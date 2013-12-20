@@ -110,8 +110,8 @@ class ExtRenderer(HtmlRenderer):
     """
     is_interactive = True
 
-    def __init__(self, ui):
-        HtmlRenderer.__init__(self, ui)
+    def __init__(self, plugin):
+        HtmlRenderer.__init__(self, plugin)
         jsgen.register_converter(self.py2js_converter)
 
         for s in 'green blue red yellow'.split():
@@ -409,7 +409,6 @@ class ExtRenderer(HtmlRenderer):
             h = 'Lino.row_action_handler('
         else:
             h = 'Lino.list_action_handler('
-            #~ ls_url = '/' + ba.actor.app_label + '/' + ba.actor.__name__
             h += "'/%s/%s'," % (ba.actor.app_label, ba.actor.__name__)
         h += "'%s'" % ba.action.action_name
         h += ",'%s'" % ba.action.http_method

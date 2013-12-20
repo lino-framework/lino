@@ -197,8 +197,8 @@ class Note(mixins.TypedPrintable,
 
     def get_printable_context(self, ar, **kw):
         kw = super(Note, self).get_printable_context(ar, **kw)
-        tplname = self.type.body_template
-        if tplname:
+        if self.type and self.type.body_template:
+            tplname = self.type.body_template
             tplname = self.type.get_templates_group() + '/' + tplname
             saved_renderer = ar.renderer
             ar.renderer = settings.SITE.ui.plain_renderer

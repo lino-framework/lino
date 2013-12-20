@@ -150,7 +150,7 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
   empty_title : "{{site.modules.extensible.CalendarPanel.label}}"
   ,activeItem: 1 // 0: day, 1: week
-  ,ls_url: '/cal/CalendarPanel'
+  ,ls_url: '/extensible/CalendarPanel'
   //~ ,disableCaching:true
   //~ ,eventStore: Lino.eventStore
   //~ ,calendarStore: Lino.calendarStore
@@ -216,7 +216,7 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   app_instance : null
   //~ empty_title : "\$ui.get_actor('cal.Panel').report.label",
   ,empty_title : "{{site.modules.extensible.CalendarPanel.label}}"
-  ,ls_url: '/cal/CalendarPanel'
+  ,ls_url: '/extensible/CalendarPanel'
   ,set_status : function(status,rp) { 
       this.requesting_panel = Ext.getCmp(rp);
       //~ console.log('20120918 CalendarAppPanel.set_status()',status,rp,this.requesting_panel);

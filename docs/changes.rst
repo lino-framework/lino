@@ -11,6 +11,26 @@ to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <http://code.google.com/p/lino/source/list>`_.
 
+Version 1.6.14 (not yet released)
+=================================
+
+- A "plugin" is an app which defines in
+  her `__init__.py` a class named "App" which must be a subclass of
+  :class:`djangosite.djangosite_site.App`. 
+  We could also call them "new-style apps". All this is
+  being imported *before* Django settings. 
+  
+- New-style apps of a Site are later accessible via
+  `settings.SITE.plugins.foo` and can receive additional
+  configuration.  This mechanism is also a (partial) solution for
+  `Django ticket #3591 <https://code.djangoproject.com/ticket/3591>`_
+
+- For example extensible_root etc are now
+  defined in the :class:`lino.apps.extensible.App` class.
+
+- :class:`lino.extjs.App` class.
+
+
   
 Version 1.6.13 (released :blogref:`20131007`)
 =============================================

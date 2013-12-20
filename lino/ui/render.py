@@ -68,8 +68,9 @@ class HtmlRenderer(object):
     is_interactive = False
     row_classes_map = {}
 
-    def __init__(self, ui):
-        self.ui = ui
+    def __init__(self, plugin):
+        self.plugin = plugin
+        # self.ui = plugin.site.ui
 
     def href(self, url, text):
         #~ return '<a href="%s">%s</a>' % (url,text)
@@ -205,8 +206,8 @@ class TextRenderer(HtmlRenderer):
     "The renderer used when rendering to .rst files and console output."
     user = None
 
-    def __init__(self, ui):
-        HtmlRenderer.__init__(self, ui)
+    def __init__(self, *args, **kw):
+        HtmlRenderer.__init__(self,  *args, **kw)
         self.user = None
 
     def instance_handler(self, ar, obj):
@@ -230,75 +231,3 @@ class TextRenderer(HtmlRenderer):
         print ar.to_rst(*args, **kw)
 
 
-class PlainRenderer(HtmlRenderer):
-
-    """
-    A "plain" HTML render that uses bootstrap and jQuery.
-    It is called "plain" because that's much more lightweight than 
-    :class:`lino.extjs.ExtRenderer`.
-    """
-
-    is_interactive = True
-
-    def instance_handler(self, ar, obj, **kw):
-        a = getattr(obj, '_detail_action', None)
-        if a is None:
-            a = obj.__class__.get_default_table().detail_action
-        if a is not None:
-            if ar is None or a.get_bound_action_permission(ar, obj, None):
-                add_user_language(kw, ar)
-                return self.get_detail_url(obj, **kw)
-
-    #~ def href_to(self,ar,obj,text=None):
-        #~ h = self.instance_handler(ar,obj)
-        #~ if h is None:
-            #~ return cgi.escape(force_unicode(obj))
-        #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
-
-    def pk2url(self, ar, pk, **kw):
-        if pk is not None:
-            #~ kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-            return settings.SITE.build_plain_url(
-                ar.actor.model._meta.app_label,
-                ar.actor.model.__name__,
-                str(pk), **kw)
-
-    def get_detail_url(self, obj, *args, **kw):
-        #~ since 20121226 kw[ext_requests.URL_PARAM_FORMAT] = ext_requests.URL_FORMAT_PLAIN
-        #~ since 20121226 return self.ui.build_url('api',obj._meta.app_label,obj.__class__.__name__,str(obj.pk),*args,**kw)
-        return settings.SITE.build_plain_url(obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
-
-    def get_home_url(self, *args, **kw):
-        return settings.SITE.build_plain_url(*args, **kw)
-
-    def get_request_url(self, ar, *args, **kw):
-        if ar.actor.__name__ == "Main":
-            return self.get_home_url(*args, **kw)
-
-        st = ar.get_status()
-        kw.update(st['base_params'])
-        add_user_language(kw, ar)
-        #~ since 20121226 kw.setdefault(ext_requests.URL_PARAM_FORMAT,ext_requests.URL_FORMAT_PLAIN)
-        if ar.offset is not None:
-            kw.setdefault(ext_requests.URL_PARAM_START, ar.offset)
-        if ar.limit is not None:
-            kw.setdefault(ext_requests.URL_PARAM_LIMIT, ar.limit)
-        if ar.order_by is not None:
-            sc = ar.order_by[0]
-            if sc.startswith('-'):
-                sc = sc[1:]
-                kw.setdefault(ext_requests.URL_PARAM_SORTDIR, 'DESC')
-            kw.setdefault(ext_requests.URL_PARAM_SORT, sc)
-        #~ print '20120901 TODO get_request_url'
-
-        return settings.SITE.build_plain_url(ar.actor.app_label, ar.actor.__name__, *args, **kw)
-
-    def request_handler(self, ar, *args, **kw):
-        return ''
-
-    def action_button(self, obj, ar, ba, label=None, **kw):
-        label = label or ba.action.label
-        return label
-
-    def action_call(self, request, bound_action, after_show):
-        return "oops"

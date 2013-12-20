@@ -17,9 +17,11 @@ from lino.ad import App
 
 class App(App):
 
-    def on_ui_init(cls, ui):
+    def on_ui_init(self, ui):
         from .ext_renderer import ExtRenderer
-        ui.extjs_renderer = ui.default_renderer = ExtRenderer(ui)
+        self.renderer = ExtRenderer(self)
+        ui.extjs_renderer = self.renderer
+        # ui.extjs_renderer = ui.default_renderer = self.renderer
 
     def get_used_libs(self, html=False):
         if html is not None:
@@ -42,6 +44,10 @@ class App(App):
                 '', ('^' + ui.site.admin_prefix, include(urls)))
         return urls
 
+    def get_index_view(self):
+        from . import views
+        return views.AdminIndex.as_view()
+
     def get_ext_urls(self, ui):
 
         from django.conf.urls import patterns
@@ -53,7 +59,7 @@ class App(App):
         rx = '^'
         urlpatterns = patterns(
             '',
-            (rx + '$', views.AdminIndex.as_view()),
+            (rx + '/?$', views.AdminIndex.as_view()),
             (rx + r'api/main_html$',
              views.MainHtml.as_view()),
             (rx + r'auth$', views.Authenticate.as_view()),

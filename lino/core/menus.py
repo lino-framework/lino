@@ -152,7 +152,7 @@ class MenuItem:
             return s + self.name
         return s
 
-    def as_html(self, ui, request, level=None):
+    def as_bootstrap_html(self, ui, request, level=None):
         if self.bound_action:
             sr = self.bound_action.actor.request(
                 action=self.bound_action,
@@ -421,9 +421,9 @@ class Menu(MenuItem):
         #~ for i in self.items:
             #~ self.items_dict[i.name] = i
 
-    def as_html(self, ui, request, level=1):
-        #~ items = [xghtml.E.li(mi.as_html(ar,level+1),class_='dropdown') for mi in self.items]
-        items = [mi.as_html(ui, request, level + 1) for mi in self.items]
+    def as_bootstrap_html(self, ui, request, level=1):
+        #~ items = [xghtml.E.li(mi.as_bootstrap_html(ar,level+1),class_='dropdown') for mi in self.items]
+        items = [mi.as_bootstrap_html(ui, request, level + 1) for mi in self.items]
         #~ print 20120901, items
         if level == 1:
             #~ return xghtml.E.ul(*items,class_='jd_menu')

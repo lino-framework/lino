@@ -2106,7 +2106,7 @@ class GridElement(Container):
     def as_plain_html(self, ar, obj):
         sar = ar.spawn(actor=self.actor,
                        action=self.actor.default_action, master_instance=obj)
-        yield sar.as_html(as_main=(self.name == "main"))
+        yield sar.as_bootstrap_html(as_main=(self.name == "main"))
         #~ yield ar.ui.table2xhtml(sar,10)
 
 

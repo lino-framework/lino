@@ -33,7 +33,8 @@ class Site(Site):
     #~ demo_fixtures = 'demo'
 
     #~ admin_prefix = 'admin'
-    plain_prefix = ''
+    # plain_prefix = ''  # deprecated
+    default_ui = 'plain'
 
     #~ anonymous_user_profile =
 

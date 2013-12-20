@@ -1,17 +1,20 @@
-SETUP_INFO = dict(name='lino',
-                  version='1.6.13',  # released 20131007(?)
-                  install_requires=['North', 'djangosite', 'odfpy',
-                                    'jinja2', 'appy', 'pytidylib', 'PyYAML'],
-                  description="A framework for writing desktop-like web applications using Django and ExtJS",
-                  license='GPL',
-                  include_package_data=True,
-                  zip_safe=False,
-                  author='Luc Saffre',
-                  author_email='luc.saffre@gmail.com',
-                  url="http://www.lino-framework.org",
-                  #~ test_suite = 'lino.test_apps',
-                  test_suite='tests',
-  classifiers="""\
+SETUP_INFO = dict(
+    name='lino',
+    version='1.6.13',  # released 20131007(?)
+    install_requires=[
+        'North', 'djangosite', 'odfpy',
+        'jinja2', 'appy', 'pytidylib', 'PyYAML'],
+    description="A framework for writing desktop-like web applications \
+    using Django and ExtJS",
+    license='GPL',
+    include_package_data=True,
+    zip_safe=False,
+    author='Luc Saffre',
+    author_email='luc.saffre@gmail.com',
+    url="http://www.lino-framework.org",
+    #~ test_suite = 'lino.test_apps',
+    test_suite='tests',
+    classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2
   Development Status :: 4 - Beta
@@ -27,14 +30,15 @@ SETUP_INFO = dict(name='lino',
   Topic :: Database :: Front-Ends
   Topic :: Home Automation
   Topic :: Office/Business
-  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
+  Topic :: Software Development :: Libraries :: \
+  Application Frameworks""".splitlines())
 
 SETUP_INFO.update(long_description="""\
-Lino is a high-level framework for writing desktop-like customized 
+Lino is a high-level framework for writing desktop-like customized
 database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
-A Lino application is technically just a Django project, 
-but the application developer does not need to write any 
+A Lino application is technically just a Django project,
+but the application developer does not need to write any
 URLconf, HTML nor CSS (`more <http://lino-framework.org/about>`_)
 
 
@@ -55,6 +59,7 @@ and
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
 lino.apps
+lino.apps.beid
 lino.apps.cal
 lino.apps.cal.fixtures
 lino.apps.cal.management
@@ -62,9 +67,10 @@ lino.apps.cal.management.commands
 lino.apps.cal.tests
 lino.apps.cal.workflows
 lino.apps.extensible
-lino.apps.beid
+lino.apps.plain
 lino.apps.eid_jslib
 lino.apps.eid_jslib.beid
+lino.apps.importfilters
 lino.core
 lino.examples
 lino.examples.docs

@@ -52,12 +52,14 @@ from lino import ad
 
 from os.path import join, dirname, exists
 
+
 class App(ad.App):
+
+    verbose_name = "Ext.ensible adapter"
 
     calendar_start_hour = 8  # setting
     calendar_end_hour = 18  # setting
 
-    verbose_name = "Ext.ensible"
     site_js_snippets = ['snippets/extensible.js']
     media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
     media_name = 'extensible'
@@ -71,7 +73,6 @@ class App(ad.App):
             version = html.a(text, href='#', onclick=onclick, title=tip)
             yield (self.verbose_name, version,
                    "http://ext.ensible.com/products/calendar/")
-        
 
     def get_css_includes(self, site):
         yield self.build_media_url('resources/css/extensible-all.css')

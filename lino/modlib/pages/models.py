@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2013 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,16 +47,7 @@ E = xghtml.E
 from lino import mixins
 from django.conf import settings
 
-#~ from lino import choices_method, simple_choices_method
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.outbox import models as outbox
-
-
-#~ outbox = dd.resolve_app('outbox')
-#~ postings = dd.resolve_app('postings')
-#~ contacts = dd.resolve_app('contacts')
-
-#~ from lino.modlib.pages import dummy
+PAGES = settings.SITE.plugins.pages
 
 #~ class PageType(dbutils.BabelNamed,mixins.PrintableType,outbox.MailableType):
 
@@ -130,11 +121,12 @@ class Page(mixins.Referrable, mixins.Hierarizable):
         #~ return u'%s %s' % (self._meta.verbose_name,self.ref)
     #~ def get_mailable_type(self):
         #~ return self.type
+
     def get_absolute_url(self):
         if self.ref:
             if self.ref != 'index':
-                return '/' + self.ref
-        return '/'
+                return PAGES.build_plain_url(self.ref)
+        return PAGES.build_plain_url()
 
     def get_sidebar_caption(self):
         if self.title:

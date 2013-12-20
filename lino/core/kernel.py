@@ -23,36 +23,20 @@ from os.path import join, dirname, exists
 
 import sys
 import atexit
-#~ import collections
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from django.conf import settings
 
 from django.utils.encoding import force_text
 
-from django.db.models import loading
-from django.utils.importlib import import_module
-from django.utils.functional import LazyObject
-
 from django.db import models
-#from django.shortcuts import render_to_response
-#from django.contrib.auth.models import User
 from django.contrib.contenttypes import generic
 
 from djangosite.signals import database_ready
-from django.conf.urls import patterns, url, include
+from django.conf.urls import patterns, include
+from django.conf.urls import url
 
-
-# from django.core.urlresolvers import reverse
-# from django.shortcuts import render_to_response, get_object_or_404
-# from django.contrib.sites.models import Site, RequestSite
-# from django.http import HttpResponse, HttpResponseRedirect, Http404
-# from django.template import RequestContext, Context, loader
-# from django.utils.http import urlquote, base36_to_int
-# from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
-
-# from djangosite.dbutils import obj2unicode
 
 import lino
 
@@ -71,9 +55,10 @@ from lino.core import web
 from lino.core.signals import pre_ui_build, post_ui_build
 
 from lino.ui import store as ext_store
+from lino.utils import codetime
 
 from lino.core.dbutils import is_devserver
-from lino.ui.render import PlainRenderer, TextRenderer
+from lino.ui.render import TextRenderer
 from lino.ui import views
 
 ACTION_RESPONSES = frozenset((
@@ -237,12 +222,11 @@ class Kernel(object):
 
         pre_ui_build.send(self)
 
-        self.plain_renderer = PlainRenderer(self)
+        # self.plain_renderer = PlainRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
-        self.default_renderer = self.plain_renderer
 
         names = set()
         for n in self.reserved_names:
@@ -250,12 +234,15 @@ class Kernel(object):
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
 
-        from lino.utils import codetime
         self.mtime = codetime()
         #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
 
         for p in site.installed_plugins:
             p.on_ui_init(self)
+
+        ui = self.site.plugins.resolve(self.site.default_ui)
+        self.default_renderer = ui.renderer
+
 
         post_ui_build.send(self)
 
@@ -266,15 +253,13 @@ class Kernel(object):
                     ba.action.params_layout.get_layout_handle(self)
 
     def kernel_startup(kernel, self):
-        """
-        This is the code that runs when you call 
-        This is a part of a Lino site setup.
-        The Django Model definitions are done, now Lino analyzes them and does certain actions.
+        """This is a part of a Lino site setup.  The Django Model definitions
+        are done, now Lino analyzes them and does certain actions:
 
         - Verify that there are no more pending injects
         - Install a DisableDeleteHandler for each Model into `_lino_ddh`
-        - Install :class:`lino.dd.Model` attributes and methods into Models that
-          don't inherit from it.
+        - Install :class:`lino.dd.Model` attributes and methods into
+          Models that don't inherit from it.
 
         """
         if len(sys.argv) == 0:
@@ -335,7 +320,6 @@ class Kernel(object):
                     settings.SITE.GFK_LIST.append(f)
 
         for a in models.get_apps():
-            #~ for app_label,a in loading.cache.app_store.items():
             app_label = a.__name__.split('.')[-2]
             #~ logger.info("Installing %s = %s" ,app_label,a)
 
@@ -617,7 +601,6 @@ class Kernel(object):
 
     def get_media_urls(self):
         #~ print "20121110 get_media_urls"
-        from django.conf.urls import patterns, url, include
         from lino.core.dbutils import is_devserver
         from django.conf import settings
 
@@ -630,11 +613,13 @@ class Kernel(object):
                             settings.MEDIA_URL)
 
         if not self.site.extjs_base_url:
-            self.setup_media_link(urlpatterns,'extjs', 'extjs_root')
-        if self.site.use_bootstrap:
-            if not self.site.bootstrap_base_url:
-                self.setup_media_link(urlpatterns,
-                    'bootstrap', 'bootstrap_root')
+            self.setup_media_link(urlpatterns, 'extjs', 'extjs_root')
+
+        # if self.site.use_bootstrap:
+        #     if not self.site.bootstrap_base_url:
+        #         self.setup_media_link(urlpatterns,
+        #             'bootstrap', 'bootstrap_root')
+
         for p in self.site.installed_plugins:
             p.setup_media_links(self, urlpatterns)
 
@@ -669,52 +654,15 @@ class Kernel(object):
 
         return urlpatterns
 
-    def get_pages_urls(self):
-        from django.conf.urls import patterns, url, include
-        from django import http
-        from django.views.generic import View
-        from lino import dd
-        pages = dd.resolve_app('pages')
-
-        class PagesIndex(View):
-
-            def get(self, request, ref='index'):
-                if not ref:
-                    ref = 'index'
-
-                #~ print 20121220, ref
-                obj = pages.lookup(ref, None)
-                if obj is None:
-                    raise http.Http404("Unknown page %r" % ref)
-                html = pages.render_node(request, obj)
-                return http.HttpResponse(html)
-
-        return patterns('',
-                        (r'^(?P<ref>\w*)$', PagesIndex.as_view()),
-                        )
-
-    def get_plain_urls(self):
-
-        from django.conf.urls import patterns, url, include
-        from lino.ui import views
-        urlpatterns = []
-        rx = '^'
-        urlpatterns = patterns(
-            '',
-            (rx + r'$', views.PlainIndex.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.PlainList.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.PlainElement.as_view()),
-        )
-        return urlpatterns
-
     def get_patterns(self):
         # self.site.startup()
 
         database_ready.send(self.site)
 
         urlpatterns = self.get_media_urls()
+
+        urlpatterns += patterns(
+            '', ('^$', self.default_renderer.plugin.get_index_view()))
 
         for p in self.site.installed_plugins:
             urlpatterns += p.get_patterns(self)
@@ -724,12 +672,12 @@ class Kernel(object):
         #         '',
         #         ('^' + self.site.admin_prefix, include(self.get_ext_urls())))
 
-        if self.site.plain_prefix:
-            urlpatterns += patterns(
-                '',
-                ('^' + self.site.plain_prefix + "/",
-                 include(self.get_plain_urls()))
-            )
+        # if self.site.plain_prefix:
+        #     urlpatterns += patterns(
+        #         '',
+        #         ('^' + self.site.plain_prefix + "/",
+        #          include(self.get_plain_urls()))
+        #     )
 
         if self.site.django_admin_prefix:  # experimental
             from django.contrib import admin
@@ -739,8 +687,8 @@ class Kernel(object):
                                      + "/", include(admin.site.urls))
                                     )
 
-        if not self.site.plain_prefix:
-            urlpatterns += self.get_plain_urls()
+        # if not self.site.plain_prefix:
+        #     urlpatterns += self.get_plain_urls()
 
         # if self.site.use_extjs:
         #     if not self.site.admin_prefix:

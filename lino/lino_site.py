@@ -234,6 +234,8 @@ class Site(Site):
 
     preview_limit = 15
 
+    default_ui = 'extjs'
+
     textfield_format = 'plain'
     """
     The default format for text fields.
@@ -926,8 +928,8 @@ class Site(Site):
     # extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
     # "Similar to :attr:`extjs_base_url` but pointing to ext.ensible.com."
 
-    bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
-    "Similar to :attr:`extjs_base_url` but pointing to twitter.github.com."
+    # bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
+    # "Similar to :attr:`extjs_base_url` but pointing to twitter.github.com."
 
     tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
     "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
@@ -1508,6 +1510,7 @@ class Site(Site):
         #~ yield 'django_extensions'
         yield 'lino.modlib.about'
         yield 'lino.extjs'
+        yield 'lino.apps.plain'
         #~ if self.admin_prefix:
             #~ yield 'lino.modlib.pages'
         yield "lino"
@@ -1549,11 +1552,10 @@ class Site(Site):
             return self.buildurl(self.admin_prefix, *args, **kw)
         return self.buildurl(*args, **kw)
 
-    def build_plain_url(self, *args, **kw):
-        if self.plain_prefix:
-            return self.buildurl('plain', *args, **kw)
-        return self.buildurl(*args, **kw)
-        #~ return self.plain_prefix + self.buildurl(*args,**kw)
+    # def build_plain_url(self, *args, **kw):
+    #     if self.plain_prefix:
+    #         return self.buildurl('plain', *args, **kw)
+    #     return self.buildurl(*args, **kw)
 
     def build_extjs_url(self, url):
         if self.extjs_base_url:
@@ -1565,10 +1567,10 @@ class Site(Site):
     #         return self.extensible_base_url + url
     #     return self.build_media_url('extensible', url)
 
-    def build_bootstrap_url(self, url):
-        if self.bootstrap_base_url:
-            return self.bootstrap_base_url + url
-        return self.build_media_url('bootstrap', url)
+    # def build_bootstrap_url(self, url):
+    #     if self.bootstrap_base_url:
+    #         return self.bootstrap_base_url + url
+    #     return self.build_media_url('bootstrap', url)
 
     def build_tinymce_url(self, url):
         if self.tinymce_base_url:

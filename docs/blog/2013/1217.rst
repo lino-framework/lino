@@ -1,0 +1,27 @@
+====================================
+20131217 (Tuesday, 17 December 2013)
+====================================
+
+Miscellaneous
+-------------
+
+- Fixed a cosmetic bug in :class:`lino.modlib.notes.models.Note`: when
+  trying to print a note with an empty `type` field, this caused an
+  :ref:`ise` "AttributeError: 'NoneType' object has no attribute
+  'body_template' at /api/pcsw/NotesByPerson".
+
+
+- New virtual column `contract_company` in `welfare.pcsw.Client` 
+  shows only the company.
+
+- Started to convert `use_bootstrap` and `bootstrap_base_url` 
+  into a plugin:
+
+  - build_bootstrap_url --> site.plugins.plain.build_media_url
+  - renamed `as_html` to `as_bootstrap_html` in lino.core (menus, actions, requests)
+
+  TODO:
+
+  - Not finished (and this conversion must wait a bit 
+    because I am concentrating on :ref:`eidreader`. 
+

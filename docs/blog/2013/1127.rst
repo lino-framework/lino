@@ -43,7 +43,7 @@ wie sich unser Problem in Estland lösen würde.
 https://code.google.com/p/esteid/wiki/WebDeveloper?wl=en
 
 Posted to `esteid-devel
-<https://groups.google.com/forum/#!forum/esteid-devel>`_::
+<https://groups.google.com/forum/#!forum/esteid-devel>`_.
 
 
 Moved more projects to GitHub

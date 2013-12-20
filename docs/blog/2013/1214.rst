@@ -9,14 +9,65 @@ Importing contacts data into a Lino application
 Started with new module :mod:`lino.apps.importfilters`.
 
 
-I often received :ref:`ise` messages like the following:
+`PermissionDenied`
+------------------
+
+Lino is obviously getting more attention. 
+I feel that directly because :ref:`ise` messages like the following 
+are getting more frequent::
 
   Exception at /api/polls/MyPolls/-99999
   <class 'lino.core.perms.AnonymousUser'> is not a <class 'lino.modlib.users.models.User'> (polls.MyPolls.master_key = 'user')
 
-I guess that such messages are caused when somebody had been playing 
-on a demo site, saved some permalink somewhere, and reused it later, 
-after the session has timed out or the database had been reinitialized.
+I guess that such messages are caused when somebody had been playing
+on a demo site, saved some permalink somewhere, and reused it later,
+after the session has timed out or the database had been
+reinitialized.
 
-e.g. a ByUser table descendant called by AnonymousUser
+This was because :meth:`lino.core.tables.AbstractTable.get_filter_kw`
+raised a plain Exception in that case.
+Now it raises a `PermissionDenied` exception, 
+leading to a "Forbidden" error message (i.e. status code 403).
+
+Better would be status code "400 Bad request" ("The request cannot be
+fulfilled due to bad syntax"), but that's available only in Django 1.6
+(where it is called SuspiciousOperation) and I currently want to remain 
+usable on earlier Django versions.
+
+- `HTTP status codes (Wikipedia) <http://en.wikipedia.org/wiki/List_of_HTTP_status_codes#4xx_Client_Error>`_
+- `403 / forbidden / PermissionDenied (Django 1.5) 
+  <https://docs.djangoproject.com/en/1.5/topics/http/views/#the-403-http-forbidden-view>`_
+- `400 / bad request / SuspiciousOperation (Django 1.6) 
+  <https://docs.djangoproject.com/en/1.6/topics/http/views/#the-400-bad-request-view>`_
+
+
+
+EIDReader continued
+-------------------
+
+:ref:`eidreader` still doesn't run under Oracle Java, even when I sign 
+the applet using a certificate purchased from GlobalSign.
+
+Most people I asked about this tell me that applets are obsolete 
+anyway, and that I should write my own browser extension.
+
+So I googled once more for "browser extension run local command", and
+thanks to `Start an external application from a Google Chrome
+Extension?
+<http://stackoverflow.com/questions/2652094/start-an-external-application-from-a-google-chrome-extension>`_
+I found L.C. Klopfenstein's `Open with external application
+<https://bitbucket.org/lck/open-with-external-application>`_ which
+uses Roque Pinel's `SimpleGet <https://github.com/repinel/SimpleGet>`_
+plugin.  That latter is discontinued. But both projects might be 
+interesting for me to get started.
+
+Note that even if I get these things to run, I still need to write
+(and Lino users must install) a local executable which does the actual
+work of reading the eid card. I'd probably use pssi to do that 
+(see :blogref:`20131126`).
+
+
+
+
+
 

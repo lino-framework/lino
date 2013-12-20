@@ -40,9 +40,10 @@ class Site(Site):
     #~ author = 'Luc Saffre'
     #~ author_email = 'luc.saffre@gmail.com'
 
-    demo_fixtures = 'std few_languages furniture demo demo2'.split()
+    demo_fixtures = 'std intro furniture demo demo2'.split()
 
-    # admin_prefix = 'admin'
+    default_ui = 'pages'
+    admin_prefix = 'admin'
     sidebar_width = 3
     user_model = 'users.User'
 

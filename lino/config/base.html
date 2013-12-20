@@ -2,7 +2,7 @@
 <html language="en"><head>
 <meta charset="utf-8"/>
 <title>{% block title %}{% endblock %}</title>
-<link rel="stylesheet" href="{{site.build_bootstrap_url('css/bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.plugins.plain.build_bootstrap_url('css','bootstrap.css')}}" type="text/css">
 <link rel="stylesheet" href="{{site.build_media_url('lino','bootstrap.css')}}" type="text/css">
 </head><body>
 <div id="wrap">
@@ -24,7 +24,7 @@
     {% endif -%}
     {% if site.plain_prefix -%}
     &mdash;
-    <a href="{{site.build_plain_url()}}">Plain</a>
+    <a href="{{site.plugins.plain.build_plain_url()}}">Plain</a>
     {% endif -%}
     </div>
     {% endblock %}

@@ -3259,7 +3259,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   get_permalink_url : function() {
       var rec = this.get_current_record();
       if (rec && ! rec.phantom && rec.id != -99998)
-          return '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + rec.id;
+          return '{{settings.SITE.build_admin_url("api")}}' 
+              + this.ls_url + '/' + rec.id;
       return '{{settings.SITE.build_admin_url("api")}}' + this.ls_url;
     
   },
@@ -3786,7 +3787,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p,true);
             //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-            window.open('{{settings.SITE.build_plain_url()}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
+            window.open('{{settings.SITE.plugins.plain.build_plain_url()}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
         {% if False and settings.SITE.is_installed('system') %}
         ,{ scope:this, 

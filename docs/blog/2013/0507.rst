@@ -81,7 +81,7 @@ Now I can remove the following item from my todo list...
   
 ... by writing a few lines of code:  
 
->>> url = '/plain/products/Products'
+>>> url = '/b/products/Products'
 >>> res = client.get(url,REMOTE_USER='robin')
 >>> print res.status_code
 200

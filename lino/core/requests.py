@@ -723,8 +723,8 @@ class ActionRequest(BaseRequest):
     def get_row_by_pk(self, pk):
         return self.actor.get_row_by_pk(self, pk)
 
-    def as_html(self, *args, **kw):
-        return self.bound_action.action.as_html(self, *args, **kw)
+    def as_bootstrap_html(self, *args, **kw):
+        return self.bound_action.action.as_bootstrap_html(self, *args, **kw)
 
     def get_request_url(self, *args, **kw):
         return self.renderer.get_request_url(self, *args, **kw)

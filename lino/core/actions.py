@@ -575,8 +575,8 @@ class Action(Parametrizable, Permittable):
             return self
         return InstanceAction(self, instance.get_default_table(), instance, owner)
 
-    def as_html(self, ar):
-        return "Oops, no as_html method for %s" % self
+    def as_bootstrap_html(self, ar):
+        return "Oops, no as_bootstrap_html method for %s" % self
 
     def make_params_layout_handle(self, ui):
         #~ return self.action.params_layout.get_layout_handle(ui)
@@ -803,7 +803,7 @@ class GridEdit(TableAction):
     def get_window_size(self, actor):
         return actor.window_size
 
-    def as_html(self, ar, as_main=True):
+    def as_bootstrap_html(self, ar, as_main=True):
         t = xghtml.Table()
         if ar.limit is None:
             ar.limit = PLAIN_PAGE_LENGTH
@@ -890,7 +890,7 @@ class ShowDetailAction(Action):
     #~ def get_elem_title(self,elem):
         #~ return _("%s (Detail)")  % unicode(elem)
 
-    def as_html(self, ar, pk):
+    def as_bootstrap_html(self, ar, pk):
         ah = ar.ah
         ba = ar.bound_action
         rpt = ar.actor
@@ -1029,8 +1029,8 @@ class ShowEmptyTable(ShowDetailAction):
         self.label = actor.label
         return super(ShowEmptyTable, self).attach_to_actor(actor, name)
 
-    def as_html(self, ar):
-        return super(ShowEmptyTable, self).as_html(ar, '-99998')
+    def as_bootstrap_html(self, ar):
+        return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
 
 
 class UpdateRowAction(Action):
