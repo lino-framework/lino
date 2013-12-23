@@ -1,0 +1,13 @@
+===================================
+20131223 (Monday, 23 December 2013)
+===================================
+
+Adapted :mod:`lino.apps.beid` so that it loads 
+the applet using `jnlp_href`.
+
+Noted on my Linux client at least one more problem: both Firefox and
+Chromium say "java.lang.IndexOutOfBoundsException: Index: 0" (which
+means that there is no card reader)
+
+Checkin on :ref:`hoppel` and pull on :ref:`testlino`.
+

@@ -67,6 +67,7 @@ lino.apps.cal.management.commands
 lino.apps.cal.tests
 lino.apps.cal.workflows
 lino.apps.extensible
+lino.apps.extjs
 lino.apps.plain
 lino.apps.eid_jslib
 lino.apps.eid_jslib.beid
@@ -76,7 +77,6 @@ lino.examples
 lino.examples.docs
 lino.examples.start
 lino.examples.start.settings
-lino.extjs
 lino.history
 lino.modlib
 lino.modlib.auto

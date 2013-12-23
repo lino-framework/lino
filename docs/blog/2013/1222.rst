@@ -1,0 +1,121 @@
+===================================
+20131222 (Sunday, 22 December 2013)
+===================================
+
+Converting Applet to Web Start application
+------------------------------------------
+
+Im IRC-Channel ##java ist es sogar *verboten*, 
+über Applets zu reden. Und sie sagen auch warum:
+http://javachannel.net/wiki/pmwiki.php/FAQ/Applets
+
+Also ich muss mal folgendes lesen:
+http://docs.oracle.com/javase/7/docs/technotes/guides/javaws
+
+The official 
+`Migrating Java Applets to Java Web Start Applications
+<http://www.oracle.com/technetwork/java/javase/applet-migration-139512.html>`__ does not help.
+
+Here is a great document 
+which finally explains all this in a 
+disgestable way:
+`Applets & Web Start Applications
+<http://www.ntu.edu.sg/home/ehchua/programming/java/J4c_AppletWebstart.html>`__
+It helped me to understand:
+
+- in fact my "applet" was already a Web Start application 
+  because it had a `jnlp_href` attribute.
+- I had the `<security><all-permissions /></security>` element 
+  missing in my `.jnlp` file.
+
+Thanks to author Chua Hock-Chuan.
+
+
+More problems in :ref:`eidreader`
+---------------------------------
+
+Sigh!
+Now that :ref:`eidreader` finally gets permission to run, 
+I can see (again) the same problems I had ages ago:
+When reading a Belgian card, I get a
+`ClassNotFoundException: be.fedict.eid.applet.service.Identity`_
+while my Estonian card produces a
+`javax.smartcardio.CardException: connect() failed`_
+(caused by a `SCARD_E_PROTO_MISMATCH`).
+
+
+ClassNotFoundException: be.fedict.eid.applet.service.Identity
+-------------------------------------------------------------
+
+This error comes when reading a **Belgian** card.
+
+.. literalinclude:: 1222b.log
+   :lines: 322-
+
+
+And this although ``jar -tf eid-applet-service.jar`` shows me that the
+class is contained.
+
+Discovered `JaNeLa <http://pscode.org/janela/>`_ who told me a few
+intersting things (none of which seems to be the cause):
+
+.. literalinclude:: 1222-janela.txt
+
+Maybe one of the 
+`jar manifest attributes
+<http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/manifest.html>`_?
+
+Hm... `Trusted-Library: true` doesn't seem to change anything, 
+but with `Trusted-Only: true` it seems to fail later
+and reports an `InvocationTargetException`. 
+The console traceback is now:
+
+.. literalinclude:: 1222c.log
+   :lines: 362-
+
+Aha, the following combination gets it to work::
+
+    Trusted-Only: true
+    Trusted-Library: false
+    
+TODO: 
+    
+- If there is anybody here who can explain me **why it works?!**
+  I guess that it has to do with the fact that the third-party 
+  jars do not have a Trusted-Library attribute...
+
+- The alert message seems to show only the first line of text 
+  "Reader: BE", but in fact the remained is there, you can see it 
+  by scrolling down.
+
+- There is still a "Security Warning":
+
+      This web site is requesting access and control of the Java
+      application shown above. Allow access only if you trust the web
+      site and know that the application is intended to run on this
+      site.
+
+      Allow access to the following application from the web site?
+
+      Yes / No / Help
+
+  The message is irritating in that it does not mention any application 
+  neither "above" nor "following".
+
+
+
+
+
+javax.smartcardio.CardException: connect() failed
+-------------------------------------------------
+
+Now there is still the Estonian card:
+
+This error comes when reading an **Estonian** card.
+
+
+.. literalinclude:: 1222a.log
+   :lines: 367-
+
+I'll leave this open for now since I personally need to read only
+Belgian cards.

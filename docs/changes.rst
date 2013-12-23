@@ -25,10 +25,47 @@ Version 1.6.14 (not yet released)
   configuration.  This mechanism is also a (partial) solution for
   `Django ticket #3591 <https://code.djangoproject.com/ticket/3591>`_
 
-- For example extensible_root etc are now
-  defined in the :class:`lino.apps.extensible.App` class.
+- Some **site** settings have become **plugin** settings:
+  The are no longer defined as class attributes of `Site`, but 
+  defined in the `App` class.
+  For example :setting:`extensible_root` is now in 
+  :attr:`lino.apps.extensible.App.media_root`.
 
-- :class:`lino.extjs.App` class.
+- Concrete example in my :ref:`djangosite_local`.
+
+  Before::
+
+    def setup_site(self):
+        ...
+        self.bootstrap_root = '/home/luc/snapshots/bootstrap'
+        self.bootstrap_base_url = None
+        self.extensible_root = '/home/luc/snapshots/extensible-1.0.1'
+        self.extensible_base_url = None
+
+  After::
+
+    def setup_site(self):
+        ...
+        self.configure_plugin(
+            'extensible',
+            calendar_start_hour=9,
+            media_root='/home/luc/snapshots/extensible-1.0.1',
+            media_base_url=None)
+
+        self.configure_plugin(
+            'plain',
+            media_root='/home/luc/snapshots/bootstrap',
+            media_base_url=None)
+
+
+- :mod:`lino.apps.extjs` and
+  :mod:`lino.apps.plain` 
+  are now plugins.
+  They are currently being included automatically in
+  :meth:`lino.lino_site.Site.get_installed_apps` 
+  to avoid more code changes in existing applications.
+
+- Moved `lino.extjs` to `lino.apps.extjs`
 
 
   

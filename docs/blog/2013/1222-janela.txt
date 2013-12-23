@@ -1,0 +1,31 @@
+JaNeLA Report - version 11.05.17
+
+
+Report for file:/home/luc/hgwork/eid/applets/eidreader.jnlp
+
+Content type application/xml does not equal expected type of application/x-java-jnlp-file
+XML encoding not known, but declared as UTF-8
+Codebase not specified.  Defaulting to file:/home/luc/hgwork/eid/applets/
+Downloads can be optimized by specifying a resource size for 'EIDReader.jar'.
+The resource download at EIDReader.jar can be optimized by removing the (default) value of download='eager'.
+Lazy downloads might not work as expected for EIDReader.jar unless the download 'part' is specified. 
+Downloads can be optimized by specifying a resource size for 'commons-logging.jar'.
+The resource download at commons-logging.jar can be optimized by removing the (default) value of download='eager'.
+The resource download at commons-logging.jar can be optimized by removing the (default) value of main='false'.
+It might be possible to optimize the start-up of the app. by  specifying download='lazy' for the commons-logging.jar resource.
+Lazy downloads might not work as expected for commons-logging.jar unless the download 'part' is specified. 
+Downloads can be optimized by specifying a resource size for 'commons-codec.jar'.
+The resource download at commons-codec.jar can be optimized by removing the (default) value of download='eager'.
+The resource download at commons-codec.jar can be optimized by removing the (default) value of main='false'.
+It might be possible to optimize the start-up of the app. by  specifying download='lazy' for the commons-codec.jar resource.
+Lazy downloads might not work as expected for commons-codec.jar unless the download 'part' is specified. 
+Downloads can be optimized by specifying a resource size for 'eid-applet-service.jar'.
+The resource download at eid-applet-service.jar can be optimized by removing the (default) value of download='eager'.
+The resource download at eid-applet-service.jar can be optimized by removing the (default) value of main='false'.
+It might be possible to optimize the start-up of the app. by  specifying download='lazy' for the eid-applet-service.jar resource.
+Lazy downloads might not work as expected for eid-applet-service.jar unless the download 'part' is specified. 
+
+
+
+
+Content type application/xml does not equal expected type of application/x-java-jnlp-file

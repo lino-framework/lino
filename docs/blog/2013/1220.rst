@@ -186,8 +186,24 @@ aufzunehmen. Die gehören in die Liste der **Orte** (die wir in erster
 Linie für **Städte** benutzen).
 
 
-Repairing the test suite
-------------------------
+Checked in
+----------
 
 - Fixed a bug in `lino/apps/extensible/config/snippets/extensible.js`: 
   the `ls_url` was still using "cal" instead of "extensible" as app label.
+
+- Finished the last changes to convert the `use_bootstrap` and
+  `plain_prefix` settings into a plugin.
+
+- Repaired the test suite: prefix for "plain" is now "b"
+
+- Checked in. 
+
+- One more change: renamed `lino.extjs` to :mod:`lino.apps.extjs` 
+  since it is now an app.
+  (erm... didn't I want differentiate "system apps" from "ERP apps"?)
+
+- Tried to write a comprehensible overview of these changes in
+  :ref:`lino.changes`.
+
+

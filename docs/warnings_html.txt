@@ -1,0 +1,7 @@
+/home/luc/hgwork/lino/docs/blog/2013/1222.rst:117: WARNING: Line spec '367-': no lines pulled from include file u'/home/luc/hgwork/lino/docs/blog/2013/1222a.log'
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:48: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:49: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:53: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:54: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:57: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:58: WARNING: Bullet list ends without a blank line; unexpected unindent.

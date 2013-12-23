@@ -12,8 +12,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Add this to your :setting:`get_installed_apps`
+"""Add this to your :setting:`get_installed_apps`
 if your Site should feature actions for reading electronic ID
 smartcards.
 
@@ -21,8 +20,13 @@ When this app is installed, then you must also add the `.jar` files
 required by :ref:`eidreader`
 into your media directory, in a subdirectory named "eidreader".
 
+Alternatively there is :mod:`lino.apps.eid_jslib.beid` which overrides
+:mod:`lino.apps.beid` and does the same except that it uses
+:ref:`eid_jslib` instead of :ref:`eidreader`
+
 This app makes sense only if there is exactly one subclass of
 :class:`BeIdCardHolder` among your Site's models.
+
 """
 
 import logging
@@ -42,14 +46,15 @@ class App(ad.App):  # was: use_eidreader
     media_name = 'eidreader'
 
     def get_head_lines(self, site, request):
-        #~ p = site.build_media_url('lino','applets','EIDReader.jar')
-        p = self.build_media_url('EIDReader.jar')
+        # p = self.build_media_url('EIDReader.jar')
+        p = self.build_media_url('eidreader.jnlp')
         p = request.build_absolute_uri(p)
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
-        yield '        archive="%s"' % p
+        # yield '        archive="%s"' % p
         yield '        width="0" height="0">'
         # ~ yield '<param name="separate_jvm" value="true">' # 20130913
-        yield '<param name="permissions" value="sandbox">'
+        yield '<param name="permissions" value="all-permissions">'
+        yield '<param name="jnlp_href" value="%s">' % p
         yield '</applet>'
 
     def card_number_to_picture_file(self, card_number):

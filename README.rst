@@ -2,16 +2,16 @@
 lino README
 ==========================
 
-A framework for writing desktop-like web applications using Django and ExtJS
+A framework for writing desktop-like web applications     using Django and ExtJS
 
 Description
 -----------
 
-Lino is a high-level framework for writing desktop-like customized 
+Lino is a high-level framework for writing desktop-like customized
 database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
-A Lino application is technically just a Django project, 
-but the application developer does not need to write any 
+A Lino application is technically just a Django project,
+but the application developer does not need to write any
 URLconf, HTML nor CSS (`more <http://lino-framework.org/about>`_)
 
 
