@@ -34,3 +34,4 @@ This is also the beginning of :mod:`lino_faggio.migrate` since a first
 
 Note: After renaming `countries.City` to `countries.Place` I
 understood that this is enough code change for this time.
+

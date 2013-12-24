@@ -127,8 +127,8 @@ class CompanyType(dd.BabelNamed):
     """
 
     class Meta:
-        verbose_name = _("company type")
-        verbose_name_plural = _("company types")
+        verbose_name = _("Group Type")
+        verbose_name_plural = _("Group Types")
 
     abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
 
@@ -471,8 +471,8 @@ class Company(Partner):
         abstract = settings.SITE.is_abstract_model('contacts.Company')
         #~ abstract = True
         app_label = 'contacts'
-        verbose_name = _("Company")
-        verbose_name_plural = _("Companies")
+        verbose_name = _("Group")
+        verbose_name_plural = _("Groups")
 
     prefix = models.CharField(max_length=200, blank=True)
     vat_id = models.CharField(_("VAT id"), max_length=200, blank=True)
