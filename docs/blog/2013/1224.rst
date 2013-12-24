@@ -32,6 +32,10 @@ things easier:
 This is also the beginning of :mod:`lino_faggio.migrate` since a first
 :ref:`faggio` has gone into production.
 
-Note: After renaming `countries.City` to `countries.Place` I
-understood that this is enough code change for this time.
+After renaming `countries.City` to `countries.Place` I understood that
+this is enough code change for today.  But I changed already
+`verbose_name` from "Company" to "Group" and `verbose_name_plural`
+from "Companies" to "Groups".  Existing applications which want to
+preserve the old label can override the new default by overriding the
+model.
 
