@@ -30,13 +30,13 @@ class App(App):
 
         urls = patterns(
             '',
-            (r'^/?$', views.PagesIndex.as_view()),
+            (r'^$', views.PagesIndex.as_view()),
             (r'^(?P<ref>\w*)$', views.PagesIndex.as_view()),
         )
 
         if self.url_prefix:
             return patterns(
-                '', ('^' + self.url_prefix, include(urls)))
+                '', ('^' + self.url_prefix + "/", include(urls)))
         return urls
 
     def get_index_view(self):

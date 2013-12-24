@@ -32,9 +32,16 @@ no license fee, source code available etc...
 You may do all this as a *commercial activity* by selling your
 services, e.g.:
 
-- giving support for Lino applications
-- hosting Lino applications
-- organizing seminars for Lino end-users or system administrators
+- you write an in-house Lino application for your customer.  The GPL
+  can then act as a warranty for your customer that you are not going
+  to reuse his know-how and sell it to another customer.
+
+- you sell mass hosting for some of the existing Lino applications
+
+- you sell support for an existing Lino application
+
+- you organize seminars for Lino end-users or system administrators
+
 
 Not very nice but still allowed is if you publish your application's
 code without any documentation, maintaining your own knowledge base
@@ -49,15 +56,20 @@ these are not requirements.
 **What the GPL does not allow** is to convey your Lino application
 using **another license** than the GPL. Concretely:
 
-- Even BSD is not allowed here, since that would open the door for a
-  third party to re-use our work under a non-free license.
+- You are not allowed to run your application on a public website
+  *without also* distributing your code. This limitation comes because
+  Lino uses ExtJS, which is Javascript (client-side code), and in that
+  case the `Senche FAQ <http://www.sencha.com/legal/open-source-faq/>`_
+  explains that *“Conveyance” for a web application is triggered when a
+  user outside the legal entity that created the application uses the
+  application."*
 
-- And the `Senche FAQ <http://www.sencha.com/legal/open-source-faq/>`_
-  explains that *“Conveyance” for a web application is triggered when
-  a user outside the legal entity that created the application uses
-  the application."* Which means that you are not allowed to run your
-  application on a public website without also distributing your code.
+- And the license of your application (if you publish it) must be GPL,
+  even BSD or some other FOSS license is not allowed here, since that
+  would open the door for a third party to re-use our work under a
+  non-free license.
 
 If you want to do one of the above, then you must ask me (and also
 Sencha and Ext.ensible) for *another license than the GPL*, and this
 license will cost some money.
+

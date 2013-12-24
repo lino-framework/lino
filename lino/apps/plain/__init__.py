@@ -54,7 +54,7 @@ class App(App):
         rx = '^'
         urls = patterns(
             '',
-            # (rx + r'$', views.PlainIndex.as_view()),
+            (rx + r'$', views.PlainIndex.as_view()),
             (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
              views.PlainList.as_view()),
             (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',

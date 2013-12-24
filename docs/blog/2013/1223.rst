@@ -20,12 +20,9 @@ file needs a codebase attribute.  Ouch! And the last "little" problem
 (:doc:`/tickets/2013/1`) took me several weeks!
 
 I am not the first one who encounters this problem. Kohsuke Kawaguchi
-did some research in 2009:
-
-- Why can't we get rid of JNLP @codebase?
-  https://weblogs.java.net/blog/kohsuke/archive/2009/07/why_cant_we_get.html
-
-Note the interesting comments until October 2010.
+did some research in 2009: `Why can't we get rid of JNLP @codebase?
+<https://weblogs.java.net/blog/kohsuke/archive/2009/07/why_cant_we_get.html>`__. Note
+the interesting comments until October 2010.
 
 Sigh. Basically this means that I must manually create a copy of the
 eidreader.jnlp file on the production server. 
@@ -48,4 +45,26 @@ Mysteries of faith:
 - Why did I sometimes have on my Linux client the problem that both
   Firefox and Chromium say "java.lang.IndexOutOfBoundsException:
   Index: 0" (which means that there is no card reader).
+
+
+Content Management à la Lino
+----------------------------
+
+Fixed a bug caused by a missing slash in the urlconf of 
+:mod:`lino.modlib.pages`
+and
+:mod:`lino.apps.extjs`.
+This bug appeared only when 
+:attr:`admin_prefix <lino.lino_site.Site.admin_prefix>`
+was no-empty (as it is in 
+:mod:`lino.examples.start` and 
+:mod:`lino.projects.cms`)
+
+But :mod:`lino.examples.start` needs some more work. TODO:
+
+- Convert :mod:`lino.apps.extjs` to use 
+  :attr:`url_prefix <lino.apps.extjs.App.url_prefix>`
+  instead of 
+  :attr:`admin_prefix <lino.lino_site.Site.admin_prefix>`.
+
 

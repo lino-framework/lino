@@ -41,7 +41,7 @@ class App(App):
         urls = self.get_ext_urls(ui)
         if ui.site.admin_prefix:
             return patterns(
-                '', ('^' + ui.site.admin_prefix, include(urls)))
+                '', ('^' + ui.site.admin_prefix+"/", include(urls)))
         return urls
 
     def get_index_view(self):
@@ -106,4 +106,3 @@ class App(App):
             )
 
         return urlpatterns
-
