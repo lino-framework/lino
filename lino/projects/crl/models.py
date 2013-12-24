@@ -102,7 +102,7 @@ we store these strings as their hexadecimal representation.
         return str2hex(value)
 
 
-dd.inject_field(countries.City, 'crl', CrlField())
+dd.inject_field(countries.Place, 'crl', CrlField())
 dd.inject_field(contacts.Person, 'crl', CrlField())
 dd.inject_field(contacts.Person, 'died_date',
                 models.DateField(

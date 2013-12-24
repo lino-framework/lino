@@ -246,7 +246,7 @@ class Model(models.Model):
         `request` is the web request,
         `actor` is the requesting actor.
         Default is to simply return `unicode(self)`.
-        One usage example is :class:`lino.modlib.countries.models.City`.
+        One usage example is :class:`lino.modlib.countries.models.Place`.
         """
         return unicode(self)
 

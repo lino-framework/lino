@@ -1,3 +1,0 @@
-/home/luc/hgwork/lino/docs/blog/2013/1223.rst:11: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: hoppel (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)

@@ -70,16 +70,16 @@ def objects():
     yield company('Moulin Rouge', '75018', 'Paris', 'Boulevard de Clichy', '82')
     yield company('Auto École Verte', '54000 ', 'Nancy', 'rue de Mon Désert', '12')
 
-    City = dd.resolve_model('countries.City')
+    Place = dd.resolve_model('countries.Place')
 
-    #~ vigala = City.objects.get(name__exact='Vigala')
+    #~ vigala = Place.objects.get(name__exact='Vigala')
     #~ person = Instantiator("contacts.Person","first_name last_name",
                 #~ country='EE',street='Uus', street_no='1',
                 #~ addr2='Vana-Vigala küla',
                 #~ city=vigala,zip_code='78003').build
     #~ yield person('Luc',  'Saffre', gender=mixins.Genders.male)
 
-    eupen = City.objects.get(name__exact='Eupen')
+    eupen = Place.objects.get(name__exact='Eupen')
     person = Instantiator("contacts.Person", "first_name last_name",
                           country='BE', city=eupen, zip_code='4700').build
     yield person('Andreas',  'Arens', gender=mixins.Genders.male)
@@ -120,7 +120,7 @@ def objects():
     yield person('Michael', 'Mießen', gender=mixins.Genders.male)
     yield person('Marie-Louise', 'Meier', gender=mixins.Genders.female)
 
-    raeren = City.objects.get(name__exact='Raeren')
+    raeren = Place.objects.get(name__exact='Raeren')
     person = Instantiator("contacts.Person", "first_name last_name",
                           country='BE', language=settings.SITE.DEFAULT_LANGUAGE.django_code,
                           city=raeren, zip_code='4730').build
@@ -148,13 +148,14 @@ def objects():
     yield person('Erna',   'Ärgerlich', gender=mixins.Genders.female)
 
     person = Instantiator("contacts.Person", country='BE',
-                          city=City.objects.get(name__exact='Angleur')).build
+                          city=Place.objects.get(name__exact='Angleur')).build
     yield person(first_name='Bernard', last_name='Bodard', title='Dr.')
     yield person(first_name='Jean', last_name='Dupont')
 
-    #~ person = Instantiator("contacts.Person",country='BE',city=City.objects.get(name__exact='Oostende')).build
+    #~ person = Instantiator("contacts.Person",country='BE',city=Place.objects.get(name__exact='Oostende')).build
     person = Instantiator("contacts.Person", country='NL',
-                          city=City.objects.get(name__exact='Amsterdam')).build
+                          city=Place.objects.get(
+                              name__exact='Amsterdam')).build
     yield person(first_name='Mark', last_name='Martelaer', gender=mixins.Genders.male)
     yield person(first_name='Rik', last_name='Radermecker', gender=mixins.Genders.male)
     yield person(first_name='Marie-Louise', last_name='Vandenmeulenbos', gender=mixins.Genders.female)

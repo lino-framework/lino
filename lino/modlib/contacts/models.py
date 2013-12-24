@@ -910,10 +910,10 @@ dd.inject_field(
 
 def site_setup(site):
 
-    site.modules.countries.Cities.set_detail_layout("""
-    name country 
-    type parent zip_code id 
-    CitiesByCity
+    site.modules.countries.Places.set_detail_layout("""
+    name country
+    type parent zip_code id
+    PlacesByPlace
     contacts.PartnersByCity
     """)
 
@@ -958,7 +958,7 @@ def setup_config_menu(site, ui, profile, m):
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
     #~ config_contacts.add_action(site.modules.countries.Countries)
-    #~ config_contacts.add_action(site.modules.countries.Cities)
+    #~ config_contacts.add_action(site.modules.countries.Places)
     #~ config_contacts.add_action(site.modules.countries.Languages)
 
     #~ m  = m.add_menu("contacts",_("~Contacts"))
@@ -968,7 +968,7 @@ def setup_config_menu(site, ui, profile, m):
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("contacts", App.verbose_name)
     m.add_action(site.modules.contacts.Roles)
-    #~ m.add_action(site.modules.countries.Cities)
+    #~ m.add_action(site.modules.countries.Places)
 
 #~ def setup_quicklinks(site,ui,user,m):
     #~ m.add_action(Person.detail_action)

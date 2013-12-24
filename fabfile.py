@@ -10,7 +10,8 @@ env.demo_databases.append('lino.projects.cosi.settings.demo')
 env.demo_databases.append('lino.projects.presto.settings.demo')
 env.demo_databases.append('lino.projects.min1.settings')
 env.demo_databases.append('lino.projects.i18n.settings')
-env.demo_databases.append('lino.examples.start.settings')
+env.demo_databases.append('lino.examples.start.settings.demo')
 # env.demo_databases.append('lino.examples.docs.settings')
+env.demo_databases.append('lino.projects.events.settings')
 
 env.use_mercurial = False

@@ -20,7 +20,7 @@ from lino.utils.instantiator import Instantiator
 
 
 def objects():
-    #~ city = Instantiator('countries.City','name country').build
+    #~ city = Instantiator('countries.Place','name country').build
     #~ yield city('Vigala','EE')
     if 'et' in settings.SITE.languages:
         lang = 'et'

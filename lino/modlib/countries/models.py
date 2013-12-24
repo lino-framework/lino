@@ -15,7 +15,7 @@
 """
 Defines models 
 :class:`Country` and
-:class:`City`.
+:class:`Place`.
 
 """
 
@@ -38,7 +38,7 @@ from lino.utils.choosers import chooser
 from lino.modlib.contacts import App
 
 
-class CityTypes(dd.ChoiceList):
+class PlaceTypes(dd.ChoiceList):
 
     """
     Sources used:
@@ -47,7 +47,7 @@ class CityTypes(dd.ChoiceList):
     
     """
     verbose_name = _("Place Type")
-add = CityTypes.add_item
+add = PlaceTypes.add_item
 # ~ add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
 add('10', _('Member State'))      # de:Bundesland
 add('11', _('Division'))
@@ -81,15 +81,15 @@ add('62', _('Small borough'), 'smallborough')     # et:alevik
 add('70', _('Village'), 'village')           # et:küla
 
 #~ REGION_TYPES = '10 11 12 13 14 15 20 21 22 23 24 25 26 27 28'
-#~ REGION_TYPES = [CityTypes.get_by_value(v) for v in REGION_TYPES.split()]
+#~ REGION_TYPES = [PlaceTypes.get_by_value(v) for v in REGION_TYPES.split()]
 
 
 class CountryDriver(object):
 
     def __init__(self, region_types, city_types):
-        self.region_types = [CityTypes.get_by_value(v)
+        self.region_types = [PlaceTypes.get_by_value(v)
                              for v in region_types.split()]
-        self.city_types = [CityTypes.get_by_value(v)
+        self.city_types = [PlaceTypes.get_by_value(v)
                            for v in city_types.split()]
 
 
@@ -127,7 +127,7 @@ class Country(dd.BabelNamed):
         cd = getattr(CountryDrivers, self.isocode, None)
         if cd is not None:
             return cd.region_types + cd.city_types
-        return CityTypes.items()
+        return PlaceTypes.items()
 
 
 #~ add_babel_field(Country,'name')
@@ -143,14 +143,14 @@ class Countries(dd.Table):
     column_names = "name isocode *"
     detail_layout = """
     isocode name short_code
-    countries.CitiesByCountry
+    countries.PlacesByCountry
     """
 
 
 FREQUENT_COUNTRIES = ['BE', 'NL', 'DE', 'FR', 'LU']
 
 
-class City(dd.BabelNamed):
+class Place(dd.BabelNamed):
 
     class Meta:
         verbose_name = _("Place")
@@ -162,11 +162,13 @@ class City(dd.BabelNamed):
     #~ name = models.CharField(max_length=200)
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8, blank=True)
-    type = CityTypes.field(blank=True)
-    parent = models.ForeignKey('self',
-                               blank=True, null=True,
-                               verbose_name=_("Part of"),
-                               help_text=_("The superordinate geographic place of which this place is a part."))
+    type = PlaceTypes.field(blank=True)
+    parent = models.ForeignKey(
+        'self',
+        blank=True, null=True,
+        verbose_name=_("Part of"),
+        help_text=_("The superordinate geographic place \
+        of which this place is a part."))
 
     #~ def __unicode__(self):
         #~ return self.name
@@ -180,8 +182,8 @@ class City(dd.BabelNamed):
     def type_choices(cls, country):
         if country is not None:
             allowed = country.allowed_city_types()
-            return [(i, t) for i, t in CityTypes.choices if i in allowed]
-        return CityTypes.choices
+            return [(i, t) for i, t in PlaceTypes.choices if i in allowed]
+        return PlaceTypes.choices
 
     def get_choices_text(self, request, actor, field):
         """
@@ -203,7 +205,7 @@ class City(dd.BabelNamed):
         #~ return unicode(self)
 
 
-class Cities(dd.Table):
+class Places(dd.Table):
     help_text = _("""
     The table of known geographical places.
     A geographical place can be a city, a town, a suburb, 
@@ -211,25 +213,25 @@ class Cities(dd.Table):
     except for countries because these have their own table.
     """)
 
-    model = 'countries.City'
+    model = 'countries.Place'
     required = dd.Required(user_level='admin', user_groups='office')
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """
     name country 
     type parent zip_code id 
-    CitiesByCity
+    PlacesByPlace
     """
 
 
-class CitiesByCity(Cities):
+class PlacesByPlace(Places):
     label = _("Subdivisions")
     master_key = 'parent'
     column_names = "name type zip_code *"
     required = dd.Required(user_groups='office')
 
 
-class CitiesByCountry(Cities):
+class PlacesByCountry(Places):
     master_key = 'country'
     column_names = "name type zip_code *"
     #~ required = dd.Required(user_groups='office')
@@ -249,7 +251,7 @@ class CountryCity(dd.Model):
         abstract = True
 
     country = models.ForeignKey("countries.Country", blank=True, null=True)
-    city = models.ForeignKey('countries.City', blank=True, null=True)
+    city = models.ForeignKey('countries.Place', blank=True, null=True)
 
     @chooser()
     def city_choices(cls, country):
@@ -260,25 +262,25 @@ class CountryCity(dd.Model):
             cd = getattr(CountryDrivers, country.isocode, None)
             flt = models.Q(country=country)
 
-        #~ types = [CityTypes.blank_item] 20120829
+        #~ types = [PlaceTypes.blank_item] 20120829
         types = [None]
         if cd:
             types += cd.city_types
             #~ flt = flt & models.Q(type__in=cd.city_types)
         else:
-            types += [v for v in CityTypes.items() if v.value >= '50']
-            #~ flt = flt & models.Q(type__gte=CityTypes.get_by_value('50'))
+            types += [v for v in PlaceTypes.items() if v.value >= '50']
+            #~ flt = flt & models.Q(type__gte=PlaceTypes.get_by_value('50'))
         flt = flt & models.Q(type__in=types)
-        #~ flt = flt | models.Q(type=CityTypes.blank_item)
-        return City.objects.filter(flt).order_by('name')
+        #~ flt = flt | models.Q(type=PlaceTypes.blank_item)
+        return Place.objects.filter(flt).order_by('name')
 
         #~ if country is not None:
             #~ cd = getattr(CountryDrivers,country.isocode,None)
             #~ if cd:
-                #~ return City.objects.filter(
+                #~ return Place.objects.filter(
                     #~ country=country,
                     #~ type__in=cd.city_types).order_by('name')
-            #~ return country.city_set.order_by('name')
+            #~ return country.place_set.order_by('name')
         #~ return cls.city.field.rel.to.objects.order_by('name')
 
     def create_city_choice(self, text):
@@ -287,11 +289,11 @@ class CountryCity(dd.Model):
         Try to auto-create it.
         """
         if self.country is not None:
-            return City.lookup_or_create('name', text, country=self.country)
+            return Place.lookup_or_create('name', text, country=self.country)
 
-            #~ qs = self.country.city_set.filter(name__iexact=text)
+            #~ qs = self.country.place_set.filter(name__iexact=text)
             #~ if qs.count() == 0:
-                #~ return self.country.city_set.create(name=text,country=self.country)
+                #~ return self.country.place_set.create(name=text,country=self.country)
             #~ raise ValidationError(
               #~ "Refused to auto-create city %s in %s because same name exists."
               #~ % (text,self.country))
@@ -314,10 +316,11 @@ class CountryCity(dd.Model):
 
 
 class CountryRegionCity(CountryCity):
-    region = models.ForeignKey('countries.City',
-                               blank=True, null=True,
-                               verbose_name=_('Region'),
-                               related_name="%(app_label)s_%(class)s_set_by_region")
+    region = models.ForeignKey(
+        'countries.Place',
+        blank=True, null=True,
+        verbose_name=_('Region'),
+        related_name="%(app_label)s_%(class)s_set_by_region")
         #~ related_name='regions')
     zip_code = models.CharField(_("Zip code"), max_length=10, blank=True)
 
@@ -331,17 +334,17 @@ class CountryRegionCity(CountryCity):
             if cd:
                 flt = models.Q(type__in=cd.region_types)
             else:
-                flt = models.Q(type__lt=CityTypes.get_by_value('50'))
-            #~ flt = flt | models.Q(type=CityTypes.blank_item)
+                flt = models.Q(type__lt=PlaceTypes.get_by_value('50'))
+            #~ flt = flt | models.Q(type=PlaceTypes.blank_item)
             flt = flt & models.Q(country=country)
-            return City.objects.filter(flt).order_by('name')
-            #~ return City.filter(flt).order_by('name')
+            return Place.objects.filter(flt).order_by('name')
+            #~ return Place.filter(flt).order_by('name')
         else:
-            flt = models.Q(type__lt=CityTypes.get_by_value('50'))
-            return City.objects.filter(flt).order_by('name')
+            flt = models.Q(type__lt=PlaceTypes.get_by_value('50'))
+            return Place.objects.filter(flt).order_by('name')
 
     def create_city_choice(self, text):
-        # if a City is created by super, then we add our region
+        # if a Place is created by super, then we add our region
         obj = super(CountryRegionCity, self).create_city_choice(text)
         obj.region = self.region
         return obj
@@ -358,15 +361,15 @@ class CountryRegionCity(CountryCity):
 
         return qs
 
-            #~ return country.city_set.filter(flt).order_by('name')
+            #~ return country.place_set.filter(flt).order_by('name')
         #~ return cls.city.field.rel.to.objects.order_by('name')
 
 
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("contacts", App.verbose_name)
     m.add_action(Countries)
-    m.add_action(Cities)
+    m.add_action(Places)
 
 #~ def setup_explorer_menu(site,ui,profile,m):
     #~ m = m.add_menu("contacts",App.verbose_name)
-    #~ m.add_action(Cities)
+    #~ m.add_action(Places)

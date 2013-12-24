@@ -77,9 +77,9 @@ class QuickTest(RemoteAuthTestCase):
                                                     ))
 
         eupen = create_and_get(
-            'countries.City', name=u'Eupen', country=be, zip_code='4700')
+            'countries.Place', name=u'Eupen', country=be, zip_code='4700')
 
-        vigala = create_and_get('countries.City', name=u'Vigala', country=ee)
+        vigala = create_and_get('countries.Place', name=u'Vigala', country=ee)
 
         luc = create_and_get(Person,
                              first_name='Luc', last_name='Saffre',

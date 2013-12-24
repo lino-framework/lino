@@ -73,7 +73,7 @@ class Site(Site):
         m = main.add_menu("concepts", concepts.MODULE_LABEL)
         m.add_action(self.modules.concepts.Concepts)
         m.add_action(self.modules.countries.Countries)
-        m.add_action(self.modules.countries.Cities)
+        m.add_action(self.modules.countries.Places)
 
     def get_main_action(self, user):
         return self.modules.belref.Main.default_action

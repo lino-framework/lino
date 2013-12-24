@@ -134,8 +134,8 @@ class App(ad.App):  # was: use_eidreader
         #~ except Exception,e:
             #~ logger.warning("%s : no country with code %r",msg1,pk)
         #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.City._meta.get_field()
-        kw.update(city=countries.City.lookup_or_create(
+        #~ fld = countries.Place._meta.get_field()
+        kw.update(city=countries.Place.lookup_or_create(
             'name', data.municipality, country=country))
 
         def sex2gender(sex):

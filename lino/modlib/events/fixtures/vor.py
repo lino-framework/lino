@@ -19,22 +19,22 @@ from lino import dd
 from lino.utils import i2d
 from north import dbutils
 Country = dd.resolve_model("countries.Country")
-City = dd.resolve_model("countries.City")
+Place = dd.resolve_model("countries.Place")
 Type = dd.resolve_model("events.Type")
 Event = dd.resolve_model("events.Event")
 Stage = dd.resolve_model("events.Stage")
 Place = dd.resolve_model("events.Place")
 Feature = dd.resolve_model("events.Feature")
 
-from lino.modlib.countries.models import CityTypes
+from lino.modlib.countries.models import PlaceTypes
 
 
 def get_city(name):
     flt = dbutils.lookup_filter('name', name)
     try:
-        return City.objects.exclude(
-            type__in=[CityTypes.county, CityTypes.province]).get(flt)
-    except City.DoesNotExist:
+        return Place.objects.exclude(
+            type__in=[PlaceTypes.county, PlaceTypes.province]).get(flt)
+    except Place.DoesNotExist:
         raise Exception("No city named %r" % name)
 
 
@@ -88,25 +88,25 @@ def objects():
     )
     yield trophy
 
-    kelmis = City.objects.get(name="Kelmis")
-    raeren = City.objects.get(name="Raeren")
-    eupen = City.objects.get(name="Eupen")
-    ottignies = City.objects.get(name="Ottignies")
-    #~ ans = City.objects.get(name="Ans")
-    bbach = City.objects.get(name="Bütgenbach")
-    bullingen = City.objects.get(name="Büllingen")
-    stvith = City.objects.get(name="Sankt Vith")
-    #~ monschau = City.objects.get(name="Montjoie")
+    kelmis = Place.objects.get(name="Kelmis")
+    raeren = Place.objects.get(name="Raeren")
+    eupen = Place.objects.get(name="Eupen")
+    ottignies = Place.objects.get(name="Ottignies")
+    #~ ans = Place.objects.get(name="Ans")
+    bbach = Place.objects.get(name="Bütgenbach")
+    bullingen = Place.objects.get(name="Büllingen")
+    stvith = Place.objects.get(name="Sankt Vith")
+    #~ monschau = Place.objects.get(name="Montjoie")
 
-    #~ stvith = City(name="Sankt Vith",name_fr="Saint-Vith",country=BE)
+    #~ stvith = Place(name="Sankt Vith",name_fr="Saint-Vith",country=BE)
     #~ yield stvith
-    #~ monschau = City(name="Monschau",name_fr="Montjoie",country=DE)
+    #~ monschau = Place(name="Monschau",name_fr="Montjoie",country=DE)
     #~ yield monschau
 
-    #~ bullingen = City(name="Büllingen",name_fr="Bullange",country=BE)
+    #~ bullingen = Place(name="Büllingen",name_fr="Bullange",country=BE)
     #~ yield bullingen
 
-    #~ bbach = City(name="Bütgenbach",name_fr="Butgenbach",country=BE)
+    #~ bbach = Place(name="Bütgenbach",name_fr="Butgenbach",country=BE)
     #~ yield bbach
 
     irmep = Place(name="IRMEP-Kaserne", name_fr="Caserne IRMEP", city=eupen)

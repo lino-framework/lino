@@ -708,10 +708,10 @@ class Site(Site):
     allow_duplicate_cities = False
     """
     In a default configuration (when :attr:`allow_duplicate_cities` is False), 
-    Lino declares a UNIQUE clause 
-    for :class:`Cities <lino.modlib.countries.models.Cities>` 
+    Lino declares a UNIQUE clause
+    for :class:`Places <lino.modlib.countries.models.Places>`
     to make sure that your database never contains duplicate cities.
-    This behaviour mighr disturb e.g. when importing legacy data that 
+    This behaviour mighr disturb e.g. when importing legacy data that
     did not have this restriction.
     Set it to True to remove the UNIQUE clause.
     

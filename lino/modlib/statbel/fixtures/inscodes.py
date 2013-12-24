@@ -12,9 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-Inserts the primary keys of Cities and Countries used by CBSS.
+Inserts the primary keys of Places and Countries used by CBSS.
 
-Note that this fixture doesn't create itself any Cities or Countries, 
+Note that this fixture doesn't create itself any Places or Countries,
 it just updates existing ones,
 which may come from 
 :mod:`lino.modlib.countries.fixtures.be`
@@ -22,7 +22,7 @@ and :mod:`lino.modlib.countries.fixtures.all_countries`.
 
 It writes the codes into a field `inscode` which has been injected 
 into the models 
-:class:`City <lino.modlib.countries.models.City>`
+:class:`Place <lino.modlib.countries.models.Place>`
 and
 :class:`Country <lino.modlib.countries.models.Country>`
 by the :mod:`lino_welfare.modlib.cbss.models` module.
@@ -3643,7 +3643,7 @@ CITIES = u"""
 
 def objects():
     Country = resolve_model('countries.Country')
-    City = resolve_model('countries.City')
+    Place = resolve_model('countries.Place')
 
     BE = Country.objects.get(pk='BE')
 
@@ -3657,7 +3657,7 @@ def objects():
         except Country.DoesNotExist:
             pass
 
-    #~ yield City(name="Dummy",country=BE)
+    #~ yield Place(name="Dummy",country=BE)
 
     if False:
 
@@ -3698,16 +3698,16 @@ def objects():
         if not zip_code:
             continue
         try:
-            city = City.objects.get(country=BE, zip_code=zip_code, name=name)
+            city = Place.objects.get(country=BE, zip_code=zip_code, name=name)
             city.inscode = inscode
             logger.debug("inscode %s --> city %s", inscode, city)
             yield city
-        except City.DoesNotExist:
+        except Place.DoesNotExist:
             logger.debug(
                 "Failed to set inscode %s because there's no city %s %s",
                 inscode, zip_code, name)
 
-        #~ for city in City.objects.filter(country=BE,zip_code=zip_code):
+        #~ for city in Place.objects.filter(country=BE,zip_code=zip_code):
             #~ if city.inscode and city.inscode != inscode:
                 #~ logger.warning("Duplicate inscode %s for %s %s",inscode,zip_code, name)
             #~ city.inscode = inscode

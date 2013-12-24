@@ -2894,9 +2894,9 @@ fr = u"""
 
 def objects():
     countries = dd.resolve_app('countries')
-    city = Instantiator(countries.City, "zip_code name",
+    city = Instantiator(countries.Place, "zip_code name",
                         country='BE',
-                        type=countries.CityTypes.city).build
+                        type=countries.PlaceTypes.city).build
     for ln in belgian_cities.splitlines():
         ln = ln.strip()
         if ln and ln[0] != '#':

@@ -30,10 +30,10 @@ def objects():
     female_first_names = demonames.FEMALE_FIRST_NAMES_FRANCE
 
     Person = dd.resolve_model("contacts.Person")
-    City = dd.resolve_model('countries.City')
+    Place = dd.resolve_model('countries.Place')
 
     CITIES = Cycler(
-        City.objects.filter(country_id='BE', zip_code__startswith='40'))
+        Place.objects.filter(country_id='BE', zip_code__startswith='40'))
     STREETS = demonames.streets_of_liege()
 
     common = dict(language='fr', country_id='BE')

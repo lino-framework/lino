@@ -51,7 +51,7 @@ from lino import dd
 
 Activity = resolve_model('pcsw.Activity')
 Country = resolve_model('countries.Country')
-City = resolve_model('countries.City')
+Place = resolve_model('countries.Place')
 Household = resolve_model('households.Household')
 Person = resolve_model("contacts.Person")
 Company = resolve_model("contacts.Company")
@@ -554,7 +554,7 @@ class TimLoader(object):
         return self.sales_gen2art.get(a)
 
     # Countries already exist after initial_data, but their short_code is
-    # needed as lookup field for Cities.
+    # needed as lookup field for Places.
     def load_nat(self, row):
         if not row['isocode'].strip():
             return
@@ -591,7 +591,7 @@ class TimLoader(object):
             name=name,
             country=country,
         )
-        return City(**kw)
+        return Place(**kw)
 
     def load_par(self, row):
         kw = {}
@@ -665,19 +665,19 @@ class TimLoader(object):
         if zip_code:
             kw.update(zip_code=zip_code)
             try:
-                city = City.objects.get(
+                city = Place.objects.get(
                     country=country,
                     zip_code__exact=zip_code,
                 )
                 kw.update(city=city)
-            except City.DoesNotExist as e:
-                city = City(zip_code=zip_code,
-                            name=zip_code,
-                            country=country)
+            except Place.DoesNotExist as e:
+                city = Place(zip_code=zip_code,
+                             name=zip_code,
+                             country=country)
                 city.save()
                 kw.update(city=city)
                 #~ dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
-            except City.MultipleObjectsReturned as e:
+            except Place.MultipleObjectsReturned as e:
                 dblogger.warning("%s-%s : %s",
                                  row['pays'],
                                  row['cp'],

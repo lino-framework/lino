@@ -37,13 +37,13 @@ then you see a list of all places in Belgium.
 This demo database contains exactly 40 entries:
 
 >>> be = countries.Country.objects.get(isocode="BE")
->>> be.city_set.count()
+>>> be.place_set.count()
 47
 
->>> countries.CitiesByCountry.request(be).get_total_count()
+>>> countries.PlacesByCountry.request(be).get_total_count()
 47
 
->>> url = '/api/countries/CitiesByCountry?fmt=json&start=0&mt=10&mk=BE'
+>>> url = '/api/countries/PlacesByCountry?fmt=json&start=0&mt=10&mk=BE'
 >>> res = client.get(url,REMOTE_USER='robin')
 >>> print(res.status_code)
 200
@@ -67,12 +67,12 @@ Site attribute to either `None` or some bigger value.
 This parameter existed before but wasn't tested.
 In your code this would simply look like this::
 
-  class CitiesByCountry(Cities):
+  class PlacesByCountry(Places):
       preview_limit = 30
 
 Here we override it on the living object:
 
->>> countries.CitiesByCountry.preview_limit = 25
+>>> countries.PlacesByCountry.preview_limit = 25
 
 Same request returns now 26 data rows:
 
@@ -83,7 +83,7 @@ Same request returns now 26 data rows:
 
 To remove the limit altogether, you can say:
 
->>> countries.CitiesByCountry.preview_limit = None
+>>> countries.PlacesByCountry.preview_limit = None
 
 Same request returns now all 45 data rows (44 + the phantom row):
 

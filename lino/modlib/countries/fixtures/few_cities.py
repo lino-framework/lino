@@ -34,28 +34,28 @@ from lino import dd
 def objects():
     #~ dblogger.info("Installing countries few_cities fixture")
     countries = dd.resolve_app('countries')
-    #~ City = resolve_model('countries.City')
-    City = countries.City
+    #~ Place = resolve_model('countries.Place')
+    Place = countries.Place
     Country = countries.Country
-    CityTypes = countries.CityTypes
-    city = Instantiator(City, 'name country').build
+    PlaceTypes = countries.PlaceTypes
+    city = Instantiator(Place, 'name country').build
 
     def make_city(country_id, name=None, **kw):
-        kw.setdefault('type', CityTypes.city)
+        kw.setdefault('type', PlaceTypes.city)
         #~ kw.update()
         #~ if name:
             #~ kw.update(name=name)
         flt = dbutils.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
         try:
-            return City.objects.exclude(type__in=[CityTypes.county, CityTypes.province]).get(flt)
-            #~ return City.objects.exclude(type=CityTypes.county).get(
+            return Place.objects.exclude(type__in=[PlaceTypes.county, PlaceTypes.province]).get(flt)
+            #~ return Place.objects.exclude(type=PlaceTypes.county).get(
                 #~ country__isocode=country_id,name=name)
         except MultipleObjectsReturned:
-            #~ qs = City.objects.exclude(type=CityTypes.county).filter(country__isocode=country_id,name=name)
+            #~ qs = Place.objects.exclude(type=PlaceTypes.county).filter(country__isocode=country_id,name=name)
             logger.info("Oops, there are multiple cities for %r", name)
             return qs[0]
-        except City.DoesNotExist:
+        except Place.DoesNotExist:
             return city(name, country_id, **kw)
 
     BE = Country.objects.get(pk='BE')
@@ -63,15 +63,15 @@ def objects():
     FR = Country.objects.get(pk='FR')
     eupen = make_city('BE', 'Eupen', zip_code='4700')
     yield eupen
-    yield make_city('BE', 'Nispert', type=CityTypes.township, parent=eupen)
+    yield make_city('BE', 'Nispert', type=PlaceTypes.township, parent=eupen)
 
     reuland = make_city('BE', 'Burg-Reuland ', zip_code='4790')
-    yield make_city('BE', 'Ouren', type=CityTypes.township, parent=reuland)
+    yield make_city('BE', 'Ouren', type=PlaceTypes.township, parent=reuland)
 
-    yield City(country=BE, zip_code='4720', type=CityTypes.city,
+    yield Place(country=BE, zip_code='4720', type=PlaceTypes.city,
                **babel_values('name', de='Kelmis', fr='La Calamine', en="Kelmis"))
-    yield make_city('BE', 'Kettenis', zip_code='4701', type=CityTypes.village)
-    yield make_city('BE', 'Raeren', zip_code='4730', type=CityTypes.village)
+    yield make_city('BE', 'Kettenis', zip_code='4701', type=PlaceTypes.village)
+    yield make_city('BE', 'Raeren', zip_code='4730', type=PlaceTypes.village)
     yield make_city('BE', 'Angleur', zip_code='4031')
     yield make_city('BE', 'Ans', zip_code='4430')
     yield make_city('BE', 'Ottignies', zip_code='1340')
@@ -85,13 +85,13 @@ def objects():
     yield make_city('BE', 'Burdinne', zip_code='4210')
 
     def be_province(de, fr, nl):
-        return City(country=BE, type=CityTypes.province,
+        return Place(country=BE, type=PlaceTypes.province,
                     **babel_values('name', de=de, fr=fr, nl=nl, en=fr))
 
     def be_city(zip_code, de=None, fr=None, nl=None, en=None, **kw):
         kw.update(babel_values('name', de=de, fr=fr, nl=nl, en=en))
-        kw.setdefault('type', CityTypes.city)
-        return City(country=BE, zip_code=zip_code, **kw)
+        kw.setdefault('type', PlaceTypes.city)
+        return Place(country=BE, zip_code=zip_code, **kw)
 
     yield be_province("Antwerpen", "Anvers", "Antwerpen")
     yield be_province("Luxemburg", "Luxembourg", "Luxemburg")
@@ -99,7 +99,7 @@ def objects():
 
     prov = be_province("Limburg", "Limbourg", "Limburg")
     yield prov
-    yield make_city('BE', 'Aalst-bij-Sint-Truiden', zip_code='3800', parent=prov, type=CityTypes.village)
+    yield make_city('BE', 'Aalst-bij-Sint-Truiden', zip_code='3800', parent=prov, type=PlaceTypes.village)
 
     prov = be_province("Lüttich", "Liège", "Luik")
     yield prov
@@ -119,14 +119,14 @@ def objects():
 
     aalst = be_city('9300', "Aalst", "Alost", "Aalst", "Aalst", parent=prov)
     yield aalst
-    yield be_city('9308', name="Gijzegem", parent=aalst, type=CityTypes.village)
-    yield be_city('9310', name="Baardegem ", parent=aalst, type=CityTypes.village)
-    yield be_city('9320', name="Erembodegem", parent=aalst, type=CityTypes.village)
-    yield be_city('9310', name="Herdersem", parent=aalst, type=CityTypes.village)
-    yield be_city('9308', name="Hofstade", parent=aalst, type=CityTypes.village)
-    yield be_city('9310', name="Meldert", parent=aalst, type=CityTypes.village)
-    yield be_city('9320', name="Nieuwerkerken", parent=aalst, type=CityTypes.village)
-    yield be_city('9310', name="Moorsel", parent=aalst, type=CityTypes.village)
+    yield be_city('9308', name="Gijzegem", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Baardegem ", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9320', name="Erembodegem", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Herdersem", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9308', name="Hofstade", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Meldert", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9320', name="Nieuwerkerken", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Moorsel", parent=aalst, type=PlaceTypes.village)
 
     yield be_province("Westflandern", "Flandre de l'Ouest", "West-Vlaanderen")
 
@@ -135,33 +135,37 @@ def objects():
     yield be_city('8400', "Ostende", "Ostende", "Oostende", "Ostende")
     yield be_city('5000', "Namür", "Namur", "Namen", "Namur")
 
-    harjumaa = make_city('EE', 'Harjumaa', type=CityTypes.county)
+    harjumaa = make_city('EE', 'Harjumaa', type=PlaceTypes.county)
     yield harjumaa
-    parnumaa = make_city('EE', 'Pärnumaa', type=CityTypes.county)
+    parnumaa = make_city('EE', 'Pärnumaa', type=PlaceTypes.county)
     yield parnumaa
-    raplamaa = make_city('EE', 'Raplamaa', type=CityTypes.county)
+    raplamaa = make_city('EE', 'Raplamaa', type=PlaceTypes.county)
     yield raplamaa
 
-    yield make_city('EE', 'Vigala', type=CityTypes.municipality, parent=raplamaa)
-    yield make_city('EE', 'Rapla', type=CityTypes.town, parent=raplamaa)
+    yield make_city('EE', 'Vigala', type=PlaceTypes.municipality, parent=raplamaa)
+    yield make_city('EE', 'Rapla', type=PlaceTypes.town, parent=raplamaa)
 
-    yield make_city('EE', 'Tallinn', type=CityTypes.city, parent=harjumaa)
-    yield make_city('EE', 'Pärnu', type=CityTypes.town, parent=parnumaa)
-    yield make_city('EE', 'Tartu', type=CityTypes.town)
-    yield make_city('EE', 'Narva', type=CityTypes.town)
-    yield make_city('EE', 'Ääsmäe', type=CityTypes.town, parent=harjumaa)
+    yield make_city('EE', 'Tallinn', type=PlaceTypes.city, parent=harjumaa)
+    yield make_city('EE', 'Pärnu', type=PlaceTypes.town, parent=parnumaa)
+    yield make_city('EE', 'Tartu', type=PlaceTypes.town)
+    yield make_city('EE', 'Narva', type=PlaceTypes.town)
+    yield make_city('EE', 'Ääsmäe', type=PlaceTypes.town, parent=harjumaa)
 
     #~ yield make_city(u'Aachen','DE')
-    yield City(country=DE, type=CityTypes.city,
-               **babel_values('name', de='Aachen', fr='Aix-la-Chapelle', nl="Aken", en="Aachen"))
-    yield City(country=DE, type=CityTypes.city,
-               **babel_values('name', de='Köln', fr='Cologne', nl="Keulen", en="Cologne"))
+    yield Place(country=DE, type=PlaceTypes.city,
+                **babel_values('name', de='Aachen',
+                               fr='Aix-la-Chapelle', nl="Aken", en="Aachen"))
+    yield Place(country=DE, type=PlaceTypes.city,
+                **babel_values('name', de='Köln',
+                               fr='Cologne', nl="Keulen", en="Cologne"))
     yield make_city('DE', 'Berlin')
     yield make_city('DE', 'Hamburg')
-    yield City(country=DE, type=CityTypes.city,
-               **babel_values('name', de='München', fr='Munich', en="Munich"))
-    yield City(country=DE, type=CityTypes.city,
-               **babel_values('name', de='Monschau', fr='Montjoie', en="Monschau"))
+    yield Place(country=DE, type=PlaceTypes.city,
+                **babel_values('name', de='München',
+                               fr='Munich', en="Munich"))
+    yield Place(country=DE, type=PlaceTypes.city,
+                **babel_values('name', de='Monschau',
+                               fr='Montjoie', en="Monschau"))
 
     yield make_city('NL', 'Maastricht')
     yield make_city('NL', 'Amsterdam')
@@ -170,10 +174,11 @@ def objects():
     yield make_city('NL', 'Utrecht')
     yield make_city('NL', 'Breda')
 
-    yield City(country=FR, type=CityTypes.city,
-               **babel_values('name', de='Paris', fr='Paris', en="Paris", et="Pariis", nl="Parijs"))
-    yield City(country=FR, type=CityTypes.city,
-               **babel_values('name', de='Nizza', fr='Nice', en="Nice"))
+    yield Place(country=FR, type=PlaceTypes.city,
+                **babel_values('name', de='Paris', fr='Paris',
+                               en="Paris", et="Pariis", nl="Parijs"))
+    yield Place(country=FR, type=PlaceTypes.city,
+                **babel_values('name', de='Nizza', fr='Nice', en="Nice"))
     yield make_city('FR', 'Metz')
     yield make_city('FR', 'Strasbourg')
     yield make_city('FR', 'Nancy')

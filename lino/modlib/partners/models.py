@@ -878,7 +878,7 @@ def site_setup(site):
     site.modules.countries.Cities.set_detail_layout("""
     name country 
     type parent zip_code id 
-    CitiesByCity
+    PlacesByPlace
     partners.PersonsByCity partners.OrganisationsByCity
     """)
 

@@ -47,7 +47,8 @@ class Couple(dd.Model):
                            null=True, related_name='couples_as_mother')
     married = models.DateField(_("Married"), blank=True, null=True)
     married_place = dd.ForeignKey(
-        'countries.City', verbose_name=_("Married in"), blank=True, null=True)
+        'countries.Place', 
+        verbose_name=_("Married in"), blank=True, null=True)
     divorced = models.DateField(_("Divorced"), blank=True, null=True)
 
     def __unicode__(self):

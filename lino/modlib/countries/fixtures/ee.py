@@ -51,15 +51,15 @@ if True:
         for line in unicode_csv_data:
             yield line.encode('utf-8')
 
-from lino.modlib.countries.models import CityTypes
+from lino.modlib.countries.models import PlaceTypes
 
 CITY_TYPES = {
-    u'küla': CityTypes.village,
-    u'linn': CityTypes.town,
-    u'alev': CityTypes.borough,
-    u'alevik': CityTypes.smallborough,
-    u'asum': CityTypes.township,
-    #~ u'aiandusühistu' : CityTypes.quarter,
+    u'küla': PlaceTypes.village,
+    u'linn': PlaceTypes.town,
+    u'alev': PlaceTypes.borough,
+    u'alevik': PlaceTypes.smallborough,
+    u'asum': PlaceTypes.township,
+    #~ u'aiandusühistu' : PlaceTypes.quarter,
     u'aiandusühistu': None,  # ignore them
 }
 
@@ -78,7 +78,7 @@ MAAKOND;VALD;LINN/ ALEV/ ALEVIK/ KÜLA;TÄNAV/TALU;AADRESSILIIK;MAJAALGUS;MAJALO
 
 
 def objects():
-    city = Instantiator('countries.City', country='EE').build
+    city = Instantiator('countries.Place', country='EE').build
     f = codecs.open(input_file, 'r', 'latin-1', 'replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')
     f.readline()
@@ -95,7 +95,7 @@ def objects():
         if len(ln) > 2:
             mk = maakonnad.get(ln[0])
             if mk is None:
-                mk = city(name=ln[0], type=CityTypes.county)
+                mk = city(name=ln[0], type=PlaceTypes.county)
                 yield mk
                 #~ print "20120822 maakond", mk, mk.pk
                 maakonnad[ln[0]] = mk
@@ -108,10 +108,10 @@ def objects():
                 if vald is None:
                     #~ ct = CITY_TYPES[ln[4]]
                     vald = city(name=ln[1],
-                                type=CityTypes.municipality,
+                                type=PlaceTypes.municipality,
                                 parent=mk, zip_code=ln[7])
                     yield vald
-                    #~ if ct != CityTypes.municipality:
+                    #~ if ct != PlaceTypes.municipality:
                         #~ print "20120822", vald, "expected municipality, found", ct
                     #~ else:
                     #~ print "20120822 vald", vald, vald.pk

@@ -44,7 +44,10 @@ def sepjoin(items, sep=', '):
 
 
 class Place(dd.BabelNamed):
-    city = dd.ForeignKey('countries.City', blank=True, null=True)
+    city = dd.ForeignKey(
+        'countries.Place',
+        related_name='events_place_set',
+        blank=True, null=True)
 
 
 class Places(dd.Table):
@@ -78,14 +81,14 @@ class Event(dd.BabelNamed):
     place = dd.ForeignKey(Place, blank=True, null=True)
     type = dd.ForeignKey(Type)
     features = models.ManyToManyField(Feature)
-    #~ cities = models.ManyToManyField('countries.City')
+    #~ cities = models.ManyToManyField('countries.Place')
     #~ description = dd.BabelTextField(format='plain',blank=True)
     url = models.URLField(blank=True)
 
 
 class Stage(dd.Sequenced):
     event = dd.ForeignKey('events.Event', related_name="stages")
-    city = dd.ForeignKey('countries.City', related_name="stages")
+    city = dd.ForeignKey('countries.Place', related_name="stages")
 
     def __unicode__(self):
         return unicode(self.city)

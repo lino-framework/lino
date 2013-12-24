@@ -88,8 +88,8 @@ class MyBook():
         elif title:
             kw.update(title=title)
         if city_name:
-            #~ countries.City.objects.get(name)
-            kw.update(city=countries.City.lookup_or_create('name',city_name,country=self.country))
+            #~ countries.Place.objects.get(name)
+            kw.update(city=countries.Place.lookup_or_create('name',city_name,country=self.country))
         #~ print birth_date
         kw.update(birth_date=self.date_converter(birth_date))
         return courses.Pupil(**kw)

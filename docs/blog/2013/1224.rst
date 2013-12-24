@@ -1,0 +1,36 @@
+====================================
+20131224 (Tuesday, 24 December 2013)
+====================================
+
+How to make money with Lino
+---------------------------
+
+I made more changes to :doc:`/about/license`.
+Especially I added another way to make money with Lino 
+(which existed before, but I didn't mention it).
+
+
+Groupware à la Lino
+-------------------
+
+:ref:`presto` is already almost a groupware. Some modules are missing:
+
+- `lino.apps.news` : Newsletters
+- `lino.apps.lists` : Mailing lists
+- `lino.apps.forums` : Discussion forums
+
+Before doing these, I think I should do certain model renames to make
+things easier:
+
+- countries: City -> Place
+- contacts: 
+  Role -> Contact, 
+  Company -> Group, 
+  CompanyType -> GroupType
+  (and later, when all production sites have migrated: RoleType -> Role)
+
+This is also the beginning of :mod:`lino_faggio.migrate` since a first
+:ref:`faggio` has gone into production.
+
+Note: After renaming `countries.City` to `countries.Place` I
+understood that this is enough code change for this time.

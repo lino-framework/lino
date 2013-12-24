@@ -52,7 +52,7 @@ from lino.core.dbutils import app_labels
 from lino.projects.crl.models import CRL
 
 Country = resolve_model('countries.Country')
-City = resolve_model('countries.City')
+Place = resolve_model('countries.Place')
 Person = resolve_model("contacts.Person")
 Company = resolve_model("contacts.Company")
 
@@ -175,17 +175,17 @@ def country2kw(row, kw):
     if zip_code:
         kw.update(zip_code=zip_code)
         try:
-            city = City.objects.get(
+            city = Place.objects.get(
                 country=country,
                 zip_code__exact=zip_code,
             )
             kw.update(city=city)
-        except City.DoesNotExist, e:
-            city = City(zip_code=zip_code, name=zip_code, country=country)
+        except Place.DoesNotExist, e:
+            city = Place(zip_code=zip_code, name=zip_code, country=country)
             city.save()
             kw.update(city=city)
             #~ logger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
-        except City.MultipleObjectsReturned, e:
+        except Place.MultipleObjectsReturned, e:
             dblogger.warning("%s-%s : %s", row['PAYS'], row['CP'], e)
 
 
@@ -301,15 +301,15 @@ def load_O_(row):
         elif len(o) == 4:
             try:
                 be = Country.objects.get(pk='BE')
-                city = City.objects.get(country=be, zip_code=o)
+                city = Place.objects.get(country=be, zip_code=o)
                 if city.name.upper() != row['A'].upper():
-                    logger.warning('City BE-%s : %r != %r',
+                    logger.warning('Place BE-%s : %r != %r',
                                    o, city.name, row['A'])
-            except City.MultipleObjectsReturned:
+            except Place.MultipleObjectsReturned:
                 logger.warning(
                     "O %s (%s) : MultipleObjectsReturned", o, row['A'])
-            except City.DoesNotExist:
-                return City(country=be, zip_code=o, name=row['A'] + ' <<<<')
+            except Place.DoesNotExist:
+                return Place(country=be, zip_code=o, name=row['A'] + ' <<<<')
         else:
             logger.warning("O %s (%s) : unknown format", o, row['A'])
 

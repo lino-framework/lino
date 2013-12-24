@@ -46,7 +46,7 @@ def extract(url):
             nl = tostring(cells[1])
             province = tostring(cells[2])
             type = tostring(cells[3])
-            #~ countries.City.lookup_or_create('name')
+            #~ countries.Place.lookup_or_create('name')
             print fr, nl, province, type
         elif len(cells) == 0:
             pass
