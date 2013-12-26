@@ -53,7 +53,7 @@ from lino import ad
 from os.path import join, dirname, exists
 
 
-class App(ad.App):
+class Plugin(ad.Plugin):
 
     verbose_name = "Ext.ensible adapter"
 

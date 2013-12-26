@@ -61,8 +61,7 @@ from lino.utils.choosers import chooser
 #~ from lino.modlib.countries.models import CountryCity
 from lino.modlib.countries.models import CountryRegionCity
 
-from lino.modlib.contacts import App
-
+from lino.modlib.contacts import Plugin
 
 from lino.utils import mti
 
@@ -935,7 +934,7 @@ def company_tables_alias(sender, **kw):
 
 
 def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", App.verbose_name)
+    m = m.add_menu("contacts", Plugin.verbose_name)
     #~ actors = (Persons,Companies,Partners)
     #~ for m in (Person,Company,Partner):
         #~ if m._meta.abstract:
@@ -954,7 +953,7 @@ def setup_master_menu(site, ui, profile, m):
 
 
 def setup_config_menu(site, ui, profile, m):
-    config_contacts = m.add_menu("contacts", App.verbose_name)
+    config_contacts = m.add_menu("contacts", Plugin.verbose_name)
     config_contacts.add_action(CompanyTypes)
     config_contacts.add_action(RoleTypes)
     #~ config_contacts.add_action(site.modules.countries.Countries)
@@ -966,7 +965,7 @@ def setup_config_menu(site, ui, profile, m):
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", App.verbose_name)
+    m = m.add_menu("contacts", Plugin.verbose_name)
     m.add_action(site.modules.contacts.Roles)
     #~ m.add_action(site.modules.countries.Places)
 

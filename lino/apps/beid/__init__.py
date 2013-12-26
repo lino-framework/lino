@@ -40,7 +40,7 @@ from lino import ad
 from lino.utils import AttrDict
 
 
-class App(ad.App):  # was: use_eidreader
+class Plugin(ad.Plugin):  # was: use_eidreader
 
     site_js_snippets = ['plugins/eidreader.js']
     media_name = 'eidreader'

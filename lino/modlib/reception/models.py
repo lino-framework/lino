@@ -61,7 +61,7 @@ add('45', _("Busy"), 'busy')
 add('46', _("Gone"), 'gone')
 
 
-from lino.modlib.reception import App
+from lino.modlib.reception import Plugin
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -473,12 +473,12 @@ class MyGoneVisitors(MyVisitors, GoneVisitors):
 
 #~ def get_todo_tables(ar):
     #~ yield (MyBusyVisitors, None)
-dd.add_user_group('reception', App.verbose_name)
+dd.add_user_group('reception', Plugin.verbose_name)
 
 
 def setup_main_menu(site, ui, profile, m):
     #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m = m.add_menu("reception", App.verbose_name)
+    m = m.add_menu("reception", Plugin.verbose_name)
     #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
     #~ m.add_separator("-")
     #~ m.add_action(Clients,'find_by_beid')
@@ -502,5 +502,5 @@ def setup_main_menu(site, ui, profile, m):
     #~ m.add_action(WaitingVisitors,params=dict(param_values=dict(only_waiting=True)))
 
 #~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("reception",App.verbose_name)
+    #~ m  = m.add_menu("reception",Plugin.verbose_name)
     #~ m.add_action(WaitingVisitors)

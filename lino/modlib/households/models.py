@@ -275,21 +275,21 @@ if settings.SITE.is_installed('households'):
                     )
 
 
-from lino.modlib.households import App
-from lino.modlib.contacts import App as ContactsApp
+from lino.modlib.households import Plugin
+from lino.modlib.contacts import Plugin as ContactsPlugin
 
 
 def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu('contacts', ContactsApp.verbose_name)
+    m = m.add_menu('contacts', ContactsPlugin.verbose_name)
     m.add_action('households.Households')
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("households", App.verbose_name)
+    m = m.add_menu("households", Plugin.verbose_name)
     m.add_action(Roles)
     m.add_action(Types)
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("households", App.verbose_name)
+    m = m.add_menu("households", Plugin.verbose_name)
     m.add_action(Members)

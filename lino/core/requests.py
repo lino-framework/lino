@@ -101,6 +101,8 @@ class BaseRequest(object):
             kw = self.parse_req(request, rqdata, **kw)
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
+        # if self.renderer is None:
+        #     raise Exception("20131226 no renderer")
 
     def error(self, e=None, message=None, **kw):
         """
@@ -355,27 +357,26 @@ class BaseRequest(object):
         return spec
 
     def run(self, thing, *args, **kw):
-        """
-        The first parameter `thing` may be an InstanceAction or a 
-        Model instance.
+        """The first parameter `thing` may be an InstanceAction or a Model
+        instance.
+
         """
         return thing.run_from_session(self, *args, **kw)
 
     #~ def set_language(self,*args):
         #~ set_language(*args)
 
-    def show(self, spec, master_instance=None, column_names=None, language=None, **kw):
-        """
-        Show the table specified by `spec` according to the current 
-        renderer. 
-        If the table is a :term:`slave table`, then a `master_instance` 
-        must be specified as second argument.
+    def show(self, spec, master_instance=None,
+             column_names=None, language=None, **kw):
+        """Show the table specified by `spec` according to the current
+        renderer.  If the table is a :term:`slave table`, then a
+        `master_instance` must be specified as second argument.
         
         Optional keyword arguments are
         
         - `column_names` overrides default list of columns
-        - `language` overrides the default language used for headers 
-          and translatable data
+        - `language` overrides the default language used for headers and
+          translatable data
         
         Usage in a tested doc::
         
@@ -393,7 +394,7 @@ class BaseRequest(object):
         Note that this function 
         either returns a string or prints to stdout and returns None,
         depending on the current renderer.
-         
+
         """
         # 20130905 added master_instance positional arg. but finally didn't use
         # it.

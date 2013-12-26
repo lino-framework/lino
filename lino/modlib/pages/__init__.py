@@ -12,15 +12,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino.ad import App
+from lino.ad import Plugin
+from django.utils.translation import ugettext_lazy as _
 
 
-class App(App):
+class Plugin(Plugin):
+
+    verbose_name = _("Pages")
 
     url_prefix = 'p'
 
     def __init__(self, *args, **kw):
-        super(App, self).__init__(*args, **kw)
+        super(Plugin, self).__init__(*args, **kw)
         from lino.apps.plain.plain_renderer import PlainRenderer
         self.renderer = PlainRenderer(self)
 

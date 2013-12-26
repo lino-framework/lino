@@ -17,5 +17,5 @@ from lino import ad
 from django.utils.translation import ugettext_lazy as _
 
 
-class App(ad.App):
+class Plugin(ad.Plugin):
     verbose_name = _("Courses")

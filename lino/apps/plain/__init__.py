@@ -16,10 +16,10 @@
 The :mod:`lino.apps.plain` app adds the "plain" user interface.
 """
 
-from lino.ad import App
+from lino.ad import Plugin
 
 
-class App(App):
+class Plugin(Plugin):
 
     url_prefix = 'b'
 

@@ -47,9 +47,11 @@ def plain_response(ui, request, tplname, context):
     if menu is None:
         menu = settings.SITE.get_site_menu(ui, u.profile)
         #~ url = settings.SITE.plain_prefix + '/'
-        url = settings.SITE.plugins.plain.build_plain_url()
+        plain = settings.SITE.plugins.plain
+        assert plain.renderer is not None
+        url = plain.build_plain_url()
         menu.add_url_button(url, label=_("Home"))
-        menu = menu.as_bootstrap_html(ui, request)
+        menu = menu.as_bootstrap_html(plain.renderer, request)
         menu = E.tostring(menu)
         PLAIN_MENUS[k] = menu
     context.update(menu=menu, E=E)
@@ -108,7 +110,9 @@ class PlainIndex(View):
     """
 
     def get(self, request, *args, **kw):
-        ui = settings.SITE.ui
+        # ui = settings.SITE.ui
+        ui = settings.SITE.plugins.plain
+        assert ui.renderer is not None
         context = dict(
             title=settings.SITE.title,
             main='',
@@ -119,14 +123,16 @@ class PlainIndex(View):
             user = auth.AnonymousUser.instance()
         a = settings.SITE.get_main_action(user)
         if a is None:
-            ar = BaseRequest(user=user, request=request)
+            ar = BaseRequest(
+                user=user, request=request,
+                renderer=ui.renderer)
         else:
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied(
                     "Action not allowed for %s" % user)
-            kw.update(renderer=ui.plain_renderer)
+            # kw.update(renderer=ui.plain_renderer)
+            kw.update(renderer=ui.renderer)
             ar = a.request(request=request, **kw)
-            #~ ar.renderer = ui.plain_renderer
             context.update(title=ar.get_title())
             # TODO: let ar generate main
             # context.update(main=ui.plain_renderer.action_call(request,a,{}))

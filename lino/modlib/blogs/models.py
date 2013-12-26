@@ -58,8 +58,8 @@ class EntryType(dd.BabelNamed, mixins.PrintableType):
         return self.name
 
 
-def html_text(s):
-    return '<div class="htmlText">' + s + '</div>'
+# def html_text(s):
+#     return '<div class="htmlText">' + s + '</div>'
 
 
 class EntryTypes(dd.Table):
@@ -105,8 +105,8 @@ class Entry(mixins.TypedPrintable,
 
 class EntryDetail(dd.FormLayout):
     main = """
-    title type:12 user:10 id 
-    # summary    
+    title type:12 user:10 id
+    # summary
     language:10 created modified owner build_time
     body
     """

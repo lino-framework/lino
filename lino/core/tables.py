@@ -474,10 +474,10 @@ class TableRequest(ActionRequest):
 
     def dump2html(ar, tble, data_iterator, column_names=None):
         """
-        Render this TableRequest into an existing :class:`lino.utils.xmlgen.html.Table`.
+        Render this TableRequest into an existing
+        :class:`lino.utils.xmlgen.html.Table`.
         """
         tble.attrib.update(cellspacing="3px", bgcolor="#ffffff", width="100%")
-        # ~ tble.attrib.update(cellspacing="3px",bgcolor="#d0def0", width="100%")
 
         grid = ar.ah.list_layout.main
         columns = grid.columns
@@ -537,13 +537,15 @@ class TableRequest(ActionRequest):
         if ar.request is None:
             columns = None
         else:
-            columns = [str(x)
-                       for x in ar.request.REQUEST.getlist(constants.URL_PARAM_COLUMNS)]
+            columns = [
+                str(x) for x in ar.request.REQUEST.getlist(
+                    constants.URL_PARAM_COLUMNS)]
         if columns:
-            #~ widths = [int(x) for x in ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)]
-            all_widths = ar.request.REQUEST.getlist(constants.URL_PARAM_WIDTHS)
-            hiddens = [(x == 'true')
-                       for x in ar.request.REQUEST.getlist(constants.URL_PARAM_HIDDENS)]
+            all_widths = ar.request.REQUEST.getlist(
+                constants.URL_PARAM_WIDTHS)
+            hiddens = [
+                (x == 'true') for x in ar.request.REQUEST.getlist(
+                    constants.URL_PARAM_HIDDENS)]
             fields = []
             widths = []
             #~ headers = []

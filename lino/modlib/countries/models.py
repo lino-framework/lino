@@ -35,7 +35,7 @@ from lino.utils.choosers import chooser
 
 #~ from lino.utils.instantiator import lookup_or_create
 
-from lino.modlib.contacts import App
+from lino.modlib.contacts import Plugin
 
 
 class PlaceTypes(dd.ChoiceList):
@@ -366,10 +366,10 @@ class CountryRegionCity(CountryCity):
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", App.verbose_name)
+    m = m.add_menu("contacts", Plugin.verbose_name)
     m.add_action(Countries)
     m.add_action(Places)
 
 #~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m = m.add_menu("contacts",App.verbose_name)
+    #~ m = m.add_menu("contacts",Plugin.verbose_name)
     #~ m.add_action(Places)

@@ -39,3 +39,48 @@ from "Companies" to "Groups".  Existing applications which want to
 preserve the old label can override the new default by overriding the
 model.
 
+
+How to have landslides use typographic quotes
+---------------------------------------------
+
+I just discovered Adam Zapletal's 
+`landslides <https://github.com/adamzap/landslide>`_
+module. Coool!
+
+Here is my first contribution: 
+I use landslides with restructuredtext markup.
+I then had the problem that landslides does not convert
+plain quotes to typographic ones.
+
+In docutils this is a parser option called
+`smart_quotes
+<http://docutils.sourceforge.net/docs/user/config.html#smart-quotes>`__.
+
+How to tell landslides to activate that option?
+It seems that this kind of configuration is not yet implemented.
+There should be a [docutils] section in the config file.
+
+I solved it for my by editing the source code directly.
+In file 
+`landslide/rst.py 
+<https://github.com/adamzap/landslide/blob/master/src/landslide/rst.py>`_
+I find the place qhere it says::
+
+
+    overrides = {
+        'input_encoding': input_encoding,
+        'doctitle_xform': doctitle,
+        'initial_header_level': initial_header_level,
+        'report_level': 'quiet',
+    }
+
+And I add a line to that dictionary::
+
+    overrides = {
+        'input_encoding': input_encoding,
+        'doctitle_xform': doctitle,
+        'initial_header_level': initial_header_level,
+        'report_level': 'quiet',
+        'smart_quotes': 'on'  # LS 20131224
+    }
+

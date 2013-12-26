@@ -57,6 +57,8 @@ from lino.ui import elems as ext_elems
 from lino.ui.render import HtmlRenderer
 from . import views
 
+from lino.ad import Plugin
+
 from lino import dd
 from lino.core import actions
 from lino.core import dbtables
@@ -374,7 +376,7 @@ class ExtRenderer(HtmlRenderer):
 
         if ba.action.opens_a_window or ba.action.parameters:
             ar = ba.request(request=request)
-            #~ after_show = ar.get_status(settings.SITE.ui)
+            #~ after_show = ar.get_status(settings.SITE.plugins.extjs)
             st.update(self.get_action_status(ar, ba, obj))
             st.update(record_id=obj.pk)
             return "Lino.%s.run(%s,%s)" % (
@@ -538,8 +540,9 @@ class ExtRenderer(HtmlRenderer):
             return '<script type="text/javascript" src="%s"></script>' % url
 
         for p in site.installed_plugins:
-            for name in p.get_css_includes(site):
-                yield stylesheet(name)
+            if isinstance(p, Plugin):
+                for name in p.get_css_includes(site):
+                    yield stylesheet(name)
 
         if run_jasmine:
             yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
@@ -623,8 +626,9 @@ tinymce.init({
 
         lng = translation.get_language()
         for p in site.installed_plugins:
-            for name in p.get_js_includes(settings, lng):
-                yield javascript(name)
+            if isinstance(p, Plugin):
+                for name in p.get_js_includes(settings, lng):
+                    yield javascript(name)
 
         #~ if site.use_bootstrap:
             #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'
@@ -864,8 +868,9 @@ tinymce.init({
             # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
 
         for p in site.installed_plugins:
-            for ln in p.get_head_lines(site, request):
-                yield ln
+            if isinstance(p, Plugin):
+                for ln in p.get_head_lines(site, request):
+                    yield ln
 
         yield '<div id="body"></div>'
         #~ yield '<div id="tbar"/>'
@@ -933,7 +938,6 @@ tinymce.init({
         fn = os.path.join(settings.MEDIA_ROOT, *self.lino_js_parts(profile))
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
-            #~ if mtime > settings.SITE.mtime:
             if mtime > settings.SITE.ui.mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
                 #~ logger.info("20130204 %s is up to date.",fn)
@@ -982,10 +986,11 @@ tinymce.init({
         f.write(jscompress(tpl.render(**context) + '\n'))
 
         for p in settings.SITE.installed_plugins:
-            for tplname in p.site_js_snippets:
-                tpl = settings.SITE.jinja_env.get_template(tplname)
-                f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
-                f.write(jscompress('\n' + tpl.render(**context) + '\n'))
+            if isinstance(p, Plugin):
+                for tplname in p.site_js_snippets:
+                    tpl = settings.SITE.jinja_env.get_template(tplname)
+                    f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
+                    f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 
         #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
@@ -1058,7 +1063,7 @@ tinymce.init({
             if fl._datasource is None:
                 return  # 20130804
             try:
-                lh = fl.get_layout_handle(settings.SITE.ui)
+                lh = fl.get_layout_handle(settings.SITE.plugins.extjs)
             except Exception as e:
                 logger.exception(e)
                 raise Exception("Could not define %s for %r: %s" % (
@@ -1101,17 +1106,17 @@ tinymce.init({
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in param_panels:
-            lh = fl.get_layout_handle(settings.SITE.ui)
+            lh = fl.get_layout_handle(settings.SITE.plugins.extjs)
             for ln in self.js_render_ParamsPanelSubclass(lh):
                 f.write(ln + '\n')
 
         for fl in action_param_panels:
-            lh = fl.get_layout_handle(settings.SITE.ui)
+            lh = fl.get_layout_handle(settings.SITE.plugins.extjs)
             for ln in self.js_render_ActionFormPanelSubclass(lh):
                 f.write(ln + '\n')
 
         for fl in form_panels:
-            lh = fl.get_layout_handle(settings.SITE.ui)
+            lh = fl.get_layout_handle(settings.SITE.plugins.extjs)
             for ln in self.js_render_FormPanelSubclass(lh):
                 f.write(ln + '\n')
 
@@ -1628,7 +1633,7 @@ tinymce.init({
             mainPanelClass = "Lino.CalendarPanel"
         elif action.action.parameters:
             params_panel = action.action.make_params_layout_handle(
-                settings.SITE.ui)
+                settings.SITE.plugins.extjs)
         else:
             return
 

@@ -32,18 +32,9 @@ from django.db import models
 from django.conf import settings
 
 from lino import dd
-from lino import mixins
-#~ from lino.core.dbutils import full_model_name
-#~ from lino.utils.choicelists import ChoiceList
-#contacts = reports.get_app('contacts')
-#~ from lino.modlib.journals import models as journals
-#~ journals = reports.get_app('journals')
-#from lino.modlib.contacts import models as contacts
-#from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
-#~ from lino.modlib.accounts.utils import AccountTypes
 
-from lino.modlib.ledger.utils import FiscalYears
+# from lino.modlib.ledger.utils import FiscalYears
 #~ from lino.core.dbutils import models_by_base
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
@@ -141,7 +132,6 @@ def collect_declared_values(jnl, mvt, decl, sums):
     return None
 
 
-#~ class Declaration(mixins.Registrable):
 class Declaration(ledger.Voucher):
 
     """
@@ -345,7 +335,7 @@ def setup_config_menu(site, ui, profile, m):
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("vat", vat.App.verbose_name)
+    m = m.add_menu("vat", settings.SITE.plugins.vat.verbose_name)
     m.add_action(Declarations)
 
 

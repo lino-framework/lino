@@ -153,7 +153,8 @@ Miscellaneous:
 import logging
 logger = logging.getLogger(__name__)
 
-from djangosite import App
+# from djangosite import Plugin
+# from lino.ad import Plugin
 
 from lino.core.tables import VirtualTable
 from lino.mixins import EmptyTable

@@ -34,8 +34,6 @@ contacts = dd.resolve_app('contacts', strict=True)
 from lino.apps.cal.utils import Recurrencies
 from lino.apps.cal.mixins import Reservation
 
-from . import App
-
 
 class BookingStates(dd.Workflow):
     required = dd.required(user_level='admin')
@@ -232,5 +230,5 @@ class BookingsByCompany(Bookings):
 
 def setup_main_menu(site, ui, profile, main):
     m = main.get_item("cal")
-    #~ m = main.add_menu("rooms",App.verbose_name)
+    #~ m = main.add_menu("rooms",settings.SITE.plugins.rooms.verbose_name)
     m.add_action(Bookings)

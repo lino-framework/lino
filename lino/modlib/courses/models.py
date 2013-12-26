@@ -953,7 +953,7 @@ dd.inject_field(
         verbose_name=_("is a pupil"),
         help_text=_("Whether this Person is also a Pupil.")))
 
-from lino.modlib.courses import App
+# from lino.modlib.courses import 
 
 #~ MODULE_LABEL = _("Courses")
 
@@ -962,7 +962,7 @@ def setup_main_menu(site, ui, profile, main):
     m = main.get_item("contacts")
     m.add_action(Teachers)
     m.add_action(Pupils)
-    m = main.add_menu("courses", App.verbose_name)
+    m = main.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
     m.add_action(Courses)
     #~ m.add_action(Teachers)
     #~ m.add_action(Pupils)
@@ -971,7 +971,7 @@ def setup_main_menu(site, ui, profile, main):
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("courses", App.verbose_name)
+    m = m.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
     #~ m.add_action(Rooms)
     m.add_action('courses.TeacherTypes')
     m.add_action('courses.PupilTypes')
@@ -982,7 +982,7 @@ def setup_config_menu(site, ui, profile, m):
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("courses", App.verbose_name)
+    m = m.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)

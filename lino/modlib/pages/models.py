@@ -194,8 +194,8 @@ class Page(mixins.Referrable, mixins.Hierarizable):
     #~ """
 class PageDetail(dd.FormLayout):
     main = """
-    ref parent seqno 
-    title 
+    ref parent seqno
+    title
     body
     """
 
@@ -238,23 +238,19 @@ def lookup(ref, *args, **kw):
     #~ except Page.DoesNotExist:
         #~ pass
 
-
 from lino.modlib.pages.dummy import render_node
 
 
-#~ def setup_main_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    #~ m.add_action(MyPages)
-def setup_my_menu(site, ui, profile, m):
-    pass
+def setup_main_menu(site, ui, profile, m):
+    m = m.add_menu('pages', settings.SITE.plugins.pages.verbose_name)
+    m.add_action('pages.Pages')
 
 system = dd.resolve_app('system')
 
 
-def setup_config_menu(site, ui, profile, m):
-    #~ m  = m.add_menu("pages",_("~Pages"))
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action(Pages)
+# def setup_config_menu(site, ui, profile, m):
+    # m = m.add_menu('pages', settings.SITE.plugins.pages.verbose_name)
+    # m.add_action('pages.Pages')
     #~ m.add_action(PageTypes)
 
 #~ def setup_explorer_menu(site,ui,profile,m):

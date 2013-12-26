@@ -59,7 +59,7 @@ from lino.utils.xmlgen.html import E
 #~ from lino.modlib.postings import models as postings
 
 
-from lino.modlib.polls import App
+from lino.modlib.polls import Plugin
 
 outbox = dd.resolve_app('outbox')
 postings = dd.resolve_app('postings')
@@ -536,18 +536,18 @@ class PollResult(Questions):
 
 
 def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("polls", App.verbose_name)
+    m = m.add_menu("polls", Plugin.verbose_name)
     m.add_action('polls.MyPolls')
     m.add_action('polls.MyResponses')
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("polls", App.verbose_name)
+    m = m.add_menu("polls", Plugin.verbose_name)
     m.add_action('polls.ChoiceSets')
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("polls", App.verbose_name)
+    m = m.add_menu("polls", Plugin.verbose_name)
     m.add_action('polls.Polls')
     m.add_action('polls.Questions')
     m.add_action('polls.Choices')
@@ -555,4 +555,4 @@ def setup_explorer_menu(site, ui, profile, m):
     #~ m.add_action('polls.Answers')
 
 
-dd.add_user_group('polls', App.verbose_name)
+dd.add_user_group('polls', Plugin.verbose_name)

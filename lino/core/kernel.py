@@ -61,6 +61,8 @@ from lino.core.dbutils import is_devserver
 from lino.ui.render import TextRenderer
 from lino.ui import views
 
+from lino.ad import Plugin as LinoPlugin
+
 ACTION_RESPONSES = frozenset((
     'message', 'success', 'alert',
     'errors',
@@ -238,7 +240,8 @@ class Kernel(object):
         #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
 
         for p in site.installed_plugins:
-            p.on_ui_init(self)
+            if isinstance(p, LinoPlugin):
+                p.on_ui_init(self)
 
         ui = self.site.plugins.resolve(self.site.default_ui)
         self.default_renderer = ui.renderer
@@ -621,7 +624,8 @@ class Kernel(object):
         #             'bootstrap', 'bootstrap_root')
 
         for p in self.site.installed_plugins:
-            p.setup_media_links(self, urlpatterns)
+            if isinstance(p, LinoPlugin):
+                p.setup_media_links(self, urlpatterns)
 
         if self.site.use_tinymce:
             if not self.site.tinymce_base_url:
@@ -665,7 +669,8 @@ class Kernel(object):
             '', ('^$', self.default_renderer.plugin.get_index_view()))
 
         for p in self.site.installed_plugins:
-            urlpatterns += p.get_patterns(self)
+            if isinstance(p, LinoPlugin):
+                urlpatterns += p.get_patterns(self)
 
         # if self.site.use_extjs and self.site.admin_prefix:
         #     urlpatterns += patterns(

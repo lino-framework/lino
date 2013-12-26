@@ -12,10 +12,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino.ad import App
+from lino.ad import Plugin
 
 
-class App(App):
+class Plugin(Plugin):
 
     def on_ui_init(self, ui):
         from .ext_renderer import ExtRenderer

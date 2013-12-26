@@ -1,0 +1,45 @@
+=====================================
+20131226 (Thursday, 26 December 2013)
+=====================================
+
+Django 1.7 will have "plugins"
+------------------------------
+
+Aymeric Augustin has implemented for Django 1.7 almost exactly what we were
+calling "plugins". The new feature is documented as
+`Applications <https://docs.djangoproject.com/en/dev/ref/applications/>`_.
+
+The official documentation now even contains a note about the
+confusing terminology for "applications" in Django.
+
+I was proud to see that Django finally realizes something I have
+always been preaching... and couldn't keep from writing `a post to
+django-developers mailing list
+<https://groups.google.com/forum/#!topic/django-developers/_iggZzrYtJQ>`_
+
+Aymeric gave me an advice which I liked: "Your App class contains more
+data. It is CMS-oriented, with stuff like site_js_snippets. You should
+look into inheriting AppConfig."
+
+I followed his advice and moved the "GUI" functionality from
+`djangosite` to :mod:`lino`. :class:`lino.lino_site.Plugin`
+
+Later I looked at the code and saw that Aymeric's implementation
+has a serious difference which I had not noticed from the
+documentation: `AppConfig` objects don't get instantiated *before*
+importing the models, but at the same time.  Oops, sorry, but that's
+now a serious difference. One of the basic ideas of plugins (for me)
+is that they get loaded and instantiated *before* the settings are
+ready. They are part of the settings.
+
+As a consequence I could not rename my `App` class to `AppConfig` (and
+inherit from Django's `AppConfig` class).  
+
+I then renamed it to `Plugin` to avoid mixing them with AppConfig
+classes.
+
+I finally got all three user interfaces of :mod:`lino.examples.start`
+working.
+
+There was still a bug in :mod:`lino.modlib.events.fixtures.vor` that
+had been introduced by the rename of City to Place.

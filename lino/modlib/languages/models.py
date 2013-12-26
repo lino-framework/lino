@@ -53,9 +53,9 @@ class Languages(dd.Table):
     required = dd.required(user_groups='office')
 
 
-from lino.modlib.contacts import App
+from lino.modlib.contacts import Plugin
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", App.verbose_name)
+    m = m.add_menu("contacts", Plugin.verbose_name)
     m.add_action(Languages)

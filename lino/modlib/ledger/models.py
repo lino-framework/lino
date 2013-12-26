@@ -1230,7 +1230,7 @@ class ActivityReport(dd.Report):
     parameters = dict(
         start_date=models.DateField(verbose_name=_("Period from")),
         end_date=models.DateField(verbose_name=_("until")),
-        #~ include_vat = models.BooleanField(verbose_name=vat.App.verbose_name),
+        #~ include_vat = models.BooleanField(verbose_name=vat.Plugin.verbose_name),
     )
 
     params_layout = "start_date end_date"

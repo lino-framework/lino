@@ -213,8 +213,9 @@ def register_choicelist(cl):
     #~ k = cl.stored_name or cl.__name__
     k = cl.stored_name or cl.actor_id
     if k in CHOICELISTS:
-        raise Exception("ChoiceList name '%s' already defined by %s" %
-                        (k, CHOICELISTS[k]))
+        raise Exception(
+            "Cannot register %r : actor name '%s' "
+            "already defined by %r" % (cl, k, CHOICELISTS[k]))
         # logger.warning("ChoiceList name '%s' already defined by %s",
         #                k, CHOICELISTS[k])
     CHOICELISTS[k] = cl

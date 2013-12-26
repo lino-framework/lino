@@ -152,29 +152,22 @@ class MenuItem:
             return s + self.name
         return s
 
-    def as_bootstrap_html(self, ui, request, level=None):
+    def as_bootstrap_html(self, plain_renderer, request, level=None):
         if self.bound_action:
+            assert plain_renderer is not None
             sr = self.bound_action.actor.request(
                 action=self.bound_action,
                 user=request.user, subst_user=request.subst_user,
                 requesting_panel=request.requesting_panel,
-                renderer=ui.plain_renderer, **self.params)
+                renderer=plain_renderer, **self.params)
 
-            #~ sr = ar.spawn(self.bound_action.actor,action=self.bound_action)
             url = sr.get_request_url()
-        #~ elif self.request:
-            #~ url = self.request.get_request_url()
         else:
             url = self.href
         assert self.label is not None
         if url is None:
             return E.p()  # spacer
-            #~ raise Exception("20120901 %s" % self.__dict__)
-        #~ return E.a(self.label,href=url,class_="dropdown-toggle",data_toggle="dropdown")
         return E.li(E.a(self.label, href=url, tabindex="-1"))
-        #~ since 20121226 return xghtml.E.a(self.label,href=url)
-        #~ return '<a href="%s">%s</a>' % (
-              #~ self.get_url_path(),self.label)
 
     def as_rst(self, ar, level=None):
         """
@@ -421,9 +414,9 @@ class Menu(MenuItem):
         #~ for i in self.items:
             #~ self.items_dict[i.name] = i
 
-    def as_bootstrap_html(self, ui, request, level=1):
-        #~ items = [xghtml.E.li(mi.as_bootstrap_html(ar,level+1),class_='dropdown') for mi in self.items]
-        items = [mi.as_bootstrap_html(ui, request, level + 1) for mi in self.items]
+    def as_bootstrap_html(self, renderer, request, level=1):
+        items = [mi.as_bootstrap_html(renderer, request, level + 1)
+                 for mi in self.items]
         #~ print 20120901, items
         if level == 1:
             #~ return xghtml.E.ul(*items,class_='jd_menu')
