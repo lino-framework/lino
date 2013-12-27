@@ -11,8 +11,7 @@ class Site(Site):
     languages = ['en', 'fr']
 
     def get_installed_apps(self):
-        for a in super(Site, self).get_installed_apps():
-            yield a
+        yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.system'
         yield 'lino.projects.babel_tutorial'
 

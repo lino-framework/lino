@@ -100,10 +100,6 @@ def site_setup(self):
             loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
     self.for_each_app(func)
 
-    #~ for name in self.get_installed_apps():
-        #~ m = import_module(name)
-        #~ if os.path.isdir(os.path.join(os.path.dirname(m.__file__),SUBDIR_NAME)):
-            #~ loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
     #~ loaders = reversed(loaders)
     #~ print 20130109, loaders
     self.jinja_env = jinja2.Environment(

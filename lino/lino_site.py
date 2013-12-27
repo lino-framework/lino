@@ -1654,15 +1654,22 @@ class Site(Site):
         - inherited apps
 
         """
+
         from django.utils.importlib import import_module
 
-        for app_name in self.get_installed_apps():
-            app_mod = import_module(app_name)
-            app = getattr(app_mod, 'App', None)
-            if app is not None and issubclass(app, ad.App) and app.extends:
-                parent = import_module(app.extends)
-                func(app.extends, parent, *args, **kw)
-            func(app_name, app_mod, *args, **kw)
+        for p in self.installed_plugins:
+            if p.extends:
+                parent = import_module(p.extends)
+                func(p.extends, parent, *args, **kw)
+            func(p.app_name, p.app_module, *args, **kw)
+
+        # for app_name in self.get_installed_apps():
+        #     app_mod = import_module(app_name)
+        #     app = getattr(app_mod, 'App', None)
+        #     if app is not None and issubclass(app, ad.App) and app.extends:
+        #         parent = import_module(app.extends)
+        #         func(app.extends, parent, *args, **kw)
+        #     func(app_name, app_mod, *args, **kw)
 
     def get_letter_date_text(self, today=None):
         """

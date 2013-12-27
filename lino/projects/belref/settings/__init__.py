@@ -45,10 +45,12 @@ class Site(Site):
 
     #~ sidebar_width  = 3
 
+    hidden_apps = 'extjs'
+
     def get_installed_apps(self):
-        for a in super(Site, self).get_installed_apps():
-            if a != 'lino.extjs':
-                yield a
+        yield super(Site, self).get_installed_apps()
+            # if a != 'lino.extjs':
+            #     yield a
         #~ yield 'django.contrib.contenttypes'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'

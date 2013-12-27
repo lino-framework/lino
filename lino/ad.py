@@ -29,6 +29,8 @@ from djangosite import Plugin as BasePlugin
 
 class Plugin(BasePlugin):
 
+    "Lino extension to `djangosite.Plugin`"
+
     media_base_url = None
     """
     Remote URL base for media files.

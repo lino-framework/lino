@@ -29,9 +29,10 @@ import os
 import base64
 
 
-from lino.apps.beid import App as BeIdPlugin
+from lino.apps.beid import Plugin as BeIdPlugin
 
-class App(BeIdPlugin):  # was: use_eid_jslib
+
+class Plugin(BeIdPlugin):  # was: use_eid_jslib
     # deprecated, not tested
     site_js_snippets = ['plugins/eid_jslib.js']
     media_name = 'eid-jslib'

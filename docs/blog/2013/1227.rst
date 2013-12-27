@@ -1,0 +1,38 @@
+===================================
+20131227 (Friday, 27 December 2013)
+===================================
+
+
+:setting:`get_installed_apps` is now allowed to yield items which are
+generators.  This makes aplication code more intuitive.
+
+Before::
+
+    def get_installed_apps(self):
+        for a in super(Site, self).get_installed_apps():
+            yield a
+        yield 'django.contrib.contenttypes'
+        ...
+
+After::
+
+    def get_installed_apps(self):
+        yield super(Site, self).get_installed_apps()
+        yield 'django.contrib.contenttypes'
+        ...
+
+
+Side effects:
+
+- New attributes `app_name` and `app_module` 
+  for each :class:`djangosite.djangosite_site.Plugin`.
+
+- Apps that do not define a "Plugin" name will still receive a 
+  Plugin object that represents them using default values.
+
+In general I'd say that my djangosite approach is more powerful but
+also more progressive than Aymeric's aproach. Especially I don't see
+how we could avoid to define the installed apps by overriding the
+:setting:`get_installed_apps` of a `Site` class.
+
+

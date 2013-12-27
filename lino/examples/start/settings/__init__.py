@@ -51,8 +51,7 @@ class Site(Site):
     #~ languages = 'de fr et en'.split()
 
     def get_installed_apps(self):
-        for a in super(Site, self).get_installed_apps():
-            yield a
+        yield super(Site, self).get_installed_apps()
 
         yield 'lino.modlib.blogs'
         yield 'lino.apps.extensible'

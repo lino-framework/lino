@@ -37,8 +37,7 @@ class Site(Site):
         tb.add_action(self.modules.contacts.Companies.detail_action)
 
     def get_installed_apps(self):
-        for a in super(Site, self).get_installed_apps():
-            yield a
+        yield super(Site, self).get_installed_apps()
 
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.system'

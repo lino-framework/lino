@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-12-24 05:34+0200\n"
-"PO-Revision-Date: 2013-12-24 05:37+0300\n"
+"PO-Revision-Date: 2013-12-27 06:19+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
@@ -2753,11 +2753,11 @@ msgstr "Personen"
 
 #: lino/modlib/contacts/models.py:474
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: lino/modlib/contacts/models.py:475
 msgid "Groups"
-msgstr ""
+msgstr "Gruppen"
 
 #: lino/modlib/contacts/models.py:478
 #: lino/modlib/partners/models.py:491

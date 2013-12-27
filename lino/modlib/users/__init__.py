@@ -25,8 +25,7 @@ To use it, you must define the following things in your :class:`lino.Lino`::
     user_model = 'users.User'
     
     def get_installed_apps(self):
-        for a in super(Lino,self).get_installed_apps():
-            yield a
+        yield super(Lino,self).get_installed_apps()
         yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         # continue with your own modules

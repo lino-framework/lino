@@ -40,8 +40,7 @@ class Site(Site):
     languages = 'en'
 
     def get_installed_apps(self):
-        for a in super(Site, self).get_installed_apps():
-            yield a
+        yield super(Site, self).get_installed_apps()
 
         yield 'lino.modlib.system'
         yield 'django.contrib.contenttypes'
