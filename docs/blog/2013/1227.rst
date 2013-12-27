@@ -3,10 +3,20 @@
 ===================================
 
 
-:setting:`get_installed_apps` is now allowed to yield items which are
-generators.  This makes aplication code more intuitive.
+More on :ref:`djangosite`
+--------------------------
 
-Before::
+In general I'd say that my :ref:`djangosite` approach is more powerful
+but also more progressive than Aymeric's aproach. 
+
+Especially I don't see how we could avoid to define the installed apps
+by overriding the :setting:`get_installed_apps` of a `Site` class.
+Updated the :ref:`djangosite` documentation in the hope of becoming
+more understandable.
+
+:setting:`get_installed_apps` is now allowed to yield items which are
+generators.  This makes aplication code more intuitive.  Until today
+you had to write::
 
     def get_installed_apps(self):
         for a in super(Site, self).get_installed_apps():
@@ -14,13 +24,12 @@ Before::
         yield 'django.contrib.contenttypes'
         ...
 
-After::
+Now you can write::
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
         yield 'django.contrib.contenttypes'
         ...
-
 
 Side effects:
 
@@ -29,10 +38,5 @@ Side effects:
 
 - Apps that do not define a "Plugin" name will still receive a 
   Plugin object that represents them using default values.
-
-In general I'd say that my djangosite approach is more powerful but
-also more progressive than Aymeric's aproach. Especially I don't see
-how we could avoid to define the installed apps by overriding the
-:setting:`get_installed_apps` of a `Site` class.
 
 

@@ -57,6 +57,7 @@ from atelier.utils import unindent
 from atelier import rstgen
 from djangosite.dbutils import full_model_name
 #~ from djangosite.dbutils import set_language
+from djangosite import Plugin
 
 from atelier.sphinxconf import Django2rstDirective
 
@@ -306,7 +307,8 @@ class ActorsOverviewDirective(Django2rstDirective):
 def resolve_name(name):
     l = name.split('.')
     if len(l) == 1:
-        return 1, dd.resolve_app(name)
+        return 1, settings.SITE.plugins.get(name)
+        # return 1, dd.resolve_app(name)
     if len(l) == 3:
         model = settings.SITE.modules.resolve(l[0] + '.' + l[1])
         if model is None:
@@ -324,7 +326,8 @@ class FormDirective(Django2rstDirective):
     def get_rst(self):
         level, cls = resolve_name(self.content[0])
         s = ''
-        with translation.override(self.state.document.settings.env.config.language):
+        with translation.override(
+                self.state.document.settings.env.config.language):
             s = '\n'.join(list(form_lines()))
         return s
 
@@ -356,15 +359,9 @@ class ActorDirective(Django2rstDirective):
                     s += '\n\n'
                 return s
 
-            if isinstance(cls, dd.__class__):  # it's a module (an app)
+            if isinstance(cls, Plugin):
                 s = ''
-                name = app_name(cls)
-                app = getattr(cls, 'App', None)
-                if app is None:
-                    title = name
-                else:
-                    title = unicode(app.verbose_name)
-
+                title = unicode(cls.verbose_name)
                 s += "\n.. index::\n   single: "
                 s += unicode(_('%s (app)') % title)
                 s += '\n\n.. _' + name + ':\n'
@@ -520,9 +517,8 @@ class ddrefRole(XRefRole):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = model_name(x.model) + '.' + x.name
                 print(target)
-            elif isinstance(x, dd.__class__):  # it's a module (an app)
-                text = utils.unescape(unicode(x.App.verbose_name))
-                #~ target = model_name(x)
+            elif isinstance(x, Plugin):
+                text = utils.unescape(unicode(x.verbose_name))
                 target = settings.SITE.userdocs_prefix + target
 
             elif isinstance(x, type) and issubclass(x, models.Model):
