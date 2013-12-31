@@ -2,27 +2,32 @@ Why GPL?
 ========
 
 Lino is published under the `GPL
-<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_,
-as explained in :doc:`license`.
+<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_, as
+explained in :doc:`license`.  The present section concentrates on the
+reason for my choice.
 
-The reason for our choice is that we want to make sure 
-that our voluntary work will always 
-belong to the general public and never be controlled 
-by some proprietary organisation.
+The BSD versus GPL discussion has a religious dimension: two persons
+can have opposite views and never get to a common statement, despite
+the fact that both are mentally sane and "rationally right".  The
+personal preference of a software developer seems to depend mainly on
+his or her life situation and personal history.
 
-**Luc's statement on this subject**:
+And as far as I can see, my personal "faith" is clear: I feel that the
+political idea behind the GPL is both *true* and *important*. And my
+personal (simplistic) summary of that political idea is: 
 
-The BSD versus GPL discussion has a religious dimension: 
-two persons can have opposite views 
-and never get to a common statement, 
-despite the fact that both are mentally sane and "rationally right".
+    Pure intellectual property such as software and plain texts should
+    *not* "belong" to anybody, they should not be object of intellectual
+    property. The GPL uses copyright only to abolish it. But only for
+    those who agree with that idea.
+    
 
-The personal preference of a software developer seems to 
-depend mainly on his or her life situation and beliefs.  
-And as far as I can see, my personal faith is clear: 
-the GPL is the only license that `"resists proprietary  vendors' 
-attempts to embrace, extend and extinguish
+Concretely spoken I want to make sure that our work will always belong
+to the general public and never be controlled by some proprietary
+organisation.  The GPL is the only license which `"resists proprietary
+vendors' attempts to embrace, extend and extinguish
 <http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`_".
+
 
 I don't claim to understand the topic completely, so 
 I'm open to comments and discussion, and maybe I'll even change my mind. 
@@ -71,3 +76,7 @@ which *did not* make me change my mind:
 
 * 2007-12-15 "numerodix", 
   `GPL vs BSD, a matter of sustainability <http://www.matusiak.eu/numerodix/blog/index.php/2007/12/15/gpl-vs-bsd-a-matter-of-sustainability/>`_
+
+* `The GNU GPL and the American Way
+  <https://www.gnu.org/philosophy/gpl-american-way.html>`_
+

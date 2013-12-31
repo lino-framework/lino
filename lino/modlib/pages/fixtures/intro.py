@@ -42,10 +42,10 @@ version {{site.version}}.
 {% if site.admin_prefix %}
 
 You are currently seeing the **web content** section,
-whose content and layout are configurable using 
+whose content and layout are configurable using
 the normal Django techniques.
 
-To see what Lino really adds to a Django site, 
+To see what Lino really adds to a Django site,
 you should go to the `Admin <{{site.admin_prefix}}/>`__ section.
 
 {% endif %}
@@ -90,6 +90,26 @@ in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
 
 {% endif %}
 """)
+
+page('index', 'et', '', """
+Tere tulemast saidil {{site.title}}.
+{% if site.verbose_name %}
+Siin jookseb
+`{{site.verbose_name}} <{{site.url}}>`__
+versioon {{site.version}}.
+{% endif %}
+
+{% if site.admin_prefix %}
+
+Praegu oled kasutajaliideses "Pages", mille kujundus ja sisu saab
+seadistada nii nagu Django saitidel ikka.
+
+Um das Besondere an Lino zu sehen, sollten Sie nun
+in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
+
+{% endif %}
+""")
+
 
 
 page('about', 'en', 'About', """

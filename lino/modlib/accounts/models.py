@@ -25,7 +25,7 @@ from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
-settings.SITE.add_site_attribute('accounts_ref_length', 20)
+# settings.SITE.add_site_attribute('accounts_ref_length', 20)
 
 from lino import dd
 from lino import mixins
@@ -102,7 +102,8 @@ class Group(dd.BabelNamed):
         unique_together = ['chart', 'ref']
 
     chart = models.ForeignKey(Chart)
-    ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
+    ref = dd.NullCharField(
+        max_length=settings.SITE.plugins.accounts.ref_length)
     #~ ref = models.CharField(max_length=100)
     account_type = AccountTypes.field(blank=True)
     # help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
@@ -140,7 +141,8 @@ class Account(dd.BabelNamed, mixins.Sequenced):
     chart = models.ForeignKey(Chart)
     group = models.ForeignKey(Group)
     #~ ref = models.CharField(max_length=100)
-    ref = dd.NullCharField(max_length=settings.SITE.accounts_ref_length)
+    ref = dd.NullCharField(
+        max_length=settings.SITE.plugins.accounts.ref_length)
     #~ chart = models.ForeignKey(Chart)
     type = AccountTypes.field()  # blank=True)
     # help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)

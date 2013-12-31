@@ -33,7 +33,7 @@ class Plugin(Plugin):
 
         urls = patterns(
             '',
-            (r'^$', views.PagesIndex.as_view()),
+            (r'^$', self.get_index_view()),
             (r'^(?P<ref>\w*)$', views.PagesIndex.as_view()),
         )
 

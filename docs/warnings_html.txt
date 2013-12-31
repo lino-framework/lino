@@ -1,8 +1,0 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.families.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.families.models'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/families/models.py", line 155, in <module>
-    from lino.modlib.contacts import App
-ImportError: cannot import name App
-/home/luc/hgwork/lino/docs/presto/index.rst:: WARNING: document isn't included in any toctree

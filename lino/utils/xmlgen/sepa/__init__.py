@@ -19,8 +19,8 @@ Usage:
 
 >>> from lino.utils.xmlgen.sepa import E
 >>> x = E.pain_001_001_02(
-...   E.GrpHdr( 
-...     E.MsgId("SAL63023CP20130621022043"), 
+...   E.GrpHdr(
+...     E.MsgId("SAL63023CP20130621022043"),
 ...     E.CreDtTm("2013-06-21T02:20:43") ,
 ...     E.NbOfTxs("8") ,
 ...     E.Grpg("MIXD") ,

@@ -2,10 +2,11 @@ Licensing : How to make money with Lino
 =======================================
 
 Lino is published under the `GPL
-<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_.  What
-does this mean concretely?  This section explains how the author of
-Lino understands the GPL.  It has no legal value, the only authority
-is the license text.  Comments and questions are welcome.
+<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_.  The
+reason for this choice is explained in :doc:`why_gpl`.  But what does
+this mean concretely?  This section explains how the author of Lino
+understands the GPL.  It has no legal value, the only authority is the
+license text.  Comments and questions are welcome.
 
 The GPL gives you the permission to use Lino as a base 
 for your own work. Examples:
