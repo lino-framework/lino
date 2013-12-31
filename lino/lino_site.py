@@ -102,7 +102,7 @@ The prefix to use for Lino "admin mode"
 (i.e. the "admin main page" with a pull-down "main menu").
 
 TODO: convert `admin_prefix` to a `url_prefix` setting on the
-`lino.apps.extjs` App.
+`lino.apps.extjs` plugin.
 
 The default value is an empty string, resulting in a website whose
 root url shows the admin mode.
@@ -863,10 +863,8 @@ class Site(Site):
 
     start_year = 2011
 
-    plain_prefix = 'plain'
-
-    #~ admin_prefix = 'admin'
-    admin_prefix = ''
+    # plain_prefix = 'plain'
+    # admin_prefix = ''
 
     time_format_extjs = 'H:i'
     """
@@ -894,53 +892,8 @@ class Site(Site):
     See :mod:`lino.test_apps.human`
     """
 
-    extjs_root = None
-    """
-    Path to the ExtJS root directory. 
-    Only used when :attr:`extjs_base_url` is None,
-    and when the `media` directory has no symbolic link named `extjs` 
-    pointing to the ExtJS root directory.
-    """
-
-    extjs_base_url = "http://extjs-public.googlecode.com/svn/tags/extjs-3.3.1/release/"
-    """
-    The URL from where to include the ExtJS library files.
-    
-    The default value points to the 
-    `extjs-public <http://code.google.com/p/extjs-public/>`_
-    repository and thus requires the clients to have an internet 
-    connection.
-    This relieves newcomers from the burden of having to 
-    specify a download location in their :xfile:`settings.py`.
-    
-    On a production site you'll probably want to download and serve 
-    these files yourself by setting this to `None` and 
-    setting :attr:`extjs_root` 
-    (or a symbolic link "extjs" in your :xfile:`media` directory)
-    to point to the local directory  where ExtJS 3.3.1 is installed).
-    
-    The same rules apply to the attributes
-    :attr:`extensible_base_url <lino.site.Site.extensible_base_url>`, 
-    :attr:`bootstrap_base_url <lino.site.Site.bootstrap_base_url>` and
-    :attr:`tinymce_base_url <lino.site.Site.tinymce_base_url>`.
-    """
-
-    # extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
-    # "Similar to :attr:`extjs_base_url` but pointing to ext.ensible.com."
-
-    # bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
-    # "Similar to :attr:`extjs_base_url` but pointing to twitter.github.com."
-
     tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
     "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
-
-    bootstrap_root = None
-    """
-    Path to the Jasmine root directory. 
-    Only used on a development server
-    whose `media` directory hasn't already a symbolic link or subdirectory,
-    and only if :attr:`use_bootstrap` is True.
-    """
 
     jasmine_root = None
     """
@@ -956,15 +909,6 @@ class Site(Site):
     Only to be used on a development server
     if the `media` directory has no symbolic link to the TinyMCE root directory,
     and only if :attr:`use_tinymce` is True.
-    """
-
-    eid_jslib_root = None
-    """
-    Path to the `eid_jslib` root directory. 
-    Only to be used on a development server
-    if the `media` directory has no symbolic link to the directory,
-    and only if :attr:`use_eid_jslib` is True.
-    http://code.google.com/p/eid-javascript-lib/
     """
 
     default_user = None
@@ -999,18 +943,6 @@ class Site(Site):
     See `/blog/2012/1105`.
     """
 
-    use_eid_jslib = False
-    """
-    Whether to include functionality to read Belgian id cards    
-    using Johan De Schutter's
-    `eid-javascript-lib <http://code.google.com/p/eid-javascript-lib/>`_.
-    
-    If this is True, Lino expects eid-javascript-lib
-    to be installed in a directory `media/beid-jslib`.
-    See also :attr:`eid_jslib_root`.
-    
-    """
-
     use_esteid = False
     """
     Whether to include functionality to read Estonian id cards.
@@ -1034,11 +966,6 @@ class Site(Site):
     Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
     See also :attr:`tinymce_root`.
     See `/blog/2011/0523`.
-    """
-
-    use_bootstrap = True
-    """
-    Whether to use the `Bootstrap  <http://twitter.github.com/bootstrap>`_ CSS toolkit.
     """
 
     use_jasmine = False
@@ -1543,20 +1470,30 @@ class Site(Site):
     def build_media_url(self, *args, **kw):
         return self.buildurl('media', *args, **kw)
 
-    def build_admin_url(self, *args, **kw):
-        if self.admin_prefix:
-            return self.buildurl(self.admin_prefix, *args, **kw)
-        return self.buildurl(*args, **kw)
+    # def build_admin_url(self, *args, **kw):
+    #     if self.admin_prefix:
+    #         return self.buildurl(self.admin_prefix, *args, **kw)
+    #     return self.buildurl(*args, **kw)
 
     # def build_plain_url(self, *args, **kw):
     #     if self.plain_prefix:
     #         return self.buildurl('plain', *args, **kw)
     #     return self.buildurl(*args, **kw)
 
-    def build_extjs_url(self, url):
-        if self.extjs_base_url:
-            return self.extjs_base_url + url
-        return self.build_media_url('extjs', url)
+    def build_admin_url(self, *args, **kw):
+        # backwards compatibility
+        # deprecated
+        return self.plugins.extjs.build_plain_url(*args, **kw)
+        
+    def build_extjs_url(self, *args, **kw):
+        # backwards compatibility
+        # deprecated
+        return self.plugins.extjs.build_media_url(*args, **kw)
+
+    # def build_extjs_url(self, url):
+    #     if self.extjs_base_url:
+    #         return self.extjs_base_url + url
+    #     return self.build_media_url('extjs', url)
 
     # def build_extensible_url(self, url):
     #     if self.extensible_base_url:

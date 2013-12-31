@@ -43,12 +43,15 @@ class Site(Site):
     demo_fixtures = 'std intro furniture demo demo2'.split()
 
     default_ui = 'pages'
-    admin_prefix = 'admin'
+    
     sidebar_width = 3
     user_model = 'users.User'
 
     languages = 'en et'
     #~ languages = 'de fr et en'.split()
+
+    # def setup_plugins(self):
+    #     self.configure_plugin('extjs', url_prefix='admin')
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

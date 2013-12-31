@@ -31,6 +31,8 @@ class Plugin(BasePlugin):
 
     "Lino extension to `djangosite.Plugin`"
 
+    ui_label = None
+
     media_base_url = None
     """
     Remote URL base for media files.
@@ -67,12 +69,8 @@ class Plugin(BasePlugin):
     List of js snippets to be injected into the `lino_*.js` file.
     """
 
-    def on_ui_init(cls, ui):
-        """This is called when the UI is being instantiated.
-
-        E.g. the :mod:`lino.extjs` app uses this to install its own
-        `default_renderer`.
-
+    def on_ui_init(cls, kernel):
+        """This is called when the kernel is being instantiated.
         """
         pass
 
@@ -100,7 +98,9 @@ class Plugin(BasePlugin):
         return self.buildurl('media', self.media_name, *parts, **kw)
 
     def build_plain_url(self, *args, **kw):
-        return self.buildurl(self.url_prefix, *args, **kw)
+        if self.url_prefix:
+            return self.buildurl(self.url_prefix, *args, **kw)
+        return self.buildurl(*args, **kw)
 
     def buildurl(self, *args, **kw):
         url = self.site.site_prefix + ("/".join(args))

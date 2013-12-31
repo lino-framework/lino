@@ -18,14 +18,16 @@
         {% endif -%}
       {% endfor -%}
     {% endif -%}
-    {% if 'extjs' in site.plugins -%}
     &mdash;
-    <a href="{{site.build_admin_url()}}">Admin</a>
-    {% endif -%}
-    {% if site.plain_prefix -%}
-    &mdash;
-    <a href="{{site.plugins.plain.build_plain_url()}}">Plain</a>
-    {% endif -%}
+    {% for ui in site.installed_plugins -%}
+        {% if ui.ui_label -%}
+        {% if ar.renderer == ui.renderer -%}
+        {{ui.ui_label}}
+        {% else -%}
+        <a href="{{ui.build_plain_url()}}">{{ui.ui_label}}</a>
+        {% endif -%}
+        {% endif -%}
+    {% endfor -%}
     </div>
     {% endblock %}
     {% block navbar %}

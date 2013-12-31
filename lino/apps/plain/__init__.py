@@ -14,12 +14,19 @@
 
 """
 The :mod:`lino.apps.plain` app adds the "plain" user interface.
+
+It uses the `Bootstrap  <http://twitter.github.com/bootstrap>`_ 
+CSS toolkit.
+
 """
 
 from lino.ad import Plugin
+from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(Plugin):
+
+    ui_label = _("Plain")
 
     url_prefix = 'b'
 
@@ -48,22 +55,21 @@ class Plugin(Plugin):
         from . import views
         return views.PlainIndex.as_view()
 
-    def get_patterns(self, ui):
-        from django.conf.urls import patterns, include, url
+    def get_patterns(self, kernel):
+        from django.conf.urls import patterns
         from . import views
-        rx = '^'
         urls = patterns(
             '',
-            (rx + r'$', views.PlainIndex.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
+            (r'^/?$', views.PlainIndex.as_view()),
+            (r'^(?P<app_label>\w+)/(?P<actor>\w+)$',
              views.PlainList.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+            (r'^(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
              views.PlainElement.as_view()),
         )
 
-        if ui.site.plain_prefix:
-            return patterns(
-                '', url('^' + self.url_prefix + "/", include(urls)))
+        # if self.url_prefix:
+        #     return patterns(
+        #         '', url('^' + self.url_prefix + "/", include(urls)))
         return urls
 
 

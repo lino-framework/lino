@@ -244,8 +244,8 @@ class Kernel(object):
                 p.on_ui_init(self)
 
         ui = self.site.plugins.resolve(self.site.default_ui)
+        ui.url_prefix = None
         self.default_renderer = ui.renderer
-
 
         post_ui_build.send(self)
 
@@ -615,8 +615,8 @@ class Kernel(object):
             raise Exception("MEDIA_URL %r doesn't end with a '/'!" %
                             settings.MEDIA_URL)
 
-        if not self.site.extjs_base_url:
-            self.setup_media_link(urlpatterns, 'extjs', 'extjs_root')
+        # if not self.site.extjs_base_url:
+        #     self.setup_media_link(urlpatterns, 'extjs', 'extjs_root')
 
         # if self.site.use_bootstrap:
         #     if not self.site.bootstrap_base_url:
@@ -634,9 +634,9 @@ class Kernel(object):
         if self.site.use_jasmine:
             self.setup_media_link(urlpatterns,
                 'jasmine', 'jasmine_root')
-        if self.site.use_eid_jslib:
-            self.setup_media_link(urlpatterns,
-                'eid-jslib', 'eid_jslib_root')
+        # if self.site.use_eid_jslib:
+        #     self.setup_media_link(urlpatterns,
+        #         'eid-jslib', 'eid_jslib_root')
 
         try:
             self.setup_media_link(urlpatterns,
@@ -665,12 +665,19 @@ class Kernel(object):
 
         urlpatterns = self.get_media_urls()
 
-        urlpatterns += patterns(
-            '', ('^$', self.default_renderer.plugin.get_index_view()))
+        # urlpatterns += patterns(
+        #     '', ('^$', self.default_renderer.plugin.get_index_view()))
 
         for p in self.site.installed_plugins:
             if isinstance(p, LinoPlugin):
-                urlpatterns += p.get_patterns(self)
+                # urlpatterns += p.get_patterns(self)
+                pat = p.get_patterns(self)
+                if p.url_prefix:
+                    urlpatterns += patterns(
+                        '', url('^' + p.url_prefix + "/?",
+                                include(pat)))
+                else:
+                    urlpatterns += pat
 
         # if self.site.use_extjs and self.site.admin_prefix:
         #     urlpatterns += patterns(

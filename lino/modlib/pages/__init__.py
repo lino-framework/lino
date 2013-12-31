@@ -18,6 +18,8 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(Plugin):
 
+    ui_label = _("Pages")
+
     verbose_name = _("Pages")
 
     url_prefix = 'p'
@@ -28,18 +30,18 @@ class Plugin(Plugin):
         self.renderer = PlainRenderer(self)
 
     def get_patterns(self, ui):
-        from django.conf.urls import patterns, include
+        from django.conf.urls import patterns
         from . import views
 
         urls = patterns(
             '',
-            (r'^$', self.get_index_view()),
+            (r'^/?$', self.get_index_view()),
             (r'^(?P<ref>\w*)$', views.PagesIndex.as_view()),
         )
 
-        if self.url_prefix:
-            return patterns(
-                '', ('^' + self.url_prefix + "/", include(urls)))
+        # if self.url_prefix:
+        #     return patterns(
+        #         '', ('^' + self.url_prefix + "/", include(urls)))
         return urls
 
     def get_index_view(self):

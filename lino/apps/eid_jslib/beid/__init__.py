@@ -36,6 +36,15 @@ class Plugin(BeIdPlugin):  # was: use_eid_jslib
     # deprecated, not tested
     site_js_snippets = ['plugins/eid_jslib.js']
     media_name = 'eid-jslib'
+    media_base_url = "?"
+    media_root = None
+    """
+    Path to the `eid_jslib` root directory. 
+    Only to be used on a development server
+    if the `media` directory has no symbolic link to the directory,
+    and only if :attr:`use_eid_jslib` is True.
+    http://code.google.com/p/eid-javascript-lib/
+    """
 
     def get_js_includes(self, settings, language):
         yield self.build_media_url('be_belgium_eid.js')

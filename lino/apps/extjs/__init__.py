@@ -13,15 +13,59 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from lino.ad import Plugin
+from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(Plugin):
+
+    ui_label = _("Admin")
+
+    url_prefix = "admin"
+
+    media_name = 'extjs'
+
+    media_base_url = "http://extjs-public.googlecode.com/" + \
+                     "svn/tags/extjs-3.3.1/release/"
+
+    media_root = None
+    """Path to the ExtJS root directory.  Only used when
+    :attr:`media_base_url` is None, and when the `media` directory has
+    no symbolic link named `extjs` pointing to the ExtJS root
+    directory.
+
+    """
+
+
+    """The URL from where to include the ExtJS library files.
+    
+    The default value points to the `extjs-public
+    <http://code.google.com/p/extjs-public/>`_ repository and thus
+    requires the clients to have an internet connection.  This
+    relieves newcomers from the burden of having to specify a download
+    location in their :xfile:`settings.py`.
+    
+    On a production site you'll probably want to download and serve
+    these files yourself by setting this to `None` and setting
+    :attr:`extjs_root` (or a symbolic link "extjs" in your
+    :xfile:`media` directory) to point to the local directory where
+    ExtJS 3.3.1 is installed).
+
+    """
 
     def on_ui_init(self, ui):
         from .ext_renderer import ExtRenderer
         self.renderer = ExtRenderer(self)
         ui.extjs_renderer = self.renderer
         # ui.extjs_renderer = ui.default_renderer = self.renderer
+
+    def get_css_includes(self, site):
+        yield self.build_media_url('resources/css/ext-all.css')
+
+    def get_js_includes(self, settings, language):
+        return []
+
+    def get_head_lines(cls, site, request):
+        return []
 
     def get_used_libs(self, html=False):
         if html is not None:
@@ -36,17 +80,17 @@ class Plugin(Plugin):
             yield ("Silk Icons", '1.3',
                    "http://www.famfamfam.com/lab/icons/silk/")
 
-    def get_patterns(self, ui):
-        from django.conf.urls import patterns, include
-        urls = self.get_ext_urls(ui)
-        if ui.site.admin_prefix:
-            return patterns(
-                '', ('^' + ui.site.admin_prefix+"/", include(urls)))
-        return urls
-
     def get_index_view(self):
         from . import views
         return views.AdminIndex.as_view()
+
+    def get_patterns(self, ui):
+        # from django.conf.urls import patterns, include
+        urls = self.get_ext_urls(ui)
+        # if self.url_prefix:
+        #     return patterns(
+        #         '', ('^' + self.url_prefix+"/", include(urls)))
+        return urls
 
     def get_ext_urls(self, ui):
 

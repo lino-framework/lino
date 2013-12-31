@@ -465,11 +465,16 @@ class ExtRenderer(HtmlRenderer):
         label = cgi.escape(force_unicode(label or a.get_button_label()))
         return '[<a href="%s">%s</a>]' % (self.action_url_http(a, **params), label)
 
+    def build_admin_url(self, *args, **kw):
+        return self.plugin.build_plain_url(*args, **kw)
+
     def get_actor_url(self, actor, *args, **kw):
-        return settings.SITE.build_admin_url("api", actor.app_label, actor.__name__, *args, **kw)
+        return self.build_admin_url(
+            "api", 
+            actor.app_label, actor.__name__, *args, **kw)
 
     def get_home_url(self, *args, **kw):
-        return settings.SITE.build_admin_url(*args, **kw)
+        return self.build_admin_url(*args, **kw)
 
     def get_request_url(self, ar, *args, **kw):
         """
@@ -489,10 +494,12 @@ class ExtRenderer(HtmlRenderer):
         #~ kw = self.request2kw(rr,**kw)
         if ar.bound_action != ar.actor.default_action:
             kw[ext_requests.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
-        return settings.SITE.build_admin_url('api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
+        return self.build_admin_url(
+            'api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
     def get_detail_url(self, obj, *args, **kw):
-        return settings.SITE.build_admin_url('api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
+        return self.build_admin_url(
+            'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
 
     #~ def request_href_js(self,rr,text=None):
         #~ url = self.request_handler(rr)
@@ -546,7 +553,7 @@ class ExtRenderer(HtmlRenderer):
 
         if run_jasmine:
             yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
-        yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
+        # yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
 
         #~ yield '<!-- overrides to base library -->'
 
@@ -564,50 +571,49 @@ class ExtRenderer(HtmlRenderer):
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url()
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url()
             #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url()
-            yield stylesheet(site.build_extjs_url("examples/ux/statusbar/css/statusbar.css"))
+            yield stylesheet(
+                site.build_extjs_url("examples/ux/statusbar/css/statusbar.css"))
             yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/GridFilters.css"))
             yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/RangeMenu.css"))
 
-        yield stylesheet(site.build_extjs_url("examples/ux/fileuploadfield/css/fileuploadfield.css"))
+        yield stylesheet(
+            site.build_extjs_url(
+                "examples/ux/fileuploadfield/css/fileuploadfield.css"))
 
-        #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/fileuploadfield/css/fileuploadfield.css" />' % site.build_media_url()
-
-        #~ yield '<link rel="stylesheet" type="text/css" href="%s/lino/extjs/lino.css">' % self.media_url()
         yield stylesheet(site.build_media_url("lino/extjs/lino.css"))
 
         if site.use_awesome_uploader:
-            yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader.css"))
-            yield stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))
+            yield stylesheet(
+                site.build_media_url(
+                    "lino/AwesomeUploader/AwesomeUploader.css"))
+            yield stylesheet(
+                site.build_media_url(
+                    "lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))
 
         if settings.DEBUG:
-            yield javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))
+            yield javascript(
+                site.build_extjs_url('adapter/ext/ext-base-debug.js'))
             yield javascript(site.build_extjs_url('ext-all-debug.js'))
         else:
             yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
             yield javascript(site.build_extjs_url('ext-all.js'))
 
         if translation.get_language() != 'en':
-            yield javascript(site.build_extjs_url('src/locale/ext-lang-' + translation.get_language() + '.js'))
+            yield javascript(
+                site.build_extjs_url(
+                    'src/locale/ext-lang-' +
+                    translation.get_language() + '.js'))
 
-        if False:
-            yield '<script type="text/javascript" src="%s/extjs/Exporter-all.js"></script>' % site.build_media_url()
-
-        if False:
-            yield '<script type="text/javascript" src="%s/extjs/examples/ux/CheckColumn.js"></script>' % site.build_media_url()
-
-        yield javascript(site.build_extjs_url('examples/ux/statusbar/StatusBar.js'))
+        yield javascript(
+            site.build_extjs_url('examples/ux/statusbar/StatusBar.js'))
 
         if site.use_spinner:
             yield javascript(site.build_extjs_url('examples/ux/Spinner.js'))
 
         if site.use_tinymce:
-            #~ p = self.media_url() + '/tinymce'
-            #~ p = site.build_media_url('tinymce')
-            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
-            #~ yield '<script type="text/javascript" src="%s/tiny_mce.js"></script>' % p
             yield javascript(site.build_tinymce_url("tiny_mce.js"))
-            #~ yield '<script type="text/javascript" src="%s/lino/tinymce/Ext.ux.TinyMCE.js"></script>' % self.media_url()
-            yield javascript(site.build_media_url("lino/tinymce/Ext.ux.TinyMCE.js"))
+            yield javascript(site.build_media_url(
+                "lino/tinymce/Ext.ux.TinyMCE.js"))
             yield '''<script language="javascript" type="text/javascript">
 tinymce.init({
         theme : "advanced"
@@ -615,8 +621,8 @@ tinymce.init({
 });
 </script>'''
 
-        #~ yield '<script type="text/javascript" src="%s/lino/extjs/Ext.ux.form.DateTime.js"></script>' % self.media_url()
-        yield javascript(site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js"))
+        yield javascript(
+            site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js"))
 
         if run_jasmine:  # site.use_jasmine:
             yield javascript(site.build_media_url("jasmine/jasmine.js"))
