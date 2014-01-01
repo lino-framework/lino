@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -134,7 +134,8 @@ class LayoutHandle:
         it uses then a hard-coded height of 10 lines.
         You can always specify your own window_size.
         """
-        if len(self.main.elements) == 1 and self.layout.window_size is not None:
+        if len(self.main.elements) == 1 \
+           and self.layout.window_size is not None:
             self.layout.window_size = (self.layout.window_size[0], 10)
             if False:
                 #~ TODO : when the field is not vflex, use height auto instead of hard-coded 10 lines
@@ -373,7 +374,10 @@ class LayoutHandle:
         return self.layout.get_data_elem(name)
 
     def get_choices_url(self, *args, **kw):
-        return self.layout.get_choices_url(settings.SITE.ui, *args, **kw)
+        # 20140101
+        return self.layout.get_choices_url(
+            settings.SITE.kernel.default_renderer.plugin,
+            *args, **kw)
 
 
 class BaseLayout(object):
@@ -610,11 +614,18 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         return "%s on %s" % (self.__class__.__name__, self._datasource)
 
     def get_choices_url(self, ui, field, **kw):
-        return settings.SITE.build_admin_url("choices",
-                                             self._datasource.app_label,
-                                             self._datasource.__name__,
-                                             field.name, **kw)
+        # 20140101
+        # return settings.SITE.build_admin_url(
+        #     "choices",
+        #     self._datasource.app_label,
+        #     self._datasource.__name__,
+        #     field.name, **kw)
 
+        return ui.build_plain_url(
+            "choices",
+            self._datasource.app_label,
+            self._datasource.__name__,
+            field.name, **kw)
 
 class FieldLayout(BaseLayout):
     pass
@@ -677,24 +688,12 @@ class ActionParamsLayout(ParamsLayout):
     url_param_name = constants.URL_PARAM_FIELD_VALUES
 
     def get_choices_url(self, ui, field, **kw):
-        return settings.SITE.build_admin_url("apchoices",
-                                             self._datasource.defining_actor.app_label,
-                                             self._datasource.defining_actor.__name__,
-                                             self._datasource.action_name,
-                                             field.name, **kw)
-
-    def unused_get_choices_url(self, ui, field, **kw):
-        """
-        """
-        a = self._datasource
-        return settings.SITE.build_admin_url("apchoices",
-                                             field.rel.to._meta.app_label,
-                                             field.rel.to.__name__,
-                                             # ~ 'oops', # todo: instantiate ActionParamsLayout per BoundAction (not per Action)?
-                                             #~ ba.actor.app_label,
-                                             #~ ba.actor.__name__,
-                                             a.action_name,
-                                             field.name, **kw)
+        return settings.SITE.build_admin_url(
+            "apchoices",
+            self._datasource.defining_actor.app_label,
+            self._datasource.defining_actor.__name__,
+            self._datasource.action_name,
+            field.name, **kw)
 
 
 def create_layout_panel(lh, name, vertical, elems, **kw):

@@ -464,7 +464,8 @@ class Site(Site):
         if True:  # after 20131206
 
             from lino.core.kernel import Kernel
-            self.ui = Kernel(self)
+            self.kernel = Kernel(self)
+            self.ui = self.kernel  # internal backwards compat
 
         else:
 
@@ -1482,13 +1483,14 @@ class Site(Site):
 
     def build_admin_url(self, *args, **kw):
         # backwards compatibility
-        # deprecated
-        return self.plugins.extjs.build_plain_url(*args, **kw)
+        return self.kernel.default_renderer.plugin.build_plain_url(
+            *args, **kw)
         
     def build_extjs_url(self, *args, **kw):
         # backwards compatibility
-        # deprecated
-        return self.plugins.extjs.build_media_url(*args, **kw)
+        return self.kernel.default_renderer.plugin.build_media_url(
+            *args, **kw)
+        # return self.plugins.extjs.build_media_url(*args, **kw) 
 
     # def build_extjs_url(self, url):
     #     if self.extjs_base_url:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -133,7 +133,8 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         #~ """
         #~ return URLTester(self)
 
-    def demo_get(self, username, url_base, json_fields, expected_rows, **kwargs):
+    def demo_get(self, username, url_base, json_fields, expected_rows,
+                 **kwargs):
         case = HttpQuery(username, url_base, json_fields,
                          expected_rows, kwargs)
         url = settings.SITE.build_admin_url(case.url_base, **case.kwargs)

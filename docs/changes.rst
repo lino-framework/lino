@@ -15,16 +15,19 @@ Version 1.6.14 (not yet released)
 =================================
 
 - A "plugin" is an app which defines in
-  her `__init__.py` a class named "App" which must be a subclass of
-  :class:`djangosite.djangosite_site.App`. 
-  We could also call them "new-style apps". All this is
-  being imported *before* Django settings. 
-  
-- New-style apps of a Site are later accessible via
-  `settings.SITE.plugins.foo` and can receive additional
-  configuration.  This mechanism is also a (partial) solution for
-  `Django ticket #3591 <https://code.djangoproject.com/ticket/3591>`_
+  her `__init__.py` a class named "Plugin" which must be a subclass of
+  :class:`djangosite.djangosite_site.Plugin`. 
+  We could also call them "new-style apps". 
+  A Plugin can have additional configuration.  
 
+  This mechanism is also a (partial) solution for
+  `Django ticket #3591 <https://code.djangoproject.com/ticket/3591>`_
+  Aymeric Augustin's solution
+  being imported *before* Django settings. 
+
+  
+- The apps of a Site are later accessible via
+  `settings.SITE.plugins.foo` 
 - Some **site** settings have become **plugin** settings:
   The are no longer defined as class attributes of `Site`, but 
   defined in the `App` class.
@@ -56,6 +59,15 @@ Version 1.6.14 (not yet released)
             'plain',
             media_root='/home/luc/snapshots/bootstrap',
             media_base_url=None)
+
+
+   --------------- --------------------------
+   Before          After
+   --------------- --------------------------
+   admin_prefix    plugins.extjs.url_prefix
+   extjs_base_url  plugins.extjs.media_base_url
+   extjs_root      plugins.extjs.media_root
+
 
 
 - :mod:`lino.apps.extjs` and
