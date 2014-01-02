@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -47,9 +47,6 @@ from north.dbutils import dtosl
 
 from lino import mixins
 from lino import dd
-#~ from lino.core import reports
-from lino.core import actions
-from lino.utils import AttrDict
 from lino.utils import ONE_DAY
 from lino.core import constants
 
@@ -664,25 +661,19 @@ add('10', _("Okay"), 'okay')
 add('20', _("Pending"), 'pending')
 
 
-#~ unclear_event_states = (EventStates.suggested,EventStates.draft,EventStates.notified)
-#~ unclear_event_states = (EventStates.suggested,EventStates.draft)
-
 class Events(dd.Table):
     help_text = _("A List of calendar entries. Each entry is called an event.")
-    #~ debug_permissions = True
     model = 'cal.Event'
     required = dd.required(user_groups='office', user_level='manager')
-    #~ column_names = 'start_date start_time user summary workflow_buttons calendar *'
     column_names = 'when_text:20 user summary event_type *'
-    #~ column_names = 'start_date start_time user summary event_type *'
 
-    hidden_columns = """
-    priority access_class transparent
-    owner created modified
-    description
-    sequence auto_type build_time owner owner_id owner_type 
-    end_date end_time
-    """
+    # hidden_columns = """
+    # priority access_class transparent
+    # owner created modified
+    # description
+    # sequence auto_type build_time owner owner_id owner_type
+    # end_date end_time
+    # """
 
     #~ active_fields = ['all_day']
     order_by = ["start_date", "start_time"]
@@ -844,14 +835,11 @@ class OneEvent(Events):
 
 if settings.SITE.user_model:
 
-    #~ class MyEvents(Events,mixins.ByUser):
     class MyEvents(Events):
         label = _("My events")
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
-        #~ column_names = 'start_date start_time event_type project summary workflow_buttons *'
-        #~ column_names = 'when_text:20 event_type project summary *'
-        column_names = 'when_text summary workflow_buttons project'
+        column_names = 'when_text summary workflow_buttons project *'
 
         @classmethod
         def param_defaults(self, ar, **kw):
@@ -893,42 +881,6 @@ if settings.SITE.user_model:
             kw.update(user=None)
             kw.update(assigned_to=ar.get_user())
             return kw
-
-    class unused_MyEventsToday(MyEvents):
-        required = dd.required(user_groups='office')
-        help_text = _("Table of my events per day.")
-        column_names = 'when_text summary workflow_buttons project'
-        label = _("My events today")
-        #~ order_by = ['start_date', 'start_time']
-
-        #~ @classmethod
-        #~ def param_defaults(self,ar,**kw):
-            #~ kw = super(MyEventsToday,self).param_defaults(ar,**kw)
-            #~ today = datetime.date.today()
-            #~ kw.update(start_date=today)
-            # ~ # kw.update(end_date=today)
-            # ~ # logger.info("20130807 %s %s",self,kw)
-            #~ return kw
-
-        #~ parameters = dict(
-          #~ date = models.DateField(_("Date"),
-          #~ blank=True,default=datetime.date.today),
-        #~ )
-        #~ @classmethod
-        #~ def get_request_queryset(self,ar):
-            #~ qs = super(MyEventsToday,self).get_request_queryset(ar)
-            #~ return qs.filter(start_date=ar.param_values.date)
-
-        #~ @classmethod
-        #~ def create_instance(self,ar,**kw):
-            #~ kw.update(start_date=ar.param_values.date)
-            #~ return super(MyEventsToday,self).create_instance(ar,**kw)
-
-        #~ @classmethod
-        #~ def setup_request(self,rr):
-            #~ rr.known_values = dict(start_date=datetime.date.today())
-            #~ super(MyEventsToday,self).setup_request(rr)
-
 
 
 def update_reminders_for_user(user, ar):

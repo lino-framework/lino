@@ -12,10 +12,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino import ad
+#from lino import ad
+
+from lino.modlib.sales import Plugin
 
 
-class Plugin(ad.Plugin):
+class Plugin(Plugin):
 
-    extends = 'lino.modlib.sales'
+    # extends = 'lino.modlib.sales'
     extends_models = ['sales.Invoice',  'sales.InvoiceItem']

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -94,21 +94,13 @@ for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME):
 def add_config_dir(name, mod):
     pth = join(dirname(mod.__file__), SUBDIR_NAME)
     if isdir(pth):
+        # logger.info("add_config_dir %s %s", name, pth)
         config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
 
 settings.SITE.for_each_app(add_config_dir)
 
-#~ for app in settings.INSTALLED_APPS:
-    #~ app_mod = import_module(app)
-    #~ app = getattr(app_mod,'App',None)
-    #~ if isinstance(app,ad.App) and app.extends:
-        #~ parent = import_module(app.extends)
-        #~ add_config_dir(parent)
-    #~ add_config_dir(app_mod)
-
 LOCAL_CONFIG_DIR = None
 
-#~ if settings.SITE.project_dir != settings.SITE.source_dir:
 if settings.SITE.is_local_project_dir:
     p = join(settings.SITE.project_dir, SUBDIR_NAME)
     if isdir(p):
@@ -119,16 +111,6 @@ config_dirs.reverse()
 config_dirs = tuple(config_dirs)
 
 #~ logger.debug('config_dirs:\n%s', '\n'.join([repr(cd) for cd in config_dirs]))
-
-#~ for app_name in settings.INSTALLED_APPS:
-    #~ app = import_module(app_name)
-    #~ fn = getattr(app,'__file__',None)
-    #~ if fn is not None:
-        #~ pth = join(dirname(fn),'config')
-        #~ if isdir(pth):
-            #~ config_dirs.append(ConfigDir(pth,False))
-    #~ LOCAL_CONFIG_DIR = ConfigDir(join(settings.PROJECT_DIR,'config'),True)
-    #~ config_dirs.append(LOCAL_CONFIG_DIR)
 
 
 def find_config_file(fn, group=''):

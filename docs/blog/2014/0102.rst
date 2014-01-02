@@ -1,0 +1,14 @@
+====================================
+20140102 (Thursday, 02 January 2014)
+====================================
+
+Added a testcase to :ref:`faggio` to test whether 
+the templates directory has been inherited.
+
+Removed the `extends` attribute in :class:`Plugin <djangosite.djangosite_site.Plugin>` because it was
+nonsense work to specify this yourself.  The Site now inspects each
+plugin's `__mro__` attribute to get that information.
+
+Moved the :meth:`Site.for_each_app <djangosite.djangosite_site.Site.for_each_app>` from :mod:`lino`  to :mod:`djangosite`.
+
+

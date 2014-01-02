@@ -8,17 +8,19 @@ Why the new apps management in Django 1.7 is not enough
 Remember :blogref:`20131226` when I was delighted to discover
 Aymeric's new app management, but then discovered that it has a
 serious difference: `AppConfig` objects don't get instantiated
-*before* importing the `models`modules, but at the same time.  Which
+*before* importing the `models` modules, but at the same time.  Which
 for me made it impossible to use Aymeric's implementation for doing
 the things I need to do.
 
-Today during a chat with Joe I thought again about that question
-and --unfortunately-- came again to the same conclusion: the new apps
-management in Django 1.7 is not enough for me.  The following is an
-example which explains why.
+Today during a chat with Joe I grew new hope that maybe I was wrong,
+that maybe it *is* possible?
+
+But after some meditation I --unfortunately-- came again to the same
+conclusion: the new apps management in Django 1.7 is not enough for
+me.  Here is an example which explains why.
 
 Let's take :ref:`faggio`.  It uses Lino's standard calendar module
-:mod:`lino.modlib.cal`, but extends the `Room` model by adding two
+:mod:`lino.apps.cal`, but extends the `Room` model by adding two
 fields, adding the another base class (the :class:`ContactRelated
 <lino.modlib.contacts.models.ContactRelated>` mixin), and by
 overriding the `__unicode__` method.  
@@ -26,7 +28,7 @@ overriding the `__unicode__` method.
 Here is the relevant application developer's code which defines the
 Faggio version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
 
-    from lino.modlib.cal.models import Room
+    from lino.apps.cal.models import Room
     from lino.modlib.contacts.models import ContactRelated
 
     class Room(Room, ContactRelated):
@@ -39,20 +41,11 @@ Faggio version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
             if self.company and self.company.city:
                 s = '%s (%s)' % (self.company.city, s)
             return s
+
     
-For this to work, the modlib version of :class:`cal.Room
-<lino.modlib.cal.models.Room>` must have `abstract=True`.  
-
-But not all Lino applications who use the calendar module want to
-override the Room model. IOW the *abstractness of certain models* must
-be *optional*.  Afaics there is no way in Django to make a model
-abstract "afterwards".  IOW we need a central place per application
-where models modules can ask whether it wants a given model to be
-abstract or not.
-
-Here is how the modlib version of :class:`cal.Room
-<lino.modlib.cal.models.Room>` 
-works around this ::
+For this to work, the *library version* of :class:`cal.Room
+<lino.apps.cal.models.Room>` must have `abstract=True`.  Here is how
+that class is begin defined::
 
     class Room(dd.BabelNamed):
         class Meta:
@@ -61,16 +54,22 @@ works around this ::
             verbose_name_plural = _("Rooms")
 
 
-This is the reason why we need the :setting:`is_abstract_model`
-method.  The implementation of this method has evolved in time.  The
-first implementation used a simple set of strings in a class attribute
-of `djangosite.Site`.  That might have been a standard Django setting.
+The *abstractness of certain models* in an apps library must be
+*optional*.  Not all Lino applications who use the calendar module
+want to override the `Room` model.  Afaics there is no way in Django
+to make a model abstract "afterwards".  IOW we need a central place
+where models modules can ask whether it wants a given model to be
+abstract or not.
 
+This is why we call the :setting:`is_abstract_model` method.  The
+implementation of this method has evolved in time.  The first
+implementation used a simple set of strings in a class attribute of
+`djangosite.Site`.  That might have been a standard Django setting.
 But as things got more and more complex, it became difficult to define
-this manually. And it was frustrating because in fact every app *does*
-know which modlib models it is going to override.  But how to load
-that information from an app before actually importing it?  I then
-discovered that Django doesn't use the `__init__.py` files of
+this manually. And it was *useless* work because every app *does* know
+which library models it is going to override.  But how to load that
+information from an app before actually importing it?  I then
+discovered that Django doesn't use the :ffile:`__init__.py` files of
 installed apps.  And of course I was lucky to have a `djangosite.Site`
 class which is being *instantiated* before `settings` have finished to
 load...
@@ -85,11 +84,13 @@ now contains this information in the `extends_models` attribute::
 
 
 This is an important pattern used by Lino's "modlib" (a collection of 
-reusable apps designed to work together).
+reusable apps designed to work together.).
 
 And I don't see how it would be possible to do this using the 
 current "plain Django 1.7" implementation. 
+Or maybe I have a mind lock;-)
 
-
-
+Note that I am in the process of renaming `lino.modlib` to
+`lino.apps`, and the ``cal`` module has already moved, ``contacts``
+not yet.
 

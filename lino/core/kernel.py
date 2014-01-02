@@ -290,7 +290,7 @@ class Kernel(object):
                 self.project_model,
                 strict="Unresolved model '%s' in project_model.")
 
-        for m,p in self.override_modlib_models.items():
+        for m, p in self.override_modlib_models.items():
             dd.resolve_model(
                 m,
                 strict="%s plugin tries to extend unresolved model '%%s'" %

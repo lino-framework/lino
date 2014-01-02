@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2013 Luc Saffre
+# Copyright 2002-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -1583,32 +1583,6 @@ class Site(Site):
             #~ from north.dbutils import set_language
             #~ set_language(u.language)
         return requests.BaseRequest(**kw)
-
-    def for_each_app(self, func, *args, **kw):
-        """
-        Successor of :meth:`djangosite.Site.on_each_app`.
-        This also loops over
-
-        - apps that don't have a models module
-        - inherited apps
-
-        """
-
-        from django.utils.importlib import import_module
-
-        for p in self.installed_plugins:
-            if p.extends:
-                parent = import_module(p.extends)
-                func(p.extends, parent, *args, **kw)
-            func(p.app_name, p.app_module, *args, **kw)
-
-        # for app_name in self.get_installed_apps():
-        #     app_mod = import_module(app_name)
-        #     app = getattr(app_mod, 'App', None)
-        #     if app is not None and issubclass(app, ad.App) and app.extends:
-        #         parent = import_module(app.extends)
-        #         func(app.extends, parent, *args, **kw)
-        #     func(app_name, app_mod, *args, **kw)
 
     def get_letter_date_text(self, today=None):
         """
