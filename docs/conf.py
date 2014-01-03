@@ -15,7 +15,7 @@ import os
 from unipath import Path
 
 from atelier.sphinxconf import configure
-configure(globals(),'lino.examples.docs.settings')
+configure(globals(),'lino.projects.docs.settings')
 
 if False:
     import settings
@@ -33,8 +33,6 @@ extensions += ['atelier.sphinxconf.blog']
 
 
 import lino
-
-# os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.examples.docs.settings'
 
 """
 Trigger loading of Djangos model cache in order to avoid side effects that

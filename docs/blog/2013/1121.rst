@@ -55,7 +55,7 @@ Should I tell Emacs to remove trailing spaces automatically?
 Here is the same problem: such changes should rather not come 
 together with "real" changes.
 
-Moved :file:`docs/settings.py` to :file:`lino/examples/docs` 
+Moved :file:`docs/settings.py` to :file:`lino/projects/docs` 
 and made it the default settings module for Emacs.
 
 `How to actually change/set environment variables from 

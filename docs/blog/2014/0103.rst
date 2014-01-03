@@ -40,4 +40,19 @@ API docs still pointed to google code repository
 ------------------------------------------------
     
 I noticed that the API docs still pointed to the google code
-repository because `srcref_url` was not set correctly.
+repository because `srcref_url` was not set correctly. Fixed.
+
+Merged `lino.examples` to `lino.projects`
+-----------------------------------------
+
+Once you start to tidy up, you cannot easily stop: When the first
+merge had taken relatively little time I got eager and also moved the
+modules below ``lino.examples`` back to :mod:`lino.projects`.  My
+original idea had been the opposite, but also here I turned back
+because I discovered that writing ``from lino.examples.std import *``
+for every Lino :xfile:`settings.py` file would sound strange.
+
+- :mod:`lino.projects.start`
+- :mod:`lino.projects.docs`
+
+

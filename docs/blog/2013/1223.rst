@@ -57,12 +57,12 @@ and
 This bug appeared only when 
 :attr:`admin_prefix <lino.lino_site.Site.admin_prefix>`
 was no-empty (as it is in 
-:mod:`lino.examples.start` and 
+:mod:`lino.projects.start` and 
 :mod:`lino.projects.cms`)
 
-But :mod:`lino.examples.start` needs some more work. TODO:
+But :mod:`lino.projects.start` needs some more work. TODO:
 
-- Convert :mod:`lino.apps.extjs` to use 
+- Convert :mod:`lino.modlib.extjs` to use 
   :attr:`url_prefix <lino.apps.extjs.App.url_prefix>`
   instead of 
   :attr:`admin_prefix <lino.lino_site.Site.admin_prefix>`.

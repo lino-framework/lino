@@ -39,7 +39,7 @@ inherit from Django's `AppConfig` class).
 But the name `App` was also not really what I liked.  So I renamed it
 to `Plugin` to avoid mixing them with `AppConfig` classes.
 
-I finally got all three user interfaces of :mod:`lino.examples.start`
+I finally got all three user interfaces of :mod:`lino.projects.start`
 working.
 
 There was still a bug in :mod:`lino.modlib.events.fixtures.vor` that

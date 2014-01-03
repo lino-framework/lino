@@ -45,7 +45,7 @@ but as expected this is not usable because it fits our needs
 The idea which I like best is of course to do that using Lino.
 I started a Lino application to quickly
 create a combined website and contacts management application for such
-a startup company: :mod:`lino.examples.start`.
+a startup company: :mod:`lino.projects.start`.
 
 A Lino application like :ref:`cosi` but
 additionally with an out-of-the-box business-card style website and a

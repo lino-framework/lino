@@ -7,14 +7,14 @@ User interfaces get more pluggable
 
 I continued to remove hard-wired dependencies to ExtJS.  The process
 is still not finished, but a next visible result is
-:mod:`lino.examples.start` where the user can now easily switch
+:mod:`lino.projects.start` where the user can now easily switch
 between the three (web) user interfaces that currently exist.
 
 Before starting the following changes, I checked in the changes made
 since :blogref:`20131227`.
 
 Moved the following settings and methods from lino_site.Site to 
-`lino.apps.extjs.Plugin`::
+`lino.modlib.extjs.Plugin`::
 
     .build_admin_url()  --> .plugins.extjs.build_plain_url()
     .admin_prefix --> .plugins.extjs.url_prefix

@@ -72,10 +72,6 @@ lino.modlib.eid_jslib
 lino.modlib.eid_jslib.beid
 lino.modlib.importfilters
 lino.core
-lino.examples
-lino.examples.docs
-lino.examples.start
-lino.examples.start.settings
 lino.history
 lino.modlib
 lino.modlib.auto
@@ -200,6 +196,9 @@ lino.projects.presto.settings
 lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
+lino.projects.docs
+lino.projects.start
+lino.projects.start.settings
 """.splitlines() if n])
 
 SETUP_INFO.update(message_extractors={
