@@ -1,0 +1,246 @@
+THANKS.txt:7: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:10: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:13: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:17: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:21: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:27: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:31: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:35: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:35: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:45: ERROR: Unknown interpreted text role "srcref".
+THANKS.txt:55: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:18: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:19: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:20: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:21: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:22: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_shell_scripts.rst:23: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
+/home/luc/hgwork/lino/docs/admin/oood.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/printable.rst:164: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/watch_tim.rst:22: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/lino/core/web.py:docstring of lino.core.web.DjangoJinjaTemplate:1: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.UsersOverview:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/utils/odsreader.py:docstring of lino.utils.odsreader:22: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/lino/utils/xmlgen/odf/__init__.py:docstring of lino.utils.xmlgen.odf:8: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0105.rst:13: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0112.rst:52: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0114.rst:109: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0314.rst:28: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0314.rst:92: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0315.rst:76: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0323.rst:8: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0323.rst:17: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0323.rst:45: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0323.rst:56: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0323.rst:95: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0324.rst:10: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0330.rst:35: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0330.rst:35: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
+/home/luc/hgwork/lino/docs/blog/2013/0420.rst:93: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0505.rst:11: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0621.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0703.rst:6: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0704.rst:30: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/0708.rst:29: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0710.rst:19: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:100: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0812.rst:11: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0812.rst:29: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0812.rst:58: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0812.rst:58: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:104: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:103: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/0818.rst:3: WARNING: Duplicate explicit target name: "wikivs".
+/home/luc/hgwork/lino/docs/blog/2013/0819.rst:144: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0819.rst:144: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0821.rst:20: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0821/bug.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0823.rst:24: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0823.rst:24: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0823.rst:49: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0824.rst:35: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:61: ERROR: Unknown interpreted text role "src".
+/home/luc/hgwork/lino/docs/blog/2013/0906.rst:20: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/0910.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0910.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0910.rst:63: ERROR: Unknown interpreted text role "function".
+/home/luc/hgwork/lino/docs/blog/2013/0912.rst:20: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0912.rst:20: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0912.rst:36: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0912.rst:45: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0912.rst:45: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0913.rst:20: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0914.rst:10: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0914.rst:10: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0914.rst:15: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0914.rst:15: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/0916.rst:54: WARNING: Inline strong start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1007.rst:24: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1007.rst:24: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:118: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:119: WARNING: Block quote ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/blog/2013/1015.rst:16: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1017.rst:64: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1017.rst:64: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1102.rst:12: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1115.rst:46: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1123.rst:38: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/1204.rst:56: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/1212.rst:8: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/blog/2013/1222.rst:117: WARNING: Line spec '367-': no lines pulled from include file u'/home/luc/hgwork/lino/docs/blog/2013/1222a.log'
+/home/luc/hgwork/lino/docs/blog/2014/0101.rst:64: ERROR: Unknown interpreted text role "ffile".
+/home/luc/hgwork/lino/docs/blog/index.rst:12: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/dev/apps.rst:19: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/dev/intro.rst:14: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/django/DjangoPatches.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/django/DjangoPatches.rst:12: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/eidreader/index.rst:5: WARNING: Duplicate explicit target name: "eid-applet".
+/home/luc/hgwork/lino/docs/ref/files.rst:10: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/ref/files.rst:55: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/1.rst:8: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/16.rst:21: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/16.rst:49: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/19.rst:47: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:48: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:49: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:53: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:54: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:57: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:58: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/27.rst:36: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/27.rst:58: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/3.rst:5: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/30.rst:50: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/30.rst:84: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/30.rst:97: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/45/using_url_protocol.rst:19: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/45/using_url_protocol.rst:21: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/5.rst:7: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tickets/8.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/todo.rst:1030: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:38: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:38: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:42: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:43: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/topics/gpdn.rst:43: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:69: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:69: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:72: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:72: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:75: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:75: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/dumpy.rst:140: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/lets.rst:22: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/lets.rst:32: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/lets.rst:33: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/lets.rst:35: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/lets.rst:37: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/mini.rst:4: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/mini.rst:11: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/pisa/index.rst:13: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/pisa/index.rst:21: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/polls/mysite/index.rst:40: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/tutorials/polls/mysite/index.rst:231: ERROR: Unknown interpreted text role "srcref".
+/home/luc/hgwork/lino/docs/admin/install.rst:81: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/modlib/beid/__init__.py:docstring of lino.modlib.beid:12: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.projects.igen.settings.rst:7: WARNING: unknown document: /igen/index
+/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
+/home/luc/hgwork/lino/docs/api/lino.utils.mti.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/blog/2013/0111.rst:7: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/blog/2013/0116.rst:98: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/blog/2013/0130.rst:9: WARNING: term not in glossary: ddt
+/home/luc/hgwork/lino/docs/blog/2013/0201.rst:10: WARNING: unknown document: ../2012/0704
+/home/luc/hgwork/lino/docs/blog/2013/0209.rst:7: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/blog/2013/0211.rst:7: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/blog/2013/0320.rst:9: WARNING: undefined label: lino.countries.country (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0320.rst:59: WARNING: undefined label: lino.modlib.cal (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0321.rst:110: WARNING: undefined label: welfare.userman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:42: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:59: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0425.rst:86: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:8: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:12: WARNING: undefined label: welfare.accounts.accounts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:15: WARNING: undefined label: welfare.pcsw.clientstest (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0506.rst:20: WARNING: undefined label: welfare.debts.liabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0507.rst:8: WARNING: undefined label: welfare.debts.entries (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0516.rst:149: WARNING: undefined label: welfare.pcsw.coachingendings (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0610.rst:26: WARNING: undefined label: welfare.debts.budgets (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0612.rst:7: WARNING: undefined label: welfare.pcsw.userswithclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:8: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:9: WARNING: undefined label: faggio.contacts.partners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:50: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:105: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0715.rst:29: WARNING: undefined label: welfare.cal.guestsbyevent (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0716.rst:8: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0718.rst:5: WARNING: undefined label: welfare.cal.guestsbypartner (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0720.rst:17: WARNING: undefined label: welfare.pcsw.userswithclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0720.rst:17: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:10: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0723.rst:144: WARNING: undefined label: welfare.receptions (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0723.rst:248: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0725.rst:42: WARNING: undefined label: faggio.sales.invoicestoissue (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0802.rst:26: WARNING: undefined label: welfare.reception.appointmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0806.rst:11: WARNING: undefined label: welfare.reception.client (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0806.rst:11: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0807.rst:8: WARNING: undefined label: welfare.cal.myeventstoday (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:5: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:50: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:54: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0814.rst:5: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:10: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:78: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0824.rst:43: WARNING: undefined label: lino.welfare (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0829.rst:8: WARNING: undefined label: eventstates.scheduled (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0901.rst:15: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:22: WARNING: undefined label: welfare.pcsw.allclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1012.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1026.rst:30: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1123.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1126.rst:132: WARNING: undefined label: tx25. (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:11: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: hoppel (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/eidreader/countries.rst:5: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/ref/glossary.rst:118: WARNING: term not in glossary: slave report
+/home/luc/hgwork/lino/docs/ref/glossary.rst:12: WARNING: undefined label: admin.install (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/1.3.4.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.5.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.6.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.7.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/docs/tickets/10.rst:4: WARNING: unknown document: /releases/2010/1027
+/home/luc/hgwork/lino/docs/tickets/31.rst:23: WARNING: unknown document: /topics/http_auth
+/home/luc/hgwork/lino/docs/tickets/32.rst:4: WARNING: unknown document: /dsbe/index
+/home/luc/hgwork/lino/docs/tickets/34.rst:1: WARNING: term not in glossary: .dtl
+/home/luc/hgwork/lino/docs/tickets/45.rst:27: WARNING: unknown document: /davlink
+/home/luc/hgwork/lino/docs/tickets/51.rst:5: WARNING: unknown document: /blog/2011/1122
+/home/luc/hgwork/lino/docs/tickets/51.rst:56: WARNING: unknown document: /blog/2011/1207
+/home/luc/hgwork/lino/docs/tickets/65.rst:4: WARNING: unknown document: /blog/2011/0311
+/home/luc/hgwork/lino/docs/tickets/70.rst:9: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/tickets/72.rst:33: WARNING: unknown document: /2013/0203
+/home/luc/hgwork/lino/docs/topics/minimal_apps.rst:15: WARNING: unknown document: /ref/modlib
+/home/luc/hgwork/lino/docs/topics/mti.rst:26: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/topics/startup.rst:19: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/topics/ui.rst:40: WARNING: undefined label: lino.ui.renderers (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/watch_tutorial/index.rst:66: WARNING: unknown document: ../workflow_tutorial/index

@@ -26,7 +26,7 @@ class Plugin(Plugin):
 
     def __init__(self, *args, **kw):
         super(Plugin, self).__init__(*args, **kw)
-        from lino.apps.plain.plain_renderer import PlainRenderer
+        from lino.modlib.plain.plain_renderer import PlainRenderer
         self.renderer = PlainRenderer(self)
 
     def get_patterns(self, ui):

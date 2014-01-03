@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@ When this app is installed, then you must also add the `.jar` files
 required by :ref:`eidreader`
 into your media directory, in a subdirectory named "eidreader".
 
-Alternatively there is :mod:`lino.apps.eid_jslib.beid` which overrides
-:mod:`lino.apps.beid` and does the same except that it uses
+Alternatively there is :mod:`lino.modlib.eid_jslib.beid` which overrides
+:mod:`lino.modlib.beid` and does the same except that it uses
 :ref:`eid_jslib` instead of :ref:`eidreader`
 
 This app makes sense only if there is exactly one subclass of

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -49,8 +49,8 @@ class Site(Site):
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.projects'
         yield 'lino.modlib.uploads'
-        yield 'lino.apps.cal'
-        yield 'lino.apps.extensible'
+        yield 'lino.modlib.cal'
+        yield 'lino.modlib.extensible'
         yield 'lino.modlib.outbox'
         yield 'lino.modlib.pages'
         #~ yield 'lino.projects.min2'

@@ -37,4 +37,9 @@ Maybe I'll change my mind and move the existing `lino.apps` modules
 back to :mod:`lino.modlib`.
 
 
+Data migration for :ref:`welfare`
+---------------------------------
+
+:mod:`lino_welfare.migrate` didn't yet rename 
+`countries.City` to `countries.Place`.
 

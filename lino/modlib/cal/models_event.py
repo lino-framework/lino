@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Part of the :xfile:`models` module for the :mod:`lino.apps.cal` app.
+Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
 
 Defines the :class:`EventType` and :class:`Event` models and their tables.
 

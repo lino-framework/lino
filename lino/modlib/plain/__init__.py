@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :mod:`lino.apps.plain` app adds the "plain" user interface.
+The :mod:`lino.modlib.plain` app adds the "plain" user interface.
 
 It uses the `Bootstrap  <http://twitter.github.com/bootstrap>`_ 
 CSS toolkit.

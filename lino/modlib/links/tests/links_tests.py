@@ -47,8 +47,7 @@ class QuickTest(TestCase):
 
     def test01(self):
         """
-        Used on `/blog/2011/0414`.
-        See the source code at :srcref:`/lino/apps/pcsw/tests/pcsw_tests.py`.
+        Used :blogref:`20110414`.
         """
 
         Person = resolve_model("contacts.Person")

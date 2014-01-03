@@ -1208,8 +1208,8 @@ class NotifyingAction(Action):
 class CalendarAction(Action):
 
     """
-    The default action for 
-    :class:`lino.apps.extensible.models.CalendarPanel`,
+    The default action for
+    :class:`lino.modlib.extensible.models.CalendarPanel`,
     only used there.
     """
     opens_a_window = True

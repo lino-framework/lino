@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class DurationUnit(dd.Choice):
         >>> DurationUnits.months.add_duration(start_date,2)
         datetime.date(2011, 12, 26)
         
-        See more usage examples in :func:`lino.apps.cal.tests.cal_test.test01`.
+        See more usage examples in :func:`lino.modlib.cal.tests.cal_test.test01`.
         """
         if orig is None:
             return None

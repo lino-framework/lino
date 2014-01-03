@@ -102,7 +102,7 @@ The prefix to use for Lino "admin mode"
 (i.e. the "admin main page" with a pull-down "main menu").
 
 TODO: convert `admin_prefix` to a `url_prefix` setting on the
-`lino.apps.extjs` plugin.
+`lino.modlib.extjs` plugin.
 
 The default value is an empty string, resulting in a website whose
 root url shows the admin mode.
@@ -131,7 +131,7 @@ The prefix to use for "plain html" URLs.
 Default value is ``'plain'``.
 
 TODO: convert `plain_prefix` to a `url_prefix` setting on the
-`lino.apps.plain` App.
+`lino.modlib.plain` App.
 
 Exactly one of :setting:`admin_prefix` and :setting:`plain_prefix`
 must be empty.
@@ -1435,8 +1435,8 @@ class Site(Site):
         if self.django_admin_prefix:
             yield 'django.contrib.admin'
         yield 'lino.modlib.about'
-        yield 'lino.apps.extjs'
-        yield 'lino.apps.plain'
+        yield 'lino.modlib.extjs'
+        yield 'lino.modlib.plain'
         yield "lino"
         for a in self.user_apps:
             yield a

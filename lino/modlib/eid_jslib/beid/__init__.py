@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@ Add this to your :setting:`get_installed_apps`
 if your Site should feature actions for reading electronic ID
 smartcards.
 
-Extends :mod:`lino.apps.eidreader` to use eid_jslib
+Extends :mod:`lino.modlib.eidreader` to use eid_jslib
 """
 
 import logging
@@ -29,7 +29,7 @@ import os
 import base64
 
 
-from lino.apps.beid import Plugin as BeIdPlugin
+from lino.modlib.beid import Plugin as BeIdPlugin
 
 
 class Plugin(BeIdPlugin):  # was: use_eid_jslib

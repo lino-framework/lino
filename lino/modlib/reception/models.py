@@ -51,7 +51,7 @@ from lino import dd
 cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
 
-from lino.apps.cal.models import GuestStates, EventStates
+from ..cal.models import GuestStates, EventStates
 
 #~ EventStates.add_item('30', _("Visit"), 'visit',fixed=False)
 

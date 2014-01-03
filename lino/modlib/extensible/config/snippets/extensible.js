@@ -1,10 +1,10 @@
 /*
   This is the `extensible.js` snippet. 
-  Used in lino.apps.extensible.App.site_js_snippets
+  Used in lino.modlib.extensible.App.site_js_snippets
 */
 
 /*
-Mappings towards lino.apps.extensible.models.PanelCalendars
+Mappings towards lino.modlib.extensible.models.PanelCalendars
 */
 // Sset SS = Ssite.modules.extensible.PanelCalendars.get_handle(Sui).store
 Ext.ensible.cal.CalendarMappings = {
@@ -18,7 +18,7 @@ Ext.ensible.cal.CalendarRecord.reconfigure();
 
 
 /*
-Mappings towards lino.apps.extensible.models.PanelEvents 
+Mappings towards lino.modlib.extensible.models.PanelEvents 
 */
 // Sset SS = Ssite.modules.extensible.PanelEvents.get_handle(Sui).store
 Ext.ensible.cal.EventMappings = {
