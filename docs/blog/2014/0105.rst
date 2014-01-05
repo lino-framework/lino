@@ -1,0 +1,51 @@
+==================================
+20140105 (Sunday, 05 January 2014)
+==================================
+
+I saw from the django developers list that Aymeric is really talented,
+there is hope that he will get the new apps management usable for
+Lino!  Added a note to :blogref:`20140101` and worked on
+:doc:`/dev/apps` in order to document what Lino actually wants to do.
+
+.. currentmodule:: lino.modlib.ledger.models
+
+Following a surprising intuition and in surprisingly little time
+(given the fact that I haven't been busy with this subject for weeks),
+I wrote another set of reports that were still missing in :ref:`cosi`:
+:class:`Debtors` and :class:`Creditors`.  Both reports are tables with
+one row for each partner having a positive balance (either debit or
+credit).  Accessible via the new menu entries :menuselection:`Reports
+--> Ledger --> Debtors` and :menuselection:`Reports --> Ledger -->
+Creditors`.  (Entspricht den Listen "Offene Posten Kunden" und "Offene
+Posten Lieferanten" aus TIM.)
+
+Also worked on the docs of :mod:`lino.modlib.ledger.models`.  This
+module wouldn't be angry for having a few classes split out into
+separate modules.
+
+TODO: 
+
+- adapt demo fixtures to generate sensible debtors and creditors
+- adapt test suites
+
+
+
+Upgrade to Ubuntu 13.04
+-----------------------
+
+I upgraded my machine to Ubuntu 13.04
+
+
+Moved Lino-Così to a separate project
+-------------------------------------
+
+:ref:`cosi` is no longer a subpackage of :mod:`lino.projects` but 
+has its own code repository at https://github.com/lsaffre/lino-cosi
+The advantage is that I can now start to write userdocs.
+
+- Test suites are not yet fully adapted.
+- docs and userdocs aren't yet available on lino-framework.org
+
+
+
+
