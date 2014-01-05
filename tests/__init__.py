@@ -89,11 +89,6 @@ class UtilsTests(LinoTestCase):
 class I18nTests(LinoTestCase):
     def test_i18n(self): self.run_simple_doctests('docs/tested/test_i18n.rst')
     
-class CosiTests(LinoTestCase):
-    def test_cosi(self):      self.run_django_manage_test("lino/projects/cosi") # covered by docs/tutorials/quickstart
-    def test_cosi_demo(self): self.run_simple_doctests('docs/tested/test_cosi_demo.rst')
-        
-
 class ProjectsTests(LinoTestCase):
     
     def test_events(self): self.run_django_manage_test("lino/projects/events") 

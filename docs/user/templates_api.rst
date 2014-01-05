@@ -73,7 +73,7 @@ TODO: This is just a start and far from being complete...
 .. initialization for doctest
 
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.cosi.settings.test'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings'
     >>> from lino.runtime import *
     >>> from north.dbutils import fds,fdm,fdl,fdf
     >>> import datetime

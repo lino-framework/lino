@@ -1,4 +1,4 @@
-global-include *.txt *.py *.BAT *.bat *.js *.css *.html \
+global-include *.txt *.py *.bat *.js *.css *.html \
   *.jar *.rtf *.java *.diff *.ico *.jpg *.png \
   *.csv *.xml *.tab \
   *.odt \

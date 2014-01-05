@@ -17,7 +17,7 @@ from lino.projects.std.settings import *
 
 
 class Site(Site):
-    title = "Lino/MinimalApp 1"
+    title = "Lino Mini 1"
 
     user_model = 'users.User'
     #~ user_model = None

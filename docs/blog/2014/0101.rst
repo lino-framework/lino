@@ -5,6 +5,9 @@
 Why the new apps management in Django 1.7 is not enough
 -------------------------------------------------------
 
+(Note: the following may not be true anymore. 
+See future posts and :doc:`/dev/apps`)
+
 Remember :blogref:`20131226` when I was delighted to discover
 Aymeric's new app management, but then discovered that it has a
 serious difference: `AppConfig` objects don't get instantiated
@@ -20,13 +23,15 @@ conclusion: the new apps management in Django 1.7 is not enough for
 me.  Here is an example which explains why.
 
 Let's take :ref:`faggio`.  It uses Lino's standard calendar module
-:mod:`lino.apps.cal`, but extends the `Room` model by adding two
-fields, adding the another base class (the :class:`ContactRelated
-<lino.modlib.contacts.models.ContactRelated>` mixin), and by
-overriding the `__unicode__` method.  
+:mod:`lino.apps.cal`, but extends the `Room` model defined there:
+
+- it adds two fields
+- it adds another base class (the :class:`ContactRelated
+  <lino.modlib.contacts.models.ContactRelated>` mixin)
+- it overrides the `__unicode__` method
 
 Here is the relevant application developer's code which defines the
-Faggio version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
+*Faggio* version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
 
     from lino.apps.cal.models import Room
     from lino.modlib.contacts.models import ContactRelated
@@ -42,7 +47,6 @@ Faggio version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
                 s = '%s (%s)' % (self.company.city, s)
             return s
 
-    
 For this to work, the *library version* of :class:`cal.Room
 <lino.apps.cal.models.Room>` must have `abstract=True`.  Here is how
 that class is begin defined::
@@ -54,7 +58,7 @@ that class is begin defined::
             verbose_name_plural = _("Rooms")
 
 
-The *abstractness of certain models* in an apps library must be
+The *abstractness of certain models* in a library app must be
 *optional*.  Not all Lino applications who use the calendar module
 want to override the `Room` model.  Afaics there is no way in Django
 to make a model abstract "afterwards".  IOW we need a central place

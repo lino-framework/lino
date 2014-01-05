@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,8 +12,25 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-General Ledger. 
+"""This is Lino's standard app for General Ledger.  It defines the
+following classes:
+
+- Models :class:`Journal`, :class:`Voucher` and :class:`Movement`
+
+- The :class:`DueMovement` class, a volatile object representing a
+  group of matching movements.
+
+- :class:`DebtsByAccount` and :class:`DebtsByPartner` are two reports
+  based on :class:`ExpectedMovements`
+
+- :class:`GeneralAccountsBalance`, :class:`ClientAccountsBalance` and
+  :class:`SupplierAccountsBalance` three reports based on
+  :class:`AccountsBalance` and :class:`PartnerAccountsBalance` 
+
+- :class:`Debtors` and :class:`Creditors` are tables with one row for
+  each partner who has a positive balance (either debit or credit).
+  Accessible via :menuselection:`Reports --> Ledger --> Debtors` and
+  :menuselection:`Reports --> Ledger --> Creditors`
 
 """
 
@@ -34,7 +51,6 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
-from lino.utils import iif
 from lino.utils import join_elems
 
 accounts = dd.resolve_app('accounts', strict=True)
@@ -55,10 +71,6 @@ vat.TradeTypes.purchases.update(
     partner_account_field_name='suppliers_account',
     partner_account_field_label=_("Suppliers account"))
 
-#~ TradeTypes.purchases.update(
-    #~ partner_account_field_name='suppliers_account',
-    #~ partner_account_field_label=_("Suppliers account"))
-
 
 class VoucherType(dd.Choice):
 
@@ -68,7 +80,8 @@ class VoucherType(dd.Choice):
         self.model = model
         value = dd.full_model_name(model)
         text = model._meta.verbose_name + ' (%s)' % dd.full_model_name(model)
-        #~ text = model._meta.verbose_name + ' (%s.%s)' % (model.__module__,model.__name__)
+        # text = model._meta.verbose_name + ' (%s.%s)' % (
+        #     model.__module__, model.__name__)
         name = None
         super(VoucherType, self).__init__(value, text, name)
 
@@ -78,7 +91,6 @@ class VoucherType(dd.Choice):
 
 class VoucherTypes(dd.ChoiceList):
     item_class = VoucherType
-    #~ blank = False
     max_length = 100
 
     @classmethod
@@ -678,7 +690,8 @@ class MovementsByPartner(Movements):
 class MovementsByAccount(Movements):
     master_key = 'account'
     order_by = ['-voucher__date']
-    column_names = 'voucher__date voucher_link debit credit partner match satisfied'
+    column_names = 'voucher__date voucher_link debit credit \
+    partner match satisfied'
     auto_fit_column_widths = True
 
     @classmethod
@@ -692,17 +705,17 @@ class MovementsByAccount(Movements):
 
 class DueMovement(object):
 
-    """
-    Volatile object representing a group of "matching" movements.
+    """Volatile object representing a group of "matching" movements.
     
-    The "matching" movements of a given movement are those who share 
-    the same `match`, `partner` and `account`.
+    The "matching" movements of a given movement are those whose
+    `match`, `partner` and `account` fields have the same values.
     
     These movements are themselves grouped into "debts" and "payments".
+    A "debt" increases the debt and a "payment" decreases it.
     
-    The value of `dc` specifies whether I mean *my* debts and payments 
+    The value of `dc` specifies whether I mean *my* debts and payments
     (towards that partner) or those *of the partner* (towards me).
-    
+
     """
 
     def __init__(self, dc, mvt):
@@ -759,6 +772,17 @@ class DueMovement(object):
 
 
 def get_due_movements(dc, **flt):
+    """Generates and yields a list of the :class:`DueMovement` objects
+    specified by the filter criteria.
+
+    :param dc: The caller must specify whether he means the debts and
+    payments *towards the partner* or *towards myself*.
+
+    :param flt: Any keyword argument is forwarded to `filter
+    <https://docs.djangoproject.com/en/dev/ref/models/querysets/#filter>`
+    which :class:`Movement` objects to consider.
+
+    """
     if dc is None:
         return
     qs = Movement.objects.filter(**flt)
@@ -774,9 +798,14 @@ def get_due_movements(dc, **flt):
 
 
 class ExpectedMovements(dd.VirtualTable):
+    """A virtual table of
+    :class:`DueMovement` rows with the following columns:
 
-    """
-    Subclassed by finan.
+        due_date balance debts payments
+
+    Also subclassed by :class:`finan.SuggestionsByVoucher
+    <lino.modlib.finan.models.SuggestionsByVoucher>`
+
     """
     label = _("Debts")
     icon_name = 'book_link'
@@ -824,18 +853,24 @@ class ExpectedMovements(dd.VirtualTable):
     def match(self, row, ar):
         return row.match
 
-    @dd.virtualfield(models.DateField(_("Due date"),
-                                      help_text=_("Due date of the eldest debt in this match group")))
+    @dd.virtualfield(
+        models.DateField(
+            _("Due date"),
+            help_text=_("Due date of the eldest debt in this match group")))
     def due_date(self, row, ar):
         return row.due_date
 
-    @dd.displayfield(_("Debts"), help_text=_("List of invoices in this match group"))
+    @dd.displayfield(
+        _("Debts"), help_text=_("List of invoices in this match group"))
     def debts(self, row, ar):
-        return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.debts]))
+        return E.p(*join_elems([
+            ar.obj2html(i.voucher.get_mti_child()) for i in row.debts]))
 
-    @dd.displayfield(_("Payments"), help_text=_("List of payments in this match group"))
+    @dd.displayfield(
+        _("Payments"), help_text=_("List of payments in this match group"))
     def payments(self, row, ar):
-        return E.p(*join_elems([ar.obj2html(i.voucher.get_mti_child()) for i in row.payments]))
+        return E.p(*join_elems([
+            ar.obj2html(i.voucher.get_mti_child()) for i in row.payments]))
 
     @dd.virtualfield(dd.PriceField(_("Balance")))
     def balance(self, row, ar):
@@ -851,6 +886,10 @@ class ExpectedMovements(dd.VirtualTable):
 
 
 class DebtsByAccount(ExpectedMovements):
+    """
+    This table is accessible by clicking the "Debts" action button on
+    an :class:`Account <lino.modlib.accounts.models.Account>`.
+    """
     master = 'accounts.Account'
 
     @classmethod
@@ -871,11 +910,14 @@ dd.inject_action('accounts.Account', due=dd.ShowSlaveTable(DebtsByAccount))
 
 class DebtsByPartner(ExpectedMovements):
 
-    """
-    Due Payments is the table to print in a Payment Reminder.
-    Usually this table has one row per sales invoice which is not fully paid.
-    But several invoices ("debts") may be grouped by match.
-    If the partner has purchase invoices, these are deduced from the balance.
+    """This is the table being printed in a Payment Reminder.  Usually
+    this table has one row per sales invoice which is not fully paid.
+    But several invoices ("debts") may be grouped by match.  If the
+    partner has purchase invoices, these are deduced from the balance.
+
+    This table is accessible by clicking the "Debts" action button on
+    a :class:`Partner <lino.modlib.contacts.models.Partner>`.
+
     """
     master = 'contacts.Partner'
     #~ column_names = 'due_date debts payments balance'
@@ -1107,6 +1149,12 @@ class Balance(object):
 
 
 class AccountsBalance(dd.VirtualTable):
+    """Base class for different reports that show a list of accounts with
+    the following columns:
+
+    ref description old_d old_c during_d during_c new_d new_c
+
+    """
     auto_fit_column_widths = True
     column_names = "ref description old_d old_c during_d during_c new_d new_c"
     slave_grid_format = 'html'
@@ -1136,10 +1184,12 @@ class AccountsBalance(dd.VirtualTable):
                     voucher__date__lt=mi.start_date,
                     dc=accounts.CREDIT, **flt))
             row.during_d = mvtsum(
-                voucher__date__gte=mi.start_date, voucher__date__lte=mi.end_date,
+                voucher__date__gte=mi.start_date,
+                voucher__date__lte=mi.end_date,
                 dc=accounts.DEBIT, **flt)
             row.during_c = mvtsum(
-                voucher__date__gte=mi.start_date, voucher__date__lte=mi.end_date,
+                voucher__date__gte=mi.start_date,
+                voucher__date__lte=mi.end_date,
                 dc=accounts.CREDIT, **flt)
             if row.old.d or row.old.c or row.during_d or row.during_c:
                 row.new = Balance(row.old.d + row.during_d,
@@ -1222,6 +1272,79 @@ class SupplierAccountsBalance(PartnerAccountsBalance):
     trade_type = vat.TradeTypes.purchases
 
 
+##
+
+class DebtorsCreditors(dd.VirtualTable):
+
+    """Abstract base class for different tables showing a list of
+    partners with the following columns:
+
+    partner due_date balance actions
+
+    """
+    auto_fit_column_widths = True
+    column_names = "partner due_date balance actions"
+    slave_grid_format = 'html'
+    abstract = True
+
+    d_or_c = NotImplementedError
+
+    @classmethod
+    def rowmvtfilter(self, row):
+        raise NotImplementedError()
+
+    @classmethod
+    def get_data_rows(self, ar):
+        # mi = ar.master_instance
+        # if mi is None:
+        #     return
+        qs = contacts.Partner.objects.order_by('name')
+        for row in qs:
+            row._balance = ZERO
+            row._due_date = None
+            for dm in get_due_movements(self.d_or_c, partner=row):
+                row._balance += dm.balance
+                if dm.due_date is not None:
+                    if row._due_date is None or row._due_date > dm.due_date:
+                        row._due_date = dm.due_date
+                # logger.info("20140105 %s %s", row, dm)
+
+            if row._balance > ZERO:
+                yield row
+
+    @dd.displayfield(_("Partner"))
+    def partner(self, row, ar):
+        return ar.obj2html(row)
+
+    @dd.virtualfield(dd.PriceField(_("Balance")))
+    def balance(self, row, ar):
+        return row._balance
+
+    @dd.virtualfield(models.DateField(_("Due date")))
+    def due_date(self, row, ar):
+        return row._due_date
+
+    @dd.displayfield(_("Actions"))
+    def actions(self, row, ar):
+        return E.p("[Show debts] [Issue reminder]")
+
+
+class Debtors(DebtorsCreditors):
+    "List of partners (usually clients) who are in debt towards us."
+    label = _("Debtors")
+    d_or_c = accounts.CREDIT
+
+
+class Creditors(DebtorsCreditors):
+    "List of partners (usually suppliers) who are giving credit to us."
+    label = _("Creditors")
+
+    d_or_c = accounts.DEBIT
+
+
+##
+
+
 class ActivityReport(dd.Report):
 
     required = dd.required(user_groups='accounts')
@@ -1294,6 +1417,8 @@ def setup_main_menu(site, ui, profile, main):
 def setup_reports_menu(site, ui, profile, m):
     m = m.add_menu("accounts", MODULE_LABEL)
     m.add_action(ActivityReport)
+    m.add_action(Debtors)
+    m.add_action(Creditors)
 
 
 def setup_config_menu(site, ui, profile, m):
@@ -1313,12 +1438,14 @@ def setup_explorer_menu(site, ui, profile, m):
 def customize_accounts():
 
     for tt in vat.TradeTypes.objects():
-        dd.inject_field('accounts.Account',
-                        tt.name + '_allowed',
-                        models.BooleanField(verbose_name=tt.text, default=True))
+        dd.inject_field(
+            'accounts.Account',
+            tt.name + '_allowed',
+            models.BooleanField(verbose_name=tt.text, default=True))
 
-    dd.inject_field('accounts.Account',
-                    'clearable', models.BooleanField(_("Clearable"), default=False))
+    dd.inject_field(
+        'accounts.Account',
+        'clearable', models.BooleanField(_("Clearable"), default=False))
 
 
 customize_accounts()
