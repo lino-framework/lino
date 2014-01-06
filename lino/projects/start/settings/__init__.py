@@ -55,6 +55,7 @@ class Site(Site):
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
 
+        yield 'lino.modlib.pages'
         yield 'lino.modlib.blogs'
         yield 'lino.modlib.extensible'
         yield 'lino.modlib.cal'

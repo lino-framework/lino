@@ -244,6 +244,10 @@ class Kernel(object):
                 p.on_ui_init(self)
 
         ui = self.site.plugins.resolve(self.site.default_ui)
+        if ui is None:
+            raise Exception(
+                "No installed app labelled %r"
+                % self.site.default_ui)
         ui.url_prefix = None
         self.default_renderer = ui.renderer
 

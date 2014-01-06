@@ -25,6 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import copy
+import datetime
 
 from django.db import models
 from django.conf import settings
@@ -103,9 +104,6 @@ class ParameterPanel(object):
 
     def __init__(self, **kw):
         self.fields = kw
-        #~ object.__init__(self,**kw)
-        #~ for n in ('__getitem__','get','items','keys','values','__iter__','__len__'):
-            #~ setattr(self,n,getattr(kw,n))
 
     def values(self, *args, **kw):
         return self.fields.values(*args, **kw)
@@ -129,18 +127,56 @@ class ParameterPanel(object):
         return self.fields.items(*args, **kw)
 
 
+class Today(ParameterPanel):
+    "Parameter panel which defines a field `today` which defaults to today"
+    def __init__(self, **kw):
+        kw.update(
+            today=models.DateField(
+                _("Situation on"),
+                blank=True, null=True,
+                default=datetime.date.today,
+                help_text="""Date of observation"""),
+        )
+        super(Today, self).__init__(**kw)
+
+
 class ObservedPeriod(ParameterPanel):
+    """Parameter panel which defines two fields `start_date`
+    and `end_date` which default to empty"""
+
+    get_default_start_date = None
+    get_default_end_date = None
 
     def __init__(self, **kw):
         kw.update(
-            start_date=models.DateField(_("Period from"),
-                                        blank=True, null=True,
+            start_date=models.DateField(
+                _("Period from"),
+                blank=True, null=True,
+                default=self.get_default_start_date,
                 help_text="""Start date of observed period"""),
-            end_date=models.DateField(_("until"),
-                                      blank=True, null=True,
+            end_date=models.DateField(
+                _("until"),
+                blank=True, null=True,
+                default=self.get_default_end_date,
                 help_text="""End date of observed period"""),
         )
         super(ObservedPeriod, self).__init__(**kw)
+
+
+class Yearly(ObservedPeriod):
+
+    """An :class:`ObservedPeriod` for which `start_date` defaults to Jan
+    1st and `end_date` to Dec 31 of the current year.
+
+    """
+
+    def get_default_start_date(self):
+        D = datetime.date
+        return D(D.today().year, 1, 1)
+
+    def get_default_end_date(self):
+        D = datetime.date
+        return D(D.today().year, 12, 31)
 
 
 class BoundAction(object):

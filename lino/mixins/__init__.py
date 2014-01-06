@@ -49,8 +49,6 @@ from lino.utils import curry
 from north.dbutils import BabelCharField
 from lino.utils.xmlgen.html import E
 
-#~ class Owned(dd.Model):
-
 
 class Controllable(model.Model):
 
@@ -808,10 +806,19 @@ class Report(EmptyTable):
 
     detail_layout = "body"
 
+    report_items = NotImplementedError
+
+    @classmethod
+    def get_story(cls, self, ar):
+        for A in cls.report_items:
+            yield E.h2(A.label)
+            if A.help_text:
+                yield E.p(unicode(A.help_text))
+            yield A
+
     @fields.virtualfield(fields.HtmlBox())
     def body(cls, self, ar):
         html = []
-        #~ for item in self.get_story(self,ar):
         for item in self.get_story(ar):
             if E.iselement(item):
                 html.append(item)

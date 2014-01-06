@@ -1,2 +1,2 @@
-django-admin.py initdb_demo --noinput --traceback --settings=lino.examples.start.settings.memory
+django-admin.py initdb_demo --noinput --traceback --settings=lino.projects.start.settings.memory
 

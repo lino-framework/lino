@@ -1274,6 +1274,7 @@ class SupplierAccountsBalance(PartnerAccountsBalance):
 
 ##
 
+
 class DebtorsCreditors(dd.VirtualTable):
 
     """Abstract base class for different tables showing a list of
@@ -1283,9 +1284,12 @@ class DebtorsCreditors(dd.VirtualTable):
 
     """
     auto_fit_column_widths = True
-    column_names = "partner due_date balance actions"
+    column_names = "age due_date partner balance actions"
     slave_grid_format = 'html'
     abstract = True
+
+    parameters = dd.Today()
+    # params_layout = "today"
 
     d_or_c = NotImplementedError
 
@@ -1295,14 +1299,21 @@ class DebtorsCreditors(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(self, ar):
-        # mi = ar.master_instance
-        # if mi is None:
-        #     return
+        mi = ar.master_instance
+        if mi is None:  # called directly from main menu
+            end_date = ar.param_values.today
+        else:   # called from Situation report
+            end_date = mi.today
+        
         qs = contacts.Partner.objects.order_by('name')
+        rows = []
         for row in qs:
             row._balance = ZERO
             row._due_date = None
-            for dm in get_due_movements(self.d_or_c, partner=row):
+            for dm in get_due_movements(
+                    self.d_or_c,
+                    partner=row,
+                    voucher__date__lte=end_date):
                 row._balance += dm.balance
                 if dm.due_date is not None:
                     if row._due_date is None or row._due_date > dm.due_date:
@@ -1310,7 +1321,12 @@ class DebtorsCreditors(dd.VirtualTable):
                 # logger.info("20140105 %s %s", row, dm)
 
             if row._balance > ZERO:
-                yield row
+                rows.append(row)
+
+        def f(a, b):
+            return cmp(a._due_date, b._due_date)
+        rows.sort(f)
+        return rows
 
     @dd.displayfield(_("Partner"))
     def partner(self, row, ar):
@@ -1324,78 +1340,64 @@ class DebtorsCreditors(dd.VirtualTable):
     def due_date(self, row, ar):
         return row._due_date
 
+    @dd.virtualfield(models.IntegerField(_("Age")))
+    def age(self, row, ar):
+        dd = ar.param_values.today - row._due_date
+        return dd.days
+
     @dd.displayfield(_("Actions"))
     def actions(self, row, ar):
+        # TODO
         return E.p("[Show debts] [Issue reminder]")
 
 
 class Debtors(DebtorsCreditors):
-    "List of partners (usually clients) who are in debt towards us."
     label = _("Debtors")
+    help_text = _("List of partners (usually clients) \
+    who are in debt towards us.")
     d_or_c = accounts.CREDIT
 
 
 class Creditors(DebtorsCreditors):
-    "List of partners (usually suppliers) who are giving credit to us."
     label = _("Creditors")
+    help_text = _("List of partners (usually suppliers) \
+    who are giving credit to us.")
 
     d_or_c = accounts.DEBIT
-
 
 ##
 
 
-class ActivityReport(dd.Report):
-
+class Situation(dd.Report):
+    label = _("Situation")
+    help_text = _("Overview of the financial situation on a given date.")
     required = dd.required(user_groups='accounts')
-    label = _("Activity Report")
 
-    parameters = dict(
-        start_date=models.DateField(verbose_name=_("Period from")),
-        end_date=models.DateField(verbose_name=_("until")),
-        #~ include_vat = models.BooleanField(verbose_name=vat.Plugin.verbose_name),
+    parameters = dd.Today()
+
+    report_items = (Debtors, Creditors)
+
+
+class ActivityReport(dd.Report):
+    label = _("Activity Report")
+    help_text = _("Overview of the financial activity during a given period.")
+    required = dd.required(user_groups='accounts')
+
+    parameters = dd.Yearly(
+        # include_vat = models.BooleanField(
+        #     verbose_name=dd.apps.vat.verbose_name),
     )
 
     params_layout = "start_date end_date"
     #~ params_panel_hidden = True
 
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        D = datetime.date
-        kw.update(start_date=D(D.today().year, 1, 1))
-        kw.update(end_date=D(D.today().year, 12, 31))
-        return kw
-
-    @classmethod
-    def get_story(cls, self, ar):
-        #~ yield E.h2(_("Introduction"))
-        #~ yield E.p("Ceci est un ",E.b("rapport"),""",
-            #~ càd un document complet généré par Lino, contenant des
-            #~ sections, des tables et du texte libre.
-            #~ Dans la version écran cliquer sur un chiffre pour voir d'où
-            #~ il vient.
-            #~ """)
-        #~ yield E.h1(isip.Contract._meta.verbose_name_plural)
-        for A in (GeneralAccountsBalance, ClientAccountsBalance, SupplierAccountsBalance):
-            yield E.h2(A.label)
-            if A.help_text:
-                yield E.p(unicode(A.help_text))
-            yield A
+    report_items = (
+        GeneralAccountsBalance,
+        ClientAccountsBalance,
+        SupplierAccountsBalance)
 
 
-MODULE_LABEL = accounts.MODULE_LABEL
-
-
-def unused_site_setup(site):
-    if site.is_installed(settings.SITE.partners_app_label):
-        app = site.modules[settings.SITE.partners_app_label]
-        for t in (app.Partners, app.Persons, app.Organisations):
-            t.add_detail_tab("ledger",
-                """
-                ledger.InvoicesByPartner
-                ledger.MovementsByPartner
-                """,
-                             label=MODULE_LABEL)
+MODULE_LABEL = dd.apps.accounts.verbose_name
 
 
 def setup_main_menu(site, ui, profile, main):
@@ -1407,15 +1409,9 @@ def setup_main_menu(site, ui, profile, main):
                          params=dict(master_instance=jnl))
 
 
-#~ def setup_main_menu(site,ui,user,m):
-    #~ m = m.add_menu("ledger",MODULE_LABEL)
-    #~ for jnl in Journal.objects.all():
-        #~ m.add_action(jnl.voucher_type.table_class,
-            #~ label=unicode(jnl),
-            #~ params=dict(master_instance=jnl))
-
 def setup_reports_menu(site, ui, profile, m):
     m = m.add_menu("accounts", MODULE_LABEL)
+    m.add_action(Situation)
     m.add_action(ActivityReport)
     m.add_action(Debtors)
     m.add_action(Creditors)

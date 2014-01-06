@@ -499,22 +499,17 @@ class Constant(object):
     """
     Deserves more documentation.
     """
-    #~ get = None
 
     def __init__(self, text_fn):
         self.text_fn = text_fn
 
-#~ def constant(verbose_name=None):
-
 
 def constant():
     """
-    Decorator to turn a method into a :class:`Constant`.
+    Decorator to turn a function into a :class:`Constant`.
+    The function must accept one positional argument `datasource`.
     """
     def decorator(fn):
-        #~ def wrapped(*args):
-            #~ return fn(*args)
-        #~ return Constant(wrapped)
         return Constant(fn)
     return decorator
 

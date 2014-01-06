@@ -61,9 +61,9 @@ Multilingual database content:
 
 Virtual Fields:
 
-- :class:`Constant <lino.core.fields.Constant>` and 
+- :class:`Constant <lino.core.fields.Constant>` and
   :class:`@constant <lino.core.fields.constant>`
-- :class:`DisplayField <lino.core.fields.DisplayField>` and 
+- :class:`DisplayField <lino.core.fields.DisplayField>` and
   :class:`@displayfield <lino.core.fields.displayfield>`
 - :class:`VirtualField <lino.core.fields.VirtualField>` and
   :class:`@virtualfield <lino.core.fields.virtualfield>`
@@ -73,6 +73,13 @@ Layouts:
 
 - :class:`FormLayout <lino.core.layouts.FormLayout>`
 - :class:`Panel <lino.core.layouts.Panel>`
+
+Parameter panels:
+
+- :class:`dd.ObservedPeriod <lino.core.actors.ObservedPeriod>`
+- :class:`dd.Yearly <lino.core.actors.Yearly>`
+- :class:`dd.Today <lino.core.actors.Today>`
+
   
 Utilities:
 
@@ -176,6 +183,8 @@ from lino.core.merge import MergeAction
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.actors import (ParameterPanel, ObservedPeriod)
+from lino.core.actors import Today
+from lino.core.actors import Yearly
 from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist
@@ -359,3 +368,10 @@ from lino.mixins.human import Human, Born
 #~ from lino.utils.screenshots import register_screenshot
 
 from django.utils.importlib import import_module
+
+apps = settings.SITE.plugins
+login = settings.SITE.login
+get_db_overview_rst = settings.SITE.get_db_overview_rst
+
+from django.utils import translation
+get_language = translation.get_language
