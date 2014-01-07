@@ -113,23 +113,23 @@ set to False) to avoid browser questions to first-time visitors.
 Out of the box Lino applications
 --------------------------------
 
-The following Lino applications are either included with Lino 
-or available as PyPI packages:
+The following Lino applications are 
+included with Lino:
 
-- :ref:`welfare`
-- :ref:`faggio`
-- :ref:`patrols`
-- :doc:`/cosi/index`
-- :doc:`/polly/index`
-
-    
 .. toctree::
-    :maxdepth: 2
-    :hidden:
+    :maxdepth: 1
     
-    /cosi/index
     /polly/index
     /belref/index
     /presto/index
       
-      
+
+The following Lino applications are 
+available as separate PyPI packages:
+
+- :ref:`welfare`
+- :ref:`faggio`
+- :ref:`patrols`
+- :ref:`cosi`
+- :ref:`logos`
+    

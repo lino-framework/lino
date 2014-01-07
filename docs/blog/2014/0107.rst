@@ -1,0 +1,7 @@
+===================================
+20140107 (Tuesday, 07 January 2014)
+===================================
+
+:ref:`welfare`: 
+Started new :welfareticket:`1`.
+Kerstin explained me why she needs ticket #1

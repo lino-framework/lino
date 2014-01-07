@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-01-06 03:33+0200\n"
-"PO-Revision-Date: 2014-01-06 03:42+0300\n"
+"PO-Revision-Date: 2014-01-07 22:30+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5046,24 +5046,24 @@ msgid "The %s model"
 msgstr ""
 
 #: lino/utils/actordoc.py:413
-#, fuzzy, python-format
+#, python-format
 msgid "Views on %s"
-msgstr "Datenfelder in %s"
+msgstr "Tabellenasichten für %s"
 
 #: lino/utils/actordoc.py:417
-#, fuzzy, python-format
+#, python-format
 msgid "Fields in %s"
 msgstr "Datenfelder in %s"
 
 #: lino/utils/actordoc.py:427
-#, fuzzy, python-format
+#, python-format
 msgid "Actions on %s"
 msgstr "Aktionen auf  %s"
 
 #: lino/utils/actordoc.py:433
-#, fuzzy, python-format
+#, python-format
 msgid "Tables referring to %s"
-msgstr "Basis Verkauf"
+msgstr "Tabellen, die auf %s verweisen"
 
 #: lino/utils/actordoc.py:452
 #, python-format
@@ -5071,9 +5071,9 @@ msgid "%s (table in module %s)"
 msgstr ""
 
 #: lino/utils/actordoc.py:463
-#, fuzzy, python-format
+#, python-format
 msgid "The %s view"
-msgstr "Team-Ansicht"
+msgstr "Tabelle \"%s\""
 
 #: lino/utils/appy_pod.py:525
 msgid "Table (landscape)"
