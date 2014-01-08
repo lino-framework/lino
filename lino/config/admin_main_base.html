@@ -73,8 +73,8 @@
       {% endif %}
       {% if site.user_model and site.is_demo_site %}
         <p>
-        {{_("This demo site has %d users:" % 
-        site.modules.users.UsersOverview.request().get_total_count())}}
+        {{_("This demo site has %d users:") % 
+        site.modules.users.UsersOverview.request().get_total_count()}}
         </p>
         {{as_ul('users.UsersOverview')}}
         <p>

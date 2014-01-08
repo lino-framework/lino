@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-01-08 04:53+0200\n"
+"POT-Creation-Date: 2014-01-08 04:59+0200\n"
 "PO-Revision-Date: 2013-10-27 18:58+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -157,6 +157,11 @@ msgstr ""
 #: lino/config/admin_main_base.html:68
 #, python-format
 msgid "We are running %(name)s version %(version)s"
+msgstr ""
+
+#: lino/config/admin_main_base.html:76
+#, python-format
+msgid "This demo site has %d users:"
 msgstr ""
 
 #: lino/config/admin_main_base.html:81

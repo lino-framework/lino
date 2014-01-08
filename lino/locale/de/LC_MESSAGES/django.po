@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-08 04:53+0200\n"
-"PO-Revision-Date: 2014-01-08 04:56+0300\n"
+"POT-Creation-Date: 2014-01-08 04:59+0200\n"
+"PO-Revision-Date: 2014-01-08 04:59+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -164,6 +164,11 @@ msgstr "Willkommen auf <b>%s</b>."
 #, python-format
 msgid "We are running %(name)s version %(version)s"
 msgstr "Hier läuft %(name)s  %(version)s"
+
+#: lino/config/admin_main_base.html:76
+#, python-format
+msgid "This demo site has %d users:"
+msgstr "Diese Demo-Anwendung hat %d Benutzer:"
 
 #: lino/config/admin_main_base.html:81
 msgid "You will now probably want to"
@@ -5326,8 +5331,3 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "a Lino application to make Belgian accounting simple."
 #~ msgstr "eine Lino-Anwendung, um belgische Buchführung einfach zu machen."
-
-#~ msgid "This demo site has %d users, they all have \"1234\" as password:"
-#~ msgstr ""
-#~ "Diese Demo-Datenbank hat %d Benutzer, alle mit dem gleichen Passwort "
-#~ "\"1234\":"
