@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-08 04:41+0200\n"
+"POT-Creation-Date: 2014-01-08 04:53+0200\n"
 "PO-Revision-Date: 2013-10-27 19:07+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -166,25 +166,24 @@ msgstr ""
 msgid "We are running %(name)s version %(version)s"
 msgstr ""
 
-#: lino/config/admin_main_base.html:76
-#, python-format
-msgid "This demo site has %d users, they all have \"1234\" as password:"
-msgstr ""
-
-#: lino/config/admin_main_base.html:80
+#: lino/config/admin_main_base.html:81
 msgid "You will now probably want to"
 msgstr ""
 
-#: lino/config/admin_main_base.html:82
+#: lino/config/admin_main_base.html:83
 #, fuzzy
 msgid "log in"
 msgstr "Anmelden"
 
-#: lino/config/admin_main_base.html:83
+#: lino/config/admin_main_base.html:84
 msgid "using one of these names."
 msgstr ""
 
-#: lino/config/admin_main_base.html:87
+#: lino/config/admin_main_base.html:85
+msgid "The password is the same for all of them: \"1234\"."
+msgstr ""
+
+#: lino/config/admin_main_base.html:89
 msgid ""
 "You will now probably want to use the <b>Log in</b> button in the upper "
 "right corner and log in."
@@ -5617,5 +5616,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "a Lino application to make Belgian accounting simple."
+#~ msgstr ""
+
+#~ msgid "This demo site has %d users, they all have \"1234\" as password:"
 #~ msgstr ""
 

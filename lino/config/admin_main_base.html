@@ -73,7 +73,8 @@
       {% endif %}
       {% if site.user_model and site.is_demo_site %}
         <p>
-        {{_("This demo site has %d users, they all have \"1234\" as password:") % site.modules.users.UsersOverview.request().get_total_count()}}
+        {{_("This demo site has %d users:" % 
+        site.modules.users.UsersOverview.request().get_total_count())}}
         </p>
         {{as_ul('users.UsersOverview')}}
         <p>
@@ -81,6 +82,7 @@
         <a href="#" 
            onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
         {{_("using one of these names.")}}
+        {{_("The password is the same for all of them: \"1234\".")}}
         </p>
       {% else %}
       <p>

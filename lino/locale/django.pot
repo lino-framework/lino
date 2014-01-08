@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.13\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-01-08 04:41+0200\n"
+"POT-Creation-Date: 2014-01-08 04:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -163,24 +163,23 @@ msgstr ""
 msgid "We are running %(name)s version %(version)s"
 msgstr ""
 
-#: lino/config/admin_main_base.html:76
-#, python-format
-msgid "This demo site has %d users, they all have \"1234\" as password:"
-msgstr ""
-
-#: lino/config/admin_main_base.html:80
+#: lino/config/admin_main_base.html:81
 msgid "You will now probably want to"
 msgstr ""
 
-#: lino/config/admin_main_base.html:82
+#: lino/config/admin_main_base.html:83
 msgid "log in"
 msgstr ""
 
-#: lino/config/admin_main_base.html:83
+#: lino/config/admin_main_base.html:84
 msgid "using one of these names."
 msgstr ""
 
-#: lino/config/admin_main_base.html:87
+#: lino/config/admin_main_base.html:85
+msgid "The password is the same for all of them: \"1234\"."
+msgstr ""
+
+#: lino/config/admin_main_base.html:89
 msgid ""
 "You will now probably want to use the <b>Log in</b> button in the upper "
 "right corner and log in."
