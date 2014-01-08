@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2013 Luc Saffre
+ Copyright 2009-2014 Luc Saffre
  This file is part of the Lino project.
  Lino is free software; you can redistribute it and/or modify 
  it under the terms of the GNU General Public License as published by
@@ -397,46 +397,23 @@ Lino.show_login_window = function(on_login) {
   if (Lino.login_window == null) {
     
       function do_login() { 
-            //~ alert("20130923 do_login() started");
             Lino.viewport.loadMask.show()
-            //~ Lino.body_loadMask.show()
             login_panel.getForm().submit({ 
                 method:'POST', 
                 waitTitle:'Connecting', 
                 waitMsg:'Sending data...',
                 success:function(){ 
-                  //~ console.log('20130923 logged in',arguments);
-                  //~ alert("20130923 do_login() success");
                   Lino.login_window.hide();
                   Lino.close_all_windows();
                   Lino.viewport.loadMask.hide();
                   if (typeof on_login == 'string') {
-                      //~ console.log("20130829 on_login",on_login);
-                      //~ alert("20130923 on_login gonna load_url");
                       Lino.load_url(on_login);
-                      //~ eval(on_login);
                   } 
-                  //~ else Lino.load_url({{settings.SITE.build_admin_url()}});
-                  //~ Lino.body_loadMask.hide();
                 },
                 failure: function(form,action) { 
-                  //~ this.loadMask.hide();
-                  //~ alert("20130923 do_login() failure");
                   Lino.on_submit_failure(form,action);
                   Lino.viewport.loadMask.hide()
-                  //~ Lino.body_loadMask.hide()
-                  //~ if (Lino.current_window) Lino.current_window.main_item.loadMask.hide()
                 }
-                //~ failure:function(form, action){ 
-                    //~ alert_msg
-                    //~ if(action.failureType == 'server'){ 
-                        //~ obj = Ext.util.JSON.decode(action.response.responseText); 
-                        //~ Ext.Msg.alert('Login Failed!', obj.errors.reason); 
-                    //~ }else{ 
-                        //~ Ext.Msg.alert('Warning!', 'Authentication server is unreachable : ' + action.response.responseText); 
-                    //~ } 
-                    //~ Lino.login_panel.getForm().reset(); 
-                //~ } 
             }); 
       };
     
@@ -481,12 +458,6 @@ Lino.show_login_window = function(on_login) {
             key: Ext.EventObject.ENTER,
             fn: function() { do_login()}
           },
-          //~ defaultButton: login_button,
-          //~ height:'auto',
-          //~ closable: false,
-          //~ resizable: false,
-          //~ plain: true,
-          //~ border: false,
           items: [login_panel] });
   };
   Lino.login_window.show();

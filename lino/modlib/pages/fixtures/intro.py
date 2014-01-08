@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,8 +27,6 @@ it will overwrite existing web pages.
 """
 
 from __future__ import unicode_literals
-
-from django.conf import settings
 
 from lino.modlib.pages.builder import page, objects
 
@@ -82,10 +80,10 @@ version {{site.version}}.
 
 {% if site.admin_prefix %}
 
-Dies ist der öffentliche Bereich, dessen Layout 
+Dies ist der öffentliche Bereich, dessen Layout
 und Inhalt frei konfigurierbar sind wie bei jeder Django-Site.
 
-Um das Besondere an Lino zu sehen, sollten Sie nun 
+Um das Besondere an Lino zu sehen, sollten Sie nun
 in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
 
 {% endif %}
@@ -111,19 +109,18 @@ in den `Verwaltungsbereich <{{site.admin_prefix}}/>`__ gehen.
 """)
 
 
-
 page('about', 'en', 'About', """
-This website is a life demonstration of 
+This website is a life demonstration of
 `{{site.verbose_name}} <{{site.url}}>`__.    
 """)
 
 page('about', 'fr', 'À propos', """
-Ce site est une démonstration en ligne de 
+Ce site est une démonstration en ligne de
 `{{site.verbose_name}} <{{site.url}}>`__.
 """)
 
 page('about', 'de', 'Info', """
-Diese Site ist eine online-Demo von `{{site.verbose_name}} <{{site.url}}>`__.
+Dies ist eine online-Demo von `{{site.verbose_name}} <{{site.url}}>`__.
 """)
 
 if False:

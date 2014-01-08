@@ -23,6 +23,16 @@ status in that case, not raise an :ref:`ise`.
 404
 
 
+Unergonomischer Eingang zur Demo
+--------------------------------
+
+Optimierungen in :srcref:`lino/config/admin_main_base.html`.
+
+Ja ich gebe zu dass das "gewöhnungsbedürftig" bzw. "ergonomisch
+betrachtet noch nichts zum Angeben" ist.
+
+In der Tat sollte ja gerade eine Demo möglichst
+keine solchen Stolpersteine haben.
 
 
 
