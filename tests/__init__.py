@@ -33,13 +33,20 @@ class BlogTest(LinoTestCase):
         # docs/blog/2013/0821.rst
         # docs/blog/2013/1210.rst
         docs/blog/2013/1211.rst
+        docs/blog/2014/0108.rst
         """)
 
-    def test_one(self):
+    def one(self):
+        """
+        this does not start with "test_" and is not called automatically.
+        used to call explicitly a single case::
+
+          $ python setup.py test -s tests.BlogTest.one
+
+        """
         self.run_simple_doctests("""
-        docs/blog/2013/1211.rst
+        docs/blog/2014/0108.rst
         """)
-
 
 
 class DocsTests(LinoTestCase):

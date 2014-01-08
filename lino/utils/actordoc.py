@@ -307,7 +307,7 @@ class ActorsOverviewDirective(Django2rstDirective):
 def resolve_name(name):
     l = name.split('.')
     if len(l) == 1:
-        return 1, settings.SITE.plugins.get(name)
+        return 1, dd.apps.get(name)
         # return 1, dd.resolve_app(name)
     if len(l) == 3:
         model = settings.SITE.modules.resolve(l[0] + '.' + l[1])

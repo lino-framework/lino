@@ -370,7 +370,9 @@ from lino.mixins.human import Human, Born
 from django.utils.importlib import import_module
 
 apps = settings.SITE.plugins
+modules = settings.SITE.modules
 login = settings.SITE.login
+startup = settings.SITE.startup
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 from django.utils import translation

@@ -42,8 +42,12 @@ Version 1.6.14 (not yet released)
         ...
         self.bootstrap_root = '/home/luc/snapshots/bootstrap'
         self.bootstrap_base_url = None
+
         self.extensible_root = '/home/luc/snapshots/extensible-1.0.1'
         self.extensible_base_url = None
+
+        self.extjs_root = '/home/luc/snapshots/ext-3.3.1'
+ 
 
   After::
 
@@ -60,13 +64,22 @@ Version 1.6.14 (not yet released)
             media_root='/home/luc/snapshots/bootstrap',
             media_base_url=None)
 
+        self.configure_plugin(
+            'extjs',
+            media_root='/home/luc/snapshots/ext-3.3.1',
+            media_base_url=None)
 
-   --------------- --------------------------
+
+Summary:
+
+
+   =============== ==========================
    Before          After
    --------------- --------------------------
    admin_prefix    plugins.extjs.url_prefix
    extjs_base_url  plugins.extjs.media_base_url
    extjs_root      plugins.extjs.media_root
+   =============== ==========================
 
 
 

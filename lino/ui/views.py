@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -65,9 +65,9 @@ def requested_actor(app_label, actor):
     """
     x = getattr(settings.SITE.modules, app_label, None)
     if x is None:
-        #~ raise http.Http404("There's no app_label %r here" % app_label)
-        raise Exception("There's no app_label %r here" % app_label)
-    cl = getattr(x, actor)
+        raise http.Http404("There's no app_label %r here" % app_label)
+        # raise Exception("There's no app_label %r here" % app_label)
+    cl = getattr(x, actor, None)
     if not isinstance(cl, type):
         raise http.Http404("%s.%s is not a class" % (app_label, actor))
     if issubclass(cl, models.Model):
