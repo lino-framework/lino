@@ -3,6 +3,10 @@ Tickets
 
 Here is a list of currently open tickets.
 
+.. directory:: 
+
+   *
+
 .. toctree::
    :maxdepth: 1
 

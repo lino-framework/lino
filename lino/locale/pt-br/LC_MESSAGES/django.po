@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-08 04:59+0200\n"
+"POT-Creation-Date: 2014-01-09 06:14+0200\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language-Team: \n"
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Quick links:"
 msgstr ""
 
-#: lino/config/admin_main_base.html:15 lino/modlib/system/models.py:372
+#: lino/config/admin_main_base.html:15 lino/modlib/system/models.py:373
 msgid "Welcome"
 msgstr "Bienvenue"
 
@@ -121,7 +121,7 @@ msgstr "Bienvenue"
 msgid "Hi, %(first_name)s!"
 msgstr ""
 
-#: lino/config/admin_main_base.html:24 lino/modlib/system/models.py:401
+#: lino/config/admin_main_base.html:24 lino/modlib/system/models.py:402
 msgid "You have"
 msgstr "Vous avez"
 
@@ -277,7 +277,7 @@ msgstr "Résumé"
 #: lino/modlib/cal/models_event.py:217 lino/modlib/courses/models.py:160
 #: lino/modlib/importfilters/models.py:118 lino/modlib/ledger/models.py:1019
 #: lino/modlib/ledger/models.py:1199 lino/modlib/orders/models.py:251
-#: lino/modlib/sales/models.py:473 lino/modlib/system/models.py:296
+#: lino/modlib/sales/models.py:473 lino/modlib/system/models.py:297
 #: lino/modlib/tickets/models.py:133 lino/modlib/tickets/models.py:242
 #: lino/modlib/tickets/models.py:339 lino/modlib/uploads/models.py:88
 msgid "Description"
@@ -523,7 +523,7 @@ msgid "User Profiles"
 msgstr ""
 
 #: lino/core/perms.py:258 lino/modlib/system/__init__.py:29
-#: lino/modlib/system/models.py:421
+#: lino/modlib/system/models.py:422
 msgid "System"
 msgstr "Sistema"
 
@@ -637,7 +637,7 @@ msgid "Reference"
 msgstr ""
 
 #: lino/mixins/__init__.py:869 lino/modlib/properties/models.py:196
-#: lino/modlib/system/models.py:295
+#: lino/modlib/system/models.py:296
 msgid "Designation"
 msgstr "Description"
 
@@ -3114,7 +3114,7 @@ msgstr ""
 
 #: lino/modlib/extjs/ext_renderer.py:1005 lino/modlib/pages/models.py:135
 #: lino/modlib/pages/models.py:170 lino/modlib/plain/views.py:53
-#: lino/modlib/system/models.py:334
+#: lino/modlib/system/models.py:335
 msgid "Home"
 msgstr "Início"
 
@@ -3459,7 +3459,7 @@ msgstr "est un ménage"
 msgid "Import filters"
 msgstr "important"
 
-#: lino/modlib/importfilters/models.py:44 lino/modlib/system/models.py:229
+#: lino/modlib/importfilters/models.py:44 lino/modlib/system/models.py:230
 msgid "Model"
 msgstr "Modèle"
 
@@ -3468,7 +3468,7 @@ msgid "Field separator"
 msgstr ""
 
 #: lino/modlib/importfilters/models.py:46
-#: lino/modlib/importfilters/models.py:70 lino/modlib/system/models.py:232
+#: lino/modlib/importfilters/models.py:70 lino/modlib/system/models.py:233
 msgid "HelpText"
 msgstr ""
 
@@ -3480,7 +3480,7 @@ msgstr ""
 msgid "Import Filter Items"
 msgstr ""
 
-#: lino/modlib/importfilters/models.py:67 lino/modlib/system/models.py:230
+#: lino/modlib/importfilters/models.py:67 lino/modlib/system/models.py:231
 #, fuzzy
 msgid "Field"
 msgstr "Fichier"
@@ -4661,61 +4661,66 @@ msgstr ""
 msgid "Rebuild site cache"
 msgstr ""
 
-#: lino/modlib/system/models.py:98
+#: lino/modlib/system/models.py:93
+#, fuzzy
+msgid "Site configuration"
+msgstr "Confirmação"
+
+#: lino/modlib/system/models.py:99
 msgid "Default build method"
 msgstr "Méthode de constuction par défault"
 
-#: lino/modlib/system/models.py:104
+#: lino/modlib/system/models.py:105
 msgid "Site Parameters"
 msgstr "Paramètres du Site"
 
-#: lino/modlib/system/models.py:201
+#: lino/modlib/system/models.py:202
 msgid "Base classes"
 msgstr ""
 
-#: lino/modlib/system/models.py:225
+#: lino/modlib/system/models.py:226
 msgid "Help Text"
 msgstr "Texte d'aide"
 
-#: lino/modlib/system/models.py:226
+#: lino/modlib/system/models.py:227
 msgid "Help Texts"
 msgstr "Textes d'aide"
 
-#: lino/modlib/system/models.py:260
+#: lino/modlib/system/models.py:261
 #, fuzzy
 msgid "Verbose name"
 msgstr "Prénom"
 
-#: lino/modlib/system/models.py:266
+#: lino/modlib/system/models.py:267
 msgid "database field"
 msgstr ""
 
-#: lino/modlib/system/models.py:292
+#: lino/modlib/system/models.py:293
 msgid "Text Field Template"
 msgstr ""
 
-#: lino/modlib/system/models.py:293
+#: lino/modlib/system/models.py:294
 msgid "Text Field Templates"
 msgstr ""
 
-#: lino/modlib/system/models.py:300
+#: lino/modlib/system/models.py:301
 msgid "If not empty, then this template is reserved to members of this team."
 msgstr ""
 
-#: lino/modlib/system/models.py:301
+#: lino/modlib/system/models.py:302
 msgid "Template Text"
 msgstr "Texte modèle"
 
-#: lino/modlib/system/models.py:381
+#: lino/modlib/system/models.py:382
 #, python-format
 msgid "Hi, %(user)s!"
 msgstr ""
 
-#: lino/modlib/system/models.py:405
+#: lino/modlib/system/models.py:406
 msgid "Congratulatons: you have no warnings."
 msgstr "Félicitations: vous n'avez aucun avertissement."
 
-#: lino/modlib/system/models.py:422
+#: lino/modlib/system/models.py:423
 msgid "Office"
 msgstr ""
 
@@ -5162,79 +5167,74 @@ msgstr "%r (choix non valide)"
 msgid "Invalid value for this field (%s)."
 msgstr "Valor inválido para este campo (%s)."
 
-#: lino/utils/actordoc.py:139 lino/utils/actordoc.py:143
+#: lino/utils/actordoc.py:141 lino/utils/actordoc.py:145
 #, python-format
 msgid "%(classref)s to %(model)s"
 msgstr ""
 
-#: lino/utils/actordoc.py:170
+#: lino/utils/actordoc.py:172
 #, python-format
 msgid "... and %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:282
+#: lino/utils/actordoc.py:284
 #, python-format
 msgid " (Menu %s)"
 msgstr ""
 
-#: lino/utils/actordoc.py:354
+#: lino/utils/actordoc.py:353
 #, python-format
-msgid "%s (field in \"%s\")"
+msgid "%(field)s (field in %(model)s)"
 msgstr ""
 
 #: lino/utils/actordoc.py:356
 #, python-format
-msgid "The **%s** field"
+msgid "%s (field)"
 msgstr ""
 
-#: lino/utils/actordoc.py:366
+#: lino/utils/actordoc.py:366 lino/utils/actordoc.py:369
 #, python-format
 msgid "%s (app)"
 msgstr ""
 
-#: lino/utils/actordoc.py:369
-#, python-format
-msgid "The %s app"
-msgstr ""
-
 #: lino/utils/actordoc.py:385
+#, fuzzy, python-format
+msgid "%(model)s (model in %(app)s)"
+msgstr "%(details)s de %(master)s"
+
+#: lino/utils/actordoc.py:393
 #, python-format
-msgid "%s (model in app \"%s\")"
+msgid "%s (model)"
 msgstr ""
 
-#: lino/utils/actordoc.py:397
-#, python-format
-msgid "The %s model"
-msgstr ""
-
-#: lino/utils/actordoc.py:413
+#: lino/utils/actordoc.py:408
 #, fuzzy, python-format
 msgid "Views on %s"
 msgstr "Marquer comme %s"
 
-#: lino/utils/actordoc.py:417
+#: lino/utils/actordoc.py:412
 #, python-format
 msgid "Fields in %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:427
+#: lino/utils/actordoc.py:422
 #, fuzzy, python-format
 msgid "Actions on %s"
 msgstr "Marquer comme %s"
 
-#: lino/utils/actordoc.py:433
+#: lino/utils/actordoc.py:428
 #, python-format
 msgid "Tables referring to %s"
 msgstr ""
 
-#: lino/utils/actordoc.py:452
-#, python-format
-msgid "%s (table in module %s)"
-msgstr ""
+#: lino/utils/actordoc.py:447
+#, fuzzy, python-format
+msgid "%(actor)s (view in %(app)s)"
+msgstr "%(details)s de %(master)s"
 
-#: lino/utils/actordoc.py:463
+#: lino/utils/actordoc.py:458
 #, python-format
-msgid "The %s view"
+msgid "%s (view)"
 msgstr ""
 
 #: lino/utils/appy_pod.py:525
@@ -5630,5 +5630,26 @@ msgstr ""
 #~ msgstr "une application Lino qui rend la comptabilité belge facile."
 
 #~ msgid "This demo site has %d users, they all have \"1234\" as password:"
+#~ msgstr ""
+
+#~ msgid "The %s app"
+#~ msgstr ""
+
+#~ msgid "The %s model"
+#~ msgstr ""
+
+#~ msgid "The %s view"
+#~ msgstr ""
+
+#~ msgid "%s (field in \"%s\")"
+#~ msgstr ""
+
+#~ msgid "The **%s** field"
+#~ msgstr ""
+
+#~ msgid "%s (model in app \"%s\")"
+#~ msgstr ""
+
+#~ msgid "%s (table in module %s)"
 #~ msgstr ""
 

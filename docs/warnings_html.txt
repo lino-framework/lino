@@ -1,0 +1,41 @@
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
+/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:5: WARNING: Field list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:7: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:8: WARNING: Field list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.User:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/users/models.py:docstring of lino.modlib.users.models.UsersOverview:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.TradeType:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models.VatRegime:1: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
+/home/luc/hgwork/lino/docs/blog/2013/0420.rst:93: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0704.rst:30: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:103: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/0818.rst:3: WARNING: Duplicate explicit target name: "wikivs".
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:61: ERROR: Unknown interpreted text role "src".
+/home/luc/hgwork/lino/docs/blog/2013/0906.rst:20: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/0910.rst:63: ERROR: Unknown interpreted text role "function".
+/home/luc/hgwork/lino/docs/blog/2013/0916.rst:54: WARNING: Inline strong start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:118: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:119: WARNING: Block quote ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/blog/2013/1015.rst:16: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1123.rst:38: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/1204.rst:56: ERROR: Unknown interpreted text role "ddref".
+/home/luc/hgwork/lino/docs/blog/2013/1222.rst:117: WARNING: Line spec '367-': no lines pulled from include file u'/home/luc/hgwork/lino/docs/blog/2013/1222a.log'
+/home/luc/hgwork/lino/docs/blog/2014/0101.rst:68: ERROR: Unknown interpreted text role "ffile".
+/home/luc/hgwork/lino/docs/dev/apps.rst:100: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/eidreader/index.rst:5: WARNING: Duplicate explicit target name: "eid-applet".
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:48: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:49: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:53: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:54: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:57: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/tickets/2013/1.rst:58: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/todo.rst:1030: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+
+interrupted!

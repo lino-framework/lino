@@ -1,0 +1,37 @@
+====================================
+20140109 (Thursday, 09 January 2014)
+====================================
+
+The documentation system
+------------------------
+
+I had some visions on what is still needed to make the Lino
+documentation system usable.  Started to write documentation about it
+in :doc:`/dev/userdocs`.  My motivation is a meeting scheduled for Jan
+22nd in Eupen with Gerd and Melanie.
+
+- Added a new :directive:`currentlanguage` directive which solves a
+  subtle problem when documenting multilingual Lino applications: I
+  want to write tickets in the language of the user who reported
+  it. That language is not necessarily English. I don't want to
+  translate tickets. But I want to expand :role:`ddref` roles into the
+  user's language, not to English.
+
+- Added two directives and roles called :directive:`directive` and
+  :directive:`role` (in :mod:`atelier.sphinxconf`).
+
+- New module :mod:`atelier.sphinxconf.dirtables` with directives to
+  automatically generate tables from the files of a directory.  
+
+The idea behind all this was a full ticket management system: since
+tickets are usually being managed by programmers, it would be normal
+to store them rather usint .rst files than in a database.
+
+But I abandoned this idea when I saw that the :directive:`entry_intro`
+directive can't insert the document's metadata because these fields
+become available in the `docinfo` node only when the document has
+finished to parse. I would have to defer the rendering until after
+that.
+
+Before doing this, I'll rather try from the other side, by storing
+them in a database.

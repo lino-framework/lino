@@ -35,5 +35,40 @@ In der Tat sollte ja gerade eine Demo möglichst
 keine solchen Stolpersteine haben.
 
 
+Verträge will ich, nicht Klienten
+---------------------------------
 
+:ref:`welfare`: 
+I opened ticket `#2 : Verträge will ich, nicht Klienten
+<http://welfare.lino-framework.org/tickets/2.html>`_.
+
+
+New ``setlanguage`` directive
+-----------------------------
+
+I added two "imports from future" to 
+`atelier.sphinxconf`::
+
+  from __future__ import print_function
+  from __future__ import unicode_literals
+
+This has the side effect that code snippets passed to py2rst or
+django2rst directives now also have this set. Because they are
+executed from here.
+
+Unfortunately when this occurs, Sphinx does not report the real 
+guilty because I don't yet know how tell here to do so. 
+So when you see::
+
+    reading sources... [ 89%] releases/index                                                                                                          
+    Exception occurred:
+      File "/home/luc/hgwork/atelier/atelier/sphinxconf/__init__.py", line 357, in output_from_exec
+        exec(code, context)
+      File "<string>", line 32
+        print s
+              ^
+    SyntaxError: invalid syntax
+    The full traceback has been saved in /tmp/sphinx-err-gJDL_O.log, if you want to report the issue to the developers.
+
+then the problem is in file `releases/index.rst`
 

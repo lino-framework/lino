@@ -87,6 +87,8 @@ def model_name(m):
     return settings.SITE.userdocs_prefix + full_model_name(m).lower()
 
 
+
+
 def app_name(a):
     assert a.__name__.endswith('.models')
     parts = a.__name__.split('.')
@@ -291,8 +293,7 @@ def actors_overview_ul(model_reports):
 class ActorsOverviewDirective(Django2rstDirective):
 
     def get_rst(self):
-        lng = self.state.document.settings.env.config.language
-        with translation.override(lng):
+        with translation.override(self.language):
             #~ set_language(lng)
             actor_names = ' '.join(self.content).split()
             items = []
@@ -326,8 +327,7 @@ class FormDirective(Django2rstDirective):
     def get_rst(self):
         level, cls = resolve_name(self.content[0])
         s = ''
-        with translation.override(
-                self.state.document.settings.env.config.language):
+        with translation.override(self.language):
             s = '\n'.join(list(form_lines()))
         return s
 
@@ -341,19 +341,19 @@ class ActorDirective(Django2rstDirective):
         #~ from actordoc import get_actor_description
         #~ from django.conf import settings
         #~ from djangosite.dbutils import set_language
-        with translation.override(self.state.document.settings.env.config.language):
-        #~ lng = self.state.document.settings.env.config.language
-        #~ set_language(lng)
+        with translation.override(self.language):
             level, cls = resolve_name(self.content[0])
             if isinstance(cls, models.Field):
                 fld = cls
                 s = ''
                 name = str(fld.model) + '.' + fld.name
                 title = force_unicode(fld.verbose_name).strip()
+                
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%s (field in "%s")') % (title, fld.model))
+                s += unicode(_('%(field)s (field in %(model)s)') % dict(
+                    field=title, model=model_ref(fld.model)))
                 s += '\n\n'
-                s += rstgen.header(level, _("The **%s** field") % title)
+                s += rstgen.header(level, _("%s (field)") % title)
                 if len(self.content) > 1:
                     s += '\n'.join(self.content[1:])
                     s += '\n\n'
@@ -366,7 +366,7 @@ class ActorDirective(Django2rstDirective):
                 s += unicode(_('%s (app)') % title)
                 s += '\n\n.. _' + name + ':\n'
                 s += '\n'
-                s += rstgen.header(level, _("The %s app") % title)
+                s += rstgen.header(level, _("%s (app)") % title)
                 return s
 
             if not isinstance(cls, type):
@@ -382,21 +382,16 @@ class ActorDirective(Django2rstDirective):
                 name = model_name(model).lower()
                 title = force_unicode(model._meta.verbose_name)
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%s (model in app "%s")') %
-                             (title, model._meta.app_label))
+                s += unicode(_('%(model)s (model in %(app)s)') % dict(
+                    model=title, app=model._meta.app_label))
+
                 s += '\n\n'
 
-                #~ title = unicode(cls._meta.verbose_name)
-                #~ indextext = _('%s (%s)') % (full_model_name(cls),title)
-                #~ name = model_name(cls)
-                #~ self.index_entries.append(('single', indextext, name, ''))
-                #~ self.add_ref_target(name,name)
                 s += '\n\n.. _' + name + ':\n'
 
                 s += '\n'
-                s += rstgen.header(level, _("The %s model") % title)
-                #~ print(s)
-                #~ s += rstgen.header(3,_('%s (%s)') % (title,full_model_name(cls)))
+                s += rstgen.header(level, _("%s (model)") % title)
+
                 s += '\n'
                 s += '\n:Internal name: ``%s``\n' % full_model_name(cls)
                 s += '\n:Implemented by: %s\n' % typeref(cls)
@@ -449,8 +444,8 @@ class ActorDirective(Django2rstDirective):
             if issubclass(cls, actors.Actor):
 
                 title = force_unicode(cls.label or cls.title)
-                indextext = _('%s (table in module %s)') % (
-                    title, cls.app_label)
+                indextext = _('%(actor)s (view in %(app)s)') % dict(
+                    actor=title, app=cls.app_label)
                 name = actor_name(cls)
                 #~ if name == 'welfare.reception.waitingvisitors':
                     #~ self.debug = True
@@ -460,7 +455,7 @@ class ActorDirective(Django2rstDirective):
 
                 s = ''
                 s += '\n\n.. _%s:\n\n' % name
-                s += rstgen.header(level, _("The %s view") % title)
+                s += rstgen.header(level, _("%s (view)") % title)
                 s += '\n:Internal name: ``%s`` (%s)\n' % (cls, typeref(cls))
 
                 if len(self.content) > 1:
@@ -489,7 +484,7 @@ class ddrefRole(XRefRole):
 
     def __call__(self, typ, rawtext, text, lineno, inliner,
                  options={}, content=[]):
-        #~ print('20130901',typ, rawtext, text, lineno, inliner,options, content)
+        
         typ = 'std:ref'
         return XRefRole.__call__(self, typ, rawtext, text, lineno,
                                  inliner, options, content)
@@ -511,8 +506,8 @@ class ddrefRole(XRefRole):
         #~ x = settings.SITE.modules.resolve(target)
         if x is None:
             raise Exception("Could not resolve name %r" % target)
-
-        with translation.override(env.config.language):
+        lng = env.temp_data.get('language', env.config.language)
+        with translation.override(lng):
             if isinstance(x, models.Field):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = model_name(x.model) + '.' + x.name
