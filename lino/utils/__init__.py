@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -12,8 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
+""":mod:`lino.utils` (the top-level module) contains a few often-used
+function for general use. There are also many Subpackages_ and
+Submodules_.
 
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
@@ -40,7 +41,6 @@ This is another test
 
 >>> print join_words(None,None,None,'Third','test')
 Third test
-
 
 """
 

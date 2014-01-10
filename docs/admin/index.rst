@@ -27,6 +27,7 @@ Java applets included with Lino
 
    /davlink/index
    /eidreader/index
+   /java/index
    
 
 Other

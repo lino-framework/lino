@@ -16,6 +16,7 @@ Recommended
    /tutorials/index
    perms
    API </api/lino>
+   /api/modules
 
 Drafts
 ------

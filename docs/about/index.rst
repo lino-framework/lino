@@ -141,6 +141,7 @@ More
    luc
    license
    why_gpl
+   proprietary
    values
    name
    

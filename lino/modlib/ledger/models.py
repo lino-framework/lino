@@ -779,8 +779,9 @@ def get_due_movements(dc, **flt):
     payments *towards the partner* or *towards myself*.
 
     :param flt: Any keyword argument is forwarded to `filter
-    <https://docs.djangoproject.com/en/dev/ref/models/querysets/#filter>`
-    which :class:`Movement` objects to consider.
+                <https://docs.djangoproject.com/en/dev/ref/\
+                models/querysets/#filter>`
+                which :class:`Movement` objects to consider.
 
     """
     if dc is None:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -11,6 +11,19 @@
 # GNU General Public License for more details.
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+"""This is the :mod:`lino.modlib.extjs` app for Lino.  It is being
+automatically included by every Lino application unless you specify
+``extjs`` in :setting:`hidden_apps` (or override your
+:setting:`get_installed_apps` method).
+
+When your Lino application uses the ExtJS user interface, then you may
+need a commercial license from Sencha if your site is (1) your
+application is not available under the GPL **and** (2) used by other
+people than the empoyees of the company who wrote the application. See
+:doc:`/about/proprietary` for details.
+
+"""
 
 from lino.ad import Plugin
 from django.utils.translation import ugettext_lazy as _
