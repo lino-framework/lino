@@ -1,0 +1,15 @@
+==================================
+20140110 (Friday, 10 January 2014)
+==================================
+
+Started new ticket :doc:`/tickets/78`.
+Started new article :doc:`/java/index`.
+
+Started new ticket :doc:`/tickets/79`, which includes a new article
+:doc:`/about/proprietary` and changes in :doc:`/about/license` and
+:doc:`/about/why_gpl`.
+
+
+
+
+

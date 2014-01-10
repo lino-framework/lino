@@ -281,12 +281,12 @@ def setup(app):
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 
-extlinks.update({
+extlinks = dict({
   'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
   'checkin': ('http://code.google.com/p/lino/source/detail?r=%s', 'Checkin '),
-#  'srcref': (lino.srcref_url, ''),
-#  'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
-#  'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
+  'srcref': (lino.srcref_url, ''),
+  'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
+  'extux': ('http://extjs-ux.org/ext-docs/?class=%s', ''),
   'djangoticket': ('http://code.djangoproject.com/ticket/%s', 'Django ticket #'),
   'welfare': ('http://welfare.lino-framework.org%s.html', ''),
   'welfareticket': ('http://welfare.lino-framework.org/tickets/%s.html', ''),

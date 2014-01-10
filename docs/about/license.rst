@@ -1,6 +1,8 @@
 Licensing : How to make money with Lino
 =======================================
 
+.. include:: /include/wip.rst
+
 Lino is published under the `GPL
 <http://en.wikipedia.org/wiki/GNU_General_Public_License>`_.  The
 reason for this choice is explained in :doc:`why_gpl`.  But what does
