@@ -1,5 +1,10 @@
+:state: closed
+:module: lino
+
 #16 : Questions about copyright 
 ===============================
+
+This ticket is closed. See :doc:`79`.
 
 Should I change Lino's license from the current GPL to LGPL or even BSD?
 The main reason to do so would be to stop refraining 

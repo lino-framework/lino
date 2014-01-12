@@ -1,4 +1,5 @@
-.. _plain:
+:state: sleeping
+:module: lino.modlib.plain
 
 #67 : Write a jQuery-based GUI
 ==============================
@@ -11,7 +12,6 @@ One problem is Brian Moeskau's great work of the Extensible
 calendar application. But even this exists in jQuery:
 Adam Shaw's 
 `FullCalendar <http://arshaw.com/fullcalendar/>`_.
-
 
 `Here <http://www.onlinecompanyportal.com/sts/>`_
 is an example integrated in a demo application 

@@ -54,7 +54,7 @@ First suggestion:
 Implementation:
 
 - New virtual field `active_contract` on 
-  :ddref:`welfare.pcsw.Client`
+  :ref:`welfare.pcsw.Client`
   functionally replaces and extends the 
   fields `applies_from` and `applies_until`.
 

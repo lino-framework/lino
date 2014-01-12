@@ -25,7 +25,6 @@ Drafts
 
    actors
    /tested/index
-   /todo
    apps
    testing
    

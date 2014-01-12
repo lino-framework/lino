@@ -1,0 +1,238 @@
+Java Plug-in 10.45.2.18
+Using JRE version 1.7.0_45-b18 Java HotSpot(TM) Client VM
+User home directory = C:\Documents and Settings\Luc Saffre
+----------------------------------------------------
+c:   clear console window
+f:   finalize objects on finalization queue
+g:   garbage collect
+h:   display this help message
+l:   dump classloader list
+m:   print memory usage
+o:   trigger logging
+q:   hide console
+r:   reload policy configuration
+s:   dump system and deployment properties
+t:   dump thread list
+v:   dump thread stack
+x:   clear classloader cache
+0-5: set trace level to <n>
+----------------------------------------------------
+basic: PluginMain.unregisterApplet: 2 from mananger sun.plugin2.applet.JNLP2Manager@1bdc7db
+preloader: Construct preloader delegate
+network: Created version ID: 1.7.0.45
+network: Created version ID: 1.7
+network: Created version ID: 2.2.45
+network: ResponseCode for file:/T:/applets/eidreader.jnlp : 200
+network: Encoding for file:/T:/applets/eidreader.jnlp : null
+network: Server response: (length: 746, lastModified: Fri Dec 20 20:02:54 EET 2013, downloadVersion: null, mimeType: application/x-java-jnlp-file)
+network: Downloading resource: file:/T:/applets/eidreader.jnlp
+	Content-Length: 746
+	Content-Encoding: null
+network: Wrote URL file:/T:/applets/eidreader.jnlp to File C:\Documents and Settings\Luc Saffre\Local Settings\Application Data\Sun\Java\Deployment\cache\6.0\47\3d6252af-31d35a50-temp
+network: Downloaded file:/T:/applets/eidreader.jnlp: C:\Documents and Settings\Luc Saffre\Local Settings\Application Data\Sun\Java\Deployment\cache\6.0\47\3d6252af-31d35a50
+cache: Adding MemoryCache entry: file:/T:/applets/eidreader.jnlp
+temp: new XMLParser with source:
+temp: <?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+">
+<information>
+    <title>EIDReader</title>
+    <vendor>Code Gears / Rumma &amp; Ko</vendor>
+    <offline-allowed/>
+</information>
+<resources>
+    <!-- Application Resources -->
+    <j2se version="1.7+"
+          href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="EIDReader.jar" main="true" />
+    <jar href="commons-logging.jar" download="lazy" main="false" />
+    <jar href="commons-codec.jar" download="lazy" main="false" />
+    <jar href="eid-applet-service.jar" download="lazy" main="false" />
+
+</resources>
+<applet-desc 
+     name="EIDReader"
+     main-class="src.eidreader.EIDReader"
+     width="200"
+     height="200">
+ </applet-desc>
+</jnlp>
+
+temp: 
+
+returning ROOT as follows:
+
+<jnlp spec="1.0+">
+  <information>
+    <title>EIDReader</title>
+    <vendor>Code Gears / Rumma & Ko</vendor>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.7+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="EIDReader.jar" main="true"/>
+    <jar href="commons-logging.jar" download="lazy" main="false"/>
+    <jar href="commons-codec.jar" download="lazy" main="false"/>
+    <jar href="eid-applet-service.jar" download="lazy" main="false"/>
+  </resources>
+  <applet-desc name="EIDReader" main-class="src.eidreader.EIDReader" width="200" height="200"/>
+</jnlp>
+temp: returning LaunchDesc from XMLFormat.parse():
+
+<jnlp spec="1.0+" codebase="file:/T:/applets/">
+  <information>
+    <title>EIDReader</title>
+    <vendor>Code Gears / Rumma & Ko</vendor>
+    <homepage href="null"/>
+    <offline-allowed/>
+  </information>
+  <update check="timeout" policy="always"/>
+  <resources>
+    <java href="http://java.sun.com/products/autodl/j2se" version="1.7+"/>
+    <jar href="file:/T:/applets/EIDReader.jar" download="eager" main="true"/>
+    <jar href="file:/T:/applets/commons-logging.jar" download="lazy" main="false"/>
+    <jar href="file:/T:/applets/commons-codec.jar" download="lazy" main="false"/>
+    <jar href="file:/T:/applets/eid-applet-service.jar" download="lazy" main="false"/>
+  </resources>
+  <applet-desc name="EIDReader" main-class="src.eidreader.EIDReader" documentbase="file:/T:/applets/test_using_jnlp.html" width="200" height="200"/>
+</jnlp>
+preloader: Added pending event 1: ConfigEvent[type=SetVisible, value=true]
+basic: Plugin2ClassLoader.addURL2 called for file:/T:/applets/EIDReader.jar
+basic: Plugin2ClassLoader.addURL2 called for file:/T:/applets/commons-logging.jar
+basic: Plugin2ClassLoader.addURL2 called for file:/T:/applets/commons-codec.jar
+basic: Plugin2ClassLoader.addURL2 called for file:/T:/applets/eid-applet-service.jar
+basic: Plugin2ClassLoader.drainPendingURLs addURL called for file:/T:/applets/EIDReader.jar
+basic: Plugin2ClassLoader.drainPendingURLs addURL called for file:/T:/applets/commons-logging.jar
+basic: Plugin2ClassLoader.drainPendingURLs addURL called for file:/T:/applets/commons-codec.jar
+basic: Plugin2ClassLoader.drainPendingURLs addURL called for file:/T:/applets/eid-applet-service.jar
+preloader: Added pending event 2: ConfigEvent[type=AppInfo, value=Appinfo:
+type = 2
+title = EIDReader
+vendor = Code Gears / Rumma & Ko
+from = file:/T:/applets/EIDReader.jarjnlp
+security = 1
+lapURL = file:/T:/applets/EIDReader.jarjnlp
+]
+preloader: Added pending event 3: InitEvent[type=App]
+network: LaunchDownload: concurrent downloads from LD: 4
+network: Total size to download: -1
+security: Security check for progress jars: allSigned=true
+preloader: Using preloader class: null com.sun.deploy.uitoolkit.impl.awt.AWTAppletAdapter@1e89f1b
+preloader: Using default preloader
+preloader: Requested to use preloader class: null
+preloader: GrayBox: parent = sun.plugin2.main.client.PluginEmbeddedFrame[frame2,0,0,200x200,layout=java.awt.BorderLayout,title=,resizable,normal]
+preloader: Delivering: ConfigEvent[type=SetVisible, value=true]
+preloader: Delivering: ConfigEvent[type=AppInfo, value=Appinfo:
+type = 2
+title = EIDReader
+vendor = Code Gears / Rumma & Ko
+from = file:/T:/applets/EIDReader.jarjnlp
+security = 1
+lapURL = file:/T:/applets/EIDReader.jarjnlp
+]
+preloader: Delivering: InitEvent[type=App]
+preloader: Skipped all (0) download events prior to null
+preloader: Preloader jars loaded. Error state=null
+preloader: Start progressCheck thread
+network: ResponseCode for file:/T:/applets/EIDReader.jar : 200
+network: Encoding for file:/T:/applets/EIDReader.jar : null
+network: Server response: (length: 14746, lastModified: Sat Dec 21 16:39:19 EET 2013, downloadVersion: null, mimeType: application/x-java-archive)
+preloader: Delivering: DownloadEvent[type=load,loaded=0, total=14746, percent=1]
+network: Downloading resource: file:/T:/applets/EIDReader.jar
+	Content-Length: 14.746
+	Content-Encoding: null
+preloader: Delivering: DownloadEvent[type=load,loaded=872, total=14746, percent=4]
+preloader: Delivering: DownloadEvent[type=load,loaded=1720, total=14746, percent=9]
+preloader: Delivering: DownloadEvent[type=load,loaded=2296, total=14746, percent=12]
+preloader: Delivering: DownloadEvent[type=load,loaded=3046, total=14746, percent=16]
+preloader: Delivering: DownloadEvent[type=load,loaded=3666, total=14746, percent=19]
+preloader: Delivering: DownloadEvent[type=load,loaded=4391, total=14746, percent=23]
+preloader: Delivering: DownloadEvent[type=load,loaded=5265, total=14746, percent=28]
+preloader: Delivering: DownloadEvent[type=load,loaded=6080, total=14746, percent=32]
+preloader: Delivering: DownloadEvent[type=load,loaded=6853, total=14746, percent=37]
+preloader: Delivering: DownloadEvent[type=load,loaded=7848, total=14746, percent=42]
+preloader: Delivering: DownloadEvent[type=load,loaded=8613, total=14746, percent=46]
+preloader: Delivering: DownloadEvent[type=load,loaded=9254, total=14746, percent=50]
+preloader: Delivering: DownloadEvent[type=load,loaded=9923, total=14746, percent=53]
+preloader: Delivering: DownloadEvent[type=load,loaded=11175, total=14746, percent=60]
+preloader: Delivering: DownloadEvent[type=load,loaded=11378, total=14746, percent=61]
+preloader: Delivering: DownloadEvent[type=load,loaded=12245, total=14746, percent=66]
+preloader: Delivering: DownloadEvent[type=load,loaded=12428, total=14746, percent=67]
+preloader: Delivering: DownloadEvent[type=load,loaded=13165, total=14746, percent=71]
+preloader: Delivering: DownloadEvent[type=load,loaded=14199, total=14746, percent=77]
+preloader: Delivering: DownloadEvent[type=load,loaded=14544, total=14746, percent=78]
+preloader: Delivering: DownloadEvent[type=load,loaded=14746, total=14746, percent=80]
+network: Wrote URL file:/T:/applets/EIDReader.jar to File C:\DOCUME~1\LUCSAF~1\LOCALS~1\Temp\jar_cache828610675405631770.tmp
+preloader: Delivering: DownloadEvent[type=verify,loaded=0, total=10, percent=90]
+security: blacklist: check contains Jz9dlVsd+klr+Zie0W06qYRF4bbcUaiuwBgNkHSwd8s=, state now IN_MEMORY
+security: blacklist: not  found in cache
+security: Trusted libraries list file not found
+preloader: Delivering: DownloadEvent[type=verify,loaded=10, total=10, percent=95]
+security: blacklist: check contains Jz9dlVsd+klr+Zie0W06qYRF4bbcUaiuwBgNkHSwd8s=, state now IN_MEMORY
+security: blacklist: not  found in cache
+network: Downloaded file:/T:/applets/EIDReader.jar: C:\DOCUME~1\LUCSAF~1\LOCALS~1\Temp\jar_cache828610675405631770.tmp
+cache: Adding MemoryCache entry: file:/T:/applets/EIDReader.jar
+network: Download Progress: jarsDone: 1
+preloader: Delivering: DownloadEvent[type=verify,loaded=10, total=10, percent=100]
+ruleset: Jnlp based RuleId: 
+        title: EIDReader
+        location: file:/T:/applets/eidreader.jnlp
+        main location: file:/T:/applets/EIDReader.jar
+        main version: null
+        isArtifact: true
+ruleset: finding Deployment Rule Set for 
+        title: EIDReader
+        location: file:/T:/applets/eidreader.jnlp
+        main location: file:/T:/applets/EIDReader.jar
+        main version: null
+        isArtifact: true
+ruleset: no rule applies, returning Default Rule
+network: Created version ID: 1.7+
+network: Created version ID: 1.7.0.45
+network: Created version ID: 1.7.0.45
+network: Created version ID: 1.7
+network: Created version ID: 2.2.45
+basic: LaunchDesc.selectJRE(false, false) returning selected jre: JREInfo for index 0:
+    platform is: 1.7
+    product is: 1.7.0_45
+    location is: http://java.sun.com/products/autodl/j2se
+    path is: C:\Program Files\Java\jre7\bin\javaw.exe
+    args is: 
+    native platform is: Windows, x86 [ x86, 32bit ]
+    JavaFX runtime is: JavaFX 2.2.45 found at C:\Program Files\Java\jre7\
+    enabled is: true
+    registered is: true
+    system is: true
+
+basic: LaunchDesc location: file:/T:/applets/EIDReader.jarjnlp
+security:  --- parseCommandLine converted : 
+into:
+[]
+preloader: Enter wait for preloader jars to be loaded 
+preloader: Done with loading of preloader jars. Error=null
+network: Created version ID: 1.0+
+network: Created version ID: 7.0
+java.lang.SecurityException: JAR manifest requested to run in all-permissons only: file:/T:/applets/EIDReader.jar
+	at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
+	at com.sun.deploy.security.DeployManifestChecker.verify(Unknown Source)
+	at com.sun.deploy.security.SandboxSecurity.isPermissionGranted(Unknown Source)
+	at com.sun.javaws.security.JNLPSignedResourcesHelper.checkSignedResourcesHelper(Unknown Source)
+	at com.sun.javaws.security.JNLPSignedResourcesHelper.checkSignedResources(Unknown Source)
+	at sun.plugin2.applet.JNLP2Manager.prepareLaunchFile(Unknown Source)
+	at sun.plugin2.applet.JNLP2Manager.loadJarFiles(Unknown Source)
+	at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+basic: null
+preloader: Delivering: DownloadEvent[type=verify,loaded=1, total=1, percent=100]
+basic: exception: The Java security settings have prevented this application from running. You may change this behavior in the Java Control Panel..
+ExitException[ 0]com.sun.deploy.security.BlockedException: The Java security settings have prevented this application from running. You may change this behavior in the Java Control Panel.
+	at com.sun.javaws.security.JNLPSignedResourcesHelper.checkSignedResourcesHelper(Unknown Source)
+	at com.sun.javaws.security.JNLPSignedResourcesHelper.checkSignedResources(Unknown Source)
+	at sun.plugin2.applet.JNLP2Manager.prepareLaunchFile(Unknown Source)
+	at sun.plugin2.applet.JNLP2Manager.loadJarFiles(Unknown Source)
+	at sun.plugin2.applet.Plugin2Manager$AppletExecutionRunnable.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+preloader: Delivering: ErrorEvent[url=null label=The Java security settings have prevented this application from running. You may change this behavior in the Java Control Panel. cause=The Java security settings have prevented this application from running. You may change this behavior in the Java Control Panel.
+preloader: Preloader shutdown after ErrorEvent
+preloader: Stop progressCheck thread
+ui: Show default error panel
+security: Reset deny session certificate store

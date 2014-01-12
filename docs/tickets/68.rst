@@ -1,3 +1,6 @@
+:state: sleeping
+:module: lino.modlib.sales
+
 #68 : Automatically update invoice total when item changed
 ==========================================================
 
@@ -14,7 +17,7 @@ Lino.GridPanel.on_afteredit).
 This has the disadvantage that the cell cursor moves 
 to the upper left corner after each cell edit.
 
-You can see how this feels by setting 
+We can see how this feels by setting 
 :meth:`lino.modlib.vat.models.VatDocument.refresh_after_item_edit` 
 to True.
 

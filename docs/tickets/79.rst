@@ -1,3 +1,6 @@
+:state: todo
+:module: lino
+
 #79 : Change Lino license from GPL to LGPL
 ==========================================
 

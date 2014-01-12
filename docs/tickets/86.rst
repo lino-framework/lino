@@ -1,0 +1,26 @@
+:state: discussion
+:module: lino_patrols
+
+#86 : Questions en cours Marc
+=============================
+
+Pour la prochaine visite de chantier :ref:`patrols`:
+
+- Period (year, month, state)
+- PeriodStates: planning, active, done
+- TimeTables h1 & h2
+- Mission : name, h1, h2 (1 IntegerField per TimeTable)
+- Need : mission, period, timtable, patrol 
+  (ex. "En Janvier il faut une patrouille H2 pour Jardins")
+- Patrol : date, mission, team
+- Team : timetable
+
+- subclass Agent(Employee) and Agent : timetable, area 
+  (i.e. the timtetable and area this agent is going to have 
+  *for the next period*. Updated automatically but with possible 
+  manual change.
+
+
+
+
+

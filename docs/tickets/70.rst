@@ -1,3 +1,6 @@
+:state: sleeping
+:module: lino.core
+
 #70 : Lino UI together with Django's permission system
 ======================================================
 
@@ -8,10 +11,10 @@ but not for substituting the permission system.
 
 See also :doc:`/tutorials/uiless`.
 
-But what it somebody wants a Lino UI together 
+But what if somebody wants a Lino UI together 
 with Django's permission system?
 
-The setting :attr:`django_admin_prefix <lino.Lino.django_admin_prefix>` 
+The :setting:`django_admin_prefix` setting
 doesn't yet work.
 It is currently not possible to run `django.contrib.admin` 
 on a Lino site because the permission systems aren't compatible.

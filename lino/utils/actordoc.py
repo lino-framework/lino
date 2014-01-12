@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,28 +19,15 @@ Lino application.
 
 from __future__ import unicode_literals, print_function
 
-from sphinx.ext.autodoc import ModuleLevelDocumenter
-from sphinx.util.docstrings import prepare_docstring
-from sphinx.util import force_decode
-from sphinx.util.nodes import make_refnode
+from sphinx.util.compat import Directive
 
-
-#~ from sphinx.config import Config
-#~ from sphinx.errors import SphinxError, SphinxWarning, ExtensionError, \
-     #~ VersionRequirementError
-from sphinx.domains import ObjType
-#~ from sphinx.domains.std import GenericObject, Target, StandardDomain
-from sphinx.domains.std import StandardDomain
-from sphinx.domains.python import PyModulelevel
 
 from sphinx.roles import XRefRole
 from sphinx.util import ws_re
 from sphinx import addnodes
 
-from docutils.parsers.rst import roles
 from docutils import nodes, utils
-from docutils.nodes import fully_normalize_name, whitespace_normalize_name
-
+from docutils.nodes import fully_normalize_name
 
 from django.db import models
 from django.conf import settings
@@ -61,45 +48,23 @@ from djangosite import Plugin
 
 from atelier.sphinxconf import Django2rstDirective
 
-
 import lino.ui.urls  # hack: trigger ui instantiation
 
 from lino.core import actions
 
 
-#~ def refto(x):
-    #~ if x is None:
-        #~ return '`None`'
-    #~ if issubclass(x,models.Model):
-        #~ return ':ref:`' + force_unicode(x._meta.verbose_name) + ' <' \
-            #~ + settings.SITE.userdocs_prefix + full_model_name(x) + '>`'
-    #~ return ':ref:`' + x.verbose_name + ' <' + settings.SITE.userdocs_prefix \
-        #~ + full_model_name(x.model) + '.' + x.name + '>`'
-
-#~ def actor_name(a): return settings.SITE.userdocs_prefix + str(a).lower()
 def actor_name(a):
-    #~ return settings.SITE.userdocs_prefix + str(a).lower()
     return fully_normalize_name(settings.SITE.userdocs_prefix + str(a))
-    #~ return settings.SITE.userdocs_prefix + str(a)
 
 
 def model_name(m):
     return settings.SITE.userdocs_prefix + full_model_name(m).lower()
 
 
-
-
 def app_name(a):
     assert a.__name__.endswith('.models')
     parts = a.__name__.split('.')
     return settings.SITE.userdocs_prefix + parts[-2]
-    #~ app = getattr(a,'App',None)
-    #~ if app is None:
-        #~ name = parts[-2]
-    #~ else:
-        #~ name = parts[-2]
-    #~ raise Exception(a.__name__)
-    #~ return settings.SITE.userdocs_prefix + name
 
 
 def actor_ref(rpt, text=None):
@@ -116,15 +81,11 @@ def model_ref(m, text=None):
 
 def rptlist(l):
     return ', '.join([actor_ref(a) for a in l])
-    #~ return ', '.join([
-        #~ ":ref:`%s (%s) <%s>`" % (str(rpt),force_unicode(rpt.label),actor_ref(rpt))
-        #~ for rpt in l])
 
 
 def typeref(cls):
     text = cls.__name__
     target = cls.__module__ + '.' + cls.__name__
-    #~ return ":coderef:`%s <%s>`" % (text,target)
     return ":class:`%s <%s>`" % (text, target)
 
 
@@ -374,9 +335,6 @@ class ActorDirective(Django2rstDirective):
 
             if issubclass(cls, models.Model):
                 model = cls
-                #~ if full_model_name(cls) == 'newcomers.Broker':
-                    #~ self.debug = True
-                #~ self.add_model_index_entry(cls)
 
                 s = ''
                 name = model_name(model).lower()
@@ -403,8 +361,8 @@ class ActorDirective(Django2rstDirective):
 
                 model_reports = [
                     r for r in dbtables.master_reports if r.model is cls]
-                model_reports += [r for r in dbtables.slave_reports if r.model is cls]
-                #~ s += rstgen.boldheader(_("Tables on a %s") % cls._meta.verbose_name)
+                model_reports += [r for r in dbtables.slave_reports
+                                  if r.model is cls]
                 s += rstgen.boldheader(_("Views on %s") %
                                        cls._meta.verbose_name)
                 s += actors_overview_ul(model_reports)
@@ -414,9 +372,9 @@ class ActorDirective(Django2rstDirective):
                 s += fields_ul(cls._meta.fields)
 
                 action_list = cls._lino_default_table.get_actions()
-                #~ action_list = [ba for ba in action_list if ba.action.sort_index >= 30]
                 action_list = [
-                    ba for ba in action_list if not isinstance(ba.action, IGNORED_ACTIONS)]
+                    ba for ba in action_list
+                    if not isinstance(ba.action, IGNORED_ACTIONS)]
                 if action_list:
                     s += '\n'
                     s += rstgen.boldheader(_("Actions on %s") %
@@ -427,18 +385,8 @@ class ActorDirective(Django2rstDirective):
                 if slave_tables:
                     s += rstgen.boldheader(_("Tables referring to %s") %
                                            cls._meta.verbose_name)
-                    #~ for tb in slave_tables:
-                        #~ s += '\n.. _'+ settings.SITE.userdocs_prefix + str(tb) + ':\n'
-                    #~ s += '\n'
-                    #~ s += rstgen.header(4,_("Slave tables of %s") % cls._meta.verbose_name)
-
-                    #~ s += "\n\n**%s**\n\n" % _("Tables referring to %s") % cls._meta.verbose_name
                     s += actors_overview_ul(slave_tables)
 
-                #~ if model_reports:
-                    #~ s += '\nMaster tables: %s\n' % rptlist(model_reports)
-                #~ if slave_tables:
-                    #~ s += '\nSlave tables: %s\n' % rptlist(slave_tables)
                 return s
 
             if issubclass(cls, actors.Actor):
@@ -503,10 +451,10 @@ class ddrefRole(XRefRole):
         # ~ target = ' '.join(target.split()) # replace newlines or tabs by spaces
 
         level, x = resolve_name(target)
-        #~ x = settings.SITE.modules.resolve(target)
         if x is None:
             raise Exception("Could not resolve name %r" % target)
-        lng = env.temp_data.get('language', env.config.language)
+        # lng = env.temp_data.get('language', env.config.language)
+        lng = CurrentLanguage.get_current_value(env)
         with translation.override(lng):
             if isinstance(x, models.Field):
                 text = utils.unescape(unicode(x.verbose_name))
@@ -541,9 +489,59 @@ class ddrefRole(XRefRole):
         return title, target
 
 
+class TempDataDirective(Directive):
+    has_content = False
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = False
+    option_spec = {}
+    temp_data_key = None
+
+    @classmethod
+    def get_default_value(self, env):
+        return None
+
+    @classmethod
+    def get_current_value(cls, env):
+        return env.temp_data.get(
+            cls.temp_data_key,
+            cls.get_default_value(env))
+
+    def run(self):
+        env = self.state.document.settings.env
+        v = self.arguments[0].strip()
+        if v == 'None':
+            del env.temp_data[self.temp_data_key]
+        else:
+            env.temp_data[self.temp_data_key] = v
+        return []
+
+
+class CurrentLanguage(TempDataDirective):
+    """Tell Sphinx to switch to the specified language until the end of
+    this document.
+
+    """
+    temp_data_key = 'language'
+
+    @classmethod
+    def get_default_value(cls, env):
+        return env.config.language
+
+
+class CurrentProject(TempDataDirective):
+    """Tell Sphinx to switch to the specified project until the end of
+    this document.
+
+    """
+    temp_data_key = 'lino_project'
+
+
 def setup(app):
 
     app.add_directive('form', FormDirective)
     app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
     app.add_role('ddref', ddrefRole())
+    app.add_directive('currentlanguage', CurrentLanguage)
+    app.add_directive('currentproject', CurrentProject)

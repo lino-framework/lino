@@ -23,6 +23,7 @@ Sitemap
    community/index
    admin/index
    
+   todo
    dev/index
    /blog/index
    changes

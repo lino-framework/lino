@@ -15,7 +15,7 @@ import os
 from unipath import Path
 
 from atelier.sphinxconf import configure
-configure(globals(),'lino.projects.docs.settings')
+configure(globals(), 'lino.projects.docs.settings')
 
 if False:
     import settings
@@ -25,6 +25,7 @@ Oops: `import settings` finds a settings module in %s.
 See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
 
 extensions += ['atelier.sphinxconf.blog']
+extensions += ['lino.utils.actordoc']
 
 
 #~ from unipath import Path

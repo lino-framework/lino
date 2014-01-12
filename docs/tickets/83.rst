@@ -1,0 +1,25 @@
+:state: sleeping
+:module: lino.core
+
+#83 : GridConfig (User-configurable views)
+==========================================
+
+
+Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
+verwaltbar via Web und automatisch migrierbar). 
+Das wäre gleichzeitig dann auch ein "Filter Editor"::
+    
+      class View(dd.Sequenced):
+          model
+          actor
+          user
+          
+      
+      class FilterCondition(dd.Sequenced):
+          view = dd.ForeignKey('View')
+          field = 
+          operator = Operators.field()
+          value = CharField()
+          connector ("and", "or", "(", ")")
+  
+

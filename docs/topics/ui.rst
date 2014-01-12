@@ -19,12 +19,12 @@ But also the :ref:`lino.ui.plain` can be useful.
 You can currently see it in action by clicking the "HTML" button 
 of a :ref:`lino.ui.grid`
 
-.. _lino.ui.extjs:
+.. _extjs:
 
 ExtJS UI
 --------
 
-.. _lino.ui.plain:
+.. _plain:
 
 Plain UI
 --------

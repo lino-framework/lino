@@ -12,11 +12,9 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-The :mod:`lino.modlib.plain` app adds the "plain" user interface.
-
-It uses the `Bootstrap  <http://twitter.github.com/bootstrap>`_ 
-CSS toolkit.
+"""The :mod:`lino.modlib.plain` app adds the :ref:`plain` user
+interface based on the `Bootstrap
+<http://twitter.github.com/bootstrap>`_ CSS toolkit.
 
 """
 

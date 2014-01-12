@@ -1,0 +1,22 @@
+====================================
+20140111 (Saturday, 11 January 2014)
+====================================
+
+Moved 2 tickets from :ref:`welfare` to :doc:`/tickets`. 
+Because I realized that
+
+- there must be one central list of tickets
+
+- I'll find a way to make :role:`ddref` work from a central doctree:
+  I can write a lino command which writes a file `ddmeta.json` which 
+  contains all dd names of a project.
+  As a workaround *en attendant' it's possible to 
+  use  ``:ref:`welfare.pcsw.Client``` to get
+  :ref:`welfare.pcsw.Client`.
+
+  Moved definition of the :directive:`currentlanguage` directive from
+  :mod:`atelier.sphinxconf` to :mod:`lino.utils.actordocs`.
+  New directive :directive:`currentproject`.
+
+I admit that my ticket management is still rather poor. 
+Still looking for ideas.

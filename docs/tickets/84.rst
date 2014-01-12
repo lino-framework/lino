@@ -1,0 +1,49 @@
+:state: discussion
+:module: lino_faggio
+
+#84 : Laufende Anfragen Eiche
+=============================
+
+Die folgenden Punkte in :ref:`faggio`
+sind jetzt fast alle geregelt. 
+Nächste Besichtigung machen.
+
+#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs
+
+#.  Stornierte Einschreibungen sollen nicht fakturiert werden
+
+#.  invoicing_address testen. Z.B. für Ehepaare.
+
+#.  Kostenlose Teilnahmen: kriegen trotzdem eine "Rechnung" mit Betrag 0
+    weil uns das ein getrenntes Dokument spart. 
+    Oder doch eine getrennte Notizart "Terminliste".
+
+#.  Termine sollen nicht einzeln bestätigt werden müssen. 
+    Sollen gar keinen Status "veröffentlicht" haben.
+    
+#.  Wenn ein automatisch generierter Termin auf storniert gesetzt wurde, 
+    dann muss Lino (bei einem Kurs mit vorgesehener Anzahl Termine) 
+    dafür einen Ersatztermin generieren.
+    
+#.  Wie war das mit den Test-Karten? Kunde zahlt für eine Stunde, nimmt 
+    teil und entscheidet erst dann, ob er den Rest bezahlt. 
+    Produkt "Schnupperkarte". Manuelle Rechnung. Bei Einschreibung Betrag manuell anpassen.
+
+#.  Z.B. bei Kursen "Funktionale Gymnastik" stehen nicht unbedingt alle 
+    Termine bei der Anmeldung fest. 
+    Anklickbare Bemerkung "Termine unter Vorbehalt"?
+
+#.  Rechnung drucken mit Terminliste und/oder für mehrere Einschreibungen.
+
+#.  Tabelle mit Rabatten : Ermäßigung je nach Schülerart (sowie eventuell je nach Artikel, Artikelgruppe,...)
+    
+#.  Wie macht man ein allgemeines Mailing (z.B. Angebot Jahreskarten).
+    Brauchen wir eine Tabelle `mailings.Mailing`?
+    
+#.  Späteinsteiger. Jemand steigt in einen begonnenen Kurs ein. 
+    Hat die ersten Stunden verpasst und soll die dann auch nicht fakturiert kriegen.
+
+#.  Buchhaltung: Bargeld-Kasse. Gutschriften erstellen können. Mahnungen ausdrucken.
+
+
+

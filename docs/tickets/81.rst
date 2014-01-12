@@ -1,0 +1,65 @@
+:state: discussion
+:created: 2014-01-07
+:module: lino_welfare.modlib.integ
+
+#81 : Verträge will ich, nicht Klienten
+=======================================
+
+.. currentlanguage:: de
+
+Ein alter Analysefehler, der sich schon seit Langem immer wieder
+bemerkbar macht: an vielen Stellen, wo die Benutzer *Verträge* sehen
+wollen, zeigt Lino *Klienten* (:ref:`welfare.pcsw.Clients`).  ("Verträge"
+bedeutet hier :ref:`welfare.isip.Contracts` und/oder
+:ref:`welfare.jobs.Contracts`.)
+
+
+Der Fehler kommt daher, dass es in der Praxis immer exakt
+einen Vertrag pro Klient gibt. Für die Benutzer ist es deshalb
+ungewohnt, die beiden Konzepte zu trennen.
+
+Beispiel Hubert:
+
+    Wenn ich meine 60§7 Liste (z.Zt. 24 Personen) öffne,
+    erscheint diese zuerst in alphabetischer Reihenfolge nach Namen.
+
+    Ich möchte sie aber oft lieber nach Enddatum Vertrag sortieren
+    um übersichtlicher sehen zu können welche meiner Verträge in Kürze
+    auslaufen werden.
+
+    Man kann sortieren nach NNR, GSM, Adresse, Tel., ID,
+    Sozialhilfeart, Sprache...  aber *nicht* nach Name, Vertrag
+    beginnt, Vertrag endet oder Alter.
+
+    Die 4 Parameter, die interessant wären zu sortieren (Namen, Daten,
+    Alter), sind die 4 Parameter, die ich NICHT nutzen kann?
+
+    Ich habe gesehen, dass dies bei allen anderen
+    Integrationsphasen-Listen 
+    (VSE1, VSE2, Arbeitssuchende, Ausbildung ....usw) gleich ist
+
+Oder meine Antwort auf eine Anfrage von Uwe:
+
+    Man kann in der Liste "Meine Klienten" 
+    momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
+    "Vertrag endet" sortieren. 
+    Liegt daran, dass das virtual fields sind.
+    Es ist zumindest nicht einfach, das zu ermöglichen. 
+    Wahrscheinlich müssten wir dazu custom functions definieren, 
+    was nicht alle db-Backends können.
+    Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
+    vorliegt. 
+    Der Vorfall bestätigt Gerds Bedenken, als die Benutzerfrage kam.
+    Eigentlich müsstet ihr die gleichen Infos auch 
+    über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
+    kriegen können.
+    Zu analysieren mit den Benutzern.
+
+
+
+Lösungsvorschlag:
+
+- Die anklickbaren Zahlen in :ref:`welfare.integ.UsersWithClients`
+  sollten auf die jeweiligen Vertragstabellen verweisen.
+
+

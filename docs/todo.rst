@@ -1,159 +1,13 @@
 To-do list
 ==========
 
-
-#.  Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
-    verwaltbar via Web und automatisch migrierbar). 
-    Das wäre gleichzeitig dann auch ein "Filter Editor"::
-    
-      class View(dd.Sequenced):
-          model
-          actor
-          user
-          
-      
-      class FilterCondition(dd.Sequenced):
-          view = dd.ForeignKey('View')
-          field = 
-          operator = Operators.field()
-          value = CharField()
-          connector ("and", "or", "(", ")")
-  
-
-:ref:`faggio` (bis Oktober)
----------------------------
-
-Die folgenden Punkte sind jetzt fast alle geregelt. 
-Nächste Besichtigung machen.
-
-#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs
-
-#.  Stornierte Einschreibungen sollen nicht fakturiert werden
-
-#.  invoicing_address testen. Z.B. für Ehepaare.
-
-#.  Kostenlose Teilnahmen: kriegen trotzdem eine "Rechnung" mit Betrag 0
-    weil uns das ein getrenntes Dokument spart. 
-    Oder doch eine getrennte Notizart "Terminliste".
-
-#.  Termine sollen nicht einzeln bestätigt werden müssen. 
-    Sollen gar keinen Status "veröffentlicht" haben.
-    
-#.  Wenn ein automatisch generierter Termin auf storniert gesetzt wurde, 
-    dann muss Lino (bei einem Kurs mit vorgesehener Anzahl Termine) 
-    dafür einen Ersatztermin generieren.
-    
-#.  Wie war das mit den Test-Karten? Kunde zahlt für eine Stunde, nimmt 
-    teil und entscheidet erst dann, ob er den Rest bezahlt. 
-    Produkt "Schnupperkarte". Manuelle Rechnung. Bei Einschreibung Betrag manuell anpassen.
-
-#.  Z.B. bei Kursen "Funktionale Gymnastik" stehen nicht unbedingt alle 
-    Termine bei der Anmeldung fest. 
-    Anklickbare Bemerkung "Termine unter Vorbehalt"?
-
-#.  Rechnung drucken mit Terminliste und/oder für mehrere Einschreibungen.
-
-#.  Tabelle mit Rabatten : Ermäßigung je nach Schülerart (sowie eventuell je nach Artikel, Artikelgruppe,...)
-    
-#.  Wie macht man ein allgemeines Mailing (z.B. Angebot Jahreskarten).
-    Brauchen wir eine Tabelle `mailings.Mailing`?
-    
-#.  Späteinsteiger. Jemand steigt in einen begonnenen Kurs ein. 
-    Hat die ersten Stunden verpasst und soll die dann auch nicht fakturiert kriegen.
-
-#.  Buchhaltung: Bargeld-Kasse. Gutschriften erstellen können. Mahnungen ausdrucken.
+(This document is migrating to :doc:`/tickets/index`)
 
 
-:ref:`welfare` (für nach Oktober)
----------------------------------
-
-#.  :ref:`davlink` : don't follow symbolic links in order to avoid the 
-    endless `/usr/X11/X11/X11` problem.
-    http://docs.oracle.com/javase/tutorial/essential/io/links.html#detect
-
-#.  Wenn man ein Parameter-Panel einmal geöffnet hat, dann bleibt dies
-    jetzt für alle weiteren Fenster so. Das ist zufällig gekommen. 
-    Ein Bug, der vielleicht ein Feature wird.
-
-#.  Doof, dass man nach den virtuellen Feldern nicht sortieren kann.
-
-#.  Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, 
-    ist es zu groß.
-
-#.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
-
-#.  Auto refresh for MyWaitingVisitors
-    
-#.  Eine echte Chronik bzw. Historik als virtuelle Tabelle, die ihre 
-    "Chronik-Einträge" aus diversen Quellen zusammensucht: 
-    history.HistoricEvents.add(name,model,field)
-    
-#.  Passfoto einlesen
- 
-#.  Bescheinigungen, die mit einem Klick rauskommen.
-    "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
-    sollte sofort kommen.
-    
-#.  Bescheinigungen mit "einfachen" Parametern, d.h. deren Inhalt 
-    nicht direkt gespeichert wird.
-
-#.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
-    wird diese anschließend nicht auf der Startseite angezeigt. 
-    Zustand ist "Begonnen" statt "Zu tun".
-
-#.  Kalender Team-Ansicht funktioniert nicht. Ich plane eine ziemliche 
-    Strukturänderung: Split the current model "Calendar" into EventType 
-    and Grabber. Then create a new model "Calendar" which represents per
-    user the items which she wants to see in her "Calendars" list of the
-    CalendarPanel:
-    
-       author name color other_user(blank=True) event_type(blank=True)
-
-#.  Familienbeziehungen
-  
-#.  HelpText erweitern : auch `verbose_name` der Felder, sowie der 
-    Modelle lokal konfigurierbar machen.
-    
-#.  Was ist mit Dublettenkontrolle beim Erstellen eines Klienten?
-  
-#.  Empfang: Kann ein Klient auf zwei Agenten zugleich warten? 
-    Soll Lino das verhindern? 
-    
-#.  Eigene Tabelle für einfache Bescheinigungen 
-    (statt SiteConfig.attestation_note_nature und NoteType.is_attestation)
-
-#.  AMK-Bescheinigungen, Einkommensbescheinigungen
-    
-#.  Volatile Variablen z.B. für "Ausländerbeihilfe":
-    "seit dem", "bis zum", "Datum der Bescheinigung"
-    Also lokal konfigurierbare Parameterfenster pro Bescheinigung.
-    Äquivalent zu den .dlg-Dateien in TIM
-  
-#.  Uploads should be ProjectRelated. Uploads controlled by a notes.Note 
-    should be visible in UploadsByProject
-    Uploads pro Notiz sollten auch vom Klienten aus sichtbar sein.
-
-
-:ref:`patrols`
---------------
-
-#.  Pour la prochaine visite de chantier:
-
-    - Period (year, month, state)
-    - PeriodStates: planning, active, done
-    - TimeTables h1 & h2
-    - Mission : name, h1, h2 (1 IntegerField per TimeTable)
-    - Need : mission, period, timtable, patrol 
-      (ex. "En Janvier il faut une patrouille H2 pour Jardins")
-    - Patrol : date, mission, team
-    - Team : timetable
-    
-    - subclass Agent(Employee) and Agent : timetable, area 
-      (i.e. the timtetable and area this agent is going to have 
-      *for the next period*. Updated automatically but with possible 
-      manual change.
-
-
+.. toctree::
+   :hidden:
+   
+   tickets/index
 
 
 
@@ -164,9 +18,10 @@ Bugs
     numerical indexes in comboboxes - not the textual values. After hitting 
     refresh, everything is OK. This happens every time.
    
-#.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail eines Uploads, 
-    der keine Reminder hat, via Permalink öffnet, dann ist die Tabelle der 
-    Aufgaben nicht leer, sondern voll irgendwelcher Einträge.
+#.  Ein Bug, der auch schon in der 1.4.8 war: wenn man das Detail
+    eines Uploads, der keine Reminder hat, via Permalink öffnet, dann
+    ist die Tabelle der Aufgaben nicht leer, sondern voll
+    irgendwelcher Einträge.
     
     Oder das gleiche Problem (auch ohne Permalink) an anderer Stelle:     
     VSEs eines Klienten im eigenen Fenster öffnen. 
@@ -182,25 +37,14 @@ Bugs
 Feature requests
 ----------------
 
-#.  A new :class:`lino.lino_site.Site` attribute `hidden_apps` 
-    for a locally configurable
-    list of apps to not install. For example in :ref:`welfare` 
-    there will be customers who don't use the `reception` app.
-    
-
 #.  :attr:`is_demo_site <lino.site.Site.is_demo_site>` should not be an 
     option in :class:`lino.site.Site` but a field of 
     :class:`lino.modlib.system.SiteConfig`. And not just a boolean but 
     a timestamp. Because certain unit tests would need that information.
 
-
-#.  convert all App.verbose_name to their translations on startup?
-    store the App class object in `Site.modules`. 
-
 #.  Have plain renderer use the new attribute 
     :attr:`lino.core.actors.Actor.get_row_class`, 
     deprecate apply_cell_format and convert existing application code.
-
 
 #.  Convert Presto to use overridden apps.
 
@@ -1197,28 +1041,6 @@ Documentation
     in :mod:`lino.modlib.cal` and :mod:`lino.modlib.newcomers`.
     This didn't work since `pcsw` then created her own UserDetail.
     
-Lino workshop
--------------
-
-Die folgenden Punkte möchte ich bei Gelegenheit mal live mit den 
-Benutzern überlegen. 
-
-#.  Uwe hat einen Bug gefunden: man kann in der Liste "Meine Klienten" 
-    momentan noch nicht auf die Kolonnen "Vertrag beginnt" und 
-    "Vertrag endet" sortieren. 
-    Liegt daran, dass das virtual fields sind.
-    Es ist zumindest nicht einfach, das zu ermöglichen. 
-    Wahrscheinlich müssten wir dazu custom functions definieren, 
-    was nicht alle db-Backends können.
-    Eher stelle ich mir die Frage, ob da nicht ein Analysefehler 
-    vorliegt. 
-    Der Vorfall bestätigt Gerds Bedenken, als die Benutzerfrage kam.
-    Eigentlich müsstet ihr die gleichen Infos auch 
-    über die Befehle `Meine VSEs` und `Meine Art-60-7-Konventionen` 
-    kriegen können.
-    Zu analysieren mit den Benutzern.
-
-
 Javascript
 ----------
 
@@ -1275,21 +1097,14 @@ Javascript
     Performanceeinbußen beim Bildschirmaufbau von Detail-Fenstern. 
     Die Wahl sollte konfigurierbar sein. Markup auch.
 
-#.  Das Detail-Fenster sollte vielleicht par défaut nicht im Editier-Modus 
-    sein, sondern unten ein Button "Edit", und erst wenn man darauf klickt, 
-    werden alle Felder editierbar (und der Record in der Datenbank blockiert), 
-    und unten stehen dann zwei Buttons "Save" und "Cancel". Wobei darauf zu 
-    achten ist was passiert, wenn man während des Bearbeitens in der Grid 
-    auf eine andere Zeile klickt. Dann muss er am besten das Detail-Fenster 
-    speichern, und falls dort ungültige Daten stehen, in der Grid den 
-    Zeilenwechsel verweigern.
+#.  Das Detail-Fenster sollte vielleicht par défaut nicht im
+    Editier-Modus sein, sondern unten ein Button "Edit", und erst wenn
+    man darauf klickt, werden alle Felder editierbar (und der Record
+    in der Datenbank blockiert), und unten stehen dann zwei Buttons
+    "Save" und "Cancel". Wobei darauf zu achten ist was passiert, wenn
+    man während des Bearbeitens in der Grid auf eine andere Zeile
+    klickt. Dann muss er am besten das Detail-Fenster speichern, und
+    falls dort ungültige Daten stehen, in der Grid den Zeilenwechsel
+    verweigern.
 
-
-Tickets
--------
-
-.. toctree::
-   :maxdepth: 2
-   
-   tickets/index
 
