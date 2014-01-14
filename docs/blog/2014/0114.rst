@@ -1,0 +1,45 @@
+===================================
+20140114 (Tuesday, 14 January 2014)
+===================================
+
+
+Adding tags to my blog
+----------------------
+
+These last days I have been thinking and experimenting on the 
+question :doc:`/tickets/88`:
+Nikola, Fiddling with my own Sphinx extensions, identi.ca, Wordpress.
+
+Probably the important thing missing on my current documentation and
+bloging system is a possibility to "tag" entries (or alternatively to
+print a list of articles that refer to a given place).
+
+Now I discovered `sphinxcontrib-taglist
+<https://github.com/spinus/sphinxcontrib-taglist>`_,
+which seems to be the solution.
+
+Hm, but I cannot figure out how to get this working.  I tried the
+following:
+
+- inserted some tags to the present page using either the :role:`tag`
+  role (lets insert :tag:`blog` and :tag:`docs` for this page) or the
+  :directive:`tag` directive.
+
+.. tag:: blog docs
+
+- I created a new page :doc:`/ref/tags` with a :directive:`taglist` 
+  directive.
+
+The tags are nicely formatted as tags should be, but they are not
+clickable, and the :doc:`/ref/tags` page does not give a list of tagged
+entries.
+
+Tried cloning from Github and using the development version 
+instead of the released version. No difference.
+Sent a mail to the author.
+
+
+:mod:`atelier.fablib`: The :fab:`blog` command now also works in
+docs-only projects like :ref:`llb` which have no Python code at all.
+
+

@@ -13,6 +13,7 @@ Reference
    javascript
    model_methods
    jargon
+   tags
    obsolete
    /topics/index
    

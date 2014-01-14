@@ -53,5 +53,5 @@ on an Oracle Java under Windows XP.
 Result: nope :-(
 
 The problem is very stable, so I wrote a ticket for it:
-:doc:`/tickets/2013/1`.
+:doc:`/tickets/82`.
 

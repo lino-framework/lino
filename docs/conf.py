@@ -26,6 +26,7 @@ See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__fil
 
 extensions += ['atelier.sphinxconf.blog']
 extensions += ['lino.utils.actordoc']
+extensions += ['sphinxcontrib.taglist']
 
 
 #~ from unipath import Path

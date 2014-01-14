@@ -22,4 +22,20 @@ Das wäre gleichzeitig dann auch ein "Filter Editor"::
           value = CharField()
           connector ("and", "or", "(", ")")
   
+Related problems:
+
+#.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
+    die **nicht** gespeichert wird.
+    Stört das?
+    Deshalb ist momentan übrigens der Titel einer Suchliste ein 
+    obligatorisches Feld.
+
+#.  Wenn die Konfiguration einer Grid verändert wurde und man aus
+    Versehen auf einen Kolonnentitel klickt, dann wird die Grid
+    sortiert und neu geladen, und alle ungespeicherte Konfiguration
+    ist futsch.  Vor dem Sortieren nachfragen "Änderungen in GC
+    speichern ?".  Diese Frage wohl nur für Benutzer, die GCs auch
+    speichern dürfen.
+
+#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
 

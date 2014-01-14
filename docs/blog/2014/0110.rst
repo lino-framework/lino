@@ -10,6 +10,8 @@ Started new ticket :doc:`/tickets/79`, which includes a new article
 :doc:`/about/why_gpl`.
 
 
+Tags: :tag:`gpl`, :tag:`java`.
+
 
 
 

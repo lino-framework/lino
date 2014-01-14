@@ -94,53 +94,8 @@ Feature requests
 
 #.  Is it really necessary that Voucher is a non-abstract class?
 
-#.  Wenn man den Begleitungszeitraum einer *Person* ändert, dann merkt Lino nicht,
-    falls durch diese Änderung ein Vertrag ungültig wird.
-
-#.  Übersetzung für "Scheduled" ist momentan "Geplant". 
-    Sollte besser "Festgelegt" o.ä. sein.
-    Und statt "vorgeschlagen" sollte Lino vielleicht besser "vorgemerkt" sagen.
-
-#.  Ein festgelegter Termin darf nicht verschoben werden können. 
-    Auch nicht im Kalender-Panel.
-
-#.  Wie soll es funktionieren, wenn ein einmal festgelegter und offiziel 
-    mitgeteilter Termin dann doch verschoben werden muss?
-    Momentan kann man den Terminzustand auf "Verlegt" setzen und dann auf 
-    "per Mail" klicken, und in der Mail steht dann schon ein entsprechender Satz.
-
-#.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten?
-    Momentan ist die Konfigurierung etwas skurril: 
-    jeder Benutzer stellt sich "sein Team" zusammen.
-    Pro Kalender sollte neben `invite_team_members` auch stehen, 
-    welches das Team ist.
-    
-#.  Und in einem könnten wir auch eine Option `auto_subscribe` 
-    in Calendar machen: solche Kalender brauchen gar nicht erst 
-    explizit abonniert zu werden.
-    
-#.  Einladung sollte ein ical haben, damit der Empfänger es in seinen
-    Calendar-client importieren kann
-
-#.  Man sieht im Kalender-Panel noch nicht, wenn man nur Gast ist und
-    noch zusagen bzw. absagen muss.
-
 #.  extensible-lang-fr.js translates "Calendar" to "Agenda". 
     Disturbing.
-
-#.  Wenn man auf einem Auswertungstermin (der automatisch generiert wurde 
-    durch eine VSE oder VBE), auf "Duplizieren" klickt, dann dupliziert Lino 
-    ihn zwar intern, löscht ihn aber anschließend gleich wieder, weil die 
-    VSE die komplette Serie neu generiert. Zu analysieren, wann so eine 
-    Aktion da überhaupt Sinn macht. 
-
-#.  Die Kolonne "Workflows" wird beim Ausdruck nicht korrekt gerendert. 
-    Weil das Feld :meth:`action_buttons <lino.core.actors.Actor.action_buttons>` 
-    noch nicht xmlgen.html verwendet.
-    Hat beim Ausdruck sowieso keinen Sinn und sollte automatisch 
-    versteckt werden.
-    Workaround: En attendant müssen die Benutzer wissen, dass sie 
-    diese Kolonne vor dem Ausdruck selber ausblenden müssen.
 
 #.  Versteckte Reiter werden nicht aktualisiert. 
     Das ist irritierend beim Arbeiten mit Budgets. 
@@ -154,62 +109,19 @@ Feature requests
 #.  http://code.google.com/p/support/wiki/ScriptedUploads
     http://wiki.python.org/moin/CheeseShopTutorial
     
-
-#.  When a user tries to sort a column on a RemoteField, the server says::
-
-      FieldError
-      Cannot resolve keyword u'applies_until' into field. Choices are: activity, addr1, addr2, aid_type, bank_account1, bank_account2, birth_country, birth_date, birth_place, broker, cal_guest_by_contact, card_issuer, card_number, card_type, card_valid_from, card_valid_until, city, civil_state, coach1, coach2, coached_from, coached_until, contact_ptr, country, email, event, faculty, fax, first_name, gender, gesdos_id, group, gsm, health_insurance, id, identifypersonrequest, in_belgium_since, income_ag, income_kg, income_misc, income_rente, income_wg, is_active, is_cpas, is_deprecated, is_seeking, is_senior, job_agents, job_office_contact, language, last_name, mails_by_sender, name, national_id, nationality, needs_residence_permit, needs_work_permit, newcomer, noble_condition, note, obstacles, pharmacy, phone, recipient, recurrenceset, region, remarks, remarks2, residence_type, rolesbyperson, skills, street, street_box, street_no, street_prefix, task, third, title, unavailable_until, unavailable_why, unemployed_since, url, work_permit_suspended_until, zip_code
-
-      TRACEBACK:
-        File "l:\snapshots\django\django\core\handlers\base.py", line 111, in get_response
-          response = callback(request, *callback_args, **callback_kwargs)
-
-        File "t:\hgwork\lino\lino\ui\extjs3\ext_ui.py", line 1409, in api_list_view
-          rows = [ rh.store.row2list(ar,row) for row in ar.sliced_data_iterator]
-
-        File "l:\snapshots\django\django\db\models\query.py", line 104, in _result_iter
-          self._fill_cache()
-
-        File "l:\snapshots\django\django\db\models\query.py", line 776, in _fill_cache
-          self._result_cache.append(self._iter.next())
-
-        File "l:\snapshots\django\django\db\models\query.py", line 266, in iterator
-          for row in compiler.results_iter():
-
-        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 699, in results_iter
-          for rows in self.execute_sql(MULTI):
-
-        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 744, in execute_sql
-          sql, params = self.as_sql()
-
-        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 62, in as_sql
-          ordering, ordering_group_by = self.get_ordering()
-
-        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 359, in get_ordering
-          self.query.model._meta, default_order=asc):
-
-        File "l:\snapshots\django\django\db\models\sql\compiler.py", line 388, in find_ordering_name
-          opts, alias, False)
-
-        File "l:\snapshots\django\django\db\models\sql\query.py", line 1283, in setup_joins
-          "Choices are: %s" % (name, ", ".join(names)))
-
-
 #.  http://ckeditor.com/demo
 
 #.  [pdf] button : generate html table without THEAD, TFOOT and TBODY.
-    Am besten sogar separate Methoden Table.header_html() und Table.body_html().
-    Dazu muss ich vielleicht voerher den Store generalisieren
-    :doc:`/tickets/57`.
-    "StoreField" wird nach "Atomizer" umbenannt und im Model gespeichert
+    Am besten sogar separate Methoden Table.header_html() und
+    Table.body_html().  Dazu muss ich vielleicht voerher den Store
+    generalisieren :doc:`/tickets/57`.  "StoreField" wird nach
+    "Atomizer" umbenannt und im Model gespeichert
     
 #.  Listings 
     "Personnes par phase d'intégration par AI" 
     and
     "Contrats par Employeur et par AI":
     how to manage grouping in a report.
-
-#.  User permissions, levels, profiles
 
 #.  Zwei Ideen zur besseren Ermittlung der Konstruktionsmethode einer Notiz: 
 
@@ -245,11 +157,8 @@ Feature requests
     weil meistens nur ein Ausbildungsabschluss erforderlich ist.
 
 #.  Der Ausdruck einer Notiz "Aktennotiz" - "Stand der Dinge" geht nur
-    unformatiert (TinyMCE). Sobald man z. B.  den Titel formatiert, kommt
-    beim Ausdruck nicht alles raus.
-    
-#.  Listing "Übersicht Verträge": die diversen Stellen sollten auf der 
-    Übersicht der Verträge optisch noch nach Arbeitgeber gruppiert sein.
+    unformatiert (TinyMCE). Sobald man z. B. den Titel formatiert,
+    kommt beim Ausdruck nicht alles raus.
     
 #.  Die neue Tabelle Berufswünsche sollte auch in der
     Personensuche integriert werden, damit falls dem DSBE verfügbare externe
@@ -334,12 +243,12 @@ Medium-term
     Voucher record there's always one and only one MTI child in one of the 
     VoucherType tables?
 
-#.  User stories: 
-    Alicia: Hubert hatte in meinem Urlaub eine Telefonnotiz auf einem meiner 
-    Klienten gemacht, und mir nun mündlich noch ein paar Zusatzinfos gesagt, 
-    die er nur vergessen hatte, rein zu schreiben. Ich will jetzt an seiner 
-    Stelle seine 
-    Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen deutlich ist.
+#.  User stories: Alicia: Hubert hatte in meinem Urlaub eine
+    Telefonnotiz auf einem meiner Klienten gemacht, und mir nun
+    mündlich noch ein paar Zusatzinfos gesagt, die er nur vergessen
+    hatte, rein zu schreiben. Ich will jetzt an seiner Stelle seine
+    Notiz nachträglich korrigieren, damit das direkt beim ersten Lesen
+    deutlich ist.
 
 
 #.  Historique des "choses" consultées pendant une session 
@@ -360,13 +269,6 @@ Medium-term
 
 #.  Make ChoiceLists visible through the web interface. 
     Show UserGroups and UserProfiles in :class:`lino.models.About`.
-
-#.  Was Lino noch braucht und nicht hat, ist die Möglichkeit, 
-    dass beim Klicken auf den Button einer Aktion vor deren Abschicken 
-    noch ein Dialogfenster mit Optionen kommt. 
-    Zum Beispiel eine Aktion `cal.Event.defer`, 
-    die vorher noch wissen muss, um wieviele Tage (Wochen, Monate) oder 
-    bis zu welchem Datum sie verschieben soll.
 
 #.  Tabelle der Benutzerprofile (und generell alle choicelists) in 
     eine lokale Konfigurationsdatei auslagern und dadurch auch für 
@@ -417,16 +319,6 @@ Medium-term
     There should be a configuration option to handle this preference.
     Also a Regions table.
 
-#.  Die virtuellen Felder `applies_from` und `applies_until` 
-    in :class:`Meine Klienten <lino.projects.pcsw.models.MyPersons>` 
-    machen jedes seinen eigenen Datenbank-Request 
-    Also zwei zusätzlichen Requests für jede Zeile. 
-    Einer für beide Felder würde reichen. 
-    Noch besser wäre natürlich gar keiner:
-    https://docs.djangoproject.com/en/dev/ref/models/querysets/#annotate
-    https://docs.djangoproject.com/en/dev/topics/db/managers/
-    https://docs.djangoproject.com/en/dev/topics/db/aggregation/
-
 #.  Unerwünschte Scrollbars:
 
     - Beim Passbild (nur mit Firefox und Chromium 17, aber nicht mit Chrome 16)
@@ -469,17 +361,9 @@ Medium-term
 
 #.  EditTemplateAction auf PrintableType kann jetzt implementiert werden.
 
-#.  Idée reconfirmée par Gaëtan: .dtl files in Python, not yaml
-
 #.  What about Cédric Krier's `HgNested extension
     <http://mercurial.selenic.com/wiki/HgNestedExtension>`_?
 
-#.  Support for eID cards: (1) read data from card and (2) user authentication.
-
-    http://code.google.com/p/eid-javascript-lib/downloads/list
-    http://www.e-contract.be/
-    http://code.google.com/p/eid-applet/
-    
 #.  contacts.Group: Eine Kontaktgruppe hat keine zusätzlichen Felder, 
     das Modell wäre lediglich da, um eine Liste aller Gruppen anzeigen 
     und ggf. spezifische Detail-Fenster definieren zu können.
@@ -496,15 +380,14 @@ Medium-term
 #.  Uploads mit Sonderzeichen im Dateinamen funktionieren noch nicht.
     See :blogref:`20110725` and :blogref:`20110809`.
 
-#.  Buttons sollten gleich nach einem Klick deaktiviert werden, 
-    bis die Aktion abgeschlossen ist.
-    Wenn man z.B. auf den Lebenslauf-Button doppelt klickt, versucht 
-    er zweimal kurz hintereinander das gleiche Dokument zu generieren. 
-    Beim zweiten Mal schlägt das dann logischerweise fehl. 
-    Er öffnet dann zwei Fenster, eines mit dem Lebenslauf und ein 
-    anderes mit der Fehlermeldung 
-    "Action Lebenslauf failed for Person #22315: I
-    need to use a temp folder
+#.  Buttons sollten gleich nach einem Klick deaktiviert werden, bis
+    die Aktion abgeschlossen ist.  Wenn man z.B. auf den
+    Lebenslauf-Button doppelt klickt, versucht er zweimal kurz
+    hintereinander das gleiche Dokument zu generieren.  Beim zweiten
+    Mal schlägt das dann logischerweise fehl.  Er öffnet dann zwei
+    Fenster, eines mit dem Lebenslauf und ein anderes mit der
+    Fehlermeldung "Action Lebenslauf failed for Person #22315: I need
+    to use a temp folder
     "/usr/local/django/dsbe_eupen/media/cache/appypdf/contacts.Person-22315.pdf.temp"
     but this folder already exists."
 
@@ -515,11 +398,6 @@ Medium-term
     Person should be split into "Clients" and "normal" persons.
     Contact Persons of a Company currently need to have an entry in the Person table.
     This is also the reason for many deferred save()s when loading a full backup.
-
-#.  Split :class:`lino.reports.Report` into :class:`lino.List` and :class:`lino.Detail`.
-    :class:`lino.ui.extjs3.ext_store.Store` should then create one Store per Model.
-
-#.  Write test cases with different cases of jobs.contract and isip.Contract
 
 #.  Il est vrai que Lino devrait désactiver le bouton "save grid config" 
     pour les utilisateurs qui n'ont pas la permission (et chez qui Lino 
@@ -572,16 +450,6 @@ http://lino/api/pcsw/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&d
     
 #.  Bug in :term:`appy.pod`: https://bugs.launchpad.net/appy/+bug/815019
 
-#.  Client-seitiger Ersatz für den "Memo"-Button, der seit 
-    :blogref`20110605` wieder raus ist.
-    Mir war klargeworden, dass diese Lösung (Memo-Felder auf Anfrage 
-    schon serverseitig abzuschneiden) erstens theoretisch Unsinn war 
-    und zweitens in der Praxis noch einige Bugs hatte. Momentan wird 
-    in der Grid immer nur die Kurzform angezeigt (`overflow:hidden;`), 
-    und irgendwann muss ich mal eine client-seitige Lösung in Javascript 
-    machen. Interessant wäre, wenn man die Höhe einzelner Zeilen 
-    manuell verändern kann. Eventuell den Text-Editor im eigenen 
-    Fenster aufrufen bei Doppelklick.
 
 #.  Mail-Interface, Posteingang : 
     Lino-Server empfängt E-Mails, die teilweise geparst werden und/oder 
@@ -628,46 +496,18 @@ Later
     Standard-Kontaktangaben speichern, und die DSBE-spezifischen Felder 
     in einer eigenen Tabelle.  Neues Model "Client(Person)"
 
-#.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
-    die **nicht** gespeichert wird.
-    Stört das?
-    Deshalb ist momentan übrigens der Titel einer Suchliste ein 
-    obligatorisches Feld.
-
-#.  Wenn die Konfiguration einer Grid verändert wurde und man 
-    aus Versehen auf einen Kolonnentitel klickt, dann wird die Grid 
-    sortiert und neu geladen, und alle ungespeicherte Konfiguration ist futsch.
-    Vor dem Sortieren nachfragen "Änderungen in GC speichern ?".
-    Diese Frage wohl nur für Benutzer, die GCs auch speichern dürfen.
-
-#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
-
-#.  Die Konfigurationsparameter 
-    `residence_permit_upload_type`, 
-    `work_permit_upload_type` und 
-    `driving_licence_upload_type`, 
-    die momentan als Klassenattribute 
-    in :class:`lino.projects.pcsw.settings.Lino`
-    implementiert sind, sollten 
-    ebenfalls zu Feldern in der SiteConfig konvertiert werden.
-    Aber Vorsicht, denn wenn die verändert werden muss 
-    vielleicht die :xfile:`lino.js` 
-    neu generiert werden.
-
 #.  Decide some relatively stable Django version to use,
     because simply getting the latest snapshot each time 
     is a bit dangerous on a production server.
 
-#.  DELETE (per Taste) auf einer Zeile in Teilnehmer oder Kandidaten funktioniert. 
-    Aber dort soll man nicht löschen können.
+#.  DELETE (per Taste) auf einer Zeile in Teilnehmer oder Kandidaten
+    funktioniert.  Aber dort soll man nicht löschen können.
 
 #.  Wenn man die Rückfrage nach "Delete" zu schnell beantwortet, 
     wird die Grid nicht aktualisiert. 
     Der Fehler funktioniert nicht immer. 
     Ich warte auf weitere Beobachtungen.
 
-#.  Reminders als "gelesen" markieren können.
-    
 #.  Im `search_field` funktionieren die Tasten HOME und END nicht.
     Oder genauer gesagt werden die von der Grid abgefangen und verarbeitet.
 
@@ -689,30 +529,24 @@ Later
 #.  Minify :xfile:`lino.js`
     http://en.wikipedia.org/wiki/Minification_(programming)
 
-#.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer neuen Person.
-    Erstellen einer neuen Person muss verweigert werden, wenn 
-    Name und Vorname identisch sind **außer** wenn beide ein unleeres Geburtsdatum 
-    haben (und nicht das gleiche).
+#.  Dublettenkontrolle. Nach Duplikaten suchen vor Erstellen einer
+    neuen Person.  Erstellen einer neuen Person muss verweigert
+    werden, wenn Name und Vorname identisch sind **außer** wenn beide
+    ein unleeres Geburtsdatum haben (und nicht das gleiche).
 
 #.  Im Hauptmenü könnten zwei Befehle :menuselection:`Help --> User Manual` 
     und :menuselection:`Help --> About` kommen, dann hätten wir den ganzen 
     Platz für Erinnerungen.
 
-#.  Wenn man z.B. in Companies.insert manuell eine ID eingibt, 
-    dann ignoriert der Server die und vergibt trotzdem seine automatische nächste ID.
+#.  Wenn man z.B. in Companies.insert manuell eine ID eingibt, dann
+    ignoriert der Server die und vergibt trotzdem seine automatische
+    nächste ID.
 
 #.  Reminders arbeiten momentan mit zwei Feldern delay_value und delay_type.
-    Schöner wäre ein TimeDelaField wie in 
+    Schöner wäre ein TimeDeltaField wie in 
     http://djangosnippets.org/snippets/1060/
 
 
-#.  Idee: Vielleicht müsste contacts.Person doch nicht abstract sein, und
-    lino.pcsw stattdessen ein neues Modell CoachedPerson(contacts.Person) 
-    definieren. 
-    Dann hätten "normale" Kontaktpersonen von Firmen gar 
-    nicht die vielen Felder des DSBE.
-    Dazu wäre ein Feld Person.type nötig.
-  
 #.  Idee: Module umstrukturieren:
 
     | lino.pcsw.models : Contract usw.
@@ -734,8 +568,8 @@ Later
 #.  Liste der Personen sollte zunächst mal nur "meine" Personen anzeigen.
     Evtl. neue Menübefehle "Meine Personen" und "Meine Coachings".
 
-#.  HTML-Editoren haben noch Probleme (Layout und Performance) und sind deshalb 
-    momentan deaktiviert. 
+#.  HTML-Editoren haben noch Probleme (Layout und Performance) und
+    sind deshalb momentan deaktiviert.
     
 #.  Arbeitsregime und Stundenplan: 
     Texte in Konfigurationsdateien auslagern
@@ -758,23 +592,26 @@ Later
    http://127.0.0.1:8000/api/pcsw/ContractsByPerson/2?mt=14&mk=16&fmt=print 
    sagt "ValueError: 'allowed_path' has to be a directory."
 
-#. Ein ``<a href="..." target="blank">`` öffnet zumindest in Chrome kein neues Fenster, 
-   sondern einen neuen Tab im gleichen Fenster. 
-   Idem für `window.open('URL','_blank')`.
-   Ich weiß nicht, wie man das abstellen kann, aber hier immerhin ein Workaround: 
-   wenn man den Titel des 
-   Browser-Tabs aus dem Browserfenster raus zieht, dann öffnet er ein neues Fenster.
+#. Ein ``<a href="..." target="blank">`` öffnet zumindest in Chrome
+   kein neues Fenster, sondern einen neuen Tab im gleichen Fenster.
+   Idem für `window.open('URL','_blank')`.  Ich weiß nicht, wie man
+   das abstellen kann, aber hier immerhin ein Workaround: wenn man den
+   Titel des Browser-Tabs aus dem Browserfenster raus zieht, dann
+   öffnet er ein neues Fenster.
 
-#. ui.get_detail_url() gibt eine URL, die den betreffenden Record öffnet. 
-   Wird benutzt, um in der `welcome.html` die Reminder eines Vertrags oder eines Uploads anklickbar zu machen.
-   In diesem Detail sollten jedoch keine Navigations-Buttons sein, 
-   denn die beziehen sich ja dann auf den selten benutzten Model-Report Contracts bzw. Uploads, 
-   der die Records aller Benutzer und Personen durchblättert.
+#. ui.get_detail_url() gibt eine URL, die den betreffenden Record
+   öffnet.  Wird benutzt, um in der `welcome.html` die Reminder eines
+   Vertrags oder eines Uploads anklickbar zu machen.  In diesem Detail
+   sollten jedoch keine Navigations-Buttons sein, denn die beziehen
+   sich ja dann auf den selten benutzten Model-Report Contracts
+   bzw. Uploads, der die Records aller Benutzer und Personen
+   durchblättert.
 
-#. It is not possible to select multiple rows when using CellSelectionModel 
-   (which is Lino's default and which cannot be changed for the moment).
-   Maybe add a button to switch between the two selection models?
-   Caution: delete_selected currently probably works only with a CellSelectionModel.
+#. It is not possible to select multiple rows when using
+   CellSelectionModel (which is Lino's default and which cannot be
+   changed for the moment).  Maybe add a button to switch between the
+   two selection models?  Caution: delete_selected currently probably
+   works only with a CellSelectionModel.
 
 #. Make it configurable (site-wide, per user,...)
    whether external links should open a new window or not.
@@ -785,24 +622,29 @@ Later
     Evtl. stattdessen einen kompletten Kalender:
     http://www.sencha.com/blog/2010/09/08/ext-js-3-3-calendar-component/
 
-#. Wie kann ich die Test-Templates für Notizen in den code repository rein kriegen?
-   Er soll sie dann auch unabhängig von der Sprache finden. 
-   Vielleicht werde ich doctemplates in die config-directories verschieben 
-   und mein System von config-Dateien erweitern, dass es auch Unterverzeichnisse verträgt.
-   Siehe :blogref:`20101029`, :blogref:`20101112`.
+#. Wie kann ich die Test-Templates für Notizen in den code repository
+   rein kriegen?  Er soll sie dann auch unabhängig von der Sprache
+   finden.  Vielleicht werde ich doctemplates in die
+   config-directories verschieben und mein System von config-Dateien
+   erweitern, dass es auch Unterverzeichnisse verträgt.  Siehe
+   :blogref:`20101029`, :blogref:`20101112`.
   
-#.  Hauptmenü nicht anzeigen, wenn ein Fenster offen ist. 
-    Stattdessen ein bequemer Button, um ein weiteres Browserfenster mit Lino zu öffnen.
-    Weil die Benutzer sonst irgendwann einen Stack overflow kriegen, 
-    weil sie sich nicht dessen bewusst sind, 
-    dass ihre Fenster offen bleiben.
-    (Das hätte möglicherweise später als Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein braucht, 
-    sondern eine für Webseiten klassischere Ansicht benutzen.)
+#.  Hauptmenü nicht anzeigen, wenn ein Fenster offen ist.  Stattdessen
+    ein bequemer Button, um ein weiteres Browserfenster mit Lino zu
+    öffnen.  Weil die Benutzer sonst irgendwann einen Stack overflow
+    kriegen, weil sie sich nicht dessen bewusst sind, dass ihre
+    Fenster offen bleiben.  (Das hätte möglicherweise später als
+    Folge, dass das Hauptmenü gar kein Pulldown-Menü mehr zu sein
+    braucht, sondern eine für Webseiten klassischere Ansicht
+    benutzen.)
   
-#.  Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes Studium haben.
+#.  Man kann z.B. noch nicht nach Personen suchen, die ein bestimmtes
+    Studium haben.
 
-#.  Einheitliches Interface um Reihenfolge zu verändern (Journals, DocItems, LinksByOwner,...). 
-    Erster Schritt: Abstract model "Ordered" mit einem Feld `pos` und zwei Actions "move up" und "move down".
+#.  Einheitliches Interface um Reihenfolge zu verändern (Journals,
+    DocItems, LinksByOwner,...).  Erster Schritt: Abstract model
+    "Ordered" mit einem Feld `pos` und zwei Actions "move up" und
+    "move down".
 
 #.  Eingabe im Detail eines SalesDocument funktioniert noch nicht: 
     Wenn man ein 
@@ -812,10 +654,10 @@ Later
   
 #.  Fenstertitel ändern bzw. anzeigen, welche GC momentan aktiv ist.
 
-#.  Was soll passieren wenn man Contract.company ändert, nachdem Contract.contact schon ausgefüllt ist?
-    Automatisch neuen Kontakt mit gleicher Person und Eigenschaft für die andere Firma anlegen?
-    ValidationError?
-    Am ehesten wäre: contact auf leer setzen.
+#.  Was soll passieren wenn man Contract.company ändert, nachdem
+    Contract.contact schon ausgefüllt ist?  Automatisch neuen Kontakt
+    mit gleicher Person und Eigenschaft für die andere Firma anlegen?
+    ValidationError?  Am ehesten wäre: contact auf leer setzen.
 
 Long-term
 ---------
@@ -825,56 +667,29 @@ Long-term
 
 #. :doc:`/tickets/12`
 
-#. Projekte für DSBE einführen? 
-   Gibt es nicht in der Praxis den Fall, dass man Notizen machen will, 
-   die "in einen Topf" gehören, aber dieser "Topf" kann 
-   nicht unbedingt einer (einzigen) Personen zugewiesen werden?
-   Falls das häufig vorkommt, schlage ich vor, dass wir noch das Konzept der Projekte einführen.
-   Pro Person müsste man per Klick leicht ein Begleitungsprojekt anlegen können. 
-   Bei Import und Synchronisierung würden automatisch auch diese Projekte synchron gehalten. 
-   Dienstleistungen sind nicht mehr einer Person und/oder einer Firma, 
-   sondern allgemein einem Projekt zugewiesen.
-   Momentan entspricht sozusagen automatisch jede Person einem einzigen Projekt.
-  
-#. Das `params={'base_params':{'mk':jnl.pk}}` in der :xfile:`lino_settings.py` 
-   in :mod:`lino.demos.igen`
-   entspricht natürlich nicht dem Designprinzip, dass das Anwendungsmenü unabhängig 
-   vom UI sein soll.
-   stattdessen muss dort `master_id=jnl.pk` stehen, und beim Generieren des 
-   Menübefehls muss also ein ReportRequest instanziert werden, oder 
-   vielleicht nur `Report.get_master_kw(master_instance)` rufen.
-  
-#. (:mod:`lino.modlib.pcsw` : 
-   Wie soll ich es machen, dass der Benutzer beim Auswählen der Krankenkasse einer Person 
-   nicht alle Firmen, sondern nur die Krankenkassen angezeigt bekommt? 
-   Etwa ein eigenes Feld `Company.is_health_insurance`?
-   Oder auf den Berufscode filtern?
-
-
 #. Abfragen mit komplexen Bedingungen zur Suche nach Personen
 
-
-#. In Kolonne Sprachkenntnisse kann man noch keinen Filter setzen. 
-   Wenn man es tut, kommt auf dem Server ein 
-   `FieldDoesNotExist: Person has no field named u'LanguageKnowledgesByPerson'`.
-   Schnelle Lösung ist, dass ich hier einen einfach Textfilter mache.
-   Aber um das richtig zu lösen, müsste das Filters-Menü für diese Kolonne 
-   nicht nur ein einfaches Textfeld haben, sondern für jede Kolonne 
-   des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen suchen kann, 
-   die eine Sprache "mündlich mindestens gut und schriftlich mindestens ausreichend" kennen
+#. In Kolonne Sprachkenntnisse kann man noch keinen Filter setzen.
+   Wenn man es tut, kommt auf dem Server ein `FieldDoesNotExist:
+   Person has no field named u'LanguageKnowledgesByPerson'`.  Schnelle
+   Lösung ist, dass ich hier einen einfach Textfilter mache.  Aber um
+   das richtig zu lösen, müsste das Filters-Menü für diese Kolonne
+   nicht nur ein einfaches Textfeld haben, sondern für jede Kolonne
+   des Ziel-Reports ein Suchfeld. Damit man z.B. nach allen Personen
+   suchen kann, die eine Sprache "mündlich mindestens gut und
+   schriftlich mindestens ausreichend" kennen
   
 
 
 
 
-
-
-
-#. Prüfen, ob Dokumentvorlagen im `XSL-FO-Format <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären. 
-  `Apache FOP <http://xmlgraphics.apache.org/fop/>`__ als Formatierer. 
-  Warum OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel. 
-  AbiWord dagegen soll es können (laut `1 <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ 
-  und `2 <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
+#. Prüfen, ob Dokumentvorlagen im `XSL-FO-Format
+  <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären.  `Apache FOP
+  <http://xmlgraphics.apache.org/fop/>`__ als Formatierer.  Warum
+  OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel.
+  AbiWord dagegen soll es können (laut `1
+  <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2
+  <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 
 #. Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
@@ -902,29 +717,35 @@ Long-term
   #. Button um Feldnamen komfortabel auszuwählen
 
 
-#. Ich würde in der Rückfrage zum Löschen eine oder mehrerer Records ja auch 
-   gerne die `__unicode__` der zu löschenden Records anzeigen.
-   FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht mehr bloß eine Liste der IDs, 
-   sondern eine Liste der Records.
-   Aber das nützt (noch) nichts, denn ich weiß nicht, wie ich den Grid-Store überredet bekomme, 
-   außer `data` auch eine Eigenschaft `title` aus jedem Record rauszulesen. 
-   Auf Serverseite wäre das kein Problem: ich bräuchte einfach nur title 
-   in `elem2rec1` statt in `elem2rec_detailed` zu setzen.
-   Aber das interessiert den Store der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...
-   Oder ich würde es wie mit `disabled_fields` machen. Also ein neues automatisches 
-   virtuelles Feld __unicode__.
+#. Ich würde in der Rückfrage zum Löschen eine oder mehrerer Records
+   ja auch gerne die `__unicode__` der zu löschenden Records anzeigen.
+   FormPanel und GridPanel.get_selected() geben deshalb jetzt nicht
+   mehr bloß eine Liste der IDs, sondern eine Liste der Records.  Aber
+   das nützt (noch) nichts, denn ich weiß nicht, wie ich den
+   Grid-Store überredet bekomme, außer `data` auch eine Eigenschaft
+   `title` aus jedem Record rauszulesen.  Auf Serverseite wäre das
+   kein Problem: ich bräuchte einfach nur title in `elem2rec1` statt
+   in `elem2rec_detailed` zu setzen.  Aber das interessiert den Store
+   der Grid nicht. Kann sein, dass ich ihn konfigurieren kann...  Oder
+   ich würde es wie mit `disabled_fields` machen. Also ein neues
+   automatisches virtuelles Feld __unicode__.
   
-#. Insert-Fenster: Für die Situationen, wo man viele neue Records hintereinander erfasst, könnte
-   vielleicht ein zusätzlicher Knopf "Save and insert another" (wie im Django-Admin), 
-   oder aber das automatische Schließen des Insert-Fensters pro Tabelle abschalten können.
+#. Insert-Fenster: Für die Situationen, wo man viele neue Records
+   hintereinander erfasst, könnte vielleicht ein zusätzlicher Knopf
+   "Save and insert another" (wie im Django-Admin), oder aber das
+   automatische Schließen des Insert-Fensters pro Tabelle abschalten
+   können.
 
-#. Wenn ich einen Slave-Report sowohl in der Grid als auch in einem Detail als Element benutze, 
-   dann verursacht das einen Konflikt im ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder 
-   mit dem gleichen Namen erzeugt, die sich nur durch den row_separator unterscheiden.
-   Lösung wäre, dass :meth:`lino.reports.Report.slave_as_summary_meth` nicht HTML, sondern JSON zurückgibt.
+#. Wenn ich einen Slave-Report sowohl in der Grid als auch in einem
+   Detail als Element benutze, dann verursacht das einen Konflikt im
+   ext_store.Store, weil er zwei virtuelle fields.HtmlBox-Felder mit
+   dem gleichen Namen erzeugt, die sich nur durch den row_separator
+   unterscheiden.  Lösung wäre, dass
+   :meth:`lino.reports.Report.slave_as_summary_meth` nicht HTML,
+   sondern JSON zurückgibt.
   
-#. Für :class:`lino.utils.printable.LatexBuildMethod` müsste mal ohne viel Aufwand 
-   ein kleines Beispiel implementiert werden.
+#. Für :class:`lino.utils.printable.LatexBuildMethod` müsste mal ohne
+   viel Aufwand ein kleines Beispiel implementiert werden.
   
 #. Die HtmlBox braucht noch ein `autoScroll:true` für wenn viele Links da sind.
   

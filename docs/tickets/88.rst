@@ -1,0 +1,22 @@
+#88 : How to blog?
+==================
+
+
+- Documentation of the changes in a (free) software project are an
+  important part of the project.
+
+- When I blog about changes in Python code, then I often need to refer
+  to existing classes.
+- A blog is, for me, rather a knowledge database, a collection of my
+  personal work notes than a publication.
+- A 
+
+
+Plain text or database?
+-----------------------
+
+I prefer to have it stored in a very basic format because
+
+On my machine or in the cloud?
+------------------------------
+

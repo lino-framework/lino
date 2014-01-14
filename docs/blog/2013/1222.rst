@@ -30,6 +30,11 @@ It helped me to understand:
 
 Thanks to author Chua Hock-Chuan.
 
+This was also interesting: 
+http://mindprod.com/jgloss/javawebstart.html#APPLETSVSJWS
+
+
+
 
 More problems in :ref:`eidreader`
 ---------------------------------

@@ -4,12 +4,8 @@
 #82 : Signed Applet Blocked by Security Settings
 ================================================
 
-**Status: Solved. Reason was a missing `<security>` tag in the `.jnlp` file. 
-See :blogref:`20131221`**
-
-
-`1 <http://www.ntu.edu.sg/home/ehchua/programming/java/J4c_AppletWebstart.html>`__
-http://mindprod.com/jgloss/javawebstart.html#APPLETSVSJWS
+**Status: Solved. Reason was a missing `<security>` tag in the `.jnlp` 
+file.** See :blogref:`20131222`
 
 Concretely I ask you: don't try to reproduce it since the environment
 is very specific and you don't have a copy of the signed jar files.
