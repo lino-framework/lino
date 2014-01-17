@@ -33,17 +33,17 @@ http://peak.telecommunity.com/DevCenter/setuptools#namespace-packages
 
 But something is still wrong::
 
->>> import sphinxcontrib
->>> dir(sphinxcontrib)
-['__doc__', '__name__', '__path__']
->>> import sphinxcontrib.dailyblog
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-ImportError: No module named dailyblog
->>> import sphinxcontrib.taglist
->>> import sphinxcontrib.dailyblog
->>> dir(sphinxcontrib)
-['__builtins__', '__doc__', '__file__', '__name__', '__path__', 'dailyblog', 'taglist']
+    >>> import sphinxcontrib
+    >>> dir(sphinxcontrib)
+    ['__doc__', '__name__', '__path__']
+    >>> import sphinxcontrib.dailyblog
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+    ImportError: No module named dailyblog
+    >>> import sphinxcontrib.taglist
+    >>> import sphinxcontrib.dailyblog
+    >>> dir(sphinxcontrib)
+    ['__builtins__', '__doc__', '__file__', '__name__', '__path__', 'dailyblog', 'taglist']
 
 I guess that the reason is that I installed 
 `sphinxcontrib-newsfeed` and
@@ -60,13 +60,13 @@ To try whether this is true, I uninstall the two released modules::
     $ pip uninstall sphinxcontrib-taglist
 
 Yes, this was (probably) necessary, but it did *not* solve the
-following problem:
+following problem::
 
->>> import pkg_resources
->>> dist = pkg_resources.get_distribution('sphinxcontrib.dailyblog')
-Traceback (most recent call last):
-    ...
-DistributionNotFound: sphinxcontrib.dailyblog
+    >>> import pkg_resources
+    >>> dist = pkg_resources.get_distribution('sphinxcontrib.dailyblog')
+    Traceback (most recent call last):
+        ...
+    DistributionNotFound: sphinxcontrib.dailyblog
 
 
 

@@ -25,16 +25,17 @@ thus the fablib command :fab:`summary` no longer prints "old" and
 problems for namespace packages.
 
 And of course the thing which caused all these evolutions: the new
-:directive:`refstothis` directive, which I finally implemented simply 
-withing :mod:`atelier.sphinxconf.dirtables`.
+:directive:`refstothis` directive, which I finally implemented in a
+new Sphinx extension module :mod:`atelier.sphinxconf.refstothis`.
 
 TODO: continue to tidy up.
 Opened new ticket :doc:`/tickets/89`.
 
 The modules 
-:mod:`atelier.sphinxconf.insert_input`
-:mod:`atelier.sphinxconf.dirtables`
+:mod:`atelier.sphinxconf.insert_input`,
+:mod:`atelier.sphinxconf.dirtables`,
 :mod:`atelier.sphinxconf.base`
+and :mod:`atelier.sphinxconf.refstothis`
 are now standalone Sphinx extensions.
 
 
