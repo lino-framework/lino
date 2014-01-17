@@ -3,14 +3,6 @@ To-do list
 
 (This document is migrating to :doc:`/tickets/index`)
 
-
-.. toctree::
-   :hidden:
-   
-   tickets/index
-
-
-
 Bugs
 ----
 

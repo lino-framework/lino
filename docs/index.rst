@@ -23,10 +23,11 @@ Sitemap
    community/index
    admin/index
    
-   todo
+   tickets/index
    dev/index
    /blog/index
    changes
+   todo
    
    user/index
    ref/index

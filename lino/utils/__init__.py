@@ -63,7 +63,6 @@ import stat
 
 from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm
 from atelier import rstgen
-from atelier import sphinxconf
 from atelier.utils import i2d
 from atelier.utils import i2t
 from north.utils import Cycler

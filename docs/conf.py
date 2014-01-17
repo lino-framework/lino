@@ -269,16 +269,11 @@ latex_documents = [
 
 #~ show_source = True
 
-#~ srcref_base_uri="http://code.google.com/lino"
-#~ srcref_base_uri="http://code.google.com/p/lino/source/browse/#hg" 
-#~ from timtools.sphinx import setup
 
-#~ from lino.utils.sphinxconf import setup
 setup1 = setup
 
 def setup(app):
     app.add_stylesheet('linodocs.css')
-    #~ from atelier.sphinxconf import setup
     setup1(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')

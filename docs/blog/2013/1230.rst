@@ -5,13 +5,15 @@
 More tests with :ref:`eidreader`
 --------------------------------
 
+.. tag:: [java]
+    Since there are chances that signing or not wasn't the reason of our
+    problem, I tried whether it is possible to get it running using non
+    signed applets.
+
+
 The `public test page <http://test-eidreader.lino-framework.org/>`_
 didn't work until now because I didn't dare to include third-party
 `.jar` files to the github repository.
-
-Since there are chances that signing or not wasn't the reason of our
-problem, I tried whether it is possible to get it running using non
-signed applets.
 
 - Updated `Makefile` to no longer sign anything.
 

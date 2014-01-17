@@ -63,3 +63,5 @@ TODO:
 - Move :mod:`lino.projects` (or most of it) to a separate repository
   where they can remain GPL.
 
+
+.. refstothis:: /tickets/79

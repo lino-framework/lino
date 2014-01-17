@@ -1,26 +1,23 @@
 Tags
 ====
 
+Documentation
+-------------
 
 .. taglist::
-    :tags: blog docs java gpl
+    :tags: blog docs
 
 
-(Here I'd expect a list of tagged items.)
+Java
+----
+
+.. taglist::
+    :tags: java
 
 
-.. tag:: gpl
+Copyright
+---------
 
-   About the GPL
-
-
-.. tag:: java
-
-   About Java
-
-
-.. tag:: docs
-
-   About Sphinx and writing docs
-
+.. taglist::
+    :tags: gpl
 

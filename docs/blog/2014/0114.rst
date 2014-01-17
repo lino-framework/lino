@@ -43,3 +43,4 @@ Sent a mail to the author.
 docs-only projects like :ref:`llb` which have no Python code at all.
 
 
+:doc:`/tickets/80`

@@ -193,7 +193,6 @@ def get_actor_description(self):
     #~
     #~ return body
 
-#~ from atelier.sphinxconf import srcref
 
 IGNORED_ACTIONS = (actions.GridEdit, actions.SubmitDetail,
                    actions.ShowDetailAction,

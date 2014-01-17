@@ -1,0 +1,17 @@
+:state: sleeping
+:module: atelier
+
+#89 : resolve docs interdependences
+-----------------------------------
+
+When I make `pp fab clean`, then afterwards I must first 
+build the Lino docs, then all other docs, and then rebuild 
+Lino docs again. 
+
+Related problems:
+
+- tidy up :mod:`atelier.sphinxconf`, turning it into a series of
+  well structured Sphinx extensions
+
+- When a `py2rst` code snipet causes an exception, then Sphinx should 
+  report a meaninful error message including the name of the guilty file.

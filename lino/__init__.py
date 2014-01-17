@@ -12,13 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-
 """
 The ``lino`` module can be imported even from a Django :xfile:`settings.py` 
 file since it does not import any django module.
 
 """
+
+from __future__ import unicode_literals
 
 import os
 
@@ -27,22 +27,7 @@ from os.path import join, abspath, dirname, normpath, isdir
 execfile(join(dirname(__file__), 'project_info.py'))
 __version__ = SETUP_INFO['version']
 intersphinx_url = "http://docs.lino-framework.org"
-# srcref_url = 'http://code.google.com/p/lino/source/browse/%s'
 srcref_url = 'https://github.com/lsaffre/lino/blob/master/%s'
-
-
-#~ __author__ = "Luc Saffre <luc.saffre@gmx.net>"
-
-#~ __url__ = "http://lino.saffre-rumma.net"
-#~ __url__ = "http://code.google.com/p/lino/"
-#~ __url__ = "http://www.lino-framework.org"
-
-
-#~ __copyright__ = """\
-#~ Copyright (c) 2002-2013 Luc Saffre.
-#~ This software comes with ABSOLUTELY NO WARRANTY and is
-#~ distributed under the terms of the GNU General Public License.
-#~ See file COPYING.txt for more information."""
 
 
 if False:

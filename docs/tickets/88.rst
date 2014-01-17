@@ -1,6 +1,11 @@
+:state: discussion
+:module: atelier
+
 #88 : How to blog?
 ==================
 
+This is probably an eternal discussion, but I should document "my way"
+somewhere.
 
 - Documentation of the changes in a (free) software project are an
   important part of the project.
@@ -15,8 +20,22 @@
 Plain text or database?
 -----------------------
 
-I prefer to have it stored in a very basic format because
+I prefer to have it stored in a very basic format because 
+it gives me the feeling that I have control over the data.
+In particular, this is because
+
+- Original files 
+- I can see my entries even without specialized tools
+- I can use standard tools like grep and find
+
+
+
 
 On my machine or in the cloud?
 ------------------------------
+
+I prefer to have it stored on my machine because 
+
+- I sometimes happen to work offline
+- it gives me the feeling that I have control over the data
 
