@@ -95,7 +95,7 @@ class EstonianAddressFormatter(AddressFormatter):
         if self.region:
             if self.city:
                 join_words(self.zip_code or self.city.zip_code, self.city)
-                if self.city_zip_code:
+                if self.city.zip_code:
                     yield unicode(self.city)
                     yield unicode(self.city)
             s = join_words(self.zip_code, self.region)

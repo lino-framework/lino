@@ -304,13 +304,6 @@ Medium-term
 
 #.  Redundant code in js_render_GridPanel_class() and ext_elems.GridPanel.
 
-#.  Country, Region and City. Belgium is -despite their constant language 
-    disputes- obviously a very *united* country since they don't need 
-    a `region` field when entering a postal address. 
-    In many other countries such a field is required.
-    There should be a configuration option to handle this preference.
-    Also a Regions table.
-
 #.  Unerwünschte Scrollbars:
 
     - Beim Passbild (nur mit Firefox und Chromium 17, aber nicht mit Chrome 16)

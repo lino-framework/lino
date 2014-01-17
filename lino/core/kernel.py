@@ -229,7 +229,6 @@ class Kernel(object):
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
-
         names = set()
         for n in self.reserved_names:
             if n in names:
@@ -365,13 +364,17 @@ class Kernel(object):
 
                     """
                     If JobProvider is an MTI child of Company,
-                    then mti.delete_child(JobProvider) must not fail on a 
-                    JobProvider being refered only by objects that can refer 
+                    then mti.delete_child(JobProvider) must not fail on a
+                    JobProvider being refered only by objects that can refer
                     to a Company as well.
                     """
                     if hasattr(f.rel.to, '_lino_ddh'):
                         # ~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
                         f.rel.to._lino_ddh.add_fk(m or model, f)
+
+        for p in self.installed_plugins:
+            if isinstance(p, LinoPlugin):
+                p.before_analyze(self)
 
         dd.pre_analyze.send(self, models_list=models_list)
         # MergeActions are defined in pre_analyze.

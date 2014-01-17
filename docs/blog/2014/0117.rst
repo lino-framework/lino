@@ -2,6 +2,9 @@
 20140117 (Friday, 17 January 2014)
 ==================================
 
+Tidying up :mod:`atelier.sphinxconf`
+------------------------------------
+
 I didn't checkin yesterday's changes because one "detail" was missing:
 "sphinxcontrib.dailyblog" would have been the wrong name for this
 project. Because the "daily blog" things were in
@@ -25,5 +28,46 @@ And of course the thing which caused all these evolutions: the new
 :directive:`refstothis` directive, which I finally implemented simply 
 withing :mod:`atelier.sphinxconf.dirtables`.
 
-TODO: tidy up
+TODO: continue to tidy up.
 Opened new ticket :doc:`/tickets/89`.
+
+The modules 
+:mod:`atelier.sphinxconf.insert_input`
+:mod:`atelier.sphinxconf.dirtables`
+:mod:`atelier.sphinxconf.base`
+are now standalone Sphinx extensions.
+
+
+
+New setting :setting:`contacts.hide_region`
+-------------------------------------------
+
+A visitor of the :ref:`cosi` demo site had caused the 
+following :ref:`ise`::
+
+  AttributeError at /api/contacts/Persons
+  'Person' object has no attribute 'city_zip_code'
+
+This bug occurred only for Partners with a non-empty 
+`region` field. This is not yet well tested.
+
+Until now, every :mod:`lino_cosi.models` did the following code::
+
+    @dd.when_prepared('contacts.Person', 'contacts.Company')
+    def hide_region(model):
+        model.hide_elements('region')
+
+Which made it basically impossible to run a "non-Belgian" :ref:`cosi` 
+site.
+
+Now this is done using the :setting:`contacts.hide_region` 
+plugin setting, and :ref:`cosi` by default no longer 
+hides the field.
+
+Also the MergeAction is now unconditionally added to every Person and
+Company (which is probably not a definitive method since it should be
+optional, but I'll decide how to configure this when a first concrete
+need arises).
+
+TODO: The `few_cities` fixture doesn't yet set the `parent` field for 
+Eupen,  Kettenis and other places.

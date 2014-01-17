@@ -461,40 +461,10 @@ class Site(Site):
 
         super(Site, self).do_site_startup()
 
-        if True:  # after 20131206
+        from lino.core.kernel import Kernel
+        self.kernel = Kernel(self)
+        self.ui = self.kernel  # internal backwards compat
 
-            from lino.core.kernel import Kernel
-            self.kernel = Kernel(self)
-            self.ui = self.kernel  # internal backwards compat
-
-        else:
-
-            from lino.core.kernel import startup_site
-            startup_site(self)
-
-            from django.conf import settings
-
-            if self.build_js_cache_on_startup is None:
-                from lino.core.dbutils import is_devserver
-                self.build_js_cache_on_startup = not (
-                    settings.DEBUG or is_devserver())
-
-            from lino.core.web import site_setup
-            site_setup(self)
-
-            from lino.ui.ui import ExtUI
-            self.ui = ExtUI(self)
-
-            from lino.core import actors
-            for a in actors.actors_list:
-                if a.get_welcome_messages is not None:
-                    self._welcome_actors.append(a)
-
-    #~ def shutdown(self):
-        #~ return super(Site,self).shutdown()
-        #~ from lino.core.kernel import shutdown_site
-        #~ shutdown_site(self)
-#~
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
 
@@ -1105,23 +1075,6 @@ class Site(Site):
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
 
         #~ print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
-
-    #~ def get_plugins(self):
-        #~ from lino.ui.ui import ExtUI
-        #~ yield ExtUI()
-
-    #~ def do_site_startup(self):
-        #~ raise Exception("20130302")
-        #~ try:
-        #~ super(Site,self).do_site_startup()
-
-        #~ if True:
-            #~ self.ui =
-        #~ except Exception as e:
-            #~ import traceback
-            #~ traceback.print_exc(e)
-            #~ sys.exit(-10)
-        #~ raise Exception("20130302")
 
     def is_imported_partner(self, obj):
         """

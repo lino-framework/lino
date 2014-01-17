@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -36,8 +36,9 @@ if output_format == "rst":
 else:
     FULL_CONTENT = False
 
+
 HAS_FUN = True
-HAS_EXERCICES = False
+HAS_EXERCICES = True
 
 book = Book(French, Estonian,
             title="Kutsealane prantsuse keel kokkadele",
@@ -130,6 +131,7 @@ if HAS_FUN:
 
 if HAS_EXERCICES:
     Exercices = Vocabulary.add_section(u"Harjutused")
+    Viktoriin = Vocabulary.add_section(u"Viktoriin")
 
 
 Intro.add_lesson(u"Tuntud sõnad", intro=u"""
@@ -277,6 +279,24 @@ le chocolat [šoko'la] : šokolaad
 le plat [pla] : roog | kauss
 le cinéma [sine'ma] : kino
 le paradis [para'di] : paradiis
+""")
+
+
+Intro.add_lesson("Liaison (sõnade sidumine)", intro="""
+Prantsuse keeles juhtub, et sõnad sulavad kokku järmise sõnaga,
+s.t. nende hääldamine muutub sõltuvalt sellest, mis järgneb.
+
+""", ref="liaison")
+
+Intro.parse_words(None, u"""
+un grand homme  [Ö~ grA~ t‿Omm] : üks suur inimene
+tout homme  [tu‿t‿Omm] : iga inimene
+avec tout son savoir [avÄk tu so~ savuaar] : kõiki oma teadmistega
+pas du tout! [pa dü 'tu] : mitte üldse!
+les enfants [lÄ‿z‿A~'fA~] : lapsed
+venez ici [ve'nee_z_i'si] : tulge sia
+les faux amis [foo‿z‿a'mi] : valed sõbrad
+bon appétit [bOn‿appe'ti] : head isu
 """)
 
 
@@ -660,7 +680,7 @@ la bombe ['bO~mbə] : pomm
 Reeglid.parse_words(Autre, u"""
 bonjour [bO~'žuur] : tere | head päeva | tere hommikust
 bonne nuit [bOnə 'nwi] : head ööd
-bon appétit [bOnappe'ti] : head isu
+bon appétit [bOn‿appe'ti] : head isu
 """)
 
 
@@ -1216,7 +1236,7 @@ merci beaucoup [mer'si bo'ku] : tänan väga
 oui [wi] : jah
 non [nO~] : ei
 
-bon appétit [bOnappe'ti] : head isu
+bon appétit [bOn‿appe'ti] : head isu
 j'ai faim [žee fÄ~] : mul on kõht tühi
 j'ai soif [žee swaf] : mul on janu
 je suis fatigué [žə swi fati'gee] : ma olen väsinud
@@ -1567,13 +1587,14 @@ Kokadele.parse_words(None, u"""
 le fromage [fro'maaž] : juust
 la caillebotte [kajə'bott] : (kodujuust)
 la raclette [rak'lett] : kuumaga sulatud juust
-le Camembert [kamA~'bäär] : (valgehallitusjuust)
-le Emmental [emən'taal] : suurte augudega kõva juust
+le Camembert [kamA~'bäär] : valgehallitusjuust
+le Emmental [emən'taal] : suurte augudega kõva juust (Šveits)
 le Rocquefort [rOk'fOOr] : (sinihallitusjuust)
-le Gruyère [grüi'jäär] : -
-le Edam [e'dam] : -
-le Brie [brii] : -
-le Parmesan [parmə'zA~] : -
+le Gruyère [grüi'jäär] :  (Šveits)
+le Edam [e'dam] : (Holland)
+le Brie [brii] : valgehallitusjuust
+le Parmesan [parmə'zA~] : (Itaalia)
+le Mascarpone [maskar'poone] : toorjust (Itaalia)
 """)
 
 
@@ -1583,7 +1604,7 @@ le dessert [des'säär] : magustoit
 la crème [krääm] : koor
 la crème fraiche [krääm 'fräš] : rõõsk koor
 la crème brûlée [krääm brü'lee] : põletud koor
-la crème bavaroise [krääm bavaru'aaz] : muna-piima-seguga kreem želatiiniga 
+la crème bavaroise [krääm bavaru'aaz] : muna-piima-seguga kreem želatiiniga
 la sauce melba [soos mel'ba] : melba kaste
 la sauce vanille [soos va'niijə] : vanillikaste
 la sauce caramel [soos kara'mäl] : karamellkaste
@@ -1601,7 +1622,8 @@ la mousse [mus] : vaht
 la tarte aux prunes [tarto'prün] : ploomikook
 la salade de fruits [sa'laad də frü'i] : puuviljasalat
 la salade de baies [sa'laad də bä] : marjasalat
-le petit-beurre [pəti'bÖÖr]: (kuiv küpsis)
+le petit-beurre [pəti'bÖÖr] : (kuiv küpsis)
+le pain d'épices [pÄ~ de'pis] : piparkook
 """)
 
 
@@ -2012,6 +2034,15 @@ novembre [no'vA~brə] : november
 décembre [de'sA~brə] : detsember
 """)
 
+General.add_lesson("Reisil")
+General.parse_words(None, u"""
+la carte d'identité [kartə didA~ti'tee] : id-kaart
+le hôtel [o'täl] : hotell
+je voyage en voiture [žə vuajaaž A~ vua'tüür] : ma reisin autoga
+je voyage en avion [žə vuajaaž A~ avio~] : ma reisin lennukiga
+je voyage en train [žə vuajaaž A~ trÄ~] : ma reisin rongiga
+""")
+
 u"""
 On met une majuscule 
 uniquement quand l'adjectif est employé comme 
@@ -2161,6 +2192,24 @@ le requin [rə'kÄ~] : haikala
 la cuillère [kwi'jäär] : lusikas
 """)
 
+    Viktoriin.add_lesson("", u"""
+Nommez trois ingrédients principaux du tiramisu
+""")
+    Viktoriin.parse_words(None, u"""
+le œuf [Öf] : muna
+le sucre ['sükrə] : suhkur
+le café [ka'fee] : kohv
+le Mascarpone [maskar'poone] : toorjust (Itaalia)
+""")
+
+    Viktoriin.add_lesson("", u"""
+ Smetana on (a) une épice, (2) une sauce au poisson ou (c) un produit laitier?
+""")
+
+    Viktoriin.add_lesson("","""
+Kuidas valmistatakse "Glace au four'i" nimeline magustoitu?
+(a) ahjus, (b) sügavkülmikus või (c) kaussis?
+""")
 
 if output_format == "rst":
     Files = book.add_section(u"Failid", intro=u"""

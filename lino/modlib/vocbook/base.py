@@ -150,6 +150,9 @@ class Word(object):
         if pronounciation:
             assert pronounciation.startswith('[')
             assert pronounciation.endswith(']')
+            pronounciation = pronounciation.replace("_", u"‿")
+            pronounciation = pronounciation.replace("A~", u"ã")
+            # pronounciation = pronounciation.replace("o~", u"")
             self.pronounciation = pronounciation[1:-1]
         if gender:
             assert gender in ('m', 'f', 'mf', 'pl')

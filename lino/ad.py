@@ -69,6 +69,11 @@ class Plugin(BasePlugin):
     List of js snippets to be injected into the `lino_*.js` file.
     """
 
+    def before_analyze(self, site):
+        """This is called when the kernel is being instantiated.
+        """
+        pass
+
     def on_ui_init(cls, kernel):
         """This is called when the kernel is being instantiated.
         """

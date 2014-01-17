@@ -366,10 +366,10 @@ A table containing elementtree HTML:
 
     """
 
-    def convert(self, v):
+    def format_value(self, v):
         if etree.iselement(v):
             return html2rst(v)
-        return rstgen.Table.convert(self, v)
+        return super(RstTable, self).format_value(v)
 
 
 def _test():

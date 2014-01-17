@@ -24,7 +24,7 @@ import subprocess
 from django.conf import settings
 from django.utils import translation
 
-from atelier.sphinxconf import Django2rstDirective
+from atelier.sphinxconf.insert_input import Django2rstDirective
 
 from lino.core import actors
 from lino.core import constants

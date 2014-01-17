@@ -46,7 +46,7 @@ from djangosite.dbutils import full_model_name
 #~ from djangosite.dbutils import set_language
 from djangosite import Plugin
 
-from atelier.sphinxconf import Django2rstDirective
+from atelier.sphinxconf.insert_input import Django2rstDirective
 
 import lino.ui.urls  # hack: trigger ui instantiation
 

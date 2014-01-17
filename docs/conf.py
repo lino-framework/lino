@@ -270,11 +270,11 @@ latex_documents = [
 #~ show_source = True
 
 
-setup1 = setup
+# setup1 = setup
 
 def setup(app):
     app.add_stylesheet('linodocs.css')
-    setup1(app)
+    # setup1(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 

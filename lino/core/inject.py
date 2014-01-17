@@ -174,10 +174,10 @@ def check_pending_injects(sender, models_list=None, **kw):
 
 def do_when_prepared(todo, *model_specs):
     """
-    Execute the specified function `todo` on all specified models, 
-    but only when they are prepared. 
-    If a specified model hasn't yet been prepared, 
-    adds the call to a queue and execute it later.
+    Execute the specified function `todo` on all specified models
+    as soon as they are prepared.
+    If a specified model hasn't yet been prepared,
+    add the call to a queue and execute it later.
     """
     #~ caller = inspect.stack()[2]
     caller = inspect.getouterframes(inspect.currentframe())[2]
@@ -215,9 +215,9 @@ def do_when_prepared(todo, *model_specs):
 
 def when_prepared(*model_specs):
     """
-    Decorator to declare a function which will automatically run when 
+    Decorator to declare a function which will automatically run when
     the specified models has been prepared.
-    If the model has already been prepared, the function is executed 
+    If the model has already been prepared, the function is executed
     immediately.
     """
     def decorator(fn):
