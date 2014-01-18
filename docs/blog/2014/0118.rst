@@ -2,7 +2,8 @@
 20140118 (Saturday, 18 January 2014)
 ====================================
 
-New ideas on :doc:`/tickets/79`.  Moved a miscellaneous question from
+New ideas on :doc:`/tickets/79`.  
+Moved a miscellaneous question from
 :doc:`/tickets/16` into a new ticket :doc:`/tickets/91`.  I plan to
 update the *documentation* before actually switching to the LGPL. The
 actual switching is a routine work and comes as the last and
@@ -17,7 +18,7 @@ One thing is to surf about it:
 - `The LGPL and Java
   <https://www.gnu.org/licenses/lgpl-java.en.html>`_
 
-Another thing is to *think* about it:
+Another thing is to *think* about it (or to write down thoughts):
 
 I imagine you are a Python programmer and want to write some
 commercial software package, and you want to use Lino as a framework.
@@ -70,3 +71,37 @@ Possible questions:
   similar to Lino.
 
 
+First logos for Lino
+--------------------
+
+Ta-daa! Ly finally took a few hours and crystallized our thoughts
+about a logo for Lino into something visible. Here a series of four
+working drafts:
+
+
+.. image:: 20140118a.png
+
+.. image:: 20140118b.png
+
+.. image:: 20140118c.png
+
+.. image:: 20140118d.png
+
+
+The logo represents a tree, but also reminds a diagram with linked
+objects.
+
+Lino applications live, they grow slowly, they are long-term
+investments into a sustainable system.
+
+Comments are welcome.
+
+My current favourite is b (that's why it is already visible in the
+sidebar).
+
+
+Sphinx tools for writing language courses
+-----------------------------------------
+
+After a meeting with Jorma Ihalainen, I created a ticket on
+:doc:`/tickets/92`. This will have to wait at least until february.

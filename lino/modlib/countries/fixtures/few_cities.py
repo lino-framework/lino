@@ -119,14 +119,22 @@ def objects():
 
     aalst = be_city('9300', "Aalst", "Alost", "Aalst", "Aalst", parent=prov)
     yield aalst
-    yield be_city('9308', name="Gijzegem", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9310', name="Baardegem ", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9320', name="Erembodegem", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9310', name="Herdersem", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9308', name="Hofstade", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9310', name="Meldert", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9320', name="Nieuwerkerken", parent=aalst, type=PlaceTypes.village)
-    yield be_city('9310', name="Moorsel", parent=aalst, type=PlaceTypes.village)
+    yield be_city('9308', name="Gijzegem",
+                  parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Baardegem ",
+                  parent=aalst, type=PlaceTypes.village)
+    yield be_city('9320', name="Erembodegem",
+                  parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Herdersem", parent=aalst,
+                  type=PlaceTypes.village)
+    yield be_city('9308', name="Hofstade", parent=aalst,
+                  type=PlaceTypes.village)
+    yield be_city('9310', name="Meldert",
+                  parent=aalst, type=PlaceTypes.village)
+    yield be_city('9320', name="Nieuwerkerken",
+                  parent=aalst, type=PlaceTypes.village)
+    yield be_city('9310', name="Moorsel",
+                  parent=aalst, type=PlaceTypes.village)
 
     yield be_province("Westflandern", "Flandre de l'Ouest", "West-Vlaanderen")
 

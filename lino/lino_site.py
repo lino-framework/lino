@@ -161,31 +161,29 @@ Redefine application-specific Choice Lists.
 Especially used to define application-specific
 :class:`UserProfiles <lino.core.perms.UserProfiles>`.
 
-Lino by default has two user profiles "User" 
-and "Administrator", defined in :mod:`lino.core.perms`.
+Lino by default has two user profiles "User" and "Administrator",
+defined in :mod:`lino.core.perms`.
 
-Application developers who use group-based requirements 
-must override this in their application's :xfile:`settings.py` 
-to provide a default list of user profiles for their 
-application.
+Application developers who use group-based requirements must override
+this in their application's :xfile:`settings.py` to provide a default
+list of user profiles for their application.
 
-See the source code of :mod:`lino.projects.presto` 
-or :mod:`lino.projects.pcsw` for a usage example.
+See the source code of :mod:`lino.projects.presto` or
+:mod:`lino_welfare` for a usage example.
 
-Local site administrators may again override this in their 
+Local site administrators may again override this in their
 :xfile:`settings.py`.
 
-Note that you may not specify values longer 
-than `max_length` when redefining your choicelists.
-This limitation is because these redefinitions happen at a 
-moment where database fields have already been instantiated, 
-so it is too late to change their max_length.        
-Not that this limitation is only for the *values*, not for the names 
-or texts of choices.
+Note that you may not specify values longer than `max_length` when
+redefining your choicelists.  This limitation is because these
+redefinitions happen at a moment where database fields have already
+been instantiated, so it is too late to change their max_length.  Not
+that this limitation is only for the *values*, not for the names or
+texts of choices.
 
 .. setting:: get_installed_apps
 
-This method is expected to yield the list of strings 
+This method is expected to yield the list of strings
 to be stored into Django's :setting:`INSTALLED_APPS` setting.
 
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,10 +15,7 @@
 """
 Work in progress.
 
-I currently use the :mod:`lino.modlib.vocbook` 
-module to generate teaching materials for my pupils, 
-the catering cooks at 
-`Vigala professional school <http://web.vigalattk.ee/>`_.
+See :doc:`/tickets/92`.
 
 """
 

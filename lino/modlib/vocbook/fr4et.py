@@ -12,6 +12,13 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+Work in progress.
+
+See :doc:`/tickets/92`.
+
+"""
+
 from __future__ import unicode_literals
 
 import os
@@ -562,6 +569,9 @@ if HAS_FUN:
 | ou le chasseur me tuera!»    
 | «Lapin, lapin entre et viens 
 | me serrer la main.»   
+
+..  youtube:: 8SW1dg7ZipU
+
 """)
 
     Fun.parse_words(Verbe, u"""
@@ -2214,12 +2224,22 @@ Kuidas valmistatakse "Glace au four'i" nimeline magustoitu?
 if output_format == "rst":
     Files = book.add_section(u"Failid", intro=u"""
     
-Neid faile saad alla laadida ja kuulata koos trükitud lehtedega:
+Järgmised faile saad siit alla laadida.
+
+- `Trükitud õpik 2012-13 <dl/2012-13.pdf>`_
+- `Trükitud õpik 2012-13 <dl/2013-14.pdf>`_
+
+Kuulamiseks koos trükitud lehtedega:
 
 - `lk. 5 <dl/lk05.mp3>`_
 - `lk. 6 <dl/lk06.mp3>`_
 - `lk. 7 <dl/lk07.mp3>`_
 - `lk. 8 <dl/lk08.mp3>`_
+
+Muu:
+
+- `Laul <dl/o-grand-st-nicolas.pdf>`_
+  (esitati detsembris 2012 Vana-Vigala TTK jõulupeol)
 
 """)
 

@@ -10,7 +10,7 @@ Recommended
 -----------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    install
    /tutorials/index
@@ -21,7 +21,7 @@ Drafts
 ------
    
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    actors
    /tested/index

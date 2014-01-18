@@ -140,8 +140,6 @@ More
    faq
    luc
    license
-   why_gpl
-   proprietary
    values
    name
    

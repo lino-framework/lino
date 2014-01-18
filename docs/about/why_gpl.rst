@@ -1,10 +1,12 @@
 Why GPL?
 ========
 
-Lino is published under the `GPL
-<http://en.wikipedia.org/wiki/GNU_General_Public_License>`_, as
-explained in :doc:`license`.  The present section concentrates on the
-reason for my choice.
+As the author of Lino, I decided to publish my work as free software
+using the `LGPL
+<http://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License>`_.
+
+as explained in :doc:`license`.  
+The present section concentrates on the reason for my choice.
 
 The BSD versus GPL discussion has a religious dimension: two persons
 can have opposite views and never get to a common statement, despite
@@ -17,17 +19,15 @@ political idea behind the GPL is both *true* and *important*. And my
 personal (simplistic) summary of that political idea is: 
 
     Pure intellectual property such as software and plain texts should
-    *not* "belong" to anybody, they should not be object of intellectual
-    property. The GPL uses copyright only to abolish it. But only for
-    those who agree with that idea.
+    *not* "belong" to anybody, they should not be object of
+    intellectual property. The GPL uses copyright only to abolish
+    it. But only for those who agree with that idea.
     
-
 Concretely spoken I want to make sure that our work will always belong
 to the general public and never be controlled by some proprietary
 organisation.  The GPL is the only license which `"resists proprietary
 vendors' attempts to embrace, extend and extinguish
 <http://en.wikipedia.org/wiki/Embrace,_extend_and_extinguish>`_".
-
 
 I don't claim to understand the topic completely, so 
 I'm open to comments and discussion, and maybe I'll even change my mind. 
@@ -54,9 +54,8 @@ which *did not* make me change my mind:
   with on “playground/testing” sites." 
   (`coderseye.com 2008-06-04 <http://coderseye.com/2008/why-i-didnt-switch-from-jquery-to-extjs-after-all.html>`_) 
   
-  (My answer: 
-  Don't worry, the GPL dosn't require you to write *beautiful* code. 
-  You wouldn't be the only one who publishes 
+  (My answer: Don't worry, the GPL doesn't require you to write
+  *beautiful* code.  You wouldn't be the only one who publishes
   shamelessly ugly code. Just look at my code.)
 
 
