@@ -1,4 +1,4 @@
-from lino.mixins import Human # , Genders
+from lino.mixins import Human
 
 class Person(Human):
     pass

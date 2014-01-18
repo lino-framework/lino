@@ -3,14 +3,14 @@
 About Humans
 ============
 
-This test application explains some basic truths about humans.
+This test application explains some basic truths about humans (as the
+:mod:`lino.mixins.human` module sees them).
 
 The database structure used for the following examples is very simple,
 we define a single model `Person` 
 which just inherits :class:`lino.mixins.human.Human`:
 
 .. literalinclude:: models.py
-
 
 .. 
   >>> from __future__ import print_function 
@@ -33,7 +33,7 @@ Gender
 The :class:`Genders <lino.core.choicelists.Genders>` choicelist
 defines the possible values for the `gender` field of a Human.
 
-A :class:`lino.core.choicelist.Choicelist` is
+A :class:`ChoiceList <lino.core.choicelists.ChoiceList>` is
 a "hard-coded" list of translatable values.
 
 It's a new concept introduceed by Lino and deserves more 
@@ -45,10 +45,11 @@ to choicelists:
 >>> print(Genders)
 lino.Genders
 
-A Choicelist is an "Actor", another Lino concept, but basically this 
-means that it is globally accessible using the above name.
+A Choicelist is an "Actor", another Lino concept which deserves more
+documentation, but basically this means that it is globally
+accessible using the above name.
 
-A Choicelist has an `objects` method (not attribute) which returns an 
+A ChoiceList has an `objects` method (not attribute) which returns an 
 iterator over the "Choices":
 
 >>> print(Genders.objects())
@@ -165,7 +166,7 @@ are equal.
 >>> print(p.get_full_name())
 Mr Jean Dupont
 
-The :func:`get_full_name <lino.modlib.contacts.models.Person.get_full_name>` 
+The :func:`get_full_name <lino.mixins.human.Human.get_full_name>` 
 function has 2 optional parameters `nominative` and `salutation`.
 
 In German you may need to get a nominative form of the salutation:
@@ -204,9 +205,8 @@ In France it is usual to print the last name with captial letters.
 ...    print(p.get_full_name(upper=True))
 M. Jean DUPONT
 
-Lino also has a setting 
-:attr:`uppercase_last_name <lino.ui.Site.uppercase_last_name>`
-which causes this to be the default.
+Lino also has a setting :setting:`uppercase_last_name` which causes
+this to be the default.
 
 >>> from django.conf import settings
 >>> settings.SITE.uppercase_last_name = True
@@ -215,10 +215,9 @@ which causes this to be the default.
 ...     print(p)
 M. Jean DUPONT
 
-When setting 
-:attr:`uppercase_last_name <lino.ui.Site.uppercase_last_name>`
-is set to True and you (exceptionally) do *not* want uppercase last names, 
-then you must specify it explicitly:
+When :setting:`uppercase_last_name` is set to True and you
+(exceptionally) do *not* want uppercase last names, then you must
+specify it explicitly:
 
 >>> with translation.override('fr'):
 ...    print(p.get_full_name(upper=False))

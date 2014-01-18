@@ -65,10 +65,9 @@ Now this is done using the :setting:`contacts.hide_region`
 plugin setting, and :ref:`cosi` by default no longer 
 hides the field.
 
-Also the MergeAction is now unconditionally added to every Person and
-Company (which is probably not a definitive method since it should be
-optional, but I'll decide how to configure this when a first concrete
-need arises).
+I also tried to add the MergeAction unconditionally to every Person
+and Company, but that turned out to not be so easy. 
+See :doc:`/tickets/90`.
 
 TODO: The `few_cities` fixture doesn't yet set the `parent` field for 
 Eupen,  Kettenis and other places.

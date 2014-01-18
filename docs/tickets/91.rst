@@ -1,0 +1,16 @@
+:state: sleeping
+:module: lino
+
+#91 : Miscellaneous copyright issues
+====================================
+
+What about the copyright notice in :srcref:`/bash/oood`?  This is
+based on `oooctl <http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl>`_
+(copyright "Nuxeo 2007 and contributors" and published using LGPL).  I
+made modifications and would like to publish my work independently
+with Lino using the GPL.  How to formulate this?
+
+Pages referring to this:
+
+.. refstothis::
+

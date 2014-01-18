@@ -1,24 +1,18 @@
 :state: closed
 :module: lino
 
-#16 : Questions about copyright 
-===============================
+#16 : Lino cannot switch to BSD or LGPL
+=======================================
 
 This ticket is closed. See :doc:`79`.
 
-Should I change Lino's license from the current GPL to LGPL or even BSD?
-The main reason to do so would be to stop refraining 
-a certain group of developers from using Lino.
+Should I change Lino's license from the current GPL to LGPL or even
+BSD?  The main reason to do so would be to stop refraining a certain
+group of developers from using Lino.
 
-For those who are interested, please read the following page 
-and tell me your comments and advice about how I should decide.
-
-ExtJS and Ext.ensible
----------------------
-
-It seems that Lino **cannot** switch to another license 
-as long as we use ExtJS and Ext.ensible.
-ExtJS and Ext.ensible are GPLv3, and Lino uses them both.
+It seems that Lino **cannot** switch to another license then GPLv3 as
+long as we use ExtJS and Ext.ensible.  ExtJS and Ext.ensible are
+GPLv3, and Lino uses them both.
 
 - Lino generates and serves HTML pages which contain the instruction 
   to include the `*.js` and `*.css` files of these libraries.
@@ -47,14 +41,6 @@ Of course it is possible to write a new user
 interface which does not require any GPLed library.
 It is just a question of priorities.
 
+Pages referring to this:
 
-Miscellaneous
--------------
-
-What about the copyright notice in :srcref:`/bash/oood`? 
-This is based on `oooctl <http://svn.nuxeo.org/nuxeo/tools/ooo/oooctl>`_ 
-(copyright "Nuxeo 2007 and contributors" and published using LGPL).
-I made modifications and would like to publish my work 
-independently with Lino using the GPL.
-How to formulate this?
-
+.. refstothis::

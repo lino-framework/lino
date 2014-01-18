@@ -1,0 +1,72 @@
+====================================
+20140118 (Saturday, 18 January 2014)
+====================================
+
+New ideas on :doc:`/tickets/79`.  Moved a miscellaneous question from
+:doc:`/tickets/16` into a new ticket :doc:`/tickets/91`.  I plan to
+update the *documentation* before actually switching to the LGPL. The
+actual switching is a routine work and comes as the last and
+"official" step. Before this I'd like to have clear and documented
+interpretation.
+
+One thing is to surf about it:
+
+- `Using Python module on LGPL license in commercial product
+  <http://stackoverflow.com/questions/8580223/using-python-module-on-lgpl-license-in-commercial-product>`_
+
+- `The LGPL and Java
+  <https://www.gnu.org/licenses/lgpl-java.en.html>`_
+
+Another thing is to *think* about it:
+
+I imagine you are a Python programmer and want to write some
+commercial software package, and you want to use Lino as a framework.
+Concretely you will write Python code which imports things from
+Lino. **That's okay and that's what I wanted to make possible by
+switching from GPL to LGPL.**
+
+The LGPL (unlike the BSD) then says that you may *not* make a copy of
+Lino *itself* or any part of it and turn it into proprietary software.
+
+Let's imagine for example that you don't use Lino but stumble over my
+:ref:`lino.tutorial.human` tutorial and want to use this in a
+proprietary plain Django application.  You can't do that directly
+because it requires the :class:`ChoiceList
+<lino.core.choicelists.ChoiceList>` class, an integral part of
+Lino. You then start to work many hours, and because you are clever,
+you manage to reimplement the :class:`ChoiceList
+<lino.core.choicelists.ChoiceList>` concept without requiring Lino,
+you have rewritten a new and better implementation of my
+:mod:`lino.mixins.human` module.
+
+And now you want to use this in a proprietary package? I say "Sorry,
+but you will need to prove that you did *not* copy any part of Lino.
+And that's rather utopic because *of course* (every Python programmer
+can confirm it) you have been looking at my source code, and *of
+course* you have been copying parts of it."  You may hide your deed by
+changing variable names, reorganizing or obfuscating your code and so
+on, but I (or rather some of my successors, because I personally don't
+imagine that I would waste my time with this kind of activity) might
+discover your product and suspect you of the above and try to prove
+that you did so.  So don't do that if you are a professional. **Don't
+copy LPGL licensed code into your proprietary product.**
+
+Possible questions:
+
+- But where is the limit between these two usages?  Aren't the example
+  files and tutorials a part of Lino, too?  
+
+  That's why example files don't have an LGPL copyright header. The
+  lack of a copyright header indicates that that you may copy it and
+  base even non-free work on it.
+
+- But for example the :ref:`lino.tutorial.dpy` tutorial invites me to
+  have a look at and get inspired by certain fixture files, and these
+  files *do* have a copyright header.  
+
+  In general one can say: as long as your proprietary application
+  *uses* Lino, there's no danger. The dangerous thing is to *not* use
+  Lino but to offer some proprietary product which looks suspiciously
+  similar to Lino.
+
+

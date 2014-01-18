@@ -188,6 +188,12 @@ or texts of choices.
 This method is expected to yield the list of strings 
 to be stored into Django's :setting:`INSTALLED_APPS` setting.
 
+
+.. setting:: uppercase_last_name
+
+Whether last name of persons should (by default) be printed with
+uppercase letters.  See :mod:`lino.test_apps.human`
+
 """
 
 
@@ -858,10 +864,6 @@ class Site(Site):
     default_number_format_extjs = '0,00/i'
 
     uppercase_last_name = False
-    """
-    Whether last name of persons should be printed with uppercase letters.
-    See :mod:`lino.test_apps.human`
-    """
 
     tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
     "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."

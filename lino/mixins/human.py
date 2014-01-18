@@ -117,16 +117,22 @@ class Human(model.Model):
             self.gender, **salutation_options)
 
     def get_full_name(self, salutation=True, upper=None, **salutation_options):
-        """Returns a one-line string composed of salutation, first_name and last_name.
+        """Returns a one-line string composed of salutation, first_name and
+        last_name.
+       
+        The optional keyword argument `salutation` can be set to
+        `False` to suppress salutations.
         
-The optional keyword argument `salutation` can be set to `False` 
-to suppress salutations. 
-See :func:`lino_welfare.modlib.pcsw.tests.pcsw_tests.test04` 
-and
-:func:`lino.modlib.contacts.tests.test01` 
-for some examples.
+        The optional keyword argument `upper` can be specified to
+        override the Site's default value
+        (:setting:`uppercase_last_name`). `True` means to convert the
+        last name to uppercase as is usually done in French.
+        
+        Any other keyword arguments are forwarded to
+        :func:`get_salutation` (see there).
 
-Optional `salutation_options` see :func:`get_salutation`.
+        See :ref:`lino.tutorial.human` for some examples.
+
         """
         #~ print '20120729 PersonMixin.get_full_name`'
         #~ return '%s %s' % (self.first_name, self.last_name.upper())
