@@ -46,3 +46,11 @@ This is not yet active, i.e. it doesn't yet generate daily blog
 pages.
 
 
+Inkasso-Schulden
+----------------
+
+Kerstin phoned me.
+Opened new ticket :doc:`/tickets/80`.
+Wrote a first implementation.
+  
+

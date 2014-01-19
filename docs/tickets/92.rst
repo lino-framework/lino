@@ -51,7 +51,7 @@ hope that a non-programmer will manage to use my tools for doing a
 similar job.
 
 
-To do 
+To do
 -----
 
 - Contact people behind `innovatsioonikeskus.ee
@@ -60,10 +60,15 @@ To do
   check whether it makes sense to continue.
 
 - Convert `vocbook` itself into a Sphinx extension and `fr4et.py` into
-  a doctree.
+  a doctree. **Or**, alternatively, convert `vocbook` into a Lino
+  application with models like FrenchWord, EstonianWord, Book, Unit,
+  Atom, VocEntry, ...
+
+  (Both directions are quite some work. The latter is more realistic
+  but requires end-users willing to invest their time.)
   
 
-**Pages referring to this ticket:**
+Pages referring to this:
 
 .. refstothis::
 

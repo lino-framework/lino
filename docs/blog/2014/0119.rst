@@ -1,0 +1,16 @@
+==================================
+20140119 (Sunday, 19 January 2014)
+==================================
+
+
+I am now a fellow
+-----------------
+
+Last week I did something which I had been thinking of for a long 
+time: I registered as a "fellowship" member of the 
+`Free Software Foundation Europe <http://www.fsfe.org>`_.
+
+If in the future I should happen to restart blogging about things that
+are not directly related to Lino, then it will be in `Luc's blog
+<http://blogs.fsfe.org/luc.saffre/>`_.
+

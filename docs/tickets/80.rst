@@ -41,13 +41,7 @@ werden.
   :ref:`welfare.debts.BailiffDebtsByBudget`.
 
 
-.. blognote:: 2014-01-07 23:35 
-
-  Opened the ticket, implementation.
-  
-
 Pages referring to this:
 
-
-.. refstothis:: /tickets/80
+.. refstothis::
 
