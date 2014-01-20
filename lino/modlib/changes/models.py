@@ -171,6 +171,25 @@ class WatcherSpec:
         self.get_master = get_master
 
 
+def watch_all_changes(ignore=[]):
+    """
+    Call to watch all changes on all models. This is fallback method and
+    settings passed to specific model using `watch_changes` call takes precedence.
+
+
+    :param ignore: specify list of model names to ignore
+    """
+    watch_all_changes.allow = True
+    watch_all_changes.ignore.extend(ignore)
+
+watch_all_changes.allow = False
+watch_all_changes.ignore = []
+
+
+def return_self(obj):
+    return obj
+
+
 def watch_changes(model, ignore=[], master_key=None, **options):
     """
     Declare the specified model to be "observed" ("watched") for changes.
@@ -178,7 +197,7 @@ def watch_changes(model, ignore=[], master_key=None, **options):
     will lead to an entry to the `Changes` table.
     
     All calls to watch_changes will be grouped by model.
-    
+
     """
     if isinstance(ignore, basestring):
         ignore = fields.fields_list(model, ignore)
@@ -190,8 +209,7 @@ def watch_changes(model, ignore=[], master_key=None, **options):
     if isinstance(master_key, fields.RemoteField):
         get_master = master_key.func
     elif master_key is None:
-        def get_master(obj):
-            return obj
+        get_master = return_self
     else:
         def get_master(obj):
             return getattr(obj, master_key.name)
@@ -205,12 +223,24 @@ def watch_changes(model, ignore=[], master_key=None, **options):
     model.change_watcher_spec = WatcherSpec(ignore, get_master)
 
 
-def get_master(obj):
+def get_change_watcher_spec(obj):
     cs = obj.change_watcher_spec
 
     if cs is None:
-        return
-    return cs.get_master(obj)
+        if not watch_all_changes.allow or obj.__class__.__name__ in watch_all_changes.ignore:
+            return None
+
+        cs = WatcherSpec([], return_self)
+        obj.change_watcher_spec = cs
+
+    return cs
+
+
+def get_master(obj):
+    cs = get_change_watcher_spec(obj)
+
+    if cs:
+        return cs.get_master(obj)
 
 
 def log_change(type, request, master, obj, msg=''):
