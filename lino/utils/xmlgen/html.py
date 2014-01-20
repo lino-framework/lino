@@ -5,7 +5,8 @@
 # Copyright (c) 1999-2004 by Fredrik Lundh
 # --------------------------------------------------------------------
 
-u"""
+
+"""
 A set of HTML generator tags for building HTML documents.
 
 Usage::
@@ -41,10 +42,12 @@ Usage::
     
 """
 
+from __future__ import unicode_literals
+
 from xml.etree import ElementTree as ET
 from atelier import rstgen
 from lino.utils.xmlgen import etree
-from lino.utils.xmlgen import Namespace, RAW
+from lino.utils.xmlgen import Namespace
 
 
 def HtmlNamespace(Namespace):
@@ -309,7 +312,7 @@ def html2rst(e):
     Usage example:
     
     >>> from lino.utils.xmlgen.html import E, html2rst
-    >>> e = E.p("This is a ",E.b("first")," test.")
+    >>> e = E.p("This is a ", E.b("first"), " test.")
     >>> print html2rst(e)
     This is a **first** test.
     
@@ -340,29 +343,29 @@ A table containing elementtree HTML:
 
 .. complextable::
   :header: 
-  
+
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from lino.utils.xmlgen.html import E, RstTable
   >>> headers = [E.p("A ",E.b("formatted")," header"),"A plain header"]
   >>> rows = [[1,2],[3,4]]
   >>> print RstTable(headers).to_rst(rows)
-  ============================ ================
-   A **formatted** header       A plain header
-  ---------------------------- ----------------
-   1                            2
-   3                            4
-  ============================ ================
+  ======================== ================
+   A **formatted** header   A plain header
+  ------------------------ ----------------
+   1                        2
+   3                        4
+  ======================== ================
   <BLANKLINE>
-  
+
   <NEXTCELL>
-  
-  ============================ ================
-   A **formatted** header       A plain header
-  ---------------------------- ----------------
-   1                            2
-   3                            4
-  ============================ ================
+
+  ======================== ================
+   A **formatted** header   A plain header
+  ------------------------ ----------------
+   1                        2
+   3                        4
+  ======================== ================
 
     """
 

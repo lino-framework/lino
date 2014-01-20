@@ -16,4 +16,10 @@
     clean-up" makes lino/modlib/changes/models.py file pep8 happy.
 
 
-
+- Fixed a minor bug in :mod:`lino.utils.rstgen`: 
+  :meth:`Column.adjust_width <lino.utils.rstgen.Column.adjust_width>`
+  did not call 
+  :meth:`Table.format_value <lino.utils.rstgen.Table.format_value>`
+  before comparing the required width. And in case of formatted values
+  this lead to wrong width calculation.
+  
