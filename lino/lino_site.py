@@ -35,7 +35,7 @@ functionality is integral part of :mod:`lino.modlib.system`.
 
 .. setting:: use_davlink
 
-Set this to `True` if this site should feature WebDAV-enabled links 
+Set this to `True` if this site should feature WebDAV-enabled links
 using :ref:`davlink`.
 
 .. setting:: use_eidreader
@@ -47,18 +47,21 @@ Set this to `True` if this site should feature using :ref:`eidreader`.
 
 .. setting:: auto_configure_logger_names
 
-A string with a space-separated list of logger names to be automatically 
-configured. See :mod:`lino.utils.log`.
+A string with a space-separated list of logger names to be
+automatically configured. See :mod:`lino.utils.log`.
 
 .. setting:: use_java
 
-A site-wide option to disable everything that needs Java.
+A site-wide option to disable everything that needs Java.  Note that
+it is up to the apps which include Java applications to respect this
+setting. Usage example is :mod:`lino.modlib.beid`.
 
 .. setting:: user_model
 
-Set this to ``"users.User"`` if you use `lino.modlib.users`. 
+Most Lino application wil set this to ``"users.User"`` if you use
+`lino.modlib.users`.
 
-Default value us `None`, meaning that this site has no user management 
+Default value us `None`, meaning that this site has no user management
 (feature used by e.g. :mod:`lino.test_apps.1`)
 
 Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of

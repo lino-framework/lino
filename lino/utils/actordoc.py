@@ -12,9 +12,29 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-A  Sphinx extension used to write multilingual documentation for a 
-Lino application.
+"""A Sphinx extension used to write multilingual user documentation
+for a Lino application.
+
+.. directive:: actor
+
+Usage::
+
+  .. actor:: app_name[.ActorName][.data_element_name]
+
+    Optional introduction text.
+
+Insert the full description of the specified data dictionary item.  If
+the name contains no ".", then it is the name of a Plugin.  If the
+name contains one ".", then it is the name of an Actor or a Model.  If
+the name contains two ".", then it is the name of a data element of
+that Actor or Model (data elements can be fields or actions)
+
+.. role:: ddref
+
+Insert a reference to the named data dictionary item.
+The visible text will be automatically in the right language
+in multilingual userdocs.
+
 """
 
 from __future__ import unicode_literals, print_function
