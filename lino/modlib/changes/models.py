@@ -20,16 +20,13 @@ It also adds a menu entry to the `Explorer` menu.
 """
 
 import logging
+
 logger = logging.getLogger(__name__)
-#~ from lino.utils import dblogger
 
 import datetime
 
 from django.conf import settings
-#~ from django.contrib.auth import models as auth
-#~ from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes.models import ContentType
-
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -38,7 +35,6 @@ from lino import dd
 from lino.core import fields
 from lino.utils.choosers import chooser
 
-
 from lino.core.signals import pre_ui_delete, pre_ui_create, pre_ui_update
 from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child, pre_remove_child
@@ -46,7 +42,6 @@ from lino.core.signals import receiver
 
 
 class ChangeTypes(dd.ChoiceList):
-
     """
     The list of possible choices for the `type` field
     of a :class:`Change`.
@@ -54,6 +49,8 @@ class ChangeTypes(dd.ChoiceList):
     app_label = 'lino'
     verbose_name = _("Change Type")
     verbose_name_plural = _("Change Types")
+
+
 add = ChangeTypes.add_item
 add('C', _("Create"), 'create')
 add('U', _("Update"), 'update')
@@ -64,10 +61,10 @@ add('M', _("Merge"), 'merge')
 
 
 class Change(dd.Model):
-
     """
     Each database change of a watched object will generate one Change record.
     """
+
     class Meta:
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
@@ -81,7 +78,6 @@ class Change(dd.Model):
                                     related_name='changes_by_object',
                                     verbose_name=_("Object type"))
     object_id = dd.GenericForeignKeyIdField(object_type)
-    #~ object = dd.GenericForeignKey('object_type','object_id',_("Object"),dont_merge=True)
     object = dd.GenericForeignKey('object_type', 'object_id', _("Object"))
     # see blog/2013/0123
 
@@ -91,8 +87,6 @@ class Change(dd.Model):
     master_id = dd.GenericForeignKeyIdField(master_type)
     master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
 
-    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    #~ description = dd.RichTextField(format='plain')
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
 
     def __unicode__(self):
@@ -128,7 +122,7 @@ class Change(dd.Model):
             except self.master_type.model_class().DoesNotExist, e:
                 return "%s with pk %r does not exist" % (
                     dd.full_model_name(self.master_type.model_class()), value)
-    # NOTE: the above code is the same as in lino.mixins.Controllable
+                # NOTE: the above code is the same as in lino.mixins.Controllable
 
 
 class Changes(dd.Table):
@@ -163,7 +157,6 @@ class Changes(dd.Table):
 
 
 class ChangesByMaster(Changes):
-
     """
     Slave Table showing the changes related to the current object
     """
@@ -173,11 +166,8 @@ class ChangesByMaster(Changes):
 
 
 class WatcherSpec:
-    #~ def __init__(self,ignored_fields,master_key):
-
     def __init__(self, ignored_fields, get_master):
         self.ignored_fields = ignored_fields
-        #~ self.master_key = master_key
         self.get_master = get_master
 
 
@@ -190,10 +180,6 @@ def watch_changes(model, ignore=[], master_key=None, **options):
     All calls to watch_changes will be grouped by model.
     
     """
-    #~ if ignore is None:
-        #~ model.change_watcher_spec = None
-        #~ return
-    #~ from lino import dd
     if isinstance(ignore, basestring):
         ignore = fields.fields_list(model, ignore)
     if isinstance(master_key, basestring):
@@ -217,14 +203,11 @@ def watch_changes(model, ignore=[], master_key=None, **options):
         if not f.editable:
             ignore.add(f.name)
     model.change_watcher_spec = WatcherSpec(ignore, get_master)
-    #~ logger.info("20131112 watch_changes(%s,%s)",model,master_key)
 
 
 def get_master(obj):
-
     cs = obj.change_watcher_spec
 
-    #~ print 20120921, cs
     if cs is None:
         return
     return cs.get_master(obj)
@@ -235,7 +218,6 @@ def log_change(type, request, master, obj, msg=''):
         type=type,
         time=datetime.datetime.now(),
         user=request.user,
-        #~ summary=self.watched._change_summary,
         master=master,
         object=obj,
         diff=msg).save()
@@ -243,18 +225,15 @@ def log_change(type, request, master, obj, msg=''):
 
 @receiver(pre_ui_update)
 def on_update(sender=None, request=None, **kw):
-    "Note that sender is a Watcher instance"
-    #~ print 'on_update',sender
-    # logger.info("20131112 on_update %s", sender)
+    # Note that sender is a Watcher instance
     master = get_master(sender.watched)
     if master is None:
-        # logger.info("20131112 No master, nothing to log")
+        # No master, nothing to log
         return
 
     cs = sender.watched.change_watcher_spec
     changes = []
     for k, old in sender.original_state.iteritems():
-        #~ if watched_fields is None or k in watched_fields:
         if not k in cs.ignored_fields:
             new = sender.watched.__dict__.get(k, dd.NOT_PROVIDED)
             if old != new:
@@ -323,6 +302,7 @@ def on_merge(sender=None, request=None, **kw):
     if master is None:
         return
     log_change(ChangeTypes.merge, request, master, sender.obj, sender.logmsg())
+
 
 from lino.modlib.system.models import SYSTEM_USER_LABEL
 
