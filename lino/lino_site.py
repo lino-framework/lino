@@ -50,6 +50,10 @@ Set this to `True` if this site should feature using :ref:`eidreader`.
 A string with a space-separated list of logger names to be automatically 
 configured. See :mod:`lino.utils.log`.
 
+.. setting:: use_java
+
+A site-wide option to disable everything that needs Java.
+
 .. setting:: user_model
 
 Set this to ``"users.User"`` if you use `lino.modlib.users`. 
@@ -781,6 +785,8 @@ class Site(Site):
     #~ """
     #~ Whether to replace Djano's template engine by Jinja.
     #~ """
+
+    use_java = True
 
     use_experimental_features = False
     """

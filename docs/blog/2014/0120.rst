@@ -1,0 +1,8 @@
+==================================
+20140120 (Monday, 20 January 2014)
+==================================
+
+
+- Started new document :ref:`welfare.tour`.
+- New Site-wide setting :setting:`use_java`.
+

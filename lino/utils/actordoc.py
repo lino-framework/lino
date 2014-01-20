@@ -469,6 +469,9 @@ class ddrefRole(XRefRole):
             elif isinstance(x, type) and issubclass(x, actors.Actor):
                 text = utils.unescape(unicode(x.title or x.label))
                 target = actor_name(x)
+            elif isinstance(x, actions.Action):
+                text = utils.unescape(unicode(x.label))
+                target = actor_name(x)
             else:
                 raise Exception("Don't know how to handle %r" % x)
 
