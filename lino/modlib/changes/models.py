@@ -132,6 +132,13 @@ class Change(dd.Model):
 
 
 class Changes(dd.Table):
+    parameters = {
+        'type': ChangeTypes.field(force_selection=False, blank=True),
+        'date': models.DateField(_("Only changes from"), blank=True),
+    }
+    if settings.SITE.user_model:
+        parameters['user'] = dd.ForeignKey(settings.SITE.user_model, blank=True)
+
     required = dd.required(user_level='admin')
 
     editable = False
@@ -142,7 +149,17 @@ class Changes(dd.Table):
     diff
     """
 
-#~ class ChangesByObject(Changes):
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Changes, cls).get_request_queryset(ar)
+        if not isinstance(qs, list):
+            if ar.param_values.type:
+                qs = qs.filter(type=ar.param_values.type)
+            if ar.param_values.date:
+                qs = qs.filter(time__range=(ar.param_values.date, ar.param_values.date+datetime.timedelta(1)))
+            if settings.SITE.user_model and ar.param_values.user:
+                qs = qs.filter(user=ar.param_values.user)
+        return qs
 
 
 class ChangesByMaster(Changes):
