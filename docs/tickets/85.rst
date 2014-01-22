@@ -1,8 +1,24 @@
-:state: discussion
+:state: waiting
 :module: lino_welfare
 
-#85 : Laufende Anfragen Gerd
-======================================
+#85 : Diverse Anfragen Gerd
+============================
+
+#.  Synchronisierungen (nach 2014):
+
+    - Daten aus TIM : Konsultierung Buchhaltung wäre interessant, wann
+      die letzten Zahlungen gemacht wurden.
+    - Daten aus ZDSS
+
+#.  Bescheinigungen mit "einfachen" Parametern, d.h. deren Inhalt
+    variabel ist, aber wiederum auch nicht so variabel, dass manuelle
+    Bearbeitung via davlink sich rechtfertigt.  Zum Beispiel z.B. für
+    "Ausländerbeihilfe": "seit dem", "bis zum", "Datum der
+    Bescheinigung"
+
+    Also lokal konfigurierbare Parameterfenster pro Bescheinigung.
+    Äquivalent zu den .dlg-Dateien in TIM.  Ob die Parameter rein
+    volatil sind, oder in einem Memo-Feld gespeichert werden.
 
 #.  :ref:`davlink` : don't follow symbolic links in order to avoid the 
     endless `/usr/X11/X11/X11` problem.
@@ -17,59 +33,16 @@
 #.  Schönheitsfehler: Wenn man Parameter-Panel zum ersten Mal öffnet, 
     ist es zu groß.
 
-#.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
-
 #.  Auto refresh for MyWaitingVisitors
     
-#.  Eine echte Chronik bzw. Historik als virtuelle Tabelle, die ihre 
-    "Chronik-Einträge" aus diversen Quellen zusammensucht: 
-    history.HistoricEvents.add(name,model,field)
-    
-#.  Passfoto einlesen
- 
-#.  Bescheinigungen, die mit einem Klick rauskommen.
-    "Bescheinigung erstellen" für pdf-Bescheinigungen ohne Parameter 
-    sollte sofort kommen.
-    
-#.  Bescheinigungen mit "einfachen" Parametern, d.h. deren Inhalt 
-    nicht direkt gespeichert wird.
-
 #.  Wenn man in "Meine Aufgaben" manuell eine Aufgabe erstellt, dann 
     wird diese anschließend nicht auf der Startseite angezeigt. 
     Zustand ist "Begonnen" statt "Zu tun".
 
-#.  Kalender Team-Ansicht funktioniert nicht. Ich plane eine ziemliche 
-    Strukturänderung: Split the current model "Calendar" into EventType 
-    and Grabber. Then create a new model "Calendar" which represents per
-    user the items which she wants to see in her "Calendars" list of the
-    CalendarPanel:
-    
-       author name color other_user(blank=True) event_type(blank=True)
-
-#.  Familienbeziehungen
-  
 #.  HelpText erweitern : auch `verbose_name` der Felder, sowie der 
     Modelle lokal konfigurierbar machen.
     
-#.  Was ist mit Dublettenkontrolle beim Erstellen eines Klienten?
-  
-#.  Empfang: Kann ein Klient auf zwei Agenten zugleich warten? 
-    Soll Lino das verhindern? 
-    
-#.  Eigene Tabelle für einfache Bescheinigungen 
-    (statt SiteConfig.attestation_note_nature und NoteType.is_attestation)
-
-#.  AMK-Bescheinigungen, Einkommensbescheinigungen
-    
-#.  Volatile Variablen z.B. für "Ausländerbeihilfe":
-    "seit dem", "bis zum", "Datum der Bescheinigung"
-    Also lokal konfigurierbare Parameterfenster pro Bescheinigung.
-    Äquivalent zu den .dlg-Dateien in TIM
-  
 #.  Uploads should be ProjectRelated. Uploads controlled by a notes.Note 
     should be visible in UploadsByProject
     Uploads pro Notiz sollten auch vom Klienten aus sichtbar sein.
-
-
-
 

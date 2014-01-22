@@ -1,4 +1,4 @@
-:state: discussion
+:state: longterm
 :module: atelier
 
 #88 : How to blog?

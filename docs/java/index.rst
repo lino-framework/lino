@@ -9,23 +9,52 @@ update-java-alternatives
   $ sudo update-alternatives --config java
 
   $ update-java-alternatives -l
-
-
-
-  $ update-java-alternatives -l
   java-1.6.0-openjdk-i386 1061 /usr/lib/jvm/java-1.6.0-openjdk-i386
   java-1.7.0-openjdk-i386 1071 /usr/lib/jvm/java-1.7.0-openjdk-i386
   java-7-oracle 1073 /usr/lib/jvm/java-7-oracle
+
   $ sudo update-java-alternatives -s java-1.7.0-openjdk-i386
   update-alternatives: error: no alternatives for apt
 
 How can I see which Java version I am using?
 --------------------------------------------
 
-::
+Simply run it::
 
     $ java -version
+
+OpenJDK Java will answer::
+
     java version "1.7.0_25"
     OpenJDK Runtime Environment (IcedTea 2.3.10) (7u25-2.3.10-1ubuntu0.13.04.2)
     OpenJDK Server VM (build 23.7-b01, mixed mode)
 
+Oracle Java will answer::
+
+    java version "1.7.0_45"
+    Java(TM) SE Runtime Environment (build 1.7.0_45-b18)
+    Java HotSpot(TM) Server VM (build 24.45-b08, mixed mode)
+
+
+
+How to generate a self-signed key
+---------------------------------
+
+::
+
+ $ keytool -genkey
+ $ keytool -selfcert
+ $ keytool -list
+
+
+
+How to get rid of "update-alternatives: error: no alternatives for apt"
+-----------------------------------------------------------------------
+
+This error can have multiple explanations.
+First step is to understand what it means::
+
+  $ less `which update-java-alternatives`
+
+tells us that this command calls `update-alternatives`, which is a
+binary.

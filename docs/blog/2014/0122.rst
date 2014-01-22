@@ -1,0 +1,8 @@
+=====================================
+20140122 (Wednesday, 22 January 2014)
+=====================================
+
+Tidied up under :doc:`/tickets`.
+
+Worked on :doc:`/tickets/93` : 
+Started new module :mod:`lino.modlib.attestations`

@@ -4,6 +4,12 @@
 
 - Started new document :ref:`welfare.tour`.
 
+- :mod:`lino.utils.actordoc` now supports :role:`ddref` referring to
+  an *action*. 
+
+  TODO: the action's label appears correctly but they are not yet
+  clickable; if the action has an icon, insert this into the text.
+
 - New Site-wide setting :setting:`use_java`.
 
 - Thanks to Joe who contributed two changesets:
@@ -16,10 +22,10 @@
     clean-up" makes lino/modlib/changes/models.py file pep8 happy.
 
 
-- Fixed a minor bug in :mod:`lino.utils.rstgen`: 
-  :meth:`Column.adjust_width <lino.utils.rstgen.Column.adjust_width>`
+- Fixed a minor bug in :mod:`atelier.rstgen`: 
+  :meth:`Column.adjust_width <atelier.rstgen.Column.adjust_width>`
   did not call 
-  :meth:`Table.format_value <lino.utils.rstgen.Table.format_value>`
+  :meth:`Table.format_value <atelier.rstgen.Table.format_value>`
   before comparing the required width. And in case of formatted values
   this lead to wrong width calculation.
   

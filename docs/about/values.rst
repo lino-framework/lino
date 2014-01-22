@@ -3,6 +3,7 @@ The values behind Lino
 
 In this text Luc tries to explain what Lino *really* means to him,
 why he loves his work and believes that it is worth doing it.
+See also :doc:`name`.
 
 
 Linked objects
@@ -10,39 +11,37 @@ Linked objects
 
 "Lino" is an acronym of the words "**Lin**\ ked **o**\ bjects".
 
-- Every software application requires a "model" of the 
-  "world" (i.e. the things to be managed by the application).
-  The idea of using *linked objects* for this modelization
-  has been first formulated by Edgar F. Codd
-  in 1969 in his `relational database model 
-  <https://en.wikipedia.org/wiki/Relational_model>`_.
+- Every software application requires a "model" of the "world"
+  (i.e. the things to be managed by the application).  The idea of
+  using *linked objects* for this modelization has been first
+  formulated by Edgar F. Codd in 1969 in his `relational database
+  model <https://en.wikipedia.org/wiki/Relational_model>`_.
 
 - But even 50 years later this idea is still some kind of expert knowledge, 
   known to database engineers but not to normal people.
 
-- Since the early 1990s I have often observed that application developers 
-  seem to hide from the end-users the fact that their application is basically 
-  "nothing but a collection of linked objects".
-  As if they were ashamed to admit that what they are doing is *that* easy.
+- Since the early 1990s I have often observed that application
+  developers seem to hide from the end-users the fact that their
+  application is basically "nothing but a collection of linked
+  objects".  As if they were ashamed to admit that what they are doing
+  is *that* easy. 
 
-Lino puts an end to this vicious circle.
+- Lino puts an end to this vicious circle. Yes, a Lino application
+  *is* that easy.  
 
-- Yes, a Lino application *is* that easy.
-  One Lino application developer who understood this, wrote:
-  "The development is so terribly easy, that one customer looked at 
-  the code and started to code Layouts and modify models by 
-  himself and I almost felt no developer is needed anymore :-)"
+- One Lino application developer who understood this, wrote: "The
+  development is so terribly easy, that one customer looked at the
+  code and started to code Layouts and modify models by himself and I
+  almost felt no developer is needed anymore :-)"
 
-- And no, there is no reason to be ashamed.
-  We continue to need professional 
-  developers because the gory details require some experience, 
-  and because it is an art to make the right choices on what 
-  to take into account and what to ignore.
+- And no, there is no reason to be ashamed.  We continue to need
+  professional developers because the gory details require some
+  experience, and because it is an art to make the right choices on
+  what to take into account and what to ignore.
   
-**Lino applications are proud to feature a transparent,
-rather exhibited view of their database model,
-leading to end-users being intuitively aware 
-of the structure behind what they are doing.** 
+**Lino applications feature a transparent, rather exhibited view of
+their database model, leading to end-users being intuitively aware of
+the structure behind what they are doing.**
 
 
 Lino is a common first name in Italy

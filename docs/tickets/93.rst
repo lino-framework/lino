@@ -1,0 +1,87 @@
+:state: todo
+:module: lino_welfare
+
+#93 : Sozialsekretariat
+=======================
+
+#.  Implement :ref:`davlink` and :ref:`eidreader` as Browser extensions.
+
+#.  Dublettenkontrolle beim Erstellen eines Klienten.
+
+#.  eid-Karte einlesen : wenn ein angeblich neuer Kunde kommt, soll
+    man zuerst die eid-Karte lesen. Lino entscheidet dann, ob es
+    Zweifel gibt und legt ggf. gleich einen neuen Klienten an.
+
+#.  Einkommensbescheinigungen und sonstige Hilfen als eigene Tabelle
+    implementieren (`aids.Aid` und `aids.Type` ("Hilfen")). Dadurch
+    werden "volatile Parameter" bis auf Weiteres unnötig.
+    
+#.  Welche Angaben aus PXS fehlen noch im Detail-Fenster 
+    von Empfang-->Klienten? (mit Monika klären)
+
+    - `Krankenkasse` und `Vollmacht` : Leute, bei denen
+      Medikamentenkosten vorgestreckt wurden, müssen eine Vollmacht
+      unterschreiben, damit das ÖSHZ sein Geld bei der Krankenkasse
+      zurückfordern kann.
+ 
+    - Medizinische Hilfe (Art (Hausarzt / Spezialist), (x) dringend, 
+      (x) Generika
+    - Eigentlich sind diese Felder nur eine "Vorschau" der GH-Historik.
+    - Sozialhilfekonto
+
+    - Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
+      Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
+
+    - Mietgarantie, MAF : scheinbar obsolet
+
+    - Referenzadresse : ob die Adresse in den Stammdaten nur eine
+      theoretische ist.
+
+    - Wann ist die letzte Bescheinigung "Lebensmittelbank" (oder
+      "Kleiderkammer") rausgegangen?  Manche Bescheinigungsarten
+      dürfen frühestens nach 6 Monaten verlängert werden.
+
+    - Konfigurierbare Historik:
+      Wann war ein Klient das letzte Mal da? Was ist alles passiert?
+      
+    - Familienbeziehungen aus TIM importieren. 
+      "Seit kurzem müssen wir alle Kinder eingeben 
+      für Kleiderkammer-Bescheinigungen."
+
+    - Bemerkungen, Notizen (freies Textfeld. wichtig.)
+
+#.  Bescheinigungen, müssen mit einem Klick rauskommen.
+    Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
+    10x klicken und kriegt tausend unnütze Fragen gestellt.
+
+#.  Uhrzeit von-bis eines prompt calendar event sollte ausgefüllt sein:
+
+    - Beginn = bei Empfang des ersten Gastes
+    - Ende = wenn der letzte Gast geht
+
+#.  Feld "User.calendar" fehlt im :ref:`welfare.users.UserDetail`
+
+#.  Aktion "Termin finden" : 
+
+    - Statt Name der Benutzer wird ein fehlendes icon angezeigt
+    - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
+
+#.  Kann ein Klient eigentlich auf zwei Agenten zugleich warten? 
+    Soll Lino das verhindern? 
+
+#.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
+
+#.  Eigene Tabelle für einfache Bescheinigungen
+    (:mod:`lino.modlib.attestations` statt
+    SiteConfig.attestation_note_nature und NoteType.is_attestation)
+
+#.  AMK-Bescheinigungen
+
+#.  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
+    diversen Quellen zusammensucht:
+    history.HistoricEvents.add(name,model,field)
+    
+
+Pages referring to this:
+
+.. refstothis::

@@ -21,6 +21,14 @@ Tickets that are **waiting for feedback** from others.
 
    *
 
+Long-term
+----------
+
+.. tickets_table:: 
+   :filter: e.meta.get('state') in ('longterm', )
+
+   *
+
 Sleeping
 --------
 
@@ -34,7 +42,7 @@ Other
 -----
 
 .. tickets_table:: 
-   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping')
+   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm')
 
    *
 
@@ -44,8 +52,7 @@ List of all tickets
 
 .. toctree::
    :maxdepth: 1
-
-   all
-
-
-
+   :glob:
+   
+   ?
+   ??

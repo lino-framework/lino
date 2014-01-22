@@ -1,4 +1,0 @@
-# 2013/1 (moved to :doc:`/tickets/82`)
-======================================
-
-(Content moved to :doc:`/tickets/82`)

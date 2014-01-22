@@ -75,7 +75,8 @@ First logos for Lino
 --------------------
 
 Ta-daa! Ly finally took a few hours and crystallized our thoughts
-about a logo for Lino into something visible. Here a series of four
+about a logo for Lino (:doc:`/tickets/94`)
+into something visible. Here a series of four
 working drafts:
 
 

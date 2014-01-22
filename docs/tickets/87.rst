@@ -1,9 +1,9 @@
 :state: discussion
 :created: 2014-01-12
-:module: lino_welfare.modlib.cal
+:module: lino.modlib.cal
 
-#87 : Funktioniert das Kalendermodul?
-=====================================
+#87 : Sammelticket Kalendermodul
+================================
 
 .. currentlanguage:: de
 
@@ -20,16 +20,6 @@
     auf "per Mail" klicken, und in der Mail steht dann schon ein
     entsprechender Satz.
 
-#.  Brauchen wir die Notion von "Teams"? Oder besser Partnerlisten?
-    Momentan ist die Konfigurierung etwas skurril: 
-    jeder Benutzer stellt sich "sein Team" zusammen.
-    Pro Kalender sollte neben `invite_team_members` auch stehen, 
-    welches das Team ist.
-    
-#.  Und in einem könnten wir auch eine Option `auto_subscribe` 
-    in Calendar machen: solche Kalender brauchen gar nicht erst 
-    explizit abonniert zu werden.
-    
 #.  Einladung sollte ein ical haben, damit der Empfänger es in seinen
     Calendar-client importieren kann
 
@@ -49,4 +39,8 @@
     automatisch versteckt werden.  Workaround: En attendant müssen die
     Benutzer wissen, dass sie diese Kolonne vor dem Ausdruck selber
     ausblenden müssen.
+
+Pages referring to this:
+
+.. refstothis::
 

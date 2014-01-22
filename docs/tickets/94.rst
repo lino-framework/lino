@@ -1,0 +1,11 @@
+:state: longterm
+:module: lino
+
+#94 : A Logo for Lino
+=====================
+
+
+
+Pages referring to this:
+
+.. refstothis::
