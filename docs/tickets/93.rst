@@ -4,18 +4,46 @@
 #93 : Sozialsekretariat
 =======================
 
+#.  Eigene Tabelle für einfache Bescheinigungen
+    (:mod:`lino.modlib.attestations` statt
+    SiteConfig.attestation_note_nature und NoteType.is_attestation).
+    Idee: nicht neue app `attestations`, sondern 
+    bestehende `outbox` verwenden.
+
+#.  Einkommensbescheinigungen und sonstige Hilfen als eigene Tabelle
+    implementieren (`aids.Aid` und `aids.Type` ("Hilfen")). 
+
+    - Art (EiEi, Ausländerbeihilfe, Heizkosten, Feste Beihilfe,
+      Erstattung, Übernahmeschein, DMH-Übernahmeschein, Möbellager)
+
+    - von, bis 
+    - Periodizität (Jährlich, ...)
+    - Beschlussdatum
+    - Gremium (SHR, SP, SAS)
+
+    - Kategorie (wenn EiEi oder Ausländer: 
+      3 Person mit Familienlasten (personne qui cohabite avec une
+      famille à sa charge)
+      2 Alleinstehend (persone isolée)
+      1 Zusammenlebend (cohabitant)
+
+    - Betrag
+
+    Tabelle EiEi-Beträge : 
+
+    - Kategorie
+    - Seit wann
+    - Betrag
+
+    
 #.  Implement :ref:`davlink` and :ref:`eidreader` as Browser extensions.
 
 #.  Dublettenkontrolle beim Erstellen eines Klienten.
 
-#.  eid-Karte einlesen : wenn ein angeblich neuer Kunde kommt, soll
+    eid-Karte einlesen : wenn ein angeblich neuer Kunde kommt, soll
     man zuerst die eid-Karte lesen. Lino entscheidet dann, ob es
     Zweifel gibt und legt ggf. gleich einen neuen Klienten an.
 
-#.  Einkommensbescheinigungen und sonstige Hilfen als eigene Tabelle
-    implementieren (`aids.Aid` und `aids.Type` ("Hilfen")). Dadurch
-    werden "volatile Parameter" bis auf Weiteres unnötig.
-    
 #.  Welche Angaben aus PXS fehlen noch im Detail-Fenster 
     von Empfang-->Klienten? (mit Monika klären)
 
@@ -25,17 +53,18 @@
       zurückfordern kann.
  
     - Medizinische Hilfe (Art (Hausarzt / Spezialist), (x) dringend, 
-      (x) Generika
-    - Eigentlich sind diese Felder nur eine "Vorschau" der GH-Historik.
+      Eigentlich sind diese Felder nur eine "Vorschau" der GH-Historik.
+      Können raus.
+     
+    - Generika, Mietgarantie, MAF, Referenzadresse:
+      werden scheinbar nicht mehr benutzt.
+
+
     - Sozialhilfekonto
 
     - Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
       Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
-    - Mietgarantie, MAF : scheinbar obsolet
-
-    - Referenzadresse : ob die Adresse in den Stammdaten nur eine
-      theoretische ist.
 
     - Wann ist die letzte Bescheinigung "Lebensmittelbank" (oder
       "Kleiderkammer") rausgegangen?  Manche Bescheinigungsarten
@@ -49,6 +78,10 @@
       für Kleiderkammer-Bescheinigungen."
 
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
+
+    - Adressen pro Klient : 
+      - Adressnart ( Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
+      - Button "zur Hauptadresse machen" (wer darf drauf klicken?)
 
 #.  Bescheinigungen, müssen mit einem Klick rauskommen.
     Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
@@ -70,10 +103,6 @@
     Soll Lino das verhindern? 
 
 #.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
-
-#.  Eigene Tabelle für einfache Bescheinigungen
-    (:mod:`lino.modlib.attestations` statt
-    SiteConfig.attestation_note_nature und NoteType.is_attestation)
 
 #.  AMK-Bescheinigungen
 

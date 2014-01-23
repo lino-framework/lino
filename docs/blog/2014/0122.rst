@@ -6,3 +6,23 @@ Tidied up under :doc:`/tickets`.
 
 Worked on :doc:`/tickets/93` : 
 Started new module :mod:`lino.modlib.attestations`
+
+
+Besichtigung :ref:`faggio` mit Sven und Roger
+(:doc:`/tickets/84`).
+
+#.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs
+
+#.  Termine sollen nicht einzeln bestätigt werden müssen. 
+    Sollen gar keinen Status "veröffentlicht" haben.
+    
+#.  Wenn ein automatisch generierter Termin auf storniert gesetzt wurde, 
+    dann muss Lino (bei einem Kurs mit vorgesehener Anzahl Termine) 
+    dafür einen Ersatztermin generieren.
+    
+#.  Wie war das mit den Test-Karten? Kunde zahlt für eine Stunde,
+    nimmt teil und entscheidet erst dann, ob er den Rest bezahlt.
+    Produkt "Schnupperkarte". Manuelle Rechnung. Bei Einschreibung
+    Betrag manuell anpassen.
+
+

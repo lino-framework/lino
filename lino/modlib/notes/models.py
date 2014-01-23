@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,41 +18,20 @@ The :xfile:`models.py` file for :mod:`lino.modlib.notes`.
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import sys
-import cgi
 import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
-
-
-#~ from lino import tools
 from lino import dd
-#~ from lino import reports
-#~ from lino import layouts
-#~ from lino.utils import perms
-from lino.utils.restify import restify
-#~ from lino.utils import printable
 from lino import mixins
 from django.conf import settings
-#~ from lino import choices_method, simple_choices_method
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.outbox import models as outbox
-#~ from lino.modlib.postings import models as postings
 
 
 outbox = dd.resolve_app('outbox')
 postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
-
-#~ TEMPLATE_GROUP = 'notes'
 
 
 class NoteType(dd.BabelNamed, mixins.PrintableType, outbox.MailableType):

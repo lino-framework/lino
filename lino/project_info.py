@@ -76,6 +76,8 @@ lino.history
 lino.modlib
 lino.modlib.auto
 lino.modlib.auto.sales
+lino.modlib.attestations
+lino.modlib.attestations.fixtures
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.countries

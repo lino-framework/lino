@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,19 +20,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import sys
-import cgi
 import datetime
-
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
 
@@ -48,9 +41,9 @@ from django.core.mail import EmailMultiAlternatives
 
 class RecipientType(dd.ChoiceList):
 
-    """
-    A list of possible values for the `type` field of a 
+    """A list of possible values for the `type` field of a
     :class:`Recipient`.
+
     """
     verbose_name = _("Recipient Type")
 
@@ -79,9 +72,10 @@ add('bcc', _("bcc"), 'bcc')
 
 class MailableType(dd.Model):
 
-    """
-    Mixin for Models that serve as `type` of a :class:`Mailable`.
-    Concrete examples are cal.EventType, cal.GuestRole, notes.NoteType
+    """Mixin for Models that serve as `type` of a :class:`Mailable`.
+    Concrete examples are cal.EventType, cal.GuestRole,
+    notes.NoteType.
+
     """
     templates_group = None
     """
@@ -177,25 +171,16 @@ class CreateMail(dd.Action):
 
 class Mailable(dd.Model):
 
-    """
-    Mixin for models that provide a "Post" button.
-    A Mailable model must also inherit either 
-    :class:`lino.mixins.printable.BasePrintable`.
+    """Mixin for models that provide a "Post" button.  A Mailable model
+    must also inherit :class:`lino.mixins.printable.BasePrintable` or
+    some subclass thereof.
+
     """
 
     class Meta:
         abstract = True
 
     create_mail = CreateMail()
-
-    #~ @classmethod
-    #~ def get_model_actions(self,table):
-        #~ for x in super(Mailable,self).get_model_actions(table): yield x
-        #~ yield 'create_mail',CreateMail()
-
-    #~ post2 = PostAction(True)
-
-    #~ post_as_attachment = models.BooleanField(_("Post as attachment"),default=False)
 
     def get_mailable_type(self):
         raise NotImplementedError()
@@ -249,9 +234,6 @@ class Recipient(dd.Model):
     type = RecipientType.field(default=RecipientType.to)
     address = models.EmailField(_("Address"), blank=True)
     name = models.CharField(_("Name"), max_length=200)
-    #~ address_type = models.ForeignKey(ContentType)
-    #~ address_id = models.PositiveIntegerField()
-    #~ address = generic.GenericForeignKey('address_type', 'address_id')
 
     def name_address(self):
         return '%s <%s>' % (self.name, self.address)
@@ -399,8 +381,8 @@ class SendMail(dd.Action):
         ar.success(**kw)
 
 
-#~ class Mail(mails.Mail,mixins.ProjectRelated,mixins.Controllable):
-class Mail(mixins.AutoUser, mixins.Printable, mixins.ProjectRelated, mixins.Controllable):
+class Mail(mixins.AutoUser, mixins.Printable,
+           mixins.ProjectRelated, mixins.Controllable):
 
     class Meta:
         verbose_name = _("Outgoing Mail")
@@ -408,8 +390,8 @@ class Mail(mixins.AutoUser, mixins.Printable, mixins.ProjectRelated, mixins.Cont
 
     send_mail = SendMail()
 
-    date = models.DateField(verbose_name=_("Date"),
-                            #~ auto_now_add=True,
+    date = models.DateField(
+        verbose_name=_("Date"),
         help_text="""
         The official date to be printed on the document.
         """)
@@ -477,14 +459,14 @@ class Mails(dd.Table):
     hidden_columns = 'body'
     order_by = ["sent"]
     detail_layout = dd.FormLayout("""
-    subject project date 
+    subject project date
     user sent #build_time id owner
     RecipientsByMail:50x5 AttachmentsByMail:20x5 uploads.UploadsByController:20x5
     body:90x10
     """)
     insert_layout = dd.FormLayout("""
-    project 
-    subject 
+    project
+    subject
     body
     """, window_size=(60, 20))
 
@@ -612,14 +594,6 @@ def setup_main_menu(site, ui, profile, m):
     m.add_action(MyOutbox)
 
 
-#~ def setup_main_menu(site,ui,user,m): pass
-
-def unused_setup_my_menu(site, ui, profile, m):
-    m = m.add_menu("outbox", MODULE_LABEL)
-    #~ m.add_action(MyInbox)
-    m.add_action(MyOutbox)
-    #~ m.add_action(MySent)
-
 #~ def setup_config_menu(site,ui,user,m):
     #~ if user.level >= UserLevels.manager:
     #~ m  = m.add_menu("outbox",MODULE_LABEL)
@@ -633,7 +607,5 @@ def setup_explorer_menu(site, ui, profile, m):
     m.add_action(Mails)
     m.add_action(Attachments)
 
-
-#~ dd.add_user_group('office',MODULE_LABEL)
 
 dd.update_field(Mail, 'user', verbose_name=_("Sender"))

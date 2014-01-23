@@ -83,17 +83,63 @@ class AttestationTypes(dd.Table):
     """
 
 
-class Attestation(mixins.TypedPrintable,
-                  mixins.UserAuthored,
-                  mixins.Controllable,
-                  contacts.ContactRelated,
-                  mixins.ProjectRelated,
-                  outbox.Mailable,
-                  postings.Postable,
-              ):
+class CreateAttestaion(dd.Action):
 
     """
-    Deserves more documentation.
+    Creates an attestation and displays it.
+    """
+    url_action_name = 'attst'
+    # icon_name = 'email_add'
+    help_text = _('Create an attestation from this')
+    label = _('Create attestation')
+
+    def get_action_permission(self, ar, obj, state):
+        if not ar.get_user().email:
+            return False
+        if obj is not None:
+            if not obj.is_attestable():
+                return False
+        return super(CreateAttestaion,
+                     self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        elem = ar.selected_rows[0]
+
+        a = Attestation(user=ar.get_user(),
+                        date=datetime.date.today(),
+                        owner=elem)
+        a.full_clean()
+        a.save()
+        js = ar.renderer.instance_handler(ar, a)
+        kw.update(eval_js=js)
+        ar.success(**kw)
+
+
+class Attestable(dd.Model):
+
+    """Mixin for models that provide a "Create attestation" button.  A
+    Mailable model must also inherit
+    :class:`lino.mixins.printable.BasePrintable` or some subclass
+    thereof.
+
+    """
+    class Meta:
+        abstract = True
+
+    create_attestation = CreateAttestaion()
+
+
+class Attestation(dd.TypedPrintable,
+                  dd.UserAuthored,
+                  dd.Controllable,
+                  contacts.ContactRelated,
+                  dd.ProjectRelated,
+                  outbox.Mailable,
+                  postings.Postable):
+
+    """
+    An attestation is a document that describes some aspect of the current
+    situation.
     """
 
     manager_level_field = 'office_level'

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2010 Luc Saffre
+# Copyright 2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,12 +15,9 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils.instantiator import Instantiator, i2d
-from lino.core.dbutils import resolve_model
-
+from lino.utils.instantiator import Instantiator
 
 def objects():
 
-    noteType = Instantiator('notes.NoteType', "name").build
-    yield noteType((u"Default"), build_method='appyodt', template='Default.odt')
-    #~ yield noteType((u"Test (rtf)"),build_method='rtf',template='test.rtf')
+    aType = Instantiator('attestations.AttestationType', "name").build
+    yield aType(_("Default"), build_method='appyodt', template='Default.odt')
