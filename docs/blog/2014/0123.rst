@@ -3,4 +3,6 @@
 ====================================
 
 Worked on :doc:`/tickets/93`.
-New module :mod:`lino_welfare.modlib.aids`.
+
+- New module :mod:`lino_welfare.modlib.aids`:
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -13,14 +13,16 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""
+"""The :xfile:`models.py` module for the :mod:`lino.modlib.contacs` app.
 
-The :xfile:`models.py` module for the :mod:`lino.modlib.contacs` app.
+This module defines the models
 
-This module defines the tables 
+- :class:`Partner` (and its two standard specializations
+  :class:`Person` and :class:`Company`)
 
-- :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
+- :class:`CompanyType`
 - :class:`Role` and :class:`RoleType`
+- :class:`ContactRelated` mixin
 
 """
 
@@ -30,43 +32,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-import datetime
-from dateutil.relativedelta import relativedelta
-
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.conf import settings
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-#~ from django.utils.translation import ugettext
 
-from django import forms
-from django.utils import translation
-
-
-import lino
-#~ from lino import layouts
 
 from lino import dd
-#~ from lino import fields
 
 from lino import mixins
 
 from lino.utils import join_words
 from lino.utils.choosers import chooser
-#~ from lino.models import get_site_config
 
-#~ from lino.modlib.contacts.utils import Genders
-
-#~ from lino.modlib.countries.models import CountryCity
 from lino.modlib.countries.models import CountryRegionCity
 
 from lino.modlib.contacts import Plugin
 
 from lino.utils import mti
-
-
-#~ from lino.modlib.contacts import MODULE_LABEL
 
 
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
@@ -126,8 +108,8 @@ class CompanyType(dd.BabelNamed):
     """
 
     class Meta:
-        verbose_name = _("Group Type")
-        verbose_name_plural = _("Group Types")
+        verbose_name = _("Organization Type")
+        verbose_name_plural = _("Organization Types")
 
     abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
 
@@ -470,8 +452,8 @@ class Company(Partner):
         abstract = settings.SITE.is_abstract_model('contacts.Company')
         #~ abstract = True
         app_label = 'contacts'
-        verbose_name = _("Group")
-        verbose_name_plural = _("Groups")
+        verbose_name = _("Organization")
+        verbose_name_plural = _("Organizations")
 
     prefix = models.CharField(max_length=200, blank=True)
     vat_id = models.CharField(_("VAT id"), max_length=200, blank=True)
@@ -802,7 +784,7 @@ class ContactRelated(dd.Model):
         """
         if company is not None:
             return cls.contact_person_choices_queryset(company)
-        return settings.SITE.modules.contacts.Person.objects.order_by(
+        return dd.modules.contacts.Person.objects.order_by(
             'last_name', 'first_name')
 
     def get_contact(self):
