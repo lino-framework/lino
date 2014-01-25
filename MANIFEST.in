@@ -7,9 +7,7 @@ global-include *.txt *.py *.bat *.js *.css *.html \
   *.po *.mo Makefile
 include bash/*
 prune docs
-prune obsolete
 prune rtlib
 prune lino/sandbox
 prune screenshots
 prune extjs-showcases
-prune tmp

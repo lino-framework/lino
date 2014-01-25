@@ -6,7 +6,7 @@ SETUP_INFO = dict(
         'jinja2', 'appy', 'pytidylib', 'PyYAML'],
     description="A framework for writing desktop-like web applications \
     using Django and ExtJS",
-    license='GPL',
+    license='LGPL',
     include_package_data=True,
     zip_safe=False,
     author='Luc Saffre',
@@ -22,7 +22,7 @@ SETUP_INFO = dict(
   Framework :: Django
   Intended Audience :: Developers
   Intended Audience :: System Administrators
-  License :: OSI Approved :: GNU General Public License (GPL)
+  License :: OSI Approved :: GNU Lesser General Public License (GPL)
   Natural Language :: English
   Natural Language :: French
   Natural Language :: German
@@ -91,6 +91,7 @@ lino.modlib.ledger
 lino.modlib.ledger.fixtures
 lino.modlib.links
 lino.modlib.links.fixtures
+lino.modlib.lists
 lino.modlib.links.tests
 lino.modlib.notes
 lino.modlib.notes.fixtures

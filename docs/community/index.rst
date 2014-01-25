@@ -45,16 +45,7 @@ Below are some profiles of people we would happily welcome.
   professional Lino support and hosting.
 
 
-
-Mailing lists
--------------
-
-- `lino-announce <https://groups.google.com/d/forum/lino-announce>`_
-  (lino-announce@googlegroups.com): 
-  Subscribe to this group if you want to receive important news about Lino.
-  Low traffic read-only mailing list.
-  
-
+ 
 Partners
 --------
 
@@ -63,6 +54,5 @@ The following organizations are promoters of the Lino project:
 - `Rumma & Ko OÜ <http://saffre-rumma.net>`_
 - `Code Gears <http://www.code-gears.com>`_
 - `Active Systems OÜ <http://active.ee>`_
-
-  
+- `wpj s.r.o <http://www.wpj.cz/>`_
 
