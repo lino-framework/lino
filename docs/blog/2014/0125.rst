@@ -1,0 +1,10 @@
+====================================
+20140125 (Saturday, 25 January 2014)
+====================================
+
+Continued with :doc:`/tickets/79`:
+added :srcref:`/COPYING.LESSER.txt`.
+
+Replaced text "GNU General Public License" 
+by "GNU Lesser General Public License" 
+in all file headers.

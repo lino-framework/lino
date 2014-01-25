@@ -1,0 +1,4 @@
+/home/luc/hgwork/lino/docs/tickets/79.rst:42: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/79.rst:42: WARNING: undefined label: faggio (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/79.rst:42: WARNING: undefined label: logos (if the link has no caption the label must precede a section header)
+WARNING: logo file 'logo.png' does not exist

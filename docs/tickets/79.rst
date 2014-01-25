@@ -60,8 +60,9 @@ TODO:
 - Adapt :doc:`/about/license`
 - Adapt :doc:`/about/why_gpl`
 - Write new article :doc:`/about/proprietary`
-- Move :mod:`lino.projects` (or most of it) to a separate repository
-  where they can remain GPL.
+
+- Verify whether I need to move :mod:`lino.projects` (or most of it)
+  to a separate repository where they can remain GPL.
 
 Pages referring to this:
 
