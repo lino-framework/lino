@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013-2014 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -441,7 +441,6 @@ class Persons(Partners):
     """, window_size=(60, 'auto'))
 
 
-#~ class CompanyMixin(dd.Model):
 class Company(Partner):
 
     """
@@ -456,16 +455,12 @@ class Company(Partner):
         verbose_name_plural = _("Organizations")
 
     prefix = models.CharField(max_length=200, blank=True)
-    vat_id = models.CharField(_("VAT id"), max_length=200, blank=True)
-    """The national VAT identification number.
-    """
 
     type = models.ForeignKey('contacts.CompanyType', blank=True, null=True,
                              verbose_name=_("Company type"))
-    """Pointer to this company's :class:`CompanyType`. 
+    """Pointer to this company's :class:`CompanyType`.
     """
 
-    #~ def get_full_name(self,**salutation_options):
     def get_full_name(self, salutation=True, **salutation_options):
         """Deserves more documentation."""
         #~ print '20120729 Company.get_full_name`'
@@ -474,19 +469,14 @@ class Company(Partner):
         return join_words(self.prefix, self.name)
     full_name = property(get_full_name)
 
-    #~ @classmethod
-    #~ def site_setup(cls,lino):
-        #~ raise Exception('20110810')
-
 
 class CompanyDetail(PartnerDetail):
 
     bottom_box = """
-    type vat_id:12
     remarks contacts.RolesByCompany
     """
 
-    name_box = "prefix name"
+    name_box = "prefix:10 name type:20"
     #~ name_box = """prefix name type:20"""
     #~ info_box = "id:5 language:10 vat_id:12"
 
@@ -496,7 +486,7 @@ class Companies(Partners):
     order_by = ["name"]
     detail_layout = CompanyDetail()
     insert_layout = dd.FormLayout("""
-    name 
+    name
     language:20 email:40
     type id
     """, window_size=(60, 'auto'))

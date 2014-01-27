@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -38,6 +38,30 @@ finan = dd.resolve_app('finan')
 declarations = dd.resolve_app('declarations')
 #~ partners = dd.resolve_app('partners')
 
+
+def pcmnref(ref, pcmn):
+    if dd.apps.ledger.use_pcmn:
+        return pcmn
+    return ref
+
+CUSTOMERS_ACCOUNT = pcmnref('customers', '4000')
+SUPPLIERS_ACCOUNT = pcmnref('suppliers',  '4400')
+
+VAT_DUE_ACCOUNT = pcmnref('vat_due',   '4510')
+VAT_DEDUCTIBLE_ACCOUT = pcmnref('vat_deductible', '4512')
+VATDCL_ACCOUNT = pcmnref('vatdcl', '4513')
+
+BESTBANK_ACCOUNT = pcmnref('bestbank', '5500')
+CASH_ACCOUNT = pcmnref('cash', '5700')
+
+PURCHASE_OF_GOODS = pcmnref('goods', '6040')
+PURCHASE_OF_SERVICES = pcmnref('services', '6010')
+PURCHASE_OF_INVESTMENTS = pcmnref('investments', '6020')
+
+PO_BESTBANK_ACCOUNT = pcmnref('bestbankpo', '5810')
+
+SALES_ACCOUNT = pcmnref('sales', '7000')
+
 current_group = None
 
 
@@ -69,59 +93,85 @@ def objects():
 
     yield Group('10', 'capital', "Capital", "Kapital", "Capital")
 
-    yield Group('40', 'assets',  "Créances commerciales", "Forderungen aus Lieferungen und Leistungen", "Commercial receivable(?)")
+    yield Group('40', 'assets',
+                "Créances commerciales",
+                "Forderungen aus Lieferungen und Leistungen",
+                "Commercial receivable(?)")
 
-    obj = Account('customers', 'assets', "Clients", "Kunden",
-                  "Customers", clearable=True)  # PCMN 4000
+    obj = Account(CUSTOMERS_ACCOUNT, 'assets',
+                  "Clients", "Kunden",
+                  "Customers", clearable=True)
     yield obj
     if sales:
         settings.SITE.site_config.update(clients_account=obj)
 
-    obj = Account('suppliers', 'liabilities', "Fournisseurs",
-                  "Lieferanten", "Suppliers", clearable=True)  # PCMN 4400
+    obj = Account(SUPPLIERS_ACCOUNT, 'liabilities',
+                  "Fournisseurs",
+                  "Lieferanten", "Suppliers",
+                  clearable=True)
     yield obj
     if vat:
         settings.SITE.site_config.update(suppliers_account=obj)
 
-    # PCMN 451
-    yield Group('45', 'assets', "TVA à payer", "Geschuldete MWSt", "VAT to pay")
-    obj = Account('vat_due', 'incomes', u"TVA due",
-                  u"MWSt zu regularisieren", "VAT due", clearable=True)  # PCMN 4510
+    yield Group('45', 'assets', "TVA à payer",
+                "Geschuldete MWSt", "VAT to pay")
+    obj = Account(VAT_DUE_ACCOUNT, 'incomes',
+                  "TVA due",
+                  "Geschuldete MWSt",
+                  "VAT due", clearable=True)
     yield obj
     if sales:
         settings.SITE.site_config.update(sales_vat_account=obj)
 
-    obj = Account('vat_deductible', 'assets', "TVA déductible",
-                  "Geschuldete MWSt", "VAT deductible", clearable=True)  # PCMN 4512
+    obj = Account(
+        VAT_DEDUCTIBLE_ACCOUT, 'assets',
+        "TVA déductible",
+        "Abziehbare MWSt",
+        "VAT deductible",
+        clearable=True)
     yield obj
     if ledger:
         settings.SITE.site_config.update(purchases_vat_account=obj)
 
     # PCMN 55
-    yield Group('55', 'assets', u"Institutions financières", u"Finanzinstitute", "Banks")
-    yield Account('bestbank', 'bank_accounts', u"Bestbank", u"Bestbank", "Bestbank")
-    yield Account('cash', 'bank_accounts', u"Cash", u"Cash", "Cash")
-    yield Account('bestbankpo', 'bank_accounts', "Ordres de paiement Bestbank",
-                  "Zahlungsaufträge Bestbank", "Payment Orders Bestbank", clearable=True)
+    yield Group('55', 'assets',
+                "Institutions financières", "Finanzinstitute", "Banks")
+    yield Account(BESTBANK_ACCOUNT, 'bank_accounts', "Bestbank",
+                  "Bestbank", "Bestbank")
+    yield Account(CASH_ACCOUNT, 'bank_accounts', "Caisse", "Kasse", "Cash")
+    yield Group('58', 'assets',
+                "Transactions en cours", "Laufende Transaktionen",
+                "Running transactions")
+    yield Account(PO_BESTBANK_ACCOUNT, 'bank_accounts',
+                  "Ordres de paiement Bestbank",
+                  "Zahlungsaufträge Bestbank",
+                  "Payment Orders Bestbank", clearable=True)
 
     # TODO: use another account type than bank_accounts:
-    yield Account('vatdcl', 'bank_accounts', u"VAT", u"VAT", "VAT")
+    yield Account(VATDCL_ACCOUNT, 'bank_accounts',
+                  "TVA à declarer",
+                  "MWSt zu deklarieren",
+                  "VAT to declare")
 
     yield Group('6', 'expenses', u"Charges", u"Aufwendungen", "Expenses")
-    yield Account('products', 'expenses',
-                  u"Achat de marchandise", u"Wareneinkäufe", "Purchase of goods",
-                  purchases_allowed=True)  # PCMN 6040
-    yield Account('services', 'expenses',
-                  "Services et biens divers", "Dienstleistungen", "Purchase of services",
+    yield Account(PURCHASE_OF_GOODS, 'expenses',
+                  "Achat de marchandise",
+                  "Wareneinkäufe",
+                  "Purchase of goods",
                   purchases_allowed=True)
-    yield Account('investments', 'expenses',
+    yield Account(PURCHASE_OF_SERVICES, 'expenses',
+                  "Services et biens divers",
+                  "Dienstleistungen",
+                  "Purchase of services",
+                  purchases_allowed=True)
+    yield Account(PURCHASE_OF_INVESTMENTS, 'expenses',
                   "Investissements", "Anlagen", "Purchase of investments",
                   purchases_allowed=True)
 
-    yield Group('7', 'incomes', u"Produits", u"Erträge", "Revenues")
-    obj = Account('sales', 'incomes',
+    yield Group('7', 'incomes', "Produits", "Erträge", "Revenues")
+    obj = Account(SALES_ACCOUNT, 'incomes',
                   "Ventes", "Verkäufe", "Sales",
-                  sales_allowed=True)  # PCMN 7000
+                  sales_allowed=True)
     yield obj
     if sales:
         settings.SITE.site_config.update(sales_account=obj)
@@ -132,23 +182,53 @@ def objects():
     else:
         MODEL = ledger.AccountInvoice
     kw = babel_values('name', de="Verkaufsrechnungen",
-                      fr="Factures vente", en="Sales invoices", et="Müügiarved")
+                      fr="Factures vente",
+                      en="Sales invoices",
+                      et="Müügiarved")
     yield MODEL.create_journal('sales', ref="S", chart=chart, **kw)
 
-    yield ledger.AccountInvoice.create_journal('purchases',
-                                               chart=chart,
-                                               ref="P",
-                                               **babel_values('name',
-                                                              de="Einkaufsrechnungen", fr="Factures achat", en="Purchase invoices", et="Ostuarved"))
+    yield ledger.AccountInvoice.create_journal(
+        'purchases',
+        chart=chart,
+        ref="P",
+        **babel_values('name',
+                       de="Einkaufsrechnungen",
+                       fr="Factures achat",
+                       en="Purchase invoices", et="Ostuarved"))
 
     if finan:
-        yield finan.BankStatement.create_journal(chart=chart, name="Bestbank", account='bestbank', ref="B")
+        yield finan.BankStatement.create_journal(
+            chart=chart,
+            name="Bestbank", account=BESTBANK_ACCOUNT, ref="B")
         kw = babel_values(
             'name', de="Zahlungsaufträge", fr="Ordres de paiement",
             en="Payment Orders", et="Maksekorraldused")
-        yield finan.PaymentOrder.create_journal('purchases', chart=chart, account='bestbankpo', ref="PO", **kw)
-        yield finan.BankStatement.create_journal(chart=chart, name="Cash", account='cash', ref="C")
-        yield finan.JournalEntry.create_journal(chart=chart, name="Miscellaneous Journal Entries", ref="M", dc=accounts.DEBIT)
+        yield finan.PaymentOrder.create_journal(
+            'purchases', chart=chart,
+            account=PO_BESTBANK_ACCOUNT,
+            ref="PO", **kw)
+        kw = babel_values(
+            'name', en="Cash",
+            de="Kasse", fr="Caisse",
+            et="Kassa")
+        yield finan.BankStatement.create_journal(
+            chart=chart, account=CASH_ACCOUNT, ref="C", **kw)
+        kw = babel_values(
+            'name', en="Miscellaneous Journal Entries",
+            de="Diverse Buchungen", fr="Opérations diverses")
+        yield finan.JournalEntry.create_journal(
+            chart=chart,
+            ref="M", dc=accounts.DEBIT, **kw)
 
     if declarations:
-        yield declarations.Declaration.create_journal(chart=chart, name=u"VAT declarations", ref="V", account='vatdcl')
+        kw = babel_values(
+            'name', en="VAT declarations",
+            de="MWSt-Erklärungen", fr="Déclarations TVA",
+            et="Käibemaksu deklaratsioonid")
+        yield declarations.Declaration.create_journal(
+            chart=chart,
+            ref="V",
+            account=VATDCL_ACCOUNT,
+            **kw)
+
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -16,13 +16,14 @@ Generates 20 fictive sales invoices,
 distributed over more than one month.
 
 """
+from __future__ import unicode_literals
 
-from decimal import Decimal
 from django.conf import settings
 from lino.utils import Cycler
 from north.dbutils import babel_values
 from lino import dd
 
+vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
 products = dd.resolve_app('products')
@@ -36,23 +37,30 @@ REQUEST = settings.SITE.login()
 
 def objects():
 
-    yield sales.InvoicingMode(**babel_values('name', en='Default', de=u"Standard", fr=u"Standard"))
+    if False:
+        yield sales.InvoicingMode(
+            **babel_values(
+                'name',
+                en='Default', de="Standard", fr="Standard"))
 
     if ledger:
         Invoice = dd.resolve_model('sales.Invoice')
         InvoiceItem = dd.resolve_model('sales.InvoiceItem')
         vt = ledger.VoucherTypes.get_for_model(Invoice)
         JOURNALS = Cycler(vt.get_journals())
+        if len(JOURNALS.items) == 0:
+            raise Exception("20140127 no journals for %s" % vt)
         PARTNERS = Cycler(Partner.objects.all())
         USERS = Cycler(settings.SITE.user_model.objects.all())
         PRODUCTS = Cycler(products.Product.objects.all())
         ITEMCOUNT = Cycler(1, 2, 3)
         for i in range(20):
             jnl = JOURNALS.pop()
-            invoice = Invoice(journal=jnl,
-                              partner=PARTNERS.pop(),
-                              user=USERS.pop(),
-                              date=settings.SITE.demo_date(-30 + 2 * i))
+            invoice = Invoice(
+                journal=jnl,
+                partner=PARTNERS.pop(),
+                user=USERS.pop(),
+                date=settings.SITE.demo_date(-30 + 2 * i))
             yield invoice
             for j in range(ITEMCOUNT.pop()):
                 item = InvoiceItem(voucher=invoice,

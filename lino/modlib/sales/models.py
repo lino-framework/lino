@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -27,11 +27,7 @@ from decimal import Decimal
 HUNDRED = Decimal('100')
 ZERO = Decimal(0)
 
-from dateutil.relativedelta import relativedelta
-ONE_DAY = relativedelta(days=1)
-
 from django.db import models
-from django import forms
 from django.conf import settings
 #~ from django.contrib.auth import models as auth
 from django.core.exceptions import ValidationError
@@ -68,11 +64,12 @@ vat.TradeTypes.sales.update(
     partner_account_field_name='clients_account',
     partner_account_field_label=_("Clients account"))
 
-dd.inject_field('contacts.Partner',
-                'invoicing_address',
-                dd.ForeignKey('contacts.Partner',
-                              verbose_name=_("Invoicing address"),
-                              blank=True, null=True))
+dd.inject_field(
+    'contacts.Partner',
+    'invoicing_address',
+    dd.ForeignKey('contacts.Partner',
+                  verbose_name=_("Invoicing address"),
+                  blank=True, null=True))
 
 #~ class Channel(ChoiceList):
     #~ label = _("Channel")
@@ -101,69 +98,6 @@ InvoiceStates.draft.add_transition(
 #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
-class PaymentTerm(dd.BabelNamed):
-
-    """
-    A convention on how an Invoice should be paid.
-    """
-
-    class Meta:
-        verbose_name = _("Payment Term")
-        verbose_name_plural = _("Payment Terms")
-
-    days = models.IntegerField(default=0)
-    months = models.IntegerField(default=0)
-    end_of_month = models.BooleanField(default=False)
-
-    def get_due_date(self, date1):
-        assert isinstance(date1, datetime.date), \
-            "%s is not a date" % date1
-        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
-        d = date1 + relativedelta(months=self.months, days=self.days)
-        if self.end_of_month:
-            d = date(d.year, d.month + 1, 1)
-            d = relativedelta(d, days=-1)
-        return d
-
-
-class PaymentTerms(dd.Table):
-    model = PaymentTerm
-    order_by = ["id"]
-
-
-class InvoicingMode(mixins.PrintableType, dd.BabelNamed):
-
-    """Represents a method of issuing/sending invoices.
-    """
-    class Meta:
-        verbose_name = _("Invoicing Mode")
-        verbose_name_plural = _("Invoicing Modes")
-    #~ id = models.CharField(max_length=3, primary_key=True)
-    #~ journal = journals.JournalRef()
-    price = dd.PriceField(blank=True, null=True, help_text=_("""\
-Additional fee charged when using this invoicing mode."""))
-    #~ channel = Channel.field(help_text="""
-        #~ Method used to send the invoice.""")
-    #~ channel = models.CharField(max_length=1,
-                #~ choices=CHANNEL_CHOICES,help_text="""
-    #~ Method used to send the invoice.
-                #~ """)
-    advance_days = models.IntegerField(
-        default=0,
-        help_text="""
-How many days in advance invoices should be posted so that the customer
-has a chance to pay them in time.""")
-
-    #~ def __unicode__(self):
-        #~ return unicode(dd.babelattr(self,'name'))
-
-#~ add_babel_field(InvoicingMode,'name')
-
-
-class InvoicingModes(dd.Table):
-    model = InvoicingMode
-
-
 class ShippingMode(dd.BabelNamed):
     price = dd.PriceField(blank=True, null=True)
 
@@ -185,96 +119,10 @@ class ShippingModes(dd.Table):
       #~ return request.user.is_staff
 
 
-class SalesRule(dd.Model):
-
-    """
-    A group of default values for certain parameters of a SalesDocument.
-    """
-    class Meta:
-        verbose_name = _("Sales Rule")
-        verbose_name_plural = _("Sales Rules")
-    #journal = models.ForeignKey(journals.Journal,blank=True,null=True)
-    #~ journal = journals.JournalRef(blank=True,null=True)
-    imode = models.ForeignKey(InvoicingMode, blank=True, null=True)
-    shipping_mode = models.ForeignKey(ShippingMode, blank=True, null=True)
-    payment_term = models.ForeignKey(PaymentTerm, blank=True, null=True)
-
-    #~ def __unicode__(self):
-        #~ return "SalesRule %d" % (self.id)
-
-#~ def get_sales_rule(doc):
-    #~ for r in SalesRule.objects.all().order_by("id"):
-        #~ if r.journal is None or r.journal == doc.journal:
-            #~ return r
-
-
-#~ class Customer(dd.Model):
-    #~ """
-    #~ Mixin meant to be applied to contacts.Person,
-    #~ contacts.Company and/or contacts.Partner
-    #~ """
-    #~ class Meta:
-        #~ abstract = True
-
-    #~ payment_term = models.ForeignKey(PaymentTerm,
-        #~ blank=True,null=True,help_text="""\
-#~ The default payment term of sales invoices for this customer.""")
-    #~ vat_regime = vat.VatRegimes.field(blank=True,help_text="""\
-#~ The default `VAT regime` of sales invoices for this customer.""")
-    #~ item_vat = models.BooleanField(default=False,help_text="""\
-#~ The default item_vat settings of sales invoices for this customer.""")
-
-
-#~ class Customer(contacts.Partner):
-    #~ """
-    #~ A Customer is a :class:`contacts.Partner`
-    #~ that can receive sales invoices.
-    #~ """
-    #~ class Meta:
-        #~ verbose_name =_("Customer")
-        #~ verbose_name_plural =_("Customers")
-
-    # ~ # name = models.CharField(max_length=40)
-    # ~ # company = models.ForeignKey('contacts.Company',blank=True,null=True)
-    # ~ # person = models.ForeignKey('contacts.Person',blank=True,null=True)
-
-    #~ payment_term = models.ForeignKey(PaymentTerm,
-        #~ blank=True,null=True,help_text="""\
-#~ The default payment term of sales invoices for this customer.""")
-    #~ vat_regime = vat.VatRegimes.field(blank=True,help_text="""\
-#~ The default `VAT regime` of sales invoices for this customer.""")
-    #~ item_vat = models.BooleanField(default=False,help_text="""\
-#~ The default item_vat settings of sales invoices for this customer.""")
-
-
-    #~ def full_clean(self,*args,**kw):
-        #~ if self.company_id is not None:
-            #~ self.name = self.company.name
-        #~ elif self.person_id is not None:
-            #~ l = filter(lambda x:x,[self.person.last_name,self.person.first_name,self.person.title])
-            #~ self.name = " ".join(l)
-        #~ super(Customer,self).full_clean(*args,**kw)
-
-    #~ def as_address(self,*args,**kw):
-        #~ recipient = self.company or self.person
-        #~ return recipient.as_address(self,*args,**kw)
-
-
-#~ class Customers(dd.Table):
-    #~ column_names = "name payment_term vat_exempt item_vat company person"
-    #~ can_delete = True
-    #~ model = Customer
-    #~ order_by = ["name"]
-
-
 class SalesDocument(
-    #~ mixins.UserAuthored,
-    vat.VatDocument,
-    ledger.Matchable,
-    #~ journals.Sendable,
-    #~ journals.Journaled,
-    #~ contacts.ContactDocument,
-        mixins.TypedPrintable):
+        vat.VatDocument,
+        ledger.Matchable,
+        dd.TypedPrintable):
 
     """Common base class for `orders.Order` and :class:`Invoice`.
     
@@ -303,9 +151,8 @@ class SalesDocument(
         #~ related_name="shipTo_%(class)s")
     your_ref = models.CharField(
         _("Your reference"), max_length=200, blank=True)
-    imode = models.ForeignKey(InvoicingMode, blank=True, null=True)
+    # imode = models.ForeignKey(InvoicingMode, blank=True, null=True)
     shipping_mode = models.ForeignKey(ShippingMode, blank=True, null=True)
-    payment_term = models.ForeignKey(PaymentTerm, blank=True, null=True)
     #~ sales_remark = models.CharField("Remark for sales",
       #~ max_length=200,blank=True)
     subject = models.CharField(_("Subject line"), max_length=200, blank=True)
@@ -325,10 +172,6 @@ class SalesDocument(
     def get_print_language(self):
         return self.language
 
-    #~ @dd.chooser()
-    #~ def partner_choices(self):
-        #~ return Customer.objects.order_by('name')
-
     def get_trade_type(self):
         return vat.TradeTypes.sales
 
@@ -340,72 +183,14 @@ class SalesDocument(
                 #~ qty = Duration(1)
         kw['product'] = product
 
-        #~ unit_price = kw.get('unit_price',None)
-        #~ if type(unit_price) == float:
-            #~ kw['unit_price'] = "%.2f" % unit_price
         kw['qty'] = qty
-        # print self,kw
         return super(SalesDocument, self).add_voucher_item(**kw)
-
-    #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
-    #~ def total_incl(self,ar=None):
-        #~ if self.total_base is None:
-            #~ return None
-        #~ return self.total_base + self.total_vat
-
-    def unused_compute_totals(self):
-        #~ logger.info("20121202 sales.compute_totals()")
-        if self.pk is None:
-            return
-        total_base = 0
-        total_vat = 0
-        for i in self.items.all():
-            if i.total_base is not None:
-                total_base += i.total_base
-            if i.total_vat is not None:
-                total_vat += i.total_vat
-            #~ if not i.product.vatExempt:
-                #~ total_vat += i.total_base() * 0.18
-        self.total_base = total_base
-        self.total_vat = total_vat
-        #~ if self.journal == "ORD":
-            #~ print "  done before_save:", self
-
-    def full_clean(self, *args, **kw):
-        """
-        """
-        if self.imode is None:
-            # ~ self.imode_id = 1 # self.partner
-            #~ self.imode_id = self.partner.imode
-            self.imode = self.partner.imode
-        super(SalesDocument, self).full_clean(*args, **kw)
-        #~ r = get_sales_rule(self)
-        #~ if r is None:
-            #~ raise ValidationError("No sales rule for %s",self)
-        #~ if self.imode is None:
-            #~ self.imode = r.imode
-        #~ if self.shipping_mode is None:
-            #~ self.shipping_mode = r.shipping_mode
-        #~ if self.shipping_mode is None:
-            #~ self.shipping_mode = r.shipping_mode
-
-#~ SALES_PRINTABLE_FIELDS = dd.fields_list(SalesDocument,
-  #~ 'customer imode payment_term '
-  #~ 'date your_ref subject '
-  #~ 'language vat_exempt item_vat ')
 
 
 class SalesDocuments(dd.Table):
     pass
-    #~ model = SalesDocument
-    #~ page_layouts = (DocumentPageLayout,)
-    #actions = reports.Report.actions + [ PrintAction ]
-
-    #~ def inlines(self):
-        #~ return dict(items=ItemsByDocument())
 
 
-#~ class Invoice(SalesDocument,ledger.Voucher,mixins.Registrable):
 class Invoice(SalesDocument, ledger.Voucher):
 
     """
@@ -451,15 +236,12 @@ class Invoice(SalesDocument, ledger.Voucher):
         yield 'due_date'
         yield 'order'
 
-        yield 'payment_term'
-        yield 'imode'
+        # yield 'imode'
         yield 'shipping_mode'
         yield 'discount'
 
         yield 'date'
         yield 'user'
-        yield 'partner'
-        yield 'vat_regime'
         #~ yield 'item_vat'
 
 
@@ -582,10 +364,10 @@ class InvoiceDetail(dd.FormLayout):
     """, label=_("Totals"))
 
     invoice_header = dd.Panel("""
-    date partner vat_regime 
-    order subject your_ref 
-    payment_term due_date:20 
-    imode shipping_mode     
+    date partner vat_regime
+    order subject your_ref
+    payment_term due_date:20
+    shipping_mode
     """, label=_("Header"))  # sales_remark
 
     general = dd.Panel("""
@@ -684,7 +466,7 @@ class DocumentsToSign(Invoices):
     filter = dict(user__isnull=True)
     #~ can_add = perms.never
     column_names = "number:4 order date " \
-        "partner:10 imode " \
+        "partner:10 " \
         "subject:10 total_incl total_base total_vat "
     #~ actions = Invoices.actions + [ SignAction() ]
 
@@ -734,85 +516,36 @@ def add_voucher_type(sender, **kw):
             #~ related_name='customers_account'))
 
 
-def customize_partners():
-
-    #~ for ms in 'contacts.Partner', 'contacts.Person', 'contacts.Company':
-    partner_model = settings.SITE.partners_app_label + '.Partner'
-    dd.inject_field(partner_model,
-                    'payment_term',
-                    models.ForeignKey(PaymentTerm,
-                                      blank=True, null=True,
-                                      help_text=_("The default payment term for sales invoices to this customer.")))
-
-    dd.inject_field(partner_model,
-                    'vat_regime',
-                    vat.VatRegimes.field(
-                        blank=True,
-                        help_text=_("The default VAT regime for sales to this customer.")))
-
-    #~ dd.inject_field(partner_model,
-        #~ 'item_vat',
-        #~ models.BooleanField(
-            #~ default=False,
-            #~ help_text=_("The default item VAT setting for sales to this customer.")))
-        #~
-    dd.inject_field(partner_model,
-                    'imode',
-                    models.ForeignKey(InvoicingMode, blank=True, null=True))
-
-
 MODULE_LABEL = _("Sales")
-
 
 def site_setup(site):
     if site.is_installed('products'):
-        site.modules.products.Products.add_detail_tab("sales",
+        site.modules.products.Products.add_detail_tab(
+            "sales",
             """
             sales.InvoiceItemsByProduct
             """,
-                                                      label=MODULE_LABEL)
+            label=MODULE_LABEL)
     #~ for t in (site.modules.partners.Partners,
               #~ site.modules.partners.Persons,
               #~ site.modules.partners.Organisations):
     for m in dd.models_by_base(site.modules.contacts.Partner):
         t = m.get_default_table()
         if not hasattr(t.detail_layout, 'sales'):
-            t.add_detail_tab("sales", """
-            invoicing_address vat_regime imode payment_term 
-            sales.InvoicesByPartner
-            """,
-                             label=MODULE_LABEL)
-    #~ site.modules.contacts.Partners.add_detail_tab("sales",
-    #~ if site.is_installed('tickets'):
-        #~ site.modules.tickets.Projects.add_detail_tab("sales","sales.InvoicesByProject")
-    #~ site.modules.lino.SiteConfigs.add_detail_tab("sales","""
-    # ~ #sales_base_account
-    # ~ #sales_vat_account
-    #~ customers_account
-    #~ """,label=_("Sales"))
+            t.add_detail_tab(
+                "sales", """
+                invoicing_address vat_id vat_regime payment_term
+                sales.InvoicesByPartner
+                """,
+                label=MODULE_LABEL)
 
-
-#~ def setup_main_menu(site,ui,profile,m):
-    #~ m = m.add_menu(vat.TradeTypes.sales.name,vat.TradeTypes.sales.text)
-
-    #~ for jnl in ledger.Journal.objects.all():
-        #~ if jnl.trade_type == vat.TradeTypes.sales:
-            #~ m.add_action(jnl.voucher_type.table_class,
-                #~ label=unicode(jnl),
-                #~ params=dict(master_instance=jnl))
-
-    #~ m.add_action(Invoices)
-    #~ m.add_action(DocumentsToSign)
 
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("sales", MODULE_LABEL)
-    m.add_action(InvoicingModes)
+    # m.add_action(InvoicingModes)
     m.add_action(ShippingModes)
-    m.add_action(PaymentTerms)
 
 
 def setup_explorer_menu(site, ui, profile, m):
     pass
 
-customize_partners()
-#~ customize_siteconfig()

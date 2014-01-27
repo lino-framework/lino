@@ -8,3 +8,8 @@ added :srcref:`/COPYING.LESSER.txt`.
 Replaced text "GNU General Public License" 
 by "GNU Lesser General Public License" 
 in all file headers.
+
+Adapted :doc:`/about/license`.
+Merged the content from `/about/why_gpl`
+and `/about/proprietary` 
+into a single document.

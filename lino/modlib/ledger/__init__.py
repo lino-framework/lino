@@ -12,6 +12,20 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+.. setting:: ledger.use_pcmn
+
+Whether to use the PCMN notation.
+
+PCMN stands for "plan compatable minimum normalisé" and is a
+standardized nomenclature for accounts used in France and Belgium.
+
+"""
+
+from __future__ import unicode_literals
+
+
 from django.utils.translation import ugettext_lazy as _
 
 from lino import ad
@@ -19,3 +33,4 @@ from lino import ad
 
 class Plugin(ad.Plugin):
     verbose_name = _("Ledger")
+    use_pcmn = False

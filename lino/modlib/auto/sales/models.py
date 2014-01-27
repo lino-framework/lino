@@ -70,6 +70,39 @@ from lino.modlib.sales.models import *
 # ~ CONFIG_PARENT = sales # inherit `config` subdir
 
 
+class InvoicingMode(dd.PrintableType, dd.BabelNamed):
+
+    """Represents a method of issuing/sending invoices.
+    """
+    class Meta:
+        verbose_name = _("Invoicing Mode")
+        verbose_name_plural = _("Invoicing Modes")
+    #~ id = models.CharField(max_length=3, primary_key=True)
+    #~ journal = journals.JournalRef()
+    price = dd.PriceField(blank=True, null=True, help_text=_("""\
+Additional fee charged when using this invoicing mode."""))
+    #~ channel = Channel.field(help_text="""
+        #~ Method used to send the invoice.""")
+    #~ channel = models.CharField(max_length=1,
+                #~ choices=CHANNEL_CHOICES,help_text="""
+    #~ Method used to send the invoice.
+                #~ """)
+    advance_days = models.IntegerField(
+        default=0,
+        help_text="""
+How many days in advance invoices should be posted so that the customer
+has a chance to pay them in time.""")
+
+    #~ def __unicode__(self):
+        #~ return unicode(dd.babelattr(self,'name'))
+
+#~ add_babel_field(InvoicingMode,'name')
+
+
+class InvoicingModes(dd.Table):
+    model = InvoicingMode
+
+
 class Invoiceable(dd.Model):
 
     """

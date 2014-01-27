@@ -617,7 +617,9 @@ class Site(Site):
         and in test cases.
         """
         from atelier import rstgen
-        from lino.core.dbutils import obj2str, full_model_name, sorted_models_list, app_labels
+        from lino.core.dbutils import (full_model_name,
+                                       sorted_models_list, app_labels)
+
 
         #~ writeln("Lino %s" % lino.__version__)
         #~ yield (settings.SITE.verbose_name, settings.SITE.version)
@@ -625,7 +627,7 @@ class Site(Site):
         models_list = sorted_models_list()
 
         apps = app_labels()
-        s = "%d applications: %s." % (len(apps), ", ".join(apps))
+        s = "%d apps: %s." % (len(apps), ", ".join(apps))
         s += "\n%d models:\n" % len(models_list)
         i = 0
         headers = [

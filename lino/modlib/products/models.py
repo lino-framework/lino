@@ -1,4 +1,4 @@
-# Copyright 2008-2012 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -74,12 +74,18 @@ class Product(dd.BabelNamed):
 
 class Products(dd.Table):
     required = dd.required(auth=True)
-    model = Product
+    model = 'products.Product'
     order_by = ["id"]
     column_names = "id:3 name cat vat_class sales_price:6 *"
+
+    insert_layout = """
+    cat sales_price vat_class
+    name
+    """
+
     detail_layout = """
-    id cat sales_price vat_class 
-    name 
+    id cat sales_price vat_class
+    name
     description
     """
 
@@ -92,8 +98,6 @@ class ProductsByCategory(Products):
 
 
 MODULE_LABEL = _("Products")
-
-#~ def setup_master_menu(site,ui,profile,m):
 
 
 def setup_main_menu(site, ui, profile, m):

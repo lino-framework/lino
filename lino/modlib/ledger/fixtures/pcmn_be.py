@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
 # source http://www.becompta.be/modules/mydownloads/downloads-6-18.html
 
-PCMN = u"""
+from __future__ import unicode_literals
+
+PCMN = """
 1 FONDS PROPRES, PROVISIONS POUR RISQUES ET CHARGES ET DETTES A PLUS D'UN AN
 10 CAPITAL
 100 Capital souscrit ou capital personnel

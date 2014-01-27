@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,12 +12,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This defines the 
-:class:`Actor` 
-and
-:class:`BoundAction` 
-classes.
+"""This defines the :class:`Actor` and :class:`BoundAction` classes.
+
+
+.. actorattr:: detail_layout
+
+Define the form layout to use for the detail window.
+Actors without `detail_layout` don't have a show_detail action.
+
+.. actorattr:: insert_layout
+
+Define the form layout to use for the insert window.  If there's a
+:aa:`detail_layout` but no :aa:`insert_layout`, Lino
+will use :aa:`detail_layout` for the insert window.
 
 """
 
@@ -713,18 +720,8 @@ class Actor(actions.Parametrizable):
     actor_id = None
 
     detail_layout = None
-    """
-    Define the form layout to use for the detail window.
-    Actors without `detail_layout` don't have a show_detail action.
-    """
 
     insert_layout = None
-    """
-    Define the form layout to use for the insert window.
-    If there's a detail_layout but no insert_layout, 
-    Lino will use detail_layout for the insert window.
-    """
-
     # deprecated: use detail_layout with a string value instead
     detail_template = None
     # deprecated: use insert_layout with a string value instead

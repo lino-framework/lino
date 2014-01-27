@@ -1,4 +1,4 @@
-:state: todo
+:state: done
 :module: lino
 
 #79 : Change Lino license from GPL to LGPL
@@ -56,10 +56,6 @@ enough when they are LGPL.
 
 
 TODO:
-
-- Adapt :doc:`/about/license`
-- Adapt :doc:`/about/why_gpl`
-- Write new article :doc:`/about/proprietary`
 
 - Verify whether I need to move :mod:`lino.projects` (or most of it)
   to a separate repository where they can remain GPL.

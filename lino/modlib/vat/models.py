@@ -1,4 +1,4 @@
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -40,6 +40,11 @@ logger = logging.getLogger(__name__)
 import datetime
 from decimal import Decimal
 
+from dateutil.relativedelta import relativedelta
+# ONE_DAY = relativedelta(days=1)
+
+
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -52,7 +57,7 @@ accounts = dd.resolve_app('accounts')
 
 ZERO = Decimal('0.00')
 
-from lino.modlib.vat import Plugin
+from . import Plugin
 
 
 class VatClasses(dd.ChoiceList):
@@ -84,7 +89,8 @@ class VatRegimes(dd.ChoiceList):
     verbose_name = _("VAT Regime")
     item_class = VatRegime
     help_text = _(
-        "Determines how the VAT is being handled, i.e. whether and how it is to be paid.")
+        "Determines how the VAT is being handled, \
+        i.e. whether and how it is to be paid.")
 
 add = VatRegimes.add_item
 add('10', _("Private person"), 'private')
@@ -246,13 +252,42 @@ def configure(**kw):
 settings.SITE.modules.define('vat', 'configure', configure)
 
 
-class VatTotal(dd.Model):
+class PaymentTerm(dd.BabelNamed):
 
     """
-    Model mixin which defines the fields 
-    `total_incl`, `total_base` and `total_vat`.
-    Used for both the document header (:class:`VatDocument`) 
-    and for each item (:class:`VatItemBase`).
+    A convention on how an Invoice should be paid.
+    """
+
+    class Meta:
+        verbose_name = _("Payment Term")
+        verbose_name_plural = _("Payment Terms")
+
+    days = models.IntegerField(default=0)
+    months = models.IntegerField(default=0)
+    end_of_month = models.BooleanField(default=False)
+
+    def get_due_date(self, date1):
+        assert isinstance(date1, datetime.date), \
+            "%s is not a date" % date1
+        #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
+        d = date1 + relativedelta(months=self.months, days=self.days)
+        if self.end_of_month:
+            d = date(d.year, d.month + 1, 1)
+            d = relativedelta(d, days=-1)
+        return d
+
+
+class PaymentTerms(dd.Table):
+    model = PaymentTerm
+    order_by = ["id"]
+
+
+class VatTotal(dd.Model):
+
+    """Model mixin which defines the fields `total_incl`, `total_base`
+    and `total_vat`.  Used for both the document header
+    (:class:`VatDocument`) and for each item (:class:`VatItemBase`).
+
     """
     class Meta:
         abstract = True
@@ -334,7 +369,6 @@ class VatTotal(dd.Model):
         #~ return self.total_base + self.total_vat
 
 
-#~ class VatDocument(mixins.UserAuthored,VatTotal):
 class VatDocument(VatTotal):
 
     """
@@ -351,17 +385,20 @@ class VatDocument(VatTotal):
     class Meta:
         abstract = True
 
-    #~ partner = models.ForeignKey(partner_model)
-    #~ partner = partners.PartnerField()
     partner = dd.ForeignKey('contacts.Partner')
-    #~ item_vat = models.BooleanField(_("Prices include VAT"),
-        # ~ # default=False,
-        # ~ # editable=False,
-        #~ help_text=_("Whether shown unit prices include VAT or not."))
-    vat_regime = VatRegimes.field(default=get_default_vat_regime)
+    vat_regime = VatRegimes.field()
+    payment_term = dd.ForeignKey(PaymentTerm, blank=True, null=True)
+
+    @classmethod
+    def get_registrable_fields(cls, site):
+        for f in super(VatDocument, cls).get_registrable_fields(site):
+            yield f
+        yield 'partner'
+        yield 'vat_regime'
+        yield 'payment_term'
 
     if False:
-        # this didn't work as expecrted because __init__() is called
+        # this didn't work as expected because __init__() is called
         # also when an existing instance is being retrieved from database
         def __init__(self, *args, **kw):
             super(VatDocument, self).__init__(*args, **kw)
@@ -371,21 +408,6 @@ class VatDocument(VatTotal):
         return self.partner
     recipient = property(get_recipient)
 
-    #~ def get_item_vat(self):
-        #~ return getattr(self.vat_regime
-
-    #~ @classmethod
-    #~ def get_filter_kw(self,ar,**kw):
-        #~ kw = super(VatDocument,self).get_filter_kw(ar,**kw)
-        #~ master_instance = kw.get('master_instance')
-        #~ if master_instance is not None:
-            #~ kw.update(master_instance = master_instance.get_partner_instance())
-
-    #~ def get_trade_type(self):
-        #~ """
-        #~ Expected to return one choice of :class:`TradeTypes`
-        #~ """
-        #~ raise NotImplementedError()
     def compute_totals(self):
         if self.pk is None:
             return
@@ -403,25 +425,23 @@ class VatDocument(VatTotal):
         sums_dict = dict()
 
         def book(account, amount):
-            if sums_dict.has_key(account):
+            if account in sums_dict:
                 sums_dict[account] += amount
             else:
                 sums_dict[account] = amount
         #~ if self.journal.type == JournalTypes.purchases:
         tt = self.get_trade_type()
-        a = tt.get_vat_account()
-        if a is None:
+        vat_account = tt.get_vat_account()
+        if vat_account is None:
             raise Exception("No vat account for %s." % tt)
         for i in self.items.order_by('seqno'):
             if i.total_base is not None:
-                a = i.get_base_account(tt)
-                if a is None:
+                b = i.get_base_account(tt)
+                if b is None:
                     raise Exception("No base account for %s" % i)
-                book(a, i.total_base)
+                book(b, i.total_base)
             if i.total_vat:
-                #~ a = settings.SITE.get_vat_account(tt,i.vat_class,self.vat_regime)
-                #~ a = self.journal.chart.get_account_by_ref(a)
-                book(a, i.total_vat)
+                book(vat_account, i.total_vat)
         return sums_dict
 
     def get_wanted_movements(self):
@@ -443,7 +463,16 @@ class VatDocument(VatTotal):
         yield self.create_movement(a, self.journal.dc, sum,
                                    partner=self.partner, match=match)
 
+    def fill_defaults(self):
+        if not self.payment_term:
+            self.payment_term = self.partner.payment_term
+        if not self.vat_regime:
+            self.vat_regime = self.partner.vat_regime
+        if not self.vat_regime:
+            self.vat_regime = get_default_vat_regime()
+
     def full_clean(self, *args, **kw):
+        self.fill_defaults()
         self.compute_totals()
         super(VatDocument, self).full_clean(*args, **kw)
 
@@ -460,12 +489,11 @@ class VatDocument(VatTotal):
         #~ abstract = True
 class VatItemBase(mixins.Sequenced, VatTotal):
 
-    """
-    Abstract Base class for InvoiceItem and OrderItem.
-    Subclasses must define a field called "voucher" 
-    which must be a FK with related_name="items" to the 
-    "owning document", 
-    which in turn must be a subclass of :class:`VatDocument`).
+    """Abstract Base class for InvoiceItem and OrderItem.  Subclasses
+    must define a field called "voucher" which must be a FK with
+    related_name="items" to the "owning document", which in turn must
+    be a subclass of :class:`VatDocument`).
+
     """
     class Meta:
         abstract = True
@@ -497,7 +525,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
         tt = self.voucher.get_trade_type()
         if self.vat_class is None:
             self.vat_class = self.get_vat_class(tt)
-        return settings.SITE.plugins.vat.get_vat_rate(
+        return dd.apps.vat.get_vat_rate(
             tt, self.vat_class, self.voucher.vat_regime)
 
     #~ def save(self,*args,**kw):
@@ -506,6 +534,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
         #~ self.voucher.save()
 
     def set_amount(self, ar, amount):
+        self.voucher.fill_defaults()
         rate = self.get_vat_rate()
         if self.voucher.vat_regime.item_vat:  # unit_price_includes_vat
             self.total_incl = amount
@@ -548,12 +577,6 @@ class VatItemBase(mixins.Sequenced, VatTotal):
             self.voucher.save()
         return kw
 
-    #~ def __unicode__(self):
-        #~ return "%s object" % self.__class__.__name__
-        #~ if self.voucher is None:
-            #~ return dd.Model.__unicode__(self)
-        #~ return u"DocItem %s.%d" % (self.voucher,self.pos)
-
 
 class QtyVatItemBase(VatItemBase):
 
@@ -583,11 +606,10 @@ class QtyVatItemBase(VatItemBase):
 
 
 if False:
-    """
-    Install a post_init signal listener for each concrete subclass of 
-    VatDocument. 
-    The following trick worked... 
-    but best is to store it in VatRegime, not per voucher.
+    """Install a post_init signal listener for each concrete subclass of
+    VatDocument.  The following trick worked...  but best is to store
+    it in VatRegime, not per voucher.
+
     """
 
     def set_default_item_vat(sender, instance=None, **kwargs):
@@ -599,6 +621,31 @@ if False:
         for m in dd.models_by_base(VatDocument):
             dd.post_init.connect(set_default_item_vat, sender=m)
             #~ print('20130902 on_post_analyze installed receiver for',m)
+
+
+dd.inject_field(
+    'contacts.Partner',
+    'vat_regime',
+    VatRegimes.field(
+        blank=True,
+        help_text=_("The default VAT regime for \
+        sales and purchases of this partner.")))
+
+dd.inject_field(
+    'contacts.Partner',
+    'vat_id',
+    models.CharField(_("VAT id"), max_length=200, blank=True))
+
+dd.inject_field(
+    'contacts.Partner',
+    'payment_term',
+    models.ForeignKey(
+        PaymentTerm,
+        blank=True, null=True,
+        help_text=_("The default payment term for \
+sales invoices to this customer.")))
+
+
 
 
 if False:
@@ -613,10 +660,14 @@ if False:
 #~ def setup_main_menu(site,ui,profile,m): pass
 #~ def setup_my_menu(site,ui,profile,m): pass
 #~ def setup_reports_menu(site,ui,profile,m): pass
-#~ def setup_config_menu(site,ui,profile,m): pass
-#~ def setup_explorer_menu(site,ui,profile,m): pass
+
+def setup_config_menu(site, ui, profile, m):
+    m = m.add_menu("vat", Plugin.verbose_name)
+    m.add_action(PaymentTerms)
+
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("vat", Plugin.verbose_name)
     m.add_action(VatRegimes)
     m.add_action(TradeTypes)
     m.add_action(VatClasses)
+

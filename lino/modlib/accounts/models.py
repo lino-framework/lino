@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -29,11 +29,6 @@ from django.conf import settings
 
 from lino import dd
 from lino import mixins
-#~ from lino.utils.choicelists import ChoiceList
-#contacts = reports.get_app('contacts')
-#~ from lino.modlib.journals import models as journals
-#~ journals = reports.get_app('journals')
-#from lino.modlib.journals import models as journals
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT, DCLABELS
@@ -54,11 +49,11 @@ class DebitOrCreditStoreField(BooleanStoreField):
 
 class DebitOrCreditField(models.BooleanField):
 
-    """
-    A field that stores either 
-    :attr:`DEBIT <lino.modlib.accounts.utils.DEBIT>` 
-    :attr:`CREDIT <lino.modlib.accounts.utils.CREDIT>`
-    (see :mod:`lino.modlib.accounts.utils`).
+    """A field that stores either :attr:`DEBIT
+    <lino.modlib.accounts.utils.DEBIT>` or :attr:`CREDIT
+    <lino.modlib.accounts.utils.CREDIT>` (see
+    :mod:`lino.modlib.accounts.utils`).
+
     """
     lino_atomizer_class = DebitOrCreditStoreField
 
@@ -86,10 +81,16 @@ class Chart(dd.BabelNamed):
 class Charts(dd.Table):
     model = Chart
     required = dd.required(user_level='manager')
+
+    insert_layout = """
+    name
+    """
+
     detail_layout = """
     id name
     GroupsByChart
     """
+
 
 #~ class Group(dd.BabelNamed,mixins.Sequenced):
 
@@ -117,9 +118,15 @@ class Groups(dd.Table):
     #~ required = dict(user_groups=['debts'],user_level='manager')
     #~ required_user_groups = ['debts']
     #~ required_user_level = UserLevels.manager
+
+    insert_layout = """
+    name
+    account_type ref
+    """
+
     detail_layout = """
     ref name
-    account_type id 
+    account_type id
     #help_text
     AccountsByGroup
     """
@@ -137,6 +144,7 @@ class Account(dd.BabelNamed, mixins.Sequenced):
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
         unique_together = ['chart', 'ref']
+        ordering = ['ref']
 
     chart = models.ForeignKey(Chart)
     group = models.ForeignKey(Group)
@@ -161,24 +169,25 @@ class Account(dd.BabelNamed, mixins.Sequenced):
         super(Account, self).full_clean(*args, **kw)
 
     def __unicode__(self):
-        return "(%(ref)s) %(title)s" % dict(ref=self.ref,
-                                            title=settings.SITE.babelattr(self, 'name'))
+        return "(%(ref)s) %(title)s" % dict(
+            ref=self.ref,
+            title=settings.SITE.babelattr(self, 'name'))
 
 
 class Accounts(dd.Table):
     model = Account
     required = dd.required(user_level='manager')
     order_by = ['ref']
-    #~ required=dict(user_groups=['debts'],user_level='manager')
     column_names = "ref name group *"
+    insert_layout = """
+    ref group type
+    name
+    """
     detail_layout = """
     ref name
     group type
     # help_text
     """
-
-#~ class AccountsByChart(Accounts):
-    #~ master_key = 'chart'
 
 
 class AccountsByGroup(Accounts):
@@ -187,27 +196,6 @@ class AccountsByGroup(Accounts):
     column_names = "ref name *"
 
 
-#~
-#~ def customize_products():
-    #~ dd.inject_field('products.Product',
-        #~ 'sales_account',
-        #~ models.ForeignKey('accounts.Account',
-            #~ verbose_name=_("Sales account"),
-            #~ blank=True,null=True,
-            #~ related_name="products_sales",
-            #~ help_text=_("The account to move when this product is used in a sales invoice.")
-        #~ ))
-    #~ dd.inject_field('products.Product',
-        #~ 'purchases_account',
-        #~ models.ForeignKey('accounts.Account',
-            #~ verbose_name=_("Purchases account"),
-            #~ blank=True,null=True,
-            #~ related_name="products_purchases",
-            #~ help_text=_("The account to move when this product is used in a purchases invoice.")
-        #~ ))
-#~
-#~ customize_products()
-#~ MODULE_LABEL = _("Accounts")
 MODULE_LABEL = _("Accounting")
 
 dd.add_user_group('accounts', MODULE_LABEL)

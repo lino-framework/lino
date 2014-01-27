@@ -25,7 +25,7 @@ following classes:
 
 - :class:`GeneralAccountsBalance`, :class:`ClientAccountsBalance` and
   :class:`SupplierAccountsBalance` three reports based on
-  :class:`AccountsBalance` and :class:`PartnerAccountsBalance` 
+  :class:`AccountsBalance` and :class:`PartnerAccountsBalance`
 
 - :class:`Debtors` and :class:`Creditors` are tables with one row for
   each partner who has a positive balance (either debit or credit).
@@ -427,28 +427,12 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
             return msg
         return super(Voucher, self).disable_delete(ar)
 
-    #~ def delete(self):
-        #~ self.journal.pre_delete_voucher(self)
-        #~ return super(Voucher,self).delete()
-    #~ def get_child_model(self):
-        # ~ ## overrides Typed
-        #~ return DOCTYPES[self.journal.doctype][0]
     def get_wanted_movements(self):
-        """
-        Subclasses must implement this. 
-        Supposed to return or yield a list 
-        of unsaved :class:`Movement` instances.
+        """Subclasses must implement this.  Supposed to return or yield a
+        list of unsaved :class:`Movement` instances.
+
         """
         raise NotImplementedError()
-        #~ return []
-
-    #~ def create_movement_credit(self,account,amount,**kw):
-        #~ kw.update(is_credit=True)
-        #~ return self.create_movement(account,amount,**kw)
-
-    #~ def create_movement_debit(self,account,amount,**kw):
-        #~ kw.update(is_credit=False)
-        #~ return self.create_movement(account,amount,**kw)
 
     def create_movement(self, account, dc, amount, **kw):
         assert isinstance(account, accounts.Account)
@@ -981,9 +965,9 @@ class Matchable(dd.Model):
 
 class AccountInvoice(vat.VatDocument, Voucher, Matchable):
 
-    """
-    An invoice for which the user enters just the bare accounts and 
+    """An invoice for which the user enters just the bare accounts and
     amounts (not e.g. products, quantities, discounts).
+
     """
 
     class Meta:
@@ -1044,7 +1028,7 @@ class InvoiceDetail(dd.FormLayout):
     """
 
     general = dd.Panel("""
-    id date partner user 
+    id date partner user
     due_date your_ref vat_regime #item_vat
     ItemsByInvoice:60 totals:20
     """, label=_("General"))
@@ -1122,15 +1106,17 @@ class InvoiceItem(VoucherItem, vat.VatItemBase):
     def account_choices(self, voucher):
         if voucher and voucher.journal:
             fkw = {voucher.journal.trade_type.name + '_allowed': True}
-            return accounts.Account.objects.filter(chart=voucher.journal.chart, **fkw)
+            return accounts.Account.objects.filter(
+                chart=voucher.journal.chart, **fkw)
         return []
 
 
 class ItemsByInvoice(dd.Table):
-    model = InvoiceItem
-    column_names = "account title vat_class total_base total_vat total_incl seqno"
+    model = 'ledger.InvoiceItem'
+    column_names = "account title vat_class total_base total_vat total_incl"
     master_key = 'voucher'
     order_by = ["seqno"]
+    auto_fit_column_widths = True
 
 
 def mvtsum(**fkw):
@@ -1263,13 +1249,11 @@ class PartnerAccountsBalance(AccountsBalance):
 
 class ClientAccountsBalance(PartnerAccountsBalance):
     label = _("Client Accounts Balances")
-
     trade_type = vat.TradeTypes.sales
 
 
 class SupplierAccountsBalance(PartnerAccountsBalance):
     label = _("Supplier Accounts Balances")
-
     trade_type = vat.TradeTypes.purchases
 
 
@@ -1401,6 +1385,19 @@ class ActivityReport(dd.Report):
 MODULE_LABEL = dd.apps.accounts.verbose_name
 
 
+def site_setup(site):
+    c = site.modules.contacts
+    for T in (c.Partners, c.Companies, c.Persons):
+        if not hasattr(T.detail_layout, 'ledger'):
+            T.add_detail_tab(
+                "ledger",
+                """
+                ledger.InvoicesByPartner
+                ledger.MovementsByPartner
+                """,
+                label=MODULE_LABEL)
+
+
 def setup_main_menu(site, ui, profile, main):
     for tt in vat.TradeTypes.objects():
         m = main.add_menu(tt.name, tt.text)
@@ -1438,7 +1435,7 @@ def customize_accounts():
         dd.inject_field(
             'accounts.Account',
             tt.name + '_allowed',
-            models.BooleanField(verbose_name=tt.text, default=True))
+            models.BooleanField(verbose_name=tt.text, default=False))
 
     dd.inject_field(
         'accounts.Account',
