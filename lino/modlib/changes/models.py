@@ -89,6 +89,9 @@ class Change(dd.Model):
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
 
+    def get_master_id_display(self):
+        pass
+
     def __unicode__(self):
         # ~ return "#%s - %s" % (self.id,self.time)
         return "#%s" % self.id
