@@ -112,20 +112,6 @@ class Controllable(model.Model):
         #~ owner_type=_("Model"),
         #~ owner_id=_("Instance"))
 
-    @chooser(instance_values=True)
-    def owner_id_choices(cls, owner_type):
-        if owner_type:
-            return owner_type.model_class().objects.all()
-        return []
-
-    def get_owner_id_display(self, value):
-        if self.owner_type:
-            try:
-                return unicode(self.owner_type.get_object_for_this_type(pk=value))
-            except self.owner_type.model_class().DoesNotExist, e:
-                return "%s with pk %r does not exist" % (
-                    full_model_name(self.owner_type.model_class()), value)
-
     def update_owned_instance(self, controllable):
         """
         If this (acting as a controller) is itself controlled,

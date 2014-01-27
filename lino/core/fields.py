@@ -17,6 +17,8 @@ Defines classes :class:`Frame` and :class:`FrameHandle`
 """
 
 import logging
+from lino.utils.choosers import chooser
+
 logger = logging.getLogger(__name__)
 
 import datetime
@@ -783,23 +785,34 @@ class GenericForeignKey(generic.GenericForeignKey):
         self.dont_merge = dont_merge
         generic.GenericForeignKey.__init__(self, ct_field, fk_field)
 
-    #~ def contribute_to_class(self, cls, name):
-        #~ """
-        #~ @chooser(instance_values=True)
-        #~ def object_id_choices(cls,object_type):
-            #~ if object_type:
-                #~ return object_type.model_class().objects.all()
-            #~ return []
-        #~ def get_object_id_display(self,value):
-            #~ if self.object_type:
-                #~ try:
-                    #~ return unicode(self.object_type.get_object_for_this_type(pk=value))
-                #~ except self.object_type.model_class().DoesNotExist,e:
-                    #~ return "%s with pk %r does not exist" % (
-                        #~ full_model_name(self.object_type.model_class()),value)
-        #~ """
-        #~ generic.GenericForeignKey.contribute_to_class(self, cls, name)
-        #~ if not hasattr(cls,
+    def contribute_to_class(self, cls, name):
+        """
+        Automatically set-up chooser and display field for ID field of generic foreign key.
+        """
+        super(GenericForeignKey, self).contribute_to_class(cls, name)
+
+        # Chooser
+        fk_choices_name = "{fk_field}_choices".format(fk_field=self.fk_field)
+        if not hasattr(cls, fk_choices_name):
+            def fk_choices(cls, **kwargs):
+                object_type = kwargs[self.ct_field]
+                if object_type:
+                    return object_type.model_class().objects.all()
+                return []
+            field = chooser(instance_values=True)(fk_choices)
+            setattr(cls, fk_choices_name, field)
+
+        # Display
+        fk_display_name = "get_{fk_field}_display".format(fk_field=self.fk_field)
+        if not hasattr(cls, fk_display_name):
+            def fk_display(self, value):
+                if self.object_type:
+                    try:
+                        return unicode(self.object_type.get_object_for_this_type(pk=value))
+                    except self.object_type.model_class().DoesNotExist, e:
+                        return "%s with pk %r does not exist" % (
+                            full_model_name(self.object_type.model_class()), value)
+            setattr(cls, fk_display_name, fk_display)
 
 
 #~ class FieldSet:
