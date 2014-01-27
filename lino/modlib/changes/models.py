@@ -89,43 +89,9 @@ class Change(dd.Model):
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
 
-    def get_master_id_display(self):
-        pass
-
     def __unicode__(self):
         # ~ return "#%s - %s" % (self.id,self.time)
         return "#%s" % self.id
-
-    # NOTE: the following code is the same as in lino.mixins.Controllable
-    # TODO: automate this behaviour in dd.GenericForeignKey
-    @chooser(instance_values=True)
-    def object_id_choices(cls, object_type):
-        if object_type:
-            return object_type.model_class().objects.all()
-        return []
-
-    def get_object_id_display(self, value):
-        if self.object_type:
-            try:
-                return unicode(self.object_type.get_object_for_this_type(pk=value))
-            except self.object_type.model_class().DoesNotExist, e:
-                return "%s with pk %r does not exist" % (
-                    dd.full_model_name(self.object_type.model_class()), value)
-
-    @chooser(instance_values=True)
-    def master_id_choices(cls, master_type):
-        if master_type:
-            return master_type.model_class().objects.all()
-        return []
-
-    def get_master_id_display(self, value):
-        if self.master_type:
-            try:
-                return unicode(self.master_type.get_object_for_this_type(pk=value))
-            except self.master_type.model_class().DoesNotExist, e:
-                return "%s with pk %r does not exist" % (
-                    dd.full_model_name(self.master_type.model_class()), value)
-                # NOTE: the above code is the same as in lino.mixins.Controllable
 
 
 class Changes(dd.Table):
