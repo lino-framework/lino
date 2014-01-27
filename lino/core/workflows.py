@@ -210,17 +210,15 @@ class ChangeStateAction(actions.Action):
     def run_from_ui(self, ar):
 
         row = ar.selected_rows[0]
-        #~ state_field_name = self.defining_actor.workflow_state_field.attname
-        #~ state_field_name = row.workflow_state_field.attname
-        state_field = ar.actor.workflow_state_field
-        #~ assert isinstance(state_field_name,basestring)
 
-        row.set_workflow_state(ar, state_field, self.target_state)
+        self.execute(ar, row)
 
         ar.response.update(refresh=True)
-        # ~ ar.response.update(refresh_all=True) # 20131026
+
         ar.success()
-        #~ print 20131026, ar.response
+
+    def execute(self, ar, obj):
+        return obj.set_workflow_state(ar, ar.actor.workflow_state_field, self.target_state)
 
 
 class NotifyingChangeStateAction(ChangeStateAction, actions.NotifyingAction):
