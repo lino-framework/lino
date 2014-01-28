@@ -1,4 +1,4 @@
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,11 +12,14 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-The :xfile:`models` module for :mod:`lino.modlib.changes`.
+The :xfile:`models.py` module for :mod:`lino.modlib.changes`.
 
 It defines the :class:`Change` model
 and the :func:`watch_changes` function.
 It also adds a menu entry to the `Explorer` menu.
+
+See also :ref:`lino.tutorial.watch`.
+
 """
 
 import logging
@@ -100,13 +103,16 @@ class Changes(dd.Table):
         'date': models.DateField(_("Only changes from"), blank=True),
     }
     if settings.SITE.user_model:
-        parameters['user'] = dd.ForeignKey(settings.SITE.user_model, blank=True)
+        parameters['user'] = dd.ForeignKey(
+            settings.SITE.user_model,
+            blank=True)
 
     required = dd.required(user_level='admin')
 
     editable = False
     model = Change
     order_by = ['-time']
+
     detail_layout = """
     time user type master object id
     diff
@@ -119,7 +125,9 @@ class Changes(dd.Table):
             if ar.param_values.type:
                 qs = qs.filter(type=ar.param_values.type)
             if ar.param_values.date:
-                qs = qs.filter(time__range=(ar.param_values.date, ar.param_values.date+datetime.timedelta(1)))
+                qs = qs.filter(time__range=(
+                    ar.param_values.date,
+                    ar.param_values.date+datetime.timedelta(1)))
             if settings.SITE.user_model and ar.param_values.user:
                 qs = qs.filter(user=ar.param_values.user)
         return qs
@@ -141,12 +149,14 @@ class WatcherSpec:
 
 
 def watch_all_changes(ignore=[]):
-    """
-    Call to watch all changes on all models. This is fallback method and
-    settings passed to specific model using `watch_changes` call takes precedence.
+
+    """Call to watch all changes on all models. This is fallback method
+    and settings passed to specific model using `watch_changes` call
+    takes precedence.
 
 
     :param ignore: specify list of model names to ignore
+
     """
     watch_all_changes.allow = True
     watch_all_changes.ignore.extend(ignore)
@@ -196,7 +206,8 @@ def get_change_watcher_spec(obj):
     cs = obj.change_watcher_spec
 
     if cs is None:
-        if not watch_all_changes.allow or obj.__class__.__name__ in watch_all_changes.ignore:
+        if not watch_all_changes.allow \
+           or obj.__class__.__name__ in watch_all_changes.ignore:
             return None
 
         cs = WatcherSpec([], return_self)
@@ -249,12 +260,12 @@ def on_update(sender=None, request=None, **kw):
 
 @receiver(pre_ui_delete)
 def on_delete(sender=None, request=None, **kw):
-    """
-    Calls :func:`log_change` with `ChangeTypes.delete`.
-    
+    """Calls :func:`log_change` with `ChangeTypes.delete`.
+
     Note that you must call this before actually deleting the object,
-    otherwise mysql (not sqlite) says 
-    ERROR: (1048, "Column 'object_id' cannot be null")
+    otherwise mysql (not sqlite) says ERROR: (1048, "Column
+    'object_id' cannot be null")
+
     """
     master = get_master(sender)
     if master is None:
@@ -265,8 +276,9 @@ def on_delete(sender=None, request=None, **kw):
 
 @receiver(pre_ui_create)
 def on_create(sender=None, request=None, **kw):
-    """
-    To be called when a new instance has actually been created and saved.
+    """To be called when a new instance has actually been created and
+    saved.
+
     """
     master = get_master(sender)
     if master is None:
@@ -300,7 +312,8 @@ def on_merge(sender=None, request=None, **kw):
     master = get_master(sender.obj)
     if master is None:
         return
-    log_change(ChangeTypes.merge, request, master, sender.obj, sender.logmsg())
+    log_change(ChangeTypes.merge, request,
+               master, sender.obj, sender.logmsg())
 
 
 from lino.modlib.system.models import SYSTEM_USER_LABEL

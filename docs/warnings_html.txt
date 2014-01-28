@@ -1,5 +1,1 @@
-/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:5: WARNING: Field list ends without a blank line; unexpected unindent.
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

@@ -1,4 +1,4 @@
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -33,7 +33,6 @@ from django.core.exceptions import ValidationError
 
 
 from lino.core.perms import UserLevels
-from lino.core.dbutils import full_model_name
 from lino.core import frames
 from lino.core import actions
 from lino.core import fields
@@ -41,7 +40,6 @@ from lino.core import dbtables
 from lino.core import model
 from lino.core.requests import VirtualRow
 from lino.core.actors import Actor
-from lino.utils.choosers import chooser
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
@@ -52,8 +50,7 @@ from lino.utils.xmlgen.html import E
 
 class Controllable(model.Model):
 
-    """
-    Mixin for models that are "controllable" by another database object.
+    """Mixin for models that are "controllable" by another database object.
 
     Defines three fields `owned_type`, `owned_id` and `owned`.
     And a class attribute :attr:`owner_label`.
@@ -67,10 +64,9 @@ class Controllable(model.Model):
     to be automatically generated when a certain payment mode
     is specified.
 
-    Controllable objects are "governed" or "controlled"
-    by their controller:
-    If the controller gets modified, it may decide to delete or
-    modify some or all of her controlled objects.
+    Controllable objects are "governed" or "controlled" by their
+    controller: If the controller gets modified, it may decide to
+    delete or modify some or all of her controlled objects.
 
     Non-automatic tasks always have an empty `controller` field.
     Some fields are read-only on an automatic Task because
@@ -80,9 +76,9 @@ class Controllable(model.Model):
     # Translators: will also be concatenated with '(type)' '(object)'
     owner_label = _('Controlled by')
     """
-    The labels (`verbose_name`) of the fields 
+    The labels (`verbose_name`) of the fields
     `owned_type`, `owned_id` and `owned`
-    are derived from this attribute which 
+    are derived from this attribute which
     may be overridden by subclasses.
     """
 
@@ -94,23 +90,21 @@ class Controllable(model.Model):
     class Meta:
         abstract = True
 
-    owner_type = fields.ForeignKey(ContentType,
-                                   editable=True,
-                                   blank=controller_is_optional, null=controller_is_optional,
-                                   verbose_name=string_concat(owner_label, ' ', _('(type)')))
+    owner_type = fields.ForeignKey(
+        ContentType,
+        editable=True,
+        blank=controller_is_optional, null=controller_is_optional,
+        verbose_name=string_concat(owner_label, ' ', _('(type)')))
+
     owner_id = fields.GenericForeignKeyIdField(
         owner_type,
         editable=True,
         blank=controller_is_optional, null=controller_is_optional,
         verbose_name=string_concat(owner_label, ' ', _('(object)')))
+
     owner = fields.GenericForeignKey(
         'owner_type', 'owner_id',
         verbose_name=owner_label)
-
-    #~ owner_panel= dd.FieldSet(_("Owner"),
-        #~ "owner_type owner_id",
-        #~ owner_type=_("Model"),
-        #~ owner_id=_("Instance"))
 
     def update_owned_instance(self, controllable):
         """
@@ -119,9 +113,6 @@ class Controllable(model.Model):
         """
         if self.owner:
             self.owner.update_owned_instance(controllable)
-        #~ m = getattr(self.owner,'update_owned_instance',None)
-        #~ if m:
-            #~ m(controllable)
 
     def save(self, *args, **kw):
         if settings.SITE.loading_from_dump:

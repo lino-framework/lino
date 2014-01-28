@@ -1,6 +1,9 @@
 Thanks to
 =========
 
+Publications
+------------
+
 Here is a list of other publications who are at least partially being 
 distributed with Lino.
 
@@ -57,3 +60,44 @@ distributed with Lino.
   many authors, I found it in a `blog post by Glenn Enright 
   <http://thepocketsite.com/blog/2010/10/12/openoffice-headless-mode/>`_.
   
+.. _people:
+
+People
+------
+
+Here is a list of people to whom we owe thanks.
+The list has not yet been systematically checked for completeness.
+
+- Alicia for constructive end-user feedback
+
+- Andreas for competent consultation on :ref:`cosi` and marketing
+  questions.
+
+- Elmar for sustaining Lino on the political level
+
+- Gerd for long-term partnership and lots of ideas for both the
+  framework itself and :ref:`welfare`.
+
+- Hubert for constructive end-user feedback
+
+- Hugh for constructive feedback on web design and philosophical
+  questions.  
+
+- Joe for advice, analysis and code contributions
+
+- Manuel for partnership and input on technologies, web design, and
+  marketing
+
+- Melanie for constructive end-user feedback
+
+- Merike for feedback on technical and infrastructural questions.
+
+- Otto for feedback on technical questions.
+
+- Ralf for competent feedback on marketing questions 
+
+- Roger for long-term partnership and lots of ideas on marketing and
+  :ref:`faggio`
+
+- Sven for analysis, testing and lots of ideas on :ref:`faggio`.
+
