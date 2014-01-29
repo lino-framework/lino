@@ -1,1 +1,2 @@
+/home/luc/hgwork/lino/docs/blog/2014/0129.rst:91: WARNING: undefined label: welfare.users.userdetail (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

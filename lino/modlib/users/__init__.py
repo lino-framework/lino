@@ -1,4 +1,4 @@
-# Copyright 2011-2012 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,16 +11,16 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-Lino's :mod:`lino.modlib.users` is an alternative to Django's 
+"""Lino's :mod:`lino.modlib.users` is an alternative to Django's
 :mod:`django.contrib.auth` module.
 
 This module is much more simple and does not require
 :mod:`django.contrib.sessions` to be installed.
 See :doc:`/tickets/31` for discussion.
 
-To use it, you must define the following things in your :class:`lino.Lino`::
+To use it, you must override :setting:`user_model` and
+:setting:`get_installed_apps` in your
+:class:`lino.lino_site.Site`. Example::
 
     user_model = 'users.User'
     
@@ -30,5 +30,14 @@ To use it, you must define the following things in your :class:`lino.Lino`::
         yield 'lino.modlib.users'
         # continue with your own modules
 
-
 """
+
+from lino import ad
+
+from django.utils.translation import ugettext_lazy as _
+
+
+class Plugin(ad.Plugin):
+    "Ceci n'est pas une documentation."
+    verbose_name = _("Users")
+

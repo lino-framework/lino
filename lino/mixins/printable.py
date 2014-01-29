@@ -850,33 +850,30 @@ class Printable(BasePrintable):
 
 class CachedPrintable(Duplicable, BasePrintable):
 
-    """
-    Mixin for Models that generate a unique external file at a 
+    """Mixin for Models that generate a unique external file at a
     determined place when being printed.
     
-    Adds a "Print" button, a "Clear cache" button and a `build_time` 
+    Adds a "Print" button, a "Clear cache" button and a `build_time`
     field.
     
-    The "Print" button of a 
-    :class:`CachedPrintable <lino.mixins.printable.CachedPrintable>`
-    transparently handles the case when multiple rows are selected. 
-    If multiple rows are selected (which is possible only when 
-    :attr:`cell_edit <lino.core.tables.AbstractTable.cell_edit>` is True),
-    then it will automatically:
+    The "Print" button of a :class:`CachedPrintable
+    <lino.mixins.printable.CachedPrintable>` transparently handles the
+    case when multiple rows are selected.  If multiple rows are
+    selected (which is possible only when :attr:`cell_edit
+    <lino.core.tables.AbstractTable.cell_edit>` is True), then it will
+    automatically:
     
-    - build the cached printable for those objects who don't yet have 
+    - build the cached printable for those objects who don't yet have
       one
       
-    - generate a single temporary pdf file which is a merge of these 
+    - generate a single temporary pdf file which is a merge of these
       individual cached printable docs
-    
-    
+
     """
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
     #~ print_all = PrintAll()
 
-    #~ must_build = models.BooleanField(_("must build"),default=True,editable=False)
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
     """
@@ -906,12 +903,11 @@ class CachedPrintable(Duplicable, BasePrintable):
             return None
         try:
             t = os.path.getmtime(filename)
-        except OSError, e:
+        except OSError:
             return None
         return datetime.datetime.fromtimestamp(t)
 
     def clear_cache(self):
-        #~ elem.must_build = True
         self.build_time = None
         self.save()
 
@@ -926,23 +922,19 @@ class CachedPrintable(Duplicable, BasePrintable):
 
 class TypedPrintable(CachedPrintable):
 
-    """
-    A :class:`CachedPrintable` that uses a "Type" for deciding which template 
-    to use on a given instance. 
+    """A :class:`CachedPrintable` that uses a "Type" for deciding which
+    template to use on a given instance.
     
-    A TypedPrintable model must define itself a field `type` which is a ForeignKey 
-    to a Model that implements :class:`PrintableType`.
+    A TypedPrintable model must define itself a field `type` which is
+    a ForeignKey to a Model that implements :class:`PrintableType`.
     
-    Alternatively you can override :meth:`get_printable_type` 
-    if you want to name the field differently. An example of 
-    this is :attr:`lino.modlib.sales.models.SalesDocument.imode`.
+    Alternatively you can override :meth:`get_printable_type` if you
+    want to name the field differently. An example of this is
+    :attr:`lino.modlib.sales.models.SalesDocument.imode`.
+
     """
 
-    #~ type = NotImplementedError
     type = None
-    """
-    Override this by a ForeignKey field.
-    """
 
     class Meta:
         abstract = True

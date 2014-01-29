@@ -40,3 +40,13 @@ For example, at least the `get_{fk_field}_display` is visible in
 :ref:`lino.tutorial.watch`.
 
 TODO: write a similar tutorial which focusses on the GFK field.
+
+
+Miscellaneous
+-------------
+
+
+Continued on :ref:`faggio`:
+
+- `courses.EnrolmentsByPupil` now includes the amount.
+- Translations

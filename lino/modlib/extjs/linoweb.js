@@ -904,10 +904,12 @@ Lino.PanelMixin = {
 
 
 // Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version {{lino.__version__}}.'});
+{% if settings.SITE.plugins.extjs.use_statusbar %}
 Lino.status_bar = new Ext.ux.StatusBar({
     autoClear: 10000, // 10 seconds
     defaultText:'{{settings.SITE.site_version()}}.'
     });
+{% endif %}
 
 {% if settings.SITE.use_tinymce %}
 
@@ -1560,18 +1562,20 @@ function PseudoConsole() {
 if (typeof(console) == 'undefined') console = new PseudoConsole();
 
 Lino.notify = function(msg) {
+  {% if settings.SITE.plugins.extjs.use_statusbar %}
   if (msg == undefined) msg = ''; else console.log(msg);
-  //~ Ext.getCmp('konsole').update(msg);
   Lino.status_bar.setStatus({
     text: msg,
     iconCls: 'ok-icon',
     clear: true // auto-clear after a set interval
   });
-  //~ Ext.getCmp('konsole').setTitle(msg.replace(/\n/g,'<br/>'));
-  //~ Ext.getCmp('konsole').update(msg.replace(/\n/g,'<br/>'));
+  {% else %}
+    if (msg == undefined) return;
+    Lino.alert(msg);
+  {% endif %}
 };
+
 Lino.alert = function(msg) {
-  //~ if (msg == undefined) msg = ''; else console.log(msg);
   Ext.MessageBox.alert('Notify',msg);
 };
 

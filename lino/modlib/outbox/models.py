@@ -39,7 +39,7 @@ from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 
 
-class RecipientType(dd.ChoiceList):
+class RecipientTypes(dd.ChoiceList):
 
     """A list of possible values for the `type` field of a
     :class:`Recipient`.
@@ -47,7 +47,7 @@ class RecipientType(dd.ChoiceList):
     """
     verbose_name = _("Recipient Type")
 
-add = RecipientType.add_item
+add = RecipientTypes.add_item
 add('to', _("to"), 'to')
 add('cc', _("cc"), 'cc')
 add('bcc', _("bcc"), 'bcc')
@@ -231,7 +231,7 @@ class Recipient(dd.Model):
     partner = models.ForeignKey('contacts.Partner',
                                 #~ verbose_name=_("Recipient"),
                                 blank=True, null=True)
-    type = RecipientType.field(default=RecipientType.to)
+    type = RecipientTypes.field(default=RecipientTypes.to)
     address = models.EmailField(_("Address"), blank=True)
     name = models.CharField(_("Name"), max_length=200)
 
@@ -281,7 +281,7 @@ class RecipientsByMail(Recipients):
 class SendMail(dd.Action):
 
     """
-    Sends this as an email.
+    Sends an `outbox.Mail` as an email.
     """
 
     icon_name = 'email_go'
@@ -309,16 +309,15 @@ class SendMail(dd.Action):
         to = []
         cc = []
         bcc = []
-        #~ [r.name_address() for r in elem.recipient_set.filter(type=mails.RecipientType.cc)]
         found = False
         missing_addresses = []
         for r in elem.recipient_set.all():
             recipients = None
-            if r.type == RecipientType.to:
+            if r.type == RecipientTypes.to:
                 recipients = to
-            elif r.type == RecipientType.cc:
+            elif r.type == RecipientTypes.cc:
                 recipients = cc
-            elif r.type == RecipientType.bcc:
+            elif r.type == RecipientTypes.bcc:
                 recipients = bcc
             if recipients is not None:
                 if not r.address:
@@ -433,7 +432,7 @@ class Mail(mixins.AutoUser, mixins.Printable,
     def get_recipients(self, rr):
         #~ recs = []
         recs = [unicode(r) for r in
-                Recipient.objects.filter(mail=self, type=RecipientType.to)]
+                Recipient.objects.filter(mail=self, type=RecipientTypes.to)]
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")), get_recipients)
 
@@ -477,10 +476,7 @@ if not settings.SITE.project_model:
 class MyOutbox(Mails):
     required = dd.required(user_groups='office')
 
-    #~ required_user_level = None
-    #~ known_values = dict(outgoing=True)
     label = _("My Outbox")
-    #~ filter = models.Q(sent__isnull=True)
     master_key = 'user'
 
     @classmethod
@@ -488,10 +484,6 @@ class MyOutbox(Mails):
         if ar.master_instance is None:
             ar.master_instance = ar.get_user()
         #~ print "20120519 MyOutbox.setup_request()", ar.master_instance
-
-#~ class MySent(MyOutbox):
-    #~ label = _("Sent Mails")
-    #~ filter = models.Q(sent__isnull=False)
 
 
 class MailsByController(Mails):

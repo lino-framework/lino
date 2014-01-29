@@ -23,6 +23,10 @@ application is not available under the GPL **and** (2) used by other
 people than the empoyees of the company who wrote the application. See
 :doc:`/about/proprietary` for details.
 
+.. setting:: extjs.use_statusbar
+
+Whether to use a status bar to display certain messages to the user.
+
 """
 
 from lino.ad import Plugin
@@ -32,6 +36,8 @@ from django.utils.translation import ugettext_lazy as _
 class Plugin(Plugin):
 
     ui_label = _("Admin")
+
+    use_statusbar = False
 
     url_prefix = "admin"
 

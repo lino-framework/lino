@@ -802,7 +802,7 @@ class Enrolments(dd.Table):
     """
     detail_layout = """
     request_date user
-    course pupil 
+    course pupil
     remark amount workflow_buttons
     sales.InvoicingsByInvoiceable
     """
@@ -904,7 +904,7 @@ class EnrolmentsByPupil(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "pupil"
-    column_names = 'request_date course user workflow_buttons *'
+    column_names = 'request_date course amount user workflow_buttons *'
 
     @classmethod
     def param_defaults(self, ar, **kw):

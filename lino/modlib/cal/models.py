@@ -574,16 +574,32 @@ def customize_users():
     #~ users = dd.resolve_app('users')
     #~ users.User.add_model_action(update_reminders=UpdateReminders())
 
+MODULE_LABEL = dd.apps.cal.verbose_name
 
-def site_setup(site):
+
+class UserDetailMixin(dd.Panel):
+
+    cal_left = """
+    event_type access_class
+    calendar
+    cal.SubscriptionsByUser
+    # cal.MembershipsByUser
+    """
+
+    cal = dd.Panel("""
+    cal_left:30 cal.TasksByUser:60
+    """,
+                   label=MODULE_LABEL,
+                   required=dict(user_groups='office'))
+
+    
+def unused_site_setup(site):
     """
     (Called during site setup.)
 
     Adds a "Calendar" tab and the :class:`UpdateReminders`
     action to `users.User`
     """
-
-    #~ site.modules.users.User.update_reminders = UpdateReminders()
 
     site.modules.users.Users.add_detail_panel(
         'cal_left', """
@@ -597,10 +613,8 @@ def site_setup(site):
         """,
         MODULE_LABEL,
         required=dict(user_groups='office'))
-    #~ site.modules.users.Users.add_detail_tab('cal.TasksByUser')
 
 
-MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
 
 
 def setup_main_menu(site, ui, profile, m):

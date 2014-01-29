@@ -18,8 +18,6 @@ The :xfile:`models.py` file for :mod:`lino.modlib.attestations`.
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -106,7 +104,7 @@ class CreateAttestaion(dd.Action):
         elem = ar.selected_rows[0]
 
         a = Attestation(user=ar.get_user(),
-                        date=datetime.date.today(),
+                        # date=datetime.date.today(),
                         owner=elem)
         a.full_clean()
         a.save()
@@ -127,6 +125,9 @@ class Attestable(dd.Model):
         abstract = True
 
     create_attestation = CreateAttestaion()
+
+    def is_attestable(self):
+        return True
 
 
 class Attestation(dd.TypedPrintable,
@@ -149,11 +150,12 @@ class Attestation(dd.TypedPrintable,
         verbose_name = _("Attestation")
         verbose_name_plural = _("Attestations")
 
-    date = models.DateField(
-        verbose_name=_('Date'), default=datetime.date.today)
+    # date = models.DateField(
+    #     verbose_name=_('Date'), default=datetime.date.today)
+
     type = models.ForeignKey(AttestationType,
                              blank=True, null=True,
-                             verbose_name=_('Attestation Type (Content)'))
+                             verbose_name=_('Attestation Type'))
 
     language = dd.LanguageField()
 
@@ -189,7 +191,7 @@ dd.update_field(Attestation, 'contact_person',
 
 class AttestationDetail(dd.FormLayout):
     main = """
-    date:10 type:25 project
+    #date:10 type:25 project
     company contact_person contact_role
     id user:10 language:8 build_time
     outbox.MailsByController
@@ -201,26 +203,30 @@ class Attestations(dd.Table):
 
     model = 'attestations.Attestation'
     detail_layout = AttestationDetail()
-    column_names = "id date user type project *"
+    insert_layout = """
+    type project user
+    company language
+    """
+    column_names = "id build_time user type project *"
     order_by = ["id"]
 
 
 class MyAttestations(mixins.ByUser, Attestations):
     required = dd.required(user_groups='office')
-    column_names = "date type project *"
-    order_by = ["date"]
+    column_names = "build_time type project *"
+    order_by = ["build_time"]
 
 
 class AttestationsByType(Attestations):
     master_key = 'type'
-    column_names = "date user *"
-    order_by = ["date"]
+    column_names = "build_time user *"
+    order_by = ["build_time"]
 
 
 class AttestationsByX(Attestations):
     required = dd.required(user_groups='office')
-    column_names = "date type user *"
-    order_by = ["-date"]
+    column_names = "build_time type user *"
+    order_by = ["-build_time"]
 
 if settings.SITE.project_model is not None:
 
@@ -230,17 +236,17 @@ if settings.SITE.project_model is not None:
 
 class AttestationsByOwner(AttestationsByX):
     master_key = 'owner'
-    column_names = "date type user *"
+    column_names = "build_time type user *"
 
 
 class AttestationsByCompany(AttestationsByX):
     master_key = 'company'
-    column_names = "date type user *"
+    column_names = "build_time type user *"
 
 
 class AttestationsByPerson(AttestationsByX):
     master_key = 'contact_person'
-    column_names = "date type user *"
+    column_names = "build_time type user *"
 
 
 system = dd.resolve_app('system')

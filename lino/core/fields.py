@@ -794,7 +794,7 @@ class GenericForeignKey(generic.GenericForeignKey):
         # Chooser
         fk_choices_name = "{fk_field}_choices".format(fk_field=self.fk_field)
         if not hasattr(cls, fk_choices_name):
-            def fk_choices(cls, **kwargs):
+            def fk_choices(obj, **kwargs):
                 object_type = kwargs[self.ct_field]
                 if object_type:
                     return object_type.model_class().objects.all()
@@ -803,15 +803,17 @@ class GenericForeignKey(generic.GenericForeignKey):
             setattr(cls, fk_choices_name, field)
 
         # Display
-        fk_display_name = "get_{fk_field}_display".format(fk_field=self.fk_field)
+        fk_display_name = "get_{fk_field}_display".format(
+            fk_field=self.fk_field)
         if not hasattr(cls, fk_display_name):
-            def fk_display(self, value):
-                if self.object_type:
+            def fk_display(obj, value):
+                ct = getattr(obj, self.ct_field)
+                if ct:
                     try:
-                        return unicode(self.object_type.get_object_for_this_type(pk=value))
-                    except self.object_type.model_class().DoesNotExist, e:
+                        return unicode(ct.get_object_for_this_type(pk=value))
+                    except ct.model_class().DoesNotExist:
                         return "%s with pk %r does not exist" % (
-                            full_model_name(self.object_type.model_class()), value)
+                            full_model_name(ct.model_class()), value)
             setattr(cls, fk_display_name, fk_display)
 
 

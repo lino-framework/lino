@@ -216,7 +216,7 @@ class UserDetail(dd.FormLayout):
     box1 = """
     username profile:20 partner
     first_name last_name initials
-    email language 
+    email language
     id created modified
     """
 

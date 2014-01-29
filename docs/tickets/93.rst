@@ -4,38 +4,12 @@
 #93 : Sozialsekretariat
 =======================
 
-#.  Eigene Tabelle für einfache Bescheinigungen
-    (:mod:`lino.modlib.attestations` statt
-    SiteConfig.attestation_note_nature und NoteType.is_attestation).
-    Idee: nicht neue app `attestations`, sondern 
-    bestehende `outbox` verwenden.
-
-#.  Einkommensbescheinigungen und sonstige Hilfen als eigene Tabelle
-    implementieren (`aids.Aid` und `aids.Type` ("Hilfen")). 
-
-    - Art (EiEi, Ausländerbeihilfe, Heizkosten, Feste Beihilfe,
-      Erstattung, Übernahmeschein, DMH-Übernahmeschein, Möbellager)
-
-    - von, bis 
-    - Periodizität (Jährlich, ...)
-    - Beschlussdatum
-    - Gremium (SHR, SP, SAS)
-
-    - Kategorie (wenn EiEi oder Ausländer: 
-      3 Person mit Familienlasten (personne qui cohabite avec une
-      famille à sa charge)
-      2 Alleinstehend (persone isolée)
-      1 Zusammenlebend (cohabitant)
-
-    - Betrag
-
-    Tabelle EiEi-Beträge : 
+#.  Tabelle EiEi-Beträge : 
 
     - Kategorie
     - Seit wann
     - Betrag
 
-    
 #.  Implement :ref:`davlink` and :ref:`eidreader` as Browser extensions.
 
 #.  Dublettenkontrolle beim Erstellen eines Klienten.
@@ -59,12 +33,10 @@
     - Generika, Mietgarantie, MAF, Referenzadresse:
       werden scheinbar nicht mehr benutzt.
 
-
     - Sozialhilfekonto
 
     - Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
       Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
-
 
     - Wann ist die letzte Bescheinigung "Lebensmittelbank" (oder
       "Kleiderkammer") rausgegangen?  Manche Bescheinigungsarten
@@ -79,11 +51,11 @@
 
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
 
-    - Adressen pro Klient : 
-      - Adressnart ( Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
+    - Mehrere Adressen pro Klient : 
+      - Adressart (Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
       - Button "zur Hauptadresse machen" (wer darf drauf klicken?)
 
-#.  Bescheinigungen, müssen mit einem Klick rauskommen.
+#.  Bescheinigungen müssen mit einem Klick rauskommen können.
     Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
     10x klicken und kriegt tausend unnütze Fragen gestellt.
 
@@ -91,8 +63,6 @@
 
     - Beginn = bei Empfang des ersten Gastes
     - Ende = wenn der letzte Gast geht
-
-#.  Feld "User.calendar" fehlt im :ref:`welfare.users.UserDetail`
 
 #.  Aktion "Termin finden" : 
 
