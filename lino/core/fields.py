@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -773,9 +773,9 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
 
 class GenericForeignKey(generic.GenericForeignKey):
 
-    """
-    Add verbose_name and help_text to Django's GFK.
-    Used by :class:`lino.mixins.Controllable`.
+    """Add verbose_name and help_text to Django's GFK.  Used by
+    :class:`lino.mixins.Controllable`.
+
     """
 
     def __init__(self, ct_field="content_type", fk_field="object_id",
@@ -786,9 +786,11 @@ class GenericForeignKey(generic.GenericForeignKey):
         generic.GenericForeignKey.__init__(self, ct_field, fk_field)
 
     def contribute_to_class(self, cls, name):
+        """Automatically set-up chooser and display field for ID field of
+        generic foreign key.
+
         """
-        Automatically set-up chooser and display field for ID field of generic foreign key.
-        """
+
         super(GenericForeignKey, self).contribute_to_class(cls, name)
 
         # Chooser

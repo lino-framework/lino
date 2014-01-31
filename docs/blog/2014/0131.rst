@@ -1,0 +1,8 @@
+==================================
+20140131 (Friday, 31 January 2014)
+==================================
+
+Upgrade on testlino for Gerd:
+
+- :mod:`lino_welfare.migrate`
+

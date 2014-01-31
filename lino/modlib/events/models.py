@@ -69,7 +69,8 @@ class Type(dd.BabelNamed):
         default="when:30 what:40 where:30")
 
     def EventsByType(self, **kw):
-        return EventsByType.request(master_instance=self)
+        kw.update(master_instance=self)
+        return EventsByType.request(**kw)
 
 
 class Types(dd.Table):
