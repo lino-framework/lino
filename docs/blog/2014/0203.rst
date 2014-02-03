@@ -1,0 +1,36 @@
+===================================
+20140203 (Monday, 03 February 2014)
+===================================
+
+Lino and bicycle races in East-Belgium
+--------------------------------------
+
+During the week-end I updated the events calendar at
+http://www.vor-cycling.be and was positively surprised how painless
+this worked.  This calendar of bicycle races in East-Belgium is part
+of Lino rather by accident because one of the responsibles is a
+friend, and because it is so fun to see how Lino can be used for
+managing "generated web content":
+:mod:`lino.modlib.events.fixtures.vor`.  
+
+Technically this is just a fixture, and --I got aware of this only
+now-- in order to fully document how it works I'd need to also include
+the project's :xfile:`userdocs` directory.  As a workaround here's the
+source code of `http://www.vor-cycling.be/events.html`, in fact the
+only special page of that site::
+
+    ===========================
+    Veranstaltungskalender 2014
+    ===========================
+    
+    .. django2rst::
+
+      from atelier.rstgen import header
+      for obj in events.Type.objects.order_by('id'):
+          print(header(2,unicode(obj)))
+          print()
+          print(obj.EventsByType().to_rst())
+
+
+
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -89,14 +89,18 @@ def objects():
     yield trophy
 
     kelmis = City.objects.get(name="Kelmis")
-    raeren = City.objects.get(name="Raeren")
+    # raeren = City.objects.get(name="Raeren")
     eupen = City.objects.get(name="Eupen")
-    ottignies = City.objects.get(name="Ottignies")
-    #~ ans = City.objects.get(name="Ans")
+    # ottignies = City.objects.get(name="Ottignies")
+    # ans = City.objects.get(name="Ans")
     bbach = City.objects.get(name="Bütgenbach")
-    bullingen = City.objects.get(name="Büllingen")
+    # bullingen = City.objects.get(name="Büllingen")
     stvith = City.objects.get(name="Sankt Vith")
-    #~ monschau = City.objects.get(name="Montjoie")
+    # monschau = City.objects.get(name="Montjoie")
+
+    yield City(name="Lontzen", country=BE)
+    yield City(name="Dinant", country=BE)
+    yield City(name="Erezée", country=BE)
 
     #~ stvith = City(name="Sankt Vith",name_fr="Saint-Vith",country=BE)
     #~ yield stvith
@@ -135,6 +139,13 @@ def objects():
         name_nl="Straße- und Mountain Bike Touren",
         name_fr="Randonnées route et Mountain Bike")
     yield f3
+    f4 = Feature(
+        name="Radtag der DG",
+        name_nl="Fietsdag van de DG",
+        name_fr="Journée vélo de la CG")
+    yield f4
+
+    # 2013
 
     yield event(breitensport, 20130324,
                 "18\. Bike-Day  IRMEP-RSK Eupen",
@@ -184,7 +195,8 @@ def objects():
     yield event(trophy, 20130706, '', '', '', cities=["Sankt Vith"])
     #~ yield event(trophy,20130713,'','','',cities=["Ouren"])
     yield event(trophy, 20130824, '', '', '', cities=["Blégny"])
-    yield event(trophy, 20130901, '', '', '', cities=["Kelmis"], url="http://www.vclc.be")
+    yield event(trophy, 20130901, '', '', '', cities=["Kelmis"],
+                url="http://www.vclc.be")
     yield event(trophy, 20130914, '', '', '', cities=["Cerfontaine"])
     yield event(trophy, 20130921, '', '', '', cities=["Burdinne"])
 
@@ -203,3 +215,63 @@ def objects():
       #~ "Merida Cup – 6de manche",
       #~ "Merida Cup – 6e manche",
       #~ cities=["Ouren"])
+
+    yield event(breitensport, 20140323,
+                "19\. Bike-Day  IRMEP-RSK Eupen",
+                "19\. Bike-Day  IRMEP-RSK Eupen",
+                "19e Bike-Day de l'IRMEP-RSK Eupen",
+                f1, f2, f4, place=irmep)
+    yield event(breitensport, 20140504,
+                "25\. Eifel-Biker event",
+                "25\. Eifel-Biker event",
+                "25e event des Eifel-Bikers",
+                f1, f2, f4, place=domaine,
+                url="http://www.eifel-biker.be")
+    yield event(breitensport, 20140605,
+                "Internationale Dreiländerfahrt",
+                "Internationale Drielandentocht",
+                "Randonnée internationale des trois frontières",
+                f3, f2, f4, place=triangel,
+                url="http://www.rsv.be/dreilanderfahrt-2")
+    yield event(breitensport, 20140518,
+                "Radtag der DG",
+                "Fietsdag van de DG",
+                "Journée vélo de la CG", f3, f2,  
+                place=galmei, url="")
+
+    yield event(strasse, 20140523,
+                "1\. Etappe des Triptyque Ardennais",
+                "1\. etappe Triptyque Ardennais",
+                "1e étape du Triptyque Ardennais",
+                cities=["Kelmis", "Büllingen", "Raeren"],
+                url="http://www.cchawy.be/")
+
+    yield event(strasse, 20140524,
+                "2\. Etappe des Triptyque Ardennais",
+                "2\. etappe Triptyque Ardennais",
+                "2e étape du Triptyque Ardennais",
+                cities=["Bütgenbach", "Eupen", "Lontzen"],
+                url="http://www.cchawy.be/")
+
+    yield event(mtb, 20140705,
+                "UCI 2 MTB Rennen",
+                "UCI 2 MTB koers",
+                "Course MTB UCI 2",
+                cities=["Sankt Vith"])
+    yield event(mtb, 20140907,
+                'Wallonia Cup – 6\. Lauf',
+                "Wallonia Cup – 6de manche",
+                "Wallonia Cup – 6e manche",
+                cities=["Eupen"])
+
+    yield event(trophy, 20140315, '', '', '', cities=["Dinant"])
+    yield event(trophy, 20140322, '', '', '', cities=["Thieusies"])
+    yield event(trophy, 20140426, '', '', '', cities=["Cuesmes"])
+    yield event(trophy, 20140518, '', '', '', cities=["Kelmis"])
+    yield event(trophy, 20140608, '', '', '', cities=["La Reid"])
+    yield event(trophy, 20140705, '', '', '', cities=["Sankt Vith"])
+    yield event(trophy, 20140712, '', '', '', cities=["Erezée"])
+    yield event(trophy, 20140823, '', '', '', cities=["Blégny"])
+    yield event(trophy, 20140906, '', '', '', cities=["Eupen"])
+    yield event(trophy, 20140913, '', '', '', cities=["Cerfontaine"])
+    yield event(trophy, 20140920, '', '', '', cities=["Burdinne"])

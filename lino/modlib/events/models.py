@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -18,18 +18,12 @@ The :xfile:`models.py` module of :mod:`lino.modlib.events`.
 
 from __future__ import unicode_literals
 
-import os
-import cgi
 import datetime
 
 from django.db import models
-#~ from django.db.models import Q
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.xmlgen.html import E
-#~ from north import dbutils
-#~ from lino import mixins
 from lino import dd
 from lino.core.constants import _handle_attr_name
 
@@ -63,13 +57,18 @@ class Features(dd.Table):
 
 
 class Type(dd.BabelNamed):
-    #~ pass
+    
     events_column_names = models.CharField(
         max_length="100",
         default="when:30 what:40 where:30")
 
-    def EventsByType(self, **kw):
+    def EventsByType(self, year=None, **kw):
         kw.update(master_instance=self)
+
+        if year is None:
+            year = datetime.date.today().year
+        kw.update(filter=models.Q(date__year=year))
+
         return EventsByType.request(**kw)
 
 
