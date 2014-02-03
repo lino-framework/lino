@@ -121,35 +121,11 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-#~ class Contact(mti.MultiTableBase,CountryCity):
-class Partner(mti.MultiTableBase, CountryRegionCity, dd.Addressable):
-
-    """
-    
-    A :class:`Partner` is anything that can act as a business partner.
-    A Partner has at least a name and usually also one "official" address.
-    Predefined subclasses of Partners are
-    :class:`Person` for physical persons and
-    :class:`Company` for companies, organisations and any kind of 
-    non-formal Partners.
-    
-    
-    Base class for anything that has contact information 
-    (postal address, email, phone,...).
-    
-    """
-
-    """
-    preferred width for ForeignKey fields to a Partner
-    """
-    preferred_foreignkey_width = 20
+class AddressLocation(CountryRegionCity):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('contacts.Partner')
-        verbose_name = _("Partner")
-        verbose_name_plural = _("Partners")
+        abstract = True
 
-    name = models.CharField(max_length=200, verbose_name=_('Name'))
     addr1 = models.CharField(_("Address line before street"),
                              max_length=200, blank=True,
                              help_text="Address line before street")
@@ -171,10 +147,72 @@ class Partner(mti.MultiTableBase, CountryRegionCity, dd.Addressable):
                              max_length=200, blank=True,
                              help_text="Address line to print below street line")
 
-    #~ zip_code = models.CharField(_("Zip code"),
-        #~ max_length=10,blank=True)
-    #~ region = models.CharField(_("Region"),
-        #~ max_length=200,blank=True)
+    def address_location_lines(self):
+        #~ lines = []
+        #~ lines = [self.name]
+        if self.addr1:
+            yield self.addr1
+        if self.street:
+            yield join_words(
+                self.street_prefix, self.street,
+                self.street_no, self.street_box)
+        if self.addr2:
+            yield self.addr2
+
+        af = get_address_formatter(self.country)
+        for ln in af.get_city_lines(self):
+            yield ln
+
+        if self.country is not None:
+            sc = settings.SITE.site_config  # get_site_config()
+            #~ print 20130228, sc.site_company_id
+            if sc.site_company is None or self.country != sc.site_company.country:
+                # (if self.country != sender's country)
+                yield unicode(self.country)
+
+        #~ logger.debug('%s : as_address() -> %r',self,lines)
+
+    def address_location(self, linesep="\n"):
+        """
+        The plain text postal address location part. 
+        Lines are separated by `linesep`.
+        """
+        return linesep.join(self.address_location_lines())
+
+    @dd.displayfield(_("Address"))
+    def address_column(self, request):
+        return self.address_location(', ')
+    #~ address_column.return_type = dd.DisplayField(_("Address"))
+
+
+class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
+
+    """
+    
+    A :class:`Partner` is anything that can act as a business partner.
+    A Partner has at least a name and usually also one "official" address.
+    Predefined subclasses of Partners are
+    :class:`Person` for physical persons and
+    :class:`Company` for companies, organisations and any kind of 
+    non-formal Partners.
+    
+    Base class for anything that has contact information
+    (postal address, email, phone,...).
+    
+    """
+
+    """
+    preferred width for ForeignKey fields to a Partner
+    """
+    preferred_foreignkey_width = 20
+
+    class Meta:
+        abstract = settings.SITE.is_abstract_model('contacts.Partner')
+        verbose_name = _("Partner")
+        verbose_name_plural = _("Partners")
+
+    name = models.CharField(max_length=200, verbose_name=_('Name'))
+
     language = dd.LanguageField()
 
     email = models.EmailField(_('E-Mail'), blank=True)  # ,null=True)
@@ -234,43 +272,6 @@ but e.g. :class:`PersonMixin` overrides this.
             #~ pass
         return self.name
     full_name = property(get_full_name)
-
-    def address_location_lines(self):
-        #~ lines = []
-        #~ lines = [self.name]
-        if self.addr1:
-            yield self.addr1
-        if self.street:
-            yield join_words(
-                self.street_prefix, self.street,
-                self.street_no, self.street_box)
-        if self.addr2:
-            yield self.addr2
-
-        af = get_address_formatter(self.country)
-        for ln in af.get_city_lines(self):
-            yield ln
-
-        if self.country is not None:
-            sc = settings.SITE.site_config  # get_site_config()
-            #~ print 20130228, sc.site_company_id
-            if sc.site_company is None or self.country != sc.site_company.country:
-                # (if self.country != sender's country)
-                yield unicode(self.country)
-
-        #~ logger.debug('%s : as_address() -> %r',self,lines)
-
-    def address_location(self, linesep="\n"):
-        """
-        The plain text postal address location part. 
-        Lines are separated by `linesep`.
-        """
-        return linesep.join(self.address_location_lines())
-
-    @dd.displayfield(_("Address"))
-    def address_column(self, request):
-        return self.address_location(', ')
-    #~ address_column.return_type = dd.DisplayField(_("Address"))
 
     @dd.displayfield(_("Name"))
     def name_column(self, request):
