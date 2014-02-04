@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -83,7 +83,8 @@ class HtmlRenderer(object):
         #~ return ar.table2xhtml(**kw)
         return E.tostring(ar.table2xhtml(**kw))
 
-    def href_button_action(self, ba, url, text=None, title=None, icon_name=NOT_GIVEN, **kw):
+    def href_button_action(
+            self, ba, url, text=None, title=None, icon_name=NOT_GIVEN, **kw):
         """
         changed 20130905 for "Must read eID card button"
         but that caused icons to not appear in workflow_buttons.

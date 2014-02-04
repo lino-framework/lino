@@ -3,5 +3,24 @@
 ====================================
 
 Continued on model :ref:`welfare.pcsw.ClientAddress`.
-I need user feedback about how to layout all this new data
-(and coming data, e.g. personal links)
+
+Checkin and upgrade on testlino for Gerd because I need user feedback
+about how to layout all this new data (and coming data, e.g. personal
+links).
+
+
+:manage:`watch_tim` made an AssertionError when ``len(IdMut)`` was
+not 3. Now it returns `None` in that case.
+
+
+
+
+
+      { "itemId": "create_event_actions", 
+        "menu_item_text": "Find date with...", 
+        "must_save": true, "tooltip": "Find date with...", 
+        "panel_btn_handler": Lino.row_action_handler('create_event_actions','GET',null),
+        "iconCls": "x-tbar-calendar", 
+        "overflowText": "Find date with...", 
+        "auto_save": true }, 
+

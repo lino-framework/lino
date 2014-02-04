@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -220,33 +220,36 @@ class ExtRenderer(HtmlRenderer):
         """
         ``kw`` may contain additional html attributes like `style`
         """
+        if not label:
+            label = ba.action.label
         if ba.action.parameters:
             st = self.get_action_status(ar, ba, obj)
-            #~ st.update(record_id=obj.pk)
-            return self.window_action_button(ar.request, ba, st, label or ba.action.label, **kw)
+            return self.window_action_button(
+                ar.request, ba, st, label, **kw)
         if ba.action.opens_a_window:
             st = ar.get_status()
             if obj is not None:
                 st.update(record_id=obj.pk)
-            return self.window_action_button(ar.request, ba, st, label or ba.action.label, **kw)
+            return self.window_action_button(
+                ar.request,
+                ba, st, label, **kw)
         return self.row_action_button(obj, ar.request, ba, label, **kw)
 
     def request_handler(self, ar, *args, **kw):
         st = ar.get_status(**kw)
         return self.action_call(ar.request, ar.bound_action, st)
 
-    def window_action_button(self, request, ba, after_show={}, label=None, title=None, **kw):
+    def window_action_button(
+            self, request, ba, after_show={},
+            label=None, title=None, **kw):
         """
         Return a HTML chunk for a button that will execute this
         action using a *Javascript* link to this action.
         """
         label = unicode(label or ba.get_button_label())
-        url = 'javascript:' + self.action_call(request, ba, after_show)
-        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button_action(ba, url, label, title or ba.action.help_text, **kw)
-        #~ if a.action.help_text:
-            #~ return self.href_button(url,label,a.action.help_text)
-        #~ return self.href_button(url,label)
+        href = 'javascript:' + self.action_call(request, ba, after_show)
+        return self.href_button_action(
+            ba, href, label, title or ba.action.help_text, **kw)
 
     def row_action_button(self, obj, request, ba, label=None, title=None, **kw):
         """

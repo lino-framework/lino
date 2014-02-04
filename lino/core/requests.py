@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -17,37 +17,19 @@ Defines classes :class:`BaseRequest` and :class:`ActionRequest`.
 import logging
 logger = logging.getLogger(__name__)
 
-import traceback
-#~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
-#~ from north.dbutils import set_language
-from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
-from django.db import models
-#~ from django.core.mail import EmailMultiAlternatives
 from django.core.mail import EmailMessage
 
 
 import lino
 from lino.utils import AttrDict
-from lino.utils import curry
-#~ from lino.utils import jsgen
-#~ from lino.utils import Warning
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
 
 from lino.core import constants as ext_requests
 
-from lino.core.dbutils import resolve_model, resolve_app
-from lino.core import layouts
-#~ from lino.core import changes
-from lino.core import fields
-from lino.core import actions
-
-#~ from lino.core.perms import UserLevels
-#~ from lino.core import perms
+from lino.core.dbutils import resolve_app
 
 
 class VirtualRow(object):
@@ -483,10 +465,12 @@ class BaseRequest(object):
         return self.renderer.put_button(self, obj, text, data, **kw)
 
     def as_button(self, *args, **kw):
+        """Return a button which when activated executes (a copy of)
+        this request.
+
         """
-        Return a button which when activated would execute (a copy of) this request.
-        """
-        return self.renderer.action_button(None, self, self.bound_action, *args, **kw)
+        return self.renderer.action_button(
+            None, self, self.bound_action, *args, **kw)
 
 
 class ActionRequest(BaseRequest):

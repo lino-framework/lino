@@ -77,10 +77,10 @@ Defining your own ChoiceLists
 
 `add_item` takes at least 2 and optionally a third positional argument:
 
-- The `value` is used to store this Choice in the database and for 
+- The `value` is used to store this Choice in the database and for
   sorting the choices.
 - The `text` is what the user sees. It should be translatable.
-- The optional `name` is used to install this choice as a class 
+- The optional `name` is used to install this choice as a class
   attribute on the ChoiceList.
 
   
@@ -95,15 +95,15 @@ ChoiceListField
 
 Example on how to use a ChoiceList in your model::
 
-  from django.db import models 
+  from django.db import models
   from lino.modlib.properties.models import HowWell
   
   class KnownLanguage(models.Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
       written = HowWell.field(verbose_name=_("written"))
 
-Every user-defined subclass of ChoiceList is also 
-automatically available as a property value in 
+Every user-defined subclass of ChoiceList is also
+automatically available as a property value in
 :mod:`lino.modlib.properties`.
 
 """
@@ -134,7 +134,7 @@ from lino.core import fields
 class Choice(object):
 
     """
-    A constant (hard-coded) value whose unicode representation 
+    A constant (hard-coded) value whose unicode representation
     depends on the current babel language at runtime.
     Used by :class:`ChoiceList`.
 
