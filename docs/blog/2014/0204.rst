@@ -13,14 +13,17 @@ links).
 not 3. Now it returns `None` in that case.
 
 
+Lino has a new app: :mod:`lino.modlib.humanlinks` which adds two
+tables :ref:`welfare.humanlink.ParentsByHuman` and
+:ref:`welfare.humanlink.ChildrenByHuman`.
 
+:ref:`welfare.reception.Clients` no longer has its own
+`detail_layout`.  Although this was a nice demo of what Lino can do,
+it seems that it is already hard enough do remember the layout of
+every detail of an application, but when you also need to
+differentiate between the calling table, then it gets too much
+complexity...
 
-
-      { "itemId": "create_event_actions", 
-        "menu_item_text": "Find date with...", 
-        "must_save": true, "tooltip": "Find date with...", 
-        "panel_btn_handler": Lino.row_action_handler('create_event_actions','GET',null),
-        "iconCls": "x-tbar-calendar", 
-        "overflowText": "Find date with...", 
-        "auto_save": true }, 
+All these changes required some rather serious changes in the layouts
+of ClientDetail.
 

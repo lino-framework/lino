@@ -1,1 +1,24 @@
+/home/luc/hgwork/lino/docs/api/lino.modlib.humanlinks.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.humanlinks.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 63, in <module>
+    class Link(dd.Sequenced):
+  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 71, in Link
+    dd.apps.humanlinks.human_model,
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'humanlinks' (keys are sales, ledger, accounts, djangosite, contacts, system, extjs, households, contenttypes, postings, vat, extensible, north, users, sessions, pages, concepts, lino, outbox, properties, about, countries, plain, notes, courses, products, uploads, cal, changes)
+/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:5: WARNING: Field list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/modlib/beid/__init__.py:docstring of lino.modlib.beid:12: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
+/home/luc/hgwork/lino/docs/api/lino.projects.igen.settings.rst:7: WARNING: unknown document: /igen/index
+/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
+/home/luc/hgwork/lino/docs/api/lino.utils.mti.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:16: WARNING: undefined label: welfare.humanlink.parentsbyhuman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:16: WARNING: undefined label: welfare.humanlink.childrenbyhuman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')
