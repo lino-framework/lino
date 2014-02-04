@@ -1571,7 +1571,7 @@ Lino.notify = function(msg) {
   });
   {% else %}
     if (msg == undefined) return;
-    Lino.alert(msg);
+    // Lino.alert(msg);
   {% endif %}
 };
 

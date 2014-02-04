@@ -1,0 +1,7 @@
+====================================
+20140204 (Tuesday, 04 February 2014)
+====================================
+
+Continued on model :ref:`welfare.pcsw.ClientAddress`.
+I need user feedback about how to layout all this new data
+(and coming data, e.g. personal links)
