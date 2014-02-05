@@ -43,7 +43,7 @@ class LinkType(dd.Choice):
         if human is None: return self.text
         return human.mf(self.mctext, self.fctext)
 
-    
+
 class LinkTypes(dd.ChoiceList):
     verbose_name_plural = _("Link type")
     item_class = LinkType

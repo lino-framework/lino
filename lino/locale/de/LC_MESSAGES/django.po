@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-04 14:03+0200\n"
-"PO-Revision-Date: 2014-02-04 14:07+0300\n"
+"PO-Revision-Date: 2014-02-05 02:12+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -625,9 +625,8 @@ msgstr ""
 
 #: lino/mixins/__init__.py:547 lino/modlib/humanlinks/models.py:72
 #: lino/modlib/tickets/models.py:128
-#, fuzzy
 msgid "Parent"
-msgstr "Drucken"
+msgstr "Vater/Mutter"
 
 #: lino/mixins/__init__.py:672
 msgid "Reference"
@@ -2655,11 +2654,11 @@ msgstr "Themen"
 
 #: lino/modlib/courses/models.py:157
 msgid "Course Line"
-msgstr "Kurs-Serie"
+msgstr "Kursserie"
 
 #: lino/modlib/courses/models.py:158
 msgid "Course Lines"
-msgstr "Kurs-Serien"
+msgstr "Kursserien"
 
 #: lino/modlib/courses/models.py:168 lino/modlib/rooms/models.py:90
 msgid "The Event Type to which events will be generated."

@@ -251,7 +251,8 @@ class ExtRenderer(HtmlRenderer):
         return self.href_button_action(
             ba, href, label, title or ba.action.help_text, **kw)
 
-    def row_action_button(self, obj, request, ba, label=None, title=None, **kw):
+    def row_action_button(
+            self, obj, request, ba, label=None, title=None, **kw):
         """
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
@@ -1608,18 +1609,33 @@ tinymce.init({
         yield "});"
         yield ""
 
-    def js_render_custom_action(self, rh, action):
+    def unused_js_render_custom_action(self, rh, action):  # until 20140204
+        """Defines the non-window action handler used by
+        :meth:`row_action_button`
         """
-        Defines the non-window action handler used by :meth:`row_action_button`
-        """
-        # 20120723 : removed useless js param "action"
-        # 20130726 added http_method and preprocessor
         yield "Lino.%s = function(rp,pk) { " % action.full_name()
-        url = ext_elems.rpt2url(rh.actor)
+        uri = ext_elems.rpt2url(rh.actor)
         yield "  Lino.run_row_action(rp,%s,%s,pk,%s,%s);" % (
-            py2js(url), py2js(action.action.http_method),
+            py2js(uri), py2js(action.action.http_method),
             py2js(action.action.action_name),
             action.action.preprocessor)
+        yield "};"
+
+    def js_render_custom_action(self, rh, action):
+        """Defines the non-window action handler used by
+        :meth:`row_action_button`
+        """
+        yield "Lino.%s = function(rp,pk) { " % action.full_name()
+        yield "  var h = function() { "
+        uri = ext_elems.rpt2url(rh.actor)
+        yield "    Lino.run_row_action(rp,%s,%s,pk,%s,%s);" % (
+            py2js(uri), py2js(action.action.http_method),
+            py2js(action.action.action_name),
+            action.action.preprocessor)
+        yield "  };"
+        yield "  var panel = Ext.getCmp(rp);"
+        # yield "  panel.do_when_clean.createDelegate(panel,[true,h])();"
+        yield "  panel.do_when_clean(true,h);"
         yield "};"
 
     #~ def js_render_window_action(self,rh,action,user):

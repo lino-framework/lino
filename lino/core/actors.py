@@ -1541,11 +1541,6 @@ class Actor(actions.Parametrizable):
         """
         return []
 
-    #~ @fields.displayfield(_("Actions"))
-    #~ def action_buttons(self,obj,ar):
-        #~ return E.p(*join_elems([
-            #~ settings.SITE.ui.row_action_button(obj,ar.request,ba)
-                #~ for ba in ar.actor.get_row_actions(ar,obj)]))
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, obj, ar):
         """

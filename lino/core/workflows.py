@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -18,20 +18,11 @@ Defines classes
 :class:`ChangeStateAction`
 """
 
-import sys
-
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.utils.functional import lazy
-from django.db import models
 
 from lino.core import actions
-from lino.core import actors
-#~ from lino.core import signals
-#~ from lino.core import changes
-
-from lino.utils import curry, unicode_string
 from lino.core import choicelists
 
 

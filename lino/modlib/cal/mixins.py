@@ -159,9 +159,7 @@ class StartedSummaryDescription(Started):
 
 
 class UpdateReminders(actions.Action):
-    #~ url_action_name = 'update_reminders'
     label = _('Update Events')
-    #~ label = _('Update Reminders')
     show_in_row_actions = True
     icon_name = 'lightning'
 
@@ -174,7 +172,7 @@ class UpdateReminders(actions.Action):
             if not ar.response.get('success'):
                 ar.info("Aborting remaining rows")
                 break
-            ar.info("Updating reminders for %s...", unicode(obj))
+            ar.info("Updating events for %s...", unicode(obj))
             n += obj.update_reminders(ar)
             ar.response.update(refresh_all=True)
 
@@ -197,18 +195,7 @@ class EventGenerator(mixins.UserAuthored):
         abstract = True
 
     do_update_reminders = UpdateReminders()
-    #~ holiday_calendar = dd.ForeignKey('cal.Calendar',
-        #~ verbose_name=_("Holiday calendar"),
-        #~ related_name="%(app_label)s_%(class)s_set_by_event_generator",
-        #~ null=True,blank=True,
-        #~ help_text=_("""Holiday calendar to which events will be generated."""))
 
-    #~ def save(self,*args,**kw):
-        #~ super(EventGenerator,self).save(*args,**kw)
-        #~ if self.user is None:
-            #~ self.update_reminders()
-        #~ else:
-            #~ dbutils.run_with_language(self.user.language,self.update_reminders)
     @classmethod
     def get_registrable_fields(cls, site):
         for f in super(EventGenerator, cls).get_registrable_fields(site):
@@ -265,11 +252,10 @@ class EventGenerator(mixins.UserAuthored):
         return self.update_auto_events(ar)
 
     def update_auto_events(self, ar):
-        """
-        Generate automatic calendar events owned by this contract.
+        """Generate automatic calendar events owned by this contract.
 
-        [NOTE1] if one event has been manually rescheduled, all following events
-        adapt to the new rythm.
+        [NOTE1] if one event has been manually rescheduled, all
+        following events adapt to the new rythm.
 
         """
         if settings.SITE.loading_from_dump:
@@ -589,6 +575,10 @@ class Reservation(RecurrenceSet, EventGenerator, dd.Registrable):
             yield f
         yield 'room'
         yield 'max_date'
+
+    def after_state_change(self, ar, old, target_state):
+        super(Reservation, self).after_state_change(ar, old, target_state)
+        self.update_reminders(ar)
 
     #~ def after_ui_save(self,ar):
         #~ super(Reservation,self).after_ui_save(ar)

@@ -80,7 +80,8 @@ class EventStates(dd.Workflow):
 
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',
-    help_text=_("Automatically suggested. Default state of an automatic event."))
+    help_text=_("Automatically suggested. \
+    Default state of an automatic event."))
 add('20', _("Draft"), 'draft')
 if False:
     add('40', _("Published"), 'published')

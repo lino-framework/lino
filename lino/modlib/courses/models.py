@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -27,35 +27,17 @@ ZERO = Decimal()
 ONE = Decimal(1)
 
 from django.db import models
-from django.db.models import Q
-from django.db.utils import DatabaseError
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-from django.utils.translation import string_concat
-from django.utils.encoding import force_unicode
-from django.utils.functional import lazy
-
-from django.contrib.contenttypes.models import ContentType
-
-#~ import lino
-#~ logger.debug(__file__+' : started')
-#~ from django.utils import translation
 
 from north.dbutils import day_and_month
 
-#~ from lino import reports
 from lino import dd
-#~ from lino import layouts
-#~ from lino.utils import printable
 from lino import mixins
 from lino.utils.choosers import chooser
 from lino.utils import mti
-from lino.mixins.printable import DirectPrintAction, Printable
-#~ from lino.mixins.reminder import ReminderEntry
-from lino.core.dbutils import obj2str
 
 from ..contacts.utils import parse_name
 
@@ -63,12 +45,10 @@ users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
-#~ Company = dd.resolve_model('contacts.Company',strict=True)
-#~ print '20130219 lino.modlib.courses 2'
 
 """
 Here we must use `resolve_model` with `strict=True`
-because we want the concrete model 
+because we want the concrete model
 and we don't know whether it is overridden
 by this application.
 """
@@ -159,12 +139,14 @@ class Line(dd.BabelNamed):
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
-    every_unit = cal.Recurrencies.field(_("Recurrency"),
-                                    default=cal.Recurrencies.weekly,
-                                    blank=True)  # iCal:DURATION
+    every_unit = cal.Recurrencies.field(
+        _("Recurrency"),
+        default=cal.Recurrencies.weekly,
+        blank=True)  # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=1)
 
-    event_type = dd.ForeignKey('cal.EventType', null=True, blank=True,
+    event_type = dd.ForeignKey(
+        'cal.EventType', null=True, blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
 
     tariff = dd.ForeignKey('products.Product',
@@ -177,14 +159,14 @@ class Lines(dd.Table):
     model = Line
     required = dd.required(user_level='manager')
     detail_layout = """
-    id name 
-    tariff event_type every_unit every 
+    id name
+    tariff event_type every_unit every
     description
     courses.CoursesByLine
     """
     insert_layout = dd.FormLayout("""
     name
-    every_unit every 
+    every_unit every
     # tariff event_type
     description
     """, window_size=(70, 16))
@@ -234,12 +216,8 @@ class Teacher(Person):
 class TeacherDetail(contacts.PersonDetail):
     general = dd.Panel(contacts.PersonDetail.main, label=_("General"))
     box5 = "remarks"
-    main = "general courses.CoursesByTeacher courses.EventsByTeacher cal.GuestsByPartner"
-
-    #~ def setup_handle(self,lh):
-
-        #~ lh.general.label = _("General")
-        #~ lh.notes.label = _("Notes")
+    main = "general courses.CoursesByTeacher \
+    courses.EventsByTeacher cal.GuestsByPartner"
 
 
 class Teachers(contacts.Persons):

@@ -100,14 +100,17 @@ def my_enrolment_workflows(sender=None, **kw):
 
     EnrolmentStates.confirmed.add_transition(ConfirmEnrolment)
     EnrolmentStates.certified.add_transition(CertifyEnrolment)
-    EnrolmentStates.cancelled.add_transition(_("Cancel"), states="confirmed")
+    EnrolmentStates.cancelled.add_transition(
+        _("Cancel"), states="confirmed")
 
-    CourseStates.registered.add_transition(states="draft")
+    CourseStates.registered.add_transition(
+        # _("Register"), 
+        states="draft")
     CourseStates.started.add_transition(states="registered")
     CourseStates.ended.add_transition(states="started")
     CourseStates.cancelled.add_transition(
-        _("Cancel"),
+        # _("Cancel"),
         states="registered started ended")
     CourseStates.draft.add_transition(
-        _("Reset"),
+        # _("Reset"),
         states="registered started ended cancelled")
