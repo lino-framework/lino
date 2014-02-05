@@ -202,6 +202,8 @@ class EventTypes(dd.Table):
         #~ self.owner = owner
         #~ self.start_time = start_time
         #~ self.end_time = end_time
+
+
 class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
 
     """
@@ -243,17 +245,19 @@ class RecurrentEvents(dd.Table):
     """
     model = 'cal.RecurrentEvent'
     required = dd.required(user_groups='office', user_level='manager')
-    column_names = "name every_unit event_type *"
+    column_names = "start_date name every_unit event_type *"
     auto_fit_column_widths = True
+    order_by = ['start_date']
 
     insert_layout = """
     name
     user event_type
     """
+
     detail_layout = """
-    id user event_type name 
+    id user event_type name
     start_date start_time  end_date end_time
-    max_events every_unit every 
+    max_events every_unit every
     monday tuesday wednesday thursday friday saturday sunday
     description cal.EventsByController
     """

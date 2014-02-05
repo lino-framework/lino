@@ -141,7 +141,7 @@ class Line(dd.BabelNamed):
 
     every_unit = cal.Recurrencies.field(
         _("Recurrency"),
-        default=cal.Recurrencies.weekly,
+        default=cal.Recurrencies.per_weekday,
         blank=True)  # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=1)
 
@@ -167,7 +167,7 @@ class Lines(dd.Table):
     insert_layout = dd.FormLayout("""
     name
     every_unit every
-    # tariff event_type
+    tariff event_type
     description
     """, window_size=(70, 16))
 

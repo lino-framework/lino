@@ -391,13 +391,6 @@ class EventGenerator(mixins.UserAuthored):
                         start_time=rset.start_time,
                         end_time=rset.end_time)
 
-                    #~ for cal in self.get_conflict_calendars():
-                    #~ if cal is not None:
-                        #~ while cal.conflicts_with_event(we):
-                                #~ date = rset.get_next_date(date)
-                                #~ if date is None or date > until:
-                                    #~ return wanted
-                                #~ we.start_date = date
                     while we.has_conflicting_events():
                         ar.info("%s conflicts with %s. ", self,
                                 we.get_conflicting_events())

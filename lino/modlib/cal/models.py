@@ -615,8 +615,6 @@ def unused_site_setup(site):
         required=dict(user_groups='office'))
 
 
-
-
 def setup_main_menu(site, ui, profile, m):
     m = m.add_menu("cal", MODULE_LABEL)
 

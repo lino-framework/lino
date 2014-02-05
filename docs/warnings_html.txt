@@ -9,7 +9,4 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
     name, ', '.join(self.keys())))
 AttributeError: AttrDict instance has no key 'humanlinks' (keys are sales, ledger, accounts, djangosite, contacts, system, extjs, households, contenttypes, postings, vat, extensible, north, users, sessions, pages, concepts, lino, outbox, properties, about, countries, plain, notes, courses, products, uploads, cal, changes)
-/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
-/home/luc/hgwork/lino/docs/blog/2014/0204.rst:21: WARNING: undefined label: welfare.humanlink.parentsbyhuman (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2014/0204.rst:21: WARNING: undefined label: welfare.humanlink.childrenbyhuman (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

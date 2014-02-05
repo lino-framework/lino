@@ -2895,6 +2895,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ }
       
     Lino.FormPanel.superclass.initComponent.call(this);
+
+    // this.on('show',
+    //         function(){ this.init_focus();}, 
+    //         this);
     
     this.on('render',function(){
       this.loadMask = new Ext.LoadMask(this.bwrap,{msg:"{{_('Please wait...')}}"});
@@ -2929,6 +2933,19 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     
   },
   
+  unused_init_focus : function(){ 
+    // set focus to the first field
+    console.log("20140205 Lino.FormPanel.init_focus");
+    // Lino.FormPanel.superclass.focus.call(this);
+    this.getForm().items.each(function(f){
+        if(f.isFormField && f.rendered){ 
+            f.focus();
+            console.log("20140205 focus", f);
+            return false;
+        }
+    });
+  },
+
   get_status : function(){
       var st = {
         base_params: this.get_base_params(),
@@ -2982,6 +2999,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     } else {
       this.set_current_record(undefined);
     }
+    // this.init_focus()
   },
     
   get_base_params : function() {
@@ -3361,16 +3379,27 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   ,on_cancel : function() { 
     this.get_containing_window().close();
   }
-  ,on_ok : function() { 
+  // ,on_ok : function() { }
+  ,on_ctrl_s : function() { 
+      
       this.save(null,true);
-      //~ var rec = this.get_current_record();
-      //~ if (rec && rec.phantom)
-          //~ this.do_when_clean(true,function() { Lino.close_window(); });
   }
   ,config_containing_window : function(wincfg) { 
+
+    this.getForm().items.each(function(f){
+        if(f.isFormField){ 
+            wincfg.defaultButton = f;
+            // console.log("20140205 defaultButton", f);
+            return false;
+        }
+    });
+
       wincfg.keys = [
-        { key: Ext.EventObject.ENTER, fn: this.on_ok, scope:this }
-        ,{ key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
+        // { key: Ext.EventObject.ENTER, fn: this.on_ok, scope:this }
+        { key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
+        ,{ key: 's', ctrl: true, 
+           stopEvent: true,
+           fn: this.on_ctrl_s, scope:this }
       ]
   }
   

@@ -225,14 +225,14 @@ def objects():
                 "25\. Eifel-Biker event",
                 "25\. Eifel-Biker event",
                 "25e event des Eifel-Bikers",
-                f1, f2, f4, place=domaine,
-                url="http://www.eifel-biker.be")
+                f1, f2, f4, place=domaine)
+                # url="http://www.eifel-biker.be")
     yield event(breitensport, 20140605,
                 "Internationale Dreiländerfahrt",
                 "Internationale Drielandentocht",
                 "Randonnée internationale des trois frontières",
-                f3, f2, f4, place=triangel,
-                url="http://www.rsv.be/dreilanderfahrt-2")
+                f3, f2, f4, place=triangel)
+                # url="http://www.rsv.be/dreilanderfahrt-2")
     yield event(breitensport, 20140518,
                 "Radtag der DG",
                 "Fietsdag van de DG",
@@ -243,15 +243,15 @@ def objects():
                 "1\. Etappe des Triptyque Ardennais",
                 "1\. etappe Triptyque Ardennais",
                 "1e étape du Triptyque Ardennais",
-                cities=["Kelmis", "Büllingen", "Raeren"],
-                url="http://www.cchawy.be/")
+                cities=["Kelmis", "Büllingen", "Raeren"])
+                # url="http://www.cchawy.be/")
 
     yield event(strasse, 20140524,
                 "2\. Etappe des Triptyque Ardennais",
                 "2\. etappe Triptyque Ardennais",
                 "2e étape du Triptyque Ardennais",
-                cities=["Bütgenbach", "Eupen", "Lontzen"],
-                url="http://www.cchawy.be/")
+                cities=["Bütgenbach", "Eupen", "Lontzen"])
+                # url="http://www.cchawy.be/")
 
     yield event(mtb, 20140705,
                 "UCI 2 MTB Rennen",

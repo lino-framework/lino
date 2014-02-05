@@ -4,3 +4,27 @@
 
 Committed yesterday's changes at 02:21.
 
+Continued to work for :ref:`faggio`:
+
+- Noch eine Benutzerfrage zu :ref:`faggio`:
+  :ref:`faq.delete_event`
+
+- Periodische Termine : Tabelle ist jetzt sortiert nach Beginndatum.
+
+
+Some subtle optimizations in the ExtJS code: 
+
+- After clicking the Insert button, the keyboard focus is now on
+  the first field of the FormPanel.
+
+- When in a text field, pressing ENTER saved the record instead of
+  inserting a newline. I completely removed the binding ENTER -> save(), 
+  and instead added a binding Ctrl-S to do that.
+
+
+TODO:
+
+Wenn man einen automatisch generierten Termin löscht, dann sollte Lino
+dies als "Stunde fällt aus, ist aber nicht storniert, sondern wird in
+der Woche darauf nachgeholt" verstehen und automatisch die folgenden
+Termine neu nummerieren.

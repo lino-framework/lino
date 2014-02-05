@@ -22,6 +22,7 @@ import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 
 from lino.utils.xmlgen.html import E
 from lino import dd
@@ -118,7 +119,7 @@ class Events(dd.Table):
     StagesByEvent FeaturesByEvent
     """
 
-    @dd.displayfield(_("When"))
+    @dd.displayfield(string_concat(_("When"), "?"))
     def when(self, obj, ar):
         #~ rv = dbutils.dtosl(obj.date)
         rv = dd.fdf(obj.date)
@@ -128,14 +129,14 @@ class Events(dd.Table):
             rv = E.a(rv, href=obj.url)
         return rv
 
-    @dd.displayfield(_("Where"))
+    @dd.displayfield(string_concat(_("Where"), "?"))
     def where(self, obj, ar):
         if obj.place is not None:
             return E.p(unicode(obj.place), ' ', E.b(unicode(obj.place.city)))
         # remember: "von Ans nach Eupen und nicht andersrum"
         return E.p(*sepjoin(obj.stages.order_by('seqno'), ' -- '))
 
-    @dd.displayfield(_("What"))
+    @dd.displayfield(string_concat(_("What"), "?"))
     def what(self, obj, ar):
         chunks = []
         if obj.name:
