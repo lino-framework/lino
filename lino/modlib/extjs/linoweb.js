@@ -2741,7 +2741,15 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   ,config_containing_window : function(wincfg) { 
       wincfg.title = this.window_title;
       wincfg.keys = [
-        { key: Ext.EventObject.ENTER, fn: this.on_ok }
+        {
+            key: Ext.EventObject.ENTER,
+            fn: function(key, e) {
+                if(e.target.type === 'textarea' && !e.ctrlKey) {
+                    return true;
+                }
+                this.on_ok();
+            }
+        }
       ]
   }
 });
@@ -3367,10 +3375,27 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //~ if (rec && rec.phantom)
           //~ this.do_when_clean(true,function() { Lino.close_window(); });
   }
-  ,config_containing_window : function(wincfg) { 
+  ,config_containing_window : function(wincfg) {
       wincfg.keys = [
-        { key: Ext.EventObject.ENTER, fn: this.on_ok, scope:this }
-        ,{ key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
+        {
+            key: Ext.EventObject.ENTER,
+            fn: function(key, e) {
+                if(e.target.type === 'textarea' && !e.ctrlKey) {
+                    return true;
+                }
+                this.on_ok(e);
+            },
+            scope:this
+        },{
+            key: Ext.EventObject.ESCAPE,
+            fn: function(key, e) {
+                if(e.target.type === 'textarea' && !e.ctrlKey) {
+                    return true;
+                }
+                this.on_ok(e);
+            },
+            scope:this
+          }
       ]
   }
   
