@@ -237,11 +237,15 @@ class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
 
     def on_create(self, ar):
         self.language = ar.get_user().language
+        if not self.country:
+            sc = settings.SITE.site_config
+            if sc.site_company:
+                self.country = sc.site_company.country
         super(Partner, self).on_create(ar)
 
     def save(self, *args, **kw):
         if self.id is None:
-            sc = settings.SITE.site_config  # get_site_config()
+            sc = settings.SITE.site_config
             if sc.next_partner_id is not None:
                 self.id = sc.next_partner_id
                 sc.next_partner_id += 1
@@ -861,9 +865,12 @@ dd.inject_field(
     models.ForeignKey(
         "contacts.Company",
         blank=True, null=True,
-        verbose_name=_("The company that runs this site"),
+        verbose_name=_("Site owner"),
         related_name='site_company_sites',
-        help_text=_("The Company to be used as sender in documents.")))
+        help_text=_("""The organisation who runs this site.
+        This is used e.g. as sender in documents.
+        Or, newly created partners inherit the country of the site owner.
+        """)))
 
 
 #~ dd.inject_field(Partner,

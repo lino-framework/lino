@@ -159,3 +159,16 @@ I don't know whether this was intended, but it suits me very well: I
 can now set `forceSelection` to some non-empty text and voilà:
 `forceSelection` is enabled, but :kbd`TAB` now selects the value
 before jumping to the next field.
+
+
+Miscellaneous
+-------------
+
+.. currentlanguage: de
+
+- Bei Auswahl Kursleiter steht jetzt nicht mehr die Kursleiterart in
+  Klammern hinter dem Namen.
+- Kursserie einfügen: auch Felder Thema und Kursleiter
+- Neue Partner (Kursleiter, Schüler, Organisationen, sonstige) haben
+  jetzt par défaut "Belgien" als Land (genauer gesagt das Land des
+  Datenbankbesitzers (:ref:`faggio.system.SiteConfig`)

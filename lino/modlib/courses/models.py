@@ -203,15 +203,8 @@ class Teacher(Person):
     teacher_type = dd.ForeignKey('courses.TeacherType', blank=True, null=True)
 
     def __unicode__(self):
-        s = self.get_full_name(salutation=False)
-        if self.teacher_type:
-            s += " (%s)" % self.teacher_type.ref
-        return s
+        return self.get_full_name(salutation=False)
 
-
-    #~ def __unicode__(self):
-        #~ return self.get_full_name(salutation=False)
-        #~ return self.last_name
 
 class TeacherDetail(contacts.PersonDetail):
     general = dd.Panel(contacts.PersonDetail.main, label=_("General"))
@@ -930,11 +923,6 @@ dd.inject_field(
         'courses.Pupil',
         verbose_name=_("is a pupil"),
         help_text=_("Whether this Person is also a Pupil.")))
-
-# from lino.modlib.courses import 
-
-#~ MODULE_LABEL = _("Courses")
-
 
 def setup_main_menu(site, ui, profile, main):
     m = main.get_item("contacts")
