@@ -84,6 +84,7 @@ def site_setup(self):
     self.__class__.list_templates = list_templates
 
     loaders = []
+    prefix_loaders = {}
 
     paths = list(self.get_settings_subdirs(SUBDIR_NAME))
     if self.is_local_project_dir:
@@ -97,8 +98,12 @@ def site_setup(self):
     def func(name, m):
         #~ logger.info("20130717 jinja loader %s %s",name,SUBDIR_NAME)
         if isdir(join(dirname(m.__file__), SUBDIR_NAME)):
-            loaders.append(jinja2.PackageLoader(name, SUBDIR_NAME))
+            loader = jinja2.PackageLoader(name, SUBDIR_NAME)
+            loaders.append(loader)
+            prefix_loaders[name] = loader
     self.for_each_app(func)
+
+    loaders.insert(0, jinja2.PrefixLoader(prefix_loaders, delimiter=":"))
 
     #~ loaders = reversed(loaders)
     #~ print 20130109, loaders
