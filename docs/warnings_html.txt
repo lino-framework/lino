@@ -1,12 +1,1 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.humanlinks.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.humanlinks.models'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 63, in <module>
-    class Link(dd.Sequenced):
-  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 71, in Link
-    dd.apps.humanlinks.human_model,
-  File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
-    name, ', '.join(self.keys())))
-AttributeError: AttrDict instance has no key 'humanlinks' (keys are sales, ledger, accounts, djangosite, contacts, system, extjs, households, contenttypes, postings, vat, extensible, north, users, sessions, pages, concepts, lino, outbox, properties, about, countries, plain, notes, courses, products, uploads, cal, changes)
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

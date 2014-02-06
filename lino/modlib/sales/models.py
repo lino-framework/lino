@@ -516,7 +516,8 @@ def add_voucher_type(sender, **kw):
             #~ related_name='customers_account'))
 
 
-MODULE_LABEL = _("Sales")
+MODULE_LABEL = dd.apps.sales.verbose_name  # _("Sales")
+
 
 def site_setup(site):
     if site.is_installed('products'):
@@ -526,18 +527,24 @@ def site_setup(site):
             sales.InvoiceItemsByProduct
             """,
             label=MODULE_LABEL)
-    #~ for t in (site.modules.partners.Partners,
-              #~ site.modules.partners.Persons,
-              #~ site.modules.partners.Organisations):
-    for m in dd.models_by_base(site.modules.contacts.Partner):
-        t = m.get_default_table()
-        if not hasattr(t.detail_layout, 'sales'):
-            t.add_detail_tab(
-                "sales", """
-                invoicing_address vat_id vat_regime payment_term
-                sales.InvoicesByPartner
-                """,
-                label=MODULE_LABEL)
+    # for m in dd.models_by_base(site.modules.contacts.Partner):
+    #     t = m.get_default_table()
+    #     if not hasattr(t.detail_layout, 'sales'):
+    #         t.add_detail_tab(
+    #             "sales", """
+    #             invoicing_address vat_id vat_regime payment_term
+    #             sales.InvoicesByPartner
+    #             """,
+    #             label=MODULE_LABEL)
+
+
+class PartnerDetailMixin(dd.Panel):
+    sales = dd.Panel(
+        """
+        invoicing_address vat_regime payment_term
+        sales.InvoicesByPartner
+        """,
+        label=MODULE_LABEL)
 
 
 def setup_config_menu(site, ui, profile, m):

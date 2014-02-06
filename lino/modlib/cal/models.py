@@ -586,11 +586,12 @@ class UserDetailMixin(dd.Panel):
     # cal.MembershipsByUser
     """
 
-    cal = dd.Panel("""
-    cal_left:30 cal.TasksByUser:60
-    """,
-                   label=MODULE_LABEL,
-                   required=dict(user_groups='office'))
+    cal = dd.Panel(
+        """
+        cal_left:30 cal.TasksByUser:60
+        """,
+        label=MODULE_LABEL,
+        required=dict(user_groups='office'))
 
     
 def unused_site_setup(site):

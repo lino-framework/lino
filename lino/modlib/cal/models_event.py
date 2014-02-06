@@ -237,6 +237,10 @@ class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
     def update_cal_summary(self, i):
         return unicode(self)
 
+dd.update_field(
+    RecurrentEvent, 'every_unit',
+    default=Recurrencies.yearly)
+
 
 class RecurrentEvents(dd.Table):
 
@@ -250,8 +254,8 @@ class RecurrentEvents(dd.Table):
     order_by = ['start_date']
 
     insert_layout = """
+    start_date every_unit event_type
     name
-    user event_type
     """
 
     detail_layout = """

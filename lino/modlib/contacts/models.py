@@ -299,14 +299,14 @@ class PartnerDetail(dd.FormLayout):
 
     contact_box = dd.Panel("""
     info_box
-    email:40 
+    email:40
     url
     phone
     gsm fax
     """, label=_("Contact"))
 
     bottom_box = """
-    remarks 
+    remarks
     is_person is_company #is_user
     """
 

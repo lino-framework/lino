@@ -632,7 +632,7 @@ dd.inject_field(
         sales and purchases of this partner.")))
 
 dd.inject_field(
-    'contacts.Partner',
+    'contacts.Company',
     'vat_id',
     models.CharField(_("VAT id"), max_length=200, blank=True))
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -208,7 +208,7 @@ class Place(dd.BabelNamed):
 class Places(dd.Table):
     help_text = _("""
     The table of known geographical places.
-    A geographical place can be a city, a town, a suburb, 
+    A geographical place can be a city, a town, a suburb,
     a province, a lake... any named geographic entity,
     except for countries because these have their own table.
     """)
@@ -285,19 +285,12 @@ class CountryCity(dd.Model):
 
     def create_city_choice(self, text):
         """
-        Called when an unknown city name was given. 
+        Called when an unknown city name was given.
         Try to auto-create it.
         """
         if self.country is not None:
             return Place.lookup_or_create('name', text, country=self.country)
 
-            #~ qs = self.country.place_set.filter(name__iexact=text)
-            #~ if qs.count() == 0:
-                #~ return self.country.place_set.create(name=text,country=self.country)
-            #~ raise ValidationError(
-              #~ "Refused to auto-create city %s in %s because same name exists."
-              #~ % (text,self.country))
-        #~ dblogger.warning("Cannot auto-create city %r if country is empty",text)
         raise ValidationError(
             "Cannot auto-create city %r if country is empty", text)
 

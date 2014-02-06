@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,16 +11,23 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-Extends the possibilities for defining choices for fields of a Django model.
+"""Extends the possibilities for defining choices for fields of a Django model.
 
 - Context-sensitive choices
 - Non-limiting choices :
-  specify a pick list of suggestions but leave the possibility 
+  specify a pick list of suggestions but leave the possibility
   to store manually entered values
-- Self-learning Combos :
-  having new items automatically stored server-side.
+- :ref:`learning_combos`
+
+.. _learning_combos:
+
+Learning Comboboxes
+-------------------
+
+Choosers inspect the model, and if it defines a method
+`create_FOO_choice`, then the chooser will become "learning": the
+ComboBox will be told to accept also new values, and the server will
+handle these cases accordingly.
 
 """
 
@@ -110,11 +117,6 @@ class Chooser(FieldChooser):
         #~ except models.FieldDoesNotExist,e:
             #~ print e
 
-        #~ m = get_unbound_meth(model,field.name + "_display")
-        #~ if m is not None:
-            #~ self.display_meth
-
-        #~ if get_class_attr(model,"create_%s_choice" % field.name):
         if hasattr(model, "create_%s_choice" % field.name):
             self.can_create_choice = True
 

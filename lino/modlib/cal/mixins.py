@@ -441,9 +441,10 @@ class RecurrenceSet(Started, Ended):
         verbose_name_plural = _("Recurrence Sets")
 
     #~ every_unit = DurationUnits.field(_("Repeat every (unit)"),
-    every_unit = Recurrencies.field(_("Recurrency"),
-                                    default=Recurrencies.monthly,
-                                    blank=True)  # iCal:DURATION
+    every_unit = Recurrencies.field(
+        _("Recurrency"),
+        default=Recurrencies.monthly,
+        blank=True)  # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=0)
 
     monday = models.BooleanField(Weekdays.monday.text, default=False)

@@ -21,7 +21,7 @@ reuse for all projects::
     
     $ mysql -u root -p 
     mysql> create user 'django'@'localhost' identified by 'my cool password';
-    
+
 For each new project you must create a database and grant permissions 
 to ``django``::
     
@@ -64,4 +64,16 @@ file::
         }
     }
 
+
+
+MySQL cheat sheet
+-----------------
+
+See which users are installed on this server::
+
+    select User,Host from mysql.user;
+    
+See which databases are installed on this server::
+
+    show databases;
 

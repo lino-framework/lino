@@ -4,19 +4,20 @@
 #84 : Laufende Anfragen Eiche
 =============================
 
-Die folgenden Punkte in :ref:`faggio`
-sind jetzt fast alle geregelt. 
-Nächste Besichtigung machen.
+An folgenden Punkten arbeite ich:
 
-An folgende Punkten arbeite ich:
+- Wenn man einen automatisch generierten Termin löscht, dann sollte
+  Lino dies als "Stunde fällt aus, ist aber nicht storniert, sondern
+  wird in der Woche darauf nachgeholt" verstehen und automatisch die
+  folgenden Termine neu nummerieren.
+
+- Kontaktlisten : z.B. "alle Naturführer", "Leute, die zur
+  20-Jahre-Feier eingeladen werden", "Verteiler"
 
 - Wie macht man ein allgemeines Mailing (z.B. Angebot Jahreskarten).
   Brauchen wir eine Tabelle `mailings.Mailing`?
     
-- Login : Possibility to store password in browser
 - Ausser "OK", "OK ohne Detail" auch "Speichern und Neu"
-
-- "Organisation" --> "Gruppe"
 
 - Gruppeneinschreibungen. Zum Beispiel : Eiche organisiert eine
   Ausfahrt. Anruf aus Kelmis einer Organisation "Wir kommen mit 42
@@ -29,15 +30,11 @@ An folgende Punkten arbeite ich:
 
 - Im Detail Person : "ist ein Schüler" --> "ist ein Teilnehmer"
 
-- Kontaktlisten : z.B. "alle Naturführer", "Leute, die zur
-  20-Jahre-Feier eingeladen werden", "Verteiler"
-
 - Fehlene Übersetzungen: 
-  - Wiederholung "once"
   - "Intructor Type" --> "Kursleiter-Statut"
   - "Participant Type" --> "Teilnehmerart"
 
-- "Kurse" -> "Angebote"
+- "Kurse" -> "Angebote"?
 
 - Uploads. z.B. Prospekt eines selbstständigen Kursanbieters,
   Mietvertrag einer Halle, ...

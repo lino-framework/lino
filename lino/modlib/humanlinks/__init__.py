@@ -21,6 +21,7 @@ Main user interface is "parents" and "children" of a "human".
 
 A string referring to the model which represents a human in your
 application.
+Default value is ``'contacts.Person'``.
 
 """
 
@@ -34,5 +35,5 @@ class Plugin(ad.Plugin):
     verbose_name = _("Human Links")
 
     ## settings
-    human_model = None
+    human_model = 'contacts.Person'
 

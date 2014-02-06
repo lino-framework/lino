@@ -3379,8 +3379,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   ,on_cancel : function() { 
     this.get_containing_window().close();
   }
-  // ,on_ok : function() { }
-  ,on_ctrl_s : function() { 
+  ,on_ok : function() { 
       
       this.save(null,true);
   }
@@ -3395,11 +3394,20 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     });
 
       wincfg.keys = [
-        // { key: Ext.EventObject.ENTER, fn: this.on_ok, scope:this }
-        { key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
-        ,{ key: 's', ctrl: true, 
-           stopEvent: true,
-           fn: this.on_ctrl_s, scope:this }
+          {
+              key: Ext.EventObject.ENTER,
+              scope:this,
+              fn: function(k, e) {
+                  if(e.target.type === 'textarea' && !e.ctrlKey) {
+                      return true;
+                  }
+                  this.on_ok();
+              }
+          },
+          { key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
+          // ,{ key: 's', ctrl: true, 
+          //    stopEvent: true,
+          //    fn: this.on_ctrl_s, scope:this }
       ]
   }
   
@@ -3772,42 +3780,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
             
             window.open('{{settings.SITE.build_admin_url("api")}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } },
-        //~ { scope:this, 
-          //~ text: "[html]", 
-          //~ handler: function() { 
-            //~ var p = this.get_current_grid_config();
-            //~ Ext.apply(p,this.get_base_params());
-            //~ p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PRINTER";
-            //~ this.add_param_values(p);
-            //~ window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          //~ } },
         { scope:this, 
-          //~ text: "[html]", 
           tooltip: "{{_('Show this table in plain html')}}", 
           iconCls: 'x-tbar-html',
           handler: function() { 
             var p = this.get_current_grid_config();
             Ext.apply(p,this.get_base_params());
-            //~ since 20121226 p.$ext_requests.URL_PARAM_FORMAT = "$ext_requests.URL_FORMAT_PLAIN";
             this.add_param_values(p,true);
-            //~ since 20121226 window.open(ADMIN_URL+'/api'+this.ls_url + "?" + Ext.urlEncode(p)) 
             window.open('{{settings.SITE.plugins.plain.build_plain_url()}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
           } }
-        {% if False and settings.SITE.is_installed('system') %}
-        ,{ scope:this, 
-          //~ text: "[pdf]", 
-          tooltip: "{{_('Show this table as a pdf document')}}", 
-          iconCls: 'x-tbar-pdf',
-          handler: function() { // list_action_handler
-            var p = this.get_current_grid_config();
-            Ext.apply(p,this.get_base_params());
-            p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_PDF}}";
-            this.add_param_values(p,true);
-            window.open('{{settings.SITE.build_admin_url("api")}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } }
-        {% endif %}
       ]);
-    
     
       var menu = [];
       var set_gc = function(index) {
@@ -4669,7 +4651,8 @@ Lino.chooser_handler = function(combo,name) {
 
 
 Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
-  forceSelection: true,
+  forceSelection: "yes but select on tab",
+  // forceSelection: true,
   triggerAction: 'all',
   minListWidth:280, // 20131022
   autoSelect: false,
@@ -4788,7 +4771,7 @@ Lino.ChoicesFieldElement = Ext.extend(Lino.ComboBox,{
 
 
 Lino.SimpleRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
-  forceSelection: true,
+  // forceSelection: true,  20140206 why was this here?
   constructor: function(config){
       Lino.SimpleRemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
           totalProperty: 'count',
