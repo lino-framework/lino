@@ -102,7 +102,7 @@
 
     {% for p in site.installed_plugins %}
         {% if p.get_js_includes %}
-            {% for name in p.get_js_includes(settings, lng) %}
+            {% for name in p.get_js_includes(settings, language) %}
                 {{ javascript(name) }}
             {% endfor %}
         {% endif %}

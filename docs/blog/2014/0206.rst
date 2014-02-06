@@ -218,12 +218,13 @@ Release for Roger
 Getting a pull request
 ----------------------
 
-Wow! Joe did a great work and converted the ExtJS HTML generating to
-a system based on templates:
+Joe converted the ExtJS HTML generating to
+a system based on templates and sent a 
+`pull request <https://github.com/lsaffre/lino/pull/6>`_.
+Wow! That was a great work!
 
-  https://github.com/lsaffre/lino/pull/6
-
-I have local changes because I worked today, but this time there are no conflicts. Here is my git status::
+I have local changes because I worked today, but this time there are
+no conflicts. Here is my git status::
 
     # On branch master
     # Changes not staged for commit:
@@ -250,11 +251,56 @@ I have local changes because I worked today, but this time there are no conflict
     #
     no changes added to commit (use "git add" and/or "git commit -a")
 
+Before committing my local changes I merge the pull request using
+the GitHub web interface.
 
-I will now do:
+Now I commit my local changes. Oops, this gives::
 
-- Before committing my local changes I merge the pull request using
-  the GitHub web interface.
-- Commit my local changes.
+    $ git commit -a -m http://docs.lino-framework.org/blog/2014/0206.html
+    [master ac2d661] http://docs.lino-framework.org/blog/2014/0206.html
+     17 files changed, 1768 insertions(+), 1377 deletions(-)
+    $ git push
+    To git@github.com:lsaffre/lino.git
+     ! [rejected]        master -> master (fetch first)
+    error: failed to push some refs to 'git@github.com:lsaffre/lino.git'
+    hint: Updates were rejected because the remote contains work that you do
+    hint: not have locally. This is usually caused by another repository pushing
+    hint: to the same ref. You may want to first merge the remote changes (e.g.,
+    hint: 'git pull') before pushing again.
+    hint: See the 'Note about fast-forwards' in 'git push --help' for details.
 
+Yes, in fact git is right. I must first pull Joe's changes::
+
+    $ git pull
+    remote: Counting objects: 20, done.
+    remote: Compressing objects: 100% (18/18), done.
+    remote: Total 20 (delta 7), reused 0 (delta 0)
+    Unpacking objects: 100% (20/20), done.
+    From github.com:lsaffre/lino
+       ec134a1..4fc982c  master     -> origin/master
+    Merge made by the 'recursive' strategy.
+     lino/core/web.py                          |   7 ++-
+     lino/modlib/extjs/config/extjs/index.html | 245 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+     lino/modlib/extjs/ext_renderer.py         | 327 +++++++++++++++---------------------------------------------------------------------------------
+     3 files changed, 301 insertions(+), 278 deletions(-)
+     create mode 100644 lino/modlib/extjs/config/extjs/index.html
+
+
+Now I can do::
+
+    $ git push
+    Counting objects: 92, done.
+    Delta compression using up to 4 threads.
+    Compressing objects: 100% (44/44), done.
+    Writing objects: 100% (49/49), 42.57 KiB | 0 bytes/s, done.
+    Total 49 (delta 32), reused 0 (delta 0)
+    To git@github.com:lsaffre/lino.git
+       4fc982c..ae16aad  master -> master
+
+The Lino test suite passes, but when I runserver for :ref:`faggio` and
+point my browser to it, then I get an UndefinedError "'lng' is
+undefined" in `/lino/modlib/extensible/__init__.py` in
+get_js_includes, line 88.  It seems that this was a typo, I just
+needed to replace `lng` by `languages` in the new file
+:srcref:`/lino/modlib/extensible/config/extjs/index.html`.
 
