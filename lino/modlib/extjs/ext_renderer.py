@@ -15,6 +15,8 @@
 from __future__ import unicode_literals
 
 import logging
+from django.template.context import RequestContext
+
 logger = logging.getLogger(__name__)
 
 import os
@@ -40,7 +42,7 @@ from django.utils.encoding import force_unicode
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 #~ from django.utils.functional import Promise
 
-from django.template.loader import get_template
+from django.template.loader import get_template, select_template
 from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
@@ -529,204 +531,72 @@ class ExtRenderer(HtmlRenderer):
             ))
         return d
 
-    def html_page(self, *args, **kw):
-        return '\n'.join([ln for ln in self.html_page_lines(*args, **kw)])
-
-    def html_page_lines(self, request, title=None, on_ready='', run_jasmine=False):
-        """
-        Generates the lines of Lino's HTML reponse.
-        """
-        site = settings.SITE
-
-        #~ logger.info("20121003 html_page_lines %r",on_ready)
-        yield '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'
-        yield '<html><head>'
-        yield '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-        yield '<title id="title">%s</title>' % site.title or site.verbose_name
-
-        def stylesheet(url):
-            return '<link rel="stylesheet" type="text/css" href="%s" />' % url
-
-        def javascript(url):
-            return '<script type="text/javascript" src="%s"></script>' % url
-
-        for p in site.installed_plugins:
-            if isinstance(p, Plugin):
-                for name in p.get_css_includes(site):
-                    yield stylesheet(name)
-
-        if run_jasmine:
-            yield stylesheet(site.build_media_url("jasmine/jasmine.css"))
-        # yield stylesheet(site.build_extjs_url('resources/css/ext-all.css'))
-
-        #~ yield '<!-- overrides to base library -->'
-
-        if site.use_vinylfox:
-            yield stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css'))
-            #~ p = self.media_url() + '/lino/vinylfox/resources/css/htmleditorplugins.css'
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s" />' % p
-
-        if site.use_filterRow:
-            #~ p = self.media_url() + '/lino/filterRow'
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s/filterRow.css" />' % p
-            yield stylesheet(site.build_media_url('lino/filterRow/filterRow.css'))
-
-        if site.use_gridfilters:
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/statusbar/css/statusbar.css" />' % self.media_url()
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/GridFilters.css" />' % self.media_url()
-            #~ yield '<link rel="stylesheet" type="text/css" href="%s/extjs/examples/ux/gridfilters/css/RangeMenu.css" />' % self.media_url()
-            yield stylesheet(
-                site.build_extjs_url("examples/ux/statusbar/css/statusbar.css"))
-            yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/GridFilters.css"))
-            yield stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/RangeMenu.css"))
-
-        yield stylesheet(
-            site.build_extjs_url(
-                "examples/ux/fileuploadfield/css/fileuploadfield.css"))
-
-        yield stylesheet(site.build_media_url("lino/extjs/lino.css"))
-
-        if site.use_awesome_uploader:
-            yield stylesheet(
-                site.build_media_url(
-                    "lino/AwesomeUploader/AwesomeUploader.css"))
-            yield stylesheet(
-                site.build_media_url(
-                    "lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))
-
-        if settings.DEBUG:
-            yield javascript(
-                site.build_extjs_url('adapter/ext/ext-base-debug.js'))
-            yield javascript(site.build_extjs_url('ext-all-debug.js'))
-        else:
-            yield javascript(site.build_extjs_url('adapter/ext/ext-base.js'))
-            yield javascript(site.build_extjs_url('ext-all.js'))
-
-        if translation.get_language() != 'en':
-            yield javascript(
-                site.build_extjs_url(
-                    'src/locale/ext-lang-' +
-                    translation.get_language() + '.js'))
-
-        yield javascript(
-            site.build_extjs_url('examples/ux/statusbar/StatusBar.js'))
-
-        if site.use_spinner:
-            yield javascript(site.build_extjs_url('examples/ux/Spinner.js'))
-
-        if site.use_tinymce:
-            yield javascript(site.build_tinymce_url("tiny_mce.js"))
-            yield javascript(site.build_media_url(
-                "lino/tinymce/Ext.ux.TinyMCE.js"))
-            yield '''<script language="javascript" type="text/javascript">
-tinymce.init({
-        theme : "advanced"
-        // , mode : "textareas"
-});
-</script>'''
-
-        yield javascript(
-            site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js"))
-
-        if run_jasmine:  # site.use_jasmine:
-            yield javascript(site.build_media_url("jasmine/jasmine.js"))
-            yield javascript(site.build_media_url("jasmine/jasmine-html.js"))
-
-            yield javascript(site.build_media_url("lino/jasmine/specs.js"))
-
-        lng = translation.get_language()
-        for p in site.installed_plugins:
-            if isinstance(p, Plugin):
-                for name in p.get_js_includes(settings, lng):
-                    yield javascript(name)
-
-        #~ if site.use_bootstrap:
-            #~ yield '<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>'
-
-        if site.use_gridfilters:
-            #~ p = self.media_url() + '/extjs/examples/ux/gridfilters'
-            p = site.build_extjs_url('examples/ux/gridfilters')
-            #~ yield '<script type="text/javascript" src="%s/extjs/examples/ux/RowEditor.js"></script>' % self.media_url()
-            yield '<script type="text/javascript" src="%s/menu/RangeMenu.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/menu/ListMenu.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/GridFilters.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/Filter.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/StringFilter.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/DateFilter.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/ListFilter.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/NumericFilter.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/filter/BooleanFilter.js"></script>' % p
-
-        yield javascript(site.build_extjs_url("examples/ux/fileuploadfield/FileUploadField.js"))
-
-        if site.use_filterRow:
-            p = site.build_media_url('lino', 'filterRow')
-            yield '<script type="text/javascript" src="%s/filterRow.js"></script>' % p
-
-        if site.use_vinylfox:
-            p = site.build_media_url() + \
-                '/lino/vinylfox/src/Ext.ux.form.HtmlEditor'
-            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
-            yield '<script type="text/javascript" src="%s.MidasCommand.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Divider.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.HR.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Image.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.RemoveFormat.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.IndentOutdent.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.SubSuperScript.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.FindAndReplace.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Table.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Word.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Link.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.SpecialCharacters.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.UndoRedo.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Heading.js"></script>' % p
-            yield '<script type="text/javascript" src="%s.Plugins.js"></script>' % p
-
-        if site.use_awesome_uploader:
-            p = site.build_media_url() + '/lino/AwesomeUploader/'
-            #~ yield '<script type="text/javascript" src="Ext.ux.form.FileUploadField.js"></script>'
-            yield '<script type="text/javascript" src="%s/Ext.ux.XHRUpload.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/swfupload.js"></script>' % p
-            yield '<!-- <script type="text/javascript" src="%s/swfupload.swfobject.js"></script> -->' % p
-            yield '<script type="text/javascript" src="%s/Ext.ux.AwesomeUploaderLocalization.js"></script>' % p
-            yield '<script type="text/javascript" src="%s/Ext.ux.AwesomeUploader.js"></script>' % p
-
-        #~ yield '<!-- overrides to library -->'
-        #~ yield '<script type="text/javascript" src="%slino/extjs/lino.js"></script>' % self.media_url()
-
+    def html_page(self, request, *args, **kw):
         """
         Acting as another user won't give you the access permissions of that user.
         A secretary who has authority to act as her boss in order to manage his calendar
         should not also see e.g. statistic reports to which she has no access.
-        For system admins it is different: 
-        when a system admin acts as another user, 
-        he inherits this user's access permissions. 
+        For system admins it is different:
+        when a system admin acts as another user,
+        he inherits this user's access permissions.
         System admins use this feature to test the permissions of other users.
         """
         user = request.user
         if user.profile.level >= dd.UserLevels.admin:
             if request.subst_user:
                 user = request.subst_user
-        if not site.build_js_cache_on_startup:
+        if not settings.SITE.build_js_cache_on_startup:
             self.build_js_cache_for_profile(user.profile, False)
-        yield '<script type="text/javascript" src="%s"></script>' % (
-            site.build_media_url(*self.lino_js_parts(user.profile)))
 
-        #~ yield '<!-- page specific -->'
+        # Render teplate
+        tpl = settings.SITE.jinja_env.get_template('extjs/index.html')
+        context = {
+            'site': settings.SITE,
+            'renderer': self,
+            'py2js': py2js,  # TODO: Should be template filter
+            'jsgen': jsgen,  # TODO: Should be in filters
+            'language': translation.get_language(),
+            'request': request,
+            'user': user,  # Current acting user
+        }
+        context.update(kw)
+        return tpl.render(context)
 
-        yield '<script type="text/javascript">'
+    def html_page_main_window(self, on_ready, request, site):
+        dashboard = dict(
+            id="dashboard",
+            xtype='container',
+            autoScroll=True,
+        )
+        main = dict(
+            id="main_area",
+            xtype='container',
+            region="center",
+            #~ autoScroll=True,
+            layout='fit',
+            items=dashboard,
+        )
+        if not on_ready:
+            dashboard.update(html=site.get_main_html(request))
 
-        yield 'Ext.onReady(function(){'
+        win = dict(
+            layout='fit',
+            #~ maximized=True,
+            items=main,
+            #~ closable=False,
+            bbar=dict(xtype='toolbar', items=js_code('Lino.status_bar')),
+            #~ title=self.site.title,
+            tbar=js_code('Lino.main_menu'),
+        )
+        jsgen.set_for_user_profile(request.user.profile)
+        return win
 
-        #~ yield "console.time('onReady');"
-
+    def html_page_user(self, request, site):
         if settings.SITE.user_model is not None:
 
             if request.user.profile.authenticated:
 
                 if request.subst_user:
-                    #~ yield "Lino.subst_user = %s;" % py2js(request.subst_user.id)
                     yield "Lino.set_subst_user(%s,%s);" % (
                         py2js(request.subst_user.id),
                         py2js(unicode(request.subst_user)))
@@ -734,7 +604,6 @@ tinymce.init({
                         " (" + _("as") + " " + \
                         unicode(request.subst_user) + ")"
                 else:
-                    #~ yield "Lino.subst_user = null;"
                     yield "Lino.set_subst_user();"
                     user_text = unicode(request.user)
 
@@ -759,9 +628,6 @@ tinymce.init({
                                   handler=js_code(handler))
                 login_menu_items = [mysettings]
                 if len(authorities):
-                    #~ act_as = [
-                        #~ dict(text=unicode(u),handler=js_code("function(){Lino.set_subst_user(%s)}" % i))
-                            #~ for i,u in user.get_received_mandates()]
                     act_as = [
                         dict(text=t, handler=js_code(
                             "function(){Lino.set_subst_user(%s,%s)}" % (v, py2js(t))))
@@ -773,7 +639,6 @@ tinymce.init({
                     act_as = dict(text=_("Act as..."), menu=dict(items=act_as))
 
                     login_menu_items.insert(0, act_as)
-                    #~ login_menu_items = [act_as,mysettings]
 
                 if site.remote_user_header is None:
                     login_menu_items.append(
@@ -786,108 +651,16 @@ tinymce.init({
                 login_menu = dict(
                     text=user_text,
                     menu=dict(items=login_menu_items))
-                #~ else:
-                    #~ login_menu = dict(text=user_text,handler=js_code(handler))
 
-                #~ yield "Lino.login_menu = %s;" % py2js(login_menu)
-                #~ yield "Lino.main_menu = Lino.main_menu.concat(['->',Lino.login_menu]);"
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
 
             else:
                 login_buttons = [
-                    #~ dict(xtype="textfield",emptyText=_('Enter your username')),
-                    #~ dict(xtype="textfield",emptyText=_('Enter your password'),inputType="password"),
                     dict(xtype="button", text=_("Log in"),
                          handler=js_code('Lino.show_login_window')),
                     #~ dict(xtype="button",text="Register",handler=Lino.register),
                 ]
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
-                if on_ready:
-                    # anonymous request using permalink: forward request.path
-                    # as "on_login" URL
-                    on_ready = "Lino.show_login_window(%s)" % py2js(
-                        request.path)
-
-        #~ yield "Lino.load_mask = new Ext.LoadMask(Ext.getBody(), {msg:'Immer mit der Ruhe...'});"
-        dashboard = dict(
-            id="dashboard",
-            xtype='container',
-            autoScroll=True,
-        )
-
-        main = dict(
-            id="main_area",
-            xtype='container',
-            region="center",
-            #~ autoScroll=True,
-            layout='fit',
-            items=dashboard,
-        )
-
-        if not on_ready:
-            #~ print "20121115 foo"
-            dashboard.update(html=site.get_main_html(request))
-
-        win = dict(
-            layout='fit',
-            #~ maximized=True,
-            items=main,
-            #~ closable=False,
-            bbar=dict(xtype='toolbar', items=js_code('Lino.status_bar')),
-            #~ title=self.site.title,
-            tbar=js_code('Lino.main_menu'),
-        )
-        jsgen.set_for_user_profile(request.user.profile)
-        for ln in jsgen.declare_vars(win):
-            yield ln
-        #~ yield '  new Ext.Viewport({layout:"fit",items:%s}).render("body");' % py2js(win)
-        #~ yield '  Lino.body_loadMask = new Ext.LoadMask(Ext.getBody(),{msg:"Please wait..."});'
-        #~ yield '  Lino.body_loadMask.show();'
-        yield '  Lino.viewport = new Lino.Viewport({items:%s});' % py2js(win)
-
-        if site.use_esteid:
-            yield 'Lino.init_esteid();'
-
-        if run_jasmine:  # site.use_jasmine:
-            yield '  jasmine.getEnv().addReporter(new jasmine.TrivialReporter());'
-            yield '  jasmine.getEnv().execute();'
-        else:
-            yield '  Lino.viewport.render("body");'
-            yield on_ready
-        #~ for ln in on_ready:
-            #~ yield ln
-
-        #~ yield "console.timeEnd('onReady');"
-        yield "}); // end of onReady()"
-        yield '</script></head><body>'
-
-        if site.use_esteid:
-            yield '<object id="esteid" type="application/x-esteid" style="width: 1px; height: 1px;"></object>'
-            #~ yield "your browser doesn't support esteid"
-            #~ yield '</object>'
-
-        if site.use_davlink:
-            p = site.build_media_url('lino', 'applets', 'DavLink.jar')
-            p = request.build_absolute_uri(p)
-            yield '<applet name="DavLink" code="davlink.DavLink.class"'
-            #~ yield '        archive="%s/lino/applets/DavLink.jar"' % site.build_media_url()
-            yield '        archive="%s"' % p
-            yield '        width="1" height="1">'
-            yield '<param name="separate_jvm" value="true">'  # 20130913
-            yield '</applet>'
-            # Note: The value of the ARCHIVE attribute is a URL of a JAR file.
-
-        for p in site.installed_plugins:
-            if isinstance(p, Plugin):
-                for ln in p.get_head_lines(site, request):
-                    yield ln
-
-        yield '<div id="body"></div>'
-        #~ yield '<div id="tbar"/>'
-        #~ yield '<div id="main"/>'
-        #~ yield '<div id="bbar"/>'
-        #~ yield '<div id="konsole"></div>'
-        yield "</body></html>"
 
     def build_site_cache(self, force=False):
         """
