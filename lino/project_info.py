@@ -77,7 +77,6 @@ lino.modlib
 lino.modlib.auto
 lino.modlib.auto.sales
 lino.modlib.attestations
-lino.modlib.attestations.fixtures
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.countries
@@ -85,6 +84,7 @@ lino.modlib.countries.fixtures
 lino.modlib.families
 lino.modlib.finan
 lino.modlib.finan.fixtures
+lino.modlib.humanlinks
 lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger

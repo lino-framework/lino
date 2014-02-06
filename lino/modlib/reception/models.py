@@ -66,25 +66,33 @@ from lino.modlib.reception import Plugin
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
 
-dd.inject_field('cal.Guest', 'waiting_since',
-                models.DateTimeField(_("Waiting since"),
-                                     editable=False, blank=True, null=True,
-                                     help_text=_("Time when the visitor arrived (checked in).")))
-dd.inject_field('cal.Guest', 'busy_since',
-                models.DateTimeField(_("Waiting until"),
-                                     editable=False, blank=True, null=True,
-                                     help_text=_("Time when the visitor was received by agent.")))
-dd.inject_field('cal.Guest', 'gone_since',
-                models.DateTimeField(_("Present until"),
-                                     editable=False, blank=True, null=True,
-                                     help_text=_("Time when the visitor left (checked out).")))
+dd.inject_field(
+    'cal.Guest', 'waiting_since',
+    models.DateTimeField(
+        _("Waiting since"),
+        editable=False, blank=True, null=True,
+        help_text=_("Time when the visitor arrived (checked in).")))
+dd.inject_field(
+    'cal.Guest', 'busy_since',
+    models.DateTimeField(
+        _("Waiting until"),
+        editable=False, blank=True, null=True,
+        help_text=_("Time when the visitor was received by agent.")))
+dd.inject_field(
+    'cal.Guest', 'gone_since',
+    models.DateTimeField(
+        _("Present until"),
+        editable=False, blank=True, null=True,
+        help_text=_("Time when the visitor left (checked out).")))
 
 
-dd.inject_field('system.SiteConfig', 'prompt_calendar',
-                dd.ForeignKey('cal.EventType',
-                              verbose_name=_("Default type for prompt events"),
-                              related_name='prompt_calendars',
-                              blank=True, null=True))
+dd.inject_field(
+    'system.SiteConfig', 'prompt_calendar',
+    dd.ForeignKey(
+        'cal.EventType',
+        verbose_name=_("Default type for prompt events"),
+        related_name='prompt_calendars',
+        blank=True, null=True))
 
 
 @dd.receiver(dd.pre_save, sender=system.SiteConfig)
@@ -97,7 +105,9 @@ def beware(sender, instance=None, **kw):
     #~ models.BooleanField(_("Prompt event"),default=False))
 
 
-def create_prompt_event(project, partner, user, summary, guest_role, now=None):
+def create_prompt_event(
+        project, partner, user, summary,
+        guest_role, now=None):
     """
     Create a "prompt event".
     """
@@ -118,7 +128,7 @@ def create_prompt_event(project, partner, user, summary, guest_role, now=None):
     event.save()
     if now is None:
         now = datetime.datetime.now()
-    cal.Guest(
+    dd.modules.cal.Guest(
         event=event,
         partner=partner,
         state=cal.GuestStates.waiting,
@@ -275,7 +285,6 @@ class CheckoutVisitor(dd.Action):
         ar.confirm(ok, msg, _("Are you sure?"))
 
 
-
 cal.Guest.checkin = CheckinVisitor(sort_index=100)
 cal.Guest.receive = ReceiveVisitor(sort_index=101)
 cal.Guest.checkout = CheckoutVisitor(sort_index=102)
@@ -283,7 +292,7 @@ cal.Guest.checkout = CheckoutVisitor(sort_index=102)
 
 class AppointmentsByPartner(dd.Table):
     label = _("Appointments")
-    model = cal.Guest
+    model = 'cal.Guest'
     #~ detail_layout = cal.Guests.detail_layout
     master_key = 'partner'
     #~ column_names = 'event__start_date event__user workflow_buttons'
@@ -415,7 +424,7 @@ class WaitingVisitors(Visitors):
     @dd.displayfield(_('Position'),
                      help_text=_("Position in waiting queue (per agent)"))
     def position(self, obj, ar):
-        n = 1 + cal.Guest.objects.filter(
+        n = 1 + dd.modules.cal.Guest.objects.filter(
             #~ waiting_since__isnull=False,
             #~ busy_since__isnull=True,
             state=GuestStates.waiting,

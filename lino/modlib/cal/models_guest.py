@@ -67,6 +67,7 @@ class Guest(dd.TypedPrintable, outbox.Mailable):
     allow_cascaded_delete = ['event']
 
     class Meta:
+        abstract = settings.SITE.is_abstract_model('cal.Guest')
         verbose_name = _("Guest")
         verbose_name_plural = _("Guests")
 
@@ -146,7 +147,7 @@ class Guest(dd.TypedPrintable, outbox.Mailable):
 class Guests(dd.Table):
     help_text = _("""A guest is a partner invited to an event.
     """)
-    model = Guest
+    model = 'cal.Guest'
     required = dd.required(user_groups='office', user_level='admin')
     column_names = 'partner role workflow_buttons remark event *'
     detail_layout = """
@@ -169,14 +170,14 @@ class Guests(dd.Table):
                               blank=True, null=True),
         partner=dd.ForeignKey('contacts.Partner',
                               blank=True, null=True),
-        event_state=EventStates.field(blank=True,
-                                      verbose_name=_("Event state"),
-                                      help_text=_(
-                                          "Only rows having this event state.")),
-        guest_state=GuestStates.field(blank=True,
-                                      verbose_name=_("Guest state"),
-                                      help_text=_(
-                                          "Only rows having this guest state.")),
+        event_state=EventStates.field(
+            blank=True,
+            verbose_name=_("Event state"),
+            help_text=_("Only rows having this event state.")),
+        guest_state=GuestStates.field(
+            blank=True,
+            verbose_name=_("Guest state"),
+            help_text=_("Only rows having this guest state.")),
     )
 
     params_layout = """start_date end_date user event_state guest_state

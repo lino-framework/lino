@@ -193,12 +193,12 @@ class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
     A Partner has at least a name and usually also one "official" address.
     Predefined subclasses of Partners are
     :class:`Person` for physical persons and
-    :class:`Company` for companies, organisations and any kind of 
+    :class:`Company` for companies, organisations and any kind of
     non-formal Partners.
-    
+
     Base class for anything that has contact information
     (postal address, email, phone,...).
-    
+
     """
 
     """

@@ -19,11 +19,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 from lino import dd
 from lino import mixins
-from django.conf import settings
 
 
 outbox = dd.resolve_app('outbox')
@@ -31,8 +32,10 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
-class AttestationType(dd.BabelNamed, mixins.PrintableType,
-                      outbox.MailableType):
+class AttestationType(
+        dd.BabelNamed,
+        mixins.PrintableType,
+        outbox.MailableType):
 
     templates_group = 'attestations/Attestation'
 
@@ -51,6 +54,13 @@ class AttestationType(dd.BabelNamed, mixins.PrintableType,
         blank=True, help_text="""The body template to be used when
 rendering a printable of this type. This is a list of files
 with extension `.body.html`.""")
+
+    content_type = dd.ForeignKey(
+        'contenttypes.ContentType',
+        verbose_name=_("Default for"),
+        unique=True,
+        help_text=_("The model for which this is the default \
+        attestation type."))
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
@@ -80,8 +90,7 @@ class AttestationTypes(dd.Table):
     attestations.AttestationsByType
     """
 
-
-class CreateAttestaion(dd.Action):
+class CreateAttestation(dd.Action):
 
     """
     Creates an attestation and displays it.
@@ -97,17 +106,25 @@ class CreateAttestaion(dd.Action):
         if obj is not None:
             if not obj.is_attestable():
                 return False
-        return super(CreateAttestaion,
+        return super(CreateAttestation,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
-        elem = ar.selected_rows[0]
+        obj = ar.selected_rows[0]
+        akw = dict(
+            user=ar.get_user(),
+            owner=obj)
+        ct = ContentType.get_for_model(obj.__class__)
+        try:
+            akw.update(type=AttestationType.get(content_type=ct))
+        except AttestationType.DoesNotExist:
+            pass
+            
+        a = obj.create_attestation(ar, **akw)
 
-        a = Attestation(user=ar.get_user(),
-                        # date=datetime.date.today(),
-                        owner=elem)
         a.full_clean()
         a.save()
+
         js = ar.renderer.instance_handler(ar, a)
         kw.update(eval_js=js)
         ar.success(**kw)
@@ -124,10 +141,13 @@ class Attestable(dd.Model):
     class Meta:
         abstract = True
 
-    create_attestation = CreateAttestaion()
+    issue_attestation = CreateAttestation()
 
     def is_attestable(self):
         return True
+
+    def create_attestation(self, ar, **kw):
+        return dd.modules.attestations.Attestation(**kw)
 
 
 class Attestation(dd.TypedPrintable,
@@ -153,9 +173,10 @@ class Attestation(dd.TypedPrintable,
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)
 
-    type = models.ForeignKey(AttestationType,
-                             blank=True, null=True,
-                             verbose_name=_('Attestation Type'))
+    type = models.ForeignKey(
+        AttestationType,
+        blank=True, null=True,
+        verbose_name=_('Attestation Type'))
 
     language = dd.LanguageField()
 
@@ -191,9 +212,9 @@ dd.update_field(Attestation, 'contact_person',
 
 class AttestationDetail(dd.FormLayout):
     main = """
-    #date:10 type:25 project
+    id type:25 project
     company contact_person contact_role
-    id user:10 language:8 build_time
+    user:10 language:8 owner build_time
     outbox.MailsByController
     """
 
@@ -204,7 +225,7 @@ class Attestations(dd.Table):
     model = 'attestations.Attestation'
     detail_layout = AttestationDetail()
     insert_layout = """
-    type project user
+    type project
     company language
     """
     column_names = "id build_time user type project *"

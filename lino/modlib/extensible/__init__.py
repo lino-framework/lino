@@ -37,11 +37,11 @@ Example configuration in a :ref:`djangosite_local` module::
 
 
 
-.. setting:: calendar_start_hour
+.. setting:: extensible.calendar_start_hour
 
 The time at which the CalendarPanel's daily view starts.
 
-.. setting:: calendar_end_hour
+.. setting:: extensible.calendar_end_hour
 
 The time at which the CalendarPanel's daily view ends.
 

@@ -23,6 +23,7 @@ last-minute surprises:
   of the PartnerDetail tabs in :ref:`faggio`: sales should come before
   ledger although logically (technically) it is the opposite.
 
+- `Enter, Ctrl-Enter and Ctrl-S`_
 - `ComboBox and the TAB key`_
 
 
@@ -171,4 +172,89 @@ Miscellaneous
 - Kursserie einfügen: auch Felder Thema und Kursleiter
 - Neue Partner (Kursleiter, Schüler, Organisationen, sonstige) haben
   jetzt par défaut "Belgien" als Land (genauer gesagt das Land des
-  Datenbankbesitzers (:ref:`faggio.system.SiteConfig`)
+  Site-Besitzers (:ddref:`system.SiteConfig.site_company`)
+
+
+Attestations
+------------
+
+Continued on :doc:`/tickets/93`.  How to issue a presence attestation
+(Anwesenheitsbescheinigung)?
+
+Das ist eine der heftigsten Änderungen in der Benutzerschnittstelle,
+die ich vorhabe.
+
+Bisher sagt man am Empfang "Bitte eine Bescheinigung
+(:kbd:`F6`)" und TIM fragt darauf "Welche?". In Lino würde ich das
+gerne andersrum machen: Um z.B. eine Bescheinung auszustellen, dass
+jemand *anwesend* war, gibt man zunächst die *Anwesenheit* ein
+(bzw. findet sie am Bildschirm) und klickt *dort* auf
+"Bescheinigung". Manuelle Eingabe der Uhrzeit ist dann (im Normalfall)
+nicht mehr nötig, weil Lino die ja kennt.
+
+
+Code changes:
+
+- :mod:`lino.modlib.cal` now supports overriding of the `cal.Guest` model.
+- :mod:`lino_welfare.modlib.cal` now uses this to make Guest an Attestable.
+- :class:`lino.modlib.attestations.AttestationType` has a new field 
+  `content_type`.
+
+TODO:
+
+- Continue on the `issue_attestation` action: how to configure or
+  customize whether the document is to be printed directly without
+  displaying a detail window.
+
+
+Release for Roger
+-----------------
+
+- Discovered and fixed another bug: :ref:`faggio` did not set default
+  values for :setting:`extensible.calendar_start_hour` and
+  :setting:`extensible.calendar_end_hour`
+
+
+Getting a pull request
+----------------------
+
+Wow! Joe did a great work and converted the ExtJS HTML generating to
+a system based on templates:
+
+  https://github.com/lsaffre/lino/pull/6
+
+I have local changes because I worked today, but this time there are no conflicts. Here is my git status::
+
+    # On branch master
+    # Changes not staged for commit:
+    #   (use "git add <file>..." to update what will be committed)
+    #   (use "git checkout -- <file>..." to discard changes in working directory)
+    #
+    #	modified:   docs/blog/2014/0206.rst
+    #	modified:   docs/warnings_html.txt
+    #	modified:   lino/locale/de/LC_MESSAGES/django.mo
+    #	modified:   lino/locale/de/LC_MESSAGES/django.po
+    #	modified:   lino/locale/django.pot
+    #	modified:   lino/locale/et/LC_MESSAGES/django.po
+    #	modified:   lino/locale/fr/LC_MESSAGES/django.po
+    #	modified:   lino/locale/nl/LC_MESSAGES/django.po
+    #	modified:   lino/locale/pt-br/LC_MESSAGES/django.po
+    #	modified:   lino/modlib/attestations/models.py
+    #	modified:   lino/modlib/cal/models_guest.py
+    #	modified:   lino/modlib/contacts/models.py
+    #	modified:   lino/modlib/extensible/__init__.py
+    #	modified:   lino/modlib/reception/models.py
+    #	modified:   lino/project_info.py
+    #	modified:   lino/projects/docs/settings.py
+    #	modified:   lino/utils/xmlgen/sepa/validate.py
+    #
+    no changes added to commit (use "git add" and/or "git commit -a")
+
+
+I will now do:
+
+- Before committing my local changes I merge the pull request using
+  the GitHub web interface.
+- Commit my local changes.
+
+
