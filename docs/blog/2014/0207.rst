@@ -65,3 +65,7 @@ websockets is another huge and dynamic chapter of web history, and
 because :ref:`davlink` and :ref:`eidreader` work perfectly, the only
 problem being Java who doesn't always *allow* them to work.
 
+Code changes:
+
+- Converted `use_davlink` to a plugin app (:mod:`lino.modlib.davlink`)
+- Published :ref:`davlink` as a separate project on github
