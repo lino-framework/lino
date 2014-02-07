@@ -35,12 +35,14 @@ functionality is integral part of :mod:`lino.modlib.system`.
 
 .. setting:: use_davlink
 
+No longer used. Replaced by :class:`lino.modlib.davlink`.
+
 Set this to `True` if this site should feature WebDAV-enabled links
 using :ref:`davlink`.
 
 .. setting:: use_eidreader
 
-No longer used. Replaced by :class:`lino.mixins.beid.BeIdReaderPlugin`.
+No longer used. Replaced by :class:`lino.modlib.beid`.
 
 Set this to `True` if this site should feature using :ref:`eidreader`.
 
@@ -1004,7 +1006,7 @@ class Site(Site):
     #~ Set this to `True` if this site should feature using :ref:`eidreader`.
     #~ """
 
-    use_davlink = False
+    # use_davlink = False
 
     #~ max_auto_events = 72
     #~ """

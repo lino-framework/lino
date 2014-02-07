@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -15,6 +15,8 @@
 import os
 
 from django.conf import settings
+
+davlink = settings.SITE.plugins.get('davlink', None)
 
 
 class MediaFile(object):
@@ -35,14 +37,14 @@ class MediaFile(object):
     @property
     def name(self):
         "return the filename on the server"
-        if self.editable and settings.SITE.use_davlink:
+        if self.editable and davlink:
             return os.path.join(settings.SITE.webdav_root, *self.parts)
         return os.path.join(settings.MEDIA_ROOT, *self.parts)
 
     @property
     def url(self):
         "return the url that points to file on the server"
-        if self.editable and settings.SITE.use_davlink:
+        if self.editable and davlink:
             return settings.SITE.webdav_url + "/".join(self.parts)
         return settings.SITE.build_media_url(*self.parts)
 

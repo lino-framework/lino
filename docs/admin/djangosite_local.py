@@ -29,19 +29,11 @@ def setup_django_settings(homedir,settings_module='settings',ve=DEFAULT_VIRTUALE
 
 def setup_site(self):
 
-    # self.use_davlink = True
-    self.extjs_base_url = None
-    self.extensible_base_url = None
-    self.bootstrap_base_url = None
     self.tinymce_base_url = None
 
-    self.bootstrap_root = '/usr/local/src/snapshots/bootstrap'
-    self.extensible_root = '/usr/local/src/snapshots/extensible-1.0.1'
-    self.extjs_root = '/usr/local/src/snapshots/ext-3.3.1'
     self.tinymce_root = '/usr/share/tinymce/www'
 
     self.jasmine_root  = None
-    self.beid_jslib_root  = '/usr/local/src/beid-jslib'
 
     self.csv_params = dict(delimiter=',',encoding='utf-16')
 
@@ -52,23 +44,18 @@ def setup_site(self):
     self.django_settings.update(EMAIL_SUBJECT_PREFIX='['+self.project_name+'] ')
     self.django_settings.update(SERVER_EMAIL='noreply@example.com')
     self.django_settings.update(DEFAULT_FROM_EMAIL='noreply@example.com')
-    self.django_settings.update(ADMINS=[["John Doe","john@example.com"]])
+    self.django_settings.update(ADMINS=[["John Doe", "john@example.com"]])
     self.django_settings.update(DEBUG=False)
     self.django_settings.update(SECRET_KEY='?~hdakl123ASD%#¤/&¤')
-    if hasattr(self,'appy_params'): 
+    if hasattr(self, 'appy_params'): 
         # it's a lino.site.Site, not just djangosite.site.Site
 
         if self.site_prefix != '/':
             assert self.site_prefix.endswith('/')
-            self.update_settings(SESSION_COOKIE_PATH = self.site_prefix[:-1])
+            self.update_settings(SESSION_COOKIE_PATH=self.site_prefix[:-1])
 
         self.site_config_defaults = dict(default_build_method='appypdf')
 
         self.appy_params.update(ooPort=8100)
         #        pythonWithUnoPath='/etc/openoffice.org3/program/python')
-
-        self.django_settings.update(LOGGING=dict(
-            filename='/var/log/lino/'+self.project_name+'/system.log',
-            logger_names='djangosite north lino lino_welfare django',
-            level='INFO'))
 

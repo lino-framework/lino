@@ -30,9 +30,9 @@ class Plugin(Plugin):
 
     # site_js_snippets = ['snippets/plain.js']
 
-    media_base_url = "http://twitter.github.com/bootstrap/assets/"
     media_name = 'bootstrap'
     media_root = None
+    media_base_url = "http://twitter.github.com/bootstrap/assets/"
 
     def on_ui_init(self, ui):
         from .plain_renderer import PlainRenderer
@@ -64,10 +64,6 @@ class Plugin(Plugin):
             (r'^(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
              views.PlainElement.as_view()),
         )
-
-        # if self.url_prefix:
-        #     return patterns(
-        #         '', url('^' + self.url_prefix + "/", include(urls)))
         return urls
 
 

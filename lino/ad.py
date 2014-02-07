@@ -114,7 +114,6 @@ class Plugin(BasePlugin):
         return url
 
     def setup_media_links(self, ui, urlpatterns):
-
         if self.media_name is None:
             return
 
@@ -125,12 +124,13 @@ class Plugin(BasePlugin):
         if not source:
             # raise Exception("%s.media_root is not set." % self)
             return
+
         if not exists(source):
             raise Exception(
                 "Directory %s (specified in %s.media_root) does not exist" %
                 (source, self))
         ui.setup_media_link(
             urlpatterns,
-            self.media_name, source=self.media_root)
+            self.media_name, source=source)
 
 

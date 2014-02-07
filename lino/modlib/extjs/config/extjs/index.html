@@ -2,13 +2,13 @@
 <html>
 
 {# ###### Macro definitions ###### #}
-{% macro stylesheet(url) %}
+{%- macro stylesheet(url) -%}
     <link rel="stylesheet" type="text/css" href="{{ url }}" />
-{% endmacro %}
+{%- endmacro -%}
 
-{% macro javascript(url) %}
+{%- macro javascript(url) -%}
     <script type="text/javascript" src="{{ url }}"></script>
-{% endmacro %}
+{%- endmacro -%}
 
 <head>
 {% block head %}
@@ -212,17 +212,6 @@
 {% block body %}
     {% if  site.use_esteid %}
         <object id="esteid" type="application/x-esteid" style="width: 1px; height: 1px;"></object>
-    {% endif %}
-
-    {% if  site.use_davlink %}
-        {% set p = site.build_media_url('lino', 'applets', 'DavLink.jar') %}
-        <applet name="DavLink" code="davlink.DavLink.class"
-        {#        archive="{{ site.build_media_url() }}/lino/applets/DavLink.jar" #}
-                archive="{{ request.build_absolute_uri(p) }}"
-                width="1" height="1">
-        <param name="separate_jvm" value="true">
-        </applet>
-        {# Note: The value of the ARCHIVE attribute is a URL of a JAR file. #}
     {% endif %}
 
     {% for p in site.installed_plugins %}

@@ -6,9 +6,9 @@
         [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
         {% endfor %}
         </p>
-        {% if site.use_davlink %}
+        {%- if site.plugins.get('davlink', None) -%}
         <p align="right"><a href="javascript:Lino.davlink_reset()">reset DavLink</a></p>
-        {% endif %}
+        {%- endif -%}
         {% if False and site.use_eidreader %}
         <p align="right"><a href="javascript:Lino.read_eid_card()">read an eID card</a></p>
         {% endif %}

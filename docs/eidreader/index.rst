@@ -77,6 +77,12 @@ authentication).
   Hints on how to get that working are welcome.
 
 
+**Pages referring to this**
+
+.. refstothis:: eidreader
+
+
+**Sitemap**
 
 .. toctree::
     :maxdepth: 1

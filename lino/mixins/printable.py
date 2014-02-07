@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -23,33 +23,23 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import sys
 import logging
-import traceback
 import cStringIO
 import datetime
-import glob
-from fnmatch import fnmatch
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.template.loader import render_to_string, get_template, select_template, Context, TemplateDoesNotExist
-from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.utils.encoding import force_unicode
-from django.utils.translation import string_concat
+from django.template.loader import get_template, select_template, Context, TemplateDoesNotExist
 
 from djangosite.dbutils import dtomy
 
-import lino
-#~ from lino import dd
+davlink = settings.SITE.plugins.get('davlink', None)
+
 
 from lino.core import actions
-from lino.core import fields
 from lino.core import dbutils
 from lino.utils import iif, moneyfmt
-#~ from north import dbutils
-#~ from lino.utils import call_optional_super
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.core.model import Model
@@ -78,11 +68,6 @@ try:
     # pisa.showLogging()
 except ImportError:
     pisa = None
-
-#~ try:
-    #~ import appy
-#~ except ImportError:
-    #~ appy = None
 
 try:
     import pyratemp
@@ -133,7 +118,7 @@ class BuildMethod:
     which extjs3 ui will implement by calling `Lino.davlink_open()`
     instead of the usual `window.open()`.
     
-    When :attr:`lino.Lino.use_davlink` is `False`,
+    When :mod:`lino.modlib.davlink` is not installed,
     this setting still influences the target path
     of resulting files, but the clients 
     will not automatically recognize them as 
@@ -164,22 +149,6 @@ class BuildMethod:
 
     def get_target_url(self, action, elem):
         return self.get_target(action, elem).url
-
-    #~ def get_target_parts(self,action,elem):
-        #~ "used by `get_target_name`"
-        #~ return [self.cache_name, self.name, elem.filename_root() + self.target_ext]
-        #~
-    #~ def get_target_name(self,action,elem):
-        #~ "return the output filename to generate on the server"
-        #~ if self.use_webdav and settings.SITE.use_davlink:
-            #~ return os.path.join(settings.SITE.webdav_root,*self.get_target_parts(action,elem))
-        #~ return os.path.join(settings.MEDIA_ROOT,*self.get_target_parts(action,elem))
-        #~
-    #~ def get_target_url(self,action,elem):
-        #~ "return the url that points to the generated filename on the server"
-        #~ if self.use_webdav and settings.SITE.use_davlink:
-            #~ return settings.SITE.webdav_url + "/".join(self.get_target_parts(action,elem))
-        #~ return settings.SITE.build_media_url(*self.get_target_parts(action,elem))
 
     def build(self, ar, action, elem):
         raise NotImplementedError
@@ -542,7 +511,7 @@ class CachedPrintAction(BasePrintAction):
                 kw.update(message=_("Reused %s printable from cache.") % obj)
             kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
-            if bm.use_webdav and settings.SITE.use_davlink and ar.request is not None:
+            if bm.use_webdav and davlink and ar.request is not None:
                 kw.update(
                     open_davlink_url=ar.request.build_absolute_uri(mf.url))
             else:
@@ -589,7 +558,7 @@ class EditTemplate(BasePrintAction):
         kw.update(message=_("Template file: %s ") % tplfile)
         kw.update(alert=True)
         url = "file://" + tplfile
-        if bm.use_webdav and settings.SITE.use_davlink:
+        if bm.use_webdav and davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
@@ -639,7 +608,7 @@ class DirectPrintAction(BasePrintAction):
         #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
         #~ return rr.ui.success_response(open_url=target,**kw)
         url = bm.get_target_url(self, elem)
-        if bm.use_webdav and settings.SITE.use_davlink:
+        if bm.use_webdav and davlink:
             url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:

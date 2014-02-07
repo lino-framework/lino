@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -727,7 +727,7 @@ class Kernel(object):
         prefix = settings.MEDIA_URL[1:]
         target = join(settings.MEDIA_ROOT, short_name)
         if exists(target):
-            #~ logger.info("20130409 path exists: %s",target)
+            # logger.info("20130409 path exists: %s", target)
             return
         if attr_name is not None:
             # usage is deprecated
@@ -742,7 +742,8 @@ class Kernel(object):
         elif not exists(source):
             raise Exception("%s does not exist" % source)
         if is_devserver():
-            #~ logger.info("django.views.static serving /%s%s from %s",prefix,short_name,source)
+            # logger.info("django.views.static serving /%s%s from %s",
+            #             prefix, short_name, source)
             urlpatterns.extend(
                 patterns(
                     'django.views.static',

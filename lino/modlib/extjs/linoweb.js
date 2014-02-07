@@ -1819,11 +1819,11 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         console.log("20131026 b gonna refresh",panel);
         if (result.refresh) panel.refresh();
     }
-    {% if settings.SITE.use_davlink %}
+    {%- if settings.SITE.is_installed('davlink') -%}
     if (result.open_davlink_url) {
        Lino.davlink_open(result.open_davlink_url);
     }
-    {% endif %}
+    {%- endif -%}
     if (result.open_url) {
         //~ console.log(20111126,result.open_url);
         //~ if (!result.message)
@@ -5147,7 +5147,7 @@ Lino.show_mti_child = function(fieldname,detail_handler) {
   }
 };
 
-{% if settings.SITE.use_davlink %}
+{% if settings.SITE.is_installed('davlink') %}
 
 Lino.davlink_open = function(webdavURL) {
   /* Calls lino.applets.davlink.DavLink.open()

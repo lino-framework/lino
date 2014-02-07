@@ -53,3 +53,15 @@ zeigt es an. Ohne weitere Zwischenfragen.
 
 Jetzt fehlt nur noch der langweiligere Teil: die Vorlagen und die
 Demo-Datenbank müssen angepasst werden.
+
+
+Browser extensions
+------------------
+
+Started research for :doc:`/tickets/96`.
+
+After this I decided to remain with Java for some time because
+websockets is another huge and dynamic chapter of web history, and
+because :ref:`davlink` and :ref:`eidreader` work perfectly, the only
+problem being Java who doesn't always *allow* them to work.
+
