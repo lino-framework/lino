@@ -8,19 +8,20 @@ Configuring your client for using DavLink
 computer. For security reasons it is normal that the Java Runtime on 
 your computer refuses this without your prior explicit permission.
 
-So you must tell your JRE that you grant permission for 
-the DavLink applet to scan your local file system and execute a program.    
-Otherwise you'll get a RuntimException
-"You must tell your client to let me read your file system."
+So you must tell your JRE that you grant permission for the DavLink
+applet to scan your local file system and execute a program.
+Otherwise you'll get a RuntimeException "You must tell your client to
+let me read your file system."
+
 
 One way is to edit your *system policy file*
 which is by default located at :file:`java.home/lib/security/java.policy`
 (where the value for `java.home` is 
 is shown as one of the first messages in your Java console).
 
-Or you might prefer edit your *user policy file*, located at
-:file:`user.home/.java.policy`
-(and where `user.home` is your home directory).
+Or you might prefer to edit your *user policy file*, located at
+:file:`user.home/.java.policy` (and where `user.home` is your home
+directory).
 
 See `Default Policy Implementation and Policy File Syntax
 <http://docs.oracle.com/javase/7/docs/technotes/guides/security/PolicyFiles.html>`_
@@ -68,17 +69,13 @@ When done, your :xfile:`.java.policy` file should look similar to this::
 Testing
 =======
 
-Here are two pages where you can try to get it running:
-
-- https://lino.googlecode.com/hg/lino/media/applets/davlink_test.html
-- https://lino.googlecode.com/hg/lino/media/applets/davlink_jnlp_test.html
+Clone the code repository and 
+open the files `examples/davlink_test.html`
+and/or `examples/davlink_jnlp_test.html`.
 
 Note that there is no WebDAV server behind these files, so you won't 
 be able to save the document. You can consider installation successful 
 when your office application *launches* and 
-
-
-
 
 Possible problems
 
@@ -89,11 +86,6 @@ Possible problems
   If you do have an application and know it's path, then 
   you can manually edit jour Java preferences to add this launcher.
   
-
-
-
-
-
 
 How to see the java console of an applet
 ----------------------------------------

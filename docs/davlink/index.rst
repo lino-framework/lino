@@ -4,20 +4,20 @@
 DavLink
 =======
 
-DavLink is an applet that 
-launches the client's desktop's office application,
-passing it the URL of a webdav file 
-as command line argument.
+DavLink is an applet that launches the client's desktop's office
+application, passing it the URL of a webdav file as command line
+argument.
+
+Supported Office suites: Microsoft, OpenOffice, LibreOffice
+Supported client platforms: Windows, Unix
 
 It is actively being used since 2011 as a solution for 
 :doc:`/tickets/45`.
 
-It is published and maintained by the author 
-as a part of the Lino project.
+It is published and maintained as a standalone `code repository on
+GitHub <https://github.com/lsaffre/davlink>`_ but documented here as a
+part of the Lino project.
 
-Supported Office suites: Microsoft, OpenOffice, LibreOffice
-
-Supported client platforms: Windows, Unix
 
 .. toctree::
    :maxdepth: 2
