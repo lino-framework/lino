@@ -297,10 +297,29 @@ Now I can do::
     To git@github.com:lsaffre/lino.git
        4fc982c..ae16aad  master -> master
 
-The Lino test suite passes, but when I runserver for :ref:`faggio` and
+And that was it!  At least the Lino test suite passes.
+
+But when I runserver for :ref:`faggio` and
 point my browser to it, then I get an UndefinedError "'lng' is
 undefined" in `/lino/modlib/extensible/__init__.py` in
 get_js_includes, line 88.  It seems that this was a typo, I just
 needed to replace `lng` by `languages` in the new file
 :srcref:`/lino/modlib/extensible/config/extjs/index.html`.
+
+Committed this one, too.  And now I continue to work for the promised
+release.
+
+
+Release for Roger
+-----------------
+
+Basically the upgrade consisted of the following actions::
+
+    # cd /var/www/vhosts/eiche
+    # ./backup.sh
+    # ./pull.sh
+    # cd lino
+    # . env/bin/activate
+    # python manage.py run /var/backups/lino/eiche/20140206_184532/restore.py 
+
 
