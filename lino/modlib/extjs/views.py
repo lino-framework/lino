@@ -480,12 +480,7 @@ def choices_for_field(request, actor, field):
     #~ logger.info("20120202 %r",field)
     chooser = choosers.get_for_field(field)
     if chooser:
-        #~ logger.info('20120710 choices_view() : has chooser')
         qs = chooser.get_request_choices(request, actor)
-        #~ qs = list(chooser.get_request_choices(ar,actor))
-        #~ logger.info("20120213 %s",qs)
-        #~ if qs is None:
-            #~ qs = []
         assert isiterable(qs), \
             "%s.%s_choices() returned %r which is not iterable." % (
                 actor.model, field.name, qs)
@@ -497,7 +492,6 @@ def choices_for_field(request, actor, field):
         elif chooser.instance_values:
             # same code as for ForeignKey
             def row2dict(obj, d):
-                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
                 d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
                     obj, request, field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
@@ -515,7 +509,6 @@ def choices_for_field(request, actor, field):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
             else:
-                #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
                 d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
                     obj, request, field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
@@ -529,7 +522,6 @@ def choices_for_field(request, actor, field):
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
 
         def row2dict(obj, d):
-            #~ d[ext_requests.CHOICES_TEXT_FIELD] = obj.get_choices_text(request,actor,field)
             d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
                 obj, request, field)
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk

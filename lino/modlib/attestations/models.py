@@ -51,21 +51,22 @@ class AttestationType(
     body_template = models.CharField(
         max_length=200,
         verbose_name=_("Body template"),
-        blank=True, help_text="""The body template to be used when
-rendering a printable of this type. This is a list of files
-with extension `.body.html`.""")
+        blank=True, help_text="The body template to be used when \
+        rendering a printable of this type. This is a list of files \
+        with extension `.body.html`.")
 
     content_type = dd.ForeignKey(
         'contenttypes.ContentType',
         verbose_name=_("Default for"),
+        null=True, blank=True,
         unique=True,
         help_text=_("The model for which this is the default \
         attestation type."))
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
-        return settings.SITE.list_templates('.body.html',
-                                            cls.get_templates_group())
+        return settings.SITE.list_templates(
+            '.body.html', cls.get_templates_group())
 
 
 class AttestationTypes(dd.Table):
@@ -75,7 +76,7 @@ class AttestationTypes(dd.Table):
     """
     model = 'attestations.AttestationType'
     required = dd.required(user_level='admin', user_groups='office')
-    column_names = 'name build_method template *'
+    column_names = 'name build_method template content_type *'
     order_by = ["name"]
 
     insert_layout = """
@@ -89,6 +90,15 @@ class AttestationTypes(dd.Table):
     remark:60x5
     attestations.AttestationsByType
     """
+
+    @classmethod
+    def get_choices_text(self, obj, request, field):
+        if field.name == 'content_type':
+            return "%s (%s)" % (
+                dd.full_model_name(obj.model_class()),
+                obj)
+        return obj.get_choices_text(request, self, field)
+
 
 class CreateAttestation(dd.Action):
 
@@ -114,20 +124,23 @@ class CreateAttestation(dd.Action):
         akw = dict(
             user=ar.get_user(),
             owner=obj)
-        ct = ContentType.get_for_model(obj.__class__)
+        ct = ContentType.objects.get_for_model(obj.__class__)
         try:
-            akw.update(type=AttestationType.get(content_type=ct))
+            akw.update(type=AttestationType.objects.get(content_type=ct))
         except AttestationType.DoesNotExist:
             pass
-            
+    
         a = obj.create_attestation(ar, **akw)
 
         a.full_clean()
         a.save()
-
-        js = ar.renderer.instance_handler(ar, a)
-        kw.update(eval_js=js)
-        ar.success(**kw)
+        
+        if True:  # issue_directly
+            a.do_print.run_from_ui(ar, **kw)
+        else:
+            js = ar.renderer.instance_handler(ar, a)
+            kw.update(eval_js=js)
+            ar.success(**kw)
 
 
 class Attestable(dd.Model):

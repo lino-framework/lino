@@ -72,10 +72,6 @@ class Chooser(FieldChooser):
     instance_values = True
     force_selection = True
     choice_display_method = None  # not yet used.
-    #~ quick_search_fields = None
-    #~ force_selection = True
-    #~ on_quick_insert = None
-    #~ quick_insert_field = None
     can_create_choice = False
 
     def __init__(self, model, field, meth):

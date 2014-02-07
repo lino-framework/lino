@@ -72,4 +72,5 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 450, in execute
     return Database.Cursor.execute(self, query, params)
 OperationalError: no such column: pages_page.body_de
+/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
 WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

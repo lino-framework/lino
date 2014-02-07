@@ -26,7 +26,6 @@ command::
 
 Will this be enough? Future will show me...
 
-
 GuestStates.accepted
 --------------------
 
@@ -39,3 +38,18 @@ state, but :ref:`welfare` does.
 
 Currently this causes problems when generating the api doc for
 :mod:`lino.modlib.reception`.
+
+
+Anwesenheitsbescheinigungen
+---------------------------
+
+Cool! Prinzipiell funktioniert es jetzt: wir haben jetzt eine neue
+Kolonne "Default for" in der Liste der Bescheinigungsarten. Dort wird
+ein Modell ausgewählt. Ih erstelle eine Bescheinigungsart
+"Anwesenheitsbescheinigung", die dort "cal.Guest" reingesetzt kriegt.
+Wenn ich jetzt (in egal welcher Ansicht) auf einem `cal.Guest` auf
+"Bescheinigung ausstellen" klicke, dann erstellt er das Dokument und
+zeigt es an. Ohne weitere Zwischenfragen.
+
+Jetzt fehlt nur noch der langweiligere Teil: die Vorlagen und die
+Demo-Datenbank müssen angepasst werden.
