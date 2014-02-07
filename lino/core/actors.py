@@ -26,6 +26,33 @@ Define the form layout to use for the insert window.  If there's a
 :aa:`detail_layout` but no :aa:`insert_layout`, Lino
 will use :aa:`detail_layout` for the insert window.
 
+.. actorattr:: known_values
+
+A `dict` of `fieldname` -> `value` pairs that specify "known values".
+
+Requests will automatically be filtered to show only existing records
+with those values.  This is like :aattr:`filter`, but new instances
+created in this Table will automatically have these values set.
+
+
+.. actorattr:: filter
+
+If specified, this must be a `models.Q` object (not a dict of
+(fieldname -> value) pairs) which will be used as a filter.
+
+Unlike :aattr:`known_values`, this can use the full range of Django's
+`field lookup methods
+<https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
+
+Note that if the user can create rows in a filtered table, you should
+make sure that new records satisfy your filter condition by default,
+otherwise you can get surprising behaviour if the user creates a new
+row.
+
+If your filter consists of simple static values on some known field,
+then you'll prefer to use :aattr:`known_values` instead of
+:attr:`filter.`
+
 """
 
 import logging
@@ -430,10 +457,6 @@ class Actor(actions.Parametrizable):
 
     _layout_class = layouts.ParamsLayout
 
-    #~ @property
-    #~ def known_values(cls):
-        #~ return cls.get_known_values()
-
     sort_index = None
     """
     The sort_index to be used for a ShowSlaveTable action on this actor.
@@ -687,15 +710,6 @@ class Actor(actions.Parametrizable):
     _label = None
     _editable = None
     _known_values = {}
-    """
-    A `dict` of `fieldname` -> `value` pairs that specify "known values".
-    Requests will automatically be filtered to show only existing records 
-    with those values.
-    This is like :attr:`filter`, but 
-    new instances created in this Table will automatically have 
-    these values set.
-    
-    """
 
     title = None
     """

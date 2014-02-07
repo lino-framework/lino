@@ -2,7 +2,40 @@
 20140207 (Friday, 07 February 2014)
 ===================================
 
-I ran the following command::
+Production upgrade without release
+----------------------------------
 
-  pp git tag 20140206
+Yesterday I did an upgrade of a production site. Do I need to do
+something before continuing development of the master branch in order
+to mark this moment in history? 
 
+I used to do this by doing an official sdist and release on PyPI, 
+but that's always a bunch of useless work. 
+
+I mean that when I will do my **next** upgrade on that production
+site, then I'd like to have a way to step back all code projects to
+this version in case of emergency. But without needing to write down
+the revision hashcode of each project before doing my general pull.
+
+I though that I can use tags to do something similar.  I read some git
+docs (`gittutorial <http://git-scm.com/docs/gittutorial>`_, `git-tags
+<http://git-scm.com/docs/git-tag.html>`_) and then ran the following
+command::
+
+  $ pp git tag 20140206
+
+Will this be enough? Future will show me...
+
+
+GuestStates.accepted
+--------------------
+
+Occasionally I stumble over the following problem:
+
+The `GuestStates.accepted` workflow state is an interesting special
+case because it exists only when a given "workflow module" has been
+imported. More concretely, :ref:`faggio` doesn't know this guest
+state, but :ref:`welfare` does.
+
+Currently this causes problems when generating the api doc for
+:mod:`lino.modlib.reception`.

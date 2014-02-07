@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -819,8 +819,7 @@ class AbstractTable(actors.Actor):
     """
 
     get_data_rows = None
-    """
-    Custom tables must define a class method of this name which 
+    """Custom tables must define a class method of this name which
     will be called with a TableRequest object and which is expected
     to return or yield the list of "rows"::
     
@@ -829,8 +828,9 @@ class AbstractTable(actors.Actor):
             ...
             yield somerow
             
-    Model tables may also define such a method in case they need local filtering.
-    
+    Model tables may also define such a method in case they need local
+    filtering.
+
     """
     variable_row_height = False
     """
@@ -918,22 +918,6 @@ class AbstractTable(actors.Actor):
     order_by = None
 
     filter = None
-    """
-    If specified, this must be a `models.Q` object
-    (not a dict of (fieldname -> value) pairs)
-    which will be used as a filter.
-    
-    Unlike :attr:`known_values`, this can use the full range of 
-    Django's `field lookup methods 
-    <https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
-    
-    Note that if the user can create rows in a filtered table, 
-    you should make sure that new records satisfy your filter condition 
-    by default, otherwise you can get surprising behaviour if the user 
-    creates a new row.
-    If your filter consists of simple static values on some known field, 
-    then you'll prefer to use :attr:`known_values` instead of :attr:`filter.`
-    """
     exclude = None
 
     extra = None
@@ -1170,14 +1154,7 @@ class AbstractTable(actors.Actor):
         kw.update(actor=self)
         if master_instance is not None:
             kw.update(master_instance=master_instance)
-        ar = TableRequest(**kw)
-        #~ if self.__name__ == 'RetrieveTIGroupsResult':
-            #~ print 20130425, __file__, ar
-
-        #~ if self.__name__ == 'PrintExpensesByBudget':
-            #~ assert ar.master_instance is not None
-            #~ print '20130327 tables.py', self, ar.master_instance
-        return ar
+        return TableRequest(**kw)
 
     @classmethod
     def run_action_from_console(self, pk=None, an=None):

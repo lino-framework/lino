@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -423,16 +423,6 @@ class Table(AbstractTable):
     The user profile(s) for which we want a screenshot of this table.
     """
 
-    #~ base_queryset = None
-    #~ """Internally used to store one Queryset instance that is reused for each request.
-    #~ Didn't yet measure this, but I believe that this is important for performance
-    #~ because Django then will cache database lookups.
-    #~ """
-
-    #~ default_params = {}
-    """See `/blog/2011/0701`.
-    """
-
     use_as_default_table = True
     """
     Set this to False if this Table should *not* become the Model's default table.
@@ -443,11 +433,6 @@ class Table(AbstractTable):
     (No longer used; see :doc:`/tickets/44`). 
     Whether multi-line text fields in Grid views should be expanded in by default or not.
     """
-
-    #~ can_add = perms.is_authenticated
-    #~ """
-    #~ A permission descriptor that defines who can add (create) rows in this table.
-    #~ """
 
     details_of_master_template = _("%(details)s of %(master)s")
     """
@@ -461,12 +446,6 @@ class Table(AbstractTable):
     Same remarks as for :attr:`lino.core.actors.Actor.disabled_fields`.
     """
 
-    #~ @classmethod
-    #~ def request(self,ui=None,request=None,action=None,**kw):
-        #~ if action is None:
-            #~ action = self.default_action
-            #~ assert action is not None
-        #~ return TableRequest(ui,self,request,action,**kw)
     @classmethod
     def request(self, master_instance=None, **kw):  # 20130327
         kw.update(actor=self)
@@ -819,17 +798,7 @@ class Table(AbstractTable):
         Upon first call, this will also lazily install Table.queryset
         which will be reused on every subsequent call.
         """
-        #~ See 20120123
-        #~ from lino.modlib.jobs.models import Jobs
-        #~ if rr.report is Jobs:
-            #~ logger.info("20120123 get_request_queryset()")
-        #~ qs = self.__dict__.get('base_queryset',None)
-        #~ if qs is None:
-            #~ qs = self.base_queryset = self.get_queryset()
-            #~ if rr.report is Jobs:
-                #~ logger.info("20120123 Setting base_queryset")
         qs = self.get_queryset()
-        #~ kw = self.get_filter_kw(rr.master_instance,**rr.params)
         kw = self.get_filter_kw(rr.master_instance)
         if kw is None:
             return []
@@ -841,12 +810,9 @@ class Table(AbstractTable):
             #~ qs = qs.exclude(rr.exclude)
 
         if self.filter:
-            #~ qs = qs.filter(**self.filter)
             qs = qs.filter(self.filter)
 
         if rr.filter:
-            #~ print rr.filter
-            #~ qs = qs.filter(**rr.filter)
             qs = qs.filter(rr.filter)
 
         if rr.known_values:
@@ -862,6 +828,7 @@ class Table(AbstractTable):
 
         if self.exclude:
             qs = qs.exclude(**self.exclude)
+            # TODO: use Q object instead of dict
 
         if rr.quick_search is not None:
             #~ qs = add_quick_search_filter(qs,self.model,rr.quick_search)

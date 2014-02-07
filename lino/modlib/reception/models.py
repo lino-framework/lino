@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -35,12 +35,6 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
-from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.utils.xmlgen.html import E
@@ -118,8 +112,6 @@ def create_prompt_event(
     ekw.update(start_date=today)
     ekw.update(end_date=today)
     ekw.update(event_type=settings.SITE.site_config.prompt_calendar)
-    #~ ekw.update(state=EventStates.visit)
-    #~ ekw.update(state=EventStates.accepted)
     ekw.update(state=EventStates.published)
     ekw.update(user=user)
     if summary:
@@ -175,16 +167,9 @@ class CheckinVisitor(dd.NotifyingAction):
     help_text = _("Mark this visitor as arrived")
     show_in_workflow = True
 
-    #~ required = dict(states='invited accepted')
-    required = dd.Required(user_groups='reception',
-                           states='invited accepted present')
-
-    def unused_get_action_permission(self, ar, obj, state):
-        if obj.event.start_date != datetime.date.today():
-            return False
-        if obj.waiting_since is not None:
-            return False
-        return super(CheckinVisitor, self).get_action_permission(ar, obj, state)
+    required = dd.Required(
+        user_groups='reception',
+        states='invited accepted present')
 
     def get_notify_subject(self, ar, obj):
         return _("%(partner)s has started waiting for %(user)s") % dict(
@@ -314,18 +299,26 @@ class AppointmentsByPartner(dd.Table):
         return qs
 
 
-ExpectedGuestsStates = (GuestStates.invited, GuestStates.accepted)
+# ExpectedGuestsStates = (GuestStates.invited, GuestStates.accepted)
+
 
 class ExpectedGuests(cal.Guests):
     label = _("Expected Guests")
-    help_text = _(
-        """Consult this table when checking in a partner who has an appointment.""")
-    filter = Q(waiting_since__isnull=True,
-               state__in=ExpectedGuestsStates)
-    column_names = 'partner event__user event__summary workflow_buttons waiting_since busy_since'
+    help_text = _("Consult this table when checking in a partner who \
+    has an appointment.")
+    # filter = Q(waiting_since__isnull=True,
+    #            state__in=ExpectedGuestsStates)
+    column_names = 'partner event__user event__summary workflow_buttons \
+    waiting_since busy_since'
     hidden_columns = 'waiting_since busy_since'
     #~ checkin = CheckinGuest()
     required = dd.Required(user_groups='reception')
+
+    @classmethod
+    def get_queryset(self):
+        return self.model.objects.filter(
+            waiting_since__isnull=True,
+            state__in=(GuestStates.invited, GuestStates.accepted))
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -343,7 +336,8 @@ if False:
         help_text = _("Shows the visitors being received.")
         filter = Q(waiting_since__isnull=False,
                    busy_since__isnull=False, gone_since__isnull=True)
-        column_names = 'since partner event__user event__summary workflow_buttons'
+        column_names = 'since partner event__user event__summary \
+        workflow_buttons'
         order_by = ['waiting_since']
         #~ checkout = CheckoutGuest()
         required = dd.Required(user_groups='reception')

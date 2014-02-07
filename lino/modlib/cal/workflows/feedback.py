@@ -21,38 +21,15 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
-import datetime
-import dateutil
-
-from django.conf import settings
-from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 #~ from django.utils.translation import string_concat
-from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
-from django.db.models import loading
-from django.core import exceptions
 
 from north import dbutils
-from north.dbutils import dtosl
 
-
-from lino import mixins
 from lino import dd
-#~ from lino.core import reports
-from lino.core import actions
-from lino.utils import AttrDict
-from lino.utils import ONE_DAY
-#~ from lino.ui import requests as ext_requests
-from lino.core import constants
 
-from lino.utils.xmlgen.html import E
-
-from ..workflows import (TaskStates,
-                                       EventStates, GuestStates)
+from ..workflows import (TaskStates, EventStates, GuestStates)
 
 #~ EventStates.add_item('30', _("Accepted"), 'accepted')
 add = EventStates.add_item
