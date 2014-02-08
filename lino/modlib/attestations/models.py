@@ -18,6 +18,8 @@ The :xfile:`models.py` file for :mod:`lino.modlib.attestations`.
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -198,6 +200,11 @@ class Attestation(dd.TypedPrintable,
 
     def get_mailable_type(self):
         return self.type
+
+    @property
+    def date(self):
+        "Used in templates"
+        return datetime.date.today()
 
     def get_print_language(self):
         return self.language

@@ -1816,7 +1816,7 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         }
         else console.log("20131026 cannot refresh_all because ",panel,"has no get_containing_window");
     } else {
-        console.log("20131026 b gonna refresh",panel);
+        {# console.log("20131026 b gonna refresh",panel); #}
         if (result.refresh) panel.refresh();
     }
     {%- if settings.SITE.is_installed('davlink') -%}

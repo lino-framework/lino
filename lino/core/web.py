@@ -1,4 +1,4 @@
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -16,15 +16,13 @@
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-from os.path import join, abspath, dirname, normpath, isdir
-import cgi
+from os.path import join, abspath, dirname, isdir
 import datetime
-import inspect
 import jinja2
 
 
@@ -47,16 +45,14 @@ SUBDIR_NAME = 'config'
 
 def list_templates(self, ext, group=''):
     """
-    Return a list of possible choices for a field that contains a 
+    Return a list of possible choices for a field that contains a
     template name.
     """
     #~ logger.info("20130717 list_templates(%r,%r)",ext,group)
     if group:
         #~ prefix = os.path.join(*(group.split('/')))
         def ff(fn):
-            rv = fn.startswith(group) and fn.endswith(ext)
-            #~ logger.info("20130101 %r -> %s", fn,rv)
-            return rv
+            return fn.startswith(group) and fn.endswith(ext)
         lst = self.jinja_env.list_templates(filter_func=ff)
         L = len(group) + 1
         lst = [i[L:] for i in lst]
@@ -215,10 +211,8 @@ class Loader(BaseLoader):
         #~ source, origin = self.load_template_source(template_name, template_dirs)
         try:
             jt = settings.SITE.jinja_env.get_template(template_name)
-        except TemplateNotFound as e:
+        except TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
         template = DjangoJinjaTemplate(jt)
         return template, None
 
-
-    #~ get_template_from_string

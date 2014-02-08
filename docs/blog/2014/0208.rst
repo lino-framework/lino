@@ -1,0 +1,40 @@
+=====================================
+20140208 (Saturday, 08 February 2014)
+=====================================
+
+
+Continued to work on attestations.
+
+Changes:
+
+- In :mod:`lino_welfare.fixtures.std`: both attestation types
+  "Bescheinigung Ausländerbeihilfe" and "Anwesenheitsbescheinigung"
+  now use the same `body` template.
+
+
+The following (internal) problem took me some time:
+
+- :mod:`lino.modlib.attestations` defines a template
+  :file:`attestations/Attestation/Default.odt`, 
+  and :ref:`welfare` overrides this template.
+  If there were a module ``lino_welfare.modlib.attestations``, then
+  things would be different, but it currently does this by defining the
+  same template the :xfile:`config` directory of the :mod:`lino_welfare`
+  app.
+
+  But the :setting:`get_installed_apps` in :mod:`lino_welare.settings`
+  yields :mod:`lino_welfare` **before**
+  :mod:`lino.modlib.attestations`, and the rule is that **the *last*
+  app wins** when Lino loads templates.
+
+  I finally fixed the problem by simply yielding 'attestations' before
+  'lino_welfare'. Here is a test case which verifies the actual path:
+
+  >>> import os
+  >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.demo'
+  >>> from lino.utils.config import find_config_file
+  >>> ffn = find_config_file('Default.odt','attestations/Attestation')
+  >>> ffn.endswith('lino_welfare/config/attestations/Attestation/Default.odt')
+  True
+
+
