@@ -9,7 +9,10 @@ Changes:
 
 - In :mod:`lino_welfare.fixtures.std`: both attestation types
   "Bescheinigung Ausländerbeihilfe" and "Anwesenheitsbescheinigung"
-  now use the same `body` template.
+  now use the same `body` template `default.body.html` which tests on
+  the type of the owner for content.
+- A new virtual field `preview`
+- New action `show_attestations` next to `issue_attestation`
 
 
 The following (internal) problem took me some time:

@@ -28,6 +28,7 @@ from django.contrib.contenttypes.models import ContentType
 from lino import dd
 from lino import mixins
 
+from lino.utils.xmlgen.html import E
 
 outbox = dd.resolve_app('outbox')
 postings = dd.resolve_app('postings')
@@ -157,6 +158,7 @@ class Attestable(dd.Model):
         abstract = True
 
     issue_attestation = CreateAttestation()
+    show_attestations = dd.ShowSlaveTable('attestations.AttestationsByOwner')
 
     def is_attestable(self):
         return True
@@ -195,6 +197,8 @@ class Attestation(dd.TypedPrintable,
 
     language = dd.LanguageField()
 
+    mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
+
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
@@ -204,10 +208,17 @@ class Attestation(dd.TypedPrintable,
     @property
     def date(self):
         "Used in templates"
+        if self.build_time:
+            return self.build_time.date()
         return datetime.date.today()
 
     def get_print_language(self):
         return self.language
+
+    @dd.virtualfield(dd.HtmlBox(_("Preview")))
+    def preview(self, ar):
+        ctx = self.get_printable_context(ar)
+        return '<div class="htmlText">%s</div>' % ctx['body']
 
     def get_printable_context(self, ar, **kw):
         kw = super(Attestation, self).get_printable_context(ar, **kw)
@@ -235,7 +246,7 @@ class AttestationDetail(dd.FormLayout):
     id type:25 project
     company contact_person contact_role
     user:10 language:8 owner build_time
-    outbox.MailsByController
+    preview
     """
 
 

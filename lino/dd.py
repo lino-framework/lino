@@ -1,4 +1,4 @@
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -135,7 +135,8 @@ Model mixins:
 - :class:`lino.mixins.ProjectRelated`
 - :class:`lino.mixins.UserAuthored`
 - :class:`lino.mixins.ByUser`
-- :class:`lino.mixins.Sequenced`
+- :class:`Sequenced <lino.mixins.Sequenced>`
+- :class:`Duplicable <lino.mixins.duplicable.Duplicable>`
 - :class:`lino.mixins.Referrable`
 - :class:`lino.mixins.Registrable`
 - :class:`lino.mixins.Hierarizable`
@@ -355,10 +356,12 @@ field2kw = settings.SITE.field2kw
 
 #~ from lino.mixins import Born
 
-from lino.mixins import (ProjectRelated, UserAuthored, ByUser,
-                         Sequenced, Hierarizable, Referrable,
-                         Registrable,
-                         CreatedModified, Controllable)
+from lino.mixins import (
+    ProjectRelated, UserAuthored, ByUser,
+    Duplicable,
+    Sequenced, Hierarizable, Referrable,
+    Registrable,
+    CreatedModified, Controllable)
 
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable
