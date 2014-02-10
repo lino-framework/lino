@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-02-06 16:01+0200\n"
-"PO-Revision-Date: 2014-02-06 16:03+0300\n"
+"PO-Revision-Date: 2014-02-10 09:02+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -67,9 +67,9 @@ msgid " using "
 msgstr " unter "
 
 #: lino/lino_site.py:1561
-#, fuzzy, python-format
+#, python-format
 msgid "%(place)s, %(date)s"
-msgstr "%(date)s um %(time)s"
+msgstr "%(place)s, den %(date)s"
 
 #: lino/config/403.html:3 lino/config/403.html:7
 msgid "Permission denied"
@@ -290,9 +290,8 @@ msgid "Don't send email notification"
 msgstr "Keine Benachrichtigung per E-Mail schicken"
 
 #: lino/core/actors.py:142
-#, fuzzy
 msgid "Situation on"
-msgstr "Dauer (Einheit)"
+msgstr "Situation am"
 
 #: lino/core/actors.py:160
 msgid "Period from"
@@ -1134,9 +1133,8 @@ msgid "Create an attestation from this"
 msgstr "per E-Mail"
 
 #: lino/modlib/attestations/models.py:92
-#, fuzzy
 msgid "Create attestation"
-msgstr "Bescheinigung"
+msgstr "Bescheinigung erstellen"
 
 #: lino/modlib/attestations/models.py:150 lino/modlib/reception/models.py:135
 msgid "Attestation"

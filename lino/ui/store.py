@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -21,57 +21,41 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-#~ import odf
-
-import cgi
 import datetime
-#~ import decimal
-#~ from dateutil import parser as dateparser
 
 from django.conf import settings
 from django.db import models
-from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.contrib.contenttypes import generic
 
-from lino.utils import jsgen
-from lino.utils.jsgen import py2js, Component, id2js, js_code
+from lino.utils.jsgen import py2js
 from lino.utils.quantities import parse_decimal
-#~ from lino.utils.xmlgen import etree
-#~ from lino.utils.xmlgen.html import E
 
 from lino.core import constants
 
-import lino
-from lino.core import dbtables
 from lino.core import fields
 from lino.core import actions
 from lino.core import frames
 from lino import dd
-#~ from lino.modlib.properties import models as properties
 from lino.utils import choosers
 from lino.utils import curry
 from lino.utils import iif
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
-#~ from lino.core import tables
-#~ from lino.utils import moneyfmt
 from lino.mixins.printable import decfmt
-
-from lino.utils.xmlgen import html as xghtml
 
 
 class StoreField(object):
 
-    """
-    Base class for the fields of a :class:`Store`.
+    """Base class for the fields of a :class:`Store`.
     
-    Note: `value_from_object` and `full_value_from_object` are similar, 
-    but for ForeignKeyStoreField one returns the primary key while the 
-    other returns the full instance.
-    
+    Note: `value_from_object` and `full_value_from_object` are
+    similar, but for ForeignKeyStoreField and GenericForeignKeyField
+    one returns the primary key while the other returns the full
+    instance.
+
     """
 
     form2obj_default = None
@@ -138,15 +122,6 @@ class StoreField(object):
     def extract_form_data(self, post_data):
         #~ logger.info("20130128 StoreField.extract_form_data %s",self.name)
         return post_data.get(self.name, None)
-        #~ v = post_data.get(self.field.name,self.form2obj_default)
-        #~ if v is None:
-            # ~ # means that the field wasn't part of the submitted form. don't touch it.
-            # ~ # except for checkboxes (who unfortunately are not submitted when clear)
-            # ~ # whose form2obj_default is False instead of None
-            #~ return
-    #~ v = post_data.get(self.field.name,NOT_PROVIDED)
-    #~ if v is NOT_PROVIDED:
-        #~ return
 
     def form2obj(self, ar, instance, post_data, is_new):
         """
@@ -298,15 +273,8 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             pass
 
         ch = choosers.get_for_field(self.field)
-        #~ if ch and ch.meth.quick_insert_field:
         if ch and ch.can_create_choice:
             return ch.create_choice(obj, v)
-            #~ if o is not None:
-                #~ o.full_clean()
-                #~ o.save()
-                #~ logger.info(u"Auto-created %s %s",
-                    #~ unicode(o._meta.verbose_name),unicode(o))
-                #~ return o
         return None
 
 
@@ -614,12 +582,7 @@ class DisplayStoreField(StoreField):
         #~ return E.td(v,**cellattrs)
 
 
-#~ class GenericForeignKeyField(ForeignKeyStoreField):
 class GenericForeignKeyField(DisplayStoreField):
-
-    #~ def get_rel_to(self,obj):
-        #~ ct = getattr(obj,self.field.ct_field)
-        #~ return ct.model_class()
 
     def full_value_from_object(self, obj, ar):
         v = getattr(obj, self.name, None)
@@ -631,13 +594,6 @@ class GenericForeignKeyField(DisplayStoreField):
         if ar.renderer is None:
             return unicode(v)
         return ar.obj2html(v)
-        #~ owner = getattr(obj,self.name)
-        #~ if owner is None:
-            # ~ # owner_id = getattr(obj,self.field.fk_field)
-            # ~ # if owner_id is None:
-                # ~ # return ''
-            #~ return ''
-        #~ return ar.obj2html(owner)
 
 
 class unused_GenericForeignKeyField(StoreField):

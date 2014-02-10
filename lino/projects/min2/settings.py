@@ -13,9 +13,6 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-import os
-import lino
-
 from lino.projects.std.settings import *
 
 class Site(Site):

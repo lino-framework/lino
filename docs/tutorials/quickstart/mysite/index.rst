@@ -40,9 +40,8 @@ you to follow the
 :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
 before continuing this one.
 
-Now open the
-:xfile:`settings.py` file of your new project
-and replace its content with the following:
+Now open the :xfile:`settings.py` file of your new project and replace
+its content with the following:
 
 .. literalinclude:: settings.py
     :linenos:
@@ -54,8 +53,8 @@ Explanations:
     That's needed because of the non-ascii **ì** in "Lino Così" 
     in line 3.
     
-#.  We import settings from Lino Così, 
-    one of the :ref:`out-of-the-box projects <lino.projects>` included with Lino.
+#.  We import settings from one of the :ref:`out-of-the-box projects
+    <lino.projects>` included with Lino.
     
 #.  Then we define a :setting:`SITE` setting, 
     an instance of the :class:`Site <lino.site.Site>` class,
@@ -92,7 +91,7 @@ This is just one command to type::
 
   $ python manage.py initdb_demo
 
-That is, you run the :mod:`initdb_demo <lino.management.commands.initdb_demo>`
+That is, you run the :manage:`initdb_demo`
 management command that comes with every Lino application.
 It will ask you::
 

@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models 
+Defines models
 :class:`Country` and
 :class:`Place`.
 
@@ -30,10 +30,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
 
-from lino.utils.choosers import chooser
-#~ from lino.utils import dblogger
-
-#~ from lino.utils.instantiator import lookup_or_create
 
 from lino.modlib.contacts import Plugin
 
@@ -178,7 +174,7 @@ class Place(dd.BabelNamed):
             return self.parent.get_parents(self, *grandparents)
         return [self] + list(grandparents)
 
-    @chooser()
+    @dd.chooser()
     def type_choices(cls, country):
         if country is not None:
             allowed = country.allowed_city_types()
@@ -253,7 +249,7 @@ class CountryCity(dd.Model):
     country = models.ForeignKey("countries.Country", blank=True, null=True)
     city = models.ForeignKey('countries.Place', blank=True, null=True)
 
-    @chooser()
+    @dd.chooser()
     def city_choices(cls, country):
         if country is None:
             cd = None
@@ -320,7 +316,7 @@ class CountryRegionCity(CountryCity):
     class Meta:
         abstract = True
 
-    @chooser()
+    @dd.chooser()
     def region_choices(cls, country):
         if country is not None:
             cd = getattr(CountryDrivers, country.isocode, None)
@@ -342,7 +338,7 @@ class CountryRegionCity(CountryCity):
         obj.region = self.region
         return obj
 
-    @chooser()
+    @dd.chooser()
     def city_choices(cls, country, region):
         qs = super(CountryRegionCity, cls).city_choices(country)
 

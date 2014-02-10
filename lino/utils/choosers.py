@@ -36,13 +36,18 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.generic import GenericForeignKey
 
 from lino.utils.instantiator import make_converter
-#~ from lino import reports
-# ~ from lino.core.fields import get_data_elem # , get_unbound_meth
-#~ import lino
-#~ from lino.core import fields
-from lino.core import constants  # as ext_requests
+from lino.core import constants
+
+
+def get_for_field(fld):
+    return getattr(fld, '_lino_chooser', None)
+
+
+def is_foreignkey(fld):
+    return isinstance(fld, (models.ForeignKey, GenericForeignKey))
 
 
 class BaseChooser:
@@ -79,7 +84,7 @@ class Chooser(FieldChooser):
         self.model = model
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
-        if not isinstance(field, models.ForeignKey):
+        if not is_foreignkey(field):
             self.simple_values = getattr(meth, 'simple_values', False)
             self.instance_values = getattr(meth, 'instance_values', False)
             self.force_selection = getattr(
@@ -225,35 +230,23 @@ class Chooser(FieldChooser):
         #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
 
 
-def get_for_field(fld):
-    return getattr(fld, '_lino_chooser', None)
-
-
 def uses_simple_values(fld):
     "used by :class:`lino.ui.extjs.ext_store.Store`"
-    if isinstance(fld, models.ForeignKey):
+    if is_foreignkey(fld):
         return False
     ch = get_for_field(fld)
     if ch is not None:
         return ch.simple_values
     choices = list(fld.choices)
-    #~ if choices is None:
-        #~ return True
-    #~ if callable(choices):
-        #~ choices = choices()
     if len(choices) == 0:
         return True
-        #~ raise Exception("%s has no chooser but an empty `choices` attribute" % fld)
     if type(choices[0]) in (list, tuple):
         return False
     return True
 
-#~ def get_for_field(fieldspec):
-    #~ fld = resolve_field(fieldspec)
-    #~ return get_for_field()
-
 
 def chooser(**options):
+    "Decorator which turns the method into a chooser."
     #~ options.setdefault('quick_insert_field',None)
     def chooser_decorator(fn):
         def wrapped(*args):

@@ -13,30 +13,27 @@ Any changes will be lost each time we reinitialize the demo data.
 
 The :ref:`demos` have their 
 :ref:`davlink` functionality switched off 
-(they have :attr:`use_davlink <lino.site.Site.use_davlink>` 
-set to False) to avoid browser questions to first-time visitors.
+to avoid browser questions to first-time visitors.
 
-
- 
 .. complextable::
 
   .. figure:: /tutorials/polls/mysite/polls1.jpg
     :scale: 30 %
     :target: http://demo1.lino-framework.org
     
-    `demo1 <http://demo1.lino-framework.org>`_
-    shows the "Polls" application developed in the 
-    :ref:`lino.tutorial.polls` tutorial.
-    A minimal didactic Lino application without authentication.
-
+  `demo1 <http://demo1.lino-framework.org>`_
+  shows the "Polls" application developed in the 
+  :ref:`lino.tutorial.polls` tutorial.
+  A minimal didactic Lino application without authentication.
+    
   <NEXTCELL>
   
   .. figure:: /screenshots/cal.Panel.jpg
     :scale: 24 %
     :target: http://faggio-demo.lino-framework.org
       
-    `demo2 <http://faggio-demo.lino-framework.org>`_ shows 
-    an early prototype of :ref:`faggio`.
+  `demo2 <http://faggio-demo.lino-framework.org>`_ shows 
+  an early prototype of :ref:`faggio`.
   
   <NEXTROW>
 
@@ -45,11 +42,11 @@ set to False) to avoid browser questions to first-time visitors.
     :target: http://demo3.lino-framework.org
   
     `demo3 <http://demo3.lino-framework.org>`_  
-    shows an early prototype of Lino Presto.
+    shows an early prototype of :ref:`presto`.
     
   <NEXTCELL>
 
-  .. figure:: /screenshots/sales.Invoice.jpg
+  .. figure:: /screenshots/cosi-screenshot.png
     :scale: 30
     :target: http://demo4.lino-framework.org
       
@@ -68,7 +65,7 @@ set to False) to avoid browser questions to first-time visitors.
     
   <NEXTCELL>
 
-  .. figure:: /screenshots/sales.Invoice.jpg
+  .. figure:: /screenshots/belref-screenshot.png
     :scale: 30
     :target: http://belref.lino-framework.org
       
@@ -113,8 +110,7 @@ set to False) to avoid browser questions to first-time visitors.
 Out of the box Lino applications
 --------------------------------
 
-The following Lino applications are 
-included with Lino:
+The following Lino applications are included with Lino:
 
 .. toctree::
     :maxdepth: 1
@@ -122,7 +118,6 @@ included with Lino:
     /polly/index
     /belref/index
     /presto/index
-      
 
 The following Lino applications are 
 available as separate PyPI packages:
@@ -133,3 +128,7 @@ available as separate PyPI packages:
 - :ref:`cosi`
 - :ref:`logos`
     
+
+
+
+

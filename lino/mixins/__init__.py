@@ -226,9 +226,6 @@ else:
         pass
 
 
-
-
-
 class AuthorAction(actions.Action):
 
     """

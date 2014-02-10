@@ -289,7 +289,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         #~ from appy.pod.renderer import Renderer
         #~ renderer = None
         """
-        When the source string contains non-ascii characters, then 
+        When the source string contains non-ascii characters, then
         we must convert it to a unicode string.
         """
         lang = str(elem.get_print_language())
@@ -298,7 +298,12 @@ class AppyBuildMethod(SimpleBuildMethod):
 
         def f():
             context = elem.get_printable_context(ar)
+
+            # backwards compat for existing .odt templates.  Cannot
+            # set this earlier because that would cause "render() got
+            # multiple values for keyword argument 'self'" exception
             context.update(self=elem)
+
             Renderer(ar, tpl, context, target,
                      **settings.SITE.appy_params).run()
         dbutils.run_with_language(lang, f)
@@ -784,25 +789,26 @@ class BasePrintable(object):
         def translate(s):
             return _(s.decode('utf8'))
         from lino import dd
-        kw.update(this=self,
-                  dtos=dd.fds,  # obsolete
-                  dtosl=dd.fdf,  # obsolete
-                  dtomy=dtomy,  # obsolete
-                  mtos=decfmt,
-                  fds=dd.fds,
-                  fdm=dd.fdm,
-                  fdl=dd.fdl,
-                  fdf=dd.fdf,
-                  fdmy=dd.fdmy,
-                  babelattr=dd.babelattr,
-                  babelitem=settings.SITE.babelitem,
-                  tr=settings.SITE.babelitem,
-                  iif=iif,
-                  settings=settings,
-                  ar=ar,
-                  site_config=settings.SITE.site_config,
-                  _=translate,
-                  )
+        kw.update(
+            this=self,  # preferred in new templates
+            dtos=dd.fds,  # obsolete
+            dtosl=dd.fdf,  # obsolete
+            dtomy=dtomy,  # obsolete
+            mtos=decfmt,
+            fds=dd.fds,
+            fdm=dd.fdm,
+            fdl=dd.fdl,
+            fdf=dd.fdf,
+            fdmy=dd.fdmy,
+            babelattr=dd.babelattr,
+            babelitem=settings.SITE.babelitem,
+            tr=settings.SITE.babelitem,
+            iif=iif,
+            settings=settings,
+            ar=ar,
+            site_config=settings.SITE.site_config,
+            _=translate,
+        )
         kw.update(language=self.get_print_language())
         return kw
 

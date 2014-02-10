@@ -15,6 +15,9 @@
 The :xfile:`models.py` file for :mod:`lino.modlib.attestations`.
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -60,16 +63,36 @@ class AttestationType(
 
     content_type = dd.ForeignKey(
         'contenttypes.ContentType',
-        verbose_name=_("Default for"),
+        verbose_name=_("Model"),
+        related_name='attestation_types',
         null=True, blank=True,
-        unique=True,
-        help_text=_("The model for which this is the default \
-        attestation type."))
+        help_text=_("The model that can issue attestations of this type."))
+
+    primary = models.BooleanField(
+        _("Primary"),
+        default=False,
+        help_text=_("""There's at most one primary type per model. \
+        Enabling this field will automatically make the other \
+        types non-primary."""))
+
+    skip_dialog = models.BooleanField(
+        _("Skip dialog"),
+        default=False,
+        help_text=_("""Check this to define a "quick attestation" type."""))
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
         return settings.SITE.list_templates(
             '.body.html', cls.get_templates_group())
+
+    def after_ui_save(self, ar):
+        super(AttestationType, self).after_ui_save(ar)
+        if self.primary:
+            for o in self.content_type.attestation_types.exclude(id=self.id):
+                if o.primary:
+                    o.primary = False
+                    o.save()
+                    ar.response.update(refresh_all=True)
 
 
 class AttestationTypes(dd.Table):
@@ -79,7 +102,7 @@ class AttestationTypes(dd.Table):
     """
     model = 'attestations.AttestationType'
     required = dd.required(user_level='admin', user_groups='office')
-    column_names = 'name build_method template content_type *'
+    column_names = 'name build_method template content_type primary *'
     order_by = ["name"]
 
     insert_layout = """
@@ -89,7 +112,9 @@ class AttestationTypes(dd.Table):
 
     detail_layout = """
     id name
-    build_method template body_template email_template attach_to_email
+    content_type primary skip_dialog
+    build_method template body_template
+    email_template attach_to_email
     remark:60x5
     attestations.AttestationsByType
     """
@@ -109,7 +134,7 @@ class CreateAttestation(dd.Action):
     Creates an attestation and displays it.
     """
     url_action_name = 'attst'
-    # icon_name = 'email_add'
+    icon_name = 'script_add'
     help_text = _('Create an attestation from this')
     label = _('Create attestation')
 
@@ -128,22 +153,33 @@ class CreateAttestation(dd.Action):
             user=ar.get_user(),
             owner=obj)
         ct = ContentType.objects.get_for_model(obj.__class__)
+        primary_type = None
+
         try:
-            akw.update(type=AttestationType.objects.get(content_type=ct))
+            primary_type = AttestationType.objects.get(
+                content_type=ct, primary=True)
+            akw.update(type=primary_type)
+        except AttestationType.MultipleObjectsReturned:
+            pass
         except AttestationType.DoesNotExist:
             pass
-    
+            # atypes = AttestationType.objects.filter(content_type=ct)
+            # n = atypes.count()
+            # if n == 1:
+            #     akw.update(type=atypes[0])
+
         a = obj.create_attestation(ar, **akw)
 
         a.full_clean()
         a.save()
         
-        if True:  # issue_directly
-            a.do_print.run_from_ui(ar, **kw)
-        else:
+        if primary_type is None or not primary_type.skip_dialog:
+            # open detail window on the created attestation
             js = ar.renderer.instance_handler(ar, a)
             kw.update(eval_js=js)
             ar.success(**kw)
+        else:  # print directly without dialog
+            a.do_print.run_from_ui(ar, **kw)
 
 
 class Attestable(dd.Model):
@@ -158,7 +194,9 @@ class Attestable(dd.Model):
         abstract = True
 
     issue_attestation = CreateAttestation()
-    show_attestations = dd.ShowSlaveTable('attestations.AttestationsByOwner')
+    
+    # Note every Attestable wants a "show attestations" button
+    # show_attestations = dd.ShowSlaveTable('attestations.AttestationsByOwner')
 
     def is_attestable(self):
         return True
@@ -205,6 +243,15 @@ class Attestation(dd.TypedPrintable,
     def get_mailable_type(self):
         return self.type
 
+    @dd.chooser()
+    def type_choices(cls, owner):
+        qs = AttestationType.objects.order_by('name')
+        if owner is None:
+            return qs.filter(content_type__isnull=True)
+        print(20140210, owner)
+        ct = ContentType.objects.get_for_model(owner.__class__)
+        return qs.filter(content_type=ct)
+
     @property
     def date(self):
         "Used in templates"
@@ -232,6 +279,10 @@ class Attestation(dd.TypedPrintable,
             ar.renderer = saved_renderer
         else:
             kw.update(body='')
+        # if self.owner is not None:
+        #     kw.update(self=self.owner)
+        #     kw.update(this=self.owner)
+        #     kw.update(doc=self)
         return kw
 
 

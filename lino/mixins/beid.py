@@ -341,8 +341,9 @@ class BeIdCardHolder(dd.Model):
                                        verbose_name=_("noble condition"))
     "The eventual noble condition of this person. Imported from TIM."
 
-    print_eid_content = dd.DirectPrintAction(
-        _("eID sheet"), 'eid-content', icon_name='vcard')
+    if False:  # see 20140210
+        print_eid_content = dd.DirectPrintAction(
+            _("eID sheet"), 'eid-content', icon_name='vcard')
 
     beid_readonly_fields = set(
         'noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())

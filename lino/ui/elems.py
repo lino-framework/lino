@@ -143,16 +143,16 @@ def before_row_edit(panel):
                         #~ print 20120603, panel.layout_handle.layout._datasource, e.field.name, f.name
                         #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
                         l.append("var bp = this.get_base_params();")
-                        #~ constants.URL_PARAM_MASTER_TYPE
-                        #~ constants.URL_PARAM_MASTER_KEY
                         l.append("%s.setContextValue('%s',bp['%s']);" % (
-                            e.as_ext(), constants.URL_PARAM_MASTER_PK, constants.URL_PARAM_MASTER_PK))
+                            e.as_ext(), constants.URL_PARAM_MASTER_PK,
+                            constants.URL_PARAM_MASTER_PK))
                         l.append("%s.setContextValue('%s',bp['%s']);" % (
-                            e.as_ext(), constants.URL_PARAM_MASTER_TYPE, constants.URL_PARAM_MASTER_TYPE))
+                            e.as_ext(), constants.URL_PARAM_MASTER_TYPE,
+                            constants.URL_PARAM_MASTER_TYPE))
                     else:
-                        #~ l.append("console.log('20110128 before_row_edit',record.data);")
                         l.append(
-                            "%s.setContextValue(%r,record ? record.data[%r] : undefined);" % (
+                            "%s.setContextValue(%r,record ? record.\
+                            data[%r] : undefined);" % (
                                 e.as_ext(), f.name, form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     #~ return js_code('function(record){ %s }' % (' '.join(l)))

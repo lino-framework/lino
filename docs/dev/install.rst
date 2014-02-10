@@ -19,32 +19,21 @@ If you had previously installed Lino using `pip install lino` as described in
 :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
 `pip uninstall lino`.
 
-Create a directory (e.g. :file:`~/hgwork`) meant to hold your 
+Create a directory (e.g. :file:`~/repositories`) meant to hold your 
 working copies of version-controlled software projects,
 `cd` to that directory and and do::
 
-  $ hg clone https://lino.googlecode.com/hg/ lino
-  $ hg clone https://django-north.googlecode.com/hg/ north
-  $ hg clone https://django-site.googlecode.com/hg/ djangosite
-  
-(The ``hg`` command is from `Mercurial
-<http://mercurial.selenic.com/wiki/QuickStart>`_. 
-Run `sudo aptitude install mercurial`  if necessary.)
+  $ git clone https://github.com/lsaffre/atelier.git
+  $ git clone https://github.com/lsaffre/djangosite.git
+  $ git clone https://github.com/lsaffre/north.git
+  $ git clone https://github.com/lsaffre/lino.git
   
 Then install these projects *as editable packages*::
 
-  $ pip install -e lino
+  $ pip install -e atelier
+  $ pip install -e djangosite
   $ pip install -e north
-  $ pip install -e site
-  
-You will also need some other dependencies for 
-which the regular pip installation will work::
-
-  $ pip install Django Unipath Sphinx Jinja2 Babel
-  
-You should also install `Fabric <http://docs.fabfile.org>`_:
-
-  $ pip install fabric 
+  $ pip install -e lino
   
 Some commands you might want to run now:
 
@@ -53,38 +42,18 @@ Run Lino's test suite
 
 ::
 
-  $ cd ~/hgwork/lino
+  $ cd ~/repositories/lino
   $ fab test
   
   
 Updating your copy of the repository
 ------------------------------------
 
-To update your copy of the repository, go to 
-your :file:`~/hgwork` directory and type::
+To update your copy of the repositories, go to 
+your :file:`~/repositories` directory and type::
 
-  $ hg pull -u lino
-  $ hg pull -u north
-  $ hg pull -u site
+  $ git pull atelier
+  $ git pull djangosite
+  $ git pull north
+  $ git pull lino
   
-Which version am I using?
---------------------------
-
-If you want to know which version you are using
-go to your :file:`~/hgwork` directory and type::
-
-  $ hg tip XYZ
-
-(XYZ is one of "lino", "north" or "site").
-
-Submitting a patch
-------------------
-
-If you fixed a bug or otherwise made some improvement 
-which you would like to contribute, 
-go to your :file:`~/hgwork` directory and type::
-
-  $ hg diff XYZ > mypatch.diff
-  
-and then send me the :file:`mypatch.diff` file
-(XYZ is one of "lino", "north" or "site").

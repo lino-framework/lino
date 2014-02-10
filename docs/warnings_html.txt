@@ -72,6 +72,3 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/backends/sqlite3/base.py", line 450, in execute
     return Database.Cursor.execute(self, query, params)
 OperationalError: no such column: pages_page.body_de
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
-WARNING: logo file 'logo.png' does not exist ('/home/luc/hgwork/lino/docs')

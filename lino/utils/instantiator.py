@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,27 +11,45 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Defines the :class:`Instantiator` class and some other utilities 
+"""Defines the :class:`Instantiator` class and some other utilities
 used mainly for :doc:`/topics/dumpy`.
+
+Example values:
+
+>>> s = '<a href="javascript:Lino.pcsw.Clients.detail.run(\
+null,{ &quot;record_id&quot;: 116 })">BASTIAENSEN Laurent (116)</a>'
+>>> GFK_HACK.match(s).groups()
+(u'pcsw.Clients', u'116')
+
+>>> s = '<a href="javascript:Lino.cal.Guests.detail.run(\
+null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
+>>> GFK_HACK.match(s).groups()
+(u'cal.Guests', u'6')
 """
+
+from __future__ import unicode_literals
+from __future__ import print_function
+
+
+import re
+GFK_HACK = re.compile(r'^<a href="javascript:Lino\.(\w+\.\w+)\.detail\.run\(null,\{ &quot;record_id&quot;: (\w+) \}\)">.*</a>$')
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 import decimal
 import datetime
 from dateutil import parser as dateparser
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
+from django.contrib.contenttypes.generic import GenericForeignKey
+# from django.contrib.contenttypes.models import ContentType
 
-#~ import lino
 from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d  # for backward compatibility of .py fixtures
-#~ from lino.core import fields
-#~ from lino.core import signals
 from lino.core.dbutils import obj2str
 
 
@@ -92,7 +110,6 @@ class DateConverter(Converter):
         value = kw.get(self.field.name)
         if value is not None:
             if not isinstance(value, datetime.date):
-                #~ print "20111218 DateConverter", value
                 if type(value) == int:
                     value = str(value)
                 d = dateparser.parse(value)
@@ -108,7 +125,6 @@ class ChoiceConverter(Converter):
 
     def convert(self, **kw):
         value = kw.get(self.field.name)
-        #~ print "20131012 c", self.field.name, kw
 
         if value is not None:
             if not isinstance(value, self.field.choicelist.item_class):
@@ -142,6 +158,29 @@ class ForeignKeyConverter(LookupConverter):
         return kw
 
 
+class GenericForeignKeyConverter(Converter):
+
+    """Converter for GenericForeignKey fields."""
+
+    def convert(self, **kw):
+        value = kw.get(self.field.name)
+        if value is not None:
+            if value == '':
+                value = None
+            else:
+                mo = GFK_HACK.match(value)
+                if mo is not None:
+                    actor = settings.SITE.modules.resolve(mo.group(1))
+                    pk = mo.group(2)
+                    value = actor.get_row_by_pk(None, pk)
+                    # ct = ContentType.objects.get_for_model(actor.model)
+                    # value = self.lookup(value)
+                else:
+                    raise Exception("Could not parse %r" % value)
+            kw[self.field.name] = value
+        return kw
+
+
 class ManyToManyConverter(LookupConverter):
 
     """Converter for ManyToMany fields."""
@@ -169,6 +208,8 @@ class ManyToManyConverter(LookupConverter):
 def make_converter(f, lookup_fields={}):
     if isinstance(f, models.ForeignKey):
         return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))
+    if isinstance(f, GenericForeignKey):
+        return GenericForeignKeyConverter(f)
     #~ if isinstance(f,fields.LinkedForeignKey):
         #~ return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f, models.ManyToManyField):
@@ -284,3 +325,11 @@ def create_and_get(model, **kw):
     o.full_clean()
     o.save()
     return model.objects.get(pk=o.pk)
+
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()

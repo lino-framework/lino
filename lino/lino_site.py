@@ -33,6 +33,14 @@ because this
 functionality is integral part of :mod:`lino.modlib.system`.
 
 
+
+.. setting:: demo_fixtures
+
+The list of fixtures to be loaded by the :manage:`initdb_demo`
+command.
+
+
+
 .. setting:: use_davlink
 
 No longer used. Replaced by :class:`lino.modlib.davlink`.
@@ -833,12 +841,6 @@ class Site(Site):
     """
 
     demo_fixtures = ['std', 'demo', 'demo2']
-    """
-    The list of fixtures to be loaded by the 
-    :mod:`initdb_demo <lino.management.commands.initdb_demo>`
-    command.
-    
-    """
 
     use_spinner = False  # doesn't work. leave this to False
 

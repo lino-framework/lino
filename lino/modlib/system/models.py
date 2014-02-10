@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -17,40 +17,23 @@ The :xfile:`models.py` module of the :mod:`lino.modlib.system` app.
 
 import logging
 logger = logging.getLogger(__name__)
-#~ from lino.utils import dblogger
 
-import cgi
 
 from django.conf import settings
-#~ from django.contrib.auth import models as auth
-#~ from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
-from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
-
-#~ from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-#~ import lino
 from lino import mixins
 from lino import dd
-#~ from lino import commands
 from lino.mixins import printable
-#~ from lino import choices_method, simple_choices_method
-from lino.core.dbutils import obj2str, sorted_models_list, full_model_name
-from lino.core.dbutils import resolve_field, UnresolvedModel
-from lino.utils.choosers import chooser, get_for_field
-from lino.utils.restify import restify
+from lino.core.dbutils import resolve_field
 from lino.core import actions
-#~ from lino.core import changes
 from lino.utils.xmlgen import html as xghtml
 
-#~ from lino.core.changes import Change, Changes, ChangesByObject
 
-
-#~ class BuildLinoJS(dd.CustomAction):
 class BuildSiteCache(dd.Action):
 
     """
@@ -237,7 +220,7 @@ if settings.SITE.is_installed('contenttypes'):
             return self.content_type.app_label + '.' \
                 + self.content_type.model + '.' + self.field
 
-        @chooser(simple_values=True)
+        @dd.chooser(simple_values=True)
         def field_choices(cls, content_type):
             l = []
             if content_type is not None:

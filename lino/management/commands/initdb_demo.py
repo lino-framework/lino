@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -13,8 +13,11 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Calls :mod:`initdb <djangosite.management.commands.initdb>` with 
-:attr:`demo_fixtures <lino.site.Site.demo_fixtures>`.
+
+.. management_command:: initdb_demo
+
+Calls :manage:`initdb` using the application's
+:setting:`demo_fixtures`.
 
 Introduction see :ref:`lino.tutorial.quickstart`.
 

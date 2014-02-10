@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Default settings module for a :ref:`cosi` project.
+This currently depends on :ref:`cosi` project.
 """
 
 from __future__ import unicode_literals
@@ -25,13 +25,6 @@ from django.utils.translation import ugettext_lazy as _
 
 class Site(Site):
 
-    """
-    Base class for a :ref:`cosi` application,
-    designed to be instantiated into the :setting:`SITE` setting.
-    
-    """
-
-    #~ title = __name__
     verbose_name = "Lino Start"
     description = _("a Lino application for startup projects.")
     version = "0.1"
@@ -42,7 +35,7 @@ class Site(Site):
     demo_fixtures = 'std intro furniture demo demo2'.split()
 
     default_ui = 'pages'
-    
+
     sidebar_width = 3
     user_model = 'users.User'
 
