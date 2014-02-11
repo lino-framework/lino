@@ -1258,9 +1258,9 @@ if FULL_CONTENT:
     General.add_lesson(u"Prantsuse automargid",
                        columns=[FR, PRON], show_headers=False)
     General.parse_words(NomPropre, u"""
-    Peugeot [pö'žo] : - 
-    Citroën [sitro'än] : - 
-    Renault [re'noo] : - 
+    Peugeot [pö'žo] : -
+    Citroën [sitro'än] : -
+    Renault [re'noo] : -
     """)
 
     General.add_lesson(u"Prantsuse eesnimed", u"""
@@ -1978,6 +1978,25 @@ les Côtes d'Auvergne [kootə do'värnjə] : -
 """)
 
 
+Kokadele.add_lesson(u"Teenindussaalis", u"""
+""")
+Kokadele.parse_words(Autre, u"""
+Puis-je prendre votre manteau? : Kas ma võtan Teie jope?
+Avez-vous réservé une table? : Kas teil on laud kinni pandud?
+Par ici, je vous prie. : Tulge siit kaudu, palun.
+Suivez-moi s'il vous plaît. : Tulge mulle järele, palun.
+Cette table-ci est libre. : See laud siin on vaba.
+Est-ce que cette table vous convient? : Kas see laud sobib teile?
+Voici la carte, Monsieur. : Siin on menüü, härra.
+Je souhaite un bon appétit. : Soovin head isu.
+Voulez-vous un déssert ou du café? : Kas soovite magustoitu või kohvi?
+Est-ce que c'était bon? : Kas toit maitses?
+""")
+
+
+
+
+
 if FULL_CONTENT:
 
     General.add_lesson(u"Omadussõnad (üld)", intro=u"""
@@ -2028,6 +2047,17 @@ blanc [blA~] | blanche [blA~š] : valge
 noir [nwaar] | noire [nwaar] : must
 """)
 
+General.add_lesson("Nädalapäevad")
+General.parse_words(NomPropre, u"""
+lundi ['lÖ~di] : esmaspäev
+mardi ['mardi] : teisipäev
+mercredi ['merkrədi] : kolmapäev
+jeudi ['žöödi] : neljapäev
+vendredi ['vA~drədi] : reede
+samedi ['samdi] : laupäev
+dimanche ['dimA~š] : pühapäev
+""")
+
 General.add_lesson(u"Kuud")
 General.parse_words(NomPropre, u"""
 janvier [žA~vi'ee] : jaanuar
@@ -2052,6 +2082,16 @@ je voyage en voiture [žə vuajaaž A~ vua'tüür] : ma reisin autoga
 je voyage en avion [žə vuajaaž A~ avio~] : ma reisin lennukiga
 je voyage en train [žə vuajaaž A~ trÄ~] : ma reisin rongiga
 """)
+
+General.parse_words(Autre, u"""
+Parlez-vous anglais? : Kas Te räägite inglise keelt?
+Je parle français... un tout petit peu. : \
+  Ma oskan prantsuse keelt... hästi natuke.
+Une escalope aux pommes de terre au four, svp. : \
+  Palun üks šnitsel ahjukartuliga.
+""")
+
+
 
 u"""
 On met une majuscule 

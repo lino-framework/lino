@@ -51,31 +51,12 @@ authentication).
   it works also for Belgian cards and (2) does not require any special
   software except Java on the client machine.
 
-**TODO**
-
-- I'd like to set up a public demo/test page, but is it allowed to 
-  sign a third-party `.jar` file and to distribute it together with 
-  my .jar file?
-  Concretely I speak about the following libraries:
-
-  - `eid-applet-services.jar` from the
-    `eid-applet <https://code.google.com/p/eid-applet/>`_
-    project (LGPL)
-  - `commons-logging.jar` from the
-    `commons-logging <http://commons.apache.org/proper/commons-logging/>`_
-    project.
-  - `commons-codec.jar` from the
-    `commons-codec <http://commons.apache.org/proper/commons-codec/>`_
-    project.
-
 **Status**
 
-
-- I need help with packaging, signing and deploying the applet.
-  I have at least one concrete problem described 
-  in :blogref:`20131220`. 
-  Hints on how to get that working are welcome.
-
+- I'd love to find a partner for this project, somebody who has some
+  experience with Java, who would give me advise and help me to learn
+  about packaging, signing and deploying the applet.  Or even (if you
+  prefer) somebody who fully takes the project maintenance.
 
 **Pages referring to this**
 

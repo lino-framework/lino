@@ -49,14 +49,17 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         if not site.use_java:
             return
         # p = self.build_media_url('EIDReader.jar')
-        p = self.build_media_url('eidreader.jnlp')
+        # p = self.build_media_url('eidreader.jnlp')
+        p = self.build_media_url()
         p = request.build_absolute_uri(p)
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
         # yield '        archive="%s"' % p
+        yield '        codebase="%s"' % p
         yield '        width="0" height="0">'
         # ~ yield '<param name="separate_jvm" value="true">' # 20130913
         yield '<param name="permissions" value="all-permissions">'
-        yield '<param name="jnlp_href" value="%s">' % p
+        # yield '<param name="jnlp_href" value="%s">' % p
+        yield '<param name="jnlp_href" value="eidreader.jnlp">'
         yield '</applet>'
 
     def card_number_to_picture_file(self, card_number):

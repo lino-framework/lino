@@ -27,13 +27,21 @@ working copies of version-controlled software projects,
   $ git clone https://github.com/lsaffre/djangosite.git
   $ git clone https://github.com/lsaffre/north.git
   $ git clone https://github.com/lsaffre/lino.git
-  
+
 Then install these projects *as editable packages*::
 
   $ pip install -e atelier
   $ pip install -e djangosite
   $ pip install -e north
   $ pip install -e lino
+
+
+While you are here you might want to do the same for one or several of
+the out-of-the-box Lino applications:
+:ref:`cosi`
+:ref:`faggio`
+:ref:`welfare`
+:ref:`logos`
   
 Some commands you might want to run now:
 

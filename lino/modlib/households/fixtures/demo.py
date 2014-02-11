@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,17 +19,10 @@ Creates some households by marrying a few Persons.
 
 """
 
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from lino.utils.instantiator import Instantiator, i2d
 from lino.core.dbutils import resolve_model
-from django.utils.translation import ugettext_lazy as _
 
 
-from django.db import models
-from django.conf import settings
-from north.dbutils import babel_values
 from lino.utils import Cycler
-#~ from lino.modlib.contacts.utils import Gender
 from lino import mixins
 
 
@@ -41,9 +34,9 @@ def objects():
     Person = resolve_model('contacts.Person')
 
     MEN = Cycler(Person.objects.filter(gender=mixins.Genders.male)
-                 .order_by('birth_date'))
+                 .order_by('-id'))
     WOMEN = Cycler(Person.objects.filter(gender=mixins.Genders.female)
-                   .order_by('birth_date'))
+                   .order_by('-id'))
 
     for i in range(3):
         he = MEN.pop()
