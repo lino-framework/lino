@@ -371,29 +371,28 @@ class LayoutElement(VisibleComponent):
         self.install_permission_handler()
 
     def loosen_requirements(self, actor):
-        """
-        Retain only those requirements of `self` which are
+        """Retain only those requirements of `self` which are
         also in `actor`.
 
         For example an InsertFormPanel has initially the requirements
-        of the actor who defines it. The actor may not be visible to the current user.
-        But the panel may be used by other actors which are visible
-        because they have with less requirements.
+        of the actor who defines it. The actor may not be visible to
+        the current user.  But the panel may be used by other actors
+        which are visible because they have less requirements.
+
         """
         #~ if str(self.layout_handle.layout._datasource) == 'cal.Guests':
             #~ logger.info("20130720 %s loosens requirements from %s",self.layout_handle.layout,actor)
         if self.layout_handle.layout._datasource == actor:
             return  # nothing to loosen
 
-        #~ kw = actor.required
-        new = dict()
         loosened = False
         for k, v in self.required.items():
             if k == 'user_groups':
                 """
-                loosening user_groups requirements means to *add* them
+                loosening user_groups requirements
+                means to *add* allowed groups
                 """
-                if actor.required.has_key(k):
+                if k in actor.required:
                     user_groups = actor.required[k]
                     if isinstance(user_groups, basestring):
                         user_groups = user_groups.split()
@@ -407,7 +406,7 @@ class LayoutElement(VisibleComponent):
                 else:
                     del self.required[k]
                     loosened = True
-            elif actor.required.has_key(k):
+            elif k in actor.required:
                 if actor.required[k] < v:
                     loosened = True
                     self.required[k] = actor.required[k]

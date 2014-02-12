@@ -1,5 +1,10 @@
-Java Howto
-==========
+Java Cheat sheet
+================
+
+.. note:: 
+
+   Warning: This is just a cheat sheet! 
+   Don't use it without understanding what a command does. 
 
 update-java-alternatives
 ------------------------
@@ -52,9 +57,18 @@ How to get rid of "update-alternatives: error: no alternatives for apt"
 -----------------------------------------------------------------------
 
 This error can have multiple explanations.
-First step is to understand what it means::
+On :blogref:`20140211` I solved this by removing and reinstalling Java...
 
-  $ less `which update-java-alternatives`
 
-tells us that this command calls `update-alternatives`, which is a
-binary.
+.. _java.flush:
+
+How to flush the Java cache?
+----------------------------
+
+- On Debian/Ubuntu, simply do::
+
+      $ rm -R ~/.icedtea/cache/*
+  
+  You can also launch the IcedTea Web Control Panel and inspect your
+  cache, disable caching alltogether and other thing. But I didn't
+  manage to delete individual entries (Ubuntu 13.10).

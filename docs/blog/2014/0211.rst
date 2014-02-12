@@ -119,9 +119,7 @@ I finally decided to add the signed third-party jars to the eidreader
 repository. The reasons why this had to wait until now were my fears
 of (1) doing something illegal and/or (2) opening a possibility for
 others to peruse my signature.
-
 Fear (1) is explained in :ref:`third_party_jars`.
-
 Fear (2) has gone away after checking documents like `Signing Applets
 Using RSA Certificates
 <http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/rsa_signing.html>`_. Yes,
@@ -131,5 +129,30 @@ which confirms that this code can be trusted. They cannot extract my
 signature from that file and use it to sign something else.
 
 
+Things are now getting much easier, and that's good because they are
+complicated enough by themselves.
 
-http://testlino:8080/
+One of my stumble stones while testing on testlino::
+    
+    AttributeError
+    AttrDict instance has no key 'nationalNumber' (keys are valid_until, last_name, national_id, ResidencePermitType, date_issued, birth_place, remark2, remark3, nationality, remark1, remark4, first_name, gender, other_names, card_id, reader, birth_date)
+
+    TRACEBACK:
+    File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/core/handlers/base.py", line 115, in get_response
+    (...)
+    File "/home/lsaffre/repositories/lino/lino/modlib/beid/__init__.py", line 95, in card2client
+    kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
+    File "/home/lsaffre/repositories/atelier/atelier/utils.py", line 50, in __getattr__
+    name, ', '.join(self.keys())))
+
+
+It seems that an old version of eidreader is still stored
+somewhere...  How to flush the Java cache?  
+`stackoverflow
+<http://stackoverflow.com/questions/8828643/java-web-start-how-to-clear-cache-or-update-the-app-from-users-perspective>`_ did not help me this tim.
+I even started a new entry :ref:`java.flush` in my :doc:`/java`.
+
+After having tested all these, I found the solution: I had
+inserted my Estonian id card instead of the Belgian one. 
+Die dümmsten Fehler sind am schwersten zu finden.
+

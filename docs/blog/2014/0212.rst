@@ -1,0 +1,34 @@
+======================================
+20140212 (Wednesday, 12 February 2014)
+======================================
+
+Social agents
+-------------
+
+In :ref:`welfare`, the first *general social agents* (not integration
+agents) started to use Lino.  In the demo database this is user
+"judith" with UserProfile 400.
+
+Added new user group "Coaching".  Both Integration agents and General
+Social agents are members of this group.
+Adapted :meth:`lino_welfare.settings.Site.setup_choicelists`.
+
+Note that "Coaching" is my particular translation of "Begleitung"; I
+am afraid that it is not the right word but could not find a better
+candidate.
+
+Changed the `user_groups` requirement of certain tables from `integ`
+to `coaching`.
+
+
+TODO: 
+
+- why does demo user judith see the Competences panel of ClientDetail?
+  The `competences` panel in `pcsw.ClientDetail` is defined with
+  required=usergroups='integ'.  It probably has to do with the
+  `loosen_requirements` method, but here be dragons. I should first
+  write test cases to test which layout elements are visible to a
+  given user profile...
+
+- Demo `integ.UsersWithClients` continues to show all users who are
+  members of the `integ` user group (i.e. with an `integ_level`).
