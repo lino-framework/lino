@@ -669,9 +669,10 @@ class ClearCacheAction(actions.Action):
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
             #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
-            return ar.confirm(doit,
-                              _("This will discard all changes in the generated file."),
-                              _("Are you sure?"))
+            return ar.confirm(
+                doit,
+                _("This will discard all changes in the generated file."),
+                _("Are you sure?"))
             #~ logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
         #~ else:
             #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
