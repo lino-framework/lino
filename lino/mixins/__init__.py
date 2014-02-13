@@ -580,12 +580,10 @@ class Hierarizable(Sequenced):
 
 class ProjectRelated(model.Model):
 
-    """
-    Mixin for Models that are automatically
-    related to a "project".
-    A project means here
-    "the central most important thing that is used to classify most other things".
-    For example in lino.projects.pcsw, the "project" is a Client.
+    """Mixin for Models that are automatically related to a "project".  A
+    project means here "the central most important thing that is used
+    to classify most other things".  For example in
+    lino.projects.pcsw, the "project" is a Client.
 
     Whether an application has such a concept of "project",
     and which model has this privileged status,

@@ -110,10 +110,19 @@ are usually rather short. Something like::
 Serving Javascript frameworks
 -----------------------------
 
-On a production server you will probably want to serve yourself 
-the third-party Javascript libraries used by Lino.
+Lino applications need certain third-party Javascript libraries, and
+the Lino server comes with a default configuration which instructs the
+clients to fetch them from some public location::
 
-::
+  extjs_base_url = "http://extjs-public.googlecode.com/svn/tags/extjs-3.3.1/release/"
+  extensible_base_url = "http://ext.ensible.com/deploy/1.0.2/"
+  bootstrap_base_url = "http://twitter.github.com/bootstrap/assets/"
+  tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
+
+On a production server you will probably want to serve them yourself.
+Here is how to do this.
+
+First you must download them::
 
   cd /var/snapshots/
 
@@ -128,17 +137,58 @@ the third-party Javascript libraries used by Lino.
   wget http://twitter.github.com/bootstrap/assets/bootstrap.zip
   unzip bootstrap.zip
   
+Then in your :file:`settings.py` (or your :file:`djangosite_local.py`)
+you must tell Lino to use these files instead of the default
+locations::
 
-Then in your :file:`settings.py` (or your :file:`djangosite_local.py`) 
-you'll set the `FOO_root <lino.ui.Site.extjs_root>` attributes 
-accordingly::
+  SITE = Site(globals())
+  SITE.extjs_base_url = None
+  SITE.extjs_root = '/var/snapshots/ext-3.3.1'
 
-  extjs_root = '/var/snapshots/ext-3.3.1'
-  extensible_root = '/var/snapshots/extensible-1.0.1'
-  bootstrap_root = '/var/snapshots/bootstrap'
+  SITE.extensible_base_url = None
+  SITE.extensible_root = '/var/snapshots/extensible-1.0.1'
+
+  SITE.bootstrap_base_url = None
+  SITE.bootstrap_root = '/var/snapshots/bootstrap'
+
+  SITE.tinymce_base_url = None
+  SITE.tinymce_root = '/usr/share/tinymce/www'
+
+
+Notes:
+
+- If the `xxx_base_url` is not empty, Lino will use it
+
+- Otherwise, Lino will check (once, at server startup) whether a
+  subdirectory xxx exists in your media directory. If not, it will
+  create symbolic links to `xxx_root` in your media directory.
+
+Attention: In versions after 201401 the configuration has changed,
+these settings are now in their respective plugin (except for tinymce
+which is not yet converted to a plugin). Your :xfile:`settings.py`
+should look like this::
+
+    SITE = Site(globals())
+
+    JSLIBS = '/var/snapshots/'
+
+    SITE.configure_plugin(
+        'extensible',
+        media_root=JSLIBS+'extensible-1.0.1',
+        media_base_url=None)
+
+    SITE.configure_plugin(
+        'plain',
+        media_root=JSLIBS+'bootstrap',
+        media_base_url=None)
+
+    SITE.configure_plugin(
+        'extjs',
+        media_root=JSLIBS+'ext-3.3.1',
+        media_base_url=None)
+
+
   
-Lino will use these values to create symbolic links in 
-your media directory.
  
   
 Install TinyMCE language packs

@@ -54,8 +54,9 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         p = request.build_absolute_uri(p)
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
         # yield '        archive="%s"' % p
-        yield '        codebase="%s"' % p
-        yield '        width="0" height="0">'
+        yield '        codebase="%s">' % p
+        # seems that you may not use another size than 
+        # yield '        width="0" height="0">'
         # ~ yield '<param name="separate_jvm" value="true">' # 20130913
         yield '<param name="permissions" value="all-permissions">'
         # yield '<param name="jnlp_href" value="%s">' % p

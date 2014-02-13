@@ -213,9 +213,9 @@ class Attestation(dd.TypedPrintable,
                   outbox.Mailable,
                   postings.Postable):
 
-    """
-    An attestation is a document that describes some aspect of the current
-    situation.
+    """An attestation is a printable document that describes some aspect
+    of the current situation.
+
     """
 
     manager_level_field = 'office_level'
@@ -242,6 +242,18 @@ class Attestation(dd.TypedPrintable,
 
     def get_mailable_type(self):
         return self.type
+
+    def on_create(self, ar):
+        """When creating an Attestation by double clicking in
+        AttestationsByProject, then the `project` field gets filled
+        automatically, but we also want to set the `owner` field to
+        the project.
+
+        """
+        super(Attestation, self).on_create(ar)
+        if not self.owner_id:
+            if self.project:
+                self.owner = self.project
 
     @dd.chooser()
     def type_choices(cls, owner):

@@ -5,10 +5,8 @@
 Gerichtsvollzieher und Inkasso-Unternehmen
 ------------------------------------------
 
-:ref:`welfare`: 
-I opened ticket `#1 : Inkasso-Unternehmen
-<http://welfare.lino-framework.org/tickets/1.html>`_
-and started to work on it.
+:ref:`welfare`: I opened ticket :doc:`/tickets/80` and started to work
+on it.
 
 
 Blogging about multiple Django projects

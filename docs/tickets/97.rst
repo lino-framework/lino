@@ -1,3 +1,5 @@
+:state: sleeping
+
 #97 : choosers with GenericForeignKey in context
 ================================================
 
