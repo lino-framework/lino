@@ -1,0 +1,51 @@
+===================================
+20140214 (Friday, 14 February 2014)
+===================================
+
+Running TIM using Wine
+----------------------
+
+I finally managed to have TIM running under Wine. Itäs just a question
+of how to organize your files. And then some configuration tuning.
+
+First problem was that Wine didn't find some required runtime DLL files.
+I ran winecfg and specified that `T:` points to `~/vbshared2/drives/T`.
+
+Another problem was that the screen painting was very slow.  Probably
+related to the following messages on stdout::
+
+    fixme:font:freetype_SelectFont Untranslated charset 255
+    fixme:font:freetype_SelectFont Untranslated charset 255
+    fixme:font:get_nearest_charset returning DEFAULT_CHARSET \
+       face->fs.fsCsb[0] = 00000000 file = (null)
+    fixme:font:freetype_SelectFont Untranslated charset 254
+    fixme:font:get_nearest_charset returning DEFAULT_CHARSET \
+      face->fs.fsCsb[0] = 00000000 file = (null)
+    
+    
+More attestations
+-----------------
+
+Working on :doc:`/tickets/93`.
+
+.. currentmodule:: lino.modlib.attestations
+
+Would it make sense to also turn a `debts.Budget` into an attestable?
+Yesterday on the phone with Gerd we said "Yes", but meanwhile I'd
+rather say "No".  
+
+Because :ref:`welfare.debts.Budget` is rather like
+:ref:`welfare.jobs.Contract` and :ref:`welfare.isip.Contract` (and
+like :ref:`welfare.cbss.RetrieveTIGroupsRequest` and
+:ref:`welfare.notes.Note`): tThese objects are printable "by
+themselves": they are usually printed exactly once, and the user does 
+not care about a history of printings. 
+
+Code changes:
+    
+- One detail to make this topic more clear is that the "Create
+  Attestation" button should be placed next to the "print" button.
+    
+- And another detail: a better name for `CreateAttestation` ("to
+  create an attestation") would be simply "attest".
+

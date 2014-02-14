@@ -128,15 +128,17 @@ class AttestationTypes(dd.Table):
         return obj.get_choices_text(request, self, field)
 
 
-class CreateAttestation(dd.Action):
+class AttestAction(dd.Action):
 
     """
     Creates an attestation and displays it.
     """
-    url_action_name = 'attst'
+    url_action_name = 'attest'
     icon_name = 'script_add'
     help_text = _('Create an attestation from this')
-    label = _('Create attestation')
+    # label = _('Create attestation')
+    label = _('Attest')
+    sort_index = 49  # immediately before "Print"
 
     def get_action_permission(self, ar, obj, state):
         if not ar.get_user().email:
@@ -144,7 +146,7 @@ class CreateAttestation(dd.Action):
         if obj is not None:
             if not obj.is_attestable():
                 return False
-        return super(CreateAttestation,
+        return super(AttestAction,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
@@ -193,7 +195,7 @@ class Attestable(dd.Model):
     class Meta:
         abstract = True
 
-    issue_attestation = CreateAttestation()
+    do_attest = AttestAction()
     
     # Note every Attestable wants a "show attestations" button
     # show_attestations = dd.ShowSlaveTable('attestations.AttestationsByOwner')

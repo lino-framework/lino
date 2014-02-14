@@ -96,12 +96,20 @@ and verifying that it works again.
 Attestations
 ------------
 
+:doc:`/tickets/93`
+
 .. currentmodule:: lino.modlib.attestations
 
 When creating an :class:`Attestation` by double clicking in
 :class:`AttestationsByProject`, then the `project` field gets filled
 automatically, but we also want to set the `owner` field to
 the project.
+
+`lino_welfare.migrate` now writes a file `migrate_from_1_1_10.py`,
+intended to get executed after the real migration. This script renames
+the `.rtf` files generated per `notes.Note` of type "Lebenslauf" so
+that Lino finds them back now that they are an
+`attestations.Attestation`.
 
 
 Blogging

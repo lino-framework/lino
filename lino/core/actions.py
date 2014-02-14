@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -15,22 +15,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import traceback
-#~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
 from django.db import models
-#~ from django.core.mail import EmailMultiAlternatives
-from django.core.mail import EmailMessage
 
-
-import lino
-#~ from lino.utils import AttrDict
-#~ from lino.utils import curry
-#~ from lino.utils import jsgen
-#~ from lino.utils import Warning
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -41,11 +31,7 @@ from lino.core import constants
 from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
-#~ from lino.core import changes
 from lino.core import fields
-
-#~ from lino.core.perms import UserLevels
-#~ from lino.core import perms
 
 PLAIN_PAGE_LENGTH = 15
 
