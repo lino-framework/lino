@@ -76,6 +76,7 @@ class UtilsTests(LinoTestCase):
         self.run_simple_doctests("""
         lino/utils/instantiator.py
         lino/utils/__init__.py
+        lino/modlib/cal/utils.py
         """)
 
     # def test_01(self): self.run_simple_doctests('lino/utils/__init__.py')
@@ -98,7 +99,7 @@ class UtilsTests(LinoTestCase):
     def test_ledger_utils(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
     def test_accounts_utils(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
     def test_contacts_utils(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
-    def test_cal_utils(self): self.run_simple_doctests('lino/apps/cal/utils.py')
+
     def test_mixins_addressable(self): self.run_simple_doctests('lino/mixins/addressable.py')
 
 class I18nTests(LinoTestCase):
