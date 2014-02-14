@@ -76,6 +76,8 @@ class Change(dd.Model):
     type = ChangeTypes.field()
     if settings.SITE.user_model:
         user = dd.ForeignKey(settings.SITE.user_model)
+    else:
+        user = dd.DummyField()
 
     object_type = models.ForeignKey(ContentType,
                                     related_name='changes_by_object',
@@ -98,9 +100,12 @@ class Change(dd.Model):
 
 
 class Changes(dd.Table):
+    param_object_type = models.ForeignKey(ContentType, verbose_name=_("Object type"), blank=True)
     parameters = {
-        'type': ChangeTypes.field(force_selection=False, blank=True),
+        'change_type': ChangeTypes.field(force_selection=False, blank=True),
         'date': models.DateField(_("Only changes from"), blank=True),
+        'object_type': param_object_type,
+        'object_id': models.PositiveIntegerField("Object ID", blank=True),
     }
     if settings.SITE.user_model:
         parameters['user'] = dd.ForeignKey(
@@ -114,15 +119,19 @@ class Changes(dd.Table):
     order_by = ['-time']
 
     detail_layout = """
-    time user type master object id
-    diff
+        time user type master object id
+        diff
+    """
+
+    params_layout = """
+        date user change_type object_type object_id
     """
 
     @classmethod
     def get_request_queryset(cls, ar):
         qs = super(Changes, cls).get_request_queryset(ar)
         if not isinstance(qs, list):
-            if ar.param_values.type:
+            if ar.param_values.change_type:
                 qs = qs.filter(type=ar.param_values.type)
             if ar.param_values.date:
                 qs = qs.filter(time__range=(
@@ -130,6 +139,10 @@ class Changes(dd.Table):
                     ar.param_values.date+datetime.timedelta(1)))
             if settings.SITE.user_model and ar.param_values.user:
                 qs = qs.filter(user=ar.param_values.user)
+            if ar.param_values.object_type:
+                qs = qs.filter(object_type=ar.param_values.object_type)
+            if ar.param_values.object_id:
+                qs = qs.filter(object_id=ar.param_values.object_id)
         return qs
 
 
@@ -138,8 +151,8 @@ class ChangesByMaster(Changes):
     Slave Table showing the changes related to the current object
     """
     required = dd.required()
-    column_names = 'time user type object diff object_type object_id'
     master_key = 'master'
+    column_names = 'time user type object diff object_type object_id'
 
 
 class WatcherSpec:
