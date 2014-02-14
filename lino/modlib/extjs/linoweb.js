@@ -404,7 +404,7 @@ Lino.show_login_window = function(on_login) {
                 waitMsg:'Sending data...',
                 success:function(){ 
                   Lino.login_window.hide();
-                  Lino.close_all_windows();
+                  Lino.handle_home_button();
                   Lino.viewport.loadMask.hide();
                   if (typeof on_login == 'string') {
                       Lino.load_url(on_login);
@@ -464,13 +464,8 @@ Lino.show_login_window = function(on_login) {
 };
 
 Lino.logout = function(id,name) {
-    //~ console.log('20121104 gonna log out',arguments);
-    //~ Lino.do_action
-    Lino.call_ajax_action(Lino.viewport,'GET',
-        '{{settings.SITE.build_admin_url("auth")}}',{},'logout',undefined,undefined,function(){
-        //~ console.log('20121104 logged out',arguments);
-        //~ Lino.login_window.hide();
-        Lino.close_all_windows();
+    Lino.call_ajax_action(Lino.viewport,'GET','{{settings.SITE.build_admin_url("auth")}}',{},'logout',undefined,undefined,function(){
+        Lino.reload();
     })
 }
 
@@ -816,26 +811,32 @@ Lino.close_window = function(status_update) {
   if (cw) cw.hide_really();
 };
 
+Lino.reload = function() {
+    // First close all windows to ensure all changes are saved
+    Lino.close_all_windows();
+
+    // Then reload current view
+    var url =  "{{settings.SITE.build_admin_url()}}"
+
+    var p = {};
+    Lino.insert_subst_user(p)
+    if (Ext.urlEncode(p))
+        url = url + "?" + Ext.urlEncode(p);
+
+    Lino.load_url(url);
+}
+
+Lino.handle_home_button = function() {
+  if (Lino.window_history.length == 0)
+      Lino.reload();
+  else
+      Lino.close_all_windows();
+}
+
 Lino.close_all_windows = function() {
-  if (Lino.window_history.length == 0) {
-      //~ Lino.viewport.refresh();
-      var url =  "{{settings.SITE.build_admin_url()}}"
-      //~ console.log("20121120 Lino.close_all_windows() : no window_history");
-      //~ if (ADMIN_URL) 
-      var p = {};
-      Lino.insert_subst_user(p)
-      if (Ext.urlEncode(p)) url = url + "?" + Ext.urlEncode(p);
-      Lino.load_url(url);
-  } else {
-    //~ console.log("20121120 Lino.close_all_windows() with window_history");
     while (Lino.window_history.length > 0) {
-      Lino.close_window();
-      //~ Lino.window_history.pop().hide_really();
+        Lino.close_window();
     }
-  }
-  //~ Lino.current_window = null;
-  //~ Lino.close_window();
-  //~ var ww = 
 }
 
 Lino.kill_current_window = function() {
