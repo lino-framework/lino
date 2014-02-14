@@ -779,7 +779,7 @@ class ExtRenderer(HtmlRenderer):
         assert profile == jsgen._for_user_profile
 
         menu = settings.SITE.get_site_menu(self, profile)
-        menu.add_item('home', _("Home"), javascript="Lino.close_all_windows()")
+        menu.add_item('home', _("Home"), javascript="Lino.handle_home_button()")
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
 
         actors_list = [
