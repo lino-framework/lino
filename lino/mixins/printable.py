@@ -30,7 +30,10 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.template.loader import get_template, select_template, Context, TemplateDoesNotExist
+
+from django.template.loader import (select_template, Context,
+                                    TemplateDoesNotExist)
+
 
 from djangosite.dbutils import dtomy
 
@@ -43,6 +46,7 @@ from lino.utils import iif, moneyfmt
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.core.model import Model
+from lino.core.choicelists import Choice, ChoiceList
 from lino.mixins.duplicable import Duplicable
 
 from lino.utils.media import MediaFile
@@ -74,75 +78,55 @@ try:
 except ImportError:
     pyratemp = None
 
-#~ def filename_root(elem):
-    #~ return elem._meta.app_label + '.' + elem.__class__.__name__
-
 
 def model_group(model):
     return model._meta.app_label + '/' + model.__name__
 
 
-bm_dict = {}
-bm_list = []
 
+class BuildMethod(Choice):
 
-class BuildMethod:
+    """Base class for all build methods.  A build method encapsulates the
+    process of generating a "printable document" that inserts data
+    from the database into a template, using a given combination of a
+    template parser and post-processor.
 
     """
-    Base class for all build methods.
-    A build method encapsulates the process of generating a 
-    "printable document" that inserts data from the database 
-    into a template, using a given combination of a template 
-    parser and post-processor.
-    """
-    name = None
-    label = None
     target_ext = None
     template_ext = None
-    #~ button_label = None
-    label = None
     templates_name = None
     cache_name = 'cache'
-    #~ webdav = False
     default_template = ''
 
     use_webdav = False
-    """
-    Whether this build method results is an editable file.
-    For example, `.odt` files are considered editable 
-    while `.pdf` files aren't.
+    """Whether this build method results is an editable file.  For
+    example, `.odt` files are considered editable while `.pdf` files
+    aren't.
     
-    In that case the target will be in a webdav folder 
-    and the print action will respond 
-    `open_davlink_url` instead of the usual `open_url`,
-    which extjs3 ui will implement by calling `Lino.davlink_open()`
-    instead of the usual `window.open()`.
+    In that case the target will be in a webdav folder and the print
+    action will respond `open_davlink_url` instead of the usual
+    `open_url`, which extjs3 ui will implement by calling
+    `Lino.davlink_open()` instead of the usual `window.open()`.
     
-    When :mod:`lino.modlib.davlink` is not installed,
-    this setting still influences the target path
-    of resulting files, but the clients 
-    will not automatically recognize them as 
-    webdav-editable URLs.
+    When :mod:`lino.modlib.davlink` is not installed, this setting
+    still influences the target path of resulting files, but the
+    clients will not automatically recognize them as webdav-editable
+    URLs.
+
     """
 
-    def __init__(self):
-        if self.label is None:
-            self.label = _(self.__class__.__name__)
-        #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'templates',self.name)
-        #~ if self.templates_name is None:
-            #~ self.templates_name = self.name
-        #~ self.templates_dir = os.path.join(settings.PROJECT_DIR,'doctemplates',self.templates_name or self.name)
+    def __init__(self, *args, **kwargs):
+        super(BuildMethod, self).__init__(*args, **kwargs)
         if self.templates_name is None:
             self.templates_name = self.name
-        #~ self.old_templates_dir = os.path.join(settings.SITE.webdav_root,'doctemplates',self.templates_name)
-        #~ self.templates_url = settings.SITE.webdav_url + '/'.join(('doctemplates',self.templates_name))
-
-    def __unicode__(self):
-        return unicode(self.label)
 
     def get_target(self, action, elem):
         "used by `get_target_name`"
-        return MediaFile(self.use_webdav, self.cache_name, self.name, elem.filename_root() + self.target_ext)
+        return MediaFile(
+            self.use_webdav,
+            self.cache_name,
+            self.name,
+            elem.filename_root() + self.target_ext)
 
     def get_target_name(self, action, elem):
         return self.get_target(action, elem).name
@@ -152,9 +136,6 @@ class BuildMethod:
 
     def build(self, ar, action, elem):
         raise NotImplementedError
-
-    #~ def get_template_url(self,action,elem):
-        #~ raise NotImplementedError
 
 
 class DjangoBuildMethod(BuildMethod):
@@ -189,9 +170,8 @@ class PisaBuildMethod(DjangoBuildMethod):
     Generates .pdf files from .html templates.
     Usage example see :ref:`lino.tutorials.pisa`.
     """
-    name = 'pisa'
+    # name = 'pisa'
     target_ext = '.pdf'
-    #~ button_label = _("PDF")
     template_ext = '.pisa.html'
 
     def build(self, ar, action, elem):
@@ -319,7 +299,6 @@ class AppyOdtBuildMethod(AppyBuildMethod):
     Python UNO bridge installed
     (except in some cases like updating fields).
     """
-    name = 'appyodt'
     target_ext = '.odt'
     cache_name = 'userdocs'
     #~ cache_name = 'webdav'
@@ -327,11 +306,9 @@ class AppyOdtBuildMethod(AppyBuildMethod):
 
 
 class AppyPdfBuildMethod(AppyBuildMethod):
-
     """
     Generates .pdf files from .odt templates.
     """
-    name = 'appypdf'
     target_ext = '.pdf'
 
 
@@ -340,10 +317,8 @@ class AppyRtfBuildMethod(AppyBuildMethod):
     """
     Generates .rtf files from .odt templates.
     """
-    name = 'appyrtf'
     target_ext = '.rtf'
     cache_name = 'userdocs'
-    #~ cache_name = 'webdav'
     use_webdav = True
 
 
@@ -352,10 +327,8 @@ class AppyDocBuildMethod(AppyBuildMethod):
     """
     Generates .doc files from .odt templates.
     """
-    name = 'appydoc'
     target_ext = '.doc'
     cache_name = 'userdocs'
-    #~ cache_name = 'webdav'
     use_webdav = True
 
 
@@ -364,7 +337,6 @@ class LatexBuildMethod(BuildMethod):
     """
     Generates .pdf files from .tex templates.
     """
-    name = 'latex'
     target_ext = '.pdf'
     template_ext = '.tex'
 
@@ -379,12 +351,9 @@ class RtfBuildMethod(SimpleBuildMethod):
     Generates .rtf files from .rtf templates.
     """
 
-    name = 'rtf'
-    #~ button_label = _("RTF")
     target_ext = '.rtf'
     template_ext = '.rtf'
     cache_name = 'userdocs'
-    #~ cache_name = 'webdav'
 
     def simple_build(self, ar, elem, tpl, target):
         context = dict(instance=elem)
@@ -399,46 +368,28 @@ class RtfBuildMethod(SimpleBuildMethod):
         return os.path.getmtime(target)
 
 
-def register_build_method(pm):
-    bm_dict[pm.name] = pm
-    bm_list.append(pm)
+class BuildMethods(ChoiceList):
+    verbose_name = _("Build method")
+    item_class = BuildMethod
 
-register_build_method(AppyOdtBuildMethod())
-register_build_method(AppyPdfBuildMethod())
-register_build_method(AppyRtfBuildMethod())
-register_build_method(LatexBuildMethod())
-register_build_method(PisaBuildMethod())
-register_build_method(RtfBuildMethod())
 
-#~ print "%d build methods:" % len(bm_list)
-#~ for bm in bm_list:
-    #~ print bm
+def register_build_method(bm):
+    BuildMethods.add_item_instance(bm)
+
+
+register_build_method(AppyOdtBuildMethod('appyodt'))
+register_build_method(AppyDocBuildMethod('appydoc'))
+register_build_method(AppyPdfBuildMethod('appypdf'))
+register_build_method(AppyRtfBuildMethod('appyrtf'))
+register_build_method(LatexBuildMethod('latex'))
+register_build_method(PisaBuildMethod('pisa'))
+register_build_method(RtfBuildMethod('rtf'))
 
 
 def build_method_choices():
-    return [(pm.name, pm.label) for pm in bm_list]
+    return BuildMethods.choices
 
 
-def get_build_method(elem):
-    bmname = elem.get_build_method()
-    if not bmname:
-        raise Exception("%s has no build method" % elem)
-    bm = bm_dict.get(bmname, None)
-    if bm is None:
-        raise Exception("Build method %r doesn't exist. Requested by %r." %
-                        (bmname, elem))
-    return bm
-
-
-#~ class PrintTableAction(actions.TableAction):
-    #~ def run_from_ui(self,ar,**kw):
-        #~ bm = get_build_method(elem)
-        #~ url = bm.get_target_url(self,elem)
-        #~ kw.update(open_url=url)
-        #~ return ar.ui.success_response(**kw)
-
-
-#~ class PrintAction(actions.RedirectAction):
 class BasePrintAction(actions.Action):
 
     """
@@ -486,12 +437,12 @@ class BasePrintAction(actions.Action):
 
 class CachedPrintAction(BasePrintAction):
 
-    """
-    Note that this action should rather be called 
-    'Open a printable document' than 'Print'.
-    For the user they are synonyms as long as 
+    """Note that this action should rather be called 'Open a printable
+    document' than 'Print'.  For the user they are synonyms as long as
     Lino doesn't support server-side printing.
+
     """
+
     select_rows = False
     http_method = 'POST'
     icon_name = 'printer'
@@ -502,11 +453,9 @@ class CachedPrintAction(BasePrintAction):
         return BasePrintAction.before_build(self, bm, elem)
 
     def run_from_ui(self, ar, **kw):
-        #~ obj = ar.selected_rows[0]
-        #~ assert obj is None
         if len(ar.selected_rows) == 1:
             obj = ar.selected_rows[0]
-            bm = get_build_method(obj)
+            bm = obj.get_build_method()
             mf = bm.get_target(self, obj)
 
             if obj.build_time is None:
@@ -537,7 +486,6 @@ class CachedPrintAction(BasePrintAction):
         pdfs = []
         for obj in qs:
             #~ assert isinstance(obj,CachedPrintable)
-            # ~ obj.register(ar) # moved call to register to Registrable.before_printable_build
             if obj.build_time is None:
                 obj.build_target(ar)
             pdf = obj.get_target_name()
@@ -558,7 +506,7 @@ class EditTemplate(BasePrintAction):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
-        bm = get_build_method(elem)
+        bm = elem.get_build_method()
         tplfile = bm.get_template_file(ar, self, elem)
         kw.update(message=_("Template file: %s ") % tplfile)
         kw.update(alert=True)
@@ -585,8 +533,6 @@ class DirectPrintAction(BasePrintAction):
         #~ if label is None: label = _("Print")
         #~ if tplname is None: tplname = 'Default'
         super(DirectPrintAction, self).__init__(label, **kw)
-        #~ BasePrintAction.__init__(self,rpt,name,label)
-        #~ self.bm =  bm_dict.get(build_method or settings.SITE.preferred_build_method)
         self.build_method = build_method
         self.tplname = tplname
 
@@ -603,15 +549,10 @@ class DirectPrintAction(BasePrintAction):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
-        bm = bm_dict.get(
+        bm = BuildMethods.get_by_value(
             self.build_method or
             settings.SITE.site_config.default_build_method)
-        #~ if self.tplname:
-            #~ if not self.tplname.endswith(bm.template_ext):
-                #~ raise Exception("Invalid template for build method %r" % bm.name)
         bm.build(ar, self, elem)
-        #~ target = settings.MEDIA_URL + "/".join(bm.get_target_parts(self,elem))
-        #~ return rr.ui.success_response(open_url=target,**kw)
         url = bm.get_target_url(self, elem)
         if bm.use_webdav and davlink:
             url = ar.request.build_absolute_uri(url)
@@ -693,14 +634,9 @@ class PrintableType(Model):
     class Meta:
         abstract = True
 
-    build_method = models.CharField(max_length=20,
-                                    verbose_name=_("Build method"),
-                                    choices=build_method_choices(), blank=True)
-    """
-    The name of the build method to be used.
-    The list of choices for this field is static, but depends on 
-    which additional packages are installed.
-    """
+    build_method = BuildMethods.field(
+        verbose_name=_("Build method"),
+        blank=True)
 
     template = models.CharField(max_length=200,
                                 verbose_name=_("Template"),
@@ -732,12 +668,8 @@ class PrintableType(Model):
     def get_template_choices(cls, build_method, template_group):
         if not build_method:
             build_method = settings.SITE.site_config.default_build_method
-        #~ return get_template_choices(cls,build_method)
-        bm = bm_dict.get(build_method, None)
-        if bm is None:
-            raise Exception("%r : invalid print method name." % build_method)
+        bm = BuildMethods.get_by_value(build_method, None)
         from lino.utils.config import find_template_config_files
-        #~ return find_template_config_files(bm.template_ext,bm.get_group(elem))
         return find_template_config_files(bm.template_ext, template_group)
 
 
@@ -770,14 +702,14 @@ class BasePrintable(object):
             return [bm.default_template]
         return ['Default' + bm.template_ext]
 
+    def get_default_build_method(self):
+        sc = settings.SITE.site_config
+        return sc.default_build_method or BuildMethods.appyodt
+        # hard-coded default
+
     def get_build_method(self):
         # TypedPrintable  overrides this
-        #~ return 'rtf'
-        #~ from lino.models import get_site_config
-        #~ return get_site_config.default_build_method
-        return settings.SITE.site_config.default_build_method
-        #~ return settings.SITE.preferred_build_method
-        #~ return 'pisa'
+        return self.get_default_build_method()
 
     def get_printable_context(self, ar, **kw):
         """
@@ -853,25 +785,35 @@ class CachedPrintable(Duplicable, BasePrintable):
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
     """
-    Timestamp of the built target file. Contains `None` 
+    Timestamp of the built target file. Contains `None`
     if no build hasn't been called yet.
     """
 
+    build_method = BuildMethods.field()
+
     class Meta:
         abstract = True
+
+    def full_clean(self, *args, **kwargs):
+        if not self.build_method:
+            self.build_method = self.get_default_build_method()
+        super(CachedPrintable, self).full_clean(*args, **kwargs)
 
     #~ def print_from_posting(self,posting,ar,**kw):
         #~ return self.do_print.run_from_session(ar,**kw)
     def on_duplicate(self, ar, master):
         super(CachedPrintable, self).on_duplicate(ar, master)
         self.build_time = None
+        self.build_method = None
 
     def get_target_name(self):
         if self.build_time:
-            return get_build_method(self).get_target_name(self.do_print, self)
+            return self.build_method.get_target_name(
+                self.do_print, self)
 
     def get_target_url(self):
-        return get_build_method(self).get_target_url(self.do_print, self)
+        return self.build_method.get_target_url(
+            self.do_print, self)
 
     def get_cache_mtime(self):
         filename = self.get_target_name()
@@ -888,7 +830,7 @@ class CachedPrintable(Duplicable, BasePrintable):
         self.save()
 
     def build_target(elem, ar):
-        bm = get_build_method(elem)
+        bm = elem.get_build_method()
         t = bm.build(ar, elem.__class__.do_print, elem)
         if t is None:
             raise Exception("%s : build() returned None?!")
@@ -924,13 +866,18 @@ class TypedPrintable(CachedPrintable):
             return super(TypedPrintable, self).get_templates_group()
         return ptype.get_templates_group()
 
-    def get_build_method(self):
+    def get_default_build_method(self):
         ptype = self.get_printable_type()
-        if ptype is None:
-            return super(TypedPrintable, self).get_build_method()
-        if ptype.build_method:
+        if ptype and ptype.build_method:
             return ptype.build_method
-        return settings.SITE.site_config.default_build_method
+        return super(TypedPrintable, self).get_default_build_method()
+
+    def get_build_method(self):
+        return self.build_method
+        # ptype = self.get_printable_type()
+        # if ptype and ptype.build_method:
+        #     return ptype.build_method
+        # return super(TypedPrintable, self).get_build_method()
 
     def get_print_templates(self, bm, action):
         ptype = self.get_printable_type()

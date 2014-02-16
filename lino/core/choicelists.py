@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -111,19 +111,13 @@ automatically available as a property value in
 import logging
 logger = logging.getLogger(__name__)
 
-
-import sys
 import warnings
 
-#~ from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
-#~ from django.utils.translation import string_concat
 from django.utils.functional import lazy
 from django.db import models
-from django.conf import settings
 
-from lino.utils import curry, unicode_string
-from lino.utils.xmlgen.html import E
+from lino.utils import unicode_string
 
 from lino.core import actions
 from lino.core import actors
@@ -142,13 +136,13 @@ class Choice(object):
     choicelist = None
     remark = None
 
-    def __init__(self, value, text, name, **kw):
+    def __init__(self, value, text=None, name=None, **kw):
         #~ self.choicelist = choicelist
         if not isinstance(value, basestring):
             raise Exception("value must be a string")
         self.value = value
-        self.text = text
-        self.name = name
+        self.name = name or value
+        self.text = text or self.__class__.__name__
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -440,7 +434,8 @@ class ChoiceList(tables.AbstractTable):
 
     @classmethod
     def add_item(cls, value, text, name=None, *args, **kw):
-        return cls.add_item_instance(cls.item_class(value, text, name, *args, **kw))
+        return cls.add_item_instance(
+            cls.item_class(value, text, name, *args, **kw))
 
     @classmethod
     def add_item_instance(cls, i):

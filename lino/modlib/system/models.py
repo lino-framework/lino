@@ -28,10 +28,11 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import mixins
 from lino import dd
-from lino.mixins import printable
 from lino.core.dbutils import resolve_field
 from lino.core import actions
 from lino.utils.xmlgen import html as xghtml
+
+from lino.mixins.printable import BuildMethods
 
 
 class BuildSiteCache(dd.Action):
@@ -78,11 +79,9 @@ class SiteConfig(dd.Model):
     objects = SiteConfigManager()
     real_objects = models.Manager()
 
-    default_build_method = models.CharField(max_length=20,
-                                            verbose_name=_(
-                                                "Default build method"),
-                                            default='appyodt',
-                                            choices=printable.build_method_choices(), blank=True)
+    default_build_method = BuildMethods.field(
+        verbose_name=_("Default build method"),
+        blank=True)
 
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))
