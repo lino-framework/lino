@@ -81,7 +81,7 @@ class SiteConfig(dd.Model):
 
     default_build_method = BuildMethods.field(
         verbose_name=_("Default build method"),
-        blank=True)
+        blank=True, null=True)
 
     def __unicode__(self):
         return force_unicode(_("Site Parameters"))

@@ -549,12 +549,10 @@ class DirectPrintAction(BasePrintAction):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
-        bm = BuildMethods.get_by_value(
-            self.build_method or
-            settings.SITE.site_config.default_build_method)
+        bm = elem.get_build_method()
         bm.build(ar, self, elem)
         url = bm.get_target_url(self, elem)
-        if bm.use_webdav and davlink:
+        if ar.request is not None and bm.use_webdav and davlink:
             url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:
@@ -636,7 +634,7 @@ class PrintableType(Model):
 
     build_method = BuildMethods.field(
         verbose_name=_("Build method"),
-        blank=True)
+        blank=True, null=True)
 
     template = models.CharField(max_length=200,
                                 verbose_name=_("Template"),
