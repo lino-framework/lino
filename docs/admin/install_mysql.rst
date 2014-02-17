@@ -14,8 +14,6 @@ Or if your site is to run within a virtualenv::
     $ sudo aptitude install mysql-server libmysqlclient-dev python-dev
     $ pip install MySQL-python
     
-
-
 For your first project create a user ``django`` which you can 
 reuse for all projects::
     
@@ -26,28 +24,10 @@ For each new project you must create a database and grant permissions
 to ``django``::
     
     $ mysql -u root -p 
-    mysql> set storage_engine=MYISAM;
     mysql> create database mysite charset 'utf8';
     mysql> grant all on mysite.* to django with grant option;
     mysql> grant all on test_mysite.* to django with grant option;
     mysql> quit;
-    
-    
-See the following chapters of the MySQL documentation
-
--   `Database Character Set and Collation
-    <http://dev.mysql.com/doc/refman/5.0/en/charset-database.html>`_
-    
-    Lino is tested only with databases using the 'utf8' charset.
-    
-
--   `Setting the Storage Engine
-    <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
-     
-    Lino requires the MYISAM database storage because :command:`initdb` 
-    can fail to drop tables due to INNODB more severe integrity 
-    contraints (which are anyway rather unnecessary when using Lino)
-
 
 And then of course you set DATABASES in your :xfile:`settings.py` 
 file::
@@ -66,6 +46,41 @@ file::
 
 
 
+Notes about certain MySQL configuration settings
+------------------------------------------------
+
+See the following chapters of the MySQL documentation
+
+-  Lino is tested only with databases using the 'utf8' charset.
+   See `Database Character Set and Collation
+   <http://dev.mysql.com/doc/refman/5.0/en/charset-database.html>`_
+    
+
+-   `Setting the Storage Engine
+    <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
+     
+    Lino requires the MYISAM database storage because :manage:`initdb` 
+    can fail to drop tables due to INNODB more severe integrity 
+    contraints (which are anyway rather unnecessary when using Lino).
+
+    Using InnoDB usually leads to the following error message when
+    trying to run :manage:`initdb` a *second* time::
+
+      IntegrityError: (1217, 'Cannot delete or update a parent row: 
+      a foreign key constraint fails')
+
+
+    One method to set this in a Debian server is to create a file
+    :file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
+
+      [mysqld]
+      default-storage-engine=myisam
+
+
+
+
+
+
 MySQL cheat sheet
 -----------------
 
@@ -76,4 +91,7 @@ See which users are installed on this server::
 See which databases are installed on this server::
 
     show databases;
+
+
+
 

@@ -371,6 +371,7 @@ class RtfBuildMethod(SimpleBuildMethod):
 class BuildMethods(ChoiceList):
     verbose_name = _("Build method")
     item_class = BuildMethod
+    app_label = 'lino'
 
 
 def register_build_method(bm):

@@ -1,0 +1,10 @@
+===================================
+20140217 (Monday, 17 February 2014)
+===================================
+
+
+- Installing Lino for Pierre.
+
+- :class:`lino.mixins.BuildMethods` had no app_label and thus caused a
+  failure with a Javascript console message "Lino.mixins is
+  undefined".

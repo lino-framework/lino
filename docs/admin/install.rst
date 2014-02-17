@@ -134,7 +134,8 @@ First you must download them::
   unzip extensible-1.0.1.zip
   rm extensible-1.0.1.zip
 
-  wget http://twitter.github.com/bootstrap/assets/bootstrap.zip
+  # wget http://twitter.github.com/bootstrap/assets/bootstrap.zip
+  wget http://getbootstrap.com/2.3.2/assets/bootstrap.zip
   unzip bootstrap.zip
   
 Then in your :file:`settings.py` (or your :file:`djangosite_local.py`)
