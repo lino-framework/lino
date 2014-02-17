@@ -667,7 +667,8 @@ class PrintableType(Model):
     def get_template_choices(cls, build_method, template_group):
         if not build_method:
             build_method = settings.SITE.site_config.default_build_method
-        bm = BuildMethods.get_by_value(build_method, None)
+        # bm = BuildMethods.get_by_value(build_method, None)
+        bm = build_method
         from lino.utils.config import find_template_config_files
         return find_template_config_files(bm.template_ext, template_group)
 
