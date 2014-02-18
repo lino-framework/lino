@@ -3,8 +3,15 @@
 ===================================
 
 
-- Installing Lino for Pierre.
+Installing a  new Lino for Pierre. 
+Updated :doc:`/admin/install_mysql`.
+
+Yesterday's changes in module :mod:`lino.mixins.printable` caused two
+bugs:
 
 - :class:`lino.mixins.BuildMethods` had no app_label and thus caused a
   failure with a Javascript console message "Lino.mixins is
   undefined".
+
+- The combobox of any `PrintableType` made an :ref:`ise`.
+

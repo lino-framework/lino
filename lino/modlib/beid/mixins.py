@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -24,9 +24,7 @@ TODO:
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 import datetime
-import base64
 
 
 from django.conf import settings
@@ -36,10 +34,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from lino.core.dbutils import get_field
 
-from lino.utils import ssin
-from lino.utils import join_words
-from lino.utils import IncompleteDate
-from lino.modlib.contacts.utils import street2kw
 from lino.utils.xmlgen.html import E
 
 from lino import dd
@@ -49,31 +43,25 @@ countries = dd.resolve_app('countries', strict=True)
 beid = settings.SITE.plugins.get('beid',None)
 
 
-
-"""
-SITE.use_eidreader --> SITE.get_plugin(BeIdReaderPlugin)
-"""
-
-
-
 class BeIdCardTypes(dd.ChoiceList):
 
-    """
-    List of Belgian Identification Card Types.
+    """List of Belgian Identification Card Types.
     
     Didn't yet find any official reference document.
     
-    The eID applet returns a field `documentType` which contains a numeric code.
-    For example 1 is for "Belgian citizen", 6 for "Kids card",...
+    The eID applet returns a field `documentType` which contains a
+    numeric code.  For example 1 is for "Belgian citizen", 6 for "Kids
+    card",...
     
-    The eID viewer, when saving a card as xml file, doesn't save these values nowhere, 
-    it saves a string equivalent (1 becomes "belgian_citizen", 6 becomes "kids_card", 
-    17 becomes "foreigner_f", 16 becomes "foreigner_e_plus",...
+    The eID viewer, when saving a card as xml file, doesn't save these
+    values nowhere, it saves a string equivalent (1 becomes
+    "belgian_citizen", 6 becomes "kids_card", 17 becomes
+    "foreigner_f", 16 becomes "foreigner_e_plus",...
     
     Sources:
     | [1] https://securehomes.esat.kuleuven.be/~decockd/wiki/bin/view.cgi/EidForums/ForumEidCards0073
     | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
-    
+
     """
     app_label = 'lino'
     required = dd.required(user_level='admin')
@@ -130,8 +118,8 @@ add('17', _("Foreigner card F"), "foreigner_f")
 add('18', _("Foreigner card F+"), "foreigner_f_plus")
 
 
-
 class BaseBeIdReadCardAction(dd.Action):
+    label = _("Read eID card")
     required = dd.Required(user_groups='reception')
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'
@@ -168,16 +156,14 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     sort_index = 90
 
     icon_name = 'vcard'
-    #~ icon_file = 'vcard.png'
 
-    label = _("Read eID card")
+    # label = _("Read eID card")
     sorry_msg = _("Sorry, I cannot handle that case: %s")
     #~ show_in_workflow = True
     #~ show_in_row_actions = True
 
     def run_from_ui(self, ar, **kw):
         row = ar.selected_rows[0]
-        #~ self.client_model = dd.resolve_model(self.client_model)
         cmc = list(dd.models_by_base(BeIdCardHolder))
         if len(cmc) != 1:
             raise Exception(
@@ -301,8 +287,6 @@ class BeIdCardHolder(dd.Model):
                                 blank=True, null=True,
                                 related_name='by_nationality',
                                 verbose_name=_("Nationality"))
-    #~ tim_nr = models.CharField(max_length=10,blank=True,null=True,unique=True,
-        #~ verbose_name=_("TIM ID"))
     card_number = models.CharField(max_length=20,
                                    blank=True,  # null=True,
                                    verbose_name=_("eID card number"))
@@ -313,11 +297,6 @@ class BeIdCardHolder(dd.Model):
         blank=True, null=True,
         verbose_name=_("until"))
 
-    #~ card_type = models.CharField(max_length=20,
-        # ~ blank=True,# null=True,
-        #~ verbose_name=_("eID card type"))
-    #~ "The type of the electronic ID card. Imported from TIM."
-
     card_type = BeIdCardTypes.field(blank=True)
 
     card_issuer = models.CharField(max_length=50,
@@ -327,26 +306,19 @@ class BeIdCardHolder(dd.Model):
 
     read_beid = BeIdReadCardAction()
 
-    #~ eid_panel = dd.FieldSet(_("eID card"),
-        #~ "card_number card_valid_from card_valid_until card_issuer card_type:20",
-        #~ card_number=_("number"),
-        #~ card_valid_from=_("valid from"),
-        #~ card_valid_until=_("until"),
-        #~ card_issuer=_("issued by"),
-        #~ card_type=_("eID card type"),
-        #~ )
-
-    noble_condition = models.CharField(max_length=50,
-                                       blank=True,  # null=True,
-                                       verbose_name=_("noble condition"))
-    "The eventual noble condition of this person. Imported from TIM."
+    noble_condition = models.CharField(
+        max_length=50,
+        blank=True,  # null=True,
+        verbose_name=_("noble condition"),
+        help_text=_("The eventual noble condition of this person."))
 
     if False:  # see 20140210
         print_eid_content = dd.DirectPrintAction(
             _("eID sheet"), 'eid-content', icon_name='vcard')
 
     beid_readonly_fields = set(
-        'noble_condition card_valid_from card_valid_until card_issuer card_number card_type'.split())
+        'noble_condition card_valid_from card_valid_until \
+        card_issuer card_number card_type'.split())
 
     def disabled_fields(self, ar):
         rv = super(BeIdCardHolder, self).disabled_fields(ar)

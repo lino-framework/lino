@@ -661,7 +661,9 @@ class PrintableType(Model):
 
     @chooser(simple_values=True)
     def template_choices(cls, build_method):
-        return cls.get_template_choices(build_method, cls.get_templates_group())
+        return cls.get_template_choices(
+            build_method,
+            cls.get_templates_group())
 
     @classmethod
     def get_template_choices(cls, build_method, template_group):

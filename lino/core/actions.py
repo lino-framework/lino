@@ -14,7 +14,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
@@ -72,8 +71,6 @@ class Permittable(object):
     
     """
 
-    # ~ required = None # not {}, see blog/2012/0923
-    #~ required = dict()
     required = {}
     """
     A dict with permission requirements.

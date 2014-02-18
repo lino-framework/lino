@@ -2243,7 +2243,7 @@ Lino.row_action_handler = function(actionName,hm,pp) {
   var fn = function(panel,btn,step) {
       if (pp) { p = pp(panel); if (! p) return; }
       
-      if (panel.get_current_record == undefined) { // AFTER_20130725
+      if (!panel || panel.get_current_record == undefined) { // AFTER_20130725
         panel = Ext.getCmp(panel);
         if (panel == undefined) {
           Lino.notify("Invalid panel spec.");

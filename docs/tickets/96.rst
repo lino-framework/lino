@@ -1,3 +1,5 @@
+:state: sleeping
+
 #96 : How to read Belgian eID cards in 2014 and thereafter?
 ===========================================================
 

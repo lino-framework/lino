@@ -1,0 +1,12 @@
+====================================
+20140218 (Tuesday, 18 February 2014)
+====================================
+
+Restored the `find_by_id` action.
+
+Lino.row_action_handler failed when invoked by a quicklink (panel was
+undefined then).
+
+Moved `mixins/beid.py` to `modlib/beid/mixins.py`
+
+`lino/config/plugins/eidreader.js` to `lino/modlib/beid/config/beid/`

@@ -17,8 +17,8 @@ if your Site should feature actions for reading electronic ID
 smartcards.
 
 When this app is installed, then you must also add the `.jar` files
-required by :ref:`eidreader`
-into your media directory, in a subdirectory named "eidreader".
+required by :ref:`eidreader` into your media directory, in a
+subdirectory named "eidreader".
 
 Alternatively there is :mod:`lino.modlib.eid_jslib.beid` which overrides
 :mod:`lino.modlib.beid` and does the same except that it uses
@@ -42,7 +42,7 @@ from lino.utils import AttrDict
 
 class Plugin(ad.Plugin):  # was: use_eidreader
 
-    site_js_snippets = ['plugins/eidreader.js']
+    site_js_snippets = ['beid/eidreader.js']
     media_name = 'eidreader'
 
     def get_head_lines(self, site, request):
@@ -55,7 +55,7 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
         # yield '        archive="%s"' % p
         yield '        codebase="%s">' % p
-        # seems that you may not use another size than 
+        # seems that you may not use another size than
         # yield '        width="0" height="0">'
         # ~ yield '<param name="separate_jvm" value="true">' # 20130913
         yield '<param name="permissions" value="all-permissions">'
@@ -76,7 +76,7 @@ class Plugin(ad.Plugin):  # was: use_eidreader
 
         from lino.utils import ssin
         from lino import dd
-        from lino.mixins.beid import BeIdCardTypes
+        from .mixins import BeIdCardTypes
         from lino.utils import join_words
         from lino.utils import IncompleteDate
         from lino.modlib.contacts.utils import street2kw

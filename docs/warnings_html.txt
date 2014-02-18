@@ -1,2 +1,7 @@
-/home/luc/hgwork/lino/docs/blog/2014/0214.rst:55: WARNING: Bullet list ends without a blank line; unexpected unindent.
-/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
+/home/luc/hgwork/lino/docs/api/lino.mixins.beid.rst:4: WARNING: autodoc: failed to import module u'lino.mixins.beid'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+ImportError: No module named beid
+/home/luc/hgwork/lino/docs/todo.rst:656: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/todo.rst:657: WARNING: Enumerated list ends without a blank line; unexpected unindent.

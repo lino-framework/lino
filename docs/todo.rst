@@ -384,21 +384,6 @@ Medium-term
     Contact Persons of a Company currently need to have an entry in the Person table.
     This is also the reason for many deferred save()s when loading a full backup.
 
-#.  Il est vrai que Lino devrait désactiver le bouton "save grid config" 
-    pour les utilisateurs qui n'ont pas la permission (et chez qui Lino 
-    réagit en disant error_response {'message': u"L'utilisateur user ne peut 
-    pas configurer contacts.Persons.", 'success': False, 'alert': True})
-
-#.  notes : Note.body füllen aus Note.eventtype.body 
-    und dabei wahrscheinlich Djangos templating language verwenden.
-
-#.  Simplified installation process without system wide configuration changes 
-    for people who just want to give a try to Lino. (:doc:`/admin/install`) 
-
-#.  Hauptmenü:
-    Was noch fehlt, wäre eine Leiste mit Shortcuts (die am besten pro Benutzer konfiguriert werden können)
-
-
 #.  GridFilter on BooleanField doesn't work.
     In `reports.add_gridfilters` there's an exception 
     "Join on field 'native' not permitted. Did you misspell 'equals' for the lookup type?" when 
