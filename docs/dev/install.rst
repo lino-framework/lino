@@ -97,18 +97,19 @@ Run Lino's test suite
 
 - The test suite needs the demo databases to be generated
 
-
-  
   
 Updating your copy of the repository
 ------------------------------------
 
 To update your copy of the repositories, go to 
-your :file:`~/repositories` directory and type::
+your :file:`~/repositories` directory and 
+run ``git pull`` for each project::
 
-  $ git pull atelier
-  $ git pull site
-  $ git pull north
-  $ git pull lino
-  $ git pull cosi
+  $ cd ~/repositories
+  $ cd atelier ; git pull ; cd ..
+  $ cd site ; git pull ; cd ..
+  $ cd north ; git pull ; cd ..
+  $ cd lino ; git pull ; cd ..
+  $ cd cosi ; git pull ; cd ..
   
+
