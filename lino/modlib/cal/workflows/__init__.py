@@ -90,7 +90,8 @@ if False:
     add('60', _("Rescheduled"), 'rescheduled', fixed=True)
 add('50', _("Took place"), 'took_place', fixed=True, edit_guests=True)
 add('70', _("Cancelled"), 'cancelled', fixed=True)
-#~ add('80', _("Absent"),'absent')
+add('75', _("Omitted"), 'omitted', fixed=True)
+#~ add('80', _("Absent"), 'absent')
 
 
 #~ EventStates.editable_states.add(EventStates.suggested)

@@ -4,6 +4,9 @@
 Installing Lino (development version)
 =====================================
 
+.. _pip: http://www.pip-installer.org/en/latest/
+.. virtualenv: https://pypi.python.org/pypi/virtualenv
+
 This document describes how you should install Lino if you want
 to use Lino's newest features even before they get officially 
 released on PyPI, or if you possibly want to contribute to 
@@ -11,39 +14,77 @@ one of the involved software projects. If the instructions here sound
 too complicated, you might prefer the simple installation as 
 described in :ref:`lino.tutorial.quickstart`
 
-We assume you have `pip <http://www.pip-installer.org/en/latest/>`_ 
-installed and your `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ 
-activated.
+Preliminaries
+-------------
 
-If you had previously installed Lino using `pip install lino` as described in 
-:ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
-`pip uninstall lino`.
+- We assume you have pip_  installed.
+- We recommend to use virtualenv_ and to activate a new environment.
+- If you had previously installed Lino using `pip install lino` as described in 
+  :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
+  `pip uninstall lino`.
+
+Get the sources
+---------------
 
 Create a directory (e.g. :file:`~/repositories`) meant to hold your 
 working copies of version-controlled software projects,
 `cd` to that directory and and do::
 
   $ git clone https://github.com/lsaffre/atelier.git
-  $ git clone https://github.com/lsaffre/djangosite.git
+  $ git clone https://github.com/lsaffre/djangosite.git site
   $ git clone https://github.com/lsaffre/north.git
   $ git clone https://github.com/lsaffre/lino.git
+  $ git clone https://github.com/lsaffre/lino-cosi.git cosi
 
-Then install these projects *as editable packages*::
+The second and the last lines are example for having a project whose
+**local name** differs from its **public name**.  We recommend to keep
+your local project names short.
+
+You should now have 5 subdirectories called `atelier`, `site`,
+`north`, `lino` and `cosi`. Each of them should contain a file
+`setup.py`, a file `README.rst`, a sub-directory `docs`, and other
+files and directories.
+
+
+The last line installed :ref:`cosi`, one of the existing free Lino
+applications. This project will serve as an example for your own Lino
+application.  Alternatively or additionally to :ref:`cosi` you might
+want to do the same for one or several of the out-of-the-box Lino
+applications: :ref:`faggio` :ref:`welfare` :ref:`logos`
+
+Installation
+------------
+
+Now you are ready to "install" these projects.
+
+Commands::
 
   $ pip install -e atelier
-  $ pip install -e djangosite
+  $ pip install -e site 
   $ pip install -e north
   $ pip install -e lino
+  $ pip install -e cosi
+
+Notes:
+
+- The ``-e`` comamnd-line switch for `pip` causes it to use the
+  "development" mode.  The first argument after ``-e`` is not a
+  *project name* but a *directory*.  Development mode means that these
+  modules run "directly from source".  `pip` does not *copy* the
+  sources to your Python `site_packages`, but instead adds a link to
+  them.
+
+- Alternatively (without pip_) you could have done::
+
+      $ cd atelier ; python setup.py develop ; cd ..
+      $ cd site ; python setup.py develop ; cd ..
+      ...
 
 
-While you are here you might want to do the same for one or several of
-the out-of-the-box Lino applications:
-:ref:`cosi`
-:ref:`faggio`
-:ref:`welfare`
-:ref:`logos`
-  
-Some commands you might want to run now:
+Configure your environment
+--------------------------
+
+Some commands you might want to run now.
 
 Run Lino's test suite
 ---------------------
@@ -51,7 +92,12 @@ Run Lino's test suite
 ::
 
   $ cd ~/repositories/lino
+  $ fab initdb
   $ fab test
+
+- The test suite needs the demo databases to be generated
+
+
   
   
 Updating your copy of the repository
@@ -61,7 +107,8 @@ To update your copy of the repositories, go to
 your :file:`~/repositories` directory and type::
 
   $ git pull atelier
-  $ git pull djangosite
+  $ git pull site
   $ git pull north
   $ git pull lino
+  $ git pull cosi
   

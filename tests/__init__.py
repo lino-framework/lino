@@ -23,7 +23,7 @@ class BlogTest(LinoTestCase):
         self.run_simple_doctests("""
         docs/blog/2013/0316.rst
         docs/blog/2013/0507.rst
-        docs/blog/2013/0508.rst
+        # docs/blog/2013/0508.rst
         # docs/blog/2013/0513.rst
         # docs/blog/2013/0622.rst
         # docs/blog/2013/0714.rst

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -36,8 +36,6 @@ add = EventStates.add_item
 add('40', _("Published"), 'published', edit_guests=True)
 
 
-#~ @dd.receiver(dd.pre_analyze)
-#~ def my(sender,**kw):
 if True:
     add = GuestStates.add_item
     #~ add('10', _("Invited"),'invited')
@@ -54,7 +52,8 @@ class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):
     def get_action_permission(self, ar, obj, state):
         if obj.event.state != EventStates.published:
             return False
-        return super(InvitationFeedback, self).get_action_permission(ar, obj, state)
+        return super(InvitationFeedback,
+                     self).get_action_permission(ar, obj, state)
 
     def get_notify_subject(self, ar, obj):
         return self.notify_subject % dict(

@@ -203,41 +203,12 @@ class Component(StartedSummaryDescription,
 
     access_class = AccessClasses.field(blank=True, help_text=_("""\
 Whether this is private, public or between."""))  # iCal:CLASS
-    #~ access_class = models.ForeignKey(AccessClass,
-        #~ blank=True,null=True,
-        #~ help_text=_("""\
-#~ Indicates whether this is private or public (or somewhere between)."""))
     sequence = models.IntegerField(_("Revision"), default=0)
-    #~ alarm_value = models.IntegerField(_("Value"),null=True,blank=True,default=1)
-    #~ alarm_unit = DurationUnit.field(_("Unit"),blank=True,
-        # ~ default=DurationUnit.days.value) # ,null=True) # note: it's a char field!
-    #~ alarm = dd.FieldSet(_("Alarm"),'alarm_value alarm_unit')
-    #~ dt_alarm = models.DateTimeField(_("Alarm time"),
-        #~ blank=True,null=True,editable=False)
-
     auto_type = models.IntegerField(null=True, blank=True, editable=False)
 
-    #~ user_modified = models.BooleanField(_("modified by user"),
-        #~ default=False,editable=False)
-
-    #~ rset = models.ForeignKey(RecurrenceSet,
-        #~ verbose_name=_("Recurrence Set"),
-        #~ blank=True,null=True)
-    #~ rparent = models.ForeignKey('self',verbose_name=_("Recurrence parent"),blank=True,null=True)
-    #~ rdate = models.TextField(_("Recurrence date"),blank=True)
-    #~ exdate = models.TextField(_("Excluded date(s)"),blank=True)
-    #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
-    #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
-
-    #~ def get_mailable_contacts(self):
-        #~ yield ('to',self.project)
-
     def save(self, *args, **kw):
-        #~ if not self.calendar:
-            #~ self.calendar = self.user.calendar or settings.SITE.site_config.default_calendar
         if self.user is not None and self.access_class is None:
             self.access_class = self.user.access_class
-            #~ self.access_class = AccessClasses.public
         super(Component, self).save(*args, **kw)
 
     def on_duplicate(self, ar, master):
@@ -246,7 +217,6 @@ Whether this is private, public or between."""))  # iCal:CLASS
     def disabled_fields(self, ar):
         rv = super(Component, self).disabled_fields(ar)
         if self.auto_type:
-            #~ return settings.SITE.TASK_AUTO_FIELDS
             rv |= self.DISABLED_AUTO_FIELDS
         return rv
 
@@ -255,8 +225,6 @@ Whether this is private, public or between."""))  # iCal:CLASS
         This is going to be used when sending
         locally created components to a remote calendar.
         """
-        #~ if self.uid:
-            #~ return self.uid
         if not settings.SITE.uid:
             raise Exception(
                 'Cannot create local calendar components because settings.SITE.uid is empty.')

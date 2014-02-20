@@ -32,6 +32,9 @@ Here is a code draft for an "integrity test" that detects such cases:
 ...         o.full_clean()
 
 
+(Note: the above snippet os no longer tested with Lino, it has been
+copied to `welfare/docs/tested`)
+
 
 
 Änderungen wurden nicht festgehalten

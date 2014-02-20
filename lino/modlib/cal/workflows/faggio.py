@@ -27,8 +27,29 @@ if True:
     #~ add('60', _("Visit"),'visit')
 
 
+class MoveEventNext(dd.Action):
+    label = _("Move event to next")
+    icon_name = 'date_next'
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.auto_type is None:
+            return False
+        return super(MoveEventNext, self).get_action_permission(
+            ar, obj, state)
+
+    def run_from_ui(self, ar):
+        eg = ar.master_instance
+        if eg is None:
+            return
+        obj = ar.selected_rows[0]
+        eg.move_event_next(ar, obj)
+        obj.save()
+
+
 @dd.receiver(dd.pre_analyze)
 def my_event_workflows(sender=None, **kw):
+
+    sender.modules.cal.Event.move_next = MoveEventNext()
 
     EventStates.took_place.add_transition(
         states='suggested draft cancelled',
@@ -42,6 +63,10 @@ def my_event_workflows(sender=None, **kw):
         #~ owner=True,
         states='suggested draft took_place',
         icon_name='cross')
+    # EventStates.omitted.add_transition(
+    #     pgettext("calendar event action", "Omit"),
+    #     states='suggested draft took_place',
+    #     icon_name='date_delete')
     EventStates.suggested.add_transition(
         _("Reset"),
         states='draft suggested took_place cancelled',

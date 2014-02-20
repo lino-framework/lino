@@ -29,17 +29,12 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
 import datetime
-import dateutil
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
-#~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
@@ -47,7 +42,6 @@ from django.utils.encoding import force_unicode
 from lino import mixins
 from lino import dd
 from lino.utils import ONE_DAY
-from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 
 from lino.core import actions
@@ -211,7 +205,6 @@ class EventGenerator(mixins.UserAuthored):
 
     def update_cal_rset(self):
         raise NotImplementedError()
-        #~ return self.exam_policy
 
     def update_cal_from(self, ar):
         """
@@ -285,16 +278,22 @@ class EventGenerator(mixins.UserAuthored):
                 if e.start_date != ae.start_date:
                     subsequent = ', '.join([str(x.auto_type)
                                            for x in wanted.values()])
-                    logger.info("""\
-%d has been rescheduled from %s to %s, adapt subsequent dates (%s)""" % (e.auto_type, ae.start_date, e.start_date, subsequent))
                     delta = e.start_date - ae.start_date
+                    logger.info(
+                        "%d has been rescheduled from %s to %s, \
+                        adapt subsequent dates (%s), delta %s"
+                        % (
+                            e.auto_type, ae.start_date,
+                            e.start_date, subsequent, delta))
                     for se in wanted.values():
+                        ov = se.start_date
                         se.start_date += delta
+                        logger.info("20140219 %d : %s -> %s" % (
+                            se.auto_type, ov, se.start_date))
             else:
                 self.compare_auto_event(e, ae)
         # create new Events for remaining wanted
         for ae in wanted.values():
-            #~ e = settings.SITE.modules.cal.Event(**ae)
             self.before_auto_event_save(ae)
             ae.save()
         #~ logger.info("20130528 update_auto_events done")
@@ -366,11 +365,9 @@ class EventGenerator(mixins.UserAuthored):
             return wanted
         until = self.update_cal_until() \
             or settings.SITE.site_config.farest_future
-            #~ or datetime.date.today().replace(year=2018)
-        #~ if until < wanted:
-            #~ raise Warning("Series ends before it was started!")
         i = 0
-        max_events = rset.max_events or settings.SITE.site_config.max_auto_events
+        max_events = rset.max_events or \
+            settings.SITE.site_config.max_auto_events
         Event = settings.SITE.modules.cal.Event
         with translation.override(self.get_events_language()):
             while i < max_events:
@@ -378,9 +375,9 @@ class EventGenerator(mixins.UserAuthored):
                     ar.info("20131020 reached maximum date %s", until)
                     break
                 i += 1
-                if settings.SITE.ignore_dates_before is None or date >= settings.SITE.ignore_dates_before:
-                    #~ we = AttrDict(
-                    we = settings.SITE.modules.cal.Event(
+                if settings.SITE.ignore_dates_before is None or \
+                   date >= settings.SITE.ignore_dates_before:
+                    we = Event(
                         auto_type=i,
                         user=self.user,
                         start_date=date,
@@ -390,34 +387,52 @@ class EventGenerator(mixins.UserAuthored):
                         event_type=event_type,
                         start_time=rset.start_time,
                         end_time=rset.end_time)
+                    date = self.resolve_conflics(we, ar, rset, until)
+                    if date is None:
+                        return wanted
 
-                    while we.has_conflicting_events():
-                        ar.info("%s conflicts with %s. ", self,
-                                we.get_conflicting_events())
-                        date = rset.get_next_date(ar, date)
-                        if date is None or date > until:
-                            ar.info("Failed to get next date for %s.", self)
-                            conflicts = [E.tostring(ar.obj2html(o))
-                                         for o in we.get_conflicting_events()]
-                            #~ msg = join_elems(conflicts)
-                            msg = ', '.join(conflicts)
-                            ar.warning("%s conflicts with %s. ", self, msg)
-                            return wanted
-                        we.start_date = date
-
-                    if rset.end_date is None:
-                        #~ we.update(end_date=None)
-                        we.end_date = None
-                    else:
-                        duration = rset.end_date - rset.start_date
-                        #~ we.update(end_date=we.start_date + duration)
-                        we.end_date = we.start_date + duration
                     wanted[i] = we
                 date = rset.get_next_date(ar, date)
                 if date is None:
                     ar.info("20131020 no date left")
                     break
         return wanted
+
+    def move_event_next(self, we, ar):
+        date = rset.get_next_date(ar, we.start_date)
+        if date is None:
+            ar.warning("20131020 no date left")
+            return
+        if self.resolve_conflicts(we, ar, rset, until) is None:
+            return
+        we.save()
+        ar.response.update(refresh=True)
+        ar.success()
+
+    def resolve_conflics(self, we, ar, rset, until):
+        date = we.start_date
+        while we.has_conflicting_events():
+            ar.info("%s conflicts with %s. ", self,
+                    we.get_conflicting_events())
+            date = rset.get_next_date(ar, date)
+            if date is None or date > until:
+                ar.info("Failed to get next date for %s.", self)
+                conflicts = [E.tostring(ar.obj2html(o))
+                             for o in we.get_conflicting_events()]
+                #~ msg = join_elems(conflicts)
+                msg = ', '.join(conflicts)
+                ar.warning("%s conflicts with %s. ", self, msg)
+                return None
+
+            we.start_date = date
+
+        if rset.end_date is None:
+            we.end_date = None
+        else:
+            duration = rset.end_date - rset.start_date
+            we.end_date = we.start_date + duration
+        return date
+
 
     def get_existing_auto_events(self):
         ot = ContentType.objects.get_for_model(self.__class__)

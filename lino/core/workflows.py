@@ -190,26 +190,17 @@ class ChangeStateAction(actions.Action):
         if self.icon_name:
             self.help_text = string_concat(self.label, '. ', self.help_text)
 
-    #~ def full_name(self,actor):
-        #~ if self.action_name is None or self.defining_actor is None:
-            #~ return repr(self)
-        #~ return self.defining_actor.actor_id + '.' + self.action_name
-
-    #~ def before_row_save(self,row,ar):
-        #~ pass
-
     def run_from_ui(self, ar):
-
         row = ar.selected_rows[0]
-
         self.execute(ar, row)
-
         ar.response.update(refresh=True)
-
         ar.success()
 
     def execute(self, ar, obj):
-        return obj.set_workflow_state(ar, ar.actor.workflow_state_field, self.target_state)
+        return obj.set_workflow_state(
+            ar,
+            ar.actor.workflow_state_field,
+            self.target_state)
 
 
 class NotifyingChangeStateAction(ChangeStateAction, actions.NotifyingAction):

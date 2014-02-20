@@ -24,9 +24,7 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
 import datetime
-import dateutil
 
 from django.conf import settings
 from django.db import models
@@ -34,7 +32,6 @@ from django.db.models import Q
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-#~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 from django.db.models import loading
@@ -63,7 +60,6 @@ postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
 
-#~ from .models import StartedSummaryDescription
 from .mixins import Ended
 from .models import Component
 from .models import Priority
@@ -73,16 +69,12 @@ from .mixins import UpdateReminders
 from .models_calendar import Calendars
 from .models_calendar import Subscription
 
-
-#~ Membership = dd.resolve_model('users.Membership')
-#~ Subscription = dd.resolve_model('cal.Subscription')
-
-
 from .workflows import (
     TaskStates, EventStates, GuestStates)
 
 
-class EventType(dd.BabelNamed, dd.Sequenced, dd.PrintableType, outbox.MailableType):
+class EventType(dd.BabelNamed, dd.Sequenced,
+                dd.PrintableType, outbox.MailableType):
 
     """
     An EventType is a collection of events and tasks.
@@ -318,8 +310,6 @@ class ExtAllDayField(dd.VirtualField):
         #~ return True
 
 
-#~ bases = (Component,Ended,mixins.TypedPrintable,outbox.Mailable, postings.Postable)
-#~ class Event(*bases):
 class Event(Component, Ended,
             mixins.TypedPrintable,
             outbox.Mailable,
@@ -399,8 +389,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if self.id is not None:  # don't conflict with myself
             qs = qs.exclude(id=self.id)
         if self.auto_type is not None:
-            qs = qs.exclude(auto_type=self.auto_type,
-                            owner_id=self.owner_id, owner_type=self.owner_type)
+            qs = qs.exclude(
+                auto_type=self.auto_type,
+                owner_id=self.owner_id, owner_type=self.owner_type)
         if self.room is not None:
             # other event in the same room
             c1 = Q(room=self.room)

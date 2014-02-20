@@ -3,5 +3,3 @@ Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
     __import__(self.modname)
 ImportError: No module named beid
-/home/luc/hgwork/lino/docs/todo.rst:656: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-/home/luc/hgwork/lino/docs/todo.rst:657: WARNING: Enumerated list ends without a blank line; unexpected unindent.
