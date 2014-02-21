@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -33,6 +33,14 @@ from lino import dd
 
 
 def objects():
+
+    if 'de' in settings.SITE.languages:
+        munich = 'München'
+        kelmis = 'Kelmis'
+    else:
+        munich = 'Munich'
+        kelmis = 'La Calamine'
+
     # ~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     #~ print settings.SITE.languages
     company = Instantiator(
@@ -48,7 +56,7 @@ def objects():
     yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  'Vervierser Straße', '45')
     yield company('Bäckerei Mießen',     '4700', 'Eupen',  'Gospert', '103')
     yield company('Bäckerei Schmitz',    '4700', 'Eupen',  'Aachener Straße', '53')
-    yield company('Garage Mergelsberg',  '4720', 'Kelmis', 'Kasinostraße', '13')
+    yield company('Garage Mergelsberg',  '4720', kelmis, 'Kasinostraße', '13')
 
     company = Instantiator(
         'contacts.Company', "name zip_code city:name street street_no", country='NL').build
@@ -56,28 +64,22 @@ def objects():
     yield company('Van Achter NV', '4836 LG', 'Breda', 'Hazeldonk', '2')
 
     company = Instantiator(
-        'contacts.Company', "name zip_code city:name street street_no", country='DE').build
-    yield company('Hans Flott & Co', '22453', 'Hamburg', 'Niendorfer Weg', '532')
-    if 'de' in settings.SITE.languages:
-        munich = 'München'
-    else:
-        munich = 'Munich'
+        'contacts.Company',
+        "name zip_code city:name street street_no", country='DE').build
+    yield company('Hans Flott & Co', '22453', 'Hamburg',
+                  'Niendorfer Weg', '532')
     yield company('Bernd Brechts Bücherladen', '80333', munich, 'Brienner Straße', '18')
     yield company('Reinhards Baumschule', '12487 ', 'Berlin', 'Segelfliegerdamm', '123')
 
     company = Instantiator(
-        'contacts.Company', "name zip_code city:name street street_no", country='FR').build
-    yield company('Moulin Rouge', '75018', 'Paris', 'Boulevard de Clichy', '82')
-    yield company('Auto École Verte', '54000 ', 'Nancy', 'rue de Mon Désert', '12')
+        'contacts.Company',
+        "name zip_code city:name street street_no", country='FR').build
+    yield company('Moulin Rouge', '75018', 'Paris',
+                  'Boulevard de Clichy', '82')
+    yield company('Auto École Verte', '54000 ', 'Nancy',
+                  'rue de Mon Désert', '12')
 
     Place = dd.resolve_model('countries.Place')
-
-    #~ vigala = Place.objects.get(name__exact='Vigala')
-    #~ person = Instantiator("contacts.Person","first_name last_name",
-                #~ country='EE',street='Uus', street_no='1',
-                #~ addr2='Vana-Vigala küla',
-                #~ city=vigala,zip_code='78003').build
-    #~ yield person('Luc',  'Saffre', gender=mixins.Genders.male)
 
     eupen = Place.objects.get(name__exact='Eupen')
     person = Instantiator("contacts.Person", "first_name last_name",
@@ -121,9 +123,10 @@ def objects():
     yield person('Marie-Louise', 'Meier', gender=mixins.Genders.female)
 
     raeren = Place.objects.get(name__exact='Raeren')
-    person = Instantiator("contacts.Person", "first_name last_name",
-                          country='BE', language=settings.SITE.DEFAULT_LANGUAGE.django_code,
-                          city=raeren, zip_code='4730').build
+    person = Instantiator(
+        "contacts.Person", "first_name last_name",
+        country='BE', language=settings.SITE.DEFAULT_LANGUAGE.django_code,
+        city=raeren, zip_code='4730').build
     yield person('Erich',    'Emonts', gender=mixins.Genders.male)
     yield person('Erwin',    'Emontspool', gender=mixins.Genders.male)
     yield person('Erna',     'Emonts-Gast', gender=mixins.Genders.female)

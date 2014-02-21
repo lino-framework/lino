@@ -20,13 +20,22 @@ from __future__ import unicode_literals
 from django.db import models
 #countries = models.get_app('countries')
 
+from lino import dd
 from lino.utils.instantiator import Instantiator
 from north.dbutils import babel_values
+
+Country = dd.resolve_model('countries.Country')
+build_country = Instantiator('countries.Country', "isocode").build
 
 
 def objects():
 
-    country = Instantiator('countries.Country', "isocode name").build
+    def country(isocode, **kw):
+        try:
+            return Country.objects.get(isocode=isocode)
+        except Country.DoesNotExist:
+            # return build_country(isocode, **kw)
+            return Country(isocode=isocode, **kw)
 
     yield country('EE', **babel_values('name',
                                        de=u"Estland",
@@ -87,8 +96,3 @@ def objects():
                                        nl=u'Congo (Democratische Republiek)',
                                        et=u'Kongo (Demokraatlik Vabariik)',
                                        ))
-    #~ yield country('EE',"Estonia")
-    #~ yield country('BE',"Belgium")
-    #~ yield country('DE',"Germany")
-    #~ yield country('FR',"France")
-    #~ yield country('NL',"Netherlands")
