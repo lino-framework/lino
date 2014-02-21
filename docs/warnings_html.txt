@@ -1,5 +1,22 @@
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:22: ERROR: Unknown interpreted text role "aattr".
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:32: ERROR: Unknown interpreted text role "aattr".
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:41: ERROR: Unknown interpreted text role "aattr".
 /home/luc/hgwork/lino/docs/api/lino.mixins.beid.rst:4: WARNING: autodoc: failed to import module u'lino.mixins.beid'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
     __import__(self.modname)
 ImportError: No module named beid
+/home/luc/hgwork/lino/docs/api/lino.modlib.system.fixtures.demo.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.system.fixtures.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+ImportError: No module named demo
+/home/luc/hgwork/lino/docs/api/lino.modlib.system.fixtures.demo2.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.system.fixtures.demo2'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/sphinx/ext/autodoc.py", line 335, in import_object
+    __import__(self.modname)
+ImportError: No module named demo2
+/home/luc/hgwork/lino/docs/dev/install.rst:21: ERROR: Unknown target name: "virtualenv".
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13

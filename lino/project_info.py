@@ -105,6 +105,7 @@ lino.modlib.sales.fixtures
 lino.modlib.uploads
 lino.modlib.properties
 lino.modlib.users
+lino.modlib.users.fixtures
 lino.modlib.thirds
 lino.modlib.reception
 lino.modlib.tickets

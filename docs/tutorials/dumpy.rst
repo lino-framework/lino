@@ -10,8 +10,8 @@ We suppose that you have read at least the beginning of
 their documentation article :ref:`dpy`.
 In this tutorial we are going to show how to use them.
 
-The :mod:`initdb <djangosite.management.commands.initdb>` command
------------------------------------------------------------------
+The :manage:`initdb` and :manage:`initdb_demo` commands
+-------------------------------------------------------
 
 Remember that we told you (in :ref:`lino.tutorial.quickstart`) 
 to "prepare your database" by running the command::
@@ -20,28 +20,37 @@ to "prepare your database" by running the command::
   
 The :xfile:`manage.py` Python script is the standard Django interface 
 for running a so-called management command.
-I you don't know what *management commands* are, 
+If you don't know what *management commands* are, 
 please read this:
 `django-admin.py and manage.py 
 <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
 
-The :mod:`initdb_demo <lino.management.commands.initdb_demo>` 
-which we used here is a `custom management command 
+The :manage:`initdb_demo` 
+command which we used here is a `custom management command 
 <https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
 provided by Lino.
 It does nothing else than to call 
-:mod:`initdb <djangosite.management.commands.initdb>`,
-passing it a predefined set of fixture names, 
-called the **demo fixtures**.
+:manage:`initdb` with the **demo fixtures**.
+
+The **demo fixtures** is a predefined set of fixture names,
+defined by the application developer in 
+the :setting:`demo_fixtures` setting.
+The `min1` app has the following demo fixtures:
+
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
+    >>> from django.conf import settings
+    >>> settings.SITE.demo_fixtures
+    'std demo'
 
 So the ``initdb_demo`` command above is equivalent to::
   
-  $ python manage.py initdb std few_countries few_cities few_languages furniture demo demo2
-  
-The 
-:mod:`initdb <djangosite.management.commands.initdb>` 
-command 
-performs three actions in one:
+  $ python manage.py initdb std demo
+
+The :manage:`initdb` command
+----------------------------
+
+The :manage:`initdb` command performs three actions in one:
 
 - a flush of your database, removing *all existing tables* 
   (not only Django tables)
@@ -141,10 +150,10 @@ The :ref:`cosi` application developer had decided that a
 demo site should by default load just *this* set of fixtures.
 How did he do that?
 Look at the source code of  
-:srcref:`/lino/projects/cosi/settings/__init__.py`
+:srcref:`/lino/projects/min1/settings/__init__.py`
 where he overrides the 
-:attr:`demo_fixtures <lino.site.Site.demo_fixtures>` 
-attribute of his :class:`Site <lino.projects.cosi.settings.Site>` 
+:setting:`demo_fixtures` 
+attribute of his :class:`Site` 
 class, setting it to::
 
     demo_fixtures = 'std few_countries few_cities few_languages furniture demo demo2'.split()

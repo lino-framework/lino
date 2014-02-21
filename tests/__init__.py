@@ -52,22 +52,35 @@ class BlogTest(LinoTestCase):
 
 class DocsTests(LinoTestCase):
 
-    def test_templates_api(self):
-        self.run_simple_doctests('docs/user/templates_api.rst')
+    def test_docs(self):
+        self.run_simple_doctests("""
+        docs/user/templates_api.rst
+        docs/tutorials/dumpy.rst
+        """)
 
-    #~ def test_actions(self): self.run_docs_django_tests('tutorials.actions.settings')
-    def test_de_BE(self): self.run_django_manage_test('docs/tutorials/de_BE')
-    def test_auto_create(self): self.run_django_manage_test('docs/tutorials/auto_create')
+    def test_de_BE(self):
+        self.run_django_manage_test('docs/tutorials/de_BE')
+
+    def test_auto_create(self):
+        self.run_django_manage_test('docs/tutorials/auto_create')
     
-    def test_human(self): self.run_django_manage_test('docs/tutorials/human')
-    def test_actions(self): self.run_django_manage_test('docs/tutorials/actions')
-    def test_actors(self): self.run_django_manage_test('docs/tutorials/actors')
+    def test_human(self):
+        self.run_django_manage_test('docs/tutorials/human')
+
+    def test_actions(self):
+        self.run_django_manage_test('docs/tutorials/actions')
+
+    def test_actors(self):
+        self.run_django_manage_test('docs/tutorials/actors')
     
-    #~ def test_pisa(self): self.run_docs_django_tests('tutorials.pisa.settings')
-    def test_pisa(self): self.run_django_manage_test('docs/tutorials/pisa')
+    def test_pisa(self):
+        self.run_django_manage_test('docs/tutorials/pisa')
     
-    def test_polls(self): self.run_django_manage_test('docs/tutorials/polls')
-    def test_quickstart(self): self.run_django_manage_test('docs/tutorials/quickstart')
+    def test_polls(self):
+        self.run_django_manage_test('docs/tutorials/polls')
+
+    def test_quickstart(self):
+        self.run_django_manage_test('docs/tutorials/quickstart')
 
 
 class UtilsTests(LinoTestCase):
@@ -107,13 +120,16 @@ class I18nTests(LinoTestCase):
     
 class ProjectsTests(LinoTestCase):
     
-    def test_events(self): self.run_django_manage_test("lino/projects/events") 
-    #~ def test_presto(self): self.run_django_manage_test("lino/projects/presto") 
-    def test_belref(self): self.run_django_manage_test("lino/projects/belref") 
-    def test_babel_tutorial(self): self.run_django_manage_test("lino/projects/babel_tutorial") 
-    #~ def test_homeworkschool(self): self.run_django_manage_test("lino/projects/homeworkschool.settings.demo") 
-    def test_min1(self): self.run_django_manage_test("lino/projects/min1") 
-    def test_min2(self): self.run_django_manage_test("lino/projects/min2") 
+    def test_events(self): 
+        self.run_django_manage_test("lino/projects/events")
+    def test_belref(self): 
+        self.run_django_manage_test("lino/projects/belref")
+    def test_babel_tutorial(self): 
+        self.run_django_manage_test("lino/projects/babel_tutorial")
+    def test_min1(self): 
+        self.run_django_manage_test("lino/projects/min1")
+    def test_min2(self): 
+        self.run_django_manage_test("lino/projects/min2")
 
 
 class Tutorials(LinoTestCase):
@@ -123,21 +139,15 @@ class Tutorials(LinoTestCase):
     def test_mini(self):
         self.run_django_manage_test("lino/tutorials/mini")
     
+
 class TestAppsTests(LinoTestCase):
     
-    #~ def test_nomti(self): self.run_django_admin_test("lino.test_apps.nomti.settings") 
-    #~ NotImplementedError: No LayoutElement for owners (<class 'django.db.models.fields.related.ManyToManyField'>) in ListLayout on nomti.PlaceTable
-    
-    #~ def test_20100212(self): self.run_django_admin_test("lino.test_apps.20100212.settings") 
-    #~ def test_quantityfield(self): self.run_django_admin_test("lino.test_apps.quantityfield.settings") 
-    
-    def test_20100212(self): self.run_django_admin_test_cd("lino/test_apps/20100212") 
-    def test_quantityfield(self): self.run_django_admin_test_cd("lino/test_apps/quantityfield") 
+    def test_20100212(self):
+        self.run_django_admin_test_cd("lino/test_apps/20100212")
+
+    def test_quantityfield(self):
+        self.run_django_admin_test_cd("lino/test_apps/quantityfield")
     
 
 
-#~ class PrestoTest(LinoTestCase):
-    #~ demo_settings_module = "lino.projects.presto.test_settings"
-    
-    #~ def test_presto_demo(self): self.run_docs_django_tests('lino.projects.presto.settings')
-    #~ def test_presto_demo(self): self.run_django_admin_test('lino.projects.presto.settings')
+

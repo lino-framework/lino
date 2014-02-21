@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,7 +12,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 from lino.projects.std.settings import *
 
 
@@ -20,17 +19,10 @@ class Site(Site):
     title = "Lino Mini 1"
 
     user_model = 'users.User'
-    #~ user_model = None
 
     default_user = 'root'
 
     demo_fixtures = 'std demo'
-
-    languages = 'en'
-
-    #~ index_view_action = "dsbe.Home"
-
-    #~ remote_user_header = "REMOTE_USER"
 
     def setup_quicklinks(self, ar, tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)
@@ -44,6 +36,5 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
-        #~ yield 'lino.projects.min1'
 
 SITE = Site(globals())
