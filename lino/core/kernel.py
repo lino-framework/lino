@@ -727,7 +727,7 @@ class Kernel(object):
         prefix = settings.MEDIA_URL[1:]
         target = join(settings.MEDIA_ROOT, short_name)
         if exists(target):
-            # logger.info("20130409 path exists: %s", target)
+            logger.debug("media path exists: %s", target)
             return
         if attr_name is not None:
             # usage is deprecated
@@ -742,8 +742,8 @@ class Kernel(object):
         elif not exists(source):
             raise Exception("%s does not exist" % source)
         if is_devserver():
-            # logger.info("django.views.static serving /%s%s from %s",
-            #             prefix, short_name, source)
+            logger.debug("django.views.static serving /%s%s from %s",
+                         prefix, short_name, source)
             urlpatterns.extend(
                 patterns(
                     'django.views.static',
@@ -754,8 +754,8 @@ class Kernel(object):
         else:
             symlink = getattr(os, 'symlink', None)
             if symlink is None:
-                logger.info("Cannot create symlink %s -> %s.",
-                            target, source)
+                logger.warning("Cannot create symlink %s -> %s.",
+                               target, source)
                 #~ raise Exception("Cannot run a production server on an OS that doesn't have symlinks")
             else:
                 logger.info("Create symlink %s -> %s.", target, source)
