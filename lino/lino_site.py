@@ -22,15 +22,14 @@ documented there.
 
 .. setting:: config_id
 
-The primary key of the one and only `SiteConfig` instance of this 
+The primary key of the one and only `SiteConfig` instance of this
 SITE. Default value is 1.
 
 This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
-Lino applications don't need ``django.contrib.sites`` 
-(`The "sites" framework
-<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_)
-because this 
-functionality is integral part of :mod:`lino.modlib.system`.
+Lino applications don't need ``django.contrib.sites`` (`The "sites"
+framework
+<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_) because
+this functionality is integral part of :mod:`lino.modlib.system`.
 
 
 
@@ -217,31 +216,15 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 from os.path import join, abspath
-import sys
-import cgi
-import inspect
 import datetime
-
-from decimal import Decimal
 
 from urllib import urlencode
 
-
-
-from lino.utils.xmlgen import html as xghtml
-from lino.utils import AttrDict
-
-#~ from lino import SETUP_INFO
-
 from django.utils.translation import ugettext_lazy as _
-
 
 from north import Site
 
-import lino
-from lino import ad
 from lino.utils.xmlgen.html import E
 
 
@@ -284,11 +267,7 @@ class Site(Site):
     """
 
     help_url = "http://code.google.com/p/lino"
-    #~ site_url =
-    #~ index_html = "This is the main page."
-    #~ title = None
     title = "Unnamed Lino site"
-    #~ domain = "www.example.com"
 
     catch_layout_exceptions = True
     """
@@ -303,8 +282,6 @@ class Site(Site):
     
     """
 
-    #~ preferred_build_method = 'pisa'
-    #~ preferred_build_method = 'appypdf'
     csv_params = dict()
     """
     Site-wide default parameters for CSV generation.
@@ -1153,6 +1130,10 @@ class Site(Site):
         we create it using default values from :attr:`site_config_defaults`.
 
         """
+
+        if not 'system' in self.modules:
+            return None
+
         if self._site_config is None:
             #~ raise Exception(20130301)
             #~ print '20130320 create _site_config'

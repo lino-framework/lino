@@ -690,8 +690,9 @@ class Actor(actions.Parametrizable):
     """
 
     allow_create = True
-    """
-    If this is False, then then Actor won't have neither create_action nor insert_action.
+    """If this is False, then then Actor won't have neither create_action
+    nor insert_action.
+
     """
 
     hide_top_toolbar = False

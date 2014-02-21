@@ -33,7 +33,7 @@ Here is a code draft for an "integrity test" that detects such cases:
 
 
 (Note: the above snippet os no longer tested with Lino, it has been
-copied to `welfare/docs/tested`)
+copied to :ref:`welfare.tested.general`)
 
 
 

@@ -40,4 +40,7 @@ The following (internal) problem took me some time:
   >>> ffn.endswith('lino_welfare/config/attestations/Attestation/Default.odt')
   True
 
+  (Note: the above snippet os no longer tested here, it has been
+  copied to :ref:`welfare.tested.general`)
+
 

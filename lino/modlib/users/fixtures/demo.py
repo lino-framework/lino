@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -25,10 +25,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-import datetime
 from django.conf import settings
 from lino import dd
-from lino.utils.instantiator import Instantiator
 
 
 def root_user(lang, **kw):
@@ -38,8 +36,8 @@ def root_user(lang, **kw):
     kw.update(email=settings.SITE.demo_email)  # 'root@example.com'
     lang = lang.django_code
     kw.update(language=lang)
+    lang = lang[:2]
     if lang == 'de':
-        #~ kw.update(first_name="Rudi",last_name=u"Rutté")
         kw.update(first_name="Rolf", last_name="Rompen")
     elif lang == 'fr':
         kw.update(first_name="Romain", last_name="Raffault")
@@ -59,6 +57,7 @@ def root_user(lang, **kw):
 
 
 def objects():
+    # logger.info("20140221 %s", settings.SITE.languages)
     User = settings.SITE.user_model
     if User is not None:
         for lang in settings.SITE.languages:
@@ -68,3 +67,4 @@ def objects():
                     u = User(**kw)
                     #~ u.set_password('1234')
                     yield u
+                    

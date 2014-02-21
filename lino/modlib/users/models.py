@@ -1,4 +1,4 @@
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,12 +11,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
-#~ import datetime
 #~ import logging
 #~ logger = logging.getLogger(__name__)
 
-#~ from django import forms
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -26,26 +23,9 @@ from django.contrib.auth.hashers import (
 
 
 from lino import dd
-from lino.utils import mti
 from lino.utils.xmlgen.html import E
-#~ from lino.utils import choicelists
-from lino.utils.choosers import chooser
 from lino import mixins
 from lino.core import actions
-
-#~ from lino.mixins import PersonMixin
-#~ from lino.modlib.contacts.models import Contact
-#~ from lino.modlib.contacts import models as contacts
-
-#~ contacts = dd.resolve_app('contacts')
-
-#~ from lino.core.perms import UserLevels
-
-#~ if settings.SITE.is_installed('users') and settings.SITE.user_model != 'users.User':
-    #~ raise Exception("""\
-#~ You are using lino.modlib.users in your INSTALLED_APPS,
-#~ but settings.SITE.user_model is %r (should be 'users.User').
-#~ """ % settings.SITE.user_model)
 
 
 class User(mixins.CreatedModified):
@@ -65,14 +45,17 @@ class User(mixins.CreatedModified):
         verbose_name_plural = _('Users')
         ordering = ['last_name', 'first_name']
 
-    username = models.CharField(_('Username'), max_length=30,
-                                unique=True,
+    username = models.CharField(
+        _('Username'), max_length=30,
+        unique=True,
         help_text=_("""Required. Must be unique."""))
 
     password = models.CharField(_('Password'), max_length=128)
 
-    profile = dd.UserProfiles.field(blank=True,
-                                    help_text=_("Users with an empty `profile` field are considered inactive and cannot log in."))
+    profile = dd.UserProfiles.field(
+        blank=True,
+        help_text=_("Users with an empty `profile` field are considered \
+inactive and cannot log in."))
 
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)

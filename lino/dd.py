@@ -11,14 +11,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-A shortcut to classes and methods needed 
-when defining your database structure in a `models` module.
+"""A shortcut to classes and methods needed when defining your
+database structure in a `models` module.
 
 The name "dd" stands for "Data Definition".
 
-A small wrapper around Django's `Model` class 
-which adds some Lino specific features:
+A small wrapper around Django's `Model` class which adds some Lino
+specific features:
 
 - :class:`Model <lino.core.model.Model>`
 
@@ -155,7 +154,6 @@ Miscellaneous:
 
 - :class:`Genders <lino.core.choicelists.Genders>`
 
-
 """
 
 import logging
@@ -250,7 +248,6 @@ from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
 
 from lino.mixins.addressable import Addressable
-
 
 from north.dbutils import BabelCharField, LanguageField
 

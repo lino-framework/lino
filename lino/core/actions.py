@@ -1057,9 +1057,7 @@ class SubmitDetail(Action):
     #~ show_in_bbar = True
     action_name = 'put'
     readonly = False
-    required = dict(user_level='user')
-    #~ url_action_name = 'SubmitDetail'
-    #~ callable_from = (ShowDetailAction,)
+    # required = dict(user_level='user')
 
     def is_callable_from(self, caller):
         return isinstance(caller, ShowDetailAction)
