@@ -2,6 +2,10 @@
 20140221 (Friday, 21 February 2014)
 ===================================
 
+
+First Lino Application Developer Workshop
+-----------------------------------------
+
 With Manuel we are creating "Lino Sunto", an application to manage
 products and vendors:
 
@@ -51,3 +55,9 @@ Moved two doctest cases from the Lino blog to
 to fail on a system without :ref:`welfare` installed.
 
 Restored some failing test cases in the :ref:`north` test suite.
+
+
+Lino in Châtelet
+----------------
+
+:mod:`lino.core.kernel` now logs more debug messages.
