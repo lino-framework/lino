@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -21,8 +21,6 @@ Lino's authentification middleware
 
 from __future__ import unicode_literals
 
-
-import os
 import logging
 logger = logging.getLogger(__name__)
 

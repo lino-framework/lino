@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -30,7 +30,6 @@ from django.contrib.contenttypes import generic
 import lino
 
 from lino import dd
-from lino.core import dbtables
 from lino.core import layouts
 from lino.core import fields
 from lino.core import actions
@@ -1206,7 +1205,7 @@ class AutoFieldElement(NumberFieldElement):
 class RequestFieldElement(IntegerFieldElement):
 
     def value2num(self, v):
-        #~ logger.info("20131114 value2num %s",v)
+        # logger.info("20131114 value2num %s",v)
         return v.get_total_count()
 
     def value_from_object(self, obj, ar):
@@ -1214,17 +1213,12 @@ class RequestFieldElement(IntegerFieldElement):
         return self.field.value_from_object(obj, ar)
 
     def value2html(self, ar, v, **cellattrs):
-        #~ logger.info("20130131 value2html %s",v)
+        # logger.info("20121116 value2html(%s)", v)
         n = v.get_total_count()
-        #~ 20130119b cellattrs.update(align="right")
-        if n == 0:
-            return E.td(**cellattrs)
-        #~ return ar.renderer.href_to_request(v,str(n))
+        if False:
+            if n == 0:
+                return E.td(**cellattrs)
         url = 'javascript:' + ar.renderer.request_handler(v)
-        #~ if n == 12:
-            #~ logger.info("20120914 value2html(%s) --> %s",v,url)
-        #~ url = ar.renderer.js2url(h)
-        #~ return E.a(cgi.escape(force_unicode(v.label)),href=url)
         return E.td(E.a(str(n), href=url), **cellattrs)
 
         #~ s = self.format_value(ar,v)
@@ -1232,13 +1226,14 @@ class RequestFieldElement(IntegerFieldElement):
         #~ return xghtml.RAW(s)
 
     def format_value(self, ar, v):
-        #~ logger.info("20121116 format_value(%s)",v)
+        # logger.info("20121116 format_value(%s)", v)
         #~ raise Exception("20130131 %s" % v)
         if v is None:
             raise Exception("Got None value for %s" % self)
         n = v.get_total_count()
-        if n == 0:
-            return ''
+        if False:
+            if n == 0:
+                return ''
         #~ if n == 12:
             #~ logger.info("20120914 format_value(%s) --> %s",v,n)
         return ar.href_to_request(v, str(n))

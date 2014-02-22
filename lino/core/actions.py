@@ -979,7 +979,7 @@ class InsertRow(TableAction):
 
     def get_action_permission(self, ar, obj, state):
         # see blog/2012/0726
-        if ar.get_user().profile.readonly:
+        if settings.SITE.user_model and ar.get_user().profile.readonly:
             return False
         return super(InsertRow, self).get_action_permission(ar, obj, state)
 

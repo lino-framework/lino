@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -22,12 +22,11 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
+from django.conf import settings
 
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
+# from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
-from lino.core.dbutils import obj2str
 from lino.core import actions
 from lino.core import model
 

@@ -242,14 +242,14 @@ class ExtRenderer(HtmlRenderer):
         return self.action_call(ar.request, ar.bound_action, st)
 
     def window_action_button(
-            self, request, ba, after_show={},
+            self, request, ba, status={},
             label=None, title=None, **kw):
         """
         Return a HTML chunk for a button that will execute this
         action using a *Javascript* link to this action.
         """
         label = unicode(label or ba.get_button_label())
-        href = 'javascript:' + self.action_call(request, ba, after_show)
+        href = 'javascript:' + self.action_call(request, ba, status)
         return self.href_button_action(
             ba, href, label, title or ba.action.help_text, **kw)
 
@@ -293,23 +293,32 @@ class ExtRenderer(HtmlRenderer):
             py2js(put_data))
         return self.href_button(url, text, **kw)
 
+    def quick_manage_buttons(self, ar, obj):
+        insert_btn = ar.renderer.insert_button(ar, _("Insert"))
+        assert insert_btn is not None
+        ba = ar.bound_action
+        manage_btn = ar.renderer.action_button(
+            obj, ar, ba, _("Manage"),
+            icon_name='application_form')
+        assert manage_btn is not None
+        return E.p(insert_btn, manage_btn)
+
     def quick_upload_buttons(self, rr):
-        """
-        Returns a HTML chunk that displays "quick upload buttons":
-        either one button :guilabel:`Upload` 
-        (if the given :class:`TableTequest <lino.core.dbtables.TableRequest>`
-        has no rows)
-        or two buttons :guilabel:`Show` and :guilabel:`Edit` 
-        if it has one row.
+        """Returns a HTML chunk that displays "quick upload buttons": either
+        one button :guilabel:`Upload` (if the given
+        :class:`TableTequest <lino.core.dbtables.TableRequest>` has no
+        rows) or two buttons :guilabel:`Show` and :guilabel:`Edit` if
+        it has one row.
         
         See also :doc:`/tickets/56`.
-        
+
         """
         if rr.get_total_count() == 0:
             if True:  # after 20130809
-                return rr.insert_button(_("Upload"),
-                                        icon_name='page_add',
-                                        title=_("Upload a file from your PC to the server."))
+                return rr.insert_button(
+                    _("Upload"),
+                    icon_name='page_add',
+                    title=_("Upload a file from your PC to the server."))
             else:
                 a = rr.actor.insert_action
                 if a is not None:
@@ -341,10 +350,12 @@ class ExtRenderer(HtmlRenderer):
                 title=_("Open the uploaded file in a new browser window")))
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
-            chunks.append(self.window_action_button(rr.request,
-                                                    rr.ah.actor.detail_action,
-                                                    after_show,
-                                                    _("Edit"), icon_name='application_form', title=_("Edit metadata of the uploaded file.")))
+            chunks.append(self.window_action_button(
+                rr.request,
+                rr.ah.actor.detail_action,
+                after_show,
+                _("Edit"), icon_name='application_form',
+                title=_("Edit metadata of the uploaded file.")))
             return xghtml.E.p(*chunks)
 
             #~ s = ''
@@ -364,10 +375,10 @@ class ExtRenderer(HtmlRenderer):
         """
         a = ar.actor.insert_action
         if a is None:
-            #~ raise Exception("20130924 a is None")
+            # raise Exception("20130924 a is None")
             return
         if not a.get_bound_action_permission(ar, ar.master_instance, None):
-            #~ raise Exception("20130924 no permission")
+            # raise Exception("20130924 no permission")
             return
         elem = ar.create_instance(**known_values)
         st = ar.get_status()
@@ -451,17 +462,9 @@ class ExtRenderer(HtmlRenderer):
         return e
 
     def href_to_request(self, sar, tar, text=None, **kw):
-        #~ url = self.js2url(self.request_handler(tar))
-        url = 'javascript:' + self.request_handler(tar)
-        #~ if 'Lino.pcsw.MyPersonsByGroup' in url:
-        #~ print 20120618, url
-        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
-        #~ if text is None:
-            #~ text = unicode(tar.get_title())
-        #~ return xghtml.E.a(text,href=url)
-        return self.href_button_action(tar.bound_action, url, text or tar.get_title(), **kw)
-        #~ return self.href_button(url,text or tar.get_title(),**kw)
-        #~ return self.href_button(url,text or cgi.escape(force_unicode(rr.label)))
+        uri = 'javascript:' + self.request_handler(tar)
+        return self.href_button_action(
+            tar.bound_action, uri, text or tar.get_title(), **kw)
 
     def unused_action_href_http(self, a, label=None, **params):
         """

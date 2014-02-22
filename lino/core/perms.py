@@ -1,4 +1,4 @@
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,6 +12,9 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
@@ -435,7 +438,7 @@ def make_view_permission_handler_(
         """
         def allow(action, profile):
             return True
-    #~ if settings.SITE.user_model is not None:
+    # if settings.SITE.user_model is not None:
     if True:  # e.g. public readonly site
         if auth:
             allow_before_auth = allow
@@ -510,7 +513,8 @@ def make_view_permission_handler_(
 
 def make_permission_handler_(
     elem, actor, readonly, debug_permissions,
-        user_level=None, user_groups=None, allow=None, auth=False, owner=None, states=None):
+        user_level=None, user_groups=None,
+        allow=None, auth=False, owner=None, states=None):
 
     #~ if str(actor) == 'courses.PendingCourseRequests':
         #~ if allow is None: raise Exception("20130424")
@@ -523,7 +527,7 @@ def make_permission_handler_(
     if allow is None:
         def allow(action, user, obj, state):
             return True
-    #~ if settings.SITE.user_model is not None:
+    # if settings.SITE.user_model is not None:
     if True:  # e.g. public readonly site
         if auth:
             allow_before_auth = allow

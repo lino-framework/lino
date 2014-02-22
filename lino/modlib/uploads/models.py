@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -58,12 +58,10 @@ class UploadTypes(dd.Table):
 
 
 class Upload(
-    mixins.Uploadable,
-    #~ contacts.PartnerDocument,
-    #~ mixins.Reminder,
-    mixins.AutoUser,
-    mixins.CreatedModified,
-        mixins.Controllable):
+        dd.Uploadable,
+        dd.UserAuthored,
+        dd.CreatedModified,
+        dd.Controllable):
 
     #~ allow_cascaded_delete = ['']
 
@@ -73,22 +71,13 @@ class Upload(
 
     type = models.ForeignKey("uploads.UploadType",
                              blank=True, null=True)
-      #~ verbose_name=_('upload type'))
 
     valid_until = models.DateField(
         blank=True, null=True,
         verbose_name=_("valid until"))
 
-    #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
-    #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
-    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
-
-    # ,null=True)
     description = models.CharField(
         _("Description"), max_length=200, blank=True)
-
-    #~ def __unicode__(self):
-        #~ return self.description or self.file.name
 
     def __unicode__(self):
         if self.description:
@@ -108,19 +97,13 @@ class Upload(
 
     def update_reminders(self):
         """
-        Also called from :func:`lino_welfare.modelib.pcsw.models.update_all_reminders`.
+        Also called from
+        :func:`lino_welfare.modlib.pcsw.models.update_all_reminders`.
         """
-        #~ logger.info("Upload.update_reminders() %s : owner is %s", self.pk, self.owner)
-
         cal.update_reminder(1, self, self.user,
                             self.valid_until,
                             _("%s expires") % self.type,
                             2, cal.DurationUnits.months)
-
-    #~ def update_owned_instance(self,task):
-        # ~ # logger.info("Upload.update_owned_instance() %s : owner is %s", self.pk, self.owner)
-        #~ mixins.AutoUser.update_owned_instance(self,task)
-        #~ mixins.Controllable.update_owned_instance(self,task)
 
 
 class Uploads(dd.Table):
@@ -131,17 +114,17 @@ class Uploads(dd.Table):
     column_names = "file user created modified *"
     detail_layout = """
     file user
-    type description 
+    type description
     # person company
     # reminder_date reminder_text delay_value delay_type reminder_done
     modified created owner
-    # show_date show_time 
+    # show_date show_time
     # show_date time timestamp
     """
 
     insert_layout = dd.FormLayout("""
     file user
-    type description 
+    type description
     """, window_size=(60, 'auto'))
 
 

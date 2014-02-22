@@ -507,9 +507,9 @@ class Constant(object):
 
 
 def constant():
-    """
-    Decorator to turn a function into a :class:`Constant`.
-    The function must accept one positional argument `datasource`.
+    """Decorator to turn a function into a :class:`Constant`.  The
+    function must accept one positional argument `datasource`.
+
     """
     def decorator(fn):
         return Constant(fn)
@@ -517,11 +517,9 @@ def constant():
 
 
 class RequestField(VirtualField):
+    """A virtual field whose values are requests.
 
     """
-    Deserves more documentation.
-    """
-
     def __init__(self, get, *args, **kw):
         kw.setdefault('max_length', 8)
         VirtualField.__init__(self, DisplayField(*args, **kw), get)

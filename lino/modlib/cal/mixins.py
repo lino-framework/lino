@@ -18,9 +18,8 @@ Part of the :mod:`lino.modlib.cal` app.
 Defines the mixins
 :class:`Started` ,
 :class:`Ended`,
-:class:`EventGenerator` 
-and :class:`RecurrenceSet` 
-.
+:class:`EventGenerator`
+and :class:`RecurrenceSet`.
 
 """
 
@@ -537,16 +536,18 @@ class RecurrenceSet(Started, Ended):
     #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
     def get_next_date(self, ar, date):
         if self.every_unit == Recurrencies.once:
-            ar.info("20131025 Recurrencies.once get_next_date() returns None.")
+            logger.debug("get_next_date() once --> None.")
             return None
         if self.every_unit == Recurrencies.per_weekday:
+            od = date
             for i in range(7):
                 date += ONE_DAY
                 if self.is_available_on(date):
+                    logger.debug(
+                        "get_next_date() per_weekday %s --> %s.", od, date)
                     return date
-            #~ raise Exception("Failed to find available weekday.")
             ar.info(
-                "20131025 %s : get_next_date() failed to find available weekday.", self)
+                "%s : get_next_date() failed to find available weekday.", self)
             return None
         return self.every_unit.add_duration(date, self.every)
 

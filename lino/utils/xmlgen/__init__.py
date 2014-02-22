@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,9 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-Inspired by Frederik Lundh's 
+"""Inspired by Frederik Lundh's
 `ElementTree Builder
 <http://effbot.org/zone/element-builder.htm>`_
 
@@ -48,16 +46,14 @@ But surprise:
 >>> print E.tostring(E.div(*elems))
 <div>a<br />bcd<br />bcd<br />bcd</div>
 
-What happened here is that the same `<br>` element instance was being 
-inserted multiple times at different places. 
-The correct usage is without the parentheses so that `join_elems` 
-instantiates each time a new element:
+What happened here is that the same `<br>` element instance was being
+inserted multiple times at different places.  The correct usage is
+without the parentheses so that `join_elems` instantiates each time a
+new element:
 
 >>> elems = join_elems(["a","b","c","d"],sep=E.br)
 >>> print E.tostring(E.div(*elems))
 <div>a<br />b<br />c<br />d</div>
-
-
 
 """
 

@@ -18,69 +18,30 @@ This defines the :class:`Table` class (``dd.Table``).
 import logging
 logger = logging.getLogger(__name__)
 
-import copy
-import cgi
-import os
-import sys
-import traceback
-import codecs
-import yaml
 import datetime
-#import logging ; logger = logging.getLogger('lino.reports')
-#~ import cPickle as pickle
-#~ import pprint
-
-from appy import Object
 
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
-#~ from django.utils.translation import ugettext as _
 from django.utils.translation import ugettext_lazy as _
-from django.utils.text import capfirst
-from django.utils.encoding import force_unicode
-from django.utils.importlib import import_module
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-#~ from django import forms
-#~ from django.conf.urls.defaults import patterns, url
-#~ from django.forms.models import modelform_factory
-#~ from django.forms.models import _get_foreign_key
-#~ from django.contrib.auth.decorators import login_required
 from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-
-#~ from dateutil import parser as dateparser
-
-from django.http import HttpResponse
-from django.utils.safestring import mark_safe
 
 
-import lino
-#~ from lino import layouts
 from lino.core import fields
 from lino.core import actions
 from lino.core.model import Model
-from djangosite.dbutils import obj2str
-#~ from lino.core import datalinks
-#~ from lino.core import boolean_texts
 from lino.core import actors
 from lino.core import frames
-#~ from lino.core import action_requests
-#~ from lino.ui import base
 
-#~ from lino.ui import requests as ext_requests
 
 from lino.core.dbutils import full_model_name
 from lino.core.dbutils import resolve_model, resolve_field, get_field, UnresolvedModel
-#~ from lino.utils.config import LOCAL_CONFIG_DIR
 from lino.core.dbutils import get_model_report
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
-# ~ from lino.core.tables import GridEdit #, ComputedColumn
 
 from lino.utils.xmlgen.html import E
-#~ from lino.modlib import field_choices
 
 
 def unused_parse_js_date(s, name):
@@ -452,9 +413,6 @@ class Table(AbstractTable):
         if master_instance is not None:
             kw.update(master_instance=master_instance)
         kw.setdefault('action', self.default_action)
-        #~ if action is None:
-            #~ action = self.default_action
-            #~ assert action is not None
         return TableRequest(**kw)
 
     @classmethod
