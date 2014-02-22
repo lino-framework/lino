@@ -294,6 +294,10 @@ class ExtRenderer(HtmlRenderer):
         return self.href_button(url, text, **kw)
 
     def quick_manage_buttons(self, ar, obj):
+        """Returns a HTML chunk that displays "quick manage buttons": one
+        "Insert" and another to open the Table.
+
+        """
         insert_btn = ar.renderer.insert_button(ar, _("Insert"))
         assert insert_btn is not None
         ba = ar.bound_action

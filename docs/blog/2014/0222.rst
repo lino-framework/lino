@@ -2,6 +2,7 @@
 20140222 (Saturday, 22 February 2014)
 =====================================
 
+
 Worked on a reported bug in :ref:`faggio`:
 It seems that `courses.Course.update_events` does not always work correctly.
 To make this reliable, we need a serious suite of unit tests.
@@ -9,5 +10,6 @@ To make this reliable, we need a serious suite of unit tests.
 :setting:`demo_date`
 :func:`atelier.utils.date_offset`.
 
-
+Worked on Lino Sunto with Manuel:
+Added new method `ext_renderer.ExtRenderer.quick_manage_buttons`.
 
