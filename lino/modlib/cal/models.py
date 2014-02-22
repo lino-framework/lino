@@ -65,6 +65,8 @@ from .workflows import take
 
 from .mixins import StartedSummaryDescription
 
+DEMO_START_YEAR = 2013
+
 
 class CalendarType(object):
 

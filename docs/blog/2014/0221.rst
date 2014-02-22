@@ -60,4 +60,5 @@ Restored some failing test cases in the :ref:`north` test suite.
 Lino in Châtelet
 ----------------
 
-:mod:`lino.core.kernel` now logs more debug messages.
+- :mod:`lino.core.kernel` now logs more debug messages.
+- The French demo fixtures required a few bits of fiddling.

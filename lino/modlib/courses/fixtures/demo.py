@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -16,27 +16,18 @@ from __future__ import unicode_literals
 
 import datetime
 
-#~ from django.contrib.contenttypes.models import ContentType
-
 from lino import dd
-#~ from lino.utils.instantiator import Instantiator, i2d
-#~ from lino.core.dbutils import resolve_model
 from lino.utils import mti, Cycler
 from django.utils.translation import ugettext_lazy as _
 
 
-from django.db import models
 from django.conf import settings
-from north.dbutils import babelkw
 
 Person = dd.resolve_model('contacts.Person')
 
 courses = dd.resolve_app('courses')
 cal = dd.resolve_app('cal')
 users = dd.resolve_app('users')
-#~ Room = resolve_model('courses.Room')
-#~ Content = resolve_model('courses.Content')
-#~ PresenceStatus = resolve_model('courses.PresenceStatus')
 
 
 def objects():
@@ -54,9 +45,11 @@ def objects():
     n = 0
     for p in Person.objects.all():
         if n % 2 == 0:
-            yield mti.insert_child(p, courses.Pupil, pupil_type=PTYPES.pop())
+            yield mti.insert_child(p, courses.Pupil,
+                                   pupil_type=PTYPES.pop())
         if n % 9 == 0:
-            yield mti.insert_child(p, courses.Teacher, teacher_type=TTYPES.pop())
+            yield mti.insert_child(p, courses.Teacher,
+                                   teacher_type=TTYPES.pop())
         n += 1
 
     if False:

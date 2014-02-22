@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
+Part of the :xfile:`models.py` module for the :mod:`lino.modlib.cal` app.
 
 Defines the :class:`EventType` and :class:`Event` models and their tables.
 
@@ -29,48 +29,28 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
-from django.db.models import loading
-from django.core import exceptions
-from django.utils.importlib import import_module
-
-from north import dbutils
-from north.dbutils import dtosl
-
 
 from lino import mixins
 from lino import dd
-from lino.utils import ONE_DAY
-from lino.core import constants
-
 
 from .utils import (
-    DurationUnits, Recurrencies,
-    setkw, dt2kw,
+    Recurrencies,
     when_text,
-    Weekdays, AccessClasses)
+    AccessClasses)
 
+
+from .mixins import Ended
+from .mixins import RecurrenceSet, EventGenerator
+from .mixins import UpdateReminders
+from .models import Component
+from .models import Priority
+from .workflows import EventStates
 
 contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
-
-
-from .mixins import Ended
-from .models import Component
-from .models import Priority
-from .mixins import RecurrenceSet, EventGenerator
-from .mixins import UpdateReminders
-
-from .models_calendar import Calendars
-from .models_calendar import Subscription
-
-from .workflows import (
-    TaskStates, EventStates, GuestStates)
 
 
 class EventType(dd.BabelNamed, dd.Sequenced,

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -23,51 +23,31 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 import datetime
 
 from django.db import models
-from django.db.models import Q
-from django.db.utils import DatabaseError
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
-from django.utils.encoding import force_unicode
-from django.utils.functional import lazy
 
 from django.contrib.contenttypes.models import ContentType
-
-#~ import lino
-#~ logger.debug(__file__+' : started')
-#~ from django.utils import translation
 
 from decimal import Decimal
 
 ZERO = Decimal()
 
-
-#~ from lino import reports
 from lino import dd
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
 
+from lino.mixins.printable import BuildMethods
+
 from lino.core import dbtables
 
-#~ sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
 
-#~ dd.extends_app('lino.modlib.sales',globals())
 
 from lino.modlib.sales.models import *
-#~ PARENT_APP = 'lino.modlib.sales'
-
-#~ from lino.modlib.sales import models as PARENT_APP
-#~ from lino.modlib.sales import models as sales
-#~ from lino.modlib.sales import models as CONFIG_PARENT
-# ~ CONFIG_PARENT = sales # inherit `config` subdir
 
 
 class InvoicingMode(dd.PrintableType, dd.BabelNamed):
@@ -274,7 +254,7 @@ class Invoice(Invoice):  # 20130709
         return lst
 
     def get_build_method(self):
-        return 'appypdf'  # must be appypdf for print_multiple
+        return BuildMethods.appypdf  # must be appypdf for print_multiple
 
 
 class InvoiceItem(InvoiceItem):  # 20130709

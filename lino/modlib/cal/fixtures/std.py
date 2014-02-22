@@ -22,7 +22,6 @@ including a demo set of holidays.
 from __future__ import unicode_literals
 
 import datetime
-import decimal
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
 
@@ -83,11 +82,12 @@ def objects():
     yield settings.SITE.site_config
 
     event_type = Instantiator('cal.EventType').build
-    holidays = event_type(all_rooms=True, **dd.babelkw('name',
-                                                       de="Feiertage",
-                                                       fr="Jours fériés",
-                                                       en="Holidays",
-                                                       ))
+    holidays = event_type(all_rooms=True,
+                          **dd.babelkw('name',
+                                       de="Feiertage",
+                                       fr="Jours fériés",
+                                       en="Holidays",
+                                   ))
     yield holidays
 
     RecurrentEvent = dd.resolve_model('cal.RecurrentEvent')
@@ -97,15 +97,22 @@ def objects():
         return add(
             every_unit=cal.Recurrencies.yearly,
             every=1,
-            start_date=settings.SITE.demo_date().replace(month=month, day=day),
+            start_date=datetime.date(
+                year=cal.DEMO_START_YEAR,
+                month=month, day=day),
             **dd.babelkw('name', en=en, de=de, fr=fr))
     yield holiday(1, 1, "New Year's Day", "Neujahr", "Jour de l'an")
-    yield holiday(5, 1, "International Workers' Day", "Tag der Arbeit", "Premier Mai")
-    yield holiday(7, 21, "National Day", "Nationalfeiertag", "Fête nationale")
-    yield holiday(8, 15, "Assumption of Mary", "Mariä Himmelfahrt", "Assomption de Marie")
-    yield holiday(10, 31, "All Souls' Day", "Allerseelen", "Commémoration des fidèles défunts")
+    yield holiday(5, 1, "International Workers' Day",
+                  "Tag der Arbeit", "Premier Mai")
+    yield holiday(7, 21, "National Day", "Nationalfeiertag",
+                  "Fête nationale")
+    yield holiday(8, 15, "Assumption of Mary", "Mariä Himmelfahrt",
+                  "Assomption de Marie")
+    yield holiday(10, 31, "All Souls' Day", "Allerseelen",
+                  "Commémoration des fidèles défunts")
     yield holiday(11, 1, "All Saints' Day", "Allerheiligen", "Toussaint")
-    yield holiday(11, 11, "Armistice with Germany", "Waffenstillstand", "Armistice")
+    yield holiday(11, 11, "Armistice with Germany",
+                  "Waffenstillstand", "Armistice")
     yield holiday(12, 25, "Christmas", "Weihnachten", "Noël")
 
     summer = holiday(07, 01, "Summer holidays",

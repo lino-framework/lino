@@ -56,22 +56,6 @@ Person = dd.resolve_model('contacts.Person', strict=True)
 # equivalent alternative :
 #~ Person = settings.SITE.modules.contacts.Person
 
-#~ from lino.modlib.contacts.models import Person
-#~ print '20130219 lino.modlib.courses 3'
-
-#~ except ImportError as e:
-    #~ import traceback
-    #~ traceback.print_exc(e)
-    #~ raise Exception("20130607")
-
-#~ class PresenceStatus(dd.BabelNamed):
-    #~ class Meta:
-        #~ verbose_name = _("Presence Status")
-        #~ verbose_name_plural = _("Presence Statuses")
-
-#~ class PresenceStatuses(dd.Table):
-    #~ model = PresenceStatus
-
 
 class StartEndTime(dd.Model):
 
@@ -109,7 +93,7 @@ class Slots(dd.Table):
     name
     """
     detail_layout = """
-    name start_time end_time 
+    name start_time end_time
     courses.CoursesBySlot
     """
 
@@ -300,35 +284,6 @@ class EventsByTeacher(cal.Events):
         qs = qs.filter(course__in=teacher.course_set.all())
         return qs
 
-#~ def on_event_generated(self,course,ev):
-
-
-def unused_setup_course_event(self, course, ev):
-    if not course.slot:
-        return
-    if not ev.start_date:
-        #~ raise Exception("20120403 %s" % obj2str(ev))
-        return
-
-    ev.start_time = course.slot.start_time
-    ev.end_time = course.slot.end_time
-
-    #~ start_time = datetime.time(16)
-    #~ skip = datetime.timedelta(minutes=60)
-    #~ if wd in (1,2,4,5):
-        #~ pass
-    #~ elif wd == 3:
-        #~ start_time = datetime.time(13)
-    #~ else:
-        #~ return
-    #~ start_time = datetime.datetime.combine(ev.start_date,start_time)
-    #~ start_time = start_time + skip * (course.slot - 1)
-    #~ ev.set_datetime('start',start_time)
-    #~ ev.set_datetime('end',start_time + skip)
-
-#~ if not hasattr(settings.SITE,'setup_course_event'):
-    #~ settings.SITE.__class__.setup_course_event = setup_course_event
-
 
 class CourseStates(dd.Workflow):
     required = dd.required(user_level='admin')
@@ -360,12 +315,6 @@ add('40', _("Certified"), 'certified', invoiceable=True, uses_a_place=True)
 #~ add('50', _("Success"),'success')
 #~ add('60', _("Award"),'award')
 #~ add('90', _("Abandoned"),'abandoned')
-
-#~ ENROLMENT_USES_UP_A_PLACE = set((EnrolmentStates.confirmed,EnrolmentStates.certified))
-ENROLMENT_USES_UP_A_PLACE = EnrolmentStates.filter(uses_a_place=True)
-
-#~ EnrolmentStates.registered.add_transition(_("Register"),states='draft',icon_name='accept')
-#~ EnrolmentStates.draft.add_transition(_("Deregister"),states="registered",icon_name='pencil')
 
 
 class Course(cal.Reservation, dd.Printable):
@@ -415,8 +364,8 @@ class Course(cal.Reservation, dd.Printable):
         return "%s %s" % (dd.babelattr(self.line.event_type, 'event_label'), i)
 
     def get_free_places(self):
-        qs = Enrolment.objects.filter(
-            course=self, state__in=ENROLMENT_USES_UP_A_PLACE)
+        used = EnrolmentStates.filter(uses_a_place=True)
+        qs = Enrolment.objects.filter(course=self, state__in=used)
         return self.max_places - qs.count()
 
     def full_clean(self, *args, **kw):
@@ -430,7 +379,8 @@ class Course(cal.Reservation, dd.Printable):
     def before_auto_event_save(self, event):
         """
         Sets room and start_time for automatic events.
-        This is a usage example for :meth:`EventGenerator.before_auto_event_save 
+        This is a usage example for
+        :meth:`EventGenerator.before_auto_event_save
         <lino.modlib.cal.models.EventGenerator.before_auto_event_save>`.
         """
         #~ logger.info("20131008 before_auto_event_save")
@@ -529,7 +479,7 @@ class Courses(dd.Table):
     start_date 
     line teacher 
     """
-    column_names = "info line teacher room slot *"
+    column_names = "info line teacher room *"
     order_by = ['start_date']
 
     parameters = dd.ObservedPeriod(
@@ -923,6 +873,7 @@ dd.inject_field(
         'courses.Pupil',
         verbose_name=_("is a pupil"),
         help_text=_("Whether this Person is also a Pupil.")))
+
 
 def setup_main_menu(site, ui, profile, main):
     m = main.get_item("contacts")

@@ -49,6 +49,8 @@ from lino.core import actions
 from .utils import Recurrencies
 from .utils import Weekdays
 
+from .workflows import EventStates
+
 
 def format_time(t):
     if t is None:
@@ -143,12 +145,9 @@ class StartedSummaryDescription(Started):
         elems = list(super(StartedSummaryDescription, self)
                      .summary_row(ar, **kw))
 
-        #~ html = super(StartedSummaryDescription,self).summary_row(ar,**kw)
         if self.summary:
             elems.append(': %s' % self.summary)
-            #~ html += '&nbsp;: %s' % cgi.escape(force_unicode(self.summary))
-            #~ html += ui.href_to(self,force_unicode(self.summary))
-        elems += [_(" on "), dbutils.dtos(self.start_date)]
+        elems += [_(" on "), dd.dtos(self.start_date)]
         return elems
 
 
@@ -387,7 +386,7 @@ class EventGenerator(mixins.UserAuthored):
                         event_type=event_type,
                         start_time=rset.start_time,
                         end_time=rset.end_time)
-                    date = self.resolve_conflics(we, ar, rset, until)
+                    date = self.resolve_conflicts(we, ar, rset, until)
                     if date is None:
                         return wanted
 
@@ -399,17 +398,22 @@ class EventGenerator(mixins.UserAuthored):
         return wanted
 
     def move_event_next(self, we, ar):
+        if we.state == EventStates.suggested:
+            we.state = EventStates.draft
+        rset = self.update_cal_rset()
         date = rset.get_next_date(ar, we.start_date)
         if date is None:
             ar.warning("20131020 no date left")
             return
+        until = self.update_cal_until() \
+            or settings.SITE.site_config.farest_future
         if self.resolve_conflicts(we, ar, rset, until) is None:
             return
         we.save()
         ar.response.update(refresh=True)
         ar.success()
 
-    def resolve_conflics(self, we, ar, rset, until):
+    def resolve_conflicts(self, we, ar, rset, until):
         date = we.start_date
         while we.has_conflicting_events():
             ar.info("%s conflicts with %s. ", self,

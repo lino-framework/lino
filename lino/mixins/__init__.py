@@ -460,16 +460,33 @@ class Sequenced(Duplicable):
         return unicode(_("Row # %s") % self.seqno)
 
     def get_siblings(self):
-        """
-        Return a Django Queryset with all siblings of this,
-        or `None` if this is a root element which cannot have anu siblings.
-        The queryset will of course include self.
-        The default implementation sets a global sequencing
-        by returning all objects of self's model.
+        """Return a Django Queryset with all siblings of this,
+        or `None` if this is a root element which cannot have any siblings.
+
+        Siblings are all objects that belong to a same sequence.
+        This is needed for automatic management of the `seqno` field.
+
+        The queryset will of course include `self`.
+        The default implementation uses a global sequencing
+        by returning all objects of `self`'s model.
+
+        A common case for overriding this method is when numbering
+        restarts for each master.  For example if you have a master
+        model `Product` and a sequenced slave model `Property` with a
+        ForeignKey field `product` which points to the Product, then
+        you'll define::
+
+          class Property(dd.Sequenced):
+
+              def get_siblings(self):
+                  return Property.objects.filter(
+                      product=self.product).order_by('seqno')
+
         Overridden e.g. in
         :class:`lino.modlib.thirds.models.Third`
         or
         :class:`lino_welfare.modlib.debts.models.Entry`.
+
         """
         return self.__class__.objects.order_by('seqno')
 

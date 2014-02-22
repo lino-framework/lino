@@ -406,13 +406,10 @@ class BasePrintAction(actions.Action):
         return super(BasePrintAction, self).attach_to_actor(actor, name)
 
     def is_callable_from(self, caller):
-        return isinstance(caller, (actions.GridEdit,
-                                   actions.ShowDetailAction,
-                                   actions.ShowEmptyTable))  # but not from InsertRow
-
-    #~ def __init__(self,rpt,*args,**kw):
-        #~ self.actor = rpt
-        #~ actions.Action.__init__(self,*args,**kw)
+        return isinstance(caller, (
+            actions.GridEdit,
+            actions.ShowDetailAction,
+            actions.ShowEmptyTable))  # but not from InsertRow
 
     def get_print_templates(self, bm, elem):
         return elem.get_print_templates(bm, self)
