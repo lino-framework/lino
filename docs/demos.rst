@@ -108,7 +108,10 @@ to avoid browser questions to first-time visitors.
 .. _lino.projects:
 
 Out of the box Lino applications
---------------------------------
+================================
+
+Included with Lino
+------------------
 
 The following Lino applications are included with Lino:
 
@@ -119,6 +122,10 @@ The following Lino applications are included with Lino:
     /belref/index
     /presto/index
 
+
+Separate projects
+-----------------
+
 The following Lino applications are 
 available as separate PyPI packages:
 
@@ -127,7 +134,16 @@ available as separate PyPI packages:
 - :ref:`patrols`
 - :ref:`cosi`
 - :ref:`logos`
-    
+
+
+.. _sunto:
+
+Lino Sunto
+----------
+
+Lino Sunto is the first free (GPL) Lino application developed by
+somebody else than the author. It is hosted at    
+https://github.com/ManuelWeidmann/lino-sunto
 
 
 

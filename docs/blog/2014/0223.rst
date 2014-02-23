@@ -1,0 +1,16 @@
+===================================
+20140223 (Sunday, 23 February 2014)
+===================================
+
+In :mod:`lino.core.perms` I removed the warning "profile specified by
+`anonymous_user_profile` is `authenticated`". This case is not worth a
+warning.  When an application specifies her own
+:setting:`anonymous_user_profile` then they are supposed to know what
+they do.  At least in the case of :ref:`sunto` we want no user
+management, and we want anonymous user to have root permissions.
+
+TODO: It seems that the `FileUploadField` doesn't declare its height
+correctly, because the height of the insert window is to small.  I
+tried to add `config.value = '<br/><br/>';` in
+`Lino.file_field_handler`, but that didn't help.
+

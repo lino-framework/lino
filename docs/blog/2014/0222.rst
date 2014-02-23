@@ -10,6 +10,67 @@ To make this reliable, we need a serious suite of unit tests.
 :setting:`demo_date`
 :func:`atelier.utils.date_offset`.
 
-Worked on Lino Sunto with Manuel:
-Added new method `ext_renderer.ExtRenderer.quick_manage_buttons`.
+Worked with Manuel on :ref:`sunto`:
+
+Managing images of a product
+----------------------------
+
+How to manage a series of uploadable images per Product?
+Our idea after some brainstorming was to use a virtual HtmlBox::
+
+    class Product(dd.Model):
+        ...
+        @dd.virtualfield(dd.HtmlBox())
+        def product_image(self, ar):
+            url = self.get_image_url()
+            img = E.a(E.img(src=url, width="100%"), href=url, target="_blank")
+            sar = ar.spawn(ImagesByProduct, master_instance=self)
+
+            toolbar = ar.renderer.quick_manage_toolbar(sar, self)
+            return E.div(E.p(img), toolbar)
+    
+        def get_image_url(self):
+            try:
+                im = ProductImage.objects.get(product=self, default_image=True)
+            except ProductImage.DoesNotExist:
+                return "placeholder.jpg"
+            return im.file.url
+
+Which assumes the following database model and tables:
+
+
+    class ProductImage(dd.Uploadable):
+        product = models.ForeignKey(Product)
+        default_image = models.BooleanField(default=False)
+
+
+    class ProductImages(dd.Table):
+        model = ProductImage
+
+        insert_layout = """
+        product
+        default_image
+        file
+        """
+
+        detail_layout = """
+        product
+        default_image
+        file
+        """
+
+
+    class ImagesByProduct(ProductImages):
+        master_key = "product"
+
+
+Remarks:
+
+- See :mod:`lino.utils.xmlgen.html`
+- `ar ` is the calling request, i.e. a web request asking "give me the
+  detail information about this product instance"
+- `self` is the Product instance
+- :meth:`quick_manage_buttons 
+  <lino.modlib.extjs.ext_renderer.ExtRenderer.quick_manage_buttons>`.
+  is a new method we added together.
 

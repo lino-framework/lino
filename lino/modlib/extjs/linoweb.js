@@ -1288,13 +1288,14 @@ Lino.FileField = Ext.extend(Ext.form.TriggerField,{
 });
 
 Lino.file_field_handler = function(panel,config) {
-  //~ if (instanceof Lino.DetailWrapper) {
   if (panel.action_name == 'insert') {
-  //~ if (panel.get_current_record().phantom) {
       panel.has_file_upload = true;
 {%if settings.SITE.use_awesome_uploader %}
       return { xtype:'button', text: 'Upload', handler: Lino.show_uploader }
 {% else %}
+
+      // config.value = '<br/><br/>';
+
       var f = new Lino.FileUploadField(config);
       //~ Lino.make_dropzone(f);
       return f;

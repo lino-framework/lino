@@ -293,9 +293,12 @@ class ExtRenderer(HtmlRenderer):
             py2js(put_data))
         return self.href_button(url, text, **kw)
 
-    def quick_manage_buttons(self, ar, obj):
-        """Returns a HTML chunk that displays "quick manage buttons": one
-        "Insert" and another to open the Table.
+    def quick_manage_toolbar(self, ar, obj):
+        """Returns a HTML chunk that displays a "toolbar" with a series of
+        "quick manage buttons": one "Insert" and another to open the
+        Table.
+
+        Usage example in :ref:`sunto`.
 
         """
         insert_btn = ar.renderer.insert_button(ar, _("Insert"))
