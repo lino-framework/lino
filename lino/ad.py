@@ -69,6 +69,8 @@ class Plugin(BasePlugin):
     List of js snippets to be injected into the `lino_*.js` file.
     """
 
+    renderer = None
+
     def before_analyze(self, site):
         """This is called when the kernel is being instantiated.
         """
@@ -78,6 +80,9 @@ class Plugin(BasePlugin):
         """This is called when the kernel is being instantiated.
         """
         pass
+
+    def __repr__(self):
+        return "%s %s" % (self.__class__, self.app_label)
 
     def get_patterns(self, ui):
         """Return a list of url patterns to be added to the Site's patterns.

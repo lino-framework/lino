@@ -674,58 +674,30 @@ class Site(Site):
     misuse Jinja's capabilities.
     """
 
-    #~ def add_config_value(self,name,default,help_text):
-        #~ if not hasattr(self,name):
-                #~ setattr(self,name,default)
-
-    #~ add_config_value('allow_duplicate_cities',False)
-
     allow_duplicate_cities = False
-    """
-    In a default configuration (when :attr:`allow_duplicate_cities` is False), 
-    Lino declares a UNIQUE clause
-    for :class:`Places <lino.modlib.countries.models.Places>`
-    to make sure that your database never contains duplicate cities.
-    This behaviour mighr disturb e.g. when importing legacy data that
-    did not have this restriction.
-    Set it to True to remove the UNIQUE clause.
+    """In a default configuration (when :attr:`allow_duplicate_cities` is
+    False), Lino declares a UNIQUE clause for :class:`Places
+    <lino.modlib.countries.models.Places>` to make sure that your
+    database never contains duplicate cities.  This behaviour mighr
+    disturb e.g. when importing legacy data that did not have this
+    restriction.  Set it to True to remove the UNIQUE clause.
     
-    Changing this setting might affect your database structure 
-    and thus require a :doc:`/topics/datamig`
-    if your application uses :mod:`lino.modlib.countries`.
-    
+    Changing this setting might affect your database structure and
+    thus require a :doc:`/topics/datamig` if your application uses
+    :mod:`lino.modlib.countries`.
+
     """
 
     uid = 'myuid'
-    """
-    A universal identifier for this Site. 
-    This is needed when synchronizing with CalDAV server.  
-    Locally created calendar components in remote calendars 
-    will get a UID based on this parameter,
-    using ``"%s@%s" (self.pk,settings.SITE.ui)``.
+    """A universal identifier for this Site.  This is needed when
+    synchronizing with CalDAV server.  Locally created calendar
+    components in remote calendars will get a UID based on this
+    parameter, using ``"%s@%s" (self.pk,settings.SITE.ui)``.
     
-    The default value is ``'myuid'``, and
-    you should certainly override this 
-    on a production server that uses remote calendars.
+    The default value is ``'myuid'``, and you should certainly
+    override this on a production server that uses remote calendars.
+
     """
-
-    #~ person_model = None
-    #~ person_model = "contacts.Person"
-    #~ """
-    #~ If your application uses :model:`lino.modlib.contacts`,
-    #~ set this to a string "applabel.Modelname" which identifies
-    #~ your Person model (which should inherit from
-    #~ :class:`lino.modlib.contacts.models.Person`).
-    #~ """
-
-    #~ company_model = None
-    #~ company_model = "contacts.Company"
-    #~ """
-    #~ If your application uses :model:`lino.modlib.contacts`,
-    #~ set this to a string "applabel.Modelname" which identifies
-    #~ your Company model (which should inherit from
-    #~ :class:`lino.modlib.contacts.models.Company`).
-    #~ """
 
     project_model = None
 
@@ -1522,20 +1494,17 @@ class Site(Site):
         has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
         """
         if self.user_model is None or username is None:
-            if not kw.has_key('user'):
+            if not 'user' in kw:
                 from lino.core.auth import AnonymousUser
                 kw.update(user=AnonymousUser.instance())
         else:
             kw.update(user=self.user_model.objects.get(username=username))
 
-        if not kw.has_key('renderer'):
+        if not 'renderer' in kw:
             kw.update(renderer=self.ui.text_renderer)
 
         from lino.core import requests
         import lino.ui.urls  # hack: trigger ui instantiation
-        #~ if u.language:
-            #~ from north.dbutils import set_language
-            #~ set_language(u.language)
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):

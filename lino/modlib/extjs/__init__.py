@@ -29,6 +29,9 @@ Whether to use a status bar to display certain messages to the user.
 
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
+
 from lino.ad import Plugin
 from django.utils.translation import ugettext_lazy as _
 
@@ -76,6 +79,7 @@ class Plugin(Plugin):
         self.renderer = ExtRenderer(self)
         ui.extjs_renderer = self.renderer
         # ui.extjs_renderer = ui.default_renderer = self.renderer
+        # print("ExtRenderer.on_ui_init() ok")
 
     def get_css_includes(self, site):
         yield self.build_media_url('resources/css/ext-all.css')
@@ -116,7 +120,7 @@ class Plugin(Plugin):
         from django.conf.urls import patterns
         from . import views
 
-        #~ print "20121110 get_urls"
+        #~ print("20121110 get_urls")
         ui.extjs_renderer.build_site_cache()
 
         rx = '^'

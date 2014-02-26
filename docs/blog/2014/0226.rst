@@ -1,0 +1,34 @@
+======================================
+20140226 (Wednesday, 26 February 2014)
+======================================
+
+
+lino_faggio.tests.QuickTest
+---------------------------
+
+Okay, the tested doc :ref:`faggio.tested.courses` is not useful for
+testing Roger's problems with event generation because these actions
+modify the database (in a rather complex manner, i.e. difficult to
+undo, i.e. needs an :fab_command:`initdb` almost each time)
+
+Started a new unit test suite::
+
+  $ go faggio
+  $ python manage.py test lino_faggio.tests.QuickTest
+
+
+
+This currently fails with a traceback for which I have no explanation
+yet::
+
+    ...
+    File "/home/luc/hgwork/lino/lino/core/layouts.py", line 847, in create_layout_element
+      settings.SITE.plugins.extjs.renderer.a2btn(a)])
+    AttributeError: 'NoneType' object has no attribute 'a2btn'
+
+
+It looks as if there were two different instances of the "extjs" plugin::
+
+  self.assertEqual(settings.SITE.plugins.extjs, dd.apps.extjs)
+
+  AssertionError: <class 'lino.modlib.extjs.Plugin'> extjs != <class 'lino.modlib.extjs.Plugin'> extjs

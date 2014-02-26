@@ -377,9 +377,8 @@ class BaseRequest(object):
         
           do text from ar.show('users.UsersOverview')
         
-        Note that this function 
-        either returns a string or prints to stdout and returns None,
-        depending on the current renderer.
+        Note that this function either returns a string or prints to
+        stdout and returns None, depending on the current renderer.
 
         """
         # 20130905 added master_instance positional arg. but finally didn't use

@@ -13,6 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 """
 The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
@@ -345,7 +346,12 @@ class Course(cal.Reservation, dd.Printable):
         blank=True, null=True)
 
     def __unicode__(self):
-        return u"%s (%s %s)" % (self.line, dd.dtos(self.start_date), self.room)
+        if self.room is None:
+            return "%s (%s)" % (self.line, dd.dtos(self.start_date))
+        return u"%s (%s %s)" % (
+            self.line,
+            dd.dtos(self.start_date),
+            self.room)
 
     def update_cal_from(self, ar):
         if self.state in (CourseStates.draft, CourseStates.cancelled):
@@ -503,7 +509,7 @@ class Courses(dd.Table):
             v = ar.param_values.get(n)
             if v:
                 qs = qs.filter(**{n: v})
-                #~ print 20130530, qs.query
+                #~ print(20130530, qs.query)
 
         if ar.param_values.topic:
             qs = qs.filter(line__topic=ar.param_values.topic)
