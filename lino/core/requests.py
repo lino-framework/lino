@@ -130,6 +130,10 @@ class BaseRequest(object):
             self.response[k] = old + '\n' + msg
         #~ return self.success(*args,**kw)
 
+    def debug(self, msg, *args, **kw):
+        if settings.SITE.verbose_client_info_message:
+            self.append_message('info', msg, *args, **kw)
+
     def info(self, msg, *args, **kw):
         self.append_message('info', msg, *args, **kw)
 

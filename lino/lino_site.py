@@ -31,14 +31,16 @@ framework
 <https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_) because
 this functionality is integral part of :mod:`lino.modlib.system`.
 
+.. setting:: verbose_client_info_message
+
+Set this to True if actions should send debug messages to the client.
+These will be shown in the client's Javascript console only.
 
 
 .. setting:: demo_fixtures
 
 The list of fixtures to be loaded by the :manage:`initdb_demo`
 command.
-
-
 
 .. setting:: use_davlink
 
@@ -265,6 +267,8 @@ class Site(Site):
        resolve_field('Bar.foo').set_format('html')
 
     """
+
+    verbose_client_info_message = False
 
     help_url = "http://code.google.com/p/lino"
     title = "Unnamed Lino site"
@@ -980,6 +984,7 @@ class Site(Site):
         
     """
 
+
     #~ use_eidreader = False
     #~ """
     #~ Set this to `True` if this site should feature using :ref:`eidreader`.
@@ -1572,3 +1577,4 @@ class Site(Site):
     #~ def make_url_tester(self):
         #~ from lino.utils.test import URLTester
         #~ return URLTester()
+

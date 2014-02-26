@@ -11,8 +11,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Defines some system models, especially the :class:`SiteConfig` model.
+"""Defines some system models, especially the :class:`SiteConfig` model.
 
 This app should usually be installed in every Lino application.
 But there are exceptions, e.g. :ref:`lino.tutorial.polls`

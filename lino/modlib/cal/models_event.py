@@ -295,9 +295,9 @@ class Event(Component, Ended,
             outbox.Mailable,
             postings.Postable):
 
-    """
-    A Calendar Event (french "Rendez-vous", german "Termin") 
-    is a planned ("scheduled") lapse of time where something happens.
+    """A Calendar Event (french "Rendez-vous", german "Termin") is a
+    planned ("scheduled") lapse of time where something happens.
+
     """
 
     class Meta:
@@ -308,27 +308,19 @@ class Event(Component, Ended,
 
     event_type = models.ForeignKey('cal.EventType', blank=True, null=True)
 
-    transparent = models.BooleanField(_("Transparent"), default=False, help_text=_("""\
+    transparent = models.BooleanField(
+        _("Transparent"), default=False, help_text=_("""\
 Indicates that this Event shouldn't prevent other Events at the same time."""))
-    #~ type = models.ForeignKey(EventType,null=True,blank=True)
     room = dd.ForeignKey('cal.Room', null=True, blank=True)  # iCal:LOCATION
     priority = models.ForeignKey(Priority, null=True, blank=True)
-    # ~ priority = Priority.field(_("Priority"),blank=True) # iCal:PRIORITY
     state = EventStates.field(default=EventStates.suggested)  # iCal:STATUS
-    # ~ status = models.ForeignKey(EventStatus,verbose_name=_("Status"),blank=True,null=True) # iCal:STATUS
-    #~ duration = dd.FieldSet(_("Duration"),'duration_value duration_unit')
-    # ~ duration_value = models.IntegerField(_("Duration value"),null=True,blank=True) # iCal:DURATION
-    # ~ duration_unit = DurationUnit.field(_("Duration unit"),blank=True) # iCal:DURATION
-    # ~ repeat_value = models.IntegerField(_("Repeat every"),null=True,blank=True) # iCal:DURATION
-    # ~ repeat_unit = DurationUnit.field(verbose_name=_("Repeat every"),null=True,blank=True) # iCal:DURATION
     all_day = ExtAllDayField(_("all day"))
-    #~ all_day = models.BooleanField(_("all day"),default=False)
 
-    assigned_to = dd.ForeignKey(settings.SITE.user_model,
-                                verbose_name=_("Assigned to"),
-                                related_name="cal_events_assigned",
-                                blank=True, null=True
-                                )
+    assigned_to = dd.ForeignKey(
+        settings.SITE.user_model,
+        verbose_name=_("Assigned to"),
+        related_name="cal_events_assigned",
+        blank=True, null=True)
 
     def has_conflicting_events(self):
         qs = self.get_conflicting_events()
@@ -398,11 +390,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
 
-    #~ def after_send_mail(self,mail,ar,kw):
-        #~ if self.state == EventStates.assigned:
-            #~ self.state = EventStates.notified
-            #~ kw['message'] += '\n('  +_("Event %s has been marked *notified*.") % self + ')'
-            #~ self.save()
+    def move_next(self, ar):
+        if not self.auto_type or not self.owner:
+            raise Exception("Only for generated events.")
+        return self.owner.move_event_next(self, ar)
+
     def save(self, *args, **kw):
         r = super(Event, self).save(*args, **kw)
         self.add_guests()

@@ -1,0 +1,59 @@
+===================================
+20140224 (Monday, 24 February 2014)
+===================================
+
+How to open a pull request
+--------------------------
+
+Manuel might add me as a contributor (how to do that? i didn't see any
+obvious method in the web interface), but in our case it seems more
+appropriate that Manuel ramains the project manager and I simply open
+a pull request.
+
+The GitHub docs say: Before you can open a pull request, you must
+create a branch in your local repository, commit to it, and push the
+branch to a repository or fork on GitHub.  (`Creating a pull request
+<https://help.github.com/articles/creating-a-pull-request>`__)
+
+Okay, but how to create a branch from local changes on master?
+
+A Spanish stackoverflow user asked the same 3 years ago: `Create a
+branch from unstaged/uncommited changes on master
+<http://stackoverflow.com/questions/2569459/git-create-a-branch-from-unstaged-uncommited-changes-on-master>`_
+
+So I did::
+
+    $ go sunto
+    $ git checkout -b image_toolbar
+    $ git commit -a -m "modified models"
+    $ git status
+    # On branch image_toolbar
+    nothing to commit, working directory clean
+    $ git diff master
+
+Until here everything seems okay. 
+
+But wen I try to push this, I get::
+
+    $ git push
+
+    ERROR: Permission to ManuelWeidmann/lino-sunto.git denied to lsaffre.
+    fatal: Could not read from remote repository.
+
+    Please make sure you have the correct access rights
+    and the repository exists.
+
+
+Testing event generation for courses
+------------------------------------
+
+Roger reported that there seem to be bugs in how :ref:`faggio` 
+generates events for a given course.
+And yes, of course this is a complex subject.
+
+That's why I started to write a test suite in 
+:ref:`faggio.tested.courses`.
+
+Code changes:
+
+- New setting :setting:`cal.debug_event_generator`.

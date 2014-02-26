@@ -36,7 +36,7 @@ Our idea after some brainstorming was to use a virtual HtmlBox::
                 return "placeholder.jpg"
             return im.file.url
 
-Which assumes the following database model and tables:
+Which assumes the following database model and tables::
 
 
     class ProductImage(dd.Uploadable):
@@ -70,7 +70,7 @@ Remarks:
 - `ar ` is the calling request, i.e. a web request asking "give me the
   detail information about this product instance"
 - `self` is the Product instance
-- :meth:`quick_manage_buttons 
-  <lino.modlib.extjs.ext_renderer.ExtRenderer.quick_manage_buttons>`.
+- :meth:`quick_manage_toolbar 
+  <lino.modlib.extjs.ext_renderer.ExtRenderer.quick_manage_toolbar>`.
   is a new method we added together.
 

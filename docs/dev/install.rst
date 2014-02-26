@@ -5,7 +5,7 @@ Installing Lino (development version)
 =====================================
 
 .. _pip: http://www.pip-installer.org/en/latest/
-.. virtualenv: https://pypi.python.org/pypi/virtualenv
+.. _virtualenv: https://pypi.python.org/pypi/virtualenv
 
 This document describes how you should install Lino if you want
 to use Lino's newest features even before they get officially 

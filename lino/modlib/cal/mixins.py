@@ -25,9 +25,6 @@ and :class:`RecurrenceSet`.
 
 from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-
 import datetime
 
 from django.conf import settings
@@ -175,11 +172,20 @@ class UpdateReminders(actions.Action):
 
 class EventGenerator(mixins.UserAuthored):
 
-    """
-    Base class for things that generate a suite of events.
-    Examples
-    :class:`isip.Contract`,     :class:`jobs.Contract`,
-    :class:`schools.Course`.
+    """Base class for things that generate a suite of events.
+
+    The generated events are "controlled" by their generator (their
+    `owner` field points to the generator) and have a non-empty
+    `auto_type` field.
+
+    Examples:
+
+    - :class:`Reservation` (subclassed by
+      :class:`lino.modlib.courses.Course`)
+
+    - :class:`lino_welfare.modlib.isip.Contract` and
+      :class:`lino_welfare.modlib.jobs.Contract` are event generators
+      with a separate
 
     """
 
@@ -213,21 +219,23 @@ class EventGenerator(mixins.UserAuthored):
         #~ return self.applies_from
 
     def update_cal_until(self):
-        """Return the limit date until which to generate events.
-        None means "no limit" (which de facto becomes `SiteConfig.farest_future`)
+        """Return the limit date until which to generate events.  None means
+        "no limit" (which de facto becomes `SiteConfig.farest_future`)
+
         """
         return None
-        #~ raise NotImplementedError()
-        #~ return self.date_ended or self.applies_until
 
     def update_cal_calendar(self):
-        """
-        Return the event_type for the events to generate.
-        Returning None means: don't generate any events.
+        """Return the event_type for the events to generate.  Returning None
+        means: don't generate any events.
+
         """
         return None
 
     def get_events_language(self):
+        """Return the language to activate while events are being generated.
+
+        """
         if self.user is None:
             return settings.SITE.get_default_language()
         return self.user.language
@@ -245,8 +253,8 @@ class EventGenerator(mixins.UserAuthored):
     def update_auto_events(self, ar):
         """Generate automatic calendar events owned by this contract.
 
-        [NOTE1] if one event has been manually rescheduled, all
-        following events adapt to the new rythm.
+        If one event has been manually rescheduled, all following
+        events adapt to the new rythm.
 
         """
         if settings.SITE.loading_from_dump:
@@ -277,7 +285,7 @@ class EventGenerator(mixins.UserAuthored):
                     subsequent = ', '.join([str(x.auto_type)
                                            for x in wanted.values()])
                     delta = e.start_date - ae.start_date
-                    logger.info(
+                    ar.debug(
                         "%d has been rescheduled from %s to %s, \
                         adapt subsequent dates (%s), delta %s"
                         % (
@@ -392,20 +400,27 @@ class EventGenerator(mixins.UserAuthored):
                     wanted[i] = we
                 date = rset.get_next_date(ar, date)
                 if date is None:
-                    ar.info("20131020 no date left")
+                    ar.info("Could not find next date.")
                     break
         return wanted
 
     def move_event_next(self, we, ar):
+        """Move the specified event
+        """
+        if we.owner is not self:
+            raise Exception(
+                "%s cannot move event controlled by %s" % (
+                    self, we.owner))
         if we.state == EventStates.suggested:
             we.state = EventStates.draft
         rset = self.update_cal_rset()
         date = rset.get_next_date(ar, we.start_date)
         if date is None:
-            ar.warning("20131020 no date left")
+            ar.error("Could not find next date.")
             return
         until = self.update_cal_until() \
             or settings.SITE.site_config.farest_future
+        we.start_date = date
         if self.resolve_conflicts(we, ar, rset, until) is None:
             return
         we.save()
@@ -413,6 +428,11 @@ class EventGenerator(mixins.UserAuthored):
         ar.success()
 
     def resolve_conflicts(self, we, ar, rset, until):
+        """Check whether given event conflicts with other events and move it
+        to a new date if necessary. Returns the new date, or None if
+        no alternative could be found.
+
+        """
         date = we.start_date
         while we.has_conflicting_events():
             ar.info("%s conflicts with %s. ", self,
@@ -422,20 +442,12 @@ class EventGenerator(mixins.UserAuthored):
                 ar.info("Failed to get next date for %s.", self)
                 conflicts = [E.tostring(ar.obj2html(o))
                              for o in we.get_conflicting_events()]
-                #~ msg = join_elems(conflicts)
                 msg = ', '.join(conflicts)
                 ar.warning("%s conflicts with %s. ", self, msg)
                 return None
-
-            we.start_date = date
-
-        if rset.end_date is None:
-            we.end_date = None
-        else:
-            duration = rset.end_date - rset.start_date
-            we.end_date = we.start_date + duration
+        
+        rset.move_event_to(we, date)
         return date
-
 
     def get_existing_auto_events(self):
         ot = ContentType.objects.get_for_model(self.__class__)
@@ -445,10 +457,9 @@ class EventGenerator(mixins.UserAuthored):
 
 
 class RecurrenceSet(Started, Ended):
-
-    """
-    Abstract base for models that group together all instances
-    of a set of recurring calendar components.
+    """Abstract base for models that express a set of recurrency
+    rules. This might be combined with :class:`EventGenerator` into a
+    same model as done by :class:`Reservation`.
 
     Thanks to http://www.kanzaki.com/docs/ical/rdate.html
 
@@ -513,7 +524,8 @@ class RecurrenceSet(Started, Ended):
 
     @dd.displayfield(_("Times"))
     def times_text(self, ar):
-        return "%s-%s" % (format_time(self.start_time), format_time(self.end_time))
+        return "%s-%s" % (format_time(self.start_time),
+                          format_time(self.end_time))
 
     @dd.displayfield(_("When"))
     def weekdays_text(self, ar):
@@ -526,28 +538,35 @@ class RecurrenceSet(Started, Ended):
             return _("Every %s") % weekdays
         return _("Every %snd %s") % (self.every, weekdays)
 
-    #~ calendar = models.ForeignKey('cal.Calendar',null=True,blank=True,
-        #~ help_text=_("""\
-#~ The calendar to which events will be generated."""))
-    #~ event_type = models.ForeignKey(EventType,null=True,blank=True)
-    #~ rdates = models.TextField(_("Recurrence dates"),blank=True)
-    #~ exdates = models.TextField(_("Excluded dates"),blank=True)
-    #~ rrules = models.TextField(_("Recurrence Rules"),blank=True)
-    #~ exrules = models.TextField(_("Exclusion Rules"),blank=True)
+    def move_event_to(self, ev, newdate):
+        """Move given event to a new date.
+        Also change `end_date` if necessary.
+        """
+        ev.start_date = newdate
+        if self.end_date is None:
+            ev.end_date = None
+        else:
+            duration = self.end_date - newdate
+            ev.end_date = newdate + duration
+            
     def get_next_date(self, ar, date):
+        """Find the next date after the given date, without worrying about
+        conflicts.
+
+        """
         if self.every_unit == Recurrencies.once:
-            logger.debug("get_next_date() once --> None.")
+            ar.debug("get_next_date() once --> None.")
             return None
         if self.every_unit == Recurrencies.per_weekday:
             od = date
             for i in range(7):
                 date += ONE_DAY
                 if self.is_available_on(date):
-                    logger.debug(
-                        "get_next_date() per_weekday %s --> %s.", od, date)
+                    ar.debug(
+                        "get_next_date() per_weekday %s --> %s.",
+                        od, date)
                     return date
-            ar.info(
-                "%s : get_next_date() failed to find available weekday.", self)
+            ar.debug("get_next_date() failed to find available weekday.")
             return None
         return self.every_unit.add_duration(date, self.every)
 
