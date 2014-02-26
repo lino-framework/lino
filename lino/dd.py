@@ -369,6 +369,7 @@ from lino.mixins.human import Human, Born
 
 from django.utils.importlib import import_module
 
+site = settings.SITE
 apps = settings.SITE.plugins
 modules = settings.SITE.modules
 login = settings.SITE.login

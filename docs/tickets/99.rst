@@ -1,0 +1,37 @@
+:state: todo
+:module: lino
+
+#99 : How can `dd.apps` differ from `settings.SITE.plugins`?
+============================================================
+
+Here is a problem on which I got stuck today. 
+
+To reproduce this problem, go to your Lino repository and get today's
+version of Lino::
+
+    $ cd ~/repositories
+    $ git pull
+
+Then run the test suite of :mod:`lino.projects.min1`::
+
+    $ cd lino/projects/min1
+    $ python manage.py test lino.tests.QuickTest
+    
+The result is::
+    
+    FAIL: test01 (lino.tests.lino_tests.QuickTest)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "/home/luc/hgwork/lino/lino/tests/lino_tests.py", line 35, in test01
+        self.assertEqual(settings.SITE.plugins.lino, dd.apps.lino)
+    AssertionError: <djangosite.djangosite_site.Plugin object at 0xa53698c> != <djangosite.djangosite_site.Plugin object at 0x8ded4ac>
+
+
+And I don't understand how this is possible.
+In :mod:`lino.dd`, Lino creates a shortcut ``dd.apps`` 
+which points to ``settings.SITE.plugins``::
+
+  apps = settings.SITE.plugins
+
+Any ideas are welcome.
+    

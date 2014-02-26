@@ -32,3 +32,11 @@ It looks as if there were two different instances of the "extjs" plugin::
   self.assertEqual(settings.SITE.plugins.extjs, dd.apps.extjs)
 
   AssertionError: <class 'lino.modlib.extjs.Plugin'> extjs != <class 'lino.modlib.extjs.Plugin'> extjs
+
+
+
+Opened :doc:`/tickets/99`.
+
+
+
+
