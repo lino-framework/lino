@@ -1382,7 +1382,7 @@ class ActivityReport(dd.Report):
         SupplierAccountsBalance)
 
 
-MODULE_LABEL = dd.apps.accounts.verbose_name
+MODULE_LABEL = settings.SITE.plugins.accounts.verbose_name
 
 
 def site_setup(site):

@@ -215,9 +215,6 @@ uppercase letters.  See :mod:`lino.test_apps.human`
 
 from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-
 from os.path import join, abspath
 import datetime
 
@@ -307,7 +304,7 @@ class Site(Site):
     
     """
 
-    auto_configure_logger_names = 'djangosite north lino'
+    auto_configure_logger_names = 'atelier djangosite north lino'
 
     appy_params = dict(ooPort=8100)
     """
@@ -340,23 +337,25 @@ class Site(Site):
     If you change this setting, you also need to override :meth:`parse_date`.
     """
 
-    #~ date_format_regex = "/^[0123]\d\.[01]\d\.-?\d+$/"
     date_format_regex = "/^[0123]?\d\.[01]?\d\.-?\d+$/"
-    """
-    Format (in Javascript regex syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_date`.
+    """Format (in Javascript regex syntax) to use for displaying dates to
+    the user.  If you change this setting, you also need to override
+    :meth:`parse_date`.
+
     """
 
     datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
-    """
-    Format (in strftime syntax) to use for formatting timestamps in AJAX responses.
-    If you change this setting, you also need to override :meth:`parse_datetime`.
+    """Format (in strftime syntax) to use for formatting timestamps in
+    AJAX responses.  If you change this setting, you also need to
+    override :meth:`parse_datetime`.
+
     """
 
     datetime_format_extjs = 'Y-m-d\TH:i:s'
-    """
-    Format (in ExtJS syntax) to use for formatting timestamps in AJAX calls.
-    If you change this setting, you also need to override :meth:`parse_datetime`.
+    """Format (in ExtJS syntax) to use for formatting timestamps in AJAX
+    calls.  If you change this setting, you also need to override
+    :meth:`parse_datetime`.
+
     """
 
     _welcome_actors = []
@@ -369,11 +368,12 @@ class Site(Site):
 
         self.update_settings(
             LOGGING_CONFIG='lino.utils.log.configure',
-            LOGGING=dict(filename=None,
-                         level='INFO',
-                         logger_names=self.auto_configure_logger_names,
-                         disable_existing_loggers=True,  # Django >= 1.5
-                         ),
+            LOGGING=dict(
+                filename=None,
+                level='INFO',
+                logger_names=self.auto_configure_logger_names,
+                disable_existing_loggers=True,  # Django >= 1.5
+            ),
         )
 
     def parse_date(self, s):
@@ -415,66 +415,46 @@ class Site(Site):
         #~ return datetime.combine(d,t)
 
     ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
-    """
-    Ignore dates before the gived date. 
-    Set this to None if you want no limit.
+    """Ignore dates before the gived date.  Set this to None if you want
+    no limit.
+
     """
 
-    #~ def get_user_model(self):
-        #~ if 'django.contrib.auth' in self.django_settings['INSTALLED_APPS']:
-            #~ from django.contrib.auth.models import User
-            #~ return 'auth.User'
-        #~ else:
-            #~ from lino.modlib.users.models import User
-        #~ return User
-        #~ return 'users.User'
-
-    #~ def add_dummy_message(self,s):
-        #~ self.dummy_messages.add(s)
-    #~ def get_app_source_file(self):
-        #~ "Override this in each application"
-        #~ return __file__
-    #~ def analyze_models(self):
-        #~ from lino.core.kernel import analyze_models
-        #~ analyze_models()
     def resolve_virtual_fields(self):
-        #~ print "20130827 resolve_virtual_fields", len(self.VIRTUAL_FIELDS)
-        #~ global VIRTUAL_FIELDS
         for vf in self.VIRTUAL_FIELDS:
             vf.lino_resolve_type()
-        #~ VIRTUAL_FIELDS = None
         self.VIRTUAL_FIELDS = []
 
     def register_virtual_field(self, vf):
-        #~ print "20130827 register_virtual_field", vf
         self.VIRTUAL_FIELDS.append(vf)
 
     def do_site_startup(self):
+        """Start the Lino instance (the object stored as :setting:`LINO` in
+        your :xfile:`settings.py`).  This is called exactly once from
+        :mod:`lino.models` when Django has has populated it's model
+        cache.
+
+        This code can run several times at once when running
+        e.g. under mod_wsgi: another thread has started and not yet
+        finished `startup_site()`.
+
         """
-        Start the Lino instance (the object stored as :setting:`LINO` in
-        your :xfile:`settings.py`).
-        This is called exactly once from :mod:`lino.models`
-        when Django has has populated it's model cache.
-
-        This code can run several times at once when running e.g. under mod_wsgi:
-        another thread has started and not yet finished `startup_site()`.
-
-        """
-
+        # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
+        
         super(Site, self).do_site_startup()
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
         self.ui = self.kernel  # internal backwards compat
 
+        # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
+
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
 
     def setup_choicelists(self):
-        from lino.utils import dblogger as logger
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
-        from django.utils.translation import ugettext_lazy as _
         from lino import dd
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
@@ -707,8 +687,9 @@ class Site(Site):
     auth_middleware = None
 
     legacy_data_path = None
-    """
-    Used by custom fixtures that import data from some legacy database.    
+    """Used by custom fixtures that import data from some legacy
+    database.
+
     """
 
     propvalue_max_length = 200
@@ -717,26 +698,23 @@ class Site(Site):
     """
 
     never_build_site_cache = False
-    """
-    Set this to `True` if you want that Lino 
-    never (re)builds the site cache (even when asked). 
-    This can be useful on a development server when you are debugging 
-    directly on the generated :xfile:`lino*.js`.
-    Or for certain unit test cases.
+    """Set this to `True` if you want that Lino never (re)builds the site
+    cache, even when asked.  This can be useful on a development
+    server when you are debugging directly on the generated
+    :xfile:`lino*.js`.  Or for certain unit test cases.
+
     """
 
     show_internal_field_names = False
-    """
-    Whether the internal field names should be visible.
-    Default is `False`.
-    ExtUI implements this by prepending them to the tooltip,
+    """Whether the internal field names should be visible.  Default is
+    `False`.  ExtUI implements this by prepending them to the tooltip,
     which means that :attr:`use_quicktips` must also be `True`.
+
     """
 
     build_js_cache_on_startup = None
-    """
-    Whether the Javascript cache files should be built on startup 
-    for all user profiles and languages.
+    """Whether the Javascript cache files should be built on startup for
+    all user profiles and languages.
     
     On a production server this should be `True` for best performance,
     but while developing, it may be easier to set it to `False`, which means 
@@ -747,6 +725,7 @@ class Site(Site):
     it becomes `False` if
     either :func:`lino.core.dbutils.is_devserver` returns True
     or setting:`DEBUG` is set.
+
     """
 
     #~ replace_django_templates = True

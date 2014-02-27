@@ -156,8 +156,14 @@ Miscellaneous:
 
 """
 
+from __future__ import unicode_literals
+from __future__ import print_function
+
+
 import logging
 logger = logging.getLogger(__name__)
+
+# logger.info("20140227 dd.py a")
 
 # from djangosite import Plugin
 # from lino.ad import Plugin
@@ -369,8 +375,8 @@ from lino.mixins.human import Human, Born
 
 from django.utils.importlib import import_module
 
-site = settings.SITE
-apps = settings.SITE.plugins
+# site = settings.SITE
+# apps = settings.SITE.plugins
 modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup
@@ -378,3 +384,5 @@ get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 from django.utils import translation
 get_language = translation.get_language
+
+# logger.info("20140227 dd.py b %s", site)

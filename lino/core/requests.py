@@ -366,8 +366,8 @@ class BaseRequest(object):
         
         Usage in a tested doc::
         
-          >>> ar = settings.SITE.login("robin")
-          >>> ar.show('users.UsersOverview')
+          >>> ses = settings.SITE.login("robin")
+          >>> ses.show('users.UsersOverview')
         
         Usage in a Jinja template::
         

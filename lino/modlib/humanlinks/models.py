@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
+from django.conf import settings
 
 from lino import dd
 
@@ -68,11 +69,11 @@ class Link(dd.Sequenced):
 
     type = LinkTypes.field(default=LinkTypes.natural)
     parent = dd.ForeignKey(
-        dd.apps.humanlinks.human_model,
+        settings.SITE.plugins.humanlinks.human_model,
         verbose_name=_("Parent"),
         related_name='children')
     child = dd.ForeignKey(
-        dd.apps.humanlinks.human_model,
+        settings.SITE.plugins.humanlinks.human_model,
         verbose_name=_("Child"),
         related_name='parents')
 
@@ -119,7 +120,7 @@ class ChildrenByHuman(Links):
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    p = dd.apps.contacts
+    p = settings.SITE.plugins.contacts
     m = m.add_menu(p.app_label, p.verbose_name)
     m.add_action(Links)
     m.add_action(LinkTypes)

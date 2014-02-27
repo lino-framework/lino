@@ -43,7 +43,8 @@ from .utils import (
 
 from .mixins import Ended
 from .mixins import RecurrenceSet, EventGenerator
-from .mixins import UpdateReminders
+from .mixins import UpdateEvents
+from .mixins import MoveEventNext
 from .models import Component
 from .models import Priority
 from .workflows import EventStates
@@ -73,10 +74,11 @@ class EventType(dd.BabelNamed, dd.Sequenced,
     is_appointment = models.BooleanField(
         _("Event is an appointment"), default=True)
     all_rooms = models.BooleanField(_("Locks all rooms"), default=False)
-    locks_user = models.BooleanField(_("Locks the user"),
-                                     help_text=_(
-                                         "Lino won't not accept more than one locking event per user at the same time."),
-                                     default=False)
+    locks_user = models.BooleanField(
+        _("Locks the user"),
+        help_text=_(
+            "Lino won't not accept more than one locking event per user at the same time."),
+        default=False)
     #~ is_default = models.BooleanField(
         #~ _("is default"),default=False)
     #~ is_private = models.BooleanField(
@@ -85,8 +87,9 @@ class EventType(dd.BabelNamed, dd.Sequenced,
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True, null=True)
-    event_label = dd.BabelCharField(_("Event label"),
-                                    max_length=200, blank=True, default=_("Appointment"))
+    event_label = dd.BabelCharField(
+        _("Event label"),
+        max_length=200, blank=True, default=_("Appointment"))
 
     #~ def full_clean(self,*args,**kw):
         #~ if not self.name:
@@ -322,6 +325,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         related_name="cal_events_assigned",
         blank=True, null=True)
 
+    move_next = MoveEventNext()
+
     def has_conflicting_events(self):
         qs = self.get_conflicting_events()
         if qs is None:
@@ -360,9 +365,10 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         qs = qs.filter(flt)
         if self.id is not None:  # don't conflict with myself
             qs = qs.exclude(id=self.id)
+        # generated events never conflict with other generated events of same owner. Rule needed for update_events.
         if self.auto_type is not None:
             qs = qs.exclude(
-                auto_type=self.auto_type,
+                # auto_type=self.auto_type,
                 owner_id=self.owner_id, owner_type=self.owner_type)
         if self.room is not None:
             # other event in the same room
@@ -389,11 +395,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     def is_user_modified(self):
         return self.state != EventStates.suggested
-
-    def move_next(self, ar):
-        if not self.auto_type or not self.owner:
-            raise Exception("Only for generated events.")
-        return self.owner.move_event_next(self, ar)
 
     def save(self, *args, **kw):
         r = super(Event, self).save(*args, **kw)
@@ -451,7 +452,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             if event.access_class == AccessClasses.show_busy:
                 s = _("Busy")
             s = event.user.username + ': ' + unicode(s)
-        elif settings.SITE.project_model is not None and event.project is not None:
+        elif settings.SITE.project_model is not None \
+                and event.project is not None:
             s += " " + unicode(_("with")) + " " + unicode(event.project)
         if event.state:
             s = ("(%s) " % unicode(event.state)) + s
@@ -864,7 +866,7 @@ def update_reminders_for_user(user, ar):
     return n
 
 
-class UpdateUserReminders(UpdateReminders):
+class UpdateUserReminders(UpdateEvents):
 
     """
     Users can invoke this to re-generate their automatic tasks.
@@ -889,6 +891,6 @@ def pre_analyze(sender, **kw):
 
 
 __all__ = [
-    'UpdateReminders',
+    'UpdateEvents',
     'Event', 'Events',
     'EventType', 'EventTypes']

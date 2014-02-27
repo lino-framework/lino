@@ -13,7 +13,7 @@ Before and after:
 
 .. image:: 1012a.png
   :scale: 45
-.. image:: 1014.png
+.. image:: 1012b.png
   :scale: 45
   
   

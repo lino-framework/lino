@@ -525,7 +525,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
         tt = self.voucher.get_trade_type()
         if self.vat_class is None:
             self.vat_class = self.get_vat_class(tt)
-        return dd.apps.vat.get_vat_rate(
+        return settings.SITE.plugins.vat.get_vat_rate(
             tt, self.vat_class, self.voucher.vat_regime)
 
     #~ def save(self,*args,**kw):

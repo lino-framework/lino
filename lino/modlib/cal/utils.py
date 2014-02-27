@@ -24,7 +24,6 @@ import datetime
 from dateutil.tz import tzlocal
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
 from django.utils import translation
 
 from babel.dates import format_datetime, format_date
@@ -72,11 +71,11 @@ def setkw(obj, **kw):
 
 
 def when_text(d, t=None):
-    """
-    Return a string with a concise representation of the given 
-    date and time combination.
+    """Return a string with a concise representation of the given date
+    and time combination.
+
     Examples:
-    
+
     >>> when_text(datetime.date(2013,12,25))
     u'2013 Dec 25 (Wed)'
     
@@ -85,13 +84,14 @@ def when_text(d, t=None):
     
     >>> when_text(None)
     u''
-    
+
     """
     if d is None:
         return ''
     fmt = 'yyyy MMM dd (EE)'
     if t is None:
-        return format_date(d, fmt, locale=to_locale(translation.get_language()))
+        return format_date(
+            d, fmt, locale=to_locale(translation.get_language()))
     #~ if d.year == datetime.date.today().year:
         #~ fmt = "%a" + settings.SITE.time_format_strftime
     #~ else:
@@ -99,7 +99,10 @@ def when_text(d, t=None):
     #~ fmt = "%a %Y %b %d " + settings.SITE.time_format_strftime
     #~ return datetime.datetime.combine(d,t).strftime(fmt)
     fmt += " HH:mm"
-    return format_datetime(datetime.datetime.combine(d, t), fmt, locale=to_locale(translation.get_language()))
+    return format_datetime(
+        datetime.datetime.combine(d, t),
+        fmt,
+        locale=to_locale(translation.get_language()))
 
 
 class Weekdays(dd.ChoiceList):

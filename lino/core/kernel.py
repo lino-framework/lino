@@ -207,7 +207,19 @@ class Kernel(object):
 
     """
 
+    # _singleton_instance = None
+
+    # @classmethod
+    # def instance(cls, site):
+    #     if cls._singleton_instance is None:
+    #         cls._singleton_instance = cls(site)
+    #     elif cls._singleton_instance.site is not site:
+    #         site.logger().info("Overriding SITE instance")
+    #         cls._singleton_instance.site = site
+    #     return cls._singleton_instance
+
     def __init__(self, site):
+        # logger.info("20140227 Kernel.__init__() a")
         self.pending_threads = {}
         self.site = site
         self.kernel_startup(site)
@@ -257,6 +269,7 @@ class Kernel(object):
             for ba in res.get_actions():
                 if ba.action.parameters:
                     ba.action.params_layout.get_layout_handle(self)
+        # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(kernel, self):
         """This is a part of a Lino site setup.  The Django Model definitions

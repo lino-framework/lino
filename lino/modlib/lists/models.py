@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
@@ -124,7 +125,7 @@ class MembersByCompany(Members):
     label = _("Memberships")
 
 
-MODULE_LABEL = dd.apps.contacts.verbose_name
+MODULE_LABEL = settings.SITE.plugins.contacts.verbose_name
 
 
 def setup_main_menu(site, ui, profile, m):

@@ -13,6 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -229,6 +230,6 @@ class TextRenderer(HtmlRenderer):
         """
         Returns a string representing this request in reStructuredText markup.
         """
-        print ar.to_rst(*args, **kw)
+        print(ar.to_rst(*args, **kw))
 
 

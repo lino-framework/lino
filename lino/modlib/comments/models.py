@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,48 +12,29 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-The :xfile:`models.py` file for :mod:`lino.modlib.notes`.
+The :xfile:`models.py` file for :mod:`lino.modlib.comments`.
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import sys
-import cgi
-import datetime
-
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
-
-
 from lino import dd
-from lino.utils.restify import restify
 from lino import mixins
 from django.conf import settings
 
 
 system = dd.resolve_app('system')
-#~ outbox = dd.resolve_app('outbox')
-#~ postings = dd.resolve_app('postings')
-#~ contacts = dd.resolve_app('contacts')
 
 
 class Comment(
         dd.CreatedModified,
         dd.UserAuthored,
         dd.Hierarizable,
-        dd.Controllable,
-):
-
-    "The model definition."
+        dd.Controllable):
+    """The model definition."""
 
     class Meta:
         abstract = settings.SITE.is_abstract_model('comments.Comment')

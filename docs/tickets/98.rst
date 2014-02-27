@@ -7,3 +7,6 @@
 "Es ist doof, dass man das Berechtigungs-System nur per Code-Änderungen
 konfigurieren kann."
 
+Pages referring to this:
+
+.. refstothis::

@@ -40,7 +40,7 @@ declarations = dd.resolve_app('declarations')
 
 
 def pcmnref(ref, pcmn):
-    if dd.apps.ledger.use_pcmn:
+    if settings.SITE.plugins.ledger.use_pcmn:
         return pcmn
     return ref
 

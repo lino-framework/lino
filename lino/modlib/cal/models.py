@@ -542,9 +542,9 @@ def customize_users():
                     ))
 
     #~ users = dd.resolve_app('users')
-    #~ users.User.add_model_action(update_reminders=UpdateReminders())
+    #~ users.User.add_model_action(update_reminders=UpdateEvents())
 
-MODULE_LABEL = dd.apps.cal.verbose_name
+MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
 
 
 class UserDetailMixin(dd.Panel):
@@ -568,7 +568,7 @@ def unused_site_setup(site):
     """
     (Called during site setup.)
 
-    Adds a "Calendar" tab and the :class:`UpdateReminders`
+    Adds a "Calendar" tab and the :class:`UpdateEvents`
     action to `users.User`
     """
 

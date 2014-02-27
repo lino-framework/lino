@@ -147,12 +147,12 @@ class StartedSummaryDescription(Started):
         return elems
 
 
-class UpdateReminders(actions.Action):
-    label = _('Update Events')
-    show_in_row_actions = True
-    icon_name = 'lightning'
+class MultipleRowAction(actions.Action):
 
     callable_from = (actions.GridEdit, actions.ShowDetailAction)
+
+    def run_on_row(self, obj, ar):
+        raise NotImplemented()
 
     def run_from_ui(self, ar, **kw):
         ar.success(**kw)
@@ -161,13 +161,38 @@ class UpdateReminders(actions.Action):
             if not ar.response.get('success'):
                 ar.info("Aborting remaining rows")
                 break
-            ar.info("Updating events for %s...", unicode(obj))
-            n += obj.update_reminders(ar)
+            ar.info("%s for %s...", self.label, unicode(obj))
+            n += self.run_on_row(obj, ar)
             ar.response.update(refresh_all=True)
 
-        msg = _("%d reminder(s) have been updated.") % n
+        msg = _("%d event(s) have been updated.") % n
         ar.info(msg)
         #~ ar.success(msg,**kw)
+
+
+class UpdateEvents(MultipleRowAction):
+    label = _('Update Events')
+    show_in_row_actions = True
+    icon_name = 'lightning'
+
+    def run_on_row(self, obj, ar):
+        return obj.update_reminders(ar)
+
+
+class MoveEventNext(MultipleRowAction):
+    label = _('Move down')
+    show_in_row_actions = True
+    icon_name = 'date_next'
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.auto_type is None:
+            return False
+        return super(MoveEventNext, self).get_action_permission(
+            ar, obj, state)
+
+    def run_on_row(self, obj, ar):
+        obj.owner.move_event_next(obj, ar)
+        return 1
 
 
 class EventGenerator(mixins.UserAuthored):
@@ -192,7 +217,7 @@ class EventGenerator(mixins.UserAuthored):
     class Meta:
         abstract = True
 
-    do_update_reminders = UpdateReminders()
+    do_update_events = UpdateEvents()
 
     @classmethod
     def get_registrable_fields(cls, site):
@@ -286,15 +311,15 @@ class EventGenerator(mixins.UserAuthored):
                                            for x in wanted.values()])
                     delta = e.start_date - ae.start_date
                     ar.debug(
-                        "%d has been rescheduled from %s to %s, \
-                        adapt subsequent dates (%s), delta %s"
+                        "%d has been moved from %s to %s: "
+                        "move subsequent dates (%s) by %s"
                         % (
                             e.auto_type, ae.start_date,
                             e.start_date, subsequent, delta))
                     for se in wanted.values():
                         ov = se.start_date
                         se.start_date += delta
-                        logger.info("20140219 %d : %s -> %s" % (
+                        ar.debug("%d : %s -> %s" % (
                             se.auto_type, ov, se.start_date))
             else:
                 self.compare_auto_event(e, ae)
@@ -357,17 +382,26 @@ class EventGenerator(mixins.UserAuthored):
         wanted = dict()
         event_type = self.update_cal_calendar()
         if event_type is None:
+            ar.debug("No event_type")
             return wanted
         rset = self.update_cal_rset()
         #~ ar.info("20131020 rset %s",rset)
         #~ if rset and rset.every > 0 and rset.every_unit:
-        if rset and rset.every_unit:
-            date = self.update_cal_from(ar)
-            if not date:
-                #~ ar.info("20131020 no start date")
+        if rset is not None:
+            if rset.every_unit:
+                date = self.update_cal_from(ar)
+                if not date:
+                    ar.info("no start date")
+                    return wanted
+                date = self.find_start_date(date)
+                if date is None:
+                    ar.debug("No available weekday.")
+    
+            else:
+                ar.info("20131020 no every_unit")
                 return wanted
         else:
-            ar.info("20131020 no recurrency")
+            ar.info("20131020 no rset")
             return wanted
         until = self.update_cal_until() \
             or settings.SITE.site_config.farest_future
@@ -405,7 +439,7 @@ class EventGenerator(mixins.UserAuthored):
         return wanted
 
     def move_event_next(self, we, ar):
-        """Move the specified event
+        """Move the specified event to the next date in this series.
         """
         if we.owner is not self:
             raise Exception(
@@ -435,18 +469,18 @@ class EventGenerator(mixins.UserAuthored):
         """
         date = we.start_date
         while we.has_conflicting_events():
-            ar.info("%s conflicts with %s. ", self,
-                    we.get_conflicting_events())
+            # ar.debug("%s conflicts with %s. ", we,
+            #          we.get_conflicting_events())
             date = rset.get_next_date(ar, date)
             if date is None or date > until:
-                ar.info("Failed to get next date for %s.", self)
+                ar.debug("Failed to get next date for %s.", we)
                 conflicts = [E.tostring(ar.obj2html(o))
                              for o in we.get_conflicting_events()]
                 msg = ', '.join(conflicts)
-                ar.warning("%s conflicts with %s. ", self, msg)
+                ar.warning("%s conflicts with %s. ", we, msg)
                 return None
         
-        rset.move_event_to(we, date)
+            rset.move_event_to(we, date)
         return date
 
     def get_existing_auto_events(self):
@@ -558,17 +592,24 @@ class RecurrenceSet(Started, Ended):
             ar.debug("get_next_date() once --> None.")
             return None
         if self.every_unit == Recurrencies.per_weekday:
-            od = date
-            for i in range(7):
-                date += ONE_DAY
-                if self.is_available_on(date):
-                    ar.debug(
-                        "get_next_date() per_weekday %s --> %s.",
-                        od, date)
-                    return date
-            ar.debug("get_next_date() failed to find available weekday.")
-            return None
+            date = self.find_start_date(date + ONE_DAY)
+            if date is None:
+                ar.debug("get_next_date() failed to find available weekday.")
+            return date
         return self.every_unit.add_duration(date, self.every)
+
+    def find_start_date(self, date):
+        """Find the first available date for the given date (possibly
+        including that date)
+
+        """
+        if self.every_unit != Recurrencies.per_weekday:
+            return date
+        for i in range(7):
+            if self.is_available_on(date):
+                return date
+            date += ONE_DAY
+        return None
 
     def is_available_on(self, date):
         wd = date.isoweekday()  # Monday:1, Tuesday:2 ... Sunday:7

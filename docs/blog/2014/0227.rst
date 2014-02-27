@@ -1,0 +1,33 @@
+=====================================
+20140227 (Thursday, 27 February 2014)
+=====================================
+
+
+
+Uff, the explanation for :doc:`/tickets/99` was complex:
+
+First I had to learn that this was a case of logging *before*
+:func:`lino.utils.log.configure` was run. That's why my first series of
+instantiation was never shown.
+
+It is also possible that Lino did not correctly detect whether logging
+is already configured.
+
+Second I had forgotten that `override_defaults` is also called from
+:mod:`djangosite.utils.djangotest`.
+
+
+One useless feature less
+------------------------
+
+In :blogref:`20131014` I added a new feature: "Lino now supports
+insert_layout with only one element: it uses then a hard-coded height
+of 10 lines."
+
+Joe reported a problem caused by this feature and suggested to simply
+remove it "because it generates some surprising results. I think
+layout with only one item should by default use "auto" size."
+
+He is absolutely right, this was a silly feature.
+
+

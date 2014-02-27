@@ -163,6 +163,7 @@ lino.utils.xmlgen.intervat
 lino.utils.xmlgen.cbss
 lino.utils.xmlgen.odf
 lino.utils.xmlgen.sepa
+lino.tests
 lino.tutorials
 lino.tutorials.mini
 lino.tutorials.lets1
