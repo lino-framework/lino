@@ -2,6 +2,12 @@
 20140228 (Friday, 28 February 2014)
 ===================================
 
+Started to update :ref:`faggio.changes`.
+
+Added new virtual field linked_date ("Date") in EventsByCourse. This
+makes the date of each event clickable, and clicking it opens a table
+with all events on that day.
+
 Unofficial release of :ref:`faggio` version 0.0.3 for Roger.
 
 
