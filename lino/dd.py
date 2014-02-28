@@ -375,12 +375,20 @@ from lino.mixins.human import Human, Born
 
 from django.utils.importlib import import_module
 
+
+# The following are not only shortcuts, they also are a preparation to
+# encapsulate the `settings.SITE` name. It is possible that after
+# Django 1.7 we no longer need a `settings.SITE`. So I plan to
+# deprecate direct access to settings.SITE in application code. I am
+# not yet 100% sure whether this is possible and makes sense.
+
 # site = settings.SITE
 # apps = settings.SITE.plugins
 modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup
 get_db_overview_rst = settings.SITE.get_db_overview_rst
+is_abstract_model = settings.SITE.is_abstract_model
 
 from django.utils import translation
 get_language = translation.get_language

@@ -140,6 +140,7 @@ lino.modlib.events.fixtures
 lino.modlib.events.tests
 lino.modlib.statbel
 lino.modlib.statbel.fixtures
+lino.modlib.sepa
 lino.modlib.system
 lino.modlib.system.fixtures
 lino.modlib.system.tests

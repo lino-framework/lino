@@ -36,10 +36,14 @@ def objects():
 
     if 'de' in settings.SITE.languages:
         munich = 'München'
-        kelmis = 'Kelmis'
     else:
         munich = 'Munich'
+
+    if 'fr' in settings.SITE.languages:
         kelmis = 'La Calamine'
+    else:
+        kelmis = 'Kelmis'
+
 
     # ~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
     #~ print settings.SITE.languages
