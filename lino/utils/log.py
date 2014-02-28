@@ -19,14 +19,17 @@ when you have your :setting:`LOGGING_CONFIG` set to
 ``'lino.utils.log.configure'`` (the default value set when you
 instantiate a :class:`lino.site.Site`)
 
-In order to disable Lino's system, you simply must configure logging
-*before* Lino starts. For example be writing at the begnning of your
-`manage.py`::
+In order to disable Lino's system, you can either set
+:setting:`LOGGING_CONFIG` to your own value, you configure logging
+yourself manually *before* Lino starts. For example by writing at the
+begnning of your :xfile:`manage.py` file::
 
     import logging
     logging.basicConfig(level=logging.INFO)
 
-
+Or when you want to log things that happen *before* Django calls
+:func:`lino.utils.log.configure`, then you must also manually
+configure logging.
 
 Examples
 --------

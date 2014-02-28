@@ -319,9 +319,11 @@ add('40', _("Certified"), 'certified', invoiceable=True, uses_a_place=True)
 
 
 class Course(cal.Reservation, dd.Printable):
-    """
-    A Course is a group of pupils that regularily
-    meet with a given teacher in a given room.
+    """A Course is a group of pupils that regularily meet with a given
+    teacher in a given room to speak about a given subject.
+
+    The subject of a course is expressed by the :class:`Line`.
+
     """
 
     FILL_EVENT_GUESTS = False
@@ -354,14 +356,14 @@ class Course(cal.Reservation, dd.Printable):
             self.room)
 
     def update_cal_from(self, ar):
+        """Note: if recurrency is per_weekday, actual start may be
+        later than self.start_date
+
+        """
         if self.state in (CourseStates.draft, CourseStates.cancelled):
             ar.info("No start date because state is %s", self.state)
             return None
         return self.start_date
-        #~ if self.start_date is None:
-            #~ return None
-        # ~ # if every is per_weekday, actual start may be later than self.start_date
-        #~ return self.get_next_date(self.start_date+datetime.timedelta(days=-1))
 
     def update_cal_calendar(self):
         return self.line.event_type
@@ -417,8 +419,9 @@ class Course(cal.Reservation, dd.Printable):
 
     @dd.displayfield(_("Events"))
     def events_text(self, ar=None):
-        return ', '.join([day_and_month(e.start_date)
-                          for e in self.events_by_course.order_by('start_date')])
+        return ', '.join([
+            day_and_month(e.start_date)
+            for e in self.events_by_course.order_by('start_date')])
 
     @dd.requestfield(_("Requested"))
     def requested(self, ar):
@@ -852,7 +855,7 @@ class EnrolmentsByCourse(Enrolments):
 class EventsByCourse(cal.Events):
     required = dd.required(user_groups='office')
     master_key = 'course'
-    column_names = 'when_text:20 start_date summary workflow_buttons *'
+    column_names = 'when_text:20 linked_date summary workflow_buttons *'
     auto_fit_column_widths = True
 
 

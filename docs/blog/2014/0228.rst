@@ -1,0 +1,7 @@
+===================================
+20140228 (Friday, 28 February 2014)
+===================================
+
+Unofficial release of :ref:`faggio` version 0.0.3 for Roger.
+
+

@@ -54,6 +54,17 @@ postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
 
+def daterange_text(a, b):
+    if a == b:
+        return a.strftime(settings.SITE.date_format_strftime)
+    d = dict(min="...", max="...")
+    if a:
+        d.update(min=a.strftime(settings.SITE.date_format_strftime))
+    if b:
+        d.update(max=b.strftime(settings.SITE.date_format_strftime))
+    return _("Dates %(min)s to %(max)s") % d
+
+
 class EventType(dd.BabelNamed, dd.Sequenced,
                 dd.PrintableType, outbox.MailableType):
 
@@ -548,6 +559,18 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def url(self, ar):
         return 'foo'
 
+    @dd.displayfield(_("Date"))
+    def linked_date(self, ar):
+        pv = dict(start_date=self.start_date)
+        if False:
+            # TODO: what to do in case of multiple day events?
+            pv.update(end_date=self.end_date or self.start_date)
+        else:
+            pv.update(end_date=self.start_date)
+        target = ar.spawn('cal.EventsByDay', param_values=pv)
+        txt = self.start_date.strftime(settings.SITE.date_format_strftime)
+        return ar.href_to_request(target, txt)
+
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self, request):
         return False
@@ -608,23 +631,6 @@ class EventInsert(EventDetail):
     start end 
     room priority access_class transparent 
     """
-
-#~ class NextDateAction(dd.ListAction):
-    #~ label = _("Next")
-    # ~ # action_name = 'next'
-    #~ default_format = ext_requests.URL_FORMAT_JSON
-
-    #~ def setup_action_request(self,actor,ar):
-        # ~ # print "coucou"
-        # ~ # assert row is None
-        #~ start_date = ar.param_values.start_date or datetime.date.today()
-        #~ end_date = ar.param_values.end_date or start_date
-        #~ ar.param_values.define('start_date',start_date + ONE_DAY)
-        #~ ar.param_values.define('end_date',end_date + ONE_DAY)
-        # ~ # ar.param_values.end_date += ONE_DAY
-        # ~ # logger.info("20121203 cal.NextDateAction.setup_action_request() %s",ar.param_values)
-        # ~ # return ar.success_response(refresh=True)
-
 
 class EventEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
@@ -742,12 +748,15 @@ class Events(dd.Table):
         for t in super(Events, self).get_title_tags(ar):
             yield t
         if ar.param_values.start_date or ar.param_values.end_date:
-            yield unicode(_("Dates %(min)s to %(max)s") % dict(
-                min=ar.param_values.start_date or'...',
-                max=ar.param_values.end_date or '...'))
+            yield daterange_text(
+                ar.param_values.start_date,
+                ar.param_values.end_date)
 
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
+
+        if ar.param_values.event_type:
+            yield unicode(ar.param_values.event_type)
 
         if ar.param_values.user:
             yield unicode(ar.param_values.user)
@@ -756,7 +765,8 @@ class Events(dd.Table):
             yield unicode(ar.param_values.project)
 
         if ar.param_values.assigned_to:
-            yield unicode(self.parameters['assigned_to'].verbose_name) + ' ' + unicode(ar.param_values.assigned_to)
+            yield unicode(self.parameters['assigned_to'].verbose_name) \
+                + ' ' + unicode(ar.param_values.assigned_to)
 
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
@@ -769,6 +779,11 @@ class Events(dd.Table):
 
 class EventsByType(Events):
     master_key = 'event_type'
+
+
+class EventsByDay(Events):
+    column_names = 'room summary workflow_buttons *'
+    auto_fit_column_widths = True
 
 #~ class EventsByType(Events):
     #~ master_key = 'type'
