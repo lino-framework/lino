@@ -88,19 +88,19 @@ Utilities:
   :func:`inrange_filter <djangosite.dbutils.inrange_filter>`
 - :func:`full_model_name <djangosite.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
-- :func:`chooser <lino.utils.choosers.chooser>` 
+- :func:`chooser <lino.utils.choosers.chooser>`
 
 Inter-app relations:
 
 - :func:`resolve_field <lino.core.dbutils.resolve_field>`
 - :func:`resolve_model <north.dbutils.resolve_model>`
-- :func:`resolve_app <lino.core.dbutils.resolve_app>` 
-- :func:`update_field <lino.core.inject.update_field>` 
-- :func:`inject_field <lino.core.inject.inject_field>` 
-- :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>` 
-- :func:`models_by_base <djangosite.dbutils.models_by_base>` 
+- :func:`resolve_app <lino.core.dbutils.resolve_app>`
+- :func:`update_field <lino.core.inject.update_field>`
+- :func:`inject_field <lino.core.inject.inject_field>`
+- :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>`
+- :func:`models_by_base <djangosite.dbutils.models_by_base>`
 
-Signals: 
+Signals:
 
 - See :ref:`lino.signals`
 
@@ -383,7 +383,7 @@ from django.utils.importlib import import_module
 # not yet 100% sure whether this is possible and makes sense.
 
 # site = settings.SITE
-# apps = settings.SITE.plugins
+apps = settings.SITE.plugins
 modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup

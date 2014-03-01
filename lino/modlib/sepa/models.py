@@ -44,7 +44,9 @@ add = AccountTypes.add_item
 
 add("01", _("Giro"), 'giro')
 add("02", _("Savings"), 'savings')
-add("03", _("Other"), 'other')
+add("03", _("Deposits"), 'deposits')
+add("04", _("Other"), 'other')
+# Tagesgeldkonto?
 
 
 class Account(dd.Model):

@@ -1,0 +1,14 @@
+==================================
+20140301 (Saturday, 01 March 2014)
+==================================
+
+Reading eID cards
+-----------------
+
+Uff, ich habe endlich rausgefunden, weshalb die `run_from_ui` von
+:class:`lino.modlib.beid.models.FindByBeIdAction` gar nicht aufgerufen
+wurde: weil `select_rows` nicht auf `False` gesetzt war.
+
+Weil ich das ganze System jetzt sowieso wieder gründlich umkrempeln
+muss, mach ich auch gleich Nägel mit Köpfen und denke mir ein System
+aus, mit dem ich all die möglichen Fälle in Unit-Tests einpacke. 

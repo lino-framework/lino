@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -23,19 +23,11 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-
-import os
-import sys
-import datetime
-
 from django.db import models
 from django.conf import settings
-from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
-from django.db.models import loading
 from django.utils.translation import ugettext as _
-
 
 from djangosite.dbutils import obj2str, full_model_name, app_labels
 from djangosite.dbutils import sorted_models_list
@@ -86,9 +78,6 @@ def resolve_app(app_label, strict=False):
             raise ImportError("No app_label %r in %s" %
                               (app_label, settings.INSTALLED_APPS))
             #~ raise ImportError("strict resolve_app failed for app_label %r" % app_label)
-
-#~ def get_models_for(app_label):
-    #~ a = models.get_app(app_label)
 
 
 def get_field(model, name):
@@ -146,29 +135,12 @@ def resolve_field(name, app_label=None):
     #~ return UnresolvedField(name)
 
 
-#~ def requires_apps(self,*app_labels):
-    #~ for app_label in app_labels:
-        #~ get_app(app_label)
-
-
-#~ def get_slave(model,name):
-    #~ """Return the named table, knowing that it is a
-    #~ slave of the specified `model`.
-    #~ If name has no app_label specified, use the model's app_label.
-    #~ """
-    #~ if not '.' in name:
-        #~ name = model._meta.app_label + '.' + name
-    #~ rpt = actors.get_actor(name)
-    #~ if rpt is None:
-        #~ return None
-    #~ return rpt
 def get_model_report(model):
     if not hasattr(model, '_lino_default_table'):
         raise Exception("%r has no _lino_default_table" % model)
     return model._lino_default_table
 
 
-#~ def navinfo(ar,elem):
 def navinfo(qs, elem):
     """
     Return a dict with navigation information for the given model 

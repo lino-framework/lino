@@ -39,8 +39,7 @@ from lino.utils.xmlgen.html import E
 from lino import dd
 
 countries = dd.resolve_app('countries', strict=True)
-# beid = settings.SITE.get_plugin('beid')
-beid = settings.SITE.plugins.get('beid',None)
+config = dd.apps.get('beid', None)
 
 
 class BeIdCardTypes(dd.ChoiceList):
@@ -119,38 +118,54 @@ add('18', _("Foreigner card F+"), "foreigner_f_plus")
 
 
 class BaseBeIdReadCardAction(dd.Action):
+    """Common base for all "Read eID card" actions.
+    """
     label = _("Read eID card")
     required = dd.Required(user_groups='reception')
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'
-    #~ client_model = NotImplementedError
-
-    #~ def __init__(self,client_model,*args,**kw):
-        #~ self.client_model = client_model
-        #~ super(BaseBeIdReadCardAction,self).__init__(*args,**kw)
+    sorry_msg = _("Sorry, I cannot handle that case: %s")
 
     def get_button_label(self, actor):
         return self.label
 
     def attach_to_actor(self, actor, name):
         """
-        Returns False to prevent this action when `beid` is not installed.
+        Don't add this action when `beid` app is not installed.
         """
-        if beid is None:
+        if config is None:
             return False
-        return super(BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
 
-    #~ def get_view_permission(self,profile):
-        #~ if not settings.SITE.use_eid_jslib:
-            #~ return False
-        #~ return super(BaseBeIdReadCardAction,self).get_view_permission(profile)
+        cmc = list(dd.models_by_base(BeIdCardHolder))
+        if len(cmc) != 1:
+            raise Exception(
+                "There must be exactly one BeIdCardHolder model in your Site!")
+        self.client_model = cmc[0]
+
+        return super(
+            BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
+
+
+class FindByBeIdAction(BaseBeIdReadCardAction):
+    """Read an eID card without being on a Client and either show the
+Client or ask to create a new client.
+
+    This is a list action (usually called from a quicklink or a main
+    menu item).
+
+    """
+
+    select_rows = False
+
+    def run_from_ui(self, ar, **kw):
+        attrs = config.card2client(ar.request.POST)
+        settings.SITE.logger.info("20140301 %s", attrs)
 
 
 class BeIdReadCardAction(BaseBeIdReadCardAction):
+    """Read beid card and store the data on the selected Client instance.
+    This is a row action (called on a given client).
 
-    """
-    Read beid card and store the data in a Client instance.
-    The base version is a row action (called on a given client).
     """
 
     sort_index = 90
@@ -158,43 +173,33 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     icon_name = 'vcard'
 
     # label = _("Read eID card")
-    sorry_msg = _("Sorry, I cannot handle that case: %s")
     #~ show_in_workflow = True
     #~ show_in_row_actions = True
 
     def run_from_ui(self, ar, **kw):
+        attrs = config.card2client(ar.request.POST)
         row = ar.selected_rows[0]
-        cmc = list(dd.models_by_base(BeIdCardHolder))
-        if len(cmc) != 1:
-            raise Exception(
-                "There must be exactly one BeIdCardHolder model in your Site!")
-        self.client_model = cmc[0]
-        data = ar.request.POST
-        attrs = beid.card2client(data)
-        #~ logger.info("20130103 BeIdReadCardAction.run_from_ui() : %s -> %s",data,attrs)
-        #~ print 20121117, attrs
-        #~ ssin = data['nationalNumber']
-        #~ ssin = attrs['national_id']
-
-        qs = self.client_model.objects.filter(national_id=attrs['national_id'])
+        qs = self.client_model.objects.filter(
+            national_id=attrs['national_id'])
         if not row.national_id and qs.count() == 0:
             row.national_id = attrs['national_id']
             row.full_clean()
             row.save()
-            #~ qs = self.client_model.objects.filter(national_id=attrs['national_id'])
 
         elif row.national_id != attrs['national_id']:
             if qs.count() > 1:
-                return ar.error(self.sorry_msg %
-                                _("There is more than one client with national id %(national_id)s in our database.")
-                                % attrs)
+                return ar.error(
+                    self.sorry_msg %
+                    _("There is more than one client with national "
+                      "id %(national_id)s in our database.") % attrs)
             if qs.count() == 0:
                 fkw = dict(last_name__iexact=attrs['last_name'],
                            first_name__iexact=attrs['first_name'])
-                """
-                if a client with same last_name and first_name 
-                exists, the user cannot (automatically) create a new client from eid card.
-                """
+
+                # if a client with same last_name and first_name
+                # exists, the user cannot (automatically) create a new
+                # client from eid card.
+
                 #~ fkw.update(national_id__isnull=True)
                 qs = self.client_model.objects.filter(**fkw)
                 if qs.count() == 0:
@@ -305,6 +310,7 @@ class BeIdCardHolder(dd.Model):
     "The administration who issued this ID card. Imported from TIM."
 
     read_beid = BeIdReadCardAction()
+    find_by_beid = FindByBeIdAction()
 
     noble_condition = models.CharField(
         max_length=50,
@@ -364,7 +370,7 @@ class BeIdCardHolder(dd.Model):
         if must_read:
             msg = _("Must read eID card!")
             #~ if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
-            if beid:
+            if config:
                 #~ ba = cls.get_action_by_name('read_beid')
                 #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
                 elems.append(ar.instance_action_button(

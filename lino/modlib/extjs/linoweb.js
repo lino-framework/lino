@@ -2271,7 +2271,8 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       //~ var url = ADMIN_URL + '/api' + panel.ls_url
       if (pp) { p = pp(panel);  if (! p) return; }
-      panel.add_param_values(p,true); // 20130915
+      if (panel)  // may be undefined when called e.g. from quicklink
+          panel.add_param_values(p,true); // 20130915
       Lino.call_ajax_action(panel,hm,url,p,actionName,step,fn);
   };
   return fn;

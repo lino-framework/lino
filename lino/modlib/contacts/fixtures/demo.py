@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Deserves documentation
+Adds a series of fictive persons and companies.
 """
 
 from __future__ import unicode_literals
@@ -21,15 +21,8 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from lino.utils.instantiator import Instantiator
-#~ from north.dbutils import default_language
-#~ from lino.modlib.contacts.utils import Gender
 from lino import mixins
-from lino.utils import dblogger
 from lino import dd
-#from lino import reports
-
-#~ contacts = reports.get_app('contacts')
-#~ Gender = contacts.Gender
 
 
 def objects():
@@ -37,33 +30,34 @@ def objects():
     if 'de' in settings.SITE.languages:
         munich = 'München'
     else:
-        munich = 'Munich'
+        munich = 'Munich'  # en, fr
 
     if 'fr' in settings.SITE.languages:
         kelmis = 'La Calamine'
     else:
-        kelmis = 'Kelmis'
+        kelmis = 'Kelmis'  # en, de
 
-
-    # ~ dblogger.info("Installing contacts demo fixture") # use --verbosity=2
-    #~ print settings.SITE.languages
     company = Instantiator(
-        'contacts.Company', "name zip_code city:name street street_no", country='EE').build
+        'contacts.Company',
+        "name zip_code city:name street street_no",
+        country='EE').build
     yield company('Rumma & Ko OÜ', '10115', 'Tallinn', 'Tartu mnt', '71')
-    #~ Company = resolve_model('contacts.Company')
-    #~ obj = Company(name='Rumma & Ko OÜ',zip_code='10115',street='Tartu mnt',street_no='71')
-    #~ print obj2str(obj)
-    #~ yield obj
 
     company = Instantiator(
-        'contacts.Company', "name zip_code city:name street street_no", country='BE').build
-    yield company('Bäckerei Ausdemwald', '4700', 'Eupen',  'Vervierser Straße', '45')
-    yield company('Bäckerei Mießen',     '4700', 'Eupen',  'Gospert', '103')
-    yield company('Bäckerei Schmitz',    '4700', 'Eupen',  'Aachener Straße', '53')
-    yield company('Garage Mergelsberg',  '4720', kelmis, 'Kasinostraße', '13')
+        'contacts.Company', "name zip_code city:name street street_no",
+        country='BE').build
+    yield company('Bäckerei Ausdemwald', '4700', 'Eupen',
+                  'Vervierser Straße', '45')
+    yield company('Bäckerei Mießen',     '4700', 'Eupen',
+                  'Gospert', '103')
+    yield company('Bäckerei Schmitz',    '4700', 'Eupen',
+                  'Aachener Straße', '53')
+    yield company('Garage Mergelsberg',  '4720', kelmis,
+                  'Kasinostraße', '13')
 
     company = Instantiator(
-        'contacts.Company', "name zip_code city:name street street_no", country='NL').build
+        'contacts.Company',
+        "name zip_code city:name street street_no", country='NL').build
     yield company('Donderweer BV', '4816 AR', 'Breda', 'Edisonstraat', '12')
     yield company('Van Achter NV', '4836 LG', 'Breda', 'Hazeldonk', '2')
 
@@ -72,8 +66,10 @@ def objects():
         "name zip_code city:name street street_no", country='DE').build
     yield company('Hans Flott & Co', '22453', 'Hamburg',
                   'Niendorfer Weg', '532')
-    yield company('Bernd Brechts Bücherladen', '80333', munich, 'Brienner Straße', '18')
-    yield company('Reinhards Baumschule', '12487 ', 'Berlin', 'Segelfliegerdamm', '123')
+    yield company('Bernd Brechts Bücherladen', '80333',
+                  munich, 'Brienner Straße', '18')
+    yield company('Reinhards Baumschule', '12487 ',
+                  'Berlin', 'Segelfliegerdamm', '123')
 
     company = Instantiator(
         'contacts.Company',
@@ -98,7 +94,8 @@ def objects():
     yield person('Marc',  'Chantraine', gender=mixins.Genders.male)
     yield person('Daniel',   'Dericum', gender=mixins.Genders.male)
     yield person('Dorothée', 'Demeulenaere', gender=mixins.Genders.female)
-    yield person('Dorothée', 'Dobbelstein-Demeulenaere', gender=mixins.Genders.female)
+    yield person('Dorothée', 'Dobbelstein-Demeulenaere',
+                 gender=mixins.Genders.female)
     yield person('Dorothée', 'Dobbelstein', gender=mixins.Genders.female)
     yield person('Berta',    'Ernst', gender=mixins.Genders.female)
     yield person('Bernd',    'Evertz', gender=mixins.Genders.male)
@@ -159,24 +156,33 @@ def objects():
     yield person(first_name='Bernard', last_name='Bodard', title='Dr.')
     yield person(first_name='Jean', last_name='Dupont')
 
-    #~ person = Instantiator("contacts.Person",country='BE',city=Place.objects.get(name__exact='Oostende')).build
     person = Instantiator("contacts.Person", country='NL',
                           city=Place.objects.get(
                               name__exact='Amsterdam')).build
-    yield person(first_name='Mark', last_name='Martelaer', gender=mixins.Genders.male)
-    yield person(first_name='Rik', last_name='Radermecker', gender=mixins.Genders.male)
-    yield person(first_name='Marie-Louise', last_name='Vandenmeulenbos', gender=mixins.Genders.female)
+    yield person(first_name='Mark', last_name='Martelaer',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Rik', last_name='Radermecker',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Marie-Louise', last_name='Vandenmeulenbos',
+                 gender=mixins.Genders.female)
 
     person = Instantiator("contacts.Person", country='DE').build
-    yield person(first_name='Emil', last_name='Eierschal', gender=mixins.Genders.male)
-    yield person(first_name='Lisa', last_name='Lahm', gender=mixins.Genders.female)
-    yield person(first_name='Bernd', last_name='Brecht', gender=mixins.Genders.male)
-    yield person(first_name='Karl', last_name='Keller', gender=mixins.Genders.male)
+    yield person(first_name='Emil', last_name='Eierschal',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Lisa', last_name='Lahm',
+                 gender=mixins.Genders.female)
+    yield person(first_name='Bernd', last_name='Brecht',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Karl', last_name='Keller',
+                 gender=mixins.Genders.male)
 
     person = Instantiator("contacts.Person", country='FR').build
-    yield person(first_name='Robin', last_name='Dubois', gender=mixins.Genders.male)
-    yield person(first_name='Denis', last_name='Denon', gender=mixins.Genders.male)
-    yield person(first_name='Jérôme', last_name='Jeanémart', gender=mixins.Genders.male)
+    yield person(first_name='Robin', last_name='Dubois',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Denis', last_name='Denon',
+                 gender=mixins.Genders.male)
+    yield person(first_name='Jérôme', last_name='Jeanémart',
+                 gender=mixins.Genders.male)
 
     s = u"""\
 Aachener Straße
