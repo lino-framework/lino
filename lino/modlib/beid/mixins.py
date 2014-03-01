@@ -147,11 +147,11 @@ class BaseBeIdReadCardAction(dd.Action):
 
 
 class FindByBeIdAction(BaseBeIdReadCardAction):
-    """Read an eID card without being on a Client and either show the
-Client or ask to create a new client.
+    """Read an eID card (without being on a holder), either show the
+holder or ask to create a new holder.
 
-    This is a list action (usually called from a quicklink or a main
-    menu item).
+This is a list action, usually called from a quicklink or a main menu
+item.
 
     """
 

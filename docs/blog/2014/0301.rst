@@ -6,9 +6,17 @@ Reading eID cards
 -----------------
 
 Uff, ich habe endlich rausgefunden, weshalb die `run_from_ui` von
-:class:`lino.modlib.beid.models.FindByBeIdAction` gar nicht aufgerufen
+:class:`lino.modlib.beid.mixins.FindByBeIdAction` gar nicht aufgerufen
 wurde: weil `select_rows` nicht auf `False` gesetzt war.
 
 Weil ich das ganze System jetzt sowieso wieder gründlich umkrempeln
 muss, mach ich auch gleich Nägel mit Köpfen und denke mir ein System
 aus, mit dem ich all die möglichen Fälle in Unit-Tests einpacke. 
+
+
+No handler for TemporaryAbsences (TemporaryAbsences)
+----------------------------------------------------
+
+Added a new handler for TemporaryAbsences (IT026) in 
+:mod:`lino_welfare.modlib.cbss.tx25`.
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -16,12 +16,10 @@
 
 """
 
-import sys
 from optparse import make_option
 
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db import models
 
 
 class Command(BaseCommand):
@@ -29,12 +27,14 @@ class Command(BaseCommand):
     args = "action_spec [args ...]"
 
     option_list = BaseCommand.option_list + (
-        make_option('--username', action='store',
-                    dest='username', default='root',
-                    help='The username to act as. Default is "root".'),
-        make_option('--language', action='store',
-                    dest='language',
-                    help="The language to use. Default is the site's default language."),
+        make_option(
+            '--username', action='store', dest='username',
+            default='root',
+            help='The username to act as. Default is "root".'),
+        make_option(
+            '--language', action='store', dest='language',
+            help="The language to use. "
+            "Default is the site's default language."),
     )
 
     def handle(self, *args, **options):
@@ -45,9 +45,5 @@ class Command(BaseCommand):
 
         username = options['username']
         ses = settings.SITE.login(username)
-
-        #~ language = options['language']
-        #~ if language:
-            #~ ses.set_language(language)
 
         ses.show(spec, language=options['language'])
