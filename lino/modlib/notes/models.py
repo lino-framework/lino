@@ -114,11 +114,11 @@ class EventTypes(dd.Table):
     """
 
 
-class Note(mixins.TypedPrintable,
-           mixins.UserAuthored,
-           mixins.Controllable,
+class Note(dd.TypedPrintable,
+           dd.UserAuthored,
+           dd.Controllable,
            contacts.ContactRelated,
-           mixins.ProjectRelated,
+           dd.ProjectRelated,
            outbox.Mailable,
            postings.Postable,
            ):
@@ -136,13 +136,18 @@ class Note(mixins.TypedPrintable,
 
     date = models.DateField(
         verbose_name=_('Date'), default=datetime.date.today)
-    type = models.ForeignKey(NoteType,
-                             blank=True, null=True,
-                             verbose_name=_('Note Type (Content)'))
-    event_type = models.ForeignKey(EventType,
-                                   blank=True, null=True,
-                                   verbose_name=_('Event Type (Form)'))
-    # ,null=True)
+    time = models.TimeField(
+        blank=True, null=True,
+        verbose_name=_("Time"),
+        default=datetime.datetime.now)
+    type = models.ForeignKey(
+        NoteType,
+        blank=True, null=True,
+        verbose_name=_('Note Type (Content)'))
+    event_type = models.ForeignKey(
+        EventType,
+        blank=True, null=True,
+        verbose_name=_('Event Type (Form)'))
     subject = models.CharField(_("Subject"), max_length=200, blank=True)
     body = dd.RichTextField(_("Body"), blank=True, format='html')
 
@@ -199,8 +204,8 @@ def html_text(s):
 
 class NoteDetail(dd.FormLayout):
     main = """
-    date:10 event_type:25 type:25
-    subject project 
+    date:10 time event_type:25 type:25
+    subject project
     company contact_person contact_role
     id user:10 language:8 build_time
     body outbox.MailsByController
@@ -212,41 +217,32 @@ class Notes(dd.Table):
 
     model = 'notes.Note'
     detail_layout = NoteDetail()
-    #~ column_names = "id date user type event_type subject * body_html"
-    column_names = "id date user event_type type project subject * body"
-    #~ hide_columns = "body"
-    #~ hidden_columns = frozenset(['body'])
-    order_by = ["id"]
-    #~ label = _("Notes")
+    column_names = "date time id user event_type type project subject * body"
+    order_by = ["date", "time"]
 
 
 class MyNotes(mixins.ByUser, Notes):
     required = dd.required(user_groups='office')
-    #~ master_key = 'user'
-    column_names = "date event_type type subject project body *"
-    #~ column_names = "date event_type type subject body *"
-    #~ column_names = "date type event_type subject body_html *"
-    #~ can_view = perms.is_authenticated
-    #~ label = _("My notes")
-    order_by = ["date"]
+    column_names = "date time event_type type subject project body *"
+    order_by = ["date", "time"]
 
 
 class NotesByType(Notes):
     master_key = 'type'
-    column_names = "date event_type subject user *"
-    order_by = ["date"]
+    column_names = "date time event_type subject user *"
+    order_by = ["date", "time"]
 
 
 class NotesByEventType(Notes):
     master_key = 'event_type'
-    column_names = "date type subject user *"
-    order_by = ["date"]
+    column_names = "date time type subject user *"
+    order_by = ["date", "time"]
 
 
 class NotesByX(Notes):
     required = dd.required(user_groups='office')
-    column_names = "date event_type type subject body user *"
-    order_by = ["-date"]
+    column_names = "date time event_type type subject body user *"
+    order_by = ["-date", "-time"]
 
 if settings.SITE.project_model is not None:
 
@@ -256,17 +252,17 @@ if settings.SITE.project_model is not None:
 
 class NotesByOwner(NotesByX):
     master_key = 'owner'
-    column_names = "date event_type type subject body user *"
+    column_names = "date time event_type type subject body user *"
 
 
 class NotesByCompany(NotesByX):
     master_key = 'company'
-    column_names = "date event_type type subject user *"
+    column_names = "date time event_type type subject user *"
 
 
 class NotesByPerson(NotesByX):
     master_key = 'contact_person'
-    column_names = "date event_type type subject user *"
+    column_names = "date time event_type type subject user *"
 
 
 def add_system_note(ar, owner, subject, body, **kw):

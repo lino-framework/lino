@@ -69,7 +69,8 @@ def objects():
     yield make_city('BE', 'Ouren', type=PlaceTypes.township, parent=reuland)
 
     yield Place(country=BE, zip_code='4720', type=PlaceTypes.city,
-               **babel_values('name', de='Kelmis', fr='La Calamine', en="Kelmis"))
+                **babel_values('name', de='Kelmis', fr='La Calamine',
+                               en="Kelmis"))
     yield make_city('BE', 'Kettenis', zip_code='4701', type=PlaceTypes.village)
     yield make_city('BE', 'Raeren', zip_code='4730', type=PlaceTypes.village)
     yield make_city('BE', 'Angleur', zip_code='4031')

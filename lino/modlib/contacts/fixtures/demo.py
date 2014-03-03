@@ -27,12 +27,12 @@ from lino import dd
 
 def objects():
 
-    if 'de' in settings.SITE.languages:
+    if settings.SITE.get_language_info('de'):
         munich = 'München'
     else:
         munich = 'Munich'  # en, fr
 
-    if 'fr' in settings.SITE.languages:
+    if settings.SITE.get_language_info('fr'):
         kelmis = 'La Calamine'
     else:
         kelmis = 'Kelmis'  # en, de

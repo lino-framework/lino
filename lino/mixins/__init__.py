@@ -318,37 +318,44 @@ class Registrable(model.Model):
             #~ self.save()
 
 
-class CreatedModified(model.Model):
+class Modified(model.Model):
 
-    """
-    Adds two timestamp fields `created` and `modified`.
+    class Meta:
+        abstract = True
 
-    We don't use Django's `auto_now` and `auto_now_add` features because:
+    modified = models.DateTimeField(_("Modified"), editable=False)
 
-    - 20110829 the modified field did not get updated after save()
-      didn't investigate further since the workaround shown at
-      http://stackoverflow.com/questions/1737017/django-auto-now-and-auto-now-add
-      is ok for me.
+    def save(self, *args, **kwargs):
+        if not settings.SITE.loading_from_dump:
+            self.modified = datetime.datetime.now()
+        super(Modified, self).save(*args, **kwargs)
 
-    - `/blog/2011/0901`
 
-    """
+class Created(model.Model):
+
     class Meta:
         abstract = True
 
     created = models.DateTimeField(_("Created"), editable=False)
-    modified = models.DateTimeField(_("Modified"), editable=False)
 
     def save(self, *args, **kwargs):
-        '''
-        On save, update timestamps.
-        '''
-        if not settings.SITE.loading_from_dump:
-            #~ if not self.pk:
-            if self.created is None:
-                self.created = datetime.datetime.now()
-            self.modified = datetime.datetime.now()
-        super(CreatedModified, self).save(*args, **kwargs)
+        if self.created is None and not settings.SITE.loading_from_dump:
+            self.created = datetime.datetime.now()
+        super(Created, self).save(*args, **kwargs)
+
+
+class CreatedModified(Created, Modified):
+
+    """Adds two timestamp fields `created` and `modified`.
+
+    We don't use Django's `auto_now` and `auto_now_add` features
+    because their deserialization (restore from a python dump) would
+    be problematic.
+
+    """
+
+    class Meta:
+        abstract = True
 
 
 class MoveUp(actions.Action):

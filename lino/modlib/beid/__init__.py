@@ -74,6 +74,7 @@ class Plugin(ad.Plugin):  # was: use_eidreader
 
         self = cls
 
+        from django.conf import settings
         from lino.utils import ssin
         from lino import dd
         from .mixins import BeIdCardTypes
@@ -84,11 +85,18 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         countries = dd.resolve_app('countries', strict=True)
 
         kw = dict()
-        #~ assert not settings.SITE.use_eid_jslib
-        #~ assert not settings.SITE.has_plugin(BeIdJsLibPlugin):
         data = data['card_data']
         if not '\n' in data:
+            # a one-line string means that some error occured (e.g. no
+            # card in reader). of course we want to show this to the
+            # user.
             raise Warning(data)
+
+        if False:  # toggle this to get test data
+            fn = os.path.join(settings.SITE.project_dir, 'tmp.txt')
+            file(fn, "w").write(data)
+            logger.info("Wrote eid card data to file %s", fn)
+        
         #~ print cd
         data = AttrDict(yaml.load(data))
         #~ raise Exception("20131108 cool: %s" % cd)

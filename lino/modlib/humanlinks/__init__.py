@@ -11,7 +11,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Defines "human links", i.e. links between two humans.
+"""Defines "parency links" or "human links", i.e. links between two humans.
 
 Main user interface is "parents" and "children" of a "human".
 
@@ -32,7 +32,7 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
     "Ceci n'est pas une documentation."
-    verbose_name = _("Human Links")
+    verbose_name = _("Parency links")
 
     ## settings
     human_model = 'contacts.Person'

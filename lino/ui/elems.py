@@ -1215,7 +1215,7 @@ class RequestFieldElement(IntegerFieldElement):
     def value2html(self, ar, v, **cellattrs):
         # logger.info("20121116 value2html(%s)", v)
         n = v.get_total_count()
-        if False:
+        if True:
             if n == 0:
                 return E.td(**cellattrs)
         url = 'javascript:' + ar.renderer.request_handler(v)
@@ -1231,7 +1231,7 @@ class RequestFieldElement(IntegerFieldElement):
         if v is None:
             raise Exception("Got None value for %s" % self)
         n = v.get_total_count()
-        if False:
+        if True:
             if n == 0:
                 return ''
         #~ if n == 12:

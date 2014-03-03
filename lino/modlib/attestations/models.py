@@ -46,8 +46,8 @@ class AttestationType(
     templates_group = 'attestations/Attestation'
 
     class Meta:
-        verbose_name = _("Attestation Type")
-        verbose_name_plural = _("Attestation Types")
+        verbose_name = _("Printout Type")
+        verbose_name_plural = _("Printout Types")
 
     important = models.BooleanField(
         verbose_name=_("important"),
@@ -224,8 +224,8 @@ class Attestation(dd.TypedPrintable,
 
     class Meta:
         abstract = settings.SITE.is_abstract_model('attestations.Attestation')
-        verbose_name = _("Attestation")
-        verbose_name_plural = _("Attestations")
+        verbose_name = _("Printout")
+        verbose_name_plural = _("Printouts")
 
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)

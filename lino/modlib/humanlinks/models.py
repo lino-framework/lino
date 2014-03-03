@@ -26,7 +26,8 @@ from lino import dd
 
 
 class LinkType(dd.Choice):
-    def __init__(self, value, text, name,
+
+    def __init__(self, value, name,
                  mptext, fptext,
                  mctext, fctext,
                  **kw):
@@ -34,38 +35,47 @@ class LinkType(dd.Choice):
         self.fptext = fptext
         self.mctext = mctext
         self.fctext = fctext
+        text = "%s (%s) / %s (%s)".format(mptext, fptext, mctext, fctext)
         super(LinkType, self).__init__(value, text, name, **kw)
 
     def as_parent(self, human):
-        if human is None: return self.text
+        if human is None:
+            return self.text
         return human.mf(self.mptext, self.fptext)
 
     def as_child(self, human):
-        if human is None: return self.text
+        if human is None:
+            return self.text
         return human.mf(self.mctext, self.fctext)
 
 
 class LinkTypes(dd.ChoiceList):
-    verbose_name_plural = _("Link type")
+    required = dd.required(user_level='admin')
+    verbose_name = _("Parency type")
+    verbose_name_plural = _("Parency types")
     item_class = LinkType
 
 add = LinkTypes.add_item
-add('01',
-    _("Natural parency"), 'natural',
+add('01', 'natural',
     _("Father"), _("Mother"),
     _("Son"), _("Daughter"))
 
 add('02',
-    _("Adoptive parency"), 'adoptive',
+    'adoptive',
     _("Adoptive father"), _("Adoptive mother"),
     _("Adopted son"), _("Adopted daughter"))
+
+add('03',
+    'grand',
+    _("Grandfather"), _("Grandmother"),
+    _("Grandson"), _("Granddaughter"))
 
 
 class Link(dd.Sequenced):
 
     class Meta:
-        verbose_name = _("Human Link")
-        verbose_name_plural = _("Human Links")
+        verbose_name = _("Parency link")
+        verbose_name_plural = _("Parency links")
 
     type = LinkTypes.field(default=LinkTypes.natural)
     parent = dd.ForeignKey(
@@ -94,7 +104,7 @@ class Links(dd.Table):
     required = dd.required(user_level='admin')
     insert_layout = dd.FormLayout("""
     type
-    parent 
+    parent
     child
     """, window_size=(40, 'auto'))
     detail_layout = dd.FormLayout("""

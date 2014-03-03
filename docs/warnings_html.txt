@@ -1,1 +1,86 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.beid.rst:15: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2010/0207.rst:9: WARNING: image file not readable: blog/2010/0207.jpg:scale:70
+/home/luc/hgwork/lino/docs/blog/2009/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/blog/2011/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/include/needs_update.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/include/tellme.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/include/wip.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/releases/2010/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/releases/2011/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0112' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0114' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0118' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0119' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0120' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0121' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0124' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0125' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0126' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0127' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0128' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0202' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0203' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0204' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0206' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0207' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0208' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0211' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0212' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0213' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0215' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0216' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0217' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0218' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0219' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0222' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0223' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0225' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0226' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0227' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0228' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0301' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0302' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0303' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0304' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0305' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0306' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0310' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0311' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0312' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0316' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0317' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0318' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0319' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0322' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0323' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0329' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0331' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0401' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0402' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0405' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0406' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0413' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0414' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0422' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0423' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0424' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0501' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0503' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0503_vbox_stretch' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0505' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0506' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0508' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0510' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0511' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0513' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0514' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0515' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0516' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0517' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0518' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0519' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0520' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0521' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0527' that doesn't have a title: no link will be generated
+WARNING: logo file 'logo.png' does not exist
+WARNING: favicon file 'favicon.ico' does not exist

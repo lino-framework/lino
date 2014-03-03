@@ -139,7 +139,11 @@ Model mixins:
 - :class:`lino.mixins.Referrable`
 - :class:`lino.mixins.Registrable`
 - :class:`lino.mixins.Hierarizable`
-- :class:`lino.mixins.CreatedModified`
+
+- :class:`Created <lino.mixins.Created>` and :class:`Modified
+  <lino.mixins.Modified>` (and their deprecated combination
+  :class:`CreatedModified <lino.mixins.CreatedModified>`)
+
 - :class:`lino.mixins.printable.BasePrintable`
 - :class:`lino.mixins.printable.Printable`
 - :class:`lino.mixins.printable.PrintableType`
@@ -357,14 +361,15 @@ from north.dbutils import fdl as dtosl
 babelitem = settings.SITE.babelitem
 field2kw = settings.SITE.field2kw
 
-#~ from lino.mixins import Born
-
 from lino.mixins import (
     ProjectRelated, UserAuthored, ByUser,
     Duplicable,
     Sequenced, Hierarizable, Referrable,
     Registrable,
-    CreatedModified, Controllable)
+    Controllable)
+
+from lino.mixins import Created, Modified
+from lino.mixins import CreatedModified  # deprecated
 
 from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable

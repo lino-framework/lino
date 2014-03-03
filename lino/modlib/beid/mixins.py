@@ -38,7 +38,9 @@ from lino.utils.xmlgen.html import E
 
 from lino import dd
 
-countries = dd.resolve_app('countries', strict=True)
+# countries = dd.resolve_app('countries', strict=True)
+
+
 config = dd.apps.get('beid', None)
 
 
@@ -136,18 +138,12 @@ class BaseBeIdReadCardAction(dd.Action):
         if config is None:
             return False
 
-        cmc = list(dd.models_by_base(BeIdCardHolder))
-        if len(cmc) != 1:
-            raise Exception(
-                "There must be exactly one BeIdCardHolder model in your Site!")
-        self.client_model = cmc[0]
-
         return super(
             BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
 
 
 class FindByBeIdAction(BaseBeIdReadCardAction):
-    """Read an eID card (without being on a holder), either show the
+    """Read an eID card without being on a holder. Either show the
 holder or ask to create a new holder.
 
 This is a list action, usually called from a quicklink or a main menu
@@ -163,23 +159,17 @@ item.
 
 
 class BeIdReadCardAction(BaseBeIdReadCardAction):
-    """Read beid card and store the data on the selected Client instance.
-    This is a row action (called on a given client).
+    """Read eId card and store the data on the selected holder.
+    This is a row action (called on a given holder).
 
     """
-
     sort_index = 90
-
     icon_name = 'vcard'
-
-    # label = _("Read eID card")
-    #~ show_in_workflow = True
-    #~ show_in_row_actions = True
 
     def run_from_ui(self, ar, **kw):
         attrs = config.card2client(ar.request.POST)
         row = ar.selected_rows[0]
-        qs = self.client_model.objects.filter(
+        qs = holder_model().objects.filter(
             national_id=attrs['national_id'])
         if not row.national_id and qs.count() == 0:
             row.national_id = attrs['national_id']
@@ -201,22 +191,25 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
                 # client from eid card.
 
                 #~ fkw.update(national_id__isnull=True)
-                qs = self.client_model.objects.filter(**fkw)
+                qs = holder_model().objects.filter(**fkw)
                 if qs.count() == 0:
                     def yes(ar):
-                        obj = self.client_model(**attrs)
+                        obj = holder_model()(**attrs)
                         obj.full_clean()
                         obj.save()
                         #~ changes.log_create(ar.request,obj)
                         dd.pre_ui_create.send(obj, request=ar.request)
-                        return self.goto_client_response(ar, obj,
-                                                         _("New client %s has been created") % obj)
-                    return ar.confirm(yes,
-                                      _("Create new client %(first_name)s %(last_name)s : Are you sure?") % attrs)
+                        return self.goto_client_response(
+                            ar, obj, _("New client %s has been created") % obj)
+                    return ar.confirm(
+                        yes, _("Create new client %(first_name)s "
+                               "%(last_name)s : Are you sure?") % attrs)
                 elif qs.count() > 1:
-                    return ar.error(self.sorry_msg %
-                                    _("There is more than one client named %(first_name)s %(last_name)s in our database.")
-                                    % attrs, alert=_("Oops!"))
+                    return ar.error(
+                        self.sorry_msg % _(
+                            "There is more than one client named "
+                            "%(first_name)s %(last_name)s in our database.")
+                        % attrs, alert=_("Oops!"))
 
             assert qs.count() == 1
             row = qs[0]
@@ -227,16 +220,18 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         watcher = dd.ChangeWatcher(obj)
         diffs = []
         for fldname, new in attrs.items():
-            fld = get_field(self.client_model, fldname)
+            fld = get_field(holder_model(), fldname)
             old = getattr(obj, fldname)
             if old != new:
-                diffs.append("%s : %s -> %s" %
-                             (unicode(fld.verbose_name), dd.obj2str(old), dd.obj2str(new)))
+                diffs.append(
+                    "%s : %s -> %s" % (
+                        unicode(fld.verbose_name), dd.obj2str(old),
+                        dd.obj2str(new)))
                 setattr(obj, fld.name, new)
 
         if len(diffs) == 0:
-            #~ return self.no_diffs_response(ar,obj)
-            return self.goto_client_response(ar, obj, _("Client %s is up-to-date") % unicode(obj))
+            return self.goto_client_response(
+                ar, obj, _("Client %s is up-to-date") % unicode(obj))
 
         msg = unicode(_("Click OK to apply the following changes for %s") %
                       obj)
@@ -272,7 +267,6 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
 
 
 class BeIdCardHolder(dd.Model):
-
     """
     Mixin for models which represent an eid card holder.
     Currently only Belgian eid cards are tested.
@@ -282,12 +276,14 @@ class BeIdCardHolder(dd.Model):
         abstract = True
 
     #~ national_id = models.CharField(max_length=200,
-    national_id = dd.NullCharField(max_length=200,
-                                   unique=True,
-                                   verbose_name=_("National ID")
-                                   #~ blank=True,verbose_name=_("National ID")
-                                   # ~ ,validators=[ssin.ssin_validator] # 20121108
-                                   )
+    national_id = dd.NullCharField(
+        max_length=200,
+        unique=True,
+        verbose_name=_("National ID")
+        #~ blank=True,verbose_name=_("National ID")
+        # ~ ,validators=[ssin.ssin_validator] # 20121108
+    )
+
     nationality = dd.ForeignKey('countries.Country',
                                 blank=True, null=True,
                                 related_name='by_nationality',
@@ -381,3 +377,12 @@ class BeIdCardHolder(dd.Model):
             # ~ attrs.update(style="background-color:#FA7F7F; padding:3pt;")
             attrs.update(class_="lino-info-red")
         return E.div(*elems, **attrs)
+
+
+def holder_model():
+    cmc = list(dd.models_by_base(BeIdCardHolder))
+    if len(cmc) != 1:
+        raise Exception(
+            "There must be exactly one BeIdCardHolder model in your Site!")
+    return cmc[0]
+

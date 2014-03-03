@@ -30,6 +30,9 @@ The following (internal) problem took me some time:
   :mod:`lino.modlib.attestations`, and the rule is that **the *last*
   app wins** when Lino loads templates.
 
+  So Lino is right, and this was "just" a bug in application code (but
+  a subtle one)
+
   I finally fixed the problem by simply yielding 'attestations' before
   'lino_welfare'. Here is a test case which verifies the actual path:
 
