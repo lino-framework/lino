@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -814,21 +814,11 @@ class ApiElement(View):
 class ApiList(View):
 
     def post(self, request, app_label=None, actor=None):
-        #~ ui = settings.SITE.ui
-        #~ rpt = requested_actor(app_label,actor)
-
-        #~ action_name = request.POST.get(
-            #~ ext_requests.URL_PARAM_ACTION_NAME,
-            #~ rpt.default_list_action_name)
-        #~ a = rpt.get_url_action(action_name)
-        #~ if a is None:
-            #~ raise http.Http404("%s has no url action %r" % (rpt,action_name))
-        #~ ar = rpt.request(ui,request,a)
-
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.ui.extjs_renderer
         #~ print 20121116, ar.bound_action.action.action_name
-        if ar.bound_action.action.action_name in ['duplicate', 'post', 'poststay', 'insert']:
+        if ar.bound_action.action.action_name in [
+                'duplicate', 'post', 'poststay', 'insert']:
             rh = ar.ah
             elem = ar.create_instance()
             if rh.actor.handle_uploaded_files is not None:
@@ -836,7 +826,8 @@ class ApiList(View):
                 file_upload = True
             else:
                 file_upload = False
-            return form2obj_and_save(ar, request.POST, elem, True, False, file_upload)
+            return form2obj_and_save(ar, request.POST, elem, True,
+                                     False, file_upload)
         return settings.SITE.ui.run_action(ar)
 
     def get(self, request, app_label=None, actor=None):

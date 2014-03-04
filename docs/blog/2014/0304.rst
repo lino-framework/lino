@@ -1,0 +1,8 @@
+=================================
+20140304 (Tuesday, 04 March 2014)
+=================================
+
+I discovered an internal bug: the test suite below
+:mod:`lino_welfare.tests` was inactive (not being discovered) Django
+1.6 because test case discovery has changed. And my default
+environment was 1.6 since quite some time. 
