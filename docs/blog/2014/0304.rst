@@ -9,12 +9,14 @@ environment was 1.6 since quite some time.
 
 
 Cool! I solved the last (rather subtile) problems for reading eID
-cards. `Kernel.get_callback` now sets `ar.renderer`, that's needed if
-the action calls ar.  `BaseBeIdReadCardAction.goto_client_response`
-now calls `Request.goto_instance` instead of setting
-`goto_record_id`. Because the latter worked only when the action was
-called from a Detail window (but not when called from a grid or from
-the home page).
+cards.  `BaseBeIdReadCardAction.goto_client_response` now calls
+:meth:`ar.goto_instance
+<lino.core.requests.BaseRequest.goto_instance>` instead of setting
+`goto_record_id`. Because the latter works only when the action was
+called from a detail window (but not when called from a grid or from
+the home page).  `Kernel.get_callback` now sets `ar.renderer`, that's
+needed if the action calls ar.
+
 First unit tests in :mod:`lino_welfare.tests.test_beid`.
 Most functionality is in :mod:`lino.modlib.beid.mixins`. 
 Started to write user documentation in :ref:`welfare.beid`.
@@ -27,8 +29,8 @@ I had to replace `exclude_trees
 correctly. (But I don't consider it necessary to report this to
 sphinx-users.)
 
+Continued on :mod:`lino.modlib.humanlinks`. Found a surprisingly
+simple solution for one customer request: a different `insert_layout`
+per slave table!
 
-Continued to meditate on :mod:`lino.modlib.humanlinks`.
-
-Most disturbing is
 
