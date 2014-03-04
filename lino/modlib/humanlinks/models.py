@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
+from django.utils.translation import string_concat
 from django.conf import settings
 
 from lino import dd
@@ -35,7 +36,9 @@ class LinkType(dd.Choice):
         self.fptext = fptext
         self.mctext = mctext
         self.fctext = fctext
-        text = "%s (%s) / %s (%s)".format(mptext, fptext, mctext, fctext)
+        text = string_concat(
+            mptext, ' (', fptext, ') / ', mctext, ' (', fctext, ')')
+        # text = "%s (%s) / %s (%s)" % (mptext, fptext, mctext, fctext)
         super(LinkType, self).__init__(value, text, name, **kw)
 
     def as_parent(self, human):
@@ -108,8 +111,9 @@ class Links(dd.Table):
     child
     """, window_size=(40, 'auto'))
     detail_layout = dd.FormLayout("""
-    id seqno type
-    parent child
+    parent
+    child
+    type:20  id:6 seqno:4
     """, window_size=(60, 'auto'))
 
 
@@ -119,6 +123,10 @@ class ParentsByHuman(Links):
     master_key = 'child'
     column_names = 'type_as_parent:10 parent'
     auto_fit_column_widths = True
+    insert_layout = dd.FormLayout("""
+    parent
+    type
+    """, window_size=(40, 'auto'))
 
 
 class ChildrenByHuman(Links):
@@ -127,6 +135,10 @@ class ChildrenByHuman(Links):
     master_key = 'parent'
     column_names = 'type_as_child:10 child'
     auto_fit_column_widths = True
+    insert_layout = dd.FormLayout("""
+    child
+    type
+    """, window_size=(40, 'auto'))
 
 
 def setup_explorer_menu(site, ui, profile, m):

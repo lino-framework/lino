@@ -92,6 +92,7 @@ class BaseRequest(object):
         The first argument should be either an exception object or a message.
         """
         kw.update(success=False)
+        kw.update(alert=_("Error"))  # added 20140304
         #~ if e is not None:
         if isinstance(e, Exception):
             if False:  # useful when debugging, but otherwise rather disturbing

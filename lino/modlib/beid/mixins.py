@@ -13,32 +13,35 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Actions to read Belgian eID card.
-
-TODO: 
-- make it an independant app 
-- make the `linoweb.js` fragmented...
+Adds actions to read Belgian eID card.
+See unit tests in :mod:`lino_welfare.tests.test_beid`.
 
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
+import os
 import datetime
+import yaml
+import base64
 
-
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-#~ from django.utils.translation import ugettext as __
 from django.utils.translation import ugettext
 from lino.core.dbutils import get_field
 
 from lino.utils.xmlgen.html import E
+from lino.utils import AttrDict
 
 from lino import dd
 
-# countries = dd.resolve_app('countries', strict=True)
+
+from lino.utils import ssin
+from lino.utils import join_words
+from lino.utils import IncompleteDate
+from lino.modlib.contacts.utils import street2kw
+
 
 
 config = dd.apps.get('beid', None)
@@ -141,81 +144,103 @@ class BaseBeIdReadCardAction(dd.Action):
         return super(
             BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
 
+    def card2client(self, data):
+        "does the actual conversion"
 
-class FindByBeIdAction(BaseBeIdReadCardAction):
-    """Read an eID card without being on a holder. Either show the
-holder or ask to create a new holder.
+        countries = dd.resolve_app('countries', strict=True)
 
-This is a list action, usually called from a quicklink or a main menu
-item.
+        kw = dict()
+        raw_data = data['card_data']
+        if not '\n' in raw_data:
+            # a one-line string means that some error occured (e.g. no
+            # card in reader). of course we want to show this to the
+            # user.
+            raise Warning(raw_data)
 
-    """
+        #~ print cd
+        data = AttrDict(yaml.load(raw_data))
+        #~ raise Exception("20131108 cool: %s" % cd)
 
-    select_rows = False
+        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
+        kw.update(first_name=join_words(
+            data.firstName,
+            data.middleName))
+        kw.update(last_name=data.name)
 
-    def run_from_ui(self, ar, **kw):
-        attrs = config.card2client(ar.request.POST)
-        settings.SITE.logger.info("20140301 %s", attrs)
+        card_number = str(data.cardNumber)
 
+        if data.photo:
+            fn = config.card_number_to_picture_file(card_number)
+            if os.path.exists(fn):
+                logger.warning("Overwriting existing image file %s.", fn)
+            fp = file(fn, 'wb')
+            fp.write(base64.b64decode(data.photo))
+            fp.close()
+            #~ print 20121117, repr(data['picture'])
+            #~ kw.update(picture_data_encoded=data['picture'])
 
-class BeIdReadCardAction(BaseBeIdReadCardAction):
-    """Read eId card and store the data on the selected holder.
-    This is a row action (called on a given holder).
+        if isinstance(data.dateOfBirth, basestring):
+            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
+        kw.update(birth_date=data.dateOfBirth)
+        kw.update(card_valid_from=data.cardValidityDateBegin)
+        kw.update(card_valid_until=data.cardValidityDateEnd)
 
-    """
-    sort_index = 90
-    icon_name = 'vcard'
+        kw.update(card_number=card_number)
+        kw.update(card_issuer=data.cardDeliveryMunicipality)
+        if data.nobleCondition:
+            kw.update(noble_condition=data.nobleCondition)
+        kw.update(street=data.streetAndNumber)
+        #~ kw.update(street_no=data['streetNumber'])
+        #~ kw.update(street_box=data['boxNumber'])
+        if True:  # kw['street'] and not (kw['street_no'] or kw['street_box']):
+            kw = street2kw(kw['street'], **kw)
+        kw.update(zip_code=str(data.zip))
+        if data.placeOfBirth:
+            kw.update(birth_place=data.placeOfBirth)
+        pk = data.reader.upper()
 
-    def run_from_ui(self, ar, **kw):
-        attrs = config.card2client(ar.request.POST)
-        row = ar.selected_rows[0]
-        qs = holder_model().objects.filter(
-            national_id=attrs['national_id'])
-        if not row.national_id and qs.count() == 0:
-            row.national_id = attrs['national_id']
-            row.full_clean()
-            row.save()
+        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
 
-        elif row.national_id != attrs['national_id']:
-            if qs.count() > 1:
-                return ar.error(
-                    self.sorry_msg %
-                    _("There is more than one client with national "
-                      "id %(national_id)s in our database.") % attrs)
-            if qs.count() == 0:
-                fkw = dict(last_name__iexact=attrs['last_name'],
-                           first_name__iexact=attrs['first_name'])
+        #~ try:
+        country = countries.Country.objects.get(isocode=pk)
+        kw.update(country=country)
+        #~ except countries.Country.DoesNotExist,e:
+        #~ except Exception,e:
+            #~ logger.warning("%s : no country with code %r",msg1,pk)
+        #~ BE = countries.Country.objects.get(isocode='BE')
+        #~ fld = countries.Place._meta.get_field()
+        kw.update(city=countries.Place.lookup_or_create(
+            'name', data.municipality, country=country))
 
-                # if a client with same last_name and first_name
-                # exists, the user cannot (automatically) create a new
-                # client from eid card.
+        def sex2gender(sex):
+            if sex == 'MALE':
+                return dd.Genders.male
+            if sex == 'FEMALE':
+                return dd.Genders.female
+            logger.warning("%s : invalid gender code %r", msg1, sex)
+        kw.update(gender=sex2gender(data.gender))
 
-                #~ fkw.update(national_id__isnull=True)
-                qs = holder_model().objects.filter(**fkw)
-                if qs.count() == 0:
-                    def yes(ar):
-                        obj = holder_model()(**attrs)
-                        obj.full_clean()
-                        obj.save()
-                        #~ changes.log_create(ar.request,obj)
-                        dd.pre_ui_create.send(obj, request=ar.request)
-                        return self.goto_client_response(
-                            ar, obj, _("New client %s has been created") % obj)
-                    return ar.confirm(
-                        yes, _("Create new client %(first_name)s "
-                               "%(last_name)s : Are you sure?") % attrs)
-                elif qs.count() > 1:
-                    return ar.error(
-                        self.sorry_msg % _(
-                            "There is more than one client named "
-                            "%(first_name)s %(last_name)s in our database.")
-                        % attrs, alert=_("Oops!"))
+        def doctype2cardtype(dt):
+            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
+            rv = BeIdCardTypes.get_by_value(str(dt))
+            # logger.info("20130103 documentType %r --> %r", dt, rv)
+            return rv
+        kw.update(card_type=doctype2cardtype(data.documentType))
 
-            assert qs.count() == 1
-            row = qs[0]
-        return self.process_row(ar, row, attrs)
+        if config.data_collector_dir:
+            fn = os.path.join(
+                config.data_collector_dir,
+                card_number + '.txt')
+            file(fn, "w").write(raw_data)
+            logger.info("Wrote eid card data to file %s", fn)
+
+        return kw
 
     def process_row(self, ar, obj, attrs):
+        """Generate a confirmation which asks to update the given data row
+        `obj` using the data read from the eid card (given in `attr`).
+
+        """
         oldobj = obj
         watcher = dd.ChangeWatcher(obj)
         diffs = []
@@ -238,15 +263,16 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         msg += ' :<br/>'
         msg += '\n<br/>'.join(diffs)
 
-        def yes(ar):
+        def yes(ar2):
             obj.full_clean()
             obj.save()
-            watcher.send_update(ar.request)
+            watcher.send_update(ar2.request)
             #~ return self.saved_diffs_response(ar,obj)
-            return self.goto_client_response(ar, obj, _("%s has been saved.") % dd.obj2unicode(obj))
+            return self.goto_client_response(
+                ar2, obj, _("%s has been saved.") % dd.obj2unicode(obj))
 
-        def no(ar):
-            return self.goto_client_response(ar, oldobj)
+        def no(ar2):
+            return self.goto_client_response(ar2, oldobj)
         #~ print 20131108, msg
         cb = ar.add_callback(msg)
         cb.add_choice('yes', yes, _("Yes"))
@@ -256,7 +282,13 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         #~ return cb
 
     def goto_client_response(self, ar, obj, msg=None, **kw):
-        kw.update(goto_record_id=obj.pk)
+        """Called from different places but always the same result.  Calls
+:meth:`ar.goto_instance
+<lino.core.requests.BaseRequest.goto_instance>`.
+
+        """
+        # kw.update(goto_record_id=obj.pk)
+        ar.goto_instance(obj)
         #~ ba = self.defining_actor.detail_action
         #~ kw.update(eval_js=ar.row_action_handler(ba,obj,ar))
         #~ kw.update(eval_js=ar.instance_handler(obj))
@@ -264,6 +296,97 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         if msg:
             return ar.success(msg, _("Success"), **kw)
         return ar.success(msg, **kw)
+
+
+class FindByBeIdAction(BaseBeIdReadCardAction):
+    """Read an eID card without being on a holder. Either show the
+holder or ask to create a new holder.
+
+This is a list action, usually called from a quicklink or a main menu
+item.
+
+    """
+
+    select_rows = False
+
+    def run_from_ui(self, ar, **kw):
+        attrs = self.card2client(ar.request.POST)
+        # settings.SITE.logger.info("20140301 %s", attrs)
+        qs = holder_model().objects.filter(national_id=attrs['national_id'])
+        if qs.count() > 1:
+            msg = self.sorry_msg % (
+                _("There is more than one client with national "
+                  "id %(national_id)s in our database.") % attrs)
+
+            raise Exception(msg)  # this is impossible because
+                                  # national_id is unique
+            return ar.error(msg)
+        if qs.count() == 0:
+            fkw = dict(last_name__iexact=attrs['last_name'],
+                       first_name__iexact=attrs['first_name'])
+
+            # if a client with same last_name and first_name
+            # exists, the user cannot (automatically) create a new
+            # client from eid card.
+
+            #~ fkw.update(national_id__isnull=True)
+            qs = holder_model().objects.filter(**fkw)
+            if qs.count() == 0:
+                def yes(ar2):
+                    obj = holder_model()(**attrs)
+                    obj.full_clean()
+                    obj.save()
+                    #~ changes.log_create(ar.request,obj)
+                    dd.pre_ui_create.send(obj, request=ar2.request)
+                    return self.goto_client_response(
+                        ar2, obj, _("New client %s has been created") % obj)
+                return ar.confirm(
+                    yes, _("Create new client %(first_name)s "
+                           "%(last_name)s : Are you sure?") % attrs)
+            elif qs.count() > 1:
+                return ar.error(
+                    self.sorry_msg % _(
+                        "Cannot create new client because "
+                        "there is more than one client named "
+                        "%(first_name)s %(last_name)s in our database.")
+                    % attrs, alert=_("Oops!"))
+
+        assert qs.count() == 1
+        row = qs[0]
+        return self.process_row(ar, row, attrs)
+
+
+class BeIdReadCardAction(BaseBeIdReadCardAction):
+    """Read eId card and store the data on the selected holder.
+
+This is a row action (called on a given holder).
+
+- When the selected holder has an empty `national_id`,
+  and when there is no holder yet with that `national_id` in the database,
+  then we want to update the existing holder from the card.
+
+
+    """
+    sort_index = 90
+    icon_name = 'vcard'
+
+    def run_from_ui(self, ar, **kw):
+        attrs = self.card2client(ar.request.POST)
+        row = ar.selected_rows[0]
+        qs = holder_model().objects.filter(
+            national_id=attrs['national_id'])
+        if not row.national_id and qs.count() == 0:
+            row.national_id = attrs['national_id']
+            row.full_clean()
+            row.save()
+            # don't return, continue below
+
+        elif row.national_id != attrs['national_id']:
+            return ar.error(
+                self.sorry_msg %
+                _("National IDs %s and %s don't match ") % (
+                    row.national_id, attrs['national_id']))
+        return self.process_row(ar, row, attrs)
 
 
 class BeIdCardHolder(dd.Model):

@@ -6,3 +6,29 @@ I discovered an internal bug: the test suite below
 :mod:`lino_welfare.tests` was inactive (not being discovered) Django
 1.6 because test case discovery has changed. And my default
 environment was 1.6 since quite some time. 
+
+
+Cool! I solved the last (rather subtile) problems for reading eID
+cards. `Kernel.get_callback` now sets `ar.renderer`, that's needed if
+the action calls ar.  `BaseBeIdReadCardAction.goto_client_response`
+now calls `Request.goto_instance` instead of setting
+`goto_record_id`. Because the latter worked only when the action was
+called from a Detail window (but not when called from a grid or from
+the home page).
+First unit tests in :mod:`lino_welfare.tests.test_beid`.
+Most functionality is in :mod:`lino.modlib.beid.mixins`. 
+Started to write user documentation in :ref:`welfare.beid`.
+
+I had to replace `exclude_trees
+<http://sphinx-doc.org/config.html#confval-exclude_trees>`_ by
+`exclude_patterns
+<http://sphinx-doc.org/config.html#confval-exclude_patterns>`_ in my
+`conf.py` files. Seems that the deprecated option no longer works
+correctly. (But I don't consider it necessary to report this to
+sphinx-users.)
+
+
+Continued to meditate on :mod:`lino.modlib.humanlinks`.
+
+Most disturbing is
+

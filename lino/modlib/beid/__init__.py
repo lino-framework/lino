@@ -27,23 +27,27 @@ Alternatively there is :mod:`lino.modlib.eid_jslib.beid` which overrides
 This app makes sense only if there is exactly one subclass of
 :class:`BeIdCardHolder` among your Site's models.
 
+.. setting:: beid.data_collector_dir
+
+Set this to the name of an existing directory to which Lino should
+write the raw data received for every card reading.
+
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
 import os
-import yaml
-import base64
 
 from lino import ad
-from lino.utils import AttrDict
 
 
 class Plugin(ad.Plugin):  # was: use_eidreader
 
     site_js_snippets = ['beid/eidreader.js']
     media_name = 'eidreader'
+
+    data_collector_dir = None
 
     def get_head_lines(self, site, request):
         if not site.use_java:
@@ -68,104 +72,4 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         from django.conf import settings
         return os.path.join(settings.MEDIA_ROOT, 'beid',
                             card_number + '.jpg')
-
-    def card2client(cls, data):
-        "does the actual conversion"
-
-        self = cls
-
-        from django.conf import settings
-        from lino.utils import ssin
-        from lino import dd
-        from .mixins import BeIdCardTypes
-        from lino.utils import join_words
-        from lino.utils import IncompleteDate
-        from lino.modlib.contacts.utils import street2kw
-
-        countries = dd.resolve_app('countries', strict=True)
-
-        kw = dict()
-        data = data['card_data']
-        if not '\n' in data:
-            # a one-line string means that some error occured (e.g. no
-            # card in reader). of course we want to show this to the
-            # user.
-            raise Warning(data)
-
-        if False:  # toggle this to get test data
-            fn = os.path.join(settings.SITE.project_dir, 'tmp.txt')
-            file(fn, "w").write(data)
-            logger.info("Wrote eid card data to file %s", fn)
-        
-        #~ print cd
-        data = AttrDict(yaml.load(data))
-        #~ raise Exception("20131108 cool: %s" % cd)
-
-        kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
-        kw.update(first_name=join_words(
-            data.firstName,
-            data.middleName))
-        kw.update(last_name=data.name)
-
-        card_number = str(data.cardNumber)
-
-        if data.photo:
-            fn = self.card_number_to_picture_file(card_number)
-            if os.path.exists(fn):
-                logger.warning("Overwriting existing image file %s.", fn)
-            fp = file(fn, 'wb')
-            fp.write(base64.b64decode(data.photo))
-            fp.close()
-            #~ print 20121117, repr(data['picture'])
-            #~ kw.update(picture_data_encoded=data['picture'])
-
-        if isinstance(data.dateOfBirth, basestring):
-            data.dateOfBirth = IncompleteDate(*data.dateOfBirth.split('-'))
-        kw.update(birth_date=data.dateOfBirth)
-        kw.update(card_valid_from=data.cardValidityDateBegin)
-        kw.update(card_valid_until=data.cardValidityDateEnd)
-
-        kw.update(card_number=card_number)
-        kw.update(card_issuer=data.cardDeliveryMunicipality)
-        if data.nobleCondition:
-            kw.update(noble_condition=data.nobleCondition)
-        kw.update(street=data.streetAndNumber)
-        #~ kw.update(street_no=data['streetNumber'])
-        #~ kw.update(street_box=data['boxNumber'])
-        if True:  # kw['street'] and not (kw['street_no'] or kw['street_box']):
-            kw = street2kw(kw['street'], **kw)
-        kw.update(zip_code=str(data.zip))
-        if data.placeOfBirth:
-            kw.update(birth_place=data.placeOfBirth)
-        pk = data.reader.upper()
-
-        msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
-
-        #~ try:
-        country = countries.Country.objects.get(isocode=pk)
-        kw.update(country=country)
-        #~ except countries.Country.DoesNotExist,e:
-        #~ except Exception,e:
-            #~ logger.warning("%s : no country with code %r",msg1,pk)
-        #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.Place._meta.get_field()
-        kw.update(city=countries.Place.lookup_or_create(
-            'name', data.municipality, country=country))
-
-        def sex2gender(sex):
-            if sex == 'MALE':
-                return dd.Genders.male
-            if sex == 'FEMALE':
-                return dd.Genders.female
-            logger.warning("%s : invalid gender code %r", msg1, sex)
-        kw.update(gender=sex2gender(data.gender))
-
-        def doctype2cardtype(dt):
-            #~ if dt == 1: return BeIdCardTypes.get_by_value("1")
-            rv = BeIdCardTypes.get_by_value(str(dt))
-            logger.info("20130103 documentType %r --> %r", dt, rv)
-            return rv
-        kw.update(card_type=doctype2cardtype(data.documentType))
-        return kw
-
 

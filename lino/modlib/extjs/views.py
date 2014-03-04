@@ -774,16 +774,12 @@ class ApiElement(View):
         return settings.SITE.ui.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):
-        #~ elem = ar.actor.get_row_by_pk(pk)
-        #~ if elem is None:
-            #~ raise http.Http404("%s has no row with primary key %r" % (ar.actor,pk))
         ar = action_request(app_label, actor, request, request.POST, True)
         if pk == '-99998':
-            #~ assert elem is None
             elem = ar.create_instance()
+            ar.selected_rows = [elem]
         else:
             ar.set_selected_pks(pk)
-        #~ ar.selected_rows = [elem]
         ar.renderer = settings.SITE.ui.extjs_renderer
         return settings.SITE.ui.run_action(ar)
 
@@ -793,18 +789,10 @@ class ApiElement(View):
         ar.set_selected_pks(pk)
         ar.renderer = settings.SITE.ui.extjs_renderer
         elem = ar.selected_rows[0]
-        #~ elem = ar.actor.get_row_by_pk(pk)
-        #~ if elem is None:
-            #~ raise http.Http404("%s has no row with primary key %r" % (actor,pk))
-        # force_update=True)
         return form2obj_and_save(ar, data, elem, False, False)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
-        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ elem = rpt.get_row_by_pk(pk)
-        #~ if elem is None:
-            #~ raise http.Http404("%s has no row with primary key %r" % (rpt,pk))
         ar = rpt.request(request=request)
         ar.set_selected_pks(pk)
         elem = ar.selected_rows[0]

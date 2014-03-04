@@ -72,7 +72,6 @@ ACTION_RESPONSES = frozenset((
     'close_window',
     'xcallback',
     'open_url', 'open_davlink_url',
-    #~ 'console_message',
     'info_message',
     'warning_message',
     'eval_js'))
@@ -469,7 +468,12 @@ class Kernel(object):
         This is called from `lino.ui.views.Callbacks`.
         """
         # logger.info("20131212 get_callback %s %s", thread_id, button_id)
-        ar = BaseRequest(request)
+
+        # 20140304 Also set a renderer so that callbacks can use it
+        # (feature needed by beid.FindByBeIdAction).
+
+        ar = BaseRequest(request, renderer=self.default_renderer)
+
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id, None)
         #~ d = self.pop_thread(int(thread_id))

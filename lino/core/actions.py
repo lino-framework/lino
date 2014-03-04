@@ -273,23 +273,16 @@ class InstanceAction(object):
         self.bound_action.action.run_from_code(ar)
         return ar.response
 
-    #~ def as_button(self,obj,request,label=None):
-        #~ print "Foo"
-        #~ ba = self.defining_actor.get_url_action(self.action_name)
-        #~ btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
-        #~ return E.tostring(btn)
-
     def as_button_elem(self, request, label=None):
-        return settings.SITE.ui.row_action_button(self.instance, request, self.bound_action, label)
+        return settings.SITE.ui.row_action_button(
+            self.instance, request, self.bound_action, label)
 
-    #~ def as_button(self,request,label=None):
     def as_button(self, *args, **kw):
+        """Return a HTML chunk with a "button" which, when clicked, will
+        execute this action on this instance.  This is being used in
+        the :ref:`lino.tutorial.polls`.
+
         """
-        Return a HTML chunk with a "button" which, when clicked, will 
-        execute this action on this instance.
-        This is being used in the :ref:`lino.tutorial.polls`.
-        """
-        #~ btn = settings.SITE.ui.row_action_button(self.instance,request,self.bound_action,label)
         return E.tostring(self.as_button_elem(*args, **kw))
 
 
