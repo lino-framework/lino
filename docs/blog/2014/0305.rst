@@ -1,0 +1,11 @@
+===================================
+20140305 (Wednesday, 05 March 2014)
+===================================
+
+Started to fine-tune the Client Addresses management.
+
+TODO:
+
+- an action to create a ClientAddress from the data stored on Client.
+  Used at least once when migrating data, and when loading demo
+  fixtures. Is it also useful in other situations?

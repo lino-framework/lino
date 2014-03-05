@@ -126,26 +126,38 @@ class AddressLocation(CountryRegionCity):
     class Meta:
         abstract = True
 
-    addr1 = models.CharField(_("Address line before street"),
-                             max_length=200, blank=True,
-                             help_text="Address line before street")
+    addr1 = models.CharField(
+        _("Address line before street"),
+        max_length=200, blank=True,
+        help_text=_("Address line before street"))
 
     street_prefix = models.CharField(
         _("Street prefix"), max_length=200, blank=True,
-        help_text="Text to print before name of street, but to ignore for sorting.")
+        help_text=_("Text to print before name of street, "
+        "but to ignore for sorting."))
 
-    street = models.CharField(_("Street"), max_length=200, blank=True,
-                              help_text="Name of street. Without house number.")
+    street = models.CharField(
+        _("Street"), max_length=200, blank=True,
+        help_text=_("Name of street, without house number."))
 
-    street_no = models.CharField(_("No."), max_length=10, blank=True,
-                                 help_text="House number")
+    street_no = models.CharField(
+        _("No."), max_length=10, blank=True,
+        help_text=_("House number."))
 
-    street_box = models.CharField(_("Box"), max_length=10, blank=True,
-                                  help_text="Text to print after :attr:`steet_no` on the same line")
+    street_box = models.CharField(
+        _("Box"), max_length=10, blank=True,
+        help_text=_("Text to print after street nuber on the same line."))
 
-    addr2 = models.CharField(_("Address line after street"),
-                             max_length=200, blank=True,
-                             help_text="Address line to print below street line")
+    addr2 = models.CharField(
+        _("Address line after street"),
+        max_length=200, blank=True,
+        help_text=_("Address line to print below street line."))
+
+    def on_create(self, ar):
+        sc = settings.SITE.site_config.site_company
+        if sc and sc.country:
+            self.country = sc.country
+        super(AddressLocation, self).on_create(ar)
 
     def address_location_lines(self):
         #~ lines = []
