@@ -741,7 +741,7 @@ def create_layout_element(lh, name, **kw):
     from lino.core import fields
     from lino.core import tables
     from lino.utils.jsgen import js_code
-    #~ if True:
+
     if settings.SITE.catch_layout_exceptions:
         try:
             de = lh.get_data_elem(name)
@@ -881,6 +881,17 @@ def create_layout_element(lh, name, **kw):
         value = getattr(lh, name, None)
         if value is not None:
             return value
+
+    # One last possibility is that the app has been hidden. In that
+    # case we want the element to simply disappear, similar as if the
+    # user had no view permission.
+
+    s = name.split('.')
+    if len(s) == 2:
+        if s[0] in settings.SITE.hidden_apps:
+            return None
+
+    # Now we tried everything. Build an error message.
 
     if hasattr(lh, 'rh'):
         msg = "Unknown element %r referred in layout <%s of %s>." % (

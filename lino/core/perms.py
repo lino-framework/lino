@@ -20,10 +20,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
+from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.actors import get_default_required as required
-#~ from lino.core import fields
 from lino.core import workflows
 from lino.core.dbutils import obj2str
 
@@ -260,12 +260,6 @@ class UserProfiles(ChoiceList):
 
     level = UserLevels.field(_("System"))
 
-    #~ @classmethod
-    #~ def clear(cls):
-        #~ cls.groups_list = [g.value for g in UserGroups.items()]
-        #~ super(UserProfiles,cls).clear()
-    #~ @classmethod
-    #~ def clear(cls,groups='*'):
     @classmethod
     def reset(cls, groups=None, hidden_languages=None):
         """
@@ -273,12 +267,10 @@ class UserProfiles(ChoiceList):
         """
         if hidden_languages is not None:
             cls.hidden_languages = hidden_languages
-        #~ cls.groups_list = [g.value for g in UserGroups.items()]
         expected_names = set(
             ['*'] + [g.value for g in UserGroups.items() if g.value])
         if groups is None:
             groups = ' '.join(expected_names)
-            #~ cls.membership_keys = tuple(expected_names)
         s = []
         for g in groups.split():
             if not g in expected_names:
@@ -345,8 +337,7 @@ class Requirements(object):
 
 
 def make_permission_handler(*args, **kw):
-    """
-    Return a function that will test whether permission is given or not.
+    """Return a function that will test whether permission is given or not.
     
     `elem` is not used (either an Action or a Permittable.)
     
@@ -365,24 +356,28 @@ def make_permission_handler(*args, **kw):
     The remaining keyword arguments are aka "requirements":
     
     `user_level`
-        A string (e.g. ``'manager'``, ``'user'``,...) 
-        The minimum :class:`user level <lino.base.utils.UserLevels>` 
-        required to get the permission.
-        The default value `None` means that no special user level is required.
+
+        A string (e.g. ``'manager'``, ``'user'``,...)
+
+        The minimum :class:`user level <lino.base.utils.UserLevels>`
+        required to get the permission.  The default value `None`
+        means that no special user level is required.
         
-        When `user_groups` is not specified, 
-        then the profile's default level (`UserProfile.level`) 
-        is being tested, otherwise the userlevel for the group 
-        membership.
-        E.g. `dd.required(user_level='manager',user_groups='integ')` 
-        will pass when `profile.level` is "user" and `profile.integ_level` is "manager"
+        When `user_groups` is not specified, then the profile's
+        default level (`UserProfile.level`) is being tested, otherwise
+        the userlevel for the group membership.
+        E.g. `dd.required(user_level='manager',user_groups='integ')`
+        will pass when `profile.level` is "user" and
+        `profile.integ_level` is "manager"
         
         
     `user_groups`
-        List of strings naming the user groups for which membership is required 
-        to get permission to view this Actor.
-        The default value `None` means that no special group membership is required.
-        Alternatively, if this is a string, it will be converted to a list of strings.
+
+        List of strings naming the user groups for which membership is
+        required to get permission to view this Actor.  The default
+        value `None` means that no special group membership is
+        required.  Alternatively, if this is a string, it will be
+        converted to a list of strings.
         
     `states`
         List of strings naming the user groups for which membership is required 
@@ -402,8 +397,7 @@ def make_permission_handler(*args, **kw):
         Usually a subclass of :class:`lino.mixins.UserAuthored`,
         but e.g. :class:`lino.modlib.cal.models.Guest` 
         defines a property `user` because it has no own `user` field).
-    
-    
+
     """
     #~ try:
     return make_permission_handler_(*args, **kw)
@@ -420,8 +414,9 @@ def make_view_permission_handler(*args, **kw):
 
 
 def make_view_permission_handler_(
-    actor, readonly, debug_permissions,
-        user_level=None, user_groups=None, allow=None, auth=False, owner=None, states=None):
+        actor, readonly, debug_permissions,
+        user_level=None, user_groups=None,
+        allow=None, auth=False, owner=None, states=None):
     #~ if states is not None:
         #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
     #~ if owner is not None:
@@ -431,11 +426,8 @@ def make_view_permission_handler_(
         if not isinstance(actor.action, workflows.ChangeStateAction):
             raise Exception("20130724 %s" % actor)
     if True:
-        """
-        ignore `allow` requirement for view_permission
-        because 
-        workflows.Choice.add_transition
-        """
+        # ignore `allow` requirement for view_permission because
+        # workflows.Choice.add_transition
         def allow(action, profile):
             return True
     # if settings.SITE.user_model is not None:
@@ -469,7 +461,14 @@ def make_view_permission_handler_(
                 if not allow1(action, profile):
                     return False
                 for g in user_groups:
-                    level = getattr(profile, g + '_level')
+                    level = getattr(profile, g + '_level', NOT_PROVIDED)
+                    if level is NOT_PROVIDED:
+                        # We need to report the guilty actor,
+                        # otherwise it is difficult to locate the error.
+                        raise Exception(
+                            "user_group %s required by %s does not exist" %
+                            (g, actor))
+                        return False
                     if level >= user_level:
                         return True
                     #~ elif debug_permissions:

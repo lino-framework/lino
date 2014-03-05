@@ -187,7 +187,7 @@ this in their application's :xfile:`settings.py` to provide a default
 list of user profiles for their application.
 
 See the source code of :mod:`lino.projects.presto` or
-:mod:`lino_welfare` for a usage example.
+:mod:`lino_welfare.settings` for a usage example.
 
 Local site administrators may again override this in their
 :xfile:`settings.py`.

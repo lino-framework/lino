@@ -144,6 +144,7 @@ models.signals.post_syncdb.connect(my_handler)
     #~ def setup_handle(self,lh):
         #~ lh.config.label = _("Site Parameters")
         #~ lh.about.label = _("About")
+
 class SiteConfigs(dd.Table):
 
     """

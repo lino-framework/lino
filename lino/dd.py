@@ -394,6 +394,7 @@ login = settings.SITE.login
 startup = settings.SITE.startup
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 is_abstract_model = settings.SITE.is_abstract_model
+is_installed = settings.SITE.is_installed
 
 from django.utils import translation
 get_language = translation.get_language

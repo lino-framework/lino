@@ -7,7 +7,7 @@
 /home/luc/hgwork/lino/docs/include/wip.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/releases/2010/index.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/releases/2011/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/blog/2009/index.rst:8: WARNING: toctree contains reference to document u'blog/2009/0818' that doesn't have a title: no link will be generated
+/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0112' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0114' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0118' that doesn't have a title: no link will be generated
@@ -83,9 +83,6 @@
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0520' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0521' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0527' that doesn't have a title: no link will be generated
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/changes.rst:100: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
-/home/luc/hgwork/lino/docs/tickets/index.rst:19: WARNING: unknown document: title_reference>dd.apps</title_reference> differ from <title_reference>settings.SITE.plugins</title_reference>? <99
+/home/luc/hgwork/lino/docs/blog/2014/0305.rst:39: WARNING: undefined label: lino_welfare.modlib.courses (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist
