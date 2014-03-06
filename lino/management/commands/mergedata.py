@@ -12,7 +12,26 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+""".. management_command:: mergedata
+
+Takes the full name of a python module as argument. It then imports
+this module and expects it to define a function `objects` in its
+global namespace. It calls this function and expects it to yield a
+series of Django instance objects which have not yet been saved. It
+then compares these objects with the "corresponding data" in the
+database and prints a summary to stdout. It then suggests to merge the
+new data into the database.
+
+- It never *deletes* any stored records.
+- All incoming objects either replace an existing (stored) object, or
+  will be added to the database.
+- If an incoming object has a non-empty primary key, then it replaces
+  the corresponding stored object. Otherwise, if the model has
+  `unique` fields, then these cause potential replacement.
+
+Currently the command is only partly implemented, it doesn't yet
+update existing records.  But it detects whether records are new, and
+adds only those.
 
 """
 

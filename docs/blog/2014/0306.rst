@@ -5,12 +5,12 @@
 The `mergedata` management command
 ----------------------------------
 
-The `mergedata` management command takes the full name of a python
-module as argument. It then imports this module and expects it to
-define a function `objects` in its global namespace. It calls this
-function and expects it to yield a series of Django instance objects
-which have not yet been saved. It then compares these objects with the
-"corresponding data" in the database and prints a summary to
+The new management command :manage:`mergedata` takes the full name of
+a python module as argument. It then imports this module and expects
+it to define a function `objects` in its global namespace. It calls
+this function and expects it to yield a series of Django instance
+objects which have not yet been saved. It then compares these objects
+with the "corresponding data" in the database and prints a summary to
 stdout. It then suggests to merge the new data into the database.
 
 - It never *deletes* any stored records.
@@ -19,3 +19,57 @@ stdout. It then suggests to merge the new data into the database.
 - If an incoming object has a non-empty primary key, then it replaces
   the corresponding stored object. Otherwise, if the model has
   `unique` fields, then these cause potential replacement.
+
+
+Upgrade in Châtelet
+-------------------
+
+- :mod:`lino.modlib.statbel.fixtures.inscodes` now gives more helpful
+  error report when `Place.MultipleObjectsReturned` occurs.
+
+- ``props`` was lacking in the :setting:`demo_fixtures` of
+  :mod:`lino_welfare.settings.fr`.
+
+- translations
+
+
+
+sphinx-build gettext very slow
+------------------------------
+
+I want to write and maintain multilingual end-user documentation for
+my software applications using "sphinx-build gettext".  For example,
+here is the source of one of my doctrees:
+https://github.com/lsaffre/lino-welfare/tree/master/userdocs
+
+I noticed that, already on a medium-sized doctree, a build can become
+very slow. By inserting print statements at different places I found
+out that the slowness is due to the calculations done in
+`sphinx.versioning` (called by `Environment.read_doc`) where it merges
+doctrees for each document.
+
+Is there hope that I can get it accelerated?  Am I doing something
+wrong?
+
+
+
+'module' object has no attribute 'CoachingEvents'
+-------------------------------------------------
+
+Trying to get a :ref:`welfare.integ.ActivityReport` failed with an
+AttributeError 'module' object has no attribute 'CoachingEvents'.
+
+Fixed.
+
+
+ERROR 'NoneType' object has no attribute 'PendingCourseRequests'
+Traceback (most recent call last):
+  File "/home/luc/hgwork/lino/lino/core/tables.py", line 214, in execute
+    self._data_iterator = self.get_data_iterator()
+  File "/home/luc/hgwork/lino/lino/core/tables.py", line 254, in get_data_iterator
+    for row in self.actor.get_data_rows(self):
+  File "/home/luc/hgwork/welfare/lino_welfare/modlib/integ/models.py", line 262, in get_data_rows
+    yield add(courses.PendingCourseRequests)
+AttributeError: 'NoneType' object has no attribute 'PendingCourseRequests'
+
+
