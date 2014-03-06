@@ -7,7 +7,6 @@
 /home/luc/hgwork/lino/docs/include/wip.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/releases/2010/index.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/releases/2011/index.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/lino/lino_site.py:docstring of lino.lino_site.Site.webdav_url:7: WARNING: term not in glossary: runserver
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0112' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0114' that doesn't have a title: no link will be generated
 /home/luc/hgwork/lino/docs/blog/2010/index.rst:260: WARNING: toctree contains reference to document u'blog/2010/0118' that doesn't have a title: no link will be generated
