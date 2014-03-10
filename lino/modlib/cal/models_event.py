@@ -235,7 +235,7 @@ class RecurrentEvents(dd.Table):
     """
     model = 'cal.RecurrentEvent'
     required = dd.required(user_groups='office', user_level='manager')
-    column_names = "start_date name every_unit event_type *"
+    column_names = "start_date end_date name every_unit event_type *"
     auto_fit_column_widths = True
     order_by = ['start_date']
 
@@ -343,6 +343,23 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if qs is None:
             return False
         return qs.count() > 0
+
+    def __unicode__(self):
+        if self.pk:
+            s = self._meta.verbose_name + " #" + str(self.pk)
+        else:
+            s = _("Unsaved %s") % self._meta.verbose_name
+        if self.summary:
+            s += " " + self.summary
+        if self.start_date:
+            d = self.start_date.strftime(settings.SITE.date_format_strftime)
+            if self.start_time:
+                t = self.start_time.strftime(
+                    settings.SITE.time_format_strftime)
+                s += " (%s %s)" % (d, t)
+            else:
+                s += " (%s)" % d
+        return s
 
     #~ def conflicts_with_existing(self):
     def get_conflicting_events(self):

@@ -393,7 +393,7 @@ class EventGenerator(mixins.UserAuthored):
                 if not date:
                     ar.info("no start date")
                     return wanted
-                date = self.find_start_date(date)
+                date = rset.find_start_date(date)
                 if date is None:
                     ar.debug("No available weekday.")
     

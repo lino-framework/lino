@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-03-06 12:29+0200\n"
-"PO-Revision-Date: 2014-03-10 11:29+0100\n"
+"PO-Revision-Date: 2014-03-10 12:54+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -556,7 +556,7 @@ msgstr "Marquer comme %s"
 
 #: lino/mixins/__init__.py:77
 msgid "Controlled by"
-msgstr "ContrÃ´lé par"
+msgstr "Contrôlé par"
 
 #: lino/mixins/__init__.py:97 lino/modlib/auto/sales/models.py:271
 msgid "(type)"
@@ -1800,11 +1800,11 @@ msgstr ""
 
 #: lino/modlib/cal/models_guest.py:47
 msgid "Guest Role"
-msgstr "RÃ´le de participant"
+msgstr "Rôle de participant"
 
 #: lino/modlib/cal/models_guest.py:48
 msgid "Guest Roles"
-msgstr "RÃ´les de participants"
+msgstr "Rôles de participants"
 
 #: lino/modlib/cal/models_guest.py:52
 msgid ""
@@ -1823,7 +1823,7 @@ msgstr "Rendez-vous"
 #: lino/modlib/cal/models_guest.py:80 lino/modlib/lists/models.py:102
 #: lino/modlib/partners/models.py:588
 msgid "Role"
-msgstr "RÃ´le"
+msgstr "Rôle"
 
 #: lino/modlib/cal/models_guest.py:148
 msgid ""
@@ -2288,7 +2288,7 @@ msgstr "Confirmation"
 #: lino/modlib/codechanges/models.py:109
 #, fuzzy
 msgid "Module"
-msgstr "RÃ´le"
+msgstr "Rôle"
 
 #: lino/modlib/comments/__init__.py:25
 #, fuzzy
@@ -3577,11 +3577,11 @@ msgstr "Ménage"
 
 #: lino/modlib/households/models.py:159
 msgid "Household Role"
-msgstr "RÃ´le dans ménage"
+msgstr "Rôle dans ménage"
 
 #: lino/modlib/households/models.py:160
 msgid "Household Roles"
-msgstr "RÃ´les dans ménage"
+msgstr "Rôles dans ménage"
 
 #: lino/modlib/households/models.py:162
 msgid "name-giving"
@@ -4204,7 +4204,7 @@ msgstr "NÂ° de TVA"
 #: lino/modlib/partners/models.py:589
 #, fuzzy
 msgid "Roles"
-msgstr "RÃ´le"
+msgstr "Rôle"
 
 #: lino/modlib/partners/models.py:861
 #, fuzzy
@@ -4227,7 +4227,7 @@ msgstr ""
 #: lino/modlib/polls/__init__.py:25 lino/modlib/polls/models.py:157
 #, fuzzy
 msgid "Polls"
-msgstr "RÃ´le"
+msgstr "Rôle"
 
 #: lino/modlib/polls/models.py:81
 #, fuzzy
@@ -5632,7 +5632,7 @@ msgstr ""
 #~ msgstr "Organisations"
 
 #~ msgid "Due"
-#~ msgstr "RÃ´le"
+#~ msgstr "Rôle"
 
 #~ msgid "title"
 #~ msgstr "Allocution"
