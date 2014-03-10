@@ -45,3 +45,7 @@ class QuickTest(TestCase):
             DurationUnits.months.add_duration(start_date, -1), i2d(20101231))
         self.assertEqual(
             DurationUnits.months.add_duration(start_date, -2), i2d(20101130))
+
+        start_date = i2d(20140401)
+        self.assertEqual(
+            DurationUnits.months.add_duration(start_date, 3), i2d(20140701))

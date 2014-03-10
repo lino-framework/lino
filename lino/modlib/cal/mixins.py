@@ -393,7 +393,9 @@ class EventGenerator(mixins.UserAuthored):
                 if not date:
                     ar.info("no start date")
                     return wanted
+                ar.debug("20140310a %s", date)
                 date = rset.find_start_date(date)
+                ar.debug("20140310b %s", date)
                 if date is None:
                     ar.debug("No available weekday.")
     
@@ -412,7 +414,7 @@ class EventGenerator(mixins.UserAuthored):
         with translation.override(self.get_events_language()):
             while i < max_events:
                 if date > until:
-                    ar.info("20131020 reached maximum date %s", until)
+                    ar.info("Reached upper date limit %s", until)
                     break
                 i += 1
                 if settings.SITE.ignore_dates_before is None or \
@@ -432,7 +434,7 @@ class EventGenerator(mixins.UserAuthored):
                         return wanted
 
                     wanted[i] = we
-                date = rset.get_next_date(ar, date)
+                date = rset.get_next_suggested_date(ar, date)
                 if date is None:
                     ar.info("Could not find next date.")
                     break
@@ -448,9 +450,8 @@ class EventGenerator(mixins.UserAuthored):
         if we.state == EventStates.suggested:
             we.state = EventStates.draft
         rset = self.update_cal_rset()
-        date = rset.get_next_date(ar, we.start_date)
+        date = rset.get_next_alt_date(ar, we.start_date)
         if date is None:
-            ar.error("Could not find next date.")
             return
         until = self.update_cal_until() \
             or settings.SITE.site_config.farest_future
@@ -468,12 +469,15 @@ class EventGenerator(mixins.UserAuthored):
 
         """
         date = we.start_date
+        ar.info("resolve_conflicts %s", we.start_date)
         while we.has_conflicting_events():
-            # ar.debug("%s conflicts with %s. ", we,
-            #          we.get_conflicting_events())
-            date = rset.get_next_date(ar, date)
+            ar.debug("20140310 %s conflicts with %s. ", we,
+                     we.get_conflicting_events())
+            date = rset.get_next_alt_date(ar, date)
             if date is None or date > until:
-                ar.debug("Failed to get next date for %s.", we)
+                ar.debug(
+                    "Failed to get next date for %s (%s > %s).",
+                    we, date, until)
                 conflicts = [E.tostring(ar.obj2html(o))
                              for o in we.get_conflicting_events()]
                 msg = ', '.join(conflicts)
@@ -545,10 +549,9 @@ class RecurrenceSet(Started, Ended):
         yield 'start_time'
         yield 'end_time'
 
-    def disabled_fields(self, ar):
+    def unused_disabled_fields(self, ar):
         rv = super(RecurrenceSet, self).disabled_fields(ar)
         if self.every_unit != Recurrencies.per_weekday:
-            #~ return settings.SITE.TASK_AUTO_FIELDS
             rv |= self.WEEKDAY_FIELDS
         return rv
 
@@ -583,18 +586,22 @@ class RecurrenceSet(Started, Ended):
             duration = self.end_date - newdate
             ev.end_date = newdate + duration
             
-    def get_next_date(self, ar, date):
+    def get_next_alt_date(self, ar, date):
+        "Currently always returns date + 1"
+        return date + ONE_DAY
+
+    def get_next_suggested_date(self, ar, date):
         """Find the next date after the given date, without worrying about
         conflicts.
 
         """
         if self.every_unit == Recurrencies.once:
-            ar.debug("get_next_date() once --> None.")
+            ar.debug("get_next_suggested_date() once --> None.")
             return None
         if self.every_unit == Recurrencies.per_weekday:
             date = self.find_start_date(date + ONE_DAY)
             if date is None:
-                ar.debug("get_next_date() failed to find available weekday.")
+                ar.debug("Failed to find available weekday.")
             return date
         return self.every_unit.add_duration(date, self.every)
 
@@ -603,8 +610,6 @@ class RecurrenceSet(Started, Ended):
         including that date)
 
         """
-        if self.every_unit != Recurrencies.per_weekday:
-            return date
         for i in range(7):
             if self.is_available_on(date):
                 return date

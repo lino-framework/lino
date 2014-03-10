@@ -14,3 +14,14 @@ One advantage of having switched to GitHub is that they have good
 documentation. For example `Using SSH over the HTTPS port
 <https://help.github.com/articles/using-ssh-over-the-https-port>`_.
 
+
+
+I forked `get_next_date` into two similar methods
+`get_next_suggested_date` and `get_next_alt_date`.  The former is what
+we are used to, the latter is to be used when trying to find an
+alternative date.
+
+Lino was not yet able to manage recurrencies of type "Monthly, but
+never put on Sunday or Saturday". Not it is.  The "weekdays" now apply
+to every Recurrency.  `Recurrencies.per_weekday` is now deprecated.
+Data migrations should convert `per_weekday` to `daily`.

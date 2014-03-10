@@ -120,19 +120,19 @@ add('7', _('Sunday'), 'sunday')
 class DurationUnit(dd.Choice):
 
     def add_duration(unit, orig, value):
-        """
-        Return a date or datetime obtained by adding `value` 
+        """Return a date or datetime obtained by adding `value`
         times this `unit` to the specified value `orig`.
         Returns None is `orig` is empty.
         
-        This is intended for use as a 
-        `curried magic method` of a specified list item:
+        This is intended for use as a `curried magic method` of a
+        specified list item:
         
-        >>> start_date = datetime.date(2011,10,26)
-        >>> DurationUnits.months.add_duration(start_date,2)
+        >>> start_date = datetime.date(2011, 10, 26)
+        >>> DurationUnits.months.add_duration(start_date, 2)
         datetime.date(2011, 12, 26)
         
-        See more usage examples in :func:`lino.modlib.cal.tests.cal_test.test01`.
+        See more usage examples in :mod:`lino.modlib.cal.tests.test_cal`.
+
         """
         if orig is None:
             return None

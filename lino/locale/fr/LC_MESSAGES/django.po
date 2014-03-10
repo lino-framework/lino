@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-03-06 12:29+0200\n"
-"PO-Revision-Date: 2014-03-10 12:54+0100\n"
+"PO-Revision-Date: 2014-03-10 14:14+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -749,11 +749,11 @@ msgstr "Méthode de construction"
 
 #: lino/mixins/uploadable.py:34
 msgid "upload"
-msgstr "upload"
+msgstr "fichier téléchargé"
 
 #: lino/mixins/uploadable.py:35
 msgid "uploads"
-msgstr "uploads"
+msgstr "fichiers téléchargés"
 
 #: lino/mixins/uploadable.py:37
 msgid "File"
@@ -1021,19 +1021,16 @@ msgid "Attest"
 msgstr "Site"
 
 #: lino/modlib/attestations/models.py:227
-#, fuzzy
 msgid "Printout"
-msgstr "Imprimer"
+msgstr "Extrait"
 
 #: lino/modlib/attestations/models.py:228
-#, fuzzy
 msgid "Printouts"
-msgstr "minutes"
+msgstr "Extraits"
 
 #: lino/modlib/attestations/models.py:236
-#, fuzzy
 msgid "Attestation Type"
-msgstr "Description"
+msgstr "Type d'extrait"
 
 #: lino/modlib/attestations/models.py:279
 msgid "Preview"
@@ -1394,9 +1391,8 @@ msgid "%d event(s) have been updated."
 msgstr "Enregistrement %s a été mis à jour."
 
 #: lino/modlib/cal/mixins.py:174
-#, fuzzy
 msgid "Update Events"
-msgstr "Mes rendez-vous"
+msgstr "Gńérer rendez-vous"
 
 #: lino/modlib/cal/mixins.py:183
 msgid "Move down"
@@ -1588,7 +1584,6 @@ msgid "%d invitations are waiting for your answer."
 msgstr "%d invitations attendent votre réponse."
 
 #: lino/modlib/cal/models_calendar.py:48
-#, fuzzy
 msgid "Calendars"
 msgstr "Calendriers"
 
@@ -1668,23 +1663,19 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/cal/models_event.py:200
-#, fuzzy
 msgid "Recurrent Event"
-msgstr "Dates de récurrence"
+msgstr "Évènement récurrent"
 
 #: lino/modlib/cal/models_event.py:201
-#, fuzzy
 msgid "Recurrent Events"
-msgstr "Dates de récurrence"
+msgstr "Évènements récurrents"
 
 #: lino/modlib/cal/models_event.py:320
-#, fuzzy
 msgctxt "cal"
 msgid "Event"
 msgstr "Rendez-vous"
 
 #: lino/modlib/cal/models_event.py:321
-#, fuzzy
 msgctxt "cal"
 msgid "Events"
 msgstr "Rendez-vous"
@@ -3211,7 +3202,7 @@ msgstr "Langue"
 #: lino/modlib/extjs/ext_renderer.py:330 lino/modlib/extjs/ext_renderer.py:343
 #: lino/modlib/uploads/models.py:69
 msgid "Upload"
-msgstr "Uploader"
+msgstr "Télécharger"
 
 #: lino/modlib/extjs/ext_renderer.py:332 lino/modlib/extjs/ext_renderer.py:347
 msgid "Upload a file from your PC to the server."
@@ -5113,15 +5104,15 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:44
 msgid "Upload Type"
-msgstr "Type d'upload"
+msgstr "Type de fichier téléchargé"
 
 #: lino/modlib/uploads/models.py:45
 msgid "Upload Types"
-msgstr "Types d'upload"
+msgstr "Types de fichiers téléchargés"
 
 #: lino/modlib/uploads/models.py:70 lino/modlib/uploads/models.py:154
 msgid "Uploads"
-msgstr "Uploads"
+msgstr "Fichiers téléchargés"
 
 #: lino/modlib/uploads/models.py:77
 msgid "valid until"
