@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-03-06 12:29+0200\n"
-"PO-Revision-Date: 2014-03-06 17:30+0300\n"
+"PO-Revision-Date: 2014-03-10 11:29+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 #: lino/projects/polly/settings/__init__.py:56
 #: lino/projects/presto/settings/__init__.py:79
 msgid "Anonymous"
-msgstr ""
+msgstr "Anonyme"
 
 #: lino/lino_site.py:464 lino/core/perms.py:77 lino/modlib/users/models.py:44
 #: lino/projects/homeworkschool/settings/__init__.py:90
@@ -39,7 +39,7 @@ msgstr "Signalétique"
 
 #: lino/lino_site.py:1222
 msgid "Reports"
-msgstr ""
+msgstr "Rapports"
 
 #: lino/lino_site.py:1224
 msgid "Configure"
@@ -457,18 +457,16 @@ msgid "Merge this object into another object of same class."
 msgstr ""
 
 #: lino/core/merge.py:155 lino/modlib/changes/models.py:63
-#, fuzzy
 msgid "Merge"
-msgstr "OÃ¹"
+msgstr "Fusionner"
 
 #: lino/core/merge.py:174
 msgid "into..."
-msgstr ""
+msgstr "vers..."
 
 #: lino/core/merge.py:175
-#, fuzzy
 msgid "Reason"
-msgstr "Personne"
+msgstr "Raison"
 
 #: lino/core/merge.py:218
 msgid "Also reassign volatile related objects"
@@ -2553,7 +2551,7 @@ msgstr "Personnes de contact"
 
 #: lino/modlib/contacts/models.py:566
 msgid "Contact Role"
-msgstr "RÃ´le"
+msgstr "Rôle"
 
 #: lino/modlib/contacts/models.py:634 lino/modlib/partners/models.py:656
 msgid "Contact persons"
@@ -2574,7 +2572,7 @@ msgstr "représenté par"
 
 #: lino/modlib/contacts/models.py:785 lino/modlib/partners/models.py:810
 msgid "represented as"
-msgstr "représenté par"
+msgstr "en tant que"
 
 #: lino/modlib/contacts/models.py:871
 msgid "Next partner id"

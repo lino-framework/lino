@@ -478,8 +478,8 @@ class Kernel(object):
         cb = self.pending_threads.pop(thread_id, None)
         #~ d = self.pop_thread(int(thread_id))
         if cb is None:
-            # logger.info("20131212 No callback %r in %r" % (
-            #     thread_id, self.pending_threads.keys()))
+            logger.debug("No callback %r in %r" % (
+                thread_id, self.pending_threads.keys()))
             ar.error("Unknown callback %r" % thread_id)
             return self.render_action_response(ar.response)
         for c in cb.choices:

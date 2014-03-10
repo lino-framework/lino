@@ -56,20 +56,13 @@ wrong?
 'module' object has no attribute 'CoachingEvents'
 -------------------------------------------------
 
-Trying to get a :ref:`welfare.integ.ActivityReport` failed with an
-AttributeError 'module' object has no attribute 'CoachingEvents'.
+Fixed a bug: Trying to get a :ref:`welfare.integ.ActivityReport`
+failed with an AttributeError 'module' object has no attribute
+'CoachingEvents'.
 
-Fixed.
 
-
-ERROR 'NoneType' object has no attribute 'PendingCourseRequests'
-Traceback (most recent call last):
-  File "/home/luc/hgwork/lino/lino/core/tables.py", line 214, in execute
-    self._data_iterator = self.get_data_iterator()
-  File "/home/luc/hgwork/lino/lino/core/tables.py", line 254, in get_data_iterator
-    for row in self.actor.get_data_rows(self):
-  File "/home/luc/hgwork/welfare/lino_welfare/modlib/integ/models.py", line 262, in get_data_rows
-    yield add(courses.PendingCourseRequests)
-AttributeError: 'NoneType' object has no attribute 'PendingCourseRequests'
+Also fixed another bug "ERROR 'NoneType' object has no attribute
+'PendingCourseRequests'" which occured only when courses not
+installed.
 
 

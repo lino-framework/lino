@@ -13,7 +13,12 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines classes :class:`Frame` and :class:`FrameHandle`
+Defines extended field classes like
+:class:`RichTextField`
+:class:`BabelTextField`
+and
+:class:`PercentageField`,
+utility functions like :func:`fields_list`.
 """
 
 import logging
@@ -1022,7 +1027,7 @@ class RecurrenceField(models.CharField):
 
 def fields_list(model, field_names):
     """
-    Return a list with the names of the specified fields,
+    Return a set with the names of the specified fields,
     checking whether each of them exists.
 
     Arguments:
@@ -1035,10 +1040,6 @@ def fields_list(model, field_names):
     will return ``['foo','bar']``
     and ``dd.fields_list(MyModel,"foo baz")`` will raise an exception.
     """
-    #~ return tuple([get_field(model,n) for n in field_names.split()])
-    #~ if model.__name__ == 'Company':
-        #~ print 20110929, [get_field(model,n) for n in field_names.split()]
-    #~ return [get_field(model,n).name for n in field_names.split()]
     lst = set()
     for name in field_names.split():
         e = model.get_data_elem(name)

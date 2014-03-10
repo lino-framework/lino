@@ -128,15 +128,15 @@ version = '.'.join(release.split('.')[:2])
 
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
-exclude_trees = [
-  'blog/2009',
-  'blog/2010',
-  'blog/2011',
-  'blog/2012',
-  'releases/2010',
-  'releases/2011',
-  'include',
-  ]
+exclude_patterns = [
+    'blog/2009/*',
+    'blog/2010/*',
+    'blog/2011/*',
+    'blog/2012/*',
+    'releases/2010/*',
+    'releases/2011/*',
+    'include/*',
+]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None

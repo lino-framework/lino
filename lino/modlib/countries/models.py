@@ -246,8 +246,12 @@ class CountryCity(dd.Model):
     class Meta:
         abstract = True
 
-    country = models.ForeignKey("countries.Country", blank=True, null=True)
-    city = models.ForeignKey('countries.Place', blank=True, null=True)
+    country = models.ForeignKey(
+        "countries.Country", blank=True, null=True)
+    city = models.ForeignKey(
+        'countries.Place',
+        verbose_name=_('City'),
+        blank=True, null=True)
 
     @dd.chooser()
     def city_choices(cls, country):

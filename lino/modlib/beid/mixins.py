@@ -42,8 +42,6 @@ from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
 
-
-
 config = dd.apps.get('beid', None)
 
 
@@ -243,16 +241,7 @@ class BaseBeIdReadCardAction(dd.Action):
         """
         oldobj = obj
         watcher = dd.ChangeWatcher(obj)
-        diffs = []
-        for fldname, new in attrs.items():
-            fld = get_field(holder_model(), fldname)
-            old = getattr(obj, fldname)
-            if old != new:
-                diffs.append(
-                    "%s : %s -> %s" % (
-                        unicode(fld.verbose_name), dd.obj2str(old),
-                        dd.obj2str(new)))
-                setattr(obj, fld.name, new)
+        objects, diffs = obj.get_beid_diffs(attrs)
 
         if len(diffs) == 0:
             return self.goto_client_response(
@@ -264,8 +253,9 @@ class BaseBeIdReadCardAction(dd.Action):
         msg += '\n<br/>'.join(diffs)
 
         def yes(ar2):
-            obj.full_clean()
-            obj.save()
+            for o in objects:
+                o.full_clean()
+                o.save()
             watcher.send_update(ar2.request)
             #~ return self.saved_diffs_response(ar,obj)
             return self.goto_client_response(
@@ -330,12 +320,17 @@ item.
             # client from eid card.
 
             #~ fkw.update(national_id__isnull=True)
-            qs = holder_model().objects.filter(**fkw)
+            contacts = dd.modules.contacts
+            qs = contacts.Person.objects.filter(**fkw)
             if qs.count() == 0:
                 def yes(ar2):
                     obj = holder_model()(**attrs)
                     obj.full_clean()
                     obj.save()
+                    objects, diffs = obj.get_beid_diffs(attrs)
+                    for o in objects:
+                        o.full_clean()
+                        o.save()
                     #~ changes.log_create(ar.request,obj)
                     dd.pre_ui_create.send(obj, request=ar2.request)
                     return self.goto_client_response(
@@ -500,6 +495,32 @@ class BeIdCardHolder(dd.Model):
             # ~ attrs.update(style="background-color:#FA7F7F; padding:3pt;")
             attrs.update(class_="lino-info-red")
         return E.div(*elems, **attrs)
+
+    def get_beid_diffs(obj, attrs):
+        """Return two lists, one with the objects to save, and another with
+        text lines to build a confirmation message explaining which
+        changes are going to be applied after confirmation.
+
+        The default implemantion is for the simple case where the
+        holder is also a contacts.AddressLocation and the address is
+        within the same database row.
+
+        """
+        raise Exception("not tested")
+        diffs = []
+        objects = []
+        # model = holder_model()
+        model = obj.__class__  # the holder
+        for fldname, new in attrs.items():
+            fld = get_field(model, fldname)
+            old = getattr(obj, fldname)
+            if old != new:
+                diffs.append(
+                    "%s : %s -> %s" % (
+                        unicode(fld.verbose_name), dd.obj2str(old),
+                        dd.obj2str(new)))
+                setattr(obj, fld.name, new)
+        return objects, diffs
 
 
 def holder_model():

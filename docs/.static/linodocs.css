@@ -49,6 +49,7 @@ p.caption {
 }
 
 p.logo {
-	width: 100%;
-	text-align: center;
+    width: 100px;
+    text-align: center;
+    padding: 20px;
 }

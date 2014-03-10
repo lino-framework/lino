@@ -1,0 +1,10 @@
+================================
+20140310 (Monday, 10 March 2014)
+================================
+
+Mise en route du Lino au CPAS de Châtelet
+-----------------------------------------
+
+:meth:`lino_welfare.modlib.jobs.models.Contract.disabled_fields`
+caused an ISE in certain situations because it still used a list, not
+a set.
