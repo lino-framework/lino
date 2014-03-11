@@ -315,14 +315,14 @@ item.
             fkw = dict(last_name__iexact=attrs['last_name'],
                        first_name__iexact=attrs['first_name'])
 
-            # if a client with same last_name and first_name
+            # if a Person with same last_name and first_name
             # exists, the user cannot (automatically) create a new
-            # client from eid card.
+            # Client from eid card.
 
             #~ fkw.update(national_id__isnull=True)
             contacts = dd.modules.contacts
-            qs = contacts.Person.objects.filter(**fkw)
-            if qs.count() == 0:
+            pqs = contacts.Person.objects.filter(**fkw)
+            if pqs.count() == 0:
                 def yes(ar2):
                     obj = holder_model()(**attrs)
                     obj.full_clean()
@@ -338,11 +338,18 @@ item.
                 return ar.confirm(
                     yes, _("Create new client %(first_name)s "
                            "%(last_name)s : Are you sure?") % attrs)
-            elif qs.count() > 1:
+            elif pqs.count() == 1:
                 return ar.error(
                     self.sorry_msg % _(
                         "Cannot create new client because "
-                        "there is more than one client named "
+                        "there is already a person named "
+                        "%(first_name)s %(last_name)s in our database.")
+                    % attrs, alert=_("Oops!"))
+            else:
+                return ar.error(
+                    self.sorry_msg % _(
+                        "Cannot create new client because "
+                        "there is more than one person named "
                         "%(first_name)s %(last_name)s in our database.")
                     % attrs, alert=_("Oops!"))
 
