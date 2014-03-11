@@ -96,6 +96,8 @@ def objects():
     def holiday(month, day, en, de, fr):
         return add(
             every_unit=cal.Recurrencies.yearly,
+            monday=True, tuesday=True, wednesday=True, thursday=True,
+            friday=True, saturday=True, sunday=True,
             every=1,
             start_date=datetime.date(
                 year=cal.DEMO_START_YEAR,

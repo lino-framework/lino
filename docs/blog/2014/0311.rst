@@ -7,3 +7,4 @@ Second day in Châtelet
 
 Added new test case to reproduce a problem when generating dates.
 :mod:`lino_welfare.tests.test_isip`.
+

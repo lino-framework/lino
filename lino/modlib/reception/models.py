@@ -441,13 +441,13 @@ class GoneVisitors(Visitors):
 
 class MyWaitingVisitors(MyVisitors, WaitingVisitors):
     label = _("Visitors waiting for me")
-    required = dd.Required(user_groups='integ debts newcomers')
+    required = dd.Required(user_groups='coaching')
     #~ column_names = 'since partner event__summary workflow_buttons'
 
 
 class MyBusyVisitors(MyVisitors, BusyVisitors):
     label = _("Visitors busy with me")
-    required = dd.Required(user_groups='integ debts newcomers')
+    required = dd.Required(user_groups='coaching')
 
     @classmethod
     def get_welcome_messages(cls, ar):
@@ -471,7 +471,7 @@ class MyBusyVisitors(MyVisitors, BusyVisitors):
 
 class MyGoneVisitors(MyVisitors, GoneVisitors):
     label = _("My gone visitors")
-    required = dd.Required(user_groups='integ debts newcomers')
+    required = dd.Required(user_groups='coaching')
 
 
 #~ def get_todo_tables(ar):

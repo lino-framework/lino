@@ -27,29 +27,17 @@ import dateutil
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 #~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
-from django.db.models import loading
-from django.core import exceptions
-from django.utils.importlib import import_module
 
-from north import dbutils
 from north.dbutils import dtosl
 
 
 from lino import mixins
 from lino import dd
-#~ from lino.core import reports
-from lino.core import actions
-from lino.utils import AttrDict
 from lino.utils import ONE_DAY
-from lino.core import constants
-
-from lino.utils.xmlgen.html import E
 
 from .utils import (
     DurationUnits, Recurrencies,
@@ -506,40 +494,35 @@ def customize_users():
             help_text=_("""The default type of events on this site.""")
                     ))
 
-    #~ dd.inject_field('system.SiteConfig',
-        #~ 'holiday_event_type',
-        #~ models.ForeignKey('cal.EventType',
-            #~ blank=True,null=True,
-            #~ related_name="%(app_label)s_%(class)s_set_by_holiday_calender",
-            #~ verbose_name=_("Holiday"),
-            #~ help_text=_("""The default type for recurring calendar events.""")
-    #~ ))
-    #~
-    dd.inject_field('system.SiteConfig',
-                    'site_calendar',
-                    models.ForeignKey('cal.Calendar',
-                                      blank=True, null=True,
-                                      related_name="%(app_label)s_%(class)s_set_by_site_calender",
-                                      verbose_name=_("Site Calendar"),
-            help_text=_("""The default calendar of this site.""")
-                    ))
+    dd.inject_field(
+        'system.SiteConfig',
+        'site_calendar',
+        models.ForeignKey(
+            'cal.Calendar',
+            blank=True, null=True,
+            related_name="%(app_label)s_%(class)s_set_by_site_calender",
+            verbose_name=_("Site Calendar"),
+            help_text=_("""The default calendar of this site.""")))
 
-    dd.inject_field('system.SiteConfig',
-                    'max_auto_events',
-                    models.IntegerField(_("Max automatic events"), default=72,
-                                        blank=True, null=True,
-                                        help_text=_(
+    dd.inject_field(
+        'system.SiteConfig',
+        'max_auto_events',
+        models.IntegerField(
+            _("Max automatic events"), default=72,
+            blank=True, null=True,
+            help_text=_(
                 """Maximum number of automatic events to be generated.""")
-                    ))
+        ))
 
-    dd.inject_field('system.SiteConfig',
-                    'farest_future',
-                    models.DateField(_("Farest future"),
-                                     default=datetime.date.today() +
-                                     dateutil.relativedelta.relativedelta(
-                                         years=5),
+    dd.inject_field(
+        'system.SiteConfig',
+        'farest_future',
+        models.DateField(
+            _("Farest future"),
+            default=datetime.date.today() +
+            dateutil.relativedelta.relativedelta(years=5),
             help_text=_("""Don't generate automatic events past that date.""")
-                    ))
+        ))
 
     #~ users = dd.resolve_app('users')
     #~ users.User.add_model_action(update_reminders=UpdateEvents())
