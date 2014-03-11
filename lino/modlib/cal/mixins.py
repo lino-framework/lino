@@ -393,9 +393,9 @@ class EventGenerator(mixins.UserAuthored):
                 if not date:
                     ar.info("no start date")
                     return wanted
-                ar.debug("20140310a %s", date)
+                # ar.debug("20140310a %s", date)
                 date = rset.find_start_date(date)
-                ar.debug("20140310b %s", date)
+                # ar.debug("20140310b %s", date)
                 if date is None:
                     ar.debug("No available weekday.")
     
@@ -469,10 +469,10 @@ class EventGenerator(mixins.UserAuthored):
 
         """
         date = we.start_date
-        ar.info("resolve_conflicts %s", we.start_date)
+        # ar.debug("20140310 resolve_conflicts %s", we.start_date)
         while we.has_conflicting_events():
-            ar.debug("20140310 %s conflicts with %s. ", we,
-                     we.get_conflicting_events())
+            # ar.debug("20140310 %s conflicts with %s. ", we,
+            #          we.get_conflicting_events())
             date = rset.get_next_alt_date(ar, date)
             if date is None or date > until:
                 ar.debug(

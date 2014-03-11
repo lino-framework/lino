@@ -5,6 +5,9 @@
 Mise en route du Lino au CPAS de Châtelet
 -----------------------------------------
 
+Worked with Mathieu to prepare meetings with end-users in the next
+days.
+
 :meth:`lino_welfare.modlib.jobs.models.Contract.disabled_fields`
 caused an ISE in certain situations because it still used a list, not
 a set.

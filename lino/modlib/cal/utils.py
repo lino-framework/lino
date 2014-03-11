@@ -116,6 +116,10 @@ add('5', _('Friday'), 'friday')
 add('6', _('Saturday'), 'saturday')
 add('7', _('Sunday'), 'sunday')
 
+WORKDAYS = frozenset([
+    Weekdays.get_by_name(k)
+    for k in 'monday tuesday wednesday thursday friday'.split()])
+
 
 class DurationUnit(dd.Choice):
 
@@ -201,7 +205,7 @@ add('D', _('daily'), 'daily')
 add('W', _('weekly'), 'weekly')
 add('M', _('monthly'), 'monthly')
 add('Y', _('yearly'), 'yearly')
-add('P', _('per weekday'), 'per_weekday')
+add('P', _('per weekday'), 'per_weekday')  # deprecated
 
 
 def amonthago():
