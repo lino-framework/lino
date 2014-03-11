@@ -101,6 +101,10 @@ class Link(dd.Sequenced):
         # print('20140204 type_as_child', self.type)
         return self.type.as_child(self.child)
 
+    # @dd.displayfield(_("Birth date"))
+    # def birth_date(self, ar):
+    #     return self.child.birth_date
+
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
@@ -133,7 +137,7 @@ class ChildrenByHuman(Links):
     label = pgettext("(human)", "Children")
     required = dd.required()
     master_key = 'parent'
-    column_names = 'type_as_child:10 child'
+    column_names = 'type_as_child:10 child child__birth_date child__age'
     auto_fit_column_widths = True
     insert_layout = dd.FormLayout("""
     child

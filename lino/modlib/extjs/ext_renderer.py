@@ -1421,8 +1421,7 @@ class ExtRenderer(HtmlRenderer):
             action.action.preprocessor)
         yield "  };"
         yield "  var panel = Ext.getCmp(rp);"
-        # yield "  panel.do_when_clean.createDelegate(panel,[true,h])();"
-        yield "  panel.do_when_clean(true,h);"
+        yield "  if(panel) panel.do_when_clean(true,h); else h();"
         yield "};"
 
     #~ def js_render_window_action(self,rh,action,user):
