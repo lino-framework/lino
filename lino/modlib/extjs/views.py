@@ -165,7 +165,8 @@ def elem2rec_detailed(ar, elem, **rec):
 
 
 def delete_element(ar, elem):
-    assert elem is not None
+    if elem is None:
+        raise Warning("Cannot delete None")
     msg = ar.actor.disable_delete(elem, ar)
     if msg is not None:
         ar.error(None, msg, alert=True)
