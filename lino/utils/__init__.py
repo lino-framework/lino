@@ -428,6 +428,22 @@ def workdays(start, end):
     return n
 
 
+def camelize(s):
+    """
+    >>> camelize("ABC DEF")
+    'Abc Def'
+    >>> camelize("ABC def")
+    'Abc def'
+    >>> camelize("eID")
+    'eID'
+    """
+    def f(k):
+        if k.upper() != k:
+            return k
+        return k[0].upper() + k[1:].lower()
+    return ' '.join([f(k) for k in s.split()])
+
+
 UNCAMEL_RE = re.compile('((?<=[a-z0-9])[A-Z]|(?!^)[A-Z](?=[a-z]))')
 
 
