@@ -464,15 +464,21 @@ class TableRequest(ActionRequest):
         if limit is not None:
             self.limit = limit
 
-    def table2xhtml(self, **kw):
+    def table2xhtml(self, header_level=None, **kw):
         t = xghtml.Table()
         self.dump2html(t, self.sliced_data_iterator, **kw)
-        return t.as_element()
+        e = t.as_element()
+        if header_level is not None:
+            # return E.div(E.h2(self.get_title()), e)
+            return E.div(E.h2(self.actor.label), e)
+        return e
 
     #~ def table2xhtml(self):
         #~ return settings.SITE.ui.table2xhtml(self)
 
-    def dump2html(ar, tble, data_iterator, column_names=None):
+    def dump2html(
+            ar, tble, data_iterator, 
+            column_names=None):
         """
         Render this TableRequest into an existing
         :class:`lino.utils.xmlgen.html.Table`.
@@ -1189,7 +1195,8 @@ class AbstractTable(actors.Actor):
             os.startfile(url)
 
     @classmethod
-    def to_rst(cls, ar, column_names=None, **kwargs):
+    def to_rst(cls, ar, column_names=None, header_level=None, **kwargs):
+        "Better name would be table2rst (analog to table2xhtml())"
         fields, headers, widths = ar.get_field_info(column_names)
         # ~ # in case column_names contains remote fields
         #~ settings.SITE.startup()
@@ -1216,7 +1223,10 @@ class AbstractTable(actors.Actor):
             rows.append([x for x in ar.sums2html(fields, sums)])
 
         t = RstTable(headers, **kwargs)
-        return t.to_rst(rows)
+        s = t.to_rst(rows)
+        if header_level is not None:
+            s = E.tostring(E.h2(ar.get_title())) + s
+        return s
 
         #~ return HtmlTable(headers,rows)
 

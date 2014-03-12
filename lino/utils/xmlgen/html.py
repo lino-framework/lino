@@ -348,8 +348,8 @@ A table containing elementtree HTML:
   Code <NEXTCELL> Result <NEXTROW>
 
   >>> from lino.utils.xmlgen.html import E, RstTable
-  >>> headers = [E.p("A ",E.b("formatted")," header"),"A plain header"]
-  >>> rows = [[1,2],[3,4]]
+  >>> headers = [E.p("A ", E.b("formatted"), " header"), "A plain header"]
+  >>> rows = [[1,2], [3,4]]
   >>> print RstTable(headers).to_rst(rows)
   ======================== ================
    A **formatted** header   A plain header

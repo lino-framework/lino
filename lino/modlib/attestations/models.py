@@ -141,8 +141,8 @@ class AttestAction(dd.Action):
     sort_index = 49  # immediately before "Print"
 
     def get_action_permission(self, ar, obj, state):
-        if not ar.get_user().email:
-            return False
+        # if not ar.get_user().email:
+        #     return False
         if obj is not None:
             if not obj.is_attestable():
                 return False

@@ -1,0 +1,10 @@
+===================================
+20140312 (Wednesday, 12 March 2014)
+===================================
+
+Added new body template for an attestation directly on pcsw.Client.
+
+New features: 
+
+- ar.show() has a new keyword argument `header_level`.
+- New name `lino` in a template is shortcut for `settings.SITE.modules`

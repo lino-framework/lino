@@ -182,8 +182,10 @@ class DisableDeleteHandler():
             if not fk.name in m.allow_cascaded_delete:
                 n = m.objects.filter(**{fk.name: obj}).count()
                 if n:
-                    msg = _("Cannot delete %(self)s \
-                    because %(count)d %(refs)s refer to it.") % dict(
+                    msg = _(
+                        "Cannot delete %(self)s "
+                        "because %(count)d %(refs)s refer to it."
+                    ) % dict(
                         self=obj, count=n,
                         refs=m._meta.verbose_name_plural
                         or m._meta.verbose_name + 's')

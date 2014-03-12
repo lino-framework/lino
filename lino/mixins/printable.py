@@ -737,6 +737,7 @@ class BasePrintable(object):
             tr=settings.SITE.babelitem,
             iif=iif,
             settings=settings,
+            lino=settings.SITE.modules,  # experimental
             ar=ar,
             site_config=settings.SITE.site_config,
             _=translate,

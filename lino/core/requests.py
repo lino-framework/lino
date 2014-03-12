@@ -353,8 +353,13 @@ class BaseRequest(object):
     #~ def set_language(self,*args):
         #~ set_language(*args)
 
+    # def show_slaves(self, master_instance, *args, **kwargs):
+    #     for spec in args:
+    #         self.show(spec, master_instance, **kwargs)
+
     def show(self, spec, master_instance=None,
-             column_names=None, language=None, **kw):
+             column_names=None, header_level=None, 
+             language=None, **kw):
         """Show the table specified by `spec` according to the current
         renderer.  If the table is a :term:`slave table`, then a
         `master_instance` must be specified as second argument.
@@ -362,6 +367,7 @@ class BaseRequest(object):
         Optional keyword arguments are
         
         - `column_names` overrides default list of columns
+        - `header_level` show also the header (using specified level)
         - `language` overrides the default language used for headers and
           translatable data
         
@@ -387,12 +393,15 @@ class BaseRequest(object):
         if master_instance is not None:
             kw.update(master_instance=master_instance)
         ar = self.spawn(spec, **kw)
-        #~ print ar.to_rst(column_names)
+
+        def doit():
+            return ar.renderer.show_request(
+                ar, column_names=column_names, header_level=header_level)
+
         if language:
-            #~ spec.set_language(language)
             with translation.override(language):
-                return ar.renderer.show_request(ar, column_names=column_names)
-        return ar.renderer.show_request(ar, column_names=column_names)
+                return doit()
+        return doit()
 
     def show_menu(self, remove_blanklines=True):
         """
