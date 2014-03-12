@@ -695,10 +695,10 @@ class Action(Parametrizable, Permittable):
         self.run_from_ui(ar, **kw)
 
     def run_from_ui(self, ar, **kw):
-        """
-        Execute the action on the given `row`. 
-        `ar` is an :class:`ActionRequest <lino.core.requests.ActionRequest>` 
-        object representing the context where the action is running.
+        """Execute the action.  `ar` is an :class:`ActionRequest
+        <lino.core.requests.ActionRequest>` object representing the
+        context where the action is running.
+
         """
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)

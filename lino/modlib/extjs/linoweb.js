@@ -2680,14 +2680,15 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   ,on_ok : function() { 
     //~ var rp = this.requesting_panel;
     var panel = this.requesting_panel;
-    //~ console.log("20131004 on_ok",this,panel,arguments);
+    console.log("20131004 on_ok",this,panel,arguments);
     //~ if (panel == undefined) {
         //~ Lino.alert("Sorry, dialog actions don't work without a requesting_panel");
         //~ return;
     //~ }
     //~ var rec = panel.get_current_record();
     var actionName = this.action_name;
-    var pk = this.base_params.mk;
+    var pk;
+    if (this.base_params) { this.base_params.mk; }
     if (pk == undefined && panel) {
         pk = panel.get_current_record().id;
     }

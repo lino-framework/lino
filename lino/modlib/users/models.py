@@ -28,6 +28,39 @@ from lino import mixins
 from lino.core import actions
 
 
+class ChangePassword(dd.Action):
+    label = _("Change password")
+    parameters = dict(
+        current=dd.PasswordField(_("Current password")),
+        new1=dd.PasswordField(_("New password")),
+        new2=dd.PasswordField(_("New password again"))
+    )
+    params_layout = """
+    current
+    new1
+    new2
+    """
+
+    def run_from_ui(self, ar, **kw):
+        
+        pv = ar.action_param_values
+        if pv.new1 != pv.new2:
+            ar.error("New passwords didn't match!")
+            return
+        count = 0
+        for obj in ar.selected_rows:
+            if obj.check_password(pv.current):
+                obj.set_password(pv.new1)
+                obj.full_clean()
+                obj.save()
+                count += 1
+            else:
+                ar.info("Incorrect current password for %s." % obj)
+
+        msg = _("New password has been set for %d users.") % count
+        ar.success(msg, alert=True)
+
+
 class User(mixins.CreatedModified):
 
     """
@@ -148,6 +181,8 @@ inactive and cannot log in."))
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
         return [[u.id, unicode(u)] for u in self.__class__.objects.all()]
         #~ return self.__class__.objects.all()
+
+    change_password = ChangePassword()
 
     # the following methods are unchanged copies from Django's User model
 

@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -120,12 +120,13 @@ class Import(dd.VirtualTable):
         kw = dict()
         flt = ar.param_values.filter
         for item in flt.item_set.all():
-            kw[item.field] = getattr(obj,item.field)
+            kw[item.field] = getattr(obj, item.field)
         return unicode(kw)
 
     @dd.displayfield(_("obj2unicode"))
     def obj2unicode(cls, obj, ar):
         return dd.obj2unicode(obj)
+
 
 def setup_config_menu(site, ui, profile, m):
     p = site.plugins.importfilters
