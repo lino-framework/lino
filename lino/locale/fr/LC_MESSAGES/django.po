@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-03-12 02:37+0100\n"
-"PO-Revision-Date: 2014-03-12 09:11+0100\n"
+"PO-Revision-Date: 2014-03-12 15:03+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -575,12 +575,11 @@ msgstr "%(details)s de %(master)s"
 #: lino/mixins/__init__.py:213 lino/modlib/polls/models.py:335
 #, python-format
 msgid "My %s"
-msgstr ""
+msgstr "Mes %s"
 
 #: lino/mixins/__init__.py:326
-#, fuzzy
 msgid "Modified"
-msgstr "Modèle"
+msgstr "Modifié"
 
 #: lino/mixins/__init__.py:339
 #, fuzzy
