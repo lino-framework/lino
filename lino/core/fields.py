@@ -262,8 +262,6 @@ class RemoteField(FakeField):
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
-        #~ store = top_model.get_default_table().get_handle().store
-        #~ store = self.field.model.get_default_table().get_handle().store
         from lino.ui import store
         #~ self._lino_atomizer = store.create_field(self,name)
         store.get_atomizer(self, name)
@@ -424,9 +422,6 @@ class VirtualField(FakeField):  # (Field):
             setattr(self, k, getattr(self.return_type, k, None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
 
-        #~ store = self.model.get_default_table().get_handle().store
-        #~ self._lino_atomizer = store.create_field(self,self.name)
-        #~ self._lino_atomizer = self.return_type._lino_atomizer
         from lino.ui import store
         #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self, self.name)

@@ -534,6 +534,18 @@ class Model(models.Model):
         #~ assert model is self.__class__
         return self
 
+    def get_detail_action(self, ar):
+        """Used by instance_handler. E.g. for a `pcsw.Client` the
+        detail_action depends on the user profile.
+
+        """
+        a = getattr(self, '_detail_action', None)
+        if not a is None:
+            return a
+        return self.__class__.get_default_table().detail_action
+
+
+
     LINO_MODEL_ATTRIBS = (
         #~ 'as_pdf',
         'get_row_permission',

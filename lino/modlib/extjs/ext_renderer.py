@@ -452,9 +452,7 @@ class ExtRenderer(HtmlRenderer):
             return self.action_call(None, ba, dict(record_id=obj.pk))
 
     def instance_handler(self, ar, obj):
-        a = getattr(obj, '_detail_action', None)
-        if a is None:
-            a = obj.get_default_table().detail_action
+        a = obj.get_detail_action(ar)
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar, obj, None):
                 return self.action_call(None, a, dict(record_id=obj.pk))

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -18,8 +18,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf import settings
-
 from lino.core import constants as ext_requests
 from lino.ui.render import HtmlRenderer
 from lino.ui.render import add_user_language
@@ -36,9 +34,7 @@ class PlainRenderer(HtmlRenderer):
     is_interactive = True
 
     def instance_handler(self, ar, obj, **kw):
-        a = getattr(obj, '_detail_action', None)
-        if a is None:
-            a = obj.__class__.get_default_table().detail_action
+        a = obj.get_detail_action(ar)
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar, obj, None):
                 add_user_language(kw, ar)
