@@ -1,0 +1,9 @@
+==================================
+20140313 (Thursday, 13 March 2014)
+==================================
+
+Attestations (Printouts)
+------------------------
+
+Today it's time in Chatelet to set up the WebDAV connection.
+

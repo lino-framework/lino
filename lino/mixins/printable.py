@@ -508,12 +508,13 @@ class EditTemplate(BasePrintAction):
         tplfile = bm.get_template_file(ar, self, elem)
         kw.update(message=_("Template file: %s ") % tplfile)
         kw.update(alert=True)
-        url = "file://" + tplfile
+        url = tplfile
         if bm.use_webdav and davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
-            kw.update(open_url=url)
-        return ar.success(**kw)
+            kw.update(open_url="file://" + url)
+        ar.success(**kw)
+        logger.info('20140313 EditTemplate %r', kw)
 
 
 class DirectPrintAction(BasePrintAction):

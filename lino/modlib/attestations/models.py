@@ -102,7 +102,7 @@ class AttestationTypes(dd.Table):
     """
     model = 'attestations.AttestationType'
     required = dd.required(user_level='admin', user_groups='office')
-    column_names = 'name build_method template content_type primary *'
+    column_names = 'content_type name build_method template primary *'
     order_by = ["name"]
 
     insert_layout = """
