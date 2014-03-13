@@ -3966,7 +3966,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   set_status : function(status){
     //~ console.log("20130605 GridPanel.set_status",status);
     this.clear_base_params();
-    if (status == undefined) status = {};
+    if (status == undefined) status = {base_params:{}};
     this.set_param_values(status.param_values);
     if (status.base_params) { 
       this.set_base_params(status.base_params);
@@ -4136,8 +4136,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ console.log('20130911 GridPanel.set_base_params',p)
     for (k in p) this.store.setBaseParam(k,p[k]);
     //~ this.store.baseParams = p;
-    if (p.query) 
-        this.quick_search_field.setValue(p.query);
+    if (this.quick_search_field)
+      this.quick_search_field.setValue(p.query || "");
     //~ if (p.param_values) 
         //~ this.set_param_values(p.param_values);  
   },
