@@ -78,9 +78,10 @@ Default profiles are following
 ::
 
     add = dd.UserProfiles.add_item
+    from lino.core.perms import UserLevels
     add('000', _("Anonymous"),      name='anonymous',   level=None,     authenticated=False)
-    add('100', _("User"),           name='user',        level='user')
-    add('900', _("Administrator"),  name='admin',       level='admin')
+    add('100', _("User"),           name='user',        level=UserLevels.user)
+    add('900', _("Administrator"),  name='admin',       level=UserLevels.admin)
 
 and can be changed in settings.py file:
 ::
@@ -93,10 +94,11 @@ and can be changed in settings.py file:
             """
             from lino import dd
             from django.utils.translation import ugettext_lazy as _
-            dd.UserProfiles.reset("office system")  # names of UserGroups as parameter
+            from lino.core.perms import UserLevels
+            dd.UserProfiles.reset("office system")  # names of UserGroups we want to set specific user level for
             add = dd.UserProfiles.add_item
-            add('100', _("Newbie"),     name='anonymous',    level="user",  memberships="G_M") # Gives Newbie a "Guest" Level for "office" User Group and "Manager" Level for "system" group
-            add('999', _("Master"),     name='master',       level="expert")
+            add('100', _("Newbie"),     name='anonymous',    level=UserLevels.user,  memberships="G_M") # Gives Newbie a "Guest" Level for "office" User Group and "Manager" Level for "system" group
+            add('999', _("Master"),     name='master',       level=UserLevels.expert)
          ...
 
 Each Profile contains information about authorization level. There is possibility to set global User Level for each profile.
