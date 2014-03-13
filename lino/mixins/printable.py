@@ -678,6 +678,7 @@ class BasePrintable(object):
     """
     Common base for :class:`Printable`.and :class:`CachedPrintable`.
     """
+    edit_template = EditTemplate()
 
     def before_printable_build(self, bm):
         pass
@@ -754,7 +755,6 @@ class Printable(BasePrintable):
     """
 
     do_print = DirectPrintAction()
-    edit_template = EditTemplate()
 
 
 class CachedPrintable(Duplicable, BasePrintable):
