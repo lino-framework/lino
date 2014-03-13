@@ -225,10 +225,6 @@ class SimpleBuildMethod(BuildMethod):
                 #~ lang = babel.DEFAULT_LANGUAGE
         #~ return lang + '/' + tpl_leaf
 
-    #~ def get_template_url(self,action,elem):
-        #~ tpl = self.get_template_leaf(action,elem)
-        #~ return self.templates_url + '/' + tpl
-
     def get_template_file(self, ar, action, elem):
         from lino.utils.config import find_config_file
         tpl_leaf = self.get_template_leaf(action, elem)
@@ -237,6 +233,16 @@ class SimpleBuildMethod(BuildMethod):
         if not tplfile:
             raise Warning("No file %s/%s" % (group, tpl_leaf))
         return tplfile
+
+    def get_template_url(self, ar, action, elem):
+        """Return the url for EditTemplate action.  This does not yet manage
+the problem of library templates.
+
+        """
+
+        leaf = self.get_template_leaf(action, elem)
+        group = elem.get_templates_group()
+        return settings.SITE.build_media_url('config', group, leaf)
 
     def build(self, ar, action, elem):
         #~ if elem is None:
@@ -505,14 +511,15 @@ class EditTemplate(BasePrintAction):
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
         bm = elem.get_build_method()
-        tplfile = bm.get_template_file(ar, self, elem)
-        kw.update(message=_("Template file: %s ") % tplfile)
+
+        url = bm.get_template_url(ar, self, elem)
+        kw.update(message=_("Template URL: %s ") % url)
         kw.update(alert=True)
-        url = tplfile
+        url = ar.request.build_absolute_uri(url)
         if davlink:
-            kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
+            kw.update(open_davlink_url=url)
         else:
-            kw.update(open_url="file://" + url)
+            kw.update(open_url=url)
         ar.success(**kw)
         logger.info('20140313 EditTemplate %r', kw)
 
