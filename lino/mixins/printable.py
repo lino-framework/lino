@@ -678,7 +678,6 @@ class BasePrintable(object):
     """
     Common base for :class:`Printable`.and :class:`CachedPrintable`.
     """
-    edit_template = EditTemplate()
 
     def before_printable_build(self, bm):
         pass
@@ -781,7 +780,7 @@ class CachedPrintable(Duplicable, BasePrintable):
     """
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
-    #~ print_all = PrintAll()
+    edit_template = EditTemplate()
 
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
