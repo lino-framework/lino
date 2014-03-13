@@ -615,7 +615,7 @@ class ClearCacheAction(actions.Action):
 
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
-            #~ logger.info("%r != %r", elem.get_cache_mtime(),elem.build_time)
+            logger.info("20140313 %r != %r", elem.get_cache_mtime(),elem.build_time)
             return ar.confirm(
                 doit,
                 _("This will discard all changes in the generated file."),
