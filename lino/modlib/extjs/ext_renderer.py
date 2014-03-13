@@ -621,17 +621,19 @@ class ExtRenderer(HtmlRenderer):
 
                 user = request.user
 
-                yield "Lino.user = %s;" % py2js(dict(id=user.id, name=unicode(user)))
+                yield "Lino.user = %s;" % py2js(
+                    dict(id=user.id, name=unicode(user)))
 
                 if user.profile.level >= dd.UserLevels.admin:
-                    authorities = [(u.id, unicode(u))
-                                   #~ for u in users.User.objects.exclude(profile=dd.UserProfiles.blank_item)] 20120829
-                                   #~ for u in users.User.objects.filter(profile__isnull=False)]
-                                   for u in settings.SITE.user_model.objects.exclude(profile='').exclude(id=user.id)]
-                        #~ for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest)]
+                    authorities = [
+                        (u.id, unicode(u))
+                        for u in settings.SITE.user_model.objects.exclude(
+                            profile='').exclude(id=user.id)]
                 else:
-                    authorities = [(a.user.id, unicode(a.user))
-                                   for a in users.Authority.objects.filter(authorized=user)]
+                    authorities = [
+                        (a.user.id, unicode(a.user))
+                        for a in users.Authority.objects.filter(
+                            authorized=user)]
 
                 a = users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
@@ -804,15 +806,13 @@ class ExtRenderer(HtmlRenderer):
         actors_list.extend(
             [a for a in choicelists.CHOICELISTS.values() if settings.SITE.is_installed(a.app_label)])
 
-        #~ logger.info("20130804 gonna remove %s", [repr(a) for a in actors_list if settings.SITE.modules.resolve(str(a)) is not a])
-        #~ actors_list = [a for a in actors_list if settings.SITE.modules.resolve(str(a)) is a]
-
         # don't generate JS for abstract actors
         actors_list = [a for a in actors_list if not a.is_abstract()]
 
-        """
-        Call Ext.namespace for *all* actors because e.g. outbox.Mails.FormPanel 
-        is defined in ns outbox.Mails which is not directly used by non-expert users.
+        """Call Ext.namespace for *all* actors because
+        e.g. outbox.Mails.FormPanel is defined in ns outbox.Mails
+        which is not directly used by non-expert users.
+
         """
         for a in actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
@@ -823,19 +823,11 @@ class ExtRenderer(HtmlRenderer):
         """
         actors with their own `get_handle_name` don't have a js implementation
         """
-        #~ print '20120605 dynamic actors',[a for a in actors_list if a.get_handle_name is not None]
         actors_list = [a for a in actors_list if a.get_handle_name is None]
 
-        #~ new_actors_list = []
-        #~ for a in actors_list:
-            #~ if a.get_view_permission(jsgen._for_user_profile):
-                #~ new_actors_list.append(a)
-        #~ actors_list = new_actors_list
-
-        actors_list = [a for a in actors_list
-                       if a.default_action.get_view_permission(jsgen._for_user_profile)]
-
-        #~ actors_list = [a for a in actors_list if a.get_view_permission(jsgen._for_user)]
+        actors_list = [
+            a for a in actors_list
+            if a.default_action.get_view_permission(jsgen._for_user_profile)]
 
         f.write("\n// ChoiceLists: \n")
         for a in choicelists.CHOICELISTS.values():
@@ -963,7 +955,10 @@ class ExtRenderer(HtmlRenderer):
                         f.write(ln + '\n')
 
         #~ assert user == jsgen._for_user
-        assert profile == jsgen._for_user_profile
+        if profile != jsgen._for_user_profile:
+            logger.warning(
+                "Oops, profile %s != jsgen._for_user_profile %s",
+                profile, jsgen._for_user_profile)
 
         return 1
 

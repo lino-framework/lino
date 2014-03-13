@@ -509,7 +509,7 @@ class EditTemplate(BasePrintAction):
         kw.update(message=_("Template file: %s ") % tplfile)
         kw.update(alert=True)
         url = tplfile
-        if bm.use_webdav and davlink:
+        if davlink:
             kw.update(open_davlink_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url="file://" + url)
