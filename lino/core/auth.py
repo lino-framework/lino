@@ -24,9 +24,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.utils.importlib import import_module
-from django.utils.translation import ugettext_lazy as _
-
 from django.core import exceptions
 from django.utils import translation
 from django.conf import settings
@@ -38,6 +35,8 @@ from lino.core.perms import AnonymousUser
 
 
 class AuthMiddleWareBase(object):
+    # Singleton instance
+    _instance = None
 
     """
     Common base class for 
@@ -47,13 +46,14 @@ class AuthMiddleWareBase(object):
     :class:`NoUserMiddleware`.
     """
 
+    def __init__(self):
+        # Save singleton instance
+        AuthMiddleWareBase._instance = self
+
     def get_user_from_request(self, request):
         raise NotImplementedError
 
     def process_request(self, request):
-
-        #~ print 20130313, request.session.get('username')
-
         settings.SITE.startup()
         """
         first request will trigger site startup to load UserProfiles
@@ -66,8 +66,7 @@ class AuthMiddleWareBase(object):
     class NOT_NEEDED:
         pass
 
-    #~ @classmethod
-    def authenticate(cls, username, password=NOT_NEEDED):
+    def authenticate(self, username, password=NOT_NEEDED):
         #~ logger.info("20130923 authenticate %s,%s" % (username,password))
 
         if not username:
@@ -86,7 +85,7 @@ class AuthMiddleWareBase(object):
                 logger.info(
                     "Could not authenticate %s : user has no profile", username)
                 return None
-            if password != cls.NOT_NEEDED:
+            if password != self.NOT_NEEDED:
                 if not user.check_password(password):
                     logger.info(
                         "Could not authenticate %s : password mismatch", username)
@@ -156,6 +155,12 @@ class AuthMiddleWareBase(object):
         #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.SITE.user_model):
             #~ raise Exception("20121228")
 
+    def can_change_password(self, request, user):
+        return False
+
+    def change_password(self, request, user, password):
+        raise NotImplementedError
+
 
 class RemoteUserMiddleware(AuthMiddleWareBase):
 
@@ -183,8 +188,6 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
             settings.SITE.remote_user_header, settings.SITE.default_user)
 
         if not username:
-            #~ msg = "Using remote authentication, but no user credentials found."
-            #~ raise exceptions.PermissionDenied(msg)
             raise Exception(
                 "Using remote authentication, but no user credentials found.")
 
@@ -224,13 +227,11 @@ class SessionUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
-        #~ logger.info("20130923 get_user_from_request(%s)" % request.session.items())
 
         user = self.authenticate(request.session.get('username'),
                                  request.session.get('password'))
 
         if user is None:
-            #~ logger.info("20130923 Login failed from session %s", request.session)
             user = AnonymousUser.instance()
 
         return user
@@ -265,9 +266,6 @@ class LDAPAuthMiddleware(SessionUserMiddleware):
         self.domain = server_spec[0]
         self.server = server_spec[1]
 
-        #~ domain = 'DOMAIN_NAME'
-        #~ server = 'SERVER_DNS'
-
         self.creds = Creds(domain)
 
     def check_password(self, username, password):
@@ -280,10 +278,9 @@ class LDAPAuthMiddleware(SessionUserMiddleware):
 
         return False
 
-    #~ @classmethod
-    def authenticate(cls, username, password=SessionUserMiddleware.NOT_NEEDED, from_session=False):
+    def authenticate(self, username, password=SessionUserMiddleware.NOT_NEEDED, from_session=False):
         if not from_session and username and password != SessionUserMiddleware.NOT_NEEDED:
-            if not cls.check_password(username, password):
+            if not self.check_password(username, password):
                 return None
 
         return SessionUserMiddleware.authenticate(username, SessionUserMiddleware.NOT_NEEDED)
@@ -301,12 +298,12 @@ class LDAPAuthMiddleware(SessionUserMiddleware):
 
 
 def get_auth_middleware():
+    """
+    Returns active Authentication Middleware instance
 
-    if settings.SITE.auth_middleware is None:
-        return AuthMiddleWareBase
-    module, obj = settings.SITE.auth_middleware.rsplit('.', 1)
-    module = import_module(module)
-    return getattr(module, obj)
+    :return: AuthMiddleWareBase
+    """
+    return AuthMiddleWareBase._instance
 
 
 def authenticate(*args, **kwargs):
@@ -314,5 +311,4 @@ def authenticate(*args, **kwargs):
     Needed by the ``/auth`` view (:class:`lino.ui.views.Authenticate`).
     Called when the Login window of the web interface is confirmed.
     """
-    middleware = get_auth_middleware()
-    return middleware().authenticate(*args, **kwargs)
+    return get_auth_middleware().authenticate(*args, **kwargs)

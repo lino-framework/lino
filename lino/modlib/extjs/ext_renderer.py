@@ -75,6 +75,7 @@ from lino.utils import AttrDict
 from lino.utils import choosers
 from lino.core import choicelists
 from lino.core import menus
+from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from lino.utils.xmlgen import html as xghtml
@@ -657,10 +658,11 @@ class ExtRenderer(HtmlRenderer):
                 if site.remote_user_header is None:
                     login_menu_items.append(
                         dict(text=_("Log out"), handler=js_code('Lino.logout')))
-                    login_menu_items.append(
-                        dict(text=_("Change password"), handler=js_code('Lino.change_password')))
-                    login_menu_items.append(
-                        dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
+                    if auth.get_auth_middleware().can_change_password(request, request.user):
+                        login_menu_items.append(
+                            dict(text=_("Change password"), handler=js_code('Lino.change_password')))
+                        login_menu_items.append(
+                            dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
 
                 login_menu = dict(
                     text=user_text,
