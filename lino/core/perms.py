@@ -45,13 +45,13 @@ class UserLevels(ChoiceList):
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
     required = required(user_level='admin')
-    short_name = models.CharField(_("Short name"), max_length=2,
-                                  help_text=_("Used when defining UserProfiles"))
+    short_name = models.CharField(
+        _("Short name"), max_length=2,
+        help_text=_("Used when defining UserProfiles"))
 
     @classmethod
     def get_column_names(self, ar):
         return 'value name short_name text remark'
-        #~ return 'value name short_name *'
 
     @classmethod
     def field(cls, module_name=None, **kw):
@@ -63,11 +63,6 @@ class UserLevels(ChoiceList):
             kw.update(verbose_name=translation.string_concat(
                 cls.verbose_name, ' (', module_name, ')'))
         return super(UserLevels, cls).field(**kw)
-
-    #~ @fields.virtualfield(models.CharField(_("Short name"),max_length=2,
-        #~ help_text="used to fill UserProfiles"))
-    #~ def short_name(cls,choice,ar):
-        #~ return choice.short_name
 
 
 add = UserLevels.add_item
@@ -161,17 +156,13 @@ class UserProfile(Choice):
 
         #~ print 20120705, value, kw
 
-        assert self.kw.has_key('level')
+        assert 'level' in self.kw
 
         for k, vf in cls.virtual_fields.items():
             if vf.has_default():
                 self.kw.setdefault(k, vf.get_default())
             elif vf.return_type.blank:
                 self.kw.setdefault(k, None)
-            #~ if k == 'accounting_level':
-            #~ if k == 'hidden_languages':
-                #~ print 20130920, k, vf, vf.has_default(), vf.get_default()
-        #~ self.kw.setdefault('hidden_languages',cls.hidden_languages.default)
 
         for k, v in self.kw.items():
             setattr(self, k, v)
@@ -185,33 +176,6 @@ class UserProfile(Choice):
 
         del self.kw
         del self.memberships
-
-        #~ for grp in enumerate(UserGroups.items()):
-            #~ attname = grp.value + '_level'
-            #~ setattr(self,attname,kw.pop(attname,''))
-        #~ if kw:
-            #~ raise Exception("UserProfile got unexpected arguments %s" % kw)
-
-        #~ dd.UserProfiles.add_item(value,label,None,**kw)
-
-    #~ def __init__(self,level='',*args,**kw):
-    #~ def __init__(self,level='',*args):
-    #~ def __init__(self,**kw):
-        #~ if level:
-            #~ self.level = getattr(UserLevels,level)
-        #~ else:
-            #~ self.level = UserLevels.blank_item
-        #~ self.level = UserLevels.get_by_name(level)
-        #~ groups = UserGroups.items()
-        #~ if len(args) > len(groups):
-            #~ raise Exception("More arguments than user groups.")
-        #~ for i,levelname in enumerate(args):
-            #~ attname = groups[i].value + '_level'
-            #~ v = UserLevels.get_by_name(levelname)
-            #~ setattr(self,attname,v)
-        #~ kw.setdefault('readonly',False)
-        #~ for k,v in kw.items():
-            #~ setattr(self,k,v)
 
     def __repr__(self):
         #~ s = self.__class__.__name__
@@ -228,9 +192,6 @@ class UserProfile(Choice):
                     s += ",%s=%s" % (g.value, v.name)
         s += ")"
         return s
-
-    #~ def hide_languages(self,languages):
-        #~ self.hidden_languages = set(settings.SITE.resolve_languages(languages))
 
 
 class UserProfiles(ChoiceList):

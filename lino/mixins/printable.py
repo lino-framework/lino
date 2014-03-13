@@ -242,7 +242,7 @@ the problem of library templates.
 
         leaf = self.get_template_leaf(action, elem)
         group = elem.get_templates_group()
-        return settings.SITE.build_media_url('config', group, leaf)
+        return settings.SITE.build_media_url('webdav', 'config', group, leaf)
 
     def build(self, ar, action, elem):
         #~ if elem is None:
@@ -513,15 +513,17 @@ class EditTemplate(BasePrintAction):
         bm = elem.get_build_method()
 
         url = bm.get_template_url(ar, self, elem)
-        kw.update(message=_("Template URL: %s ") % url)
-        kw.update(alert=True)
         url = ar.request.build_absolute_uri(url)
+        kw.update(message=_("Going to launch: %s ") % url)
+        kw.update(alert=True)
         if davlink:
             kw.update(open_davlink_url=url)
         else:
             kw.update(open_url=url)
         ar.success(**kw)
         logger.info('20140313 EditTemplate %r', kw)
+
+# http://10.171.37.173/api/attestations/AttestationTypes/5?an=detail
 
 
 class DirectPrintAction(BasePrintAction):
