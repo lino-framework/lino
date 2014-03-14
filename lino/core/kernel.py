@@ -48,6 +48,7 @@ from lino.core.requests import BaseRequest
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
+from lino.core import fields
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
@@ -338,13 +339,13 @@ class Kernel(object):
             for f in model._meta.virtual_fields:
                 if isinstance(f, generic.GenericForeignKey):
                     settings.SITE.GFK_LIST.append(f)
-
+        vip_classes = (layouts.BaseLayout, fields.Dummy)
         for a in models.get_apps():
             app_label = a.__name__.split('.')[-2]
             #~ logger.info("Installing %s = %s" ,app_label,a)
 
             for k, v in a.__dict__.items():
-                if isinstance(v, type) and issubclass(v, layouts.BaseLayout):
+                if isinstance(v, type) and issubclass(v, vip_classes):
                     #~ print "%s.%s = %r" % (app_label,k,v)
                     self.modules.define(app_label, k, v)
                 #~ if isinstance(v,type) and issubclass(v,dd.Plugin):

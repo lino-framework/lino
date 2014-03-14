@@ -147,39 +147,15 @@ class StartedSummaryDescription(Started):
         return elems
 
 
-class MultipleRowAction(actions.Action):
-
-    callable_from = (actions.GridEdit, actions.ShowDetailAction)
-
-    def run_on_row(self, obj, ar):
-        raise NotImplemented()
-
-    def run_from_ui(self, ar, **kw):
-        ar.success(**kw)
-        n = 0
-        for obj in ar.selected_rows:
-            if not ar.response.get('success'):
-                ar.info("Aborting remaining rows")
-                break
-            ar.info("%s for %s...", self.label, unicode(obj))
-            n += self.run_on_row(obj, ar)
-            ar.response.update(refresh_all=True)
-
-        msg = _("%d event(s) have been updated.") % n
-        ar.info(msg)
-        #~ ar.success(msg,**kw)
-
-
-class UpdateEvents(MultipleRowAction):
+class UpdateEvents(dd.MultipleRowAction):
     label = _('Update Events')
-    show_in_row_actions = True
     icon_name = 'lightning'
 
     def run_on_row(self, obj, ar):
         return obj.update_reminders(ar)
 
 
-class MoveEventNext(MultipleRowAction):
+class MoveEventNext(dd.MultipleRowAction):
     label = _('Move down')
     show_in_row_actions = True
     icon_name = 'date_next'
@@ -289,7 +265,7 @@ class EventGenerator(mixins.UserAuthored):
         wanted = self.get_wanted_auto_events(ar)
         #~ logger.info("20131020 get_wanted_auto_events() returned %s",wanted)
         count = len(wanted)
-        current = 0
+        # current = 0
 
         #~ msg = dd.obj2str(self)
         #~ msg += ", qs=" + str([e.auto_type for e in qs])

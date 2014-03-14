@@ -759,6 +759,8 @@ def create_layout_element(lh, name, **kw):
     #~ if isinstance(de,fields.NullField):
         #~ return None
 
+    if isinstance(de, type) and issubclass(de, fields.Dummy):
+        return None
     if isinstance(de, fields.DummyField):
         return None
     if isinstance(de, fields.Constant):

@@ -994,6 +994,10 @@ or "%(ex3)s" means "on a 23th of July".""") % msgkw)
         #~ return self.get_prep_value(value)
 
 
+class Dummy(object):
+    pass
+
+
 class DummyField(object):
 
     """
@@ -1003,6 +1007,9 @@ class DummyField(object):
 
     def __init__(self, *args, **kw):
         pass
+
+    # def __getattr__(self, name):
+    #     return None
 
     def set_attributes_from_name(self, k):
         pass

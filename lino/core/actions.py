@@ -720,6 +720,8 @@ class Action(Parametrizable, Permittable):
         pass
 
 
+
+
 class TableAction(Action):
 
     """
@@ -740,6 +742,9 @@ class RedirectAction(Action):
 
     def get_target_url(self, elem):
         raise NotImplementedError
+
+
+
 
 
 def buttons2pager(buttons):
@@ -1192,6 +1197,29 @@ class CalendarAction(Action):
     #~ icon_name = 'x-tbar-calendar'
     icon_name = 'calendar'
 
+
+class MultipleRowAction(Action):
+
+    show_in_row_actions = True
+    callable_from = (GridEdit, ShowDetailAction)
+
+    def run_on_row(self, obj, ar):
+        raise NotImplemented()
+
+    def run_from_ui(self, ar, **kw):
+        ar.success(**kw)
+        n = 0
+        for obj in ar.selected_rows:
+            if not ar.response.get('success'):
+                ar.info("Aborting remaining rows")
+                break
+            ar.info("%s for %s...", unicode(self.label), unicode(obj))
+            n += self.run_on_row(obj, ar)
+            ar.response.update(refresh_all=True)
+
+        msg = _("%d row(s) have been updated.") % n
+        ar.info(msg)
+        #~ ar.success(msg,**kw)
 
 
 def action(*args, **kw):

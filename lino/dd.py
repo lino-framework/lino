@@ -212,6 +212,7 @@ from lino.core.tables import VentilatingTable
 from lino.core.actions import action
 #~ from lino.core.actions import Action
 from lino.core.actions import Action
+from lino.core.actions import MultipleRowAction
 #~ RowAction = CustomAction
 #~ Action = CustomAction
 from lino.core.actions import ShowSlaveTable
@@ -231,7 +232,12 @@ from lino.core.actions import NotifyingAction
 
 
 from lino.core.fields import fields_list, ImportedFields
-from lino.core.fields import DummyField
+from lino.core.fields import Dummy, DummyField
+
+# 20140314 need a Dummy object to define a dummy module
+# from lino.core.layouts import BaseLayout as Dummy  # 20140314
+# from lino.core.actors import Actor as Dummy  # 20140314
+
 from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField

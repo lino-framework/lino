@@ -304,6 +304,14 @@ class ExtAllDayField(dd.VirtualField):
         #~ return True
 
 
+class UpdateGuests(dd.MultipleRowAction):
+    label = _('Update Guests')
+    icon_name = 'lightning'
+
+    def run_on_row(self, obj, ar):
+        return obj.update_guests(ar)
+
+
 class Event(Component, Ended,
             mixins.TypedPrintable,
             outbox.Mailable,
@@ -319,6 +327,8 @@ class Event(Component, Ended,
         #~ abstract = True
         verbose_name = pgettext(u"cal", u"Event")
         verbose_name_plural = pgettext(u"cal", u"Events")
+
+    do_update_guests = UpdateGuests()
 
     event_type = models.ForeignKey('cal.EventType', blank=True, null=True)
 
@@ -424,19 +434,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
 
-    def save(self, *args, **kw):
-        r = super(Event, self).save(*args, **kw)
-        self.add_guests()
-        #~ """
-        #~ The following hack removes this event from the series of
-        #~ automatically generated events so that the Generator re-creates
-        #~ a new one.
-        #~ """
-        #~ if self.state == EventStates.cancelled:
-            #~ self.auto_type = None
-        return r
+    # def save(self, *args, **kw):
+    #     r = super(Event, self).save(*args, **kw)
+    #     self.add_guests()
+    #     return r
 
-    def add_guests(self):
+    def update_guests(self, ar):
         """
         Decide whether it is time to add Guest instances for this event,
         and if yes, call :meth:`suggest_guests` to instantiate them.
@@ -444,28 +447,31 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ print "20130722 Event.save"
         #~ print "20130717 add_guests"
         if settings.SITE.loading_from_dump:
-            return
+            return 0
         if not self.is_user_modified():
-            #~ print "not is_user_modified"
-            return
+            ar.info("not is_user_modified")
+            return 0
         if not self.state.edit_guests:
-        #~ if not self.state in (EventStates.suggested, EventStates.draft):
-        #~ if self.is_fixed_state():
-            #~ print "is a fixed state"
-            return
+            ar.info("not state.edit_guests")
+            return 0
         if self.guest_set.all().count() > 0:
-            #~ print "guest_set not empty"
-            return
+            ar.info("guest_set not empty")
+            return 0
+        n = 0
         for g in self.suggest_guests():
             g.save()
+            n += 1
             #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
+        return n
 
     def suggest_guests(self):
         """
         Yield a list of Partner instances to be invited to this Event.
         This method is called when :meth:`add_guests` decided so.
         """
-        return []
+        if self.owner:
+            for obj in self.owner.suggest_cal_guests(self):
+                yield obj
 
     def get_event_summary(event, ar):
         """
@@ -576,7 +582,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def url(self, ar):
         return 'foo'
 
-    @dd.displayfield(_("Date"))
+    # @dd.displayfield(_("Date"))
+    @dd.displayfield(_("When"))
     def linked_date(self, ar):
         pv = dict(start_date=self.start_date)
         if False:
@@ -585,7 +592,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         else:
             pv.update(end_date=self.start_date)
         target = ar.spawn('cal.EventsByDay', param_values=pv)
-        txt = self.start_date.strftime(settings.SITE.date_format_strftime)
+        # txt = self.start_date.strftime(settings.SITE.date_format_strftime)
+        txt = when_text(self.start_date, self.start_time)
         return ar.href_to_request(target, txt)
 
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
@@ -821,7 +829,8 @@ class EventsByRoom(Events):
 class EventsByController(Events):
     required = dd.required(user_groups='office')
     master_key = 'owner'
-    column_names = 'when_text:20 summary workflow_buttons *'
+    column_names = 'linked_date summary workflow_buttons *'
+    # column_names = 'when_text:20 linked_date summary workflow_buttons *'
     auto_fit_column_widths = True
 
 if settings.SITE.project_model:

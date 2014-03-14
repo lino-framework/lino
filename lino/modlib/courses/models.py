@@ -38,9 +38,10 @@ from north.dbutils import day_and_month
 from lino import dd
 from lino import mixins
 from lino.utils.choosers import chooser
-from lino.utils import mti
 
 from ..contacts.utils import parse_name
+
+config = settings.SITE.plugins.courses
 
 users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
@@ -139,20 +140,24 @@ class Line(dd.BabelNamed):
                            verbose_name=_("Participation fee"),
                            related_name='lines_by_tariff')
 
+    guest_role = dd.ForeignKey(
+        "cal.GuestRole", blank=True, null=True,
+        help_text=_("Default guest role for particpants of events."))
+
 
 class Lines(dd.Table):
     model = Line
     required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    tariff event_type every_unit every
+    event_type guest_role tariff every_unit every
     description
     courses.CoursesByLine
     """
     insert_layout = dd.FormLayout("""
     name
     every_unit every
-    tariff event_type
+    event_type guest_role tariff
     description
     """, window_size=(70, 16))
 
@@ -161,119 +166,11 @@ class LinesByTopic(Lines):
     master_key = "topic"
 
 
-class TeacherType(dd.Referrable, dd.BabelNamed, dd.Printable):
-
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.TeacherType')
-        verbose_name = _("Teacher type")
-        verbose_name_plural = _('Teacher types')
-
-
-class TeacherTypes(dd.Table):
-    model = 'courses.TeacherType'
-    required = dd.required(user_level='manager')
-    detail_layout = """
-    id name
-    courses.TeachersByType
-    """
-
-
-class Teacher(Person):
-
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.Teacher')
-        verbose_name = _("Teacher")
-        verbose_name_plural = _("Teachers")
-
-    teacher_type = dd.ForeignKey('courses.TeacherType', blank=True, null=True)
-
-    def __unicode__(self):
-        return self.get_full_name(salutation=False)
-
-
-class TeacherDetail(contacts.PersonDetail):
-    general = dd.Panel(contacts.PersonDetail.main, label=_("General"))
-    box5 = "remarks"
-    main = "general courses.CoursesByTeacher \
-    courses.EventsByTeacher cal.GuestsByPartner"
-
-
-class Teachers(contacts.Persons):
-    model = 'courses.Teacher'
-    #~ detail_layout = TeacherDetail()
-    column_names = 'name_column address_column teacher_type *'
-    auto_fit_column_widths = True
-
-
-class TeachersByType(Teachers):
-    master_key = 'teacher_type'
-
-
-class PupilType(dd.Referrable, dd.BabelNamed, dd.Printable):
-
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.PupilType')
-        verbose_name = _("Pupil type")
-        verbose_name_plural = _('Pupil types')
-
-
-class PupilTypes(dd.Table):
-    model = 'courses.PupilType'
-    required = dd.required(user_level='manager')
-    detail_layout = """
-    id name
-    courses.PupilsByType
-    """
-
-
-class Pupil(Person):
-
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.Pupil')
-        verbose_name = _("Pupil")
-        verbose_name_plural = _("Pupils")
-
-    pupil_type = dd.ForeignKey('courses.PupilType', blank=True, null=True)
-
-    def __unicode__(self):
-        s = self.get_full_name(salutation=False)
-        if self.pupil_type:
-            s += " (%s)" % self.pupil_type.ref
-        return s
-
-
-class PupilDetail(contacts.PersonDetail):
-    main = "general courses.EnrolmentsByPupil"
-
-    general = dd.Panel(contacts.PersonDetail.main, label=_("General"))
-    box5 = "remarks"
-
-    #~ pupil = dd.Panel("""
-    #~ EnrolmentsByPupil
-    #~ """,label = _("Pupil"))
-
-    #~ def setup_handle(self,lh):
-
-        #~ lh.general.label = _("General")
-        #~ lh.courses.label = _("School")
-        #~ lh.notes.label = _("Notes")
-
-
-class Pupils(contacts.Persons):
-    model = 'courses.Pupil'
-    #~ detail_layout = PupilDetail()
-    column_names = 'name_column address_column pupil_type *'
-    auto_fit_column_widths = True
-
-
-class PupilsByType(Pupils):
-    master_key = 'pupil_type'
-
-
 class EventsByTeacher(cal.Events):
     help_text = _("Shows events of courses of this teacher")
-    master = 'courses.Teacher'
-    column_names = 'when_text:20 course__line room state'
+    master = config.teacher_model
+    column_names = 'when_text:20 owner room state'
+    # column_names = 'when_text:20 course__line room state'
     auto_fit_column_widths = True
 
     @classmethod
@@ -333,10 +230,8 @@ class Course(cal.Reservation, dd.Printable):
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
 
-    #~ workflow_state_field = 'state'
-
     line = models.ForeignKey('courses.Line')
-    teacher = models.ForeignKey('courses.Teacher', blank=True, null=True)
+    teacher = models.ForeignKey(config.teacher_model, blank=True, null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     slot = models.ForeignKey(Slot, blank=True, null=True)
 
@@ -360,7 +255,8 @@ class Course(cal.Reservation, dd.Printable):
         later than self.start_date
 
         """
-        if self.state in (CourseStates.draft, CourseStates.cancelled):
+        # if self.state in (CourseStates.draft, CourseStates.cancelled):
+        if self.state == CourseStates.cancelled:
             ar.info("No start date because state is %s", self.state)
             return None
         return self.start_date
@@ -369,7 +265,25 @@ class Course(cal.Reservation, dd.Printable):
         return self.line.event_type
 
     def update_cal_summary(self, i):
-        return "%s %s" % (dd.babelattr(self.line.event_type, 'event_label'), i)
+        return "%s %s" % (dd.babelattr(
+            self.line.event_type, 'event_label'), i)
+
+    def suggest_cal_guests(self, event):
+        # logger.info("20140314 suggest_guests")
+        Guest = dd.modules.cal.Guest
+        if self.line is None:
+            return
+        gr = self.line.guest_role
+        if gr is None:
+            return
+        fkw = dict(course=self)
+        states = (EnrolmentStates.requested, EnrolmentStates.confirmed)
+        fkw.update(state__in=states)
+        for obj in Enrolment.objects.filter(**fkw):
+            yield Guest(
+                event=event,
+                partner=obj.pupil,
+                role=gr)
 
     def get_free_places(self):
         used = EnrolmentStates.filter(uses_a_place=True)
@@ -425,12 +339,13 @@ class Course(cal.Reservation, dd.Printable):
 
     @dd.requestfield(_("Requested"))
     def requested(self, ar):
-        #~ return ar.spawn(EnrolmentsByCourse,master_instance=self,param_values=dict(state=EnrolmentStates.requested))
-        return EnrolmentsByCourse.request(self, param_values=dict(state=EnrolmentStates.requested))
+        return EnrolmentsByCourse.request(
+            self, param_values=dict(state=EnrolmentStates.requested))
 
     @dd.requestfield(_("Confirmed"))
     def confirmed(self, ar):
-        return EnrolmentsByCourse.request(self, param_values=dict(state=EnrolmentStates.confirmed))
+        return EnrolmentsByCourse.request(
+            self, param_values=dict(state=EnrolmentStates.confirmed))
 
     @dd.requestfield(_("Enrolments"))
     def enrolments(self, ar):
@@ -485,8 +400,8 @@ class Courses(dd.Table):
     #~ order_by = ['date','start_time']
     detail_layout = CourseDetail()
     insert_layout = """
-    start_date 
-    line teacher 
+    start_date
+    line teacher
     """
     column_names = "info line teacher room *"
     order_by = ['start_date']
@@ -495,7 +410,9 @@ class Courses(dd.Table):
         line=models.ForeignKey('courses.Line', blank=True, null=True),
         topic=models.ForeignKey('courses.Topic', blank=True, null=True),
         #~ company = models.ForeignKey('contacts.Company',blank=True,null=True),
-        teacher=models.ForeignKey('courses.Teacher', blank=True, null=True),
+        teacher=models.ForeignKey(
+            config.teacher_model,
+            blank=True, null=True),
         state=CourseStates.field(blank=True),
         active=dd.YesNo.field(blank=True),
     )
@@ -603,7 +520,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     #~ teacher = models.ForeignKey(Teacher)
     course = dd.ForeignKey('courses.Course')
-    pupil = dd.ForeignKey('courses.Pupil')
+    pupil = dd.ForeignKey(config.pupil_model)
     request_date = models.DateField(
         _("Date of request"), default=datetime.date.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
@@ -616,7 +533,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     @chooser()
     def pupil_choices(cls, course):
-        Pupil = dd.resolve_model('courses.Pupil')
+        Pupil = dd.resolve_model(config.pupil_model)
         return Pupil.objects.all()
 
     def create_pupil_choice(self, text):
@@ -624,7 +541,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         Called when an unknown pupil name was given.
         Try to auto-create it.
         """
-        Pupil = dd.resolve_model('courses.Pupil')
+        Pupil = dd.resolve_model(config.pupil_model)
         kw = parse_name(text)
         if len(kw) != 2:
             raise ValidationError(
@@ -686,9 +603,14 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
     def compute_amount(self):
         #~ if self.course is None:
             #~ return
-        if self.course.line.tariff is None:
-            self.amount = ZERO
-        self.amount = self.course.line.tariff.sales_price
+        tariff = self.course.line.tariff
+        # tariff is a DummyField when products is not installed
+        # tariff may be None
+        self.amount = getattr(tariff, 'sales_price', ZERO)
+        # if tariff is None:
+        #     self.amount = ZERO
+        # else:
+        #     self.amount = tariff.sales_price
 
     def get_invoiceable_amount(self):
         return self.amount
@@ -852,64 +774,43 @@ class EnrolmentsByCourse(Enrolments):
     #~ cell_edit = False
 
 
-class EventsByCourse(cal.Events):
-    required = dd.required(user_groups='office')
-    master_key = 'course'
-    column_names = 'when_text:20 linked_date summary workflow_buttons *'
-    auto_fit_column_widths = True
+# class EventsByCourse(cal.Events):
+#     required = dd.required(user_groups='office')
+#     master_key = 'course'
+#     column_names = 'when_text:20 linked_date summary workflow_buttons *'
+#     auto_fit_column_widths = True
 
 
-dd.inject_field(
-    'cal.Event',
-    'course',
-    dd.ForeignKey(
-        'courses.Course',
-        blank=True, null=True,
-        related_name="events_by_course"))
-
-dd.inject_field(
-    Person,
-    'is_teacher',
-    mti.EnableChild(
-        'courses.Teacher',
-        verbose_name=_("is a teacher"),
-        help_text=_("Whether this Person is also a Teacher.")))
-
-dd.inject_field(
-    Person,
-    'is_pupil',
-    mti.EnableChild(
-        'courses.Pupil',
-        verbose_name=_("is a pupil"),
-        help_text=_("Whether this Person is also a Pupil.")))
+# dd.inject_field(
+#     'cal.Event',
+#     'course',
+#     dd.ForeignKey(
+#         'courses.Course',
+#         blank=True, null=True,
+#         help_text=_("Fill in only if this event is a session of a course."),
+#         related_name="events_by_course"))
 
 
 def setup_main_menu(site, ui, profile, main):
-    m = main.get_item("contacts")
-    m.add_action(Teachers)
-    m.add_action(Pupils)
-    m = main.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
+    m = main.add_menu("courses", config.verbose_name)
     m.add_action(Courses)
-    #~ m.add_action(Teachers)
-    #~ m.add_action(Pupils)
     m.add_action(PendingRequestedEnrolments)
     m.add_action(PendingConfirmedEnrolments)
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
+    m = m.add_menu("courses", config.verbose_name)
     #~ m.add_action(Rooms)
-    m.add_action('courses.TeacherTypes')
-    m.add_action('courses.PupilTypes')
     m.add_action(Topics)
     m.add_action(Lines)
     m.add_action(Slots)
-    #~ m.add_action(PresenceStatuses)
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("courses", settings.SITE.plugins.courses.verbose_name)
+    m = m.add_menu("courses", config.verbose_name)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
     m.add_action(Enrolments)
     m.add_action(EnrolmentStates)
+
+dd.add_user_group('courses', config.verbose_name)

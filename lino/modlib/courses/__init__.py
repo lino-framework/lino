@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino-Welfare project.
 # Lino-Welfare is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,3 +19,6 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
     verbose_name = _("Courses")
+    teacher_model = 'contacts.Person'
+    pupil_model = 'contacts.Person'
+

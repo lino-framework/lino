@@ -2,7 +2,14 @@
 20140314 (Friday, 14 March 2014)
 ================================
 
-We decided to re-activate the 
-:mod:`lino_welfare.modlib.courses` 
-app for :mod:`lino_welfare.settings.fr`.
+We decided to re-activate the :mod:`lino_welfare.modlib.courses` app
+for :mod:`lino_welfare.settings.fr`.  Then we discovered that the
+:mod:`lino.modlib.courses` app is probably more suitable.  In fact not
+exactly: e.g.
 
+- TeacherType and PupilType are not needed
+- pupils are always instances of `pcsw.Client`, 
+  teachers are always instances of `users.User`.
+
+Also started :mod:`lino_welfare.settings.fr.pcsw` because it seems
+clear that Chatelet and Eupen will need their own `ClientDetail`.
