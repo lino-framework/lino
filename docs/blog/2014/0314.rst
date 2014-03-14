@@ -1,0 +1,8 @@
+================================
+20140314 (Friday, 14 March 2014)
+================================
+
+We decided to re-activate the 
+:mod:`lino_welfare.modlib.courses` 
+app for :mod:`lino_welfare.settings.fr`.
+
