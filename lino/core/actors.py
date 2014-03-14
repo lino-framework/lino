@@ -1390,15 +1390,16 @@ class Actor(actions.Parametrizable):
         return self._actions_dict.keys()
 
     @classmethod
+    def get_row_actions(self, cf):
+        return [ba for ba in self.get_actions(cf)
+                if ba.action.select_rows]
+        
+    @classmethod
     def get_actions(self, callable_from=None):
-        #~ if self._actions_list is None:
-            #~ raise Exception("Tried to %s.get_actions() with empty _actions_list" % self)
         if callable_from is None:
             return self._actions_list
-        #~ cf = ba.action.callable_from
-        #~ return [ba for ba in self._actions_list
-            #~ if cf is None or isinstance(callable_from,cf)]
-        return [ba for ba in self._actions_list if ba.action.is_callable_from(callable_from)]
+        return [ba for ba in self._actions_list
+                if ba.action.is_callable_from(callable_from)]
 
     @classmethod
     def get_data_elem(self, name):

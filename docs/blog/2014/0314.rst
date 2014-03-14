@@ -11,5 +11,31 @@ exactly: e.g.
 - pupils are always instances of `pcsw.Client`, 
   teachers are always instances of `users.User`.
 
-Also started :mod:`lino_welfare.settings.fr.pcsw` because it seems
+Started :mod:`lino_welfare.settings.fr.pcsw` because it seems
 clear that Chatelet and Eupen will need their own `ClientDetail`.
+
+Started :mod:`lino_welfare.modlib.sales` which is a Dmmy module to 
+satisfy :mod:`lino.modlib.courses`.
+
+
+A little API change
+-------------------
+
+ClientDetail used to show aa stupid `cal.EventsByProject` in the
+Calendar tab. But this table did not detect events where the current
+client is "only" a participant and not in the `Event.project` field.
+
+To get this done I had to do a (minor) API change:
+`lino.core.actors.Table.get_queryset` is now being called with the
+ActionRequest as argument.
+
+Before::
+
+    @classmethod
+    def get_queryset(self):
+
+Now you must say::
+
+    @classmethod
+    def get_queryset(self, ar):
+

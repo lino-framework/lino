@@ -348,7 +348,7 @@ class Partners(dd.Table):
     """, window_size=(40, 'auto'))
 
     @classmethod
-    def get_queryset(self):
+    def get_queryset(self, ar):
         return self.model.objects.select_related('country', 'city')
 
 

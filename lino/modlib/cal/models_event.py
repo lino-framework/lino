@@ -839,7 +839,8 @@ if settings.SITE.project_model:
         required = dd.required(user_groups='office')
         master_key = 'project'
         auto_fit_column_widths = True
-        column_names = 'when_text user summary workflow_buttons'
+        column_names = 'linked_date user summary workflow_buttons'
+        # column_names = 'when_text user summary workflow_buttons'
 
 
 class OneEvent(Events):

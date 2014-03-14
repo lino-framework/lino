@@ -742,7 +742,7 @@ class Table(AbstractTable):
         return title
 
     @classmethod
-    def get_queryset(self):
+    def get_queryset(self, ar):
         """
         Return an iterable over the items processed by this table.
         Override this to use e.g. select_related() or to return a list.
@@ -756,7 +756,9 @@ class Table(AbstractTable):
         Upon first call, this will also lazily install Table.queryset
         which will be reused on every subsequent call.
         """
-        qs = self.get_queryset()
+        qs = self.get_queryset(rr)
+        if qs is None:
+            return []
         kw = self.get_filter_kw(rr.master_instance)
         if kw is None:
             return []

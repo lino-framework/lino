@@ -315,7 +315,7 @@ class ExpectedGuests(cal.Guests):
     required = dd.Required(user_groups='reception')
 
     @classmethod
-    def get_queryset(self):
+    def get_queryset(self, ar):
         return self.model.objects.filter(
             waiting_since__isnull=True,
             state__in=(GuestStates.invited, GuestStates.accepted))

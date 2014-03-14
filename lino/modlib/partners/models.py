@@ -337,7 +337,7 @@ class Addressables(dd.Table):
     column_names = "name email * id"
 
     @classmethod
-    def get_queryset(self):
+    def get_queryset(self, ar):
         return self.model.objects.select_related('country', 'city')
 
 

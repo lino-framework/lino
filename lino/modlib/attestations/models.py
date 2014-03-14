@@ -66,7 +66,7 @@ class AttestationType(
         verbose_name=_("Model"),
         related_name='attestation_types',
         null=True, blank=True,
-        help_text=_("The model that can issue attestations of this type."))
+        help_text=_("The model that can issue printouts of this type."))
 
     primary = models.BooleanField(
         _("Primary"),
@@ -78,7 +78,7 @@ class AttestationType(
     skip_dialog = models.BooleanField(
         _("Skip dialog"),
         default=False,
-        help_text=_("""Check this to define a "quick attestation" type."""))
+        help_text=_("""Check this to define a "quick printout" type."""))
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
@@ -131,13 +131,13 @@ class AttestationTypes(dd.Table):
 class AttestAction(dd.Action):
 
     """
-    Creates an attestation and displays it.
+    Creates a Printout and displays it.
     """
     url_action_name = 'attest'
     icon_name = 'script_add'
-    help_text = _('Create an attestation from this')
-    # label = _('Create attestation')
-    label = _('Attest')
+    help_text = _('Create a printout from this')
+    label = _('Create Printout')
+    # label = _('Attest')
     sort_index = 49  # immediately before "Print"
 
     def get_action_permission(self, ar, obj, state):
@@ -186,8 +186,8 @@ class AttestAction(dd.Action):
 
 class Attestable(dd.Model):
 
-    """Mixin for models that provide a "Create attestation" button.  A
-    Mailable model must also inherit
+    """Mixin for models that provide a "Create printout" button.
+    An implementing model must also inherit
     :class:`lino.mixins.printable.BasePrintable` or some subclass
     thereof.
 
@@ -232,8 +232,7 @@ class Attestation(dd.TypedPrintable,
 
     type = models.ForeignKey(
         AttestationType,
-        blank=True, null=True,
-        verbose_name=_('Attestation Type'))
+        blank=True, null=True)
 
     language = dd.LanguageField()
 
