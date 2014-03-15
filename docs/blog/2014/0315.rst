@@ -1,0 +1,9 @@
+==================================
+20140315 (Saturday, 15 March 2014)
+==================================
+
+- :doc:`/tickets/100`
+- 
+
+The :directive:`tickets_table` was not able to handle documents 
+with backticks (``\```) in the title.

@@ -1,8 +1,8 @@
-:state: todo
+:state: closed
 :module: lino
 
-#99 : How can `dd.apps` differ from `settings.SITE.plugins`?
-============================================================
+#99 : How can ``dd.apps`` differ from ``settings.SITE.plugins``?
+================================================================
 
 Here is a problem on which I got stuck today (:blogref:`20140226`).
 
@@ -41,4 +41,3 @@ Question: How is this possible? Why does this test fail?
 Answer: this problem was specific to Lino. 
 Details see :blogref:`20140227`.
 
-    
