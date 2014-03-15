@@ -3,7 +3,27 @@
 ==================================
 
 - :doc:`/tickets/100`
-- 
 
-The :directive:`tickets_table` was not able to handle documents 
-with backticks (``\```) in the title.
+- Fixed a bug in :mod:`atelier.sphinxconf`: The
+  :directive:`tickets_table` was not able to handle documents with
+  backticks (``\```) in the title.
+
+- Also added `scripts/shotwell2blog.py` to the :ref:`atelier`
+  repository. In fact it has not really to do with atelier, but I
+  didn't want to create a project just for this.
+
+
+
+
+Change in :ref:`site`: the :setting:`hidden_apps` setting was not
+enough. I replaced it by :setting:`get_apps_modifiers`.
+
+The week in Chatelet taught me that we will probably have many
+variants of Lino Welfare.  I renamed :mod:`lino_welfare.settings.fr`
+to :mod:`lino_welfare.settings.chatelet`, created a new package
+:mod:`lino_welfare.settings.eupen`, started a new module
+:mod:`lino.settings.base` which is common base for eupen and chatelet.
+
+Note that the names *eupen* and *chatelet* don't mean that *every* new
+site will get it's own package. `eupen` means rather "as they work in
+Eupen" (and `chatelet` means "as they work in Chatelet").

@@ -106,3 +106,4 @@ pour Luc
     - **Tests de niveau** (date, type, résultat).    
       Types de tests (p.ex. "Dactylo", "Francais", "Math", ...)
       
+- Upload with valid_until does not generate task.
