@@ -2281,6 +2281,17 @@ Muu:
 - `Laul <dl/o-grand-st-nicolas.pdf>`_
   (esitati detsembris 2012 Vana-Vigala TTK jõulupeol)
 
+- Originaalmenüüd töötajate restoranist:
+  `1 <dl/menus/20130415.pdf>`_
+  `2 <dl/menus/20130923.pdf>`_
+  `3 <dl/menus/20130930.pdf>`_
+  `4 <dl/menus/20131007.pdf>`_
+  `5 <dl/menus/20131014.pdf>`_
+  `6 <dl/menus/20131028.pdf>`_
+  `7 <dl/menus/20131104.pdf>`_
+  `8 <dl/menus/20131111.pdf>`_
+
+
 """)
 
 
