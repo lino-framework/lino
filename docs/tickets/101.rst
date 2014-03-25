@@ -1,0 +1,6 @@
+:state: contrib
+:module: lino.modlib.extjs
+
+#101 : Upgrade from ExtJS 3 to 4
+================================
+

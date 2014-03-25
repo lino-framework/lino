@@ -1,14 +1,19 @@
-:state: sleeping
+:state: contrib
 :module: lino.core
 
-#83 : GridConfig (User-configurable views)
-==========================================
+#83 : User-configurable views
+=============================
 
+In a Lino table grid view end-users can manually change the column
+widths, column ordering , custom filters and other things.
 
-Views (GridConfigs) konfigurierbar pro User in der Datenbank (d.h. 
-verwaltbar via Web und automatisch migrierbar). 
-Das wäre gleichzeitig dann auch ein "Filter Editor"::
-    
+We want to add a possibility for end-users and system admins to store
+such manual configurations and (1) make them a local default setup
+and/or (2) manually selectable by the end-users.
+
+Such stored grid configs should be user-specific.
+This will also be the occasion to add a new interactive "filter editor".
+
       class View(dd.Sequenced):
           model
           actor
@@ -22,6 +27,7 @@ Das wäre gleichzeitig dann auch ein "Filter Editor"::
           value = CharField()
           connector ("and", "or", "(", ")")
   
+
 Related problems:
 
 #.  Momentan ist es nicht möglich, "mal eben" eine Suche zu machen, 
@@ -37,5 +43,4 @@ Related problems:
     speichern ?".  Diese Frage wohl nur für Benutzer, die GCs auch
     speichern dürfen.
 
-#.  save_grid_config könnte nachfragen bevor er die GC abspeichert.
 

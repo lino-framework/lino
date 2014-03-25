@@ -3,6 +3,22 @@ Tickets
 =======
 
 
+Open for contribution
+---------------------
+
+The following tickets are selected for future Lino Core Contributors.
+If you understand at least one of them, then you are a potential `Lino
+Core Developer <http://saffre-rumma.net/jobs/coredev.html>`_
+candidate.
+
+.. tickets_table:: 
+   :filter: e.meta.get('state') in ('contrib', )
+
+   *
+
+
+
+
 Active
 ----------
 
@@ -42,7 +58,7 @@ Other
 -----
 
 .. tickets_table:: 
-   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm')
+   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm', 'contrib')
 
    *
 

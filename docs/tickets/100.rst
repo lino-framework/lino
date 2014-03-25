@@ -1,3 +1,6 @@
+:state: active
+:module: lino_welfare
+
 #100 : Ce qui reste à faire pour Châtelet
 =========================================
 
