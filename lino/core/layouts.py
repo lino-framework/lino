@@ -890,7 +890,7 @@ def create_layout_element(lh, name, **kw):
 
     s = name.split('.')
     if len(s) == 2:
-        if s[0] in settings.SITE.hidden_apps:
+        if settings.SITE.is_hidden_app(s[0]):
             return None
 
     # Now we tried everything. Build an error message.

@@ -5,8 +5,49 @@
 =========================================
 
 
-à discuter
-----------
+Questions aux utilisateurs
+--------------------------
+
+- Réunir *Candidatures externes* et *Démarches*? Le premier est un cas
+  spécial du second (une CE est une D déjà accomplie qu'on note
+  après coup). Est-ce qu'une démarche peut consister en "Contacter
+  telle personne dans telle organisation"? Et si oui, ne serait-il
+  pas intéressant dans certains de ces cas de pouvoir sélectionner
+  parmis les organisations connues. P.ex. ensuite imprimer un mémo
+  pour l'usager qui mentionne les no de téléphone.
+    
+
+- Question de vocabulaire pour les "Tests de niveau".
+  Je propose de dire "Badges" au lieu de "Tests de niveau".
+  Qu'en pensez-vous?
+
+  Sinon, comment traduire "Badge" et "Award"? 
+
+  - "Badges" is the global list of known levels
+    (p.ex. "Dactylo", "Français", "Math", ...)  
+
+  - Award : le fait d'avoir passé un examen de niveau donné à une date
+    donnée et un résultat donné.
+
+- Agences Interim: faut-il juste une liste des noms des agences (avec
+  lien vers le signalétique de l'agence)? Ne faut-il pas p.ex. des
+  dates du/au, une remarque?
+
+- Quelle est la différence entre un *Certificat médical* et un *Handicap*?
+  Scannez-vous les documents originaux?
+  Quand a-t-on besoin de ces infos? Donner des exemples pratiques. 
+  
+- Est-il utile d'avoir une liste de tous les médecins connus?
+
+- Réunir *Certificats médicaux* et *Handicaps* en une seule table
+  "Documents externes"?  Intégrer les deux dans les *Fichiers
+  téléchargés*?
+
+
+
+
+à discuter après le release
+---------------------------
 
 - Supprimer ce qui reste dans l'onglet "Aide sociale".  (Aussi la
   "phase d'intégration"? nécessaire pour la table "Agents et leurs
@@ -14,29 +55,11 @@
 
 - Renommer "Agents et leurs clients" en "Dossiers par agent"
 
-- OK pour enlever la table des parents d'un bénéficiaire?
-
 - Nous avons importé les noms et dates de naissance des 815
   bénéficiaires, mais sans les NISS. Comment lire la carte d'identité
   d'un tel bénéficiaire existant? Pour l'instant je propose: laisser
   Lino faire un nouveau bénéficiaire, puis fusionner les deux dès
   qu'on découvre le doublon.
-
-- Agences Interim: faut-il juste une liste des noms des agences (avec
-  lien vers le signalétique de l'agence)? Ne faut-il pas p.ex. des
-  dates du/au, une remarque?
-
-- Réunir *Tests de niveau*, *Certificats médicaux* et *Handicaps* en
-  une seule table "Documents externes".  Intégrer ceci dans ce qui
-  s'appelle pour l'instant *Fichiers téléchargés*: Le champ
-  `Upload.valid_until` disparait (son contenu est migré dans
-  `Document`).
-
-- Quelle est la différence entre *Certificats médicaux* et *Handicaps*?
-  Scannez-vous les documents originaux?
-  Quand a-t-on besoin de ces infos? Donner des exemples pratiques. 
-  
-- Est-il utile d'avoir une liste de tous les médecins connus?
 
 - Deux tables séparées pour "Études" et "Formations".
   Études: système scolaire "officiel" ou "regulier".
@@ -51,14 +74,6 @@
   aide à les entrer dans l'ordre chronologique.  Pensons aux usagers
   qui ont fait un mélange de "formations" et d'"études".
 
-- Réunir *Candidatures externes* et *Démarches*? Le premier est un cas
-  spécial du second (une CE est une D déjà accomplie qu'on note
-  après coup). Est-ce qu'une démarche peut consister en "Contacter
-  telle personne dans telle organisation"? Et si oui, ne serait-il
-  pas intéressant dans certains de ces cas de pouvoir sélectionner
-  parmis les organisations connues. P.ex. ensuite imprimer un mémo
-  pour l'usager qui mentionne les no de téléphone.
-    
 
  
 
@@ -74,7 +89,7 @@ pour Luc
   les ateliers et modules.
 
   - "Liste d'attente" pour les candidats inscrits à un atelier pour
-    lequel les pplaces disponibles sont remplies.
+    lequel les places disponibles sont remplies.
   - Il y a des ateliers à participation "flottante" ou "continue": les
     gens commencent à des moments différents et progressent à un
     rythme individuel.

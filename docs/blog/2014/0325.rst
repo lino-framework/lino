@@ -56,7 +56,7 @@ which differentiates three levels of education:
 - Thérapie     (Therapy)   : changing conducts, behaviour
 
 
-Dataase migration:
+Database migration:
 
 - new field `study_regime` in :class:`lino_welfare.modlib.jobs.models.Study`
 

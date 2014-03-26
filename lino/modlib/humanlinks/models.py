@@ -108,7 +108,6 @@ class Link(dd.Human, dd.Born):
         # print('20140204 type_as_parent', self.type)
         return self.type.as_parent(self.parent)
 
-    # @dd.virtualfield(LinkTypes.field())
     @dd.displayfield(_("Type"))
     def type_as_child(self, ar):
         # print('20140204 type_as_child', self.type)
@@ -133,17 +132,17 @@ class Link(dd.Human, dd.Born):
 class Links(dd.Table):
     model = 'humanlinks.Link'
     required = dd.required(user_level='admin')
-    insert_layout = dd.FormLayout("""
-    type
-    parent
-    child
-    first_name last_name gender birth_date
-    """, window_size=(40, 'auto'))
-    detail_layout = dd.FormLayout("""
-    parent
-    child first_name last_name gender birth_date
-    type:20  id:6
-    """, window_size=(60, 'auto'))
+    # insert_layout = dd.FormLayout("""
+    # type
+    # parent
+    # child
+    # first_name last_name gender birth_date
+    # """, window_size=(40, 'auto'))
+    # detail_layout = dd.FormLayout("""
+    # parent
+    # child first_name last_name gender birth_date
+    # type:20  id:6
+    # """, window_size=(60, 'auto'))
 
 
 class ParentsByHuman(Links):
@@ -152,10 +151,10 @@ class ParentsByHuman(Links):
     master_key = 'child'
     column_names = 'type_as_parent:10 parent'
     auto_fit_column_widths = True
-    insert_layout = dd.FormLayout("""
-    parent
-    type
-    """, window_size=(40, 'auto'))
+    # insert_layout = dd.FormLayout("""
+    # parent
+    # type
+    # """, window_size=(40, 'auto'))
 
 
 class ChildrenByHuman(Links):
@@ -163,15 +162,15 @@ class ChildrenByHuman(Links):
     label = _("Dependent persons")
     required = dd.required()
     master_key = 'parent'
-    column_names = 'type_as_child:10 child first_name last_name gender birth_date age'
+    column_names = 'type child first_name last_name gender birth_date age'
     #column_names = 'type_as_child:10 child child__birth_date child__age'
     auto_fit_column_widths = True
-    insert_layout = dd.FormLayout("""
-    child
-    first_name last_name
-    gender birth_date
-    type
-    """, window_size=(40, 'auto'))
+    # insert_layout = dd.FormLayout("""
+    # child
+    # first_name last_name
+    # gender birth_date
+    # type
+    # """, window_size=(40, 'auto'))
 
 
 def setup_explorer_menu(site, ui, profile, m):
