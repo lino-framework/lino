@@ -14,7 +14,7 @@
 
 - Renommer "Agents et leurs clients" en "Dossiers par agent"
 
-- Enlever la table des parents d'un bénéficiaire.
+- OK pour enlever la table des parents d'un bénéficiaire?
 
 - Nous avons importé les noms et dates de naissance des 815
   bénéficiaires, mais sans les NISS. Comment lire la carte d'identité
@@ -32,6 +32,12 @@
   `Upload.valid_until` disparait (son contenu est migré dans
   `Document`).
 
+- Quelle est la différence entre *Certificats médicaux* et *Handicaps*?
+  Scannez-vous les documents originaux?
+  Quand a-t-on besoin de ces infos? Donner des exemples pratiques. 
+  
+- Est-il utile d'avoir une liste de tous les médecins connus?
+
 - Deux tables séparées pour "Études" et "Formations".
   Études: système scolaire "officiel" ou "regulier".
   Formations: système "individuel" ou "privé".
@@ -47,7 +53,7 @@
 
 - Réunir *Candidatures externes* et *Démarches*? Le premier est un cas
   spécial du second (une CE est une D déjà accomplie qu'on note
-  après coup). Est-ce qu'une démarche peut consiter en "Contacter
+  après coup). Est-ce qu'une démarche peut consister en "Contacter
   telle personne dans telle organisation"? Et si oui, ne serait-il
   pas intéressant dans certains de ces cas de pouvoir sélectionner
   parmis les organisations connues. P.ex. ensuite imprimer un mémo
@@ -90,6 +96,9 @@ pour Luc
 
 - Nouvelles tables par bénéficiaire:
 
+    - **Tests de niveau** (date, type, résultat).    
+      Types de tests (p.ex. "Dactylo", "Francais", "Math", ...)
+      
     - **Certificats médicaux** (médecin, valable du/au, remarque)
     - **Handicaps** (type (p.ex. AWIPH, ETA, Prévoyance), numéro, valable
       du/au, remarque)
@@ -106,7 +115,3 @@ pour Luc
     - **Démarches** ou entrées du **plan d'action** (date, objectif,
       démarche à réaliser, OK)
     
-    - **Tests de niveau** (date, type, résultat).    
-      Types de tests (p.ex. "Dactylo", "Francais", "Math", ...)
-      
-- Upload with valid_until does not generate task.

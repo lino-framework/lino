@@ -12,6 +12,14 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines an Upload model as PartnerDocument and AutoUser.
+Defines an Upload model.
 
 """
+from lino import ad
+from django.utils.translation import ugettext_lazy as _
+
+
+class Plugin(ad.Plugin):
+
+    verbose_name = _("Uploads")
+

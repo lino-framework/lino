@@ -36,8 +36,9 @@ class LinkType(dd.Choice):
         self.fptext = fptext
         self.mctext = mctext
         self.fctext = fctext
-        text = string_concat(
-            mptext, ' (', fptext, ') / ', mctext, ' (', fctext, ')')
+        # text = string_concat(
+        #     mptext, ' (', fptext, ') / ', mctext, ' (', fctext, ')')
+        text = string_concat(mctext, ' (', fctext, ')')
         # text = "%s (%s) / %s (%s)" % (mptext, fptext, mctext, fctext)
         super(LinkType, self).__init__(value, text, name, **kw)
 
@@ -68,17 +69,28 @@ add('02',
     _("Adoptive father"), _("Adoptive mother"),
     _("Adopted son"), _("Adopted daughter"))
 
+# add('03',
+#     'grand',
+#     _("Grandfather"), _("Grandmother"),
+#     _("Grandson"), _("Granddaughter"))
+
 add('03',
-    'grand',
-    _("Grandfather"), _("Grandmother"),
-    _("Grandson"), _("Granddaughter"))
+    'relative',
+    _("Relative"), _("Relative"),
+    _("Relative"), _("Relative"))
+
+add('04',
+    'other',
+    _("Other"), _("Other"),
+    _("Other"), _("Other"))
 
 
-class Link(dd.Sequenced):
+# class Link(dd.Sequenced):
+class Link(dd.Human, dd.Born):
 
     class Meta:
-        verbose_name = _("Parency link")
-        verbose_name_plural = _("Parency links")
+        verbose_name = _("Dependent Person")
+        verbose_name_plural = _("Dependent Persons")
 
     type = LinkTypes.field(default=LinkTypes.natural)
     parent = dd.ForeignKey(
@@ -87,7 +99,8 @@ class Link(dd.Sequenced):
         related_name='children')
     child = dd.ForeignKey(
         settings.SITE.plugins.humanlinks.human_model,
-        verbose_name=_("Child"),
+        blank=True, null=True,
+        #verbose_name=_("Child"),
         related_name='parents')
 
     @dd.displayfield(_("Type"))
@@ -105,6 +118,17 @@ class Link(dd.Sequenced):
     # def birth_date(self, ar):
     #     return self.child.birth_date
 
+    def child_changed(self, ar):
+        """Copy data fields from child"""
+        obj = self.child
+        if obj is not None:
+            for k in ('first_name', 'last_name', 'gender', 'birth_date'):
+                if not getattr(self, k):
+                    setattr(self, k, getattr(obj, k))
+
+    # def full_clean(self):
+    #     super(Link, self).full_clean()
+
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
@@ -113,11 +137,12 @@ class Links(dd.Table):
     type
     parent
     child
+    first_name last_name gender birth_date
     """, window_size=(40, 'auto'))
     detail_layout = dd.FormLayout("""
     parent
-    child
-    type:20  id:6 seqno:4
+    child first_name last_name gender birth_date
+    type:20  id:6
     """, window_size=(60, 'auto'))
 
 
@@ -134,13 +159,17 @@ class ParentsByHuman(Links):
 
 
 class ChildrenByHuman(Links):
-    label = pgettext("(human)", "Children")
+    # label = pgettext("(human)", "Children")
+    label = _("Dependent persons")
     required = dd.required()
     master_key = 'parent'
-    column_names = 'type_as_child:10 child child__birth_date child__age'
+    column_names = 'type_as_child:10 child first_name last_name gender birth_date age'
+    #column_names = 'type_as_child:10 child child__birth_date child__age'
     auto_fit_column_widths = True
     insert_layout = dd.FormLayout("""
     child
+    first_name last_name
+    gender birth_date
     type
     """, window_size=(40, 'auto'))
 

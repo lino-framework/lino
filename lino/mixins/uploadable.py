@@ -31,14 +31,23 @@ class Uploadable(Model):
 
     class Meta:
         abstract = True
-        verbose_name = _("upload")
-        verbose_name_plural = _("uploads")
+        # verbose_name = _("upload")
+        # verbose_name_plural = _("uploads")
 
-    file = models.FileField(_("File"), upload_to='uploads/%Y/%m')
-    mimetype = models.CharField(_("MIME type"), max_length=64, editable=False)
+    file = models.FileField(
+        _("File"),
+        blank=True,
+        upload_to='uploads/%Y/%m')
+    mimetype = models.CharField(
+        _("MIME type"),
+        blank=True,
+        max_length=64, editable=False)
 
     def handle_uploaded_files(self, request):
         #~ from django.core.files.base import ContentFile
+        if not 'file' in request.FILES:
+            logger.debug("No 'file' has been submitted.")
+            return
         uf = request.FILES['file']  # an UploadedFile instance
         #~ cf = ContentFile(request.FILES['file'].read())
         #~ print f

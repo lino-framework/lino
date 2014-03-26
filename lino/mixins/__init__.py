@@ -118,10 +118,10 @@ class Controllable(model.Model):
         if settings.SITE.loading_from_dump:
             super(Controllable, self).save(*args, **kw)
         else:
-            if self.owner:  # and not self.is_user_modified():
+            if self.owner:
                 self.owner.update_owned_instance(self)
             super(Controllable, self).save(*args, **kw)
-            if self.owner:  # and self.is_user_modified():
+            if self.owner:
                 self.owner.after_update_owned_instance(self)
 
 
