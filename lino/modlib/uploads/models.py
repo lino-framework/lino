@@ -25,17 +25,18 @@ from lino import dd
 from lino import mixins
 
 
-class UploadType(dd.BabelNamed):
+# class UploadType(dd.BabelNamed):
+class UploadType(dd.Model):
 
     class Meta:
         abstract = dd.is_abstract_model('uploads.UploadType')
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
-    # name = models.CharField(max_length=200, verbose_name=_('Name'))
+    name = models.CharField(max_length=200, verbose_name=_('Name'))
 
-    # def __unicode__(self):
-    #     return self.name
+    def __unicode__(self):
+        return self.name
 
 
 class UploadTypes(dd.Table):

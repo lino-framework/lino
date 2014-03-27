@@ -523,6 +523,10 @@ def py2js(v):
     #~ if not isinstance(v, (str,unicode)):
         #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
     return json.dumps(v)
+    # try:
+    #     return json.dumps(v)
+    # except TypeError as e:
+    #     raise TypeError("%r : %s" % (v, e))
     # ~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
 
 
