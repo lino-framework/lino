@@ -840,10 +840,11 @@ class ContactRelated(dd.Model):
     @classmethod
     def contact_person_choices_queryset(cls, company):
         """
-        Return a queryset of candidate Person objects allowed 
+        Return a queryset of candidate Person objects allowed
         in `contact_person` for a given `company`.
         """
-        return settings.SITE.modules.contacts.Person.objects.filter(rolesbyperson__company=company).distinct()
+        return settings.SITE.modules.contacts.Person.objects.filter(
+            rolesbyperson__company=company).distinct()
 
     def full_clean(self, *args, **kw):
         if not settings.SITE.loading_from_dump:

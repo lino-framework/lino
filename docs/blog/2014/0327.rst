@@ -2,6 +2,9 @@
 20140327 (Thursday, 27 March 2014)
 ==================================
 
+The `Migrator` class - inheritance for Migrations
+-------------------------------------------------
+
 The migration which I used yesterday in Chatelet to migrate the
 production server was only for the "Chatelet" variant of Lino
 Welfare. That is, for a Lino Welfare which uses the "alternate"
@@ -9,10 +12,31 @@ implementation of the `courses` app.
 
 This was enough to run the upgrade in Chatelet, which was my most
 urgent goal. But I must not leave it as this since in an "Eupen"
-variant they don't want to convert
+variant they don't want to convert their `courses` tables.
 
-must find a solution for this before doing an upgrade in Eupen.
+Now I replaced :setting:`migration_module` by
+:setting:`migration_class`.  This allows us to define "Migrators" as
+classes who inherit from each other.  Technically I could have the
+Site class themself, but it looks more clean when migration code is in
+a single module (or package), but not together with settings.
 
-For :mod:`lino_welfare.settings.chatelet`
+Usage example: module :mod:`lino_welfare.settings.chatelet.migrate`.
 
-migrate_from_1_1_11
+Note: yes, Django 1.7 will have its own migrations, basically inspired
+by South. That might look as a clear reason to abandon :ref:`north`
+and start using Django migrations.  Note that if you don't like north,
+you can simply use South or Django 1.7 migrations.  But:
+
+- There is no immediate need for me to learn. I'll wait at least until
+  Django 1.7 is released.
+
+- There are certain Lino magics for which I don't yet see how I'd do
+  them using South. Examples:
+
+  - migrating from one language distribution to another
+  - injected fields and interdependent apps
+
+
+
+Welfare Uploads
+---------------

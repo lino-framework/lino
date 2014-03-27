@@ -18,7 +18,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -26,16 +25,17 @@ from lino import dd
 from lino import mixins
 
 
-class UploadType(dd.Model):
+class UploadType(dd.BabelNamed):
 
     class Meta:
+        abstract = dd.is_abstract_model('uploads.UploadType')
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
-    name = models.CharField(max_length=200, verbose_name=_('Name'))
+    # name = models.CharField(max_length=200, verbose_name=_('Name'))
 
-    def __unicode__(self):
-        return self.name
+    # def __unicode__(self):
+    #     return self.name
 
 
 class UploadTypes(dd.Table):
@@ -54,7 +54,7 @@ class Upload(
     #~ allow_cascaded_delete = ['']
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('uploads.Upload')
+        abstract = dd.is_abstract_model('uploads.Upload')
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
@@ -96,6 +96,11 @@ class Uploads(dd.Table):
     file
     user
     """, window_size=(60, 'auto'))
+
+
+class UploadsByType(Uploads):
+    master_key = 'type'
+    column_names = "file description user * "
 
 
 class UploadsByController(Uploads):
