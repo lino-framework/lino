@@ -1,0 +1,5 @@
+/home/luc/hgwork/lino/docs/blog/2014/0326.rst:5: WARNING: undefined label: chat (if the link has no caption the label must precede a section header)
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+WARNING: logo file 'logo.png' does not exist
+WARNING: favicon file 'favicon.ico' does not exist

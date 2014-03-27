@@ -28,7 +28,6 @@ class Site(Site):
     #~ author_email = "luc.saffre@gmx.net"
 
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
-    #~ migration_module = 'lino.projects.az.migrate'
 
     demo_fixtures = 'std few_languages demo demo2'.split(
     )

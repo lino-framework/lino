@@ -17,6 +17,15 @@ from __future__ import print_function
 
 """
 The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
+
+Models:
+
+Slot
+Topic
+Line
+Course
+Enrolment
+
 """
 
 import logging

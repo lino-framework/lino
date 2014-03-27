@@ -32,7 +32,6 @@ class Site(Site):
     title = "Lino/CRL"
     #~ domain = "dsbe.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/crl/index.html"
-    #~ migration_module = 'lino.projects.polo.migrate'
 
     def is_abstract_model(self, name):
         if name == 'contacts.Person':

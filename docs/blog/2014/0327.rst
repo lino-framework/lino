@@ -1,0 +1,18 @@
+==================================
+20140327 (Thursday, 27 March 2014)
+==================================
+
+The migration which I used yesterday in Chatelet to migrate the
+production server was only for the "Chatelet" variant of Lino
+Welfare. That is, for a Lino Welfare which uses the "alternate"
+implementation of the `courses` app.
+
+This was enough to run the upgrade in Chatelet, which was my most
+urgent goal. But I must not leave it as this since in an "Eupen"
+variant they don't want to convert
+
+must find a solution for this before doing an upgrade in Eupen.
+
+For :mod:`lino_welfare.settings.chatelet`
+
+migrate_from_1_1_11

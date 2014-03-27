@@ -18,7 +18,6 @@ from lino.projects.std.settings import *
 class Site(Site):
     title = "Lino/MinimalApp 2"
     #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
-    #~ migration_module = 'lino.projects.az.migrate'
 
     #~ project_model = 'contacts.Person'
     #~ project_model = 'contacts.Person'
