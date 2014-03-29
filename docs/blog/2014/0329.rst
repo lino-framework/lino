@@ -1,0 +1,8 @@
+==================================
+20140329 (Saturday, 29 March 2014)
+==================================
+
+Worked on :doc:`/tickets/93`.
+
+New module :mod:`lino.modlib.dedupe` adds a "Similar Persons" slave
+table in the "Coaching" tab of ClientDetail.

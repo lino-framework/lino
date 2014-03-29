@@ -4,22 +4,49 @@
 #93 : Sozialsekretariat
 =======================
 
-#.  Tabelle EiEi-Beträge : 
 
-    - Kategorie
-    - Seit wann
-    - Betrag
+todo
+-----
 
-#.  Implement :ref:`davlink` and :ref:`eidreader` as Browser extensions.
+- SimilarPersons.
+  Bevor jemand einen Neuantrag zuweist, muss Lino im gleichen Tab aber
+  noch eine Tabelle von "ähnlichen Klienten" anzeigen.
 
-#.  Dublettenkontrolle beim Erstellen eines Klienten.
+  http://stackoverflow.com/questions/2230295/whats-the-best-way-to-dedupe-a-table
 
-    eid-Karte einlesen : wenn ein angeblich neuer Kunde kommt, soll
-    man zuerst die eid-Karte lesen. Lino entscheidet dann, ob es
-    Zweifel gibt und legt ggf. gleich einen neuen Klienten an.
+- Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
+  importieren.
 
-#.  Welche Angaben aus PXS fehlen noch im Detail-Fenster 
-    von Empfang-->Klienten? (mit Monika klären)
+- Konfigurierbare Historik:
+  Wann war ein Klient das letzte Mal da? Was ist alles passiert?
+      
+
+to test
+-------
+
+
+#. Dublettenkontrolle : wenn ein (angeblich) neuer Kunde kommt, soll
+   man einfach die eid-Karte lesen. Lino entscheidet dann, ob es
+   Zweifel gibt und legt ggf. gleich einen neuen Klienten an.  Also
+   beim Einlesen werden nur die "sicher ermittelten" Dubletten
+   gehandhabt. Im Zweifelsfall legt Lino einen Klienten (im Status
+   "Neuantrag") an.
+
+#. Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
+   Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
+
+
+
+to discuss
+----------
+
+- Wer darf auf den Button "zur Hauptadresse machen" klicken?
+
+- Brauchen wir eine Tabelle der EiEi-Beträge (Kategorie, Seit wann,
+  Betrag) ?
+
+- Welche Angaben aus PXS fehlen noch im Detail-Fenster 
+  von Empfang-->Klienten? (mit Monika klären)
 
     - `Krankenkasse` und `Vollmacht` : Leute, bei denen
       Medikamentenkosten vorgestreckt wurden, müssen eine Vollmacht
@@ -35,25 +62,11 @@
 
     - Sozialhilfekonto
 
-    - Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
-      Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
-
     - Wann ist die letzte Bescheinigung "Lebensmittelbank" (oder
       "Kleiderkammer") rausgegangen?  Manche Bescheinigungsarten
       dürfen frühestens nach 6 Monaten verlängert werden.
 
-    - Konfigurierbare Historik:
-      Wann war ein Klient das letzte Mal da? Was ist alles passiert?
-      
-    - Familienbeziehungen aus TIM importieren. 
-      "Seit kurzem müssen wir alle Kinder eingeben 
-      für Kleiderkammer-Bescheinigungen."
-
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
-
-    - Mehrere Adressen pro Klient : 
-      - Adressart (Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
-      - Button "zur Hauptadresse machen" (wer darf drauf klicken?)
 
 #.  Bescheinigungen müssen mit einem Klick rauskommen können.
     Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
@@ -80,6 +93,18 @@
     diversen Quellen zusammensucht:
     history.HistoricEvents.add(name,model,field)
     
+
+Closed
+-------
+
+- Mehrere Adressen pro Klient : 
+   - Adressart (Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
+   - Button "zur Hauptadresse machen" (wer darf drauf klicken?)
+
+- eid-Karte einlesen : funktioniert momentan mit :ref:`eidreader`.
+  Die Idee, dass wir :ref:`davlink` und :ref:`eidreader` als Browser
+  extension implementieren müssen, erwies sich als unnötig.
+
 
 Pages referring to this:
 

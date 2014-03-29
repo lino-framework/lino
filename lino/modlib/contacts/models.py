@@ -968,3 +968,4 @@ def setup_explorer_menu(site, ui, profile, m):
 
 def PartnerField(**kw):
     return models.ForeignKey(Partner, **kw)
+
