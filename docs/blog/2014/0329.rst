@@ -4,5 +4,15 @@
 
 Worked on :doc:`/tickets/93`.
 
-New module :mod:`lino.modlib.dedupe` adds a "Similar Persons" slave
-table in the "Coaching" tab of ClientDetail.
+Bevor man einen Neuantrag zuweist, kann man jetzt die neue 
+Tabelle "Ähnliche Personen" anzeigen.
+
+
+http://stackoverflow.com/questions/2230295/whats-the-best-way-to-dedupe-a-table
+
+New module :mod:`lino.modlib.dedupe` defines a "SimilarPersons" slave
+table.
+
+in the "Coaching" tab of ClientDetail.
+
+

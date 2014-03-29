@@ -8,18 +8,33 @@
 todo
 -----
 
-- SimilarPersons.
-  Bevor jemand einen Neuantrag zuweist, muss Lino im gleichen Tab aber
-  noch eine Tabelle von "ähnlichen Klienten" anzeigen.
-
-  http://stackoverflow.com/questions/2230295/whats-the-best-way-to-dedupe-a-table
-
 - Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
   importieren.
 
 - Konfigurierbare Historik:
   Wann war ein Klient das letzte Mal da? Was ist alles passiert?
+  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
+  diversen Quellen zusammensucht:
+  history.HistoricEvents.add(name,model,field)
       
+- Bescheinigungen müssen mit einem Klick rauskommen können.
+  Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
+  10x klicken und kriegt tausend unnütze Fragen gestellt.
+
+- Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
+
+- Uhrzeit von-bis eines prompt calendar event sollte ausgefüllt sein:
+
+    - Beginn = bei Empfang des ersten Gastes
+    - Ende = wenn der letzte Gast geht
+
+- Aktion "Termin finden" : 
+
+    - Statt Name der Benutzer wird ein fehlendes icon angezeigt
+    - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
+
+
+    
 
 to test
 -------
@@ -45,6 +60,8 @@ to discuss
 - Brauchen wir eine Tabelle der EiEi-Beträge (Kategorie, Seit wann,
   Betrag) ?
 
+- AMK-Bescheinigungen
+
 - Welche Angaben aus PXS fehlen noch im Detail-Fenster 
   von Empfang-->Klienten? (mit Monika klären)
 
@@ -68,33 +85,13 @@ to discuss
 
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
 
-#.  Bescheinigungen müssen mit einem Klick rauskommen können.
-    Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
-    10x klicken und kriegt tausend unnütze Fragen gestellt.
-
-#.  Uhrzeit von-bis eines prompt calendar event sollte ausgefüllt sein:
-
-    - Beginn = bei Empfang des ersten Gastes
-    - Ende = wenn der letzte Gast geht
-
-#.  Aktion "Termin finden" : 
-
-    - Statt Name der Benutzer wird ein fehlendes icon angezeigt
-    - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
-
 #.  Kann ein Klient eigentlich auf zwei Agenten zugleich warten? 
     Soll Lino das verhindern? 
 
 #.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
 
-#.  AMK-Bescheinigungen
 
-#.  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
-    diversen Quellen zusammensucht:
-    history.HistoricEvents.add(name,model,field)
-    
-
-Closed
+Done
 -------
 
 - Mehrere Adressen pro Klient : 
@@ -106,6 +103,13 @@ Closed
   extension implementieren müssen, erwies sich als unnötig.
 
 
-Pages referring to this:
+- SimilarPersons.  Bevor man einen Neuantrag zuweist, kann man jetzt
+  die neue Tabelle "Ähnliche Personen" konsultieren, um eventuelle
+  Dubletten zu erkennen.
+
+
+
+Pages referring to this
+-----------------------
 
 .. refstothis::

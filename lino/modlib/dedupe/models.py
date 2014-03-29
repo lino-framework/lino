@@ -38,26 +38,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 
-
-def find_similar_instances(obj, truncate, *fieldnames):
-    qs = obj.__class__.objects.exclude(pk=obj.pk)
-    # qs = obj.__class__.objects.all()
-    # flt = models.Q(last_name__icontains=obj.last_name)
-
-    # v = obj.first_name[:2]
-    # flt &= models.Q(first_name__istartswith=v)
-
-    v = obj.first_name[:2]
-    return qs.filter(
-        last_name__icontains=obj.last_name, first_name__istartswith=v)
-
-    # for k in fieldnames:
-    #     v = getattr(obj, k)
-    #     if truncate is not None:
-    #         v = v[:truncate]
-    #     flt = flt | models.Q(**{k + '__icontains': v})
-    # return qs.filter(flt)
-
+contacts = dd.resolve_app('contacts')
 
 class SimilarPersons(dd.VirtualTable):
     label = _("Similar Persons")
@@ -77,7 +58,7 @@ class SimilarPersons(dd.VirtualTable):
 
         # others = set()
 
-        for o in find_similar_instances(mi, None, 'last_name', 'first_name'):
+        for o in self.find_similar_instances(mi):
             # if not o in others:
             #     others.add(o)
             yield self.Row(mi, o)
@@ -86,7 +67,38 @@ class SimilarPersons(dd.VirtualTable):
         #     if not o in others:
         #         others.add(o)
         #         yield self.Row(mi, o)
-        
+
+    # @classmethod
+    # def get_target_model(self, obj):
+    #     return obj.__class__
+    
+    @classmethod
+    def get_words(self, obj):
+        s1 = set()
+        for s in (obj.last_name, obj.first_name):
+            for word in s.split():
+                s1.add(word)
+        s2 = set()
+        for n in s1:
+            for word in s.split('-'):
+                s2.add(word)
+        return s2
+    
+    @classmethod
+    def find_similar_instances(self, obj):
+        flt = models.Q()
+        for w in self.get_words(obj):
+            flt |= models.Q(last_name__icontains=w)
+            flt |= models.Q(first_name__icontains=w)
+        # model = self.get_target_model(obj)
+        qs = contacts.Person.objects.exclude(pk=obj.pk)
+        return qs.filter(flt)
+        # v = obj.first_name[:2]
+        # return qs.filter(
+        #     last_name__icontains=obj.last_name,
+        #     first_name__istartswith=v)
+
     @dd.displayfield(_("Other"))
     def other(self, obj, ar):
         return ar.obj2html(obj.slave)
+
