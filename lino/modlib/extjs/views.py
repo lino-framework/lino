@@ -90,7 +90,6 @@ class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
 
 
-
 def elem2rec1(ar, rh, elem, **rec):
     rec.update(data=rh.store.row2dict(ar, elem))
     return rec
@@ -105,6 +104,7 @@ def elem2rec_insert(ar, ah, elem):
     rec.update(title=ar.get_action_title())
     rec.update(phantom=True)
     #~ rec.update(id=elem.pk) or -99999)
+    # logger.info("20140331 insert_rec %s", rec)
     return rec
 
 

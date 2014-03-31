@@ -648,7 +648,6 @@ class ActionRequest(BaseRequest):
         # logger.debug('%s.create_instance(%r)',self,kw)
         if self.known_values:
             kw.update(self.known_values)
-        #~ print "20120527 create_instance", self, kw
         obj = self.actor.create_instance(self, **kw)
         #~ print 20120630, self.actor, 'actions.TableRequest.create_instance'
         #~ if self.known_values is not None:

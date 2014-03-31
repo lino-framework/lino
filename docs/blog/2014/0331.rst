@@ -15,3 +15,35 @@ of duplicate new clients. Great!  SimilarPersons is ready for customer
 review.
 
 
+Aid regimes, Aid helpers
+------------------------
+
+Added some new tables in :mod:`lino_welfare-modlib.aids`. This is my
+favourite suggestion about how to store these information. To be
+tested and analyzed with end-users.
+
+Checkin. 
+
+TODO:
+
+- When inserting to MedicalAidsByClient, Lino displays all AidType
+  objects (also financial ones) as if _aid_regime was None.
+
+
+Thunderbird fails to send message
+---------------------------------
+
+First question: 
+How to have Thunderbird log debug information?
+Answer:
+https://wiki.mozilla.org/MailNews:Logging#Other_Protocol_Logging_options_within_MailNews
+
+::
+
+    # For bash shell (the default shell on most GNU/Linux systems):
+    export NSPR_LOG_MODULES=imap:5
+    export NSPR_LOG_FILE=/tmp/imap.log
+
+
+
+
