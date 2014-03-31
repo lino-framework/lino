@@ -1,0 +1,17 @@
+================================
+20140331 (Monday, 31 March 2014)
+================================
+
+SimilarPersons ready for customer review
+----------------------------------------
+
+SimilarPersons has now `slave_grid_format` = 'summary'.  Fixed a bug
+in the framework which made that Lino didn't yet manage this case
+(setting `slave_grid_format` to "summary" on a VirtualTable).
+
+The algorithm for finding similar persons isn't yet very intelligent,
+but at least we have now an integral workflow to cope with the problem
+of duplicate new clients. Great!  SimilarPersons is ready for customer
+review.
+
+

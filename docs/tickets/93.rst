@@ -8,19 +8,6 @@
 todo
 -----
 
-- Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
-  importieren.
-
-- Konfigurierbare Historik:
-  Wann war ein Klient das letzte Mal da? Was ist alles passiert?
-  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
-  diversen Quellen zusammensucht:
-  history.HistoricEvents.add(name,model,field)
-      
-- Bescheinigungen müssen mit einem Klick rauskommen können.
-  Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
-  10x klicken und kriegt tausend unnütze Fragen gestellt.
-
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
 
 - Uhrzeit von-bis eines prompt calendar event sollte ausgefüllt sein:
@@ -34,21 +21,35 @@ todo
     - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
 
 
+- Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
+  importieren.
+
+- Konfigurierbare Historik:
+  Wann war ein Klient das letzte Mal da? Was ist alles passiert?
+  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
+  diversen Quellen zusammensucht:
+  history.HistoricEvents.add(name,model,field)
+      
+- Bescheinigungen müssen mit einem Klick rauskommen können.
+  Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
+  10x klicken und kriegt tausend unnütze Fragen gestellt.
+
     
 
 to test
 -------
 
 
-#. Dublettenkontrolle : wenn ein (angeblich) neuer Kunde kommt, soll
-   man einfach die eid-Karte lesen. Lino entscheidet dann, ob es
-   Zweifel gibt und legt ggf. gleich einen neuen Klienten an.  Also
-   beim Einlesen werden nur die "sicher ermittelten" Dubletten
-   gehandhabt. Im Zweifelsfall legt Lino einen Klienten (im Status
-   "Neuantrag") an.
+- Dublettenkontrolle : wenn ein (angeblich) neuer Kunde kommt, soll
+  man einfach die eid-Karte lesen. Im Normalfall haben wir die
+  NR-Nummer, also gibt es keinen Zweifel.  Im Zweifelsfall legt Lino
+  einen Klienten (im Status "Neuantrag") an.  Bevor man einen
+  Neuantrag zuweist, kann man jetzt die neue Tabelle "Ähnliche
+  Personen" (SimilarPersons) konsultieren, um eventuelle Dubletten zu
+  erkennen.
 
-#. Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
-   Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
+- Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
+  Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
 
 
@@ -102,10 +103,6 @@ Done
   Die Idee, dass wir :ref:`davlink` und :ref:`eidreader` als Browser
   extension implementieren müssen, erwies sich als unnötig.
 
-
-- SimilarPersons.  Bevor man einen Neuantrag zuweist, kann man jetzt
-  die neue Tabelle "Ähnliche Personen" konsultieren, um eventuelle
-  Dubletten zu erkennen.
 
 
 

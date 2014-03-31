@@ -40,15 +40,20 @@ from lino import dd
 
 contacts = dd.resolve_app('contacts')
 
+
 class SimilarPersons(dd.VirtualTable):
     label = _("Similar Persons")
-    slave_grid_format = 'html'
+    # slave_grid_format = 'html'
+    slave_grid_format = 'summary'
 
     class Row:
 
         def __init__(self, master, slave):
             self.master = master
             self.slave = slave
+
+        def summary_row(self, ar):
+            yield ar.obj2html(self.slave)
 
     @classmethod
     def get_data_rows(self, ar):

@@ -134,6 +134,32 @@ def get_default_required(**kw):
     return kw
 
 
+def comma():
+    return ', '
+
+#~ def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
+
+
+def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
+    """
+    Returns this table as a unicode string.
+
+    :param max_items: don't include more than the specified number of items.
+    """
+    elems = []
+    n = 0
+    for i in objects:
+        if n:
+            elems.append(separator())
+        n += 1
+        elems += list(ar.summary_row(i, **kw))
+        if n >= max_items:
+            elems += [separator(), '...']
+            break
+            #~ return E.p(*elems)
+    return E.p(*elems)
+
+
 class ParameterPanel(object):
 
     def __init__(self, **kw):
@@ -1582,3 +1608,17 @@ class Actor(actions.Parametrizable):
             l.append(ar.action_button(ba, obj))
             sep = ' '
         return E.p(*l)
+
+    @classmethod
+    def slave_as_summary_meth(self, row_separator):
+        """
+        Creates and returns the method to be used when
+        :attr:`AbstractTable.slave_grid_format` is 'summary'.
+        """
+        def meth(master, ar):
+            ar = ar.spawn(self, master_instance=master)
+            s = qs2summary(ar, ar.data_iterator, row_separator)
+            return s
+        return meth
+
+
