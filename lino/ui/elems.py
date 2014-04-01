@@ -941,10 +941,6 @@ class RemoteComboFieldElement(ComboFieldElement):
         # ~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field, **kw)
-            #~ url = self.layout_handle.ui.build_url("choices",
-                #~ self.layout_handle.layout._datasource.app_label,
-                #~ self.layout_handle.layout._datasource.__name__,
-                #~ self.field.name,**kw)
             proxy = dict(url=url, method='GET')
             kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" %
                       py2js(proxy)))

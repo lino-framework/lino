@@ -1,0 +1,7 @@
+=================================
+20140401 (Tuesday, 01 April 2014)
+=================================
+
+Documented yesterday's workaround of the aid_regime problem in
+AidsByClient.
+
