@@ -2,6 +2,15 @@
 20140401 (Tuesday, 01 April 2014)
 =================================
 
-Documented yesterday's workaround of the aid_regime problem in
-AidsByClient.
+Documented yesterday's workaround of the `aid_regime` problem in
+`AidsByClient`.
 
+I removed the `Attestable` mixin. Every Model is now potentially
+"attestable".  The CreatePrintOut action is dynamically added at
+server startup for every model that has at least one "Printout type"
+(AttestationType).
+
+Continued on some proper examples of real attestations
+("Anwesenheitsbescheinigung" und "Ausländerbeihilfe").  Started to
+make use of Jinja's `template inheritance
+<http://jinja.pocoo.org/docs/templates/#template-inheritance>`_.

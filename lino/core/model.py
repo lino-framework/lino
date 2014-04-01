@@ -544,6 +544,18 @@ class Model(models.Model):
             return a
         return self.__class__.get_default_table().detail_action
 
+    def is_attestable(self):
+        """Override this to disable the create printout action on individual
+instances.
+
+        """
+        return True
+
+    def get_attestation_options(self, ar, **kw):
+        """Set additional fields of newwly created printout from this."""
+        return kw
+
+
 
 
     LINO_MODEL_ATTRIBS = (

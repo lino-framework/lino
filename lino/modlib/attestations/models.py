@@ -46,6 +46,7 @@ class AttestationType(
     templates_group = 'attestations/Attestation'
 
     class Meta:
+        abstract = dd.is_abstract_model('attestations.AttestationType')
         verbose_name = _("Printout Type")
         verbose_name_plural = _("Printout Types")
 
@@ -128,7 +129,7 @@ class AttestationTypes(dd.Table):
         return obj.get_choices_text(request, self, field)
 
 
-class AttestAction(dd.Action):
+class CreatePrintout(dd.Action):
 
     """
     Creates a Printout and displays it.
@@ -146,7 +147,7 @@ class AttestAction(dd.Action):
         if obj is not None:
             if not obj.is_attestable():
                 return False
-        return super(AttestAction,
+        return super(CreatePrintout,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
@@ -170,7 +171,9 @@ class AttestAction(dd.Action):
             # if n == 1:
             #     akw.update(type=atypes[0])
 
-        a = obj.create_attestation(ar, **akw)
+        # a = obj.create_attestation(ar, **akw)
+        akw = obj.get_attestation_options(ar, **akw)
+        a = dd.modules.attestations.Attestation(**akw)
 
         a.full_clean()
         a.save()
@@ -182,29 +185,6 @@ class AttestAction(dd.Action):
             ar.success(**kw)
         else:  # print directly without dialog
             a.do_print.run_from_ui(ar, **kw)
-
-
-class Attestable(dd.Model):
-
-    """Mixin for models that provide a "Create printout" button.
-    An implementing model must also inherit
-    :class:`lino.mixins.printable.BasePrintable` or some subclass
-    thereof.
-
-    """
-    class Meta:
-        abstract = True
-
-    do_attest = AttestAction()
-    
-    # Note every Attestable wants a "show attestations" button
-    # show_attestations = dd.ShowSlaveTable('attestations.AttestationsByOwner')
-
-    def is_attestable(self):
-        return True
-
-    def create_attestation(self, ar, **kw):
-        return dd.modules.attestations.Attestation(**kw)
 
 
 class Attestation(dd.TypedPrintable,
@@ -223,7 +203,7 @@ class Attestation(dd.TypedPrintable,
     manager_level_field = 'office_level'
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('attestations.Attestation')
+        abstract = dd.is_abstract_model('attestations.Attestation')
         verbose_name = _("Printout")
         verbose_name_plural = _("Printouts")
 
@@ -382,3 +362,26 @@ def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
     m.add_action('attestations.Attestations')
 
+
+@dd.receiver(dd.pre_analyze)
+def set_attest_actions(sender, **kw):
+    # logger.info("20140401 %s.set_attest_actions()", __name__)
+    # in case AttestationType is overridden
+    AttestationType = sender.modules.attestations.AttestationType
+    ctypes = set()
+    for atype in AttestationType.objects.all():
+        ct = atype.content_type
+        if not ct is None and not ct in ctypes:
+            ctypes.add(ct)
+            m = ct.model_class()
+            m.define_action(do_attest=CreatePrintout())
+            m.define_action(
+                show_attestations=dd.ShowSlaveTable(
+                    'attestations.AttestationsByOwner'))
+            logger.info("20140401 %s is attestable", m)
+
+    # Note every Attestable wants a "show attestations" button
+
+    # An attestable model must also inherit
+    # :class:`lino.mixins.printable.BasePrintable` or some subclass
+    # thereof.
