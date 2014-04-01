@@ -409,6 +409,8 @@ class BasePrintAction(actions.Action):
     def attach_to_actor(self, actor, name):
         if not dbutils.resolve_app('system'):
             return False
+        # if actor.__name__ == 'AttestationsByProject':
+        #     logger.info("20140401 attach_to_actor() %r", self)
         return super(BasePrintAction, self).attach_to_actor(actor, name)
 
     def is_callable_from(self, caller):
@@ -447,7 +449,7 @@ class CachedPrintAction(BasePrintAction):
 
     """
 
-    select_rows = False
+    # select_rows = False
     http_method = 'POST'
     icon_name = 'printer'
 

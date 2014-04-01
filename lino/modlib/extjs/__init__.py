@@ -124,6 +124,9 @@ class Plugin(Plugin):
 
         from django.conf.urls import patterns
         from . import views
+        from lino.utils import codetime
+
+        ui.code_mtime = codetime()
 
         #~ print("20121110 get_urls")
         ui.extjs_renderer.build_site_cache()

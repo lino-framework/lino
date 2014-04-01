@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -56,10 +56,13 @@ def codefiles(pattern='*'):
 
 
 def codetime(*args, **kw):
-    """
-    Return the modification time of the youngest source code in memory.
-    Used by :mod:`lino.ui.extjs3.ext_ui` to avoid generating lino.js files if not necessary.
+    """Return the modification time of the youngest source code in memory.
+
+    Used by :mod:`lino.modlib.extjs` to avoid generating .js files if
+    not necessary.
+
     Inspired by the code_changed() function in `django.utils.autoreload`.
+
     """
     code_mtime = None
     pivot = None
@@ -67,10 +70,10 @@ def codetime(*args, **kw):
         stat = os.stat(filename)
         mtime = stat.st_mtime
         if code_mtime is None or code_mtime < mtime:
-            #~ print 20130204, filename, time.ctime(mtime)
+            # print 20130204, filename, time.ctime(mtime)
             code_mtime = mtime
             pivot = filename
-    #~ print '20130204 codetime:', time.ctime(code_mtime), pivot
+    # print '20130204 codetime:', time.ctime(code_mtime), pivot
     return code_mtime
 
 

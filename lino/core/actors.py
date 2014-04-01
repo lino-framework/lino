@@ -1117,7 +1117,7 @@ class Actor(actions.Parametrizable):
                 # 20130820 allow disabling inherited actions
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
-                    if not cls._actions_dict.has_key(k):
+                    if not k in cls._actions_dict:
                             #~ cls._attach_action(k,v)
                         if v.attach_to_actor(cls, k):
                             cls.bind_action(v)
@@ -1128,8 +1128,10 @@ class Actor(actions.Parametrizable):
             return cmp(a.action.sort_index, b.action.sort_index)
         cls._actions_list.sort(f)
         cls._actions_list = tuple(cls._actions_list)
-        #~ if cls.__name__ == 'RetrieveTIGroupsRequest':
-        #~ logger.info('20120614 %s : %s',cls, [str(a) for a in cls._actions_list])
+        # if cls.__name__ == 'AttestationsByProject':
+        #     logger.info(
+        #         '20120614 %s : %s', cls,
+        #         [str(a) for a in cls._actions_list])
 
     @classmethod
     def bind_action(self, a):

@@ -378,7 +378,7 @@ def set_attest_actions(sender, **kw):
             m.define_action(
                 show_attestations=dd.ShowSlaveTable(
                     'attestations.AttestationsByOwner'))
-            logger.info("20140401 %s is attestable", m)
+            # logger.info("20140401 %s is attestable", m)
 
     # Note every Attestable wants a "show attestations" button
 

@@ -477,10 +477,10 @@ class Action(Parametrizable, Permittable):
 
     select_rows = True
     #~ select_rows = False
-    """
-    TODO: rename this to "single_row".
-    True if this action should be called on a single row (ignoring multiple row selection)..
-    Set this to False if this action is a list action, not a row action.
+    """TODO: rename this to "single_row".  True if this action should be
+    called on a single row (ignoring multiple row selection).  Set
+    this to False if this action is a list action, not a row action.
+
     """
 
     http_method = 'GET'

@@ -249,7 +249,7 @@ class Kernel(object):
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
 
-        self.mtime = codetime()
+        # self.mtime = codetime()
         #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
 
         for p in site.installed_plugins:

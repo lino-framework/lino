@@ -28,9 +28,6 @@ import sys
 import cgi
 import time
 import datetime
-#import traceback
-import cPickle as pickle
-from urllib import urlencode
 import codecs
 import jinja2
 
@@ -676,25 +673,27 @@ class ExtRenderer(HtmlRenderer):
                          handler=js_code('Lino.show_login_window')),
                     #~ dict(xtype="button",text="Register",handler=Lino.register),
                 ]
-                yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
+                yield "Lino.main_menu = \
+                Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
 
     def build_site_cache(self, force=False):
-        """
-        Build the site cache files under `/media/cache`,
-        especially the :xfile:`lino*.js` files, one per user profile and language.
+        """Build the site cache files under `/media/cache`, especially the
+        :xfile:`lino*.js` files, one per user profile and language.
+
         """
         if settings.SITE.never_build_site_cache:
             logger.debug(
                 "Not building site cache because `settings.SITE.never_build_site_cache` is True")
             return
         if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.debug("Not building site cache because " +
-                         "directory '%s' (settings.MEDIA_ROOT) does not exist.",
-                         settings.MEDIA_ROOT)
+            logger.debug(
+                "Not building site cache because " +
+                "directory '%s' (settings.MEDIA_ROOT) does not exist.",
+                settings.MEDIA_ROOT)
             return
 
         started = time.time()
-        #~ logger.info("build_site_cache started")
+        # logger.info("20140401 build_site_cache started")
 
         settings.SITE.on_each_app('setup_site_cache', force)
 
@@ -723,23 +722,25 @@ class ExtRenderer(HtmlRenderer):
                         count, time.time() - started)
 
     def build_js_cache_for_profile(self, profile, force):
-        """
-        Build the lino*.js file for the specified user and the current language.
-        If the file exists and is up to date, don't generate it unless
-        `force=False` is specified.
+        """Build the lino*.js file for the specified user and the current
+        language.  If the file exists and is up to date, don't
+        generate it unless `force=False` is specified.
 
         This is called
-        - on each request if :attr:`lino.Lino.build_js_cache_on_startup` is `False`.
+        - on each request if :setting:`build_js_cache_on_startup` is `False`.
         - with `force=True` by :class:`lino.models.BuildSiteCache`
+
         """
         jsgen.set_for_user_profile(profile)
 
         fn = os.path.join(settings.MEDIA_ROOT, *self.lino_js_parts(profile))
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
-            if mtime > settings.SITE.ui.mtime:
+            if mtime > settings.SITE.kernel.code_mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                #~ logger.info("20130204 %s is up to date.",fn)
+                logger.info(
+                    "20140401 %s (%s) is up to date.",
+                    fn, time.ctime(mtime))
                 return 0
 
         logger.info("Building %s ...", fn)
@@ -945,8 +946,10 @@ class ExtRenderer(HtmlRenderer):
                 if ba.action.parameters:
                     pass
                 elif ba.action.opens_a_window:
-                    if isinstance(ba.action, (actions.ShowDetailAction, actions.InsertRow)):
-                        for ln in self.js_render_detail_action_FormPanel(rh, ba):
+                    if isinstance(ba.action, (actions.ShowDetailAction,
+                                              actions.InsertRow)):
+                        for ln in self.js_render_detail_action_FormPanel(
+                                rh, ba):
                             f.write(ln + '\n')
                     for ln in self.js_render_window_action(rh, ba, profile):
                         f.write(ln + '\n')
@@ -1008,7 +1011,12 @@ class ExtRenderer(HtmlRenderer):
         buttons = []
         combo_map = dict()
         for ba in action_list:
-            if ba.action.show_in_bbar and ba.get_view_permission(jsgen._for_user_profile):
+
+            # if ba.actor.__name__ == 'AttestationsByProject':
+            #     logger.info("20140401 toolbar() %r", ba.action)
+            
+            if ba.action.show_in_bbar and ba.get_view_permission(
+                    jsgen._for_user_profile):
                 if ba.action.combo_group is None:
                     buttons.append(self.a2btn(ba))
                 else:

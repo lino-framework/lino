@@ -14,3 +14,7 @@ Continued on some proper examples of real attestations
 ("Anwesenheitsbescheinigung" und "Ausländerbeihilfe").  Started to
 make use of Jinja's `template inheritance
 <http://jinja.pocoo.org/docs/templates/#template-inheritance>`_.
+
+Then I noticed that the print button had disappeared.  It took me more
+than an hour to find out why: `CachedPrintAction` had `select_rows`
+set to `False`. Don't ask me why.
