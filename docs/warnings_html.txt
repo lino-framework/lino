@@ -1,2 +1,7 @@
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:22: ERROR: Unknown interpreted text role "aattr".
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:32: ERROR: Unknown interpreted text role "aattr".
+/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:41: ERROR: Unknown interpreted text role "aattr".
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

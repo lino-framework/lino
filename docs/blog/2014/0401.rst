@@ -18,3 +18,9 @@ make use of Jinja's `template inheritance
 Then I noticed that the print button had disappeared.  It took me more
 than an hour to find out why: `CachedPrintAction` had `select_rows`
 set to `False`. Don't ask me why.
+
+While looking for this explanation I stumbled over another little bug:
+Lino did not detect any code change in app code because these are not
+yet imported when the Kernel gets instantiatet set.  I now set
+`Kernel.mtime` in `get_url_patterns`. That's early enough.  Also
+renamed `Kernel.mtime` to `Kernel.code_mtime`.
