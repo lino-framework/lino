@@ -20,6 +20,7 @@ todo
     - Statt Name der Benutzer wird ein fehlendes icon angezeigt
     - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
 
+- Kontonummern erfassen : das ist wohl noch nicht sehr benutzerfreundlich...
 
 - Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
   importieren.
@@ -30,10 +31,6 @@ todo
   diversen Quellen zusammensucht:
   history.HistoricEvents.add(name,model,field)
       
-- Bescheinigungen müssen mit einem Klick rauskommen können.
-  Dialog einfacher und Ausdruck direkt raus.  Momentan muss man
-  10x klicken und kriegt tausend unnütze Fragen gestellt.
-
     
 
 to test
@@ -112,6 +109,9 @@ Done
 - eid-Karte einlesen : funktioniert momentan mit :ref:`eidreader`.
   Die Idee, dass wir :ref:`davlink` und :ref:`eidreader` als Browser
   extension implementieren müssen, erwies sich als unnötig.
+
+- Bescheinigungen können jetzt mit einem Klick rauskommen. 
+  (wenn beide Felder skip_dialog und primary angekreuzt sind)
 
 
 

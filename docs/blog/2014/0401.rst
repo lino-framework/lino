@@ -24,3 +24,7 @@ Lino did not detect any code change in app code because these are not
 yet imported when the Kernel gets instantiatet set.  I now set
 `Kernel.mtime` in `get_url_patterns`. That's early enough.  Also
 renamed `Kernel.mtime` to `Kernel.code_mtime`.
+
+In `Attestation`, the pointer to AttestationType was named `type`.
+Renamed it to `attestation_type`.  The former was "old" naming style.
+I now prefer the latter because e.g. it makes searching more explicit.

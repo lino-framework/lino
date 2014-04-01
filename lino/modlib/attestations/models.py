@@ -161,7 +161,7 @@ class CreatePrintout(dd.Action):
         try:
             primary_type = AttestationType.objects.get(
                 content_type=ct, primary=True)
-            akw.update(type=primary_type)
+            akw.update(attestation_type=primary_type)
         except AttestationType.MultipleObjectsReturned:
             pass
         except AttestationType.DoesNotExist:
@@ -210,8 +210,8 @@ class Attestation(dd.TypedPrintable,
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)
 
-    type = models.ForeignKey(
-        AttestationType,
+    attestation_type = models.ForeignKey(
+        'attestations.AttestationType',
         blank=True, null=True)
 
     language = dd.LanguageField()
@@ -222,7 +222,7 @@ class Attestation(dd.TypedPrintable,
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):
-        return self.type
+        return self.attestation_type
 
     def on_create(self, ar):
         """When creating an Attestation by double clicking in
@@ -237,11 +237,11 @@ class Attestation(dd.TypedPrintable,
                 self.owner = self.project
 
     @dd.chooser()
-    def type_choices(cls, owner):
+    def attestation_type_choices(cls, owner):
         qs = AttestationType.objects.order_by('name')
         if owner is None:
             return qs.filter(content_type__isnull=True)
-        print(20140210, owner)
+        # print(20140210, owner)
         ct = ContentType.objects.get_for_model(owner.__class__)
         return qs.filter(content_type=ct)
 
@@ -262,9 +262,10 @@ class Attestation(dd.TypedPrintable,
 
     def get_printable_context(self, ar, **kw):
         kw = super(Attestation, self).get_printable_context(ar, **kw)
-        if self.type and self.type.body_template:
-            tplname = self.type.body_template
-            tplname = self.type.get_templates_group() + '/' + tplname
+        atype = self.attestation_type
+        if atype and atype.body_template:
+            tplname = atype.body_template
+            tplname = atype.get_templates_group() + '/' + tplname
             saved_renderer = ar.renderer
             ar.renderer = settings.SITE.ui.plain_renderer
             template = settings.SITE.jinja_env.get_template(tplname)
@@ -278,6 +279,20 @@ class Attestation(dd.TypedPrintable,
         #     kw.update(doc=self)
         return kw
 
+    @classmethod
+    def on_analyze(cls, lino):
+        cls.PRINTABLE_FIELDS = dd.fields_list(
+            cls,
+            'project company contact_person contact_role \
+            attestation_type language \
+            user build_method')
+        super(Attestation, cls).on_analyze(lino)
+
+    def disabled_fields(self, ar):
+        if not self.build_time:
+            return set()
+        return self.PRINTABLE_FIELDS
+
 
 dd.update_field(Attestation, 'company',
                 verbose_name=_("Recipient (Organization)"))
@@ -287,9 +302,9 @@ dd.update_field(Attestation, 'contact_person',
 
 class AttestationDetail(dd.FormLayout):
     main = """
-    id type:25 project
+    id attestation_type:25 project
     company contact_person contact_role
-    user:10 language:8 owner build_time
+    user:10 language:8 owner build_method build_time
     preview
     """
 
@@ -300,28 +315,28 @@ class Attestations(dd.Table):
     model = 'attestations.Attestation'
     detail_layout = AttestationDetail()
     insert_layout = """
-    type project
+    attestation_type project
     company language
     """
-    column_names = "id build_time user type project *"
+    column_names = "id build_time user attestation_type project *"
     order_by = ["id"]
 
 
 class MyAttestations(mixins.ByUser, Attestations):
     required = dd.required(user_groups='office')
-    column_names = "build_time type project *"
+    column_names = "build_time attestation_type project *"
     order_by = ["build_time"]
 
 
 class AttestationsByType(Attestations):
-    master_key = 'type'
+    master_key = 'attestation_type'
     column_names = "build_time user *"
     order_by = ["build_time"]
 
 
 class AttestationsByX(Attestations):
     required = dd.required(user_groups='office')
-    column_names = "build_time type user *"
+    column_names = "build_time attestation_type user *"
     order_by = ["-build_time"]
 
 if settings.SITE.project_model is not None:
@@ -332,17 +347,17 @@ if settings.SITE.project_model is not None:
 
 class AttestationsByOwner(AttestationsByX):
     master_key = 'owner'
-    column_names = "build_time type user *"
+    column_names = "build_time attestation_type user *"
 
 
 class AttestationsByCompany(AttestationsByX):
     master_key = 'company'
-    column_names = "build_time type user *"
+    column_names = "build_time attestation_type user *"
 
 
 class AttestationsByPerson(AttestationsByX):
     master_key = 'contact_person'
-    column_names = "build_time type user *"
+    column_names = "build_time attestation_type user *"
 
 
 system = dd.resolve_app('system')
@@ -362,6 +377,7 @@ def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
     m.add_action('attestations.Attestations')
 
+from django.db.utils import OperationalError
 
 @dd.receiver(dd.pre_analyze)
 def set_attest_actions(sender, **kw):
@@ -369,16 +385,20 @@ def set_attest_actions(sender, **kw):
     # in case AttestationType is overridden
     AttestationType = sender.modules.attestations.AttestationType
     ctypes = set()
-    for atype in AttestationType.objects.all():
-        ct = atype.content_type
-        if not ct is None and not ct in ctypes:
-            ctypes.add(ct)
-            m = ct.model_class()
-            m.define_action(do_attest=CreatePrintout())
-            m.define_action(
-                show_attestations=dd.ShowSlaveTable(
-                    'attestations.AttestationsByOwner'))
-            # logger.info("20140401 %s is attestable", m)
+    try:
+        for atype in AttestationType.objects.all():
+            ct = atype.content_type
+            if not ct is None and not ct in ctypes:
+                ctypes.add(ct)
+                m = ct.model_class()
+                m.define_action(do_attest=CreatePrintout())
+                m.define_action(
+                    show_attestations=dd.ShowSlaveTable(
+                        'attestations.AttestationsByOwner'))
+                # logger.info("20140401 %s is attestable", m)
+    except OperationalError as e:
+        logger.info("Failed to load attest_actions : %s", e)
+
 
     # Note every Attestable wants a "show attestations" button
 
