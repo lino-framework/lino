@@ -26,3 +26,9 @@ Discovered a new problem:
 Solved this by changing internal API for Renderer.row_action_button
 and action_call_on_instance and Action.as_button_elem: not the web
 request but the action request is to be passed.
+
+
+
+And another subtle problem: when displaying the calendarPanel for
+another user, Lino displayed the calendar list of the authenticated
+user.

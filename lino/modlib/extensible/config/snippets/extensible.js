@@ -110,33 +110,6 @@ Lino.unused_eventStore = new Ext.data.JsonStore({
   }
 });
 
-//~ Lino.eventStore.on('load', function() {
-//~ });
-
-
-    //~ Lino.subst_user = id;
-
-
-//~ Lino.calendarStore = new Ext.data.ArrayStore({ 
-Lino.unused_calendarStore = new Ext.data.JsonStore({ 
-      listeners: { exception: Lino.on_store_exception }
-      ,restful : true
-      ,proxy: new Ext.data.HttpProxy({ 
-          url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
-          disableCaching: false // no need for cache busting when loading via Ajax
-          //~ restful : true
-          //~ method: "GET"
-      })
-      //~ ,autoLoad: true
-      //~ ,remoteSort: true
-      //~ ,baseParams: bp
-      ,totalProperty: "count"
-      ,root: "rows"
-      ,fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange()
-      ,idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
-      //~ ,idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
-    });
-
 
 Lino.CalendarCfg = {
     dateParamFormat: '{{settings.SITE.date_format_extjs}}',
@@ -185,8 +158,9 @@ Ext.override(Ext.ensible.cal.CalendarPanel,{
     //~ ,eventdelete: Lino.on_eventdelete
     //~ ,eventresize: Lino.on_eventresize
     ,afterrender : function(config) {
-      //~ console.log("20120704 afterrender");
-      this.app_instance.calendar_store.load();
+      // console.log("20140402 CalendarPanel.afterrender");
+      this.app_instance.calendar_store.cal_panel = this;
+      // 20140402 this.app_instance.calendar_store.load();
       //~ console.log("20120704 afterrender calls eventStore.load()",p);
       this.app_instance.event_store.cal_panel = this;
       //~ Lino.eventStore.load({params:p});
@@ -218,8 +192,8 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
   ,empty_title : "{{site.modules.extensible.CalendarPanel.label}}"
   ,ls_url: '/extensible/CalendarPanel'
   ,set_status : function(status,rp) { 
+      // console.log('20140402 CalendarAppPanel.set_status()', status);
       this.requesting_panel = Ext.getCmp(rp);
-      //~ console.log('20120918 CalendarAppPanel.set_status()',status,rp,this.requesting_panel);
       this.clear_base_params();
       if (status == undefined) status = {};
       //~ if (status.param_values) 
@@ -229,17 +203,21 @@ Lino.CalendarAppPanel = Ext.extend(Lino.CalendarAppPanel,{
       }
   ,refresh : function() {
       //~ this.app_instance.event_store.reload(); 20130905
+      this.app_instance.calendar_store.load();  // added 20140402
       this.app_instance.event_store.load();
   }
   ,layout: 'fit'
   ,get_base_params : function() {
-    var p = Ext.apply({},this.base_params);
+    // console.log('20140402 getbase_params has', this.base_params);
+    var p = Ext.apply({}, this.base_params);
     Lino.insert_subst_user(p);
+    // console.log('20140402 getbase_params returns', p);
     return p;
   }
   ,set_base_params : function(p) {
     this.base_params = Ext.apply(this.app_instance.event_store.baseParams,p);
     this.app_instance.event_store.baseParams = this.base_params;
+    // console.log('20140402 this.base_params is', this.base_params);
   }
   ,clear_base_params : function() {
       this.base_params = {};
@@ -284,9 +262,10 @@ Lino.CalendarApp = function() { return {
               options.params[view.dateParamStart] = bounds.start.format(view.dateParamFormat);
               options.params[view.dateParamEnd] = bounds.end.format(view.dateParamFormat);
               Lino.insert_subst_user(options.params);
+              Ext.apply(options.params, cap.get_base_params());
               //~ this.cal_panel.base_params.su.toString();
               //~ if (this.cal_panel) {
-                  Ext.apply(options.params,this.cal_panel.base_params);
+                  // Ext.apply(options.params,this.cal_panel.base_params);
               //~ }
               //~ Ext.apply(options.params,p)
               //~ console.log('20130905 eventStore.load()',this.cal_panel,this.baseParams,options.params);
@@ -300,7 +279,7 @@ Lino.CalendarApp = function() { return {
           listeners: { exception: Lino.on_store_exception }
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt="{{ext_requests.URL_FORMAT_JSON}}")}}', 
+              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt=ext_requests.URL_FORMAT_JSON)}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ restful : true
               //~ method: "GET"
@@ -313,6 +292,17 @@ Lino.CalendarApp = function() { return {
           ,fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange()
           ,idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
           //~ ,idIndex: Ext.ensible.cal.CalendarMappings.CalendarId.mapping
+          ,load: function(options) {
+              // new since 20140402 add substitute user when calling
+              // calendars
+              if (!options) options = {};
+              if (!options.params) options.params = {};
+              // Lino.insert_subst_user(options.params);
+              Ext.apply(options.params, cap.get_base_params());
+              // console.log("20140402 calendar_store.load", options.params, 
+              //             this.cal_panel, cap.get_base_params());
+            return Ext.data.JsonStore.prototype.load.call(this,options);
+          }
       });
       
       cap = new Lino.CalendarAppPanel({ 
@@ -347,7 +337,7 @@ Lino.CalendarApp = function() { return {
                   listeners: {
                       'select': {
                           fn: function(dp, dt){
-                              console.log(20131017,dp);
+                              // console.log("20131017",dp);
                               //~ Lino.calendarPanel.setStartDate(dt);
                               //~ cap.setStartDate(dt);
                               Ext.getCmp('app-calendar').setStartDate(dt);

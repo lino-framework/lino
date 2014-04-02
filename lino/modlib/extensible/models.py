@@ -139,7 +139,7 @@ class PanelCalendars(Calendars):
         try:
             sub = self.subscription_set.get(user=ar.get_user())
         except self.subscription_set.model.DoesNotExist:
-            return False
+            return True
         return sub.is_hidden
 
 
@@ -174,7 +174,7 @@ class PanelEvents(Events):
         Handle the request parameters issued by Ext.ensible CalendarPanel.
         """
         #~ filter = kw.get('filter',{})
-        assert not kw.has_key('filter')
+        assert not 'filter' in kw
         fkw = {}
         #~ logger.info("20120118 filter is %r", filter)
         endDate = rqdata.get(constants.URL_PARAM_END_DATE, None)
@@ -191,20 +191,23 @@ class PanelEvents(Events):
         #~ subs = Subscription.objects.filter(user=request.user).values_list('calendar__id',flat=True)
         #~ filter.update(calendar__id__in=subs)
 
+        fkw.update(event_type__is_appointment=True)
+
         flt = models.Q(**fkw)
 
-        """
-        If you override `parse_req`, then keep in mind that it will
-        be called *before* Lino checks the requirements. 
-        For example the user may be AnonymousUser even if 
-        the requirements won't let it be executed.
+        """If you override `parse_req`, then keep in mind that it will be
+        called *before* Lino checks the requirements.  For example the
+        user may be AnonymousUser even if the requirements won't let
+        it be executed.
 
         `request.subst_user.profile` may be None e.g. when called 
         from `find_appointment` in :ref:`welfare.pcsw.Clients`.
+
         """
         if not request.user.profile.authenticated:
             raise exceptions.PermissionDenied(
-                _("As %s you have no permission to run this action.") % request.user.profile)
+                _("As %s you have no permission to run this action.")
+                % request.user.profile)
 
         # who am i ?
         me = request.subst_user or request.user
@@ -212,6 +215,7 @@ class PanelEvents(Events):
         # show all my events
         for_me = models.Q(user__isnull=True)
         for_me |= models.Q(user=me)
+        for_me |= models.Q(assigned_to=me)
 
         # also show events to which i am invited
         if me.partner:
@@ -234,8 +238,13 @@ class PanelEvents(Events):
                 #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
                 for_me = for_me | models.Q(
                     user__in=we, access_class__in=team_classes)
-        flt = flt & for_me
-        #~ logger.info('20120710 %s', flt)
+        if False:
+            # currently disabled. this is needed ony when you want to
+            # support private events, i.e. events which are never
+            # visible to other users.
+
+            flt = flt & for_me
+        # logger.info('20140402 %s', flt)
         kw.update(filter=flt)
         #~ logger.info('20130808 %s %s', tv,me)
         return kw
@@ -247,11 +256,17 @@ class PanelEvents(Events):
 
     @classmethod
     def create_instance(self, ar, **kw):
+        """This handles a rather hackerish method used to make appointments
+        for a predifined "project", concrete use case is the "find
+        appointment" button for a given client and user.
+
+        """
         obj = super(PanelEvents, self).create_instance(ar, **kw)
         if ar.current_project is not None:
             obj.project = settings.SITE.project_model.objects.get(
                 pk=ar.current_project)
             #~ obj.state = EventStates.published
+        # logger.info('20140402 create_instance %s ', obj)
         return obj
 
 

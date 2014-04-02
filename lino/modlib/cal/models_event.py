@@ -507,7 +507,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return super(Event, self).before_ui_save(ar, **kw)
 
     def on_create(self, ar):
-        self.event_type = ar.user.event_type or settings.SITE.site_config.default_event_type
+        self.event_type = ar.user.event_type or \
+            settings.SITE.site_config.default_event_type
         self.start_date = datetime.date.today()
         self.start_time = datetime.datetime.now().time()
         # 20130722 e.g. CreateClientEvent sets it explicitly
