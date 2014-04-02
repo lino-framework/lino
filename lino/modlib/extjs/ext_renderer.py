@@ -91,8 +91,6 @@ from lino.mixins import printable
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
-AFTER_20130725 = True
-
 
 def prepare_label(mi):
     return mi.label
@@ -216,8 +214,11 @@ class ExtRenderer(HtmlRenderer):
             if ba.action.params_layout.params_store is None:
                 raise Exception("20121016 %s has no store" %
                                 ba.action.params_layout)
-            kw.update(field_values=ba.action.params_layout.params_store.pv2dict(
-                ba.action.action_param_defaults(ar, obj)))
+            kw.update(ar.get_status())
+            kw.update(
+                field_values=ba.action.params_layout.params_store.pv2dict(
+                    ba.action.action_param_defaults(ar, obj)))
+
         return kw
 
     def action_button(self, obj, ar, ba, label=None, **kw):
@@ -237,7 +238,7 @@ class ExtRenderer(HtmlRenderer):
             return self.window_action_button(
                 ar.request,
                 ba, st, label, **kw)
-        return self.row_action_button(obj, ar.request, ba, label, **kw)
+        return self.row_action_button(obj, ar, ba, label, **kw)
 
     def request_handler(self, ar, *args, **kw):
         st = ar.get_status(**kw)
@@ -256,31 +257,16 @@ class ExtRenderer(HtmlRenderer):
             ba, href, label, title or ba.action.help_text, **kw)
 
     def row_action_button(
-            self, obj, request, ba, label=None, title=None, **kw):
+            self, obj, ar, ba, label=None, title=None, **kw):
         """
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
         """
         #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
-        if AFTER_20130725:
-            #~ url = 'javascript:%s(%s)' % (ba.get_panel_btn_handler(),py2js(rp))
-            #~ url = 'javascript:' + ba.get_js_call(request,obj)
-            # ~ url = 'javascript:' + self.action_call_on_instance(obj,request,ba,**kw) # until 20130905
-            url = 'javascript:' + \
-                self.action_call_on_instance(obj, request, ba)
-        else:
-            if request is None:
-                rp = None
-            else:
-                rp = request.requesting_panel
-            url = 'javascript:Lino.%s(%s,%s)' % (
-                ba.full_name(), py2js(rp), py2js(obj.pk))
-        # ~ return self.href_button_action(ba,url,label,title or ba.action.help_text) # until 20130905
-        return self.href_button_action(ba, url, label, title or ba.action.help_text, **kw)
-        #~ if a.action.help_text:
-            #~ return self.href_button(url,label,a.action.help_text)
-        #~ return self.href_button(url,label)
+        uri = 'javascript:' + self.action_call_on_instance(obj, ar, ba)
+        return self.href_button_action(
+            ba, uri, label, title or ba.action.help_text, **kw)
 
     def put_button(self, ar, obj, text, data, **kw):
 
@@ -394,14 +380,14 @@ class ExtRenderer(HtmlRenderer):
         st.update(data_record=views.elem2rec_insert(ar, ar.ah, elem))
         return self.window_action_button(ar.request, a, st, text, **options)
 
-    def action_call_on_instance(self, obj, request, ba, **st):
-        if request is None:
+    def action_call_on_instance(self, obj, ar, ba, **st):
+        if ar is None:
             rp = None
         else:
-            rp = request.requesting_panel
+            rp = ar.requesting_panel
 
         if ba.action.opens_a_window or ba.action.parameters:
-            ar = ba.request(request=request)
+            ar = ba.request(request=ar.request)
             #~ after_show = ar.get_status(settings.SITE.plugins.extjs)
             st.update(self.get_action_status(ar, ba, obj))
             st.update(record_id=obj.pk)

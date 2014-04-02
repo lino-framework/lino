@@ -8,22 +8,18 @@
 todo
 -----
 
+- http://127.0.0.1:8000/api/pcsw/Clients/178?an=detail
+  
+  Wenn man als Rolf in "Termin machen mit" (CoachingsByClient) auf den
+  Kalender klickt ("Termin finden") und dann im Kalender für Hubert
+  einen Termin mit Robin Dubois macht, dann wird der Termin erstellt,
+  später verschwindet er wieder.
+
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
-
-- Uhrzeit von-bis eines prompt calendar event sollte ausgefüllt sein:
-
-    - Beginn = bei Empfang des ersten Gastes
-    - Ende = wenn der letzte Gast geht
-
-- Aktion "Termin finden" : 
-
-    - Statt Name der Benutzer wird ein fehlendes icon angezeigt
-    - Bei erstellen Termin im Kalender werden Felder nicht ausgefüllt.
 
 - Kontonummern erfassen : das ist wohl noch nicht sehr benutzerfreundlich...
 
-- Familienbeziehungen (heisst jetzt "Personen zu Lasten") aus TIM
-  importieren.
+- Familienbeziehungen aus TIM importieren.
 
 - Konfigurierbare Historik:
   Wann war ein Klient das letzte Mal da? Was ist alles passiert?
@@ -48,6 +44,7 @@ to test
 - Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
   Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
+- "Familienbeziehungen" heißen jetzt "Personen zu Lasten"
 
 
 to discuss
@@ -60,8 +57,7 @@ to discuss
   "Französisch Stufe 1". Intern nenne ich es "Badges" und "Awards" wie
   bei den Pfadfindern. Die Sozis halten in Lino fest, welcher Kunde
   wann welchen test de niveau bestanden hat.
-
-Frage: wollt ihr das auch?
+  Frage: wollt ihr das auch?
 
 - Wer darf auf den Button "zur Hauptadresse machen" klicken?
 
@@ -112,6 +108,12 @@ Done
 
 - Bescheinigungen können jetzt mit einem Klick rauskommen. 
   (wenn beide Felder skip_dialog und primary angekreuzt sind)
+
+- Uhrzeiten "von" und "bis" einer visite (prompt calendar event) wird
+  jetzt automatisch ausgefüllt :
+
+    - Beginn = bei Empfang des ersten Gastes (receive)
+    - Ende = wenn der (erste) Gast geht (checkout)
 
 
 

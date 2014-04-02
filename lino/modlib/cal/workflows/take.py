@@ -44,9 +44,10 @@ class TakeAssignedEvent(dd.Action):
     help_text = _("Take responsibility for this event.")
 
     def get_action_permission(self, ar, obj, state):
-        if obj.assigned_to != ar.get_user():
+        if obj.user == ar.get_user():
             return False
-        return super(TakeAssignedEvent, self).get_action_permission(ar, obj, state)
+        return super(TakeAssignedEvent,
+                     self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]

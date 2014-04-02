@@ -566,6 +566,20 @@ Lino.MainPanel = {
       this.add_param_values(p,false)
       return p;
   }
+  /*
+
+  Lino.MainPanel.set_status() : the status can have the following keys:
+
+  - field_values
+  - param_values
+  - base_params
+  - record_id
+  - active_tab
+  - data_record
+  - show_params_panel
+  - current_page
+
+   */
   ,set_status : function(status) {}
   ,get_status : function() { return {}}
   ,refresh : function() {}
@@ -771,7 +785,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport,{
 
 
 
-Lino.open_window = function(win,st,requesting_panel) {
+Lino.open_window = function(win, st, requesting_panel) {
   //~ console.log("20120918 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
@@ -784,7 +798,7 @@ Lino.open_window = function(win,st,requesting_panel) {
   Lino.current_window = win;
   //~ if (st.{{ext_requests.URL_PARAM_SUBST_USER}}) 
       //~ Lino.subst_user_field.setValue(st.{{ext_requests.URL_PARAM_SUBST_USER}});
-  win.main_item.set_status(st,requesting_panel);
+  win.main_item.set_status(st, requesting_panel);
   win.show();
 };
 
@@ -872,9 +886,9 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
       }
       return this.window;
     },
-    run : function(requesting_panel,status) {
+    run : function(requesting_panel, status) {
       //~ console.log('20120625 window_action.run()',this)
-      Lino.open_window(this.get_window(),status,requesting_panel);
+      Lino.open_window(this.get_window(), status, requesting_panel);
     }
   
 });
@@ -2711,7 +2725,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     
     
   }
-  ,set_status : function(status,rp){
+  ,set_status : function(status, rp){
     this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();

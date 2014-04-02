@@ -439,10 +439,12 @@ class BaseRequest(object):
         return self.renderer.window_action_button(self, *args, **kw)
 
     def row_action_button(self, obj, a, *args, **kw):
-        return self.renderer.row_action_button(obj, self.request, a, *args, **kw)
+        return self.renderer.row_action_button(
+            obj, self, a, *args, **kw)
 
     def instance_action_button(self, ai, *args, **kw):
-        return self.renderer.row_action_button(ai.instance, self.request, ai.bound_action, *args, **kw)
+        return self.renderer.row_action_button(
+            ai.instance, self, ai.bound_action, *args, **kw)
 
     def action_button(self, ba, obj, *args, **kw):
         return self.renderer.action_button(obj, self, ba, *args, **kw)
@@ -466,11 +468,15 @@ class BaseRequest(object):
                 if self.choice is None:
                     kw = dict(title=_("Select this value"))
                     for c in self.question.get_choiceset().choices.all():
-                        l.append(ar.put_button(self,unicode(c),dict(choice=c),**kw))
-                        #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
+                        l.append(
+                            ar.put_button(self,
+                            unicode(c), dict(choice=c),**kw))
+                        #~ l.append(self.select_choice.as_button_elem(ar, unicode(c)))
                 else:
                     l.append(E.b(unicode(self.choice)))
-                    l.append(ar.put_button(self,_("Undo"),dict(choice=None),title=_("Undo your vote")))
+                    l.append(ar.put_button(
+                        self, _("Undo"), dict(choice=None),
+                        title=_("Undo your vote")))
                 return E.p(*join_elems(l))
 
         

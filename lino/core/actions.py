@@ -273,9 +273,9 @@ class InstanceAction(object):
         self.bound_action.action.run_from_code(ar)
         return ar.response
 
-    def as_button_elem(self, request, label=None):
+    def as_button_elem(self, ar, label=None):
         return settings.SITE.ui.row_action_button(
-            self.instance, request, self.bound_action, label)
+            self.instance, ar, self.bound_action, label)
 
     def as_button(self, *args, **kw):
         """Return a HTML chunk with a "button" which, when clicked, will

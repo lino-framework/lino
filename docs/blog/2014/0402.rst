@@ -1,0 +1,28 @@
+===================================
+20140402 (Wednesday, 02 April 2014)
+===================================
+
+Continued on :doc:`/tickets/93`.
+
+Was already fixed:
+
+- Aktion "Termin finden" : 
+
+    - Statt Name der Benutzer wird ein fehlendes Icon angezeigt
+    - Bei Erstellen Termin im Kalender werden Felder nicht ausgefüllt.
+
+Fixed:
+
+- Uhrzeiten "von" und "bis" einer visite (prompt calendar event) wird
+  jetzt automatisch ausgefüllt :
+
+Discovered a new problem:
+
+- Wenn man in "Termin machen mit" (CoachingsByClient.actions) auf die Sanduhr
+  klickt (create_visit), dann kommt zwar das Parameter-Fenster der
+  Aktion, aber wenn man dort auf OK klickt, sagt er "Sorry, dialog
+  action without base_params.mk"
+
+Solved this by changing internal API for Renderer.row_action_button
+and action_call_on_instance and Action.as_button_elem: not the web
+request but the action request is to be passed.

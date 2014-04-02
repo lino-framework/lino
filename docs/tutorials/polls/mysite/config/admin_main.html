@@ -7,7 +7,7 @@
 {% set sep = joiner(" / ") %}
 {% for obj in poll.choice_set.all() %}
   {{ sep() }}
-  {{ obj.vote.as_button(request,unicode(obj))}}
+  {{ obj.vote.as_button(ar, unicode(obj))}}
 {% endfor %}
 <br/><small>Published {{dtosl(poll.pub_date)}}
 <br/>Results:

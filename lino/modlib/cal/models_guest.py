@@ -80,13 +80,7 @@ class Guest(dd.TypedPrintable, outbox.Mailable):
                              verbose_name=_("Role"),
                              blank=True, null=True)
 
-    #~ state = GuestStates.field(blank=True)
     state = GuestStates.field(default=GuestStates.invited)
-    #~ status = models.ForeignKey(GuestStatus,verbose_name=_("Status"),blank=True,null=True)
-
-    #~ confirmed = models.DateField(
-        #~ blank=True,null=True,
-        #~ verbose_name=_("Confirmed"))
 
     remark = models.CharField(
         _("Remark"), max_length=200, blank=True)
@@ -96,11 +90,9 @@ class Guest(dd.TypedPrintable, outbox.Mailable):
         return self.event.user
     user = property(get_user)
 
-    #~ def __unicode__(self):
-        # ~ return self._meta.verbose_name + " #" + str(self.pk)
-
     def __unicode__(self):
-        return u'%s #%s ("%s")' % (self._meta.verbose_name, self.pk, self.event)
+        return u'%s #%s ("%s")' % (
+            self._meta.verbose_name, self.pk, self.event)
 
     def get_printable_type(self):
         return self.role

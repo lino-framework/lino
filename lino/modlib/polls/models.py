@@ -476,7 +476,7 @@ class AnswersByResponse(dd.VirtualTable):
             for c in obj.question.get_choiceset().choices.all():
                 l.append(unicode(c))
                 #~ l.append(ar.put_button(obj.question,unicode(c),dict(choice=c),**kw))
-                #~ l.append(self.select_choice.as_button_elem(ar.request,unicode(c)))
+                #~ l.append(self.select_choice.as_button_elem(ar,unicode(c)))
         return E.p(*join_elems(l))
 
 

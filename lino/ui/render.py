@@ -183,7 +183,7 @@ class HtmlRenderer(object):
     def insert_button(self, ar, text, known_values={}, **options):
         return '[?!]'
 
-    def row_action_button(self, obj, request, ba,
+    def row_action_button(self, obj, ar, ba,
                           label=None, title=None, **kw):
         return '[?!]'
 

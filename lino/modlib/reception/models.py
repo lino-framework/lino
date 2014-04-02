@@ -196,9 +196,12 @@ class CheckinVisitor(dd.NotifyingAction):
                 obj.event.save()
                 doit(ar3)
 
-            return ar.confirm(ok,
-                              _("Checkin in will reassign the event from %(old)s to %(new)s.") %
-                              dict(old=obj.event.user, new=obj.event.assigned_to), _("Are you sure?"))
+            return ar.confirm(
+                ok,
+                _("Checkin in will reassign the event \
+                from %(old)s to %(new)s.") %
+                dict(old=obj.event.user, new=obj.event.assigned_to),
+                _("Are you sure?"))
 
         return doit(ar)
 
@@ -218,6 +221,12 @@ class ReceiveVisitor(dd.Action):
             obj.busy_since = datetime.datetime.now()
             #~ if obj.state in ExpectedGuestsStates:
                 #~ obj.state = GuestStates.present
+
+            if not obj.event.start_time:
+                ar.info("event.start_time has been set")
+                obj.event.start_time = obj.busy_since
+                obj.event.save()
+
             obj.save()
             ar.success(refresh=True)
 
@@ -239,8 +248,6 @@ Visitor leaves             X               X              X
 
 """
 
-#~ class CheckoutVisitor(dd.NotifyingAction):
-
 
 class CheckoutVisitor(dd.Action):
     label = _("Checkout")
@@ -254,9 +261,14 @@ class CheckoutVisitor(dd.Action):
         obj = ar.selected_rows[0]
 
         def ok(ar2):
-            if obj.busy_since is None:
-                obj.busy_since = datetime.datetime.now()
             obj.gone_since = datetime.datetime.now()
+            if obj.busy_since is None:
+                obj.busy_since = obj.gone_since
+            if not obj.event.end_time:
+                ar.info("event.end_time has been set")
+                obj.event.end_time = obj.gone_since
+                obj.event.save()
+
             obj.state = GuestStates.gone
             obj.save()
             kw.update(refresh=True)
@@ -461,8 +473,8 @@ class MyBusyVisitors(MyVisitors, BusyVisitors):
             chunks = [unicode(_("You are busy with "))]
 
             def f(g):
-                #~ return sar.obj2html(g,unicode(g.partner))
-                return sar.row_action_button(g, cls.detail_action, unicode(g.partner), icon_name=None)
+                return sar.row_action_button(
+                    g, cls.detail_action, unicode(g.partner), icon_name=None)
             chunks += join_elems([f(g)
                                  for g in guests], sep=unicode(_(" and ")))
             chunks.append('.')
