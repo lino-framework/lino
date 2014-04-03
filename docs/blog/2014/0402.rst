@@ -27,8 +27,11 @@ Solved this by changing internal API for Renderer.row_action_button
 and action_call_on_instance and Action.as_button_elem: not the web
 request but the action request is to be passed.
 
+And another subtle problem in :mod:`lino.modlib.extensible` which took
+me a few hours (but otherwise the "find appointment" button on a
+client simply made no sense): When displaying the calendarPanel for
+another user (by setting subst_user), then Lino displayed the calendar
+list of the authenticated user.
 
-
-And another subtle problem: when displaying the calendarPanel for
-another user, Lino displayed the calendar list of the authenticated
-user.
+TODO: instead of subscribe_all(), subscribe only certain users to
+certain others. Maybe also make two users with a common calendar.

@@ -67,16 +67,17 @@ class User(mixins.CreatedModified):
     Represents a :ddref:`users.User` of this site.
     """
 
+    class Meta:
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+        abstract = dd.is_abstract_model('users.User')
+        ordering = ['last_name', 'first_name']
+
     preferred_foreignkey_width = 15
 
     hidden_columns = 'password remarks'
 
     #~ authenticated = True
-
-    class Meta:
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
-        ordering = ['last_name', 'first_name']
 
     username = models.CharField(
         _('Username'), max_length=30,
@@ -239,7 +240,7 @@ class UserDetail(dd.FormLayout):
     """
 
     main = """
-    box1:40 MembershipsByUser:20
+    box1 #MembershipsByUser:20
     remarks:40 AuthoritiesGiven:20
     """
 
@@ -249,10 +250,10 @@ class UserInsert(dd.FormLayout):
     window_size = (60, 'auto')
 
     main = """
-    username email 
+    username email
     first_name last_name
     partner
-    language profile     
+    language profile
     """
 
 
@@ -260,7 +261,7 @@ class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
     required = dict(user_level='manager')
-    model = User
+    model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = ['partner']
@@ -287,9 +288,6 @@ class Users(dd.Table):
 class MySettings(Users):
     use_as_default_table = False
     hide_top_toolbar = True
-    #~ model = User
-    #~ detail_layout = Users.detail_layout
-    #~ detail_layout = UserDetail()
     required = dict()
     default_list_action_name = 'detail'
 
@@ -313,37 +311,37 @@ class UsersOverview(Users):
 #~ if settings.SITE.user_model:
 
 
-class Team(mixins.BabelNamed):
+# class Team(mixins.BabelNamed):
 
-    class Meta:
-        verbose_name = _("Team")
-        verbose_name_plural = _("Teams")
-
-
-class Teams(dd.Table):
-    required = dict(user_level='manager')
-    model = Team
+#     class Meta:
+#         verbose_name = _("Team")
+#         verbose_name_plural = _("Teams")
 
 
-class Membership(mixins.UserAuthored):
-
-    class Meta:
-        verbose_name = _("Membership")
-        verbose_name_plural = _("Memberships")
-
-    team = models.ForeignKey('users.Team')
+# class Teams(dd.Table):
+#     required = dict(user_level='manager')
+#     model = Team
 
 
-class Memberships(dd.Table):
-    required = dict(user_level='manager')
-    model = Membership
+# class Membership(mixins.UserAuthored):
+
+#     class Meta:
+#         verbose_name = _("Membership")
+#         verbose_name_plural = _("Memberships")
+
+#     team = models.ForeignKey('users.Team')
 
 
-class MembershipsByUser(mixins.ByUser, Memberships):
-    #~ required = dict()
-    master_key = 'user'
-    column_names = 'team'
-    auto_fit_column_widths = True
+# class Memberships(dd.Table):
+#     required = dict(user_level='manager')
+#     model = Membership
+
+
+# class MembershipsByUser(mixins.ByUser, Memberships):
+#     #~ required = dict()
+#     master_key = 'user'
+#     column_names = 'team'
+#     auto_fit_column_widths = True
 
 
 class Authority(mixins.UserAuthored):
@@ -362,8 +360,9 @@ class Authority(mixins.UserAuthored):
 
     #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
 
-    authorized = models.ForeignKey(settings.SITE.user_model,
-                                   help_text=_("The user who gets authority to act in your name."))
+    authorized = models.ForeignKey(
+        settings.SITE.user_model,
+        help_text=_("The user who gets authority to act in your name."))
 
     @dd.chooser()
     def authorized_choices(cls, user):

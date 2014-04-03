@@ -30,7 +30,6 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
@@ -77,7 +76,7 @@ class Subscription(dd.UserAuthored):
     It corresponds to what the extensible CalendarPanel calls "Calendars"
     
     :user: points to the author (recipient) of this subscription
-    :other_user: 
+    :other_user:
     
     """
 
@@ -85,38 +84,17 @@ class Subscription(dd.UserAuthored):
         abstract = settings.SITE.is_abstract_model('cal.Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
+        unique_together = ['user', 'calendar']
 
     manager_level_field = 'office_level'
 
-    #~ label = models.CharField(_("Label"),max_length=200)
-
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
-
-    #~ other_user = dd.ForeignKey('users.User',blank=True,null=True,
-        #~ help_text=_("If nonempty, show only events of that user"))
-    #~ event_type = dd.ForeignKey('cal.EventType',blank=True,null=True)
-    #~ room = dd.ForeignKey('cal.Room',blank=True,null=True)
-    #~ team = dd.ForeignKey('users.Team',blank=True,null=True)
     calendar = dd.ForeignKey(
         'cal.Calendar', help_text=_("The calendar you want to subscribe to."))
 
     is_hidden = models.BooleanField(
-        _("hidden"), default=False, help_text=_("""\
-Whether this subscription should initially be displayed as a hidden calendar."""))
-
-    #~ def contains_event(self,event):
-        #~ if self.event_type is not None and event.event_type != self.event_type:
-            #~ return False
-        #~ if self.room is not None and event.room != self.room:
-            #~ return False
-        #~ if self.other_user is not None and event.user != self.other_user:
-            #~ return False
-        #~ return True
-
-    #~ def add_events_filter(self,qs,ar):
-        #~ """
-        #~ Add filter criteria to the specified Queryset (on Event model)
-        #~ """
+        _("hidden"), default=False,
+        help_text=_("""Whether this subscription should "
+        "initially be displayed as a hidden calendar."""))
 
 
 class Subscriptions(dd.Table):

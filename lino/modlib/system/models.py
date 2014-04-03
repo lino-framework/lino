@@ -280,8 +280,10 @@ if settings.SITE.user_model:
         description = dd.RichTextField(_("Description"),
                                        blank=True, null=True, format='plain')
             #~ blank=True,null=True,format='html')
-        team = dd.ForeignKey('users.Team', blank=True, null=True,
-                             help_text=_("If not empty, then this template is reserved to members of this team."))
+        # team = dd.ForeignKey(
+        #     'users.Team', blank=True, null=True,
+        #     help_text=_("If not empty, then this template "
+        #                 "is reserved to members of this team."))
         text = dd.RichTextField(_("Template Text"),
                                 blank=True, null=True, format='html')
 
@@ -293,11 +295,11 @@ if settings.SITE.user_model:
         required = dd.required(user_groups='office', user_level='admin')
         insert_layout = dd.FormLayout("""
         name
-        user team
+        user #team
         """, window_size=(60, 'auto'))
 
         detail_layout = """
-        id name user team
+        id name user #team
         description
         text
         """
@@ -419,7 +421,7 @@ def setup_config_menu(site, ui, profile, m):
     system.add_instance_action(site.site_config)
     if site.user_model and profile.authenticated:
         system.add_action(site.user_model)
-        system.add_action(site.modules.users.Teams)
+        # system.add_action(site.modules.users.Teams)
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
     if site.is_installed('contenttypes'):
