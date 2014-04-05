@@ -43,6 +43,7 @@ Extended Fields:
 - :class:`PriceField<lino.core.fields.PriceField>`
 - :class:`GenericForeignKey <lino.core.fields.GenericForeignKey>`
 - :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
+- :class:`CustomField <lino.core.fields.CustomField>`
 - :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
 - :class:`DummyField <lino.core.fields.DummyField>`
 - :func:`ForeignKey <lino.core.fields.ForeignKey>`
@@ -238,6 +239,7 @@ from lino.core.fields import Dummy, DummyField
 # from lino.core.layouts import BaseLayout as Dummy  # 20140314
 # from lino.core.actors import Actor as Dummy  # 20140314
 
+from lino.core.fields import CustomField
 from lino.core.fields import RecurrenceField
 from lino.core.fields import GenericForeignKey
 from lino.core.fields import GenericForeignKeyIdField

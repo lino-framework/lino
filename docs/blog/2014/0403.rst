@@ -2,6 +2,9 @@
 20140403 (Thursday, 03 April 2014)
 ==================================
 
+More database changes
+---------------------
+
 I discovered that the **Team** and **Membership** models 
 in :mod:`lino.modlib.users` weren't used at all. So I removed them.
 
@@ -17,3 +20,56 @@ attribute.
 
 Why is there is no "Calendar" field per Event?
 The answer is now in :mod:`lino.modlib.cal`.
+
+
+Obey the goat
+-------------
+
+I stumbled over a blog entry `Book upgraded to Django 1.7!
+<http://www.obeythetestinggoat.com/book-upgraded-to-django-17.html>`_
+by Harry Percival where he writes how the fact that Django comes now
+with migrations out of the box influenced his way of explaining
+models in his book `Test-Driven-Development with Python`.
+
+Very interesting.  One day I should read that book.  Though I am
+afraid that my method of development is *not* test-driven, it is
+prototype-driven. First write a prototype and demo data. Testing is
+only at second place.
+
+
+
+Entering IBAN numbers manually
+------------------------------
+
+When entering IBAN numbers manually, the worst problem was that you
+had take yourself care of typing the two first letters uppercase.
+
+In TIM you could simply specify "@k@!" as the field's "picture" to get
+this behaviour.  In ExtJS this is not trivial.
+
+A snippet posted by `Manel Juàrez
+<http://www.sencha.com/forum/member.php?109001-maneljn>`_ in Oct 2011
+in a thread `textfield auto conversion to uppercase while writing
+<http://www.sencha.com/forum/showthread.php?150336-textfield-auto-conversion-to-uppercase-while-writing>`_
+showed me how to do it:
+
+- the `<text>` element must have style `text-transform:uppercase;`
+- and that's not enough because the value remains lowercase. The field
+  must have a listener similar to this::
+
+    listeners:{
+      change: function(field, newValue, oldValue){
+      field.setValue(newValue.toUpperCase());
+    }
+
+
+Wrote `lino.ui.elems.UppercaseFieldElement` which does this. 
+
+But there's another problem: Lino uses the grid's ``afteredit`` event
+to send data. And this event is triggered before the field's
+``change`` event.  To solve this correctly, we probably need to change
+some internals of `Lino.GridPanel`. This is in fact a job which could
+be delegated.  I'd rather do the other open items of my todo list
+before diving into this.
+
+(Continued :blogref:`20140405`)

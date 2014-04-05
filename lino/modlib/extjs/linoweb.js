@@ -4411,7 +4411,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     e.column - The grid column index
     */
     var p = {};
-    //~ console.log('20101130 modified: ',e.record.modified);
+    // console.log('20140403 afteredit: ',e.record);
     //~ console.log('20101130 value: ',e.value);
     //~ var p = e.record.getChanges();
     //~ console.log('20101130 getChanges: ',e.record.getChanges());

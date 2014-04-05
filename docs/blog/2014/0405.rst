@@ -1,0 +1,22 @@
+==================================
+20140405 (Saturday, 05 April 2014)
+==================================
+
+custom fields
+-------------
+
+One problem with a first (internal) implementation was that it made
+the whole framework depend on `django-iban`.  `django-iban` is very
+good, but only people who use :mod:`lino.modlib.sepa` will want to
+install it.
+
+To solve this, I added a new feature to Lino: apps can now define
+their own custom fields. This is of course just an extension to
+Django's philosophy.  For Lino we just needed to add a
+:class:`CustomField <lino.core.fields.CustomField>`
+
+Usage example see :class:`lino.modlib.sepa.models.UppercaseTextField`
+and its subclasses :class:`lino.modlib.sepa.models.IBANField` and
+:class:`lino.modlib.sepa.models.SWIFTBICField`.
+
+

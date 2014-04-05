@@ -45,7 +45,12 @@ class Site(Site):
 
     #~ sidebar_width  = 3
 
-    hidden_apps = 'extjs'
+    # hidden_apps = 'extjs'
+
+    def get_apps_modifiers(self, **kk):
+        kw = super(Site, self).get_apps_modifiers(**kk)
+        kw.update(extjs=None)
+        return kw
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

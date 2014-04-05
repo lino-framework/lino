@@ -1070,6 +1070,20 @@ def ForeignKey(othermodel, *args, **kw):
     return models.ForeignKey(othermodel, *args, **kw)
 
 
+class CustomField(object):
+    """Mixin to create a custom field."""
+    def create_layout_elem(self, layout_handle, field, **kw):
+        """Instantiate and return some subclass of
+        :class:`lino.ui.elems.LayoutElement` to be used in
+        `layout_handle`.
+
+        `self` and `field` are identical unless self is a RemoteField
+        or a VirtualField.
+
+        """
+        return None
+
+
 class ImportedFields(object):
 
     """
@@ -1083,3 +1097,4 @@ class ImportedFields(object):
             fields_list(cls, names))
         #~ logger.info('20120801 %s.declare_imported_fields() --> %s' % (
             #~ cls,cls._imported_fields))
+

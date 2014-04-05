@@ -32,9 +32,45 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from django_iban.fields import IBANField, SWIFTBICField
-
 from lino import dd
+
+from django_iban import fields as iban_fields
+
+from lino.ui.elems import CharFieldElement
+
+config = dd.apps.sepa
+
+config.site_js_snippets = ['sepa/uppercasetextfield.js']
+
+# class UppercaseFieldElement(CharFieldElement):
+#     def get_field_options(self, **kw):
+#         kw = super(UppercaseFieldElement, self).get_field_options(**kw)
+#         kw.update(style='text-transform:uppercase;')
+#         return kw
+
+
+class UppercaseTextFieldElement(CharFieldElement):
+    """A CharFieldElement which accepts only upper-case characters.
+    """
+    value_template = "new Lino.UppercaseTextField(%s)"
+
+
+class UppercaseTextField(models.CharField, dd.CustomField):
+    """A custom CharField that accepts only uppercase caracters."""
+    def create_layout_elem(self, *args, **kw):
+        return UppercaseTextFieldElement(*args, **kw)
+
+    def to_python(self, value):
+        if isinstance(value, basestring):
+            return value.upper()
+
+
+class IBANField(iban_fields.IBANField, UppercaseTextField):
+    pass
+
+
+class SWIFTBICField(iban_fields.SWIFTBICField, UppercaseTextField):
+    pass
 
 
 class AccountTypes(dd.ChoiceList):
@@ -60,6 +96,8 @@ class Account(dd.Model):
     bic = SWIFTBICField()
     # account_type = dd.ForeignKey('sepa.AccountType')
     account_type = AccountTypes.field(default=AccountTypes.giro)
+    remark = models.CharField(
+        _("Remark"), max_length=200, blank=True)
 
 
 class Accounts(dd.Table):

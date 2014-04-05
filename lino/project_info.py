@@ -123,7 +123,6 @@ lino.modlib.vat
 lino.modlib.households
 lino.modlib.households.fixtures
 lino.modlib.courses
-lino.modlib.courses.fixtures
 lino.modlib.about
 lino.modlib.pages
 lino.modlib.pages.fixtures

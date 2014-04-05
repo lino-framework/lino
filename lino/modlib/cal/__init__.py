@@ -13,15 +13,11 @@
 
 """This is Lino's Calendar module.
 
-
-
-
-
 There is no "Calendar" field per Event
 --------------------------------------
 
 Note that the default implementation has no "Calendar" field per
-Event. The `Event` model instead has a `get_calendar` method. 
+Event. The `Event` model instead has a `get_calendar` method.
 
 You might extend Event in your plugin as follows::
 

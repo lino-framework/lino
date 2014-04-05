@@ -861,6 +861,7 @@ class PasswordFieldElement(CharFieldElement):
         return kw
 
 
+
 class FileFieldElement(CharFieldElement):
     #~ xtype = 'fileuploadfield'
     #~ value_template = "new Lino.FileField(%s)"
@@ -2176,6 +2177,7 @@ class TabPanel(Panel):
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
 
+
 _FIELD2ELEM = (
     #~ (dd.Constant, ConstantElement),
     (dd.RecurrenceField, RecurrenceElement),
@@ -2236,11 +2238,13 @@ def field2elem(layout_handle, field, **kw):
             #~ elif isinstance(field,fields.GenericForeignKeyIdField):
                 #~ return ComplexRemoteComboFieldElement(layout_handle,field,**kw)
             else:
-                return ComplexRemoteComboFieldElement(layout_handle, field, **kw)
+                return ComplexRemoteComboFieldElement(
+                    layout_handle, field, **kw)
     if field.choices:
         if isinstance(field, choicelists.ChoiceListField):
-            kw.setdefault('preferred_width',
-                          field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)
+            kw.setdefault(
+                'preferred_width',
+                field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)
             kw.update(forceSelection=field.force_selection)
             return ChoiceListFieldElement(layout_handle, field, **kw)
         else:
@@ -2255,11 +2259,16 @@ def field2elem(layout_handle, field, **kw):
         selector_field = field.field
     if isinstance(selector_field, dd.VirtualField):
         selector_field = selector_field.return_type
-    # remeber the case of RemoteField to VirtualField
+    # remember the case of RemoteField to VirtualField
 
     #~ if str(layout_handle.layout._datasource) == 'pcsw.UsersWithClients':
         #~ if field is not selector_field:
             #~ print 20130131, field.name, field, selector_field
+
+    if isinstance(selector_field, fields.CustomField):
+        e = selector_field.create_layout_elem(layout_handle, field, **kw)
+        if e is not None:
+            return e
 
     if isinstance(selector_field, models.BooleanField) and not field.editable:
         return BooleanDisplayElement(layout_handle, field, **kw)
@@ -2268,10 +2277,14 @@ def field2elem(layout_handle, field, **kw):
         if isinstance(selector_field, df):
             return cl(layout_handle, field, **kw)
     if isinstance(field, dd.VirtualField):
-        raise NotImplementedError("No LayoutElement for VirtualField %s on %s in %s" % (
-            field.name, field.return_type.__class__, layout_handle.layout))
+        raise NotImplementedError(
+            "No LayoutElement for VirtualField %s on %s in %s" % (
+                field.name, field.return_type.__class__,
+                layout_handle.layout))
     if isinstance(field, fields.RemoteField):
-        raise NotImplementedError("No LayoutElement for RemoteField %s to %s" % (
-            field.name, field.field.__class__))
-    raise NotImplementedError("No LayoutElement for %s (%s) in %s"
-                              % (field.name, field.__class__, layout_handle.layout))
+        raise NotImplementedError(
+            "No LayoutElement for RemoteField %s to %s" % (
+                field.name, field.field.__class__))
+    raise NotImplementedError(
+        "No LayoutElement for %s (%s) in %s" % (
+            field.name, field.__class__, layout_handle.layout))
