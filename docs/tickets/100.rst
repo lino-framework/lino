@@ -8,46 +8,37 @@
 Questions aux utilisateurs
 --------------------------
 
-- Réunir *Candidatures externes* et *Démarches*? Le premier est un cas
-  spécial du second (une CE est une D déjà accomplie qu'on note
-  après coup). Est-ce qu'une démarche peut consister en "Contacter
-  telle personne dans telle organisation"? Et si oui, ne serait-il
-  pas intéressant dans certains de ces cas de pouvoir sélectionner
-  parmis les organisations connues. P.ex. ensuite imprimer un mémo
-  pour l'usager qui mentionne les no de téléphone.
-    
-
 - Question de vocabulaire pour les "Tests de niveau".
-  Je propose de dire "Badges" au lieu de "Tests de niveau".
-  Qu'en pensez-vous?
+  Comment différencier entre
 
-  Sinon, comment traduire "Badge" et "Award"? 
-
-  - "Badges" is the global list of known levels
+  - Les "Niveaux" ("Badges") eux-meme càd la liste configurable
     (p.ex. "Dactylo", "Français", "Math", ...)  
 
-  - Award : le fait d'avoir passé un examen de niveau donné à une date
-    donnée et un résultat donné.
+  - Les "Tests" ("Awards") : le fait d'avoir passé un examen de niveau
+    donné (à une date donnée et un résultat donné).
 
 - Agences Interim: faut-il juste une liste des noms des agences (avec
   lien vers le signalétique de l'agence)? Ne faut-il pas p.ex. des
   dates du/au, une remarque?
 
-- Quelle est la différence entre un *Certificat médical* et un *Handicap*?
-  Scannez-vous les documents originaux?
-  Quand a-t-on besoin de ces infos? Donner des exemples pratiques. 
-  
-- Est-il utile d'avoir une liste de tous les médecins connus?
-
-- Réunir *Certificats médicaux* et *Handicaps* en une seule table
-  "Documents externes"?  Intégrer les deux dans les *Fichiers
-  téléchargés*?
-
+- Est-il utile d'avoir une liste de tous les médecins connus?  (et par
+  conséquent pouvoir trouver, par médecin, les certificats connus?)
 
 
 
 à discuter après le release
 ---------------------------
+
+- Je propose de saisir les *Certificats médicaux* et *Handicaps* dans
+  les *Fichiers téléchargés*. Sinon: Quelle est la différence entre un
+  *Certificat médical* et un *Handicap*?  Scannez-vous les documents
+  originaux?  Quand a-t-on besoin de ces infos? Donner des exemples
+  pratiques.
+  
+
+- Les *Fichiers téléchargés* se trouvent encore sous "Recherche d'emploi"
+
+- Nous n'avons pas parlé d'une table des "Aides octroyées".
 
 - Supprimer ce qui reste dans l'onglet "Aide sociale".  (Aussi la
   "phase d'intégration"? nécessaire pour la table "Agents et leurs
@@ -74,8 +65,13 @@ Questions aux utilisateurs
   aide à les entrer dans l'ordre chronologique.  Pensons aux usagers
   qui ont fait un mélange de "formations" et d'"études".
 
-- Plan d'action: tester et discuter
- 
+- Je propose de saisir *Candidatures externes* et *Démarches* car le
+  premier est un cas spécial du second (une CE est une D déjà
+  accomplie qu'on note après coup).
+  
+  Le plan d'action se fait dans les "Tâches" de l'onglet "Calendrier".
+  Pour l'imprimer on fait un extrait de type "Plan d'action".
+
 
 pour Luc
 --------
