@@ -1,0 +1,29 @@
+================================
+20140407 (Monday, 07 April 2014)
+================================
+
+Bravo, Lino: en fait les "démarches" du "plan d'action" existaient
+déjà: ce sont les "tâches" du calendrier. Il me suffisait d'ajouter un
+nouveau modèle d'extrait "Plan d'action" (TasksByClient).  Il faudra
+peut-être ajouter un champ pour le "projet".
+
+Note: I also changed the format of the description field in
+`cal.mixins.Component` from html to plain. Mainly because
+TasksByClient wants to print the description field, which would (due
+to the current implementation) require me to parse the content, which
+would make the publid demos sites `vulnerable
+<https://docs.python.org/2/library/xml.html#xml-vulnerabilities>`_
+
+TODO: 
+
+- decide how to handle this choice in the future. Should the format of
+  RichtTextField be locally configurable?
+
+- Do I need to write a data migration? 
+  As the author of :mod:`lino.modlib`, how can I "warn" both Faggio
+  and Welfare developers about the need for data migration? This is
+  the right moment to start with app-level migrators. Which will
+  introduce app-level versions.
+
+
+

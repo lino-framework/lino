@@ -132,7 +132,11 @@ class StartedSummaryDescription(Started):
 
     # iCal:SUMMARY
     summary = models.CharField(_("Summary"), max_length=200, blank=True)
-    description = dd.RichTextField(_("Description"), blank=True, format='html')
+    description = dd.RichTextField(
+        _("Description"),
+        blank=True,
+        format='plain')
+        # format='html')
 
     def __unicode__(self):
         return self._meta.verbose_name + " #" + str(self.pk)

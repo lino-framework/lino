@@ -342,4 +342,3 @@ if settings.SITE.is_installed('contacts'):
 __all__ = [
     'Guest', 'Guests',
 ]
-#~ __all__ = ['Task','Tasks','MyTasks','TasksByUser','TasksByController','TasksByProject']

@@ -8,26 +8,10 @@
 todo
 -----
 
-- http://127.0.0.1:8000/api/pcsw/Clients/178?an=detail
-  
-  Wenn man als Rolf in "Termin machen mit" (CoachingsByClient) auf den
-  Kalender klickt ("Termin finden") und dann im Kalender für Hubert
-  einen Termin mit Robin Dubois macht, dann wird der Termin erstellt,
-  später verschwindet er wieder.
-
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
-
-- Kontonummern erfassen : das ist wohl noch nicht sehr benutzerfreundlich...
 
 - Familienbeziehungen aus TIM importieren.
 
-- Konfigurierbare Historik:
-  Wann war ein Klient das letzte Mal da? Was ist alles passiert?
-  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
-  diversen Quellen zusammensucht:
-  history.HistoricEvents.add(name,model,field)
-      
-    
 
 to test
 -------
@@ -41,23 +25,28 @@ to test
   Personen" (SimilarPersons) konsultieren, um eventuelle Dubletten zu
   erkennen.
 
-- Bankkonto pro Klient (Partner?). Mit Kontenart (Sichtkonto,
-  Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
-
 - "Familienbeziehungen" heißen jetzt "Personen zu Lasten"
 
+- Bankkonten sind momentan nur pro Klient. Auch z.B. für Lieferanten?
+  Mit Kontenart (Sichtkonto,
+  Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
-to discuss
-----------
+- Kontonummern erfassen. N.B. In TIM haben wir auch eine Tabelle von
+  belgischen BICs. Macht es Sinn, das in Lino auch so zu machen? Ist
+  es nicht sowieso bald Vergangenheit, von der IBAN aus die BICzu
+  errechnen? Oder einen Online-Service nutzen?
 
+- Wenn man als Rolf in "Termin machen mit" (CoachingsByClient) auf den
+  Kalender klickt ("Termin finden") und dann im Kalender für Hubert
+  einen Termin mit Robin Dubois macht, dann wird der Termin erstellt,
+  später verschwindet er wieder.
 
-- in Charleroi haben sie die sogenannten "tests de niveau". Das sind
-  kleine Prüfungen, die vom ÖSHZ organisiert werden, und die eine
-  Fähigkeit bestätigen. Zum Beispiel "Anstreichen", "Nähen",
-  "Französisch Stufe 1". Intern nenne ich es "Badges" und "Awards" wie
-  bei den Pfadfindern. Die Sozis halten in Lino fest, welcher Kunde
-  wann welchen test de niveau bestanden hat.
-  Frage: wollt ihr das auch?
+- Badges. in Charleroi haben sie die sogenannten "tests de
+  niveau". Das sind kleine Prüfungen, die vom ÖSHZ organisiert werden,
+  und die eine Fähigkeit bestätigen. Zum Beispiel "Anstreichen",
+  "Nähen", "Französisch Stufe 1". Die Sozis halten in Lino fest,
+  welcher Kunde wann welchen test de niveau bestanden hat.  Frage:
+  Will Eupen das auch?
 
 - Wer darf auf den Button "zur Hauptadresse machen" klicken?
 
@@ -89,11 +78,20 @@ to discuss
 
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
 
-#.  Kann ein Klient eigentlich auf zwei Agenten zugleich warten? 
-    Soll Lino das verhindern? 
+- Kann ein Klient eigentlich auf zwei Agenten zugleich warten? 
+  Soll Lino das verhindern? 
 
-#.  Wieso darf man keinen Termin erstellen für Benutzer ohne Profil?
+- Konfigurierbare Historik:
+  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
+  diversen Quellen zusammensucht:
+  history.HistoricEvents.add(name,model,field)
 
+  Rückfragen: Bitte genauer definieren, welchen Zweck diese Tabelle
+  erfüllen soll.  Ich habe notiert "Wann war ein Klient das letzte Mal
+  da? Was ist alles passiert?", aber das reicht mir nicht. Bitte ein
+  konkretes Beispiel beschreiben. 
+      
+    
 
 Done
 -------

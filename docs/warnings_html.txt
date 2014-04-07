@@ -1,2 +1,11 @@
+/home/luc/hgwork/lino/docs/api/lino.modlib.badges.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.badges.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/badges/models.py", line 31, in <module>
+    config = dd.apps.badges
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'badges' (keys are sepa, sales, ledger, attestations, accounts, djangosite, contacts, system, extjs, households, contenttypes, products, postings, vat, extensible, north, users, sessions, pages, concepts, lino, outbox, properties, about, countries, plain, notes, courses, humanlinks, uploads, cal, changes)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist
