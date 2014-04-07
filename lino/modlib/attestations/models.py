@@ -377,7 +377,7 @@ def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
     m.add_action('attestations.Attestations')
 
-from django.db.utils import OperationalError
+from django.db.utils import DatabaseError
 
 @dd.receiver(dd.pre_analyze)
 def set_attest_actions(sender, **kw):
@@ -396,7 +396,7 @@ def set_attest_actions(sender, **kw):
                     show_attestations=dd.ShowSlaveTable(
                         'attestations.AttestationsByOwner'))
                 # logger.info("20140401 %s is attestable", m)
-    except OperationalError as e:
+    except DatabaseError as e:
         logger.info("Failed to load attest_actions : %s", e)
 
 
