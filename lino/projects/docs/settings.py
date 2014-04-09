@@ -60,6 +60,7 @@ class Site(Site):
         yield 'lino.modlib.attestations'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
+        yield 'lino.modlib.badges'
 
         yield 'lino.modlib.accounts'
         yield 'lino.modlib.ledger'

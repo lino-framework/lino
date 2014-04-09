@@ -34,9 +34,11 @@ Questions aux utilisateurs
   *Certificat médical* et un *Handicap*?  Scannez-vous les documents
   originaux?  Quand a-t-on besoin de ces infos? Donner des exemples
   pratiques.
-  
 
-- Les *Fichiers téléchargés* se trouvent encore sous "Recherche d'emploi"
+- Les *Fichiers téléchargés* se trouvent sous "Recherche d'emploi";
+
+- En général la structure et les onglets du détail d'un bénéficiaire
+  n'est pas terminée. J'attends vos propositions
 
 - Nous n'avons pas parlé d'une table des "Aides octroyées".
 
@@ -52,28 +54,22 @@ Questions aux utilisateurs
   Lino faire un nouveau bénéficiaire, puis fusionner les deux dès
   qu'on découvre le doublon.
 
-- Deux tables séparées pour "Études" et "Formations".
-  Études: système scolaire "officiel" ou "regulier".
-  Formations: système "individuel" ou "privé".
-
-  Nous avons dit que oui il est vrai que les colonnes sont les mêmes
-  pour les deux tables, mais que de les mettre dans une même marmite
-  ne correspond pas à la réalité.
-
-  D'accord pour ce qui est certaines vues. Mais pour l'encodage
-  (pendant une interview avec le bénéficiaire) je signale que Lino
-  aide à les entrer dans l'ordre chronologique.  Pensons aux usagers
-  qui ont fait un mélange de "formations" et d'"études".
+- Vous avez maintentant comme demandé deux tables séparées pour
+  "Études" et "Formations".  Études: système scolaire "officiel" ou
+  "regulier".  Formations: système "individuel" ou "privé".
 
 - Je propose de saisir *Candidatures externes* et *Démarches* car le
   premier est un cas spécial du second (une CE est une D déjà
   accomplie qu'on note après coup).
   
   Le plan d'action se fait dans les "Tâches" de l'onglet "Calendrier".
-  Pour l'imprimer on fait un extrait de type "Plan d'action".
+  Pour l'imprimer on fait un "extrait" de type "Plan d'action".
+
+- Un "extrait" est un document généré par Lino et contenant des
+  informations extraites de la base de données.
 
 
-pour Luc
+à tester
 --------
 
 - Possibilité d'encoder des enfants en "libre" sans créer un

@@ -1,0 +1,33 @@
+========================
+Wednesday, April 9, 2014
+========================
+
+The title of a blog entry
+-------------------------
+
+:doc:`/tickets/88`.
+Fiddled with the date format in the header of daily blog entries.  It
+uses now `babel's
+<http://babel.edgewall.org/wiki/Documentation/dates.html>`_ default
+"full" format. Which has the advantage of working for blogs in other
+languages than English. 
+
+The whole :mod:`atelier.sphinxcontrib` works for me but is usable only
+by people who are ready to dive into it. If you want to use it and get
+discouraged, don't hesitate to ask for a free consultation before
+abandoning completely ;-)
+
+
+
+Allgemeine Medizinische Kosten
+------------------------------
+
+:doc:`/tickets/93`.  I found a last thing to do before doing an
+upgrade of testlino in Eupen: write a demo case of a medical aid
+printout.
+
+When application code declared a chooser with an argument for which no
+field exists, then Lino made a rather strange error message.  Now it
+says more clearly something like Exception: No data element 'foo' in
+<class 'lino_welfare.modlib.aids.models.Helper'> (declared in
+role_choices)

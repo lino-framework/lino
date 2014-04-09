@@ -26,4 +26,9 @@ TODO:
   introduce app-level versions.
 
 
+Encore un upgrade à Chatelet: migration & traductions.  Updated
+:doc:`/tickets/100`. 
 
+Pour :ref:`welfare` je dois maintentant attendre feedback des
+utilisateurs.  Pour les deux tickets :doc:`/tickets/93` et
+:doc:`/tickets/100`.

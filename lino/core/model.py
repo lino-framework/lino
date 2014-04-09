@@ -165,6 +165,14 @@ class Model(models.Model):
         return E.li(unicode(self))
 
     @classmethod
+    def get_param_elem(model, name):
+        # This is called by :meth:`Chooser.get_data_elem` when
+        # application code defines a chooser with an argument that
+        # does not match any field. There is currently no usage
+        # example for this on database models.
+        return None
+
+    @classmethod
     def get_data_elem(model, name):
         #~ logger.info("20120202 get_data_elem %r,%r",model,name)
         if not name.startswith('__'):
@@ -217,7 +225,7 @@ class Model(models.Model):
 
         try:
             return model._meta.get_field(name)
-        except models.FieldDoesNotExist, e:
+        except models.FieldDoesNotExist:
             pass
 
         #~ s = name.split('.')
@@ -562,6 +570,7 @@ instances.
         #~ 'as_pdf',
         'get_row_permission',
         'get_data_elem',
+        'get_param_elem',
         'after_ui_save',
         #~ 'update_system_note',
         'preferred_foreignkey_width',

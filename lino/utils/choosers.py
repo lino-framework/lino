@@ -100,7 +100,10 @@ class Chooser(FieldChooser):
         for name in self.context_params:
             f = self.get_data_elem(name)
             if f is None:
-                raise Exception("2013112")
+                raise Exception(
+                    "No data element '%s' in %s "
+                    "(method %s_choices)" % (
+                        name, self.model, field.name))
             #~ if name == 'p_book':
                 #~ print 20131012, f
             self.context_fields.append(f)
