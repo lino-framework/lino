@@ -1,0 +1,11 @@
+======================
+Friday, April 11, 2014
+======================
+
+I understood something: `isib.Contract`, `debts.Budet` and
+`notes.Note` should no longer be (directly) printables, but become
+attestables.
+
+But I want to avoid manual changes in the two templates used to print
+isip.Contract and jobs.Contract. By overriding their
+get_printable_context mthod.

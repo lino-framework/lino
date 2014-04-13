@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -17,11 +17,12 @@
 :class:`PropType`
 :class:`PropChoice`
 :class:`PropGroup`
-A :class:`PropOccurence` is when a certain "property owner" 
-has a certain :class:`Property`. 
+
+A :class:`PropOccurence` is when a given "property owner" 
+has a given :class:`Property`. 
 "Property owner" can be anything: 
 a person, a company, a product, an upload, 
-it depends on the implentation of :class:`PropOccurence`.
+it depends on the implementation of :class:`PropOccurence`.
 For example :mod:`lino.projects.pcsw.models.PersonProperty`.
 
 A :class:`Property` defines the configuration of a property.
@@ -52,9 +53,9 @@ MULTIPLE_VALUES_SEP = ','
 
 
 class DoYouLike(dd.ChoiceList):
+    """A list of possible answers to questions of type "How much do you
+    like ...?".
 
-    """
-    A list of possible answers to questions of type "How much do you like ...?".
     """
     verbose_name = _("certainly not...very much")
 
@@ -68,15 +69,12 @@ add('4', _("very much"))
 
 class HowWell(dd.ChoiceList):
 
-    """
-    A list of possible answers to questions of type "How well ...?":
-    "not at all", "a bit", "moderate", "quite well" and "very well" 
+    """A list of possible answers to questions of type "How well ...?":
+    "not at all", "a bit", "moderate", "quite well" and "very well"
     
     which are stored in the database as '0' to '4',
     and whose `__unicode__()` returns their translated text.
 
-    `lino.projects.pcsw.models.Languageknowledge.spoken` 
-    `lino.projects.pcsw.models.Languageknowledge.written` 
     """
     verbose_name = _("not at all...very well")
 
@@ -110,9 +108,10 @@ class PropType(dd.BabelNamed):
         verbose_name=_("Choices List"),
         choices=choicelist_choices())
 
-    default_value = models.CharField(_("default value"),
-                                     max_length=settings.SITE.propvalue_max_length,
-                                     blank=True)
+    default_value = models.CharField(
+        _("default value"),
+        max_length=settings.SITE.propvalue_max_length,
+        blank=True)
     """
     The default value to set when creating a :class:`PropertyOccurence`.
     This is currently used only in some fixture...
@@ -167,31 +166,31 @@ class PropType(dd.BabelNamed):
 
 class PropChoice(dd.Model):
 
-    """
-    A Choice for this PropType.
-    `text` is the text to be displayed in combo boxes.
+    """A Choice for a given PropType.  `text` is the text to be displayed
+    in combo boxes.
     
-    `value` is the value to be stored in :attr:`PropValue.value`, 
-    it must be unique for all PropChoices of a given PropType.
+    `value` is the value to be stored in :attr:`PropValue.value`, it
+    must be unique for all PropChoices of a given PropType.
     
-    Choices for a given PropType will be sorted on `value`
-    (we might make this more customizable if necessary by adding a new field `sort_text` 
-    and/or an option to sort on text instead of value) 
+    Choices for a given PropType will be sorted on `value` (we might
+    make this more customizable if necessary by adding a new field
+    `sort_text` and/or an option to sort on text instead of value)
     
-    When configuring your property choices, be aware of the fact tht existing 
-    property occurences will *not* change when you change the `value` 
-    of a property choice.
-    
-    
+    When configuring your property choices, be aware of the fact that
+    existing property occurences will *not* change when you change the
+    `value` of a property choice.
+
     """
     class Meta:
         verbose_name = _("Property Choice")
         verbose_name_plural = _("Property Choices")
         unique_together = ['type', 'value']
 
-    type = models.ForeignKey(PropType, verbose_name=_("Property Type"))
+    type = models.ForeignKey(
+        PropType, verbose_name=_("Property Type"))
     value = models.CharField(
-        max_length=settings.SITE.propvalue_max_length, verbose_name=_("Value"))
+        max_length=settings.SITE.propvalue_max_length,
+        verbose_name=_("Value"))
     text = dd.BabelCharField(
         max_length=200, verbose_name=_("Designation"), blank=True)
 
@@ -207,20 +206,14 @@ class PropChoice(dd.Model):
 
 class PropGroup(dd.BabelNamed):
 
-    """
-    A Property Group defines a list of Properties that fit together under a common name.
-    Examples of Property Groups: Skills, Soft Skills, Obstacles
-    There will be one menu entry per Group.
+    """A Property Group defines a list of Properties that fit together
+    under a common name.  Examples of Property Groups: Skills, Soft
+    Skills, Obstacles There will be one menu entry per Group.
+
     """
     class Meta:
         verbose_name = _("Property Group")
         verbose_name_plural = _("Property Groups")
-
-#~ from django.db.models.signals import pre_delete
-#~ from django.dispatch import receiver
-#~ @receiver(pre_delete, sender=PropGroup)
-#~ def my_handler(sender, instance=None, **kwargs):
-    #~ print "Gonna delete", dd.obj2str(instance,True)
 
 
 class Property(dd.BabelNamed):
@@ -229,43 +222,32 @@ class Property(dd.BabelNamed):
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
 
-    #~ name = dd.BabelCharField(max_length=200,verbose_name=_("Designation"))
-    group = models.ForeignKey(PropGroup, verbose_name=_("Property Group"))
+    group = models.ForeignKey(PropGroup)
     type = models.ForeignKey(PropType, verbose_name=_("Property Type"))
-
-    #~ def __unicode__(self):
-        #~ return dd.babelattr(self,'name')
-#~ add_babel_field(Property,'name')
 
 
 class PropertyOccurence(dd.Model):
 
-    """
-    A Property Occurence is when a Property occurs, possibly having a certain value.
+    """A Property Occurence is when a Property occurs, possibly having a
+    certain value.
     
-    Abstract base class for 
+    Abstract base class for
     | :class:`lino_welfare.modlib.cv.models.PersonProperty`,
     | :class:`lino_welfare.modlib.cv.models.WantedProperty`,
     | :class:`lino_welfare.modlib.cv.models.AvoidedProperty`,
     | ...
-    
+
     """
 
     class Meta:
         abstract = True
 
-    group = models.ForeignKey(PropGroup,
-                              verbose_name=_("Property group"))
-    property = models.ForeignKey(Property,
-                                 verbose_name=_("Property"))  # ,blank=True,null=True)
-    # property must be nullable?
-    value = models.CharField(_("Value"),
-                             max_length=settings.SITE.propvalue_max_length,
-                             blank=True)
-
-    #~ def get_text(self):
-        #~ c = PropChoice.objects.get(type=self.property.type,value=self.value)
-        #~ return dd.babelattr(c,'name')
+    group = models.ForeignKey(PropGroup)
+    property = models.ForeignKey('properties.Property')
+    value = models.CharField(
+        _("Value"),
+        max_length=settings.SITE.propvalue_max_length,
+        blank=True)
 
     @dd.chooser()
     def value_choices(cls, property):

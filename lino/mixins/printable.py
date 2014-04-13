@@ -700,13 +700,15 @@ class BasePrintable(object):
         return model_group(self.__class__)
 
     def filename_root(self):
-        return self._meta.app_label + '.' + self.__class__.__name__ + '-' + str(self.pk)
+        return self._meta.app_label + '.' + self.__class__.__name__ \
+            + '-' + str(self.pk)
 
     def get_print_templates(self, bm, action):
-        """Return a list of filenames of templates for the specified build method.
-        Returning an empty list means that this item is not printable. 
-        For subclasses of :class:`SimpleBuildMethod` the returned list 
-        may not contain more than 1 element.
+        """Return a list of filenames of templates for the specified build
+        method.  Returning an empty list means that this item is not
+        printable.  For subclasses of :class:`SimpleBuildMethod` the
+        returned list may not contain more than 1 element.
+
         """
         #~ return [ filename_root(self) + bm.template_ext ]
         if bm.default_template:

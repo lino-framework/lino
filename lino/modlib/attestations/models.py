@@ -273,6 +273,7 @@ class Attestation(dd.TypedPrintable,
             ar.renderer = saved_renderer
         else:
             kw.update(body='')
+        kw.update(obj=self.owner)
         # if self.owner is not None:
         #     kw.update(self=self.owner)
         #     kw.update(this=self.owner)

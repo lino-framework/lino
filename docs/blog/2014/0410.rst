@@ -1,0 +1,10 @@
+========================
+Thursday, April 10, 2014
+========================
+
+aids.Helper must not be ContactRelated.  These entries are rather like
+simple text fields.  I had the idea (and did some investigation) to
+use the properties app to manage this.  But I came to the conclusion
+that the properties module is obsolete because it was from before we
+had configurable choicelists.
+

@@ -28,6 +28,9 @@ extensions += ['atelier.sphinxconf.blog']
 extensions += ['lino.utils.actordoc']
 extensions += ['sphinxcontrib.taglist']
 
+extensions += ['atelier.sphinxconf.sigal_image']
+sigal_base_url = 'http://sigal.saffre-rumma.net'
+
 
 #~ from unipath import Path
 #~ DOCSDIR = Path(__file__).parent.absolute()

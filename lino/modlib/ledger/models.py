@@ -258,19 +258,19 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
                 return _("%s is not the last voucher in journal" % unicode(doc))
 
     def get_templates_group(self):
-        """
-        Here we override the class method by an instance method.
-        This means that we must also override all other methods
-        of Printable who call the *class* method. 
-        This is currently only :meth:`template_choices`.
+        """Here we override the class method by an instance method.  This
+        means that we must also override all other methods of
+        Printable who call the *class* method.  This is currently only
+        :meth:`template_choices`.
+
         """
         return model_group(self.voucher_type.model)
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, voucher_type):
-        """
-        Overrides PrintableType.template_choices to not use the class 
+        """Overrides PrintableType.template_choices to not use the class
         method `get_templates_group`.
+
         """
         if not voucher_type:
             return []

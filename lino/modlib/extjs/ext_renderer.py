@@ -724,9 +724,9 @@ class ExtRenderer(HtmlRenderer):
             mtime = os.stat(fn).st_mtime
             if mtime > settings.SITE.kernel.code_mtime:
                 #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
-                logger.info(
-                    "20140401 %s (%s) is up to date.",
-                    fn, time.ctime(mtime))
+                # logger.info(
+                #     "20140401 %s (%s) is up to date.",
+                #     fn, time.ctime(mtime))
                 return 0
 
         logger.info("Building %s ...", fn)
