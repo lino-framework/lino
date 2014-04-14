@@ -1,0 +1,27 @@
+======================
+Monday, April 14, 2014
+======================
+
+
+I changed in :mod:`lino.modlib.attestations` the algorithm to find the
+`body_template`: (1) the `AttestationType.content_type` field is no
+longer nullable and (2) the template group is no longer
+"attestations/Attestation" but determined by the model specified by
+`content_type`. 
+
+Concretely:
+
+- /config/attestations/Attestation/aids_Aid.body.html --> 
+  /modlib/aids/config/aids/Aid/aid_certificate.body.html
+
+- /config/attestations/Attestation/cal_Guest.body.html --> 
+  /modlib/cal/config/cal/Guest/presence_certificate.body.html
+
+
+A bug fixed: The (virtual) `preview` field of :class:`Attestation
+<lino.modlib.attestations.models.Attestation>` ignored
+:meth:`get_print_language
+<lino.modlib.attestations.models.Attestation.get_print_language>` and
+displayed in the user's language instead.
+
+

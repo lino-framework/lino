@@ -8,9 +8,29 @@
 todo
 -----
 
+- `isip.Contract`, `debts.Budet` and `notes.Note` must be
+  *attestables*, not simply `CachedPrintable`.
+
+  In order to avoid manual changes in the two templates used to print
+  `isip.Contract` and `jobs.Contract`, we can override their
+  `get_printable_context` method.
+
+  And I must change the current template naming strategy.  The
+  `lino_welfare/config/attestations/Attestation` directory is okay for
+  general templates like `base.body.html` and `default.body.html`,
+  `certificate.body.html`, but e.g. `cal_Guest.body.html` should be
+  `cal/Guest/presence_cert.body.html`
+
+
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
 
 - Familienbeziehungen aus TIM importieren.
+
+- Datenmigration: es gibt noch Kontonummern im alten nationalen
+  Format. Lino kann bisher nicht automatisch die BIC aus der NBAN
+  ermitteln. Dazu wäre eine Tabelle wie die BIC.DBF in TIM nötig, die
+  ein Mapping BE 731 --> BECRCEBB ermöglicht. Lohnt sich das? Ist das
+  nötig?
 
 
 to test
@@ -27,31 +47,30 @@ to test
 
 - "Familienbeziehungen" heißen jetzt "Personen zu Lasten"
 
-- Bankkonten sind momentan nur pro Klient. Auch z.B. für Lieferanten?
-  Mit Kontenart (Sichtkonto,
-  Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
+- Bankkonten sind momentan nur pro Klient. 
+  Wollen wir das auch z.B. für Lieferanten?
 
 - Kontonummern erfassen. N.B. In TIM haben wir auch eine Tabelle von
   belgischen BICs. Macht es Sinn, das in Lino auch so zu machen? Ist
   es nicht sowieso bald Vergangenheit, von der IBAN aus die BICzu
   errechnen? Oder einen Online-Service nutzen?
 
-- Wenn man als Rolf in "Termin machen mit" (CoachingsByClient) auf den
-  Kalender klickt ("Termin finden") und dann im Kalender für Hubert
-  einen Termin mit Robin Dubois macht, dann wird der Termin erstellt,
-  später verschwindet er wieder.
+- fixed: Wenn man als Rolf in "Termin machen mit" (CoachingsByClient)
+  auf den Kalender klickt ("Termin finden") und dann im Kalender für
+  Hubert einen Termin mit Robin Dubois macht, dann wird der Termin
+  erstellt, später verschwindet er wieder.
 
 - Badges. in Charleroi haben sie die sogenannten "tests de
   niveau". Das sind kleine Prüfungen, die vom ÖSHZ organisiert werden,
   und die eine Fähigkeit bestätigen. Zum Beispiel "Anstreichen",
   "Nähen", "Französisch Stufe 1". Die Sozis halten in Lino fest,
   welcher Kunde wann welchen test de niveau bestanden hat.  Frage:
-  Will Eupen das auch?
+  Will Eupen das auch? Und wie sollen wir es nennen?
 
 - Wer darf auf den Button "zur Hauptadresse machen" klicken?
 
-- Brauchen wir eine Tabelle der EiEi-Beträge (Kategorie, Seit wann,
-  Betrag) ?
+- Brauchen wir wirklich die besprochene Tabelle der EiEi-Beträge
+  (Kategorie, Seit wann, Betrag) ?
 
 - AMK-Bescheinigungen
 
@@ -113,6 +132,8 @@ Done
     - Beginn = bei Empfang des ersten Gastes (receive)
     - Ende = wenn der (erste) Gast geht (checkout)
 
+- Bankkontonummern pro Klient in separater Tabelle.  Mit Kontenart
+  (Sichtkonto, Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
 
 

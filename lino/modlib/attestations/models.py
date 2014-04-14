@@ -27,9 +27,11 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
+from django.utils import translation
 
 from lino import dd
 from lino import mixins
+from lino.mixins.printable import model_group
 
 from lino.utils.xmlgen.html import E
 
@@ -66,7 +68,7 @@ class AttestationType(
         'contenttypes.ContentType',
         verbose_name=_("Model"),
         related_name='attestation_types',
-        null=True, blank=True,
+        # null=True, blank=True,
         help_text=_("The model that can issue printouts of this type."))
 
     primary = models.BooleanField(
@@ -82,9 +84,14 @@ class AttestationType(
         help_text=_("""Check this to define a "quick printout" type."""))
 
     @dd.chooser(simple_values=True)
-    def body_template_choices(cls):
-        return settings.SITE.list_templates(
-            '.body.html', cls.get_templates_group())
+    def body_template_choices(cls, content_type):
+        tplgroup = model_group(content_type.model_class())
+        return settings.SITE.list_templates('.body.html', tplgroup)
+
+    # @dd.chooser(simple_values=True)
+    # def body_template_choices(cls):
+    #     return settings.SITE.list_templates(
+    #         '.body.html', cls.get_templates_group())
 
     def after_ui_save(self, ar):
         super(AttestationType, self).after_ui_save(ar)
@@ -253,19 +260,27 @@ class Attestation(dd.TypedPrintable,
         return datetime.date.today()
 
     def get_print_language(self):
+        """Returns the language to be selected when rendering this
+        Attestation. Default implementation returns the content of
+        `self.language`.
+
+        """
         return self.language
 
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self, ar):
-        ctx = self.get_printable_context(ar)
-        return '<div class="htmlText">%s</div>' % ctx['body']
+        with translation.override(self.get_print_language()):
+            ctx = self.get_printable_context(ar)
+            return '<div class="htmlText">%s</div>' % ctx['body']
 
     def get_printable_context(self, ar, **kw):
         kw = super(Attestation, self).get_printable_context(ar, **kw)
         atype = self.attestation_type
         if atype and atype.body_template:
             tplname = atype.body_template
-            tplname = atype.get_templates_group() + '/' + tplname
+            tplgroup = model_group(atype.content_type.model_class())
+            tplname = tplgroup + '/' + tplname
+            # tplname = atype.get_templates_group() + '/' + tplname
             saved_renderer = ar.renderer
             ar.renderer = settings.SITE.ui.plain_renderer
             template = settings.SITE.jinja_env.get_template(tplname)
