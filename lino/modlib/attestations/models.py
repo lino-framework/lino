@@ -115,7 +115,8 @@ class AttestationTypes(dd.Table):
 
     insert_layout = """
     name
-    build_method
+    content_type primary skip_dialog
+    build_method template body_template
     """
 
     detail_layout = """
