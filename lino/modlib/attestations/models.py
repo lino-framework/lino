@@ -143,9 +143,8 @@ class CreatePrintout(dd.Action):
     """
     url_action_name = 'attest'
     icon_name = 'script_add'
-    help_text = _('Create a printout from this')
-    label = _('Create Printout')
-    # label = _('Attest')
+    help_text = _('Create a new excerpt using this data record.')
+    label = _('Create Excerpt')
     sort_index = 49  # immediately before "Print"
 
     def get_action_permission(self, ar, obj, state):
@@ -327,6 +326,8 @@ class AttestationDetail(dd.FormLayout):
 
 class Attestations(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
+    label = _("Excerpts history")
+    icon_name = 'script'
 
     model = 'attestations.Attestation'
     detail_layout = AttestationDetail()
@@ -364,7 +365,7 @@ if settings.SITE.project_model is not None:
 class AttestationsByOwner(AttestationsByX):
     master_key = 'owner'
     column_names = "build_time attestation_type user *"
-
+    help_text = _("History of excerpts based on this data record.")
 
 class AttestationsByCompany(AttestationsByX):
     master_key = 'company'
@@ -410,7 +411,8 @@ def set_attest_actions(sender, **kw):
                 m.define_action(do_attest=CreatePrintout())
                 m.define_action(
                     show_attestations=dd.ShowSlaveTable(
-                        'attestations.AttestationsByOwner'))
+                        'attestations.AttestationsByOwner'
+                    ))
                 # logger.info("20140401 %s is attestable", m)
     except DatabaseError as e:
         logger.info("Failed to load attest_actions : %s", e)

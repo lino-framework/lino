@@ -1,17 +1,17 @@
+
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-04-07 10:33+0300\n"
+"POT-Creation-Date: 2014-04-14 22:07+0300\n"
 "PO-Revision-Date: 2014-04-07 10:38+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
-"X-Generator: Poedit 1.5.4\n"
 
 #: lino/lino_site.py:461 lino/projects/homeworkschool/settings/__init__.py:87
 #: lino/projects/polly/settings/__init__.py:56
@@ -128,13 +128,13 @@ msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
-"\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-"
+"framework.org/demos.html\">sites de démonstration</a>."
 
 #: lino/config/admin_main_base.html:33
 msgid ""
-"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or directly "
-"to the person who invited you."
+"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or "
+"directly to the person who invited you."
 msgstr ""
 
 #: lino/config/admin_main_base.html:46 lino/modlib/extjs/linoweb.js:1666
@@ -147,8 +147,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:62
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
-"in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
+"bar in the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:66
@@ -316,7 +316,7 @@ msgstr ""
 msgid "value"
 msgstr ""
 
-#: lino/core/choicelists.py:361 lino/modlib/attestations/models.py:56
+#: lino/core/choicelists.py:361 lino/modlib/attestations/models.py:58
 #: lino/modlib/badges/models.py:61 lino/modlib/blogs/models.py:55
 #: lino/modlib/cal/models_guest.py:86 lino/modlib/cal/workflows/take.py:76
 #: lino/modlib/courses/models.py:539 lino/modlib/finan/models.py:218
@@ -407,7 +407,8 @@ msgstr "Confirmation"
 #, fuzzy, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"%(self)s ne peut être effacé parce que %(count)d  %(refs)s y font référence"
+"%(self)s ne peut être effacé parce que %(count)d  %(refs)s y font "
+"référence"
 
 #: lino/core/kernel.py:460
 msgid "User abandoned"
@@ -638,7 +639,7 @@ msgstr "Imprimer"
 msgid "Reference"
 msgstr ""
 
-#: lino/mixins/__init__.py:865 lino/modlib/properties/models.py:196
+#: lino/mixins/__init__.py:865 lino/modlib/properties/models.py:195
 #: lino/modlib/system/models.py:279
 msgid "Designation"
 msgstr "Description"
@@ -743,7 +744,7 @@ msgstr ""
 msgid "Template"
 msgstr "Modèle"
 
-#: lino/mixins/printable.py:797
+#: lino/mixins/printable.py:799
 #, fuzzy
 msgid "build time"
 msgstr "Méthode de construction"
@@ -805,8 +806,8 @@ msgstr ""
 msgid "Name"
 msgstr "Nom"
 
-#: lino/modlib/about/models.py:233 lino/modlib/properties/models.py:194
-#: lino/modlib/properties/models.py:262
+#: lino/modlib/about/models.py:233 lino/modlib/properties/models.py:193
+#: lino/modlib/properties/models.py:248
 msgid "Value"
 msgstr "Valeur"
 
@@ -954,78 +955,78 @@ msgstr "Type de compte"
 msgid "Notes"
 msgstr "minutes"
 
-#: lino/modlib/attestations/models.py:50
+#: lino/modlib/attestations/models.py:52
 msgid "Printout Type"
 msgstr "Type d'extrait"
 
-#: lino/modlib/attestations/models.py:51
+#: lino/modlib/attestations/models.py:53
 msgid "Printout Types"
 msgstr "Types d'extrait"
 
-#: lino/modlib/attestations/models.py:54 lino/modlib/blogs/models.py:53
+#: lino/modlib/attestations/models.py:56 lino/modlib/blogs/models.py:53
 #: lino/modlib/notes/models.py:47
 msgid "important"
 msgstr "important"
 
-#: lino/modlib/attestations/models.py:60 lino/modlib/notes/models.py:52
+#: lino/modlib/attestations/models.py:62 lino/modlib/notes/models.py:52
 #, fuzzy
 msgid "Body template"
 msgstr "Modèle"
 
-#: lino/modlib/attestations/models.py:67
-#: lino/modlib/importfilters/models.py:44 lino/modlib/system/models.py:213
+#: lino/modlib/attestations/models.py:69 lino/modlib/importfilters/models.py:44
+#: lino/modlib/system/models.py:213
 msgid "Model"
 msgstr "Modèle"
 
-#: lino/modlib/attestations/models.py:70
+#: lino/modlib/attestations/models.py:72
 #, fuzzy
 msgid "The model that can issue printouts of this type."
 msgstr "Céer courrier"
 
-#: lino/modlib/attestations/models.py:73
+#: lino/modlib/attestations/models.py:75
 #, fuzzy
 msgid "Primary"
 msgstr "Vendredi"
 
-#: lino/modlib/attestations/models.py:75
+#: lino/modlib/attestations/models.py:77
 msgid ""
-"There's at most one primary type per model.         Enabling this field will "
-"automatically make the other         types non-primary."
-msgstr ""
-
-#: lino/modlib/attestations/models.py:80
-msgid "Skip dialog"
+"There's at most one primary type per model.         Enabling this field "
+"will automatically make the other         types non-primary."
 msgstr ""
 
 #: lino/modlib/attestations/models.py:82
+msgid "Skip dialog"
+msgstr ""
+
+#: lino/modlib/attestations/models.py:84
 msgid "Check this to define a \"quick printout\" type."
 msgstr ""
 
-#: lino/modlib/attestations/models.py:139
+#: lino/modlib/attestations/models.py:146
 msgid "Create a printout from this"
 msgstr "Créer un extrait"
 
-#: lino/modlib/attestations/models.py:140
+#: lino/modlib/attestations/models.py:147
 msgid "Create Printout"
 msgstr "Créer un extrait"
 
-#: lino/modlib/attestations/models.py:207
+#: lino/modlib/attestations/models.py:214
 msgid "Printout"
 msgstr "Extrait"
 
-#: lino/modlib/attestations/models.py:208
+#: lino/modlib/attestations/models.py:215
 msgid "Printouts"
 msgstr "Extraits"
 
-#: lino/modlib/attestations/models.py:258
+#: lino/modlib/attestations/models.py:270
 msgid "Preview"
 msgstr ""
 
-#: lino/modlib/attestations/models.py:298 lino/modlib/notes/models.py:197
+#: lino/modlib/attestations/models.py:314 lino/modlib/notes/models.py:197
 msgid "Recipient (Organization)"
 msgstr ""
 
-#: lino/modlib/attestations/models.py:300 lino/modlib/notes/models.py:198
+#: lino/modlib/attestations/models.py:316 lino/modlib/notes/models.py:198
 msgid "Recipient (Person)"
 msgstr ""
 
@@ -1253,7 +1254,8 @@ msgid ""
 "There is more than one client with national id %(national_id)s in our "
 "database."
 msgstr ""
-"Il y a plus d'un client avec NN %(national_id)s dans notre base de données."
+"Il y a plus d'un client avec NN %(national_id)s dans notre base de "
+"données."
 
 #: lino/modlib/beid/mixins.py:337
 #, fuzzy, python-format
@@ -1271,8 +1273,8 @@ msgid ""
 "Cannot create new client because there is already a person named "
 "%(first_name)s %(last_name)s in our database."
 msgstr ""
-"Il y a plus d'une personne nommée %(first_name)s %(last_name)s dans notre "
-"base de données."
+"Il y a plus d'une personne nommée %(first_name)s %(last_name)s dans notre"
+" base de données."
 
 #: lino/modlib/beid/mixins.py:347 lino/modlib/beid/mixins.py:354
 msgid "Oops!"
@@ -1284,8 +1286,8 @@ msgid ""
 "Cannot create new client because there is more than one person named "
 "%(first_name)s %(last_name)s in our database."
 msgstr ""
-"Il y a plus d'une personne nommée %(first_name)s %(last_name)s dans notre "
-"base de données."
+"Il y a plus d'une personne nommée %(first_name)s %(last_name)s dans notre"
+" base de données."
 
 #: lino/modlib/beid/mixins.py:389
 #, python-format
@@ -1627,7 +1629,8 @@ msgid ""
 "Whether this subscription should \"\n"
 "        \"initially be displayed as a hidden calendar."
 msgstr ""
-"Activer cette case pour ne pas afficher ce calendrier en ouvrant le panneau."
+"Activer cette case pour ne pas afficher ce calendrier en ouvrant le "
+"panneau."
 
 #: lino/modlib/cal/models_event.py:65 lino/modlib/cal/models_guest.py:215
 #: lino/modlib/cal/models_task.py:186
@@ -1657,7 +1660,8 @@ msgstr "Bloque l'utilisateur"
 
 #: lino/modlib/cal/models_event.py:90
 msgid ""
-"Lino won't not accept more than one locking event per user at the same time."
+"Lino won't not accept more than one locking event per user at the same "
+"time."
 msgstr ""
 
 #: lino/modlib/cal/models_event.py:102
@@ -1671,7 +1675,8 @@ msgstr "Rendez-vous"
 #: lino/modlib/cal/models_event.py:125
 msgid ""
 "The list of Event Types defined on this system.\n"
-"    An EventType is a list of events which have certain things in common,\n"
+"    An EventType is a list of events which have certain things in common,"
+"\n"
 "    especially they are displayed in the same colour in the calendar panel"
 msgstr ""
 
@@ -1702,11 +1707,10 @@ msgid "Transparent"
 msgstr "non bloquant"
 
 #: lino/modlib/cal/models_event.py:336
-msgid ""
-"Indicates that this Event shouldn't prevent other Events at the same time."
+msgid "Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr ""
-"Indique que cet évènement n'empêche pas d'avoir d'autres évènements en même "
-"temps."
+"Indique que cet évènement n'empêche pas d'avoir d'autres évènements en "
+"même temps."
 
 #: lino/modlib/cal/models_event.py:341
 msgid "all day"
@@ -1870,8 +1874,7 @@ msgid "My presences"
 msgstr "Mes présences"
 
 #: lino/modlib/cal/models_guest.py:259
-msgid ""
-"Shows all my presences in calendar events, independently of their state."
+msgid "Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:292
@@ -2597,7 +2600,8 @@ msgstr ""
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
-"        Or, newly created partners inherit the country of the site owner.\n"
+"        Or, newly created partners inherit the country of the site owner."
+"\n"
 "        "
 msgstr ""
 
@@ -2753,8 +2757,7 @@ msgid "Part of"
 msgstr ""
 
 #: lino/modlib/countries/models.py:166
-msgid ""
-"The superordinate geographic place         of which this place is a part."
+msgid "The superordinate geographic place         of which this place is a part."
 msgstr ""
 
 #: lino/modlib/countries/models.py:205
@@ -4439,106 +4442,102 @@ msgstr "Rejeter"
 msgid "Projects"
 msgstr ""
 
-#: lino/modlib/properties/models.py:59
+#: lino/modlib/properties/models.py:60
 msgid "certainly not...very much"
 msgstr ""
 
-#: lino/modlib/properties/models.py:62
+#: lino/modlib/properties/models.py:63
 msgid "certainly not"
 msgstr ""
 
-#: lino/modlib/properties/models.py:63
+#: lino/modlib/properties/models.py:64
 msgid "rather not"
 msgstr ""
 
-#: lino/modlib/properties/models.py:64
+#: lino/modlib/properties/models.py:65
 msgid "normally"
 msgstr ""
 
-#: lino/modlib/properties/models.py:65
+#: lino/modlib/properties/models.py:66
 msgid "quite much"
 msgstr ""
 
-#: lino/modlib/properties/models.py:66
+#: lino/modlib/properties/models.py:67
 msgid "very much"
 msgstr ""
 
-#: lino/modlib/properties/models.py:81
+#: lino/modlib/properties/models.py:79
 msgid "not at all...very well"
 msgstr ""
 
-#: lino/modlib/properties/models.py:84
+#: lino/modlib/properties/models.py:82
 msgid "not at all"
 msgstr "pas du tout"
 
-#: lino/modlib/properties/models.py:85
+#: lino/modlib/properties/models.py:83
 msgid "a bit"
 msgstr "un peu"
 
-#: lino/modlib/properties/models.py:86
+#: lino/modlib/properties/models.py:84
 msgid "moderate"
 msgstr ""
 
-#: lino/modlib/properties/models.py:87
+#: lino/modlib/properties/models.py:85
 msgid "quite well"
 msgstr "plutôt bien"
 
-#: lino/modlib/properties/models.py:88
+#: lino/modlib/properties/models.py:86
 msgid "very well"
 msgstr "très bien"
 
-#: lino/modlib/properties/models.py:103 lino/modlib/properties/models.py:192
-#: lino/modlib/properties/models.py:234
+#: lino/modlib/properties/models.py:101 lino/modlib/properties/models.py:190
+#: lino/modlib/properties/models.py:226
 msgid "Property Type"
 msgstr "Type de propriété"
 
-#: lino/modlib/properties/models.py:104
+#: lino/modlib/properties/models.py:102
 msgid "Property Types"
 msgstr "Types de propriétés"
 
-#: lino/modlib/properties/models.py:110
+#: lino/modlib/properties/models.py:108
 msgid "Choices List"
 msgstr "Liste de choix"
 
-#: lino/modlib/properties/models.py:113
+#: lino/modlib/properties/models.py:112
 msgid "default value"
 msgstr "valeur par défault"
 
-#: lino/modlib/properties/models.py:122
+#: lino/modlib/properties/models.py:121
 msgid "Limit to choices"
 msgstr "Limite aux choix"
 
-#: lino/modlib/properties/models.py:128
+#: lino/modlib/properties/models.py:127
 msgid "Multiple choices"
 msgstr "Choix multiples"
 
-#: lino/modlib/properties/models.py:188
+#: lino/modlib/properties/models.py:185
 msgid "Property Choice"
 msgstr "Choix de propriété"
 
-#: lino/modlib/properties/models.py:189
+#: lino/modlib/properties/models.py:186
 msgid "Property Choices"
 msgstr "Choix de propriétés"
 
-#: lino/modlib/properties/models.py:216 lino/modlib/properties/models.py:233
+#: lino/modlib/properties/models.py:215
 msgid "Property Group"
 msgstr "Groupe de propriétés"
 
-#: lino/modlib/properties/models.py:217
+#: lino/modlib/properties/models.py:216
 msgid "Property Groups"
 msgstr "Groupes de propriétés"
 
-#: lino/modlib/properties/models.py:229 lino/modlib/properties/models.py:260
+#: lino/modlib/properties/models.py:222
 msgid "Property"
 msgstr "Propriété"
 
-#: lino/modlib/properties/models.py:230 lino/modlib/properties/models.py:355
+#: lino/modlib/properties/models.py:223 lino/modlib/properties/models.py:337
 msgid "Properties"
 msgstr "Propriétés"
-
-#: lino/modlib/properties/models.py:258
-msgid "Property group"
-msgstr "Groupe de propriétés"
 
 #: lino/modlib/reception/__init__.py:31
 msgid "Reception"
@@ -4602,7 +4601,8 @@ msgstr "%(partner)s a commencé d'attendre %(user)s"
 #: lino/modlib/reception/models.py:201
 #, python-format
 msgid ""
-"Checkin in will reassign the event                 from %(old)s to %(new)s."
+"Checkin in will reassign the event                 from %(old)s to "
+"%(new)s."
 msgstr ""
 
 #: lino/modlib/reception/models.py:210
@@ -4636,8 +4636,7 @@ msgid "Expected Guests"
 msgstr "Visiteurs attendus"
 
 #: lino/modlib/reception/models.py:319
-msgid ""
-"Consult this table when checking in a partner who     has an appointment."
+msgid "Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
 #: lino/modlib/reception/models.py:347
@@ -4821,13 +4820,14 @@ msgstr ""
 
 #: lino/modlib/statbel/models.py:33
 msgid ""
-"The official code for this place                     used by statbel.fgov.be"
+"The official code for this place                     used by "
+"statbel.fgov.be"
 msgstr ""
 
 #: lino/modlib/statbel/models.py:43
 msgid ""
-"The official code for this country                     used by statbel.fgov."
-"be"
+"The official code for this country                     used by "
+"statbel.fgov.be"
 msgstr ""
 
 #: lino/modlib/system/models.py:44
@@ -5083,8 +5083,8 @@ msgstr ""
 
 #: lino/modlib/users/models.py:91
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot log "
-"in."
+"Users with an empty `profile` field are considered inactive and cannot "
+"log in."
 msgstr ""
 
 #: lino/modlib/users/models.py:94
@@ -5146,8 +5146,8 @@ msgstr ""
 
 #: lino/modlib/vat/models.py:91
 msgid ""
-"Determines how the VAT is being handled,         i.e. whether and how it is "
-"to be paid."
+"Determines how the VAT is being handled,         i.e. whether and how it "
+"is to be paid."
 msgstr ""
 
 #: lino/modlib/vat/models.py:96
@@ -5687,3 +5687,7 @@ msgstr ""
 
 #~ msgid "Membership"
 #~ msgstr "Membre d'équipe"
+
+#~ msgid "Property group"
+#~ msgstr "Groupe de propriétés"
+

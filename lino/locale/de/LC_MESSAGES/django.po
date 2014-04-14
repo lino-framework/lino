@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-07 10:33+0300\n"
+"POT-Creation-Date: 2014-04-14 22:07+0300\n"
 "PO-Revision-Date: 2014-03-03 18:41+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -319,7 +319,7 @@ msgstr "Arbeitsablauf"
 msgid "value"
 msgstr "Wert"
 
-#: lino/core/choicelists.py:361 lino/modlib/attestations/models.py:56
+#: lino/core/choicelists.py:361 lino/modlib/attestations/models.py:58
 #: lino/modlib/badges/models.py:61 lino/modlib/blogs/models.py:55
 #: lino/modlib/cal/models_guest.py:86 lino/modlib/cal/workflows/take.py:76
 #: lino/modlib/courses/models.py:539 lino/modlib/finan/models.py:218
@@ -637,7 +637,7 @@ msgstr "Vater/Mutter"
 msgid "Reference"
 msgstr "Referenz"
 
-#: lino/mixins/__init__.py:865 lino/modlib/properties/models.py:196
+#: lino/mixins/__init__.py:865 lino/modlib/properties/models.py:195
 #: lino/modlib/system/models.py:279
 msgid "Designation"
 msgstr "Bezeichnung"
@@ -742,7 +742,7 @@ msgstr "Dadurch gehen alle manuellen Änderungen im generierten Dokument verlore
 msgid "Template"
 msgstr "Vorlage"
 
-#: lino/mixins/printable.py:797
+#: lino/mixins/printable.py:799
 msgid "build time"
 msgstr "Druckdatum"
 
@@ -803,8 +803,8 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
-#: lino/modlib/about/models.py:233 lino/modlib/properties/models.py:194
-#: lino/modlib/properties/models.py:262
+#: lino/modlib/about/models.py:233 lino/modlib/properties/models.py:193
+#: lino/modlib/properties/models.py:248
 msgid "Value"
 msgstr "Wert"
 
@@ -951,80 +951,80 @@ msgstr "Kontenart"
 msgid "Notes"
 msgstr "Notizen"
 
-#: lino/modlib/attestations/models.py:50
+#: lino/modlib/attestations/models.py:52
 msgid "Printout Type"
 msgstr "Ausdruckart"
 
-#: lino/modlib/attestations/models.py:51
+#: lino/modlib/attestations/models.py:53
 msgid "Printout Types"
 msgstr "Ausdruckarten"
 
-#: lino/modlib/attestations/models.py:54 lino/modlib/blogs/models.py:53
+#: lino/modlib/attestations/models.py:56 lino/modlib/blogs/models.py:53
 #: lino/modlib/notes/models.py:47
 msgid "important"
 msgstr "wichtig"
 
-#: lino/modlib/attestations/models.py:60 lino/modlib/notes/models.py:52
+#: lino/modlib/attestations/models.py:62 lino/modlib/notes/models.py:52
 #, fuzzy
 msgid "Body template"
 msgstr "URL-Vorlage"
 
-#: lino/modlib/attestations/models.py:67 lino/modlib/importfilters/models.py:44
+#: lino/modlib/attestations/models.py:69 lino/modlib/importfilters/models.py:44
 #: lino/modlib/system/models.py:213
 msgid "Model"
 msgstr "Modell"
 
-#: lino/modlib/attestations/models.py:70
+#: lino/modlib/attestations/models.py:72
 #, fuzzy
 msgid "The model that can issue printouts of this type."
 msgstr "per E-Mail"
 
-#: lino/modlib/attestations/models.py:73
+#: lino/modlib/attestations/models.py:75
 #, fuzzy
 msgid "Primary"
 msgstr "Freitag"
 
-#: lino/modlib/attestations/models.py:75
+#: lino/modlib/attestations/models.py:77
 msgid ""
 "There's at most one primary type per model.         Enabling this field "
 "will automatically make the other         types non-primary."
 msgstr ""
 
-#: lino/modlib/attestations/models.py:80
+#: lino/modlib/attestations/models.py:82
 msgid "Skip dialog"
 msgstr ""
 
-#: lino/modlib/attestations/models.py:82
+#: lino/modlib/attestations/models.py:84
 msgid "Check this to define a \"quick printout\" type."
 msgstr ""
 
-#: lino/modlib/attestations/models.py:139
+#: lino/modlib/attestations/models.py:146
 #, fuzzy
 msgid "Create a printout from this"
 msgstr "per E-Mail"
 
-#: lino/modlib/attestations/models.py:140
+#: lino/modlib/attestations/models.py:147
 #, fuzzy
 msgid "Create Printout"
 msgstr "eher nicht"
 
-#: lino/modlib/attestations/models.py:207
+#: lino/modlib/attestations/models.py:214
 msgid "Printout"
 msgstr "Ausdruck"
 
-#: lino/modlib/attestations/models.py:208
+#: lino/modlib/attestations/models.py:215
 msgid "Printouts"
 msgstr "Ausdrucke"
 
-#: lino/modlib/attestations/models.py:258
+#: lino/modlib/attestations/models.py:270
 msgid "Preview"
 msgstr "Vorschau"
 
-#: lino/modlib/attestations/models.py:298 lino/modlib/notes/models.py:197
+#: lino/modlib/attestations/models.py:314 lino/modlib/notes/models.py:197
 msgid "Recipient (Organization)"
 msgstr "Empfänger (Organisation)"
 
-#: lino/modlib/attestations/models.py:300 lino/modlib/notes/models.py:198
+#: lino/modlib/attestations/models.py:316 lino/modlib/notes/models.py:198
 msgid "Recipient (Person)"
 msgstr "Empfänger (Person)"
 
@@ -4371,106 +4371,102 @@ msgstr "Projekt"
 msgid "Projects"
 msgstr "Produkte"
 
-#: lino/modlib/properties/models.py:59
+#: lino/modlib/properties/models.py:60
 msgid "certainly not...very much"
 msgstr "bloß nicht ... sehr gerne"
 
-#: lino/modlib/properties/models.py:62
+#: lino/modlib/properties/models.py:63
 msgid "certainly not"
 msgstr "bloß nicht"
 
-#: lino/modlib/properties/models.py:63
+#: lino/modlib/properties/models.py:64
 msgid "rather not"
 msgstr "eher nicht"
 
-#: lino/modlib/properties/models.py:64
+#: lino/modlib/properties/models.py:65
 msgid "normally"
 msgstr "normal"
 
-#: lino/modlib/properties/models.py:65
+#: lino/modlib/properties/models.py:66
 msgid "quite much"
 msgstr "gerne"
 
-#: lino/modlib/properties/models.py:66
+#: lino/modlib/properties/models.py:67
 msgid "very much"
 msgstr "sehr gerne"
 
-#: lino/modlib/properties/models.py:81
+#: lino/modlib/properties/models.py:79
 msgid "not at all...very well"
 msgstr "gar nicht ... sehr gut"
 
-#: lino/modlib/properties/models.py:84
+#: lino/modlib/properties/models.py:82
 msgid "not at all"
 msgstr "gar nicht"
 
-#: lino/modlib/properties/models.py:85
+#: lino/modlib/properties/models.py:83
 msgid "a bit"
 msgstr "ein bisschen"
 
-#: lino/modlib/properties/models.py:86
+#: lino/modlib/properties/models.py:84
 msgid "moderate"
 msgstr "mittelmäßig"
 
-#: lino/modlib/properties/models.py:87
+#: lino/modlib/properties/models.py:85
 msgid "quite well"
 msgstr "gut"
 
-#: lino/modlib/properties/models.py:88
+#: lino/modlib/properties/models.py:86
 msgid "very well"
 msgstr "sehr gut"
 
-#: lino/modlib/properties/models.py:103 lino/modlib/properties/models.py:192
-#: lino/modlib/properties/models.py:234
+#: lino/modlib/properties/models.py:101 lino/modlib/properties/models.py:190
+#: lino/modlib/properties/models.py:226
 msgid "Property Type"
 msgstr "Eigenschafts-Datentyp"
 
-#: lino/modlib/properties/models.py:104
+#: lino/modlib/properties/models.py:102
 msgid "Property Types"
 msgstr "Eigenschafts-Datentypen"
 
-#: lino/modlib/properties/models.py:110
+#: lino/modlib/properties/models.py:108
 msgid "Choices List"
 msgstr "Auswahliste"
 
-#: lino/modlib/properties/models.py:113
+#: lino/modlib/properties/models.py:112
 msgid "default value"
 msgstr "Standardwert"
 
-#: lino/modlib/properties/models.py:122
+#: lino/modlib/properties/models.py:121
 msgid "Limit to choices"
 msgstr "Beschränken auf Auswahl"
 
-#: lino/modlib/properties/models.py:128
+#: lino/modlib/properties/models.py:127
 msgid "Multiple choices"
 msgstr "Mehrfachauswahl"
 
-#: lino/modlib/properties/models.py:188
+#: lino/modlib/properties/models.py:185
 msgid "Property Choice"
 msgstr "Auswahlmöglichkeit"
 
-#: lino/modlib/properties/models.py:189
+#: lino/modlib/properties/models.py:186
 msgid "Property Choices"
 msgstr "Auswahlmöglichkeiten"
 
-#: lino/modlib/properties/models.py:216 lino/modlib/properties/models.py:233
+#: lino/modlib/properties/models.py:215
 msgid "Property Group"
 msgstr "Eigenschaftsgruppe"
 
-#: lino/modlib/properties/models.py:217
+#: lino/modlib/properties/models.py:216
 msgid "Property Groups"
 msgstr "Eigenschaftsgruppen"
 
-#: lino/modlib/properties/models.py:229 lino/modlib/properties/models.py:260
+#: lino/modlib/properties/models.py:222
 msgid "Property"
 msgstr "Eigenschaft"
 
-#: lino/modlib/properties/models.py:230 lino/modlib/properties/models.py:355
+#: lino/modlib/properties/models.py:223 lino/modlib/properties/models.py:337
 msgid "Properties"
 msgstr "Eigenschaften"
-
-#: lino/modlib/properties/models.py:258
-msgid "Property group"
-msgstr "Eigenschaftsgruppe"
 
 #: lino/modlib/reception/__init__.py:31
 msgid "Reception"
@@ -5709,4 +5705,7 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Membership"
 #~ msgstr "Team-Mitglied"
+
+#~ msgid "Property group"
+#~ msgstr "Eigenschaftsgruppe"
 
