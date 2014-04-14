@@ -231,6 +231,9 @@ class Attestation(dd.TypedPrintable,
     def get_mailable_type(self):
         return self.attestation_type
 
+    def get_printable_type(self):
+        return self.attestation_type
+
     def on_create(self, ar):
         """When creating an Attestation by double clicking in
         AttestationsByProject, then the `project` field gets filled
