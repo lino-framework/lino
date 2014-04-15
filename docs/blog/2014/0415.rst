@@ -1,0 +1,26 @@
+=======================
+Tuesday, April 15, 2014
+=======================
+
+
+New method :meth:`north.dpy.Migrator.after_load`. 
+Data migrations should no longer do::
+
+   def f(loader):
+       # do something after load
+   globals_dict.update(after_load=f)
+
+But::
+
+   def f(loader):
+       # do something after load
+   self.after_load(f)
+
+Until now it was (theoretically) possible that the after_load method
+of one migration got cancelled by a next migration.
+
+
+New module :mod:`lino.modlib.sepa.utils` with a function to convert an
+old belgian national bank number to iban and bic. Used during data
+migration.
+
