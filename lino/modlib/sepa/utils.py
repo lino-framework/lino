@@ -47,7 +47,7 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-from django_iban.validators import swift_bic_validator, iban_validator
+from django_iban.validators import swift_bic_validator, IBANValidator
 
 BANK_CODES = """
 000	BPOT BE B1
@@ -1112,7 +1112,7 @@ def old_belgian_nban_to_iban_bic(s):
 
 def belgian_nban_to_iban_bic(s):
     iban = be2iban(s)
-    iban_validator(iban)
+    IBANValidator(iban)
     bic = iban2bic(iban)
     swift_bic_validator(bic)
     return [iban, bic]
