@@ -3,6 +3,9 @@ Tuesday, April 15, 2014
 =======================
 
 
+Data migration and `after_load`
+-------------------------------
+
 New method :meth:`north.dpy.Migrator.after_load`. 
 Data migrations should no longer do::
 
@@ -16,11 +19,22 @@ But::
        # do something after load
    self.after_load(f)
 
-Until now it was (theoretically) possible that the after_load method
-of one migration got cancelled by a next migration.
+Until now it was (theoretically) possible that the `after_load` method
+of one migration got overwritten by a next migration.
 
 
-New module :mod:`lino.modlib.sepa.utils` with a function to convert an
-old belgian national bank number to iban and bic. Used during data
-migration.
+Converting Belgian NBANs to IBAN & BIC
+--------------------------------------
+
+New module :mod:`lino.modlib.sepa.utils` to convert a Belgian National
+Bank Account Number to the corresponding IBAN and BIC. We need this
+for data migration in :doc:`/ticket/93`.  A first implementation used
+the free public SOAP service available at `ibanbic.be
+<http://www.ibanbic.be/IBANBIC.asmx?op=BBANtoIBANandBIC>`_. Unfortunately
+this turned out to be too slow when we need to convert thousands of
+NBANs. So I rewrote the whole thing based on my existing code from
+TIM, and using a hard-coded list of Belgian bank codes (taken from
+`nbb.be`).
+
+
 

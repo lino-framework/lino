@@ -12,32 +12,35 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This defines a function `belgian_nban_to_iban_bic` which returns
-the IBAN and BIC of a Belgian "old-style" "national" bank account
-number.
+"""This defines two functions which convert a Belgian National Bank
+Account Number (NBAN) into an (IBAN, BIC) pair.
 
-Instead of maintaining our own mapping of bank numbers -> BIC code, we
-currently use a public free SOAP service available at
-`ibanbic.be <http://www.ibanbic.be/IBANBIC.asmx?op=BBANtoIBANandBIC>`_
-and maintained by `ebcs.be <http://www.ebcs.be>`_.
+There are two ways to implement this:
+
+- using a hard-coded mapping of Belgian bank numbers to their BIC code:
+  :func:`belgian_nban_to_iban_bic`
+- using an online service : :func:`belgian_nban_to_iban_bic_soap`
 
 Usage examples:
 
->>> belgian_nban_to_iban_bic("001-1148294-84")
-[u'BE03 0011 1482 9484', u'GEBA BE BB']
-
-Retrieve an invalid account number:
-
->>> belgian_nban_to_iban_bic("001-1148294-83")
-[u'', u'']
-
 >>> belgian_nban_to_iban_bic('340-1549215-66')
+('BE07340154921566', 'BBRUBEBB')
 >>> belgian_nban_to_iban_bic('001-6012719-56')
+('BE20001601271956', 'GEBABEBB')
 >>> belgian_nban_to_iban_bic('063-4975581-01')
+('BE43063497558101', 'GKCCBEBB')
+
+Here is an invalid Belgian NBAN:
+
+>>> belgian_nban_to_iban_bic("001-1148294-83")  #doctest: +ELLIPSIS
+Traceback (most recent call last):
+...
+ValidationError: [u'Belgian NBAN ends with 83 (expected 84)!']
+
+See also:
 
 - http://fr.wikipedia.org/wiki/ISO_13616#Composition
 - http://www.europebanks.info/ibanguide.htm#5
-
 
 """
 
@@ -47,9 +50,33 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-from django_iban.validators import swift_bic_validator, IBANValidator
+from django.core.exceptions import ValidationError
 
-BANK_CODES = """
+# try:
+#     from django_iban.validators import swift_bic_validator, IBANValidator
+# except ImportError:
+#     pass
+
+try:
+    from suds.client import Client
+
+except ImportError:
+    pass
+
+_CLIENT = None
+
+
+def client():
+    global _CLIENT
+    if _CLIENT is None:
+        url = 'http://www.ibanbic.be/IBANBIC.asmx?WSDL'
+        _CLIENT = Client(url)  # Will fail if suds is not installed.
+    return _CLIENT
+
+
+# The following string is taken from
+# http://www.nbb.be/pub/09_00_00_00_00/09_06_00_00_00/09_06_02_00_00.htm?l=en
+BANK_CODES = """\
 000	BPOT BE B1
 001	GEBA BE BB
 002	GEBA BE BB
@@ -152,7 +179,6 @@ BANK_CODES = """
 099	GKCC BE BB
 100	NBBE BE BB 203
 101	NBBE BE BB 203
-102	nav
 103	NICA BE BB
 104	NICA BE BB
 105	NICA BE BB
@@ -162,13 +188,8 @@ BANK_CODES = """
 109	BKCP BE B1 BKB
 110	BKCP BE BB
 111	ABER BE 21
-112	VRIJ
 113	BKCP BE B1 BKB
 114	BKCP BE B1 BKB
-115	VRIJ
-116	VRIJ
-117	VRIJ
-118	VRIJ
 119	BKCP BE B1 BKB
 120	BKCP BE B1 BKB
 121	BKCP BE B1 BKB
@@ -178,18 +199,12 @@ BANK_CODES = """
 125	CPHB BE 75
 126	CPHB BE 75
 127	BKCP BE B1 BKB
-128	VRIJ
 129	BKCP BE B1 BKB
-130	VRIJ
 131	BKCP BE B1 BKB
 132	BNAG BE BB
 133	BKCP BE B1 BKB
 134	BKCP BE B1 BKB
-135	VRIJ
-136	VRIJ
 137	GEBA BE BB
-138	NAP
-139	nav
 140	GEBA BE BB
 141	GEBA BE BB
 142	GEBA BE BB
@@ -201,44 +216,15 @@ BANK_CODES = """
 148	GEBA BE BB
 149	GEBA BE BB
 150	BCMC BE BB
-151	VRIJ
-152	VRIJ
-153	VRIJ
-154	VRIJ
-155	VRIJ
-156	VRIJ
-157	VRIJ
-158	VRIJ
-159	VRIJ
-160	VRIJ
-161	VRIJ
-162	VRIJ
-163	VRIJ
-164	VRIJ
-165	VRIJ
-166	nav
-167	VRIJ
-168	VRIJ
-169	VRIJ
-170	VRIJ
 171	CPHB BE 75
 172	RABO BE 22
 173	RABO BE 23
-174	VRIJ
-175	NAV
 176	BSCH BE BR
 177	BSCH BE BR
 178	COBA BE BX
 179	COBA BE BX
-180	VRIJ
-181	VRIJ
-182	VRIJ
 183	BARB BE BB
-184	VRIJ
 185	HBKA BE 22
-186	VRIJ
-187	VRIJ
-188	VRIJ
 189	SMBC BE BB
 190	CREG BE BB
 191	CREG BE BB
@@ -265,11 +251,6 @@ BANK_CODES = """
 212	GEBA BE BB
 213	GEBA BE BB
 214	GEBA BE BB
-215	VRIJ
-216	VRIJ
-217	VRIJ
-218	VRIJ
-219	VRIJ
 220	GEBA BE BB
 221	GEBA BE BB
 222	GEBA BE BB
@@ -302,13 +283,7 @@ BANK_CODES = """
 249	GEBA BE BB
 250	GEBA BE BB
 251	GEBA BE BB
-252	VRIJ
-253	VRIJ
-254	VRIJ
-255	VRIJ
-256	VRIJ
 257	GEBA BE BB
-258	VRIJ
 259	GEBA BE BB
 260	GEBA BE BB
 261	GEBA BE BB
@@ -550,54 +525,26 @@ BANK_CODES = """
 497	KRED BE BB
 498	KRED BE BB
 499	KRED BE BB
-500	VRIJ
 501	DHBN BE BB
-502	VRIJ
-503	VRIJ
-504	VRIJ
-505	NAP
-506	NAP
 507	DIER BE 21
 508	PARB BE BZ MDC
 509	ABNA BE 2A IPC
 510	VAPE BE 21
-511	NAP
 512	DNIB BE 21
 513	SGPB BE 99
 514	PUIL BE BB
 515	IRVT BE BB
-516	VRIJ
 517	FORD BE 21
-518	NAP
 519	BNYM BE BB
-520	VRIJ
 521	FVLB BE 22
 522	UTWB BE BB
 523	TRIO BE BB
 524	WAFA BE BB
 525	FVLB BE 2E
-526	VRIJ
-527	VRIJ
-528	VRIJ
-529	VRIJ
 530	SHIZ BE BB
-531	NAP
-532	VRIJ
-533	VRIJ
-534	VRIJ
 535	FBHL BE 22
-536	VRIJ
-537	VRIJ
-538	nav
-539	NAP
-540	nav
 541	BKID BE 22
-542	VRIJ
-543	VRIJ
-544	VRIJ
-545	NAP
 546	WAFA BE BB
-547	VRIJ
 548	LOCY BE BB
 549	CHAS BE BX
 550	GKCC BE BB
@@ -630,16 +577,13 @@ BANK_CODES = """
 577	CITI BE BX
 578	CITI BE BX
 579	CITI BE BX
-580	VRIJ
 581	MHCB BE BB
-582	VRIJ
 583	DEGR BE BB
 584	ICIC GB 2L
 585	RCBP BE BB
 586	CFFR BE B1
 587	BIBL BE 21
 588	CMCI BE B1
-589	VRIJ
 590	BSCH BE BB
 591	BSCH BE BB
 592	BSCH BE BB
@@ -652,104 +596,56 @@ BANK_CODES = """
 599	CTBK BE BX
 600	CTBK BE BX
 601	CTBK BE BX
-602	NAP
-603	VRIJ
-604	VRIJ
 605	BKCH BE BB
-606	VRIJ
 607	ICBK BE BB
-608	VRIJ
-609	NAV
 610	DEUT BE BE
 611	DEUT BE BE
 612	DEUT BE BE
 613	DEUT BE BE
-614	VRIJ
-615	VRIJ
-616	VRIJ
-617	VRIJ
-618	VRIJ
-619	VRIJ
-620	VRIJ
-621	VRIJ
-622	VRIJ
-623	VRIJ
 624	GKCC BE BB
 625	GKCC BE BB
 626	CPBI FRPP
-627	VRIJ
-628	VRIJ
-629	VRIJ
 630	BBRU BE BB
 631	BBRU BE BB
-632	VRIJ
-633	VRIJ
 634	BNAG BE BB
 635	BNAG BE BB
 636	BNAG BE BB
-637	VRIJ
 638	GKCC BE BB
 639	ABNA BE 2A MYO
 640	ADIA BE 22
-641	VRIJ
 642	BBVA BE BB
 643	BMPB BE BB
-644	VRIJ
 645	JVBA BE 22
 646	BNAG BE BB
 647	BNAG BE BB
-648	VRIJ
-649	VRIJ
-650	VRIJ
 651	KEYT BE BB
 652	HBKA BE 22
-653	VRIJ
-654	VRIJ
-655	VRIJ
 656	ETHI BE BB
 657	GKCC BE BB
 658	HABB BE BB
-659	VRIJ
-660	VRIJ
-661	VRIJ
-662	VRIJ
-663	VRIJ
 664	BCDM BE BB
 665	SPAA BE 22
-666	nav
-667	VRIJ
 668	SBIN BE 2X
-669	nav
-670	NYA
 671	EURB BE 99
 672	GKCC BE BB
 673	HBKA BE 22
 674	ABNA BE 2A IDJ
 675	BYBB BE BB
 676	DEGR BE BB
-677	VRIJ
 678	DELE BE 22
 679	PCHQ BE BB
 680	GKCC BE BB
-681	VRIJ
 682	GKCC BE BB
 683	GKCC BE BB
-684	VRIJ
 685	BOFA BE 3X
 686	BOFA BE 3X
 687	MGTC BE BE
 688	SGAB BE B2
-689	VRIJ
 690	BNPA BE BB
 691	FTSB NL 2R
-692	nav
 693	BOTK BE BX
 694	DEUT BE BE
-695	VRIJ
 696	CRLY BE BB
-697	VRIJ
-698	VRIJ
-699	VRIJ
 700	AXAB BE 22
 701	AXAB BE 22
 702	AXAB BE 22
@@ -760,15 +656,6 @@ BANK_CODES = """
 707	AXAB BE 22
 708	AXAB BE 22
 709	AXAB BE 22
-710	NAP
-711	NAP
-712	NAP
-713	NAP
-714	NAP
-715	NAP
-716	NAP
-717	NAP
-718	NAP
 719	FTSB BE 22
 720	ABNA BE BR
 721	ABNA BE BR
@@ -867,14 +754,7 @@ BANK_CODES = """
 814	AXAB BE 22
 815	AXAB BE 22
 816	AXAB BE 22
-817	-
-818	VRIJ
-819	VRIJ
-820	VRIJ
-821	VRIJ
-822	VRIJ
 823	BLUX BE 41
-824	NAV
 825	DEUT BE BE
 826	DEUT BE BE
 827	ETHI BE BB
@@ -896,36 +776,23 @@ BANK_CODES = """
 843	FTNO BE B1
 844	RABO BE 22
 845	DEGR BE BB
-846	VRIJ
-847	nav
-848	VRIJ
-849	VRIJ
 850	SPAA BE 22
 851	SPAA BE 22
 852	SPAA BE 22
 853	SPAA BE 22
-854	VRIJ
-855	VRIJ
-856	VRIJ
-857	VRIJ
-858	NAP
 859	SPAA BE 22
 860	SPAA BE 22
 861	SPAA BE 22
 862	SPAA BE 22
 863	SPAA BE 22
-864	VRIJ
 865	SPAA BE 22
 866	SPAA BE 22
-867	VRIJ
 868	KRED BE BB
-869	NAP
 870	BNAG BE BB
 871	BNAG BE BB
 872	BNAG BE BB
 873	PCHQ BE BB
 874	BNAG BE BB
-875	nav
 876	MBWM BE BB
 877	BNAG BE BB
 878	BNAG BE BB
@@ -950,35 +817,19 @@ BANK_CODES = """
 897	VDSP BE 91
 898	VDSP BE 91
 899	VDSP BE 91
-900	NAP
-901	NAP
-902	NAP
-903	VRIJ
-904	VRIJ
-905	VRIJ
 906	CEKV BE 81
 907	SPAA BE 22
 908	CEKV BE 81
 909	FTNO BE B1
 910	HBKA BE 22
 911	TUNZ BE B1
-912	nav
 913	EPBF BE BB
-914	VRIJ
-915	VRIJ
-916	VRIJ
-917	VRIJ
 918	BILL BE BB
-919	NAP
 920	HBKA BE 22
 921	HBKA BE 22
 922	HBKA BE 22
 923	HBKA BE 22
-924	VRIJ
 925	HBKA BE 22
-926	VRIJ
-927	nav
-928	VRIJ
 929	HBKA BE 22
 930	HBKA BE 22
 931	HBKA BE 22
@@ -993,12 +844,8 @@ BANK_CODES = """
 940	CLIQ BE B1
 941	CVMC BE BB
 942	PUIL BE BB
-943	nav
-944	NYA
 945	JPMG BE BB
-946	VRIJ
 947	AARB BE B1
-948	VRIJ
 949	HSBC BE BB
 950	CTBK BE BX
 951	CTBK BE BX
@@ -1014,20 +861,14 @@ BANK_CODES = """
 961	HBKA BE 22
 962	ETHI BE BB
 963	AXAB BE 22
-964	NAP
 965	ETHI BE BB
-966	NAP
-967	VRIJ
 968	ENIB BE BB
 969	PUIL BE BB
 970	HBKA BE 22
 971	HBKA BE 22
-972	NAP
 973	ARSP BE 22
-974	VRIJ
 975	AXAB BE 22
 976	HBKA BE 22
-977	VRIJ
 978	ARSP BE 22
 979	ARSP BE 22
 980	ARSP BE 22
@@ -1045,46 +886,39 @@ BANK_CODES = """
 BELGIAN_BICS = {}
 for ln in BANK_CODES.splitlines():
     a = ln.split('\t')
-    if len(a) == 2:
-        bic = a[1].replace(' ', '')
-        if len(bic) in (8, 11):
-            BELGIAN_BICS[a[0]] = bic
-
-from suds.client import Client
-
-_CLIENT = None
-
-
-def client():
-    global _CLIENT
-    if _CLIENT is None:
-        url = 'http://www.ibanbic.be/IBANBIC.asmx?WSDL'
-        _CLIENT = Client(url)
-    return _CLIENT
-
-# FUNCTION be2iban(cNBAN)
-# local cData
-# cNBAN := strtran(cNBAN,"-","")
-# cData := cNBAN + "1114" // "BE" converted to numbers
-# cData += "00" // the yet unknown control digits
-# RETURN "BE"+strtran(str(98-BigMod(cData,97),2)," ","0")+cNBAN
-
-# // http://fr.wikipedia.org/wiki/ISO_13616#Composition
-# FUNCTION be2bic(cCompte)
-# RETURN "" if empty(cCompte)
-# RETURN DbfPeek(oBic(),"BE"+padr(left(cCompte,3),LEN_NBID),;
-#   "trim(BIC->IdBIC)","",2)
+    assert len(a) == 2
+    bic = a[1].replace(' ', '')
+    assert len(bic) in (8, 11)
+    BELGIAN_BICS[a[0]] = bic
 
 
 def be2iban(nban):
     """
+    Convert Belgian NBAN to an IBAN.
+
     Usage examples:
 
     >>> be2iban("001-1148294-84")
     'BE03001114829484'
+
+    Based on my previous Clipper implementation for TIM:
+    http://code.google.com/p/tim/source/browse/SRC/TIMDATA2.PRG
+
     """
     nban = nban.replace(' ', '')
     nban = nban.replace('-', '')
+    if len(nban) != 12:
+        raise ValidationError("Length of Belgian NBAN must be 12!")
+    m = int(nban[:10]) % 97
+    end = nban[-2:]
+    if m == 0:
+        if end != '97':
+            raise ValidationError(
+                "Belgian NBAN ends with %s (expected 97)!" % end)
+    else:
+        if int(end) != m:
+            raise ValidationError(
+                "Belgian NBAN ends with %s (expected %s)!" % (end, m))
     data = nban + "1114"  # "BE" converted to numbers
     data += "00"  # the yet unknown control digits
     s = "%02d" % (98 - (int(data) % 97))
@@ -1093,10 +927,18 @@ def be2iban(nban):
 
 def iban2bic(iban):
     """
+    Return the BIC corresponding to the given Belgian NBAN.
+
+    This is based on a hard-coded mapping.
+
     Usage examples:
 
     >>> iban2bic('BE03001114829484')
     'GEBABEBB'
+
+    Based on my previous Clipper implementation for TIM:
+    http://code.google.com/p/tim/source/browse/SRC/TIMDATA2.PRG
+
     """
     iban = iban.replace(' ', '')
     if iban.startswith('BE'):
@@ -1104,18 +946,33 @@ def iban2bic(iban):
         return BELGIAN_BICS[k]
 
 
-def old_belgian_nban_to_iban_bic(s):
-    
+def belgian_nban_to_iban_bic(s):
+    """Convert a Belgian National Bank Account Number (NBAN)
+into an IBAN, BIC pair.
+
+    """
+    iban = be2iban(s)
+    # IBANValidator(iban)
+    bic = iban2bic(iban)
+    # swift_bic_validator(bic)
+    return (iban, bic)
+
+
+def belgian_nban_to_iban_bic_soap(s):
+    """Convert a Belgian National Bank Account Number (NBAN) into an IBAN,
+BIC pair.
+
+This method uses the free public SOAP service available at `ibanbic.be
+<http://www.ibanbic.be/IBANBIC.asmx?op=BBANtoIBANandBIC>`_ and thus
+requires Internet access, is slower, but has the advantage of being
+more reliable because maintained by `an expert <http://www.ebcs.be>`_.
+
+    """
     s = client().service.BBANtoIBANandBIC(s)
     return s.split('#')
 
 
-def belgian_nban_to_iban_bic(s):
-    iban = be2iban(s)
-    IBANValidator(iban)
-    bic = iban2bic(iban)
-    swift_bic_validator(bic)
-    return [iban, bic]
+
 
 
 def _test():

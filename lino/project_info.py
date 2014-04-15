@@ -58,6 +58,7 @@ and
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
+lino.modlib.badges
 lino.modlib.beid
 lino.modlib.cal
 lino.modlib.cal.fixtures
@@ -65,6 +66,7 @@ lino.modlib.cal.management
 lino.modlib.cal.management.commands
 lino.modlib.cal.tests
 lino.modlib.cal.workflows
+lino.modlib.dedupe
 lino.modlib.extensible
 lino.modlib.extjs
 lino.modlib.plain
@@ -140,6 +142,7 @@ lino.modlib.events.tests
 lino.modlib.statbel
 lino.modlib.statbel.fixtures
 lino.modlib.sepa
+lino.modlib.sepa.fixtures
 lino.modlib.system
 lino.modlib.system.fixtures
 lino.modlib.system.tests
