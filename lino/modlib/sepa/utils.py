@@ -17,11 +17,24 @@ the IBAN and BIC of a Belgian "old-style" "national" bank account
 number.
 
 Instead of maintaining our own mapping of bank numbers -> BIC code, we
-currently use www.ibanbic.be SOAP service.
+currently use a public free SOAP service available at
+`ibanbic.be <http://www.ibanbic.be/IBANBIC.asmx?op=BBANtoIBANandBIC>`_
+and maintained by `ebcs.be <http://www.ebcs.be>`_.
+
+Usage examples:
+
+>>> belgian_nban_to_iban_bic("001-1148294-84")
+[u'BE03 0011 1482 9484', u'GEBA BE BB']
+
+Retrieve an invalid account number:
+
+>>> belgian_nban_to_iban_bic("001-1148294-83")
+[u'', u'']
 
 """
 
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,6 +58,10 @@ def belgian_nban_to_iban_bic(s):
     s = client().service.BBANtoIBANandBIC(s)
     return s.split('#')
 
-if __name__ == '__main__':
- 
-    print belgian_nban_to_iban_bic("001-1148294-84")
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
