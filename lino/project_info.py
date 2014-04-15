@@ -58,7 +58,6 @@ and
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
-lino.modlib.badges
 lino.modlib.beid
 lino.modlib.cal
 lino.modlib.cal.fixtures

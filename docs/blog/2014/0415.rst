@@ -28,7 +28,7 @@ Converting Belgian NBANs to IBAN & BIC
 
 New module :mod:`lino.modlib.sepa.utils` to convert a Belgian National
 Bank Account Number to the corresponding IBAN and BIC. We need this
-for data migration in :doc:`/ticket/93`.  A first implementation used
+for data migration in :doc:`/tickets/93`.  A first implementation used
 the free public SOAP service available at `ibanbic.be
 <http://www.ibanbic.be/IBANBIC.asmx?op=BBANtoIBANandBIC>`_. Unfortunately
 this turned out to be too slow when we need to convert thousands of
@@ -37,4 +37,8 @@ TIM, and using a hard-coded list of Belgian bank codes (taken from
 `nbb.be`).
 
 
+Miscellaneous
+-------------
 
+I moved the `badges` app from :mod:`lino.modlib` to
+:mod:`lino_welfare.modlib`.
