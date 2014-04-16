@@ -8,6 +8,15 @@
 todo
 -----
 
+- datenmigration: Bestehende Klienten haben keine Adressen. 
+
+- Manuell Adresse erstellen: nicht anschließend das Detail-Fenster
+  anzeigen.
+
+- Adressart muss auch manuell eingegeben werden können.
+  Pro Adresse ein Datum und/oder eine "Einlesequelle" (eid-Karte,
+  Tx25)
+
 - Lino erweitern, dass ein customisierbarer Dialog vor dem Erstellen
   programmiert werden kann.  Damit es wie in TIM geht:
   Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen.
