@@ -8,6 +8,51 @@
 todo
 -----
 
+- Lino erweitern, dass ein customisierbarer Dialog vor dem Erstellen
+  programmiert werden kann.  Damit es wie in TIM geht:
+  Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen.
+  Gefahr, dass wir irgenwann aus dem Fusionieren nicht mehr
+  rauskommen.
+
+- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
+  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
+  die Lino vorgeschlagen hätte".
+
+- sepa.Account.managed : übersetzen mit "Verwaltet". 
+  Und Hilfetext "Dieses Bankkonto wird durch das ÖSHZ verwaltet."
+
+- Bankkonten auch für Lieferanten? Ja. Aber ohne ein Feld
+  "Verwaltet". Sowieso auch ein Ankreuzfeld "Primärkonto". Und zwei
+  Felder IBAN und BIC auch pro Partner.
+
+- Eingabe Bankkonten : Wenn belgische IBAN angegeben ist und BIC leer
+  ist, soll Lino eine BIC vorschlagen. Wenn er sie kennt.
+
+- Collect-Modus des eidreader einschalten.
+
+- Leute, deren offizieller Name "(Decl.)" enthält. Wenn dieser Text im
+  Namen und/oder Vornamen der eID-Karte steht, dann wird er aus dem
+  Namen entfernt und stattdessen ein neues Ankreuzfeld "declared_name"
+  eingeschaltet.
+
+- Datenmigration: ich bin noch nicht sicher, ob alles gut rüber
+  kommt. Zum Beispiel kommen da diverse Fehlermeldungen u.A. eine
+  ganze Serie von "Deferred sepa.Account()" wegen ungültiger BIC oder
+  IBAN (was auch so sein sollte), die dann am Ende aber einfach
+  "verschwinden" statt wie es sein sollte als "unresolved" bewarnt zu
+  werden.
+
+- Beziehungen.  Aus TIM importieren und dann hören, was die Benutzer
+  zu der neuen Datenbankstruktur sagen. Bezeichnung "Beziehungen"
+  statt "Personen zu Lasten".  Was wird aus Ehepartnern?  Wie
+  reagieren die Leute darauf, dass man von der Frau aus nicht mehr den
+  Mann sieht?  Weitere Beziehungsarten: Zusammenlebend usw.
+  (humanlinks).
+
+
+feedback
+--------
+
 - `isip.Contract`, `debts.Budet` and `notes.Note` must be
   *attestables*, not simply `CachedPrintable`.
 
@@ -21,44 +66,7 @@ todo
   `certificate.body.html`, but e.g. `cal_Guest.body.html` should be
   `cal/Guest/presence_cert.body.html`
 
-
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
-
-- Familienbeziehungen aus TIM importieren.
-
-- Datenmigration: es gibt noch Kontonummern im alten nationalen
-  Format. Lino kann bisher nicht automatisch die BIC aus der NBAN
-  ermitteln. Dazu wäre eine Tabelle wie die BIC.DBF in TIM nötig, die
-  ein Mapping BE 731 --> BECRCEBB ermöglicht. Lohnt sich das? Ist das
-  nötig?
-
-
-to test
--------
-
-
-- Dublettenkontrolle : wenn ein (angeblich) neuer Kunde kommt, soll
-  man einfach die eid-Karte lesen. Im Normalfall haben wir die
-  NR-Nummer, also gibt es keinen Zweifel.  Im Zweifelsfall legt Lino
-  einen Klienten (im Status "Neuantrag") an.  Bevor man einen
-  Neuantrag zuweist, kann man jetzt die neue Tabelle "Ähnliche
-  Personen" (SimilarPersons) konsultieren, um eventuelle Dubletten zu
-  erkennen.
-
-- "Familienbeziehungen" heißen jetzt "Personen zu Lasten"
-
-- Bankkonten sind momentan nur pro Klient. 
-  Wollen wir das auch z.B. für Lieferanten?
-
-- Kontonummern erfassen. N.B. In TIM haben wir auch eine Tabelle von
-  belgischen BICs. Macht es Sinn, das in Lino auch so zu machen? Ist
-  es nicht sowieso bald Vergangenheit, von der IBAN aus die BICzu
-  errechnen? Oder einen Online-Service nutzen?
-
-- fixed: Wenn man als Rolf in "Termin machen mit" (CoachingsByClient)
-  auf den Kalender klickt ("Termin finden") und dann im Kalender für
-  Hubert einen Termin mit Robin Dubois macht, dann wird der Termin
-  erstellt, später verschwindet er wieder.
 
 - Badges. in Charleroi haben sie die sogenannten "tests de
   niveau". Das sind kleine Prüfungen, die vom ÖSHZ organisiert werden,
@@ -109,15 +117,27 @@ to test
   erfüllen soll.  Ich habe notiert "Wann war ein Klient das letzte Mal
   da? Was ist alles passiert?", aber das reicht mir nicht. Bitte ein
   konkretes Beispiel beschreiben. 
-      
-    
+
 
 Done
 -------
 
-- Mehrere Adressen pro Klient : 
-   - Adressart (Referenzadresse, Reelle, Offizieller Wohnsitz, Sonstige)
-   - Button "zur Hauptadresse machen" (wer darf drauf klicken?)
+- Siehe Änderungen Version 1.1.11 bzw. 1.1.12 in :ref:`welfare.changes`.
+
+- "Beziehungen" sind jetzt etwas anders strukturiert.  Erstens braucht
+  man jetzt nicht mehr jedes Kind als Klient zu erfassen. Wenn man nur
+  Namen, Geschlecht und Geburtsdatum wissen will, dann reicht ein
+  Eintrag direkt in der Tabelle.  Das hat aber einen Nachteil (der
+  vielleicht gar keiner ist): Beziehungen sind jetzt nicht mehr
+  symmetrisch (bzw. bidirektional), sondern "gerichtet"
+  bzw. hierarchisch. D.h. wenn man bei einem Klienten eingibt, dass er
+  mit einem anderen Klienten verheiratet ist, dann sieht man das nicht
+  automatisch auch von diesem anderen Klienten aus.
+
+- bug fixed: Wenn man als Rolf in "Termin machen mit"
+  (CoachingsByClient) auf den Kalender klickt ("Termin finden") und
+  dann im Kalender für Hubert einen Termin mit Robin Dubois macht,
+  dann wird der Termin erstellt, später verschwindet er wieder.
 
 - eid-Karte einlesen : funktioniert momentan mit :ref:`eidreader`.
   Die Idee, dass wir :ref:`davlink` und :ref:`eidreader` als Browser
@@ -131,9 +151,6 @@ Done
 
     - Beginn = bei Empfang des ersten Gastes (receive)
     - Ende = wenn der (erste) Gast geht (checkout)
-
-- Bankkontonummern pro Klient in separater Tabelle.  Mit Kontenart
-  (Sichtkonto, Sparkonto, Budgetbegleitung, Sozialhilfekonto, ...)
 
 
 
