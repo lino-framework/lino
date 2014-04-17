@@ -484,15 +484,15 @@ class Kernel(object):
             logger.debug("No callback %r in %r" % (
                 thread_id, self.pending_threads.keys()))
             ar.error("Unknown callback %r" % thread_id)
-            return self.render_action_response(ar.response)
+            return self.render_action_response(ar)
         for c in cb.choices:
             if c.name == button_id:
         #~ rv = c.func(request)
                 c.func(ar)
-                return self.render_action_response(ar.response)
+                return self.render_action_response(ar)
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
-        return self.render_action_response(ar.response)
+        return self.render_action_response(ar)
 
         #~ m = getattr(d,button_id)
         #~ rv = m(request)
@@ -562,14 +562,14 @@ class Kernel(object):
         """
         try:
             ar.bound_action.action.run_from_ui(ar)
-            return self.render_action_response(ar.response)
+            return self.render_action_response(ar)
         except Warning as e:
             ar.error(unicode(e), alert=True)
             #~ r = dict(
               #~ success=False,
               #~ message=unicode(e),
               #~ alert=True)
-            return self.render_action_response(ar.response)
+            return self.render_action_response(ar)
         #~ removed 20130913
         #~ except Exception as e:
             #~ if len(ar.selected_rows) == 0:
@@ -614,13 +614,13 @@ class Kernel(object):
 
         h.store = ext_store.Store(h)
 
-    def render_action_response(self, rv):
+    def render_action_response(self, ar):
+        """Builds a JSON response from given dict ``rv``, checking first
+        whether there are only allowed keys (defined in
+        :attr:`ACTION_RESPONSES`)
+
         """
-        Builds a JSON response from given dict ``rv``, 
-        checking first whether there are only allowed keys 
-        (defined in :attr:`ACTION_RESPONSES`)
-        """
-        rv = self.check_action_response(rv)
+        rv = self.check_action_response(ar.response)
         return views.json_response(rv)
 
     def row_action_button(self, *args, **kw):

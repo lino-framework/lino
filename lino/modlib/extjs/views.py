@@ -110,7 +110,8 @@ def elem2rec_empty(ar, ah, elem, **rec):
     if ar.actor.parameters:
         #~ rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
         rec.update(
-            param_values=ar.actor.params_layout.params_store.pv2dict(ar.param_values))
+            param_values=ar.actor.params_layout.params_store.pv2dict(
+                ar.param_values))
     return rec
 
 
@@ -158,7 +159,7 @@ def delete_element(ar, elem):
     msg = ar.actor.disable_delete(elem, ar)
     if msg is not None:
         ar.error(None, msg, alert=True)
-        return settings.SITE.ui.render_action_response(ar.response)
+        return settings.SITE.ui.render_action_response(ar)
 
     #~ dblogger.log_deleted(ar.request,elem)
 
@@ -174,7 +175,7 @@ def delete_element(ar, elem):
                 ) % dict(record=dd.obj2unicode(elem), error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         ar.error(None, msg)
-        return settings.SITE.ui.render_action_response(ar.response)
+        return settings.SITE.ui.render_action_response(ar)
         #~ raise Http404(msg)
 
     return HttpResponseDeleted()
@@ -198,12 +199,15 @@ def ajax_error(ar, e):
         else:
             e = '<br>'.join(e.messages)
     ar.error(e, alert=True)
-    return json_response(ar.response)
+    # return json_response(ar.response)
 
 
-def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
-    """
-    Parses the data from HttpRequest to the model instance and saves it.
+def form2obj_and_save(ar, data, elem, is_new):
+    """Parses the data from HttpRequest to the model instance and saves it.
+
+    This is used by `ApiList.post` and `ApiElement.put`, and by
+    `Restful.post` and `Restful.put`.
+
     """
     request = ar.request
     rh = ar.ah
@@ -213,7 +217,8 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
         rh.store.form2obj(ar, data, elem, is_new)
         elem.full_clean()
     except CATCHED_AJAX_EXCEPTIONS as e:
-        return ajax_error(ar, e)
+        ajax_error(ar, e)
+        return
 
     ar.response.update(success=True)
 
@@ -229,8 +234,9 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
 
         try:
             elem.save(**kw2save)
-        except CATCHED_AJAX_EXCEPTIONS, e:
-            return ajax_error(ar, e)
+        except CATCHED_AJAX_EXCEPTIONS as e:
+            ajax_error(ar, e)
+            return
 
         if is_new:
             dd.pre_ui_create.send(elem, request=request)
@@ -241,26 +247,10 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
             ar.response.update(message=_("%s has been updated.") %
                                dd.obj2unicode(elem))
     else:
-        ar.response.update(message=_("%s : nothing to save.") %
-                           dd.obj2unicode(elem))
+        ar.response.update(
+            message=_("%s : nothing to save.") % dd.obj2unicode(elem))
 
     elem.after_ui_save(ar)
-
-    if restful:
-        # restful mode (used only for Ext.ensible) needs list_fields, not
-        # detail_fields
-        ar.response.update(
-            rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
-    elif file_upload:
-        ar.response.update(record_id=elem.pk)
-        return json_response(ar.response, content_type='text/html')
-    else:
-        # TODO: in fact we need *either* `rows` (when this was called
-        # from a Grid) *or* `data_record` (when this was called from a
-        # form).  But how to find out which one is needed?
-        ar.response.update(rows=[rh.store.row2list(ar, elem)])
-        ar.response.update(data_record=elem2rec_detailed(ar, elem))
-    return json_response(ar.response)
 
 
 class AdminIndex(View):
@@ -289,8 +279,12 @@ class MainHtml(View):
         settings.SITE.startup()
         ui = settings.SITE.ui
         #~ raise Exception("20131023")
-        rv = dict(success=True, html=settings.SITE.get_main_html(request))
-        return ui.render_action_response(rv)
+        from lino.core import requests
+        ar = requests.BaseRequest(request)
+        ar.response.update(
+            success=True,
+            html=settings.SITE.get_main_html(request))
+        return ui.render_action_response(ar)
 
 
 class Authenticate(View):
@@ -309,22 +303,26 @@ class Authenticate(View):
             request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
-            rv = dict(success=True, message="User %r logged out." % username)
-            return settings.SITE.ui.render_action_response(rv)
+
+            from lino.core import requests
+            ar = requests.BaseRequest(request)
+            ar.success("User %r logged out." % username)
+            return settings.SITE.ui.render_action_response(ar)
         raise http.Http404()
 
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = auth.authenticate(username, password)
+        from lino.core import requests
+        ar = requests.BaseRequest(request)
         if user is None:
-            rv = dict(success=False, message="Could not authenticate %r" %
-                      username)
-            return settings.SITE.ui.render_action_response(rv)
+            ar.error("Could not authenticate %r" % username)
+            return settings.SITE.ui.render_action_response(ar)
         request.session['username'] = username
         request.session['password'] = password
-        rv = dict(success=True, message=("Now logged in as %r" % username))
-        return settings.SITE.ui.render_action_response(rv)
+        ar.success(("Now logged in as %r" % username))
+        return settings.SITE.ui.render_action_response(ar)
 
 
 class RunJasmine(View):
@@ -577,7 +575,13 @@ class Restful(View):
 
         data = request.POST.get('rows')
         data = json.loads(data)
-        return form2obj_and_save(ar, data, instance, True, True)
+        form2obj_and_save(ar, data, instance, True)
+
+        # Ext.ensible needs list_fields, not detail_fields
+        ar.response.update(
+            rows=[ar.ah.store.row2dict(
+                ar, instance, ar.ah.store.list_fields)])
+        return json_response(ar.response)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
         #~ ui = settings.SITE.ui
@@ -607,10 +611,7 @@ class Restful(View):
         return json_response(kw)
 
     def put(self, request, app_label=None, actor=None, pk=None):
-        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ a = rpt.default_action
-        #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
         ar.set_selected_pks(pk)
         elem = ar.selected_rows[0]
@@ -622,8 +623,11 @@ class Restful(View):
         a = rpt.get_url_action(rpt.default_list_action_name)
         ar = rpt.request(request=request, action=a)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        # force_update=True)
-        return form2obj_and_save(ar, data, elem, False, True)
+        form2obj_and_save(ar, data, elem, False)
+        # Ext.ensible needs list_fields, not detail_fields
+        ar.response.update(
+            rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
+        return json_response(ar.response)
 
 
 class ApiElement(View):
@@ -721,7 +725,14 @@ class ApiElement(View):
         ar.set_selected_pks(pk)
         ar.renderer = settings.SITE.ui.extjs_renderer
         elem = ar.selected_rows[0]
-        return form2obj_and_save(ar, data, elem, False, False)
+        form2obj_and_save(ar, data, elem, False)
+
+        # TODO: in fact we need *either* `rows` (when this was called
+        # from a Grid) *or* `data_record` (when this was called from a
+        # form).  But how to find out which one is needed?
+        ar.response.update(rows=[ar.ah.store.row2list(ar, elem)])
+        ar.response.update(data_record=elem2rec_detailed(ar, elem))
+        return json_response(ar.response)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
@@ -745,8 +756,18 @@ class ApiList(View):
                 file_upload = True
             else:
                 file_upload = False
-            return form2obj_and_save(ar, request.POST, elem, True,
-                                     False, file_upload)
+            form2obj_and_save(ar, request.POST, elem, True)
+            if file_upload:
+                ar.response.update(record_id=elem.pk)
+                return json_response(ar.response, content_type='text/html')
+            else:
+                # TODO: in fact we need *either* `rows` (when this was called
+                # from a Grid) *or* `data_record` (when this was called from a
+                # form).  But how to find out which one is needed?
+                ar.response.update(rows=[rh.store.row2list(ar, elem)])
+                ar.response.update(data_record=elem2rec_detailed(ar, elem))
+                return json_response(ar.response)
+
         return settings.SITE.ui.run_action(ar)
 
     def get(self, request, app_label=None, actor=None):

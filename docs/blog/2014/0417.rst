@@ -27,4 +27,10 @@ And it requires some rather important internal changes.  But Gerd and
 I agreed that it makes sense to do this surgery now.
 
 I started yesterday with some "hygienic preparations": tidy up some of
-the code that will change.
+the code that will change::
+
+    #	modified:   lino/core/actions.py
+    #	modified:   lino/modlib/extjs/ext_renderer.py
+    #	modified:   lino/modlib/extjs/linoweb.js
+    #	modified:   lino/modlib/extjs/views.py
+
