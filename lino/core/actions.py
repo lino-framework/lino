@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
@@ -720,16 +721,14 @@ class Action(Parametrizable, Permittable):
         pass
 
 
-
-
 class TableAction(Action):
 
-    """
-    TODO: get_action_permission and required_states 
-    are needed here because `disabled_actions` also asks InsertRow whether 
-    it's permitted on that row. It's in fact not correct to ask this for 
-    the Insert button. Has to do with the fact that the Insert button is 
-    in the bottom toolbar though it should be in the top toolbar...
+    """TODO: get_action_permission and required_states are needed here
+    because `disabled_actions` also asks InsertRow whether it's
+    permitted on that row. It's in fact not correct to ask this for
+    the Insert button. Has to do with the fact that the Insert button
+    is in the bottom toolbar though it should be in the top toolbar...
+
     """
 
     #~ required_states = None
@@ -940,17 +939,13 @@ class ShowDetailAction(Action):
 #~ Action.callable_from = (GridEdit,ShowDetailAction)
 class InsertRow(TableAction):
 
+    """Opens the Insert window filled with a blank row.  The new row will
+    be actually created only when this window gets submitted.
+
     """
-    Opens the Insert window filled with a blank row. 
-    The new row will be actually created only when this 
-    window gets submitted.
-    """
-    #~ debug_permissions = 20130924
 
     label = _("New")
-    # ~ icon_name = 'x-tbar-new' # if action rendered as toolbar button
     icon_name = 'add'  # if action rendered as toolbar button
-    # ~ icon_file = 'add.png' # if action rendered by quick_add_buttons
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
@@ -959,11 +954,8 @@ class InsertRow(TableAction):
     help_text = _("Insert a new record")
     # ~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
-    #~ callable_from = (GridEdit,ShowDetailAction)
     action_name = 'insert'
-    #~ label = _("Insert")
     key = INSERT  # (ctrl=True)
-    #~ needs_selection = False
 
     def get_action_title(self, ar):
         return _("Insert into %s") % force_unicode(ar.get_title())
@@ -1060,6 +1052,17 @@ class SubmitDetail(Action):
     def is_callable_from(self, caller):
         return isinstance(caller, ShowDetailAction)
 
+    def run_from_ui(self, ar, **kw):
+        elem = ar.selected_rows[0]
+        ar.form2obj_and_save(ar.rqdata, elem, False)
+
+        # TODO: in fact we need *either* `rows` (when this was called
+        # from a Grid) *or* `data_record` (when this was called from a
+        # form).  But how to find out which one is needed?
+        ar.response.update(rows=[ar.ah.store.row2list(ar, elem)])
+        ar.response.update(data_record=ar.elem2rec_detailed(elem))
+        # return json_response(ar.response)
+
 
 class SubmitInsert(SubmitDetail):
     switch_to_detail = True
@@ -1073,6 +1076,25 @@ class SubmitInsert(SubmitDetail):
 
     def is_callable_from(self, caller):
         return isinstance(caller, InsertRow)
+
+    def run_from_ui(self, ar, **kw):
+        rh = ar.ah
+        elem = ar.create_instance()
+        if rh.actor.handle_uploaded_files is not None:
+            rh.actor.handle_uploaded_files(elem, ar.request)
+            file_upload = True
+        else:
+            file_upload = False
+        ar.form2obj_and_save(ar.request.POST, elem, True)
+        if file_upload:
+            ar.response.update(record_id=elem.pk)
+            ar.set_content_type('text/html')
+        else:
+            # TODO: in fact we need *either* `rows` (when this was called
+            # from a Grid) *or* `data_record` (when this was called from a
+            # form).  But how to find out which one is needed?
+            ar.response.update(rows=[rh.store.row2list(ar, elem)])
+            ar.response.update(data_record=ar.elem2rec_detailed(elem))
 
 
 class SubmitInsertAndStay(SubmitInsert):

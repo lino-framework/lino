@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
@@ -22,14 +23,23 @@ from django.utils import translation
 from django.conf import settings
 from django import http
 from django.core.mail import EmailMessage
+from django.core import exceptions
+from django.utils.encoding import force_unicode
 
+from djangosite.dbutils import obj2unicode
 
-import lino
 from lino.utils import AttrDict
 
 from lino.core import constants as ext_requests
 
 from lino.core.dbutils import resolve_app
+from lino.core.dbutils import navinfo
+
+from lino.utils.xmlgen.html import E
+
+from lino.core.signals import pre_ui_create, ChangeWatcher
+
+CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
 
 class VirtualRow(object):
@@ -59,15 +69,17 @@ class PhantomRow(VirtualRow):
 
 class BaseRequest(object):
 
-    """
-    Base class for :class:`ActionRequest` and :class:`TableRequest <lino.core.tables.TableRequest>`.
+    """Base class for :class:`ActionRequest` and :class:`TableRequest
+    <lino.core.tables.TableRequest>`.
     
     This holds information like the current user and renderer.
-    A bare BaseRequest instance is returned as a "session" by 
+    A bare BaseRequest instance is returned as a "session" by
     :meth:`login <lino.site.Site.login>`.
+
     """
     renderer = None
     selected_rows = []
+    content_type = 'application/json'
 
     #~ def __init__(self,request=None,renderer=None,**kw):
     def __init__(self, request=None, **kw):
@@ -169,6 +181,9 @@ class BaseRequest(object):
     def goto_instance(self, obj, **kw):
         js = self.instance_handler(obj)
         self.response.update(eval_js=js)
+
+    def set_content_type(self, ct):
+        self.content_type = ct
 
     def must_execute(self):
         return True
@@ -491,6 +506,118 @@ class BaseRequest(object):
         return self.renderer.action_button(
             None, self, self.bound_action, *args, **kw)
 
+    def ajax_error(ar, e):
+        """Convert a catched exception to a user-friendly error message.
+
+        """
+        if isinstance(e, exceptions.ValidationError):
+            def fieldlabel(name):
+                de = ar.ah.actor.get_data_elem(name)
+                #~ print 20130423, de
+                return force_unicode(getattr(de, 'verbose_name', name))
+            md = getattr(e, 'message_dict', None)
+            if md is not None:
+                e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
+                                for k, v in md.items()])
+            else:
+                e = '<br>'.join(e.messages)
+        ar.error(e, alert=True)
+        # return json_response(ar.response)
+
+    def elem2rec1(ar, rh, elem, **rec):
+        rec.update(data=rh.store.row2dict(ar, elem))
+        return rec
+
+    def elem2rec_insert(ar, ah, elem):
+        """
+        Returns a dict of this record, designed for usage by an InsertWindow.
+        """
+        rec = ar.elem2rec1(ah, elem)
+        rec.update(title=ar.get_action_title())
+        rec.update(phantom=True)
+        return rec
+
+    def elem2rec_detailed(ar, elem, **rec):
+        """Adds additional information for this record, used only by
+    detail views.
+
+        The "navigation information" is a set of pointers to the next,
+        previous, first and last record relative to this record in
+        this report.  (This information can be relatively expensive
+        for records that are towards the end of the report.  See
+        `/blog/2010/0716`, `/blog/2010/0721`, `/blog/2010/1116`,
+        `/blog/2010/1207`.)
+
+        recno 0 means "the requested element exists but is not
+        contained in the requested queryset".  This can happen after
+        changing the quick filter (search_change) of a detail view.
+
+           """
+        rh = ar.ah
+        rec = ar.elem2rec1(rh, elem, **rec)
+        if ar.actor.hide_top_toolbar:
+            rec.update(title=ar.get_detail_title(elem))
+        else:
+            #~ print(ar.get_title())
+            #~ print(dd.obj2str(elem))
+            #~ print(repr(unicode(elem)))
+            if True:  # before 20131017
+                rec.update(title=ar.get_title() + u" » " +
+                           ar.get_detail_title(elem))
+            else:  # todo
+                rec.update(title=E.tostring(ar.href_to_request(ar))
+                           + u" » " + ar.get_detail_title(elem))
+        rec.update(id=elem.pk)
+        rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
+        if rh.actor.show_detail_navigator:
+            rec.update(navinfo=navinfo(ar.data_iterator, elem))
+        return rec
+
+    def form2obj_and_save(ar, data, elem, is_new):
+        """Parses the data from HttpRequest to the model instance and saves it
+
+        This is used by `ApiList.post` and `ApiElement.put`, and by
+        `Restful.post` and `Restful.put`.
+
+        """
+        request = ar.request
+        rh = ar.ah
+        if not is_new:
+            watcher = ChangeWatcher(elem)
+        try:
+            rh.store.form2obj(ar, data, elem, is_new)
+            elem.full_clean()
+        except CATCHED_AJAX_EXCEPTIONS as e:
+            ar.ajax_error(e)
+            return
+
+        if is_new or watcher.is_dirty():
+
+            elem.before_ui_save(ar)
+
+            kw2save = {}
+            if is_new:
+                kw2save.update(force_insert=True)
+            else:
+                kw2save.update(force_update=True)
+
+            try:
+                elem.save(**kw2save)
+            except CATCHED_AJAX_EXCEPTIONS as e:
+                ar.ajax_error(e)
+                return
+
+            if is_new:
+                pre_ui_create.send(elem, request=request)
+                ar.success(_("%s has been created.") % obj2unicode(elem))
+            else:
+                watcher.send_update(request)
+                ar.success(_("%s has been updated.") % obj2unicode(elem))
+        else:
+            ar.success(_("%s : nothing to save.") % obj2unicode(elem))
+
+        elem.after_ui_save(ar)
+
 
 class ActionRequest(BaseRequest):
 
@@ -513,6 +640,7 @@ class ActionRequest(BaseRequest):
 
     def __init__(self, actor=None,
                  request=None, action=None, renderer=None,
+                 rqdata=None,
                  param_values=None,
                  action_param_values=None,
                  **kw):
@@ -525,6 +653,7 @@ class ActionRequest(BaseRequest):
         """
         #~ ActionRequest.__init__(self,ui,action)
         self.actor = actor
+        self.rqdata = rqdata
         #~ self.action = action or actor.default_action
         #~ self.bound_action = BoundAction(actor,action or actor.default_action)
         #~ if action and not isinstance(action,BoundAction):

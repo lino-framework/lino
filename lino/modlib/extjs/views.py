@@ -44,7 +44,6 @@ from django.db import models
 from django.conf import settings
 from django.views.generic import View
 import json
-from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
@@ -62,7 +61,6 @@ from lino.core import auth
 
 from lino.core import actions
 from lino.core import dbtables
-from lino.core.dbutils import navinfo
 
 from lino.ui.views import requested_actor, action_request
 from lino.ui.views import json_response, json_response_kw
@@ -76,24 +74,6 @@ MAX_ROW_COUNT = 300
 
 class HttpResponseDeleted(http.HttpResponse):
     status_code = 204
-
-
-def elem2rec1(ar, rh, elem, **rec):
-    rec.update(data=rh.store.row2dict(ar, elem))
-    return rec
-
-
-def elem2rec_insert(ar, ah, elem):
-    """
-    Returns a dict of this record, designed for usage by an InsertWindow.
-    """
-    rec = elem2rec1(ar, ah, elem)
-    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
-    rec.update(title=ar.get_action_title())
-    rec.update(phantom=True)
-    #~ rec.update(id=elem.pk) or -99999)
-    # logger.info("20140331 insert_rec %s", rec)
-    return rec
 
 
 def elem2rec_empty(ar, ah, elem, **rec):
@@ -112,44 +92,6 @@ def elem2rec_empty(ar, ah, elem, **rec):
         rec.update(
             param_values=ar.actor.params_layout.params_store.pv2dict(
                 ar.param_values))
-    return rec
-
-
-def elem2rec_detailed(ar, elem, **rec):
-    """
-    Adds additional information for this record, used only by detail views.
-
-    The "navigation information" is a set of pointers to the next, previous,
-    first and last record relative to this record in this report.
-    (This information can be relatively expensive for records that are towards
-    the end of the report.
-    See `/blog/2010/0716`,
-    `/blog/2010/0721`,
-    `/blog/2010/1116`,
-    `/blog/2010/1207`.)
-
-    recno 0 means "the requested element exists but is not contained in the requested queryset".
-    This can happen after changing the quick filter (search_change) of a detail view.
-
-    """
-    rh = ar.ah
-    rec = elem2rec1(ar, rh, elem, **rec)
-    if ar.actor.hide_top_toolbar:
-        rec.update(title=ar.get_detail_title(elem))
-    else:
-        #~ print(ar.get_title())
-        #~ print(dd.obj2str(elem))
-        #~ print(repr(unicode(elem)))
-        if True:  # before 20131017
-            rec.update(title=ar.get_title() + u" » " +
-                       ar.get_detail_title(elem))
-        else:  # todo
-            rec.update(title=E.tostring(ar.href_to_request(ar))
-                       + u" » " + ar.get_detail_title(elem))
-    rec.update(id=elem.pk)
-    rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
-    if rh.actor.show_detail_navigator:
-        rec.update(navinfo=navinfo(ar.data_iterator, elem))
     return rec
 
 
@@ -179,78 +121,6 @@ def delete_element(ar, elem):
         #~ raise Http404(msg)
 
     return HttpResponseDeleted()
-
-CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
-
-
-def ajax_error(ar, e):
-    """Convert a catched exception to a user-friendly error message.
-
-    """
-    if isinstance(e, exceptions.ValidationError):
-        def fieldlabel(name):
-            de = ar.ah.actor.get_data_elem(name)
-            #~ print 20130423, de
-            return force_unicode(getattr(de, 'verbose_name', name))
-        md = getattr(e, 'message_dict', None)
-        if md is not None:
-            e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
-                            for k, v in md.items()])
-        else:
-            e = '<br>'.join(e.messages)
-    ar.error(e, alert=True)
-    # return json_response(ar.response)
-
-
-def form2obj_and_save(ar, data, elem, is_new):
-    """Parses the data from HttpRequest to the model instance and saves it.
-
-    This is used by `ApiList.post` and `ApiElement.put`, and by
-    `Restful.post` and `Restful.put`.
-
-    """
-    request = ar.request
-    rh = ar.ah
-    if not is_new:
-        watcher = dd.ChangeWatcher(elem)
-    try:
-        rh.store.form2obj(ar, data, elem, is_new)
-        elem.full_clean()
-    except CATCHED_AJAX_EXCEPTIONS as e:
-        ajax_error(ar, e)
-        return
-
-    ar.response.update(success=True)
-
-    if is_new or watcher.is_dirty():
-
-        elem.before_ui_save(ar)
-
-        kw2save = {}
-        if is_new:
-            kw2save.update(force_insert=True)
-        else:
-            kw2save.update(force_update=True)
-
-        try:
-            elem.save(**kw2save)
-        except CATCHED_AJAX_EXCEPTIONS as e:
-            ajax_error(ar, e)
-            return
-
-        if is_new:
-            dd.pre_ui_create.send(elem, request=request)
-            ar.response.update(
-                message=_("%s has been created.") % dd.obj2unicode(elem))
-        else:
-            watcher.send_update(request)
-            ar.response.update(message=_("%s has been updated.") %
-                               dd.obj2unicode(elem))
-    else:
-        ar.response.update(
-            message=_("%s : nothing to save.") % dd.obj2unicode(elem))
-
-    elem.after_ui_save(ar)
 
 
 class AdminIndex(View):
@@ -575,7 +445,7 @@ class Restful(View):
 
         data = request.POST.get('rows')
         data = json.loads(data)
-        form2obj_and_save(ar, data, instance, True)
+        ar.form2obj_and_save(data, instance, True)
 
         # Ext.ensible needs list_fields, not detail_fields
         ar.response.update(
@@ -623,7 +493,7 @@ class Restful(View):
         a = rpt.get_url_action(rpt.default_list_action_name)
         ar = rpt.request(request=request, action=a)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        form2obj_and_save(ar, data, elem, False)
+        ar.form2obj_and_save(data, elem, False)
         # Ext.ensible needs list_fields, not detail_fields
         ar.response.update(
             rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
@@ -674,12 +544,12 @@ class ApiElement(View):
             if fmt == ext_requests.URL_FORMAT_JSON:
                 if pk == '-99999':
                     elem = ar.create_instance()
-                    datarec = elem2rec_insert(ar, ah, elem)
+                    datarec = ar.elem2rec_insert(ah, elem)
                 elif pk == '-99998':
                     elem = ar.create_instance()
                     datarec = elem2rec_empty(ar, ah, elem)
                 else:
-                    datarec = elem2rec_detailed(ar, elem)
+                    datarec = ar.elem2rec_detailed(elem)
 
                 return json_response(datarec)
 
@@ -724,15 +594,8 @@ class ApiElement(View):
         ar = action_request(app_label, actor, request, data, False)
         ar.set_selected_pks(pk)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        elem = ar.selected_rows[0]
-        form2obj_and_save(ar, data, elem, False)
-
-        # TODO: in fact we need *either* `rows` (when this was called
-        # from a Grid) *or* `data_record` (when this was called from a
-        # form).  But how to find out which one is needed?
-        ar.response.update(rows=[ar.ah.store.row2list(ar, elem)])
-        ar.response.update(data_record=elem2rec_detailed(ar, elem))
-        return json_response(ar.response)
+        logger.info("20140517 %s", ar.bound_action)
+        return settings.SITE.ui.run_action(ar)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
@@ -747,27 +610,6 @@ class ApiList(View):
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        if ar.bound_action.action.action_name in [
-                'duplicate', 'post', 'poststay', 'insert']:
-            rh = ar.ah
-            elem = ar.create_instance()
-            if rh.actor.handle_uploaded_files is not None:
-                rh.actor.handle_uploaded_files(elem, request)
-                file_upload = True
-            else:
-                file_upload = False
-            form2obj_and_save(ar, request.POST, elem, True)
-            if file_upload:
-                ar.response.update(record_id=elem.pk)
-                return json_response(ar.response, content_type='text/html')
-            else:
-                # TODO: in fact we need *either* `rows` (when this was called
-                # from a Grid) *or* `data_record` (when this was called from a
-                # form).  But how to find out which one is needed?
-                ar.response.update(rows=[rh.store.row2list(ar, elem)])
-                ar.response.update(data_record=elem2rec_detailed(ar, elem))
-                return json_response(ar.response)
-
         return settings.SITE.ui.run_action(ar)
 
     def get(self, request, app_label=None, actor=None):
@@ -794,7 +636,8 @@ class ApiList(View):
                       title=unicode(ar.get_title()))
             if ar.actor.parameters:
                 kw.update(
-                    param_values=ar.actor.params_layout.params_store.pv2dict(ar.param_values))
+                    param_values=ar.actor.params_layout.params_store.pv2dict(
+                        ar.param_values))
             return json_response(kw)
 
         if fmt == ext_requests.URL_FORMAT_HTML:
@@ -811,7 +654,7 @@ class ApiList(View):
                 elem = ar.create_instance()
                 #~ print 20120630
                 #~ print elem.national_id
-                rec = elem2rec_insert(ar, rh, elem)
+                rec = ar.elem2rec_insert(rh, elem)
                 after_show.update(data_record=rec)
 
             kw = dict(on_ready=

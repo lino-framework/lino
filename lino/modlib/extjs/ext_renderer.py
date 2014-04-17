@@ -320,7 +320,7 @@ class ExtRenderer(HtmlRenderer):
                     after_show = rr.get_status()
                     elem = rr.create_instance()
                     after_show.update(
-                        data_record=views.elem2rec_insert(rr, rr.ah, elem))
+                        data_record=rr.elem2rec_insert(rr.ah, elem))
                     #~ after_show.update(record_id=-99999)
                     # see tickets/56
                     return self.window_action_button(
@@ -377,7 +377,7 @@ class ExtRenderer(HtmlRenderer):
             return
         elem = ar.create_instance(**known_values)
         st = ar.get_status()
-        st.update(data_record=views.elem2rec_insert(ar, ar.ah, elem))
+        st.update(data_record=ar.elem2rec_insert(ar.ah, elem))
         return self.window_action_button(ar.request, a, st, text, **options)
 
     def action_call_on_instance(self, obj, ar, ba, **st):

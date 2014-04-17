@@ -56,7 +56,6 @@ from lino.core import web
 from lino.core.signals import pre_ui_build, post_ui_build
 
 from lino.ui import store as ext_store
-from lino.utils import codetime
 
 from lino.core.dbutils import is_devserver
 from lino.ui.render import TextRenderer
@@ -68,6 +67,8 @@ ACTION_RESPONSES = frozenset((
     'message', 'success', 'alert',
     'errors',
     'html',
+    'rows',
+    'data_record',
     'goto_record_id',
     'refresh', 'refresh_all',
     'close_window',
@@ -248,9 +249,6 @@ class Kernel(object):
             if n in names:
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
-
-        # self.mtime = codetime()
-        #~ logger.info("20130610 codetime is %s", datetime.datetime.fromtimestamp(self.mtime))
 
         for p in site.installed_plugins:
             if isinstance(p, LinoPlugin):
@@ -565,30 +563,7 @@ class Kernel(object):
             return self.render_action_response(ar)
         except Warning as e:
             ar.error(unicode(e), alert=True)
-            #~ r = dict(
-              #~ success=False,
-              #~ message=unicode(e),
-              #~ alert=True)
             return self.render_action_response(ar)
-        #~ removed 20130913
-        #~ except Exception as e:
-            #~ if len(ar.selected_rows) == 0:
-                #~ msg = unicode(e)
-            #~ else:
-                #~ elem = ar.selected_rows[0]
-                #~ if isinstance(elem,models.Model):
-                    #~ elem = obj2unicode(elem)
-                #~ msg = _(
-                  #~ "Action \"%(action)s\" failed for %(record)s:") % dict(
-                  #~ action=ar.bound_action.full_name(),
-                  #~ record=elem)
-                #~ msg += "\n" + unicode(e)
-            #~ msg += '.\n' + unicode(_(
-              #~ "An error report has been sent to the system administrator."))
-            #~ logger.warning(msg)
-            #~ logger.exception(e)
-            #~ r = self.error(e,msg,alert=_("Oops!"))
-            #~ return self.render_action_response(r)
 
     def setup_handle(self, h, ar):
         """
@@ -621,7 +596,7 @@ class Kernel(object):
 
         """
         rv = self.check_action_response(ar.response)
-        return views.json_response(rv)
+        return views.json_response(rv, ar.content_type)
 
     def row_action_button(self, *args, **kw):
         """
