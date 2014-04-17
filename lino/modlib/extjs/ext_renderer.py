@@ -1047,7 +1047,7 @@ class ExtRenderer(HtmlRenderer):
         if a.parameters:
             kw.update(panel_btn_handler=js_code(
                 "Lino.param_action_handler(Lino.%s)" % ba.full_name()))
-        elif isinstance(a, actions.SubmitDetail):
+        elif isinstance(a, actions.SubmitDetail):  # also SubmitInsert
             js = 'function(panel){panel.save(null,%s,%r)}' % (
                 py2js(a.switch_to_detail), a.action_name)
             kw.update(panel_btn_handler=js_code(js))
@@ -1057,9 +1057,6 @@ class ExtRenderer(HtmlRenderer):
             kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code(
                 'function(panel){Lino.show_insert(panel)}'))
-        #~ elif isinstance(a,actions.DuplicateRow):
-            #~ kw.update(panel_btn_handler=js_code(
-                #~ 'function(panel){Lino.show_insert_duplicate(panel)}'))
         elif isinstance(a, actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         else:

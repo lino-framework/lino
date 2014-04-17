@@ -8,7 +8,15 @@
 todo
 -----
 
-- datenmigration: Bestehende Klienten haben keine Adressen. 
+- Lino erweitern, dass ein spezifischer Dialog vor dem Erstellen
+  programmiert werden kann.  Damit es wie in TIM geht:
+  Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen eines
+  Klienten.  Gefahr, dass wir irgenwann aus dem Fusionieren nicht mehr
+  rauskommen.
+
+- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
+  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
+  die Lino vorgeschlagen hätte".
 
 - Manuell Adresse erstellen: nicht anschließend das Detail-Fenster
   anzeigen.
@@ -17,15 +25,7 @@ todo
   Pro Adresse ein Datum und/oder eine "Einlesequelle" (eid-Karte,
   Tx25)
 
-- Lino erweitern, dass ein customisierbarer Dialog vor dem Erstellen
-  programmiert werden kann.  Damit es wie in TIM geht:
-  Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen.
-  Gefahr, dass wir irgenwann aus dem Fusionieren nicht mehr
-  rauskommen.
-
-- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
-  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
-  die Lino vorgeschlagen hätte".
+- Datenmigration: pro bestehendem Klienten eine Adresse erstellen.
 
 - sepa.Account.managed : übersetzen mit "Verwaltet". 
   Und Hilfetext "Dieses Bankkonto wird durch das ÖSHZ verwaltet."

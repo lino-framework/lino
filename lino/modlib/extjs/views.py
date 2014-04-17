@@ -39,23 +39,16 @@ Summary from <http://en.wikipedia.org/wiki/Restful>:
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import cgi
-
 from django import http
 from django.db import models
-from django.db import IntegrityError
 from django.conf import settings
 from django.views.generic import View
-#~ from django.utils import simplejson as json
 import json
 from django.core import exceptions
 from django.utils.translation import ugettext as _
-from django.utils.translation import get_language
 from django.utils.encoding import force_unicode
 
 from lino import dd
-#~ from lino.core.signals import pre_ui_delete
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -69,19 +62,14 @@ from lino.core import auth
 
 from lino.core import actions
 from lino.core import dbtables
-#~ from lino.core import changes
 from lino.core.dbutils import navinfo
 
 from lino.ui.views import requested_actor, action_request
 from lino.ui.views import json_response, json_response_kw
 
 
-
-#~ from lino.ui import requests as ext_requests
 from lino.core import constants as ext_requests
 from lino.ui import elems as ext_elems
-
-#~ from lino.ui.extjs3 import ext_elems
 
 MAX_ROW_COUNT = 300
 
@@ -191,22 +179,18 @@ def delete_element(ar, elem):
 
     return HttpResponseDeleted()
 
-#CATCHED_AJAX_EXCEPTIONS = (Warning,IntegrityError,exceptions.ValidationError)
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
 
 def ajax_error(ar, e):
-    """
-    Utility function that converts a catched exception
-    to a user-friendly error message.
+    """Convert a catched exception to a user-friendly error message.
+
     """
     if isinstance(e, exceptions.ValidationError):
         def fieldlabel(name):
             de = ar.ah.actor.get_data_elem(name)
             #~ print 20130423, de
             return force_unicode(getattr(de, 'verbose_name', name))
-        #~ logger.info("20130418 ajax_error(%s",e.messages)
-        #~ if isinstance(e.messages,dict):
         md = getattr(e, 'message_dict', None)
         if md is not None:
             e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
@@ -216,23 +200,13 @@ def ajax_error(ar, e):
     ar.error(e, alert=True)
     return json_response(ar.response)
 
-# ~ def form2obj_and_save(self,request,rh,data,elem,is_new,include_rows): # **kw2save):
-# **kw2save):
-
 
 def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
     """
     Parses the data from HttpRequest to the model instance and saves it.
     """
-    #~ self = settings.SITE.ui
     request = ar.request
     rh = ar.ah
-    #~ logger.info('20131017 form2obj_and_save %r', data)
-    #~ print 'form2obj_and_save %r' % data
-
-    #~ logger.info('20130418 before calling store.form2obj , elem is %s' % dd.obj2str(elem))
-    # store normal form data (POST or PUT)
-    #~ original_state = dict(elem.__dict__)
     if not is_new:
         watcher = dd.ChangeWatcher(elem)
     try:
@@ -241,25 +215,11 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
     except CATCHED_AJAX_EXCEPTIONS as e:
         return ajax_error(ar, e)
 
-    #~ kw = dict(success=True)
     ar.response.update(success=True)
 
-    #~ except exceptions.ValidationError, e:
-        #~ kw = settings.SITE.ui.error(e)
-        #~ return json_response(kw)
-
-    #~ dirty = False
-    #~ missing = object()
-    #~ for k, v in original_state.iteritems():
-        #~ if v != elem.__dict__.get(k, missing):
-            #~ dirty = True
-    #~ if not dirty:
     if is_new or watcher.is_dirty():
 
         elem.before_ui_save(ar)
-
-        #~ if not is_new:
-            #~ dblogger.log_changes(request,elem)
 
         kw2save = {}
         if is_new:
@@ -271,23 +231,16 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
             elem.save(**kw2save)
         except CATCHED_AJAX_EXCEPTIONS, e:
             return ajax_error(ar, e)
-            #~ return views.json_response_kw(success=False,
-                  #~ msg=_("There was a problem while saving your data:\n%s") % e)
 
         if is_new:
             dd.pre_ui_create.send(elem, request=request)
-            #~ changes.log_create(request,elem)
             ar.response.update(
                 message=_("%s has been created.") % dd.obj2unicode(elem))
-                #~ record_id=elem.pk)
         else:
             watcher.send_update(request)
-            #~ watcher.log_diff(request)
             ar.response.update(message=_("%s has been updated.") %
                                dd.obj2unicode(elem))
-
     else:
-
         ar.response.update(message=_("%s : nothing to save.") %
                            dd.obj2unicode(elem))
 
@@ -301,21 +254,12 @@ def form2obj_and_save(ar, data, elem, is_new, restful, file_upload=False):
     elif file_upload:
         ar.response.update(record_id=elem.pk)
         return json_response(ar.response, content_type='text/html')
-    else:  # 20120814
-        #~ logger.info("20120816 %r", ar.action)
-        #~ if isinstance(ar.bound_action.action,actions.GridEdit):
-        # ~ if ar.bound_action.action.action_name in ('put','post'): # grid.on_afteredit
-            #~ kw.update(rows=[rh.store.row2list(ar,elem)])
-        #~ else:
-            #~ kw.update(data_record=elem2rec_detailed(ar,elem))
-        """
-        TODO: in fact we need *either* `rows` (when this was called from a Grid)
-        *or* `data_record` (when this was called from a form).
-        But how to find out which one is needed?
-        """
+    else:
+        # TODO: in fact we need *either* `rows` (when this was called
+        # from a Grid) *or* `data_record` (when this was called from a
+        # form).  But how to find out which one is needed?
         ar.response.update(rows=[rh.store.row2list(ar, elem)])
         ar.response.update(data_record=elem2rec_detailed(ar, elem))
-    #~ logger.info("20120208 form2obj_and_save --> %r",kw)
     return json_response(ar.response)
 
 
@@ -333,7 +277,8 @@ class AdminIndex(View):
             user = request.subst_user or request.user
             a = settings.SITE.get_main_action(user)
             if a is not None and a.get_view_permission(user.profile):
-                kw.update(on_ready=ui.extjs_renderer.action_call(request, a, {}))
+                kw.update(on_ready=ui.extjs_renderer.action_call(
+                    request, a, {}))
         return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
 
 
@@ -369,9 +314,6 @@ class Authenticate(View):
         raise http.Http404()
 
     def post(self, request, *args, **kw):
-        #~ from lino.core import auth
-        #~ from django.contrib.sessions.backends.db import SessionStore
-        #~ ss = SessionStore()
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = auth.authenticate(username, password)
@@ -381,10 +323,6 @@ class Authenticate(View):
             return settings.SITE.ui.render_action_response(rv)
         request.session['username'] = username
         request.session['password'] = password
-        #~ request.session['password'] = request.GET.get('password')
-        #~ auth.login(request,request.GET.get('username'), request.GET.get('password'))
-        #~ ss.save()
-        #~ logger.info("20130924 Now logged in as %r" % username)
         rv = dict(success=True, message=("Now logged in as %r" % username))
         return settings.SITE.ui.render_action_response(rv)
 
@@ -628,12 +566,7 @@ class Restful(View):
     """
 
     def post(self, request, app_label=None, actor=None, pk=None):
-        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ if pk is None:
-            #~ elem = None
-        #~ else:
-            #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
 
         instance = ar.create_instance()
@@ -643,9 +576,7 @@ class Restful(View):
             ar.actor.handle_uploaded_files(instance, request)
 
         data = request.POST.get('rows')
-        #~ logger.info("20111217 Got POST %r",data)
         data = json.loads(data)
-        #~ data = self.rest2form(request,rh,data)
         return form2obj_and_save(ar, data, instance, True, True)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
@@ -805,7 +736,6 @@ class ApiList(View):
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        #~ print 20121116, ar.bound_action.action.action_name
         if ar.bound_action.action.action_name in [
                 'duplicate', 'post', 'poststay', 'insert']:
             rh = ar.ah
@@ -820,40 +750,28 @@ class ApiList(View):
         return settings.SITE.ui.run_action(ar)
 
     def get(self, request, app_label=None, actor=None):
-        #~ ar = action_request(app_label,actor,request,request.GET,limit=PLAIN_PAGE_LENGTH)
         ar = action_request(app_label, actor, request, request.GET, True)
         ar.renderer = settings.SITE.ui.extjs_renderer
         rh = ar.ah
 
-        #~ print 20120630, 'api_list_view'
         fmt = request.GET.get(
             ext_requests.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
 
-        #~ logger.info("20121203 views.ApiList.get() %s",ar.bound_action.full_name())
-
         if fmt == ext_requests.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
                     for row in ar.sliced_data_iterator]
-            #~ return json_response_kw(msg="20120124")
-            #~ total_count = len(ar.data_iterator)
             total_count = ar.get_total_count()
-            #~ if ar.create_rows:
             for row in ar.create_phantom_rows():
                 d = rh.store.row2list(ar, row)
                 rows.append(d)
                 total_count += 1
-            #~ 20120918
             kw = dict(count=total_count,
                       rows=rows,
                       success=True,
                       no_data_text=ar.no_data_text,
-                      #~ status=ar.get_status(ar.ui),
                       title=unicode(ar.get_title()))
-                #~ disabled_actions=rpt.disabled_actions(ar,None),
-                #~ gc_choices=[gc.data for gc in ar.actor.grid_configs])
             if ar.actor.parameters:
-                #~ kw.update(param_values=ar.actor.params_layout.params_store.pv2dict(settings.SITE.ui,ar.param_values))
                 kw.update(
                     param_values=ar.actor.params_layout.params_store.pv2dict(ar.param_values))
             return json_response(kw)

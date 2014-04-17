@@ -1074,6 +1074,13 @@ class SubmitInsert(SubmitDetail):
     def is_callable_from(self, caller):
         return isinstance(caller, InsertRow)
 
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        sar = ar.spawn(self.slave_table, master_instance=obj)
+        js = ar.renderer.request_handler(sar)
+        ar.response.update(eval_js=js)
+
+
 
 class SubmitInsertAndStay(SubmitInsert):
     sort_index = 11
@@ -1084,7 +1091,6 @@ class SubmitInsertAndStay(SubmitInsert):
 
 
 class ShowSlaveTable(Action):
-    #~ TABLE2ACTION_ATTRS = tuple('sort_index help_text icon_name label'.split())
     TABLE2ACTION_ATTRS = tuple('help_text icon_name label'.split())
     #~ label = "ShowSlaveTable"
     #~ show_in_row_actions = True

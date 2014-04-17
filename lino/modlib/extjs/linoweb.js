@@ -2999,13 +2999,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       }
     
     if (status.data_record) {
-      //~ console.log('20111201 Lino.FormPanel with data_record',this.data_record.title,this.containing_window);
-      //~ this.main_item.on_master_changed.defer(2000,this.main_item,[status.data_record]);
-      //~ Lino.do_when_visible(this.main_item,function(){this.on_master_changed(status.data_record)});
-      //~ this.main_item.on('afterrender',function(){
-      //~   this.main_item.on_master_changed(status.data_record)},this,{single:true});
-      /* must defer because because set_window_title() didn't work otherwise */
-      this.set_current_record.createDelegate(this,[status.data_record]).defer(100);
+      /* defer because because set_window_title() didn't work otherwise */
+      this.set_current_record.createDelegate(
+          this, [status.data_record]).defer(100);
       //~ this.set_current_record(this.data_record);
       //~ return;
     } else if (status.record_id != undefined) { 
@@ -3302,96 +3298,81 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     if (this.has_file_upload) this.form.fileUpload = true;
     //~ console.log('FormPanel.save()',rec);
     if (!action_name) action_name = this.action_name;
-    if (rec) {
-      var p = {};
-      Ext.apply(p,this.get_base_params());
-      p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
-      //~ if (this.action_name) 
-          //~ p.$ext_requests.URL_PARAM_ACTION_NAME = this.action_name;
-      p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
-      if (rec.phantom) {
-        //~ if (this.action_name != 'insert') 
-            //~ console.log("Warning: phantom record, but action_name is",this.action_name)
-        this.form.submit({
-          url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url,
-          method: 'POST',
-          params: p, 
-          scope: this,
-          success: function(form, action) {
-            this.loadMask.hide();
-            Lino.notify(action.result.message);
-            /***
-            Close this window, but update the status of the 
-            calling window.
-            If the calling window is a detail on the same table,
-            then it should skip to the new record. But only then.
-            A successful response usually has a data_record,
-            except if it is a fileupload form where some mysterious 
-            decoding problems (20120209) force us to return a record_id 
-            which will lead to an additional GET.
-            ***/
-            var url = this.ls_url;
-            var ww = Lino.calling_window();
-            if (ww && ww.window.main_item instanceof Lino.FormPanel 
-                   && ww.window.main_item.ls_url == this.ls_url) {
-                //~ console.log("20120217 case 1");
-                ww.status.record_id = action.result.record_id;
-                ww.status.data_record = action.result.data_record;
-                Lino.close_window();
-            } else if (this.ls_detail_handler && switch_to_detail) {
-                //~ console.log("20120217 case 2");
-                Lino.kill_current_window();
-                this.ls_detail_handler.run(null,{
-                    record_id:action.result.record_id,
-                    data_record: action.result.data_record,
-                    base_params:this.get_base_params()
-                });
-            } else {
-                //~ console.log("20120217 case 3");
-                Lino.close_window();
-            }
-            //~ Lino.close_window(function(ww){
-                //~ if (ww.window.main_item instanceof Lino.FormPanel 
-                    //~ && ww.window.main_item.ls_url == url) {
-                  //~ ww.status.record_id = action.result.record_id,
-                  //~ ww.status.data_record = action.result.data_record
-                //~ }
-            //~ });
-          },
-          failure: function(form,action) { 
-            this.loadMask.hide();
-            Lino.on_submit_failure(form,action);
-          },
-          clientValidation: true
-        })
-      } else {
-        //~ if (this.action_name != 'detail') 
-            //~ console.log("Warning: non-phantom record, but action_name is",this.action_name)
-        this.form.submit({
-          url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + rec.id,
-          method: 'PUT',
-          //~ headers: { 'HTTP_X_REQUESTED_WITH' : 'XMLHttpRequest'},
-          scope: this,
-          params: p, 
-          success: function(form, action) {
-            //~ panel.form.setValues(rec.data);
-            //~ 20110701 panel.form.my_loadRecord(rec);
-            this.loadMask.hide();
-            Lino.notify(action.result.message);
-            if (action.result.data_record)
-                this.set_current_record(action.result.data_record,after);
-            else
-                console.log("Warning: no data_record in response to FormPanel.PUT")
-            //~ this.refresh_with_after(after);
-            //~ if (after) after(); else panel.refresh();
-          },
-          failure: function(form,action) { 
-            this.loadMask.hide();
-            Lino.on_submit_failure(form,action)},
-          clientValidation: true
-        })
-      }
-    } else Lino.notify("Sorry, no current record.");
+    if (!rec) { 
+        Lino.notify("Sorry, no current record."); 
+        return; 
+    }
+    var p = {};
+    Ext.apply(p,this.get_base_params());
+    p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
+    p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
+    if (rec.phantom) {  // SubmitInsert
+      this.form.submit({
+        url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url,
+        method: 'POST',
+        params: p, 
+        scope: this,
+        success: function(form, action) {
+          this.loadMask.hide();
+          Lino.notify(action.result.message);
+          /***
+          Close this window, but update the status of the 
+          calling window.
+          If the calling window is a detail on the same table,
+          then it should skip to the new record. But only then.
+          A successful response usually has a data_record,
+          except if it is a fileupload form where some mysterious 
+          decoding problems (20120209) force us to return a record_id 
+          which will lead to an additional GET.
+          ***/
+          var url = this.ls_url;
+          var ww = Lino.calling_window();
+          if (ww && ww.window.main_item instanceof Lino.FormPanel 
+                 && ww.window.main_item.ls_url == this.ls_url) {
+              //~ console.log("20120217 case 1");
+              ww.status.record_id = action.result.record_id;
+              ww.status.data_record = action.result.data_record;
+              Lino.close_window();
+          } else if (this.ls_detail_handler && switch_to_detail) {
+              //~ console.log("20120217 case 2");
+              Lino.kill_current_window();
+              this.ls_detail_handler.run(null,{
+                  record_id:action.result.record_id,
+                  data_record: action.result.data_record,
+                  base_params:this.get_base_params()
+              });
+          } else {
+              //~ console.log("20120217 case 3");
+              Lino.close_window();
+          }
+        },
+        failure: function(form,action) { 
+          this.loadMask.hide();
+          Lino.on_submit_failure(form,action);
+        },
+        clientValidation: true
+      })
+    } else {  // submit on existing row
+      this.form.submit({
+        url: '{{settings.SITE.build_admin_url("api")}}' 
+              + this.ls_url + '/' + rec.id,
+        method: 'PUT',
+        scope: this,
+        params: p, 
+        success: function(form, action) {
+          this.loadMask.hide();
+          Lino.notify(action.result.message);
+          if (action.result.data_record)
+              this.set_current_record(action.result.data_record,after);
+          else
+              console.log("Warning: no data_record in response to FormPanel.PUT")
+        },
+        failure: function(form,action) { 
+          this.loadMask.hide();
+          Lino.on_submit_failure(form,action)},
+        clientValidation: true
+      })
+    }
   }
   
   ,on_cancel : function() { 
