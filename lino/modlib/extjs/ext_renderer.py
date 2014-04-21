@@ -1253,25 +1253,25 @@ class ExtRenderer(HtmlRenderer):
         yield ""
         #~ yield "// js_render_detail_action_FormPanel %s" % action
         dtl = action.get_window_layout()
-        #~ dtl = rpt.detail_layout
         if dtl is None:
             raise Exception("action %s without detail?" % action.full_name())
-        #~ yield "Lino.%sPanel = Ext.extend(Lino.%s.FormPanel,{" % (action,dtl._datasource)
-        yield "Lino.%sPanel = Ext.extend(Lino.%s,{" % (action.full_name(), dtl._formpanel_name)
+        yield "Lino.%sPanel = Ext.extend(Lino.%s,{" % (
+            action.full_name(), dtl._formpanel_name)
         yield "  empty_title: %s," % py2js(action.get_button_label())
-        #~ if not isinstance(action,actions.InsertRow):
         if action.action.hide_navigator:
             yield "  hide_navigator: true,"
 
         if rh.actor.params_panel_hidden:
             yield "  params_panel_hidden: true,"
 
+        if action.action.save_action_name is not None:
+            yield "  save_action_name: %s," % py2js(
+                action.action.save_action_name)
         yield "  ls_bbar_actions: %s," % py2js(
             self.toolbar(rpt.get_row_actions(action.action)))
         yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
-        #~ yield "  active_fields: %s," % py2js(rpt.active_fields)
         yield "  initComponent : function() {"
         a = rpt.detail_action
         if a:
@@ -1280,12 +1280,12 @@ class ExtRenderer(HtmlRenderer):
         if a:
             yield "    this.ls_insert_handler = Lino.%s;" % a.full_name()
 
-        yield "    Lino.%sPanel.superclass.initComponent.call(this);" % action.full_name()
+        yield "    Lino.%sPanel.superclass.initComponent.call(this);" \
+            % action.full_name()
         yield "  }"
         yield "});"
         yield ""
 
-    #~ def js_render_GridPanel_class(self,rh,user):
     def js_render_GridPanel_class(self, rh):
 
         yield ""

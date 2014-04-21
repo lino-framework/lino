@@ -19,30 +19,22 @@ from cgi import escape
 import decimal
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
-from django.utils.encoding import force_unicode
 from django.conf import settings
-from django.contrib.contenttypes import generic
-
-import lino
 
 from lino import dd
 from lino.core import layouts
 from lino.core import fields
-from lino.core import actions
 from lino.core.actions import Permittable
 from lino.core import constants
 
-#~ from lino.core import perms
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
-from lino.utils import curry
 from lino.utils import mti
 from lino.core import choicelists
-from lino.utils.jsgen import py2js, id2js, js_code
+from lino.utils.jsgen import py2js, js_code
 from lino.utils import choosers
 from lino.utils import join_elems
 
@@ -717,20 +709,20 @@ class FieldElement(LayoutElement):
         pass
 
     def value2html(self, ar, v, **cellattrs):
-        """
-        Return a etree element representing of the given value.
+        """Return a etree element representing of the given value.
         The possible return values may be:
 
         - an xml.etree.ElementTree.Element
 
-        The default implementation returns a unicode string obtained from :meth:`format_value`.
+        The default implementation returns an HTML element obtained
+        from :meth:`format_value`.
+
         """
-        #~ return "<span>%s</span>" % force_unicode(v)
         if self.field.primary_key:
             url = ar.renderer.pk2url(ar, v)
             if url is not None:
-                return E.td(E.a(self.format_value(ar, v), href=url), **cellattrs)
-            #~ return ar.renderer.obj2html(ar,v,self.format_value(ar,v))
+                return E.td(E.a(self.format_value(
+                    ar, v), href=url), **cellattrs)
         return E.td(self.format_value(ar, v), **cellattrs)
 
     def format_value(self, ar, v):
@@ -1516,8 +1508,6 @@ class HtmlBoxElement(DisplayElement):
         if self.label:
             #~ kw.update(title=unicode(self.label)) 20111111
             kw.update(title=self.label)
-        #~ if self.field.bbar is not None:
-            #~ kw.update(ls_bbar_actions=self.field.bbar)
         return kw
 
 
@@ -2054,14 +2044,6 @@ class GridElement(Container):
             kw.update(params_panel_hidden=True)
         Container.__init__(self, layout_handle, name, **kw)
         self.active_children = columns
-        #~ 20111125
-        #~ assert not kw.has_key('before_row_edit')
-        #~ self.update(before_row_edit=before_row_edit(self))
-
-        #~ if self.report.master is not None and self.report.master is not dd.Model:
-            #~ self.mt = ContentType.objects.get_for_model(self.report.master).pk
-        #~ else:
-            #~ self.mt = 'undefined'
 
     def get_view_permission(self, profile):
         # skip Container parent:

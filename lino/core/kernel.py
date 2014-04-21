@@ -69,6 +69,7 @@ ACTION_RESPONSES = frozenset((
     'html',
     'rows',
     'data_record',
+    # 'record_id',
     'goto_record_id',
     'refresh', 'refresh_all',
     'close_window',

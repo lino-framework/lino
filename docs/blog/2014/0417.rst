@@ -34,3 +34,39 @@ the code that will change::
     #	modified:   lino/modlib/extjs/linoweb.js
     #	modified:   lino/modlib/extjs/views.py
 
+
+Checkin at noon: one big transplantation is done and most things seem
+to work. Cool! But there is a "detail" indicating a fundamental
+problem in my AJAX calls. 
+
+Here is how to reproduce it. Open FireFox and Firebug. 
+
+- Go to http://127.0.0.1:8000/api/pcsw/Clients and click the "Insert" button.
+- Fill in last_name and first_name and click "Create". 
+  The visible answer is as expected the new record in a detail window.
+- But if you press ENTER instead of clicking "Create", then you get a server traceback::
+
+    WARNING AjaxExceptionResponse:
+    NotImplementedError
+    <class 'lino.core.actions.InsertRow'> has no run_from_ui() method
+    
+- In both cases your browser will send a POST to that same
+  address, with your form field values *plus* two fields ``rp`` and
+  ``an``.
+
+- The difference between the two is that `an` is ``post`` in the first
+  case (i.e. this will become a SubmitInsert action) and ``insert`` in
+  the econd case.
+
+  ls_bbar_actions: [ 
+      { "itemId": "post", 
+        "menu_item_text": "Erstellen", 
+        "tooltip": "Datensatz erstellen und dann im Detail-Fenster \u00f6ffnen", 
+        "panel_btn_handler": function(panel){panel.save(null,true,'post')}, 
+        "text": "Erstellen", 
+        "overflowText": "Erstellen", 
+        "auto_save": false }, 
+
+  
+
+

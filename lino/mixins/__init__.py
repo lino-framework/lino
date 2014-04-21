@@ -11,7 +11,29 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
+"""This package contains Model mixins, some of which are heavily used
+by :mod:`lino.modlib`. None of them is mandatory for a Lino
+application.
+
+They are also available in :mod:`lino.dd`, so we recommend to use the
+``dd`` shortcut::
+
+  from lino import dd
+  class MyModel(dd.Controllable):
+      ...
+
+The following usage, in an application, is **not** recommended ::
+
+  from lino import mixins
+  class MyModel(mixins.Controllable):
+      ...
+
+This is because the `Controllable` class might some day move into a
+separate module.  Using the ``dd`` shortcut hides the actual location
+of a given mixin class.
+
+So the following is just an alphabetical list of classes defined
+here. See the documentation of :mod:`lino.dd` for an overview.
 
 """
 
@@ -234,9 +256,11 @@ class AuthorAction(actions.Action):
 
     def get_action_permission(self, ar, obj, state):
         user = ar.get_user()
-        if obj.user != user and getattr(user.profile, self.manager_level_field) < UserLevels.manager:
+        if obj.user != user and getattr(
+                user.profile, self.manager_level_field) < UserLevels.manager:
             return self.readonly
-        return super(actions.AuthorAction, self).get_action_permission(ar, obj, state)
+        return super(
+            actions.AuthorAction, self).get_action_permission(ar, obj, state)
 
 
 class Registrable(model.Model):
@@ -799,6 +823,12 @@ class EmptyTable(frames.Frame):
 
 
 class Report(EmptyTable):
+
+    """A special kind of :class:`EmptyTable` used to quickly create
+    complex "reports". A report is a series of tables combined into a
+    single printable and previewable document.
+
+    """
 
     detail_layout = "body"
 

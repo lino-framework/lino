@@ -464,9 +464,11 @@ Lino.show_login_window = function(on_login) {
 };
 
 Lino.logout = function(id,name) {
-    Lino.call_ajax_action(Lino.viewport,'GET','{{settings.SITE.build_admin_url("auth")}}',{},'logout',undefined,undefined,function(){
-        Lino.reload();
-    })
+    Lino.call_ajax_action(
+        Lino.viewport, 'GET', 
+        '{{settings.SITE.build_admin_url("auth")}}',
+        {}, 'logout', undefined, undefined,
+        function(){Lino.reload();})
 }
 
 Lino.set_subst_user = function(id,name) {
@@ -786,7 +788,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport,{
 
 
 Lino.open_window = function(win, st, requesting_panel) {
-  //~ console.log("20120918 Lino.open_window()",win,st);
+  // console.log("20140418 Lino.open_window()",win,st);
   var cw = Lino.current_window;
   if (cw) {
     //~ console.log("20120918 Lino.open_window() save current status",cw.main_item.get_status());
@@ -811,13 +813,20 @@ Lino.load_url = function(url) {
     document.location = url;
 }
 
-Lino.close_window = function(status_update) {
+Lino.close_window = function(status_update, norestore) {
+  // norestore is used when called by handle_action_result() who 
+  // will call set_status itself later
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
+  // console.log(
+  //     "20140418 Lino.close_window() going to close", 
+  //     cw, "previous is", ww, "norestore is", norestore);
   if (ww) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
-    if (status_update) status_update(ww);
-    ww.window.main_item.set_status(ww.status);
+    if(!norestore) {
+        if (status_update) status_update(ww);
+        ww.window.main_item.set_status(ww.status);
+    }
     Lino.current_window = ww.window;
   } else {
     Lino.current_window = null;
@@ -854,6 +863,7 @@ Lino.close_all_windows = function() {
 }
 
 Lino.kill_current_window = function() {
+  // console.log("20140418 Lino.kill_current_window()");
   var cw = Lino.current_window;
   Lino.current_window = null;
   if (cw) cw.hide_really();
@@ -1713,30 +1723,34 @@ Lino.delete_selected = function(panel) {
   });
 };
 
+// 20140417
+
 Lino.action_handler = function (panel,on_success,on_confirm) {
   return function (response) {
-      
-      // 20131026
       if (!panel) { 
           if (Lino.current_window) 
               panel = Lino.current_window.main_item;
           else panel = Lino.viewport;
       }
       
-    //~ console.log(20120608,panel);
-    if (panel instanceof Lino.GridPanel) {
-        //~ gridmode = false;
-        gridmode = true;
-        //~ console.log('20120608 yes');
-    } else {
-        gridmode = false;
-        //~ console.log('20120608 no');
-    }
     if (panel.loadMask) panel.loadMask.hide(); // 20120211
     if (!response.responseText) return ;
     var result = Ext.decode(response.responseText);
-    //~ console.log('Lino.action_handler()','result is',result,'on_confirm is',on_confirm);
+    Lino.handle_action_result(panel, result, on_success, on_confirm);
+  }
+};
+
+Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
+
+    // console.log('20140417 Lino.handle_action_result()',
+    //             'result is', result);
     
+    if (panel instanceof Lino.GridPanel) {
+        gridmode = true;
+    } else {
+        gridmode = false;
+    }
+
     if (result.eval_js) {
         //~ console.log(20120618,result.eval_js);
         eval(result.eval_js);
@@ -1760,7 +1774,8 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
           //~ Lino.insert_subst_user(p);
           Ext.Ajax.request({
             method: 'GET',
-            url: '{{settings.SITE.build_admin_url("callbacks")}}/'+result.xcallback.id + '/' + buttonId,
+            url: '{{settings.SITE.build_admin_url("callbacks")}}/'
+                  + result.xcallback.id + '/' + buttonId,
             //~ params: {bi: buttonId},
             success: Lino.action_handler(panel,on_success,on_confirm)
           });
@@ -1770,35 +1785,11 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         return;
     }
     
-    if (on_success && result.success) on_success(result);
-    
-    //~ if (on_confirm && result.confirm_message) {
-        //~ var config = {title:"{{_('Confirmation')}}"};
-        //~ // config.buttons = Ext.MessageBox.YESNOCANCEL;
-        //~ config.buttons = Ext.MessageBox.YESNO;
-        //~ config.msg = result.confirm_message;
-        //~ config.fn = function(buttonId,text,opt) {
-          //~ if (buttonId == "yes") {
-              //~ on_confirm(panel,undefined,result.step);
-          //~ }
-        //~ }
-        //~ Ext.MessageBox.show(config);
-        //~ return;
-    //~ }
-    //~ if (result.dialog_fn) {
-        //~ console.log('20120928 TODO',result.dialog_fn);
-    //~ }
-    if (result.data_record && ! gridmode) {
-        //~ not used
-        panel.set_status({data_record:result.data_record});
-    }  else if (result.new_status && ! gridmode) {
-        //~ not used
-        //~ console.log('20120607 new_status');
-        panel.set_status(result.new_status);
-    } else if (result.goto_record_id != undefined && ! gridmode) {
-        //~ Uncaught TypeError: Cannot call method 'run' of undefined 
-        panel.load_record_id(result.goto_record_id);
-    } 
+    if (on_success && result.success) {
+        // console.log("20140421 handle_action_result calls on_success", 
+        //             on_success);
+        on_success(result);
+    }
     
     if (result.info_message) {
         console.log(result.info_message);
@@ -1819,20 +1810,57 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
             Lino.notify(result.message);
         }
     }
-     
-    if (result.close_window) {
-        Lino.close_window();
-    }
+
+    if(result.record_id || result.data_record) {
+          /***
+          When a SubmitInsert action returns a data_record or a
+          record_id, then that record is to be displayed in a detail
+          window.
     
+          A successful response usually has a data_record, except if
+          it is a fileupload form where some mysterious decoding
+          problems (20120209) force us to return a record_id which has
+          the same visible result but using an additional GET.
+
+          If the calling window is a detail on the same table, then it
+          should simply get updated to the new record. Otherwise open
+          a new detail window.
+
+          ***/
+          // var url = panel.ls_url;
+          var ww = Lino.calling_window();
+          if (ww && ww.window.main_item instanceof Lino.FormPanel 
+                 && ww.window.main_item.ls_url == panel.ls_url) {
+              //~ console.log("20120217 case 1");
+              ww.status.record_id = result.record_id;
+              ww.status.data_record = result.data_record;
+              Lino.close_window();
+          } else if (panel.ls_detail_handler) {
+              //~ console.log("20120217 case 2");
+              Lino.kill_current_window();
+              panel.ls_detail_handler.run(null,{
+                  record_id:result.record_id,
+                  data_record: result.data_record,
+                  base_params:panel.get_base_params()
+              });
+          // } else {
+          //     console.log(
+          //         "20140421 Couldn't remember any example for this case");
+          //     Lino.close_window();
+          }
+
+    }
+
     if (result.refresh_all) {
         var cw = panel.get_containing_window();
-        //~ console.log("20120123 refresh_all");
         if (cw) {
-          cw.main_item.refresh();
+            // console.log("20140421 refresh_all calls refresh on", cw);
+            cw.main_item.refresh();
         }
-        else console.log("20131026 cannot refresh_all because ",panel,"has no get_containing_window");
+        else console.log("20131026 cannot refresh_all because ",
+                         panel,"has no get_containing_window");
     } else {
-        {# console.log("20131026 b gonna refresh",panel); #}
+        // console.log("20131026 b gonna refresh",panel);
         if (result.refresh) panel.refresh();
     }
     {%- if settings.SITE.is_installed('davlink') -%}
@@ -1847,10 +1875,10 @@ Lino.action_handler = function (panel,on_success,on_confirm) {
         window.open(result.open_url,'foo',"");
         //~ document.location = result.open_url;
     }
-  }
 };
 
-Lino.do_action = function(caller,action) { // obsolete but still used for deleting records.
+// obsolete but still used for deleting records.
+Lino.do_action = function(caller,action) { 
   action.success = function(response) {
     if (caller.loadMask) caller.loadMask.hide();
     //~ console.log('Lino.do_action()',action,'action success',response);
@@ -2245,7 +2273,7 @@ Lino.call_ajax_action = function(panel,method,url,p,actionName,step,on_confirm,o
     method: method
     ,url: url
     ,params: p
-    ,success: Lino.action_handler(panel,on_success,on_confirm)
+    ,success: Lino.action_handler(panel, on_success, on_confirm)
     ,failure: Lino.ajax_error_handler(panel)
   });
 };
@@ -2694,7 +2722,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   ,on_ok : function() { 
     //~ var rp = this.requesting_panel;
     var panel = this.requesting_panel;
-    console.log("20131004 on_ok",this,panel,arguments);
+    // console.log("20131004 on_ok",this,panel,arguments);
     //~ if (panel == undefined) {
         //~ Lino.alert("Sorry, dialog actions don't work without a requesting_panel");
         //~ return;
@@ -2791,7 +2819,8 @@ Lino.fields2array = function(fields,values) {
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
-  params_panel_hidden : false,
+    params_panel_hidden : false,
+    save_action_name : null, 
   //~ base_params : {},
   //~ trackResetOnLoad : true,
   //~ query_params : {},
@@ -2860,13 +2889,17 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         
         this.tbar = this.tbar.concat([
           this.first = new Ext.Toolbar.Button({
-            tooltip:"{{_('First')}}",disabled:true,handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
+              tooltip:"{{_('First')}}",disabled:true,
+              handler:this.moveFirst,scope:this,iconCls:'x-tbar-page-first'}),
           this.prev = new Ext.Toolbar.Button({
-            tooltip:"{{_('Previous')}}",disabled:true,handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
+              tooltip:"{{_('Previous')}}",disabled:true,
+              handler:this.movePrev,scope:this,iconCls:'x-tbar-page-prev'}),
           this.next = new Ext.Toolbar.Button({
-            tooltip:"{{_('Next')}}",disabled:true,handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
+              tooltip:"{{_('Next')}}",disabled:true,
+              handler:this.moveNext,scope:this,iconCls:'x-tbar-page-next'}),
           this.last = new Ext.Toolbar.Button({
-            tooltip:"{{_('Last')}}",disabled:true,handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
+              tooltip:"{{_('Last')}}",disabled:true,
+              handler:this.moveLast,scope:this,iconCls:'x-tbar-page-last'})
         ]);
       }
       this.tbar = this.add_params_panel(this.tbar);
@@ -2980,7 +3013,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* FormPanel */
   set_status : function(status,rp){
     this.requesting_panel = Ext.getCmp(rp);
-    //~ console.log('20120918 FormPanel.set_status()',status);
+    // console.log('20140418 FormPanel.set_status()',this,status);
     this.clear_base_params();
     if (status == undefined) status = {};
     //~ if (status.param_values) 
@@ -2999,10 +3032,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       }
     
     if (status.data_record) {
-      /* defer because because set_window_title() didn't work otherwise */
-      this.set_current_record.createDelegate(
-          this, [status.data_record]).defer(100);
-      //~ this.set_current_record(this.data_record);
+      /* defer because set_window_title() didn't work otherwise */
+      // 20140421 removed defer for bughunting to simplify side effects
+      // this.set_current_record.createDelegate(
+      //     this, [status.data_record]).defer(100);
+      this.set_current_record(status.data_record);
       //~ return;
     } else if (status.record_id != undefined) { 
       /* possible values include 0 and null, 0 being a valid record id, 
@@ -3062,10 +3096,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     else 
       this.abandon();
   },
-  moveFirst : function() {this.goto_record_id(this.current_record.navinfo.first)},
-  movePrev : function() {this.goto_record_id(this.current_record.navinfo.prev)},
-  moveNext : function() {this.goto_record_id(this.current_record.navinfo.next)},
-  moveLast : function() {this.goto_record_id(this.current_record.navinfo.last)},
+  moveFirst : function() {this.goto_record_id(
+      this.current_record.navinfo.first)},
+  movePrev : function() {this.goto_record_id(
+      this.current_record.navinfo.prev)},
+  moveNext : function() {this.goto_record_id(
+      this.current_record.navinfo.next)},
+  moveLast : function() {this.goto_record_id(
+      this.current_record.navinfo.last)},
   
   
   refresh : function(unused) { 
@@ -3083,6 +3121,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   do_when_clean : function(auto_save,todo) {
     var this_ = this;
     if (this.form.isDirty()) {
+        // console.log('20140421 do_when_clean : form is dirty')
         if (auto_save) {
             this_.save(todo);
         } else {
@@ -3103,7 +3142,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         }
         Ext.MessageBox.show(config);
     }else{
-      //~ console.log('do_when_clean : now!')
+      // console.log('20140421 do_when_clean : now!')
       todo();
     }
   },
@@ -3112,7 +3151,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log('20110701 Lino.FormPanel.goto_record_id()',record_id);
     //~ var this_ = this;
     //~ this.do_when_clean(function() { this_.load_record_id(record_id) }
-    this.do_when_clean(true,this.load_record_id.createDelegate(this,[record_id]));
+    this.do_when_clean(
+        true, this.load_record_id.createDelegate(this, [record_id]));
   },
   
   load_record_id : function(record_id,after) {
@@ -3135,7 +3175,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
     //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
-    //~ console.log('20121120 FormPanel.load_record_id',record_id,p);
+    // console.log('20140421 FormPanel.load_record_id',record_id,p);
     if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -3148,9 +3188,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         if (this.loadMask) this.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
-          //~ console.log('20120918 goto_record_id success',rec);
+          // console.log('20140418 load_record_id success',rec);
           this.set_param_values(rec.param_values);
-          this.set_current_record(rec,after);
+          this.set_current_record(rec, after);
         }
       },
       failure: Lino.ajax_error_handler(this)
@@ -3166,8 +3206,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ }
   },
   
-  set_current_record : function(record,after) {
-    //~ console.log('20120722 Lino.FormPanel.set_current_record',record.title,record);
+  set_current_record : function(record, after) {
+    // console.log(
+    //     '20140418 Lino.FormPanel.set_current_record',
+    //     this, record.title);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -3245,8 +3287,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         this.last.disable();
       }
     }
-    //~ console.log('20100531 Lino.DetailMixin.on_load_master_record',this.main_form);
+    // console.log('20140421 gonna call before_row_edit',record);
     this.before_row_edit(record);
+    // console.log('20140421 gonna call after',after);
     if (after) after();
   },
   
@@ -3291,13 +3334,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   Lino.FormPanel.save() 
   */
   save : function(after,switch_to_detail,action_name) {
-    //~ var panel = this;
-    //~ console.log('20121120 FormPanel.save');
+    var panel = this;
+    // console.log('20140417 FormPanel.save', action_name);
     this.loadMask.show();
     var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;
     //~ console.log('FormPanel.save()',rec);
-    if (!action_name) action_name = this.action_name;
+    if (!action_name) 
+        action_name = this.action_name;
     if (!rec) { 
         Lino.notify("Sorry, no current record."); 
         return; 
@@ -3312,18 +3356,26 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         method: 'POST',
         params: p, 
         scope: this,
+        // 20140417
+        // success: function(form, action) { Lino.action_handler(panel) },
         success: function(form, action) {
           this.loadMask.hide();
           Lino.notify(action.result.message);
+          Lino.handle_action_result(this, action.result);
+        },
+
+        unused_success: function(form, action) {
+          this.loadMask.hide();
+          Lino.notify(action.result.message);
           /***
-          Close this window, but update the status of the 
-          calling window.
-          If the calling window is a detail on the same table,
-          then it should skip to the new record. But only then.
-          A successful response usually has a data_record,
-          except if it is a fileupload form where some mysterious 
-          decoding problems (20120209) force us to return a record_id 
-          which will lead to an additional GET.
+          Close this window, but update the status of the calling
+          window.  If the calling window is a detail on the same
+          table, then it should skip to the new record. Otherwise open
+          a new detail window.  A successful response usually has a
+          data_record, except if it is a fileupload form where some
+          mysterious decoding problems (20120209) force us to return a
+          record_id which has the same visible result but using an
+          additional GET.
           ***/
           var url = this.ls_url;
           var ww = Lino.calling_window();
@@ -3362,6 +3414,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         success: function(form, action) {
           this.loadMask.hide();
           Lino.notify(action.result.message);
+          Lino.handle_action_result(this, action.result);
+        },
+        unused_success: function(form, action) {
+          this.loadMask.hide();
+          Lino.notify(action.result.message);
           if (action.result.data_record)
               this.set_current_record(action.result.data_record,after);
           else
@@ -3380,18 +3437,20 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   ,on_ok : function() { 
       
-      this.save(null,true);
+      this.save(null,true, this.save_action_name);
   }
   ,config_containing_window : function(wincfg) { 
 
-    this.getForm().items.each(function(f){
-        if(f.isFormField){ 
-            wincfg.defaultButton = f;
-            // console.log("20140205 defaultButton", f);
-            return false;
-        }
-    });
-
+      // If no defaultButton set, specify the first form field to
+      // receive focus when Window is focussed.
+      if (!wincfg.defaultButton) this.getForm().items.each(function(f){
+          if(f.isFormField){ 
+              wincfg.defaultButton = f;
+              // console.log("20140205 defaultButton", f);
+              return false;
+          }
+      });
+      // if (!wincfg.defaultButton) 
       wincfg.keys = [
           {
               key: Ext.EventObject.ENTER,
@@ -4982,7 +5041,9 @@ Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
 });
 
 
-
+// 20140417 I don't remember why the following plugin is here. It
+// seems that it is not used. I rename it DefaultButtonX before
+// removing it completely...
 
 (function(){
     var ns = Ext.ns('Ext.ux.plugins');
@@ -4999,7 +5060,7 @@ Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
      * @version 0.1
      *
      */
-    ns.DefaultButton =  Ext.extend(Object, {
+    ns.DefaultButtonX =  Ext.extend(Object, {
         init: function(button) {
             button.on('afterRender', setupKeyListener, button);
         }
@@ -5023,7 +5084,7 @@ Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
         });
     }
 
-    Ext.ComponentMgr.registerPlugin('defaultButton', ns.DefaultButton);
+    Ext.ComponentMgr.registerPlugin('defaultButtonX', ns.DefaultButtonX);
 
 })(); 
 

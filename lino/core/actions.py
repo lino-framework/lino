@@ -297,6 +297,8 @@ class Action(Parametrizable, Permittable):
 
     debug_permissions = False
 
+    save_action_name = None
+
     icon_name = None
     """
     The class name of an icon to be used for this action
@@ -943,6 +945,7 @@ class InsertRow(TableAction):
     be actually created only when this window gets submitted.
 
     """
+    save_action_name = 'post'
 
     label = _("New")
     icon_name = 'add'  # if action rendered as toolbar button
@@ -1087,7 +1090,7 @@ class SubmitInsert(SubmitDetail):
             file_upload = False
         ar.form2obj_and_save(ar.request.POST, elem, True)
         if file_upload:
-            ar.response.update(record_id=elem.pk)
+            ar.response.update(goto_record_id=elem.pk)
             ar.set_content_type('text/html')
         else:
             # TODO: in fact we need *either* `rows` (when this was called
@@ -1095,6 +1098,8 @@ class SubmitInsert(SubmitDetail):
             # form).  But how to find out which one is needed?
             ar.response.update(rows=[rh.store.row2list(ar, elem)])
             ar.response.update(data_record=ar.elem2rec_detailed(elem))
+        # ar.response.update(close_window=True)
+        # ar.info("20140418 SubmitInsert %s", ar.response)
 
 
 class SubmitInsertAndStay(SubmitInsert):
