@@ -716,8 +716,7 @@ class Actor(actions.Parametrizable):
     """
 
     allow_create = True
-    """If this is False, then then Actor won't have neither create_action
-    nor insert_action.
+    """If this is False, then then Actor won't have no insert_action.
 
     """
 
@@ -773,8 +772,10 @@ class Actor(actions.Parametrizable):
     detail_action = None
     update_action = None
     insert_action = None
-    create_action = None
+    # create_action = None
     delete_action = None
+
+    submit_insert = actions.SubmitInsert()
 
     _handle_class = None
     "For internal use"
@@ -1044,11 +1045,9 @@ class Actor(actions.Parametrizable):
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
         if cls.editable:
             if cls.allow_create:
-                cls.create_action = cls.bind_action(actions.SubmitInsert())
+                # cls.create_action = cls.bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
                     cls.insert_action = cls.bind_action(actions.InsertRow())
-                    # cls.create_edit_action = cls.bind_action(
-                    #     actions.SubmitInsertAndStay())
             cls.update_action = cls.bind_action(
                 actions.SubmitDetail(sort_index=1))
             if not cls.hide_top_toolbar:
@@ -1069,13 +1068,9 @@ class Actor(actions.Parametrizable):
         if isinstance(cls.workflow_state_field, basestring):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
-            #~ note that fld may be none e.g. cal.Component
+            #~ note that fld may be None e.g. cal.Component
         if cls.workflow_state_field is not None:
-            #~ for name,a in cls.get_state_actions():
             for a in cls.workflow_state_field.choicelist.workflow_actions:
-            # ~ for a in cls.workflow_state_field.choicelist._actions_list: # 20130531
-                #~ print 20120709, cls,name,a
-                #~ setattr(cls,name,fn())
                 setattr(cls, a.action_name, a)
 
         # bind all my actions, including those inherited from parent actors:

@@ -26,7 +26,8 @@ import atexit
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from django.conf import settings
-
+from django.core import exceptions
+from django.utils.encoding import force_unicode
 from django.utils.encoding import force_text
 
 from django.db import models
@@ -43,7 +44,7 @@ import lino
 from lino import dd
 
 from lino.utils import class_dict_items
-from lino.core.requests import BaseRequest
+from lino.core.requests import ActorRequest
 
 from lino.core import layouts
 from lino.core import actors
@@ -95,19 +96,11 @@ class Callback(object):
     title = _('Confirmation')
     #~ def __init__(self,yes,no):
 
-    def __init__(self, message):
-
-    #~ def __init__(self,message,answers,labels=None):
+    def __init__(self, ar, message):
         self.message = message
         self.choices = []
         self.choices_dict = {}
-        #~ self.answers = {}
-        #~ self.labels = labels
-        #~ self.yes = yes
-        #~ self.no = no
-
-        #~ d = Decision(yes,no)
-        #~ self.pending_dialogs[d.hash()] = d
+        self.ar = ar
 
     def __repr__(self):
         return "Callback(%r)" % self.message
@@ -444,7 +437,7 @@ class Kernel(object):
     def field2elem(self, lui, field, **kw):
         pass
 
-    def get_callback(self, request, thread_id, button_id):
+    def run_callback(self, request, thread_id, button_id):
         """
         Return an existing (pending) callback.
         This is called from `lino.ui.views.Callbacks`.
@@ -454,7 +447,7 @@ class Kernel(object):
         # 20140304 Also set a renderer so that callbacks can use it
         # (feature needed by beid.FindByBeIdAction).
 
-        ar = BaseRequest(request, renderer=self.default_renderer)
+        ar = ActorRequest(request, renderer=self.default_renderer)
 
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id, None)
@@ -464,9 +457,28 @@ class Kernel(object):
                 thread_id, self.pending_threads.keys()))
             ar.error("Unknown callback %r" % thread_id)
             return self.render_action_response(ar)
+
+        # e.g. SubmitInsertClient must set `data_record` in the
+        # callback request ("ar2", not "ar"), i.e. the methods to
+        # create an instance and to fill `data_record` must run on the
+        # callback request.  So the callback request must be a clone
+        # of the original request.  New since 20140421
+        ar.actor = cb.ar.actor
+        ar.ah = cb.ar.ah
+        ar.bound_action = cb.ar.bound_action
+        ar.create_kw = cb.ar.create_kw
+        ar.known_values = cb.ar.known_values
+        ar.param_values = cb.ar.param_values
+        ar.action_param_values = cb.ar.action_param_values
+        ar.data_iterator = cb.ar.data_iterator
+
+        # for k in ('data_record', 'goto_record_id'):
+        #     v = cb.ar.response.get(k, None)
+        #     if v is not None:
+        #         ar.response[k] = v
+                
         for c in cb.choices:
             if c.name == button_id:
-        #~ rv = c.func(request)
                 c.func(ar)
                 return self.render_action_response(ar)
 
@@ -488,19 +500,20 @@ class Kernel(object):
         the user's answer arrives in a next HTTP request.
 
         Implementation notes:
-        Calling this from an Action's :meth:`Action.run` method will
+        Calling this from an Action's
+        :meth:`run_from_ui <lino.core.actions.Action.run_from_ui>` method will
         interrupt the execution, send the specified message back to
         the user, adding the executables `yes` and optionally `no` to a queue
         of pending "dialog threads".
         The client will display the prompt and will continue this thread
-        by requesting :class:`lino.ui.extjs3.views.Callbacks`.
+        by requesting :class:`lino.modlib.extjs3.views.Callbacks`.
         """
         if len(msgs) > 1:
             msg = '\n'.join([force_text(s) for s in msgs])
         else:
             msg = msgs[0]
 
-        return Callback(msg)
+        return Callback(ar, msg)
 
     def set_callback(self, ar, cb):
         """
@@ -521,14 +534,28 @@ class Kernel(object):
                 buttons=buttons))
 
     def run_action(self, ar):
-        """
+        """Run the action, catching some exceptions in order to report them
+        in a user-friendly way.
+
         """
         try:
             ar.bound_action.action.run_from_ui(ar)
-            return self.render_action_response(ar)
+        except exceptions.ValidationError as e:
+            def fieldlabel(name):
+                de = ar.ah.actor.get_data_elem(name)
+                return force_unicode(getattr(de, 'verbose_name', name))
+            md = getattr(e, 'message_dict', None)
+            if md is not None:
+                e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
+                                for k, v in md.items()])
+            else:
+                e = '<br>'.join(e.messages)
+            ar.error(e, alert=True)
+
         except Warning as e:
             ar.error(unicode(e), alert=True)
-            return self.render_action_response(ar)
+
+        return self.render_action_response(ar)
 
     def setup_handle(self, h, ar):
         """
@@ -559,6 +586,7 @@ class Kernel(object):
         ActionRequest.
 
         """
+        logger.info("20140421 render_action_response %s", ar.response)
         return views.json_response(ar.response, ar.content_type)
 
     def row_action_button(self, *args, **kw):

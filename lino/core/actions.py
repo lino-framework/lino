@@ -21,6 +21,8 @@ from django.conf import settings
 from django import http
 from django.db import models
 
+from djangosite.dbutils import obj2unicode
+
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -32,6 +34,7 @@ from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
+from lino.core.signals import pre_ui_create
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -928,7 +931,7 @@ class InsertRow(TableAction):
     be actually created only when this window gets submitted.
 
     """
-    save_action_name = 'post'
+    save_action_name = 'submit_insert'
 
     label = _("New")
     icon_name = 'add'  # if action rendered as toolbar button
@@ -1055,7 +1058,7 @@ class SubmitInsert(SubmitDetail):
     icon_name = None  # don't inherit 'x-tbar-save' from Submitdetail
     #~ url_action_name = 'SubmitInsert'
     label = _("Create")
-    action_name = 'post'
+    action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")
     #~ label = _("Insert")
     #~ callable_from = (InsertRow,)
@@ -1064,33 +1067,35 @@ class SubmitInsert(SubmitDetail):
         return isinstance(caller, InsertRow)
 
     def run_from_ui(self, ar, **kw):
-        rh = ar.ah
-        elem = ar.create_instance()
-        if rh.actor.handle_uploaded_files is not None:
-            rh.actor.handle_uploaded_files(elem, ar.request)
-            file_upload = True
-        else:
-            file_upload = False
-        ar.form2obj_and_save(ar.request.POST, elem, True)
-        if file_upload:
+        elem = ar.create_instance_from_request()
+        self.save_new_instance(ar, elem)
+
+    def save_new_instance(self, ar, elem):
+        elem.before_ui_save(ar)
+        elem.save(force_insert=True)
+        # yes, `pre_ui_create` comes *after* save()
+        pre_ui_create.send(elem, request=ar.request)
+        elem.after_ui_save(ar)
+        ar.success(_("%s has been created.") % obj2unicode(elem))
+        if ar.actor.handle_uploaded_files is not None:
             ar.set_response(goto_record_id=elem.pk)
             ar.set_content_type('text/html')
         else:
             # TODO: in fact we need *either* `rows` (when this was called
             # from a Grid) *or* `data_record` (when this was called from a
             # form).  But how to find out which one is needed?
-            ar.set_response(rows=[rh.store.row2list(ar, elem)])
+            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
             ar.set_response(data_record=ar.elem2rec_detailed(elem))
         # ar.set_response(close_window=True)
         # ar.info("20140418 SubmitInsert %s", ar.response)
 
 
-class SubmitInsertAndStay(SubmitInsert):
-    sort_index = 11
-    switch_to_detail = False
-    action_name = 'poststay'
-    label = _("Create without detail")
-    help_text = _("Don't open a detail window on the new record")
+# class SubmitInsertAndStay(SubmitInsert):
+#     sort_index = 11
+#     switch_to_detail = False
+#     action_name = 'poststay'
+#     label = _("Create without detail")
+#     help_text = _("Don't open a detail window on the new record")
 
 
 class ShowSlaveTable(Action):

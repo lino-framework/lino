@@ -219,7 +219,7 @@ class EidAppletService(View):
 class Callbacks(View):
 
     def get(self, request, thread_id, button_id):
-        return settings.SITE.ui.get_callback(request, thread_id, button_id)
+        return settings.SITE.ui.run_callback(request, thread_id, button_id)
 
 
 #~ if settings.SITE.user_model:

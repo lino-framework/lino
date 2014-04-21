@@ -100,5 +100,3 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
     ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
     return ar
 
-
-

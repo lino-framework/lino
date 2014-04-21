@@ -492,8 +492,6 @@ class BeIdCardHolder(dd.Model):
             msg = _("Must read eID card!")
             #~ if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
             if config:
-                #~ ba = cls.get_action_by_name('read_beid')
-                #~ elems.append(ar.action_button(ba,self,_("Must read eID card!")))
                 elems.append(ar.instance_action_button(
                     self.read_beid, msg, icon_name=None))
             else:

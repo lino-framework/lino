@@ -139,12 +139,14 @@ class StoreField(object):
             #~ print 20130125, self.field.empty_strings_allowed, self.field.name, self.form2obj_default
             if self.field.empty_strings_allowed:
                 v = self.parse_form_value(v, instance)
-                # if a field has been posted with empty string,
-                # we don't want it to get the field's default value!
-                # otherwise checkboxes with default value True can never be unset!
-                # charfields have empty_strings_allowed
-                # e.g. id field may be empty
-                # but don't do this for other cases
+
+                # If a field has been posted with empty string, we
+                # don't want it to get the field's default value!
+                # Otherwise checkboxes with default value True can
+                # never be unset!
+
+                # Charfields have empty_strings_allowed (e.g. id field
+                # may be empty) but don't do this for other cases.
             else:
                 v = self.form2obj_default
         else:
@@ -153,7 +155,9 @@ class StoreField(object):
             if instance.pk == v:
                 return
             raise exceptions.ValidationError({
-                self.field.name: _("Existing primary key value %r may not be modified.") % instance.pk})
+                self.field.name: _(
+                    "Existing primary key value %r "
+                    "may not be modified.") % instance.pk})
 
         return self.set_value_in_object(ar, instance, v)
 
@@ -1109,19 +1113,11 @@ class Store(BaseStore):
 
     def form2obj(self, ar, form_values, instance, is_new):
         disabled_fields = set(self.actor.disabled_fields(instance, ar))
-        #~ logger.info("20130107 Store.form2obj(%s)", form_values)
-        #~ logger.info("20120228 %s Store.form2obj(%s),\ndisabled %s\n all_fields %s",
-            #~ self.rh,form_values,disabled_fields,self.all_fields)
-        #~ print 20110406, disabled_fields
         changed_triggers = []
         for f in self.all_fields:
-          #~ if f.field is not None and f.field.editable:
-          #~ if f.editable:
             if not f.name in disabled_fields:
                 try:
-                    #~ if f.form2obj(ar.request,instance,form_values,is_new):
                     if f.form2obj(ar, instance, form_values, is_new):
-                        #~ logger.info("20130107 Store.form2obj %s changed", f)
                         m = getattr(instance, f.name + "_changed", None)
                         if m is not None:
                             changed_triggers.append(m)
@@ -1132,19 +1128,14 @@ class Store(BaseStore):
                         {f.name: _("Invalid value for this field (%s).") % e})
                 except Exception, e:
                     logger.warning(
-                        "Exception during Store.form2obj (field %s) : %s", f.name, e)
+                        "Exception during Store.form2obj (field %s) : %s",
+                        f.name, e)
                     logger.exception(e)
                     raise
-                #~ logger.info("20120228 Store.form2obj %s -> %s", f, dd.obj2str(instance))
+                # logger.info("20120228 Store.form2obj %s -> %s",
+                # f, dd.obj2str(instance))
         for m in changed_triggers:
             m(ar)
-            #~ m()
-
-        #~ m = getattr(instance,"_changed",None)
-        #~ if m is not None:
-            #~ m(request)
-        #~ return instance
-        #~ logger.info("20120603 Store.form2obj %s", instance.national_id)
 
     def column_names(self):
         l = []

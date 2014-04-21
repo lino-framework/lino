@@ -24,7 +24,6 @@ from django.conf import settings
 from django import http
 from django.core.mail import EmailMessage
 from django.core import exceptions
-from django.utils.encoding import force_unicode
 
 from djangosite.dbutils import obj2unicode
 
@@ -540,24 +539,6 @@ class BaseRequest(object):
         return self.renderer.action_button(
             None, self, self.bound_action, *args, **kw)
 
-    def ajax_error(ar, e):
-        """Convert a catched exception to a user-friendly error message.
-
-        """
-        if isinstance(e, exceptions.ValidationError):
-            def fieldlabel(name):
-                de = ar.ah.actor.get_data_elem(name)
-                #~ print 20130423, de
-                return force_unicode(getattr(de, 'verbose_name', name))
-            md = getattr(e, 'message_dict', None)
-            if md is not None:
-                e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
-                                for k, v in md.items()])
-            else:
-                e = '<br>'.join(e.messages)
-        ar.error(e, alert=True)
-        # return json_response(ar.response)
-
     def elem2rec1(ar, rh, elem, **rec):
         rec.update(data=rh.store.row2dict(ar, elem))
         return rec
@@ -614,16 +595,10 @@ class BaseRequest(object):
         `Restful.post` and `Restful.put`.
 
         """
-        request = ar.request
-        rh = ar.ah
         if not is_new:
             watcher = ChangeWatcher(elem)
-        try:
-            rh.store.form2obj(ar, data, elem, is_new)
-            elem.full_clean()
-        except CATCHED_AJAX_EXCEPTIONS as e:
-            ar.ajax_error(e)
-            return
+        ar.ah.store.form2obj(ar, data, elem, is_new)
+        elem.full_clean()
 
         if is_new or watcher.is_dirty():
 
@@ -635,17 +610,13 @@ class BaseRequest(object):
             else:
                 kw2save.update(force_update=True)
 
-            try:
-                elem.save(**kw2save)
-            except CATCHED_AJAX_EXCEPTIONS as e:
-                ar.ajax_error(e)
-                return
+            elem.save(**kw2save)
 
             if is_new:
-                pre_ui_create.send(elem, request=request)
+                pre_ui_create.send(elem, request=ar.request)
                 ar.success(_("%s has been created.") % obj2unicode(elem))
             else:
-                watcher.send_update(request)
+                watcher.send_update(ar.request)
                 ar.success(_("%s has been updated.") % obj2unicode(elem))
         else:
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))
@@ -653,7 +624,112 @@ class BaseRequest(object):
         elem.after_ui_save(ar)
 
 
-class ActionRequest(BaseRequest):
+class ActorRequest(BaseRequest):
+    """Base for :class:`ActionRequest`, but also used directly by
+    :meth:`lino.core.kernel.Kernel.run_callback`.
+
+    """
+    def create_phantom_rows(self, **kw):
+        if self.create_kw is None or not self.actor.editable \
+           or not self.actor.allow_create:
+            return
+        if not self.actor.get_create_permission(self):
+            return
+        yield PhantomRow(self, **kw)
+
+    def create_instance(self, **kw):
+        """Create a row (a model instance if this is a database table) using
+        the specified keyword arguments.
+
+        """
+        if self.create_kw:
+            kw.update(self.create_kw)
+        if self.known_values:
+            kw.update(self.known_values)
+        obj = self.actor.create_instance(self, **kw)
+        return obj
+
+    def create_instance_from_request(self):
+        elem = self.create_instance()
+        if self.actor.handle_uploaded_files is not None:
+            self.actor.handle_uploaded_files(elem, self.request)
+
+        self.ah.store.form2obj(self, self.request.POST, elem, True)
+        elem.full_clean()
+        return elem
+
+    def get_status(self, **kw):
+        if self.actor.parameters:
+            kw.update(
+                param_values=self.actor.params_layout.params_store.pv2dict(
+                    self.param_values))
+
+        if self.bound_action.action.parameters is not None:
+            pv = self.bound_action.action.params_layout.params_store.pv2dict(
+                self.action_param_values)
+            kw.update(field_values=pv)
+
+        bp = kw.setdefault('base_params', {})
+
+        if self.current_project is not None:
+            bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
+
+        if self.subst_user is not None:
+            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
+        return kw
+
+    def spawn(self, actor, **kw):
+        if actor is None:
+            actor = self.actor
+        return super(ActorRequest, self).spawn(actor, **kw)
+
+    def summary_row(self, *args, **kw):
+        return self.actor.summary_row(self, *args, **kw)
+
+    def get_sum_text(self):
+        return self.actor.get_sum_text(self)
+
+    def get_row_by_pk(self, pk):
+        return self.actor.get_row_by_pk(self, pk)
+
+    def as_bootstrap_html(self, *args, **kw):
+        return self.bound_action.action.as_bootstrap_html(self, *args, **kw)
+
+    def get_action_title(self):
+        return self.bound_action.action.get_action_title(self)
+
+    def get_title(self):
+        return self.actor.get_title(self)
+
+    def render_to_dict(self):
+        return self.bound_action.action.render_to_dict(self)
+
+    #~ def get_request_url(self,*args,**kw):
+        #~ return self.ui.get_request_url(self,*args,**kw)
+
+    def get_request_url(self, *args, **kw):
+        return self.renderer.get_request_url(self, *args, **kw)
+
+    def absolute_uri(self, *args, **kw):
+        ar = self.spawn(*args, **kw)
+        #~ location = ar.renderer.get_request_url(ar)
+        location = ar.get_request_url()
+        return self.request.build_absolute_uri(location)
+
+    def to_rst(self, *args, **kw):
+        """
+        Returns a string representing this request in reStructuredText markup.
+        """
+        return self.actor.to_rst(self, *args, **kw)
+
+    def run(self, *args, **kw):
+        """
+        Runs this action request.
+        """
+        return self.bound_action.action.run_from_code(self, *args, **kw)
+
+
+class ActionRequest(ActorRequest):
 
     """
     Holds information about an indivitual web request and provides methods like
@@ -671,6 +747,7 @@ class ActionRequest(BaseRequest):
     offset = None
     limit = None
     order_by = None
+    action_param_values = None
 
     def __init__(self, actor=None,
                  request=None, action=None, renderer=None,
@@ -770,26 +847,6 @@ class ActionRequest(BaseRequest):
             kv.update(known_values)
         self.known_values = kv
 
-    def create_phantom_rows(self, **kw):
-        if self.create_kw is None or not self.actor.editable \
-           or not self.actor.allow_create:
-            return
-        if not self.actor.get_create_permission(self):
-            return
-        yield PhantomRow(self, **kw)
-
-    def create_instance(self, **kw):
-        """Create a row (a model instance if this is a database table) using
-        the specified keyword arguments.
-
-        """
-        if self.create_kw:
-            kw.update(self.create_kw)
-        if self.known_values:
-            kw.update(self.known_values)
-        obj = self.actor.create_instance(self, **kw)
-        return obj
-
     def get_data_iterator(self):
         raise NotImplementedError
 
@@ -798,72 +855,3 @@ class ActionRequest(BaseRequest):
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
 
-    def get_action_title(self):
-        return self.bound_action.action.get_action_title(self)
-
-    def get_title(self):
-        return self.actor.get_title(self)
-
-    def render_to_dict(self):
-        return self.bound_action.action.render_to_dict(self)
-
-    #~ def get_request_url(self,*args,**kw):
-        #~ return self.ui.get_request_url(self,*args,**kw)
-
-    def get_status(self, **kw):
-        if self.actor.parameters:
-            kw.update(
-                param_values=self.actor.params_layout.params_store.pv2dict(
-                    self.param_values))
-
-        if self.bound_action.action.parameters is not None:
-            pv = self.bound_action.action.params_layout.params_store.pv2dict(
-                self.action_param_values)
-            kw.update(field_values=pv)
-
-        bp = kw.setdefault('base_params', {})
-
-        if self.current_project is not None:
-            bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
-
-        if self.subst_user is not None:
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
-        return kw
-
-    def spawn(self, actor, **kw):
-        if actor is None:
-            actor = self.actor
-        return super(ActionRequest, self).spawn(actor, **kw)
-
-    def summary_row(self, *args, **kw):
-        return self.actor.summary_row(self, *args, **kw)
-
-    def get_sum_text(self):
-        return self.actor.get_sum_text(self)
-
-    def get_row_by_pk(self, pk):
-        return self.actor.get_row_by_pk(self, pk)
-
-    def as_bootstrap_html(self, *args, **kw):
-        return self.bound_action.action.as_bootstrap_html(self, *args, **kw)
-
-    def get_request_url(self, *args, **kw):
-        return self.renderer.get_request_url(self, *args, **kw)
-
-    def absolute_uri(self, *args, **kw):
-        ar = self.spawn(*args, **kw)
-        #~ location = ar.renderer.get_request_url(ar)
-        location = ar.get_request_url()
-        return self.request.build_absolute_uri(location)
-
-    def to_rst(self, *args, **kw):
-        """
-        Returns a string representing this request in reStructuredText markup.
-        """
-        return self.actor.to_rst(self, *args, **kw)
-
-    def run(self, *args, **kw):
-        """
-        Runs this action request.
-        """
-        return self.bound_action.action.run_from_code(self, *args, **kw)

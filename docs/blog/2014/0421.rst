@@ -43,3 +43,53 @@ Instead of writing ``ar.response.update(foo=X)`` we now recommend
 
 Started a documentation page about :doc:`/dev/actions` for developers.
 
+The new action :class:`SubmitInsertClient
+<lino_welfare.modlib.pcsw.models.SubmitInsertClient>` is the first
+example on how to use the new feature in application code.
+The application developer writes a new Action::
+
+
+    from lino.core.actions import SubmitInsert
+
+    class SubmitInsertClient(SubmitInsert):
+        def run_from_ui(self, ar, **kw):
+            obj = ar.create_instance_from_request()
+
+            def ok(ar2):
+                self.save_new_instance(ar2, obj)
+
+            if obj.first_name == 'Foo':
+                ar.confirm(ok, _("Is that true? Your name is 'Foo'?"))
+            else:
+                ok(ar)
+
+And then overrides the default `submit_insert` action (either on the
+Model or on a Table) with an instance of this class::
+
+  class Client(dd.model):
+      ...
+      submit_insert = SubmitInsertClient()
+
+
+
+An unexpected subtlety was that `SubmitInsertClient`, like every
+submit_insert action must set `data_record`. And this must be in the
+callback request ("ar2"), not in the original action request "ar".
+But the callback request until now was just a BaseRequest, without
+methods like `create_instance` (i.e. the methods to create an instance
+and to fill `data_record`).  So the callback request (created by
+:meth:`lino.core.kernel.Kernel.run_callback`) had to become a more
+close clone of the original request.
+
+Checkin after midnight and without thorough testing. But 
+
+TODO:
+
+During testing I discovered a bug which was already there for some time:
+the "Must read eID card" action link in `newcomers.NewClients` doesn't work. It causes an :ref:`ise`::
+
+  ParameterStore of LayoutHandle for ParamsLayout on pcsw.Clients expected a list of 12 values, but got [u'21.03.2014', u'false', u'false', u'']
+
+This is because the action is being called using pcsw/Clients instead
+of pcsw/NewClients as URI.
+

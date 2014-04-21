@@ -1831,21 +1831,20 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
           var ww = Lino.calling_window();
           if (ww && ww.window.main_item instanceof Lino.FormPanel 
                  && ww.window.main_item.ls_url == panel.ls_url) {
-              //~ console.log("20120217 case 1");
+              console.log("20120217 case 1");
               ww.status.record_id = result.record_id;
               ww.status.data_record = result.data_record;
               Lino.close_window();
           } else if (panel.ls_detail_handler) {
-              //~ console.log("20120217 case 2");
+              console.log("20120217 case 2");
               Lino.kill_current_window();
               panel.ls_detail_handler.run(null,{
                   record_id:result.record_id,
                   data_record: result.data_record,
                   base_params:panel.get_base_params()
               });
-          // } else {
-          //     console.log(
-          //         "20140421 Couldn't remember any example for this case");
+          } else {
+              console.log("Case 3");
           //     Lino.close_window();
           }
 
@@ -4546,7 +4545,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         failure: Lino.ajax_error_handler(this)
     };
     if (e.record.phantom) {
-      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'post'; // SubmitInsert.action_name
+      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'submit_insert'; // SubmitInsert.action_name
       Ext.apply(req,{
         method: 'POST',
         url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url

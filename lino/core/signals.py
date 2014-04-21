@@ -64,7 +64,11 @@ Sent when a model instance is being merged into another instance.
 pre_remove_child = Signal(['request', 'child'])
 pre_add_child = Signal(['request'])
 pre_ui_create = Signal(['request'])
+"""
+Sent when a new model instance has been created and saved.
+"""
 pre_ui_update = Signal(['request'])
+
 pre_ui_delete = Signal(['request'])
 """
 Sent just before a model instance is being deleted using 
