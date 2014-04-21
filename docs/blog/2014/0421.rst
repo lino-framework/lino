@@ -3,8 +3,8 @@ Monday, April 21, 2014
 ======================
 
 
-Customizable for SubmitInsert action
-------------------------------------
+Customizable SubmitInsert actions
+---------------------------------
 
 Uff! I feel (a bit) as if Lino had resurrected from death.  
 
@@ -32,4 +32,14 @@ that implements an idea `apidoc output format
 which I posted in January to sphinx-users.  I adapted my :fab:`api`
 command in :mod:`atelier.fablib` to use this option.
 
+
+
+Customizable SubmitInsert actions (continued)
+---------------------------------------------
+
+Instead of writing ``ar.response.update(foo=X)`` we now recommend
+``ar.set_response(foo=X)``. This has the advantage of raising
+(immediately) an exception when you specify an invalid keyword.
+
+Started a documentation page about :doc:`/dev/actions` for developers.
 

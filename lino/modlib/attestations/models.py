@@ -100,7 +100,7 @@ class AttestationType(
                 if o.primary:
                     o.primary = False
                     o.save()
-                    ar.response.update(refresh_all=True)
+                    ar.set_response(refresh_all=True)
 
 
 class AttestationTypes(dd.Table):

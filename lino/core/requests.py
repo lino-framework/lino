@@ -41,6 +41,26 @@ from lino.core.signals import pre_ui_create, ChangeWatcher
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
+ACTION_RESPONSES = frozenset((
+    'message', 'success', 'alert',
+    'errors',
+    'html',
+    'rows',
+    'data_record',
+    # 'record_id',
+    'goto_record_id',
+    'refresh', 'refresh_all',
+    'close_window',
+    'xcallback',
+    'open_url', 'open_davlink_url',
+    'info_message',
+    'warning_message',
+    'eval_js'))
+"""
+Action responses supported by `Lino.action_handler`
+(defined in :xfile:`linolib.js`).
+"""
+
 
 class VirtualRow(object):
 
@@ -98,9 +118,23 @@ class BaseRequest(object):
         # if self.renderer is None:
         #     raise Exception("20131226 no renderer")
 
+    def set_response(self, **kw):
+        """Store one or several keyword values to be rendered in the response.
+        
+        Raise an exception if the action responded using an unknown keyword.
+
+        See :ref:`set_response`.
+
+
+        """
+        for k in kw.keys():
+            if not k in ACTION_RESPONSES:
+                raise Exception("Unknown key %r in action response." % k)
+        self.response.update(kw)
+            
     def error(self, e=None, message=None, **kw):
         """
-        Shortcut for building an error response.
+        Shortcut to :meth:`set_response` used to set an error response.
         The first argument should be either an exception object or a message.
         """
         kw.update(success=False)
@@ -114,7 +148,7 @@ class BaseRequest(object):
         if message is None:
             message = unicode(e)
         kw.update(message=message)
-        self.response.update(kw)
+        self.set_response(**kw)
 
     def success(self, message=None, alert=None, **kw):
         """
@@ -128,7 +162,7 @@ class BaseRequest(object):
             kw.update(alert=alert)
         if message:
             kw.update(message=message)
-        self.response.update(kw)
+        self.set_response(**kw)
 
     def append_message(self, level, msg, *args, **kw):
         if args:
@@ -180,7 +214,7 @@ class BaseRequest(object):
 
     def goto_instance(self, obj, **kw):
         js = self.instance_handler(obj)
-        self.response.update(eval_js=js)
+        self.set_response(eval_js=js)
 
     def set_content_type(self, ct):
         self.content_type = ct
@@ -654,15 +688,8 @@ class ActionRequest(BaseRequest):
         #~ ActionRequest.__init__(self,ui,action)
         self.actor = actor
         self.rqdata = rqdata
-        #~ self.action = action or actor.default_action
-        #~ self.bound_action = BoundAction(actor,action or actor.default_action)
-        #~ if action and not isinstance(action,BoundAction):
-            #~ raise Exception("20121003 %r is not a BoundAction" % action)
-
-        #~ if actor.__name__ == 'PrintExpensesByBudget':
-            #~ print '20130327 requests.ActionRequest.__init__', kw.get('master_instance')
-
         self.bound_action = action or actor.default_action
+        action = self.bound_action.action
         BaseRequest.__init__(self, request=request, renderer=renderer, **kw)
         self.ah = actor.get_request_handle(self)
         if self.actor.parameters is not None:
@@ -674,58 +701,53 @@ class ActionRequest(BaseRequest):
                         "%s.param_defaults() returned invalid keyword %r" %
                         (self.actor, k))
 
-            """
-            New since 20120913.
-            E.g. newcomers.Newcomers is a simple pcsw.Clients with known_values=dict(client_state=newcomer)
-            and since there is a parameter `client_state`, we override that parameter's default value.
-            """
+            # New since 20120913.  E.g. newcomers.Newcomers is a
+            # simple pcsw.Clients with
+            # known_values=dict(client_state=newcomer) and since there
+            # is a parameter `client_state`, we override that
+            # parameter's default value.
+
             for k, v in self.known_values.items():
-                if pv.has_key(k):
+                if k in pv:
                     pv[k] = v
 
-            """
-            New since 20120914.
-            MyClientsByGroup has a known group, this 
-            must also appear as `group` parameter value.
-            Lino now understands tables where the master_key is also a parameter.
-            """
-            if self.actor.master_key is not None:
-                if pv.has_key(self.actor.master_key):
-                    pv[self.actor.master_key] = self.master_instance
+            # New since 20120914.  MyClientsByGroup has a known group,
+            # this must also appear as `group` parameter value.  Lino
+            # now understands tables where the master_key is also a
+            # parameter.
 
-            #~ logger.info("20130721 a core/requests.py param_values is %r",pv)
+            if self.actor.master_key is not None:
+                if self.actor.master_key in pv:
+                    pv[self.actor.master_key] = self.master_instance
 
             if param_values is None:
                 if request is not None:  # 20121025
-                    #~ pv.update(self.ui.parse_params(self.ah,request))
-                    #~ pv.update(self.ah.store.parse_params(request))
                     pv.update(
-                        self.actor.params_layout.params_store.parse_params(request))
-                    #~ logger.info("20130721 b core/requests.py param_values is %r",pv)
+                        self.actor.params_layout.params_store.parse_params(
+                            request))
             else:
                 for k in param_values.keys():
-                    if not pv.has_key(k):
+                    if not k in pv:
                         raise Exception(
-                            "Invalid key '%s' in param_values of %s request (possible keys are %s)" % (k, actor, pv.keys()))
+                            "Invalid key '%s' in param_values of %s "
+                            "request (possible keys are %s)" % (
+                                k, actor, pv.keys()))
                 pv.update(param_values)
-                #~ logger.info("20130721 c core/requests.py param_values is %r",pv)
 
             self.param_values = AttrDict(**pv)
-            #~ logger.info("20130721 d core/requests.py param_values is %r",pv)
 
-        #~ print 20130121, __file__, self.bound_action.action, self.bound_action.action.parameters
-
-        if self.bound_action.action.parameters is not None:
-            apv = self.bound_action.action.action_param_defaults(self, None)
+        if action.parameters is not None:
+            apv = action.action_param_defaults(self, None)
             if request is not None:
                 apv.update(
-                    self.bound_action.action.params_layout.params_store.parse_params(request))
+                    action.params_layout.params_store.parse_params(request))
             #~ logger.info("20130122 action_param_defaults() returned %s",apv)
             if action_param_values is not None:
                 for k in action_param_values.keys():
-                    if not apv.has_key(k):
+                    if not k in apv:
                         raise Exception(
-                            "Invalid key '%s' in action_param_values of %s request (possible keys are %s)" %
+                            "Invalid key '%s' in action_param_values "
+                            "of %s request (possible keys are %s)" %
                             (k, actor, apv.keys()))
                 apv.update(action_param_values)
             self.action_param_values = AttrDict(**apv)
@@ -749,47 +771,23 @@ class ActionRequest(BaseRequest):
         self.known_values = kv
 
     def create_phantom_rows(self, **kw):
-        #~ logger.info('20121011 %s.create_phantom_rows(), %r', self,self.create_kw)
-        if self.create_kw is None or not self.actor.editable or not self.actor.allow_create:
-            #~ logger.info('20120519 %s.create_phantom_row(), %r', self,self.create_kw)
+        if self.create_kw is None or not self.actor.editable \
+           or not self.actor.allow_create:
             return
         if not self.actor.get_create_permission(self):
             return
-        # ~ # if not self.actor.get_permission(self.get_user(),self.actor.create_action):
-        # ~ # if not self.actor.allow_create(self.get_user(),None,None):
-        # ~ # ca = self.actor.get_url_action('create_action')
-        #~ ca = self.actor.create_action
-        #~ if ca is not None:
-            # ~ # if not self.actor.create_action.allow(self.get_user(),None,None):
-            # ~ # if not ca.allow(self.get_user(),None,None):
-            #~ if not ca.get_bound_action_permission(self.get_user(),None,None):
-                #~ return
         yield PhantomRow(self, **kw)
 
-    #~ def get_actor_handle(self):
-        #~ if self._actor_handle is None:
-            #~ self._actor_handle = self.actor.get_request_handle(self)
-        #~ return self._actor_handle
-        #~
-    #~ ah = property(get_actor_handle)
-
     def create_instance(self, **kw):
-        """
-        Create a row (a model instance if this is a database table) 
-        using the specified keyword arguments.
+        """Create a row (a model instance if this is a database table) using
+        the specified keyword arguments.
+
         """
         if self.create_kw:
             kw.update(self.create_kw)
-        # logger.debug('%s.create_instance(%r)',self,kw)
         if self.known_values:
             kw.update(self.known_values)
         obj = self.actor.create_instance(self, **kw)
-        #~ print 20120630, self.actor, 'actions.TableRequest.create_instance'
-        #~ if self.known_values is not None:
-            #~ self.ah.store.form2obj(self.known_values,obj,True)
-            #~ for k,v in self.known_values:
-                #~ field = self.model._meta.get_field(k) ...hier
-                #~ kw[k] = v
         return obj
 
     def get_data_iterator(self):
@@ -814,10 +812,9 @@ class ActionRequest(BaseRequest):
 
     def get_status(self, **kw):
         if self.actor.parameters:
-            #~ kw.update(param_values=self.ah.store.pv2dict(ui,self.param_values))
-            #~ lh = self.actor.params_layout.get_layout_handle(ui)
             kw.update(
-                param_values=self.actor.params_layout.params_store.pv2dict(self.param_values))
+                param_values=self.actor.params_layout.params_store.pv2dict(
+                    self.param_values))
 
         if self.bound_action.action.parameters is not None:
             pv = self.bound_action.action.params_layout.params_store.pv2dict(
@@ -829,14 +826,8 @@ class ActionRequest(BaseRequest):
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
 
-        #~ if self.selected_rows is not None:
-            #~ bp[ext_requests.URL_PARAM_SELECTED] = [obj.pk for obj in self.selected_rows if obj is not None]
-
         if self.subst_user is not None:
-            #~ bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.username
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
-        #~ if self.actor.__name__ == 'MyClients':
-            #~ print "20120918 actions.get_status", kw
         return kw
 
     def spawn(self, actor, **kw):
@@ -844,8 +835,6 @@ class ActionRequest(BaseRequest):
             actor = self.actor
         return super(ActionRequest, self).spawn(actor, **kw)
 
-    #~ def decide_response(self,*args,**kw): return self.ui.decide_response(self,*args,**kw)
-    #~ def prompt(self,*args,**kw): return self.ui.prompt(self,*args,**kw)
     def summary_row(self, *args, **kw):
         return self.actor.summary_row(self, *args, **kw)
 

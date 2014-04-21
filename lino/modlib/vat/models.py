@@ -571,7 +571,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
         """
         kw = super(VatItemBase, self).after_ui_save(ar)
         if self.voucher.refresh_after_item_edit:
-            ar.response.update(refresh_all=True)
+            ar.set_response(refresh_all=True)
             self.voucher.compute_totals()
             self.voucher.full_clean()
             self.voucher.save()

@@ -443,7 +443,7 @@ class EventGenerator(mixins.UserAuthored):
         if self.resolve_conflicts(we, ar, rset, until) is None:
             return
         we.save()
-        ar.response.update(refresh=True)
+        ar.set_response(refresh=True)
         ar.success()
 
     def resolve_conflicts(self, we, ar, rset, until):

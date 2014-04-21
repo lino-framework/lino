@@ -47,7 +47,7 @@ class PrintAndChangeStateAction(dd.ChangeStateAction):
         def ok(ar2):
             obj.do_print.run_from_ui(ar, **kw)
             super(PrintAndChangeStateAction, self).run_from_ui(ar)
-            ar.response.update(refresh_all=True)
+            ar.set_response(refresh_all=True)
 
         msg = self.get_confirmation_message(obj, ar)
         ar.confirm(ok, msg, _("Are you sure?"))
@@ -87,11 +87,11 @@ class ConfirmEnrolment(dd.ChangeStateAction):
             if msg is None:
                 obj.state = EnrolmentStates.confirmed
                 obj.save()
-                ar.response.update(refresh_all=True)
+                ar.set_response(refresh_all=True)
             else:
                 msg = _("Cannot confirm %(pupil)s : %(message)s") % dict(
                     pupil=obj.pupil, message=msg)
-                ar.response.update(message=msg, alert=True)
+                ar.set_response(message=msg, alert=True)
                 break
 
 

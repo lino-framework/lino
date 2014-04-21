@@ -647,25 +647,8 @@ class Action(Parametrizable, Permittable):
         self.defining_actor = actor
         if self.label is None:
             self.label = name
-        #~ if actor.hide_top_toolbar:
-            #~ self.hide_top_toolbar = True
-        #~ if self.help_text is None \
-            #~ and name == actor.get_default_action():
-            #~ self.help_text  = actor.help_text
-        #~ if name == 'default_action':
-            #~ print 20120527, self
         setup_params_choosers(self.__class__)
         return True
-
-    #~ def contribute_to_class(self,model,name):
-        #~ ma = model.__dict__.get('_lino_model_actions',None)
-        #~ if ma is None:
-            #~ ma = dict()
-            #~ model._lino_model_actions = ma
-            # ~ # model.__dict__.set('_lino_model_actions',ma)
-        #~ ma[name] = self
-        #~ self.name = name
-        # ~ # model.__dict__['_lino_model_actions'] = d
 
     def __unicode__(self):
         return force_unicode(self.label)
@@ -1062,8 +1045,8 @@ class SubmitDetail(Action):
         # TODO: in fact we need *either* `rows` (when this was called
         # from a Grid) *or* `data_record` (when this was called from a
         # form).  But how to find out which one is needed?
-        ar.response.update(rows=[ar.ah.store.row2list(ar, elem)])
-        ar.response.update(data_record=ar.elem2rec_detailed(elem))
+        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+        ar.set_response(data_record=ar.elem2rec_detailed(elem))
         # return json_response(ar.response)
 
 
@@ -1090,15 +1073,15 @@ class SubmitInsert(SubmitDetail):
             file_upload = False
         ar.form2obj_and_save(ar.request.POST, elem, True)
         if file_upload:
-            ar.response.update(goto_record_id=elem.pk)
+            ar.set_response(goto_record_id=elem.pk)
             ar.set_content_type('text/html')
         else:
             # TODO: in fact we need *either* `rows` (when this was called
             # from a Grid) *or* `data_record` (when this was called from a
             # form).  But how to find out which one is needed?
-            ar.response.update(rows=[rh.store.row2list(ar, elem)])
-            ar.response.update(data_record=ar.elem2rec_detailed(elem))
-        # ar.response.update(close_window=True)
+            ar.set_response(rows=[rh.store.row2list(ar, elem)])
+            ar.set_response(data_record=ar.elem2rec_detailed(elem))
+        # ar.set_response(close_window=True)
         # ar.info("20140418 SubmitInsert %s", ar.response)
 
 
@@ -1141,7 +1124,7 @@ class ShowSlaveTable(Action):
         obj = ar.selected_rows[0]
         sar = ar.spawn(self.slave_table, master_instance=obj)
         js = ar.renderer.request_handler(sar)
-        ar.response.update(eval_js=js)
+        ar.set_response(eval_js=js)
         #~ kw.update(eval_js=js)
         #~ return kw
 
@@ -1192,10 +1175,10 @@ class NotifyingAction(Action):
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        ar.response.update(message=ar.action_param_values.notify_subject)
+        ar.set_response(message=ar.action_param_values.notify_subject)
         #~ kw.update(alert=True)
-        ar.response.update(refresh=True)
-        ar.response.update(success=True)
+        ar.set_response(refresh=True)
+        ar.set_response(success=True)
         #~ kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
         self.add_system_note(ar, obj)
         #~ return kw
@@ -1241,7 +1224,7 @@ class MultipleRowAction(Action):
                 break
             ar.info("%s for %s...", unicode(self.label), unicode(obj))
             n += self.run_on_row(obj, ar)
-            ar.response.update(refresh_all=True)
+            ar.set_response(refresh_all=True)
 
         msg = _("%d row(s) have been updated.") % n
         ar.info(msg)

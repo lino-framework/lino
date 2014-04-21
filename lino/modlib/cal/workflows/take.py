@@ -57,7 +57,7 @@ class TakeAssignedEvent(dd.Action):
             obj.assigned_to = None
             #~ kw = super(TakeAssignedEvent,self).run(obj,ar,**kw)
             obj.save()
-            ar.response.update(refresh=True)
+            ar.set_response(refresh=True)
             #~ return kw
         ar.confirm(ok, self.help_text, _("Are you sure?"))
 
@@ -99,7 +99,7 @@ if False:
             obj.user = ar.action_param_values.to_user
             super(AssignEvent, self).run_from_ui(ar, **kw)
             #~ obj.save()
-            ar.response.update(refresh=True)
+            ar.set_response(refresh=True)
             #~ return kw
 
 

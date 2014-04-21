@@ -7,7 +7,7 @@ Overview
 
 An :class:`Actor <lino.core.actors.Actor>` 
 is a globally known unique thing that offers actions.
-Each actor has a list of **actions**.
+Each actor has a list of :doc:`actions <actions>`.
 Almost every incoming web request
 is a given *user* who requests execution 
 of a given *action* on a given *actor*.

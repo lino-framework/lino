@@ -193,7 +193,7 @@ class ChangeStateAction(actions.Action):
     def run_from_ui(self, ar):
         row = ar.selected_rows[0]
         self.execute(ar, row)
-        ar.response.update(refresh=True)
+        ar.set_response(refresh=True)
         ar.success()
 
     def execute(self, ar, obj):

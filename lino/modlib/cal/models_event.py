@@ -919,7 +919,6 @@ class UpdateUserReminders(UpdateEvents):
         user = ar.selected_rows[0]
         logger.info("Updating reminders for %s", unicode(user))
         n = update_reminders_for_user(user, ar)
-        #~ ar.response.update(success=True)
         msg = _("%(num)d reminders for %(user)s have been updated."
                 ) % dict(user=user, num=n)
         logger.info(msg)

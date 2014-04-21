@@ -63,26 +63,6 @@ from lino.ui import views
 
 from lino.ad import Plugin as LinoPlugin
 
-ACTION_RESPONSES = frozenset((
-    'message', 'success', 'alert',
-    'errors',
-    'html',
-    'rows',
-    'data_record',
-    # 'record_id',
-    'goto_record_id',
-    'refresh', 'refresh_all',
-    'close_window',
-    'xcallback',
-    'open_url', 'open_davlink_url',
-    'info_message',
-    'warning_message',
-    'eval_js'))
-"""
-Action responses supported by `Lino.action_handler`
-(defined in :xfile:`linolib.js`).
-"""
-
 
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
@@ -534,27 +514,11 @@ class Kernel(object):
         for c in cb.choices:
             buttons[c.name] = c.label
 
-        ar.response.update(
-            success=True,
-            message=cb.message,
-            xcallback=dict(id=h,
-                           title=cb.title,
-                           buttons=buttons))
-
-    def check_action_response(self, rv):
-        """
-        Raise an exception if the action responded using an unknown keyword.
-        """
-
-        #~ if rv is None:
-            #~ rv = self.success()
-
-        #~ elif isinstance(rv,Callback):
-
-        for k in rv.keys():
-            if not k in ACTION_RESPONSES:
-                raise Exception("Unknown key %r in action response." % k)
-        return rv
+        ar.success(
+            cb.message, xcallback=dict(
+                id=h,
+                title=cb.title,
+                buttons=buttons))
 
     def run_action(self, ar):
         """
@@ -591,13 +555,11 @@ class Kernel(object):
         h.store = ext_store.Store(h)
 
     def render_action_response(self, ar):
-        """Builds a JSON response from given dict ``rv``, checking first
-        whether there are only allowed keys (defined in
-        :attr:`ACTION_RESPONSES`)
+        """Builds a JSON response from response information stored in given
+        ActionRequest.
 
         """
-        rv = self.check_action_response(ar.response)
-        return views.json_response(rv, ar.content_type)
+        return views.json_response(ar.response, ar.content_type)
 
     def row_action_button(self, *args, **kw):
         """

@@ -24,6 +24,7 @@ Drafts
    :maxdepth: 1
 
    actors
+   actions
    /tested/index
    apps
    testing

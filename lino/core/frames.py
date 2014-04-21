@@ -46,13 +46,7 @@ class Frame(actors.Actor):
     Deserves more documentation.
     """
     _handle_class = FrameHandle
-    #~ default_action_class = None
     editable = False
-
-    #~ @classmethod
-    #~ def class_init(self):
-        #~ self.default_action = self.get_default_action()
-        #~ super(Frame,self).class_init()
 
     @classmethod
     def get_actor_label(self):

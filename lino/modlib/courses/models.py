@@ -724,7 +724,7 @@ class ConfirmAllEnrolments(dd.Action):
             for obj in ar:
                 obj.state = EnrolmentStates.confirmed
                 obj.save()
-                ar.response.update(refresh_all=True)
+                ar.set_response(refresh_all=True)
 
         msg = _(
             "This will confirm all %d enrolments in this list.") % ar.get_total_count()

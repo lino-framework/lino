@@ -151,7 +151,7 @@ class MainHtml(View):
         #~ raise Exception("20131023")
         from lino.core import requests
         ar = requests.BaseRequest(request)
-        ar.response.update(
+        ar.set_response(
             success=True,
             html=settings.SITE.get_main_html(request))
         return ui.render_action_response(ar)
@@ -448,7 +448,7 @@ class Restful(View):
         ar.form2obj_and_save(data, instance, True)
 
         # Ext.ensible needs list_fields, not detail_fields
-        ar.response.update(
+        ar.set_response(
             rows=[ar.ah.store.row2dict(
                 ar, instance, ar.ah.store.list_fields)])
         return json_response(ar.response)
@@ -495,7 +495,7 @@ class Restful(View):
         ar.renderer = settings.SITE.ui.extjs_renderer
         ar.form2obj_and_save(data, elem, False)
         # Ext.ensible needs list_fields, not detail_fields
-        ar.response.update(
+        ar.set_response(
             rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
         return json_response(ar.response)
 

@@ -293,7 +293,6 @@ class MySettings(Users):
 
     @classmethod
     def get_default_action(cls):
-        #~ return cls.default_elem_action_name
         return actions.ShowDetailAction()
 
 

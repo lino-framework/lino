@@ -452,7 +452,7 @@ class Model(models.Model):
         """
         Called after a state change.
         """
-        ar.response.update(refresh=True)
+        ar.set_response(refresh=True)
 
     def set_workflow_state(row, ar, state_field, target_state):
 

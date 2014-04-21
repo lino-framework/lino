@@ -893,40 +893,11 @@ class Actor(actions.Parametrizable):
         """
         Called internally a site startup. Don't override.
         """
-        #~ if str(cls) == 'contacts.Persons':
-            #~ logger.info("20130804 Actor.class_init() %r",cls)
-        #~ if cls.__name__ == 'Home':
-            #~ print "20120524",cls, "class_init()", cls.__bases__
-        #~ 20121008 cls.default_action = cls.get_default_action()
-
-        #~ classDict = cls.__dict__
-
-        #~ dt = classDict.get('detail_template',None)
-        #~ dt = getattr(cls,'detail_template',None)
-        #~ if dt is not None:
-            #~ raise Exception("Please rename detail_template to detail_layout")
-            #~ if dl is not None:
-                #~ raise Exception("%r has both detail_template and detail_layout" % cls)
-            #~ dl = dt
-
-        #~ if cls.is_abstract() : return
-
-        if False:  # (20130817) tried to move this from an earlier moment
-            for k, v in class_dict_items(cls):
-            #~ for k,v in cls.__dict__.items():
-                if isinstance(v, fields.Constant):
-                    cls.add_constant(k, v)
-                if isinstance(v, fields.VirtualField):  # 20120903b
-                    cls.add_virtual_field(k, v)
-
-        #~ if str(cls) == 'cal.Tasks':
-            #~ logger.info("20130817 gonna add actor vfs")
 
         master = getattr(cls, 'master', None)
         if master is not None:
             cls.master = resolve_model(master)
 
-        #~ dl = getattr(cls,'detail_layout',None)
         dl = cls.__dict__.get('detail_layout', None)  # see 20130804
         if dl is None and not cls._class_init_done:
             dl = cls.detail_layout
@@ -940,20 +911,20 @@ class Actor(actions.Parametrizable):
                 raise Exception("Cannot use detail_layout of %r for %r" %
                                 (dl._datasource, cls))
 
-        #~ dl = getattr(cls,'insert_layout',None)
         dl = cls.__dict__.get('insert_layout', None)
         if dl is None and not cls._class_init_done:
             dl = cls.insert_layout
         if dl is not None:
             if isinstance(dl, basestring):
-                cls.insert_layout = layouts.FormLayout(dl, cls,
-                                                       window_size=(cls.insert_layout_width, 'auto'))
+                cls.insert_layout = layouts.FormLayout(
+                    dl, cls, window_size=(cls.insert_layout_width, 'auto'))
             elif dl._datasource is None:
                 dl.set_datasource(cls)
                 cls.insert_layout = dl
             elif not issubclass(cls, dl._datasource):
-                raise Exception("Cannot reuse %r insert_layout for %r" %
-                                (dl._datasource, cls))
+                raise Exception(
+                    "Cannot reuse %r insert_layout for %r" %
+                    (dl._datasource, cls))
                 #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
 
         # 20130906
@@ -1062,12 +1033,8 @@ class Actor(actions.Parametrizable):
         """
         # ~ cls._actions_list = [] # 20121129
 
-        #~ default_action = getattr(cls,cls.get_default_action())
         default_action = cls.get_default_action()
         cls.default_action = cls.bind_action(default_action)
-        #~ print 20121010, cls, default_action
-        #~ if default_action.help_text is None:
-            #~ default_action.help_text = cls.help_text
 
         if cls.detail_layout or cls.detail_template:
             if default_action and isinstance(
@@ -1080,8 +1047,8 @@ class Actor(actions.Parametrizable):
                 cls.create_action = cls.bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
                     cls.insert_action = cls.bind_action(actions.InsertRow())
-                    cls.create_edit_action = cls.bind_action(
-                        actions.SubmitInsertAndStay())
+                    # cls.create_edit_action = cls.bind_action(
+                    #     actions.SubmitInsertAndStay())
             cls.update_action = cls.bind_action(
                 actions.SubmitDetail(sort_index=1))
             if not cls.hide_top_toolbar:
