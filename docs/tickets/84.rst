@@ -1,4 +1,4 @@
-:state: todo
+:state: testing
 :module: lino_faggio
 
 #84 : Laufende Anfragen Eiche

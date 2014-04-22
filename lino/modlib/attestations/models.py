@@ -418,7 +418,9 @@ def set_attest_actions(sender, **kw):
                         'attestations.AttestationsByOwner'
                     ))
                 # logger.info("20140401 %s is attestable", m)
-    except DatabaseError as e:
+    except Exception as e:
+    # except (DatabaseError, models.DoesNotExist) as e:
+        
         logger.info("Failed to load attest_actions : %s", e)
 
 

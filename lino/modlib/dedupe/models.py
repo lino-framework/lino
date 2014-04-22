@@ -15,11 +15,10 @@
 """Defines a virtual table SimilarPersons.
 
 Current implementation is rather primitive.
-
->>> from lino.runtime import contacts
->>> contacts.Person()
-
 We plan to add another table with NYSIIS or SOUNDEX strings.
+
+Examples and test cases in :ref:`welfare.tested.pcsw`.
+
 
 """
 
@@ -43,6 +42,10 @@ contacts = dd.resolve_app('contacts')
 
 
 class SimilarPersons(dd.VirtualTable):
+    """Shows a slave table of persons that are "similar" to a given master
+    instance (and therefore are potential duplicates).
+
+    """
     label = _("Similar Persons")
     # slave_grid_format = 'html'
     slave_grid_format = 'summary'
@@ -55,6 +58,9 @@ class SimilarPersons(dd.VirtualTable):
 
         def summary_row(self, ar):
             yield ar.obj2html(self.slave)
+
+        def __unicode__(self):
+            return unicode(self.slave)
 
     @classmethod
     def get_data_rows(self, ar):
@@ -86,7 +92,7 @@ class SimilarPersons(dd.VirtualTable):
                 s1.add(word)
         s2 = set()
         for n in s1:
-            for word in s.split('-'):
+            for word in n.split('-'):
                 s2.add(word)
         return s2
     
@@ -94,13 +100,15 @@ class SimilarPersons(dd.VirtualTable):
     def find_similar_instances(self, obj):
         """This is Lino's default algorithm for finding similar humans in a
         database. It is rather simplistic. To become more smart, we
-        might add helper fields with soundex copies of the names.
+        might add helper tables with soundex copies of the names.
 
         """
         qs = contacts.Person.objects.exclude(pk=obj.pk)
         for w in self.get_words(obj):
+            # logger.info("20140222 find_similar_instances word %s", w)
             flt = Q(last_name__icontains=w) | Q(first_name__icontains=w)
             qs = qs.filter(flt)
+        # logger.info("20140222 find_similar_instances %s", qs.query)
         return qs
 
     @dd.displayfield(_("Other"))

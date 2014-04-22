@@ -2,6 +2,7 @@
 Tuesday, April 22, 2014
 =======================
 
+Working on :doc:`/tickets/93`.
 
 "Must read eID card" action in `newcomers.NewClients` 
 ------------------------------------------------------
@@ -51,5 +52,11 @@ action. And it was really easy::
                            "client named %s?") % obj.get_full_name()
         ar.confirm(ok, msg)
 
-Note: I also optimized a bit in our
+I also optimized in our
 :meth:`find_similar_instances <lino.modlib.dedupe.models.SimilarPersons.find_similar_instances>` method, which continues to be rather simplistic.
+
+Added test cases in :ref:`welfare.tested.pcsw`.
+
+Started to try to get the welfare test suite repaired.  But after some
+hours I decided that for the moment this would be inefficient because
+many tests are still going to change.

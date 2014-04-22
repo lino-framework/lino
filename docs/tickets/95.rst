@@ -1,4 +1,4 @@
-:state: todo
+:state: longterm
 :module: lino_cosi
 
 ===============================

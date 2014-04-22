@@ -1,0 +1,2 @@
+WARNING: logo file 'logo.png' does not exist
+WARNING: favicon file 'favicon.ico' does not exist
