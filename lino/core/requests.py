@@ -101,6 +101,7 @@ class BaseRequest(object):
     action_param_values = None
     param_values = None
     bound_action = None
+    edit_mode = None
 
     renderer = None
     selected_rows = []
@@ -250,6 +251,8 @@ class BaseRequest(object):
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(
             ext_requests.URL_PARAM_PROJECT, None))
+        kw.update(edit_mode=rqdata.get(
+            ext_requests.URL_PARAM_EDIT_MODE, None))
 
         selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
         #~ kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
@@ -269,6 +272,7 @@ class BaseRequest(object):
               user=None,
               subst_user=None,
               current_project=None,
+              edit_mode=None,
               #~ selected_rows=None,
               selected_pks=None,
               requesting_panel=None,
@@ -276,6 +280,7 @@ class BaseRequest(object):
         self.requesting_panel = requesting_panel
         self.user = user
         self.current_project = current_project
+        self.edit_mode = edit_mode
         #~ self.selected_rows = selected_rows
         if renderer is not None:
             self.renderer = renderer
@@ -685,6 +690,8 @@ class ActorRequest(BaseRequest):
 
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
+        if self.edit_mode is not None:
+            bp[ext_requests.URL_PARAM_EDIT_MODE] = self.edit_mode
 
         if self.subst_user is not None:
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id

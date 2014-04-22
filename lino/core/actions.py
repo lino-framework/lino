@@ -1077,9 +1077,12 @@ class SubmitInsert(SubmitDetail):
             # TODO: in fact we need *either* `rows` (when this was called
             # from a Grid) *or* `data_record` (when this was called from a
             # form).  But how to find out which one is needed?
-            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
-            ar.set_response(data_record=ar.elem2rec_detailed(elem))
-        # ar.set_response(close_window=True)
+            if ar.edit_mode == constants.EDIT_MODE_GRID:
+                ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+            if ar.actor.stay_in_grid:
+                ar.set_response(close_window=True)
+            else:
+                ar.set_response(data_record=ar.elem2rec_detailed(elem))
         # ar.info("20140418 SubmitInsert %s", ar.response)
 
 

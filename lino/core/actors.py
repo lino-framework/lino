@@ -479,6 +479,12 @@ class Actor(actions.Parametrizable):
 
     _layout_class = layouts.ParamsLayout
 
+    stay_in_grid = False
+    """Set this to True if Lino should not open a newly created record in
+    a detail window.
+
+    """
+
     sort_index = None
     """
     The sort_index to be used for a ShowSlaveTable action on this actor.
