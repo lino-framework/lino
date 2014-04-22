@@ -317,8 +317,6 @@ class BoundAction(object):
 
     def get_bound_action_permission(self, ar, obj, state):
         if not self.action.get_action_permission(ar, obj, state):
-            #~ if self.action.action_name == 'wf7':
-                #~ logger.info("20130424 actors.BoundAction.get_bound_action_permission")
             return False
         return self._allow(ar.get_user(), obj, state)
 
@@ -327,9 +325,6 @@ class BoundAction(object):
         Return True if this bound action is visible for users of this
         profile.
         """
-        #~ if self.action.__class__.__name__ == 'ShowSlaveTable':
-            #~ logger.info("20130820 BoundAction.get_view_permission()")
-            #~ raise Exception(20130820)
         if not self.actor.get_view_permission(profile):
             return False
         if not self.action.get_view_permission(profile):
@@ -337,7 +332,8 @@ class BoundAction(object):
         return self.allow_view(profile)
 
     def __repr__(self):
-        return "<%s(%s,%r)>" % (self.__class__.__name__, self.actor, self.action)
+        return "<%s(%s,%r)>" % (
+            self.__class__.__name__, self.actor, self.action)
 
 
 #~ class ClassProperty(property):

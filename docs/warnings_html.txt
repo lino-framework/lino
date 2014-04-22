@@ -1,6 +1,2 @@
-/home/luc/hgwork/lino/lino/modlib/vat/models.py:docstring of lino.modlib.vat.models:18: ERROR: Unexpected indentation.
-/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

@@ -245,9 +245,9 @@ class Parametrizable(object):
 
 #~ class ActionRunner(object):
 class InstanceAction(object):
+    """Volatile object which wraps a given action to be run on a given
+    model instance.
 
-    """
-    Wrapper object used to run actions from Python code.
     """
 
     def __init__(self, action, actor, instance, owner):
@@ -256,8 +256,9 @@ class InstanceAction(object):
         self.bound_action = actor.get_action_by_name(action.action_name)
         if self.bound_action is None:
             raise Exception("%s has not action %r" % (actor, action))
-            # happened 20131020 from beid.eid_info() : if use_eid_jslib was False
-            # then Action.attach_to_actor returned False
+            # Happened 20131020 from lino.modlib.beid.eid_info() :
+            # When `use_eid_jslib` was False, then
+            # `Action.attach_to_actor` returned False.
         self.instance = instance
         self.owner = owner
 
@@ -377,18 +378,15 @@ class Action(Parametrizable, Permittable):
     #~ """
 
     action_name = None
-    """
-    Internally used to store the name of this action within the defining Actor's namespace.
-    """
+    """Internally used to store the name of this action within the
+    defining Actor's namespace.
 
-    #~ url_action_name = None
-    #~ """
-    #~ """
+    """
 
     use_param_panel = False
-    """
-    Used internally. This is True for window actions whose window 
-    use the parameter panel: grid and emptytable (but not showdetail)
+    """Used internally. This is True for window actions whose window use
+    the parameter panel: grid and emptytable (but not showdetail)
+
     """
 
     defining_actor = None
@@ -500,17 +498,12 @@ class Action(Parametrizable, Permittable):
     this action is called.
     """
 
-    #~ def __init__(self,label=None,url_action_name=None,required={},**kw):
     def __init__(self, label=None, **kw):
         """
         The first argument is the optional `label`,
         other arguments should be specified as keywords and can be 
         any of the existing class attributes.
         """
-        #~ if url_action_name is not None:
-            #~ if not isinstance(url_action_name,basestring):
-                #~ raise Exception("%s name %r is not a string" % (self.__class__,url_action_name))
-            #~ self.url_action_name = url_action_name
         if label is not None:
             self.label = label
 
@@ -629,10 +622,10 @@ class Action(Parametrizable, Permittable):
         setup_params_choosers(self.__class__)
 
     def attach_to_actor(self, actor, name):
-        """
-        Called once per Actor per Action on startup before a BoundAction 
-        instance is being created.
-        If this returns False, then the action won't be attached to the given actor.
+        """Called once per Actor per Action on startup before a BoundAction
+        instance is being created.  If this returns False, then the
+        action won't be attached to the given actor.
+
         """
         if not actor.editable and not self.readonly:
             return False
@@ -1245,10 +1238,11 @@ def action(*args, **kw):
     :attr:`help_text <Action.help_text>` and
     :attr:`required <Action.required>`.
     
-    The decorated function must return a `dict` which allowed 
-    keys are defined in :attr:`lino.ui.base.ACTION_RESPONSES`.
+    The decorated function will be installed as the actions's
+    `run_from_ui` method.
     """
     def decorator(fn):
+        # print 20140422, fn.__name__
         kw.setdefault('custom_handler', True)
         #~ kw.setdefault('show_in_row_actions',True)
         a = Action(*args, **kw)

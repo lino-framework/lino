@@ -85,8 +85,9 @@ Checkin after midnight and without thorough testing. But
 
 TODO:
 
-During testing I discovered a bug which was already there for some time:
-the "Must read eID card" action link in `newcomers.NewClients` doesn't work. It causes an :ref:`ise`::
+During testing I discovered a bug which was already there for some
+time: the "Must read eID card" action link in `newcomers.NewClients`
+doesn't work. It causes an :ref:`ise`::
 
   ParameterStore of LayoutHandle for ParamsLayout on pcsw.Clients expected a list of 12 values, but got [u'21.03.2014', u'false', u'false', u'']
 

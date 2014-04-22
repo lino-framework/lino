@@ -96,6 +96,12 @@ class BaseRequest(object):
     :meth:`login <lino.site.Site.login>`.
 
     """
+    # Some of the following are needed e.g. for polls tutorial
+    actor = None
+    action_param_values = None
+    param_values = None
+    bound_action = None
+
     renderer = None
     selected_rows = []
     content_type = 'application/json'
@@ -491,6 +497,12 @@ class BaseRequest(object):
             obj, self, a, *args, **kw)
 
     def instance_action_button(self, ai, *args, **kw):
+        """Return an HTML element with a button (or a button-like href) which,
+        when clicked, will run the given instance action ``ai``.
+        ``ai`` must be an instance of :class:`InstanceAction
+        <lino.core.actions.InstanceAction>`.
+
+        """
         return self.renderer.row_action_button(
             ai.instance, self, ai.bound_action, *args, **kw)
 
@@ -747,7 +759,6 @@ class ActionRequest(ActorRequest):
     offset = None
     limit = None
     order_by = None
-    action_param_values = None
 
     def __init__(self, actor=None,
                  request=None, action=None, renderer=None,

@@ -1,0 +1,34 @@
+=======================
+Tuesday, April 22, 2014
+=======================
+
+
+"Must read eID card" action in `newcomers.NewClients` 
+------------------------------------------------------
+
+Fixed the bug (discovered yesterday) on the "Must read eID card"
+action link in `newcomers.NewClients`.
+
+This was indeed because the action is being called using pcsw/Clients
+instead of pcsw/NewClients as URI.
+
+The action link is generated (by the `eid_info` virtual field defined
+on :class:`BeIdCardHolder <lino.modlib.beid.mixins.BeIdCardHolder>`)
+using the following code::
+
+  msg = _("Must read eID card!")
+  ar.instance_action_button(self.read_beid, msg, icon_name=None)
+
+The culprit was
+:meth:`lino.modlib.extjs.ext_renderer.ExtRenderer.action_call_on_instance`
+who ignored that `ba.actor` may differ from `ar.actor` when defined on
+a different actor.
+
+
+global name 'Answers' is not defined
+------------------------------------
+
+Also fixed a bug which caused an :ref:`ise` "global name 'Answers' is
+not defined" in :ref:`polly` when a Response was being displayed.
+Note that :ref:`polly` is still not usable after adding support for
+multiple choices.  The `select_by_response` action doesn't yet work.
