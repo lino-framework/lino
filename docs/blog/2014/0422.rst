@@ -60,3 +60,16 @@ Added test cases in :ref:`welfare.tested.pcsw`.
 Started to try to get the welfare test suite repaired.  But after some
 hours I decided that for the moment this would be inefficient because
 many tests are still going to change.
+
+Multiple addresses per Client
+-----------------------------
+
+Started to work on the next item of :doc:`/tickets/93`: 
+multiple client addresses.
+
+It is the first time that we want SubmitInsert to *not* switch to
+detail window.
+
+It seems that we need a concept of "edit mode", that is, a new url
+parameter to add to the AJAX call, so that the action can know whether
+it was called from a grid or from a detail.

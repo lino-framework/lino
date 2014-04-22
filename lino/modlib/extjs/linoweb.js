@@ -1831,12 +1831,12 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
           var ww = Lino.calling_window();
           if (ww && ww.window.main_item instanceof Lino.FormPanel 
                  && ww.window.main_item.ls_url == panel.ls_url) {
-              console.log("20120217 case 1");
+              // console.log("20120217 case 1");
               ww.status.record_id = result.record_id;
               ww.status.data_record = result.data_record;
               Lino.close_window();
           } else if (panel.ls_detail_handler) {
-              console.log("20120217 case 2");
+              // console.log("20120217 case 2");
               Lino.kill_current_window();
               panel.ls_detail_handler.run(null,{
                   record_id:result.record_id,
@@ -1844,7 +1844,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
                   base_params:panel.get_base_params()
               });
           } else {
-              console.log("Case 3");
+              // console.log("Case 3");
           //     Lino.close_window();
           }
 
