@@ -11,60 +11,34 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
-"""
-The :xfile:`models` module for :mod:`lino.modlib.polls`.
+"""The :xfile:`models` module for :mod:`lino.modlib.polls`.
 
-A Poll is a collection of Questions
-A Question is a question text and a ChoiceSet.
-A ChoiceSet is a stored ordered set of possible Choices.
-A Response is when a User answers to a Poll. 
-A Response is a set of Answers, one Answer for each Question of the Poll.
+A Poll is a collection of Questions. Each Question has a question text
+and a ChoiceSet.  A ChoiceSet is a stored ordered set of possible
+Choices.  A Response is when a User answers to a Poll.  A Response
+contains a set of AnswerChoices, each of with represents a given
+Choice selected by that User for a given Question of the Poll.  If the
+Question is multiple choice, then there may be more than one
+AnswerChoice per Question.  A Response also contains a set of
+AnswerRemarks, each of with represents a remark written by that
+User for a given Question of the Poll.
 
-An Answer is when a given User selects a given Choice for a given Question
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-import sys
-import cgi
-import datetime
-
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
-
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
-
-
-#~ from lino import tools
-from lino import dd
-#~ from lino import reports
-#~ from lino import layouts
-#~ from lino.utils import perms
-from lino.utils.restify import restify
-from lino.utils import join_elems
-#~ from lino.utils import printable
-from lino import mixins
 from django.conf import settings
-from lino.utils.xmlgen.html import E
+from django.utils.translation import ugettext_lazy as _
 
-#~ from lino import choices_method, simple_choices_method
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.outbox import models as outbox
-#~ from lino.modlib.postings import models as postings
+from lino import dd
+from lino.utils import join_elems
+
+from lino.utils.xmlgen.html import E
 
 
 from lino.modlib.polls import Plugin
-
-outbox = dd.resolve_app('outbox')
-postings = dd.resolve_app('postings')
-contacts = dd.resolve_app('contacts')
-
 
 #~ def NullBooleanField(*args,**kw):
     #~ kw.setdefault('default',False)
@@ -145,7 +119,6 @@ class Choice(dd.BabelNamed, dd.Sequenced):
         mi = ar.master_instance
         if isinstance(mi, Response):
             AnswerChoice(response=mi, choice=self).save()
-            
 
 
 class Choices(dd.Table):
@@ -154,6 +127,7 @@ class Choices(dd.Table):
 
 class ChoicesBySet(Choices):
     master_key = 'choiceset'
+
 
 class Poll(dd.UserAuthored, dd.CreatedModified):
 
@@ -332,8 +306,8 @@ class Responses(dd.Table):
     remark
     """
     insert_layout = """
-    user 
-    poll 
+    user
+    poll
     """
 
     @classmethod

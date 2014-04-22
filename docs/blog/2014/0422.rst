@@ -28,7 +28,28 @@ a different actor.
 global name 'Answers' is not defined
 ------------------------------------
 
-Also fixed a bug which caused an :ref:`ise` "global name 'Answers' is
-not defined" in :ref:`polly` when a Response was being displayed.
-Note that :ref:`polly` is still not usable after adding support for
-multiple choices.  The `select_by_response` action doesn't yet work.
+Also fixed a bug in :mod:`lino.modlib.polls` which caused an
+:ref:`ise` "global name 'Answers' is not defined" in :ref:`polly` when
+a Response was being displayed.  Note that :ref:`polly` is still not
+usable after adding support for multiple choices.  The
+`select_by_response` action doesn't yet work.
+
+Preventing duplicate person records
+-----------------------------------
+
+Cool: Yesterday I just used a dummy example of a possible callback
+confirmation: "Is that true? Your name is 'Foo'?" Now I wrote the real
+action. And it was really easy::
+
+    qs = dedupe.SimilarPersons.find_similar_instances(obj)
+    if qs.count() > 0:
+        msg = _(
+            "There are %d clients with similar name:") % qs.count()
+        for other in qs[:4]:
+            msg += '<br/>' + unicode(other)
+        msg += '<br/>' + _("Are you sure you want to create a new "
+                           "client named %s?") % obj.get_full_name()
+        ar.confirm(ok, msg)
+
+Note: I also optimized a bit in our
+:meth:`find_similar_instances <lino.modlib.dedupe.models.SimilarPersons.find_similar_instances>` method, which continues to be rather simplistic.

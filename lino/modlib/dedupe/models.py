@@ -14,8 +14,10 @@
 
 """Defines a virtual table SimilarPersons.
 
-Current implementation is very primitive: same last_name and same
-first letter of first_name.
+Current implementation is rather primitive.
+
+>>> from lino.runtime import contacts
+>>> contacts.Person()
 
 We plan to add another table with NYSIIS or SOUNDEX strings.
 
@@ -31,8 +33,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from django.db import models
-from django.conf import settings
+from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -91,17 +92,16 @@ class SimilarPersons(dd.VirtualTable):
     
     @classmethod
     def find_similar_instances(self, obj):
-        flt = models.Q()
-        for w in self.get_words(obj):
-            flt |= models.Q(last_name__icontains=w)
-            flt |= models.Q(first_name__icontains=w)
-        # model = self.get_target_model(obj)
+        """This is Lino's default algorithm for finding similar humans in a
+        database. It is rather simplistic. To become more smart, we
+        might add helper fields with soundex copies of the names.
+
+        """
         qs = contacts.Person.objects.exclude(pk=obj.pk)
-        return qs.filter(flt)
-        # v = obj.first_name[:2]
-        # return qs.filter(
-        #     last_name__icontains=obj.last_name,
-        #     first_name__istartswith=v)
+        for w in self.get_words(obj):
+            flt = Q(last_name__icontains=w) | Q(first_name__icontains=w)
+            qs = qs.filter(flt)
+        return qs
 
     @dd.displayfield(_("Other"))
     def other(self, obj, ar):
