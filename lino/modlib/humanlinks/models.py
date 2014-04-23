@@ -127,16 +127,12 @@ class Link(dd.Human, dd.Born):
     # def birth_date(self, ar):
     #     return self.child.birth_date
 
-    def child_changed(self, ar):
+    def full_clean(self):
         """Copy data fields from child"""
         obj = self.child
         if obj is not None:
             for k in ('first_name', 'last_name', 'gender', 'birth_date'):
-                if not getattr(self, k):
-                    setattr(self, k, getattr(obj, k))
-
-    # def full_clean(self):
-    #     super(Link, self).full_clean()
+                setattr(self, k, getattr(obj, k))
 
 
 class Links(dd.Table):
