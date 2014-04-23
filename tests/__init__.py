@@ -90,7 +90,7 @@ class UtilsTests(LinoTestCase):
         lino/utils/instantiator.py
         lino/utils/__init__.py
         lino/modlib/cal/utils.py
-        lino/modlib/sepa/utils.py
+        lino/modlib/iban/utils.py
         """)
 
     # def test_01(self): self.run_simple_doctests('lino/utils/__init__.py')

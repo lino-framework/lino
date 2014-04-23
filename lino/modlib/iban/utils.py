@@ -37,6 +37,10 @@ Traceback (most recent call last):
 ...
 ValidationError: [u'Belgian NBAN ends with 83 (expected 84)!']
 
+
+This is also used by :mod:`lino.modlib.sepa`.
+
+
 See also:
 
 - http://fr.wikipedia.org/wiki/ISO_13616#Composition
@@ -970,9 +974,6 @@ more reliable because maintained by `an expert <http://www.ebcs.be>`_.
     """
     s = client().service.BBANtoIBANandBIC(s)
     return s.split('#')
-
-
-
 
 
 def _test():

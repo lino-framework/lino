@@ -58,6 +58,12 @@ and
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
+lino.core
+lino.history
+lino.modlib
+lino.modlib.auto
+lino.modlib.auto.sales
+lino.modlib.attestations
 lino.modlib.beid
 lino.modlib.cal
 lino.modlib.cal.fixtures
@@ -68,16 +74,10 @@ lino.modlib.cal.workflows
 lino.modlib.dedupe
 lino.modlib.extensible
 lino.modlib.extjs
-lino.modlib.plain
+lino.modlib.iban
 lino.modlib.eid_jslib
 lino.modlib.eid_jslib.beid
 lino.modlib.importfilters
-lino.core
-lino.history
-lino.modlib
-lino.modlib.auto
-lino.modlib.auto.sales
-lino.modlib.attestations
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.countries
@@ -97,6 +97,7 @@ lino.modlib.lists
 lino.modlib.links.tests
 lino.modlib.notes
 lino.modlib.notes.fixtures
+lino.modlib.plain
 lino.modlib.products
 lino.modlib.products.fixtures
 lino.modlib.projects

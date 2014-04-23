@@ -94,6 +94,8 @@ class Site(Site):
         yield 'lino.modlib.accounts'
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
+        yield 'lino.modlib.iban'
+        yield 'lino.modlib.sepa'
         #~ yield 'lino.modlib.sales'
         yield 'lino.modlib.auto.sales'
         #~ 'lino.modlib.projects',

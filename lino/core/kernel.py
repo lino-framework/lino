@@ -411,14 +411,13 @@ class Kernel(object):
 
         self.on_each_app('site_setup')
 
-        """
-        Actor.after_site_setup() is called after the apps' site_setup().
-        Example: pcsw.site_setup() adds a detail to properties.Properties, 
-        the base class for properties.PropsByGroup. 
-        The latter would not 
-        install a `detail_action` during her after_site_setup() 
-        and also would never get it later.
-        """
+        # Actor.after_site_setup() is called after the apps'
+        # site_setup().  Example: pcsw.site_setup() adds a detail to
+        # properties.Properties, the base class for
+        # properties.PropsByGroup.  The latter would not install a
+        # `detail_action` during her after_site_setup() and also would
+        # never get it later.
+
         for a in actors.actors_list:
             a.after_site_setup(self)
 

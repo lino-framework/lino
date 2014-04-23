@@ -17,6 +17,8 @@
 
 Defines the :class:`EventType` and :class:`Event` models and their tables.
 
+There are some test cases in :mod:`lino.tutorials.mini.tests`
+
 """
 
 from __future__ import unicode_literals
@@ -32,9 +34,32 @@ from lino import dd
 config = dd.apps.sepa
 
 from ..iban.fields import IBANField, BICField
+from ..iban.utils import belgian_nban_to_iban_bic, iban2bic
 
 
-class Account(dd.Model):
+class IbanBicHolder(dd.Model):
+
+    class Meta:
+        abstract = True
+
+    iban = IBANField(_("IBAN"))
+    bic = BICField(_("BIC"), blank=True)
+
+    def full_clean(self):
+        if self.iban and not self.bic:
+            if self.iban[0].isdigit():
+                iban, bic = belgian_nban_to_iban_bic(self.iban)
+                self.bic = bic
+                self.iban = iban
+            else:
+                self.bic = iban2bic(self.iban) or ''
+
+
+class Account(IbanBicHolder):
+    """A bank account related to a given :class:`Partner
+<lino.modlib.contacts.models.Partner>`.
+
+    """
     class Meta:
         abstract = dd.is_abstract_model('sepa.Account')
         verbose_name = _("Account")
@@ -43,8 +68,6 @@ class Account(dd.Model):
     partner = dd.ForeignKey(
         'contacts.Partner',
         related_name='sepa_accounts')
-    iban = IBANField(_("IBAN"))
-    bic = BICField(_("BIC"), blank=True)
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 
     primary = models.BooleanField(
@@ -81,7 +104,7 @@ class Accounts(dd.Table):
 
 class AccountsByPartner(Accounts):
     master_key = 'partner'
-    column_names = 'iban bic managed'
+    column_names = 'iban bic remark'
     order_by = ['iban']
     auto_fit_column_widths = True
 

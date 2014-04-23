@@ -11,12 +11,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-The :xfile:`models.py` module for :mod:`lino.modlib.changes`.
+"""The :xfile:`models.py` module for :mod:`lino.modlib.changes`.
 
-It defines the :class:`Change` model
-and the :func:`watch_changes` function.
-It also adds a menu entry to the `Explorer` menu.
+It defines the :class:`Change` model and the :func:`watch_changes`
+function.  It also adds a menu entry to the `Explorer` menu.
 
 See also :ref:`lino.tutorial.watch`.
 
@@ -36,7 +34,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino.core import fields
-from lino.utils.choosers import chooser
 
 from lino.core.signals import pre_ui_delete, pre_ui_create, pre_ui_update
 from lino.core.signals import pre_merge
@@ -100,7 +97,8 @@ class Change(dd.Model):
 
 
 class Changes(dd.Table):
-    param_object_type = models.ForeignKey(ContentType, verbose_name=_("Object type"), blank=True)
+    param_object_type = models.ForeignKey(
+        ContentType, verbose_name=_("Object type"), blank=True)
     parameters = {
         'change_type': ChangeTypes.field(force_selection=False, blank=True),
         'date': models.DateField(_("Only changes from"), blank=True),

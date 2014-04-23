@@ -49,6 +49,8 @@ from lino.modlib.countries.models import CountryRegionCity
 from lino.modlib.contacts import Plugin
 
 from lino.utils import mti
+from lino.utils.xmlgen.html import E
+from lino.utils import join_elems
 
 
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
@@ -297,6 +299,20 @@ but e.g. :class:`PersonMixin` overrides this.
     def get_partner_instance(self):
         return self  # compatibility with lino.modlib.partners
 
+    @dd.displayfield()
+    def overview(self, ar):
+        return self.get_overview_elems(ar)
+
+    def get_overview_elems(self, ar):
+        elems = [E.b(self.name), E.br()]
+        elems += join_elems(list(self.address_location_lines()), sep=E.br)
+        elems = [
+            E.div(*elems,
+                  style="font-size:18px;font-weigth:bold;"
+                  "vertical-align:bottom;text-align:middle")]
+
+        return elems
+
 
 class PartnerDetail(dd.FormLayout):
 
@@ -328,11 +344,6 @@ class PartnerDetail(dd.FormLayout):
 
     name_box = "name"
     info_box = "id language"
-
-
-    #~ def setup_handle(self,dh):
-        #~ dh.address_box.label = _("Address")
-        #~ dh.contact_box.label = _("Contact")
 
 
 class Partners(dd.Table):
@@ -378,21 +389,23 @@ class PersonMixin(mixins.Human):
     class Meta:
         abstract = True
 
-    title = models.CharField(max_length=200, blank=True,
-                             verbose_name=_('Title'),
-                             help_text=_("Text to print before first_name as part of the first address line."))
+    title = models.CharField(
+        max_length=200, blank=True,
+        verbose_name=_('Title'),
+        help_text=_(
+            "Text to print before allocation and name as part "
+            "of the first address line."))
 
 
 class Person(PersonMixin, Partner):
 
     """
-    Mixin for models that represent a physical person. 
-    
+    Mixin for models that represent a physical person.
+
     See :ref:`lino.tutorial.human`.
 
     """
     class Meta:
-        #~ abstract = True
         abstract = settings.SITE.is_abstract_model('contacts.Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
@@ -407,40 +420,39 @@ class Person(PersonMixin, Partner):
         #~ yield  " ".join(l)
 
     def full_clean(self, *args, **kw):
-    #~ def save(self,*args,**kw):
-        """
-        Set the `name` field of this person. 
-        This field is visible in the Partner's detail but not 
-        in the Person's detail and serves for sorting 
-        when selecting a Partner. 
-        It also serves for quick search on Persons.
+        """Set the `name` field of this person.  This field is visible in the
+        Partner's detail but not in the Person's detail and serves for
+        sorting when selecting a Partner.  It also serves for quick
+        search on Persons.
+
         """
         self.name = join_words(self.last_name, self.first_name)
         super(Person, self).full_clean(*args, **kw)
 
+    def get_overview_elems(self, ar):
+        elems = [self.get_salutation(nominative=True), E.br()]
+        elems += [self.first_name, ' ',
+                  E.b(self.last_name),
+                  E.br()]
+        elems += join_elems(list(self.address_location_lines()), sep=E.br)
+        elems = [
+            E.div(*elems,
+                  style="font-size:18px;font-weigth:bold;"
+                  "vertical-align:bottom;text-align:middle")]
+
+        # elems.append(E.br())
+        # elems.append(self.eid_info(ar))
+        # elems = [E.div(*elems)]
+        return elems
 
 
 class PersonDetail(PartnerDetail):
 
-    #~ main = """
-    #~ address_box contact_box
-    #~ bottom_box contacts.RolesByPerson
-    #~ """
-
     name_box = "last_name first_name:15 gender title:10"
-    #~ info_box = "id:5 language:10 birth_date:10"
     info_box = "id:5 language:10"
-
     bottom_box = "remarks contacts.RolesByPerson"
 
 
-    #~ def setup_handle(self,dh):
-        #~ PartnerDetail.setup_handle(self,dh)
-        #~ dh.address_box.label = _("Address")
-        #~ dh.contact_box.label = _("Contact")
-
-
-#~ class Persons(dd.Table):
 class Persons(Partners):
 
     """
@@ -449,7 +461,9 @@ class Persons(Partners):
     #~ required = dict(user_level='user')
     model = "contacts.Person"
     order_by = ["last_name", "first_name", "id"]
-    column_names = "name_column:20 address_column email phone:10 gsm:10 id language:10 *"
+    column_names = (
+        "name_column:20 address_column email "
+        "phone:10 gsm:10 id language:10 *")
     detail_layout = PersonDetail()
 
     insert_layout = dd.FormLayout("""
@@ -486,6 +500,19 @@ class Company(Partner):
         return join_words(self.prefix, self.name)
     full_name = property(get_full_name)
 
+    def get_overview_elems(self, ar):
+        elems = []
+        if self.prefix:
+            elems += [self.prefix, ' ']
+        elems += [E.b(self.name), E.br()]
+        elems += join_elems(list(self.address_location_lines()), sep=E.br)
+        elems = [
+            E.div(*elems,
+                  style="font-size:18px;font-weigth:bold;"
+                  "vertical-align:bottom;text-align:middle")]
+
+        return elems
+
 
 class CompanyDetail(PartnerDetail):
 
@@ -493,9 +520,7 @@ class CompanyDetail(PartnerDetail):
     remarks contacts.RolesByCompany
     """
 
-    name_box = "prefix:10 name type:20"
-    #~ name_box = """prefix name type:20"""
-    #~ info_box = "id:5 language:10 vat_id:12"
+    name_box = "prefix:10 name type:30"
 
 
 class Companies(Partners):

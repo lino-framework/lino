@@ -12,14 +12,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This module contains some relatively quick tests 
-that don't load any fixtures.
+"""NO LONGER USED.
+
+This module contains some relatively quick tests that don't load any
+fixtures.
 
 To run only this test::
 
   manage.py test contacts.QuickTest
-  
+
 """
 
 from __future__ import unicode_literals
@@ -58,6 +59,7 @@ class QuickTest(RemoteAuthTestCase):
         Tests some basic funtionality.
         """
         #~ self.assertEqual(settings.MIDDLEWARE_CLASSES,1)
+        self.assertEqual(1+1, 1)
 
         ee = create_and_get('countries.Country',
                             isocode='EE', **babelkw('name',
