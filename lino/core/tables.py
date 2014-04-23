@@ -839,16 +839,16 @@ class AbstractTable(actors.Actor):
 
     """
     variable_row_height = False
-    """
-    Set this to True if you want to have 
-    each row to get the height that it needs. 
+    """Set this to True if you want each row to get the height that it
+    needs.
+
     """
 
     auto_fit_column_widths = False
-    """
-    Set this to True if you want to have 
-    the column widths adjusted to always fill the available width.
-    This implies that there will be no horizontal scrollbar.
+    """Set this to True if you want to have the column widths adjusted to
+    always fill the available width.  This implies that there will be
+    no horizontal scrollbar.
+
     """
 
     hidden_columns = frozenset()

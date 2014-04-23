@@ -13,3 +13,6 @@ Bank accounts by partner. Worked on
 :mod:`lino_welfare.modlib.sepa`.
 Moved some functionality into a separate new module
 :mod:`lino.modlib.iban`.
+
+
+Fixed a problem in :mod:`north.dpy`: 

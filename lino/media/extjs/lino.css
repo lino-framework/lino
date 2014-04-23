@@ -17,9 +17,10 @@
 http://stackoverflow.com/questions/2106104/word-wrap-grid-cells-in-ext-js 
 e.g. welfare.jobs.NewJobsOverview needs
 */
-/* 
+
+/*
 .x-grid3-cell-inner {
-  /* white-space: normal; changed from nowrap 
+  // white-space: normal; changed from nowrap
   height:18px; 
   overflow:hidden;
 }

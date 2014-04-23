@@ -495,12 +495,6 @@ class Actor(actions.Parametrizable):
     The icon_name to be used for a ShowSlaveTable action on this actor.
     """
 
-    #~ icon_file = None
-    #~ """
-    #~ The icon_file to be used for a ShowSlaveTable action on this actor.
-    #~ """
-    #~
-
     hidden_elements = frozenset()
 
     @classmethod
@@ -539,8 +533,7 @@ class Actor(actions.Parametrizable):
     """
 
     get_row_classes = None
-    """
-    If not None, this must be a class method which takes a table row
+    """If not None, this must be a class method which takes a table row
     and an ActionRequest and returns either None or a string 
     "red", "green" or "blue" (todo: add more colors 
     and styles). Example::
@@ -550,26 +543,22 @@ class Actor(actions.Parametrizable):
             if obj.client_state == pcsw.ClientStates.newcomer:
                 return 'green'
     
-    It will cause an additional special field RowClassStoreField
-    
+    Defining this method will cause an additional special field
+    RowClassStoreField
+
     """
 
     app_label = None
-    """
-    Specify this if you want to "override" an existing actor.
+    """Specify this if you want to "override" an existing actor.
     
-    The default value is deduced from the module where the 
-    subclass is defined.
+    The default value is deduced from the module where the subclass is
+    defined.
     
     Note that this attribute is not inherited from base classes.
     
     :func:`lino.core.table.table_factory` also uses this.
+
     """
-
-    #~ related_name = None
-    #~ """
-
-    #~ """
 
     window_size = None
     """
@@ -581,25 +570,22 @@ class Actor(actions.Parametrizable):
     default_elem_action_name = 'detail'
 
     debug_permissions = False
-    """
-    When this is `True`, Lino logs an ``info`` message each time a permission handler 
-    for an action on this actor is called. 
-    Not to be used on a production site but useful for debugging.
+    """When this is `True`, Lino logs an ``info`` message each time a
+    permission handler for an action on this actor is called.  Not to
+    be used on a production site but useful for debugging.
+
     """
 
-    #~ required = dict()
     required = get_default_required()
 
-    # ~ required = dict(auth=True) # 20121116
-
-    #~ create_required = dict()
     update_required = dict()
     delete_required = dict()
 
     master_key = None
-    """
-    The name of the ForeignKey field of this Table's model that points to it's master.
-    Setting this will turn the report into a slave report.
+    """The name of the ForeignKey field of this Table's model that points
+    to it's master.  Setting this will turn the report into a slave
+    report.
+
     """
 
     master = None
@@ -614,20 +600,18 @@ class Actor(actions.Parametrizable):
     """
 
     editable = None
-    """
-    Set this explicitly to True or False to make the 
-    Actor per se editable or not.
-    Otherwise it will be set to `False` if the Actor 
+    """Set this explicitly to True or False to make the Actor per se
+    editable or not.  Otherwise it will be set to `False` if the Actor
     is a Table and has a `get_data_rows` method.
     
-    Non-editable actors won't even call `get_view_permission` 
-    for actions which are not readonly.
+    Non-editable actors won't even call `get_view_permission` for
+    actions which are not readonly.
     
-    The :class:`lino.models.Changes` table is an example where this is being used: 
-    nobody should ever edit something in the table of Changes. 
-    The user interface uses this to generate optimized JS code for this case.
-    
-    
+    The :class:`lino.models.Changes` table is an example where this is
+    being used: nobody should ever edit something in the table of
+    Changes.  The user interface uses this to generate optimized JS
+    code for this case.
+
     """
 
     hide_sums = False
@@ -636,21 +620,21 @@ class Actor(actions.Parametrizable):
     """
 
     insert_layout_width = 60
-    """
-    When specifying an :attr:`insert_layout` using a simple a multline 
+    """When specifying an :attr:`insert_layout` using a simple a multline
     string, then Lino will instantiate a FormPanel with this width.
+
     """
 
     workflow_state_field = None
-    """
-    The name of the field that contains the workflow state of an object.
-    Subclasses may override this.
+    """The name of the field that contains the workflow state of an
+    object.  Subclasses may override this.
+
     """
 
     workflow_owner_field = None
-    """
-    The name of the field that contains the user who is 
-    considered to own an object when `Rule.owned_only` is checked.
+    """The name of the field that contains the user who is considered to
+    own an object when `Rule.owned_only` is checked.
+
     """
 
     @classmethod
@@ -668,10 +652,6 @@ class Actor(actions.Parametrizable):
         """
         return None
 
-    #~ @classmethod
-    #~ def get_default_table(cls):
-        #~ "For InstanceAction "
-        #~ return cls
     @classmethod
     def disabled_fields(cls, obj, ar):
         """
@@ -701,11 +681,6 @@ class Actor(actions.Parametrizable):
         """
         return set()
 
-    #~ disable_editing = None
-    #~ """
-    #~ Return `True` if the record as a whole should be read-only.
-    #~ Same remarks as for :attr:`disabled_fields`.
-    #~ """
     active_fields = []
     """A list of field names that are "active" (cause a save and
     refresh of a Detail or Insert form).
@@ -723,16 +698,16 @@ class Actor(actions.Parametrizable):
     """
 
     hide_top_toolbar = False
-    """
-    Whether a Detail Window should have navigation buttons, 
-    a "New" and a "Delete" buttons.
-    In ExtJS UI also influences the title of a Detail Window to specify only 
-    the current element without prefixing the Tables's title.
+    """Whether a Detail Window should have navigation buttons, a "New"
+    and a "Delete" buttons.  In ExtJS UI also influences the title of
+    a Detail Window to specify only the current element without
+    prefixing the Tables's title.
     
     This option is True in 
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
     :class:`lino.modlib.users.models.Mysettings`.
+
     """
 
     _label = None
@@ -747,27 +722,24 @@ class Actor(actions.Parametrizable):
     """
 
     label = None
-    """
-    The text to appear e.g. on a button that will call 
-    the default action of an actor.
-    This attribute is *not* inherited to subclasses.
-    For :class:`lino.core.table.Table` subclasses
-    that don't have a label, 
-    Lino will call 
-    :meth:`get_actor_label <lino.core.table.Table.get_actor_label>`.
+    """The text to appear e.g. on a button that will call the default
+    action of an actor.  This attribute is *not* inherited to
+    subclasses.  For :class:`lino.core.table.Table` subclasses that
+    don't have a label, Lino will call :meth:`get_actor_label
+    <lino.core.table.Table.get_actor_label>`.
+
     """
 
-    #~ actions = []
     default_action = None
     actor_id = None
 
     detail_layout = None
-
     insert_layout = None
-    # deprecated: use detail_layout with a string value instead
+
     detail_template = None
     # deprecated: use insert_layout with a string value instead
     insert_template = None
+    # deprecated: use detail_layout with a string value instead
 
     help_text = None
 
@@ -783,10 +755,10 @@ class Actor(actions.Parametrizable):
     "For internal use"
 
     get_handle_name = None
-    """
-    Most actors use the same UI handle for each request. 
-    But e.g. debts.PrintEntriesByBudget overrides this to 
-    implement dynamic columns depending on it's master_instance.
+    """Most actors use the same UI handle for each request.  But
+    e.g. debts.PrintEntriesByBudget overrides this to implement
+    dynamic columns depending on it's master_instance.
+
     """
 
     @classmethod
@@ -805,9 +777,10 @@ class Actor(actions.Parametrizable):
         return actions.make_params_layout_handle(self, ui)
 
     abstract = False
-    """
-    Set this to True to prevent Lino from generating useless JavaScript 
-    if this is just an abstract base class to be inherited by other actors.
+    """Set this to True to prevent Lino from generating useless
+    JavaScript if this is just an abstract base class to be inherited
+    by other actors.
+
     """
 
     @classmethod
@@ -1108,42 +1081,17 @@ class Actor(actions.Parametrizable):
         self._actions_list.append(ba)
         return ba
 
-    #~ @classmethod
-    #~ def unbind_action(self,k):
-        #~ self._actions_dict.pop(k,None)
-        #~ self._actions_list = [ba for ba in self._actions_list if ba.action.action_name != k]
-        #~ logger.info("20130820 unbind_action %s",self._actions_list)
-
-    #~ @classmethod
-    #~ def get_row_actions(self,ar,obj):
-        #~ state = self.get_row_state(obj)
-        #~ profile = ar.get_user().profile
-        #~ for ba in self.get_actions(ar.bound_action.action):
-            #~ if ba.action.show_in_row_actions:
-                    #~ if ba.get_view_permission(profile):
-                        #~ if self.get_row_permission(obj,ar,state,ba):
-                            #~ yield ba
-
     @classmethod
     def get_workflow_actions(self, ar, obj):
         """
         Return the actions to be displayed in a `workflow_buttons` field.
         """
         state = self.get_row_state(obj)
-        #~ logger.info("20130424 get_workflow_actions() for %s (state is %s)",
-            #~ obj,state)
-        #~ u = ar.get_user()
-
-        #~ for ba in self.get_actions(ar.bound_action.action):
         for ba in self.get_actions():
             if ba.action.show_in_workflow:
                 #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj, ar, state, ba):
                     yield ba
-                #~ else:
-                    #~ logger.info('20130424 [%s] is not allowed for %s',ba,ar.get_user())
-            #~ else:
-                #~ logger.info('20130424 [%s] has not show_in_workflow', ba)
 
     @classmethod
     def get_label(self):
@@ -1170,14 +1118,14 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_title(self, ar):
-        """
-        Return the title of this Table for the given request `ar`.
-        Override this if your Table's title should mention for example filter conditions.
-        See also :meth:`lino.core.dbtables.Table.get_title`.
+        """Return the title of this Table for the given request `ar`.
+        Override this if your Table's title should mention for example
+        filter conditions.  See also
+        :meth:`lino.core.dbtables.Table.get_title`.
+
         """
         # NOTE: similar code in dbtables
         title = self.get_title_base(ar)
-        #~ title = self.title or self.label
         tags = list(self.get_title_tags(ar))
         if len(tags):
             title += " (%s)" % (', '.join(tags))
