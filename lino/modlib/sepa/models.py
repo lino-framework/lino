@@ -24,65 +24,14 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
-
-from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
 from lino import dd
 
-from django_iban import fields as iban_fields
-
-from lino.ui.elems import CharFieldElement
-
 config = dd.apps.sepa
 
-config.site_js_snippets = ['sepa/uppercasetextfield.js']
-
-# class UppercaseFieldElement(CharFieldElement):
-#     def get_field_options(self, **kw):
-#         kw = super(UppercaseFieldElement, self).get_field_options(**kw)
-#         kw.update(style='text-transform:uppercase;')
-#         return kw
-
-
-class UppercaseTextFieldElement(CharFieldElement):
-    """A CharFieldElement which accepts only upper-case characters.
-    """
-    value_template = "new Lino.UppercaseTextField(%s)"
-
-
-class UppercaseTextField(models.CharField, dd.CustomField):
-    """A custom CharField that accepts only uppercase caracters."""
-    def create_layout_elem(self, *args, **kw):
-        return UppercaseTextFieldElement(*args, **kw)
-
-    def to_python(self, value):
-        if isinstance(value, basestring):
-            return value.upper()
-
-
-class IBANField(iban_fields.IBANField, UppercaseTextField):
-    pass
-
-
-class SWIFTBICField(iban_fields.SWIFTBICField, UppercaseTextField):
-    pass
-
-
-class AccountTypes(dd.ChoiceList):
-    verbose_name = _("Account type")
-    verbose_name_plural = _("Account types")
-add = AccountTypes.add_item
-
-add("01", _("Giro"), 'giro')
-add("02", _("Savings"), 'savings')
-add("03", _("Deposits"), 'deposits')
-add("04", _("Other"), 'other')
-# Tagesgeldkonto?
+from ..iban.fields import IBANField, BICField
 
 
 class Account(dd.Model):
@@ -91,13 +40,39 @@ class Account(dd.Model):
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
 
-    partner = dd.ForeignKey('contacts.Partner')
-    iban = IBANField()
-    bic = SWIFTBICField()
-    # account_type = dd.ForeignKey('sepa.AccountType')
-    account_type = AccountTypes.field(default=AccountTypes.giro)
-    remark = models.CharField(
-        _("Remark"), max_length=200, blank=True)
+    partner = dd.ForeignKey(
+        'contacts.Partner',
+        related_name='sepa_accounts')
+    iban = IBANField(_("IBAN"))
+    bic = BICField(_("BIC"), blank=True)
+    remark = models.CharField(_("Remark"), max_length=200, blank=True)
+
+    primary = models.BooleanField(
+        _("Primary"),
+        default=False,
+        help_text=_(
+            "Enabling this field will automatically disable any "
+            "previous primary account and update "
+            "the partner's IBAN and BIC"))
+
+    allow_cascaded_delete = ['partner']
+
+    def after_ui_save(self, ar):
+        super(Account, self).after_ui_save(ar)
+        if self.primary:
+            mi = self.partner
+            for o in mi.sepa_accounts.exclude(id=self.id):
+                if o.primary:
+                    o.primary = False
+                    o.save()
+                    ar.set_response(refresh_all=True)
+            watcher = dd.ChangeWatcher(mi)
+            for k in PRIMARY_FIELDS:
+                setattr(mi, k, getattr(self, k))
+            mi.save()
+            watcher.send_update(ar.request)
+
+PRIMARY_FIELDS = dd.fields_list(Account, 'iban bic')
 
 
 class Accounts(dd.Table):
@@ -106,6 +81,11 @@ class Accounts(dd.Table):
 
 class AccountsByPartner(Accounts):
     master_key = 'partner'
-    column_names = 'account_type iban bic managed'
+    column_names = 'iban bic managed'
     order_by = ['iban']
     auto_fit_column_widths = True
+
+
+def setup_explorer_menu(site, ui, profile, m):
+    m = m.add_menu(config.app_label, config.verbose_name)
+    m.add_action('sepa.Accounts')

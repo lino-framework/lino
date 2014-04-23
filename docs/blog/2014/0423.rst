@@ -1,0 +1,16 @@
+=========================
+Wednesday, April 23, 2014
+=========================
+
+The new `edit_mode` request parameter and the `stay_in_grid` actor
+attribute now to work. First use case is `pcsw.AddressesByClient`:
+double-clicking here on the phantom record will show the insert window
+and then **stay in the grid**, i.e. **not** open a detail window on
+the newly created row.
+
+
+Bank accounts per partner. Worked on 
+:mod:`lino.modlib.sepa` and
+:mod:`lino_welfare.modlib.sepa`.
+Moved some functionality into a separate new module
+:mod:`lino.modlib.iban`.

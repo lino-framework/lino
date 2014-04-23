@@ -73,3 +73,10 @@ detail window.
 It seems that we need a concept of "edit mode", that is, a new url
 parameter to add to the AJAX call, so that the action can know whether
 it was called from a grid or from a detail.
+
+Also added new Actor attribute `stay_in_grid`.
+
+Checkin.
+
+TODO: After click on "primary address", Lino now closes the detail
+window and displays that address's detail.

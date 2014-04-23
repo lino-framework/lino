@@ -1035,14 +1035,17 @@ class SubmitDetail(Action):
         return isinstance(caller, ShowDetailAction)
 
     def run_from_ui(self, ar, **kw):
+        logger.info("20140423 SubmitDetail")
         elem = ar.selected_rows[0]
         ar.form2obj_and_save(ar.rqdata, elem, False)
 
         # TODO: in fact we need *either* `rows` (when this was called
         # from a Grid) *or* `data_record` (when this was called from a
         # form).  But how to find out which one is needed?
-        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
-        ar.set_response(data_record=ar.elem2rec_detailed(elem))
+        if ar.edit_mode == constants.EDIT_MODE_GRID:
+            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+        else:
+            ar.set_response(data_record=ar.elem2rec_detailed(elem))
         # return json_response(ar.response)
 
 
@@ -1060,6 +1063,7 @@ class SubmitInsert(SubmitDetail):
         return isinstance(caller, InsertRow)
 
     def run_from_ui(self, ar, **kw):
+        # logger.info("20140423 SubmitInsert")
         elem = ar.create_instance_from_request()
         self.save_new_instance(ar, elem)
 

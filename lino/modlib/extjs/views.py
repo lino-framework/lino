@@ -594,7 +594,6 @@ class ApiElement(View):
         ar = action_request(app_label, actor, request, data, False)
         ar.set_selected_pks(pk)
         ar.renderer = settings.SITE.ui.extjs_renderer
-        logger.info("20140517 %s", ar.bound_action)
         return settings.SITE.ui.run_action(ar)
 
     def delete(self, request, app_label=None, actor=None, pk=None):

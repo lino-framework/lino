@@ -1721,9 +1721,7 @@ Lino.delete_selected = function(panel) {
   });
 };
 
-// 20140417
-
-Lino.action_handler = function (panel,on_success,on_confirm) {
+Lino.action_handler = function (panel, on_success, on_confirm) {
   return function (response) {
       if (!panel) { 
           if (Lino.current_window) 
@@ -3052,7 +3050,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   ,get_base_params : function() {  /* FormPanel */
     // needed for insert_action
     var p = Ext.apply({}, this.base_params);
-    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = {{ext_requests.EDIT_MODE_FORM}};
     Lino.insert_subst_user(p);
     return p;
   }
@@ -3324,6 +3321,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     Ext.apply(p, this.get_base_params());
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
+    if (panel.containing_panel instanceof Lino.GridPanel) {
+        p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_GRID}}';
+    }else{
+        p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_FORM}}';
+    }
     if (rec.phantom) {  // SubmitInsert
       this.form.submit({
         url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url,
@@ -4114,7 +4116,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   }
   ,get_base_params : function() {  /* Lino.GridPanel */
     var p = Ext.apply({}, this.store.baseParams);
-    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = {{ext_requests.EDIT_MODE_GRID}};
     Lino.insert_subst_user(p);
     return p;
   },
@@ -4388,6 +4389,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ var p = e.record.getChanges();
     //~ console.log('20101130 getChanges: ',e.record.getChanges());
     //~ this.before_row_edit(e.record);
+    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_GRID}}';
     for(k in e.record.getChanges()) {
         var v = e.record.get(k);
     //~ for(k in e.record.modified) {

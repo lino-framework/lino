@@ -23,4 +23,5 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
     "Ceci n'est pas une documentation."
-    verbose_name = _("SEPA")
+    verbose_name = _("IBAN")
+    site_js_snippets = ['iban/uppercasetextfield.js']
