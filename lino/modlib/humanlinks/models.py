@@ -168,6 +168,7 @@ class ChildrenByHuman(Links):
     label = _("Dependent persons")
     required = dd.required()
     master_key = 'parent'
+    order_by = ['birth_date']
     column_names = 'type child first_name last_name gender birth_date age'
     #column_names = 'type_as_child:10 child child__birth_date child__age'
     auto_fit_column_widths = True
