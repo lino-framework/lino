@@ -15,4 +15,13 @@ Moved some functionality into a separate new module
 :mod:`lino.modlib.iban`.
 
 
-Fixed a problem in :mod:`north.dpy`: 
+Fixed a problem in :mod:`north.dpy`: new method finalize() now reports
+unresolved rows. Also changed the implementation of `after_load`.
+
+
+Beziehungen aus TIM importieren:
+
+- wrote a script `lino_welfare/scripts/load_plp.py`
+- to be run as follows::
+
+    $ python manage.py run ~/repositories/welfare/lino_welfare/scripts/load_plp.py /mnt/oeshz_home_server/ANWPROG/TIM/CPAS/PLP.DBF

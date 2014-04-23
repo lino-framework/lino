@@ -69,17 +69,27 @@ add('02',
     _("Adoptive father"), _("Adoptive mother"),
     _("Adopted son"), _("Adopted daughter"))
 
-# add('03',
-#     'grand',
-#     _("Grandfather"), _("Grandmother"),
-#     _("Grandson"), _("Granddaughter"))
-
 add('03',
+    'grandparent',
+    _("Grandfather"), _("Grandmother"),
+    _("Grandson"), _("Granddaughter"))
+
+add('05',
+    'partner',
+    _("Husband"), _("Wife"),
+    _("Husband"), _("Wife"))
+
+add('06',
+    'friend',
+    _("Friend"), _("Friend"),
+    _("Friend"), _("Friend"))
+
+add('80',
     'relative',
     _("Relative"), _("Relative"),
     _("Relative"), _("Relative"))
 
-add('04',
+add('90',
     'other',
     _("Other"), _("Other"),
     _("Other"), _("Other"))
