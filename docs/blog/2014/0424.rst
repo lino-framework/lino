@@ -15,3 +15,11 @@ itself! Everything in one place and no need to do anything special in
 order to activate the app. Cool!  Added a new function
 :func:`dd.update_model <lino.core.inject.update_model>` to facilitate
 overriding an existing action.
+
+
+Fixed an :ref:`ise` "
+AttributeError
+type object 'AddressTypes' has no attribute 'eid'"
+which occured when reading an eID card.
+
+:mod:`lino.modlib.beid.mixins`

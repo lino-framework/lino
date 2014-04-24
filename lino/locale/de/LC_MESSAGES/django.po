@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-04-24 11:24+0300\n"
-"PO-Revision-Date: 2014-04-24 11:33+0300\n"
+"PO-Revision-Date: 2014-04-24 15:22+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1226,9 +1226,9 @@ msgid "Click OK to apply the following changes for %s"
 msgstr "OK um die folgenden Änderungen für Klient %s einzulesen"
 
 #: lino/modlib/beid/mixins.py:262
-#, fuzzy, python-format
+#, python-format
 msgid "%s has been saved."
-msgstr "%s wurde aktualisiert."
+msgstr "%s wurde gespeichert."
 
 #: lino/modlib/beid/mixins.py:308
 #, python-format
