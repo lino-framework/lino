@@ -140,9 +140,4 @@ class CheckedSubmitInsert(SubmitInsert):
             ok(ar)
 
 
-# @dd.receiver(dd.pre_analyze)
-# def install_submit_insert(sender, **kw):
-#     sender.modules.contacts.Person._action(
-
 dd.update_model(contacts.Person, submit_insert=CheckedSubmitInsert())
-
