@@ -234,6 +234,19 @@ def inject_action(model_spec, **actions):
     return do_when_prepared(todo, model_spec)
 
 
+def update_model(model_spec, **actions):
+    """
+    Replace the specified attributes in the specified model.q
+    """
+    def todo(model):
+        for k, v in actions.items():
+            if not hasattr(model, k):
+                raise Exception(
+                    "%s has no attribute %s to update." % (model, k))
+            setattr(model, k, v)
+    return do_when_prepared(todo, model_spec)
+
+
 def inject_field(model_spec, name, field, doc=None):
     """
     Add the given field to the given model.

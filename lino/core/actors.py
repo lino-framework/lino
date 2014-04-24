@@ -749,8 +749,6 @@ class Actor(actions.Parametrizable):
     # create_action = None
     delete_action = None
 
-    submit_insert = actions.SubmitInsert()
-
     _handle_class = None
     "For internal use"
 

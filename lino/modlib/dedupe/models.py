@@ -12,13 +12,21 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Defines a virtual table :class:`SimilarPersons`, and overrides the
-`submit_insert` action of `contacts.Person` with a specialized variant
-which checks for duplicate persons.
+"""Overrides the :attr:`submit_insert
+<lino.core.model.Model.submit_insert>` action of `contacts.Person`
+with :class:`CheckedSubmitInsert`, a specialized variant of the
+standard :class:`SubmitInsert <lino.core.actions.SubmitInsert>` that
+checks for duplicate persons and asks a user confirmation when
+necessary.
 
 The current implementation of the detection algorithm is rather
 primitive.  We might one day add another table with NYSIIS or SOUNDEX
 strings.
+
+Also defines a virtual table :class:`SimilarPersons`, which does that
+same check on existing Persons and shows a slave table of persons that
+are "similar" to a given master instance (and therefore are potential
+duplicates).
 
 Examples and test cases in :ref:`welfare.tested.pcsw`.
 
@@ -45,10 +53,7 @@ contacts = dd.resolve_app('contacts')
 
 
 class SimilarPersons(dd.VirtualTable):
-    """Shows a slave table of persons that are "similar" to a given master
-    instance (and therefore are potential duplicates).
-
-    """
+    """See above."""
     label = _("Similar Persons")
     # slave_grid_format = 'html'
     slave_grid_format = 'summary'
@@ -107,8 +112,7 @@ class SimilarPersons(dd.VirtualTable):
 
 
 class CheckedSubmitInsert(SubmitInsert):
-    """Specialized variant of `SubmitInsert` which checks for duplicate
-persons.
+    """See above.
 
     """
 
@@ -136,8 +140,9 @@ persons.
             ok(ar)
 
 
-@dd.receiver(dd.pre_analyze)
-def install_submit_insert(sender, **kw):
-    sender.modules.contacts.Person.define_action(
-        submit_insert=CheckedSubmitInsert())
+# @dd.receiver(dd.pre_analyze)
+# def install_submit_insert(sender, **kw):
+#     sender.modules.contacts.Person._action(
+
+dd.update_model(contacts.Person, submit_insert=CheckedSubmitInsert())
 

@@ -17,17 +17,14 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-#~ import copy
-
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
-
 
 from django.core.exceptions import ValidationError
 
 from lino.core import fields
 from lino.core import signals
+from lino.core import actions
 from lino.core import dbutils
 from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen.html import E
@@ -36,97 +33,91 @@ from lino.utils import get_class_attr
 
 class Model(models.Model):
 
-    """
-    Adds Lino specific features to Django's Model base class. 
-    If a Lino application uses simple Django Models,
-    the attributes and methods defined here are added to these 
-    modules during :func:`lino.core.kernel.analyze_models`.
+    """Adds Lino-specific features to Django's Model base class.  If a
+    Lino application uses simple Django Models, the attributes and
+    methods defined here are added to these modules during
+    :func:`lino.core.kernel.analyze_models`.
+
     """
     class Meta:
         abstract = True
 
     allow_cascaded_delete = []
-    """
-    A list of names of ForeignKey fields of this model 
-    that allow for cascaded delete.
+    """A list of names of ForeignKey fields of this model that allow for
+    cascaded delete.
     
-    When deleting an object through the user interface, 
-    Lino by default forbids to delete an object that is 
-    referenced by other objects. Users will get a message 
-    of type "Cannot delete X because n Ys refer to it".
+    When deleting an object through the user interface, Lino by
+    default forbids to delete an object that is referenced by other
+    objects. Users will get a message of type "Cannot delete X because
+    n Ys refer to it".
     
-    Example: Lino should not refuse to delete 
-    a Mail just because it has some Recipient. 
-    When deleting a Mail, Lino should also delete its Recipients.
-    That's why :class:`lino.modlib.outbox.models.Recipient` 
-    has ``allow_cascaded_delete = ['mail']``.
+    Example: Lino should not refuse to delete a Mail just because it
+    has some Recipient.  When deleting a Mail, Lino should also delete
+    its Recipients.  That's why
+    :class:`lino.modlib.outbox.models.Recipient` has
+    ``allow_cascaded_delete = ['mail']``.
     
     Note that this currently is also consulted by
-    :meth:`lino.mixins.duplicable.Duplicable.duplicate`
-    to decide whether slaves of a record being duplicated
-    should be duplicated as well.
+    :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
+    whether slaves of a record being duplicated should be duplicated
+    as well.
     
-    This mechanism doesn't depend on nor influence Django's
-    `on_delete
+    This mechanism doesn't depend on nor influence Django's `on_delete
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-    option.
-    But of course you should not allow_cascaded_delete for fields
-    which have e.g. `on_delete=PROTECT`.
+    option.  But of course you should not allow_cascaded_delete for
+    fields which have e.g. `on_delete=PROTECT`.
 
-    
     """
 
-    #~ help_text = None
+    submit_insert = actions.SubmitInsert()
+    """This is the action represented by the "Create" button of an Insert
+    window. See :mod:`lino.modlib.dedupe` for an example of how to
+    override it.
+
+    """
 
     quick_search_fields = None
-    """
-    When quick_search text is given for a table on this model, 
-    Lino by default searches the query text in all CharFields.
-    But on models with `quick_search_fields` will search only those fields.
+    """When quick_search text is given for a table on this model, Lino by
+    default searches the query text in all CharFields.  But on models
+    with `quick_search_fields` will search only those fields.
     
-    This is also used when a gridfilter has been set on a 
-    foreign key column which points to this model. 
-    
-    """
+    This is also used when a gridfilter has been set on a foreign key
+    column which points to this model.
 
-    #~ grid_search_field = None
-    #~ """
-    #~ The name of the field to be used when a gridfilter has been set on a
-    #~ foreign key column which points to this model. Capito?
-    #~ """
+    """
 
     hidden_columns = frozenset()
-    """
-    If specified, this is the default value for 
-    :attr:`hidden_columns <lino.core.tables.AbstractTable.hidden_columns>` 
-    of every `Table` on this model.
+    """If specified, this is the default value for :attr:`hidden_columns
+    <lino.core.tables.AbstractTable.hidden_columns>` of every `Table`
+    on this model.
+
     """
 
     hidden_elements = frozenset()
-    """
-    If specified, this is the default value for 
-    :attr:`hidden_elements <lino.core.tables.AbstractTable.hidden_elements>` 
-    of every `Table` on this model.
+    """If specified, this is the default value for :attr:`hidden_elements
+    <lino.core.tables.AbstractTable.hidden_elements>` of every `Table`
+    on this model.
+
     """
 
     preferred_foreignkey_width = None
-    """
-    The default preferred width (in characters) of widgets that display a 
-    ForeignKey to this model
+    """The default preferred width (in characters) of widgets that
+    display a ForeignKey to this model
+
     """
 
     workflow_state_field = None
-    """
-    If this is set on a Model, then it will be used as default 
-    value for :attr:`lino.core.table.Table.workflow_state_field` 
-    on all tables based on this Model.
+    """If this is set on a Model, then it will be used as default value
+    for :attr:`lino.core.table.Table.workflow_state_field` on all
+    tables based on this Model.
+
     """
 
     workflow_owner_field = None
-    """
-    If this is set on a Model, then it will be used as default 
-    value for :attr:`lino.core.table.Table.workflow_owner_field` 
-    on all tables based on this Model.
+    """If this is set on a Model, then it will be used as default value
+    for :attr:`lino.core.table.Table.workflow_owner_field` on all
+    tables based on this Model.
+
     """
 
     change_watcher_spec = None
@@ -340,17 +331,9 @@ class Model(models.Model):
         """
         return []
 
-    #~ @classmethod
-    #~ def site_setup(self,site):
-        #~ pass
-
     @classmethod
     def on_analyze(self, site):
         pass
-
-    #~ def lookup_or_create(self,*args,**kwargs):
-        #~ from lino.utils.instantiator import lookup_or_create
-        #~ lookup_or_create(self,*args,**kwargs)
 
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
@@ -477,9 +460,9 @@ class Model(models.Model):
 
     @classmethod
     def add_model_action(self, **kw):
-        """
-        Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders` action 
-        to :class: `lino.modlib.users.models.User`.
+        """Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
+        action to :class: `lino.modlib.users.models.User`.
+
         """
         for k, v in kw.items():
             if hasattr(self, k):
@@ -488,16 +471,6 @@ class Model(models.Model):
             setattr(self, k, v)
         #~ self._custom_actions = dict(self._custom_actions)
         #~ self._custom_actions.update(kw)
-
-    #~ @classmethod
-    #~ def get_model_actions(self,table):
-        #~ """
-        #~ Called once for each :class:`lino.core.dbtables.Table` on this model.
-        #~ Yield a list of (name,action) tuples to install on the table.
-        #~ """
-
-        #~ if full_model_name(self) in settings.SITE.mergeable_models:
-            #~ yield ( 'merge_row', MergeAction(self) )
 
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
@@ -535,9 +508,6 @@ instances.
     def get_attestation_options(self, ar, **kw):
         """Set additional fields of newwly created printout from this."""
         return kw
-
-
-
 
     LINO_MODEL_ATTRIBS = (
         #~ 'as_pdf',

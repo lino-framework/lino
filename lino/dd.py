@@ -98,6 +98,8 @@ Inter-app relations:
 - :func:`resolve_app <lino.core.dbutils.resolve_app>`
 - :func:`update_field <lino.core.inject.update_field>`
 - :func:`inject_field <lino.core.inject.inject_field>`
+- :func:`update_model <lino.core.inject.update_model>`
+
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>`
 - :func:`models_by_base <djangosite.dbutils.models_by_base>`
 
@@ -322,6 +324,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.inject import inject_action
 from lino.core.inject import inject_field
+from lino.core.inject import update_model
 from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
