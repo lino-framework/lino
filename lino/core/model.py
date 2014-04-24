@@ -25,14 +25,10 @@ from django.utils.translation import ugettext as _
 
 
 from django.core.exceptions import ValidationError
-#~ from django.core.exceptions import MultipleObjectsReturned
-
 
 from lino.core import fields
 from lino.core import signals
 from lino.core import dbutils
-from lino.core.actions import InstanceAction
-#~ from lino.core.actions import PdfAction
 from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
@@ -48,8 +44,6 @@ class Model(models.Model):
     """
     class Meta:
         abstract = True
-
-    #~ as_pdf = PdfAction()
 
     allow_cascaded_delete = []
     """
@@ -135,31 +129,10 @@ class Model(models.Model):
     on all tables based on this Model.
     """
 
-    #~ _watch_changes_specs = None
     change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
     """
-
-    #~ _custom_actions = dict()
-    """
-    Internally used to store custom model actions.
-    """
-
-    #~ _change_summary = ''
-    #~ """
-    #~ Internally used by :meth:`watch_changes`
-    #~ """
-
-    #~ def get_watcher(self,*args,**kw):
-        #~ from lino.core import changes
-        #~ return changes.Watcher(self,*args,**kw)
-
-    #~ def update_system_note(self,note):
-        #~ pass
-
-    #~ def set_change_summary(self,text):
-        #~ self._change_summary = text
 
     def as_list_item(self, ar):
         return E.li(unicode(self))

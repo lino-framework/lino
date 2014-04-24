@@ -1,0 +1,15 @@
+========================
+Thursday, April 24, 2014
+========================
+
+Fixed a bug which had been introduced together with the customizable
+insert actions: pressing ENTER in a Detail window (or closing a dirty
+Detail window and answering Yes when asked whether you want to save
+your modifications) caused an :ref:`ise` because the AJAX call used
+the wrong action name.
+
+Tss, tss, how blind a man can be: why did I define the specialized
+SubmitInsert action in :mod:`lino_welfare.modlib.pcsw`? It can of
+course be in :mod:`lino.modlib.dedupe`, together with `SimilarPersons`
+itself! Everything in one place and no need to do anything special in
+order to activate the app. Cool!

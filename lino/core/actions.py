@@ -828,6 +828,7 @@ class ShowDetailAction(Action):
     opens_a_window = True
     show_in_workflow = False
     #~ show_in_row_actions = True
+    save_action_name = 'put'
 
     sort_index = 20
     #~ callable_from = (GridEdit,)

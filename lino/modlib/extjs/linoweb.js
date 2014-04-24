@@ -2705,8 +2705,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   window_title: "Action Parameters",
   constructor : function(config){
     config.bbar = [
-        {text:'OK',handler:this.on_ok,scope:this},
-        {text:'Cancel',handler:this.on_cancel,scope:this}
+        {text: 'OK', handler: this.on_ok, scope: this},
+        {text: 'Cancel', handler: this.on_cancel, scope: this}
     ];
     //~ config.items = config.params_panel;
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
@@ -2741,11 +2741,12 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     // 20131004
     //~ var url = '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + pk;
     var url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
-    var fn = function(panel,btn,step) {
+    var fn = function(panel, btn, step) {
       var p = {};
       self.add_field_values(p)
       //~ Lino.call_ajax_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
-      Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn,on_success);
+      Lino.call_ajax_action(
+          panel, 'GET', url, p, actionName, step, fn, on_success);
     }
     fn(panel,null,null);
     
@@ -2954,21 +2955,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     },this);
     
     
-    //~ var this_ = this;
-    //~ this.cascade(function(cmp){
-      //~ // var active_field = false;
-      //~ for (i = 0; i < this_.active_fields.length; i++) {
-        //~ if (cmp.name == this_.active_fields[i]) {
-            //~ // active_field = true; break;
-            //~ cmp.on("change",function() {this_.save()});
-        //~ }
-      //~ };
-      //~ if (active_field) {
-      // if (cmp instanceof Lino.GridPanel) {
-          //~ cmp.on("change",function() {this_.save()});
-      //~ }
-    //~ });
-    
     if (this.action_name == 'insert') {
       this.cascade(function(cmp){
         // console.log('20110613 cascade',cmp);
@@ -3100,7 +3086,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     }
   }
   
-  ,do_when_clean : function(auto_save,todo) {
+  ,do_when_clean : function(auto_save, todo) {
     var this_ = this;
     if (this.form.isDirty()) {
         // console.log('20140421 do_when_clean : form is dirty')
@@ -3304,13 +3290,15 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* 
   Lino.FormPanel.save() 
   */
-  save : function(after,switch_to_detail,action_name) {
+  // save : function(after, switch_to_detail, action_name) {
+  save : function(after) {
     var panel = this;
     // console.log('20140417 FormPanel.save', action_name);
     this.loadMask.show();
     var rec = this.get_current_record();
     if (this.has_file_upload) this.form.fileUpload = true;
     //~ console.log('FormPanel.save()',rec);
+    var action_name = this.save_action_name;
     if (!action_name) 
         action_name = this.action_name;
     if (!rec) { 
@@ -3375,13 +3363,16 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.get_containing_window().close();
   }
   ,on_ok : function() { 
-      
-      this.save(null,true, this.save_action_name);
+      // console.log("20140424");
+      // this.save(null, true, this.save_action_name);
+      this.save();
   }
   ,config_containing_window : function(wincfg) { 
 
-      // If no defaultButton set, specify the first form field to
-      // receive focus when Window is focussed.
+      // Note that defaultButton means: which component should receive
+      // focus when Window is focussed.  If no defaultButton set,
+      // specify the first form field.
+
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){
           if(f.isFormField){ 
               wincfg.defaultButton = f;
@@ -3389,7 +3380,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               return false;
           }
       });
-      // if (!wincfg.defaultButton) 
+
       wincfg.keys = [
           {
               key: Ext.EventObject.ENTER,

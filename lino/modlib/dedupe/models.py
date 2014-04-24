@@ -12,13 +12,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Defines a virtual table SimilarPersons.
+"""Defines a virtual table :class:`SimilarPersons`, and overrides the
+`submit_insert` action of `contacts.Person` with a specialized variant
+which checks for duplicate persons.
 
-Current implementation is rather primitive.
-We plan to add another table with NYSIIS or SOUNDEX strings.
+The current implementation of the detection algorithm is rather
+primitive.  We might one day add another table with NYSIIS or SOUNDEX
+strings.
 
 Examples and test cases in :ref:`welfare.tested.pcsw`.
-
 
 """
 
@@ -37,6 +39,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino import dd
+from lino.core.actions import SubmitInsert
 
 contacts = dd.resolve_app('contacts')
 
@@ -68,22 +71,9 @@ class SimilarPersons(dd.VirtualTable):
         if mi is None:
             return
 
-        # others = set()
-
         for o in self.find_similar_instances(mi):
-            # if not o in others:
-            #     others.add(o)
             yield self.Row(mi, o)
 
-        # for o in find_similar_instances(mi, 5, 'last_name'):
-        #     if not o in others:
-        #         others.add(o)
-        #         yield self.Row(mi, o)
-
-    # @classmethod
-    # def get_target_model(self, obj):
-    #     return obj.__class__
-    
     @classmethod
     def get_words(self, obj):
         s1 = set()
@@ -114,4 +104,40 @@ class SimilarPersons(dd.VirtualTable):
     @dd.displayfield(_("Other"))
     def other(self, obj, ar):
         return ar.obj2html(obj.slave)
+
+
+class CheckedSubmitInsert(SubmitInsert):
+    """Specialized variant of `SubmitInsert` which checks for duplicate
+persons.
+
+    """
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.create_instance_from_request()
+
+        def ok(ar2):
+            self.save_new_instance(ar2, obj)
+
+        qs = SimilarPersons.find_similar_instances(obj)
+        if qs.count() > 0:
+            msg = _("There are %d %s with similar name:") % (
+                qs.count(), qs.model._meta.verbose_name_plural)
+            for other in qs[:4]:
+                msg += '<br/>' + unicode(other)
+
+            msg += '<br/>'
+            msg += _("Are you sure you want to create a new "
+                     "%(model)s named %(name)s?") % dict(
+                         model=qs.model._meta.verbose_name,
+                         name=obj.get_full_name())
+            
+            ar.confirm(ok, msg)
+        else:
+            ok(ar)
+
+
+@dd.receiver(dd.pre_analyze)
+def install_submit_insert(sender, **kw):
+    sender.modules.contacts.Person.define_action(
+        submit_insert=CheckedSubmitInsert())
 

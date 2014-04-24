@@ -431,6 +431,8 @@ class Person(PersonMixin, Partner):
 
     def get_overview_elems(self, ar):
         elems = [self.get_salutation(nominative=True), E.br()]
+        if self.title:
+            elems += [self.title, ' ']
         elems += [self.first_name, ' ',
                   E.b(self.last_name),
                   E.br()]
