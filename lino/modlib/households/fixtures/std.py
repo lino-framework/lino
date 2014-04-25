@@ -97,6 +97,13 @@ def objects():
     yield Role(**kw)
 
     kw = babel_values('name',
+                      de=u"Verwandter",
+                      fr=u"Membre de famille",
+                      en=u"Relative",
+                      )
+    yield Role(**kw)
+
+    kw = babel_values('name',
                       de=u"Adoptivkind",
                       fr=u"Enfant adopté",
                       en=u"Adopted child",

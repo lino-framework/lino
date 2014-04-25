@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,32 +12,14 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-import datetime
-from dateutil.relativedelta import relativedelta
-
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.conf import settings
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
-#~ from django.utils.translation import ugettext
-
-from django import forms
-from django.utils import translation
-
-
-import lino
 
 from lino import dd
-
-from lino import mixins
 from lino.utils import join_words
-from lino.utils.choosers import chooser
-#~ from lino.modlib.contacts.utils import Gender
-
 from lino.utils import mti
-#~ from lino.modlib.contacts import models as contacts
+
 contacts = dd.resolve_app('contacts')
 
 
@@ -56,19 +38,18 @@ class Types(dd.Table):
     required = dd.required(user_level='admin')
     model = Type
     detail_layout = """
-    name 
+    name
     HouseholdsByType
     """
 
 
 class Household(contacts.Partner):
-
     """
-    A Household is a Partner that represents several Persons living together.
-    list of :class:`members <Member>`.
+    A Household is a Partner who represents several Persons living together.
+    A Household has a list of :class:`members <Member>`.
     """
     class Meta:
-        abstract = settings.SITE.is_abstract_model('households.Household')
+        abstract = dd.is_abstract_model('households.Household')
         verbose_name = _("Household")
         verbose_name_plural = _("Households")
 
@@ -93,12 +74,10 @@ class Household(contacts.Partner):
                 self.name = "-"
         super(Household, self).full_clean(*args, **kw)
 
-    #~ def get_full_name(self,**salutation_options):
     def get_full_name(self, salutation=True, **salutation_options):
-        """Deserves more documentation."""
-        #~ if self.prefix:
+        """Overrides
+:meth:`lino.modlib.contacts.models.Partner.get_full_name`."""
         return join_words(self.prefix, self.name)
-        #~ return join_words(_("Household"),self.name)
     full_name = property(get_full_name)
 
     def __unicode__(self):
@@ -115,7 +94,7 @@ class HouseholdDetail(dd.FormLayout):
     """
 
     box4 = """
-    email:40 
+    email:40
     url
     phone
     gsm
@@ -151,7 +130,6 @@ class HouseholdsByType(Households):
 
 
 class Role(dd.BabelNamed):
-
     """
     The role of a :class:`Member` in a :class:`Household`.
     """
@@ -159,13 +137,14 @@ class Role(dd.BabelNamed):
         verbose_name = _("Household Role")
         verbose_name_plural = _("Household Roles")
 
-    name_giving = models.BooleanField(_("name-giving"),
-                                      default=False,
-      help_text="""\
-When the `name` field of a Household is empty, 
-its value is computed by joining the `Last Name` 
-of all name-giving members with a dash ("-").
-      """)
+    name_giving = models.BooleanField(
+        _("name-giving"),
+        default=False,
+        help_text=(
+            "Whether this role is name-giving for its household. "
+            "The name of a Household is computed by joining the "
+            "`Last Name` of all name-giving members with a dash (`-`)."
+        ))
 
     #~ header = dd.BabelCharField(_("Header"),
         #~ max_length=50,blank=True,
@@ -197,20 +176,17 @@ class Member(dd.Model):
     """
 
     class Meta:
+        abstract = dd.is_abstract_model('households.Member')
         verbose_name = _("Household Member")
         verbose_name_plural = _("Household Members")
 
-    role = models.ForeignKey(Role, blank=True, null=True, help_text="""\
-The Role of this Person in this Household.
-List of choices is configured in `Configure --> Households --> Roles`.
-""")
-      #~
-      #~ )
-    #~ partner = models.ForeignKey(contacts.Partner,
-        #~ related_name='membersbypartner')
+    role = models.ForeignKey(
+        'households.Role', blank=True, null=True,
+        help_text=_("The Role of this Person in this Household."))
     household = models.ForeignKey('households.Household')
-    person = models.ForeignKey("contacts.Person",
-                               related_name='membersbyperson')
+    person = models.ForeignKey(
+        "contacts.Person",
+        related_name='membersbyperson')
     start_date = models.DateField(_("From"), blank=True, null=True)
     end_date = models.DateField(_("Until"), blank=True, null=True)
     #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
