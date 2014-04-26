@@ -294,13 +294,11 @@ class TableRequest(ActionRequest):
                 try:
                     master = kw['master'] = ContentType.objects.get(
                         pk=mt).model_class()
-                except ContentType.DoesNotExist, e:
+                except ContentType.DoesNotExist:
                     pass
-                    #~ master is None
-                    #~ raise ContentType.DoesNotExist("ContentType %r does not exist." % mt)
+                    # master is None
 
-                #~ print kw
-            if not kw.has_key('master_instance'):
+            if not 'master_instance' in kw:
                 pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
                 #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
                 #~ if pk in ('', '-99999'):
@@ -311,14 +309,16 @@ class TableRequest(ActionRequest):
                 else:
                     try:
                         kw['master_instance'] = master.objects.get(pk=pk)
-                    except ValueError, e:
+                    except ValueError:
                         raise Exception(
-                            "Invalid primary key %r for %s", pk, master.__name__)
-                    except master.DoesNotExist, e:
+                            "Invalid primary key %r for %s",
+                            pk, master.__name__)
+                    except master.DoesNotExist:
                         # todo: ReportRequest should become a subclass of
                         # Dialog and this exception should call dlg.error()
-                        raise Exception("There's no %s with primary key %r" %
-                                        (master.__name__, pk))
+                        raise Exception(
+                            "There's no %s with primary key %r" %
+                            (master.__name__, pk))
                 # ~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
 
@@ -449,11 +449,11 @@ class TableRequest(ActionRequest):
         #~ if self.actor.__name__ == 'PrintExpensesByBudget':
             #~ print '20130327 2 tables.py', self, self.master_instance
 
-        """
-        20120519 : outbox.MyOutbox had no phantom record when called from menu.
-        When called by permalink it had. Because get_create_kw was called before 
-        Actor.setup_request() which sets the master_instance.
-        """
+        # 20120519 : outbox.MyOutbox had no phantom record when called
+        # from menu.  When called by permalink it had. Because
+        # get_create_kw was called before Actor.setup_request() which
+        # sets the master_instance.
+
         self.actor.setup_request(self)
 
         self.create_kw = self.actor.get_create_kw(self.master_instance)

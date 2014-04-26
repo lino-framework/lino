@@ -1087,7 +1087,6 @@ class Actor(actions.Parametrizable):
         state = self.get_row_state(obj)
         for ba in self.get_actions():
             if ba.action.show_in_workflow:
-                #~ if obj.get_row_permission(ar,state,ba):
                 if self.get_row_permission(obj, ar, state, ba):
                     yield ba
 
@@ -1138,7 +1137,7 @@ class Actor(actions.Parametrizable):
         return []
 
     @classmethod
-    def setup_request(self, req):
+    def setup_request(self, ar):
         pass
 
     @classmethod

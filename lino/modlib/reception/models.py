@@ -136,7 +136,6 @@ def create_prompt_event(
 class CreateNote(dd.Action):
     label = _("Attestation")
     show_in_workflow = True
-    #~ show_in_row_actions = True
     parameters = dict(
         #~ date=models.DateField(_("Date"),blank=True,null=True),
         note_type=dd.ForeignKey('notes.NoteType'),

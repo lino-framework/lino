@@ -177,8 +177,6 @@ class CreateInvoice(dd.Action):
     icon_name = 'money'
     sort_index = 50
     label = _("Create invoice")
-    #~ show_in_row_actions = True
-    #~ show_in_workflow = True
 
     def get_partners(self, ar):
         return [o.partner for o in ar.selected_rows]

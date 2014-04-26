@@ -23,26 +23,38 @@ from lino.core.dbutils import resolve_model
 
 
 from lino.utils import Cycler
-from lino import mixins
+from lino import dd
 
 
 def objects():
 
-    Role = resolve_model('households.Role')
-    Member = resolve_model('households.Member')
-    Household = resolve_model('households.Household')
+    # Role = resolve_model('households.Role')
+    # Member = resolve_model('households.Member')
+    # Household = resolve_model('households.Household')
     Person = resolve_model('contacts.Person')
+    Type = resolve_model('households.Type')
 
-    MEN = Cycler(Person.objects.filter(gender=mixins.Genders.male)
+    MEN = Cycler(Person.objects.filter(gender=dd.Genders.male)
                  .order_by('-id'))
-    WOMEN = Cycler(Person.objects.filter(gender=mixins.Genders.female)
+    WOMEN = Cycler(Person.objects.filter(gender=dd.Genders.female)
                    .order_by('-id'))
+    TYPES = Cycler(Type.objects.all())
 
-    for i in range(3):
-        he = MEN.pop()
-        she = WOMEN.pop()
-        #~ fam = Household(father=MEN.pop(),mother=WOMEN.pop())
-        fam = Household(name=he.last_name + "-" + she.last_name, type_id=3)
-        yield fam
-        yield Member(household=fam, person=he, role=Role.objects.get(pk=1))
-        yield Member(household=fam, person=she, role=Role.objects.get(pk=2))
+    ses = dd.login()
+    for i in range(5):
+        pv = dict(
+            head=MEN.pop(), partner=WOMEN.pop(),
+            type=TYPES.pop())
+        ses.run(
+            Person.create_household,
+            action_param_values=pv)
+        # yield ses.response['data_record']
+        # he = MEN.pop()
+        # she = WOMEN.pop()
+        
+        # fam = Household(name=he.last_name + "-" + she.last_name, type_id=3)
+        # yield fam
+        # yield Member(household=fam, person=he, role=Role.objects.get(pk=1))
+        # yield Member(household=fam, person=she, role=Role.objects.get(pk=2))
+
+    return []

@@ -513,6 +513,8 @@ if settings.SITE.project_model is not None:
 
 
 class SentByPartner(Mails):
+    """Shows the Mails that have been sent to a given Partner. 
+    """
     required = dd.required()
     master = 'contacts.Partner'
     label = _("Outbox")
@@ -520,9 +522,9 @@ class SentByPartner(Mails):
     order_by = ['sent']
 
     @classmethod
-    def get_request_queryset(self, rr):
+    def get_request_queryset(self, ar):
         q1 = Recipient.objects.filter(
-            partner=rr.master_instance).values('mail').query
+            partner=ar.master_instance).values('mail').query
         qs = Mail.objects.filter(id__in=q1)
         qs = qs.order_by('sent')
         return qs

@@ -98,6 +98,7 @@ Inter-app relations:
 - :func:`resolve_app <lino.core.dbutils.resolve_app>`
 - :func:`update_field <lino.core.inject.update_field>`
 - :func:`inject_field <lino.core.inject.inject_field>`
+- :func:`inject_action <lino.core.inject.inject_action>`
 - :func:`update_model <lino.core.inject.update_model>`
 
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>`

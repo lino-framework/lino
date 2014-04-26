@@ -161,7 +161,7 @@ class UpdateEvents(dd.MultipleRowAction):
 
 class MoveEventNext(dd.MultipleRowAction):
     label = _('Move down')
-    show_in_row_actions = True
+    custom_handler = True
     icon_name = 'date_next'
 
     def get_action_permission(self, ar, obj, state):

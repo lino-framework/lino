@@ -145,15 +145,14 @@ class Workflow(choicelists.ChoiceList):
 
 class ChangeStateAction(actions.Action):
 
-    """
-    This is the class used when generating automatic 
-    "state actions". For each possible value of the Actor's 
-    :attr:`workflow_state_field` there will be an automatic action called 
-    `mark_XXX`
+    """This is the class used when generating automatic "state
+    actions". For each possible value of the Actor's
+    :attr:`workflow_state_field` there will be an automatic action
+    called `mark_XXX`
+
     """
 
-    #~ debug_permissions = True
-
+    show_in_bbar = False
     show_in_workflow = True
 
     def __init__(self, target_state, required, help_text=None, **kw):

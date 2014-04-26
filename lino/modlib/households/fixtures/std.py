@@ -22,104 +22,64 @@ Adds some :class:`household roles <households.Role>`.
 #~ from django.contrib.contenttypes.models import ContentType
 #~ from lino.utils.instantiator import Instantiator, i2d
 from lino.core.dbutils import resolve_model
-from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
 
 
-from django.db import models
-from django.conf import settings
+# from django.db import models
+# from django.conf import settings
 from north.dbutils import babel_values
 
 
 def objects():
+    if False:
+        Role = resolve_model('households.Role')
 
-    Role = resolve_model('households.Role')
+        kw = babel_values('name',
+                          de=u"Familienoberhaupt",
+                          fr=u"Chef de ménage",
+                          en=u"Head of household"
+        )
+        yield Role(name_giving=True, **kw)
+        kw = babel_values('name',
+                          de=u"Ehepartner",
+                          fr=u"Conjoint",
+                          en=u"Spouse",
+        )
+        yield Role(name_giving=True, **kw)
+        kw = babel_values('name',
+                          de=u"Partner",
+                          fr=u"Partenaire",
+                          en=u"Partner",
+        )
+        yield Role(name_giving=True, **kw)
+        kw = babel_values('name',
+                          de=u"Mitbewohner",
+                          fr=u"Cohabitant",
+                          en=u"Cohabitant",
+        )
+        yield Role(**kw)
+        kw = babel_values('name',
+                          de=u"Kind",
+                          fr=u"Enfant",
+                          en=u"Child",
+        )
+        yield Role(**kw)
+
+        kw = babel_values('name',
+                          de=u"Verwandter",
+                          fr=u"Membre de famille",
+                          en=u"Relative",
+        )
+        yield Role(**kw)
+
+        kw = babel_values('name',
+                          de=u"Adoptivkind",
+                          fr=u"Enfant adopté",
+                          en=u"Adopted child",
+        )
+        yield Role(**kw)
+
     Type = resolve_model('households.Type')
-    #~ yield Role(**babel_values('name',
-          #~ de=u"Vater",
-          #~ fr=u"père",
-          #~ en=u"father",
-          #~ ))
-    #~ yield Role(**babel_values('name',
-          #~ de=u"Mutter",
-          #~ fr=u"mère",
-          #~ en=u"mother",
-          #~ ))
-    #~ yield Role(**babel_values('name',
-          #~ de=u"Tochter",
-          #~ fr=u"fille",
-          #~ en=u"daughter",
-          #~ ))
-    #~ yield Role(**babel_values('name',
-          #~ de=u"Sohn",
-          #~ fr=u"fils",
-          #~ en=u"son",
-          #~ ))
-
-    kw = babel_values('name',
-                      de=u"Haushaltsvorstand",
-                      fr=u"Chef de ménage",
-                      en=u"Head of household",
-                      )
-    yield Role(name_giving=True, **kw)
-    kw = babel_values('name',
-                      de=u"Ehepartner",
-                      fr=u"Conjoint",
-                      en=u"Spouse",
-                      )
-    yield Role(name_giving=True, **kw)
-    kw = babel_values('name',
-                      de=u"Partner",
-                      fr=u"Partenaire",
-                      en=u"Partner",
-                      )
-    yield Role(name_giving=True, **kw)
-    kw = babel_values('name',
-                      de=u"Mitbewohner",
-                      fr=u"Cohabitant",
-                      en=u"Cohabitant",
-                      )
-    yield Role(**kw)
-    kw = babel_values('name',
-                      de=u"Kind",
-                      fr=u"Enfant",
-                      en=u"Child",
-                      )
-    #~ kw.update(babel_values('male',
-          #~ de=u"Sohn",
-          #~ fr=u"Fils",
-          #~ en=u"Son",
-          #~ ))
-    #~ kw.update(babel_values('female',
-          #~ de=u"Tochter",
-          #~ fr=u"Fille",
-          #~ en=u"Daughter",
-          #~ ))
-    yield Role(**kw)
-
-    kw = babel_values('name',
-                      de=u"Verwandter",
-                      fr=u"Membre de famille",
-                      en=u"Relative",
-                      )
-    yield Role(**kw)
-
-    kw = babel_values('name',
-                      de=u"Adoptivkind",
-                      fr=u"Enfant adopté",
-                      en=u"Adopted child",
-                      )
-    #~ kw.update(babel_values('male',
-          #~ de=u"Adoptivsohn",
-          #~ fr=u"Fils adoptif",
-          #~ en=u"Adopted son",
-          #~ ))
-    #~ kw.update(babel_values('female',
-          #~ de=u"Adoptivtochter",
-          #~ fr=u"Fille adoptive",
-          #~ en=u"Adopted daughter",
-          #~ ))
-    yield Role(**kw)
-
     yield Type(**babel_values('name',
                               de=u"Ehepaar",
                               fr=u"Couple marié",

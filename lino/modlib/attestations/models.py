@@ -49,8 +49,8 @@ class AttestationType(
 
     class Meta:
         abstract = dd.is_abstract_model('attestations.AttestationType')
-        verbose_name = _("Printout Type")
-        verbose_name_plural = _("Printout Types")
+        verbose_name = _("Attestation Type")
+        verbose_name_plural = _("Attestation Types")
 
     important = models.BooleanField(
         verbose_name=_("important"),
@@ -137,10 +137,9 @@ class AttestationTypes(dd.Table):
         return obj.get_choices_text(request, self, field)
 
 
-class CreatePrintout(dd.Action):
+class CreateAttestation(dd.Action):
+    """Creates a Attestation and displays it.
 
-    """
-    Creates a Printout and displays it.
     """
     url_action_name = 'attest'
     icon_name = 'script_add'
@@ -154,7 +153,7 @@ class CreatePrintout(dd.Action):
         if obj is not None:
             if not obj.is_attestable():
                 return False
-        return super(CreatePrintout,
+        return super(CreateAttestation,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
@@ -211,8 +210,8 @@ class Attestation(dd.TypedPrintable,
 
     class Meta:
         abstract = dd.is_abstract_model('attestations.Attestation')
-        verbose_name = _("Printout")
-        verbose_name_plural = _("Printouts")
+        verbose_name = _("Attestation")
+        verbose_name_plural = _("Attestations")
 
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)
@@ -398,7 +397,8 @@ def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
     m.add_action('attestations.Attestations')
 
-from django.db.utils import DatabaseError
+# from django.db.utils import DatabaseError
+
 
 @dd.receiver(dd.pre_analyze)
 def set_attest_actions(sender, **kw):
@@ -412,7 +412,7 @@ def set_attest_actions(sender, **kw):
             if not ct is None and not ct in ctypes:
                 ctypes.add(ct)
                 m = ct.model_class()
-                m.define_action(do_attest=CreatePrintout())
+                m.define_action(do_attest=CreateAttestation())
                 m.define_action(
                     show_attestations=dd.ShowSlaveTable(
                         'attestations.AttestationsByOwner'

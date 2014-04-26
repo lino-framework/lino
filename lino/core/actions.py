@@ -12,6 +12,11 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""This defines the :class:`Action` class, together with some helper
+classes like :class:`InstanceAction`
+
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -363,19 +368,16 @@ class Action(Parametrizable, Permittable):
     """
 
     auto_save = True
-    """
-    What to do when this action is being called while the user is on a dirty record.
+    """What to do when this action is being called while the user is on a
+    dirty record.
     
-    - `False` means: forget any changes in current record and run the action.
-    - `True` means: save any changes in current record before running the action.
-    - `None` means: ask the user.
-    """
+    - `False` means: forget any changes in current record and run the
+      action.
 
-    #~ required = {}
-    #~ """
-    #~ A dict with permission requirements.
-    #~ See :func:`lino.core.perms.make_permission_handler`.
-    #~ """
+    - `True` means: save any changes in current record before running
+      the action.  `None` means: ask the user.
+
+    """
 
     action_name = None
     """Internally used to store the name of this action within the
@@ -452,31 +454,32 @@ class Action(Parametrizable, Permittable):
     Used internally if :attr:`opens_a_window` to say whether the window has a navigator.
     """
 
-    show_in_bbar = True
-    """
-    Used internally.
-    Whether this action should be displayed as a button in the bottom toolbar and the context menu.
-    """
+    # show_in_row_actions = False
+    # """
+    # No longer used.
+    # Whether this action should be displayed as a button in the 
+    # :meth:`action_buttons <lino.core.model.Model.action_buttons>`    
+    # column.
+    # """
 
-    show_in_row_actions = False
-    """
-    No longer used.
-    Whether this action should be displayed as a button in the 
-    :meth:`action_buttons <lino.core.model.Model.action_buttons>`    
-    column.
+    show_in_bbar = True
+    """Whether this action should be displayed as a button in the toolbar
+    and the context menu.
     """
 
     show_in_workflow = False
-    """
-    Used internally.
-    Whether this action should be displayed 
-    as the :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>` column.
+    """Used internally.  Whether this action should be displayed as the
+    :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
+    column. If this is True, then Lino will automatically set
+    :attr:`custom_handler` to True.
+
     """
 
     custom_handler = False
-    """
-    Whether this action is implemented as Javascript function call.
-    (...)
+    """Whether this action is implemented as Javascript function call.
+    This is necessary if you want your action to be callable using an
+    "action link" (html button).
+
     """
 
     select_rows = True
@@ -517,12 +520,12 @@ class Action(Parametrizable, Permittable):
 
         if self.show_in_workflow:
             self.custom_handler = True
-            self.show_in_bbar = False
-        else:
-            self.show_in_bbar = True
 
-        if self.show_in_row_actions:
-            self.custom_handler = True
+        # elif not self.show_in_bbar:
+        #     self.custom_handler = True
+
+        # if self.show_in_row_actions:
+        #     self.custom_handler = True
 
         #~ self.set_required(**required)
         #~ assert self.callable_from is None or isinstance(
@@ -685,8 +688,11 @@ class Action(Parametrizable, Permittable):
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)
 
-    def run_from_session(self, ses, obj, *args, **kw):  # 20130820
-        #~ ba = action.defining_actor.get_action_by_name(action.action_name)
+    def run_from_session(self, ses, *args, **kw):  # 20130820
+        if len(args):
+            obj = args[0]
+        else:
+            obj = None
         ia = InstanceAction(self, self.defining_actor, obj, None)
         return ia.run_from_session(ses, *args, **kw)
 
@@ -827,7 +833,6 @@ class ShowDetailAction(Action):
     #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
-    #~ show_in_row_actions = True
     save_action_name = 'put'
 
     sort_index = 20
@@ -1102,7 +1107,6 @@ class SubmitInsert(SubmitDetail):
 class ShowSlaveTable(Action):
     TABLE2ACTION_ATTRS = tuple('help_text icon_name label'.split())
     #~ label = "ShowSlaveTable"
-    #~ show_in_row_actions = True
     show_in_bbar = True
     sort_index = 60
 
@@ -1137,7 +1141,8 @@ class ShowSlaveTable(Action):
 
 class NotifyingAction(Action):
 
-    show_in_row_actions = True
+    # show_in_row_actions = True
+    custom_handler = True
 
     parameters = dict(
         notify_subject=models.CharField(
@@ -1214,11 +1219,15 @@ class CalendarAction(Action):
 
 
 class MultipleRowAction(Action):
-
-    show_in_row_actions = True
+    """Base class for actions that update something on every selected row.
+    """
+    # show_in_row_actions = True
+    custom_handler = True
     callable_from = (GridEdit, ShowDetailAction)
 
     def run_on_row(self, obj, ar):
+        """This is being called on every selected row.
+        """
         raise NotImplemented()
 
     def run_from_ui(self, ar, **kw):
