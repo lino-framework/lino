@@ -133,7 +133,7 @@ class HouseholdDetail(dd.FormLayout):
     bottom_box = "remarks households.MembersByHousehold"
 
     intro_box = """
-    type name language:10 id 
+    type name language:10 id
     """
 
     main = """
@@ -173,7 +173,6 @@ class HouseholdsByType(Households):
 #             "The name of a Household is computed by joining the "
 #             "`Last Name` of all name-giving members with a dash (`-`)."
 #         ))
-
 
 
 # class Roles(dd.Table):
