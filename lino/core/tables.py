@@ -456,7 +456,7 @@ class TableRequest(ActionRequest):
 
         self.actor.setup_request(self)
 
-        self.create_kw = self.actor.get_create_kw(self.master_instance)
+        self.create_kw = self.actor.get_create_kw(self)
 
         if offset is not None:
             self.offset = offset
@@ -1091,23 +1091,36 @@ class AbstractTable(actors.Actor):
         #~ return "Grid Config has been saved to %s" % filename
 
     @classmethod
-    def get_create_kw(self, master_instance, **kw):
-        return self.get_filter_kw(master_instance, **kw)
+    def get_create_kw(self, ar, **kw):
+        """Deprecated.  This additional wrapper was used by
+        `lino.modlib.links` which anyway never worked.  We will soon
+        throw it away and call get_filter_kw directly instead.
+
+        """
+        return self.get_filter_kw(ar, **kw)
 
     @classmethod
-    def get_filter_kw(self, master_instance, **kw):
-        """
-        Return a dict with the "master keywords" for this table
+    def get_filter_kw(self, ar, **kw):
+        """Return a dict with the "master keywords" for this table
         and a given `master_instance`.
+
+        :class:`lino.modlib.tickets.models.EntriesBySession`
+        Blog Entries are not directly linked to a Session, but in the
+        Detail of a Session we want to display a table of related blog
+        entries.
+
+        :class:`lino.modlib.households.models.SiblingsByPerson`
+        Household members are not directly linked to a Person, but
+        usually a Person is member of exactly one household, and in
+        the Detail of a Person we want to display the members of that
+        household.
+
         """
+        master_instance = ar.master_instance
         if self.master is None:
             pass
             # master_instance may be e.g. a lino.core.actions.EmptyTableRow
             # UsersWithClients as "slave" of the "table" Home
-
-            #~ if master_instance is not None:
-                #~ raise Exception("Unexpected master %r for table %s" % (master_instance,self.actor_id))
-            #~ assert master_instance is None, "Table %s doesn't accept a master" % self.actor_id
         elif self.master is models.Model:
             pass
         elif isinstance(self.master_field, generic.GenericForeignKey):
@@ -1145,7 +1158,6 @@ class AbstractTable(actors.Actor):
                             self.master_key))
             kw[self.master_field.name] = master_instance
 
-        #~ logger.info('20120519 %s.get_filter_kw(%r) --> %r',self,master_instance,kw)
         return kw
 
     #~ @classmethod

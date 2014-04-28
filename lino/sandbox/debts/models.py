@@ -702,7 +702,8 @@ class EntriesSummaryByBudget(EntriesByType, SummaryByBudget):
     order_by = ('account', 'partner', 'remark', 'seqno')
 
     @classmethod
-    def get_filter_kw(self, master, **kw):
+    def get_filter_kw(self, ar, **kw):
+        master = ar.master_instance
         self._cols_dict = dict()
         if master is None:
             return kw

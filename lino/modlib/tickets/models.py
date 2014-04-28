@@ -427,18 +427,19 @@ if blogs:
 
     class EntriesBySession(EntriesByTicket):
 
-        """
-        The Blog Entries linked to *the Ticket of* a Session.
+        """The Blog Entries linked to *the Ticket of* a Session.
         
-        Blog Entries are not directly linked to a Session, but in the 
-        Detail of a Session we want to display a table of related blog 
+        Blog Entries are not directly linked to a Session, but in the
+        Detail of a Session we want to display a table of related blog
         entries.
+
         """
+
         @classmethod
-        def get_filter_kw(self, master_instance, **kw):
-            if master_instance is not None:
-                master_instance = master_instance.ticket
-            return super(EntriesBySession, self).get_filter_kw(master_instance, **kw)
+        def get_filter_kw(self, ar, **kw):
+            if ar.master_instance is not None:
+                kw.update(ticket=ar.master_instance.ticket)
+            return kw
 
 
 else:

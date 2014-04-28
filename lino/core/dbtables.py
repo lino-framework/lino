@@ -735,7 +735,7 @@ class Table(AbstractTable):
         qs = self.get_queryset(rr)
         if qs is None:
             return []
-        kw = self.get_filter_kw(rr.master_instance)
+        kw = self.get_filter_kw(rr)
         if kw is None:
             return []
         if len(kw):

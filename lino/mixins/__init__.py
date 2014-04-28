@@ -239,6 +239,7 @@ if settings.SITE.user_model:
             #~ logger.info("mixins.ByUser.setup_request")
             if ar.master_instance is None:
                 ar.master_instance = ar.get_user()
+            super(ByUser, self).setup_request(ar)
 
 
 else:

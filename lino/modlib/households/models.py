@@ -109,6 +109,8 @@ class Household(contacts.Partner):
     full_name = property(get_full_name)
 
     def __unicode__(self):
+        if self.type:
+            return "%s %s" % (self.type, self.get_full_name())
         return unicode(self.get_full_name())
 
 
@@ -245,7 +247,8 @@ class MembersByHousehold(Members):
 
 
 class SiblingsByPerson(Members):
-    """If the master is member of a single household, display the members
+    """
+    If the master is member of a single household, display the members
     of that Household. Otherwise display an explanation message.
     
     """
@@ -256,31 +259,58 @@ class SiblingsByPerson(Members):
     auto_fit_column_widths = True
 
     @classmethod
-    def create_instance(self, ar, **kw):
-        kw.update(household=self.get_master_instance(ar))
-        return super(SiblingsByPerson, self).create_instance(ar, **kw)
-        
-    @classmethod
-    def get_master_instance(self, ar):
-        mi = ar.master_instance
+    def setup_request(self, ar):
+        ar.master_household = None
+        mi = ar.master_instance  # a Person
         if mi is None:
             return
         M = dd.modules.households.Member
         try:
             mbr = M.objects.get(person=mi)
-            return mbr.household
+            ar.master_household = mbr.household
         except M.DoesNotExist:
-            raise Warning("%s has no household" % mi)
+            ar.no_data_text = _("%s is not member of any household") % mi
         except M.MultipleObjectsReturned:
-            raise Warning("%s has multiple households" % mi)
-
+            # raise Warning("%s has multiple households" % mi)
+            ar.no_data_text = _("%s is member of multiple households") % mi
+        
     @classmethod
-    def get_request_queryset(self, ar):
-        mi = self.get_master_instance(ar)
-        if mi is None:
-            return []
-        M = dd.modules.households.Member
-        return M.objects.filter(household=mi)
+    def get_filter_kw(self, ar, **kw):
+        # hh = self.get_master_household(ar.master_instance)
+        hh = ar.master_household
+        if hh is None:
+            return None
+        kw.update(household=hh)
+        return super(SiblingsByPerson, self).get_filter_kw(ar, **kw)
+
+    # @classmethod
+    # def get_master_household(self, mi):
+    #     if mi is None:
+    #         return
+    #     M = dd.modules.households.Member
+    #     try:
+    #         mbr = M.objects.get(person=mi)
+    #         return mbr.household
+    #     except M.DoesNotExist:
+    #         # raise Warning("%s has no household" % mi)
+    #         # Warning("%s has no household" % mi)
+    #         pass
+    #     except M.MultipleObjectsReturned:
+    #         # raise Warning("%s has multiple households" % mi)
+    #         pass
+
+    # @classmethod
+    # def create_instance(self, ar, **kw):
+    #     kw.update(household=self.get_master_household(ar.master_instance))
+    #     return super(SiblingsByPerson, self).create_instance(ar, **kw)
+        
+    # @classmethod
+    # def get_request_queryset(self, ar):
+    #     mi = self.get_master_household(ar.master_instance)
+    #     if mi is None:
+    #         return []
+    #     M = dd.modules.households.Member
+    #     return M.objects.filter(household=mi)
 
 
 class CreateHousehold(dd.Action):
@@ -296,8 +326,8 @@ class CreateHousehold(dd.Action):
         type=dd.ForeignKey('households.Type'))
     params_layout = """
     head
-    partner
     type
+    partner
     """
 
     def action_param_defaults(self, ar, obj, **kw):
@@ -350,21 +380,23 @@ class MembersByPerson(Members):
         # obj = ar.master_instance
         sar = ar.spawn(self, master_instance=obj)
         elems = []
-        n = sar.get_total_count()
-        if n == 0:
-            elems += [_("Not member of any household."), E.br()]
-        else:
-            if n > 1:
-                elems += [_("Member of %s households: ") % n]
+        # n = sar.get_total_count()
+        # if n == 0:
+        #     elems += [_("Not member of any household."), E.br()]
+        # else:
 
-            items = []
-            for m in sar.data_iterator:
-                items.append(E.li(
-                    unicode(m.role), _(" in "), ar.obj2html(m.household)))
+        items = []
+        for m in sar.data_iterator:
+            items.append(E.li(
+                unicode(m.role), _(" in "),
+                # unicode(m.household.type), " ",
+                ar.obj2html(m.household)))
+        if len(items) > 0:
+            elems += [_("%s is") % obj]
             elems.append(E.ul(*items))
-        elems.append(ar.instance_action_button(obj.create_household))
-        logger.info("20140428 MembersByPerson.get_slave_summary() %s", elems)
-        return E.p(*elems)
+        elems += [
+            E.br(), ar.instance_action_button(obj.create_household)]
+        return E.div(*elems)
 
 
 # class MembersByRole(Members):

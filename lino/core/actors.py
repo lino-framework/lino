@@ -1138,6 +1138,15 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def setup_request(self, ar):
+        """
+        Customized versions may e.g. set `master_instance`
+        before calling super() (outbox.MyOutbox or mixins.ByUser).
+
+        Other usages are more hackerish:
+        - :class:`lino.modlib.households.models.SiblingsByPerson`
+        - :class:`lino_welfare.modlib.cal.models.EventsByClient`
+
+        """
         pass
 
     @classmethod
@@ -1533,7 +1542,7 @@ TableSummaryPanel. Lino automagically creates a virtualfield
 
     @classmethod
     def slave_as_summary_meth(self, row_separator):
-        raise Exception("No longer supported. Is it being used at all?")
+        raise Exception("Deprecated. Is it being used at all?")
 
         def meth(master, ar):
             ar = ar.spawn(self, master_instance=master)

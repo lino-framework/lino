@@ -484,6 +484,7 @@ class MyOutbox(Mails):
         if ar.master_instance is None:
             ar.master_instance = ar.get_user()
         #~ print "20120519 MyOutbox.setup_request()", ar.master_instance
+        super(MyOutbox, self).setup_request(ar)
 
 
 class MailsByController(Mails):
