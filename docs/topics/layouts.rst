@@ -2,53 +2,92 @@
 Form Layouts
 ============
 
-This is the topic overview about Form Layouts
-which supposes that you have read the 
-tutorial: :doc:`/tutorials/layouts`.
+This is the topic overview about Form Layouts which supposes that you
+have read the tutorial: :doc:`/tutorials/layouts`.
 
 .. currentmodule:: lino.core.layouts
 
-Overview
---------
+Form Layouts
+------------
 
-A :class:`Layout <BaseLayout>` is an abstract pythonical description 
-of how to arrange the fields and other elements of a form.
+A form layout is an abstract pythonical description of how to arrange
+the fields and other elements of a form.
 
-Application programmers write Layouts by subclassing
+For simple form layouts it is enough to specify just a string
+template. For example::
+
+  detail_layout = """
+  id name
+  description
+  """
+
+You can do this for the following attributes of your :attr:`Actor
+<lino.core.actors.Actor>` subclass::
+
+- :attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
+- :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`
+- :attr:`params_layout <lino.core.actors.Actor.params_layout>`
+
+Additionally you can do this for the :attr:`params_layout
+<lino.core.actions.Action.params_layout>` of a custom action.
+
+
+
+Lino will automatically convert such a string template into an
+instance of :class:`dd.FormLayout <FormLayout>`.  See
+:ref:`lino.tutorial.polls`.
+
+In more complex situations it may be preferrable or even necessary to
+define your own layout class.  You do this by subclassing
 :class:`dd.FormLayout <FormLayout>`
-and setting the 
-:attr:`detail_layout <lino.core.actors.Actor.detail_layout>`
-(or 
-:attr:`insert_layout <lino.core.actors.Actor.insert_layout>`)
-attribute of an :attr:`Actor <lino.core.actors.Actor>` subclass.
 
-For simple form layouts it is enough to specify just a 
-string template. See :ref:`lino.tutorial.polls`.
+.  For example::
 
-**A Layout consists of "panels".**
-Each panel is a class attribute defined on your subclass,
-containing a string value to be used as 
-template describibing the content of that panel.
-A Layout must define at least a ``main`` panel. 
-It can define more panels whose names 
-may be chosen by the application developer
-(just don't chose the name :attr:`window_size` 
-which has a special meaning, and don't start you panel 
-names with an underscore because these are reserved for internal use).
+  class PartnerDetail(dd.FormLayout):
+      main = """
+      id name
+      description contact
+      """
+      contact = """
+      phone
+      email
+      url
+      """
 
-A layout template (the value of a panel attribute) 
-is a string containing words, where each word is 
-either the name of a *data element*, 
-or the name of another panel.
+:attr:`column_names <lino.core.actors.Actor.column_names>`
+:class:`dd.FormLayout <ListLayout>`.
 
-**Data elements** are database fields, table fields or :term:`slave tables <slave table>`
-(except for a :class:`ParamsLayout`, where data elements are names of 
-:attr:`parameters <lino.core.actors.Actor.parameters>`
-defined on the actor.
 
-Panels are **either horizontal or vertical**, 
-depending on whether their template contains 
-at least one newline character or not.
+Lino differentiates between "data layouts" and "parameter layouts".
+
+A layout template (the value of a panel attribute) is a string
+containing words, where each word is the name of a *data element*.
+
+**Data elements** can be 
+- database fields
+- table fields
+- another panel
+- a :term:`slave tables <slave table>`
+- a parameter
+
+This is for ListLayout and DetailLayout and
+InsertLayout. :class:`ParamsLayout` are special but similar: their
+data elements refer to :attr:`parameters
+<lino.core.actors.Actor.parameters>` defined on the actor.
+
+
+**A Layout consists of "panels".** Each panel is a class attribute
+defined on your subclass, containing a string value to be used as
+template describing the content of that panel.  A Layout must define
+at least a ``main`` panel.  It can define more panels whose names may
+be chosen by the application developer (just don't chose the name
+:attr:`window_size` which has a special meaning, and don't start you
+panel names with an underscore because these are reserved for internal
+use).
+
+
+Panels are **either horizontal or vertical**, depending on whether
+their template contains at least one newline character or not.
 
 Indentation doesn't matter.
 
@@ -79,15 +118,20 @@ a newline somewhere in your main's template. Example::
       left:60 right:30
       """
 
-A :class:`ListLayout` is a special case for describing the columns of a GridPanel
-and therefore may contain only one `main` panel descriptor 
-which must be horizontal.
-ListLayouts are created automatically by Lino, using the 
-:attr:`column_names <lino.core.actors.Actor.column_names>` 
-attribute of the Actor as `main` panel.
+.. ListLayout::
 
-A :class:`ParamsLayout` is a special case for 
-describing the layout of a parameters panel.
+List Layouts
+------------
+
+A :class:`ListLayout` is a special case for describing the columns of
+a GridPanel and therefore may contain only one `main` panel descriptor
+which must be horizontal.  ListLayouts are created automatically by
+Lino, using the :attr:`column_names
+<lino.core.actors.Actor.column_names>` attribute of the Actor as
+`main` panel.
+
+A :class:`ParamsLayout` is a special case for describing the layout of
+a parameters panel.
 
 Some blog entries with more examples of layout definition:
 

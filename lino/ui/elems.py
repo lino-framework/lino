@@ -1286,9 +1286,9 @@ class QuantityFieldElement(CharFieldElement):
 
 
 class DisplayElement(FieldElement):
+    """ExtJS element to be used for :class:`DisplayFields
+    <lino.core.fields.DisplayField>`.
 
-    """
-    ExtJS element to be used for :class:`DisplayFields <lino.core.fields.DisplayField>`.
     """
     #~ preferred_width = 30
     #~ preferred_height = 3
@@ -1471,22 +1471,16 @@ class RecurrenceElement(DisplayElement):
 
 
 class HtmlBoxElement(DisplayElement):
-
     """
     Element that renders to a `Lino.HtmlBoxPanel`.
     """
     ext_suffix = "_htmlbox"
-    #~ declare_type = jsgen.DECLARE_VAR
     value_template = "new Lino.HtmlBoxPanel(%s)"
     preferred_height = 5
     vflex = True
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
     refers_to_ww = True
-
-    #~ def __init__(self,layout_handle,name,action,**kw):
-        #~ kw.update(plugins=js_code('Lino.HtmlBoxPlugin'))
-        #~ LayoutElement.__init__(self,layout_handle,name,**kw)
 
     def get_field_options(self, **kw):
         #~ kw.update(master_panel=js_code("this"))
@@ -1504,11 +1498,32 @@ class HtmlBoxElement(DisplayElement):
         # ~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             #~ kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
         kw.update(items=js_code("new Ext.BoxComponent({autoScroll:true})"))
-        #~ kw.update(items=js_code("new Ext.BoxComponent({})"))
         if self.label:
-            #~ kw.update(title=unicode(self.label)) 20111111
             kw.update(title=self.label)
         return kw
+
+
+class SlaveSummaryPanel(HtmlBoxElement):
+    """The panel used to display a slave table whose `slave_grid_format`
+is 'summary'.
+
+    """
+    def __init__(self, lh, actor, **kw):
+        # kw.update(help_text=actor.help_text)
+        # kw.update(name=actor.__name__)
+        box = fields.HtmlBox(actor.label, help_text=actor.help_text)
+        fld = fields.VirtualField(box, actor.get_slave_summary)
+        fld.name = actor.__name__
+        fld.lino_resolve_type()
+        # kw = dict()
+        a = actor.insert_action
+        if a is not None:
+            kw.update(
+                ls_insert_handler=js_code("Lino.%s" % a.full_name()))
+            kw.update(
+                ls_bbar_actions=[
+                    settings.SITE.plugins.extjs.renderer.a2btn(a)])
+        super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 
 
 class Container(LayoutElement):

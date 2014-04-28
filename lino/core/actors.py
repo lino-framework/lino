@@ -142,7 +142,7 @@ def comma():
 
 def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
     """
-    Returns this table as a unicode string.
+    Render a collection of objects as a single paragraph.
 
     :param max_items: don't include more than the specified number of items.
     """
@@ -1521,15 +1521,53 @@ class Actor(actions.Parametrizable):
         return E.p(*l)
 
     @classmethod
+    def get_slave_summary(self, obj, ar):
+        """Return the HTML paragraph to be displayed in the
+TableSummaryPanel. Lino automagically creates a virtualfield
+``slave_summary`` on each table using this method.
+
+        """
+        ar = ar.spawn(self, master_instance=obj)
+        # ar = ar.spawn(self, master_instance=ar.master_instance)
+        return qs2summary(ar, ar.data_iterator, E.br)
+
+    @classmethod
     def slave_as_summary_meth(self, row_separator):
-        """
-        Creates and returns the method to be used when
-        :attr:`AbstractTable.slave_grid_format` is 'summary'.
-        """
+        raise Exception("No longer supported. Is it being used at all?")
+
         def meth(master, ar):
             ar = ar.spawn(self, master_instance=master)
             s = qs2summary(ar, ar.data_iterator, row_separator)
             return s
         return meth
 
+    @classmethod
+    def unused_get_table_summary_field(self, lh, **kw):
+        fld = fields.HtmlBox(verbose_name=self.label, **kw)
+        fld.help_text = self.help_text
+        fld.name = self.__name__
+        return fields.VirtualField(fld, self.get_slave_summary)
 
+    @classmethod
+    def unused_get_slave_summary_method(self, lh):
+        """Creates and returns the method to be used to display a summary of
+        this table.  The LayoutHandle ``lh`` is either a FormLayout or
+        a ListLayout. This is expetced to return a callable which
+        accepts two arguments
+
+        :attr:`AbstractTable.slave_grid_format`
+        is 'summary'.
+
+        """
+        if isinstance(lh. layouts.ListLayout):
+            def meth(master, ar):
+                ar = ar.spawn(self, master_instance=master)
+                return qs2summary(ar, ar.data_iterator, ', ')
+        elif isinstance(lh, (layouts.FormLayout, layouts.ParamsLayout)):
+            def meth(master, ar):
+                ar = ar.spawn(self, master_instance=master)
+                return qs2summary(ar, ar.data_iterator, E.br)
+        else:
+            raise NotImplementedError()
+        return meth
+            

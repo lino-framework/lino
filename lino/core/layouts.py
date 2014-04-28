@@ -746,18 +746,12 @@ def create_layout_element(lh, name, **kw):
         try:
             de = lh.get_data_elem(name)
         except Exception, e:
-            # ~ logger.exception(e) # removed 20130422 caused disturbing output when running tests
+            # logger.exception(e) removed 20130422 because it caused
+            # disturbing output when running tests
             de = None
             name += " (" + str(e) + ")"
     else:
         de = lh.get_data_elem(name)
-
-    #~ if isinstance(de,fields.FieldSet):
-        # ~ # return lh.desc2elem(ext_elems.FieldSetPanel,name,de.desc)
-        #~ return lh.desc2elem(name,de.desc,**kw)
-
-    #~ if isinstance(de,fields.NullField):
-        #~ return None
 
     if isinstance(de, type) and issubclass(de, fields.Dummy):
         return None
@@ -797,53 +791,28 @@ def create_layout_element(lh, name, **kw):
         lh.add_store_field(de)
         return ext_elems.GenericForeignKeyElement(lh, de, **kw)
 
-    #~ if isinstance(de,type) and issubclass(de,dd.Table):
     if isinstance(de, type) and issubclass(de, tables.AbstractTable):
+        # The data element refers to a table.
         kw.update(master_panel=js_code("this"))
         if isinstance(lh.layout, FormLayout):
-            """a Table in a DetailWindow"""
+            # When a table is specified in the layout a DetailWindow,
+            # then it will be rendered as a panel that displays a
+            # "summary" of that table. The panel will have a tool
+            # button to "open that table in its own window". The
+            # format of that summary is defined by the
+            # `slave_grid_format` of the table. `slave_grid_format` is
+            # a string with one of the following values:
+
             kw.update(tools=[
                 js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                      de.default_action.full_name())
-                #~ js_code("Lino.report_window_button(Lino.%s)" % de.default_action)
-                #~ js_code("Lino.report_window_button(ww,Lino.%s)" % de.default_action)
-            ])
-            #~ if settings.SITE.use_quicktips and de.help_text:
-                #~ kw.update(listeners=dict(render=js_code(
-                  #~ "Lino.quicktip_renderer(%s,%s)" % (py2js('Slave'),py2js(de.help_text)))
-                #~ ))
-
+                      de.default_action.full_name())])
             if de.slave_grid_format == 'grid':
-                #~ if not de.parameters:
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
                     kw.update(preview_limit=de.preview_limit)
-                e = ext_elems.GridElement(lh, name, de, **kw)
-                return e
-            elif de.slave_grid_format == 'summary':
-                # a Table in a DetailWindow, displayed as a summary in a
-                # HtmlBox
-                o = dict(drop_zone="FooBar")
-                #~ a = de.get_action('insert')
-                a = de.insert_action
-                if a is not None:
-                    kw.update(ls_insert_handler=js_code("Lino.%s" %
-                              a.full_name()))
-                    kw.update(ls_bbar_actions=[
-                        settings.SITE.plugins.extjs.renderer.a2btn(a)])
-                #~ else:
-                    #~ print 20120619, de, 'has no insert_action'
-                field = fields.HtmlBox(verbose_name=de.label, **o)
-                field.help_text = de.help_text
-                field.name = de.__name__
-                #~ field._return_type_for_method = de.slave_as_summary_meth(self,'<br>')
-                field._return_type_for_method = de.slave_as_summary_meth(E.br)
-                lh.add_store_field(field)
-                e = ext_elems.HtmlBoxElement(lh, field, **kw)
-                return e
+                return ext_elems.GridElement(lh, name, de, **kw)
 
             elif de.slave_grid_format == 'html':
-                #~ a = de.get_action('insert')
                 if de.editable:
                     a = de.insert_action
                     if a is not None:
@@ -854,18 +823,24 @@ def create_layout_element(lh, name, **kw):
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de.__name__
                 field.help_text = de.help_text
-                #~ field._return_type_for_method = de.slave_as_html_meth(self)
                 field._return_type_for_method = de.slave_as_html_meth()
                 lh.add_store_field(field)
-                # ~ kw.update(required=de.required) # e.g. lino.Home.UsersWithClients not visible for everybody
                 e = ext_elems.HtmlBoxElement(lh, field, **kw)
                 e.add_requirements(**de.required)
                 return e
+
+            elif de.slave_grid_format == 'summary':
+                e = ext_elems.SlaveSummaryPanel(lh, de, **kw)
+                lh.add_store_field(e.field)
+                return e
+            else:
+                raise Exception(
+                    "Invalid slave_grid_format %r" % de.slave_grid_format)
+
         else:
-            #~ field = fields.TextField(verbose_name=de.label)
+            raise Exception("No longer supported. Is it being used at all?")
             field = fields.HtmlBox(verbose_name=de.label)
             field.name = de.__name__
-            #~ field._return_type_for_method = de.slave_as_summary_meth(self,', ')
             field._return_type_for_method = de.slave_as_summary_meth(', ')
             lh.add_store_field(field)
             e = ext_elems.HtmlBoxElement(lh, field, **kw)

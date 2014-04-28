@@ -62,8 +62,8 @@ add('02', _("Spouse"), 'spouse')
 add('03', _("Partner"), 'partner')
 add('04', _("Cohabitant"), 'cohabitant')
 add('05', _("Child"), 'child')
+add('07', _("Adopted child"), 'adopted')
 add('06', _("Relative"), 'relative')
-add('07', _("Adopted"), 'adopted')
 
 
 class Household(contacts.Partner):
@@ -254,22 +254,34 @@ class SiblingsByPerson(Members):
     required = dd.required()
     master = 'contacts.Person'
     column_names = 'person role start_date end_date *'
+    auto_fit_column_widths = True
 
     @classmethod
-    def get_request_queryset(self, ar):
+    def create_instance(self, ar, **kw):
+        kw.update(household=self.get_master_instance(ar))
+        return super(SiblingsByPerson, self).create_instance(ar, **kw)
+        
+    @classmethod
+    def get_master_instance(self, ar):
         mi = ar.master_instance
         if mi is None:
-            return []
+            return
         M = dd.modules.households.Member
         try:
             mbr = M.objects.get(person=mi)
+            return mbr.household
         except M.DoesNotExist:
             raise Warning("%s has no household" % mi)
         except M.MultipleObjectsReturned:
             raise Warning("%s has multiple households" % mi)
-        if mbr is None:
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        mi = self.get_master_instance(ar)
+        if mi is None:
             return []
-        return M.objects.filter(household=mbr.household)
+        M = dd.modules.households.Member
+        return M.objects.filter(household=mi)
 
 
 class CreateHousehold(dd.Action):
@@ -290,7 +302,7 @@ class CreateHousehold(dd.Action):
     """
 
     def action_param_defaults(self, ar, obj, **kw):
-        logger.info("20140426")
+        # logger.info("20140426")
         kw = super(CreateHousehold, self).action_param_defaults(ar, obj, **kw)
         kw.update(head=obj)
         return kw
@@ -312,15 +324,17 @@ class CreateHousehold(dd.Action):
             hh.add_member(head, MemberRoles.head)
         if partner is not None:
             hh.add_member(partner, MemberRoles.partner)
-        ar.success(_("Household has been created"))
+        ar.success(
+            _("Household has been created"),
+            close_window=True, refresh_all=True)
         ar.goto_instance(hh)
 
 dd.inject_action(
     'contacts.Person',
     create_household=CreateHousehold())
-dd.inject_action(
-    'contacts.Person',
-    show_households=dd.ShowSlaveTable('households.MembersByPerson'))
+# dd.inject_action(
+#     'contacts.Person',
+#     show_households=dd.ShowSlaveTable('households.MembersByPerson'))
 
 
 class MembersByPerson(Members):
@@ -328,8 +342,30 @@ class MembersByPerson(Members):
     label = _("Household memberships")
     master_key = 'person'
     column_names = 'household role start_date end_date *'
-    auto_fit_column_widths = True
-    hide_columns = 'id'
+    # auto_fit_column_widths = True
+    # hide_columns = 'id'
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        # obj = ar.master_instance
+        sar = ar.spawn(self, master_instance=obj)
+        elems = []
+        n = sar.get_total_count()
+        if n == 0:
+            elems += [_("Not member of any household."), E.br()]
+        else:
+            if n > 1:
+                elems += [_("Member of %s households: ") % n]
+
+            items = []
+            for m in sar.data_iterator:
+                items.append(E.li(
+                    unicode(m.role), _(" in "), ar.obj2html(m.household)))
+            elems.append(E.ul(*items))
+        elems.append(ar.instance_action_button(obj.create_household))
+        logger.info("20140428 MembersByPerson.get_slave_summary() %s", elems)
+        return E.p(*elems)
 
 
 # class MembersByRole(Members):
@@ -347,31 +383,31 @@ dd.inject_field(
         help_text=("Whether this Partner is a Household.")))
 
 
-def households_panel_by_person(obj, ar, **kw):
-    logger.info("20140426 households_panel_by_person")
-    elems = []
-    # elems.append(E.p("Foo %s" % obj))
-    # Memberships
-    sar = ar.spawn('households.MembersByPerson', master_instance=obj)
-    n = sar.get_total_count()
-    if n > 1:
-        elems += ["Member of %s households: " % n]
+# def households_panel_by_person(obj, ar, **kw):
+#     logger.info("20140426 households_panel_by_person")
+#     elems = []
+#     # elems.append(E.p("Foo %s" % obj))
+#     # Memberships
+#     sar = ar.spawn('households.MembersByPerson', master_instance=obj)
+#     n = sar.get_total_count()
+#     if n > 1:
+#         elems += ["Member of %s households: " % n]
 
-    items = []
-    for m in sar.data_iterator:
-        items.append(E.li(
-            unicode(m.role), _(" in "), ar.obj2html(m.household)))
-    elems.append(E.ul(*items))
-    elems.append(ar.instance_action_button(obj.create_household))
-    return E.div(*elems)
+#     items = []
+#     for m in sar.data_iterator:
+#         items.append(E.li(
+#             unicode(m.role), _(" in "), ar.obj2html(m.household)))
+#     elems.append(E.ul(*items))
+#     elems.append(ar.instance_action_button(obj.create_household))
+#     return E.div(*elems)
 
 
-dd.inject_field(
-    'contacts.Person',
-    'households_panel',
-    dd.VirtualField(
-        dd.HtmlBox(_("Households")),
-        households_panel_by_person))
+# dd.inject_field(
+#     'contacts.Person',
+#     'households_panel',
+#     dd.VirtualField(
+#         dd.HtmlBox(_("Households")),
+#         households_panel_by_person))
 
 
 def setup_main_menu(site, ui, profile, m):

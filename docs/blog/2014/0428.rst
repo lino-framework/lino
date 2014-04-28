@@ -1,0 +1,14 @@
+======================
+Monday, April 28, 2014
+======================
+
+Household composition
+---------------------
+
+Letzter Schliff in :mod:`lino.modlib.households` (SiblingsByPerson und
+MembersByPerson).  Cool, es scheint zu klappen!  Also die "Rollen im
+Haushalt" sind jetzt eine ChoiceList und nicht mehr ein Model. Also
+nicht mehr einfach so übers Web-Interface konfigurierbar.
+
+Jetzt muss ich noch die Datenmigration anpassen, insbesondere 
+`load_plp.py`
