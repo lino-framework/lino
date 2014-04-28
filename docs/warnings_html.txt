@@ -1,9 +1,6 @@
 /home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:22: ERROR: Unknown interpreted text role "aattr".
 /home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:32: ERROR: Unknown interpreted text role "aattr".
 /home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:41: ERROR: Unknown interpreted text role "aattr".
-/home/luc/hgwork/lino/docs/topics/layouts.rst:121: ERROR: Unknown directive type "ListLayout".
-
-.. ListLayout::
 None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
 WARNING: logo file 'logo.png' does not exist
