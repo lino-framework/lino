@@ -116,6 +116,15 @@ class Household(contacts.Partner):
 
 class HouseholdDetail(dd.FormLayout):
 
+    main = """
+    type name language:10 id
+    address_box
+    bottom_box
+    """
+
+    # intro_box = """
+    # """
+
     box3 = """
     country region
     city zip_code:10
@@ -124,28 +133,17 @@ class HouseholdDetail(dd.FormLayout):
     """
 
     box4 = """
-    email:40
-    url
     phone
     gsm
+    email:40
+    url
     """
 
     address_box = "box3 box4"
 
     bottom_box = "remarks households.MembersByHousehold"
 
-    intro_box = """
-    type name language:10 id
-    """
 
-    main = """
-    intro_box
-    address_box
-    bottom_box
-    """
-
-
-#~ class Households(pcsw.Partners):
 class Households(contacts.Partners):
     model = 'households.Household'
     required = dd.Required(user_groups='office')
