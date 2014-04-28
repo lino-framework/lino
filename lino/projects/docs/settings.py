@@ -49,6 +49,7 @@ class Site(Site):
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
+        yield 'lino.modlib.addresses'
         yield 'lino.modlib.humanlinks'
 
         yield 'lino.modlib.uploads'
