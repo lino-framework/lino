@@ -38,13 +38,14 @@ The current solution has some drawbacks:
 - We will also need a renderer for plain HTML and plain text.
 
 
-TODO
-----
+ParameterStore on pcsw.Clients expects a list of 12 values but got 16
+---------------------------------------------------------------------
 
-- IBAN numbers don't seem to get validated.
+I discovered an urgent bug:
 
-- Wenn ich eine Klientenliste öffne über ein RequestField öffne, und
-  wenn ich dort doppelklicke, kriege ich::
+- Wenn ich eine Klientenliste über ein RequestField (von
+  UsersWithClients aus) öffne und dort auf einem Klienten
+  doppelklicke, kriege ich::
 
     Exception
     ParameterStore of LayoutHandle for ParamsLayout on pcsw.Clients expected a list of 12 values, but got [u'30', u'200096', u'', u'29.04.2014', u'29.04.2014', u'', u'', u'', u'', u'', u'false', u'', u'', u'1', u'false', u'false']
@@ -56,4 +57,21 @@ TODO
     request))
     File "/home/lsaffre/repositories/lino/lino/ui/store.py", line 949, in parse_params
     self, len(self.param_fields), pv))
+
+
+Worked several hours on it, without success until now.  I encapsulated
+some code into `install_layout` in order to use the same logic for
+`params_layout` where this was not yet done. But that was not the reason.
+
+Why does a GET to ``/api/integ/Clients/177`` use the ParameterStore
+defined on `pcsw.Clients`!?  Yes, `integ.Clients` inherits from
+`pcsw.Clients`, but it even specifies its own `parameters` and
+`params_layout`, so my `install_layout` above was of course useless.
+
+
+
+Another, less urgent bug:
+
+
+- IBAN numbers don't seem to get validated.
 
