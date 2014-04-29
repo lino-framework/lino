@@ -23,6 +23,7 @@ from django_iban import fields as iban_fields
 
 from lino import dd
 
+from lino.utils.jsgen import js_code
 from lino.ui.elems import CharFieldElement
 
 
@@ -30,6 +31,19 @@ class UppercaseTextFieldElement(CharFieldElement):
     """A CharFieldElement which accepts only upper-case characters.
     """
     value_template = "new Lino.UppercaseTextField(%s)"
+
+
+class IBANFieldElement(UppercaseTextFieldElement):
+    def get_column_options(self, **kw):
+        """Return a string to be used as
+`ext.grid.Column.renderer
+<http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.grid.Column-cfg-renderer>`.
+
+        """
+        kw = super(
+            UppercaseTextFieldElement, self).get_column_options(**kw)
+        kw.update(renderer=js_code('Lino.iban_renderer'))
+        return kw
 
 
 class UppercaseTextField(models.CharField, dd.CustomField):
@@ -40,12 +54,24 @@ class UppercaseTextField(models.CharField, dd.CustomField):
     def to_python(self, value):
         if isinstance(value, basestring):
             return value.upper()
-
-
-class IBANField(iban_fields.IBANField, UppercaseTextField):
-    pass
+        return value
 
 
 class BICField(iban_fields.SWIFTBICField, UppercaseTextField):
     pass
+
+
+class IBANField(iban_fields.IBANField, dd.CustomField):
+
+    def create_layout_elem(self, *args, **kw):
+        return IBANFieldElement(*args, **kw)
+
+    def to_python(self, value):
+        if isinstance(value, basestring):
+            return value.upper().replace(' ', '')
+        return value
+
+    # def get_column_renderer(self):
+    #     return 'Lino.iban_renderer'
+
 

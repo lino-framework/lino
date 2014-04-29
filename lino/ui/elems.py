@@ -158,26 +158,11 @@ class GridColumn(jsgen.Component):
     declare_type = jsgen.DECLARE_INLINE
 
     def __init__(self, layout_handle, index, editor, **kw):
-        """
-        """
-        #~ print 20100515, editor.name, editor.__class__
-        #~ assert isinstance(editor,FieldElement), \
-            #~ "%s.%s is a %r (expected FieldElement instance)" % (cm.grid.report,editor.name,editor)
-        #~ if isinstance(editor,BooleanFieldElement):
-            #~ self.editor = None
-        #~ else:
-        #~ if editor.field.__class__.__name__ == "DcAmountField":
-            #~ print 20130911, editor.editable
         self.editor = editor
         if editor.grid_column_template is not None:
             self.value_template = editor.grid_column_template
         kw.update(sortable=True)
-        # ~ kw.update(submitValue=False) # 20110406
         kw.update(colIndex=index)
-        kw.update(editor.get_column_options())
-        # ~ kw.update(style='overflow:hidden') # 20130319
-        # ~ kw.update(style='height:18px') # 20130319
-        #~ kw.update(hidden=editor.hidden)
         if editor.hidden:
             kw.update(hidden=True)
         if settings.SITE.use_filterRow:
@@ -199,20 +184,19 @@ class GridColumn(jsgen.Component):
                 ])
 
         if settings.SITE.use_gridfilters and editor.gridfilters_settings:
-            # 20121120 last minute
-            if isinstance(editor, FieldElement) and not isinstance(editor.field, fields.VirtualField):
+            if isinstance(editor, FieldElement) \
+               and not isinstance(editor.field, fields.VirtualField):
                 kw.update(filter=editor.gridfilters_settings)
-        #~ if isinstance(editor,FieldElement) and editor.field.primary_key:
         if isinstance(editor, FieldElement):
             if settings.SITE.use_quicktips:
                 #~ if jsgen._for_user_profile.expert:
                 if settings.SITE.show_internal_field_names:
                     ttt = "(%s.%s) " % (layout_handle.layout._datasource,
                                         self.editor.field.name)
-                    #~ ttt = "(%s) " % self.editor.field.name
                 else:
                     ttt = ''
-                if self.editor.field.help_text and not "<" in self.editor.field.help_text:
+                if self.editor.field.help_text and \
+                   not "<" in self.editor.field.help_text:
                     #~ GridColumn tooltips don't support html
                     ttt = string_concat(ttt, self.editor.field.help_text)
                 if ttt:
@@ -224,53 +208,38 @@ class GridColumn(jsgen.Component):
                 """
                 rpt = fld.rel.to.get_default_table()
                 if rpt.detail_action is not None:
-                    if rpt.detail_action.get_view_permission(jsgen._for_user_profile):
+                    if rpt.detail_action.get_view_permission(
+                            jsgen._for_user_profile):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                             name + constants.CHOICES_HIDDEN_SUFFIX,
                             rpt.detail_action.full_name())
 
             rend = None
-            if isinstance(editor.field, models.AutoField):
-                rend = 'Lino.id_renderer'
-            elif isinstance(editor.field, dd.DisplayField):
-                rend = 'Lino.raw_renderer'
-            elif isinstance(editor.field, models.TextField):
-                rend = 'Lino.text_renderer'
-            #~ elif isinstance(editor.field,models.DecimalField):
-                #~ rend = 'Lino.hide_zero_renderer'
-            #~ elif isinstance(editor.field,dd.LinkedForeignKey):
-                #~ rend = "Lino.lfk_renderer(this,'%s')" % \
-                  #~ (editor.field.name + constants.CHOICES_HIDDEN_SUFFIX)
-            #~ elif isinstance(editor.field,models.ForeignKey):
-            elif has_fk_renderer(editor.field):
+            # if isinstance(editor.field, models.AutoField):
+            #     rend = 'Lino.id_renderer'
+            # elif isinstance(editor.field, dd.DisplayField):
+            #     rend = 'Lino.raw_renderer'
+            # elif isinstance(editor.field, models.TextField):
+            #     rend = 'Lino.text_renderer'
+            # if isinstance(editor.field, fields.CustomField):
+            #     rend = editor.field.get_column_renderer()
+            if has_fk_renderer(editor.field):
                 rend = fk_renderer(editor.field, editor.field.name)
             elif isinstance(editor.field, fields.VirtualField):
                 kw.update(sortable=False)
                 if has_fk_renderer(editor.field.return_type):
                     rend = fk_renderer(
                         editor.field.return_type, editor.field.name)
-                #~ elif isinstance(editor.field.return_type,models.DecimalField):
-                    #~ print "20120510 Lino.hide_zero_renderer", editor.field.name
-                    #~ rend = 'Lino.hide_zero_renderer'
-            #~ elif isinstance(editor.field,dd.GenericForeignKeyIdField):
-                #~ rend = "Lino.gfk_renderer()"
             if rend:
                 kw.update(renderer=js_code(rend))
             kw.update(editable=editor.editable)
-            #~ if editor.editable:
             if editor.editable and not isinstance(editor, BooleanFieldElement):
                 kw.update(editor=editor)
-            #~ if str(editor.layout_handle.layout._datasource) == 'pcsw.CoachingsByProject':
-              #~ if editor.name == 'user':
-                #~ print 20120919, editor.field.__class__, editor.field.editable
-                #~ print 20120919, editor.field.model, kw['editable']
-
         else:
             kw.update(editable=False)
+        kw.update(editor.get_column_options())
         jsgen.Component.__init__(self, editor.name, **kw)
 
-        #~ if self.editable:
-            #~ editor = self.get_field_options()
     def ext_options(self, **kw):
         kw = jsgen.Component.ext_options(self, **kw)
         if self.editor.field is not None:

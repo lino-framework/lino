@@ -1,0 +1,31 @@
+=======================
+Tuesday, April 29, 2014
+=======================
+
+Formatting IBAN numbers
+-----------------------
+
+Lino now renders IBAN numbers as it should:
+"EE87 2200 2210 1206 7904" instead of "EE872200221012067904".
+
+The first challenge was a decision: should we store the spaces in the
+database or not?  My current answer is: we don't store the spaces, we
+use a renderer to insert them dynamically.
+
+The second challenge was how to implement this. I made changes in
+:mod:`lino.modlib.iban.fields`, :mod:`lino.ui.elems` and
+:srcref:`lino/modlib/iban/config/uppercasetextfield.js`.  Thanks to
+`How to insert space every 4 characters for IBAN registering?
+<http://stackoverflow.com/questions/17260238/how-to-insert-space-every-4-characters-for-iban-registering>`_
+asked in March 2014 by `Jackyto
+<http://stackoverflow.com/users/2354926/jackyto>`_ and answered by
+`David Thomas <http://stackoverflow.com/users/82548/david-thomas>`_
+
+The current solution has some drawbacks:
+
+- Works only in a grid (IBAN fields in a Detail window are not
+  formatted. Which is not a problem since we currently have no
+  occurence of this case).
+- Pressing F2 to start editing causes the formatting to disappear
+  (waiting for user feedback on this).
+- We will also need a renderer for plain HTML and plain text.
