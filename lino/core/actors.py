@@ -814,6 +814,10 @@ class Actor(actions.Parametrizable):
         return obj.summary_row(ar, **kw)
 
     @classmethod
+    def do_setup(self):
+        pass
+
+    @classmethod
     def get_handle(self):
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
@@ -821,10 +825,6 @@ class Actor(actions.Parametrizable):
             raise Exception(
                 "Tried to get static handle for %s (get_handle_name is %r)"
                 % (self, self.get_handle_name))
-        #~ if ui is None:
-            #~ hname = '_lino_console_handler'
-        #~ else:
-            #~ hname = _handle_attr_name
         return self._get_handle(None, _handle_attr_name)
 
     @classmethod
@@ -832,34 +832,11 @@ class Actor(actions.Parametrizable):
         # don't inherit from parent!
         h = self.__dict__.get(hname, None)
         if h is None:
-            #~ if self._replaced_by is not None:
-                #~ raise Exception("Trying to get handle for %s which is replaced by %s" % (self,self._replaced_by))
             h = self._handle_class(self)
             setattr(self, hname, h)
             h.setup(ar)
         return h
 
-    @classmethod
-    def do_setup(cls):
-        if False:  # see :blogref:`20130327`
-            if cls.master is not None:
-                if not isinstance(cls.master, type):
-                    raise Exception("%s.master is %r" % (cls, cls.master))
-                if not issubclass(cls.master, models.Model):
-                    raise Exception("%s.master is %r" % (cls, cls.master))
-                name = cls.related_name or uncamel(cls.__name__)
-                if cls.app_label == cls.master._meta.app_label:
-                    if hasattr(cls.master, name):
-                        logger.debug("Name %s.%s already defined",
-                                     cls.master, name)
-                    else:
-                        #~ def m(obj,ar):
-                            #~ return ar.spawn(cls,master_instance=obj,title=cls.label)
-                        def m(obj):
-                            return cls.request(master_instance=obj, title=cls.label)
-                        setattr(cls.master, name, m)
-
-    #~ submit_action = actions.SubmitDetail()
     _class_init_done = False
 
     @classmethod
@@ -867,7 +844,6 @@ class Actor(actions.Parametrizable):
         """
         Called internally a site startup. Don't override.
         """
-
         master = getattr(cls, 'master', None)
         if master is not None:
             cls.master = resolve_model(master)
@@ -882,8 +858,9 @@ class Actor(actions.Parametrizable):
                 dl.set_datasource(cls)
                 cls.detail_layout = dl
             elif not issubclass(cls, dl._datasource):
-                raise Exception("Cannot use detail_layout of %r for %r" %
-                                (dl._datasource, cls))
+                raise Exception(
+                    "Cannot reuse %r detail_layout for %r" %
+                    (dl._datasource, cls))
 
         dl = cls.__dict__.get('insert_layout', None)
         if dl is None and not cls._class_init_done:
@@ -899,43 +876,8 @@ class Actor(actions.Parametrizable):
                 raise Exception(
                     "Cannot reuse %r insert_layout for %r" %
                     (dl._datasource, cls))
-                #~ logger.debug("Note: %s uses layout owned by %s",cls,dl._datasource)
 
-        # 20130906
-        #~ if cls.label is None:
-            #~ cls.label = cls.get_actor_label()
-
-        #~ if cls.parameters is not None:
-            #~ for name,f in cls.parameters.items():
-                #~ if isinstance(f,models.ForeignKey):
-                    #~ if f.verbose_name is None:
-                        #~ f.rel.to = resolve_model(f.rel.to)
-                        #~ f.verbose_name = f.rel.to._meta.verbose_name
-
-        if False:
-            #~ for b in cls.__bases__:
-            for b in cls.mro():
-                for k, v in b.__dict__.items():
-                    if isinstance(v, actions.Action):
-                        if v.parameters is not None:
-                        #~ if not cls.__dict__.has_key(k):
-                        #~ if cls.__name__ == 'Home':
-                            if cls.__dict__.get(k, None) is None:
-                            #~ logger.info("20120628 %s.%s copied from %s",cls,k,b)
-                            #~ label = v.label
-                            #~ 20130121 : removed two following lines
-                            #~ v = copy.deepcopy(v)
-                            #~ v.name = None
-                                setattr(cls, k, v)
-                                #~ cls.define_action(k,v)
-                                #~ if b is EmptyTable:
-                                    #~ print "20120523", classname, k, v
-                #~ bd = getattr(b,'_actions_dict',None)
-                #~ if bd:
-                    #~ for k,v in bd.items():
-                            #~ cls._actions_dict[k] = cls.add_action(copy.deepcopy(v),k)
-
-        _class_init_done = True
+        # cls._class_init_done = True
 
     @classmethod
     def get_known_values(self):

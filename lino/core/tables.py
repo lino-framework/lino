@@ -526,15 +526,15 @@ class TableRequest(ActionRequest):
             if has_sum:
                 cells = ar.sums2html(columns, sums, **cellattrs)
                 tble.body.append(xghtml.E.tr(*cells))
-                #~ tble.add_body_row(*ar.ah.store.sums2html(ar,fields,sums,**cellattrs))
 
     def get_field_info(ar, column_names=None):
-        """
-        Return a tuple (fields, headers, widths) which expresses which columns, headers
-        and widths the user wants for this TableRequest. If `self` has web request info,
-        checks for GET parameters cn, cw and ch (coming from the grid widget). Otherwise
-        Also apply the tables's :meth:`override_column_headers
+        """Return a tuple (fields, headers, widths) which expresses which
+        columns, headers and widths the user wants for this
+        TableRequest. If `self` has web request info, checks for GET
+        parameters cn, cw and ch (coming from the grid widget). Also
+        apply the tables's :meth:`override_column_headers
         <lino.core.actors.Actor.override_column_headers>` method.
+
         """
         u = ar.get_user()
         if u is not None:
@@ -554,9 +554,6 @@ class TableRequest(ActionRequest):
                     constants.URL_PARAM_HIDDENS)]
             fields = []
             widths = []
-            #~ headers = []
-            #~ ah = ar.actor.get_handle(self.extjs_ui)
-            #~ ah = ar.actor.get_handle(settings.SITE.ui)
             ah = ar.actor.get_handle()
             for i, cn in enumerate(columns):
                 col = None
@@ -565,37 +562,25 @@ class TableRequest(ActionRequest):
                         col = e
                         break
                 if col is None:
-                    #~ names = [e.name for e in ar.ah.list_layout._main.walk()]
-                    #~ raise Exception("No column named %r in %s" % (cn,ah.list_layout.main.columns))
                     raise Exception("No column named %r in %s" %
                                     (cn, ar.ah.list_layout.main.columns))
                 if not hiddens[i]:
                     fields.append(col)
-                    #~ fields.append(col.field._lino_atomizer)
-                    #~ headers.append(unicode(col.label or col.name))
                     widths.append(int(all_widths[i]))
         else:
             if column_names:
                 from lino.core import layouts
-                #~ assert ar.actor is not None
                 ll = layouts.ListLayout(column_names, datasource=ar.actor)
-                #~ lh = ll.get_layout_handle(self.extjs_ui)
                 lh = ll.get_layout_handle(settings.SITE.ui)
                 columns = lh.main.columns
                 columns = [e for e in columns if not e.hidden]
             else:
-                #~ ah = ar.actor.get_handle(self.extjs_ui)
                 ah = ar.actor.get_request_handle(ar)
                 columns = ah.list_layout.main.columns
-
-            #~ if ar.actor.__name__ == 'ActiveCourses':
-                #~ logger.info("20131010 %s", [e.hidden for e in columns])
 
             # render them so that babelfields in hidden_languages get hidden:
             for e in columns:
                 e.value = e.ext_options()
-                #~ e.value.update(e.ext_options())
-                #~ e.js_value()
             #
             columns = [e for e in columns if not e.value.get('hidden', False)]
 

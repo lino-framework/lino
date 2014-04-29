@@ -816,10 +816,9 @@ class ActionRequest(ActorRequest):
                     pv[self.actor.master_key] = self.master_instance
 
             if param_values is None:
-                if request is not None:  # 20121025
-                    pv.update(
-                        self.actor.params_layout.params_store.parse_params(
-                            request))
+                if request is not None:
+                    ps = self.actor.params_layout.params_store
+                    pv.update(ps.parse_params(request))
             else:
                 for k in param_values.keys():
                     if not k in pv:

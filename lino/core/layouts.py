@@ -42,7 +42,7 @@ from django.contrib.contenttypes import generic
 
 from lino.utils.xmlgen.html import E
 
-from lino.core import constants  # as ext_requests
+from lino.core import constants
 
 
 class LayoutError(RuntimeError):
@@ -99,25 +99,18 @@ class Panel(object):
 
 
 class LayoutHandle:
-
     """
     LayoutHandle analyzes a Layout and stores the
     resulting LayoutElements provided by the UI.
 
+    The same class is used for all kinds of BaseLayout instances.
+
     """
 
     def __init__(self, layout):
-
-        #~ logger.debug('20111113 %s.__init__(%s,%s)',self.__class__.__name__,rh,layout)
         assert isinstance(layout, BaseLayout)
-        #assert isinstance(link,reports.ReportHandle)
-        #~ base.Handle.__init__(self,ui)
         self.layout = layout
         self.hidden_elements = layout.hidden_elements
-        #~ self.ui = settings.SITE.ui
-        #~ self.rh = rh
-        #~ self.datalink = layout.get_datalink(ui)
-        # ~ self.label = layout.label # or ''
         self._store_fields = []
         self._names = {}
 
@@ -134,22 +127,17 @@ class LayoutHandle:
 
         self.layout.setup_handle(self)
         for k, v in self.layout._labels.items():
-            #~ if not hasattr(self,k):
-            if not self._names.has_key(k):
-                raise Exception("%s has no attribute %r (layout.main is %r)" %
-                                (self, k, layout.main))
-            #~ getattr(self,k).label = v
+            if not k in self._names:
+                raise Exception(
+                    "%s has no attribute %r (layout.main is %r)" %
+                    (self, k, layout.main))
             self._names[k].label = v
 
     def __str__(self):
-        #~ return "%s %s" % (self.rh,self.__class__.__name__)
         return "%s for %s" % (self.__class__.__name__, self.layout)
 
     def add_store_field(self, field):
         self._store_fields.append(field)
-
-    def add_hidden_field(self, field):
-        return HiddenField(self, field)
 
     def get_title(self, ar):
         return self.layout.get_title(ar)
@@ -162,13 +150,8 @@ class LayoutHandle:
 
     def desc2elem(self, elemname, desc, **kw):
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
-        #assert desc != 'Countries_choices2'
 
         if isinstance(desc, Panel):
-            #~ assert not self.layout._element_options.has_key(elemname)
-            #~ self.layout._element_options[elemname] = desc.options
-            #~ d = self._element_options.setdefault(elemname,{})
-            #~ d.update(desc.options)
             if len(kw):
                 newkw = dict(desc.options)
                 newkw.update(kw)
@@ -210,20 +193,16 @@ class LayoutHandle:
                     i += 1
                     e = self.desc2elem(elemname + '_' + str(i), x)
                     if e is not None:
-                        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
                         elems.append(e)
-            #~ if len(elems) == 1:
-                #~ vertical = False
         else:
             # it's a horizontal box
             vertical = False
             elems = []
             for x in desc.split():
                 if not x.startswith("#"):
-                    """
-                    20100214 pcsw.PersonDetail hatte 2 MainPanels,
-                    weil PageLayout kein einzeiliges (horizontales) `main` vertrug
-                    """
+                    # 20100214 pcsw.PersonDetail hatte 2 MainPanels,
+                    # weil PageLayout kein einzeiliges (horizontales)
+                    # `main` vertrug
                     e = self.create_element(x)
                     if e is None:
                         pass
@@ -232,91 +211,50 @@ class LayoutHandle:
                     else:
                         elems.append(e)
         if len(elems) == 0:
-            #~ raise Exception("20120914 %s %s" % (self,elemname))
             return None
-        # return self.vbox_class(self,name,*elems,**kw)
-        #~ kw = self.ui.panel_attr2kw(**kw)
-        #~ return panelclass(self,elemname,True,*elems,**kw)
-        # panelclass != self.main_class:
         if len(elems) == 1 and elemname != 'main':
-            #~ if label:
-                #~ elems[0].label = label
             elems[0].setup(**kw)
             return elems[0]
-        #~ kw.update(self.layout.panel_options.get(elemname,{}))
         e = create_layout_panel(self, elemname, vertical, elems, **kw)
-        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         return e
 
     def define_panel(self, name, desc, **kw):
         if not desc:
             return
-            #~ raise Exception(
-                #~ 'Failed to define empty element %s (in %s)'
-                #~ % (name,self.layout))
-        #~ if hasattr(self,name):
-        if self._names.has_key(name):
+        if name in self._names:
             raise Exception(
                 'Duplicate element definition %s = %r in %s'
                 % (name, desc, self.layout))
-        #~ if name == 'main':
-            #~ e = self.desc2elem(self.main_class,name,desc,**kw)
-        #~ else:
-            #~ e = self.desc2elem(self.ui.Panel,name,desc,**kw)
         e = self.desc2elem(name, desc, **kw)
         if e is None:
-            if False:
-                raise Exception(
-                    'Failed to define element %s = %s\n(in %s)'
-                    % (name, desc, self.layout))
             return
-        #~ e.allow_read = curry(perms.make_permission(self.layout._datasource,**e.required),e)
         self._names[name] = e
-        #~ setattr(self,name,e)
         return e
 
     def create_element(self, desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name, pkw = self.splitdesc(desc_name)
-        #~ kw.update(pkw)
-        #~ e = getattr(self,name,None)
-        if self._names.has_key(name):
+        if name in self._names:
             raise Exception(
                 'Duplicate element definition %s = %r in %s'
                 % (name, desc_name, self.layout))
-        #~ e = self._names.get(name,None)
-        #~ if e is not None:
-            #~ return e
         desc = getattr(self.layout, name, None)
         if desc is not None:
             return self.define_panel(name, desc, **pkw)
-        #~ if str(self.layout._datasource) == 'cal.Events':
-            #~ if name == 'start':
-                #~ print 20121021, repr(name), "not a panel", repr(self.layout)
-            #~ return self.define_panel(name,desc)
         e = create_layout_element(self, name, **pkw)
-        #~ e = self.ui.create_layout_element(self,name)
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
-            #~ if self.layout._datasource.__name__ == "ActiveCourses":
-                #~ print "20131010 hide element %r in %s" % (name, self)
             if isinstance(self.layout, FormLayout):
                 return None
             if isinstance(e, list):  # it is a babelfield
                 for be in e:
                     be.hidden = True
-                #~ raise Exception("Cannot hide element %s of %s" % (name,self))
             else:
                 e.hidden = True
-        #~ setattr(self,name,e)
         self._names[name] = e
-        #~ self.setup_element(e)
-        #~ if name == 'invoiceable':
-            #~ logger.info("20130612 create_element() --> %r", e)
         return e
 
-    #~ def splitdesc(self,picture,**kw):
     def splitdesc(self, picture):
         kw = dict()
         if picture.endswith(')'):
@@ -346,9 +284,6 @@ class LayoutHandle:
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):
             return False
-        #~ and (de.name not in self.hidden_elements) \
-        #~ and (de.name not in self.rh.report.known_values.keys()) \
-        #~ if de.name == self.rh.report.master_key: return False
         if isinstance(self.layout, ListLayout):
             if de.name == self.layout._datasource.master_key:
                 return False
@@ -358,7 +293,6 @@ class LayoutHandle:
         return self.layout.get_data_elem(name)
 
     def get_choices_url(self, *args, **kw):
-        # 20140101
         return self.layout.get_choices_url(
             settings.SITE.kernel.default_renderer.plugin,
             *args, **kw)
@@ -384,9 +318,7 @@ class BaseLayout(object):
 
     """
     _handle_class = LayoutHandle
-    #~ __metaclass__ = LayoutMeta
 
-    # ~ _table = None # deprecated
     _datasource = None
 
     window_size = None
@@ -398,24 +330,10 @@ class BaseLayout(object):
 
     main = None
 
-    #~ panel_options = {}
-    #~ """
-    #~ A dict of
-    #~ """
-
-    #~ 20120923
-    #~ _added_panels = dict()
-    #~ _labels = dict()
-    #~ _element_options = dict()
-
-    #~ def __init__(self,table=None,main=None,hidden_elements=frozenset(),window_size=None):
     def __init__(self, main=None, datasource=None, hidden_elements=None, **kw):
         """
         datasource is either an actor or an action.
         """
-        #~ assert table is not None
-        #~ self._table = table
-        #~ self._datasource = datasource
         self._labels = self.override_labels()
         self._added_panels = dict()
         #~ self._window_size = window_size
@@ -564,33 +482,18 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
 
-    #~ def before_setup_handle(self):
-        #~ pass
     def get_layout_handle(self, ui):
         """
         Same code as lino.ui.base.Handled.get_handle,
         except that here it's an instance method.
         """
-        #~ assert ui is None or isinstance(ui,UI), \
-            #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
-        #~ if ui is None:
-            #~ hname = '_lino_console_handler'
-        #~ else:
-            #~ hname = ui._handle_attr_name
         hname = constants._handle_attr_name
 
-        #~ write_lock.acquire()
-        #~ try:
         # we do not want any inherited handle
         h = self.__dict__.get(hname, None)
         if h is None:
-            #~ self.before_setup_handle()
-            #~ print 20130404, self._handle_class
             h = self._handle_class(self)
             setattr(self, hname, h)
-            #~ h.setup()
-        #~ finally:
-            #~ write_lock.release()
         return h
 
     def __str__(self):
@@ -644,9 +547,8 @@ class ListLayout(FieldLayout):
 
 
 class ParamsLayout(BaseLayout):
-
     """
-    A Layout description for a :attr:`lino.core.actors.Actor.parameters` panel.
+    A Layout description for a table parameter panel.
     """
     join_str = " "
     url_param_name = constants.URL_PARAM_PARAM_VALUES
@@ -656,16 +558,13 @@ class ParamsLayout(BaseLayout):
         return self._datasource.get_param_elem(name)
 
     def setup_handle(self, lh):
-        #~ if self.params_store is None:
-        #~ from lino.ui.extjs3 import ext_store
         from lino.ui import store
         self.params_store = store.ParameterStore(lh, self.url_param_name)
 
 
 class ActionParamsLayout(ParamsLayout):
-
     """
-    A Layout description for an :attr:`lino.core.actions.Action.parameters` panel.
+    A Layout description for an action parameter panel.
     """
     join_str = "\n"
     window_size = (50, 'auto')
@@ -692,13 +591,6 @@ def create_layout_panel(lh, name, vertical, elems, **kw):
     pkw.update(label=kw.pop('label', None))
     pkw.update(width=kw.pop('width', None))
     pkw.update(height=kw.pop('height', None))
-    #~ required = {}
-    #~ main panel
-    # 20121116
-    #~ if False and name == 'main' and isinstance(lh.layout,ListLayout):
-    #~ if name != 'main' and isinstance(lh.layout,ListLayout):
-    #~ required.update(lh.layout._datasource.required)
-    #~ todo: requirements sind eine negativ-liste. aber auth=True muss in eine positiv-liste
     v = kw.pop('required', NOT_PROVIDED)
     if v is not NOT_PROVIDED:
         pkw.update(required=v)
@@ -706,18 +598,12 @@ def create_layout_panel(lh, name, vertical, elems, **kw):
         raise Exception("Unknown panel attributes %r for %s" % (kw, lh))
     if name == 'main':
         if isinstance(lh.layout, ListLayout):
-            #~ return ext_elems.GridMainPanel(lh,name,vertical,*elems,**pkw)
-            #~ return ext_elems.GridMainPanel(lh,name,lh.layout._datasource,*elems,**pkw)
             e = ext_elems.GridElement(
                 lh, name, lh.layout._datasource, *elems, **pkw)
         elif isinstance(lh.layout, ActionParamsLayout):
             e = ext_elems.ActionParamsPanel(lh, name, vertical, *elems, **pkw)
         elif isinstance(lh.layout, ParamsLayout):
             e = ext_elems.ParamsPanel(lh, name, vertical, *elems, **pkw)
-            #~ fkw = dict(layout='fit', autoHeight= True, frame= True, items=pp)
-            #~ if lh.layout._datasource.params_panel_hidden:
-                #~ fkw.update(hidden=True)
-            #~ return ext_elems.FormPanel(**fkw)
         elif isinstance(lh.layout, FormLayout):
             if len(elems) == 1 or vertical:
                 e = ext_elems.DetailMainPanel(
@@ -726,8 +612,6 @@ def create_layout_panel(lh, name, vertical, elems, **kw):
                 e = ext_elems.TabPanel(lh, name, *elems, **pkw)
         else:
             raise Exception("No element class for layout %r" % lh.layout)
-        #~ actions.loosen_requirements(e,**lh.layout._datasource.required)
-        #~ e.debug_permissions = True
         return e
     return ext_elems.Panel(lh, name, vertical, *elems, **pkw)
 

@@ -147,14 +147,10 @@ def discover_choosers():
 
 
 def register_params(cls):
-    #~ if cls.__class__.__name__ == 'Merge':
-        #~ print("20130121 register_params",cls.parameters)
-        #~ assert cls.parameters is not None
     if cls.parameters:
         for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
-            #~ v._datasource = cls
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
                 cls.parameters.keys())
@@ -163,6 +159,9 @@ def register_params(cls):
         elif isinstance(cls.params_layout, layouts.Panel):
             cls.params_layout = cls._layout_class(
                 cls.params_layout.desc, cls, **cls.params_layout.options)
+        else:
+            assert isinstance(cls.params_layout, cls._layout_class)
+            # but what if cls.params_layout._datasource != cls?
 
     elif cls.params_layout is not None:
         raise Exception("params_layout but no parameters ?!")
@@ -200,39 +199,21 @@ class Parametrizable(object):
     Set this to a `dict` of `name = models.XyzField()` pairs.
     """
 
-    # ~ params_template = None # no longer used
-
     params_layout = None
-    """
-    If this table or action has parameters, specify here how they should be 
-    laid out in the parameters panel.
+    """If this table or action has parameters, specify here how they
+    should be laid out in the parameters panel.
+
     """
 
     params_panel_hidden = False
-    """
-    If this table has parameters, set this to True if the parameters 
-    panel should be initially hidden when this table is being displayed.
+    """If this table has parameters, set this to True if the parameters
+    panel should be initially hidden when this table is being
+    displayed.
+
     """
 
     _layout_class = NotImplementedError
 
-    #~ @classmethod
-    #~ def install_params_on_actor(cls):
-        #~ for k in ('get_window_layout', 'after_site_setup',
-          #~ 'make_params_layout_handle','get_param_elem'):
-            #~ um = getattr(cls,k)
-            #~ setattr(cls,k,classmethod(um))
-
-    #~ @classmethod
-    #~ def get_param_elem(self,name):
-        #~ if self.__name__ == 'Merge':
-            #~ if not isinstance(self.params_layout,self._layout_class):
-                #~ raise Exception("20130121 self.params_layout is a %s" % self.params_layout.__class__)
-            #~ print("20130121 get_param_elem",self.params_layout._datasource)
-        #~ if self.parameters:
-            #~ return self.parameters.get(name,None)
-        #~ return None
-    #~ @classmethod
     def get_window_layout(self, actor):
         return self.params_layout
 
@@ -242,13 +223,6 @@ class Parametrizable(object):
             return wl.window_size
 
 
-#~ class ActionMetaClass(type):
-    #~ def __new__(meta, classname, bases, classDict):
-        #~ cls = type.__new__(meta, classname, bases, classDict)
-        #~ cls.register_params()
-        #~ return cls
-
-#~ class ActionRunner(object):
 class InstanceAction(object):
     """Volatile object which wraps a given action to be run on a given
     model instance.
@@ -314,12 +288,6 @@ class Action(Parametrizable, Permittable):
     when rendered as toolbar button.
     """
 
-    #~ icon_file = None
-    #~ """
-    #~ The file name of an icon to be used for this action
-    #~ when rendered by quick_add_buttons.
-    #~ """
-
     _layout_class = layouts.ActionParamsLayout
 
     hidden_elements = frozenset()
@@ -331,8 +299,7 @@ class Action(Parametrizable, Permittable):
     """
 
     sort_index = 90
-    """
-    Determins the sort order in which the actions will be presented to 
+    """Determins the sort order in which the actions will be presented to
     the user.
     
     List actions are negative and come first.
@@ -351,9 +318,9 @@ class Action(Parametrizable, Permittable):
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     60    :class:`ShowSlaveTable`
-    90    default for all custom row actions created using :func:`@dd.action <action>`
+    90    default for all custom row actions
     ===== =================================
-    
+
     """
 
     label = None
@@ -392,9 +359,9 @@ class Action(Parametrizable, Permittable):
     """
 
     defining_actor = None
-    """
-    Internally used to store the :class:`lino.core.actors.Actor` 
-    who defined this action.
+    """Internally used to store the :class:`lino.core.actors.Actor` who
+    defined this action.
+
     """
 
     key = None
@@ -422,20 +389,19 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
-    """
-    Whether this action possibly modifies data *in the given object*.
+    """Whether this action possibly modifies data *in the given object*.
     
     This means that :class:`InsertRow` is a `readonly` action.
-    Actions like :class:`InsertRow` and :class:`Duplicable <lino.mixins.duplicable.Duplicate>` 
-    which do not modify the given object but *do* modify the database,
-    must override their `get_action_permission`::
+    Actions like :class:`InsertRow` and :class:`Duplicable
+    <lino.mixins.duplicable.Duplicate>` which do not modify the given
+    object but *do* modify the database, must override their
+    `get_action_permission`::
     
       def get_action_permission(self,ar,obj,state):
-          if user.profile.readonly: 
+          if user.profile.readonly:
               return False
           return super(Duplicate,self).get_action_permission(ar,obj,state)
-        
-    
+
     """
 
     opens_a_window = False
@@ -444,14 +410,15 @@ class Action(Parametrizable, Permittable):
     """
 
     hide_top_toolbar = False
-    """
-    Used internally if :attr:`opens_a_window` to say whether 
-    the window has a top toolbar.
+    """Used internally if :attr:`opens_a_window` to say whether the
+    window has a top toolbar.
+
     """
 
     hide_navigator = False
-    """
-    Used internally if :attr:`opens_a_window` to say whether the window has a navigator.
+    """Used internally if :attr:`opens_a_window` to say whether the
+    window has a navigator.
+
     """
 
     # show_in_row_actions = False
@@ -502,21 +469,18 @@ class Action(Parametrizable, Permittable):
     """
 
     def __init__(self, label=None, **kw):
-        """
-        The first argument is the optional `label`,
-        other arguments should be specified as keywords and can be 
-        any of the existing class attributes.
+        """The first argument is the optional `label`, other arguments should
+        be specified as keywords and can be any of the existing class
+        attributes.
+
         """
         if label is not None:
             self.label = label
 
-        #~ if label is None:
-            #~ label = self.label or self.url_action_name
         for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("Invalid action keyword %s" % k)
             setattr(self, k, v)
-        #~ self.add_requirements()
 
         if self.show_in_workflow:
             self.custom_handler = True
@@ -527,13 +491,6 @@ class Action(Parametrizable, Permittable):
         # if self.show_in_row_actions:
         #     self.custom_handler = True
 
-        #~ self.set_required(**required)
-        #~ assert self.callable_from is None or isinstance(
-            #~ self.callable_from,(tuple,type)), "%s" % self
-        #~ if self.parameters is None:
-            #~ assert self.params_layout is None
-        #~ else:
-            #~ assert self.params_layout is not None
         register_params(self)
 
         if self.parameters is not None:
@@ -541,8 +498,8 @@ class Action(Parametrizable, Permittable):
                 raise Exception("20130121 %s" % self)
             #~ assert isinstance(self.params_layout,self._layout_class)
 
-        if hasattr(self, 'run'):
-            raise Exception(str(self))
+        # if hasattr(self, 'run'):
+        #     raise Exception(str(self))
 
     def __get__(self, instance, owner):
         """
@@ -551,16 +508,15 @@ class Action(Parametrizable, Permittable):
         """
         if instance is None:
             return self
-        return InstanceAction(self, instance.get_default_table(), instance, owner)
+        return InstanceAction(
+            self, instance.get_default_table(), instance, owner)
 
     def as_bootstrap_html(self, ar):
         return "Oops, no as_bootstrap_html method for %s" % self
 
     def make_params_layout_handle(self, ui):
-        #~ return self.action.params_layout.get_layout_handle(ui)
         return make_params_layout_handle(self, ui)
 
-    #~ @classmethod
     def get_param_elem(self, name):
         # same as in Actor but here it is an instance method
         if self.parameters:

@@ -909,13 +909,8 @@ class ParameterStore(BaseStore):
         self.params_layout_handle = params_layout_handle
 
     def __str__(self):
-        return "%s of %s" % (self.__class__.__name__, self.params_layout_handle)
-
-    def unused_pv2list(self, pv):
-        l = []
-        for f in self.param_fields:
-            l.append(pv[f.field.name])
-        return l
+        return "%s of %s" % (
+            self.__class__.__name__, self.params_layout_handle)
 
     def pv2dict(self, pv, **d):
         for fld in self.param_fields:
@@ -930,29 +925,22 @@ class ParameterStore(BaseStore):
         def parse(sf, form_value):
             if form_value == '' and not sf.field.empty_strings_allowed:
                 return sf.form2obj_default
-                # if a field has been posted with empty string,
-                # we don't want it to get the field's default value because
-                # otherwise checkboxes with default value True can never be unset.
-                # charfields have empty_strings_allowed
-                # e.g. id field may be empty
-                # but don't do this for other cases
+                # When a field has been posted with empty string, we
+                # don't want it to get the field's default value
+                # because otherwise checkboxes with default value True
+                # can never be unset.  charfields have
+                # empty_strings_allowed e.g. id field may be empty.
+                # But don't do this for other cases.
             else:
                 return sf.parse_form_value(form_value, None)
 
-        #~ if pv:
-            #~ if len(self.param_fields) != len(pv):
-                #~ raise Exception("len(%r) != len(%r)" % (self.param_fields,pv))
         if len(pv) > 0:
             if len(self.param_fields) != len(pv):
-                #~ logger.info('20121016 %s para_fields are %s',self,[sf.field.name for sf in self.param_fields])
-                raise Exception("%s expected a list of %d values, but got %s" % (
-                    self, len(self.param_fields), pv))
+                raise Exception(
+                    "%s expected a list of %d values, but got %s" % (
+                        self, len(self.param_fields), pv))
             for i, f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f, pv[i])
-        #~ else: removed 20120918
-            #~ for i,f in enumerate(self.param_fields):
-                #~ kw[f.field.name] = parse(f,'')
-        #~ logger.info("20120221 2 parse_params(%s) --> %r",pv,kw)
         return kw
 
 

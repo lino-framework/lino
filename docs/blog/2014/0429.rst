@@ -12,10 +12,17 @@ The first challenge was a decision: should we store the spaces in the
 database or not?  My current answer is: we don't store the spaces, we
 use a renderer to insert them dynamically.
 
-The second challenge was how to implement this. I made changes in
-:mod:`lino.modlib.iban.fields`, :mod:`lino.ui.elems` and
-:srcref:`lino/modlib/iban/config/uppercasetextfield.js`.  Thanks to
-`How to insert space every 4 characters for IBAN registering?
+This is more or less compatible to `django-iban
+<https://github.com/benkonrath/django-iban>`_ who currently just
+accepts spaces and removes them forever (but does not render them
+formatted).
+
+The second challenge was how to implement this.  The `commit
+<https://github.com/lsaffre/lino/commit/3748768ed9d8b3e0f4e616d4378562cb7d787078>`_
+shows what I did.  I made changes in :mod:`lino.modlib.iban.fields`
+and :srcref:`/lino/modlib/iban/config/uppercasetextfield.js` (those in
+:mod:`lino.ui.elems` are rather cosmetic).  Thanks to `How to insert
+space every 4 characters for IBAN registering?
 <http://stackoverflow.com/questions/17260238/how-to-insert-space-every-4-characters-for-iban-registering>`_
 asked in March 2014 by `Jackyto
 <http://stackoverflow.com/users/2354926/jackyto>`_ and answered by
@@ -29,3 +36,24 @@ The current solution has some drawbacks:
 - Pressing F2 to start editing causes the formatting to disappear
   (waiting for user feedback on this).
 - We will also need a renderer for plain HTML and plain text.
+
+
+TODO
+----
+
+- IBAN numbers don't seem to get validated.
+
+- Wenn ich eine Klientenliste öffne über ein RequestField öffne, und
+  wenn ich dort doppelklicke, kriege ich::
+
+    Exception
+    ParameterStore of LayoutHandle for ParamsLayout on pcsw.Clients expected a list of 12 values, but got [u'30', u'200096', u'', u'29.04.2014', u'29.04.2014', u'', u'', u'', u'', u'', u'false', u'', u'', u'1', u'false', u'false']
+
+    TRACEBACK:
+    File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/core/handlers/base.py", line 114, in get_response
+    (...)
+    File "/home/lsaffre/repositories/lino/lino/core/requests.py", line 822, in __init__
+    request))
+    File "/home/lsaffre/repositories/lino/lino/ui/store.py", line 949, in parse_params
+    self, len(self.param_fields), pv))
+
