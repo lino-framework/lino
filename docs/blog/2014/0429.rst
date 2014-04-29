@@ -66,12 +66,32 @@ some code into `install_layout` in order to use the same logic for
 Why does a GET to ``/api/integ/Clients/177`` use the ParameterStore
 defined on `pcsw.Clients`!?  Yes, `integ.Clients` inherits from
 `pcsw.Clients`, but it even specifies its own `parameters` and
-`params_layout`, so my `install_layout` above was of course useless.
+`params_layout` (so my `install_layout` above was of course useless).
 
 
+Started new tested document :ref:`welfare.tested.integ` which
+reproduces the problem.
 
-Another, less urgent bug:
+The problematic code was this::
 
+        elems += [
+            E.br(), ar.instance_action_button(obj.create_household)]
+
+Here `obj.create_household` instantiates an `InstanceAction` on a
+Person's `create_household`.  The application code is okay, but I must
+decide whether `ar.instance_action_button` should parse the web
+request or not.  In the above case it may not.  But here be
+dragons. Not sure whether this will cause problems elsewhere.
+
+Cool: I added a `get_slave_summary` method to
+`UploadsByController`. This will make our "quick upload buttons"
+needless! Not yet finished, but promising.
+
+Checkin wegen Feierabend.
+
+More bugs to fix:
 
 - IBAN numbers don't seem to get validated.
-
+- insert window of an Upload has a layout problem. 
+  I guess that the uploadField doesn't collaborate well with the auto height.
+- Inserting in UploadsByClient sets the `owner` but not the `client`.

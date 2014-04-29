@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino import mixins
+from lino.utils.xmlgen.html import E
 
 
 # class UploadType(dd.BabelNamed):
@@ -49,17 +50,14 @@ class UploadTypes(dd.Table):
 class Upload(
         dd.Uploadable,
         dd.UserAuthored,
-        #dd.CreatedModified,
         dd.Controllable):
-
-    #~ allow_cascaded_delete = ['']
 
     class Meta:
         abstract = dd.is_abstract_model('uploads.Upload')
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
-    type = models.ForeignKey(
+    type = dd.ForeignKey(
         "uploads.UploadType",
         blank=True, null=True)
 
@@ -80,23 +78,22 @@ class Upload(
 
 
 class Uploads(dd.Table):
-    #~ debug_permissions = 20130924
     required = dd.required(user_level='admin')
     model = 'uploads.Upload'
-    # order_by = ["modified"]
     column_names = "file type user owner description *"
+
     detail_layout = """
     file user
     type description
     owner
     """
 
-    insert_layout = dd.FormLayout("""
+    insert_layout = """
     type
     description
     file
     user
-    """, window_size=(60, 'auto'))
+    """
 
 
 class UploadsByType(Uploads):
@@ -108,12 +105,40 @@ class UploadsByController(Uploads):
     required = dd.required()
     master_key = 'owner'
     column_names = "file type description user * "
+
+    insert_layout = """
+    file
+    type
+    description
+    """
+
     slave_grid_format = 'summary'
 
-    insert_layout = dd.FormLayout("""
-    type description
-    file
-    """, window_size=(60, 'auto'))
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        elems = []
+        UploadType = dd.modules.uploads.UploadType
+        # Upload = dd.modules.uploads.Upload
+        types = []
+        for ut in UploadType.objects.all():
+            sar = self.request(
+                master_instance=obj, known_values=dict(type=ut))
+            files = []
+            for m in sar:
+                files.append(E.li(ar.obj2html(
+                    m, m.remark or m.file.name), ' '))
+            if len(files) > 0:
+                types += [
+                    E.p(unicode(ut), ': '),
+                    E.ul(*files)]
+            # else:
+            #     types += [
+            #         E.p(unicode(ut), ': '),
+            #         ar.instance_action_button(obj.create_household)]
+        if len(types) > 0:
+            elems.append(E.ul(*types))
+        return E.div(*elems)
+
 
 
 class MyUploads(Uploads, mixins.ByUser):

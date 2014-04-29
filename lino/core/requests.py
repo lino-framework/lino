@@ -46,8 +46,8 @@ ACTION_RESPONSES = frozenset((
     'html',
     'rows',
     'data_record',
-    # 'record_id',
-    'goto_record_id',
+    'record_id',
+    # 'goto_record_id',
     'refresh', 'refresh_all',
     'close_window',
     'xcallback',
@@ -498,18 +498,19 @@ class BaseRequest(object):
         return self.renderer.window_action_button(self, *args, **kw)
 
     def row_action_button(self, obj, a, *args, **kw):
+        # use the same renderer, but do *not* parse the web request data.
         return self.renderer.row_action_button(
-            obj, self, a, *args, **kw)
+            obj, None, a, *args, **kw)
 
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button (or a button-like href) which,
         when clicked, will run the given instance action ``ai``.
         ``ai`` must be an instance of :class:`InstanceAction
         <lino.core.actions.InstanceAction>`.
-
         """
+        # use the same renderer, but do *not* parse the web request data.
         return self.renderer.row_action_button(
-            ai.instance, self, ai.bound_action, *args, **kw)
+            ai.instance, None, ai.bound_action, *args, **kw)
 
     def action_button(self, ba, obj, *args, **kw):
         return self.renderer.action_button(obj, self, ba, *args, **kw)
@@ -584,7 +585,7 @@ class BaseRequest(object):
         contained in the requested queryset".  This can happen after
         changing the quick filter (search_change) of a detail view.
 
-           """
+        """
         rh = ar.ah
         rec = ar.elem2rec1(rh, elem, **rec)
         if ar.actor.hide_top_toolbar:

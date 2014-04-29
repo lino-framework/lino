@@ -375,8 +375,7 @@ class MembersByPerson(Members):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
-        # obj = ar.master_instance
-        sar = ar.spawn(self, master_instance=obj)
+        sar = self.request(master_instance=obj)
         elems = []
         # n = sar.get_total_count()
         # if n == 0:

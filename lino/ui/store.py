@@ -1165,10 +1165,10 @@ class Store(BaseStore):
         if fields is None:
             fields = self.detail_fields
         for fld in fields:
-            #~ logger.info("20111209 Store.row2dict %s %s", row,fld)
+            # logger.info("20140429 Store.row2dict %s", fld)
             v = fld.full_value_from_object(row, ar)
             fld.value2dict(v, d, row)
-            #~ logger.info("20111209 Store.row2dict %s -> %s", f, d)
+            # logger.info("20140429 Store.row2dict %s -> %s", fld, v)
         return d
 
     #~ def row2odt(self,request,fields,row,sums):

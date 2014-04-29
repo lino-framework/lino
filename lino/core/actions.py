@@ -1065,7 +1065,7 @@ class SubmitInsert(SubmitDetail):
         elem.after_ui_save(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))
         if ar.actor.handle_uploaded_files is not None:
-            ar.set_response(goto_record_id=elem.pk)
+            ar.set_response(record_id=elem.pk)
             ar.set_content_type('text/html')
         else:
             # TODO: in fact we need *either* `rows` (when this was called

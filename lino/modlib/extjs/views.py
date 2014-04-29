@@ -501,14 +501,10 @@ class Restful(View):
 
 
 class ApiElement(View):
-    #~ def api_element_view(self,request,app_label=None,actor=None,pk=None):
 
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ if not ah.actor.can_view.passes(request.user):
-            #~ msg = "User %s cannot view %s." % (request.user,ah.actor)
-            #~ return http.HttpResponseForbidden()
 
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
                                       rpt.default_elem_action_name)
@@ -520,14 +516,12 @@ class ApiElement(View):
             #~ ar = ba.request(request=request,selected_pks=[pk])
             #~ print 20131004, ba.actor
             ar = ba.request(request=request)
+
             ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
-            #~ elem = rpt.get_row_by_pk(pk)
             if elem is None:
                 raise http.Http404("%s has no row with primary key %r" %
                                    (rpt, pk))
-                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-            #~ ar.selected_rows = [elem]
         else:
             ar = ba.request(request=request)
             elem = None
@@ -538,7 +532,6 @@ class ApiElement(View):
         fmt = request.GET.get(
             ext_requests.URL_PARAM_FORMAT, ba.action.default_format)
 
-        #~ if isinstance(a,actions.OpenWindowAction):
         if ba.action.opens_a_window:
 
             if fmt == ext_requests.URL_FORMAT_JSON:
@@ -576,6 +569,7 @@ class ApiElement(View):
             assert elem is None
             elem = ar.create_instance()
             ar.selected_rows = [elem]
+
 
         return settings.SITE.ui.run_action(ar)
 
