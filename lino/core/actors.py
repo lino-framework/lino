@@ -837,7 +837,7 @@ class Actor(actions.Parametrizable):
             h.setup(ar)
         return h
 
-    _class_init_done = False
+    # _class_init_done = False
 
     @classmethod
     def class_init(cls):
@@ -848,34 +848,39 @@ class Actor(actions.Parametrizable):
         if master is not None:
             cls.master = resolve_model(master)
 
-        dl = cls.__dict__.get('detail_layout', None)  # see 20130804
-        if dl is None and not cls._class_init_done:
-            dl = cls.detail_layout
-        if dl is not None:
-            if isinstance(dl, basestring):
-                cls.detail_layout = layouts.FormLayout(dl, cls)
-            elif dl._datasource is None:
-                dl.set_datasource(cls)
-                cls.detail_layout = dl
-            elif not issubclass(cls, dl._datasource):
-                raise Exception(
-                    "Cannot reuse %r detail_layout for %r" %
-                    (dl._datasource, cls))
+        actions.install_layout(cls, 'detail_layout', layouts.FormLayout)
+        actions.install_layout(
+            cls, 'insert_layout', layouts.FormLayout,
+            window_size=(cls.insert_layout_width, 'auto'))
 
-        dl = cls.__dict__.get('insert_layout', None)
-        if dl is None and not cls._class_init_done:
-            dl = cls.insert_layout
-        if dl is not None:
-            if isinstance(dl, basestring):
-                cls.insert_layout = layouts.FormLayout(
-                    dl, cls, window_size=(cls.insert_layout_width, 'auto'))
-            elif dl._datasource is None:
-                dl.set_datasource(cls)
-                cls.insert_layout = dl
-            elif not issubclass(cls, dl._datasource):
-                raise Exception(
-                    "Cannot reuse %r insert_layout for %r" %
-                    (dl._datasource, cls))
+        # dl = cls.__dict__.get('detail_layout', None)  # see 20130804
+        # if dl is None:  # and not cls._class_init_done:
+        #     dl = cls.detail_layout
+        # if dl is not None:
+        #     if isinstance(dl, basestring):
+        #         cls.detail_layout = layouts.FormLayout(dl, cls)
+        #     elif dl._datasource is None:
+        #         dl.set_datasource(cls)
+        #         cls.detail_layout = dl
+        #     elif not issubclass(cls, dl._datasource):
+        #         raise Exception(
+        #             "Cannot reuse %r detail_layout for %r" %
+        #             (dl._datasource, cls))
+
+        # dl = cls.__dict__.get('insert_layout', None)
+        # if dl is None:  # and not cls._class_init_done:
+        #     dl = cls.insert_layout
+        # if dl is not None:
+        #     if isinstance(dl, basestring):
+        #         cls.insert_layout = layouts.FormLayout(
+        #             dl, cls, window_size=(cls.insert_layout_width, 'auto'))
+        #     elif dl._datasource is None:
+        #         dl.set_datasource(cls)
+        #         cls.insert_layout = dl
+        #     elif not issubclass(cls, dl._datasource):
+        #         raise Exception(
+        #             "Cannot reuse %r insert_layout for %r" %
+        #             (dl._datasource, cls))
 
         # cls._class_init_done = True
 

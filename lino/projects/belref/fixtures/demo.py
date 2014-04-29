@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,10 +12,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This is Luc's personal collection of Belgian vocabulary.
-It is not complete enough to be of real benefit, 
-but publicly available at http://belref.lino-framework.org/
+"""This is Luc's personal collection of Belgian vocabulary.  It is
+not complete enough to be of real benefit, but publicly available at
+http://belref.lino-framework.org/
 
 """
 
@@ -30,6 +29,7 @@ from north import dbutils
 
 from lino import dd
 Concept = dd.resolve_model('concepts.Concept')
+Link = dd.resolve_model('concepts.Link')
 
 from lino.modlib.concepts.models import LinkTypes
 
@@ -45,11 +45,8 @@ def C(en, de, fr='', nl='', jargon=None, obsoletes=None, **kw):
             if mo:
                 abbr[lang] = mo.group(1).strip()
                 name[lang] = mo.group(2).strip()
-                #~ kw['abbr_'+lang] = mo.group(1).strip()
-                #~ kw['name_'+lang] = mo.group(2).strip()
             else:
                 name[lang] = t
-                #~ kw['name_'+lang] = t
     kw.update(dbutils.babel_values('name', **name))
     kw.update(dbutils.babel_values('abbr', **abbr))
     obj = Concept(**kw)
@@ -128,3 +125,8 @@ def objects():
         "LfA (Landesamt für Arbeitsbeschaffung)",
         "ONEM (Office national de l'emploi)",
         "RVA (Rijksdienst voor Arbeidsvoorziening)")
+    yield C(
+        "Head of household",
+        "Haushaltsvorstand",
+        "Chef de ménage",
+        "Haushaltsvorstand")

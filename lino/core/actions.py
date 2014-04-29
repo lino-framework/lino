@@ -146,7 +146,34 @@ def discover_choosers():
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
 
 
+def install_layout(cls, k, layout_class, **options):
+    """
+    - ``k`` is one of 'detail_layout', 'insert_layout', 'params_layout'
+    - ``
+    """
+    dl = cls.__dict__.get(k, None)
+    if dl is None:  # and not cls._class_init_done:
+        dl = getattr(cls, k)
+    if dl is not None:
+        if isinstance(dl, basestring):
+            setattr(cls, k, layout_class(dl, cls, **options))
+        elif isinstance(dl, layouts.Panel):
+            options.update(dl.options)
+            setattr(cls, k, layout_class(dl.desc, cls, **options))
+        elif dl._datasource is None:
+            dl.set_datasource(cls)
+            setattr(cls, k, dl)
+        elif not issubclass(cls, dl._datasource):
+            raise Exception(
+                "Cannot reuse %r %s for %r" %
+                (dl._datasource, k, cls))
+
+
 def register_params(cls):
+    """Note that `cls` is either an actor or an action. And remember that
+    actors are class objects while actions are instances.
+
+    """
     if cls.parameters:
         for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
@@ -154,14 +181,15 @@ def register_params(cls):
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
                 cls.parameters.keys())
-        if isinstance(cls.params_layout, basestring):
-            cls.params_layout = cls._layout_class(cls.params_layout, cls)
-        elif isinstance(cls.params_layout, layouts.Panel):
-            cls.params_layout = cls._layout_class(
-                cls.params_layout.desc, cls, **cls.params_layout.options)
-        else:
-            assert isinstance(cls.params_layout, cls._layout_class)
-            # but what if cls.params_layout._datasource != cls?
+        install_layout(cls, 'params_layout', cls._layout_class)
+        # if isinstance(cls.params_layout, basestring):
+        #     cls.params_layout = cls._layout_class(cls.params_layout, cls)
+        # elif isinstance(cls.params_layout, layouts.Panel):
+        #     cls.params_layout = cls._layout_class(
+        #         cls.params_layout.desc, cls, **cls.params_layout.options)
+        # else:
+        #     assert isinstance(cls.params_layout, cls._layout_class)
+        #     # but what if cls.params_layout._datasource != cls?
 
     elif cls.params_layout is not None:
         raise Exception("params_layout but no parameters ?!")
