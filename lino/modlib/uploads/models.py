@@ -28,7 +28,7 @@ from lino.utils.xmlgen.html import E
 
 # class UploadType(dd.BabelNamed):
 class UploadType(dd.Model):
-
+    """The type of an upload."""
     class Meta:
         abstract = dd.is_abstract_model('uploads.UploadType')
         verbose_name = _("Upload Type")
@@ -41,6 +41,10 @@ class UploadType(dd.Model):
 
 
 class UploadTypes(dd.Table):
+    """The table with all existing upload types.
+
+This usually is accessible via the `Configure` menu.
+    """
     required = dd.required(user_level='admin')
     model = 'uploads.UploadType'
     column_names = "name *"
@@ -78,6 +82,7 @@ class Upload(
 
 
 class Uploads(dd.Table):
+    "Shows all Uploads"
     required = dd.required(user_level='admin')
     model = 'uploads.Upload'
     column_names = "file type user owner description *"
@@ -102,6 +107,7 @@ class UploadsByType(Uploads):
 
 
 class UploadsByController(Uploads):
+    "UploadsByController"
     required = dd.required()
     master_key = 'owner'
     column_names = "file type description user * "
@@ -116,6 +122,13 @@ class UploadsByController(Uploads):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
+        """Displays the uploads related to this controller as a list grouped
+by uploads type.
+
+Note that this also works on
+:class:`lino_welfare.modlib.uploads.models.UploadsByClient`.
+
+        """
         elems = []
         UploadType = dd.modules.uploads.UploadType
         # Upload = dd.modules.uploads.Upload
@@ -140,8 +153,8 @@ class UploadsByController(Uploads):
         return E.div(*elems)
 
 
-
 class MyUploads(Uploads, mixins.ByUser):
+    """Shows only my Uploads (i.e. those whose author is current user)."""
     required = dd.required()
     column_names = "file description user owner *"
     # order_by = ["modified"]

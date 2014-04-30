@@ -1267,7 +1267,7 @@ Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
 //~ Lino.FileUploadField = Ext.ux.form.FileUploadField;
 
 Lino.FileUploadField = Ext.extend(Ext.ux.form.FileUploadField,{
-    onRender : function(ct, position){
+    unused_onRender : function(ct, position){
       Lino.FileUploadField.superclass.onRender.call(this, ct, position);
       this.el.on({
         dragenter:function(event){
@@ -2727,8 +2727,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     //~ }
     //~ var rec = panel.get_current_record();
     var actionName = this.action_name;
-    var pk;
-    if (this.base_params) { this.base_params.mk; }
+    var pk = this.record_id;
+    if (pk == undefined && this.base_params) { pk = this.base_params.mk; }
     if (pk == undefined && panel) {
         pk = panel.get_current_record().id;
     }
@@ -2738,9 +2738,13 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     }
     var self = this;
     function on_success() { self.get_containing_window().close(); };
-    // 20131004
-    //~ var url = '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + pk;
-    var url = '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + pk;
+    // see 20131004 and 20140430
+    var url = '{{settings.SITE.build_admin_url("api")}}';
+    if (panel) 
+        url += panel.ls_url;
+    else 
+        url += this.ls_url;
+    url += '/' + pk;
     var fn = function(panel, btn, step) {
       var p = {};
       self.add_field_values(p)
@@ -2760,6 +2764,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     //~ if (status.param_values) 
     this.set_field_values(status.field_values);
     if (status.base_params) this.set_base_params(status.base_params);
+    this.record_id = status.record_id;
   }
   
   ,add_field_values : function (p) { // similar to add_param_values()

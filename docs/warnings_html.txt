@@ -1,7 +1,2 @@
-/home/luc/hgwork/lino/lino/core/actions.py:docstring of lino.core.actions.install_layout:2: WARNING: Inline literal start-string without end-string.
-/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:22: ERROR: Unknown interpreted text role "aattr".
-/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:32: ERROR: Unknown interpreted text role "aattr".
-/home/luc/hgwork/lino/lino/core/actors.py:docstring of lino.core.actors:41: ERROR: Unknown interpreted text role "aattr".
-/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

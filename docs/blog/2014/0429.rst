@@ -78,10 +78,12 @@ The problematic code was this::
             E.br(), ar.instance_action_button(obj.create_household)]
 
 Here `obj.create_household` instantiates an `InstanceAction` on a
-Person's `create_household`.  The application code is okay, but I must
-decide whether `ar.instance_action_button` should parse the web
-request or not.  In the above case it may not.  But here be
-dragons. Not sure whether this will cause problems elsewhere.
+Person's `create_household`.  The application code is okay, but we
+must decide whether or not `ar.instance_action_button` should parse
+`ar.request` (i.e. the web request which caused the current request).
+In the above case it may not.  But here be dragons. Not sure whether
+this will cause problems elsewhere.  The API for rendering action
+buttons is not yet what I would call "stable".
 
 Cool: I added a `get_slave_summary` method to
 `UploadsByController`. This will make our "quick upload buttons"
@@ -92,6 +94,9 @@ Checkin wegen Feierabend.
 More bugs to fix:
 
 - IBAN numbers don't seem to get validated.
-- insert window of an Upload has a layout problem. 
-  I guess that the uploadField doesn't collaborate well with the auto height.
+
+- The Insert window of an Upload has a layout problem.  I guess that
+  the `Lino.FileUploadField` doesn't collaborate well with the auto
+  height.
+
 - Inserting in UploadsByClient sets the `owner` but not the `client`.

@@ -1,0 +1,44 @@
+=========================
+Wednesday, April 30, 2014
+=========================
+
+TODO
+----
+
+- IBAN numbers don't seem to get validated.
+
+- The Insert window of an Upload has a layout problem.  I guess that
+  the `Lino.FileUploadField` doesn't collaborate well with the auto
+  height.
+
+- Inserting in UploadsByClient sets the `owner` but not the `client`.
+
+DONE
+----
+
+- Sometimes I got "Sorry, dialog action without base_params.mk" when
+  invoking CreateHousehold from the action link in MembersByPerson
+  summary panel.
+
+  There was a typo in `linoweb.js`::
+
+    if (this.base_params) { this.base_params.mk; }
+
+  Had to be::
+
+    if (this.base_params) { pk = this.base_params.mk; }
+
+  But it was even more subtle. The API for generating action buttons
+  is really not yet stable. But at least I start to test it in 
+  :ref:`welfare.tested.integ`.
+
+
+- Finish the :meth:`UploadsByController.get_slave_summary
+  <lino.modlib.uploads.models.UploadsByController.get_slave_summary>`
+  method. This will make our "quick upload buttons" needless! This is
+  also going to stabilize the API for rendering action buttons.
+
+  After the lessons I had yesterday and today, I seriously plan to
+  work on this in a tested document. First I must add some demo data
+  to `uploads.Upload`.
+

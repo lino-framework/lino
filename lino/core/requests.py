@@ -28,8 +28,10 @@ from django.core import exceptions
 from djangosite.dbutils import obj2unicode
 
 from lino.utils import AttrDict
+from lino.utils import curry
 
 from lino.core import constants as ext_requests
+from lino.core import actions
 
 from lino.core.dbutils import resolve_app
 from lino.core.dbutils import navinfo
@@ -59,6 +61,106 @@ ACTION_RESPONSES = frozenset((
 Action responses supported by `Lino.action_handler`
 (defined in :xfile:`linolib.js`).
 """
+
+
+class BoundAction(object):
+
+    """
+    An Action which is bound to an Actor.
+    If an Actor has subclasses, each subclass "inherits" its actions.
+    """
+
+    def __init__(self, actor, action):
+
+        if not isinstance(action, actions.Action):
+            raise Exception("%s : %r is not an Action" % (actor, action))
+        self.action = action
+        self.actor = actor
+
+        required = dict()
+        if action.readonly:
+            required.update(actor.required)
+        #~ elif isinstance(action,InsertRow):
+            #~ required.update(actor.create_required)
+        elif isinstance(action, actions.DeleteSelected):
+            required.update(actor.delete_required)
+        else:
+            required.update(actor.update_required)
+        required.update(action.required)
+        #~ print 20120628, str(a), required
+        #~ def wrap(a,required,fn):
+            #~ return fn
+
+        debug_permissions = actor.debug_permissions and \
+            action.debug_permissions
+
+        if debug_permissions:
+            if settings.DEBUG:
+                logger.info("debug_permissions for %r (required=%s)",
+                            self, required)
+            else:
+                raise Exception(
+                    "debug_permissions for %r (required=%s)", self, required)
+
+        from lino.core.perms import (
+            make_permission_handler, make_view_permission_handler)
+        self.allow_view = curry(make_view_permission_handler(
+            self, action.readonly, debug_permissions, **required), action)
+        self._allow = curry(make_permission_handler(
+            action, actor, action.readonly,
+            debug_permissions, **required), action)
+        #~ if debug_permissions:
+            #~ logger.info("20130424 _allow is %s",self._allow)
+        #~ actor.actions.define(a.action_name,ba)
+
+    def get_window_layout(self):
+        return self.action.get_window_layout(self.actor)
+
+    def get_window_size(self):
+        return self.action.get_window_size(self.actor)
+
+    def full_name(self):
+        return self.action.full_name(self.actor)
+        #~ if self.action.action_name is None:
+            #~ raise Exception("%r action_name is None" % self.action)
+        #~ return str(self.actor) + '.' + self.action.action_name
+
+    def request(self, *args, **kw):
+        kw.update(action=self)
+        return self.actor.request(*args, **kw)
+
+    def get_button_label(self, *args):
+        return self.action.get_button_label(self.actor, *args)
+
+    #~ def get_panel_btn_handler(self,*args):
+        #~ return self.action.get_panel_btn_handler(self.actor,*args)
+
+    def setup_action_request(self, *args):
+        return self.action.setup_action_request(self.actor, *args)
+
+    def get_row_permission(self, ar, obj, state):
+        #~ if self.actor is None: return False
+        return self.actor.get_row_permission(obj, ar, state, self)
+
+    def get_bound_action_permission(self, ar, obj, state):
+        if not self.action.get_action_permission(ar, obj, state):
+            return False
+        return self._allow(ar.get_user(), obj, state)
+
+    def get_view_permission(self, profile):
+        """
+        Return True if this bound action is visible for users of this
+        profile.
+        """
+        if not self.actor.get_view_permission(profile):
+            return False
+        if not self.action.get_view_permission(profile):
+            return False
+        return self.allow_view(profile)
+
+    def __repr__(self):
+        return "<%s(%s,%r)>" % (
+            self.__class__.__name__, self.actor, self.action)
 
 
 class VirtualRow(object):
@@ -229,11 +331,9 @@ class BaseRequest(object):
         return True
 
     def setup_from(self, other):
-        """
-        Copy certain values 
-        (render, user, subst_user & requesting_panel) 
-        from this request to the other.
-        
+        """Copy certain values (renderer, user, subst_user &
+        requesting_panel) from this request to the other.
+
         """
         if not self.must_execute():
             return
@@ -375,31 +475,26 @@ class BaseRequest(object):
                     subject, sender, recipients)
 
     def spawn(self, spec, **kw):
-        """
-        Create a new ActionRequest using default values from this one 
-        and the action specified by `spec`.
-        
+        """Create a new ActionRequest using default values from this one and
+        the action specified by `spec`.
+
         """
         if isinstance(spec, ActionRequest):
             for k, v in kw.items():
                 assert hasattr(spec, k)
                 setattr(spec, k, v)
-            #~ if kw:
-                #~ ar = ar.spawn(**kw)
-                #~ raise Exception(20130327)
+            spec.setup_from(self)
+        elif isinstance(spec, BoundAction):
+            spec = spec.request(**kw)
             spec.setup_from(self)
         else:
             from lino.core.menus import create_item
             mi = create_item(spec)
-            #~ print 20130425, __file__, mi.bound_action
             kw.setdefault('user', self.user)
             kw.setdefault('subst_user', self.subst_user)
             kw.setdefault('renderer', self.renderer)
             kw.setdefault('requesting_panel', self.requesting_panel)
             spec = mi.bound_action.request(**kw)
-        #~ ar.user = self.user
-        #~ ar.subst_user = self.subst_user
-        #~ ar.renderer = self.renderer
         return spec
 
     def run(self, thing, *args, **kw):
@@ -510,7 +605,7 @@ class BaseRequest(object):
         """
         # use the same renderer, but do *not* parse the web request data.
         return self.renderer.row_action_button(
-            ai.instance, None, ai.bound_action, *args, **kw)
+            ai.instance, self, ai.bound_action, *args, **kw)
 
     def action_button(self, ba, obj, *args, **kw):
         return self.renderer.action_button(obj, self, ba, *args, **kw)
