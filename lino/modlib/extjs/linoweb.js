@@ -816,9 +816,9 @@ Lino.close_window = function(status_update, norestore) {
   // will call set_status itself later
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
-  // console.log(
-  //     "20140418 Lino.close_window() going to close", 
-  //     cw, "previous is", ww, "norestore is", norestore);
+  console.log(
+      "20140430 Lino.close_window() going to close", 
+      cw, "previous is", ww, "norestore is", norestore);
   if (ww) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
     if(!norestore) {
@@ -1782,8 +1782,8 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     }
     
     if (on_success && result.success) {
-        // console.log("20140421 handle_action_result calls on_success", 
-        //             on_success);
+        console.log("20140430 handle_action_result calls on_success", 
+                    on_success);
         on_success(result);
     }
     

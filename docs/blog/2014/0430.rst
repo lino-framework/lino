@@ -2,6 +2,59 @@
 Wednesday, April 30, 2014
 =========================
 
+
+Upgrading Ubuntu from 13.10 to 14.04 LTS
+----------------------------------------
+
+Hm... I tried once more to upgrade from Ubuntu 13.10 to 14.04 LTS,
+this time I also consulted pages at
+`ubuntu.com <http://www.ubuntu.com/download/desktop/upgrade>`_
+and `tecmint.com <http://www.tecmint.com/upgrade-ubuntu-to-14-04/>`_.
+
+Again no success.  I tried several variants of update-manager::
+
+  $ update-manager
+  $ update-manager -c
+  $ update-manager -d
+
+The result is always the same, it says: "The software on your computer
+is up to date" *without* the expected addition "However, Ubuntu 14.04
+is now available and you have 13.10", and consequently without any
+Upgrade button.
+
+Here is the content of my `/etc/apt/sources` (without comments)::
+
+    deb http://archive.ubuntu.com/ubuntu saucy main restricted
+    deb-src http://archive.ubuntu.com/ubuntu saucy main restricted
+
+    deb http://archive.ubuntu.com/ubuntu saucy universe
+    deb-src http://archive.ubuntu.com/ubuntu saucy universe
+
+    deb http://archive.ubuntu.com/ubuntu saucy multiverse
+    deb-src http://archive.ubuntu.com/ubuntu saucy multiverse
+
+    deb http://archive.ubuntu.com/ubuntu saucy-security main restricted
+    deb-src http://archive.ubuntu.com/ubuntu saucy-security main restricted
+    deb http://archive.ubuntu.com/ubuntu saucy-security universe
+    deb-src http://archive.ubuntu.com/ubuntu saucy-security universe
+    deb http://archive.ubuntu.com/ubuntu saucy-security multiverse
+    deb-src http://archive.ubuntu.com/ubuntu saucy-security multiverse
+
+    deb http://archive.canonical.com/ubuntu saucy partner
+    deb-src http://archive.canonical.com/ubuntu saucy partner
+
+    ## This software is not part of Ubuntu, but is offered by third-party
+    ## developers who want to ship their latest software.
+    deb http://extras.ubuntu.com/ubuntu saucy main
+    deb-src http://extras.ubuntu.com/ubuntu saucy main
+
+    deb http://archive.ubuntu.com/ubuntu saucy-updates restricted main multiverse universe
+
+
+I am giving up for now. If somebody sees an explanation, please
+tell me.
+
+
 TODO
 ----
 
@@ -33,12 +86,15 @@ DONE
   :ref:`welfare.tested.integ`.
 
 
-- Finish the :meth:`UploadsByController.get_slave_summary
+- Worked on the :meth:`UploadsByController.get_slave_summary
   <lino.modlib.uploads.models.UploadsByController.get_slave_summary>`
   method. This will make our "quick upload buttons" needless! This is
   also going to stabilize the API for rendering action buttons.
 
-  After the lessons I had yesterday and today, I seriously plan to
-  work on this in a tested document. First I must add some demo data
-  to `uploads.Upload`.
+  After the lessons I had yesterday and today, I want to work on this
+  in a tested document. First I must add some demo data to
+  `uploads.Upload`.
+
+- `uploads.UploadType` is again a :class:`BabelNamed
+  <north.dbutils.dbutils_babel.BabelNamed>`.
 

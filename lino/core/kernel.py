@@ -585,7 +585,7 @@ class Kernel(object):
         ActionRequest.
 
         """
-        # logger.info("20140421 render_action_response %s", ar.response)
+        # logger.info("20140430 render_action_response %s", ar.response)
         return views.json_response(ar.response, ar.content_type)
 
     def row_action_button(self, *args, **kw):

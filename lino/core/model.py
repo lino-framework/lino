@@ -524,6 +524,7 @@ instances.
         'disabled_fields',
         'get_choices_text',
         'summary_row',
+        'submit_insert',
         #~ 'get_model_actions',
         #~ '_custom_actions',
         'hidden_columns',

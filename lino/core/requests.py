@@ -325,6 +325,7 @@ class BaseRequest(object):
         self.set_response(eval_js=js)
 
     def set_content_type(self, ct):
+        # logger.info("20140430 set_content_type(%r)", ct)
         self.content_type = ct
 
     def must_execute(self):
@@ -578,13 +579,15 @@ class BaseRequest(object):
 
     def instance_handler(self, *args, **kw):
         return self.renderer.instance_handler(self, *args, **kw)
-    #~ def href_to(self,*args,**kw): return self.renderer.href_to(self,*args,**kw)
 
     def pk2url(self, *args, **kw):
         return self.renderer.pk2url(self, *args, **kw)
 
     def obj2html(self, *args, **kw):
         return self.renderer.obj2html(self, *args, **kw)
+
+    def href_button(self, *args, **kw):
+        return self.renderer.href_button(*args, **kw)
 
     def href_to_request(self, *args, **kw):
         return self.renderer.href_to_request(self, *args, **kw)

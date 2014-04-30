@@ -289,7 +289,7 @@ class ExtRenderer(HtmlRenderer):
         Usage example in :ref:`sunto`.
 
         """
-        insert_btn = ar.renderer.insert_button(ar, _("Insert"))
+        insert_btn = ar.insert_button(_("Insert"))
         assert insert_btn is not None
         ba = ar.bound_action
         manage_btn = ar.renderer.action_button(
@@ -339,7 +339,6 @@ class ExtRenderer(HtmlRenderer):
             chunks.append(self.href_button(
                 settings.SITE.build_media_url(obj.file.name), _("show"),
                 target='_blank',
-                #~ icon_file='world_go.png',
                 icon_name='page_go',
                 style="vertical-align:-30%;",
                 title=_("Open the uploaded file in a new browser window")))
@@ -355,7 +354,7 @@ class ExtRenderer(HtmlRenderer):
 
         return '[?!]'
 
-    def insert_button(self, ar, text, known_values={}, **options):
+    def insert_button(self, ar, text=None, known_values={}, **options):
         """
         Returns the HTML of a button which will call the `insert_action`.
         """
@@ -461,17 +460,15 @@ class ExtRenderer(HtmlRenderer):
             if a.get_bound_action_permission(ar, obj, None):
                 return self.action_call(ar.request, a, dict(record_id=obj.pk))
 
-    def obj2html(self, ar, obj, text=None):
-        h = self.instance_handler(ar, obj)
-        if text is None:
+    def obj2html(self, ar, obj, text=None, **kw):
+        if not text:
             text = force_unicode(obj)
-        elif isinstance(text, basestring):
-            text = (text,)
+        h = self.instance_handler(ar, obj)
         if h is None:
-            return xghtml.E.b(*text)
-        uri = 'javascript:' + h
-        e = xghtml.E.a(*text, href=uri)
-        return e
+            return self.href_button(None, text, **kw)
+        return self.href_button('javascript:' + h, text, **kw)
+        # e = xghtml.E.a(*text, href=uri)
+        # return e
 
     def href_to_request(self, sar, tar, text=None, **kw):
         uri = 'javascript:' + self.request_handler(tar)

@@ -92,11 +92,12 @@ class HtmlRenderer(object):
         """
         if icon_name is NOT_GIVEN:
             icon_name = ba.action.icon_name
-        if icon_name is not None and not kw.has_key('style'):
+        if icon_name is not None and not 'style' in kw:
             kw.update(style="vertical-align:-30%;")
         return self.href_button(url, text, title, icon_name=icon_name, **kw)
 
-    def href_button(self, url, text, title=None, target=None, icon_name=None, **kw):
+    def href_button(
+            self, url, text, title=None, target=None, icon_name=None, **kw):
         """
         Returns an etree object of a "button-like" ``<a href>`` tag.
         """
@@ -107,24 +108,18 @@ class HtmlRenderer(object):
             # Remember that Python 2.6 doesn't like if title is a Promise
             kw.update(title=unicode(title))
             #~ return xghtml.E.a(text,href=url,title=title)
+        if isinstance(text, basestring):
+            text = (text,)
+        if url is None:
+            return E.b(*text)
+
         kw.update(href=url)
-        #~ if icon_name:
         if icon_name is not None:
-            #~ btn = xghtml.E.button(type='button',class_='x-btn-text '+icon_name)
-            #~ btn = xghtml.E.button(
-                #~ type='button',
-                #~ class_='x-btn-text '+icon_name,
-                #~ onclick='function() {console.log(20121024)}')
-            #~ return btn
-            #~ return xghtml.E.a(btn,**kw)
-            #~ kw.update(class_='x-btn-text '+icon_name)
             img = E.img(src=settings.SITE.build_media_url(
                 'lino', 'extjs', 'images', 'mjames', icon_name + '.png'))
             return E.a(img, **kw)
         else:
-            #~ return E.span('[',xghtml.E.a(text,**kw),']')
-            #~ kw.update(style='border-width:1px; border-color:black; border-style:solid;')
-            return E.a(text, **kw)
+            return E.a(*text, **kw)
 
     def quick_add_buttons(self, ar):
         """
