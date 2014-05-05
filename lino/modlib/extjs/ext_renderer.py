@@ -436,6 +436,9 @@ class ExtRenderer(HtmlRenderer):
         return "%s()" % self.get_panel_btn_handler(bound_action)
 
     def get_panel_btn_handler(self, ba):
+        if not ba.action.action_name:
+            raise Exception(
+                "Cannot make handler for nameless action %r" % ba.action)
         if ba.action.select_rows:
             h = 'Lino.row_action_handler('
         else:
@@ -1068,13 +1071,13 @@ class ExtRenderer(HtmlRenderer):
         elif isinstance(a, actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
         elif isinstance(a, actions.InsertRow):
-            kw.update(must_save=True)
+            # kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code('Lino.show_insert'))
             # 'function(panel){Lino.show_insert(panel)}'))
-        elif isinstance(a, actions.DeleteSelected):
-            kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
+        # elif isinstance(a, actions.DeleteSelected):
+        #     kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         else:
-            kw.update(must_save=True)
+            # kw.update(must_save=True)
             kw.update(
                 panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
 

@@ -21,6 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode
 from django.conf import settings
 from django import http
@@ -39,7 +40,7 @@ from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
-from lino.core.signals import pre_ui_create, ChangeWatcher
+from lino.core.signals import pre_ui_create, ChangeWatcher, pre_ui_delete
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -974,28 +975,6 @@ class UpdateRowAction(Action):
     required = dict(user_level='user')
 
 
-class DeleteSelected(Action):
-
-    """
-    Delete the row on which it is being executed.
-    """
-    #~ debug_permissions = "20130222"
-    #~ icon_name = 'x-tbar-delete'
-    icon_name = 'delete'
-    help_text = _("Delete this record")
-    auto_save = False
-    sort_index = 30
-    readonly = False
-    show_in_workflow = False
-    required = dict(user_level='user')
-    #~ callable_from = (GridEdit,ShowDetailAction)
-    #~ needs_selection = True
-    label = _("Delete")
-    #~ url_action_name = 'delete'
-    key = DELETE  # (ctrl=True)
-    #~ client_side = True
-
-
 class SubmitDetail(Action):
     sort_index = 10
     # switch_to_detail = False
@@ -1244,6 +1223,60 @@ class MultipleRowAction(Action):
         msg = _("%d row(s) have been updated.") % n
         ar.info(msg)
         #~ ar.success(msg,**kw)
+
+
+class DeleteSelected(MultipleRowAction):
+
+    """
+    Delete the row on which it is being executed.
+    """
+    action_name = 'delete_selected'  # because...
+    icon_name = 'delete'
+    help_text = _("Delete this record")
+    auto_save = False
+    sort_index = 30
+    readonly = False
+    show_in_workflow = False
+    required = dict(user_level='user')
+    #~ callable_from = (GridEdit,ShowDetailAction)
+    #~ needs_selection = True
+    label = _("Delete")
+    #~ url_action_name = 'delete'
+    key = DELETE  # (ctrl=True)
+    #~ client_side = True
+
+    def run_from_ui(self, ar, **kw):
+        objects = []
+        for obj in ar.selected_rows:
+            objects.append(unicode(obj))
+            msg = ar.actor.disable_delete(obj, ar)
+            if msg is not None:
+                ar.error(None, msg, alert=True)
+                return
+        
+        def ok(ar2):
+            super(DeleteSelected, self).run_from_ui(ar, **kw)
+            ar2.success(
+                record_deleted=True,
+                actor_url=ar2.actor.actor_url())
+
+        d = dict(num=len(objects), targets=', '.join(objects))
+        if len(objects) == 1:
+            d.update(type=ar.actor.model._meta.verbose_name)
+        else:
+            d.update(type=ar.actor.model._meta.verbose_name_plural)
+        ar.confirm(
+            ok,
+            string_concat(
+                _("You are about to delete %(num)d %(type)s:\n"
+                  "%(targets)s") % d,
+                '\n',
+                _("Are you sure ?")))
+
+    def run_on_row(self, obj, ar):
+        pre_ui_delete.send(sender=obj, request=ar.request)
+        obj.delete()
+        return 1
 
 
 def action(*args, **kw):

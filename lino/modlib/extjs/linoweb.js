@@ -742,7 +742,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
   // }
   ,refresh : function() {
       var caller = this;
-      console.log("20140504 Lino.Viewport.refresh()");
+      // console.log("20140504 Lino.Viewport.refresh()");
       if (caller.loadMask) caller.loadMask.show();
       var success = function(response) {
         if (caller.loadMask) caller.loadMask.hide();
@@ -1683,7 +1683,7 @@ Lino.show_in_own_window_button = function(handler) {
 
 
 
-Lino.delete_selected = function(panel) {
+Lino.old_delete_selected = function(panel) {
   //~ console.log("Lino.delete_selected",panel);
   var recs1 = panel.get_selected();
   var recs = [];
@@ -1888,7 +1888,10 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
 
-
+    if(result.record_deleted && panel.ls_url == result.actor_url) {
+        panel.after_delete();
+    }
+    
     if (result.refresh_all) {
         var cw = Lino.current_window;
         // var cw = panel.get_containing_window();

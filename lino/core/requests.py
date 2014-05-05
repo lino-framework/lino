@@ -53,6 +53,7 @@ ACTION_RESPONSES = frozenset((
     # 'goto_record_id',
     'refresh', 'refresh_all',
     'close_window',
+    'record_deleted',
     'xcallback',
     'open_url', 'open_davlink_url',
     'info_message',

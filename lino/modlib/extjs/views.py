@@ -590,6 +590,13 @@ class ApiElement(View):
         return settings.SITE.ui.run_action(ar)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
+        data = http.QueryDict(request.body)
+        ar = action_request(app_label, actor, request, data, False)
+        ar.set_selected_pks(pk)
+        ar.renderer = settings.SITE.ui.extjs_renderer
+        return settings.SITE.ui.run_action(ar)
+        
+    def old_delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
         ar = rpt.request(request=request)
         ar.set_selected_pks(pk)

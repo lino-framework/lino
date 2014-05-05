@@ -19,6 +19,9 @@ Short-term to-do list
   then I must click the Refresh button in order to have the summary
   panel updated.
 
+- NoteDetail has an UploadsyController which does not work (because
+  `_upload_regime` is None).
+
 The actions API needs a `show_record` method
 --------------------------------------------
 
@@ -84,11 +87,23 @@ cell editing)? Lino.GridPanel currently translates this to a call to
 insert window opened.
 
 
-Checkin at 15:05 : the new vision seems usable
+Checkin at 15:05 : the new vision seems usable...
 
-But there are still details to fix. For example:
+... there are still some details to fix. For example:
 
 - open a GridPanel --> Double-click on a row --> change some value and
   save --> close the detail window
 - Now I must click twice on the close button of the GridPanel in order
   to have it disappear
+
+But before tidying up these details I decided to do another dirty
+work: make the DeleteSelected action customizable.
+
+This wasn't so hard. And now the confirmation message before deleting
+records is more clear because it lists the records to be deleted.
+
+I am rather satisfied because these were some dirty works that had
+been waiting since a long time.  And funny but true: the summary
+panels still don't get refreshed...
+
+Checkin wegen Feierabend.
