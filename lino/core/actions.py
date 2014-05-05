@@ -39,7 +39,7 @@ from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
-from lino.core.signals import pre_ui_create
+from lino.core.signals import pre_ui_create, ChangeWatcher
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -907,7 +907,6 @@ class ShowDetailAction(Action):
         return main
 
 
-#~ Action.callable_from = (GridEdit,ShowDetailAction)
 class InsertRow(TableAction):
 
     """Opens the Insert window filled with a blank row.  The new row will
@@ -946,15 +945,6 @@ class InsertRow(TableAction):
         return super(InsertRow, self).get_action_permission(ar, obj, state)
 
 
-#~ class DuplicateRow(Action):
-    #~ opens_a_window = True
-  #~
-    #~ readonly = False
-    #~ required = dict(user_level='user')
-    #~ callable_from = (GridEdit,ShowDetailAction)
-    #~ action_name = 'duplicate'
-    #~ label = _("Duplicate")
-#~
 class ShowEmptyTable(ShowDetailAction):
     use_param_panel = True
     #~ callable_from = tuple()
@@ -1007,57 +997,64 @@ class DeleteSelected(Action):
 
 
 class SubmitDetail(Action):
-    #~ debug_permissions = 20130128
     sort_index = 10
-    switch_to_detail = False
-    #~ icon_name = 'x-tbar-save'
+    # switch_to_detail = False
     icon_name = 'disk'
     help_text = _("Save changes in this form")
     label = _("Save")
     auto_save = False
     show_in_workflow = False
-    #~ show_in_bbar = True
     action_name = 'put'
     readonly = False
-    # required = dict(user_level='user')
 
     def is_callable_from(self, caller):
         return isinstance(caller, ShowDetailAction)
 
     def run_from_ui(self, ar, **kw):
-        logger.info("20140423 SubmitDetail")
+        # logger.info("20140423 SubmitDetail")
         elem = ar.selected_rows[0]
-        ar.form2obj_and_save(ar.rqdata, elem, False)
+        # ar.form2obj_and_save(ar.rqdata, elem, False)
+
+        watcher = ChangeWatcher(elem)
+        ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
+        elem.full_clean()
+
+        if watcher.is_dirty():
+            elem.before_ui_save(ar)
+            elem.save(force_update=True)
+            watcher.send_update(ar.request)
+            ar.success(_("%s has been updated.") % obj2unicode(elem))
+        else:
+            ar.success(_("%s : nothing to save.") % obj2unicode(elem))
+
+        elem.after_ui_save(ar)
 
         # TODO: in fact we need *either* `rows` (when this was called
-        # from a Grid) *or* `data_record` (when this was called from a
+        # from a Grid) *or* `goto_instance` (when this was called from a
         # form).  But how to find out which one is needed?
         if ar.edit_mode == constants.EDIT_MODE_GRID:
             ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
-        else:
-            ar.set_response(data_record=ar.elem2rec_detailed(elem))
-        # return json_response(ar.response)
+
+        ar.goto_instance(elem)
 
 
-class SubmitInsert(SubmitDetail):
-    switch_to_detail = True
-    icon_name = None  # don't inherit 'x-tbar-save' from Submitdetail
-    #~ url_action_name = 'SubmitInsert'
-    label = _("Create")
-    action_name = None  # 'post'
-    help_text = _("Create the record and open a detail window on it")
-    #~ label = _("Insert")
-    #~ callable_from = (InsertRow,)
+class CreateRow(Action):
+    "Called when user edited a cell of a phantom record in a grid."
+    sort_index = 10
+    auto_save = False
+    show_in_workflow = False
+    readonly = False
 
     def is_callable_from(self, caller):
-        return isinstance(caller, InsertRow)
+        return False
 
     def run_from_ui(self, ar, **kw):
-        # logger.info("20140423 SubmitInsert")
         elem = ar.create_instance_from_request()
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
+        ar.info("20140504 SubmitInsert %s %s",
+                ar.edit_mode, ar.requesting_panel)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `pre_ui_create` comes *after* save()
@@ -1066,16 +1063,38 @@ class SubmitInsert(SubmitDetail):
         ar.success(_("%s has been created.") % obj2unicode(elem))
         if ar.actor.handle_uploaded_files is not None:
             ar.set_content_type('text/html')
-        if ar.edit_mode == constants.EDIT_MODE_GRID:
-            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+            # Without this the browser adds a <PRE></PRE> tag around
+            # the AJAX response.
+        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
         if ar.actor.stay_in_grid:
-            ar.set_response(close_window=True)
-        elif ar.actor.handle_uploaded_files is not None:
-            ar.set_response(record_id=elem.pk)
-        else:
-            ar.set_response(data_record=ar.elem2rec_detailed(elem))
-        # ar.info("20140418 SubmitInsert %s", ar.response)
+            # ar.set_response(refresh_all=True)
+            return
+            # ar.set_response(refresh_all=True)
+            # No need to ask refresh_all since closing the window will
+            # automatically refresh the underlying window.
 
+        # if ar.edit_mode == constants.EDIT_MODE_HREF:
+        #     ar.set_response(refresh_all=True)
+        #     return
+        # if ar.edit_mode != constants.EDIT_MODE_GRID:
+        #     ar.set_response(close_window=True)
+        ar.goto_instance(elem)
+
+
+class SubmitInsert(CreateRow):
+    "When the OK button of an Insert Window was clicked."
+    label = _("Create")
+    action_name = None  # 'post'
+    help_text = _("Create the record and open a detail window on it")
+
+    def is_callable_from(self, caller):
+        return isinstance(caller, InsertRow)
+
+    def run_from_ui(self, ar, **kw):
+        # logger.info("20140423 SubmitInsert")
+        elem = ar.create_instance_from_request()
+        self.save_new_instance(ar, elem)
+        ar.set_response(close_window=True)
 
 # class SubmitInsertAndStay(SubmitInsert):
 #     sort_index = 11

@@ -570,7 +570,6 @@ class ApiElement(View):
             elem = ar.create_instance()
             ar.selected_rows = [elem]
 
-
         return settings.SITE.ui.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):

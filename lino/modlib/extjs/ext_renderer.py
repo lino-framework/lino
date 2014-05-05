@@ -872,7 +872,7 @@ class ExtRenderer(HtmlRenderer):
                 #~ fl._using_actors.append(actor)
             else:
                 fl._formpanel_name = formpanel_name
-                fl._url = ext_elems.rpt2url(res)
+                fl._url = res.actor_url()
                 #~ fl._using_actors = [actor]
                 collector.add(fl)
 
@@ -890,12 +890,6 @@ class ExtRenderer(HtmlRenderer):
                 if ba.action.parameters:
                     add(res, action_param_panels, ba.action.params_layout,
                         "%s.%s_ActionFormPanel" % (res, ba.action.action_name))
-
-        if False:
-            logger.debug('FormPanels')
-            for fl in details:
-                logger.debug('- ' + fl._formpanel_name + ' : ' +
-                             ','.join([a.actor_id for a in fl._using_actors]))
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in param_panels:
@@ -1063,16 +1057,20 @@ class ExtRenderer(HtmlRenderer):
         if a.parameters:
             kw.update(panel_btn_handler=js_code(
                 "Lino.param_action_handler(Lino.%s)" % ba.full_name()))
-        elif isinstance(a, actions.SubmitDetail):  # also SubmitInsert
-            js = 'function(panel){panel.save(null,%s,%r)}' % (
-                py2js(a.switch_to_detail), a.action_name)
+        elif isinstance(a, actions.SubmitInsert):
+            js = 'function(panel){panel.save()}'
+            kw.update(panel_btn_handler=js_code(js))
+        elif isinstance(a, actions.SubmitDetail):
+            js = 'function(panel){panel.save()}'
+            # js = 'function(panel){panel.save(null,%s,%r)}' % (
+            #     py2js(a.switch_to_detail), a.action_name)
             kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a, actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
         elif isinstance(a, actions.InsertRow):
             kw.update(must_save=True)
-            kw.update(panel_btn_handler=js_code(
-                'function(panel){Lino.show_insert(panel)}'))
+            kw.update(panel_btn_handler=js_code('Lino.show_insert'))
+            # 'function(panel){Lino.show_insert(panel)}'))
         elif isinstance(a, actions.DeleteSelected):
             kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         else:
@@ -1150,7 +1148,7 @@ class ExtRenderer(HtmlRenderer):
         #~ if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             #~ yield "  autoHeight: true,"
         yield "  initComponent : function() {"
-        yield "    var containing_panel = this;"
+        # 20140503 yield "    var containing_panel = this;"
         lc = 0
         for ln in jsgen.declare_vars(dh.main.elements):
             yield "    " + ln
@@ -1183,7 +1181,7 @@ class ExtRenderer(HtmlRenderer):
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
         yield "  initComponent : function() {"
-        yield "    var containing_panel = this;"
+        # 20140503 yield "    var containing_panel = this;"
         lc = 0
         for ln in jsgen.declare_vars(dh.main.elements):
             yield "    " + ln
@@ -1221,7 +1219,7 @@ class ExtRenderer(HtmlRenderer):
         if not tbl.editable:
             yield "  disable_editing: true,"
         yield "  initComponent : function() {"
-        yield "    var containing_panel = this;"
+        # 20140503 yield "    var containing_panel = this;"
         lc = 0
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln
@@ -1284,7 +1282,7 @@ class ExtRenderer(HtmlRenderer):
                 action.action.save_action_name)
         yield "  ls_bbar_actions: %s," % py2js(
             self.toolbar(rpt.get_row_actions(action.action)))
-        yield "  ls_url: %s," % py2js(ext_elems.rpt2url(rpt))
+        yield "  ls_url: %s," % py2js(rpt.actor_url())
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
         yield "  initComponent : function() {"
@@ -1309,7 +1307,7 @@ class ExtRenderer(HtmlRenderer):
 
         kw = dict()
         #~ kw.update(empty_title=%s,rh.actor.get_button_label()
-        kw.update(ls_url=ext_elems.rpt2url(rh.actor))
+        kw.update(ls_url=rh.actor.actor_url())
         kw.update(ls_store_fields=[js_code(f.as_js(f.name))
                   for f in rh.store.list_fields])
         if rh.store.pk is not None:
@@ -1405,7 +1403,7 @@ class ExtRenderer(HtmlRenderer):
         """
         yield "Lino.%s = function(rp,pk) { " % action.full_name()
         yield "  var h = function() { "
-        uri = ext_elems.rpt2url(rh.actor)
+        uri = rh.actor.actor_url()
         yield "    Lino.run_row_action(rp,%s,%s,pk,%s,%s);" % (
             py2js(uri), py2js(action.action.http_method),
             py2js(action.action.action_name),

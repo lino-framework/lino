@@ -69,6 +69,7 @@ class Model(models.Model):
 
     """
 
+    grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
     """This is the action represented by the "Create" button of an Insert
     window. See :mod:`lino.modlib.dedupe` for an example of how to

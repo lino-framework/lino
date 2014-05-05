@@ -76,10 +76,6 @@ def has_fk_renderer(fld):
     return isinstance(fld, models.ForeignKey)
 
 
-def rpt2url(rpt):
-    return '/' + rpt.app_label + '/' + rpt.__name__
-
-
 def py2html(obj, name):
     for n in name.split('.'):
         obj = getattr(obj, n, "N/A")
@@ -743,16 +739,8 @@ class TextFieldElement(FieldElement):
                 kw.update(containing_panel=js_code("this"))
                 #~ kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
-                #~ kw.update(tinymce_options=dict(
-                    #~ template_external_list_url=layout_handle.ui.build_url('templates',layout_handle.rh.report.app_label,layout_handle.rh.report.name)
-                  #~ template_templates=[
-                    #~ dict(title="Editor Details",
-                        #~ src="editor_details.htm",
-                        #~ description="Adds Editor Name and Staff ID")]
-                #~ ))
-                #~ LayoutElement.__init__(self,layout_handle,varname_field(field),label=unicode(field.verbose_name),**kw)
-                #~ LayoutElement.__init__(self,layout_handle,field.name,label=unicode(field.verbose_name),**kw)
-                return LayoutElement.__init__(self, layout_handle, field.name, **kw)
+                return LayoutElement.__init__(
+                    self, layout_handle, field.name, **kw)
             else:
                 self.value_template = "new Ext.form.HtmlEditor(%s)"
                 if settings.SITE.use_vinylfox:

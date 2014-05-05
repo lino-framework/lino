@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,28 +19,15 @@ Defines the classes :class:`MenuItem`
 import logging
 logger = logging.getLogger(__name__)
 
-
-import traceback
-import copy
-
 from django.conf import settings
-from django.conf.urls import patterns, url, include
-from django.shortcuts import render_to_response
-#~ from django.utils.safestring import mark_safe
-from django import template
-from django.utils.encoding import force_unicode
 from django.db import models
 
 from atelier import rstgen
 from djangosite.dbutils import obj2str
 
 from lino.core import actors
-from lino.core import requests
-from lino.utils.jsgen import js_code
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
-
-from lino.core import actions
 
 
 class MenuItem:
@@ -276,7 +263,6 @@ class Menu(MenuItem):
     
     """
 
-    #~ template_to_response = 'lino/menu.html'
     def __init__(self, user_profile, name, label=None, parent=None, **kw):
         MenuItem.__init__(self, name, label, **kw)
         self.parent = parent

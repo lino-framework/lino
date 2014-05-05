@@ -48,6 +48,7 @@ ACTION_RESPONSES = frozenset((
     'html',
     'rows',
     'data_record',
+    'actor_url',
     'record_id',
     # 'goto_record_id',
     'refresh', 'refresh_all',
@@ -366,7 +367,7 @@ class BaseRequest(object):
                     #~ kw.update(subst_user=settings.SITE.user_model.objects.get(username=username))
                 #~ except settings.SITE.user_model.DoesNotExist, e:
                     #~ pass
-        #~ logger.info("20120723 ActionRequest.parse_req() --> %s",kw)
+        # logger.info("20140503 ActionRequest.parse_req() %s", kw)
         return kw
 
     def setup(self,
@@ -710,6 +711,9 @@ class BaseRequest(object):
         This is used by `ApiList.post` and `ApiElement.put`, and by
         `Restful.post` and `Restful.put`.
 
+        20140505 : no longer used by ApiList and ApiElement, but still
+        by Restful.*
+
         """
         if not is_new:
             watcher = ChangeWatcher(elem)
@@ -821,6 +825,16 @@ class ActorRequest(BaseRequest):
 
     def render_to_dict(self):
         return self.bound_action.action.render_to_dict(self)
+
+    def goto_instance(self, obj, **kw):
+        if self.actor.model is None \
+           or not isinstance(obj, self.actor.model):
+            return super(ActorRequest, self).goto_instance(obj, **kw)
+        self.set_response(actor_url=self.actor.actor_url())
+        if self.actor.handle_uploaded_files is not None:
+            self.set_response(record_id=obj.pk)
+        else:
+            self.set_response(data_record=self.elem2rec_detailed(obj))
 
     #~ def get_request_url(self,*args,**kw):
         #~ return self.ui.get_request_url(self,*args,**kw)
@@ -946,6 +960,9 @@ class ActionRequest(ActorRequest):
             self.action_param_values = AttrDict(**apv)
 
         self.bound_action.setup_action_request(self)
+        # if str(self.actor).startswith('uploads.'):
+        #     logger.info("20140503 %s --> edit_mode is %s",
+        #                 self, self.edit_mode)
 
     def setup(self,
               #~ param_values={},

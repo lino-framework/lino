@@ -413,6 +413,10 @@ class Actor(actions.Parametrizable):
         pass
 
     @classmethod
+    def actor_url(self):
+        return '/' + self.app_label + '/' + self.__name__
+
+    @classmethod
     def register_class_attribute(cls, k, v):
         if isinstance(v, fields.Constant):
             cls.add_constant(k, v)

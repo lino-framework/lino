@@ -104,7 +104,7 @@ class Upload(
     @dd.chooser()
     def type_choices(self, upload_area):
         M = dd.resolve_model('uploads.UploadType')
-        logger.info("20140430 type_choices", upload_area)
+        logger.info("20140430 type_choices %s", upload_area)
         if upload_area is None:
             return M.objects.all()
         return M.objects.filter(upload_area=upload_area)

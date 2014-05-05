@@ -54,17 +54,16 @@ Here is the content of my `/etc/apt/sources` (without comments)::
 I am giving up for now. If somebody sees an explanation, please
 tell me.
 
+Thanks to Gerd who pointed me to `SK on unixmen.com
+<http://www.unixmen.com/upgrade-ubuntu-13-10-saucy-salamander-ubuntu-14-04-trusty-tahr/>_
+which explained the `/etc/update-manager/release-upgrades` file.  I
+changed `Prompt=lts` to `Prompt=normal`.  And yes, that was the
+solution. As a comment in file itself says: "Note that this option
+(lts) should not be used if the currently-running release is not
+itself an LTS release, since in that case the upgrader won't be able
+to determine if a newer release is available."
 
-TODO
-----
 
-- IBAN numbers don't seem to get validated.
-
-- The Insert window of an Upload has a layout problem.  I guess that
-  the `Lino.FileUploadField` doesn't collaborate well with the auto
-  height.
-
-- Inserting in UploadsByClient sets the `owner` but not the `client`.
 
 DONE
 ----
