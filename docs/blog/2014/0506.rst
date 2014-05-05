@@ -1,0 +1,19 @@
+====================
+Tuesday, May 6, 2014
+====================
+
+One detail fixed:
+
+- open a GridPanel, e.g. http://127.0.0.1:8000/api/countries/Places
+- Double-click on a row to open the detail window
+-  change some value and click the Save button 
+- close the detail window
+- note that your change does not yet appear in the grid
+- click on the close button of the grid panel window
+- note that the window doesn't seem to close, but now it refreshes and shows your change.
+- Now I must click twice on the close button of the GridPanel in order
+  to have it disappear
+
+
+Explanation was that the case of SubmitDetail was not yet correctly
+handled.

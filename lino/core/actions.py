@@ -58,7 +58,7 @@ class Hotkey:
 
     def __call__(self, **kw):
         for n in self.inheritable:
-            if not kw.has_key(n):
+            if not n in kw:
                 kw[n] = getattr(self, n)
             return Hotkey(**kw)
 
@@ -73,12 +73,11 @@ DELETE = Hotkey(keycode=46)
 
 class Permittable(object):
 
-    """
-    Base class for objects that have view permissions control.
-    
-    :class:`lino.core.actors.Actor` would be a subclass, 
-    but is a special case since actors never get instantiated.
-    
+    """Base class for objects that have view permissions control.
+
+    :class:`lino.core.actors.Actor` would be a subclass, but is a
+    special case since actors never get instantiated.
+
     """
 
     required = {}
