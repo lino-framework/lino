@@ -63,6 +63,7 @@ lino.history
 lino.modlib
 lino.modlib.auto
 lino.modlib.auto.sales
+lino.modlib.addresses
 lino.modlib.attestations
 lino.modlib.beid
 lino.modlib.cal
@@ -91,10 +92,7 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
-lino.modlib.links
-lino.modlib.links.fixtures
 lino.modlib.lists
-lino.modlib.links.tests
 lino.modlib.notes
 lino.modlib.notes.fixtures
 lino.modlib.plain
