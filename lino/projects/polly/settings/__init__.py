@@ -70,3 +70,4 @@ class Site(Site):
         yield 'lino.modlib.polls'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.projects.polly'
+        yield 'lino.modlib.appypod'

@@ -77,7 +77,7 @@ from lino.utils import jsgen
 
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
-from lino.utils.appy_pod import PrintTableAction, PortraitPrintTableAction
+# from lino.utils.appy_pod import PrintTableAction, PortraitPrintTableAction
 
 
 class InvalidRequest(Exception):
@@ -918,10 +918,10 @@ class AbstractTable(actors.Actor):
     
     """
 
-    if settings.SITE.is_installed('system'):
+    # if settings.SITE.is_installed('system'):
 
-        as_pdf = PrintTableAction()
-        as_pdf_p = PortraitPrintTableAction()
+    #     as_pdf = PrintTableAction()
+    #     as_pdf_p = PortraitPrintTableAction()
 
     def __init__(self, *args, **kw):
         raise NotImplementedError("20120104")
