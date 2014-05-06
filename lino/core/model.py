@@ -87,6 +87,13 @@ class Model(models.Model):
 
     """
 
+    active_fields = frozenset()
+    """If specified, this is the default value for :attr:`active_fields`
+    <lino.core.tables.AbstractTable.active_fields>` of every `Table`
+    on this model.
+
+    """
+
     hidden_columns = frozenset()
     """If specified, this is the default value for :attr:`hidden_columns
     <lino.core.tables.AbstractTable.hidden_columns>` of every `Table`
@@ -528,6 +535,7 @@ instances.
         'submit_insert',
         #~ 'get_model_actions',
         #~ '_custom_actions',
+        'active_fields',
         'hidden_columns',
         'hidden_elements',
         'get_default_table',

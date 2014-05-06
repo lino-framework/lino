@@ -680,7 +680,6 @@ class Events(dd.Table):
     # end_date end_time
     # """
 
-    #~ active_fields = ['all_day']
     order_by = ["start_date", "start_time"]
 
     detail_layout = EventDetail()

@@ -250,6 +250,8 @@ class CountryCity(dd.Model):
         blank=True, null=True)
     zip_code = models.CharField(_("Zip code"), max_length=10, blank=True)
 
+    active_fields = 'city zip_code'
+
     @dd.chooser()
     def city_choices(cls, country):
         if country is None:

@@ -303,6 +303,10 @@ class Kernel(object):
                 model.hidden_columns = frozenset(
                     dd.fields_list(model, model.hidden_columns))
 
+            if isinstance(model.active_fields, basestring):
+                model.active_fields = frozenset(
+                    dd.fields_list(model, model.active_fields))
+
             if model._meta.abstract:
                 raise Exception("Tiens?")
 

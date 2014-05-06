@@ -806,6 +806,11 @@ class AbstractTable(actors.Actor):
 
     """
 
+    active_fields = frozenset()
+    """A list of field names that are "active" (cause a save and
+    refresh of a Detail or Insert form).
+    """
+
     hidden_columns = frozenset()
     """If given, this is specifies the data elements that should be
     hidden by default when rendering this actor in a grid.

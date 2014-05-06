@@ -264,7 +264,7 @@ class Users(dd.Table):
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
-    active_fields = ['partner']
+    active_fields = 'partner'
 
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'

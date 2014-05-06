@@ -507,8 +507,13 @@ class Table(AbstractTable):
             if isinstance(self.hidden_columns, basestring):
                 self.hidden_columns = frozenset(
                     fields.fields_list(self.model, self.hidden_columns))
-            self.hidden_columns = self.hidden_columns | self.model.hidden_columns
-            self.hidden_elements = self.hidden_elements | self.model.hidden_elements
+            self.hidden_columns |= self.model.hidden_columns
+
+            if isinstance(self.active_fields, basestring):
+                self.active_fields = frozenset(
+                    fields.fields_list(self.model, self.active_fields))
+            self.active_fields |= self.model.active_fields
+            self.hidden_elements |= self.model.hidden_elements
 
             for b in self.model.mro():
                 for k, v in b.__dict__.items():

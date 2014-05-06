@@ -2,6 +2,9 @@
 Tuesday, May 6, 2014
 ====================
 
+Finished the actions API
+------------------------
+
 One detail fixed:
 
 - open a GridPanel, e.g. http://127.0.0.1:8000/api/countries/Places
@@ -26,6 +29,9 @@ The `PrintTableAction` group was not being used at all. Fixed.
 
 Checkin.
 
+Chat with Joe
+-------------
+
 Inspired by a chat with Joe, I added a new package
 :mod:`lino.modlib.appypod` and removed these actions from
 :mod:`lino.core.tables`.  Because such things should be optional.
@@ -40,3 +46,21 @@ Oops, and then I started to write a two new tested tutorials:
 I noticed that none of the tutorials was being tested because Django's
 test discovery had changed in 1.6. Added a file test.py for each of
 them.
+
+zip_code and city
+-----------------
+
+In Belgium we have usually one city per zip_code. Users are used to
+automatically see "Eupen" when they enter "4700", or "4700" when they
+enter "Eupen". So these two fields must become active.
+
+Since these fields are defined on a model mixin and I want them to be
+active "everywhere", I added
+:attr:`lino.core.model.Model.active_field` and made it support the
+"space-separated list of names in one string" format as for
+`column_names`, `hidden_columns`.
+
+Then I discovered a little problem: active fields shoul not be used in
+an Insert window. When I add an address in AdressesByPartner, the
+InsertWindow gets closed as soon as I select a city.  To be
+meditated...

@@ -589,11 +589,6 @@ class Actor(actions.Parametrizable):
         """
         return set()
 
-    active_fields = []
-    """A list of field names that are "active" (cause a save and
-    refresh of a Detail or Insert form).
-    """
-
     hide_window_title = False
     """
     This is set to `True` in home pages
