@@ -1284,7 +1284,7 @@ class ExtRenderer(HtmlRenderer):
             yield "  save_action_name: %s," % py2js(
                 action.action.save_action_name)
         yield "  ls_bbar_actions: %s," % py2js(
-            self.toolbar(rpt.get_row_actions(action.action)))
+            self.toolbar(rpt.get_toolbar_actions(action.action)))
         yield "  ls_url: %s," % py2js(rpt.actor_url())
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
@@ -1323,7 +1323,7 @@ class ExtRenderer(HtmlRenderer):
                 #~ kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
         kw.update(cell_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=self.toolbar(
-            rh.actor.get_row_actions(rh.actor.default_action.action)))
+            rh.actor.get_toolbar_actions(rh.actor.default_action.action)))
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])
         kw.update(gc_name=ext_elems.DEFAULT_GC_NAME)
         #~ if action != rh.actor.default_action:

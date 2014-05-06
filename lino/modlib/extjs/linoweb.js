@@ -4501,13 +4501,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         failure: Lino.ajax_error_handler(this)
     };
     if (e.record.phantom) {
-      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'grid_post'; // SubmitInsert.action_name
+      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'grid_post'; // CreateRow.action_name
       Ext.apply(req,{
         method: 'POST',
         url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url
       });
     } else {
-      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
+      req.params.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'grid_put'; // SaveRow.action_name
       Ext.apply(req,{
         method: 'PUT',
         url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url + '/' + e.record.id

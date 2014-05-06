@@ -153,9 +153,7 @@ class Place(dd.BabelNamed):
         verbose_name_plural = _("Places")
         if not settings.SITE.allow_duplicate_cities:
             unique_together = ('country', 'parent', 'name', 'type')
-            #~ unique_together = ('country','parent','name','type','zip_code')
 
-    #~ name = models.CharField(max_length=200)
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8, blank=True)
     type = PlaceTypes.field(blank=True)
@@ -214,8 +212,8 @@ class Places(dd.Table):
     order_by = "country name".split()
     column_names = "country name type zip_code *"
     detail_layout = """
-    name country 
-    type parent zip_code id 
+    name country
+    type parent zip_code id
     PlacesByPlace
     """
 
@@ -230,28 +228,27 @@ class PlacesByPlace(Places):
 class PlacesByCountry(Places):
     master_key = 'country'
     column_names = "name type zip_code *"
-    #~ required = dd.Required(user_groups='office')
     required = dd.Required()
     details_of_master_template = _("%(details)s in %(master)s")
 
 
 class CountryCity(dd.Model):
 
-    """
-    Model mixin that adds two fields `country` and `city` 
-    and defines 
-    a context-sensitive chooser for `city`, 
-    a `create_city_choice` method, ...
+    """Model mixin that adds two fields `country` and `city` and defines
+    a context-sensitive chooser for `city`, a `create_city_choice`
+    method, ...
+
     """
     class Meta:
         abstract = True
 
-    country = models.ForeignKey(
+    country = dd.ForeignKey(
         "countries.Country", blank=True, null=True)
-    city = models.ForeignKey(
+    city = dd.ForeignKey(
         'countries.Place',
         verbose_name=_('City'),
         blank=True, null=True)
+    zip_code = models.CharField(_("Zip code"), max_length=10, blank=True)
 
     @dd.chooser()
     def city_choices(cls, country):
@@ -302,9 +299,18 @@ class CountryCity(dd.Model):
             self.city = None
 
     def full_clean(self, *args, **kw):
-        if self.city is not None and self.city.country is not None \
-                and self.country != self.city.country:
-            self.country = self.city.country
+        city = self.city
+        if city is None:
+            if self.country and self.zip_code:
+                qs = Place.objects.filter(
+                    country=self.country, zip_code=self.zip_code)
+                if qs.count() > 0:
+                    self.city = qs[0]
+        else:
+            if city.country is not None and self.country != city.country:
+                self.country = city.country
+            if city.zip_code:
+                self.zip_code = city.zip_code
         super(CountryCity, self).full_clean(*args, **kw)
 
 
@@ -315,7 +321,6 @@ class CountryRegionCity(CountryCity):
         verbose_name=_('Region'),
         related_name="%(app_label)s_%(class)s_set_by_region")
         #~ related_name='regions')
-    zip_code = models.CharField(_("Zip code"), max_length=10, blank=True)
 
     class Meta:
         abstract = True

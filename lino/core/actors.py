@@ -849,9 +849,6 @@ class Actor(actions.Parametrizable):
             return True
         return cls.editable
 
-    #~ 20120621 @classmethod
-    #~ def get_permission(self,user,action):
-        #~ return True
     @classmethod
     def _collect_actions(cls):
         """
@@ -865,21 +862,22 @@ class Actor(actions.Parametrizable):
         default_action = cls.get_default_action()
         cls.default_action = cls.bind_action(default_action)
 
-        if cls.detail_layout or cls.detail_template:
+        if cls.detail_layout:
             if default_action and isinstance(
                     default_action, actions.ShowDetailAction):
                 cls.detail_action = cls.bind_action(default_action)
             else:
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
+            cls.submit_detail = cls.bind_action(actions.SubmitDetail())
+
         if cls.editable:
             if cls.allow_create:
                 # cls.create_action = cls.bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
                     cls.insert_action = cls.bind_action(actions.InsertRow())
-            cls.update_action = cls.bind_action(
-                actions.SubmitDetail(sort_index=1))
             if not cls.hide_top_toolbar:
                 cls.delete_action = cls.bind_action(actions.DeleteSelected())
+            cls.update_action = cls.bind_action(actions.SaveRow())
 
         if isinstance(cls.workflow_owner_field, basestring):
             cls.workflow_owner_field = cls.get_data_elem(
@@ -904,11 +902,11 @@ class Actor(actions.Parametrizable):
         # bind all my actions, including those inherited from parent actors:
         for b in cls.mro():
             for k, v in b.__dict__.items():
-                # 20130820 allow disabling inherited actions
+                # Allow disabling inherited actions by setting them to
+                # None in subclass.
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
                     if not k in cls._actions_dict:
-                            #~ cls._attach_action(k,v)
                         if v.attach_to_actor(cls, k):
                             cls.bind_action(v)
 
@@ -1192,9 +1190,10 @@ class Actor(actions.Parametrizable):
         return self._actions_dict.keys()
 
     @classmethod
-    def get_row_actions(self, cf):
+    def get_toolbar_actions(self, cf):
         return [ba for ba in self.get_actions(cf)
-                if ba.action.select_rows]
+                if ba.action.show_in_bbar]
+                # if ba.action.select_rows]
         
     @classmethod
     def get_actions(self, callable_from=None):

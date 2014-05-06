@@ -491,42 +491,20 @@ class RowClassStoreField(SpecialStoreField):
 class DisableEditingStoreField(SpecialStoreField):
 
     """
-    A field whose value is the result of the `get_row_permission` 
+    A field whose value is the result of the `get_row_permission`
     method on that row.
     New feature since `/blog/2011/0830`
     """
     name = 'disable_editing'
 
     def full_value_from_object(self, obj, ar):
-        #~ return self.store.actor.disable_editing(obj,request)
-        #~ a = self.store.actor.submit_action
-        #~ m = getattr(obj,'get_permission',None)
-        #~ u = ar.get_user()
-        #~ if not self.store.actor.get_permission(a,u) or (m is not None and not m(a,u)):
-        #~ if not self.store.actor.get_permission(a,u,obj):
-        #~ return not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj)
-        #~ if self.store.actor.get_row_permission is None:
-            #~ return self.store.actor.editable
-        #~ return not self.store.actor.get_row_permission(actions.UPDATE,ar.get_user(),obj)
         actor = self.store.actor
         if actor.update_action is None:
             #~ print 20120601, self.store.actor, "update_action is None"
             return True  # disable editing if there's no update_action
-        #~ state = actor.get_row_state(obj)
-        #~ print 20120621, obj.__class__
-        #~ return not obj.get_row_permission(ar.get_user(),state,self.store.actor.update_action)
-        #~ logger.info("20120622 ext_store gonna call get_action_permission")
         v = actor.get_row_permission(
             obj, ar, actor.get_row_state(obj), actor.update_action)
-        #~ v = self.store.actor.update_action.get_action_permission(ar.get_user(),obj,state)
-        #~ logger.info("ext_store 20120622 got %r", v)
         return not v
-        #~ return not self.store.actor.get_row_permission(self.store.actor.update_action,ar.get_user(),obj)
-        #~ if not self.store.actor.get_permission(actions.UPDATE,ar.get_user(),obj):
-            #~ return True
-        #~ return False
-        #~ if not self.store.report.get_permission(ar.get_user(),):
-            #~ return False
 
 
 #~ class PropertiesStoreField(StoreField):

@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 u"""
->>> DATA = [ 
+>>> DATA = [
 ... ["Belgium", "Eupen", 17000] ,
 ... ["Belgium", u"Liège", 400000] ,
 ... ["Belgium", "Raeren", 5000] ,
@@ -58,9 +58,6 @@ from django.core.exceptions import PermissionDenied
 
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
-
-from atelier import rstgen
 
 from north import dbutils
 
@@ -71,16 +68,12 @@ from lino.core import fields
 from lino.core import signals
 
 from lino.core.dbutils import obj2str
-from lino.core.model import Model
 
-#~ from lino.core.fields import FakeField
 from lino.core.requests import ActionRequest
 
 from lino.ui import base
 
-#~ from lino.utils.appy_pod import Renderer
 from lino.utils import jsgen
-#~ from lino.utils import join_elems
 
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
@@ -141,7 +134,8 @@ if False:  # 20130710
                 f = self.report.get_data_elem(colname)
                 if f is None:
                     logger.debug(
-                        "Removed unknown column %d (%r). Must save.", i, colname)
+                        "Removed unknown column %d (%r). Must save.",
+                        i, colname)
                     must_save = True
                 else:
                     valid_columns.append(colname)

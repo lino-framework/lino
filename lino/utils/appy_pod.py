@@ -528,6 +528,7 @@ class PrintTableAction(actions.Action):
     sort_index = -10
     select_rows = False
     default_format = 'ajax'
+    show_in_bbar = True
     preprocessor = "Lino.get_current_grid_config"
     MAX_ROW_COUNT = 900
     template_name = "Table.odt"

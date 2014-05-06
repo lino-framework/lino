@@ -817,7 +817,7 @@ class ShowDetailAction(Action):
     #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
-    save_action_name = 'put'
+    save_action_name = 'submit_detail'
 
     sort_index = 20
     #~ callable_from = (GridEdit,)
@@ -974,25 +974,26 @@ class UpdateRowAction(Action):
     required = dict(user_level='user')
 
 
-class SubmitDetail(Action):
+class SaveRow(Action):
+    """Called when user edited a cell of a non-phantom record in a grid.
+    Installed as `update_action` on every `Actor <lino.core.actors.Actor>`.
+    """
     sort_index = 10
-    # switch_to_detail = False
-    icon_name = 'disk'
-    help_text = _("Save changes in this form")
-    label = _("Save")
-    auto_save = False
     show_in_workflow = False
-    action_name = 'put'
+    action_name = 'grid_put'
     readonly = False
+    auto_save = False
 
     def is_callable_from(self, caller):
-        return isinstance(caller, ShowDetailAction)
+        return False
 
     def run_from_ui(self, ar, **kw):
         # logger.info("20140423 SubmitDetail")
         elem = ar.selected_rows[0]
         # ar.form2obj_and_save(ar.rqdata, elem, False)
+        self.save_existing_instance(elem, ar)
 
+    def save_existing_instance(self, elem, ar):
         watcher = ChangeWatcher(elem)
         ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
         elem.full_clean()
@@ -1010,14 +1011,36 @@ class SubmitDetail(Action):
         # TODO: in fact we need *either* `rows` (when this was called
         # from a Grid) *or* `goto_instance` (when this was called from a
         # form).  But how to find out which one is needed?
-        if ar.edit_mode == constants.EDIT_MODE_GRID:
-            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+        # if ar.edit_mode == constants.EDIT_MODE_GRID:
+        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
 
+
+class SubmitDetail(SaveRow):
+    """Called when the OK button of a Detail Window was clicked.
+    Installed as `submit_detail` on every `Actor <lino.core.actors.Actor>`.
+    """
+    # switch_to_detail = False
+    icon_name = 'disk'
+    help_text = _("Save changes in this form")
+    label = _("Save")
+    # action_name = 'submit_detail'
+    action_name = ShowDetailAction.save_action_name
+
+    def is_callable_from(self, caller):
+        return isinstance(caller, ShowDetailAction)
+
+    def run_from_ui(self, ar, **kw):
+        # logger.info("20140423 SubmitDetail")
+        elem = ar.selected_rows[0]
+        # ar.form2obj_and_save(ar.rqdata, elem, False)
+        self.save_existing_instance(elem, ar)
         ar.goto_instance(elem)
 
 
 class CreateRow(Action):
-    "Called when user edited a cell of a phantom record in a grid."
+    """Called when user edited a cell of a phantom record in a grid.
+    Installed as `grid_post` on every `dd.Model <lino.core.model.Model>`.
+    """
     sort_index = 10
     auto_save = False
     show_in_workflow = False
@@ -1031,8 +1054,8 @@ class CreateRow(Action):
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
-        ar.info("20140504 SubmitInsert %s %s",
-                ar.edit_mode, ar.requesting_panel)
+        # ar.info("20140504 SubmitInsert %s %s",
+        #         ar.edit_mode, ar.requesting_panel)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `pre_ui_create` comes *after* save()
@@ -1060,7 +1083,9 @@ class CreateRow(Action):
 
 
 class SubmitInsert(CreateRow):
-    "When the OK button of an Insert Window was clicked."
+    """Called when the OK button of an Insert Window was clicked.
+    Installed as `submit_insert` on every `dd.Model <lino.core.model.Model>`.
+    """
     label = _("Create")
     action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")
