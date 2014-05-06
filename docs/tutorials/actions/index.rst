@@ -75,51 +75,57 @@ Traceback (most recent call last):
 ...
 AttributeError: 'Moo' object has no attribute 't'
 
-So in this case we need to specify them as the first parameter.
-And becasue they are row actions, we need to pass the instance as 
+So in this case we need to specify them table as the first parameter.
+And because they are row actions, we need to pass the instance as 
 mandatory first argument:
 
->>> ses.run(S1.t,obj)
+>>> ses.run(S1.t, obj)
 {'message': u'Called t() on Moo object', 'success': True}
 
->>> ses.run(S1.b,obj)
+>>> ses.run(S1.b, obj)
 {'message': u'Called a() on Moo object', 'success': True}
 
   
 How to "remove" an inherited action or collected from a table
 -------------------------------------------------------------
 
+Here are the actions on Moos:
+
+>>> pprint([ba.action for ba in Moos.get_actions()])
+[<SaveRow grid_put>,
+ <CreateRow grid_post (u'grid_post')>,
+ <SubmitInsert submit_insert (u'Create')>,
+ <DeleteSelected delete_selected (u'Delete')>,
+ <GridEdit grid>,
+ <A a (u'a')>,
+ <A b (u'a')>,
+ <Action m (u'm')>,
+ <Action t (u't')>]
+
+A subclass inherits all actions from her parent.
 When I define a second table `S1(Moos)`, then `S1` will have 
 both actions `m` and `t`:
 
-
->>> pprint([ba.action for ba in Moos.get_actions()])
-[<SubmitDetail put (u'Save')>,
- <SubmitInsert post (u'Create')>,
- <DeleteSelected None (u'Delete')>,
- <GridEdit grid>,
- <A a (u'a')>,
- <A b (u'a')>,
- <Action m (u'm')>,
- <Action t (u't')>]
-
-A subclass inherits all actions from her parent:
-
 >>> pprint([ba.action for ba in S1.get_actions()])
-[<SubmitDetail put (u'Save')>,
- <SubmitInsert post (u'Create')>,
- <DeleteSelected None (u'Delete')>,
+[<SaveRow grid_put>,
+ <CreateRow grid_post (u'grid_post')>,
+ <SubmitInsert submit_insert (u'Create')>,
+ <DeleteSelected delete_selected (u'Delete')>,
  <GridEdit grid>,
  <A a (u'a')>,
  <Action m (u'm')>,
  <A b (u'a')>,
  <Action t (u't')>]
 
+S2 does not have these actions because we "removed" them by overriding
+them with None:
 
 >>> pprint([ba.action for ba in S2.get_actions()])
-[<SubmitDetail put (u'Save')>,
- <SubmitInsert post (u'Create')>,
- <DeleteSelected None (u'Delete')>,
+[<SaveRow grid_put>,
+ <CreateRow grid_post (u'grid_post')>,
+ <SubmitInsert submit_insert (u'Create')>,
+ <DeleteSelected delete_selected (u'Delete')>,
  <GridEdit grid>]
+
 
 

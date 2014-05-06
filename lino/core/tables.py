@@ -12,34 +12,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-u"""
->>> DATA = [
-... ["Belgium", "Eupen", 17000] ,
-... ["Belgium", u"Liège", 400000] ,
-... ["Belgium", "Raeren", 5000] ,
-... ["Estonia", "Tallinn", 400000] ,
-... ["Estonia", "Vigala", 1500] ,
-... ]
-
-
->>> class CitiesAndInhabitants(VirtualTable):
-...     column_names = "country city population"
-...     @classmethod
-...     def get_data_rows(self,ar):
-...         return DATA
-...
-...     @column(label="Country")
-...     def country(obj,ar):
-...         return obj[0]
-...     @column(label="City")
-...     def city(obj,ar):
-...         return obj[1]
-...     @column(label="Population")
-...     def city(obj,ar):
-...         return obj[2]
-...
-
->>> CitiesAndInhabitants.to_rst()
+"""
+Documentation in
+- :ref:`dev.vtables`
+- :ref:`dev.tables`
 
 """
 
@@ -831,35 +807,29 @@ class AbstractTable(actors.Actor):
     """
 
     hidden_columns = frozenset()
-    """
-    If given, this is specifies the data elements
-    that should be hidden by default when rendering 
-    this actor in a grid.
+    """If given, this is specifies the data elements that should be
+    hidden by default when rendering this actor in a grid.
     
-    When specified as class attribute of a 
-    :class:`lino.core.model.Model` 
-    or a :class:`dd.Table <lino.core.dbtables.Table>`, 
-    this can be a single string containing 
-    a space-separated list of field names. 
-    Lino will automatically resolve this using 
-    :func:`dd.fields_list <lino.core.fields.fields_list>` 
-    during server startup.
+    When specified as class attribute of a
+    :class:`lino.core.model.Model` or a :class:`dd.Table
+    <lino.core.dbtables.Table>`, this can be a single string
+    containing a space-separated list of field names.  Lino will
+    automatically resolve this using :func:`dd.fields_list
+    <lino.core.fields.fields_list>` during server startup.
     
-    Otherwise it must be specified as a set of strings, 
-    each one the name of a data element.
-    """
+    Otherwise it must be specified as a set of strings, each one the
+    name of a data element.
 
-    #~ hidden_elements = None
+    """
 
     form_class = None
     help_url = None
     #master_instance = None
 
     page_length = 20
-    """
-    Number of rows to display per page.
-    Used to control the height of a combobox of a ForeignKey 
-    pointing to this model 
+    """Number of rows to display per page.  Used to control the height of
+    a combobox of a ForeignKey pointing to this model
+
     """
 
     cell_edit = True

@@ -64,6 +64,7 @@ lino.modlib
 lino.modlib.auto
 lino.modlib.auto.sales
 lino.modlib.addresses
+lino.modlib.appypod
 lino.modlib.attestations
 lino.modlib.beid
 lino.modlib.cal

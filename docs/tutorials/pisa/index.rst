@@ -38,9 +38,10 @@ use ``"appyodt"``
 
 >>> settings.SITE.site_config.update(default_build_method = 'pisa')
 
-Let's install our well-known demo root users from :mod:`lino.modlib.system.fixtures.demo`:
+Let's install our well-known demo root users from
+:mod:`lino.modlib.users.fixtures.demo`:
 
->>> from lino.modlib.system.fixtures.demo import objects
+>>> from lino.modlib.users.fixtures.demo import objects
 >>> for obj in objects(): 
 ...     obj.save()
 

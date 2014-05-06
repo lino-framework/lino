@@ -53,9 +53,10 @@ Dynamic actor labels
 The following fails:
 
 >>> print(Customers.label) 
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 Traceback (most recent call last):
 ...
-DoesNotExist: PartnerType matching query does not exist. Lookup parameters were {'pk': 1}
+DoesNotExist: PartnerType matching query does not exist.
 
 That's correct. Because accessing the `label` property will read it 
 from the database. We must first fill these rows:

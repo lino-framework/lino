@@ -678,7 +678,7 @@ class Action(Parametrizable, Permittable):
         else:
             obj = None
         ia = InstanceAction(self, self.defining_actor, obj, None)
-        return ia.run_from_session(ses, *args, **kw)
+        return ia.run_from_session(ses, **kw)
 
     def action_param_defaults(self, ar, obj, **kw):
         """

@@ -53,3 +53,21 @@ readable application code. Consider the following excerpt from
             return super(MyPresences,self).get_request_queryset(ar)
     
 
+Tables
+------
+
+The most common type of actors are tables. A Table is an Actor which
+displays some data in a tabular way, i.e. interactively as a GridPanel
+or on a printable document as a table.
+
+There are VirtualTable and "normal" (model-based) tables. And then
+there is a third kind of table is special: the EmptyTable.
+
+The columns of a table are defined by an attribute `column_names`.
+The rows of a table are defined by a method `get_data_rows`.
+
+See :ref:`dev.vtables`
+See :ref:`dev.tables`
+
+
+

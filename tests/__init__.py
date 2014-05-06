@@ -73,6 +73,12 @@ class DocsTests(LinoTestCase):
     def test_actors(self):
         self.run_django_manage_test('docs/tutorials/actors')
     
+    def test_vtables(self):
+        self.run_django_manage_test('docs/tutorials/vtables')
+    
+    def test_tables(self):
+        self.run_django_manage_test('docs/tutorials/tables')
+    
     def test_pisa(self):
         self.run_django_manage_test('docs/tutorials/pisa')
     

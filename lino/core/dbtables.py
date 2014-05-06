@@ -510,12 +510,6 @@ class Table(AbstractTable):
             self.hidden_columns = self.hidden_columns | self.model.hidden_columns
             self.hidden_elements = self.hidden_elements | self.model.hidden_elements
 
-            #~ if self.model is not None:
-
-            #~ for b in self.model.mro():
-                #~ for k,v in b.__dict__.items():
-                    #~ if isinstance(v,actions.Action):
-                        #~ raise Exception("20130121 Must convert %s.%s to get_model_actions()" % (self.model,k))
             for b in self.model.mro():
                 for k, v in b.__dict__.items():
                     # ~ v = self.model.__dict__.get(k,v) # 20131025 allow disabling inherited actions

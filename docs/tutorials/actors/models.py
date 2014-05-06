@@ -43,4 +43,3 @@ class MyFunnyPersons(FunnyPersons):
 
 
 from .dynamic_labels import *    
-    

@@ -408,6 +408,10 @@ get_db_overview_rst = settings.SITE.get_db_overview_rst
 is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
 
+
+def show(*args, **kw):
+    return login().show(*args, **kw)
+
 from django.utils import translation
 get_language = translation.get_language
 

@@ -92,11 +92,11 @@ And then enter the following Python instructions there:
 
 >>> from django.conf import settings
 >>> settings.INSTALLED_APPS
-('lino.modlib.about', 'lino', 'polls', 'north', 'djangosite')
+('lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.plain', 'lino', 'polls', 'north', 'djangosite')
 
-This shows that your 'polls' app has been embedded into a series of other apps:
-:mod:`lino.ui` and :mod:`lino.modlib.about` come first, then your app, 
-followed by :mod:`lino` and :mod:`djangosite`.
+This shows that your 'polls' app has been embedded into a series of
+other apps. The details of this is not important right now. Just note
+that Lino does some magic on your :setting:`INSTALLED_APPS` setting.
 
 Other Django setting for which Lino sets default values are:
 

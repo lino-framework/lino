@@ -19,6 +19,8 @@ you'll now want to know how to do it yourself.
    pisa/index
    de_BE/index
    actors/index
+   vtables/index
+   tables/index
    actions/index
    watch_tutorial/index
    workflows_tutorial/index
