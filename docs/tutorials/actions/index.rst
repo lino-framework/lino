@@ -1,10 +1,10 @@
-.. _dev.actions: 
-
 ==============
 Actions
 ==============
 
 .. include:: /include/wip.rst
+
+For a complete reference see :ref:`dev.actions`
 
 Actions are one of the concepts which Lino adds to Django.
 

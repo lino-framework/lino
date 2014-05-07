@@ -1,12 +1,12 @@
-.. _dev.actors: 
-
 ==============
 Actors
 ==============
 
 .. include:: /include/wip.rst
 
+This is a tutorial to illustrate stuff explained in :ref:`dev.actors`.
 This tutorial was started as a doctest for :blogref:`20130907`.
+
 
 Actors are one of the concepts which Lino adds to Django.
 

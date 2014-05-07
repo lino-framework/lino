@@ -88,7 +88,7 @@ class Model(models.Model):
     """
 
     active_fields = frozenset()
-    """If specified, this is the default value for :attr:`active_fields`
+    """If specified, this is the default value for :attr:`active_fields
     <lino.core.tables.AbstractTable.active_fields>` of every `Table`
     on this model.
 

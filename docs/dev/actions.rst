@@ -1,13 +1,19 @@
+.. _dev.actions: 
+
 =======
 Actions
 =======
+
+Note: this is intended to be a rather dry but complete document for
+reference purposes.  See also some tutorials:
+
+- :doc:`/tutorials/actions/index`
+
 
 Overview
 --------
 
 Lino has a unique API for writing custom actions in your application.
-
-See also :ref:`dev.actions`.
 
 .. set_response:
 

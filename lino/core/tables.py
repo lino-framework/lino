@@ -807,23 +807,29 @@ class AbstractTable(actors.Actor):
     """
 
     active_fields = frozenset()
-    """A list of field names that are "active" (cause a save and
-    refresh of a Detail or Insert form).
+    """A list of field names that are "active". This means that when their
+    value was changed in a Detail or Insert window, they cause an
+    immediate save and refresh of the window.
+
+    Syntax and inheritance as for :attr:`hidden_columns`.
+
     """
 
     hidden_columns = frozenset()
     """If given, this is specifies the data elements that should be
     hidden by default when rendering this actor in a grid.
     
-    When specified as class attribute of a
-    :class:`lino.core.model.Model` or a :class:`dd.Table
-    <lino.core.dbtables.Table>`, this can be a single string
-    containing a space-separated list of field names.  Lino will
-    automatically resolve this using :func:`dd.fields_list
-    <lino.core.fields.fields_list>` during server startup.
-    
-    Otherwise it must be specified as a set of strings, each one the
-    name of a data element.
+    Its value is a set of strings, each one the name of a data
+    element. Defaults to an empty set.
+
+    Application code should specify this as a single string containing
+    a space-separated list of field names.  Lino will automatically
+    resolve this during server startup using :func:`dd.fields_list
+    <lino.core.fields.fields_list>`.
+
+    Note that this can be specified either on a
+    :class:`lino.core.model.Model` or on a :class:`dd.Table
+    <lino.core.dbtables.Table>` (Lino will make a union of both).
 
     """
 

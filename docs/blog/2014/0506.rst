@@ -52,13 +52,14 @@ zip_code and city
 
 In Belgium we have usually one city per zip_code. Users are used to
 automatically see "Eupen" when they enter "4700", or "4700" when they
-enter "Eupen". So these two fields must become active.
+enter "Eupen". So these two fields must become "active".
 
 Since these fields are defined on a model mixin and I want them to be
 active "everywhere", I added
-:attr:`lino.core.model.Model.active_field` and made it support the
-"space-separated list of names in one string" format as for
-`column_names`, `hidden_columns`.
+:attr:`lino.core.model.Model.active_fields` (similar to
+:attr:`hidden_columns <lino.core.model.Model.hidden_columns>`) and
+made it support the "space-separated list of names in one string"
+format as for `column_names`, `hidden_columns`.
 
 Then I discovered a little problem: active fields shoul not be used in
 an Insert window. When I add an address in AdressesByPartner, the

@@ -1,10 +1,10 @@
-.. _dev.tables: 
-
 ==============
 Tables
 ==============
 
 .. include:: /include/wip.rst
+
+This is a tutorial to illustrate stuff explained in :ref:`dev.actors`.
 
 Here is the :xfile:`models.py` file we will use for this tutorial:
 
