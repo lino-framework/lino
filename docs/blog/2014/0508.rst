@@ -13,3 +13,6 @@ It also shows how cool the :meth:`lino.core.actors.get_slave_summary`
 method is.
 
 New module :mod:`lino.modlib.humanlinks.fixtures.demo`.
+
+
+Adapted `lino_welfare/scripts/load_plp.py` once more.

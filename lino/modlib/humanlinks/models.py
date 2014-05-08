@@ -162,7 +162,7 @@ It is also a cool usage example for the
 :meth:`lino.core.actors.get_slave_summary` method.
 
     """
-    label = pgettext("(human)", "Links")
+    label = _("Human Links")
     required = dd.required()
     master = settings.SITE.plugins.humanlinks.human_model
     column_names = 'parent type_as_parent:10 child'

@@ -1000,7 +1000,6 @@ class Dummy(object):
 
 
 class DummyField(object):
-
     """
     Deserves more documentation.
     """
@@ -1029,19 +1028,19 @@ class RecurrenceField(models.CharField):
 
 
 def fields_list(model, field_names):
-    """
-    Return a set with the names of the specified fields,
+    """Return a set with the names of the specified fields,
     checking whether each of them exists.
 
-    Arguments:
-    `model` is any subclass of `django.db.models.Model`.
-    `field_names` is a single string with a space-separated list of field names.
+    Arguments: `model` is any subclass of `django.db.models.Model`.
+    `field_names` is a single string with a space-separated list of
+    field names.
 
     For example if you have a model `MyModel`
     with two fields `foo` and `bar`,
     then ``dd.fields_list(MyModel,"foo bar")``
     will return ``['foo','bar']``
     and ``dd.fields_list(MyModel,"foo baz")`` will raise an exception.
+
     """
     lst = set()
     for name in field_names.split():

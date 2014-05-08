@@ -89,6 +89,7 @@ lino.modlib.families
 lino.modlib.finan
 lino.modlib.finan.fixtures
 lino.modlib.humanlinks
+lino.modlib.humanlinks.fixtures
 lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger
