@@ -1,0 +1,15 @@
+=====================
+Thursday, May 8, 2014
+=====================
+
+I understood that :ref:`welfare` needs both apps (households **and**
+humanlinks).
+
+;mod:`lino.modlib.humanlinks.models.LinksByHuman` is cool because it
+displays both "parent" and "child" links, without needing an
+artificial duplication of every PLP record as was needed in TIM.
+
+It also shows how cool the :meth:`lino.core.actors.get_slave_summary`
+method is.
+
+New module :mod:`lino.modlib.humanlinks.fixtures.demo`.

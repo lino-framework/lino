@@ -187,7 +187,6 @@ class HouseholdsByType(Households):
 
 
 class Member(dd.Model):
-
     """
     The role of a given :class:`Person` in a given :class:`Household`.
     """
@@ -280,35 +279,6 @@ class SiblingsByPerson(Members):
             return None
         kw.update(household=hh)
         return super(SiblingsByPerson, self).get_filter_kw(ar, **kw)
-
-    # @classmethod
-    # def get_master_household(self, mi):
-    #     if mi is None:
-    #         return
-    #     M = dd.modules.households.Member
-    #     try:
-    #         mbr = M.objects.get(person=mi)
-    #         return mbr.household
-    #     except M.DoesNotExist:
-    #         # raise Warning("%s has no household" % mi)
-    #         # Warning("%s has no household" % mi)
-    #         pass
-    #     except M.MultipleObjectsReturned:
-    #         # raise Warning("%s has multiple households" % mi)
-    #         pass
-
-    # @classmethod
-    # def create_instance(self, ar, **kw):
-    #     kw.update(household=self.get_master_household(ar.master_instance))
-    #     return super(SiblingsByPerson, self).create_instance(ar, **kw)
-        
-    # @classmethod
-    # def get_request_queryset(self, ar):
-    #     mi = self.get_master_household(ar.master_instance)
-    #     if mi is None:
-    #         return []
-    #     M = dd.modules.households.Member
-    #     return M.objects.filter(household=mi)
 
 
 class CreateHousehold(dd.Action):
@@ -409,33 +379,6 @@ dd.inject_field(
         'households.Household',
         verbose_name=_("is Household"),
         help_text=("Whether this Partner is a Household.")))
-
-
-# def households_panel_by_person(obj, ar, **kw):
-#     logger.info("20140426 households_panel_by_person")
-#     elems = []
-#     # elems.append(E.p("Foo %s" % obj))
-#     # Memberships
-#     sar = ar.spawn('households.MembersByPerson', master_instance=obj)
-#     n = sar.get_total_count()
-#     if n > 1:
-#         elems += ["Member of %s households: " % n]
-
-#     items = []
-#     for m in sar.data_iterator:
-#         items.append(E.li(
-#             unicode(m.role), _(" in "), ar.obj2html(m.household)))
-#     elems.append(E.ul(*items))
-#     elems.append(ar.instance_action_button(obj.create_household))
-#     return E.div(*elems)
-
-
-# dd.inject_field(
-#     'contacts.Person',
-#     'households_panel',
-#     dd.VirtualField(
-#         dd.HtmlBox(_("Households")),
-#         households_panel_by_person))
 
 
 def setup_main_menu(site, ui, profile, m):

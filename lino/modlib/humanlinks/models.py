@@ -22,8 +22,10 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
 from django.conf import settings
+from django.db.models import Q
 
 from lino import dd
+from lino.utils.xmlgen.html import E
 
 
 class LinkType(dd.Choice):
@@ -60,7 +62,7 @@ class LinkTypes(dd.ChoiceList):
     item_class = LinkType
 
 add = LinkTypes.add_item
-add('01', 'natural',
+add('01', 'parent',
     _("Father"), _("Mother"),
     _("Son"), _("Daughter"))
 
@@ -75,9 +77,14 @@ add('03',
     _("Grandson"), _("Granddaughter"))
 
 add('05',
-    'partner',
+    'spouse',
     _("Husband"), _("Wife"),
     _("Husband"), _("Wife"))
+
+add('07',
+    'partner',
+    _("Partner"), _("Partner"),
+    _("Partner"), _("Partner"))
 
 add('06',
     'friend',
@@ -95,14 +102,13 @@ add('90',
     _("Other"), _("Other"))
 
 
-# class Link(dd.Sequenced):
-class Link(dd.Human, dd.Born):
+class Link(dd.Model):
 
     class Meta:
-        verbose_name = _("Dependent Person")
-        verbose_name_plural = _("Dependent Persons")
+        verbose_name = _("Personal Link")
+        verbose_name_plural = _("Personal Links")
 
-    type = LinkTypes.field(default=LinkTypes.natural)
+    type = LinkTypes.field(default=LinkTypes.parent)
     parent = dd.ForeignKey(
         settings.SITE.plugins.humanlinks.human_model,
         verbose_name=_("Parent"),
@@ -123,17 +129,6 @@ class Link(dd.Human, dd.Born):
         # print('20140204 type_as_child', self.type)
         return self.type.as_child(self.child)
 
-    # @dd.displayfield(_("Birth date"))
-    # def birth_date(self, ar):
-    #     return self.child.birth_date
-
-    def full_clean(self):
-        """Copy data fields from child"""
-        obj = self.child
-        if obj is not None:
-            for k in ('first_name', 'last_name', 'gender', 'birth_date'):
-                setattr(self, k, getattr(obj, k))
-
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
@@ -151,33 +146,68 @@ class Links(dd.Table):
     # """, window_size=(60, 'auto'))
 
 
-class ParentsByHuman(Links):
-    label = pgettext("(human)", "Parents")
-    required = dd.required()
-    master_key = 'child'
-    column_names = 'type_as_parent:10 parent'
-    auto_fit_column_widths = True
-    # insert_layout = dd.FormLayout("""
-    # parent
-    # type
-    # """, window_size=(40, 'auto'))
+def pf(obj):
+    return obj.get_full_name(nominative=True)
 
 
-class ChildrenByHuman(Links):
-    # label = pgettext("(human)", "Children")
-    label = _("Dependent persons")
+class LinksByHuman(Links):
+    """Display all human links of the master, using both the parent and
+the child directions.
+
+It is a cool usage example for using a
+:meth:`lino.core.actors.get_request_queryset` method instead of
+`master_key`.
+
+It is also a cool usage example for the
+:meth:`lino.core.actors.get_slave_summary` method.
+
+    """
+    label = pgettext("(human)", "Links")
     required = dd.required()
-    master_key = 'parent'
-    order_by = ['birth_date']
-    column_names = 'type child first_name last_name gender birth_date age'
-    #column_names = 'type_as_child:10 child child__birth_date child__age'
-    auto_fit_column_widths = True
-    # insert_layout = dd.FormLayout("""
-    # child
-    # first_name last_name
-    # gender birth_date
-    # type
-    # """, window_size=(40, 'auto'))
+    master = settings.SITE.plugins.humanlinks.human_model
+    column_names = 'parent type_as_parent:10 child'
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        mi = ar.master_instance  # a Person
+        if mi is None:
+            return
+        Link = dd.modules.humanlinks.Link
+        flt = Q(parent=mi) | Q(child=mi)
+        return Link.objects.filter(flt).order_by(
+            'child__birth_date', 'parent__birth_date')
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        sar = self.request(master_instance=obj)
+        links = []
+        for lnk in sar:
+            if lnk.child == obj:
+                i = (lnk.type.as_child(obj), lnk.parent)
+            else:
+                i = (lnk.type.as_parent(obj), lnk.child)
+            links.append(i)
+
+        def by_age(a, b):
+            return cmp(b[1].birth_date.as_date(), a[1].birth_date.as_date())
+
+        links.sort(by_age)
+
+        items = []
+        for type, other in links:
+            items.append(E.li(
+                unicode(type), _(" of "),
+                ar.obj2html(other, pf(other)),
+                " (%s)" % other.age()
+            ))
+        elems = []
+        if len(items) > 0:
+            elems += [_("%s is") % pf(obj)]
+            elems.append(E.ul(*items))
+        # elems += [
+        #     E.br(), ar.instance_action_button(obj.create_household)]
+        return E.div(*elems)
 
 
 def setup_explorer_menu(site, ui, profile, m):
@@ -191,6 +221,6 @@ __all__ = [
     'LinkTypes',
     'Link',
     'Links',
-    'ChildrenByHuman',
-    'ParentsByHuman']
+    'LinksByHuman'
+    ]
 
