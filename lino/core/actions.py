@@ -12,8 +12,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This defines the :class:`Action` class, together with some helper
-classes like :class:`InstanceAction`
+"""This defines the :class:`dd.Action` class, together with some
+helper classes like :class:`InstanceAction` and the :func:`dd.action`
+decorator.
 
 """
 
@@ -149,7 +150,8 @@ def discover_choosers():
 def install_layout(cls, k, layout_class, **options):
     """
     - ``k`` is one of 'detail_layout', 'insert_layout', 'params_layout'
-    - ``
+    - `layout_class`
+
     """
     dl = cls.__dict__.get(k, None)
     if dl is None:  # and not cls._class_init_done:
@@ -299,87 +301,25 @@ class InstanceAction(object):
 
 
 class Action(Parametrizable, Permittable):
-
-    """
-    Abstract base class for all Actions
-    """
+    "See :class:`dd.Action`."
 
     #~ __metaclass__ = ActionMetaClass
-
     debug_permissions = False
-
     save_action_name = None
-
     icon_name = None
-    """
-    The class name of an icon to be used for this action
-    when rendered as toolbar button.
-    """
-
     _layout_class = layouts.ActionParamsLayout
-
     hidden_elements = frozenset()
-
     combo_group = None
-    """
-    The name of another action to which to "attach" this action.
-    Both actions will then be rendered as a single combobutton.
-    """
-
     sort_index = 90
-    """Determins the sort order in which the actions will be presented to
-    the user.
-    
-    List actions are negative and come first.
-    
-    Predefined `sort_index` values are:
-    
-    ===== =================================
-    value action
-    ===== =================================
-    -1    :class:`as_pdf <lino.utils.appy_pod.PrinttableAction>`
-    10    :class:`insert <InsertRow>`, SubmitDetail
-    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
-    20    :class:`detail <ShowDetailAction>`
-    30    :class:`delete <DeleteSelected>`
-    31    :class:`merge <lino.mixins.mergeable.Merge>`
-    50    :class:`Print <lino.mixins.printable.BasePrintAction>`
-    51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
-    60    :class:`ShowSlaveTable`
-    90    default for all custom row actions
-    ===== =================================
-
-    """
-
     label = None
-    """
-    The text to appear on the button.
-    """
-
     help_text = None
-    """
-    A help text that shortly explains what this action does.
-    ExtJS uses this as tooltip text.
-    """
-
     auto_save = True
-    """What to do when this action is being called while the user is on a
-    dirty record.
-    
-    - `False` means: forget any changes in current record and run the
-      action.
-
-    - `True` means: save any changes in current record before running
-      the action.  `None` means: ask the user.
-
-    """
 
     action_name = None
     """Internally used to store the name of this action within the
     defining Actor's namespace.
 
     """
-
     use_param_panel = False
     """Used internally. This is True for window actions whose window use
     the parameter panel: grid and emptytable (but not showdetail)
@@ -403,34 +343,12 @@ class Action(Parametrizable, Permittable):
             #~ return isinstance(caller,(GridEdit,ShowDetailAction))
         #~ return isinstance(caller,GridEdit)
 
-    #~ callable_from = None
-    #~ """
-    #~ Either `None`(default) or a tuple of class
-    #~ objects (subclasses of :class:`Action`).
-    #~ If specified, this action is available only within a window
-    #~ that has been opened by one of the given actions.
-    #~ """
-
     default_format = 'html'
     """
     Used internally.
     """
 
     readonly = True
-    """Whether this action possibly modifies data *in the given object*.
-    
-    This means that :class:`InsertRow` is a `readonly` action.
-    Actions like :class:`InsertRow` and :class:`Duplicable
-    <lino.mixins.duplicable.Duplicate>` which do not modify the given
-    object but *do* modify the database, must override their
-    `get_action_permission`::
-    
-      def get_action_permission(self,ar,obj,state):
-          if user.profile.readonly:
-              return False
-          return super(Duplicate,self).get_action_permission(ar,obj,state)
-
-    """
 
     opens_a_window = False
     """
@@ -448,14 +366,6 @@ class Action(Parametrizable, Permittable):
     window has a navigator.
 
     """
-
-    # show_in_row_actions = False
-    # """
-    # No longer used.
-    # Whether this action should be displayed as a button in the 
-    # :meth:`action_buttons <lino.core.model.Model.action_buttons>`    
-    # column.
-    # """
 
     show_in_bbar = True
     """Whether this action should be displayed as a button in the toolbar
@@ -478,7 +388,6 @@ class Action(Parametrizable, Permittable):
     """
 
     select_rows = True
-    #~ select_rows = False
     """TODO: rename this to "single_row".  True if this action should be
     called on a single row (ignoring multiple row selection).  Set
     this to False if this action is a list action, not a row action.
@@ -810,9 +719,6 @@ class GridEdit(TableAction):
 
 class ShowDetailAction(Action):
 
-    """
-    An action that opens the Detail Window of its actor.
-    """
     icon_name = 'application_form'
     #~ icon_file = 'application_form.png'
     opens_a_window = True
@@ -909,10 +815,6 @@ class ShowDetailAction(Action):
 
 class InsertRow(TableAction):
 
-    """Opens the Insert window filled with a blank row.  The new row will
-    be actually created only when this window gets submitted.
-
-    """
     save_action_name = 'submit_insert'
 
     label = _("New")
@@ -975,9 +877,6 @@ class UpdateRowAction(Action):
 
 
 class SaveRow(Action):
-    """Called when user edited a cell of a non-phantom record in a grid.
-    Installed as `update_action` on every `Actor <lino.core.actors.Actor>`.
-    """
     sort_index = 10
     show_in_workflow = False
     action_name = 'grid_put'
@@ -1251,9 +1150,6 @@ class MultipleRowAction(Action):
 
 class DeleteSelected(MultipleRowAction):
 
-    """
-    Delete the row on which it is being executed.
-    """
     action_name = 'delete_selected'  # because...
     icon_name = 'delete'
     help_text = _("Delete this record")
@@ -1304,17 +1200,6 @@ class DeleteSelected(MultipleRowAction):
 
 
 def action(*args, **kw):
-    """
-    Decorator to define custom actions.
-    Same signature as :meth:`Action.__init__`.
-    In practice you'll possibly use:
-    :attr:`label <Action.label>`,
-    :attr:`help_text <Action.help_text>` and
-    :attr:`required <Action.required>`.
-    
-    The decorated function will be installed as the actions's
-    `run_from_ui` method.
-    """
     def decorator(fn):
         # print 20140422, fn.__name__
         kw.setdefault('custom_handler', True)

@@ -12,77 +12,27 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This defines the :class:`Actor` and :class:`BoundAction` classes.
-
-
-.. actorattr:: detail_layout
-
-Define the form layout to use for the detail window.
-Actors without `detail_layout` don't have a show_detail action.
-
-.. actorattr:: insert_layout
-
-Define the form layout to use for the insert window.  If there's a
-:aa:`detail_layout` but no :aa:`insert_layout`, Lino
-will use :aa:`detail_layout` for the insert window.
-
-.. actorattr:: known_values
-
-A `dict` of `fieldname` -> `value` pairs that specify "known values".
-
-Requests will automatically be filtered to show only existing records
-with those values.  This is like :aattr:`filter`, but new instances
-created in this Table will automatically have these values set.
-
-
-.. actorattr:: filter
-
-If specified, this must be a `models.Q` object (not a dict of
-(fieldname -> value) pairs) which will be used as a filter.
-
-Unlike :aattr:`known_values`, this can use the full range of Django's
-`field lookup methods
-<https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
-
-Note that if the user can create rows in a filtered table, you should
-make sure that new records satisfy your filter condition by default,
-otherwise you can get surprising behaviour if the user creates a new
-row.
-
-If your filter consists of simple static values on some known field,
-then you'll prefer to use :aattr:`known_values` instead of
-:attr:`filter.`
+"""This defines :class:`dd.Actor` and related classes.
 
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
-import copy
 import datetime
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-import lino
-#~ from lino.ui import base
-
-#~ from lino.ui.base import Handled
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
-#~ from lino.core import changes
 from lino.core.dbutils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.requests import BoundAction
 from lino.core.constants import _handle_attr_name
 from lino.utils import curry, AttrDict
-#~ from lino.core import perms
-from lino.utils import jsgen
-from lino.utils import uncamel
-from lino.utils import join_elems
-#~ from lino.utils import class_dict_items
 from lino.utils.xmlgen.html import E
 
 
@@ -370,24 +320,11 @@ class ActorMetaClass(type):
 
 class Actor(actions.Parametrizable):
 
-    """
-    Base class for
-    :class:`AbstractTable <lino.core.tables.AbstractTable>`,
-    :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
-    and :class:`Frame <lino.core.frames.Frame>`.
-
-    See :doc:`/dev/actors`.
-    """
-
     __metaclass__ = ActorMetaClass
 
     _layout_class = layouts.ParamsLayout
 
     stay_in_grid = False
-    """Set this to True if Lino should not open a newly created record in
-    a detail window.
-
-    """
 
     sort_index = None
     """
@@ -469,9 +406,9 @@ class Actor(actions.Parametrizable):
     """
 
     window_size = None
-    """
-    Set this to a tuple of (height, width) in pixels to have 
-    this actor display in a modal non-maximized window.
+    """Set this to a tuple of (height, width) in pixels to have this
+    actor display in a modal non-maximized window.
+
     """
 
     default_list_action_name = 'grid'
@@ -490,37 +427,12 @@ class Actor(actions.Parametrizable):
     delete_required = dict()
 
     master_key = None
-    """The name of the ForeignKey field of this Table's model that points
-    to it's master.  Setting this will turn the report into a slave
-    report.
-
-    """
 
     master = None
-    """
-    Automatically set to the model pointed to by the :attr:`master_key`.
-    Used also in lino.models.ModelsBySite
-    """
 
     master_field = None
-    """
-    For internal use. Automatically set to the field descriptor of the :attr:`master_key`.
-    """
 
     editable = None
-    """Set this explicitly to True or False to make the Actor per se
-    editable or not.  Otherwise it will be set to `False` if the Actor
-    is a Table and has a `get_data_rows` method.
-    
-    Non-editable actors won't even call `get_view_permission` for
-    actions which are not readonly.
-    
-    The :class:`lino.models.Changes` table is an example where this is
-    being used: nobody should ever edit something in the table of
-    Changes.  The user interface uses this to generate optimized JS
-    code for this case.
-
-    """
 
     hide_sums = False
     """
@@ -562,31 +474,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def disabled_fields(cls, obj, ar):
-        """
-        Return a set of field names that should not be editable
-        for the specified `obj` and `request`.
-
-        If defined in the Table, this must be a class method that accepts
-        two arguments `obj` and `ar` (an `ActionRequest`)::
-
-          @classmethod
-          def disabled_fields(cls,obj,ar):
-              ...
-              return set()
-
-
-        If not defined in the Table, Lino will look whether
-        the Table's model has a `disabled_fields` method
-        and install a wrapper to this model method.
-        When defined on the model, is must be an *instance*
-        method
-
-          def disabled_fields(self,ar):
-              ...
-              return set()
-
-        See also :doc:`/tickets/2`.
-        """
         return set()
 
     hide_window_title = False
@@ -601,37 +488,14 @@ class Actor(actions.Parametrizable):
     """
 
     hide_top_toolbar = False
-    """Whether a Detail Window should have navigation buttons, a "New"
-    and a "Delete" buttons.  In ExtJS UI also influences the title of
-    a Detail Window to specify only the current element without
-    prefixing the Tables's title.
-    
-    This option is True in 
-    :class:`lino.models.SiteConfigs`,
-    :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.models.Mysettings`.
-
-    """
 
     _label = None
     _editable = None
     _known_values = {}
 
     title = None
-    """
-    The text to appear e.g. as window title when the actor's 
-    default action has been called.
-    If this is not set, Lino will use the :attr:`label` as title.
-    """
 
     label = None
-    """The text to appear e.g. on a button that will call the default
-    action of an actor.  This attribute is *not* inherited to
-    subclasses.  For :class:`lino.core.table.Table` subclasses that
-    don't have a label, Lino will call :meth:`get_actor_label
-    <lino.core.table.Table.get_actor_label>`.
-
-    """
 
     default_action = None
     actor_id = None
@@ -656,11 +520,6 @@ class Actor(actions.Parametrizable):
     "For internal use"
 
     get_handle_name = None
-    """Most actors use the same UI handle for each request.  But
-    e.g. debts.PrintEntriesByBudget overrides this to implement
-    dynamic columns depending on it's master_instance.
-
-    """
 
     @classmethod
     def get_request_handle(self, ar):
@@ -678,11 +537,6 @@ class Actor(actions.Parametrizable):
         return actions.make_params_layout_handle(self, ui)
 
     abstract = False
-    """Set this to True to prevent Lino from generating useless
-    JavaScript if this is just an abstract base class to be inherited
-    by other actors.
-
-    """
 
     @classmethod
     def is_abstract(cls):
@@ -793,9 +647,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_actor_label(self):
-        """
-        Compute the label of this actor.
-        """
         return self._label or self.__name__
 
     @classmethod
@@ -815,15 +666,7 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_view_permission(self, profile):
-        """
-        Return True if this actor as a whole is visible for users with
-        the given profile.
-        """
-        #~ return self.default_action.action.allow(user,None,None)
-        #~ return self.default_action.get_bound_action_permission(user,None,None)
-        #~ 20130511 return self.default_action.get_view_permission(profile)
-        #~ return self.allow_read(user,None,None)
-        return True  # 20130511
+        return True
 
     @classmethod
     def get_create_permission(self, ar):
@@ -835,11 +678,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):
-        """
-        Returns True or False whether the given action
-        is allowed for the given row instance `row`
-        and the user who issued the given ActionRequest `ar`.
-        """
         if ba.action.readonly:
             return True
         return cls.editable
@@ -918,9 +756,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def bind_action(self, a):
-        #~ if a.action_name in self._actions_dict:
-            #~ raise Exception("20130424 Attempt to re-bind %r to %r" % (a,self))
-            #~ logger.warning("20130424 re-binding %r to %r",a,self)
         ba = BoundAction(self, a)
         if a.action_name is not None:
             self._actions_dict.define(a.action_name, ba)
@@ -944,31 +779,14 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_detail_title(self, ar, obj):
-        """
-        Return the string to use when building the title of a
-        detail window on a given row of this actor.
-        """
         return unicode(obj)
 
     @classmethod
     def get_choices_text(self, obj, request, field):
-        """
-        Return the text to be displayed in a combo box
-        for the field `field` of this actor to represent
-        the choice `obj`.
-        Override this if you want a customized representation.
-        For example :class:`lino_faggio.models.InvoiceItems`
-        """
         return obj.get_choices_text(request, self, field)
 
     @classmethod
     def get_title(self, ar):
-        """Return the title of this Table for the given request `ar`.
-        Override this if your Table's title should mention for example
-        filter conditions.  See also
-        :meth:`lino.core.dbtables.Table.get_title`.
-
-        """
         # NOTE: similar code in dbtables
         title = self.get_title_base(ar)
         tags = list(self.get_title_tags(ar))
@@ -986,15 +804,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def setup_request(self, ar):
-        """
-        Customized versions may e.g. set `master_instance`
-        before calling super() (outbox.MyOutbox or mixins.ByUser).
-
-        Other usages are more hackerish:
-        - :class:`lino.modlib.households.models.SiblingsByPerson`
-        - :class:`lino_welfare.modlib.cal.models.EventsByClient`
-
-        """
         pass
 
     @classmethod
@@ -1013,16 +822,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def disabled_actions(self, ar, obj):
-        """
-        Returns a dictionary containg the names of the actions
-        that are disabled  for the given object instance `obj`
-        and the user who issued the given ActionRequest `ar`.
-
-        Application developers should not need to override this method.
-
-        Default implementation returns an empty dictionary.
-        Overridden by :class:`lino.core.dbtables.Table`
-        """
         return {}
 
     @classmethod
@@ -1036,9 +835,6 @@ class Actor(actions.Parametrizable):
         """
         return unicode(_("Total (%d rows)") % ar.get_total_count())
 
-    #~ @classmethod
-    #~ def get_detail(self):
-        #~ return self.detail_layout
     @classmethod
     def set_detail_layout(self, *args, **kw):
         """
@@ -1199,9 +995,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_data_elem(self, name):
-        """
-        Find data element in this actor by name.
-        """
         c = self._constants.get(name, None)
         if c is not None:
             return c
@@ -1258,37 +1051,12 @@ class Actor(actions.Parametrizable):
     @classmethod
     def param_defaults(self, ar, **kw):
         """
-        Return a dict with default values for the parameters of a request.
-
-        Usage example. The Clients table has a parameter `coached_since`
-        whose default value is empty::
-
-          class Clients(dd.Table):
-              parameters = dd.ParameterPanel(
-                ...
-                coached_since=models.DateField(blank=True))
-
-        But NewClients is a subclass of Clients with the only difference
-        that the default value is `amonthago`::
-
-
-          class NewClients(Clients):
-              @classmethod
-              def param_defaults(self,ar,**kw):
-                  kw = super(NewClients,self).param_defaults(ar,**kw)
-                  kw.update(coached_since=amonthago())
-                  return kw
-
         """
         for k, pf in self.parameters.items():
             if not isinstance(pf, fields.DummyField):
                 #~ if not param_values.has_key(k):
                 kw[k] = pf.get_default()
         return kw
-
-    #~ @classmethod
-    #~ def request(self,ui=None,request=None,action=None,**kw):
-        #~ return ActionRequest(ui,self,request,action,**kw)
 
     @classmethod
     def request(self, *args, **kw):
@@ -1314,12 +1082,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def show(self, master_instance=None, column_names=None, **known_values):
-        """
-        Creates an action request for this actor and calls its
-        :meth:`show <lino.core.actions.ActionRequest.show>`
-        method.
-        This is a shortcut for usage in tested document snippets.
-        """
         kw = dict()
         if master_instance is not None:
             kw.update(master_instance=master_instance)
@@ -1327,12 +1089,6 @@ class Actor(actions.Parametrizable):
         kw.update(known_values=known_values)
         kw.update(renderer=settings.SITE.ui.text_renderer)
         self.request(**kw).show(column_names)
-        #~ return settings.SITE.ui.text_renderer.request(**kw).to_rst(column_names)
-        #~ username = kw.pop('username',None)
-        #~ if username and settings.SITE.user_model is not None:
-            #~ kw['user'] = settings.SITE.user_model.objects.get(username=username)
-        #~ kw.update(renderer=settings.SITE.ui.text_renderer)
-        #~ return self.request(**kw).to_rst(column_names)
 
     @classmethod
     def to_html(self, **kw):
@@ -1340,10 +1096,6 @@ class Actor(actions.Parametrizable):
         """
         #~ settings.SITE.startup()
         return E.tostring(self.request(**kw).table2xhtml())
-        #~ return self.request(**kw).table2xhtml()
-
-    #~ def show(self,*args,**kw):
-        #~ print self.to_rst(*args,**kw)
 
     @classmethod
     def get_screenshot_requests(self, language):
@@ -1356,9 +1108,6 @@ class Actor(actions.Parametrizable):
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, obj, ar):
-        """
-        Displays the workflow buttons for the given row `obj` and the request `ar`.
-        """
         #~ logger.info('20120930 workflow_buttons %r', obj)
         actor = ar.actor
         #~ print 20120621 , actor,  self
@@ -1381,52 +1130,7 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
-        """Return the HTML paragraph to be displayed in the
-TableSummaryPanel. Lino automagically creates a virtualfield
-``slave_summary`` on each table using this method.
-
-        """
         ar = ar.spawn(self, master_instance=obj)
         # ar = ar.spawn(self, master_instance=ar.master_instance)
         return qs2summary(ar, ar.data_iterator, E.br)
 
-    @classmethod
-    def slave_as_summary_meth(self, row_separator):
-        raise Exception("Deprecated. Is it being used at all?")
-
-        def meth(master, ar):
-            ar = ar.spawn(self, master_instance=master)
-            s = qs2summary(ar, ar.data_iterator, row_separator)
-            return s
-        return meth
-
-    @classmethod
-    def unused_get_table_summary_field(self, lh, **kw):
-        fld = fields.HtmlBox(verbose_name=self.label, **kw)
-        fld.help_text = self.help_text
-        fld.name = self.__name__
-        return fields.VirtualField(fld, self.get_slave_summary)
-
-    @classmethod
-    def unused_get_slave_summary_method(self, lh):
-        """Creates and returns the method to be used to display a summary of
-        this table.  The LayoutHandle ``lh`` is either a FormLayout or
-        a ListLayout. This is expetced to return a callable which
-        accepts two arguments
-
-        :attr:`AbstractTable.slave_grid_format`
-        is 'summary'.
-
-        """
-        if isinstance(lh. layouts.ListLayout):
-            def meth(master, ar):
-                ar = ar.spawn(self, master_instance=master)
-                return qs2summary(ar, ar.data_iterator, ', ')
-        elif isinstance(lh, (layouts.FormLayout, layouts.ParamsLayout)):
-            def meth(master, ar):
-                ar = ar.spawn(self, master_instance=master)
-                return qs2summary(ar, ar.data_iterator, E.br)
-        else:
-            raise NotImplementedError()
-        return meth
-            

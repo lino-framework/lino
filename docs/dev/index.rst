@@ -14,8 +14,9 @@ Recommended
 
    install
    /tutorials/index
-   perms
-   API </api/lino>
+   api
+   Generated API </api/lino>
+
 
 Drafts
 ------
@@ -23,8 +24,6 @@ Drafts
 .. toctree::
    :maxdepth: 1
 
-   actors
-   actions
    /tested/index
    apps
    testing

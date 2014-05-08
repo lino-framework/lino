@@ -12,10 +12,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Documentation in
-- :ref:`dev.vtables`
-- :ref:`dev.tables`
+"""Defines the classes `dd.AbstractTable` and
+:class:`dd.VirtualTable`.
 
 """
 
@@ -142,11 +140,7 @@ def column_header(col):
 
 
 class TableRequest(ActionRequest):
-
-    """
-    An :class:`action request <lino.core.actions.ActionRequest>`
-    on a :class:`Table`.
-    """
+    "See :class:`rt.TableRequest`."
 
     master_instance = None
     master = None
@@ -168,17 +162,7 @@ class TableRequest(ActionRequest):
     _data_iterator = None
     _sliced_data_iterator = None
 
-    #~ def __init__(self,master_instance=None,*args,**kw):
-            #~ if master_instance is not None:
-                #~ kw.update(master_instance=master_instance)
-            #~ ActionRequest.__init__(self,*args,**kw)
-
-    #~ def __init__(self,ui,actor,request=None,action=None,**kw):
-            #~ ActionRequest.__init__(self,ui,actor,request,action,**kw)
-
     def execute(self):
-            #~ if self.actor.parameters:
-                #~ logger.info("20121203 TableRequest.execute() %s",self.param_values)
 
         try:
             self._data_iterator = self.get_data_iterator()
@@ -446,13 +430,7 @@ class TableRequest(ActionRequest):
     #~ def table2xhtml(self):
         #~ return settings.SITE.ui.table2xhtml(self)
 
-    def dump2html(
-            ar, tble, data_iterator, 
-            column_names=None):
-        """
-        Render this TableRequest into an existing
-        :class:`lino.utils.xmlgen.html.Table`.
-        """
+    def dump2html(ar, tble, data_iterator, column_names=None):
         tble.attrib.update(cellspacing="3px", bgcolor="#ffffff", width="100%")
 
         grid = ar.ah.list_layout.main
@@ -498,14 +476,6 @@ class TableRequest(ActionRequest):
                 tble.body.append(xghtml.E.tr(*cells))
 
     def get_field_info(ar, column_names=None):
-        """Return a tuple (fields, headers, widths) which expresses which
-        columns, headers and widths the user wants for this
-        TableRequest. If `self` has web request info, checks for GET
-        parameters cn, cw and ch (coming from the grid widget). Also
-        apply the tables's :meth:`override_column_headers
-        <lino.core.actors.Actor.override_column_headers>` method.
-
-        """
         u = ar.get_user()
         if u is not None:
             jsgen.set_for_user_profile(u.profile)
@@ -723,29 +693,11 @@ class Group(object):
 
 class AbstractTable(actors.Actor):
 
-    """
-    Base class for :class:`Table` and `VirtualTable`.
-
-    An AbstractTable is the definition of a tabular data view,
-    usually displayed in a Grid (but it's up to the user
-    interface to decide how to implement this).
-
-    The `column_names` attribute defines the "horizontal layout".
-    The "vertical layout" is some iterable.
-    """
     _handle_class = TableHandle
 
     hide_zero_rows = False
-    """
-    Set this to `True` if you want to remove rows which contain no 
-    values when rendering this table as plain HTML.
-    This is ignored when rendered as ExtJS.
-    """
 
     column_names = '*'
-    """
-    A string that describes the list of columns of this table.
-    """
 
     group_by = None
     """
@@ -758,41 +710,10 @@ class AbstractTable(actors.Actor):
     Used internally to store :class:`groups <Group>` defined by this Table.
     """
 
-    #~ preview_limit = 15
     preview_limit = settings.SITE.preview_limit
-    """
-    The LIMIT to use when this is being used in "preview mode", 
-    e.g. as a slave table in a detail window.
-    
-    If you set this to `None`, preview requests for this table will request all rows.
-    Since preview tables usually have no paging toolbar, that's 
-    theoretically what we want (but can 
-    lead to waste of performance if there are many rows).
-    
-    The default value for this is the  
-    :attr:`preview_limit <lino.site.Site.preview_limit>`
-    class attribute of your :class:`Site <lino.site.Site>`,
-    which itself has a hard-coded default value of 15
-    and which you can override in your :xfile:`settings.py`.
-    
-    Test case and description  in :ref:`cosi.tested`.
-    
-    """
 
     get_data_rows = None
-    """Custom tables must define a class method of this name which
-    will be called with a TableRequest object and which is expected
-    to return or yield the list of "rows"::
-    
-        @classmethod
-        def get_data_rows(self,ar):
-            ...
-            yield somerow
-            
-    Model tables may also define such a method in case they need local
-    filtering.
 
-    """
     variable_row_height = False
     """Set this to True if you want each row to get the height that it
     needs.
@@ -800,38 +721,8 @@ class AbstractTable(actors.Actor):
     """
 
     auto_fit_column_widths = False
-    """Set this to True if you want to have the column widths adjusted to
-    always fill the available width.  This implies that there will be
-    no horizontal scrollbar.
-
-    """
-
     active_fields = frozenset()
-    """A list of field names that are "active". This means that when their
-    value was changed in a Detail or Insert window, they cause an
-    immediate save and refresh of the window.
-
-    Syntax and inheritance as for :attr:`hidden_columns`.
-
-    """
-
     hidden_columns = frozenset()
-    """If given, this is specifies the data elements that should be
-    hidden by default when rendering this actor in a grid.
-    
-    Its value is a set of strings, each one the name of a data
-    element. Defaults to an empty set.
-
-    Application code should specify this as a single string containing
-    a space-separated list of field names.  Lino will automatically
-    resolve this during server startup using :func:`dd.fields_list
-    <lino.core.fields.fields_list>`.
-
-    Note that this can be specified either on a
-    :class:`lino.core.model.Model` or on a :class:`dd.Table
-    <lino.core.dbtables.Table>` (Lino will make a union of both).
-
-    """
 
     form_class = None
     help_url = None
@@ -868,13 +759,6 @@ class AbstractTable(actors.Actor):
     """
 
     slave_grid_format = 'grid'
-    """
-    How to display this table when it is a slave in a detail window. 
-    `grid` (default) to render as a grid. 
-    `summary` to render a summary in a HtmlBoxPanel.
-    `html` to render plain html a HtmlBoxPanel.
-    Example: :class:`links.LinksByController`
-    """
 
     grid_configs = []
     """
@@ -899,11 +783,6 @@ class AbstractTable(actors.Actor):
     
     """
 
-    # if settings.SITE.is_installed('system'):
-
-    #     as_pdf = PrintTableAction()
-    #     as_pdf_p = PortraitPrintTableAction()
-
     def __init__(self, *args, **kw):
         raise NotImplementedError("20120104")
 
@@ -916,7 +795,6 @@ class AbstractTable(actors.Actor):
     def parse_req(self, request, rqdata, **kw):
         return kw
 
-    #~ grid = actions.GridEdit()
     @classmethod
     def get_row_by_pk(self, ar, pk):
         """
@@ -931,82 +809,18 @@ class AbstractTable(actors.Actor):
         return actions.GridEdit()
 
     @classmethod
-    def unused_class_init(self):
-        """
-        Sets table-specific default values for certain attributes.
-        """
-        #~ if self.default_action is None:
-            #~ self.default_action = actions.GridEdit()
-
-        #~ 20130714 navinfo now also works on lists
-        #~ if self.get_data_rows is not None:
-            #~ self.show_detail_navigator = False
-
-        """
-        :mod:`lino_welfare.modlib.debts.models`,
-        :class:`DistByBudget` 
-        defines its own `get_data_rows` but inherits from 
-        :class:`EntriesByBudget` 
-        which has no `get_data_rows`.
-        """
-        if self.editable is None:
-        #~ if self.__dict__.get('editable') is None:
-            self.editable = (self.get_data_rows is None)
-            #~ logger.info("20130204 %s editable = %s",self.__name__,self.editable)
-        #~ if self.editable is None:
-            #~ if self.get_data_rows is not None:
-                #~ self.editable = False
-            #~ self.editable = (self.get_data_rows is None)
-        super(AbstractTable, self).class_init()
-
-    @classmethod
     def get_actor_editable(self):
         if self._editable is None:
             return (self.get_data_rows is None)
         return self._editable
 
-    #~ @classmethod
-    #~ def do_setup(self):
-      #~
-        #~ self.setup_columns()
-        #~
-        #~ super(AbstractTable,self).do_setup()
-        #~
-        #~ self.grid_configs = []
-        #~
-        #~ def loader(content,cd,filename):
-            #~ data = yaml.load(content)
-            #~ gc = GridConfig(self,data,filename,cd)
-            #~ self.grid_configs.append(gc)
-            #~
-        #~ load_config_files(loader,'%s.*gc' % self)
-        #~
     @classmethod
     def setup_columns(self):
         pass
 
     @classmethod
     def get_column_names(self, ar):
-        """
-        Dynamic tables must subclass this method
-        """
         return self.column_names
-
-    #~ @classmethod
-    #~ def add_column(self,*args,**kw):
-        #~ """
-        #~ Use this from an overridden `before_ui_handle` method to
-        #~ dynamically define computed columns to this table.
-        #~ """
-        #~ return self._add_column(ComputedColumn(*args,**kw))
-
-    #~ @classmethod
-    #~ def _add_column(self,col):
-        #~ col.add_to_table(self)
-        # ~ # make sure we don't add it to an inherited `computed_columns`:
-        #~ self.computed_columns = dict(self.computed_columns)
-        #~ self.computed_columns[col.name] = col
-        #~ return col
 
     @classmethod
     def group_from_row(self, row):
@@ -1017,18 +831,6 @@ class AbstractTable(actors.Actor):
         for cc in self.virtual_fields.values():
             yield cc
         #~ return []
-
-    #~ @classmethod
-    #~ def get_detail(self):
-        #~ return None
-
-    #~ removed 20130424 because that doesn't work for PendingCourseRequests
-    #~ i.e. both get_data_rows and editable
-    #~ @classmethod
-    #~ def get_row_permission(self,obj,ar,state,ba):
-        #~ if self.get_data_rows:
-            #~ return ba.action.readonly
-        #~ return True
 
     @classmethod
     def save_grid_config(self, index, data):
@@ -1061,21 +863,6 @@ class AbstractTable(actors.Actor):
 
     @classmethod
     def get_filter_kw(self, ar, **kw):
-        """Return a dict with the "master keywords" for this table
-        and a given `master_instance`.
-
-        :class:`lino.modlib.tickets.models.EntriesBySession`
-        Blog Entries are not directly linked to a Session, but in the
-        Detail of a Session we want to display a table of related blog
-        entries.
-
-        :class:`lino.modlib.households.models.SiblingsByPerson`
-        Household members are not directly linked to a Person, but
-        usually a Person is member of exactly one household, and in
-        the Detail of a Person we want to display the members of that
-        household.
-
-        """
         master_instance = ar.master_instance
         if self.master is None:
             pass
@@ -1204,12 +991,7 @@ class AbstractTable(actors.Actor):
 
 
 class VirtualTable(AbstractTable):
-
-    """
-    An :class:`AbstractTable` that works on an
-    volatile (non persistent) list of rows.
-    By nature it cannot have database fields, only virtual fields.
-    """
+    pass
 
 
 class VentilatingTable(AbstractTable):

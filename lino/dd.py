@@ -11,15 +11,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""A shortcut to classes and methods needed when defining your
-database structure in a `models` module.
-
-The name "dd" stands for "Data Definition".
-
-A small wrapper around Django's `Model` class which adds some Lino
-specific features:
-
-- :class:`Model <lino.core.model.Model>`
+"""See :doc:`/dev/dd`.
 
 Tables:
 

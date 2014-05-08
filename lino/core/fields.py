@@ -18,7 +18,7 @@ Defines extended field classes like
 :class:`BabelTextField`
 and
 :class:`PercentageField`,
-utility functions like :func:`fields_list`.
+utility functions like :func:`dd.fields_list`.
 """
 
 import logging
@@ -354,10 +354,7 @@ class VirtualGetter(object):
 
 
 class VirtualField(FakeField):  # (Field):
-
-    """
-    Currently subclassed only by :class:`lino.utils.mti.EnableChild`.
-    """
+    "See :class:`dd.VirtualField`."
 
     def __init__(self, return_type, get):
         self.return_type = return_type  # a Django Field instance
@@ -1000,9 +997,7 @@ class Dummy(object):
 
 
 class DummyField(object):
-    """
-    Deserves more documentation.
-    """
+    "See :class:`dd.DummyField`."
     choices = []
 
     def __init__(self, *args, **kw):
@@ -1016,7 +1011,6 @@ class DummyField(object):
 
 
 class RecurrenceField(models.CharField):
-
     """
     Deserves more documentation.
     """
@@ -1028,40 +1022,20 @@ class RecurrenceField(models.CharField):
 
 
 def fields_list(model, field_names):
-    """Return a set with the names of the specified fields,
-    checking whether each of them exists.
-
-    Arguments: `model` is any subclass of `django.db.models.Model`.
-    `field_names` is a single string with a space-separated list of
-    field names.
-
-    For example if you have a model `MyModel`
-    with two fields `foo` and `bar`,
-    then ``dd.fields_list(MyModel,"foo bar")``
-    will return ``['foo','bar']``
-    and ``dd.fields_list(MyModel,"foo baz")`` will raise an exception.
-
-    """
+    "See :func:`dd.fields_list`."
     lst = set()
     for name in field_names.split():
         e = model.get_data_elem(name)
         if e is None:
             raise models.FieldDoesNotExist(
                 "No data element %r in %s" % (name, model))
-        lst.add(e.name)
+        if not isinstance(e, DummyField):
+            lst.add(e.name)
     return lst
 
 
 def ForeignKey(othermodel, *args, **kw):
-    """
-    This is almost as
-    `django.db.models.ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`,
-    except for a subtle difference:
-    it supports `othermodel` being `None` or the name of some non-installed model
-    and returns a :class:`DummyField <lino.core.fields.DummyField>`
-    in that case.
-    This difference is useful when designing reusable models.
-    """
+    "See :class:`dd.ForeignKey`."
     if othermodel is None:
         return DummyField(othermodel, *args, **kw)
     if isinstance(othermodel, basestring):
@@ -1071,23 +1045,14 @@ def ForeignKey(othermodel, *args, **kw):
 
 
 class CustomField(object):
-    """Mixin to create a custom field."""
+    "See :class:`dd.CustomField`."
     def create_layout_elem(self, layout_handle, field, **kw):
-        """Instantiate and return some subclass of
-        :class:`lino.ui.elems.LayoutElement` to be used in
-        `layout_handle`.
-
-        `self` and `field` are identical unless self is a RemoteField
-        or a VirtualField.
-
-        """
         return None
 
 
 class ImportedFields(object):
-
     """
-    Utility mixin to easily declare "imported fields"
+    Model mixin to easily declare "imported fields"
     """
     _imported_fields = set()
 

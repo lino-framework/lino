@@ -8,34 +8,37 @@
 todo
 -----
 
-- Lino erweitern, dass ein spezifischer Dialog vor dem Erstellen
-  programmiert werden kann.  Damit es wie in TIM geht:
-  Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen eines
-  Klienten.  Gefahr, dass wir irgenwann aus dem Fusionieren nicht mehr
-  rauskommen.
+- IBAN numbers don't seem to get validated.
+
+- The Insert window of an Upload has a layout problem.  I guess that
+  the `Lino.FileUploadField` doesn't collaborate well with the auto
+  height.
+
+- Inserting in UploadsByClient sets the `owner` but not the `client`.
+
+- Write a tested document for the summary panel of UploadsByController
+
+- Summary panels don't get refreshed, e.g. when I add a new upload
+  then I must click the Refresh button in order to have the summary
+  panel updated.
+
+- NoteDetail has an UploadsyController which does not work (I guess
+  because `_upload_regime` is None).
+
+- Manuell Adresse erstellen: wenn man eine Stadt im Insert Window
+  eingibt, wird das Fenster beendet. Das ist nicht richtig, aber
+  technisch noch wieder eine Herausforderung. Bisher funktioniten
+  active fields so, dass sie sozusagen automatisch im Hintergrund auf
+  den Speichern-Button klickten. Dadurch sind sie in Insert Windows
+  nicht anwendbar. Beim Erstellen einer Adresse ist das aber
+  nötig. Ich denke an eine neue Aktion "validate": ähnlich wie
+  Speichern, aber auf dem Server dann ohne das letzte ``save()``.
 
 - Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
   Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
-  die Lino vorgeschlagen hätte".
-
-- Manuell Adresse erstellen: nicht anschließend das Detail-Fenster
-  anzeigen.
-
-- Adressart muss auch manuell eingegeben werden können.
-  Pro Adresse ein Datum und/oder eine "Einlesequelle" (eid-Karte,
-  Tx25)
-
-- Datenmigration: pro bestehendem Klienten eine Adresse erstellen.
-
-- sepa.Account.managed : übersetzen mit "Verwaltet". 
-  Und Hilfetext "Dieses Bankkonto wird durch das ÖSHZ verwaltet."
-
-- Bankkonten auch für Lieferanten? Ja. Aber ohne ein Feld
-  "Verwaltet". Sowieso auch ein Ankreuzfeld "Primärkonto". Und zwei
-  Felder IBAN und BIC auch pro Partner.
-
-- Eingabe Bankkonten : Wenn belgische IBAN angegeben ist und BIC leer
-  ist, soll Lino eine BIC vorschlagen. Wenn er sie kennt.
+  die Lino vorgeschlagen hätte". Ich könnte hier mit Zeilenfarben
+  arbeiten, aber dann überschneidet sich das mit der Zeilenfarbe pro
+  Status.
 
 - Collect-Modus des eidreader einschalten.
 
@@ -44,19 +47,10 @@ todo
   Namen entfernt und stattdessen ein neues Ankreuzfeld "declared_name"
   eingeschaltet.
 
-- Datenmigration: ich bin noch nicht sicher, ob alles gut rüber
-  kommt. Zum Beispiel kommen da diverse Fehlermeldungen u.A. eine
-  ganze Serie von "Deferred sepa.Account()" wegen ungültiger BIC oder
-  IBAN (was auch so sein sollte), die dann am Ende aber einfach
-  "verschwinden" statt wie es sein sollte als "unresolved" bewarnt zu
-  werden.
+- Datenmigration: hier sind noch ein paar ungültige BICs oder IBANs im
+  TIM. Am einfachsten ist es, die Daten schon dort zu validieren. 
 
-- Beziehungen.  Aus TIM importieren und dann hören, was die Benutzer
-  zu der neuen Datenbankstruktur sagen. Bezeichnung "Beziehungen"
-  statt "Personen zu Lasten".  Was wird aus Ehepartnern?  Wie
-  reagieren die Leute darauf, dass man von der Frau aus nicht mehr den
-  Mann sieht?  Weitere Beziehungsarten: Zusammenlebend usw.
-  (humanlinks).
+- :ref:`/tickets/104`
 
 
 feedback
@@ -133,6 +127,31 @@ Done
 
 - Siehe Änderungen Version 1.1.11 bzw. 1.1.12 in :ref:`welfare.changes`.
 
+- stay_in_grid : Manuell Adresse erstellen: nicht anschließend das
+  Detail-Fenster anzeigen.
+
+- sepa.Account.managed : übersetzen mit "Verwaltet". 
+  Und Hilfetext "Dieses Bankkonto wird durch das ÖSHZ verwaltet."
+
+- Bankkonten auch für Lieferanten? Ja. Aber ohne ein Feld
+  "Verwaltet". Sowieso auch ein Ankreuzfeld "Primärkonto". Und zwei
+  Felder IBAN und BIC auch pro Partner.
+
+- Eingabe Bankkonten : Wenn belgische IBAN angegeben ist und BIC leer
+  ist, soll Lino eine BIC vorschlagen. Wenn er sie kennt.
+
+- Adressart muss auch manuell eingegeben werden können.
+  Pro Adresse ein Datum und/oder eine "Einlesequelle" (eid-Karte,
+  Tx25)
+
+- Datenmigration: pro bestehendem Klienten eine Adresse erstellen.
+
+- Lino erweitern, dass ein spezifischer Dialog vor dem Erstellen
+  programmiert werden kann.  Damit es wie in TIM geht:
+  Dublettenkontrolle mit eventuellem Dialog *vor* dem Erstellen eines
+  Klienten.  Gefahr, dass wir irgenwann aus dem Fusionieren nicht mehr
+  rauskommen.
+
 - "Beziehungen" sind jetzt etwas anders strukturiert.  Erstens braucht
   man jetzt nicht mehr jedes Kind als Klient zu erfassen. Wenn man nur
   Namen, Geschlecht und Geburtsdatum wissen will, dann reicht ein
@@ -142,6 +161,13 @@ Done
   bzw. hierarchisch. D.h. wenn man bei einem Klienten eingibt, dass er
   mit einem anderen Klienten verheiratet ist, dann sieht man das nicht
   automatisch auch von diesem anderen Klienten aus.
+
+- Beziehungen.  Aus TIM importieren und dann hören, was die Benutzer
+  zu der neuen Datenbankstruktur sagen. Bezeichnung "Beziehungen"
+  statt "Personen zu Lasten".  Was wird aus Ehepartnern?  Wie
+  reagieren die Leute darauf, dass man von der Frau aus nicht mehr den
+  Mann sieht?  Weitere Beziehungsarten: Zusammenlebend usw.
+  (humanlinks).
 
 - bug fixed: Wenn man als Rolf in "Termin machen mit"
   (CoachingsByClient) auf den Kalender klickt ("Termin finden") und

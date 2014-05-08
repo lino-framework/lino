@@ -2,17 +2,48 @@
 Thursday, May 8, 2014
 =====================
 
-I understood that :ref:`welfare` needs both apps (households **and**
-humanlinks).
+Bereit zur nächsten Baustellenbesichtigung
+------------------------------------------
 
-;mod:`lino.modlib.humanlinks.models.LinksByHuman` is cool because it
+I understood that :ref:`welfare` needs both apps (
+:mod:`households <lino.modlib.households>` **and**
+:mod:`humanlinks <lino.modlib.humanlinks>`).
+
+:mod:`lino.modlib.humanlinks.models.LinksByHuman` is cool because it
 displays both "parent" and "child" links, without needing an
 artificial duplication of every PLP record as was needed in TIM.
 
-It also shows how cool the :meth:`lino.core.actors.get_slave_summary`
+It also shows how cool the :meth:`lino.core.actors.Actor.get_slave_summary`
 method is.
 
 New module :mod:`lino.modlib.humanlinks.fixtures.demo`.
 
+Adapted :mod:`lino_welfare.scripts.load_plp` once more.
 
-Adapted `lino_welfare/scripts/load_plp.py` once more.
+Release and data migration on testlino.
+
+@Gerd: :doc:`/tickets/93` is ready for a next visit.
+
+
+AttributeError: 'DummyField' object has no attribute 'name'
+-----------------------------------------------------------
+
+:mod:`lino.projects.polly` is broken, it says the above error
+message. But the message gives no information about where the real bug
+sits.
+
+Modified :func:`dd.fields_list` and the docstring of
+:class:`dd.DummyField`.
+
+The new API reference
+---------------------
+
+Oops, while writing the above sentence I stumbled over the simple
+solution to a deep problem which I had with documenting Lino: I tried
+to get it documented using docstrings and Sphinx's apidoc tool. That
+was a mistake. I started a new documnt :doc:`/dev/api` which seems to
+bring a little revolution into the Lino documentation. It is far from
+being finished, but now I see hope to get Lino documentation so that
+others can use it.
+
+

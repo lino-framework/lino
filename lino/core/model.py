@@ -32,42 +32,12 @@ from lino.utils import get_class_attr
 
 
 class Model(models.Model):
+    "See :class:`dd.Model`."
 
-    """Adds Lino-specific features to Django's Model base class.  If a
-    Lino application uses simple Django Models, the attributes and
-    methods defined here are added to these modules during
-    :func:`lino.core.kernel.analyze_models`.
-
-    """
     class Meta:
         abstract = True
 
     allow_cascaded_delete = []
-    """A list of names of ForeignKey fields of this model that allow for
-    cascaded delete.
-    
-    When deleting an object through the user interface, Lino by
-    default forbids to delete an object that is referenced by other
-    objects. Users will get a message of type "Cannot delete X because
-    n Ys refer to it".
-    
-    Example: Lino should not refuse to delete a Mail just because it
-    has some Recipient.  When deleting a Mail, Lino should also delete
-    its Recipients.  That's why
-    :class:`lino.modlib.outbox.models.Recipient` has
-    ``allow_cascaded_delete = ['mail']``.
-    
-    Note that this currently is also consulted by
-    :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
-    whether slaves of a record being duplicated should be duplicated
-    as well.
-    
-    This mechanism doesn't depend on nor influence Django's `on_delete
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-    option.  But of course you should not allow_cascaded_delete for
-    fields which have e.g. `on_delete=PROTECT`.
-
-    """
 
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()

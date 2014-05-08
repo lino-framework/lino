@@ -2,26 +2,6 @@
 Monday, May 5, 2014
 ===================
 
-Short-term to-do list
----------------------
-
-- IBAN numbers don't seem to get validated.
-
-- The Insert window of an Upload has a layout problem.  I guess that
-  the `Lino.FileUploadField` doesn't collaborate well with the auto
-  height.
-
-- Inserting in UploadsByClient sets the `owner` but not the `client`.
-
-- Write a tested document for the summary panel of UploadsByController
-
-- Summary panels don't get refreshed, e.g. when I add a new upload
-  then I must click the Refresh button in order to have the summary
-  panel updated.
-
-- NoteDetail has an UploadsyController which does not work (because
-  `_upload_regime` is None).
-
 The actions API needs a `show_record` method
 --------------------------------------------
 

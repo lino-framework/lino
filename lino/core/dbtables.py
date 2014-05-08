@@ -12,7 +12,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-This defines the :class:`Table` class (``dd.Table``).
+This defines the :class:`dd.Table` class.
 """
 
 import logging
@@ -329,29 +329,9 @@ def model2actor(m):
 
 
 class Table(AbstractTable):
-
-    """
-    An :class:`AbstractTable` that works on a Django
-    Model using a Django QuerySet.
-
-    A Table definition adds attributes
-    like `model` and `master` and `master_key`
-    who are important because Lino handles relations automagically.
-
-    Another class of attributes are
-    `filter`, 'exclude' and `sort_order`
-    which it simply forwards to the QuerySet.
-
-    """
-    #~ hide_details = []
-    #~ """
-    #~ A list of base classes whose `.dtl` files should not be loaded for this report.
-    #~ """
-
+    "See :class:`dd.Table`."
+    
     model = None
-    """
-    The model on which this table iterates.
-    """
 
     show_detail_navigator = True
 
@@ -361,9 +341,6 @@ class Table(AbstractTable):
     """
 
     use_as_default_table = True
-    """
-    Set this to False if this Table should *not* become the Model's default table.
-    """
 
     expand_memos = False
     """
