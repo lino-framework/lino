@@ -140,7 +140,10 @@ def column_header(col):
 
 
 class TableRequest(ActionRequest):
-    "See :class:`rt.TableRequest`."
+    """Represents an :class:`rt.ActionRequest` on a :class:`table
+    <dd.AbstractTable>`.
+
+    """
 
     master_instance = None
     master = None

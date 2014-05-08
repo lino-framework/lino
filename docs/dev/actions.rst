@@ -26,7 +26,7 @@ See also some tutorials:
 The ``Action`` class reference
 ------------------------------
 
-.. class:: dd.Action
+.. class:: Action
 
   Abstract base class for all Actions.
 

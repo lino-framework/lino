@@ -11,21 +11,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-'''
-This module defines the core classes
-
-- :class:`FormLayout`, :class:`ListLayout`,
-  :class:`ParamsLayout` and :class:`ActionParamsLayout`
-  and their common base class :class:`BaseLayout`
-- :class:`Panel`
-- The internally used :class:`LayoutHandle` class
-
-See also:
-
-- Topic overview: :doc:`/topics/layouts`
-- Tutorial: :doc:`/tutorials/layouts`
-
-'''
+"See :doc:`/dev/layouts`."
 
 from __future__ import unicode_literals
 
@@ -100,11 +86,10 @@ class Panel(object):
 
 class LayoutHandle:
     """
-    LayoutHandle analyzes a Layout and stores the
-    resulting LayoutElements provided by the UI.
+    A `LayoutHandle` analyzes some subclass of :class:`BaseLayout` and
+    stores the resulting LayoutElements provided by the UI.
 
     The same class is used for all kinds of BaseLayout instances.
-
     """
 
     def __init__(self, layout):
@@ -300,23 +285,6 @@ class LayoutHandle:
 
 class BaseLayout(object):
 
-    """
-    Base class for all Layouts (:class:`FormLayout`, :class:`ListLayout`
-    and  :class:`ParamsLayout`).
-
-    A Layout instance just holds the string templates.
-    It is designed to be subclassed by applications programmers,
-    but in most cases it is more convenient (and recommended)
-    to use the methods
-    :meth:`set_detail_layout <lino.core.actors.Actor.set_detail_layout>`,
-    :meth:`set_insert_layout <lino.core.actors.Actor.set_insert_layout>`,
-    :meth:`add_detail_panel <lino.core.actors.Actor.add_detail_panel>`
-    and
-    :meth:`add_detail_tab <lino.core.actors.Actor.add_detail_tab>`
-    on the :class:`Actor <lino.core.actors.Actor>`.
-
-
-    """
     _handle_class = LayoutHandle
 
     _datasource = None
@@ -517,27 +485,14 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
 class FieldLayout(BaseLayout):
     pass
 
-    #~ def before_setup_handle(self):
-        #~ logger.info("20130804 before_setup_handle %s",self)
-        #~ ds = settings.SITE.modules.resolve(str(self._datasource))
-        #~ if self._datasource is not ds:
-            #~ logger.info("20130804 override _datasource of %r by %r",self._datasource,ds)
-            #~ self._datasource = ds
-
 
 class FormLayout(FieldLayout):
 
-    """
-    A Layout description for the main panel of a DetailWindow or InsertWindow.
-    """
     join_str = "\n"
 
 
 class ListLayout(FieldLayout):
 
-    """
-    A Layout description for the columns of a GridPanel.
-    """
     join_str = " "
 
     def set_datasource(self, ds):
@@ -547,9 +502,7 @@ class ListLayout(FieldLayout):
 
 
 class ParamsLayout(BaseLayout):
-    """
-    A Layout description for a table parameter panel.
-    """
+
     join_str = " "
     url_param_name = constants.URL_PARAM_PARAM_VALUES
     params_store = None
@@ -563,9 +516,6 @@ class ParamsLayout(BaseLayout):
 
 
 class ActionParamsLayout(ParamsLayout):
-    """
-    A Layout description for an action parameter panel.
-    """
     join_str = "\n"
     window_size = (50, 'auto')
     url_param_name = constants.URL_PARAM_FIELD_VALUES

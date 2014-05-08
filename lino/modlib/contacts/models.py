@@ -13,16 +13,10 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""The :xfile:`models.py` module for the :mod:`lino.modlib.contacs` app.
+"""The :xfile:`models.py` module for the :mod:`lino.modlib.contacs`
+app.
 
-This module defines the models
-
-- :class:`Partner` (and its two standard specializations
-  :class:`Person` and :class:`Company`)
-
-- :class:`CompanyType`
-- :class:`Role` and :class:`RoleType`
-- :class:`ContactRelated` mixin
+See :mod:`modlib.contacts`.
 
 """
 
@@ -103,11 +97,6 @@ def get_address_formatter(country):
 
 
 class CompanyType(dd.BabelNamed):
-
-    """
-    Represents a possible choice for the  `type`
-    field of a :class:`Company`.
-    """
 
     class Meta:
         verbose_name = _("Organization Type")
@@ -201,24 +190,8 @@ class AddressLocation(CountryRegionCity):
 
 class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
 
-    """
-    
-    A :class:`Partner` is anything that can act as a business partner.
-    A Partner has at least a name and usually also one "official" address.
-    Predefined subclasses of Partners are
-    :class:`Person` for physical persons and
-    :class:`Company` for companies, organisations and any kind of
-    non-formal Partners.
-
-    Base class for anything that has contact information
-    (postal address, email, phone,...).
-
-    """
-
-    """
-    preferred width for ForeignKey fields to a Partner
-    """
     preferred_foreignkey_width = 20
+    # preferred width for ForeignKey fields to a Partner
 
     class Meta:
         abstract = settings.SITE.is_abstract_model('contacts.Partner')
@@ -399,12 +372,6 @@ class PersonMixin(mixins.Human):
 
 class Person(PersonMixin, Partner):
 
-    """
-    Mixin for models that represent a physical person.
-
-    See :ref:`lino.tutorial.human`.
-
-    """
     class Meta:
         abstract = settings.SITE.is_abstract_model('contacts.Person')
         verbose_name = _("Person")
@@ -476,10 +443,6 @@ class Persons(Partners):
 
 class Company(Partner):
 
-    """
-    Abstract base class for a company.
-    See also :doc:`/tickets/14`.
-    """
     class Meta:
         abstract = settings.SITE.is_abstract_model('contacts.Company')
         #~ abstract = True

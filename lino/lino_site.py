@@ -12,203 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This defines the :class:`Site` class.  It has a lot of class
-attributes which may be overridden by the application developer and/or
-the local site administrator.
-
-Here is a list of Lino-specific settings.  The settings inherited
-:class:`north.north_site.Site` and :class:`djangosite.Site` are
-documented there.
-
-.. setting:: config_id
-
-The primary key of the one and only `SiteConfig` instance of this
-SITE. Default value is 1.
-
-This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
-Lino applications don't need ``django.contrib.sites`` (`The "sites"
-framework
-<https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_) because
-this functionality is integral part of :mod:`lino.modlib.system`.
-
-.. setting:: verbose_client_info_message
-
-Set this to True if actions should send debug messages to the client.
-These will be shown in the client's Javascript console only.
-
-
-.. setting:: demo_fixtures
-
-The list of fixtures to be loaded by the :manage:`initdb_demo`
-command.
-
-.. setting:: use_davlink
-
-No longer used. Replaced by :class:`lino.modlib.davlink`.
-
-Set this to `True` if this site should feature WebDAV-enabled links
-using :ref:`davlink`.
-
-.. setting:: use_eidreader
-
-No longer used. Replaced by :class:`lino.modlib.beid`.
-
-Set this to `True` if this site should feature using :ref:`eidreader`.
-
-
-.. setting:: auto_configure_logger_names
-
-A string with a space-separated list of logger names to be
-automatically configured. See :mod:`lino.utils.log`.
-
-.. setting:: use_java
-
-A site-wide option to disable everything that needs Java.  Note that
-it is up to the apps which include Java applications to respect this
-setting. Usage example is :mod:`lino.modlib.beid`.
-
-.. setting:: user_model
-
-Most Lino application wil set this to ``"users.User"`` if you use
-`lino.modlib.users`.
-
-Default value us `None`, meaning that this site has no user management
-(feature used by e.g. :mod:`lino.test_apps.1`)
-
-Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-`lino.modlib.users` (not tested).
-
-
-.. setting:: remote_user_header
-    
-The name of the header (set by the web server) that Lino should
-consult for finding the user of a request.  The default value `None`
-means that http authentication is not used.  Apache's default value is
-``"REMOTE_USER"``.
-
-
-.. setting:: ldap_auth_server
-
-This should be a string with the domain name and DNS (separated by a
-space) of the LDAP server to be used for authentication.  Example::
-
-  ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
-  
-.. setting:: auth_middleware
-
-Override used Authorisation middlewares with supplied tuple of
-middleware class names.
-
-If None, use logic described in :doc:`/topics/auth`
-  
-
-
-.. setting:: project_model
-
-Deprecated because this is an obsolete pattern.
-
-Optionally set this to the <applabel.ModelName> of a model used as
-"central project" in your application.  Which concretely means that
-certain other models like notes.Note, outbox.Mail, ... have an
-additional ForeignKey to this model.
-
-
-
-.. setting:: admin_prefix
-
-The prefix to use for Lino "admin mode"
-(i.e. the "admin main page" with a pull-down "main menu").
-
-TODO: convert `admin_prefix` to a `url_prefix` setting on the
-`lino.modlib.extjs` plugin.
-
-The default value is an empty string, resulting in a website whose
-root url shows the admin mode.
-
-Note that unlike Django's `MEDIA_URL
-<https://docs.djangoproject.com/en/dev/ref/settings/#media-url>`__
-setting, this must not contain any slash.
-
-If this is nonempty, then your site features a "web content mode": the
-root url renders "web content" defined by :mod:`lino.modlib.pages`.
-The usual value in that case is ``admin_prefix = "admin"``.
-
-See also
-
-- `telling Django to recognize a different application root url
-  <http://groups.google.com/group/django-users/browse_thread/thread/c95ba83e8f666ae5?pli=1>`__
-- `How to get site's root path in Django 
-  <http://groups.google.com/group/django-users/browse_thread/thread/27f035aa8e566af6>`__
-- `#8906 django.contrib.auth settings.py URL's aren't portable <https://code.djangoproject.com/ticket/8906>`__
-- `Changed the way URL paths are determined 
-  <https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined>`__
-
-.. setting:: plain_prefix
-
-The prefix to use for "plain html" URLs.
-Default value is ``'plain'``.
-
-TODO: convert `plain_prefix` to a `url_prefix` setting on the
-`lino.modlib.plain` App.
-
-Exactly one of :setting:`admin_prefix` and :setting:`plain_prefix`
-must be empty.
-
-
-.. setting:: preview_limit
-    
-Default value for the :attr:`preview_limit
-<lino.core.tables.AbstractTable.preview_limit>` parameter of all
-tables who don't specify their own one.  Default value is 15.
-
-
-.. setting:: start_year
-
-An integer with the calendar year in which this site starts working.
-Used e.g. 
-by :mod:`lino.modlib.ledger.utils`
-to fill the default list of FixcalYears.
-Or by :mod:`lino.modlib.ledger.fixtures.mini`
-to generate demo invoices.
-
-
-.. setting:: setup_choicelists
-
-Redefine application-specific Choice Lists.
-
-Especially used to define application-specific
-:class:`UserProfiles <lino.core.perms.UserProfiles>`.
-
-Lino by default has two user profiles "User" and "Administrator",
-defined in :mod:`lino.core.perms`.
-
-Application developers who use group-based requirements must override
-this in their application's :xfile:`settings.py` to provide a default
-list of user profiles for their application.
-
-See the source code of :mod:`lino.projects.presto` or
-:mod:`lino_welfare.settings` for a usage example.
-
-Local site administrators may again override this in their
-:xfile:`settings.py`.
-
-Note that you may not specify values longer than `max_length` when
-redefining your choicelists.  This limitation is because these
-redefinitions happen at a moment where database fields have already
-been instantiated, so it is too late to change their max_length.  Not
-that this limitation is only for the *values*, not for the names or
-texts of choices.
-
-.. setting:: get_installed_apps
-
-This method is expected to yield the list of strings
-to be stored into Django's :setting:`INSTALLED_APPS` setting.
-
-
-.. setting:: uppercase_last_name
-
-Whether last name of persons should (by default) be printed with
-uppercase letters.  See :mod:`lino.test_apps.human`
+"""This defines the :class:`settings.Site` class.
 
 """
 
@@ -1463,15 +1267,7 @@ class Site(Site):
         return E.span(*p)
 
     def login(self, username=None, **kw):
-        """
-        For usage from a shell.
-
-        The :meth:`login <lino.site.Site.login>` method doesn't require any
-        password because when somebody has command-line access we trust
-        that she has already authenticated. It returns a
-        :class:`BaseRequest <lino.core.requests.BaseRequest>` object which
-        has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
-        """
+        "See :func:`dd.login`."
         self.startup()
         if self.user_model is None or username is None:
             if not 'user' in kw:
@@ -1488,10 +1284,7 @@ class Site(Site):
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):
-        """
-        Returns a string like "Eupen, den 26. August 2013".
-
-        """
+        "See :func:`settings.Site.get_letter_date_text`."
         sc = self.site_config.site_company
         if today is None:
             today = datetime.date.today()
@@ -1501,26 +1294,8 @@ class Site(Site):
                 place=unicode(sc.city.name), date=dd.fdl(today))
         return dd.fdl(today)
 
-    #~ def get_letter_margin_top_html(self,ar):
-        #~ s = '<p class="Centered9pt">%s</p>'
-        #~ s = s % self.site_config.site_company.get_address('<br/>')
-        #~ return s
-        #~ from lino.utils.config import find_config_file
-        #~ logo_path = find_config_file('logo.jpg')
-        #~ return '<img src="%s"/>' % logo_path
-        #~ return '<img src="file://%s" />' % logo_path
-
-    #~ def get_letter_margin_bottom_html(self,ar):
-        #~ s = '<p class="Centered9pt">%s</p>'
-        #~ s = s % self.site_config.site_company.get_address('<br/>')
-        #~ return s
-        #~ return ''
-
     def get_admin_main_items(self, ar):
-        """
-        Yield a sequence of "items" to be rendered
-        in :xfile:`admin_main.html`.
-        """
+        "See :func:`settings.Site.get_letter_date_text`."
         return []
 
     #~ def make_url_tester(self):

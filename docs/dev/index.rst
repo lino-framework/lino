@@ -32,7 +32,6 @@ Drafts
    userdocs
    signals
    intro
-   modlib
    style
    datamig
    versioning

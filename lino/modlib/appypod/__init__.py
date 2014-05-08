@@ -15,7 +15,7 @@
 LibreOffice.  This requires :mod:`lino.utils.appy_pod`.
 
 To use it, simply add the following line to your
-:settings:`get_installed_apps`::
+:setting:`get_installed_apps`::
 
     yield 'lino.modlib.appypod'
 

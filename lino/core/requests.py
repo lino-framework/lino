@@ -193,11 +193,7 @@ class PhantomRow(VirtualRow):
 class BaseRequest(object):
 
     """Base class for :class:`ActionRequest` and :class:`TableRequest
-    <lino.core.tables.TableRequest>`.
-    
-    This holds information like the current user and renderer.
-    A bare BaseRequest instance is returned as a "session" by
-    :meth:`login <lino.site.Site.login>`.
+    <lino.core.tables.TableRequest>`. See :class:`rt.ActionRequest`.
 
     """
     # Some of the following are needed e.g. for polls tutorial
@@ -514,37 +510,8 @@ class BaseRequest(object):
     #     for spec in args:
     #         self.show(spec, master_instance, **kwargs)
 
-    def show(self, spec, master_instance=None,
-             column_names=None, header_level=None, 
-             language=None, **kw):
-        """Show the table specified by `spec` according to the current
-        renderer.  If the table is a :term:`slave table`, then a
-        `master_instance` must be specified as second argument.
-        
-        Optional keyword arguments are
-        
-        - `column_names` overrides default list of columns
-        - `header_level` show also the header (using specified level)
-        - `language` overrides the default language used for headers and
-          translatable data
-        
-        Usage in a tested doc::
-        
-          >>> ses = settings.SITE.login("robin")
-          >>> ses.show('users.UsersOverview')
-        
-        Usage in a Jinja template::
-        
-          {{ar.show('users.UsersOverview')}}
-        
-        Usage in an appy.pod template::
-        
-          do text from ar.show('users.UsersOverview')
-        
-        Note that this function either returns a string or prints to
-        stdout and returns None, depending on the current renderer.
-
-        """
+    def show(self, spec, master_instance=None, column_names=None,
+             header_level=None, language=None, **kw):
         # 20130905 added master_instance positional arg. but finally didn't use
         # it.
         if master_instance is not None:

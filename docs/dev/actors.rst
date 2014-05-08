@@ -64,7 +64,7 @@ See also
 The ``Actor`` class reference
 ----------------------------- 
 
-.. class:: dd.Actor
+.. class:: Actor
 
   Base class for
   :class:`AbstractTable <lino.core.tables.AbstractTable>`,
@@ -136,6 +136,11 @@ The ``Actor`` class reference
     :meth:`show <lino.core.actions.ActionRequest.show>`
     method.
     This is a shortcut for usage in tested document snippets.
+
+  .. method:: override_column_headers(self, ar)
+
+    Dynamically override the column headers. This has no effect on a
+    GridPanel, only in printed documents or plain html.
 
   .. method:: get_data_elem(self, name)
     
@@ -350,7 +355,7 @@ Tables
 The ``AbstractTable`` class reference
 -------------------------------------
 
-.. class:: dd.AbstractTable
+.. class:: AbstractTable
 
     An AbstractTable is the definition of a tabular data view,
     usually displayed in a Grid (but it's up to the user
@@ -491,7 +496,7 @@ The ``AbstractTable`` class reference
 The ``VirtualTable`` class reference
 ------------------------------------
 
-.. class:: dd.VirtualTable
+.. class:: VirtualTable
 
     An :class:`AbstractTable` that works on an volatile (non
     persistent) list of rows.
@@ -504,7 +509,7 @@ The ``VirtualTable`` class reference
 The ``Table`` class reference
 -----------------------------
 
-.. class:: dd.Table
+.. class:: Table
 
 A table that works on a Django Model using a Django QuerySet.
 
