@@ -151,6 +151,7 @@ def pf(obj):
 
 
 class LinksByHuman(Links):
+    "See :class:`ml.humanlinks.LinksByHuman`."
     label = _("Human Links")
     required = dd.required()
     master = dd.apps.humanlinks.human_model
