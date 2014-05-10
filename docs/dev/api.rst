@@ -14,3 +14,4 @@ pillow.
    layouts
    perms
    modlib
+   

@@ -66,7 +66,8 @@ from djangosite.dbutils import full_model_name
 #~ from djangosite.dbutils import set_language
 from djangosite import Plugin
 
-from atelier.sphinxconf.insert_input import Django2rstDirective
+from atelier.sphinxconf.insert_input import Py2rstDirective
+
 
 import lino.ui.urls  # hack: trigger ui instantiation
 
@@ -270,21 +271,6 @@ def actors_overview_ul(model_reports):
     return rstgen.ul(items)
 
 
-class ActorsOverviewDirective(Django2rstDirective):
-
-    def get_rst(self):
-        with translation.override(self.language):
-            #~ set_language(lng)
-            actor_names = ' '.join(self.content).split()
-            items = []
-            for an in actor_names:
-                cls = settings.SITE.modules.resolve(an)
-                if not isinstance(cls, type):
-                    raise Exception("%s is not an actor." % self.content[0])
-                items.append("%s : %s" % (actor_ref(cls), cls.help_text or ''))
-            return rstgen.ul(items)
-
-
 def resolve_name(name):
     l = name.split('.')
     if len(l) == 1:
@@ -302,7 +288,154 @@ def form_lines():
     yield '<script >'
 
 
-class FormDirective(Django2rstDirective):
+class ddrefRole(XRefRole):
+
+    nodeclass = addnodes.pending_xref
+    innernodeclass = nodes.emphasis
+
+    def __call__(self, typ, rawtext, text, lineno, inliner,
+                 options={}, content=[]):
+        
+        typ = 'std:ref'
+        return XRefRole.__call__(self, typ, rawtext, text, lineno,
+                                 inliner, options, content)
+
+    def process_link(self, env, refnode, has_explicit_title, title, target):
+        """Called after parsing title and target text, and creating the
+        reference node (given in *refnode*).  This method can alter the
+        reference node and must return a new (or the same) ``(title, target)``
+        tuple.
+        """
+
+        #~ print(20130901, refnode, has_explicit_title, title, target)
+        #~ 20130901 <pending_xref refdomain="" refexplicit="False" reftype="ddref"/> False cal.Event cal.Event
+
+        target = ws_re.sub(' ', target)  # replace newlines or tabs by spaces
+        # ~ target = ' '.join(target.split()) # replace newlines or tabs by spaces
+
+        level, x = resolve_name(target)
+        if x is None:
+            raise Exception("Could not resolve name %r" % target)
+        # lng = env.temp_data.get('language', env.config.language)
+        lng = CurrentLanguage.get_current_value(env)
+        with translation.override(lng):
+            if isinstance(x, models.Field):
+                text = utils.unescape(unicode(x.verbose_name))
+                target = model_name(x.model) + '.' + x.name
+                print(target)
+            elif isinstance(x, Plugin):
+                text = utils.unescape(unicode(x.verbose_name))
+                target = settings.SITE.userdocs_prefix + target
+
+            elif isinstance(x, type) and issubclass(x, models.Model):
+                text = utils.unescape(unicode(x._meta.verbose_name))
+                target = model_name(x)
+            elif isinstance(x, type) and issubclass(x, actors.Actor):
+                text = utils.unescape(unicode(x.title or x.label))
+                target = actor_name(x)
+            elif isinstance(x, actions.Action):
+                text = utils.unescape(unicode(x.label))
+                target = actor_name(x)
+            else:
+                raise Exception("Don't know how to handle %r" % x)
+
+        if not has_explicit_title:
+            # avoid replacing title by the heading text
+            refnode['refexplicit'] = True
+            title = text
+
+        refnode['refwarn'] = False  # never warn
+
+        #~ refnode['reftype'] = 'ref'
+
+        #~ title = "[%s]" % title
+        #~ if target == 'welfare.reception.waitingvisitors':
+        #~ print("20130907 ddref to %s : title=%r" % (target,title))
+
+        return title, target
+
+
+class TempDataDirective(Directive):
+    has_content = False
+    required_arguments = 1
+    optional_arguments = 0
+    final_argument_whitespace = False
+    option_spec = {}
+    temp_data_key = None
+
+    @classmethod
+    def get_default_value(self, env):
+        return None
+
+    @classmethod
+    def get_current_value(cls, env):
+        return env.temp_data.get(
+            cls.temp_data_key,
+            cls.get_default_value(env))
+
+    def run(self):
+        env = self.state.document.settings.env
+        v = self.arguments[0].strip()
+        if v == 'None':
+            del env.temp_data[self.temp_data_key]
+        else:
+            env.temp_data[self.temp_data_key] = v
+        return []
+
+
+class CurrentLanguage(TempDataDirective):
+    """Tell Sphinx to switch to the specified language until the end of
+    this document.
+
+    """
+    temp_data_key = 'language'
+
+    @classmethod
+    def get_default_value(cls, env):
+        return env.config.language
+
+
+class CurrentProject(TempDataDirective):
+    """Tell Sphinx to switch to the specified project until the end of
+    this document.
+
+    """
+    temp_data_key = 'lino_project'
+
+
+class Lino2rstDirective(Py2rstDirective):
+    """Defines the :directive:`django2rst` directive."""
+
+    def get_context(self):
+        from django.conf import settings
+        context = super(Lino2rstDirective, self).get_context()
+        context.update(settings=settings)
+        context.update(settings.SITE.modules)
+        context.update(dd=dd)
+        return context
+
+    def output_from_exec(self, code):
+        from django.utils import translation
+        with translation.override(self.language):
+            return super(Lino2rstDirective, self).output_from_exec(code)
+
+
+class ActorsOverviewDirective(Lino2rstDirective):
+
+    def get_rst(self):
+        with translation.override(self.language):
+            #~ set_language(lng)
+            actor_names = ' '.join(self.content).split()
+            items = []
+            for an in actor_names:
+                cls = settings.SITE.modules.resolve(an)
+                if not isinstance(cls, type):
+                    raise Exception("%s is not an actor." % self.content[0])
+                items.append("%s : %s" % (actor_ref(cls), cls.help_text or ''))
+            return rstgen.ul(items)
+
+
+class FormDirective(Lino2rstDirective):
 
     def get_rst(self):
         level, cls = resolve_name(self.content[0])
@@ -312,7 +445,7 @@ class FormDirective(Django2rstDirective):
         return s
 
 
-class ActorDirective(Django2rstDirective):
+class ActorDirective(Lino2rstDirective):
     #~ has_content = False
     titles_allowed = True
     #~ debug = True
@@ -444,121 +577,6 @@ class ActorDirective(Django2rstDirective):
         return [indexnode] + content
 
 
-class ddrefRole(XRefRole):
-
-    nodeclass = addnodes.pending_xref
-    innernodeclass = nodes.emphasis
-
-    def __call__(self, typ, rawtext, text, lineno, inliner,
-                 options={}, content=[]):
-        
-        typ = 'std:ref'
-        return XRefRole.__call__(self, typ, rawtext, text, lineno,
-                                 inliner, options, content)
-
-    def process_link(self, env, refnode, has_explicit_title, title, target):
-        """Called after parsing title and target text, and creating the
-        reference node (given in *refnode*).  This method can alter the
-        reference node and must return a new (or the same) ``(title, target)``
-        tuple.
-        """
-
-        #~ print(20130901, refnode, has_explicit_title, title, target)
-        #~ 20130901 <pending_xref refdomain="" refexplicit="False" reftype="ddref"/> False cal.Event cal.Event
-
-        target = ws_re.sub(' ', target)  # replace newlines or tabs by spaces
-        # ~ target = ' '.join(target.split()) # replace newlines or tabs by spaces
-
-        level, x = resolve_name(target)
-        if x is None:
-            raise Exception("Could not resolve name %r" % target)
-        # lng = env.temp_data.get('language', env.config.language)
-        lng = CurrentLanguage.get_current_value(env)
-        with translation.override(lng):
-            if isinstance(x, models.Field):
-                text = utils.unescape(unicode(x.verbose_name))
-                target = model_name(x.model) + '.' + x.name
-                print(target)
-            elif isinstance(x, Plugin):
-                text = utils.unescape(unicode(x.verbose_name))
-                target = settings.SITE.userdocs_prefix + target
-
-            elif isinstance(x, type) and issubclass(x, models.Model):
-                text = utils.unescape(unicode(x._meta.verbose_name))
-                target = model_name(x)
-            elif isinstance(x, type) and issubclass(x, actors.Actor):
-                text = utils.unescape(unicode(x.title or x.label))
-                target = actor_name(x)
-            elif isinstance(x, actions.Action):
-                text = utils.unescape(unicode(x.label))
-                target = actor_name(x)
-            else:
-                raise Exception("Don't know how to handle %r" % x)
-
-        if not has_explicit_title:
-            # avoid replacing title by the heading text
-            refnode['refexplicit'] = True
-            title = text
-
-        refnode['refwarn'] = False  # never warn
-
-        #~ refnode['reftype'] = 'ref'
-
-        #~ title = "[%s]" % title
-        #~ if target == 'welfare.reception.waitingvisitors':
-        #~ print("20130907 ddref to %s : title=%r" % (target,title))
-
-        return title, target
-
-
-class TempDataDirective(Directive):
-    has_content = False
-    required_arguments = 1
-    optional_arguments = 0
-    final_argument_whitespace = False
-    option_spec = {}
-    temp_data_key = None
-
-    @classmethod
-    def get_default_value(self, env):
-        return None
-
-    @classmethod
-    def get_current_value(cls, env):
-        return env.temp_data.get(
-            cls.temp_data_key,
-            cls.get_default_value(env))
-
-    def run(self):
-        env = self.state.document.settings.env
-        v = self.arguments[0].strip()
-        if v == 'None':
-            del env.temp_data[self.temp_data_key]
-        else:
-            env.temp_data[self.temp_data_key] = v
-        return []
-
-
-class CurrentLanguage(TempDataDirective):
-    """Tell Sphinx to switch to the specified language until the end of
-    this document.
-
-    """
-    temp_data_key = 'language'
-
-    @classmethod
-    def get_default_value(cls, env):
-        return env.config.language
-
-
-class CurrentProject(TempDataDirective):
-    """Tell Sphinx to switch to the specified project until the end of
-    this document.
-
-    """
-    temp_data_key = 'lino_project'
-
-
 def setup(app):
 
     app.add_directive('form', FormDirective)
@@ -567,3 +585,5 @@ def setup(app):
     app.add_role('ddref', ddrefRole())
     app.add_directive('currentlanguage', CurrentLanguage)
     app.add_directive('currentproject', CurrentProject)
+    app.add_directive('django2rst', Lino2rstDirective)  # backward compat
+    app.add_directive('lino2rst', Lino2rstDirective)

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,24 +19,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import subprocess
 
-from django.conf import settings
 from django.utils import translation
 
-from atelier.sphinxconf.insert_input import Django2rstDirective
+from lino.utils.actordoc import Lino2rstDirective
 
 from lino.core import actors
-from lino.core import constants
-
-#~ SCREENSHOTS = dict()
 
 
-class ScreenshotDirective(Django2rstDirective):
+class ScreenshotDirective(Lino2rstDirective):
 
     def get_rst(self):
-        #~ lng = self.state.document.settings.env.config.language
-        #~ set_language(lng)
         assert len(self.content) == 0
         assert len(self.arguments) == 1
         ss = SCREENSHOTS[self.arguments[0]]
@@ -48,7 +41,6 @@ def get_screenshots(language):
     #~ print 20130515, actors.actors_list
     for actor in actors.actors_list:  # dbtables.master_reports:
             for ar in actor.get_screenshot_requests(language):
-                #~ for lng in settings.SITE.languages:
                 yield Screenshot(ar)
 
 

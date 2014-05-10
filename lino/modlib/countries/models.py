@@ -251,6 +251,7 @@ class CountryCity(dd.Model):
     zip_code = models.CharField(_("Zip code"), max_length=10, blank=True)
 
     active_fields = 'city zip_code'
+    # active fields cannot be used in insert_layout
 
     @dd.chooser()
     def city_choices(cls, country):
@@ -300,14 +301,17 @@ class CountryCity(dd.Model):
         if self.city is not None and self.country != self.city.country:
             self.city = None
 
+    def zip_code_changed(self, ar):
+        if self.country and self.zip_code:
+            qs = Place.objects.filter(
+                country=self.country, zip_code=self.zip_code)
+            if qs.count() > 0:
+                self.city = qs[0]
+
     def full_clean(self, *args, **kw):
         city = self.city
         if city is None:
-            if self.country and self.zip_code:
-                qs = Place.objects.filter(
-                    country=self.country, zip_code=self.zip_code)
-                if qs.count() > 0:
-                    self.city = qs[0]
+            self.zip_code_changed(None)
         else:
             if city.country is not None and self.country != city.country:
                 self.country = city.country

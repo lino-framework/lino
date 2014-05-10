@@ -54,6 +54,7 @@ class DocsTests(LinoTestCase):
 
     def test_docs(self):
         self.run_simple_doctests("""
+        docs/dev/modlib.rst
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
         """)

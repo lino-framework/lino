@@ -1,9 +1,22 @@
-========
-Settings
-========
+==================
+Application Design
+==================
 
+.. currentmodule:: ad
 
-.. currentmodule:: settings
+The :mod:`lino.ad` module is a shortcut to those parts of Lino which
+are used in your :xfile:`settings.py` files and in the
+:xfile:`__init__.py` files of your apps.  The name ``ad`` stands for
+"Application Design".
+
+This module is being imported from within your Django settings and
+**before your models are imported**.
+
+The :class:`Site` class is what you are going to instantiate and store
+in your :setting:`SITE` setting.
+
+The :class:`Plugin` class is an optional descriptor for every app.
+
 
 The ``Site`` class
 ------------------
@@ -88,7 +101,7 @@ The ``Site`` class
     `full_python_path` mappings. The default returns an empty dict.
 
     These mappings will be applied to the apps returned by
-    :method:`get_installed_apps`. 
+    :meth:`get_installed_apps`. 
 
     Mapping an app_label to `None` will remove (not install) that app from
     your Site.
@@ -99,7 +112,7 @@ The ``Site`` class
         def get_apps_modifiers(self, **kw):
             kw.update(debts=None)
             kw.update(courses='lino.modlib.courses')
-            kw.update(pcsw='lino_welfare.settings.fr.pcsw')
+            kw.update(pcsw='lino_welfare.settings.chatelet.pcsw')
             return kw
 
 
@@ -108,7 +121,7 @@ The ``Site`` class
     Internally used. Contains a set of model names that were 
     declared to be overridden.
 
-    See also :meth:`djangosite.Site.is_abstract_model`.
+    See also :func:`dd.is_abstract_model`.
 
   .. attribute:: django_settings
 
@@ -123,24 +136,6 @@ The ``Site`` class
     based on the process startup time.
 
     Used in Python fixtures and unit tests.
-
-
-
-  .. attribute:: plugins
-
-    An :class:`AttrDict` object with one entry for each installed 
-    app that is a plugin (i.e. which has an 
-    :class:`ad.App <djangosite.djangosite_site.App>` class object)
-
-
-
-
-
-
-  .. attribute:: migration_class
-
-    Used by :func:`north.dpy.install_migrations`.
-
 
   .. attribute:: languages
 
@@ -173,7 +168,7 @@ The ``Site`` class
     >>> from django.utils import translation
     >>> from north import TestSite as Site
     >>> from pprint import pprint
-    >>> pprint(Site().django_settings) #doctest: +ELLIPSIS
+    >>> pprint(Site().django_settings)  #doctest: +ELLIPSIS
     {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                                'NAME': '...default.db'}},
      'FIXTURE_DIRS': (),
@@ -212,8 +207,7 @@ The ``Site`` class
      u'en_US': LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix=''),
      'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
 
-    >>> site.startup()
-    >>> pprint(site.django_settings['LANGUAGES']) #doctest: +ELLIPSIS
+    >>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
     [('de', 'German'), ('fr', 'French')]
 
 
@@ -229,12 +223,12 @@ The ``Site`` class
     ...     return site,obj
 
 
-    >>> site,obj = testit('de en')
-    >>> site.field2kw(obj,'name')
+    >>> site, obj = testit('de en')
+    >>> site.field2kw(obj, 'name')
     {'de': 'Hallo', 'en': 'Hello'}
 
-    >>> site,obj = testit('fr et')
-    >>> site.field2kw(obj,'name')
+    >>> site, obj = testit('fr et')
+    >>> site.field2kw(obj, 'name')
     {'fr': 'Salut'}
 
         
@@ -245,7 +239,7 @@ The ``Site`` class
 
     This is available in templates as a function `tr`.
 
-    >>> kw = dict(de="Hallo",en="Hello",fr="Salut")
+    >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
     >>> from north import TestSite as Site
     >>> from django.utils import translation
@@ -290,19 +284,22 @@ The ``Site`` class
 
 
 
+
   .. attribute:: hidden_languages
 
     A string of django codes of languages that should be hidden.
 
-    Lino Welfare uses this because the demo database has 4 
+    :ref:`welfare` uses this because the demo database has 4
     languages, but `nl` is currently hidden bu default.
 
 
-  .. attribute:: migration_module
 
-    If you maintain a data migration module for your application, 
+  .. attribute:: migration_class
+
+    If you maintain a data migrator module for your application, 
     specify its name here.
-    See :ref:`datamig`.
+
+    See :ref:`datamig` and/or :func:`north.dpy.install_migrations`.
 
 
 
@@ -319,16 +316,13 @@ The ``Site`` class
 
 
 
-
-
-  .. attribute:: languages
-
-  See :setting:`languages`.
-
-
   .. method:: setup_choicelists()
 
-    Redefine application-specific Choice Lists.
+    This is a hook for code to be run *after* all plugins have been
+    instantiated and *before* the models are being discovered.
+
+    This is especially useful for redefining your application's
+    ChoiceLists.
 
     Especially used to define application-specific
     :class:`UserProfiles <lino.core.perms.UserProfiles>`.
@@ -336,9 +330,9 @@ The ``Site`` class
     Lino by default has two user profiles "User" and "Administrator",
     defined in :mod:`lino.core.perms`.
 
-    Application developers who use group-based requirements must override
-    this in their application's :xfile:`settings.py` to provide a default
-    list of user profiles for their application.
+    Application developers who use group-based requirements can
+    override this in their application's :xfile:`settings.py` to
+    provide a default list of user profiles for their application.
 
     See the source code of :mod:`lino.projects.presto` or
     :mod:`lino_welfare.settings` for a usage example.
@@ -348,10 +342,10 @@ The ``Site`` class
 
     Note that you may not specify values longer than `max_length` when
     redefining your choicelists.  This limitation is because these
-    redefinitions happen at a moment where database fields have already
-    been instantiated, so it is too late to change their max_length.  Not
-    that this limitation is only for the *values*, not for the names or
-    texts of choices.
+    redefinitions happen at a moment where database fields have
+    already been instantiated, so it is too late to change their
+    max_length.  Note that this limitation is only for the *values*,
+    not for the names or texts of choices.
 
   .. method:: get_installed_apps
 
@@ -542,25 +536,33 @@ The ``Site`` class
 The ``Plugin`` class
 --------------------
 
+The basic usage is to write in your :xfile:`__init__.py` file::
+
+    from lino import ad, _
+
+    class Plugin(ad.Plugin):
+        verbose_name = _("Contacts")
+
+
+
 
 .. class:: Plugin
 
     The base class for all plugins.
 
-    Every Django app which defines a class object called "Plugin" in
-    its main module (not in the :xfile:`models.py` module) is a
-    plugin.
+    Every Django app may define a class object called "Plugin" in
+    its :xfile:`__init__.py` module (not in the :xfile:`models.py` module).
 
-    Corollaire: There is at most one plugin per app, and plugins
-    can be referenced using their app_label.
+    Plugins get instiantiated exactly once when the :class:`Site`
+    object instantiates (i.e. before Django settings are ready).
 
-    Plugins get some special functionality: their App class object
-    will be instiantiated exactly once when the :class:`Site`
-    instantiates (i.e. before Django settings are ready), and this
-    object is stored in :data:`dd.plugins <plugins>`
-    using the `app_label` as key.
+    All plugins are globally accessible 
+    in :data:`dd.apps` using the `app_label` as key.
 
   .. attribute:: verbose_name
+
+    The name of this app, as shown to the user. This can be
+    translatable. 
 
 
   .. attribute:: extends_models

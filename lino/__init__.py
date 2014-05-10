@@ -63,3 +63,6 @@ def setup_project(settings_module):
 
 
 from .lino_site import Site
+
+from django.utils.translation import ugettext_lazy as _
+   

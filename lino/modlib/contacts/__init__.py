@@ -11,43 +11,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""A general-purpose address book, used by many other apps in
-:mod:`lino.modlib`.
+"See :mod:`ml.contacts`."
 
-**Settings**
-
-.. setting:: contacts.hide_region
-
-Whether to hide the `region` field in postal addresses.  Set this to
-`True` if you live in a country like Belgium.
-
-Belgium is --despite their constant language disputes-- obviously a
-very *united* country since they don't need a `region` field when
-entering a postal address.  In many other countries such a field is
-required.
-
-Example code in your :xfile:`settings.py` file::
-
-  SITE.configure_plugin('contacts', hide_region=True)
-
-"""
-
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino import ad, _
 
 
 class Plugin(ad.Plugin):
-    "Ceci n'est pas une documentation."
+
     verbose_name = _("Contacts")
 
     ## settings
     hide_region = False
 
     def before_analyze(self, site):
-        """
-        
-        """
         # print "20140117 on_ui_init", self.hide_region
         contacts = site.modules.contacts
         # contacts = self.app_module

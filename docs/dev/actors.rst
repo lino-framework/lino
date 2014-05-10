@@ -369,6 +369,13 @@ The ``AbstractTable`` class reference
 
     Default value is ``'*'``.
 
+    Lino will automatically create a :class:`dd.ListLayout` from this.
+
+    This string must not contain any newline characters because a
+    ListLayout's `main` panel descriptor must be horizontal.
+
+
+
   .. method:: get_column_names(self, ar)
 
     Dynamic tables must subclass this method
@@ -431,11 +438,20 @@ The ``AbstractTable`` class reference
 
   .. attribute:: active_fields
 
-    A list of field names that are "active". This means that when their
-    value was changed in a Detail or Insert window, they cause an
-    immediate save and refresh of the window.
-
+    A list of field names that are "active". 
     Value and inheritance as for :attr:`hidden_columns`.
+
+    When a field is "active", this means only that it will cause an
+    immediate "background" save and refresh of the :term:`detail
+    window` when their value was changed. The true "activity"
+    (i.e. other fields being updated according to the value of an
+    active field) is defined in the model's :meth:`full_clean
+    <dd.Model.full_clean>` and :meth:`FOO_changed
+    <dd.Model.FOO_changed>` methods.
+
+    Note that active fields are active only in a :term:`detail
+    window`, not in an :term:`insert window`.  That's because there
+    they would lead to the unexpected behaviour of closing the window.
 
 
   .. attribute:: slave_grid_format = 'grid'
@@ -511,15 +527,15 @@ The ``Table`` class reference
 
 .. class:: Table
 
-A table that works on a Django Model using a Django QuerySet.
+A table that works on a Django Model using a QuerySet.
 
-A Table definition adds attributes
-like :attr:`model` and :attr:`master` and :attr:`master_key`
-who are important because Lino handles relations automagically.
+A table inherits from :class:`AbstractTable` and adds attributes like
+:attr:`model` and :attr:`master` and :attr:`master_key` who are
+important because Lino handles relations automagically.
 
-Another class of attributes are
-`filter`, `exclude` and `sort_order`
-which it simply forwards to the QuerySet.
+Another class of attributes are `filter`, `exclude` and `sort_order`
+which are thin wrappers to Django's query lookup parameters of same
+name.
 
   .. attribute:: model = None
 

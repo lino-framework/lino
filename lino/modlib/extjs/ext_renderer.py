@@ -1065,19 +1065,12 @@ class ExtRenderer(HtmlRenderer):
             kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a, actions.SubmitDetail):
             js = 'function(panel){panel.save()}'
-            # js = 'function(panel){panel.save(null,%s,%r)}' % (
-            #     py2js(a.switch_to_detail), a.action_name)
             kw.update(panel_btn_handler=js_code(js))
         elif isinstance(a, actions.ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
         elif isinstance(a, actions.InsertRow):
-            # kw.update(must_save=True)
             kw.update(panel_btn_handler=js_code('Lino.show_insert'))
-            # 'function(panel){Lino.show_insert(panel)}'))
-        # elif isinstance(a, actions.DeleteSelected):
-        #     kw.update(panel_btn_handler=js_code("Lino.delete_selected"))
         else:
-            # kw.update(must_save=True)
             kw.update(
                 panel_btn_handler=js_code(self.get_panel_btn_handler(ba)))
 
@@ -1212,7 +1205,8 @@ class ExtRenderer(HtmlRenderer):
             return
 
         yield ""
-        yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % dh.layout._formpanel_name
+        yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % \
+            dh.layout._formpanel_name
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
@@ -1241,24 +1235,29 @@ class ExtRenderer(HtmlRenderer):
             yield "    this.onRender = function(ct, position) {"
             for ln in on_render:
                 yield "      " + ln
-            #~ yield "      Lino.%s.FormPanel.superclass.onRender.call(this, ct, position);" % tbl
-            yield "      Lino.%s.superclass.onRender.call(this, ct, position);" % dh.layout._formpanel_name
+            yield "      Lino.%s.superclass.onRender.call(this, ct, position);" % \
+                dh.layout._formpanel_name
             yield "    }"
 
-        #~ yield "    Lino.%s.FormPanel.superclass.initComponent.call(this);" % tbl
-        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+        yield "    Lino.%s.superclass.initComponent.call(this);" % \
+            dh.layout._formpanel_name
 
-        if tbl.active_fields:
-        #~ if issubclass(tbl,tables.AbstractTable) and tbl.active_fields:
-            yield '    // active_fields:'
-            for name in tbl.active_fields:
-                e = dh.main.find_by_name(name)
-                if e is not None:  # 20120715
-                    yield '    %s.on("%s",function(){this.save()},this);' % (py2js(e), e.active_change_event)
-                    """
-                    Seems that checkboxes don't emit a change event when they are changed.
-                    http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
-                    """
+        # Seems that checkboxes don't emit a change event
+        # when they are changed:
+        # http://www.sencha.com/forum/showthread.php?43350-2.1-gt-2.2-OPEN-Checkbox-missing-the-change-event
+
+        if dh.layout._formpanel_name.endswith('.DetailFormPanel'):
+            if tbl.active_fields:
+                yield '    // active_fields:'
+                for name in tbl.active_fields:
+                    e = dh.main.find_by_name(name)
+                    if e is not None:  # 20120715
+                        if True:  # see actions.ValidateForm
+                            f = 'function(){ this.save() }'
+                        else:
+                            f = 'function(){ this.validate_form() }'
+                        yield '    %s.on("%s", %s, this);' % (
+                            py2js(e), e.active_change_event, f)
         yield "  }"
         yield "});"
         yield ""

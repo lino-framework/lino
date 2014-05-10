@@ -1,0 +1,37 @@
+======================
+Saturday, May 10, 2014
+======================
+
+I worked more than one day on the following problem:
+
+- Manuell Adresse erstellen: wenn man eine Stadt im :term:`insert
+  window` eingibt, wird das Fenster beendet. Das ist nicht richtig,
+  aber technisch noch wieder eine Herausforderung. Bisher funktionieren
+  active fields so, dass sie sozusagen automatisch im Hintergrund auf
+  den Speichern-Button klickten. Dadurch sind sie in Insert Windows
+  nicht anwendbar. Beim Erstellen einer Adresse ist das aber
+  nötig. Ich denke an eine neue Aktion "validate": ähnlich wie
+  Speichern, aber auf dem Server dann ohne das letzte ``save()``.
+
+
+The bad news: Lino still cannot handle :term:`active fields` in an
+:term:`insert window`.
+
+The good news: I simply removed the :class:`zip_code
+<ml.contacts.AddressLocation.zip_code>` field from the :term:`insert
+window` of :class:`ml.addresses.Addresses`, and this might be a
+surprisingly good workaround, probably even a better solution than
+what I believed to be the only solution.
+
+The :class:`zip_code <ml.contacts.AddressLocation.zip_code>` and
+:class:`city <ml.contacts.AddressLocation.city>` fields are still
+:attr:`active <dd.AbstractTable.active_fields>`, but Lino now takes
+care to make them active only in a detail window and not in an insert
+window.
+
+:class:`ml.countries.CountryCity` defines the behaviour of
+synchonizing `zip_code` and `city` (where appropriate).
+
+
+
+

@@ -1,13 +1,14 @@
 ===============
-Data definition
+Database Design
 ===============
 
 The :mod:`lino.dd` module is a shortcut to those parts of Lino which
 are used in your :xfile:`models.py` modules.  The name ``dd`` stands
-for "Data Definition".
+for "Database Design".
 
 To keep your application as future-proof as possible, you should use
-these shortcuts instead of importing them from their real place.
+these shortcuts instead of importing these classes and functions from
+their real place.
 
 .. toctree::
    :maxdepth: 2
@@ -29,7 +30,22 @@ The `dd.Model` class
   "extend" these by adding the attributes and methods defined here to
   these classes.
 
-  .. attribute:: allow_cascaded_delete = []
+  .. method:: full_clean
+
+    This is defined by Django.
+
+  .. method:: FOO_changed
+
+    For every field named "FOO", if the model has a method called
+    "FOO_changed", then this method will be installed as a field-level
+    post-edit trigger.
+
+  .. attribute:: active_fields
+
+    Default value for :attr:`dd.Table.active_fields`
+
+
+  .. attribute:: allow_cascaded_delete
 
     A list of names of ForeignKey fields of this model that allow for
     cascaded delete.
@@ -117,7 +133,7 @@ them.
 .. function:: is_abstract_model(name)
 
   Return True if the named model is declared as being extended by
-  :attr:`settings.Plugin.extends_models`.
+  :attr:`ad.Plugin.extends_models`.
 
   `name` must be a string with the full model name, e.g. ``"myapp.MyModel"``.
 
@@ -125,7 +141,7 @@ them.
 .. function:: is_hidden_app(app_label)
 
   Return True if the app is known, but has been disabled using 
-  :meth:`settings.Site.get_apps_modifiers`.
+  :meth:`ad.Site.get_apps_modifiers`.
 
 
 .. function:: login(self, username=None, **kw)
@@ -167,6 +183,15 @@ code wants to make sure that it was called.
     - apps that don't have a models module
     - inherited apps
 
+.. attribute:: plugins
+
+    Alias for :attr:`apps` for backward compatibility.
+
+.. attribute:: apps
+
+    An :class:`AttrDict` object with one entry for each installed app,
+    mapping to the :class:`ad.Plugin` of that app.
+
 .. attribute:: logger
 
   Shortcut to the Lino logger.
@@ -175,7 +200,7 @@ code wants to make sure that it was called.
 .. function:: makedirs_if_missing(dirname)
 
     Make missing directories if they don't exist
-    and if :attr:`settings.Site.make_missing_dirs` is `True`.
+    and if :attr:`ad.Site.make_missing_dirs` is `True`.
 
 
 

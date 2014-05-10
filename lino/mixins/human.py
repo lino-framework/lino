@@ -134,11 +134,7 @@ class Human(model.Model):
         See :ref:`lino.tutorial.human` for some examples.
 
         """
-        #~ print '20120729 PersonMixin.get_full_name`'
-        #~ return '%s %s' % (self.first_name, self.last_name.upper())
         words = []
-        #~ if salutation is None:
-            #~ salutation = SHOW_SALUTATION
         if salutation:
             words.append(self.get_salutation(**salutation_options))
         words.append(self.first_name)
@@ -148,7 +144,6 @@ class Human(model.Model):
             words.append(self.last_name.upper())
         else:
             words.append(self.last_name)
-        #~ words += [self.first_name, self.last_name.upper()]
         return join_words(*words)
     full_name = property(get_full_name)
 

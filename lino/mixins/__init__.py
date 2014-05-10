@@ -697,9 +697,6 @@ from lino.mixins.printable import (Printable, PrintableType,
 
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born, Genders
-#~ from lino.mixins.mails import Recipient, Mail
-#~ from lino.utils.dblogger import DiffingMixin
-#~ from lino.mixins.personal import SexField, PersonMixin
 
 from lino.core import actions
 from lino.mixins import printable

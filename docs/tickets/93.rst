@@ -25,15 +25,6 @@ todo
 - NoteDetail has an UploadsyController which does not work (I guess
   because `_upload_regime` is None).
 
-- Manuell Adresse erstellen: wenn man eine Stadt im Insert Window
-  eingibt, wird das Fenster beendet. Das ist nicht richtig, aber
-  technisch noch wieder eine Herausforderung. Bisher funktioniten
-  active fields so, dass sie sozusagen automatisch im Hintergrund auf
-  den Speichern-Button klickten. Dadurch sind sie in Insert Windows
-  nicht anwendbar. Beim Erstellen einer Adresse ist das aber
-  nötig. Ich denke an eine neue Aktion "validate": ähnlich wie
-  Speichern, aber auf dem Server dann ohne das letzte ``save()``.
-
 - Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
   Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
   die Lino vorgeschlagen hätte". Ich könnte hier mit Zeilenfarben

@@ -271,16 +271,12 @@ def inject_field(model_spec, name, field, doc=None):
 
 
 def update_field(model_spec, name, **kw):
-    """
-    Update some attribute of the specified existing field.
-    For example 
-    :class:`PersonMixin <lino.modlib.contacts.models.PersonMixin>` 
-    defines a field `first_name` which may not be blank.
-    If you inherit from 
-    :class:`PersonMixin <lino.modlib.contacts.models.PersonMixin>`
-    but want `first_name` to be optional::
+    """Update some attribute of the specified existing field.  For
+    example :class:`Human <lino.mixins.human.Human>` defines a field
+    `first_name` which may not be blank.  If you inherit from this
+    mixin but want `first_name` to be optional::
     
-      class MyPerson(contacts.PersonMixin):
+      class MyPerson(mixins.Human):
         ...
       dd.update_field(MyPerson,'first_name',blank=True)
       
@@ -288,7 +284,7 @@ def update_field(model_spec, name, **kw):
     as done in  :mod:`lino.modlib.outbox.models`::
     
       dd.update_field(Mail,'user',verbose_name=_("Sender"))
-    
+
     """
     def todo(model):
         try:

@@ -110,11 +110,11 @@ class Link(dd.Model):
 
     type = LinkTypes.field(default=LinkTypes.parent)
     parent = dd.ForeignKey(
-        settings.SITE.plugins.humanlinks.human_model,
+        dd.apps.humanlinks.human_model,
         verbose_name=_("Parent"),
         related_name='children')
     child = dd.ForeignKey(
-        settings.SITE.plugins.humanlinks.human_model,
+        dd.apps.humanlinks.human_model,
         blank=True, null=True,
         #verbose_name=_("Child"),
         related_name='parents')
@@ -151,20 +151,9 @@ def pf(obj):
 
 
 class LinksByHuman(Links):
-    """Display all human links of the master, using both the parent and
-the child directions.
-
-It is a cool usage example for using a
-:meth:`lino.core.actors.get_request_queryset` method instead of
-`master_key`.
-
-It is also a cool usage example for the
-:meth:`lino.core.actors.get_slave_summary` method.
-
-    """
     label = _("Human Links")
     required = dd.required()
-    master = settings.SITE.plugins.humanlinks.human_model
+    master = dd.apps.humanlinks.human_model
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'
 
@@ -211,7 +200,7 @@ It is also a cool usage example for the
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    p = settings.SITE.plugins.contacts
+    p = dd.apps.contacts
     m = m.add_menu(p.app_label, p.verbose_name)
     m.add_action(Links)
     m.add_action(LinkTypes)

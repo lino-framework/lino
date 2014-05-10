@@ -99,27 +99,35 @@ Glossary
     writes a Sphinx documentation tree about the models 
     installed on this site.
     :mod:`lino.management.commands.makedocs`
+
+  Active fields
+
+    See :attribute:`dd.AbstractTable.active_fields`.
     
   Table
-    One of Lino's central concepts. 
-    A table defines metadata about a certain view of the database.
-    :class:`lino.core.table.Table`.
-    :class:`lino.utils.tables.AbstractTable`.
+    See :class:`dd.Table` and :class:`dd.AbstractTable`.
     
-  Slave Table
-    A Slave Table is a :term:`Table` which displays only rows that "belong" 
-    to a given master instance. For example if you have two models `City` 
-    and `Person`, with a `ForeignKey` `Person.city` pointing to `City`, 
-    then you might define a slave table `PersonsByCity` which displays 
-    only Persons who live in a given City. 
+  Slave Table 
+
+    A Slave Table is a :term:`Table` which displays only rows that
+    "belong" to a given master instance. For example if you have two
+    models `City` and `Person`, with a `ForeignKey` `Person.city`
+    pointing to `City`, then you might define a slave table
+    `PersonsByCity` which displays only Persons who live in a given
+    City.
     
 
   Detail Window
-    A window that displays data of a single record. 
-    Used for viewing, editing or inserting new records.
-    Besides fields, a Detail Window can possibly include 
-    :term:`Slave Reports <Slave Report>`.
+
+    A window that displays data of a single record.  Used for viewing,
+    editing or inserting new records.  Besides fields, a Detail Window
+    can possibly include :term:`Slave Tables <Slave Table>`.
     
+  Insert Window
+
+    The window used to edit data of a new record before it is being
+    saved for the first time.
+
   GFK
     Generic ForeignKey. This is a ForeignKey that can point to 
     different tables.

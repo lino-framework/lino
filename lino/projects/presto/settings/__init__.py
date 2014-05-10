@@ -11,25 +11,15 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-
 from lino.projects.std.settings import *
 
 
 class Site(Site):
 
-    #~ title = __name__
     verbose_name = "Lino Presto"
     version = "0.1"
     url = "http://www.lino-framework.org/autodoc/lino.projects.presto"
-    #~ description = "a Lino application for Belgian Public Welfare Centres"
-    #~ author = 'Luc Saffre'
-    #~ author_email = 'luc.saffre@gmail.com'
 
-    #~ demo_fixtures = 'std few_countries few_cities few_languages props demo demo2 history'.split()
-    # demo_fixtures = 'std all_countries be few_cities few_languages \
-    # props democfg demo demo2'.split()
-    # demo_fixtures = 'std few_countries few_cities few_languages \
-    # props democfg demo demo2'.split()
     demo_fixtures = 'std few_languages props democfg demo demo2'.split()
 
     languages = 'en de fr et'
@@ -44,28 +34,6 @@ class Site(Site):
         'households.Household': p,
         'sales.Invoice': p,
         'sales.InvoiceItem': p}
-
-    #~ def get_main_action(self,user):
-        #~ return self.modules.lino.Home.default_action
-
-    #~ def setup_quicklinks(self,ui,user,tb):
-        #~ tb.add_action(self.modules.contacts.Persons.detail_action)
-
-    #~ def get_partner_account(self,voucher):
-        #~ tt = voucher.get_trade_type()
-        #~ if tt.name == 'sales':
-            #~ return '400000'
-        #~ elif tt.name == 'purchases':
-            #~ return '440000'
-
-    #~ def get_product_base_account(self,tt,product):
-        #~ if tt.name == 'sales':
-            #~ return '704000'
-        #~ elif tt.name == 'purchases':
-            #~ return '604000'
-
-    #~ def get_vat_account(self,tt,vc,vr):
-        #~ return '472100'
 
     def setup_choicelists(self):
         """

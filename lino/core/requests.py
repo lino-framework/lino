@@ -474,10 +474,8 @@ class BaseRequest(object):
                     subject, sender, recipients)
 
     def spawn(self, spec, **kw):
-        """Create a new ActionRequest using default values from this one and
-        the action specified by `spec`.
+        "See :meth:`rt.ActionRequest.spawn`."
 
-        """
         if isinstance(spec, ActionRequest):
             for k, v in kw.items():
                 assert hasattr(spec, k)
@@ -512,10 +510,12 @@ class BaseRequest(object):
 
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, **kw):
+        "See :meth:`rt.ActionRequest.show`."
         # 20130905 added master_instance positional arg. but finally didn't use
         # it.
         if master_instance is not None:
             kw.update(master_instance=master_instance)
+
         ar = self.spawn(spec, **kw)
 
         def doit():

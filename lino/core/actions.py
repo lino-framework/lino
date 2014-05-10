@@ -156,19 +156,20 @@ def install_layout(cls, k, layout_class, **options):
     dl = cls.__dict__.get(k, None)
     if dl is None:  # and not cls._class_init_done:
         dl = getattr(cls, k)
-    if dl is not None:
-        if isinstance(dl, basestring):
-            setattr(cls, k, layout_class(dl, cls, **options))
-        elif isinstance(dl, layouts.Panel):
-            options.update(dl.options)
-            setattr(cls, k, layout_class(dl.desc, cls, **options))
-        elif dl._datasource is None:
-            dl.set_datasource(cls)
-            setattr(cls, k, dl)
-        elif not issubclass(cls, dl._datasource):
-            raise Exception(
-                "Cannot reuse %r %s for %r" %
-                (dl._datasource, k, cls))
+    if dl is None:
+        return
+    if isinstance(dl, basestring):
+        setattr(cls, k, layout_class(dl, cls, **options))
+    elif isinstance(dl, layouts.Panel):
+        options.update(dl.options)
+        setattr(cls, k, layout_class(dl.desc, cls, **options))
+    elif dl._datasource is None:
+        dl.set_datasource(cls)
+        setattr(cls, k, dl)
+    elif not issubclass(cls, dl._datasource):
+        raise Exception(
+            "Cannot reuse %r %s for %r" %
+            (dl._datasource, k, cls))
 
 
 def register_params(cls):
@@ -912,6 +913,36 @@ class SaveRow(Action):
         # form).  But how to find out which one is needed?
         # if ar.edit_mode == constants.EDIT_MODE_GRID:
         ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+
+
+# this is a first attempt to solve the "cannot use active fields in
+# insert window" problem.  not yet ready for use. the idea is that
+# active fields should not send a real "save" request (either POST or
+# PUT) in the background but a "validate_form" request which creates a
+# dummy instance from form content, calls it's full_clean() method to
+# have other fields filled in, and then return the modified form
+# content. Fails because the Record.phantom in ExtJS then still gets
+# lost.
+
+class ValidateForm(Action):
+    # called by active_fields
+    show_in_workflow = False
+    action_name = 'validate'
+    readonly = False
+    auto_save = False
+
+    def is_callable_from(self, caller):
+        return False
+
+    def run_from_ui(self, ar, **kw):
+        elem = ar.create_instance_from_request()
+        logger.info("20140509 a %s", obj2unicode(elem))
+        ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
+        logger.info("20140509 b %s", obj2unicode(elem))
+        elem.full_clean()
+        ar.success()
+        # ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+        ar.goto_instance(elem)
 
 
 class SubmitDetail(SaveRow):

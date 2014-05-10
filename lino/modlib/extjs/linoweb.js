@@ -3344,78 +3344,75 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     }
     this.add_param_values(p)
     return p;
-  },
+  }
   
-  /* 
-  Lino.FormPanel.save() 
-  */
-  save : function(after) {
-    var panel = this;
-    this.loadMask.show();
-    var rec = this.get_current_record();
-    if (this.has_file_upload) this.form.fileUpload = true;
-    //~ console.log('FormPanel.save()',rec);
+  ,validate_form : function() {  // not used. see actions.ValidateForm
+      // var ov = {};
+      // this.form.items.each(function(f){
+      //     ov[f.name] = f.originalValue
+      // });
+
+      // console.log('20140509 FormPanel.validate_form', ov);
+      // var after = function() { 
+      //     this.form.items.each(function(f){
+      //         f.originalValue = ov[f.name];
+      //     });
+      // }
+      // this.save2(null, 'validate', after);
+      this.save2(null, 'validate');
+  }
+
+  /* Lino.FormPanel */
+  ,save : function(after) {
     var action_name = this.save_action_name;
     if (!action_name) 
         action_name = this.action_name;
     // console.log('20140503 FormPanel.save', action_name);
+    this.save2(after, action_name);
+  }
+
+  ,save2 : function(after, action_name) {
+    var rec = this.get_current_record();
     if (!rec) { 
         Lino.notify("Sorry, no current record."); 
         return; 
     }
+    var panel = this;
+    if (this.has_file_upload) this.form.fileUpload = true;
+    //~ console.log('FormPanel.save()',rec);
+    this.loadMask.show();
     var p = {};
     Ext.apply(p, this.get_base_params());
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
     p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_FORM}}';
-    // if (panel.requesting_panel) {
-    //     p.{{ext_requests.URL_PARAM_EDIT_MODE}} = panel.requesting_panel.edit_mode;
-    // } else {
-    //   p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_HREF}}';
-    // }
-    if (rec.phantom) {  // SubmitInsert
-      this.form.submit({
-        url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url,
-        method: 'POST',
+    var submit_config = {
         params: p, 
         scope: this,
         success: function(form, action) {
           this.loadMask.hide();
           Lino.notify(action.result.message);
-          Lino.handle_action_result(this, action.result);
+          Lino.handle_action_result(this, action.result, after);
         },
         failure: function(form,action) { 
           this.loadMask.hide();
-          Lino.on_submit_failure(form,action);
+          Lino.on_submit_failure(form, action);
         },
         clientValidation: true
-      })
+    };
+    if (rec.phantom) {  // it's a new record
+      Ext.apply(submit_config, {
+        url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url,
+        method: 'POST'
+      });
     } else {  // submit on existing row
-      this.form.submit({
+      Ext.apply(submit_config, {
         url: '{{settings.SITE.build_admin_url("api")}}' 
               + this.ls_url + '/' + rec.id,
-        method: 'PUT',
-        scope: this,
-        params: p, 
-        success: function(form, action) {
-          this.loadMask.hide();
-          Lino.notify(action.result.message);
-          Lino.handle_action_result(this, action.result);
-        },
-        unused_success: function(form, action) {
-          this.loadMask.hide();
-          Lino.notify(action.result.message);
-          if (action.result.data_record)
-              this.set_current_record(action.result.data_record,after);
-          else
-              console.log("Warning: no data_record in response to FormPanel.PUT")
-        },
-        failure: function(form,action) { 
-          this.loadMask.hide();
-          Lino.on_submit_failure(form,action)},
-        clientValidation: true
+        method: 'PUT'
       })
     }
+    this.form.submit(submit_config);
   }
   
   ,on_cancel : function() { 

@@ -12,14 +12,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-A special settings module to be used as DJANGO_SETTINGS_MODULE 
+"""A special settings module to be used as DJANGO_SETTINGS_MODULE 
 when Sphinx generates the Lino docs.
 
-It contains *all* modlib modules, which makes no sense in practice 
-and would raise errors if you try to initialize a database or 
-validate the models, but it is enough to have autodocs do its job. 
+It contains (almost) all modlib modules, which makes no sense in
+practice and would raise errors if you try to initialize a database or
+validate the models, but it is enough to have autodocs do its job.
 And that's all we want.
 
 """
@@ -50,7 +48,7 @@ class Site(Site):
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.addresses'
-        yield 'lino.modlib.humanlinks'
+        # yield 'lino.modlib.humanlinks'  # requires Person to be Born
 
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.notes'

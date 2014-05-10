@@ -27,12 +27,17 @@ The ``ActionRequest`` class
 
 
   .. method:: show(self, spec, master_instance=None,
-              column_names=None, header_level=None, 
-              language=None, **kw)
+                   column_names=None, header_level=None, 
+                   language=None, **kw)
 
-    Show the table specified by `spec` according to the current
-    renderer.  If the table is a :term:`slave table`, then a
-    `master_instance` must be specified as second argument.
+    Show the specified table or action using the current renderer.  If
+    the table is a :term:`slave table`, then a `master_instance` must
+    be specified as second argument.
+
+    The first argument, `spec` can be:
+    - a string with the name of a model, actor or action
+    - another action request
+    - a bound action (i.e. a :class:`BoundAction` instance)
 
     Optional keyword arguments are
 
@@ -41,10 +46,11 @@ The ``ActionRequest`` class
     - `language` overrides the default language used for headers and
       translatable data
 
+    Any other keyword arguments are forwarded to :meth:`spawn`.
+
     Usage in a tested doc::
 
-      >>> ses = settings.SITE.login("robin")
-      >>> ses.show('users.UsersOverview')
+      >>> dd.login("robin").show('users.UsersOverview', limit=5)
 
     Usage in a Jinja template::
 
@@ -58,14 +64,16 @@ The ``ActionRequest`` class
     stdout and returns None, depending on the current renderer.
 
 
-  .. method:: set_response()
+  .. method:: spawn(spec, **kwargs)
 
-    The :meth:`set_response`
-    method of an action request is used to communicate with the user.
+    Create a new ActionRequest using default values from this one and
+    the action specified by `spec`.  
 
+  .. method:: set_response(**kw)
 
-    This does not yet respond anything, it is stored until the
-    action has finished. The response might be overwritten by
+    Set (some part of) the response to be sent when the action request
+    finises.  This does not yet respond anything, it is stored until
+    the action has finished. The response might be overwritten by
     subsequent calls to `set_response`.
 
     Allowed keywords are:

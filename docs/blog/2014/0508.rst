@@ -48,6 +48,8 @@ others can use it.
 
 For example I can now easily talk in this blog about central concepts
 like 
+:class:`ad.Site`, 
+:class:`ad.Plugin`, 
 :class:`dd.Actor`, 
 :class:`dd.Action`, 
 :class:`dd.fields_list`, 

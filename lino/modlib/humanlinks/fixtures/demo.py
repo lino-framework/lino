@@ -23,10 +23,6 @@ Creates a fictive family tree.
 from lino.utils.instantiator import Instantiator
 from lino import dd
 
-Person = dd.modules.contacts.Person
-Link = dd.modules.humanlinks.Link
-LinkTypes = dd.modules.humanlinks.LinkTypes
-
 
 class InstanceGenerator(object):
     def __init__(self):
@@ -54,6 +50,10 @@ NAME1 = "Frisch"
 
 
 def objects():
+
+    Person = dd.modules.contacts.Person
+    Link = dd.modules.humanlinks.Link
+    LinkTypes = dd.modules.humanlinks.LinkTypes
 
     ig = InstanceGenerator()
     ig.add_instantiator(Person, 'first_name last_name gender birth_date')

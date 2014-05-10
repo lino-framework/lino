@@ -16,7 +16,8 @@
 """The :xfile:`models.py` module for the :mod:`lino.modlib.contacs`
 app.
 
-See :mod:`modlib.contacts`.
+
+See :mod:`ml.contacts`.
 
 """
 
@@ -113,7 +114,7 @@ class CompanyTypes(dd.Table):
 
 
 class AddressLocation(CountryRegionCity):
-
+    "See :class:`ml.contacts.AddressLocation`."
     class Meta:
         abstract = True
 
@@ -125,7 +126,7 @@ class AddressLocation(CountryRegionCity):
     street_prefix = models.CharField(
         _("Street prefix"), max_length=200, blank=True,
         help_text=_("Text to print before name of street, "
-        "but to ignore for sorting."))
+                    "but to ignore for sorting."))
 
     street = models.CharField(
         _("Street"), max_length=200, blank=True,
@@ -176,25 +177,21 @@ class AddressLocation(CountryRegionCity):
         #~ logger.debug('%s : as_address() -> %r',self,lines)
 
     def address_location(self, linesep="\n"):
-        """
-        The plain text postal address location part. 
-        Lines are separated by `linesep`.
-        """
         return linesep.join(self.address_location_lines())
 
     @dd.displayfield(_("Address"))
     def address_column(self, request):
         return self.address_location(', ')
-    #~ address_column.return_type = dd.DisplayField(_("Address"))
 
 
 class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
+    "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20
     # preferred width for ForeignKey fields to a Partner
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('contacts.Partner')
+        abstract = dd.is_abstract_model('contacts.Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
 
@@ -251,16 +248,9 @@ class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
     def get_full_name(self, *args, **kw):
         """\
 Returns a one-line string representing this Partner.
-The default returns simply the `name` field, ignoring any parameters, 
-but e.g. :class:`PersonMixin` overrides this.
+The default returns simply the `name` field, ignoring any parameters,
+but e.g. :class:`Human` overrides this.
         """
-        #~ print '20120729 Partner.get_full_name`'
-
-        #~ try:
-            #~ p = getattr(self,'person')
-            #~ return p.get_full_name(*args,**kw)
-        #~ except ObjectDoesNotExist:
-            #~ pass
         return self.name
     full_name = property(get_full_name)
 
@@ -354,13 +344,13 @@ class PartnersByCountry(Partners):
     order_by = "city street street_no".split()
 
 
-class PersonMixin(mixins.Human):
+class Person(mixins.Human, Partner):
 
-    """
-    Can be used also for Persons that are no Partners
-    """
     class Meta:
-        abstract = True
+        abstract = dd.is_abstract_model('contacts.Person')
+        verbose_name = _("Person")
+        verbose_name_plural = _("Persons")
+        ordering = ['last_name', 'first_name']
 
     title = models.CharField(
         max_length=200, blank=True,
@@ -368,15 +358,6 @@ class PersonMixin(mixins.Human):
         help_text=_(
             "Text to print before allocation and name as part "
             "of the first address line."))
-
-
-class Person(PersonMixin, Partner):
-
-    class Meta:
-        abstract = settings.SITE.is_abstract_model('contacts.Person')
-        verbose_name = _("Person")
-        verbose_name_plural = _("Persons")
-        ordering = ['last_name', 'first_name']
 
     def address_person_lines(self, *args, **kw):
         "Deserves more documentation."
@@ -444,8 +425,7 @@ class Persons(Partners):
 class Company(Partner):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('contacts.Company')
-        #~ abstract = True
+        abstract = dd.is_abstract_model('contacts.Company')
         app_label = 'contacts'
         verbose_name = _("Organization")
         verbose_name_plural = _("Organizations")

@@ -46,12 +46,8 @@ def customize_contacts():
 
 customize_contacts()
 
-#~ from lino.modlib.contacts import models as contacts
-#~ from lino.modlib.notes import models as notes
 contacts = dd.resolve_app('contacts')
 households = dd.resolve_app('households')
-
-#~ class Person(contacts.PersonMixin,contacts.Partner,contacts.Born,mixins.Printable):
 
 
 class Person(contacts.Person, mixins.Born, mixins.Printable, mixins.CreatedModified):

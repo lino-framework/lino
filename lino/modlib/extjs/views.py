@@ -454,23 +454,14 @@ class Restful(View):
         return json_response(ar.response)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
-        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ a = rpt.default_action
-        #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
         ar.set_selected_pks(pk)
         return delete_element(ar, ar.selected_rows[0])
 
     def get(self, request, app_label=None, actor=None, pk=None):
-        #~ ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
-        #~ a = rpt.default_action
         assert pk is None, 20120814
-        #~ if pk is None:
-            #~ elem = None
-        #~ else:
-            #~ elem = rpt.get_row_by_pk(pk)
         ar = rpt.request(request=request)
         rh = ar.ah
         rows = [
@@ -487,7 +478,6 @@ class Restful(View):
         elem = ar.selected_rows[0]
         rh = ar.ah
 
-        # raw_post_data before Django 1.4
         data = http.QueryDict(request.body).get('rows')
         data = json.loads(data)
         a = rpt.get_url_action(rpt.default_list_action_name)
@@ -573,27 +563,30 @@ class ApiElement(View):
         return settings.SITE.ui.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):
-        ar = action_request(app_label, actor, request, request.POST, True)
+        ar = action_request(
+            app_label, actor, request, request.POST, True,
+            renderer=settings.SITE.ui.extjs_renderer)
         if pk == '-99998':
             elem = ar.create_instance()
             ar.selected_rows = [elem]
         else:
             ar.set_selected_pks(pk)
-        ar.renderer = settings.SITE.ui.extjs_renderer
         return settings.SITE.ui.run_action(ar)
 
     def put(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
-        ar = action_request(app_label, actor, request, data, False)
+        ar = action_request(
+            app_label, actor, request, data, False,
+            renderer=settings.SITE.ui.extjs_renderer)
         ar.set_selected_pks(pk)
-        ar.renderer = settings.SITE.ui.extjs_renderer
         return settings.SITE.ui.run_action(ar)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)
-        ar = action_request(app_label, actor, request, data, False)
+        ar = action_request(
+            app_label, actor, request, data, False,
+            renderer=settings.SITE.ui.extjs_renderer)
         ar.set_selected_pks(pk)
-        ar.renderer = settings.SITE.ui.extjs_renderer
         return settings.SITE.ui.run_action(ar)
         
     def old_delete(self, request, app_label=None, actor=None, pk=None):

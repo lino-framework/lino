@@ -711,6 +711,8 @@ class Actor(actions.Parametrizable):
             if not cls.hide_top_toolbar:
                 cls.delete_action = cls.bind_action(actions.DeleteSelected())
             cls.update_action = cls.bind_action(actions.SaveRow())
+            if cls.detail_layout:
+                cls.validate_form = cls.bind_action(actions.ValidateForm())
 
         if isinstance(cls.workflow_owner_field, basestring):
             cls.workflow_owner_field = cls.get_data_elem(

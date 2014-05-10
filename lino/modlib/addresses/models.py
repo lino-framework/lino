@@ -96,7 +96,7 @@ class Address(contacts.AddressLocation):
         editable=False, default=DataSources.manually)
     address_type = AddressTypes.field(blank=True, null=True)
     partner = dd.ForeignKey(
-        'contacts.Partner', 
+        'contacts.Partner',
         related_name='addresses_by_partner')
     remark = dd.CharField(_("Remark"), max_length=50, blank=True)
 
@@ -109,6 +109,9 @@ class Address(contacts.AddressLocation):
             "the partner's address data fields."))
 
     allow_cascaded_delete = ['partner']
+
+    def __unicode__(self):
+        return self.address_location(', ')
 
     def after_ui_save(self, ar):
         super(Address, self).after_ui_save(ar)
@@ -137,7 +140,7 @@ class Addresses(dd.Table):
         "partner address_type:10 remark:10 "
         "address_column:30 primary data_source *")
     insert_layout = """
-    country city zip_code
+    country city
     street street_no street_box
     address_type remark
     """

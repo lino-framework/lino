@@ -152,10 +152,10 @@ class Addressable(CountryRegionCity):
         yield self.get_full_name()
 
     def get_full_name(self, *args, **kw):
-        """
-        Returns a one-line string representing this Partner.
-        The default returns simply the `name` field, ignoring any parameters, 
-        but e.g. :class:`PersonMixin` overrides this.
+        """Returns a one-line string representing this Partner.  The default
+        returns simply the `name` field, ignoring any parameters, but
+        e.g. :class:`Human` overrides this.
+
         """
         raise NotImplementedError()
         #~ return self.name
