@@ -10,10 +10,6 @@ todo
 
 - IBAN numbers don't seem to get validated.
 
-- The Insert window of an Upload has a layout problem.  I guess that
-  the `Lino.FileUploadField` doesn't collaborate well with the auto
-  height.
-
 - Inserting in UploadsByClient sets the `owner` but not the `client`.
 
 - Write a tested document for the summary panel of UploadsByController
@@ -118,8 +114,13 @@ Done
 
 - Siehe Änderungen Version 1.1.11 bzw. 1.1.12 in :ref:`welfare.changes`.
 
-- stay_in_grid : Manuell Adresse erstellen: nicht anschließend das
-  Detail-Fenster anzeigen.
+- The :term:`insert window` of an Upload has a layout problem.  I
+  guess that the `Lino.FileUploadField` doesn't collaborate well with
+  the auto height. This was worked around by experimenting with a
+  layout that works.
+
+- :attr:`dd.Table.stay_in_grid` : Manuell Adresse erstellen: nicht
+  anschließend das Detail-Fenster anzeigen.
 
 - sepa.Account.managed : übersetzen mit "Verwaltet". 
   Und Hilfetext "Dieses Bankkonto wird durch das ÖSHZ verwaltet."

@@ -59,7 +59,7 @@ class QuickTest(RemoteAuthTestCase):
         Tests some basic funtionality.
         """
         #~ self.assertEqual(settings.MIDDLEWARE_CLASSES,1)
-        self.assertEqual(1+1, 1)
+        self.assertEqual(1+1, 2)
 
         ee = create_and_get('countries.Country',
                             isocode='EE', **babelkw('name',
@@ -92,17 +92,15 @@ class QuickTest(RemoteAuthTestCase):
 
         settings.SITE.uppercase_last_name = True
 
-        """
-        If the following tests raise a
-        "DoesNotExist: Company matching query does not exist"
-        then this may come because Site._site_config has been 
-        filled before the database switched from the real db to test db.
-        and not properly reset.
+        """If the following tests raise a "DoesNotExist: Company matching
+        query does not exist" then this may come because
+        Site._site_config has been filled before the database switched
+        from the real db to test db.  and not properly reset.
+
         """
 
         if settings.SITE.get_language_info('en'):
             with translation.override('en'):
-                #~ dbutils.set_language('en')
                 self.assertEquals(luc.address, u'''\
 Mr Luc SAFFRE
 Uus 1
@@ -238,9 +236,10 @@ Estland''')
 
         data['next_partner_id'] = 12345
         #~ pprint(data)
-        response = self.client.put(url, data,
-                                   #~ content_type="application/x-www-form-urlencoded; charset=UTF-8",
-                                   REMOTE_USER='root')
+        response = self.client.put(
+            url, data,
+            #~ content_type="application/x-www-form-urlencoded; charset=UTF-8",
+            REMOTE_USER='root')
 
         result = self.check_json_result(
             response, 'message rows success data_record')
@@ -248,8 +247,17 @@ Estland''')
 
         john = create_and_get(Person, first_name='John', last_name='Smith')
         # fails: self.assertEqual(john.pk,12345)
-        """
-        I no longer understand how to call test.Client.put() with normal form data...
-        Furthermore this seems to change between 1.4 and 1.5, so I'll wait until all 
-        my users have moved to 1.5.
-        """
+
+    def test02(self):
+        # This case demonstratest that ordering does not ignore case, at
+        # least in sqlite. we would prefer to have `['adams', 'Zybulka']`,
+        # but we get `['Zybulka', 'adams']`.
+
+        contacts = dd.modules.contacts
+        contacts.Partner(name="Zybulka").save()
+        contacts.Partner(name="adams").save()
+        ar = dd.login().spawn(contacts.Partners)
+        l = [p.name for p in ar]
+        expected = ['Zybulka', 'adams']
+        self.assertEqual(l, expected)
+

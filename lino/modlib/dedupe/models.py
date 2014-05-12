@@ -12,10 +12,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Overrides the :attr:`submit_insert
-<lino.core.model.Model.submit_insert>` action of `contacts.Person`
-with :class:`CheckedSubmitInsert`, a specialized variant of the
-standard :class:`SubmitInsert <lino.core.actions.SubmitInsert>` that
+"""Overrides the :attr:`submit_insert <dd.Model.submit_insert>` action
+of `contacts.Person` with :class:`CheckedSubmitInsert`, a customized
+variant of the standard :class:`SubmitInsert <dd.SubmitInsert>` that
 checks for duplicate persons and asks a user confirmation when
 necessary.
 
@@ -121,6 +120,8 @@ class CheckedSubmitInsert(SubmitInsert):
 
         def ok(ar2):
             self.save_new_instance(ar2, obj)
+            ar2.set_response(close_window=True)
+            logger.info("20140512 CheckedSubmitInsert")
 
         qs = SimilarPersons.find_similar_instances(obj)
         if qs.count() > 0:

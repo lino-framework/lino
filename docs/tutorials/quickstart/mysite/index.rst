@@ -7,24 +7,15 @@ Getting started
 Installation
 ------------
 
-Note that Lino doesn't yet run under Python3, you need Python 2.7 or 2.6.  
-
-The easiest way is to simply type::
+The easiest way to install Lino is::
 
   pip install lino
 
-If this works, then you can skip to the next section.
+Note that Lino doesn't yet run under Python 3, you need Python 2.7 or
+2.6.
 
-It may take some time because Lino uses a lot of other Python packages 
-which pip must possibly download.
-
-If you didn't yet have `pip <http://www.pip-installer.org/en/latest/>`_, 
-run `sudo aptitude install python-pip`.
-If you cannot or don't want to perform system-wide installs, 
-use `virtualenv <https://pypi.python.org/pypi/virtualenv>`_.
-
-Another possibility is to install a development version of Lino 
-and its related projects, as described in :ref:`lino.dev.install`.
+But the recommended way is to use a development version, as described
+in :ref:`lino.dev.install`.
 
   
 Start your project

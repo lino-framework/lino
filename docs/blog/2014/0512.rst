@@ -1,0 +1,92 @@
+====================
+Monday, May 12, 2014
+====================
+
+Creating a Client
+-----------------
+
+Discovered and fixed a bug caused by recent changes: Confirming the
+:term:`insert window` on Clients seemed to fail.  In fact it was just
+the :class:`ml.dedupe.CheckedSubmitInsert` action who failed to call
+:meth:`rt.ActionRequest.set_response` with `close_window=True`.
+
+
+Cannot `order_by` case-insensitive
+----------------------------------
+
+Discovered a subtle but disturbing problem:
+:class:`ml.contacts.Persons` does not ignore case when sorting
+alphabetically by name.  It is funny that no Lino user has ever
+complained about that.  But understandable: as long as users are
+disciplinated, they will always write a capital first letter for the
+name.
+
+And yes, some other Django users obviously have had this problem
+before me, since the official documentation is clear:
+
+  There’s no way to specify whether ordering should be case
+  sensitive. With respect to case-sensitivity, Django will order results
+  however your database backend normally orders them.
+
+  (https://docs.djangoproject.com/en/dev/ref/models/querysets/#order-by)
+
+The best way to work around this is probably an invisible field
+"sort_name" which contains an all-uppercase version of the name. But
+see next section which explains why we leave this problem untouched
+for the moment.
+
+
+Is MTI evil?
+------------
+
+It is a bit sad then, that the `name` field must remain in Partner but
+is not used for Persons. To be meditated. Remeber that the "Partner"
+is not abstract because (IMHO that's an important feature) we have
+many fields that can point to "some kind of partner", that is, to
+"either a company, or a person, or a client". Multi-table inheritance
+again. And Dan Greenfield wrote that it's evil. And I didn't believe
+him. And maybe I should convert.
+
+What would change in :ref:`welfare` if I'd replace the current MTI
+structure for Partner (Person, Company, JobProvider, CourseProvider,
+Client) into a structure where there is a Partner model with only 3
+fields:
+
+- partner_type
+- object_id
+- display_name
+
+PartnerTypes would then be a ChoiceList.  This structure is similar to
+what we have in :mod:`ml.journals` and :mod:`ml.ledger`.  For the
+end-users this would be almost invisible. 
+
+- There would be no (simple) table of all partners, sortable by
+  something else than the name or the id. For example in the detail
+  window of a city we could offer a table with all Clients in that
+  city, another table with all companies in that city, but not one
+  single table with all partners in that city.
+
+- The "is a person" and "is a company" checkboxes on PartnerDetail
+  would go away.
+
+A sub-question is: Should `Client` continue to inherit from `Person`?
+Should also the "is a client" checkbox on PersonDetail go away?
+Certain fields like "phone" and "birth_date" exist in `Person` and in
+`Client`. Without MTI we cannot handle this transparently.
+
+Let's answer No to that sub-question. So we would have three Partner
+types: "Organisation", "Person" and "Household". 
+Clients are not a partner type but a special Person
+JobProviders are not a partner type but a special Company.
+
+In that case we still would need something new: some automatism for
+creating a "partner account" per Person and per Client. Indee: not
+every Person requires a partner account (for example the minor
+children of a client). A "partner account" is required as soon as the
+user wants to write a postal address.
+
+This idea is worth a case study when we have more time. For now we
+prefer to concentrate on more urgent issues in 
+:doc:`/tickets/93`.
+
+

@@ -936,9 +936,7 @@ class ValidateForm(Action):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.create_instance_from_request()
-        logger.info("20140509 a %s", obj2unicode(elem))
         ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
-        logger.info("20140509 b %s", obj2unicode(elem))
         elem.full_clean()
         ar.success()
         # ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
@@ -984,8 +982,6 @@ class CreateRow(Action):
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
-        # ar.info("20140504 SubmitInsert %s %s",
-        #         ar.edit_mode, ar.requesting_panel)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `pre_ui_create` comes *after* save()
@@ -1024,7 +1020,6 @@ class SubmitInsert(CreateRow):
         return isinstance(caller, InsertRow)
 
     def run_from_ui(self, ar, **kw):
-        # logger.info("20140423 SubmitInsert")
         elem = ar.create_instance_from_request()
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)

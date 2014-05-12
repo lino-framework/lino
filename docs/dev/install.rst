@@ -6,6 +6,7 @@ Installing Lino (development version)
 
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
+.. _fabric: http://www.fabfile.org/
 
 This document describes how you should install Lino if you want
 to use Lino's newest features even before they get officially 
@@ -18,10 +19,16 @@ Preliminaries
 -------------
 
 - We assume you have pip_  installed.
-- We recommend to use virtualenv_ and to activate a new environment.
+- We recommend to install fabric_, a command-line tool systems to
+  streamline administration tasks. Simply type ``pip install fabric``
+  to install it.
+
 - If you had previously installed Lino using `pip install lino` as described in 
   :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
   `pip uninstall lino`.
+
+- We also recommend to use virtualenv_ and to activate a new environment.
+
 
 Get the sources
 ---------------
@@ -67,7 +74,7 @@ Commands::
 
 Notes:
 
-- The ``-e`` comamnd-line switch for `pip` causes it to use the
+- The ``-e`` command-line switch for `pip` causes it to use the
   "development" mode.  The first argument after ``-e`` is not a
   *project name* but a *directory*.  Development mode means that these
   modules run "directly from source".  `pip` does not *copy* the
@@ -85,6 +92,8 @@ Configure your environment
 --------------------------
 
 Some commands you might want to run now.
+
+
 
 Run Lino's test suite
 ---------------------
@@ -107,9 +116,10 @@ run ``git pull`` for each project::
 
   $ cd ~/repositories
   $ cd atelier ; git pull ; cd ..
-  $ cd site ; git pull ; cd ..
+  $ cd site ; git pull  ; cd ..
   $ cd north ; git pull ; cd ..
   $ cd lino ; git pull ; cd ..
   $ cd cosi ; git pull ; cd ..
   
 
+Continue here: :ref:`lino.tutorial.quickstart`
