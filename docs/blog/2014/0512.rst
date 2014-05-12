@@ -90,3 +90,34 @@ prefer to concentrate on more urgent issues in
 :doc:`/tickets/93`.
 
 
+Weiter nach Baustellenbesichtigung
+-----------------------------------
+
+:doc:`/tickets/93`
+
+
+The default color of a Calendar is now dynamically computed (maximum
+of existing colors + 1).
+
+- Kalenderfarben sind jetzt nicht mehr für alle gleich nach Migration. 
+
+- `jobs.StudiesByPerson` : 
+  - es fehlten einige Kolonnen
+  - Bezeichnung "Schule und Studien" ersetzt durch "Ausbildung und Studien"
+  - Auswahlliste Ausbildungsarten sind jetzt wieder alfabetisch sortiert.
+
+- Die VSEs, Stellenanfragen und Art-60§7-Konventionen sind jetzt in
+  einem einzigen Reiter "Verträge".
+
+- Button links um Beziehungen erstellen zu können.
+
+- Neue Haushaltsrollen "Kind des Partners" und "Kind des
+  Vorstands". "Kind" bedeutet "Kind beider".
+
+- Wenn meinen einen haushalt erstellt, werden jetzt die Kinder aus
+  "Beziehungen" automatisch eingetragen.
+
+- Wenn man einen Haushalt löscht, werden jetzt auch automatisch alle
+  Mitgliedschaften gelöscht.
+
+- Added new method `meth:`dd.Model.after_ui_create`.

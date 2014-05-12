@@ -986,6 +986,7 @@ class CreateRow(Action):
         elem.save(force_insert=True)
         # yes, `pre_ui_create` comes *after* save()
         pre_ui_create.send(elem, request=ar.request)
+        elem.after_ui_create(ar)
         elem.after_ui_save(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))
         if ar.actor.handle_uploaded_files is not None:

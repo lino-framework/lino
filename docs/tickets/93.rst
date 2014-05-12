@@ -12,20 +12,12 @@ todo
 
 - Inserting in UploadsByClient sets the `owner` but not the `client`.
 
-- Write a tested document for the summary panel of UploadsByController
-
 - Summary panels don't get refreshed, e.g. when I add a new upload
   then I must click the Refresh button in order to have the summary
   panel updated.
 
 - NoteDetail has an UploadsyController which does not work (I guess
   because `_upload_regime` is None).
-
-- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
-  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
-  die Lino vorgeschlagen hätte". Ich könnte hier mit Zeilenfarben
-  arbeiten, aber dann überschneidet sich das mit der Zeilenfarbe pro
-  Status.
 
 - Collect-Modus des eidreader einschalten.
 
@@ -38,6 +30,24 @@ todo
   TIM. Am einfachsten ist es, die Daten schon dort zu validieren. 
 
 - :ref:`/tickets/104`
+
+
+Later
+-----
+
+- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
+  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
+  die Lino vorgeschlagen hätte". Ich könnte hier mit Zeilenfarben
+  arbeiten, aber dann überschneidet sich das mit der Zeilenfarbe pro
+  Status.
+
+- Write a tested document for the summary panel of UploadsByController
+
+- Informationen aus Tx25 in die Datenbank reinholen bzw. an nützlichen
+  Stellen anzeigen.
+
+- When a :term:`detail window` has more tabs than the window can hold,
+  then we need something to scroll on these.
 
 
 feedback

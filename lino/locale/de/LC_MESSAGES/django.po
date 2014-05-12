@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-12 15:04+0300\n"
-"PO-Revision-Date: 2014-05-12 15:05+0300\n"
+"POT-Creation-Date: 2014-05-12 17:59+0300\n"
+"PO-Revision-Date: 2014-05-12 18:38+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -275,7 +275,7 @@ msgstr "Kurzbeschreibung"
 
 #: lino/core/actions.py:1078 lino/core/tables.py:1008
 #: lino/modlib/cal/mixins.py:136 lino/modlib/cal/mixins.py:542
-#: lino/modlib/cal/models_calendar.py:49 lino/modlib/cal/models_event.py:84
+#: lino/modlib/cal/models_calendar.py:53 lino/modlib/cal/models_event.py:84
 #: lino/modlib/cal/models_event.py:205 lino/modlib/courses/models.py:135
 #: lino/modlib/importfilters/models.py:118 lino/modlib/ledger/models.py:1004
 #: lino/modlib/ledger/models.py:1186 lino/modlib/orders/models.py:251
@@ -308,9 +308,10 @@ msgid ""
 "You are about to delete %(num)d %(type)s:\n"
 "%(targets)s"
 msgstr ""
+"%(num)d %(type)s: werden gelöscht!\n"
+"%(targets)s"
 
 #: lino/core/actions.py:1220
-#, fuzzy
 msgid "Are you sure ?"
 msgstr "Sind Sie sicher?"
 
@@ -650,7 +651,7 @@ msgstr "Zeile Nr. %s"
 msgid "Move"
 msgstr ""
 
-#: lino/mixins/__init__.py:593 lino/modlib/humanlinks/models.py:114
+#: lino/mixins/__init__.py:593 lino/modlib/humanlinks/models.py:118
 #: lino/modlib/tickets/models.py:128
 msgid "Parent"
 msgstr "Vater/Mutter"
@@ -832,7 +833,7 @@ msgid "Value"
 msgstr "Wert"
 
 #: lino/modlib/about/models.py:237 lino/modlib/cal/models.py:102
-#: lino/modlib/humanlinks/models.py:122 lino/modlib/humanlinks/models.py:127
+#: lino/modlib/humanlinks/models.py:126 lino/modlib/humanlinks/models.py:131
 msgid "Type"
 msgstr "Art"
 
@@ -971,55 +972,48 @@ msgstr "Kontenart"
 
 #: lino/modlib/addresses/__init__.py:25 lino/modlib/addresses/models.py:93
 #: lino/modlib/addresses/models.py:161
-#, fuzzy
 msgid "Addresses"
-msgstr "Adresse"
+msgstr "Adressen"
 
 #: lino/modlib/addresses/models.py:40
-#, fuzzy
 msgid "Address type"
-msgstr "Verwandschaftsart"
+msgstr "Adressenart"
 
 #: lino/modlib/addresses/models.py:41
-#, fuzzy
 msgid "Address types"
-msgstr "Verwandschaftsarten"
+msgstr "Adressenarten"
 
 #: lino/modlib/addresses/models.py:44
-#, fuzzy
 msgid "Official address"
-msgstr "Fakturationsadresse"
+msgstr "Offizielle Adresse"
 
 #: lino/modlib/addresses/models.py:45
-#, fuzzy
 msgid "Unverified address"
-msgstr "Fakturationsadresse"
+msgstr "Ungeprüfte Adresse"
 
 #: lino/modlib/addresses/models.py:46
 msgid "Declared address"
 msgstr "Deklarierte Addresse"
 
 #: lino/modlib/addresses/models.py:47
-#, fuzzy
 msgid "Reference address"
-msgstr "Referenz"
+msgstr "Referenzadresse"
 
 #: lino/modlib/addresses/models.py:51
 msgid "Data source"
-msgstr ""
+msgstr "Datenquelle"
 
 #: lino/modlib/addresses/models.py:52
 msgid "Data sources"
-msgstr ""
+msgstr "Datenquellen"
 
 #: lino/modlib/addresses/models.py:55
 msgid "Manually entered"
-msgstr ""
+msgstr "Manuell eingegeben"
 
 #: lino/modlib/addresses/models.py:56
-#, fuzzy
 msgid "Read from eID"
-msgstr "gültig von"
+msgstr "Eingelesen von eID-Karte"
 
 #: lino/modlib/addresses/models.py:92 lino/modlib/contacts/models.py:182
 #: lino/modlib/contacts/models.py:293 lino/modlib/outbox/models.py:235
@@ -1030,9 +1024,8 @@ msgstr "Adresse"
 
 #: lino/modlib/addresses/models.py:104 lino/modlib/attestations/models.py:75
 #: lino/modlib/sepa/models.py:74
-#, fuzzy
 msgid "Primary"
-msgstr "Freitag"
+msgstr "Primär"
 
 #: lino/modlib/addresses/models.py:106
 msgid ""
@@ -1446,7 +1439,7 @@ msgstr "Inhalt"
 msgid "~Blog"
 msgstr ""
 
-#: lino/modlib/cal/__init__.py:55 lino/modlib/cal/models_calendar.py:46
+#: lino/modlib/cal/__init__.py:55 lino/modlib/cal/models_calendar.py:50
 #: lino/modlib/extensible/models.py:102
 msgid "Calendar"
 msgstr "Kalender"
@@ -1657,31 +1650,31 @@ msgstr "%d zugewiesene Termine"
 msgid "%d invitations are waiting for your answer."
 msgstr "%d unbeantwortete Einladungen zu Versammlungen"
 
-#: lino/modlib/cal/models_calendar.py:47
+#: lino/modlib/cal/models_calendar.py:51
 msgid "Calendars"
 msgstr "Kalenderliste"
 
-#: lino/modlib/cal/models_calendar.py:52
+#: lino/modlib/cal/models_calendar.py:56
 msgid "color"
 msgstr "Farbe"
 
-#: lino/modlib/cal/models_calendar.py:85
+#: lino/modlib/cal/models_calendar.py:89
 msgid "Subscription"
 msgstr "Abonnement"
 
-#: lino/modlib/cal/models_calendar.py:86
+#: lino/modlib/cal/models_calendar.py:90
 msgid "Subscriptions"
 msgstr "Abonnements"
 
-#: lino/modlib/cal/models_calendar.py:92
+#: lino/modlib/cal/models_calendar.py:96
 msgid "The calendar you want to subscribe to."
 msgstr ""
 
-#: lino/modlib/cal/models_calendar.py:95
+#: lino/modlib/cal/models_calendar.py:99
 msgid "hidden"
 msgstr "versteckt"
 
-#: lino/modlib/cal/models_calendar.py:96
+#: lino/modlib/cal/models_calendar.py:100
 #, fuzzy
 msgid ""
 "Whether this subscription should \"\n"
@@ -2491,8 +2484,7 @@ msgid "Address line to print below street line."
 msgstr "Adresszeile vor Straße"
 
 #: lino/modlib/contacts/models.py:195 lino/modlib/households/models.py:62
-#: lino/modlib/households/models.py:292 lino/modlib/humanlinks/models.py:86
-#: lino/modlib/humanlinks/models.py:87 lino/modlib/ledger/models.py:1316
+#: lino/modlib/households/models.py:310 lino/modlib/ledger/models.py:1316
 #: lino/modlib/partners/models.py:256
 msgid "Partner"
 msgstr "Partner"
@@ -3416,15 +3408,15 @@ msgstr ""
 
 #: lino/modlib/families/models.py:48
 msgid "Married"
-msgstr ""
+msgstr "Ehepartner"
 
 #: lino/modlib/families/models.py:51
 msgid "Married in"
-msgstr ""
+msgstr "Ehepartner in "
 
 #: lino/modlib/families/models.py:52
 msgid "Divorced"
-msgstr ""
+msgstr "Geschieden"
 
 #: lino/modlib/families/models.py:119 lino/modlib/humanlinks/models.py:66
 msgid "Father"
@@ -3519,7 +3511,7 @@ msgstr "Vorschläge"
 msgid "Financial"
 msgstr ""
 
-#: lino/modlib/households/__init__.py:8 lino/modlib/households/models.py:77
+#: lino/modlib/households/__init__.py:8 lino/modlib/households/models.py:79
 msgid "Households"
 msgstr "Haushalte"
 
@@ -3535,7 +3527,7 @@ msgstr "Haushaltsarten"
 msgid "Roles"
 msgstr "Rollen"
 
-#: lino/modlib/households/models.py:60 lino/modlib/households/models.py:290
+#: lino/modlib/households/models.py:60 lino/modlib/households/models.py:308
 msgid "Head of household"
 msgstr "Vorstand"
 
@@ -3547,7 +3539,7 @@ msgstr "Ehepartner"
 msgid "Cohabitant"
 msgstr "Mitbewohner"
 
-#: lino/modlib/households/models.py:64
+#: lino/modlib/households/models.py:64 lino/modlib/humanlinks/models.py:123
 msgid "Child"
 msgstr "Kind"
 
@@ -3555,67 +3547,78 @@ msgstr "Kind"
 msgid "Adopted child"
 msgstr "Adoptivkind"
 
-#: lino/modlib/households/models.py:66 lino/modlib/humanlinks/models.py:96
-#: lino/modlib/humanlinks/models.py:97
+#: lino/modlib/households/models.py:66
 msgid "Relative"
 msgstr "Verwandt"
 
-#: lino/modlib/households/models.py:76
+#: lino/modlib/households/models.py:67
+msgid "Child of head"
+msgstr "Kind des Vorstands"
+
+#: lino/modlib/households/models.py:68
+msgid "Child of partner"
+msgstr "Kind des Partners"
+
+#: lino/modlib/households/models.py:78
 msgid "Household"
 msgstr "Haushalt"
 
-#: lino/modlib/households/models.py:196
+#: lino/modlib/households/models.py:197
 msgid "Household Member"
 msgstr "Mitglied"
 
-#: lino/modlib/households/models.py:197 lino/modlib/households/models.py:241
+#: lino/modlib/households/models.py:198 lino/modlib/households/models.py:242
 msgid "Household Members"
 msgstr "Mitglieder"
 
-#: lino/modlib/households/models.py:208
+#: lino/modlib/households/models.py:209
 msgid "From"
 msgstr ""
 
-#: lino/modlib/households/models.py:209
+#: lino/modlib/households/models.py:210
 msgid "Until"
 msgstr ""
 
-#: lino/modlib/households/models.py:252
+#: lino/modlib/households/models.py:253
 msgid "Household composition"
 msgstr "Haushaltszusammensetzung"
 
-#: lino/modlib/households/models.py:269
+#: lino/modlib/households/models.py:272
 #, python-format
 msgid "%s is not member of any household"
 msgstr "%s ist in keinem Haushalt"
 
-#: lino/modlib/households/models.py:272
+#: lino/modlib/households/models.py:275
 #, python-format
 msgid "%s is member of multiple households"
 msgstr "%s ist in mehreren Haushalten zugleich"
 
-#: lino/modlib/households/models.py:287
+#: lino/modlib/households/models.py:294
+msgid " as "
+msgstr " als "
+
+#: lino/modlib/households/models.py:305
 msgid "Create Household"
 msgstr "Haushalt erstellen"
 
-#: lino/modlib/households/models.py:325
+#: lino/modlib/households/models.py:343
 msgid "Household has been created"
 msgstr "Haushalt wurde erstellt."
 
-#: lino/modlib/households/models.py:339
+#: lino/modlib/households/models.py:357
 msgid "Household memberships"
 msgstr "Mitgliedschaft in Haushalten"
 
-#: lino/modlib/households/models.py:358
+#: lino/modlib/households/models.py:376
 msgid " in "
 msgstr " in "
 
-#: lino/modlib/households/models.py:362 lino/modlib/humanlinks/models.py:196
+#: lino/modlib/households/models.py:380 lino/modlib/humanlinks/models.py:200
 #, python-format
 msgid "%s is"
 msgstr "%s ist"
 
-#: lino/modlib/households/models.py:380
+#: lino/modlib/households/models.py:398
 msgid "is Household"
 msgstr "ist ein Haushalt"
 
@@ -3679,25 +3682,66 @@ msgstr "Ehemann"
 msgid "Wife"
 msgstr "Ehefrau"
 
+#: lino/modlib/humanlinks/models.py:86 lino/modlib/humanlinks/models.py:87
+#, fuzzy
+msgctxt "male"
+msgid "Partner"
+msgstr "Partner"
+
+#: lino/modlib/humanlinks/models.py:86 lino/modlib/humanlinks/models.py:87
+msgctxt "female"
+msgid "Partner"
+msgstr "Partnerin"
+
 #: lino/modlib/humanlinks/models.py:91 lino/modlib/humanlinks/models.py:92
+#, fuzzy
+msgctxt "male"
 msgid "Friend"
 msgstr "Freund"
 
-#: lino/modlib/humanlinks/models.py:108
+#: lino/modlib/humanlinks/models.py:91 lino/modlib/humanlinks/models.py:92
+msgctxt "female"
+msgid "Friend"
+msgstr "Freundin"
+
+#: lino/modlib/humanlinks/models.py:96 lino/modlib/humanlinks/models.py:97
+msgctxt "male"
+msgid "Relative"
+msgstr "Verwandter"
+
+#: lino/modlib/humanlinks/models.py:96 lino/modlib/humanlinks/models.py:97
+msgctxt "female"
+msgid "Relative"
+msgstr "Verwandte"
+
+#: lino/modlib/humanlinks/models.py:112
 msgid "Personal Link"
-msgstr ""
+msgstr "Verwandtschaftsbeziehung"
 
-#: lino/modlib/humanlinks/models.py:109
+#: lino/modlib/humanlinks/models.py:113
 msgid "Personal Links"
-msgstr ""
+msgstr "Verwandtschaftsbeziehungen"
 
-#: lino/modlib/humanlinks/models.py:155
+#: lino/modlib/humanlinks/models.py:139
+#, python-format
+msgid "%(c)s is %(t)s of %(p)s"
+msgstr "%(c)s ist %(t)s von %(p)s"
+
+#: lino/modlib/humanlinks/models.py:159
 msgid "Human Links"
 msgstr "Beziehungen"
 
-#: lino/modlib/humanlinks/models.py:190
+#: lino/modlib/humanlinks/models.py:194
 msgid " of "
 msgstr " von "
+
+#: lino/modlib/humanlinks/models.py:203
+msgid "No relationships."
+msgstr "Keine Beziehungen"
+
+#: lino/modlib/humanlinks/models.py:224
+msgid "Create relationship as "
+msgstr "Beziehung erstellen als "
 
 #: lino/modlib/iban/__init__.py:26 lino/modlib/iban/models.py:31
 #: lino/modlib/sepa/models.py:45

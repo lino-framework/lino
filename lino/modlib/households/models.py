@@ -64,6 +64,8 @@ add('04', _("Cohabitant"), 'cohabitant')
 add('05', _("Child"), 'child')
 add('07', _("Adopted child"), 'adopted')
 add('06', _("Relative"), 'relative')
+add('10', _("Child of head"), 'child_of_head')
+add('11', _("Child of partner"), 'child_of_partner')
 
 
 class Household(contacts.Partner):
@@ -103,8 +105,7 @@ class Household(contacts.Partner):
         return mbr
 
     def get_full_name(self, salutation=True, **salutation_options):
-        """Overrides
-:meth:`lino.modlib.contacts.models.Partner.get_full_name`."""
+        """Overrides :meth:`ml.contacts.Partner.get_full_name`."""
         return join_words(self.prefix, self.name)
     full_name = property(get_full_name)
 
@@ -196,6 +197,8 @@ class Member(dd.Model):
         verbose_name = _("Household Member")
         verbose_name_plural = _("Household Members")
 
+    allow_cascaded_delete = 'household'
+
     role = MemberRoles.field(
         default=MemberRoles.child, blank=True, null=True)
     # role = models.ForeignKey(
@@ -254,6 +257,8 @@ class SiblingsByPerson(Members):
     master = 'contacts.Person'
     column_names = 'person role start_date end_date *'
     auto_fit_column_widths = True
+    # slave_grid_format = 'summary'
+    window_size = (100, 20)
 
     @classmethod
     def setup_request(self, ar):
@@ -279,6 +284,21 @@ class SiblingsByPerson(Members):
             return None
         kw.update(household=hh)
         return super(SiblingsByPerson, self).get_filter_kw(ar, **kw)
+
+    @classmethod
+    def unused_get_slave_summary(self, obj, ar):
+        sar = self.request(master_instance=obj)
+        elems = []
+
+        items = []
+        for m in sar.data_iterator:
+            items.append(E.li(
+                ar.obj2html(m.person), _(" as "),
+                unicode(m.role)
+                ))
+        if len(items) > 0:
+            elems.append(E.ul(*items))
+        return E.div(*elems)
 
 
 class CreateHousehold(dd.Action):
@@ -321,6 +341,8 @@ class CreateHousehold(dd.Action):
             hh.add_member(head, MemberRoles.head)
         if partner is not None:
             hh.add_member(partner, MemberRoles.partner)
+        hh.after_ui_create(ar)
+        hh.after_ui_save(ar)
         ar.success(
             _("Household has been created"),
             close_window=True, refresh_all=True)

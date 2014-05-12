@@ -37,6 +37,12 @@ from django.core.validators import MinValueValidator
 from lino import dd
 
 
+def default_color():
+    d = Calendar.objects.all().aggregate(models.Max('color'))
+    n = d['color__max'] or 0
+    return n + 1
+
+
 class Calendar(dd.BabelNamed):
 
     COLOR_CHOICES = [i + 1 for i in range(32)]
@@ -49,7 +55,7 @@ class Calendar(dd.BabelNamed):
     description = dd.RichTextField(_("Description"), blank=True, format='html')
 
     color = models.IntegerField(
-        _("color"), default=1,
+        _("color"), default=default_color,
         validators=[MinValueValidator(1), MaxValueValidator(32)]
     )
         #~ choices=COLOR_CHOICES)

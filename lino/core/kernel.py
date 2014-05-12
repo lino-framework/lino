@@ -307,6 +307,10 @@ class Kernel(object):
                 model.active_fields = frozenset(
                     dd.fields_list(model, model.active_fields))
 
+            if isinstance(model.allow_cascaded_delete, basestring):
+                model.allow_cascaded_delete = tuple(
+                    dd.fields_list(model, model.allow_cascaded_delete))
+
             if model._meta.abstract:
                 raise Exception("Tiens?")
 

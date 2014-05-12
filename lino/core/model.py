@@ -228,7 +228,7 @@ class Model(models.Model):
     def before_ui_save(self, ar):
         """
         Called after a PUT or POST on this row, and before saving the row.
-        Example in :class:`lino.modlib.cal.models.Event` to mark the 
+        Example in :class:`lino.modlib.cal.models.Event` to mark the
         event as user modified by setting a default state.
         """
         pass
@@ -255,6 +255,9 @@ class Model(models.Model):
             if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self, name))
         self.hidden_elements = self.hidden_elements | set(names)
+
+    def after_ui_create(self, ar):
+        pass
 
     def after_ui_save(self, ar):
         """
@@ -493,6 +496,7 @@ instances.
         'get_data_elem',
         'get_param_elem',
         'after_ui_save',
+        'after_ui_create',
         #~ 'update_system_note',
         'preferred_foreignkey_width',
         'before_ui_save',

@@ -34,6 +34,25 @@ The `dd.Model` class
 
     This is defined by Django.
 
+  .. method:: before_ui_save(ar)
+
+    A hook for adding customized code to be executed each time an
+    instance of this model gets updated via the user interface and
+    **before** the changes are written to the database.
+
+  .. method:: after_ui_save(ar)
+
+    Like :meth:`before_ui_save`, but 
+    **after** the changes are written to the database.
+    
+  .. method:: after_ui_create(ar)
+
+    Like :meth:`after_ui_save`, but only on a **new** instance.  
+
+    Usage example: the :class:`ml.households.Household` model in
+    :ref:`welfare` overrides this in order to call its `populate`
+    method.
+
   .. method:: FOO_changed
 
     For every field named "FOO", if the model has a method called

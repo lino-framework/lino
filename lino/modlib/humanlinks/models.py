@@ -83,23 +83,27 @@ add('05',
 
 add('07',
     'partner',
-    _("Partner"), _("Partner"),
-    _("Partner"), _("Partner"))
+    pgettext("male", "Partner"), pgettext("female", "Partner"),
+    pgettext("male", "Partner"), pgettext("female", "Partner"))
 
 add('06',
     'friend',
-    _("Friend"), _("Friend"),
-    _("Friend"), _("Friend"))
+    pgettext("male", "Friend"), pgettext("female", "Friend"),
+    pgettext("male", "Friend"), pgettext("female", "Friend"))
 
 add('80',
     'relative',
-    _("Relative"), _("Relative"),
-    _("Relative"), _("Relative"))
+    pgettext("male", "Relative"), pgettext("female", "Relative"),
+    pgettext("male", "Relative"), pgettext("female", "Relative"))
 
 add('90',
     'other',
     _("Other"), _("Other"),
     _("Other"), _("Other"))
+
+
+addable_link_types = (LinkTypes.parent, LinkTypes.adoptive,
+                      LinkTypes.relative, LinkTypes.other)
 
 
 class Link(dd.Model):
@@ -116,7 +120,7 @@ class Link(dd.Model):
     child = dd.ForeignKey(
         dd.apps.humanlinks.human_model,
         blank=True, null=True,
-        #verbose_name=_("Child"),
+        verbose_name=_("Child"),
         related_name='parents')
 
     @dd.displayfield(_("Type"))
@@ -129,21 +133,21 @@ class Link(dd.Model):
         # print('20140204 type_as_child', self.type)
         return self.type.as_child(self.child)
 
+    def __unicode__(self):
+        if self.type is None:
+            return super(Link, self).__unicode__()
+        return _("%(c)s is %(t)s of %(p)s") % dict(
+            p=self.parent, c=self.child, t=self.type.as_child(self.child))
+
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
     required = dd.required(user_level='admin')
-    # insert_layout = dd.FormLayout("""
-    # type
-    # parent
-    # child
-    # first_name last_name gender birth_date
-    # """, window_size=(40, 'auto'))
-    # detail_layout = dd.FormLayout("""
-    # parent
-    # child first_name last_name gender birth_date
-    # type:20  id:6
-    # """, window_size=(60, 'auto'))
+    detail_layout = dd.FormLayout("""
+    parent
+    child
+    type
+    """, window_size=(40, 'auto'))
 
 
 def pf(obj):
@@ -195,8 +199,29 @@ class LinksByHuman(Links):
         if len(items) > 0:
             elems += [_("%s is") % pf(obj)]
             elems.append(E.ul(*items))
-        # elems += [
-        #     E.br(), ar.instance_action_button(obj.create_household)]
+        else:
+            elems.append(_("No relationships."))
+
+        actions = []
+
+        def add_action(btn):
+            if btn is None:
+                return False
+            actions.append(btn)
+            return True
+
+        for lt in addable_link_types:
+            sar = ar.spawn(Links, known_values=dict(type=lt, parent=obj))
+            if add_action(sar.insert_button(
+                    lt.as_parent(obj), icon_name=None)):
+                actions.append('/')
+                
+            sar = ar.spawn(Links, known_values=dict(type=lt, child=obj))
+            if add_action(sar.insert_button(
+                    lt.as_child(obj), icon_name=None)):
+                actions.append(' ')
+
+        elems += [E.br(), _("Create relationship as ")] + actions
         return E.div(*elems)
 
 
