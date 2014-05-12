@@ -173,7 +173,7 @@ class LinksByHuman(Links):
         sar = self.request(master_instance=obj)
         links = []
         for lnk in sar:
-            if lnk.child == obj:
+            if lnk.child.id == obj.id:
                 i = (lnk.type.as_child(obj), lnk.parent)
             else:
                 i = (lnk.type.as_parent(obj), lnk.child)
