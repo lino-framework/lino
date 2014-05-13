@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<style>
+    @page {
+        margin: 1cm;
+        margin-top: 2.5cm;
+
+        {% block page_style %}
+            size: a4 landscape;
+        {% endblock %}
+
+        @frame header {
+            -pdf-frame-content: headerContent;
+            top: 1cm;
+            margin-left: 1cm;
+            margin-right: 1cm;
+            height: 1cm;
+        }
+    }
+
+    td {
+        margin-right: 2px;
+    }
+</style>
+<head>
+    <title></title>
+</head>
+<body>
+
+{{ as_html_table(ar) }}
+
+<div id="headerContent">
+    <table style="width: 100%">
+        <tr>
+            <td>
+                {{ settings.SITE.site_header() }}
+            </td>
+            <td style="text-align: center">
+                {{ ar.get_title() }}
+            </td>
+            <td style="text-align: right">
+                Page <pdf:pagenumber>, {{ dtos(now) }},
+                {{ settings.SITE.site_version() }}
+            </td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
