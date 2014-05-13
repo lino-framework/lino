@@ -42,6 +42,10 @@ class TableRenderer(object):
         return self.column[0].field._lino_atomizer.full_value_from_object(self.row, self.ar)
 
     @property
+    def value_as_text(self):
+        return self.column[0].format_value(self.ar, self.value)
+
+    @property
     def value_as_html(self):
         return self.column[0].value2html(self.ar, self.value)
 
@@ -56,18 +60,18 @@ class TableRenderer(object):
 
 class ExcelRenderer(TableRenderer):
     def render(self):
-        workbook = xlwt.Workbook(encoding='utf-8', style_compression=1)
+        workbook = xlwt.Workbook(encoding='utf-8')
 
         sheet = workbook.add_sheet(self.title)
 
         header_style = xlwt.easyxf("font: bold on;")
         for c, column in enumerate(self.columns):
             sheet.write(0, c, self.column_name, header_style)
-            sheet.col(c).width = 256 * self.column_width / 7
+            sheet.col(c).width = 256 * self.column_width / 7  # 256 == 1 character width
 
         for c, column in enumerate(self.columns):
             for r, row in enumerate(self.rows, start=1):
-                sheet.write(r, c, self.value)
+                sheet.write(r, c, self.value_as_text)
 
         return workbook
 
