@@ -103,6 +103,7 @@ add('90',
 
 
 addable_link_types = (LinkTypes.parent, LinkTypes.adoptive,
+                      LinkTypes.spouse,
                       LinkTypes.relative, LinkTypes.other)
 
 
@@ -136,8 +137,14 @@ class Link(dd.Model):
     def __unicode__(self):
         if self.type is None:
             return super(Link, self).__unicode__()
-        return _("%(c)s is %(t)s of %(p)s") % dict(
-            p=self.parent, c=self.child, t=self.type.as_child(self.child))
+        return _("%(child)s is %(what)s") % dict(
+            child=unicode(self.child),
+            what=self.type_of_parent_text())
+
+    def type_of_parent_text(self):
+        return _("%(type)s of %(parent)s") % dict(
+            parent=self.parent,
+            type=self.type.as_child(self.child))
 
 
 class Links(dd.Table):
@@ -238,4 +245,5 @@ __all__ = [
     'Links',
     'LinksByHuman'
     ]
+
 

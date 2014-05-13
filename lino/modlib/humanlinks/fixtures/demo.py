@@ -46,9 +46,6 @@ class InstanceGenerator(object):
         return rv
 
 
-NAME1 = "Frisch"
-
-
 def objects():
 
     Person = dd.modules.contacts.Person
@@ -58,6 +55,8 @@ def objects():
     ig = InstanceGenerator()
     ig.add_instantiator(Person, 'first_name last_name gender birth_date')
     ig.add_instantiator(Link, 'parent child type')
+
+    NAME1 = "Frisch"
 
     opa = ig.person("Hubert", NAME1, 'M', '1933-07-21')
     oma = ig.person("Gaby", "Frogemuth", 'F', '1934-08-04')

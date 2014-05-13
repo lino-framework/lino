@@ -161,6 +161,7 @@ class AddressesByPartner(Addresses):
     label = _("Addresses")
     auto_fit_column_widths = True
     stay_in_grid = True
+    window_size = (80, 20)
 
     # slave_grid_format = 'summary'
 

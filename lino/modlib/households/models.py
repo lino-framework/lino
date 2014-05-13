@@ -20,11 +20,12 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
-from lino.utils import join_words
+from lino.utils import join_words, join_elems
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
 
 contacts = dd.resolve_app('contacts')
+humanlinks = dd.resolve_app('humanlinks')
 
 config = dd.apps.households
 mnugrp = dd.apps.contacts
@@ -64,8 +65,14 @@ add('04', _("Cohabitant"), 'cohabitant')
 add('05', _("Child"), 'child')
 add('07', _("Adopted child"), 'adopted')
 add('06', _("Relative"), 'relative')
-add('10', _("Child of head"), 'child_of_head')
-add('11', _("Child of partner"), 'child_of_partner')
+# add('10', _("Child of head"), 'child_of_head')
+# add('11', _("Child of partner"), 'child_of_partner')
+
+parent_roles = (MemberRoles.head, MemberRoles.spouse,
+                MemberRoles.partner, MemberRoles.cohabitant)
+
+child_roles = (MemberRoles.child, MemberRoles.adopted)
+               # MemberRoles.child_of_head, MemberRoles.child_of_partner)
 
 
 class Household(contacts.Partner):
@@ -257,7 +264,7 @@ class SiblingsByPerson(Members):
     master = 'contacts.Person'
     column_names = 'person role start_date end_date *'
     auto_fit_column_widths = True
-    # slave_grid_format = 'summary'
+    slave_grid_format = 'summary'
     window_size = (100, 20)
 
     @classmethod
@@ -286,19 +293,71 @@ class SiblingsByPerson(Members):
         return super(SiblingsByPerson, self).get_filter_kw(ar, **kw)
 
     @classmethod
-    def unused_get_slave_summary(self, obj, ar):
+    def get_slave_summary(self, obj, ar):
+        # For every child, we want to display its relationship to
+        # every parent of this household
         sar = self.request(master_instance=obj)
-        elems = []
+        if sar.master_household is None:
+            return E.div(ar.no_data_text)
 
+        parents = [
+            m.person for m in sar
+            if (m.role in parent_roles) and (m.person is not None)]
+
+        family_name = sar.master_household.name.split('-')[0]
+        # logger.info("20140513 %s %s", family_name, obj.name)
+
+        def name_in_household(h):
+            if h.last_name == family_name:
+                return h.first_name
+            # return h.get_full_name(salutation=False)
+            return h.last_name.upper() + ' ' + h.first_name
+
+        def pf(p):
+            return ar.obj2html(p, name_in_household(p))
+
+        def fmt(m):
+            elems = [unicode(m.role), ': ']
+            if m.person:
+                elems += [pf(m.person)]
+                hl = self.find_links(ar, m.person, parents, pf)
+                if len(hl):
+                    elems += [' ('] + hl + [')']
+            else:
+                elems += [name_in_household(m)]
+            return elems
+            
         items = []
         for m in sar.data_iterator:
-            items.append(E.li(
-                ar.obj2html(m.person), _(" as "),
-                unicode(m.role)
-                ))
+            items.append(E.li(*fmt(m)))
+        elems = []
         if len(items) > 0:
+            elems = [E.p(
+                unicode(sar.master_household.type),
+                ' ',
+                E.b(family_name.upper()), ":")]
             elems.append(E.ul(*items))
         return E.div(*elems)
+
+    @classmethod
+    def find_links(self, ar, child, parents, parent_formatter):
+        types = {}  # mapping LinkType -> list of parents
+        # for p in parents:
+        if True:
+            for lnk in humanlinks.Link.objects.filter(child=child):
+                    # child=child, parent=p):
+                tt = lnk.type.as_child(lnk.child)
+                l = types.setdefault(tt, [])
+                l.append(lnk.parent)
+        elems = []
+        for tt, parents in types.items():
+            if len(elems):
+                elems.append(', ')
+            text = join_elems(
+                [parent_formatter(p) for p in parents],
+                sep=_(" and "))
+            elems += [tt, _(" of ")] + text
+        return elems
 
 
 class CreateHousehold(dd.Action):

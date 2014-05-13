@@ -2,7 +2,7 @@
 Tuesday, May 13, 2014
 =====================
 
-Uploads.
+Worked on Uploads:
 
 - Fixed: Inserting in UploadsByClient sets the `owner` but not the `client`.
 - `CreateRow` and `SubmitInsert` may not set the `rows` attribute of
@@ -24,4 +24,14 @@ Uploads.
 
 - 'AidType' object has no attribute 'get_detail_action'
 
+- Added a new test case "Paul Frisch" in :ref:`welfare.tested.integ`.
+
+
+Neue Ideen nach Baustellenbesichtigung mit Gerd. 
+
+- Klientenkontakte kommt nach Begleitung zurück (wo es bisher war)
+- Adressen nur noch als action link im info_panel
+- Reiter "Kontakte" umbenennen nach "Beziehungen". Dortselbst ein
+  neues Panel "Zusammenfassung Beziehungen der letzten Tx25"
+ 
 
