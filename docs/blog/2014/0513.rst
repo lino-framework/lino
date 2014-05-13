@@ -11,6 +11,8 @@ Uploads.
   can contain complex strings which cause decoding problems on the
   client when responding to a file upload.
 
+- The summary panel of uploads was not satisfying. Maybe now.
+
 - Overriding the `detail_layout` of `uploads.Uploads` causes subtle
   problems. I cannot simply say ``Uploads.detail_layout = "..."`` in
   :mod:`lino_welfare.modlib.uploads.models` because the
@@ -19,3 +21,7 @@ Uploads.
   startup some day: resolve layouts a bit later in a separate loop.
   Currently a visible consequence is that double-clicking on a row in
   a grid view of some subclass of Uploads shows the wrong layout.
+
+- 'AidType' object has no attribute 'get_detail_action'
+
+

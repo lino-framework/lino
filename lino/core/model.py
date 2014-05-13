@@ -492,6 +492,7 @@ instances.
 
     LINO_MODEL_ATTRIBS = (
         #~ 'as_pdf',
+        'get_detail_action',
         'get_row_permission',
         'get_data_elem',
         'get_param_elem',
