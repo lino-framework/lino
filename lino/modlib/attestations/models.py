@@ -186,9 +186,10 @@ class CreateAttestation(dd.Action):
         
         if primary_type is None or not primary_type.skip_dialog:
             # open detail window on the created attestation
-            js = ar.renderer.instance_handler(ar, a)
-            kw.update(eval_js=js)
+            # js = ar.renderer.instance_handler(ar, a)
+            # kw.update(eval_js=js)
             ar.success(**kw)
+            ar.goto_instance(a)
         else:  # print directly without dialog
             a.do_print.run_from_ui(ar, **kw)
 
@@ -247,10 +248,10 @@ class Attestation(dd.TypedPrintable,
 
     @dd.chooser()
     def attestation_type_choices(cls, owner):
+        logger.info("20140513 %s %s", owner)
         qs = AttestationType.objects.order_by('name')
         if owner is None:
             return qs.filter(content_type__isnull=True)
-        # print(20140210, owner)
         ct = ContentType.objects.get_for_model(owner.__class__)
         return qs.filter(content_type=ct)
 

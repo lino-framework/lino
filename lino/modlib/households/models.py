@@ -295,66 +295,46 @@ class SiblingsByPerson(Members):
     @classmethod
     def get_slave_summary(self, obj, ar):
         # For every child, we want to display its relationship to
-        # every parent of this household
+        # every parent of this household.
         sar = self.request(master_instance=obj)
         if sar.master_household is None:
             return E.div(ar.no_data_text)
+        # obj is the Person for which we display the household
 
-        parents = [
-            m.person for m in sar
-            if (m.role in parent_roles) and (m.person is not None)]
-
-        family_name = sar.master_household.name.split('-')[0]
-        # logger.info("20140513 %s %s", family_name, obj.name)
-
-        def name_in_household(h):
-            if h.last_name == family_name:
-                return h.first_name
-            # return h.get_full_name(salutation=False)
-            return h.last_name.upper() + ' ' + h.first_name
-
-        def pf(p):
-            return ar.obj2html(p, name_in_household(p))
-
-        def fmt(m):
+        def format_item(m):
             elems = [unicode(m.role), ': ']
             if m.person:
-                elems += [pf(m.person)]
-                hl = self.find_links(ar, m.person, parents, pf)
+                elems += [obj.format_family_member(ar, m.person)]
+                hl = self.find_links(ar, m.person, obj)
                 if len(hl):
                     elems += [' ('] + hl + [')']
             else:
-                elems += [name_in_household(m)]
+                elems += [obj.format_family_member(ar, m)]
             return elems
             
         items = []
         for m in sar.data_iterator:
-            items.append(E.li(*fmt(m)))
+            items.append(E.li(*format_item(m)))
         elems = []
         if len(items) > 0:
-            elems = [E.p(
-                unicode(sar.master_household.type),
-                ' ',
-                E.b(family_name.upper()), ":")]
+            elems = []
             elems.append(E.ul(*items))
         return E.div(*elems)
 
     @classmethod
-    def find_links(self, ar, child, parents, parent_formatter):
+    def find_links(self, ar, child, parent):
         types = {}  # mapping LinkType -> list of parents
-        # for p in parents:
-        if True:
-            for lnk in humanlinks.Link.objects.filter(child=child):
-                    # child=child, parent=p):
-                tt = lnk.type.as_child(lnk.child)
-                l = types.setdefault(tt, [])
-                l.append(lnk.parent)
+        for lnk in humanlinks.Link.objects.filter(child=child):
+                # child=child, parent=p):
+            tt = lnk.type.as_child(lnk.child)
+            l = types.setdefault(tt, [])
+            l.append(lnk.parent)
         elems = []
         for tt, parents in types.items():
             if len(elems):
                 elems.append(', ')
             text = join_elems(
-                [parent_formatter(p) for p in parents],
+                [parent.format_family_member(ar, p) for p in parents],
                 sep=_(" and "))
             elems += [tt, _(" of ")] + text
         return elems

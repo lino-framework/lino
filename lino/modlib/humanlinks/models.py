@@ -30,6 +30,8 @@ from lino.utils.xmlgen.html import E
 
 class LinkType(dd.Choice):
 
+    symmetric = False
+
     def __init__(self, value, name,
                  mptext, fptext,
                  mctext, fctext,
@@ -79,27 +81,31 @@ add('03',
 add('05',
     'spouse',
     _("Husband"), _("Wife"),
-    _("Husband"), _("Wife"))
+    _("Husband"), _("Wife"), symmetric=True)
 
 add('07',
     'partner',
     pgettext("male", "Partner"), pgettext("female", "Partner"),
-    pgettext("male", "Partner"), pgettext("female", "Partner"))
+    pgettext("male", "Partner"), pgettext("female", "Partner"),
+    symmetric=True)
 
 add('06',
     'friend',
     pgettext("male", "Friend"), pgettext("female", "Friend"),
-    pgettext("male", "Friend"), pgettext("female", "Friend"))
+    pgettext("male", "Friend"), pgettext("female", "Friend"),
+    symmetric=True)
 
 add('80',
     'relative',
     pgettext("male", "Relative"), pgettext("female", "Relative"),
-    pgettext("male", "Relative"), pgettext("female", "Relative"))
+    pgettext("male", "Relative"), pgettext("female", "Relative"),
+    symmetric=True)
 
 add('90',
     'other',
-    _("Other"), _("Other"),
-    _("Other"), _("Other"))
+    pgettext("male", "Other"), pgettext("female", "Other"),
+    pgettext("male", "Other"), pgettext("female", "Other"),
+    symmetric=True)
 
 
 addable_link_types = (LinkTypes.parent, LinkTypes.adoptive,
@@ -157,10 +163,6 @@ class Links(dd.Table):
     """, window_size=(40, 'auto'))
 
 
-def pf(obj):
-    return obj.get_full_name(nominative=True)
-
-
 class LinksByHuman(Links):
     "See :class:`ml.humanlinks.LinksByHuman`."
     label = _("Human Links")
@@ -193,18 +195,23 @@ class LinksByHuman(Links):
         def by_age(a, b):
             return cmp(b[1].birth_date.as_date(), a[1].birth_date.as_date())
 
-        links.sort(by_age)
+        try:
+            links.sort(by_age)
+        except AttributeError:
+            # 'str' object has no attribute 'as_date'
+            # possible when incomplete or empty birth_date
+            pass
 
         items = []
         for type, other in links:
             items.append(E.li(
                 unicode(type), _(" of "),
-                ar.obj2html(other, pf(other)),
+                obj.format_family_member(ar, other),
                 " (%s)" % other.age()
             ))
         elems = []
         if len(items) > 0:
-            elems += [_("%s is") % pf(obj)]
+            elems += [_("%s is") % obj.first_name]
             elems.append(E.ul(*items))
         else:
             elems.append(_("No relationships."))
@@ -221,11 +228,12 @@ class LinksByHuman(Links):
             sar = ar.spawn(Links, known_values=dict(type=lt, parent=obj))
             if add_action(sar.insert_button(
                     lt.as_parent(obj), icon_name=None)):
-                actions.append('/')
-                
-            sar = ar.spawn(Links, known_values=dict(type=lt, child=obj))
-            if add_action(sar.insert_button(
-                    lt.as_child(obj), icon_name=None)):
+                if not lt.symmetric:
+                    actions.append('/')
+                    sar = ar.spawn(
+                        Links, known_values=dict(type=lt, child=obj))
+                    add_action(sar.insert_button(
+                        lt.as_child(obj), icon_name=None))
                 actions.append(' ')
 
         elems += [E.br(), _("Create relationship as ")] + actions

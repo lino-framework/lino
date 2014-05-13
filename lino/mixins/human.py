@@ -147,6 +147,17 @@ class Human(model.Model):
         return join_words(*words)
     full_name = property(get_full_name)
 
+    def format_family_member(self, ar, other):
+        """used in `humanlinks.LinksByHuman` and in
+`households.SiblingsByPerson`.
+
+        """
+        if other.last_name == self.last_name:
+            text = other.first_name
+        else:
+            text = other.first_name + ' ' + other.last_name.upper()
+        return ar.obj2html(other, text)
+
 
 class Born(model.Model):
 

@@ -27,11 +27,21 @@ Worked on Uploads:
 - Added a new test case "Paul Frisch" in :ref:`welfare.tested.integ`.
 
 
-Neue Ideen nach Baustellenbesichtigung mit Gerd. 
+Nach Baustellenbesichtigung mit Gerd habe ich die folgenden neuen
+Ideen gemacht:
 
 - Klientenkontakte kommt nach Begleitung zurück (wo es bisher war)
 - Adressen nur noch als action link im info_panel
-- Reiter "Kontakte" umbenennen nach "Beziehungen". Dortselbst ein
-  neues Panel "Zusammenfassung Beziehungen der letzten Tx25"
+- Reiter "Kontakte" umbenennen nach "Beziehungen". 
+- Im Reiter "Beziehungen" ein neues Panel "Zusammenfassung Beziehungen
+  der letzten Tx25".
+- Eine coole Idee war auch `Human.format_family_member`
  
+Es gibt noch ein fieses Problem:
+
+Createattestation auf Client erstellt einen Auszug und zweigt ihn
+an... aber man kann die Auszugsart nicht auswählen. Weil owner ein
+GenericForeignKey ist, und Lino kriegtq das noch nicht hin als
+Parameter eines choosers.
+
 
