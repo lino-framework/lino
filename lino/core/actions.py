@@ -168,8 +168,8 @@ def install_layout(cls, k, layout_class, **options):
         setattr(cls, k, dl)
     elif not issubclass(cls, dl._datasource):
         raise Exception(
-            "Cannot reuse %r %s for %r" %
-            (dl._datasource, k, cls))
+            "Cannot reuse %s of %r for %r" %
+            (k, dl._datasource, cls))
 
 
 def register_params(cls):
@@ -989,11 +989,17 @@ class CreateRow(Action):
         elem.after_ui_create(ar)
         elem.after_ui_save(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))
-        if ar.actor.handle_uploaded_files is not None:
+
+        if ar.actor.handle_uploaded_files is None:
+            # The `rows` can contain complex strings which cause
+            # decoding problems on the client when responding to a
+            # file upload
+            ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+        else:
+            # Must set text/html for file uploads, otherwise the
+            # browser adds a <PRE></PRE> tag around the AJAX response.
             ar.set_content_type('text/html')
-            # Without this the browser adds a <PRE></PRE> tag around
-            # the AJAX response.
-        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+
         if ar.actor.stay_in_grid:
             # ar.set_response(refresh_all=True)
             return

@@ -54,13 +54,6 @@ def discover():
     actor_classes = None
 
 
-def initialize():
-
-    logger.debug("actors.initialize()")
-    for a in actors_list:
-        a.class_init()
-
-
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
     if not settings.SITE.is_installed(a.app_label):
@@ -594,8 +587,6 @@ class Actor(actions.Parametrizable):
             h.setup(ar)
         return h
 
-    # _class_init_done = False
-
     @classmethod
     def class_init(cls):
         """
@@ -609,37 +600,6 @@ class Actor(actions.Parametrizable):
         actions.install_layout(
             cls, 'insert_layout', layouts.FormLayout,
             window_size=(cls.insert_layout_width, 'auto'))
-
-        # dl = cls.__dict__.get('detail_layout', None)  # see 20130804
-        # if dl is None:  # and not cls._class_init_done:
-        #     dl = cls.detail_layout
-        # if dl is not None:
-        #     if isinstance(dl, basestring):
-        #         cls.detail_layout = layouts.FormLayout(dl, cls)
-        #     elif dl._datasource is None:
-        #         dl.set_datasource(cls)
-        #         cls.detail_layout = dl
-        #     elif not issubclass(cls, dl._datasource):
-        #         raise Exception(
-        #             "Cannot reuse %r detail_layout for %r" %
-        #             (dl._datasource, cls))
-
-        # dl = cls.__dict__.get('insert_layout', None)
-        # if dl is None:  # and not cls._class_init_done:
-        #     dl = cls.insert_layout
-        # if dl is not None:
-        #     if isinstance(dl, basestring):
-        #         cls.insert_layout = layouts.FormLayout(
-        #             dl, cls, window_size=(cls.insert_layout_width, 'auto'))
-        #     elif dl._datasource is None:
-        #         dl.set_datasource(cls)
-        #         cls.insert_layout = dl
-        #     elif not issubclass(cls, dl._datasource):
-        #         raise Exception(
-        #             "Cannot reuse %r insert_layout for %r" %
-        #             (dl._datasource, cls))
-
-        # cls._class_init_done = True
 
     @classmethod
     def get_known_values(self):
@@ -839,25 +799,12 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def set_detail_layout(self, *args, **kw):
-        """
-        Update the :attr:`detail_layout` of this actor,
-        or create a new layout if there wasn't one before.
-
-        The first argument can be either a string or a
-        :class:`FormLayout <lino.core.layouts.FormLayout>` instance.
-        If it is a string, it will replace the currently defined 'main' panel.
-        With the special case that if the current main panel is horizontal
-        (i.e. the layout has tabs) it replaces the 'general' tab.
-        """
+        "See :meth:`dd.Actor.set_detail_layout`"
         return self.set_form_layout('detail_layout', *args, **kw)
 
     @classmethod
     def set_insert_layout(self, *args, **kw):
-        """
-        Update the :attr:`insert_layout` of this actor,
-        or create a new layout if there wasn't one before.
-        Otherwise same usage as :meth:`set_detail_layout`.
-        """
+        "See :meth:`dd.Actor.set_insert_layout`"
         return self.set_form_layout('insert_layout', *args, **kw)
 
     @classmethod
@@ -866,7 +813,14 @@ class Actor(actions.Parametrizable):
             existing = getattr(self, attname)  # 20120914c
             if isinstance(dtl, basestring):
                 if existing is None:
-                    setattr(self, attname, layouts.FormLayout(dtl, self, **kw))
+                    setattr(self, attname, layouts.FormLayout(
+                        dtl, self, **kw))
+                # if existing is None or isinstance(existing, basestring):
+                #     if kw:
+                #         setattr(self, attname, layouts.FormLayout(
+                #             dtl, self, **kw))
+                #     else:
+                #         setattr(self, attname, dtl)
                     return
                 if '\n' in dtl and not '\n' in existing.main:
                     name = 'general'
@@ -880,7 +834,7 @@ class Actor(actions.Parametrizable):
                 assert isinstance(dtl, layouts.FormLayout)
                 assert dtl._datasource is None
                 # added for 20120914c but it wasn't the problem
-                if existing is not None:
+                if existing and not isinstance(existing, basestring):
                     if not isinstance(dtl, existing.__class__):
                         raise NotImplementedError(
                             "Cannot replace existing %s %r by %r" % (

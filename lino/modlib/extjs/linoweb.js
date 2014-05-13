@@ -1807,22 +1807,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
 
-    /***
-    When a SubmitInsert action returns a data_record or a
-    record_id, then that record is to be displayed in a detail
-    window.
-
-    A successful response usually has a data_record, except if
-    it is a fileupload form where some mysterious decoding
-    problems (20120209) force us to return a record_id which has
-    the same visible result but using an additional GET.
-
-    If the calling window is a detail on the same table, then it
-    should simply get updated to the new record. Otherwise open
-    a new detail window.
-
-    ***/
-
     var ns = {};  // new status
 
     if (result.close_window) {
@@ -1872,6 +1856,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
                   //             result.actor_url)
               }
           } else {
+              result.refresh_all = true;
               // console.log("20140506 case 6");
           }
         }

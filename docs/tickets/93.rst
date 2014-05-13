@@ -10,14 +10,12 @@ todo
 
 - IBAN numbers don't seem to get validated.
 
-- Inserting in UploadsByClient sets the `owner` but not the `client`.
-
 - Summary panels don't get refreshed, e.g. when I add a new upload
   then I must click the Refresh button in order to have the summary
   panel updated.
 
-- NoteDetail has an UploadsyController which does not work (I guess
-  because `_upload_regime` is None).
+- NoteDetail has an `UploadsByController` panel which does not work (I
+  guess because `_upload_regime` is None).
 
 - Collect-Modus des eidreader einschalten.
 

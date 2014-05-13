@@ -395,7 +395,10 @@ class Kernel(object):
 
         actors.discover()
 
-        actors.initialize()
+        logger.debug("actors.initialize()")
+        for a in actors.actors_list:
+            a.class_init()
+
         dbtables.discover()
         #~ choosers.discover()
         actions.discover_choosers()

@@ -121,3 +121,6 @@ of existing colors + 1).
   Mitgliedschaften gelöscht.
 
 - Added new method `meth:`dd.Model.after_ui_create`.
+
+- Ehepartner und Freunde wurden doppelt
+  importiert (von :mod:`lino_welfare.scripts.load_plp`).

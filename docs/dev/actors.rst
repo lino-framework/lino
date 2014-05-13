@@ -462,15 +462,6 @@ The ``AbstractTable`` class reference
     `html` to render plain html a HtmlBoxPanel.
     Example: :class:`links.LinksByController`
 
-  .. method:: get_slave_summary(self, obj, ar)
-
-    Return the HTML paragraph to be displayed in the
-    TableSummaryPanel when :attr:`slave_grid_format` is `summary`.
-
-    Lino internally creates a virtualfield ``slave_summary`` on each
-    table which invokes this method.
-
-
   .. attribute:: preview_limit
 
     The maximum number of rows to fetch when this is being used in
@@ -491,7 +482,6 @@ The ``AbstractTable`` class reference
     
     Test case and description  in :ref:`cosi.tested`.
     
-
   .. method:: get_data_rows(self, ar)
 
     Virtual tables *must* define this method, normal (model-based)
@@ -508,6 +498,32 @@ The ``AbstractTable`` class reference
             
     Model tables may also define such a method in case they need local
     filtering.
+
+  .. method:: set_detail_layout(self, *args, **kw)
+
+    Update the :attr:`detail_layout` of this actor, or create a new
+    layout if there wasn't one before.
+
+    The first argument can be either a string or a :class:`FormLayout
+    <dd.FormLayout>` instance.  If it is a string, it will replace the
+    currently defined 'main' panel.  With the special case that if the
+    current main panel is horizontal (i.e. the layout has tabs) it
+    replaces the 'general' tab.
+
+  .. method:: set_insert_layout(self, *args, **kw)
+
+    Update the :attr:`insert_layout` of this actor,
+    or create a new layout if there wasn't one before.
+    Otherwise same usage as :meth:`set_detail_layout`.
+
+  .. method:: get_slave_summary(self, obj, ar)
+
+    Return the HTML paragraph to be displayed in the
+    TableSummaryPanel when :attr:`slave_grid_format` is `summary`.
+
+    Lino internally creates a virtualfield ``slave_summary`` on each
+    table which invokes this method.
+
 
 The ``VirtualTable`` class reference
 ------------------------------------

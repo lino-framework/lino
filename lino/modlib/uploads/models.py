@@ -70,6 +70,13 @@ This usually is accessible via the `Configure` menu.
     """
 
 
+def filename_leaf(name):
+    i = name.rfind('/')
+    if i != -1:
+        return name[i + 1:]
+    return name
+
+
 class Upload(
         dd.Uploadable,
         dd.UserAuthored,
@@ -92,11 +99,10 @@ class Upload(
     def __unicode__(self):
         if self.description:
             s = self.description
+        elif self.file:
+            s = filename_leaf(self.file.name)
         else:
-            s = self.file.name
-            i = s.rfind('/')
-            if i != -1:
-                s = s[i + 1:]
+            s = unicode(self.id)
         if self.type:
             s = unicode(self.type) + ' ' + s
         return s
@@ -182,19 +188,20 @@ subclasses for the different `_upload_area`.
         # Upload = dd.modules.uploads.Upload
         elems = []
         types = []
+
+        def fmt(o):
+            # almost as unicode, but without the type
+            return m.description or filename_leaf(m.file.name) or unicode(m.id)
         for ut in UploadType.objects.filter(
                 upload_area=self._upload_area):
             sar = ar.spawn(
                 self, master_instance=obj,
-                known_values=dict(
-                    type_id=ut.id))
+                known_values=dict(type_id=ut.id))
             # logger.info("20140430 %s", sar.data_iterator.query)
             files = []
             for m in sar:
-                def fmt(o):
-                    return m.description or m.file.name or unicode(m.id)
                 edit = ar.obj2html(
-                    m,  fmt(m), # _("Edit"),
+                    m,  fmt(m),  # _("Edit"),
                     # icon_name='application_form',
                     title=_("Edit metadata of the uploaded file."))
                 if m.file.name:
@@ -202,11 +209,12 @@ subclasses for the different `_upload_area`.
                         settings.SITE.build_media_url(m.file.name),
                         _(" [show]"),  # fmt(m),
                         target='_blank',
+                        icon_name='../xsite/link',
                         # icon_name='page_go',
                         # style="vertical-align:-30%;",
                         title=_("Open the uploaded file in a new browser window"))
                     # logger.info("20140430 %s", E.tostring(e))
-                    files.append(E.span(show, edit))
+                    files.append(E.span(edit, ' ', show))
                 else:
                     files.append(edit)
             if True:
