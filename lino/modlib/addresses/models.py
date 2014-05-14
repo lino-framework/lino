@@ -133,6 +133,19 @@ Address.ADDRESS_FIELDS = dd.fields_list(
     'street street_no street_box addr1 addr2 zip_code city region country')
 
 
+@dd.receiver(dd.pre_ui_delete)
+def on_delete(sender=None, request=None, **kw):
+    self = sender
+    mi = self.partner
+    if self.primary and mi:
+        watcher = dd.ChangeWatcher(mi)
+        for k in self.ADDRESS_FIELDS:
+            fld = self._meta.get_field(k)
+            setattr(mi, k, fld.get_default())
+        mi.save()
+        watcher.send_update(request)
+        
+
 class Addresses(dd.Table):
     model = 'addresses.Address'
     required = dd.required(user_level='admin')

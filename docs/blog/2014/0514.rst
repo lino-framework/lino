@@ -19,3 +19,6 @@ code from :mod:`lino_welfare.modlib.pcsw` to
 :mod:`lino.modlib.contacts`.
 
 The test suite had some minor failures.
+
+Deleting a primary address now will clear the adderss fields of the
+partner.
