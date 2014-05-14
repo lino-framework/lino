@@ -266,14 +266,21 @@ but e.g. :class:`Human` overrides this.
     def overview(self, ar):
         return self.get_overview_elems(ar)
 
+    def get_name_elems(self, ar):
+        return [E.b(self.name), E.br()]
+
     def get_overview_elems(self, ar):
-        elems = [E.b(self.name), E.br()]
+        elems = self.get_name_elems(ar)
         elems += join_elems(list(self.address_location_lines()), sep=E.br)
         elems = [
             E.div(*elems,
                   style="font-size:18px;font-weigth:bold;"
                   "vertical-align:bottom;text-align:middle")]
-
+        if dd.is_installed('addresses'):
+            sar = ar.spawn('addresses.AddressesByPartner',
+                           master_instance=self)
+            btn = sar.as_button(_("Manage addresses"))
+            elems.append(E.p(btn, align="right"))
         return elems
 
 
@@ -377,22 +384,13 @@ class Person(mixins.Human, Partner):
         self.name = join_words(self.last_name, self.first_name)
         super(Person, self).full_clean(*args, **kw)
 
-    def get_overview_elems(self, ar):
+    def get_name_elems(self, ar):
         elems = [self.get_salutation(nominative=True), E.br()]
         if self.title:
             elems += [self.title, ' ']
         elems += [self.first_name, ' ',
                   E.b(self.last_name),
                   E.br()]
-        elems += join_elems(list(self.address_location_lines()), sep=E.br)
-        elems = [
-            E.div(*elems,
-                  style="font-size:18px;font-weigth:bold;"
-                  "vertical-align:bottom;text-align:middle")]
-
-        # elems.append(E.br())
-        # elems.append(self.eid_info(ar))
-        # elems = [E.div(*elems)]
         return elems
 
 
@@ -445,17 +443,11 @@ class Company(Partner):
         return join_words(self.prefix, self.name)
     full_name = property(get_full_name)
 
-    def get_overview_elems(self, ar):
+    def get_name_elems(self, ar):
         elems = []
         if self.prefix:
             elems += [self.prefix, ' ']
         elems += [E.b(self.name), E.br()]
-        elems += join_elems(list(self.address_location_lines()), sep=E.br)
-        elems = [
-            E.div(*elems,
-                  style="font-size:18px;font-weigth:bold;"
-                  "vertical-align:bottom;text-align:middle")]
-
         return elems
 
 

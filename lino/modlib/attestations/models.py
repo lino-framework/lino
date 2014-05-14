@@ -248,7 +248,7 @@ class Attestation(dd.TypedPrintable,
 
     @dd.chooser()
     def attestation_type_choices(cls, owner):
-        logger.info("20140513 %s %s", owner)
+        logger.info("20140513 %s", owner)
         qs = AttestationType.objects.order_by('name')
         if owner is None:
             return qs.filter(content_type__isnull=True)

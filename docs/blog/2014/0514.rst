@@ -1,0 +1,19 @@
+=======================
+Wednesday, May 14, 2014
+=======================
+
+Tried to solve :doc:`/tickets/97`.  A real solution would require
+changes in `store.py` and `elems.py`, take much more time than I
+currently have and would bring unstability.
+
+I finally ended up by simply extending the workaround: the `GFK_HACK`
+regular expression used by
+:class:`lino.utils.instantiator.GenericForeignKeyConverter` didn't
+work when the value had been rendered by a request with a known
+requesting panel.
+
+The "Manage addresses" button is cool, but (1) it should be next to
+the address, not after the `eid_info`. And (2) we want it for every
+site where :mod:`lino.modlib.addresses` is installed. So I moved this
+code from :mod:`lino_welfare.modlib.pcsw` to
+:mod:`lino.modlib.contacts`.

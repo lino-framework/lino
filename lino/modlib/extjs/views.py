@@ -288,9 +288,9 @@ def choices_for_field(request, actor, field):
     chooser = choosers.get_for_field(field)
     if chooser:
         qs = chooser.get_request_choices(request, actor)
-        assert isiterable(qs), \
-            "%s.%s_choices() returned %r which is not iterable." % (
-                actor.model, field.name, qs)
+        if not isiterable(qs):
+            raise Exception("%s.%s_choices() returned non-iterable %r" % (
+                actor.model, field.name, qs))
         if chooser.simple_values:
             def row2dict(obj, d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
@@ -323,7 +323,6 @@ def choices_for_field(request, actor, field):
 
     elif isinstance(field, models.ForeignKey):
         m = field.rel.to
-        #~ t = getattr(m,'_lino_choices_table',m.get_default_table())
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
         #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
@@ -334,7 +333,7 @@ def choices_for_field(request, actor, field):
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
             return d
     else:
-        raise http.Http404("No choices for %s" % fldname)
+        raise http.Http404("No choices for %s" % field)
     return (qs, row2dict)
 
 

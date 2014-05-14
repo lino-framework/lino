@@ -8,6 +8,13 @@
 todo
 -----
 
+- Button "Manage addresses" hinter der Adresse
+
+- Wenn primäre Adresse gelöscht wird, müssen Adressfelder des Partners
+  geleert werden.
+
+- CreateAttestation on Client doesn't yet work.
+
 - IBAN numbers don't seem to get validated.
 
 - Summary panels don't get refreshed, e.g. when I add a new upload

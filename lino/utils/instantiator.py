@@ -32,7 +32,7 @@ from __future__ import print_function
 
 
 import re
-GFK_HACK = re.compile(r'^<a href="javascript:Lino\.(\w+\.\w+)\.detail\.run\(null,\{ &quot;record_id&quot;: (\w+) \}\)">.*</a>$')
+GFK_HACK = re.compile(r'^<a href="javascript:Lino\.(\w+\.\w+)\.detail\.run\(.*,\{ &quot;record_id&quot;: (\w+) \}\)">.*</a>$')
 
 import logging
 logger = logging.getLogger(__name__)
