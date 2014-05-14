@@ -74,6 +74,7 @@ lino.modlib.cal.management.commands
 lino.modlib.cal.tests
 lino.modlib.cal.workflows
 lino.modlib.dedupe
+lino.modlib.export_excel
 lino.modlib.extensible
 lino.modlib.extjs
 lino.modlib.iban
@@ -97,15 +98,16 @@ lino.modlib.ledger.fixtures
 lino.modlib.lists
 lino.modlib.notes
 lino.modlib.notes.fixtures
+lino.modlib.print_pisa
 lino.modlib.plain
 lino.modlib.products
 lino.modlib.products.fixtures
 lino.modlib.projects
+lino.modlib.properties
 lino.modlib.rooms
 lino.modlib.sales
 lino.modlib.sales.fixtures
 lino.modlib.uploads
-lino.modlib.properties
 lino.modlib.users
 lino.modlib.users.fixtures
 lino.modlib.thirds

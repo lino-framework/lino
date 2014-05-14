@@ -39,7 +39,6 @@ from django.test.utils import override_settings
 from north import dbutils
 
 from lino import dd
-Person = dd.resolve_model("contacts.Person")
 from lino.utils.instantiator import Instantiator, create_and_get
 from north.dbutils import babelkw
 
@@ -47,9 +46,6 @@ from lino.modlib.contacts import models as contacts
 
 from lino import mixins
 Genders = mixins.Genders
-
-person = Instantiator(Person).build
-company = Instantiator("contacts.Company").build
 
 
 class QuickTest(RemoteAuthTestCase):
@@ -60,6 +56,10 @@ class QuickTest(RemoteAuthTestCase):
         """
         #~ self.assertEqual(settings.MIDDLEWARE_CLASSES,1)
         self.assertEqual(1+1, 2)
+
+        Person = dd.resolve_model("contacts.Person")
+        # person = Instantiator(Person).build
+        # company = Instantiator("contacts.Company").build
 
         ee = create_and_get('countries.Country',
                             isocode='EE', **babelkw('name',
@@ -141,7 +141,8 @@ Estland''')
         self.assertEqual(luc.pk, contacts.PARTNER_NUMBERS_START_AT)
 
         url = settings.SITE.build_admin_url(
-            'api', 'contacts', 'Person', '%d?query=&an=detail&fmt=json' % luc.pk)
+            'api', 'contacts', 'Person',
+            '%d?query=&an=detail&fmt=json' % luc.pk)
         #~ url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
         if settings.SITE.get_language_info('en'):
             u.language = 'en'

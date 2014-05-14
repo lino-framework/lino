@@ -17,3 +17,5 @@ the address, not after the `eid_info`. And (2) we want it for every
 site where :mod:`lino.modlib.addresses` is installed. So I moved this
 code from :mod:`lino_welfare.modlib.pcsw` to
 :mod:`lino.modlib.contacts`.
+
+The test suite had some minor failures.

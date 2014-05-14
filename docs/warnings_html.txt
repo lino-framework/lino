@@ -2,12 +2,16 @@
 Traceback (most recent call last):
   File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
     __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 109, in <module>
+  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 116, in <module>
     class Link(dd.Model):
-  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 117, in Link
+  File "/home/luc/hgwork/lino/lino/modlib/humanlinks/models.py", line 124, in Link
     dd.apps.humanlinks.human_model,
   File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
     name, ', '.join(self.keys())))
 AttributeError: AttrDict instance has no key 'humanlinks' (keys are addresses, sepa, sales, ledger, attestations, accounts, djangosite, contacts, system, extjs, households, contenttypes, postings, vat, uploads, north, users, sessions, pages, concepts, lino, iban, outbox, properties, about, countries, plain, notes, courses, products, extensible, cal, changes)
+/home/luc/hgwork/lino/docs/api/lino.modlib.extjs.rst:12: WARNING: unknown document: /about/proprietary
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
+/home/luc/hgwork/lino/docs/tickets/93.rst:37: WARNING: undefined label: /tickets/104 (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist
