@@ -9,5 +9,7 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/atelier/atelier/utils.py", line 50, in __getattr__
     name, ', '.join(self.keys())))
 AttributeError: AttrDict instance has no key 'humanlinks' (keys are addresses, sepa, sales, ledger, attestations, accounts, djangosite, contacts, system, extjs, households, contenttypes, postings, vat, uploads, north, users, sessions, pages, concepts, lino, iban, outbox, properties, about, countries, plain, notes, courses, products, extensible, cal, changes)
+/home/luc/hgwork/lino/docs/dev/ml/index.rst:8: WARNING: toctree contains reference to nonexisting document u'dev/ml/humanlinks'
+/home/luc/hgwork/lino/docs/dev/humanlinks.rst:: WARNING: document isn't included in any toctree
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

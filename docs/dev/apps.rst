@@ -50,7 +50,7 @@ that class is begin defined::
 
     class Room(dd.BabelNamed):
         class Meta:
-            abstract = settings.SITE.is_abstract_model('cal.Room')
+            abstract = dd.is_abstract_model('cal.Room')
             verbose_name = _("Room")
             verbose_name_plural = _("Rooms")
 

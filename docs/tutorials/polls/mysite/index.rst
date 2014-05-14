@@ -7,11 +7,6 @@ In this tutorial we are going to take the "Polls"
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
-The result of this tutorial is available as a public 
-live demo at http://demo1.lino-framework.org
-
-You might compare this with :ref:`north.tutorial.polls`.
-
 .. contents:: Table of Contents
  :local:
  :depth: 2
@@ -51,31 +46,32 @@ But we are now going to modify the files
 The :file:`settings.py` file
 -----------------------------
 
-Lino uses some tricks to make Django :file:`settings.py`
-files more pleasant to work with,
-especially if you maintain Lino sites for several customers.
+Lino uses some tricks to make Django :xfile:`settings.py` files more
+pleasant to work with, especially if you maintain Lino sites for
+several customers.
 
-- Change the contents of your :file:`settings.py` 
-  to the following:
+- Change the contents of your :xfile:`settings.py` to the following:
 
 .. literalinclude:: settings.py
 
 A few explanations:
 
-This instantiates your local ``SITE`` setting.
-Every Lino application requires a setting named ``SITE`` 
-which must be a :class:`lino.ui.Site` instance.
+This instantiates your local :setting:`SITE` setting.  Every Lino application
+requires a setting named :setting:`SITE` which must be a :class:`ad.Site`
+instance.
 
-The first argument of the instantiator is the built-in 
-Python variable `__file__`.
-This is how Lino knows the full path of your local settings file.
+The first argument of the instantiator is the built-in Python variable
+``__file__``.  This is how Lino knows the full path of your local
+settings file.
   
-The second argument is the `global()` namespace of your settings module.
-Lino uses this to fill "intelligent default values" to your settings.
-That's why these lines should be at the *beginning* of your file.
+The second argument (``globals()``) is the global namespace of your
+settings module.  Lino uses this to fill "intelligent default values"
+to your settings.  That's why these lines should be at the *beginning*
+of your file.
 
-All remaining positional arguments will go into the :setting:`INSTALLED_APPS` setting.
-In our example we have only one positional argument ``'polls'``.
+All remaining positional arguments will go into the
+:setting:`INSTALLED_APPS` setting.  In our example we have only one
+positional argument ``'polls'``.
 
 Lino automatically adds some more apps before and after your app
 As an application developer you don't need to worry about those 
@@ -105,10 +101,8 @@ Other Django setting for which Lino sets default values are:
   to set your own :setting:`DATABASES`, but this default value is what we 
   think the best choice for beginners.
   
-- :setting:`SER` : a file :file:`default.db` in your project directory.
-
-- :setting:`USE_L10N` and  :setting:`LANGUAGE_CODE` : see :attr:``
-
+- :setting:`USE_L10N` and :setting:`LANGUAGE_CODE` : see
+  :attr:`ad.Site.languages`
 
 
 
@@ -153,16 +147,14 @@ A few explanations while looking at that file:
   but we recommend to use `dd.Model` when there's no doubt that 
   you want Lino and not only Django.
 
-- :class:`dd.Table <lino.core.table.Table>` is used as base class 
-  for the three **Table** definitions in our application.
-  That's an important new concept in Lino, and
-  we'll talk about it in the Tables_ section.
+- :class:`dd.Table` is used as base class for the three **Table**
+  definitions in our application.  That's an important new concept in
+  Lino, and we'll talk about it in the Tables_ section.
 
-- There's one **custom action** in our application, 
-  defined as the `vote` method on the `Choice` model, 
-  using the :class:`dd.action <lino.core.actions.action>` 
-  decorator. Another important new concept in Lino, 
-  we'll talk about it in the Actions_ section.
+- There's one **custom action** in our application, defined as the
+  `vote` method on the `Choice` model, using the :meth:`dd.action`
+  decorator. Another important new concept in Lino, we'll talk about
+  it in the Actions_ section.
   
   
 The main index
@@ -387,15 +379,14 @@ A Table is the "abstract" definition of a tabular view.
 It is not only used for the Grid Window but also to implement 
 the :guilabel:`[html]` and :guilabel:`[pdf]` views.
 
-A Table definition has attributes
-like `filter` and `sort_order` 
-which you know from Django's QuerySet.
+A Table definition has attributes like `filter` and `sort_order` which
+you know from Django's QuerySet.
 
 But it also has Lino-specific attributes like 
-:attr:`column_names <lino.utils.tables.AbstractTable.column_names>`,
-:attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
+:attr:`column_names <dd.AbstractTable.column_names>`,
+:attr:`detail_layout <dd.Actor.detail_layout>` 
 or
-:attr:`parameters <lino.core.actors.Actor.parameters>`.
+:attr:`parameters <dd.Actor.parameters>`.
 
 To define Tables, you simply need to declare their classes.
 Tables never get instantiated.
@@ -409,11 +400,11 @@ There are a lot of other options for tables,
 and a consistent overview has yet to be written.
 But you can try to work through the API docs, 
 knowing that
-:class:`lino.core.table.Table` 
+:class:`dd.Table` 
 inherits from
-:class:`lino.utils.tables.AbstractTable` 
+:class:`dd.AbstractTable` 
 who inherits from
-:class:`lino.core.actors.Actor`.
+:class:`dd.Actor`.
 
 Since tables are normal Python classes 
 they can use inheritance.
@@ -425,96 +416,95 @@ a `model` attribute for `ChoicesByPoll`.
 `ChoicesByPoll` means: the table of `Choices` of a given `Poll`. 
 This given Poll is called the "master" of these Choices.
 We also say that a slave table *depends* on its master.
-Lino manages this dependency almost automatically.
-The application developer just needs to specify a 
-class attribute 
-:attr:`master_key <lino.core.table.Table.master_key>`.
-This is attribute, when set, must be a string containing 
-the name of a `ForeignKey` field which 
-must exist in the Table's model.
 
+Lino manages this dependency almost automatically.  The application
+developer just needs to specify a class attribute :attr:`master_key
+<dd.Table.master_key>`.  This is attribute, when set, must be a string
+containing the name of a `ForeignKey` field which must exist in the
+Table's model.
 
-Note that you can define more than one Table per Model.
-This is a fundamental difference from Django's concept of 
-the `ModelAdmin` class and `Model._meta` options.
+Note that you can define more than one Table per Model.  This is a
+fundamental difference from Django's concept of the `ModelAdmin` class
+and `Model._meta` options.
 
 
 Actions
 -------
 
-
-
-Lino has a class :class:`Action <lino.core.actions.Action>` 
+Lino has a class :class:`Action <dd.Action>` 
 which represents the methods who have a clickable button 
 or menu item in the user interface. 
-Each :class:`Action <lino.core.actions.Action>`
-instance holds a few important pieces of information:
+
+Each :class:`Action <dd.Action>` instance holds a few important pieces
+of information:
 
 - label : the text to place on the button or menu item
 - help_text : the text to appear as tooltip when the mouse is over that button
-- permission requirements : specify who and under which conditions this action is available (a complex subject, we'll talk about it in a later tutorial)
+- permission requirements : specify for whom and under which
+  conditions this action is available (a complex subject, we'll talk
+  about it in a later tutorial)
 - handler function : the function to execute when the action is invoked
 
 Many actions are created automatically by Lino. For example:
 
 - each table has a "default action" which is 
   to open a window which displays this table as a grid.
-  That's why (in the :meth:`setup_menu <lino.Lino.setup_menu>`
-  method of your :xfile:`settings.py`) you can say::
+  That's why (in the :meth:`setup_main_menu <dd.Site.setup_main_menu>`
+  function of your :file:`polls/models.py`) you can say::
 
-    m.add_action(self.modules.polls.Polls)
+    def setup_main_menu(site, ui, profile, main):
+        m = main.add_menu("polls", "Polls")
+        m.add_action('polls.Polls')
+        m.add_action('polls.Choices')
+
 
   The :meth:`add_action <lino.core.menus.Menu.add_action>` method of Lino's 
   :class:`lino.core.menus.Menu` is smart enough to understand that if you 
   specify a Table, you mean in fact that table's default action.
 
-- The :guilabel:`Save`, :guilabel:`Delete` and :guilabel:`New` 
-  buttons in the bottom toolbar of the Detail window have their own 
-  :class:`Action <lino.core.actions.Action>` instance.
+- The :guilabel:`Save`, :guilabel:`Delete` and :guilabel:`New` buttons
+  in the bottom toolbar of the Detail window have their own
+  :class:`Action <dd.Action>` instance.
   
 Custom actions are the actions defined by the application developer.
 Our tutorial has one of them:
 
 .. code-block:: python
-  
+
     @dd.action(help_text="Click here to vote this.")
-    def vote(self,ar):
-        def yes():
+    def vote(self, ar):
+        def yes(ar):
             self.votes += 1
             self.save()
             return ar.success(
                 "Thank you for voting %s" % self,
-                "Voted!",refresh=True)
+                "Voted!", refresh=True)
         if self.votes > 0:
-            msg = "%s has already %d votes!" % (self,self.votes)
+            msg = "%s has already %d votes!" % (self, self.votes)
             msg += "\nDo you still want to vote for it?"
-            return ar.confirm(yes,msg)
-        return yes()
-    
+            return ar.confirm(yes, msg)
+        return yes(ar)
 
-The :func:`@dd.action <lino.core.actions.action>` decorator
-can have keyword parameters to specify 
-information about the action. In practice these may be 
-:attr:`label <lino.core.actions.Action.label>`,
-:attr:`help_text <lino.core.actions.Action.help_text>` and
-:attr:`required <lino.core.actions.Action.required>`.
+The :func:`@dd.action <dd.action>` decorator can have keyword
+parameters to specify information about the action. In practice these
+may be :attr:`label <dd.Action.label>`, :attr:`help_text
+<dd.Action.help_text>` and :attr:`required <dd.Action.required>`.
 
 The action method itself should have the following signature::
 
-    def vote(self,ar,**kw):
+    def vote(self, ar, **kw):
         ...
         return ar.success(kw)
         
-Where `ar` is an :class:`ActionRequest <lino.core.actions.ActionRequest>` 
-instance that holds information about the web request and provides methods 
-like
+Where ``ar`` is an :class:`rt.ActionRequest` instance that holds
+information about the web request and provides methods like
 
-- :meth:`callback <lino.ui.base.UI.callback>` 
-  and :meth:`confirm <lino.ui.base.UI.confirm>`
+- :meth:`callback <rt.ActionRequest.callback>` 
+  and :meth:`confirm <rt.ActionRequest.confirm>`
   lets you define a dialog with the user using callbacks.
 
-- :meth:`success <lino.ui.base.UI.success>` and
-  :meth:`error <lino.ui.base.UI.error>` are possible return values
+- :meth:`success <rt.ActionRequest.success>` and
+  :meth:`error <rt.ActionRequest.error>` are possible return values
   where you can ask the client to do certain things.
 
 
@@ -525,5 +515,11 @@ Summary
 In this tutorial we followed Part 1 of the Django Tutorial, 
 then continued the Lino way and explained two important new Lino concepts: 
 Tables and Actions
+
+The result of this tutorial is available as a public 
+live demo at http://demo1.lino-framework.org
+
+You might compare this with :ref:`north.tutorial.polls`.
+
 
 

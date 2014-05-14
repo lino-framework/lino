@@ -1,9 +1,23 @@
-===============================
-The standard library ``modlib``
-===============================
+========
+Contacts
+========
 
-The :mod:`lino.modlib` modules are ready-to-use "apps" (as Django
-calls them) which may be used by your Lino applications.
+.. module:: ml.contacts
+
+The :mod:`lino.modlib.contacts` package 
+provides data definitions for "Contact management".
+
+This app is being extended by :ref:`welfare` in
+:mod:`lino_welfare.modlib.contacts` or by :ref:`faggio` in
+:mod:`lino_faggio.modlib.contacts`.
+
+.. note:: 
+
+  This is a tested document. You can test it using::
+
+    $ python setup.py test -s tests.DocsTests.test_docs
+
+
 
 .. 
   >>> import os
@@ -13,81 +27,7 @@ calls them) which may be used by your Lino applications.
   >>> dd.startup()
   >>> globals().update(dd.modules)
 
-.. contents::
 
-
-.. toctree::
-   :maxdepth: 2
-
-   humanlinks
-
-
-
-Users
-=====
-
-.. module:: ml.users
-
-Countries (Geographic places)
-=============================
-
-.. module:: ml.countries
-
-.. class:: Country
-
-.. class:: Place
-
-
-.. class:: CountryCity
-
-  .. attribute:: zip_code
-  .. attribute:: city
-
-    Pointer to :class:`Place`
-
-  .. method:: full_clean
-
-    Fills my :attr:`zip_code` from my :attr:`city`,
-
-    If my `zip_code` is not empty and differs from that of the city.
-
-
-.. class:: CountryRegionCity
-
-    Adds a `region` field to a :class:`CountryCity`.
-
-  
-
-Addresses
-=========
-
-.. module:: ml.addresses
-
-Adds multiple addresses per Partner.
-
-.. class:: Address
-
-  Inherits fields from 
-  :class:`ml.countries.CountryRegionCity` (country, region, city. zip_code)
-  and
-  :class:`ml.contacts.AddresssLocation` (street, street_no, ...)
-
-  .. attribute:: partner
-
-  
-
-
-Contacts
-========
-
-
-.. module:: ml.contacts
-
-The :mod:`lino.modlib.contacts` package 
-(or some extension of it like
-:mod:`lino_welfare.modlib.contacts` or 
-:mod:`lino_faggio.modlib.contacts`)
-provides data definitions for "Contact management":
 
 **Models**
 
@@ -219,31 +159,3 @@ provides data definitions for "Contact management":
 
 
 
-Using the modlib
-================
-
-
-Overriding `modlib` apps
-------------------------
-
-Optionally you may write your own Django application that adds new
-models or reimplements models from lino.modlib.
-
-For example if you have a Django application `myapp` and want to
-extend :class:`contacts.Person`, then in :file:`myapp/models.py` you
-write::
-
-  from lino.modlib.contacts import models as contacts
-  class Person(contacts.Person):
-
-      class Meta:
-          app_label = 'contacts'
-          
-      my_field = models.CharField(...)
-      ...
-
-The important thing is to manually specify `Meta.app_label` because
-otherwise your model would be called `myapp.Person`.
-
-
-  

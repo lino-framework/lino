@@ -8,10 +8,10 @@ pillow.
 .. toctree::
    :maxdepth: 2
 
-   settings
+   ad
    dd
    rt
    layouts
    perms
-   modlib
+   ml/index
    

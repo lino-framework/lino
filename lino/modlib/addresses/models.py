@@ -16,9 +16,9 @@ The :xfile:`models.py` module of the :mod:`lino.modlib.addresses` app.
 
 Defines the following actors:
 
-- the :class:`Address` model
-- the :class:`DataSources` choicelist
-- the the :class:`AddressTypes` choicelist
+- the :class:`ml.addresses.Address` model
+- the :class:`ml.addresses.DataSources` choicelist
+- the the :class:`ml.addresses.AddressTypes` choicelist
 
 """
 
@@ -32,6 +32,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
+from lino.utils.xmlgen.html import E
 
 contacts = dd.resolve_app('contacts')
 
@@ -57,9 +58,7 @@ add('02', _("Read from eID"), 'eid')
 
 
 class AddressOwner(dd.Model):
-    """
-    Base class for the "addressee" of any address.
-    """
+    "See :class:`ml.addresses.AddressOwner`."
     class Meta:
         abstract = True
 
@@ -85,7 +84,15 @@ class AddressOwner(dd.Model):
                 addr.save()
                 return addr
 
+    def get_overview_elems(self, ar):
+        elems = super(AddressOwner, self).get_overview_elems(ar)
+        sar = ar.spawn('addresses.AddressesByPartner',
+                       master_instance=self)
+        btn = sar.as_button(_("Manage addresses"))
+        elems.append(E.p(btn, align="right"))
+        return elems
     
+
 class Address(contacts.AddressLocation):
 
     class Meta:
@@ -104,7 +111,7 @@ class Address(contacts.AddressLocation):
         _("Primary"),
         default=False,
         help_text=_(
-            "Enabling this field will automatically disable any "
+            "Checking this field will automatically uncheck any "
             "previous primary addresses and update "
             "the partner's address data fields."))
 
@@ -134,7 +141,7 @@ Address.ADDRESS_FIELDS = dd.fields_list(
 
 
 @dd.receiver(dd.pre_ui_delete)
-def on_delete(sender=None, request=None, **kw):
+def clear_partner_on_delete(sender=None, request=None, **kw):
     self = sender
     mi = self.partner
     if self.primary and mi:
@@ -144,7 +151,7 @@ def on_delete(sender=None, request=None, **kw):
             setattr(mi, k, fld.get_default())
         mi.save()
         watcher.send_update(request)
-        
+
 
 class Addresses(dd.Table):
     model = 'addresses.Address'

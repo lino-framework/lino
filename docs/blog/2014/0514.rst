@@ -22,3 +22,24 @@ The test suite had some minor failures.
 
 Deleting a primary address now will clear the adderss fields of the
 partner.
+
+
+First session with Taavi
+------------------------
+
+Getting Lino development version to run on Windows.
+
+- The first thing he did was :ref:`lino.dev.install`.
+  Main difficulties where pip itself, pycrypto and pylibtidy. The
+  latter produced an `OSError: Could not libtidy using any of these
+  names:
+  libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,libtidy.dylib,tidy`
+  traceback.
+
+- The Lino test suite then failed because
+  :class:`atelier.utils.SubProcessParent` had ``from __future__ import
+  unicode_literals``, which caused a traceback ``TypeError:
+  environment can only contain strings`` in the Python :mod:`subprocess`
+  module.
+
+- Updated :ref:`lino.tutorial.polls`.

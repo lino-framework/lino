@@ -276,11 +276,6 @@ but e.g. :class:`Human` overrides this.
             E.div(*elems,
                   style="font-size:18px;font-weigth:bold;"
                   "vertical-align:bottom;text-align:middle")]
-        if dd.is_installed('addresses'):
-            sar = ar.spawn('addresses.AddressesByPartner',
-                           master_instance=self)
-            btn = sar.as_button(_("Manage addresses"))
-            elems.append(E.p(btn, align="right"))
         return elems
 
 

@@ -54,13 +54,13 @@ class DocsTests(LinoTestCase):
 
     def test_docs(self):
         self.run_simple_doctests("""
-        docs/dev/modlib.rst
+        docs/dev/ml/contacts.rst
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
         """)
 
     def test_settings(self):
-        self.run_simple_doctests('docs/dev/settings.rst')
+        self.run_simple_doctests('docs/dev/ad.rst')
 
     def test_de_BE(self):
         self.run_django_manage_test('docs/tutorials/de_BE')
