@@ -8,21 +8,9 @@
 todo
 -----
 
-- Button "Manage addresses" hinter der Adresse
-
-- Wenn primäre Adresse gelöscht wird, müssen Adressfelder des Partners
-  geleert werden.
-
-- CreateAttestation on Client doesn't yet work.
-
-- IBAN numbers don't seem to get validated.
-
 - Summary panels don't get refreshed, e.g. when I add a new upload
   then I must click the Refresh button in order to have the summary
   panel updated.
-
-- NoteDetail has an `UploadsByController` panel which does not work (I
-  guess because `_upload_regime` is None).
 
 - Collect-Modus des eidreader einschalten.
 
@@ -128,6 +116,19 @@ Done
 -------
 
 - Siehe Änderungen Version 1.1.11 bzw. 1.1.12 in :ref:`welfare.changes`.
+
+- Button "Manage addresses" hinter der Adresse
+
+- Wenn primäre Adresse gelöscht wird, müssen Adressfelder des Partners
+  geleert werden.
+
+- CreateAttestation on Client doesn't yet work.
+
+- IBAN numbers don't seem to get validated.
+
+- NoteDetail has an `UploadsByController` panel which does not work (I
+  guess because `_upload_regime` is None).
+
 
 - The :term:`insert window` of an Upload has a layout problem.  I
   guess that the `Lino.FileUploadField` doesn't collaborate well with

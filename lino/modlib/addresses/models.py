@@ -140,7 +140,7 @@ Address.ADDRESS_FIELDS = dd.fields_list(
     'street street_no street_box addr1 addr2 zip_code city region country')
 
 
-@dd.receiver(dd.pre_ui_delete)
+@dd.receiver(dd.pre_ui_delete, sender=Address)
 def clear_partner_on_delete(sender=None, request=None, **kw):
     self = sender
     mi = self.partner

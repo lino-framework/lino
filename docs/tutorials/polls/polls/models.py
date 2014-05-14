@@ -9,8 +9,7 @@ class Poll(dd.Model):
     question = models.CharField("Question text", max_length=200)
     hidden = models.BooleanField(
         "Hidden",
-        help_text="""\
-Whether this poll should not be shown in the main window.""",
+        help_text="Whether this poll should not be shown in the main window.",
         default=False)
     #~ pub_date = models.DateTimeField('Date published',auto_now_add=True)
     pub_date = models.DateTimeField(

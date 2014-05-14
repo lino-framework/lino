@@ -19,7 +19,6 @@ This contains the definition of the :class:`ExtRenderer` class.
 from __future__ import unicode_literals
 
 import logging
-from django.template.context import RequestContext
 
 logger = logging.getLogger(__name__)
 
@@ -27,38 +26,21 @@ import os
 import sys
 import cgi
 import time
-import datetime
 import codecs
 import jinja2
 
-
-#~ from north.babel import LANGUAGE_CHOICES
-
-from django.db import models
 from django.conf import settings
-from django.http import HttpResponse, Http404
-from django.utils import functional
 from django.utils import translation
 from django.utils.encoding import force_unicode
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
-#~ from django.utils.functional import Promise
-
-from django.template.loader import get_template, select_template
-from django.template import RequestContext
 
 from django.utils.translation import ugettext as _
-#~ from django.utils import simplejson as json
-from django.utils import translation
 
 from django.contrib.contenttypes.models import ContentType
-from django.conf.urls import patterns, url, include
-
 
 import lino
 from lino.core import constants as ext_requests
 from lino.ui import elems as ext_elems
 from lino.ui.render import HtmlRenderer
-from . import views
 
 from lino.ad import Plugin
 
@@ -84,8 +66,6 @@ if False:
 else:
     def jscompress(s):
         return s
-
-from lino.mixins import printable
 
 
 if settings.SITE.user_model:
@@ -742,7 +722,6 @@ class ExtRenderer(HtmlRenderer):
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > settings.SITE.kernel.code_mtime:
-                #~ if not user.modified or user.modified < datetime.datetime.fromtimestamp(mtime):
                 # logger.info(
                 #     "20140401 %s (%s) is up to date.",
                 #     fn, time.ctime(mtime))
@@ -1086,6 +1065,8 @@ class ExtRenderer(HtmlRenderer):
             itemId=a.action_name,
             #~ text=unicode(a.label),
         )
+        if a.key:
+            kw.update(keycode=a.key.keycode)
         if a.help_text:
             kw.update(tooltip=a.help_text)
         elif a.icon_name:

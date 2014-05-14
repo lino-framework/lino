@@ -1531,19 +1531,23 @@ Ext.override(Ext.grid.CellSelectionModel, {
                     }
                     break;
                 }
-            case e.DELETE:
-                if (!e.hasModifier()) {
-                    if (!g.editing) {
-                        e.stopEvent();
-                        Lino.delete_selected(g);
-                        return;
-                    }
-                    break;
-                }
+            // case e.DELETE:
+            //     if (!e.hasModifier()) {
+            //         if (!g.editing) {
+            //             e.stopEvent();
+            //             Lino.delete_selected(g);
+            //             return;
+            //         }
+            //         break;
+            //     }
+
             case e.ENTER:
                 e.stopEvent();
                 g.onCellDblClick(r,c);
                 break;
+
+            default:
+                g.handle_key_event(e);
                 
         }
         
@@ -1738,8 +1742,8 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
 
 Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
-    console.log('20140504 Lino.handle_action_result()',
-                'result is', result);
+    // console.log('20140504 Lino.handle_action_result()',
+    //             'result is', result);
     
     // if (panel instanceof Lino.GridPanel) {
     //     gridmode = true;
@@ -2167,9 +2171,9 @@ Lino.build_buttons = function(panel,actions) {
   if (actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
+    var keyhandlers = {};
     for (var i=0; i < actions.length; i++) { 
       var a = actions[i];
-      //~ buttons[i] = new Ext.Toolbar.Button(a);
       if (a.menu) a.menu = Lino.build_buttons(panel,a.menu).bbar;
       buttons[i] = a;
       cmenu[i] = {
@@ -2190,16 +2194,24 @@ Lino.build_buttons = function(panel,actions) {
           }
           buttons[i].handler = h;
           cmenu[i].handler = h;
+          if (a.keycode) {
+              keyhandlers[a.keycode] = h;
+          }
           //~ if (buttons[i].xtype == 'splitbutton') {
               //~ cmenu[i].menu = a.menu;
           //~ } else {
               //~ cmenu[i].handler = h;
           //~ }
       } else {
-          cmenu[i].handler = a.handler;
+          console.log("action without panel_btn_handler",a)
+          // cmenu[i].handler = a.handler;
       }
     }
-    return {bbar:buttons, cmenu:new Ext.menu.Menu(cmenu)};
+    return {
+        bbar:buttons, 
+        cmenu:new Ext.menu.Menu(cmenu),
+        keyhandlers: keyhandlers
+    };
   }
 }
 
@@ -2504,7 +2516,7 @@ if (Ext.ux.grid !== undefined) {
 Lino.FieldBoxMixin = {
   before_init : function(config,params) {
     if (params) Ext.apply(config,params);
-    var actions = Lino.build_buttons(this,config.ls_bbar_actions);
+    var actions = Lino.build_buttons(this, config.ls_bbar_actions);
     if (actions) config.bbar = actions.bbar;
   },
   //~ constructor : function(ww,config,params){
@@ -3620,38 +3632,21 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
   },
   
-  unused_is_loading : function() { 
-    if (! this.loadMask.el) return true; // not even rendered: 
-    // thanks to Marco Pegoraro http://movableapp.com/2011/09/sencha-touch-loadmask-isvisible/
-    var loading = (this.loadMask.el.select('.x-loading-msg').elements.length > 0);
-    //~ console.log('20130515 GridPanel.is_loading() returns',loading);
-    return loading;
-    //~ return this.store.getCount() > 0; 
-    //~ return (this.loadMask.el.select('.x-loading-msg').elements.length)
-    //~ return !this.viewReady; 
-    //~ return this.loadMask.isVisible(); 
-    //~ return !this.loadMask.disabled; 
-  },
-  
-  unused_config_containing_window : function(wincfg) { 
-      //~ temporarily remove save_grid_config button (see /blog(2012/1107)
-      if (wincfg.tools != undefined) 
-        wincfg.tools = [
-          //~ {handler:this.save_grid_data,
-            //~ qtip:"$_("Save Grid Data")",
-            //~ scope:this, id:"save_data"}, // 20120814
-          {handler:this.save_grid_config,
-            qtip:"{{_("Save Grid Configuration")}}",
-            scope:this, id:"save"}
-        ].concat(wincfg.tools);
-      //~ wincfg.listeners = { show: ... };
-  },
   init_containing_window : function(win) { 
     //~ console.log("20111206 install refresh");
     //~ win.on('show',this.refresh,this);
-  },
+  }
+
+  ,handle_key_event : function(e) { 
+    console.log("20140514 handle_key_event", e, this.keyhandlers);
+    var h = this.keyhandlers[e.keyCode];
+    if (h) {
+      h(this);
+      e.stopEvent();
+    }
+  }
   
-  initComponent : function(){
+  ,initComponent : function(){
     
     /* 
     Problem 20111206:
@@ -3763,13 +3758,14 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         //~ this.quick_search_field.focus(); // 20121024
       }, this
     );
-    var actions = Lino.build_buttons(this,this.ls_bbar_actions);
+    var actions = Lino.build_buttons(this, this.ls_bbar_actions);
     //~ Ext.apply(config,Lino.build_buttons(this,config.ls_bbar_actions));
     //~ config.bbar, this.cmenu = Lino.build_buttons(this,config.ls_bbar_actions);
     //~ this.cmenu = new Ext.menu.Menu({items: config.bbar});
     delete this.ls_bbar_actions
     if (actions) {
         this.cmenu = actions.cmenu;
+        this.keyhandlers = actions.keyhandlers;
     }
     
     if (!this.hide_top_toolbar) {  

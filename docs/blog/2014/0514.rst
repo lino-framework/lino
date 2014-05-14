@@ -20,7 +20,7 @@ code from :mod:`lino_welfare.modlib.pcsw` to
 
 The test suite had some minor failures.
 
-Deleting a primary address now will clear the adderss fields of the
+Deleting a primary address now will clear the address fields of the
 partner.
 
 
@@ -43,3 +43,27 @@ Getting Lino development version to run on Windows.
   module.
 
 - Updated :ref:`lino.tutorial.polls`.
+
+- :mod:`lino.modlib.humanlinks` requires :class:`ml.contacts.Person`
+  to be :class:`lino.mixins.human.Born`.  And because at some moment I
+  thought that the default :class:`ml.contacts.Person` should be
+  minimal, it was not be Born. But meanwhile I'd say that indeed most
+  contact managers have a birth date for their persons.
+
+- Taavi's first Lino application will have 3 models: 
+  Song, Concert and Performance
+
+
+Continued on  :doc:`/tickets/93`
+--------------------------------
+
+- The DELETE key failed not invoke the DeleteSelected action (after
+  converting this to a customizable action). Now it works again. And
+  Lino is now able for the first time to handle custom hotkey
+  definitions using :meth:`Lino.GridPanel.handle_key_event`.  The
+  system is not yet stable and cannot yet handle modifiers, but I am
+  glad that a beginning ist finally there.
+
+- The IBAN number of a :class:`ml.sepa.Account` was indeed not
+  validated. Simply because I forgot to call :func:`super` in its
+  :meth:`dd.Model.full_clean` method.

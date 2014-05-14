@@ -48,7 +48,7 @@ class Site(Site):
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.addresses'
-        # yield 'lino.modlib.humanlinks'  # requires Person to be Born
+        yield 'lino.modlib.humanlinks'  # requires Person to be Born
 
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.notes'

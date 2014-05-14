@@ -46,6 +46,7 @@ class IbanBicHolder(dd.Model):
     bic = BICField(_("BIC"), blank=True)
 
     def full_clean(self):
+        super(IbanBicHolder, self).full_clean()
         if self.iban and not self.bic:
             if self.iban[0].isdigit():
                 iban, bic = belgian_nban_to_iban_bic(self.iban)
@@ -56,8 +57,7 @@ class IbanBicHolder(dd.Model):
 
 
 class Account(IbanBicHolder):
-    """A bank account related to a given :class:`Partner
-<lino.modlib.contacts.models.Partner>`.
+    """A bank account related to a given :class:`ml.contacts.Partner`.
 
     """
     class Meta:

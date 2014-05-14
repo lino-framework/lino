@@ -36,9 +36,14 @@ See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project
 
 .. xfile:: __init__.py
 
-The Python language requires a file :xfile:`__init__.py` 
-in each directory that is to be considered as a package.
-:xfile:`__init__.py` are often empty (but not always).
+The Python language requires a file :xfile:`__init__.py` in each
+directory that is to be considered as a package.  Read the `Modules
+<https://docs.python.org/2/tutorial/modules.html>`_ chapter of the
+Python Tutorial for more.
+
+The :xfile:`__init__.py` files of a Django app are often empty, but
+with Lino these files can contain :class:`ad.Plugin` class
+definitions.
 
 .. xfile:: media
 

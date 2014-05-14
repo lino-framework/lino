@@ -12,7 +12,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
 
-Defines the `Store` class and its fields 
+Defines the `Store` class and its "fields" (aka atomizers).
 
 """
 

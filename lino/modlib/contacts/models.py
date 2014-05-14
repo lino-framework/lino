@@ -346,7 +346,7 @@ class PartnersByCountry(Partners):
     order_by = "city street street_no".split()
 
 
-class Person(mixins.Human, Partner):
+class Person(mixins.Human, mixins.Born, Partner):
 
     class Meta:
         abstract = dd.is_abstract_model('contacts.Person')
@@ -361,14 +361,6 @@ class Person(mixins.Human, Partner):
             "Text to print before allocation and name as part "
             "of the first address line."))
 
-    def address_person_lines(self, *args, **kw):
-        "Deserves more documentation."
-        if self.title:
-            yield self.title
-        yield self.get_full_name(*args, **kw)
-        #~ l = filter(lambda x:x,[self.first_name,self.last_name])
-        #~ yield  " ".join(l)
-
     def full_clean(self, *args, **kw):
         """Set the `name` field of this person.  This field is visible in the
         Partner's detail but not in the Person's detail and serves for
@@ -378,6 +370,14 @@ class Person(mixins.Human, Partner):
         """
         self.name = join_words(self.last_name, self.first_name)
         super(Person, self).full_clean(*args, **kw)
+
+    def address_person_lines(self, *args, **kw):
+        "Deserves more documentation."
+        if self.title:
+            yield self.title
+        yield self.get_full_name(*args, **kw)
+        #~ l = filter(lambda x:x,[self.first_name,self.last_name])
+        #~ yield  " ".join(l)
 
     def get_name_elems(self, ar):
         elems = [self.get_salutation(nominative=True), E.br()]
