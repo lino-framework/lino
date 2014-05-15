@@ -1684,47 +1684,6 @@ Lino.show_in_own_window_button = function(handler) {
   }
 }
 
-
-
-
-Lino.old_delete_selected = function(panel) {
-  //~ console.log("Lino.delete_selected",panel);
-  var recs1 = panel.get_selected();
-  var recs = [];
-  for ( var i=0; i < recs1.length; i++ ) { if (! recs1[i].phantom) recs.push(recs1[i]); }
-  if (recs.length == 0) {
-    Lino.notify("Please select at least one record.");
-    return;
-  };
-  if (recs.length == 1) {
-      if (recs[0].disable_delete) {
-        Lino.alert(recs[0].disable_delete);
-        return;
-      }
-  };
-  //~ console.log(recs);
-  Ext.MessageBox.show({
-    title: "{{_('Confirmation')}}",
-    msg: String.format("{{_('Delete {0} rows. Are you sure?')}}",String(recs.length)),
-    //~ msg: "Delete " + String(recs.length) + " rows. Are you sure?",
-    //~ buttons: Ext.MessageBox.YESNOCANCEL,
-    buttons: Ext.MessageBox.YESNO,
-    fn: function(btn) {
-      if (btn == 'yes') {
-        for ( var i=0; i < recs.length; i++ ) {
-          Lino.do_action(panel,{
-              method:'DELETE',
-              url:  '{{settings.SITE.build_admin_url("api")}}' + panel.ls_url + '/' + recs[i].id,
-              after_success: panel.after_delete.createDelegate(panel)
-          })
-        }
-        //~ caller.after_delete();
-      }
-      else Lino.notify("Dann eben nicht.");
-    }
-  });
-};
-
 Lino.action_handler = function (panel, on_success, on_confirm) {
   return function (response) {
       if (!panel) { 
@@ -1742,8 +1701,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
 
 Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
-    // console.log('20140504 Lino.handle_action_result()',
-    //             'result is', result);
+    console.log('20140504 Lino.handle_action_result()', result);
     
     // if (panel instanceof Lino.GridPanel) {
     //     gridmode = true;
@@ -1779,7 +1737,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
             //~ params: {bi: buttonId},
             success: Lino.action_handler(panel, on_success, on_confirm)
           });
-          //~ Lino.call_ajax_action(panel,'GET',)
         }
         Ext.MessageBox.show(config);
         return;
@@ -1994,12 +1951,12 @@ Lino.permalink_handler = function (ww) {
 
 Lino.ajax_error_handler = function(panel) {
   return function(response,options) {
-    console.log('Ajax failure:',response,options);
+    console.log('Ajax failure:', response, options);
     if (panel.loadMask) panel.loadMask.hide();
     if (response.responseText) {
       var lines = response.responseText.split('\n');
       if (lines.length > 10) {
-          line = lines.splice(5,lines.length-10,"(...)");
+          line = lines.splice(5, lines.length-10, "(...)");
       }
       //~ console.log(20131005, response.statusText.toCamel());
       Ext.MessageBox.alert(
@@ -2098,31 +2055,6 @@ Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
     }
 });
 
-//~ Lino.NullNumberColumn = Ext.extend(Ext.grid.NumberColumn, {
-    //~ align : 'right', 
-    //~ constructor: function(cfg){
-        //~ Ext.grid.NumberColumn.superclass.constructor.call(this, cfg);
-        //~ var t = this;
-        //~ this.renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-          //~ console.log(20130128,"NullNumberColumn.renderer",value);
-          //~ if (value === null) return '';
-          //~ return Ext.util.Format.number(value, t.format);
-      //~ };
-    //~ }
-//~ });
-
-
-
-
-//~ Lino.cell_button_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  //~ return '<input type="button" onclick="alert(value)" value=" ? ">' ;
-//~ }
-
-
-//~ Lino.default_renderer = function(value, metaData, record, rowIndex, colIndex, store) {
-  //~ if (record.phantom) return '';
-  //~ return value;
-//~ }
 
 Lino.fk_renderer = function(fkname,handlername) {
   //~ console.log('Lino.fk_renderer handler=',handler);
@@ -2266,10 +2198,6 @@ Lino.do_on_current_record = function(panel,fn,phantom_fn) {
 };
 
 
-
-
-
-
 Lino.call_ajax_action = function(
     panel, method, url, p, actionName, step, on_confirm, on_success) {
   p.{{ext_requests.URL_PARAM_ACTION_NAME}} = actionName;
@@ -2292,14 +2220,8 @@ Lino.call_ajax_action = function(
       p.{{ext_requests.URL_PARAM_SELECTED}} = rs;
   }
   
-  // p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_HREF}}';
-
   if (panel.loadMask) panel.loadMask.show(); 
-  //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
-  //~ Lino.insert_subst_user(p);
     
-  //~ if (step) p['$ext_requests.URL_PARAM_ACTION_STEP'] = step;
-  //~ if (pp) pp(p); // "parameter processor" : first used for read beid card
   Ext.Ajax.request({
     method: method
     ,url: url
@@ -2327,14 +2249,11 @@ Lino.row_action_handler = function(actionName,hm,pp) {
       
       Lino.do_on_current_record(panel,function(rec) {
           //~ console.log(panel);
-          //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
           panel.add_param_values(p, true); // 20130915
           p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_HREF';
           Lino.call_ajax_action(
               panel, hm, panel.get_record_url(rec.id), 
               p, actionName, step, fn);
-          //~ Lino.call_ajax_action(null,hm,panel.get_record_url(rec.id),p,actionName,step,fn);
-          // 20131026 tried to not forward panel to ajax call 
       });
   };
   return fn;
@@ -2358,8 +2277,6 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
 Lino.param_action_handler = function(window_action) { // 20121012
   var fn = function(panel,btn,step) {
     Lino.do_on_current_record(panel,function(rec) {
-      //~ console.log(panel);
-      //~ 20120723 Lino.call_ajax_action(panel,rec.id,actionName,step,fn);
       window_action.run(panel.getId(),{}); 
     });
   };
@@ -2376,9 +2293,7 @@ Lino.run_row_action = function(
   if (preprocessor) var p = preprocessor(); else var p = {};
   p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_HREF';
   var fn = function(panel,btn,step) {
-    //~ 20120723 Lino.call_ajax_action(panel,pk,actionName,step,fn);
-    //~ 20130726 Lino.call_ajax_action(panel,'GET',url,p,actionName,step,fn);
-    Lino.call_ajax_action(panel,meth,url,p,actionName,step,fn);
+    Lino.call_ajax_action(panel, meth, url, p, actionName, step, fn);
   }
   fn(panel,null,null);
 }
@@ -2420,18 +2335,13 @@ Lino.show_detail = function(panel, btn) {
 
 Lino.run_detail_handler = function(panel,pk) {
   var bp = panel.get_base_params();
-  //~ var bp = {};
   panel.add_param_values(bp); // 20120918
   var status = {
     record_id:pk,
     base_params:bp
-    //~ param_values: pv.$ext_requests.URL_PARAM_PARAM_VALUES
   }
   //~ console.log("20120918 Lino.show_detail",status);
   panel.ls_detail_handler.run(null,status);
-  //~ panel.loadMask.hide();
-  //~ panel.containing_window.window.hideMask();
-  //~ panel.el.unmask();
 }
 
 Lino.show_fk_detail = function(combo,detail_action,insert_action) {
@@ -2452,23 +2362,6 @@ Lino.show_insert = function(panel,btn) {
   panel.ls_insert_handler.run(panel.getId(),{record_id:-99999,base_params:bp});
 };
 
-//~ Lino.show_insert_duplicate = function(panel,btn) {
-  //~ Lino.do_on_current_record(panel,
-    //~ function(rec) {
-      //~ var newRec = {};
-      //~ Ext.apply(newRec,rec);
-      //~ newRec.id = -99999;
-      //~ panel.ls_insert_handler.run(null,{data_record:rec});
-    //~ });
-//~ };
-
-//~ Lino.update_row_handler = function(action_name) {
-  //~ return function(panel,btn) {
-    //~ Lino.notify("Sorry, " + action_name + " is not implemented.");
-  //~ }
-//~ };
-
-
 {% if settings.SITE.use_gridfilters %}
 
 if (Ext.ux.grid !== undefined) {
@@ -2484,34 +2377,6 @@ if (Ext.ux.grid !== undefined) {
 };
 
 {% endif %}
-
-//~ Lino.ButtonField = Ext.extend(Ext.form.TextField,{
-//~ Lino.ButtonField = Ext.extend(Ext.form.Field,{
-    //~ editable : false,
-    //~ constructor : function(ww,config,params){
-      //~ this.containing_window = ww;
-      //~ if (params) Ext.apply(config,params);
-      //~ Lino.ButtonField.superclass.constructor.call(this, config);
-    //~ },
-    //~ setButtons : function(buttons){
-      //~ console.log('setButtons',buttons);
-    //~ },
-    //~ onRender : function(ct, position){
-        //~ if(!this.el){
-            //~ this.panel = new Ext.Container({items:[
-              //~ {xtype:'button',text:'upload'},
-              //~ {xtype:'button',text:'show'},
-              //~ {xtype:'button',text:'edit'}
-            //~ ]});
-            //~ this.panel.ownerCt = this;
-            //~ this.el = this.panel.getEl();
-
-        //~ }
-        //~ Lino.ButtonField.superclass.onRender.call(this, ct, position);
-    //~ },
-
-  
-//~ });
 
 Lino.FieldBoxMixin = {
   before_init : function(config,params) {
@@ -2790,14 +2655,14 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     else 
         url += this.ls_url;
     url += '/' + pk;
+    // prepare possible recursive call
     var fn = function(panel, btn, step) {
       var p = {};
       self.add_field_values(p)
-      //~ Lino.call_ajax_action(panel,'GET',panel.get_record_url(rec.id),p,actionName,step,fn,on_success);
       Lino.call_ajax_action(
           panel, 'GET', url, p, actionName, step, fn, on_success);
     }
-    fn(panel,null,null);
+    fn(panel, null, null);
     
     
   }
@@ -2842,10 +2707,6 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
 });
 
-//~ Lino.add_blank = function(oa) {
-    //~ return [].concat(oa)
-    //~ return 
-    //~ }
     
 Lino.fields2array = function(fields,values) {
     //~ console.log('20130605 fields2array gonna loop on', fields,values);
@@ -3638,7 +3499,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   }
 
   ,handle_key_event : function(e) { 
-    console.log("20140514 handle_key_event", e, this.keyhandlers);
+    // console.log("20140514 handle_key_event", e, this.keyhandlers);
     var h = this.keyhandlers[e.keyCode];
     if (h) {
       h(this);
@@ -4616,22 +4477,6 @@ Lino.cell_context_menu = function(grid,row,col,e) {
 }
 
 
-//~ Lino.load_main_menu = function() {
-  //~ Ext.Ajax.request({
-    //~ waitMsg: 'Loading main menu...',
-    //~ method: 'GET',
-    //~ url: '/menu',
-    //~ success: Lino.on_load_menu,
-    //~ failure: Lino.ajax_error_handler
-  //~ });
-//~ };
-
-
-
-//~ Lino.SlavePlugin = function(caller) {
-  //~ this.caller = caller;
-//~ };
-
 Lino.chooser_handler = function(combo,name) {
   return function(cmp,newValue,oldValue) {
     //~ console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
@@ -4959,67 +4804,6 @@ Lino.Window = Ext.extend(Ext.Window,{
   }
 });
 
-
-Lino.unused_ParamWindow = Ext.extend(Lino.Window,{
-  //~ layout: "border", 
-  constructor : function (config) {
-    Lino.ParamWindow.superclass.constructor.call(this,config);
-    this.main_item = config.items; // `items` must be a single component
-    config.layout = 'border';
-    this.main_item.region = 'center';
-    config.params.region = 'north';
-    config.items = [config.params, config.items];
-    //~ delete config.params;
-  }
-});
-
-
-// 20140417 I don't remember why the following plugin is here. It
-// seems that it is not used. I rename it DefaultButtonX before
-// removing it completely...
-
-(function(){
-    var ns = Ext.ns('Ext.ux.plugins');
-
-    /**
-     * @class Ext.ux.plugins.DefaultButton
-     * @extends Object
-     *
-     * Plugin for Button that will click() the button if the user presses ENTER while
-     * a component in the button's form has focus.
-     *
-     * @author Stephen Friedrich
-     * @date 09-DEC-2009
-     * @version 0.1
-     *
-     */
-    ns.DefaultButtonX =  Ext.extend(Object, {
-        init: function(button) {
-            button.on('afterRender', setupKeyListener, button);
-        }
-    });
-
-    function setupKeyListener() {
-        var formPanel = this.findParentByType('form');
-        new Ext.KeyMap(formPanel.el, {
-            key: Ext.EventObject.ENTER,
-            shift: false,
-            alt: false,
-            fn: function(keyCode, e){
-                if(e.target.type === 'textarea' && !e.ctrlKey) {
-                    return true;
-                }
-
-                this.el.select('button').item(0).dom.click();
-                return false;
-            },
-            scope: this
-        });
-    }
-
-    Ext.ComponentMgr.registerPlugin('defaultButtonX', ns.DefaultButtonX);
-
-})(); 
 
 Ext.override(Ext.form.BasicForm,{
     my_loadRecord : function(values){

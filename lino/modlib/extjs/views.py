@@ -509,8 +509,8 @@ class ApiElement(View):
             ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
             if elem is None:
-                raise http.Http404("%s has no row with primary key %r" %
-                                   (rpt, pk))
+                raise http.Http404(
+                    "%s has no row with primary key %r" % (rpt, pk))
         else:
             ar = ba.request(request=request)
             elem = None

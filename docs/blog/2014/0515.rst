@@ -5,10 +5,75 @@ Thursday, May 15, 2014
 Middle name
 -----------
 
-I decided to add a field `middle_names` to 
-:class:`lino.mixins.human.Human`
-after reading the Wikipedia entry about 
-`Middle name <http://en.wikipedia.org/wiki/Middle_name>`_.
+I decided to add a field `middle_names` to
+:class:`lino.mixins.human.Human` after reading the Wikipedia entry
+about `Middle name <http://en.wikipedia.org/wiki/Middle_name>`_ (which
+in German is called `Zwischenname
+<http://de.wikipedia.org/wiki/Zwischenname>`_).
+
+Adapted :meth:`ml.beid.BaseBeIdReadCardAction.card2client`.
+
+CachedPrintable vs. Attestable
+------------------------------
+
+Gerd helped my to understand something.
+
+Es fehlten in der Tat noch ein paar fundamentale Erkenntnisse bei den
+Bescheinigungen bzw. Auszügen:
+
+- CreateAttestation brauche ein Dialogfenster. Selbst eine
+  Anwesenheitsbestätigung braucht nicht mit einem *einzigen* Klick als
+  pdf generiert zu werden (das ist ein Klick zu wenig).
+
+- Verträge und Budgets müssen ebenfalls Attestable statt
+  CachedPrintable werden. Aber da brauchen wir eine neue spezielle Art
+  von Auszugsart, nämlich "definitiv". Siehe unten.
+
+Sonstige Probleme, die wir entdeckt haben:
+
+- Layout im Reiter "Historie"
+
+- cal.Guest ist Printable und Attestable zugleich, das ist Quatsch.
+  Eine Anwendung, die :mod:`lino.modlib.attestations` nutzt, sollte
+  selber keine direkten CachedPrintable definieren.
+
+- importierte Lebensläufe: es fehlen der owner und die build_method
+
+Ein definitiver Auszug blockert das bescheinigte Objekt. Oder genauer
+gesagt er bewirkt, dass das verknüpfte Objekt nicht mehr bearbeitet
+werden kann. Das, was die Leute als "Cache löschen" kennen, bleibt
+äußerlich gleich, bewirkt aber in Zukunft, dass der definitive
+Ausdruck entfernt wird. Der definitive Auszug bleibt übrigens dann als
+solcher in der Historie bestehen, wirkt aber nicht mehr blockierend.
+Jeder Attestable kriegt ein neues Feld "final_attestation", einen FK
+nach Attestation. "Cache löschen" bedeutet dann einfach, dass dieses
+Feld geleert wird.
 
 
-:meth:`ml.beid.BaseBeIdReadCardAction.card2client`
+More spaghetti in `linoweb.js`
+------------------------------
+
+Discovered another bug. When I assign client #116 of the
+:ref:`welfare` demo database to a coach, then I get::
+
+    WARNING AjaxExceptionResponse:
+    Http404
+    newcomers.AvailableCoachesByClient has no row with primary key u'116'
+
+    TRACEBACK:
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 114, in get_response
+        response = wrapped_callback(request, *callback_args, **callback_kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+        return handler(request, *args, **kwargs)
+      File "/home/luc/hgwork/lino/lino/modlib/extjs/views.py", line 513, in get
+        (rpt, pk))
+
+
+This seems to be due to the fact that there is yet another code
+spaghetti in `linoweb.js`: 
+
+Lino.call_ajax_action
+
+

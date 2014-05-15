@@ -1122,12 +1122,9 @@ class NotifyingAction(Action):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         ar.set_response(message=ar.action_param_values.notify_subject)
-        #~ kw.update(alert=True)
         ar.set_response(refresh=True)
         ar.set_response(success=True)
-        #~ kw = super(NotifyingAction,self).run_from_ui(obj,ar,**kw)
         self.add_system_note(ar, obj)
-        #~ return kw
 
     def add_system_note(self, ar, owner, **kw):
         #~ body = _("""%(user)s executed the following action:\n%(body)s
