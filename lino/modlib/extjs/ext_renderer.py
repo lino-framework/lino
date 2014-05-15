@@ -209,6 +209,8 @@ class ExtRenderer(HtmlRenderer):
             label = ba.action.label
         if ba.action.parameters:
             st = self.get_action_status(ar, ba, obj)
+            if obj is not None:
+                st.update(record_id=obj.pk)
             return self.window_action_button(
                 ar.request, ba, st, label, **kw)
         if ba.action.opens_a_window:
@@ -1134,17 +1136,19 @@ class ExtRenderer(HtmlRenderer):
             raise Exception("%r of %s has no variables" % (dh.main, dh))
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
-            [e for e in dh.main.walk() if isinstance(e, ext_elems.FieldElement)])
-        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+            [e for e in dh.main.walk()
+             if isinstance(e, ext_elems.FieldElement)])
+        yield "    Lino.%s.superclass.initComponent.call(this);" % \
+            dh.layout._formpanel_name
         yield "  }"
         yield "});"
         yield ""
 
     def js_render_ActionFormPanelSubclass(self, dh):
         tbl = dh.layout._datasource
-        #~ logger.info("20121007 js_render_ActionFormPanelSubclass %s",dh.layout._formpanel_name)
         yield ""
-        yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % dh.layout._formpanel_name
+        yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % \
+            dh.layout._formpanel_name
         for k, v in dh.main.ext_options().items():
             if k != 'items':
                 yield "  %s: %s," % (k, py2js(v))
@@ -1163,13 +1167,12 @@ class ExtRenderer(HtmlRenderer):
         for ln in jsgen.declare_vars(dh.main.elements):
             yield "    " + ln
             lc += 1
-        # 20121116
-        #~ if lc == 0:
-            #~ raise Exception("%s (%r of %s) has no variables" % (dh.layout._formpanel_name,dh.main,dh))
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
-            [e for e in dh.main.walk() if isinstance(e, ext_elems.FieldElement)])
-        yield "    Lino.%s.superclass.initComponent.call(this);" % dh.layout._formpanel_name
+            [e for e in dh.main.walk()
+             if isinstance(e, ext_elems.FieldElement)])
+        yield "    Lino.%s.superclass.initComponent.call(this);" % \
+            dh.layout._formpanel_name
         yield "  }"
         yield "});"
         yield ""

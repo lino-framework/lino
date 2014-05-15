@@ -71,7 +71,6 @@ Discovered another bug. When I assign client #116 of the
         (rpt, pk))
 
 
-
 I was first afraid that we have a fundamental problem in
 :xfile:`linoweb.js`: actions with parameters are called using
 different Javascript code than those without parameters.  In order to
@@ -79,3 +78,23 @@ understand the problem a bit better and get prepared for another
 surgery, I updated :doc:`/ref/javascript` and tidied up some code.
 And then my fears turned out to be wrong.  The reason was "only" a bug
 in determining the URL of the AJAX call.
+
+The call had the following URL::
+
+    GET /api/newcomers/AvailableCoachesByClient/116?_dc=140015
+    ...
+    Begleitung%20durch%20Alicia%20Allmanns.&fv=false&
+    an=assign_coach&mt=58&mk=116
+
+Which had the wrong element id (116). 
+    
+Added a test case about this in :ref:`welfare.tested.integ`.
+The bug itself was in 
+`ext_renderer.ExtRenderer.action_button`.
+
+When an action has parameters, then Lino generates a subclass of
+ActionFormPanel which defines the Window to be opened.  And when the
+user confirms such a window (by clicking on its OK button), the client
+must send an AJAX call.  But we cannot hard-code the URL for that call
+in our generated ActionFormPanel subclass because it is possible that
+a same window is being reused on many different tables. 

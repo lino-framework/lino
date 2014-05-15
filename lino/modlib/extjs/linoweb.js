@@ -2532,7 +2532,6 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
         {text: 'OK', handler: this.on_ok, scope: this},
         {text: 'Cancel', handler: this.on_cancel, scope: this}
     ];
-    //~ config.items = config.params_panel;
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
   //~ ,initComponent : function(){
@@ -2543,6 +2542,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   }
   ,on_ok : function() { 
     var panel = this.requesting_panel;
+    // var panel = this.get_containing_window().main_item;
     // console.log("20131004 on_ok",this,panel,arguments);
     var actionName = this.action_name;
     var pk = this.record_id;
