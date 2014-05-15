@@ -14,3 +14,4 @@ calls them) which may be used by your Lino applications.
    contacts
    humanlinks
    beid
+   extjs

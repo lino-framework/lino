@@ -1,0 +1,52 @@
+ExtJS - User Interface using ExtJS 3
+====================================
+
+.. module:: ml.extjs
+
+This page documents the :mod:`lino.modlib.extjs` app.
+
+It is being automatically included by every Lino application unless
+you specify ``extjs`` in :setting:`hidden_apps` (or override your
+:setting:`get_installed_apps` method).
+
+When your Lino application uses the ExtJS user interface, then you may
+need a commercial license from Sencha if your site is (1) your
+application is not available under the GPL **and** (2) used by other
+people than the empoyees of the company who wrote the application. See
+:doc:`/about/license` for details.
+
+Whether to use a status bar to display certain messages to the user.
+
+
+.. class:: Plugin
+
+  .. attribute:: use_statusbar
+
+    Whether to use a statusbar. Default is `False` since this is not
+    really useful.
+
+  .. attribute:: media_base_url
+
+  .. attribute:: media_root
+
+    Path to the ExtJS root directory.  Only used when
+    :attr:`media_base_url` is None, and when the `media` directory has
+    no symbolic link named `extjs` pointing to the ExtJS root
+    directory.
+
+    The URL from where to include the ExtJS library files.
+    
+    The default value points to the `extjs-public
+    <http://code.google.com/p/extjs-public/>`_ repository and thus
+    requires the clients to have an internet connection.  This
+    relieves newcomers from the burden of having to specify a download
+    location in their :xfile:`settings.py`.
+    
+    On a production site you'll probably want to download and serve
+    these files yourself by setting this to `None` and setting
+    :attr:`extjs_root` (or a symbolic link "extjs" in your
+    :xfile:`media` directory) to point to the local directory where
+    ExtJS 3.3.1 is installed).
+
+
+

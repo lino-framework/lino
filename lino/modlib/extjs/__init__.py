@@ -12,28 +12,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This is the :mod:`lino.modlib.extjs` app for Lino.  It is being
-automatically included by every Lino application unless you specify
-``extjs`` in :setting:`hidden_apps` (or override your
-:setting:`get_installed_apps` method).
-
-When your Lino application uses the ExtJS user interface, then you may
-need a commercial license from Sencha if your site is (1) your
-application is not available under the GPL **and** (2) used by other
-people than the empoyees of the company who wrote the application. See
-:doc:`/about/proprietary` for details.
-
-.. setting:: extjs.use_statusbar
-
-Whether to use a status bar to display certain messages to the user.
-
-"""
+"See :mod:`ml.extjs`."
 
 from __future__ import unicode_literals
 from __future__ import print_function
-
-# import logging
-# logger = logging.getLogger(__name__)
 
 from lino.ad import Plugin
 from django.utils.translation import ugettext_lazy as _
@@ -53,29 +35,6 @@ class Plugin(Plugin):
                      "svn/tags/extjs-3.3.1/release/"
 
     media_root = None
-    """Path to the ExtJS root directory.  Only used when
-    :attr:`media_base_url` is None, and when the `media` directory has
-    no symbolic link named `extjs` pointing to the ExtJS root
-    directory.
-
-    """
-
-
-    """The URL from where to include the ExtJS library files.
-    
-    The default value points to the `extjs-public
-    <http://code.google.com/p/extjs-public/>`_ repository and thus
-    requires the clients to have an internet connection.  This
-    relieves newcomers from the burden of having to specify a download
-    location in their :xfile:`settings.py`.
-    
-    On a production site you'll probably want to download and serve
-    these files yourself by setting this to `None` and setting
-    :attr:`extjs_root` (or a symbolic link "extjs" in your
-    :xfile:`media` directory) to point to the local directory where
-    ExtJS 3.3.1 is installed).
-
-    """
 
     def on_ui_init(self, kernel):
         # logger.info("20140227 extjs.Plugin.on_ui_init() a")
