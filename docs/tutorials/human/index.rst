@@ -7,8 +7,8 @@ This test application explains some basic truths about humans (as the
 :mod:`lino.mixins.human` module sees them).
 
 The database structure used for the following examples is very simple,
-we define a single model `Person` 
-which just inherits :class:`lino.mixins.human.Human`:
+we define a single model `Person` which just inherits
+:class:`lino.mixins.human.Human`:
 
 .. literalinclude:: models.py
 
@@ -20,25 +20,22 @@ which just inherits :class:`lino.mixins.human.Human`:
 Overview
 ---------
 
-Humans have three properties: 
-`first_name`, `last_name` and `gender`.
-All these fields may be blank
-(except if your application changed that rule
-using :func:`dd.update_field <lino.core.inject.update_field>`).
+The Human mixins defines four properties: `first_name`, `middle_name`,
+`last_name` and `gender`.  All these fields may be blank (except if
+your application changed that rule using :func:`dd.update_field`).
 
 
 Gender
 -------
 
-The :class:`Genders <lino.core.choicelists.Genders>` choicelist
-defines the possible values for the `gender` field of a Human.
+The :class:`dd.Genders` choicelist defines the possible values for the
+`gender` field of a Human.
 
-A :class:`ChoiceList <lino.core.choicelists.ChoiceList>` is
-a "hard-coded" list of translatable values.
+A :class:`dd.ChoiceList` is a "hard-coded" list of translatable
+values.
 
-It's a new concept introduceed by Lino and deserves more 
-documentation, but here is at least a short introduction 
-to choicelists:
+It's a concept introduceed by Lino and deserves more documentation,
+but here is at least a short introduction to choicelists:
 
 >>> from lino.dd import Genders
 
@@ -46,10 +43,10 @@ to choicelists:
 lino.Genders
 
 A Choicelist is an "Actor", another Lino concept which deserves more
-documentation, but basically this means that it is globally
-accessible using the above name.
+documentation, but basically this means that it is globally accessible
+using the above name.
 
-A ChoiceList has an `objects` method (not attribute) which returns an 
+A ChoiceList has an `objects` method (not attribute) which returns an
 iterator over the "Choices":
 
 >>> print(Genders.objects())
@@ -57,8 +54,8 @@ iterator over the "Choices":
 
 Each Choice has a "value", a "name" and a "text". 
 
-The **value** is what gets stored when this choice is assigned 
-to a database field. 
+The **value** is what gets stored when this choice is assigned to a
+database field.
 
 >>> [g.value for g in Genders.objects()]
 ['M', 'F']
@@ -243,16 +240,16 @@ Mr Adam was the first man.
 Mrs Eva was the first woman.
 
 
-The `mf` method is a bit sexistic in that it returns 
-the male value when the `gender` field is blank:
+The `mf` method is a bit sexistic in that it returns the male value
+when the `gender` field is blank:
 
->>> p = Person(first_name="Kai")
+>>> p = Person(first_name="Conchita", last_name="Wurst")
 >>> print(p.mf("He","She"))
 He
 
-Templates should use the third argument to handle this case properly:
+Templates can use the third argument to handle this case properly:
 
->>> print(p.mf("He","She","He or she"))
+>>> print(p.mf("He", "She", "He or she"))
 He or she
 
 

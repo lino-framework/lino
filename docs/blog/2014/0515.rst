@@ -1,0 +1,14 @@
+======================
+Thursday, May 15, 2014
+======================
+
+Middle name
+-----------
+
+I decided to add a field `middle_names` to 
+:class:`lino.mixins.human.Human`
+after reading the Wikipedia entry about 
+`Middle name <http://en.wikipedia.org/wiki/Middle_name>`_.
+
+
+:meth:`ml.beid.BaseBeIdReadCardAction.card2client`

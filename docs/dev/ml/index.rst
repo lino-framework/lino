@@ -13,3 +13,4 @@ calls them) which may be used by your Lino applications.
    addresses
    contacts
    humanlinks
+   beid

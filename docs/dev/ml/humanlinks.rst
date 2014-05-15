@@ -3,7 +3,7 @@ Human Links
 
 .. module:: ml.humanlinks
 
-Adds Links beween persons
+Adds Links beween persons.
 
 .. class:: LinkTypes
 .. class:: Link

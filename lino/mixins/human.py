@@ -72,35 +72,38 @@ def get_salutation(gender, nominative=False):
 
 
 class Human(model.Model):
+    """Base class for all models that represent a human.  It defines the
+    fields `first_name`, `middle_name, `last_name` and `gender`.
 
-    """
-    Base class for all models that represent a human.
-    It defines three fields `first_name`, `last_name` and `gender`.
-    
     """
     class Meta:
         abstract = True
 
-    first_name = models.CharField(max_length=200,
-                                  blank=True,
-                                  verbose_name=_('First name'))
-    "Space-separated list of all first names."
+    first_name = models.CharField(
+        _('First name'),
+        max_length=200,
+        blank=True,
+        help_text=_("First or given name."))
 
-    last_name = models.CharField(max_length=200,
-                                 blank=True,
-                                 verbose_name=_('Last name'))
-    """Last name (family name)."""
+    # http://en.wikipedia.org/wiki/Middle_name
+    middle_name = models.CharField(
+        _("Middle name"), max_length=200, blank=True,
+        help_text=_("Space-separated list of all middle names."))
+
+    last_name = models.CharField(
+        _('Last name'), max_length=200, blank=True,
+        help_text=_("Last name (family name).")
+        )
 
     gender = Genders.field(blank=True)
 
     def mf(self, m, f, u=None):
-        """
-        Taking three parameters `m`, `f` and `u` of any type, 
-        returns one of them depending on whether this Person 
-        is male, female or of unknown gender.
-        
-        See :mod:`lino.test_apps.gender` for some examples.
-        
+        """Taking three parameters `m`, `f` and `u` of any type, returns one
+        of them depending on whether this Person is male, female or of
+        unknown gender.
+
+        See :ref:`lino.tutorial.human` for some examples.
+
         """
         if self.gender is Genders.male:
             return m
@@ -116,7 +119,9 @@ class Human(model.Model):
             #~ translation.get_language(),
             self.gender, **salutation_options)
 
-    def get_full_name(self, salutation=True, upper=None, **salutation_options):
+    def get_full_name(
+            self, salutation=True,
+            upper=None, **salutation_options):
         """Returns a one-line string composed of salutation, first_name and
         last_name.
        

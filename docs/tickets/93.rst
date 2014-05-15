@@ -8,6 +8,9 @@
 todo
 -----
 
+- Wenn man eine ungültige IBAN eingibt, dann kommt zwar die
+  Fehlermeldung und es wird nicht gespeichert, aber die Zelle wird
+  nicht rot markiert.
 - Summary panels don't get refreshed, e.g. when I add a new upload
   then I must click the Refresh button in order to have the summary
   panel updated.
@@ -22,7 +25,7 @@ todo
 - Datenmigration: hier sind noch ein paar ungültige BICs oder IBANs im
   TIM. Am einfachsten ist es, die Daten schon dort zu validieren. 
 
-- :ref:`/tickets/104`
+- :doc:`/tickets/104`
 
 
 Later
