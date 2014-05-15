@@ -5,8 +5,39 @@ Javascript functions
 .. default-domain:: js
 
 
-Defined in lino.js
+The ``linoweb.js`` file
+=======================
+
+.. xfile:: linoweb.js
+
+The :srcref:`lino/modlib/extjs/linoweb.js` template is used to
+generate a huge monolythic javascript file which contains
+Lino-specific Javascript functions.
+
+
+General functions
 ------------------
+
+.. function:: Lino.id_renderer()
+.. function:: Lino.logout(id, name)
+
+Action calls
+------------
+
+.. function:: Lino.row_action_handler(actionName, hm, pp)
+.. function:: Lino.list_action_handler(ls_url,actionName,hm,pp)
+.. function:: Lino.run_row_action(requesting_panel, url, meth, pk, actionName, preprocessor)
+
+.. function:: Lino.put = function(requesting_panel, pk, data) {
+
+.. function:: Lino.call_ajax_action( 
+              panel, method, url, p, actionName, step, on_confirm, on_success)
+.. function:: Lino.action_handler(panel, on_success, on_confirm)
+.. function:: Lino.handle_action_result(panel, result, on_success, on_confirm)
+
+
+Classes
+-------
 
 .. class:: Lino.WindowWrapper
 
@@ -21,40 +52,56 @@ Defined in lino.js
     Display this window.
 
   
-.. js:class:: Lino.FormPanel
+.. class:: Lino.FormPanel
 
-  .. js:attribute:: Lino.FormPanel.ls_data_url
+  .. attribute:: Lino.FormPanel.ls_data_url
   
     The base URI of the report.
   
-  .. js:attribute:: Lino.FormPanel.data_record
+  .. attribute:: Lino.FormPanel.data_record
   
     An object that should have at least these attributes:
     - title
     - values
   
-  See :blogref:`20100714`
+    See :blogref:`20100714`
   
-  .. js:function:: Lino.FormPanel.load_master_record
+  .. function:: Lino.FormPanel.load_master_record
+
+  .. function:: Lino.FormPanel.save()
+  .. function:: Lino.FormPanel.load_record_id(record_id,after)
+
   
   
     
-.. js:class:: Lino.GridPanel
+.. class:: Lino.GridPanel
 
-  .. js:function:: Lino.GridPanel.load_slavegrid()
+  .. function:: Lino.GridPanel.load_slavegrid()
   
-  .. js:attribute:: Lino.GridPanel.ls_data_url
+  .. attribute:: Lino.GridPanel.ls_data_url
   
     The base URI of the report.
   
-  See :blogref:`20100714`
+    See :blogref:`20100714`
   
-.. js:function:: Lino.id_renderer()
+
+.. function:: Lino.GridPanel.on_afteredit(e)
+
+
+.. class:: Lino.ActionFormPanel
+
+  The window that opens when the user invokes an action that has
+  parameters.
+
+.. function:: Lino.ActionFormPanel.on_ok()
+
+
+
 
 Defined in site.js
 ------------------
 
-.. js:function:: Lino.notes.NoteTypes.grid(params)
+.. function:: Lino.notes.NoteTypes.grid(params)
 
   :param object params: Parameters to override default config values.
   :returns: null
@@ -65,6 +112,6 @@ Defined in site.js
 Names from external libraries
 -----------------------------
 
-.. js:class:: Ext.ux.grid.GridFilters
+.. class:: Ext.ux.grid.GridFilters
 
 

@@ -201,13 +201,11 @@ class BaseRequest(object):
     action_param_values = None
     param_values = None
     bound_action = None
-    edit_mode = None
 
     renderer = None
     selected_rows = []
     content_type = 'application/json'
 
-    #~ def __init__(self,request=None,renderer=None,**kw):
     def __init__(self, request=None, **kw):
         self.request = request
         self.response = dict()
@@ -221,8 +219,6 @@ class BaseRequest(object):
             kw = self.parse_req(request, rqdata, **kw)
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
-        # if self.renderer is None:
-        #     raise Exception("20131226 no renderer")
 
     def set_response(self, **kw):
         """Store one or several keyword values to be rendered in the response.
@@ -350,8 +346,6 @@ class BaseRequest(object):
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(
             ext_requests.URL_PARAM_PROJECT, None))
-        kw.update(edit_mode=rqdata.get(
-            ext_requests.URL_PARAM_EDIT_MODE, None))
 
         selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
         #~ kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
@@ -371,20 +365,14 @@ class BaseRequest(object):
               user=None,
               subst_user=None,
               current_project=None,
-              edit_mode=None,
-              #~ selected_rows=None,
               selected_pks=None,
               requesting_panel=None,
               renderer=None):
         self.requesting_panel = requesting_panel
         self.user = user
         self.current_project = current_project
-        self.edit_mode = edit_mode
-        #~ self.selected_rows = selected_rows
         if renderer is not None:
             self.renderer = renderer
-        #~ if self.actor.parameters:
-            #~ self.param_values = AttrDict(**param_values)
         self.subst_user = subst_user
 
         if selected_pks is not None:
@@ -393,43 +381,6 @@ class BaseRequest(object):
     def set_selected_pks(self, *selected_pks):
         #~ print 20131003, selected_pks
         self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
-
-    #~ def dialog(self,dlg):
-        # ~ # not finished
-        #~ self.step += 1
-        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            #~ return
-        #~ raise DialogRequired(self.step,dlg)
-
-    #~ def confirm(self,*messages):
-        #~ """
-        #~ Calling this from an Action's :meth:`Action.run` method will
-        #~ interrupt the execution, send the specified message(s) back to
-        #~ the user, waiting for confirmation before continuing.
-
-        #~ Note that this is implemented without any server sessions
-        #~ and cookies. While this system is genial, it has one drawback
-        #~ which you should be aware of: the code execution does not
-        #~ *continue* after the call to `confirm` but starts again at the
-        #~ beginning (with the difference that the client this time calls it with
-        #~ an internal `step` parameter that tells Lino that this `confirm()`
-        #~ has been answered and should no longer raise stop execution.
-        #~ """
-        #~ assert len(messages) > 0 and messages[0], "At least one non-empty message required"
-        #~ self.step += 1
-        #~ if int(self.request.REQUEST.get(ext_requests.URL_PARAM_ACTION_STEP,'0')) >= self.step:
-            #~ return
-        #~ raise ConfirmationRequired(self.step,messages)
-
-    #~ def decide(self,msg,yes,no=None):
-        #~ """
-        #~ Calling this from an Action's :meth:`Action.run` method will
-        #~ interrupt the execution, send the specified message(s) back to
-        #~ the user, adding the executables `yes` and optionally `no` to a queue
-        #~ of pending dialogs.
-
-        #~ """
-        #~ raise DecisionRequired(msg,yes,no)
 
     def get_user(self):
         """
@@ -761,8 +712,6 @@ class ActorRequest(BaseRequest):
 
         if self.current_project is not None:
             bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
-        if self.edit_mode is not None:
-            bp[ext_requests.URL_PARAM_EDIT_MODE] = self.edit_mode
 
         if self.subst_user is not None:
             bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id

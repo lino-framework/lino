@@ -102,81 +102,6 @@ Ext.ux.MonthPickerPlugin = function() {
 
 Ext.preg('monthPickerPlugin', Ext.ux.MonthPickerPlugin);  
 
-//~ /* 
-  //~ http://www.diloc.de/blog/2008/03/05/how-to-submit-ext-forms-the-right-way/
-//~ */
-//~ /**
- //~ * This submit action is basically the same as the normal submit action,
- //~ * only that it uses the fields getSubmitValue() to compose the values to submit,
- //~ * instead of looping over the input-tags in the form-tag of the form.
- //~ *
- //~ * To use it, just use the OOSubmit-plugin on either a FormPanel or a BasicForm,
- //~ * or explicitly call form.doAction('oosubmit');
- //~ *
- //~ * @param {Object} form
- //~ * @param {Object} options
- //~ */
-//~ Ext.ux.OOSubmitAction = function(form, options){
-    //~ Ext.ux.OOSubmitAction.superclass.constructor.call(this, form, options);
-//~ };
-
-//~ Ext.extend(Ext.ux.OOSubmitAction, Ext.form.Action.Submit, {
-    //~ /**
-    //~ * @cfg {boolean} clientValidation Determines whether a Form's fields are validated
-    //~ * in a final call to {@link Ext.form.BasicForm#isValid isValid} prior to submission.
-    //~ * Pass <tt>false</tt> in the Form's submit options to prevent this. If not defined, pre-submission field validation
-    //~ * is performed.
-    //~ */
-    //~ type : 'oosubmit',
-
-    //~ // private
-    //~ /**
-     //~ * This is nearly a copy of the original submit action run method
-     //~ */
-    //~ run : function(){
-        //~ var o = this.options;
-        //~ var method = this.getMethod();
-        //~ var isPost = method == 'POST';
-
-        //~ var params = this.options.params || {};
-        //~ if (isPost) Ext.applyIf(params, this.form.baseParams);
-
-        //~ //now add the form parameters
-        //~ this.form.items.each(function(field)
-        //~ {
-            //~ if (!field.disabled)
-            //~ {
-                //~ //check if the form item provides a specialized getSubmitValue() and use that if available
-                //~ if (typeof field.getSubmitValue == "function")
-                    //~ params[field.getName()] = field.getSubmitValue();
-                //~ else
-                    //~ params[field.getName()] = field.getValue();
-            //~ }
-        //~ });
-
-        //~ //convert params to get style if we are not post
-        //~ if (!isPost) params=Ext.urlEncode(params);
-
-        //~ if(o.clientValidation === false || this.form.isValid()){
-            //~ Ext.Ajax.request(Ext.apply(this.createCallback(o), {
-                //~ url:this.getUrl(!isPost),
-                //~ method: method,
-                //~ params:params, //add our values
-                //~ isUpload: this.form.fileUpload
-            //~ }));
-
-        //~ }else if (o.clientValidation !== false){ // client validation failed
-            //~ this.failureType = Ext.form.Action.CLIENT_INVALID;
-            //~ this.form.afterAction(this, false);
-        //~ }
-    //~ },
-
-//~ });
-//~ //add our action to the registry of known actions
-//~ Ext.form.Action.ACTION_TYPES['oosubmit'] = Ext.ux.OOSubmitAction;
-
-
-
 
 /**
 JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
@@ -735,11 +660,6 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
       //~ console.log("20121118 Lino.viewport.loadMask",this.loadMask);
     },this);
   }
-  // ,get_base_params : function() { 
-  //   var p = {};
-  //   Lino.insert_subst_user(p);
-  //   return p;
-  // }
   ,refresh : function() {
       var caller = this;
       // console.log("20140504 Lino.Viewport.refresh()");
@@ -2234,7 +2154,7 @@ Lino.call_ajax_action = function(
 
 
 
-Lino.row_action_handler = function(actionName,hm,pp) {
+Lino.row_action_handler = function(actionName, hm, pp) {
   var p = {};
   var fn = function(panel, btn, step) {
       if (pp) { p = pp(panel); if (! p) return; }
@@ -2249,8 +2169,7 @@ Lino.row_action_handler = function(actionName,hm,pp) {
       
       Lino.do_on_current_record(panel,function(rec) {
           //~ console.log(panel);
-          panel.add_param_values(p, true); // 20130915
-          p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_HREF';
+          panel.add_param_values(p, true);
           Lino.call_ajax_action(
               panel, hm, panel.get_record_url(rec.id), 
               p, actionName, step, fn);
@@ -2264,12 +2183,10 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
   var url = '{{settings.SITE.build_admin_url("api")}}' + ls_url
   var fn = function(panel,btn,step) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
-      //~ var url = ADMIN_URL + '/api' + panel.ls_url
       if (pp) { p = pp(panel);  if (! p) return; }
       if (panel)  // may be undefined when called e.g. from quicklink
-          panel.add_param_values(p,true); // 20130915
-      p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_HREF';
-      Lino.call_ajax_action(panel,hm,url,p,actionName,step,fn);
+          panel.add_param_values(p,true);
+      Lino.call_ajax_action(panel, hm,url, p, actionName, step, fn);
   };
   return fn;
 };
@@ -2291,20 +2208,18 @@ Lino.run_row_action = function(
   url = '{{settings.SITE.build_admin_url("api")}}' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
   if (preprocessor) var p = preprocessor(); else var p = {};
-  p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_HREF';
   var fn = function(panel,btn,step) {
     Lino.call_ajax_action(panel, meth, url, p, actionName, step, fn);
   }
   fn(panel,null,null);
 }
 
-Lino.put = function(requesting_panel,pk,data) {
+Lino.put = function(requesting_panel, pk, data) {
     var panel = Ext.getCmp(requesting_panel);
     //~ var panel = null; // 20131026
     var p = {};
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
 
-    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = 'ext_requests.EDIT_MODE_PUT';
     Ext.apply(p,data);
     var req = {
         params:p
@@ -2611,7 +2526,6 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   //~ layout:'fit'
   //~ ,autoHeight: true
   //~ ,frame: true
-  edit_mode : '{{ext_requests.EDIT_MODE_FORM}}',
   window_title : "Action Parameters",
   constructor : function(config){
     config.bbar = [
@@ -2628,14 +2542,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     this.get_containing_window().close();
   }
   ,on_ok : function() { 
-    //~ var rp = this.requesting_panel;
     var panel = this.requesting_panel;
     // console.log("20131004 on_ok",this,panel,arguments);
-    //~ if (panel == undefined) {
-        //~ Lino.alert("Sorry, dialog actions don't work without a requesting_panel");
-        //~ return;
-    //~ }
-    //~ var rec = panel.get_current_record();
     var actionName = this.action_name;
     var pk = this.record_id;
     if (pk == undefined && this.base_params) { pk = this.base_params.mk; }
@@ -2730,7 +2638,6 @@ Lino.fields2array = function(fields,values) {
 Lino.FormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,Lino.PanelMixin);
 Lino.FormPanel = Ext.extend(Lino.FormPanel,{
-  edit_mode : '{{ext_requests.EDIT_MODE_FORM}}',
   params_panel_hidden : false,
   save_action_name : null, 
   //~ base_params : {},
@@ -3042,25 +2949,12 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   
   ,load_record_id : function(record_id,after) {
     var this_ = this;
-    //~ var p = { fmt: this.containing_window.config.action_name};
-    //~ var p = Ext.apply({},this.containing_window.config.base_params);
     var p = Ext.apply({}, this.get_base_params());
-    //~ Lino.insert_subst_user(p);
-    //~ console.log('20110713 action_name=',this.containing_window.config.action_name,
-      //~ 'base_params=',this.containing_window.config.base_params);
     if (this.action_name)
         p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
-    //~ p.an = this.action_name;
-    //~ p.an = this.containing_window.config.action_name;
-    //~ p.fmt = 'json';
-    //~ p.fmt = '$ext_requests.URL_FORMAT_JSON';
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
-    //~ p.$ext_requests.URL_PARAM_SUBST_USER = Lino.subst_user;
     p.{{ext_requests.URL_PARAM_FORMAT}} = '{{ext_requests.URL_FORMAT_JSON}}';
-    //~ 20110119b p['$URL_PARAM_FILTER'] = this.quick_search_text;
-    //~ Ext.apply(p,this.query_params);
     this.add_param_values(p);
-    // console.log('20140421 FormPanel.load_record_id',record_id,p);
     if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -3243,7 +3137,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     Ext.apply(p, this.get_base_params());
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
-    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_FORM}}';
     var submit_config = {
         params: p, 
         scope: this,
@@ -3313,60 +3206,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       ]
   }
   
-  
-  /* not used (no longer possible without .dtl files)
-  , edit_detail_config : function () {
-    var active_tab = {};
-    var main = this.items.get(0);
-    if (main.getActiveTab !== undefined) {
-      var tabitem = main.getActiveTab();
-      Ext.apply(active_tab,{$ext_requests.URL_PARAM_TAB : main.items.indexOf(tabitem)});
-    }
-    var editor = new Ext.form.TextArea();
-    var close = function() { win.close(); }
-    var _this = this;
-    var save = function() { 
-      //~ console.log(20110609,arguments); 
-      var params = {desc: editor.getValue()};
-      Ext.apply(params,active_tab);
-      var a = { 
-        params: params, 
-        method: 'PUT',
-        url: ADMIN_URL + '/detail_config' + _this.ls_url,
-        failure : Lino.ajax_error_handler(this),
-        success: Lino.action_handler( _this, function(result) {
-          //~ console.log('detail_config/save success',result);
-          win.close();
-          document.location = _this.get_permalink();
-        })
-      };
-      //~ console.log('detail_config/save sent',a);
-      _this.loadMask.show(); // 20120211
-      Ext.Ajax.request(a);
-    }
-    var save_btn = new Ext.Button({text:'Save',handler:save,disabled:true});
-    var win = new Ext.Window({title:'Detail Layout',
-      items:editor, layout:'fit',
-      width:500,height:500,
-      bbar:[{text:'Cancel',handler:close},save_btn]});
-    var a = { 
-      params:active_tab, 
-      method:'GET',
-      url:ADMIN_URL+'/detail_config'+_this.ls_url,
-      success : function(response) {
-        if (response.responseText) {
-          var result = Ext.decode(response.responseText);
-          if (result.success) {
-            editor.setValue(result.desc);
-            save_btn.enable();
-          }
-        }
-      }
-    };
-    Ext.Ajax.request(a);
-    win.show();
-  }
-  */
 });
 
 
@@ -3459,7 +3298,6 @@ Lino.auto_height_cell_template = new Ext.Template(
 Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel,{
-  edit_mode : '{{ext_requests.EDIT_MODE_GRID}}',
   quick_search_text : '',
   is_searching : false,
   disabled_in_insert_window : true,
@@ -4215,7 +4053,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     win.show();
   },
   
-  save_grid_config : function () {
+  unused_save_grid_config : function () {
     //~ console.log('TODO: save_grid_config',this);
     //~ p.column_widths = Ext.pluck(this.colModel.columns,'width');
     var a = { 
@@ -4273,7 +4111,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ var p = e.record.getChanges();
     //~ console.log('20101130 getChanges: ',e.record.getChanges());
     //~ this.before_row_edit(e.record);
-    p.{{ext_requests.URL_PARAM_EDIT_MODE}} = '{{ext_requests.EDIT_MODE_GRID}}';
+
     for(k in e.record.getChanges()) {
         var v = e.record.get(k);
     //~ for(k in e.record.modified) {

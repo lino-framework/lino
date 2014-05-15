@@ -71,9 +71,59 @@ Discovered another bug. When I assign client #116 of the
         (rpt, pk))
 
 
-This seems to be due to the fact that there is yet another code
-spaghetti in `linoweb.js`: 
+This seems to be due to the fact that we have a fundamental problem in
+:xfile:`linoweb.js`: actions with parameters are called using
+different Javascript code than those without parameters.
 
-Lino.call_ajax_action
+- :func:`Lino.FormPanel.save`
+- :func:`Lino.ActionFormPanel.on_ok`
+- :func:`Lino.GridPanel.on_afteredit`
 
+
+
+
+Before actually starting another surgery, I tried to understand the
+whole :xfile:`linoweb.js` a bit better. I updated
+:doc:`/ref/javascript` and tried to document.
+
+:func:`Lino.row_action_handler`
+:func:`Lino.list_action_handler` 
+:func:`Lino.run_row_action`
+:func:`Lino.logout`
+
+:func:`Lino.call_ajax_action`
+
+:func:`Lino.put`
+:func:`Lino.action_handler`
+:func:`Lino.handle_action_result`
+:func:`Lino.FormPanel.load_record_id`
+
+
+.. graphviz:: 
+
+   digraph "Who's who in :xfile:`linoweb.js`" {
+
+    row_action_handler -> call_ajax_action;
+    list_action_handler -> call_ajax_action;
+    run_row_action -> call_ajax_action;
+    logout -> call_ajax_action;
+    
+    put -> action_handler;
+    on_afteredit -> action_handler;
+    
+    "ActionFormPanel.on_ok" -> call_ajax_action;
+    call_ajax_action -> action_handler;
+    action_handler -> handle_action_result;
+
+    "FormPanel.save"  -> handle_action_result;
+    
+    handle_action_result -> action_handler;
+   }
+
+
+
+TODO:
+
+- Convert :func:`Lino.FormPanel.load_record_id`  to use 
+  :func:`Lino.action_handler` instead of doing it herself.
 

@@ -5,12 +5,6 @@ Files
 
   See :blogref:`20120508`.
   
-.. xfile:: linoweb.js
-
-The template used to generate a huge monolythic .js file which 
-contains Lino-specific Javascript functions.
-:srcref:`/lino/extjs/linoweb.js`.
-  
 .. xfile:: setup.py
 
 Deserves more documentation.
