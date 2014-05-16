@@ -46,7 +46,6 @@ class IbanBicHolder(dd.Model):
     bic = BICField(_("BIC"), blank=True)
 
     def full_clean(self):
-        super(IbanBicHolder, self).full_clean()
         if self.iban and not self.bic:
             if self.iban[0].isdigit():
                 iban, bic = belgian_nban_to_iban_bic(self.iban)
@@ -54,6 +53,7 @@ class IbanBicHolder(dd.Model):
                 self.iban = iban
             else:
                 self.bic = iban2bic(self.iban) or ''
+        super(IbanBicHolder, self).full_clean()
 
 
 class Account(IbanBicHolder):

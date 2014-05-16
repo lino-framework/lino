@@ -14,8 +14,10 @@
 
 """This module contains some quick tests:
 
-- In a :class:`sepa.Account <lino.modlib.sepa.models.Account>`:
+- In a :class:`ml.sepa.Account`:
+
   - Fill IBAN and BIC from Belgian NBAN or IBAN
+  - Test whether the record is being validated.
 
 
 You can run only these tests by issuing::
@@ -32,6 +34,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # from django.conf import settings
+from django.core.exceptions import ValidationError
 from djangosite.utils.djangotest import RemoteAuthTestCase
 
 # from lino import dd
@@ -40,10 +43,12 @@ from djangosite.utils.djangotest import RemoteAuthTestCase
 class QuickTest(RemoteAuthTestCase):
     maxDiff = None
 
-    def test01(self):
+    def test_sepa(self):
         from lino.runtime import sepa
         from lino.runtime import contacts
         partner = contacts.Partner(name="Foo")
+        partner.full_clean()
+        partner.save()
 
         # Fill IBAN and BIC from Belgian NBAN
         obj = sepa.Account(partner=partner, iban="001-1148294-84")
@@ -51,8 +56,39 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(obj.bic, 'GEBABEBB')
         self.assertEqual(obj.iban, 'BE03001114829484')
 
-        # Fill IBAN and BIC from Belgian IBAN
+        # Fill BIC from Belgian IBAN
         obj = sepa.Account(partner=partner, iban="BE03001114829484")
         obj.full_clean()
         self.assertEqual(obj.bic, 'GEBABEBB')
         self.assertEqual(obj.iban, 'BE03001114829484')
+
+        # Raise ValidationError when invalid IBAN
+        obj = sepa.Account(partner=partner, iban="BE03001114829483")
+        try:
+            obj.full_clean()
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertEqual(
+                e.message_dict,
+                {'iban': ['Not a valid IBAN.']})
+
+        # Raise ValidationError when invalid BIC
+        obj = sepa.Account(
+            partner=partner, iban="BE03001114829484", bic="FOO")
+        try:
+            obj.full_clean()
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertEqual(
+                e.message_dict,
+                {'bic': ['A SWIFT-BIC is either 8 or 11 characters long.']})
+
+        # Raise ValidationError when no BIC is given
+        obj = sepa.Account(partner=partner)
+        try:
+            obj.full_clean()
+            self.fail("Expected ValidationError")
+        except ValidationError as e:
+            self.assertEqual(
+                e.message_dict,
+                {'iban': [u'This field cannot be blank.']})
