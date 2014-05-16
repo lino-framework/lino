@@ -15,10 +15,14 @@
 The `demo` fixture for `humanlinks`
 ===================================
 
-Creates a fictive family tree.
+Creates two fictive families:
+
+- Hubert & Gaby Frisch-Frogemuth with their children and grand-children
+- 
 
 """
 
+from __future__ import unicode_literals
 
 from lino.utils.instantiator import Instantiator
 from lino import dd
@@ -95,5 +99,48 @@ def objects():
     ig.link(P3, P3A, LinkTypes.parent)
 
     ig.link(P, P2, LinkTypes.spouse)
+
+    yield ig.flush()
+
+    A = ig.person("Albert", "Adam", 'M', '1973-07-21')
+    B = ig.person("Bruno", "Braun", 'M', '1973-07-22')
+
+    E = ig.person("Eveline", "Evrard", 'F', '1974-08-21')
+    F = ig.person("Françoise", "Freisen", 'F', '1974-08-22')
+
+    I = ig.person("Ilja", "Adam", 'M', '1994-08-22')
+    J = ig.person("Jan", "Braun", 'M', '1996-08-22')
+    K = ig.person("Kevin", "Braun", 'M', '1998-08-22')
+    L = ig.person("Lars", "Braun", 'M', '1998-08-22')
+
+    M = ig.person("Monique", "Braun", 'F', '2000-08-22')
+    N = ig.person("Noémie", "Adam", 'F', '2002-08-22')
+    O = ig.person("Odette", "Adam", 'F', '2004-08-22')
+    P = ig.person("Pascale", "Adam", 'F', '2004-08-22')
+
+    yield ig.flush()
+
+    ig.link(A, I, LinkTypes.parent)
+    ig.link(A, N, LinkTypes.parent)
+    ig.link(A, O, LinkTypes.parent)
+    ig.link(A, P, LinkTypes.parent)
+
+    ig.link(B, J, LinkTypes.parent)
+    ig.link(B, K, LinkTypes.parent)
+    ig.link(B, L, LinkTypes.parent)
+    ig.link(B, M, LinkTypes.parent)
+
+    ig.link(E, I, LinkTypes.parent)
+    ig.link(E, J, LinkTypes.parent)
+    ig.link(E, K, LinkTypes.parent)
+    ig.link(E, L, LinkTypes.parent)
+
+    ig.link(F, M, LinkTypes.parent)
+    ig.link(F, N, LinkTypes.parent)
+    ig.link(F, O, LinkTypes.parent)
+    ig.link(F, P, LinkTypes.parent)
+
+    ig.link(A, F, LinkTypes.spouse)
+    ig.link(B, E, LinkTypes.spouse)
 
     yield ig.flush()

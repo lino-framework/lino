@@ -409,7 +409,7 @@ class BasePrintAction(actions.Action):
     def attach_to_actor(self, actor, name):
         if not dbutils.resolve_app('system'):
             return False
-        # if actor.__name__ == 'AttestationsByProject':
+        # if actor.__name__ == 'ExcerptsByProject':
         #     logger.info("20140401 attach_to_actor() %r", self)
         return super(BasePrintAction, self).attach_to_actor(actor, name)
 
@@ -525,7 +525,7 @@ class EditTemplate(BasePrintAction):
         ar.success(**kw)
         logger.info('20140313 EditTemplate %r', kw)
 
-# http://10.171.37.173/api/attestations/AttestationTypes/5?an=detail
+# http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
 
 
 class DirectPrintAction(BasePrintAction):

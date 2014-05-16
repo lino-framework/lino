@@ -65,7 +65,6 @@ lino.modlib.auto
 lino.modlib.auto.sales
 lino.modlib.addresses
 lino.modlib.appypod
-lino.modlib.attestations
 lino.modlib.beid
 lino.modlib.cal
 lino.modlib.cal.fixtures
@@ -74,6 +73,7 @@ lino.modlib.cal.management.commands
 lino.modlib.cal.tests
 lino.modlib.cal.workflows
 lino.modlib.dedupe
+lino.modlib.excerpts
 lino.modlib.export_excel
 lino.modlib.extensible
 lino.modlib.extjs

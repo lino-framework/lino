@@ -56,7 +56,7 @@ class Site(Site):
         yield 'lino.modlib.extensible'
         yield 'lino.modlib.cal'
         # yield 'lino.modlib.reception'
-        yield 'lino.modlib.attestations'
+        yield 'lino.modlib.excerpts'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 

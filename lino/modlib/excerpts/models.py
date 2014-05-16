@@ -45,10 +45,10 @@ class ExcerptType(
         mixins.PrintableType,
         outbox.MailableType):
 
-    templates_group = 'attestations/Excerpt'
+    templates_group = 'excerpts/Excerpt'
 
     class Meta:
-        abstract = dd.is_abstract_model('attestations.ExcerptType')
+        abstract = dd.is_abstract_model('excerpts.ExcerptType')
         verbose_name = _("Excerpt Type")
         verbose_name_plural = _("Excerpt Types")
 
@@ -108,7 +108,7 @@ class ExcerptTypes(dd.Table):
     """
     Displays all rows of :class:`ExcerptType`.
     """
-    model = 'attestations.ExcerptType'
+    model = 'excerpts.ExcerptType'
     required = dd.required(user_level='admin', user_groups='office')
     column_names = 'content_type name build_method template primary *'
     order_by = ["name"]
@@ -125,7 +125,7 @@ class ExcerptTypes(dd.Table):
     build_method template body_template
     email_template attach_to_email
     remark:60x5
-    attestations.ExcerptsByType
+    excerpts.ExcerptsByType
     """
 
     @classmethod
@@ -142,7 +142,7 @@ class CreateExcerpt(dd.Action):
 
     """
     parameters = dict(
-        excerpt_type=dd.ForeignKey('attestations.ExcerptType'),
+        excerpt_type=dd.ForeignKey('excerpts.ExcerptType'),
         user=dd.ForeignKey('users.User'),
         owner_type=dd.ForeignKey(ContentType, editable=False),
     )
@@ -196,7 +196,7 @@ class CreateExcerpt(dd.Action):
             excerpt_type=at,
             owner=obj)
         akw = obj.get_excerpt_options(ar, **akw)
-        a = dd.modules.attestations.Excerpt(**akw)
+        a = dd.modules.excerpts.Excerpt(**akw)
 
         a.full_clean()
         a.save()
@@ -205,7 +205,7 @@ class CreateExcerpt(dd.Action):
             # print directly without dialog
             a.do_print.run_from_ui(ar, **kw)
         else:
-            # open detail window on the created attestation
+            # open detail window on the created excerpt
             # js = ar.renderer.instance_handler(ar, a)
             # kw.update(eval_js=js)
             ar.success(**kw)
@@ -228,7 +228,7 @@ class Excerpt(dd.TypedPrintable,
     manager_level_field = 'office_level'
 
     class Meta:
-        abstract = dd.is_abstract_model('attestations.Excerpt')
+        abstract = dd.is_abstract_model('excerpts.Excerpt')
         verbose_name = _("Excerpt")
         verbose_name_plural = _("Excerpts")
 
@@ -236,7 +236,7 @@ class Excerpt(dd.TypedPrintable,
     #     verbose_name=_('Date'), default=datetime.date.today)
 
     excerpt_type = dd.ForeignKey(
-        'attestations.ExcerptType',
+        'excerpts.ExcerptType',
         blank=True, null=True)
 
     language = dd.LanguageField()
@@ -351,7 +351,7 @@ class Excerpts(dd.Table):
     label = _("Excerpts history")
     icon_name = 'script'
 
-    model = 'attestations.Excerpt'
+    model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
     insert_layout = """
     excerpt_type project
@@ -405,24 +405,24 @@ system = dd.resolve_app('system')
 
 def setup_main_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.MyExcerpts')
+    m.add_action('excerpts.MyExcerpts')
 
 
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.ExcerptTypes')
+    m.add_action('excerpts.ExcerptTypes')
 
 
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.Excerpts')
+    m.add_action('excerpts.Excerpts')
 
 
 @dd.receiver(dd.pre_analyze)
 def set_excerpts_actions(sender, **kw):
     # logger.info("20140401 %s.set_attest_actions()", __name__)
     # in case ExcerptType is overridden
-    ExcerptType = sender.modules.attestations.ExcerptType
+    ExcerptType = sender.modules.excerpts.ExcerptType
     ctypes = set()
     try:
         for atype in ExcerptType.objects.all():
@@ -433,7 +433,7 @@ def set_excerpts_actions(sender, **kw):
                 m.define_action(create_excerpt=CreateExcerpt())
                 m.define_action(
                     show_excerpts=dd.ShowSlaveTable(
-                        'attestations.ExcerptsByOwner'
+                        'excerpts.ExcerptsByOwner'
                     ))
                 # logger.info("20140401 %s is attestable", m)
     except Exception as e:
