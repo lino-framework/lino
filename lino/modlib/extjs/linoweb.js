@@ -737,7 +737,7 @@ Lino.close_window = function(status_update, norestore) {
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
   // console.log(
-  //     "20140430 Lino.close_window() going to close", 
+  //     "20140516 Lino.close_window() going to close", 
   //     cw, "previous is", ww, "norestore is", norestore);
   if (ww) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
@@ -1629,11 +1629,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     //     gridmode = false;
     // }
 
-    if (result.eval_js) {
-        //~ console.log(20120618,result.eval_js);
-        eval(result.eval_js);
-    }
-    
     //~ if (result.goto_record) {
         //~ var js = "Lino." + result.goto_record[0] + '.detail.run';
         //~ var h = eval(js);
@@ -1689,7 +1684,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     }
 
     var ns = {};  // new status
-
     if (result.close_window) {
         if(result.record_id || result.data_record) {
             var ww = Lino.calling_window();
@@ -1745,6 +1739,14 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
     if(result.record_deleted && panel.ls_url == result.actor_url) {
         panel.after_delete();
+    }
+    
+    // `eval_js` must get handled after `close_window` because it
+    // might ask to open a new window (and we don't want to close the
+    // new window).
+     if (result.eval_js) {
+        //~ console.log(20120618,result.eval_js);
+        eval(result.eval_js);
     }
     
     if (result.refresh_all) {
@@ -2127,9 +2129,8 @@ Lino.call_ajax_action = function(
           panel = Lino.current_window.main_item;
       else panel = Lino.viewport;
   }
-  //~ console.log("20130809 Lino.call_ajax_action",panel);
   Ext.apply(p, panel.get_base_params());
-  
+
   if (panel.get_selected) {
       var selected_recs = panel.get_selected();
       //~ console.log("20130831",selected_recs);
@@ -2139,6 +2140,8 @@ Lino.call_ajax_action = function(
       };
       p.{{ext_requests.URL_PARAM_SELECTED}} = rs;
   }
+  
+  // console.log("20140516 Lino.call_ajax_action", p, actionName, step);
   
   if (panel.loadMask) panel.loadMask.show(); 
     
@@ -2555,7 +2558,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
         return;
     }
     var self = this;
-    function on_success() { self.get_containing_window().close(); };
+    // function on_success() { self.get_containing_window().close(); };
     // see 20131004 and 20140430
     var url = '{{settings.SITE.build_admin_url("api")}}';
     if (panel) 
@@ -2586,7 +2589,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     this.record_id = status.record_id;
   }
   
-  , before_row_edit : function(record) {}
+  ,before_row_edit : function(record) {}
   ,add_field_values : function (p) { // similar to add_param_values()
       //~ 20121023 
       if (this.form.isDirty()) {

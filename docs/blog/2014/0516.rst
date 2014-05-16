@@ -4,7 +4,7 @@ Friday, May 16, 2014
 
 I discovered that :class:`ml.excerpts.CreateExcerpt`, like every
 :term:`dialog action`, cannot be in the top toolbar because these
-actions must be statically renderable.
+actions must be statically renderable.  This is :doc:`/tickets/105`.
 
 I discovered that Lino didn't yet support choosers on actions with a
 parameter window.
@@ -18,8 +18,10 @@ parameter window.
   :js:func:`ActionFormPanel.before_row_edit` function (and that
   :js:func:`ActionFormPanel.set_field_values` did not call it).
 
-I started to rename "attestations" to "excerpts". First the model
-classes themselves. The module name will move in a separate commit.
+Zwischendurch:
 
-The Lino test suite had a failure in
-:mod:`lino.tutorials.mini.tests`. Added some test cases there.
+- I started to rename "attestations" to "excerpts". First the model
+  classes themselves. The module name will move in a separate commit.
+
+- The Lino test suite had a failure in
+  :mod:`lino.tutorials.mini.tests`. Added some test cases there.

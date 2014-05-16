@@ -12,6 +12,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"See :class:`dd.Model`."
+
 from __future__ import unicode_literals
 
 import logging

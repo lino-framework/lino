@@ -417,6 +417,10 @@ class Action(Parametrizable, Permittable):
         if label is not None:
             self.label = label
 
+        if self.parameters is not None and self.select_rows:
+            self.show_in_bbar = False
+            # see ticket #105
+
         for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("Invalid action keyword %s" % k)
