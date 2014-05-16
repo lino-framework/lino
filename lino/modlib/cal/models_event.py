@@ -49,7 +49,7 @@ from .models import Component
 from .models import Priority
 from .workflows import EventStates
 
-contacts = dd.resolve_app('contacts')
+# contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 

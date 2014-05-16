@@ -314,6 +314,9 @@ class Model(models.Model):
         """
         return []
 
+    def get_overview_elems(self, ar):
+        return []
+
     @classmethod
     def on_analyze(self, site):
         pass

@@ -20,18 +20,61 @@ Defines models
 """
 
 
-import datetime
 from django.db import models
 from django.conf import settings
 
 from lino import dd
-#~ from lino import layouts
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
 
+from lino.utils import join_words
 
-from lino.modlib.contacts import Plugin
+
+class AddressFormatter(object):
+
+    """
+    Format used in BE, DE, FR, NL...
+    """
+    def get_city_lines(me, self):
+        if self.city is not None:
+            s = join_words(self.zip_code or self.city.zip_code, self.city)
+            if s:
+                yield s
+
+
+class EstonianAddressFormatter(AddressFormatter):
+
+    """
+    Format used in Estonia.
+    Not ready and not tested.
+    """
+    def get_city_lines(me, self):
+        #lines = [self.name,street,self.addr1,self.addr2]
+        if self.region:
+            if self.city:
+                join_words(self.zip_code or self.city.zip_code, self.city)
+                if self.city.zip_code:
+                    yield unicode(self.city)
+                    yield unicode(self.city)
+            s = join_words(self.zip_code, self.region)
+        else:
+            s = join_words(self.zip_code, self.city)
+        if s:
+            yield s
+
+
+ADDRESS_FORMATTERS = dict()
+ADDRESS_FORMATTERS[None] = AddressFormatter()
+ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
+
+
+def get_address_formatter(country):
+    if country and country.isocode:
+        af = ADDRESS_FORMATTERS.get(country.isocode, None)
+        if af is not None:
+            return af
+    return ADDRESS_FORMATTERS.get(None)
 
 
 class PlaceTypes(dd.ChoiceList):
@@ -369,8 +412,82 @@ class CountryRegionCity(CountryCity):
         #~ return cls.city.field.rel.to.objects.order_by('name')
 
 
+class AddressLocation(CountryRegionCity):
+    "See :class:`ml.contacts.AddressLocation`."
+    class Meta:
+        abstract = True
+
+    addr1 = models.CharField(
+        _("Address line before street"),
+        max_length=200, blank=True,
+        help_text=_("Address line before street"))
+
+    street_prefix = models.CharField(
+        _("Street prefix"), max_length=200, blank=True,
+        help_text=_("Text to print before name of street, "
+                    "but to ignore for sorting."))
+
+    street = models.CharField(
+        _("Street"), max_length=200, blank=True,
+        help_text=_("Name of street, without house number."))
+
+    street_no = models.CharField(
+        _("No."), max_length=10, blank=True,
+        help_text=_("House number."))
+
+    street_box = models.CharField(
+        _("Box"), max_length=10, blank=True,
+        help_text=_("Text to print after street nuber on the same line."))
+
+    addr2 = models.CharField(
+        _("Address line after street"),
+        max_length=200, blank=True,
+        help_text=_("Address line to print below street line."))
+
+    def on_create(self, ar):
+        sc = settings.SITE.site_config.site_company
+        if sc and sc.country:
+            self.country = sc.country
+        super(AddressLocation, self).on_create(ar)
+
+    def address_location_lines(self):
+        #~ lines = []
+        #~ lines = [self.name]
+        if self.addr1:
+            yield self.addr1
+        if self.street:
+            yield join_words(
+                self.street_prefix, self.street,
+                self.street_no, self.street_box)
+        if self.addr2:
+            yield self.addr2
+
+        af = get_address_formatter(self.country)
+        for ln in af.get_city_lines(self):
+            yield ln
+
+        if self.country is not None:
+            sc = settings.SITE.site_config  # get_site_config()
+            #~ print 20130228, sc.site_company_id
+            if sc.site_company is None or self.country != sc.site_company.country:
+                # (if self.country != sender's country)
+                yield unicode(self.country)
+
+        #~ logger.debug('%s : as_address() -> %r',self,lines)
+
+    def address_location(self, linesep="\n"):
+        return linesep.join(self.address_location_lines())
+
+    @dd.displayfield(_("Address"))
+    def address_column(self, request):
+        return self.address_location(', ')
+
+
+menu_root = dd.apps.countries
+
+
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", Plugin.verbose_name)
+    m = m.add_menu(menu_root.app_label, menu_root.verbose_name)
     m.add_action(Countries)
     m.add_action(Places)
 

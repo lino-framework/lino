@@ -33,8 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
 from lino.utils.xmlgen.html import E
-
-contacts = dd.resolve_app('contacts')
+from lino.modlib.countries.models import AddressLocation
 
 
 class AddressTypes(dd.ChoiceList):
@@ -93,7 +92,7 @@ class AddressOwner(dd.Model):
         return elems
     
 
-class Address(contacts.AddressLocation):
+class Address(AddressLocation):
 
     class Meta:
         verbose_name = _("Address")

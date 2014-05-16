@@ -1621,7 +1621,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
 
 Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
-    console.log('20140504 Lino.handle_action_result()', result);
+    // console.log('20140504 Lino.handle_action_result()', result);
     
     // if (panel instanceof Lino.GridPanel) {
     //     gridmode = true;
@@ -1657,32 +1657,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         return;
     }
     
-    if (on_success && result.success) {
-        // console.log("20140430 handle_action_result calls on_success", 
-        //             on_success);
-        on_success(result);
-    }
-    
-    if (result.info_message) {
-        console.log(result.info_message);
-    }
-    
-    if (result.warning_message) {
-        if (!result.alert) result.alert = "{{_('Warning')}}";
-        Ext.MessageBox.alert(result.alert, result.warning_message);
-    }
-    
-    if (result.message) {
-        //~ if (result.alert && ! gridmode) {
-        if (result.alert) { // 20120628b 
-            //~ Ext.MessageBox.alert('Alert',result.alert_msg);
-            if (result.alert === true) result.alert = "{{_('Alert')}}";
-            Ext.MessageBox.alert(result.alert, result.message);
-        } else {
-            Lino.notify(result.message);
-        }
-    }
-
     var ns = {};  // new status
     if (result.close_window) {
         if(result.record_id || result.data_record) {
@@ -1737,27 +1711,56 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
 
-    if(result.record_deleted && panel.ls_url == result.actor_url) {
-        panel.after_delete();
-    }
-    
-    // `eval_js` must get handled after `close_window` because it
+    // `eval_js` must get handler after `close_window` because it
     // might ask to open a new window (and we don't want to close the
-    // new window).
-     if (result.eval_js) {
+    // new window).  It must execute *before* any MessageBox,
+    // otherwise the box would get hidden by a window that opens
+    // afterwards.
+
+    if (result.eval_js) {
         //~ console.log(20120618,result.eval_js);
         eval(result.eval_js);
+    }
+    
+    if (on_success && result.success) {
+        // console.log("20140430 handle_action_result calls on_success", 
+        //             on_success);
+        on_success(result);
+    }
+    
+    if (result.info_message) {
+        console.log(result.info_message);
+    }
+    
+    if (result.warning_message) {
+        if (!result.alert) result.alert = "{{_('Warning')}}";
+        Ext.MessageBox.alert(result.alert, result.warning_message);
+    }
+    
+    if (result.message) {
+        //~ if (result.alert && ! gridmode) {
+        if (result.alert) { // 20120628b 
+            //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+            if (result.alert === true) result.alert = "{{_('Alert')}}";
+            Ext.MessageBox.alert(result.alert, result.message);
+        } else {
+            Lino.notify(result.message);
+        }
+    }
+
+    if(result.record_deleted && panel.ls_url == result.actor_url) {
+        panel.after_delete();
     }
     
     if (result.refresh_all) {
         var cw = Lino.current_window;
         // var cw = panel.get_containing_window();
         if (cw) {
-            console.log("20140504 refresh_all calls refresh on", cw.main_item);
+            // console.log("20140504 refresh_all calls refresh on", cw.main_item);
             cw.main_item.refresh();
         }
-        else console.log("20131026 cannot refresh_all because ",
-                         panel,"has no get_containing_window");
+        // else console.log("20131026 cannot refresh_all because ",
+        //                  panel,"has no get_containing_window");
     } else {
         // console.log("20131026 b gonna refresh",panel);
         if (result.refresh) panel.refresh();

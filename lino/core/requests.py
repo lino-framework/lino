@@ -57,7 +57,7 @@ ACTION_RESPONSES = frozenset((
     'xcallback',
     'open_url', 'open_davlink_url',
     'info_message',
-    'warning_message',
+    'warning_message',  # deprecated
     'eval_js'))
 """
 Action responses supported by `Lino.action_handler`
@@ -668,6 +668,8 @@ class ActorRequest(BaseRequest):
     :meth:`lino.core.kernel.Kernel.run_callback`.
 
     """
+    no_data_text = _("No data to display")
+
     def create_phantom_rows(self, **kw):
         if self.create_kw is None or not self.actor.editable \
            or not self.actor.allow_create:
@@ -744,8 +746,11 @@ class ActorRequest(BaseRequest):
         return self.bound_action.action.render_to_dict(self)
 
     def goto_instance(self, obj, **kw):
+        # e.g. find_by_beid is called from viewport, so there is no
+        # requesting_panel.
         if self.actor.model is None \
-           or not isinstance(obj, self.actor.model):
+           or not isinstance(obj, self.actor.model)\
+           or self.requesting_panel is None:
             return super(ActorRequest, self).goto_instance(obj, **kw)
         self.set_response(actor_url=self.actor.actor_url())
         if self.actor.handle_uploaded_files is not None:

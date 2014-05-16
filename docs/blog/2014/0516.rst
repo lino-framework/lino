@@ -25,3 +25,9 @@ Zwischendurch:
 
 - The Lino test suite had a failure in
   :mod:`lino.tutorials.mini.tests`. Added some test cases there.
+
+- Ich habe mich mal drangesetzt um die Test-Suite von :ref:`welfare`
+  wieder ans Laufen zu kriegen. Ist noch nicht ganz fertig.
+
+- :mod:`lino_welfare.tests.test_beid` took more time, but was
+  useful because it detected several bugs.

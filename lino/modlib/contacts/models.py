@@ -37,64 +37,18 @@ from lino import dd
 from lino import mixins
 
 from lino.utils import join_words
+from lino.utils import join_elems
 from lino.utils.choosers import chooser
 
-from lino.modlib.countries.models import CountryRegionCity
+from lino.modlib.countries.models import AddressLocation
 
 from lino.modlib.contacts import Plugin
 
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
-from lino.utils import join_elems
 
 
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
-
-
-class AddressFormatter(object):
-
-    """
-    Format used in BE, DE, FR, NL...
-    """
-    def get_city_lines(me, self):
-        if self.city is not None:
-            s = join_words(self.zip_code or self.city.zip_code, self.city)
-            if s:
-                yield s
-
-
-class EstonianAddressFormatter(AddressFormatter):
-
-    """
-    Format used in Estonia.
-    Not ready and not tested.
-    """
-    def get_city_lines(me, self):
-        #lines = [self.name,street,self.addr1,self.addr2]
-        if self.region:
-            if self.city:
-                join_words(self.zip_code or self.city.zip_code, self.city)
-                if self.city.zip_code:
-                    yield unicode(self.city)
-                    yield unicode(self.city)
-            s = join_words(self.zip_code, self.region)
-        else:
-            s = join_words(self.zip_code, self.city)
-        if s:
-            yield s
-
-
-ADDRESS_FORMATTERS = dict()
-ADDRESS_FORMATTERS[None] = AddressFormatter()
-ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
-
-
-def get_address_formatter(country):
-    if country and country.isocode:
-        af = ADDRESS_FORMATTERS.get(country.isocode, None)
-        if af is not None:
-            return af
-    return ADDRESS_FORMATTERS.get(None)
 
 
 class CompanyType(dd.BabelNamed):
@@ -111,77 +65,6 @@ class CompanyTypes(dd.Table):
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
-
-
-class AddressLocation(CountryRegionCity):
-    "See :class:`ml.contacts.AddressLocation`."
-    class Meta:
-        abstract = True
-
-    addr1 = models.CharField(
-        _("Address line before street"),
-        max_length=200, blank=True,
-        help_text=_("Address line before street"))
-
-    street_prefix = models.CharField(
-        _("Street prefix"), max_length=200, blank=True,
-        help_text=_("Text to print before name of street, "
-                    "but to ignore for sorting."))
-
-    street = models.CharField(
-        _("Street"), max_length=200, blank=True,
-        help_text=_("Name of street, without house number."))
-
-    street_no = models.CharField(
-        _("No."), max_length=10, blank=True,
-        help_text=_("House number."))
-
-    street_box = models.CharField(
-        _("Box"), max_length=10, blank=True,
-        help_text=_("Text to print after street nuber on the same line."))
-
-    addr2 = models.CharField(
-        _("Address line after street"),
-        max_length=200, blank=True,
-        help_text=_("Address line to print below street line."))
-
-    def on_create(self, ar):
-        sc = settings.SITE.site_config.site_company
-        if sc and sc.country:
-            self.country = sc.country
-        super(AddressLocation, self).on_create(ar)
-
-    def address_location_lines(self):
-        #~ lines = []
-        #~ lines = [self.name]
-        if self.addr1:
-            yield self.addr1
-        if self.street:
-            yield join_words(
-                self.street_prefix, self.street,
-                self.street_no, self.street_box)
-        if self.addr2:
-            yield self.addr2
-
-        af = get_address_formatter(self.country)
-        for ln in af.get_city_lines(self):
-            yield ln
-
-        if self.country is not None:
-            sc = settings.SITE.site_config  # get_site_config()
-            #~ print 20130228, sc.site_company_id
-            if sc.site_company is None or self.country != sc.site_company.country:
-                # (if self.country != sender's country)
-                yield unicode(self.country)
-
-        #~ logger.debug('%s : as_address() -> %r',self,lines)
-
-    def address_location(self, linesep="\n"):
-        return linesep.join(self.address_location_lines())
-
-    @dd.displayfield(_("Address"))
-    def address_column(self, request):
-        return self.address_location(', ')
 
 
 class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
@@ -262,12 +145,12 @@ but e.g. :class:`Human` overrides this.
     def get_partner_instance(self):
         return self  # compatibility with lino.modlib.partners
 
+    def get_name_elems(self, ar):
+        return [E.b(self.name), E.br()]
+
     @dd.displayfield()
     def overview(self, ar):
         return self.get_overview_elems(ar)
-
-    def get_name_elems(self, ar):
-        return [E.b(self.name), E.br()]
 
     def get_overview_elems(self, ar):
         elems = self.get_name_elems(ar)

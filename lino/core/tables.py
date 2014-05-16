@@ -159,9 +159,6 @@ class TableRequest(ActionRequest):
     offset = None
     #~ create_rows = None
 
-    #~ no_data_text = None
-    no_data_text = _("No data to display")  # Keine Daten anzuzeigen
-
     _data_iterator = None
     _sliced_data_iterator = None
 

@@ -128,9 +128,9 @@ class BaseBeIdReadCardAction(dd.Action):
         #~ raise Exception("20131108 cool: %s" % cd)
 
         kw.update(national_id=ssin.format_ssin(str(data.nationalNumber)))
-        kw.update(first_name=data.firstName)
-        kw.update(middle_name=data.middleName)
-        kw.update(last_name=data.name)
+        kw.update(first_name=data.firstName or '')
+        kw.update(middle_name=data.middleName or '')
+        kw.update(last_name=data.name or '')
 
         card_number = str(data.cardNumber)
 
@@ -240,8 +240,7 @@ class BaseBeIdReadCardAction(dd.Action):
 
     def goto_client_response(self, ar, obj, msg=None, **kw):
         """Called from different places but always the same result.  Calls
-:meth:`ar.goto_instance
-<lino.core.requests.BaseRequest.goto_instance>`.
+:meth:`ar.goto_instance <rt.ActionRequest.goto_instance>`.
 
         """
         # kw.update(goto_record_id=obj.pk)
@@ -253,6 +252,8 @@ class BaseBeIdReadCardAction(dd.Action):
         if msg:
             return ar.success(msg, _("Success"), **kw)
         return ar.success(msg, **kw)
+
+NAMES = tuple('last_name middle_name first_name'.split())
 
 
 class FindByBeIdAction(BaseBeIdReadCardAction):
@@ -273,12 +274,22 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
                                   # national_id is unique
             return ar.error(msg)
         if qs.count() == 0:
-            fkw = dict(last_name__iexact=attrs['last_name'],
-                       first_name__iexact=attrs['first_name'])
+            fkw = dict()
+            for k in NAMES:
+                v = attrs[k]
+                if v:
+                    fkw[k+'__iexact'] = v
+            # fkw = dict(last_name__iexact=attrs['last_name'],
+            #            middle_name__iexact=attrs['middle_name'],
+            #            first_name__iexact=attrs['first_name'])
 
-            # if a Person with same last_name and first_name
-            # exists, the user cannot (automatically) create a new
-            # Client from eid card.
+            full_name = join_words(
+                attrs['first_name'],
+                attrs['middle_name'],
+                attrs['last_name'])
+
+            # If a Person with same full_name exists, the user cannot
+            # (automatically) create a new Client from eid card.
 
             #~ fkw.update(national_id__isnull=True)
             contacts = dd.modules.contacts
@@ -297,22 +308,22 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
                     return self.goto_client_response(
                         ar2, obj, _("New client %s has been created") % obj)
                 return ar.confirm(
-                    yes, _("Create new client %(first_name)s "
-                           "%(last_name)s : Are you sure?") % attrs)
+                    yes,
+                    _("Create new client %s : Are you sure?") % full_name)
             elif pqs.count() == 1:
                 return ar.error(
                     self.sorry_msg % _(
                         "Cannot create new client because "
                         "there is already a person named "
-                        "%(first_name)s %(last_name)s in our database.")
-                    % attrs, alert=_("Oops!"))
+                        "%s in our database.")
+                    % full_name, alert=_("Oops!"))
             else:
                 return ar.error(
                     self.sorry_msg % _(
                         "Cannot create new client because "
                         "there is more than one person named "
-                        "%(first_name)s %(last_name)s in our database.")
-                    % attrs, alert=_("Oops!"))
+                        "%s in our database.")
+                    % full_name, alert=_("Oops!"))
 
         assert qs.count() == 1
         row = qs[0]
