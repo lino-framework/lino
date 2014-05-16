@@ -15,24 +15,15 @@ application is not available under the GPL **and** (2) used by other
 people than the empoyees of the company who wrote the application. See
 :doc:`/about/license` for details.
 
-Whether to use a status bar to display certain messages to the user.
-
 
 .. class:: Plugin
 
   .. attribute:: use_statusbar
 
-    Whether to use a statusbar. Default is `False` since this is not
-    really useful.
+    Whether to use a status bar to display certain messages to the user.
+    Default is `False` since currently this is not really useful.
 
   .. attribute:: media_base_url
-
-  .. attribute:: media_root
-
-    Path to the ExtJS root directory.  Only used when
-    :attr:`media_base_url` is None, and when the `media` directory has
-    no symbolic link named `extjs` pointing to the ExtJS root
-    directory.
 
     The URL from where to include the ExtJS library files.
     
@@ -48,5 +39,10 @@ Whether to use a status bar to display certain messages to the user.
     :xfile:`media` directory) to point to the local directory where
     ExtJS 3.3.1 is installed).
 
+  .. attribute:: media_root
 
+    Path to the ExtJS root directory.  Only used when
+    :attr:`media_base_url` is None, and when the `media` directory has
+    no symbolic link named `extjs` pointing to the ExtJS root
+    directory.
 

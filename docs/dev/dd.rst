@@ -53,6 +53,12 @@ The `dd.Model` class
     :ref:`welfare` overrides this in order to call its `populate`
     method.
 
+  .. method:: FOO_choices
+
+    For every field named "FOO", if the model has a method called
+    "FOO_choices" (which must be decorated by :func:`dd.chooser`),
+    then this method will be installed as a chooser for this field.
+
   .. method:: FOO_changed
 
     For every field named "FOO", if the model has a method called

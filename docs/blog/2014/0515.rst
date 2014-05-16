@@ -13,48 +13,12 @@ in German is called `Zwischenname
 
 Adapted :meth:`ml.beid.BaseBeIdReadCardAction.card2client`.
 
-CachedPrintable vs. Attestable
-------------------------------
+Cannot assign newcomer to a coach
+---------------------------------
 
-Gerd helped my to understand something.
-
-Es fehlten in der Tat noch ein paar fundamentale Erkenntnisse bei den
-Bescheinigungen bzw. Auszügen:
-
-- CreateAttestation brauche ein Dialogfenster. Selbst eine
-  Anwesenheitsbestätigung braucht nicht mit einem *einzigen* Klick als
-  pdf generiert zu werden (das ist ein Klick zu wenig).
-
-- Verträge und Budgets müssen ebenfalls Attestable statt
-  CachedPrintable werden. Aber da brauchen wir eine neue spezielle Art
-  von Auszugsart, nämlich "definitiv". Siehe unten.
-
-Sonstige Probleme, die wir entdeckt haben:
-
-- Layout im Reiter "Historie"
-
-- cal.Guest ist Printable und Attestable zugleich, das ist Quatsch.
-  Eine Anwendung, die :mod:`lino.modlib.attestations` nutzt, sollte
-  selber keine direkten CachedPrintable definieren.
-
-- importierte Lebensläufe: es fehlen der owner und die build_method
-
-Ein definitiver Auszug blockert das bescheinigte Objekt. Oder genauer
-gesagt er bewirkt, dass das verknüpfte Objekt nicht mehr bearbeitet
-werden kann. Das, was die Leute als "Cache löschen" kennen, bleibt
-äußerlich gleich, bewirkt aber in Zukunft, dass der definitive
-Ausdruck entfernt wird. Der definitive Auszug bleibt übrigens dann als
-solcher in der Historie bestehen, wirkt aber nicht mehr blockierend.
-Jeder Attestable kriegt ein neues Feld "final_attestation", einen FK
-nach Attestation. "Cache löschen" bedeutet dann einfach, dass dieses
-Feld geleert wird.
-
-
-More spaghetti in `linoweb.js`
-------------------------------
-
-Discovered another bug. When I assign client #116 of the
-:ref:`welfare` demo database to a coach, then I get::
+I discovered another bug which was introduced during the last
+weeks. When I assign client #116 of the :ref:`welfare` demo database
+to a coach, then I get::
 
     WARNING AjaxExceptionResponse:
     Http404
@@ -98,3 +62,42 @@ user confirms such a window (by clicking on its OK button), the client
 must send an AJAX call.  But we cannot hard-code the URL for that call
 in our generated ActionFormPanel subclass because it is possible that
 a same window is being reused on many different tables. 
+
+
+CachedPrintable vs. Attestable
+------------------------------
+
+Gerd helped my to understand the following.
+
+Es fehlten in der Tat noch ein paar fundamentale Erkenntnisse bei den
+Bescheinigungen bzw. Auszügen:
+
+- CreateAttestation braucht ein Dialogfenster. Selbst eine
+  Anwesenheitsbestätigung braucht nicht mit einem *einzigen* Klick als
+  pdf generiert zu werden (das ist ein Klick zu wenig).
+
+- Verträge und Budgets müssen ebenfalls Attestable statt
+  CachedPrintable werden. Aber da brauchen wir eine neue spezielle Art
+  von Auszugsart, nämlich "definitiv". Siehe unten.
+
+Sonstige Probleme, die wir entdeckt haben:
+
+- Layout im Reiter "Historie"
+
+- cal.Guest ist Printable und Attestable zugleich, das ist Quatsch.
+  Eine Anwendung, die :mod:`lino.modlib.attestations` nutzt, sollte
+  selber keine direkten CachedPrintable definieren.
+
+- importierte Lebensläufe: es fehlen der owner und die build_method
+
+Ein definitiver Auszug blockert das bescheinigte Objekt. Oder genauer
+gesagt er bewirkt, dass das verknüpfte Objekt nicht mehr bearbeitet
+werden kann. Das, was die Leute als "Cache löschen" kennen, bleibt
+äußerlich gleich, bewirkt aber in Zukunft, dass der definitive
+Ausdruck entfernt wird. Der definitive Auszug bleibt übrigens dann als
+solcher in der Historie bestehen, wirkt aber nicht mehr blockierend.
+Jeder Attestable kriegt ein neues Feld "final_attestation", einen FK
+nach Attestation. "Cache löschen" bedeutet dann einfach, dass dieses
+Feld geleert wird.
+
+

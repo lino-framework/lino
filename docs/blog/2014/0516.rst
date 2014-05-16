@@ -1,0 +1,26 @@
+====================
+Friday, May 16, 2014
+====================
+
+I discovered that :class:`ml.excerpts.CreateExcerpt`, like every
+:term:`dialog action`, cannot be in the top toolbar because these
+actions must be statically renderable.
+
+I discovered that Lino didn't yet support choosers on actions with a
+parameter window.
+
+- One problem was that :func:`lino.core.actions.check_for_chooser`
+  failed when you defined a :meth:`dd.Action.FOO_choices` method on an
+  action.
+
+- Another problem was that
+  `ExtRenderer.js_render_ActionFormPanelSubclass` did not generate a
+  :js:func:`ActionFormPanel.before_row_edit` function (and that
+  :js:func:`ActionFormPanel.set_field_values` did not call it).
+
+
+
+I started to rename "attestations" to "excerpts". First the model
+classes themselves. The module name will move in a separate commit.
+
+

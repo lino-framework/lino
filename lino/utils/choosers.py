@@ -139,11 +139,10 @@ class Chooser(FieldChooser):
         return m(text)
 
     def get_data_elem(self, name):
-        """
-        Calls 
-        :meth:`lino.core.actors.Actor.get_data_elem`
-        or
-        :meth:`lino.core.model.Model.get_data_elem`.
+        """Calls :meth:`dd.Actor.get_data_elem` or
+        :meth:`dd.Model.get_data_elem` or
+        :meth:`dd.Action.get_data_elem`.
+
         """
         de = self.model.get_data_elem(name)
         if de is None:
@@ -252,8 +251,7 @@ def uses_simple_values(fld):
     return True
 
 
-def chooser(**options):
-    "Decorator which turns the method into a chooser."
+def _chooser(make, **options):
     #~ options.setdefault('quick_insert_field',None)
     def chooser_decorator(fn):
         def wrapped(*args):
@@ -264,5 +262,20 @@ def chooser(**options):
         #~ 20120918b wrapped.context_params = fn.func_code.co_varnames[2:fn.func_code.co_argcount]
         for k, v in options.items():
             setattr(wrapped, k, v)
-        return classmethod(wrapped)
+        return make(wrapped)
+        # return classmethod(wrapped)
+        # A chooser on an action must not turn it into a classmethod
     return chooser_decorator
+
+
+def chooser(**options):
+    "Decorator which turns the method into a chooser."
+    return _chooser(classmethod, **options)
+
+
+def noop(x):
+    return x
+
+
+def action_chooser(**options):
+    return _chooser(noop, **options)

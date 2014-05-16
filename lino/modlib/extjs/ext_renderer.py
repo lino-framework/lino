@@ -1157,6 +1157,12 @@ class ExtRenderer(HtmlRenderer):
         yield "  action_name: '%s'," % tbl.action_name
         yield "  ls_url: %s," % py2js(dh.layout._url)
         yield "  window_title: %s," % py2js(tbl.label)
+
+        yield "  before_row_edit : function(record) {"
+        for ln in ext_elems.before_row_edit(dh.main):
+            yield "    " + ln
+        yield "  },"
+
         #~ yield "  layout: 'fit',"
         #~ yield "  auto_save: true,"
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':

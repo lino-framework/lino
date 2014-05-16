@@ -115,6 +115,15 @@ Glossary
     pointing to `City`, then you might define a slave table
     `PersonsByCity` which displays only Persons who live in a given
     City.
+
+  Dialog Action
+
+    A dialog action is an action which opens a window where the user
+    can specify "action parameters" before actually running the
+    action.  
+
+    An :class:`dd.Action` is a dialog action if and only if it has
+    :attr:`dd.Action.parameters` not `None`.
     
 
   Detail Window

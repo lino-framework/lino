@@ -23,10 +23,9 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields import NOT_PROVIDED
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
-#~ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
-from lino.utils.xmlgen.html import E
+# from lino.utils.xmlgen.html import E
 
 from lino.core import constants
 
@@ -237,6 +236,8 @@ class LayoutHandle:
                     be.hidden = True
             else:
                 e.hidden = True
+        
+        self.layout.setup_element(self, e)
         self._names[name] = e
         return e
 
@@ -340,6 +341,9 @@ class BaseLayout(object):
             self.main = self.main.replace(name, '')
 
     def setup_handle(self, lh):
+        pass
+
+    def setup_element(self, lh, e):
         pass
 
     def update(self, **kw):
@@ -519,6 +523,10 @@ class ActionParamsLayout(ParamsLayout):
     join_str = "\n"
     window_size = (50, 'auto')
     url_param_name = constants.URL_PARAM_FIELD_VALUES
+
+    def setup_element(self, lh, e):
+        from lino.utils import jsgen
+        e.declare_type = jsgen.DECLARE_THIS
 
     def get_choices_url(self, ui, field, **kw):
         return settings.SITE.build_admin_url(

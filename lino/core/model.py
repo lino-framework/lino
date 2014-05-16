@@ -480,20 +480,24 @@ class Model(models.Model):
         return self.__class__.get_default_table().detail_action
 
     def is_attestable(self):
-        """Override this to disable the create printout action on individual
-instances.
+        """Override this to disable the :class:`ml.excerpts.CreateExcerpt`
+action on individual instances.
 
         """
         return True
 
-    def get_attestation_options(self, ar, **kw):
-        """Set additional fields of newwly created printout from this."""
+    def get_excerpt_options(self, ar, **kw):
+        """Set additional fields of newly created excerpts from this.
+        Used by :class:`ml.excerpts.CreateExcerpt`.
+        """
         return kw
 
     LINO_MODEL_ATTRIBS = (
         #~ 'as_pdf',
         'get_detail_action',
         'get_row_permission',
+        'get_excerpt_options',
+        'is_attestable',
         'get_data_elem',
         'get_param_elem',
         'after_ui_save',

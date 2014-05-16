@@ -402,7 +402,6 @@ def declare_vars(v):
     If `v` is a :class:`Component`, `list`, `tuple` or `dict` which contains
     other variables, recursively yields also the lines to declare these.
     """
-    #~ assert _for_user_profile is not None
     if isinstance(v, (list, tuple)):
         for sub in v:
             for ln in declare_vars(sub):
@@ -413,7 +412,8 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v, VisibleComponent) and not v.get_view_permission(_for_user_profile):
+    if isinstance(v, VisibleComponent) and not v.get_view_permission(
+            _for_user_profile):
         return
     if isinstance(v, Component):
         for sub in v.ext_options().values():

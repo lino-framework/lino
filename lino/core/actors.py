@@ -950,6 +950,10 @@ class Actor(actions.Parametrizable):
                 if ba.action.is_callable_from(callable_from)]
 
     @classmethod
+    def make_chooser(cls, wrapped):
+        return classmethod(wrapped)
+    
+    @classmethod
     def get_data_elem(self, name):
         c = self._constants.get(name, None)
         if c is not None:

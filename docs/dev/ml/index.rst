@@ -2,16 +2,17 @@
 The standard library ``modlib``
 ===============================
 
-The :mod:`lino.modlib` modules are ready-to-use "apps" (as Django
-calls them) which may be used by your Lino applications.
+The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
+(as Django calls them) for Lino applications.
 
 .. toctree::
    :maxdepth: 2
 
-   users
-   countries
    addresses
-   contacts
-   humanlinks
    beid
+   contacts
+   countries
    extjs
+   excerpts
+   humanlinks
+   users

@@ -128,7 +128,10 @@ def check_for_chooser(model, field):
     if isinstance(field, fields.DummyField):
         return
     methname = field.name + "_choices"
-    m = get_class_attr(model, methname)
+    if isinstance(model, Action):
+        m = getattr(model, methname, None)
+    else:
+        m = get_class_attr(model, methname)
     if m is not None:
         ch = Chooser(model, field, m)
         setattr(field, '_lino_chooser', ch)
@@ -200,7 +203,6 @@ def register_params(cls):
 
 def setup_params_choosers(self):
     if self.parameters:
-        #~ from lino.utils.choosers import check_for_chooser
         for k, fld in self.parameters.items():
             if isinstance(fld, models.ForeignKey):
                 fld.rel.to = resolve_model(fld.rel.to)
@@ -449,11 +451,19 @@ class Action(Parametrizable, Permittable):
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
 
+    # @classmethod
+    # def make_chooser(cls, wrapped):
+    #     return wrapped
+
     def as_bootstrap_html(self, ar):
         return "Oops, no as_bootstrap_html method for %s" % self
 
     def make_params_layout_handle(self, ui):
         return make_params_layout_handle(self, ui)
+
+    def get_data_elem(self, name):
+        # same as in Actor but here it is an instance method
+        return None
 
     def get_param_elem(self, name):
         # same as in Actor but here it is an instance method
@@ -516,7 +526,8 @@ class Action(Parametrizable, Permittable):
         self.action_name = name
         self.defining_actor = wf
         #~ logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
-        setup_params_choosers(self.__class__)
+        # setup_params_choosers(self.__class__)
+        setup_params_choosers(self)
 
     def attach_to_actor(self, actor, name):
         """Called once per Actor per Action on startup before a BoundAction
@@ -540,7 +551,8 @@ class Action(Parametrizable, Permittable):
         self.defining_actor = actor
         if self.label is None:
             self.label = name
-        setup_params_choosers(self.__class__)
+        setup_params_choosers(self)
+        # setup_params_choosers(self.__class__)
         return True
 
     def __unicode__(self):
@@ -591,8 +603,12 @@ class Action(Parametrizable, Permittable):
         return ia.run_from_session(ses, **kw)
 
     def action_param_defaults(self, ar, obj, **kw):
-        """
-        Same as Actor.param_defaults, except that here it is a instance method
+        """Same as Actor.param_defaults, except that here it is a instance
+        method.
+
+        Note that this method is not called for actions which are
+        rendered in a toolbar.
+
         """
         for k, pf in self.parameters.items():
             kw[k] = pf.get_default()

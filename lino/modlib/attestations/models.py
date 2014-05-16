@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-The :xfile:`models.py` file for :mod:`lino.modlib.attestations`.
+The :xfile:`models.py` file for :mod:`ml.excerpts`.
 """
 
 from __future__ import unicode_literals
@@ -40,17 +40,17 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
-class AttestationType(
+class ExcerptType(
         dd.BabelNamed,
         mixins.PrintableType,
         outbox.MailableType):
 
-    templates_group = 'attestations/Attestation'
+    templates_group = 'attestations/Excerpt'
 
     class Meta:
-        abstract = dd.is_abstract_model('attestations.AttestationType')
-        verbose_name = _("Attestation Type")
-        verbose_name_plural = _("Attestation Types")
+        abstract = dd.is_abstract_model('attestations.ExcerptType')
+        verbose_name = _("Excerpt Type")
+        verbose_name_plural = _("Excerpt Types")
 
     important = models.BooleanField(
         verbose_name=_("important"),
@@ -67,7 +67,7 @@ class AttestationType(
     content_type = dd.ForeignKey(
         'contenttypes.ContentType',
         verbose_name=_("Model"),
-        related_name='attestation_types',
+        related_name='excerpt_types',
         # null=True, blank=True,
         help_text=_("The model that can issue printouts of this type."))
 
@@ -94,21 +94,21 @@ class AttestationType(
     #         '.body.html', cls.get_templates_group())
 
     def after_ui_save(self, ar):
-        super(AttestationType, self).after_ui_save(ar)
+        super(ExcerptType, self).after_ui_save(ar)
         if self.primary:
-            for o in self.content_type.attestation_types.exclude(id=self.id):
+            for o in self.content_type.excerpt_types.exclude(id=self.id):
                 if o.primary:
                     o.primary = False
                     o.save()
                     ar.set_response(refresh_all=True)
 
 
-class AttestationTypes(dd.Table):
+class ExcerptTypes(dd.Table):
 
     """
-    Displays all rows of :class:`AttestationType`.
+    Displays all rows of :class:`ExcerptType`.
     """
-    model = 'attestations.AttestationType'
+    model = 'attestations.ExcerptType'
     required = dd.required(user_level='admin', user_groups='office')
     column_names = 'content_type name build_method template primary *'
     order_by = ["name"]
@@ -125,7 +125,7 @@ class AttestationTypes(dd.Table):
     build_method template body_template
     email_template attach_to_email
     remark:60x5
-    attestations.AttestationsByType
+    attestations.ExcerptsByType
     """
 
     @classmethod
@@ -137,15 +137,47 @@ class AttestationTypes(dd.Table):
         return obj.get_choices_text(request, self, field)
 
 
-class CreateAttestation(dd.Action):
-    """Creates a Attestation and displays it.
+class CreateExcerpt(dd.Action):
+    """Creates a Excerpt and displays it.
 
     """
-    url_action_name = 'attest'
+    parameters = dict(
+        excerpt_type=dd.ForeignKey('attestations.ExcerptType'),
+        user=dd.ForeignKey('users.User'),
+        owner_type=dd.ForeignKey(ContentType, editable=False),
+    )
+    params_layout = """
+    excerpt_type
+    user
+    owner_type
+    """
+    url_action_name = 'create_excerpt'
     icon_name = 'script_add'
     help_text = _('Create a new excerpt using this data record.')
     label = _('Create Excerpt')
     sort_index = 49  # immediately before "Print"
+
+    def action_param_defaults(self, ar, obj, **kw):
+        kw = super(CreateExcerpt, self).action_param_defaults(
+            ar, obj, **kw)
+        if obj is not None:
+            ct = ContentType.objects.get_for_model(obj.__class__)
+            kw.update(owner_type=ct)
+            try:
+                at = ExcerptType.objects.get(
+                    content_type=ct, primary=True)
+                kw.update(excerpt_type=at)
+            except ExcerptType.MultipleObjectsReturned:
+                pass
+            except ExcerptType.DoesNotExist:
+                pass
+        kw.update(user=ar.get_user())
+        return kw
+
+    @dd.chooser()
+    def excerpt_type_choices(cls, owner_type):
+        logger.info("20140515 excerpt_type_choices(%r)", owner_type)
+        return ExcerptType.objects.filter(content_type=owner_type)
 
     def get_action_permission(self, ar, obj, state):
         # if not ar.get_user().email:
@@ -153,56 +185,42 @@ class CreateAttestation(dd.Action):
         if obj is not None:
             if not obj.is_attestable():
                 return False
-        return super(CreateAttestation,
+        return super(CreateExcerpt,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
+        at = ar.action_param_values.excerpt_type
         akw = dict(
-            user=ar.get_user(),
+            user=ar.action_param_values.user,
+            excerpt_type=at,
             owner=obj)
-        ct = ContentType.objects.get_for_model(obj.__class__)
-        primary_type = None
-
-        try:
-            primary_type = AttestationType.objects.get(
-                content_type=ct, primary=True)
-            akw.update(attestation_type=primary_type)
-        except AttestationType.MultipleObjectsReturned:
-            pass
-        except AttestationType.DoesNotExist:
-            pass
-            # atypes = AttestationType.objects.filter(content_type=ct)
-            # n = atypes.count()
-            # if n == 1:
-            #     akw.update(type=atypes[0])
-
-        # a = obj.create_attestation(ar, **akw)
-        akw = obj.get_attestation_options(ar, **akw)
-        a = dd.modules.attestations.Attestation(**akw)
+        akw = obj.get_excerpt_options(ar, **akw)
+        a = dd.modules.attestations.Excerpt(**akw)
 
         a.full_clean()
         a.save()
-        
-        if primary_type is None or not primary_type.skip_dialog:
+
+        if at.skip_dialog:
+            # print directly without dialog
+            a.do_print.run_from_ui(ar, **kw)
+        else:
             # open detail window on the created attestation
             # js = ar.renderer.instance_handler(ar, a)
             # kw.update(eval_js=js)
             ar.success(**kw)
             ar.goto_instance(a)
-        else:  # print directly without dialog
-            a.do_print.run_from_ui(ar, **kw)
 
 
-class Attestation(dd.TypedPrintable,
-                  dd.UserAuthored,
-                  dd.Controllable,
-                  contacts.ContactRelated,
-                  dd.ProjectRelated,
-                  outbox.Mailable,
-                  postings.Postable):
+class Excerpt(dd.TypedPrintable,
+              dd.UserAuthored,
+              dd.Controllable,
+              contacts.ContactRelated,
+              dd.ProjectRelated,
+              outbox.Mailable,
+              postings.Postable):
 
-    """An attestation is a printable document that describes some aspect
+    """An excerpt is a printable document that describes some aspect
     of the current situation.
 
     """
@@ -210,15 +228,15 @@ class Attestation(dd.TypedPrintable,
     manager_level_field = 'office_level'
 
     class Meta:
-        abstract = dd.is_abstract_model('attestations.Attestation')
-        verbose_name = _("Attestation")
-        verbose_name_plural = _("Attestations")
+        abstract = dd.is_abstract_model('attestations.Excerpt')
+        verbose_name = _("Excerpt")
+        verbose_name_plural = _("Excerpts")
 
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)
 
-    attestation_type = models.ForeignKey(
-        'attestations.AttestationType',
+    excerpt_type = dd.ForeignKey(
+        'attestations.ExcerptType',
         blank=True, null=True)
 
     language = dd.LanguageField()
@@ -229,27 +247,27 @@ class Attestation(dd.TypedPrintable,
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):
-        return self.attestation_type
+        return self.excerpt_type
 
     def get_printable_type(self):
-        return self.attestation_type
+        return self.excerpt_type
 
     def on_create(self, ar):
-        """When creating an Attestation by double clicking in
-        AttestationsByProject, then the `project` field gets filled
+        """When creating an Excerpt by double clicking in
+        ExcerptsByProject, then the `project` field gets filled
         automatically, but we also want to set the `owner` field to
         the project.
 
         """
-        super(Attestation, self).on_create(ar)
+        super(Excerpt, self).on_create(ar)
         if not self.owner_id:
             if self.project:
                 self.owner = self.project
 
     @dd.chooser()
-    def attestation_type_choices(cls, owner):
-        logger.info("20140513 %s", owner)
-        qs = AttestationType.objects.order_by('name')
+    def excerpt_type_choices(cls, owner):
+        # logger.info("20140513 %s", owner)
+        qs = ExcerptType.objects.order_by('name')
         if owner is None:
             return qs.filter(content_type__isnull=True)
         ct = ContentType.objects.get_for_model(owner.__class__)
@@ -264,7 +282,7 @@ class Attestation(dd.TypedPrintable,
 
     def get_print_language(self):
         """Returns the language to be selected when rendering this
-        Attestation. Default implementation returns the content of
+        Excerpt. Default implementation returns the content of
         `self.language`.
 
         """
@@ -277,8 +295,8 @@ class Attestation(dd.TypedPrintable,
             return '<div class="htmlText">%s</div>' % ctx['body']
 
     def get_printable_context(self, ar, **kw):
-        kw = super(Attestation, self).get_printable_context(ar, **kw)
-        atype = self.attestation_type
+        kw = super(Excerpt, self).get_printable_context(ar, **kw)
+        atype = self.excerpt_type
         if atype and atype.body_template:
             tplname = atype.body_template
             tplgroup = model_group(atype.content_type.model_class())
@@ -303,9 +321,9 @@ class Attestation(dd.TypedPrintable,
         cls.PRINTABLE_FIELDS = dd.fields_list(
             cls,
             'project company contact_person contact_role \
-            attestation_type language \
+            excerpt_type language \
             user build_method')
-        super(Attestation, cls).on_analyze(lino)
+        super(Excerpt, cls).on_analyze(lino)
 
     def disabled_fields(self, ar):
         if not self.build_time:
@@ -313,72 +331,73 @@ class Attestation(dd.TypedPrintable,
         return self.PRINTABLE_FIELDS
 
 
-dd.update_field(Attestation, 'company',
+dd.update_field(Excerpt, 'company',
                 verbose_name=_("Recipient (Organization)"))
-dd.update_field(Attestation, 'contact_person',
+dd.update_field(Excerpt, 'contact_person',
                 verbose_name=_("Recipient (Person)"))
 
 
-class AttestationDetail(dd.FormLayout):
+class ExcerptDetail(dd.FormLayout):
     main = """
-    id attestation_type:25 project
+    id excerpt_type:25 project
     company contact_person contact_role
     user:10 language:8 owner build_method build_time
     preview
     """
 
 
-class Attestations(dd.Table):
+class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     label = _("Excerpts history")
     icon_name = 'script'
 
-    model = 'attestations.Attestation'
-    detail_layout = AttestationDetail()
+    model = 'attestations.Excerpt'
+    detail_layout = ExcerptDetail()
     insert_layout = """
-    attestation_type project
+    excerpt_type project
     company language
     """
-    column_names = "id build_time user attestation_type project *"
+    column_names = "id build_time user excerpt_type project *"
     order_by = ["id"]
 
 
-class MyAttestations(mixins.ByUser, Attestations):
+class MyExcerpts(mixins.ByUser, Excerpts):
     required = dd.required(user_groups='office')
-    column_names = "build_time attestation_type project *"
+    column_names = "build_time excerpt_type project *"
     order_by = ["build_time"]
 
 
-class AttestationsByType(Attestations):
-    master_key = 'attestation_type'
+class ExcerptsByType(Excerpts):
+    master_key = 'excerpt_type'
     column_names = "build_time user *"
     order_by = ["build_time"]
 
 
-class AttestationsByX(Attestations):
+class ExcerptsByX(Excerpts):
     required = dd.required(user_groups='office')
-    column_names = "build_time attestation_type user *"
+    column_names = "build_time excerpt_type user *"
     order_by = ["-build_time"]
 
 if settings.SITE.project_model is not None:
 
-    class AttestationsByProject(AttestationsByX):
+    class ExcerptsByProject(ExcerptsByX):
         master_key = 'project'
 
 
-class AttestationsByOwner(AttestationsByX):
+class ExcerptsByOwner(ExcerptsByX):
     master_key = 'owner'
-    column_names = "build_time attestation_type user *"
+    column_names = "build_time excerpt_type user *"
     help_text = _("History of excerpts based on this data record.")
 
-class AttestationsByCompany(AttestationsByX):
+
+class ExcerptsByCompany(ExcerptsByX):
     master_key = 'company'
-    column_names = "build_time attestation_type user *"
+    column_names = "build_time excerpt_type user *"
 
 
-class AttestationsByPerson(AttestationsByX):
+class ExcerptsByPerson(ExcerptsByX):
     master_key = 'contact_person'
-    column_names = "build_time attestation_type user *"
+    column_names = "build_time excerpt_type user *"
 
 
 system = dd.resolve_app('system')
@@ -386,46 +405,39 @@ system = dd.resolve_app('system')
 
 def setup_main_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.MyAttestations')
+    m.add_action('attestations.MyExcerpts')
 
 
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.AttestationTypes')
+    m.add_action('attestations.ExcerptTypes')
 
 
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('attestations.Attestations')
-
-# from django.db.utils import DatabaseError
+    m.add_action('attestations.Excerpts')
 
 
 @dd.receiver(dd.pre_analyze)
-def set_attest_actions(sender, **kw):
+def set_excerpts_actions(sender, **kw):
     # logger.info("20140401 %s.set_attest_actions()", __name__)
-    # in case AttestationType is overridden
-    AttestationType = sender.modules.attestations.AttestationType
+    # in case ExcerptType is overridden
+    ExcerptType = sender.modules.attestations.ExcerptType
     ctypes = set()
     try:
-        for atype in AttestationType.objects.all():
+        for atype in ExcerptType.objects.all():
             ct = atype.content_type
             if not ct is None and not ct in ctypes:
                 ctypes.add(ct)
                 m = ct.model_class()
-                m.define_action(do_attest=CreateAttestation())
+                m.define_action(create_excerpt=CreateExcerpt())
                 m.define_action(
-                    show_attestations=dd.ShowSlaveTable(
-                        'attestations.AttestationsByOwner'
+                    show_excerpts=dd.ShowSlaveTable(
+                        'attestations.ExcerptsByOwner'
                     ))
                 # logger.info("20140401 %s is attestable", m)
     except Exception as e:
-    # except (DatabaseError, models.DoesNotExist) as e:
-        
-        logger.info("Failed to load attest_actions : %s", e)
-
-
-    # Note every Attestable wants a "show attestations" button
+        logger.info("Failed to load excerpts_actions : %s", e)
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass

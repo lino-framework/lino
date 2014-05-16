@@ -85,6 +85,8 @@ TODO:
 .. function:: Lino.handle_action_result(panel, result, on_success, on_confirm)
 
 
+
+
 Classes
 -------
 

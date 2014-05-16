@@ -549,6 +549,8 @@ class Kernel(object):
 
         """
         try:
+            if ar.bound_action.action.parameters is not None:
+                ar.set_response(close_window=True)
             ar.bound_action.action.run_from_ui(ar)
         except exceptions.ValidationError as e:
             def fieldlabel(name):

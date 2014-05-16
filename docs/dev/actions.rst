@@ -100,6 +100,14 @@ The ``Action`` class reference
   ===== =================================
 
 
+  .. method:: FOO_choices
+
+    For every parameter field named "FOO", if the action has a method
+    called "FOO_choices" (which must be decorated by
+    :func:`dd.chooser`), then this method will be installed as a
+    chooser for this parameter field.
+
+
 
 .. class:: DeleteSelected
 

@@ -138,8 +138,8 @@ def before_row_edit(panel):
                             constants.URL_PARAM_MASTER_TYPE))
                     else:
                         l.append(
-                            "%s.setContextValue(%r,record ? record.\
-                            data[%r] : undefined);" % (
+                            "%s.setContextValue(%r, record ? record."
+                            "data[%r] : undefined);" % (
                                 e.as_ext(), f.name, form_field_name(f)))
     #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
     #~ return js_code('function(record){ %s }' % (' '.join(l)))

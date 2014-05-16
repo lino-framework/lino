@@ -2568,7 +2568,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
       var p = {};
       self.add_field_values(p)
       Lino.call_ajax_action(
-          panel, 'GET', url, p, actionName, step, fn, on_success);
+          panel, 'GET', url, p, actionName, step, fn); //  , on_success);
     }
     fn(panel, null, null);
     
@@ -2586,6 +2586,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
     this.record_id = status.record_id;
   }
   
+  , before_row_edit : function(record) {}
   ,add_field_values : function (p) { // similar to add_param_values()
       //~ 20121023 
       if (this.form.isDirty()) {
@@ -2604,8 +2605,14 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
   ,set_field_values : function(pv) {
       //~ console.log('20120203 MainPanel.set_param_values', pv);
       this.status_field_values = pv;
-      if (pv) this.form.my_loadRecord(pv);
-      else this.form.reset(); 
+      if (pv) {
+          this.form.my_loadRecord(pv);
+          var record = { data: pv };
+          this.before_row_edit(record);
+      } else {
+          this.form.reset(); 
+          this.before_row_edit();
+      }
   }
   ,config_containing_window : function(wincfg) { 
       wincfg.title = this.window_title;
@@ -3061,6 +3068,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     if (after) after();
   },
   
+  /* FormPanel */
   before_row_edit : function(record) {},
   search_change : function(field,oldValue,newValue) {
     //~ console.log('search_change',field.getValue(),oldValue,newValue)
