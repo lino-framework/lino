@@ -74,12 +74,17 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         response = self.client.get(url, REMOTE_USER='foo')
         self.assertEqual(
             response.status_code, 403,
-            "Status code other than 403 for anonymous on GET %s" % url)
+            "Status code %s other than 403 for anonymous on GET %s" % (
+                response.status_code, url))
 
         response = self.client.get(url, REMOTE_USER=case.username)
-        try:
-        #~ if True:
-            result = self.check_json_result(response, case.json_fields, url)
+        # try:
+        if True:
+            user = settings.SITE.user_model.objects.get(
+                username=case.username)
+            result = self.check_json_result(
+                response, case.json_fields,
+                "GET %s for user %s" % (url, user))
 
             num = case.expected_rows
             if num is not None:
@@ -92,6 +97,6 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
                     self.fail(msg)
                     #~ failures += 1
 
-        except Exception as e:
-            print("%s:\n%s" % (url, e))
-            raise
+        # except Exception as e:
+        #     print("%s:\n%s" % (url, e))
+        #     raise
