@@ -566,8 +566,8 @@ class PrintTableAction(actions.Action):
         context = self.get_context(ar)
         if os.path.exists(target_file):
             os.remove(target_file)
-        logger.info(u"appy.pod render %s -> %s (params=%s",
-                    tplfile, target_file, settings.SITE.appy_params)
+        logger.debug(u"appy.pod render %s -> %s (params=%s",
+                     tplfile, target_file, settings.SITE.appy_params)
         renderer = Renderer(ar, tplfile, context,
                             target_file, **settings.SITE.appy_params)
         renderer.run()

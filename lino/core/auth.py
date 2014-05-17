@@ -35,16 +35,13 @@ from lino.core.perms import AnonymousUser
 
 
 class AuthMiddleWareBase(object):
-    # Singleton instance
-    _instance = None
+    """Common base class for :class:`RemoteUserMiddleware`,
+    :class:`SessionsUserMiddleware` and :class:`NoUserMiddleware`.
 
     """
-    Common base class for 
-    :class:`RemoteUserMiddleware`,
-    :class:`SessionsUserMiddleware`
-    and
-    :class:`NoUserMiddleware`.
-    """
+
+    # Singleton instance
+    _instance = None
 
     def __init__(self):
         # Save singleton instance
@@ -72,37 +69,37 @@ class AuthMiddleWareBase(object):
         if not username:
             return AnonymousUser.instance()
 
-        """
-        20120110 : Alicia once managed to add a space char in front of 
-        her username log in the login dialog. 
-        Apache let her in as " alicia".
-        """
+        # 20120110 : Alicia once managed to add a space char in front
+        # of her username log in the login dialog.  Apache let her in
+        # as " alicia".
         username = username.strip()
 
         try:
             user = settings.SITE.user_model.objects.get(username=username)
             if user.profile is None:
                 logger.info(
-                    "Could not authenticate %s : user has no profile", username)
+                    "Could not authenticate %s : user has no profile",
+                    username)
                 return None
             if password != self.NOT_NEEDED:
                 if not user.check_password(password):
                     logger.info(
-                        "Could not authenticate %s : password mismatch", username)
+                        "Could not authenticate %s : password mismatch",
+                        username)
                     return None
                 #~ logger.info("20130923 good password for %s",username)
             #~ else:
                 #~ logger.info("20130923 no password needed for %s",username)
             return user
-        except settings.SITE.user_model.DoesNotExist, e:
-            logger.info("Could not authenticate %s : no such user", username)
+        except settings.SITE.user_model.DoesNotExist:
+            logger.debug("Could not authenticate %s : no such user", username)
             return None
 
     def on_login(self, request, user):
-        """
-        The method which is applied when the user has been determined.
-        On multilingual sites, 
-        if URL_PARAM_USER_LANGUAGE is present it overrides user.language.
+        """The method which is applied when the user has been determined.  On
+        multilingual sites, if URL_PARAM_USER_LANGUAGE is present it
+        overrides user.language.
+
         """
         #~ logger.info("20130923 on_login(%s)" % user)
 
@@ -144,7 +141,7 @@ class AuthMiddleWareBase(object):
                 try:
                     su = settings.SITE.user_model.objects.get(id=int(su))
                     #~ logger.info("20120714 su is %s",su.username)
-                except settings.SITE.user_model.DoesNotExist, e:
+                except settings.SITE.user_model.DoesNotExist:
                     su = None
             else:
                 su = None  # e.g. when it was an empty string "su="
@@ -164,23 +161,22 @@ class AuthMiddleWareBase(object):
 
 class RemoteUserMiddleware(AuthMiddleWareBase):
 
-    """
-    Middleware automatically installed by 
-    :meth:`get_middleware_classes <lino.site.Site.get_middleware_classes>`
-    when both
-    :setting:`remote_user_header` and :setting:`user_model` 
-    are not empty.
+    """Middleware automatically installed by
+    :meth:`get_middleware_classes
+    <lino.site.Site.get_middleware_classes>` when both
+    :setting:`remote_user_header` and :setting:`user_model` are not
+    empty.
     
     This does the same as
-    `django.contrib.auth.middleware.RemoteUserMiddleware`, 
-    but in a simplified manner and without using Sessions.
+    `django.contrib.auth.middleware.RemoteUserMiddleware`, but in a
+    simplified manner and without using Sessions.
     
     It also activates the User's language, if that field is not empty.
     Since it will run *after*
     `django.contrib.auth.middleware.RemoteUserMiddleware`
     (at least if you didn't change :meth:`lino.Lino.get_middleware_classes`),
     it will override any browser setting.
-    
+
     """
 
     def get_user_from_request(self, request):
@@ -205,10 +201,10 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 
 class NoUserMiddleware(AuthMiddleWareBase):
 
-    """
-    Middleware automatically installed by 
-    :meth:`get_middleware_classes <lino.site.Site.get_middleware_classes>`
-    when :setting:`user_model` is None.
+    """Middleware automatically installed by
+    :meth:`ad.Site.get_middleware_classes` when
+    :attr:`ad.Site.user_model` is None.
+
     """
 
     def get_user_from_request(self, request):
