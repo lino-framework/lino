@@ -115,8 +115,9 @@ class HtmlRenderer(object):
 
         kw.update(href=url)
         if icon_name is not None:
-            img = E.img(src=settings.SITE.build_media_url(
-                'lino', 'extjs', 'images', 'mjames', icon_name + '.png'))
+            src = settings.SITE.build_media_url(
+                'lino', 'extjs', 'images', 'mjames', icon_name + '.png')
+            img = E.img(src=src, alt=icon_name)
             return E.a(img, **kw)
         else:
             return E.a(*text, **kw)

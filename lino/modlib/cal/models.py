@@ -270,97 +270,20 @@ Whether this is private, public or between."""))  # iCal:CLASS
         #~ return True
 
 
-if False:  # removed 20130810
-
-    def tasks_summary(ui, user, days_back=None, days_forward=None, **kw):
-        """
-        Return a HTML summary of all open reminders for this user.
-        May be called from :xfile:`welcome.html`.
-        """
-        Task = dd.resolve_model('cal.Task')
-        Event = dd.resolve_model('cal.Event')
-        today = datetime.date.today()
-
-        past = {}
-        future = {}
-
-        def add(cmp):
-            if cmp.start_date < today:
-            #~ if task.dt_alarm < today:
-                lookup = past
-            else:
-                lookup = future
-            day = lookup.get(cmp.start_date, None)
-            if day is None:
-                day = [cmp]
-                lookup[cmp.start_date] = day
-            else:
-                day.append(cmp)
-
-        #~ filterkw = { 'due_date__lte' : today }
-        filterkw = {}
-        if days_back is not None:
-            filterkw.update({
-                'start_date__gte': today - datetime.timedelta(days=days_back)
-                #~ 'dt_alarm__gte' : today - datetime.timedelta(days=days_back)
-            })
-        if days_forward is not None:
-            filterkw.update({
-                'start_date__lte': today + datetime.timedelta(days=days_forward)
-                #~ 'dt_alarm__lte' : today + datetime.timedelta(days=days_forward)
-            })
-        #~ filterkw.update(dt_alarm__isnull=False)
-        filterkw.update(user=user)
-
-        for o in Event.objects.filter(
-            #~ models.Q(status=None) | models.Q(status__reminder=True),
-            models.Q(state=None) | models.Q(state__lte=EventStates.published),
-                **filterkw).order_by('start_date'):
-            add(o)
-
-        #~ filterkw.update(done=False)
-        #~ filterkw.update(state__in=[TaskState.blank_item,TaskState.todo]) 20120829
-        filterkw.update(state__in=[None, TaskStates.todo])
-
-        for task in Task.objects.filter(**filterkw).order_by('start_date'):
-            add(task)
-
-        def loop(lookup, reverse):
-            sorted_days = lookup.keys()
-            sorted_days.sort()
-            if reverse:
-                sorted_days.reverse()
-            for day in sorted_days:
-                yield '<h3>' + dtosl(day) + '</h3>'
-                yield dd.summary(ui, lookup[day], **kw)
-
-        #~ cells = ['Ausblick'+':<br>',cgi.escape(u'Rückblick')+':<br>']
-        cells = [
-            cgi.escape(_('Upcoming reminders')) + ':<br>',
-            cgi.escape(_('Past reminders')) + ':<br>'
-        ]
-        for s in loop(future, False):
-            cells[0] += s
-        for s in loop(past, True):
-            cells[1] += s
-        s = ''.join(
-            ['<td valign="top" bgcolor="#eeeeee" width="30%%">%s</td>' % s for s in cells])
-        s = '<table cellspacing="3px" bgcolor="#ffffff"><tr>%s</tr></table>' % s
-        s = '<div class="htmlText">%s</div>' % s
-        return s
-
-
-def update_auto_event(autotype, user, date, summary, owner, **defaults):
+def update_auto_event(
+        autotype, user, date, summary, owner, **defaults):
         #~ model = dd.resolve_model('cal.Event')
     return update_auto_component(Event, autotype, user, date, summary, owner, **defaults)
 
 
-def update_auto_task(autotype, user, date, summary, owner, **defaults):
+def update_auto_task(
+        autotype, user, date, summary, owner, **defaults):
     #~ model = dd.resolve_model('cal.Task')
     return update_auto_component(Task, autotype, user, date, summary, owner, **defaults)
 
 
-def update_auto_component(model, autotype, user, date, summary, owner, **defaults):
+def update_auto_component(
+        model, autotype, user, date, summary, owner, **defaults):
     """
     Creates, updates or deletes the
     automatic :class:`calendar component <Component>`

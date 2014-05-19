@@ -63,6 +63,7 @@ a
 abbr
 acronym
 address
+alt
 applet
 area
 b

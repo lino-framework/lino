@@ -1,0 +1,30 @@
+====================
+Monday, May 19, 2014
+====================
+
+- New body template for a "plan d'action". The other body templates
+  weren't yet converted after the rename "attestations" to "ecerpts".
+
+- Added a :attr:`ml.uploads.Upload.valid_until` to the uploads in
+  :mod:`lino_welfare.fixtures.demo` in order to have some tasks in the
+  demo database.
+
+- After adding a Task for an Upload (in :ref:`welfare`), the
+  `Task.owner` is (correctly) the `Upload`, but `Task.project` doesn't
+  point to the `Client`. A Task is a `ProjectRelated`, and it is the
+  `project` field which holds that pointer. I removed the field
+  `Upload.client` added by :mod:`lino_welfare.modlib.uploads` because
+  that was redundant with `Upload.project`.
+
+
+- Cool, the proof of concept passed: `isip.ContractType` and
+  `jobs.ContractType` are no longer PrintableType, and `isip.Contract`
+  and `jobs.Contract` are no longer Printable. And instead of this,
+  there are now two more Excerpt Types, one for each of them.  New
+  field `ExcerptType.certifiable`. The field `build_time` is now
+  replaced by the virtual field certificate. Certifiable is a mixin
+  for models whose instances should have certain fields disabled when
+  a "definitive excerpt" (i.e. one with a "certifying" type) has been
+  created.
+
+

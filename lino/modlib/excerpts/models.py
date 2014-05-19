@@ -40,6 +40,45 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
+class Certifiable(dd.Model):
+    
+    class Meta:
+        abstract = True
+
+    def get_certificate(self):
+        qs = dd.modules.excerpts.Excerpt.objects.filter(
+            excerpt_type__certifying=True,
+            owner_id=self.pk,
+            owner_type=ContentType.objects.get_for_model(self.__class__))
+        if qs.count() == 0:
+            return None
+        return qs[0]
+
+    def disabled_fields(self, ar):
+        if self.get_certificate() is None:
+            return set()
+        return self.CERTIFIED_FIELDS
+
+    @dd.displayfield(_("Certificate"))
+    def certificate(self, ar):
+        obj = self.get_certificate()
+        if obj is None:
+            return ar.instance_action_button(self.create_excerpt)
+        return ar.obj2html(obj)
+
+    @classmethod
+    def on_analyze(cls, lino):
+        # Contract.user.verbose_name = _("responsible (DSBE)")
+        cls.CERTIFIED_FIELDS = dd.fields_list(
+            cls,
+            cls.get_certifiable_fields())
+        super(Certifiable, cls).on_analyze(lino)
+
+    @classmethod
+    def get_certifiable_fields(cls):
+        return ''
+
+
 class ExcerptType(
         dd.BabelNamed,
         mixins.PrintableType,
@@ -51,6 +90,10 @@ class ExcerptType(
         abstract = dd.is_abstract_model('excerpts.ExcerptType')
         verbose_name = _("Excerpt Type")
         verbose_name_plural = _("Excerpt Types")
+
+    certifying = models.BooleanField(
+        verbose_name=_("Certifying"),
+        default=False)
 
     important = models.BooleanField(
         verbose_name=_("important"),
@@ -115,13 +158,13 @@ class ExcerptTypes(dd.Table):
 
     insert_layout = """
     name
-    content_type primary skip_dialog
+    content_type primary skip_dialog certifying
     build_method template body_template
     """
 
     detail_layout = """
     id name
-    content_type primary skip_dialog
+    content_type primary skip_dialog certifying
     build_method template body_template
     email_template attach_to_email
     remark:60x5
@@ -244,6 +287,8 @@ class Excerpt(dd.TypedPrintable,
     mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
     def __unicode__(self):
+        if self.build_time:
+            return unicode(self.build_time)
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):

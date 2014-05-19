@@ -333,6 +333,8 @@ class Table(AbstractTable):
     
     model = None
 
+    debug_sql = False
+
     show_detail_navigator = True
 
     screenshot_profiles = ['admin']
@@ -754,6 +756,8 @@ class Table(AbstractTable):
         if order_by:
             #~ logger.info("20120122 order_by %s",order_by)
             qs = qs.order_by(*order_by)
+        if self.debug_sql:
+            logger.info("%s %s", self.debug_sql, qs.query)
         return qs
 
     @classmethod

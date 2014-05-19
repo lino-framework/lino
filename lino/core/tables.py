@@ -271,8 +271,8 @@ class TableRequest(ActionRequest):
                         # todo: ReportRequest should become a subclass of
                         # Dialog and this exception should call dlg.error()
                         raise Exception(
-                            "There's no %s with primary key %r" %
-                            (master.__name__, pk))
+                            "%s : There's no %s with primary key %r" %
+                            (self.actor, master.__name__, pk))
                 # ~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
 

@@ -135,6 +135,7 @@ class Controllable(model.Model):
         """
         if self.owner:
             self.owner.update_owned_instance(controllable)
+        super(Controllable, self).update_owned_instance(controllable)
 
     def save(self, *args, **kw):
         if settings.SITE.loading_from_dump:
@@ -631,12 +632,13 @@ class ProjectRelated(model.Model):
 
     """Mixin for Models that are automatically related to a "project".  A
     project means here "the central most important thing that is used
-    to classify most other things".  For example in
-    lino.projects.pcsw, the "project" is a Client.
+    to classify most other things".  
 
     Whether an application has such a concept of "project",
     and which model has this privileged status,
-    is set in :attr:`lino.Lino.project_model`.
+    is set in :attr:`ad.Site.project_model`.
+
+    For example in :ref:`welfare` the "project" is a Client.
 
     """
 
@@ -666,16 +668,16 @@ class ProjectRelated(model.Model):
                 s += [" (", ar.obj2html(self.project), ")"]
         return s
 
-    def update_owned_instance(self, other):
+    def update_owned_instance(self, controllable):
         """
         When a :class:`project-related <ProjectRelated>`
         object controls another project-related object,
         then the controlled automatically inherits
         the `project` of its controller.
         """
-        if isinstance(other, ProjectRelated):
-            other.project = self.project
-        super(ProjectRelated, self).update_owned_instance(other)
+        if isinstance(controllable, ProjectRelated):
+            controllable.project = self.project
+        super(ProjectRelated, self).update_owned_instance(controllable)
 
     def get_mailable_recipients(self):
         if isinstance(self.project, settings.SITE.modules.contacts.Partner):

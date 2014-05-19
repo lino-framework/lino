@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import string_concat
 # from django.utils.encoding import force_unicode
 
 from lino import dd
@@ -33,9 +34,7 @@ class UploadAreas(dd.ChoiceList):
     verbose_name = _("Upload Area")
     verbose_name_plural = _("Upload Areas")
 add = UploadAreas.add_item
-add('10', _("Career related uploads"), 'cv')
-add('20', _("Medical uploads"), 'medical')
-add('30', _("Other uploads"), 'other')
+add('90', _("Other uploads"), 'other')
 
 
 class UploadType(dd.BabelNamed):
@@ -45,7 +44,17 @@ class UploadType(dd.BabelNamed):
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
-    upload_area = UploadAreas.field(default=UploadAreas.cv)
+    upload_area = UploadAreas.field(default=UploadAreas.other)
+
+    max_number = models.IntegerField(
+        _("Max. number"), default=-1,
+        help_text=string_concat(
+            _("No need to upload more uploads than N of this type."),
+            "\n",
+            _("-1 means no limit.")))
+    wanted = models.BooleanField(
+        _("Wanted"), default=False,
+        help_text=_("Add a (+) button when there is no upload of this type."))
 
 
 class UploadTypes(dd.Table):
@@ -64,7 +73,7 @@ This usually is accessible via the `Configure` menu.
     """
 
     detail_layout = """
-    id upload_area
+    id upload_area wanted max_number
     name
     uploads.UploadsByType
     """
@@ -87,7 +96,7 @@ class Upload(
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
-    upload_area = UploadAreas.field(default=UploadAreas.cv)
+    upload_area = UploadAreas.field(default=UploadAreas.other)
 
     type = dd.ForeignKey(
         "uploads.UploadType",
@@ -114,6 +123,11 @@ class Upload(
         if upload_area is None:
             return M.objects.all()
         return M.objects.filter(upload_area=upload_area)
+
+    def save(self, *args, **kw):
+        if self.type is not None:
+            self.upload_area = self.type.upload_area
+        super(Upload, self).save(*args, **kw)
 
 
 class Uploads(dd.Table):
@@ -148,20 +162,10 @@ class MyUploads(Uploads, mixins.ByUser):
     # order_by = ["modified"]
 
 
-class UploadsByController(Uploads):
-    "UploadsByController"
+class AreaUploads(Uploads):
     required = dd.required()
-    master_key = 'owner'
-    column_names = "file type description user * "
     stay_in_grid = True
-    _upload_area = None
-
-    insert_layout = """
-    file
-    type
-    description
-    """
-
+    _upload_area = UploadAreas.other
     slave_grid_format = 'summary'
 
     @classmethod
@@ -173,6 +177,13 @@ class UploadsByController(Uploads):
         if self._upload_area is not None:
             return self._upload_area.text
         return self._label or self.__name__
+
+    @classmethod
+    def format_row_in_slave_summary(self, ar, obj):
+        """almost as unicode, but without the type
+        """
+        return obj.description or filename_leaf(obj.file.name) \
+            or unicode(obj.id)
 
     @classmethod
     def get_slave_summary(self, obj, ar):
@@ -189,9 +200,6 @@ subclasses for the different `_upload_area`.
         elems = []
         types = []
 
-        def fmt(o):
-            # almost as unicode, but without the type
-            return m.description or filename_leaf(m.file.name) or unicode(m.id)
         for ut in UploadType.objects.filter(
                 upload_area=self._upload_area):
             sar = ar.spawn(
@@ -200,8 +208,11 @@ subclasses for the different `_upload_area`.
             # logger.info("20140430 %s", sar.data_iterator.query)
             files = []
             for m in sar:
+                text = self.format_row_in_slave_summary(ar, m)
+                if text is None:
+                    continue
                 edit = ar.obj2html(
-                    m,  fmt(m),  # _("Edit"),
+                    m,  text,  # _("Edit"),
                     # icon_name='application_form',
                     title=_("Edit metadata of the uploaded file."))
                 if m.file.name:
@@ -217,7 +228,8 @@ subclasses for the different `_upload_area`.
                     files.append(E.span(edit, ' ', show))
                 else:
                     files.append(edit)
-            if True:
+            if ut.wanted and (
+                    ut.max_number < 0 or len(files) < ut.max_number):
                 files.append(sar.insert_button())
             if len(files) > 0:
                 e = E.p(unicode(ut), ': ', *join_elems(files, ', '))
@@ -230,16 +242,16 @@ subclasses for the different `_upload_area`.
         return E.div(*elems)
 
 
-class MedicalUploadsByController(UploadsByController):
-    _upload_area = UploadAreas.medical
+class UploadsByController(AreaUploads):
+    "UploadsByController"
+    master_key = 'owner'
+    column_names = "file type description user * "
 
-
-class CareerUploadsByController(UploadsByController):
-    _upload_area = UploadAreas.cv
-
-
-class OtherUploadsByController(UploadsByController):
-    _upload_area = UploadAreas.other
+    insert_layout = """
+    file
+    type
+    description
+    """
 
 
 system = dd.resolve_app('system')
