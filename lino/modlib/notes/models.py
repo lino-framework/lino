@@ -48,6 +48,9 @@ class NoteType(dd.BabelNamed, mixins.PrintableType, outbox.MailableType):
         default=False)
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
 
+    # needed for data migration after 20140520
+    template = models.CharField(max_length=200, blank=True)
+
 
 class NoteTypes(dd.Table):
 
