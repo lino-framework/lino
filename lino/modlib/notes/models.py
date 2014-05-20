@@ -48,16 +48,6 @@ class NoteType(dd.BabelNamed, mixins.PrintableType, outbox.MailableType):
         default=False)
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
 
-    body_template = models.CharField(max_length=200,
-                                     verbose_name=_("Body template"),
-      blank=True, help_text="""The body template to be used when 
-rendering a printable of this type. This is a list of files 
-with extension `.body.html`.""")
-
-    @dd.chooser(simple_values=True)
-    def body_template_choices(cls):
-        return settings.SITE.list_templates('.body.html', cls.get_templates_group())
-
 
 class NoteTypes(dd.Table):
 
@@ -77,7 +67,7 @@ class NoteTypes(dd.Table):
 
     detail_layout = """
     id name
-    build_method template body_template email_template attach_to_email
+    build_method template email_template attach_to_email
     remark:60x5
     notes.NotesByType
     """
@@ -178,20 +168,6 @@ class Note(dd.TypedPrintable,
 
     def get_print_language(self):
         return self.language
-
-    def get_printable_context(self, ar, **kw):
-        kw = super(Note, self).get_printable_context(ar, **kw)
-        if self.type and self.type.body_template:
-            tplname = self.type.body_template
-            tplname = self.type.get_templates_group() + '/' + tplname
-            saved_renderer = ar.renderer
-            ar.renderer = settings.SITE.ui.plain_renderer
-            template = settings.SITE.jinja_env.get_template(tplname)
-            kw.update(body=template.render(**kw))
-            ar.renderer = saved_renderer
-        else:
-            kw.update(body=self.body)
-        return kw
 
 
 dd.update_field(Note, 'company', verbose_name=_("Recipient (Organization)"))

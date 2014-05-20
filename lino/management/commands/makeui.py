@@ -46,7 +46,6 @@ from lino.core import dbtables
 from lino.core import actions
 from lino.core.dbutils import app_labels
 from lino.utils import confirm
-from lino.utils.config import find_config_file
 from lino.utils import rstgen
 from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js

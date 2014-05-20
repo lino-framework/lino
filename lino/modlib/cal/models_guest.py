@@ -40,7 +40,7 @@ from .workflows import EventStates
 outbox = dd.resolve_app('outbox')
 
 
-class GuestRole(dd.PrintableType, outbox.MailableType, dd.BabelNamed):
+class GuestRole(outbox.MailableType, dd.BabelNamed):
     templates_group = 'cal/Guest'
 
     class Meta:
@@ -49,18 +49,18 @@ class GuestRole(dd.PrintableType, outbox.MailableType, dd.BabelNamed):
 
 
 class GuestRoles(dd.Table):
-    help_text = _("""The role of a guest expresses what the 
-    partner is going to do there.""")
+    help_text = _("The role of a guest expresses what the "
+                  "partner is going to do there.")
     model = GuestRole
     required = dd.required(user_groups='office', user_level='admin')
     detail_layout = """
     id name
-    build_method template email_template attach_to_email
+    #build_method #template email_template attach_to_email
     cal.GuestsByRole
     """
 
 
-class Guest(dd.TypedPrintable, outbox.Mailable):
+class Guest(outbox.Mailable):
 
     workflow_state_field = 'state'
 
@@ -94,8 +94,8 @@ class Guest(dd.TypedPrintable, outbox.Mailable):
         return u'%s #%s ("%s")' % (
             self._meta.verbose_name, self.pk, self.event)
 
-    def get_printable_type(self):
-        return self.role
+    # def get_printable_type(self):
+    #     return self.role
 
     def get_mailable_type(self):
         return self.role

@@ -30,7 +30,8 @@ from lino import mixins
 from lino import dd
 from lino.core.dbutils import resolve_field
 from lino.core import actions
-from lino.utils.xmlgen import html as xghtml
+from lino.utils.xmlgen.html import E
+from lino.utils import join_elems
 
 from lino.mixins.printable import BuildMethods
 
@@ -201,7 +202,7 @@ if settings.SITE.is_installed('contenttypes'):
                 #~ add(obj.model_class())
                 for b in obj.model_class().__bases__:
                     add(b)
-            return ', '.join(chunks)
+            return E.p(*join_elems(chunks, sep=', '))
 
     class HelpText(dd.Model):
 
@@ -343,7 +344,7 @@ class Home(mixins.EmptyTable):
             for mi in quicklinks.items:
                 chunks.append(' ')
                 chunks.append(ar.window_action_button(mi.bound_action))
-            return xghtml.E.p('Quick Links:', *chunks)
+            return E.p('Quick Links:', *chunks)
 
     #~ @dd.virtualfield(dd.HtmlBox())
     #~ def missed_reminders(cls,self,req):
@@ -365,7 +366,7 @@ class Home(mixins.EmptyTable):
         if u.profile.authenticated:
 
             intro = [_("Hi, %(user)s!") % dict(user=u.first_name)]
-            story.append(xghtml.E.p(*intro))
+            story.append(E.p(*intro))
             warnings = []
 
             #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
@@ -375,25 +376,25 @@ class Home(mixins.EmptyTable):
                     #~ r = T.request(subst_user=u)
                     #~ r = ar.spawn(T)
                     if r.get_total_count() != 0:
-                        warnings.append(xghtml.E.li(
+                        warnings.append(E.li(
                             ar.href_to_request(r, text % r.get_total_count())))
                             #~ _("You have %d entries in ") % r.get_total_count(),
                             #~ ar.href_to_request(r,label)))
 
-            #~ warnings.append(xghtml.E.li("Test 1"))
-            #~ warnings.append(xghtml.E.li("Second test"))
+            #~ warnings.append(E.li("Test 1"))
+            #~ warnings.append(E.li("Second test"))
             if len(warnings):
-                #~ story.append(xghtml.E.h3(_("Warnings")))
-                story.append(xghtml.E.h3(_("You have")))
-                story.append(xghtml.E.ul(*warnings))
+                #~ story.append(E.h3(_("Warnings")))
+                story.append(E.h3(_("You have")))
+                story.append(E.ul(*warnings))
             else:
                 story.append(
-                    xghtml.E.p(_("Congratulatons: you have no warnings.")))
+                    E.p(_("Congratulatons: you have no warnings.")))
         #~ else:
-            # story.append(xghtml.E.p("Please log in"))
+            # story.append(E.p("Please log in"))
             #~ story.append(settings.SITE.get_guest_greeting())
 
-        return xghtml.E.div(*story, class_="htmlText", style="margin:5px")
+        return E.div(*story, class_="htmlText", style="margin:5px")
 
 
     #~ @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))

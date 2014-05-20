@@ -1,0 +1,76 @@
+=====================
+Tuesday, May 20, 2014
+=====================
+
+I have still some questions to meditate.
+
+For the end-user there are two types of excerpts: (1) those who were
+until now a simple "Print" button (usually together with a "Clear
+Cache" button) and (2) those where the user chooses the "excerpt type"
+before printing.
+
+For example in :ref:`welfare`, Budgets and Contract are case (1). They
+have zero or one "printout". They either have been printed, or they
+haven't. There's never more than one printout per Budget or Contract.
+`pcsw.Client` is an example of case (2). You cannot simply say "Print"
+on a client, you must also specify "what" to print (current choices
+are a curriculum vitae, eid-content and a todo list "plan d'action").
+
+For Budgets and Contracts there will be no visible difference for the
+user. The advantage of using excerpts is that now these printouts are
+visible in the "history" (per client or per user).
+
+Excerpts make it possible to dynamically configure the choice
+between (1) and (2).  A concrete use case that drops into mind:
+Invoices (in an accounting application) are usually case (1), but a
+customer might decide that they want every invoice printed (possibly)
+twice, one "internal" version (used e.g. by the packaging team) and
+one version for the client. That would be case (2).
+
+With case (1), users just want their "Print" and "Clear cache" buttons.
+With case (2) it gets more complex.
+
+Todo:
+
+- Handle case (2) using a ComboButton
+
+- Convert existing data.
+
+- Is there a way do avoid rewriting the existing templates `vse.odt` and
+  `art60-7.odt`? Currently they don't work because the printing context
+  has changed.
+
+
+
+Converted also `cal.Guest` and `cal.Event` to the new system (they are
+no longer `Printable`).
+
+I removed the `body_template` functionality from
+:class:`ml.notes.NoteType` (which was there from before we had
+excerpts).
+
+
+The following decision took some time (to understand what's happening
+and to choose the solution):
+
+I renamed the `get_templates_group` methods in
+:mod:`lino.mixins.printable` to `get_template_groups`.  
+And accordingly I changed 
+lino.utils.config.find_template_config_files
+
+Because I had the following problem: I want Lino to use the same
+template `Default.odt` for most excerpts.  This should be in a
+template group `excerpts`. But apps must be able to define
+model-specific templates (as :file:`cv.odt`, :file:`eid-content.odt`,
+:file:`art60-7.odt`). And these should not get mixed up with each
+other, so they should use in their model-based template group. So the
+list of possible choices for the :attr:`ml.excerpts.Excerpt.template`
+field is a combination of a files found in all groups.
+
+Another question is about the template context of an excerpt: Should
+``this``refer to the `Excerpt` instance? Or rather to the
+`Excerpt.owner`, i.e. the object being printed?
+
+Added a subtle new feature: 
+If :attr:`master_key` is given, then this field is automatically added to 
+:attr:`hidden_columns`.

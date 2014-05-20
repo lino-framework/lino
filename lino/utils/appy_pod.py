@@ -518,9 +518,7 @@ class Renderer(AppyRenderer):
 
 
 class PrintTableAction(actions.Action):
-
     """
-
     """
     label = _("Table (landscape)")
     help_text = _('Show this table as a pdf document')
@@ -556,10 +554,9 @@ class PrintTableAction(actions.Action):
             raise Exception(_("List contains more than %d rows") %
                             self.MAX_ROW_COUNT)
 
-        tplgroup = None
-        tplfile = find_config_file(self.template_name, tplgroup)
+        tplfile = find_config_file(self.template_name, '')
         if not tplfile:
-            raise Exception("No file %s / %s" % (tplgroup, self.template_name))
+            raise Exception("No file %s" % self.template_name)
 
         ar.renderer = settings.SITE.ui.default_renderer  # 20120624
 

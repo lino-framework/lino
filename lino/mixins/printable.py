@@ -83,7 +83,6 @@ def model_group(model):
     return model._meta.app_label + '/' + model.__name__
 
 
-
 class BuildMethod(Choice):
 
     """Base class for all build methods.  A build method encapsulates the
@@ -204,8 +203,6 @@ class SimpleBuildMethod(BuildMethod):
     def get_template_leaf(self, action, elem):
 
         tpls = action.get_print_templates(self, elem)
-        #~ if not tpls:
-            #~ return
         if len(tpls) != 1:
             raise Exception(
                 "%s.get_print_templates() must return exactly 1 template (got %r)" % (
@@ -216,22 +213,17 @@ class SimpleBuildMethod(BuildMethod):
             name = tpl_leaf[:-len(self.template_ext)] + \
                 "_" + lang + self.template_ext
             from lino.utils.config import find_config_file
-            #~ if find_config_file(name,self.get_group(elem)):
-            if find_config_file(name, elem.get_templates_group()):
+            if find_config_file(name, *elem.get_template_groups()):
                 return name
         return tpl_leaf
-            #~ tplfile = os.path.normpath(os.path.join(self.templates_dir,lang,tpl_leaf))
-            #~ if not os.path.exists(tplfile):
-                #~ lang = babel.DEFAULT_LANGUAGE
-        #~ return lang + '/' + tpl_leaf
 
     def get_template_file(self, ar, action, elem):
         from lino.utils.config import find_config_file
         tpl_leaf = self.get_template_leaf(action, elem)
-        group = elem.get_templates_group()
-        tplfile = find_config_file(tpl_leaf, group)
+        groups = elem.get_template_groups()
+        tplfile = find_config_file(tpl_leaf, *groups)
         if not tplfile:
-            raise Warning("No file %s/%s" % (group, tpl_leaf))
+            raise Warning("No file %s/%s" % (groups, tpl_leaf))
         return tplfile
 
     def get_template_url(self, ar, action, elem):
@@ -241,8 +233,9 @@ the problem of library templates.
         """
 
         leaf = self.get_template_leaf(action, elem)
-        group = elem.get_templates_group()
-        return settings.SITE.build_media_url('webdav', 'config', group, leaf)
+        parts = ['webdav', 'config'] + elem.get_template_groups()
+        parts.append(leaf)
+        return settings.SITE.build_media_url(*parts)
 
     def build(self, ar, action, elem):
         #~ if elem is None:
@@ -288,7 +281,7 @@ class AppyBuildMethod(SimpleBuildMethod):
             # backwards compat for existing .odt templates.  Cannot
             # set this earlier because that would cause "render() got
             # multiple values for keyword argument 'self'" exception
-            context.update(self=elem)
+            context.update(self=context['this'])
 
             Renderer(ar, tpl, context, target,
                      **settings.SITE.appy_params).run()
@@ -592,8 +585,6 @@ class ClearCacheAction(actions.Action):
     sort_index = 51
     url_action_name = 'clear'
     label = _('Clear cache')
-    #~ debug_permissions = 20121127
-
     icon_name = 'printer_delete'
 
     #~ def disabled_for(self,obj,request):
@@ -612,19 +603,17 @@ class ClearCacheAction(actions.Action):
 
         def doit(ar):
             elem.clear_cache()
-            ar.success("%s printable cache has been cleared." %
+            ar.success(_("%s printable cache has been cleared.") %
                        elem, refresh=True)
 
         t = elem.get_cache_mtime()
         if t is not None and t != elem.build_time:
-            logger.info("20140313 %r != %r", elem.get_cache_mtime(),elem.build_time)
+            logger.info(
+                "20140313 %r != %r", elem.get_cache_mtime(), elem.build_time)
             return ar.confirm(
                 doit,
                 _("This will discard all changes in the generated file."),
                 _("Are you sure?"))
-            #~ logger.info("Got confirmation to discard changes in %s", elem.get_target_name())
-        #~ else:
-            #~ logger.info("%r == %r : no confirmation", elem.get_cache_mtime(),elem.build_time)
         return doit(ar)
 
 
@@ -655,33 +644,29 @@ class PrintableType(Model):
     Ending must correspond to the :attr:`build_method`.
     """
 
-    #~ build_method = models.CharField(max_length=20,choices=mixins.build_method_choices())
-    #~ template = models.CharField(max_length=200)
-
     @classmethod
-    def get_templates_group(cls):
-        """
-        Note that `get_templates_group` is 
-        a **class method** on `PrintableType`
-        but an **instance method** on `Printable`.
+    def get_template_groups(cls):
+        """Note that `get_template_groups` is a **class method** on
+        `PrintableType` but an **instance method** on `Printable`.
+
         """
         #~ return cls.templates_group or cls._meta.app_label
-        return cls.templates_group  # or full_model_name(cls)
+        return [cls.templates_group]  # or full_model_name(cls)
 
     @chooser(simple_values=True)
     def template_choices(cls, build_method):
         return cls.get_template_choices(
             build_method,
-            cls.get_templates_group())
+            cls.get_template_groups())
 
     @classmethod
-    def get_template_choices(cls, build_method, template_group):
+    def get_template_choices(cls, build_method, template_groups):
         if not build_method:
             build_method = settings.SITE.site_config.default_build_method
         # bm = BuildMethods.get_by_value(build_method, None)
         bm = build_method
         from lino.utils.config import find_template_config_files
-        return find_template_config_files(bm.template_ext, template_group)
+        return find_template_config_files(bm.template_ext, *template_groups)
 
 
 class BasePrintable(object):
@@ -696,8 +681,8 @@ class BasePrintable(object):
     def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
-    def get_templates_group(self):
-        return model_group(self.__class__)
+    def get_template_groups(self):
+        return [model_group(self.__class__)]
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ \
@@ -726,7 +711,7 @@ class BasePrintable(object):
 
     def get_printable_context(self, ar, **kw):
         """
-        Defines the certain names of a template context.
+        Defines certain names of a template context.
         
         See :doc:`/user/templates_api`.
         
@@ -873,11 +858,11 @@ class TypedPrintable(CachedPrintable):
     def get_printable_type(self):
         return self.type
 
-    def get_templates_group(self):
+    def get_template_groups(self):
         ptype = self.get_printable_type()
         if ptype is None:
-            return super(TypedPrintable, self).get_templates_group()
-        return ptype.get_templates_group()
+            return super(TypedPrintable, self).get_template_groups()
+        return ptype.get_template_groups()
 
     def get_default_build_method(self):
         ptype = self.get_printable_type()
@@ -902,7 +887,4 @@ class TypedPrintable(CachedPrintable):
                 "Invalid template '%s' configured for %s '%s' (expected filename ending with '%s')." %
                 (tplname, ptype.__class__.__name__, unicode(ptype), bm.template_ext))
         return [tplname]
-        #~ return [ ptype.get_templates_group() + '/' + ptype.template ]
 
-    #~ def get_print_language(self,bm):
-        #~ return self.language

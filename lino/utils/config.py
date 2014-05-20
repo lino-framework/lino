@@ -113,58 +113,52 @@ config_dirs = tuple(config_dirs)
 #~ logger.debug('config_dirs:\n%s', '\n'.join([repr(cd) for cd in config_dirs]))
 
 
-def find_config_file(fn, group=''):
+def find_config_file(fn, *groups):
     if os.path.isabs(fn):
         return fn
-    if group:
-        prefix = join(*(group.split('/')))
-    else:
-        prefix = ''
-    for cd in config_dirs:
-        ffn = join(cd.name, prefix, fn)
-        if os.path.exists(ffn):
-            return ffn
+    for group in groups:
+        if group:
+            prefix = join(*(group.split('/')))
+        else:
+            prefix = ''
+        for cd in config_dirs:
+            ffn = join(cd.name, prefix, fn)
+            if os.path.exists(ffn):
+                return ffn
 
 
-def find_config_files(pattern, group=''):
-    """
-    Returns a dict of filename -> config_dir entries for 
-    each config file on this site that matches the pattern.
-    Loops through `config_dirs` and collects matching files. 
-    When more than one file of the same name exists in different 
-    applications it gets overridden by later apps.
+def find_config_files(pattern, *groups):
+    """Returns a dict of filename -> config_dir entries for each config
+    file on this site that matches the pattern.  Loops through
+    `config_dirs` and collects matching files.  When more than one
+    file of the same name exists in different apps it gets overridden
+    by later apps.
     
-    `group` is e.g. '','foo', 'foo/bar',...
-    
+    `groups` is a tuple of strings, e.g. '','foo', 'foo/bar',...
+
     """
-    if group:
-        prefix = os.path.sep + join(*(group.split('/')))
-        #~ if not group.endswith('/'):
-            #~ group += '/'
-    else:
-        prefix = ''
     files = {}
-    for cd in config_dirs:
-        pth = cd.name + prefix
-        #~ print 'find_config_files() discover', pth, pattern
-        if isdir(pth):
-            for fn in os.listdir(pth):
-                if fnmatch(fn, pattern):
-                    files.setdefault(fn, cd)
-                    #~ if not files.has_key(fn):
-                        #~ files[fn] = cd
-        #~ else:
-            #~ print 'find_config_files() not a directory:', pth
+    for group in groups:
+        if group:
+            prefix = os.path.sep + join(*(group.split('/')))
+        else:
+            prefix = ''
+        for cd in config_dirs:
+            pth = cd.name + prefix
+            if isdir(pth):
+                for fn in os.listdir(pth):
+                    if fnmatch(fn, pattern):
+                        files.setdefault(fn, cd)
     return files
 
 
-def find_template_config_files(template_ext, templates_group):
+def find_template_config_files(template_ext, *groups):
+    """Like :func:`find_config_files`, but ignore babel variants:
+    e.g. ignore "foo_fr.html" if "foo.html" exists but don't ignore
+    "my_template.html"
+
     """
-    find_config_files and ignore babel variants:
-    e.g. ignore "foo_fr.html" if "foo.html" exists 
-    but don't ignore "my_template.html"
-    """
-    files = find_config_files('*' + template_ext, templates_group)
+    files = find_config_files('*' + template_ext, *groups)
     l = []
     template_ext
     for name in files.keys():
@@ -172,17 +166,18 @@ def find_template_config_files(template_ext, templates_group):
         chunks = basename.split('_')
         if len(chunks) > 1:
             basename = '_'.join(chunks[:-1])
-            if files.has_key(basename + template_ext):
+            if basename + template_ext in files:
                 continue
         l.append(name)
     l.sort()
     if not l:
-        logger.warning("email_template_choices() : no matches for (%r,%r)",
-                       '*' + template_ext, templates_group)
+        logger.warning(
+            "find_template_config_files() : no matches for (%r, %r)",
+            '*' + template_ext, groups)
     return l
 
 
-def load_config_files(loader, pattern, group=''):
+def load_config_files(loader, pattern, *groups):
     """
     Naming conventions for :xfile:`*.dtl` files are:
     
@@ -193,18 +188,19 @@ def load_config_files(loader, pattern, group=''):
     The `sort()` below must remove the filename extension (".dtl") 
     because otherwise the frist Detail would come last.
     """
-    files = find_config_files(pattern, group).items()
+    files = find_config_files(pattern, *groups).items()
 
     def fcmp(a, b):
         return cmp(a[0][:-4], b[0][:-4])
     files.sort(fcmp)
-    prefix = group.replace("/", os.sep)
-    for filename, cd in files:
-        filename = join(prefix, filename)
-        ffn = join(cd.name, filename)
-        logger.debug("Loading %s...", ffn)
-        s = codecs.open(ffn, encoding='utf-8').read()
-        loader(s, cd, filename)
+    for group in groups:
+        prefix = group.replace("/", os.sep)
+        for filename, cd in files:
+            filename = join(prefix, filename)
+            ffn = join(cd.name, filename)
+            logger.debug("Loading %s...", ffn)
+            s = codecs.open(ffn, encoding='utf-8').read()
+            loader(s, cd, filename)
 
 
 class Configured(object):

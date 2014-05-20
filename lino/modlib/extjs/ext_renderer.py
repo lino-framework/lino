@@ -1024,6 +1024,7 @@ class ExtRenderer(HtmlRenderer):
             if menu is None:
                 reduced_buttons.append(b)
             elif len(menu) == 1:
+                # logger.info("20140520 reduced %s", menu)
                 reduced_buttons.append(menu[0])
             else:
                 b.update(xtype='splitbutton')

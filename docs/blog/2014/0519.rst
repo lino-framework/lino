@@ -27,4 +27,6 @@ Monday, May 19, 2014
   a "definitive excerpt" (i.e. one with a "certifying" type) has been
   created.
 
+- The same for debts.Budget.
 
+- But the template and bodytemplate in ExcerptType...

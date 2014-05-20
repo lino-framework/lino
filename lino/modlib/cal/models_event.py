@@ -66,7 +66,7 @@ def daterange_text(a, b):
 
 
 class EventType(dd.BabelNamed, dd.Sequenced,
-                dd.PrintableType, outbox.MailableType):
+                outbox.MailableType):
 
     """
     An EventType is a collection of events and tasks.
@@ -127,7 +127,7 @@ class EventTypes(dd.Table):
     especially they are displayed in the same colour in the calendar panel""")
     required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.EventType'
-    column_names = "name build_method template *"
+    column_names = "name *"
 
     detail_layout = """
     name 
@@ -135,7 +135,7 @@ class EventTypes(dd.Table):
     # description
     start_date id 
     # type url_template username password
-    build_method template email_template attach_to_email
+    #build_method #template email_template attach_to_email
     is_appointment all_rooms locks_user
     EventsByType 
     """

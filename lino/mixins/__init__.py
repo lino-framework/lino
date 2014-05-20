@@ -753,8 +753,8 @@ class EmptyTableRow(VirtualRow, Printable):
     def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
-    def get_templates_group(self):
-        return self._table.app_label + '/' + self._table.__name__
+    def get_template_groups(self):
+        return [self._table.app_label + '/' + self._table.__name__]
 
     def filename_root(self):
         return self._table.app_label + '.' + self._table.__name__

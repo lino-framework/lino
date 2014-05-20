@@ -565,9 +565,11 @@ name.
   .. attribute:: master_key = None
 
     The name of the ForeignKey field of this Table's :attr:`model that
-    points to it's :attr:`master`.  Setting this will turn the report
-    into a slave table.
+    points to it's :attr:`master`.  Setting this will turn the table
+    into a :term:`slave table`.
 
+    The :attr:`master_key` is automatically added to
+    :attr:`hidden_columns`.
 
   .. attribute:: master_field = None
 

@@ -559,6 +559,7 @@ class Table(AbstractTable):
                 self.master = master_model
                 #~ self.fk = fk
                 self.master_field = fk
+                self.hidden_columns |= set([fk.name])
         #~ else:
             #~ assert self.master is None
 
