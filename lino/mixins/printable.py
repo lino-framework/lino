@@ -227,8 +227,12 @@ class SimpleBuildMethod(BuildMethod):
         return tplfile
 
     def get_template_url(self, ar, action, elem):
-        """Return the url for EditTemplate action.  This does not yet manage
-the problem of library templates.
+        """Return the url for EditTemplate action.  
+
+This does not yet manage the problem of library templates. The local
+system manager must dedide for every library template whether it
+should be locally edited. Currently this is done manually by copying
+the file to `media/webdav/config`.
 
         """
 
@@ -516,7 +520,7 @@ class EditTemplate(BasePrintAction):
         else:
             kw.update(open_url=url)
         ar.success(**kw)
-        logger.info('20140313 EditTemplate %r', kw)
+        # logger.info('20140313 EditTemplate %r', kw)
 
 # http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
 
