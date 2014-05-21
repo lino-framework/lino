@@ -260,6 +260,7 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
     "See :class:`ml.beid.FindByBeIdAction`."
 
     select_rows = False
+    show_in_bbar = False
 
     def run_from_ui(self, ar, **kw):
         attrs = self.card2client(ar.request.POST)

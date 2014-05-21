@@ -337,7 +337,7 @@ class Action(Parametrizable, Permittable):
 
     key = None
     """
-    The hotkey. Currently not used.
+    The hotkey.
     """
 
     def is_callable_from(self, caller):
@@ -371,32 +371,9 @@ class Action(Parametrizable, Permittable):
     """
 
     show_in_bbar = True
-    """Whether this action should be displayed as a button in the toolbar
-    and the context menu.
-    """
-
     show_in_workflow = False
-    """Used internally.  Whether this action should be displayed as the
-    :meth:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
-    column. If this is True, then Lino will automatically set
-    :attr:`custom_handler` to True.
-
-    """
-
     custom_handler = False
-    """Whether this action is implemented as Javascript function call.
-    This is necessary if you want your action to be callable using an
-    "action link" (html button).
-
-    """
-
     select_rows = True
-    """TODO: rename this to "single_row".  True if this action should be
-    called on a single row (ignoring multiple row selection).  Set
-    this to False if this action is a list action, not a row action.
-
-    """
-
     http_method = 'GET'
     """
     HTTP method to use when this action is called using an AJAX call.
@@ -1067,6 +1044,7 @@ class ShowSlaveTable(Action):
 
     def __init__(self, slave_table, **kw):
         self.slave_table = slave_table
+        self.explicit_attribs = set(kw.keys())
         #~ kw.setdefault('label',slave_table.label)
         super(ShowSlaveTable, self).__init__(**kw)
 
@@ -1078,7 +1056,8 @@ class ShowSlaveTable(Action):
         if isinstance(self.slave_table, basestring):
             self.slave_table = settings.SITE.modules.resolve(self.slave_table)
         for k in self.TABLE2ACTION_ATTRS:
-            setattr(self, k, getattr(self.slave_table, k))
+            if not k in self.explicit_attribs:
+                setattr(self, k, getattr(self.slave_table, k))
         #~ self.label = self.slave_table.label
         #~ self.help_text = self.slave_table.help_text
         #~ self.icon_name = self.slave_table.icon_name

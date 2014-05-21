@@ -39,6 +39,36 @@ The ``Action`` class reference
     A help text that shortly explains what this action does.
     ExtJS uses this as tooltip text.
 
+  .. attribute:: select_rows
+
+    True if this action should be called on a single row (ignoring
+    multiple row selection).  Set this to False if this action is a
+    list action, not a row action.
+
+
+  .. attribute:: custom_handler
+
+    Whether this action is implemented as Javascript function call.
+    This is necessary if you want your action to be callable using an
+    "action link" (html button).
+
+  .. attribute:: show_in_workflow
+
+    Used internally.  Whether this action should be displayed as the
+    :meth:`workflow_buttons <dd.Model.workflow_buttons>`
+    column. If this is True, then Lino will automatically set
+    :attr:`custom_handler` to True.
+
+
+  .. attribute:: show_in_bbar
+
+     Whether this action should be displayed as a button in the toolbar
+     and the context menu.
+
+     For example :class:`ml.beid.FindByBeIdAction` has
+     :attr:`show_in_bbar` explicitly set to `False`, otherwise it
+     would be visible in the toolbar.
+
   .. attribute:: auto_save = True
 
     What to do when this action is being called while the user is on a
@@ -50,7 +80,7 @@ The ``Action`` class reference
     - `True` means: save any changes in current record before running
       the action.  `None` means: ask the user.
 
-  .. attribute:: readonly = True
+  .. attribute:: readonly
 
     Whether this action possibly modifies data *in the given object*.
     
@@ -65,7 +95,7 @@ The ``Action`` class reference
               return False
           return super(Duplicate,self).get_action_permission(ar,obj,state)
 
-  .. attribute:: icon_name = None
+  .. attribute:: icon_name
 
   The class name of an icon to be used for this action when rendered
   as toolbar button.
@@ -75,7 +105,7 @@ The ``Action`` class reference
   The name of another action to which to "attach" this action.
   Both actions will then be rendered as a single combobutton.
 
-  .. attribute:: sort_index = 90
+  .. attribute:: sort_index
 
   Determins the sort order in which the actions will be presented to
   the user.

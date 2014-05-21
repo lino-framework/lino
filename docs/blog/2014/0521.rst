@@ -1,0 +1,66 @@
+=======================
+Wednesday, May 21, 2014
+=======================
+
+Vorbereitung Baustellenbesichtigung Gerd.
+
+Na das war ja nochmal wieder eine dicke Wurst. Aber ich bin froh, dass
+sie raus ist:
+
+  Jeder Ausdruck eines Vertrags oder Budgets wird jetzt ebenfalls in
+  der Historik festgehalten. Das ganze System zum Konfigurieren der
+  "Bescheinigungen" ist insgesamt flexibler geworden.
+
+Es fehlten noch ein paar fundamentale Erkenntnisse:
+
+- CreateAttestation brauchte dann doch kein Dialogfenster.  Es sieht
+  tatsächlich so aus als ob die "Dialogfenster vor dem Ausdruck", die
+  wir von TIM kennen, in Lino nicht mehr nötig sind.  Stattdessen wird
+  der "Drucken"-Button zu einem Combo-Button, falls für ein Modell
+  mehrere Ausdrucksarten existieren.
+
+- Ein definitiver Auszug ("certifying") blockert das bescheinigte
+  Objekt. Oder genauer gesagt er bewirkt, dass das verknüpfte Objekt
+  nicht mehr bearbeitet werden kann. Das, was die Leute als "Cache
+  löschen" kennen, bleibt äußerlich gleich, bewirkt aber in Zukunft,
+  dass der definitive Ausdruck entfernt wird. Jeder Attestable kriegt
+  ein neues Feld "certificate", einen FK zum bescheinigenden
+  Auszug. 
+
+Kleine Hindernisse auf dem Weg dorthin waren:
+
+- In der :file:`cv.odt` waren einige Feldmarkierungen kaputt gegangen.
+  Von Feldern wie ``self.owner.city`` war nur der letzte Teil braun
+  (d.h. als Änderung markiert). Muss wohl bei einem Versionswechsel
+  von LO passiert sein. Ich nehme an, dass das einer der Gründe ist,
+  weshalb man die alte Methode via Markierung als "Änderung" ersetzen
+  sollte durch "conditional text"-Felder.
+
+
+- I use LibreOffice to edit an instance of a CV file through WebDAV. I
+  click on the "Print" button of the excerpt. LO opens, asks for my
+  password and displays the file.  I close the file without changing
+  anything. Then in Lino I clear the cache and click on "Print"
+  again. LO now says:
+
+      The file
+      http://testlino:8080/media/webdav/userdocs/appyrtf/excerpts.Excerpt-145.rtf
+      is locked by yourself. Currently, another write access to this file
+      cannot be granted.
+
+    
+More fiddling:
+
+    
+- :class:`ml.beid.FindByBeIdAction` now has `show_in_bbar`
+   explicitly set to `False`. Otherwise it is visible in the toolbar 
+
+    
+
+TODO:
+
+- Layout im Reiter "Historie"
+- importierte Lebensläufe: es fehlen der owner und die build_method
+- Datenmigration: muss ich existierende Auszüge importieren? Momentan
+  ist es so, das Lino bei der Migration "vergisst", ob ein Vertrag
+  schon ausgedruckt wurde oder nicht. 

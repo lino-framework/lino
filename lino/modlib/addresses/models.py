@@ -87,8 +87,10 @@ class AddressOwner(dd.Model):
         elems = super(AddressOwner, self).get_overview_elems(ar)
         sar = ar.spawn('addresses.AddressesByPartner',
                        master_instance=self)
+        # btn = sar.as_button(_("Manage addresses"), icon_name="wrench")
         btn = sar.as_button(_("Manage addresses"))
-        elems.append(E.p(btn, align="right"))
+        # elems.append(E.p(btn, align="right"))
+        elems.append(E.p(btn))
         return elems
     
 
