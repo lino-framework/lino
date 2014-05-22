@@ -129,6 +129,12 @@ The ``Action`` class reference
   90    default for all custom row actions
   ===== =================================
 
+  .. method:: run_from_ui(self, ar, **kw)
+
+    Execute the action.  `ar` is an :class:`ActionRequest
+    <ar.ActionRequest>` object representing the
+    context where the action is running.
+
 
   .. method:: FOO_choices
 
@@ -137,6 +143,19 @@ The ``Action`` class reference
     :func:`dd.chooser`), then this method will be installed as a
     chooser for this parameter field.
 
+  .. method:: get_view_permission(self, profile)
+
+    Return True if this action is visible for users of given profile.
+
+  .. method:: get_action_permission(self, ar, obj, state)
+
+    Return (True or False) whether the given :class:`ar
+    <rt.ActionRequest>` should get permission to execute on the given
+    Model instance `obj` (which is in the given `state`).
+
+    Derived Action classes may override this to add vetos.
+    E.g. the MoveUp action of a Sequenced is not available on the
+    first row of given `ar`.
 
 
 .. class:: DeleteSelected

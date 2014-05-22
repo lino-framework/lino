@@ -52,8 +52,18 @@ Kleine Hindernisse auf dem Weg dorthin waren:
 More fiddling:
 
     
-- :class:`ml.beid.FindByBeIdAction` now has `show_in_bbar`
-   explicitly set to `False`. Otherwise it is visible in the toolbar 
+- :class:`ml.beid.FindByBeIdAction` now has :attr:`show_in_bbar
+  <dd.Action.show_in_bbar>` explicitly set to `False`. Otherwise it was
+  visible in the toolbar
+
+- "Adressen verwalten" sah unglücklich aus als rechtsbündiger Text.
+  Habe mit einem Icon experimentiert (wrench.png) und dann letztlich
+  doch als Text gelassen, aber linksbündig.
+
+- Die SlaveTableAction "E-Mail-Ausgang" hat jetzt immerhin ein Icon
+  (transmit.png) und steht nicht mehr zwischen "Drucken" und
+  "Druck-Historik". Die kommt voraussichtlich mit in den neuen Reiter
+  "Dienstleistungen".
 
     
 

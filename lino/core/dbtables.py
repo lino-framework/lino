@@ -434,11 +434,8 @@ class Table(AbstractTable):
             return self.model.objects.get(pk=pk)
         except ValueError:
             return None
-            #~ msg = "Invalid primary key %r for %s." % (pk,self)
-            #~ raise Http404(msg)
         except self.model.DoesNotExist:
             return None
-            #~ raise Http404("%s %s does not exist." % (self,pk))
 
     @classmethod
     def disabled_actions(self, ar, obj):

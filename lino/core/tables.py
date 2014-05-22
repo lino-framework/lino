@@ -798,9 +798,12 @@ class AbstractTable(actors.Actor):
     @classmethod
     def get_row_by_pk(self, ar, pk):
         """
-        dbtables.Table overrides this.
+        `dbtables.Table` overrides this.
         """
-        return ar.data_iterator[int(pk) - 1]
+        try:
+            return ar.data_iterator[int(pk)-1]
+        except (ValueError, IndexError):
+            return None
 
     @classmethod
     def get_default_action(cls):

@@ -383,11 +383,10 @@ class BaseRequest(object):
         self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
 
     def get_user(self):
-        """
-        Return the :class:`User <lino.modlib.users.models.User>` 
-        instance of the user who issued the request.
-        If the authenticated user is acting as somebody else, 
-        return that :class:`User <lino.modlib.users.models.User>` instance.
+        """Return the :class:`User <ml.users.User>` instance of the user who
+        issued the request.  If the authenticated user is acting as
+        somebody else, return that user's instance.
+
         """
         return self.subst_user or self.user
 

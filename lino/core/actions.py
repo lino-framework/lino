@@ -540,40 +540,20 @@ class Action(Parametrizable, Permittable):
         return force_unicode(self.label)
 
     def get_action_permission(self, ar, obj, state):
-        """
-        Return (True or False) whether the given 
-        :class:`ActionRequest <lino.core.requests.ActionRequest>` 
-        `ar` should be allowed to execute on the given Model 
-        instance `obj` (which is in the given `state`).
-        
-        Derived Action classes may override this to add vetos.
-        E.g. DispatchAction is not available for a User with empty 
-        partner.
-        Or MoveUp action of a Sequenced is not available on the first 
-        row of given `ar`.
-        """
+        "See :meth:`dd.Action.get_action_permission`."
         return True
 
     def get_view_permission(self, profile):
-        """
-        Return True if this action is visible for users of given profile.
-        
-        Overridden e.g. by :class:`lino.mixins.beid.BeIdReadCardAction`
-        to make it available only when :attr:`lino.Lino.use_eid_jslib` is True.
-        """
+        "See :meth:`dd.Action.get_view_permission`."
         return True
+
+    def run_from_ui(self, ar, **kw):
+        "See :meth:`dd.Action.run_from_ui`."
+        raise NotImplementedError(
+            "%s has no run_from_ui() method" % self.__class__)
 
     def run_from_code(self, ar, **kw):
         self.run_from_ui(ar, **kw)
-
-    def run_from_ui(self, ar, **kw):
-        """Execute the action.  `ar` is an :class:`ActionRequest
-        <lino.core.requests.ActionRequest>` object representing the
-        context where the action is running.
-
-        """
-        raise NotImplementedError(
-            "%s has no run_from_ui() method" % self.__class__)
 
     def run_from_session(self, ses, *args, **kw):  # 20130820
         if len(args):
@@ -619,9 +599,6 @@ class RedirectAction(Action):
 
     def get_target_url(self, elem):
         raise NotImplementedError
-
-
-
 
 
 def buttons2pager(buttons):

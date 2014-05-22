@@ -29,6 +29,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
 
+from django.core.exceptions import ValidationError
+
 from lino import dd
 from lino import mixins
 from lino.mixins.printable import model_group
@@ -40,33 +42,23 @@ postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
-def get_certificate(obj):
-    qs = dd.modules.excerpts.Excerpt.objects.filter(
-        excerpt_type__certifying=True,
-        owner_id=obj.pk,
-        owner_type=ContentType.objects.get_for_model(obj.__class__))
-    if qs.count() == 0:
-        return None
-    return qs[0]
-
-
 class Certifiable(dd.Model):
     
     class Meta:
         abstract = True
 
+    printed_by = dd.ForeignKey(
+        'excerpts.Excerpt',
+        verbose_name=_("Printed"),
+        editable=False,
+        related_name="%(app_label)s_%(class)s_set_as_printed",
+        blank=True, null=True,
+    )
+
     def disabled_fields(self, ar):
-        if get_certificate(self) is None:
+        if self.printed_by_id is None:
             return set()
         return self.CERTIFIED_FIELDS
-
-    @dd.displayfield(_("Certificate"))
-    def certificate(self, ar):
-        obj = get_certificate(self)
-        if obj is None:
-            return ''
-            # return ar.instance_action_button(self.create_excerpt)
-        return ar.obj2html(obj)
 
     @classmethod
     def on_analyze(cls, lino):
@@ -79,6 +71,12 @@ class Certifiable(dd.Model):
     @classmethod
     def get_certifiable_fields(cls):
         return ''
+
+    @dd.displayfield(_("Printed"))
+    def printed(self, ar):
+        if self.printed_by_id is None:
+            return ''
+        return ar.obj2html(self.printed_by)
 
 
 class ExcerptType(
@@ -95,11 +93,9 @@ class ExcerptType(
 
     certifying = models.BooleanField(
         verbose_name=_("Certifying"),
-        default=False)
+        default=False,
+        help_text=_("Whether an excerpt of this type is a unique printout."))
 
-    important = models.BooleanField(
-        verbose_name=_("important"),
-        default=False)
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
 
     body_template = models.CharField(
@@ -123,10 +119,11 @@ class ExcerptType(
         Enabling this field will automatically make the other \
         types non-primary."""))
 
-    skip_dialog = models.BooleanField(
-        _("Skip dialog"),
+    backward_compat = models.BooleanField(
+        _("Backward compatible"),
         default=False,
-        help_text=_("""Check this to define a "quick printout" type."""))
+        help_text=_("Check this to have `this` in template context "
+                    "point to owner instead of excerpt."))
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, content_type):
@@ -142,6 +139,20 @@ class ExcerptType(
     # def body_template_choices(cls):
     #     return settings.SITE.list_templates(
     #         '.body.html', cls.get_templates_group())
+
+    def full_clean(self, *args, **kwargs):
+        if self.certifying:
+            if not self.primary:
+                raise ValidationError(
+                    _("Cannot set %(c)s without %(p)s") % dict(
+                        c=_("Certifying"), p=_("Primary")))
+            mc = self.content_type.model_class()
+            if not issubclass(mc, Certifiable):
+                raise ValidationError(
+                    _("Cannot set %(c)s for non.certifiable "
+                      "model %(m)s") % dict(
+                        c=_("Certifying"), m=mc.meta.verbose_name))
+        super(ExcerptType, self).full_clean(*args, **kwargs)
 
     def after_ui_save(self, ar):
         super(ExcerptType, self).after_ui_save(ar)
@@ -165,12 +176,13 @@ class ExcerptTypes(dd.Table):
     """
     model = 'excerpts.ExcerptType'
     required = dd.required(user_level='admin', user_groups='office')
-    column_names = 'content_type primary name build_method template *'
+    column_names = ("content_type primary certifying name build_method "
+                    "template *")
     order_by = ["content_type", "name"]
 
     insert_layout = """
     name
-    content_type primary skip_dialog certifying
+    content_type primary certifying
     build_method template body_template
     """
 
@@ -178,7 +190,7 @@ class ExcerptTypes(dd.Table):
     id name
     content_type:15 build_method:15 template:15 \
     body_template:15 email_template:15
-    primary skip_dialog certifying attach_to_email
+    primary certifying backward_compat attach_to_email
     # remark:60x5
     excerpts.ExcerptsByType
     """
@@ -192,27 +204,7 @@ class ExcerptTypes(dd.Table):
         return obj.get_choices_text(request, self, field)
 
 
-class DeleteCertificate(dd.Action):
-    sort_index = 51
-    label = _('Clear cache')
-    icon_name = 'printer_delete'
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        crt = get_certificate(obj)
-        if crt is None:
-            ar.error(_("No certificate to delete."))
-            return
-
-        def ok(ar2):
-            crt.delete()
-            ar2.success(_("Certificate has been deleted."), refresh=True)
-        ar.confirm(
-            ok, _(
-                "Going to undo the printout for %s") % dd.obj2unicode(obj))
-
-
-class CreateCertificate(dd.Action):
+class CreateExcerpt(dd.Action):
     icon_name = 'printer'
     help_text = _('Print this data record.')
     label = _('Print')
@@ -221,95 +213,59 @@ class CreateCertificate(dd.Action):
 
     def __init__(self, etype, *args, **kwargs):
         self.excerpt_type = etype
-        super(CreateCertificate, self).__init__(*args, **kwargs)
+        super(CreateExcerpt, self).__init__(*args, **kwargs)
 
     def run_from_ui(self, ar, **kw):
+        Excerpt = dd.modules.excerpts.Excerpt
         obj = ar.selected_rows[0]
-        akw = dict(
-            user=ar.get_user(),
-            excerpt_type=self.excerpt_type,
-            owner=obj)
-        akw = obj.get_excerpt_options(ar, **akw)
-        a = dd.modules.excerpts.Excerpt(**akw)
+        try:
+            a = Excerpt.objects.get(
+                excerpt_type=self.excerpt_type,
+                owner_id=obj.pk,
+                owner_type=ContentType.objects.get_for_model(obj.__class__))
+        except Excerpt.DoesNotExist:
+            akw = dict(
+                user=ar.get_user(),
+                owner=obj,
+                excerpt_type=self.excerpt_type)
+            akw = obj.get_excerpt_options(ar, **akw)
+            a = Excerpt(**akw)
+            a.full_clean()
+            a.save()
 
-        a.full_clean()
-        a.save()
+        if self.excerpt_type.certifying:
+            obj.printed_by = a
+            obj.full_clean()
+            obj.save()
+
         a.do_print.run_from_ui(ar, **kw)
 
 
-class unused_CreateExcerpt(dd.Action):
-    """Creates a Excerpt and displays it.
-
-    """
-    parameters = dict(
-        excerpt_type=dd.ForeignKey('excerpts.ExcerptType'),
-        user=dd.ForeignKey('users.User'),
-        owner_type=dd.ForeignKey(ContentType, editable=False),
-    )
-    params_layout = """
-    excerpt_type
-    user
-    owner_type
-    """
-    url_action_name = 'create_excerpt'
-    icon_name = 'script_add'
-    help_text = _('Create a new excerpt using this data record.')
-    label = _('Create Excerpt')
-    sort_index = 49  # immediately before "Print"
-
-    def action_param_defaults(self, ar, obj, **kw):
-        kw = super(CreateExcerpt, self).action_param_defaults(
-            ar, obj, **kw)
-        if obj is not None:
-            ct = ContentType.objects.get_for_model(obj.__class__)
-            kw.update(owner_type=ct)
-            try:
-                at = ExcerptType.objects.get(
-                    content_type=ct, primary=True)
-                kw.update(excerpt_type=at)
-            except ExcerptType.MultipleObjectsReturned:
-                pass
-            except ExcerptType.DoesNotExist:
-                pass
-        kw.update(user=ar.get_user())
-        return kw
-
-    @dd.chooser()
-    def excerpt_type_choices(cls, owner_type):
-        logger.info("20140515 excerpt_type_choices(%r)", owner_type)
-        return ExcerptType.objects.filter(content_type=owner_type)
+class ClearPrinted(dd.Action):
+    sort_index = 51
+    label = _('Clear printed')
+    icon_name = 'printer_delete'
+    help_text = _("Mark this object as not printed.")
 
     def get_action_permission(self, ar, obj, state):
-        # if not ar.get_user().email:
-        #     return False
-        if obj is not None:
-            if not obj.is_attestable():
-                return False
-        return super(CreateExcerpt,
-                     self).get_action_permission(ar, obj, state)
+        if obj.printed_by_id is None:
+            return False
+        return super(ClearPrinted, self).get_action_permission(
+            ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        at = ar.action_param_values.excerpt_type
-        akw = dict(
-            user=ar.action_param_values.user,
-            excerpt_type=at,
-            owner=obj)
-        akw = obj.get_excerpt_options(ar, **akw)
-        a = dd.modules.excerpts.Excerpt(**akw)
+        if obj.printed_by_id is None:
+            ar.error(_("Oops."))
+            return
 
-        a.full_clean()
-        a.save()
-
-        if at.skip_dialog:
-            # print directly without dialog
-            a.do_print.run_from_ui(ar, **kw)
-        else:
-            # open detail window on the created excerpt
-            # js = ar.renderer.instance_handler(ar, a)
-            # kw.update(eval_js=js)
-            ar.success(**kw)
-            ar.goto_instance(a)
+        def ok(ar2):
+            obj.printed_by = None
+            obj.full_clean()
+            obj.save()
+            ar2.success(_("Printedness has been undone."), refresh=True)
+        ar.confirm(
+            ok, _("Going to undo the printedness of %s") % dd.obj2unicode(obj))
 
 
 class Excerpt(dd.TypedPrintable,
@@ -335,9 +291,7 @@ class Excerpt(dd.TypedPrintable,
     # date = models.DateField(
     #     verbose_name=_('Date'), default=datetime.date.today)
 
-    excerpt_type = dd.ForeignKey(
-        'excerpts.ExcerptType',
-        blank=True, null=True)
+    excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
 
     language = dd.LanguageField()
 
@@ -346,7 +300,7 @@ class Excerpt(dd.TypedPrintable,
     def __unicode__(self):
         if self.build_time:
             return unicode(self.build_time)
-        return u'%s #%s' % (self._meta.verbose_name, self.pk)
+        return _("Unprinted %s #%d") % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):
         return self.excerpt_type
@@ -406,20 +360,23 @@ class Excerpt(dd.TypedPrintable,
     def get_printable_context(self, ar, **kw):
         kw = super(Excerpt, self).get_printable_context(ar, **kw)
         kw.update(obj=self.owner)
-        # kw.update(this=self.owner)
         # kw.update(excerpt=self)
-        atype = self.excerpt_type
-        if atype and atype.body_template:
-            tplname = atype.body_template
-            tplgroup = model_group(atype.content_type.model_class())
-            tplname = tplgroup + '/' + tplname
-            saved_renderer = ar.renderer
-            ar.renderer = settings.SITE.ui.plain_renderer
-            template = settings.SITE.jinja_env.get_template(tplname)
-            kw.update(body=template.render(**kw))
-            ar.renderer = saved_renderer
-        else:
-            kw.update(body='')
+        body = ''
+        if self.excerpt_type_id is not None:
+            atype = self.excerpt_type
+            if atype.backward_compat:
+                kw.update(this=self.owner)
+
+            if atype.body_template:
+                tplname = atype.body_template
+                tplgroup = model_group(atype.content_type.model_class())
+                tplname = tplgroup + '/' + tplname
+                saved_renderer = ar.renderer
+                ar.renderer = settings.SITE.ui.plain_renderer
+                template = settings.SITE.jinja_env.get_template(tplname)
+                body = template.render(**kw)
+                ar.renderer = saved_renderer
+        kw.update(body=body)
         # if self.owner is not None:
         #     kw.update(self=self.owner)
         #     kw.update(this=self.owner)
@@ -467,7 +424,8 @@ class Excerpts(dd.Table):
     excerpt_type project
     company language
     """
-    column_names = "id build_time user excerpt_type project *"
+    column_names = ("id build_time owner excerpt_type user project "
+                    "company contact_person *")
     order_by = ["id"]
 
 
@@ -479,8 +437,9 @@ class MyExcerpts(mixins.ByUser, Excerpts):
 
 class ExcerptsByX(Excerpts):
     required = dd.required(user_groups='office')
-    column_names = "build_time owner excerpt_type user project company contact_person *"
+    column_names = "build_time excerpt_type owner *"
     order_by = ['-build_time', 'id']
+    auto_fit_column_widths = True
 
 
 class ExcerptsByType(ExcerptsByX):
@@ -537,16 +496,17 @@ def set_excerpts_actions(sender, **kw):
                 an = 'create_excerpt'
                 if not atype.primary:
                     an += str(atype.pk)
-                m.define_action(**{an: CreateCertificate(
+                m.define_action(**{an: CreateExcerpt(
                     atype, unicode(atype))})
                 if atype.primary:
-                    m.define_action(
-                        show_excerpts=dd.ShowSlaveTable(
-                            'excerpts.ExcerptsByOwner'
-                        ))
-                if atype.certifying:
-                    m.define_action(
-                        delete_certificate=DeleteCertificate())
+                    if atype.certifying:
+                        m.define_action(
+                            clear_printed=ClearPrinted())
+                    else:
+                        m.define_action(
+                            show_excerpts=dd.ShowSlaveTable(
+                                'excerpts.ExcerptsByOwner'
+                            ))
                 # logger.info("20140401 %s is attestable", m)
     except Exception as e:
         logger.info("Failed to load excerpts_actions : %s", e)

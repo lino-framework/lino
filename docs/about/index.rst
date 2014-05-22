@@ -110,6 +110,9 @@ to the government agency with 30 users and hundreds of documents per day.
 
 Luc has been working on writing a successor for TIM **since the early 1990s**.
 He has done and dropped projects in C++, PHP and Java. 
+In `August 2013 <https://sourceforge.net/p/lino/news/>`_ 
+he published a first version of Lino on Sourceforge.
+
 Since **August 2004** he's mostly working in Python. 
 In **March 2009** he discovered :term:`Django` whose database model and application 
 server concepts seem ideal for Lino. 
@@ -127,6 +130,11 @@ In September 2012 we purchased the domain name `lino-framework.org`.
 The second real-world Lino application started
 :doc:`in Czechia <joe>` 
 in **July 2013**.
+
+Other registered Lino users are:
+
+- A :ref:`faggio` in Eupen since October 2013
+- A :ref:`welfare` in Châtelet since March 2014
 
 
 

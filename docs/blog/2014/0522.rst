@@ -1,0 +1,63 @@
+======================
+Thursday, May 22, 2014
+======================
+
+
+An old bug
+----------
+
+The following bug was in Lino already on :blogref:`20131007`, i.e. for
+more than seven months. An extraordinary longevity::
+
+
+    ValueError
+    invalid literal for int() with base 10: ''
+
+    TRACEBACK:
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 114, in get_response
+        response = wrapped_callback(request, *callback_args, **callback_kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+        return self.dispatch(request, *args, **kwargs)
+      File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+        return handler(request, *args, **kwargs)
+      File "/home/luc/hgwork/lino/lino/modlib/extjs/views.py", line 607, in get
+        ar = action_request(app_label, actor, request, request.GET, True)
+      File "/home/luc/hgwork/lino/lino/ui/views.py", line 100, in action_request
+        ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
+      File "/home/luc/hgwork/lino/lino/core/tables.py", line 922, in request
+        return TableRequest(**kw)
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 823, in __init__
+        BaseRequest.__init__(self, request=request, renderer=renderer, **kw)
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 221, in __init__
+        self.setup(**kw)
+      File "/home/luc/hgwork/lino/lino/core/tables.py", line 401, in setup
+        ActionRequest.setup(self, **kw)
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 893, in setup
+        BaseRequest.setup(self, **kw)
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 379, in setup
+        self.set_selected_pks(*selected_pks)
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 383, in set_selected_pks
+        self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
+      File "/home/luc/hgwork/lino/lino/core/requests.py", line 734, in get_row_by_pk
+        return self.actor.get_row_by_pk(self, pk)
+      File "/home/luc/hgwork/lino/lino/core/tables.py", line 803, in get_row_by_pk
+        return ar.data_iterator[int(pk) - 1]
+
+
+
+The request sent was:
+
+GET /api/cbss/RetrieveTIGroupsResult?_dc=1400732092414&cw=171&cw=54&cw=135&cw=459&ch=&ch=&ch=&ch=&ci=group&ci=type&ci=since&ci=info&name=0&an=as_pdf&mt=97&mk=2&sr= HTTP/1.1
+
+The same problem happened probably on any `class:`dd.VirtualTable`.
+
+- Upload-Bereich "Lebenslauf" --> "Arbeitssuche"
+- Layout im Reiter "Historie"
+- "Certificate" : "Ausdruck"
+- Ausdruck Art60 funktioniert nicht. Felder sind leer.
+- help_text "History of excerpts based on this data record"
+  Button ist nicht nötig bei certifying excerpt types.
+- Tooltips für ExcerptTypes. "Primär" und "Certifying".
+- Blitz auf Art607 von Martha Mustermann löscht alle Termine.
+  ExamPolicies: Wochentage ankreuzen.
+

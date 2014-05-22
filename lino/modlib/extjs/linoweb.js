@@ -2173,7 +2173,7 @@ Lino.row_action_handler = function(actionName, hm, pp) {
         }
       }
       
-      Lino.do_on_current_record(panel,function(rec) {
+      Lino.do_on_current_record(panel, function(rec) {
           //~ console.log(panel);
           panel.add_param_values(p, true);
           Lino.call_ajax_action(
