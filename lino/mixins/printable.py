@@ -461,11 +461,12 @@ class CachedPrintAction(BasePrintAction):
             bm = obj.get_build_method()
             mf = bm.get_target(self, obj)
 
+            leaf = mf.parts[-1]
             if obj.build_time is None:
                 obj.build_target(ar)
-                kw.update(message=_("%s printable has been built.") % obj)
+                kw.update(message=_("%s has been built.") % leaf)
             else:
-                kw.update(message=_("Reused %s printable from cache.") % obj)
+                kw.update(message=_("Reused %s from cache.") % leaf)
             kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
             if bm.use_webdav and davlink and ar.request is not None:
@@ -582,7 +583,7 @@ class ClearCacheAction(actions.Action):
     Defines the :guilabel:`Clear cache` button on a Printable record.
     
     The `run_from_ui` method has an optional keyword argmuent
-     `force`. This is set to True in `docs/tests/debts.rst` 
+     `force`. This is set to True in `docs/tests/debts.rst`
      to avoid compliations.
     
     """
@@ -699,7 +700,6 @@ class BasePrintable(object):
         returned list may not contain more than 1 element.
 
         """
-        #~ return [ filename_root(self) + bm.template_ext ]
         if bm.default_template:
             return [bm.default_template]
         return ['Default' + bm.template_ext]

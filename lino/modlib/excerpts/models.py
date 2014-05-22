@@ -78,6 +78,13 @@ class Certifiable(dd.Model):
             return ''
         return ar.obj2html(self.printed_by)
 
+    def clear_cache(self):
+        obj = self.printed_by
+        self.printed_by = None
+        self.full_clean()
+        self.save()
+        obj.delete()
+
 
 class ExcerptType(
         dd.BabelNamed,
@@ -260,12 +267,14 @@ class ClearPrinted(dd.Action):
             return
 
         def ok(ar2):
-            obj.printed_by = None
-            obj.full_clean()
-            obj.save()
+            obj.clear_cache()
             ar2.success(_("Printedness has been undone."), refresh=True)
-        ar.confirm(
-            ok, _("Going to undo the printedness of %s") % dd.obj2unicode(obj))
+        if False:
+            ar.confirm(
+                ok,
+                _("Going to undo the printedness of %s") % dd.obj2unicode(obj))
+        else:
+            ok(ar)
 
 
 class Excerpt(dd.TypedPrintable,
@@ -311,6 +320,15 @@ class Excerpt(dd.TypedPrintable,
             raise Exception("20140520 Must have excerpt_type.")
         grp = model_group(ptype.content_type.model_class())
         return [grp, 'excerpts']
+
+    def filename_root(self):
+        # mainly because otherwise we would need to move files around on
+        # existing sites
+        et = self.excerpt_type
+        if et is None or not et.certifying:
+            return super(Excerpt, self).filename_root()
+        o = self.owner
+        return o._meta.app_label + '.' + o.__class__.__name__ + '-' + str(o.pk)
 
     def get_printable_type(self):
         return self.excerpt_type
@@ -509,7 +527,7 @@ def set_excerpts_actions(sender, **kw):
                             ))
                 # logger.info("20140401 %s is attestable", m)
     except Exception as e:
-        logger.info("Failed to load excerpts_actions : %s", e)
+        logger.info("Failed to set excerpts actions : %s", e)
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass

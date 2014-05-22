@@ -51,13 +51,27 @@ GET /api/cbss/RetrieveTIGroupsResult?_dc=1400732092414&cw=171&cw=54&cw=135&cw=45
 
 The same problem happened probably on any `class:`dd.VirtualTable`.
 
+
+Final sprint before releasing of :ref:`welfare`
+-----------------------------------------------
+
+More details done:
+
+
 - Upload-Bereich "Lebenslauf" --> "Arbeitssuche"
 - Layout im Reiter "Historie"
-- "Certificate" : "Ausdruck"
+- "Certificate" --> "Gedruckt"
 - Ausdruck Art60 funktioniert nicht. Felder sind leer.
-- help_text "History of excerpts based on this data record"
+- help_text "History of excerpts based on this data record".
   Button ist nicht nötig bei certifying excerpt types.
 - Tooltips für ExcerptTypes. "Primär" und "Certifying".
 - Blitz auf Art607 von Martha Mustermann löscht alle Termine.
   ExamPolicies: Wochentage ankreuzen.
+
+
+The new methods 
+:meth:`north.dpy.LoaderBase.initialize`
+and
+:meth:`north.dpy.Migrator.before_load`.
+
 

@@ -153,56 +153,15 @@ class Duplicate(actions.Action):
 
 class Duplicable(model.Model):
 
-    """
-    Adds a row action "Duplicate" which duplicates (creates a clone of) 
-    the object it was called on.
+    """Adds a row action "Duplicate" which duplicates (creates a clone
+    of) the object it was called on.
     
-    Subclasses may override :meth:`on_duplicate` to customize the default 
-    behaviour,
-    which is to copy all fields except the primary key 
-    and all related objects that are duplicable.
-    
+    Subclasses may override :meth:`dd.Model.on_duplicate` to customize the
+    default behaviour, which is to copy all fields except the primary
+    key and all related objects that are duplicable.
+
     """
     class Meta:
         abstract = True
 
     duplicate = Duplicate()
-
-
-    #~ @dd.action(_("Duplicate"),sort_index=60,show_in_workflow=False,readonly=True)
-    #~ def duplicate(self,ar,**kw):
-        #~ related = []
-        #~ for m,fk in self._lino_ddh.fklist:
-            #~ if m.allow_cascaded_delete:
-                #~ related.append((fk,m.objects.filter(**{fk.name:self})))
-        #~ if True:
-            #~ for f in self._meta.fields:
-                #~ if not f.primary_key:
-                    #~ kw[f.name] = getattr(self,f.name)
-            #~ new = self.__class__(**kw)
-            #~ """
-            #~ 20120704 create_instances causes fill_from_person() on a CBSS request.
-            #~ """
-        #~ else:
-            # ~ # doesn't seem to want to work
-            #~ new = self
-            #~ for f in self._meta.fields:
-                #~ if f.primary_key:
-                    # ~ setattr(new,f.name,None) # causes Django to consider this an unsaved instance
-            # ~ new.pk = None # causes Django to consider this an unsaved instance
-
-        #~ new.save(force_insert=True)
-        #~ new.on_duplicate(ar,None)
-
-        #~ for fk,qs in related:
-            #~ for obj in qs:
-                # ~ obj.pk = None # causes Django to save a copy
-                #~ setattr(obj,fk.name,new)
-                #~ obj.on_duplicate(ar,new)
-                #~ obj.save(force_insert=True)
-
-        #~ kw = dict()
-        #~ kw.update(refresh=True)
-        #~ kw.update(message=_("Duplicated %(old)s to %(new)s.") % dict(old=self,new=new))
-        #~ kw.update(goto_record_id=new.pk)
-        #~ return ar.success(**kw)
