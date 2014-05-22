@@ -367,24 +367,21 @@ class EventGenerator(mixins.UserAuthored):
         rset = self.update_cal_rset()
         #~ ar.info("20131020 rset %s",rset)
         #~ if rset and rset.every > 0 and rset.every_unit:
-        if rset is not None:
-            if rset.every_unit:
-                date = self.update_cal_from(ar)
-                if not date:
-                    ar.info("no start date")
-                    return wanted
-                # ar.debug("20140310a %s", date)
-                date = rset.find_start_date(date)
-                # ar.debug("20140310b %s", date)
-                if date is None:
-                    ar.info("No available weekday.")
-                    return wanted
-    
-            else:
-                ar.info("20131020 no every_unit")
-                return wanted
-        else:
+        if rset is None:
             ar.info("20131020 no rset")
+            return wanted
+        if not rset.every_unit:
+            ar.info("20131020 no every_unit")
+            return wanted
+        date = self.update_cal_from(ar)
+        if not date:
+            ar.info("no start date")
+            return wanted
+        # ar.debug("20140310a %s", date)
+        date = rset.find_start_date(date)
+        # ar.debug("20140310b %s", date)
+        if date is None:
+            ar.info("No available weekday.")
             return wanted
         until = self.update_cal_until() \
             or settings.SITE.site_config.farest_future

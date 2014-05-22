@@ -32,6 +32,14 @@ The ``Site`` class
 
   .. attribute:: site_config
 
+  .. attribute:: the_demo_date
+
+    Specify a fixed date instead of the process startup time to be
+    used by :meth:`demo_date`. For example the :ref:`welfare` test
+    suite has a fixed demo date because certain tests for generating
+    events rely on a fixed date.
+
+
   .. attribute:: startup_time
 
     Don't modify this. 
@@ -132,8 +140,9 @@ The ``Site`` class
 
   .. attribute:: demo_date
 
-    Compute a date using :func:`atelier.utils.date_offset`
-    based on the process startup time.
+    Compute a date using :func:`atelier.utils.date_offset` based on
+    the process startup time (or :attr:`the_demo_date` if this is
+    set).
 
     Used in Python fixtures and unit tests.
 

@@ -198,6 +198,11 @@ class HtmlRenderer(object):
         return self.href_button_action(ba, url, label,
                                        title or ba.action.help_text, **kw)
 
+    def action_button(self, obj, ar, ba, label=None, **kw):
+        if not label:
+            label = ba.action.label
+        return "[%s]" % label
+
 
 class TextRenderer(HtmlRenderer):
 
@@ -227,5 +232,4 @@ class TextRenderer(HtmlRenderer):
         Returns a string representing this request in reStructuredText markup.
         """
         print(ar.to_rst(*args, **kw))
-
 
