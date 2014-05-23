@@ -447,7 +447,7 @@ class ExtRenderer(HtmlRenderer):
 
     def obj2html(self, ar, obj, text=None, **kw):
         if not text:
-            text = force_unicode(obj)
+            text = unicode(obj)
         h = self.instance_handler(ar, obj)
         if h is None:
             return self.href_button(None, text, **kw)

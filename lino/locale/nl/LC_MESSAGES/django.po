@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 08:24+0300\n"
+"POT-Creation-Date: 2014-05-23 18:17+0300\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -17,57 +17,57 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: lino/lino_site.py:265 lino/projects/homeworkschool/settings/__init__.py:87
+#: lino/lino_site.py:267 lino/projects/homeworkschool/settings/__init__.py:87
 #: lino/projects/polly/settings/__init__.py:56
 #: lino/projects/presto/settings/__init__.py:47
 msgid "Anonymous"
 msgstr ""
 
-#: lino/lino_site.py:268 lino/core/perms.py:72 lino/modlib/users/models.py:71
+#: lino/lino_site.py:270 lino/core/perms.py:72 lino/modlib/users/models.py:71
 #: lino/projects/homeworkschool/settings/__init__.py:89
 #: lino/projects/polly/settings/__init__.py:58
 #: lino/projects/presto/settings/__init__.py:49
 msgid "User"
 msgstr "Benutzer"
 
-#: lino/lino_site.py:269 lino/core/perms.py:74
+#: lino/lino_site.py:271 lino/core/perms.py:74
 #: lino/projects/homeworkschool/settings/__init__.py:90
 #: lino/projects/polly/settings/__init__.py:59
 #: lino/projects/presto/settings/__init__.py:50
 msgid "Administrator"
 msgstr ""
 
-#: lino/lino_site.py:1020 lino/modlib/changes/models.py:90
+#: lino/lino_site.py:908 lino/modlib/changes/models.py:90
 msgid "Master"
 msgstr "Stammdaten"
 
-#: lino/lino_site.py:1026
+#: lino/lino_site.py:914
 msgid "Reports"
 msgstr ""
 
-#: lino/lino_site.py:1028
+#: lino/lino_site.py:916
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/lino_site.py:1030
+#: lino/lino_site.py:918
 msgid "Explorer"
 msgstr ""
 
-#: lino/lino_site.py:1032
+#: lino/lino_site.py:920
 msgid "Site"
 msgstr "Site"
 
-#: lino/lino_site.py:1250
+#: lino/lino_site.py:1079
 #, fuzzy
 msgid "This is "
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: lino/lino_site.py:1259
+#: lino/lino_site.py:1088
 #, fuzzy
 msgid " using "
 msgstr "Meine Einstellungen"
 
-#: lino/lino_site.py:1293
+#: lino/lino_site.py:1122
 #, fuzzy, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(date)s om %(time)s"
@@ -137,9 +137,8 @@ msgid ""
 msgstr ""
 
 #: lino/config/admin_main_base.html:33
-msgid ""
-"Your feedback is welcome to <em>lino-users@googlegroups.com</em> or "
-"directly to the person who invited you."
+#, python-format
+msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr ""
 
 #: lino/config/admin_main_base.html:46 lino/modlib/extjs/linoweb.js:1598
@@ -194,85 +193,85 @@ msgid ""
 "right corner and log in."
 msgstr ""
 
-#: lino/core/actions.py:676 lino/core/actions.py:745
+#: lino/core/actions.py:650 lino/core/actions.py:719
 #: lino/modlib/extjs/linoweb.js:3567
 msgid "First page"
 msgstr "Erste Seite"
 
-#: lino/core/actions.py:677 lino/core/actions.py:747
+#: lino/core/actions.py:651 lino/core/actions.py:721
 #: lino/modlib/extjs/linoweb.js:3569
 msgid "Previous page"
 msgstr "Vorige Seite"
 
-#: lino/core/actions.py:689 lino/core/actions.py:749
+#: lino/core/actions.py:663 lino/core/actions.py:723
 #: lino/modlib/extjs/linoweb.js:3570
 msgid "Next page"
 msgstr "Nächste Seite"
 
-#: lino/core/actions.py:690 lino/core/actions.py:751
+#: lino/core/actions.py:664 lino/core/actions.py:725
 #: lino/modlib/extjs/linoweb.js:3568
 msgid "Last page"
 msgstr "Letzte Seite"
 
-#: lino/core/actions.py:712
+#: lino/core/actions.py:686
 msgid "Detail"
 msgstr "Detail"
 
-#: lino/core/actions.py:713
+#: lino/core/actions.py:687
 msgid "Open a detail window on this record"
 msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
-#: lino/core/actions.py:795 lino/ui/render.py:137
+#: lino/core/actions.py:769 lino/ui/render.py:137
 msgid "New"
 msgstr "Neu"
 
-#: lino/core/actions.py:802
+#: lino/core/actions.py:776
 msgid "Insert a new record"
 msgstr "Neuen Datensatz erstellen"
 
-#: lino/core/actions.py:809
+#: lino/core/actions.py:783
 #, python-format
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:879 lino/core/requests.py:658
+#: lino/core/actions.py:853 lino/core/requests.py:658
 #, python-format
 msgid "%s has been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/actions.py:881 lino/core/requests.py:660
+#: lino/core/actions.py:855 lino/core/requests.py:660
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/actions.py:926
+#: lino/core/actions.py:900
 msgid "Save changes in this form"
 msgstr "Änderungen in diesem Formular speichern"
 
-#: lino/core/actions.py:927
+#: lino/core/actions.py:901
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:965 lino/core/requests.py:655
+#: lino/core/actions.py:939 lino/core/requests.py:655
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: lino/core/actions.py:996 lino/modlib/changes/models.py:55
+#: lino/core/actions.py:970 lino/modlib/changes/models.py:55
 msgid "Create"
 msgstr "Erstellen"
 
-#: lino/core/actions.py:998
+#: lino/core/actions.py:972
 msgid "Create the record and open a detail window on it"
 msgstr "Datensatz erstellen und dann im Detail-Fenster öffnen"
 
-#: lino/core/actions.py:1060 lino/modlib/cal/mixins.py:134
+#: lino/core/actions.py:1034 lino/modlib/cal/mixins.py:134
 #: lino/modlib/extensible/models.py:161 lino/modlib/tickets/models.py:236
 #: lino/modlib/tickets/models.py:336
 msgid "Summary"
 msgstr "Zusammenfassung"
 
-#: lino/core/actions.py:1061 lino/core/tables.py:1008
+#: lino/core/actions.py:1035 lino/core/tables.py:1008
 #: lino/modlib/cal/mixins.py:136 lino/modlib/cal/mixins.py:539
 #: lino/modlib/cal/models_calendar.py:55 lino/modlib/cal/models_event.py:84
 #: lino/modlib/cal/models_event.py:205 lino/modlib/courses/models.py:135
@@ -284,31 +283,31 @@ msgstr "Zusammenfassung"
 msgid "Description"
 msgstr "Omschrijving"
 
-#: lino/core/actions.py:1063
+#: lino/core/actions.py:1037
 msgid "Don't send email notification"
 msgstr "Keine Benachrichtigung per E-Mail schicken"
 
-#: lino/core/actions.py:1152
+#: lino/core/actions.py:1126
 #, fuzzy, python-format
 msgid "%d row(s) have been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/actions.py:1161
+#: lino/core/actions.py:1135
 msgid "Delete this record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/core/actions.py:1169 lino/modlib/changes/models.py:57
+#: lino/core/actions.py:1143 lino/modlib/changes/models.py:57
 msgid "Delete"
 msgstr "Löschen"
 
-#: lino/core/actions.py:1197
+#: lino/core/actions.py:1171
 #, python-format
 msgid ""
 "You are about to delete %(num)d %(type)s:\n"
 "%(targets)s"
 msgstr ""
 
-#: lino/core/actions.py:1200
+#: lino/core/actions.py:1174
 #, fuzzy
 msgid "Are you sure ?"
 msgstr "Sind Sie sicher?"
@@ -3262,7 +3261,7 @@ msgid "Oops."
 msgstr "Oeps!"
 
 #: lino/modlib/excerpts/models.py:271
-#, fuzzy, python-format
+#, fuzzy
 msgid "Printedness has been undone."
 msgstr "Dokument %s wurde generiert."
 
@@ -6111,5 +6110,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Create Excerpt"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Your feedback is welcome to <em>lino-"
+#~ "users@googlegroups.com</em> or directly to the"
+#~ " person who invited you."
 #~ msgstr ""
 

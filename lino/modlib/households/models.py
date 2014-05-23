@@ -118,7 +118,7 @@ class Household(contacts.Partner):
 
     def __unicode__(self):
         if self.type:
-            return "%s %s" % (self.type, self.get_full_name())
+            return u"%s %s" % (self.type, self.get_full_name())
         return unicode(self.get_full_name())
 
 

@@ -29,3 +29,9 @@ anymore.  This was due to the following automatism in
     #     # see ticket #105
 
 Added explanations to :doc:`/tickets/105`. 
+
+The French translations are now more or less ready.
+
+Moved more docstrings from miscellaneous source files to
+:class:`ad.Site`.
+
