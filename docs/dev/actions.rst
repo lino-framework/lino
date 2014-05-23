@@ -39,6 +39,23 @@ The ``Action`` class reference
     A help text that shortly explains what this action does.
     ExtJS uses this as tooltip text.
 
+  .. attribute:: parameters
+
+    User-definable parameter fields for this table.
+    Set this to a `dict` of `name = models.XyzField()` pairs.
+
+  .. attribute:: params_layout
+
+    If this table or action has parameters, specify here how they
+    should be laid out in the parameters panel.
+
+  .. attribute:: params_panel_hidden
+
+    If this table has parameters, set this to True if the parameters
+    panel should be initially hidden when this table is being
+    displayed.
+
+
   .. attribute:: select_rows
 
     True if this action should be called on a single row (ignoring
@@ -117,8 +134,8 @@ The ``Action`` class reference
   ===== =================================
   value action
   ===== =================================
-  -1    :class:`as_pdf <lino.utils.appy_pod.PrinttableAction>`
-  10    :class:`insert <InsertRow>`, SubmitDetail
+  -1    :class:`as_pdf <lino.utils.appy_pod.PrintTableAction>`
+  10    :class:`InsertRow`, :class:`SubmitDetail`
   11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
   20    :class:`detail <ShowDetailAction>`
   30    :class:`delete <DeleteSelected>`
@@ -158,9 +175,28 @@ The ``Action`` class reference
     first row of given `ar`.
 
 
+  .. method:: action_param_defaults(self, ar, obj, **kw)
+
+    Same as :meth:`dd.Actor.param_defaults`, except that here it is a
+    instance method.
+
+    Note that this method is not called for actions which are rendered
+    in a toolbar (:doc:`/tickets/105`)
+
+
+
+Predefined actions
+------------------
+
+
+
 .. class:: DeleteSelected
 
     Delete the row(s) on which it is being executed.
+
+.. class:: GridEdit
+
+    Open a window with a grid editor on this table as main item.
 
 .. class:: ShowDetailAction
 

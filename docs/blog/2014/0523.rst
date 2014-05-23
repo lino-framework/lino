@@ -20,3 +20,12 @@ is at version 1.0.10, so we are using :meth:`migrate_from_1_0_10
 <lino_welfare.migrate.Migrator.migrate_from_1_0_11>` in a single run.
 
 
+The :attr:`ml.reception.Clients.create_visit` action was not rendered
+anymore.  This was due to the following automatism in
+:class:`dd.Action` constructor (which I therefore removed again)::
+
+    # if self.parameters is not None and self.select_rows:
+    #     self.show_in_bbar = False
+    #     # see ticket #105
+
+Added explanations to :doc:`/tickets/105`. 

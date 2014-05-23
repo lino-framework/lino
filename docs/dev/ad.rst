@@ -30,7 +30,47 @@ The ``Site`` class
   site administrator.
 
 
+  .. attribute:: site_prefix
+
+    This must be set if your project is not sitting at the "root" URL 
+    of your server.
+    It must start *and* end with a *slash*. Default value is ``'/'``. 
+    For example if you have::
+    
+        WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
+      
+    Then your :xfile:`settings.py` should specify::
+    
+        site_prefix = '/foo/'
+    
+    See also :ref:`mass_hosting`.
+    
+
+  .. attribute:: help_email
+
+    An e-mail address where users can get help. This is included in
+    :xfile:`admin_main.html`.
+
+  .. attribute:: help_url
+
   .. attribute:: site_config
+
+    This property holds a cached version of the one and only
+    :class:`ml.system.SiteConfig` row that holds site-wide
+    database-stored parameters.
+
+  .. attribute:: default_user
+
+    Username to be used if a request with 
+    no REMOTE_USER header makes its way through to Lino. 
+    Which may happen on a development server and if Apache is 
+    configured to allow it.
+    Used by :mod:`lino.core.auth`.
+
+  .. attribute:: anonymous_user_profile
+
+    The user profile to be assigned to anonymous user.
+    
 
   .. attribute:: the_demo_date
 
@@ -378,11 +418,44 @@ The ``Site`` class
     Set this to True if actions should send debug messages to the client.
     These will be shown in the client's Javascript console only.
 
+  .. attribute:: is_demo_site
+
+    When this is `True`, then this site runs in "demo" mode.     
+    "Demo mode" means:
+    
+    - the welcome text for anonymous users says "This demo site has X 
+      users, they all have "1234" as password", 
+      followed by a list of available usernames.
+    
+    Default value is `True`.
+    On a production site you will of course set this to `False`.
+    
+    See also :attr:`demo_fixtures`.
 
   .. attribute:: demo_fixtures
 
     The list of fixtures to be loaded by the :manage:`initdb_demo`
     command.
+
+
+  .. attribute:: time_format_extjs
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+    """
+
+  .. attribute:: date_format_extjs
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+    """
+
+  .. attribute:: alt_date_formats_extjs
+
+    """
+    Alternative date entry formats accepted by ExtJS Date widgets.
+    """
+
 
   .. attribute:: use_davlink
 
@@ -582,6 +655,73 @@ The basic usage is to write in your :xfile:`__init__.py` file::
     For backwards compatibility this has no effect
     when :setting:`override_modlib_models` is set.
 
+  .. attribute:: legacy_data_path
+
+    Used by custom fixtures that import data from some legacy
+    database.
+
+  .. attribute:: never_build_site_cache
+
+    Set this to `True` if you want that Lino never (re)builds the site
+    cache, even when asked.  This can be useful on a development
+    server when you are debugging directly on the generated
+    :xfile:`lino*.js`.  Or for certain unit test cases.
+
+  .. attribute:: build_js_cache_on_startup
+
+    Whether the Javascript cache files should be built on startup for
+    all user profiles and languages.
+    
+    On a production server this should be `True` for best performance,
+    but while developing, it may be easier to set it to `False`, which means 
+    that each file is built upon need (when a first request comes in).
+    
+    The default value `None` means that Lino decides automatically 
+    during startup:
+    it becomes `False` if
+    either :func:`lino.core.dbutils.is_devserver` returns True
+    or setting:`DEBUG` is set.
+
+  .. attribute:: use_experimental_features
+
+    Whether to include "experimental features".
+
+
+  .. attribute:: site_config_defaults
+
+    Default values to be used when creating the 
+    :class:`ml.system.SiteConfig` instance.
+    
+    Usage example::
+    
+      site_config_defaults = dict(default_build_method='appypdf')
+      
+
+
+  .. attribute:: show_internal_field_names
+
+    Whether the internal field names should be visible.  Default is
+    `False`.  ExtUI implements this by prepending them to the tooltip,
+    which means that :attr:`use_quicktips` must also be `True`.
+
+  .. attribute:: trusted_templates
+
+    Set this to True if you are sure that the users of your site won't try to 
+    misuse Jinja's capabilities.
+
+  .. attribute:: allow_duplicate_cities
+
+    In a default configuration (when :attr:`allow_duplicate_cities` is
+    False), Lino declares a UNIQUE clause for :class:`Places
+    <lino.modlib.countries.models.Places>` to make sure that your
+    database never contains duplicate cities.  This behaviour mighr
+    disturb e.g. when importing legacy data that did not have this
+    restriction.  Set it to True to remove the UNIQUE clause.
+    
+    Changing this setting might affect your database structure and
+    thus require a :doc:`/topics/datamig` if your application uses
+    :mod:`lino.modlib.countries`.
+
 
   .. method:: configure(self, **kw)
 
@@ -628,5 +768,24 @@ The basic usage is to write in your :xfile:`__init__.py` file::
 
   .. method:: get_admin_main_items(ar)
 
-    Yield a sequence of "items" to be rendered
-    in :xfile:`admin_main.html`.
+    Yield a sequence of "items" to be rendered in
+    :xfile:`admin_main.html`.
+
+  .. method:: get_system_note_recipients(self, ar, obj, silent)
+
+    Return or yield a list of recipients
+    (i.e. strings "Full Name <name@example.com>" )
+    to be notified by email about a system note issued
+    by action request `ar` about the object instance `obj`.
+
+    Default behaviour is to simply forward it to the `obj`'s
+    :meth:`get_system_note_recipients
+    <dd.Model.get_system_note_recipients>`, but here is a hook to
+    define local exceptions to the application specific default rules.
+
+  .. method:: welcome_html(self, ui=None)
+
+    Return a HTML version of the "This is APPLICATION
+    version VERSION using ..." text. to be displayed in the
+    About dialog, in the plain html footer, and maybe at other
+    places.

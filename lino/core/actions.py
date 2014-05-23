@@ -219,31 +219,14 @@ def make_params_layout_handle(self, ui):
 
 
 class Parametrizable(object):
+    #  Base class for both Actors and Actions.
 
-    """
-    Base class for both Actors and Actions.
-    """
     active_fields = None  # 20121006
     master_field = None
 
     parameters = None
-    """
-    User-definable parameter fields for this table.
-    Set this to a `dict` of `name = models.XyzField()` pairs.
-    """
-
     params_layout = None
-    """If this table or action has parameters, specify here how they
-    should be laid out in the parameters panel.
-
-    """
-
     params_panel_hidden = False
-    """If this table has parameters, set this to True if the parameters
-    panel should be initially hidden when this table is being
-    displayed.
-
-    """
 
     _layout_class = NotImplementedError
 
@@ -564,13 +547,8 @@ class Action(Parametrizable, Permittable):
         return ia.run_from_session(ses, **kw)
 
     def action_param_defaults(self, ar, obj, **kw):
-        """Same as Actor.param_defaults, except that here it is a instance
-        method.
+        "See :meth:`dd.Action.action_param_defaults` ."
 
-        Note that this method is not called for actions which are
-        rendered in a toolbar.
-
-        """
         for k, pf in self.parameters.items():
             kw[k] = pf.get_default()
         return kw
@@ -588,8 +566,6 @@ class TableAction(Action):
     is in the bottom toolbar though it should be in the top toolbar...
 
     """
-
-    #~ required_states = None
 
     def get_action_title(self, ar):
         return ar.get_title()
@@ -619,8 +595,6 @@ class GridEdit(TableAction):
     show_in_workflow = False
     opens_a_window = True
     # ~ icon_file = 'application_view_list.png' # used e.g. by quick_add_buttons()
-
-    #~ callable_from = tuple()
     action_name = 'grid'
 
     def is_callable_from(self, caller):

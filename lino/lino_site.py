@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This defines the :class:`settings.Site` class.
+"""This defines the :class:`ad.Site` class.
 
 """
 
@@ -71,7 +71,8 @@ class Site(Site):
 
     verbose_client_info_message = False
 
-    help_url = "http://code.google.com/p/lino"
+    help_url = "http://www.lino-framework.org"
+    help_email = "users@lino-framework.org"
     title = "Unnamed Lino site"
 
     catch_layout_exceptions = True
@@ -114,6 +115,7 @@ class Site(Site):
     """
     Used by :class:`lino.mixins.printable.AppyBuildMethod`.
     """
+
 
     #~ decimal_separator = '.'
     decimal_separator = ','
@@ -453,30 +455,14 @@ class Site(Site):
     max_actor_name_length = 100
 
     trusted_templates = False
-    """
-    Set this to True if you are sure that the users of your site won't try to 
-    misuse Jinja's capabilities.
-    """
 
     allow_duplicate_cities = False
-    """In a default configuration (when :attr:`allow_duplicate_cities` is
-    False), Lino declares a UNIQUE clause for :class:`Places
-    <lino.modlib.countries.models.Places>` to make sure that your
-    database never contains duplicate cities.  This behaviour mighr
-    disturb e.g. when importing legacy data that did not have this
-    restriction.  Set it to True to remove the UNIQUE clause.
-    
-    Changing this setting might affect your database structure and
-    thus require a :doc:`/topics/datamig` if your application uses
-    :mod:`lino.modlib.countries`.
-
-    """
 
     uid = 'myuid'
     """A universal identifier for this Site.  This is needed when
     synchronizing with CalDAV server.  Locally created calendar
     components in remote calendars will get a UID based on this
-    parameter, using ``"%s@%s" (self.pk,settings.SITE.ui)``.
+    parameter, using ``"%s@%s" (self.pk, settings.SITE.ui)``.
     
     The default value is ``'myuid'``, and you should certainly
     override this on a production server that uses remote calendars.
@@ -491,10 +477,6 @@ class Site(Site):
     auth_middleware = None
 
     legacy_data_path = None
-    """Used by custom fixtures that import data from some legacy
-    database.
-
-    """
 
     propvalue_max_length = 200
     """
@@ -502,74 +484,13 @@ class Site(Site):
     """
 
     never_build_site_cache = False
-    """Set this to `True` if you want that Lino never (re)builds the site
-    cache, even when asked.  This can be useful on a development
-    server when you are debugging directly on the generated
-    :xfile:`lino*.js`.  Or for certain unit test cases.
-
-    """
-
     show_internal_field_names = False
-    """Whether the internal field names should be visible.  Default is
-    `False`.  ExtUI implements this by prepending them to the tooltip,
-    which means that :attr:`use_quicktips` must also be `True`.
-
-    """
-
     build_js_cache_on_startup = None
-    """Whether the Javascript cache files should be built on startup for
-    all user profiles and languages.
-    
-    On a production server this should be `True` for best performance,
-    but while developing, it may be easier to set it to `False`, which means 
-    that each file is built upon need (when a first request comes in).
-    
-    The default value `None` means that Lino decides automatically 
-    during startup:
-    it becomes `False` if
-    either :func:`lino.core.dbutils.is_devserver` returns True
-    or setting:`DEBUG` is set.
-
-    """
-
-    #~ replace_django_templates = True
-    #~ """
-    #~ Whether to replace Djano's template engine by Jinja.
-    #~ """
-
     use_java = True
-
     use_experimental_features = False
-    """
-    Whether to include "experimental" features.
-    """
-
     site_config_defaults = {}
-    """
-    Default values to be used when creating the 
-    :class:`lino.models.SiteConfig` instance.
-    
-    Usage example::
-    
-      site_config_defaults = dict(default_build_method='appypdf')
-      
-    """
 
     is_demo_site = True
-    """
-    When this is `True`, then this site runs in "demo" mode.     
-    "Demo mode" means:
-    
-    - the welcome text for anonymous users says "This demo site has X 
-      users, they all have "1234" as password", 
-      followed by a list of available usernames.
-    
-    Default value is `True`.
-    On a production site you will of course set this to `False`.
-    
-    See also :attr:`demo_fixtures`.
-    
-    """
 
     demo_email = 'demo@example.com'
     """
@@ -588,27 +509,9 @@ class Site(Site):
     """
 
     start_year = 2011
-
-    # plain_prefix = 'plain'
-    # admin_prefix = ''
-
     time_format_extjs = 'H:i'
-    """
-    Format (in ExtJS syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_time`.
-    """
-
     date_format_extjs = 'd.m.Y'
-    """
-    Format (in ExtJS syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_date`.
-    """
-
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-    """
-    Alternative date entry formats accepted by ExtJS Date widgets.
-    """
-
     #~ default_number_format_extjs = '0,000.00/i'
     default_number_format_extjs = '0,00/i'
 
@@ -634,25 +537,10 @@ class Site(Site):
     """
 
     default_user = None
-    """
-    Username to be used if a request with 
-    no REMOTE_USER header makes its way through to Lino. 
-    Which may happen on a development server and if Apache is 
-    configured to allow it.
-    Used by :mod:`lino.core.auth`.
-    """
-
     anonymous_user_profile = '000'
-    """
-    The UserProfile to be assigned to anonymous user.
-    
-    """
-
     #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
     ldap_auth_server = None
-
-    #~ simulate_remote_user = False
 
     use_gridfilters = True
 
@@ -1150,25 +1038,7 @@ class Site(Site):
         for a in self.user_apps:
             yield a
 
-    #~ def get_guest_greeting(self):
-        #~ return E.p("Please log in")
-
     site_prefix = '/'
-    """
-    This must be set if your project is not sitting at the "root" URL 
-    of your server.
-    It must start *and* end with a *slash*. Default value is ``'/'``. 
-    For example if you have::
-    
-        WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
-      
-    Then your :xfile:`settings.py` should specify::
-    
-        site_prefix = '/foo/'
-    
-    See also :ref:`mass_hosting`.
-    
-    """
 
     def buildurl(self, *args, **kw):
         #~ url = '/' + ("/".join(args))
@@ -1180,16 +1050,6 @@ class Site(Site):
     def build_media_url(self, *args, **kw):
         return self.buildurl('media', *args, **kw)
 
-    # def build_admin_url(self, *args, **kw):
-    #     if self.admin_prefix:
-    #         return self.buildurl(self.admin_prefix, *args, **kw)
-    #     return self.buildurl(*args, **kw)
-
-    # def build_plain_url(self, *args, **kw):
-    #     if self.plain_prefix:
-    #         return self.buildurl('plain', *args, **kw)
-    #     return self.buildurl(*args, **kw)
-
     def build_admin_url(self, *args, **kw):
         # backwards compatibility
         return self.kernel.default_renderer.plugin.build_plain_url(
@@ -1199,22 +1059,6 @@ class Site(Site):
         # backwards compatibility
         return self.kernel.default_renderer.plugin.build_media_url(
             *args, **kw)
-        # return self.plugins.extjs.build_media_url(*args, **kw) 
-
-    # def build_extjs_url(self, url):
-    #     if self.extjs_base_url:
-    #         return self.extjs_base_url + url
-    #     return self.build_media_url('extjs', url)
-
-    # def build_extensible_url(self, url):
-    #     if self.extensible_base_url:
-    #         return self.extensible_base_url + url
-    #     return self.build_media_url('extensible', url)
-
-    # def build_bootstrap_url(self, url):
-    #     if self.bootstrap_base_url:
-    #         return self.bootstrap_base_url + url
-    #     return self.build_media_url('bootstrap', url)
 
     def build_tinymce_url(self, url):
         if self.tinymce_base_url:
@@ -1222,26 +1066,11 @@ class Site(Site):
         return self.build_media_url('tinymce', url)
 
     def get_system_note_recipients(self, ar, obj, silent):
-        """
-        Return or yield a list of recipients
-        (i.e. strings "Full Name <name@example.com>" )
-        to be notified by email about a system note issued
-        by action request `ar` about the object instance `obj`.
-
-        Default behaviour is to simply forwar it to the `obj`'s
-        :meth:`get_system_note_recipients <lino.core.model.Model.get_system_note_recipients>`,
-        but here is a hook to define local exceptions to the
-        application specific default rules.
-        """
+        "See :meth:`ad.Site.get_system_note_recipients`."
         return obj.get_system_note_recipients(ar, silent)
 
     def welcome_html(self, ui=None):
-        """
-        Return a HTML version of the "This is APPLICATION
-        version VERSION using ..." text. to be displayed in the
-        About dialog, in the plain html footer, and maybe at other
-        places.
-        """
+        "See :meth:`ad.Site.welcome_html`."
         from django.utils.translation import ugettext as _
 
         p = []
@@ -1284,7 +1113,7 @@ class Site(Site):
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):
-        "See :func:`settings.Site.get_letter_date_text`."
+        "See :meth:`ad.Site.get_letter_date_text`."
         sc = self.site_config.site_company
         if today is None:
             today = datetime.date.today()
@@ -1295,10 +1124,7 @@ class Site(Site):
         return dd.fdl(today)
 
     def get_admin_main_items(self, ar):
-        "See :func:`settings.Site.get_letter_date_text`."
+        "See :func:`ad.Site.get_admin_main_items`."
         return []
 
-    #~ def make_url_tester(self):
-        #~ from lino.utils.test import URLTester
-        #~ return URLTester()
 
