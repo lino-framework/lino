@@ -21,14 +21,10 @@ Sitemap
    demos
    about/index
    community/index
-   admin/index
-   
-   tickets/index
-   dev/index
    /blog/index
-   changes
-   todo
-   
+
+   dev/index
+   admin/index
    user/index
    ref/index
 

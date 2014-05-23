@@ -15,7 +15,9 @@ Recommended
    install
    /tutorials/index
    api
-   Generated API </api/lino>
+   tickets/index
+   changes
+   todo
 
 
 Drafts
@@ -24,6 +26,7 @@ Drafts
 .. toctree::
    :maxdepth: 1
 
+   Generated API </api/lino>
    /tested/index
    apps
    testing

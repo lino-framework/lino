@@ -1,0 +1,22 @@
+====================
+Friday, May 23, 2014
+====================
+
+Final sprint before releasing of :ref:`welfare`
+-----------------------------------------------
+
+The data migration is rather complex this time. 
+Most work is done in :mod:`lino_welfare.migrate`.
+
+I moved a piece of old code from 
+:mod:`migrate <lino_welfare.migrate>` to
+:mod:`migrate_old <lino_welfare.migrate_old>`.
+
+Interesting to not that migrations are (of course) cummulative. This
+time I am doing a double migration in Eupen. Their production server
+is at version 1.0.10, so we are using :meth:`migrate_from_1_0_10
+<lino_welfare.migrate.Migrator.migrate_from_1_0_10>` and
+:meth:`migrate_from_1_0_11
+<lino_welfare.migrate.Migrator.migrate_from_1_0_11>` in a single run.
+
+
