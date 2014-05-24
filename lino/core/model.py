@@ -220,28 +220,13 @@ class Model(models.Model):
         return set()
 
     def on_create(self, ar):
-        """
-        Used e.g. by :class:`lino.modlib.notes.models.Note`.
-        on_create gets the action request as argument.
-        Didn't yet find out how to do that using a standard Django signal.
-        """
         pass
 
     def before_ui_save(self, ar):
-        """
-        Called after a PUT or POST on this row, and before saving the row.
-        Example in :class:`lino.modlib.cal.models.Event` to mark the
-        event as user modified by setting a default state.
-        """
         pass
 
     @classmethod
     def define_action(cls, **kw):
-        """
-        Adds one or several actions to this model.
-        Actions must be specified using keyword arguments.
-        
-        """
         for k, v in kw.items():
             if hasattr(cls, k):
                 raise Exception("Tried to redefine %s.%s" % (cls, k))
@@ -249,10 +234,6 @@ class Model(models.Model):
 
     @classmethod
     def hide_elements(self, *names):
-        """
-        Call this to mark the named data elements (fields) as hidden.
-        They remain in the database but are not visible in the user interface.
-        """
         for name in names:
             if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self, name))
@@ -262,27 +243,9 @@ class Model(models.Model):
         pass
 
     def after_ui_save(self, ar):
-        """
-        Called after a PUT or POST on this row, 
-        and after the row has been saved.
-        Used by 
-        :class:`lino_welfare.modlib.debts.models.Budget` 
-        to fill default entries to a new Budget,
-        or by :class:`lino_welfare.modlib.cbss.models.CBSSRequest` 
-        to execute the request,
-        or by 
-        :class:`lino_welfare.modlib.jobs.models.Contract` 
-        :class:`lino_welfare.modlib.pcsw.models.Coaching` 
-        :class:`lino.modlib.vat.models.Vat` 
-        """
         pass
 
     def get_row_permission(self, ar, state, ba):
-        """
-        Returns True or False whether this row instance 
-        gives permission the ActionRequest `ar` 
-        to run the specified action.
-        """
         #~ if ba.action.action_name == 'wf7':
             #~ logger.info("20130424 Model.get_row_permission() gonna call %r.get_bound_action_permission()",ba)
         return ba.get_bound_action_permission(ar, self, state)
@@ -369,19 +332,9 @@ class Model(models.Model):
 
     @classmethod
     def setup_table(cls, t):
-        """
-        Called during site startup once on each Table that 
-        uses this model.
-        """
         pass
 
     def on_duplicate(self, ar, master):
-        """
-        Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
-        `ar` is the action request that asked to duplicate.
-        If `master` is not None, then this is a cascaded duplicate initiated
-        be a duplicate() on the specifie `master`.
-        """
         pass
 
     def before_state_change(self, ar, old, new):
@@ -443,20 +396,6 @@ class Model(models.Model):
         Called from :meth:`lino.Lino.get_system_note_recipients`.
         """
         return []
-
-    @classmethod
-    def add_model_action(self, **kw):
-        """Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
-        action to :class: `lino.modlib.users.models.User`.
-
-        """
-        for k, v in kw.items():
-            if hasattr(self, k):
-                raise Exception("add_model_action tried to override '%s' in %s"
-                                % (k, self))
-            setattr(self, k, v)
-        #~ self._custom_actions = dict(self._custom_actions)
-        #~ self._custom_actions.update(kw)
 
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation

@@ -35,5 +35,5 @@ class Plugin(ad.Plugin):
             v = self.site.accounts_ref_length
             raise Exception("""%s has an attribute 'accounts_ref_length'!.
 You probably want to replace this by:
-SITE.configure_plugins("accounts",accounts_ref_length=%r)
+ad.configure_plugins("accounts", accounts_ref_length=%r)
 """ % (self.site, v))

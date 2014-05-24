@@ -35,3 +35,4 @@ The French translations are now more or less ready.
 Moved more docstrings from miscellaneous source files to
 :class:`ad.Site`.
 
+The next young man discovered Lino and wants to learn it.

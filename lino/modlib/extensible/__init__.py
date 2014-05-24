@@ -16,25 +16,14 @@
 Adds usage of the `Extensible <http://ext.ensible.com>`_ calendar
 library.
 
-Example configuration in a :xfile:`settings.py` file::
+Example configuration in a :xfile:`settings.py` file or
+a :ref:`djangosite_local` module::
 
-    SITE.configure_plugin(
+    ad.configure_plugin(
         'extensible',
         calendar_start_hour=9,
         media_root='/home/luc/snapshots/extensible-1.0.1',
         media_base_url=None)
-
-
-Example configuration in a :ref:`djangosite_local` module::
-
-    def site_setup(self):
-
-        self.configure_plugin(
-            'extensible',
-            calendar_start_hour=9,
-            media_root='/home/luc/snapshots/extensible-1.0.1',
-            media_base_url=None)
-
 
 
 .. setting:: extensible.calendar_start_hour

@@ -42,9 +42,6 @@ class Site(Site):
     languages = 'en et'
     #~ languages = 'de fr et en'.split()
 
-    # def setup_plugins(self):
-    #     self.configure_plugin('extjs', url_prefix='admin')
-
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
 

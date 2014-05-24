@@ -447,8 +447,6 @@ def customize_users():
             help_text=_("""Don't generate automatic events past that date.""")
         ))
 
-    #~ users = dd.resolve_app('users')
-    #~ users.User.add_model_action(update_reminders=UpdateEvents())
 
 MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
 

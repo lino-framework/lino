@@ -7,15 +7,33 @@ Application Design
 The :mod:`lino.ad` module is a shortcut to those parts of Lino which
 are used in your :xfile:`settings.py` files and in the
 :xfile:`__init__.py` files of your apps.  The name ``ad`` stands for
-"Application Design".
-
-This module is being imported from within your Django settings and
-**before your models are imported**.
+"Application Design".  Application design happens **during** the
+import of your Django settings and **before** your models are
+imported.
 
 The :class:`Site` class is what you are going to instantiate and store
 in your :setting:`SITE` setting.
 
 The :class:`Plugin` class is an optional descriptor for every app.
+
+
+.. function:: configure_plugin(app_label, **kwargs)
+
+  Set one ore several configuration settings of the given plugin.
+
+  This should be called *before instantiating* your :class:`Site`
+  class.
+
+  For example to enable :attr:`ml.contacts.Plugin.hide_region` to
+  True::
+
+    ad.configure_plugin('contacts', hide_region=True)
+
+  The :func:`configure_plugin` function is a simple interface for
+  locally configuring plugins. See :doc:`/admin/settings` for more
+  details on this.
+
+
 
 
 The ``Site`` class
@@ -756,11 +774,6 @@ The basic usage is to write in your :xfile:`__init__.py` file::
   .. method:: on_site_startup(site)
 
     This will be called exactly once, when models are ready.
-
-  .. method:: configure_plugin(app_label, **kw)
-
-    Set one ore several configuration settings of the given plugin.
-
 
   .. method:: get_letter_date_text(today=None)
 

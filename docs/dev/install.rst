@@ -7,6 +7,7 @@ Installing Lino (development version)
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
 .. _fabric: http://www.fabfile.org/
+.. _git: http://git-scm.com/downloads
 
 This document describes how you should install Lino if you want
 to use Lino's newest features even before they get officially 
@@ -18,6 +19,7 @@ described in :ref:`lino.tutorial.quickstart`
 Preliminaries
 -------------
 
+- You will need git_ to get the source files.
 - We assume you have pip_  installed.
 - We recommend to install fabric_, a command-line tool systems to
   streamline administration tasks. Simply type ``pip install fabric``
@@ -104,7 +106,11 @@ Run Lino's test suite
   $ fab initdb
   $ fab test
 
-- The test suite needs the demo databases to be generated
+- The :fab:`initdb` command will initialize certain demo
+  databases. These are used by the test suite which would fail if
+  these demo databases are missing.
+- The :fab:`test` command simply runs the test suite, it is a short
+  for ``python setup.py test``
 
   
 Updating your copy of the repository

@@ -1,0 +1,13 @@
+======================
+Saturday, May 24, 2014
+======================
+
+I noticed that the :attr:`ml.contacts.Plugin.hide_region` didn't work
+in the online demo.
+
+Added new function :func:`ad.configure_plugin`.
+And :meth:`ad.Site.configure_plugin` now raises an exception.
+
+Worked on :doc:`/admin/settings`.
+
+

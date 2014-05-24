@@ -53,6 +53,64 @@ The `dd.Model` class
     :ref:`welfare` overrides this in order to call its `populate`
     method.
 
+  .. method:: define_action(cls, **kwargs)
+
+    Adds one or several actions to this model.
+    Actions must be specified using keyword arguments.
+
+    Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
+    action to :class: `lino.modlib.users.models.User`.
+
+  .. method:: hide_elements(cls, *names)
+
+    Mark the named data elements (fields) as hidden.  They remain in
+    the database but are not visible in the user interface.
+
+  .. method:: on_create(self, ar)
+
+    Used e.g. by :class:`ml.notes.Note`.
+    on_create gets the action request as argument.
+    Didn't yet find out how to do that using a standard Django signal.
+
+  .. method:: before_ui_save(self, ar)
+
+    Called after a PUT or POST on this row, and before saving the row.
+
+    Example in :class:`ml.cal.Event` to mark the event as user
+    modified by setting a default state.
+
+  .. method:: after_ui_save(self, ar)
+
+    Called after a PUT or POST on this row, 
+    and after the row has been saved.
+    Used by 
+    :class:`lino_welfare.modlib.debts.models.Budget` 
+    to fill default entries to a new Budget,
+    or by :class:`lino_welfare.modlib.cbss.models.CBSSRequest` 
+    to execute the request,
+    or by 
+    :class:`lino_welfare.modlib.jobs.models.Contract` 
+    :class:`lino_welfare.modlib.pcsw.models.Coaching` 
+    :class:`lino.modlib.vat.models.Vat` 
+
+  .. method:: get_row_permission(self, ar, state, ba)
+
+    Returns True or False whether this row instance gives permission
+    to the ActionRequest `ar` to run the specified action.
+
+  .. method:: setup_table(cls, t)
+
+    Called during site startup once on each Table that 
+    uses this model.
+
+  .. method:: on_duplicate(self, ar, master)
+
+    Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
+    `ar` is the action request that asked to duplicate.
+    If `master` is not None, then this is a cascaded duplicate initiated
+    be a duplicate() on the specifie `master`.
+
+
   .. method:: FOO_choices
 
     For every field named "FOO", if the model has a method called

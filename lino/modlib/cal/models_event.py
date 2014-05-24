@@ -926,9 +926,7 @@ class UpdateUserReminders(UpdateEvents):
 
 @dd.receiver(dd.pre_analyze, dispatch_uid="add_update_reminders")
 def pre_analyze(sender, **kw):
-    #~ logger.info("%s.set_merge_actions()",__name__)
-    #~ modules = sender.modules
-    sender.user_model.add_model_action(update_reminders=UpdateUserReminders())
+    sender.user_model.define_action(update_reminders=UpdateUserReminders())
 
 
 __all__ = [

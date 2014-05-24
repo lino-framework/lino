@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -26,26 +26,8 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
+from lino import ad
 from lino import Site
-
-#~ SITE = Site(globals())
-#~ """
-#~ This Site instance will normally be replaced by an instance
-#~ in a local settings.py file
-#~ """
-
-#~ DBLOGGER = 'db'
-#~ DBLOGFILE = 'auto'
-#~ USE_FIREBUG = False
-#~ USE_GRIDFILTERS = True
-#~ MODEL_DEBUG = True
-#~ PROJECT_DIR = normpath(dirname(__file__))
-#~ USER_INTERFACES = [
-  #~ 'lino.ui.extjsu',
-  #~ 'lino.ui.extjs'
-  #~ ]
-#~ DATA_DIR = join(LINO.project_dir,"data")
-
 
 def TIM2LINO_LOCAL(alias, obj):
     """Hook for local special treatment on instances that have been imported from TIM.

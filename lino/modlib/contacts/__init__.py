@@ -24,7 +24,6 @@ class Plugin(ad.Plugin):
     hide_region = False
 
     def before_analyze(self, site):
-        # print "20140117 on_ui_init", self.hide_region
         contacts = site.modules.contacts
         # contacts = self.app_module
 

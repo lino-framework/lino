@@ -25,6 +25,7 @@ from os.path import exists
 from urllib import urlencode
 
 from djangosite import Plugin as BasePlugin
+from djangosite import configure_plugin
 
 
 class Plugin(BasePlugin):

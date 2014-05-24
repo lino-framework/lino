@@ -15,9 +15,9 @@ Recommended
    install
    /tutorials/index
    api
-   tickets/index
-   changes
-   todo
+   /tickets/index
+   /changes
+   /todo
 
 
 Drafts
