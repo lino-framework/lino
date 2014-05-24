@@ -27,17 +27,8 @@ This app is being extended by :ref:`welfare` in
   >>> dd.startup()
   >>> globals().update(dd.modules)
 
-
-
-**Models**
-
-- The :class:`Partner` model (and its two subclasses
-  :class:`Person` and :class:`Company`)
-
-- A :class:`CompanyType` model can be used to classify companies.
-
-- The :class:`Role` and :class:`RoleType` models store "who is who"
-  information.
+Mixins
+======
 
 .. class:: AddressLocation
 
@@ -74,6 +65,18 @@ This app is being extended by :ref:`welfare` in
     4000 Liège
     Belgium
 
+
+
+Models
+======
+
+- The :class:`Partner` model (and its two subclasses
+  :class:`Person` and :class:`Company`)
+
+- A :class:`CompanyType` model can be used to classify companies.
+
+- The :class:`Role` and :class:`RoleType` models store "who is who"
+  information.
 
 
 .. class:: Partner(AddressLocation)
@@ -115,16 +118,6 @@ This app is being extended by :ref:`welfare` in
     
     Pointer to the :class:`CompanyType`. 
 
-.. class:: CompanyDetail
-
-    The :class:`dd.Layout` of the detail Window of a :class:`Company`.
-
-
-
-.. class:: CompanyDetail
-
-
-
 .. class:: CompanyType
 
     Represents a possible choice for the :attr:`Company.type`
@@ -136,12 +129,26 @@ This app is being extended by :ref:`welfare` in
        dd.login('robin').show(contacts.CompanyTypes, limit=5)
 
 
+Tables and Layouts
+==================
 
-**Settings**
+.. class:: CompanyDetail
+
+    The :class:`dd.Layout` of the :term:`detail window` of a :class:`Company`.
+
+.. class:: PersonDetail
+
+    The :class:`dd.Layout` of the :term:`detail window` of a :class:`Person`.
+
+
+
+
+Settings
+========
 
 .. class:: Plugin
 
-  See also :class:`ad.Plugin`.
+  See also :doc:`/admin/settings` and :doc:`/dev/ad`.
 
   .. attribute:: hide_region
 
@@ -154,8 +161,6 @@ This app is being extended by :ref:`welfare` in
 
     Example code in a local :xfile:`settings.py` file::
 
-      SITE.configure_plugin('contacts', hide_region=True)
-
-
+      dd.configure_plugin('contacts', hide_region=True)
 
 

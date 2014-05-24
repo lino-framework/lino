@@ -11,6 +11,19 @@ are used in your :xfile:`settings.py` files and in the
 import of your Django settings and **before** your models are
 imported.
 
+Plugins
+-------
+
+A minimal :xfile:`__init__.py` file of a Django app::
+
+    from lino import ad, _
+
+    class Plugin(ad.Plugin):
+
+        verbose_name = _("Places")
+
+
+
 The :class:`Site` class is what you are going to instantiate and store
 in your :setting:`SITE` setting.
 

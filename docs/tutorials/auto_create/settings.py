@@ -1,3 +1,2 @@
-from lino import Site
-SITE = Site(globals(),'auto_create')
-SECRET_KEY = "20227" # see :djangoticket:`20227`
+from lino.projects.std.settings import *
+SITE = Site(globals(), 'auto_create')

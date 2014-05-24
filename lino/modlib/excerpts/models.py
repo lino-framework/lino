@@ -80,10 +80,11 @@ class Certifiable(dd.Model):
 
     def clear_cache(self):
         obj = self.printed_by
-        self.printed_by = None
-        self.full_clean()
-        self.save()
-        obj.delete()
+        if obj is not None:
+            self.printed_by = None
+            self.full_clean()
+            self.save()
+            obj.delete()
 
 
 class ExcerptType(

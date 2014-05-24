@@ -11,9 +11,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This defines Lino default settings. You include this (directly or indirectly) 
-into your local :xfile:`settings.py` using::
+"""This defines Lino default settings. You include this (directly or
+indirectly) into your local :xfile:`settings.py` using::
 
   from lino.projects.std.settings import *
 
@@ -26,11 +25,13 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-from lino import ad
-from lino import Site
+from lino.ad import Site, configure_plugin
+
 
 def TIM2LINO_LOCAL(alias, obj):
-    """Hook for local special treatment on instances that have been imported from TIM.
+    """Hook for local special treatment on instances that have been
+    imported from TIM.
+
     """
     return obj
 
@@ -44,7 +45,6 @@ def TIM2LINO_USERNAME(userid):
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
-#TEMPLATE_STRING_IF_INVALID = 'foo'
 
 
 ADMINS = [
@@ -52,15 +52,6 @@ ADMINS = [
 ]
 
 MANAGERS = ADMINS
-
-if False:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': join(LINO.project_dir, 'demo.db')
-            #~ 'NAME': ':memory:'
-        }
-    }
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -83,28 +74,6 @@ TIME_ZONE = None
 # to load the internationalization machinery.
 USE_I18N = True
 
-# Absolute path to the directory that holds media.
-# Example: "/home/media/media.lawrence.com/"
-# Used by FileSystemStorage.
-# Lino generates the :xfile:`site.js` there.
-# ~ if sys.platform == 'win32': # development server
-    #~ MEDIA_ROOT = abspath(join(PROJECT_DIR,'media'))
-#~ else:
-    #~ MEDIA_ROOT = abspath(join(DATA_DIR,'media'))
-
-#~ MEDIA_ROOT = abspath(join(LINO.project_dir,'media'))
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash if there is a path component (optional in other cases).
-# Examples: "http://media.lawrence.com", "http://example.com/media/"
-#~ MEDIA_URL = '/media/'
-
-# URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
-# trailing slash.
-# Examples: "http://foo.com/media/", "/media/".
-#~ ADMIN_MEDIA_PREFIX = '/admin-media/'
-
-
 EMAIL_HOST = "mail.example.com"
 #EMAIL_PORT = ""
 
@@ -114,6 +83,5 @@ DATABASES = {
         'NAME': ':memory:'
     }
 }
-
 
 SECRET_KEY = "20227"  # see :djangoticket:`20227`

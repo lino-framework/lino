@@ -7,7 +7,7 @@ certain settings locally.
 To edit your local :xfile:`settings.py` file, go to the project
 directory and start your preferred editor on the file `settings.py`::
 
-  cd /usr/local/django/dsbe_eupen
+  cd /usr/local/django/myproject
   nano settings.py
 
 After modifying your settings.py you must restart all Lino services
