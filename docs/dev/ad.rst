@@ -61,6 +61,24 @@ The ``Site`` class
   site administrator.
 
 
+  .. attribute:: sidebar_width
+
+    Used by :mod:`lino.modlib.plain`.
+    Width of the sidebar in 1/12 of total screen width.
+    Meaningful values are 0 (no sidebar), 2 or 3.
+
+
+  .. attribute:: ignore_dates_before
+
+    Ignore dates before the given date.  Set this to `None` if you want
+    no limit.
+    Default value is "7 days before server startup".
+
+  .. attribute:: ignore_dates_after
+
+    Ignore dates after the given date.  This should never be `None`.
+    Default value is approximately 5 years after server startup.
+
   .. attribute:: site_prefix
 
     This must be set if your project is not sitting at the "root" URL 
@@ -88,7 +106,14 @@ The ``Site`` class
 
     This property holds a cached version of the one and only
     :class:`ml.system.SiteConfig` row that holds site-wide
-    database-stored parameters.
+    database-stored and web-editable Site configuration parameters.
+
+    If no instance exists (which happens in a virgin database), we
+    create it using default values from :attr:`site_config_defaults`.
+
+    This is always `None` when :mod:`lino.modlib.system` is not installed.
+
+
 
   .. attribute:: default_user
 
@@ -469,23 +494,67 @@ The ``Site`` class
     command.
 
 
-  .. attribute:: time_format_extjs
-    """
-    Format (in ExtJS syntax) to use for displaying dates to the user.
+  .. attribute:: date_format_regex
+
+    Format (in Javascript regex syntax) to use for displaying dates to
+    the user.  If you change this setting, you also need to override
+    :meth:`parse_date`.
+
+  .. attribute:: datetime_format_strftime
+
+    Format (in strftime syntax) to use for formatting timestamps in
+    AJAX responses.  If you change this setting, you also need to
+    override :meth:`parse_datetime`.
+
+  .. attribute:: datetime_format_extjs
+
+    Format (in ExtJS syntax) to use for formatting timestamps in AJAX
+    calls.  If you change this setting, you also need to override
+    :meth:`parse_datetime`.
+
+  .. attribute:: date_format_strftime
+
+    Format (in strftime syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+
+  .. attribute:: time_format_strftime
+
+    Format (in strftime syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_time`.
-    """
+
+  .. method:: parse_date(self, s)
+
+    Convert a string formatted using
+    :attr:`date_format_strftime` or  :attr:`date_format_extjs`
+    into a `(y,m,d)` tuple (not a `datetime.date` instance).
+    See `/blog/2010/1130`.
+
+  .. method:: parse_time(self, s)
+
+    Convert a string formatted using
+    :attr:`time_format_strftime` or  :attr:`time_format_extjs`
+    into a `datetime.time` instance.
+
+  .. method:: parse_datetime(self, s)
+
+    Convert a string formatted using
+    :attr:`datetime_format_strftime` or  :attr:`datetime_format_extjs`
+    into a `datetime.datetime` instance.
+
 
   .. attribute:: date_format_extjs
-    """
+
     Format (in ExtJS syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_date`.
-    """
 
   .. attribute:: alt_date_formats_extjs
 
-    """
     Alternative date entry formats accepted by ExtJS Date widgets.
-    """
+
+  .. attribute:: time_format_extjs
+
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
 
 
   .. attribute:: use_davlink
@@ -720,8 +789,7 @@ The basic usage is to write in your :xfile:`__init__.py` file::
 
   .. attribute:: site_config_defaults
 
-    Default values to be used when creating the 
-    :class:`ml.system.SiteConfig` instance.
+    Default values to be used when creating the :attr:`site_config`.
     
     Usage example::
     
@@ -815,3 +883,23 @@ The basic usage is to write in your :xfile:`__init__.py` file::
     version VERSION using ..." text. to be displayed in the
     About dialog, in the plain html footer, and maybe at other
     places.
+
+  .. method:: get_db_overview_rst(self)
+
+    Return a reStructredText-formatted "database overview" report.
+    Used by the :manage:`diag` command and in test cases.
+
+  .. method:: site_header(self)
+
+    Used in footnote or header of certain printed documents.
+
+    The convention is to call it as follows from an appy.pod template
+    (use the `html` function, not `xhtml`)
+    ::
+
+      do text
+      from html(settings.SITE.site_header())
+
+    Note that this is expected to return a unicode string possibly
+    containing valid HTML (not XHTML) tags for formatting.
+

@@ -251,37 +251,10 @@ class Site(Site):
     """
 
     time_format_strftime = '%H:%M'
-    """
-    Format (in strftime syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_time`.
-    """
-
     date_format_strftime = '%d.%m.%Y'
-    """
-    Format (in strftime syntax) to use for displaying dates to the user.
-    If you change this setting, you also need to override :meth:`parse_date`.
-    """
-
     date_format_regex = "/^[0123]?\d\.[01]?\d\.-?\d+$/"
-    """Format (in Javascript regex syntax) to use for displaying dates to
-    the user.  If you change this setting, you also need to override
-    :meth:`parse_date`.
-
-    """
-
     datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
-    """Format (in strftime syntax) to use for formatting timestamps in
-    AJAX responses.  If you change this setting, you also need to
-    override :meth:`parse_datetime`.
-
-    """
-
     datetime_format_extjs = 'Y-m-d\TH:i:s'
-    """Format (in ExtJS syntax) to use for formatting timestamps in AJAX
-    calls.  If you change this setting, you also need to override
-    :meth:`parse_datetime`.
-
-    """
 
     _welcome_actors = []
 
@@ -302,32 +275,16 @@ class Site(Site):
         )
 
     def parse_date(self, s):
-        """
-        Convert a string formatted using
-        :attr:`date_format_strftime` or  :attr:`date_format_extjs`
-        into a `(y,m,d)` tuple (not a `datetime.date` instance).
-        See `/blog/2010/1130`.
-        """
         ymd = tuple(reversed(map(int, s.split('.'))))
         assert len(ymd) == 3
         return ymd
         #~ return datetime.date(*ymd)
 
     def parse_time(self, s):
-        """
-        Convert a string formatted using
-        :attr:`time_format_strftime` or  :attr:`time_format_extjs`
-        into a datetime.time instance.
-        """
         hms = map(int, s.split(':'))
         return datetime.time(*hms)
 
     def parse_datetime(self, s):
-        """
-        Convert a string formatted using
-        :attr:`datetime_format_strftime` or  :attr:`datetime_format_extjs`
-        into a datetime.datetime instance.
-        """
         #~ print "20110701 parse_datetime(%r)" % s
         #~ s2 = s.split()
         s2 = s.split('T')
@@ -340,10 +297,7 @@ class Site(Site):
         #~ return datetime.combine(d,t)
 
     ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
-    """Ignore dates before the gived date.  Set this to None if you want
-    no limit.
-
-    """
+    ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
 
     def resolve_virtual_fields(self):
         for vf in self.VIRTUAL_FIELDS:
@@ -354,16 +308,6 @@ class Site(Site):
         self.VIRTUAL_FIELDS.append(vf)
 
     def do_site_startup(self):
-        """Start the Lino instance (the object stored as :setting:`LINO` in
-        your :xfile:`settings.py`).  This is called exactly once from
-        :mod:`lino.models` when Django has has populated it's model
-        cache.
-
-        This code can run several times at once when running
-        e.g. under mod_wsgi: another thread has started and not yet
-        finished `startup_site()`.
-
-        """
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
         
         super(Site, self).do_site_startup()
@@ -507,11 +451,6 @@ class Site(Site):
                 yield u
 
     def get_db_overview_rst(self):
-        """
-        Returns a reStructredText-formatted "database overview" report.
-        Used by the :mod:`diag <lino.management.commands.diag>` command
-        and in test cases.
-        """
         from atelier import rstgen
         from lino.core.dbutils import (full_model_name,
                                        sorted_models_list, app_labels)
@@ -745,41 +684,12 @@ class Site(Site):
         subst w: <dev_project_path>\media\webdav
         
     """
-
-
-    #~ use_eidreader = False
-    #~ """
-    #~ Set this to `True` if this site should feature using :ref:`eidreader`.
-    #~ """
-
-    # use_davlink = False
-
-    #~ max_auto_events = 72
-    #~ """
-    #~ Maximum number of automatic events to be generated.
-    #~ """
-
-    #~ mergeable_models = []
-    #~ """
-    #~ A list of models that should have a "Merge" action
-    #~ (see :mod:`lino.mixins.mergeable`).
-    #~ """
-
-
     sidebar_width = 0
-    """
-    Width of the sidebar in 1/12 of total screen width.
-    Meaningful values are 0 (no sidebar), 2 or 3.
-    """
 
     # for internal use:
-    #~ _extjs_ui = None
-    #~ _groph_ui = None
     _site_config = None
 
     def override_defaults(self, **kwargs):
-        """
-        """
         #~ logger.info("20130404 lino.site.Site.override_defaults")
         super(Site, self).override_defaults(**kwargs)
 
@@ -846,21 +756,6 @@ class Site(Site):
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
 
     def site_header(self):
-        """
-        Used in footnote or header of certain printed documents.
-
-        The convention is to call it as follows from an appy.pod template
-        (use the `html` function, not `xhtml`)
-        ::
-
-          do text
-          from html(settings.SITE.site_header())
-
-        Note that this is expected to return a unicode string possibly
-        containing valid HTML (not XHTML) tags for formatting.
-
-
-        """
         if self.is_installed('contacts'):
             if self.site_config.site_company:
                 return self.site_config.site_company.get_address('<br/>')
@@ -873,30 +768,8 @@ class Site(Site):
         """
         pass
 
-    #~ @property
-    #~ def site_config(self):
-        #~ SiteConfig = self.modules.system.SiteConfig
-        #~ try:
-            #~ return SiteConfig.objects.get(pk=1)
-        #~ except SiteConfig.DoesNotExist:
-            #~ kw = dict(pk=1)
-            #~ kw.update(self.site_config_defaults)
-            #~ sc = SiteConfig(**kw)
-            #~ sc.full_clean()
-            #~ sc.save()
-            #~ return sc
     @property
     def site_config(self):
-        """
-        Returns the one and only
-        :class:`lino.modlib.system.models.SiteConfig` instance which
-        contains Site configuration parameters which are stored in the
-        database and editable using the web interface.
-
-        If no instance exists (which happens in a virgin database),
-        we create it using default values from :attr:`site_config_defaults`.
-
-        """
 
         if not 'system' in self.modules:
             return None

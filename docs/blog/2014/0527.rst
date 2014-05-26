@@ -11,6 +11,13 @@ table with a detail_layout and an insert_layout did not switch to
 detail window after closing the insert window.
 
 
-`farest_future` is a database field in Siteconfig while
-`ignore_dates_before` is a Site class attribute. They should be both
-in the same place.
+commit
+
+
+Discovered and fixed an oddness: `farest_future` ("Don't generate
+automatic events past that date.") was a database field in
+`SiteConfig` while :attr:`ad.Site.ignore_dates_before` was a Site
+class attribute. They should be both in the same place. And since
+normal web interface users should not need to worry about these
+parameters, we remove `farest_future` from `SiteConfig` and replace it
+by a new attribute :attr:`ad.Site.ignore_dates_after`.

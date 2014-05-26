@@ -571,12 +571,11 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def url(self, ar):
         return 'foo'
 
-    # @dd.displayfield(_("Date"))
     @dd.displayfield(_("When"))
     def linked_date(self, ar):
         pv = dict(start_date=self.start_date)
         if False:
-            # TODO: what to do in case of multiple day events?
+            # TODO: what to do with events that span multiple days?
             pv.update(end_date=self.end_date or self.start_date)
         else:
             pv.update(end_date=self.start_date)

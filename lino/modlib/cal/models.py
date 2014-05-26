@@ -437,16 +437,6 @@ def customize_users():
                 """Maximum number of automatic events to be generated.""")
         ))
 
-    dd.inject_field(
-        'system.SiteConfig',
-        'farest_future',
-        models.DateField(
-            _("Farest future"),
-            default=datetime.date.today() +
-            dateutil.relativedelta.relativedelta(years=5),
-            help_text=_("""Don't generate automatic events past that date.""")
-        ))
-
 
 MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
 

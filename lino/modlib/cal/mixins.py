@@ -225,7 +225,7 @@ class EventGenerator(mixins.UserAuthored):
 
     def update_cal_until(self):
         """Return the limit date until which to generate events.  None means
-        "no limit" (which de facto becomes `SiteConfig.farest_future`)
+        "no limit" (which de facto becomes :attr:`ad.Site.ignore_dates_after`)
 
         """
         return None
@@ -384,10 +384,10 @@ class EventGenerator(mixins.UserAuthored):
             ar.info("No available weekday.")
             return wanted
         until = self.update_cal_until() \
-            or settings.SITE.site_config.farest_future
+            or settings.SITE.ignore_dates_after
         if until is None:
-            raise Exception("20140311 farest_future is %s " %
-                            settings.SITE.site_config.farest_future)
+            raise Exception("20140311 ignore_dates_after is %s " %
+                            settings.SITE.ignore_dates_after)
         i = 0
         max_events = rset.max_events or \
             settings.SITE.site_config.max_auto_events
@@ -436,7 +436,7 @@ class EventGenerator(mixins.UserAuthored):
         if date is None:
             return
         until = self.update_cal_until() \
-            or settings.SITE.site_config.farest_future
+            or settings.SITE.ignore_dates_after
         we.start_date = date
         if self.resolve_conflicts(we, ar, rset, until) is None:
             return
