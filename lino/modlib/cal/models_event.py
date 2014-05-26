@@ -102,6 +102,11 @@ class EventType(dd.BabelNamed, dd.Sequenced,
         _("Event label"),
         max_length=200, blank=True, default=_("Appointment"))
 
+    max_conflicting = models.PositiveIntegerField(
+        _("Simultaneous events"),
+        help_text=_("How many conflicting events should be tolerated."),
+        default=1)
+
     #~ def full_clean(self,*args,**kw):
         #~ if not self.name:
             #~ if self.username:
@@ -130,19 +135,19 @@ class EventTypes(dd.Table):
     column_names = "name *"
 
     detail_layout = """
-    name 
+    name
     event_label
     # description
-    start_date id 
+    start_date id
     # type url_template username password
     #build_method #template email_template attach_to_email
-    is_appointment all_rooms locks_user
-    EventsByType 
+    is_appointment all_rooms locks_user max_conflicting
+    EventsByType
     """
 
     insert_layout = dd.FormLayout("""
-    name 
-    event_label 
+    name
+    event_label
     """, window_size=(60, 'auto'))
 
 #~ def default_calendar(user):
@@ -348,12 +353,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     move_next = MoveEventNext()
 
-    def has_conflicting_events(self):
-        qs = self.get_conflicting_events()
-        if qs is None:
-            return False
-        return qs.count() > 0
-
     def __unicode__(self):
         if self.pk:
             s = self._meta.verbose_name + " #" + str(self.pk)
@@ -371,7 +370,16 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
                 s += " (%s)" % d
         return s
 
-    #~ def conflicts_with_existing(self):
+    def has_conflicting_events(self):
+        qs = self.get_conflicting_events()
+        if qs is None:
+            return False
+        if self.event_type is not None:
+            n = self.event_type.max_conflicting - 1
+        else:
+            n = 0
+        return qs.count() > n
+
     def get_conflicting_events(self):
         """
         Return a QuerySet of Events that conflict with this one.
@@ -403,7 +411,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         qs = qs.filter(flt)
         if self.id is not None:  # don't conflict with myself
             qs = qs.exclude(id=self.id)
-        # generated events never conflict with other generated events of same owner. Rule needed for update_events.
+        # generated events never conflict with other generated events
+        # of same owner. Rule needed for update_events.
         if self.auto_type is not None:
             qs = qs.exclude(
                 # auto_type=self.auto_type,

@@ -2,13 +2,11 @@
 #51 : Lino and Tryton
 =====================
 
-In November 2011 I discovered OpenERP and was amazed 
-by how good it is and how well it covers what I can do 
-with Lino.
-:doc:`A few days later </blog/2011/1122>`
-I discovered that OpenERP cannot be considered free software, 
-but that we have `Tryton <http://www.tryton.org>`_, 
-a free fork of OpenERP.
+In November 2011 I discovered OpenERP and was amazed by how good it is
+and how well it covers what I can do with Lino.  :doc:`A few days
+later </blog/2011/1122>` I discovered that OpenERP cannot be
+considered free software, but that we have `Tryton
+<http://www.tryton.org>`_, a free fork of OpenERP.
 
 This discovery raised an important question:
 which framework is better?
@@ -67,8 +65,8 @@ Lino has some unique features and ways of doing things, which
 differ from Tryton, and I guess (but didn't verify) that I 
 wouldn't be satisfied with other approaches:
 
-- Support for multilingual database content
-- :doc:`/topics/datamig`
+- :ref:`mldbc`
+- :ref:`datamig`
 - :doc:`/topics/mti` (MTI)
 - Synchronize data from a legacy database
 

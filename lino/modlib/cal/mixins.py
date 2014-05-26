@@ -416,6 +416,7 @@ class EventGenerator(mixins.UserAuthored):
 
                     wanted[i] = we
                 date = rset.get_next_suggested_date(ar, date)
+                date = rset.find_start_date(date)
                 if date is None:
                     ar.info("Could not find next date.")
                     break
@@ -452,6 +453,7 @@ class EventGenerator(mixins.UserAuthored):
         date = we.start_date
         # ar.debug("20140310 resolve_conflicts %s", we.start_date)
         while we.has_conflicting_events():
+            qs = we.get_conflicting_events()
             # ar.debug("20140310 %s conflicts with %s. ", we,
             #          we.get_conflicting_events())
             date = rset.get_next_alt_date(ar, date)
@@ -459,8 +461,7 @@ class EventGenerator(mixins.UserAuthored):
                 ar.debug(
                     "Failed to get next date for %s (%s > %s).",
                     we, date, until)
-                conflicts = [E.tostring(ar.obj2html(o))
-                             for o in we.get_conflicting_events()]
+                conflicts = [E.tostring(ar.obj2html(o)) for o in qs]
                 msg = ', '.join(conflicts)
                 ar.warning("%s conflicts with %s. ", we, msg)
                 return None
@@ -569,7 +570,7 @@ class RecurrenceSet(Started, Ended):
             
     def get_next_alt_date(self, ar, date):
         "Currently always returns date + 1"
-        return date + ONE_DAY
+        return self.find_start_date(date + ONE_DAY)
 
     def get_next_suggested_date(self, ar, date):
         """Find the next date after the given date, without worrying about
@@ -580,11 +581,11 @@ class RecurrenceSet(Started, Ended):
             ar.debug("get_next_suggested_date() once --> None.")
             return None
         if self.every_unit == Recurrencies.per_weekday:
-            date = self.find_start_date(date + ONE_DAY)
-            if date is None:
-                ar.debug("Failed to find available weekday.")
-            return date
-        return self.every_unit.add_duration(date, self.every)
+            date = date + ONE_DAY
+        else:
+            date = self.every_unit.add_duration(date, self.every)
+        return self.find_start_date(date)
+
 
     def find_start_date(self, date):
         """Find the first available date for the given date (possibly

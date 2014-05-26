@@ -1,0 +1,8 @@
+====================
+Monday, May 26, 2014
+====================
+
+Miscellaneous
+
+- Added :doc:`/about/compared`
+- The date of one event on vor-cycling.be had changed
