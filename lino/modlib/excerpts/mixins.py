@@ -12,6 +12,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+"""
+
+This defines the :class:`ml.excerpts.Certifiable` model mixin.
+
+"""
+
 from __future__ import unicode_literals
 from __future__ import print_function
 

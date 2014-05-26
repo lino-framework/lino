@@ -915,7 +915,7 @@ class SubmitDetail(SaveRow):
 
 class CreateRow(Action):
     """Called when user edited a cell of a phantom record in a grid.
-    Installed as `grid_post` on every `dd.Model <lino.core.model.Model>`.
+    Installed as `grid_post` on every :class:`dd.Model`.
     """
     sort_index = 10
     auto_save = False

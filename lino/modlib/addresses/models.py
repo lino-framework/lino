@@ -93,6 +93,22 @@ class AddressOwner(dd.Model):
         elems.append(E.p(btn))
         return elems
     
+    def sync_primary_address(self, request):
+        Address = dd.modules.addresses.Address
+        watcher = dd.ChangeWatcher(self)
+        kw = dict(partner=self, primary=True)
+        try:
+            pa = Address.objects.get(**kw)
+            for k in Address.ADDRESS_FIELDS:
+                setattr(self, k, getattr(pa, k))
+        except Address.DoesNotExist:
+            pa = None
+            for k in Address.ADDRESS_FIELDS:
+                fld = self._meta.get_field(k)
+                setattr(self, k, fld.get_default())
+        self.save()
+        watcher.send_update(request)
+
 
 class Address(AddressLocation):
 
@@ -123,18 +139,17 @@ class Address(AddressLocation):
 
     def after_ui_save(self, ar):
         super(Address, self).after_ui_save(ar)
+        mi = self.partner
+        if mi is None:
+            return
         if self.primary:
-            mi = self.partner
             for o in mi.addresses_by_partner.exclude(id=self.id):
                 if o.primary:
                     o.primary = False
                     o.save()
                     ar.set_response(refresh_all=True)
-            watcher = dd.ChangeWatcher(mi)
-            for k in self.ADDRESS_FIELDS:
-                setattr(mi, k, getattr(self, k))
-            mi.save()
-            watcher.send_update(ar.request)
+        mi.sync_primary_address(ar.request)
+
 
 Address.ADDRESS_FIELDS = dd.fields_list(
     Address,
@@ -145,13 +160,8 @@ Address.ADDRESS_FIELDS = dd.fields_list(
 def clear_partner_on_delete(sender=None, request=None, **kw):
     self = sender
     mi = self.partner
-    if self.primary and mi:
-        watcher = dd.ChangeWatcher(mi)
-        for k in self.ADDRESS_FIELDS:
-            fld = self._meta.get_field(k)
-            setattr(mi, k, fld.get_default())
-        mi.save()
-        watcher.send_update(request)
+    if mi:
+        mi.sync_primary_address(request)
 
 
 class Addresses(dd.Table):

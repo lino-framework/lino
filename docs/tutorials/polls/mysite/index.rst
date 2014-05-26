@@ -112,8 +112,8 @@ Other Django setting for which Lino sets default values are:
 
 
 
-The :xfile:`models.py` file
----------------------------
+The :file:`models.py` file
+--------------------------
 
 - Change the contents of your :xfile:`polls/models.py` to the
   following:
@@ -140,11 +140,104 @@ A few explanations while looking at that file:
   it in the Actions_ section.
   
   
+Adding a demo fixture
+---------------------
+
+One more thing before seeing a result.  We made at least one change in
+our :xfile:`models.py` file after the Django tutorial: we added the
+`hidden` field of a Poll::
+
+    hidden = models.BooleanField(
+        "Hidden",
+        help_text="Whether this poll should not be shown in the main window.",
+        default=False)
+
+To be more precise: Django and Lino "know" that we added a field named
+`hidden` in the `Polls` table of our database, **but** the database
+doesn't yet know it.  If you would run your application now, then you
+would get some "operational" database error because Lino would ask the
+database to read or update this field, and the database would answer
+that there is no field named "hidden".  We must tell our database that
+the structure has changed.  This is called **data migration** and it
+happens very often when you are developing and maintaining a database
+application.
+
+Data migration is a complex topic. Django needed until version 1.7
+before they dared to suggest a default method to automating these
+tasks (see `Migrations
+<https://docs.djangoproject.com/en/1.7/topics/migrations/>`_ if you
+are curious).  
+
+Lino suggests a slightly different approach to the whole topic, and
+this approach starts here.  We are now going to add a **demo
+fixture**.
+
+- In your project directory, create a directory named :file:`fixtures`.
+
+- Create an empty file named :xfile:`__init__.py` in that same
+  directory.
+
+- Create a file named ``demo.py`` with the following content:
+
+  .. literalinclude:: ../polls/fixtures/demo1.py
+
+- Run the following command (from your project directory) 
+  to install these fixtures::
+
+    python manage.py initdb demo
+    
+  The output should be similar to::
+  
+    INFO Analyzing models...
+    We are going to flush your database (C:\mysite\test.db).
+    Are you sure (y/n) ?y
+    INFO Lino initdb ('demo',) started on database C:\mysite\test.db.
+    INFO Using Lino 1.4.9, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, 
+    OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), 
+    Python 2.7.1.
+    Creating tables ...
+    Creating table lino_siteconfig
+    Creating table polls_poll
+    Creating table polls_choice
+    Installing custom SQL ...
+    Installing indexes ...
+    Installed 0 object(s) from 0 fixture(s)
+    INFO Saved 13 instances from C:\mysite\polls\fixtures\demo.py.
+    Installed 13 object(s) from 1 fixture(s)
+    INFO Lino initdb done ('demo',) on database C:\mysite\polls\test.db.  
+    
+- Replace your file ``demo.py`` by something like the file
+  :srcref:`polls/fixtures/demo.py
+  <docs/tutorials/polls/polls/fixtures/demo.py>` from the Lino
+  repository. They are functionally equivalent.  Read more about
+  :doc:`/tutorials/dumpy` if you haven't done that yet.
+  
+Now we are ready to start the development web server on our project.
+  
+Starting the web interface
+--------------------------
+
+Start the development server::
+
+  $ cd ~/mypy/mysite
+  $ python manage.py runserver
+  
+or (on Windows)::
+
+  c:\mypy\mysite> python manage.py runserver
+  
+and point your browser to http://127.0.0.1:8000/ 
+to see your first Lino application running.
+
+- Please play around and create some polls before reading on.
+
+
+
 The main index
 --------------
   
-The following template is used to 
-build the HTML to be displayed in our Main Window.
+The following template is used to build the HTML to be displayed in
+our Main Window.
 
 Create a directory named ``config`` under your project directory, and
 in that directory create a file named `admin_main.html` with the
@@ -197,91 +290,7 @@ Explanations:
 
 
 
-Adding a demo fixture
----------------------
 
-One more thing before seeing a result.  We made at least one change in
-our :xfile:`models.py` file after the Django tutorial: we added the
-`hidden` field of a Poll::
-
-    hidden = models.BooleanField(
-        "Hidden",
-        help_text="Whether this poll should not be shown in the main window.",
-        default=False)
-
-To be more precise: Django and Lino "know" that we added a field named
-`hidden` in the `Polls` table of our database, **but** the database
-doesn't yet know it.  If you would run your application now, then you
-would get some "operational" database error because Lino would ask the
-database to read or update this field, and the database would answer
-that there is no field named "hidden".  We must tell our database that
-the structure has changed.  This is called **data migration** and it
-happens very often when you are developing and maintaining a database
-application.
-
-Data migration is a complex topic. Django needed until version 1.7
-before they dared to suggest a default method to automating these
-tasks (see `Migrations
-<https://docs.djangoproject.com/en/1.7/topics/migrations/>`_ if you
-are curious).  
-
-Lino suggests a slightly different approach to the whole topic, and
-this approach starts here.  We are now going to add a **demo
-fixture**.
-
-- Download the file   
-  :srcref:`polls/fixtures/demo.py <docs/tutorials/polls/polls/fixtures/demo.py>`  
-  from the Lino repository and add it to a :file:`fixtures` directory
-  below your project directory.
-  
-- Create an empty file :xfile:`__init__.py` in that same directory.
-  
-- Run the following command (from your project directory) 
-  to install these fixtures::
-
-    python manange.py initdb demo
-    
-  The output should be similar to::
-  
-    INFO Analyzing models...
-    We are going to flush your database (C:\mysite\test.db).
-    Are you sure (y/n) ?y
-    INFO Lino initdb ('demo',) started on database C:\mysite\test.db.
-    INFO Using Lino 1.4.9, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, 
-    OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), 
-    Python 2.7.1.
-    Creating tables ...
-    Creating table lino_siteconfig
-    Creating table polls_poll
-    Creating table polls_choice
-    Installing custom SQL ...
-    Installing indexes ...
-    Installed 0 object(s) from 0 fixture(s)
-    INFO Saved 13 instances from C:\mysite\polls\fixtures\demo.py.
-    Installed 13 object(s) from 1 fixture(s)
-    INFO Lino initdb done ('demo',) on database C:\mysite\polls\test.db.  
-    
-- Read more about :doc:`/tutorials/dumpy` 
-  if you haven't done that yet.
-  
-Now we are ready to start the development web server on our project.
-  
-Starting the web interface
---------------------------
-
-Start the development server::
-
-  $ cd ~/mypy/mysite
-  $ python manage.py runserver
-  
-or (on Windows)::
-
-  c:\mypy\mysite> python manage.py runserver
-  
-and point your browser to http://127.0.0.1:8000/ 
-to see your first Lino application running.
-
-- Please play around and create some polls before reading on.
 
 
 Screenshots

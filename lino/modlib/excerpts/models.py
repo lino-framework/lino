@@ -183,12 +183,12 @@ class CreateExcerpt(dd.Action):
     def run_from_ui(self, ar, **kw):
         Excerpt = dd.modules.excerpts.Excerpt
         obj = ar.selected_rows[0]
-        try:
-            a = Excerpt.objects.get(
-                excerpt_type=self.excerpt_type,
-                owner_id=obj.pk,
-                owner_type=ContentType.objects.get_for_model(obj.__class__))
-        except Excerpt.DoesNotExist:
+        qs = Excerpt.objects.filter(
+            excerpt_type=self.excerpt_type,
+            owner_id=obj.pk,
+            owner_type=ContentType.objects.get_for_model(obj.__class__))
+        qs = qs.order_by('id')
+        if qs.count() == 0:
             akw = dict(
                 user=ar.get_user(),
                 owner=obj,
@@ -197,6 +197,8 @@ class CreateExcerpt(dd.Action):
             a = Excerpt(**akw)
             a.full_clean()
             a.save()
+        else:
+            a = qs[0]
 
         if self.excerpt_type.certifying:
             obj.printed_by = a

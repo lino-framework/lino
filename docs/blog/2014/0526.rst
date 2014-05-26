@@ -8,4 +8,82 @@ Miscellaneous
 
 - Sigh! There's still much to do in the documentation!
 
-- The date of one event on vor-cycling.be had changed
+- The date of one event on `vor-cycling.be
+  <http://www.vor-cycling.be/>` had changed
+
+
+The online demo of :ref:`welfare` was broken after a recent upgrade.
+This took me some time.  Problems that come when the ``import`` of
+some part of a Django project fails are sometimes difficult to track
+because Django adds some magic there.
+
+I moved :class:`ml.excerpts.Certifiable` to a separate module
+:mod:`lino.modlib.excerpts.mixins` because I believed that this was the
+reason. 
+
+But the reason was (as usual) more stupid than expected: the local
+:xfile:`settings.py` file still referred to
+``lino_welfare.settings.eupen`` settings. And these still existed as
+`.pyc` files.  Because I don't automatically tidy up after a pull.
+Now I enhanced my local `pull` command to do a ``find -name
+'*.pyc' -exec rm {} +`` after each pull::
+
+    set -e
+
+    function pull_here() {
+      git pull
+      find -name '*.pyc' -exec rm {} +
+    }
+
+    cd /home/luc/repositories/davlink ; pull_here
+    cd /home/luc/repositories/eidreader ; pull_here
+
+    cd /home/luc/repositories/atelier ; pull_here
+    cd /home/luc/repositories/djangosite ; pull_here
+    cd /home/luc/repositories/north ; pull_here
+    cd /home/luc/repositories/lino ; pull_here
+
+    cd /home/luc/repositories/lino-welfare ; pull_here
+    cd /home/luc/repositories/lino-patrols ; pull_here
+    cd /home/luc/repositories/lino-faggio ; pull_here
+    cd /home/luc/repositories/lino-logos ; pull_here
+    cd /home/luc/repositories/cosi ; pull_here
+
+
+
+Ausdruck Lebenslauf Martha Mustermann
+-------------------------------------
+
+201405-26 10:11:35 WARNING ajax : AjaxExceptionResponse:
+MultipleObjectsReturned
+get() returned more than one Excerpt -- it returned 3!
+
+TRACEBACK:
+  File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/core/handlers/base.py", line 114, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/home/lsaffre/repositories/lino/lino/modlib/extjs/views.py", line 562, in get
+    return settings.SITE.ui.run_action(ar)
+  File "/home/lsaffre/repositories/lino/lino/core/kernel.py", line 554, in run_action
+    ar.bound_action.action.run_from_ui(ar)
+  File "/home/lsaffre/repositories/lino/lino/modlib/excerpts/models.py", line 232, in run_from_ui
+    owner_type=ContentType.objects.get_for_model(obj.__class__))
+  File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/db/models/manager.py", line 151, in get
+    return self.get_queryset().get(*args, **kwargs)
+  File "/usr/local/django/testlino/env/lib/python2.6/site-packages/django/db/models/query.py", line 310, in get
+    (self.model._meta.object_name, num))
+
+Adresse auf "leer" setzen
+-------------------------
+
+Lino soll die Adresse des Partners auch dann auf leer setzen, wenn man
+das "Primär" der primären Adresse abschaltet. Wenn man die primäre
+Adresse löscht
+
+Diverse Layout-Änderungen in Clientdetail
+------------------------------------------
+
+
