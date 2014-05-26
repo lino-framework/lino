@@ -100,7 +100,7 @@ inactive and cannot log in."))
 
     language = dd.LanguageField(default=models.NOT_PROVIDED, blank=True)
 
-    if settings.SITE.is_installed('contacts'):
+    if dd.is_installed('contacts'):
 
         partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
 
@@ -122,7 +122,7 @@ inactive and cannot log in."))
         #~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
 
-    if settings.SITE.is_installed('contacts'):
+    if dd.is_installed('contacts'):
         def get_person(self):
             if self.partner:
                 return self.partner.get_mti_child('person')
@@ -222,7 +222,7 @@ inactive and cannot log in."))
         """
         try:
             return cls.objects.get(username=username)
-        except cls.DoesNotExist, e:
+        except cls.DoesNotExist:
             if default is models.NOT_PROVIDED:
                 raise cls.DoesNotExist(
                     "No %s with username %r" % (

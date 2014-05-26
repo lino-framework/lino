@@ -1,0 +1,16 @@
+=====================
+Tuesday, May 27, 2014
+=====================
+
+
+Preparing for :doc:`/tickets/104`:
+Added new fields does_asd and does_integ to `pcsw.CoachingType`.
+
+Discovered a Javascript bug: double clicking in a grid of a normal
+table with a detail_layout and an insert_layout did not switch to
+detail window after closing the insert window.
+
+
+`farest_future` is a database field in Siteconfig while
+`ignore_dates_before` is a Site class attribute. They should be both
+in the same place.

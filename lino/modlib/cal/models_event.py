@@ -88,13 +88,10 @@ class EventType(dd.BabelNamed, dd.Sequenced,
     locks_user = models.BooleanField(
         _("Locks the user"),
         help_text=_(
-            "Lino won't not accept more than one locking event per user at the same time."),
+            "Whether events of this type make the user unavailable "
+            "for other locking events at the same time."),
         default=False)
-    #~ is_default = models.BooleanField(
-        #~ _("is default"),default=False)
-    #~ is_private = models.BooleanField(
-        #~ _("private"),default=False,help_text=_("""\
-#~ Whether other users may subscribe to this EventType."""))
+
     start_date = models.DateField(
         verbose_name=_("Start date"),
         blank=True, null=True)
@@ -106,24 +103,6 @@ class EventType(dd.BabelNamed, dd.Sequenced,
         _("Simultaneous events"),
         help_text=_("How many conflicting events should be tolerated."),
         default=1)
-
-    #~ def full_clean(self,*args,**kw):
-        #~ if not self.name:
-            #~ if self.username:
-                #~ self.name = self.username
-            #~ elif self.user is None:
-                #~ self.name = "Anonymous"
-            #~ else:
-                #~ self.name = self.user.get_full_name()
-        #~ super(EventType,self).full_clean(*args,**kw)
-
-
-    #~ def __unicode__(self):
-        #~ return self.name
-
-    #~ def color(self,request):
-        #~ return settings.SITE.get_calendar_color(self,request)
-    #~ color.return_type = models.IntegerField(_("Color"))
 
 
 class EventTypes(dd.Table):

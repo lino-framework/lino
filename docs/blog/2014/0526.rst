@@ -79,6 +79,8 @@ TRACEBACK:
 Adresse auf "leer" setzen
 -------------------------
 
+- Primäradresse abklicken oder löschen: keine Aktualisierung
+
 Lino soll die Adresse des Partners auch dann auf leer setzen, wenn man
 das "Primär" der primären Adresse abschaltet. Wenn man die primäre
 Adresse löscht
@@ -87,3 +89,22 @@ Diverse Layout-Änderungen in Clientdetail
 ------------------------------------------
 
 
+Bugs fixed.
+
+- Reiter Hilfen: Zivilstand, Geburtsland- und Ort
+
+Jetzt wieder im Reiter "Person".
+
+- Fusionieren Reiter Hilfe und Gesundheit?
+
+Voilà. Ist es jetzt besser?
+
+- Reiter Historie: Ereignisse/Notizen: Datum, Zeit kleiner, Betreff größer
+
+Voilà. :class:`ml.notes.NotesByProject`
+
+
+Java performance
+----------------
+
+WARNING: key deployment.system.cachedir has no value, setting to default value

@@ -1676,20 +1676,26 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
             }
         }
         Lino.close_window(function(st) {Ext.apply(st, ns)}); 
+
+        // Subsequent processing expects that `panel` is "the current
+        // panel".
+        panel = Lino.current_window.main_item;
     }
 
     if(result.record_id || result.data_record) {
+        // console.log(20140527, ns, ! (ns.record_id || ns.data_record));
         if (! (ns.record_id || ns.data_record)) {
           if (panel instanceof Lino.FormPanel) {
               if (panel.ls_url == result.actor_url) {
+                  // console.log("20140506 case 2 it's a FormPanel:", panel);
                   panel.set_status({
                       record_id: result.record_id,
                       data_record: result.data_record,
                   });
               // } else {
-                  // console.log("20140506 case 3", 
-                  //             panel.ls_url, "is not", 
-                  //             result.actor_url)
+              //     console.log("20140527 case 3", 
+              //                 panel.ls_url, "is not", 
+              //                 result.actor_url)
               }
           } else if (panel.ls_detail_handler) {
               if (panel.ls_url == result.actor_url) {
@@ -1700,19 +1706,19 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
                       base_params: panel.get_base_params()
                   });
               // } else {
-                  // console.log("20140506 case 5", 
-                  //             panel.ls_url, "is not", 
-                  //             result.actor_url)
+              //     console.log("20140527 case 5", 
+              //                 panel.ls_url, "is not", 
+              //                 result.actor_url)
               }
           } else {
               result.refresh_all = true;
-              // console.log("20140506 case 6");
+              // console.log("20140527 case 6");
           }
         }
     }
 
-    // `eval_js` must get handler after `close_window` because it
-    // might ask to open a new window (and we don't want to close the
+    // `eval_js` must get handled after `close_window` because it
+    // might ask to open a new window (and we don't want to close that
     // new window).  It must execute *before* any MessageBox,
     // otherwise the box would get hidden by a window that opens
     // afterwards.
@@ -2833,7 +2839,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* FormPanel */
   set_status : function(status, rp){
     this.requesting_panel = Ext.getCmp(rp);
-    // console.log('20140504 FormPanel.set_status()', status);
+    // console.log('20140527 FormPanel.set_status()', status);
     this.clear_base_params();
     if (status == undefined) status = {};
     //~ if (status.param_values) 
@@ -3698,7 +3704,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
   */
   set_status : function(status, rp){
     this.requesting_panel = Ext.getCmp(rp);
-    //~ console.log("20130605 GridPanel.set_status",status);
+    // console.log("20140527 GridPanel.set_status", status);
     this.clear_base_params();
     if (status == undefined) status = {base_params:{}};
     this.set_param_values(status.param_values);
