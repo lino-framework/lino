@@ -4,5 +4,8 @@ Monday, May 26, 2014
 
 Miscellaneous
 
-- Added :doc:`/about/compared`
+- Added Dolibarr to :doc:`/about/compared`. 
+
+- Sigh! There's still much to do in the documentation!
+
 - The date of one event on vor-cycling.be had changed
