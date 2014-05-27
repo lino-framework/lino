@@ -1,5 +1,6 @@
 import os
 from django.conf import settings
+from django.db import models
 from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
@@ -62,16 +63,19 @@ class ExcelRenderer(TableRenderer):
     def render(self):
         workbook = xlwt.Workbook(encoding='utf-8')
 
-        sheet = workbook.add_sheet(self.title)
+        sheet = workbook.add_sheet(self.title[:31])
 
         header_style = xlwt.easyxf("font: bold on;")
         for c, column in enumerate(self.columns):
             sheet.write(0, c, self.column_name, header_style)
-            sheet.col(c).width = 256 * self.column_width / 7  # 256 == 1 character width
+            sheet.col(c).width = min(256 * self.column_width / 7, 65535)  # 256 == 1 character width, max width=65535
 
         for c, column in enumerate(self.columns):
             for r, row in enumerate(self.rows, start=1):
-                sheet.write(r, c, self.value_as_text)
+                try:
+                    sheet.write(r, c, self.value)
+                except Exception:
+                    sheet.write(r, c, self.value_as_text)
 
         return workbook
 
