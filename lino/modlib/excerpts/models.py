@@ -183,29 +183,31 @@ class CreateExcerpt(dd.Action):
     def run_from_ui(self, ar, **kw):
         Excerpt = dd.modules.excerpts.Excerpt
         obj = ar.selected_rows[0]
-        qs = Excerpt.objects.filter(
-            excerpt_type=self.excerpt_type,
-            owner_id=obj.pk,
-            owner_type=ContentType.objects.get_for_model(obj.__class__))
-        qs = qs.order_by('id')
-        if qs.count() == 0:
+        ex = None
+        if self.excerpt_type.certifying:
+            qs = Excerpt.objects.filter(
+                excerpt_type=self.excerpt_type,
+                owner_id=obj.pk,
+                owner_type=ContentType.objects.get_for_model(obj.__class__))
+            qs = qs.order_by('id')
+            if qs.count() > 0:
+                ex = qs[0]
+        if ex is None:
             akw = dict(
                 user=ar.get_user(),
                 owner=obj,
                 excerpt_type=self.excerpt_type)
             akw = obj.get_excerpt_options(ar, **akw)
-            a = Excerpt(**akw)
-            a.full_clean()
-            a.save()
-        else:
-            a = qs[0]
+            ex = Excerpt(**akw)
+            ex.full_clean()
+            ex.save()
 
         if self.excerpt_type.certifying:
-            obj.printed_by = a
+            obj.printed_by = ex
             obj.full_clean()
             obj.save()
 
-        a.do_print.run_from_ui(ar, **kw)
+        ex.do_print.run_from_ui(ar, **kw)
 
 
 class ClearPrinted(dd.Action):
