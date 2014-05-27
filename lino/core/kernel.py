@@ -292,12 +292,7 @@ class Kernel(object):
 
             model._lino_ddh = DisableDeleteHandler(model)
 
-            for k in dd.Model.LINO_MODEL_ATTRIBS:
-                if not hasattr(model, k):
-                    #~ setattr(model,k,getattr(dd.Model,k))
-                    setattr(model, k, dd.Model.__dict__[k])
-                    #~ model.__dict__[k] = getattr(dd.Model,k)
-                    #~ logger.info("20121127 Install default %s for %s",k,model)
+            dd.Model.django2lino(model)
 
             if isinstance(model.hidden_columns, basestring):
                 model.hidden_columns = frozenset(

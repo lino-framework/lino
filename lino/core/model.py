@@ -437,7 +437,6 @@ action on individual instances.
         return kw
 
     LINO_MODEL_ATTRIBS = (
-        #~ 'as_pdf',
         'get_detail_action',
         'get_row_permission',
         'get_excerpt_options',
@@ -446,7 +445,6 @@ action on individual instances.
         'get_param_elem',
         'after_ui_save',
         'after_ui_create',
-        #~ 'update_system_note',
         'preferred_foreignkey_width',
         'before_ui_save',
         'allow_cascaded_delete',
@@ -456,8 +454,6 @@ action on individual instances.
         'get_choices_text',
         'summary_row',
         'submit_insert',
-        #~ 'get_model_actions',
-        #~ '_custom_actions',
         'active_fields',
         'hidden_columns',
         'hidden_elements',
@@ -466,21 +462,33 @@ action on individual instances.
         'get_system_note_recipients',
         'get_system_note_type',
         'quick_search_fields',
-        #~ 'help_text',
         'change_watcher_spec',
-        #~ 'site_setup',
         'on_analyze',
         'disable_delete',
         'lookup_or_create',
         'on_duplicate',
         'on_create',
         'get_typed_instance',
-        'print_subclasses_graph')
-    """
-    A list of the attributes to be copied to Django models which do not inherit from 
-    :class:`lino.core.model.Model`.
-    Used by :mod:`lino.core.kernel`
-    """
+        'print_subclasses_graph',
+        'grid_post', 'submit_insert')
+
+    @classmethod
+    def django2lino(cls, model):
+        """
+        A list of the attributes to be copied to Django models which do
+        not inherit from :class:`lino.core.model.Model`.  Used by
+        :mod:`lino.core.kernel`
+
+        """
+        if issubclass(model, cls):
+            return
+
+        for k in cls.LINO_MODEL_ATTRIBS:
+            if not hasattr(model, k):
+                #~ setattr(model,k,getattr(dd.Model,k))
+                setattr(model, k, cls.__dict__[k])
+                #~ model.__dict__[k] = getattr(dd.Model,k)
+                #~ logger.info("20121127 Install default %s for %s",k,model)
 
     @classmethod
     def print_subclasses_graph(self):
