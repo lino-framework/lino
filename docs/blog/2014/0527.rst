@@ -430,3 +430,11 @@ JRE-Version verwenden 1.7.0_55-b13 Java HotSpot(TM) Client VM
 
 liveconnect: Security Exception: LiveConnect (JavaScript) blocked due
 to security settings.
+
+
+Upgrading a production server
+-----------------------------
+
+Today I upgraded the :ref:`welfare` production server in Eupen. This
+version had been running there since 20131007, i.e. for more than 8
+months.  Such a production upgrade is still a rather stressing job.

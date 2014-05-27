@@ -138,9 +138,13 @@ class BaseBeIdReadCardAction(dd.Action):
             fn = config.card_number_to_picture_file(card_number)
             if os.path.exists(fn):
                 logger.warning("Overwriting existing image file %s.", fn)
-            fp = file(fn, 'wb')
-            fp.write(base64.b64decode(data.photo))
-            fp.close()
+            try:
+                fp = file(fn, 'wb')
+                fp.write(base64.b64decode(data.photo))
+                fp.close()
+            except IOError as e:
+                logger.warning("Failed to store image file %s : %s", fn, e)
+                
             #~ print 20121117, repr(data['picture'])
             #~ kw.update(picture_data_encoded=data['picture'])
 
