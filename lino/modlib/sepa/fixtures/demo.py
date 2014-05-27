@@ -79,4 +79,11 @@ def objects():
     yield A('BPOTBEB1', 'BE46 0003 2544 8336')
     yield A('BPOTBEB1', 'BE81 0003 2587 3924')
 
-
+    yield C('Ethias s.a.',
+            "http://www.ethias.be",
+            vat_id="BE 0404.484.654",
+            street="Rue des Croisiers", 
+            street_no=24,
+            country="BE",
+            zip_code="4000")
+    yield A('ETHIBEBB', 'BE79827081803833')
