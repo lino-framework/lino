@@ -431,10 +431,24 @@ JRE-Version verwenden 1.7.0_55-b13 Java HotSpot(TM) Client VM
 liveconnect: Security Exception: LiveConnect (JavaScript) blocked due
 to security settings.
 
+I **maybe** solved this at least for davlink by generating (in
+:mod:`lino.modlib.davlink`) a `davlink.jnlp` file and using a
+`jnlp_href` parameter in the ``<applet>`` tag. Lino also currently
+uses a self-signed `DavLink.jar`. I'd be glad if this works in an
+Intranet where a GlobalSign certificate is useless.
+
+If it works, I'd do the same for :ref:`eidreader`.
+
 
 Upgrading a production server
 -----------------------------
 
 Today I upgraded the :ref:`welfare` production server in Eupen. This
 version had been running there since 20131007, i.e. for more than 8
-months.  Such a production upgrade is still a rather stressing job.
+months.  
+
+Such a production upgrade is still a rather stressing job, but -with
+the danger of repeating myself- I summarize my evening: Lino is really
+cool!
+
+
