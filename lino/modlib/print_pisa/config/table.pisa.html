@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <style>
+{% block style %}
     @page {
         margin: 1cm;
         margin-top: 2.5cm;
@@ -21,15 +22,18 @@
     td {
         margin-right: 2px;
     }
+{% endblock %}
 </style>
 <head>
     <title></title>
 </head>
 <body>
+{% block body %}
 
 {{ as_html_table(ar) }}
 
 <div id="headerContent">
+    {% block header %}
     <table style="width: 100%">
         <tr>
             <td>
@@ -44,7 +48,8 @@
             </td>
         </tr>
     </table>
+    {% endblock %}
 </div>
-
+{% endblock %}
 </body>
 </html>
