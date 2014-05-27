@@ -26,7 +26,6 @@ import os
 import sys
 import cgi
 import time
-import codecs
 import jinja2
 
 from django.conf import settings
@@ -721,33 +720,11 @@ class ExtRenderer(HtmlRenderer):
         jsgen.set_for_user_profile(profile)
 
         fn = os.path.join(settings.MEDIA_ROOT, *self.lino_js_parts(profile))
-        if not force and os.path.exists(fn):
-            mtime = os.stat(fn).st_mtime
-            if mtime > settings.SITE.kernel.code_mtime:
-                # logger.info(
-                #     "20140401 %s (%s) is up to date.",
-                #     fn, time.ctime(mtime))
-                return 0
 
-        logger.info("Building %s ...", fn)
-        settings.SITE.makedirs_if_missing(os.path.dirname(fn))
-        f = codecs.open(fn, 'w', encoding='utf-8')
-        try:
+        def write(f):
             self.write_lino_js(f, profile)
-            #~ f.write(jscompress(js))
-            f.close()
-            #~ logger.info("20130128 USED_NUMBER_FORMATS: %s", ext_elems.USED_NUMBER_FORMATS)
-            return 1
-        except Exception, e:
-            """
-            If some error occurs, remove the partly generated file
-            to make sure that Lino will try to generate it again
-            (and report the same error message) on next request.
-            """
-            f.close()
-            #~ os.remove(fn)
-            raise
-        #~ logger.info("Wrote %s ...", fn)
+
+        settings.SITE.make_cache_file(fn, write, force)
 
     def write_lino_js(self, f, profile):
 
@@ -759,11 +736,6 @@ class ExtRenderer(HtmlRenderer):
             ext_requests=ext_requests,
         )
 
-        #~ messages = set()
-        #~ def mytranslate(s):
-            #~ messages.add(s)
-            #~ return _(s)
-        #~ context.update(_=mytranslate)
         context.update(_=_)
 
         tpl = self.linolib_template()
@@ -794,7 +766,8 @@ class ExtRenderer(HtmlRenderer):
             + dbtables.frames_list]
 
         actors_list.extend(
-            [a for a in choicelists.CHOICELISTS.values() if settings.SITE.is_installed(a.app_label)])
+            [a for a in choicelists.CHOICELISTS.values()
+             if settings.SITE.is_installed(a.app_label)])
 
         # don't generate JS for abstract actors
         actors_list = [a for a in actors_list if not a.is_abstract()]
@@ -949,41 +922,14 @@ class ExtRenderer(HtmlRenderer):
         return 1
 
     def lino_js_parts(self, profile):
-        return ('cache', 'js', 'lino_' + profile.value + '_' + translation.get_language() + '.js')
-
-    #~ def linolib_template_name(self):
-        #~ return os.path.join(os.path.dirname(__file__),'linolib.js')
+        return ('cache', 'js',
+                'lino_' + profile.value + '_'
+                + translation.get_language() + '.js')
 
     def linolib_template(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(
             os.path.dirname(__file__)))
         return env.get_template('linoweb.js')
-        #~ fn = self.linolib_template_name()
-        #~ return settings.SITE.jinja2_env.Template(file(fn).read())
-        #~ return settings.SITE.jinja2_env.Template(file(fn).read())
-        #~ return jinja2.Template(file(self.linolib_template_name()).read())
-
-        #~ def docurl(ref):
-            #~ if not ref.startswith('/'):
-                #~ raise Exception("Invalid docref %r" % ref)
-            # ~ # todo: check if file exists...
-            #~ return "http://lino.saffre-rumma.net" + ref + ".html"
-
-        #~ libname = self.linolib_template_name()
-
-        #~ tpl = CheetahTemplate(codecs.open(libname,encoding='utf-8').read())
-        #~ tpl.ui = self
-
-        #~ tpl._ = _
-        #~ tpl.site = settings.SITE
-        #~ tpl.settings = settings
-        #~ tpl.lino = lino
-        #~ tpl.docurl = docurl
-        #~ tpl.ui = self
-        #~ tpl.ext_requests = ext_requests
-        #~ for k in ext_requests.URL_PARAMS:
-            #~ setattr(tpl,k,getattr(ext_requests,k))
-        #~ return tpl
 
     def toolbar(self, action_list):
         """

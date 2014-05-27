@@ -21,10 +21,12 @@ subdirectory named "davlink".
 
 """
 
+import os
 from lino import ad
+import jinja2
 
 
-class Plugin(ad.Plugin):  # was: use_davlink
+class Plugin(ad.Plugin):
 
     media_name = 'davlink'
 
@@ -33,15 +35,31 @@ class Plugin(ad.Plugin):  # was: use_davlink
             return
         # jar = self.build_media_url('DavLink.jar')
         # jar = request.build_absolute_uri(jar)
-        jnlp = self.build_media_url('davlink.jnlp')
-        jnlp = request.build_absolute_uri(jnlp)
-        # yield '<applet name="DavLink" code="davlink.DavLink"'
+        jnlp = site.build_media_url(*self.jnlp_file_parts())
+        # jnlp = request.build_absolute_uri(jnlp)
+        # yield '<applet code="davlink.DavLink"'
+        yield '<applet name="DavLink" code="davlink.DavLink"'
         # yield '        archive="%s"' % jar
-        yield '<applet code="davlink.DavLink"'
         yield '        width="1" height="1">'
         # yield '<param name="separate_jvm" value="true">' # 20130913
         # yield '<param name="permissions" value="all-permissions">'
         yield '<param name="jnlp_href" value="%s">' % jnlp
         yield '</applet>'
 
+    def write_jnlp_file(self, f):
+        context = dict(
+            site=self.site,
+        )
+        env = jinja2.Environment(loader=jinja2.FileSystemLoader(
+            os.path.dirname(__file__)))
+        tpl = env.get_template('template.jnlp')
+        f.write(tpl.render(**context))
 
+    def get_patterns(self, ui):
+        from django.conf import settings
+        fn = os.path.join(settings.MEDIA_ROOT, *self.jnlp_file_parts())
+        ui.site.make_cache_file(fn, self.write_jnlp_file)
+        return []
+
+    def jnlp_file_parts(self):
+        return ('cache', self.media_name + '.jnlp')

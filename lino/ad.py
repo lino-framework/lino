@@ -24,9 +24,11 @@ Example::
 
 from __future__ import unicode_literals
 
+import os
 import datetime
 from os.path import join, abspath, exists
 from urllib import urlencode
+import codecs
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -1119,6 +1121,32 @@ class Site(Site):
         "See :func:`ad.Site.get_admin_main_items`."
         return []
 
+    def make_cache_file(self, fn, write, force=False):
+
+        if not force and os.path.exists(fn):
+            mtime = os.stat(fn).st_mtime
+            if mtime > self.kernel.code_mtime:
+                # logger.info(
+                #     "20140401 %s (%s) is up to date.", fn, time.ctime(mtime))
+                return 0
+
+        self.logger.info("Building %s ...", fn)
+        self.makedirs_if_missing(os.path.dirname(fn))
+        f = codecs.open(fn, 'w', encoding='utf-8')
+        try:
+            write(f)
+            f.close()
+            return 1
+        except Exception:
+            """
+            If some error occurs, remove the partly generated file
+            to make sure that Lino will try to generate it again
+            (and report the same error message) on next request.
+            """
+            f.close()
+            #~ os.remove(fn)
+            raise
+        #~ logger.info("Wrote %s ...", fn)
 
 
 

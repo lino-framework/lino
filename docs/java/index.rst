@@ -67,7 +67,7 @@ How to flush the Java cache?
 
 - On Debian/Ubuntu, simply do::
 
-      $ rm -R ~/.icedtea/cache/*
+      $ javaws -Xclearcache
   
   You can also launch the IcedTea Web Control Panel and inspect your
   cache, disable caching alltogether and other thing. But I didn't

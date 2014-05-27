@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,7 +19,7 @@ Application code doesn't need to worry about this.
 This is found by Django because 
 :mod:`lino.projects.std.settings`
 :setting:`ROOT_URLCONF` 
-is set to ``'lino.ui.extjs3.urls'``.
+is set to ``'lino.ui.urls'``.
 
 """
 
