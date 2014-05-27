@@ -82,7 +82,7 @@ def objects():
     yield C('Ethias s.a.',
             "http://www.ethias.be",
             vat_id="BE 0404.484.654",
-            street="Rue des Croisiers", 
+            street="Rue des Croisiers",
             street_no=24,
             country="BE",
             zip_code="4000")

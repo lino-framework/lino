@@ -1,12 +1,2 @@
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:63: WARNING: Inline emphasis start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:63: WARNING: Inline strong start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:65: WARNING: Inline emphasis start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:65: WARNING: Inline strong start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:67: WARNING: Inline emphasis start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:67: WARNING: Inline strong start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:75: WARNING: Inline emphasis start-string without end-string.
-/home/luc/hgwork/lino/docs/blog/2014/0526.rst:75: WARNING: Inline strong start-string without end-string.
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.13
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

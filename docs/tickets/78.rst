@@ -1,5 +1,10 @@
-#78 : Error: No card reader found
-=================================
+:state: closed
+:module: eidreader
+
+#78 : eidreader says "Error: No card reader found"
+==================================================
+
+(Closed because the problem vanished).
 
 When I try :ref:`eidreader` by browsing to `test-eidreader
 <http://test-eidreader.lino-framework.org/test_using_jnlp.html>`_ and

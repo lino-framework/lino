@@ -104,7 +104,3 @@ Voilà. Ist es jetzt besser?
 Voilà. :class:`ml.notes.NotesByProject`
 
 
-Java performance
-----------------
-
-WARNING: key deployment.system.cachedir has no value, setting to default value

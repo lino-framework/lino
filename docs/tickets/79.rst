@@ -4,6 +4,8 @@
 #79 : Change Lino license from GPL to LGPL
 ==========================================
 
+Done.
+
 After some exchange with Joe about licensing, I understood that the
 LGPL and not the GPL is what I always have wanted for Lino. I
 personally believe in free software, but I don't want to force other

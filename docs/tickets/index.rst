@@ -53,12 +53,20 @@ Sleeping
 
    *
 
+Done
+--------
+
+.. tickets_table:: 
+   :filter: e.meta.get('state') in ('done', 'closed', 'fixed')
+
+   *
+
 
 Other
 -----
 
 .. tickets_table:: 
-   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm', 'contrib')
+   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm', 'contrib', 'done', 'closed', 'fixed')
 
    *
 

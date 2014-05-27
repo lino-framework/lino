@@ -15,7 +15,7 @@ Details
 
 Apache's `error.log`:
 
-Jeudi matin 20/01/2011 javais fait un release de Lino. Les dernières
+Jeudi matin 20/01/2011 j'avais fait un release de Lino. Les dernières
 lignes de jeudi m'indiquaient que cela fonctionne::
 
   [Thu Jan 20 07:43:45 2011] [notice] Apache/2.2.9 (Debian) DAV/2 mod_wsgi/2.5 Python/2.5.2 configured -- resuming normal operations

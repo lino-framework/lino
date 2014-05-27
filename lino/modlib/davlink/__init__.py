@@ -32,15 +32,16 @@ class Plugin(ad.Plugin):  # was: use_davlink
     def get_head_lines(self, site, request):
         if not site.use_java:
             return
-        p = self.build_media_url('DavLink.jar')
-        # p = self.build_media_url('davlink.jnlp')
-        p = request.build_absolute_uri(p)
-        yield '<applet name="DavLink" code="davlink.DavLink.class"'
-        yield '        archive="%s"' % p
-        yield '        width="0" height="0">'
+        jar = self.build_media_url('DavLink.jar')
+        jar = request.build_absolute_uri(jar)
+        jnlp = self.build_media_url('davlink.jnlp')
+        jnlp = request.build_absolute_uri(jnlp)
+        yield '<applet name="DavLink" code="davlink.DavLink"'
+        # yield '        archive="%s"' % jar
+        yield '        width="1" height="1">'
         # yield '<param name="separate_jvm" value="true">' # 20130913
         # yield '<param name="permissions" value="all-permissions">'
-        # yield '<param name="jnlp_href" value="%s">' % p
+        yield '<param name="jnlp_href" value="%s">' % jnlp
         yield '</applet>'
 
 

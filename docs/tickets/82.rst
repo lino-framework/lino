@@ -56,3 +56,5 @@ file.
 - The `eidreader.jnlp
 <https://github.com/lsaffre/eidreader/tree/master/applets/eidreader.jnlp>`__ 
 file.
+
+.. refstothis::

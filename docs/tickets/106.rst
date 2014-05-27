@@ -1,0 +1,13 @@
+:state: active
+:module: lino_welfare
+
+#106 : Signed Applet Blocked by Security Settings
+=================================================
+
+After solving :doc:`82` for Oracle Java 7u42, here is again a similar
+problem occuring with Java 7u52.
+
+
+
+
+.. refstothis::

@@ -10,7 +10,7 @@
   TODO: the action's label appears correctly but they are not yet
   clickable; if the action has an icon, insert this into the text.
 
-- New Site-wide setting :setting:`use_java`.
+- New site-wide setting :attr:`dd.Site.use_java`.
 
 - Thanks to Joe who contributed two changesets:
 
