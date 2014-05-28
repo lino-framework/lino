@@ -316,7 +316,12 @@ class BaseRequest(object):
 
     def goto_instance(self, obj, **kw):
         js = self.instance_handler(obj)
-        self.set_response(eval_js=js)
+        kw.update(eval_js=js)
+        self.set_response(**kw)
+
+    def close_window(self, **kw):
+        kw.update(close_window=True)
+        self.set_response(**kw)
 
     def set_content_type(self, ct):
         # logger.info("20140430 set_content_type(%r)", ct)

@@ -736,6 +736,7 @@ Lino.close_window = function(status_update, norestore) {
   // will call set_status itself later
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
+  var retval = cw.main_item.requesting_panel;
   // console.log(
   //     "20140516 Lino.close_window() going to close", 
   //     cw, "previous is", ww, "norestore is", norestore);
@@ -750,6 +751,7 @@ Lino.close_window = function(status_update, norestore) {
     Lino.current_window = null;
   }
   if (cw) cw.hide_really();
+  return retval;
 };
 
 Lino.kill_current_window = function() {
@@ -1675,11 +1677,18 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
             //     console.log("20140506 calling_window not a FormPanel", ww);
             }
         }
-        Lino.close_window(function(st) {Ext.apply(st, ns)}); 
+
+        panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
 
         // Subsequent processing expects that `panel` is "the current
-        // panel".
-        panel = Lino.current_window.main_item;
+        // panel". Since we close the window, `panel` should now point
+        // to the previous window. . Note the case of an insert window
+        // that has been invoked by double-clicking on the phantom row
+        // of a slave table in a detail window. In that case we want
+        // `panel` to become the slave table's grid panel that called
+        // the insert window, which is the slave table's grid panel
+        // and not the master's detail form panel.  panel =
+        // Lino.current_window.main_item;
     }
 
     if(result.record_id || result.data_record) {
@@ -1692,10 +1701,10 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
                       record_id: result.record_id,
                       data_record: result.data_record,
                   });
-              // } else {
-              //     console.log("20140527 case 3", 
-              //                 panel.ls_url, "is not", 
-              //                 result.actor_url)
+              } else {
+                  console.log("20140527 case 3", 
+                              panel.ls_url, "is not", 
+                              result.actor_url)
               }
           } else if (panel.ls_detail_handler) {
               if (panel.ls_url == result.actor_url) {

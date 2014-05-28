@@ -69,13 +69,20 @@ The ``ActionRequest`` class
     Create a new ActionRequest using default values from this one and
     the action specified by `spec`.  
 
+  .. method:: success()
+
+    Tell client to consider the action as successful. This is the same as
+    :meth:`set_response` with `success=True`.
+
+  .. method:: close_window()
+
+    Ask client to close the current window. This is the same as
+    :meth:`set_response` with `close_window=True`.
+
   .. method:: set_response(**kw)
 
     Set (some part of) the response to be sent when the action request
-    finishes.  This does not yet respond anything, it is stored until
-    the action has finished. The response might be overwritten by
-    subsequent calls to `set_response`.
-
+    finishes.  
     Allowed keywords are:
 
     - ``message`` -- a string with a message to be shown to the user.
@@ -100,6 +107,18 @@ The ``ActionRequest`` class
     - ``warning_message``
     - ``eval_js``
 
+    This does not yet respond anything, it is stored until the action
+    has finished. The response might be overwritten by subsequent
+    calls to :meth:`set_response`.
+
+    :js:func:`Lino.handle_action_result` will get these instructions
+    as *keywords* and thus will not know the order in which they have
+    been issued. This is a design decision.  We *want* that, when
+    writing custom actions, the order of these instructions does not
+    matter.
+
+
+
   .. method:: table2xhtml(self, header_level=None, **kw)
      
     Available only when the actor is a :class:`dd.AbstractTable`.
@@ -122,7 +141,7 @@ The ``ActionRequest`` class
 
     Usually `data_record`, except if it is a `file upload
     <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
-    where some mysterious decoding problems (:blogref`20120209`)
+    where some mysterious decoding problems (:blogref:`20120209`)
     force us to return a `record_id` which has the same visible
     result but using an additional GET.
 

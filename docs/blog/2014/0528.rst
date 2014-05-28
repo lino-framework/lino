@@ -113,23 +113,6 @@ Each ``git push origin`` commands gave output similar to this::
      * [new tag]         v0.1.7 -> v0.1.7
     
 
-When sharing the version tag on `north` I got::
-
-    $ git push origin v0.1.7
-
-    fatal: Could not read from remote repository.
-
-    Please make sure you have the correct access rights
-    and the repository exists.
-
-    $ git status
-    On branch master
-    nothing to commit, working directory clean
-    $ git push origin v0.1.7
-    fatal: protocol error: expected sha/ref, got 'GitHub SSH access is temporarily unavailable'
-    
-This was a temporary phenomen, maybe due to some maintenance work on a server.    
-
 The next step then was to increment the version numbers. 
 Note the :fab:`esi` command.
 For example in :ref:`welfare`::
@@ -164,7 +147,6 @@ If you use Git and followed until here, please tell me:
 
 - Did I get it right?
 
-
 Another thing is to make this process more automatic. That's for later.
 
 
@@ -183,8 +165,8 @@ This means that existing applications should include
 :meth:`ad.Site.get_installed_apps` method.
 
 I changed the action's label from "To Excel" to "Export to .xls"
-because it works with every office application that can read
-:file:`.xls` files.
+because it doesn't require any given proprietary produce, it works
+with every office application that can read :file:`.xls` files.
 
-In fact I'd like to rename the app from "export_excel" to "export_xls"
-or maybe even simply "xls". Any comments to this?
+I'd like to rename the app from "export_excel" to "export_xls" or
+maybe even simply "xls". Any comments to this?

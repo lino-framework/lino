@@ -1,0 +1,44 @@
+======================
+Thursday, May 29, 2014
+======================
+
+Detail window doesn't open after insert in slave table
+------------------------------------------------------
+
+After yesterdays production upgrade, Gerd reported the following
+problem report (original formulation by an end-user):
+
+    Wenn man eine Notiz eingibt, kann man nur noch erstellen. Und nicht
+    mehr erstellen und bearbeiten.  Praktisch müssen wir es also erstellen
+    und dann wieder öffnen bevor wir was im Inhalt eintragen können.
+    Lästig...
+
+This was a genuine bug. It is again our well-known situation after a
+:class:`dd.SubmitInsert` action.  This action calls
+:meth:`ar.goto_instance <rt.ActionRequest.goto_instance>` (to display
+the new record) and :meth:`ar.close_window
+<rt.ActionRequest.close_window>` (to close the :term:`insert window`).
+
+:js:func:`Lino.handle_action_result` uses a variable `panel` for "the
+current panel".  Ater closing a window, `panel` points to the main
+item of the previous window.  We got already that far, but here we had
+the case of an insert window that has been invoked by double-clicking
+on the phantom row of a slave table in a detail window. This wasn't
+yet handled correctly. In that case we want `panel` to become the
+*slave table grid panel* who opened the :term:`insert window`, and not
+the main panel of the master's :term:`detail window`.  That's why
+:js:func:`Lino.close_window` now returns the `requesting_panel` of the
+window which was closed.
+
+
+More about tagging
+------------------
+
+This is a first bug in Lino 1.6.13, and I am tempted to change the
+``v1.6.13`` tag because:
+
+- it has not yet been officially released on PyPI
+- I can update Gerd's production site without a need for data migration.
+
+One can say that Gerd's production site serves as guinea pig, and that
+my tag has been too early. Or I should have called it ``v1.6.13rc1``.
