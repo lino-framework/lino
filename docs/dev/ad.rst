@@ -187,16 +187,16 @@ The ``Site`` class
     Yield the list of apps to be installed on this site.  This will be
     stored to :setting:`INSTALLED_APPS` when the Site instantiates.  
 
-    Each item must be either a string (unicode being converted to str) or
-    a *generator* which will be iterated recursively (again expecting
-    either strings or geneortaors of strings).
+    Each item must be either a string (unicode being converted to str)
+    or a *generator* which will be iterated recursively (again
+    expecting either strings or generators of strings).
+
+    Note also the :meth:`get_apps_modifiers` method which will be
+    applied to the result of :meth:`get_installed_apps`.
 
   .. attribute:: hidden_apps
 
-    A set (or space-spearated string) with the names of apps which should
-    *not* get installed even if :setting:`get_installed_apps` returns them.
-
-    Either an empty `set`
+    No longer used. Replaced by :meth:`get_apps_modifiers`.
 
   .. method:: get_apps_modifiers(**kw)
 
@@ -219,6 +219,11 @@ The ``Site`` class
             kw.update(pcsw='lino_welfare.settings.chatelet.pcsw')
             return kw
 
+    It is theoretically possible but not recommended to replace an
+    existing app_label by an app with a different app_label. For
+    example, the following might work but is not recommended::
+
+            kw.update(courses='my.modlib.mycourses')
 
   .. attribute:: override_modlib_models
 

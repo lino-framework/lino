@@ -33,374 +33,6 @@ Last little details in :mod:`lino_welfare.migrate`:
 - ignore field `SiteConfig.farest_future`
 
 
-Java deployment cache
-----------------------
-
-
-startup arguments: 
-0: /run/user/1000/icedteaplugin-luc-NCACiT/5032-icedteanp-plugin-to-appletviewer
-1: /run/user/1000/icedteaplugin-luc-NCACiT/5032-icedteanp-appletviewer-to-plugin
-2: /run/user/1000/icedteaplugin-luc-NCACiT/5032-icedteanp-plugin-debug-to-appletviewer
-System is already following XDG .cache and .config specifications
-config: /home/luc/.config/icedtea-web file exists: true
-cache: /home/luc/.cache/icedtea-web file exists:true
-Loading User level properties from: /home/luc/.config/icedtea-web/deployment.properties
-WARNING: key deployment.system.cachedir has no value, setting to default value
-Starting processing of plugin-debug-to-console /run/user/1000/icedteaplugin-luc-NCACiT/5032-icedteanp-plugin-debug-to-appletviewer
-Started processing of plugin-debug-to-console /run/user/1000/icedteaplugin-luc-NCACiT/5032-icedteanp-plugin-debug-to-appletviewer
-Starting security dialog thread
-Using firefox's profiles file: /home/luc/.mozilla/firefox/profiles.ini
-Found preferences file: /home/luc/.mozilla/firefox/ei0vmnap.default/prefs.js
-Read 361 entries from Firefox's preferences
-JNLPRuntime already initialized
-Status: CONNECT STARTED
- +(CONNECT STARTED)
- @ /media/eidreader/eidreader.jnlp
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/eidreader/eidreader.jnlp
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/eidreader/eidreader.jnlp
-All possible urls for location=http://testlino:8080/media/eidreader/eidreader.jnlp state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/eidreader/eidreader.jnlp, http://testlino:8080/media/eidreader/eidreader.jnlp]
-Selecting proxy for: http://testlino:8080/media/eidreader/eidreader.jnlp
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-Setting value:null
-Setting value:[Ljava.lang.Object;@a415a1
-Returning value:[Ljava.lang.Object;@a415a1
-Selecting proxy for: http://testlino:8080/media/eidreader/eidreader.jnlp
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : ETag ,Value : ["34bb8-30d-4f283a46bac00"]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:22 GMT]
-Key : Content-Length ,Value : [781]
-Key : Last-Modified ,Value : [Sun, 16 Feb 2014 10:38:40 GMT]
-Key : Keep-Alive ,Value : [timeout=15, max=100]
-Key : Content-Type ,Value : [application/x-java-jnlp-file]
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/eidreader/eidreader.jnlp state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/eidreader/eidreader.jnlp by HEAD
-Selecting proxy for: http://testlino:8080/media/eidreader/eidreader.jnlp
-Selected proxies: [DIRECT]
-isCurrent: http://testlino:8080/media/eidreader/eidreader.jnlp = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/eidreader/eidreader.jnlp
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/eidreader/eidreader.jnlp
-Homepage: null
-Description: null
-Jars not ready to provide attribute Application-Name
-Acceptable title tag found, contains: EIDReader
-Acceptable vendor tag found, contains: Code Gears / Rumma & Ko
-UNIQUEKEY=1401152843227-281483481-http://testlino:8080/media/eidreader/eidreader.jnlp
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-Acquired shared lock on /tmp/luc/netx/locks/netx_running to indicate javaws is running
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-        result: null
-New classloader: http://testlino:8080/media/eidreader/eidreader.jnlp
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-Status: CONNECT STARTED
- +(CONNECT STARTED)
- @ /media/eidreader/commons-logging.jar
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/eidreader/commons-logging.jar
-Status: CONNECT STARTED
- +(CONNECT STARTED)
- @ /media/eidreader/eid-applet-service.jar
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/eidreader/eid-applet-service.jar
-Status: CONNECT STARTED
- +(CONNECT STARTED)
- @ /media/eidreader/commons-codec.jar
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/eidreader/commons-codec.jar
-Status: CONNECT STARTED
- +(CONNECT STARTED)
- @ /media/eidreader/EIDReader.jar
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/eidreader/EIDReader.jar
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/eidreader/commons-logging.jar
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/eidreader/eid-applet-service.jar
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/eidreader/commons-codec.jar
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/eidreader/EIDReader.jar
-All possible urls for location=http://testlino:8080/media/eidreader/commons-codec.jar state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/eidreader/commons-codec.jar, http://testlino:8080/media/eidreader/commons-codec.jar]
-Selecting proxy for: http://testlino:8080/media/eidreader/commons-codec.jar
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-All possible urls for location=http://testlino:8080/media/eidreader/EIDReader.jar state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/eidreader/EIDReader.jar, http://testlino:8080/media/eidreader/EIDReader.jar]
-Selecting proxy for: http://testlino:8080/media/eidreader/EIDReader.jar
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-All possible urls for location=http://testlino:8080/media/eidreader/commons-logging.jar state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/eidreader/commons-logging.jar, http://testlino:8080/media/eidreader/commons-logging.jar]
-Selecting proxy for: http://testlino:8080/media/eidreader/commons-logging.jar
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-All possible urls for location=http://testlino:8080/media/eidreader/eid-applet-service.jar state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/eidreader/eid-applet-service.jar, http://testlino:8080/media/eidreader/eid-applet-service.jar]
-Selecting proxy for: http://testlino:8080/media/eidreader/eid-applet-service.jar
-Selected proxies: [DIRECT]
-Selecting proxy for: socket://testlino:8080
-Selected proxies: [DIRECT]
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : ETag ,Value : ["34b1a-46adf-4f283a46bac00"]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:23 GMT]
-Key : Content-Length ,Value : [289503]
-Key : Last-Modified ,Value : [Sun, 16 Feb 2014 10:38:40 GMT]
-Key : Keep-Alive ,Value : [timeout=15, max=100]
-Key : Content-Type ,Value : [application/java-archive]
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/eidreader/commons-codec.jar state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/eidreader/commons-codec.jar by HEAD
-Selecting proxy for: http://testlino:8080/media/eidreader/commons-codec.jar
-Selected proxies: [DIRECT]
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : ETag ,Value : ["34b14-3b85-4f283a46bac00"]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:23 GMT]
-Key : Content-Length ,Value : [15237]
-Key : Last-Modified ,Value : [Sun, 16 Feb 2014 10:38:40 GMT]
-Key : Keep-Alive ,Value : [timeout=15, max=100]
-Key : Content-Type ,Value : [application/java-archive]
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/eidreader/EIDReader.jar state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/eidreader/EIDReader.jar by HEAD
-Selecting proxy for: http://testlino:8080/media/eidreader/EIDReader.jar
-Selected proxies: [DIRECT]
-isCurrent: http://testlino:8080/media/eidreader/commons-codec.jar = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/eidreader/commons-codec.jar
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/eidreader/commons-codec.jar
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : ETag ,Value : ["34bb7-20316-4f283a46bac00"]
-Key : ETag ,Value : ["34b4b-1136a-4f283a46bac00"]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:23 GMT]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:23 GMT]
-Key : Content-Length ,Value : [70506]
-Key : Content-Length ,Value : [131862]
-Key : Last-Modified ,Value : [Sun, 16 Feb 2014 10:38:40 GMT]
-Key : Last-Modified ,Value : [Sun, 16 Feb 2014 10:38:40 GMT]
-Key : Keep-Alive ,Value : [timeout=15, max=100]
-Key : Keep-Alive ,Value : [timeout=15, max=100]
-Key : Content-Type ,Value : [application/java-archive]
-Key : Content-Type ,Value : [application/java-archive]
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/eidreader/commons-logging.jar state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/eidreader/commons-logging.jar by HEAD
-Selecting proxy for: http://testlino:8080/media/eidreader/commons-logging.jar
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/eidreader/eid-applet-service.jar state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/eidreader/eid-applet-service.jar by HEAD
-Selecting proxy for: http://testlino:8080/media/eidreader/eid-applet-service.jar
-Selected proxies: [DIRECT]
-Selected proxies: [DIRECT]
-isCurrent: http://testlino:8080/media/eidreader/EIDReader.jar = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/eidreader/EIDReader.jar
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/eidreader/EIDReader.jar
-isCurrent: http://testlino:8080/media/eidreader/commons-logging.jar = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/eidreader/commons-logging.jar
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/eidreader/commons-logging.jar
-isCurrent: http://testlino:8080/media/eidreader/eid-applet-service.jar = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/eidreader/eid-applet-service.jar
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/eidreader/eid-applet-service.jar
-Jar found at /home/luc/.cache/icedtea-web/cache/41/http/testlino/media/eidreader/commons-logging.jarhas been verified as SIGNED_OK
-Jar found at /home/luc/.cache/icedtea-web/cache/40/http/testlino/media/eidreader/eid-applet-service.jarhas been verified as SIGNED_OK
-Jar found at /home/luc/.cache/icedtea-web/cache/39/http/testlino/media/eidreader/commons-codec.jarhas been verified as SIGNED_OK
-Jar found at /home/luc/.cache/icedtea-web/cache/38/http/testlino/media/eidreader/EIDReader.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-App already has trusted publisher: true
-App already has trusted publisher: true
-Ending check for signed JNLP file...
-App already has trusted publisher: true
-App already has trusted publisher: true
-Jar found at /home/luc/.cache/icedtea-web/cache/41/http/testlino/media/eidreader/commons-logging.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-Jar found at /home/luc/.cache/icedtea-web/cache/40/http/testlino/media/eidreader/eid-applet-service.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-Jar found at /home/luc/.cache/icedtea-web/cache/39/http/testlino/media/eidreader/commons-codec.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-Jar found at /home/luc/.cache/icedtea-web/cache/38/http/testlino/media/eidreader/EIDReader.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-Activate jar: file:/home/luc/.cache/icedtea-web/cache/41/http/testlino/media/eidreader/commons-logging.jar
-Activate native: http://testlino:8080/media/eidreader/commons-logging.jar
-Activate jar: file:/home/luc/.cache/icedtea-web/cache/40/http/testlino/media/eidreader/eid-applet-service.jar
-Activate native: http://testlino:8080/media/eidreader/eid-applet-service.jar
-Activate jar: file:/home/luc/.cache/icedtea-web/cache/39/http/testlino/media/eidreader/commons-codec.jar
-Activate native: http://testlino:8080/media/eidreader/commons-codec.jar
-Activate jar: file:/home/luc/.cache/icedtea-web/cache/38/http/testlino/media/eidreader/EIDReader.jar
-Activate native: http://testlino:8080/media/eidreader/EIDReader.jar
-Permission added: ("java.io.FilePermission" "/home/luc/.cache/icedtea-web/cache/41/http/testlino/media/eidreader/commons-logging.jar" "read")
-Permission added: ("java.io.FilePermission" "/home/luc/.cache/icedtea-web/cache/40/http/testlino/media/eidreader/eid-applet-service.jar" "read")
-Permission added: ("java.io.FilePermission" "/home/luc/.cache/icedtea-web/cache/39/http/testlino/media/eidreader/commons-codec.jar" "read")
-Permission added: ("java.io.FilePermission" "/home/luc/.cache/icedtea-web/cache/38/http/testlino/media/eidreader/EIDReader.jar" "read")
-Trusted Only manifest attribute is "true". The applet is fully signed and requests permission level: All-Permission
-Codebase matches codebase manifest attribute, and  application is signed. Continuing. See: http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/no_redeploy.html for details.
-Found alaca URLs to be verified
- - http://testlino:8080/media/eidreader
- - http://testlino:8080
-Setting value:null
-Setting value:0
-Returning value:0
-The application uses non-codebase resources, has no Application-Library-Allowable-Codebase Attribute, and was allowed to run by the user
-Class-Path attribute cleared for /home/luc/.cache/icedtea-web/cache/41/http/testlino/media/eidreader/commons-logging.jar
-Class-Path attribute cleared for /home/luc/.cache/icedtea-web/cache/40/http/testlino/media/eidreader/eid-applet-service.jar
-Class-Path attribute cleared for /home/luc/.cache/icedtea-web/cache/39/http/testlino/media/eidreader/commons-codec.jar
-Class-Path attribute cleared for /home/luc/.cache/icedtea-web/cache/38/http/testlino/media/eidreader/EIDReader.jar
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread AWT-EventQueue-1
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread Thread-3
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread Thread-4
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread NetxPanelThread@http://testlino:8080/
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread Thread-5
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@1740e4a as the classloader for thread EIDReader applet
-JNLPRuntime already initialized
-Jar string: http://testlino:8080/media/davlink/DavLink.jar
-jars length: 1
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-        result: null
-New classloader: null
-Jars not ready to provide attribute Application-Name
-Status: STARTED
-Jars not ready to provide main class
- +(STARTED)
- @ /media/davlink/DavLink.jar
-Status: CONNECT STARTED
- +(CONNECT)
- @ /media/davlink/DavLink.jar
-Status: CONNECT DOWNLOAD STARTED
- +(DOWNLOAD)
- @ /media/davlink/DavLink.jar
-Status: CONNECTING DOWNLOAD STARTED
- +(CONNECTING)
- -(CONNECT)
- @ /media/davlink/DavLink.jar
-All possible urls for location=http://testlino:8080/media/davlink/DavLink.jar state=CONNECTING DOWNLOAD STARTED : [http://testlino:8080/media/davlink/DavLink.jar, http://testlino:8080/media/davlink/DavLink.jar]
-Selecting proxy for: http://testlino:8080/media/davlink/DavLink.jar
-Selected proxies: [DIRECT]
-Selecting proxy for: http://testlino:8080/media/davlink/DavLink.jar
-Selected proxies: [DIRECT]
-Key : null ,Value : [HTTP/1.1 200 OK]
-Key : ETag ,Value : ["34a03-59c4-4f2227c2d5c40"]
-Key : Date ,Value : [Tue, 27 May 2014 01:07:28 GMT]
-Key : Content-Length ,Value : [22980]
-Key : Last-Modified ,Value : [Tue, 11 Feb 2014 14:43:53 GMT]
-Key : Keep-Alive ,Value : [timeout=15, max=97]
-Key : Content-Type ,Value : [application/java-archive]
-Key : Connection ,Value : [Keep-Alive]
-Key : Accept-Ranges ,Value : [bytes]
-Key : Server ,Value : [Apache/2.2.16 (Debian)]
-best url for location=http://testlino:8080/media/davlink/DavLink.jar state=CONNECTING DOWNLOAD STARTED is http://testlino:8080/media/davlink/DavLink.jar by HEAD
-Selecting proxy for: http://testlino:8080/media/davlink/DavLink.jar
-Selected proxies: [DIRECT]
-isCurrent: http://testlino:8080/media/davlink/DavLink.jar = true
-Status: CONNECTED DOWNLOAD STARTED
- +(CONNECTED)
- -(CONNECTING)
- @ /media/davlink/DavLink.jar
-Status: CONNECTED DOWNLOADED STARTED
- +(DOWNLOADED)
- -(DOWNLOAD)
- @ /media/davlink/DavLink.jar
-Jar found at /home/luc/.cache/icedtea-web/cache/5/http/testlino/media/davlink/DavLink.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-App already has trusted publisher: true
-App already has trusted publisher: true
-Ending check for signed JNLP file...
-App already has trusted publisher: true
-App already has trusted publisher: true
-Jar found at /home/luc/.cache/icedtea-web/cache/5/http/testlino/media/davlink/DavLink.jarhas been verified as SIGNED_OK
-1.2.840.113549.1.9.1=#1613696e666f40636f64652d67656172732e636f6d,CN=Weidmann Manuel,OU=IT & Development,O=Weidmann Manuel,L=Amel,ST=Liege,C=BE found in cacerts (/home/luc/.config/icedtea-web/security/trusted.certs)
-CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE found in cacerts (/usr/lib/jvm/java-7-openjdk-i386/jre/lib/security/cacerts)
-Jars not ready to provide attribute Application-Name
-Jars not ready to provide main class
-Activate jar: file:/home/luc/.cache/icedtea-web/cache/5/http/testlino/media/davlink/DavLink.jar
-Activate native: http://testlino:8080/media/davlink/DavLink.jar
-Permission added: ("java.io.FilePermission" "/home/luc/.cache/icedtea-web/cache/5/http/testlino/media/davlink/DavLink.jar" "read")
-Trusted Only manifest attribute is "true". The applet is fully signed and requests permission level: All-Permission
-Codebase matches codebase manifest attribute, and  application is signed. Continuing. See: http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/no_redeploy.html for details.
-Found alaca URLs to be verified
- - http://testlino:8080/media/davlink
- - http://testlino:8080
-Setting value:null
-Setting value:0
-Returning value:0
-The application uses non-codebase resources, has no Application-Library-Allowable-Codebase Attribute, and was allowed to run by the user
-Class-Path attribute cleared for /home/luc/.cache/icedtea-web/cache/5/http/testlino/media/davlink/DavLink.jar
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread AWT-EventQueue-2
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread Thread-8
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread Thread-9
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread NetxPanelThread@http://testlino:8080/
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread Thread-10
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread DavLink applet
-Setting net.sourceforge.jnlp.runtime.JNLPClassLoader@a27802 as the classloader for thread Timer-0
-
 Java sucks (continued)
 ----------------------
 
@@ -423,13 +55,13 @@ And I created the directory `/home/luc/.java/deployment/cache/selfmade`.
 
 Seems to have no effect.
 
-Even worse: 
+Even worse, here is another error which occurs only on a Windows machine::
 
-Java-Plug-in 10.55.2.13
-JRE-Version verwenden 1.7.0_55-b13 Java HotSpot(TM) Client VM
-
-liveconnect: Security Exception: LiveConnect (JavaScript) blocked due
-to security settings.
+  Java-Plug-in 10.55.2.13
+  JRE-Version verwenden 1.7.0_55-b13 Java HotSpot(TM) Client VM
+  (...)
+  liveconnect: Security Exception: LiveConnect (JavaScript) blocked due
+  to security settings.
 
 I **maybe** solved this at least for davlink by generating (in
 :mod:`lino.modlib.davlink`) a `davlink.jnlp` file and using a
@@ -450,5 +82,22 @@ months.
 Such a production upgrade is still a rather stressing job, but -with
 the danger of repeating myself- I summarize my evening: Lino is really
 cool!
+
+For example I discovered the folowing problem after the migration:
+
+- Bestehende Ausdrucke von VSEs und Konventionen sind nicht sichtbar
+  in der Historie des Klienten.
+
+Which I solved simply by a script to be run using the :manage:`run` command::
+
+    from lino.runtime import *
+    for M in (isip.Contract, jobs.Contract):
+      for obj in M.objects.all():
+        ex = obj.printed_by
+        if ex is not None and ex.project_id is None:
+            print obj
+            ex.project = obj.client
+            ex.full_clean()
+            ex.save()
 
 

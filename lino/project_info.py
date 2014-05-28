@@ -1,6 +1,6 @@
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.13',  # released 20131007(?)
+    version='1.6.14',
     install_requires=[
         'North', 'djangosite', 'odfpy',
         'jinja2', 'appy', 'pytidylib', 'PyYAML'],

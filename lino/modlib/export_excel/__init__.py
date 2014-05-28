@@ -14,7 +14,7 @@
 """This app installs a button to "export" any table to excel xls format.
 
 To use it, simply add the following line to your
-:settings:`get_installed_apps`::
+:meth:`ad.Site.get_installed_apps`::
 
     yield 'lino.modlib.export_excel'
 

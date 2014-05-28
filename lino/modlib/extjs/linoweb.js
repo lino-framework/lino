@@ -3511,18 +3511,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
       tbar = this.add_params_panel(tbar);
       tbar = tbar.concat([
         { scope:this, 
-          //~ text: "[csv]", 
-          tooltip: "{{_('Export this table to a .csv file')}}", 
-          iconCls: 'x-tbar-csv',
-          handler: function() { 
-            var p = this.get_current_grid_config();
-            Ext.apply(p,this.get_base_params());
-            p.{{ext_requests.URL_PARAM_FORMAT}} = "{{ext_requests.URL_FORMAT_CSV}}";
-            this.add_param_values(p,true);
-            
-            window.open('{{settings.SITE.build_admin_url("api")}}'+this.ls_url + "?" + Ext.urlEncode(p)) 
-          } },
-        { scope:this, 
           tooltip: "{{_('Show this table in plain html')}}", 
           iconCls: 'x-tbar-html',
           handler: function() { 

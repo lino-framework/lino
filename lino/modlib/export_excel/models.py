@@ -1,3 +1,17 @@
+# -*- coding: UTF-8 -*-
+# Copyright 2014 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
 import os
 from django.conf import settings
 from django.db import models
@@ -81,8 +95,8 @@ class ExcelRenderer(TableRenderer):
 
 
 class ExportExcelAction(actions.Action):
-    label = _("To Excel")
-    help_text = _('Export this table as a xls Excel document')
+    label = _("Export to .xls")
+    help_text = _('Export this table as an .xls document')
     icon_name = 'csv'
     sort_index = -5
     select_rows = False
@@ -100,8 +114,7 @@ class ExportExcelAction(actions.Action):
         # Render
         self.render(ar, mf.name)
 
-        ar.response.update(success=True)
-        ar.response.update(open_url=mf.url)
+        ar.response.success(open_url=mf.url)
 
     def render(self, ar, file):
         workbook = ExcelRenderer(ar).render()

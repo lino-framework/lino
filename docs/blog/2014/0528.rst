@@ -1,0 +1,190 @@
+=======================
+Wednesday, May 28, 2014
+=======================
+
+Another contribution
+--------------------
+
+Joe sent two pull requests for :mod:`export_excel
+<lino.modlib.export_excel>` and :mod:`print_pisa
+<lino.modlib.print_pisa>`.  Thank you, Joe!  I beg your pardon that I
+still did not find time to have a closer look at them.
+:mod:`export_excel <lino.modlib.export_excel>` would probably be of
+immediate benefit.
+
+(See also `Removed the "Export to .csv" button`_ later on this page.)
+
+
+Thoughts about versioning and release process
+---------------------------------------------
+
+Yesterday I made an upgrade on a :ref:`welfare` production server,
+including data migration.  So before doing "anything else" I should
+bump certain version numbers and tag the repositories.
+
+- :ref:`welfare` needs a new version number (must change from version
+  1.1.12 to 1.1.13) because North database migration works using the
+  application's version number.  (Which by the way is an important
+  difference with South or the coming Django migration system, who use
+  an individual "version" counters for every app.)
+
+- :ref:`lino`, :ref:`north` and :ref:`site` need a new version number
+  because they might have influence on the :ref:`welfare` database
+  structure, and thus :ref:`welfare` needs to be able to specify "I
+  want *this* version of lino, of north and/or of djangosite".
+
+
+- The "anything else" above is not absolute.  We are talking about
+  changes in trunk/master of :mod:`djangosite`, :mod:`north`,
+  :mod:`lino` and :mod:`lino_welfare` itself.  But for example
+  :ref:`atelier`, :ref:`davlink` and :ref:`eidreader` are special
+  because they have no influence on the database.
+
+- Changing the version number is itself easy thanks to :ref:`atelier`:
+  I just need to change the :xfile:`project_info.py` file, which
+  currently contains::
+
+    SETUP_INFO = dict(
+        name='lino-welfare',
+        version='1.1.12',  # not yet released
+        install_requires=['lino', 'suds', 'vobject', 'django-iban'],
+        ...
+
+But before actually doing this, I must "release" the current versions.
+
+In fact I don't need to release them officially on PyPI right now. As
+long as nobody asks for a new released version, I can save time by
+skipping this step. But I must be ready to do it retroactively some
+day in the future.
+
+So I should tag the current state of the involved repositories.  To
+get back into this, I needed to read the Git docs about `Tagging
+<http://git-scm.com/book/en/Git-Basics-Tagging>`_
+
+The author of `Git Tag Does the Wrong Thing by Default
+<http://www.rockstarprogrammer.org/post/2008/oct/16/git-tag-does-wrong-thing-default/>`_
+claims that I should not use lightweight tags.  And `Why should I care
+about lightweight vs. annotated tags?
+<http://stackoverflow.com/questions/4971746/why-should-i-care-about-lightweight-vs-annotated-tags>`_
+explains it more in detail.
+
+`AlBlue 20110426
+<http://alblue.bandlem.com/2011/04/git-tip-of-week-tags.html>`_ writes
+another interesting must-know about tags:
+
+    A tag is like a branch, in that it identifies a specific commit with a
+    descriptive label.  
+    
+    What’s the difference between tags and branches?  The workspace is
+    (almost always) associated with a branch, called ``master`` by
+    default. When it is, a commit will automatically update the
+    ``master`` reference to point to that new commit; in other words,
+    *branches are mutable references*.
+
+    A tag, on the other hand, is created to point to a specific commit and
+    thereafter does not change, even if the branch moves on. In other
+    words, *tags are immutable references*.
+
+So I now made an annotated tag on each project::
+
+  $ go site
+  $ git tag -a v0.1.8 -m v0.1.8
+  $ git push origin v0.1.8
+
+  $ go north
+  $ git tag -a v0.1.7 -m v0.1.7
+  $ git push origin v0.1.7
+
+  $ go lino
+  $ git tag -a v1.6.13 -m v1.6.13
+  $ git push origin v1.6.13
+
+  $ go welfare
+  $ git tag -a v1.1.12 -m v1.1.12
+  $ git push origin v1.1.12
+
+Each ``git push origin`` commands gave output similar to this::
+    
+    $ git push origin v0.1.7
+    Counting objects: 1, done.
+    Writing objects: 100% (1/1), 160 bytes | 0 bytes/s, done.
+    Total 1 (delta 0), reused 0 (delta 0)
+    To git@github.com:lsaffre/north.git
+     * [new tag]         v0.1.7 -> v0.1.7
+    
+
+When sharing the version tag on `north` I got::
+
+    $ git push origin v0.1.7
+
+    fatal: Could not read from remote repository.
+
+    Please make sure you have the correct access rights
+    and the repository exists.
+
+    $ git status
+    On branch master
+    nothing to commit, working directory clean
+    $ git push origin v0.1.7
+    fatal: protocol error: expected sha/ref, got 'GitHub SSH access is temporarily unavailable'
+    
+This was a temporary phenomen, maybe due to some maintenance work on a server.    
+
+The next step then was to increment the version numbers. 
+Note the :fab:`esi` command.
+For example in :ref:`welfare`::
+    
+    $ go welfare
+    $ fab esi
+    
+And change the file to::    
+
+    SETUP_INFO = dict(
+        name='lino-welfare',
+        version='1.1.13',
+        install_requires=['lino', 'suds', 'vobject', 'django-iban'],
+        ...
+
+    
+Oops, then I noticed that I probably made a little mistake. Released
+versions should specify versions in their `install_requires`. So in
+fact *before* setting the tags I should have done something like::
+
+    SETUP_INFO = dict(
+        name='lino-welfare',
+        version='1.1.12',
+        install_requires=['lino==1.6.12', 'suds', 'vobject', 'django-iban'],
+        ...
+
+And then, afterwards *remove* the version specificier (``==1.6.12``)
+again because it can be disturbing in development versions.  Is that
+true?
+
+If you use Git and followed until here, please tell me:
+
+- Did I get it right?
+
+
+Another thing is to make this process more automatic. That's for later.
+
+
+Removed the "Export to .csv" button
+-----------------------------------
+
+I finally took the time to have a look at Joe's work.  This is really
+cool, Joe!  
+
+Since this "clone" works much better than the "original", and since it
+is useless to have both, and since the original was not removable
+because still old-style coding, I simply **removed the original**.
+
+This means that existing applications should include
+:mod:`lino.modlib.export_excel` to their
+:meth:`ad.Site.get_installed_apps` method.
+
+I changed the action's label from "To Excel" to "Export to .xls"
+because it works with every office application that can read
+:file:`.xls` files.
+
+In fact I'd like to rename the app from "export_excel" to "export_xls"
+or maybe even simply "xls". Any comments to this?
