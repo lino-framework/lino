@@ -41,4 +41,39 @@ This is a first bug in Lino 1.6.13, and I am tempted to change the
 - I can update Gerd's production site without a need for data migration.
 
 One can say that Gerd's production site serves as guinea pig, and that
-my tag has been too early. Or I should have called it ``v1.6.13rc1``.
+my first ``v1.6.13`` tag should rather have been ``v1.6.13rc1``.
+
+Simply overwriting the existing tag doesn't work::
+
+  $ git tag -a v1.6.13 -m "after first bugfix"
+  fatal: tag 'v1.6.13' already exists
+
+So I try by deleting it first::
+
+  $ git tag -d v1.6.13
+  Deleted tag 'v1.6.13' (was ce2ebd3)
+  $ git tag -a v1.6.13 -m "after first bugfix"
+
+But oops, when I try to push my changed vision of what ``v1.6.13``
+should mean, I get::
+
+  $ git push origin v1.6.13
+  To git@github.com:lsaffre/lino.git
+   ! [rejected]        v1.6.13 -> v1.6.13 (already exists)
+  error: failed to push some refs to 'git@github.com:lsaffre/lino.git'
+  hint: Updates were rejected because the tag already exists in the remote.
+
+It seems that we must accept the fact that ``v1.6.13`` will always be
+a buggy version because we cannot change an annotated tag once it has
+been published.  
+
+So I undo my attempt::
+
+  $ git tag -d v1.6.13
+  Deleted tag 'v1.6.13' (was bebb5c5)
+
+  $ git pull origin v1.6.13
+  From github.com:lsaffre/lino
+   * tag               v1.6.13    -> FETCH_HEAD
+  Already up-to-date.
+
