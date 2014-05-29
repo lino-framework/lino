@@ -82,7 +82,10 @@ class Model(models.Model):
 
     preferred_foreignkey_width = None
     """The default preferred width (in characters) of widgets that
-    display a ForeignKey to this model
+    display a ForeignKey to this model.
+
+    If not specified, the default default `preferred_width` 
+    for ForeignKey fields is *20*.
 
     """
 
@@ -203,17 +206,14 @@ class Model(models.Model):
         return unicode(self)
 
     def disable_delete(self, ar):
-        """
-        Return None if it is okay to delete this object,
-        otherwise a nonempty string explaining why.
-        The argument `ar` contains the :class:`lino.core.actions.ActionRequest` 
-        which is trying to delete. `ar` is possibly `None` when this is 
-        being called from a script or batch process.
-        """
         return self._lino_ddh.disable_delete_on_object(self)
 
     @classmethod
     def get_default_table(self):
+        """
+        Used internally. Lino chooses during the kernel startup, for each model, 
+        one of the discovered Table subclasses as the "default table".
+        """
         return self._lino_default_table
 
     def disabled_fields(self, ar):

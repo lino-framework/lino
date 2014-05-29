@@ -9,8 +9,9 @@ so you should do that tutorial before reading on here.
 
 Vocabulary: in Lino a "workflow" is a combination of
 (1) a list of possible "states" (aka "life cycle") and
-(2) a list of "transitions", i.e. actions which change from one state 
-to another state.
+(2) a list of "transitions", i.e. actions which change from one state
+to another state. For an overview about workflows in Lino read
+:ref:`workflows`.
 
 
 We recommend to define workflows in a separate module 

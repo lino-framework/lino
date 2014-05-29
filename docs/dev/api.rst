@@ -12,6 +12,5 @@ pillow.
    dd
    rt
    layouts
-   perms
    ml/index
    

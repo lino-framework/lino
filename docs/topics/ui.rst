@@ -4,6 +4,9 @@ The user interface
 
 Lino comes with an extensible collection of out-of-the-box user interfaces.
 
+Currently there's one serious user interface based on Sencha ExtJS and
+and another, experimental and more lightweight, based on the
+Twitter/Bootstrap library.
 
 .. _lino.ui.renderer:
 

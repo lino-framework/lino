@@ -16,6 +16,18 @@ out-of-the box user interface.
 Technical details about the differences between Lino and Django 
 are described in :doc:`lino_and_django`.
 
+Target users
+------------
+
+Lino is written for developers who want to write a customized database
+application, either for internal use by themselves or their employer,
+or for internal use by their customer, or for public use as a service
+to their customers.
+
+Since there is also a growing collection of :ref:`lino.projects`, Lino
+becomes interesting for service providers who offer hosting of one of
+these applications without developing themselves.
+
 
 Features
 --------
@@ -41,14 +53,16 @@ also apply to Lino:
   
 Lino then adds its own features to the above:
 
-- An out-of-the-box :doc:`user interface </topics/ui>`.
-  Lino application developers don't waste their time writing html templates or css.
+- An out-of-the-box :doc:`user interface </topics/ui>`.  Lino
+  application developers don't waste their time writing html templates
+  or css.
 
-- :doc:`/topics/layouts` :  
-  Design not only your *models* but also your *forms* using the Python language.
+- :ref:`layouts`:
+  use the Python language not only
+  for designing your *models* but also your *forms*.
   
 - Lino adds enterprise-level concepts for definining 
-  :doc:`/topics/perms` and :doc:`/topics/workflow`.
+  :ref:`permissions` and :ref:`workflows`.
   
 - :ref:`mldbc` : 
   Use Lino's rich experience with applications that manage 
@@ -63,24 +77,8 @@ Lino then adds its own features to the above:
 - Other features include extensions to handle
   :ref:`polymorphism`.
   
-
-
-Components
-----------
-
-Lino consists of different parts which are currently in a single 
-project, but that might change in the future:
-
-- the framework itself. See :mod:`lino.dd` for an overview
-  of the concepts.
-
-- a collection of *user interface renderers*.
-  Currently there's one for ExtJS 
-  and another for a Twitter/Bootstrap-based "plain" interface.
-
-- :ref:`modlib`, a collection of reusable Django apps and out-of-the-box 
-  demo applications
-
+- And last but not least, Lino includes :mod:`ml`, a collection of
+  reusable Django apps designed for Lino applications.
 
 
 Design goals
@@ -88,6 +86,7 @@ Design goals
 
 - Lino applications are intuitive and easy-to-understand for the end user.
   (Context menus, Tooltips,...)
+- sustainable application development
 - agile programming
 - rapid prototyping 
 - libraries of reusable code
@@ -118,12 +117,10 @@ In **March 2009** he discovered :term:`Django` whose database model and applicat
 server concepts seem ideal for Lino. 
 In **August 2009** he started to use the :term:`ExtJS` Javascript framework.
 
-The first real-world Lino application started 
-in a Belgian *Public Centre for Social Welfare* 
-(PCSW) in **January 2011**.
-In **August 2012** we forked it into a separate project 
-`Lino-Welfare <http://welfare.lino-framework.org>`_
-to be maintained by an independant organization.
+The first real-world Lino application started in a Belgian *Public
+Centre for Social Welfare* (PCSW) in **January 2011**.  In **August
+2012** we forked it into a separate project :ref:`welfare`.  to be
+maintained by an independant organization.
 
 In September 2012 we purchased the domain name `lino-framework.org`.
 
@@ -144,6 +141,7 @@ More
 .. toctree::
    :maxdepth: 1
    
+   projects
    testimonals
    faq
    luc

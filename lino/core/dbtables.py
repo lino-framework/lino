@@ -76,18 +76,6 @@ def wildcard_data_elems(model):
     #~ for de in data_elems(self.model): yield de
 
 
-#~ removed 20130810
-#~ def summary_row(obj,ar,**kw):
-    #~ return obj.summary_row(ar,**kw)
-
-
-
-#~ def default_summary_row(obj,rr):
-    #~ return u'<a href="%s" target="_blank">%s</a>' % (rr.get_request_url(str(obj.pk),fmt='detail'),unicode(obj))
-    #~ return u'<span onClick="foo">%s</span>' % (ui.get_actor_url(self,str(obj.pk)),unicode(obj))
-    # ~ return u'<a href="#" onclick="Lino.foo">%s</a>' % unicode(obj)
-
-
 def base_attrs(cl):
     #~ if cl is Table or len(cl.__bases__) == 0:
         #~ return
@@ -698,6 +686,15 @@ class Table(AbstractTable):
         """
         Return an iterable over the items processed by this table.
         Override this to use e.g. select_related() or to return a list.
+
+        Return a customized default queryset
+    
+        Example::
+
+          def get_queryset(self):
+              return self.model.objects.select_related('country', 'city')
+
+
         """
         return self.model.objects.all()
 

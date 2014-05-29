@@ -77,3 +77,36 @@ So I undo my attempt::
    * tag               v1.6.13    -> FETCH_HEAD
   Already up-to-date.
 
+
+Using the GPL for documentation
+-------------------------------
+
+I read on http://www.gnu.org/licenses/licenses.en.html:
+
+    Documentation for free software should be free documentation, so that
+    people can redistribute it and improve it along with the software it
+    describes. To make it free documentation, you need to release it
+    under a free documentation license. We normally use the GNU Free
+    Documentation License (GNU FDL), but occasionally we use other free
+    documentation licenses.
+    
+And then asked on <fsfe-de@fsfeurope.org>:
+
+    Heißt das, dass meine Verfahrensweise nicht ganz korrekt ist? Ist meine
+    Dokumentation nicht automatisch auch frei, wenn sie unter der GPL steht?
+    Was kann ich tun, damit es korrekt ist?
+
+Answer is: don't worry. The GPL is okay for documentation, and the
+`FDL <http://en.wikipedia.org/wiki/GNU_Free_Documentation_License>`_
+has numerous problems.
+
+
+Online demos updated
+--------------------
+
+I maked a pull and an initdb on the :ref:`demos`.
+
+For example the :ref:`cosi` demo (at http://demo4.lino-framework.org/)
+now shows the cool new :mod:`lino.moxlib.export_excel` module
+contributed by Joe: just open some table and click on the Excel icon
+in the button toolbar.

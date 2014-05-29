@@ -15,6 +15,8 @@ Recommended
    install
    /tutorials/index
    api
+   perms
+   workflows
    /tickets/index
    /changes
    /todo
@@ -38,5 +40,4 @@ Drafts
    style
    datamig
    versioning
-   /ref/model_methods
 

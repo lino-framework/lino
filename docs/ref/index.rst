@@ -11,7 +11,6 @@ Reference
    fixtures
    settings
    javascript
-   model_methods
    jargon
    tags
    obsolete

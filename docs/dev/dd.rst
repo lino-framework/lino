@@ -53,6 +53,42 @@ The `dd.Model` class
     :ref:`welfare` overrides this in order to call its `populate`
     method.
 
+
+  .. method:: summary_row(self, ar)
+
+    Return a HTML fragment that describes this record in a 
+    :func:`lino.core.tables.summary`.
+  
+    Example::
+  
+        def summary_row(self, ar):
+            elems = [ar.obj2html(self)]
+            if self.city:
+                elems. += [" (", ar.obj2html(self.city), ")"]
+            return E.p(*elems)
+
+
+           
+  .. method:: disable_delete(self, ar)
+
+    Hook to decide whether a given record may be deleted.  
+    Return a  non-empty string 
+    
+    This should return `None` if it is okay to delete this object, or
+    otherwise a nonempty string with a message that explains why this
+    object cannot be deleted.
+
+    Example::
+    
+      def disable_delete(self,request):
+          if self.is_imported:
+              return _("Cannot delete imported records.")
+            
+    The argument `ar` contains the :class:`rt.ActionRequest` 
+    which is trying to delete. `ar` is possibly `None` when this is 
+    being called from a script or batch process.
+
+
   .. method:: define_action(cls, **kwargs)
 
     Adds one or several actions to this model.
@@ -60,6 +96,21 @@ The `dd.Model` class
 
     Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
     action to :class: `lino.modlib.users.models.User`.
+
+  .. method:: disabled_fields(self, ar)
+
+    Return a list of names of fields that should be disabled (not editable) 
+    for this record.
+    
+    Example::
+    
+      def disabled_fields(self,request):
+          if self.user == request.user: return []
+          df = ['field1']
+          if self.foo:
+            df.append('field2')
+          return df
+        
 
   .. method:: hide_elements(cls, *names)
 
@@ -113,15 +164,39 @@ The `dd.Model` class
 
   .. method:: FOO_choices
 
+    Return a queryset or list of allowed choices for field FOO.
+
     For every field named "FOO", if the model has a method called
     "FOO_choices" (which must be decorated by :func:`dd.chooser`),
     then this method will be installed as a chooser for this field.
 
+    Example of a context-sensitive chooser method::
+  
+      country = models.ForeignKey("countries.Country", blank=True, null=True)
+      city = models.ForeignKey('countries.City', blank=True, null=True)
+          
+      @chooser()
+      def city_choices(cls,country):
+          if country is not None:
+              return country.place_set.order_by('name')
+          return cls.city.field.rel.to.objects.order_by('name')
+      
+  
+
+
   .. method:: FOO_changed
+
+    Called when field FOO of an instance of this model has been
+    modified through the user interface.
 
     For every field named "FOO", if the model has a method called
     "FOO_changed", then this method will be installed as a field-level
     post-edit trigger.
+
+    Example::
+    
+      def city_changed(self,oldvalue):
+          print("City changed from %s to %s!" % (oldvalue, self.city))
 
   .. attribute:: active_fields
 

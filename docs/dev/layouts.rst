@@ -1,3 +1,5 @@
+.. _layouts:
+
 =======
 Layouts
 =======
@@ -36,10 +38,6 @@ Lino will automatically convert such string templates into instances
 of :class:`ListLayout`, :class:`FormLayout`.  :class:`ParamsLayout` or
 :class:`ActionParamsLayout`.
 
-Lino automatically creates 
-
-- :class:`dd.Panel` and :class:`dd.FormLayout`
-
 See also:
 
 - Tutorial: :doc:`/tutorials/layouts`
@@ -66,8 +64,8 @@ name of a *data element*.
 This is for :class:`ListLayout` and :class:`FormLayout`.
 
 :class:`ParamsLayout` are special but similar: their data elements
-refer to the *parameters*  of an actor 
-defined in :attr:`dd.Actor.parameters`.
+refer to the *parameters* of an actor defined in
+:attr:`dd.Actor.parameters`.
 
 
 Panels

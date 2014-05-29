@@ -4,6 +4,9 @@
 Permissions
 ===========
 
+Lino adds enterprise-level concepts for definining permissions. This
+includes a replacement for Django's User model. 
+
 .. include:: /include/wip.rst
 
 The :attr:`required <lino.core.actions.Permittable.required>` 
