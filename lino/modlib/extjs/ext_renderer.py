@@ -724,7 +724,7 @@ class ExtRenderer(HtmlRenderer):
         def write(f):
             self.write_lino_js(f, profile)
 
-        settings.SITE.make_cache_file(fn, write, force)
+        return settings.SITE.make_cache_file(fn, write, force)
 
     def write_lino_js(self, f, profile):
 

@@ -758,4 +758,3 @@ class Kernel(object):
                     raise OSError(
                         "Failed to create symlink %s -> %s : %s",
                         target, source, e)
-

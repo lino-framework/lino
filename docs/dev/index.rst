@@ -20,6 +20,7 @@ Recommended
    /tickets/index
    /changes
    /todo
+   pull
 
 
 Drafts

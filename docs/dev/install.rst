@@ -20,14 +20,17 @@ Preliminaries
 -------------
 
 - You will need git_ to get the source files.
+
 - We assume you have pip_  installed.
-- We recommend to install fabric_, a command-line tool systems to
-  streamline administration tasks. Simply type ``pip install fabric``
-  to install it.
 
 - If you had previously installed Lino using `pip install lino` as described in 
   :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
   `pip uninstall lino`.
+
+- We recommend to install fabric_, a command-line tool systems to
+  streamline administration tasks. It's easy to install it::
+
+     $ pip install fabric
 
 
 Create a virtual Python environment
@@ -98,42 +101,28 @@ Notes:
       ...
 
 
-Configure your environment
---------------------------
-
-Some commands you might want to run now.
-
-
-
 Run Lino's test suite
 ---------------------
 
-::
+The following commands are not strictly necessary, but they are a
+useful check to see whether everything worked well.
 
-  $ cd ~/repositories/lino
-  $ fab initdb
-  $ fab test
+- First we install some more recommended Python modules::
 
-- The :fab:`initdb` command will initialize certain demo
-  databases. These are used by the test suite which would fail if
-  these demo databases are missing.
+     $ pip install reportlab
+     $ pip install pisa
+
+- And here we go for the test suite::
+
+    $ cd ~/repositories/lino
+    $ fab initdb
+    $ fab test
+
+- The :fab:`initdb` command initializes the demo databases. These are
+  used by the test suite which would fail if these demo databases were
+  missing.
 - The :fab:`test` command simply runs the test suite, it is a short
   for ``python setup.py test``
 
-  
-Updating your copy of the repository
-------------------------------------
-
-To update your copy of the repositories, go to 
-your :file:`~/repositories` directory and 
-run ``git pull`` for each project::
-
-  $ cd ~/repositories
-  $ cd atelier ; git pull ; cd ..
-  $ cd site ; git pull  ; cd ..
-  $ cd north ; git pull ; cd ..
-  $ cd lino ; git pull ; cd ..
-  $ cd cosi ; git pull ; cd ..
-  
 
 Continue here: :ref:`lino.tutorial.quickstart`
