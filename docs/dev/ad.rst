@@ -778,14 +778,14 @@ The basic usage is to write in your :xfile:`__init__.py` file::
     all user profiles and languages.
     
     On a production server this should be `True` for best performance,
-    but while developing, it may be easier to set it to `False`, which means 
-    that each file is built upon need (when a first request comes in).
+    but often this is not necessary, so default value is `False`,
+    which means that each file is built upon need (when a first
+    request comes in).
     
-    The default value `None` means that Lino decides automatically 
-    during startup:
-    it becomes `False` if
-    either :func:`lino.core.dbutils.is_devserver` returns True
-    or setting:`DEBUG` is set.
+    You can also set it to `None`, which means that Lino decides
+    automatically during startup: it becomes `False` if either
+    :func:`lino.core.dbutils.is_devserver` returns True or
+    setting:`DEBUG` is set.
 
   .. attribute:: use_experimental_features
 

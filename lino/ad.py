@@ -545,7 +545,7 @@ class Site(Site):
 
     never_build_site_cache = False
     show_internal_field_names = False
-    build_js_cache_on_startup = None
+    build_js_cache_on_startup = False
     use_java = True
     use_experimental_features = False
     site_config_defaults = {}
