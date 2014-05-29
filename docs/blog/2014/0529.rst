@@ -104,7 +104,7 @@ has numerous problems.
 Online demos updated
 --------------------
 
-I maked a pull and an initdb on the :ref:`demos`.
+I made a pull and an initdb on the :ref:`demos`.
 
 For example the :ref:`cosi` demo (at http://demo4.lino-framework.org/)
 now shows the cool new :mod:`lino.moxlib.export_excel` module
@@ -117,3 +117,6 @@ working only when :setting:`DEBUG` was true. Yes, on a production
 server it is not wise to publish the traceback, but our nice HTML
 formatted "Congratulations, you found a problem" page was not the
 right answer to an AJAX call.
+
+This helped me to fix a bug which I introduced myself into Joe's code.
+

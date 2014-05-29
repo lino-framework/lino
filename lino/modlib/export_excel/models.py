@@ -114,6 +114,8 @@ class ExportExcelAction(actions.Action):
         # Render
         self.render(ar, mf.name)
 
+        # Tell client that the action was successful and that it
+        # should open a new browser window on the generated file.
         ar.success(open_url=mf.url)
 
     def render(self, ar, file):
