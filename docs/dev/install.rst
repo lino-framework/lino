@@ -29,7 +29,15 @@ Preliminaries
   :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
   `pip uninstall lino`.
 
-- We also recommend to use virtualenv_ and to activate a new environment.
+
+Create a virtual Python environment
+-----------------------------------
+
+We recommend to use virtualenv_ and to activate a new
+environment. Something like this::
+
+  $ virtualenv tmp
+  $ . tmp/bin/activate
 
 
 Get the sources

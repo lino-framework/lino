@@ -7,7 +7,70 @@
 After solving :doc:`82` for Oracle Java 7u42, here is again a similar
 problem occuring with Java 7u52.
 
+This document is for Milton who tries to help me.
+
+Gerd reports this problem. It is reproducible on their system, a local
+network with Windows 7 clients.  They all have the same Java RTE
+version 1.7u52.
+
+Everything works fine when the :guilabel:`Security Level` in their
+:guilabel:`Java Control Panel` is set to :guilabel:`Medium` (which
+surprisingly is the lowest level).
+
+But when they set it to :guilabel:`High` (which indeed is the medium
+level), they cannot get :ref:`davlink` to work.  They report error
+messages like
+
+  Signed Applet Blocked by Security Settings
+
+in the Java Console and accordingly in the Javascript console things like:
+
+  Uncaught Error: Error calling method on NPObject. 
+
+I didn't yet manage to reproduce this problem. On a Windows XP machine
+with Java 7u60 everything seems to work perfectly. I don't believe
+that the Windows version makes a difference here.
+
+Okay, the most evident difference is that Gerd has Java 7u52.  I have
+7u60 because I missed the intermediate versions and could not find a
+place to download older Java versions.
+
+My next question: Where can I get a Windows installer for Java 7u52?
 
 
+Environment setup
+-----------------
+
+Here is how to reproduce this problem yourself.
+
+- Install a development version of Lino Welfare
+- Run a development server on the docs demo::
+
+    cd ~/repositories/welfare/lino_welfare/projects/docs
+    mkdir media
+    python manage.py initdb_demo
+    python manage.py runserver
+
+  You must create the :xfile:`media` directory yourself. You can do
+  this directly inside your code repository since `git` ignores any
+  files below any directory named :xfile:`media`. You must have write
+  permission to these files.
+
+- Point your browser to http://127.0.0.1:8000/
+
+- This page uses two applets :ref:`davlink` and :ref:`eidreader`.  You
+  should get some kind of security prompts from Java, asking you
+  whether you give permission to these applets ("JNLP applications").
+
+- Always watch the Java console in order to see what's happening.
+
+
+- The Java security mechanisms are obviously very different depending
+  on (1) operating system, (2) browser and (3) the version of the Java
+  Runtime Environment.
+
+
+References to this
+------------------
 
 .. refstothis::

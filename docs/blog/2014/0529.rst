@@ -120,3 +120,64 @@ right answer to an AJAX call.
 
 This helped me to fix a bug which I introduced myself into Joe's code.
 
+
+
+How to reach the host machine from a virtual client
+---------------------------------------------------
+
+Worked on :doc:`/tickets/106`. 
+
+Trying to reproduce it myself.  In my case the problematic client is
+under Windows in a VirtualBox.
+
+I had the problem that I didnt figure out myself how to have that
+virtual machine connect to the development server running on my host.
+Pointing the browser in that virtual machine to http://127.0.0.1:8000
+did not get there.
+
+Thanks here to `Naftuli Tzvi Kay
+<http://superuser.com/users/55611/naftuli-tzvi-kay>`_ who asked
+exactly my question in Juli 2011 and then answered it himself the next
+day:
+
+    Q: I'd essentially like to access my host computer from the guest in
+    VirtualBox. Is there an IP address given for my host which I can
+    use from the guest? Are there extra steps required to set this up?
+    I'd like to access my host's Apache, FTP, and SSH services.
+
+    A: In the default setup, you should be able to reach your host
+    through your default gateway, in my case 10.0.2.2. You can easily
+    determine this IP address in Windows via ipconfig. (...)
+    
+    (Source: `Connect to the host machine from a VirtualBox guest OS? <http://superuser.com/questions/310697/connect-to-the-host-machine-from-a-virtualbox-guest-os>`_)
+
+    
+Aha. The `default gateway
+<http://en.wikipedia.org/wiki/Default_gateway>`_ on my virtual client
+machine is::
+
+    C:\Documents and Settings\Luc Saffre>ipconfig
+
+    Windows IP Configuration
+
+    Ethernet adapter Local Area Connection 3:
+
+            Connection-specific DNS Suffix  . : lan
+            IP Address. . . . . . . . . . . . : 192.168.1.65
+            Subnet Mask . . . . . . . . . . . : 255.255.0.0
+            Default Gateway . . . . . . . . . : 192.168.0.2
+
+    
+So on my virtual browser, instead of pointing it to
+http://127.0.0.1:8000 I must point it to:
+    
+  http://192.168.0.2:8000
+
+Finally! One long lasting problem solved.
+
+Now the next problem is: I still can't reproduce it! Both :ref:`davlink`
+and :ref:`eidreader` work perfectly under Windows XP using Oracle Java::
+
+  Java Plug-in 10.60.2.19
+  Using JRE version 1.7.0_60-b19 Java HotSpot(TM) Client VM
+
