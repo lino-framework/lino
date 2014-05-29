@@ -110,3 +110,10 @@ For example the :ref:`cosi` demo (at http://demo4.lino-framework.org/)
 now shows the cool new :mod:`lino.moxlib.export_excel` module
 contributed by Joe: just open some table and click on the Excel icon
 in the button toolbar.
+
+Ta-daa, I finally worked on
+:class:`lino.utils.ajax.AjaxExceptionResponse` which had the problem of
+working only when :setting:`DEBUG` was true. Yes, on a production
+server it is not wise to publish the traceback, but our nice HTML
+formatted "Congratulations, you found a problem" page was not the
+right answer to an AJAX call.

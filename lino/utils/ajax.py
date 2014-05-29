@@ -19,6 +19,11 @@ Additions by LS:
 - also logs a warning on the development server because that is easier
   to read than opening firebug and look at the response.
 
+- must work also when :setting:`DEBUG` is False. Yes, on a production
+  server it is not wise to publish the traceback, but our nice HTML
+  formatted "Congratulations, you found a problem" page is never the
+  right answer to an AJAX call.
+
 """
 
 import sys
