@@ -1,0 +1,13 @@
+====================
+Monday, June 2, 2014
+====================
+
+More fiddling with :class:`lino.utils.ajax.AjaxExceptionResponse`. On
+a production server with :setting:`DEBUG` False, there was the
+following message in system log::
+
+    201406-02 09:18:28 WARNING ajax : AjaxExceptionResponse:
+    AttributeError
+    'NoneType' object has no attribute 'parse_params'
+
+

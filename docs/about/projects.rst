@@ -20,8 +20,8 @@ The following Lino applications are included with Lino:
 Separate projects
 -----------------
 
-The following Lino applications are 
-available as separate PyPI packages:
+The following Lino applications are available as separate projects
+maintained by the same author:
 
 - :ref:`welfare`
 - :ref:`faggio`

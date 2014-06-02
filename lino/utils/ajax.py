@@ -44,7 +44,8 @@ class AjaxExceptionResponse:
                 for tb in traceback.format_tb(tb):
                     #~ response += "%s\n" % tb
                     response += tb
-            # import logging
-            # logger = logging.getLogger(__name__)
-            settings.SITE.logger.warning("AjaxExceptionResponse:\n" + response)
+                settings.SITE.logger.warning(
+                    "AjaxExceptionResponse:\n" + response)
+            else:
+                settings.SITE.logger.exception(exception)
             return HttpResponseServerError(response)

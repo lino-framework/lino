@@ -17,8 +17,6 @@ candidate.
    *
 
 
-
-
 Active
 ----------
 
