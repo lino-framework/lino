@@ -1,7 +1,7 @@
 from atelier.fablib import *
 setup_from_project('lino')
 
-env.languages = "en de fr et nl pt-br".split()
+env.languages = "en de fr et nl pt-br es".split()
 env.tolerate_sphinx_warnings = True
 
 env.demo_databases.append('lino.projects.docs.settings')
