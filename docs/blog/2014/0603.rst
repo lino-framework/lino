@@ -14,12 +14,28 @@ journals. Here is how I did that::
 
     @dd.chooser()
     def journal_choices(cls):
-        logger.info("20140603 journal_choices %r", cls)
         vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         qs = Journal.objects.filter(voucher_type=vt)
-        logger.info("20140603 %s %s ", vt, qs.query)
         return qs
-
 
 But it doesn't work...
 
+... because the current implementation of choosers is a bit
+strange. The chooser decorator does not convert the function to a
+Chooser instance, it just adds the chooser options as attributes to
+the callable. Chooser instances are instantiated only later, in
+`actions.install_choosers`. And they are stored *per field*. This is
+the reason for our problem: since Voucher is an MTI child, there is
+only one field instance for all models. And though each model causes
+the instantiation of a Chooser, they all are then stored to
+`_lino_chooser` attribute of the same field, thus only the last
+instance survives.  It seems that I can optimize that.
+
+Milton posted a `first ticket
+<https://github.com/lsaffre/lino-cosi/issues/1>`_ in :ref:`cosi`, and
+I answered. Most work was to update the tutorials and beginner's docs
+which had indeed some obsolete parts. I hope that they are more clear
+now.
+
+The :fab:`docs` fab command failed when ``SETUP_INFO['description']``
+contained non-ASCII text.

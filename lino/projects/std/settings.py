@@ -84,4 +84,10 @@ DATABASES = {
     }
 }
 
+# Django wants system admins to define their own `SECRET_KEY
+# <https://docs.djangoproject.com/en/dev/ref/settings/#secret-key>`__
+# setting.  Hint: as long as you're on a development server you just
+# put some non-empty string and that's okay.
+
 SECRET_KEY = "20227"  # see :djangoticket:`20227`
+

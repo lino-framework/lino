@@ -135,7 +135,9 @@ def check_for_chooser(model, field):
     if m is not None:
         ch = Chooser(model, field, m)
         setattr(field, '_lino_chooser', ch)
-        #~ logger.debug("Installed %s",ch)
+        # logger.info(
+        #     "20140603 Installed %s to %r on %s",
+        #     ch, hash(field), model)
     #~ else:
         #~ logger.info("No chooser for %s.%s",model,field.name)
 

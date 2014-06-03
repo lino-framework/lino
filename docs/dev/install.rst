@@ -12,35 +12,26 @@ Installing Lino (development version)
 This document describes how you should install Lino if you want
 to use Lino's newest features even before they get officially 
 released on PyPI, or if you possibly want to contribute to 
-one of the involved software projects. If the instructions here sound 
-too complicated, you might prefer the simple installation as 
-described in :ref:`lino.tutorial.quickstart`
+one of the involved software projects. 
+
 
 Preliminaries
 -------------
 
 - You will need git_ to get the source files.
 
-- We assume you have pip_  installed.
+- We assume you have pip_ installed.
 
-- If you had previously installed Lino using `pip install lino` as described in 
-  :ref:`lino.tutorial.quickstart`, then you should first uninstall it using 
-  `pip uninstall lino`.
+- We recommend to use virtualenv_ and to activate a new
+  environment. Something like this::
+
+    $ virtualenv tmp
+    $ . tmp/bin/activate
 
 - We recommend to install fabric_, a command-line tool systems to
   streamline administration tasks. It's easy to install it::
 
      $ pip install fabric
-
-
-Create a virtual Python environment
------------------------------------
-
-We recommend to use virtualenv_ and to activate a new
-environment. Something like this::
-
-  $ virtualenv tmp
-  $ . tmp/bin/activate
 
 
 Get the sources
@@ -54,28 +45,22 @@ working copies of version-controlled software projects,
   $ git clone https://github.com/lsaffre/djangosite.git site
   $ git clone https://github.com/lsaffre/north.git
   $ git clone https://github.com/lsaffre/lino.git
-  $ git clone https://github.com/lsaffre/lino-cosi.git cosi
 
-The second and the last lines are example for having a project whose
-**local name** differs from its **public name**.  We recommend to keep
+The second line is an example for having a project whose
+**local name** differs from its **public name**.
+We recommend to keep
 your local project names short.
 
-You should now have 5 subdirectories called `atelier`, `site`,
-`north`, `lino` and `cosi`. Each of them should contain a file
-`setup.py`, a file `README.rst`, a sub-directory `docs`, and other
-files and directories.
-
-
-The last line installed :ref:`cosi`, one of the existing free Lino
-applications. This project will serve as an example for your own Lino
-application.  Alternatively or additionally to :ref:`cosi` you might
-want to do the same for one or several of the out-of-the-box Lino
-applications: :ref:`faggio` :ref:`welfare` :ref:`logos`
+You should now have 4 subdirectories called `atelier`, `site`,
+`north`, `lino`. Each of them should contain a file `setup.py`, a file
+`README.rst`, a sub-directory `docs`, and other files and directories.
 
 Installation
 ------------
 
-Now you are ready to "install" these projects.
+Now you are ready to "install" these projects, i.e. to tell your
+Python interpreter where they are, so that you can import them from
+within any Python program.
 
 Commands::
 
@@ -83,7 +68,6 @@ Commands::
   $ pip install -e site 
   $ pip install -e north
   $ pip install -e lino
-  $ pip install -e cosi
 
 Notes:
 
@@ -104,8 +88,8 @@ Notes:
 Run Lino's test suite
 ---------------------
 
-The following commands are not strictly necessary, but they are a
-useful check to see whether everything worked well.
+The following commands are a recommended check to see whether
+everything worked well.
 
 - First we install some more recommended Python modules::
 
@@ -121,8 +105,18 @@ useful check to see whether everything worked well.
 - The :fab:`initdb` command initializes the demo databases. These are
   used by the test suite which would fail if these demo databases were
   missing.
+
 - The :fab:`test` command simply runs the test suite, it is a short
   for ``python setup.py test``
 
 
-Continue here: :ref:`lino.tutorial.quickstart`
+Where to go from here 
+---------------------
+
+- :ref:`lino.tutorial.quickstart`
+
+- Another idea is to follow the 
+  :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
+
+- Try one or several of the out-of-the-box Lino applications:
+  :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or :ref:`logos`

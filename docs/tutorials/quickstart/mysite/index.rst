@@ -1,67 +1,54 @@
 .. _lino.tutorial.quickstart:
 
-===============
-Getting started
-===============
+===========================
+Create a local Lino project
+===========================
 
-Installation
-------------
+In this tutorial we are going to create a local Lino project which
+inherits from one of the simple :ref:`out-of-the-box projects
+<lino.projects>` included with Lino.
 
-The easiest way to install Lino is::
+We suppose that you have installed Lino the framework as described in
+:ref:`lino.dev.install`.
 
-  pip install lino
 
-Note that Lino doesn't yet run under Python 3, you need Python 2.7 or
-2.6.
+The project directory
+---------------------
 
-But the recommended way is to use a development version, as described
-in :ref:`lino.dev.install`.
+Create an empty directory which will become your project directory::
 
-  
-Start your project
-------------------
+    $ mkdir ~/mysite
+    $ cd ~/mysite
 
-We begin by creating a plain empty Django project::
+Create two files :file:`settings.py` and  :xfile:`manage.py` 
+in this directory as described hereafter.
 
-  $ cd
-  $ django-admin startproject mysite
-  
-If the above command is new to you, then we recommend 
-you to follow the 
-:ref:`Lino Polls tutorial <lino.tutorial.polls>` 
-before continuing this one.
+The ``settings.py`` file
+-------------------------
 
-Now open the :xfile:`settings.py` file of your new project and replace
-its content with the following:
+
+Your first :file:`settings.py` file should look as follows:
 
 .. literalinclude:: settings.py
-    :linenos:
 
 Explanations:
 
-#.  The Python way to specify  encoding
-    (:pep:`263`).
-    That's needed because of the non-ascii **ì** in "Lino Così" 
-    in line 3.
-    
-#.  We import settings from one of the :ref:`out-of-the-box projects
+#.  :mod:`lino.projects.min1` is one of the simple 
+    :ref:`out-of-the-box projects
     <lino.projects>` included with Lino.
-    
+
+    We import these settings directly into our global namespace using
+    the wildcard ``*``. This is necessary because that's how Django
+    wants settings.
+   
 #.  Then we define a :setting:`SITE` setting, 
-    an instance of the :class:`Site <lino.site.Site>` class,
+    an instance of the :class:`Site <ad.Site>` class,
     passing our 
     :func:`globals` as first argument. 
     This will set default values 
     for all required Django settings
     (e.g. :setting:`DATABASES` and :setting:`LOGGING`).
     
-#.  With one exception: 
-    Django wants system admins to define their own 
-    `SECRET_KEY <https://docs.djangoproject.com/en/dev/ref/settings/#secret-key>`__ 
-    setting, so Lino doesn't dare to set a default value for this. 
-    Hint: as long as you're on a development server you just put some 
-    non-empty string and that's okay.
-
 You might add ``DEBUG = True`` or other settings of your choice.
 
 The basic idea is to keep local :xfile:`settings.py` files 
@@ -74,13 +61,21 @@ the :ref:`djangosite_local.py <djangosite_local>` file,
 another technique which Lino adds to plain Django.
 
 
+The ``manage.py`` file
+----------------------
+
+Your project's :xfile:`manage.py` file should look as follows:
+
+.. literalinclude:: manage.py
+
+
 Initial data
 ------------
 
 Next we create your database and populate it with some demo content.
 This is just one command to type::
 
-  $ python manage.py initdb_demo
+    $ python manage.py initdb_demo
 
 That is, you run the :manage:`initdb_demo`
 management command that comes with every Lino application.
@@ -134,20 +129,13 @@ which should output something like::
   Quit the server with CTRL-BREAK.
 
 And then point our web browser to http://127.0.0.1:8000/.
-This produces the same result as 
-the `online demo of Lino Così 
-<http://demo4.lino-framework.org/>`__.
+The result should look similar to this:
 
 .. image:: quickstart.jpg
   :scale: 80
 
 Congratulations for having installed your first Lino application.
 
-Note what the development server does when the first web request arrives::
 
-  INFO Checking /media URLs
-  INFO Building /home/luc/mysite/mysite/media/cache/js/lino_000_de.js ...
-  [27/Feb/2013 10:42:36] "GET / HTTP/1.1" 200 4465
-  [27/Feb/2013 10:42:40] "GET /media/cache/js/lino_000_de.js HTTP/1.1" 200 198655
 
 

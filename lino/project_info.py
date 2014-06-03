@@ -1,3 +1,6 @@
+# -*- coding: UTF-8 -*-
+from __future__ import unicode_literals
+
 SETUP_INFO = dict(
     name='lino',
     version='1.6.14',
@@ -43,10 +46,11 @@ URLconf, HTML nor CSS (`more <http://lino-framework.org/about>`_)
 
 
 Examples of Lino applications are
-`Lino-Welfare <http://welfare.lino-framework.org>`__,
-`Lino-Patrols <http://patrols.lino-framework.org>`__
+`Lino Welfare <http://welfare.lino-framework.org>`__,
+`Lino Così <http://cosi.lino-framework.org>`__
+`Lino Patrols <http://patrols.lino-framework.org>`__
 or
-`Lino-Faggio <http://faggio.lino-framework.org>`__.
+`Lino Faggio <http://faggio.lino-framework.org>`__.
 
 Lino is based on three other projects by the same author:
 `atelier <http://atelier.lino-framework.org>`__,
