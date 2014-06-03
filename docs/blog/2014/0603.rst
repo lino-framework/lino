@@ -1,0 +1,25 @@
+=====================
+Tuesday, June 3, 2014
+=====================
+
+Worked on :ref:`cosi`. Steve reported the problem that double-click on
+the phantom row of the "Unregistered invoices" table opens a dialog
+window to create a new invoice, but then says "journal may not be
+null".
+
+I simply needed to add a journal field to the insert_layout used in
+that table.  But then I stumbled over a strange phenomen.  The chooser
+for that journal field should of couse show only invoice
+journals. Here is how I did that::
+
+    @dd.chooser()
+    def journal_choices(cls):
+        logger.info("20140603 journal_choices %r", cls)
+        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
+        qs = Journal.objects.filter(voucher_type=vt)
+        logger.info("20140603 %s %s ", vt, qs.query)
+        return qs
+
+
+But it doesn't work...
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -25,29 +25,20 @@ from lino.projects.std.settings import *
 class Site(Site):
 
     #~ title = __name__
-    verbose_name = u"Lino CMS"
+    verbose_name = "Lino CMS"
     #~ description = _("yet another Content Management System.")
     version = "0.1"
-    url = "http://www.lino-framework.org/api/lino.projects.cms"
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
 
-    admin_prefix = '/admin'
+    default_ui = 'plain'
 
-    languages = ['en', 'de', 'fr']
-    #~ languages = 'de fr et en'.split()
+    languages = 'en de fr'
 
     project_model = 'tickets.Project'
     user_model = 'users.User'
 
     sidebar_width = 3
-
-    #~ remote_user_header = "REMOTE_USER"
-
-    #~ def get_app_source_file(self): return __file__
-
-    #~ def get_main_action(self,user):
-        #~ return self.modules.lino.Home.default_action
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
@@ -61,5 +52,12 @@ class Site(Site):
         yield 'lino.modlib.tickets'
         yield 'lino.modlib.pages'
         yield 'lino.projects.cms'
+
+
+    # def get_apps_modifiers(self, **kk):
+    #     kw = super(Site, self).get_apps_modifiers(**kk)
+    #     kw.update(extjs=None)
+    #     return kw
+
 
 SITE = Site(globals())

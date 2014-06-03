@@ -145,22 +145,25 @@ class Country(dd.BabelNamed):
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
 
-    isocode = models.CharField(max_length=4, primary_key=True,
-                               verbose_name=_("ISO code"),
+    isocode = models.CharField(
+        max_length=4, primary_key=True,
+        verbose_name=_("ISO code"),
         help_text=_("""\
-        The two-letter code for this country as defined by ISO 3166-1. 
+        The two-letter code for this country as defined by ISO 3166-1.
         For countries that no longer exist it may be a 4-letter code."""))
     #~ name = models.CharField(max_length=200)
     #~ name = d.BabelCharField(max_length=200,verbose_name=_("Designation"))
-    short_code = models.CharField(max_length=4, blank=True,
-                                  verbose_name=_("Short code"),
-        help_text=_("""A short abbreviation for regional usage. Obsolete."""))
-    iso3 = models.CharField(max_length=3, blank=True,
-                            verbose_name=_("ISO-3 code"),
-        help_text=_("""The three-letter code for this country as defined by ISO 3166-1."""))
 
-    #~ def __unicode__(self):
-        #~ return babel.babelattr(self,'name')
+    short_code = models.CharField(
+        max_length=4, blank=True,
+        verbose_name=_("Short code"),
+        help_text=_("""A short abbreviation for regional usage. Obsolete."""))
+
+    iso3 = models.CharField(
+        max_length=3, blank=True,
+        verbose_name=_("ISO-3 code"),
+        help_text=_("The three-letter code for this country "
+                    "as defined by ISO 3166-1."))
 
     def allowed_city_types(self):
         cd = getattr(CountryDrivers, self.isocode, None)

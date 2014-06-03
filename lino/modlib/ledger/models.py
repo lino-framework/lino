@@ -142,27 +142,18 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         verbose_name = _("Journal")
         verbose_name_plural = _("Journals")
 
-    #~ id = models.CharField(max_length=4,primary_key=True)
     ref = dd.NullCharField(max_length=20, unique=True)
-    #~ name = models.CharField(max_length=100)
     trade_type = vat.TradeTypes.field(blank=True)
-    # ~ doctype = models.IntegerField() #choices=DOCTYPE_CHOICES)
     voucher_type = VoucherTypes.field()
     force_sequence = models.BooleanField(
         _("Force chronological sequence"), default=False)
-    #~ total_based = models.BooleanField(_("Voucher entry based on total amount"),default=False)
     chart = dd.ForeignKey('accounts.Chart')
-    #~ chart = dd.ForeignKey('accounts.Chart',blank=True,null=True)
     account = dd.ForeignKey('accounts.Account', blank=True, null=True)
-    #~ account = models.CharField(max_length=6,blank=True)
-    #~ pos = models.IntegerField()
-    #~ printed_name = models.CharField(max_length=100,blank=True)
     printed_name = dd.BabelCharField(max_length=100, blank=True)
     dc = accounts.DebitOrCreditField()
 
     @dd.chooser()
-    def account_choices(self, chart):
-        #~ fkw = dict()
+    def account_choices(cls, chart):
         fkw = dict(type=accounts.AccountTypes.bank_accounts)
         return accounts.Account.objects.filter(chart=chart, **fkw)
 
@@ -299,7 +290,7 @@ class Journals(dd.Table):
 def JournalRef(**kw):
     # ~ kw.update(blank=True,null=True) # Django Ticket #12708
     kw.update(related_name="%(app_label)s_%(class)s_set_by_journal")
-    return models.ForeignKey(Journal, **kw)
+    return dd.ForeignKey('ledger.Journal', **kw)
 
 
 def VoucherNumber(**kw):
@@ -316,8 +307,8 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
     This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
     finan.Statement etc...
     
-    It is *not* abstract so that :class:`Movement` can have a ForeignKey 
-    to a Voucher. Otherwise we would have to care ourselves about data 
+    It is *not* abstract so that :class:`Movement` can have a ForeignKey
+    to a Voucher. Otherwise we would have to care ourselves about data
     integrity, and we couln't make queries on `voucher__xxx`.
     
     """
@@ -350,6 +341,14 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
 
     def get_trade_type(self):
         return self.journal.trade_type
+
+    @dd.chooser()
+    def journal_choices(cls):
+        logger.info("20140603 journal_choices %r", cls)
+        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
+        qs = Journal.objects.filter(voucher_type=vt)
+        logger.info("20140603 %s %s ", vt, qs.query)
+        return qs
 
     @classmethod
     def create_journal(cls, trade_type=None, account=None, chart=None, **kw):
@@ -660,7 +659,8 @@ class MovementsByVoucher(Movements):
 class MovementsByPartner(Movements):
     master_key = 'partner'
     order_by = ['-voucher__date']
-    column_names = 'voucher__date voucher_link debit credit account match satisfied'
+    column_names = ('voucher__date voucher_link debit credit '
+                    'account match satisfied')
     auto_fit_column_widths = True
 
     @classmethod
@@ -1040,7 +1040,7 @@ class InvoiceDetail(dd.FormLayout):
 
 
 class Invoices(dd.Table):
-    model = AccountInvoice
+    model = 'ledger.AccountInvoice'
     order_by = ["date", "id"]
     column_names = "date id number partner total_incl user *"
     parameters = dict(
@@ -1049,10 +1049,10 @@ class Invoices(dd.Table):
         pjournal=JournalRef(blank=True))
     params_layout = "pjournal pyear ppartner"
     detail_layout = InvoiceDetail()
-    insert_layout = dd.FormLayout("""
-    partner
+    insert_layout = """
+    journal partner
     date total_incl
-    """, window_size=(60, 'auto'))
+    """
 
     @classmethod
     def get_request_queryset(cls, ar):
@@ -1079,6 +1079,10 @@ class InvoicesByJournal(ByJournal, Invoices):
         "total_base total_vat user workflow_buttons *"
                   #~ "ledger_remark:10 " \
     params_panel_hidden = True
+    insert_layout = """
+    partner
+    date total_incl
+    """
 
 
 class InvoicesByPartner(Invoices):
@@ -1093,8 +1097,7 @@ VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 
 
 class InvoiceItem(VoucherItem, vat.VatItemBase):
-    #~ document = models.ForeignKey(AccountInvoice,related_name='items')
-    voucher = models.ForeignKey(AccountInvoice, related_name='items')
+    voucher = dd.ForeignKey('ledger.AccountInvoice', related_name='items')
 
     #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
     account = models.ForeignKey('accounts.Account')
