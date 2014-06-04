@@ -5,17 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-02 13:06+0300\n"
-"PO-Revision-Date: 2013-06-23 05:10+0100\n"
+"PO-Revision-Date: 2014-06-04 20:16+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: et\n"
 
 #: lino/ad.py:332 lino/projects/homeworkschool/settings/__init__.py:87
 #: lino/projects/polly/settings/__init__.py:56
@@ -43,11 +45,11 @@ msgstr ""
 
 #: lino/ad.py:908
 msgid "Reports"
-msgstr ""
+msgstr "Aruanded"
 
 #: lino/ad.py:910
 msgid "Configure"
-msgstr ""
+msgstr "Seaded"
 
 #: lino/ad.py:912
 msgid "Explorer"
@@ -59,11 +61,11 @@ msgstr ""
 
 #: lino/ad.py:1073
 msgid "This is "
-msgstr ""
+msgstr "See on "
 
 #: lino/ad.py:1082
 msgid " using "
-msgstr ""
+msgstr " kasutades "
 
 #: lino/ad.py:1116
 #, python-format
@@ -108,16 +110,16 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:4
 msgid "Quick links:"
-msgstr ""
+msgstr "Kiirviited"
 
 #: lino/config/admin_main_base.html:15 lino/modlib/system/models.py:359
 msgid "Welcome"
-msgstr ""
+msgstr "Tere tulemast"
 
 #: lino/config/admin_main_base.html:16
 #, python-format
 msgid "Hi, %(first_name)s!"
-msgstr ""
+msgstr "Tere, %(first_name)s!"
 
 #: lino/config/admin_main_base.html:24 lino/modlib/system/models.py:388
 msgid "You have"
@@ -125,17 +127,20 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:31
 msgid "This is a Lino demo site."
-msgstr ""
+msgstr "See siin on üks Lino näidise sait."
 
 #: lino/config/admin_main_base.html:32
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
+"Proovi ka meie teised <a href=\"http://lino-framework.org/demos.html"
+"\">näidise saidid</a>."
 
 #: lino/config/admin_main_base.html:33
 #, python-format
-msgid "Your feedback is welcome to %s or directly to the person who invited you."
+msgid ""
+"Your feedback is welcome to %s or directly to the person who invited you."
 msgstr ""
 
 #: lino/config/admin_main_base.html:46 lino/modlib/extjs/linoweb.js:1600
@@ -148,8 +153,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:62
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:66
@@ -276,7 +281,6 @@ msgstr ""
 #: lino/modlib/sales/models.py:255 lino/modlib/system/models.py:281
 #: lino/modlib/tickets/models.py:133 lino/modlib/tickets/models.py:242
 #: lino/modlib/tickets/models.py:339 lino/modlib/uploads/models.py:106
-#, fuzzy
 msgid "Description"
 msgstr ""
 
@@ -342,7 +346,6 @@ msgstr ""
 #: lino/modlib/lists/models.py:98 lino/modlib/notes/models.py:49
 #: lino/modlib/notes/models.py:86 lino/modlib/sepa/models.py:71
 #: lino/modlib/thirds/models.py:43
-#, fuzzy
 msgid "Remark"
 msgstr ""
 
@@ -895,7 +898,7 @@ msgstr ""
 
 #: lino/modlib/accounts/__init__.py:28 lino/modlib/accounts/models.py:199
 msgid "Accounting"
-msgstr ""
+msgstr "Raamatupidamine"
 
 #: lino/modlib/accounts/models.py:62
 msgid "Debit (checked) or Credit (not checked)"
@@ -903,27 +906,27 @@ msgstr ""
 
 #: lino/modlib/accounts/models.py:70
 msgid "Account Chart"
-msgstr ""
+msgstr "Kontoplaan"
 
 #: lino/modlib/accounts/models.py:71
 msgid "Account Charts"
-msgstr ""
+msgstr "Kontoplaanid"
 
 #: lino/modlib/accounts/models.py:101
 msgid "Account Group"
-msgstr ""
+msgstr "Kontorühm"
 
 #: lino/modlib/accounts/models.py:102
 msgid "Account Groups"
-msgstr ""
+msgstr "Kontorühmad"
 
 #: lino/modlib/accounts/models.py:144 lino/modlib/sepa/models.py:65
 msgid "Account"
-msgstr ""
+msgstr "Konto"
 
 #: lino/modlib/accounts/models.py:145 lino/modlib/sepa/models.py:66
 msgid "Accounts"
-msgstr ""
+msgstr "Kontod"
 
 #: lino/modlib/accounts/utils.py:198 lino/modlib/finan/models.py:267
 #: lino/modlib/ledger/models.py:576 lino/modlib/ledger/models.py:1199
@@ -961,19 +964,19 @@ msgstr ""
 
 #: lino/modlib/accounts/utils.py:303
 msgid "Capital"
-msgstr ""
+msgstr "Kapitaal"
 
 #: lino/modlib/accounts/utils.py:311
 msgid "Incomes"
-msgstr ""
+msgstr "Tulud"
 
 #: lino/modlib/accounts/utils.py:320
 msgid "Expenses"
-msgstr ""
+msgstr "Kulud"
 
 #: lino/modlib/accounts/utils.py:329
 msgid "Bank accounts"
-msgstr ""
+msgstr "Pamgakontod"
 
 #: lino/modlib/accounts/utils.py:335
 msgid "Account Type"
@@ -1259,8 +1262,8 @@ msgstr ""
 #: lino/modlib/beid/mixins.py:320
 #, python-format
 msgid ""
-"Cannot create new client because there is already a person named %s in "
-"our database."
+"Cannot create new client because there is already a person named %s in our "
+"database."
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:324 lino/modlib/beid/mixins.py:331
@@ -1270,8 +1273,8 @@ msgstr ""
 #: lino/modlib/beid/mixins.py:327
 #, python-format
 msgid ""
-"Cannot create new client because there is more than one person named %s "
-"in our database."
+"Cannot create new client because there is more than one person named %s in "
+"our database."
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:356
@@ -1313,7 +1316,7 @@ msgstr ""
 
 #: lino/modlib/beid/mixins.py:426
 msgid "eID card"
-msgstr ""
+msgstr "id-kaart"
 
 #: lino/modlib/beid/mixins.py:434
 msgid "Card no."
@@ -1646,8 +1649,7 @@ msgstr ""
 #: lino/modlib/cal/models_event.py:109
 msgid ""
 "The list of Event Types defined on this system.\n"
-"    An EventType is a list of events which have certain things in common,"
-"\n"
+"    An EventType is a list of events which have certain things in common,\n"
 "    especially they are displayed in the same colour in the calendar panel"
 msgstr ""
 
@@ -1681,7 +1683,8 @@ msgid "Transparent"
 msgstr ""
 
 #: lino/modlib/cal/models_event.py:320
-msgid "Indicates that this Event shouldn't prevent other Events at the same time."
+msgid ""
+"Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr ""
 
 #: lino/modlib/cal/models_event.py:325
@@ -1837,7 +1840,8 @@ msgid "My presences"
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:259
-msgid "Shows all my presences in calendar events, independently of their state."
+msgid ""
+"Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:292
@@ -2333,7 +2337,6 @@ msgid "Children"
 msgstr ""
 
 #: lino/modlib/contacts/__init__.py:21
-#, fuzzy
 msgid "Contacts"
 msgstr "Kontaktid"
 
@@ -2382,25 +2385,22 @@ msgid "Remarks"
 msgstr "Märkused"
 
 #: lino/modlib/contacts/models.py:95
-#, fuzzy
 msgid "is Person"
-msgstr "Isik"
+msgstr "on Isik"
 
 #: lino/modlib/contacts/models.py:96
 msgid "Whether this Partner is a Person."
 msgstr ""
 
 #: lino/modlib/contacts/models.py:100
-#, fuzzy
 msgid "is Company"
-msgstr "Firma"
+msgstr "on Firma"
 
 #: lino/modlib/contacts/models.py:101
 msgid "Whether this Partner is a Company."
 msgstr ""
 
 #: lino/modlib/contacts/models.py:186 lino/modlib/partners/models.py:320
-#, fuzzy
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -2420,18 +2420,16 @@ msgstr ""
 
 #: lino/modlib/contacts/models.py:243
 msgid ""
-"Text to print before allocation and name as part of the first address "
-"line."
+"Text to print before allocation and name as part of the first address line."
 msgstr ""
 
 #: lino/modlib/contacts/models.py:306
-#, fuzzy
 msgid "Organization"
-msgstr "Nimetus"
+msgstr "Firma"
 
 #: lino/modlib/contacts/models.py:307
 msgid "Organizations"
-msgstr ""
+msgstr "Firmad"
 
 #: lino/modlib/contacts/models.py:312
 msgid "Company type"
@@ -2446,24 +2444,20 @@ msgid "Functions"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:401 lino/modlib/partners/models.py:609
-#, fuzzy
 msgid "Contact Person"
 msgstr "Kontaktisik"
 
 #: lino/modlib/contacts/models.py:402 lino/modlib/partners/models.py:610
-#, fuzzy
 msgid "Contact Persons"
-msgstr "Kontaktisik"
+msgstr "Kontaktisikud"
 
 #: lino/modlib/contacts/models.py:406
-#, fuzzy
 msgid "Contact Role"
-msgstr "Kontaktisik"
+msgstr "Kontaktisiku liik"
 
 #: lino/modlib/contacts/models.py:474 lino/modlib/partners/models.py:656
-#, fuzzy
 msgid "Contact persons"
-msgstr "Kontaktiliigid"
+msgstr "Kontaktisikud"
 
 #: lino/modlib/contacts/models.py:483 lino/modlib/partners/models.py:665
 msgid "Contact for"
@@ -2498,14 +2492,13 @@ msgstr ""
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
-"        Or, newly created partners inherit the country of the site owner."
-"\n"
+"        Or, newly created partners inherit the country of the site owner.\n"
 "        "
 msgstr ""
 
 #: lino/modlib/countries/__init__.py:21 lino/modlib/countries/models.py:196
 msgid "Places"
-msgstr ""
+msgstr "Kohad"
 
 #: lino/modlib/countries/models.py:88
 msgid "Place Type"
@@ -2521,7 +2514,7 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:93 lino/modlib/countries/models.py:370
 msgid "Region"
-msgstr ""
+msgstr "Regioon"
 
 #: lino/modlib/countries/models.py:94
 msgid "Community"
@@ -2533,11 +2526,11 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:98
 msgid "County"
-msgstr ""
+msgstr "Maakond"
 
 #: lino/modlib/countries/models.py:99
 msgid "Province"
-msgstr ""
+msgstr "Provints"
 
 #: lino/modlib/countries/models.py:100
 msgid "Shire"
@@ -2569,7 +2562,7 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:108 lino/modlib/countries/models.py:292
 msgid "City"
-msgstr ""
+msgstr "Linn"
 
 #: lino/modlib/countries/models.py:109
 msgid "Town"
@@ -2601,15 +2594,15 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:120
 msgid "Village"
-msgstr ""
+msgstr "Küla"
 
 #: lino/modlib/countries/models.py:145
 msgid "Country"
-msgstr ""
+msgstr "Riik"
 
 #: lino/modlib/countries/models.py:146
 msgid "Countries"
-msgstr ""
+msgstr "Riigid"
 
 #: lino/modlib/countries/models.py:149
 msgid "ISO code"
@@ -2653,7 +2646,8 @@ msgid "Part of"
 msgstr ""
 
 #: lino/modlib/countries/models.py:207
-msgid "The superordinate geographic place         of which this place is a part."
+msgid ""
+"The superordinate geographic place         of which this place is a part."
 msgstr ""
 
 #: lino/modlib/countries/models.py:246
@@ -2919,31 +2913,31 @@ msgstr ""
 
 #: lino/modlib/declarations/be.py:81
 msgid "Sales base"
-msgstr ""
+msgstr "Põhikonto Müük"
 
 #: lino/modlib/declarations/be.py:82
 msgid "Sales VAT"
-msgstr ""
+msgstr "Käibemaksukonto Müük"
 
 #: lino/modlib/declarations/be.py:83
 msgid "Purchases base"
-msgstr ""
+msgstr "Põhikonto Ost"
 
 #: lino/modlib/declarations/be.py:84
 msgid "Purchases VAT"
-msgstr ""
+msgstr "Käibemaksukonto Ost"
 
 #: lino/modlib/declarations/be.py:87
 msgid "Investments"
-msgstr ""
+msgstr "Investeeringud"
 
 #: lino/modlib/declarations/be.py:88
 msgid "Ware"
-msgstr ""
+msgstr "Vara"
 
 #: lino/modlib/declarations/be.py:89
 msgid "Services"
-msgstr ""
+msgstr "Teenused"
 
 #: lino/modlib/declarations/models.py:53
 msgid "Submitted"
@@ -3040,11 +3034,11 @@ msgstr ""
 
 #: lino/modlib/declarations/models.py:147
 msgid "VAT declaration"
-msgstr ""
+msgstr "Käibemaksu deklaratsioon"
 
 #: lino/modlib/declarations/models.py:148
 msgid "VAT declarations"
-msgstr ""
+msgstr "Käibemaksu deklaratsioonid"
 
 #: lino/modlib/dedupe/models.py:56
 #, fuzzy
@@ -3117,8 +3111,8 @@ msgstr ""
 
 #: lino/modlib/excerpts/models.py:83
 msgid ""
-"There's at most one primary type per model.         Enabling this field "
-"will automatically make the other         types non-primary."
+"There's at most one primary type per model.         Enabling this field will "
+"automatically make the other         types non-primary."
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:88
@@ -4698,8 +4692,7 @@ msgstr ""
 #: lino/modlib/reception/models.py:200
 #, python-format
 msgid ""
-"Checkin in will reassign the event                 from %(old)s to "
-"%(new)s."
+"Checkin in will reassign the event                 from %(old)s to %(new)s."
 msgstr ""
 
 #: lino/modlib/reception/models.py:209
@@ -4733,7 +4726,8 @@ msgid "Expected Guests"
 msgstr ""
 
 #: lino/modlib/reception/models.py:318
-msgid "Consult this table when checking in a partner who     has an appointment."
+msgid ""
+"Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
 #: lino/modlib/reception/models.py:346
@@ -4888,8 +4882,8 @@ msgstr ""
 
 #: lino/modlib/sepa/models.py:76
 msgid ""
-"Enabling this field will automatically disable any previous primary "
-"account and update the partner's IBAN and BIC"
+"Enabling this field will automatically disable any previous primary account "
+"and update the partner's IBAN and BIC"
 msgstr ""
 
 #: lino/modlib/statbel/models.py:31 lino/modlib/statbel/models.py:41
@@ -4898,14 +4892,13 @@ msgstr ""
 
 #: lino/modlib/statbel/models.py:33
 msgid ""
-"The official code for this place                     used by "
-"statbel.fgov.be"
+"The official code for this place                     used by statbel.fgov.be"
 msgstr ""
 
 #: lino/modlib/statbel/models.py:43
 msgid ""
-"The official code for this country                     used by "
-"statbel.fgov.be"
+"The official code for this country                     used by statbel.fgov."
+"be"
 msgstr ""
 
 #: lino/modlib/system/models.py:45
@@ -5186,8 +5179,8 @@ msgstr ""
 
 #: lino/modlib/users/models.py:91
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot "
-"log in."
+"Users with an empty `profile` field are considered inactive and cannot log "
+"in."
 msgstr ""
 
 #: lino/modlib/users/models.py:94
@@ -5244,18 +5237,17 @@ msgstr ""
 
 #: lino/modlib/vat/models.py:89
 msgid "VAT Regime"
-msgstr ""
+msgstr "Käibemaksurežiim"
 
 #: lino/modlib/vat/models.py:91
 msgid ""
-"Determines how the VAT is being handled,         i.e. whether and how it "
-"is to be paid."
+"Determines how the VAT is being handled,         i.e. whether and how it is "
+"to be paid."
 msgstr ""
 
 #: lino/modlib/vat/models.py:96
-#, fuzzy
 msgid "Private person"
-msgstr "Isik"
+msgstr "Eraisik"
 
 #: lino/modlib/vat/models.py:97
 msgid "Subject to VAT"
@@ -5284,11 +5276,11 @@ msgstr ""
 
 #: lino/modlib/vat/models.py:152
 msgid "Purchases"
-msgstr ""
+msgstr "Ost"
 
 #: lino/modlib/vat/models.py:153
 msgid "Wages"
-msgstr ""
+msgstr "Palgad"
 
 #: lino/modlib/vat/models.py:262
 msgid "Payment Term"
@@ -5340,9 +5332,8 @@ msgid "owned only"
 msgstr ""
 
 #: lino/projects/babel_tutorial/models.py:7
-#, fuzzy
 msgid "Categories"
-msgstr "Tootekategooriad"
+msgstr "Kategooriad"
 
 #: lino/projects/babel_tutorial/models.py:9
 msgid "Hardware"
@@ -5553,780 +5544,3 @@ msgstr ""
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
-
-#~ msgid "Invoiceable partners"
-#~ msgstr ""
-
-#~ msgid "Table of all partners who have at least one invoiceable item."
-#~ msgstr ""
-
-#~ msgid "Lesson %d"
-#~ msgstr ""
-
-#~ msgid "Ready to print"
-#~ msgstr ""
-
-#~ msgid "Quick appointment"
-#~ msgstr ""
-
-#~ msgid "Birth"
-#~ msgstr ""
-
-#~ msgid "eID card"
-#~ msgstr ""
-
-#~ msgid "number"
-#~ msgstr ""
-
-#~ msgid "valid from"
-#~ msgstr ""
-
-#~ msgid "issued by"
-#~ msgstr ""
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "Under construction"
-#~ msgstr ""
-
-#~ msgid "Read eID card and find corresponding client."
-#~ msgstr ""
-
-#~ msgid "Only events managed by this user."
-#~ msgstr ""
-
-#~ msgid "Only events having this state."
-#~ msgstr ""
-
-#~ msgid "Only guests having this state."
-#~ msgstr ""
-
-#~ msgid "Shows received invitations which I must accept or reject."
-#~ msgstr ""
-
-#~ msgid "My received invitations"
-#~ msgstr ""
-
-#~ msgid "%d tasks to do"
-#~ msgstr ""
-
-#~ msgid "%d events assigned to you"
-#~ msgstr ""
-
-#~ msgid "List of the possible states of a calendar event."
-#~ msgstr ""
-
-#~ msgid "Created appointment for %(user)s with %(partner)s"
-#~ msgstr ""
-
-#~ msgid "Guest left from reception queue"
-#~ msgstr ""
-
-#~ msgid "%(partner)s has stopped waiting for %(user)s"
-#~ msgstr ""
-
-#~ msgid "Hi, "
-#~ msgstr ""
-
-#~ msgid "%(user)s receives %(guest)s."
-#~ msgstr ""
-
-#~ msgid "Create visit"
-#~ msgstr ""
-
-#~ msgid "%(guest)s has left the centre."
-#~ msgstr ""
-
-#~ msgid "My Waiting Guests"
-#~ msgstr ""
-
-#~ msgid "Expert"
-#~ msgstr ""
-
-#~ msgid "My "
-#~ msgstr ""
-
-#~ msgid "The account to move when this product is used in a sales invoice."
-#~ msgstr ""
-
-#~ msgid "Purchases account"
-#~ msgstr ""
-
-#~ msgid "The account to move when this product is used in a purchases invoice."
-#~ msgstr ""
-
-#~ msgid "Unclear events"
-#~ msgstr ""
-
-#~ msgid "My unclear events"
-#~ msgstr ""
-
-#~ msgid "Events which probably need your attention."
-#~ msgstr ""
-
-#~ msgid "%d unclear events approaching."
-#~ msgstr ""
-
-#~ msgid "Scheduled"
-#~ msgstr ""
-
-#~ msgid "Mark this as Scheduled. All participants have been informed."
-#~ msgstr ""
-
-#~ msgid "Reschedule"
-#~ msgstr ""
-
-#~ msgid "VAT exempt"
-#~ msgstr ""
-
-#~ msgid "Guest role for clients"
-#~ msgstr ""
-
-#~ msgid "Default calendar for client events"
-#~ msgstr ""
-
-#~ msgid "Mark this guest as arrived"
-#~ msgstr ""
-
-#~ msgid "Guest was received by agent"
-#~ msgstr ""
-
-#~ msgid "Guest left the centre"
-#~ msgstr ""
-
-#~ msgid "Received Guests"
-#~ msgstr ""
-
-#~ msgid "Waiting Guests"
-#~ msgstr ""
-
-#~ msgid "The default item VAT setting for sales to this customer."
-#~ msgstr ""
-
-#~ msgid "Prices include VAT"
-#~ msgstr ""
-
-#~ msgid "Whether prices includes VAT or not."
-#~ msgstr ""
-
-#~ msgid "%s (actor in module %s)"
-#~ msgstr ""
-
-#~ msgid "%s (model in module %s)"
-#~ msgstr ""
-
-#~ msgid "My notes"
-#~ msgstr ""
-
-#~ msgid "Waiting Visitors"
-#~ msgstr ""
-
-#~ msgid "Fields of %s"
-#~ msgstr ""
-
-#~ msgid "Actions on a %s"
-#~ msgstr ""
-
-#~ msgid "Tables based on %s"
-#~ msgstr ""
-
-#~ msgid "Slave tables of %s"
-#~ msgstr ""
-
-#~ msgid "%s (model in module `%s`)"
-#~ msgstr ""
-
-#~ msgid "This will create and print %d invoices."
-#~ msgstr ""
-
-#~ msgid "List of things for which this partner should get an invoice"
-#~ msgstr ""
-
-#~ msgid "Update Reminders"
-#~ msgstr ""
-
-#~ msgid "Event/Note"
-#~ msgstr ""
-
-#~ msgid "Events/Notes"
-#~ msgstr ""
-
-#~ msgid "Matched by"
-#~ msgstr ""
-
-#~ msgid "Action \"%(action)s\" failed for %(record)s:"
-#~ msgstr ""
-
-#~ msgid "An error report has been sent to the system administrator."
-#~ msgstr ""
-
-#~ msgid "Bank statement"
-#~ msgstr ""
-
-#~ msgid "Bank statements"
-#~ msgstr ""
-
-#~ msgid "Sales account"
-#~ msgstr ""
-
-#~ msgid "%(place)s, %s(date)"
-#~ msgstr ""
-
-#~ msgid "Received"
-#~ msgstr ""
-
-#~ msgid "%(guest)s leaves without being received."
-#~ msgstr ""
-
-#~ msgid "(Root)"
-#~ msgstr ""
-
-#~ msgid "Calendars"
-#~ msgstr ""
-
-#~ msgid "The calendar to which events will be generated."
-#~ msgstr ""
-
-#~ msgid "UID"
-#~ msgstr ""
-
-#~ msgid "Hidden"
-#~ msgstr ""
-
-#~ msgid "Default calendar"
-#~ msgstr ""
-
-#~ msgid "The default calendar for your events and tasks."
-#~ msgstr ""
-
-#~ msgid "Tariff"
-#~ msgstr ""
-
-#~ msgid "Default calendar for prompt events"
-#~ msgstr ""
-
-#~ msgid "~Calendar"
-#~ msgstr ""
-
-#~ msgid "If nonempty, show only events of that user"
-#~ msgstr ""
-
-#~ msgid "Missed reminders"
-#~ msgstr ""
-
-#~ msgid "Holiday"
-#~ msgstr ""
-
-#~ msgid "The default type for recurring calendar events."
-#~ msgstr ""
-
-#~ msgid "Course"
-#~ msgstr ""
-
-#~ msgid "Before | Debit"
-#~ msgstr ""
-
-#~ msgid "Before | Credit"
-#~ msgstr ""
-
-#~ msgid "After | Debit"
-#~ msgstr ""
-
-#~ msgid "After | Credit"
-#~ msgstr ""
-
-#~ msgid "Contract"
-#~ msgstr "Kontakt"
-
-#~ msgid "Contracts"
-#~ msgstr "Kontaktid"
-
-#~ msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
-#~ msgstr ""
-
-#~ msgid "Team view"
-#~ msgstr ""
-
-#~ msgid "Register this object."
-#~ msgstr ""
-
-#~ msgid "Deregister this object."
-#~ msgstr ""
-
-#~ msgid "Introduction"
-#~ msgstr ""
-
-#~ msgid "This will create an invoice for %s."
-#~ msgstr ""
-
-#~ msgid "New Year's Day"
-#~ msgstr ""
-
-#~ msgid "International Workers' Day"
-#~ msgstr ""
-
-#~ msgid "National Day"
-#~ msgstr ""
-
-#~ msgid "Assumption of Mary"
-#~ msgstr ""
-
-#~ msgid "All Souls' Day"
-#~ msgstr ""
-
-#~ msgid "All Saints' Day"
-#~ msgstr ""
-
-#~ msgid "Armistice with Germany"
-#~ msgstr ""
-
-#~ msgid "Christmas"
-#~ msgstr ""
-
-#~ msgid "Summer holidays"
-#~ msgstr ""
-
-#~ msgid "This will reset all invitations"
-#~ msgstr ""
-
-#~ msgid "company types"
-#~ msgstr ""
-
-#~ msgid "Companies"
-#~ msgstr "Firmad"
-
-#~ msgid "The superordinate geographic place of which this place is a part."
-#~ msgstr ""
-
-#~ msgid "Due"
-#~ msgstr ""
-
-#~ msgid "title"
-#~ msgstr ""
-
-#~ msgid "Answer"
-#~ msgstr ""
-
-#~ msgid "Undo"
-#~ msgstr ""
-
-#~ msgid "Undo your vote"
-#~ msgstr ""
-
-#~ msgid "The official code for this place used by statbel.fgov.be"
-#~ msgstr ""
-
-#~ msgid "The official code for this country used by statbel.fgov.be"
-#~ msgstr ""
-
-#~ msgid "Belgian Reference System."
-#~ msgstr ""
-
-#~ msgid "Table of my events per day."
-#~ msgstr ""
-
-#~ msgid "My events today"
-#~ msgstr ""
-
-#~ msgid "a Lino application to make Belgian accounting simple."
-#~ msgstr ""
-
-#~ msgid "This demo site has %d users, they all have \"1234\" as password:"
-#~ msgstr ""
-
-#~ msgid "The %s app"
-#~ msgstr ""
-
-#~ msgid "The %s model"
-#~ msgstr ""
-
-#~ msgid "The %s view"
-#~ msgstr ""
-
-#~ msgid "%s (field in \"%s\")"
-#~ msgstr ""
-
-#~ msgid "The **%s** field"
-#~ msgstr ""
-
-#~ msgid "%s (model in app \"%s\")"
-#~ msgstr ""
-
-#~ msgid "%s (table in module %s)"
-#~ msgstr ""
-
-#~ msgid "Group Type"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Group Types"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Group"
-#~ msgstr ""
-
-#~ msgid "Groups"
-#~ msgstr ""
-
-#~ msgid "Sales Rule"
-#~ msgstr ""
-
-#~ msgid "Sales Rules"
-#~ msgstr ""
-
-#~ msgid "The default VAT regime for sales to this customer."
-#~ msgstr ""
-
-#~ msgid "Attestation Type (Content)"
-#~ msgstr ""
-
-#~ msgid "Default"
-#~ msgstr "Isik"
-
-#~ msgid "Automatically suggested. Default state of an automatic event."
-#~ msgstr ""
-
-#~ msgid "The company that runs this site"
-#~ msgstr ""
-
-#~ msgid "The Company to be used as sender in documents."
-#~ msgstr ""
-
-#~ msgid "Create attestation"
-#~ msgstr ""
-
-#~ msgid "%d reminder(s) have been updated."
-#~ msgstr ""
-
-#~ msgid "Consult this table when checking in a partner who has an appointment."
-#~ msgstr ""
-
-#~ msgid "Attestation Types"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Attestations"
-#~ msgstr "Isikud"
-
-#~ msgid "Managed"
-#~ msgstr "Keel"
-
-#~ msgid "Link type"
-#~ msgstr ""
-
-#~ msgid "Human Link"
-#~ msgstr ""
-
-#~ msgid "Human Links"
-#~ msgstr ""
-
-#~ msgid "Natural parency"
-#~ msgstr ""
-
-#~ msgid "Adoptive parency"
-#~ msgstr ""
-
-#~ msgid "Template file: %s "
-#~ msgstr ""
-
-#~ msgid "%d event(s) have been updated."
-#~ msgstr ""
-
-#~ msgid "Teacher type"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Teacher types"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Teacher"
-#~ msgstr ""
-
-#~ msgid "Teachers"
-#~ msgstr ""
-
-#~ msgid "Pupil type"
-#~ msgstr ""
-
-#~ msgid "Pupil types"
-#~ msgstr ""
-
-#~ msgid "Pupil"
-#~ msgstr ""
-
-#~ msgid "Pupils"
-#~ msgstr ""
-
-#~ msgid "is a teacher"
-#~ msgstr ""
-
-#~ msgid "Whether this Person is also a Teacher."
-#~ msgstr ""
-
-#~ msgid "is a pupil"
-#~ msgstr ""
-
-#~ msgid "Whether this Person is also a Pupil."
-#~ msgstr ""
-
-#~ msgid "upload"
-#~ msgstr ""
-
-#~ msgid "uploads"
-#~ msgstr ""
-
-#~ msgid "The model that can issue attestations of this type."
-#~ msgstr ""
-
-#~ msgid "Check this to define a \"quick attestation\" type."
-#~ msgstr ""
-
-#~ msgid "Create an attestation from this"
-#~ msgstr ""
-
-#~ msgid "Attest"
-#~ msgstr ""
-
-#~ msgid "Attestation Type"
-#~ msgstr ""
-
-#~ msgid "Grandfather"
-#~ msgstr ""
-
-#~ msgid "Grandmother"
-#~ msgstr ""
-
-#~ msgid "Grandson"
-#~ msgstr ""
-
-#~ msgid "Granddaughter"
-#~ msgstr ""
-
-#~ msgid "Parency link"
-#~ msgstr ""
-
-#~ msgid "Child"
-#~ msgstr ""
-
-#~ msgctxt "(human)"
-#~ msgid "Children"
-#~ msgstr ""
-
-#~ msgid "valid until"
-#~ msgstr ""
-
-#~ msgid "%s expires"
-#~ msgstr ""
-
-#~ msgid "Checkin in will reassign the event from %(old)s to %(new)s."
-#~ msgstr ""
-
-#~ msgid "If not empty, then this template is reserved to members of this team."
-#~ msgstr ""
-
-#~ msgid "Team"
-#~ msgstr ""
-
-#~ msgid "Teams"
-#~ msgstr ""
-
-#~ msgid "Membership"
-#~ msgstr ""
-
-#~ msgid "Property group"
-#~ msgstr ""
-
-#~ msgid "Create without detail"
-#~ msgstr ""
-
-#~ msgid "Don't open a detail window on the new record"
-#~ msgstr ""
-
-#~ msgid "Create a printout from this"
-#~ msgstr ""
-
-#~ msgid "Create Printout"
-#~ msgstr ""
-
-#~ msgid "Badges"
-#~ msgstr ""
-
-#~ msgid "Badge"
-#~ msgstr ""
-
-#~ msgid "Badge Award"
-#~ msgstr ""
-
-#~ msgid "Badge Awards"
-#~ msgstr ""
-
-#~ msgid "Holder"
-#~ msgstr ""
-
-#~ msgid "Awards"
-#~ msgstr ""
-
-#~ msgid "Text to print before first_name as part of the first address line."
-#~ msgstr ""
-
-#~ msgid "Select this value"
-#~ msgstr ""
-
-#~ msgid "Account type"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Account types"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Giro"
-#~ msgstr ""
-
-#~ msgid "Savings"
-#~ msgstr ""
-
-#~ msgid "Deposits"
-#~ msgstr ""
-
-#~ msgid "Printout Type"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Printout Types"
-#~ msgstr "Firmaliik"
-
-#~ msgid "Printout"
-#~ msgstr ""
-
-#~ msgid "Printouts"
-#~ msgstr ""
-
-#~ msgid "Household Role"
-#~ msgstr ""
-
-#~ msgid "Household Roles"
-#~ msgstr ""
-
-#~ msgid "name-giving"
-#~ msgstr ""
-
-#~ msgid "Member of"
-#~ msgstr ""
-
-#~ msgid "(a type)"
-#~ msgstr ""
-
-#~ msgid "(b type)"
-#~ msgstr ""
-
-#~ msgid "(a object)"
-#~ msgstr ""
-
-#~ msgid "(b object)"
-#~ msgstr ""
-
-#~ msgid "Links from this"
-#~ msgstr ""
-
-#~ msgid "Links to this"
-#~ msgstr ""
-
-#~ msgid "~Links"
-#~ msgstr ""
-
-#~ msgid "Dependent Person"
-#~ msgstr "Isik"
-
-#~ msgid "Dependent Persons"
-#~ msgstr "Isik"
-
-#~ msgctxt "(human)"
-#~ msgid "Parents"
-#~ msgstr "Isik"
-
-#~ msgid "Dependent persons"
-#~ msgstr "Isik"
-
-#~ msgid "Friend"
-#~ msgstr ""
-
-#~ msgid "Save Grid Configuration"
-#~ msgstr ""
-
-#~ msgid "Child of head"
-#~ msgstr ""
-
-#~ msgid "Child of partner"
-#~ msgstr ""
-
-#~ msgid " as "
-#~ msgstr ""
-
-#~ msgid "%(c)s is %(t)s of %(p)s"
-#~ msgstr ""
-
-#~ msgid "Create new client %(first_name)s %(last_name)s : Are you sure?"
-#~ msgstr ""
-
-#~ msgid "Upcoming reminders"
-#~ msgstr ""
-
-#~ msgid "Past reminders"
-#~ msgstr ""
-
-#~ msgid "Delete {0} rows. Are you sure?"
-#~ msgstr ""
-
-#~ msgid "Career related uploads"
-#~ msgstr ""
-
-#~ msgid "Medical uploads"
-#~ msgstr ""
-
-#~ msgid "%s printable has been built."
-#~ msgstr ""
-
-#~ msgid "Reused %s printable from cache."
-#~ msgstr ""
-
-#~ msgid "Certificate"
-#~ msgstr ""
-
-#~ msgid "Skip dialog"
-#~ msgstr ""
-
-#~ msgid "Check this to define a \"quick printout\" type."
-#~ msgstr ""
-
-#~ msgid "No certificate to delete."
-#~ msgstr ""
-
-#~ msgid "Certificate has been deleted."
-#~ msgstr ""
-
-#~ msgid "Going to undo the printout for %s"
-#~ msgstr ""
-
-#~ msgid "Create a new excerpt using this data record."
-#~ msgstr ""
-
-#~ msgid "Create Excerpt"
-#~ msgstr ""
-
-#~ msgid "Farest future"
-#~ msgstr ""
-
-#~ msgid "Don't generate automatic events past that date."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Lino won't not accept more than "
-#~ "one locking event per user at the"
-#~ " same time."
-#~ msgstr ""
-
-#~ msgid "To Excel"
-#~ msgstr ""
-
-#~ msgid "Export this table as a xls Excel document"
-#~ msgstr ""
-
-#~ msgid "Export this table to a .csv file"
-#~ msgstr ""
-
