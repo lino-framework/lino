@@ -1472,19 +1472,6 @@ is 'summary'.
         fld = fields.VirtualField(box, actor.get_slave_summary)
         fld.name = actor.__name__
         fld.lino_resolve_type()
-        if False:
-            # 20140430 I removed the automatic Insert button in the
-            # bottom toolbar of a slave summary panel. Because it was
-            # there so lonely... and then it wasn't able to set
-            # known_values (which was disturbing for
-            # UploadsByController and UploadsByClient subclasses).
-            a = actor.insert_action
-            if a is not None:
-                kw.update(
-                    ls_insert_handler=js_code("Lino.%s" % a.full_name()))
-                kw.update(
-                    ls_bbar_actions=[
-                        settings.SITE.plugins.extjs.renderer.a2btn(a)])
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 
 

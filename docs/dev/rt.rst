@@ -159,4 +159,7 @@ The ``ActionRequest`` class
     <dd.Actor.override_column_headers>` method.
 
 
+  .. method:: insert_button(self, text=None, known_values={}, **options)
 
+    Returns the HTML of an action link which will open the
+    :term:`insert window` of this request.

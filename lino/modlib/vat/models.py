@@ -484,9 +484,6 @@ class VatDocument(VatTotal):
         super(VatDocument, self).before_state_change(ar, old, new)
 
 
-#~ class DeclaredVatDocument(VatDocument):
-    #~ class Meta:
-        #~ abstract = True
 class VatItemBase(mixins.Sequenced, VatTotal):
 
     """Abstract Base class for InvoiceItem and OrderItem.  Subclasses
@@ -603,6 +600,8 @@ class QtyVatItemBase(VatItemBase):
 
         if self.unit_price is not None and self.qty is not None:
             self.set_amount(ar, self.unit_price * self.qty)
+
+
 
 
 if False:

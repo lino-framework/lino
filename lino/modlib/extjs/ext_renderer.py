@@ -211,29 +211,29 @@ class ExtRenderer(HtmlRenderer):
             if obj is not None:
                 st.update(record_id=obj.pk)
             return self.window_action_button(
-                ar.request, ba, st, label, **kw)
+                ar, ba, st, label, **kw)
         if ba.action.opens_a_window:
             st = ar.get_status()
             if obj is not None:
                 st.update(record_id=obj.pk)
             return self.window_action_button(
-                ar.request,
+                ar,
                 ba, st, label, **kw)
         return self.row_action_button(obj, ar, ba, label, **kw)
 
     def request_handler(self, ar, *args, **kw):
         st = ar.get_status(**kw)
-        return self.action_call(ar.request, ar.bound_action, st)
+        return self.action_call(ar, ar.bound_action, st)
 
     def window_action_button(
-            self, request, ba, status={},
+            self, ar, ba, status={},
             label=None, title=None, **kw):
         """
         Return a HTML chunk for a button that will execute this
         action using a *Javascript* link to this action.
         """
         label = unicode(label or ba.get_button_label())
-        href = 'javascript:' + self.action_call(request, ba, status)
+        href = 'javascript:' + self.action_call(ar, ba, status)
         return self.href_button_action(
             ba, href, label, title or ba.action.help_text, **kw)
 
@@ -305,7 +305,7 @@ class ExtRenderer(HtmlRenderer):
                     #~ after_show.update(record_id=-99999)
                     # see tickets/56
                     return self.window_action_button(
-                        rr.request, a, after_show, _("Upload"),
+                        rr, a, after_show, _("Upload"),
                         #~ icon_file='attach.png',
                         #~ icon_file='world_add.png',
                         icon_name='page_add',
@@ -326,7 +326,7 @@ class ExtRenderer(HtmlRenderer):
             chunks.append(' ')
             after_show.update(record_id=obj.pk)
             chunks.append(self.window_action_button(
-                rr.request,
+                rr,
                 rr.ah.actor.detail_action,
                 after_show,
                 _("Edit"), icon_name='application_form',
@@ -336,20 +336,16 @@ class ExtRenderer(HtmlRenderer):
         return '[?!]'
 
     def insert_button(self, ar, text=None, known_values={}, **options):
-        """
-        Returns the HTML of a button which will call the `insert_action`.
-        """
+        "See :meth:`rt.ActionRequest.insert_button`."
         a = ar.actor.insert_action
         if a is None:
-            # raise Exception("20130924 a is None")
             return
         if not a.get_bound_action_permission(ar, ar.master_instance, None):
-            # raise Exception("20130924 no permission")
             return
         elem = ar.create_instance(**known_values)
         st = ar.get_status()
         st.update(data_record=ar.elem2rec_insert(ar.ah, elem))
-        return self.window_action_button(ar.request, a, st, text, **options)
+        return self.window_action_button(ar, a, st, text, **options)
 
     def action_call_on_instance(self, obj, ar, ba, **st):
         """Return a string with Javascript code that would, when executed, run
@@ -442,7 +438,7 @@ class ExtRenderer(HtmlRenderer):
             if ar is None:
                 return self.action_call(None, a, dict(record_id=obj.pk))
             if a.get_bound_action_permission(ar, obj, None):
-                return self.action_call(ar.request, a, dict(record_id=obj.pk))
+                return self.action_call(ar, a, dict(record_id=obj.pk))
 
     def obj2html(self, ar, obj, text=None, **kw):
         if not text:

@@ -56,7 +56,8 @@ from lino.utils import join_elems
 accounts = dd.resolve_app('accounts', strict=True)
 contacts = dd.resolve_app('contacts', strict=True)
 vat = dd.resolve_app('vat', strict=True)
-partner_model = settings.SITE.partners_app_label + '.Partner'
+# partner_model = settings.SITE.partners_app_label + '.Partner'
+partner_model = 'contacts.Partner'
 
 ZERO = Decimal(0)
 
@@ -241,12 +242,12 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
             #~ self.pos = self.__class__.objects.all().count() + 1
         super(Journal, self).full_clean(*args, **kw)
 
-    #~ def pre_delete_voucher(self,doc):
     def disable_voucher_delete(self, doc):
         # print "pre_delete_voucher", doc.number, self.get_next_number()
         if self.force_sequence:
             if doc.number + 1 != self.get_next_number(doc):
-                return _("%s is not the last voucher in journal" % unicode(doc))
+                return _("%s is not the last voucher in journal"
+                         % unicode(doc))
 
     def get_template_groups(self):
         """Here we override the class method by an instance method.  This
@@ -282,8 +283,8 @@ class Journals(dd.Table):
     """
     insert_layout = dd.FormLayout("""
     ref name
-    trade_type 
-    voucher_type 
+    trade_type
+    voucher_type
     """, window_size=(60, 'auto'))
 
 
@@ -297,20 +298,16 @@ def VoucherNumber(**kw):
     return models.IntegerField(**kw)
 
 
-#~ class Voucher(mixins.Controllable):
-#~ class Voucher(mixins.UserAuthored,mixins.ProjectRelated):
 class Voucher(mixins.UserAuthored, mixins.Registrable):
 
-    """
-    A Voucher is a document that represents a monetary transaction.
-    Subclasses must define a field `state`.
-    This model is subclassed by sales.Invoice, ledger.AccountInvoice, 
-    finan.Statement etc...
+    """A Voucher is a document that represents a monetary transaction.
+    Subclasses must define a field `state`.  This model is subclassed
+    by sales.Invoice, ledger.AccountInvoice, finan.Statement etc...
     
     It is *not* abstract so that :class:`Movement` can have a ForeignKey
     to a Voucher. Otherwise we would have to care ourselves about data
     integrity, and we couln't make queries on `voucher__xxx`.
-    
+
     """
     class Meta:
         verbose_name = _("Voucher")
@@ -518,8 +515,79 @@ class ByJournal(dd.Table):
         return unicode(ar.master_instance)
 
 
-#~ class Movement(mixins.Sequenced,Matchable):
-#~ class Movement(Matchable):
+class VouchersByPartner(dd.VirtualTable):
+    label = _("VAT vouchers")
+    order_by = ["-date"]
+    master = 'contacts.Partner'
+    column_names = "date voucher total_incl total_base total_vat"
+
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_data_rows(self, ar):
+        obj = ar.master_instance
+        rows = []
+        if obj is not None:
+            for M in dd.models_by_base(vat.VatDocument):
+                rows += list(M.objects.filter(partner=obj))
+
+            def by_date(a, b):
+                return cmp(b.date, a.date)
+
+            rows.sort(by_date)
+        return rows
+
+    @dd.displayfield(_("Voucher"))
+    def voucher(self, row, ar):
+        return ar.obj2html(row)
+
+    @dd.virtualfield('ledger.Voucher.date')
+    def date(self, row, ar):
+        return row.date
+
+    @dd.virtualfield('ledger.AccountInvoice.total_incl')
+    def total_incl(self, row, ar):
+        return row.total_incl
+
+    @dd.virtualfield('ledger.AccountInvoice.total_base')
+    def total_base(self, row, ar):
+        return row.total_base
+
+    @dd.virtualfield('ledger.AccountInvoice.total_vat')
+    def total_vat(self, row, ar):
+        return row.total_vat
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        vtypes = set()
+        for m in dd.models_by_base(vat.VatDocument):
+            vtypes.add(
+                VoucherTypes.get_by_value(dd.full_model_name(m)))
+
+        elems = []
+        actions = []
+
+        def add_action(btn):
+            if btn is None:
+                return False
+            actions.append(btn)
+            return True
+
+        for jnl in Journal.objects.filter(voucher_type__in=vtypes):
+            sar = ar.spawn(
+                InvoicesByJournal,
+                master_instance=jnl,
+                known_values=dict(partner=obj))
+            # logger.info(
+            #     "20140604 sar.requesting_panel %s",
+            #     sar.requesting_panel)
+            if add_action(sar.insert_button(unicode(jnl), icon_name=None)):
+                actions.append(' ')
+
+        elems += [E.br(), _("Create voucher in journal ")] + actions
+        return E.div(*elems)
+
+
 class Movement(dd.Model):
 
     """
@@ -1085,54 +1153,6 @@ class InvoicesByJournal(ByJournal, Invoices):
     """
 
 
-class InvoicesByPartner(Invoices):
-    label = _("Unregistered invoices")
-    order_by = ["date"]
-    master_key = 'partner'
-    column_names = "date total_incl total_base total_vat *"
-    filter = models.Q(state=InvoiceStates.draft)
-
-    slave_grid_format = 'summary'
-
-    @classmethod
-    def param_defaults(cls, ar, **kw):
-        kw = super(InvoicesByPartner, cls).param_defaults(ar, **kw)
-        kw.update(pyear=None)
-        return kw
-
-    @classmethod
-    def get_slave_summary(self, obj, ar):
-        elems = []
-
-        # sar = self.request(master_instance=obj)
-        # N = sar.get_total_count()
-        # if N > 0:
-        #     elems += [_("%s has %d unregistered invoices.") % (obj, N)]
-        # else:
-        #     elems.append(_("No unregistered invoices."))
-
-        actions = []
-
-        def add_action(btn):
-            if btn is None:
-                return False
-            actions.append(btn)
-            return True
-
-        vt = VoucherTypes.get_by_value(dd.full_model_name(self.model))
-
-        for jnl in Journal.objects.filter(voucher_type=vt):
-            sar = ar.spawn(
-                InvoicesByJournal,
-                master_instance=jnl,
-                known_values=dict(partner=obj))
-            if add_action(sar.insert_button(unicode(jnl), icon_name=None)):
-                actions.append(' ')
-
-        elems += [E.br(), _("Create invoice in journal ")] + actions
-        return E.div(*elems)
-
-
 VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 
 
@@ -1435,7 +1455,7 @@ def site_setup(site):
             T.add_detail_tab(
                 "ledger",
                 """
-                ledger.InvoicesByPartner
+                ledger.VouchersByPartner
                 ledger.MovementsByPartner
                 """,
                 label=MODULE_LABEL)

@@ -560,8 +560,8 @@ class BooleanStoreField(StoreField):
 
 class DisplayStoreField(StoreField):
     pass
-    #~ def value2html(self,ar,v,**cellattrs):
-        #~ return E.td(v,**cellattrs)
+    # def full_value_from_object(self, obj, ar):
+    #     return self.field.value_from_object(obj, ar)
 
 
 class GenericForeignKeyField(DisplayStoreField):

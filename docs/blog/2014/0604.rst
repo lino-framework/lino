@@ -57,7 +57,21 @@ Continued to work in :ref:`cosi` (or
 action link to create an invoice.
 
 But this is still not yet usable because it creates only incoming
-invoices (:class:`ml.ledger.AccountInvoice` ) but no sales invoices.
-In fact I should do this for any :class:`ml.ledger.Voucher`.
-:class:`ml.ledger.VouchersByPartner` 
+invoices (:class:`ml.ledger.AccountInvoice`), not sales invoices.
+In fact I should do this for any :class:`ml.ledger.Voucher`
+:class:`ml.ledger.VouchersByPartner`.
 
+
+A subtle problem remains: the action links to create vouchers
+in the slave summary of
+:class:`ml.ledger.VouchersByPartner` basically work, but 
+the newly created document
+is not displayed in a detail window.
+
+`linoweb.js`: When the insert window has been called by an action link
+(e.g. generated using ar.insert_button), then Lino.close_window can
+return `undefined`.
+
+`ext_renderer.py`: the optional `request` argument to
+`window_action_button` and `action_call` is now an
+:class:`rt.ActionRequest`, not a plain Django web request.
