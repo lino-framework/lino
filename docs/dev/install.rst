@@ -113,10 +113,10 @@ everything worked well.
 Where to go from here 
 ---------------------
 
-- :ref:`lino.tutorial.quickstart`
+- :ref:`lino.tutorial.hello`
 
-- Another idea is to follow the 
-  :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
+- :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
 
-- Try one or several of the out-of-the-box Lino applications:
-  :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or :ref:`logos`
+- Try to install one or several of the out-of-the-box Lino
+  applications: :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or
+  :ref:`logos`

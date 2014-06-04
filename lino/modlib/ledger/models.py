@@ -1092,6 +1092,46 @@ class InvoicesByPartner(Invoices):
     column_names = "date total_incl total_base total_vat *"
     filter = models.Q(state=InvoiceStates.draft)
 
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        kw = super(InvoicesByPartner, cls).param_defaults(ar, **kw)
+        kw.update(pyear=None)
+        return kw
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        elems = []
+
+        # sar = self.request(master_instance=obj)
+        # N = sar.get_total_count()
+        # if N > 0:
+        #     elems += [_("%s has %d unregistered invoices.") % (obj, N)]
+        # else:
+        #     elems.append(_("No unregistered invoices."))
+
+        actions = []
+
+        def add_action(btn):
+            if btn is None:
+                return False
+            actions.append(btn)
+            return True
+
+        vt = VoucherTypes.get_by_value(dd.full_model_name(self.model))
+
+        for jnl in Journal.objects.filter(voucher_type=vt):
+            sar = ar.spawn(
+                InvoicesByJournal,
+                master_instance=jnl,
+                known_values=dict(partner=obj))
+            if add_action(sar.insert_button(unicode(jnl), icon_name=None)):
+                actions.append(' ')
+
+        elems += [E.br(), _("Create invoice in journal ")] + actions
+        return E.div(*elems)
+
 
 VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 

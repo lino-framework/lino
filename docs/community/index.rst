@@ -21,24 +21,18 @@ Below are some profiles of people we would happily welcome.
   Follow what's going on and tell us your opinion about Lino. 
   Tell other people the advantages of Lino.
   
-- Vendors of software solutions --
-  Consider whether Lino is the right product for one of your customers.
-  Primary target are small and medium-sized companies who need a 
-  customized database application.
-  Consider becoming yourself a support provider by training your employees on Lino. 
-  See also :doc:`/about/license`
+- Vendors of software solutions -- Consider whether Lino is the right
+  product for one of your customers.  Primary target are small and
+  medium-sized companies who need a customized database application.
+  Consider becoming yourself a support provider by training your
+  employees on Lino.  See also :doc:`/about/license`
 
+- System administrators -- Show the :ref:`demos` to your users and
+  analyze whether they might need a Lino application.
+  
 - Internet hosting providers --
   Add one of the :ref:`lino.projects`
   to your shared host offers.
-
-- System administrators --
-  :ref:`Install Lino <lino.tutorial.quickstart>`
-  on one of your computer systems.
-  Show it to your users and analyze whether they might need a Lino application.
-  
-- Web designers --
-  Help us to make this website better.
 
 - Business project managers --
   Help us to find or found organizations that offer

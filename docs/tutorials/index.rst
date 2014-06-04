@@ -1,16 +1,16 @@
 Tutorials
 =========
 
-After watching the :doc:`online demos </demos>`
-you'll now want to know how to do it yourself.
+After having :doc:`installed the framework </dev/install>`
+you'll now want to learn how to use it.
 
 .. toctree::
    :maxdepth: 1
 
-   quickstart/mysite/index
+   hello/index
    polls/mysite/index
-   lets
    dumpy
+   lets
    babel
    layouts
    mini

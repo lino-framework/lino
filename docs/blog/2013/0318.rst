@@ -51,7 +51,7 @@ Polls tutorial
 Worked on 
 :ref:`north.tutorial.polls`, 
 :ref:`lino.tutorial.polls` and
-:ref:`lino.tutorial.quickstart`.
+:ref:`lino.tutorial.hello`.
 
 :meth:`djangosite.Site.get_settings_subdirs` 
 failed to detect a local directory if the class was 

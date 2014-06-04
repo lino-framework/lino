@@ -2,23 +2,27 @@
 Wednesday, June 4, 2014
 =======================
 
+Documentation
+-------------
+
+Motivated by the fact that Milton is learning Lino, I continued to
+work in the documentation. 
+
 The Lino test suite failed because I had added ``from __future__
 import unicode_literals`` to the :xfile:`project_info.py`.
 
-
-Added new directive 
-:rst:dir:`command`
-with corresponding role 
-:rst:role:`cmd`.
-
-
-Removed my self-made ``directive`` and ``role`` directives and roles
-and changed existing docs to use their built-in equivalents (which I
-discovered only recently after having reinvented them).
+Added new directive :rst:dir:`command` with corresponding role
+:rst:role:`cmd`. This replaces the now obsolete 
+``:fab:`` role and the ``:fab_command:`` directive.
 
 .. default-domain:: rst
 
-Example::
+Removed my self-made ``directive`` and ``role`` directives and roles
+and changed existing docs to use their built-in equivalents (i.e. the
+`rst
+<http://sphinx-doc.org/domains.html?highlight=directive#the-restructuredtext-domain>`_
+domain which I discovered only recently). The following example which
+I wrote in the documentation of them remains pedagogically useful::
 
   The :role:`role` *role* inserts a *reference to* a
   role definition which is defined somewhere else using the
@@ -27,7 +31,6 @@ Example::
   The :role:`dir` *role* inserts a *reference to* a
   directive definition which is defined somewhere else using the
   :dir:`directive` *directive*.
-
 
 Result:
 
@@ -38,4 +41,23 @@ Result:
   The :role:`dir` *role* inserts a *reference to* a
   directive definition which is defined somewhere else using the
   :dir:`directive` *directive*.
+
+
+Moved the content of :ref:`lino.tutorial.quickstart`
+to a new tutorial :ref:`lino.tutorial.hello`.
+
+
+Creating invoices from a partner
+--------------------------------
+
+Continued to work in :ref:`cosi` (or
+:mod:`lino.modlib.ledger` to be precise).
+
+:class:`ml.ledger.InvoicesByPartner` now has a summary pane with an
+action link to create an invoice.
+
+But this is still not yet usable because it creates only incoming
+invoices (:class:`ml.ledger.AccountInvoice` ) but no sales invoices.
+In fact I should do this for any :class:`ml.ledger.Voucher`.
+:class:`ml.ledger.VouchersByPartner` 
 
