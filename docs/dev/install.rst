@@ -102,11 +102,11 @@ everything worked well.
     $ fab initdb
     $ fab test
 
-- The :fab:`initdb` command initializes the demo databases. These are
-  used by the test suite which would fail if these demo databases were
-  missing.
+- The :cmd:`fab initdb` command initializes the demo databases. These
+  are used by the test suite which would fail if these demo databases
+  were missing.
 
-- The :fab:`test` command simply runs the test suite, it is a short
+- The :cmd:`fab test` command simply runs the test suite, it is a short
   for ``python setup.py test``
 
 

@@ -1,0 +1,41 @@
+=======================
+Wednesday, June 4, 2014
+=======================
+
+The Lino test suite failed because I had added ``from __future__
+import unicode_literals`` to the :xfile:`project_info.py`.
+
+
+Added new directive 
+:rst:dir:`command`
+with corresponding role 
+:rst:role:`cmd`.
+
+
+Removed my self-made ``directive`` and ``role`` directives and roles
+and changed existing docs to use their built-in equivalents (which I
+discovered only recently after having reinvented them).
+
+.. default-domain:: rst
+
+Example::
+
+  The :role:`role` *role* inserts a *reference to* a
+  role definition which is defined somewhere else using the
+  :dir:`role` *directive*.
+
+  The :role:`dir` *role* inserts a *reference to* a
+  directive definition which is defined somewhere else using the
+  :dir:`directive` *directive*.
+
+
+Result:
+
+  The :role:`role` *role* inserts a *reference to* a
+  role definition which is defined somewhere else using the
+  :dir:`role` *directive*.
+
+  The :role:`dir` *role* inserts a *reference to* a
+  directive definition which is defined somewhere else using the
+  :dir:`directive` *directive*.
+

@@ -48,7 +48,7 @@ Now before going on it's really time to get all test suites up and
 running again.  The suites for :ref:`patrols`, :ref:`faggio` and
 :ref:`welfare` had been broken for some time. Now they pass again.
 
-I also had neglected the :fab:`userdocs` directories, now they all
+I also had neglected the :xfile:`userdocs` directories, now they all
 build again without any warning.
 
 Moved `get_installed_apps` method from :mod:`lino` 

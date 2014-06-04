@@ -29,7 +29,7 @@ Wes Turner wrote `a new command-line option for sphinx-apidoc
 <https://bitbucket.org/birkenfeld/sphinx/issue/1456/apidoc-add-a-m-option-to-put-module>`_
 that implements an idea `apidoc output format
 <https://groups.google.com/forum/#!topic/sphinx-users/Bm4w7OQcWYM>`
-which I posted in January to sphinx-users.  I adapted my :fab:`api`
+which I posted in January to sphinx-users.  I adapted my :cmd:`fab api`
 command in :mod:`atelier.fablib` to use this option.
 
 

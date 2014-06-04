@@ -14,9 +14,9 @@ Because I realized that
   use  ``:ref:`welfare.pcsw.Client``` to get
   :ref:`welfare.pcsw.Client`.
 
-  Moved definition of the :directive:`currentlanguage` directive from
+  Moved definition of the :rst:dir:`currentlanguage` directive from
   :mod:`atelier.sphinxconf` to :mod:`lino.utils.actordocs`.
-  New directive :directive:`currentproject`.
+  New directive :rst:dir:`currentproject`.
 
 I admit that my ticket management is still rather poor. 
 Still looking for ideas.

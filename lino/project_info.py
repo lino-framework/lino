@@ -230,6 +230,7 @@ SETUP_INFO.update(package_data=dict())
 
 
 def add_package_data(package, *patterns):
+    package = str(package)
     l = SETUP_INFO['package_data'].setdefault(package, [])
     l.extend(patterns)
     return l

@@ -114,7 +114,7 @@ Each ``git push origin`` commands gave output similar to this::
     
 
 The next step then was to increment the version numbers. 
-Note the :fab:`esi` command.
+Note the :cmd:`fab esi` command.
 For example in :ref:`welfare`::
     
     $ go welfare

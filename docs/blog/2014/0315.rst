@@ -5,7 +5,7 @@
 - :doc:`/tickets/100`
 
 - Fixed a bug in :mod:`atelier.sphinxconf`: The
-  :directive:`tickets_table` was not able to handle documents with
+  :rst:dir:`tickets_table` was not able to handle documents with
   backticks (``\```) in the title.
 
 - Also added `scripts/shotwell2blog.py` to the :ref:`atelier`

@@ -8,7 +8,7 @@ Committing after midnight
 I really like my method of having *at most one* blog entry per day where 
 I write down everything I did that day, all projects mixed.
 
-The :fab:`ci` command then does a combined `commit` and `push` using 
+The :cmd:`fab ci` command then does a combined `commit` and `push` using 
 either Mercurial or Git, specifying today's blog entry as commit message.
 
 A subtle problem occured when I worked longer than midnight before 

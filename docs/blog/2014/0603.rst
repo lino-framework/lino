@@ -37,5 +37,7 @@ I answered. Most work was to update the tutorials and beginner's docs
 which had indeed some obsolete parts. I hope that they are more clear
 now.
 
-The :fab:`docs` fab command failed when ``SETUP_INFO['description']``
+The :cmd:`fab docs` command 
+failed when ``SETUP_INFO['description']``
 contained non-ASCII text.
+

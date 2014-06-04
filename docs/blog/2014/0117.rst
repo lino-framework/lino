@@ -19,13 +19,13 @@ So I decided to undo most changes, i.e. to not move
 :mod:`atelier.sphinxconf` into a separate module.
 
 Only one change remains: atelier now supports namespace packages (and
-thus the fablib command :fab:`summary` no longer prints "old" and
+thus the fablib command :cmd:`fab summary` no longer prints "old" and
 "new" version because that would require the Distribution object
 (returned from `pkg_resources.get_distribution`) which afaics makes
 problems for namespace packages.
 
 And of course the thing which caused all these evolutions: the new
-:directive:`refstothis` directive, which I finally implemented in a
+:rst:dir:`refstothis` directive, which I finally implemented in a
 new Sphinx extension module :mod:`atelier.sphinxconf.refstothis`.
 
 TODO: continue to tidy up.

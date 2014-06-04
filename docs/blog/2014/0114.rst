@@ -23,11 +23,11 @@ following:
 
 - inserted some tags to the present page using either the :role:`tag`
   role (lets insert :tag:`blog` and :tag:`docs` for this page) or the
-  :directive:`tag` directive.
+  :rst:dir:`tag` directive.
 
 .. tag:: blog docs
 
-- I created a new page :doc:`/ref/tags` with a :directive:`taglist` 
+- I created a new page :doc:`/ref/tags` with a :rst:dir:`taglist` 
   directive.
 
 The tags are nicely formatted as tags should be, but they are not
@@ -39,7 +39,7 @@ instead of the released version. No difference.
 Sent a mail to the author.
 
 
-:mod:`atelier.fablib`: The :fab:`blog` command now also works in
+:mod:`atelier.fablib`: The :cmd:`fab blog` command now also works in
 docs-only projects like :ref:`llb` which have no Python code at all.
 
 

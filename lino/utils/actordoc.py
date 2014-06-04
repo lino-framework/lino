@@ -15,7 +15,7 @@
 """A Sphinx extension used to write multilingual user documentation
 for a Lino application.
 
-.. directive:: actor
+.. rst:directive:: actor
 
 Usage::
 
@@ -29,7 +29,7 @@ name contains one ".", then it is the name of an Actor or a Model.  If
 the name contains two ".", then it is the name of a data element of
 that Actor or Model (data elements can be fields or actions)
 
-.. role:: ddref
+.. rst:role:: ddref
 
 Insert a reference to the named data dictionary item.
 The visible text will be automatically in the right language
@@ -404,7 +404,7 @@ class CurrentProject(TempDataDirective):
 
 
 class Lino2rstDirective(Py2rstDirective):
-    """Defines the :directive:`django2rst` directive."""
+    """Defines the :rst:dir:`django2rst` directive."""
 
     def get_context(self):
         from django.conf import settings

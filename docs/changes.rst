@@ -109,7 +109,7 @@ Version 1.6.12 (released :blogref:`20130924`)
     (:blogref:`20130912`).
   - menu buttons (grouped actions), see :blogref:`20130913`.
   
-  - New fab command :fab:`test_sdist` (:blogref:`20130913`).
+  - New command :cmd:`fab test_sdist` (:blogref:`20130913`).
     
   - New management command :manage:`dump2py`.
   

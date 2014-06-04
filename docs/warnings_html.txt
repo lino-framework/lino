@@ -1,2 +1,11 @@
+/home/luc/hgwork/lino/docs/blog/2014/0114.rst:24: ERROR: Unknown interpreted text role "role".
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0114.rst:42: WARNING: undefined label: llb (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:31: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:37: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:43: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist
