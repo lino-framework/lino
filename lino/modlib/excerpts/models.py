@@ -247,11 +247,6 @@ class Excerpt(dd.TypedPrintable,
               outbox.Mailable,
               postings.Postable):
 
-    """An excerpt is a printable document that describes some aspect
-    of the current situation.
-
-    """
-
     manager_level_field = 'office_level'
 
     class Meta:

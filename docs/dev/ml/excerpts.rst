@@ -4,44 +4,93 @@ Excerpts
 
 .. module:: ml.excerpts
 
-The :mod:`lino.modlib.attestations` package provides data definitions
-for using "database excerpts".
+The :mod:`lino.modlib.excerpts` package provides data definitions for
+using "database excerpts".
 
+Models
+------
 
 .. class:: Certifiable
 
-Any model which inherits from this mixin becomes "certifiable".
+  Any model which inherits from this mixin becomes "certifiable".
 
-That is:
+  That is:
 
-- it has a `printed_by` field and a corresponding virtual field
-  `printed` which point to the excerpt that is the "definitive"
-  ("Certifying") printout of this object.
+    - it has a `printed_by` field and a corresponding virtual field
+      `printed` which point to the excerpt that is the "definitive"
+      ("Certifying") printout of this object.
 
-- It may define a list of "certifiable" fields. These files will
-  automaticaly become disabled (readonly) when the document is
-  "certified".
+    - It may define a list of "certifiable" fields. 
+      See :meth:`get_certifiable_fields`.
 
-    @classmethod
-    def get_certifiable_fields(cls):
-        return ''
-
-Your database is then expected to have a certifying ExcerptType on
-this model. 
+  Your database is then expected to have a certifying ExcerptType on
+  this model. 
 
 
-Usage example::
+  Usage example::
 
-  from lino.modlib.excerpts.mixins import Certifiable
+      from lino.modlib.excerpts.mixins import Certifiable
 
-  class MyModel(dd.UserAuthored, Certifiable, dd.Duplicable):
-      ...
+      class MyModel(dd.UserAuthored, Certifiable, dd.Duplicable):
+          ...
+
+  .. attribute:: printed_by
+
+    ForeignKey to the :class:`Excerpt` which certifies this instance.
+
+    A :class:`Certifiable` is considered "certified" when this this is
+    not `None`.
+
+  .. method:: get_certifiable_fields()
+
+    Expected to return a string with a space-separated list of field
+    names.  These files will automaticaly become disabled (readonly)
+    when the document is "certified". The default implementation
+    returns an empty string, which means that no field will become
+    disabled when the row is "certified".
+
+    Example::
+
+        @classmethod
+        def get_certifiable_fields(cls):
+            return 'date user title'
 
 
-.. class:: CreateExcerpt
+
 
 .. class:: ExcerptType
 
+  .. attribute:: certifying
+  .. attribute:: body_template
+  .. attribute:: content_type
+  .. attribute:: primary
+  .. attribute:: backward_compat
+
+
 .. class:: Excerpt
 
+    An excerpt is a printable document that describes some aspect
+    of the current situation.
+
+  .. attribute:: company
+
+    The optional recipient of this excerpt.
+    (ForeignKey to :class:`ml.contacts.Company`)
+
+  .. attribute:: contact_person
+
+    The optional recipient of this excerpt.
+    (ForeignKey to :class:`ml.contacts.Person`)
+
+  .. attribute:: excerpt_type
+
+  The type of this excerpt (ForeignKey to :class:`ExcerptType`).
+
+  .. attribute:: language
+
+Actions
+-------
+
+.. class:: CreateExcerpt
+.. class:: ClearPrinted
 

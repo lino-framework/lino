@@ -143,12 +143,12 @@ class Duplicate(actions.Action):
         obj = ar.selected_rows[0]
         new = self.run_from_code(ar)
         kw = dict()
-        kw.update(refresh=True)
+        # kw.update(refresh=True)
         kw.update(message=_("Duplicated %(old)s to %(new)s.") %
                   dict(old=obj, new=new))
         #~ kw.update(new_status=dict(record_id=new.pk))
-        kw.update(goto_record_id=new.pk)
-        return ar.success(**kw)
+        ar.success(**kw)
+        ar.goto_instance(new)
 
 
 class Duplicable(model.Model):

@@ -46,6 +46,7 @@ Result:
 Moved the content of :ref:`lino.tutorial.quickstart`
 to a new tutorial :ref:`lino.tutorial.hello`.
 
+.. default-domain:: py
 
 Creating invoices from a partner
 --------------------------------
@@ -75,3 +76,15 @@ return `undefined`.
 `ext_renderer.py`: the optional `request` argument to
 `window_action_button` and `action_call` is now an
 :class:`rt.ActionRequest`, not a plain Django web request.
+
+
+Unknown key 'goto_record_id' in action response
+-----------------------------------------------
+
+The :class:`lino.mixins.duplicable.Duplicate` action caused an
+:ref:`ise` "Unknown key 'goto_record_id' in action response."
+Fixed.
+
+:class:`ml.debts.Budget` now also uses 
+:meth:`ml.excerpts.Certifiable.get_certifiable_fields`
+

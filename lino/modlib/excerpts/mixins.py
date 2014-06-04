@@ -13,7 +13,6 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-
 This defines the :class:`ml.excerpts.Certifiable` model mixin.
 
 """
