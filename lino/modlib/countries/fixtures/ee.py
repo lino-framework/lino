@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2012 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -13,16 +13,20 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""
-Imports file :file:`sihtnumbrid.csv` which you can obtain from
-`Estonian Post office <http://www.post.ee/ariklient_sihtnumbrid_allalaadimiseks>`_.
+"""Imports file :file:`sihtnumbrid.csv` which you can obtain from
+`Estonian Post office
+<https://www.omniva.ee/ari/kiri/noudmiseni_sihtnumbrid>`_ and which is
+expected to have the following structure:
 
-A copy of file :file:`sihtnumbrid.csv` was accidentally published here 
-between June 2010 and May 2012, until we realized that 
-this wasn't allowed due to copyright restrictions.
+  MAAKOND;VALD;LINN/ ALEV/ ALEVIK/
+  KÜLA;TÄNAV/TALU;AADRESSILIIK;MAJAALGUS;MAJALOPP;SIHTNUMBER
 
-You must download the file yourself and place it into your 
-:attr:`project directory <lino.Lino.project_dir>`.
+A copy of file :file:`sihtnumbrid.csv` was accidentally published here
+between June 2010 and May 2012, until we realized that this wasn't
+allowed due to copyright restrictions.
+
+You must download the file yourself and place it into your
+:attr:`project directory <ad.Site.project_dir>`.
 
 """
 
@@ -32,9 +36,10 @@ import codecs
 
 from django.conf import settings
 
-from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino.utils.ucsv import UnicodeReader
+from lino.utils.config import find_config_file
+
+from lino.modlib.countries.models import PlaceTypes
 
 if True:
 
@@ -51,7 +56,6 @@ if True:
         for line in unicode_csv_data:
             yield line.encode('utf-8')
 
-from lino.modlib.countries.models import PlaceTypes
 
 CITY_TYPES = {
     u'küla': PlaceTypes.village,
@@ -68,17 +72,15 @@ CITY_TYPES = {
   #~ os.path.dirname(__file__),
   #~ 'sihtnumbrid.csv')
 
-input_file = os.path.join(
-    settings.SITE.project_dir,
-    'sihtnumbrid.csv')
-
-u"""  
-MAAKOND;VALD;LINN/ ALEV/ ALEVIK/ KÜLA;TÄNAV/TALU;AADRESSILIIK;MAJAALGUS;MAJALOPP;SIHTNUMBER   
-"""
+# input_file = os.path.join(
+#     settings.SITE.project_dir,
+#     'sihtnumbrid.csv')
 
 
 def objects():
     city = Instantiator('countries.Place', country='EE').build
+    input_file = find_config_file('sihtnumbrid.csv')
+    settings.SITE.logger.info("Importing Estonian places from %s", input_file)
     f = codecs.open(input_file, 'r', 'latin-1', 'replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')
     f.readline()

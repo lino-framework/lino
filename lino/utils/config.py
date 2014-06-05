@@ -110,12 +110,14 @@ if settings.SITE.is_local_project_dir:
 config_dirs.reverse()
 config_dirs = tuple(config_dirs)
 
-#~ logger.debug('config_dirs:\n%s', '\n'.join([repr(cd) for cd in config_dirs]))
+# logger.info('config_dirs:\n%s', '\n'.join([repr(cd) for cd in config_dirs]))
 
 
 def find_config_file(fn, *groups):
     if os.path.isabs(fn):
         return fn
+    if len(groups) == 0:
+        groups = ['']
     for group in groups:
         if group:
             prefix = join(*(group.split('/')))

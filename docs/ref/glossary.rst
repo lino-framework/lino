@@ -102,7 +102,7 @@ Glossary
 
   Active fields
 
-    See :attribute:`dd.AbstractTable.active_fields`.
+    See :attr:`dd.Model.active_fields`.
     
   Table
     See :class:`dd.Table` and :class:`dd.AbstractTable`.
@@ -110,11 +110,12 @@ Glossary
   Slave Table 
 
     A Slave Table is a :term:`Table` which displays only rows that
-    "belong" to a given master instance. For example if you have two
-    models `City` and `Person`, with a `ForeignKey` `Person.city`
-    pointing to `City`, then you might define a slave table
-    `PersonsByCity` which displays only Persons who live in a given
-    City.
+    "belong" to a given master instance. 
+
+    For example if you have two models `City` and `Person`, with a
+    `ForeignKey` `Person.city` pointing to `City`, then you might
+    define a slave table `PersonsByCity` which displays only Persons
+    who live in a given City.
 
   Dialog Action
 
