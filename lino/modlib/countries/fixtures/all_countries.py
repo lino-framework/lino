@@ -1,5 +1,5 @@
 # coding: utf-8
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,16 +12,19 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This fixture adds all known countries of the world to your database.
-Unlike the official `ISO 3133
-<http://www.iso.org/iso/country_codes>`_
-it features more languages, and it creates also codes for
-countries that no longer exist.
-It is not official at all. See also :doc:`/topics/gpdn`.
+"""This fixture adds all known countries of the world to your
+database.
 
-The `countries.xml` is an unmodified
-copy of http://users.pandora.be/bosteels/countries.xml
+Unlike the official `ISO 3133 <http://www.iso.org/iso/country_codes>`_
+it features more languages, and it creates also codes for countries
+that no longer exist.  It is not official at all. See also
+:doc:`/topics/gpdn`.
+
+The `countries.xml` is an unmodified copy of
+http://users.pandora.be/bosteels/countries.xml
+
+TODO: Estonian names. Maybe from
+https://et.wikipedia.org/wiki/ISO_maakoodide_loend
 
 TABLE2 contains 4-letter codes for countries that no longer exist.
 This is mostly based on <http://www.davros.org/misc/iso3166.html>,
@@ -116,13 +119,16 @@ def objects():
                 'coun:alpha3')[0].childNodes[0].data,
         )
 
+        if not 'name' in kw:
+            kw['name'] = names['en']
         if kw['name']:
             #~ kw.update(iso3=iso3)
             n += 1
             yield Country(**kw)
         else:
-            logger.info("%r : no name for default site language %s",
-                        coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
+            logger.warning(
+                "%r : no name for default site language %s",
+                coun, settings.SITE.DEFAULT_LANGUAGE.django_code)
 
     for ln in TABLE2.splitlines():
         ln = ln.strip()

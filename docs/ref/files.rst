@@ -16,10 +16,6 @@ reusable apps
 <https://docs.djangoproject.com/en/dev/intro/reusable-apps/>`_
 
 
-.. xfile:: settings.py
-
-See :ref:`lino.tutorial.polls` 
-
 .. xfile:: urls.py
 
 See http://docs.djangoproject.com/en/dev/intro/tutorial01/#creating-a-project

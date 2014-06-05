@@ -8,6 +8,11 @@ How Lino makes your Django settings
 Basics
 ======
 
+.. xfile:: settings.py
+
+See :ref:`lino.tutorial.polls` 
+
+
 To turn your Django project into a Lino site, you change your
 :xfile:`settings.py` file as follows:
 

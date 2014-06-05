@@ -84,6 +84,8 @@ class Plugin(BasePlugin):
 
     renderer = None
 
+
+
     def before_analyze(self, site):
         """This is called when the kernel is being instantiated.
         """
@@ -157,6 +159,190 @@ class Site(Site):
     """
     This is the base for every Lino Site.
     """
+
+    partners_app_label = 'contacts'
+    """
+    Temporary setting, see :ref:`polymorphism`.
+    """
+
+    # three constants used by lino.modlib.workflows:
+    max_state_value_length = 20
+    max_action_name_length = 50
+    max_actor_name_length = 100
+
+    trusted_templates = False
+
+    allow_duplicate_cities = False
+
+    uid = 'myuid'
+    """A universal identifier for this Site.  This is needed when
+    synchronizing with CalDAV server.  Locally created calendar
+    components in remote calendars will get a UID based on this
+    parameter, using ``"%s@%s" (self.pk, settings.SITE.ui)``.
+    
+    The default value is ``'myuid'``, and you should certainly
+    override this on a production server that uses remote calendars.
+
+    """
+
+    project_model = None
+
+    #~ user_model = "users.User"
+    user_model = None
+
+    auth_middleware = None
+
+    legacy_data_path = None
+
+    propvalue_max_length = 200
+    """
+    Used by :mod:`lino.modlib.properties`.
+    """
+
+    never_build_site_cache = False
+    show_internal_field_names = False
+    build_js_cache_on_startup = False
+    use_java = True
+    use_experimental_features = False
+    site_config_defaults = {}
+
+    is_demo_site = True
+
+    demo_email = 'demo@example.com'
+    """
+    
+    """
+
+    demo_fixtures = ['std', 'demo', 'demo2']
+
+    use_spinner = False  # doesn't work. leave this to False
+
+    #~ django_admin_prefix = '/django'
+    django_admin_prefix = None
+    """
+    The prefix to use for Django admin URLs.
+    Leave this unchanged as long as :doc:`/tickets/70` is not solved.
+    """
+
+    start_year = 2011
+    time_format_extjs = 'H:i'
+    date_format_extjs = 'd.m.Y'
+    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    #~ default_number_format_extjs = '0,000.00/i'
+    default_number_format_extjs = '0,00/i'
+
+    uppercase_last_name = False
+
+    tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
+    "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
+
+    jasmine_root = None
+    """
+    Path to the Jasmine root directory. 
+    Only used on a development server
+    if the `media` directory has no symbolic link to the Jasmine root directory
+    and only if :attr:`use_jasmine` is True.
+    """
+
+    tinymce_root = None
+    """
+    Path to the tinymce root directory. 
+    Only to be used on a development server
+    if the `media` directory has no symbolic link to the TinyMCE root directory,
+    and only if :attr:`use_tinymce` is True.
+    """
+
+    default_user = None
+    anonymous_user_profile = '000'
+    #~ remote_user_header = "REMOTE_USER"
+    remote_user_header = None
+    ldap_auth_server = None
+
+    use_gridfilters = True
+
+    use_eid_applet = False
+    """
+    Whether to include functionality to read Belgian id cards
+    using the official 
+    `eid-applet <http://code.google.com/p/eid-applet>`_.
+    This option is experimental and doesn't yet work.
+    See `/blog/2012/1105`.
+    """
+
+    use_esteid = False
+    """
+    Whether to include functionality to read Estonian id cards.
+    This option is experimental and doesn't yet work.
+    """
+
+    use_filterRow = not use_gridfilters
+    """
+    See `/blog/2011/0630`.
+    This option was experimental and doesn't yet work (and maybe never will).
+    """
+
+    use_awesome_uploader = False
+    """
+    Whether to use AwesomeUploader. 
+    This option was experimental and doesn't yet work (and maybe never will).
+    """
+
+    use_tinymce = True
+    """
+    Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
+    See also :attr:`tinymce_root`.
+    See `/blog/2011/0523`.
+    """
+
+    use_jasmine = False
+    """
+    Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_ testing library.
+    """
+
+    use_quicktips = True
+    """
+    Whether to make use of `Ext.QuickTips
+    <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_
+    when displaying :ref:`help_texts`.
+    
+    """
+
+    use_css_tooltips = False
+    """
+    Whether to make use of CSS tooltips
+    when displaying help texts defined in :class:`lino.models.HelpText`.
+    """
+
+    use_vinylfox = False
+    """
+    Whether to use VinylFox extensions for HtmlEditor. 
+    This feature was experimental and doesn't yet work (and maybe never will).
+    See `/blog/2011/0523`.
+    """
+
+    webdav_root = None
+    """
+    The path on server to store webdav files.
+    Default is "PROJECT_DIR/media/webdav".
+    """
+
+    webdav_url = None
+    """
+    The URL prefix for webdav files.
+    In a normal production configuration you should leave this to `None`, 
+    Lino will set a default value "/media/webdav/",
+    supposing that your Apache is configured as described in 
+    :doc:`/admin/webdav`.
+    
+    This may be used to simulate a :term:`WebDAV` location 
+    on a development server.
+    For example on a Windows machine, you may set it to ``w:\``,      
+    and before invoking :term:`runserver`, you issue in a command prompt::
+    
+        subst w: <dev_project_path>\media\webdav
+        
+    """
+    sidebar_width = 0
 
     config_id = 1
 
@@ -258,7 +444,12 @@ class Site(Site):
     datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
     datetime_format_extjs = 'Y-m-d\TH:i:s'
 
+    ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
+    ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
+
+    # for internal use:
     _welcome_actors = []
+    _site_config = None
 
     def init_before_local(self, *args):
         super(Site, self).init_before_local(*args)
@@ -297,9 +488,6 @@ class Site(Site):
         return datetime.datetime(*(ymd + hms))
         #~ d = datetime.date(*self.parse_date(s[0]))
         #~ return datetime.combine(d,t)
-
-    ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
-    ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
 
     def resolve_virtual_fields(self):
         for vf in self.VIRTUAL_FIELDS:
@@ -503,193 +691,6 @@ class Site(Site):
                 rows.append(cells)
         s += rstgen.table(headers, rows)
         return s
-
-    partners_app_label = 'contacts'
-    """
-    Temporary setting, see :ref:`polymorphism`.
-    """
-
-    # three constants used by lino.modlib.workflows:
-    max_state_value_length = 20
-    max_action_name_length = 50
-    max_actor_name_length = 100
-
-    trusted_templates = False
-
-    allow_duplicate_cities = False
-
-    uid = 'myuid'
-    """A universal identifier for this Site.  This is needed when
-    synchronizing with CalDAV server.  Locally created calendar
-    components in remote calendars will get a UID based on this
-    parameter, using ``"%s@%s" (self.pk, settings.SITE.ui)``.
-    
-    The default value is ``'myuid'``, and you should certainly
-    override this on a production server that uses remote calendars.
-
-    """
-
-    project_model = None
-
-    #~ user_model = "users.User"
-    user_model = None
-
-    auth_middleware = None
-
-    legacy_data_path = None
-
-    propvalue_max_length = 200
-    """
-    Used by :mod:`lino.modlib.properties`.
-    """
-
-    never_build_site_cache = False
-    show_internal_field_names = False
-    build_js_cache_on_startup = False
-    use_java = True
-    use_experimental_features = False
-    site_config_defaults = {}
-
-    is_demo_site = True
-
-    demo_email = 'demo@example.com'
-    """
-    
-    """
-
-    demo_fixtures = ['std', 'demo', 'demo2']
-
-    use_spinner = False  # doesn't work. leave this to False
-
-    #~ django_admin_prefix = '/django'
-    django_admin_prefix = None
-    """
-    The prefix to use for Django admin URLs.
-    Leave this unchanged as long as :doc:`/tickets/70` is not solved.
-    """
-
-    start_year = 2011
-    time_format_extjs = 'H:i'
-    date_format_extjs = 'd.m.Y'
-    alt_date_formats_extjs = 'd/m/Y|Y-m-d'
-    #~ default_number_format_extjs = '0,000.00/i'
-    default_number_format_extjs = '0,00/i'
-
-    uppercase_last_name = False
-
-    tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
-    "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
-
-    jasmine_root = None
-    """
-    Path to the Jasmine root directory. 
-    Only used on a development server
-    if the `media` directory has no symbolic link to the Jasmine root directory
-    and only if :attr:`use_jasmine` is True.
-    """
-
-    tinymce_root = None
-    """
-    Path to the tinymce root directory. 
-    Only to be used on a development server
-    if the `media` directory has no symbolic link to the TinyMCE root directory,
-    and only if :attr:`use_tinymce` is True.
-    """
-
-    default_user = None
-    anonymous_user_profile = '000'
-    #~ remote_user_header = "REMOTE_USER"
-    remote_user_header = None
-    ldap_auth_server = None
-
-    use_gridfilters = True
-
-    use_eid_applet = False
-    """
-    Whether to include functionality to read Belgian id cards
-    using the official 
-    `eid-applet <http://code.google.com/p/eid-applet>`_.
-    This option is experimental and doesn't yet work.
-    See `/blog/2012/1105`.
-    """
-
-    use_esteid = False
-    """
-    Whether to include functionality to read Estonian id cards.
-    This option is experimental and doesn't yet work.
-    """
-
-    use_filterRow = not use_gridfilters
-    """
-    See `/blog/2011/0630`.
-    This option was experimental and doesn't yet work (and maybe never will).
-    """
-
-    use_awesome_uploader = False
-    """
-    Whether to use AwesomeUploader. 
-    This option was experimental and doesn't yet work (and maybe never will).
-    """
-
-    use_tinymce = True
-    """
-    Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
-    See also :attr:`tinymce_root`.
-    See `/blog/2011/0523`.
-    """
-
-    use_jasmine = False
-    """
-    Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_ testing library.
-    """
-
-    use_quicktips = True
-    """
-    Whether to make use of `Ext.QuickTips
-    <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_
-    when displaying :ref:`help_texts`.
-    
-    """
-
-    use_css_tooltips = False
-    """
-    Whether to make use of CSS tooltips
-    when displaying help texts defined in :class:`lino.models.HelpText`.
-    """
-
-    use_vinylfox = False
-    """
-    Whether to use VinylFox extensions for HtmlEditor. 
-    This feature was experimental and doesn't yet work (and maybe never will).
-    See `/blog/2011/0523`.
-    """
-
-    webdav_root = None
-    """
-    The path on server to store webdav files.
-    Default is "PROJECT_DIR/media/webdav".
-    """
-
-    webdav_url = None
-    """
-    The URL prefix for webdav files.
-    In a normal production configuration you should leave this to `None`, 
-    Lino will set a default value "/media/webdav/",
-    supposing that your Apache is configured as described in 
-    :doc:`/admin/webdav`.
-    
-    This may be used to simulate a :term:`WebDAV` location 
-    on a development server.
-    For example on a Windows machine, you may set it to ``w:\``,      
-    and before invoking :term:`runserver`, you issue in a command prompt::
-    
-        subst w: <dev_project_path>\media\webdav
-        
-    """
-    sidebar_width = 0
-
-    # for internal use:
-    _site_config = None
 
     def override_defaults(self, **kwargs):
         #~ logger.info("20130404 lino.site.Site.override_defaults")

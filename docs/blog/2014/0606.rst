@@ -1,0 +1,11 @@
+====================
+Friday, June 6, 2014
+====================
+
+The new package :mod:`lino.projects.estref` is the Estonian equivalent
+of :ref:`belref`. But without the alternative plain user interface. 
+
+I used it mainly to test :mod:`lino.modlib.countries.fixtures.est`
+which is now a proof of concept for my vision of using :ref:`dpy` as
+data format for maintaining the list of places of a country.
+

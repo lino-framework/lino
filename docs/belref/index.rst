@@ -29,6 +29,7 @@ in the :mod:`lino.projects.belref` package.
 The project grows **very slowly** because I know no 
 single person who believes that this might make sense
 (besides myself of course, but even I wouldn't give my hand for it).
+See also :doc:`/topics/gpdn`.
 
 A side effect with potentially more concrete impact is that this 
 is also our test field for the 

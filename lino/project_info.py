@@ -190,6 +190,8 @@ lino.projects.cms
 lino.projects.cms.fixtures
 lino.projects.crl
 lino.projects.crl.fixtures
+lino.projects.estref
+lino.projects.estref.settings
 lino.projects.events
 lino.projects.homeworkschool
 lino.projects.homeworkschool.settings

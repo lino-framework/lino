@@ -59,12 +59,22 @@ information. Should I talk with `Andres
 <https://et.wikipedia.org/wiki/Kasutaja:Andres>`_ about this?  But
 before talking to anybody, shouldn't I prepare something to make my
 vision visible to others? Do we need something like :ref:`belref`, but
-for Estonia?
+for Estonia?  To be continued.
+
+More docs
+---------
+
+Milton's questions in `Lino Cosi app installation
+<https://github.com/lsaffre/lino-cosi/issues/2>`_ motivated me to do
+some more work in the documentation. Also fixed some minor (but
+fatal) bugs in :mod:`lino.projects.min1`.
+
+- :doc:`/tutorials/hello/index`
+- :doc:`/dev/settings`
+- :doc:`/dev/application`
+- :doc:`/dev/startup`
+
+Most content was previously in :ref:`site` which I plan to merge back
+into Lino some day.
 
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings'
->>> from lino import runtime
->>> from lino.modlib.countries.fixtures.est import objects
->>> l = list(objects())
->>> print(l)

@@ -1,3 +1,5 @@
+:orphan:
+
 .. _lino.tutorial.quickstart:
 
 ===============

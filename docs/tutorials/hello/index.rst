@@ -61,11 +61,10 @@ file:
 .. literalinclude:: manage.py
 
 This is plain traditional Django know-how.  There are many opinions,
-tricks, flavors and conventions about how Django's :xfile:`manage.py`
-file should look. Partly for historical reasons.
-
-Lino does not add any tricks to the `manage.py` file.  You can use
-your own variant if you prefer.
+tricks, flavors and conventions about Django's :xfile:`manage.py`
+files, partly for historical reasons.  Lino does not add any tricks to
+the :xfile:`manage.py` file, so you can use your own flavour if you
+prefer.
 
 
 Initial data

@@ -1,3 +1,2 @@
-/home/luc/hgwork/lino/docs/tutorials/quickstart/mysite/index.rst:: WARNING: document isn't included in any toctree
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

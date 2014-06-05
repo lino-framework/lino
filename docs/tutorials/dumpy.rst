@@ -113,7 +113,7 @@ The `min1` app has the following demo fixtures:
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
     >>> from django.conf import settings
     >>> settings.SITE.demo_fixtures
-    'std demo'
+    'std demo demo2'
 
 So the ``initdb_demo`` command above is equivalent to::
   

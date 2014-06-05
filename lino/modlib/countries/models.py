@@ -256,7 +256,7 @@ class Places(dd.Table):
     model = 'countries.Place'
     required = dd.Required(user_level='admin', user_groups='office')
     order_by = "country name".split()
-    column_names = "country name type zip_code *"
+    column_names = "country name type zip_code parent *"
     detail_layout = """
     name country
     type parent zip_code id
@@ -268,7 +268,7 @@ class PlacesByPlace(Places):
     label = _("Subdivisions")
     master_key = 'parent'
     column_names = "name type zip_code *"
-    required = dd.Required(user_groups='office')
+    # required = dd.Required(user_groups='office')
 
 
 class PlacesByCountry(Places):
