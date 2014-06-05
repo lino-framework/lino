@@ -20,9 +20,9 @@ class Site(Site):
 
     user_model = 'users.User'
 
-    default_user = 'root'
+    # default_user = 'root'
 
-    demo_fixtures = 'std demo'
+    demo_fixtures = 'std demo demo2'
 
     def setup_quicklinks(self, ar, tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)

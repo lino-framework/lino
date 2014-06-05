@@ -40,32 +40,32 @@ Explanations:
     the wildcard ``*``. This is necessary because that's how Django
     wants settings.
    
-#.  Then we define a :setting:`SITE` setting, 
-    an instance of the :class:`Site <ad.Site>` class,
-    passing our 
-    :func:`globals` as first argument. 
-    This will set default values 
-    for all required Django settings
-    (e.g. :setting:`DATABASES` and :setting:`LOGGING`).
+#.  Then we define a :setting:`SITE` setting::
+
+       SITE = Site(globals(), ...)
+
+    This is the important trick which turns your Django project into a
+    Lino application.  It will set default values for all required
+    Django settings (e.g. :setting:`DATABASES` and
+    :setting:`LOGGING`).  More about this in :ref:`settings`.
     
 You might add ``DEBUG = True`` or other settings of your choice.
-
-The basic idea is to keep local :xfile:`settings.py` files 
-small and to delegate the responsibility of maintaining
-default values for Django settings to the application developer.
-
-In case you think already now about how to host many different Lino 
-applications on your server, then read also about 
-the :ref:`djangosite_local.py <djangosite_local>` file, 
-another technique which Lino adds to plain Django.
 
 
 The ``manage.py`` file
 ----------------------
 
-Your project's :xfile:`manage.py` file should look as follows:
+We suggest the following content for your project's :xfile:`manage.py`
+file:
 
 .. literalinclude:: manage.py
+
+This is plain traditional Django know-how.  There are many opinions,
+tricks, flavors and conventions about how Django's :xfile:`manage.py`
+file should look. Partly for historical reasons.
+
+Lino does not add any tricks to the `manage.py` file.  You can use
+your own variant if you prefer.
 
 
 Initial data
@@ -124,14 +124,8 @@ which should output something like::
   Development server is running at http://127.0.0.1:8000/
   Quit the server with CTRL-BREAK.
 
-And then point our web browser to http://127.0.0.1:8000/.
-The result should look similar to this:
+And then point our web browser to http://127.0.0.1:8000 and you should
+see some welcome text and instructions for logging in.
 
-.. image:: quickstart.jpg
-  :scale: 80
-
-Congratulations for having installed your first Lino application.
-
-
-
+Congratulations! Enjoy your first Lino application.
 

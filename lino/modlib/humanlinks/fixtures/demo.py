@@ -24,30 +24,8 @@ Creates two fictive families:
 
 from __future__ import unicode_literals
 
-from lino.utils.instantiator import Instantiator
+from lino.utils.instantiator import InstanceGenerator
 from lino import dd
-
-
-class InstanceGenerator(object):
-    def __init__(self):
-        self._objects = []
-        self._instantiators = dict()
-
-    def add_instantiator(self, *args, **kw):
-        i = Instantiator(*args, **kw)
-        # self._instantiators[i.model] = i
-        k = i.model.__name__.lower()
-
-        def f(*args, **kw):
-            o = i.build(*args, **kw)
-            self._objects.append(o)
-            return o
-        setattr(self, k, f)
-
-    def flush(self):
-        rv = self._objects
-        self._objects = []
-        return rv
 
 
 def objects():
@@ -57,8 +35,10 @@ def objects():
     LinkTypes = dd.modules.humanlinks.LinkTypes
 
     ig = InstanceGenerator()
-    ig.add_instantiator(Person, 'first_name last_name gender birth_date')
-    ig.add_instantiator(Link, 'parent child type')
+    ig.add_instantiator(
+        'person', Person, 'first_name last_name gender birth_date')
+    ig.add_instantiator(
+        'link', Link, 'parent child type')
 
     NAME1 = "Frisch"
 

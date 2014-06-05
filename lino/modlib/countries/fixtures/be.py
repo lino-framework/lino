@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,17 +11,17 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
-"""
-Loads all Belgian cities into the database.
-Supposes that :mod:`few_cities <lino.modlib.countries.fixtures.few_cities>` 
-has also been loaded and thus does not load the cities defined there.
+
+"""Loads all Belgian cities into the database.  Supposes that
+:mod:`few_cities <lino.modlib.countries.fixtures.few_cities>` has also
+been loaded and thus does not load the cities defined there.
 
 This list of Belgian cities is in no way authoritative, but "works for me".
 
-The result is available for public access under 
+The result is available for public access under
 http://belref.lino-framework.org
 
-Original sources 
+Original sources:
 
 - http://www.charline.be/info/codepost/cpost.htm
 - https://fr.wikibooks.org/wiki/N%C3%A9erlandais_pour_traducteurs_:_les_villes_belges

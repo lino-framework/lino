@@ -14,6 +14,9 @@ Recommended
 
    install
    /tutorials/index
+   settings
+   application
+   startup
    api
    perms
    workflows

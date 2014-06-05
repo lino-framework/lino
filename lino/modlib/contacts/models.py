@@ -195,7 +195,7 @@ class PartnerDetail(dd.FormLayout):
 
 
 class Partners(dd.Table):
-    required = dd.Required(user_level='user', user_groups='office')
+    required = dd.Required(user_level='user')  # user_groups='office')
     model = 'contacts.Partner'
     column_names = "name email * id"
     order_by = ['name', 'id']
@@ -768,15 +768,8 @@ def company_tables_alias(sender, **kw):
 
 def setup_main_menu(site, ui, profile, m):
     m = m.add_menu("contacts", Plugin.verbose_name)
-    #~ actors = (Persons,Companies,Partners)
-    #~ for m in (Person,Company,Partner):
-        #~ if m._meta.abstract:
-            #~ return
-    """
-    We use the string representations and not the classes because 
-    other installed applications may want to override these tables.
-    """
-    #~ for a in (Persons,Companies,Partners):
+    # We use the string representations and not the classes because
+    # other installed applications may want to override these tables.
     for a in ('contacts.Persons', 'contacts.Companies', 'contacts.Partners'):
         m.add_action(a)
 

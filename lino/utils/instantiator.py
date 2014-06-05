@@ -315,6 +315,35 @@ class Instantiator:
         return instance
 
 
+class InstanceGenerator(object):
+    """
+    Usage example see :mod:`lino.modlib.humanlinks.fixtures`.
+    """
+    def __init__(self):
+        self._objects = []
+        self._instantiators = dict()
+
+    def add_instantiator(self, name, *args, **kw):
+        i = Instantiator(*args, **kw)
+        # self._instantiators[i.model] = i
+
+        def f(*args, **kw):
+            o = i.build(*args, **kw)
+            return self.on_new(o)
+        setattr(self, name, f)
+
+    def on_new(self, o):
+        self._objects.append(o)
+        return o
+
+    def flush(self):
+        rv = self._objects
+        self._objects = []
+        return rv
+
+
+
+
 def create_and_get(model, **kw):
     """
     Instantiate, full_clean, save 
