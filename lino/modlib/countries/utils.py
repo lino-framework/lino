@@ -65,6 +65,12 @@ class PlaceGenerator(InstanceGenerator):
                 obj, obj.type, e)
         # return super(PlaceGenerator, self).on_new(obj)
     
+    def can_be_parent(self, p, o):
+        "return True if p can be parent for o"
+        if self.assimilate(p.type) < self.assimilate(o.type):
+            return True
+        return False
+
     def assimilate(self, pt):
         """In Estonia, municipalities and towns can be siblings within a same
 county."""
@@ -72,10 +78,4 @@ county."""
             return PlaceTypes.town
         return pt
     
-    def can_be_parent(self, p, o):
-        "return True if p can be parent for o"
-        if p.type < self.assimilate(o.type):
-            return True
-        return False
-
 
