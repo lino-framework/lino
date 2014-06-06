@@ -45,8 +45,10 @@ def root_user(lang, **kw):
         kw.update(first_name="Rando", last_name="Roosi")
     elif lang == 'en':
         kw.update(first_name="Robin", last_name="Rood")
-    elif lang == 'pt-br':
+    elif lang == 'pt':
         kw.update(first_name="Ronaldo", last_name="Rosa")
+    elif lang == 'es':
+        kw.update(first_name="Rodrigo", last_name="Rosalez")
     elif lang == 'nl':
         kw.update(first_name="Rik", last_name="Rozenbos")
     else:

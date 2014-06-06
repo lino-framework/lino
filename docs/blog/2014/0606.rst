@@ -20,4 +20,8 @@ More documentation
   which was probably the main reason why Milton asked `Lino Cosi app
   installation <https://github.com/lsaffre/lino-cosi/issues/2>`_
 
-- Started :doc:`/dev/translate`.
+- Started :doc:`/dev/translate` (also dedicated to Milton).
+
+And note that you must pull the newest version of Lino before trying
+it, because there were some minor things missing, e.g. a Spanish demo
+user "Rodrigo Rosalez".

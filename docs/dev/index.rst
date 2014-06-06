@@ -20,10 +20,12 @@ Recommended
    api
    perms
    workflows
+   pull
+   translate/index
+
    /tickets/index
    /changes
    /todo
-   pull
 
 
 Drafts
@@ -44,5 +46,4 @@ Drafts
    style
    datamig
    versioning
-   translate
 
