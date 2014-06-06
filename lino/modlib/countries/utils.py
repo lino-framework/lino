@@ -41,11 +41,14 @@ class PlaceGenerator(InstanceGenerator):
     def on_new(self, obj):
         prev = self.prev_obj
         if prev and prev.type and obj.type:
-            if prev.type < obj.type:
+            otype = self.assimilate(obj.type)
+            ptype = self.assimilate(prev.type)
+            if ptype < otype:
                 obj.parent = prev
             else:
                 p = prev.parent
-                while p and not self.can_be_parent(p, obj):
+                while p and not self.can_be_parent(
+                        self.assimilate(p.type), otype):
                     p = p.parent
                 if p is not None:
                     obj.parent = p
@@ -65,9 +68,12 @@ class PlaceGenerator(InstanceGenerator):
                 obj, obj.type, e)
         # return super(PlaceGenerator, self).on_new(obj)
     
-    def can_be_parent(self, p, o):
-        "return True if p can be parent for o"
-        if self.assimilate(p.type) < self.assimilate(o.type):
+    def can_be_parent(self, ptype, otype):
+        """return True if a place of type pt can be parent for a place of type
+        ot.
+
+        """
+        if ptype < otype:
             return True
         return False
 
