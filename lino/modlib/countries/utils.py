@@ -17,6 +17,8 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
+from django.core.exceptions import ValidationError
+
 from lino import dd
 
 from lino.utils.instantiator import InstanceGenerator
@@ -47,15 +49,20 @@ class PlaceGenerator(InstanceGenerator):
                     p = p.parent
                 if p is not None:
                     obj.parent = p
-                else:
+                elif False:
                     logger.warning(
                         "%s (%s) is no parent for %s (%s)",
                         prev, prev.type, obj, obj.type)
 
-        self.prev_obj = obj
-        obj.full_clean()
-        obj.save()
-        return obj
+        try:
+            obj.full_clean()
+            obj.save()
+            self.prev_obj = obj
+            return obj
+        except ValidationError as e:
+            logger.warning(
+                "Failed to load %s (%s) : %s",
+                obj, obj.type, e)
         # return super(PlaceGenerator, self).on_new(obj)
     
     def assimilate(self, pt):
