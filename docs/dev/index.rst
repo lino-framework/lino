@@ -44,4 +44,5 @@ Drafts
    style
    datamig
    versioning
+   translate
 

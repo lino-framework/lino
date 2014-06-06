@@ -144,11 +144,11 @@ def objects():
     yield be_city('8400', "Ostende", "Ostende", "Oostende", "Ostende")
     yield be_city('5000', "Namür", "Namur", "Namen", "Namur")
 
-    harjumaa = make_city('EE', 'Harjumaa', type=PlaceTypes.county)
+    harjumaa = make_city('EE', 'Harju', type=PlaceTypes.county)
     yield harjumaa
-    parnumaa = make_city('EE', 'Pärnumaa', type=PlaceTypes.county)
+    parnumaa = make_city('EE', 'Pärnu', type=PlaceTypes.county)
     yield parnumaa
-    raplamaa = make_city('EE', 'Raplamaa', type=PlaceTypes.county)
+    raplamaa = make_city('EE', 'Rapla', type=PlaceTypes.county)
     yield raplamaa
 
     yield make_city('EE', 'Vigala', type=PlaceTypes.municipality, parent=raplamaa)

@@ -36,7 +36,6 @@ Other
 .. toctree::
     :maxdepth: 2
    
-    translate
     using_appy_pod
     printable
     settings
