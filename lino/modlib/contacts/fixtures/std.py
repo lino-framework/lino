@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -11,6 +11,16 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
+
+"""
+Loads a series of default :class:`ml.contacts.CompanyType`.
+
+.. django2rst::
+
+  dd.show('contacts.CompanyTypes')
+
+See also :doc:`/tickets/108`.
+"""
 
 from __future__ import unicode_literals
 

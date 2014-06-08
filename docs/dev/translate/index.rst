@@ -46,7 +46,7 @@ work together with Lino under the LGPL.
 Instructions
 ------------
 
-Go to your copy of the :ref:`cosi` repository::
+Go to your local project directory::
 
   $ cd ~/mysite
 
@@ -54,6 +54,11 @@ Change your project's :xfile:`settings.py` file once more so that it
 looks as follows:
 
 .. literalinclude:: settings.py
+
+That is, you specify your own language distribution. See
+:attr:`ad.Site.languages` for details.  Note that the first language
+cannot currently be Spanish because the demo fixtures would fail
+(:doc:`/tickets/108`).
 
 Initialize the demo database::
 

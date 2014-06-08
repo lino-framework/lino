@@ -43,7 +43,6 @@
 /home/luc/hgwork/lino/docs/blog/2014/0526.rst:75: WARNING: Inline strong start-string without end-string.
 /home/luc/hgwork/lino/docs/davlink/usage.rst:14: ERROR: Unknown target name: "davlink.jar <https://github.com/lsaffre/davlink/blob/master/example/davlink.jar?raw=true>>".
 /home/luc/hgwork/lino/docs/dev/apps.rst:100: WARNING: Inline interpreted text or phrase reference start-string without end-string.
-/home/luc/hgwork/lino/docs/dev/translate/index.rst:56: WARNING: Include file u'/home/luc/hgwork/lino/docs/dev/translate/settings.py' not found or reading it failed
 /home/luc/hgwork/lino/docs/dev/userdocs.rst:28: ERROR: Unknown directive type "directive".
 
 .. directive:: actor
@@ -157,7 +156,6 @@
 /home/luc/hgwork/lino/docs/blog/2014/0528.rst:37: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2014/0528.rst:43: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/blog/2014/0605.rst:77: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2014/0606.rst:23: WARNING: unknown document: /dev/translate
 None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/dev/userdocs.rst:17: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/eidreader/countries.rst:5: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)

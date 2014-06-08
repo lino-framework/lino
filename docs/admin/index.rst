@@ -38,6 +38,7 @@ Other
    
     using_appy_pod
     printable
+    snapshot
     settings
     which_lino
     install_windows

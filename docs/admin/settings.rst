@@ -1,3 +1,5 @@
+.. _howto.settings:
+
 Modifying your local `settings.py`
 ==================================
 
