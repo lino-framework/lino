@@ -25,7 +25,7 @@ SETUP_INFO = dict(
   Framework :: Django
   Intended Audience :: Developers
   Intended Audience :: System Administrators
-  License :: OSI Approved :: GNU Lesser General Public License (GPL)
+  License :: OSI Approved :: GNU Lesser General Public License (LGPL)
   Natural Language :: English
   Natural Language :: French
   Natural Language :: German

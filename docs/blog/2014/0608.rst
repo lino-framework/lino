@@ -2,6 +2,6 @@
 Sunday, June 8, 2014
 ====================
 
-Upgrade and data migration in chatelet.
-Some French translations.
-
+Upgrade and data migration in chatelet.  Some French translations.  A
+little optimization in :manage:`dump2py`: write the list of field
+names as a comment to the per-model files.

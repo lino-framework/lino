@@ -1,0 +1,43 @@
+====================
+Monday, June 9, 2014
+====================
+
+Common Knowledge
+----------------
+
+Last Friday (:blogref:`20140606`) I wrote about my vision of "using
+:ref:`dpy` as data format for maintaining the list of places of a
+country".
+
+During the week-end this vision made another evolution step: I
+understood that :ref:`dpy` as data format is too limiting.  The data
+format must be plain Python, not some part of Lino or Django.
+
+Today I invested another full day of work in this topic. Starting with
+two observations:
+
+- "Paris is the capital of France" is an example of what the Wikipedia
+  calls `Common Knowledge
+  <https://en.wikipedia.org/wiki/Common_knowledge>`_.
+
+- The Estonian national statistic institute maintains a "List of
+  classificators" (`Klassifikaatorite nimistu
+  <http://metaweb.stat.ee/?siteLanguage=ee>`_), and one of them is
+  "Classification of Estonian administrative units and settlements"
+  (Eesti haldus- ja asustusjaotuse klassifikaator (EHAK).
+  Unfortunately this file is not directly useable because it has no
+  zip codes.
+
+At the end of the day I had opened three new projects on GitHub:
+
+- `commondata <https://github.com/lsaffre/commondata>`_
+- `commondata.be <https://github.com/lsaffre/commondata-be>`_
+- `commondata.ee <https://github.com/lsaffre/commondata-ee>`_
+
+TODO: adapt :mod:`lino.modlib.countries.fixtures.ee` and
+:mod:`lino.modlib.countries.fixtures.be` to use this data.
+
+
+
+
+
