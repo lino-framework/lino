@@ -2,15 +2,16 @@
 Tuesday, June 10, 2014
 ======================
 
+atelier
+-------
+
 The :mod:`commondata`, :mod:`commondata.ee` and :mod:`commondata.be`
 projects don't have a separate :xfile:`projects_info.py` file because
 I wanted to keep them as simple as possible.
 
-But already yesterday I thought what a pity that I cannot to 
-:cmd:`ci` on them! And that they won't get included when I do
-:cmd:`pp fab ci`
-or
-:cmd:`pp fab test`!
+Already yesterday I thought what a pity that I cannot simply run
+:cmd:`ci` on them! And that they won't get included when I do :cmd:`pp
+fab ci` or :cmd:`pp fab test`!
 
 But now :ref:`atelier` can handle projects like these!  The drawback
 (or in fact a new requirement which I dare to consider an improvement
@@ -32,5 +33,19 @@ one place.  Their `__file__` attribute is unpredictable::
   $ pywhich commondata
   /home/luc/hgwork/be/commondata/__init__.pyc
 
+davlink
+-------
 
-:ref:`davlink` is now again with a codegears-signed `DavLink.jar'
+:ref:`davlink` is now again with a codegears-signed `DavLink.jar'.
+
+Release in Eupen.  Or rather "upgrade" than "release".  This was
+mainly to re-get the signed version of the davlink applet. I made a
+general :ref:`pull` for all repositories because it is in general
+recommended to pull all projects together. Because I still don't have
+a strict procedure for managing "releases".  It would be overhead to
+impose a stricter procedure as long as I am the only person who does
+data migrations and upgrades.  The application's version is the only
+version number that is actually being used.  For example
+:ref:`welfare` has been at version 1.1.13 for more than a week now,
+and I have even been working on the data migration for chatelet. This
+is okay as long as I have no changes in the database schema.
