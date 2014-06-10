@@ -2,3 +2,35 @@
 Tuesday, June 10, 2014
 ======================
 
+The :mod:`commondata`, :mod:`commondata.ee` and :mod:`commondata.be`
+projects don't have a separate :xfile:`projects_info.py` file because
+I wanted to keep them as simple as possible.
+
+But already yesterday I thought what a pity that I cannot to 
+:cmd:`ci` on them! And that they won't get included when I do
+:cmd:`pp fab ci`
+or
+:cmd:`pp fab test`!
+
+But now :ref:`atelier` can handle projects like these!  The drawback
+(or in fact a new requirement which I dare to consider an improvement
+after reading a question `setup.py should use if __name__ ==
+'__main__', right?
+<http://code.activestate.com/lists/python-distutils-sig/23211/>`_
+asked 07 Apr 2014 by Asheesh Laroia in distutils-sig and answered by
+Carl Meyer) is that every atelier project must now protect it's
+:xfile:`setup.py` file using an ``if __name__ == '__main__':``
+construct.
+
+TODO: :cmd:`fab summary` reports the wrong description for
+:mod:`commondata`. That's because the `PROJECTS` variable used by
+atelier is simply a list of Python module names. Atelier then imports
+these projects and uses their `__file__` attribute. This trick does
+not work for namespace packages since these are defined at more than
+one place.  Their `__file__` attribute is unpredictable::
+
+  $ pywhich commondata
+  /home/luc/hgwork/be/commondata/__init__.pyc
+
+
+:ref:`davlink` is now again with a codegears-signed `DavLink.jar'
