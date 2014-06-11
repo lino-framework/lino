@@ -19,6 +19,8 @@ Defines models
 
 """
 
+import logging
+logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
@@ -212,6 +214,13 @@ class Place(dd.BabelNamed):
 
     #~ def __unicode__(self):
         #~ return self.name
+
+    def save(self, *args, **kw):
+        super(Place, self).save(*args, **kw)
+        if self.name == "Rapla" and self.type.name == 'county':
+            logger.info("20140611 Rapla %s", self.id)
+            import traceback
+            traceback.print_stack()
 
     def get_parents(self, *grandparents):
         if self.parent_id:
