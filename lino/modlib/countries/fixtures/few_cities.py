@@ -53,8 +53,7 @@ def objects():
             #     PlaceTypes.county, PlaceTypes.province]).get(flt)
         except MultipleObjectsReturned:
             #~ qs = Place.objects.exclude(type=PlaceTypes.county).filter(country__isocode=country_id,name=name)
-            logger.info("Oops, there are multiple cities for %r", name)
-            return qs[0]
+            raise Exception("Oops, there are multiple cities for %r", name)
         except Place.DoesNotExist:
             return city(name, country_id, **kw)
 
