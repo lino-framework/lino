@@ -42,9 +42,6 @@ def objects():
 
     def make_city(country_id, name=None, **kw):
         kw.setdefault('type', PlaceTypes.city)
-        #~ kw.update()
-        #~ if name:
-            #~ kw.update(name=name)
         flt = dbutils.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
         try:
@@ -55,7 +52,10 @@ def objects():
             #~ qs = Place.objects.exclude(type=PlaceTypes.county).filter(country__isocode=country_id,name=name)
             raise Exception("Oops, there are multiple cities for %r", name)
         except Place.DoesNotExist:
-            return city(name, country_id, **kw)
+            obj = city(name, country_id, **kw)
+            obj.full_clean()
+            obj.save()
+            return obj
 
     BE = Country.objects.get(pk='BE')
     DE = Country.objects.get(pk='DE')
