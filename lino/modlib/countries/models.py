@@ -225,11 +225,12 @@ class Place(dd.BabelNamed):
             return [(i, t) for i, t in PlaceTypes.choices if i in allowed]
         return PlaceTypes.choices
 
-    def get_choices_text(self, request, actor, field):
+    # def get_choices_text(self, request, actor, field):
+    def __unicode__(self):
         """
         Extends the default behaviour (which would simply diplay this
         city in the current language) by also adding the name in other
-        languages.
+        languages and the type between parentheses.
         """
         names = [self.name]
         for lng in settings.SITE.BABEL_LANGS:
@@ -239,9 +240,12 @@ class Place(dd.BabelNamed):
                 names.append(n)
                 #~ s += ' / ' + n
         if len(names) == 1:
-            return names[0]
-        return "%s (%s)" % (names[0], ', '.join(names[1:]))
-        #~ return s
+            s = names[0]
+        else:
+            s = ' / '.join(names)
+            # s = "%s (%s)" % (names[0], ', '.join(names[1:]))
+        s += " (%s)" % unicode(self.type)
+        return s
         #~ return unicode(self)
 
 

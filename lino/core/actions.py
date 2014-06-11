@@ -1007,7 +1007,10 @@ class ShowSlaveTable(Action):
 
     def attach_to_actor(self, actor, name):
         if isinstance(self.slave_table, basestring):
-            self.slave_table = settings.SITE.modules.resolve(self.slave_table)
+            T = settings.SITE.modules.resolve(self.slave_table)
+            if T is None:
+                raise Exception("No table named %s" % self.slave_table)
+            self.slave_table = T
         for k in self.TABLE2ACTION_ATTRS:
             if not k in self.explicit_attribs:
                 setattr(self, k, getattr(self.slave_table, k))

@@ -261,7 +261,9 @@ class Excerpt(dd.TypedPrintable,
 
     language = dd.LanguageField()
 
-    mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
+    if dd.is_installed('outbox'):
+
+        mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
     def __unicode__(self):
         if self.build_time:

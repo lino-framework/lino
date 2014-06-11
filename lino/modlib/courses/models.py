@@ -598,12 +598,8 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     @classmethod
     def get_partner_filter(cls, partner):
-        """
-        Return a dict of filter...
-        """
-        #~ kw.update(pupil=partner)
-        q1 = models.Q(pupil__invoicing_address__isnull=True, pupil=partner)
-        q2 = models.Q(pupil__invoicing_address=partner)
+        q1 = models.Q(pupil__invoice_recipient__isnull=True, pupil=partner)
+        q2 = models.Q(pupil__invoice_recipient=partner)
         return models.Q(q1 | q2, invoice__isnull=True)
 
     def pupil_changed(self, ar):

@@ -23,16 +23,17 @@ Models
     - It may define a list of "certifiable" fields. 
       See :meth:`get_certifiable_fields`.
 
-  Your database is then expected to have a certifying ExcerptType on
-  this model. 
-
-
   Usage example::
 
       from lino.modlib.excerpts.mixins import Certifiable
 
       class MyModel(dd.UserAuthored, Certifiable, dd.Duplicable):
           ...
+
+  The :mod:`lino.modlib.excerpts.fixtures.std` fixture automatically
+  creates a certifying :class:`ExcerptType` instance for every model
+  which inherits from :class:`Certifiable`.
+  
 
   .. attribute:: printed_by
 
@@ -60,9 +61,16 @@ Models
 
 .. class:: ExcerptType
 
+  Lino will automatically install a "Print" action on every model of
+  your app for which the database contains an :class:`ExcerptType`
+  instance.
+
+  .. attribute:: content_type
+
+    The model on which excerpts of this type are going to work.
+
   .. attribute:: certifying
   .. attribute:: body_template
-  .. attribute:: content_type
   .. attribute:: primary
   .. attribute:: backward_compat
 

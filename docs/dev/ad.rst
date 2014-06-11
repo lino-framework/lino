@@ -321,7 +321,22 @@ The ``Site`` class
     [('de', 'German'), ('fr', 'French')]
 
 
-  .. method:: field2kw(obj,name,**known_values)
+  .. method:: str2kw(self, text, name, **kw)
+
+    Converts the given lazy translatable string `text` into a
+    dictionary which maps the names for babelfield `name` to their
+    corresponding values.
+
+    >>> from django.utils.translation import ugettext_lazy as _
+    >>> from north import TestSite as Site
+    >>> site = Site(languages='de fr es')
+    >>> site.str2kw(_("January"), 'name')
+    {'name_fr': u'janvier', 'name': u'Januar', 'name_es': u'Enero'}
+    >>> site = Site(languages='fr de es')
+    >>> site.str2kw(_("January"), 'name')
+    {'name_de': u'Januar', 'name': u'janvier', 'name_es': u'Enero'}
+    
+  .. method:: field2kw(obj, name, **known_values)
 
     Examples:
 
@@ -720,45 +735,6 @@ The ``Site`` class
 
 
 
-The ``Plugin`` class
---------------------
-
-The basic usage is to write in your :xfile:`__init__.py` file::
-
-    from lino import ad, _
-
-    class Plugin(ad.Plugin):
-        verbose_name = _("Contacts")
-
-
-
-
-.. class:: Plugin
-
-    The base class for all plugins.
-
-    Every Django app may define a class object called "Plugin" in
-    its :xfile:`__init__.py` module (not in the :xfile:`models.py` module).
-
-    Plugins get instiantiated exactly once when the :class:`Site`
-    object instantiates (i.e. before Django settings are ready).
-
-    All plugins are globally accessible 
-    in :data:`dd.apps` using the `app_label` as key.
-
-  .. attribute:: verbose_name
-
-    The name of this app, as shown to the user. This can be
-    translatable. 
-
-
-  .. attribute:: extends_models
-
-    If specified, a list of model names for which this app provides a
-    subclass.
-    
-    For backwards compatibility this has no effect
-    when :setting:`override_modlib_models` is set.
 
   .. attribute:: legacy_data_path
 
@@ -827,13 +803,6 @@ The basic usage is to write in your :xfile:`__init__.py` file::
     :mod:`lino.modlib.countries`.
 
 
-  .. method:: configure(self, **kw)
-
-    Set the given parameter(s) of this Plugin instance.
-    Any number of parameters can be specified as keyword arguments.
-
-    Raise an exception if caller specified a key that does not
-    have a corresponding attribute.
 
   .. method:: welcome_text()
 
@@ -908,3 +877,57 @@ The basic usage is to write in your :xfile:`__init__.py` file::
     Note that this is expected to return a unicode string possibly
     containing valid HTML (not XHTML) tags for formatting.
 
+
+
+
+The ``Plugin`` class
+--------------------
+
+Plugins are conceptually similar to Django's `AppConfig classes
+<https://docs.djangoproject.com/en/dev/ref/applications/>`_.
+
+The basic usage for plugins is to write in your :xfile:`__init__.py`
+file::
+
+    from lino import ad, _
+
+    class Plugin(ad.Plugin):
+        verbose_name = _("Contacts")
+
+
+
+
+.. class:: Plugin
+
+    The base class for all plugins.
+
+    Every Django app may define a class object called "Plugin" in
+    its :xfile:`__init__.py` module (not in the :xfile:`models.py` module).
+
+    Plugins get instiantiated exactly once when the :class:`Site`
+    object instantiates (i.e. before Django settings are ready).
+
+    All plugins are globally accessible in :data:`dd.plugins` using
+    the `app_label` as key.
+
+  .. attribute:: verbose_name
+
+    The name of this app, as shown to the user. This can be
+    translatable. 
+
+
+  .. attribute:: extends_models
+
+    If specified, a list of model names for which this app provides a
+    subclass.
+    
+    For backwards compatibility this has no effect
+    when :setting:`override_modlib_models` is set.
+
+  .. method:: configure(self, **kw)
+
+    Set the given parameter(s) of this Plugin instance.
+    Any number of parameters can be specified as keyword arguments.
+
+    Raise an exception if caller specified a key that does not
+    have a corresponding attribute.

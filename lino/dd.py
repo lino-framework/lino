@@ -399,6 +399,7 @@ startup = settings.SITE.startup
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
+str2kw = settings.SITE.str2kw
 
 
 def show(*args, **kw):

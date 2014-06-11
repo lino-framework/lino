@@ -12,10 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-The :xfile:`models` module for the :mod:`lino.modlib.auto.sales` app.
-
-"""
+"See :mod:`ml.sales`."
 
 from __future__ import unicode_literals
 
@@ -52,8 +49,7 @@ from lino.modlib.sales.models import *
 
 class InvoicingMode(dd.PrintableType, dd.BabelNamed):
 
-    """Represents a method of issuing/sending invoices.
-    """
+    "See :class:``"
     class Meta:
         verbose_name = _("Invoicing Mode")
         verbose_name_plural = _("Invoicing Modes")
@@ -76,8 +72,6 @@ has a chance to pay them in time.""")
     #~ def __unicode__(self):
         #~ return unicode(dd.babelattr(self,'name'))
 
-#~ add_babel_field(InvoicingMode,'name')
-
 
 class InvoicingModes(dd.Table):
     model = InvoicingMode
@@ -85,37 +79,19 @@ class InvoicingModes(dd.Table):
 
 class Invoiceable(dd.Model):
 
-    """
-    Mixin for things that are "invoiceable", i.e. for which a customer
-    is going to get an invoice.
-    """
-    invoiceable_date_field = ''
-    """
-    The name of the field which holds the invoiceable date.
-    """
+    "See :class:`ml.sales.Invoiceable`."
 
-    #~ invoiceable_partner_field = ''
-    #~ """
-    #~ The name of the field which holds the invoiceable partner.
-    #~ """
+    invoiceable_date_field = ''
 
     class Meta:
         abstract = True
 
     invoice = dd.ForeignKey('sales.Invoice',
-                            #~ verbose_name=_("Invoice"),
                             blank=True, null=True)
 
     @classmethod
     def get_partner_filter(cls, partner):
-        """
-        Return a dict of filter...
-        """
         raise NotImplementedError()
-        #~ kw = dict()
-        #~ kw.update(invoice__isnull=True)
-        #~ kw.update(partner=partner)
-        #~ return models.Q(**kw)
 
     def get_invoiceable_product(self):
         return None
@@ -137,14 +113,7 @@ class Invoiceable(dd.Model):
         #~ logger.info('20130711 get_invoiceables_for (%s,%s)', partner, max_date)
         for m in dd.models_by_base(cls):
             flt = m.get_partner_filter(partner)
-            #~ fkw = dict()
-            #~ fkw[m.invoiceable_partner_field] = partner
-            #~ fkw.update(invoice__isnull=True)
-            #~ if max_date is not None:
-                #~ fkw["%s__lte" % m.invoiceable_date_field] = max_date
-            #~ logger.info('20130711 %s %s', m, fkw)
             qs = m.objects.filter(flt)
-            #~ qs = qs.exclude(company=settings.SITE.site_config.site_company)
             for obj in qs.order_by(m.invoiceable_date_field):
                 if obj.get_invoiceable_product() is not None:
                     yield obj
@@ -174,6 +143,7 @@ def create_invoice_for(obj, ar):
 
 
 class CreateInvoice(dd.Action):
+    "See :class:`ml.sales.CreateInvoice`."
     icon_name = 'money'
     sort_index = 50
     label = _("Create invoice")
@@ -205,7 +175,7 @@ class CreateInvoice(dd.Action):
 
 
 class CreateInvoiceForPartner(CreateInvoice):
-    help_text = _("Create invoice for this partner using invoiceable items")
+    help_text = _("Create invoice from invoiceables for this partner")
 
     def get_partners(self, ar):
         return ar.selected_rows
@@ -264,9 +234,10 @@ class InvoiceItem(InvoiceItem):  # 20130709
         verbose_name = _("Voucher item")
         verbose_name_plural = _("Voucher items")
 
-    invoiceable_type = dd.ForeignKey(ContentType,
-                                     editable=False, blank=True, null=True,
-                                     verbose_name=string_concat(invoiceable_label, ' ', _('(type)')))
+    invoiceable_type = dd.ForeignKey(
+        ContentType,
+        editable=False, blank=True, null=True,
+        verbose_name=string_concat(invoiceable_label, ' ', _('(type)')))
     invoiceable_id = dd.GenericForeignKeyIdField(
         invoiceable_type,
         editable=False, blank=True, null=True,
@@ -286,12 +257,6 @@ class ItemsByInvoice(ItemsByInvoice):  # 20130709
 
     column_names = "invoiceable product title description:20x1 discount unit_price qty total_incl total_base total_vat"
 
-    #~ @classmethod
-    #~ def get_choices_text(self,obj,request,field):
-        #~ if field.name == 'enrolment':
-            #~ return unicode(obj.course)
-        # ~ # raise Exception("20130607 field.name is %r" % field.name)
-        #~ return super(ItemsByInvoice,self).get_choices_text(obj,field,request)
 
 
 class InvoicingsByInvoiceable(InvoiceItemsByProduct):  # 20130709
@@ -300,10 +265,6 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct):  # 20130709
     master_key = 'invoiceable'
     editable = False
     column_names = "voucher qty title description:20x1 discount unit_price total_incl total_base total_vat"
-
-    #~ column_names =
-
-#~ sales.ItemsByInvoice.column_names = "enrolment product title description:20x1 discount unit_price qty total_incl total_base total_vat"
 
 
 #~ contacts = dd.resolve_app('contacts')

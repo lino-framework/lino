@@ -29,7 +29,7 @@ from lino import dd
 
 
 class Certifiable(dd.Model):
-    
+
     class Meta:
         abstract = True
 
@@ -71,5 +71,4 @@ class Certifiable(dd.Model):
             self.full_clean()
             self.save()
             obj.delete()
-
 

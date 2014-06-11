@@ -48,9 +48,9 @@ def objects():
         flt = dbutils.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
         try:
-            return Place.objects.exclude(type__in=[PlaceTypes.county, PlaceTypes.province]).get(flt)
-            #~ return Place.objects.exclude(type=PlaceTypes.county).get(
-                #~ country__isocode=country_id,name=name)
+            return Place.objects.get(flt)
+            # return Place.objects.exclude(type__in=[
+            #     PlaceTypes.county, PlaceTypes.province]).get(flt)
         except MultipleObjectsReturned:
             #~ qs = Place.objects.exclude(type=PlaceTypes.county).filter(country__isocode=country_id,name=name)
             logger.info("Oops, there are multiple cities for %r", name)

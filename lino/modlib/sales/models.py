@@ -12,10 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-
-
-"""
+"See :mod:`ml.sales`."
 
 from __future__ import unicode_literals
 
@@ -41,6 +38,8 @@ from lino import mixins
 from lino.utils import mti
 #~ from lino.utils.quantities import Duration
 
+from lino.modlib.excerpts.mixins import Certifiable
+
 from ..vat.utils import add_vat, remove_vat
 
 #~ journals = resolve_app('journals')
@@ -52,6 +51,8 @@ partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger', strict=True)
 vat = dd.resolve_app('vat', strict=True)
 products = dd.resolve_app('products', strict=True)
+
+
 
 
 vat.TradeTypes.sales.update(
@@ -66,7 +67,7 @@ vat.TradeTypes.sales.update(
 
 dd.inject_field(
     'contacts.Partner',
-    'invoicing_address',
+    'invoice_recipient',
     dd.ForeignKey('contacts.Partner',
                   verbose_name=_("Invoicing address"),
                   blank=True, null=True))
@@ -79,10 +80,8 @@ dd.inject_field(
 
 
 class InvoiceStates(dd.Workflow):
+    pass
 
-    """
-    This lists the possible values for the workflow of a :class:`Invoice`
-    """
 add = InvoiceStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
 add('20', _("Registered"), 'registered', editable=False)
@@ -99,33 +98,25 @@ InvoiceStates.draft.add_transition(
 
 
 class ShippingMode(dd.BabelNamed):
-    price = dd.PriceField(blank=True, null=True)
 
     class Meta:
         verbose_name = _("Shipping Mode")
         verbose_name_plural = _("Shipping Modes")
 
+    price = dd.PriceField(blank=True, null=True)
+
 
 class ShippingModes(dd.Table):
 
-    """
-    Represents a possible method of how the items described in a SalesDocument 
-    are to be transferred from us to our customer.
-    """
     model = ShippingMode
-    #~ order_by = ["id"]
-    #~ can_view = perms.is_staff
-    #~ def can_view(self,request):
-      #~ return request.user.is_staff
 
 
 class SalesDocument(
         vat.VatDocument,
         ledger.Matchable,
-        dd.TypedPrintable):
+        Certifiable):
 
-    """Common base class for `orders.Order` and :class:`Invoice`.
-    
+    """
     #~ Subclasses must either add themselves a date field (as does Order) 
     #~ or inherit it from Voucher (as does Invoice)
     """
@@ -192,10 +183,6 @@ class SalesDocuments(dd.Table):
 
 
 class Invoice(SalesDocument, ledger.Voucher):
-
-    """
-    An invoice usually used for selling something.
-    """
     class Meta:
         abstract = settings.SITE.is_abstract_model('sales.Invoice')
         verbose_name = _("Invoice")
@@ -532,7 +519,7 @@ def site_setup(site):
     #     if not hasattr(t.detail_layout, 'sales'):
     #         t.add_detail_tab(
     #             "sales", """
-    #             invoicing_address vat_id vat_regime payment_term
+    #             invoice_recipient vat_id vat_regime payment_term
     #             sales.InvoicesByPartner
     #             """,
     #             label=MODULE_LABEL)
@@ -541,7 +528,7 @@ def site_setup(site):
 class PartnerDetailMixin(dd.Panel):
     sales = dd.Panel(
         """
-        invoicing_address vat_regime payment_term
+        invoice_recipient vat_regime payment_term
         sales.InvoicesByPartner
         """,
         label=MODULE_LABEL)
