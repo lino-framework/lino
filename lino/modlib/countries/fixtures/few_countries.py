@@ -1,4 +1,4 @@
-﻿# Copyright 2009-2013 Luc Saffre
+﻿# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -16,16 +16,11 @@ Adds an arbitrary selection of a few demo countries.
 
 from __future__ import unicode_literals
 
-
-from django.db import models
-#countries = models.get_app('countries')
+from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
-from lino.utils.instantiator import Instantiator
-from north.dbutils import babel_values
 
 Country = dd.resolve_model('countries.Country')
-build_country = Instantiator('countries.Country', "isocode").build
 
 
 def objects():
@@ -34,65 +29,13 @@ def objects():
         try:
             return Country.objects.get(isocode=isocode)
         except Country.DoesNotExist:
-            # return build_country(isocode, **kw)
             return Country(isocode=isocode, **kw)
 
-    yield country('EE', **babel_values('name',
-                                       de=u"Estland",
-                                       fr=u'Estonie',
-                                       en=u"Estonia",
-                                       nl=u'Estland',
-                                       et=u'Eesti',
-                                       ))
-    yield country('BE', **babel_values('name',
-                                       de=u"Belgien",
-                                       fr=u'Belgique',
-                                       en=u"Belgium",
-                                       nl=u'Belgie',
-                                       et=u'Belgia',
-                                       ))
-    yield country('DE', **babel_values('name',
-                                       de=u"Deutschland",
-                                       fr=u'Allemagne',
-                                       en=u"Germany",
-                                       nl=u'Duitsland',
-                                       et=u'Saksamaa',
-                                       ))
-    yield country('FR', **babel_values('name',
-                                       de=u"Frankreich",
-                                       fr=u'France',
-                                       en=u"France",
-                                       nl=u'Frankrijk',
-                                       et=u'Prantsusmaa',
-                                       ))
-    yield country('NL', **babel_values('name',
-                                       de=u"Niederlande",
-                                       fr=u'Pays-Bas',
-                                       en=u"Netherlands",
-                                       nl=u'Nederlande',
-                                       et=u'Holand',
-                                       ))
-
-    yield country('MA', **babel_values('name',
-                                       de=u"Marokko",
-                                       fr=u'Maroc',
-                                       en=u"Maroc",
-                                       nl=u'Marocco',
-                                       et=u'Marokko',
-                                       ))
-
-    yield country('RU', **babel_values('name',
-                                       de=u"Russland",
-                                       fr=u'Russie',
-                                       en=u"Russia",
-                                       nl=u'Rusland',
-                                       et=u'Venemaa',
-                                       ))
-
-    yield country('CD', **babel_values('name',
-                                       de=u"Kongo (Demokratische Republik)",
-                                       fr=u'Congo (République Démocratique)',
-                                       en=u"Congo (Democratic Republic)",
-                                       nl=u'Congo (Democratische Republiek)',
-                                       et=u'Kongo (Demokraatlik Vabariik)',
-                                       ))
+    yield country('EE', **dd.str2kw(_("Estonia"), 'name'))
+    yield country('BE', **dd.str2kw(_("Belgium"), 'name'))
+    yield country('DE', **dd.str2kw(_("Germany"), 'name'))
+    yield country('FR', **dd.str2kw(_("France"), 'name'))
+    yield country('NL', **dd.str2kw(_("Netherlands"), 'name'))
+    yield country('MA', **dd.str2kw(_("Maroc"), 'name'))
+    yield country('RU', **dd.str2kw(_("Russia"), 'name'))
+    yield country('CD', **dd.str2kw(_("Congo (Democratic Republic)"), 'name'))

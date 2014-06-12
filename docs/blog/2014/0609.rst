@@ -2,6 +2,8 @@
 Monday, June 9, 2014
 ====================
 
+.. _commondata:
+
 Common Knowledge
 ----------------
 

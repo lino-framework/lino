@@ -25,7 +25,7 @@ which uses :mod:`ml.sales` must also install :mod:`ml.excerpts`.
 Hm... Can we leave this as this? Do we need automatic management of
 dependencies (i.e. :attr:`ad.Plugin.requires`)?
 
-- Another example why we need  
+- Another example why we need app dependencies is sepa and iban.
 
 
 TODO:
@@ -34,8 +34,7 @@ TODO:
 - AddressesBy
 
 
-
-
+Continued on :ref:`commondata`.
 
 :ref:`dpy` : Django sometimes seems to also load fixtures from current
 directory.  This was disturbing while writing :ref:`cosi.tested.est`
