@@ -200,7 +200,8 @@ class Place(dd.BabelNamed):
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
         if not settings.SITE.allow_duplicate_cities:
-            unique_together = ('country', 'parent', 'name', 'type')
+            unique_together = (
+                'country', 'parent', 'name', 'type', 'zip_code')
 
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8, blank=True)
@@ -215,12 +216,12 @@ class Place(dd.BabelNamed):
     #~ def __unicode__(self):
         #~ return self.name
 
-    # def save(self, *args, **kw):
-    #     super(Place, self).save(*args, **kw)
-    #     if self.name == "Rapla" and self.type.name == 'county':
-    #         logger.info("20140611 Rapla %s", self.id)
-    #         import traceback
-    #         traceback.print_stack()
+    def save(self, *args, **kw):
+        if self.name == u"Söödi":
+            logger.info("20140611 Gonna save Rapla %s", self.id)
+            import traceback
+            traceback.print_stack()
+        super(Place, self).save(*args, **kw)
 
     def get_parents(self, *grandparents):
         if self.parent_id:

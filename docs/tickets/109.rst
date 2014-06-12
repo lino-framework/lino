@@ -1,0 +1,23 @@
+#109 : Loading city names into a database
+=========================================
+
+For Belgium and Estonia, Lino currently uses :ref:`commondata` to load
+detailed lists of places in these countries, together with their zip
+codes.
+
+- While this is currently satisfying for these countries, our plan is to
+  the :ref:`commondata` interface by an interface to `geonames.org
+  <http://www.geonames.org>`_.
+
+- write a management command to update existing databases from
+  `geonames.org <http://www.geonames.org>`_.
+
+Web links
+---------
+
+- `geonames.org <http://www.geonames.org/postalcode-search.html?q=eupen&country=BE>`_
+
+- `django-cities-light
+<http://django-cities-light.readthedocs.org/en/1.8/index.html>`_ "is
+very simple and is useful if you want to make a simple address book
+for example"

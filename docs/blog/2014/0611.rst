@@ -2,6 +2,10 @@
 Wednesday, June 11, 2014
 ========================
 
+
+Excerpts also for Così
+----------------------
+
 DONE:
 
 - Added :mod:`ml.excerpts` to :ref:`cosi`.  
@@ -34,10 +38,13 @@ TODO:
 - AddressesBy
 
 
+Free default data for places and zip codes
+------------------------------------------
+
 Continued on :ref:`commondata`.
 
 :ref:`dpy` : Django sometimes seems to also load fixtures from current
-directory.  This was disturbing while writing :ref:`cosi.tested.est`
+directory.  This was disturbing while writing :ref:`cosi.tested.estonia`
 because the following then caused a "Fixture has no attribute
 objects":
 

@@ -2,4 +2,57 @@
 Thursday, June 12, 2014
 =======================
 
-Continued on :ref:`commondata`.
+
+I continued on :ref:`commondata`.  There was a last stupid problem,
+not even related to the real problem but which blocks the demo. See
+next section.
+
+
+Soodi and Söödi
+---------------
+
+Two innocent small villages in the south of Estonia caused me about
+one day of work. And taught me that Django's unique_together_ meta
+option reduces Non-ASCII letters to their plain ASCII letter (e.g. "ö"
+becomes "o"). The problem is subtle since it passes in sqlite but
+fails in mysql.
+
+
+.. _unique_together: https://docs.djangoproject.com/en/1.6/ref/models/options/#unique-together
+
+
+The fixtures ``few_cities`` and ``eesti`` (both in
+:mod:`lino.modlib.countries.fixtures` ) must be specified in the right
+order: ``eesti`` must come first. Because it does not check whether
+the place already exists. While ``few_cities`` does this test.
+
+I finally laid down this subject in a new ticket :doc:`/tickets/109`.
+
+
+
+EventGenerators for multiple users
+----------------------------------
+
+Worked on :doc:`/tickets/104`.
+
+Preparation work: collect document about :class:`ml.cal.EventGenerator`
+into :mod:`ml.cal`.
+
+A first change is that the general hard-coded default value for
+:attr:`ad.Site.ignore_dates_before` is no longer
+`datetime.date.today() + datetime.timedelta(days=-7)` but simply
+`None`.  This is a better default value. We need constant conditions
+in our test databases.
+
+Then I started to look at how Lino generates demo data. Optimized the
+procedure.
+
+TODO:
+- Robin Dubois scheint ein guter Testfall (hat drei DSBE-Begleitungen).
+  Aber sein Vertrag wurde nicht vom richtigen Begleiter erstellt.
+- Write a method `Client.get_active_coach(date, coaching_type)` which
+  should cache the dates of coachings because it will be used by
+  EventGenerator.
+- in demo fixture, use this method also to see who was the author of
+  every contract
+

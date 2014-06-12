@@ -13,10 +13,24 @@ wollen, zeigt Lino *Klienten* (:ref:`welfare.pcsw.Clients`).  ("Verträge"
 bedeutet hier :ref:`welfare.isip.Contracts` und/oder
 :ref:`welfare.jobs.Contracts`.)
 
-
 Der Fehler kommt daher, dass es in der Praxis immer exakt
 einen Vertrag pro Klient gibt. Für die Benutzer ist es deshalb
 ungewohnt, die beiden Konzepte zu trennen.
+
+
+Beispiel Melanie:
+
+    In der Liste 60/7 würden wir gerne zwischen 'Vertrag endet' und
+    'NR Nummer', die Organisation vom der 60/7 Konvention.  Somit
+    hätten wir auf einen besseren Blick über diese Kundschaft Was
+    dahinter steckt (zur Info): wir würden gerne sofort sehen wer wo
+    arbeitet, ohne es in der Konvention nachforschen zu müssen, gerade
+    wenn wir einen Kollegen vertreten (wir wissen dann nicht unbedingt
+    wer wo arbeitet).
+
+    Gerd präzisierte später: die Frage betrifft die Grid, die über den
+    Link in der Tabelle auf der Startseite angezeigt wird.
+
 
 Beispiel Hubert:
 

@@ -444,7 +444,7 @@ class Site(Site):
     datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
     datetime_format_extjs = 'Y-m-d\TH:i:s'
 
-    ignore_dates_before = datetime.date.today() + datetime.timedelta(days=-7)
+    ignore_dates_before = None
     ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
 
     # for internal use:
