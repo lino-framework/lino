@@ -233,8 +233,8 @@ class Place(dd.BabelNamed):
             return [(i, t) for i, t in PlaceTypes.choices if i in allowed]
         return PlaceTypes.choices
 
-    # def get_choices_text(self, request, actor, field):
-    def __unicode__(self):
+    # def __unicode__(self):
+    def get_choices_text(self, request, actor, field):
         """
         Extends the default behaviour (which would simply diplay this
         city in the current language) by also adding the name in other
@@ -252,7 +252,7 @@ class Place(dd.BabelNamed):
         else:
             s = ' / '.join(names)
             # s = "%s (%s)" % (names[0], ', '.join(names[1:]))
-        if False:  # TODO: attribute per type?
+        if True:  # TODO: attribute per type?
             s += " (%s)" % unicode(self.type)
         return s
         #~ return unicode(self)

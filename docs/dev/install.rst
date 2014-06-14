@@ -81,14 +81,18 @@ Run Lino's test suite
 The following commands are a recommended check to see whether
 everything worked well.
 
-- First we install some more recommended Python modules::
+- First we install some more Python modules needed by the test suite::
 
      $ pip install fabric
-     $ pip install reportlab
+     $ pip install html5lib
+     $ pip install 'reportlab==2.7'
      $ pip install pisa
      $ pip install django-iban
 
   fabric_ is a command-line tool systems to streamline administration tasks. 
+
+  pisa complains that "Reportlab Version 2.1+ is needed!" with
+  reportlab 3, so we install 2.7 (the latest 2.x version)
 
 - And here we go for the test suite::
 
