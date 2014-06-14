@@ -36,18 +36,14 @@ working copies of version-controlled software projects,
 `cd` to that directory and and do::
 
   $ git clone https://github.com/lsaffre/atelier.git
-  $ git clone https://github.com/lsaffre/djangosite.git site
+  $ git clone https://github.com/lsaffre/djangosite.git
   $ git clone https://github.com/lsaffre/north.git
   $ git clone https://github.com/lsaffre/lino.git
 
-The second line is an example for having a project whose
-**local name** differs from its **public name**.
-We recommend to keep
-your local project names short.
-
-You should now have 4 subdirectories called `atelier`, `site`,
-`north`, `lino`. Each of them should contain a file `setup.py`, a file
-`README.rst`, a sub-directory `docs`, and other files and directories.
+You should now have 4 subdirectories called `atelier`, `djangosite`,
+`north`, `lino`. Each of them should contain a file :xfile:`setup.py`,
+a file :xfile:`README.rst` and a whole tree of other files and
+directories.
 
 Installation
 ------------
@@ -59,7 +55,7 @@ within any Python program.
 Commands::
 
   $ pip install -e atelier
-  $ pip install -e site 
+  $ pip install -e djangosite 
   $ pip install -e north
   $ pip install -e lino
 
@@ -75,7 +71,7 @@ Notes:
 - Alternatively (without pip_) you could have done::
 
       $ cd atelier ; python setup.py develop ; cd ..
-      $ cd site ; python setup.py develop ; cd ..
+      $ cd djangosite ; python setup.py develop ; cd ..
       ...
 
 

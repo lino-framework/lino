@@ -4,4 +4,16 @@ Saturday, June 14, 2014
 
 :cmd:`fab test` in :ref:`welfare` was broken.
 
+Worked on 
+`SITE objects has no keywords 'str2kw' after update of 11/06/2014
+<https://github.com/lsaffre/lino/issues/17>`_.
+
+The :doc:`/dev/install` page still had some problems:
+
+- `django-iban` was missing
+- Modified a :blogref:`20131211` so that it works when :ref:`faggio`
+  is not installed.
+- Moved ``lino.projects.start`` to ``lino_cosi.settings.start`` because
+  it is actually a variant of :ref:`cosi` and made the test suite fail
+  in a virgin installation as described by
 

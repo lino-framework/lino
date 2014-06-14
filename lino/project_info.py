@@ -210,8 +210,6 @@ lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 lino.projects.docs
-lino.projects.start
-lino.projects.start.settings
 """.splitlines() if n])
 
 SETUP_INFO.update(message_extractors={

@@ -17,7 +17,7 @@ where I did the conversion too late: modifying :setting:`LANGUAGES`
 has no effect when `settings` have been loaded.  Now it is fixed:
 
 >>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_faggio.settings.test'
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings'
 >>> from lino.runtime import settings
 >>> from __future__ import print_function
 >>> print(settings.LANGUAGES)
