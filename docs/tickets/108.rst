@@ -1,4 +1,4 @@
-:state: discuss
+:state: active
 
 ====================================
 #108: Internationalize demo fixtures

@@ -83,9 +83,9 @@ class PlaceTypes(dd.ChoiceList):
 
     """
     Sources used:
-    
+
     - http://en.wikipedia.org/wiki/List_of_subnational_entities
-    
+
     """
     verbose_name = _("Place Type")
 add = PlaceTypes.add_item
@@ -109,9 +109,7 @@ add('28', _('Sector'))
 
 add('50', _('City'), 'city')              # et:suurlinn  de:Stadt
 add('51', _('Town'), 'town')              # et:linn      de:Kleinstadt
-# et:vald     de:Gemeinde fr:Commune
-add('52', _('Municipality'), 'municipality')
-# ~ add('53', _('Commune'),'commune')           # de:Kommune fr:Commune
+add('52', _('Municipality'), 'municipality')  # et:vald de:Gemeinde fr:Commune
 add('54', _('Parish'), 'parish')           # de:Pfarre fr:Paroisse
 add('55', _('Township'), 'township')         # de:Stadtteil fr:?
 add('56', _('Quarter'), 'quarter')           # de:Viertel fr:Quartier
@@ -254,7 +252,8 @@ class Place(dd.BabelNamed):
         else:
             s = ' / '.join(names)
             # s = "%s (%s)" % (names[0], ', '.join(names[1:]))
-        s += " (%s)" % unicode(self.type)
+        if False:  # TODO: attribute per type?
+            s += " (%s)" % unicode(self.type)
         return s
         #~ return unicode(self)
 

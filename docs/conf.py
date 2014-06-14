@@ -282,8 +282,9 @@ def setup(app):
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 
-extlinks = dict({
-  'issue': ('http://code.google.com/p/lino/issues/detail?id=%s', 'Issue '),
+extlinks.update({
+    'issue': (
+        'http://code.google.com/p/lino/issues/detail?id=%s', '# '),
   'checkin': ('http://code.google.com/p/lino/source/detail?r=%s', 'Checkin '),
   'srcref': (lino.srcref_url, ''),
   'extjs': ('http://www.sencha.com/deploy/dev/docs/?class=%s', ''),
@@ -294,11 +295,6 @@ extlinks = dict({
   'welfareusermande': ('http://welfare-userman.lino-framework.org/de%s.html', ''),
   'welfareusermanfr': ('http://welfare-userman.lino-framework.org/fr%s.html', ''),
 })
-
-#~ intersphinx_mapping = {
-  #~ 'django': ('http://docs.djangoproject.com', 'http://docs.djangoproject.com/en/dev/objects.inv')
-#~ }
-
 
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'

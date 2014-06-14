@@ -283,6 +283,9 @@ class EventGenerator(mixins.UserAuthored):
         if obj.__dict__ != original_state:
             obj.save()
 
+    def setup_auto_event(self, obj):
+        pass
+
     def before_auto_event_save(self, obj):
         pass
 
@@ -338,10 +341,10 @@ class EventGenerator(mixins.UserAuthored):
                         event_type=event_type,
                         start_time=rset.start_time,
                         end_time=rset.end_time)
+                    self.setup_auto_event(we)
                     date = self.resolve_conflicts(we, ar, rset, until)
                     if date is None:
                         return wanted
-
                     wanted[i] = we
                 date = rset.get_next_suggested_date(ar, date)
                 date = rset.find_start_date(date)

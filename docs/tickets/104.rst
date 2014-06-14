@@ -1,4 +1,4 @@
-:state: active
+:state: done
 :module: lino_welfare
 
 #104 : Aktive Begleitung weitergeben
@@ -23,3 +23,6 @@ generiert werden sollen. Also:
   beenden, neue Begleitung erstellen, und alle Termingeneratoren (VSEs
   und Konventionen) neu generieren lassen.
 
+
+Solved :blogref:`20140613`.
+Test case is in :ref:`welfare.tested.integ`.

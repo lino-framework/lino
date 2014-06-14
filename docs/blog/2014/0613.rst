@@ -1,0 +1,6 @@
+=====================
+Friday, June 13, 2014
+=====================
+
+Solved ticket :doc:`/tickets/104`.
+Test case is in :ref:`welfare.tested.integ`

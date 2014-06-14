@@ -38,7 +38,7 @@ and villages with their zip codes.  I would say that the national post
 office is more or less authority on this topic.  That's why we have
 :mod:`lino.modlib.countries.fixtures.ee` which needs a file
 :file:`sihtnumbrid.csv` which I used to download from Estonian post
-office.  In general I am pessimistic about getting their help for
+office.  I didn't ask, but am pessimistic about getting their help for
 making this database freely available.  Meanwhile they changed their
 name and reorganized their web site. The new site has a `download page
 <https://www.omniva.ee/ari/kiri/noudmiseni_sihtnumbrid>`_, but (1) it

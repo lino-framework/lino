@@ -48,11 +48,13 @@ Then I started to look at how Lino generates demo data. Optimized the
 procedure.
 
 TODO:
-- Robin Dubois scheint ein guter Testfall (hat drei DSBE-Begleitungen).
-  Aber sein Vertrag wurde nicht vom richtigen Begleiter erstellt.
-- Write a method `Client.get_active_coach(date, coaching_type)` which
+
+- Write a method `Client.get_coach_by_date(date, coaching_type)` which
   should cache the dates of coachings because it will be used by
   EventGenerator.
-- in demo fixture, use this method also to see who was the author of
-  every contract
+- Write a test case. Robin Dubois scheint ein guter Testfall (hat drei
+  DSBE-Begleitungen).  Aber sein Vertrag wurde nicht vom richtigen
+  Begleiter erstellt.
+- in the demo fixture, use the `get_coach_by_date` method also to see who
+  was the author of every contract
 
