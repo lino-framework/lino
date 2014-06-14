@@ -28,12 +28,6 @@ Preliminaries
     $ virtualenv tmp
     $ . tmp/bin/activate
 
-- We recommend to install fabric_, a command-line tool systems to
-  streamline administration tasks. It's easy to install it::
-
-     $ pip install fabric
-
-
 Get the sources
 ---------------
 
@@ -93,8 +87,12 @@ everything worked well.
 
 - First we install some more recommended Python modules::
 
+     $ pip install fabric
      $ pip install reportlab
      $ pip install pisa
+     $ pip install django-iban
+
+  fabric_ is a command-line tool systems to streamline administration tasks. 
 
 - And here we go for the test suite::
 

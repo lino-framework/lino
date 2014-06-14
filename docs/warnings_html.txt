@@ -1,0 +1,3 @@
+/home/luc/hgwork/lino/docs/tickets/109.rst:6: WARNING: undefined label: commondata (if the link has no caption the label must precede a section header)
+WARNING: logo file 'logo.png' does not exist
+WARNING: favicon file 'favicon.ico' does not exist
