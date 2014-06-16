@@ -1,0 +1,6 @@
+=====================
+Monday, June 16, 2014
+=====================
+
+I wrote the next migrator method for :ref:`faggio`:
+:meth:`lino_faggio.migrate.Migrator.migrate_from_0_0_3`.
