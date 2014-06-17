@@ -132,11 +132,10 @@ def find_config_file(fn, *groups):
 def find_config_files(pattern, *groups):
     """Returns a dict of filename -> config_dir entries for each config
     file on this site that matches the pattern.  Loops through
-    `config_dirs` and collects matching files.  When more than one
-    file of the same name exists in different apps it gets overridden
-    by later apps.
-    
-    `groups` is a tuple of strings, e.g. '','foo', 'foo/bar',...
+    `config_dirs` and collects matching files.  When a filename is
+    provided by more than one app, then the latest app gets gets it.
+
+    `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
 
     """
     files = {}

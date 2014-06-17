@@ -41,10 +41,6 @@ from .workflows import TaskStates
 
 class Task(Component):
 
-    """
-    A Task is when a user plans to to something 
-    (and optionally wants to get reminded about it).
-    """
     #~ workflow_state_field = 'state'
 
     class Meta:

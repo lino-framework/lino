@@ -476,9 +476,6 @@ class Actor(actions.Parametrizable):
     """
 
     allow_create = True
-    """If this is False, then then Actor won't have no insert_action.
-
-    """
 
     hide_top_toolbar = False
 
@@ -630,10 +627,6 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_create_permission(self, ar):
-        """
-        Dynamic test per request.
-        This is being called only when `allow_create` is True.
-        """
         return True
 
     @classmethod

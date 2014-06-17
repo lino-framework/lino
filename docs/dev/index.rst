@@ -23,19 +23,12 @@ Recommended
    pull
    translate/index
 
-   /tickets/index
-   /changes
-   /todo
-
-
 Drafts
 ------
    
 .. toctree::
    :maxdepth: 1
 
-   Generated API </api/lino>
-   /tested/index
    apps
    testing
    
@@ -46,4 +39,17 @@ Drafts
    style
    datamig
    versioning
+
+
+Other
+-----
+
+.. toctree::
+   :maxdepth: 1
+
+   /changes
+   /todo
+   Generated API </api/lino>
+   /tested/index
+
 

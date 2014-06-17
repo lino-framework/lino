@@ -115,6 +115,15 @@ The ``Actor`` class reference
     JavaScript if this is just an abstract base class to be inherited
     by other actors.
 
+  .. attribute:: allow_create
+
+    If this is False, then then Actor won't have no insert_action.
+
+  .. method:: get_create_permission(self, ar)
+
+    Dynamic test per request.
+    This is being called only when :attr:`allow_create` is True.
+
   .. method:: get_handle_name(self, ar)
 
     Most actors use the same UI handle for each request.  But

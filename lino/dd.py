@@ -384,6 +384,8 @@ from lino.mixins.human import Human, Born
 
 from django.utils.importlib import import_module
 
+from django.contrib.contenttypes.models import ContentType
+
 
 # The following are not only shortcuts, they also are a preparation to
 # encapsulate the `settings.SITE` name. It is possible that after

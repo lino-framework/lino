@@ -43,20 +43,22 @@ from jinja2.exceptions import TemplateNotFound
 SUBDIR_NAME = 'config'
 
 
-def list_templates(self, ext, group=''):
+def list_templates(self, ext, *groups):
     """
     Return a list of possible choices for a field that contains a
     template name.
     """
-    #~ logger.info("20130717 list_templates(%r,%r)",ext,group)
-    if group:
-        #~ prefix = os.path.join(*(group.split('/')))
-        def ff(fn):
-            return fn.startswith(group) and fn.endswith(ext)
-        lst = self.jinja_env.list_templates(filter_func=ff)
-        L = len(group) + 1
-        lst = [i[L:] for i in lst]
-        return lst
+    logger.info("20140617 list_templates(%r, %r)", ext, groups)
+    if len(groups):
+        retval = []
+        for group in groups:
+            #~ prefix = os.path.join(*(group.split('/')))
+            def ff(fn):
+                return fn.startswith(group) and fn.endswith(ext)
+            lst = self.jinja_env.list_templates(filter_func=ff)
+            L = len(group) + 1
+            retval += [i[L:] for i in lst]
+        return retval
     return self.jinja_env.list_templates(extensions=[ext])
 
 

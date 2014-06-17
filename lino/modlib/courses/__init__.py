@@ -22,3 +22,10 @@ class Plugin(ad.Plugin):
     teacher_model = 'contacts.Person'
     pupil_model = 'contacts.Person'
 
+    def day_and_month(self, d):
+        if d is None:
+            return "-"
+        return d.strftime("%d.%m.")
+
+
+    

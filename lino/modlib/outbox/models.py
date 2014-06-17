@@ -79,13 +79,13 @@ class MailableType(dd.Model):
     """
     templates_group = None
     """
-    Should contain a string "<app_label>/<Model>" of the Mailable 
+    Should contain a string "<app_label>/<Model>" of the Mailable
     being typed by this MailableType. Example::
     
-      class NoteType(...,MailableType):
+      class NoteType(..., MailableType):
           templates_group = 'notes/Note'
           
-      class Note(...,Mailable):
+      class Note(..., Mailable):
           type = models.ForeignKey(NoteType)
 
     """
@@ -93,18 +93,22 @@ class MailableType(dd.Model):
     class Meta:
         abstract = True
 
-    attach_to_email = models.BooleanField(_("Attach to email"),
-                                          default=False,
+    attach_to_email = models.BooleanField(
+        _("Attach to email"),
+        default=False,
         help_text="""\
 Whether the printable file should be attached to the email
 when creating an email from a mailable of this type.
 """)
     #~ email_as_attachment = models.BooleanField(_("Email as attachment"))
 
-    email_template = models.CharField(max_length=200,
-                                      verbose_name=_("Email template"),
-      blank=True, help_text="""The name of the file to be used as 
-template when creating an email from a mailable of this type.""")
+    email_template = models.CharField(
+        max_length=200,
+        verbose_name=_("Email template"),
+        blank=True,
+        help_text=_(
+            "The name of the file to be used as "
+            "template when creating an email from a mailable of this type."))
 
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):

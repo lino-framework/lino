@@ -7,7 +7,7 @@ Excerpts
 The :mod:`lino.modlib.excerpts` package provides data definitions for
 using "database excerpts".
 
-Models
+Mixins
 ------
 
 .. class:: Certifiable
@@ -57,6 +57,8 @@ Models
             return 'date user title'
 
 
+Models
+------
 
 
 .. class:: ExcerptType
@@ -95,6 +97,15 @@ Models
   The type of this excerpt (ForeignKey to :class:`ExcerptType`).
 
   .. attribute:: language
+
+
+Tables
+------
+
+.. class:: Excerpts
+
+  Base class for all tables on :class:`Excerpt`
+
 
 Actions
 -------

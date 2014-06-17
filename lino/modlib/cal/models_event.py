@@ -68,10 +68,6 @@ def daterange_text(a, b):
 class EventType(dd.BabelNamed, dd.Sequenced,
                 outbox.MailableType):
 
-    """
-    An EventType is a collection of events and tasks.
-    """
-
     templates_group = 'cal/Event'
 
     class Meta:
@@ -176,10 +172,6 @@ class EventTypes(dd.Table):
 
 class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
 
-    """
-    An event that recurs at intervals.
-    """
-
     class Meta:
         verbose_name = _("Recurrent Event")
         verbose_name_plural = _("Recurrent Events")
@@ -214,9 +206,6 @@ dd.update_field(
 
 class RecurrentEvents(dd.Table):
 
-    """
-    The list of all :class:`Recurrence Sets <RecurrenceSet>`.
-    """
     model = 'cal.RecurrentEvent'
     required = dd.required(user_groups='office', user_level='manager')
     column_names = "start_date end_date name every_unit event_type *"
@@ -300,11 +289,6 @@ class Event(Component, Ended,
             mixins.TypedPrintable,
             outbox.Mailable,
             postings.Postable):
-
-    """A Calendar Event (french "Rendez-vous", german "Termin") is a
-    planned ("scheduled") lapse of time where something happens.
-
-    """
 
     class Meta:
         abstract = settings.SITE.is_abstract_model('cal.Event')

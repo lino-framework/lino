@@ -45,9 +45,9 @@ class PrintAndChangeStateAction(dd.ChangeStateAction):
         obj = ar.selected_rows[0]
 
         def ok(ar2):
-            obj.do_print.run_from_ui(ar, **kw)
-            super(PrintAndChangeStateAction, self).run_from_ui(ar)
-            ar.set_response(refresh_all=True)
+            obj.do_print.run_from_ui(ar2, **kw)
+            super(PrintAndChangeStateAction, self).run_from_ui(ar2)
+            ar2.set_response(refresh_all=True)
 
         msg = self.get_confirmation_message(obj, ar)
         ar.confirm(ok, msg, _("Are you sure?"))

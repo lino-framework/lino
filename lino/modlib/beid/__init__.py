@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Add this to your :setting:`get_installed_apps`
+"""Add this to your :meth:`ad.Site.get_installed_apps`
 if your Site should feature actions for reading electronic ID
 smartcards.
 

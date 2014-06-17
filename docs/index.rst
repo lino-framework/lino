@@ -26,6 +26,8 @@ Sitemap
    dev/index
    admin/index
    user/index
+
+   tickets/index
    ref/index
 
 

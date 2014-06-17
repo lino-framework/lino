@@ -97,8 +97,12 @@ class ExcerptType(
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls, content_type):
-        tplgroups = [model_group(content_type.model_class()), 'excerpts']
-        return settings.SITE.list_templates('.body.html', tplgroups)
+        # 20140617 don't remember why the "excerpts" group was useful here
+        # tplgroups = [model_group(content_type.model_class()), 'excerpts']
+        # return settings.SITE.list_templates('.body.html', *tplgroups)
+
+        tplgroup = model_group(content_type.model_class())
+        return settings.SITE.list_templates('.body.html', tplgroup)
 
     # @dd.chooser(simple_values=True)
     # def body_template_choices(cls):
@@ -404,6 +408,8 @@ class Excerpts(dd.Table):
     column_names = ("id build_time owner excerpt_type user project "
                     "company contact_person *")
     order_by = ["id"]
+
+    allow_create = False
 
 
 class MyExcerpts(mixins.ByUser, Excerpts):

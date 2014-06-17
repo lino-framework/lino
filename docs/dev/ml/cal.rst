@@ -8,6 +8,43 @@ The :mod:`lino.modlib.cal` package
 provides data definitions for "Calendar management".
 
 
+.. class:: Event
+
+  A Calendar Event (french "Rendez-vous", german "Termin") is a
+  planned ("scheduled") lapse of time where something happens.
+
+  .. attribute:: type
+
+     The type of this event. Every calendar event should have this
+     field pointing to a given :class:`EventType`, which holds
+     extended configurable information about this event.
+
+
+.. class:: EventType
+
+    The possible value of the :attr:`Event.type` field.
+
+    Example content:
+
+    .. lino2rst::
+
+       dd.login('robin').show(cal.EventTypes, limit=5)
+
+
+.. class:: Task
+
+    A Task is when a user plans to to something 
+    (and optionally wants to get reminded about it).
+
+.. class:: RecurrentEvent
+
+    An event that recurs at intervals.
+
+.. class:: RecurrentEvents
+
+    The list of all recurrent events (:class:`RecurrentEvent`).
+
+
 Mixins
 ======
 

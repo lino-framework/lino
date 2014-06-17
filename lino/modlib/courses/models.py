@@ -42,7 +42,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from north.dbutils import day_and_month
+# from north.dbutils import day_and_month
 
 from lino import dd
 from lino import mixins
@@ -343,8 +343,13 @@ class Course(cal.Reservation, dd.Printable):
     @dd.displayfield(_("Events"))
     def events_text(self, ar=None):
         return ', '.join([
-            day_and_month(e.start_date)
+            config.day_and_month(e.start_date)
             for e in self.events_by_course.order_by('start_date')])
+
+    @property
+    def events_by_course(self):
+        ct = dd.ContentType.objects.get_for_model(self.__class__)
+        return cal.Event.objects.filter(owner_type=ct, owner_id=self.id)
 
     @dd.requestfield(_("Requested"))
     def requested(self, ar):
