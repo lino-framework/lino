@@ -123,14 +123,29 @@ class ExcerptType(
                         c=_("Certifying"), m=mc.meta.verbose_name))
         super(ExcerptType, self).full_clean(*args, **kwargs)
 
-    def after_ui_save(self, ar):
-        super(ExcerptType, self).after_ui_save(ar)
+    def update_siblings(self):
+        updated = 0
         if self.primary:
             for o in self.content_type.excerpt_types.exclude(id=self.id):
                 if o.primary:
                     o.primary = False
                     o.save()
-                    ar.set_response(refresh_all=True)
+                    updated += 1
+        return updated
+
+    def save(self, *args, **kwargs):
+        # It is important to ensure that there is really only one
+        # primary ExcerptType per model because
+        # :func:`set_excerpts_actions` will install these as action on
+        # the model.
+        super(ExcerptType, self).save(*args, **kwargs)
+        self.update_siblings()
+        
+    def after_ui_save(self, ar):
+        super(ExcerptType, self).after_ui_save(ar)
+        if self.primary:
+        # if self.update_siblings():
+            ar.set_response(refresh_all=True)
 
     @classmethod
     def get_template_groups(cls):
@@ -490,7 +505,8 @@ def set_excerpts_actions(sender, **kw):
                             show_excerpts=dd.ShowSlaveTable(
                                 'excerpts.ExcerptsByOwner'
                             ))
-                # logger.info("20140401 %s is attestable", m)
+                logger.info(
+                    "20140618 %s.define_action('%s') from %s ", ct, an, atype)
     except Exception as e:
         logger.info("Failed to set excerpts actions : %s", e)
 

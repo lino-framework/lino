@@ -321,19 +321,19 @@ The ``Site`` class
     [('de', 'German'), ('fr', 'French')]
 
 
-  .. method:: str2kw(self, text, name, **kw)
+  .. method:: str2kw(self, name, text, **kw)
 
-    Converts the given lazy translatable string `text` into a
-    dictionary which maps the names for babelfield `name` to their
-    corresponding values.
+    Return a dictionary which maps the internal field names for
+    babelfield `name` to their respective translation of the given
+    lazy translatable string `text`.
 
     >>> from django.utils.translation import ugettext_lazy as _
     >>> from north import TestSite as Site
     >>> site = Site(languages='de fr es')
-    >>> site.str2kw(_("January"), 'name')
+    >>> site.str2kw('name', _("January"))
     {'name_fr': u'janvier', 'name': u'Januar', 'name_es': u'Enero'}
     >>> site = Site(languages='fr de es')
-    >>> site.str2kw(_("January"), 'name')
+    >>> site.str2kw('name', _("January"))
     {'name_de': u'Januar', 'name': u'janvier', 'name_es': u'Enero'}
     
   .. method:: field2kw(obj, name, **known_values)

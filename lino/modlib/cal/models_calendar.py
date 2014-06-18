@@ -106,6 +106,7 @@ class Subscription(dd.UserAuthored):
 class Subscriptions(dd.Table):
     required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.Subscription'
+    order_by = ['calendar__name']
     #~ insert_layout = """
     #~ label
     #~ event_type

@@ -234,11 +234,11 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         """
-        UserGroups manually sets max_length because the 
-        default list has only one group with value "system", 
+        UserGroups manually sets max_length because the
+        default list has only one group with value "system",
         but applications may want to add longer group names
         """
-        if classDict.has_key('label'):
+        if 'label' in classDict:
             raise Exception("label replaced by verbose_name_plural")
         classDict.setdefault('max_length', 1)
         cls = actors.ActorMetaClass.__new__(meta, classname, bases, classDict)

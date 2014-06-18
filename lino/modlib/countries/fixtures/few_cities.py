@@ -44,8 +44,6 @@ def objects():
         kw.setdefault('type', PlaceTypes.city)
         flt = dbutils.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
-        if name == "Rapla" and kw['type'].name == 'county':
-            logger.info("20140611 fld is %s", flt)
         try:
             return Place.objects.get(flt)
             # return Place.objects.exclude(type__in=[
@@ -57,8 +55,6 @@ def objects():
             obj = city(name, country_id, **kw)
             obj.full_clean()
             obj.save()
-            if name == "Rapla" and kw['type'].name == 'county':
-                logger.info("20140611 DoesNotExist --> %s", obj)
             return obj
 
     BE = Country.objects.get(pk='BE')

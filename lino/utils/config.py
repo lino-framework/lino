@@ -284,20 +284,28 @@ def must_make(src, target):
     try:
         src_st = os.stat(src)
         src_mt = src_st.st_mtime
-    except OSError, e:
+    except OSError:
         # self.error("os.stat() failed: ",e)
         return False
 
     try:
         target_st = os.stat(target)
         target_mt = target_st.st_mtime
-    except OSError, e:
-        # self.error("os.stat() failed: %s",e)
+    except OSError:
+        # self.error("os.stat() failed: %s", e)
         return True
 
     if src_mt - target_mt > MODIFY_WINDOW:
         return True
     return False
+
+
+def is_local_file(filename):
+    return filename.startswith(settings.SITE.project_dir)
+
+
+def make_local_file(filename):
+    raise NotImplementedError(filename)
 
 
 def make_dummy_messages_file(src_fn, messages):

@@ -214,13 +214,6 @@ class Place(dd.BabelNamed):
     #~ def __unicode__(self):
         #~ return self.name
 
-    def save(self, *args, **kw):
-        if self.name == u"Söödi":
-            logger.info("20140611 Gonna save Rapla %s", self.id)
-            import traceback
-            traceback.print_stack()
-        super(Place, self).save(*args, **kw)
-
     def get_parents(self, *grandparents):
         if self.parent_id:
             return self.parent.get_parents(self, *grandparents)

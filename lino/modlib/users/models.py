@@ -31,9 +31,9 @@ from lino.core import actions
 class ChangePassword(dd.Action):
     label = _("Change password")
     parameters = dict(
-        current=dd.PasswordField(_("Current password")),
-        new1=dd.PasswordField(_("New password")),
-        new2=dd.PasswordField(_("New password again"))
+        current=dd.PasswordField(_("Current password"), blank=True),
+        new1=dd.PasswordField(_("New password"), blank=True),
+        new2=dd.PasswordField(_("New password again"), blank=True)
     )
     params_layout = """
     current

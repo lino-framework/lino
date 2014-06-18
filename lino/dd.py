@@ -380,6 +380,8 @@ from lino.mixins.printable import BasePrintable, Printable, PrintableType, Cache
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born
 
+from lino.mixins.periods import DatePeriod, PeriodEvents
+
 #~ from lino.utils.screenshots import register_screenshot
 
 from django.utils.importlib import import_module

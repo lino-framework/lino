@@ -127,8 +127,8 @@ The ``Actor`` class reference
   .. method:: get_handle_name(self, ar)
 
     Most actors use the same UI handle for each request.  But
-    e.g. debts.PrintEntriesByBudget overrides this to implement
-    dynamic columns depending on it's master_instance.
+    e.g. :class:`welfare.debts.PrintEntriesByBudget` overrides this to
+    implement dynamic columns depending on it's master_instance.
 
 
   .. method:: workflow_buttons(self, obj, ar)
@@ -140,7 +140,8 @@ The ``Actor`` class reference
     `ar` is the :class:`rt.ActionRequest`.
 
   .. method:: show(self, master_instance=None, column_names=None,
-              **known_values):
+                   **known_values):
+
     Creates an action request for this actor and calls its
     :meth:`show <lino.core.actions.ActionRequest.show>`
     method.
@@ -218,13 +219,6 @@ The ``Actor`` class reference
     JavaScript if this is just an abstract base class to be inherited
     by other actors.
 
-  .. method:: get_handle_name(self, ar)
-
-    Most actors use the same UI handle for each request.  But
-    e.g. debts.PrintEntriesByBudget overrides this to implement
-    dynamic columns depending on it's master_instance.
-
-
   .. method:: workflow_buttons(self, obj, ar)
 
     A virtual field that displays the workflow buttons for the given
@@ -232,13 +226,6 @@ The ``Actor`` class reference
 
     `obj` is an instance of this table's row class,
     `ar` is the :class:`rt.ActionRequest`.
-
-  .. method:: show(self, master_instance=None, column_names=None,
-              **known_values):
-    Creates an action request for this actor and calls its
-    :meth:`show <lino.core.actions.ActionRequest.show>`
-    method.
-    This is a shortcut for usage in tested document snippets.
 
   .. method:: get_data_elem(self, name)
     
@@ -305,7 +292,7 @@ The ``Actor`` class reference
     If not defined in the Table, Lino will look whether the Table's
     model has a `disabled_fields` method and install a wrapper to this
     model method.  When defined on the model, is must be an *instance*
-    method
+    method::
 
       def disabled_fields(self,ar):
           ...
@@ -323,7 +310,7 @@ The ``Actor`` class reference
     Application developers should not need to override this method.
 
     Default implementation returns an empty dictionary.
-    Overridden by :class:`lino.core.dbtables.Table`
+    Overridden by :class:`dd.Table`
 
 
   .. method:: request(self, *args, **kw) 
@@ -343,8 +330,8 @@ The ``Actor`` class reference
             ...
             coached_since=models.DateField(blank=True))
 
-    But NewClients is a subclass of Clients with the only difference
-    that the default value is `amonthago`::
+    But `NewClients` is a subclass of `Clients` with the only
+    difference that the default value is `amonthago`::
 
 
       class NewClients(Clients):
@@ -361,8 +348,8 @@ Tables
 ------
 
 
-The ``AbstractTable`` class reference
--------------------------------------
+The ``AbstractTable`` class
+---------------------------
 
 .. class:: AbstractTable
 

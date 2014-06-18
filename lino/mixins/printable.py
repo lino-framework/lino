@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
+import shutil
 import os
 import logging
 import cStringIO
@@ -52,6 +53,8 @@ from lino.mixins.duplicable import Duplicable
 from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
+
+from lino.utils.config import is_local_file, make_local_file
 
 
 def decfmt(v, places=2, **kw):
@@ -223,7 +226,7 @@ class SimpleBuildMethod(BuildMethod):
         groups = elem.get_template_groups()
         tplfile = find_config_file(tpl_leaf, *groups)
         if not tplfile:
-            raise Warning("No file %s/%s" % (groups, tpl_leaf))
+            raise Warning("No file %s in %s" % (tpl_leaf, groups))
         return tplfile
 
     def get_template_url(self, ar, action, elem):
@@ -236,10 +239,6 @@ the file to `media/webdav/config`.
 
         """
 
-        leaf = self.get_template_leaf(action, elem)
-        parts = ['webdav', 'config'] + elem.get_template_groups()
-        parts.append(leaf)
-        return settings.SITE.build_media_url(*parts)
 
     def build(self, ar, action, elem):
         #~ if elem is None:
@@ -508,20 +507,55 @@ class EditTemplate(BasePrintAction):
     label = _('Edit Print Template')
     required = dict(user_level='manager')
 
+    def get_view_permission(self, profile):
+        # if not davlink:
+        #     return False
+        return super(EditTemplate, self).get_view_permission(profile)
+
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
         bm = elem.get_build_method()
+        leaf = bm.get_template_leaf(self, elem)
 
-        url = bm.get_template_url(ar, self, elem)
+        groups = elem.get_template_groups()
+        # if len(groups) != 1:
+        #     raise Exception("Oops: more than 1 group in %s" % groups)
+        parts = [groups[0], leaf]
+
+        config_dir = os.path.join(settings.SITE.project_dir, 'config')
+
+        local_file = os.path.join(config_dir, *parts)
+
+        filename = bm.get_template_file(ar, self, elem)
+
+        parts = ['webdav', 'config'] + parts
+        url = settings.SITE.build_media_url(*parts)
         url = ar.request.build_absolute_uri(url)
-        kw.update(message=_("Going to launch: %s ") % url)
-        kw.update(alert=True)
-        if davlink:
-            kw.update(open_davlink_url=url)
+
+        def doit(ar):
+            ar.info("Going to open url: %s " % url)
+            ar.success(open_davlink_url=url)
+            # logger.info('20140313 EditTemplate %r', kw)
+    
+        if is_local_file(filename):
+            if filename != local_file:
+                raise Warning("Oops: %s != %s", filename, local_file)
+            doit(ar)
         else:
-            kw.update(open_url=url)
-        ar.success(**kw)
-        # logger.info('20140313 EditTemplate %r', kw)
+            def ok(ar2):
+                logger.info(
+                    "%s made local template copy %s", ar.user, local_file)
+                shutil.copy(filename, local_file)
+                # new = make_local_file(filename)
+                # ar.info("Now %s" % new, alert=True)
+                doit(ar2)
+
+            ar.confirm(ok, _(
+                "Before you can edit this template we must create a "
+                "local copy on the server. "
+                "This will exclude the template from future updates."),
+                _("Are you sure?"))
+                
 
 # http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
 
@@ -566,15 +600,6 @@ class DirectPrintAction(BasePrintAction):
         else:
             kw.update(open_url=url)
         ar.success(**kw)
-
-#~ class EditTemplateAction(dd.Action):
-    #~ name = 'tpledit'
-    #~ label = _('Edit template')
-
-    #~ def run_from_ui(self,rr,elem,**kw):
-        #~ bm = get_build_method(elem)
-        #~ target = bm.get_template_url(self,elem)
-        #~ return rr.ui.success_response(open_url=target,**kw)
 
 
 class ClearCacheAction(actions.Action):
