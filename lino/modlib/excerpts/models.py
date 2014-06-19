@@ -505,8 +505,8 @@ def set_excerpts_actions(sender, **kw):
                             show_excerpts=dd.ShowSlaveTable(
                                 'excerpts.ExcerptsByOwner'
                             ))
-                logger.info(
-                    "20140618 %s.define_action('%s') from %s ", ct, an, atype)
+                # logger.info(
+                #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
     except Exception as e:
         logger.info("Failed to set excerpts actions : %s", e)
 

@@ -12,37 +12,27 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This creates a list `config_dirs` of all 
-configuration directories by looping through :setting:`INSTALLED_APPS` 
-and taking those whose source directory has a :xfile:`config` subdir.
+"""This defines the :class:`ConfigDirCache` which Lino instantiates
+and installs as :attr:`ad.Site.confdirs`.
 
-..
+It creates a list `config_dirs` of all configuration directories by
+looping through :attr:`ad.Site.installed_plugins` and taking those
+whose source directory has a :xfile:`config` subdir.
 
-  DO NOT import this module at the global level of a models module
-  because importing it will fill the config dirs, i.e. will try to import 
-  every installed `models` module.
+The mechanism in this module emulates the behaviour of Django's and
+Jinja's template loaders.
 
-The mechanism in this module emulates the behaviour of Django's 
-(or Jinja's) template loaders. 
-It was written before I discovered Jinja and became less used afterwards.
-But we still need it to find the `.odt` files for 
-:class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
-This task cannot be done using Jinja because
-Jinja's `get_template` method returns a `Template`, 
-and Jinja templates don't know their filename,
-the only thing needed by 
-:class:`AppyBuildMethod <lino.mixins.printable.AppyBuildMethod>`.
-
+We cannot use the Jinja loader because Jinja's `get_template` method
+returns a `Template`, and Jinja templates don't know their filename.
 One possibility might be to write a special Jinja Template class...
 
-Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst 
-`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` 
-und dann `lino.projects.pcsw`. 
-Also vom Allgemeineren zum Spezifischeren. Und bei den config-Dirs soll diese 
-Liste umgekehrt abgeklappert werden (und die Suche beim 
-ersten Treffer aufhören): zuerst das eventuelle lokale `config_dir`, 
-dann `lino.projects.pcsw`, dann die diversen `lino.modlib.*` usw. 
+Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst
+`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann
+`lino.projects.pcsw`.  Also vom Allgemeineren zum Spezifischeren. Und
+bei den config-Dirs soll diese Liste umgekehrt abgeklappert werden
+(und die Suche beim ersten Treffer aufhören): zuerst das eventuelle
+lokale `config_dir`, dann `lino.projects.pcsw`, dann die diversen
+`lino.modlib.*` usw.
 
 """
 
@@ -52,18 +42,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-from os.path import join, abspath, dirname, normpath, isdir
-
+from os.path import join, abspath, dirname, isdir
 import sys
 import codecs
-import glob
-
 from fnmatch import fnmatch
 
-from django.utils.importlib import import_module
 from django.conf import settings
 
-from lino import ad
 from lino.utils import iif
 
 SUBDIR_NAME = 'config'  # we might change this to "templates"
@@ -71,137 +56,149 @@ SUBDIR_NAME = 'config'  # we might change this to "templates"
 
 class ConfigDir:
 
-    """
-    A configuration directory is a directory that may contain configuration files.
-    
+    """A directory that may contain configuration files.
+
     """
 
     def __init__(self, name, writeable):
-        self.name = os.path.abspath(name)
+        self.name = abspath(name)
         self.writeable = writeable
 
     def __repr__(self):
-        return "ConfigDir %s" % self.name + iif(self.writeable, " (writeable)", "")
+        return "ConfigDir %s" % self.name + iif(
+            self.writeable, " (writeable)", "")
 
 
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-config_dirs = []
-
-for pth in settings.SITE.get_settings_subdirs(SUBDIR_NAME):
-    config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
 
 
-def add_config_dir(name, mod):
-    pth = join(dirname(mod.__file__), SUBDIR_NAME)
-    if isdir(pth):
-        # logger.info("add_config_dir %s %s", name, pth)
-        config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
-
-settings.SITE.for_each_app(add_config_dir)
-
-LOCAL_CONFIG_DIR = None
-
-if settings.SITE.is_local_project_dir:
-    p = join(settings.SITE.project_dir, SUBDIR_NAME)
-    if isdir(p):
-        LOCAL_CONFIG_DIR = ConfigDir(p, True)
-        config_dirs.append(LOCAL_CONFIG_DIR)
-
-config_dirs.reverse()
-config_dirs = tuple(config_dirs)
-
-# logger.info('config_dirs:\n%s', '\n'.join([repr(cd) for cd in config_dirs]))
-
-
-def find_config_file(fn, *groups):
-    if os.path.isabs(fn):
-        return fn
-    if len(groups) == 0:
-        groups = ['']
-    for group in groups:
-        if group:
-            prefix = join(*(group.split('/')))
-        else:
-            prefix = ''
-        for cd in config_dirs:
-            ffn = join(cd.name, prefix, fn)
-            if os.path.exists(ffn):
-                return ffn
-
-
-def find_config_files(pattern, *groups):
-    """Returns a dict of filename -> config_dir entries for each config
-    file on this site that matches the pattern.  Loops through
-    `config_dirs` and collects matching files.  When a filename is
-    provided by more than one app, then the latest app gets gets it.
-
-    `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
+class ConfigDirCache(object):
+    """
 
     """
-    files = {}
-    for group in groups:
-        if group:
-            prefix = os.path.sep + join(*(group.split('/')))
-        else:
-            prefix = ''
-        for cd in config_dirs:
-            pth = cd.name + prefix
+    _init = False
+
+    def __init__(self, site):
+        if self._init:
+            raise Exception("Oops")
+        self._init = True
+        self.site = site
+        config_dirs = []
+
+        for pth in site.get_settings_subdirs(SUBDIR_NAME):
+            config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
+
+        def add_config_dir(name, mod):
+            pth = join(dirname(mod.__file__), SUBDIR_NAME)
             if isdir(pth):
-                for fn in os.listdir(pth):
-                    if fnmatch(fn, pattern):
-                        files.setdefault(fn, cd)
-    return files
+                # logger.info("add_config_dir %s %s", name, pth)
+                config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
 
+        # for p in site.installed_plugins:
+        #     add_config_dir(p.app_name, p.app_module.__file__)
+        site.for_each_app(add_config_dir)
 
-def find_template_config_files(template_ext, *groups):
-    """Like :func:`find_config_files`, but ignore babel variants:
-    e.g. ignore "foo_fr.html" if "foo.html" exists but don't ignore
-    "my_template.html"
+        self.LOCAL_CONFIG_DIR = None
 
-    """
-    files = find_config_files('*' + template_ext, *groups)
-    l = []
-    template_ext
-    for name in files.keys():
-        basename = name[:-len(template_ext)]
-        chunks = basename.split('_')
-        if len(chunks) > 1:
-            basename = '_'.join(chunks[:-1])
-            if basename + template_ext in files:
-                continue
-        l.append(name)
-    l.sort()
-    if not l:
-        logger.warning(
-            "find_template_config_files() : no matches for (%r, %r)",
-            '*' + template_ext, groups)
-    return l
+        if site.is_local_project_dir:
+            p = join(settings.SITE.project_dir, SUBDIR_NAME)
+            if isdir(p):
+                self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
+                config_dirs.append(self.LOCAL_CONFIG_DIR)
 
+        config_dirs.reverse()
+        self.config_dirs = tuple(config_dirs)
 
-def load_config_files(loader, pattern, *groups):
-    """
-    Naming conventions for :xfile:`*.dtl` files are:
-    
-    - the first detail is called appname.Model.dtl
-    - If there are more Details, then they are called 
-      appname.Model.2.dtl, appname.Model.3.dtl etc.
-    
-    The `sort()` below must remove the filename extension (".dtl") 
-    because otherwise the frist Detail would come last.
-    """
-    files = find_config_files(pattern, *groups).items()
+        # logger.info('config_dirs:\n%s', '\n'.join([
+        #     repr(cd) for cd in config_dirs]))
 
-    def fcmp(a, b):
-        return cmp(a[0][:-4], b[0][:-4])
-    files.sort(fcmp)
-    for group in groups:
-        prefix = group.replace("/", os.sep)
-        for filename, cd in files:
-            filename = join(prefix, filename)
-            ffn = join(cd.name, filename)
-            logger.debug("Loading %s...", ffn)
-            s = codecs.open(ffn, encoding='utf-8').read()
-            loader(s, cd, filename)
+    def find_config_file(self, fn, *groups):
+        if os.path.isabs(fn):
+            return fn
+        if len(groups) == 0:
+            groups = ['']
+        for group in groups:
+            if group:
+                prefix = join(*(group.split('/')))
+            else:
+                prefix = ''
+            for cd in self.config_dirs:
+                ffn = join(cd.name, prefix, fn)
+                if os.path.exists(ffn):
+                    return ffn
+
+    def find_config_files(self, pattern, *groups):
+        """Returns a dict of filename -> config_dir entries for each config
+        file on this site that matches the pattern.  Loops through
+        `config_dirs` and collects matching files.  When a filename is
+        provided by more than one app, then the latest app gets gets it.
+
+        `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
+
+        """
+        files = {}
+        for group in groups:
+            if group:
+                prefix = os.path.sep + join(*(group.split('/')))
+            else:
+                prefix = ''
+            for cd in self.config_dirs:
+                pth = cd.name + prefix
+                if isdir(pth):
+                    for fn in os.listdir(pth):
+                        if fnmatch(fn, pattern):
+                            files.setdefault(fn, cd)
+        return files
+
+    def find_template_config_files(self, template_ext, *groups):
+        """Like :func:`find_config_files`, but ignore babel variants:
+        e.g. ignore "foo_fr.html" if "foo.html" exists but don't ignore
+        "my_template.html"
+
+        """
+        files = self.find_config_files('*' + template_ext, *groups)
+        l = []
+        template_ext
+        for name in files.keys():
+            basename = name[:-len(template_ext)]
+            chunks = basename.split('_')
+            if len(chunks) > 1:
+                basename = '_'.join(chunks[:-1])
+                if basename + template_ext in files:
+                    continue
+            l.append(name)
+        l.sort()
+        if not l:
+            logger.warning(
+                "find_template_config_files() : no matches for (%r, %r)",
+                '*' + template_ext, groups)
+        return l
+
+    def load_config_files(self, loader, pattern, *groups):
+        """
+        Currently not used.
+        Naming conventions for :xfile:`*.dtl` files are:
+
+        - the first detail is called appname.Model.dtl
+        - If there are more Details, then they are called
+          appname.Model.2.dtl, appname.Model.3.dtl etc.
+
+        The `sort()` below must remove the filename extension (".dtl")
+        because otherwise the frist Detail would come last.
+        """
+        files = self.find_config_files(pattern, *groups).items()
+
+        def fcmp(a, b):
+            return cmp(a[0][:-4], b[0][:-4])
+        files.sort(fcmp)
+        for group in groups:
+            prefix = group.replace("/", os.sep)
+            for filename, cd in files:
+                filename = join(prefix, filename)
+                ffn = join(cd.name, filename)
+                logger.debug("Loading %s...", ffn)
+                s = codecs.open(ffn, encoding='utf-8').read()
+                loader(s, cd, filename)
 
 
 class Configured(object):
@@ -304,15 +301,12 @@ def is_local_file(filename):
     return filename.startswith(settings.SITE.project_dir)
 
 
-def make_local_file(filename):
-    raise NotImplementedError(filename)
-
-
 def make_dummy_messages_file(src_fn, messages):
     """
-    Write a dummy `.py` source file containing 
-    translatable messages that getmessages will find. 
+    Write a dummy `.py` source file containing
+    translatable messages that getmessages will find.
     """
+    raise Exception("Never used")
     target_fn = src_fn + '.py'
     if not must_make(src_fn, target_fn):
         logger.debug("%s is up-to-date.", target_fn)

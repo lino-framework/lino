@@ -70,6 +70,7 @@ lino.modlib.auto.sales
 lino.modlib.addresses
 lino.modlib.appypod
 lino.modlib.beid
+lino.modlib.boards
 lino.modlib.cal
 lino.modlib.cal.fixtures
 lino.modlib.cal.management

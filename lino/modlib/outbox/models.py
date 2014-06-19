@@ -68,8 +68,6 @@ add('bcc', _("bcc"), 'bcc')
     #~ column_names = 'name build_method template *'
 
 
-#~ from lino.utils.config import find_template_config_files
-
 class MailableType(dd.Model):
 
     """Mixin for Models that serve as `type` of a :class:`Mailable`.

@@ -54,7 +54,7 @@ from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
 
-from lino.utils.config import is_local_file, make_local_file
+from lino.utils.config import is_local_file
 
 
 def decfmt(v, places=2, **kw):
@@ -215,16 +215,15 @@ class SimpleBuildMethod(BuildMethod):
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + \
                 "_" + lang + self.template_ext
-            from lino.utils.config import find_config_file
-            if find_config_file(name, *elem.get_template_groups()):
+            if settings.SITE.find_config_file(
+                    name, *elem.get_template_groups()):
                 return name
         return tpl_leaf
 
     def get_template_file(self, ar, action, elem):
-        from lino.utils.config import find_config_file
         tpl_leaf = self.get_template_leaf(action, elem)
         groups = elem.get_template_groups()
-        tplfile = find_config_file(tpl_leaf, *groups)
+        tplfile = settings.SITE.find_config_file(tpl_leaf, *groups)
         if not tplfile:
             raise Warning("No file %s in %s" % (tpl_leaf, groups))
         return tplfile
@@ -522,9 +521,8 @@ class EditTemplate(BasePrintAction):
         #     raise Exception("Oops: more than 1 group in %s" % groups)
         parts = [groups[0], leaf]
 
-        config_dir = os.path.join(settings.SITE.project_dir, 'config')
-
-        local_file = os.path.join(config_dir, *parts)
+        local_file = os.path.join(
+            settings.SITE.project_dir, 'config', *parts)
 
         filename = bm.get_template_file(ar, self, elem)
 
@@ -695,8 +693,8 @@ class PrintableType(Model):
             build_method = settings.SITE.site_config.default_build_method
         # bm = BuildMethods.get_by_value(build_method, None)
         bm = build_method
-        from lino.utils.config import find_template_config_files
-        return find_template_config_files(bm.template_ext, *template_groups)
+        return settings.SITE.find_template_config_files(
+            bm.template_ext, *template_groups)
 
 
 class BasePrintable(object):

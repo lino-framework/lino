@@ -502,11 +502,18 @@ class Site(Site):
         
         super(Site, self).do_site_startup()
 
+        from lino.utils.config import ConfigDirCache
+        self.confdirs = ConfigDirCache(self)
+
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
         self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
+
+    def find_config_file(self, *args, **kwargs):
+        # fails if called before startup. Does not trigger Site startup.
+        return self.confdirs.find_config_file(*args, **kwargs)
 
     def setup_workflows(self):
         self.on_each_app('setup_workflows')

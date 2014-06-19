@@ -46,7 +46,6 @@ from lino.core import actions
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
-from lino.utils.config import find_config_file
 from lino.utils.media import TmpMediaFile
 
 
@@ -554,7 +553,7 @@ class PrintTableAction(actions.Action):
             raise Exception(_("List contains more than %d rows") %
                             self.MAX_ROW_COUNT)
 
-        tplfile = find_config_file(self.template_name, '')
+        tplfile = settings.SITE.find_config_file(self.template_name, '')
         if not tplfile:
             raise Exception("No file %s" % self.template_name)
 

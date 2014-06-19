@@ -36,7 +36,6 @@ from django.db.models import loading
 import lino
 from lino.core.dbutils import app_labels
 from lino.utils import confirm, curry
-from lino.utils.config import find_config_file
 from lino.utils import rstgen
 from north import dbutils
 from lino.utils.restify import doc2rst, abstract
@@ -179,7 +178,7 @@ class GeneratingCommand(BaseCommand):
         #~ if self.tmpl_dir:
             #~ tplname = join(self.tmpl_dir,tplname)
         #~ tplname = self.subcommand + '/' + tplname
-        tpl_filename = find_config_file(tplname, self.tmpl_dir)
+        tpl_filename = settings.SITE.find_config_file(tplname, self.tmpl_dir)
         if tpl_filename is None:
             raise Exception("No file %s found" % tplname)
         if isinstance(tpl_filename, unicode):

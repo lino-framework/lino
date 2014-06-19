@@ -2,11 +2,16 @@
 Wednesday, June 18, 2014
 ========================
 
-Okay, let's go. I started to work on some change requests
-:ref:`welfare` which had been waiting because they need a database
-migration.  Incremented version from '1.1.12' to '1.1.13'.
+The next version for :ref:`welfare`
+-----------------------------------
 
-- 
+I started to work on some change requests :ref:`welfare` which had
+been waiting because they need a database migration.  Incremented
+version from '1.1.12' to '1.1.13'.
+
+- The user request which triggered this was
+  the new column :attr:`welfare.aids.AidType.board`
+  (which I added only the next day).
 
 - Moved `aids.Decider` to `boards.Board` in new module
   `lino.modlib.boards`. 

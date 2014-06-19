@@ -14,6 +14,20 @@
 
 from __future__ import unicode_literals
 
+"""This defines the :class:`Kernel` class.
+
+The "kernel" of a Lino site is (like `SITE` itself) a "de facto
+singleton".  It encapsulates a bunch of functionality which remains an
+independent class/object instance and is not merged into the Site
+because it gets imported and instantiated only when Django has
+finished the models loading.
+
+TODO: Rename this to something else.  Because "kernel" suggests
+something which is loaded *in first place*, but this object is
+rather loaded at the end (of the startup process).
+
+"""
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -171,16 +185,7 @@ class DisableDeleteHandler():
 
 
 class Kernel(object):
-    """This is the class of the object stored in `settings.SITE.ui`. It is
-    (like SITE itself) a "de facto singleton".  But it remains an
-    independent class/object instance (and is not merged into the
-    Site) because it gets imported and instantiated only when Django
-    has finished the models loading.
-    
-    TODO: Either rename `SITE.ui` to `SITE.kernel`, or rename this to
-    something else.  Because "kernel" suggests something which is
-    loaded *in first place*, but this object is rather loaded at the
-    end (of the startup process).
+    """This is the class of the object stored in :attr:`ad.Site.kernel`.
 
     """
 

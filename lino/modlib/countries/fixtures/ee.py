@@ -37,7 +37,6 @@ import codecs
 from django.conf import settings
 
 from lino.utils.instantiator import Instantiator
-from lino.utils.config import find_config_file
 
 from lino.modlib.countries.models import PlaceTypes
 
@@ -79,7 +78,7 @@ CITY_TYPES = {
 
 def objects():
     city = Instantiator('countries.Place', country='EE').build
-    input_file = find_config_file('sihtnumbrid.csv')
+    input_file = settings.SITE.find_config_file('sihtnumbrid.csv')
     settings.SITE.logger.info("Importing Estonian places from %s", input_file)
     f = codecs.open(input_file, 'r', 'latin-1', 'replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')

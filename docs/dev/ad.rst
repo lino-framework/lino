@@ -61,6 +61,20 @@ The ``Site`` class
   site administrator.
 
 
+  .. attribute:: confdirs
+
+    This attribute is available only after site startup.
+    See :mod:`lino.utils.config`.
+
+  .. attribute:: kernel
+    
+    This attribute is available only after site startup.
+    See :mod:`lino.core.kernel`.
+
+  .. attribute:: ui
+
+    Alias for :attr:`kernel`.
+
   .. attribute:: sidebar_width
 
     Used by :mod:`lino.modlib.plain`.
