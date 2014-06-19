@@ -40,13 +40,11 @@ def parsedate(s):
 
 class ExtDateTimeField(dd.VirtualField):
 
-    """
-    An editable virtual field needed for 
-    communication with the Ext.ensible CalendarPanel
-    because Lino uses two separate fields 
-    `start_date` and `start_time`
-    or `end_date` and `end_time` while CalendarPanel expects 
-    and sends single DateTime values.
+    """An editable virtual field needed for communication with the
+    Ext.ensible CalendarPanel because Lino uses two separate fields
+    `start_date` and `start_time` or `end_date` and `end_time` while
+    CalendarPanel expects and sends single DateTime values.
+
     """
     editable = True
 

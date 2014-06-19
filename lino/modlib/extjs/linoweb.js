@@ -860,7 +860,7 @@ Lino.status_bar = new Ext.ux.StatusBar({
 
 {% if settings.SITE.use_tinymce %}
 
-Lino.edit_tinymce_text = function(panel,options) {
+Lino.edit_tinymce_text = function(panel, options) {
   // `panel` is the RichTextPanel
   //~ console.log(20111220,panel);
   //~ var rec = panel.get_current_record();
@@ -2497,7 +2497,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
                             var record = t.containing_panel.get_current_record();
                             record.data[t.editor.name] = t.editor.getValue();
                         }
-                        Lino.edit_tinymce_text(t,tinymce_options)
+                        Lino.edit_tinymce_text(t, tinymce_options)
                       }
                     }];
     

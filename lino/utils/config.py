@@ -105,6 +105,8 @@ class ConfigDirCache(object):
             if isdir(p):
                 self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
                 config_dirs.append(self.LOCAL_CONFIG_DIR)
+            else:
+                logger.info("No local config directory.")
 
         config_dirs.reverse()
         self.config_dirs = tuple(config_dirs)
@@ -295,10 +297,6 @@ def must_make(src, target):
     if src_mt - target_mt > MODIFY_WINDOW:
         return True
     return False
-
-
-def is_local_file(filename):
-    return filename.startswith(settings.SITE.project_dir)
 
 
 def make_dummy_messages_file(src_fn, messages):

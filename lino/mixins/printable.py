@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 import shutil
 import os
+from os.path import join, dirname
 import logging
 import cStringIO
 import datetime
@@ -53,8 +54,6 @@ from lino.mixins.duplicable import Duplicable
 from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
-
-from lino.utils.config import is_local_file
 
 
 def decfmt(v, places=2, **kw):
@@ -208,7 +207,8 @@ class SimpleBuildMethod(BuildMethod):
         tpls = action.get_print_templates(self, elem)
         if len(tpls) != 1:
             raise Exception(
-                "%s.get_print_templates() must return exactly 1 template (got %r)" % (
+                "%s.get_print_templates() must return "
+                "exactly 1 template (got %r)" % (
                     elem.__class__.__name__, tpls))
         tpl_leaf = tpls[0]
         lang = elem.get_print_language()
@@ -227,17 +227,6 @@ class SimpleBuildMethod(BuildMethod):
         if not tplfile:
             raise Warning("No file %s in %s" % (tpl_leaf, groups))
         return tplfile
-
-    def get_template_url(self, ar, action, elem):
-        """Return the url for EditTemplate action.
-
-This does not yet manage the problem of library templates. The local
-system manager must dedide for every library template whether it
-should be editable locally. Currently this is done manually by copying
-the file to `media/webdav/config`.
-
-        """
-
 
     def build(self, ar, action, elem):
         #~ if elem is None:
@@ -501,14 +490,28 @@ class CachedPrintAction(BasePrintAction):
 
 
 class EditTemplate(BasePrintAction):
+    """Edit the print template, i.e. the file specified by
+    :meth:`BasePrintable.get_print_templates`.
+
+    The action becomes automatically visible for users with
+    `UserLevel` "manager" and when :mod:`lino.modlib.davlink` is
+    installed.
+
+    If it is visible, then it still works only when your
+    :xfile:`webdav` directory (1) is published by your server under
+    "/webdav" and (2) has a symbolic link named `config` which points
+    to your local config directory. And (3) the local config directory
+    must be writable by `www-data`.
+
+    """
     sort_index = 51
     url_action_name = 'edit_tpl'
     label = _('Edit Print Template')
     required = dict(user_level='manager')
 
     def get_view_permission(self, profile):
-        # if not davlink:
-        #     return False
+        if not davlink:
+            return False
         return super(EditTemplate, self).get_view_permission(profile)
 
     def run_from_ui(self, ar, **kw):
@@ -521,8 +524,12 @@ class EditTemplate(BasePrintAction):
         #     raise Exception("Oops: more than 1 group in %s" % groups)
         parts = [groups[0], leaf]
 
-        local_file = os.path.join(
-            settings.SITE.project_dir, 'config', *parts)
+        lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
+        if lcd is None:
+            ar.info("No local config directory: %s " % lcd)
+            raise Warning("No local config directory. "
+                          "Contact your system administrator.")
+        local_file = join(lcd.name, *parts)
 
         filename = bm.get_template_file(ar, self, elem)
 
@@ -535,17 +542,14 @@ class EditTemplate(BasePrintAction):
             ar.success(open_davlink_url=url)
             # logger.info('20140313 EditTemplate %r', kw)
     
-        if is_local_file(filename):
-            if filename != local_file:
-                raise Warning("Oops: %s != %s", filename, local_file)
+        if filename == local_file:
             doit(ar)
         else:
             def ok(ar2):
                 logger.info(
                     "%s made local template copy %s", ar.user, local_file)
+                settings.SITE.makedirs_if_missing(dirname(local_file))
                 shutil.copy(filename, local_file)
-                # new = make_local_file(filename)
-                # ar.info("Now %s" % new, alert=True)
                 doit(ar2)
 
             ar.confirm(ok, _(
@@ -774,11 +778,13 @@ class BasePrintable(object):
 
 class Printable(BasePrintable):
 
-    """
-    Mixin for Models whose instances can "print" (generate a printable document).
+    """Mixin for Models whose instances have a "print" action (i.e. for
+    which Lino can generate a printable document).
+
     """
 
     do_print = DirectPrintAction()
+    edit_template = EditTemplate()
 
 
 class CachedPrintable(Duplicable, BasePrintable):
@@ -805,7 +811,6 @@ class CachedPrintable(Duplicable, BasePrintable):
     """
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
-    edit_template = EditTemplate()
 
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)

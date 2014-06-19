@@ -856,7 +856,7 @@ The ``Site`` class
   .. method:: get_system_note_recipients(self, ar, obj, silent)
 
     Return or yield a list of recipients
-    (i.e. strings "Full Name <name@example.com>" )
+    (i.e. strings like "John Doe  <john@example.com>" )
     to be notified by email about a system note issued
     by action request `ar` about the object instance `obj`.
 

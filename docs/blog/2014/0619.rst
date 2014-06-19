@@ -18,4 +18,24 @@ i.e. will try to import every installed `models` module.
 The true reason was a bug in :meth:`dd.for_each_app`.
 
 
+Editing printable templates
+---------------------------
 
+:class:`lino.mixins.printable.EditTemplate` did not yet manage the
+problem of library templates. The local system manager had to dedide
+for every library template whether it should be editable locally by
+copying the file manually to the local config directory.  This is now
+done in a user-friendly way through the web interface.
+
+Working on system notes
+-----------------------
+
+The :meth:`dd.Model.get_system_note_recipients` actions for
+:class:`welfare.pcsw.Client` and :class:`welfare.pcsw.Coaching` gave
+invalid recipient addresses for coaches with empty email
+address. These are now silently ignored.
+
+
+TODO:
+
+- Make the body_template configurable.

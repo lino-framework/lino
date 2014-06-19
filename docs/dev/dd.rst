@@ -54,6 +54,23 @@ The `dd.Model` class
     method.
 
 
+  .. method:: get_system_note_type(self, ar, silent)
+
+    Used when :mod:`lino.modlib.notes` is installed. Expected to
+    return either `None` (the default) or an existing
+    :class:`ml.notes.NoteType` instance. If this is not `None`, then
+    the system note will also be stored in the database as a
+    :class:`ml.notes.Note`.
+
+  .. method:: get_system_note_recipients(self, ar, silent)
+
+    Return a list of email recipients for a system note on this
+    object. Used by :meth:`rt.ActionRequest.add_system_note`.
+
+    Every recipient must be a string with a valid email recipient like
+    "john@example.com" or "John Doe <john@example.com>".
+
+
   .. method:: summary_row(self, ar)
 
     Return a HTML fragment that describes this record in a 

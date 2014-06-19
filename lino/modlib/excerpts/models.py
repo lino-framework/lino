@@ -22,6 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
+from os.path import join
 
 from django.db import models
 from django.conf import settings
@@ -152,6 +153,19 @@ class ExcerptType(
         raise Exception("""20140520 Not used by ExcerptType. We
         override everything else to not call the class method.""")
 
+    def get_body_template_filename(self):
+        if not self.body_template:
+            return
+        tplgroup = model_group(self.content_type.model_class())
+        return settings.SITE.find_config_file(
+            self.body_template, tplgroup)
+
+    def get_body_template_name(self):
+        if not self.body_template:
+            return None
+        tplgroup = model_group(self.content_type.model_class())
+        return tplgroup + '/' + self.body_template
+
 
 class ExcerptTypes(dd.Table):
 
@@ -258,6 +272,34 @@ class ClearPrinted(dd.Action):
             ok(ar)
 
 
+class BodyTemplateContentField(dd.VirtualField):
+
+    editable = True
+
+    def __init__(self, *args, **kw):
+        rt = dd.RichTextField(*args, **kw)
+        dd.VirtualField.__init__(self, rt, None)
+
+    def value_from_object(self, obj, ar):
+        fn = obj.get_body_template_filename()
+        if not fn:
+            return "No body_template file"
+        return file(fn).read()
+
+    def set_value_in_object(self, request, obj, value):
+        fn = obj.get_body_template_name()
+        if not fn:
+            raise Warning("No body_template")
+
+        lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
+        if lcd is None:
+            raise Warning("No local config directory. "
+                          "Contact your system administrator.")
+        local_file = join(lcd.name, fn)
+        value = value.encode('utf-8')
+        return file(local_file, "w").write(value)
+
+
 class Excerpt(dd.TypedPrintable,
               dd.UserAuthored,
               dd.Controllable,
@@ -273,15 +315,11 @@ class Excerpt(dd.TypedPrintable,
         verbose_name = _("Excerpt")
         verbose_name_plural = _("Excerpts")
 
-    # date = models.DateField(
-    #     verbose_name=_('Date'), default=datetime.date.today)
-
     excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
-
     language = dd.LanguageField()
+    body_template_content = BodyTemplateContentField(_("Body template"))
 
     if dd.is_installed('outbox'):
-
         mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
     def __unicode__(self):
@@ -363,15 +401,14 @@ class Excerpt(dd.TypedPrintable,
             if atype.backward_compat:
                 kw.update(this=self.owner)
 
-            if atype.body_template:
-                tplname = atype.body_template
-                tplgroup = model_group(atype.content_type.model_class())
-                tplname = tplgroup + '/' + tplname
+            tplname = atype.get_body_template_name()
+            if tplname:
                 saved_renderer = ar.renderer
                 ar.renderer = settings.SITE.ui.plain_renderer
                 template = settings.SITE.jinja_env.get_template(tplname)
                 body = template.render(**kw)
                 ar.renderer = saved_renderer
+
         kw.update(body=body)
         # if self.owner is not None:
         #     kw.update(self=self.owner)
@@ -393,6 +430,19 @@ class Excerpt(dd.TypedPrintable,
             return set()
         return self.PRINTABLE_FIELDS
 
+    # @dd.virtualfield(dd.RichTextField(_("Body template")))
+    # def body_template_content(self, ar):
+    #     fn = self.get_body_template_filename()
+    #     if not fn:
+    #         return "No file %s" % fn
+    #     return file(fn).read()
+
+    def get_body_template_filename(self):
+        if self.excerpt_type_id is None:
+            return
+        return self.excerpt_type.get_body_template_filename()
+
+
 
 dd.update_field(Excerpt, 'company',
                 verbose_name=_("Recipient (Organization)"))
@@ -405,7 +455,7 @@ class ExcerptDetail(dd.FormLayout):
     id excerpt_type:25 project
     company contact_person contact_role
     user:10 language:8 owner build_method build_time
-    preview
+    preview:60 body_template_content:40
     """
 
 

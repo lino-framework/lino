@@ -392,9 +392,6 @@ class Model(models.Model):
         return None
 
     def get_system_note_recipients(self, ar, silent):
-        """
-        Called from :meth:`lino.Lino.get_system_note_recipients`.
-        """
         return []
 
     def to_html(self, **kw):
