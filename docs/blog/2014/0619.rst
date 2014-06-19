@@ -15,6 +15,7 @@ it was not allowed to import this module at the global level of a
 models module because importing it will fill the config dirs,
 i.e. will try to import every installed `models` module.
 
-The true reason was a bug in :meth:`ad.Site.on_each_app`.
+The true reason was a bug in :meth:`dd.for_each_app`.
+
 
 

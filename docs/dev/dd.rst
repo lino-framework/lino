@@ -336,6 +336,7 @@ code wants to make sure that it was called.
     installed app.
 
 .. function:: for_each_app(self, func, *args, **kw)
+ 
     Successor of :func:`dd.on_each_app`.  This also loops over
 
     - apps that don't have a models module
@@ -352,7 +353,7 @@ code wants to make sure that it was called.
 
 .. attribute:: logger
 
-  Shortcut to the Lino logger.
+    Shortcut to the Lino logger.
 
 
 .. function:: makedirs_if_missing(dirname)
