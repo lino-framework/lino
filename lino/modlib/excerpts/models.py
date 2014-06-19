@@ -277,17 +277,19 @@ class BodyTemplateContentField(dd.VirtualField):
     editable = True
 
     def __init__(self, *args, **kw):
+        if settings.SITE.confdirs.LOCAL_CONFIG_DIR is None:
+            self.editable = False  # No local config dir
         rt = dd.RichTextField(*args, **kw)
         dd.VirtualField.__init__(self, rt, None)
 
     def value_from_object(self, obj, ar):
-        fn = obj.get_body_template_filename()
+        fn = obj.excerpt_type.get_body_template_filename()
         if not fn:
             return "No body_template file"
         return file(fn).read()
 
-    def set_value_in_object(self, request, obj, value):
-        fn = obj.get_body_template_name()
+    def set_value_in_object(self, ar, obj, value):
+        fn = obj.excerpt_type.get_body_template_name()
         if not fn:
             raise Warning("No body_template")
 
@@ -297,7 +299,8 @@ class BodyTemplateContentField(dd.VirtualField):
                           "Contact your system administrator.")
         local_file = join(lcd.name, fn)
         value = value.encode('utf-8')
-        return file(local_file, "w").write(value)
+        logger.info("Wrote body_template_content %s", local_file)
+        file(local_file, "w").write(value)
 
 
 class Excerpt(dd.TypedPrintable,
@@ -417,31 +420,19 @@ class Excerpt(dd.TypedPrintable,
         return kw
 
     @classmethod
-    def on_analyze(cls, lino):
+    def on_analyze(cls, site):
         cls.PRINTABLE_FIELDS = dd.fields_list(
             cls,
             'project company contact_person contact_role \
             excerpt_type language \
+            body_template_content \
             user build_method')
-        super(Excerpt, cls).on_analyze(lino)
+        super(Excerpt, cls).on_analyze(site)
 
     def disabled_fields(self, ar):
         if not self.build_time:
             return set()
         return self.PRINTABLE_FIELDS
-
-    # @dd.virtualfield(dd.RichTextField(_("Body template")))
-    # def body_template_content(self, ar):
-    #     fn = self.get_body_template_filename()
-    #     if not fn:
-    #         return "No file %s" % fn
-    #     return file(fn).read()
-
-    def get_body_template_filename(self):
-        if self.excerpt_type_id is None:
-            return
-        return self.excerpt_type.get_body_template_filename()
-
 
 
 dd.update_field(Excerpt, 'company',
@@ -451,17 +442,26 @@ dd.update_field(Excerpt, 'contact_person',
 
 
 class ExcerptDetail(dd.FormLayout):
-    main = """
-    id excerpt_type:25 project
-    company contact_person contact_role
-    user:10 language:8 owner build_method build_time
-    preview:60 body_template_content:40
-    """
+    main = "general config"
+    general = dd.Panel(
+        """
+        id excerpt_type:25 project
+        company contact_person contact_role
+        user:10 language:8 owner build_time
+        preview
+        """, label=_("General"))
+    config = dd.Panel(
+        """
+        build_method
+        body_template_content
+        """,
+        label=_("Configure"),
+        required=dd.required(user_level="admin"))
 
 
 class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
-    label = _("Excerpts history")
+    # label = _("Excerpts history")
     icon_name = 'script'
 
     model = 'excerpts.Excerpt'

@@ -451,6 +451,11 @@ class Site(Site):
     _welcome_actors = []
     _site_config = None
 
+    def __init__(self, *args, **kwargs):
+        super(Site, self). __init__(*args, **kwargs)
+        from lino.utils.config import ConfigDirCache
+        self.confdirs = ConfigDirCache(self)
+
     def init_before_local(self, *args):
         super(Site, self).init_before_local(*args)
 
@@ -501,9 +506,6 @@ class Site(Site):
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
         
         super(Site, self).do_site_startup()
-
-        from lino.utils.config import ConfigDirCache
-        self.confdirs = ConfigDirCache(self)
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)

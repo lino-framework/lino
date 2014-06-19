@@ -47,7 +47,7 @@ import sys
 import codecs
 from fnmatch import fnmatch
 
-from django.conf import settings
+# from django.conf import settings
 
 from lino.utils import iif
 
@@ -101,7 +101,7 @@ class ConfigDirCache(object):
         self.LOCAL_CONFIG_DIR = None
 
         if site.is_local_project_dir:
-            p = join(settings.SITE.project_dir, SUBDIR_NAME)
+            p = join(site.project_dir, SUBDIR_NAME)
             if isdir(p):
                 self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
                 config_dirs.append(self.LOCAL_CONFIG_DIR)

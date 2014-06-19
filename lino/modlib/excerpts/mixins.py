@@ -47,12 +47,12 @@ class Certifiable(dd.Model):
         return self.CERTIFIED_FIELDS
 
     @classmethod
-    def on_analyze(cls, lino):
+    def on_analyze(cls, site):
         # Contract.user.verbose_name = _("responsible (DSBE)")
         cls.CERTIFIED_FIELDS = dd.fields_list(
             cls,
             cls.get_certifiable_fields())
-        super(Certifiable, cls).on_analyze(lino)
+        super(Certifiable, cls).on_analyze(site)
 
     @classmethod
     def get_certifiable_fields(cls):

@@ -407,46 +407,41 @@ class SpecialStoreField(StoreField):
 
 class DisabledFieldsStoreField(SpecialStoreField):
 
-    """
-    See also blog entries 20100803, 20111003, 20120901
+    """See also blog entries 20100803, 20111003, 20120901
     
     Note some special cases:
     
-    - vat.VatDocument.total_incl (readonly virtual PriceField) must be disabled 
-      and may not get submitted. 
-      ExtJS requires us to set this dynamically each time.
-    - JobsOverview.body (a virtual HtmlBox) 
-      or Model.workflow_buttons (a displayfield) must *not* have the 'disabled' css class
-    - 
+    - vat.VatDocument.total_incl (readonly virtual PriceField) must be
+      disabled and may not get submitted.  ExtJS requires us to set
+      this dynamically each time.
+
+    - JobsOverview.body (a virtual HtmlBox) or Model.workflow_buttons
+      (a displayfield) must *not* have the 'disabled' css class -
+
     """
     name = 'disabled_fields'
 
     def __init__(self, store):
         SpecialStoreField.__init__(self, store)
-        self.disabled_fields = set()
+        self.always_disabled = set()
         for f in self.store.all_fields:
             if f.field is not None:
                 if isinstance(f, VirtStoreField):
                     if not f.vf.editable:
                         if not isinstance(f.vf.return_type, dd.DisplayField):
-                            self.disabled_fields.add(f.name)
+                            self.always_disabled.add(f.name)
                             #~ print "20121010 always disabled:", f
                 elif not isinstance(f.field, generic.GenericForeignKey):
                     if not f.field.editable:
-                        self.disabled_fields.add(f.name)
+                        self.always_disabled.add(f.name)
 
     def full_value_from_object(self, obj, ar):
-        #~ l = [ f.name for f in self.store.actor.disabled_fields(request,obj)]
         d = dict()
-        #~ if self.store.actor.disabled_fields is not None:
         for name in self.store.actor.disabled_fields(obj, ar):
             if name is not None:
                 d[name] = True
-        #~ l = list(self.store.actor.disabled_fields(obj,request))
 
-        for name in self.disabled_fields:
-            if name is None:
-                raise Exception('20130322a')
+        for name in self.always_disabled:
             d[name] = True
 
         # disable the primary key field if pk is set (i.e. on saved instance):
