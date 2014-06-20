@@ -22,7 +22,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
-from os.path import join
+from os.path import join, dirname
 
 from django.db import models
 from django.conf import settings
