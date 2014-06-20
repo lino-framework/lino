@@ -298,6 +298,7 @@ class BodyTemplateContentField(dd.VirtualField):
             raise Warning("No local config directory. "
                           "Contact your system administrator.")
         local_file = join(lcd.name, fn)
+        settings.SITE.makedirs_if_missing(dirname(local_file))
         value = value.encode('utf-8')
         logger.info("Wrote body_template_content %s", local_file)
         file(local_file, "w").write(value)
