@@ -53,6 +53,7 @@ class PeriodEvent(Choice):
         
         
 class PeriodEvents(ChoiceList):
+    app_label = 'lino'
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
     item_class = PeriodEvent
