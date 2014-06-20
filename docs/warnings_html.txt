@@ -1,2 +1,5 @@
+/home/luc/hgwork/lino/lino/ad.py:docstring of lino.ad.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist
