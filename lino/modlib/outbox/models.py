@@ -152,7 +152,7 @@ class CreateMail(dd.Action):
         as_attachment = elem.attach_to_email(ar)
 
         m = Mail(user=ar.get_user(),
-                 date=datetime.date.today(),
+                 date=settings.SITE.today(),
                  subject=elem.get_mailable_subject(),
                  owner=elem)
         #~ if as_attachment:
@@ -412,7 +412,7 @@ class Mail(mixins.AutoUser, mixins.Printable,
     sent = models.DateTimeField(null=True, editable=False)
 
     def on_create(self, ar):
-        self.date = datetime.date.today()
+        self.date = settings.SITE.today()
         super(Mail, self).on_create(ar)
 
     #~ def disabled_fields(self,ar):

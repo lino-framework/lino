@@ -108,7 +108,7 @@ def create_prompt_event(
     ekw = dict(project=project)
     #~ ekw.update(state=cal.EventStates.draft)
     #~ ekw.update(state=EventStates.published)
-    today = datetime.date.today()
+    today = settings.SITE.today()
     ekw.update(start_date=today)
     ekw.update(end_date=today)
     ekw.update(event_type=settings.SITE.site_config.prompt_calendar)
@@ -151,7 +151,7 @@ class CreateNote(dd.Action):
         notes = dd.resolve_app('notes')
         ekw = dict(project=obj, user=ar.get_user())
         ekw.update(type=ar.action_param_values.note_type)
-        ekw.update(date=datetime.date.today())
+        ekw.update(date=settings.SITE.today())
         if ar.action_param_values.subject:
             ekw.update(subject=ar.action_param_values.subject)
         note = notes.Note(**ekw)
@@ -303,8 +303,8 @@ class AppointmentsByPartner(dd.Table):
         qs = super(AppointmentsByPartner, self).get_request_queryset(ar)
         if isinstance(qs, list):
             return qs
-        start_date = datetime.date.today() - datetime.timedelta(days=17)
-        end_date = datetime.date.today() + datetime.timedelta(days=17)
+        start_date = settings.SITE.today() - datetime.timedelta(days=17)
+        end_date = settings.SITE.today() + datetime.timedelta(days=17)
         qs = qs.filter(event__start_date__gte=start_date,
                        event__start_date__lte=end_date)
         return qs
@@ -335,7 +335,7 @@ class ExpectedGuests(cal.Guests):
     def param_defaults(self, ar, **kw):
         kw = super(ExpectedGuests, self).param_defaults(ar, **kw)
         #~ kw.update(only_expected=True)
-        today = datetime.date.today()
+        today = settings.SITE.today()
         kw.update(start_date=today)
         kw.update(end_date=today)
         return kw

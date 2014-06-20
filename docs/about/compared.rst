@@ -1,9 +1,9 @@
 Lino compared to other frameworks
 =================================
 
-Work in progress.  The following projects do something similar as
-Lino.  If you have used or otherwise know one of them, please write a
-few sentences about what's different.
+The following projects do something similar to Lino.  If you have used
+or otherwise know one of them, please write a few sentences about
+what's different.
 
 Written in Python:
 
@@ -17,9 +17,7 @@ Written in Python:
   purpose application platform under the license GPL-3 written in
   Python and using PostgreSQL as database engine.  It is the core base
   of a complete business solution providing modularity, scalability
-  and security.
-
-  See :doc:`/tickets/51`.
+  and security. See :doc:`/tickets/51`.
 
 Written in other languages:
 

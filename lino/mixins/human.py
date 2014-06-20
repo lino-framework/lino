@@ -48,19 +48,18 @@ from lino.core import model
 
 
 def get_salutation(gender, nominative=False):
-    """
-    Returns "Mr" or "Mrs" or a translation thereof, 
-    depending on the gender and the current language.
+    """Returns "Mr" or "Mrs" or a translation thereof, depending on the
+    gender and the current language.
     
-    Note that the English abbreviations 
-    `Mr <http://en.wikipedia.org/wiki/Mr.>`_ and 
-    `Mrs <http://en.wikipedia.org/wiki/Mrs.>`_
-    are written either with (AE) or without (BE) a dot. 
+    Note that the English abbreviations `Mr
+    <http://en.wikipedia.org/wiki/Mr.>`_ and `Mrs
+    <http://en.wikipedia.org/wiki/Mrs.>`_ are written either *with*
+    (AE) or *without* (BE) a dot.
     
-    The optional keyword argument `nominative` used only when babel language
-    is "de": specifying ``nominative=True`` will return "Herr" instead of default 
-    "Herrn" for male persons.
-    
+    The optional keyword argument `nominative` used only when babel
+    language is "de": specifying ``nominative=True`` will return
+    "Herr" instead of default "Herrn" for male persons.
+
     """
     if not gender:
         return ''
@@ -72,10 +71,8 @@ def get_salutation(gender, nominative=False):
 
 
 class Human(model.Model):
-    """Base class for all models that represent a human.  It defines the
-    fields `first_name`, `middle_name, `last_name` and `gender`.
+    "See :class:`dd.Human`."
 
-    """
     class Meta:
         abstract = True
 
@@ -85,7 +82,6 @@ class Human(model.Model):
         blank=True,
         help_text=_("First or given name."))
 
-    # http://en.wikipedia.org/wiki/Middle_name
     middle_name = models.CharField(
         _("Middle name"), max_length=200, blank=True,
         help_text=_("Space-separated list of all middle names."))
@@ -98,13 +94,6 @@ class Human(model.Model):
     gender = Genders.field(blank=True)
 
     def mf(self, m, f, u=None):
-        """Taking three parameters `m`, `f` and `u` of any type, returns one
-        of them depending on whether this Person is male, female or of
-        unknown gender.
-
-        See :ref:`lino.tutorial.human` for some examples.
-
-        """
         if self.gender is Genders.male:
             return m
         if self.gender is Genders.female:
@@ -120,25 +109,7 @@ class Human(model.Model):
             self.gender, **salutation_options)
 
     def get_full_name(
-            self, salutation=True,
-            upper=None, **salutation_options):
-        """Returns a one-line string composed of salutation, first_name and
-        last_name.
-       
-        The optional keyword argument `salutation` can be set to
-        `False` to suppress salutations.
-        
-        The optional keyword argument `upper` can be specified to
-        override the Site's default value
-        (:setting:`uppercase_last_name`). `True` means to convert the
-        last name to uppercase as is usually done in French.
-        
-        Any other keyword arguments are forwarded to
-        :func:`get_salutation` (see there).
-
-        See :ref:`lino.tutorial.human` for some examples.
-
-        """
+            self, salutation=True, upper=None, **salutation_options):
         words = []
         if salutation:
             words.append(self.get_salutation(**salutation_options))
@@ -165,21 +136,18 @@ class Human(model.Model):
 
 
 class Born(model.Model):
+    "See :class:`dd.Born`."
 
-    """
-    Abstract base class that adds a `birth_date` 
-    field and a virtual field "Age".
-    """
     class Meta:
         abstract = True
 
     birth_date = fields.IncompleteDateField(
         blank=True, verbose_name=_("Birth date"))
 
-    def get_age_years(self, today=None):
+    def get_age(self, today=None):
         if self.birth_date and self.birth_date.year:
             if today is None:
-                today = datetime.date.today()
+                today = settings.SITE.today()
             try:
                 return today - self.birth_date.as_date()
             except ValueError:
@@ -187,7 +155,7 @@ class Born(model.Model):
 
     @fields.displayfield(_("Age"))
     def age(self, request, today=None):
-        a = self.get_age_years(today)
+        a = self.get_age(today)
         if a is None:
             return unicode(_('unknown'))
         s = _("%d years") % (a.days / 365)

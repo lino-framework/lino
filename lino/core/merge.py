@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,8 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 """
-This defines the :class:`MergeAction` class, 
-which is available in :mod:`lino.dd`.
+This defines the :class:`dd.MergeAction` class.
 
 Usage example::
 
@@ -46,9 +45,9 @@ E = xghtml.E
 
 
 class MergePlan(object):
+    """A volatile object which represents what is going to happen after
+    the user confirms to merge two objects.
 
-    """
-    A MergePlan is 
     """
 
     def __init__(self, obj, merge_to, keep_volatiles={}):
@@ -241,7 +240,8 @@ class MergeAction(actions.Action):
 
         def ok(ar2):
             msg = mp.execute(request=ar.request)
-            ar2.success(msg, refresh=True, goto_record_id=mp.merge_to.pk)
+            ar2.goto_instance(mp.merge_to)
+            ar2.success(msg, alert=True, close_window=True)
 
         if msg is None:
             return ok(ar)

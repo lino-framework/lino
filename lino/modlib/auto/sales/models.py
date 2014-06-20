@@ -124,7 +124,7 @@ def create_invoice_for(obj, ar):
     if len(invoiceables) == 0:
         raise Warning(_("No invoiceables found for %s.") % obj)
     jnl = Invoice.get_journals()[0]
-    invoice = Invoice(partner=obj, journal=jnl, date=datetime.date.today())
+    invoice = Invoice(partner=obj, journal=jnl, date=settings.SITE.today())
     invoice.save()
     for ii in invoiceables:
         i = InvoiceItem(voucher=invoice, invoiceable=ii,

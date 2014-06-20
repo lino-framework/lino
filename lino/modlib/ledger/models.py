@@ -318,7 +318,7 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
 
     #~ controller_is_optional = False
 
-    date = models.DateField(_("Date"), default=datetime.date.today)
+    date = models.DateField(_("Date"), default=settings.SITE.today)
 
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
@@ -1136,7 +1136,7 @@ class Invoices(dd.Table):
     @classmethod
     def param_defaults(cls, ar, **kw):
         kw = super(Invoices, cls).param_defaults(ar, **kw)
-        kw.update(pyear=FiscalYears.from_date(datetime.date.today()))
+        kw.update(pyear=FiscalYears.from_date(settings.SITE.today()))
         return kw
 
 

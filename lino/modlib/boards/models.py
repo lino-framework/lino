@@ -80,7 +80,7 @@ class BoardDecision(dd.Model):
         abstract = True
 
     decided_date = models.DateField(
-        verbose_name=_('Decided'), default=datetime.date.today)
+        verbose_name=_('Decided'), default=dd.today)
     board = models.ForeignKey('boards.Board', blank=True, null=True)
 
     @dd.chooser()

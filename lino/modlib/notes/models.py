@@ -125,7 +125,7 @@ class Note(dd.TypedPrintable,
         verbose_name_plural = _("Notes")
 
     date = models.DateField(
-        verbose_name=_('Date'), default=datetime.date.today)
+        verbose_name=_('Date'), default=settings.SITE.today)
     time = models.TimeField(
         blank=True, null=True,
         verbose_name=_("Time"),

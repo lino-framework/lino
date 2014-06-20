@@ -23,9 +23,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
-import dateutil
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -279,7 +276,7 @@ if settings.SITE.is_installed('contacts'):
             kw = super(MyPresences, self).param_defaults(ar, **kw)
             kw.update(partner=ar.get_user().partner)
             #~ kw.update(guest_state=GuestStates.invited)
-            #~ kw.update(start_date=datetime.date.today())
+            #~ kw.update(start_date=settings.SITE.today())
             return kw
 
         #~ @classmethod
@@ -302,7 +299,7 @@ if settings.SITE.is_installed('contacts'):
             #~ kw.update(partner=ar.get_user().partner)
             #~ kw.update(user=None)
             kw.update(guest_state=GuestStates.invited)
-            kw.update(start_date=datetime.date.today())
+            kw.update(start_date=settings.SITE.today())
             return kw
 
     class MyGuests(Guests):
@@ -317,28 +314,10 @@ if settings.SITE.is_installed('contacts'):
             kw = super(MyGuests, self).param_defaults(ar, **kw)
             kw.update(user=ar.get_user())
             kw.update(guest_state=GuestStates.invited)
-            kw.update(start_date=datetime.date.today())
+            kw.update(start_date=settings.SITE.today())
             return kw
 
 
-#~ class MySentInvitations(Guests):
-    #~ help_text = _("""Shows invitations which I sent accept or reject.""")
-    #~ label = _("My Sent Invitations")
-    #~ order_by = ['event__start_date','event__start_time']
-    #~ column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ datelimit = datetime.date.today() + dateutil.relativedelta.relativedelta(days=-7)
-        #~ ar.filter = models.Q(event__user=ar.get_user(),event__start_date__gte=datelimit)
-        #~ return super(MySentInvitations,self).get_request_queryset(ar)
-#~ class MyPendingSentInvitations(MySentInvitations):
-    #~ help_text = _("""Shows invitations which I sent, and for which I accept or reject.""")
-    #~ label = _("My Pending Sent Invitations")
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ ar.filter = models.Q(state=GuestStates.invited,event__user=ar.get_user())
-        # ~ # ! note that we skip one mro parent:
-        #~ return super(MySentInvitations,self).get_request_queryset(ar)
 __all__ = [
     'Guest', 'Guests',
 ]

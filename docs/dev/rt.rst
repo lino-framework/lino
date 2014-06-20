@@ -178,3 +178,12 @@ The ``ActionRequest`` class
 
     Returns the HTML of an action link which will open the
     :term:`insert window` of this request.
+
+  .. method:: action_button(self, ba, obj, *args, **kw)
+
+    Returns the HTML of an action link which will run the specified
+    action.
+
+    ``kw`` may contain additional html attributes like `style`.
+
+

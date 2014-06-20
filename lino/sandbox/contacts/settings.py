@@ -53,7 +53,7 @@ INSTALLED_APPS = (
 )
 
 import datetime
-filename = datetime.date.today().strftime('%Y-%m-%d.log')
+filename = settings.SITE.today().strftime('%Y-%m-%d.log')
 LOGGING = dict(filename=join(LINO.project_dir, 'log', filename), level='DEBUG')
 
 

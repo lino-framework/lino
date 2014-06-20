@@ -396,7 +396,7 @@ if settings.SITE.user_model:
 
         parameters = dict(
             today=models.DateField(_("Date"),
-                                   blank=True, default=datetime.date.today),
+                                   blank=True, default=settings.SITE.today),
         )
 
         @classmethod
@@ -484,7 +484,6 @@ def setup_main_menu(site, ui, profile, m):
     m.add_action(MyTickets)
     m.add_action(MySessions)
     m.add_action(MySessionsByDate)
-    #~ m.add_action(MySessionsByDate,params=dict(master_instance=datetime.date.today()))
 
 
 def setup_my_menu(site, ui, profile, m):

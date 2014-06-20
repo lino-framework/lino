@@ -536,7 +536,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
     course = dd.ForeignKey('courses.Course')
     pupil = dd.ForeignKey(config.pupil_model)
     request_date = models.DateField(
-        _("Date of request"), default=datetime.date.today)
+        _("Date of request"), default=settings.SITE.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
     amount = dd.PriceField(_("Participation fee"), blank=True)
     remark = models.CharField(max_length=200,

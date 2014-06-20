@@ -165,7 +165,7 @@ class Budget(mixins.AutoUser, mixins.CachedPrintable):
 
     #~ allow_cascaded_delete = True
 
-    date = models.DateField(_("Date"), blank=True, default=datetime.date.today)
+    date = models.DateField(_("Date"), blank=True, default=dd.today)
     partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
     closed = models.BooleanField(verbose_name=_("Closed"), default=False)
     intro = dd.RichTextField(_("Introduction"), format="html", blank=True)

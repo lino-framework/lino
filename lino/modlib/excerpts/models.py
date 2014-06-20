@@ -387,7 +387,7 @@ class Excerpt(dd.TypedPrintable,
         "Used in templates"
         if self.build_time:
             return self.build_time.date()
-        return datetime.date.today()
+        return settings.SITE.today()
 
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self, ar):

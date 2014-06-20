@@ -202,7 +202,6 @@ class ExtRenderer(HtmlRenderer):
 
     def action_button(self, obj, ar, ba, label=None, **kw):
         """
-        ``kw`` may contain additional html attributes like `style`
         """
         if not label:
             label = ba.action.label

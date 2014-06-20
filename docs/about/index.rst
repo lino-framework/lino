@@ -1,28 +1,33 @@
 About Lino
 ==========
 
-A Lino application is technically just a Django project, 
-but certain choices have been made for you.
-For example the application developer does not need to write any 
-URLconf, HTML, CSS nor Javascript.
-A Lino application has an out-of-the box user interface.
+Lino is a high-level framework for writing desktop-like customized
+database applications based on `Django
+<https://www.djangoproject.com/>`_ and `Sencha ExtJS
+<http://www.sencha.com/products/extjs/>`_.
 
-Advantages: everything gets much easier: writing a prototype, 
-changing database structures and business logic,
-long-term maintenance, documentation...
+A Lino application is technically a Django project where certain
+choices have been made for you as the application developer.  For
+example you don't not need to write any URLconf, HTML, CSS nor
+Javascript.  A Lino application has an out-of-the box user interface.
+Technical details about the differences between Lino and Django are
+described in :doc:`lino_and_django`.
+
+Advantages: everything gets much easier: writing a prototype, changing
+database structures and business logic, long-term maintenance,
+documentation...  
+
 Disadvantage: you are limited to applications that fit into this
 out-of-the box user interface.
 
-Technical details about the differences between Lino and Django 
-are described in :doc:`lino_and_django`.
 
 Target users
 ------------
 
-Lino is written for developers who want to write a customized database
-application, either for internal use by themselves or their employer,
-or for internal use by their customer, or for public use as a service
-to their customers.
+Lino is designed for professional developers who write and maintain a
+customized database application, either for internal use by themselves
+or their employer, or for internal use by their customer, or for
+public use as a service to their customers.
 
 Since there is also a growing collection of :ref:`lino.projects`, Lino
 becomes interesting for service providers who offer hosting of one of
@@ -32,9 +37,8 @@ these applications without developing themselves.
 Features
 --------
     
-Because Lino applications are Django projects, 
-the following features (copied from the 
-`Django website <https://www.djangoproject.com/>`_) 
+Because Lino applications are Django projects, the following features
+(copied from the `Django website <https://www.djangoproject.com/>`_)
 also apply to Lino:
 
 - **Object-relational mapper** :
@@ -84,6 +88,7 @@ Lino then adds its own features to the above:
 Design goals
 ------------
 
+
 - Lino applications are intuitive and easy-to-understand for the end user.
   (Context menus, Tooltips,...)
 - sustainable application development
@@ -93,6 +98,21 @@ Design goals
 - short release cycles
 - maintainable code
 - stable 
+
+
+Limitations
+-----------
+
+- Lino does not even *try* to be very easy to learn. There are other
+  frameworks who try to first results in less time. With Lino it may
+  take a day or two before you fall in love with it. But your love
+  will last longer.
+
+- Lino is not well documented. This is a disadvantage of using a young
+  framework with a small community. But we are working on it. Give
+  your feedback, tell us where you got stuck, help us to grow!
+
+
 
 
 History

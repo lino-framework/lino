@@ -13,6 +13,10 @@
 
 from __future__ import unicode_literals
 
+"""
+Defines classes :class:`DatePeriod` and :class:`PeriodEvents`.
+"""
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -20,6 +24,7 @@ import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 from lino.core.choicelists import Choice, ChoiceList
 from lino.core.model import Model
@@ -53,6 +58,14 @@ class PeriodEvent(Choice):
         
         
 class PeriodEvents(ChoiceList):
+    """List of things you can observe on a :class:`DatePeriod`. The
+default list has the following choices:
+
+.. django2rst::
+
+  dd.show('lino.PeriodEvents')
+
+    """
     app_label = 'lino'
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
@@ -67,7 +80,10 @@ add('30', _("Ended"), 'ended')
 
 class DatePeriod(Model):
 
-    "A period whose start and end are date fields."
+    """A model mixin for models which represent a period whose start and
+end are date fields.
+
+    """
 
     class Meta:
         abstract = True

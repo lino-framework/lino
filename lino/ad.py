@@ -207,12 +207,7 @@ class Site(Site):
     site_config_defaults = {}
 
     is_demo_site = True
-
     demo_email = 'demo@example.com'
-    """
-    
-    """
-
     demo_fixtures = ['std', 'demo', 'demo2']
 
     use_spinner = False  # doesn't work. leave this to False
@@ -1120,7 +1115,7 @@ class Site(Site):
         "See :meth:`ad.Site.get_letter_date_text`."
         sc = self.site_config.site_company
         if today is None:
-            today = datetime.date.today()
+            today = self.today()
         from lino import dd
         if sc and sc.city:
             return _("%(place)s, %(date)s") % dict(

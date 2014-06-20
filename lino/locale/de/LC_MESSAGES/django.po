@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-20 06:48+0300\n"
-"PO-Revision-Date: 2014-06-20 07:13+0300\n"
+"PO-Revision-Date: 2014-06-20 14:35+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2776,16 +2776,15 @@ msgstr "Straße"
 
 #: lino/modlib/countries/models.py:441
 msgid "Name of street, without house number."
-msgstr ""
+msgstr "Name der Straße, ohne Hausnummer"
 
 #: lino/modlib/countries/models.py:444 lino/modlib/partners/models.py:127
 msgid "No."
 msgstr "Nr."
 
 #: lino/modlib/countries/models.py:445
-#, fuzzy
 msgid "House number."
-msgstr "Mitglied"
+msgstr "Hausnummer"
 
 #: lino/modlib/countries/models.py:448 lino/modlib/partners/models.py:130
 msgid "Box"
@@ -2800,44 +2799,40 @@ msgid "Address line after street"
 msgstr "Adresszeile nach Straße"
 
 #: lino/modlib/countries/models.py:454
-#, fuzzy
 msgid "Address line to print below street line."
-msgstr "Adresszeile vor Straße"
+msgstr "Adresszeile nach Straße"
 
 #: lino/modlib/countries/fixtures/few_countries.py:34
-#, fuzzy
 msgid "Estonia"
-msgstr "Vorschläge"
+msgstr "Estland"
 
 #: lino/modlib/countries/fixtures/few_countries.py:35
 msgid "Belgium"
-msgstr ""
+msgstr "Belgien"
 
 #: lino/modlib/countries/fixtures/few_countries.py:36
 msgid "Germany"
-msgstr ""
+msgstr "Deutschland"
 
 #: lino/modlib/countries/fixtures/few_countries.py:37
-#, fuzzy
 msgid "France"
-msgstr "Referenz"
+msgstr "Frankreich"
 
 #: lino/modlib/countries/fixtures/few_countries.py:38
-#, fuzzy
 msgid "Netherlands"
-msgstr "Sonstige Uploads"
+msgstr "Niederlande"
 
 #: lino/modlib/countries/fixtures/few_countries.py:39
 msgid "Maroc"
-msgstr ""
+msgstr "Marokko"
 
 #: lino/modlib/countries/fixtures/few_countries.py:40
 msgid "Russia"
-msgstr ""
+msgstr "Russland"
 
 #: lino/modlib/countries/fixtures/few_countries.py:41
 msgid "Congo (Democratic Republic)"
-msgstr ""
+msgstr "Kongo (Demokratische Republik)"
 
 #: lino/modlib/courses/__init__.py:21 lino/modlib/courses/models.py:240
 msgid "Courses"

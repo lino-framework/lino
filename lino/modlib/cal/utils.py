@@ -92,7 +92,7 @@ def when_text(d, t=None):
     if t is None:
         return format_date(
             d, fmt, locale=to_locale(translation.get_language()))
-    #~ if d.year == datetime.date.today().year:
+    #~ if d.year == settings.SITE.today().year:
         #~ fmt = "%a" + settings.SITE.time_format_strftime
     #~ else:
         #~ fmt = "%a %y %b %d" + settings.SITE.time_format_strftime
@@ -209,7 +209,7 @@ add('P', _('per weekday'), 'per_weekday')  # deprecated
 
 
 def amonthago():
-    return DurationUnits.months.add_duration(datetime.date.today(), -1)
+    return DurationUnits.months.add_duration(dd.today(), -1)
 
 
 class AccessClasses(dd.ChoiceList):

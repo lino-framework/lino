@@ -15,6 +15,7 @@ their real place.
 
    actors
    actions
+   mixins
    layouts
 
 .. currentmodule:: dd

@@ -197,7 +197,7 @@ class Tasks(dd.Table):
         """
         Enhance today by making background color a bit darker.
         """
-        if row.start_date == datetime.date.today():
+        if row.start_date == settings.SITE.today():
             td.attrib.update(bgcolor="gold")
 
 
@@ -236,16 +236,15 @@ if settings.SITE.user_model:
             kw = super(MyTasks, self).param_defaults(ar, **kw)
             kw.update(user=ar.get_user())
             kw.update(state=TaskStates.todo)
-            kw.update(start_date=datetime.date.today())
+            kw.update(start_date=settings.SITE.today())
             return kw
 
     class unused_MyTasksToDo(MyTasks):
         help_text = _("Table of my tasks marked 'to do'.")
         column_names = 'start_date summary workflow_buttons *'
         label = _("To-do list")
-        #~ filter = Q(state__in=(TaskState.blank_item,TaskState.todo,TaskState.started))
         filter = Q(
-            start_date__lte=datetime.date.today() +
+            start_date__lte=settings.SITE.today() +
             dateutil.relativedelta.relativedelta(
                 days=1),
             state__in=(TaskStates.todo, TaskStates.started))

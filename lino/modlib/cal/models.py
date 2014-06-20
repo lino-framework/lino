@@ -298,7 +298,7 @@ def update_auto_component(
             #~ print "20111014 loading_from_dump"
         return None
     ot = ContentType.objects.get_for_model(owner.__class__)
-    if date and date >= datetime.date.today() + datetime.timedelta(days=-7):
+    if date and date >= settings.SITE.today() + datetime.timedelta(days=-7):
         #~ defaults = owner.get_auto_task_defaults(**defaults)
         #~ print "20120729 b"
         defaults.setdefault('user', user)

@@ -68,7 +68,7 @@ class DeclarationPeriods(dd.ChoiceList):
     @classmethod
     def setup_field(cls, fld):
         def d():
-            return cls.from_date(datetime.date.today())
+            return cls.from_date(settings.SITE.today())
         fld.default = d
 
     @classmethod

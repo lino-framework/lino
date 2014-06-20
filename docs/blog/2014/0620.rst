@@ -3,3 +3,34 @@ Friday, June 20, 2014
 =====================
 
 Some translations, and then upgrade with database migration in Eupen.
+
+Bugfix: The :class:`lino.mixins.periods.PeriodEvents` choicelist
+(moved out from isip recently) had no `app_label`. Which caused the
+windows based on it to not open (and to write a JS error "Undefined
+name 'Lino.mixins')."
+
+Bugfix: The :class:`dd.MergeAction` worked but did not give correct
+feedback (window remained open and caused an :ref:`ise`). But the
+merge actually had been done.
+
+Testing today
+-------------
+
+New method :meth:`ad.Site.today`.  This method was truly necessary!
+
+Because there are more and more test cases for :ref:`welfare` which
+test for subtle conditions that arise when generating automatic
+calendar events. For example to not work on holidays, managing
+conflicting events etc. And I think the best approch is to say once
+for all that our demo database "lives" on a constant date. This date
+happens to be `2014-05-22` because that was when I added the
+:attr:`ad.Site.the_demo_date` attribute.
+
+And today I finally understood that this wasn't enough. Many tables
+used Python's :func:`datetime.date.today` function, causing the
+results to vary depending on the day when the demo database had been
+generated.  For example the ages of the family members of
+:ref:`paulfrisch` changed -of course- each time one of them had had
+birthday...
+
+And imagine! The :ref:`welfare` test suite passes again!

@@ -139,7 +139,7 @@ The ``Action`` class reference
   11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
   20    :class:`detail <ShowDetailAction>`
   30    :class:`delete <DeleteSelected>`
-  31    :class:`merge <lino.mixins.mergeable.Merge>`
+  31    :class:`merge <MergeAction>`
   50    :class:`Print <lino.mixins.printable.BasePrintAction>`
   51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
   60    :class:`ShowSlaveTable`
@@ -213,6 +213,11 @@ Predefined actions
     Called when user edited a cell of a non-phantom record in a grid.
     Installed as `update_action` on every :class:`Actor`.
 
+.. class:: MergeAction
+
+    Merge this object into another object of same class.
+
+
 .. decorator:: action(*args, **kw)
 
     Decorator to define custom actions.
@@ -224,3 +229,4 @@ Predefined actions
     
     The decorated function will be installed as the actions's
     `run_from_ui` method.
+

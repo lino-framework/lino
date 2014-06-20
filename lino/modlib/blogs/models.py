@@ -87,11 +87,6 @@ class Entry(mixins.TypedPrintable,
         verbose_name = _("Blog Entry")
         verbose_name_plural = _("Blog Entries")
 
-    #~ date = fields.MyDateField()
-    #~ date = models.DateField(verbose_name=_('Date'),default=datetime.date.today)
-    #~ owner_type = models.ForeignKey(ContentType,blank=True,null=True)
-    #~ owner_id = models.PositiveIntegerField(blank=True,null=True)
-    #~ owner = generic.GenericForeignKey('owner_type', 'owner_id')
     language = dd.LanguageField()
     type = models.ForeignKey(EntryType, blank=True, null=True)
     # ,null=True)

@@ -102,46 +102,47 @@ class CompaniesWithEntryTypes(dd.VentilatingTable,contacts.Companies):
     auto_fit_column_widths = True
     
     @classmethod
-    def param_defaults(cls,ar,**kw):
-        kw = super(CompaniesWithEntryTypes,cls).param_defaults(ar,**kw)
-        kw.update(end_date=datetime.date.today())
-        #~ kw.update(start_date=datetime.date.today())
+    def param_defaults(cls, ar, **kw):
+        kw = super(CompaniesWithEntryTypes, cls).param_defaults(ar, **kw)
+        kw.update(end_date=settings.SITE.today())
         return kw
-        
 
     @classmethod
     def get_ventilated_columns(self):
         def w(et):
-            # return a getter function for a RequestField on the given EntryType
-            def func(fld,obj,ar):
+            # return a getter function for a RequestField on the given
+            # EntryType.
+
+            def func(fld, obj, ar):
                 #~ mi = ar.master_instance
                 #~ if mi is None: return None
-                pv = dict(start_date=ar.param_values.start_date,end_date=ar.param_values.end_date)
+                pv = dict(
+                    start_date=ar.param_values.start_date,
+                    end_date=ar.param_values.end_date)
                 if et is not None:
                     pv.update(entry_type=et)
                 pv.update(company=obj)
                 return Entries.request(param_values=pv)
             return func
         for et in EntryType.objects.all():
-            yield dd.RequestField(w(et),verbose_name=unicode(et))
-        yield dd.RequestField(w(None),verbose_name=_("Total"))
+            yield dd.RequestField(w(et), verbose_name=unicode(et))
+        yield dd.RequestField(w(None), verbose_name=_("Total"))
     
    
-@dd.receiver(dd.post_save,sender=EntryType)
-def my_setup_columns(sender,**kw):
+@dd.receiver(dd.post_save, sender=EntryType)
+def my_setup_columns(sender, **kw):
     CompaniesWithEntryTypes.setup_columns()
-    
-    
+
 
 @dd.receiver(dd.post_startup)
-def my_details_setup(sender,**kw):
+def my_details_setup(sender, **kw):
     self = sender
-    
-    self.modules.contacts.Companies.add_detail_tab('entries','matrix_tutorial.EntriesByCompany')
+    self.modules.contacts.Companies.add_detail_tab(
+        'entries', 'matrix_tutorial.EntriesByCompany')
 
 
-def setup_main_menu(site,ui,profile,m):
-    m = m.add_menu("entries",_("Entries"))
+def setup_main_menu(site, ui, profile, m):
+    m = m.add_menu("entries", _("Entries"))
     m.add_action(Entries)
     m.add_action(EntryTypes)
     m.add_action(CompaniesWithEntryTypes)

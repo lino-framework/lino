@@ -72,7 +72,7 @@ class Started(dd.Model):
         Fills default value "today" to start_date
         """
         if not self.start_date:
-            self.start_date = datetime.date.today()
+            self.start_date = settings.SITE.today()
         super(Started, self).save(*args, **kw)
 
     def set_datetime(self, name, value):
@@ -509,7 +509,7 @@ class RecurrenceSet(Started, Ended):
         #~ logger.info('20130529 is_available_on(%s) -> %s -> %s',date,wd,rv)
         return rv
 
-dd.update_field(RecurrenceSet, 'start_date', default=datetime.date.today)
+dd.update_field(RecurrenceSet, 'start_date', default=settings.SITE.today)
 
 
 class Reservation(RecurrenceSet, EventGenerator, dd.Registrable):

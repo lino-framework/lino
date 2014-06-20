@@ -211,7 +211,7 @@ class CreatePostings(dd.Action):
                 p = Posting(
                     user=ar.user, owner=elem,
                     partner=rec,
-                    date=datetime.date.today(),
+                    date=settings.SITE.today(),
                     state=PostingStates.ready)
                 p.full_clean()
                 p.save()

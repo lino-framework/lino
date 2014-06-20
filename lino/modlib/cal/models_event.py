@@ -481,7 +481,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def on_create(self, ar):
         self.event_type = ar.user.event_type or \
             settings.SITE.site_config.default_event_type
-        self.start_date = datetime.date.today()
+        self.start_date = settings.SITE.today()
         self.start_time = datetime.datetime.now().time()
         # 20130722 e.g. CreateClientEvent sets it explicitly
         if self.assigned_to is None:
@@ -489,7 +489,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         super(Event, self).on_create(ar)
 
     #~ def on_create(self,ar):
-        #~ self.start_date = datetime.date.today()
+        #~ self.start_date = settings.SITE.today()
         #~ self.start_time = datetime.datetime.now().time()
         # ~ # default user is almost the same as for UserAuthored
         # ~ # but we take the *real* user, not the "working as"
@@ -769,7 +769,7 @@ class Events(dd.Table):
         """
         Enhance today by making background color a bit darker.
         """
-        if row.start_date == datetime.date.today():
+        if row.start_date == settings.SITE.today():
             td.attrib.update(bgcolor="#bbbbbb")
 
 
@@ -834,7 +834,7 @@ if settings.SITE.user_model:
             kw.update(show_appointments=dd.YesNo.yes)
             #~ kw.update(assigned_to=ar.get_user())
             #~ logger.info("20130807 %s %s",self,kw)
-            kw.update(start_date=datetime.date.today())
+            kw.update(start_date=settings.SITE.today())
             return kw
 
         @classmethod
@@ -850,8 +850,8 @@ if settings.SITE.user_model:
         #~ def param_defaults(self,ar,**kw):
             #~ kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
             #~ kw.update(observed_event=EventEvents.pending)
-            #~ kw.update(start_date=datetime.date.today())
-            #~ kw.update(end_date=datetime.date.today()+ONE_DAY)
+            #~ kw.update(start_date=settings.SITE.today())
+            #~ kw.update(end_date=settings.SITE.today()+ONE_DAY)
             #~ return kw
     class MyAssignedEvents(MyEvents):
         label = _("Events assigned to me")

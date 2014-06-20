@@ -130,7 +130,7 @@ class Order(sales.SalesDocument, mixins.ProjectRelated, mixins.Registrable):
         if self.start_date is None:
             return
         if today is None:
-            today = datetime.date.today()
+            today = settings.SITE.today()
 
         if make_until is None:
             make_until = today
@@ -234,7 +234,7 @@ class Orders(sales.SalesDocuments):
 
 #~ class PendingOrdersParams(forms.Form):
     #~ make_until = forms.DateField(label="Make invoices until",
-      #~ initial=datetime.date.today()+ONE_DAY,required=False)
+      #~ initial=settings.SITE.today()+ONE_DAY,required=False)
 
 #~ class PendingOrders(Orders):
     #~ param_form = PendingOrdersParams

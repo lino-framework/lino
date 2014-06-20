@@ -138,7 +138,7 @@ class Today(ParameterPanel):
             today=models.DateField(
                 _("Situation on"),
                 blank=True, null=True,
-                default=datetime.date.today,
+                default=settings.SITE.today,
                 help_text="""Date of observation"""),
         )
         super(Today, self).__init__(**kw)

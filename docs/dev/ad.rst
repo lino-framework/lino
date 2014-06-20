@@ -253,7 +253,19 @@ The ``Site`` class
     instantiating the Site object).
 
 
-  .. attribute:: demo_date
+  .. method:: today(self)
+
+    This is almost equivalent to calling :func:`datetime.date.today`.
+
+    The difference is when :attr:`the_demo_date` is set where
+    :meth:`today` will return that date.
+
+    This is currently used by :meth:`dd.Born.get_age`.
+
+    Needed in test cases like :ref:`welfare.tested.integ` where the
+    age of people would otherwise change.
+
+  .. method:: demo_date(self, *args, **kwargs)
 
     Compute a date using :func:`atelier.utils.date_offset` based on
     the process startup time (or :attr:`the_demo_date` if this is

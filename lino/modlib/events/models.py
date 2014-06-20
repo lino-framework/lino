@@ -18,8 +18,6 @@ The :xfile:`models.py` module of :mod:`lino.modlib.events`.
 
 from __future__ import unicode_literals
 
-import datetime
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
@@ -67,7 +65,7 @@ class Type(dd.BabelNamed):
         kw.update(master_instance=self)
 
         if year is None:
-            year = datetime.date.today().year
+            year = settings.SITE.today().year
         kw.update(filter=models.Q(date__year=year))
 
         return EventsByType.request(**kw)

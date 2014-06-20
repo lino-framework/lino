@@ -401,7 +401,7 @@ class Invoices(SalesDocuments):
     @classmethod
     def param_defaults(cls, ar, **kw):
         kw = super(Invoices, cls).param_defaults(ar, **kw)
-        kw.update(year=ledger.FiscalYears.from_date(datetime.date.today()))
+        kw.update(year=ledger.FiscalYears.from_date(settings.SITE.today()))
         return kw
 
 

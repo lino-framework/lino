@@ -22,7 +22,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import datetime
 import yaml
 import base64
 
@@ -268,7 +267,6 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
 
     def run_from_ui(self, ar, **kw):
         attrs = self.card2client(ar.request.POST)
-        # settings.SITE.logger.info("20140301 %s", attrs)
         qs = holder_model().objects.filter(national_id=attrs['national_id'])
         if qs.count() > 1:
             msg = self.sorry_msg % (
@@ -419,7 +417,7 @@ class BeIdCardHolder(dd.Model):
     def has_valid_card_data(self, today=None):
         if not self.card_number:
             return False
-        if self.card_valid_until < (today or datetime.date.today()):
+        if self.card_valid_until < (today or dd.today()):
             return False
         return True
 
@@ -440,7 +438,7 @@ class BeIdCardHolder(dd.Model):
                 valid = ", %s %s %s %s" % (
                     ugettext("valid from"), dd.dtos(self.card_valid_from),
                     ugettext("until"), dd.dtos(self.card_valid_until))
-                if self.card_valid_until < datetime.date.today():
+                if self.card_valid_until < dd.today():
                     must_read = True
                     elems.append(E.b(valid))
                     elems.append(E.br())
@@ -453,7 +451,6 @@ class BeIdCardHolder(dd.Model):
             must_read = True
         if must_read:
             msg = _("Must read eID card!")
-            #~ if settings.SITE.use_eid_jslib or settings.SITE.use_eidreader:
             if config:
                 elems.append(ar.instance_action_button(
                     self.read_beid, msg, icon_name=None))

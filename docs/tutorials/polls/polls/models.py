@@ -12,9 +12,7 @@ class Poll(dd.Model):
         help_text="Whether this poll should not be shown in the main window.",
         default=False)
     #~ pub_date = models.DateTimeField('Date published',auto_now_add=True)
-    pub_date = models.DateTimeField(
-        'Date published',
-        default=datetime.date.today)
+    pub_date = models.DateTimeField('Date published', default=dd.today)
     
     input_mask_test = dd.CharField(
         "Question text",
