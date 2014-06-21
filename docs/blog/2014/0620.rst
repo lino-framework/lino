@@ -34,3 +34,5 @@ generated.  For example the ages of the family members of
 birthday...
 
 And imagine! The :ref:`welfare` test suite passes again!
+
+And :mod:`atelier.rstgen` can now handle empty tables.

@@ -166,6 +166,15 @@ class ExcerptType(
         tplgroup = model_group(self.content_type.model_class())
         return tplgroup + '/' + self.body_template
 
+    @classmethod
+    def update_for_model(cls, model, **kw):
+        ct = ContentType.objects.get_for_model(dd.resolve_model(model))
+        obj = cls.objects.get(primary=True, content_type=ct)
+        for k, v in kw.items():
+            setattr(obj, k, v)
+        obj.full_clean()
+        obj.save()
+
 
 class ExcerptTypes(dd.Table):
 
