@@ -8,6 +8,13 @@ Finishing on :doc:`/tickets/110`:
   partners (:class:`welfare.isip.ContractPartner`).
   Number of partners per contract varies between 0 and 2.
 
+- Started to adapt te `isip/Contact/Default.odt` template and then
+  discovered that we have a more recent template in Eupen.
 
-Added a new test case :srcref:`/tests/test_appy_pod.py`
-and.
+
+Added a new test case :srcref:`/tests/test_appy_pod.py` (but then
+realized that this test case is in fact always skipped because the
+current development version of appy `has no `setup.py` file
+<https://bugs.launchpad.net/appy/+bug/1048963>`_ and thus cannot be
+installed using pip; the PYTHONPATH seems to be ignored with `setup.py
+test`).

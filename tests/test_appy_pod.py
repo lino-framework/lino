@@ -32,10 +32,12 @@ PARAMS.update(raiseOnError=True)
 
 MYDIR = abspath(dirname(__file__))
 
+from distutils.version import StrictVersion as V
+
 
 class RaiseExceptionTest(unittest.TestCase):
 
-    @unittest.skipIf(version.short != 'dev',
+    @unittest.skipIf(V(version.short) < V('0.9.0'),
                      "not supported with appy version %s" % version.short)
     def test_01(self):
 
