@@ -1,0 +1,13 @@
+=====================
+Monday, June 23, 2014
+=====================
+
+Finishing on :doc:`/tickets/110`:
+
+- :mod:`lino_welfare.fixtures.demo` now adds some contract
+  partners (:class:`welfare.isip.ContractPartner`).
+  Number of partners per contract varies between 0 and 2.
+
+
+Added a new test case :srcref:`/tests/test_appy_pod.py`
+and.

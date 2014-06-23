@@ -3,7 +3,7 @@ from unipath import Path
 ROOTDIR = Path(__file__).parent.parent
 
 # load  SETUP_INFO:
-execfile(ROOTDIR.child('lino','project_info.py'),globals())
+execfile(ROOTDIR.child('lino', 'project_info.py'), globals())
 
 from djangosite.utils.pythontest import TestCase
 
@@ -132,7 +132,7 @@ class I18nTests(LinoTestCase):
     
 class ProjectsTests(LinoTestCase):
     
-    def test_events(self): 
+    def test_events(self):
         self.run_django_manage_test("lino/projects/events")
     def test_belref(self): 
         self.run_django_manage_test("lino/projects/belref")
@@ -159,7 +159,6 @@ class TestAppsTests(LinoTestCase):
 
     def test_quantityfield(self):
         self.run_django_admin_test_cd("lino/test_apps/quantityfield")
-    
 
 
-
+from . import test_appy_pod
