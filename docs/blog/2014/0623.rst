@@ -2,7 +2,8 @@
 Monday, June 23, 2014
 =====================
 
-Finishing on :doc:`/tickets/110`:
+Finishing on :doc:`/tickets/110`
+--------------------------------
 
 - :mod:`lino_welfare.fixtures.demo` now adds some contract
   partners (:class:`welfare.isip.ContractPartner`).
@@ -11,6 +12,11 @@ Finishing on :doc:`/tickets/110`:
 - Started to adapt te `isip/Contact/Default.odt` template and then
   discovered that we have a more recent template in Eupen.
 
+- Upgrade and data migration in Eupen and Chatelet.
+
+
+Testing for errors in an appy template
+--------------------------------------
 
 Added a new test case :srcref:`/tests/test_appy_pod.py` (but then
 realized that this test case is in fact always skipped because the

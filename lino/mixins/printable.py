@@ -650,7 +650,6 @@ class ClearCacheAction(actions.Action):
 
 
 class PrintableType(Model):
-
     """
     Base class for models that specify the :attr:`TypedPrintable.type`.
     """
@@ -667,9 +666,7 @@ class PrintableType(Model):
         verbose_name=_("Build method"),
         blank=True, null=True)
 
-    template = models.CharField(max_length=200,
-                                verbose_name=_("Template"),
-                                blank=True)
+    template = models.CharField(_("Template"), max_length=200, blank=True)
     """
     The name of the file to be used as template.
     The list of choices for this field depend on the :attr:`build_method`.

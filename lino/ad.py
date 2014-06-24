@@ -512,6 +512,10 @@ class Site(Site):
         # fails if called before startup. Does not trigger Site startup.
         return self.confdirs.find_config_file(*args, **kwargs)
 
+    def find_template_config_files(self, *args, **kwargs):
+        # fails if called before startup. Does not trigger Site startup.
+        return self.confdirs.find_template_config_files(*args, **kwargs)
+
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
 

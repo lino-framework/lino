@@ -3,10 +3,11 @@
 #110 : VSEs mit mehr als einem externen Partner
 ===============================================
 
-:class:`ml.isip.Contract` should not be itself
+:class:`welfare.isip.Contract` should not be itself
 :class:`dd.ContactRelated`, but we move this data to a new slave table
 isip.PartnersByContract.
 
-It is probable but not yet confirmed that they want the same for 
-:class:`ml.jobs.Contract`.
-
+Will they want the same for :class:`welfare.jobs.Contract`?  Probably
+not, because a :class:`welfare.jobs.Contract` is related to a Job, and
+every Job is related to one company. The whole
+:class:`welfare.jobs.JobsOverview` would become pointless.
