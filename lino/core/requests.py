@@ -98,11 +98,12 @@ class BoundAction(object):
 
         if debug_permissions:
             if settings.DEBUG:
-                logger.info("debug_permissions for %r (required=%s)",
+                logger.info("debug_permissions active for %r (required=%s)",
                             self, required)
             else:
                 raise Exception(
-                    "debug_permissions for %r (required=%s)", self, required)
+                    "settings.DEBUG is False, but `debug_permissions` "
+                    "for %r (required=%s) is active." % (self, required))
 
         from lino.core.perms import (
             make_permission_handler, make_view_permission_handler)

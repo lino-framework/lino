@@ -174,8 +174,8 @@ class CreateMail(dd.Action):
 class Mailable(dd.Model):
 
     """Mixin for models that provide a "Post" button.  A Mailable model
-    must also inherit :class:`lino.mixins.printable.BasePrintable` or
-    some subclass thereof.
+    must also inherit from :class:`dd.Printable` or some subclass
+    thereof.
 
     """
 

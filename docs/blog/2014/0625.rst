@@ -1,0 +1,13 @@
+========================
+Wednesday, June 25, 2014
+========================
+
+- Fixed a bug which caused the :class:`dd.EditTemplate` action to be
+  missing on :class:`ml.excerpts.Excerpts`.
+
+- :ref:`watch_tim` now logs a warning "Ignoring invalid email address
+  %s" when the case occurs.
+
+- New fixture :mod:`lino_welfare.fixtures.demo2` creates one Excerpt
+  for each ExcerptType. (TODO: when to render them? during
+  initdb_demo? or only in test suite?)

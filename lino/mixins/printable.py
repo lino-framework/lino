@@ -490,18 +490,7 @@ class CachedPrintAction(BasePrintAction):
 
 
 class EditTemplate(BasePrintAction):
-    """Edit the print template, i.e. the file specified by
-    :meth:`BasePrintable.get_print_templates`.
-
-    The action becomes automatically visible for users with
-    `UserLevel` "manager" and when :mod:`lino.modlib.davlink` is
-    installed.
-
-    If it is visible, then it still works only when your
-    :xfile:`webdav` directory (1) is published by your server under
-    "/webdav" and (2) has a symbolic link named `config` which points
-    to your local config directory. And (3) the local config directory
-    must be writable by `www-data`.
+    """
 
     """
     sort_index = 51
@@ -511,6 +500,7 @@ class EditTemplate(BasePrintAction):
 
     def get_view_permission(self, profile):
         if not davlink:
+            # print "20140625 no davlink"
             return False
         return super(EditTemplate, self).get_view_permission(profile)
 
@@ -650,9 +640,7 @@ class ClearCacheAction(actions.Action):
 
 
 class PrintableType(Model):
-    """
-    Base class for models that specify the :attr:`TypedPrintable.type`.
-    """
+    "See :class:`dd.PrintableType`."
 
     templates_group = None
     """
@@ -698,11 +686,11 @@ class PrintableType(Model):
             bm.template_ext, *template_groups)
 
 
-class BasePrintable(object):
+class Printable(object):
+    "See :class:`dd.Printable`."
 
-    """
-    Common base for :class:`Printable`.and :class:`CachedPrintable`.
-    """
+    do_print = DirectPrintAction()
+    edit_template = EditTemplate()
 
     def before_printable_build(self, bm):
         pass
@@ -718,12 +706,6 @@ class BasePrintable(object):
             + '-' + str(self.pk)
 
     def get_print_templates(self, bm, action):
-        """Return a list of filenames of templates for the specified build
-        method.  Returning an empty list means that this item is not
-        printable.  For subclasses of :class:`SimpleBuildMethod` the
-        returned list may not contain more than 1 element.
-
-        """
         if bm.default_template:
             return [bm.default_template]
         return ['Default' + bm.template_ext]
@@ -738,13 +720,6 @@ class BasePrintable(object):
         return self.get_default_build_method()
 
     def get_printable_context(self, ar, **kw):
-        """
-        Defines certain names of a template context.
-        
-        See :doc:`/user/templates_api`.
-        
-        :class:`lino.modlib.notes.models.Note` extends this.
-        """
         def translate(s):
             return _(s.decode('utf8'))
         from lino import dd
@@ -773,48 +748,14 @@ class BasePrintable(object):
         return kw
 
 
-class Printable(BasePrintable):
+class CachedPrintable(Duplicable, Printable):
+    "See :class:`dd.CachedPrintable`."
 
-    """Mixin for Models whose instances have a "print" action (i.e. for
-    which Lino can generate a printable document).
-
-    """
-
-    do_print = DirectPrintAction()
-    edit_template = EditTemplate()
-
-
-class CachedPrintable(Duplicable, BasePrintable):
-
-    """Mixin for Models that generate a unique external file at a
-    determined place when being printed.
-    
-    Adds a "Print" button, a "Clear cache" button and a `build_time`
-    field.
-    
-    The "Print" button of a :class:`CachedPrintable
-    <lino.mixins.printable.CachedPrintable>` transparently handles the
-    case when multiple rows are selected.  If multiple rows are
-    selected (which is possible only when :attr:`cell_edit
-    <lino.core.tables.AbstractTable.cell_edit>` is True), then it will
-    automatically:
-    
-    - build the cached printable for those objects who don't yet have
-      one
-      
-    - generate a single temporary pdf file which is a merge of these
-      individual cached printable docs
-
-    """
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
 
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
-    """
-    Timestamp of the built target file. Contains `None`
-    if no build hasn't been called yet.
-    """
 
     build_method = BuildMethods.field()
 
@@ -866,18 +807,7 @@ class CachedPrintable(Duplicable, BasePrintable):
 
 
 class TypedPrintable(CachedPrintable):
-
-    """A :class:`CachedPrintable` that uses a "Type" for deciding which
-    template to use on a given instance.
-    
-    A TypedPrintable model must define itself a field `type` which is
-    a ForeignKey to a Model that implements :class:`PrintableType`.
-    
-    Alternatively you can override :meth:`get_printable_type` if you
-    want to name the field differently. An example of this is
-    :attr:`lino.modlib.sales.models.SalesDocument.imode`.
-
-    """
+    "See :class:`dd.TypedPrintable`."
 
     type = None
 

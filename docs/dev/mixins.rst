@@ -84,3 +84,69 @@ Model mixins
 
     See :ref:`lino.tutorial.human` for some examples.
 
+
+.. class:: Printable
+
+    Mixin for Models whose instances have a "print" action (i.e. for
+    which Lino can generate a printable document).
+
+    Extended by :class:`CachedPrintable` and :class:`TypedPrintable`.
+    
+    .. method:: get_print_templates(self, bm, action)
+
+        Return a list of filenames of templates for the specified
+        build method.  Returning an empty list means that this item is
+        not printable.  For subclasses of :class:`SimpleBuildMethod`
+        the returned list may not contain more than 1 element.
+
+    .. method:: get_printable_context(self, ar, **kw)
+
+        Defines certain names of a template context.
+        See :doc:`/user/templates_api`.
+        :class:`ml.notes.Note` extends this.
+
+
+.. class:: CachedPrintable
+
+    Mixin for Models that generate a unique external file at a
+    determined place when being printed.
+    
+    Adds a "Print" button, a "Clear cache" button and a `build_time`
+    field.
+    
+    The "Print" button of a :class:`CachedPrintable
+    <lino.mixins.printable.CachedPrintable>` transparently handles the
+    case when multiple rows are selected.  If multiple rows are
+    selected (which is possible only when :attr:`cell_edit
+    <lino.core.tables.AbstractTable.cell_edit>` is True), then it will
+    automatically:
+    
+    - build the cached printable for those objects who don't yet have
+      one
+      
+    - generate a single temporary pdf file which is a merge of these
+      individual cached printable docs
+
+    .. attribute:: build_time
+
+        Timestamp of the built target file. Contains `None`
+        if no build hasn't been called yet.
+
+.. class:: TypedPrintable
+
+    A :class:`CachedPrintable` that uses a "Type" for deciding which
+    template to use on a given instance.
+    
+    A TypedPrintable model must define itself a field ``type`` which
+    is a ForeignKey to a Model that implements :class:`PrintableType`.
+    
+    Alternatively you can override :meth:`get_printable_type` if you
+    want to name the field differently. An example of this is
+    :attr:`ml.sales.SalesDocument.imode`.
+
+
+
+.. class:: PrintableType
+
+    Base class for models that specify the
+    :attr:`TypedPrintable.type`.

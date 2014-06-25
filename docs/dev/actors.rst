@@ -6,7 +6,7 @@ Actors
 
 
 Overview
---------
+========
 
 An :class:`Actor <dd.Actor>` is a globally known unique thing that
 offers :class:`actions <dd.Action>`.
@@ -61,8 +61,8 @@ See also
 
 
 
-The ``Actor`` class reference
------------------------------ 
+The ``Actor`` class
+===================
 
 .. class:: Actor
 
@@ -100,6 +100,11 @@ The ``Actor`` class reference
     :class:`lino_welfare.pcsw.models.Home`,
     :class:`lino.modlib.users.models.Mysettings`.
 
+
+
+  .. attribute:: debug_permissions
+
+    Whether to log :ref:`debug_permissions` for this actor.
 
 
   .. attribute:: label
@@ -345,7 +350,7 @@ The ``Actor`` class reference
 
 
 Tables
-------
+======
 
 
 The ``AbstractTable`` class

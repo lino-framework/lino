@@ -248,3 +248,22 @@ Removed it. Waiting for concrete use-case.
 
 
 
+.. _debug_permissions:
+
+Permission debug messages
+-------------------------
+
+Sometimes you want to know why a given action is available (or not
+available) on an actor where you would not (or would) have expected it
+to be.
+
+In this situation you can temporarily set the `debug_permissions`
+attributes on both the :attr:`Actor <dd.Actor.debug_permissions>` and
+the :attr:`Action <dd.Action.debug_permissions>` to True.
+
+This will cause Lino to log an info message for each invocation of a
+handler on this action.
+
+Since you probably don't want to have this feature accidentally
+activated on a production server, Lino will raise an Exception if this
+happens when :setting:`DEBUG` is False.

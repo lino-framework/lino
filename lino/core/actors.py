@@ -408,11 +408,6 @@ class Actor(actions.Parametrizable):
     default_elem_action_name = 'detail'
 
     debug_permissions = False
-    """When this is `True`, Lino logs an ``info`` message each time a
-    permission handler for an action on this actor is called.  Not to
-    be used on a production site but useful for debugging.
-
-    """
 
     required = get_default_required()
 

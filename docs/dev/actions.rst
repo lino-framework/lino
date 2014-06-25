@@ -183,6 +183,11 @@ The ``Action`` class reference
     Note that this method is not called for actions which are rendered
     in a toolbar (:doc:`/tickets/105`)
 
+  .. attribute:: debug_permissions
+
+    Whether to log :ref:`debug_permissions` for this action.
+    
+
 
 
 Predefined actions
@@ -194,6 +199,21 @@ Predefined actions
 
     Delete the row(s) on which it is being executed.
 
+.. class:: EditTemplate
+
+    Edit the print template, i.e. the file specified by
+    :meth:`dd.Printable.get_print_templates`.
+
+    The action becomes automatically visible for users with
+    `UserLevel` "manager" and when :mod:`lino.modlib.davlink` is
+    installed.
+
+    If it is visible, then it still works only when your
+    :xfile:`webdav` directory (1) is published by your server under
+    "/webdav" and (2) has a symbolic link named `config` which points
+    to your local config directory. And (3) the local config directory
+    must be writable by `www-data`.
+   
 .. class:: GridEdit
 
     Open a window with a grid editor on this table as main item.

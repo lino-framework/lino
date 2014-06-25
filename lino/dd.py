@@ -140,11 +140,10 @@ Model mixins:
   <lino.mixins.Modified>` (and their deprecated combination
   :class:`CreatedModified <lino.mixins.CreatedModified>`)
 
-- :class:`lino.mixins.printable.BasePrintable`
 - :class:`lino.mixins.printable.Printable`
 - :class:`lino.mixins.printable.PrintableType`
-- :class:`lino.mixins.printable.CachedPrintable`
 - :class:`lino.mixins.printable.TypedPrintable`
+- :class:`lino.mixins.printable.CachedPrintable`
 - :class:`lino.mixins.uploadable.Uploadable`
 - :class:`lino.mixins.human.Human`
 - :class:`lino.mixins.human.Born`
@@ -375,7 +374,7 @@ from lino.mixins import (
 from lino.mixins import Created, Modified
 from lino.mixins import CreatedModified  # deprecated
 
-from lino.mixins.printable import BasePrintable, Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
 #~ from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born

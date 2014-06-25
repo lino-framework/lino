@@ -175,6 +175,35 @@ class ExcerptType(
         obj.full_clean()
         obj.save()
 
+    def get_or_create_excerpt(self, ar):
+        obj = ar.selected_rows[0]
+        Excerpt = dd.modules.excerpts.Excerpt
+        ex = None
+        if self.certifying:
+            qs = Excerpt.objects.filter(
+                excerpt_type=self,
+                owner_id=obj.pk,
+                owner_type=ContentType.objects.get_for_model(obj.__class__))
+            qs = qs.order_by('id')
+            if qs.count() > 0:
+                ex = qs[0]
+        if ex is None:
+            akw = dict(
+                user=ar.get_user(),
+                owner=obj,
+                excerpt_type=self)
+            akw = obj.get_excerpt_options(ar, **akw)
+            ex = Excerpt(**akw)
+            ex.full_clean()
+            ex.save()
+
+        if self.certifying:
+            obj.printed_by = ex
+            obj.full_clean()
+            obj.save()
+
+        return ex
+
 
 class ExcerptTypes(dd.Table):
 
@@ -223,31 +252,7 @@ class CreateExcerpt(dd.Action):
         super(CreateExcerpt, self).__init__(*args, **kwargs)
 
     def run_from_ui(self, ar, **kw):
-        Excerpt = dd.modules.excerpts.Excerpt
-        obj = ar.selected_rows[0]
-        ex = None
-        if self.excerpt_type.certifying:
-            qs = Excerpt.objects.filter(
-                excerpt_type=self.excerpt_type,
-                owner_id=obj.pk,
-                owner_type=ContentType.objects.get_for_model(obj.__class__))
-            qs = qs.order_by('id')
-            if qs.count() > 0:
-                ex = qs[0]
-        if ex is None:
-            akw = dict(
-                user=ar.get_user(),
-                owner=obj,
-                excerpt_type=self.excerpt_type)
-            akw = obj.get_excerpt_options(ar, **akw)
-            ex = Excerpt(**akw)
-            ex.full_clean()
-            ex.save()
-
-        if self.excerpt_type.certifying:
-            obj.printed_by = ex
-            obj.full_clean()
-            obj.save()
+        ex = self.excerpt_type.get_or_create_excerpt(ar)
 
         ex.do_print.run_from_ui(ar, **kw)
 
@@ -473,6 +478,7 @@ class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     # label = _("Excerpts history")
     icon_name = 'script'
+    debug_permissions = 20140625
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()

@@ -105,8 +105,11 @@ class ConfigDirCache(object):
             if isdir(p):
                 self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
                 config_dirs.append(self.LOCAL_CONFIG_DIR)
-            else:
-                logger.info("No local config directory.")
+        #         print "20140625 Local config directory %s." % p
+        #     else:
+        #         print "20140625 No local config directory."
+        # else:
+        #     print "20140625 Not a local project directory."
 
         config_dirs.reverse()
         self.config_dirs = tuple(config_dirs)
