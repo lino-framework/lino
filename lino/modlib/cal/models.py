@@ -153,7 +153,7 @@ class Rooms(dd.Table):
     required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.Room'
     detail_layout = """
-    id name 
+    id name
     cal.EventsByRoom
     """
 

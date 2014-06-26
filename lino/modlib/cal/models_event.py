@@ -908,5 +908,5 @@ def pre_analyze(sender, **kw):
 
 __all__ = [
     'UpdateEvents',
-    'Event', 'Events',
+    'Event', 'Events', 'EventsByController',
     'EventType', 'EventTypes']

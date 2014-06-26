@@ -275,6 +275,9 @@ class InstanceAction(object):
         self.bound_action.action.run_from_code(ar)
         return ar.response
 
+    def __call__(self, *args, **kwargs):
+        return self.run_from_session(*args, **kwargs)
+
     def as_button_elem(self, ar, label=None):
         return settings.SITE.ui.row_action_button(
             self.instance, ar, self.bound_action, label)

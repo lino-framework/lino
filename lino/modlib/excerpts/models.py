@@ -557,9 +557,10 @@ def set_excerpts_actions(sender, **kw):
             ct = atype.content_type
             if ct is not None:
                 m = ct.model_class()
-                an = 'create_excerpt'
-                if not atype.primary:
-                    an += str(atype.pk)
+                if atype.primary:
+                    an = 'do_print'
+                else:
+                    an = 'create_excerpt' + str(atype.pk)
                 m.define_action(**{an: CreateExcerpt(
                     atype, unicode(atype))})
                 if atype.primary:
