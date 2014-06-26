@@ -47,12 +47,12 @@ Let's install our well-known demo root users from
 
 Or here is another demo user:
 
->>> anna = users.User(username='anna',profile='100',first_name="Anna",last_name="Andante")
+>>> anna = users.User(username='anna', profile='100', first_name="Anna", last_name="Andante")
 >>> anna.save()
 
 Create a Person:
 
->>> pisa.Person(first_name="Jean",last_name="Dupont").save()
+>>> pisa.Person(first_name="Jean", last_name="Dupont").save()
 
 Start a scripting session as `robin`
 
@@ -68,10 +68,10 @@ Run the Print action:
 
 Check the result:
 
->>> print(rv) #doctest: +NORMALIZE_WHITESPACE
+>>> print(rv)  #doctest: +NORMALIZE_WHITESPACE
 {'open_url': u'/media/cache/pisa/pisa.Person-1.pdf', 'success': True}
 
-Since the media/cache directory is not part of the Lino repository, 
+Since the `media/cache` directory is not part of the Lino repository,
 we copy the resulting file to a public place:
 
 >>> import shutil

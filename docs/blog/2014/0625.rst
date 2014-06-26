@@ -9,5 +9,5 @@ Wednesday, June 25, 2014
   %s" when the case occurs.
 
 - New fixture :mod:`lino_welfare.fixtures.demo2` creates one Excerpt
-  for each ExcerptType. (TODO: when to render them? during
-  initdb_demo? or only in test suite?)
+  for each ExcerptType. (TODO: write a test case which actually
+  renders them, with the new appy.pod strict mode enabled)
