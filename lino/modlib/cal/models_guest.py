@@ -88,8 +88,8 @@ class Guest(outbox.Mailable):
     user = property(get_user)
 
     def __unicode__(self):
-        return u'%s #%s ("%s")' % (
-            self._meta.verbose_name, self.pk, self.event)
+        return u'%s #%s (%s)' % (
+            self._meta.verbose_name, self.pk, self.event.strftime())
 
     # def get_printable_type(self):
     #     return self.role

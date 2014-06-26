@@ -1,3 +1,6 @@
+{% if not admin_item_limit %}
+{% set admin_item_limit = 5 %}
+{% endif %}
 <div class="htmlText" style="margin:5px">
 {% if request.user.profile.authenticated %}
     {% block hello_user %}
@@ -9,10 +12,6 @@
         {%- if site.plugins.get('davlink', None) -%}
         <p align="right"><a href="javascript:Lino.davlink_reset()">reset DavLink</a></p>
         {%- endif -%}
-        {% if False and site.use_eidreader %}
-        <p align="right"><a href="javascript:Lino.read_eid_card()">read an eID card</a></p>
-        {% endif %}
-        <h2>{{_("Welcome")}}</h2>
         <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
         {% set sep = joiner(',') %}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}
@@ -48,7 +47,7 @@
             icon_name="../xsite/link"))}}
         </h2>
         
-        {{E.tostring(ar.show(T,limit=5))}}
+        {{E.tostring(ar.show(T, limit=admin_item_limit))}}
         {% endif %}
         {% endfor %}
         {% endblock %}

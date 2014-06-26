@@ -4,3 +4,23 @@ Thursday, June 26, 2014
 
 - Some translations to DE
 
+- Added test cases in :ref:`welfare.tested.misc` for printing excerpts.
+
+  This makes use of appy.pod's new `raiseOnError=True` option and
+  detected one (minor) bug: a jobs.Contract failed to print when a
+  `company` without `contact_person` was given.
+  
+
+- Added a default picture used by :class:`welfare.pcsw.Client`.  TODO:
+  this would be a first use case for Django's staticfiles.
+
+- The tables returned by :meth:`ad.Site.get_admin_main_items` are
+  displayed with a limit of 5 by default. Until now you had to rewrite
+  the whole ``hello_user`` block in :xfile:`admin_main_base.html`.
+  Now it is enough to add a line to your :xfile:`admin_main.html`::
+
+        {% set admin_item_limit = 20 %}
+        {% extends "admin_main_base.html" %}
+
+- Changed the order of items yeld by
+  :meth:`ad.Site.get_admin_main_items` in :ref:`welfare`.

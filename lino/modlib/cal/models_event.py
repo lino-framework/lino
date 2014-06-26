@@ -316,6 +316,17 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     move_next = MoveEventNext()
 
+    def strftime(self):
+        if not self.start_date:
+            return ''
+        d = self.start_date.strftime(settings.SITE.date_format_strftime)
+        if self.start_time:
+            t = self.start_time.strftime(
+                settings.SITE.time_format_strftime)
+            return "%s %s" % (d, t)
+        else:
+            return d
+        
     def __unicode__(self):
         if self.pk:
             s = self._meta.verbose_name + " #" + str(self.pk)
@@ -323,14 +334,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             s = _("Unsaved %s") % self._meta.verbose_name
         if self.summary:
             s += " " + self.summary
-        if self.start_date:
-            d = self.start_date.strftime(settings.SITE.date_format_strftime)
-            if self.start_time:
-                t = self.start_time.strftime(
-                    settings.SITE.time_format_strftime)
-                s += " (%s %s)" % (d, t)
-            else:
-                s += " (%s)" % d
+        when = self.strftime()
+        if when:
+            s += " (%s)" % when
         return s
 
     def has_conflicting_events(self):

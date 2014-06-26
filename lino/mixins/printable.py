@@ -712,8 +712,12 @@ class Printable(object):
 
     def get_default_build_method(self):
         sc = settings.SITE.site_config
-        return sc.default_build_method or BuildMethods.appyodt
-        # hard-coded default
+        if sc.default_build_method is not None:
+            return sc.default_build_method
+        if settings.SITE.default_build_method:
+            return BuildMethods.get_by_value(
+                settings.SITE.default_build_method)
+        return BuildMethods.appyodt  # hard-coded default
 
     def get_build_method(self):
         # TypedPrintable  overrides this

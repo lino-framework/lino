@@ -206,6 +206,8 @@ class Site(Site):
     use_experimental_features = False
     site_config_defaults = {}
 
+    default_build_method = "appypdf"
+
     is_demo_site = True
     demo_email = 'demo@example.com'
     demo_fixtures = ['std', 'demo', 'demo2']

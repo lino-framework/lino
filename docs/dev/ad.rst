@@ -862,8 +862,18 @@ The ``Site`` class
 
   .. method:: get_admin_main_items(ar)
 
-    Yield a sequence of "items" to be rendered in
-    :xfile:`admin_main.html`.
+    Expected to yield a sequence of "items" to be rendered on the home
+    page.
+
+    Every item is expected to be a :class:`dd.Table` or a
+    :class:`dd.VirtualTable`. These tables are rendered in that order,
+    with a limit of 5 rows by default.  To change this default value,
+    override it in your local copy of :xfile:`admin_main.html`::
+
+        {% set admin_item_limit = 20 %}
+        {% extends "admin_main_base.html" %}
+
+
 
   .. method:: get_system_note_recipients(self, ar, obj, silent)
 
