@@ -312,8 +312,8 @@ class BaseLayout(object):
             self.main = main
         #~ elif not hasattr(self,'main'):
         elif self.main is None:
-            raise Exception("Cannot instantiate %s without `main`." %
-                            self.__class__)
+            raise Exception(
+                "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
         for k, v in kw.items():
             #~ if not hasattr(self,k):
@@ -485,6 +485,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             self._datasource.app_label,
             self._datasource.__name__,
             field.name, **kw)
+
 
 class FieldLayout(BaseLayout):
     pass

@@ -174,7 +174,8 @@ from lino.mixins import Report
 
 from north.dbutils import resolve_model, UnresolvedModel
 
-from lino.core.dbutils import resolve_app, resolve_field, get_field
+from lino.core.dbutils import resolve_app, require_app_models
+from lino.core.dbutils import resolve_field, get_field
 from djangosite.dbutils import obj2str
 from djangosite.dbutils import obj2unicode
 from djangosite.dbutils import range_filter
@@ -395,7 +396,7 @@ from django.contrib.contenttypes.models import ContentType
 # not yet 100% sure whether this is possible and makes sense.
 
 # site = settings.SITE
-apps = settings.SITE.plugins
+plugins = apps = settings.SITE.plugins
 modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup
@@ -404,6 +405,10 @@ is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
+
+
+def resolve_plugin(app_label):
+    return plugins.get(app_label, None)
 
 
 def show(*args, **kw):

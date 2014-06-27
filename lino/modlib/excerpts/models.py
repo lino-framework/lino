@@ -21,7 +21,6 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 from os.path import join, dirname
 
 from django.db import models
@@ -36,11 +35,11 @@ from lino import dd
 from lino import mixins
 from lino.mixins.printable import model_group
 
-from lino.utils.xmlgen.html import E
+outbox = dd.require_app_models('outbox')
+postings = dd.require_app_models('postings')
+contacts = dd.require_app_models('contacts')
 
-outbox = dd.resolve_app('outbox')
-postings = dd.resolve_app('postings')
-contacts = dd.resolve_app('contacts')
+davlink = dd.resolve_plugin('davlink')
 
 from .mixins import Certifiable
 
@@ -259,9 +258,10 @@ class CreateExcerpt(dd.Action):
 
 class ClearPrinted(dd.Action):
     sort_index = 51
-    label = _('Clear printed')
+    label = _('Clear print cache')
     icon_name = 'printer_delete'
-    help_text = _("Mark this object as not printed.")
+    help_text = _("Mark this object as not printed. A subsequent "
+                  "call to print will generate a new cache file.")
 
     def get_action_permission(self, ar, obj, state):
         if obj.printed_by_id is None:
@@ -277,11 +277,12 @@ class ClearPrinted(dd.Action):
 
         def ok(ar2):
             obj.clear_cache()
-            ar2.success(_("Printedness has been undone."), refresh=True)
+            ar2.success(_("Print cache file has been cleared."), refresh=True)
         if False:
             ar.confirm(
                 ok,
-                _("Going to undo the printedness of %s") % dd.obj2unicode(obj))
+                _("Going to clear the print cache file of %s") %
+                dd.obj2unicode(obj))
         else:
             ok(ar)
 
@@ -299,7 +300,8 @@ class BodyTemplateContentField(dd.VirtualField):
     def value_from_object(self, obj, ar):
         fn = obj.excerpt_type.get_body_template_filename()
         if not fn:
-            return "No body_template file"
+            return "(%s)" % _(
+                "Excerpt type \"%s\" has no body_template") % obj.excerpt_type
         return file(fn).read()
 
     def set_value_in_object(self, ar, obj, value):
@@ -457,19 +459,17 @@ dd.update_field(Excerpt, 'contact_person',
 
 
 class ExcerptDetail(dd.FormLayout):
-    main = "general config"
+    debug_exceptions = 20140627
+    main = "general config" if davlink else "general"
     general = dd.Panel(
         """
         id excerpt_type:25 project
         company contact_person contact_role
-        user:10 language:8 owner build_time
+        user:10 language:8 owner build_method build_time
         preview
         """, label=_("General"))
     config = dd.Panel(
-        """
-        build_method
-        body_template_content
-        """,
+        "body_template_content",
         label=_("Configure"),
         required=dd.required(user_level="admin"))
 
@@ -478,7 +478,6 @@ class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     # label = _("Excerpts history")
     icon_name = 'script'
-    debug_permissions = 20140625
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()

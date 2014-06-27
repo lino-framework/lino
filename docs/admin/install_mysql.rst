@@ -54,30 +54,27 @@ See the following chapters of the MySQL documentation
 -  Lino is tested only with databases using the 'utf8' charset.
    See `Database Character Set and Collation
    <http://dev.mysql.com/doc/refman/5.0/en/charset-database.html>`_
-    
 
--   `Setting the Storage Engine
-    <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
-     
-    Lino requires the MYISAM database storage because :manage:`initdb` 
-    can fail to drop tables due to INNODB more severe integrity 
-    contraints (which are anyway rather unnecessary when using Lino).
+- `Setting the Storage Engine
+  <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
+   
+  Lino is more easy to use with the MyISAM database storage because
+  :manage:`initdb` can fail to drop tables due to InnoDB's more
+  severe integrity contraints.  Using InnoDB usually leads to the
+  following error message when trying to run :manage:`initdb` a
+  *second* time::
 
-    Using InnoDB usually leads to the following error message when
-    trying to run :manage:`initdb` a *second* time::
+    IntegrityError: (1217, 'Cannot delete or update a parent row: 
+    a foreign key constraint fails')
 
-      IntegrityError: (1217, 'Cannot delete or update a parent row: 
-      a foreign key constraint fails')
+  One method to set this in a Debian server is to create a file
+  :file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
 
+    [mysqld]
+    default-storage-engine=myisam
 
-    One method to set this in a Debian server is to create a file
-    :file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
-
-      [mysqld]
-      default-storage-engine=myisam
-
-
-
+  OTOH, if you insist on InnoDB, you can work around this problem by
+  doing yourself a DROP DATABASE followed by a new CREATE DATABASE.
 
 
 

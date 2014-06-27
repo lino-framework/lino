@@ -301,7 +301,7 @@ class LayoutElement(VisibleComponent):
             setattr(self, k, v)
 
         # new since 20121130. theoretically better
-        if not kw.has_key('required'):
+        if not 'required' in kw:
             required = dict()
             required.update(layout_handle.layout._datasource.required)
             required.update(self.required)
@@ -1772,16 +1772,9 @@ class Panel(Container):
         assert self.preferred_width > 0, "%s : preferred_width is 0" % self
 
         d = self.value
-        if not d.has_key('layout'):
+        if not 'layout' in d:
             if len(self.elements) == 1:
                 d.update(layout='fit')
-                #~ """
-                #~ before 20130924 it was always 'fit' here. But
-                #~ """
-                #~ if self.elements[0].vflex or not self.elements[0].value.get('autoHeight',False):
-                    #~ d.update(layout='fit')
-                #~ else:
-                    #~ d.update(layout='form')
             elif self.vertical:
                 #~ d.update(layout='form')
                 if self.vflex:

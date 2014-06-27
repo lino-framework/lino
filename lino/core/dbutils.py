@@ -42,13 +42,14 @@ from north.dbutils import resolve_model, UnresolvedModel
 
 
 def resolve_app(app_label, strict=False):
-    """
-    Return the `modules` module of the given `app_label` if it is installed. 
-    Otherwise return either the :term:`dummy module` for `app_label` 
-    if it exists, or `None`.
-    If the optional second argument `strict` is `True`, then 
+    """Return the `modules` module of the given `app_label` if it is
+    installed.  Otherwise return either the :term:`dummy module` for
+    `app_label` if it exists, or `None`.
+
+    If the optional second argument `strict` is `True`, raise
+    ImportError if the app is not installed.
     
-    This function is designed for use in models modules and available 
+    This function is designed for use in models modules and available
     through the shortcut ``dd.resolve_app``.
     
     For example, instead of writing::
@@ -59,12 +60,11 @@ def resolve_app(app_label, strict=False):
         
         sales = dd.resolve_app('sales')
         
-    Because it makes your code usable 
-    (1) in applications that don't have the 'sales' module installed
-    and
-    (2) in applications who have another implementation of the `sales` 
-    module (e.g. :mod:`lino.modlib.auto.sales`)
-    
+    because it makes your code usable (1) in applications that don't
+    have the 'sales' module installed and (2) in applications who have
+    another implementation of the `sales` module
+    (e.g. :mod:`lino.modlib.auto.sales`)
+
     """
     #~ app_label = app_label
     for app_name in settings.INSTALLED_APPS:
@@ -79,6 +79,9 @@ def resolve_app(app_label, strict=False):
                               (app_label, settings.INSTALLED_APPS))
             #~ raise ImportError("strict resolve_app failed for app_label %r" % app_label)
 
+
+def require_app_models(app_label):
+    return resolve_app(app_label, True)
 
 def get_field(model, name):
     '''Returns the field descriptor of the named field in the specified model.
