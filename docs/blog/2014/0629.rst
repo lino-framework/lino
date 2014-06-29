@@ -2,7 +2,7 @@
 Sunday, June 29, 2014
 =====================
 
-Steve Johnson replied, and I invested two more hours in trying to
+Steve Johnson replied (see :doc:`yesterday <0629>`), and I invested two more hours in trying to
 understand what's wrong. Without success.
 
 Worked on :mod:`atelier.sphinxconf.configure`.

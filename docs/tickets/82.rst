@@ -45,16 +45,18 @@ For your convenience
   in one file).
 
 - Here is the `Makefile
-<https://github.com/lsaffre/eidreader/tree/master/Makefile>`__ 
-file.
+  <https://github.com/lsaffre/eidreader/tree/master/Makefile>`__ 
+  file.
 
 
 - The `Manifest.txt
-<https://github.com/lsaffre/eidreader/tree/master/Manifest.txt>`__ 
-file.
+  <https://github.com/lsaffre/eidreader/tree/master/Manifest.txt>`__ 
+  file.
 
 - The `eidreader.jnlp
-<https://github.com/lsaffre/eidreader/tree/master/applets/eidreader.jnlp>`__ 
-file.
+  <https://github.com/lsaffre/eidreader/tree/master/applets/eidreader.jnlp>`__
+  file.
+
+References to this:
 
 .. refstothis::
