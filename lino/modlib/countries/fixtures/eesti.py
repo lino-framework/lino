@@ -64,7 +64,6 @@ def place2objects(country, place, parent=None):
         raise Exception("Could not save %s : %r" % (
             dd.obj2str(obj), e))
     obj.save()
-    logger.info("20140612 Saved %s", unicode(obj))
     yield obj
 
     for cp in place.children:

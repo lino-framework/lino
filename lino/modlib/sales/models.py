@@ -53,8 +53,6 @@ vat = dd.resolve_app('vat', strict=True)
 products = dd.resolve_app('products', strict=True)
 
 
-
-
 vat.TradeTypes.sales.update(
     price_field_name='sales_price',
     price_field_label=_("Sales price"),
@@ -116,45 +114,24 @@ class SalesDocument(
         ledger.Matchable,
         Certifiable):
 
-    """
-    #~ Subclasses must either add themselves a date field (as does Order) 
-    #~ or inherit it from Voucher (as does Invoice)
-    """
+    # Subclasses must either add themselves a date field (as does
+    # Order) or inherit it from Voucher (as does Invoice)
 
     auto_compute_totals = True
 
     class Meta:
         abstract = True
 
-    #~ item_class = NotImplementedError
-
-    #~ customer = models.ForeignKey("sales.Customer",
-        #~ blank=True,null=True,
-        #~ related_name="%(app_label)s_%(class)s_by_contact",
-        #~ related_name="%(app_label)s_%(class)s_related",
-        #~ )
     language = dd.LanguageField()
 
-    #~ customer = models.ForeignKey(Customer,
-        #~ related_name="customer_%(class)s")
-    #~ ship_to = models.ForeignKey(Customer,
-        #~ blank=True,null=True,
-        #~ related_name="shipTo_%(class)s")
+    # ship_to = models.ForeignKey('contacts.Partner',
+        # blank=True,null=True,
+        # related_name="ship_to_%(class)s")
     your_ref = models.CharField(
         _("Your reference"), max_length=200, blank=True)
-    # imode = models.ForeignKey(InvoicingMode, blank=True, null=True)
     shipping_mode = models.ForeignKey(ShippingMode, blank=True, null=True)
-    #~ sales_remark = models.CharField("Remark for sales",
-      #~ max_length=200,blank=True)
     subject = models.CharField(_("Subject line"), max_length=200, blank=True)
-    #~ vat_exempt = models.BooleanField(default=False)
-    #~ item_vat = models.BooleanField(default=False)
-    #~ total_base = dd.PriceField(blank=True,null=True)
-    #~ total_vat = dd.PriceField(blank=True,null=True)
     intro = models.TextField("Introductive Text", blank=True)
-    #~ user = models.ForeignKey(settings.SITE.user_model,blank=True,null=True)
-    #status = models.CharField(max_length=1, choices=STATUS_CHOICES)
-    #~ discount = models.IntegerField(_("Discount"),blank=True,null=True)
     discount = dd.PercentageField(_("Discount"), blank=True, null=True)
 
     def get_printable_type(self):
@@ -190,12 +167,8 @@ class Invoice(SalesDocument, ledger.Voucher):
 
     due_date = models.DateField(_("Date of payment"), blank=True, null=True)
     order = dd.ForeignKey('orders.Order', blank=True, null=True)
-
     state = InvoiceStates.field(default=InvoiceStates.draft)
-
     workflow_state_field = 'state'
-
-    #~ _registrable_fields = set('date author partner vat_regime payment_term due_date'.split())
 
     def get_due_date(self):
         return self.due_date or self.date
@@ -377,13 +350,14 @@ class Invoices(SalesDocuments):
     #~ parameters = dict(pyear=journals.YearRef())
     parameters = dict(
         year=ledger.FiscalYears.field(blank=True),
+        state=InvoiceStates.field(blank=True),
         journal=ledger.JournalRef(blank=True))
     model = 'sales.Invoice'
     order_by = ["id"]
     column_names = "id date partner total_incl user *"
     detail_layout = InvoiceDetail()
     insert_layout = dd.FormLayout("""
-    partner date 
+    partner date
     subject
     """, window_size=(40, 'auto'))
 
@@ -391,11 +365,12 @@ class Invoices(SalesDocuments):
     def get_request_queryset(cls, ar):
         qs = super(Invoices, cls).get_request_queryset(ar)
         if not isinstance(qs, list):
+            pv = ar.param_values
             #~ print 20120825, ar
-            if ar.param_values.year:
-                qs = qs.filter(year=ar.param_values.year)
-            if ar.param_values.journal:
-                qs = qs.filter(journal=ar.param_values.journal)
+            if pv.year:
+                qs = qs.filter(year=pv.year)
+            if pv.journal:
+                qs = qs.filter(journal=pv.journal)
         return qs
 
     @classmethod

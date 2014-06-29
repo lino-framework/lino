@@ -188,7 +188,7 @@ html_favicon = 'favicon.ico'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['.static']
+# html_static_path = ['.static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -277,7 +277,8 @@ latex_documents = [
 # setup1 = setup
 
 def setup(app):
-    app.add_stylesheet('linodocs.css')
+    # app.add_stylesheet('linodocs.css')
+    app.add_stylesheet('centeredlogo.css')
     # setup1(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
@@ -315,7 +316,7 @@ autosummary_generate = True
 # http://sphinx.pocoo.org/theming.html
 html_theme = "default"
 
-html_theme_options = dict(collapsiblesidebar=True,externalrefs=True)
+html_theme_options = dict(collapsiblesidebar=True, externalrefs=True)
 
 todo_include_todos = True
 

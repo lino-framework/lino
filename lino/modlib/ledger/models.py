@@ -464,14 +464,25 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def get_mti_child(self):
-        return self.journal.voucher_type.model.objects.get(id=self.id)
+        try:
+            return self.journal.voucher_type.model.objects.get(id=self.id)
+        except Voucher.DoesNotExist:
+            logger.warning(
+                "No mti child %s in %s",
+                self.id,
+                self.journal.voucher_type.model.objects.all().query)
         #~ return self.journal.voucher_type.model.objects.get(
             #~ journal=self.journal,number=self.number,year=self.year)
         #~ m = self.journal.voucher_type.model
         #~ return m.objects.get(pk=self.pk)
 
     def obj2html(self, ar):
-        return ar.obj2html(self.get_mti_child())
+        # if self.__class__ is not Voucher:
+        #     return super(Voucher, self).obj2html(ar)
+        mc = self.get_mti_child()
+        if mc is None:
+            return ''
+        return ar.obj2html(mc)
 
     #~ def add_voucher_item(self,account=None,**kw):
         #~ if account is not None:
@@ -559,12 +570,20 @@ class VouchersByPartner(dd.VirtualTable):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
+
+        elems = []
+        sar = self.request(master_instance=obj)
+        # elems += ["Partner:", unicode(ar.master_instance)]
+        for voucher in sar:
+            vc = voucher.get_mti_child()
+            if vc and vc.state.name == "draft":
+                elems += [ar.obj2html(vc), " "]
+
         vtypes = set()
         for m in dd.models_by_base(vat.VatDocument):
             vtypes.add(
                 VoucherTypes.get_by_value(dd.full_model_name(m)))
 
-        elems = []
         actions = []
 
         def add_action(btn):

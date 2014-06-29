@@ -1,0 +1,13 @@
+:state: active
+
+#113: Creating invoices in :ref:`cosi`
+======================================
+
+There are several problems:
+
+- Lino does not show the detail window on the created invoice
+- VouchersByPartner should show a shortcur link to unregistered
+  vouchers (i.e. to their MTI children).
+- A sales invoice is created in table ledger_invoice instead of
+  sales_invoice. Seems that there is some misundertanding when
+  generating the `insert_button` in `get_slave_summary`.

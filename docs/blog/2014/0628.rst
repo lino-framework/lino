@@ -11,3 +11,6 @@ Looks promising! And easy to try!  So I tried it on the docs for
 :ref:`welfare`.  Opened `issue #29
 <https://github.com/irskep/sphinx-better-theme/issues/29>`_ and hoping
 for help.
+
+Opened ticket :doc:`/tickets/113`.
+Clsoed ticket :doc:`/tickets/112`.

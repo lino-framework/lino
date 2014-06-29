@@ -1,0 +1,15 @@
+=====================
+Sunday, June 29, 2014
+=====================
+
+Steve Johnson replied, and I invested two more hours in trying to
+understand what's wrong. Without success.
+
+Worked on :mod:`atelier.sphinxconf.configure`.
+
+- Lino logo now also on the :ref:`welfare` pages. 
+  This required a `centeredlogo.css` to look nice.
+
+- add an extlinks entry
+  `:XXX_srcref:` for every project which has a name ``srcref_url``
+  defined in its main module.

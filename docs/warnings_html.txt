@@ -1,2 +1,3 @@
+/home/luc/hgwork/lino/lino/modlib/ledger/models.py:docstring of lino.modlib.ledger.models.get_due_movements:5: WARNING: Field list ends without a blank line; unexpected unindent.
 WARNING: logo file 'logo.png' does not exist
 WARNING: favicon file 'favicon.ico' does not exist

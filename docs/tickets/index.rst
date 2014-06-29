@@ -21,7 +21,7 @@ Active
 ----------
 
 .. tickets_table:: 
-   :filter: e.meta.get('state') in ('open', 'todo')
+   :filter: e.meta.get('state') in ('open', 'todo', 'active')
 
    *
 
@@ -64,7 +64,7 @@ Other
 -----
 
 .. tickets_table:: 
-   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'discussion', 'testing', 'sleeping', 'longterm', 'contrib', 'done', 'closed', 'fixed')
+   :filter: e.meta.get('state') and not e.meta.get('state') in ('open', 'todo', 'active', 'discussion', 'testing', 'sleeping', 'longterm', 'contrib', 'done', 'closed', 'fixed')
 
    *
 
