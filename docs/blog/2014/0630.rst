@@ -10,3 +10,12 @@ This was more subtle because it required a change in `linoweb.js` and
 the internal web API: in order to test whether the calling window can
 display a data_record or not, the action result now contains a
 `detail_handler_name` rather than an `actor_url`.
+
+
+Okay, but before I can ask Steve and Ülle to test this, here is
+already a next problem: :doc:`/tickets/114`.
+
+And another one: :doc:`/tickets/115`
+
+And a third one: :doc:`/tickets/116`.
+
