@@ -467,7 +467,7 @@ class ExtRenderer(HtmlRenderer):
 
     def get_actor_url(self, actor, *args, **kw):
         return self.build_admin_url(
-            "api", 
+            "api",
             actor.app_label, actor.__name__, *args, **kw)
 
     def get_home_url(self, *args, **kw):
@@ -802,6 +802,9 @@ class ExtRenderer(HtmlRenderer):
         action_param_panels = set()
 
         def add(res, collector, fl, formpanel_name):
+            # res: an actor
+            # collector: one of form_panels, param_panels or
+            # action_param_panels
             # fl : a FormLayout
             if fl is None:
                 return
@@ -819,16 +822,12 @@ class ExtRenderer(HtmlRenderer):
                     e.loosen_requirements(res)
             else:
                 lh.main.loosen_requirements(res)
-            if fl in collector:
-                pass
-                #~ fl._using_actors.append(actor)
-            else:
+
+            if not fl in collector:
                 fl._formpanel_name = formpanel_name
                 fl._url = res.actor_url()
-                #~ fl._using_actors = [actor]
                 collector.add(fl)
 
-        #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
 
         for res in actors_list:
@@ -1288,11 +1287,9 @@ class ExtRenderer(HtmlRenderer):
 
         yield "  initComponent : function() {"
 
-        #~ a = rh.actor.get_action('detail')
         a = rh.actor.detail_action
         if a:
             yield "    this.ls_detail_handler = Lino.%s;" % a.full_name()
-        #~ a = rh.actor.get_action('insert')
         a = rh.actor.insert_action
         if a:
             yield "    this.ls_insert_handler = Lino.%s;" % a.full_name()
@@ -1306,7 +1303,6 @@ class ExtRenderer(HtmlRenderer):
             yield "      " + ln
         yield "    };"
 
-        #~ if rh.on_render:
         on_render = self.build_on_render(rh.list_layout.main)
         if on_render:
             yield "    this.onRender = function(ct, position) {"
@@ -1319,14 +1315,8 @@ class ExtRenderer(HtmlRenderer):
             ext_elems.GridColumn(rh.list_layout, i, e) for i, e
             in enumerate(rh.list_layout.main.columns)])
 
-        #~ yield "    this.columns = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);"
-        #~ yield "    this.colModel = Lino.ColumnModel({columns:this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns)});"
-
-        #~ yield "    this.items = %s;" % rh.list_layout._main.as_ext()
-        #~ 20111125 see ext_elems.py too
-        #~ if self.main.listeners:
-            #~ yield "  config.listeners = %s;" % py2js(self.main.listeners)
-        yield "    Lino.%s.GridPanel.superclass.initComponent.call(this);" % rh.actor
+        yield "    Lino.%s.GridPanel.superclass.initComponent.call(this);" \
+            % rh.actor
         yield "  }"
         yield "});"
         yield ""
@@ -1335,19 +1325,18 @@ class ExtRenderer(HtmlRenderer):
         """Defines the non-window action handler used by
         :meth:`row_action_button`
         """
-        yield "Lino.%s = function(rp,pk) { " % action.full_name()
+        yield "Lino.%s = function(rp, pk) { " % action.full_name()
         yield "  var h = function() { "
         uri = rh.actor.actor_url()
-        yield "    Lino.run_row_action(rp,%s,%s,pk,%s,%s);" % (
+        yield "    Lino.run_row_action(rp, %s, %s, pk, %s, %s);" % (
             py2js(uri), py2js(action.action.http_method),
             py2js(action.action.action_name),
             action.action.preprocessor)
         yield "  };"
         yield "  var panel = Ext.getCmp(rp);"
-        yield "  if(panel) panel.do_when_clean(true,h); else h();"
+        yield "  if(panel) panel.do_when_clean(true, h); else h();"
         yield "};"
 
-    #~ def js_render_window_action(self,rh,action,user):
     def js_render_window_action(self, rh, action, profile):
 
         rpt = rh.actor

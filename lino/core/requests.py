@@ -48,7 +48,8 @@ ACTION_RESPONSES = frozenset((
     'html',
     'rows',
     'data_record',
-    'actor_url',
+    # 'actor_url',
+    'detail_handler_name',
     'record_id',
     # 'goto_record_id',
     'refresh', 'refresh_all',
@@ -744,10 +745,13 @@ class ActorRequest(BaseRequest):
         # e.g. find_by_beid is called from viewport, so there is no
         # requesting_panel.
         if self.actor.model is None \
-           or not isinstance(obj, self.actor.model)\
-           or self.requesting_panel is None:
+           or not isinstance(obj, self.actor.model) \
+           or self.actor.detail_action is None:
+           # or self.requesting_panel is None:
             return super(ActorRequest, self).goto_instance(obj, **kw)
-        self.set_response(actor_url=self.actor.actor_url())
+        # self.set_response(actor_url=self.actor.actor_url())
+        self.set_response(
+            detail_handler_name=self.actor.detail_action.full_name())
         if self.actor.handle_uploaded_files is not None:
             self.set_response(record_id=obj.pk)
         else:

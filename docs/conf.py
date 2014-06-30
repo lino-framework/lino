@@ -25,7 +25,8 @@ Oops: `import settings` finds a settings module in %s.
 See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
 
 extensions += ['atelier.sphinxconf.blog']
-extensions += ['lino.utils.actordoc']
+extensions += ['lino.sphinxcontrib.logo']
+extensions += ['lino.sphinxcontrib.actordoc']
 extensions += ['sphinxcontrib.taglist']
 
 extensions += ['atelier.sphinxconf.sigal_image']
@@ -184,11 +185,6 @@ html_logo = 'logo.png'
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
 html_favicon = 'favicon.ico'
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-# html_static_path = ['.static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.

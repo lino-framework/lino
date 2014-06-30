@@ -2,8 +2,8 @@
 Sunday, June 29, 2014
 =====================
 
-Steve Johnson replied (see :doc:`yesterday <0629>`), and I invested two more hours in trying to
-understand what's wrong. Without success.
+Steve Johnson replied (see :doc:`yesterday <0628>`), and I invested
+two more hours in trying to understand what's wrong. Without success.
 
 Worked on :mod:`atelier.sphinxconf.configure`.
 
@@ -13,3 +13,26 @@ Worked on :mod:`atelier.sphinxconf.configure`.
 - add an extlinks entry
   `:XXX_srcref:` for every project which has a name ``srcref_url``
   defined in its main module.
+
+After committing the above I *still* continued to think about it.
+
+The `centeredlogo` thing was not a generally useful extension.
+
+- Moved `lino.utils.actordoc` to :mod:`lino.sphinxcontrib.actordoc`.
+- Added :mod:`lino.sphinxcontrib.logo` centralizes has both the static
+  files and css.
+
+
+Worked on :doc:`/tickets/113`. Two points are now solved:
+
+- VouchersByPartner should show a shortcurt link to unregistered
+  vouchers (i.e. to their MTI children).
+
+- A sales invoice is created in table ledger_invoice instead of
+  sales_invoice. Seems that there is some misundertanding when
+  generating the `insert_button` in
+  the :meth:`dd.AbstractTable.get_slave_summary` of
+  :class:`ml.ledger.VouchersByPartner`.
+
+The last one, "Lino does not show the detail window on the created
+invoice", is more difficult.

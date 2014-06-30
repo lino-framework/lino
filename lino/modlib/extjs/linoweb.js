@@ -737,11 +737,11 @@ Lino.close_window = function(status_update, norestore) {
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
   var retval = cw.main_item.requesting_panel;
-  console.log(
-      "20140604 Lino.close_window() going to close", 
-      cw, "previous is", ww, 
-      "norestore is", norestore,
-      "retval is", retval);
+  // console.log(
+  //     "20140604 Lino.close_window() going to close", 
+  //     cw, "previous is", ww, 
+  //     "norestore is", norestore,
+  //     "retval is", retval);
   if (ww) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
     if(!norestore) {
@@ -1660,63 +1660,79 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         Ext.MessageBox.show(config);
         return;
     }
+
+    // `record_id` and/or `data_record` both mean "display the detail
+    // of this record". 
     
+    if(result.detail_handler_name) {
+        // TODO: make sure that result.detail_handler_name is secure
+        var detail_handler = eval("Lino." + result.detail_handler_name);
+    }
     var ns = {};  // new status
     if (result.close_window) {
+        
         if(result.record_id || result.data_record) {
             var ww = Lino.calling_window();
             if (ww && ww.window.main_item instanceof Lino.FormPanel) {
-                if (ww.window.main_item.ls_url == result.actor_url) {
-                    // console.log("20140506 case 1");
+                if (ww.window.main_item.ls_detail_handler == detail_handler) {
                     ns.record_id = result.record_id;
                     ns.data_record = result.data_record;
-                } else {
-                    console.log("20140604 case 2", 
-                                ww.window.main_item.ls_url, "is not", 
-                                result.actor_url)
+                    console.log("20140630 use new status.");
                 }
-            // } else {
-            //     console.log("20140506 calling_window not a FormPanel", ww);
             }
         }
 
-        panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
-
         // Subsequent processing expects that `panel` is "the current
         // panel". Since we close the window, `panel` should now point
-        // to the previous window. . Note the case of an insert window
+        // to the previous window. Note the case of an insert window
         // that has been invoked by double-clicking on the phantom row
         // of a slave table in a detail window. In that case we want
-        // `panel` to become the slave table's grid panel that called
-        // the insert window, which is the slave table's grid panel
-        // and not the master's detail form panel.  When the insert
-        // window has been called by an action link (e.g. generated
-        // using ar.insert_button), then Lino.close_window can return
-        // `undefined`. 
+        // `panel` to become the grid panel of the slave table who
+        // called the insert window, not the master's detail form
+        // panel.  When the insert window has been called by an action
+        // link (e.g. generated using ar.insert_button), then
+        // Lino.close_window can return `undefined`.
+
+        panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
         if (!panel) 
             panel = Lino.current_window.main_item;
+
     }
 
     if(result.record_id || result.data_record) {
-        // console.log(20140527, ns, ! (ns.record_id || ns.data_record));
         if (! (ns.record_id || ns.data_record)) {
           if (panel instanceof Lino.FormPanel 
-              && panel.ls_url == result.actor_url) {
-              // console.log("20140506 case 2 it's a FormPanel:", panel);
+              && panel.ls_detail_handler == detail_handler) 
+            {
+              console.log("20140630 use panel.set_status().");
               panel.set_status({
                   record_id: result.record_id,
                   data_record: result.data_record});
-          } else if (panel.ls_detail_handler 
-                     && panel.ls_url == result.actor_url) {
-              // console.log("20140506 case 4");
-              panel.ls_detail_handler.run(null, {
+          } else {
+              console.log("20140630 run detail_handler.");
+              detail_handler.run(null, {
                   record_id: result.record_id,
                   data_record: result.data_record,
                   base_params: panel.get_base_params()});
-          } else {
-              result.refresh_all = true;
-              console.log("20140604 case 6", result.actor_url);
           }
+
+          // if (panel instanceof Lino.FormPanel 
+          //     && panel.ls_url == result.actor_url) {
+          //     // console.log("20140506 case 2 it's a FormPanel:", panel);
+          //     panel.set_status({
+          //         record_id: result.record_id,
+          //         data_record: result.data_record});
+          // } else if (panel.ls_detail_handler 
+          //            && panel.ls_url == result.actor_url) {
+          //     // console.log("20140506 case 4");
+          //     panel.ls_detail_handler.run(null, {
+          //         record_id: result.record_id,
+          //         data_record: result.data_record,
+          //         base_params: panel.get_base_params()});
+          // } else {
+          //     result.refresh_all = true;
+          //     console.log("20140604 case 6", result.actor_url);
+          // }
         }
     }
 
@@ -1757,7 +1773,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
 
-    if(result.record_deleted && panel.ls_url == result.actor_url) {
+    if(result.record_deleted && panel.ls_detail_handler == detail_handler) {
         panel.after_delete();
     }
     

@@ -15,3 +15,8 @@ not the *Welfare*.  And furthermore it is more easy to pronunciate.
 
 Closed as long as there is no proof of necessity for a change. Lino
 says "PCSW", not "PSWC".
+
+Pages referring to this:
+
+.. refstothis::
+

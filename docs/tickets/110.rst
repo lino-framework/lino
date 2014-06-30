@@ -11,3 +11,8 @@ Will they want the same for :class:`welfare.jobs.Contract`?  Probably
 not, because a :class:`welfare.jobs.Contract` is related to a Job, and
 every Job is related to one company. The whole
 :class:`welfare.jobs.JobsOverview` would become pointless.
+
+Pages referring to this:
+
+.. refstothis::
+

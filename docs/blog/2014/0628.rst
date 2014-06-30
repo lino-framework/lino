@@ -13,4 +13,4 @@ Looks promising! And easy to try!  So I tried it on the docs for
 for help.
 
 Opened ticket :doc:`/tickets/113`.
-Clsoed ticket :doc:`/tickets/112`.
+Marked ticket :doc:`/tickets/112` as closed.

@@ -22,7 +22,7 @@ import os
 
 from django.utils import translation
 
-from lino.utils.actordoc import Lino2rstDirective
+from lino.sphinxcontrib.actordoc import Lino2rstDirective
 
 from lino.core import actors
 

@@ -834,6 +834,8 @@ class TypedPrintable(CachedPrintable):
         return super(TypedPrintable, self).get_default_build_method()
 
     def get_build_method(self):
+        if not self.build_method:
+            return self.get_default_build_method()
         return self.build_method
         # ptype = self.get_printable_type()
         # if ptype and ptype.build_method:

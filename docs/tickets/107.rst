@@ -33,6 +33,7 @@ Basically I plan the following:
 - Maybe simply distribute both versions of the `.jar` files.
 
 
+Pages referring to this:
 
-
+.. refstothis::
 

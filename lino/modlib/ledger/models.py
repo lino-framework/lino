@@ -12,34 +12,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This is Lino's standard app for General Ledger.  It defines the
-following classes:
-
-- Models :class:`Journal`, :class:`Voucher` and :class:`Movement`
-
-- The :class:`DueMovement` class, a volatile object representing a
-  group of matching movements.
-
-- :class:`DebtsByAccount` and :class:`DebtsByPartner` are two reports
-  based on :class:`ExpectedMovements`
-
-- :class:`GeneralAccountsBalance`, :class:`ClientAccountsBalance` and
-  :class:`SupplierAccountsBalance` three reports based on
-  :class:`AccountsBalance` and :class:`PartnerAccountsBalance`
-
-- :class:`Debtors` and :class:`Creditors` are tables with one row for
-  each partner who has a positive balance (either debit or credit).
-  Accessible via :menuselection:`Reports --> Ledger --> Debtors` and
-  :menuselection:`Reports --> Ledger --> Creditors`
-
-"""
+"""See :mod:`ml.ledger`."""
 
 from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 from decimal import Decimal
 
 from django.db import models
@@ -117,10 +96,6 @@ class MatchField(models.CharField):
 
 class DcAmountField(dd.VirtualField):
 
-    """
-    An editable virtual field to set both fields `amount` and `dc`
-    """
-
     editable = True
 
     def __init__(self, dc, *args, **kw):
@@ -159,7 +134,6 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         return accounts.Account.objects.filter(chart=chart, **fkw)
 
     def get_doc_model(self):
-        """The model of vouchers in this Journal."""
         # print self,DOCTYPE_CLASSES, self.doctype
         return self.voucher_type.model
         #~ return DOCTYPES[self.doctype][0]
@@ -174,9 +148,6 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         return cl.objects.get(**kw)
 
     def create_voucher(self, **kw):
-        """
-        Create an instance of this Journal's voucher model (:meth:`get_doc_model`).
-        """
         cl = self.get_doc_model()
         kw.update(journal=self)
         try:
@@ -186,7 +157,7 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
             for k, v in kw.items():
                 setattr(doc, k, v)
             #~ print 20120825, kw
-        except TypeError, e:
+        except TypeError:
             #~ print 20100804, cl
             raise
         doc.on_create(None)
@@ -260,10 +231,9 @@ class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, voucher_type):
-        """Overrides PrintableType.template_choices to not use the class
-        method `get_template_groups`.
+        # Overrides PrintableType.template_choices to not use the class
+        # method `get_template_groups`.
 
-        """
         if not voucher_type:
             return []
         #~ print 20131006, voucher_type
@@ -300,15 +270,6 @@ def VoucherNumber(**kw):
 
 class Voucher(mixins.UserAuthored, mixins.Registrable):
 
-    """A Voucher is a document that represents a monetary transaction.
-    Subclasses must define a field `state`.  This model is subclassed
-    by sales.Invoice, ledger.AccountInvoice, finan.Statement etc...
-    
-    It is *not* abstract so that :class:`Movement` can have a ForeignKey
-    to a Voucher. Otherwise we would have to care ourselves about data
-    integrity, and we couln't make queries on `voucher__xxx`.
-
-    """
     class Meta:
         verbose_name = _("Voucher")
         verbose_name_plural = _("Vouchers")
@@ -503,9 +464,6 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
 
 class Vouchers(dd.Table):
 
-    """
-    List of all vouchers
-    """
     model = Voucher
     editable = False
     order_by = ["date", "number"]
@@ -592,26 +550,21 @@ class VouchersByPartner(dd.VirtualTable):
             actions.append(btn)
             return True
 
-        for jnl in Journal.objects.filter(voucher_type__in=vtypes):
-            sar = ar.spawn(
-                InvoicesByJournal,
-                master_instance=jnl,
-                known_values=dict(partner=obj))
-            # logger.info(
-            #     "20140604 sar.requesting_panel %s",
-            #     sar.requesting_panel)
-            if add_action(sar.insert_button(unicode(jnl), icon_name=None)):
-                actions.append(' ')
+        for vt in vtypes:
+            for jnl in vt.get_journals():
+                sar = ar.spawn(
+                    vt.table_class,
+                    master_instance=jnl,
+                    known_values=dict(partner=obj))
+                if add_action(sar.insert_button(unicode(jnl),
+                                                icon_name=None)):
+                    actions.append(' ')
 
         elems += [E.br(), _("Create voucher in journal ")] + actions
         return E.div(*elems)
 
 
 class Movement(dd.Model):
-
-    """
-    An accounting movement in the ledger.
-    """
 
     allow_cascaded_delete = ['voucher']
 
@@ -693,17 +646,10 @@ class Movement(dd.Model):
 
 class Movements(dd.Table):
 
-    """
-    The table of all movements, 
-    displayed by :menuselection:`Explorer --> Accounting --> Movements`.
-    This is also the base class for 
-    :class:`MovementsByVoucher`,
-    :class:`MovementsByAccount`
-    and
-    :class:`MovementsByPartner`
-    and defines e.g. filtering parameters.
+    # This is also the base class for :class:`MovementsByVoucher`,
+    # :class:`MovementsByAccount` and :class:`MovementsByPartner` and
+    # defines e.g. filtering parameters.
     
-    """
     model = Movement
     column_names = 'voucher_link account debit credit *'
     editable = False
@@ -776,18 +722,6 @@ class MovementsByAccount(Movements):
 
 class DueMovement(object):
 
-    """Volatile object representing a group of "matching" movements.
-    
-    The "matching" movements of a given movement are those whose
-    `match`, `partner` and `account` fields have the same values.
-    
-    These movements are themselves grouped into "debts" and "payments".
-    A "debt" increases the debt and a "payment" decreases it.
-    
-    The value of `dc` specifies whether I mean *my* debts and payments
-    (towards that partner) or those *of the partner* (towards me).
-
-    """
 
     def __init__(self, dc, mvt):
         self.dc = dc
@@ -843,18 +777,6 @@ class DueMovement(object):
 
 
 def get_due_movements(dc, **flt):
-    """Generates and yields a list of the :class:`DueMovement` objects
-    specified by the filter criteria.
-
-    :param dc: The caller must specify whether he means the debts and
-    payments *towards the partner* or *towards myself*.
-
-    :param flt: Any keyword argument is forwarded to `filter
-                <https://docs.djangoproject.com/en/dev/ref/\
-                models/querysets/#filter>`
-                which :class:`Movement` objects to consider.
-
-    """
     if dc is None:
         return
     qs = Movement.objects.filter(**flt)
@@ -870,15 +792,6 @@ def get_due_movements(dc, **flt):
 
 
 class ExpectedMovements(dd.VirtualTable):
-    """A virtual table of
-    :class:`DueMovement` rows with the following columns:
-
-        due_date balance debts payments
-
-    Also subclassed by :class:`finan.SuggestionsByVoucher
-    <lino.modlib.finan.models.SuggestionsByVoucher>`
-
-    """
     label = _("Debts")
     icon_name = 'book_link'
     #~ column_names = 'match due_date debts payments balance'
@@ -958,10 +871,6 @@ class ExpectedMovements(dd.VirtualTable):
 
 
 class DebtsByAccount(ExpectedMovements):
-    """
-    This table is accessible by clicking the "Debts" action button on
-    an :class:`Account <lino.modlib.accounts.models.Account>`.
-    """
     master = 'accounts.Account'
 
     @classmethod
@@ -982,15 +891,6 @@ dd.inject_action('accounts.Account', due=dd.ShowSlaveTable(DebtsByAccount))
 
 class DebtsByPartner(ExpectedMovements):
 
-    """This is the table being printed in a Payment Reminder.  Usually
-    this table has one row per sales invoice which is not fully paid.
-    But several invoices ("debts") may be grouped by match.  If the
-    partner has purchase invoices, these are deduced from the balance.
-
-    This table is accessible by clicking the "Debts" action button on
-    a :class:`Partner <lino.modlib.contacts.models.Partner>`.
-
-    """
     master = 'contacts.Partner'
     #~ column_names = 'due_date debts payments balance'
 
@@ -1027,14 +927,6 @@ InvoiceStates.draft.add_transition(
 
 class Matchable(dd.Model):
 
-    """
-    Base class for :class:`AccountInvoice`
-    (and e.g. `sales.Invoice`, `finan.DocItem`)
-    
-    Adds a field `match` and a chooser for it.
-    Requires a field `partner`.
-    """
-
     class Meta:
         abstract = True
 
@@ -1051,11 +943,6 @@ class Matchable(dd.Model):
 
 
 class AccountInvoice(vat.VatDocument, Voucher, Matchable):
-
-    """An invoice for which the user enters just the bare accounts and
-    amounts (not e.g. products, quantities, discounts).
-
-    """
 
     class Meta:
         verbose_name = _("Invoice")
@@ -1075,11 +962,6 @@ class AccountInvoice(vat.VatDocument, Voucher, Matchable):
 
 
 class VoucherItem(dd.Model):
-
-    """
-    Subclasses must define a field `voucher` which must 
-    be a FK with related_name='items'
-    """
 
     allow_cascaded_delete = ['voucher']
 
@@ -1218,12 +1100,6 @@ class Balance(object):
 
 
 class AccountsBalance(dd.VirtualTable):
-    """Base class for different reports that show a list of accounts with
-    the following columns:
-
-    ref description old_d old_c during_d during_c new_d new_c
-
-    """
     auto_fit_column_widths = True
     column_names = "ref description old_d old_c during_d during_c new_d new_c"
     slave_grid_format = 'html'

@@ -22,3 +22,7 @@ If you set :attr:`ad.Site.languages` to ``"es en"`` and run
 
 For example :mod:`lino.modlib.contacts.fixtures.std`.
 
+Pages referring to this:
+
+.. refstothis::
+
