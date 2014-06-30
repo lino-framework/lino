@@ -1164,9 +1164,10 @@ class DeleteSelected(MultipleRowAction):
         
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
-            ar2.success(
-                record_deleted=True,
-                actor_url=ar2.actor.actor_url())
+            ar2.success(record_deleted=True)
+            if ar2.actor.detail_action:
+                ar2.set_response(
+                    detail_handler_name=ar2.actor.detail_action.full_name())
 
         d = dict(num=len(objects), targets=', '.join(objects))
         if len(objects) == 1:
