@@ -1,0 +1,12 @@
+:state: active
+
+========================================================================
+#115 : ChangePassword says "Sorry, dialog action without base_params.mk"
+========================================================================
+
+Cannot change passwort via web interface
+
+Pages referring to this:
+
+.. refstothis::
+

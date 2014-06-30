@@ -1,0 +1,93 @@
+:state: active
+
+========================================================================
+#116 : DavLink fails to get permission
+========================================================================
+
+:ref:`davlink` fails again after Gerd upgraded from 1.7.52 to 1.7.60.
+The Java Console says:
+
+  liveconnect: Security Exception: LiveConnect (JavaScript) blocked
+  due to security settings.
+
+
+First attempt
+-------------
+
+Is it possible that they increased severity for the
+`Application-Library-Allowable-Codebase
+<http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html#app_library>`__
+attribute? Because a bit earlier it says:
+
+  security: Missing Application-Library-Allowable-Codebase manifest
+  attribute for: http://192.168.0.2:8080/media/davlink/DavLink.jar
+
+I am not sure whether this warning was there before. Unfortunately I
+cannot find anything about this neither in the `release notes
+<http://www.oracle.com/technetwork/java/javase/7u60-relnotes-2200106.html>`__
+nor in the list of `bug fixes
+<http://www.oracle.com/technetwork/java/javase/2col/7u60-bugfixes-2202029.html>`__,
+so this remains a plain assumption.
+
+The documentation states that "This attribute is not needed if the
+JAR file for the RIA is in the same location as the JNLP file or HTML
+page that starts the RIA." -- Isn't that the case here?  In my case I
+have the following URLs:
+
+- HTML page : http://192.168.0.2:8080
+- JAR file  : http://192.168.0.2:8080/media/davlink/DavLink.jar
+- JNLP file : http://192.168.0.2:8080/media/cache/davlink.jnlp
+
+Are these different "locations"? Does the "location" include the path
+component of the URL? When I read the documentation of the `Codebase
+<http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html#codebase>`__,
+then I'd rather say the opposite. 
+But why then the warning?
+To verify this, I added this line to my :file:`Manifest.txt`::
+
+  Application-Library-Allowable-Codebase: *
+
+The warning disappears, but the problem is not solved.  Sigh!  Once
+again, I am in a situation where I cannot see what I did wrong from
+reading the documentation. Once again I am forced to start hacking
+blindly using the trial-and-error method.
+
+Second attempt
+--------------
+
+After reading `this stackoverflow post
+<http://stackoverflow.com/questions/22074063/java-7u51-liveconnect-javascript-blocked-due-to-security-settings>`_
+I tried another line to my :file:`Manifest.txt`::
+
+  Caller-Allowable-Codebase: *
+
+And now it passes.  Don't ask me why, I searched the above
+documentation and could not find any explanation.
+
+One problem remains: the user must confirm a security warning each
+time:
+
+    This web site is requesting access and control of the Java
+    application shown above. Allow access only if you trust the web
+    site and know that the application is intended to run on this site.
+
+    Allow access to the following applications from this web site?
+
+    Yes -- No -- Help
+
+Another observation: the Java Console complains a little:
+
+  security: Javascript from a non secure page is accessing privileged
+  code. Consider using HTTPS protocol when using Javascript -> Java
+  liveconnect calls.
+
+We can ignore this security warning since this site is available only
+from inside.
+
+
+
+Pages referring to this
+-----------------------
+
+.. refstothis::
+

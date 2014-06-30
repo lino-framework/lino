@@ -1,0 +1,16 @@
+:state: active
+
+===========================================
+#114 : Inserting items into a sales invoice
+===========================================
+
+- In :ref:`cosi`, create a sales invoice. 
+- In ItemsByInvoice, select a product *and terminate the ComboBox with TAB*.
+- Type some text in the "Description" cell. Terminate with RETURN.
+
+Result is that Lino adds two items at once.
+
+Pages referring to this:
+
+.. refstothis::
+
