@@ -33,6 +33,9 @@ authentication).
 - This documentation is currently part of the Lino project and visible
   at http://lino-framework.org/eidreader
 
+- An online demo is available at
+  http://test-eidreader.lino-framework.org/
+
 **Relation with other projects**
 
 - This applet is "underground work" and not yet officially 
