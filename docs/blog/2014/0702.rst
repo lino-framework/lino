@@ -80,4 +80,37 @@ Automatic refresh every 10 seconds
 ----------------------------------
 
 Added a button "autorefresh" which causes the home screen to start
-refreshing every 10 seconds.
+refreshing every 10 seconds.  Opening any window stops the
+autorefresh.
+
+This is a quick workaround, not yet very user-friedly:
+
+- no feedback indicating that it is activated.
+- no protection against repeated clicks. every click starts a queue of
+  autorefreshes.
+
+
+TypeError: expected string or buffer
+------------------------------------
+
+Lino made an :ref:`ise` when reading a Belgian eID card which had the
+  following address data::
+
+    streetAndNumber: null
+    zip: null
+    municipality: null
+
+- Added a new test case for :ref:`welfare` which reproduces the problem.
+
+- Fixed the bug (in :class:`ml.beid.BaseBeIdReadCardAction`)
+
+- Discovered that these test cases were not being tested anymore.  Now
+  they are, but I am not yet fully satisfied with how this is being
+  done.
+
+- These test cases need to specify `no_local=True` because they need
+  e.g. `use_java`.
+
+- Added the case of an incomplete birth date to the docstring of
+  :mod:`lino.utils.ssin`.
+

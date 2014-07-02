@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -42,19 +42,18 @@ http://www.simplification.fgov.be/doc/1206617650-4990.pdf
 Formatting Belgian National Numbers
 -----------------------------------
 
-An obsolete but still used format for printing a Belgian SSIN
-is ``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, 
-``x`` indicates the century (``*`` for the 19th, `` `` (space) for the 20th
-and ``=`` for the 21st century), ``123`` is a sequential number for persons 
-born the same day (odd numbers for men and even numbers for women), 
-and ``97`` is a check digit (remainder of previous digits divided by 97).
+An obsolete but still used format for printing a Belgian SSIN is
+``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, ``x`` indicates
+the century (``*`` for the 19th, `` `` (space) for the 20th and ``=``
+for the 21st century), ``123`` is a sequential number for persons born
+the same day (odd numbers for men and even numbers for women), and
+``97`` is a check digit (remainder of previous digits divided by 97).
 
-And a function :func:`generate_ssin` is mainly used to 
-generate fictive demo data.
-For example, here is the national number of the 25th boy born in 
-Belgium on June 1st, 1968:
+And a function :func:`generate_ssin` is mainly used to generate
+fictive demo data.  For example, here is the national number of the
+25th boy born in Belgium on June 1st, 1968:
     
->>> n = generate_ssin(datetime.date(1968,6,1),Genders.male,53)
+>>> n = generate_ssin(datetime.date(1968,6,1), Genders.male, 53)
 >>> print n
 680601 053-29
 >>> ssin_validator(n)
@@ -67,17 +66,25 @@ For boys it is 1, for girls 2.
 020405 002=44
 >>> ssin_validator(n)
 
-There are two validator functions, 
-:func:`is_valid_ssin` and :func:`ssin_validator`. 
-the difference between them is 
-that one returns True or False while the other raises a ValidationError 
-to be used in Django forms.
-The message of this ValidationError depends on the user language.
+There are two validator functions, :func:`is_valid_ssin` and
+:func:`ssin_validator`.  the difference between them is that one
+returns True or False while the other raises a ValidationError to be
+used in Django forms.  The message of this ValidationError depends on
+the user language.
 
 >>> ssin_validator('123')
 Traceback (most recent call last):
 ...
 ValidationError: [u'Invalid SSIN 123 : A formatted SSIN must have 13 positions']
+
+Here is the SSIN of a person with incomplete birth date:
+
+>>> from lino.utils import IncompleteDate
+>>> n = generate_ssin(IncompleteDate(1995, 0, 0), Genders.male, 153)
+>>> print n
+950000 153-96
+>>> ssin_validator(n)
+
 
 No need for special characters?
 -------------------------------
@@ -224,9 +231,9 @@ format_niss = format_ssin
 
 
 def ssin_validator(ssin):
-    """
-    Checks whether the specified SSIN is valid. 
-    If not, raises a ValidationError.
+    """Checks whether the specified SSIN is valid.  If not, raises a
+    ValidationError.
+
     """
     ssin = ssin.strip()
     if not ssin:

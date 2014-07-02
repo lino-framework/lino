@@ -157,28 +157,22 @@ class BaseBeIdReadCardAction(dd.Action):
         kw.update(card_issuer=data.cardDeliveryMunicipality)
         if data.nobleCondition:
             kw.update(noble_condition=data.nobleCondition)
-        kw.update(street=data.streetAndNumber)
-        #~ kw.update(street_no=data['streetNumber'])
-        #~ kw.update(street_box=data['boxNumber'])
-        if True:  # kw['street'] and not (kw['street_no'] or kw['street_box']):
-            kw = street2kw(kw['street'], **kw)
-        kw.update(zip_code=str(data.zip))
+        if data.streetAndNumber:
+            # kw.update(street=data.streetAndNumber)
+            kw = street2kw(data.streetAndNumber, **kw)
+        if data.zip:
+            kw.update(zip_code=str(data.zip))
         if data.placeOfBirth:
             kw.update(birth_place=data.placeOfBirth)
         pk = data.reader.upper()
 
         msg1 = "BeIdReadCardToClientAction %s" % kw.get('national_id')
 
-        #~ try:
         country = countries.Country.objects.get(isocode=pk)
         kw.update(country=country)
-        #~ except countries.Country.DoesNotExist,e:
-        #~ except Exception,e:
-            #~ logger.warning("%s : no country with code %r",msg1,pk)
-        #~ BE = countries.Country.objects.get(isocode='BE')
-        #~ fld = countries.Place._meta.get_field()
-        kw.update(city=countries.Place.lookup_or_create(
-            'name', data.municipality, country=country))
+        if data.municipality:
+            kw.update(city=countries.Place.lookup_or_create(
+                'name', data.municipality, country=country))
 
         def sex2gender(sex):
             if sex == 'MALE':
