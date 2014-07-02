@@ -18,14 +18,14 @@ See also the :ref:`atelier.sphinxext` documentation page
 of :ref:`atelier`.
 
 
-.. role:: ddref
+.. rst:role:: ddref
 
 Insert a reference to the user documentation of an item of the data
 dictionary of the Lino Site associated to this doctree.
 
 This role is available only when this project has a userdocs.
 
-.. directive:: actor
+.. rst:directive:: actor
 
 Generate and insert user documentation for the specified actor.
 If this directive has content, this will be inserted at the beginning.

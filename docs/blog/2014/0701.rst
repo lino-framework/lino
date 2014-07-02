@@ -1,0 +1,35 @@
+================================
+20140701 (Tuesday, 01 July 2014)
+================================
+
+Today it took me a whole day for making :ref:`eidreader` available
+using both the self-signed and the codegears-signed jars.
+
+The most time-consuming was that I switched from make_ to paver_.
+Which consisted of several tasks:
+
+- I had to admit that I will never love make_
+  (:file:`Makefile_before_paver` is there just to show why)
+
+- I had to evaluate the available pythonic make tools. I looked at
+  scons_, some others and finally found paver_.
+
+- rewrite EIDReader's :file:`Makefile` into a `pavement.py
+  <https://github.com/lsaffre/eidreader/blob/master/pavement.py>`_
+  file.
+
+.. _make: http://www.gnu.org/software/make/
+.. _paver: http://paver.github.io/paver/
+.. _scons: http://www.scons.org/
+
+While doing the above I noticed another detail: the library `.jar`
+files contained both signatures.  Thanks to Hamza Yerlikaya who asked
+`Unsigning a signed jar
+<http://stackoverflow.com/questions/1291978/un-signing-a-signed-jar>`_,
+and thanks to `midnight commander
+<https://www.midnight-commander.org/>`_ who made this easy.  This
+"detail" might have been a hidden cause for earlier problems,
+according to `What prevents Java from verifying signed jars with
+multiple signature algorithms
+<http://stackoverflow.com/questions/12614139/what-prevents-java-from-verifying-signed-jars-with-multiple-signature-algorithms>`_.
+

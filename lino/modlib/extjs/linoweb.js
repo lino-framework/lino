@@ -315,6 +315,12 @@ Lino.insert_subst_user = function(p){
 
 Lino.login_window = null;
 
+Lino.autorefresh = function() {
+  if (Lino.current_window == null) {
+      Lino.viewport.refresh();
+      Lino.autorefresh.defer(10000);
+  }
+}
 
 Lino.show_login_window = function(on_login) {
   //~ console.log('20121103 show_login_window',arguments);
@@ -336,7 +342,7 @@ Lino.show_login_window = function(on_login) {
                   } 
                 },
                 failure: function(form,action) { 
-                  Lino.on_submit_failure(form,action);
+                  Lino.on_submit_failure(form, action);
                   Lino.viewport.loadMask.hide()
                 }
             }); 
@@ -792,7 +798,8 @@ Lino.close_all_windows = function() {
 }
 
 Lino.calling_window = function() {
-    if (Lino.window_history.length) return Lino.window_history[Lino.window_history.length-1];
+    if (Lino.window_history.length) 
+        return Lino.window_history[Lino.window_history.length-1];
 }
 
 //~ Lino.WindowAction = function(mainItemClass,windowConfig,mainConfig,ppf) {

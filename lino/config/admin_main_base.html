@@ -8,6 +8,7 @@
         {% for mi in settings.SITE.get_quicklinks(ar).items %}
         [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
         {% endfor %}
+        <a href="javascript:Lino.autorefresh();">autorefresh</a>
         </p>
         {%- if site.plugins.get('davlink', None) -%}
         <p align="right"><a href="javascript:Lino.davlink_reset()">reset DavLink</a></p>
