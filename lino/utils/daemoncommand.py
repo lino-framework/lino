@@ -141,12 +141,10 @@ except ImportError:
 
 class DaemonCommand(BaseCommand):
 
-    """
-    If you have an existing Django management command,
-    just rename it's `handle` method to `handle_daemon`
-    and inherit from this instead
-    of
-    :class:`django.core.management.base.BaseCommand`.
+    """If you have an existing Django management command, just rename
+    it's `handle` method to `handle_daemon` and inherit from this
+    instead of :class:`django.core.management.base.BaseCommand`.
+
     """
 
     option_list = BaseCommand.option_list + (
@@ -289,11 +287,12 @@ class DaemonCommand(BaseCommand):
 
             uid = self.get_option_value(options, 'uid')
             if uid is not None:
-                context.uid = uid
+                context.uid = int(uid)
 
             gid = self.get_option_value(options, 'gid')
             if gid is not None:
-                context.gid = uid
+                context.gid = int(gid)
+            print 20140703, gid
 
             context.open()
 

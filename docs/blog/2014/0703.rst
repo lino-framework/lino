@@ -1,0 +1,34 @@
+======================
+Thursday, July 3, 2014
+======================
+
+
+Lino as an SMTP server
+----------------------
+
+Started new module :mod:`lino.modlib.smtpd` which has no models but
+defines a :manage:`recmail` management command and a 
+:attr:`mail_received <lino.modlib.smtpd.signals.mail_received>`
+signal.
+
+Started new project :ref:`noi` which hooks
+to that signal.  As a first step I just want to log every incoming
+mail.
+
+Now I start the server::
+
+    $ go noi
+    $ sudo -i
+    # . /home/luc/pythonenvs/py27/bin/activate
+    # python manage.py recmail
+    
+
+But when I try and send a mail to myself, Thunderbird says:
+
+    An error occurred while sending mail. The mail server responded:
+    Requested action not taken: mailbox unavailable
+
+    invalid DNS A/AAAA resource record. Please check the message recipient
+    luc@127.0.0.1 and try again.
+
+    
