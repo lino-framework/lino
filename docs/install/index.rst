@@ -10,11 +10,11 @@ Installing Lino Noi
   of the *Lino Noi* repository::
 
     cd ~/repositories
-    git clone https://github.com/lsaffre/lino-noi 
+    git clone https://github.com/lsaffre/noi 
     
 - Use pip to install this as editable package::
 
-    pip install -e lino-noi
+    pip install -e noi
 
 - Create a local Lino project as explained in :ref:`lino.tutorial.hello`.
 
