@@ -1,0 +1,6 @@
+global-include *.txt *.py *.js *.css *.html \
+  *.ico  \
+  *.xml \
+  *.odt \
+  *.po *.mo
+prune docs
