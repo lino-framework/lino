@@ -1,0 +1,15 @@
+:state: sleeping
+
+===========================
+#117 : Add Python 3 support
+===========================
+
+We currently don't yet consider this urgent because all platforms
+still have good support for Python 2. 
+
+Some questions to consider before starting.
+
+- Is it worth to use six (i.e. to do the extra work of having a
+  transitional phase?).
+
+- Ticket :doc:`101` is more urgent.

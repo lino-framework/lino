@@ -18,6 +18,9 @@ one of the involved software projects.
 Preliminaries
 -------------
 
+- Lino requires Python 2. It is not yet converted to Python 3.  See
+  :doc:`/tickets/117` if you want to discuss this.
+
 - You will need git_ to get the source files.
 
 - We assume you have pip_ installed.
@@ -118,3 +121,4 @@ Where to go from here
 - Try to install one or several of the out-of-the-box Lino
   applications: :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or
   :ref:`logos`
+
