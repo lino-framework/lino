@@ -2,7 +2,7 @@
 lino-noi README
 ==========================
 
-A Lino application for for simply doing your accounting
+A Lino application for managing local communities
 
 Description
 -----------
