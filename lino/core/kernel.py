@@ -634,24 +634,19 @@ class Kernel(object):
 
         if self.site.use_tinymce:
             if not self.site.tinymce_base_url:
-                self.setup_media_link(urlpatterns,
-                    'tinymce', 'tinymce_root')
+                self.setup_media_link(urlpatterns, 'tinymce', 'tinymce_root')
         if self.site.use_jasmine:
-            self.setup_media_link(urlpatterns,
-                'jasmine', 'jasmine_root')
-        # if self.site.use_eid_jslib:
-        #     self.setup_media_link(urlpatterns,
-        #         'eid-jslib', 'eid_jslib_root')
+            self.setup_media_link(urlpatterns, 'jasmine', 'jasmine_root')
 
         try:
-            self.setup_media_link(urlpatterns,
-                'lino', source=resource_filename(
-                    Requirement.parse("lino"), "lino/media"))
+            src = resource_filename(
+                Requirement.parse("lino"), "lino/media")
         except DistributionNotFound:
             # if it is not installed using pip, link directly to the source
             # tree
-            self.setup_media_link(urlpatterns,
-                'lino', source=join(dirname(lino.__file__), 'media'))
+            src = join(dirname(lino.__file__), 'media')
+
+        self.setup_media_link(urlpatterns, 'lino', source=src)
 
         #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
         if is_devserver():

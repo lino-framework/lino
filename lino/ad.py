@@ -149,9 +149,7 @@ class Plugin(BasePlugin):
             raise Exception(
                 "Directory %s (specified in %s.media_root) does not exist" %
                 (source, self))
-        ui.setup_media_link(
-            urlpatterns,
-            self.media_name, source=source)
+        ui.setup_media_link(urlpatterns, self.media_name, source=source)
 
 
 class Site(Site):

@@ -1,0 +1,46 @@
+================================
+20140708 (Tuesday, 08 July 2014)
+================================
+
+Some more packaging problems. After converting the packaging process
+for :ref:`eidreader` from make to fabric, there are some problems
+because I did not make a dumb 1:1 conversion. For example I had
+removed the `-tsa` option for my self-signed jars. Now I got the
+following message:
+
+    No -tsa or -tsacert is provided and this jar is not
+    timestamped. Without a timestamp, users may not be able to validate
+    this jar after the signer certificate's expiration date (2014-08-25)
+    or after any future revocation date.
+
+The `-tsa` option, as explained in `Signing JAR Files
+<http://docs.oracle.com/javase/tutorial/deployment/jar/signing.html>`_,
+"generates a time stamp for the signature using the Time Stamping
+Authority (TSA) identified by the URL.".
+
+Wikipedia article about `Trusted timestamping
+<https://en.wikipedia.org/wiki/Trusted_timestamping>`_ explains some
+generally interesting things.
+
+If I understand well, anyone can ask Globalsign's TSA to act as TSA,
+even for self-signed jars, simply by adding::
+
+  -tsa http://timestamp.globalsign.com/scripts/timestamp.dll
+
+
+
+But the main problem was that the clients reported ClassNotFound
+errors for `EIDReader$1.class`.
+
+The `EIDReader.java` file produces several `.class` files: the usual
+`EIDReader.class`, three files (`EstEIDUtil.class`,
+`PersonalFile.class` and `BelgianReader.class`) for each additional
+class defined in the source file. And then two additional files
+`EIDReader$1.class` and `EIDReader$2.class`. Where do these come from?
+These are anonymous inner classes (as explained for example `here
+<http://stackoverflow.com/questions/1075207/what-are-the-1-in-class-file>`__).
+
+After all this I still had to learn that the ``$`` sign of the class
+name can cause problem: `Inner classes not being included in jar file
+<http://stackoverflow.com/questions/12023490/inner-classes-not-being-included-in-jar-file>`__.
+
