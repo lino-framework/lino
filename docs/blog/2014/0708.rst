@@ -29,8 +29,11 @@ even for self-signed jars, simply by adding::
 
 
 
-But the main problem was that the clients reported ClassNotFound
-errors for `EIDReader$1.class`.
+The main problem was that the clients reported ClassNotFound errors
+for `EIDReader$1.class`::
+
+    Exception in thread "EIDReader applet" java.lang.RuntimeException: java.lang.NoClassDefFoundError:
+    src/eidreader/EIDReader$1java.lang.NoClassDefFoundError: src/eidreader/EIDReader$1
 
 The `EIDReader.java` file produces several `.class` files: the usual
 `EIDReader.class`, three files (`EstEIDUtil.class`,
@@ -43,4 +46,13 @@ These are anonymous inner classes (as explained for example `here
 After all this I still had to learn that the ``$`` sign of the class
 name can cause problem: `Inner classes not being included in jar file
 <http://stackoverflow.com/questions/12023490/inner-classes-not-being-included-in-jar-file>`__.
+
+
+And here another mysterious message in the IcedTea console::
+
+    Error on Java side: 
+    Codebase matches codebase manifest attribute, and  application is signed. Continuing. See: http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/no_redeploy.html for details.
+
+
+
 
