@@ -149,6 +149,9 @@ lino.modlib.declarations
 lino.modlib.events
 lino.modlib.events.fixtures
 lino.modlib.events.tests
+lino.modlib.smtpd
+lino.modlib.smtpd.management
+lino.modlib.smtpd.management.commands
 lino.modlib.statbel
 lino.modlib.statbel.fixtures
 lino.modlib.sepa
