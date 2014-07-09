@@ -193,7 +193,7 @@ class BaseBeIdReadCardAction(dd.Action):
             fn = os.path.join(
                 config.data_collector_dir,
                 card_number + '.txt')
-            file(fn, "w").write(raw_data)
+            file(fn, "w").write(raw_data.encode("utf-8"))
             logger.info("Wrote eid card data to file %s", fn)
 
         return kw

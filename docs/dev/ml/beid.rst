@@ -3,6 +3,18 @@ BeId - read Belgian eId cards
 
 .. module:: ml.beid
 
+Plugin settings
+---------------
+
+.. attribute:: data_collector_dir
+
+    When this is a non-empty string containing a directory name on the
+    server, then Lino writes the raw data of every eid card into a
+    text file in this directory.
+
+Choicelists
+-----------
+
 .. class:: BeIdCardTypes
 
     List of Belgian Identification Card Types.
@@ -37,7 +49,8 @@ BeId - read Belgian eId cards
       civil servants. This type is also no longer used.
     
 
-
+Model mixins
+------------
 
 
 .. class:: BeIdCardHolder

@@ -45,18 +45,18 @@ After all this I still had to learn that the ``$`` sign of the class
 name can cause problem: `Inner classes not being included in jar file
 <http://stackoverflow.com/questions/12023490/inner-classes-not-being-included-in-jar-file>`__.
 
-Another mysterious message in the IcedTea console is:
+I also observed the following things which seem to not disturb:
+
+- A mysterious message in the IcedTea console is:
 
     Error on Java side: Codebase matches codebase manifest attribute,
     and application is signed. Continuing. See:
     http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/no_redeploy.html
     for details.
 
-More urgent seems yet another problem with my classpath::
+- When card data is being read, the console mentions several
+  `java.lang.ClassNotFoundException`::
 
-    java.lang.NullPointerException 
-    addressData has been parsed
-    java.lang.ClassNotFoundException:
-    be.fedict.eid.applet.service.spi.AddressDTO 
+    be.fedict.eid.applet.service.spi.AddressDTO
     be.fedict.eid.applet.service.spi.IdentityDTO
     org.apache.log4j.Category
