@@ -41,7 +41,7 @@ class PrintTableActionPisa(PrintTableAction):
         extend_context(context)
 
         template = settings.SITE.jinja_env.get_template(self.template_name)
-        html = template.render(**context)
+        html = template.render(**context).encode('utf-8')
 
         with open(output_file + '.html', "w") as file:
             file.write(html)
