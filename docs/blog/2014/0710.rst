@@ -5,3 +5,8 @@ Thursday, July 10, 2014
 Yesterday's UnicodeEncode bug in :mod:`ml.beid` was not yet correctly
 fixed. I am shooting from the hip because my Belgian eID card contains
 only ASCII characters, so I cannot easily test this.
+
+Joe contributed a `bugfix <https://github.com/lsaffre/lino/pull/18>`_ 
+for :mod:`lino.modlib.export_excel`.
+
+Converted also the :ref:`davlink` Makefile to `fabfile.py`. The logic for building java classes and jars is now in :class:`atelier.fablib.JarBuilder`.
