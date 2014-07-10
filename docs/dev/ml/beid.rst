@@ -17,8 +17,12 @@ Choicelists
 
 .. class:: BeIdCardTypes
 
-    List of Belgian Identification Card Types.
-    
+    List of Belgian identity card types:
+
+    .. lino2rst::
+
+       dd.login('robin').show(beid.BeIdCardTypes)
+
     Didn't yet find any official reference document.
     
     The eID applet returns a field `documentType` which contains a

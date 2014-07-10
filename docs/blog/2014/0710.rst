@@ -1,0 +1,7 @@
+=======================
+Thursday, July 10, 2014
+=======================
+
+Yesterday's UnicodeEncode bug in :mod:`ml.beid` was not yet correctly
+fixed. I am shooting from the hip because my Belgian eID card contains
+only ASCII characters, so I cannot easily test this.

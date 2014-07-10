@@ -115,7 +115,7 @@ class BaseBeIdReadCardAction(dd.Action):
         countries = dd.resolve_app('countries', strict=True)
 
         kw = dict()
-        raw_data = data['card_data']
+        raw_data = data['card_data'].decode('utf-8')
         if not '\n' in raw_data:
             # a one-line string means that some error occured (e.g. no
             # card in reader). of course we want to show this to the
@@ -193,7 +193,7 @@ class BaseBeIdReadCardAction(dd.Action):
             fn = os.path.join(
                 config.data_collector_dir,
                 card_number + '.txt')
-            file(fn, "w").write(raw_data.encode("utf-8"))
+            file(fn, "w").write(raw_data)
             logger.info("Wrote eid card data to file %s", fn)
 
         return kw
