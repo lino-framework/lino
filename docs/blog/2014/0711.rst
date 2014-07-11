@@ -1,0 +1,8 @@
+=====================
+Friday, July 11, 2014
+=====================
+
+And still the unicode error in :mod:`ml.beid` (see :blogref:`20140710`
+and :blogref:`20140709`) was not fixed. Next attempt.
+
+

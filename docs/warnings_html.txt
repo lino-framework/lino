@@ -1,3 +1,0 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.beid.rst:15: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14

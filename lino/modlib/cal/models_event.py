@@ -563,16 +563,9 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     @dd.displayfield(_("When"))
     def linked_date(self, ar):
-        pv = dict(start_date=self.start_date)
-        if False:
-            # TODO: what to do with events that span multiple days?
-            pv.update(end_date=self.end_date or self.start_date)
-        else:
-            pv.update(end_date=self.start_date)
-        target = ar.spawn('cal.EventsByDay', param_values=pv)
-        # txt = self.start_date.strftime(settings.SITE.date_format_strftime)
+        # EventsByDay = settings.SITE.modules.cal.EventsByDay
         txt = when_text(self.start_date, self.start_time)
-        return ar.href_to_request(target, txt)
+        return EventsByDay.as_link(ar, self.start_date, txt)
 
     @dd.virtualfield(dd.DisplayField(_("Reminder")))
     def reminder(self, request):
@@ -786,6 +779,23 @@ class EventsByType(Events):
 class EventsByDay(Events):
     column_names = 'room summary workflow_buttons *'
     auto_fit_column_widths = True
+
+    @classmethod
+    def get_title_base(self, ar):
+        return when_text(ar.param_values.start_date)
+
+    @classmethod
+    def as_link(cls, ar, today, txt=None):
+        if today is None:
+            today = settings.SITE.today()
+        if txt is None:
+            txt = when_text(today)
+        pv = dict(start_date=today)
+        # TODO: what to do with events that span multiple days?
+        pv.update(end_date=today)
+        target = ar.spawn(cls, param_values=pv)
+        return ar.href_to_request(target, txt)
+
 
 #~ class EventsByType(Events):
     #~ master_key = 'type'
