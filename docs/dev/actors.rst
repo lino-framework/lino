@@ -364,6 +364,18 @@ The ``AbstractTable`` class
 
     Base class for :class:`Table` and :class:`VirtualTable`.
 
+  .. attribute:: variable_row_height
+
+    Set this to `True` if you want each row to get the height that it
+    needs.
+
+
+  .. attribute:: cell_edit
+
+    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
+    When True, the users cannot select multiple rows.
+    When False, the users cannot select and edit individual cells.
+
   .. attribute:: column_names
 
     A string that describes the list of columns of this table.

@@ -614,8 +614,8 @@ class EventDetail(dd.FormLayout):
     main = """
     event_type summary user assigned_to
     start end #all_day #duration state
-    room priority access_class transparent #rset 
-    owner created:20 modified:20  
+    room priority access_class transparent #rset
+    owner created:20 modified:20
     description
     GuestsByEvent outbox.MailsByController
     """
@@ -627,6 +627,7 @@ class EventInsert(EventDetail):
     start end 
     room priority access_class transparent 
     """
+
 
 class EventEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
@@ -665,6 +666,7 @@ class Events(dd.Table):
         project=dd.ForeignKey(settings.SITE.project_model,
                               blank=True, null=True),
         event_type=dd.ForeignKey('cal.EventType', blank=True, null=True),
+        room=dd.ForeignKey('cal.Room', blank=True, null=True),
         assigned_to=dd.ForeignKey(settings.SITE.user_model,
                                   verbose_name=_("Assigned to"),
                                   blank=True, null=True,
@@ -678,17 +680,9 @@ class Events(dd.Table):
     )
 
     params_layout = """
-    start_date end_date observed_event state 
-    user assigned_to project event_type show_appointments
+    start_date end_date observed_event state
+    user assigned_to project event_type room show_appointments
     """
-    #~ params_layout = dd.Panel("""
-    #~ start_date end_date other
-    #~ """,other="""
-    #~ user
-    #~ assigned_to
-    #~ state
-    #~ """)
-
     # ~ next = NextDateAction() # doesn't yet work. 20121203
 
     fixed_states = set(EventStates.filter(fixed=True))
@@ -699,69 +693,69 @@ class Events(dd.Table):
     def get_request_queryset(self, ar):
         #~ logger.info("20121010 Clients.get_request_queryset %s",ar.param_values)
         qs = super(Events, self).get_request_queryset(ar)
+        pv = ar.param_values
 
-        if ar.param_values.user:
-            #~ if ar.param_values.assigned_to:
-                #~ qs = qs.filter(Q(assigned_to=ar.param_values.assigned_to)|Q(user=ar.param_values.user))
-            #~ else:
-            qs = qs.filter(user=ar.param_values.user)
-        if ar.param_values.assigned_to:
-            qs = qs.filter(assigned_to=ar.param_values.assigned_to)
+        if pv.user:
+            qs = qs.filter(user=pv.user)
+        if pv.assigned_to:
+            qs = qs.filter(assigned_to=pv.assigned_to)
 
-        if settings.SITE.project_model is not None and ar.param_values.project:
-            qs = qs.filter(project=ar.param_values.project)
+        if settings.SITE.project_model is not None and pv.project:
+            qs = qs.filter(project=pv.project)
 
-        if ar.param_values.event_type:
-            qs = qs.filter(event_type=ar.param_values.event_type)
+        if pv.event_type:
+            qs = qs.filter(event_type=pv.event_type)
         else:
-            if ar.param_values.show_appointments == dd.YesNo.yes:
+            if pv.show_appointments == dd.YesNo.yes:
                 qs = qs.filter(event_type__is_appointment=True)
-            elif ar.param_values.show_appointments == dd.YesNo.no:
+            elif pv.show_appointments == dd.YesNo.no:
                 qs = qs.filter(event_type__is_appointment=False)
 
-        if ar.param_values.state:
-            qs = qs.filter(state=ar.param_values.state)
+        if pv.state:
+            qs = qs.filter(state=pv.state)
 
-        #~ if ar.param_values.observed_event:
-        if ar.param_values.observed_event == EventEvents.okay:
+        if pv.room:
+            qs = qs.filter(room=pv.room)
+
+        if pv.observed_event == EventEvents.okay:
             qs = qs.filter(state__in=self.fixed_states)
-        elif ar.param_values.observed_event == EventEvents.pending:
+        elif pv.observed_event == EventEvents.pending:
             qs = qs.filter(state__in=self.pending_states)
 
-        if ar.param_values.start_date:
-            qs = qs.filter(start_date__gte=ar.param_values.start_date)
-            #~ if ar.param_values.end_date:
-                #~ qs = qs.filter(start_date__gte=ar.param_values.start_date)
-            #~ else:
-                #~ qs = qs.filter(start_date=ar.param_values.start_date)
-        if ar.param_values.end_date:
-            qs = qs.filter(start_date__lte=ar.param_values.end_date)
+        if pv.start_date:
+            qs = qs.filter(start_date__gte=pv.start_date)
+        if pv.end_date:
+            qs = qs.filter(start_date__lte=pv.end_date)
         return qs
 
     @classmethod
     def get_title_tags(self, ar):
         for t in super(Events, self).get_title_tags(ar):
             yield t
-        if ar.param_values.start_date or ar.param_values.end_date:
+        pv = ar.param_values
+        if pv.start_date or pv.end_date:
             yield daterange_text(
-                ar.param_values.start_date,
-                ar.param_values.end_date)
+                pv.start_date,
+                pv.end_date)
 
-        if ar.param_values.state:
-            yield unicode(ar.param_values.state)
+        if pv.state:
+            yield unicode(pv.state)
 
-        if ar.param_values.event_type:
-            yield unicode(ar.param_values.event_type)
+        if pv.event_type:
+            yield unicode(pv.event_type)
 
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        if pv.user:
+            yield unicode(pv.user)
 
-        if settings.SITE.project_model is not None and ar.param_values.project:
-            yield unicode(ar.param_values.project)
+        if pv.room:
+            yield unicode(pv.room)
 
-        if ar.param_values.assigned_to:
+        if settings.SITE.project_model is not None and pv.project:
+            yield unicode(pv.project)
+
+        if pv.assigned_to:
             yield unicode(self.parameters['assigned_to'].verbose_name) \
-                + ' ' + unicode(ar.param_values.assigned_to)
+                + ' ' + unicode(pv.assigned_to)
 
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):

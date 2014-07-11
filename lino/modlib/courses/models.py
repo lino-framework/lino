@@ -642,16 +642,19 @@ class Enrolments(dd.Table):
     #~ debug_permissions=20130531
     required = dd.required(user_level='manager')
     model = 'courses.Enrolment'
+    stay_in_grid = True
     parameters = dd.ObservedPeriod(
         author=dd.ForeignKey(
             settings.SITE.user_model, blank=True, null=True),
         state=EnrolmentStates.field(blank=True, null=True),
         course_state=CourseStates.field(
             _("Course state"), blank=True, null=True),
-        participants_only=models.BooleanField(_("Participants only"),
-                                              help_text=_(
-                                                  "Hide cancelled enrolments. Ignored if you specify an explicit enrolment state."),
-                                              default=True),
+        participants_only=models.BooleanField(
+            _("Participants only"),
+            help_text=_(
+                "Hide cancelled enrolments. "
+                "Ignored if you specify an explicit enrolment state."),
+            default=True),
     )
     params_layout = """start_date end_date author state course_state participants_only"""
     order_by = ['request_date']
@@ -779,9 +782,9 @@ class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "course"
-    column_names = 'request_date pupil workflow_buttons user *'
+    column_names = 'request_date pupil user amount workflow_buttons *'
     auto_fit_column_widths = True
-    #~ cell_edit = False
+    # cell_edit = False
 
 
 # class EventsByCourse(cal.Events):

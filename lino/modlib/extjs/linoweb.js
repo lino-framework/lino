@@ -3406,10 +3406,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     Workaround is to generate a line "params.containing_window = true;" 
     in the handler function.
     */ 
-    //~ if (this.containing_window) {
     if (this.is_main_window) {
         //~ console.log(20111206, 'delete title',this.title,'from',this);
-        //~ delete this.title;
         this.tools = undefined;  
         this.title = undefined;  /* simply deleting it 
           isn't enough because that would only 
@@ -3419,16 +3417,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     
     /* e.g. when slave gridwindow called from a permalink */
     //~ if (this.base_params) Ext.apply(bp,this.base_params);  
-    //~ bp['fmt'] = 'json';
     
-    //~ function on_proxy_write( proxy, action,data, response,rs,options) {
-      //~ console.log('20120814 on_proxy_write',action,data,response)
-      //~ this.getStore().doUpdate();
-      //~ this.getStore().loadData(data);
-    //~ }
-    //~ function on_proxy_load( proxy, transactionObject, callbackOptions ) {
-      //~ console.log('on_proxy_load',transactionObject)
-    //~ }
     var proxy = new Ext.data.HttpProxy({ 
       // 20120814 
       url: '{{settings.SITE.build_admin_url("api")}}' + this.ls_url
@@ -3468,13 +3457,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     //~ var grid = this;
     this.store.on('load', function() {
         //~ console.log('20120814 GridStore.on(load)',this_.store);
-        //~ var da = this_.store.reader.arrayData.disabled_actions;
-        //~ if (da) {
-            //~ this.cmenu.cascade(function(item){ 
-              //~ console.log(20120531, item.itemId, da[item.itemId]);
-              //~ if (da[item.itemId]) item.disable(); else item.enable();
-            //~ });
-        //~ };
         this_.set_param_values(this_.store.reader.arrayData.param_values);
         //~ this_.set_status(this_.store.reader.arrayData.status);
         //~ 20120918
@@ -3591,24 +3573,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         nextText: "{{_('Next page')}}",
         items: tbar
       });
-      //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
-          //~ var ps = this.calculatePageSize();
-          //~ if (ps && ps != this.getTopToolbar().pageSize) {
-              //~ // console.log('20120203 resize : pageSize',this.getTopToolbar().pageSize,'->',ps);
-              //~ // this.getTopToolbar().pageSize =  ps;
-              //~ cmp.refresh();
-              //~ // this.getTopToolbar().doRefresh();
-          //~ }
-        //~ }, this);
-      //~ this.on('resize', function(cmp,aw,ah,rw,rh) {
-          //~ cmp.getTopToolbar().pageSize = this.calculatePageSize(aw,ah,rw,rh) || 10;
-          //~ cmp.refresh();
-        //~ }, this, {delay:500});
     }
-    
-    //~ delete this.page_length
-    
-    
       
     if (this.cell_edit) {
       this.selModel = new Ext.grid.CellSelectionModel()
@@ -3629,8 +3594,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         var sels = this.selModel.getSelections();
         if (sels.length == 0) sels = [this.store.getAt(0)];
         return sels
-        //~ var sels = this.getSelectionModel().getSelections();
-        //~ return Ext.pluck(sels,'id');
       };
       this.get_current_record = function() { 
         var rec = this.selModel.getSelected();
@@ -3640,37 +3603,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
     };
     this.columns  = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);
     
-    //~ var grid = this;
-    //~ this.colModel = new Ext.grid.ColumnModel({
-      //~ columns: this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns),
-      //~ isCellEditable: function(col, row) {
-        //~ var record = grid.store.getAt(row);
-        //~ console.log('20120514',col,record); // dataIndex
-        //~ var dataIndex = grid.colModel.getDataIndex(col);
-        //~ if (dataIndex in record.data['disabled_fields']) {
-            //~ Lino.notify("$_("This field is disabled")");
-            //~ return false;
-        //~ }
-        //~ return Ext.grid.ColumnModel.prototype.isCellEditable.call(this, col, row);
-      //~ }
-    //~ });    
-    
-    
     Lino.GridPanel.superclass.initComponent.call(this);
     
-    //~ if (this.containing_window) 
-        //~ this.on('afterlayout', this.refresh, this);
-        //~ this.on('afterrender', this.refresh,this);
-    //~ else
-        //~ this.on('show', this.refresh,this);
-    //~ this.on('afterlayout', function() {
-      //~ if (this.id == "ext-comp-1157") 
-        //~ console.log("20120213 afterlayout",this); 
-      //~ // this.refresh();
-      //~ },this);
-    //~ this.on('afterrender', this.refresh);
-    //~ this.on('resize', this.refresh,this,{delay:500});
-    //~ this.on('resize', function(){console.log("20120213 resize",arguments)},this);
     this.on('resize', function(){
       //~ console.log("20120213 resize",arguments)
       this.refresh();
@@ -3689,9 +3623,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         this.on('rowcontextmenu', Lino.row_context_menu, this);
     }
     //~ this.on('contextmenu', Lino.grid_context_menu, this);
-    
-    
-    //~ if (this.id == "ext-comp-1157") captureEvents(this);    
     
     delete this.cell_edit;
     

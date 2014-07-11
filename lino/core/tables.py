@@ -715,10 +715,6 @@ class AbstractTable(actors.Actor):
     get_data_rows = None
 
     variable_row_height = False
-    """Set this to True if you want each row to get the height that it
-    needs.
-
-    """
 
     auto_fit_column_widths = False
     active_fields = frozenset()
@@ -726,7 +722,6 @@ class AbstractTable(actors.Actor):
 
     form_class = None
     help_url = None
-    #master_instance = None
 
     page_length = 20
     """Number of rows to display per page.  Used to control the height of
@@ -735,11 +730,6 @@ class AbstractTable(actors.Actor):
     """
 
     cell_edit = True
-    """
-    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
-    When True, the users cannot select multiple rows.
-    When False, the users cannot select and edit individual cells.
-    """
 
     show_detail_navigator = False
     """
@@ -753,7 +743,7 @@ class AbstractTable(actors.Actor):
 
     typo_check = True
     """
-    True means that Lino shoud issue a warning if a subclass 
+    True means that Lino shoud issue a warning if a subclass
     defines any attribute that did not exist in the base class.
     Usually such a warning means that there is something wrong.
     """
@@ -762,7 +752,7 @@ class AbstractTable(actors.Actor):
 
     grid_configs = []
     """
-    Will be filled during :meth:`lino.core.table.Table.do_setup`. 
+    Will be filled during :meth:`lino.core.table.Table.do_setup`.
     """
 
     order_by = None
