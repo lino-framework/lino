@@ -1,0 +1,6 @@
+=======================
+Saturday, July 12, 2014
+=======================
+
+I upgraded :ref:`eiche`, the last production site which was still
+running with a version from before April 2014.

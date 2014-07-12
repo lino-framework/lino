@@ -5,7 +5,7 @@ Community
 Lino is a young framework with a small but growing community.
 
 Get involved
-------------
+============
 
 There's much to do! 
 This is the time for pioneers to join us!
@@ -41,12 +41,47 @@ Below are some profiles of people we would happily welcome.
 
  
 Partners
---------
+========
 
-The following organizations are promoters of the Lino project:
+The following organizations are promoters of the Lino project and
+offer professional consultance for Lino applications:
 
 - `Rumma & Ko OÜ <http://saffre-rumma.net>`_
 - `Code Gears <http://www.code-gears.com>`_
 - `Active Systems OÜ <http://active.ee>`_
 - `wpj s.r.o <http://www.wpj.cz/>`_
 
+
+Lino users
+==========
+
+The following organizations are using a Lino application.
+
+.. _dsbe:
+
+ÖSHZ Eupen
+----------
+
+Using :ref:`welfare` since January 2011.
+
+- Contact: Gerd Xhonneux
+
+.. _chat:
+
+CPAS de Châtelet
+----------------
+
+Using :ref:`welfare` since March 2014.
+
+- Contact: Mathieu Jacqmin
+
+
+.. _eiche:
+
+Die Eiche VoG
+-------------
+
+Using :ref:`faggio` in Eupen since October 2013.
+
+- Contact: Roger Rauw
+- Website: http://die-eiche.be/

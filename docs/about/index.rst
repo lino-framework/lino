@@ -148,11 +148,7 @@ The second real-world Lino application started
 :doc:`in Czechia <joe>` 
 in **July 2013**.
 
-Other registered Lino users are:
-
-- A :ref:`faggio` in Eupen since October 2013
-- A :ref:`welfare` in Châtelet since March 2014
-
+Other registered Lino users: see :doc:`/community/index`.
 
 
 More

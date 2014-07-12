@@ -14,5 +14,5 @@ ENTER while still in the combobox will submit the form with an empty
 fooHidden field, so Lino will not see your value. Visible for example
 in :ref:`faggio` creating an enrolment to a course.
 
-Had a testing session on :ref:`faggio`.
+Had a final spurt session on :ref:`faggio`.
 Added a filter parameter "room" to :class:`ml.cal.Events`.
