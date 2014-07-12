@@ -742,6 +742,7 @@ class Printable(object):
             babelitem=settings.SITE.babelitem,
             tr=settings.SITE.babelitem,
             iif=iif,
+            dd=dd,
             settings=settings,
             lino=settings.SITE.modules,  # experimental
             ar=ar,
