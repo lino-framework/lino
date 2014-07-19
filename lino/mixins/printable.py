@@ -477,7 +477,7 @@ class CachedPrintAction(BasePrintAction):
         pdfs = []
         for obj in qs:
             #~ assert isinstance(obj,CachedPrintable)
-            if obj.build_time is None:
+            if obj.printed_by_id is None:
                 obj.build_target(ar)
             pdf = obj.get_target_name()
             assert pdf is not None

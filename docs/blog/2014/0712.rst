@@ -9,8 +9,14 @@ running with a version from before April 2014.
 :class:`welfare.aids.Aid` is no longer called "Aid" but "Aid
 confirmation".  It no longer inherits from
 :class:`ml.boards.BoardDecision` (which removes the fields `board` and
-`decided_date`).  Added :class:new field `remark`. Adapted the default
-body template used to print an excerpt for an aid confirmation.
-Increased application version from 1.1.13 to 1.1.14 since we need a
-database migration. Wrote
+`decided_date`).  Added new field `remark`. Adapted the default body
+template used to print an excerpt for an aid confirmation.  Increased
+application version from 1.1.13 to 1.1.14 since we need a database
+migration. Wrote
 :meth:`lino_welfare.migrate.Migrator.migrate_from_1_1_14`.
+
+I saw only now that test :ref:`welfare` test suite is broken due to a
+"UnicodeEncodeError: 'ascii' codec can't encode character u'\xe9' in
+position 70: ordinal not in range(128)" due to the recent changes in
+:mod:`ml.beid`. Before fixing this I wait for more test results from
+:ref:`chat`.

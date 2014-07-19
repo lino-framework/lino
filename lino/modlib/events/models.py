@@ -19,6 +19,7 @@ The :xfile:`models.py` module of :mod:`lino.modlib.events`.
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
