@@ -187,3 +187,6 @@ The ``ActionRequest`` class
     ``kw`` may contain additional html attributes like `style`.
 
 
+  .. method:: parse_req(self, request, rqdata, **kw):
+
+    Parse the given Django request and setup from it.

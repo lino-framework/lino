@@ -486,9 +486,6 @@ class VirtualField(FakeField):  # (Field):
 
 
 def virtualfield(return_type):
-    """
-    Decorator to turn a method into a VirtualField.
-    """
     def decorator(fn):
         return VirtualField(return_type, fn)
     return decorator
@@ -515,9 +512,7 @@ def constant():
 
 
 class RequestField(VirtualField):
-    """A virtual field whose values are requests.
-
-    """
+    "See :class:`dd.RequestField`."
     def __init__(self, get, *args, **kw):
         kw.setdefault('max_length', 8)
         VirtualField.__init__(self, DisplayField(*args, **kw), get)

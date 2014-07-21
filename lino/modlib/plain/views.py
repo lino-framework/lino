@@ -129,7 +129,7 @@ class PlainIndex(View):
         else:
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied(
-                    "Action not allowed for %s" % user)
+                    "Action not allowed for %s" % user.profile)
             # kw.update(renderer=ui.plain_renderer)
             kw.update(renderer=ui.renderer)
             ar = a.request(request=request, **kw)

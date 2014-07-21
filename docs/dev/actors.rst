@@ -144,6 +144,19 @@ The ``Actor`` class
     `obj` is an instance of this table's row class,
     `ar` is the :class:`rt.ActionRequest`.
 
+  .. method:: parse_req(cls, ar, rqdata, **kw)
+
+    This is called when an incoming web request on this actor is being
+    parsed.
+
+    If you override `parse_req`, then keep in mind that it will be
+    called *before* Lino checks the requirements.  For example the
+    user may be AnonymousUser even if the requirements won't let it be
+    executed.  `ar.subst_user.profile` may be None, e.g. when called
+    from `find_appointment` in :ref:`welfare.pcsw.Clients`.
+
+
+
   .. method:: show(self, master_instance=None, column_names=None,
                    **known_values):
 

@@ -193,16 +193,7 @@ class PanelEvents(Events):
 
         flt = models.Q(**fkw)
 
-        """If you override `parse_req`, then keep in mind that it will be
-        called *before* Lino checks the requirements.  For example the
-        user may be AnonymousUser even if the requirements won't let
-        it be executed.
-
-        `request.subst_user.profile` may be None e.g. when called 
-        from `find_appointment` in :ref:`welfare.pcsw.Clients`.
-
-        """
-        if not request.user.profile.authenticated:
+        if False:  # not request.user.profile.authenticated:
             raise exceptions.PermissionDenied(
                 _("As %s you have no permission to run this action.")
                 % request.user.profile)
@@ -217,25 +208,8 @@ class PanelEvents(Events):
 
         # also show events to which i am invited
         if me.partner:
-            #~ me_as_guest = Guest.objects.filter(partner=request.user.partner)
-            #~ for_me = for_me | models.Q(guest_set__count__gt=0)
-            #~ for_me = for_me | models.Q(guest_count__gt=0)
             for_me = for_me | models.Q(guest__partner=me.partner)
 
-        if False:
-            # in team view, show also events of all my team members
-            tv = rqdata.get(constants.URL_PARAM_TEAM_VIEW, False)
-            if tv and constants.parse_boolean(tv):
-                # positive list of ACLs for events of team members
-                team_classes = (None, AccessClasses.public,
-                                AccessClasses.show_busy)
-                my_teams = Membership.objects.filter(user=me)
-                we = settings.SITE.user_model.objects.filter(
-                    users_membership_set_by_user__team__in=my_teams)
-                #~ team_ids = Membership.objects.filter(user=me).values_list('watched_user__id',flat=True)
-                #~ for_me = for_me | models.Q(user__id__in=team_ids,access_class__in=team_classes)
-                for_me = for_me | models.Q(
-                    user__in=we, access_class__in=team_classes)
         if False:
             # currently disabled. this is needed ony when you want to
             # support private events, i.e. events which are never
@@ -246,11 +220,6 @@ class PanelEvents(Events):
         kw.update(filter=flt)
         #~ logger.info('20130808 %s %s', tv,me)
         return kw
-
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ qs = super(PanelEvents,self).get_request_queryset(ar)
-        #~ return qs
 
     @classmethod
     def create_instance(self, ar, **kw):
