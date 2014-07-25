@@ -1,0 +1,18 @@
+=====================
+Friday, July 25, 2014
+=====================
+
+So. Ich habe die Einkommensbescheinigungen jetzt bereit für eine
+nächste Besichtigung.  Momentan haben wir (schon seit Längerem) die
+Anwesenheitsbescheinigungen und (jetzt neu) alle Arten von
+Einkommensbescheinigungen.  AMKs muss ich noch machen. Aber vorher
+jetzt ein Commit. Und dann Übersetzungen in einem weiteren Commit.
+
+Dies ist mein Vorschlag, um an die Sache ran zu gehen.  Die Benutzer
+fragten zwar "Wieso wollt ihr das alles so kompliziert machen?", aber
+unsere Antwort darauf lautet (momentan noch): "Es wird komplexer als
+in TIM, weil wir dem Umstieg nutzen, um mehr als bisher in der
+Datenbank festzuhalten.  Wir glauben, dass es nach der
+Umgewöhnungszeit die Qualität verbessert und die Arbeit insgesamt
+erleichtert."
+

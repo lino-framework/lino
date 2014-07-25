@@ -1068,8 +1068,10 @@ class Actor(actions.Parametrizable):
             #~ l.append(u" » ")
             #~ l.append(u" \u25b8 ")
             #~ l.append(u" \u2192 ")
-        #~ sep = u" \u25b8 "
-        sep = u" \u2192 "
+            #~ sep = u" \u25b8 "
+            sep = u" \u2192 "
+        else:
+            sep = ''
         for ba in ar.actor.get_workflow_actions(ar, obj):
             l.append(sep)
             l.append(ar.action_button(ba, obj))

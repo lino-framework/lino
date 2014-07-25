@@ -863,6 +863,7 @@ if settings.SITE.user_model:
             #~ kw.update(start_date=settings.SITE.today())
             #~ kw.update(end_date=settings.SITE.today()+ONE_DAY)
             #~ return kw
+
     class MyAssignedEvents(MyEvents):
         label = _("Events assigned to me")
         help_text = _("Table of events assigned to me.")

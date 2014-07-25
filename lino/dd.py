@@ -47,7 +47,7 @@ Multilingual database content:
 - :class:`BabelTextField <fields.BabelTextField>`
 - :class:`LanguageField <north.dbutils.LanguageField>`
 - :class:`babelkw <north.dbutils.babelkw>`
-- :class:`babelattr <north.dbutils.babelattr>`
+- :func:`babelattr <north.dbutils.babelattr>`
 - :setting:`babelitem`
 - :setting:`field2kw`
 

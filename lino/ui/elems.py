@@ -11,6 +11,16 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
+"""Defines "layout elements" (widgets).
+
+:class:`GridColumn`
+:class:`Toolbar`
+:class:`LayoutElement`
+:class:`FieldElement`
+:class:`TextFieldElement`
+
+
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,10 +51,6 @@ from lino.utils import join_elems
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
-from lino.utils.xmlgen import RAW as RAWXML
-
-#~ from lino.core import constants as ext_requests
-
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -65,7 +71,7 @@ DEFAULT_PADDING = 2
 
 def form_field_name(f):
     if isinstance(f, models.ForeignKey) \
-            or (isinstance(f, models.Field) and f.choices):  # ~ or isinstance(f,dd.LinkedForeignKey):
+            or (isinstance(f, models.Field) and f.choices):
         return f.name + constants.CHOICES_HIDDEN_SUFFIX
     else:
         return f.name
@@ -470,7 +476,6 @@ class ConstantElement(LayoutElement):
         #~ return kw
 
     def as_plain_html(self, ar, obj):
-        #~ return RAWXML(self.value.get('html'))
         return self.value.get('html')
 
 
@@ -536,7 +541,7 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable  # and not field.primary_key
 
-        if not kw.has_key('listeners'):
+        if not 'listeners' in kw:
             if not isinstance(layout_handle.layout, layouts.ListLayout):
                 add_help_text(
                     kw, self.field.help_text, self.field.verbose_name,
@@ -607,11 +612,12 @@ class FieldElement(LayoutElement):
         #~ kw.update(xtype='gridcolumn')
         #~ kw.update(dataIndex=self.field.name)
         kw.update(dataIndex=self.name)
-        #~ if self.label is None:
-            #~ kw.update(header=self.field.name)
-        #~ else:
-        #~ kw.update(header=unicode(self.label or self.name))
-        kw.update(header=self.label or self.name)
+        if self.label is None:
+            kw.update(header=self.name)
+        elif self.label:
+            kw.update(header=self.label)
+        else:
+            kw.update(header=self.label)
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:

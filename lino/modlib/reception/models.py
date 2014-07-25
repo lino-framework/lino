@@ -491,30 +491,14 @@ dd.add_user_group('reception', Plugin.verbose_name)
 
 
 def setup_main_menu(site, ui, profile, m):
-    #~ m  = m.add_menu("office",lino.OFFICE_MODULE_LABEL)
-    m = m.add_menu("reception", Plugin.verbose_name)
-    #~ m  = m.add_menu("cal",cal.MODULE_LABEL)
-    #~ m.add_separator("-")
-    #~ m.add_action(Clients,'find_by_beid')
-    #~ m.add_action(Clients)
-    #~ m.add_action(ExpectedGuests)
-    #~ m.add_action(MyWaitingVisitors)
-    #~ m.add_action(MyBusyVisitors)
+    app = dd.apps.reception
+    m = m.add_menu(app.app_name, app.verbose_name)
 
     m.add_action(WaitingVisitors)
     m.add_action(BusyVisitors)
     m.add_action(GoneVisitors)
 
-    """
-    MyWaitingVisitors is maybe not needed as a menu entry since it is also a get_admin_main_items
-    if i remove it then i must edit pcsw_tests.py
-    Waiting for user feedback before doing this.
-    """
+    # MyWaitingVisitors is maybe not needed as a menu entry since it
+    # is also a get_admin_main_items. if i remove it then i must edit
+    # pcsw_tests.py Waiting for user feedback before doing this.
     m.add_action(MyWaitingVisitors)
-    #~ m.add_action(ReceivedVisitors)
-    #~ m.add_action(ExpectedGuests,params=dict(param_values=dict(only_expected=True)))
-    #~ m.add_action(WaitingVisitors,params=dict(param_values=dict(only_waiting=True)))
-
-#~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("reception",Plugin.verbose_name)
-    #~ m.add_action(WaitingVisitors)

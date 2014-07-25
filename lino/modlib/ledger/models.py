@@ -1242,6 +1242,7 @@ class DebtorsCreditors(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(self, ar):
+        rows = []
         mi = ar.master_instance
         if mi is None:  # called directly from main menu
             end_date = ar.param_values.today
@@ -1249,7 +1250,6 @@ class DebtorsCreditors(dd.VirtualTable):
             end_date = mi.today
         
         qs = contacts.Partner.objects.order_by('name')
-        rows = []
         for row in qs:
             row._balance = ZERO
             row._due_date = None
