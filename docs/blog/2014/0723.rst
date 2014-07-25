@@ -33,12 +33,12 @@ My minor change is to add a call to ``encode('utf-8')``::
     with open(feed_path, 'w') as out:
         out.write(feed.to_string().encode('utf-8'))
 
-Here is the news feed of my private blog, which failed with the origin
-version but now gets generated correctly (as it seems):
+This change fixes a bug which happened when ablog tried to generate
+the `atom.xml` file for my private blog. Now it gets generated (more
+or less) correctly: http://luc.saffre-rumma.net/blog/atom.xml
 
-  http://luc.saffre-rumma.net/blog/atom.xml
-
-And now I want to share this bug fix.
+And now I want to share this bug fix by sending a pull request to the
+project author.
 
 So I tell Git to start a new branch, using ``git checkout -b
 <new_branch>``::
@@ -58,7 +58,7 @@ I commit it as due::
     
   $ git commit -m "Added encoding utf-8 to file atom.xml"
 
-And finally I'd like to send my branch to the repository::
+And finally I'd like to push my branch to the repository::
 
     $ git push origin lsaffre-feed_encoding 
     ERROR: Permission to abakan/ablog.git denied to lsaffre.
@@ -67,11 +67,11 @@ And finally I'd like to send my branch to the repository::
     Please make sure you have the correct access rights
     and the repository exists.
 
-Maybe the project owner must give me some permission?  Note that I
-don't to get write access to the whole project, I just want to share
-my pull request.
+Maybe the project owner must give me some permission?  But I don't to
+get write access to the whole project, I just want to share my pull
+request.
 
-Thanks for any hint.
+What am I missing? Thanks for any hint.
 
 Using dirhtml builder
 ---------------------

@@ -2,6 +2,10 @@
 Friday, July 25, 2014
 =====================
 
+Einkommensbescheinigungen
+-------------------------
+
+
 So. Ich habe die Einkommensbescheinigungen jetzt bereit für eine
 nächste Besichtigung.  Momentan haben wir (schon seit Längerem) die
 Anwesenheitsbescheinigungen und (jetzt neu) alle Arten von
@@ -16,3 +20,69 @@ Datenbank festzuhalten.  Wir glauben, dass es nach der
 Umgewöhnungszeit die Qualität verbessert und die Arbeit insgesamt
 erleichtert."
 
+
+Cannot share a pull request to ablog
+------------------------------------
+
+Continued from :blogref:`20140723`.
+
+The explanation was that I need to fork the project on GitHub::
+
+    $ git clone git@github.com:lsaffre/ablog.git
+    $ e ablog/__init__.py  # Make my modifs
+    $ git checkout -b feed_encoding
+    $ git commit -m "Added encoding utf-8 to file atom.xml"
+    $ git push origin feed_encoding 
+    Total 0 (delta 0), reused 0 (delta 0)
+    To git@github.com:lsaffre/ablog.git
+     * [new branch]      feed_encoding -> feed_encoding
+    
+Later I made also this::
+    
+    $ git remote add upstream git@github.com:abakan/ablog.git
+    $ git pull upstream master
+
+(Thanks to `Git branches tutorial
+<https://www.atlassian.com/git/tutorial/git-branches>`_,
+`stackoverflow
+<http://stackoverflow.com/questions/6286571/git-fork-is-git-clone>`_
+and `Collaboration on Github
+<http://www.eqqon.com/index.php/Collaborative_Github_Workflow>`_)
+    
+
+
+Add i18n to ablog
+-----------------
+    
+ABlog automatically generates certain strings like "Recent posts",
+"Categories".  If these strings appear in English on your blog although you specified another language, then this page is for you.
+    
+These strings need to be translated. Ablog needs your help.
+   
+    
+.. _extract_messages: http://babel.edgewall.org/wiki/Documentation/setup.html#extract-messages
+
+.. _init_catalog: http://babel.edgewall.org/wiki/Documentation/setup.html#init-catalog
+
+.. _update_catalog: http://babel.edgewall.org/wiki/Documentation/setup.html#update-catalog
+    
+- extract_messages_ must run each time you changed some translatable
+  message texts::
+    
+    $ python setup.py extract_messages -o ablog/locale/sphinx.pot
+    ...
+
+  This will create a file :xfile:`ablog/locale/sphinx.pot`, the
+  central messages catalog used by the different translations.
+
+- init_catalog_ must run after extract_messages_ once for each *new* language::
+
+    $ python setup.py init_catalog -l de -i ablog/locale/sphinx.pot -o ablog/locale/de/LC_MESSAGES/sphinx.po
+
+  This will create a file :xfile:`ablog/locale/de/LC_MESSAGES/sphinx.po`.
+
+- update_catalog_ must run after extract_messages_ for each existing
+  language::
+
+    $ python setup.py update_catalog -l de -i ablog/locale/sphinx.pot -o ablog/locale/de/LC_MESSAGES/sphinx.po
+    
