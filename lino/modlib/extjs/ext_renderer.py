@@ -47,7 +47,6 @@ from lino import dd
 from lino.core import actions
 from lino.core import dbtables
 from lino.core import tables
-from lino.core.actions import CalendarAction
 
 from lino.utils import AttrDict
 from lino.utils import choosers
@@ -866,7 +865,8 @@ class ExtRenderer(HtmlRenderer):
                     if not ba.action in actions_written:
                         #~ logger.info("20121005 %r is not in %r",a,actions_written)
                         actions_written.add(ba.action)
-                        for ln in self.js_render_window_action(rh, ba, profile):
+                        for ln in self.js_render_window_action(
+                                rh, ba, profile):
                             f.write(ln + '\n')
 
         for rpt in actors_list:
@@ -878,17 +878,6 @@ class ExtRenderer(HtmlRenderer):
 
                 for ln in self.js_render_GridPanel_class(rh):
                     f.write(ln + '\n')
-
-            #~ for a in rpt.get_actions():
-                #~ if a.opens_a_window or a.parameters:
-                    #~ if isinstance(a,(actions.ShowDetailAction,actions.InsertRow)):
-                        #~ for ln in self.js_render_detail_action_FormPanel(rh,a):
-                              #~ f.write(ln + '\n')
-                    #~ for ln in self.js_render_window_action(rh,a,user):
-                        #~ f.write(ln + '\n')
-                #~ elif a.custom_handler:
-                    #~ for ln in self.js_render_custom_action(rh,a,user):
-                        #~ f.write(ln + '\n')
 
             for ba in rpt.get_actions():
                 if ba.action.parameters:
@@ -1352,11 +1341,11 @@ class ExtRenderer(HtmlRenderer):
             mainPanelClass = "Lino.%sPanel" % action.full_name()
         elif isinstance(action.action, actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-        elif isinstance(action.action, CalendarAction):
-            mainPanelClass = "Lino.CalendarPanel"
         elif action.action.parameters:
             params_panel = action.action.make_params_layout_handle(
                 settings.SITE.plugins.extjs)
+        elif action.action.extjs_main_panel:
+            pass
         else:
             return
 
@@ -1384,42 +1373,30 @@ class ExtRenderer(HtmlRenderer):
                     raise ValueError("height")
                 #~ print 20120629, action, windowConfig
 
-        yield "Lino.%s = new Lino.WindowAction(%s,function(){" % (
+        yield "Lino.%s = new Lino.WindowAction(%s, function(){" % (
             action.full_name(), py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');"
-        if isinstance(action.action, CalendarAction):
-            yield "  return Lino.CalendarApp().get_main_panel();"
+        if action.action.extjs_main_panel:
+            yield "  return %s;" % action.action.extjs_main_panel
         else:
             p = dict()
             if action.action is settings.SITE.get_main_action(profile):
                 p.update(is_home_page=True)
-            #~ yield "  var p = {};"
             if action.action.hide_top_toolbar or action.actor.hide_top_toolbar or action.action.parameters:
                 p.update(hide_top_toolbar=True)
-                #~ yield "  p.hide_top_toolbar = true;"
             if rpt.hide_window_title:
-                #~ yield "  p.hide_window_title = true;"
                 p.update(hide_window_title=True)
-            # ~ yield "  p.is_main_window = true;" # workaround for problem 20111206
+
             p.update(is_main_window=True)  # workaround for problem 20111206
             yield "  var p = %s;" % py2js(p)
-            # ~ yield "  Lino.insert_subst_user(p);" # 20121010 :
-            #~ if isinstance(action,CalendarAction):
-                #~ yield "  p.items = Lino.CalendarAppPanel_items;"
             if params_panel:
-                #~ for ln in jsgen.declare_vars(params_panel):
-                    #~ yield '  '  + ln
                 if action.action.parameters:
-                    #~ yield "  return %s;" % params_panel
                     yield "  return new Lino.%s({});" % wl._formpanel_name
                 else:
-                    #~ yield "  p.params_panel = %s;" % params_panel
                     yield "  p.params_panel = new Lino.%s({});" % params_panel.layout._formpanel_name
                     yield "  return new %s(p);" % mainPanelClass
             else:
                 yield "  return new %s(p);" % mainPanelClass
-        #~ yield "  console.log('20120625 rv is',rv);"
-        #~ yield "  return rv;"
         yield "});"
 
     def linolib_intro(self):

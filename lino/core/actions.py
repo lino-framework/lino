@@ -306,6 +306,9 @@ class Action(Parametrizable, Permittable):
     help_text = None
     auto_save = True
 
+    extjs_main_panel = None
+    
+
     action_name = None
     """Internally used to store the name of this action within the
     defining Actor's namespace.
@@ -1092,20 +1095,6 @@ class NotifyingAction(Action):
             ar.action_param_values.notify_subject,
             ar.action_param_values.notify_body,
             ar.action_param_values.notify_silent, **kw)
-
-
-class CalendarAction(Action):
-
-    """
-    The default action for
-    :class:`lino.modlib.extensible.models.CalendarPanel`,
-    only used there.
-    """
-    opens_a_window = True
-    action_name = 'grid'  # because...
-    default_format = 'html'
-    #~ icon_name = 'x-tbar-calendar'
-    icon_name = 'calendar'
 
 
 class MultipleRowAction(Action):

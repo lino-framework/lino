@@ -29,13 +29,22 @@ from django.utils.translation import ugettext_lazy as _
 from django.core import exceptions
 from lino import dd
 from lino.core import constants
-from lino.core.actions import CalendarAction
 
 from ..cal.models import Subscription, Calendars, Events
 
 
 def parsedate(s):
     return datetime.date(*settings.SITE.parse_date(s))
+
+
+class CalendarAction(dd.Action):
+
+    extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
+    opens_a_window = True
+    action_name = 'grid'  # because...
+    default_format = 'html'
+    #~ icon_name = 'x-tbar-calendar'
+    icon_name = 'calendar'
 
 
 class ExtDateTimeField(dd.VirtualField):

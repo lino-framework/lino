@@ -1,0 +1,38 @@
+=======================
+Saturday, July 26, 2014
+=======================
+
+Awesome uploader for Lino
+-------------------------
+
+I had another look at Andrew Rymarczyk's `AwesomeUploader
+<http://jsjoy.com/blog/ext-js-extension-awesome-uploader>`_ and
+started another exprimental integration into Lino. My first attempt
+(`use_awesome_uploader`) is long time ago and Lino has evolved
+meanwhile.
+
+the base idea is that people can upload multiple files using drag and
+drop, and then (later) open a list of their uploads where they can
+"manage" them: assign them to a project, share them with others, ...
+
+- New module :mod:`lino.modlib.awesomeuploader`.
+- New action attribute :attr:`dd.Action.extjs_main_panel`, and
+  `CalendarAction` is no longer defined in :mod:`lino.core` but in
+  :mod:`lino.modlib.extensible` (Cool! If that remains the only
+  result of today, then I am already happy!)
+
+
+:ref:`noi` serves as guinea pig. 
+
+Currently you must get the source code yourself from `google
+<https://code.google.com/p/awesomeuploader>`_ and link it to your
+project's media directory::
+
+  $ cd repositories
+  $ svn checkout http://awesomeuploader.googlecode.com/svn/trunk/ awesomeuploader
+  $ ln -s ~/repositories/awesomeuploader ~/myproject/media/awesomeuploader
+
+But don't yet expect it to work. Because it doesn't. The menu command
+and the quick link are there, but they only cause a TypeError
+"this.main_item.config_containing_window is not a function".  That's
+normal because I stopped there to make a checkin and have breakfast.

@@ -30,7 +30,7 @@ The ``Action`` class reference
 
   Abstract base class for all Actions.
 
-  .. attribute:: label = None
+  .. attribute:: label
 
   The text to appear on the button.
 
@@ -187,7 +187,15 @@ The ``Action`` class reference
 
     Whether to log :ref:`debug_permissions` for this action.
     
+  .. attribute:: extjs_main_panel
 
+    Used by `extensible` and `awesome_uploader`.
+
+    Example::
+
+        class CalendarAction(dd.Action):
+            extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
+            ...
 
 
 Predefined actions

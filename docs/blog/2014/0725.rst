@@ -5,7 +5,6 @@ Friday, July 25, 2014
 Einkommensbescheinigungen
 -------------------------
 
-
 So. Ich habe die Einkommensbescheinigungen jetzt bereit für eine
 nächste Besichtigung.  Momentan haben wir (schon seit Längerem) die
 Anwesenheitsbescheinigungen und (jetzt neu) alle Arten von
@@ -86,3 +85,8 @@ These strings need to be translated. Ablog needs your help.
 
     $ python setup.py update_catalog -l de -i ablog/locale/sphinx.pot -o ablog/locale/de/LC_MESSAGES/sphinx.po
     
+
+Upgrade in :ref:`gx`
+--------------------
+    
+Including a new version number and migrator for :ref:`welfare`.
