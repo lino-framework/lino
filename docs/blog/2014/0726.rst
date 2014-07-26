@@ -36,3 +36,7 @@ But don't yet expect it to work. Because it doesn't. The menu command
 and the quick link are there, but they only cause a TypeError
 "this.main_item.config_containing_window is not a function".  That's
 normal because I stopped there to make a checkin and have breakfast.
+
+Second session after breakfast: the component is now visible, i can
+drag and drop files, but their upload fails because the server doesn't
+yet accept the request.

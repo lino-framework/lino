@@ -61,4 +61,8 @@ class Plugin(ad.Plugin):
         yield self.build_media_url('AwesomeUploader.css')
 
     def get_js_includes(self, settings, language):
+        yield self.build_media_url('Ext.ux.form.FileUploadField.js')
+        yield self.build_media_url('Ext.ux.XHRUpload.js')
+        yield self.build_media_url('swfupload.js')
+        yield self.build_media_url('swfupload.swfobjectjs')
         yield self.build_media_url('AwesomeUploader.js')
