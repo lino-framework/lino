@@ -4114,6 +4114,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         params:p,
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
+          console.log("20140728 afteredit.success got ", result);
           //~ if (result.data_record) {
           if (result.refresh_all) {
               var cw = self.get_containing_window();
@@ -4125,10 +4126,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
               //~ self.getStore().loadData(result,true);
               var r = self.getStore().reader.readRecords(result);
               if (e.record.phantom) {
-                  //~ console.log("20120816 afteredit.success POST",r);
-                  self.getStore().insert(e.row,r.records);
+                  console.log("20140728 afteredit.success insert", e.row, r.records);
+                  self.getStore().insert(e.row, r.records);
               }else{
-                  //~ console.log("20120816 afteredit.success PUT",r);
+                  console.log("20140728 afteredit.success doUpdate", 
+                              r.records[0]);
                   self.getStore().doUpdate(r.records[0]);
               }
               self.getStore().rejectChanges(); /* 

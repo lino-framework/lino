@@ -218,3 +218,5 @@ add = AccessClasses.add_item
 add('10', _('Private'), 'private')
 add('20', _('Show busy'), 'show_busy')
 add('30', _('Public'), 'public')
+
+

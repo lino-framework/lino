@@ -302,10 +302,10 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
 
     @dd.chooser()
     def journal_choices(cls):
-        logger.info("20140603 journal_choices %r", cls)
+        # logger.info("20140603 journal_choices %r", cls)
         vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         qs = Journal.objects.filter(voucher_type=vt)
-        logger.info("20140603 %s %s ", vt, qs.query)
+        # logger.info("20140603 %s %s ", vt, qs.query)
         return qs
 
     @classmethod

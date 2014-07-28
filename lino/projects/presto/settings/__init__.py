@@ -75,10 +75,12 @@ class Site(Site):
         yield 'lino.modlib.extensible'
         yield 'lino.modlib.cal'
         yield 'lino.modlib.outbox'
+        yield 'lino.modlib.excerpts'
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
         yield 'lino.projects.presto'
 
         yield 'lino.modlib.appypod'
+        yield 'lino.modlib.export_excel'
 
 # SITE = Site(globals())

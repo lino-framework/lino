@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2012 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -12,8 +12,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This module adds models for Projects, Milestones, Tickets and Sessions.
+"""This module adds models for Projects, Milestones, Tickets and Sessions.
 
 A **Project** is something into which somebody invests time, energy and money.
 Projects form a tree: each Project can have a `parent` 
@@ -36,25 +35,26 @@ invested into that Project.
 
 Projects are handled by their *name* while Tickets are handled by their *number*.
 
-Extreme case of a session: 
+Extreme case of a session:
 
-- I start to work on an existing ticket #1 at 9:23.
-  A customer phones at 10:17 with a question. Created #2.
-  That call is interrupted several times (by the customer himself).
-  During the first interruption another customer calls, 
-  with another problem (ticket #3) which we solve together within 5 minutes.
-  During the second interruption of #2 (which lasts 7 minutes) I make a coffee break.
-  During the third interruption I continue to analyze the customer's problem.
-  When ticket #2 is solved, I decided that it's not worth to keep track of each interruption and that the overall session time for this ticket
-  can be estimated to 0:40.
-  
+- I start to work on an existing ticket #1 at 9:23.  A customer phones
+  at 10:17 with a question. Created #2.  That call is interrupted
+  several times (by the customer himself).  During the first
+  interruption another customer calls, with another problem (ticket
+  #3) which we solve together within 5 minutes.  During the second
+  interruption of #2 (which lasts 7 minutes) I make a coffee break.
+
+  During the third interruption I continue to analyze the customer's
+  problem.  When ticket #2 is solved, I decided that it's not worth to
+  keep track of each interruption and that the overall session time
+  for this ticket can be estimated to 0:40.
+
   ::
-  
+
     Ticket start end    Pause  Duration
     #1     9:23  13:12  0:45
     #2     10:17 11:12  0:12       0:43   
     #3     10:23 10:28             0:05
-
 
 """
 import cgi
@@ -73,6 +73,7 @@ from lino import dd
 blogs = dd.resolve_app('blogs')
 
 from lino.modlib.tickets.utils import TicketStates
+from lino.modlib.cal.mixins import daterange_text
 
 
 class ProjectType(mixins.PrintableType, dd.BabelNamed):
@@ -218,12 +219,12 @@ class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
 
-    reported = dd.ForeignKey(Milestone,
+    reported = dd.ForeignKey('tickets.Milestone',
                              related_name='tickets_reported',
                              verbose_name='Reported for',
                              blank=True, null=True,
                              help_text=_("Milestone for which this ticket has been reported."))
-    fixed = dd.ForeignKey(Milestone,
+    fixed = dd.ForeignKey('tickets.Milestone',
                           related_name='tickets_fixed',
                           verbose_name='Fixed for',
                           blank=True, null=True,
@@ -256,7 +257,8 @@ class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
     def reported_choices(cls, project):
         if not project:
             return []
-        return project.tickets_milestone_set_by_project.filter(reached__isnull=False)
+        return project.tickets_milestone_set_by_project.filter(
+            reached__isnull=False)
 
     @dd.chooser()
     def fixed_choices(cls, project):
@@ -265,19 +267,90 @@ class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
         return project.tickets_milestone_set_by_project.all()
 
 
+class TicketEvents(dd.ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+add = TicketEvents.add_item
+add('10', _("Opened"), 'opened')
+add('20', _("Closed"), 'closed')
+
+
 class Tickets(dd.Table):
     model = Ticket
     detail_layout = """
     summary partner project reported id
     user created modified state workflow_buttons fixed
-    description 
+    description
     SessionsByTicket EntriesByTicket
     """
     insert_layout = dd.FormLayout("""
-    summary 
-    partner 
-    project 
+    summary
+    partner
+    project
     """, window_size=(50, 'auto'))
+
+    parameters = dd.ObservedPeriod(
+        user=dd.ForeignKey(settings.SITE.user_model,
+                           blank=True, null=True,
+                           help_text=_("Only rows authored by this user.")),
+        project=dd.ForeignKey(
+            settings.SITE.project_model,
+            blank=True, null=True),
+        state=TicketStates.field(
+            blank=True, help_text=_("Only rows having this state.")),
+        observed_event=TicketEvents.field(blank=True))
+    params_layout = """user project state \
+    start_date end_date observed_event"""
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Tickets, self).get_request_queryset(ar)
+        pv = ar.param_values
+
+        if pv.user:
+            qs = qs.filter(user=pv.user)
+
+        if settings.SITE.project_model is not None and pv.project:
+            qs = qs.filter(project=pv.project)
+
+        if pv.state:
+            qs = qs.filter(state=pv.state)
+
+        if pv.observed_event == TicketEvents.opened:
+            if pv.start_date:
+                qs = qs.filter(created__gte=pv.start_date)
+            if pv.end_date:
+                qs = qs.filter(created__lte=pv.end_date)
+        elif pv.observed_event == TicketEvents.pending:
+            if pv.start_date:
+                qs = qs.filter(closed__gte=pv.start_date)
+            if pv.end_date:
+                qs = qs.filter(closed__lte=pv.end_date)
+
+        return qs
+
+    @classmethod
+    def get_title_tags(self, ar):
+        for t in super(Tickets, self).get_title_tags(ar):
+            yield t
+        pv = ar.param_values
+        if pv.start_date or pv.end_date:
+            yield daterange_text(
+                pv.start_date,
+                pv.end_date)
+
+        if pv.state:
+            yield unicode(pv.state)
+
+        if pv.user:
+            yield unicode(pv.user)
+
+        if settings.SITE.project_model is not None and pv.project:
+            yield unicode(pv.project)
+
+        if pv.observed_event:
+            yield unicode(self.parameters['observed_event'].verbose_name) \
+                + ' ' + unicode(pv.observed_event)
 
 
 class UnassignedTickets(Tickets):
@@ -320,15 +393,16 @@ class TicketsReported(Tickets):
 class Session(mixins.AutoUser, mixins.ProjectRelated):
 
     """
-    A Session is when a user works on a project or ticket. 
+    A Session is when a user works on a project or ticket.
     """
     class Meta:
         verbose_name = _("Session")
         verbose_name_plural = _('Sessions')
 
-    partner = models.ForeignKey('contacts.Partner',
-                                blank=True, null=True,
-                                help_text=_("The partner to be invoiced for this session."))
+    partner = models.ForeignKey(
+        'contacts.Partner',
+        blank=True, null=True,
+        help_text=_("The partner to be invoiced for this session."))
     #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
     ticket = models.ForeignKey('tickets.Ticket',
                                blank=True, null=True,
@@ -338,7 +412,7 @@ class Session(mixins.AutoUser, mixins.ProjectRelated):
                                help_text=_("Short summary of the session."))
     description = dd.RichTextField(_("Description"), blank=True,
                                    format='plain')
-    date = models.DateField(verbose_name=_("Date"))
+    date = models.DateField(verbose_name=_("Date"), blank=True)
     start_time = models.TimeField(
         blank=True, null=True,
         verbose_name=_("Start time"))
@@ -360,7 +434,12 @@ class Session(mixins.AutoUser, mixins.ProjectRelated):
                 self.date.strftime(settings.SITE.date_format_strftime),
                 self.start_time.strftime(settings.SITE.time_format_strftime),
                 self.end_time.strftime(settings.SITE.time_format_strftime))
-        return super(Session, self).__unicode__()
+        return "%s # %s" % (self._meta.verbose_name, self.pk)
+
+    def save(self, *args, **kwargs):
+        if self.date is None and not settings.SITE.loading_from_dump:
+            self.date = settings.SITE.today()
+        super(Session, self).save(*args, **kwargs)
 
 
 class Sessions(dd.Table):
@@ -369,10 +448,11 @@ class Sessions(dd.Table):
     order_by = ['date', 'start_time']
     detail_layout = """
     date start_time end_time break_time project ticket
-    user id 
+    user id
     description
     EntriesBySession
     """
+    stay_in_grid = True
 
 
 class SessionsByTicket(Sessions):
@@ -414,18 +494,20 @@ if settings.SITE.user_model:
 
 if blogs:
 
-    dd.inject_field('blogs.Entry',
-                    'ticket',
-                    models.ForeignKey("tickets.Ticket",
-                                      blank=True, null=True,
-                                      # verbose_name=_("Local job office"),
-                                      # related_name='job_office_sites'
+    dd.inject_field(
+        'blogs.Entry',
+        'ticket',
+        models.ForeignKey(
+            "tickets.Ticket",
+            blank=True, null=True,
+            # verbose_name=_("Local job office"),
+            # related_name='job_office_sites'
             help_text="""The Ticket attributed to this Entry."""))
 
     class EntriesByTicket(blogs.Entries):
         master_key = 'ticket'
 
-    class EntriesBySession(EntriesByTicket):
+    class EntriesBySession(blogs.Entries):
 
         """The Blog Entries linked to *the Ticket of* a Session.
         
@@ -434,12 +516,23 @@ if blogs:
         entries.
 
         """
+        master = 'tickets.Session'
 
         @classmethod
-        def get_filter_kw(self, ar, **kw):
+        def get_request_queryset(self, ar):
             if ar.master_instance is not None:
-                kw.update(ticket=ar.master_instance.ticket)
-            return kw
+                if ar.master_instance.ticket is not None:
+                    qs = blogs.Entries.get_request_queryset(self, ar)
+                    return qs.filter(ticket=ar.master_instance.ticket)
+            return []
+
+        # @classmethod
+        # def get_filter_kw(self, ar, **kw):
+        #     if ar.master_instance is not None:
+        #         if ar.master_instance.ticket is not None:
+        #             kw.update(ticket=ar.master_instance.ticket)
+        #             return kw
+        #     # otherwise return None
 
 
 else:
@@ -458,10 +551,10 @@ if settings.SITE.user_model:
         order_by = ["-created", "id"]
         column_names = 'created id project summary state *'
 
-    class MyOpenTickets(Tickets, mixins.ByUser):
-        order_by = ["-created", "id"]
-        column_names = 'created id project summary state *'
-        filter = models.Q(closed__isnull=True)
+    # class MyOpenTickets(Tickets, mixins.ByUser):
+    #     order_by = ["-created", "id"]
+    #     column_names = 'created id project summary state *'
+    #     filter = models.Q(closed__isnull=True)
 
 
 #~ if dd.is_installed('cal'):
@@ -480,7 +573,7 @@ if settings.SITE.user_model:
 def setup_main_menu(site, ui, profile, m):
     m = m.add_menu("tickets", _("Tickets"))
     m.add_action(MyProjects)
-    m.add_action(MyOpenTickets)
+    # m.add_action(MyOpenTickets)
     m.add_action(MyTickets)
     m.add_action(MySessions)
     m.add_action(MySessionsByDate)
@@ -502,4 +595,4 @@ def setup_explorer_menu(site, ui, profile, m):
     m.add_action(Projects)
     m.add_action(Tickets)
     m.add_action(Sessions)
-    m.add_action(Milestones)
+    m.add_action('tickets.Milestones')

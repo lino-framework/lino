@@ -54,6 +54,17 @@ def format_time(t):
     return t.strftime(settings.SITE.time_format_strftime)
 
 
+def daterange_text(a, b):
+    if a == b:
+        return a.strftime(settings.SITE.date_format_strftime)
+    d = dict(min="...", max="...")
+    if a:
+        d.update(min=a.strftime(settings.SITE.date_format_strftime))
+    if b:
+        d.update(max=b.strftime(settings.SITE.date_format_strftime))
+    return _("Dates %(min)s to %(max)s") % d
+
+
 class Started(dd.Model):
 
     class Meta:

@@ -1,0 +1,52 @@
+#118: Backup causes computer to hang after hours of work
+========================================================
+
+Ubuntu 14.04. I try to do a backup of my home folder to an external
+500 GB hard drive. It says:
+
+  Creating the first backup. This may take a while.
+
+I went to sleep. I woke up and saw that my computer's user interface
+hangs. The internal hard disk lights shortly from time to time.  Even
+a :kbd: `Ctrl+Alt+F1` and trying to log in to a text console fails.
+
+I switch off the computer and restart it. The :file:`/backup/hoppel`
+folder of that drive (specified under Storage location) contains 3033
+items::
+
+    duplicity-full.20140726T194808Z.vol1.difftar.gpg
+    ...
+    duplicity-full.20140726T194808Z.vol3033.difftar.gpg
+
+They all have the same size 52.5 MB.
+
+I deleted these files, added `~/archive` (contains 110 GB) to the
+"Folders to ignore" then wanted to tried again. 
+
+Before trying again I noticed that the external drive is almost full
+because I moved the 3030 to trash instead of actually deleting them.
+
+When I clicked on the Trash folder in Nautilus, it started a huge
+background process just to populate the list of files::
+
+
+    PID USER  PR  NI    VIRT    RES    SHR S  %CPU %MEM    TIME+ COMMAND     
+   3395 root  20   0    8128   6084    760 R  58.9  0.1  8:06.68 mount.ntfs  
+   2976 luc   20   0  261168 216900   2996 S  55.9  2.7  7:37.78 gvfsd-trash 
+   2738 luc   20   0  274420  60384  23104 S  11.6  0.7  2:52.56 nautilus    
+
+I closed the Nautilus window after 10 minutes, before the right
+panel started to display any files, and tried to remove these
+files manually::
+
+    
+    $ cd '/media/luc/TOSHIBA EXT'
+    $ rm -R .Trash-1000
+
+The processes did not stop. So I killed the boss::
+
+    $ kill 2976
+
+Now everything seems ready for a next try.
+
+Seems that there was just too little space on the target drive.

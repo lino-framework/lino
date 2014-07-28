@@ -45,6 +45,7 @@ from .mixins import Ended
 from .mixins import RecurrenceSet, EventGenerator
 from .mixins import UpdateEvents
 from .mixins import MoveEventNext
+from .mixins import daterange_text
 from .models import Component
 from .models import Priority
 from .workflows import EventStates
@@ -52,17 +53,6 @@ from .workflows import EventStates
 # contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
-
-
-def daterange_text(a, b):
-    if a == b:
-        return a.strftime(settings.SITE.date_format_strftime)
-    d = dict(min="...", max="...")
-    if a:
-        d.update(min=a.strftime(settings.SITE.date_format_strftime))
-    if b:
-        d.update(max=b.strftime(settings.SITE.date_format_strftime))
-    return _("Dates %(min)s to %(max)s") % d
 
 
 class EventType(dd.BabelNamed, dd.Sequenced,

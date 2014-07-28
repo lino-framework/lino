@@ -1,3 +1,0 @@
-/home/luc/hgwork/lino/docs/blog/2014/0725.rst:89: WARNING: undefined label: gx (if the link has no caption the label must precede a section header)
-None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14
