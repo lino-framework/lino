@@ -1,0 +1,100 @@
+================================
+20140729 (Tuesday, 29 July 2014)
+================================
+
+A nasty Javascript bug
+======================
+
+I discovered and am investigating a bug in :xfile:`linoweb.js`. It
+happens when adding a new record to a grid using cell editing (which
+currently requires the user to press :kbd:`F2`). The bug is not very
+urgent since the current production sites don't really use this entry
+method. Most people even don't know it. But it is necessary in an
+accounting application. It is a show stopper for :ref:`cosi`.  I want
+to fix this bug. But it is a good one.
+
+As usual when I must do some job which I don't love, I find
+distractions.  For example Ly watched one of my private blog pages and
+complained that you cannot start to page through all photos after
+having clicked on a first one.  I concluded that she is right:
+:mod:`atelier/sphinxconf/sigal_image` now uses `lightbox
+<http://lokeshdhakar.com/projects/lightbox2/>`_.
+
+Hackerzacker, ich bin jetzt schon den dritten Tag mit diesem doofen
+Bug im JS dran!  Da scheint etwas mit der inheritence (`Ext.extend`)
+nicht zu klappen.
+
+Da stellt sich natürlich die Frage, ob ich nicht besser langsam mal
+auf die neueste ExtJS-Version umsteige.
+
+Erfreulich: ExtJS Version 5 ist raus!
+
+Weniger erfreulich: nirgends auf der Webseite finde ich einen Link für
+den Download der GPL-Version. Auch ein öffentliches Repository haben
+die ja nie gehabt.  Okay, `hier
+<http://www.sencha.com/forum/showthread.php?260398-Ext-JS-3.4.1.1-Available-Full-Public-Release!>`_
+gibt es immerhin noch die Version 3.4.1.1. Mit der scheint Lino
+übrigens auch nicht zu funktionieren. Er meldet dann "TypeError:
+this.indexOf is not a function" in der JS-Konsole. 
+
+Lino braucht eben Version 3.3.1. Insgesamt kein Problem wenn man es
+weiß.
+
+Until now I believed that Sencha are glad that ExtJS is the primary
+user interface for Lino. But I start to wonder whether that's true.
+They don't give the impression that they care for the *free* users'
+community of their products.  And I am not the first to feel like this
+(probably rather the last...): a Premium user *dnorman* wrote in 2012
+in a thread about (`Public ExtJS github repository!
+<http://www.sencha.com/forum/showthread.php?200033-Public-ExtJS-github-repository!>`_):
+
+    Having harped on this issue with various persons at various times,
+    it is becoming increasingly clear, despite some overtures to the
+    contrary, that Sencha is not interested in this kind of community
+    interaction.
+
+    This is a shame, because Sencha is by their very nature a
+    tool-maker, and is pretty good at it too... but they absolutely
+    cannot be in the trenches on a day-to-day-basis as a
+    tool-user. This is evidenced by my rather large library of patches
+    required to make ExtJS work for my application at
+    all. (complexities for which dataIndex is unsatisfactory, the
+    ability to render more than one instance of an MVC view/controller
+    pair, etc, etc, etc) My company would be happy to surrender the
+    copyrights for these patches, but there's no mechanism to
+    contribute them upstream. Yes, there's the "feature request"
+    process, but that's not a good fit for the "this bit needs some
+    re-architecting" scenario.
+
+    From my perspective, Sencha is rightly concerned with
+    thought-leadership. This is a good thing in many ways. *But*
+    without a significantly improved mechanism for user contribution
+    and feedback, Sencha dwells in the echo-chamber, and runs the risk
+    of having companies like mine abandon the platform.
+
+In 2010 there is a blog entry announcing that `Ext JS is Migrating to
+Git <http://www.sencha.com/blog/ext-js-is-migrating-to-git/>`_, and
+their `GitHub account <https://github.com/extjs>`_ still exists, butI could not find anything helpful there.
+
+
+Upgraded from Bootstrap 2 to 3
+==============================
+
+The above considerations caused some motivation to reactivate my
+search for alternatives for the ExtJS user interface.  After looking
+at `Angular.js` & friends I fell back to our good old Bootstrap.
+
+Until now Bootstrap (v2) was integrated into Lino as
+:mod:`lino.modlib.plain`.  This app is now deprecated and replaced by
+:mod:`lino.modlib.bootstrap3`.  Applications should not need to do
+anything.
+
+One good side effect is that the usage of the name "plain" to
+designate "an HTML interface using Bootstrap" is now history.
+
+Existing functionality is converted to Bootstrap 3.  But besides the
+look and feel there is no further visible change yet. There is still
+much to do before :mod:`lino.modlib.bootstrap3` becomes a usable
+alternative to :mod:`lino.modlib.extjs`.
+
+Checkin. 

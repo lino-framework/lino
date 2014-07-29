@@ -3326,8 +3326,12 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     //~ if (FOO > 0) {
         //~ foo.bar = baz;
     //~ } else FOO += 1;
-    return Lino.GridStore.superclass.load.call(this,options);
+    return Lino.GridStore.superclass.load.call(this, options);
   }
+  // ,insert : function(index, records) {
+  //   return Ext.data.Store.prototype.insert.call(this, index, records)
+    // return Lino.GridStore.superclass.insert.call(this, index, records);
+  // }
 });
 
 Lino.get_current_grid_config = function(panel) {
@@ -3342,9 +3346,9 @@ Lino.auto_height_cell_template = new Ext.Template(
 '</td>'
 );
 
-Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel,Lino.MainPanel);
-Lino.GridPanel = Ext.extend(Lino.GridPanel,Lino.PanelMixin);
-Lino.GridPanel = Ext.extend(Lino.GridPanel,{
+Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel, Lino.MainPanel);
+Lino.GridPanel = Ext.extend(Lino.GridPanel, Lino.PanelMixin);
+Lino.GridPanel = Ext.extend(Lino.GridPanel, {
   quick_search_text : '',
   is_searching : false,
   disabled_in_insert_window : true,
@@ -3518,20 +3522,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
           //~ id: "seachString" 
       })];
       tbar = this.add_params_panel(tbar);
-      tbar = tbar.concat([
-        { scope:this, 
-          tooltip: "{{_('Show this table in plain html')}}", 
-          iconCls: 'x-tbar-html',
-          handler: function() { 
-            var p = this.get_current_grid_config();
-            Ext.apply(p, this.get_base_params());
-            this.add_param_values(p, true);
-            window.open(
-                '{{settings.SITE.plugins.plain.build_plain_url()}}' + 
-                    this.ls_url + "?" + Ext.urlEncode(p)) 
-          } }
-      ]);
-    
       var menu = [];
       var set_gc = function(index) {
         return function() {
@@ -4114,7 +4104,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
         params:p,
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
-          console.log("20140728 afteredit.success got ", result);
+          // console.log("20140728 afteredit.success got ", result);
           //~ if (result.data_record) {
           if (result.refresh_all) {
               var cw = self.get_containing_window();
@@ -4126,14 +4116,14 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel,{
               //~ self.getStore().loadData(result,true);
               var r = self.getStore().reader.readRecords(result);
               if (e.record.phantom) {
-                  console.log("20140728 afteredit.success insert", e.row, r.records);
+                  // console.log("20140728 gonna call Store.insert()", self.getStore(), e.row, r.records);
                   self.getStore().insert(e.row, r.records);
               }else{
-                  console.log("20140728 afteredit.success doUpdate", 
-                              r.records[0]);
+                  // console.log("20140728 afteredit.success doUpdate", r.records[0]);
                   self.getStore().doUpdate(r.records[0]);
               }
-              self.getStore().rejectChanges(); /* 
+              self.getStore().rejectChanges(); 
+              /* 
               get rid of the red triangles without saving the record again
               */
               //~ self.getStore().commitChanges(); // get rid of the red triangles

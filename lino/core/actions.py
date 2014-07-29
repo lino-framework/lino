@@ -592,7 +592,9 @@ def buttons2pager(buttons):
             items.append(E.li(E.span(symbol, class_="disabled")))
         else:
             items.append(E.li(E.a(symbol, href=url)))
-    return E.div(E.ul(*items), class_='pagination')
+    # Bootstrap version 2.x
+    # return E.div(E.ul(*items), class_='pagination')
+    return E.ul(*items, class_='pagination pagination-sm')
 
 
 class GridEdit(TableAction):
@@ -621,6 +623,7 @@ class GridEdit(TableAction):
         return actor.window_size
 
     def as_bootstrap_html(self, ar, as_main=True):
+        # used by lino.modlib.plain and lino.modlib.bootstrap3
         t = xghtml.Table()
         if ar.limit is None:
             ar.limit = PLAIN_PAGE_LENGTH

@@ -757,9 +757,6 @@ class ActorRequest(BaseRequest):
         else:
             self.set_response(data_record=self.elem2rec_detailed(obj))
 
-    #~ def get_request_url(self,*args,**kw):
-        #~ return self.ui.get_request_url(self,*args,**kw)
-
     def get_request_url(self, *args, **kw):
         return self.renderer.get_request_url(self, *args, **kw)
 

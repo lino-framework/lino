@@ -33,8 +33,8 @@ class Site(Site):
     #~ demo_fixtures = 'demo'
 
     #~ admin_prefix = 'admin'
-    # plain_prefix = ''  # deprecated
-    default_ui = 'plain'
+    # default_ui = 'plain'
+    default_ui = 'bootstrap3'
 
     #~ anonymous_user_profile =
 
@@ -50,6 +50,7 @@ class Site(Site):
     def get_apps_modifiers(self, **kk):
         kw = super(Site, self).get_apps_modifiers(**kk)
         kw.update(extjs=None)
+        kw.update(plain=None)
         return kw
 
     def get_installed_apps(self):
@@ -67,6 +68,7 @@ class Site(Site):
         #~ yield 'lino.modlib.tickets'
         #~ yield 'lino.modlib.pages'
         yield 'lino.modlib.concepts'
+        yield 'lino.modlib.bootstrap3'
         yield 'lino.projects.belref'
 
     def setup_menu(self, ui, profile, main):

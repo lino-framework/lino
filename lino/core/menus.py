@@ -139,14 +139,14 @@ class MenuItem:
             return s + self.name
         return s
 
-    def as_bootstrap_html(self, plain_renderer, request, level=None):
+    def as_bootstrap_html(self, renderer, request, level=None):
         if self.bound_action:
-            assert plain_renderer is not None
+            assert renderer is not None
             sr = self.bound_action.actor.request(
                 action=self.bound_action,
                 user=request.user, subst_user=request.subst_user,
                 requesting_panel=request.requesting_panel,
-                renderer=plain_renderer, **self.params)
+                renderer=renderer, **self.params)
 
             url = sr.get_request_url()
         else:

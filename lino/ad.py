@@ -84,8 +84,6 @@ class Plugin(BasePlugin):
 
     renderer = None
 
-
-
     def before_analyze(self, site):
         """This is called when the kernel is being instantiated.
         """
@@ -1035,7 +1033,7 @@ class Site(Site):
             yield 'django.contrib.admin'
         yield 'lino.modlib.about'
         yield 'lino.modlib.extjs'
-        yield 'lino.modlib.plain'
+        yield 'lino.modlib.bootstrap3'
         yield "lino"
         for a in self.user_apps:
             yield a

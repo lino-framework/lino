@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html language="{{requested_language}}"><head>
+<meta charset="utf-8"/>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{site.plugins.bootstrap3.build_media_url('css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.build_media_url('lino','bootstrap.css')}}" type="text/css">
+</head><body>
+<div id="wrap">
+  <div class="container-fluid">
+    {% block header %}
+    <div class="row-fluid header">
+
+    {% if 'users' in site.plugins -%}
+    <form class="form-inline" method="POST" action="{{ar.renderer.plugin.build_media_url('auth')}}">
+    <input type="username" class="input-small" placeholder="Username">
+    <input type="password" class="input-small" placeholder="Password">
+    <button type="submit" class="btn">Sign in</button>
+    &mdash;
+    {% endif -%}
+
+    {% if len(site.languages) > 1 -%}
+      {% for lang in site.languages -%}
+        {% if lang.django_code == requested_language -%}
+            {{lang.django_code}}
+        {% else -%} {# URL_PARAM_USER_LANGUAGE #}
+            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a> 
+        {% endif -%}
+      {% endfor -%}
+    {% endif -%}
+    &mdash;
+    {% for p in site.installed_plugins -%}
+        {% if p.ui_label -%}
+        {% if ar.renderer == p.renderer -%}
+        {{p.ui_label}}
+        {% else -%}
+        <a href="{{p.build_media_url()}}">{{p.ui_label}}</a>
+        {% endif -%}
+        {% endif -%}
+    {% endfor -%}
+
+    {% if 'users' in site.plugins -%}
+    </form>
+    {% endif -%}
+
+    </div>
+    {% endblock %}
+    {% block navbar %}
+      {% if menu -%}
+      <div class="navbar navbar-static">
+        <div class="navbar-inner">
+          <div class="container" style="width: auto;">
+            {{menu}}
+          </div>  
+        </div>  
+      </div>  
+      {% endif -%}
+    {% endblock %}
+    {% block main %}
+    <div class="row-fluid">
+        {% block content %}
+        This page has no content.
+        {% endblock %}
+    </div>
+    {% endblock %}
+  </div>
+  <div id="push"></div>
+</div>
+<div id="footer">
+<footer class="container-fluid">
+{% block footer %}
+<p style="vertical-align: middle;">
+{% if request %}
+&copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
+{% endif %}
+{{E.tostring(site.welcome_html())}}
+</p>
+{% endblock %}
+</footer>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="{{site.plugins.bootstrap3.build_media_url('js','bootstrap.min.js')}}"></script>
+</body></html>
