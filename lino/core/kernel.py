@@ -679,18 +679,6 @@ class Kernel(object):
                 else:
                     urlpatterns += pat
 
-        # if self.site.use_extjs and self.site.admin_prefix:
-        #     urlpatterns += patterns(
-        #         '',
-        #         ('^' + self.site.admin_prefix, include(self.get_ext_urls())))
-
-        # if self.site.plain_prefix:
-        #     urlpatterns += patterns(
-        #         '',
-        #         ('^' + self.site.plain_prefix + "/",
-        #          include(self.get_plain_urls()))
-        #     )
-
         if self.site.django_admin_prefix:  # experimental
             from django.contrib import admin
             admin.autodiscover()
@@ -699,16 +687,6 @@ class Kernel(object):
                                      + "/", include(admin.site.urls))
                                     )
 
-        # if not self.site.plain_prefix:
-        #     urlpatterns += self.get_plain_urls()
-
-        # if self.site.use_extjs:
-        #     if not self.site.admin_prefix:
-        #         urlpatterns += self.get_ext_urls()
-        #     else:
-        #         urlpatterns += self.get_pages_urls()
-
-        #~ print 20131021, urlpatterns
         return urlpatterns
 
     def setup_media_link(self, urlpatterns, short_name,

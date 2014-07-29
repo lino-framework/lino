@@ -118,7 +118,7 @@ def site_setup(self):
         from lino.core import auth
         a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = self.ui.plain_renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         t = xghtml.Table()
         #~ t = doc.add_table()
@@ -133,7 +133,7 @@ def site_setup(self):
         from lino.core import auth
         a = self.modules.resolve(action_spec)
         ar = a.request(user=auth.AnonymousUser.instance())
-        ar.renderer = self.ui.plain_renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
         return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
     self.jinja_env.globals.update(

@@ -585,11 +585,13 @@ class RedirectAction(Action):
         raise NotImplementedError
 
 
-def buttons2pager(buttons):
+def buttons2pager(buttons, title=None):
     items = []
+    # if title:
+    #     items.append(E.li(E.span(title)))
     for symbol, label, url in buttons:
         if url is None:
-            items.append(E.li(E.span(symbol, class_="disabled")))
+            items.append(E.li(E.span(symbol), class_="disabled"))
         else:
             items.append(E.li(E.a(symbol, href=url)))
     # Bootstrap version 2.x
@@ -641,7 +643,7 @@ class GridEdit(TableAction):
 
         ar.dump2html(t, ar.sliced_data_iterator)
         if not as_main:
-            url = ar.get_request_url()  # open in to own window
+            url = ar.get_request_url()  # open in own window
             return E.div(E.a(ar.get_title(), href=url), t.as_element())
 
         buttons = []
@@ -735,15 +737,6 @@ class ShowDetailAction(Action):
                     buttons.append(
                         ('>>', _("Last page"), ar.pk2url(ni['last'])))
 
-                    #~ chunks = []
-                    #~ for text,title,url in buttons:
-                        #~ chunks.append('[')
-                        #~ if url:
-                            #~ chunks.append(E.a(text,href=url,title=title))
-                        #~ else:
-                            #~ chunks.append(text)
-                        #~ chunks.append('] ')
-                    #~ navigator = E.p(*chunks)
                     navigator = buttons2pager(buttons)
                 else:
                     navigator = E.p("No navinfo")

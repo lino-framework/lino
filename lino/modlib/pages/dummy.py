@@ -69,7 +69,7 @@ def lookup(ref, default=models.NOT_PROVIDED):
     return DUMMY_PAGES.get(ref, default)
 
 
-def render_node(request, node, template_name='node.html', **context):
+def render_node(request, node, template_name='pages/node.html', **context):
     context.update(node=node)
     heading = dbutils.babelattr(node, 'title', '')
     if heading:

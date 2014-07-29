@@ -2,9 +2,9 @@
 {% set active_page = "" %}
 {% block title %}{{title}}{% endblock %}
 {% block main %}
-<div class="row-fluid">
-  <div class="span12">
-    <h1>{{heading}}</h1>
+<h2>{{heading}}</h2>
+<div class="container-fluid">
+  <div class="row">
     {{E.tostring(main)}}
   </div>
 </div>

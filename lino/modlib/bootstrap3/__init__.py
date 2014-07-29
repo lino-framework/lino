@@ -24,11 +24,11 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(Plugin):
 
-    ui_label = _("Bootstrap 3")
-
-    url_prefix = 'bs3'
+    ui_label = _("Bootstrap")
 
     # site_js_snippets = ['snippets/plain.js']
+
+    url_prefix = 'bs3'
 
     media_name = 'bootstrap'
     media_root = None

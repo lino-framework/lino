@@ -66,6 +66,7 @@ class Plugin(BasePlugin):
     contain media files for this app.
 
     `None` means that there this app has no media files of her own.
+
     Best practice is to set this to the `app_label`.  Will be ignored
     if :setting:`media_base_url` is nonempty.
 
@@ -448,6 +449,9 @@ class Site(Site):
         super(Site, self). __init__(*args, **kwargs)
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
+        self.user_interfaces = tuple([
+            p for p in self.installed_plugins
+            if isinstance(p, Plugin) and p.ui_label])
 
     def init_before_local(self, *args):
         super(Site, self).init_before_local(*args)

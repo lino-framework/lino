@@ -405,15 +405,9 @@ class Menu(MenuItem):
                  for mi in self.items]
         #~ print 20120901, items
         if level == 1:
-            #~ return xghtml.E.ul(*items,class_='jd_menu')
-            #~ return xghtml.E.ul(*items,id='navbar')
-            # ~ return xghtml.E.ul(*items,id='Navigation') # SelfHTML
-            #~ return xghtml.E.ul(*items,class_='dd_menu')
-            #~ until 20121226 return xghtml.E.ul(*items,id='nav')
-            return E.ul(*items, class_='nav nav-tabs')
+            return E.ul(*items, class_='nav navbar-nav')
         if self.label is None:
             raise Exception("%s has no label" % self)
-        #~ since 20121226 return xghtml.E.p(self.label,xghtml.E.ul(*items))
         if level == 2:
             cl = 'dropdown'
             menu_title = E.a(

@@ -29,9 +29,9 @@ class Site(Site):
     #~ description = _("yet another Content Management System.")
     version = "0.1"
     author = 'Luc Saffre'
-    author_email = 'luc.saffre@gmail.com'
+    author_email = 'luc.saffre@fsfe.org'
 
-    default_ui = 'plain'
+    default_ui = 'bootstrap3'
 
     languages = 'en de fr'
 

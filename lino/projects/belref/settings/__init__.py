@@ -68,7 +68,7 @@ class Site(Site):
         #~ yield 'lino.modlib.tickets'
         #~ yield 'lino.modlib.pages'
         yield 'lino.modlib.concepts'
-        yield 'lino.modlib.bootstrap3'
+        # yield 'lino.modlib.bootstrap3'
         yield 'lino.projects.belref'
 
     def setup_menu(self, ui, profile, main):

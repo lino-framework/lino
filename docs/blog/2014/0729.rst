@@ -98,3 +98,11 @@ much to do before :mod:`lino.modlib.bootstrap3` becomes a usable
 alternative to :mod:`lino.modlib.extjs`.
 
 Checkin. 
+
+There is one degradation: in Bootstrap 2 it was possible to render
+three menu levels (e.g. :menuselection:`Konfigurierung --> Kontakte
+--> Organisationsarten`) using dropdowns with sub-dropdowns. This is
+no longer supported in Bootstrap 3 (see `Bootstrap 3 dropdown sub menu
+missing
+<http://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-missing>`_).
+

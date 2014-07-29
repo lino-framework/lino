@@ -1,11 +1,11 @@
-{% extends "base.html" %}
+{% extends "bootstrap3/base.html" %}
 {% set active_page = "{{node.ref}}" %}
 {% block title %}{{title}}{% endblock %}
 
 {% block main %}
-<div class="row-fluid">
+<div class="container-fluid">
   {% if site.sidebar_width -%}
-  <div class="span{{site.sidebar_width}}">
+  <div class="col-md-{{site.sidebar_width}}">
     {% block sidebar_top %}
     <br/><br/><br/>
     {% endblock %}
@@ -13,7 +13,7 @@
     {% block sidebar_bottom %}
     {% endblock %}
   </div>
-  <div class="span{{12-site.sidebar_width}}">
+  <div class="col-md-{{12-site.sidebar_width}}">
   {% endif -%}
     {% block content %}
     {% if heading%}<h1>{{heading}}</h1>{% endif %}

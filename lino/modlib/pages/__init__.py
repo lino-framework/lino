@@ -24,6 +24,8 @@ class Plugin(Plugin):
 
     url_prefix = 'p'
 
+    media_name = 'pages'
+
     def __init__(self, *args, **kw):
         super(Plugin, self).__init__(*args, **kw)
         from lino.modlib.plain.plain_renderer import PlainRenderer
