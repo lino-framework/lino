@@ -763,13 +763,14 @@ class EventsByType(Events):
 class EventsByDay(Events):
     label = _("Appointments today")
     column_names = 'room summary workflow_buttons *'
-    auto_fit_column_widths = True
     required = dd.required(user_groups='office reception')
+    auto_fit_column_widths = True
+    params_panel_hidden = False
 
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(EventsByDay, self).param_defaults(ar, **kw)
-        kw.update(show_appointments=dd.YesNo.yes)
+        # kw.update(show_appointments=dd.YesNo.yes)
         kw.update(start_date=settings.SITE.today())
         kw.update(end_date=settings.SITE.today())
         return kw
