@@ -60,7 +60,23 @@ Changes in :mod:`lino.modlib.beid.mixins`.
 - added a logger line before writing the file
 - tested using ``configure_plugin('beid',
   data_collector_dir='/home/luc/tmp')``
-- 
-      
+ 
 
 
+Appointments today
+------------------
+
+The reception clerks in :ref:`chatelet` don't need the calendar panel,
+they just want a plain list of all appointments of today.
+
+- Extended the existing :class:`ml.cal.EventsByDay` so that it can be
+  used as amenu command.
+
+- :ref:`welfare` overrides the :attr:`dd.Table.column_names` for
+  :class:`ml.cal.EventsByDay`
+
+
+TODO: The table is defined in `cal`, but it appears only in the
+`reception` menu.  The table has a requirement `user_groups="office
+reception"`. Won't this cause problems in an application which has
+`cal` but not `reception`?

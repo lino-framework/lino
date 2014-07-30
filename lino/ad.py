@@ -449,9 +449,6 @@ class Site(Site):
         super(Site, self). __init__(*args, **kwargs)
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
-        self.user_interfaces = tuple([
-            p for p in self.installed_plugins
-            if isinstance(p, Plugin) and p.ui_label])
 
     def init_before_local(self, *args):
         super(Site, self).init_before_local(*args)
@@ -507,6 +504,9 @@ class Site(Site):
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
         self.ui = self.kernel  # internal backwards compat
+        self.user_interfaces = tuple([
+            p for p in self.installed_plugins
+            if isinstance(p, Plugin) and p.ui_label])
 
         # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
 

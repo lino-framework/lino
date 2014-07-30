@@ -184,7 +184,7 @@ class CheckinVisitor(dd.NotifyingAction):
             obj.state = GuestStates.busy
             obj.busy_since = None
             obj.save()
-            ar2.update(success=True)
+            ar2.success()
             super(CheckinVisitor, self).run_from_ui(ar2, **kw)
 
         if obj.event.assigned_to is not None:
@@ -494,11 +494,13 @@ def setup_main_menu(site, ui, profile, m):
     app = dd.apps.reception
     m = m.add_menu(app.app_name, app.verbose_name)
 
-    m.add_action(WaitingVisitors)
-    m.add_action(BusyVisitors)
-    m.add_action(GoneVisitors)
+    m.add_action('cal.EventsByDay')
+
+    m.add_action('reception.WaitingVisitors')
+    m.add_action('reception.BusyVisitors')
+    m.add_action('reception.GoneVisitors')
 
     # MyWaitingVisitors is maybe not needed as a menu entry since it
     # is also a get_admin_main_items. if i remove it then i must edit
     # pcsw_tests.py Waiting for user feedback before doing this.
-    m.add_action(MyWaitingVisitors)
+    m.add_action('reception.MyWaitingVisitors')

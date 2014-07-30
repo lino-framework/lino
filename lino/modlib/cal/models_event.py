@@ -553,7 +553,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     @dd.displayfield(_("When"))
     def linked_date(self, ar):
-        # EventsByDay = settings.SITE.modules.cal.EventsByDay
+        EventsByDay = settings.SITE.modules.cal.EventsByDay
         txt = when_text(self.start_date, self.start_time)
         return EventsByDay.as_link(ar, self.start_date, txt)
 
@@ -761,8 +761,23 @@ class EventsByType(Events):
 
 
 class EventsByDay(Events):
+    label = _("Appointments today")
     column_names = 'room summary workflow_buttons *'
     auto_fit_column_widths = True
+    required = dd.required(user_groups='office reception')
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(EventsByDay, self).param_defaults(ar, **kw)
+        kw.update(show_appointments=dd.YesNo.yes)
+        kw.update(start_date=settings.SITE.today())
+        kw.update(end_date=settings.SITE.today())
+        return kw
+
+    @classmethod
+    def create_instance(self, ar, **kw):
+        kw.update(start_date=ar.param_values.start_date)
+        return super(EventsByDay, self).create_instance(ar, **kw)
 
     @classmethod
     def get_title_base(self, ar):
@@ -901,7 +916,7 @@ def pre_analyze(sender, **kw):
     sender.user_model.define_action(update_reminders=UpdateUserReminders())
 
 
-__all__ = [
-    'UpdateEvents',
-    'Event', 'Events', 'EventsByController',
-    'EventType', 'EventTypes']
+# __all__ = [
+#     'UpdateEvents',
+#     'Event', 'Events', 'EventsByController',
+#     'EventType', 'EventTypes', 'EventsByDay']

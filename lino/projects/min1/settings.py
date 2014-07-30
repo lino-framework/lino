@@ -37,4 +37,6 @@ class Site(Site):
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
 
-SITE = Site(globals())
+SITE = Site(globals(), no_local=True)
+
+SECRET_KEY = "20227"  # see :djangoticket:`20227`

@@ -74,15 +74,15 @@ as I want (one project per .rst file).
 
 Now I can remove the following item from my todo list...
 
-- write unit tests to test the plain ui. 
+- write unit tests to test the bootstrap ui. 
   The best place would be a tested document with a Django test client.
   But how to instantiate a Django test client from a testcase which 
   does *not* use a test database but the project's demo database?
   
 ... by writing a few lines of code:  
 
->>> url = '/b/products/Products'
->>> res = client.get(url,REMOTE_USER='robin')
+>>> url = '/bs3/products/Products'
+>>> res = client.get(url, REMOTE_USER='robin')
 >>> print res.status_code
 200
 

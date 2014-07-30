@@ -92,7 +92,8 @@ How to "remove" an inherited action or collected from a table
 Here are the actions on Moos:
 
 >>> pprint([ba.action for ba in Moos.get_actions()])
-[<SaveRow grid_put>,
+[<ShowAsHtml show_as_html (u'HTML')>,
+ <SaveRow grid_put>,
  <CreateRow grid_post (u'grid_post')>,
  <SubmitInsert submit_insert (u'Create')>,
  <DeleteSelected delete_selected (u'Delete')>,
@@ -107,7 +108,8 @@ When I define a second table `S1(Moos)`, then `S1` will have
 both actions `m` and `t`:
 
 >>> pprint([ba.action for ba in S1.get_actions()])
-[<SaveRow grid_put>,
+[<ShowAsHtml show_as_html (u'HTML')>,
+ <SaveRow grid_put>,
  <CreateRow grid_post (u'grid_post')>,
  <SubmitInsert submit_insert (u'Create')>,
  <DeleteSelected delete_selected (u'Delete')>,
@@ -121,7 +123,8 @@ S2 does not have these actions because we "removed" them by overriding
 them with None:
 
 >>> pprint([ba.action for ba in S2.get_actions()])
-[<SaveRow grid_put>,
+[<ShowAsHtml show_as_html (u'HTML')>,
+ <SaveRow grid_put>,
  <CreateRow grid_post (u'grid_post')>,
  <SubmitInsert submit_insert (u'Create')>,
  <DeleteSelected delete_selected (u'Delete')>,
