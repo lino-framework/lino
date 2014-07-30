@@ -1,0 +1,66 @@
+========================
+Wednesday, July 30, 2014
+========================
+
+Multiple blog postings per document
+-----------------------------------
+
+.. highlight:: bash
+
+Ahmet made changes in ablog to support `multiple postings per document
+<https://github.com/abakan/ablog/issues/4>`_ and asked me to test
+them.  So I needed to merge his changes into the local copy of my fork.
+The GitHub help section about `Syncing a fork
+<https://help.github.com/articles/syncing-a-fork>`_ worked like a
+charm for me::
+
+    $ git fetch upstream
+    remote: Counting objects: 40, done.
+    remote: Compressing objects: 100% (31/31), done.
+    remote: Total 40 (delta 14), reused 16 (delta 9)
+    Unpacking objects: 100% (40/40), done.
+    From github.com:abakan/ablog
+       4819cb9..50ba0a4  master     -> upstream/master
+
+    $ git merge upstream/master
+    Updating 4819cb9..50ba0a4
+    Fast-forward
+     .gitignore                               |   1 +
+     ablog/__init__.py                        | 362 +----------------------------
+     ablog/{ablog.py => blog.py}              |  56 ++---
+     ablog/post.py                            | 379 +++++++++++++++++++++++++++++++
+     ablog/templates/archive.html             |   2 +-
+     ablog/templates/postnavy.html            |   4 +-
+     ablog/templates/recentposts.html         |   2 +-
+     docs/Makefile                            |   4 +-
+     docs/conf.py                             |   3 +-
+     docs/{i18n.rst => manual/ablog-i18n.rst} |  28 ++-
+     docs/manual/multiple-posting.rst         |  31 +++
+     11 files changed, 468 insertions(+), 404 deletions(-)
+     rename ablog/{ablog.py => blog.py} (92%)
+     create mode 100644 ablog/post.py
+     rename docs/{i18n.rst => manual/ablog-i18n.rst} (71%)
+     create mode 100644 docs/manual/multiple-posting.rst
+
+
+Since this feature now works perfectly, there are chances that I start
+to use ablog for the Lino blog, too.  But I agree, there are more
+urgent things to do...
+
+
+UnicodeError while writing to `data_collector_dir`
+--------------------------------------------------
+
+Next shot to try to catch that Unicode error when writing non-ascii
+card data to :setting:`beid.data_collector_dir`:
+
+Changes in :mod:`lino.modlib.beid.mixins`.
+
+- removed one call to ``.decode('utf-8')``
+- added a logger line before writing the file
+- tested using ``configure_plugin('beid',
+  data_collector_dir='/home/luc/tmp')``
+- 
+      
+
+

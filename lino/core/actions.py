@@ -587,8 +587,8 @@ class RedirectAction(Action):
 
 def buttons2pager(buttons, title=None):
     items = []
-    # if title:
-    #     items.append(E.li(E.span(title)))
+    if title:
+        items.append(E.li(E.span(title)))
     for symbol, label, url in buttons:
         if url is None:
             items.append(E.li(E.span(symbol), class_="disabled"))
@@ -627,6 +627,7 @@ class GridEdit(TableAction):
     def as_bootstrap_html(self, ar, as_main=True):
         # used by lino.modlib.plain and lino.modlib.bootstrap3
         t = xghtml.Table()
+        t.attrib.update(class_="table table-striped table-hover")
         if ar.limit is None:
             ar.limit = PLAIN_PAGE_LENGTH
         pglen = ar.limit

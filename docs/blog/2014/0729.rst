@@ -5,13 +5,15 @@
 A nasty Javascript bug
 ======================
 
-I discovered and am investigating a bug in :xfile:`linoweb.js`. It
-happens when adding a new record to a grid using cell editing (which
+I discovered and am investigating a bug in :xfile:`linoweb.js`. 
+:doc:`/tickets/119`.
+It happens when adding a new record to a grid using cell editing (which
 currently requires the user to press :kbd:`F2`). The bug is not very
 urgent since the current production sites don't really use this entry
 method. Most people even don't know it. But it is necessary in an
 accounting application. It is a show stopper for :ref:`cosi`.  I want
-to fix this bug. But it is a good one.
+to fix this bug. But it is a nasty one.
+
 
 As usual when I must do some job which I don't love, I find
 distractions.  For example Ly watched one of my private blog pages and
@@ -25,23 +27,23 @@ Bug im JS dran!  Da scheint etwas mit der inheritence (`Ext.extend`)
 nicht zu klappen.
 
 Da stellt sich natürlich die Frage, ob ich nicht besser langsam mal
-auf die neueste ExtJS-Version umsteige.
-
-Erfreulich: ExtJS Version 5 ist raus!
-
-Weniger erfreulich: nirgends auf der Webseite finde ich einen Link für
-den Download der GPL-Version. Auch ein öffentliches Repository haben
-die ja nie gehabt.  Okay, `hier
+auf die neueste ExtJS-Version umsteige.  Erfreulich: ExtJS Version 5
+ist raus!  Weniger erfreulich: nirgends auf der Webseite finde ich
+einen Link für den Download der GPL-Version. Auch ein öffentliches
+Repository haben die ja nie gehabt.  Okay, `hier
 <http://www.sencha.com/forum/showthread.php?260398-Ext-JS-3.4.1.1-Available-Full-Public-Release!>`_
 gibt es immerhin noch die Version 3.4.1.1. Mit der scheint Lino
 übrigens auch nicht zu funktionieren. Er meldet dann "TypeError:
-this.indexOf is not a function" in der JS-Konsole. 
+this.indexOf is not a function" in der JS-Konsole.
 
-Lino braucht eben Version 3.3.1. Insgesamt kein Problem wenn man es
-weiß.
+Das Upgrade zur Version 5 wird irgendwann kommen.  Aber das wird ein
+Stück Drecksarbeit, auf die ich wenig Lust habe und für die es keinen
+zwingenden Grund gibt.  Lino braucht eben Version 3.3.1. Insgesamt
+kein Problem wenn man es weiß.
 
-Until now I believed that Sencha are glad that ExtJS is the primary
-user interface for Lino. But I start to wonder whether that's true.
+Until now I believed that Sencha are *glad* about Lino selecting ExtJS
+as primary user interface (or at least that they *would* be glad if
+they would *know* it).  But I start to wonder whether that's true.
 They don't give the impression that they care for the *free* users'
 community of their products.  And I am not the first to feel like this
 (probably rather the last...): a Premium user *dnorman* wrote in 2012
@@ -87,7 +89,7 @@ at `Angular.js` & friends I fell back to our good old Bootstrap.
 Until now Bootstrap (v2) was integrated into Lino as
 :mod:`lino.modlib.plain`.  This app is now deprecated and replaced by
 :mod:`lino.modlib.bootstrap3`.  Applications should not need to do
-anything.
+anything because this was one of the "automatic" apps.
 
 One good side effect is that the usage of the name "plain" to
 designate "an HTML interface using Bootstrap" is now history.
@@ -106,3 +108,12 @@ no longer supported in Bootstrap 3 (see `Bootstrap 3 dropdown sub menu
 missing
 <http://stackoverflow.com/questions/18023493/bootstrap-3-dropdown-sub-menu-missing>`_).
 
+Yes, listening to Mark Otto's statement is probably more future-proof
+than trying to work around it.  And in fact this would return us to
+how TIM did it: use several 2-dimensional menus instead of one
+3-dimensional menu. TIM differentiates "main menu", the "reports
+menu", the "configuration menu" and the "explorer menu".
+
+One question is: should Lino analyze the menu tree and do this
+differentiation automatically (transparently, depending on the user
+interface)?

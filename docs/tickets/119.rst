@@ -1,0 +1,122 @@
+#119 : Adding records in grid mode
+==================================
+
+It happens when adding a new record to a grid using cell editing
+(which currently requires the user to press :kbd:`F2`).
+
+Here is how to reproduce it:
+
+- get the latest Lino development version
+- :cmd:`cd` to the :srcref:`lino/projects/presto` of your clone and
+  run::
+
+    $ python manage.py initdb_demo
+    $ python manage.py runserver
+
+- Open your browser on http://127.0.0.1:8000/
+- Log in as robin
+
+- Select :menuselection:`Tickets --> My Sessions` and move the cursor
+  to the third column ("Start time") of the :ref:`phantom row`.
+
+  .. image:: /blog/2014/0729a.png
+      :scale: 80
+
+- Press :kbd:`F2` (to start editing), type "17" into the combo box,
+  press :kbd:`TAB` (to move to the next cell) and type "18" into that
+  cell.
+
+  .. image:: /blog/2014/0729b.png
+    :scale: 80
+
+  Until now everything is as it should.
+
+- Now press :kbd:`TAB` again to confirm your editing. This should move
+  the cursor to the "Break Time" cell. But it doesn't.  It creates a
+  second row!
+
+  .. image:: /blog/2014/0729c.png
+    :scale: 80
+
+
+What has happened? The new record (which gets created and then
+inserted into the grid) is wrongly considered as a phantom record
+(i.e.  `e.record.phantom` is true). That's why the second TAB (handled
+by a second call to `on_afteredit`) tries to do another POST followed
+by `Store.insert()`. The DataStore.insert() method seems to be able to
+insert both phantom and dirty records, but it isn't even being
+called. And I don't understand why...
+
+
+Here is an excerpt from `Lino.GridPanel.on_afteredit` (defined in
+:xfile:`linoweb.js`)::
+
+     success: Lino.action_handler( this, function(result) {
+     ...
+          console.log("20140728 afteredit.success got ", result);  
+          if (result.refresh_all) {
+              ...
+          } else if (result.rows) {
+              var r = self.getStore().reader.readRecords(result);
+              if (e.record.phantom) {
+                  console.log("20140728 gonna call Store.insert()", self.getStore(), e.row, r.records);
+                  self.getStore().insert(e.row, r.records);
+              }else{
+                  self.getStore().doUpdate(r.records[0]);
+              }
+              self.getStore().rejectChanges(); 
+              /* get rid of the red triangles without saving the record again
+              */
+              ...
+
+I am currently stuck at the following line::
+
+  self.getStore().insert(e.row, r.records);
+
+`self.getStore()` returns a `Lino.GridStore` instance which is a
+subclass of `Ext.data.ArrayStore`::
+
+  Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{ 
+      ...
+  });
+
+
+And `Ext.data.ArrayStore` (defined in `ext-all-debug.js
+<http://extjs-public.googlecode.com/svn/tags/extjs-3.3.1/release/ext-all-debug.js>`_)
+inherits from `Ext.data.Store`::
+
+    Ext.data.ArrayStore = Ext.extend(Ext.data.Store, {
+       ...
+    });
+
+
+And `Ext.data.ArrayStore` defines the `insert` method which I call (or
+want to call)::
+
+    Ext.data.Store = Ext.extend(Ext.util.Observable, {
+        ...
+
+        insert : function(index, records) {
+            var i, len, record;
+            records = [].concat(records);
+            for (i = 0, len = records.length; i < len; i++) {
+                record = records[i];
+                this.data.insert(index + i, record);
+                record.join(this);
+                if (record.dirty || record.phantom) {
+                    this.modified.push(record);
+                }
+            }
+            if (this.snapshot) {
+                this.snapshot.addAll(records); 
+            }
+            this.fireEvent('add', this, records, index);
+        },
+
+        ...
+    });
+
+
+But this method gets never executed.  For some unknown reason, it is
+the `insert` method of `Ext.util.MixedCollection` which is being
+executed instead.

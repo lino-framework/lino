@@ -4104,7 +4104,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         params:p,
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
-          // console.log("20140728 afteredit.success got ", result);
+          console.log("20140728 afteredit.success got ", result);
           //~ if (result.data_record) {
           if (result.refresh_all) {
               var cw = self.get_containing_window();
