@@ -1,0 +1,6 @@
+/home/luc/hgwork/lino/lino/ad.py:docstring of lino.ad.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/docs/api/lino.modlib.beid.rst:15: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0507.rst:8: WARNING: undefined label: welfare.debts.entries (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0730.rst:69: WARNING: undefined label: chatelet (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14
+/home/luc/hgwork/lino/docs/tutorials/actions/index.rst:7: WARNING: undefined label: dev.actions (if the link has no caption the label must precede a section header)

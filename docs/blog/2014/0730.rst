@@ -80,3 +80,15 @@ TODO: The table is defined in `cal`, but it appears only in the
 `reception` menu.  The table has a requirement `user_groups="office
 reception"`. Won't this cause problems in an application which has
 `cal` but not `reception`?
+
+
+Upgrade in :ref:`chat`
+----------------------
+
+Added translations to French.
+
+Discovered that :meth:`lino_welfare.migrate.migrate_from_1_1_15` and
+:meth:`lino_welfare.migrate.migrate_from_1_1_16` conflict with each
+other when both are being applied in a single migration.  Opened
+:doc:`/tickets/120`.
+

@@ -1,0 +1,28 @@
+#120 : Multiple migrations can conflict with each other
+=======================================================
+
+.. highlight:: python
+
+For example :meth:`lino_welfare.migrate.migrate_from_1_1_15` and
+:meth:`lino_welfare.migrate.migrate_from_1_1_16` conflict with each
+other when both are being applied in a single migration.  Because they
+both change the same model ('aids.Aid').
+
+This is a fundamental problem with :ref:`dpy`.  
+
+The solution will probably require a syntax change.  These
+`create_foo_Bar` functions should be methods rather than functions in
+the global namespace.  For example, the python dump (created by
+version 1.1.14) contained a file `aids_aid.py` which contained lines
+like this::
+
+  loader.save(create_aids_aid(2,date(2014,4,7),date(2014,4,7),date(2014,4,7),None,137,u'20',5,1,None))
+
+This should rather become::
+
+  loader.create_aids_aid(2,date(2014,4,7),date(2014,4,7),date(2014,4,7),None,137,u'20',5,1,None)
+
+
+Not urgent because I can always write a quick local workaround when it
+happens.
+
