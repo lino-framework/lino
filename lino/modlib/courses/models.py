@@ -248,6 +248,8 @@ class Course(cal.Reservation, dd.Printable):
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     slot = models.ForeignKey(Slot, blank=True, null=True)
 
+    quick_search_fields = ('line__name', 'line__topic__name')
+
     state = CourseStates.field(default=CourseStates.draft)
 
     max_places = models.PositiveIntegerField(
@@ -427,7 +429,7 @@ class Courses(dd.Table):
     start_date
     line teacher
     """
-    column_names = "info line teacher room *"
+    column_names = "info line teacher room state *"
     # order_by = ['start_date']
     order_by = 'line__name room__name start_date'.split()
 
@@ -807,9 +809,10 @@ class EnrolmentsByCourse(Enrolments):
     request_date user
     """
 
-    @dd.virtualfield(dd.HtmlBox("Pupil"))
+    @dd.virtualfield(dd.HtmlBox(_("Participant")))
     def pupil_info(cls, self, ar):
-        elems = self.pupil.get_name_elems(ar)
+        elems = [ar.obj2html(self.pupil, self.pupil.get_full_name())]
+        elems += [', ']
         elems += join_elems(
             list(self.pupil.address_location_lines()),
             sep=', ')

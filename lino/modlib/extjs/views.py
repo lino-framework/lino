@@ -325,7 +325,7 @@ def choices_for_field(request, actor, field):
         m = field.rel.to
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
-        #~ logger.info('20120710 choices_view(FK) %s --> %s',t,qs)
+        # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
 
         def row2dict(obj, d):
             d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
