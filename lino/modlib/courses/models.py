@@ -485,13 +485,6 @@ class Courses(dd.Table):
             if v:
                 yield unicode(v)
 
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(Courses, self).param_defaults(ar, **kw)
-        #~ kw.update(state=CourseStates.started)
-        kw.update(active=dd.YesNo.yes)
-        return kw
-
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
@@ -503,6 +496,13 @@ class CoursesByLine(Courses):
     master_key = "line"
     column_names = "info weekdays_text room times_text teacher *"
     order_by = ['room__name', 'start_date']
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(Courses, self).param_defaults(ar, **kw)
+        #~ kw.update(state=CourseStates.started)
+        kw.update(active=dd.YesNo.yes)
+        return kw
 
 
 class CoursesByTopic(Courses):
@@ -530,6 +530,13 @@ class ActiveCourses(Courses):
     column_names = 'info enrolments max_places teacher room *'
     #~ auto_fit_column_widths = True
     hide_sums = True
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(Courses, self).param_defaults(ar, **kw)
+        #~ kw.update(state=CourseStates.started)
+        kw.update(active=dd.YesNo.yes)
+        return kw
 
 
 class CreateInvoiceForEnrolment(sales.CreateInvoice):
