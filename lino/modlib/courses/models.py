@@ -264,7 +264,7 @@ class Course(cal.Reservation, dd.Printable):
 
     def on_duplicate(self, ar, master):
         self.state = CourseStates.draft
-        super(Course, self).on_duplicate(ar)
+        super(Course, self).on_duplicate(ar, master)
 
     def __unicode__(self):
         if self.name:
