@@ -367,7 +367,7 @@ field2kw = settings.SITE.field2kw
 
 from lino.mixins import (
     ProjectRelated, UserAuthored, ByUser,
-    Duplicable,
+    Duplicable, Duplicate,
     Sequenced, Hierarizable, Referrable,
     Registrable,
     Controllable)

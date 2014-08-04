@@ -260,6 +260,7 @@ class Course(cal.Reservation, dd.Printable):
     name = models.CharField(max_length=100,
                             blank=True,
                             verbose_name=_("Name"))
+    duplicate = dd.Duplicate()
 
     def __unicode__(self):
         if self.name:
@@ -431,7 +432,8 @@ class Courses(dd.Table):
     """
     column_names = "info line teacher room state *"
     # order_by = ['start_date']
-    order_by = 'line__name room__name start_date'.split()
+    # order_by = 'line__name room__name start_date'.split()
+    order_by = ['name']
 
     parameters = dd.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),

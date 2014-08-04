@@ -12,9 +12,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-Defines the model mixin :class:`Duplicable`.
-"duplicable" [du'plikəblə] means "able to produce a duplicate ['duplikət],['du:plikeit]".
+"""Defines the model mixin :class:`Duplicable`.  "duplicable"
+[du'plikəblə] means "able to produce a duplicate
+['duplikət], ['du:plikeit]".
+
 """
 
 from __future__ import unicode_literals
