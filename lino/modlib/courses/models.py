@@ -523,8 +523,9 @@ class ActiveCourses(Courses):
 
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments #price max_places teacher room *'
+    column_names = 'info enrolments max_places teacher room *'
     #~ auto_fit_column_widths = True
+    hide_sums = True
 
 
 class CreateInvoiceForEnrolment(sales.CreateInvoice):
