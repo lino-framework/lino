@@ -262,7 +262,7 @@ class Course(cal.Reservation, dd.Printable):
                             verbose_name=_("Name"))
     duplicate = dd.Duplicate()
 
-    def on_duplicate(self, ar):
+    def on_duplicate(self, ar, master):
         self.state = CourseStates.draft
         super(Course, self).on_duplicate(ar)
 
