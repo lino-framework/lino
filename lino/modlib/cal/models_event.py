@@ -50,7 +50,6 @@ from .models import Component
 from .models import Priority
 from .workflows import EventStates
 
-# contacts = dd.resolve_app('contacts')
 postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
@@ -497,8 +496,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
-        if settings.SITE.is_installed('contacts') and issubclass(settings.SITE.project_model, contacts.Partner):
-            if self.project:
+        if self.project:
+            if isinstance(self.project, dd.modules.contacts.Partner):
                 yield self.project
         for g in self.guest_set.all():
             yield g.partner
@@ -509,8 +508,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.event_type
 
     def get_mailable_recipients(self):
-        if settings.SITE.is_installed('contacts') and issubclass(settings.SITE.project_model, contacts.Partner):
-            if self.project:
+        if self.project:
+            if isinstance(self.project, dd.modules.contacts.Partner):
                 yield ('to', self.project)
         for g in self.guest_set.all():
             yield ('to', g.partner)

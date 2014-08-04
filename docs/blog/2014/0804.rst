@@ -1,0 +1,13 @@
+======================
+Monday, August 4, 2014
+======================
+
+:ref:`faggio`.
+
+- New field :attr:`ml.courses.Course.name` : "Kurzbezeichnung" eines
+  Kurses.
+
+- Diverse Kolonnen und Layouts
+
+  EnrolmentsByPupil.insert_layout 
+  EnrolmentsByCourse.insert_layout 

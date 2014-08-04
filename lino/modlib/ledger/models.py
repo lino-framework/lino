@@ -1245,6 +1245,8 @@ class DebtorsCreditors(dd.VirtualTable):
         rows = []
         mi = ar.master_instance
         if mi is None:  # called directly from main menu
+            if ar.param_values is None:
+                return rows
             end_date = ar.param_values.today
         else:   # called from Situation report
             end_date = mi.today

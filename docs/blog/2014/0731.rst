@@ -1,0 +1,13 @@
+=======================
+Thursday, July 31, 2014
+=======================
+
+I made an upgrade of the online demo sites (:ref:`demos`) while
+somebody was exploring it (sorry).
+
+I keep receiving `PermissionDenied` server tracebacks per email saying
+"As Anonyme you have no permission to run this action".  It seems that
+they are all caused by standard AJAX requests as Lino uses, except
+that these ones are anonymous.  And I continue to ignore how to
+reproduce them.
+

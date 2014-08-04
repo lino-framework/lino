@@ -51,5 +51,6 @@ Other
    /todo
    Generated API </api/lino>
    /tested/index
+   git
 
 

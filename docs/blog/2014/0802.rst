@@ -1,0 +1,16 @@
+========================
+Saturday, August 2, 2014
+========================
+
+The :class:`ml.outbox.CreateMail` action on a Calendar Event caused a
+NameError "global name 'contacts' is not defined". Fixed.
+
+Fixed some stupid but fatal bugs which orrcured when entering
+bankstatements.  E.g. AttributeError "'DueMovement' object has no
+attribute 'amount'".
+
+
+Fixed an AttributeError "'NoneType' object has no attribute 'today'"
+which occured during bootstrap views of :class:`ml.ledger.Debtors` and
+:class:`ml.ledger.Creditors`.
+

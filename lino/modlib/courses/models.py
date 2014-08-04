@@ -100,7 +100,7 @@ class Slots(dd.Table):
     model = Slot
     required = dd.required(user_level='manager')
     insert_layout = """
-    start_time end_time 
+    start_time end_time
     name
     """
     detail_layout = """
@@ -187,7 +187,11 @@ class EventsByTeacher(cal.Events):
         teacher = ar.master_instance
         if teacher is None:
             return []
+        if True:
+            return []
+        # TODO: build a list of courses, then show events by course
         qs = super(EventsByTeacher, self).get_request_queryset(ar)
+        mycourses = dd.modules.Course.objects.filter(teacher=teacher)
         qs = qs.filter(course__in=teacher.course_set.all())
         return qs
 
@@ -251,7 +255,13 @@ class Course(cal.Reservation, dd.Printable):
         help_text=("Maximal number of participants"),
         blank=True, null=True)
 
+    name = models.CharField(max_length=100,
+                            blank=True,
+                            verbose_name=_("Name"))
+
     def __unicode__(self):
+        if self.name:
+            return self.name
         if self.room is None:
             return "%s (%s)" % (self.line, dd.dtos(self.start_date))
         return u"%s (%s %s)" % (
@@ -418,7 +428,8 @@ class Courses(dd.Table):
     line teacher
     """
     column_names = "info line teacher room *"
-    order_by = ['start_date']
+    # order_by = ['start_date']
+    order_by = 'line__name room__name start_date'.split()
 
     parameters = dd.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),
@@ -452,13 +463,6 @@ class Courses(dd.Table):
                 qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
             elif ar.param_values.active == dd.YesNo.no:
                 qs = qs.exclude(state__in=ACTIVE_COURSE_STATES)
-            #~
-        #~ if ar.param_values.line is not None:
-            #~ qs = qs.filter(line=ar.param_values.line)
-            #~
-        #~ if ar.param_values.state is not None:
-            #~ qs = qs.filter(state=ar.param_values.state)
-
         return qs
 
     @classmethod
@@ -473,19 +477,29 @@ class Courses(dd.Table):
             if v:
                 yield unicode(v)
 
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(Courses, self).param_defaults(ar, **kw)
+        #~ kw.update(state=CourseStates.started)
+        kw.update(active=dd.YesNo.yes)
+        return kw
+
 
 class CoursesByTeacher(Courses):
     master_key = "teacher"
     column_names = "start_date start_time end_time line room *"
+    order_by = ['start_date']
 
 
 class CoursesByLine(Courses):
     master_key = "line"
-    column_names = "start_date start_time end_time weekdays_text room times_text teacher *"
+    column_names = "info weekdays_text room times_text teacher *"
+    order_by = ['room__name', 'start_date']
 
 
 class CoursesByTopic(Courses):
     master = Topic
+    order_by = ['start_date']
     order_by = ['start_date']
     column_names = "start_date:8 line:20 room:10 weekdays_text:10 times_text:10"
 
@@ -507,13 +521,6 @@ class ActiveCourses(Courses):
     #~ column_names = 'info requested confirmed teacher company room'
     column_names = 'info enrolments #price max_places teacher room *'
     #~ auto_fit_column_widths = True
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(ActiveCourses, self).param_defaults(ar, **kw)
-        #~ kw.update(state=CourseStates.started)
-        kw.update(active=dd.YesNo.yes)
-        return kw
 
 
 class CreateInvoiceForEnrolment(sales.CreateInvoice):
@@ -777,14 +784,36 @@ class EnrolmentsByPupil(Enrolments):
         kw.update(participants_only=False)
         return kw
 
+    insert_layout = """
+    course
+    remark
+    request_date user
+    """
+
+from lino.utils import join_elems
+from lino.utils.xmlgen.html import E
 
 class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "course"
-    column_names = 'request_date pupil user amount workflow_buttons *'
+    column_names = 'request_date pupil_info user amount workflow_buttons remark *'
     auto_fit_column_widths = True
     # cell_edit = False
+
+    insert_layout = """
+    pupil
+    remark
+    request_date user
+    """
+
+    @dd.virtualfield(dd.HtmlBox("Pupil"))
+    def pupil_info(cls, self, ar):
+        elems = self.pupil.get_name_elems(ar)
+        elems += join_elems(
+            list(self.pupil.address_location_lines()),
+            sep=', ')
+        return E.div(*elems)
 
 
 # class EventsByCourse(cal.Events):
