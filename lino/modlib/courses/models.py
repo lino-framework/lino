@@ -502,7 +502,6 @@ class CoursesByLine(Courses):
 class CoursesByTopic(Courses):
     master = Topic
     order_by = ['start_date']
-    order_by = ['start_date']
     column_names = "start_date:8 line:20 room:10 weekdays_text:10 times_text:10"
 
     @classmethod
@@ -510,7 +509,8 @@ class CoursesByTopic(Courses):
         topic = ar.master_instance
         if topic is None:
             return []
-        return settings.SITE.modules.courses.Course.objects.filter(line__topic=topic)
+        return settings.SITE.modules.courses.Course.objects.filter(
+            line__topic=topic)
 
 
 class CoursesBySlot(Courses):
@@ -778,7 +778,7 @@ class EnrolmentsByPupil(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "pupil"
-    column_names = 'request_date course amount user workflow_buttons *'
+    column_names = 'request_date course user:10 remark amount:10 workflow_buttons *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -799,7 +799,7 @@ class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "course"
-    column_names = 'request_date pupil_info user amount workflow_buttons remark *'
+    column_names = 'request_date pupil_info user:10 remark amount:10 workflow_buttons *'
     auto_fit_column_widths = True
     # cell_edit = False
 
