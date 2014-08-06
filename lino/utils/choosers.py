@@ -11,13 +11,18 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""Extends the possibilities for defining choices for fields of a Django model.
+"""Extends the possibilities for defining choices for fields of a
+Django model.
 
 - Context-sensitive choices
 - Non-limiting choices :
   specify a pick list of suggestions but leave the possibility
   to store manually entered values
 - :ref:`learning_combos`
+
+TODO: compare with `django-ajax-selects
+<https://github.com/crucialfelix/django-ajax-selects>`_
+
 
 .. _learning_combos:
 

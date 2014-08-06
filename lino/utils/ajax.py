@@ -30,6 +30,8 @@ import sys
 import traceback
 from django.conf import settings
 from django.http import HttpResponseServerError
+from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 
 
 class AjaxExceptionResponse:
@@ -48,4 +50,6 @@ class AjaxExceptionResponse:
                     "AjaxExceptionResponse:\n" + response)
             else:
                 settings.SITE.logger.exception(exception)
+            if isinstance(exception, PermissionDenied):
+                return HttpResponseForbidden(response)
             return HttpResponseServerError(response)
