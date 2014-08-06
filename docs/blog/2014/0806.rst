@@ -1,0 +1,8 @@
+=========================
+Wednesday, August 6, 2014
+=========================
+
+Fixed a bug which caused a TypeError "getattr(): attribute name must
+be string" when user selected trade type "Wages" in the parameters of
+a :class:`ml.ledger.DebtsByAccount` or
+:class:`ml.ledger.DebtsByPartner` table.

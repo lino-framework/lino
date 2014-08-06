@@ -118,17 +118,22 @@ class TradeType(dd.Choice):
 
     def get_base_account(self):
         if self.base_account_field_name is None:
-            raise Exception("%s has no base_account_field_name!" % self)
+            return None
+            # raise Exception("%s has no base_account_field_name!" % self)
         return getattr(settings.SITE.site_config,
                        self.base_account_field_name)
 
     def get_vat_account(self):
         if self.vat_account_field_name is None:
-            raise Exception("%s has no vat_account_field_name!" % self)
+            return None
+            # raise Exception("%s has no vat_account_field_name!" % self)
         return getattr(settings.SITE.site_config, self.vat_account_field_name)
 
     def get_partner_account(self):
-        return getattr(settings.SITE.site_config, self.partner_account_field_name)
+        if self.partner_account_field_name is None:
+            return None
+        return getattr(
+            settings.SITE.site_config, self.partner_account_field_name)
 
     def get_product_base_account(self, product):
         if self.base_account_field_name is None:
@@ -458,10 +463,9 @@ class VatDocument(VatTotal):
             match = "%s#%s" % (self.journal.ref, self.pk)
 
         a = self.get_trade_type().get_partner_account()
-        #~ a = settings.SITE.get_partner_account(self)
-        #~ a = self.journal.chart.get_account_by_ref(a)
-        yield self.create_movement(a, self.journal.dc, sum,
-                                   partner=self.partner, match=match)
+        if a is not None:
+            yield self.create_movement(
+                a, self.journal.dc, sum, partner=self.partner, match=match)
 
     def fill_defaults(self):
         if not self.payment_term:

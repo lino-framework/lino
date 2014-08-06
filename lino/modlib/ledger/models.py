@@ -814,11 +814,11 @@ class ExpectedMovements(dd.VirtualTable):
     def get_data_rows(cls, ar, **flt):
         #~ if ar.param_values.journal:
             #~ pass
-        if ar.param_values.trade_type:
-            flt.update(
-                account=ar.param_values.trade_type.get_partner_account())
-        if ar.param_values.date_until is not None:
-            flt.update(voucher__date__lte=ar.param_values.date_until)
+        pv = ar.param_values
+        if pv.trade_type:
+            flt.update(account=pv.trade_type.get_partner_account())
+        if pv.date_until is not None:
+            flt.update(voucher__date__lte=pv.date_until)
         return get_due_movements(cls.get_dc(ar), **flt)
 
     @classmethod
@@ -1198,7 +1198,9 @@ class PartnerAccountsBalance(AccountsBalance):
 
     @classmethod
     def rowmvtfilter(self, row):
-        return dict(partner=row, account=self.trade_type.get_partner_account())
+        a = self.trade_type.get_partner_account()
+        # TODO: what if a is None?
+        return dict(partner=row, account=a)
 
     @dd.displayfield(_("Ref"))
     def ref(self, row, ar):

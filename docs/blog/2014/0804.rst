@@ -2,12 +2,15 @@
 Monday, August 4, 2014
 ======================
 
-:ref:`faggio`.
+Today I met with Ruth, Hermann, Gaby and Monique to talk about
+:ref:`faggio`.  Together we had lots of ideas. Some of them I
+implemented right now:
 
 - New field :attr:`ml.courses.Course.name` : "Kurzbezeichnung" eines
   Kurses.
 
-- Diverse Kolonnen und Layouts
+- Miscellaneous `column_names`, `insert_layout` and parameters.
+  Separate `insert_layout` for `courses.EnrolmentsByPupil`
+  and `courses.EnrolmentsByCourse`.
 
-  EnrolmentsByPupil.insert_layout 
-  EnrolmentsByCourse.insert_layout 
+- ...
