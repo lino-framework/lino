@@ -13,5 +13,4 @@ After reading `this thread on stackoverflow
 I changed :mod:`lino.utils.ajax` to return HttpResponseForbidden
 instead of HttpResponseServerError in case of PermissionDenied.
 
-HttpResponseForbidden
-
+Updated and reinitialized the :ref:`demos`.

@@ -1,0 +1,61 @@
+=======================
+Monday, August 11, 2014
+=======================
+
+Bescheinigungen
+===============
+
+Worked on :mod:`welfare.aids` as analyzed with Gerd:
+
+- aids.Confirmation (Hilfebestätigung) als abstract base class. Gemeinsame
+  Felder: start_date, end_date, aid_type, author, signer, board, board_date
+
+  Und dann via MTI mindestens drei Unterklassen:
+
+  - IncomeConfirmation (Einkommensbescheinigung) : EiEi, Ausländerbeihilfe
+  - RefundConfirmation (Kostenrückerstattung) : AMK
+  - OtherConfirmation (Sonstige) : Lebensmittelbank
+
+AidType.content_type : Art der Unterklasse. Darf nicht mehr geändert
+werden wenn mindestens ein Record existiert.
+
+User-Interface : eine HtmlBox mit einer Aktion für jede Bestätigungsart.
+
+Datenmigration : unwichtig, weil ich die einfach manuell
+rauskommentieren kann.
+
+
+
+Choosers on subclasses
+======================
+
+I discovered and fixed a subtle framework bug.
+For example when I defined a base model and two subclasses thereof::
+
+    class Confirmation(dd.Model):
+    
+        aid_type = dd.ForeignKey(...)
+
+        @classmethod
+        def get_aid_types(cls):
+            ct = ConfirmationTypes.get_by_value(dd.full_model_name(cls))
+            return dd.modules.aids.AidType.objects.filter(confirmation_type=ct)
+
+    class A(Confirmation):
+        ...
+
+    class B(Confirmation):
+
+        ...
+
+Then the combobox for `aid_type` on an A row and of a B row had the
+same content. It is possible (I didn't verify) that this happened only
+for MTI constellations, i.e. when the model which defines the
+`aid_type` field was not abstract.
+
+Explanation: This was because Lino stored these choosers on the
+database field object.  Which caused the chooser for `A.aid_type` to
+be overwritten by the chooser for `B.aid_type`.
+
+Solution: choosers are now stored in a dict `_lino_choosers` on the
+model (or action).

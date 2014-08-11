@@ -284,8 +284,8 @@ def choices_for_field(request, actor, field):
     (whose requesting actor has already been identified and is given
     as `actor`).
     """
-    #~ logger.info("20120202 %r",field)
-    chooser = choosers.get_for_field(field)
+    model = actor.get_chooser_model()
+    chooser = choosers.get_for_field(model, field.name)
     if chooser:
         qs = chooser.get_request_choices(request, actor)
         if not isiterable(qs):
@@ -308,6 +308,7 @@ def choices_for_field(request, actor, field):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
                 return d
+
     elif field.choices:
         qs = field.choices
 

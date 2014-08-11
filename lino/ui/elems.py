@@ -128,7 +128,8 @@ def before_row_edit(panel):
             if e.format == 'html' and settings.SITE.use_tinymce:
                 l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e, FieldElement):
-            chooser = choosers.get_for_field(e.field)
+            model = panel.layout_handle.layout.get_chooser_model()
+            chooser = choosers.get_for_field(model, e.field.name)
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
                 for f in chooser.context_fields:
@@ -2161,8 +2162,8 @@ TRIGGER_BUTTON_WIDTH = 3
 
 
 def field2elem(layout_handle, field, **kw):
-    #~ if hasattr(field,'_lino_chooser'):
-    ch = choosers.get_for_field(field)
+    model = layout_handle.layout.get_chooser_model()
+    ch = choosers.get_for_field(model, field.name)
     if ch:
         #~ if ch.on_quick_insert is not None:
         #~ if ch.meth.quick_insert_field is not None:

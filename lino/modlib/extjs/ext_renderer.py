@@ -1023,7 +1023,8 @@ class ExtRenderer(HtmlRenderer):
         for e in field_elems:
             #~ if isinstance(e,FileFieldElement):
                 #~ kw.update(fileUpload=True)
-            chooser = choosers.get_for_field(e.field)
+            model = main.layout_handle.layout.get_chooser_model()
+            chooser = choosers.get_for_field(model, e.field.name)
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.lh.layout, e.field.name)
                 for f in chooser.context_fields:

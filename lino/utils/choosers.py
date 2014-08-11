@@ -47,8 +47,9 @@ from lino.utils.instantiator import make_converter
 from lino.core import constants
 
 
-def get_for_field(fld):
-    return getattr(fld, '_lino_chooser', None)
+def get_for_field(model, fieldname):
+    d = getattr(model, '_choosers_dict', {})
+    return d.get(fieldname, None)
 
 
 def is_foreignkey(fld):
@@ -241,11 +242,11 @@ class Chooser(FieldChooser):
         #~ raise NotImplementedError("%s : Cannot get text for value %r" % (self.meth,value))
 
 
-def uses_simple_values(fld):
+def uses_simple_values(model, fld):
     "used by :class:`lino.ui.extjs.ext_store.Store`"
     if is_foreignkey(fld):
         return False
-    ch = get_for_field(fld)
+    ch = get_for_field(model, fld.name)
     if ch is not None:
         return ch.simple_values
     choices = list(fld.choices)

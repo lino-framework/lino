@@ -16,7 +16,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 
 from lino import dd
 from django.db import models
@@ -29,10 +28,17 @@ class Board(dd.BabelNamed, dd.DatePeriod):
         verbose_name = _("Board")
         verbose_name_plural = _("Boards")
 
+    def full_clean(self, *args, **kw):
+        if not self.start_date:
+            self.start_date = dd.today()
+        super(Board, self).full_clean(*args, **kw)
 
-dd.update_field(Board, 'start_date', verbose_name=_("Works since"))
+
+dd.update_field(
+    Board, 'start_date',
+    verbose_name=_("Works since"),
+    null=False)
 dd.update_field(Board, 'end_date', verbose_name=_("Worked until"))
-
 
 
 class Boards(dd.Table):
@@ -74,21 +80,21 @@ class MembersByBoard(Members):
     order_by = ["role"]
 
 
-class BoardDecision(dd.Model):
-
+class BoardDecision(dd.UserAuthored):
+    # base class for aids.Confirmation
     class Meta:
         abstract = True
 
-    decided_date = models.DateField(
-        verbose_name=_('Decided'), default=dd.today)
+    decision_date = models.DateField(
+        verbose_name=_('Decided'), blank=True, null=True)
     board = models.ForeignKey('boards.Board', blank=True, null=True)
 
     @dd.chooser()
-    def board_choices(self, decided_date):
+    def board_choices(self, decision_date):
         M = dd.resolve_model('boards.Board')
         qs = M.objects.all()
-        if decided_date:
-            qs = dd.PeriodEvents.active.add_filter(qs, decided_date)
+        if decision_date:
+            qs = dd.PeriodEvents.active.add_filter(qs, decision_date)
         return qs
 
 

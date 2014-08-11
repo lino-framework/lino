@@ -300,13 +300,16 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
     def get_trade_type(self):
         return self.journal.trade_type
 
+    @classmethod
+    def get_journals(cls):
+        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
+        #~ doctype = get_doctype(cls)
+        return Journal.objects.filter(voucher_type=vt).order_by('seqno')
+
     @dd.chooser()
     def journal_choices(cls):
         # logger.info("20140603 journal_choices %r", cls)
-        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
-        qs = Journal.objects.filter(voucher_type=vt)
-        # logger.info("20140603 %s %s ", vt, qs.query)
-        return qs
+        return cls.get_journals()
 
     @classmethod
     def create_journal(cls, trade_type=None, account=None, chart=None, **kw):
@@ -324,12 +327,6 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
             kw.update(account=account)
         #~ jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
         return Journal(trade_type=trade_type, voucher_type=vt, **kw)
-
-    @classmethod
-    def get_journals(cls):
-        vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
-        #~ doctype = get_doctype(cls)
-        return Journal.objects.filter(voucher_type=vt).order_by('seqno')
 
     def __unicode__(self):
         return "%s#%s" % (self.journal.ref, self.id)
@@ -432,14 +429,8 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
                 "No mti child %s in %s",
                 self.id,
                 self.journal.voucher_type.model.objects.all().query)
-        #~ return self.journal.voucher_type.model.objects.get(
-            #~ journal=self.journal,number=self.number,year=self.year)
-        #~ m = self.journal.voucher_type.model
-        #~ return m.objects.get(pk=self.pk)
 
     def obj2html(self, ar):
-        # if self.__class__ is not Voucher:
-        #     return super(Voucher, self).obj2html(ar)
         mc = self.get_mti_child()
         if mc is None:
             return ''

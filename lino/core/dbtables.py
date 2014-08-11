@@ -351,6 +351,10 @@ class Table(AbstractTable):
     """
 
     @classmethod
+    def get_chooser_model(self):
+        return self.model
+
+    @classmethod
     def request(self, master_instance=None, **kw):  # 20130327
         kw.update(actor=self)
         if master_instance is not None:

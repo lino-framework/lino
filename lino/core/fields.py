@@ -263,8 +263,7 @@ class RemoteField(FakeField):
         #~ settings.SITE.register_virtual_field(self)
 
         from lino.ui import store
-        #~ self._lino_atomizer = store.create_field(self,name)
-        store.get_atomizer(self, name)
+        store.get_atomizer(self.rel, self, name)
 
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer
@@ -422,7 +421,7 @@ class VirtualField(FakeField):  # (Field):
 
         from lino.ui import store
         #~ self._lino_atomizer = store.create_field(self,self.name)
-        store.get_atomizer(self, self.name)
+        store.get_atomizer(self.model, self, self.name)
 
     def get_default(self):
         return self.return_type.get_default()

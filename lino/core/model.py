@@ -143,7 +143,7 @@ class Model(models.Model):
                             "Invalid RemoteField %s.%s (no field %s in %s)" %
                             (full_model_name(model), name, n, full_model_name(model)))
                     # make sure that the atomizer gets created.
-                    store.get_atomizer(fld, fld.name)
+                    store.get_atomizer(model, fld, fld.name)
                     field_chain.append(fld)
                     if fld.rel:
                         model = fld.rel.to

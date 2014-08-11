@@ -238,7 +238,7 @@ class ComboStoreField(StoreField):
         #~ v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
-        ch = choosers.get_for_field(self.field)
+        ch = choosers.get_for_field(obj.__class__, self.field.name)
         if ch is not None:
             return (v, ch.get_text_for_value(v, obj))
         for i in self.field.choices:
@@ -271,12 +271,12 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             return
         try:
             return relto_model.objects.get(pk=v)
-        except ValueError, e:
+        except ValueError:
             pass
-        except relto_model.DoesNotExist, e:
+        except relto_model.DoesNotExist:
             pass
 
-        ch = choosers.get_for_field(self.field)
+        ch = choosers.get_for_field(obj.__class__, self.field.name)
         if ch and ch.can_create_choice:
             return ch.create_choice(obj, v)
         return None
@@ -765,21 +765,21 @@ class OneToOneStoreField(RelatedMixin, StoreField):
         #~ d[self.field.name] = self.value_from_object(request,obj)
 
 
-def get_atomizer(fld, name):
+def get_atomizer(model, fld, name):
     sf = getattr(fld, '_lino_atomizer', None)
     if sf is None:
-        sf = create_atomizer(fld, name)
+        sf = create_atomizer(model, fld, name)
         setattr(fld, '_lino_atomizer', sf)
     return sf
 
 
-def create_atomizer(fld, name):
+def create_atomizer(model, fld, name):
     if isinstance(fld, fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,
         then modify its behaviour.
         """
-        sf = create_atomizer(fld.field, fld.name)
+        sf = create_atomizer(model, fld.field, fld.name)
 
         def value_from_object(sf, obj, ar):
             #~ if fld.name == 'event__when_text':
@@ -817,10 +817,10 @@ def create_atomizer(fld, name):
         return sf_class(fld, name)
 
     if isinstance(fld, dd.RequestField):
-        delegate = create_atomizer(fld.return_type, fld.name)
+        delegate = create_atomizer(model, fld.return_type, fld.name)
         return RequestStoreField(fld, delegate, name)
     if isinstance(fld, dd.VirtualField):
-        delegate = create_atomizer(fld.return_type, fld.name)
+        delegate = create_atomizer(model, fld.return_type, fld.name)
         return VirtStoreField(fld, delegate, name)
     if isinstance(fld, models.FileField):
         return FileFieldStoreField(fld, name)
@@ -858,7 +858,7 @@ def create_atomizer(fld, name):
     if isinstance(fld, models.IntegerField):
         return IntegerStoreField(fld, name)
     kw = {}
-    if choosers.uses_simple_values(fld):
+    if choosers.uses_simple_values(model, fld):
         return StoreField(fld, name, **kw)
     else:
         return ComboStoreField(fld, name, **kw)
@@ -873,9 +873,10 @@ class ParameterStore(BaseStore):
     def __init__(self, params_layout_handle, url_param):
         self.param_fields = []
 
+        model = params_layout_handle.layout.get_chooser_model()
         for pf in params_layout_handle._store_fields:
         #~ for pf in rh.report.params:
-            self.param_fields.append(create_atomizer(pf, pf.name))
+            self.param_fields.append(create_atomizer(model, pf, pf.name))
 
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -1060,7 +1061,7 @@ class Store(BaseStore):
                 self.add_field_for(fields, self.pk)
 
     def add_field_for(self, fields, df):
-        sf = get_atomizer(df, df.name)
+        sf = get_atomizer(self.actor.get_chooser_model(), df, df.name)
 
         if not sf in self.all_fields:
             self.all_fields.append(sf)

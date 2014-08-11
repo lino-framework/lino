@@ -52,6 +52,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.core.exceptions import ValidationError
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
 from lino.core.perms import UserLevels
@@ -363,6 +364,10 @@ class Created(model.Model):
         abstract = True
 
     created = models.DateTimeField(_("Created"), editable=False)
+
+    @fields.displayfield(_('Created'))
+    def created_natural(self, ar):
+        return naturaltime(self.created)
 
     def save(self, *args, **kwargs):
         if self.created is None and not settings.SITE.loading_from_dump:
