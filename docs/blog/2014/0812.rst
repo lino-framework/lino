@@ -1,0 +1,31 @@
+========================
+Tuesday, August 12, 2014
+========================
+
+Added new model :class:`welfare.aids.RefundPartner`, a subclass of new
+:class:`welfare.pcsw.ClientContactBase` model mixin (which I moved out
+of and now inherit by :class:`welfare.pcsw.ClientContact`).  Added a
+slave table :class:`welfare.aids.PartnersByConfirmation` to the detail of
+:class:`welfare.aids.RefundConfirmation`.
+
+Moved field `client_contact_type` from
+:class:`welfare.contacts.Company` to :class:`welfare.contacts.Partner`
+and added a chooser in
+:class:`welfare.pcsw.ClientContactBase`. Because also a Person can be
+a client contact.
+
+TODO: when entering data into
+:class:`welfare.aids.PartnersByConfirmation` users still need to know
+whether a given contact type is a company or a person. That might be
+disturbing.
+
+Added two more client contact types "Physician" and "Family doctor" in
+:mod:`lino_welfare.fixtures.demo`.  Note: how should I translate
+"Hausarzt"? "General Practitioner" or "Family doctor"? The `WONCA
+<http://www.globalfamilydoctor.com/>`_ seems to have chosen the
+former: "WONCA is an unusual, yet convenient acronym comprising the
+first five initials of the World Organization of National Colleges,
+Academies and Academic Associations of General Practitioners/Family
+Physicians."
+
+Updated German translations for :ref:`welfare`.

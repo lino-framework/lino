@@ -7,8 +7,9 @@ Bescheinigungen
 
 Worked on :mod:`welfare.aids` as analyzed with Gerd:
 
-- aids.Confirmation (Hilfebestätigung) als abstract base class. Gemeinsame
-  Felder: start_date, end_date, aid_type, author, signer, board, board_date
+- aids.Confirmation (Hilfebestätigung) als base class. Gemeinsame
+  Felder: start_date, end_date, aid_type, author, signer, board,
+  board_date
 
   Und dann via MTI mindestens drei Unterklassen:
 
@@ -59,3 +60,11 @@ be overwritten by the chooser for `B.aid_type`.
 
 Solution: choosers are now stored in a dict `_lino_choosers` on the
 model (or action).
+
+
+TODO: replace the insert method of ConfirmationsByClient so that it
+asks for the ConfirmationType and inserts into corresponding the MTI
+child and not into the base model `Confirmation`.
+
+The easy solution would be an HtmlBox with one clickable action per
+ConfirmationType.
