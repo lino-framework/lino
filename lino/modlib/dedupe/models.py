@@ -13,10 +13,10 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """Overrides the :attr:`submit_insert <dd.Model.submit_insert>` action
-of `contacts.Person` with :class:`CheckedSubmitInsert`, a customized
-variant of the standard :class:`SubmitInsert <dd.SubmitInsert>` that
-checks for duplicate persons and asks a user confirmation when
-necessary.
+of :class:`ml.contacts.Person` with :class:`CheckedSubmitInsert`, a
+customized variant of the standard :class:`SubmitInsert
+<dd.SubmitInsert>` that checks for duplicate persons and asks a user
+confirmation when necessary.
 
 The current implementation of the detection algorithm is rather
 primitive.  We might one day add another table with NYSIIS or SOUNDEX

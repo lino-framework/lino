@@ -31,3 +31,21 @@ Physicians."
 Updated German translations for :ref:`welfare`.
 
 Checkin. Upgrade at :ref:`dsbe`.
+
+More changes after evaluation with Gerd:
+
+- Tabelle Hilfebestäitigungen pro Kunde:
+  - hier fehlt die Hilfeart und die Periode.
+  - Filterparameter auch Hilfeart
+- "Unterschreiber" umbenennen nach "Verantwortlicher" oder
+  "Entscheider"... oder "Bestätiger"
+- "Einfache Bescheinigung" ersetzen durch "Einfache Hilfebestätigung"
+- "Erstellen und Drucken" zugleich.
+- "Bestehende Ausdrucke" (ExcerptsByOwner) jetzt als slave table mit
+  summary im detail_layout einer `aids.Confirmation`.
+
+Idee zu besprechen:
+
+- Bestätiger ist nicht immer der primary coach, sondern oft auch der
+  Autor. Option pro Hilfeart.
+

@@ -34,6 +34,7 @@ from django.core.exceptions import ValidationError
 from lino import dd
 from lino import mixins
 from lino.mixins.printable import model_group
+from lino.utils.xmlgen.html import E
 
 outbox = dd.require_app_models('outbox')
 postings = dd.require_app_models('postings')
@@ -241,8 +242,8 @@ class ExcerptTypes(dd.Table):
 
 class CreateExcerpt(dd.Action):
     icon_name = 'printer'
-    help_text = _('Print this data record.')
     label = _('Print')
+    help_text = _('Create an excerpt in order to print this data record.')
     sort_index = 50  # like "Print"
     combo_group = "creacert"
 
@@ -501,9 +502,11 @@ class MyExcerpts(mixins.ByUser, Excerpts):
 
 class ExcerptsByX(Excerpts):
     required = dd.required(user_groups='office')
-    column_names = "build_time excerpt_type owner *"
+    column_names = "build_time excerpt_type owner " \
+                   "company contact_person contact_role *"
     order_by = ['-build_time', 'id']
     auto_fit_column_widths = True
+    # window_size = (70, 20)
 
 
 class ExcerptsByType(ExcerptsByX):
@@ -513,7 +516,43 @@ class ExcerptsByType(ExcerptsByX):
 class ExcerptsByOwner(ExcerptsByX):
     master_key = 'owner'
     help_text = _("History of excerpts based on this data record.")
-    # hidden_columns = 'owner'
+    label = _("Existing excerpts")
+
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        sar = self.request(master_instance=obj)
+        items = []
+        for ex in sar:
+            items.append(E.li(ar.obj2html(ex)))
+        if len(items) == 0:
+            items.append(_("No excerpts."))
+
+        # actions = []
+
+        # def add_action(btn):
+        #     if btn is None:
+        #         return False
+        #     actions.append(btn)
+        #     return True
+
+        # for lt in addable_link_types:
+        #     sar = ar.spawn(Links, known_values=dict(type=lt, parent=obj))
+        #     if add_action(sar.insert_button(
+        #             lt.as_parent(obj), icon_name=None)):
+        #         if not lt.symmetric:
+        #             actions.append('/')
+        #             sar = ar.spawn(
+        #                 Links, known_values=dict(type=lt, child=obj))
+        #             add_action(sar.insert_button(
+        #                 lt.as_child(obj), icon_name=None))
+        #         actions.append(' ')
+
+        # elems += [E.br(), _("Create relationship as ")] + actions
+        return E.div(*items)
+
+
 
 if settings.SITE.project_model is not None:
 
