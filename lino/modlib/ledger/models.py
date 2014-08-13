@@ -422,13 +422,14 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def get_mti_child(self):
-        try:
-            return self.journal.voucher_type.model.objects.get(id=self.id)
-        except Voucher.DoesNotExist:
-            logger.warning(
-                "No mti child %s in %s",
-                self.id,
-                self.journal.voucher_type.model.objects.all().query)
+        if self.id is not None:
+            try:
+                return self.journal.voucher_type.model.objects.get(id=self.id)
+            except Voucher.DoesNotExist:
+                logger.warning(
+                    "No mti child %s in %s",
+                    self.id,
+                    self.journal.voucher_type.model.objects.all().query)
 
     def obj2html(self, ar):
         mc = self.get_mti_child()

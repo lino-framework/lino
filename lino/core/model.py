@@ -84,7 +84,7 @@ class Model(models.Model):
     """The default preferred width (in characters) of widgets that
     display a ForeignKey to this model.
 
-    If not specified, the default default `preferred_width` 
+    If not specified, the default default `preferred_width`
     for ForeignKey fields is *20*.
 
     """

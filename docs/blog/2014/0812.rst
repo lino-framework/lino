@@ -44,8 +44,6 @@ More changes after evaluation with Gerd:
 - "Bestehende Ausdrucke" (ExcerptsByOwner) jetzt als slave table mit
   summary im detail_layout einer `aids.Confirmation`.
 
-Idee zu besprechen:
-
-- Bestätiger ist nicht immer der primary coach, sondern oft auch der
-  Autor. Option pro Hilfeart.
+A 3 hours phone meeting with Mathieu resulted in a new ticket
+:doc:`/tickets/121`.
 

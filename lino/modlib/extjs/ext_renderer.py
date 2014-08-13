@@ -19,16 +19,15 @@ This contains the definition of the :class:`ExtRenderer` class.
 from __future__ import unicode_literals
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 import os
-import sys
 import cgi
 import time
 import jinja2
 
 from django.conf import settings
+from django.db import models
 from django.utils import translation
 from django.utils.encoding import force_unicode
 
@@ -128,7 +127,7 @@ class ExtRenderer(HtmlRenderer):
             #~ return unicode(v)
         #~ if isinstance(v,Promise):
             #~ return unicode(v)
-        if isinstance(v, dd.Model):
+        if isinstance(v, models.Model):
             return v.pk
         if isinstance(v, Exception):
             return unicode(v)
@@ -333,13 +332,16 @@ class ExtRenderer(HtmlRenderer):
 
         return '[?!]'
 
-    def insert_button(self, ar, text=None, known_values={}, **options):
+    def insert_button(self, ar, text=None, known_values=None, **options):
         "See :meth:`rt.ActionRequest.insert_button`."
+        # changed 20140812 : known_values now defaults to ar's known_values
         a = ar.actor.insert_action
         if a is None:
             return
         if not a.get_bound_action_permission(ar, ar.master_instance, None):
             return
+        if known_values is None:
+            known_values = ar.known_values
         elem = ar.create_instance(**known_values)
         st = ar.get_status()
         st.update(data_record=ar.elem2rec_insert(ar.ah, elem))

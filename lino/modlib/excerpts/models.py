@@ -91,6 +91,8 @@ class ExcerptType(
         help_text=_("Check this to have `this` in template context "
                     "point to owner instead of excerpt."))
 
+    print_directly = models.BooleanField(_("Print directly"), default=True)
+
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, content_type):
         tplgroups = [model_group(content_type.model_class()), 'excerpts']
@@ -226,7 +228,7 @@ class ExcerptTypes(dd.Table):
     id name
     content_type:15 build_method:15 template:15 \
     body_template:15 email_template:15
-    primary certifying backward_compat attach_to_email
+    primary print_directly certifying backward_compat attach_to_email
     # remark:60x5
     excerpts.ExcerptsByType
     """
@@ -253,8 +255,11 @@ class CreateExcerpt(dd.Action):
 
     def run_from_ui(self, ar, **kw):
         ex = self.excerpt_type.get_or_create_excerpt(ar)
-
-        ex.do_print.run_from_ui(ar, **kw)
+        # logger.info("20140812 excerpts.CreateExcerpt %s", self.excerpt_type)
+        if self.excerpt_type.print_directly:
+            ex.do_print.run_from_ui(ar, **kw)
+        else:
+            ar.goto_instance(ex)
 
 
 class ClearPrinted(dd.Action):
@@ -342,6 +347,13 @@ class Excerpt(dd.TypedPrintable,
 
     if dd.is_installed('outbox'):
         mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
+
+    def disabled_fields(self, ar):
+        rv = super(Excerpt, self).disabled_fields(ar)
+        rv = rv | set(['excerpt_type', 'project'])
+        if self.build_time:
+            rv |= self.PRINTABLE_FIELDS
+        return rv
 
     def __unicode__(self):
         if self.build_time:
@@ -448,11 +460,6 @@ class Excerpt(dd.TypedPrintable,
             user build_method')
         super(Excerpt, cls).on_analyze(site)
 
-    def disabled_fields(self, ar):
-        if not self.build_time:
-            return set()
-        return self.PRINTABLE_FIELDS
-
 
 dd.update_field(Excerpt, 'company',
                 verbose_name=_("Recipient (Organization)"))
@@ -460,21 +467,35 @@ dd.update_field(Excerpt, 'contact_person',
                 verbose_name=_("Recipient (Person)"))
 
 
-class ExcerptDetail(dd.FormLayout):
-    debug_exceptions = 20140627
-    main = "general config" if davlink else "general"
-    general = dd.Panel(
-        """
+if davlink:
+
+    class ExcerptDetail(dd.FormLayout):
+        window_size = (80, 15)
+        main = "general config"
+        general = dd.Panel(
+            """
+            id excerpt_type:25 project
+            company contact_person contact_role
+            user:10 language:8 build_method
+            owner build_time
+            # preview
+            """, label=_("General"))
+        config = dd.Panel(
+            "body_template_content",
+            label=_("Configure"),
+            required=dd.required(user_level="admin"))
+
+else:
+
+    class ExcerptDetail(dd.FormLayout):
+        window_size = (80, 'auto')
+        main = """
         id excerpt_type:25 project
         company contact_person contact_role
-        user:10 language:8 owner build_method build_time
-        preview
-        """, label=_("General"))
-    config = dd.Panel(
-        "body_template_content",
-        label=_("Configure"),
-        required=dd.required(user_level="admin"))
-
+        user:10 language:8 build_method
+        owner build_time
+        # preview
+        """
 
 class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')

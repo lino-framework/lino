@@ -292,8 +292,8 @@ class BaseLayout(object):
 
     window_size = None
     """
-    A tuple `(width,height)` that specifies the size of the window to be used for this layout.
-    For example, specifying `window_size=(50,30)` means "50 characters wide and 30 lines high".
+    A tuple `(width, height)` that specifies the size of the window to be used for this layout.
+    For example, specifying `window_size=(50, 30)` means "50 characters wide and 30 lines high".
     The `height` value can also be the string ``'auto'``.
     """
 

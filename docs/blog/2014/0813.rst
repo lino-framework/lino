@@ -1,0 +1,26 @@
+==========================
+Wednesday, August 13, 2014
+==========================
+
+Added two  boolean fields `print_directly` and `signed_by_primary_coach`
+to `aids.ConfirmationType`.
+
+Added a `print_directly` boolean to `excerpts.ExcerptType`.  Default
+value is True.  If this is unchecked, CreateExcerpt shows the created
+excerpt instead of printing it directly and showing the result. This
+is useful when the user wants a possibility to edit recipient and
+language.
+
+The detail_layout of an Excerpt now has a window_size (is no longer
+fullscreen), and I removed the preview field. Because that seems more
+natural.
+
+Added new fields `doctor` and `doctor_type` to `RefundConfirmation`.
+
+TODO:
+
+- Deleting a database object should automatically delete all
+  Controllable objects controlled by this.  For example the excerpts of
+  a confirmation, the uploads of a client.
+
+

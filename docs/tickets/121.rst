@@ -1,0 +1,226 @@
+================================
+#121 : Changements pour Chatelet
+================================
+
+Propositions de changement par :ref:`chat`.
+
+- Pouvoir imprimer un PIIS
+- "primary coach" -> "Titulaire du dossier"
+- "Cours" -> "Ateliers"
+
+
+Database changes
+----------------
+
+- LanguageKnowledge: différencier entre expression et compréhension.
+  Donc 4 champs d'évaluation au lieu de 2: 
+  Expression orale/écrit -- Compréhension orale/écrit
+
+- Nouvelle case à cocher "Economie sociale" par contrat de Mise à l'emploi
+
+
+
+Onglet "Personne"
+-----------------
+
+- supprimer « Allocution »
+- renommer « Middle Name » en « Deuxième prénom »
+- renommer « Workflow » en « État » (dans module «Rendez-vous»)
+- renommer «Utilisateur responsable» en «Agent traitant» (dans module
+  «Rendez-vous»)
+
+- renommer « Quand » en « Date » (dans module « Rendez-vous »)
+- supprimer la colonne "primaire" (dans module « Créer un rendez-vous avec »)
+
+- transférer le bouton « a besoin d’un permis de travail »
+  (actuellement dans l’onglet Recherche d’emploi) dans "Personne"
+
+- transférer le module « Enrolment » (actuellement dans l’onglet
+  «Langue») dans l’onglet « Personne » (en dessous du module « Créer
+  un rendez-vous ») 
+
+- renommer «Enrolments» en «Orientation interne». 
+  "Inscriptions"
+
+- (à méditer) Dans module « Rendez-vous », une fois qu’on a indiqué
+  que la personne a «quitté», l’info peut disparaitre vu qu’elle
+  s’indique de toute façon dans l’onglet « Calendrier », module «
+  Evènements »
+
+ 
+Onglet "Aide sociale"
+---------------------
+
+1) supprimer cet onglet et transférer les cases suivantes dans
+   l'onglet « Personne »
+
+    - "En Belgique depuis"
+    - renommer "Type de séjour" en "Titre de séjour"
+      ajouter une date de validité residence_until
+    - renommer "Phase d’intégration" en « Parcours d’insertion »
+
+Onglet "Accompagnement"
+-----------------------
+
+1)      renommer l’onglet « Accompagnement » en « Intervenants »
+2)      renommer « Workflow » en « État »
+3)      supprimer « Refusal Reason »
+4)      faire en sorte que quand on ajoute un deuxième, troisième, quatrième…intervenant, cet intervenant reçoive un mail d’alerte 
+
+
+Onglet "Liens de parenté"
+-------------------------
+
+1) renommer l’onglet « Liens de parenté » en «Situation familiale»
+2) supprimer le module « Appartenance aux ménages »
+3) supprimer le module « BCSS »
+4) supprimer le module « Similar persons »
+
+5) Dans « Composition de ménage » reproduire le tableau en annexe
+   (Seule la colonne « Suivi par… » serait en menu déroulant avec le
+   nom des travailleurs sociaux)
+
+6) Garder le module lien de parenté avec également le même tableau en
+   annexe et le renommer « Parenté avec le dossier social »
+
+Mettre le module « Composition de ménage » au-dessus de « Lien de
+parenté » (comme dans le fichier annexé)
+
+
+Onglet "Parcours"
+-----------------
+
+Ajout d'une table «Statut»:
+
+- Ouvrier
+- Employé
+- Indépendant
+- aide Indépendant
+- Non déclaré
+- Bénévolat
+- ALE
+- Job étudiant
+- Intérim
+- Stage
+
+
+1) déplacer cet onglet et le mettre juste avant l’onglet « Recherche
+   d’emploi »
+
+2) Module « Études »
+
+a. renommer « Commencé » par « Début »
+b. renommer « Arrêté » par « Fin »
+c. renommer « Ecole » en « Etablissement » et le mettre juste après « Fin »
+d. supprimer la case « Ville »
+e. renommer « Contenu des études » en « Options »
+
+f. renommer la case « Succès » en « Certificat/diplôme » (et
+   transformer en menu déroulant)
+
+g. ajouter un module d’Upload pour pouvoir importer les
+   diplômes et attestations de réussite qu’on aura scanné
+
+3) Module « Formation »
+
+- changer tous les termes « Etude » en « Formation » ;)
+- supprimer la case « Ville »
+- renommer « Commencé » par « Début »
+- renommer « Arrêté » par « Fin »
+- ajouter une case « Evaluation » (texte libre) et une case date juste
+  après (et la placer après la case « Statut »)
+- renommer la case « Ecole » en « Organisme » et la placer juste après
+  « Type de formation »
+- ajouter une case « Statut » (en menu déroulant) et la placer après
+  la case « Fin »
+
+4) Module Expériences professionnelles
+
+a. renommer « Commencé » par « Début »
+b. renommer « Arrêté » par « Fin »
+c. supprimer « Intitulé de la fonction »
+d. supprimer « Secteur d’activité »
+e. ajouter une case « Temps de travail » (en texte libre) et la placer après la case « Fonction »
+f. ajouter une case « Statut » (en menu déroulant) et la placer après  la case « temps de travail »
+ 
+
+Onglet Compétences
+-------------------
+ 
+1) Module « Compétences professionnelles »
+
+   - renommer « Propriété » en « Secteur » (à laisser en menu déroulant)
+   - renommer la case « Remarque » en « Compétences » (texte libre)
+
+2) renommer le module « Obstacles » (avec les cases propriété, valeur,
+   remarque) en « Freins »
+
+   - modifier la case «valeur» en «Détecté par… » (avec un menu déroulant)
+
+3) renommer le module « Obstacles (texte libre) en « Remarque »
+4) supprimer  le module « Awards »
+5) renommer le module « Autres talents » en « Atouts »
+
+- "Compétences en langues"
+
+Onlget Contrats 
+---------------
+
+- Onglet "PIIS" avec juste un tableau isip.JobsByClient
+- détail d'un PIIS : un seul layout. 
+- "Contract partners" traduire par "Services utilisateurs" (terme
+  officiel)
+
+
+Onglet "Intervention psychosociale"
+-----------------------------------
+
+- nouvelle table spécifique
+- cfr fichiers .xls et .doc
+
+
+
+
+Onglet "SIS"
+------------
+
+- liste des inscriptions à des Ateliers de type "insertion sociale"
+
+- 4 champs texte libres ("Motif de l'orientation", ...)
+
+Onglet "Modules internes"
+-------------------------
+
+- champ de texte libre "Démarches à réaliser"
+
+
+Recherche d'emploi
+------------------
+
+1) Renommer le nom de l’onglet « Recherche d’emploi » en « Recherche
+   d’emploi active »
+
+2) Ajouter un module Upload de document
+
+3) Suivre le document Excel créer les modules
+
+
+Concepts
+--------
+
+- Article 60§7 : dans une administration publique, asbl, ou entreprise
+  d'économie sociale.
+
+- Article 61 : dans une entreprise privée
+
+- Lino appelle "employant" l'entreprise (Art 61) ou l'organisme (60§7)
+  dans laquelle le travail a lieu.
+
+- L'orientation interne consiste en des "Ateliers". Il y a plusieurs
+  "catégories" d'ateliers, à savoir:
+
+    - Ateliers d'insertion sociale
+    - Ateliers d'apprentissage des savoirs de base
+    - Module de détermination d'un projet socioprofessionnel
+
+
