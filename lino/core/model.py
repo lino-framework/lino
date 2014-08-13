@@ -228,7 +228,8 @@ class Model(models.Model):
     @classmethod
     def define_action(cls, **kw):
         for k, v in kw.items():
-            if hasattr(cls, k):
+            if k in cls.__dict__:
+            # if hasattr(cls, k):
                 raise Exception("Tried to redefine %s.%s" % (cls, k))
             setattr(cls, k, v)
 

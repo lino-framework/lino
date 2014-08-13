@@ -497,6 +497,7 @@ else:
         # preview
         """
 
+
 class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     # label = _("Excerpts history")
@@ -635,7 +636,7 @@ def set_excerpts_actions(sender, **kw):
                 # logger.info(
                 #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
     except Exception as e:
-        logger.info("Failed to set excerpts actions : %s", e)
+        logger.warning("Failed to set excerpts actions : %s", e)
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass
