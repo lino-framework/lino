@@ -292,7 +292,6 @@ class DaemonCommand(BaseCommand):
             gid = self.get_option_value(options, 'gid')
             if gid is not None:
                 context.gid = int(gid)
-            print 20140703, gid
 
             context.open()
 
