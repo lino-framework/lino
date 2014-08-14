@@ -44,12 +44,14 @@ Nachträge zum gestern Besprochenen:
   Übernahmescheinen auswählbar sind.  Ärzte sollten als *Personen*
   erfasst werden. Können aber theoretisch auch Organisationen sein.
 
+- Ärzte werden automatisch erstellt, wenn sie noch nicht
+  existieren. Vorsicht: in diesem Fall immer "Vorname Nachname"
+  eingeben. Lino setzt automatisch ein "Dr." davor.
 
 TODO:
 
 - Prüfen, ob die Periode einer Bescheinigung innerhalb der Periode des
   Beschlusses liegt.
-- Ärzte automatisch erstellen können
 - Titel im Ausdruck der Bescheinigungen
 - Ausdruck AMK : Apotheke angeben.
 - Ausdruck AMK : Zusatzformular wenn DMH.
