@@ -5,5 +5,51 @@ Thursday, August 14, 2014
 
 Letzter Feinschliff nach den gestrigen Umstrukturierungen.
 
-Arztarten sind jetzt Klientenkontaktarten. 
-Neues Feld ClientContactType.can_refund.
+Nachträge zum gestern Besprochenen:
+
+- Die beiden zentralen Konzepte nenne ich nun "Hilfebeschluss" und
+  "Hilfebescheinigung". Ein Beschluss muss immer ein Beginndatum
+  haben. Die Periode einer Bescheinigung muss innerhalb der Periode
+  des Beschlusses liegen.
+
+- Es gibt drei Arten von Hilfebescheinigungen: Einfache HB,
+  Einkommensbescheinigungen und Übernahmescheine.
+
+- Um eine Hilfebescheinigung auszustellen, muss ein entsprechender
+  Hilfebeschluss vorliegen. Man klickt dann einfach in der Tabelle
+  "Hilfebeschlüsse" auf den Link "Bescheinigung erstellen".
+
+- Ein Hilfebeschluss in Lino kann auch auch ohne tatsächlichen
+  Ratsbeschluss existieren. In diesem Fall übernimmt sozusagen der
+  Autor des Beschlusses (ein Benutzer) die Verantwortung. 
+
+- Hilfebeschlüsse können nur von Sozis erstellt werden (aber diese
+  Einschränkung ist in der Übergangsphase noch nicht aktiv).
+
+- Einkommensbescheinigungen : Die Kategorie und der Betrag wird für
+  jede Bescheinigung manuell eingegeben. Der Beschluss ist lediglich
+  die prinzipielle Tatsache, dass der Klient z.B. EiEi erhält.
+
+- AMK und DMH sind zwei verschiedene Hilfearten, die die gleiche
+  Bescheinigungsart haben, nämlich Übernahmescheine. Bei AMK muss die
+  Option "Dringend" abgeschaltet sein und bei DMH eingeschaltet. Dies
+  wird aber von Lino momentan weder vorbelegt noch kontrolliert.
+
+- Bescheinigungen können bestätigt und "entstätigt" werden. Dieses
+  Feature wird momentan nicht genutzt.
+
+- Arztarten sind jetzt als Klientenkontaktarten definiert.  Neues Feld
+  ClientContactType.can_refund muss für die "medizinischen"
+  Klientenkontaktarten eingeschaltet werden, damit sie in
+  Übernahmescheinen auswählbar sind.  Ärzte sollten als *Personen*
+  erfasst werden. Können aber theoretisch auch Organisationen sein.
+
+
+TODO:
+
+- Prüfen, ob die Periode einer Bescheinigung innerhalb der Periode des
+  Beschlusses liegt.
+- Ärzte automatisch erstellen können
+- Titel im Ausdruck der Bescheinigungen
+- Ausdruck AMK : Apotheke angeben.
+- Ausdruck AMK : Zusatzformular wenn DMH.

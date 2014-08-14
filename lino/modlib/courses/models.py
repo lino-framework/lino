@@ -31,7 +31,6 @@ Enrolment
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 from decimal import Decimal
 ZERO = Decimal()
 ONE = Decimal(1)
@@ -48,7 +47,7 @@ from lino import dd
 from lino import mixins
 from lino.utils.choosers import chooser
 
-from ..contacts.utils import parse_name
+from lino.modlib.contacts.utils import parse_name
 
 config = settings.SITE.plugins.courses
 
