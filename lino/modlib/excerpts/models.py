@@ -38,7 +38,6 @@ from lino.utils.xmlgen.html import E
 
 outbox = dd.require_app_models('outbox')
 postings = dd.require_app_models('postings')
-contacts = dd.require_app_models('contacts')
 
 davlink = dd.resolve_plugin('davlink')
 
@@ -329,7 +328,6 @@ class BodyTemplateContentField(dd.VirtualField):
 class Excerpt(dd.TypedPrintable,
               dd.UserAuthored,
               dd.Controllable,
-              contacts.ContactRelated,
               dd.ProjectRelated,
               outbox.Mailable,
               postings.Postable):
@@ -342,7 +340,6 @@ class Excerpt(dd.TypedPrintable,
         verbose_name_plural = _("Excerpts")
 
     excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
-    language = dd.LanguageField()
     body_template_content = BodyTemplateContentField(_("Body template"))
 
     if dd.is_installed('outbox'):
@@ -388,7 +385,7 @@ class Excerpt(dd.TypedPrintable,
         `self.language`.
 
         """
-        return self.language
+        return self.owner.get_print_language()
 
     def on_create(self, ar):
         """When creating an Excerpt by double clicking in
@@ -454,17 +451,10 @@ class Excerpt(dd.TypedPrintable,
     def on_analyze(cls, site):
         cls.PRINTABLE_FIELDS = dd.fields_list(
             cls,
-            'project company contact_person contact_role \
-            excerpt_type language \
+            'project excerpt_type  \
             body_template_content \
             user build_method')
         super(Excerpt, cls).on_analyze(site)
-
-
-dd.update_field(Excerpt, 'company',
-                verbose_name=_("Recipient (Organization)"))
-dd.update_field(Excerpt, 'contact_person',
-                verbose_name=_("Recipient (Person)"))
 
 
 if davlink:
@@ -475,8 +465,7 @@ if davlink:
         general = dd.Panel(
             """
             id excerpt_type:25 project
-            company contact_person contact_role
-            user:10 language:8 build_method
+            user:10 build_method
             owner build_time
             # preview
             """, label=_("General"))
@@ -491,8 +480,7 @@ else:
         window_size = (80, 'auto')
         main = """
         id excerpt_type:25 project
-        company contact_person contact_role
-        user:10 language:8 build_method
+        user:10 build_method
         owner build_time
         # preview
         """
@@ -506,11 +494,10 @@ class Excerpts(dd.Table):
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
     insert_layout = """
-    excerpt_type project
-    company language
+    excerpt_type 
+    project
     """
-    column_names = ("id build_time owner excerpt_type user project "
-                    "company contact_person *")
+    column_names = ("id build_time owner excerpt_type user project *")
     order_by = ["id"]
 
     allow_create = False
@@ -524,8 +511,7 @@ class MyExcerpts(mixins.ByUser, Excerpts):
 
 class ExcerptsByX(Excerpts):
     required = dd.required(user_groups='office')
-    column_names = "build_time excerpt_type owner " \
-                   "company contact_person contact_role *"
+    column_names = "build_time excerpt_type owner *"
     order_by = ['-build_time', 'id']
     auto_fit_column_widths = True
     # window_size = (70, 20)
@@ -575,19 +561,10 @@ class ExcerptsByOwner(ExcerptsByX):
         return E.div(*items)
 
 
-
 if settings.SITE.project_model is not None:
 
     class ExcerptsByProject(ExcerptsByX):
         master_key = 'project'
-
-
-class ExcerptsByCompany(ExcerptsByX):
-    master_key = 'company'
-
-
-class ExcerptsByPerson(ExcerptsByX):
-    master_key = 'contact_person'
 
 
 system = dd.resolve_app('system')

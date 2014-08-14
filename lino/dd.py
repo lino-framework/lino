@@ -405,6 +405,7 @@ is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
+demo_date = settings.SITE.demo_date
 
 
 def resolve_plugin(app_label):

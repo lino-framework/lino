@@ -2,6 +2,9 @@
 Wednesday, August 13, 2014
 ==========================
 
+More about Aid Confirmations
+----------------------------
+
 Added two  boolean fields `print_directly` and `signed_by_primary_coach`
 to `aids.ConfirmationType`.
 
@@ -17,10 +20,27 @@ natural.
 
 Added new fields `doctor` and `doctor_type` to `RefundConfirmation`.
 
+Added body template for RefundConfirmation.
+
 TODO:
+
+- Finish `amk.body.html`
+- Fill list of DoctorTypes
 
 - Deleting a database object should automatically delete all
   Controllable objects controlled by this.  For example the excerpts of
   a confirmation, the uploads of a client.
 
 
+
+Notes after phone meeting with Gerd:
+
+Okay, wir kommen der Sache immer näher
+
+- Momentane Tabelle "Bestätigungen" (Confirmations) wird umbenannt
+  nach "Bescheinigungen".
+- Empfänger und Sprache von Excerpt nach Confirmation
+- Neue Tabelle "Hilfebestätigungen" (Grant):
+  aid_type board und signer kommen con Confirmation nach Grant 
+- ExcerptTypes der Bestätigungen werden *certifying* (also
+  nur ein Ausdruck pro Confirmation)

@@ -21,14 +21,14 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
-
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
+from djangosite.dbutils import obj2str, full_model_name
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
 from lino.core import dbutils
-from djangosite.dbutils import obj2str, full_model_name
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
 
@@ -195,8 +195,8 @@ class Model(models.Model):
 
     def get_choices_text(self, request, actor, field):
         """
-        Return the text to be displayed when an instance of this model 
-        is being used as a choice in a combobox (i.e. by ForeignKey fields 
+        Return the text to be displayed when an instance of this model
+        is being used as a choice in a combobox (i.e. by ForeignKey fields
         pointing to this model).
         `request` is the web request,
         `actor` is the requesting actor.
@@ -373,13 +373,17 @@ class Model(models.Model):
     def after_send_mail(self, mail, ar, kw):
         """
         Called when an outbox email controlled by self has been sent
-        (i.e. when the :class:`lino.modlib.outbox.models.SendMail` 
+        (i.e. when the :class:`lino.modlib.outbox.models.SendMail`
         action has successfully completed).
         """
         pass
 
     def summary_row(self, ar, **kw):
         yield ar.obj2html(self)
+
+    @fields.displayfield(_("Description"))
+    def description_column(self, ar):
+        return ar.obj2html(self)
 
     def __repr__(self):
         return obj2str(self)

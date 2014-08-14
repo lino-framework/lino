@@ -573,10 +573,10 @@ class Kernel(object):
         """
         ar is usually None, except for actors with dynamic handle
         """
+        #~ logger.info('20121010 ExtUI.setup_handle() %s',h.actor)
+
         if h.actor.is_abstract():
             return
-
-        #~ logger.info('20121010 ExtUI.setup_handle() %s',h.actor)
 
         if isinstance(h, tables.TableHandle):
             ll = layouts.ListLayout(

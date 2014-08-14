@@ -1,0 +1,9 @@
+=========================
+Thursday, August 14, 2014
+=========================
+
+
+Letzter Feinschliff nach den gestrigen Umstrukturierungen.
+
+Arztarten sind jetzt Klientenkontaktarten. 
+Neues Feld ClientContactType.can_refund.
