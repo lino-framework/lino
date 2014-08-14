@@ -60,7 +60,7 @@ class Certifiable(dd.Model):
 
     @dd.displayfield(_("Printed"))
     def printed(self, ar):
-        if self.printed_by_id is None:
+        if self.printed_by is None:
             return ''
         return ar.obj2html(self.printed_by)
 

@@ -276,7 +276,7 @@ class ClearPrinted(dd.Action):
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        if obj.printed_by_id is None:
+        if obj.printed_by is None:
             ar.error(_("Oops."))
             return
 
@@ -591,29 +591,31 @@ def set_excerpts_actions(sender, **kw):
     # in case ExcerptType is overridden
     ExcerptType = sender.modules.excerpts.ExcerptType
     try:
-        for atype in ExcerptType.objects.all():
-            ct = atype.content_type
-            if ct is not None:
-                m = ct.model_class()
-                if atype.primary:
-                    an = 'do_print'
-                else:
-                    an = 'create_excerpt' + str(atype.pk)
-                m.define_action(**{an: CreateExcerpt(
-                    atype, unicode(atype))})
-                if atype.primary:
-                    if atype.certifying:
-                        m.define_action(
-                            clear_printed=ClearPrinted())
-                    else:
-                        m.define_action(
-                            show_excerpts=dd.ShowSlaveTable(
-                                'excerpts.ExcerptsByOwner'
-                            ))
-                # logger.info(
-                #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
+        etypes = list(ExcerptType.objects.all())
     except Exception as e:
         logger.warning("Failed to set excerpts actions : %s", e)
+
+    for atype in etypes:
+        ct = atype.content_type
+        if ct is not None:
+            m = ct.model_class()
+            if atype.primary:
+                an = 'do_print'
+            else:
+                an = 'create_excerpt' + str(atype.pk)
+            m.define_action(**{an: CreateExcerpt(
+                atype, unicode(atype))})
+            if atype.primary:
+                if atype.certifying:
+                    m.define_action(
+                        clear_printed=ClearPrinted())
+                else:
+                    m.define_action(
+                        show_excerpts=dd.ShowSlaveTable(
+                            'excerpts.ExcerptsByOwner'
+                        ))
+            # logger.info(
+            #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass
