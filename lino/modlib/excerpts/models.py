@@ -593,6 +593,7 @@ def set_excerpts_actions(sender, **kw):
     try:
         etypes = list(ExcerptType.objects.all())
     except Exception as e:
+        etypes = []
         logger.warning("Failed to set excerpts actions : %s", e)
 
     for atype in etypes:
