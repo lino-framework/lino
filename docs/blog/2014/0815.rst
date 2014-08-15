@@ -1,0 +1,10 @@
+=======================
+Friday, August 15, 2014
+=======================
+
+I ran::
+
+  find -name '*.py' | xargs dos2unix
+  find -name '*.rst' | xargs dos2unix
+  find -name '*.html' | xargs dos2unix
+

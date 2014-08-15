@@ -27,11 +27,6 @@ TODO:
 - Finish `amk.body.html`
 - Fill list of DoctorTypes
 
-- Deleting a database object should automatically delete all
-  Controllable objects controlled by this.  For example the excerpts of
-  a confirmation, the uploads of a client.
-
-
 
 Notes after phone meeting with Gerd:
 
