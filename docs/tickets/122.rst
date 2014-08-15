@@ -1,0 +1,33 @@
+#122: Endspurt Bescheinigungen
+==============================
+
+TODO:
+
+- RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakt)
+
+- Ausdruck Lebensmittelbank: Haushaltszusammensetzung
+
+- Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
+
+- Im Detail einer EiEi-Bescheinigung fehlen die Buttons "Print" und
+  "Clear Cache".
+
+- Wenn man auf den Zeitstempel eines ausgedruckten Auszugs klickt
+  (`Certifiable.printed`), sollte direkt das Dokument kommen, nicht
+  der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
+  dann, wenn man das Dokument neu generieren lassen will. Also ein
+  zweiter Link...
+  
+- Unten links fehlt ein Stück des Rahmens
+
+- Titel im Ausdruck der Bescheinigungen
+- Prüfen, ob die Periode einer Bescheinigung innerhalb der Periode
+  des Beschlusses liegt?
+
+- Deleting a database object should automatically delete all
+  Controllable objects controlled by this.  For example the excerpts of
+  a confirmation, the uploads of a client.
+
+
+
+

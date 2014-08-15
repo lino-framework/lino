@@ -2,9 +2,15 @@
 Friday, August 15, 2014
 =======================
 
-I ran::
+I ran `dos2unix` following in most projects::
 
-  find -name '*.py' | xargs dos2unix
-  find -name '*.rst' | xargs dos2unix
-  find -name '*.html' | xargs dos2unix
+  $ find -name '*.rst' -or -name '*.py' -or -name '*.html' | xargs dos2unix
+
+
+Started to think about how to solve the following:
+
+- Deleting a database object should automatically delete all
+  Controllable objects controlled by this.  For example the excerpts of
+  a confirmation, the uploads of a client.
+
 

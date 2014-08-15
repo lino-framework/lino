@@ -4,6 +4,9 @@
 Code snippets for testing Lino's i18n
 ===================================================
 
+.. to run (almost) only this test:
+  $ python setup.py test -s tests.DocsTests.test_docs
+
 General stuff:
 
 >>> import os

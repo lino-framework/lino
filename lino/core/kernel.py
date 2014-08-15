@@ -342,7 +342,10 @@ class Kernel(object):
         for model in models_list:
 
             for f, m in model._meta.get_fields_with_model():
-                #~ if isinstance(f,models.CharField) and f.null:
+
+                # Refuse nullable CharFields, but don't trigger on
+                # NullableCharField (which is a subclass of CharField).
+
                 if f.__class__ is models.CharField and f.null:
                     msg = "Nullable CharField %s in %s" % (f.name, model)
                     raise Exception(msg)
@@ -364,7 +367,6 @@ class Kernel(object):
                     to a Company as well.
                     """
                     if hasattr(f.rel.to, '_lino_ddh'):
-                        # ~ f.rel.to._lino_ddh.add_fk(model,f) # 20120728
                         f.rel.to._lino_ddh.add_fk(m or model, f)
 
         for p in self.installed_plugins:

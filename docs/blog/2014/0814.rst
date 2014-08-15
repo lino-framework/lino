@@ -70,7 +70,7 @@ Analyse erfordert viel Zeit und Energie und Adrenalin. Rapid
 Prototyping kann den Stress erhöhen, ist aber letzten Endes
 effizienter als die klassischen Methoden.
 
-DONE (to be tested):
+DONE:
 
 - Es gibt auch Hilfearten (z.B. "Erstattung"), für die nie eine
   Bescheinigung gedruckt wird. Deren Feld Bescheinigungsart kann jetzt
@@ -93,33 +93,5 @@ DONE (to be tested):
     AidType.pharmacy_type und RefundConfirmation.pharmacy.
 
 
-TODO:
-
-- RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakt)
-
-- Ausdruck Lebensmittelbank: Haushaltszusammensetzung
-
-- Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
-
-- Im Detail einer EiEi-Bescheinigung fehlen die Buttons "Print" und
-  "Clear Cache".
-
-- Wenn man auf den Zeitstempel eines ausgedruckten Auszugs klickt
-  (`Certifiable.printed`), sollte direkt das Dokument kommen, nicht
-  der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
-  dann, wenn man das Dokument neu generieren lassen will. Also ein
-  zweiter Link...
-  
-- Unten links fehlt ein Stück des Rahmens
-
-- Titel im Ausdruck der Bescheinigungen
-- Prüfen, ob die Periode einer Bescheinigung innerhalb der Periode
-  des Beschlusses liegt?
-
-- Deleting a database object should automatically delete all
-  Controllable objects controlled by this.  For example the excerpts of
-  a confirmation, the uploads of a client.
-
-
-
-
+Die restlichen Tuduhs packe ich ein, weil die jetzt 4 Wochen warten
+dürfen: :doc:`/tickets/122`.

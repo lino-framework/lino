@@ -591,13 +591,13 @@ def set_excerpts_actions(sender, **kw):
     # in case ExcerptType is overridden
     ExcerptType = sender.modules.excerpts.ExcerptType
     try:
-        etypes = list(ExcerptType.objects.all())
+        etypes = [(obj, obj.content_type)
+                  for obj in ExcerptType.objects.all()]
     except Exception as e:
         etypes = []
         logger.warning("Failed to set excerpts actions : %s", e)
 
-    for atype in etypes:
-        ct = atype.content_type
+    for atype, ct in etypes:
         if ct is not None:
             m = ct.model_class()
             if atype.primary:

@@ -58,6 +58,7 @@ class DocsTests(LinoTestCase):
         docs/dev/ml/contacts.rst
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
+        docs/tested/test_i18n.rst
         """)
 
     def test_settings(self):
@@ -127,9 +128,6 @@ class UtilsTests(LinoTestCase):
 
     def test_mixins_addressable(self): self.run_simple_doctests('lino/mixins/addressable.py')
 
-class I18nTests(LinoTestCase):
-    def test_i18n(self): self.run_simple_doctests('docs/tested/test_i18n.rst')
-    
 class ProjectsTests(LinoTestCase):
     
     def test_events(self):
