@@ -47,7 +47,10 @@ from lino import dd
 from lino import mixins
 from lino.utils.choosers import chooser
 
+from lino.utils import join_elems
+from lino.utils.xmlgen.html import E
 from lino.modlib.contacts.utils import parse_name
+
 
 config = settings.SITE.plugins.courses
 
@@ -805,8 +808,6 @@ class EnrolmentsByPupil(Enrolments):
     request_date user
     """
 
-from lino.utils import join_elems
-from lino.utils.xmlgen.html import E
 
 class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
@@ -847,6 +848,38 @@ class EnrolmentsByCourse(Enrolments):
 #         blank=True, null=True,
 #         help_text=_("Fill in only if this event is a session of a course."),
 #         related_name="events_by_course"))
+
+
+
+class ActiveCoursesByPupil(ActiveCourses):
+    label = _("Suggested enrolments")
+    column_names = 'info enrolments max_places room custom_actions *'
+    auto_fit_column_widths = True
+    hide_sums = True
+    master = config.pupil_model
+    
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(ActiveCoursesByPupil, self).param_defaults(ar, **kw)
+        kw.update(active=dd.YesNo.yes)
+        return kw
+
+    @dd.displayfield(_("Actions"))
+    def custom_actions(self, course, ar, **kw):
+        mi = ar.master_instance
+        if mi is None:
+            return ''
+        kv = dict(course=course)
+        # kv.update(granting=self)
+        # at = self.aid_type
+        # ct = at.confirmation_type
+        # if not ct:
+        #     return ''
+        sar = ar.spawn(EnrolmentsByPupil,
+                       master_instance=mi, known_values=kv)
+        txt = _("Enrol")
+        btn = sar.insert_button(txt, icon_name=None)
+        return E.div(btn)
 
 
 def setup_main_menu(site, ui, profile, main):
