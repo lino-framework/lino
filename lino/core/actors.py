@@ -368,86 +368,23 @@ class Actor(actions.Parametrizable):
         cls.register_class_attribute(name, fld)
 
     get_welcome_messages = None
-    """
-    If not None, this must be a class method which takes an ActionRequest 
-    and returns or yields a list of messages to displayed in the welcome 
-    screen.
-    """
-
     get_row_classes = None
-    """If not None, this must be a class method which takes a table row
-    and an ActionRequest and returns either None or a string 
-    "red", "green" or "blue" (todo: add more colors 
-    and styles). Example::
-    
-        @classmethod
-        def get_row_classes(cls,obj,ar):
-            if obj.client_state == pcsw.ClientStates.newcomer:
-                return 'green'
-    
-    Defining this method will cause an additional special field
-    RowClassStoreField
-
-    """
-
     app_label = None
-    """Specify this if you want to "override" an existing actor.
-    
-    The default value is deduced from the module where the subclass is
-    defined.
-    
-    Note that this attribute is not inherited from base classes.
-    
-    :func:`lino.core.table.table_factory` also uses this.
-
-    """
-
     window_size = None
-    """Set this to a tuple of (height, width) in pixels to have this
-    actor display in a modal non-maximized window.
-
-    """
-
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
-
     debug_permissions = False
-
     required = get_default_required()
-
     update_required = dict()
     delete_required = dict()
-
     master_key = None
-
     master = None
-
     master_field = None
-
     editable = None
-
     hide_sums = False
-    """
-    Set this to True if you don't want Lino to display sums in a table view.
-    """
-
     insert_layout_width = 60
-    """When specifying an :attr:`insert_layout` using a simple a multline
-    string, then Lino will instantiate a FormPanel with this width.
-
-    """
-
     workflow_state_field = None
-    """The name of the field that contains the workflow state of an
-    object.  Subclasses may override this.
-
-    """
-
     workflow_owner_field = None
-    """The name of the field that contains the user who is considered to
-    own an object when `Rule.owned_only` is checked.
-
-    """
 
     @classmethod
     def get_pk_field(self):
@@ -469,45 +406,26 @@ class Actor(actions.Parametrizable):
         return set()
 
     hide_window_title = False
-    """
-    This is set to `True` in home pages
-    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
-    """
-
     allow_create = True
-
     hide_top_toolbar = False
-
     _label = None
     _editable = None
     _known_values = {}
-
     title = None
-
     label = None
-
     default_action = None
     actor_id = None
-
     detail_layout = None
     insert_layout = None
-
-    detail_template = None
-    # deprecated: use insert_layout with a string value instead
-    insert_template = None
-    # deprecated: use detail_layout with a string value instead
-
+    detail_template = None    # deprecated: use insert_layout instead
+    insert_template = None    # deprecated: use detail_layout instead
     help_text = None
-
     detail_action = None
     update_action = None
     insert_action = None
     # create_action = None
     delete_action = None
-
-    _handle_class = None
-    "For internal use"
-
+    _handle_class = None  # For internal use.
     get_handle_name = None
 
     @classmethod

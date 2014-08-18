@@ -114,6 +114,49 @@ The ``Actor`` class
     subclasses.  For :class:`dd.Table` subclasses that don't have a
     label, Lino will call :meth:`get_actor_label`.
 
+  .. attribute:: insert_layout_width
+
+    When specifying an :attr:`insert_layout` using a simple a multline
+    string, then Lino will instantiate a FormPanel with this width.
+
+  .. attribute:: workflow_state_field
+
+    The name of the field that contains the workflow state of an
+    object.  Subclasses may override this.
+
+  .. attribute:: workflow_owner_field
+
+    The name of the field that contains the user who is considered to
+    own an object when `Rule.owned_only` is checked.
+
+  .. attribute:: hide_sums
+
+  .. attribute:: hide_window_title
+
+    This is set to `True` e.h. in home pages
+    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
+
+
+    Set this to True if you don't want Lino to display sums in a table
+    view.
+
+  .. attribute:: window_size
+
+    Set this to a tuple of (height, width) in pixels to have this
+    actor display in a modal non-maximized window.
+
+  .. attribute:: app_label
+
+    Specify this if you want to "override" an existing actor.
+    
+    The default value is deduced from the module where the subclass is
+    defined.
+    
+    Note that this attribute is not inherited from base classes.
+    
+    :func:`lino.core.table.table_factory` also uses this.
+
+
   .. attribute:: abstract
 
     Set this to `True` to prevent Lino from generating useless
@@ -128,6 +171,31 @@ The ``Actor`` class
 
     Dynamic test per request.
     This is being called only when :attr:`allow_create` is True.
+
+  .. method:: get_row_classes(self, ar)
+
+    If a method of this name is defined on an actor, then it must be a
+    class method which takes an :class:`rt.ActionRequest` as single
+    argument and returns either None or a string "red", "green" or
+    "blue" (todo: add more colors and styles). Example::
+    
+        @classmethod
+        def get_row_classes(cls,obj,ar):
+            if obj.client_state == pcsw.ClientStates.newcomer:
+                return 'green'
+    
+    Defining this method will cause an additional special
+    `RowClassStoreField` field in the :class:`lino.ui.Store` objects
+    of this actor.
+
+
+
+  .. method:: get_welcome_messages(self, ar)
+
+    If a method of this name is defined on an actor, then it must be a
+    class method which takes an :class:`rt.ActionRequest` as single
+    argument and returns or yields a list of messages to be displayed
+    in the welcome block of :xfile:`admin_main.html`.
 
   .. method:: get_handle_name(self, ar)
 

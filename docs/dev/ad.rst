@@ -196,6 +196,12 @@ The ``Site`` class
     in these cases, asking you to create it yourself)
 
 
+  .. method:: get_welcome_messages()
+
+    Yields a list of "welcome messages" (see
+    :meth:`dd.Actor.get_welcome_messages`) of all actors.  This is
+    being called from :xfile:`admin_main.html`.
+
   .. method:: get_installed_apps()
 
     Yield the list of apps to be installed on this site.  This will be

@@ -534,11 +534,3 @@ from .models_event import *
 from .mixins import EventGenerator, RecurrenceSet, Reservation
 
 
-def get_todo_tables(ar):
-    yield ('cal.MyAssignedEvents', _("%d events assigned."))
-    # ~ yield (MyUnclearEvents, _("%d unclear events approaching.")) # "%d unklare Termine kommen näher"
-    yield ('cal.MyPendingPresences', _("%d invitations are waiting for your answer."))
-    #~ yield (MyGuests, _("%d invitations are waiting for your answer."))
-    #~ yield (MyTasksToDo,_("%d tasks to do"))
-    #~ yield (MyEventsNotified,_("%d notified events"))
-    #~ yield (EventsAssignedToMe,_("%d events assigned to you"))

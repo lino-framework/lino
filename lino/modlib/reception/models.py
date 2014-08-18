@@ -485,8 +485,6 @@ class MyGoneVisitors(MyVisitors, GoneVisitors):
     required = dd.Required(user_groups='coaching')
 
 
-#~ def get_todo_tables(ar):
-    #~ yield (MyBusyVisitors, None)
 dd.add_user_group('reception', Plugin.verbose_name)
 
 

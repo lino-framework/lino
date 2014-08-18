@@ -149,6 +149,12 @@ class PostingsReady(PostingsByState):
     label = _("Postings ready to print")
     known_values = dict(state=PostingStates.ready)
 
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        count = ar.get_total_count()
+        if count > 0:
+            yield _("%d postings ready to print") % count
+
 
 class PostingsPrinted(PostingsByState):
     label = _("Postings printed")
@@ -279,7 +285,3 @@ def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
     #~ m  = m.add_menu("postings",MODULE_LABEL)
     m.add_action(Postings)
-
-
-def get_todo_tables(ar):
-    yield (PostingsReady, _("%d postings ready to print"))

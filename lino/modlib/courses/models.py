@@ -850,7 +850,6 @@ class EnrolmentsByCourse(Enrolments):
 #         related_name="events_by_course"))
 
 
-
 class ActiveCoursesByPupil(ActiveCourses):
     label = _("Suggested enrolments")
     column_names = 'info enrolments max_places room custom_actions *'

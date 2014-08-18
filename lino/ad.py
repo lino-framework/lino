@@ -1004,30 +1004,9 @@ class Site(Site):
         return web.render_from_request(request, 'admin_main.html')
 
     def get_welcome_messages(self, ar):
-        """
-        Return or yield a list of messages to display for welcome.
-        """
         for a in self._welcome_actors:
             for msg in a.get_welcome_messages(ar):
                 yield msg
-
-    def get_todo_tables(self, ar):
-        """
-        Return or yield a list of tables that should be empty
-        """
-        from django.db import models
-        for app_module in models.get_apps():
-            meth = getattr(app_module, 'get_todo_tables', None)
-            if meth is not None:
-                #~ dblogger.debug("Running %s of %s", methname, mod.__name__)
-                for table, text in meth(ar):
-                    if isinstance(table, basestring):
-                        table = self.modules.resolve(table)
-                    if table.default_action.get_view_permission(ar.get_user().profile):
-                        if table.default_action.get_row_permission(ar, None, None):
-                            if text is None:
-                                text = "%d " + unicode(table.label)
-                            yield (table, text)
 
     def get_installed_apps(self):
 

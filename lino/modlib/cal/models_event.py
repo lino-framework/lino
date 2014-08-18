@@ -884,6 +884,12 @@ if settings.SITE.user_model:
             kw.update(assigned_to=ar.get_user())
             return kw
 
+        @classmethod
+        def get_welcome_messages(cls, ar, **kw):
+            count = ar.get_total_count()
+            if count > 0:
+                yield _("%d events have been assigned to you.") % count
+
 
 def update_reminders_for_user(user, ar):
     n = 0

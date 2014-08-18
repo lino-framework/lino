@@ -51,9 +51,9 @@ class BuildSiteCache(dd.Action):
         settings.SITE.ui.default_renderer.build_site_cache(True)
         return ar.success(
             """\
-Seems that it worked. Refresh your browser. 
+Seems that it worked. Refresh your browser.
 <br>
-Note that other users might experience side effects because 
+Note that other users might experience side effects because
 of the unexpected .js update, but there are no known problems so far.
 Please report any anomalies.""",
             alert=_("Success"))
@@ -327,15 +327,6 @@ class Home(mixins.EmptyTable):
     welcome
     """
 
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ "Overrides the default method. Home page needs no print method."
-        #~ pass
-
-    #~ @dd.virtualfield(dd.HtmlBox())
-    #~ def tasks_summary(cls,self,req):
-        #~ return cal.tasks_summary(req.ui,req.get_user())
-
     @dd.virtualfield(dd.HtmlBox())
     def quick_links(cls, self, ar):
         quicklinks = settings.SITE.get_quicklinks(ar)
@@ -346,65 +337,6 @@ class Home(mixins.EmptyTable):
                 chunks.append(ar.window_action_button(mi.bound_action))
             return E.p('Quick Links:', *chunks)
 
-    #~ @dd.virtualfield(dd.HtmlBox())
-    #~ def missed_reminders(cls,self,req):
-        #~ return cal.reminders(req.ui,req.get_user(),days_back=90,
-            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-
-    #~ @dd.constant('')
-    #~ @dd.constant()
-    #~ def welcome(cls,ui):
-        #~ return "Welcome to the <b>%s</b> server." % cgi.escape(settings.SITE.title)
-
-    @dd.virtualfield(dd.HtmlBox(_('Welcome')))
-    def welcome(cls, self, ar):
-
-        #~ MAXITEMS = 2
-        u = ar.get_user()
-        story = []
-
-        if u.profile.authenticated:
-
-            intro = [_("Hi, %(user)s!") % dict(user=u.first_name)]
-            story.append(E.p(*intro))
-            warnings = []
-
-            #~ for T in (MySuggestedCoachings,cal.MyTasksToDo):
-            for table, text in settings.SITE.get_todo_tables(ar):
-                if table.get_view_permission(u.profile):
-                    r = table.request(user=u)
-                    #~ r = T.request(subst_user=u)
-                    #~ r = ar.spawn(T)
-                    if r.get_total_count() != 0:
-                        warnings.append(E.li(
-                            ar.href_to_request(r, text % r.get_total_count())))
-                            #~ _("You have %d entries in ") % r.get_total_count(),
-                            #~ ar.href_to_request(r,label)))
-
-            #~ warnings.append(E.li("Test 1"))
-            #~ warnings.append(E.li("Second test"))
-            if len(warnings):
-                #~ story.append(E.h3(_("Warnings")))
-                story.append(E.h3(_("You have")))
-                story.append(E.ul(*warnings))
-            else:
-                story.append(
-                    E.p(_("Congratulatons: you have no warnings.")))
-        #~ else:
-            # story.append(E.p("Please log in"))
-            #~ story.append(settings.SITE.get_guest_greeting())
-
-        return E.div(*story, class_="htmlText", style="margin:5px")
-
-
-    #~ @dd.virtualfield(dd.HtmlBox(_('Missed reminders')))
-    #~ def missed_reminders(cls,self,req):
-        #~ return cal.reminders(req.ui,req.get_user(),days_back=90,
-            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
-    #~ @dd.virtualfield(dd.HtmlBox(_('Upcoming reminders')))
-    #~ def coming_reminders(cls,self,req):
-        #~ return cal.reminders(req.ui,req.get_user(),days_forward=30,
-            #~ max_items=10,before='<ul><li>',separator='</li><li>',after="</li></ul>")
 SYSTEM_USER_LABEL = _("System")
 OFFICE_MODULE_LABEL = _("Office")
 
@@ -440,8 +372,6 @@ def setup_explorer_menu(site, ui, profile, m):
         system.add_action(dd.UserLevels)
         system.add_action(dd.UserProfiles)
         office.add_action(TextFieldTemplates)
-    #~ if site.is_installed('contenttypes'):
-        #~ system.add_action(Changes)
 
 
 dd.add_user_group('office', OFFICE_MODULE_LABEL)
