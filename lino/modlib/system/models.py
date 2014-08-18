@@ -309,34 +309,6 @@ if settings.SITE.user_model:
         required = dd.required(user_groups='office')
 
 
-class Home(mixins.EmptyTable):
-
-    """
-    Deprecated. Use :xfile:`admin_main.html` instead.
-    This is the "home page" or "welcome screen", the window to be displayed
-    when no other window is opened.
-    """
-    required = dd.required()
-    #~ debug_actions = True
-    label = _("Home")
-    hide_window_title = True
-    hide_top_toolbar = True
-    #~ detail_layout = HomeDetail()
-    detail_layout = """
-    quick_links:80x1
-    welcome
-    """
-
-    @dd.virtualfield(dd.HtmlBox())
-    def quick_links(cls, self, ar):
-        quicklinks = settings.SITE.get_quicklinks(ar)
-        if quicklinks.items:
-            chunks = []
-            for mi in quicklinks.items:
-                chunks.append(' ')
-                chunks.append(ar.window_action_button(mi.bound_action))
-            return E.p('Quick Links:', *chunks)
-
 SYSTEM_USER_LABEL = _("System")
 OFFICE_MODULE_LABEL = _("Office")
 

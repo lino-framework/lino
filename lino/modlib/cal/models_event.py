@@ -886,9 +886,11 @@ if settings.SITE.user_model:
 
         @classmethod
         def get_welcome_messages(cls, ar, **kw):
-            count = ar.get_total_count()
+            sar = ar.spawn(cls)
+            count = sar.get_total_count()
             if count > 0:
-                yield _("%d events have been assigned to you.") % count
+                txt = _("%d events have been assigned to you.") % count
+                yield ar.href_to_request(sar, txt)
 
 
 def update_reminders_for_user(user, ar):

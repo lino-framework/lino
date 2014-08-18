@@ -151,9 +151,11 @@ class PostingsReady(PostingsByState):
 
     @classmethod
     def get_welcome_messages(cls, ar, **kw):
-        count = ar.get_total_count()
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
         if count > 0:
-            yield _("%d postings ready to print") % count
+            txt = _("%d postings are ready to print.") % count
+            yield ar.href_to_request(sar, txt)
 
 
 class PostingsPrinted(PostingsByState):

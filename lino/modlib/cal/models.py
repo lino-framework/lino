@@ -532,5 +532,3 @@ from .models_guest import *
 from .models_event import *
 
 from .mixins import EventGenerator, RecurrenceSet, Reservation
-
-

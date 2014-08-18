@@ -525,6 +525,19 @@ class CoursesBySlot(Courses):
     master_key = "slot"
 
 
+class DraftCourses(Courses):
+    label = _("Draft courses")
+    column_names = 'info user room *'
+    hide_sums = True
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(Courses, self).param_defaults(ar, **kw)
+        kw.update(state=CourseStates.draft)
+        # kw.update(active=dd.YesNo.yes)
+        return kw
+
+
 class ActiveCourses(Courses):
 
     label = _("Active courses")
