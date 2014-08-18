@@ -250,6 +250,36 @@ class Place(dd.BabelNamed):
         return s
         #~ return unicode(self)
 
+    @classmethod
+    def get_cities(cls, country):
+        if country is None:
+            cd = None
+            flt = models.Q()
+        else:
+            cd = getattr(CountryDrivers, country.isocode, None)
+            flt = models.Q(country=country)
+
+        #~ types = [PlaceTypes.blank_item] 20120829
+        types = [None]
+        if cd:
+            types += cd.city_types
+            #~ flt = flt & models.Q(type__in=cd.city_types)
+        else:
+            types += [v for v in PlaceTypes.items() if v.value >= '50']
+            #~ flt = flt & models.Q(type__gte=PlaceTypes.get_by_value('50'))
+        flt = flt & models.Q(type__in=types)
+        #~ flt = flt | models.Q(type=PlaceTypes.blank_item)
+        return cls.objects.filter(flt).order_by('name')
+
+        #~ if country is not None:
+            #~ cd = getattr(CountryDrivers,country.isocode,None)
+            #~ if cd:
+                #~ return Place.objects.filter(
+                    #~ country=country,
+                    #~ type__in=cd.city_types).order_by('name')
+            #~ return country.place_set.order_by('name')
+        #~ return cls.city.field.rel.to.objects.order_by('name')
+
 
 class Places(dd.Table):
     help_text = _("""
@@ -307,33 +337,7 @@ class CountryCity(dd.Model):
 
     @dd.chooser()
     def city_choices(cls, country):
-        if country is None:
-            cd = None
-            flt = models.Q()
-        else:
-            cd = getattr(CountryDrivers, country.isocode, None)
-            flt = models.Q(country=country)
-
-        #~ types = [PlaceTypes.blank_item] 20120829
-        types = [None]
-        if cd:
-            types += cd.city_types
-            #~ flt = flt & models.Q(type__in=cd.city_types)
-        else:
-            types += [v for v in PlaceTypes.items() if v.value >= '50']
-            #~ flt = flt & models.Q(type__gte=PlaceTypes.get_by_value('50'))
-        flt = flt & models.Q(type__in=types)
-        #~ flt = flt | models.Q(type=PlaceTypes.blank_item)
-        return Place.objects.filter(flt).order_by('name')
-
-        #~ if country is not None:
-            #~ cd = getattr(CountryDrivers,country.isocode,None)
-            #~ if cd:
-                #~ return Place.objects.filter(
-                    #~ country=country,
-                    #~ type__in=cd.city_types).order_by('name')
-            #~ return country.place_set.order_by('name')
-        #~ return cls.city.field.rel.to.objects.order_by('name')
+        return Place.get_cities(country)
 
     def create_city_choice(self, text):
         """

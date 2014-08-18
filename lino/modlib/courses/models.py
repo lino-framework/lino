@@ -444,16 +444,20 @@ class Courses(dd.Table):
     parameters = dd.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),
         topic=models.ForeignKey('courses.Topic', blank=True, null=True),
+        city=models.ForeignKey('countries.Place', blank=True, null=True),
         #~ company = models.ForeignKey('contacts.Company',blank=True,null=True),
         teacher=models.ForeignKey(
             config.teacher_model,
             blank=True, null=True),
+        user=models.ForeignKey(
+            settings.SITE.user_model,
+            blank=True, null=True),
         state=CourseStates.field(blank=True),
         active=dd.YesNo.field(blank=True),
     )
-    params_layout = """topic line teacher state active"""
+    params_layout = """topic line city teacher user state active"""
 
-    simple_param_fields = 'line teacher state'.split()
+    simple_param_fields = 'line teacher state user'.split()
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -468,6 +472,8 @@ class Courses(dd.Table):
 
         if ar.param_values.topic:
             qs = qs.filter(line__topic=ar.param_values.topic)
+        if ar.param_values.city:
+            qs = qs.filter(room__company__city=ar.param_values.city)
         if ar.param_values.state is None:
             if ar.param_values.active == dd.YesNo.yes:
                 qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
@@ -480,6 +486,8 @@ class Courses(dd.Table):
         for t in super(Courses, self).get_title_tags(ar):
             yield t
 
+        if ar.param_values.city:
+            yield _("in %s") % ar.param_values.city
         if ar.param_values.topic:
             yield unicode(ar.param_values.topic)
         for n in self.simple_param_fields:
@@ -527,13 +535,14 @@ class CoursesBySlot(Courses):
 
 class DraftCourses(Courses):
     label = _("Draft courses")
-    column_names = 'info user room *'
+    column_names = 'info teacher room *'
     hide_sums = True
 
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.draft)
+        kw.update(user=ar.get_user())
         # kw.update(active=dd.YesNo.yes)
         return kw
 
@@ -863,8 +872,8 @@ class EnrolmentsByCourse(Enrolments):
 #         related_name="events_by_course"))
 
 
-class ActiveCoursesByPupil(ActiveCourses):
-    label = _("Suggested enrolments")
+class SuggestedCoursesByPupil(ActiveCourses):
+    label = _("Suggested courses")
     column_names = 'info enrolments max_places room custom_actions *'
     auto_fit_column_widths = True
     hide_sums = True
@@ -872,8 +881,11 @@ class ActiveCoursesByPupil(ActiveCourses):
     
     @classmethod
     def param_defaults(self, ar, **kw):
-        kw = super(ActiveCoursesByPupil, self).param_defaults(ar, **kw)
+        kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
         kw.update(active=dd.YesNo.yes)
+        pupil = ar.master_instance
+        if pupil and pupil.city:
+            kw.update(city=pupil.city)
         return kw
 
     @dd.displayfield(_("Actions"))

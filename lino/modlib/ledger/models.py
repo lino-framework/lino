@@ -652,7 +652,7 @@ class Movements(dd.Table):
         pjournal=JournalRef(blank=True),
         cleared=dd.YesNo.field(_("Show cleared movements"), blank=True))
     params_layout = """
-    start_date end_date cleared 
+    start_date end_date cleared
     pjournal pyear ppartner paccount"""
 
     @classmethod
@@ -713,7 +713,6 @@ class MovementsByAccount(Movements):
 
 
 class DueMovement(object):
-
 
     def __init__(self, dc, mvt):
         self.dc = dc

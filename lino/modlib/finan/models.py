@@ -227,9 +227,9 @@ class VoucherItem(mixins.Sequenced, ledger.VoucherItem, ledger.Matchable):
 
     def match_changed(self, ar):
         if self.match:
-            m = ledger.DueMovement(
-                self.voucher.journal.dc, self.partner, self.match)
-            self.dc = not self.voucher.journal.dc
+            dc = not self.voucher.journal.dc
+            m = ledger.DueMovement(dc, self)
+            self.dc = dc
             self.amount = m.balance
             #~ if m.balance > 0:
                 #~ self.dc = not self.voucher.journal.dc
@@ -254,9 +254,11 @@ class VoucherItem(mixins.Sequenced, ledger.VoucherItem, ledger.Matchable):
                     if match.trade_type is not None:
                         self.account = match.trade_type.get_partner_account()
                     self.dc = match.dc
-                    self.amount = match.amount
-            if self.account_id is None:
-                raise ValidationError("Could not guess account")
+                    self.amount = match.balance
+                    self.match = match.match
+                if self.account_id is None:
+                    raise ValidationError(
+                        _("Could not determine the general account"))
         if self.dc is None:
             self.dc = self.voucher.journal.dc
         #~ if self.amount < 0:
