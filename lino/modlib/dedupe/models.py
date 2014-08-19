@@ -111,9 +111,6 @@ class SimilarPersons(dd.VirtualTable):
 
 
 class CheckedSubmitInsert(SubmitInsert):
-    """See above.
-
-    """
 
     def run_from_ui(self, ar, **kw):
         obj = ar.create_instance_from_request()
@@ -121,7 +118,7 @@ class CheckedSubmitInsert(SubmitInsert):
         def ok(ar2):
             self.save_new_instance(ar2, obj)
             ar2.set_response(close_window=True)
-            logger.info("20140512 CheckedSubmitInsert")
+            # logger.info("20140512 CheckedSubmitInsert")
 
         qs = SimilarPersons.find_similar_instances(obj)
         if qs.count() > 0:
@@ -135,7 +132,7 @@ class CheckedSubmitInsert(SubmitInsert):
                      "%(model)s named %(name)s?") % dict(
                          model=qs.model._meta.verbose_name,
                          name=obj.get_full_name())
-            
+
             ar.confirm(ok, msg)
         else:
             ok(ar)

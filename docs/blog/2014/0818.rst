@@ -2,9 +2,12 @@
 Monday, August 18, 2014
 =======================
 
-Working on :ref:`faggio`. I realized that the ActiveCourses table (a
+Started to work on :doc:`/tickets/123`. 
+I realized that the ActiveCourses table (a
 global list of active courses) is probably longer needed now that we
 have `ActiveCoursesByPupil`.
 
 Removed the `get_todo_tables` feature and replaced its last usages by
 corresponding :meth:`dd.Actor.get_welcome_messages` definitions.
+
+Enrolment options.

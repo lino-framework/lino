@@ -36,6 +36,7 @@ ZERO = Decimal()
 ONE = Decimal(1)
 
 from django.db import models
+from django.db.models import Q
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -45,7 +46,6 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from lino import dd
 from lino import mixins
-from lino.utils.choosers import chooser
 
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
@@ -155,13 +155,16 @@ class Line(dd.BabelNamed):
         "cal.GuestRole", blank=True, null=True,
         help_text=_("Default guest role for particpants of events."))
 
+    options_cat = dd.ForeignKey('products.ProductCat', blank=True, null=True)
+
 
 class Lines(dd.Table):
     model = Line
-    required = dd.required(user_level='manager')
+    # required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    event_type guest_role tariff every_unit every
+    topic tariff options_cat
+    event_type guest_role every_unit every
     description
     courses.CoursesByLine
     """
@@ -249,6 +252,7 @@ class Course(cal.Reservation, dd.Printable):
     teacher = models.ForeignKey(config.teacher_model, blank=True, null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     slot = models.ForeignKey(Slot, blank=True, null=True)
+    remark = models.TextField(_("Remark"), blank=True)
 
     quick_search_fields = ('line__name', 'line__topic__name')
 
@@ -314,9 +318,12 @@ class Course(cal.Reservation, dd.Printable):
                 role=gr)
 
     def get_free_places(self):
-        used = EnrolmentStates.filter(uses_a_place=True)
-        qs = Enrolment.objects.filter(course=self, state__in=used)
-        return self.max_places - qs.count()
+        used_states = EnrolmentStates.filter(uses_a_place=True)
+        qs = Enrolment.objects.filter(course=self, state__in=used_states)
+        res = qs.aggregate(models.Sum('places'))
+        # logger.info("20140819 %s", res)
+        used_places = res['places__sum']
+        return self.max_places - used_places
 
     def full_clean(self, *args, **kw):
         if self.line is not None:
@@ -365,6 +372,12 @@ class Course(cal.Reservation, dd.Printable):
             config.day_and_month(e.start_date)
             for e in self.events_by_course.order_by('start_date')])
 
+    @dd.displayfield(_("Available places"), max_length=5)
+    def free_places(self, ar=None):
+        if not self.max_places:
+            return _("Unlimited")
+        return str(self.get_free_places())
+
     @property
     def events_by_course(self):
         ct = dd.ContentType.objects.get_for_model(self.__class__)
@@ -385,16 +398,16 @@ class Course(cal.Reservation, dd.Printable):
         return EnrolmentsByCourse.request(self)
 
 
-"""
-customize fields coming from mixins to override their inherited default verbose_names
-"""
+# customize fields coming from mixins to override their inherited
+# default verbose_names
 dd.update_field(Course, 'every_unit', default=models.NOT_PROVIDED)
 dd.update_field(Course, 'every', default=models.NOT_PROVIDED)
 
 
 if Course.FILL_EVENT_GUESTS:
 
-    @dd.receiver(dd.post_save, sender=cal.Event, dispatch_uid="fill_event_guests_from_course")
+    @dd.receiver(dd.post_save, sender=cal.Event,
+                 dispatch_uid="fill_event_guests_from_course")
     def fill_event_guests_from_course(sender=None, instance=None, **kw):
         #~ logger.info("20130528 fill_event_guests_from_course")
         if settings.SITE.loading_from_dump:
@@ -422,10 +435,13 @@ class CourseDetail(dd.FormLayout):
     general = dd.Panel("""
     line teacher start_date end_date start_time end_time
     user room #slot workflow_buttons id:8
-    max_places max_events max_date  every_unit every
+    max_places max_events max_date every_unit every
     monday tuesday wednesday thursday friday saturday sunday
     cal.EventsByController
     """, label=_("General"))
+    # enrolments = dd.Panel("""
+    # OptionsByCourse:20 EnrolmentsByCourse:40
+    # """, label=_("Enrolments"))
 
 
 class Courses(dd.Table):
@@ -473,7 +489,9 @@ class Courses(dd.Table):
         if ar.param_values.topic:
             qs = qs.filter(line__topic=ar.param_values.topic)
         if ar.param_values.city:
-            qs = qs.filter(room__company__city=ar.param_values.city)
+            flt = Q(room__isnull=True)
+            flt |= Q(room__company__city=ar.param_values.city)
+            qs = qs.filter(flt)
         if ar.param_values.state is None:
             if ar.param_values.active == dd.YesNo.yes:
                 qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
@@ -551,7 +569,7 @@ class ActiveCourses(Courses):
 
     label = _("Active courses")
     #~ column_names = 'info requested confirmed teacher company room'
-    column_names = 'info enrolments max_places teacher room *'
+    column_names = 'info enrolments free_places teacher room *'
     #~ auto_fit_column_widths = True
     hide_sums = True
 
@@ -562,11 +580,58 @@ class ActiveCourses(Courses):
         kw.update(active=dd.YesNo.yes)
         return kw
 
+if False:
+
+    class Option(dd.BabelNamed):
+
+        class Meta:
+            abstract = settings.SITE.is_abstract_model('courses.Option')
+            verbose_name = _("Enrolment option")
+            verbose_name_plural = _('Enrolment options')
+
+        course = dd.ForeignKey('courses.Course')
+
+        price = dd.ForeignKey('products.Product',
+                              verbose_name=_("Price"),
+                              null=True, blank=True)
+
+    class Options(dd.Table):
+        model = 'courses.Option'
+        required = dd.required(user_level='manager')
+        stay_in_grid = True
+        column_names = 'name price *'
+        auto_fit_column_widths = True
+        insert_layout = """
+        name
+        price
+        """
+        detail_layout = """
+        name
+        id course price
+        EnrolmentsByOption
+        """
+
+    class OptionsByCourse(Options):
+        master_key = 'course'
+        required = dd.required()
+
+
+## ENROLMENT
 
 class CreateInvoiceForEnrolment(sales.CreateInvoice):
 
     def get_partners(self, ar):
         return [o.pupil for o in ar.selected_rows]
+
+
+class ConfirmedSubmitInsert(dd.SubmitInsert):
+    def run_from_ui(self, ar, **kw):
+        obj = ar.create_instance_from_request()
+        msg = obj.get_confirm_veto(ar)
+        if msg is None:
+            obj.state = EnrolmentStates.confirmed
+        self.save_new_instance(ar, obj)
+        ar.set_response(close_window=True)
 
 
 class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
@@ -586,13 +651,29 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         _("Date of request"), default=settings.SITE.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
     amount = dd.PriceField(_("Participation fee"), blank=True)
+    places = models.PositiveIntegerField(
+        pgettext("in a course", "Places"),
+        help_text=("number of participants"),
+        default=1)
+    option = dd.ForeignKey(
+        'products.Product', verbose_name=_("Option"),
+        blank=True, null=True)
+
     remark = models.CharField(max_length=200,
                               blank=True,
                               verbose_name=_("Remark"))
 
     create_invoice = CreateInvoiceForEnrolment()
+    submit_insert = ConfirmedSubmitInsert()
 
-    @chooser()
+    @dd.chooser()
+    def option_choices(cls, course):
+        if not course.line or not course.line.options_cat:
+            return []
+        Product = dd.modules.products.Product
+        return Product.objects.filter(cat=course.line.options_cat)
+
+    @dd.chooser()
     def pupil_choices(cls, course):
         Pupil = dd.resolve_model(config.pupil_model)
         return Pupil.objects.all()
@@ -615,7 +696,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
 
     def get_confirm_veto(self, ar):
         """
-        Called from ConfirmEnrolment.
+        Called from :class:`ml.courses.ConfirmEnrolment`.
         If this returns something else than None,
         then the enrolment won't be confirmed and the return value
         displayed to the user.
@@ -664,10 +745,6 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         # tariff is a DummyField when products is not installed
         # tariff may be None
         self.amount = getattr(tariff, 'sales_price', ZERO)
-        # if tariff is None:
-        #     self.amount = ZERO
-        # else:
-        #     self.amount = tariff.sales_price
 
     def get_invoiceable_amount(self):
         return self.amount
@@ -682,7 +759,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         return self.course
 
     def get_invoiceable_qty(self):
-        return ONE
+        return self.places
 
 
 class Enrolments(dd.Table):
@@ -703,7 +780,8 @@ class Enrolments(dd.Table):
                 "Ignored if you specify an explicit enrolment state."),
             default=True),
     )
-    params_layout = """start_date end_date author state course_state participants_only"""
+    params_layout = """start_date end_date author state \
+    course_state participants_only"""
     order_by = ['request_date']
     column_names = 'request_date course pupil workflow_buttons user *'
     #~ hidden_columns = 'id state'
@@ -761,6 +839,14 @@ class Enrolments(dd.Table):
         if ar.param_values.author:
             yield unicode(ar.param_values.author)
 
+
+if dd.is_installed('products'):
+
+    class EnrolmentsByOption(Enrolments):
+        master_key = 'option'
+        column_names = 'course pupil remark amount request_date *'
+        order_by = ['request_date']
+    
 
 class ConfirmAllEnrolments(dd.Action):
     label = _("Confirm all")
@@ -826,6 +912,7 @@ class EnrolmentsByPupil(Enrolments):
 
     insert_layout = """
     course
+    places option
     remark
     request_date user
     """
@@ -835,19 +922,22 @@ class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
     required = dd.required()
     master_key = "course"
-    column_names = 'request_date pupil_info user:10 remark amount:10 workflow_buttons *'
+    column_names = 'request_date pupil_info option \
+    remark amount:10 workflow_buttons *'
     auto_fit_column_widths = True
     # cell_edit = False
 
     insert_layout = """
     pupil
+    places option
     remark
     request_date user
     """
 
     @dd.virtualfield(dd.HtmlBox(_("Participant")))
     def pupil_info(cls, self, ar):
-        elems = [ar.obj2html(self.pupil, self.pupil.get_full_name())]
+        elems = [ar.obj2html(self.pupil,
+                             self.pupil.get_full_name(nominative=True))]
         elems += [', ']
         elems += join_elems(
             list(self.pupil.address_location_lines()),
@@ -874,11 +964,12 @@ class EnrolmentsByCourse(Enrolments):
 
 class SuggestedCoursesByPupil(ActiveCourses):
     label = _("Suggested courses")
-    column_names = 'info enrolments max_places room custom_actions *'
+    column_names = 'info enrolments free_places custom_actions *'
     auto_fit_column_widths = True
     hide_sums = True
     master = config.pupil_model
-    
+    details_of_master_template = _("%(details)s for %(master)s")
+
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
@@ -899,33 +990,39 @@ class SuggestedCoursesByPupil(ActiveCourses):
         # ct = at.confirmation_type
         # if not ct:
         #     return ''
+        # free = course.get_free_places()
         sar = ar.spawn(EnrolmentsByPupil,
                        master_instance=mi, known_values=kv)
-        txt = _("Enrol")
-        btn = sar.insert_button(txt, icon_name=None)
+        if sar.get_total_count() == 0:
+            txt = _("Enrol")
+            btn = sar.insert_button(txt, icon_name=None)
+        else:
+            txt = _("Show enrolment")
+            btn = ar.obj2html(sar.data_iterator[0])
         return E.div(btn)
 
 
 def setup_main_menu(site, ui, profile, main):
     m = main.add_menu("courses", config.verbose_name)
-    m.add_action(Courses)
-    m.add_action(PendingRequestedEnrolments)
-    m.add_action(PendingConfirmedEnrolments)
+    m.add_action('courses.Courses')
+    m.add_action('courses.Lines')
+    m.add_action('courses.PendingRequestedEnrolments')
+    m.add_action('courses.PendingConfirmedEnrolments')
 
 
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("courses", config.verbose_name)
     #~ m.add_action(Rooms)
-    m.add_action(Topics)
-    m.add_action(Lines)
-    m.add_action(Slots)
+    m.add_action('courses.Topics')
+    m.add_action('courses.Slots')
 
 
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("courses", config.verbose_name)
     #~ m.add_action(Presences)
     #~ m.add_action(Events)
-    m.add_action(Enrolments)
-    m.add_action(EnrolmentStates)
+    m.add_action('courses.Enrolments')
+    # m.add_action('courses.Options')
+    m.add_action('courses.EnrolmentStates')
 
 dd.add_user_group('courses', config.verbose_name)

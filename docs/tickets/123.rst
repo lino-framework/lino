@@ -1,0 +1,33 @@
+==============================
+#123 : Lino Faggio August 2014
+==============================
+
+Geplante Änderungen in :ref:`faggio`.
+
+- Erfassen einer Einschreibung vom Kunden aus muss klarer werden.
+  Es reicht nicht, einfach nur eine alphabetische lineare Liste aller
+  Kurse zu kriegen. Virtual table "SelectableCourses" by participant
+  with parameters, detail_layout and a custom action to enrol into that
+  course. Siehe auch Screenshots von Hermanns Access-Anwendung.
+
+- Reisen und Ausfahrten in einem eigenen neuen Modul? Reisen und
+  Ausfahren sind anders als Kurse, denn:
+  - Pro Anmeldung gibt es Optionen wie Zimmerwünsche und Auswahl der
+    Haltestelle.
+  - Reisen brauchen nicht im Kalender zu erscheinen
+
+- Nach Erfassen einer Einschreibung sollte man nicht noch mal auf
+  "Bestätigen" klicken müssen.
+
+- Neues Feld "NR-Nummer" pro Teilnehmer
+
+- "Verfalldatum" eines Kurses. Alte Kurse automatisch rausfiltern.
+  Zustand "Beendet" kann dann raus.
+- Die Unterscheidung der Zustände "Entwurf" und "Registriert" scheint
+  umständlich. Kann man die nicht zusammen legen?
+- Kurs löschen geht nicht
+- "wöchentlich" und "pro Wochentag"
+- Unexpected data type bei Export Excel
+- Rechnung erstellen geht nicht ("type object "InvoicesToCreate" has no
+  attribute 'model')
+- Druckvorlage Rechnung. Zumindest ein erster Vorschlag

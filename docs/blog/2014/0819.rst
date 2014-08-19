@@ -1,0 +1,17 @@
+========================
+Tuesday, August 19, 2014
+========================
+
+Continued with :doc:`/tickets/123`. 
+
+In a first version 
+
+- I'll suggest only one possible option per enrolment. Maybe they will
+  want a one-to-many relationship.
+- I don't yet put separate tables for trips/journeys and
+  courses. journeys are currently just "a special kind of courses":
+  they don't have a room specified and thus don't generate any events.
+- Enrolment options are implemented as products.
+
+  
+  

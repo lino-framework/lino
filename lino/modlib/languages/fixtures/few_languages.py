@@ -1,4 +1,5 @@
-# Copyright 2009-2012 Luc Saffre
+# -*- coding: UTF-8 -*-
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -14,48 +15,19 @@
 Adds an arbitrary selection of a few demo languages.
 """
 
-from django.db import models
-#countries = models.get_app('countries')
+from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
 from lino.utils.instantiator import Instantiator
-from north.dbutils import babel_values
+from lino import dd
 
 
 def objects():
 
     Language = Instantiator('languages.Language', "id").build
 
-    yield Language('ger', **babel_values('name',
-                                         de=u"Deutsch",
-                                         fr=u'Allemand',
-                                         en=u'German',
-                                         nl=u'Duits',
-                                         et=u'Saksa',
-                                         ))
-    yield Language('fre', **babel_values('name',
-                                         de=u"Französisch",
-                                         fr=u'Français',
-                                         en=u'French',
-                                         nl=u'Frans',
-                                         et=u'Prantsuse',
-                                         ))
-    yield Language('eng', **babel_values('name',
-                                         de=u"Englisch",
-                                         fr=u'Anglais',
-                                         en=u'English',
-                                         nl=u'Engels',
-                                         et=u'Inglise',
-                                         ))
-    yield Language('dut', **babel_values('name',
-                                         de=u"Niederländisch",
-                                         fr=u'Néerlandais',
-                                         en=u'Dutch',
-                                         nl=u'Nederlands',
-                                         et=u'Hollandi',
-                                         ))
-    yield Language('est', **babel_values('name',
-                                         de=u"Estnisch",
-                                         fr=u'Estonien',
-                                         en=u'Estonian',
-                                         et=u'Eesti',
-                                         ))
+    yield Language('ger', **dd.str2kw('name', _("German")))
+    yield Language('fre', **dd.str2kw('name', _("French")))
+    yield Language('eng', **dd.str2kw('name', _("English")))
+    yield Language('dut', **dd.str2kw('name', _("Dutch")))
+    yield Language('est', **dd.str2kw('name', _("Estonian")))

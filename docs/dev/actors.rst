@@ -665,10 +665,17 @@ name.
     The :attr:`master_key` is automatically added to
     :attr:`hidden_columns`.
 
-  .. attribute:: master_field = None
+  .. attribute:: master_field
 
     For internal use. Automatically set to the field descriptor of the
     :attr:`master_key`.
+
+  .. attribute:: details_of_master_template
+
+    Used to build the title of a request on this table when it is a
+    slave of a given master. The default value is defined as follows::
+
+        details_of_master_template = _("%(details)s of %(master)s")
 
   .. attribute:: use_as_default_table = True
 

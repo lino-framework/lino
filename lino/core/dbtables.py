@@ -333,16 +333,12 @@ class Table(AbstractTable):
     use_as_default_table = True
 
     expand_memos = False
-    """
-    (No longer used; see :doc:`/tickets/44`). 
-    Whether multi-line text fields in Grid views should be expanded in by default or not.
+    """(No longer used; see :doc:`/tickets/44`).  Whether multi-line text
+    fields in Grid views should be expanded in by default or not.
+
     """
 
     details_of_master_template = _("%(details)s of %(master)s")
-    """
-    Used to build the title of a request on this table when it is a 
-    slave of a given master.
-    """
 
     handle_uploaded_files = None
     """

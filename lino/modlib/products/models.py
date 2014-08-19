@@ -22,8 +22,6 @@ vat = dd.resolve_app('vat')
 
 class ProductCat(dd.BabelNamed):
 
-    """
-    """
     class Meta:
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")

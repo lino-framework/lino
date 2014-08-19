@@ -4,3 +4,4 @@ Traceback (most recent call last):
     __import__(self.modname)
   File "/home/luc/hgwork/lino/lino/modlib/languages/fixtures/few_languages.py", line 36
 SyntaxError: Non-ASCII character '\xc3' in file /home/luc/hgwork/lino/lino/modlib/languages/fixtures/few_languages.py on line 36, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
+/home/luc/hgwork/lino/docs/dev/actors.rst:220: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
