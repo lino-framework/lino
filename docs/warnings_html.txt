@@ -1,7 +1,5 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.languages.fixtures.few_languages.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.languages.fixtures.few_languages'; the following exception was raised:
-Traceback (most recent call last):
-  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
-    __import__(self.modname)
-  File "/home/luc/hgwork/lino/lino/modlib/languages/fixtures/few_languages.py", line 36
-SyntaxError: Non-ASCII character '\xc3' in file /home/luc/hgwork/lino/lino/modlib/languages/fixtures/few_languages.py on line 36, but no encoding declared; see http://www.python.org/peps/pep-0263.html for details
+/home/luc/hgwork/lino/docs/tickets/123.rst:16: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/tickets/123.rst:17: WARNING: Block quote ends without a blank line; unexpected unindent.
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/dev/actors.rst:220: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14

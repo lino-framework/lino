@@ -331,6 +331,8 @@ class Actor(actions.Parametrizable):
 
     hidden_elements = frozenset()
 
+    model = None
+
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
         """

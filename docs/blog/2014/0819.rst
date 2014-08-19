@@ -13,5 +13,9 @@ In a first version
   they don't have a room specified and thus don't generate any events.
 - Enrolment options are implemented as products.
 
-  
+Haltestellen: die werden nicht als Einschreibeoptionen gemacht,
+sondern das würde ich später als Zusatzmodul "Reiseplanung"
+hinzufügen. En attendant wird es wahrscheinlich am einfachsten sein,
+die Teilnehmerliste nach Calc bzw. Excel zu exportieren und dort
+manuell die Haltestellen zu bestimmen.
   

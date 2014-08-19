@@ -206,14 +206,13 @@ class CourseStates(dd.Workflow):
 
 add = CourseStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
-#~ add('20', _("Published"),'published',editable=False)
 add('20', _("Registered"), 'registered', editable=False)
-add('30', _("Started"), 'started', editable=False)
-add('40', _("Ended"), 'ended', editable=False)
-add('50', _("Cancelled"), 'cancelled', editable=True)
+# add('30', _("Started"), 'started', editable=False)
+# add('40', _("Ended"), 'ended', editable=False)
+# add('50', _("Cancelled"), 'cancelled', editable=True)
 
-#~ ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
-ACTIVE_COURSE_STATES = set((CourseStates.registered, CourseStates.started))
+# #~ ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
+# ACTIVE_COURSE_STATES = set((CourseStates.registered, CourseStates.started))
 
 
 class EnrolmentStates(dd.Workflow):
@@ -226,7 +225,7 @@ add = EnrolmentStates.add_item
 add('10', _("Requested"), 'requested', invoiceable=False, uses_a_place=False)
 add('20', _("Confirmed"), 'confirmed', invoiceable=True, uses_a_place=True)
 add('30', _("Cancelled"), 'cancelled', invoiceable=False, uses_a_place=False)
-add('40', _("Certified"), 'certified', invoiceable=True, uses_a_place=True)
+# add('40', _("Certified"), 'certified', invoiceable=True, uses_a_place=True)
 #~ add('40', _("Started"),'started')
 #~ add('50', _("Success"),'success')
 #~ add('60', _("Award"),'award')
@@ -266,6 +265,14 @@ class Course(cal.Reservation, dd.Printable):
     name = models.CharField(max_length=100,
                             blank=True,
                             verbose_name=_("Name"))
+    tariff = dd.ForeignKey('products.Product',
+                           blank=True, null=True,
+                           verbose_name=_("Participation fee"),
+                           related_name='courses_by_tariff')
+
+    enrolments_until = models.DateField(
+        _("Enrolments until"), blank=True, null=True)
+
     duplicate = dd.Duplicate()
 
     def on_duplicate(self, ar, master):
@@ -288,9 +295,9 @@ class Course(cal.Reservation, dd.Printable):
 
         """
         # if self.state in (CourseStates.draft, CourseStates.cancelled):
-        if self.state == CourseStates.cancelled:
-            ar.info("No start date because state is %s", self.state)
-            return None
+        # if self.state == CourseStates.cancelled:
+        #     ar.info("No start date because state is %s", self.state)
+        #     return None
         return self.start_date
 
     def update_cal_calendar(self):
@@ -331,6 +338,13 @@ class Course(cal.Reservation, dd.Printable):
                 self.every_unit = self.line.every_unit
             if self.every is None:
                 self.every = self.line.every
+        if self.enrolments_until is None:
+            self.enrolments_until = self.start_date
+        # if self.id is not None:
+        #     if self.enrolments_until is None:
+        #         qs = self.get_existing_auto_events()
+        #         if qs.count():
+        #             self.enrolments_until = qs[0].start_date
         super(Course, self).full_clean(*args, **kw)
 
     def before_auto_event_save(self, event):
@@ -461,7 +475,6 @@ class Courses(dd.Table):
         line=models.ForeignKey('courses.Line', blank=True, null=True),
         topic=models.ForeignKey('courses.Topic', blank=True, null=True),
         city=models.ForeignKey('countries.Place', blank=True, null=True),
-        #~ company = models.ForeignKey('contacts.Company',blank=True,null=True),
         teacher=models.ForeignKey(
             config.teacher_model,
             blank=True, null=True),
@@ -493,10 +506,13 @@ class Courses(dd.Table):
             flt |= Q(room__company__city=ar.param_values.city)
             qs = qs.filter(flt)
         if ar.param_values.state is None:
+            flt = (Q(enrolments_until__isnull=True)
+                   | Q(enrolments_until__gte=dd.today())) \
+                & Q(state=CourseStates.registered)
             if ar.param_values.active == dd.YesNo.yes:
-                qs = qs.filter(state__in=ACTIVE_COURSE_STATES)
+                qs = qs.filter(flt)
             elif ar.param_values.active == dd.YesNo.no:
-                qs = qs.exclude(state__in=ACTIVE_COURSE_STATES)
+                qs = qs.exclude(flt)
         return qs
 
     @classmethod
@@ -512,6 +528,12 @@ class Courses(dd.Table):
             v = ar.param_values.get(n)
             if v:
                 yield unicode(v)
+
+    @dd.chooser()
+    def city_choices(cls):
+        Place = dd.modules.countries.Place
+        Room = dd.modules.cal.Room
+        return Place.objects.filter(cat=course.line.options_cat)
 
 
 class CoursesByTeacher(Courses):
@@ -634,8 +656,9 @@ class ConfirmedSubmitInsert(dd.SubmitInsert):
         ar.set_response(close_window=True)
 
 
-class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
+class Enrolment(dd.UserAuthored, sales.Invoiceable):
 
+    invoiceable_date_field = 'request_date'
     workflow_state_field = 'state'
 
     class Meta:
@@ -659,9 +682,11 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
         'products.Product', verbose_name=_("Option"),
         blank=True, null=True)
 
-    remark = models.CharField(max_length=200,
-                              blank=True,
-                              verbose_name=_("Remark"))
+    remark = models.CharField(_("Remark"), max_length=200, blank=True)
+    confirmation_details = dd.RichTextField(
+        _("Confirmation details"), blank=True,
+        # format="html"
+    )
 
     create_invoice = CreateInvoiceForEnrolment()
     submit_insert = ConfirmedSubmitInsert()
@@ -726,8 +751,8 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
     def __unicode__(self):
         return "%s / %s" % (self.course, self.pupil)
 
-    invoiceable_date_field = 'request_date'
-    #~ invoiceable_partner_field = 'pupil'
+    def get_print_language(self):
+        return self.pupil.language
 
     @classmethod
     def get_partner_filter(cls, partner):
@@ -741,9 +766,9 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
     def compute_amount(self):
         #~ if self.course is None:
             #~ return
-        tariff = self.course.line.tariff
-        # tariff is a DummyField when products is not installed
-        # tariff may be None
+        tariff = self.get_invoiceable_product()
+        # When `products` is not installed, then tariff may be None
+        # because it is a DummyField.
         self.amount = getattr(tariff, 'sales_price', ZERO)
 
     def get_invoiceable_amount(self):
@@ -752,7 +777,7 @@ class Enrolment(dd.UserAuthored, dd.Printable, sales.Invoiceable):
     def get_invoiceable_product(self):
         #~ if self.course is not None:
         if self.state.invoiceable:
-            return self.course.line.tariff
+            return self.course.tariff or self.course.line.tariff
 
     def get_invoiceable_title(self):
         #~ if self.course is not None:
@@ -794,7 +819,7 @@ class Enrolments(dd.Table):
     request_date user
     course pupil
     remark amount workflow_buttons
-    sales.InvoicingsByInvoiceable
+    confirmation_details sales.InvoicingsByInvoiceable
     """
 
     @classmethod
@@ -876,7 +901,7 @@ class PendingRequestedEnrolments(Enrolments):
     column_names = 'request_date course pupil remark user amount workflow_buttons'
     hidden_columns = 'id state'
 
-    confirm_all = ConfirmAllEnrolments()
+    # confirm_all = ConfirmAllEnrolments()
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -894,7 +919,7 @@ class PendingConfirmedEnrolments(Enrolments):
     def param_defaults(self, ar, **kw):
         kw = super(PendingConfirmedEnrolments, self).param_defaults(ar, **kw)
         kw.update(state=EnrolmentStates.confirmed)
-        kw.update(course_state=CourseStates.ended)
+        # kw.update(course_state=CourseStates.ended)
         return kw
 
 

@@ -406,7 +406,7 @@ class EventGenerator(mixins.UserAuthored):
 
     def get_existing_auto_events(self):
         ot = ContentType.objects.get_for_model(self.__class__)
-        return settings.SITE.modules.cal.Event.objects.filter(
+        return dd.modules.cal.Event.objects.filter(
             owner_type=ot, owner_id=self.pk,
             auto_type__isnull=False).order_by('auto_type')
 
