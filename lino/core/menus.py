@@ -332,7 +332,7 @@ class Menu(MenuItem):
     def add_item(self, name, label, **kw):
         return self.add_item_instance(MenuItem(name, label, **kw))
 
-    def add_separator(self, label, **kw):
+    def add_separator(self, label='-', **kw):
         if len(self.items) > 0 and not self.items[-1].label.startswith('-'):
             return self.add_item_instance(MenuItem(None, label, **kw))
 
