@@ -329,7 +329,7 @@ class Course(cal.Reservation, dd.Printable):
         qs = Enrolment.objects.filter(course=self, state__in=used_states)
         res = qs.aggregate(models.Sum('places'))
         # logger.info("20140819 %s", res)
-        used_places = res['places__sum']
+        used_places = res['places__sum'] or 0
         return self.max_places - used_places
 
     def full_clean(self, *args, **kw):
