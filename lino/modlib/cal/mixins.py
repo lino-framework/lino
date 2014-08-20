@@ -438,10 +438,8 @@ class RecurrenceSet(Started, Ended):
 
     @classmethod
     def on_analyze(cls, lino):
-        cls.WEEKDAY_FIELDS = dd.fields_list(cls,
-            '''monday tuesday wednesday
-            thursday friday saturday  sunday    
-            ''')
+        cls.WEEKDAY_FIELDS = dd.fields_list(
+            cls, 'monday tuesday wednesday thursday friday saturday  sunday')
         super(RecurrenceSet, cls).on_analyze(lino)
 
     @classmethod
@@ -459,10 +457,19 @@ class RecurrenceSet(Started, Ended):
         yield 'start_time'
         yield 'end_time'
 
-    def unused_disabled_fields(self, ar):
+    def save(self, *args, **kw):
+        if self.every_unit == Recurrencies.once:
+            self.max_events = 1
+            self.every = 0
+        super(RecurrenceSet, self).save(*args, **kw)
+
+    def disabled_fields(self, ar):
         rv = super(RecurrenceSet, self).disabled_fields(ar)
-        if self.every_unit != Recurrencies.per_weekday:
-            rv |= self.WEEKDAY_FIELDS
+        if self.every_unit == Recurrencies.once:
+            rv.add('max_events')
+            rv.add('every')
+        # if self.every_unit != Recurrencies.per_weekday:
+            # rv |= self.WEEKDAY_FIELDS
         return rv
 
     @dd.displayfield(_("Description"))
@@ -507,10 +514,11 @@ class RecurrenceSet(Started, Ended):
         return self.find_start_date(date)
 
     def find_start_date(self, date):
-        for i in range(7):
-            if self.is_available_on(date):
-                return date
-            date += ONE_DAY
+        if date is not None:
+            for i in range(7):
+                if self.is_available_on(date):
+                    return date
+                date += ONE_DAY
         return None
 
     def is_available_on(self, date):

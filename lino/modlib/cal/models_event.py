@@ -169,6 +169,12 @@ class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
     # ~ summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
     description = dd.RichTextField(_("Description"), blank=True, format='html')
 
+    def before_auto_event_save(self, obj):
+        if self.end_date and self.end_date != self.start_date:
+            duration = self.end_date - self.start_date
+            obj.end_date = obj.start_date + duration
+        super(RecurrentEvent, self).before_auto_event_save(obj)
+
     #~ def on_create(self,ar):
         #~ super(RecurrentEvent,self).on_create(ar)
         #~ self.event_type = settings.SITE.site_config.holiday_event_type
@@ -190,7 +196,7 @@ class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
 
 dd.update_field(
     RecurrentEvent, 'every_unit',
-    default=Recurrencies.yearly)
+    default=Recurrencies.yearly, blank=False, null=False)
 
 
 class RecurrentEvents(dd.Table):
@@ -202,14 +208,16 @@ class RecurrentEvents(dd.Table):
     order_by = ['start_date']
 
     insert_layout = """
-    start_date every_unit event_type
     name
+    start_date end_date every_unit event_type
     """
+    insert_layout_width = 80
 
     detail_layout = """
-    id user event_type name
+    name
+    id user event_type
     start_date start_time  end_date end_time
-    max_events every_unit every
+    every_unit every max_events
     monday tuesday wednesday thursday friday saturday sunday
     description cal.EventsByController
     """
@@ -218,9 +226,9 @@ class RecurrentEvents(dd.Table):
 class ExtAllDayField(dd.VirtualField):
 
     """
-    An editable virtual field needed for 
+    An editable virtual field needed for
     communication with the Ext.ensible CalendarPanel
-    because we consider the "all day" checkbox 
+    because we consider the "all day" checkbox
     equivalent to "empty start and end time fields".
     """
 
@@ -531,20 +539,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     @dd.displayfield(_("When"))
     def when_text(self, ar):
         assert ar is not None
-        #~ print 20130802, ar.renderer
-        #~ raise foo
-        #~ txt = when_text(self.start_date)
         txt = when_text(self.start_date, self.start_time)
-        #~ return txt
+        if self.end_date and self.end_date != self.start_date:
+            txt += "-" + when_text(self.end_date, self.end_time)
+        return txt
         #~ logger.info("20130802a when_text %r",txt)
-        return ar.obj2html(self, txt)
-        #~ try:
-            #~ e = ar.obj2html(self,txt)
-        #~ except Exception,e:
-            #~ import traceback
-            #~ traceback.print_exc(e)
-        #~ logger.info("20130802b when_text %r",E.tostring(e))
-        #~ return e
+        # return ar.obj2html(self, txt)
 
     @dd.displayfield(_("Link URL"))
     def url(self, ar):
@@ -815,7 +815,7 @@ class EventsByRoom(Events):
 class EventsByController(Events):
     required = dd.required(user_groups='office')
     master_key = 'owner'
-    column_names = 'linked_date summary workflow_buttons *'
+    column_names = 'when_text summary workflow_buttons *'
     # column_names = 'when_text:20 linked_date summary workflow_buttons *'
     auto_fit_column_widths = True
 

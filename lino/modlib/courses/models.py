@@ -535,7 +535,7 @@ class Courses(dd.Table):
             qs = qs.filter(flt)
         elif ar.param_values.active == dd.YesNo.no:
             qs = qs.exclude(flt)
-        logger.info("20140820 %s", dd.today())
+        # logger.info("20140820 %s", dd.today())
         return qs
 
     @classmethod
@@ -1017,6 +1017,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
     hide_sums = True
     master = config.pupil_model
     details_of_master_template = _("%(details)s for %(master)s")
+    params_layout = 'topic line city teacher active'
 
     @classmethod
     def param_defaults(self, ar, **kw):

@@ -23,6 +23,7 @@ import datetime
 
 from dateutil.tz import tzlocal
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
 
@@ -88,21 +89,14 @@ def when_text(d, t=None):
     """
     if d is None:
         return ''
-    fmt = 'yyyy MMM dd (EE)'
-    if t is None:
-        return format_date(
-            d, fmt, locale=to_locale(translation.get_language()))
-    #~ if d.year == settings.SITE.today().year:
-        #~ fmt = "%a" + settings.SITE.time_format_strftime
-    #~ else:
-        #~ fmt = "%a %y %b %d" + settings.SITE.time_format_strftime
-    #~ fmt = "%a %Y %b %d " + settings.SITE.time_format_strftime
-    #~ return datetime.datetime.combine(d,t).strftime(fmt)
-    fmt += " HH:mm"
-    return format_datetime(
-        datetime.datetime.combine(d, t),
-        fmt,
-        locale=to_locale(translation.get_language()))
+    # fmt = 'yyyy MMM dd (EE)'
+    # txt = d.strftime(settings.SITE.date_format_strftime)
+    txt = format_date(
+        d, 'EE ', locale=to_locale(translation.get_language()))
+    txt += dd.fds(d)
+    if t is not None:
+        txt += ' (%s)' % t.strftime(settings.SITE.time_format_strftime)
+    return txt
 
 
 class Weekdays(dd.ChoiceList):

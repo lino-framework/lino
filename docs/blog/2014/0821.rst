@@ -1,0 +1,9 @@
+=========================
+Thursday, August 21, 2014
+=========================
+
+Fixed some bugs in RecurrenceSet and EventGenerator which made it
+impossible to create a RecurrentEvent with recurrency "once".
+
+Changed the format of `when_text`. People in Eupen are irritated by
+dates formatted "2014 Aug 21 (Do.)".  Now they see "Do. 21.08.14".
