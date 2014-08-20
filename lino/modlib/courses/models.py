@@ -155,7 +155,24 @@ class Line(dd.BabelNamed):
         "cal.GuestRole", blank=True, null=True,
         help_text=_("Default guest role for particpants of events."))
 
-    options_cat = dd.ForeignKey('products.ProductCat', blank=True, null=True)
+    options_cat = dd.ForeignKey(
+        'products.ProductCat',
+        verbose_name=_("Options category"),
+        related_name="courses_lines_by_options_cat",
+        blank=True, null=True)
+
+    fees_cat = dd.ForeignKey(
+        'products.ProductCat',
+        verbose_name=_("Fees category"),
+        related_name="courses_lines_by_fees_cat",
+        blank=True, null=True)
+
+    @dd.chooser()
+    def tariff_choices(cls, fees_cat):
+        if not fees_cat:
+            return []
+        Product = dd.modules.products.Product
+        return Product.objects.filter(cat=fees_cat)
 
 
 class Lines(dd.Table):
@@ -163,7 +180,7 @@ class Lines(dd.Table):
     # required = dd.required(user_level='manager')
     detail_layout = """
     id name
-    topic tariff options_cat
+    topic fees_cat tariff options_cat
     event_type guest_role every_unit every
     description
     courses.CoursesByLine
@@ -171,7 +188,7 @@ class Lines(dd.Table):
     insert_layout = dd.FormLayout("""
     name
     every_unit every
-    event_type guest_role tariff
+    event_type guest_role
     description
     """, window_size=(70, 16))
 
@@ -288,6 +305,13 @@ class Course(cal.Reservation, dd.Printable):
             self.line,
             dd.dtos(self.start_date),
             self.room)
+
+    @dd.chooser()
+    def tariff_choices(cls, line):
+        if not line or not line.fees_cat:
+            return []
+        Product = dd.modules.products.Product
+        return Product.objects.filter(cat=line.fees_cat)
 
     def update_cal_from(self, ar):
         """Note: if recurrency is per_weekday, actual start may be
@@ -505,14 +529,13 @@ class Courses(dd.Table):
             flt = Q(room__isnull=True)
             flt |= Q(room__company__city=ar.param_values.city)
             qs = qs.filter(flt)
-        if ar.param_values.state is None:
-            flt = (Q(enrolments_until__isnull=True)
-                   | Q(enrolments_until__gte=dd.today())) \
-                & Q(state=CourseStates.registered)
-            if ar.param_values.active == dd.YesNo.yes:
-                qs = qs.filter(flt)
-            elif ar.param_values.active == dd.YesNo.no:
-                qs = qs.exclude(flt)
+        flt = Q(enrolments_until__isnull=True) | \
+              Q(enrolments_until__gte=dd.today())
+        if ar.param_values.active == dd.YesNo.yes:
+            qs = qs.filter(flt)
+        elif ar.param_values.active == dd.YesNo.no:
+            qs = qs.exclude(flt)
+        logger.info("20140820 %s", dd.today())
         return qs
 
     @classmethod
@@ -550,7 +573,7 @@ class CoursesByLine(Courses):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
-        #~ kw.update(state=CourseStates.started)
+        kw.update(state=CourseStates.registered)
         kw.update(active=dd.YesNo.yes)
         return kw
 
@@ -598,7 +621,7 @@ class ActiveCourses(Courses):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
-        #~ kw.update(state=CourseStates.started)
+        kw.update(state=CourseStates.registered)
         kw.update(active=dd.YesNo.yes)
         return kw
 
@@ -671,7 +694,7 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
     course = dd.ForeignKey('courses.Course')
     pupil = dd.ForeignKey(config.pupil_model)
     request_date = models.DateField(
-        _("Date of request"), default=settings.SITE.today)
+        _("Date of request"), default=dd.today)
     state = EnrolmentStates.field(default=EnrolmentStates.requested)
     amount = dd.PriceField(_("Participation fee"), blank=True)
     places = models.PositiveIntegerField(
@@ -998,7 +1021,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
-        kw.update(active=dd.YesNo.yes)
+        # kw.update(active=dd.YesNo.yes)
         pupil = ar.master_instance
         if pupil and pupil.city:
             kw.update(city=pupil.city)

@@ -1,2 +1,0 @@
-/home/luc/hgwork/lino/docs/tickets/123.rst:16: ERROR: Unexpected indentation.
-/home/luc/hgwork/lino/docs/tickets/123.rst:17: WARNING: Block quote ends without a blank line; unexpected unindent.

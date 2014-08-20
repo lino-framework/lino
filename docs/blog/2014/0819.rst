@@ -12,9 +12,3 @@ In a first version
 - Enrolment options are implemented as products.
   Only one possible option per enrolment. 
 
-Haltestellen: die werden nicht als Einschreibeoptionen gemacht,
-sondern das würde ich später als Zusatzmodul "Reiseplanung"
-hinzufügen. En attendant wird es wahrscheinlich am einfachsten sein,
-die Teilnehmerliste nach Calc bzw. Excel zu exportieren und dort
-manuell die Haltestellen zu bestimmen.
-  
