@@ -458,7 +458,9 @@ class RecurrenceSet(Started, Ended):
         yield 'end_time'
 
     def save(self, *args, **kw):
-        if self.every_unit == Recurrencies.once:
+        if self.every_unit == Recurrencies.per_weekday:
+            self.every_unit = Recurrencies.weekly
+        elif self.every_unit == Recurrencies.once:
             self.max_events = 1
             self.every = 0
         super(RecurrenceSet, self).save(*args, **kw)
