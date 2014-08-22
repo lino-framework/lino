@@ -532,3 +532,6 @@ from .models_guest import *
 from .models_event import *
 
 from .mixins import EventGenerator, RecurrenceSet, Reservation
+
+Reservation.show_today = ShowEventsByDay('start_date')
+Event.show_today = ShowEventsByDay('start_date')

@@ -33,3 +33,12 @@ Clickable foreign keys
 :ref:`new.visible`: Clickable foreign keys in a grid are now less
 "intrusive": instead of making the whole text clickable, we now prefix
 a clickable `xsite/link.png` icon.
+
+
+Miscellaneous changes in :ref:`faggio`
+--------------------------------------
+
+New field `ref` for :class:`ml.courses.Line`.
+
+New action :class:`ml.cal.ShowEventsByDay` on Event and on Reservation
+is a handy shortcut to "Show all calendar events of the same day."

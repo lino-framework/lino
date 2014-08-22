@@ -5,10 +5,11 @@ Thursday, August 21, 2014
 Fixed some bugs in RecurrenceSet and EventGenerator which made it
 impossible to create a RecurrentEvent with recurrency "once". 
 
-The every_unit field of RecurrentEvent is no longer nullable.
+Database change: The `every_unit` field of
+:class:`ml.cal.RecurrentEvent` is no longer nullable.
 
 RecurrenceSet now saves the deprecated "per weekday" for `every_unit`
-as weekly.
+as "weekly".
 
 Changed the format of `when_text`. People in Eupen are irritated by
 dates formatted "2014 Aug 21 (Do.)".  Now they see "Do. 21.08.14".

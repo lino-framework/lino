@@ -797,9 +797,11 @@ class EventsByDay(Events):
 
 
 class ShowEventsByDay(dd.Action):
-    label = _("Events today")
+    label = _("Today")
+    help_text = _("Show all calendar events of the same day.")
     show_in_bbar = True
     sort_index = 60
+    icon_name = 'calendar'
 
     def __init__(self, date_field, **kw):
         self.date_field = date_field
