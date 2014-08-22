@@ -761,7 +761,7 @@ class EventsByType(Events):
 
 class EventsByDay(Events):
     label = _("Appointments today")
-    column_names = 'room summary workflow_buttons *'
+    column_names = 'room summary owner workflow_buttons *'
     required = dd.required(user_groups='office reception')
     auto_fit_column_widths = True
     params_panel_hidden = False
@@ -794,6 +794,25 @@ class EventsByDay(Events):
         pv.update(end_date=today)
         target = ar.spawn(cls, param_values=pv)
         return ar.href_to_request(target, txt)
+
+
+class ShowEventsByDay(dd.Action):
+    label = _("Events today")
+    show_in_bbar = True
+    sort_index = 60
+
+    def __init__(self, date_field, **kw):
+        self.date_field = date_field
+        super(ShowEventsByDay, self).__init__(**kw)
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        today = getattr(obj, self.date_field)
+        pv = dict(start_date=today)
+        pv.update(end_date=today)
+        sar = ar.spawn(EventsByDay, param_values=pv)
+        js = ar.renderer.request_handler(sar)
+        ar.set_response(eval_js=js)
 
 
 #~ class EventsByType(Events):
@@ -841,6 +860,7 @@ if settings.SITE.user_model:
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
         column_names = 'when_text summary workflow_buttons project *'
+        auto_fit_column_widths = True
 
         @classmethod
         def param_defaults(self, ar, **kw):
@@ -857,17 +877,6 @@ if settings.SITE.user_model:
             kw.update(start_date=ar.param_values.start_date)
             return super(MyEvents, self).create_instance(ar, **kw)
 
-    #~ class MyUnclearEvents(MyEvents):
-        #~ label = _("My unclear events")
-        #~ help_text = _("Events which probably need your attention.")
-        #~
-        #~ @classmethod
-        #~ def param_defaults(self,ar,**kw):
-            #~ kw = super(MyUnclearEvents,self).param_defaults(ar,**kw)
-            #~ kw.update(observed_event=EventEvents.pending)
-            #~ kw.update(start_date=settings.SITE.today())
-            #~ kw.update(end_date=settings.SITE.today()+ONE_DAY)
-            #~ return kw
 
     class MyAssignedEvents(MyEvents):
         label = _("Events assigned to me")

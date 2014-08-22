@@ -133,7 +133,7 @@ class Line(dd.BabelNamed):
     class Meta:
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
-    ref = dd.NullCharField(max_length=30, unique=True)
+    ref = dd.NullCharField(_("Reference"), max_length=30, unique=True)
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
@@ -192,9 +192,9 @@ class Lines(dd.Table):
     courses.CoursesByLine
     """
     insert_layout = dd.FormLayout("""
-    name ref
-    every_unit every
-    event_type guest_role
+    name
+    ref topic
+    every_unit every event_type
     description
     """, window_size=(70, 16))
 
