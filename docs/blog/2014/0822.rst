@@ -31,5 +31,5 @@ Clickable foreign keys
 ----------------------
 
 :ref:`new.visible`: Clickable foreign keys in a grid are now less
-"intrusive": instead of making the whole text clickable, we now append
+"intrusive": instead of making the whole text clickable, we now prefix
 a clickable `xsite/link.png` icon.

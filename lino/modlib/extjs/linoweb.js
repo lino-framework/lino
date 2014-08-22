@@ -2024,7 +2024,7 @@ Lino.fk_renderer = function(fkname,handlername) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
     //~ if (record.phantom) return '';
     if (value) {
-        return value + ' ' + Lino.link_button('javascript:'+handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})")');
+        return Lino.link_button('javascript:'+handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})")') + value;
         // until 20140822 (clickable foreign keys):
         // var s = '<a href="javascript:' ;
         // s += handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})">';

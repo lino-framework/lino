@@ -398,7 +398,7 @@ class Course(cal.Reservation, dd.Printable):
 
     @dd.displayfield(_("Info"))
     def info(self, ar):
-        return ar.obj2html(self)
+        return unicode(self)
 
     #~ @dd.displayfield(_("Where"))
     #~ def where_text(self,ar):
@@ -955,6 +955,7 @@ class EnrolmentsByPupil(Enrolments):
     required = dd.required()
     master_key = "pupil"
     column_names = 'request_date course user:10 remark amount:10 workflow_buttons *'
+    auto_fit_column_widths = True
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -1022,6 +1023,14 @@ class SuggestedCoursesByPupil(ActiveCourses):
     master = config.pupil_model
     details_of_master_template = _("%(details)s for %(master)s")
     params_layout = 'topic line city teacher active'
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(SuggestedCoursesByPupil, self).get_request_queryset(ar)
+        pupil = ar.master_instance
+        if pupil is not None:
+            qs = qs.exclude(enrolment__pupil=pupil)
+        return qs
 
     @classmethod
     def param_defaults(self, ar, **kw):
