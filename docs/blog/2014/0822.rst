@@ -5,7 +5,7 @@ Friday, August 22, 2014
 Choosers for parameters of a table
 ----------------------------------
 
-:ref:`new`: until now it was not possible to write a chooser for a
+:ref:`new.dev`: until now it was not possible to write a chooser for a
 field of :attr:`dd.Actor.parameters`.  Now it is.  :ref:`regressions`.
 
 This feature was needed for solving the following problem (from
@@ -26,3 +26,10 @@ the current combox `city`).  "dynamic" means here: after
 :meth:`ad.Site.setup_choicelists` but before generating the
 :xfile:`linolib.js`. This wll probably require some other cool new
 features.
+
+Clickable foreign keys
+----------------------
+
+:ref:`new.visible`: Clickable foreign keys in a grid are now less
+"intrusive": instead of making the whole text clickable, we now append
+a clickable `xsite/link.png` icon.

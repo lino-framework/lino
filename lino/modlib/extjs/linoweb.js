@@ -2013,17 +2013,23 @@ Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
 });
 
 
+Lino.link_button = function(url) {
+    return '<a href="' + url + '"><img src="{{settings.SITE.build_media_url('lino', 'extjs', 'images', 'xsite', 'link.png')}}" alt="link_button"></a>'
+            img = E.img(src=src, alt=icon_name);
+}
+
 Lino.fk_renderer = function(fkname,handlername) {
   //~ console.log('Lino.fk_renderer handler=',handler);
   return function(value, metaData, record, rowIndex, colIndex, store) {
     //~ console.log('Lino.fk_renderer',fkname,rowIndex,colIndex,record,metaData,store);
     //~ if (record.phantom) return '';
     if (value) {
-        var s = '<a href="javascript:' ;
-        s += handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})">';
-        s += value + '</a>';
-        //~ console.log('Lino.fk_renderer',value,'-->',s);
-        return s
+        return value + ' ' + Lino.link_button('javascript:'+handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})")');
+        // until 20140822 (clickable foreign keys):
+        // var s = '<a href="javascript:' ;
+        // s += handlername + '.run(null,{record_id:\'' + String(record.data[fkname]) + '\'})">';
+        // s += value + '</a>';
+        // return s
     }
     return '';
   }
