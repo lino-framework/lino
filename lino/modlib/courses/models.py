@@ -490,7 +490,7 @@ class Courses(dd.Table):
     start_date
     line teacher
     """
-    column_names = "info line teacher room state *"
+    column_names = "start_date #info line teacher room state *"
     # order_by = ['start_date']
     # order_by = 'line__name room__name start_date'.split()
     order_by = ['name']
@@ -508,7 +508,7 @@ class Courses(dd.Table):
         state=CourseStates.field(blank=True),
         active=dd.YesNo.field(blank=True),
     )
-    params_layout = """topic line city teacher user state active"""
+    params_layout = """topic line city teacher user state active:10"""
 
     simple_param_fields = 'line teacher state user'.split()
 
