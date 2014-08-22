@@ -327,8 +327,8 @@ class BaseLayout(object):
             #~ if str(ds).endswith('Partners'):
                 #~ print "20130124 set_datasource ", self,self.hidden_elements
 
-    def get_chooser_model(self):
-        return self._datasource.get_chooser_model()
+    def get_chooser_holder(self):
+        return self._datasource
 
     def override_labels(self):
         return dict()

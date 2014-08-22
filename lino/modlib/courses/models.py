@@ -556,7 +556,11 @@ class Courses(dd.Table):
     def city_choices(cls):
         Place = dd.modules.countries.Place
         Room = dd.modules.cal.Room
-        return Place.objects.filter(cat=course.line.options_cat)
+        places = set([
+            obj.company.city.id
+            for obj in Room.objects.filter(company__isnull=False)])
+        # logger.info("20140822 city_choices %s", places)
+        return Place.objects.filter(id__in=places)
 
 
 class CoursesByTeacher(Courses):

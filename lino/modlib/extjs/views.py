@@ -278,19 +278,19 @@ if settings.SITE.user_model and settings.SITE.use_tinymce:
             raise http.Http404("Method %r not supported" % request.method)
 
 
-def choices_for_field(request, actor, field):
-    """
-    Return the choices for the given field and the given web request
-    (whose requesting actor has already been identified and is given
-    as `actor`).
-    """
-    model = actor.get_chooser_model()
-    chooser = choosers.get_for_field(model, field.name)
+def choices_for_field(request, holder, field):
+    # Return the choices for the given field and the given web request
+    # (whose requesting holder is given as `holder`).
+    # holder is either a Model, an Actor or an Action.
+    # model = holder.get_chooser_model()
+    chooser = holder.get_chooser_for_field(field.name)
+    # logger.info('20140822 choices_for_field(%s.%s) --> %s',
+    #             holder, field.name, chooser)
     if chooser:
-        qs = chooser.get_request_choices(request, actor)
+        qs = chooser.get_request_choices(request, holder)
         if not isiterable(qs):
             raise Exception("%s.%s_choices() returned non-iterable %r" % (
-                actor.model, field.name, qs))
+                holder.model, field.name, qs))
         if chooser.simple_values:
             def row2dict(obj, d):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
@@ -299,7 +299,7 @@ def choices_for_field(request, actor, field):
         elif chooser.instance_values:
             # same code as for ForeignKey
             def row2dict(obj, d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
+                d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                     obj, request, field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
                 return d
@@ -317,7 +317,7 @@ def choices_for_field(request, actor, field):
                 d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
                 d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
             else:
-                d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
+                d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                     obj, request, field)
                 d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
             return d
@@ -329,7 +329,7 @@ def choices_for_field(request, actor, field):
         # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
 
         def row2dict(obj, d):
-            d[ext_requests.CHOICES_TEXT_FIELD] = actor.get_choices_text(
+            d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                 obj, request, field)
             d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
             return d
@@ -366,14 +366,14 @@ def choices_response(request, qs, row2dict, emptyValue):
 
 
 class ActionParamChoices(View):
-
+    # Examples: 
     def get(self, request, app_label=None, actor=None, an=None, field=None, **kw):
         actor = requested_actor(app_label, actor)
         ba = actor.get_url_action(an)
         if ba is None:
             raise Exception("Unknown action %r for %s" % (an, actor))
         field = ba.action.get_param_elem(field)
-        qs, row2dict = choices_for_field(request, actor, field)
+        qs, row2dict = choices_for_field(request, ba.action, field)
         if field.blank:
             emptyValue = '<br/>'
         else:

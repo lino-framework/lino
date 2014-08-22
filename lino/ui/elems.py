@@ -128,8 +128,8 @@ def before_row_edit(panel):
             if e.format == 'html' and settings.SITE.use_tinymce:
                 l.append("%s.refresh();" % e.as_ext())
         elif isinstance(e, FieldElement):
-            model = panel.layout_handle.layout.get_chooser_model()
-            chooser = choosers.get_for_field(model, e.field.name)
+            holder = panel.layout_handle.layout.get_chooser_holder()
+            chooser = holder.get_chooser_for_field(e.field.name)
             if chooser:
                 #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
                 for f in chooser.context_fields:
@@ -206,9 +206,8 @@ class GridColumn(jsgen.Component):
                     kw.update(tooltip=ttt)
 
             def fk_renderer(fld, name):
-                """
-                FK fields are clickable only if their target has a detail view
-                """
+                # FK fields are clickable only if their target has a
+                # detail view
                 rpt = fld.rel.to.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
@@ -2162,8 +2161,8 @@ TRIGGER_BUTTON_WIDTH = 3
 
 
 def field2elem(layout_handle, field, **kw):
-    model = layout_handle.layout.get_chooser_model()
-    ch = choosers.get_for_field(model, field.name)
+    holder = layout_handle.layout.get_chooser_holder()
+    ch = holder.get_chooser_for_field(field.name)
     if ch:
         #~ if ch.on_quick_insert is not None:
         #~ if ch.meth.quick_insert_field is not None:

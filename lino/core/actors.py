@@ -349,8 +349,13 @@ class Actor(actions.Parametrizable):
         return '/' + self.app_label + '/' + self.__name__
 
     @classmethod
-    def get_chooser_model(self):
-        return self
+    def get_chooser_for_field(cls, fieldname):
+        d = getattr(cls, '_choosers_dict', {})
+        return d.get(fieldname, None)
+
+    # @classmethod
+    # def get_chooser_model(self):
+    #     return self
 
     @classmethod
     def register_class_attribute(cls, k, v):

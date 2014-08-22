@@ -432,6 +432,11 @@ action on individual instances.
         """
         return True
 
+    @classmethod
+    def get_chooser_for_field(cls, fieldname):
+        d = getattr(cls, '_choosers_dict', {})
+        return d.get(fieldname, None)
+
     def get_excerpt_options(self, ar, **kw):
         """Set additional fields of newly created excerpts from this.
         Used by :class:`ml.excerpts.CreateExcerpt`.
@@ -439,6 +444,7 @@ action on individual instances.
         return kw
 
     LINO_MODEL_ATTRIBS = (
+        'get_chooser_for_field',
         'get_detail_action',
         'get_row_permission',
         'get_excerpt_options',

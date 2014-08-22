@@ -71,6 +71,15 @@ The ``Actor`` class
   :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
   and :class:`Frame <lino.core.frames.Frame>`.
 
+  .. attribute:: parameters
+
+  Either None or a dict defining the "parameters" of that actor.
+  TODO: write documentation.
+
+  .. attribute:: params_layout
+
+  The layout to be used for the parameter panel.
+
   .. attribute:: detail_layout
 
     Define the form layout to use for the detail window.  Actors
@@ -406,7 +415,8 @@ The ``Actor`` class
 
   .. method:: param_defaults(self, ar, **kw)
 
-    Return a dict with default values for the parameters of a request.
+    Return a dict with default values for the :attr:`parameters`.
+    This will be called per request.
 
     Usage example. The Clients table has a parameter `coached_since`
     whose default value is empty::
@@ -647,16 +657,16 @@ Another class of attributes are `filter`, `exclude` and `sort_order`
 which are thin wrappers to Django's query lookup parameters of same
 name.
 
-  .. attribute:: model = None
+  .. attribute:: model
 
     The model on which this table iterates.
 
-  .. attribute:: master = None
+  .. attribute:: master
 
     Automatically set to the model pointed to by the
     :attr:`master_key`.  Used also in lino.models.ModelsBySite
 
-  .. attribute:: master_key = None
+  .. attribute:: master_key
 
     The name of the ForeignKey field of this Table's :attr:`model that
     points to it's :attr:`master`.  Setting this will turn the table
@@ -677,7 +687,7 @@ name.
 
         details_of_master_template = _("%(details)s of %(master)s")
 
-  .. attribute:: use_as_default_table = True
+  .. attribute:: use_as_default_table
 
     Set this to `False` if this Table should *not* become the Model's
     default table.
@@ -711,7 +721,7 @@ name.
     :attr:`filter.`
 
 
-  .. attribute:: editable = None
+  .. attribute:: editable
 
     Set this explicitly to True or False to make the Actor per se
     editable or not.  Otherwise it will be set to `False` if the Actor
@@ -726,7 +736,7 @@ name.
     to generate optimized JS code for this case.
 
 
-  .. attribute:: stay_in_grid = False
+  .. attribute:: stay_in_grid
 
     Set this to True if Lino should not open a newly created record in
     a detail window.

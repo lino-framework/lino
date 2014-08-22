@@ -347,8 +347,12 @@ class Table(AbstractTable):
     """
 
     @classmethod
-    def get_chooser_model(self):
-        return self.model
+    def get_chooser_for_field(self, fieldname):
+        ch = super(Table, self).get_chooser_for_field(fieldname)
+        if ch is not None:
+            return ch
+        if self.model is not None:
+            return self.model.get_chooser_for_field(fieldname)
 
     @classmethod
     def request(self, master_instance=None, **kw):  # 20130327

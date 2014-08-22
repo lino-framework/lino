@@ -124,35 +124,27 @@ def add_requirements(obj, **kw):
 from lino.utils.choosers import Chooser
 
 
-def check_for_chooser(model, field):
+def check_for_chooser(holder, field):
+    # holder is either a Model, an Actor or an Action.
     if isinstance(field, fields.DummyField):
         return
     methname = field.name + "_choices"
-    m = getattr(model, methname, None)
-    # if isinstance(model, Action):
-    #     m = getattr(model, methname, None)
-    # else:
-    #     m = get_class_attr(model, methname)
+    m = getattr(holder, methname, None)
     if m is not None:
-        ch = Chooser(model, field, m)
-        # setattr(field, '_lino_chooser', ch)
-        # d = getattr(model, '_choosers_dict', None)
-        d = model.__dict__.get('_choosers_dict', None)
+        ch = Chooser(holder, field, m)
+        d = holder.__dict__.get('_choosers_dict', None)
         if d is None:
             d = dict()
-            setattr(model, '_choosers_dict', d)
-        # if field.name == 'aid_type':
-        #     logger.info("20140811 Installed chooser for %s into %s (%s)",
-        #                 field.name, model, ch.model)
+            setattr(holder, '_choosers_dict', d)
         if ch in d:
             raise Exception("Redefinition of chooser %s" % field)
         d[field.name] = ch
-    #~ else:
-        #~ logger.info("No chooser for %s.%s",model,field.name)
+    # if field.name == 'city':
+    #     logger.info("20140822 chooser for %s.%s", holder, field.name)
 
 
 def discover_choosers():
-    logger.debug("Discovering choosers...")
+    logger.debug("Discovering choosers for model fields...")
     #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         #~ n = 0
@@ -436,8 +428,12 @@ class Action(Parametrizable, Permittable):
     # def make_chooser(cls, wrapped):
     #     return wrapped
 
-    def get_chooser_model(self):
-        return self
+    def get_chooser_for_field(self, fieldname):
+        d = getattr(self, '_choosers_dict', {})
+        return d.get(fieldname, None)
+
+    # def get_chooser_model(self):
+    #     return self
 
     def as_bootstrap_html(self, ar):
         return "Oops, no as_bootstrap_html method for %s" % self

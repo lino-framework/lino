@@ -238,9 +238,10 @@ class ComboStoreField(StoreField):
         #~ v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
-        ch = choosers.get_for_field(obj.__class__, self.field.name)
-        if ch is not None:
-            return (v, ch.get_text_for_value(v, obj))
+        if obj is not None:
+            ch = obj.__class__.get_chooser_for_field(self.field.name)
+            if ch is not None:
+                return (v, ch.get_text_for_value(v, obj))
         for i in self.field.choices:
             if i[0] == v:
                 return (v, unicode(i[1]))
@@ -276,7 +277,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         except relto_model.DoesNotExist:
             pass
 
-        ch = choosers.get_for_field(obj.__class__, self.field.name)
+        ch = obj.__class__.get_chooser_for_field(self.field.name)
         if ch and ch.can_create_choice:
             return ch.create_choice(obj, v)
         return None
@@ -873,10 +874,10 @@ class ParameterStore(BaseStore):
     def __init__(self, params_layout_handle, url_param):
         self.param_fields = []
 
-        model = params_layout_handle.layout.get_chooser_model()
+        holder = params_layout_handle.layout.get_chooser_holder()
         for pf in params_layout_handle._store_fields:
         #~ for pf in rh.report.params:
-            self.param_fields.append(create_atomizer(model, pf, pf.name))
+            self.param_fields.append(create_atomizer(holder, pf, pf.name))
 
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -1061,7 +1062,7 @@ class Store(BaseStore):
                 self.add_field_for(fields, self.pk)
 
     def add_field_for(self, fields, df):
-        sf = get_atomizer(self.actor.get_chooser_model(), df, df.name)
+        sf = get_atomizer(self.actor, df, df.name)
 
         if not sf in self.all_fields:
             self.all_fields.append(sf)

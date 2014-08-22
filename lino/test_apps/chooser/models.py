@@ -45,7 +45,7 @@ In an entry form for a Contact you want only the cities of that country when sel
 How to use a Chooser on a ForeignKey:
 
   >>> from lino.core.dbutils import get_field
-  >>> city = choosers.get_for_field(Contact, 'city')
+  >>> city = Contact.get_chooser_for_field('city')
   >>> [unicode(o) for o in city.get_choices(country=be)]
   [u'Brussels', u'Eupen']
   
@@ -56,7 +56,7 @@ How to use a Chooser on a ForeignKey:
   
 There is no method `country_choices`, so `Contact.country` has no Chooser:
   
-  >>> print choosers.get_for_field(Contact, 'country')
+  >>> print Contact.get_chooser_for_field('country')
   None
 
   
@@ -65,7 +65,7 @@ Situation 2
 
 How to use a Chooser on a field with choices:
 
-  >>> food = choosers.get_for_field(Contact, 'food')
+  >>> food = Contact.get_chooser_for_field('food')
   
   >>> [unicode(o) for o in food.get_choices()]
   [u'Potato', u'Vegetable', u'Meat', u'Fish']

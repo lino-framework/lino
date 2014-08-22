@@ -9,7 +9,28 @@ should know when upgrading.
 See the author's :ref:`Developer Blog <blog>`
 to get detailed news.
 The final truth about what's going on is only 
-`The Source Code <http://code.google.com/p/lino/source/list>`_.
+the source code.
+
+Lists of marked blog entries
+============================
+
+.. _new:
+
+New feature
+-----------
+
+.. refstothis:: new
+
+.. _regressions:
+
+
+This change possibly introduced some regressions
+------------------------------------------------
+
+.. refstothis:: new
+
+
+
 
 Version 1.6.14 (not yet released)
 =================================
