@@ -129,10 +129,11 @@ class Topics(dd.Table):
 
 
 class Line(dd.BabelNamed):
-
+    # a line (series) of courses. 
     class Meta:
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
+    ref = dd.NullCharField(max_length=30, unique=True)
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
@@ -174,19 +175,24 @@ class Line(dd.BabelNamed):
         Product = dd.modules.products.Product
         return Product.objects.filter(cat=fees_cat)
 
+    def __unicode__(self):
+        if self.ref:
+            return self.ref
+        return super(Line, self).__unicode__()
+
 
 class Lines(dd.Table):
     model = Line
     # required = dd.required(user_level='manager')
     detail_layout = """
-    id name
+    id name ref
     topic fees_cat tariff options_cat
     event_type guest_role every_unit every
     description
     courses.CoursesByLine
     """
     insert_layout = dd.FormLayout("""
-    name
+    name ref
     every_unit every
     event_type guest_role
     description
@@ -249,7 +255,7 @@ add('30', _("Cancelled"), 'cancelled', invoiceable=False, uses_a_place=False)
 #~ add('90', _("Abandoned"),'abandoned')
 
 
-class Course(cal.Reservation, dd.Printable):
+class Course(cal.Reservation):
     """A Course is a group of pupils that regularily meet with a given
     teacher in a given room to speak about a given subject.
 
@@ -295,6 +301,16 @@ class Course(cal.Reservation, dd.Printable):
     def on_duplicate(self, ar, master):
         self.state = CourseStates.draft
         super(Course, self).on_duplicate(ar, master)
+
+    @classmethod
+    def get_registrable_fields(cls, site):
+        for f in super(Course, cls).get_registrable_fields(site):
+            yield f
+        yield 'line'
+        yield 'teacher'
+        yield 'name'
+        yield 'enrolments_until'
+        yield 'tariff'
 
     def __unicode__(self):
         if self.name:
@@ -490,10 +506,11 @@ class Courses(dd.Table):
     start_date
     line teacher
     """
-    column_names = "start_date #info line teacher room state *"
+    column_names = "start_date #info line teacher room workflow_buttons *"
     # order_by = ['start_date']
     # order_by = 'line__name room__name start_date'.split()
     order_by = ['name']
+    auto_fit_column_widths = True
 
     parameters = dd.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),
