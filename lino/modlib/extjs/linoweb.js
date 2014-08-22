@@ -2014,8 +2014,8 @@ Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
 
 
 Lino.link_button = function(url) {
-    return '<a href="' + url + '"><img src="{{settings.SITE.build_media_url('lino', 'extjs', 'images', 'xsite', 'link.png')}}" alt="link_button"></a>'
-            img = E.img(src=src, alt=icon_name);
+    // return '<a href="' + url + '"><img src="{{settings.SITE.build_media_url('lino', 'extjs', 'images', 'xsite', 'link.png')}}" alt="link_button"></a>'
+    return '<a href="' + url + '" style="text-decoration:none;">&raquo;</a>'
 }
 
 Lino.fk_renderer = function(fkname,handlername) {
