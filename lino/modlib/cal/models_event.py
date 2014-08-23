@@ -762,7 +762,7 @@ class EventsByType(Events):
 class EventsByDay(Events):
     label = _("Appointments today")
     column_names = 'room summary owner workflow_buttons *'
-    required = dd.required(user_groups='office reception')
+    required = dd.required(user_groups='office')
     auto_fit_column_widths = True
     params_panel_hidden = False
 

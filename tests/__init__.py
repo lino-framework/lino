@@ -128,6 +128,7 @@ class UtilsTests(LinoTestCase):
 
     def test_mixins_addressable(self): self.run_simple_doctests('lino/mixins/addressable.py')
 
+
 class ProjectsTests(LinoTestCase):
     
     def test_events(self):

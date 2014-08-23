@@ -53,8 +53,8 @@ DONE:
   "Projektarten" mit "Kurse", "Ausfahrten", "Reisen" etc?  --> vorerst
   nicht.
 
-TODO:
+WONTFIX:
 
 - "Unexpected data type <class 'xml.etree.ElementTree.Element'>"
   bei Export Excel einer Tabelle mit virtuellen Feldern.
-
+  Could not reproduce.

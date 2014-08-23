@@ -78,10 +78,10 @@ def when_text(d, t=None):
     Examples:
 
     >>> when_text(datetime.date(2013,12,25))
-    u'2013 Dec 25 (Wed)'
+    u'Wed 12/25/13'
     
     >>> when_text(datetime.date(2013,12,25),datetime.time(17,15,00))
-    u'2013 Dec 25 (Wed) 17:15'
+    u'Wed 12/25/13 (17:15)'
     
     >>> when_text(None)
     u''

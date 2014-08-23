@@ -179,6 +179,10 @@ lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1
 lino.projects.min2
+lino.projects.min2.modlib
+lino.projects.min2.modlib.contacts
+lino.projects.min2.modlib.contacts.fixtures
+lino.projects.min2.tests
 lino.projects.polly
 lino.projects.polly.settings
 lino.projects.presto

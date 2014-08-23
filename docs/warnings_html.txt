@@ -1,0 +1,2 @@
+/home/luc/hgwork/lino/docs/blog/2014/0822.rst:8: WARNING: undefined label: new.dev (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0822.rst:33: WARNING: undefined label: new.visible (if the link has no caption the label must precede a section header)

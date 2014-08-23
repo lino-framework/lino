@@ -73,11 +73,18 @@ class TableRenderer(object):
         return self.column[2]
 
 
+def sheet_name(s):
+    s = s[:31]
+    for c in u"[]:\\?/*\x00":
+        s = s.replace('/', '_')
+    return s
+
+
 class ExcelRenderer(TableRenderer):
     def render(self):
         workbook = xlwt.Workbook(encoding='utf-8')
 
-        sheet = workbook.add_sheet(self.title[:31])
+        sheet = workbook.add_sheet(sheet_name(self.title))
 
         header_style = xlwt.easyxf("font: bold on;")
         for c, column in enumerate(self.columns):
