@@ -2,6 +2,10 @@
 Saturday, August 23, 2014
 =========================
 
+A bug in :mod:`lino.modlib.export_excel`
+----------------------------------------
+
+
 A last thing to do for :doc:`/tickets/123`:
 
 - "Unexpected data type <class 'xml.etree.ElementTree.Element'>"
@@ -27,3 +31,6 @@ In :mod:`lino.modlib.export_excel`, added a function `sheet_name`
 which removes more invalid characters from the title. For example
 slashes ("/") are not allowed.
 
+
+Worked on :ref:`presto`
+------------------------

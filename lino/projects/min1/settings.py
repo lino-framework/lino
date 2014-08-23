@@ -36,6 +36,7 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
+        yield 'lino.modlib.export_excel'
 
 SITE = Site(globals(), no_local=True)
 

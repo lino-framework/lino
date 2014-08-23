@@ -58,7 +58,7 @@ Company = resolve_model("contacts.Company")
 Account = dd.resolve_model('accounts.Account')
 Group = dd.resolve_model('accounts.Group')
 
-from lino.runtime import *
+# from lino.runtime import *
 
 if True:
     users = dd.resolve_app('users')
@@ -71,6 +71,8 @@ if True:
     products = dd.resolve_app('products')
     contacts = dd.resolve_app('contacts')
     finan = dd.resolve_app('finan')
+    sepa = dd.resolve_app('sepa')
+    lists = dd.resolve_app('lists')
 
 
 def dbfmemo(s):
@@ -181,7 +183,11 @@ def row2jnl(row):
 
 
 def get_customer(pk):
-    return contacts.Partner.objects.get(pk=pk)
+    try:
+        return contacts.Partner.objects.get(pk=pk)
+    except contacts.Partner.DoesNotExist:
+        return None
+
     #~ try:
         #~ return sales.Customer.objects.get(pk=pk)
     #~ except sales.Customer.DoesNotExist:
@@ -223,15 +229,13 @@ def try_full_clean(i):
 
 class TimLoader(object):
 
-    use_dbf_py = False
-    """
-    `True` means to use Ethan Furman's 
-    `dbf <http://pypi.python.org/pypi/dbf/>`_ package
-    to read the file,
-    False means to use :mod:`lino.utils.dbfreader`.
-    Set it to True when reading data from a TIM with FOXPRO DBE, 
-    False when reading DBFNTX files. 
-    
+    use_dbf_py = True
+    """`True` means to use Ethan Furman's `dbf
+    <http://pypi.python.org/pypi/dbf/>`_ package to read the file,
+    False means to use :mod:`lino.utils.dbfreader`.  Set it to True
+    when reading data from a TIM with FOXPRO DBE, False when reading
+    DBFNTX files.
+
     """
 
     LEN_IDGEN = 6
@@ -264,6 +268,8 @@ class TimLoader(object):
         prt = data.idprt
         if prt == 'O':
             return Company
+        elif prt == 'L':
+            return lists.List
         elif prt == 'P':
             return Person
         elif prt == 'F':
@@ -279,7 +285,7 @@ class TimLoader(object):
 
     def par_pk(self, pk):
         if pk.startswith('T'):
-            return 2500 + int(pk[1:]) - 256
+            return 3000 + int(pk[1:]) - 256
         else:
             return int(pk)
 
@@ -302,10 +308,16 @@ class TimLoader(object):
             return 'LU'
         if s == 'E':
             return 'ES'
+        if s == 'H':
+            return 'HU'
         if s == 'I':
             return 'IT'
         if s == 'USA':
             return 'US'
+        if s == 'AUS':
+            return 'AU'
+        if s == 'SF':
+            return 'FI'
         if s == 'VIE':
             return ''
         return s
@@ -334,9 +346,10 @@ class TimLoader(object):
                           len(table), fn, table.codepage)
             for record in table:
                 if not dbf.is_deleted(record):
-                    i = row2obj(record)
-                    if i is not None:
-                        yield settings.TIM2LINO_LOCAL(tableName, i)
+                    yield row2obj(record)
+                    # i = row2obj(record)
+                    # if i is not None:
+                    #     yield settings.TIM2LINO_LOCAL(tableName, i)
             table.close()
         else:
             f = dbfreader.DBFFile(fn, codepage="cp850")
@@ -456,22 +469,34 @@ class TimLoader(object):
         if doc is None:
             raise Exception("FNL %r without document" %
                             list(jnl, year, number))
-        kw.update(seqno=int(row.line.strip()))
+        try:
+            kw.update(seqno=int(row.line.strip()))
+        except ValueError:
+            pass
         kw.update(date=row.date)
         kw.update(match=row.match.strip())
-        if row.idctr == ('V'):
-            kw.update(partner_id=self.par_pk(row.idcpt.strip()))
-            kw.update(
-                account=vat.TradeTypes.sales.get_partner_account())
-        elif row.idctr == ('E'):
-            kw.update(partner_id=self.par_pk(row.idcpt.strip()))
-            kw.update(
-                account=vat.TradeTypes.purchases.get_partner_account())
-        else:
-            kw.update(account=accounts.Account.objects.get(
-                ref=row.idcpt.strip()))
-        kw.update(amount=mton(row.mont))
-        kw.update(dc=self.dc2lino(row.dc))
+        try:
+            if row.idctr == ('V'):
+                kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+                kw.update(
+                    account=vat.TradeTypes.sales.get_partner_account())
+            elif row.idctr == ('E'):
+                kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+                kw.update(
+                    account=vat.TradeTypes.purchases.get_partner_account())
+            elif row.idctr == ('G'):
+                kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+                kw.update(
+                    account=vat.TradeTypes.wages.get_partner_account())
+            else:
+                a = accounts.Account.objects.get(ref=row.idcpt.strip())
+                kw.update(account=a)
+            kw.update(amount=mton(row.mont))
+            kw.update(dc=self.dc2lino(row.dc))
+        except Exception as e:
+            logger.warning("Failed to load FNL line %s from %s : %s",
+                           row, kw, e)
+            raise
         return doc.add_voucher_item(**kw)
 
     def load_ven(self, row, **kw):
@@ -481,16 +506,18 @@ class TimLoader(object):
         kw.update(year=year)
         kw.update(number=number)
         #~ kw.update(id=pk)
-        if jnl.trade_type.name == 'sales':
-            partner = get_customer(self.par_pk(row.idpar))
+        partner = get_customer(self.par_pk(row.idpar))
+        if partner is not None:
             kw.update(partner=partner)
+        if jnl.trade_type.name == 'sales':
             kw.update(imode=self.DIM)
             if row.idprj.strip():
                 kw.update(project_id=int(row.idprj.strip()))
             kw.update(discount=mton(row.remise))
         elif jnl.trade_type.name == 'purchases':
-            kw.update(partner=contacts.Partner.objects.get(
-                pk=self.par_pk(row.idpar)))
+            pass
+            # kw.update(partner=contacts.Partner.objects.get(
+            #     pk=self.par_pk(row.idpar)))
             #~ partner=contacts.Partner.objects.get(pk=self.par_pk(row.idpar))
         else:
             raise Exception("Unkonwn TradeType %r" % jnl.trade_type)
@@ -547,7 +574,11 @@ class TimLoader(object):
         #~ kw.update(qty=row.montt.strip())
         #~ kw.update(qty=row.attrib.strip())
         #~ kw.update(date=row.date)
-        return doc.add_voucher_item(**kw)
+        try:
+            return doc.add_voucher_item(**kw)
+        except Exception as e:
+            logger.warning("Failed to load VNL line %s from %s : %s",
+                           row, kw, e)
 
     def vnlg2product(self, row):
         a = row.idart.strip()
@@ -620,78 +651,105 @@ class TimLoader(object):
                 first_name=row['vorname'].strip(),
                 last_name=row.firme,
                 #~ birth_date=row['gebdat'],
-                bank_account1=row['compte1'].strip(),
                 title=row['allo'].strip(),
+            )
+        elif cl is Household:
+            self.store(
+                kw,
+                name=row.firme,
+            )
+        elif cl is lists.List:
+            self.store(
+                kw,
+                name=row.firme,
             )
         else:
             dblogger.warning(
                 "Ignored PAR record %s (IdPrt %r)" % (
                     row.idpar, row.idprt))
             return
-        language = isolang(row['langue'])
-        self.store(
-            kw,
-            language=language,
-            remarks=dbfmemo(row['memo']),
-        )
+        if cl is not lists.List:
+            language = isolang(row['langue'])
+            self.store(
+                kw,
+                language=language,
+                remarks=dbfmemo(row['memo']),
+            )
 
-        #~ country2kw(row,kw)
+            #~ country2kw(row,kw)
 
-        country = row['pays'].strip()
-        if country:
-            try:
-                country = Country.objects.get(
-                    short_code__exact=country)
-            except Country.DoesNotExist:
-                country = Country(isocode=country,
-                                  name=country,
-                                  short_code=country)
-                country.save()
-            kw.update(country=country)
+            country = row['pays'].strip()
+            if country:
+                try:
+                    country = Country.objects.get(
+                        short_code__exact=country)
+                except Country.DoesNotExist:
+                    country = Country(isocode=country,
+                                      name=country,
+                                      short_code=country)
+                    country.save()
+                kw.update(country=country)
 
-        self.store(
-            kw,
-            phone=row['tel'].strip(),
-            fax=row['fax'].strip(),
-            street=row['rue'].strip(),
-            street_no=row['ruenum'],
-            street_box=row['ruebte'].strip(),
-        )
+            self.store(
+                kw,
+                phone=row['tel'].strip(),
+                fax=row['fax'].strip(),
+                street=row['rue'].strip(),
+                street_no=row['ruenum'],
+                street_box=row['ruebte'].strip(),
+            )
 
-        # kw.update(street2kw(join_words(row['RUE'],
-        # row['RUENUM'],row['RUEBTE'])))
+            # kw.update(street2kw(join_words(row['RUE'],
+            # row['RUENUM'],row['RUEBTE'])))
 
-        zip_code = row['cp'].strip()
-        if zip_code:
-            kw.update(zip_code=zip_code)
-            try:
-                city = Place.objects.get(
-                    country=country,
-                    zip_code__exact=zip_code,
-                )
-                kw.update(city=city)
-            except Place.DoesNotExist as e:
-                city = Place(zip_code=zip_code,
-                             name=zip_code,
-                             country=country)
-                city.save()
-                kw.update(city=city)
-                #~ dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
-            except Place.MultipleObjectsReturned as e:
-                dblogger.warning("%s-%s : %s",
-                                 row['pays'],
-                                 row['cp'],
-                                 e)
+            zip_code = row['cp'].strip()
+            if zip_code:
+                kw.update(zip_code=zip_code)
+                try:
+                    city = Place.objects.get(
+                        country=country,
+                        zip_code__exact=zip_code,
+                    )
+                    kw.update(city=city)
+                except Place.DoesNotExist as e:
+                    city = Place(zip_code=zip_code,
+                                 name=zip_code,
+                                 country=country)
+                    city.save()
+                    kw.update(city=city)
+                    #~ dblogger.warning("%s-%s : %s",row['PAYS'],row['CP'],e)
+                except Place.MultipleObjectsReturned as e:
+                    dblogger.warning("%s-%s : %s",
+                                     row['pays'],
+                                     row['cp'],
+                                     e)
 
-        #~ print cl,kw
         try:
-            return cl(**kw)
+            obj = cl(**kw)
         except Exception as e:
             dblogger.warning("Failed to instantiate %s from %s",
                              cl, kw)
             raise
+        yield obj
 
-    #~ PRJPAR = dict()
+        def compte2iban(s, **kw):
+            a = s.split(':')
+            if len(a) == 1:
+                kw.update(iban=s)
+            elif len(a) == 2:
+                kw.update(bic=a[0])
+                kw.update(iban=a[1])
+            else:
+                kw.update(iban=s)
+            return kw
+        
+        compte1 = row['compte1'].strip()
+        if compte1:
+            obj.full_clean()
+            obj.save()
+            kw = compte2iban(compte1, partner=obj, primary=True)
+            if kw['iban']:
+                yield sepa.Account(**kw)
 
     def load_prj(self, row, **kw):
         pk = int(row.idprj.strip())
@@ -772,7 +830,7 @@ class TimLoader(object):
     def load_art(self, row, **kw):
         try:
             pk = int(row.idart)
-        except ValueError, e:
+        except ValueError as e:
             dblogger.warning("Ignored %s: %s", row, e)
             return
         kw.update(id=pk)
@@ -781,6 +839,7 @@ class TimLoader(object):
             #~ kw.update(name=names[0])
         #~ names2kw(kw,row.name1,row.name2,row.name3)
         self.babel2kw('name', 'name', row, kw)
+        logger.info("20140823 product %s", kw)
         return products.Product(**kw)
 
     def decode_string(self, v):
@@ -788,11 +847,18 @@ class TimLoader(object):
         #~ return v.decode(self.codepage)
 
     def babel2kw(self, tim_fld, lino_fld, row, kw):
+        import dbf
         for i, lng in enumerate(self.languages):
-            v = getattr(row, tim_fld + str(i + 1), '').strip()
-            if v:
-                v = self.decode_string(v)
-                kw[lino_fld + lng.suffix] = v
+            try:
+                v = getattr(row, tim_fld + str(i + 1), '').strip()
+                if v:
+                    v = self.decode_string(v)
+                    kw[lino_fld + lng.suffix] = v
+                    if not lino_fld in kw:
+                        kw[lino_fld] = v
+
+            except dbf.FieldMissingError as e:
+                logger.info("20140823 %s", e)
 
     def after_load(self, tableName):
         pass
@@ -801,6 +867,7 @@ class TimLoader(object):
         kw1 = dict()
         kw1.update(clients_account='400000')
         kw1.update(suppliers_account='440000')
+        kw1.update(wages_account='460000')
         kw1.update(sales_vat_account='411000')      # vat paid
         kw1.update(purchases_vat_account='451000')  # due vat
         kw1.update(sales_account='700000')
@@ -844,6 +911,9 @@ class TimLoader(object):
 
         yield tim.load_dbf('JNL')
         yield tim.load_dbf('ART')
+
+        yield dpy.FlushDeferredObjects
+
         #~ yield tim.load_dbf('NAT')
         yield tim.load_dbf('PLZ')
         yield tim.load_dbf('PAR')
@@ -870,7 +940,7 @@ class TimLoader(object):
 
 class MyTimLoader(TimLoader):
 
-    archived_tables = set('GEN ART VEN VNL'.split())
+    archived_tables = set('GEN ART VEN VNL JNL FIN FNL'.split())
     archive_name = 'rumma'
     languages = 'et en de fr'
 
@@ -897,30 +967,21 @@ class MyTimLoader(TimLoader):
         self.PROD_617010.save()
 
     def load_par(self, row):
-        obj = super(MyTimLoader, self).load_par(row)
-        if obj is None:
-            return
-        cl = obj.__class__
-        if cl is Company:
-            self.store(kw,
-                       national_id_et=row['regkood'].strip(),
-                       )
-        elif cl is Household:
-            self.store(kw,
-                       prefix=row.allo,
-                       name=row.firme,
-                       )
-        elif cl is Person:
-            self.store(kw,
-                       gender=convert_gender(row['sex']),
-                       national_id_et=row['regkood'].strip(),
-                       )
-        kw.update(created=row['datcrea'])
-        kw.update(modified=datetime.datetime.now())
-        email = row.email.strip()
-        if email and is_valid_email(email):
-            kw.update(email=email)
-        return obj
+        for obj in super(MyTimLoader, self).load_par(row):
+            if isinstance(obj, contacts.Partner):
+                obj.isikukood = row['regkood'].strip()
+                obj.prefix = row.allo
+                cl = obj.__class__
+                if cl is Company:
+                    pass
+                elif cl is Person:
+                    obj.gender = convert_gender(row['sex'])
+                obj.created = row['datcrea']
+                obj.modified = datetime.datetime.now()
+                email = row.email.strip()
+                if email and is_valid_email(email):
+                    obj.email = email
+            yield obj
 
 
 def objects():

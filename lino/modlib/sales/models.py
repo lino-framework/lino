@@ -63,6 +63,10 @@ vat.TradeTypes.sales.update(
     partner_account_field_name='clients_account',
     partner_account_field_label=_("Clients account"))
 
+vat.TradeTypes.wages.update(
+    partner_account_field_name='wages_account',
+    partner_account_field_label=_("Wages account"))
+
 dd.inject_field(
     'contacts.Partner',
     'invoice_recipient',

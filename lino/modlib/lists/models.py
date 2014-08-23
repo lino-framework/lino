@@ -62,7 +62,7 @@ class List(dd.BabelNamed, dd.Referrable):
         verbose_name = _("Partner List")
         verbose_name_plural = _("Partner Lists")
 
-    type = dd.ForeignKey('lists.ListType')
+    type = dd.ForeignKey('lists.ListType', blank=True, null=True)
     remarks = models.TextField(_("Remarks"), blank=True)
 
     print_labels = dd.PrintLabelsAction()

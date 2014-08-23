@@ -18,7 +18,7 @@ class Site(Site):
 
     verbose_name = "Lino Presto"
     version = "0.1"
-    url = "http://www.lino-framework.org/autodoc/lino.projects.presto"
+    url = "http://lino-framework.org/presto/"
 
     demo_fixtures = 'std few_languages props democfg demo demo2'.split()
 
@@ -27,13 +27,13 @@ class Site(Site):
     project_model = 'tickets.Project'
     user_model = 'users.User'
 
-    p = None
-    override_modlib_models = {
-        'contacts.Person': p,
-        'contacts.Company': p,
-        'households.Household': p,
-        'sales.Invoice': p,
-        'sales.InvoiceItem': p}
+    # p = None
+    # override_modlib_models = {
+    #     'contacts.Person': p,
+    #     'contacts.Company': p,
+    #     'households.Household': p,
+    #     'sales.Invoice': p,
+    #     'sales.InvoiceItem': p}
 
     def setup_choicelists(self):
         """
@@ -56,20 +56,22 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
-        yield 'lino.modlib.contacts'
+        yield 'lino.projects.presto.modlib.contacts'
         yield 'lino.modlib.households'
+        yield 'lino.modlib.lists'
+        yield 'lino.modlib.addresses'
+        yield 'lino.modlib.humanlinks',
         yield 'lino.modlib.products'
         yield 'lino.modlib.accounts'
         yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.iban'
         yield 'lino.modlib.sepa'
-        #~ yield 'lino.modlib.sales'
+        yield 'lino.modlib.finan'
         yield 'lino.modlib.auto.sales'
         #~ 'lino.modlib.projects',
         yield 'lino.modlib.blogs'
         yield 'lino.modlib.tickets'
-        #~ 'lino.modlib.links',
         yield 'lino.modlib.uploads'
         #~ 'lino.modlib.thirds',
         yield 'lino.modlib.extensible'
@@ -78,9 +80,9 @@ class Site(Site):
         yield 'lino.modlib.excerpts'
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
-        yield 'lino.projects.presto'
 
         yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
 
-# SITE = Site(globals())
+        yield 'lino.projects.presto'
+

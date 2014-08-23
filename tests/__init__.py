@@ -59,6 +59,7 @@ class DocsTests(LinoTestCase):
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
         docs/tested/test_i18n.rst
+        docs/tested/test_presto.rst
         """)
 
     def test_settings(self):

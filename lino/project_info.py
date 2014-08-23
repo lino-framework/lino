@@ -188,6 +188,10 @@ lino.projects.polly.settings
 lino.projects.presto
 lino.projects.presto.fixtures
 lino.projects.presto.settings
+lino.projects.presto.modlib
+lino.projects.presto.modlib.contacts
+lino.projects.presto.modlib.contacts.fixtures
+lino.projects.presto.tests
 lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures

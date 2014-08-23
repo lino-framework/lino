@@ -1,4 +1,4 @@
-# Copyright 2003-2009 Luc Saffre
+# Copyright 2003-2009, 2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -29,7 +29,6 @@ from dateutil import parser as dateparser
 
 import sys
 import string
-import struct
 
 codepages = {
     '\x01': "cp437",
@@ -236,8 +235,9 @@ class DBFRecord:
             return self._values[name]
         except KeyError:
             if default is NOTGIVEN:
-                raise AttributeError("No field named %r in %s" %
-                                     (name, self._values.keys()))
+                raise AttributeError(
+                    "No field named %r in %s" %
+                    (name, self._values.keys()))
             return default
 
     def get(self, *args, **kw):
@@ -307,7 +307,7 @@ class DBFField:
                 if len(data.strip()) == 0:
                     #~ return None
                     return ''
-                raise "bad memo block number %s" % repr(data)
+                raise Exception("bad memo block number %s" % repr(data))
             return self.dbf.blockfile.get_block(num)
 
         elif self.field_type == "N":
@@ -319,8 +319,7 @@ class DBFField:
             return dateparser.parse(data)
             # ~ return data # string "YYYYMMDD", use the time module or mxDateTime
         else:
-            raise NotImplementedError("Unknown data type "
-                                      + self.field_type)
+            raise NotImplementedError("Unknown data type " + self.field_type)
 
 # --- A class that represents a block file
 
@@ -412,7 +411,7 @@ class DBFHash:
         self.file.open()
         while 1:
             rec = self.file.get_next_record()
-            if rec == None:
+            if rec is None:
                 break
             self.hash[rec[self.key]] = rec
 
@@ -443,7 +442,7 @@ def make_html(f, out=sys.stdout, skiptypes="MOP"):
     f.open()
     while 1:
         rec = f.get_next_record()
-        if rec == None:
+        if rec is None:
             break
 
         out.write("<TR>")
