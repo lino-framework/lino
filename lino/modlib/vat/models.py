@@ -156,6 +156,7 @@ class TradeTypes(dd.ChoiceList):
 TradeTypes.add_item('S', _("Sales"), 'sales', dc=accounts.CREDIT)
 TradeTypes.add_item('P', _("Purchases"), 'purchases', dc=accounts.DEBIT)
 TradeTypes.add_item('W', _("Wages"), 'wages', dc=accounts.DEBIT)
+TradeTypes.add_item('C', _("Clearings"), 'clearings', dc=accounts.DEBIT)
 
 """
 Note that :mod:`lino.modlib.sales.models` and/or
@@ -440,10 +441,12 @@ class VatDocument(VatTotal):
         if vat_account is None:
             raise Exception("No vat account for %s." % tt)
         for i in self.items.order_by('seqno'):
-            if i.total_base is not None:
+            if i.total_base:
                 b = i.get_base_account(tt)
                 if b is None:
-                    raise Exception("No base account for %s" % i)
+                    raise Exception(
+                        "No base account for %s (total_base is %r)" % (
+                            i, i.total_base))
                 book(b, i.total_base)
             if i.total_vat:
                 book(vat_account, i.total_vat)

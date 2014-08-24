@@ -40,7 +40,7 @@ from lino.modlib.contacts.models import ContactRelated
 
 class ListType(dd.BabelNamed):
 
-    """Represents a possible choice for the `type` field of a
+    """Represents a possible choice for the `list_type` field of a
     :class:`List`.
 
     """
@@ -62,7 +62,7 @@ class List(dd.BabelNamed, dd.Referrable):
         verbose_name = _("Partner List")
         verbose_name_plural = _("Partner Lists")
 
-    type = dd.ForeignKey('lists.ListType', blank=True, null=True)
+    list_type = dd.ForeignKey('lists.ListType', blank=True, null=True)
     remarks = models.TextField(_("Remarks"), blank=True)
 
     print_labels = dd.PrintLabelsAction()
@@ -71,35 +71,34 @@ class List(dd.BabelNamed, dd.Referrable):
 class Lists(dd.Table):
     required = dd.required(user_level='manager')
     model = 'lists.List'
-    column_names = 'name *'
+    column_names = 'ref name list_type *'
     order_by = ['ref']
 
     insert_layout = dd.FormLayout("""
-    ref type
+    ref list_type
     name
     remarks
     """, window_size=(60, 12))
 
     detail_layout = dd.FormLayout("""
-    ref type id
+    ref list_type id
     name
     remarks
     MembersByList
     """)
 
 
-class Member(ContactRelated, dd.Sequenced):
+class Member(dd.Sequenced):
 
     class Meta:
         verbose_name = _("List Member")
         verbose_name_plural = _("List Members")
 
     list = dd.ForeignKey('lists.List')
+    partner = dd.ForeignKey(
+        'contacts.Partner',
+        related_name="list_memberships")
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
-
-
-dd.update_field(Member, 'contact_person', verbose_name=_("Person"))
-dd.update_field(Member, 'contact_role', verbose_name=_("Role"))
 
 
 class Members(dd.Table):
@@ -110,19 +109,14 @@ class Members(dd.Table):
 class MembersByList(Members):
     master_key = 'list'
     order_by = ['seqno']
-    column_names = "seqno company contact_person contact_role remark"
+    column_names = "seqno partner remark"
 
 
-class MembersByPerson(Members):
-    master_key = 'contact_person'
-    column_names = "list company contact_role remark"
+class MembersByPartner(Members):
+    master_key = 'partner'
+    column_names = "list remark"
     label = _("Memberships")
-
-
-class MembersByCompany(Members):
-    master_key = 'company'
-    column_names = "list contact_person contact_role remark"
-    label = _("Memberships")
+    order_by = ['list__ref']
 
 
 MODULE_LABEL = settings.SITE.plugins.contacts.verbose_name

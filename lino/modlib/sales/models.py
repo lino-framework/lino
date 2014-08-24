@@ -67,6 +67,10 @@ vat.TradeTypes.wages.update(
     partner_account_field_name='wages_account',
     partner_account_field_label=_("Wages account"))
 
+vat.TradeTypes.clearings.update(
+    partner_account_field_name='clearings_account',
+    partner_account_field_label=_("Clearings account"))
+
 dd.inject_field(
     'contacts.Partner',
     'invoice_recipient',
@@ -221,6 +225,8 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
     discount = dd.PercentageField(_("Discount"), blank=True, null=True)
 
     def get_base_account(self, tt):
+        if self.product is None:
+            return
         return tt.get_product_base_account(self.product)
         #~ return self.voucher.journal.chart.get_account_by_ref(ref)
 

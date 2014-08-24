@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 GET_THEM_ALL = True
+# GET_THEM_ALL = False
 
 import os
 import datetime
@@ -36,10 +37,12 @@ from decimal import Decimal
 from dateutil import parser as dateparser
 
 from django.conf import settings
+from django.db import transaction
 from django.core.exceptions import ValidationError
 
 from lino.utils import dbfreader
 from lino.utils import dblogger
+from lino.utils import mti
 from north import dpy
 
 from lino.modlib.accounts.utils import AccountTypes
@@ -73,6 +76,8 @@ if True:
     finan = dd.resolve_app('finan')
     sepa = dd.resolve_app('sepa')
     lists = dd.resolve_app('lists')
+
+MemberRoles = households.MemberRoles
 
 
 def dbfmemo(s):
@@ -182,19 +187,6 @@ def row2jnl(row):
         return None, None, None
 
 
-def get_customer(pk):
-    try:
-        return contacts.Partner.objects.get(pk=pk)
-    except contacts.Partner.DoesNotExist:
-        return None
-
-    #~ try:
-        #~ return sales.Customer.objects.get(pk=pk)
-    #~ except sales.Customer.DoesNotExist:
-        #~ obj = mti.create_child(contacts.Partner,pk,sales.Customer)
-        #~ obj.save()
-        #~ return sales.Customer.objects.get(pk=pk)
-
 
 def ticket_state(idpns):
     if idpns == ' ':
@@ -283,6 +275,16 @@ class TimLoader(object):
             return accounts.CREDIT
         raise Exception("Invalid D/C value %r" % dc)
 
+    def get_customer(self, pk):
+        pk = pk.strip()
+        if not pk:
+            return None
+        pk = self.par_pk(pk)
+        try:
+            return contacts.Partner.objects.get(pk=pk)
+        except contacts.Partner.DoesNotExist:
+            return None
+
     def par_pk(self, pk):
         if pk.startswith('T'):
             return 3000 + int(pk[1:]) - 256
@@ -314,12 +316,30 @@ class TimLoader(object):
             return 'IT'
         if s == 'USA':
             return 'US'
+        if s == 'A':
+            return 'AT'
         if s == 'AUS':
             return 'AU'
+        if s == 'BEN':
+            return 'BJ'
+        if s == 'ANG':
+            return 'AO'
+        if s == 'TUN':
+            return 'TN'
+        if s == 'S':
+            return 'SE'
+        if s == 'D-':
+            return 'DE'
+        if s == 'COL':
+            return 'CO'
+        if s == 'CAM':
+            return 'CM'
         if s == 'SF':
             return 'FI'
         if s == 'VIE':
             return ''
+        if s == 'BRA':
+            return 'BR'
         return s
         #~ if s == 'AU': return 'AU'
         #~ if s == 'NL': return 'NL'
@@ -472,8 +492,9 @@ class TimLoader(object):
         try:
             kw.update(seqno=int(row.line.strip()))
         except ValueError:
-            pass
-        kw.update(date=row.date)
+            pass  # some lines contain "***"
+        if row.date:
+            kw.update(date=row.date)
         kw.update(match=row.match.strip())
         try:
             if row.idctr == ('V'):
@@ -488,6 +509,10 @@ class TimLoader(object):
                 kw.update(partner_id=self.par_pk(row.idcpt.strip()))
                 kw.update(
                     account=vat.TradeTypes.wages.get_partner_account())
+            elif row.idctr == ('S'):
+                kw.update(partner_id=self.par_pk(row.idcpt.strip()))
+                kw.update(
+                    account=vat.TradeTypes.clearings.get_partner_account())
             else:
                 a = accounts.Account.objects.get(ref=row.idcpt.strip())
                 kw.update(account=a)
@@ -506,7 +531,7 @@ class TimLoader(object):
         kw.update(year=year)
         kw.update(number=number)
         #~ kw.update(id=pk)
-        partner = get_customer(self.par_pk(row.idpar))
+        partner = self.get_customer(row.idpar)
         if partner is not None:
             kw.update(partner=partner)
         if jnl.trade_type.name == 'sales':
@@ -614,7 +639,7 @@ class TimLoader(object):
             try:
                 country = Country.objects.get(isocode=self.short2iso(pk))
                 #~ country = Country.objects.get(short_code=pk)
-            except Country.DoesNotExist, e:
+            except Country.DoesNotExist:
                 dblogger.warning("Ignored PLZ record %s" % row)
                 return
         kw = dict(
@@ -831,8 +856,10 @@ class TimLoader(object):
         try:
             pk = int(row.idart)
         except ValueError as e:
-            dblogger.warning("Ignored %s: %s", row, e)
+            logger.warning("Ignored %s: %s", row, e)
             return
+        if pk == 0:
+            pk = 1000  # mysql doesn't accept value 0
         kw.update(id=pk)
         #~ def names2kw(kw,*names):
             #~ names = [n.strip() for n in names]
@@ -858,7 +885,8 @@ class TimLoader(object):
                         kw[lino_fld] = v
 
             except dbf.FieldMissingError as e:
-                logger.info("20140823 %s", e)
+                pass
+                # logger.info("20140823 %s", e)
 
     def after_load(self, tableName):
         pass
@@ -868,10 +896,10 @@ class TimLoader(object):
         kw1.update(clients_account='400000')
         kw1.update(suppliers_account='440000')
         kw1.update(wages_account='460000')
-        kw1.update(sales_vat_account='411000')      # vat paid
-        kw1.update(purchases_vat_account='451000')  # due vat
-        kw1.update(sales_account='700000')
-        kw1.update(purchases_account='603000')
+        kw1.update(sales_vat_account='472100')      # vat paid 411000
+        kw1.update(purchases_vat_account='472200')  # due vat 451000
+        kw1.update(sales_account='704000')
+        kw1.update(clearings_account='462100')
 
         sc = dict()
         for k, v in kw1.items():
@@ -926,16 +954,18 @@ class TimLoader(object):
         objects don't get saved at the first attempt
         """
 
-        yield tim.load_dbf('VEN')
-        yield tim.load_dbf('VNL')
+        if GET_THEM_ALL:
 
-        yield tim.load_dbf('FIN')
-        yield tim.load_dbf('FNL')
+            yield tim.load_dbf('VEN')
+            yield tim.load_dbf('VNL')
 
-        ses = settings.SITE.login('root')
+            yield tim.load_dbf('FIN')
+            yield tim.load_dbf('FNL')
 
-        for doc in self.must_register:
-            doc.register(ses)
+            ses = settings.SITE.login('root')
+
+            for doc in self.must_register:
+                doc.register(ses)
 
 
 class MyTimLoader(TimLoader):
@@ -944,7 +974,25 @@ class MyTimLoader(TimLoader):
     archive_name = 'rumma'
     languages = 'et en de fr'
 
+    household_roles = {
+        'VATER': MemberRoles.head,
+        'MUTTER': MemberRoles.spouse,
+        'KIND': MemberRoles.child,
+        'K': MemberRoles.child,
+    }
+
     def objects(self):
+        self.contact_roles = cr = {}
+        cr.update(DIR=contacts.RoleType.objects.get(pk=2))
+        cr.update(A=contacts.RoleType.objects.get(pk=3))
+        cr.update(SYSADM=contacts.RoleType.objects.get(pk=4))
+
+        obj = contacts.RoleType(name="TIM user")
+        yield obj
+        cr.update(TIM=obj)
+        obj = contacts.RoleType(name="Lino user")
+        yield obj
+        cr.update(LINO=obj)
 
         self.PROD_617010 = products.Product(
             name="Edasimüük remondikulud",
@@ -957,11 +1005,15 @@ class MyTimLoader(TimLoader):
         #~ for o in super(MyTimLoader,self).objects():
             #~ yield o
 
+        yield self.load_dbf('PLS')
+        yield self.load_dbf('MBR')
+
         if GET_THEM_ALL:
             yield self.load_dbf('PIN')
             yield self.load_dbf('DLS')
 
     def after_gen_load(self):
+        super(MyTimLoader, self).after_gen_load()
         self.PROD_617010.sales_account = accounts.Account.objects.get(
             ref='617010')
         self.PROD_617010.save()
@@ -982,6 +1034,68 @@ class MyTimLoader(TimLoader):
                 if email and is_valid_email(email):
                     obj.email = email
             yield obj
+
+    def load_pls(self, row, **kw):
+        kw.update(ref=row.idpls.strip())
+        kw.update(name=row.name)
+        return lists.List(**kw)
+
+    def load_mbr(self, row, **kw):
+
+        p1 = self.get_customer(row.idpar)
+        if p1 is None:
+            logger.warning(
+                "Failed to load MBR %s : "
+                "No idpar", row)
+            return
+        p2 = self.get_customer(row.idpar2)
+
+        if p2 is not None:
+            contact_role = self.contact_roles.get(row.idpls.strip())
+            if contact_role is not None:
+                kw = dict()
+                kw.update(company=mti.get_child(p1, Company))
+                p = mti.get_child(p2, Person)
+                if p is None:
+                    logger.warning(
+                        "Failed to load MBR %s : "
+                        "idpar2 is not a person", row)
+                    return
+                kw.update(person=p)
+                kw.update(type=contact_role)
+                return contacts.Role(**kw)
+
+            role = self.household_roles.get(row.idpls.strip())
+            if role is not None:
+                household = mti.get_child(p1, Household)
+                if household is None:
+                    logger.warning(
+                        "Failed to load MBR %s : "
+                        "idpar is not a household", row)
+                    return
+                person = mti.get_child(p2, Person)
+                if person is None:
+                    logger.warning(
+                        "Failed to load MBR %s : idpar2 is not a person", row)
+                    return
+                return households.Member(
+                    household=household,
+                    person=person,
+                    role=role)
+            logger.warning(
+                "Failed to load MBR %s : idpar2 is not empty", row)
+            return
+
+        try:
+            lst = lists.List.objects.get(ref=row.idpls.strip())
+        except lists.List.DoesNotExist:
+            logger.warning(
+                "Failed to load MBR %s : unknown idpls", row)
+            return
+        kw.update(list=lst)
+        kw.update(remark=row.remarq)
+        kw.update(partner=p1)
+        return lists.Member(**kw)
 
 
 def objects():

@@ -133,7 +133,7 @@ class PersonDetail(PersonDetail):
     """
 
     contact = dd.Panel("""
-    #address_box addresses.AddressesByPartner
+    lists.MembersByPartner
     remarks:30 sepa.AccountsByPartner
     """, label=_("Contact"))
 
@@ -150,7 +150,6 @@ class PersonDetail(PersonDetail):
     url
     created modified
     # notes.NotesByPartner
-    lists.MembersByPerson
     """, label=_("Miscellaneous"))
 
 
@@ -171,7 +170,7 @@ class Company(Partner, Company):
 
 class CompanyDetail(CompanyDetail):
 
-    main = "general contact notes tickets misc"
+    main = "general contact tickets misc"
 
     general = dd.Panel("""
     overview:20 general2:40 general3:40
@@ -192,7 +191,7 @@ class CompanyDetail(CompanyDetail):
     """
 
     contact = dd.Panel("""
-    #address_box addresses.AddressesByPartner
+    lists.MembersByPartner
     remarks:30 sepa.AccountsByPartner
     """, label=_("Contact"))
 
@@ -202,8 +201,6 @@ class CompanyDetail(CompanyDetail):
     street_prefix street:25 street_no street_box
     addr2
     """
-
-    notes = "lists.MembersByCompany"
 
     tickets = "tickets.TicketsByPartner"
 
