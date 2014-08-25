@@ -285,7 +285,10 @@ class Kernel(object):
                 self.project_model,
                 strict="Unresolved model '%s' in project_model.")
 
-        for m, p in self.override_modlib_models.items():
+        for app_name_model, p in self.override_modlib_models.items():
+            # app_name_model is the full installed app module name +
+            # the model name. It certainly contains at least one dot.
+            m = '.'.join(app_name_model.split('.')[-2:])
             dd.resolve_model(
                 m,
                 strict="%s plugin tries to extend unresolved model '%%s'" %

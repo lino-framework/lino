@@ -120,7 +120,7 @@ class Note(dd.TypedPrintable,
     manager_level_field = 'office_level'
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('notes.Note')
+        abstract = dd.is_abstract_model(__name__, 'Note')
         verbose_name = _("Note")
         verbose_name_plural = _("Notes")
 

@@ -75,7 +75,7 @@ def setup_BookingStates_workflow(sender=None, **kw):
 class Booking(contacts.ContactRelated, Reservation, dd.Printable):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('rooms.Booking')
+        abstract = dd.is_abstract_model(__name__, 'Booking')
         verbose_name = _("Booking")
         verbose_name_plural = _('Bookings')
 

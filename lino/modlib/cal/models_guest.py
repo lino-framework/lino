@@ -64,7 +64,7 @@ class Guest(outbox.Mailable):
     allow_cascaded_delete = ['event']
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Guest')
+        abstract = dd.is_abstract_model(__name__, 'Guest')
         verbose_name = _("Guest")
         verbose_name_plural = _("Guests")
 

@@ -74,7 +74,7 @@ class SiteConfig(dd.Model):
     """
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('system.SiteConfig')
+        abstract = dd.is_abstract_model(__name__, 'SiteConfig')
         verbose_name = _("Site configuration")
 
     objects = SiteConfigManager()

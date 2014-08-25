@@ -61,7 +61,7 @@ class Account(IbanBicHolder):
 
     """
     class Meta:
-        abstract = dd.is_abstract_model('sepa.Account')
+        abstract = dd.is_abstract_model(__name__, 'Account')
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
 

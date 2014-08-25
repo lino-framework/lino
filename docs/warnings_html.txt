@@ -1,2 +1,24 @@
-/home/luc/hgwork/lino/docs/blog/2014/0822.rst:8: WARNING: undefined label: new.dev (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/blog/2014/0822.rst:33: WARNING: undefined label: new.visible (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.contacts.models.rst:4: WARNING: autodoc: failed to import module u'lino.projects.min2.modlib.contacts.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/min2/modlib/contacts/models.py", line 33, in <module>
+    class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/base.py", line 96, in __new__
+    new_class.add_to_class('_meta', Options(meta, **kwargs))
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/base.py", line 264, in add_to_class
+    value.contribute_to_class(cls, name)
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/options.py", line 114, in contribute_to_class
+    raise Exception("20140516 %r" % self.verbose_name)
+Exception: 20140516 u'partner'
+/home/luc/hgwork/lino/docs/api/lino.projects.presto.modlib.contacts.models.rst:4: WARNING: autodoc: failed to import module u'lino.projects.presto.modlib.contacts.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/presto/modlib/contacts/models.py", line 90, in <module>
+    class Person(Partner, Person):
+  File "/home/luc/pythonenvs/py27/local/lib/python2.7/site-packages/django/db/models/base.py", line 79, in __new__
+    new_class = super_new(cls, name, bases, {'__module__': module})
+TypeError: Error when calling the metaclass bases
+    Cannot create a consistent method resolution
+order (MRO) for bases Partner, Person

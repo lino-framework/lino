@@ -169,7 +169,7 @@ class SalesDocuments(dd.Table):
 
 class Invoice(SalesDocument, ledger.Voucher):
     class Meta:
-        abstract = settings.SITE.is_abstract_model('sales.Invoice')
+        abstract = dd.is_abstract_model(__name__, 'Invoice')
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
@@ -298,7 +298,7 @@ class ItemsByDocument(dd.Table):
 class InvoiceItem(ProductDocItem):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('sales.InvoiceItem')
+        abstract = dd.is_abstract_model(__name__, 'InvoiceItem')
 
     voucher = models.ForeignKey('sales.Invoice', related_name='items')
 

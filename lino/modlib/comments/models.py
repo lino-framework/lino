@@ -37,7 +37,7 @@ class Comment(
     """The model definition."""
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('comments.Comment')
+        abstract = dd.is_abstract_model(__name__, 'Comment')
         verbose_name = _("Comment")
         verbose_name_plural = _("Comment")
 

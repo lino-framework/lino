@@ -94,7 +94,7 @@ class RemoteCalendar(dd.Sequenced):
     and local modifications will be sent back to the remote calendar.
     """
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.RemoteCalendar')
+        abstract = dd.is_abstract_model(__name__, 'RemoteCalendar')
         verbose_name = _("Remote Calendar")
         verbose_name_plural = _("Remote Calendars")
         ordering = ['seqno']
@@ -137,7 +137,7 @@ class Room(dd.BabelNamed):
     A Room is BabelNamed (has a multilingual name).
     """
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Room')
+        abstract = dd.is_abstract_model(__name__, 'Room')
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
 

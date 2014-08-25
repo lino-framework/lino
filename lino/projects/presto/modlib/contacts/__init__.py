@@ -20,6 +20,6 @@ from lino.modlib.contacts import Plugin
 
 class Plugin(Plugin):
 
-    extends_models = ['contacts.Partner',
-                      'contacts.Person',
-                      'contacts.Company']
+    extends_models = ['Partner',
+                      'Person',
+                      'Company']

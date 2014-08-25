@@ -74,7 +74,7 @@ class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
     # preferred width for ForeignKey fields to a Partner
 
     class Meta:
-        abstract = dd.is_abstract_model('contacts.Partner')
+        abstract = dd.is_abstract_model(__name__, 'Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
 
@@ -232,7 +232,7 @@ class PartnersByCountry(Partners):
 class Person(mixins.Human, mixins.Born, Partner):
 
     class Meta:
-        abstract = dd.is_abstract_model('contacts.Person')
+        abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
         ordering = ['last_name', 'first_name']
@@ -301,7 +301,7 @@ class Persons(Partners):
 class Company(Partner):
 
     class Meta:
-        abstract = dd.is_abstract_model('contacts.Company')
+        abstract = dd.is_abstract_model(__name__, 'Company')
         app_label = 'contacts'
         verbose_name = _("Organization")
         verbose_name_plural = _("Organizations")

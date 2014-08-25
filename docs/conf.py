@@ -318,4 +318,3 @@ todo_include_todos = True
 
 #~ New in version 1.1
 gettext_compact = True
-

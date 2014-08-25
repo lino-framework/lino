@@ -60,7 +60,7 @@ class EventType(dd.BabelNamed, dd.Sequenced,
     templates_group = 'cal/Event'
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.EventType')
+        abstract = dd.is_abstract_model(__name__, 'EventType')
         verbose_name = _("Event Type")
         verbose_name_plural = _("Event Types")
         ordering = ['seqno']
@@ -288,7 +288,7 @@ class Event(Component, Ended,
             postings.Postable):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Event')
+        abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
         verbose_name = pgettext(u"cal", u"Event")
         verbose_name_plural = pgettext(u"cal", u"Events")

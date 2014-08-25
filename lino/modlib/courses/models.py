@@ -266,7 +266,7 @@ class Course(cal.Reservation):
     FILL_EVENT_GUESTS = False
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.Course')
+        abstract = dd.is_abstract_model(__name__, 'Course')
         verbose_name = _("Course")
         verbose_name_plural = _('Courses')
 
@@ -651,7 +651,7 @@ if False:
     class Option(dd.BabelNamed):
 
         class Meta:
-            abstract = settings.SITE.is_abstract_model('courses.Option')
+            abstract = dd.is_abstract_model(__name__, 'Option')
             verbose_name = _("Enrolment option")
             verbose_name_plural = _('Enrolment options')
 
@@ -706,7 +706,7 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
     workflow_state_field = 'state'
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('courses.Enrolment')
+        abstract = dd.is_abstract_model(__name__, 'Enrolment')
         verbose_name = _("Enrolment")
         verbose_name_plural = _('Enrolments')
         unique_together = ('course', 'pupil')

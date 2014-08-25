@@ -132,7 +132,7 @@ class ChoicesBySet(Choices):
 class Poll(dd.UserAuthored, dd.CreatedModified):
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('polls.Poll')
+        abstract = dd.is_abstract_model(__name__, 'Poll')
         verbose_name = _("Poll")
         verbose_name_plural = _("Polls")
         ordering = ['created']

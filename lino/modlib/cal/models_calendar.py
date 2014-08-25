@@ -48,7 +48,7 @@ class Calendar(dd.BabelNamed):
     COLOR_CHOICES = [i + 1 for i in range(32)]
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Calendar')
+        abstract = dd.is_abstract_model(__name__, 'Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
 
@@ -87,7 +87,7 @@ class Subscription(dd.UserAuthored):
     """
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('cal.Subscription')
+        abstract = dd.is_abstract_model(__name__, 'Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
         unique_together = ['user', 'calendar']

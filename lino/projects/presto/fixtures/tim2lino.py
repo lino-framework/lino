@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 
 
 GET_THEM_ALL = True
-# GET_THEM_ALL = False
+GET_THEM_ALL = False
 
 import os
 import datetime
@@ -681,7 +681,7 @@ class TimLoader(object):
         elif cl is Household:
             self.store(
                 kw,
-                name=row.firme,
+                name=row.firme.strip() + ' ' + row.vorname.strip(),
             )
         elif cl is lists.List:
             self.store(
@@ -701,31 +701,16 @@ class TimLoader(object):
                 remarks=dbfmemo(row['memo']),
             )
 
-            #~ country2kw(row,kw)
-
-            country = row['pays'].strip()
-            if country:
+            isocode = self.short2iso(row.pays.strip())
+            if isocode:
                 try:
                     country = Country.objects.get(
-                        short_code__exact=country)
+                        isocode=isocode)
                 except Country.DoesNotExist:
-                    country = Country(isocode=country,
-                                      name=country,
-                                      short_code=country)
+                    country = Country(isocode=isocode,
+                                      name=isocode)
                     country.save()
                 kw.update(country=country)
-
-            self.store(
-                kw,
-                phone=row['tel'].strip(),
-                fax=row['fax'].strip(),
-                street=row['rue'].strip(),
-                street_no=row['ruenum'],
-                street_box=row['ruebte'].strip(),
-            )
-
-            # kw.update(street2kw(join_words(row['RUE'],
-            # row['RUENUM'],row['RUEBTE'])))
 
             zip_code = row['cp'].strip()
             if zip_code:
@@ -748,6 +733,17 @@ class TimLoader(object):
                                      row['pays'],
                                      row['cp'],
                                      e)
+            self.store(
+                kw,
+                phone=row['tel'].strip(),
+                fax=row['fax'].strip(),
+                street=row['rue'].strip(),
+                street_no=row['ruenum'],
+                street_box=row['ruebte'].strip(),
+            )
+
+            # kw.update(street2kw(join_words(row['RUE'],
+            # row['RUENUM'],row['RUEBTE'])))
 
         try:
             obj = cl(**kw)
@@ -866,7 +862,7 @@ class TimLoader(object):
             #~ kw.update(name=names[0])
         #~ names2kw(kw,row.name1,row.name2,row.name3)
         self.babel2kw('name', 'name', row, kw)
-        logger.info("20140823 product %s", kw)
+        # logger.info("20140823 product %s", kw)
         return products.Product(**kw)
 
     def decode_string(self, v):
@@ -993,6 +989,12 @@ class MyTimLoader(TimLoader):
         obj = contacts.RoleType(name="Lino user")
         yield obj
         cr.update(LINO=obj)
+        obj = contacts.RoleType(name="Board member")
+        yield obj
+        cr.update(VMKN=obj)
+        obj = contacts.RoleType(name="Member")
+        yield obj
+        cr.update(M=obj)
 
         self.PROD_617010 = products.Product(
             name="Edasimüük remondikulud",
@@ -1054,7 +1056,13 @@ class MyTimLoader(TimLoader):
             contact_role = self.contact_roles.get(row.idpls.strip())
             if contact_role is not None:
                 kw = dict()
-                kw.update(company=mti.get_child(p1, Company))
+                p = mti.get_child(p1, Company)
+                if p is None:
+                    logger.warning(
+                        "Failed to load MBR %s : "
+                        "idpar is not a company", row)
+                    return
+                kw.update(company=p)
                 p = mti.get_child(p2, Person)
                 if p is None:
                     logger.warning(

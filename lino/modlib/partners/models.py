@@ -252,7 +252,7 @@ class Partner(dd.Model):
     preferred_foreignkey_width = 20
 
     class Meta:
-        abstract = settings.SITE.is_abstract_model('partners.Partner')
+        abstract = dd.is_abstract_model(__name__, 'Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
 
@@ -402,7 +402,7 @@ class Person(ConcretePartner, Addressable, PersonMixin):
 
     class Meta:
         #~ abstract = True
-        abstract = settings.SITE.is_abstract_model('partners.Person')
+        abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")
 
@@ -476,7 +476,7 @@ class Organisation(ConcretePartner, Addressable):
     See also :doc:`/tickets/14`.
     """
     class Meta:
-        abstract = settings.SITE.is_abstract_model('partners.Organisation')
+        abstract = dd.is_abstract_model(__name__, 'Organisation')
         #~ abstract = True
         #~ app_label = 'partners'
         verbose_name = _("Organisation")

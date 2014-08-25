@@ -52,7 +52,7 @@ class ExcerptType(
     # templates_group = 'excerpts/Excerpt'
 
     class Meta:
-        abstract = dd.is_abstract_model('excerpts.ExcerptType')
+        abstract = dd.is_abstract_model(__name__, 'ExcerptType')
         verbose_name = _("Excerpt Type")
         verbose_name_plural = _("Excerpt Types")
 
@@ -335,7 +335,7 @@ class Excerpt(dd.TypedPrintable,
     manager_level_field = 'office_level'
 
     class Meta:
-        abstract = dd.is_abstract_model('excerpts.Excerpt')
+        abstract = dd.is_abstract_model(__name__, 'Excerpt')
         verbose_name = _("Excerpt")
         verbose_name_plural = _("Excerpts")
 

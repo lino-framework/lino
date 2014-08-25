@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,5 +19,4 @@ from lino.modlib.sales import Plugin
 
 class Plugin(Plugin):
 
-    # extends = 'lino.modlib.sales'
-    extends_models = ['sales.Invoice',  'sales.InvoiceItem']
+    extends_models = ['Invoice',  'InvoiceItem']

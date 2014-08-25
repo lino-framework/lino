@@ -70,7 +70,7 @@ class User(mixins.CreatedModified):
     class Meta:
         verbose_name = _('User')
         verbose_name_plural = _('Users')
-        abstract = dd.is_abstract_model('users.User')
+        abstract = dd.is_abstract_model(__name__, 'User')
         ordering = ['last_name', 'first_name']
 
     preferred_foreignkey_width = 15

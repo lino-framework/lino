@@ -81,7 +81,7 @@ class Household(contacts.Partner):
     A Household has a list of :class:`members <Member>`.
     """
     class Meta:
-        abstract = dd.is_abstract_model('households.Household')
+        abstract = dd.is_abstract_model(__name__, 'Household')
         verbose_name = _("Household")
         verbose_name_plural = _("Households")
 
@@ -200,7 +200,7 @@ class Member(dd.Model):
     """
 
     class Meta:
-        abstract = dd.is_abstract_model('households.Member')
+        abstract = dd.is_abstract_model(__name__, 'Member')
         verbose_name = _("Household Member")
         verbose_name_plural = _("Household Members")
 

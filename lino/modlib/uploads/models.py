@@ -40,7 +40,7 @@ add('90', _("Other uploads"), 'other')
 class UploadType(dd.BabelNamed):
     """The type of an upload."""
     class Meta:
-        abstract = dd.is_abstract_model('uploads.UploadType')
+        abstract = dd.is_abstract_model(__name__, 'UploadType')
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
@@ -92,7 +92,7 @@ class Upload(
         dd.Controllable):
 
     class Meta:
-        abstract = dd.is_abstract_model('uploads.Upload')
+        abstract = dd.is_abstract_model(__name__, 'Upload')
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 

@@ -3,8 +3,8 @@ Supported countries
 ====================
 
 Currently supported countries are Estonia_ and Belgium_.
-Contributions for other countries are welcome
-(please contact :ref:`luc` before doing a lot of work).
+Contributions for other countries are welcome (please contact the
+author before doing a lot of work).
 
 Estonia
 -------
