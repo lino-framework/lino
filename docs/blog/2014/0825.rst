@@ -1,0 +1,44 @@
+=======================
+Monday, August 25, 2014
+=======================
+
+I started to split the `pcsw.Client` model into a "base" version and
+an extended version for Eupen.
+
+While I was there I slightly changed the the API for defining
+overrideable library models using customizeable model abstractness:
+
+
+- In :attr:`ad.Plugin.extends_models` the named models must not any
+  more include the app_label. Until now you had to define::
+
+    from lino.modlib.notes import Plugin
+    class Plugin(Plugin):
+        extends_models = ['notes.Note']
+    
+  Now yuo write::
+
+    from lino.modlib.notes import Plugin
+    class Plugin(Plugin):
+        extends_models = ['Note']
+
+
+- And then the :meth:`dd.is_abstract_model` has a new API. In the
+  `Meta` class of a model which wants to be overrideable, you must
+  replace
+
+  ::
+
+        abstract = dd.is_abstract_model('notes.Note')
+
+  by
+
+  ::
+        abstract = dd.is_abstract_model(__name__, 'Note')
+
+The main reason for this change was a new feature: Lino now supports
+multi-level plugin inheritance.  We could now define a `Person` class
+in `lino_welfare.projects.chatelet.modlib.contacts` which inherits
+from `lino_welfare.modlib.contacts` which in turn inherits from
+`lino.modlib.contacts`.
+
