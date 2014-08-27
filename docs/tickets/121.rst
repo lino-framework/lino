@@ -17,6 +17,24 @@ DONE
     (panneau "Créer un rendez-vous avec").
   - supprimer le champ "Allocution"
 
+- database changes:
+
+    - nouveau champ `residence_until` (date de validité permis de
+      séjour)
+    - supprimé plusieurs champs du panneau "Aide sociale":
+      `gesdos_id`, `job_agents`, types de revenu (cases à cocher), ...
+
+    - LanguageKnowledge: différencier entre expression et compréhension.
+      Donc 4 champs d'évaluation au lieu de 2: 
+      Expression orale/écrite -- Compréhension orale/écrite
+
+- Dans l'onglet "Lien de parenté": supprimer les panneaux «BCSS» et
+  «Similar persons».
+
+- transférer le module "Enrolments" (actuellement dans l’onglet
+  «Langues») dans l’onglet "Personne" (en dessous du module "Créer un
+  rendez-vous")
+
 
 TODO
 ====
@@ -24,51 +42,27 @@ TODO
 - Pouvoir imprimer un PIIS
 - traduire "primary coach" par "Titulaire du dossier"
 - traduire "Cours" par "Ateliers"
+- renommer "Middle Name" en "Deuxième prénom"
+- renommer "Workflow" en "État"
 
+- renommer «Utilisateur responsable» en «Agent traitant» (dans module
+  «Rendez-vous»)
 
-Database changes
-----------------
-
-- LanguageKnowledge: différencier entre expression et compréhension.
-  Donc 4 champs d'évaluation au lieu de 2: 
-  Expression orale/écrite -- Compréhension orale/écrite
-
-- Nouvelle case à cocher "Economie sociale" par contrat de Mise à l'emploi
+- renommer l’onglet "Liens de parenté" en "Situation familiale"
 
 
 Onglet "Personne"
 -----------------
 
-- renommer "Middle Name" en "Deuxième prénom"
-- renommer "Workflow" en "État" (dans module «Rendez-vous»)
-- renommer «Utilisateur responsable» en «Agent traitant» (dans module
-  «Rendez-vous»)
-
-- transférer le bouton "a besoin d’un permis de travail" (actuellement
-  dans l'onglet "Recherche d'emploi") dans "Personne"
-
-- transférer le module "Enrolment" (actuellement dans l’onglet
-  «Langue») dans l’onglet "Personne" (en dessous du module "Créer
-  un rendez-vous") 
-
 - renommer «Enrolments» en «Orientation interne». 
   "Inscriptions"
-
-- (à méditer) Dans module "Rendez-vous", une fois qu’on a indiqué
-  que la personne a «quitté», l’info peut disparaitre vu qu’elle
-  s’indique de toute façon dans l’onglet "Calendrier", module «
-  Evènements"
 
  
 Onglet "Aide sociale"
 ---------------------
 
-Supprimer cet onglet et transférer les cases suivantes dans
-l'onglet «Personne»
-
 - "En Belgique depuis"
 - renommer "Type de séjour" en "Titre de séjour"
-- ajouter une date de validité residence_until
 - renommer "Phase d’intégration" en "Parcours d’insertion"
 
 
@@ -77,17 +71,10 @@ Onglet "Accompagnement"
 
 1) renommer l’onglet en "Intervenants"
 2) renommer «Workflow» en «État»
-3) supprimer «Refusal Reason»
 4) faire en sorte que quand on ajoute un deuxième, troisième,
    quatrième... intervenant, cet intervenant reçoive un mail d’alerte
 
 
-Onglet "Liens de parenté"
--------------------------
-
-- renommer l’onglet "Liens de parenté" en "Situation familiale"
-- supprimer le panneau «BCSS»
-- supprimer le panneau «Similar persons»
 
 Onglet "Parcours"
 -----------------
@@ -121,7 +108,7 @@ f. renommer la case "Succès" en "Certificat/diplôme" (et
    transformer en menu déroulant)
 
 g. ajouter un module d’Upload pour pouvoir importer les
-   diplômes et attestations de réussite qu’on aura scanné
+   diplômes et attestations de réussite qu’on aura scanné.
 
 3) Module "Formation"
 
@@ -177,9 +164,8 @@ Onlget Contrats
 Onglet "Intervention psychosociale"
 -----------------------------------
 
-- nouvelle table spécifique
+- nouvelle table spécifique (`aids.ConsultingConfirmation`)
 - cfr fichiers .xls et .doc
-
 
 
 
@@ -247,10 +233,31 @@ Concepts
       annexe et le renommer "Parenté avec le dossier social"
 
 
-- Onglet "Aide sociale": voulez-vous vraiment supprimer les éléments suivants?
-    - gesdos_id, job_agents
-    - income_ag etc?
+- Supprimer l'onglet "Aide sociale" et transférer les cases suivantes
+  dans l'onglet "Personne" (...). Il n'y a pas assez de place dans
+  l'onglet "Personne". 
+
+- Voulez-vous vraiment supprimer les éléments suivants?
     - medical uploads (p.ex. attestations handicap)
     - aid grantings (sert à imprimer p.ex. attestations de revenu)
 
+
+- Nouvelle case à cocher "Economie sociale" par contrat de mise à
+  l'emploi. --> Plutot par *type* de contrat de mise à l'emploi
+  
+
+- (à méditer) Dans module "Rendez-vous", une fois qu’on a indiqué que
+  la personne a «quitté», l’info peut disparaitre vu qu’elle s’indique
+  de toute façon dans l’onglet "Calendrier", module "Evènements".
+
+
+- transférer le bouton "a besoin d’un permis de travail" (actuellement
+  dans l'onglet "Recherche d'emploi") dans "Personne"
+
+
+- Dans l'onglet "Accompagnement", supprimer le champ «Refusal
+  Reason». Le voulez-vous vraiment?  Alors il faudrait également
+  enlever l'action "Refuser" et dire que vous supprimez les dossiers
+  refusés. Donc pas de statistiques.
+  
 
