@@ -41,7 +41,11 @@ TODO
 
 - Pouvoir imprimer un PIIS
 - traduire "primary coach" par "Titulaire du dossier"
+
 - traduire "Cours" par "Ateliers"
+- renommer «Enrolments» en "Inscriptions" (au lieu de «Orientation
+  interne»).
+
 - renommer "Middle Name" en "Deuxième prénom"
 - renommer "Workflow" en "État"
 
@@ -50,12 +54,6 @@ TODO
 
 - renommer l’onglet "Liens de parenté" en "Situation familiale"
 
-
-Onglet "Personne"
------------------
-
-- renommer «Enrolments» en «Orientation interne». 
-  "Inscriptions"
 
  
 Onglet "Aide sociale"
@@ -164,15 +162,26 @@ Onlget Contrats
 Onglet "Intervention psychosociale"
 -----------------------------------
 
-- nouvelle table spécifique (`aids.ConsultingConfirmation`)
-- cfr fichiers .xls et .doc
+- Nouvelle table "Demandes d’intervention psychosociale".
+  Chaque demande comprend les champs suivants:
+    - Date de la demande
+    - Nom, Prénom et Numéro de téléphone du bénéficiaire
+    - Service demandeur
+    - Assistant(e) social(e) pourvoyeur(se)
+    - Autre assistant(e) social(e) : (texte libre)
+    - Projet envisagé par l’assistant(e) social(e) avec l’usager : (texte)
+    - Difficultés détectées chez la personne et à l’origine de la demande: (texte)
 
+  Le nom interne sera `projects.Project`, et l'utilisateur verra
+  "Demandes d'intervention" et un champ supplémentaire "Type
+  d'intervention" qui pour l'instant aura un seul choix "intervention
+  psychosociale", mais qui sait, 
 
 
 Onglet "SIS"
 ------------
 
-- liste des inscriptions à des Ateliers de type "insertion sociale"
+- Liste des inscriptions à des Ateliers de type "insertion sociale"
 
 - 4 champs texte libres ("Motif de l'orientation", ...)
 
@@ -260,4 +269,8 @@ Concepts
   enlever l'action "Refuser" et dire que vous supprimez les dossiers
   refusés. Donc pas de statistiques.
   
-
+- Avez vous pensé à mettre les formations dans les "experiences
+  professionnelles"? (et d'enlever le panneau "Formations"
+  actuel). C'est le nouveau champ "Statut" qui ferait la
+  différence. Une formations serait une experience professionnelle
+  avec un statut correspondant.

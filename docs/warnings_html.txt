@@ -22,4 +22,7 @@ Traceback (most recent call last):
 TypeError: Error when calling the metaclass bases
     Cannot create a consistent method resolution
 order (MRO) for bases Person, Partner
+/home/luc/hgwork/lino/docs/tickets/121.rst:73: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tickets/121.rst:75: ERROR: Unexpected indentation.
+None:1: WARNING: undefined label: luc (if the link has no caption the label must precede a section header)
 /home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14
