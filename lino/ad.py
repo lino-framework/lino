@@ -524,14 +524,21 @@ class Site(Site):
     def setup_choicelists(self):
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
+        
+        def grouplevels(level):
+            kw = dict(level=level)
+            for g in dd.UserGroups.items():
+                kw[g.name+'_level'] = level
+            return kw
+
         from lino import dd
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
         add('000', _("Anonymous"), name='anonymous', level=None,
             #~ readonly=True,
             authenticated=False)
-        add('100', _("User"), name='user', level='user')
-        add('900', _("Administrator"), name='admin', level='admin')
+        add('100', _("User"), name='user', **grouplevels('user'))
+        add('900', _("Administrator"), name='admin', **grouplevels('admin'))
 
     def add_user_field(self, name, fld):
         if self.user_model:

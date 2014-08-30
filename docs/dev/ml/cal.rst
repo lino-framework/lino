@@ -7,6 +7,9 @@ Calendar
 The :mod:`lino.modlib.cal` package 
 provides data definitions for "Calendar management".
 
+Models
+======
+
 
 .. class:: Event
 
@@ -217,3 +220,14 @@ Mixins
   .. attribute:: max_date
 
 
+Tables
+======
+
+.. class:: Events
+
+  Table which shows all calendar events. 
+
+.. class:: MyEvents
+
+  Table which shows today's and future calendar events of the
+  requesting user.

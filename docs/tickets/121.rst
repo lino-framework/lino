@@ -39,6 +39,15 @@ DONE
 TODO
 ====
 
+- Détails gênants du framework:
+
+  - quand on ferme la dernière fenetre, la page de depart devrait
+    s'actualiser automatiquement.
+
+  - (plus difficile) quand on a inséré un object et ferme la fenetre
+    de detail pour revenir vers la vue "tableau", il est irritant de
+    ne pas voir l'objet que l'on vient de créer.
+
 - Pouvoir imprimer un PIIS
 - traduire "primary coach" par "Titulaire du dossier"
 
@@ -53,6 +62,9 @@ TODO
   «Rendez-vous»)
 
 - renommer l’onglet "Liens de parenté" en "Situation familiale"
+
+- Ajouter deux champs "Nombre d'heures" et "Taux de présence" dans
+  `courses.Enrolment`.
 
 
  
@@ -165,41 +177,59 @@ Onglet "Intervention psychosociale"
 - Nouvelle table "Demandes d’intervention psychosociale".
   Chaque demande comprend les champs suivants:
     - Date de la demande
-    - Nom, Prénom et Numéro de téléphone du bénéficiaire
-    - Service demandeur
-    - Assistant(e) social(e) pourvoyeur(se)
-    - Autre assistant(e) social(e) : (texte libre)
+    - Pointeur vers le bénéficiaire (`client`)
+    - Service demandeur (`coaching_type`)
+    - Assistant(e) social(e) pourvoyeur(se) (`user`)
+    - Autre assistant(e) social(e) : texte libre
     - Projet envisagé par l’assistant(e) social(e) avec l’usager : (texte)
     - Difficultés détectées chez la personne et à l’origine de la demande: (texte)
 
   Le nom interne sera `projects.Project`, et l'utilisateur verra
   "Demandes d'intervention" et un champ supplémentaire "Type
   d'intervention" qui pour l'instant aura un seul choix "intervention
-  psychosociale", mais qui sait, 
+  psychosociale".
 
 
 Onglet "SIS"
 ------------
 
-- Liste des inscriptions à des Ateliers de type "insertion sociale"
+- Tableau "Ateliers d'insertion sociale" (`courses.Enrolment`) avec
+  les colonnes suivantes:
 
-- 4 champs texte libres ("Motif de l'orientation", ...)
+    - Atelier (pointeur)
+    - Entrée (date)
+    - Sortie (date)
+    - Nombre d'heures (?)
+    - Taux de présence (implémentation à discuter)
+    - Motif de sortie (pointeur)
+    - Statut (pointeur)
+    - (Remarque?)
+
+- 4 champs texte libres: "Motif de l'orientation", "Attentes de la
+  personne". "Moteurs", "Objectifs" )
 
 Onglet "Modules internes"
 -------------------------
 
-- champ de texte libre "Démarches à réaliser"
+- Tableau "Ateliers d'apprentissage des savoirs de base" (mêmes colonnes
+  que "Ateliers d'insertion sociale")
+
+- Tableau "Modules de détermination d'un projet socioprofessionnel"
+  (mêmes colonnes que "Ateliers d'insertion sociale", sauf la colonne
+  "Résultat" qui est intitulée "Projet/orientation")
+
+- Champ de texte libre "Démarches à réaliser"
 
 
 Recherche d'emploi
 ------------------
 
-1) Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
+- Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
    d’emploi active"
 
-2) Ajouter un module Upload de document
+- Ajouter un module Upload de document
 
-3) Suivre le document Excel créer les modules
+- Voir document "LINO - Onglet Recherche d'emploi active"
 
 
 
@@ -217,9 +247,13 @@ Concepts
 - L'orientation interne consiste en des "Ateliers". Il y a plusieurs
   "catégories" d'ateliers, à savoir:
 
-    - Ateliers d'insertion sociale
-    - Ateliers d'apprentissage des savoirs de base
-    - Module de détermination d'un projet socioprofessionnel
+    - Ateliers d'insertion sociale (`CourseAreas.integ`)
+    - Ateliers d'apprentissage des savoirs de base (`CourseAreas.basic`)
+    - Modules de détermination d'un projet socioprofessionnel
+      (`CourseAreas.job`)
+
+  (Je crois que nous mettrons toutes ces inscriptions dans une même
+  table en les différenciant par une choicelist `CourseAreas`).
 
 
 à discuter
@@ -274,3 +308,10 @@ Concepts
   actuel). C'est le nouveau champ "Statut" qui ferait la
   différence. Une formations serait une experience professionnelle
   avec un statut correspondant.
+
+- Dans l'onglet "Modules internes", le tableau "Modules de
+  détermination d'un projet socioprofessionnel" a les mêmes colonnes
+  que "Ateliers d'insertion sociale", sauf la colonne "Résultat" qui
+  est intitulée "Projet/orientation". Je compte ignorer cette
+  différence et mettre "Résultat" partout. D'accord?
+

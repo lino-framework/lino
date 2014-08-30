@@ -70,6 +70,14 @@ Person = dd.resolve_model('contacts.Person', strict=True)
 #~ Person = settings.SITE.modules.contacts.Person
 
 
+class CourseAreas(dd.ChoiceList):
+    verbose_name = _("Course area")
+    verbose_name_plural = _("Course areas")
+add = CourseAreas.add_item
+add('C', _("Courses"), 'default')
+# add('J', _("Journeys"), 'journeys')
+
+
 class StartEndTime(dd.Model):
 
     class Meta:
@@ -134,6 +142,7 @@ class Line(dd.BabelNamed):
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
     ref = dd.NullCharField(_("Reference"), max_length=30, unique=True)
+    course_area = CourseAreas.field(default=CourseAreas.default)
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
@@ -711,6 +720,8 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
         verbose_name_plural = _('Enrolments')
         unique_together = ('course', 'pupil')
 
+    course_area = CourseAreas.field(default=CourseAreas.default)
+
     #~ teacher = models.ForeignKey(Teacher)
     course = dd.ForeignKey('courses.Course')
     pupil = dd.ForeignKey(config.pupil_model)
@@ -734,6 +745,11 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
 
     create_invoice = CreateInvoiceForEnrolment()
     submit_insert = ConfirmedSubmitInsert()
+
+    @dd.chooser()
+    def course_choices(cls, course_area):
+        return dd.modules.courses.Course.objects.filter(
+            line__course_area=course_area)
 
     @dd.chooser()
     def option_choices(cls, course):
@@ -973,6 +989,17 @@ class EnrolmentsByPupil(Enrolments):
     master_key = "pupil"
     column_names = 'request_date course user:10 remark amount:10 workflow_buttons *'
     auto_fit_column_widths = True
+    _course_area = CourseAreas.default
+
+    @classmethod
+    def get_known_values(self):
+        return dict(course_area=self._course_area)
+
+    @classmethod
+    def get_actor_label(self):
+        if self._course_area is not None:
+            return self._course_area.text
+        return self._label or self.__name__
 
     @classmethod
     def param_defaults(self, ar, **kw):

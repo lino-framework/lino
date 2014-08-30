@@ -668,7 +668,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
   }
   ,refresh : function() {
       var caller = this;
-      // console.log("20140504 Lino.Viewport.refresh()");
+      // console.log("20140829 Lino.Viewport.refresh()");
       if (caller.loadMask) caller.loadMask.show();
       var success = function(response) {
         if (caller.loadMask) caller.loadMask.hide();
@@ -676,7 +676,9 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
           var result = Ext.decode(response.responseText);
           //~ console.log('Lino.do_action()',action.name,'result is',result);
           if (result.html) {
-              Ext.getCmp('main_area').update(result.html);
+              var cmp = Ext.getCmp('main_area');
+              // cmp.removeAll(true);  // 20140829
+              cmp.update(result.html);
           }
           if (result.message) {
               if (result.alert) {
@@ -712,10 +714,11 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
 
 
 Lino.open_window = function(win, st, requesting_panel) {
-  // console.log("20140506 Lino.open_window()",win,st);
+  // console.log("20140829 Lino.open_window()",win.x, win.y, win.lastZindex);
   var cw = Lino.current_window;
   if (cw) {
-    //~ console.log("20120918 Lino.open_window() save current status",cw.main_item.get_status());
+    // console.log("20140829 Lino.open_window() save current status",
+    //             cw.main_item.get_status());
     Lino.window_history.push({
       window:cw,
       status:cw.main_item.get_status()
@@ -744,7 +747,7 @@ Lino.close_window = function(status_update, norestore) {
   var ww = Lino.window_history.pop();
   var retval = cw.main_item.requesting_panel;
   // console.log(
-  //     "20140604 Lino.close_window() going to close", 
+  //     "20140829 Lino.close_window() going to close", 
   //     cw, "previous is", ww, 
   //     "norestore is", norestore,
   //     "retval is", retval);
@@ -756,7 +759,9 @@ Lino.close_window = function(status_update, norestore) {
     }
     Lino.current_window = ww.window;
   } else {
-    Lino.current_window = null;
+      Lino.current_window = null;
+      // new since 20140829:
+      if(!norestore) { Lino.viewport.refresh(); }
   }
   if (cw) cw.hide_really();
   return retval;
@@ -818,6 +823,7 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
     //~ mainItemClass: null,
     get_window : function() {
       //~ if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
+      // if (this.window == null || this.window.isDestroyed)  { // 20140829
       if (this.window == null)  {
           //~ this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
           this.windowConfig.main_item = this.main_item_fn();
@@ -826,7 +832,7 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
       return this.window;
     },
     run : function(requesting_panel, status) {
-      //~ console.log('20120625 window_action.run()',this)
+      // console.log('20140829 window_action.run()', this)
       Lino.open_window(this.get_window(), status, requesting_panel);
     }
   
@@ -1711,12 +1717,12 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
           if (panel instanceof Lino.FormPanel 
               && panel.ls_detail_handler == detail_handler) 
             {
-              console.log("20140630 use panel.set_status().");
+              // console.log("20140630 use panel.set_status().");
               panel.set_status({
                   record_id: result.record_id,
                   data_record: result.data_record});
           } else {
-              console.log("20140630 run detail_handler.");
+              // console.log("20140630 run detail_handler.");
               detail_handler.run(null, {
                   record_id: result.record_id,
                   data_record: result.data_record,
@@ -4110,7 +4116,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         params:p,
         waitMsg: 'Saving your data...',
         success: Lino.action_handler( this, function(result) {
-          console.log("20140728 afteredit.success got ", result);
+          // console.log("20140728 afteredit.success got ", result);
           //~ if (result.data_record) {
           if (result.refresh_all) {
               var cw = self.get_containing_window();
@@ -4590,19 +4596,20 @@ Lino.Window = Ext.extend(Ext.Window,{
     Lino.Window.superclass.hide.call(this);
   },
   onRender : function(ct, position){
-    //~ console.log('20120110 Lino.Window.onRender() 1');
+    // console.log('20140829 Lino.Window.onRender() 1');
     Lino.Window.superclass.onRender.call(this, ct, position);
     var main_area = Ext.getCmp('main_area')
     //~ console.log('20120110 Lino.Window.onRender() 2');
   
     this.on('show', function(win) {
-        //~ console.log('20120110 Lino.Window.on show 1');
+        // console.log('20140829 Lino.Window.on(show) : add resize handler');
         main_area.on('resize', win.onWindowResize, win);
     });
     this.on('hide', function(win) {
+        // console.log('20140829 Lino.Window.on(hide) : remove resize handler');
         main_area.un('resize', win.onWindowResize, win);
     });
-    //~ console.log('20120110 Lino.Window.onRender() 3');
+    // console.log('20140829 Lino.Window.onRender() 3');
   }
 });
 

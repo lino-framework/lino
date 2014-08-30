@@ -606,7 +606,7 @@ class EventDetail(dd.FormLayout):
     room priority access_class transparent #rset
     owner created:20 modified:20
     description
-    GuestsByEvent outbox.MailsByController
+    GuestsByEvent #outbox.MailsByController
     """
 
 

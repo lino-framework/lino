@@ -34,10 +34,11 @@ from lino import dd
 from .workflows import GuestStates
 from .workflows import EventStates
 
-outbox = dd.resolve_app('outbox')
+# outbox = dd.resolve_app('outbox')
 
 
-class GuestRole(outbox.MailableType, dd.BabelNamed):
+# class GuestRole(outbox.MailableType, dd.BabelNamed):
+class GuestRole(dd.BabelNamed):
     templates_group = 'cal/Guest'
 
     class Meta:
@@ -52,12 +53,13 @@ class GuestRoles(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     detail_layout = """
     id name
-    #build_method #template email_template attach_to_email
+    #build_method #template #email_template #attach_to_email
     cal.GuestsByRole
     """
 
 
-class Guest(outbox.Mailable):
+# class Guest(outbox.Mailable):
+class Guest(dd.Model):
 
     workflow_state_field = 'state'
 
@@ -134,19 +136,18 @@ class Guest(outbox.Mailable):
 
 #~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
-    help_text = _("""A guest is a partner invited to an event.
-    """)
+    help_text = _("""A guest is a partner invited to an event. """)
     model = 'cal.Guest'
     required = dd.required(user_groups='office', user_level='admin')
     column_names = 'partner role workflow_buttons remark event *'
     detail_layout = """
     event partner role
     state remark workflow_buttons
-    outbox.MailsByController
+    # outbox.MailsByController
     """
     insert_layout = dd.FormLayout("""
-    event 
-    partner 
+    event
+    partner
     role
     """, window_size=(60, 'auto'))
 
