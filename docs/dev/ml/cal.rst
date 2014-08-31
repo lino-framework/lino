@@ -7,6 +7,11 @@ Calendar
 The :mod:`lino.modlib.cal` package 
 provides data definitions for "Calendar management".
 
+.. contents:: 
+   :local:
+   :depth: 2
+
+
 Models
 ======
 
@@ -38,6 +43,10 @@ Models
 
     A Task is when a user plans to to something 
     (and optionally wants to get reminded about it).
+
+    .. attribute:: state
+     
+        The state of this Task. one of :class:`TaskStates`
 
 .. class:: RecurrentEvent
 
@@ -218,6 +227,43 @@ Mixins
 
   .. attribute:: room
   .. attribute:: max_date
+
+Choicelists
+===========
+
+
+.. class:: EventStates
+
+    Possible values for the state of a task. The list of choices for
+    the :attr:`Event.state` field. By default it contains the following
+    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+
+    .. django2rst:: 
+
+            dd.show(cal.EventStates)
+
+
+.. class:: TaskStates
+
+    Possible values for the state of a task. The list of choices for
+    the :attr:`Task.state` field. By default it contains the following
+    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+
+    .. django2rst:: 
+
+            dd.show(cal.TaskStates)
+
+
+.. class:: GuestStates
+
+    Possible values for the state of a Guest. The list of choices for
+    the :attr:`Guest.state` field. By default it contains the following
+    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+
+    .. django2rst:: 
+
+            dd.show(cal.GuestStates)
+
 
 
 Tables

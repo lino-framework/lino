@@ -81,15 +81,23 @@ Models
 
 .. class:: Partner(AddressLocation)
 
-    A :class:`Partner` is anything that can act as a business partner.
-    A Partner has at least a name and usually also one "official" address.
-    Predefined subclasses of Partners are
-    :class:`Person` for physical persons and
-    :class:`Company` for companies, organisations and any kind of
-    non-formal Partners.
+    A Partner is any physical or moral person for which you want to
+    keep contact data (address, phone numbers, ...).
 
-    Base class for anything that has contact information
-    (postal address, email, phone,...).
+    A :class:`Partner` can act as the recipient of a sales invoice, as
+    the sender of an incoming purchases invoice, ...
+
+    A Partner has at least a name and usually also an "official" address.
+
+    Predefined subclasses of Partners are :class:`Person` for physical
+    persons and :class:`Company` for companies, organisations and any
+    kind of non-formal Partners.
+
+    Lino differentiates the following subclasses of Partner:
+
+    .. django2rst:: contacts.Partner.print_subclasses_graph()
+
+
 
   .. attribute:: name
 
@@ -104,7 +112,7 @@ Models
 
 .. class:: Person
 
-    Represents a physical person.
+    Represents a physical person and an individual human being.
     See :ref:`lino.tutorial.human`.
 
 .. class:: Company
@@ -124,9 +132,27 @@ Models
     field. The :mod:`std <ml.contacts.std>` fixture fills this with
     the following data (5 first rows only):
 
-    .. lino2rst::
+    .. django2rst::
 
-       dd.login('robin').show(contacts.CompanyTypes, limit=5)
+       dd.show(contacts.CompanyTypes, limit=5)
+
+.. class:: Role
+
+    A Role is when a given :class:`Person` plays a given
+    :class:`RoleType` in a given :class:`Company`.
+
+.. class:: RoleType
+
+    A :class:`RoleType` is 
+    "what a given :class:`Person` can be for a given 
+    :class:`Company`".
+
+    The default database comes with the following list of 
+    :class:`RoleType`:
+    
+    .. django2rst:: dd.show(contacts.RoleTypes)
+    
+
 
 
 Tables and Layouts

@@ -32,10 +32,7 @@ signature of :meth:`ad.Site.get_admin_main_items`.
 
 Not very elegant, but it works.
 
-Online demos
-============
-
-I updated the :ref:`demos`.
+Checkin and update of the :ref:`demos`.
 
 Removed `admin_item_limit` from :xfile:`admin_main.html`
 ========================================================
@@ -69,3 +66,4 @@ specifies a width of 0. If the width is 0, then we know that the
 window has fallen into this strange kind of hiddenness and that we
 need to instantiate a new one.
 
+Checkin and update of the online :ref:`demos`.

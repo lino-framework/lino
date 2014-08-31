@@ -1,0 +1,9 @@
+=========================
+Monday, September 1, 2014
+=========================
+
+Started to introduce the requested modifications in French
+translations.  This revealed that ``fab mm`` has become really too
+slow for the userdocs :ref:`welfare`. I decided to declare as
+deprecated my system of building multilingual docs using Sphinx's
+gettext builder, and to convert them to monolingual docs.

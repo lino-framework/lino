@@ -22,4 +22,3 @@ Traceback (most recent call last):
 TypeError: Error when calling the metaclass bases
     Cannot create a consistent method resolution
 order (MRO) for bases Partner, Person
-/home/luc/hgwork/lino/docs/dev/actors.rst:229: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
