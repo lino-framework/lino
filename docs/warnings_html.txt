@@ -21,4 +21,4 @@ Traceback (most recent call last):
     new_class = super_new(cls, name, bases, {'__module__': module})
 TypeError: Error when calling the metaclass bases
     Cannot create a consistent method resolution
-order (MRO) for bases Person, Partner
+order (MRO) for bases Partner, Person

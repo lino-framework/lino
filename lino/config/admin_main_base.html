@@ -29,7 +29,7 @@
         {% endblock %}
         
         {% block admin_main_items %}
-        {% for T in settings.SITE.get_admin_main_items(ar) %}
+        {% for T in settings.SITE.get_admin_main_items() %}
         {% if T.default_action.get_view_permission(ar.get_user().profile) %}
         <h2>{{T.label}} 
         {# {{E.tostring(ar.window_action_button(T.default_action,

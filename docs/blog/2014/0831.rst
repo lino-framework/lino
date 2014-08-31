@@ -1,0 +1,30 @@
+=======================
+Sunday, August 31, 2014
+=======================
+
+Several sleepless hours and I finally found a workaround for
+yesterday's problem.
+
+The explanation is as follows: when an Ext.Window is being
+instantiated, then this object is somehow "linked" to "the current DOM
+element". When a `WindowAction.run()` is called from the menu, then it
+will be linked to the DOM element of the menu item. And in our case it
+is linked to some element which will later be replaced by new html
+chunk.  For example, yesterday's problem works only for windows which
+have been instantiated by a click on such a symbol.
+
+The workaround is to add the following code to `Lino.Viewport.refresh`::
+
+        {% for T in settings.SITE.get_admin_main_items() %}
+             if (Lino.{{T.default_action.full_name()}}) {
+                 Lino.{{T.default_action.full_name()}}.window = null;
+             }
+        {% endfor %}
+
+That is, we delete the cached Ext.Window instance for those actions
+that are callable from the :xfile:`admin_main.html`. 
+
+This workaround also required us to remove the `ar` argument from the
+signature of `get_admin_main_items`.
+
+Not very elegant, but it works.

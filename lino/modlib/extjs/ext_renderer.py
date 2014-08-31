@@ -746,7 +746,6 @@ class ExtRenderer(HtmlRenderer):
                     f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
                     f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 
-        #~ assert user == jsgen._for_user
         assert profile == jsgen._for_user_profile
 
         menu = settings.SITE.get_site_menu(self, profile)

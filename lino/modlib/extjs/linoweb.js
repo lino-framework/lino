@@ -678,7 +678,16 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
           if (result.html) {
               var cmp = Ext.getCmp('main_area');
               // cmp.removeAll(true);  // 20140829
-              cmp.update(result.html);
+
+        {% for T in settings.SITE.get_admin_main_items() %}
+             if (Lino.{{T.default_action.full_name()}}) {
+                 Lino.{{T.default_action.full_name()}}.window = null;
+             }
+        {% endfor %}
+
+
+
+              cmp.update(result.html, true);
           }
           if (result.message) {
               if (result.alert) {
@@ -714,7 +723,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
 
 
 Lino.open_window = function(win, st, requesting_panel) {
-  // console.log("20140829 Lino.open_window()",win.x, win.y, win.lastZindex);
+  // console.log("20140829 Lino.open_window()",win.el);
   var cw = Lino.current_window;
   if (cw) {
     // console.log("20140829 Lino.open_window() save current status",
@@ -825,6 +834,7 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
       //~ if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
       // if (this.window == null || this.window.isDestroyed)  { // 20140829
       if (this.window == null)  {
+      // if (true)  {
           //~ this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
           this.windowConfig.main_item = this.main_item_fn();
           this.window = new Lino.Window(this.windowConfig);

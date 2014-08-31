@@ -1113,7 +1113,7 @@ class Site(Site):
                 place=unicode(sc.city.name), date=dd.fdl(today))
         return dd.fdl(today)
 
-    def get_admin_main_items(self, ar):
+    def get_admin_main_items(self):
         "See :func:`ad.Site.get_admin_main_items`."
         return []
 
