@@ -568,23 +568,23 @@ The ``AbstractTable`` class
 
   .. attribute:: preview_limit
 
-    The maximum number of rows to fetch when this is being used in
-    "preview mode", e.g. as a slave table in a detail window.
+    The maximum number of rows to fetch when this table is being
+    displayed in "preview mode", i.e. (1) as a slave table in a detail
+    window or (2) as an item of the :xfile:`admin_main.html` returned
+    by :meth:`ad.Site.get_admin_main_items`.
 
-    Default value is taken from :attr:`lino.Site.preview_limit`.
+    The default value for this is the :attr:`preview_limit
+    <ad.Site.preview_limit>` class attribute of your
+    :class:`Site <ad.Site>`, which itself has a hard-coded
+    default value of 15 and which you can override in your
+    :xfile:`settings.py`.
     
     If you set this to `None`, preview requests for this table will
     request all rows.  Since preview tables usually have no paging
     toolbar, that's theoretically what we want (but can lead to waste
     of performance if there are many rows).
     
-    The default value for this is the :attr:`preview_limit
-    <lino.site.Site.preview_limit>` class attribute of your
-    :class:`Site <lino.site.Site>`, which itself has a hard-coded
-    default value of 15 and which you can override in your
-    :xfile:`settings.py`.
-    
-    Test case and description  in :ref:`cosi.tested`.
+    Test case and description in :ref:`cosi.tested`.
     
   .. method:: get_data_rows(self, ar)
 

@@ -628,7 +628,7 @@ The ``Site`` class
     A string with a space-separated list of logger names to be
     automatically configured. See :mod:`lino.utils.log`.
 
-    .. setting:: use_java
+  .. attribute:: use_java
 
     A site-wide option to disable everything that needs Java.  Note that
     it is up to the apps which include Java applications to respect this
@@ -661,7 +661,7 @@ The ``Site`` class
 
       ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
 
-    .. setting:: auth_middleware
+  .. attribute:: auth_middleware
 
     Override used Authorisation middlewares with supplied tuple of
     middleware class names.
@@ -710,7 +710,7 @@ The ``Site`` class
     - `Changed the way URL paths are determined 
       <https://code.djangoproject.com/wiki/BackwardsIncompatibleChanges#ChangedthewayURLpathsaredetermined>`__
 
-  .. setting:: plain_prefix
+  .. attribute:: plain_prefix
 
     The prefix to use for "plain html" URLs.
     Default value is ``'plain'``.
@@ -722,11 +722,11 @@ The ``Site`` class
     must be empty.
 
 
-  .. setting:: preview_limit
+  .. attribute:: preview_limit
     
     Default value for the :attr:`preview_limit
-    <lino.core.tables.AbstractTable.preview_limit>` parameter of all
-    tables who don't specify their own one.  Default value is 15.
+    <dd.AbstractTable.preview_limit>` parameter of all tables who
+    don't specify their own one.  Default value is 15.
 
 
   .. attribute:: start_year
@@ -869,16 +869,11 @@ The ``Site`` class
   .. method:: get_admin_main_items(ar)
 
     Expected to yield a sequence of "items" to be rendered on the home
-    page.
+    page (:xfile:`admin_main.hml`).
 
     Every item is expected to be a :class:`dd.Table` or a
     :class:`dd.VirtualTable`. These tables are rendered in that order,
-    with a limit of 5 rows by default.  To change this default value,
-    override it in your local copy of :xfile:`admin_main.html`::
-
-        {% set admin_item_limit = 20 %}
-        {% extends "admin_main_base.html" %}
-
+    with a limit of :attr:`dd.AbstractTable.preview_limit` rows.
 
 
   .. method:: get_system_note_recipients(self, ar, obj, silent)
@@ -963,9 +958,6 @@ file::
     If specified, a list of model names for which this app provides a
     subclass.
     
-    For backwards compatibility this has no effect
-    when :setting:`override_modlib_models` is set.
-
   .. method:: configure(self, **kw)
 
     Set the given parameter(s) of this Plugin instance.

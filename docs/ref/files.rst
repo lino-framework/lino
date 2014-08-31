@@ -53,7 +53,7 @@ The ExtJS3 user interface generates a series of files
 at server startup which contain the 
 client side application logic. 
 The first part of this file comes from
-a file :srcref:`/lino/ui/extjs3/linolib.js`,
+a file :srcref:`/lino/modlib/extjs/linolib.js`,
 the second part is purely generated from your models and reports).
 
 
@@ -64,3 +64,7 @@ They contain chunks of English text as they appear in Lino,
 together with their translation into a given language.
 See :doc:`/admin/translate`.
 
+.. xfile:: admin_main.html
+
+This is the template used to generate the inner content of the home
+page.
