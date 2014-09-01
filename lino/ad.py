@@ -466,6 +466,13 @@ class Site(Site):
             ),
         )
 
+    def get_default_required(self, **kw):
+        #~ if not kw.has_key('auth'):
+            #~ kw.update(auth=True)
+        if self.user_model is not None:
+            kw.setdefault('auth', True)
+        return kw
+
     def parse_date(self, s):
         ymd = tuple(reversed(map(int, s.split('.'))))
         assert len(ymd) == 3

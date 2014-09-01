@@ -70,13 +70,6 @@ def register_actor(a):
     return a
 
 
-def get_default_required(**kw):
-    #~ if not kw.has_key('auth'):
-        #~ kw.update(auth=True)
-    if settings.SITE.user_model is not None:
-        kw.setdefault('auth', True)
-    return kw
-
 
 def comma():
     return ', '
@@ -381,7 +374,7 @@ class Actor(actions.Parametrizable):
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
     debug_permissions = False
-    required = get_default_required()
+    required = settings.SITE.get_default_required()
     update_required = dict()
     delete_required = dict()
     master_key = None
@@ -551,12 +544,16 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_create_permission(self, ar):
+        if ar.get_user().profile.readonly:
+            return False
         return True
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):
         if ba.action.readonly:
             return True
+        if ar.get_user().profile.readonly:
+            return False
         return cls.editable
 
     @classmethod

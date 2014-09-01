@@ -2,8 +2,67 @@
 Monday, September 1, 2014
 =========================
 
-Started to introduce the requested modifications in French
+
+
+I started to introduce the requested modifications in French
 translations.  This revealed that ``fab mm`` has become really too
-slow for the userdocs :ref:`welfare`. I decided to declare as
-deprecated my system of building multilingual docs using Sphinx's
-gettext builder, and to convert them to monolingual docs.
+slow for the :ref:`welfare` userdocs. 
+
+It is clear that my system of building multilingual docs using
+Sphinx's gettext builder is deprecated, I started to convert them to
+monolingual docs.
+
+Worked on :ref:`noi`
+====================
+
+I added :mod:`ml.tickets` to :ref:`noi` and started to see more
+clearly a concrete usage for that application: a ticketing management
+system to manage our own tickets. Because the current system (within
+the documentation using Sphinx) turns out to be not enough. I also
+abandon the idea of doing this in Presto and of copying exactly the
+database structure I have in TIM.
+
+One important new thing in :ref:`noi` is the fact that it publishes
+the whole database as is. Anonymous requests may not modify anything,
+but they can see everything.  
+
+- Added new method `ad.Site.get_default_required`, and :ref:`noi`
+  overrides this to make all tables visible for everybody.  
+
+- Discovered that readonly user profiles don't work (they are not
+  readonly).
+
+
+Chatelet
+========
+
+Continued heavily on :doc:`/tickets/121`.
+
+dashboard
+=========
+
+Hey, I discovered another thing related to yesterday's refresh problem.
+Here is the code of the onReady function in our main page::
+
+    Lino.viewport = new Lino.Viewport( { 
+      items: { 
+        "bbar": { "items": Lino.status_bar, "xtype": "toolbar" }, 
+        "tbar": Lino.main_menu, 
+        "layout": "fit", 
+        "items": { 
+          "items": { 
+            "autoScroll": true, 
+            "html": "...", 
+            "xtype": "container", 
+            "id": "dashboard" 
+          }, 
+          "region": "center", 
+          "layout": "fit", 
+          "xtype": "container", 
+          "id": "main_area" 
+        } 
+      } 
+    });
+
+Do you see? It's not "main_area" but "dashboard" whose html I must
+update!

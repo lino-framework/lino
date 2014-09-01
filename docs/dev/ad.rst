@@ -914,7 +914,10 @@ The ``Site`` class
     Note that this is expected to return a unicode string possibly
     containing valid HTML (not XHTML) tags for formatting.
 
-
+  .. method:: get_default_required(**kwargs):
+    
+    Return a dict with the default value for the
+    :attr:`dd.Actor.required` attribute of every actor.
 
 
 The ``Plugin`` class

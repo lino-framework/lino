@@ -40,10 +40,56 @@ DONE
 - traduire "Cours" par "Ateliers"
 
 
+Onglet "SIS"
+------------
+
+- Tableau "Ateliers d'insertion sociale" (`courses.Enrolment`) avec
+  les colonnes suivantes:
+
+    - Atelier (pointeur)
+    - Entrée (date)
+    - Sortie (date)
+    - Nombre d'heures (?)
+    - Taux de présence (implémentation à discuter)
+    - Motif de sortie (pointeur)
+    - Statut (pointeur)
+    - (Remarque?)
+
+- 4 champs texte libres: "Motif de l'orientation", "Attentes de la
+  personne". "Moteurs", "Objectifs" )
+
+Onglet "Modules internes"
+-------------------------
+
+- Tableau "Ateliers d'apprentissage des savoirs de base" (mêmes colonnes
+  que "Ateliers d'insertion sociale")
+
+- Tableau "Modules de détermination d'un projet socioprofessionnel"
+  (mêmes colonnes que "Ateliers d'insertion sociale", sauf la colonne
+  "Résultat" qui est intitulée "Projet/orientation")
+
+- Champ de texte libre "Démarches à réaliser"
+
+
 TODO
 ====
 
-- Détail gênants du framework:
+- no summary for Composition de ménage
+- uploads : viennent tous un meme pot car: p.ex. une attestation
+  médicale de handicap pourrait venir dans l'onglet "recherche de
+  travail" mais aussi "Santé".
+
+
+- Types de contrat de travail 
+  - renommer en "Types de contrats de mise au travail".
+  - trier alphabétiquement
+
+
+  NB: 
+  - "Mise au travail" : art 60, art 61 et ALE.
+  - ALE - Agence locale de l'emploi. Contrat géré à l'extérieur.
+
+- Détail gênant du framework:
 
   - quand on a inséré un object et ferme la fenetre
     de detail pour revenir vers la vue "tableau", il est irritant de
@@ -185,37 +231,6 @@ Onglet "Intervention psychosociale"
   psychosociale".
 
 
-Onglet "SIS"
-------------
-
-- Tableau "Ateliers d'insertion sociale" (`courses.Enrolment`) avec
-  les colonnes suivantes:
-
-    - Atelier (pointeur)
-    - Entrée (date)
-    - Sortie (date)
-    - Nombre d'heures (?)
-    - Taux de présence (implémentation à discuter)
-    - Motif de sortie (pointeur)
-    - Statut (pointeur)
-    - (Remarque?)
-
-- 4 champs texte libres: "Motif de l'orientation", "Attentes de la
-  personne". "Moteurs", "Objectifs" )
-
-Onglet "Modules internes"
--------------------------
-
-- Tableau "Ateliers d'apprentissage des savoirs de base" (mêmes colonnes
-  que "Ateliers d'insertion sociale")
-
-- Tableau "Modules de détermination d'un projet socioprofessionnel"
-  (mêmes colonnes que "Ateliers d'insertion sociale", sauf la colonne
-  "Résultat" qui est intitulée "Projet/orientation")
-
-- Champ de texte libre "Démarches à réaliser"
-
-
 Recherche d'emploi
 ------------------
 
@@ -242,19 +257,38 @@ Concepts
   table en les différenciant par une choicelist `CourseAreas`).
 
 
+    Tout à fait, il y a 3 grandes catégories.
+
+    Dans Insertion sociale:
+    - Trucs et astuces
+    - Cuisine
+    - Créatif
+    - Parentalité
+
+    Dans Apprentissage des savoirs de base:
+    - Remédiation français/Mathématiques
+
+    Dans Détermination d'un projet:
+    - Module "Activons-nous"
+
+
 à discuter
 ==========
 
-- Renommer "Quand" en "Date" (dans Onglet "Personne", panneau "Rendez-vous").
+- Renommer "Quand" en "Date" (dans Onglet "Personne", panneau
+  "Rendez-vous"). Mais ce champ montre également l'heure (si elle est
+  spécifiée).
 
 - Dans l'onglet "Situation familiale", les changements demandés pour
   liens de parenté ne serait pas satisfaisants. Discutons:
 
     - mettre le panneau "Composition de ménage" au-dessus du panneau
-      "Liens de parenté".  --> Mais les Liens de parenté viennent "avant"
-      la composition de ménage car Lino remplit automatiquement und ménage
-      en fonction des liens de parenté.
-    - supprimer le panneau «Appartenance aux ménages»
+      "Liens de parenté".  --> Mais les Liens de parenté viennent
+      "avant" la composition de ménage car Lino remplit
+      automatiquement un ménage en fonction des liens de
+      parenté. L'inverse ne serait pas possible.
+    - supprimer le panneau «Appartenance aux ménages».
+      Une personne peut 
     - Dans "Composition de ménage" reproduire le tableau en annexe
       (Seule la colonne "Suivi par…" serait en menu déroulant avec le
       nom des travailleurs sociaux)
@@ -269,19 +303,15 @@ Concepts
     - medical uploads (p.ex. attestations handicap)
     - aid grantings (sert à imprimer p.ex. attestations de revenu)
 
-
 - Nouvelle case à cocher "Economie sociale" par contrat de mise à
   l'emploi. --> Plutot par *type* de contrat de mise à l'emploi
-  
 
 - (à méditer) Dans module "Rendez-vous", une fois qu’on a indiqué que
   la personne a «quitté», l’info peut disparaitre vu qu’elle s’indique
   de toute façon dans l’onglet "Calendrier", module "Evènements".
 
-
 - transférer le bouton "a besoin d’un permis de travail" (actuellement
   dans l'onglet "Recherche d'emploi") dans "Personne"
-
 
 - Dans l'onglet "Accompagnement", supprimer le champ «Refusal
   Reason». Le voulez-vous vraiment?  Alors il faudrait également
@@ -303,5 +333,4 @@ Concepts
 - transférer le module "Enrolments" (actuellement dans l’onglet
   «Langues») dans l’onglet "Personne" (en dessous du module "Créer un
   rendez-vous")
-
 

@@ -41,12 +41,10 @@ from .workflows import TaskStates
 
 class Task(Component):
 
-    #~ workflow_state_field = 'state'
-
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
-        #~ abstract = True
+        abstract = dd.is_abstract_model(__name__, 'Task')
 
     due_date = models.DateField(
         blank=True, null=True,
@@ -129,7 +127,7 @@ class Tasks(dd.Table):
     start_date due_date id workflow_buttons 
     summary 
     user project 
-    #event_type owner created:20 modified:20   
+    #event_type owner created:20 modified:20
     description #notes.NotesByTask
     """
     insert_layout = dd.FormLayout("""
@@ -206,6 +204,7 @@ class TasksByController(Tasks):
     required = dd.required(user_groups='office')
     column_names = 'start_date summary workflow_buttons id'
     #~ hidden_columns = set('owner_id owner_type'.split())
+    auto_fit_column_widths = True
 
 if settings.SITE.user_model:
 
@@ -257,5 +256,5 @@ if settings.SITE.project_model:
         column_names = 'start_date user summary workflow_buttons *'
 
 
-__all__ = ['Task', 'Tasks']
+# __all__ = ['Task', 'Tasks']
 #~ __all__ = ['Task','Tasks','MyTasks','TasksByUser','TasksByController','TasksByProject']

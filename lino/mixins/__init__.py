@@ -243,6 +243,13 @@ if settings.SITE.user_model:
                 ar.master_instance = ar.get_user()
             super(ByUser, self).setup_request(ar)
 
+        @classmethod
+        def get_view_permission(self, profile):
+            if not profile.authenticated:
+                return False
+            return super(ByUser, self).get_view_permission(profile)
+
+
 
 else:
 

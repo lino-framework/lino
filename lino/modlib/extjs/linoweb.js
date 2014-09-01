@@ -676,7 +676,7 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
           var result = Ext.decode(response.responseText);
           //~ console.log('Lino.do_action()',action.name,'result is',result);
           if (result.html) {
-              var cmp = Ext.getCmp('main_area');
+              var cmp = Ext.getCmp('dashboard');
               // cmp.removeAll(true);  // 20140829
               cmp.update(result.html, true);
           }
@@ -825,8 +825,8 @@ Lino.WindowAction = Ext.extend(Lino.WindowAction,{
     get_window : function() {
       //~ if(mainConfig) Ext.apply(this.mainConfig,mainConfig);
       // if (this.window == null || this.window.isDestroyed)  { // 20140829
-      if (this.window == null || this.window.getBox().width == 0)  { // 20140829
-      // if (this.window == null)  {
+      // if (this.window == null || this.window.getBox().width == 0)  { // 20140829
+      if (this.window == null)  {
       // if (true)  {
           //~ this.windowConfig.main_item = new this.mainItemClass(this.mainConfig);
           this.windowConfig.main_item = this.main_item_fn();

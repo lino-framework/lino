@@ -25,24 +25,6 @@
         {% endif %}
         {% endblock %}
         
-        {% block admin_main_items %}
-        {% for T in settings.SITE.get_admin_main_items() %}
-        {% if T.default_action.get_view_permission(ar.get_user().profile) %}
-        <h2>{{T.label}} 
-        {# {{E.tostring(ar.window_action_button(T.default_action,
-            title=_("Show this panel in own window"),
-            icon_ffile="../wikipedia/external_text"))}} #}
-        {{E.tostring(ar.window_action_button(T.default_action,
-            title=_("Show this panel in own window"),
-            style='vertical-align:0;',
-            icon_name="../xsite/link"))}}
-        </h2>
-        
-        {{E.tostring(ar.show(T, limit=T.preview_limit))}}
-        {% endif %}
-        {% endfor %}
-        {% endblock %}
-        
     {% endblock %}
 {% else %}
   {% block hello_anonymous %}
@@ -82,4 +64,23 @@
       {{ self.feedback() }}
   {% endblock %}
 {% endif %}
+
+{% block admin_main_items %}
+{% for T in settings.SITE.get_admin_main_items() %}
+{% if T.default_action.get_view_permission(ar.get_user().profile) %}
+<h2>{{T.label}} 
+{# {{E.tostring(ar.window_action_button(T.default_action,
+    title=_("Show this panel in own window"),
+    icon_ffile="../wikipedia/external_text"))}} #}
+{{E.tostring(ar.window_action_button(T.default_action,
+    title=_("Show this panel in own window"),
+    style='vertical-align:0;',
+    icon_name="../xsite/link"))}}
+</h2>
+
+{{E.tostring(ar.show(T, limit=T.preview_limit))}}
+{% endif %}
+{% endfor %}
+{% endblock %}
+
 </div>

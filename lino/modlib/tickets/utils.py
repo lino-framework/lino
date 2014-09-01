@@ -17,6 +17,14 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 
 
+class DependencyTypes(dd.ChoiceList):
+    verbose_name = _("Dependency type")
+add = DependencyTypes.add_item
+add('10', _("Duplicate"), 'duplicate')
+add('20', _("Callback"), 'callback')
+add('30', _("Requires"), 'requires')
+
+    
 class TicketStates(dd.Workflow):
 
     """

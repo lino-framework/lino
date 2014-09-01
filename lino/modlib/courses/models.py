@@ -142,7 +142,7 @@ class Line(dd.BabelNamed):
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
     ref = dd.NullCharField(_("Reference"), max_length=30, unique=True)
-    course_area = CourseAreas.field(default=CourseAreas.default)
+    course_area = CourseAreas.field(blank=True)
     topic = models.ForeignKey(Topic, blank=True, null=True)
     description = dd.BabelTextField(_("Description"), blank=True)
 
@@ -720,7 +720,7 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
         verbose_name_plural = _('Enrolments')
         unique_together = ('course', 'pupil')
 
-    course_area = CourseAreas.field(default=CourseAreas.default)
+    course_area = CourseAreas.field(blank=True)
 
     #~ teacher = models.ForeignKey(Teacher)
     course = dd.ForeignKey('courses.Course')
@@ -748,8 +748,10 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
 
     @dd.chooser()
     def course_choices(cls, course_area):
-        return dd.modules.courses.Course.objects.filter(
-            line__course_area=course_area)
+        qs = dd.modules.courses.Course.objects.all()
+        if course_area:
+            qs = qs.filter(line__course_area=course_area)
+        return qs
 
     @dd.chooser()
     def option_choices(cls, course):
@@ -989,11 +991,13 @@ class EnrolmentsByPupil(Enrolments):
     master_key = "pupil"
     column_names = 'request_date course user:10 remark amount:10 workflow_buttons *'
     auto_fit_column_widths = True
-    _course_area = CourseAreas.default
+    _course_area = None  # CourseAreas.default
 
     @classmethod
     def get_known_values(self):
-        return dict(course_area=self._course_area)
+        if self._course_area is not None:
+            return dict(course_area=self._course_area)
+        return dict()
 
     @classmethod
     def get_actor_label(self):

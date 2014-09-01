@@ -778,8 +778,8 @@ class TimLoader(object):
         if row.parent.strip():
             kw.update(parent_id=int(row.parent))
         kw.update(name=row.name1.strip())
-        if row.idpar.strip():
-            kw.update(partner_id=self.par_pk(row.idpar.strip()))
+        # if row.idpar.strip():
+        #     kw.update(partner_id=self.par_pk(row.idpar.strip()))
 
         kw.update(ref=row.seq.strip())
         kw.update(user=self.get_user(None))

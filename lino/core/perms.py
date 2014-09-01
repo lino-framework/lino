@@ -23,7 +23,7 @@ from django.utils import translation
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core.actors import get_default_required as required
+# from lino.core.actors import get_default_required as required
 from lino.core import workflows
 from lino.core.dbutils import obj2str
 
@@ -44,7 +44,7 @@ class UserLevels(ChoiceList):
     verbose_name = _("User Level")
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
-    required = required(user_level='admin')
+    required = settings.SITE.get_default_required(user_level='admin')
     short_name = models.CharField(
         _("Short name"), max_length=2,
         help_text=_("Used when defining UserProfiles"))
@@ -94,7 +94,7 @@ class UserGroups(ChoiceList):
     Applications can define their functional groups
     
     """
-    required = required(user_level='admin')
+    required = settings.SITE.get_default_required(user_level='admin')
     verbose_name = _("User Group")
     verbose_name_plural = _("User Groups")
     app_label = 'lino'
@@ -199,7 +199,7 @@ class UserProfiles(ChoiceList):
     """
     Deserves a docstring.
     """
-    required = required(user_level='admin')
+    required = settings.SITE.get_default_required(user_level='admin')
     #~ item_class = UserProfile
     verbose_name = _("User Profile")
     verbose_name_plural = _("User Profiles")
@@ -255,7 +255,7 @@ class UserProfiles(ChoiceList):
     def add_item(cls, value, text, memberships=None, name=None, **kw):
         return cls.add_item_instance(UserProfile(cls, value, text, name, memberships, **kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.site.Site.setup_choicelists`
+#~ UserProfiles choicelist is going to be filled in `ad.Site.setup_choicelists`
 #~ because the attributes of each item depend on UserGroups
 
 
@@ -280,7 +280,6 @@ def add_user_group(name, label):
     UserProfiles.virtual_fields[k].lino_resolve_type()
 
 
-#~ def default_required(): return dict(auth=True)
 class Requirements(object):
 
     """
@@ -348,7 +347,7 @@ def make_permission_handler(*args, **kw):
         
     `auth`
         If True, permission is given for any authenticated user 
-        (and not for :class:`lino.core.auth.AnonymousUser`).
+        (and not for :class:`AnonymousUser`).
         
     `owner`
         If True, permission is given only to the author of the object. 

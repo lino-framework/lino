@@ -61,7 +61,7 @@ class PartnerDetail(PartnerDetail):
     url
     """
 
-    tickets = "tickets.TicketsByPartner"
+    tickets = "tickets.VotesByPartner"
 
     general3 = """
     email:40
@@ -144,7 +144,7 @@ class PersonDetail(PersonDetail):
     addr2
     """
 
-    tickets = "tickets.TicketsByPartner"
+    tickets = "tickets.VotesByPartner"
 
     misc = dd.Panel("""
     url
@@ -202,7 +202,7 @@ class CompanyDetail(CompanyDetail):
     addr2
     """
 
-    tickets = "tickets.TicketsByPartner"
+    tickets = "tickets.VotesByPartner"
 
     misc = dd.Panel("""
     id language

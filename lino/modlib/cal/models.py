@@ -278,8 +278,9 @@ def update_auto_event(
 
 def update_auto_task(
         autotype, user, date, summary, owner, **defaults):
-    #~ model = dd.resolve_model('cal.Task')
-    return update_auto_component(Task, autotype, user, date, summary, owner, **defaults)
+    Task = dd.resolve_model('cal.Task')
+    return update_auto_component(
+        Task, autotype, user, date, summary, owner, **defaults)
 
 
 def update_auto_component(

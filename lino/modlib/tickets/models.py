@@ -23,7 +23,7 @@ For software projects we usually call them a "release" and they are
 named by a version number.
 
 A **Ticket** is a concrete question or problem formulated 
-by a `reporter` (a Partner). 
+by a `reporter` (a user). 
 A Ticket is always related to one and only one Project.
 It may be related to other tickets which may belong to other projects.
 
@@ -72,7 +72,7 @@ from lino import dd
 
 blogs = dd.resolve_app('blogs')
 
-from lino.modlib.tickets.utils import TicketStates
+from lino.modlib.tickets.utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
 
 
@@ -128,7 +128,6 @@ class Project(mixins.UserAuthored, mixins.Printable, mixins.Referrable):
     parent = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType', blank=True, null=True)
-    partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
     #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     description = dd.RichTextField(_("Description"), blank=True,
@@ -145,13 +144,13 @@ class ProjectDetail(dd.FormLayout):
 
     general = dd.Panel("""
     ref name parent
-    type user 
-    description ProjectsByProject 
+    type user
+    description ProjectsByProject
     # cal.EventsByProject
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    TicketsByProject SessionsByProject
+    TicketsByProject #SessionsByProject
     """, label=_("Tickets"))
 
     history = dd.Panel("""
@@ -171,12 +170,36 @@ class ProjectsByProject(Projects):
     column_names = "ref name *"
 
 
-class ProjectsByPartner(Projects):
+# class ProjectsByPartner(Projects):
+#     master_key = 'partner'
+#     column_names = "ref name *"
+
+
+class Vote(dd.Model):
+    class Meta:
+        verbose_name = _("Vote")
+        verbose_name_plural = _('Votes')
+
+    ticket = dd.ForeignKey('tickets.Ticket')
+    partner = dd.ForeignKey('contacts.Partner')
+    remark = models.CharField(_("Remark"), max_length=200, blank=True)
+
+
+class Votes(dd.Table):
+    model = 'tickets.Vote'
+
+
+class VotesByTicket(Votes):
+    master_key = 'ticket'
+    column_names = "partner remark *"
+
+
+class VotesByPartner(Votes):
     master_key = 'partner'
-    column_names = "ref name *"
+    column_names = "ticket remark *"
 
 
-class Milestone(mixins.ProjectRelated, mixins.Referrable):
+class Milestone(mixins.Referrable):
 
     """
     """
@@ -184,6 +207,7 @@ class Milestone(mixins.ProjectRelated, mixins.Referrable):
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
 
+    project = dd.ForeignKey('tickets.Project', blank=True, null=True)
     #~ label = models.CharField(_("Label"),max_length=20)
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
@@ -209,7 +233,7 @@ class MilestonesByProject(Milestones):
     column_names = "ref expected reached *"
 
 
-class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
+class Ticket(mixins.AutoUser, mixins.CreatedModified):
 
     """
     """
@@ -219,21 +243,23 @@ class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
 
-    reported = dd.ForeignKey('tickets.Milestone',
-                             related_name='tickets_reported',
-                             verbose_name='Reported for',
-                             blank=True, null=True,
-                             help_text=_("Milestone for which this ticket has been reported."))
-    fixed = dd.ForeignKey('tickets.Milestone',
-                          related_name='tickets_fixed',
-                          verbose_name='Fixed for',
-                          blank=True, null=True,
-                          help_text=_("The milestone for which this ticket has been fixed."))
-    partner = models.ForeignKey('contacts.Partner',
-                                blank=True, null=True,
-                                help_text=_("The partner who reported this ticket."))
-    #~ partner = models.ForeignKey('contacts.Partner')
-    #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
+    reported_for = dd.ForeignKey(
+        'tickets.Milestone',
+        related_name='tickets_reported',
+        verbose_name='Reported for',
+        blank=True, null=True,
+        help_text=_("Milestone for which this ticket has been reported."))
+    fixed_for = dd.ForeignKey(
+        'tickets.Milestone',
+        related_name='tickets_fixed',
+        verbose_name='Fixed for',
+        blank=True, null=True,
+        help_text=_("The milestone for which this ticket has been fixed."))
+    assigned_to = dd.ForeignKey(
+        'users.User',
+        blank=True, null=True,
+        help_text=_("The user who works on this ticket."))
+    project = models.ForeignKey('tickets.Project', blank=True, null=True)
     summary = models.CharField(_("Summary"), max_length=200,
                                blank=True,
                                help_text=_("Short summary of the problem."))
@@ -254,14 +280,14 @@ class Ticket(mixins.AutoUser, mixins.CreatedModified, mixins.ProjectRelated):
         return u"#%d (%s)" % (self.id, self.summary)
 
     @dd.chooser()
-    def reported_choices(cls, project):
+    def reported_for_choices(cls, project):
         if not project:
             return []
         return project.tickets_milestone_set_by_project.filter(
             reached__isnull=False)
 
     @dd.chooser()
-    def fixed_choices(cls, project):
+    def fixed_for_choices(cls, project):
         if not project:
             return []
         return project.tickets_milestone_set_by_project.all()
@@ -276,16 +302,16 @@ add('20', _("Closed"), 'closed')
 
 
 class Tickets(dd.Table):
-    model = Ticket
+    model = 'tickets.Ticket'
     detail_layout = """
-    summary partner project reported id
-    user created modified state workflow_buttons fixed
+    summary assigned_to project reported_for id
+    user created modified state workflow_buttons fixed_for
     description
-    SessionsByTicket EntriesByTicket
+    ParentsByTicket ChildrenByTicket
+    SessionsByTicket #EntriesByTicket
     """
     insert_layout = dd.FormLayout("""
     summary
-    partner
     project
     """, window_size=(50, 'auto'))
 
@@ -321,7 +347,7 @@ class Tickets(dd.Table):
                 qs = qs.filter(created__gte=pv.start_date)
             if pv.end_date:
                 qs = qs.filter(created__lte=pv.end_date)
-        elif pv.observed_event == TicketEvents.pending:
+        elif pv.observed_event == TicketEvents.closed:
             if pv.start_date:
                 qs = qs.filter(closed__gte=pv.start_date)
             if pv.end_date:
@@ -354,12 +380,12 @@ class Tickets(dd.Table):
 
 
 class UnassignedTickets(Tickets):
-    column_names = "summary project partner *"
+    column_names = "summary project user *"
 
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary user partner time *"
+    column_names = "summary user time *"
     parameters = dict(
         today=models.DateField(_("Date"), blank=True)
     )
@@ -371,39 +397,69 @@ class TicketsByProject(Tickets):
         return qs.annotate(sessions_time=models.Sum('sessions__time'))
 
 
-class TicketsByPartner(Tickets):
-    master_key = 'partner'
-    column_names = "summary project user *"
+class RecentTickets(Tickets):
+    label = _("Recent tickets")
+    order_by = ["-modified", "id"]
+    column_names = 'modified id project summary state *'
+
+
+# class TicketsByPartner(Tickets):
+#     master_key = 'partner'
+#     column_names = "summary project user *"
 
 
 class TicketsFixed(Tickets):
     label = _("Tickets Fixed")
-    master_key = 'fixed'
-    column_names = "summary user partner *"
+    master_key = 'fixed_for'
+    column_names = "summary user *"
     editable = False
 
 
 class TicketsReported(Tickets):
     label = _("Tickets Reported")
-    master_key = 'reported'
-    column_names = "summary user partner *"
+    master_key = 'reported_for'
+    column_names = "summary user *"
     editable = False
 
 
-class Session(mixins.AutoUser, mixins.ProjectRelated):
+class Dependency(dd.Model):
+    class Meta:
+        verbose_name = _("Dependency")
+        verbose_name_plural = _('Dependencies')
+
+    parent = dd.ForeignKey('tickets.Ticket', related_name="children")
+    child = dd.ForeignKey('tickets.Ticket', related_name="parents")
+    dependency_type = DependencyTypes.field()
+
+
+class Dependencies(dd.Table):
+    model = 'tickets.Dependency'
+
+
+class ChildrenByTicket(Dependencies):
+    master_key = 'parent'
+    column_names = "dependency_type child *"
+
+
+class ParentsByTicket(Dependencies):
+    master_key = 'child'
+    column_names = "dependency_type parent *"
+
+
+class Session(mixins.AutoUser):
 
     """
-    A Session is when a user works on a project or ticket.
+    A Session is when a user works on a given ticket.
     """
     class Meta:
         verbose_name = _("Session")
         verbose_name_plural = _('Sessions')
 
-    partner = models.ForeignKey(
-        'contacts.Partner',
-        blank=True, null=True,
-        help_text=_("The partner to be invoiced for this session."))
-    #~ project = models.ForeignKey('tickets.Project',blank=True,null=True)
+    # partner = models.ForeignKey(
+    #     'contacts.Partner',
+    #     blank=True, null=True,
+    #     help_text=_("The partner to be invoiced for this session."))
+    # project = models.ForeignKey('tickets.Project',blank=True,null=True)
     ticket = models.ForeignKey('tickets.Ticket',
                                blank=True, null=True,
                                related_name='sessions')
@@ -447,10 +503,10 @@ class Sessions(dd.Table):
     column_names = 'date start_time end_time break_time summary user *'
     order_by = ['date', 'start_time']
     detail_layout = """
-    date start_time end_time break_time project ticket
+    date start_time end_time break_time ticket
     user id
     description
-    EntriesBySession
+    # EntriesBySession
     """
     stay_in_grid = True
 
@@ -459,20 +515,20 @@ class SessionsByTicket(Sessions):
     master_key = 'ticket'
 
 
-class SessionsByProject(Sessions):
-    master_key = 'project'
+# class SessionsByProject(Sessions):
+#     master_key = 'project'
 
 if settings.SITE.user_model:
 
     class MySessions(Sessions, mixins.ByUser):
         order_by = ['date', 'start_time']
-        column_names = 'date start_time end_time break_time project ticket summary *'
+        column_names = 'date start_time end_time break_time ticket summary *'
 
     class MySessionsByDate(MySessions):
         #~ master_key = 'date'
         order_by = ['start_time']
         label = _("My sessions by date")
-        column_names = 'start_time end_time break_time project ticket summary *'
+        column_names = 'start_time end_time break_time ticket summary *'
 
         parameters = dict(
             today=models.DateField(_("Date"),
@@ -596,3 +652,5 @@ def setup_explorer_menu(site, ui, profile, m):
     m.add_action(Tickets)
     m.add_action(Sessions)
     m.add_action('tickets.Milestones')
+    m.add_action('tickets.Dependencies')
+    m.add_action('tickets.Votes')

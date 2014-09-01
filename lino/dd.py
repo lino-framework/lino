@@ -322,9 +322,9 @@ from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
 
+# from lino.core.actors import get_default_required as required
 
-from lino.core.actors import get_default_required as required
-Required = required
+Required = required = settings.SITE.get_default_required
 
 
 class PseudoRequest:
