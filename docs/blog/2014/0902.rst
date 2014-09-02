@@ -19,6 +19,13 @@ Continued on :doc:`/tickets/121`.
 - activated the "Client projects" (Demandes d'intervention) app for
   :ref:`chat`.
 
+- Removed the different specific UploadAreas in :ref:`welfare`. Only
+  one area (as in the standard modlib app).
+
+- New model :class:`welfare.jobs.Status`. New field
+  :attr:`jobs.Experience.status` is a nullable ForeignKey to it.
+  And new field :attr:`jobs.Experience.is_training`.
+
 
 Test case : a person with multiple household memberships
 --------------------------------------------------------

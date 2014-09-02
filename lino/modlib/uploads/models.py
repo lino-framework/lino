@@ -34,7 +34,7 @@ class UploadAreas(dd.ChoiceList):
     verbose_name = _("Upload Area")
     verbose_name_plural = _("Upload Areas")
 add = UploadAreas.add_item
-add('90', _("Other uploads"), 'other')
+add('90', _("Uploads"), 'general')
 
 
 class UploadType(dd.BabelNamed):
@@ -44,7 +44,7 @@ class UploadType(dd.BabelNamed):
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
-    upload_area = UploadAreas.field(default=UploadAreas.other)
+    upload_area = UploadAreas.field(default=UploadAreas.general)
 
     max_number = models.IntegerField(
         _("Max. number"), default=-1,
@@ -96,7 +96,7 @@ class Upload(
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
-    upload_area = UploadAreas.field(default=UploadAreas.other)
+    upload_area = UploadAreas.field(default=UploadAreas.general)
 
     type = dd.ForeignKey(
         "uploads.UploadType",
@@ -165,7 +165,7 @@ class MyUploads(Uploads, mixins.ByUser):
 class AreaUploads(Uploads):
     required = dd.required()
     stay_in_grid = True
-    _upload_area = UploadAreas.other
+    _upload_area = UploadAreas.general
     slave_grid_format = 'summary'
 
     @classmethod

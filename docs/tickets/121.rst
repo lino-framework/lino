@@ -88,6 +88,26 @@ DONE
 
    (nom interne :class:`welfare.projects.Project`)
 
+- Nouvelle table «Statut»: (Ouvrier, Employé etc)
+
+- Études : renommé "Commencé" en "Début", renommer "Arrêté" en "Fin"
+  "Ecole" en "Etablissement" et le mettre juste après "Fin", 
+  supprimé la case "Ville", renommé "Contenu des études" en "Options"
+
+- Enlevé le tableau "Formations". On met les formations dans les
+  expériences professionnelles en cochant la case "Formation".
+
+- Expériences professionnelles: Supprimé "Intitulé de la fonction",
+  supprimé "Secteur d’activité", ajouté un champ "Temps de travail"
+  (en texte libre).  Ajouté une case "Statut" (en menu déroulant)
+  après la case "temps de travail"
+ 
+
+- renommé l’onglet "Accompagnement" en "Intervenants"
+- renommé «Workflow» en «État»
+
+- renommé "Type de séjour" en "Titre de séjour"
+- renommé "Phase d’intégration" en "Phase d’insertion"
 
 TODO
 ====
@@ -126,80 +146,18 @@ TODO
 
 
  
-Onglet "Aide sociale"
----------------------
 
-- "En Belgique depuis"
-- renommer "Type de séjour" en "Titre de séjour"
-- renommer "Phase d’intégration" en "Parcours d’insertion"
-
-
-Onglet "Accompagnement"
+Onglet 
 -----------------------
 
-1) renommer l’onglet en "Intervenants"
-2) renommer «Workflow» en «État»
-4) faire en sorte que quand on ajoute un deuxième, troisième,
-   quatrième... intervenant, cet intervenant reçoive un mail d’alerte
+- à vérifier: quand on ajoute un deuxième, troisième,
+  quatrième... intervenant, cet intervenant reçoive un mail d’alerte
 
 
-
-Onglet "Parcours"
------------------
-
-Ajout d'une table «Statut»:
-
-- Ouvrier
-- Employé
-- Indépendant
-- aide Indépendant
-- Non déclaré
-- Bénévolat
-- ALE
-- Job étudiant
-- Intérim
-- Stage
-
-
-1) déplacer cet onglet et le mettre juste avant l’onglet "Recherche
-   d’emploi"
-
-2) Module "Études"
-
-a. renommer "Commencé" par "Début"
-b. renommer "Arrêté" par "Fin"
-c. renommer "Ecole" en "Etablissement" et le mettre juste après "Fin"
-d. supprimer la case "Ville"
-e. renommer "Contenu des études" en "Options"
-
-f. renommer la case "Succès" en "Certificat/diplôme" (et
-   transformer en menu déroulant)
-
-g. ajouter un module d’Upload pour pouvoir importer les
-   diplômes et attestations de réussite qu’on aura scanné.
-
-3) Module "Formation"
-
-- changer tous les termes "Etude" en "Formation" ;)
-- supprimer la case "Ville"
-- renommer "Commencé" par "Début"
-- renommer "Arrêté" par "Fin"
-- ajouter une case "Evaluation" (texte libre) et une case date juste
-  après (et la placer après la case "Statut")
-- renommer la case "Ecole" en "Organisme" et la placer juste après
-  "Type de formation"
-- ajouter une case "Statut" (en menu déroulant) et la placer après
-  la case "Fin"
-
-4) Module Expériences professionnelles
-
-a. renommer "Commencé" par "Début"
-b. renommer "Arrêté" par "Fin"
-c. supprimer "Intitulé de la fonction"
-d. supprimer "Secteur d’activité"
-e. ajouter une case "Temps de travail" (en texte libre) et la placer après la case "Fonction"
-f. ajouter une case "Statut" (en menu déroulant) et la placer après  la case "temps de travail"
- 
+- Études : renommer la case "Succès" en "Certificat/diplôme" (et
+  transformer en menu déroulant)
+- Formation: ajouter une case "Evaluation" (texte libre) et une case
+  date juste après (et la placer après la case "Statut")
 
 Onglet Compétences
 -------------------
