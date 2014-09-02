@@ -243,3 +243,44 @@ Account balances
 
     A :class:`PartnerAccountsBalance` for the TradeType "purchases".
 
+
+
+.. class:: DebtorsCreditors
+
+    Abstract base class for different tables showing a list of
+    partners with the following columns:
+
+    partner due_date balance actions
+
+
+.. class:: Debtors
+
+    Lists those partners who have some debt against us.
+    :class:`DebtorsCreditors`.
+
+.. class:: Creditors
+
+    Lists those partners who give us some form of credit.
+    :class:`DebtorsCreditors`.
+
+
+
+
+Reports
+-------
+
+.. class:: Situation
+
+    A report consisting of the following tables:
+
+   -  :class:`Debtors`
+   -  :class:`Creditors`
+
+.. class:: ActivityReport
+
+    A report consisting of the following tables:
+
+    - :class:`GeneralAccountsBalance`
+    - :class:`ClientAccountsBalance`
+    - :class:`SupplierAccountsBalance`
+

@@ -4,6 +4,7 @@ Actions
 
 .. currentmodule:: dd
 
+.. |disk| image:: ../../lino/media/extjs/images/mjames/disk.png
 
 Overview
 --------
@@ -12,9 +13,8 @@ Each :class:`Actor` has a list of :class:`Actions <Action>`.
 
 Many actions are installed automatically
 (e.g. :class:`DeleteSelected`, ...). Other actions are "custom
-actions" defined by the application code.
-
-Lino has a unique API for writing custom actions in your application.
+actions" defined by the application code.  Lino has a unique API for
+writing custom actions in your application.
 
 See also some tutorials:
 
@@ -245,6 +245,15 @@ Predefined actions
 
     Merge this object into another object of same class.
 
+.. class:: SubmitDetail
+
+    The "Save" button of a :term:`detail window`.
+    Rendered as a button with a disk (|disk|).
+
+
+Writing your own actions
+------------------------
+
 
 .. decorator:: action(*args, **kw)
 
@@ -258,3 +267,5 @@ Predefined actions
     The decorated function will be installed as the actions's
     `run_from_ui` method.
 
+
+  

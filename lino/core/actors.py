@@ -575,7 +575,8 @@ class Actor(actions.Parametrizable):
                 cls.detail_action = cls.bind_action(default_action)
             else:
                 cls.detail_action = cls.bind_action(actions.ShowDetailAction())
-            cls.submit_detail = cls.bind_action(actions.SubmitDetail())
+            if cls.editable:
+                cls.submit_detail = cls.bind_action(actions.SubmitDetail())
 
         if cls.editable:
             if cls.allow_create:

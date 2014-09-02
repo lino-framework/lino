@@ -906,13 +906,11 @@ class ValidateForm(Action):
 
 class SubmitDetail(SaveRow):
     """Called when the OK button of a Detail Window was clicked.
-    Installed as `submit_detail` on every `Actor <lino.core.actors.Actor>`.
+    Installed as `submit_detail` on every :class:`dd.Actor`.
     """
-    # switch_to_detail = False
     icon_name = 'disk'
     help_text = _("Save changes in this form")
     label = _("Save")
-    # action_name = 'submit_detail'
     action_name = ShowDetailAction.save_action_name
 
     def is_callable_from(self, caller):

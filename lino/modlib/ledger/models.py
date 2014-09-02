@@ -1213,11 +1213,7 @@ class SupplierAccountsBalance(PartnerAccountsBalance):
 
 class DebtorsCreditors(dd.VirtualTable):
 
-    """Abstract base class for different tables showing a list of
-    partners with the following columns:
-
-    partner due_date balance actions
-
+    """
     """
     auto_fit_column_widths = True
     column_names = "age due_date partner balance actions"

@@ -800,10 +800,8 @@ class EmptyTable(frames.Frame):
     hide_navigator = True
     default_list_action_name = 'show'
     default_elem_action_name = 'show'
-    #~ default_action = actions.ShowEmptyTable()
 
     do_print = DirectPrintAction()
-    #~ show = actions.ShowEmptyTable()
 
     @classmethod
     def get_default_action(cls):
