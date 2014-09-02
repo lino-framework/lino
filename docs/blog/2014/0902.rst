@@ -1,0 +1,63 @@
+==========================
+Tuesday, September 2, 2014
+==========================
+
+Chatelet
+========
+
+Continued on :doc:`/tickets/121`.
+
+- Enlevé le mode sommaire pour "Composition de ménage" (the chatelet
+  version of :ref:`welfare` patches
+  :attr:`dd.AbstractTable.slave_grid_format` of
+  :class:`ml.households.SiblingsByPerson` to ``"grid"``.
+
+- :class:`ml.households.SiblingsByPerson` no longer ignores
+  `Member.end_date` when looking for the active household. See test
+  case below.
+
+- activated the "Client projects" (Demandes d'intervention) app for
+  :ref:`chat`.
+
+
+Test case : a person with multiple household memberships
+--------------------------------------------------------
+
+The demo fixture for :mod:`ml.households` now takes a random household
+membership, puts an end_date to that membership and creates another
+membership for the same person with another person.  And in
+:mod:`lino.projects.docs` that fictive person happens to be Jan Braun:
+
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings' 
+>>> from lino import dd
+>>> dd.startup()
+>>> Person = dd.modules.contacts.Person
+>>> Member = dd.modules.households.Member
+>>> Member.objects.filter(end_date__isnull=False)
+[Member #5 (u'Mr Jan Braun (Head of household)')]
+>>> p = Person.objects.get(first_name="Jan", last_name="Braun")
+>>> Member.objects.filter(person=p).count()
+2
+>>> dd.show(dd.modules.households.MembersByPerson, master_instance=p)
+============================== =================== ============ ==========
+ Household                      Role                Start date   End date
+------------------------------ ------------------- ------------ ----------
+ Family Braun-Evrard            Head of household
+ Factual household Braun-Adam   Head of household                3/4/02
+============================== =================== ============ ==========
+<BLANKLINE>
+
+>>> SiblingsByPerson = dd.modules.households.SiblingsByPerson
+>>> SiblingsByPerson.slave_grid_format = 'grid'  # currently not necessary
+>>> dd.show(SiblingsByPerson, p)
+==================== =================== ============ ==========
+ Person               Role                Start date   End date
+-------------------- ------------------- ------------ ----------
+ Mr Jan Braun         Head of household
+ Mrs Eveline Evrard   Partner
+==================== =================== ============ ==========
+<BLANKLINE>
+
+

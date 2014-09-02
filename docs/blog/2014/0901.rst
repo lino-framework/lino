@@ -38,11 +38,12 @@ Chatelet
 
 Continued heavily on :doc:`/tickets/121`.
 
-dashboard
-=========
+Refreshing the home page
+========================
 
-Hey, I discovered another thing related to yesterday's refresh problem.
-Here is the code of the onReady function in our main page::
+Hey, I discovered *en passant* why refreshing the home page caused
+some windows to become invisible! Here is the code of the onReady
+function in our main page::
 
     Lino.viewport = new Lino.Viewport( { 
       items: { 

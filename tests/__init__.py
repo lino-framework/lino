@@ -34,7 +34,8 @@ class BlogTest(LinoTestCase):
         # docs/blog/2013/1210.rst
         docs/blog/2013/1211.rst
         docs/blog/2014/0108.rst
-        # docs/blog/2014/0208.rst
+        docs/blog/2014/0605.rst
+        docs/blog/2014/0902.rst
         """)
 
     def one(self):
@@ -46,7 +47,7 @@ class BlogTest(LinoTestCase):
 
         """
         self.run_simple_doctests("""
-        docs/blog/2014/0605.rst
+        docs/blog/2014/0902.rst
         """)
 
 

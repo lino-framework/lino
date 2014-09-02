@@ -141,6 +141,7 @@ class Line(dd.BabelNamed):
     class Meta:
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
+        abstract = dd.is_abstract_model(__name__, 'Line')
     ref = dd.NullCharField(_("Reference"), max_length=30, unique=True)
     course_area = CourseAreas.field(blank=True)
     topic = models.ForeignKey(Topic, blank=True, null=True)
@@ -191,7 +192,7 @@ class Line(dd.BabelNamed):
 
 
 class Lines(dd.Table):
-    model = Line
+    model = 'courses.Line'
     # required = dd.required(user_level='manager')
     detail_layout = """
     id name ref

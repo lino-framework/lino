@@ -10,75 +10,92 @@ Propositions de changement par :ref:`chat`.
 DONE
 ====
 
-- dans l'onglet "Personne" d'un bénéficiaire:
+- traduire "Cours" par "Ateliers"
 
-  - supprimer la colonne "primaire" dans
-    `pcsw.ClientDetail.general.CoachingsByClient` 
-    (panneau "Créer un rendez-vous avec").
-  - supprimer le champ "Allocution"
+- supprimé la colonne "primaire" dans 
+  :class:`welfare.pcsw.CoachingsByClient` 
+  (panneau "Créer un rendez-vous avec" dans l'onglet "Personne" d'un bénéficiaire).
 
-- database changes:
+- supprimé le champ "Allocution" d'un bénéficiaire
 
-    - nouveau champ `residence_until` (date de validité permis de
-      séjour)
-    - supprimé plusieurs champs du panneau "Aide sociale":
-      `gesdos_id`, `job_agents`, types de revenu (cases à cocher), ...
+- nouveau champ `residence_until` (date de validité permis de
+  séjour)
 
-    - LanguageKnowledge: différencier entre expression et compréhension.
-      Donc 4 champs d'évaluation au lieu de 2: 
-      Expression orale/écrite -- Compréhension orale/écrite
+- supprimé plusieurs champs du panneau "Aide sociale":
+  `gesdos_id`, `job_agents`, types de revenu (cases à cocher), ...
 
-- Dans l'onglet "Lien de parenté": supprimer les panneaux «BCSS» et
-  «Similar persons».
+- LanguageKnowledge: différencier entre expression et compréhension.
+  Donc 4 champs d'évaluation au lieu de 2: 
+  Expression orale/écrite -- Compréhension orale/écrite
+
+- Dans l'onglet "Lien de parenté":
+
+  - Supprimé les panneaux «BCSS» et  «Similar persons».
+  - Enlevé le mode sommaire pour "Composition de ménage"
 
 - quand on ferme la dernière fenetre, la page de depart s'actualise
   maintenant automatiquement.
 
-- renommer "Middle Name" en "Deuxième prénom"
-- renommer "Workflow" en "État"
-- renommer l’onglet "Liens de parenté" en "Situation familiale"
-- traduire "Cours" par "Ateliers"
+- renommé "Middle Name" en "Deuxième prénom"
+- renommé "Workflow" en "État"
+- renommé l’onglet "Liens de parenté" en "Situation familiale"
 
 
-Onglet "SIS"
-------------
+- Nouvel onglet "SIS" avec:
 
-- Tableau "Ateliers d'insertion sociale" (`courses.Enrolment`) avec
-  les colonnes suivantes:
+    - Tableau "Ateliers d'insertion sociale" (`courses.Enrolment`) avec
+      les colonnes suivantes:
 
-    - Atelier (pointeur)
-    - Entrée (date)
-    - Sortie (date)
-    - Nombre d'heures (?)
-    - Taux de présence (implémentation à discuter)
-    - Motif de sortie (pointeur)
-    - Statut (pointeur)
-    - (Remarque?)
+        - Atelier (pointeur)
+        - Entrée (date)
+        - Sortie (date)
+        - Nombre d'heures (?)
+        - Taux de présence (implémentation à discuter)
+        - Motif de sortie (pointeur)
+        - Statut (pointeur)
+        - (Remarque?)
 
-- 4 champs texte libres: "Motif de l'orientation", "Attentes de la
-  personne". "Moteurs", "Objectifs" )
+    - 4 champs texte libres: "Motif de l'orientation", "Attentes de la
+      personne". "Moteurs", "Objectifs" )
 
-Onglet "Modules internes"
--------------------------
+- Nouvel onglet "Modules internes" avec:
 
-- Tableau "Ateliers d'apprentissage des savoirs de base" (mêmes colonnes
-  que "Ateliers d'insertion sociale")
+    - Tableau "Ateliers d'apprentissage des savoirs de base" (mêmes colonnes
+      que "Ateliers d'insertion sociale")
 
-- Tableau "Modules de détermination d'un projet socioprofessionnel"
-  (mêmes colonnes que "Ateliers d'insertion sociale", sauf la colonne
-  "Résultat" qui est intitulée "Projet/orientation")
+    - Tableau "Modules de détermination d'un projet socioprofessionnel"
+      (mêmes colonnes que "Ateliers d'insertion sociale", sauf la colonne
+      "Résultat" qui est intitulée "Projet/orientation")
 
-- Champ de texte libre "Démarches à réaliser"
+    - Champ de texte libre "Démarches à réaliser"
+
+- Nouvel onglet "Intervention psychosociale" et nouvelle table
+  "Demandes d’intervention psychosociale".  Chaque demande
+  comprend les champs suivants:
+    
+    - Date de la demande
+    - Pointeur vers le bénéficiaire (`client`)
+    - Service demandeur (`coaching_type`)
+    - Assistant(e) social(e) pourvoyeur(se) (`user`)
+    - Autre assistant(e) social(e) : texte libre
+    - Projet envisagé par l’assistant(e) social(e) avec l’usager : (texte)
+    - Difficultés détectées chez la personne et à l’origine de la demande: (texte)
+
+   L'utilisateur verra
+   "Demandes d'intervention" et un champ supplémentaire "Type
+   d'intervention" qui pour l'instant aura un seul choix "intervention
+   psychosociale".
+
+   (nom interne :class:`welfare.projects.Project`)
 
 
 TODO
 ====
 
-- no summary for Composition de ménage
-- uploads : viennent tous un meme pot car: p.ex. une attestation
-  médicale de handicap pourrait venir dans l'onglet "recherche de
-  travail" mais aussi "Santé".
-
+- Fichiers téléchargés (UploadsByProject) viennent tous un meme pot
+  (car il est parfois difficile de les classer de manière univoque,
+  p.ex. une attestation médicale de handicap pourrait venir dans
+  l'onglet "recherche de travail" mais aussi "Santé")
 
 - Types de contrat de travail 
   - renommer en "Types de contrats de mise au travail".
@@ -211,24 +228,6 @@ Onlget Contrats
 - "Contract partners" traduire par "Services utilisateurs" (terme
   officiel)
 
-
-Onglet "Intervention psychosociale"
------------------------------------
-
-- Nouvelle table "Demandes d’intervention psychosociale".
-  Chaque demande comprend les champs suivants:
-    - Date de la demande
-    - Pointeur vers le bénéficiaire (`client`)
-    - Service demandeur (`coaching_type`)
-    - Assistant(e) social(e) pourvoyeur(se) (`user`)
-    - Autre assistant(e) social(e) : texte libre
-    - Projet envisagé par l’assistant(e) social(e) avec l’usager : (texte)
-    - Difficultés détectées chez la personne et à l’origine de la demande: (texte)
-
-  Le nom interne sera `projects.Project`, et l'utilisateur verra
-  "Demandes d'intervention" et un champ supplémentaire "Type
-  d'intervention" qui pour l'instant aura un seul choix "intervention
-  psychosociale".
 
 
 Recherche d'emploi

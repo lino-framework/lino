@@ -23,13 +23,14 @@ from lino.core.dbutils import resolve_model
 
 
 from lino.utils import Cycler
+from lino.utils import i2d
 from lino import dd
 
 
 def objects():
 
-    # Role = resolve_model('households.Role')
-    # Member = resolve_model('households.Member')
+    Member = dd.modules.households.Member
+    MemberRoles = dd.modules.households.MemberRoles
     # Household = resolve_model('households.Household')
     Person = resolve_model('contacts.Person')
     Type = resolve_model('households.Type')
@@ -57,4 +58,16 @@ def objects():
         # yield Member(household=fam, person=he, role=Role.objects.get(pk=1))
         # yield Member(household=fam, person=she, role=Role.objects.get(pk=2))
 
-    return []
+    i = 0
+    for m in Member.objects.filter(role=MemberRoles.head):
+        i += 1
+        if i % 3 == 0:
+            m.end_date = i2d(20020304)
+            yield m
+
+            pv = dict(
+                head=m.person, partner=WOMEN.pop(),
+                type=TYPES.pop())
+            ses.run(
+                Person.create_household,
+                action_param_values=pv)

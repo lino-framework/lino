@@ -558,13 +558,16 @@ The ``AbstractTable`` class
     they would lead to the unexpected behaviour of closing the window.
 
 
-  .. attribute:: slave_grid_format = 'grid'
+  .. attribute:: slave_grid_format
 
-    How to display this table when it is a slave in a detail window. 
-    `grid` (default) to render as a grid. 
-    `summary` to render a summary in a HtmlBoxPanel.
-    `html` to render plain html a HtmlBoxPanel.
-    Example: :class:`links.LinksByController`
+    How to display this table when it is a slave in a detail
+    window. Must be one of the following values:
+
+    - `'grid'` (default) to render as a grid. 
+    - `'summary'` to render a summary in a HtmlBoxPanel.
+    - `'html'` to render plain html a HtmlBoxPanel.
+
+    Example: :class:`ml.households.SiblingsByPerson`.
 
   .. attribute:: preview_limit
 

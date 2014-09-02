@@ -25,4 +25,3 @@ order (MRO) for bases Partner, Person
 /home/luc/hgwork/lino/docs/tickets/121.rst:124: WARNING: Enumerated list ends without a blank line; unexpected unindent.
 /home/luc/hgwork/lino/docs/tickets/121.rst:126: ERROR: Unexpected indentation.
 /home/luc/hgwork/lino/docs/tickets/121.rst:220: ERROR: Unexpected indentation.
-/home/luc/hgwork/lino/lino/ad.py:docstring of lino.ad.Site.webdav_url:7: WARNING: term not in glossary: runserver

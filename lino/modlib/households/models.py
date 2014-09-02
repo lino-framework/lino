@@ -16,7 +16,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
@@ -194,7 +193,7 @@ class HouseholdsByType(Households):
 #     """
 
 
-class Member(dd.Model):
+class Member(dd.DatePeriod):
     """
     The role of a given :class:`Person` in a given :class:`Household`.
     """
@@ -208,17 +207,10 @@ class Member(dd.Model):
 
     role = MemberRoles.field(
         default=MemberRoles.child, blank=True, null=True)
-    # role = models.ForeignKey(
-    #     'households.Role', blank=True, null=True,
-    #     help_text=_("The Role of this Person in this Household."))
     household = models.ForeignKey('households.Household')
     person = models.ForeignKey(
         "contacts.Person",
         related_name='membersbyperson')
-    start_date = models.DateField(_("From"), blank=True, null=True)
-    end_date = models.DateField(_("Until"), blank=True, null=True)
-    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
-      #~ verbose_name=_("contact type"))
 
     def __unicode__(self):
         if self.person_id is None:
@@ -274,14 +266,18 @@ class SiblingsByPerson(Members):
         if mi is None:
             return
         M = dd.modules.households.Member
-        try:
-            mbr = M.objects.get(person=mi)
-            ar.master_household = mbr.household
-        except M.DoesNotExist:
+        mbr = M.objects.filter(person=mi)
+        if mbr.count() == 1:
+            ar.master_household = mbr[0].household
+        elif mbr.count() == 0:
             ar.no_data_text = _("%s is not member of any household") % mi
-        except M.MultipleObjectsReturned:
-            # raise Warning("%s has multiple households" % mi)
-            ar.no_data_text = _("%s is member of multiple households") % mi
+        else:
+            mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
+            if mbr.count() == 1:
+                ar.master_household = mbr[0].household
+            else:
+                ar.no_data_text = _(
+                    "%s is member of multiple households") % mi
         
     @classmethod
     def get_filter_kw(self, ar, **kw):

@@ -51,7 +51,8 @@ class PeriodEvent(Choice):
             qs = qs.filter(end_date__gte=obj.start_date)
             qs = qs.filter(end_date__lte=obj.end_date)
         elif self.name == 'active':
-            qs = qs.filter(start_date__lte=obj.end_date)
+            qs = qs.filter(models.Q(start_date__isnull=True) |
+                           models.Q(start_date__lte=obj.end_date))
             qs = qs.filter(models.Q(end_date__isnull=True) |
                            models.Q(end_date__gte=obj.start_date))
         return qs
