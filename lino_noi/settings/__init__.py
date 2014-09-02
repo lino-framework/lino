@@ -26,6 +26,8 @@ class Site(Site):
     version = '0.0.1'
 
     user_model = 'users.User'
+    
+    demo_fixtures = ['std', 'demo', 'demo2', 'linotickets']
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
@@ -36,6 +38,7 @@ class Site(Site):
         yield 'lino.modlib.contacts'
         # yield 'lino.modlib.products'
         yield 'lino.modlib.tickets'
+        yield 'lino.modlib.lists'
 
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.appypod'
@@ -54,8 +57,6 @@ class Site(Site):
 
     def get_admin_main_items(self):
         yield self.modules.tickets.RecentTickets
-
-
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
