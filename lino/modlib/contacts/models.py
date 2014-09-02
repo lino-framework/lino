@@ -308,10 +308,7 @@ class Company(Partner):
 
     prefix = models.CharField(max_length=200, blank=True)
 
-    type = models.ForeignKey('contacts.CompanyType', blank=True, null=True,
-                             verbose_name=_("Company type"))
-    """Pointer to this company's :class:`CompanyType`.
-    """
+    type = models.ForeignKey('contacts.CompanyType', blank=True, null=True)
 
     def get_full_name(self, salutation=True, **salutation_options):
         """Deserves more documentation."""
