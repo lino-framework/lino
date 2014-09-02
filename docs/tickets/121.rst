@@ -1,11 +1,10 @@
-================================
-#121 : Changements pour Chatelet
-================================
+=====================================
+#121 : Changements Châtelet Août 2014
+=====================================
 
 .. currentlanguage:: fr
 
-
-Propositions de changement par :ref:`chat`.
+Propositions de changement pour :ref:`chat`.
 
 DONE
 ====
@@ -31,7 +30,9 @@ DONE
 - Dans l'onglet "Lien de parenté":
 
   - Supprimé les panneaux «BCSS» et  «Similar persons».
-  - Enlevé le mode sommaire pour "Composition de ménage"
+
+  - Le tableau "Composition de ménage" est maintenant directement en
+    mode "tableau" et non plus en mode "sommaire".
 
 - quand on ferme la dernière fenetre, la page de depart s'actualise
   maintenant automatiquement.
@@ -109,10 +110,7 @@ DONE
 - renommé "Type de séjour" en "Titre de séjour"
 - renommé "Phase d’intégration" en "Phase d’insertion"
 
-TODO
-====
-
-- Fichiers téléchargés (UploadsByProject) viennent tous un meme pot
+- Fichiers téléchargés (UploadsByProject) viennent tous un même pot
   (car il est parfois difficile de les classer de manière univoque,
   p.ex. une attestation médicale de handicap pourrait venir dans
   l'onglet "recherche de travail" mais aussi "Santé")
@@ -121,10 +119,23 @@ TODO
   - renommer en "Types de contrats de mise au travail".
   - trier alphabétiquement
 
+- renommer «Enrolments» en "Inscriptions" (au lieu de «Orientation
+  interne»).
 
-  NB: 
-  - "Mise au travail" : art 60, art 61 et ALE.
-  - ALE - Agence locale de l'emploi. Contrat géré à l'extérieur.
+- Les PIIS se trouvent maintenant dans l'onglet SIS.
+
+- Le détail d'un PIIS a été réorganisé.
+
+
+- Les "Compétences en langues" se trouvent maintenant dans l'onglet
+  Compétences.
+
+- renommé "Obstacles" en "Freins"
+
+- supprimé  le panneau "Awards"
+
+TODO
+====
 
 - Détail gênant du framework:
 
@@ -135,9 +146,6 @@ TODO
 - Pouvoir imprimer un PIIS
 - traduire "primary coach" par "Titulaire du dossier"
 
-- renommer «Enrolments» en "Inscriptions" (au lieu de «Orientation
-  interne»).
-
 - renommer «Utilisateur responsable» en «Agent traitant» (dans module
   «Rendez-vous»)
 
@@ -145,56 +153,32 @@ TODO
   `courses.Enrolment`.
 
 
- 
-
-Onglet 
------------------------
-
 - à vérifier: quand on ajoute un deuxième, troisième,
   quatrième... intervenant, cet intervenant reçoive un mail d’alerte
 
 
 - Études : renommer la case "Succès" en "Certificat/diplôme" (et
   transformer en menu déroulant)
+
 - Formation: ajouter une case "Evaluation" (texte libre) et une case
   date juste après (et la placer après la case "Statut")
 
-Onglet Compétences
--------------------
- 
-1) Module "Compétences professionnelles"
+
+- Panneau "Compétences professionnelles":
 
    - renommer "Propriété" en "Secteur" (à laisser en menu déroulant)
    - renommer la case "Remarque" en "Compétences" (texte libre)
 
-2) renommer le module "Obstacles" (avec les cases propriété, valeur,
-   remarque) en "Freins"
+- Freins: modifier la case «valeur» en «Détecté par…" (avec un menu déroulant)
 
-   - modifier la case «valeur» en «Détecté par…" (avec un menu déroulant)
+- renommer le module "Obstacles (texte libre) en "Remarque"
+- renommer le module "Autres talents" en "Atouts"
 
-3) renommer le module "Obstacles (texte libre) en "Remarque"
-4) supprimer  le module "Awards"
-5) renommer le module "Autres talents" en "Atouts"
-
-- "Compétences en langues"
-
-Onlget Contrats 
----------------
-
-- Onglet "PIIS" avec juste un tableau isip.JobsByClient
-- détail d'un PIIS : un seul layout. 
-- "Contract partners" traduire par "Services utilisateurs" (terme
+- "Contract partners" d'un PIIS : traduire par "Services utilisateurs" (terme
   officiel)
-
-
-
-Recherche d'emploi
-------------------
 
 - Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
    d’emploi active"
-
-- Ajouter un module Upload de document
 
 - Voir document "LINO - Onglet Recherche d'emploi active"
 
@@ -228,24 +212,30 @@ Concepts
     Dans Détermination d'un projet:
     - Module "Activons-nous"
 
+- "Mise au travail" = Art.60§7 **et** Art.61 **et** autres types (ALE,
+  ...) 
+
+- ALE = Agence locale de l'emploi. Il s'agit de contrats gérés à
+  l'extérieur.
+
 
 à discuter
 ==========
 
 - Renommer "Quand" en "Date" (dans Onglet "Personne", panneau
   "Rendez-vous"). Mais ce champ montre également l'heure (si elle est
-  spécifiée).
+  spécifiée), donc "Date" me semble faux.
 
-- Dans l'onglet "Situation familiale", les changements demandés pour
-  liens de parenté ne serait pas satisfaisants. Discutons:
+- Dans l'onglet "Situation familiale", les changements demandés
+  suivants ne seraient pas satisfaisants:
 
     - mettre le panneau "Composition de ménage" au-dessus du panneau
       "Liens de parenté".  --> Mais les Liens de parenté viennent
       "avant" la composition de ménage car Lino remplit
       automatiquement un ménage en fonction des liens de
       parenté. L'inverse ne serait pas possible.
-    - supprimer le panneau «Appartenance aux ménages».
-      Une personne peut 
+    - supprimer le panneau «Appartenance aux ménages».  Une personne
+      peut appartenir à plusieurs ménages au cours du temps.
     - Dans "Composition de ménage" reproduire le tableau en annexe
       (Seule la colonne "Suivi par…" serait en menu déroulant avec le
       nom des travailleurs sociaux)

@@ -80,6 +80,12 @@ Glossary
     A daemon process that synchronizes data from TIM to Lino.
     See :mod:`lino_welfare.modlib.pcsw.management.commands.watch_tim`
 
+  welcome message 
+     A user-specific message that you get in your main page.  welcome
+     messages are being generated dynamically each time your main page
+     is being displayed. See :meth:`dd.Actor.get_welcome_messages`.
+
+
   watch_calendars
     A daemon process that synchronizes remote calendars 
     into the Lino database.

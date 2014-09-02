@@ -71,3 +71,20 @@ membership for the same person with another person.  And in
 <BLANKLINE>
 
 
+
+Miscellaneous
+=============
+
+Fixed a bug in :ref:`faggio` which caused "Unknown element
+u'lists.MembersByPerson' referred in layout <MyPersonDetail on
+contacts.Persons>."
+
+
+The :attr:`ml.cal.TakeEvent` action did not always work as
+expected:
+
+- Basically you can now take *any* event, even if it is not *assigned*
+  to you.
+
+- When answering to a callback, `linoweb.js` did not set the
+  subst_user. Now it does.

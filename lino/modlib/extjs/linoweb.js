@@ -402,7 +402,7 @@ Lino.logout = function(id,name) {
         function(){Lino.reload();})
 }
 
-Lino.set_subst_user = function(id,name) {
+Lino.set_subst_user = function(id, name) {
     //~ console.log(20130723,'Lino.set_subst_user',id,name,Lino.current_window,Lino.viewport);
     Lino.subst_user = id;
     if (Lino.current_window) 
@@ -1660,16 +1660,18 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         var config = {title:result.xcallback.title};
         //~ config.buttons = Ext.MessageBox.YESNOCANCEL;
         //~ config.buttons = Ext.MessageBox.YESNO;
+        var p = {};
+        Lino.insert_subst_user(p);
         config.buttons = result.xcallback.buttons;
         config.msg = result.message;
-        config.fn = function(buttonId,text,opt) {
+        config.fn = function(buttonId, text, opt) {
           panel.loadMask.show(); 
           //~ Lino.insert_subst_user(p);
           Ext.Ajax.request({
             method: 'GET',
             url: '{{settings.SITE.build_admin_url("callbacks")}}/'
                   + result.xcallback.id + '/' + buttonId,
-            //~ params: {bi: buttonId},
+            params: p,
             success: Lino.action_handler(panel, on_success, on_confirm)
           });
         }

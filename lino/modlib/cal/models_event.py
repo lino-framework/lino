@@ -879,7 +879,6 @@ if settings.SITE.user_model:
             kw.update(start_date=ar.param_values.start_date)
             return super(MyEvents, self).create_instance(ar, **kw)
 
-
     class MyAssignedEvents(MyEvents):
         label = _("Events assigned to me")
         help_text = _("Table of events assigned to me.")

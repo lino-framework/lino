@@ -21,6 +21,20 @@ Models
   A Calendar Event (french "Rendez-vous", german "Termin") is a
   planned ("scheduled") lapse of time where something happens.
 
+  .. attribute:: user
+
+     The responsible user.
+
+  .. attribute:: assigned_to
+
+    This field is usually empty.  Setting it to another user means "I
+    am not fully responsible for this event".  This will cause the
+    other user to see this event in his :class:`MyAssignedEvents`
+    table.
+
+    This field is cleared when somebody calls :class:`TakeEvent` on
+    the event.
+
   .. attribute:: type
 
      The type of this event. Every calendar event should have this
@@ -273,7 +287,37 @@ Tables
 
   Table which shows all calendar events. 
 
+.. class:: MyAssignedEvents
+
+  The table of events which are *assigned* to me. That is, whose
+  :attr:`Event.assigned_to` field refers to the requesting user.
+
+  This table also causes a :term:`welcome message` "X events have been
+  assigned to you" in case it is not empty.
+
 .. class:: MyEvents
 
   Table which shows today's and future calendar events of the
   requesting user.
+
+
+Actions
+=======
+
+.. |flag_green| image:: ../../../lino/media/extjs/images/mjames/flag_green.png
+  
+.. class:: TakeEvent
+
+    Represented by a green flag (|flag_green|) button.
+
+    This action means that you declare to become the fully responsible
+    user for this event.  Accordingly, this action is available only
+    when you are not already fully responsible. You are fully
+    responsible when (1) :attr:`Event.user` is set to *you*
+    **and** (2) :attr:`Event.assigned_to` is *not empty*.
+
+    Basically anybody can take any event, even if it is not assigned
+    to them.
+
+
+

@@ -203,8 +203,9 @@ The ``Actor`` class
 
     If a method of this name is defined on an actor, then it must be a
     class method which takes an :class:`rt.ActionRequest` as single
-    argument and returns or yields a list of messages to be displayed
-    in the welcome block of :xfile:`admin_main.html`.
+    argument and returns or yields a list of :term:`welcome messages
+    <welcome message>` (messages to be displayed in the welcome block
+    of :xfile:`admin_main.html`).
 
   .. method:: get_handle_name(self, ar)
 

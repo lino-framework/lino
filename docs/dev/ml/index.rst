@@ -23,3 +23,4 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
    ledger
    users
    sales
+   households

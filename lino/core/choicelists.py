@@ -190,6 +190,9 @@ class Choice(object):
         # see blog/2012/0527
         return self
 
+    @classmethod
+    def get_chooser_for_field(cls, fieldname):
+        return None
 
 #~ class UnresolvedValue(Choice):
     #~ def __init__(self,choicelist,value):

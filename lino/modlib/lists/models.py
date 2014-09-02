@@ -91,8 +91,8 @@ class Lists(dd.Table):
 class Member(dd.Sequenced):
 
     class Meta:
-        verbose_name = _("List Member")
-        verbose_name_plural = _("List Members")
+        verbose_name = _("List memberships")
+        verbose_name_plural = _("List memberships")
 
     list = dd.ForeignKey('lists.List')
     partner = dd.ForeignKey(
@@ -115,7 +115,6 @@ class MembersByList(Members):
 class MembersByPartner(Members):
     master_key = 'partner'
     column_names = "list remark"
-    label = _("Memberships")
     order_by = ['list__ref']
 
 
@@ -135,4 +134,3 @@ def setup_config_menu(site, ui, profile, m):
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("contacts", MODULE_LABEL)
     m.add_action('lists.Members')
-
