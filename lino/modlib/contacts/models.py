@@ -54,8 +54,8 @@ PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
 class CompanyType(dd.BabelNamed):
 
     class Meta:
-        verbose_name = _("Organization Type")
-        verbose_name_plural = _("Organization Types")
+        verbose_name = _("Organization type")
+        verbose_name_plural = _("Organization types")
 
     abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
 
