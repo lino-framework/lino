@@ -432,8 +432,8 @@ class Action(Parametrizable, Permittable):
         d = getattr(self, '_choosers_dict', {})
         return d.get(fieldname, None)
 
-    # def get_chooser_model(self):
-    #     return self
+    def get_choices_text(self, obj, request, field):
+        return obj.get_choices_text(request, self, field)
 
     def as_bootstrap_html(self, ar):
         return "Oops, no as_bootstrap_html method for %s" % self

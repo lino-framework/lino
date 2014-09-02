@@ -366,7 +366,7 @@ def choices_response(request, qs, row2dict, emptyValue):
 
 
 class ActionParamChoices(View):
-    # Examples: 
+    # Examples: `welfare.pcsw.CreateCoachingVisit`
     def get(self, request, app_label=None, actor=None, an=None, field=None, **kw):
         actor = requested_actor(app_label, actor)
         ba = actor.get_url_action(an)

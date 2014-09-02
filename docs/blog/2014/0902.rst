@@ -98,3 +98,8 @@ expected:
 
 - Fixed a bug which caused e.g. :class:`ml.ledger.Situation` to have a
   "save" button (:class:`dd.SubmitDetail` ).
+
+- Fixed a bug which caused e.g. an :ref:`ise` "'CreateCoachingVisit'
+  object has no attribute 'get_choices_text'" when trying to select a
+  user in the combobox of the parameter window of
+  :class:`welfare.reception.CreateCoachingVisit`.
