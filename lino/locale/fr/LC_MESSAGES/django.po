@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-09-02 23:50+0300\n"
-"PO-Revision-Date: 2014-09-02 23:51+0300\n"
+"PO-Revision-Date: 2014-09-02 23:53+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -2467,14 +2467,12 @@ msgid "Contacts"
 msgstr "Contacts"
 
 #: lino/modlib/contacts/models.py:57
-#, fuzzy
 msgid "Organization type"
-msgstr "Confirmation"
+msgstr "Type d'organisation"
 
 #: lino/modlib/contacts/models.py:58
-#, fuzzy
 msgid "Organization types"
-msgstr "Confirmation"
+msgstr "Types d'organisation"
 
 #: lino/modlib/contacts/models.py:78 lino/modlib/households/models.py:62
 #: lino/modlib/households/models.py:347 lino/modlib/ledger/models.py:1265
