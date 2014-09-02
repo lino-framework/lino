@@ -541,9 +541,10 @@ class Site(Site):
         from lino import dd
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
-        add('000', _("Anonymous"), name='anonymous', level=None,
-            #~ readonly=True,
-            authenticated=False)
+        add('000', _("Anonymous"), name='anonymous',
+            readonly=self.user_model is not None,
+            authenticated=False,
+            **grouplevels('user'))
         add('100', _("User"), name='user', **grouplevels('user'))
         add('900', _("Administrator"), name='admin', **grouplevels('admin'))
 

@@ -386,9 +386,9 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary user time *"
-    parameters = dict(
-        today=models.DateField(_("Date"), blank=True)
-    )
+    # parameters = dict(
+    #     today=models.DateField(_("Date"), blank=True)
+    # )
 
     @classmethod
     def get_request_queryset(self, ar):
