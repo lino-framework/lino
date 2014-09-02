@@ -35,6 +35,7 @@ class Site(Site):
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
         # yield 'lino.modlib.products'
+        yield 'lino.modlib.tickets'
 
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.appypod'
@@ -45,6 +46,14 @@ class Site(Site):
         yield 'lino.modlib.awesomeuploader'
 
         yield 'lino_noi'
+
+    def get_default_required(self, **kw):
+        # overrides the default behaviour which would add
+        # `auth=True`. In Lino Noi everybody can see everything.
+        return kw
+
+    def get_admin_main_items(self):
+        yield self.modules.tickets.RecentTickets
 
 
 
