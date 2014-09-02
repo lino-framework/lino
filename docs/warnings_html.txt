@@ -22,8 +22,4 @@ Traceback (most recent call last):
 TypeError: Error when calling the metaclass bases
     Cannot create a consistent method resolution
 order (MRO) for bases Partner, Person
-/home/luc/hgwork/lino/docs/tickets/121.rst:141: WARNING: Enumerated list ends without a blank line; unexpected unindent.
-/home/luc/hgwork/lino/docs/tickets/121.rst:143: ERROR: Unexpected indentation.
 /home/luc/hgwork/lino/docs/dev/ml/households.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/dev/actors.rst:229: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/releases/index.rst:1: WARNING: unknown document: 1.6.14
