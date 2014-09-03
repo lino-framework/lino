@@ -1,0 +1,5 @@
+============================
+Wednesday, September 3, 2014
+============================
+
+Fixed a bug in `on_database_ready` of `welfare.integ`.

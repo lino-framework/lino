@@ -1,3 +1,16 @@
+/home/luc/hgwork/lino/docs/api/lino.projects.homeworkschool.settings.demo.rst:4: WARNING: autodoc: failed to import module u'lino.projects.homeworkschool.settings.demo'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/projects/homeworkschool/settings/demo.py", line 2, in <module>
+    SITE = Site(globals(), title=Site.verbose_name + " demo")
+  File "/home/luc/hgwork/lino/lino/ad.py", line 449, in __init__
+    super(Site, self). __init__(*args, **kwargs)
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 171, in __init__
+    self.load_plugins()
+  File "/home/luc/hgwork/site/djangosite/djangosite_site.py", line 316, in load_plugins
+    raise Exception("20140825")
+Exception: 20140825
 /home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.contacts.models.rst:4: WARNING: autodoc: failed to import module u'lino.projects.min2.modlib.contacts.models'; the following exception was raised:
 Traceback (most recent call last):
   File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
@@ -21,4 +34,4 @@ Traceback (most recent call last):
     new_class = super_new(cls, name, bases, {'__module__': module})
 TypeError: Error when calling the metaclass bases
     Cannot create a consistent method resolution
-order (MRO) for bases Person, Partner
+order (MRO) for bases Partner, Person
