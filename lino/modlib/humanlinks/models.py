@@ -186,11 +186,14 @@ class LinksByHuman(Links):
         sar = self.request(master_instance=obj)
         links = []
         for lnk in sar:
-            if lnk.child_id == obj.id:
-                i = (lnk.type.as_child(obj), lnk.parent)
+            if lnk.parent is None or lnk.child is None:
+                pass
             else:
-                i = (lnk.type.as_parent(obj), lnk.child)
-            links.append(i)
+                if lnk.child_id == obj.id:
+                    i = (lnk.type.as_child(obj), lnk.parent)
+                else:
+                    i = (lnk.type.as_parent(obj), lnk.child)
+                links.append(i)
 
         def by_age(a, b):
             return cmp(b[1].birth_date.as_date(), a[1].birth_date.as_date())
