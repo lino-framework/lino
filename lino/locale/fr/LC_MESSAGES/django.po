@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-09-02 23:50+0300\n"
-"PO-Revision-Date: 2014-09-02 23:53+0300\n"
+"PO-Revision-Date: 2014-09-04 19:13+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1966,9 +1966,8 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:290
-#, fuzzy
 msgid "My pending presences"
-msgstr "Mes présences"
+msgstr "Mes présences à confirmer"
 
 #: lino/modlib/cal/models_guest.py:291
 msgid "Received invitations which I must accept or reject."
@@ -1989,7 +1988,7 @@ msgstr "Tâches"
 #: lino/modlib/cal/models_task.py:51 lino/modlib/ledger/models.py:834
 #: lino/modlib/ledger/models.py:945 lino/modlib/ledger/models.py:1273
 msgid "Due date"
-msgstr ""
+msgstr "Échéance"
 
 #: lino/modlib/cal/models_task.py:54
 msgid "Due time"
