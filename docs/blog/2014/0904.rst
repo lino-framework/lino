@@ -1,0 +1,17 @@
+===========================
+Thursday, September 4, 2014
+===========================
+
+Added two tables :class:`EventsByContract
+<welfare.isip.EventsByContract>` and :class:`DelegatedTasksByContract
+<welfare.isip.DelegatedTasksByContract>` to be used in a template when
+printing a :class:`welfare.isip.Contract`.
+
+Added a new field :attr:`welfare.isip.Contract.full_name`.
+
+This will contain the full title of the contract as printed on the document.
+Example:
+
+  Projet relatif à une formation professionnelle ou une formation par
+  le travail
+

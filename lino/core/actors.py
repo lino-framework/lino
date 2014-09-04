@@ -702,8 +702,8 @@ class Actor(actions.Parametrizable):
         return {}
 
     @classmethod
-    def override_column_headers(self, ar):
-        return {}
+    def override_column_headers(self, ar, **kwargs):
+        return kwargs
 
     @classmethod
     def get_sum_text(self, ar):
