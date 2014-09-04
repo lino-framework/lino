@@ -312,7 +312,8 @@ class BodyTemplateContentField(dd.VirtualField):
     def set_value_in_object(self, ar, obj, value):
         fn = obj.excerpt_type.get_body_template_name()
         if not fn:
-            raise Warning("No `body_template_name` while saving to %s" % obj)
+            raise Warning(
+                "No `body_template_name` while saving to %s" % dd.obj2str(obj))
 
         lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
         if lcd is None:
