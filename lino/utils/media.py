@@ -26,8 +26,8 @@ class MediaFile(object):
     using
     :setting:`MEDIA_ROOT`
     :attr:`use_davlink <lino.site.Site.use_davlink>`
-    :attr:`webdav_root <lino.site.Site.webdav_root>`
-    :attr:`webdav_url <lino.site.Site.webdav_url>`
+    :attr:`webdav_root <ad.Site.webdav_root>`
+    :attr:`webdav_url <ad.Site.webdav_url>`
     """
 
     def __init__(self, editable, *parts):

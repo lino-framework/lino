@@ -160,33 +160,33 @@ DONE
   «Langues») dans l’onglet "Personne" (en dessous du module "Créer un
   rendez-vous")
 
-
-
-TODO
-====
-
-- Dans l'onglet "Accompagnement", supprimer le champ «Refusal
-  Reason».
-  
 - Imprimer un PIIS. Voir modèles de documents.
 
-- Traduire "primary coach" par "Titulaire du dossier"
-
-- (à vérifier) quand on ajoute un deuxième, troisième,
-  quatrième... intervenant, cet intervenant reçoive un mail d’alerte
-
-- Études : renommer la case "Succès" en "Certificat/diplôme" (et
-  transformer en menu déroulant)
-
-- Formation: ajouter une case "Evaluation" (texte libre) et une case
-  date juste après (et la placer après la case "Statut")
-
-- renommer le champ de texte "Obstacles" en "Remarque"
 - renommer le champ de texte "Autres talents" en "Atouts"
 
 - "Contract partners" d'un PIIS : traduire par "Services utilisateurs"
   (terme officiel)
 
+- (à vérifier) quand on ajoute un deuxième, troisième,
+  quatrième... intervenant, cet intervenant reçoive un mail d’alerte
+
+- Traduire "primary coach" par "Titulaire du dossier"
+
+
+
+TODO
+====
+
+- "Insérer dans Ateliers d'insertion sociale" : dans les choix de
+  l'atelier Lino propose aussi les autres catégories (`course_area`).
+
+- Dans l'onglet "Accompagnement", supprimer le champ «Refusal
+  Reason».
+  
+- Études : renommer la case "Succès" en "Certificat/diplôme" (et
+  transformer en menu déroulant)
+
+- renommer le champ de texte "Obstacles" en "Remarque"
 
 en attente
 ==========
@@ -242,4 +242,7 @@ en attente
 - Freins: modifier la case «valeur» en «Détecté par…" (avec un menu déroulant)
 
 - Voir document "LINO - Onglet Recherche d'emploi active"
+
+- Formation: ajouter une case "Evaluation" (texte libre) et une case
+  date juste après (et la placer après la case "Statut")
 
