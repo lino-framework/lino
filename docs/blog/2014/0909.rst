@@ -1,0 +1,6 @@
+==========================
+Tuesday, September 9, 2014
+==========================
+
+Fixed a bug which (at least in :ref:`welfare`) caused an :ref:`ise`
+when user tried to add a line in `cal.GuestsByEvent`.

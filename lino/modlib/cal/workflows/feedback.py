@@ -50,6 +50,8 @@ if True:
 class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):
 
     def get_action_permission(self, ar, obj, state):
+        if obj.partner_id is None:
+            return False
         if obj.event.state != EventStates.published:
             return False
         return super(InvitationFeedback,

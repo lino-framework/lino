@@ -170,6 +170,12 @@ class CheckinVisitor(dd.NotifyingAction):
         user_groups='reception',
         states='invited accepted present')
 
+    def get_action_permission(self, ar, obj, state):
+        if obj.partner_id is None:
+            return False
+        return super(CheckinVisitor,
+                     self).get_action_permission(ar, obj, state)
+
     def get_notify_subject(self, ar, obj):
         return _("%(partner)s has started waiting for %(user)s") % dict(
             event=obj,
@@ -178,6 +184,7 @@ class CheckinVisitor(dd.NotifyingAction):
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
+        # cal.Guest
 
         def doit(ar2):
             obj.waiting_since = datetime.datetime.now()
@@ -197,8 +204,8 @@ class CheckinVisitor(dd.NotifyingAction):
 
             return ar.confirm(
                 ok,
-                _("Checkin in will reassign the event \
-                from %(old)s to %(new)s.") %
+                _("Checkin in will reassign the event "
+                  "from %(old)s to %(new)s.") %
                 dict(old=obj.event.user, new=obj.event.assigned_to),
                 _("Are you sure?"))
 

@@ -186,20 +186,17 @@ TODO
 - Études : renommer la case "Succès" en "Certificat/diplôme" (et
   transformer en menu déroulant)
 
-- renommer le champ de texte "Obstacles" en "Remarque"
-
-en attente
-==========
+- Renommer le champ de texte "Freins" en "Remarque"
 
 - Détail gênant du framework: quand on a inséré un object et ferme la
   fenetre de detail pour revenir vers la vue "tableau", il est
   irritant de ne pas voir l'objet que l'on vient de créer.
 
+en attente
+==========
+
 - Ajouter deux champs "Nombre d'heures" et "Taux de présence" dans
   `courses.Enrolment`.
-
-
-
 
 
 
@@ -216,8 +213,9 @@ en attente
 - Supprimer l'onglet "Aide sociale" et transférer les cases suivantes
   dans l'onglet "Personne" (...). 
 
-- Voulez-vous vraiment supprimer les octrois d'aide?
-  Serven p.ex. à imprimer une attestation de revenu.
+- Je propose de ne pas supprimer les octrois d'aide.  Servent p.ex. à
+  imprimer une attestation de revenu, mais également pour l'impression
+  d'un PIIS.
 
 - Dans module "Rendez-vous", une fois qu’on a indiqué que la personne
   a «quitté», l’info peut disparaitre vu qu’elle s’indique de toute
