@@ -14,3 +14,5 @@ env.demo_databases.append('lino.projects.i18n.settings')
 env.demo_databases.append('lino.projects.events.settings')
 
 env.use_mercurial = False
+
+env.apidoc_exclude_pathnames = ['lino/projects']

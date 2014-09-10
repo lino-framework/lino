@@ -769,7 +769,7 @@ class EventsByDay(Events):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(EventsByDay, self).param_defaults(ar, **kw)
-        # kw.update(show_appointments=dd.YesNo.yes)
+        kw.update(show_appointments=dd.YesNo.yes)
         kw.update(start_date=settings.SITE.today())
         kw.update(end_date=settings.SITE.today())
         return kw

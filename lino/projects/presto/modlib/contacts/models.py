@@ -30,7 +30,7 @@ class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
 
     class Meta:
         verbose_name = _("Partner")
-        verbose_name_plural = _("Partner")
+        verbose_name_plural = _("Partners")
 
     isikukood = models.CharField(
         _("isikukood"), max_length=20, blank=True)

@@ -1,0 +1,14 @@
+=============================
+Wednesday, September 10, 2014
+=============================
+
+The default value for the `show_appointments` parameter of
+:class:`ml.cal.EventsByDay` is now again "Yes".
+
+Added a new :xfile:`fabfile.py` configuration option
+`apidoc_exclude_pathnames`.  And then use it in Lino's
+:file:`fabfile.py` to exclude the :file:`projects` directory.  A
+disadvantage of Django is that you cannot generate Sphinx
+documentation for multiple projects during a same Python process.
+
+

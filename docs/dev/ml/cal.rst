@@ -12,14 +12,31 @@ provides data definitions for "Calendar management".
    :depth: 2
 
 
+Glossary
+========
+
+.. glossary::
+
+  event
+
+    Something that happens at a given date and (optionally) time.
+    A planned ("scheduled") lapse of time where something happens.
+    Stored in :class:`Event`.
+
+  appointment
+
+    An appointment (french "Rendez-vous", german "Termin") is an
+    :term:`event` whose :class:`type <EventType>` has the
+    :attr:`EventType.is_appointment` field checked.
+
+
+
+
 Models
 ======
 
 
 .. class:: Event
-
-  A Calendar Event (french "Rendez-vous", german "Termin") is a
-  planned ("scheduled") lapse of time where something happens.
 
   .. attribute:: user
 
@@ -45,13 +62,24 @@ Models
 .. class:: EventType
 
     The possible value of the :attr:`Event.type` field.
-
     Example content:
 
     .. lino2rst::
 
-       dd.login('robin').show(cal.EventTypes, limit=5)
+       dd.show(cal.EventTypes, limit=5)
 
+    .. attribute:: is_appointment
+
+        Whether events of this type should be considered
+        "appointments" (i.e. whose time and place have been agreed
+        upon with other users or external parties).
+
+        The table (:class:`EventsByDay` and
+        :class:`MyEvents`) show only events whose type has the
+        `is_appointment` field checked.
+     
+
+   
 
 .. class:: Task
 
@@ -297,8 +325,19 @@ Tables
 
 .. class:: MyEvents
 
-  Table which shows today's and future calendar events of the
-  requesting user.
+    Table which shows today's and future appointments of the requesting
+    user.
+    The default filter parameters are set to show only
+    :term:`appointments <appointment>`.
+
+
+.. class:: EventsByDay
+
+  This table is usually labelled "Appointments today". It has no
+  "date" column because it shows events of a given date.
+
+  The default filter parameters are set to show only
+  :term:`appointments <appointment>`.
 
 
 Actions
