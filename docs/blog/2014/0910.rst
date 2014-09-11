@@ -2,6 +2,9 @@
 Wednesday, September 10, 2014
 =============================
 
+Morning
+-------
+
 The default value for the `show_appointments` parameter of
 :class:`ml.cal.EventsByDay` is now again "Yes".
 
@@ -11,4 +14,14 @@ Added a new :xfile:`fabfile.py` configuration option
 disadvantage of Django is that you cannot generate Sphinx
 documentation for multiple projects during a same Python process.
 
+Lino Welfare "à la Châtelet"
+(:mod:`lino_welfare.projects.chatelet.modlib.courses`) now adds two new
+states "Started" and "Finished" to `EnrolmentStates`.  This is an
+example of how to extend a ChoiceList.
 
+
+Evening
+-------
+
+Fixed a bug which caused an AttributeError "'State' object has no
+attribute 'uses_a_place'".
