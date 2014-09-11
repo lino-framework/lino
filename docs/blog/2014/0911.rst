@@ -1,0 +1,6 @@
+============================
+Thursday, September 11, 2014
+============================
+
+Updated :doc:`/about/license`, changed license of :ref:`cosi` from GPL
+to LGPL.

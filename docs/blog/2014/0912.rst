@@ -1,0 +1,23 @@
+====================================
+20140912 (Friday, 12 September 2014)
+====================================
+
+Johannes is trying to get a :ref:`cosi` up and running. Which revealed
+some problems.
+
+- Lino does not yet work in Dango 1.7
+
+- :manage:`initdb_demo` for :ref:`cosi` failed because the demo
+  fixtures require `commondata
+  <https://github.com/lsaffre/commondata>`_ (and `commondata.be
+  <https://github.com/lsaffre/commondata-be>`_ and `commondata.ee
+  <https://github.com/lsaffre/commondata-ee>`_)
+
+- I added instructions in :ref:`cosi.install`, but agree that this is
+  a suboptimal procedure since it is a lot of typing. It would be
+  easier to just type `pip install commondata.ee`, but I haven't yet
+  released these packages to PyPI.
+
+- :command:`fab test` failed for commondata.
+
+
