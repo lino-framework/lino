@@ -1,0 +1,5 @@
+============================
+Saturday, September 13, 2014
+============================
+
+Started to update Estonian translations for :ref:`faggio`.
