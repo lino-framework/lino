@@ -362,6 +362,10 @@ class Excerpt(dd.TypedPrintable,
     def get_mailable_type(self):
         return self.excerpt_type
 
+    @property
+    def recipient(self):
+        return self.owner.get_print_recipient()
+
     def get_template_groups(self):
         ptype = self.get_printable_type()
         if ptype is None:

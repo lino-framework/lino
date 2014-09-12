@@ -2,6 +2,9 @@
 20140912 (Friday, 12 September 2014)
 ====================================
 
+Getting started with :ref:`cosi`
+--------------------------------
+
 Johannes is trying to get a :ref:`cosi` up and running. Which revealed
 some problems.
 
@@ -34,3 +37,40 @@ some problems.
   that sounds a more logical name and (2) the file is next to a
   :file:`projects` directory, which was annoying because
   auto-completion needed a second shoot to differenciate them.
+
+- Continued to meditate (in :doc:`/about/license`) about the question
+  "BSD or GPL".
+
+
+:ref:`welfare`: Coaching ended but client still coached
+-------------------------------------------------------
+
+Mathieu reported a subtle problem: 
+
+- Quand les travailleurs consultent la liste de leurs dossiers
+  attribués, même quand ils ont noté la fin du suivi, le dossier reste
+  dans leur quota (voir mail d’Arianne ci-dessous).
+
+Here is an example case in the demo data:
+
+.. image:: 0912a.png
+  :scale: 60
+
+`pcsw.Clients` with parameter `coached_by` set to "Mélanie" should
+*not* show this client. But currently it does.
+
+
+Added a test case in :ref:`welfare.tested.pcsw`.
+
+The :class:`atelier.sphinxconf.insert_input.InsertInputDirective` now
+reports the filename and line number where an exceptioni occured.
+This helped me to unreveal the following problem which had been
+occuring for some time when building the docs for :ref:`welfare`.
+
+A default implementation of :meth:`dd.Model.get_print_language` is now
+defined on every model. No need to explicitly declare it
+`:class:`dd.Printable`. This is because printability is now dynamic:
+:mod:`lino.modlib.excerpts` makes it possible to turn any model into a
+"printable" just by creating an :class:`ml.excerpts.ExcerptType` for
+it.
+

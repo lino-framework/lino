@@ -189,7 +189,7 @@ some proprietary organisation.  That's why Lino is LGPL and not BSD.
 A question of belief
 --------------------
 
-If you continue to not agree with our choice of the GPL, then read on. 
+If you continue to not agree with our choice of the LGPL, then read on. 
 
 We said that you "refuse to see the danger", but this is of course not
 a final verdict, it is just our current *credo*.  We *believe* that a

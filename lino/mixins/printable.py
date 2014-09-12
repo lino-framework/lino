@@ -363,6 +363,16 @@ class BuildMethods(ChoiceList):
     item_class = BuildMethod
     app_label = 'lino'
 
+    @classmethod
+    def get_system_default(cls):
+        sc = settings.SITE.site_config
+        if sc.default_build_method is not None:
+            return sc.default_build_method
+        if settings.SITE.default_build_method:
+            return cls.get_by_value(
+                settings.SITE.default_build_method)
+        return cls.appyodt  # hard-coded default
+
 
 def register_build_method(bm):
     BuildMethods.add_item_instance(bm)
@@ -679,11 +689,9 @@ class PrintableType(Model):
     @classmethod
     def get_template_choices(cls, build_method, template_groups):
         if not build_method:
-            build_method = settings.SITE.site_config.default_build_method
-        # bm = BuildMethods.get_by_value(build_method, None)
-        bm = build_method
+            build_method = BuildMethods.get_system_default()
         return settings.SITE.find_template_config_files(
-            bm.template_ext, *template_groups)
+            build_method.template_ext, *template_groups)
 
 
 class Printable(object):
@@ -694,9 +702,6 @@ class Printable(object):
 
     def before_printable_build(self, bm):
         pass
-
-    def get_print_language(self):
-        return settings.SITE.DEFAULT_LANGUAGE.django_code
 
     def get_template_groups(self):
         return [model_group(self.__class__)]
@@ -711,13 +716,7 @@ class Printable(object):
         return ['Default' + bm.template_ext]
 
     def get_default_build_method(self):
-        sc = settings.SITE.site_config
-        if sc.default_build_method is not None:
-            return sc.default_build_method
-        if settings.SITE.default_build_method:
-            return BuildMethods.get_by_value(
-                settings.SITE.default_build_method)
-        return BuildMethods.appyodt  # hard-coded default
+        return BuildMethods.get_system_default()
 
     def get_build_method(self):
         # TypedPrintable  overrides this

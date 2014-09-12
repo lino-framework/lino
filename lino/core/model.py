@@ -443,9 +443,17 @@ action on individual instances.
         """
         return kw
 
+    def get_print_language(self):
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
+
+    def get_print_recipient(self):
+        return None
+
     LINO_MODEL_ATTRIBS = (
         'get_chooser_for_field',
         'get_detail_action',
+        'get_print_language',
+        'get_print_recipient',
         'get_row_permission',
         'get_excerpt_options',
         'is_attestable',
