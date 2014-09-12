@@ -114,10 +114,10 @@ Let's imagine for example that you don't use Lino but stumble over my
 :ref:`lino.tutorial.human` tutorial and want to use this in a
 proprietary plain Django application.  Simply importing it would be
 okay.  But you can't do that directly because it requires the
-:class:`ChoiceList <lino.core.choicelists.ChoiceList>` class, an
+:class:`ChoiceList <dd.ChoiceList>` class, an
 integral part of Lino. You then start to work many hours, and because
 you are smart, you manage to reimplement the :class:`ChoiceList
-<lino.core.choicelists.ChoiceList>` concept without requiring Lino,
+<dd.ChoiceList>` concept without requiring Lino,
 you have rewritten a new and better implementation of my
 :mod:`lino.mixins.human` module.  And now you want to use this in a
 proprietary package?  Sorry, you will need to prove that you did *not*
@@ -133,7 +133,7 @@ won't do that if you are a professional.
 
 I say "Sorry, this is *not* what we wanted to happen when we invested
 our time and energy into Lino!".  The LGPL helps to protect Lino from
-this kind of usages.
+this kind of usage.
 
 Possible questions:
 
@@ -184,3 +184,61 @@ developers from using Lino.  Because they refuse to see the danger and
 we refuse to expose our work to the danger.  We want to make sure that
 our work will always remain free software and never be controlled by
 some proprietary organisation.  That's why Lino is LGPL and not BSD.
+
+
+A question of belief
+--------------------
+
+If you continue to not agree with our choice of the GPL, then read on. 
+
+We said that you "refuse to see the danger", but this is of course not
+a final verdict, it is just our current *credo*.  We *believe* that a
+non-free concurrent *is* a serious danger for Lino, while you
+*believe* that it *is not*.
+
+Here are some statements which might help us to continue our dialog.
+
+.. complextable::
+
+   BSD/MIT
+   <NEXTCELL>
+   GPL
+   <NEXTROW>
+    
+   The **user** of the software must be free
+   <NEXTCELL>
+   The **software** must be free
+   <NEXTROW>
+
+   the default state of the product of the intellect should be one of
+   freedom to deal with it as one sees fit, implying that you may do what
+   you will with what you have in your possession -- and that the same
+   applies to everyone else.
+   (`wikivs.com <http://www.wikivs.com/wiki/Copyfree_vs_Copyleft>`_)
+    
+   <NEXTCELL>
+
+   the product of the intellect must be spread as broadly as possible,
+   such that distributing the pragmatically useful part of something
+   without also distributing the underlying construction of it is
+   punishable by law.
+   (`wikivs.com <http://www.wikivs.com/wiki/Copyfree_vs_Copyleft>`_)
+
+   <NEXTROW>
+    
+   liberal, capitalistic
+   <NEXTCELL>
+   communist
+
+   <NEXTROW>
+   
+   Companies are more trustworthy than governments because they are
+   at least controlled by the governments, while governments have no
+   supervising instance.
+   
+   <NEXTCELL>
+   
+   Companies are not trustworthy because their declared goal is to
+   produce benefit for their owners, not the freedom and well-being of
+   their customers.
+
