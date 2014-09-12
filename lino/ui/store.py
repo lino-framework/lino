@@ -199,7 +199,7 @@ class RelatedMixin(object):
             return None
         try:
             return getattr(obj, self.name)
-        except relto_model.DoesNotExist, e:
+        except relto_model.DoesNotExist:
             return None
 
 
@@ -277,9 +277,10 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         except relto_model.DoesNotExist:
             pass
 
-        ch = obj.__class__.get_chooser_for_field(self.field.name)
-        if ch and ch.can_create_choice:
-            return ch.create_choice(obj, v)
+        if obj is not None:
+            ch = obj.__class__.get_chooser_for_field(self.field.name)
+            if ch and ch.can_create_choice:
+                return ch.create_choice(obj, v)
         return None
 
 

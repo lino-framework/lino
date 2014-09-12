@@ -1,21 +1,17 @@
 from unipath import Path
 
-ROOTDIR = Path(__file__).parent.parent
-
-# load  SETUP_INFO:
-execfile(ROOTDIR.child('lino', 'project_info.py'), globals())
-
 from djangosite.utils.pythontest import TestCase
+import lino
 
 
 class LinoTestCase(TestCase):
     demo_settings_module = "lino.projects.std.settings_test"
-    project_root = ROOTDIR
+    project_root = Path(__file__).parent.parent
 
 
 class PackagesTests(LinoTestCase):
     def test_01(self):
-        self.run_packages_test(SETUP_INFO['packages'])
+        self.run_packages_test(lino.SETUP_INFO['packages'])
 
 
 class BlogTest(LinoTestCase):
@@ -135,12 +131,16 @@ class ProjectsTests(LinoTestCase):
     
     def test_events(self):
         self.run_django_manage_test("lino/projects/events")
+
     def test_belref(self): 
         self.run_django_manage_test("lino/projects/belref")
+
     def test_babel_tutorial(self): 
         self.run_django_manage_test("lino/projects/babel_tutorial")
+
     def test_min1(self): 
         self.run_django_manage_test("lino/projects/min1")
+
     def test_min2(self): 
         self.run_django_manage_test("lino/projects/min2")
 

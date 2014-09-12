@@ -13,11 +13,24 @@ some problems.
   <https://github.com/lsaffre/commondata-be>`_ and `commondata.ee
   <https://github.com/lsaffre/commondata-ee>`_)
 
+  EDIT: Maybe only :cmd:`fab initdb` failed, and commondata is not
+  needed for getting started.
+
 - I added instructions in :ref:`cosi.install`, but agree that this is
   a suboptimal procedure since it is a lot of typing. It would be
   easier to just type `pip install commondata.ee`, but I haven't yet
   released these packages to PyPI.
 
-- :command:`fab test` failed for commondata.
+- :cmd:`fab test` failed for commondata.
 
+- Released the commondata packages to PyPI and changed the 
+  instructions in :ref:`cosi.install`.
 
+- Fixed some copyright headers in :ref:`cosi` which still mentioned
+  GPL instead of LGPL.
+
+- Renamed the file :file:`project_info.py` to :file:`setup_info.py` in
+  3 projects: Lino itself, :ref:`welfare` and :ref:`cosi`. Because (1)
+  that sounds a more logical name and (2) the file is next to a
+  :file:`projects` directory, which was annoying because
+  auto-completion needed a second shoot to differenciate them.

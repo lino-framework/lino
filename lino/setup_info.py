@@ -106,6 +106,7 @@ lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
 lino.modlib.lists
+lino.modlib.lists.fixtures
 lino.modlib.notes
 lino.modlib.notes.fixtures
 lino.modlib.print_pisa
