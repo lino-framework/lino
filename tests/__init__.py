@@ -49,10 +49,12 @@ class BlogTest(LinoTestCase):
 
 class DocsTests(LinoTestCase):
 
+    # python setup.py test -s tests.DocsTests.test_docs
     def test_docs(self):
         self.run_simple_doctests("""
         docs/dev/ad.rst
         docs/dev/ml/contacts.rst
+        docs/dev/mixins.rst
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
         docs/tested/test_i18n.rst

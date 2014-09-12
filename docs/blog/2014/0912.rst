@@ -62,15 +62,16 @@ Here is an example case in the demo data:
 
 Added a test case in :ref:`welfare.tested.pcsw`.
 
-The :class:`atelier.sphinxconf.insert_input.InsertInputDirective` now
-reports the filename and line number where an exceptioni occured.
-This helped me to unreveal the following problem which had been
-occuring for some time when building the docs for :ref:`welfare`.
+The directives defined by :mod:`atelier.sphinxconf.insert_input` now
+cause a warning and report the filename and line number when an
+exception occurs.  This helped me to unreveal the following problem
+which had been occuring for some time when building the docs for
+:ref:`welfare`.
 
 A default implementation of :meth:`dd.Model.get_print_language` is now
-defined on every model. No need to explicitly declare it
-`:class:`dd.Printable`. This is because printability is now dynamic:
-:mod:`lino.modlib.excerpts` makes it possible to turn any model into a
+defined on every model. No need to explicitly declare it as
+`:class:`dd.Printable`.  This is because :mod:`lino.modlib.excerpts`
+makes printability "dynamic": it possible to turn any model into a
 "printable" just by creating an :class:`ml.excerpts.ExcerptType` for
-it.
-
+it.  Another such method is :meth:`dd.Model.get_print_recipient` which
+returns None by default.

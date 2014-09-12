@@ -85,8 +85,19 @@ The `dd.Model` class
                 elems. += [" (", ar.obj2html(self.city), ")"]
             return E.p(*elems)
 
+  .. method:: get_print_language(self)
 
-           
+     Return a Django language code to be activated when an instance of
+     this is being printed.
+     The default implementation returns the Site's default language.
+
+  .. method:: get_print_recipient(self)
+
+     Return either `None` or an :class:`Addressable` object (usually a
+     :class:`ml.contacts.Partner` instance) which is to be used as
+     recipient when an instance of this is being printed.  Print
+     templates
+
   .. method:: disable_delete(self, ar)
 
     Hook to decide whether a given record may be deleted.  
