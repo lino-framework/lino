@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,15 @@
 
 u"""
 
-This module is used by 
-the :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>` 
-command that comes with :mod:`lino_welfare`.
+This module is used by
+
+- :mod:`garble <lino.modlib.contacts.management.commands.garble_persons>`
+- :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>`
+
 
 Example usage:
 
-The first five a Belgians:
+The first five Belgians:
 
 >>> for i in range(5):
 ...     print LAST_NAMES_BELGIUM.pop()
@@ -42,7 +44,8 @@ Ankundinov
 
 Or here is a mixture of nationalities, for each Belgian comes one foreigner:
 
->>> LAST_NAMES = Cycler(LAST_NAMES_BELGIUM,LAST_NAMES_RUSSIA,LAST_NAMES_BELGIUM,LAST_NAMES_MUSLIM)
+>>> LAST_NAMES = Cycler(LAST_NAMES_BELGIUM,
+...     LAST_NAMES_RUSSIA, LAST_NAMES_BELGIUM, LAST_NAMES_MUSLIM)
 
 >>> for i in range(10):
 ...     print LAST_NAMES.pop()
@@ -60,7 +63,7 @@ Arshan
 Some fictive Estonians (each couple one male & one female):
 
 >>> for i in range(5):
-...    print MALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop(), '&', 
+...    print MALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop(), '&',
 ...    print FEMALE_FIRST_NAMES_ESTONIA.pop(), LAST_NAMES_ESTONIA.pop()
 Aadu Ivanov & Adeele Tamm
 Aare Saar & Age Sepp
@@ -75,14 +78,14 @@ The raw data was originally copied from:
 
 - Belgian last names from http://www.lavoute.org/debuter/Belgique.htm
 - French last names from http://www.nom-famille.com/noms-les-plus-portes-en-france.html
-- Russion last names from http://www.meetmylastname.com/prd/articles/24
-- French first names from 
+- Russian last names from http://www.meetmylastname.com/prd/articles/24
+- French first names from
   http://meilleursprenoms.com/site/LesClassiques/LesClassiques.htm
-- African, Muslim and Russian names from  
+- African, Muslim and Russian names from
   http://www.babynames.org.uk
   and http://genealogy.familyeducation.com
   
-- Streets of Liège from 
+- Streets of Liège from
   http://fr.wikipedia.org/wiki/Liste_des_rues_de_Li%C3%A8ge
   
 - Estonian last names:
@@ -7798,7 +7801,7 @@ Anne
 Anne                               
 Anne                               
 Anne                               
-Anne(+)                            
+Anne
 Anneli                             
 Anneli                             
 Anneli                             
@@ -7861,7 +7864,7 @@ Heli
 Heli                               
 Helja                              
 Heljo                              
-Helju (Heljo)                      
+Helju
 Helve                              
 Helyn                              
 Iiris                              
@@ -7921,7 +7924,7 @@ Kjersti
 Krista                             
 Krista                             
 Krista                             
-Krista (+10.09.10)                 
+Krista
 Kristel                            
 Kristel                            
 Kristel                            
@@ -7959,14 +7962,12 @@ Liina
 Liis                               
 Liisa                              
 Liisa                              
-Liisi (Eke)                        
 Liivi                              
 Lili                               
 Linda                              
 Linda                              
 Loone                              
-Lorraine                           
-Luule (+)                          
+Luule
 Ly                                 
 Lya                                
 Maarika                            
@@ -8094,6 +8095,7 @@ Veronika
 Viire                              
 Viivi                              
 Vilma                              
+Vika
 Virge                              
 Virge                              
 Virve                              
@@ -8128,16 +8130,14 @@ Allan
 Ando                               
 Andreas                            
 Andreas                            
-Andreas Junior                     
+Andreas
 Andres                             
 Andres                             
 Andres                             
 Andres                             
 Andres                             
 Andres                             
-Andres                             
-Andres                             
-Andres (Bit)                       
+Andres
 Andri                              
 Andrus                             
 Andrus                             
@@ -8161,18 +8161,12 @@ Artur
 Arvo                               
 Arvo                               
 Arvo                               
-Brd                               
-Carsten                            
-Christian                          
-Clemens                            
 Daniel                             
-Didier                             
 Diego                              
 Dmitri                             
 Eerik                              
 Einar                              
 Elmar                              
-Emmanuel "Manu"                    
 Enn                                
 Enn                                
 Enn                                
@@ -8194,7 +8188,6 @@ Hannes
 Hannes                             
 Hannes                             
 Hannes                             
-Hannes & Andres                    
 Harmo                              
 Harri                              
 Harri                              
@@ -8215,7 +8208,6 @@ Indrek
 Indrek                             
 Ivar                               
 Ivo                                
-Ivo "Aadam"                        
 Jaak                               
 Jaak                               
 Jaak                               
@@ -8252,7 +8244,6 @@ Karla
 Karlis                             
 Kaur                               
 Klaus                              
-Klaus-Dieter                       
 Kristjan                           
 Kristjan                           
 Kristo                             
@@ -8269,7 +8260,6 @@ Maarjo
 Madis                              
 Madis                              
 Mads                               
-Mads Michael Hastrup               
 Mairold                            
 Manfred                            
 Marek                              
@@ -8297,31 +8287,22 @@ Meelis
 Meelis                             
 Michael                            
 Michael                            
-Michael JJ                         
 Mihkel                             
 Mihkel                             
 Mihkel                             
 Mikk                               
 Mikk                               
-Ole Michael                        
 Olev                               
 Oliver                             
 Oliver                             
 Oliver                             
 Ott                                
 Otto                               
-Ove                                
 Patrick                            
 Patrik                             
-Pawan                              
-Peer                               
 Peeter                             
 Peeter                             
 Peter                              
-Philippe                           
-Philippe                           
-Pierre Clément                     
-Piet                               
 Priit                              
 Priit                              
 Priit                              
@@ -8343,7 +8324,6 @@ Reet
 Rein                               
 Rein                               
 Rein                               
-Ricardo                            
 Riho                               
 Risto                              
 Roland                             
@@ -8355,9 +8335,6 @@ Sandor
 Siim                               
 Silver                             
 Simon                              
-Sonnich Jessen                     
-Sten Erik                          
-Stéphane                           
 Suigu                              
 Sulev                              
 Sulev                              
@@ -8373,7 +8350,6 @@ Tarvo
 Tarvo                              
 Tauno                              
 Tero                               
-Thierry                            
 Tiit                               
 Tiit                               
 Tiit                               
@@ -8403,10 +8379,8 @@ Veiko
 Velio                              
 Vello                              
 Vesal                              
-Vika                               
 Villu                              
 Virgo                              
-Vladimir                           
 Volker                             
 William                            
 William                            

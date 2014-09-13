@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-13 02:26+0300\n"
-"PO-Revision-Date: 2014-09-13 02:56+0300\n"
+"PO-Revision-Date: 2014-09-13 03:53+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -669,21 +669,21 @@ msgstr ""
 
 #: lino/mixins/human.py:67
 msgid "Mrs"
-msgstr ""
+msgstr "Pr"
 
 #: lino/mixins/human.py:69
 msgctxt "nominative salutation"
 msgid "Mr"
-msgstr ""
+msgstr "Hr"
 
 #: lino/mixins/human.py:70
 msgctxt "indirect salutation"
 msgid "Mr"
-msgstr ""
+msgstr "Hr"
 
 #: lino/mixins/human.py:80 lino/modlib/users/models.py:95
 msgid "First name"
-msgstr "Eestnimi"
+msgstr "Eesnimi"
 
 #: lino/mixins/human.py:83
 msgid "First or given name."
@@ -733,18 +733,16 @@ msgid "Observed events"
 msgstr ""
 
 #: lino/mixins/periods.py:77
-#, fuzzy
 msgid "Started"
-msgstr "Tänav"
+msgstr "Alustatud"
 
 #: lino/mixins/periods.py:78
 msgid "Active"
 msgstr ""
 
 #: lino/mixins/periods.py:79
-#, fuzzy
 msgid "Ended"
-msgstr "Sugu"
+msgstr "Lõpetatud"
 
 #: lino/mixins/periods.py:93 lino/modlib/cal/mixins.py:75
 #: lino/modlib/cal/models_event.py:81

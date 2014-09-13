@@ -3,3 +3,6 @@ Saturday, September 13, 2014
 ============================
 
 Started to update Estonian translations for :ref:`faggio`.
+New management command 
+:mod:`lino.modlib.contacts.management.commands.garble_persons`.
+TODO: Write a `streets_of_tallinn` generator.

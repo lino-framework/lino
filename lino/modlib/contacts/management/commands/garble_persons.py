@@ -1,0 +1,134 @@
+# -*- coding: UTF-8 -*-
+# Copyright 2009-2014 Luc Saffre
+# This file is part of the Lino project.
+# Lino is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+# Lino is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# You should have received a copy of the GNU General Public License
+# along with Lino ; if not, see <http://www.gnu.org/licenses/>.
+
+"""
+
+Garbles person names in the database so that it may be used for a demo.
+
+"""
+
+from optparse import make_option
+
+from django.conf import settings
+from django.core.management.base import BaseCommand, CommandError
+
+from lino.utils import dblogger
+from lino.utils import Cycler, join_words
+
+from lino import mixins
+from lino import dd
+
+
+from lino.utils import confirm
+
+from lino.utils import demonames as demo
+
+
+class Distribution(object):
+    def __init__(self):
+        self.LAST_NAMES = Cycler(self.get_last_names())
+        self.MALES = Cycler(self.get_male_first_names())
+        self.FEMALES = Cycler(self.get_female_first_names())
+
+
+class BelgianDistribution(Distribution):
+
+    def get_last_names(self):
+        yield demo.LAST_NAMES_BELGIUM
+        yield demo.LAST_NAMES_MUSLIM
+        yield demo.LAST_NAMES_BELGIUM
+        yield demo.LAST_NAMES_RUSSIA
+        yield demo.LAST_NAMES_BELGIUM
+        yield demo.LAST_NAMES_AFRICAN
+
+    def get_male_first_names(self):
+        yield demo.MALE_FIRST_NAMES_FRANCE
+        yield demo.MALE_FIRST_NAMES_MUSLIM
+        yield demo.MALE_FIRST_NAMES_FRANCE
+        yield demo.MALE_FIRST_NAMES_RUSSIA
+        yield demo.MALE_FIRST_NAMES_FRANCE
+        yield demo.MALE_FIRST_NAMES_AFRICAN
+
+    def get_female_first_names(self):
+        yield demo.FEMALE_FIRST_NAMES_FRANCE
+        yield demo.FEMALE_FIRST_NAMES_MUSLIM
+        yield demo.FEMALE_FIRST_NAMES_FRANCE
+        yield demo.FEMALE_FIRST_NAMES_RUSSIA
+        yield demo.FEMALE_FIRST_NAMES_FRANCE
+        yield demo.FEMALE_FIRST_NAMES_AFRICAN
+
+
+class EstonianDistribution(Distribution):
+    def get_last_names(self):
+        yield demo.LAST_NAMES_ESTONIA
+
+    def get_male_first_names(self):
+        yield demo.MALE_FIRST_NAMES_ESTONIA
+
+    def get_female_first_names(self):
+        yield demo.FEMALE_FIRST_NAMES_ESTONIA
+
+
+DISTS = dict()
+DISTS['BE'] = BelgianDistribution()
+DISTS['EE'] = EstonianDistribution()
+
+class Command(BaseCommand):
+    args = '(no arguments)'
+    help = "Garbles person names in the database so that it "
+    "may be used for a demo."
+
+    option_list = BaseCommand.option_list + (
+        make_option(
+            '--noinput', action='store_false',
+            dest='interactive', default=True,
+            help='Do not prompt for input of any kind.'),
+        make_option(
+            '--distribution', action='store',
+            dest='distribution', default='BE',
+            help='Distribution to use. Available dists are BE and EE.'),
+    )
+
+    def handle(self, *args, **options):
+
+        dbname = settings.DATABASES['default']['NAME']
+        if options.get('interactive'):
+            if not confirm("This is going to GARBLE your database (%s).\n"
+                           "Are you sure (y/n) ?" % dbname):
+                raise CommandError("User abort.")
+
+        k = options.get('distribution')
+        dist = DISTS.get(k.upper())
+        if not dist:
+            raise CommandError("Invalid distribution key %r." % k)
+        
+        User = dd.resolve_model(settings.SITE.user_model)
+        Person = dd.modules.contacts.Person
+
+        for p in Person.objects.order_by('id'):
+            if User.objects.filter(partner=p).count() > 0:
+                # users keep their original name
+                pass
+            else:
+                p.last_name = dist.LAST_NAMES.pop()
+                if p.gender == mixins.Genders.male:
+                    p.first_name = dist.MALES.pop()
+                    dist.FEMALES.pop()
+                else:
+                    p.first_name = dist.FEMALES.pop()
+                    dist.MALES.pop()
+                p.name = join_words(p.last_name, p.first_name)
+                p.save()
+                dblogger.info("%s", p)
+
