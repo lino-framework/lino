@@ -12,6 +12,23 @@ provides data definitions for "Calendar management".
    :depth: 2
 
 
+
+.. note:: 
+
+  This is a tested document. You can test it using::
+
+    $ python setup.py test -s tests.DocsTests.test_docs
+
+.. 
+  >>> import os
+  >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+  ...   'lino.projects.docs.settings'
+  >>> from lino import dd
+  >>> dd.startup()
+  >>> globals().update(dd.modules)
+
+
+
 Glossary
 ========
 
@@ -294,6 +311,40 @@ Choicelists
     .. django2rst:: 
 
             dd.show(cal.TaskStates)
+
+
+
+.. class:: DurationUnits
+
+    .. django2rst:: 
+
+            dd.show(cal.DurationUnits)
+
+
+    .. method:: add_duration(self, start_value, add_value)
+
+    Example:
+
+    >>> from lino.utils import i2d
+    >>> DurationUnits = dd.modules.cal.DurationUnits
+    >>> start_date = i2d(20111026)
+    >>> DurationUnits.months.add_duration(start_date, 2)
+    datetime.date(2011, 12, 26)
+    >>> cal.DurationUnits.months.add_duration(start_date, -2)
+    datetime.date(2011, 8, 26)
+
+    >>> start_date = i2d(20110131)
+    >>> DurationUnits.months.add_duration(start_date, 1)
+    datetime.date(2011, 2, 28)
+    >>> DurationUnits.months.add_duration(start_date, -1)
+    datetime.date(2010, 12, 31)
+    >>> DurationUnits.months.add_duration(start_date, -2)
+    datetime.date(2010, 11, 30)
+
+    >>> start_date = i2d(20140401)
+    >>> DurationUnits.months.add_duration(start_date, 3)
+    datetime.date(2014, 7, 1)
+
 
 
 .. class:: GuestStates

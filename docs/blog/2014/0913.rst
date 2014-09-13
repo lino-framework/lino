@@ -2,7 +2,81 @@
 Saturday, September 13, 2014
 ============================
 
+
+Preparing demo in Tallinn
+-------------------------
+
 Started to update Estonian translations for :ref:`faggio`.
+
 New management command 
-:mod:`lino.modlib.contacts.management.commands.garble_persons`.
+:mod:`garble_persons <lino.modlib.contacts.management.commands.garble_persons>`
+
 TODO: Write a `streets_of_tallinn` generator.
+
+Getting the newest LibreOffice
+------------------------------
+
+This is not directly related to Lino.
+In a blog post `Making the best of MS Office files
+<http://blogs.fsfe.org/the_unconventional/2014/09/12/making-the-best-of-ms-office-files/>`_
+I read a quick trick to get newest versions of LibreOffice.  
+Until today I had version 4.2.6.3.
+Let's try whether the trick works::
+
+    $ sudo add-apt-repository ppa:libreoffice/ppa
+    This PPA will have what the Document Foundation calls "LibreOffice
+    fresh", the latest release of the newest series (but no alpha/beta
+    releases).
+
+    Please file bugs for these packages on launchpad as described in:
+    https://lists.launchpad.net/libreoffice/msg00072.html
+    ...
+    To return to the LibreOffice version from the main archive, use
+    ppa-purge. See:
+    http://www.webupd8.org/2009/12/remove-ppa-repositories-via-command.html
+    for details 
+
+    More info:
+    https://launchpad.net/~libreoffice/+archive/ubuntu/ppa 
+
+
+Installation says "OK". Now let's try what it changes::
+
+    $ sudo aptitude update
+    $ sudo aptitude upgrade
+    The following packages will be REMOVED:  
+      libcdr-0.0-0{u} libmspub-0.0-0{u} liborcus-0.6-0{u} libvisio-0.0-0{u} libwps-0.2-2{u} 
+    The following packages will be upgraded:
+      apport apport-gtk flashplugin-installer fonts-opensymbol gcc-4.9-base gir1.2-gudev-1.0 libgcc1 libgudev-1.0-0 libharfbuzz-icu0 
+      libharfbuzz0b libnss3 libnss3-1d libnss3-nssdb libnss3-tools libpam-systemd libphonon4 libreoffice-avmedia-backend-gstreamer 
+      libreoffice-base-core libreoffice-calc libreoffice-common libreoffice-core libreoffice-draw libreoffice-emailmerge libreoffice-gnome 
+      libreoffice-gtk libreoffice-help-en-gb libreoffice-help-en-us libreoffice-impress libreoffice-l10n-en-gb libreoffice-l10n-en-za 
+      libreoffice-math libreoffice-ogltrans libreoffice-pdfimport libreoffice-presentation-minimizer libreoffice-presenter-console 
+      libreoffice-style-human libreoffice-style-tango libreoffice-writer libsystemd-daemon0 libsystemd-journal0 libsystemd-login0 libudev1 phonon 
+      phonon-backend-gstreamer phonon-backend-gstreamer-common phonon-backend-gstreamer1.0 python-apport python-problem-report python3-apport 
+      python3-distupgrade python3-problem-report python3-uno systemd-services thunderbird thunderbird-gnome-support thunderbird-locale-en 
+      thunderbird-locale-en-gb thunderbird-locale-en-us ubuntu-release-upgrader-core ubuntu-release-upgrader-gtk udev unity-settings-daemon 
+      uno-libs3 ure 
+    64 packages upgraded, 0 newly installed, 5 to remove and 0 not upgraded.
+
+Voilà, now I have version 4.3.1.2. 
+
+
+Supporting Django 1.7
+---------------------
+
+I continued to work on getting Lino ready for Django 1.7.  This is not
+trivial since Lino had some features like site startup already before
+Django.
+`Applications <https://docs.djangoproject.com/en/dev/ref/applications/>`_
+`Migrations <https://docs.djangoproject.com/en/dev/topics/migrations/>`_
+`Field deconstruction <https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#field-deconstruction>`_
+
+For example, :mod:`djangosite.models` looked at
+`django.db.models.loading.cache.postponed` in order to run
+:func:`dd.startup`.  But it seems that Django no longer has a list of
+postponed apps.  The trick was to raise an ImportError if some other
+app was still not completely loaded, and then (when Django tries to
+import it a second time) run :func:`dd.startup`. With Django 1.7 we
+can simply use the `AppConfig.ready` method.
+

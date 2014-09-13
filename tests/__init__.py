@@ -53,6 +53,7 @@ class DocsTests(LinoTestCase):
     def test_docs(self):
         self.run_simple_doctests("""
         docs/dev/ad.rst
+        docs/dev/ml/cal.rst
         docs/dev/ml/contacts.rst
         docs/dev/mixins.rst
         docs/user/templates_api.rst

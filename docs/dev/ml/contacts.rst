@@ -11,13 +11,16 @@ This app is being extended by :ref:`welfare` in
 :mod:`lino_welfare.modlib.contacts` or by :ref:`faggio` in
 :mod:`lino_faggio.modlib.contacts`.
 
+.. contents:: 
+   :local:
+   :depth: 2
+
+
 .. note:: 
 
   This is a tested document. You can test it using::
 
     $ python setup.py test -s tests.DocsTests.test_docs
-
-
 
 .. 
   >>> import os

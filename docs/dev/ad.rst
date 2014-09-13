@@ -11,6 +11,27 @@ are used in your :xfile:`settings.py` files and in the
 import of your Django settings and **before** your models are
 imported.
 
+.. contents:: 
+   :local:
+   :depth: 2
+
+
+.. note:: 
+
+  This is a tested document. You can test it using::
+
+    $ python setup.py test -s tests.DocsTests.test_docs
+
+.. 
+  >>> import os
+  >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+  ...   'lino.projects.docs.settings'
+  >>> from lino import dd
+  >>> dd.startup()
+  >>> globals().update(dd.modules)
+
+
+
 Plugins
 -------
 
@@ -353,6 +374,57 @@ The ``Site`` class
     [('de', 'German'), ('fr', 'French')]
 
 
+  .. method:: babelattr(self, obj, attrname, default=NOT_PROVIDED, language=None)
+
+    Return the value of the specified babel field `attrname` of `obj`
+    in the current language.
+
+    This is to be used in multilingual document templates.  For
+    example in a document template of a Contract you may use the
+    following expression::
+
+      babelattr(self.type, 'name')
+
+    This will return the correct value for the current language.
+
+    Examples:
+
+    >>> from django.utils import translation
+    >>> from north import TestSite as Site
+    >>> from atelier.utils import AttrDict
+    >>> def testit(site_languages):
+    ...     site = Site(languages=site_languages)
+    ...     obj = AttrDict(site.babelkw('name', de="Hallo", en="Hello", fr="Salut"))
+    ...     return site,obj
+
+
+    >>> site,obj = testit('de en')
+    >>> with translation.override('de'):
+    ...     site.babelattr(obj,'name')
+    'Hallo'
+
+    >>> with translation.override('en'):
+    ...     site.babelattr(obj,'name')
+    'Hello'
+
+    If the object has no translation for a given language, return
+    the site's default language.  Two possible cases:
+
+    The language exists on the site, but the object has no
+    translation for it:
+
+    >>> site,obj = testit('en es')
+    >>> with translation.override('es'):
+    ...     site.babelattr(obj, 'name')
+    'Hello'
+
+    Or a language has been activated which doesn't exist on the site:
+
+    >>> with translation.override('fr'):
+    ...     site.babelattr(obj, 'name')
+    'Hello'
+
+   
   .. method:: str2kw(self, name, text, **kw)
 
     Return a dictionary which maps the internal field names for
@@ -414,27 +486,32 @@ The ``Site`` class
     'Hello'
 
     If the current language is not found in the specified `values`,
-    then it returns the site's default language ("de" in our example):
+    then it returns the site's default language:
 
     >>> with translation.override('jp'):
-    ...    tr(en="Hello",de="Hallo",fr="Salut")
-    'Hallo'
+    ...    tr(en="Hello", de="Hallo", fr="Salut")
+    'Hello'
+
+    Testing detail: default language should be "de" in our example, but
+    we are playing here with more than one Site instance while Django
+    knows only one "default language" which is the one specified in 
+    `lino.projects.docs.settings`.
 
     Another way is to specify an explicit default value using a
     positional argument. In that case the language's default language
     doesn'n matter:
 
     >>> with translation.override('jp'):
-    ...    tr("Hello",de="Hallo",fr="Salut")
-    'Hello'
+    ...    tr("Tere", de="Hallo", fr="Salut")
+    'Tere'
 
     >>> with translation.override('de'):
-    ...     tr("Hello",de="Hallo",fr="Salut")
+    ...     tr("Tere", de="Hallo", fr="Salut")
     'Hallo'
 
     You may not specify more than one default value:
 
-    >>> tr("Hello","Hallo")
+    >>> tr("Hello", "Hallo")
     Traceback (most recent call last):
     ...
     ValueError: ('Hello', 'Hallo') is more than 1 default value.

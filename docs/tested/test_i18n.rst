@@ -59,7 +59,7 @@ Now we look at this table in different languages:
 ============== ================= ======
  Kasutajanimi   Kasutajaprofiil   Keel
 -------------- ----------------- ------
- robin          Administrator     en
+ robin          Administraator    en
 ============== ================= ======
 <BLANKLINE>
 

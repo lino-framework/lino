@@ -586,13 +586,12 @@ Django creates copies of them when inheriting models.
 
 class ChoiceListField(models.CharField):
 
-    """
-    A field that stores a value to be selected from a 
+    """A field that stores a value to be selected from a
     :class:`ChoiceList`.
     
-    ChoiceListField cannot be nullable since they are implemented as CharFields.
-    Therefore when filtering on empty values in a database query
-    you cannot use ``__isnull``::
+    ChoiceListField cannot be nullable since they are implemented as
+    CharFields.  Therefore when filtering on empty values in a
+    database query you cannot use ``__isnull``::
     
       for u in users.User.objects.filter(profile__isnull=False):
       
@@ -603,20 +602,15 @@ class ChoiceListField(models.CharField):
     or use the ``__gte`` operator::
       
       for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest):
-      
-    
-    
+
     """
 
     __metaclass__ = models.SubfieldBase
 
     empty_strings_allowed = False
 
-    #~ force_selection = True
-
-    #~ choicelist = NotImplementedError
-
-    def __init__(self, choicelist, verbose_name=None, force_selection=True, **kw):
+    def __init__(self, choicelist, verbose_name=None,
+                 force_selection=True, **kw):
         if verbose_name is None:
             verbose_name = choicelist.verbose_name
         self.choicelist = choicelist
@@ -633,6 +627,14 @@ class ChoiceListField(models.CharField):
         kw.update(kw)
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self, verbose_name, **defaults)
+
+    def deconstruct(self):
+        # needed for Django 1.7
+        # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
+
+        name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
+        args = [self.choicelist]
+        return name, path, args, kwargs
 
     def get_internal_type(self):
         return "CharField"

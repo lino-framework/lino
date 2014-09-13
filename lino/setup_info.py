@@ -80,10 +80,11 @@ lino.modlib.cal
 lino.modlib.cal.fixtures
 lino.modlib.cal.management
 lino.modlib.cal.management.commands
-lino.modlib.cal.tests
 lino.modlib.cal.workflows
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
+lino.modlib.contacts.management
+lino.modlib.contacts.management.commands
 lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.davlink
