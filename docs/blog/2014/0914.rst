@@ -1,0 +1,11 @@
+====================================
+20140914 (Sunday, 14 September 2014)
+====================================
+
+
+Added streets of Tallinn to :mod:`lino.utils.demonames`.
+
+Discovered that the English word for "linnaosa" is not "township" but
+"district" (according to `this
+<https://www.riigiteataja.ee/akt/13225804>`_).
+

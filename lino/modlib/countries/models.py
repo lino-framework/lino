@@ -104,14 +104,14 @@ add('23', _('Subregion'))
 add('24', _('Department'))
 add('25', _('Arrondissement'))
 add('26', _('Prefecture'))
-add('27', _('District'))          # de:Kreis
-add('28', _('Sector'))
+add('27', _('District'), 'district')        # de:Stadtteil fr:?, et: linnaosa
+add('28', _('Sector'))                      # de:Kreis
 
 add('50', _('City'), 'city')              # et:suurlinn  de:Stadt
 add('51', _('Town'), 'town')              # et:linn      de:Kleinstadt
 add('52', _('Municipality'), 'municipality')  # et:vald de:Gemeinde fr:Commune
 add('54', _('Parish'), 'parish')           # de:Pfarre fr:Paroisse
-add('55', _('Township'), 'township')         # de:Stadtteil fr:?
+add('55', _('Township'), 'township')       #
 add('56', _('Quarter'), 'quarter')           # de:Viertel fr:Quartier
 
 add('61', _('Borough'), 'borough')           # et:alev

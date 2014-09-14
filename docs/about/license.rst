@@ -101,11 +101,11 @@ Notes:
 Why Lino is not BSD licensed
 ----------------------------
 
-I imagine you are a Python programmer and want to write some
-commercial software package, and you want to use Lino as a framework.
-Concretely you will write Python code which imports things from
-Lino. That's okay and that's what I wanted to make possible by
-switching from GPL to LGPL.
+Imagine you are a Python programmer and want to write some commercial
+software package, and you want to use Lino as a framework.  Concretely
+you will write Python code which imports things from Lino. That's okay
+and that's what I wanted to make possible by switching from GPL to
+LGPL.
 
 The LGPL (unlike the BSD) then says that you may *not* make a copy of
 Lino *itself* or any part of it and turn it into proprietary software.

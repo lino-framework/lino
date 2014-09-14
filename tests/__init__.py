@@ -114,7 +114,14 @@ class UtilsTests(LinoTestCase):
         self.run_simple_doctests('lino/utils/xmlgen/sepa/__init__.py')
     def test_05(self): self.run_simple_doctests('lino/utils/memo.py')
     def test_06(self): self.run_simple_doctests('lino/utils/html2xhtml.py')
-    def test_07(self): self.run_simple_doctests('lino/utils/demonames.py')
+
+    def test_demonames(self):
+        self.run_simple_doctests("""
+        lino/utils/demonames/__init__.py
+        lino/utils/demonames/est.py
+        lino/utils/demonames/rus.py
+        """)
+
     def test_08(self): self.run_simple_doctests('lino/utils/odsreader.py')
     
     def test_ssin(self): self.run_simple_doctests('lino/utils/ssin.py')

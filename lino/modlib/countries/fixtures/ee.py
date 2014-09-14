@@ -13,7 +13,10 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 
-"""Imports file :file:`sihtnumbrid.csv` which you can obtain from
+"""
+DEPRECATED : use eesti.py instead!
+
+Imports file :file:`sihtnumbrid.csv` which you can obtain from
 `Estonian Post office
 <https://www.omniva.ee/ari/kiri/noudmiseni_sihtnumbrid>`_ and which is
 expected to have the following structure:

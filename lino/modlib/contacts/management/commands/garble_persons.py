@@ -41,6 +41,9 @@ class Distribution(object):
         self.MALES = Cycler(self.get_male_first_names())
         self.FEMALES = Cycler(self.get_female_first_names())
 
+    def before_save(self, obj):
+        pass
+
 
 class BelgianDistribution(Distribution):
 
@@ -70,6 +73,17 @@ class BelgianDistribution(Distribution):
 
 
 class EstonianDistribution(Distribution):
+
+    def __init__(self):
+        super(EstonianDistribution, self).__init__()
+        Country = dd.modules.countries.Country
+        Place = dd.modules.countries.Place
+        PlaceTypes = dd.modules.countries.PlaceTypes
+        self.tallinn = Place.objects.get(
+            type=PlaceTypes.town, name="Tallinn")
+        self.eesti = Country.objects.get(isocode="EE")
+        self.streets = Cycler(self.get_streets())
+
     def get_last_names(self):
         yield demo.LAST_NAMES_ESTONIA
 
@@ -79,10 +93,25 @@ class EstonianDistribution(Distribution):
     def get_female_first_names(self):
         yield demo.FEMALE_FIRST_NAMES_ESTONIA
 
+    def get_streets(self):
+        Place = dd.modules.countries.Place
+        PlaceTypes = dd.modules.countries.PlaceTypes
+        for streetname, linnaosa in demo.streets_of_tallinn():
+            try:
+                p = Place.objects.get(
+                    type=PlaceTypes.district, name__iexact=linnaosa)
+            except Place.DoesNotExist:
+                raise Exception("Unknown district %r" % linnaosa)
+            yield p, streetname
 
-DISTS = dict()
-DISTS['BE'] = BelgianDistribution()
-DISTS['EE'] = EstonianDistribution()
+    def before_save(self, obj):
+        if obj.country and obj.country.isocode == 'BE':
+            obj.country = self.eesti
+            p, s = self.streets.pop()
+            obj.city = p
+            obj.zip_code = p.zip_code
+            obj.street = s
+
 
 class Command(BaseCommand):
     args = '(no arguments)'
@@ -108,10 +137,15 @@ class Command(BaseCommand):
                            "Are you sure (y/n) ?" % dbname):
                 raise CommandError("User abort.")
 
-        k = options.get('distribution')
-        dist = DISTS.get(k.upper())
-        if not dist:
+        def build_dist(k):
+            k = k.upper()
+            if k == 'BE':
+                return BelgianDistribution()
+            if k == 'EE':
+                return EstonianDistribution()
             raise CommandError("Invalid distribution key %r." % k)
+        
+        dist = build_dist(options.get('distribution'))
         
         User = dd.resolve_model(settings.SITE.user_model)
         Person = dd.modules.contacts.Person
@@ -129,6 +163,7 @@ class Command(BaseCommand):
                     p.first_name = dist.FEMALES.pop()
                     dist.MALES.pop()
                 p.name = join_words(p.last_name, p.first_name)
-                p.save()
-                dblogger.info("%s", p)
+                dist.before_save(p)
+                # p.save()
+                dblogger.info(p.get_address(', '))
 

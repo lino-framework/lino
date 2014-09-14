@@ -12,7 +12,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This fixture contains all Estonian places.
+"""
+DEPRECATED : use eesti.py instead!
+
+This fixture contains all Estonian places.
 
 It is a proof of concept for my idea of using :ref:`dpy` as data
 format for maintaining large knowledge bases like the list of places
