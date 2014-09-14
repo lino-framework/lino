@@ -6,9 +6,11 @@
 Added streets of Tallinn (copied from
 http://www.eki.ee/knab/tallinn1.htm) to :mod:`lino.utils.demonames`.
 
-Discovered that the English word for "linnaosa" is not "township" but
-"district" (according to `this
-<https://www.riigiteataja.ee/akt/13225804>`_).
+Discovered that 
+(according to `this
+<https://www.riigiteataja.ee/akt/13225804>`_)
+the English word for "linnaosa" is not "township" but "district".
+Later I decided to keep "township" nevertheless.
 
 Restructured :mod:`lino_faggio.settings` into
 :mod:`lino_faggio.projects`.
