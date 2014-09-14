@@ -79,6 +79,16 @@ def get_address_formatter(country):
     return ADDRESS_FORMATTERS.get(None)
 
 
+class PlaceType(dd.Choice):
+
+    def find(self, name):
+        M = dd.modules.countries.Place
+        try:
+            return M.objects.get(type=self, name=name)
+        except M.DoesNotExist:
+            raise Exception("No %s named %s" % (self, name))
+
+
 class PlaceTypes(dd.ChoiceList):
 
     """
@@ -88,6 +98,8 @@ class PlaceTypes(dd.ChoiceList):
 
     """
     verbose_name = _("Place Type")
+    item_class = PlaceType
+
 add = PlaceTypes.add_item
 # ~ add('10', pgettext_lazy(u'countries','State'))             # de:Bundesland
 add('10', _('Member State'))      # de:Bundesland
@@ -104,14 +116,14 @@ add('23', _('Subregion'))
 add('24', _('Department'))
 add('25', _('Arrondissement'))
 add('26', _('Prefecture'))
-add('27', _('District'), 'district')        # de:Stadtteil fr:?, et: linnaosa
+add('27', _('District'), 'district')
 add('28', _('Sector'))                      # de:Kreis
 
 add('50', _('City'), 'city')              # et:suurlinn  de:Stadt
 add('51', _('Town'), 'town')              # et:linn      de:Kleinstadt
 add('52', _('Municipality'), 'municipality')  # et:vald de:Gemeinde fr:Commune
 add('54', _('Parish'), 'parish')           # de:Pfarre fr:Paroisse
-add('55', _('Township'), 'township')       #
+add('55', _('Township'), 'township')       # de:Stadtteil fr:?, et: linnaosa
 add('56', _('Quarter'), 'quarter')           # de:Viertel fr:Quartier
 
 add('61', _('Borough'), 'borough')           # et:alev
@@ -134,7 +146,7 @@ class CountryDriver(object):
 
 class CountryDrivers:
     BE = CountryDriver('21', '50 70')
-    EE = CountryDriver('20', '50 51 52 61 62 70')
+    EE = CountryDriver('20', '50 51 52 55 61 62 70')
     DE = CountryDriver('10', '50 51 52 70')
     FR = CountryDriver('24', '50 51 52 70')
 

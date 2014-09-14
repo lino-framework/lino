@@ -154,7 +154,7 @@ def objects():
                     parent=raplamaa)
     yield make_city('EE', 'Rapla', type=PlaceTypes.town, parent=raplamaa)
 
-    yield make_city('EE', 'Tallinn', type=PlaceTypes.city, parent=harjumaa)
+    yield make_city('EE', 'Tallinn', type=PlaceTypes.town, parent=harjumaa)
     yield make_city('EE', 'Pärnu', type=PlaceTypes.town, parent=parnumaa)
     yield make_city('EE', 'Tartu', type=PlaceTypes.town)
     yield make_city('EE', 'Narva', type=PlaceTypes.town)

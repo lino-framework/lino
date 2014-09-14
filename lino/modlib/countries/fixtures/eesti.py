@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 from commondata.ee.places import root
 
 from commondata.ee.places import (Village, SmallBorough, Borough,
-                                  District, Town, Municipality, County)
+                                  Township, Town, Municipality, County)
 
 from lino import dd
 
@@ -33,10 +33,10 @@ countries = dd.resolve_app('countries')
 def cd2type(p):
     if isinstance(p, County):
         return countries.PlaceTypes.county
-    if isinstance(p, District):
-        return countries.PlaceTypes.district
     if isinstance(p, Town):
         return countries.PlaceTypes.town
+    if isinstance(p, Township):
+        return countries.PlaceTypes.township
     if isinstance(p, Municipality):
         return countries.PlaceTypes.municipality
     if isinstance(p, Borough):
