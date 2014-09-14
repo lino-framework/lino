@@ -164,6 +164,6 @@ class Command(BaseCommand):
                     dist.MALES.pop()
                 p.name = join_words(p.last_name, p.first_name)
                 dist.before_save(p)
-                # p.save()
+                p.save()
                 dblogger.info(p.get_address(', '))
 
