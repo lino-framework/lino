@@ -1,0 +1,16 @@
+=============================
+Wednesday, September 17, 2014
+=============================
+
+Continued to work on ticket :doc:`/tickets/124`.
+
+I removed most "partner" information from the detail of a household. A
+household (in :ref:`welfare`) is now mostly the list of its members.
+MembersByHousehold now shows the extended fields (first_name,
+birth_date etc).
+
+Added a PopulateHumanLinks action which analyzes the households and
+creates children in humanlinks.
+
+TODO: automatically create a Person from filled data fields of a
+Member whose person field is still empty.

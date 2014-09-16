@@ -151,6 +151,20 @@ class Link(dd.Model):
             parent=self.parent,
             type=self.type.as_child(self.child))
 
+    @classmethod
+    def check_autocreate(cls, parent, child):
+        if parent is None or child is None:
+            return False
+        assert parent != child
+        t = (LinkTypes.parent, LinkTypes.adoptive)
+        qs = cls.objects.filter(parent=parent, child=child, type__in=t)
+        if qs.count() == 0:
+            obj = cls(parent=parent, child=child, type=LinkTypes.parent)
+            obj.full_clean()
+            obj.save()
+            return True
+        return False
+
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
