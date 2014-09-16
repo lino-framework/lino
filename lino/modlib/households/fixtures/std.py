@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -19,84 +19,25 @@ Adds some :class:`household roles <households.Role>`.
 
 """
 
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from lino.utils.instantiator import Instantiator, i2d
-from lino.core.dbutils import resolve_model
-# from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 
-
-# from django.db import models
-# from django.conf import settings
-from north.dbutils import babel_values
+from lino import dd
 
 
 def objects():
-    if False:
-        Role = resolve_model('households.Role')
+    Type = dd.modules.households.Type
 
-        kw = babel_values('name',
-                          de=u"Familienoberhaupt",
-                          fr=u"Chef de ménage",
-                          en=u"Head of household"
-        )
-        yield Role(name_giving=True, **kw)
-        kw = babel_values('name',
-                          de=u"Ehepartner",
-                          fr=u"Conjoint",
-                          en=u"Spouse",
-        )
-        yield Role(name_giving=True, **kw)
-        kw = babel_values('name',
-                          de=u"Partner",
-                          fr=u"Partenaire",
-                          en=u"Partner",
-        )
-        yield Role(name_giving=True, **kw)
-        kw = babel_values('name',
-                          de=u"Mitbewohner",
-                          fr=u"Cohabitant",
-                          en=u"Cohabitant",
-        )
-        yield Role(**kw)
-        kw = babel_values('name',
-                          de=u"Kind",
-                          fr=u"Enfant",
-                          en=u"Child",
-        )
-        yield Role(**kw)
+    yield Type(**dd.str2kw('name', _("Married couple")))
+    # Ehepaar / couple marié
 
-        kw = babel_values('name',
-                          de=u"Verwandter",
-                          fr=u"Membre de famille",
-                          en=u"Relative",
-        )
-        yield Role(**kw)
+    yield Type(**dd.str2kw('name', _("Divorced couple")))
+    # Geschiedene Ehe / Mariage divorcé
 
-        kw = babel_values('name',
-                          de=u"Adoptivkind",
-                          fr=u"Enfant adopté",
-                          en=u"Adopted child",
-        )
-        yield Role(**kw)
+    yield Type(**dd.str2kw('name', _("Factual household")))
+    # Faktischer Haushalt / Ménage de fait
 
-    Type = resolve_model('households.Type')
-    yield Type(**babel_values('name',
-                              de=u"Ehepaar",
-                              fr=u"Couple marié",
-                              en=u"Married couple",
-                              ))
-    yield Type(**babel_values('name',
-                              de=u"Familie",
-                              fr=u"Famille",
-                              en=u"Family",
-                              ))
-    yield Type(**babel_values('name',
-                              de=u"Faktischer Haushalt",
-                              fr=u"Ménage de fait",
-                              en=u"Factual household",
-                              ))
-    yield Type(**babel_values('name',
-                              de=u"Legale Wohngemeinschaft",
-                              fr=u"Cohabitation légale",
-                              en=u"Legal cohabitation",
-                              ))
+    yield Type(**dd.str2kw('name', _("Legal cohabitation")))
+    # Legale Wohngemeinschaft / Cohabitation légale
+
+    yield Type(**dd.str2kw('name', _("Former household")))
+    yield Type(**dd.str2kw('name', _("Other")))

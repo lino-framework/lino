@@ -49,7 +49,7 @@ class ChangePassword(dd.Action):
             return
         count = 0
         for obj in ar.selected_rows:
-            if obj.check_password(pv.current):
+            if obj.password == '' or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
                 obj.save()
@@ -175,9 +175,6 @@ inactive and cannot log in."))
                 self.initials = self.first_name[0] + self.last_name[0]
         super(User, self).full_clean(*args, **kw)
 
-    #~ def save(self,*args,**kw):
-        #~ super(User,self).save(*args,**kw)
-
     def get_received_mandates(self):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
         return [[u.id, unicode(u)] for u in self.__class__.objects.all()]
@@ -185,7 +182,8 @@ inactive and cannot log in."))
 
     change_password = ChangePassword()
 
-    # the following methods are unchanged copies from Django's User model
+    # the following methods are unchanged copies from Django's User
+    # model
 
     def set_password(self, raw_password):
         self.password = make_password(raw_password)

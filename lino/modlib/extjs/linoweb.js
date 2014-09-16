@@ -2576,9 +2576,9 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 {% endif %}
 
 Lino.ActionFormPanel = Ext.extend(Ext.form.FormPanel,Lino.MainPanel);
-Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.PanelMixin);
-Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,Lino.FieldBoxMixin);
-Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, Lino.PanelMixin);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, Lino.FieldBoxMixin);
+Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   //~ layout:'fit'
   //~ ,autoHeight: true
   //~ ,frame: true
@@ -2675,6 +2675,14 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel,{
       wincfg.keys = [
         { key: Ext.EventObject.ENTER, fn: this.on_ok }
       ]
+      
+      if (!wincfg.defaultButton) this.getForm().items.each(function(f){
+          if(f.isFormField){ 
+              wincfg.defaultButton = f;
+              return false;
+          }
+      });
+
   }
 });
 

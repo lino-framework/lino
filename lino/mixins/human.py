@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # This file is part of the Lino project.
 # Lino is free software; you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published by
@@ -14,13 +14,11 @@
 """
 
 See :ref:`lino.tutorial.human`.
-    
+
 """
 
 import logging
 logger = logging.getLogger(__name__)
-
-import datetime
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -33,19 +31,6 @@ from lino.core.choicelists import Genders
 from lino.core import fields
 from lino.core import model
 
-#~ from lino import dd
-
-#~ SHOW_SALUTATION = True
-#~ UPPERCASE_LAST_NAME = True
-
-#~ def uppercase_last_name(b):
-    #~ global UPPERCASE_LAST_NAME
-    #~ UPPERCASE_LAST_NAME = b
-
-#~ def show_salutation(b):
-    #~ global SHOW_SALUTATION
-    #~ SHOW_SALUTATION = b
-
 
 def get_salutation(gender, nominative=False):
     """Returns "Mr" or "Mrs" or a translation thereof, depending on the
@@ -56,7 +41,7 @@ def get_salutation(gender, nominative=False):
     <http://en.wikipedia.org/wiki/Mrs.>`_ are written either *with*
     (AE) or *without* (BE) a dot.
     
-    The optional keyword argument `nominative` used only when babel
+    The optional keyword argument `nominative` is used only when
     language is "de": specifying ``nominative=True`` will return
     "Herr" instead of default "Herrn" for male persons.
 

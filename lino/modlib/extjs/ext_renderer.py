@@ -391,24 +391,24 @@ class ExtRenderer(HtmlRenderer):
 
         return "Lino.%s(%s,%s)" % (name, py2js(rp), py2js(obj.pk))
 
-    def action_call(self, request, bound_action, after_show):
+    def action_call(self, request, bound_action, status):
 
         if bound_action.action.opens_a_window or \
            bound_action.action.parameters:
             if request and request.subst_user:
-                after_show[
+                status[
                     ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(bound_action.action, actions.ShowEmptyTable):
-                after_show.update(record_id=-99998)
+                status.update(record_id=-99998)
             if request is None:
                 rp = None
             else:
                 rp = request.requesting_panel
-            if after_show:
+            if status:
                 return "Lino.%s.run(%s,%s)" % (
                     bound_action.full_name(),
                     py2js(rp),
-                    py2js(after_show))
+                    py2js(status))
             return "Lino.%s.run(%s)" % (bound_action.full_name(), py2js(rp))
         return "%s()" % self.get_panel_btn_handler(bound_action)
 

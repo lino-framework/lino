@@ -4,3 +4,23 @@ Tuesday, September 16, 2014
 
 Updated the :ref:`demos`.
 Continued with translation of :ref:`faggio`.
+
+
+Fixed a bug reported by Mathieu:
+
+- running ChangePassword on a newly created user does not actually
+  change the password.
+  If says "Success. New password has been set for 0 users."
+
+
+A new test case in the documentation :class:`ml.users` verifies
+this.
+
+
+Opened new ticket :doc:`/tickets/124` and started to work on it.
+Especially in :mod:`ml.households`.
+
+Optimization to the framework in :xfile:`linoweb.js`:
+`Lino.ActionPanelForm` now sets the keyboard focus to the first field.
+
+New database field :attr:`ml.households.Member.primary`.

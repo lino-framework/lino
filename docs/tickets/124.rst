@@ -1,0 +1,61 @@
+==========================================
+#124 : Changements Châtelet Septembre 2014
+==========================================
+
+.. currentlanguage:: fr
+
+Propositions de changement par :ref:`chat` en septembre 2014.
+
+DONE:
+
+- impossible de mettre le mot de passe d'un nouvel utilisateur
+  --> OK
+
+- Rendez-vous aujourd'hui:
+  Avoir la colonne « Résumé » dans le module. 
+  Avoir la colonne « LOCAL »
+  Faire des colonnes moins larges.
+  --> OK
+
+- Onglet "Situation familiale":
+  Mettre finalement composition de ménage au-dessus de Liens de
+  parenté.  
+  --> OK
+
+FEEDBACK
+
+- Composition de ménage : Nous n’avons pas la possibilité d’encoder en
+  libre.
+  --> non reproductible
+
+- Composition de ménage : ajouter une colonne "Suivi par"
+
+  --> quelle serait la différence entre ce champ et un accompagnement?
+
+- Liens de parenté : Faire le même type de tableau que
+  Composition de ménage avec encodage libre (voir annexe).
+  Dans la case Nom et Prénom, peut-on faire en sorte de retrouver les
+  bénéficiaires déjà encodés dans le programme ainsi que de faire de
+  l’encodage libre ?
+
+  --> je propose d'envisager l'approche suivant:
+
+  - nous laissons les liens de parenté en mode "sommaire" car un
+    tableau serait peu pratique. Par exemple il ne permet pas
+    d'encoder le père et la mère d'un enfant en un seul coup.
+
+  - nous convenons qu'il faut encoder les ménages précédents pour
+    pouvoir encoder les enfants provenant de ces ménages.  Notons
+    qu'il est conseillé mais pas nécessaire d'encoder le partenaire
+    d'un ménage.
+
+  - Je fais en sorte que Lino génère automatiquement les personnes et
+    liens de parenté à partir des données dans les compositions de
+    ménage (donc aussi la direction inverse de ce qu'il fait déjà).
+
+  - Comment représenter/nommer un ménage de maniè re plus intuitive?
+
+TODO:
+
+- Composition de ménage : ajouter un champ "Garde enfant"
+- Ajouter une colonne "Suivi par"

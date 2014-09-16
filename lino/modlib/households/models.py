@@ -91,18 +91,6 @@ class Household(contacts.Partner):
     #~ dummy = models.CharField(max_length=1,blank=True)
     # workaround for https://code.djangoproject.com/ticket/13864
 
-    # def full_clean(self, *args, **kw):
-    #     if not self.name or self.name == '-':
-    #         l = []
-    #         for m in self.member_set.all():
-    #             if m.role.name_giving:
-    #                 l.append(m.person.last_name)
-    #         if len(l):
-    #             self.name = '-'.join(l)
-    #         else:
-    #             self.name = "-"
-    #     super(Household, self).full_clean(*args, **kw)
-
     def add_member(self, person, role=None):
         mbr = dd.modules.households.Member(
             household=self, person=person, role=role)
@@ -116,9 +104,16 @@ class Household(contacts.Partner):
     full_name = property(get_full_name)
 
     def __unicode__(self):
-        if self.type:
-            return u"%s %s" % (self.type, self.get_full_name())
+        # if self.type:
+        #     return u"%s %s" % (self.type, self.get_full_name())
         return unicode(self.get_full_name())
+
+    def get_name_elems(self, ar):
+        elems = []
+        if self.prefix:
+            elems += [self.prefix, ' ']
+        elems += [E.b(self.name), E.br()]
+        return elems
 
 
 class HouseholdDetail(dd.FormLayout):
@@ -207,10 +202,29 @@ class Member(dd.DatePeriod):
 
     role = MemberRoles.field(
         default=MemberRoles.child, blank=True, null=True)
-    household = models.ForeignKey('households.Household')
     person = models.ForeignKey(
         "contacts.Person",
-        related_name='membersbyperson')
+        related_name='household_members')
+    household = models.ForeignKey('households.Household')
+    primary = models.BooleanField(
+        _("Primary"),
+        default=False,
+        help_text=_(
+            "Whether this is the primary household of this person. "
+            "Checking this field will automatically disable any "
+            "other primary memberships."))
+
+    def after_ui_save(self, ar):
+        super(Member, self).after_ui_save(ar)
+        mi = self.person
+        if mi is None:
+            return
+        if self.primary:
+            for o in mi.household_members.exclude(id=self.id):
+                if o.primary:
+                    o.primary = False
+                    o.save()
+                    ar.set_response(refresh_all=True)
 
     def __unicode__(self):
         if self.person_id is None:
@@ -249,7 +263,7 @@ class SiblingsByPerson(Members):
     """
     If the master is member of a single household, display the members
     of that Household. Otherwise display an explanation message.
-    
+
     """
     label = _("Household composition")
     required = dd.required()
@@ -273,6 +287,7 @@ class SiblingsByPerson(Members):
             ar.no_data_text = _("%s is not member of any household") % mi
         else:
             mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
+            mbr = mbr.filter(primary=True)
             if mbr.count() == 1:
                 ar.master_household = mbr[0].household
             else:
@@ -348,9 +363,9 @@ class CreateHousehold(dd.Action):
             blank=True, null=True),
         type=dd.ForeignKey('households.Type'))
     params_layout = """
-    head
-    type
     partner
+    type
+    head
     """
 
     def action_param_defaults(self, ar, obj, **kw):
@@ -363,11 +378,13 @@ class CreateHousehold(dd.Action):
         head = ar.action_param_values.head
         partner = ar.action_param_values.partner
         name = head.last_name
+        prefix = head.first_name
         if partner:
             name += '-' + partner.last_name
+            prefix += ' & ' + partner.first_name
         hh = dd.modules.households.Household(
-            # head=head,
-            type=ar.action_param_values.type, name=name)
+            type=ar.action_param_values.type,
+            name=name, prefix=prefix)
         hh.full_clean()
         hh.save()
         # TODO: see 20140426
@@ -395,7 +412,7 @@ class MembersByPerson(Members):
     required = dd.required()
     label = _("Household memberships")
     master_key = 'person'
-    column_names = 'household role start_date end_date *'
+    column_names = 'household role primary start_date end_date *'
     # auto_fit_column_widths = True
     # hide_columns = 'id'
     slave_grid_format = 'summary'
@@ -411,15 +428,30 @@ class MembersByPerson(Members):
 
         items = []
         for m in sar.data_iterator:
-            items.append(E.li(
-                unicode(m.role), _(" in "),
-                # unicode(m.household.type), " ",
-                ar.obj2html(m.household)))
+            args = (unicode(m.role), _(" in "),
+                    ar.obj2html(m.household))
+            if m.primary:
+                items.append(E.li(E.b(*args)))
+            else:
+                items.append(E.li(*args))
         if len(items) > 0:
             elems += [_("%s is") % obj]
             elems.append(E.ul(*items))
-        elems += [
-            E.br(), ar.instance_action_button(obj.create_household)]
+        if False:
+            elems += [
+                E.br(), ar.instance_action_button(obj.create_household)]
+        else:
+            elems += [E.br(), _("Create a household"), ' : ']
+            Type = dd.modules.households.Type
+            ba = dd.modules.contacts.Persons.get_action_by_name(
+                'create_household')
+            buttons = []
+            for t in Type.objects.all():
+                apv = dict(type=t, head=obj)
+                sar = ar.spawn(ba,  # master_instance=obj,
+                               action_param_values=apv)
+                buttons.append(ar.href_to_request(sar, unicode(t)))
+            elems += join_elems(buttons, sep=' / ')
         return E.div(*elems)
 
 
