@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-13 02:26+0300\n"
-"PO-Revision-Date: 2014-09-13 03:53+0300\n"
+"PO-Revision-Date: 2014-09-16 12:27+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -122,21 +122,21 @@ msgstr "Tere, %(first_name)s!"
 
 #: lino/config/admin_main_base.html:21
 msgid "This is a Lino demo site."
-msgstr "See siin on üks Lino näidise sait."
+msgstr "Tere tulemast selle Lino demo saidile."
 
 #: lino/config/admin_main_base.html:22
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Proovi ka meie teised <a href=\"http://lino-framework.org/demos.html"
-"\">näidise saidid</a>."
+"Vaata ka teisi <a href=\"http://lino-framework.org/demos.html\">demo saite</"
+"a>."
 
 #: lino/config/admin_main_base.html:23
 #, python-format
 msgid ""
 "Your feedback is welcome to %s or directly to the person who invited you."
-msgstr ""
+msgstr "Kui vajad abi, siis küsi aadressilt %s või otse autori käest."
 
 #: lino/config/admin_main_base.html:33
 msgid "You have entered the <b>admin</b> section."

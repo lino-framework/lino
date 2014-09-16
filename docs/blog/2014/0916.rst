@@ -1,0 +1,6 @@
+===========================
+Tuesday, September 16, 2014
+===========================
+
+Updated the :ref:`demos`.
+Continued with translation of :ref:`faggio`.

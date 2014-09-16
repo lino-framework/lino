@@ -9,8 +9,8 @@ License
 
 Lino is published under the `LGPL
 <http://en.wikipedia.org/wiki/GNU_Lesser_General_Public_License>`_
-because we want to make sure that our work will always remain free
-software and never be controlled by some proprietary organisation.
+because we want to make sure that our work will always remain freely
+available for everybody.
 
 The LGPL gives you the permission to use Lino as a base for your own
 work. Examples:
