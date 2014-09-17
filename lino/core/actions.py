@@ -308,7 +308,6 @@ class Action(Parametrizable, Permittable):
     auto_save = True
 
     extjs_main_panel = None
-    
 
     action_name = None
     """Internally used to store the name of this action within the

@@ -388,7 +388,6 @@ class ExtRenderer(HtmlRenderer):
         # name = ba.action.full_name(ar.actor or ba.actor)
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         name = ba.action.full_name(ba.actor)
-
         return "Lino.%s(%s,%s)" % (name, py2js(rp), py2js(obj.pk))
 
     def action_call(self, request, bound_action, status):

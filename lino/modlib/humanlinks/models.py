@@ -252,6 +252,7 @@ class LinksByHuman(Links):
                         lt.as_child(obj), icon_name=None))
                 actions.append(' ')
 
+        # elems += [E.br(), obj.populate_humanlinks.as_button_elem(ar), ' ']
         elems += [E.br(), _("Create relationship as ")] + actions
         return E.div(*elems)
 
