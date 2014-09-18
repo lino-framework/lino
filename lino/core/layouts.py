@@ -589,10 +589,16 @@ def create_layout_element(lh, name, **kw):
     else:
         de = lh.get_data_elem(name)
 
+    if name == 'propgroup_skills':
+        logger.info("20140919 %s %s", lh, de)
+
     if isinstance(de, type) and issubclass(de, fields.Dummy):
         return None
+
     if isinstance(de, fields.DummyField):
+        lh.add_store_field(de)
         return None
+
     if isinstance(de, fields.Constant):
         return ext_elems.ConstantElement(lh, de, **kw)
 
@@ -707,9 +713,9 @@ def create_layout_element(lh, name, **kw):
     # Now we tried everything. Build an error message.
 
     if hasattr(lh, 'rh'):
-        msg = "Unknown element %r referred in layout <%s of %s>." % (
-            name, lh.layout, lh.rh.actor)
-        l = [de.name for de in lh.rh.actor.wildcard_data_elems()]
+        msg = "Unknown element '%s' (%r) referred in layout <%s of %s>." % (
+            name, de, lh.layout, lh.rh.actor)
+        l = [wde.name for wde in lh.rh.actor.wildcard_data_elems()]
         # VirtualTables don't have a model
         model = getattr(lh.rh.actor, 'model', None)
         if getattr(model, '_lino_slaves', None):
@@ -720,8 +726,8 @@ def create_layout_element(lh, name, **kw):
         #~ l = [de.name for de in lh.layout._datasource.wildcard_data_elems()]
         #~ print(20130202, [f.name for f in lh.layout._datasource.model._meta.fields])
         #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
-        msg = "Unknown element %r referred in layout <%s>." % (
-            name, lh.layout)
+        msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
+            name, de, lh.layout)
         if de is not None:
             msg += " Cannot handle %r" % de
     raise KeyError(msg)

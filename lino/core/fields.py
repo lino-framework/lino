@@ -204,7 +204,7 @@ class FakeField(object):
     :class:`DisplayField`
     """
     model = None
-    choices = None
+    choices = []
     primary_key = False
     editable = False
     name = None
@@ -996,15 +996,24 @@ class Dummy(object):
     pass
 
 
-class DummyField(object):
+class DummyField(FakeField):
     "See :class:`dd.DummyField`."
-    choices = []
+    # choices = []
+    # primary_key = False
 
     def __init__(self, *args, **kw):
         pass
 
     # def __getattr__(self, name):
     #     return None
+
+    def get_default(self):
+        return None
+
+    def contribute_to_class(self, cls, name):
+        self.name = name
+        assert not hasattr(cls, name)
+        setattr(cls, name, self)
 
     def set_attributes_from_name(self, k):
         pass

@@ -21,6 +21,7 @@ from north.dbutils import babel_values
 
 def objects():
     ptype = Instantiator('properties.PropType').build
+    properties = dd.resolve_app('properties')
     yield ptype(id=1, **babel_values('name', **dict(
         en="Present or not",
         de=u"Vorhanden oder nicht",
@@ -29,8 +30,8 @@ def objects():
         nl=u"Ja of niet",
     )))
     yield ptype(id=2,
-                choicelist=dd.HowWell.actor_id,
-                default_value=dd.HowWell.default.value,
+                choicelist=properties.HowWell.actor_id,
+                default_value=properties.HowWell.default.value,
                 **babel_values('name', **dict(
                     en="Rating",
                     de=u"Bewertung",

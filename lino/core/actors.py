@@ -676,6 +676,9 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_param_elem(self, name):
         # same as in Action, but here it is a class method
+        if name == 'propgroup_skills':
+            logger.info("20140919 get_param_elem %s", self.parameters)
+
         if self.parameters:
             return self.parameters.get(name, None)
         return None
@@ -918,9 +921,8 @@ class Actor(actions.Parametrizable):
         """
         """
         for k, pf in self.parameters.items():
-            if not isinstance(pf, fields.DummyField):
-                #~ if not param_values.has_key(k):
-                kw[k] = pf.get_default()
+            # if not isinstance(pf, fields.DummyField):
+            kw[k] = pf.get_default()
         return kw
 
     @classmethod

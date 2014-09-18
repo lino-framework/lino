@@ -867,7 +867,6 @@ class ParameterStore(BaseStore):
 
         holder = params_layout_handle.layout.get_chooser_holder()
         for pf in params_layout_handle._store_fields:
-        #~ for pf in rh.report.params:
             self.param_fields.append(create_atomizer(holder, pf, pf.name))
 
         self.param_fields = tuple(self.param_fields)
@@ -1080,7 +1079,7 @@ class Store(BaseStore):
                 except ValueError as e:
                     raise exceptions.ValidationError(
                         {f.name: _("Invalid value for this field (%s).") % e})
-                except Exception, e:
+                except Exception as e:
                     logger.warning(
                         "Exception during Store.form2obj (field %s) : %s",
                         f.name, e)

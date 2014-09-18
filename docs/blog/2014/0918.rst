@@ -27,7 +27,7 @@ than one file
 :doc:`/tickets/124`
 -------------------
 
-Continued to work on this ticket.
+Continued to work on :doc:`/tickets/124`.
 
 - Added a clickable checkbox indicating the primary household in 
   the summary view of :class:`ml.households.MembersByPerson`.
@@ -59,3 +59,22 @@ redesigned :mod:`welfare.cv` module (currently in
 :mod:`lino_welfare.projects.chatelet.modlib.cv`).  It is functionally
 almost equivalent to :mod:`lino_welfare.modlib.cv` which I plan to
 deprecate since it uses :mod:`lino.modlib.properties`.
+
+22:50
+
+- I moved `HowWell` and `DoYouLike` from :mod:`lino.dd` back to
+  `properties`, because I don't want these choicelists in the global
+  :mod:`dd` module.
+
+  This also has the advantage that I don't need a conversion during data
+  migration (remember that `properties` stores their `app_label`).
+
+  And then I use their copy in the new 
+  :mod:`lino_welfare.projects.chatelet.modlib.cv` module.
+
+- A DummyField is now a FakeField and may be used to explicitly ignore
+  its name in a layout specification.  This subtle new feature is
+  used by chatelet's `cv` app to solve the fact that
+  `SiteConfig.detail_layout` contains three fields `propgroup_skills`,
+  `propgroup_softskills` and `propgroup_obstacles` which are needed in
+  eupen but not in chatelet. Declaring them as a `DummyField`
