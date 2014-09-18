@@ -9,8 +9,12 @@ household (in :ref:`welfare`) is now mostly the list of its members.
 MembersByHousehold now shows the extended fields (first_name,
 birth_date etc).
 
-Added a PopulateHumanLinks action which analyzes the households and
-creates children in humanlinks.
+When the `person` of a household membership is empty, then Lino now
+watches the data fields (first_name, last_name, birth_date and gender)
+and, when all these fields are filled, will automatically create a
+client using this data and set the `person` field to this client.
 
-TODO: automatically create a Person from filled data fields of a
-Member whose person field is still empty.
+When a household membership has been modified, Lino now checks whether
+this membership leads to a parental human link and, if appropriate,
+creates one.
+

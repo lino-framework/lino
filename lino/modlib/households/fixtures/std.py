@@ -27,11 +27,11 @@ from lino import dd
 def objects():
     Type = dd.modules.households.Type
 
-    yield Type(**dd.str2kw('name', _("Married couple")))
-    # Ehepaar / couple marié
+    yield Type(**dd.str2kw('name', _("Married")))
+    # Verheiratet / Marié
 
-    yield Type(**dd.str2kw('name', _("Divorced couple")))
-    # Geschiedene Ehe / Mariage divorcé
+    yield Type(**dd.str2kw('name', _("Divorced")))
+    # Geschieden / Divorcé
 
     yield Type(**dd.str2kw('name', _("Factual household")))
     # Faktischer Haushalt / Ménage de fait
@@ -39,5 +39,5 @@ def objects():
     yield Type(**dd.str2kw('name', _("Legal cohabitation")))
     # Legale Wohngemeinschaft / Cohabitation légale
 
-    yield Type(**dd.str2kw('name', _("Former household")))
+    yield Type(**dd.str2kw('name', _("Isolated")))
     yield Type(**dd.str2kw('name', _("Other")))

@@ -748,8 +748,8 @@ Lino.close_window = function(status_update, norestore) {
   var ww = Lino.window_history.pop();
   var retval = cw.main_item.requesting_panel;
   // console.log(
-  //     "20140829 Lino.close_window() going to close", 
-  //     cw, "previous is", ww, 
+  //     "20140917 Lino.close_window() going to close", cw.title,
+  //     "previous is", ww, 
   //     "norestore is", norestore,
   //     "retval is", retval);
   if (ww) {
@@ -1799,14 +1799,16 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         var cw = Lino.current_window;
         // var cw = panel.get_containing_window();
         if (cw) {
-            // console.log("20140504 refresh_all calls refresh on", cw.main_item);
+            // console.log("20140917 refresh_all calls refresh on", cw.main_item);
             cw.main_item.refresh();
         }
-        // else console.log("20131026 cannot refresh_all because ",
-        //                  panel,"has no get_containing_window");
+        // else console.log("20140917 cannot refresh_all because ",
+        //                  "there is no current_window");
     } else {
-        // console.log("20131026 b gonna refresh",panel);
-        if (result.refresh) panel.refresh();
+        if (result.refresh) {
+            // console.log("20140917 Gonna call panel.refresh()", panel);
+            panel.refresh();
+        }
     }
     {%- if settings.SITE.is_installed('davlink') -%}
     if (result.open_davlink_url) {
@@ -2385,9 +2387,9 @@ Lino.FieldBoxMixin = {
 
 
 
-Lino.HtmlBoxPanel = Ext.extend(Ext.Panel,Lino.PanelMixin);
-Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,Lino.FieldBoxMixin);
-Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
+Lino.HtmlBoxPanel = Ext.extend(Ext.Panel, Lino.PanelMixin);
+Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, Lino.FieldBoxMixin);
+Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, {
   disabled_in_insert_window : true,
   constructor : function(config,params) {
     this.before_init(config,params);
@@ -2446,6 +2448,7 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
     });
   },
   refresh : function(unused) { 
+      // this.containing_panel.refresh();
       this.refresh_with_after();
   },
   /* HtmlBoxPanel */
@@ -2461,14 +2464,15 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel,{
             var record = this.containing_panel.get_current_record();
             var newcontent = record ? 
                 this.format_data(record.data[this.name]) : '';
-            // console.log('20140504 HtmlBox.refresh()',this.name, record);
+            // console.log('20140917 HtmlBox.refresh()',
+            //             this.name, record.data.LinksByHuman);
             el.update(newcontent, true);
-        } else {
-            console.log('20140502 cannot HtmlBox.refresh()',this.name);
+        // } else {
+        //     console.log('20140502 cannot HtmlBox.refresh()',this.name);
         }
       };
 
-      Lino.do_when_visible(box,todo.createDelegate(this));
+      Lino.do_when_visible(box, todo.createDelegate(this));
   }
 });
 //~ Ext.override(Lino.HtmlBoxPanel,Lino.FieldBoxMixin);
@@ -2875,11 +2879,17 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     });
   },
 
+  /* FormPanel */
   get_status : function(){
       var st = {
         base_params: this.get_base_params(),
-        data_record : this.get_current_record()
+        // data_record : this.get_current_record()
         }
+      st.record_id = this.get_current_record().id;
+      // 20140917 : get_status must not store the whole data_record
+      // because that would prevent the form to actually reload
+      // when set_status is called after a child window closed.
+      
       var tp = this.items.get(0);
       if (tp instanceof Ext.TabPanel) {
         st.active_tab = tp.getActiveTab();
@@ -2891,7 +2901,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   /* FormPanel */
   set_status : function(status, rp){
     this.requesting_panel = Ext.getCmp(rp);
-    // console.log('20140527 FormPanel.set_status()', status);
+    // console.log('20140917 FormPanel.set_status()', status);
     this.clear_base_params();
     if (status == undefined) status = {};
     //~ if (status.param_values) 
@@ -2920,7 +2930,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       /* possible values include 0 and null, 0 being a valid record id, 
       null the equivalent of undefined
       */
-      //~ this.main_item.goto_record_id(this.status.record_id);
       this.load_record_id(status.record_id);
     } else {
       this.set_current_record(undefined);
@@ -2973,11 +2982,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   /* FormPanel */
   ,refresh_with_after : function(after) { 
-    // console.log('20140504 Lino.FormPanel.refresh()',this);
+    // console.log('20140917 Lino.FormPanel.refresh_with_after()',this);
     if (this.current_record) {
         this.load_record_id(this.current_record.id, after);
     } else {
-        this.set_current_record(undefined,after);
+        this.set_current_record(undefined, after);
     }
   }
   
@@ -3011,7 +3020,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   
   ,goto_record_id : function(record_id) {
-    //~ console.log('20110701 Lino.FormPanel.goto_record_id()',record_id);
+    // console.log('20140917 Lino.FormPanel.goto_record_id()',record_id);
     //~ var this_ = this;
     //~ this.do_when_clean(function() { this_.load_record_id(record_id) }
     this.do_when_clean(
@@ -3038,7 +3047,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         if (this.loadMask) this.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
-          // console.log('20140418 load_record_id success',rec);
+          // console.log('20140917 load_record_id success', rec);
           this.set_param_values(rec.param_values);
           this.set_current_record(rec, after);
         }
@@ -3126,9 +3135,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         this.last.disable();
       }
     }
-    // console.log('20140421 gonna call before_row_edit',record);
+    // console.log('20140917 gonna call before_row_edit', record);
     this.before_row_edit(record);
-    // console.log('20140421 gonna call after',after);
+    // console.log('20140917 gonna call after', after);
     if (after) after();
   },
   

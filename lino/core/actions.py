@@ -279,17 +279,17 @@ class InstanceAction(object):
     def __call__(self, *args, **kwargs):
         return self.run_from_session(*args, **kwargs)
 
-    def as_button_elem(self, ar, label=None):
+    def as_button_elem(self, ar, label=None, **kwargs):
         return settings.SITE.ui.row_action_button(
-            self.instance, ar, self.bound_action, label)
+            self.instance, ar, self.bound_action, label, **kwargs)
 
-    def as_button(self, *args, **kw):
+    def as_button(self, *args, **kwargs):
         """Return a HTML chunk with a "button" which, when clicked, will
         execute this action on this instance.  This is being used in
         the :ref:`lino.tutorial.polls`.
 
         """
-        return E.tostring(self.as_button_elem(*args, **kw))
+        return E.tostring(self.as_button_elem(*args, **kwargs))
 
 
 class Action(Parametrizable, Permittable):
@@ -959,17 +959,10 @@ class CreateRow(Action):
             ar.set_content_type('text/html')
 
         if ar.actor.stay_in_grid:
-            # ar.set_response(refresh_all=True)
             return
-            # ar.set_response(refresh_all=True)
             # No need to ask refresh_all since closing the window will
             # automatically refresh the underlying window.
 
-        # if ar.edit_mode == constants.EDIT_MODE_HREF:
-        #     ar.set_response(refresh_all=True)
-        #     return
-        # if ar.edit_mode != constants.EDIT_MODE_GRID:
-        #     ar.set_response(close_window=True)
         ar.goto_instance(elem)
 
 

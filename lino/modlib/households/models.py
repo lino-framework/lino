@@ -12,6 +12,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
+from __future__ import unicode_literals
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -245,6 +247,15 @@ class Member(dd.DatePeriod):
             for ln in self.address_location_lines():
                 yield ln
 
+    @dd.action(help_text=_("Make this the primary household."))
+    def set_primary(self, ar):
+        # logger.info("20140918 set_primary")
+        self.primary = True
+        self.full_clean()
+        self.save()
+        self.after_ui_save(ar)
+        ar.success(refresh=True)
+
 
 class Members(dd.Table):
     model = 'households.Member'
@@ -428,12 +439,15 @@ class MembersByPerson(Members):
 
         items = []
         for m in sar.data_iterator:
+            
             args = (unicode(m.role), _(" in "),
                     ar.obj2html(m.household))
             if m.primary:
-                items.append(E.li(E.b(*args)))
+                items.append(E.li(E.b("\u2611 ", *args)))
             else:
-                items.append(E.li(*args))
+                btn = m.set_primary.as_button_elem(
+                    ar, "\u2610 ", style="text-decoration:none;")
+                items.append(E.li(btn, *args))
         if len(items) > 0:
             elems += [_("%s is") % obj]
             elems.append(E.ul(*items))

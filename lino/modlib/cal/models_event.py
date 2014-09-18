@@ -861,7 +861,7 @@ if settings.SITE.user_model:
         label = _("My events")
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
-        column_names = 'when_text summary workflow_buttons project *'
+        column_names = 'when_text project summary workflow_buttons *'
         auto_fit_column_widths = True
 
         @classmethod

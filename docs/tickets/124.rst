@@ -22,15 +22,15 @@ DONE:
   parenté.  
   --> OK
 
-FEEDBACK
+- Onglet "Interventants", panneau "Contacts":
+  Supprimer "Type de contact client".
+  Renommer "Remarques" en "Coordonnées".
 
-- Composition de ménage : Nous n’avons pas la possibilité d’encoder en
-  libre.
-  --> non reproductible
+- Page d'accueil : Placer la colonne « Bénéficiaire » entre « Quand »
+  et « Résumé »
 
-- Composition de ménage : ajouter une colonne "Suivi par"
 
-  --> quelle serait la différence entre ce champ et un accompagnement?
+TESTING
 
 - Liens de parenté : Faire le même type de tableau que
   Composition de ménage avec encodage libre (voir annexe).
@@ -55,7 +55,17 @@ FEEDBACK
 
   - Comment représenter/nommer un ménage de maniè re plus intuitive?
 
-TODO:
+DISCUSS
+
+- Composition de ménage : Nous n’avons pas la possibilité d’encoder en
+  libre.
+  --> non reproductible
+
+- Composition de ménage : ajouter une colonne "Suivi par"
+
+  --> quelle serait la différence entre ce champ et un accompagnement?
 
 - Composition de ménage : ajouter un champ "Garde enfant"
-- Ajouter une colonne "Suivi par"
+
+TODO:
+

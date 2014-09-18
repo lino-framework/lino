@@ -94,6 +94,11 @@ add('06',
     pgettext("male", "Friend"), pgettext("female", "Friend"),
     symmetric=True)
 
+add('07',
+    'step',
+    _("Stepfather"), _("Stepmother"),
+    _("Stepson"), _("Stepdaughter"))
+
 add('80',
     'relative',
     pgettext("male", "Relative"), pgettext("female", "Relative"),
@@ -169,6 +174,7 @@ class Link(dd.Model):
 class Links(dd.Table):
     model = 'humanlinks.Link'
     required = dd.required(user_level='admin')
+    stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent
     child
