@@ -15,6 +15,8 @@ Adriaen
 Adriaensen
 Aelter
 
+>>> from lino.utils.demonames import LAST_NAMES_RUSSIA
+
 Next comes a group of five Russians:
 
 >>> for i in range(5):
@@ -27,6 +29,7 @@ Ankundinov
 
 Or here is a mixture of nationalities, for each Belgian comes one foreigner:
 
+>>> from lino.utils.demonames import LAST_NAMES_MUSLIM
 >>> LAST_NAMES = Cycler(LAST_NAMES_BELGIUM,
 ...     LAST_NAMES_RUSSIA, LAST_NAMES_BELGIUM, LAST_NAMES_MUSLIM)
 

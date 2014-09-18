@@ -286,14 +286,18 @@ class SiblingsByPerson(Members):
             ar.master_household = mbr[0].household
         elif mbr.count() == 0:
             ar.no_data_text = _("%s is not member of any household") % mi
-        else:
-            mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
+        else:  # more than 1 row
             mbr = mbr.filter(primary=True)
             if mbr.count() == 1:
                 ar.master_household = mbr[0].household
             else:
-                ar.no_data_text = _(
-                    "%s is member of multiple households") % mi
+                mbr = M.objects.filter(person=mi)
+                mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
+                if mbr.count() == 1:
+                    ar.master_household = mbr[0].household
+                else:
+                    ar.no_data_text = _(
+                        "%s is member of multiple households") % mi
         
     @classmethod
     def get_filter_kw(self, ar, **kw):

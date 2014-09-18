@@ -19,14 +19,14 @@ Aaron Kask & Aili Kukk
 
 >>> streets = Cycler(streets_of_tallinn())
 >>> print(len(streets))
-1579
+1523
 >>> for i in range(5):
 ...     print("%s (%s)" % streets.pop())
-Aarde tn (PÕHJA-TALLINN)
-Aasa tn (KESKLINN)
-Aate tn (NÕMME)
-Abaja põik (PIRITA)
-Abaja tn (PIRITA)
+Aarde tn (Põhja-Tallinn)
+Aasa tn (Kesklinn)
+Aate tn (Nõmme)
+Abaja põik (Pirita)
+Abaja tn (Pirita)
 
 
 Sources:
@@ -2758,6 +2758,8 @@ def streets_of_tallinn():
                 if s == "NÕMME": return "Nõmme"
                 if s == "MUSTAMÄE": return "Mustamäe"
                 if s == "LASNAMÄE": return "Lasnamäe"
+                if s == "KESKLINN": return "Kesklinn"
+                if s == "PIRITA": return "Pirita"
                 return s
             linnaosa = convert(linnaosa)
 
