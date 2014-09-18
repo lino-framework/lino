@@ -2,9 +2,9 @@
 Thursday, September 18, 2014
 ============================
 
-I finally fixed a bug in `linoweb.js` which has caused already quite
-some irritation: Lino.HtmlBoxPanels failed to automatically refresh
-after certain actions.  The reason was:
+Cool: I finally fixed a bug in `linoweb.js` which has caused already
+quite some irritation: Lino.HtmlBoxPanels failed to automatically
+refresh after certain actions.  The reason was:
 :meth:`Lino.FormPanel.get_status` must not store the whole
 `data_record` (only the `record_id`) because that would prevent the
 form from actually reloading when :meth:`set_status` is called after a
@@ -19,3 +19,4 @@ Continued to optimize for :ref:`chat`:
   "Responsible user"
 
 
+Opened :doc:`/tickets/125`.

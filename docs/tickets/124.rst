@@ -69,3 +69,8 @@ DISCUSS
 
 TODO:
 
+- there's more to do
+
+Pages referring to this:
+
+.. refstothis::

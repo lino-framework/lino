@@ -1,10 +1,11 @@
 :state: done
 :module: lino
 
-#79 : Change Lino license from GPL to LGPL
-==========================================
+===================================================
+#79 [closed] : Change Lino license from GPL to LGPL
+===================================================
 
-Done.
+Done. Obsolete after :doc:`125`.
 
 After some exchange with Joe about licensing, I understood that the
 LGPL and not the GPL is what I always have wanted for Lino. I

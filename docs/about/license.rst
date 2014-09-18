@@ -1,6 +1,8 @@
 License
 =======
 
+This document will be obsolete after :doc:`/tickets/125`.
+
 .. note::
 
    Disclaimer: This section explains how we understand the LGPL.  It
@@ -34,9 +36,7 @@ work free software by publishing it using the GPL or LGPL.
 
 You may do all this as a *commercial activity*.  When working with
 free software, you make money by selling *your work*, not by selling
-*the permission to use* your work (aka license).  The trick is to
-understand the basic message of the GPL: **spiritual work is no
-private property and cannot be used as capital**.
+*the permission to use* your work (aka license).  
 
 Here are some ideas on how to use Lino for making money:
 

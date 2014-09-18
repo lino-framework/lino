@@ -1,8 +1,8 @@
 :state: closed
 :module: lino
 
-#16 : Lino cannot switch to BSD or LGPL
-=======================================
+#16 [closed] : Lino cannot switch to BSD or LGPL
+================================================
 
 This ticket is closed. See :doc:`79`.
 

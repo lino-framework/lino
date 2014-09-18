@@ -1,11 +1,6 @@
 Releases
 ========
 
-.. py2rst::
-
-  from atelier.sphinxconf import version2rst
-  import lino
-  version2rst(self,lino)
 
 Older releases
 --------------
