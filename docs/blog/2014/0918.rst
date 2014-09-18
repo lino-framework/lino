@@ -14,6 +14,15 @@ child window closed.
 Opened ticket :doc:`/tickets/125`.
 ... and in the evening also did it for Lino and :ref:`welfare`.
 
+The Emacs manual explains who to do a `replace operation across more
+than one file
+<http://www.gnu.org/software/emacs/manual/html_node/efaq/Replacing-text-across-multiple-files.html>`_. Summary:
+
+- `M-x find-name-dired` to assemble a list of files
+- `t` (toggle selection)
+- `Q` to start a `query-replace-regexp` session on the selected files
+- `Y` to accept all replacements in all files.
+
 
 :doc:`/tickets/124`
 -------------------
