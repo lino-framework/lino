@@ -248,7 +248,7 @@ from lino.core.fields import PercentageField
 from lino.core.fields import QuantityField
 from lino.core.fields import HtmlBox, PriceField, RichTextField
 
-from lino.core.fields import DisplayField, displayfield
+from lino.core.fields import DisplayField, displayfield, htmlbox
 from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant

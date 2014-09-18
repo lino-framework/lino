@@ -13,7 +13,7 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Defines models for :mod:`lino.modlib.reception`.
+Defines models for :mod:`ml.reception`.
 
 Guest
 
@@ -131,34 +131,6 @@ def create_prompt_event(
     #~ event.full_clean()
     #~ print 20130722, ekw, ar.action_param_values.user, ar.get_user()
     return event
-
-
-class CreateNote(dd.Action):
-    label = _("Attestation")
-    show_in_workflow = True
-    parameters = dict(
-        #~ date=models.DateField(_("Date"),blank=True,null=True),
-        note_type=dd.ForeignKey('notes.NoteType'),
-        subject=models.CharField(verbose_name=_("Subject"), blank=True))
-    params_layout = """
-    note_type
-    subject
-    """
-    #~ required = dict(states='coached')
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        notes = dd.resolve_app('notes')
-        ekw = dict(project=obj, user=ar.get_user())
-        ekw.update(type=ar.action_param_values.note_type)
-        ekw.update(date=settings.SITE.today())
-        if ar.action_param_values.subject:
-            ekw.update(subject=ar.action_param_values.subject)
-        note = notes.Note(**ekw)
-        note.save()
-        #~ kw.update(success=True)
-        #~ kw.update(refresh=True)
-        ar.goto_instance(note, **kw)
 
 
 class CheckinVisitor(dd.NotifyingAction):
@@ -293,6 +265,14 @@ cal.Guest.receive = ReceiveVisitor(sort_index=101)
 cal.Guest.checkout = CheckoutVisitor(sort_index=102)
 
 
+@dd.receiver(dd.pre_analyze)
+def my_guest_workflows(sender=None, **kw):
+    GuestStates.excused.add_transition(
+        states='invited waiting accepted absent')
+    GuestStates.absent.add_transition(
+        states='waiting invited accepted excused')
+
+
 class AppointmentsByPartner(dd.Table):
     label = _("Appointments")
     model = 'cal.Guest'
@@ -303,6 +283,7 @@ class AppointmentsByPartner(dd.Table):
     #~ slave_grid_format = 'html'
     editable = False
     auto_fit_column_widths = True
+    variable_row_height = True
 
     @classmethod
     def get_request_queryset(self, ar):

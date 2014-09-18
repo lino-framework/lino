@@ -350,13 +350,14 @@ Choicelists
 .. class:: GuestStates
 
     Possible values for the state of a Guest. The list of choices for
-    the :attr:`Guest.state` field. By default it contains the following
-    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+    the :attr:`Guest.state` field.  Example data:
 
     .. django2rst:: 
 
             dd.show(cal.GuestStates)
 
+    The actual content can be redefined by other apps,
+    e.g. :mod:`ml.reception`. 
 
 
 Tables

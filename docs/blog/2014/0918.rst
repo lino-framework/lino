@@ -20,3 +20,23 @@ Continued to optimize for :ref:`chat`:
 
 
 Opened :doc:`/tickets/125`.
+
+
+:mod:`ml.reception` now adds two new states "excused" and "absent" to
+:class:`ml.cal.GuestStates`.
+
+Added :attr:`dd.AbstractTable.variable_row_height` to
+:class:`ml.reception.AppointmentsByPartner`.
+Before and after:
+
+.. image:: 0918a.png
+    :scale: 90
+
+.. image:: 0918b.png
+    :scale: 90
+
+(Also tried whether it makes a difference when in :file:`lino.css` I
+change the `white-space` property of `lino-auto-height` class from
+``normal`` to ``wrap``.)
+
+

@@ -44,7 +44,7 @@ if True:
     add('40', _("Present"), 'present', afterwards=True)
     #~ add('41', _("Gone"),'gone',afterwards=True)
     add('50', _("Absent"), 'absent', afterwards=True)
-    #~ add('60', _("Visit"),'visit')
+    add('60', _("Excused"), 'excused', afterwards=True)
 
 
 class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):

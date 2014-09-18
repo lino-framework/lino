@@ -1003,6 +1003,7 @@ class Actor(actions.Parametrizable):
             l.append(sep)
             l.append(ar.action_button(ba, obj))
             sep = ' '
+            # sep = E.br()
         return E.p(*l)
 
     @classmethod

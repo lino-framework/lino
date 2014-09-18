@@ -8,18 +8,20 @@ Before actually doing it, I use this ticket to explain why.
 What does it mean to change the Lino license from LGPL to BSD?  If you
 arrived here, then you probably **agree** that software should be free
 to use for everybody.  The question is: what should we do with those
-who **don't**? That is, with those who *don't play nice* and try to
-turn our spiritual work into their proprietary software?  Can we
-**force** them somehow to play nice?  The GPL says "We must force
-them!"  while the BSD says "Keep cool!"
+who **don't** agree? That is, with those who *don't play nice* and try
+to turn our spiritual work into their proprietary software?  Can we
+**force** them somehow to play nice?  Until recently I believed that
+"We must force them!" (GPL), but I have come to say "Keep cool!"
+(BSD).
 
 Here is why I did the move:
 
 - I am fed up with contantly thinking about the copyright topic.
 - Anyway the GPL is not enough to get rid of `the copyright plague`_.
-- I hope to get more help from Django developers
+- I hope to get more help from Django developers when they are no
+  longer locked away by the license
 
-Concretely TODO:
+TODO:
 
 - Change contents of `COPYING.txt` file.  `producingoss.com
   <http://producingoss.com/en/license-quickstart.html>`_ gave concrete

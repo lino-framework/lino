@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-18 03:43+0300\n"
+"POT-Creation-Date: 2014-09-18 08:21+0300\n"
 "PO-Revision-Date: 2014-08-20 05:18+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -405,11 +405,11 @@ msgstr "Record  %(rowid)d von %(rowcount)d"
 msgid "No navigation"
 msgstr "Ohne Navigation"
 
-#: lino/core/fields.py:896
+#: lino/core/fields.py:903
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
-#: lino/core/fields.py:963
+#: lino/core/fields.py:970
 #, python-format
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
@@ -1845,7 +1845,7 @@ msgstr "%d zugewiesene Termine"
 msgid "Only rows having this state."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:668 lino/modlib/reception/models.py:297
+#: lino/modlib/cal/models_event.py:668 lino/modlib/reception/models.py:305
 msgid "Appointments"
 msgstr "Termine"
 
@@ -2204,6 +2204,7 @@ msgid "Reopen"
 msgstr "Neu öffnen"
 
 #: lino/modlib/cal/workflows/faggio.py:24
+#: lino/modlib/cal/workflows/feedback.py:47
 msgid "Excused"
 msgstr "Entschuldigt"
 
@@ -2984,6 +2985,7 @@ msgid "Unlimited"
 msgstr "Unbeschränkt"
 
 #: lino/modlib/courses/models.py:460 lino/modlib/courses/models.py:721
+#: lino/modlib/courses/models.py:1007
 msgid "Enrolments"
 msgstr "Einschreibungen"
 
@@ -3833,7 +3835,7 @@ msgstr "%s ist in keinem Haushalt"
 msgid "%s is member of multiple households"
 msgstr "%s ist in mehreren Haushalten zugleich"
 
-#: lino/modlib/households/models.py:360 lino/modlib/reception/models.py:483
+#: lino/modlib/households/models.py:360 lino/modlib/reception/models.py:492
 msgid " and "
 msgstr " und "
 
@@ -5078,73 +5080,73 @@ msgstr "Besucher hat Zentrum verlassen."
 msgid "%(guest)s leaves after meeting with %(user)s."
 msgstr "%(guest)s beginnt Einzelgespräch bei %(user)s."
 
-#: lino/modlib/reception/models.py:324
+#: lino/modlib/reception/models.py:333
 msgid "Expected Guests"
 msgstr "Erwartete Besucher"
 
-#: lino/modlib/reception/models.py:325
+#: lino/modlib/reception/models.py:334
 msgid "Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
-#: lino/modlib/reception/models.py:353
+#: lino/modlib/reception/models.py:362
 msgid "Received Visitors"
 msgstr "Empfangene Besucher"
 
-#: lino/modlib/reception/models.py:354
+#: lino/modlib/reception/models.py:363
 msgid "Shows the visitors being received."
 msgstr ""
 
-#: lino/modlib/reception/models.py:364 lino/modlib/reception/models.py:416
-#: lino/modlib/reception/models.py:432 lino/modlib/reception/models.py:455
+#: lino/modlib/reception/models.py:373 lino/modlib/reception/models.py:425
+#: lino/modlib/reception/models.py:441 lino/modlib/reception/models.py:464
 msgid "Since"
 msgstr "Seit"
 
-#: lino/modlib/reception/models.py:410
+#: lino/modlib/reception/models.py:419
 msgid "Busy visitors"
 msgstr "Beschäftigte Besucher"
 
-#: lino/modlib/reception/models.py:411
+#: lino/modlib/reception/models.py:420
 msgid "Shows the visitors who are busy with some agent."
 msgstr ""
 
-#: lino/modlib/reception/models.py:422
+#: lino/modlib/reception/models.py:431
 msgid "Waiting visitors"
 msgstr "Wartende Besucher"
 
-#: lino/modlib/reception/models.py:423
+#: lino/modlib/reception/models.py:432
 msgid "Shows the visitors in the waiting room."
 msgstr ""
 
-#: lino/modlib/reception/models.py:436
+#: lino/modlib/reception/models.py:445
 #, fuzzy
 msgid "Position"
 msgstr "Postsendung"
 
-#: lino/modlib/reception/models.py:437
+#: lino/modlib/reception/models.py:446
 msgid "Position in waiting queue (per agent)"
 msgstr ""
 
-#: lino/modlib/reception/models.py:449
+#: lino/modlib/reception/models.py:458
 msgid "Gone visitors"
 msgstr "Gegangene Besucher"
 
-#: lino/modlib/reception/models.py:450
+#: lino/modlib/reception/models.py:459
 msgid "Shows the visitors who have gone."
 msgstr ""
 
-#: lino/modlib/reception/models.py:461
+#: lino/modlib/reception/models.py:470
 msgid "Visitors waiting for me"
 msgstr "Meine Warteschlange"
 
-#: lino/modlib/reception/models.py:466
+#: lino/modlib/reception/models.py:475
 msgid "Visitors busy with me"
 msgstr "Meine beschäftigten Besucher"
 
-#: lino/modlib/reception/models.py:477
+#: lino/modlib/reception/models.py:486
 msgid "You are busy with "
 msgstr "Du bist beschäftigt mit "
 
-#: lino/modlib/reception/models.py:489
+#: lino/modlib/reception/models.py:498
 msgid "My gone visitors"
 msgstr "Meine gegangenen Besucher"
 

@@ -69,7 +69,34 @@ DISCUSS
 
 TODO:
 
-- there's more to do
+- Onglet "Personne". 
+
+  - Panneau "Rendez-vous": Renommer « Utilisateur responsable » en «
+    Agent traitant »
+
+  - Avoir la possibilité de choisir « Pas venu » et « Pas excusé » en
+    plus de « Recevoir » et « Quitter »
+
+  - Renommer « EnrolmentsByPupil » en  « Orientations internes en attente »
+
+- Si on ajoute une orientation par ce module, il ne s’inscrit pas dans
+  l’onglet « Orientation interne »…Par contre, si on ajoute la
+  personne par l’onglet « Orientation interne », il apparaît
+  correctement dans « Enrolments ».
+
+Onglet "Ateliers" :
+
+- Corriger mercrediT en mercredi (une fois qu’on a cliqué sur un des
+  ateliers)
+
+Dans configuration, Je ne trouve pas les emplacements pour modifier
+les menus déroulants :
+
+- Etat civil
+- Panneau Langues : les niveaux de français (écrit et oral) – Bien,
+  très bien…
+
+ 
 
 Pages referring to this:
 

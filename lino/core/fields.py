@@ -519,9 +519,16 @@ class RequestField(VirtualField):
 
 def displayfield(*args, **kw):
     """
-    Decorator shortcut to turn a method into a virtual DisplayField.
+    Decorator shortcut to turn a method into a DisplayField.
     """
     return virtualfield(DisplayField(*args, **kw))
+
+
+def htmlbox(*args, **kw):
+    """
+    Decorator shortcut to turn a method into a HtmlBox.
+    """
+    return virtualfield(HtmlBox(*args, **kw))
 
 
 def requestfield(*args, **kw):

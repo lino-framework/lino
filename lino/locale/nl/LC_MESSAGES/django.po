@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-18 03:43+0300\n"
+"POT-Creation-Date: 2014-09-18 08:21+0300\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -404,11 +404,11 @@ msgstr "Record  %(rowid)d von %(rowcount)d"
 msgid "No navigation"
 msgstr "Ohne Navigation"
 
-#: lino/core/fields.py:896
+#: lino/core/fields.py:903
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
-#: lino/core/fields.py:963
+#: lino/core/fields.py:970
 #, python-format
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
@@ -1883,7 +1883,7 @@ msgstr ""
 msgid "Only rows having this state."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:668 lino/modlib/reception/models.py:297
+#: lino/modlib/cal/models_event.py:668 lino/modlib/reception/models.py:305
 msgid "Appointments"
 msgstr ""
 
@@ -2257,6 +2257,7 @@ msgid "Reopen"
 msgstr ""
 
 #: lino/modlib/cal/workflows/faggio.py:24
+#: lino/modlib/cal/workflows/feedback.py:47
 #, fuzzy
 msgid "Excused"
 msgstr "Erstellt"
@@ -3066,6 +3067,7 @@ msgid "Unlimited"
 msgstr ""
 
 #: lino/modlib/courses/models.py:460 lino/modlib/courses/models.py:721
+#: lino/modlib/courses/models.py:1007
 msgid "Enrolments"
 msgstr ""
 
@@ -3948,7 +3950,7 @@ msgstr ""
 msgid "%s is member of multiple households"
 msgstr ""
 
-#: lino/modlib/households/models.py:360 lino/modlib/reception/models.py:483
+#: lino/modlib/households/models.py:360 lino/modlib/reception/models.py:492
 #, fuzzy
 msgid " and "
 msgstr "Geschlecht"
@@ -5209,73 +5211,73 @@ msgstr ""
 msgid "%(guest)s leaves after meeting with %(user)s."
 msgstr ""
 
-#: lino/modlib/reception/models.py:324
+#: lino/modlib/reception/models.py:333
 msgid "Expected Guests"
 msgstr ""
 
-#: lino/modlib/reception/models.py:325
+#: lino/modlib/reception/models.py:334
 msgid "Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
-#: lino/modlib/reception/models.py:353
+#: lino/modlib/reception/models.py:362
 msgid "Received Visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:354
+#: lino/modlib/reception/models.py:363
 msgid "Shows the visitors being received."
 msgstr ""
 
-#: lino/modlib/reception/models.py:364 lino/modlib/reception/models.py:416
-#: lino/modlib/reception/models.py:432 lino/modlib/reception/models.py:455
+#: lino/modlib/reception/models.py:373 lino/modlib/reception/models.py:425
+#: lino/modlib/reception/models.py:441 lino/modlib/reception/models.py:464
 msgid "Since"
 msgstr ""
 
-#: lino/modlib/reception/models.py:410
+#: lino/modlib/reception/models.py:419
 msgid "Busy visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:411
+#: lino/modlib/reception/models.py:420
 msgid "Shows the visitors who are busy with some agent."
 msgstr ""
 
-#: lino/modlib/reception/models.py:422
+#: lino/modlib/reception/models.py:431
 msgid "Waiting visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:423
+#: lino/modlib/reception/models.py:432
 msgid "Shows the visitors in the waiting room."
 msgstr ""
 
-#: lino/modlib/reception/models.py:436
+#: lino/modlib/reception/models.py:445
 #, fuzzy
 msgid "Position"
 msgstr "Omschrijving"
 
-#: lino/modlib/reception/models.py:437
+#: lino/modlib/reception/models.py:446
 msgid "Position in waiting queue (per agent)"
 msgstr ""
 
-#: lino/modlib/reception/models.py:449
+#: lino/modlib/reception/models.py:458
 msgid "Gone visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:450
+#: lino/modlib/reception/models.py:459
 msgid "Shows the visitors who have gone."
 msgstr ""
 
-#: lino/modlib/reception/models.py:461
+#: lino/modlib/reception/models.py:470
 msgid "Visitors waiting for me"
 msgstr ""
 
-#: lino/modlib/reception/models.py:466
+#: lino/modlib/reception/models.py:475
 msgid "Visitors busy with me"
 msgstr ""
 
-#: lino/modlib/reception/models.py:477
+#: lino/modlib/reception/models.py:486
 msgid "You are busy with "
 msgstr ""
 
-#: lino/modlib/reception/models.py:489
+#: lino/modlib/reception/models.py:498
 msgid "My gone visitors"
 msgstr ""
 
