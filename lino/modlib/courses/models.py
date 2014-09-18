@@ -1004,7 +1004,7 @@ class EnrolmentsByPupil(Enrolments):
     def get_actor_label(self):
         if self._course_area is not None:
             return self._course_area.text
-        return self._label or self.__name__
+        return _("Enrolments")
 
     @classmethod
     def param_defaults(self, ar, **kw):
