@@ -12,7 +12,7 @@ SETUP_INFO = dict(
         'jinja2', 'appy', 'pytidylib', 'PyYAML'],
     description="A framework for writing desktop-like web applications \
     using Django and ExtJS",
-    license='BSD',
+    license='BSD License',
     include_package_data=True,
     zip_safe=False,
     author='Luc Saffre',
@@ -28,7 +28,7 @@ SETUP_INFO = dict(
   Framework :: Django
   Intended Audience :: Developers
   Intended Audience :: System Administrators
-  License :: OSI Approved :: BSD
+  License :: OSI Approved :: BSD License
   Natural Language :: English
   Natural Language :: French
   Natural Language :: German
@@ -36,8 +36,7 @@ SETUP_INFO = dict(
   Topic :: Database :: Front-Ends
   Topic :: Home Automation
   Topic :: Office/Business
-  Topic :: Software Development :: Libraries :: \
-  Application Frameworks""".splitlines())
+  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
 
 SETUP_INFO.update(long_description="""\
 Lino is a high-level framework for writing desktop-like customized
