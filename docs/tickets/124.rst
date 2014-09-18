@@ -29,6 +29,16 @@ DONE:
 - Page d'accueil : Placer la colonne « Bénéficiaire » entre « Quand »
   et « Résumé »
 
+- Onglet "Ateliers" : corriger mercrediT en mercredi (une fois qu’on a
+  cliqué sur un des ateliers)
+
+- Peux-tu aussi retirer la case "personne" et mettre "auteur" dans la
+  liste des ateliers.
+  --> OK sauf que je propose "Instructeur" au lieu de "Auteur".
+
+- Connaissances de langue : Renommer la colonne « Parlé » en «
+  Expression orale », « Ecrit » en « Expression écrite », etc.
+
 
 TESTING
 
@@ -40,20 +50,27 @@ TESTING
 
   --> je propose d'envisager l'approche suivant:
 
-  - nous laissons les liens de parenté en mode "sommaire" car un
-    tableau serait peu pratique. Par exemple il ne permet pas
-    d'encoder le père et la mère d'un enfant en un seul coup.
+- nous laissons les liens de parenté en mode "sommaire" car un
+  tableau serait peu pratique. Par exemple il ne permet pas
+  d'encoder le père et la mère d'un enfant en un seul coup.
 
-  - nous convenons qu'il faut encoder les ménages précédents pour
-    pouvoir encoder les enfants provenant de ces ménages.  Notons
-    qu'il est conseillé mais pas nécessaire d'encoder le partenaire
-    d'un ménage.
+- nous convenons qu'il faut encoder les ménages précédents pour
+  pouvoir encoder les enfants provenant de ces ménages.  Notons
+  qu'il est conseillé mais pas nécessaire d'encoder le partenaire
+  d'un ménage.
 
-  - Je fais en sorte que Lino génère automatiquement les personnes et
-    liens de parenté à partir des données dans les compositions de
-    ménage (donc aussi la direction inverse de ce qu'il fait déjà).
+- Je fais en sorte que Lino génère automatiquement les personnes et
+  liens de parenté à partir des données dans les compositions de
+  ménage (donc aussi la direction inverse de ce qu'il fait déjà).
 
-  - Comment représenter/nommer un ménage de maniè re plus intuitive?
+- Comment représenter/nommer un ménage de maniè re plus intuitive?
+
+- Onglet "Personne", panneau "Rendez-vous": Renommer « Utilisateur
+  responsable » en « Agent traitant » --> OK
+
+- Onglet "Personne", panneau "Rendez-vous": Avoir la possibilité de
+  choisir « Pas venu » et « Pas excusé » en plus de « Recevoir » et
+  « Quitter » --> OK sauf que je les appelle "Excusé" et "Absent"
 
 DISCUSS
 
@@ -67,36 +84,60 @@ DISCUSS
 
 - Composition de ménage : ajouter un champ "Garde enfant"
 
-TODO:
+- «EnrolmentsByPupil» : Renommer en "Orientations internes en attente"
 
-- Onglet "Personne". 
-
-  - Panneau "Rendez-vous": Renommer « Utilisateur responsable » en «
-    Agent traitant »
-
-  - Avoir la possibilité de choisir « Pas venu » et « Pas excusé » en
-    plus de « Recevoir » et « Quitter »
-
-  - Renommer « EnrolmentsByPupil » en  « Orientations internes en attente »
-
-- Si on ajoute une orientation par ce module, il ne s’inscrit pas dans
+  Si on ajoute une orientation par ce module, il ne s’inscrit pas dans
   l’onglet « Orientation interne »…Par contre, si on ajoute la
   personne par l’onglet « Orientation interne », il apparaît
   correctement dans « Enrolments ».
 
-Onglet "Ateliers" :
+  Quand on a créé un atelier, dans l’onglet inscription : Si on a fait
+  une demande pour un bénéficiaire et qu’on clique sur annulé, la
+  ligne disparaît des inscriptions mais pas du module Enrolments situé
+  dans l’onglet personne. Peut-on faire en sorte que ça disparaisse
+  aussi d’Enrolments ?
 
-- Corriger mercrediT en mercredi (une fois qu’on a cliqué sur un des
-  ateliers)
+  --> Quel est le but de ce panneau? Pourquoi est-il dans
+  le premier onglet?
 
-Dans configuration, Je ne trouve pas les emplacements pour modifier
-les menus déroulants :
+- Dans configuration, je ne trouve pas les emplacements pour modifier
+  les menus déroulants :
 
-- Etat civil
-- Panneau Langues : les niveaux de français (écrit et oral) – Bien,
-  très bien…
+    - Etat civil
+
+    
+  Oui, certaines listes ne sont pas prévus pour etre "directement"
+  modifiables. Dis-moi ce que tu voudrais changer. 
+
+- Peux-tu aussi changer le mot PARTICIPANTS en BENEFICIAIRES (afin que
+  l’on ait la liste de nos bénéficiaires). Ça va nous servir pour
+  compter le nombre de personnes présentes et garder un historique.
+
+  --> Mais le meme système pourrait servir pour des réunions internes,
+  (gestion des présences pour des personnes qui ne sont pas des
+  bénéficiaires)
+
+- Alerte mail quand ajout nouvel intervenant.
+
+TODO:
+
+- Quand on a créé un atelier, dans l’onglet inscription : Si on a fait
+  une demande pour un bénéficiaire et qu’on clique sur annulé, la
+  ligne disparaît des inscriptions mais pas du module Enrolments situé
+  dans l’onglet personne. Peut-on faire en sorte que ça disparaisse
+  aussi d’Enrolments ?
+
+- Module « Compétences professionnelles » :
+
+  - Renommer « Propriété » en « Fonction » (et reprendre les métiers
+    déjà encodés dans Fonctions)
+
+    --> nouvelle table
 
  
+- Niveaux de connaissance de langue ("Bien", "Très bien" etc) Très
+  bien, Bien, Moyen, Faible, Très faible
+    
 
 Pages referring to this:
 

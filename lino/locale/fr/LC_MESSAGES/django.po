@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2014-09-18 08:21+0300\n"
-"PO-Revision-Date: 2014-09-18 08:22+0300\n"
+"PO-Revision-Date: 2014-09-18 14:41+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -2035,7 +2035,7 @@ msgstr "Mardi"
 
 #: lino/modlib/cal/utils.py:107
 msgid "Wednesday"
-msgstr "Mercredit"
+msgstr "Mercredi"
 
 #: lino/modlib/cal/utils.py:108
 msgid "Thursday"
@@ -2102,9 +2102,8 @@ msgid "monthly"
 msgstr "chaque mois"
 
 #: lino/modlib/cal/utils.py:201
-#, fuzzy
 msgid "yearly"
-msgstr "années"
+msgstr "chaque année"
 
 #: lino/modlib/cal/utils.py:202
 #, fuzzy

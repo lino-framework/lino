@@ -14,7 +14,7 @@ class PackagesTests(LinoTestCase):
         self.run_packages_test(lino.SETUP_INFO['packages'])
 
 
-class BlogTest(LinoTestCase):
+class BlogTests(LinoTestCase):
     def test_all(self):
         self.run_simple_doctests("""
         docs/blog/2013/0316.rst
@@ -118,9 +118,8 @@ class UtilsTests(LinoTestCase):
 
     def test_demonames(self):
         self.run_simple_doctests("""
-        lino/utils/demonames/__init__.py
+        lino/utils/demonames/bel.py
         lino/utils/demonames/est.py
-        lino/utils/demonames/rus.py
         """)
 
     def test_08(self): self.run_simple_doctests('lino/utils/odsreader.py')

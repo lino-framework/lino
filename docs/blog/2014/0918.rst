@@ -10,16 +10,21 @@ refresh after certain actions.  The reason was:
 form from actually reloading when :meth:`set_status` is called after a
 child window closed.
 
-Continued to optimize for :ref:`chat`:
+
+Opened ticket :doc:`/tickets/125`.
+... and in the evening also did it for Lino and :ref:`welfare`.
+
+
+:doc:`/tickets/124`
+-------------------
+
+Continued to work on this ticket.
 
 - Added a clickable checkbox indicating the primary household in 
   the summary view of :class:`ml.households.MembersByPerson`.
 
 - :attr:`ml.cal.Event.user` : `verbose_name` is now "Agent" instead of
   "Responsible user"
-
-
-Opened :doc:`/tickets/125`.
 
 
 :mod:`ml.reception` now adds two new states "excused" and "absent" to
@@ -40,3 +45,8 @@ change the `white-space` property of `lino-auto-height` class from
 ``normal`` to ``wrap``.)
 
 
+The :mod:`lino_welfare.projects.chatelet` variant now has a completely
+redesigned :mod:`welfare.cv` module (currently in
+:mod:`lino_welfare.projects.chatelet.modlib.cv`).  It is functionally
+almost equivalent to :mod:`lino_welfare.modlib.cv` which I plan to
+deprecate since it uses :mod:`lino.modlib.properties`.

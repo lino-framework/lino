@@ -1,4 +1,7 @@
 # -*- coding: UTF-8 -*-
+# Copyright 2009-2014 Luc Saffre
+# License: BSD (see file COPYING for details)
+
 from __future__ import unicode_literals
 
 SETUP_INFO = dict(
@@ -9,7 +12,7 @@ SETUP_INFO = dict(
         'jinja2', 'appy', 'pytidylib', 'PyYAML'],
     description="A framework for writing desktop-like web applications \
     using Django and ExtJS",
-    license='LGPL',
+    license='BSD',
     include_package_data=True,
     zip_safe=False,
     author='Luc Saffre',
@@ -25,7 +28,7 @@ SETUP_INFO = dict(
   Framework :: Django
   Intended Audience :: Developers
   Intended Audience :: System Administrators
-  License :: OSI Approved :: GNU Lesser General Public License (LGPL)
+  License :: OSI Approved :: BSD
   Natural Language :: English
   Natural Language :: French
   Natural Language :: German

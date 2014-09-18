@@ -51,12 +51,12 @@ membership for the same person with another person.  And in
 >>> Member.objects.filter(person=p).count()
 2
 >>> dd.show(dd.modules.households.MembersByPerson, master_instance=p)
-============================== =================== ============ ==========
- Household                      Role                Start date   End date
------------------------------- ------------------- ------------ ----------
- Family Braun-Evrard            Head of household
- Factual household Braun-Adam   Head of household                3/4/02
-============================== =================== ============ ==========
+============================ =================== ========= ============ ==========
+ Household                    Role                Primary   Start date   End date
+---------------------------- ------------------- --------- ------------ ----------
+ Jan & Eveline Braun-Evrard   Head of household   No
+ Jan & Noémie Braun-Adam      Head of household   No                     3/4/02
+============================ =================== ========= ============ ==========
 <BLANKLINE>
 
 >>> SiblingsByPerson = dd.modules.households.SiblingsByPerson

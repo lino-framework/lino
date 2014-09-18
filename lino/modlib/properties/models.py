@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2008-2014 Luc Saffre
-# This file is part of the Lino project.
-# Lino is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# You should have received a copy of the GNU Lesser General Public License
-# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# License: BSD (see file COPYING for details)
 
 """
 
@@ -37,7 +27,6 @@ import cgi
 import datetime
 
 from django.db import models
-#~ from django.db.models import Q
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
@@ -50,40 +39,6 @@ from lino import dd
 from lino.core.choicelists import get_choicelist, choicelist_choices
 
 MULTIPLE_VALUES_SEP = ','
-
-
-class DoYouLike(dd.ChoiceList):
-    """A list of possible answers to questions of type "How much do you
-    like ...?".
-
-    """
-    verbose_name = _("certainly not...very much")
-
-add = DoYouLike.add_item
-add('0', _("certainly not"))
-add('1', _("rather not"))
-add('2', _("normally"), "default")
-add('3', _("quite much"))
-add('4', _("very much"))
-
-
-class HowWell(dd.ChoiceList):
-
-    """A list of possible answers to questions of type "How well ...?":
-    "not at all", "a bit", "moderate", "quite well" and "very well"
-    
-    which are stored in the database as '0' to '4',
-    and whose `__unicode__()` returns their translated text.
-
-    """
-    verbose_name = _("not at all...very well")
-
-add = HowWell.add_item
-add('0', _("not at all"))
-add('1', _("a bit"))
-add('2', _("moderate"), "default")
-add('3', _("quite well"))
-add('4', _("very well"))
 
 
 class PropType(dd.BabelNamed):
@@ -333,10 +288,15 @@ class ChoicesByType(PropChoices):
     column_names = 'value text *'
 
 
+def setup_explorer_menu(site, ui, profile, m):
+    m = m.add_menu("props", _("Properties"))
+    m.add_action('properties.Properties')
+
+
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu("props", _("Properties"))
-    m.add_action(PropGroups)
-    m.add_action(PropTypes)
+    m.add_action('properties.PropGroups')
+    m.add_action('properties.PropTypes')
     for pg in PropGroup.objects.all():
         m.add_action(
             PropsByGroup,
