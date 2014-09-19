@@ -61,14 +61,14 @@ DONE:
       tableau serait peu pratique. Par exemple il ne permet pas
       d'encoder le père et la mère d'un enfant en un seul coup.
 
-    - nous convenons qu'il faut encoder les ménages précédents pour
-      pouvoir encoder les enfants provenant de ces ménages.  Notons
+    - nous convenons qu'il faut **encoder les ménages précédents** pour
+      pouvoir encoder les **enfants provenant de ces ménages**.  Notons
       qu'il est conseillé mais pas nécessaire d'encoder le partenaire
       d'un ménage.
 
-    - Je fais en sorte que Lino génère automatiquement les personnes et
+    - Lino génère maintenent automatiquement les personnes et
       liens de parenté à partir des données dans les compositions de
-      ménage (donc aussi la direction inverse de ce qu'il fait déjà).
+      ménage.
 
 - Onglet "Personne", panneau "Rendez-vous": Renommer « Utilisateur
   responsable » en « Agent traitant » --> OK
@@ -81,7 +81,7 @@ DONE:
   sont transférés dans "Savoirs de base" (merge IntegEnrolments
   into BasicEnrolments)
 
-- Les PIIS ot maintenant leur onglet à eux seuls.
+- Les PIIS ont maintenant leur onglet à eux seuls.
  
 DISCUSS
 
@@ -93,9 +93,13 @@ DISCUSS
 
   --> quelle serait la différence entre ce champ et un accompagnement?
 
-- "Intervenant" et "Accompagnement"?
+- Vocabulaire: "Intervenant" et/ou "Accompagnement"?
 
 - Composition de ménage : ajouter un champ "Garde enfant"
+
+  --> pourrais-tu me raconter plus sur le champ "Garde d'enfant": Que
+  comptez-vous noter dans ce champ (nom? tél? oui/non?)? Que
+  comptez-vous faire avec cette information?
 
 - «EnrolmentsByPupil» : Renommer en "Orientations internes en attente"
 
@@ -142,10 +146,11 @@ DISCUSS
 - Formations : se peut-il que les Eupenois encodent PIIS de type
   formation pour ce que vous voulez mettre dans "Formations"?
 
-- Regarder `changes.Changes` et réfléchir s'il vous le faut
+- Regarder `changes.Changes` et réfléchir s'il vous le faut.
 
 TODO:
 
+- Visite du chantier (Luc et Mathieu)
 
 Pages referring to this:
 
