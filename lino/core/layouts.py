@@ -589,9 +589,6 @@ def create_layout_element(lh, name, **kw):
     else:
         de = lh.get_data_elem(name)
 
-    if name == 'propgroup_skills':
-        logger.info("20140919 %s %s", lh, de)
-
     if isinstance(de, type) and issubclass(de, fields.Dummy):
         return None
 

@@ -269,8 +269,6 @@ class ActorMetaClass(type):
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
             elif not cls.__name__.startswith('unused_'):
-                if classname == 'BeIdCardTypes':
-                    logger.info("20140919 Found actor %s.", cls)
                 # ~ cls.class_init() # 20120115
                 actor_classes.append(cls)
             #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
