@@ -22,7 +22,7 @@ def objects():
     Member = dd.modules.households.Member
     MemberRoles = dd.modules.households.MemberRoles
     # Household = resolve_model('households.Household')
-    Person = resolve_model('contacts.Person')
+    Person = resolve_model(dd.apps.households.person_model)
     Type = resolve_model('households.Type')
 
     MEN = Cycler(Person.objects.filter(gender=dd.Genders.male)

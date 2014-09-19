@@ -172,12 +172,12 @@ Tables and Layouts
 
 
 
-Settings
-========
+Configuration
+=============
 
 .. class:: Plugin
 
-  See also :doc:`/admin/settings` and :doc:`/dev/ad`.
+  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
 
   .. attribute:: hide_region
 

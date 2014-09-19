@@ -54,6 +54,7 @@ from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
 from lino.core import fields
+from lino.core import choicelists
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants

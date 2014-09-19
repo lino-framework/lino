@@ -65,4 +65,3 @@ class Site(Site):
         #~ yield 'lino'
 
 SITE = Site(globals())
-#~ print 20130409, __file__, LOGGING

@@ -8,8 +8,12 @@ The :mod:`lino.ad` module is a shortcut to those parts of Lino which
 are used in your :xfile:`settings.py` files and in the
 :xfile:`__init__.py` files of your apps.  The name ``ad`` stands for
 "Application Design".  Application design happens **during** the
-import of your Django settings and **before** your models are
+import of your Django **settings** and **before** your **models** get
 imported.
+
+Lino defines two classes :class:`Site` and :class:`Plugin` which are
+heavily used to do lots of magic and to make apps more pleasant to
+configure.
 
 .. contents:: 
    :local:
@@ -32,47 +36,8 @@ imported.
 
 
 
-Plugins
--------
-
-A minimal :xfile:`__init__.py` file of a Django app::
-
-    from lino import ad, _
-
-    class Plugin(ad.Plugin):
-
-        verbose_name = _("Places")
-
-
-
-The :class:`Site` class is what you are going to instantiate and store
-in your :setting:`SITE` setting.
-
-The :class:`Plugin` class is an optional descriptor for every app.
-
-
-.. function:: configure_plugin(app_label, **kwargs)
-
-  Set one ore several configuration settings of the given plugin.
-
-  This should be called *before instantiating* your :class:`Site`
-  class.
-
-  For example to enable :attr:`ml.contacts.Plugin.hide_region` to
-  True::
-
-    ad.configure_plugin('contacts', hide_region=True)
-
-  The :func:`configure_plugin` function is a simple interface for
-  locally configuring plugins. See :doc:`/admin/settings` for more
-  details on this.
-
-
-
-
 The ``Site`` class
 ------------------
-
 
 .. class:: Site(settings_globals, user_apps=[], **kwargs)
 
@@ -81,6 +46,8 @@ The ``Site`` class
   This may be overridden by the application developer and/or the local
   site administrator.
 
+  The :class:`Site` class is what you are going to instantiate and store
+  in your :setting:`SITE` setting.
 
   .. attribute:: confdirs
 
@@ -1000,32 +967,36 @@ The ``Site`` class
 The ``Plugin`` class
 --------------------
 
-Plugins are conceptually similar to Django's `AppConfig classes
-<https://docs.djangoproject.com/en/dev/ref/applications/>`_.
-
-The basic usage for plugins is to write in your :xfile:`__init__.py`
-file::
-
-    from lino import ad, _
-
-    class Plugin(ad.Plugin):
-        verbose_name = _("Contacts")
-
-
-
 
 .. class:: Plugin
 
     The base class for all plugins.
 
-    Every Django app may define a class object called "Plugin" in
-    its :xfile:`__init__.py` module (not in the :xfile:`models.py` module).
+    A :class:`Plugin` is an optional descriptor for an app which gets
+    defined and configured before Django models start to load.
+
+    The `ad.Plugin` class is comparable to Django's `AppConfig
+    <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
+    which has been added in version 1.7.  It is probable that Lino's
+    Plugins will once become subclasses of Django's AppConfigs. When we
+    drop support for older Django versions.
+
+    Plugins are defined in your app's :xfile:`__init__.py` file. For
+    example::
+
+        from lino import ad, _
+
+        class Plugin(ad.Plugin):
+
+            verbose_name = _("Places")
+
+    Unlike Django's AppConfig, you *cannot* define a `Plugin` in your
+    :xfile:`models.py` file, you *must* define it in your app's
+    :xfile:`__init__.py`.  This limitation has the advantage of making
+    certain things possible which are not possible in plain Django.
 
     Plugins get instiantiated exactly once when the :class:`Site`
     object instantiates (i.e. before Django settings are ready).
-
-    All plugins are globally accessible in :data:`dd.plugins` using
-    the `app_label` as key.
 
   .. attribute:: verbose_name
 
@@ -1045,3 +1016,35 @@ file::
 
     Raise an exception if caller specified a key that does not
     have a corresponding attribute.
+
+
+
+Configuring plugins
+-------------------
+
+
+.. function:: configure_plugin(app_label, **kwargs)
+
+  Set one ore several configuration settings of the given plugin.
+
+  The :func:`configure_plugin` function is a simple interface for
+  locally configuring plugins. 
+
+  This should be called *before instantiating* your :class:`Site`
+  class.
+
+  For example to enable :attr:`ml.contacts.Plugin.hide_region` to
+  True::
+
+    ad.configure_plugin('contacts', hide_region=True)
+
+  See :doc:`/admin/settings` for more details.
+
+
+Using plugins
+-------------
+
+All plugins are globally accessible under :data:`dd.apps` using the
+`app_label` as key.
+
+

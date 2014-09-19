@@ -2,31 +2,6 @@
 # Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Add this to your :meth:`ad.Site.get_installed_apps`
-if your Site should feature actions for reading electronic ID
-smartcards.
-
-When this app is installed, then you must also add the `.jar` files
-required by :ref:`eidreader` into your media directory, in a
-subdirectory named "eidreader".
-
-Alternatively there is :mod:`lino.modlib.eid_jslib.beid` which overrides
-:mod:`lino.modlib.beid` and does the same except that it uses
-:ref:`eid_jslib` instead of :ref:`eidreader`
-
-This app makes sense only if there is exactly one subclass of
-:class:`BeIdCardHolder` among your Site's models.
-
-.. setting:: beid.data_collector_dir
-
-Set this to the name of an existing directory to which Lino should
-write the raw data received for every card reading.
-
-"""
-
-import logging
-logger = logging.getLogger(__name__)
-
 import os
 
 from lino import ad

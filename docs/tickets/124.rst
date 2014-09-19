@@ -49,26 +49,28 @@ DONE:
 - Freins: Nouvelle colonne "Détecté par" avec un menu déroulant pour
   sélectionner un agent.
 
-- Liens de parenté : Faire le même type de tableau que
-  Composition de ménage avec encodage libre (voir annexe).
-  Dans la case Nom et Prénom, peut-on faire en sorte de retrouver les
-  bénéficiaires déjà encodés dans le programme ainsi que de faire de
-  l’encodage libre ?
+- Situation familiale: je propose l'approche suivant.
 
-  --> je propose d'envisager l'approche suivant:
+    - nous convenons qu'il faut **encoder les ménages précédents**
+      éventuels pour pouvoir encoder les **enfants provenant de ces
+      ménages**.  Notons qu'il est conseillé mais pas nécessaire
+      d'encoder le partenaire d'un ménage.
 
-    - nous laissons les liens de parenté en mode "sommaire" car un
-      tableau serait peu pratique. Par exemple il ne permet pas
-      d'encoder le père et la mère d'un enfant en un seul coup.
+    - Si un bénéficiaire est membre de plusieurs ménages, on peut
+      spécifier manuellement le "ménage primaire" en cliquant sur le
+      petit carré.
+    
+    - Composition de ménage: pour ajouter un membre, on peut *soit*
+      sélectionner un bénéficiaire (et alors les 4 champs pour le nom,
+      le prénom, la date de naissance et le sexe deviennent
+      lecture-seule), *soit* remplir ces quatre champs. Si on les
+      remplit *tous*, alors Lino crée automatiquement un bénéficiaire.
 
-    - nous convenons qu'il faut **encoder les ménages précédents** pour
-      pouvoir encoder les **enfants provenant de ces ménages**.  Notons
-      qu'il est conseillé mais pas nécessaire d'encoder le partenaire
-      d'un ménage.
-
-    - Lino génère maintenent automatiquement les personnes et
-      liens de parenté à partir des données dans les compositions de
-      ménage.
+    - Pour les membres de ménage qui sont liés à un bénéficiaire, Lino
+      génère automatiquement les liens de parenté à partir des données
+      dans la compositions de ménage. Càd tous les membres de type
+      "parent" (càd le chef de famille et le partenaire) deviennent
+      père (mère) de tous les enfants.
 
 - Onglet "Personne", panneau "Rendez-vous": Renommer « Utilisateur
   responsable » en « Agent traitant » --> OK
@@ -84,10 +86,6 @@ DONE:
 - Les PIIS ont maintenant leur onglet à eux seuls.
  
 DISCUSS
-
-- Composition de ménage : Nous n’avons pas la possibilité d’encoder en
-  libre.
-  --> non reproductible
 
 - Composition de ménage : ajouter une colonne "Suivi par"
 

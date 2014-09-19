@@ -26,6 +26,8 @@ from django.db.models import Q
 from lino import dd
 from lino.utils.xmlgen.html import E
 
+config = dd.apps.humanlinks
+
 
 class LinkType(dd.Choice):
 
@@ -125,11 +127,11 @@ class Link(dd.Model):
 
     type = LinkTypes.field(default=LinkTypes.parent)
     parent = dd.ForeignKey(
-        dd.apps.humanlinks.human_model,
+        config.person_model,
         verbose_name=_("Parent"),
         related_name='children')
     child = dd.ForeignKey(
-        dd.apps.humanlinks.human_model,
+        config.person_model,
         blank=True, null=True,
         verbose_name=_("Child"),
         related_name='parents')
@@ -186,7 +188,7 @@ class LinksByHuman(Links):
     "See :class:`ml.humanlinks.LinksByHuman`."
     label = _("Human Links")
     required = dd.required()
-    master = dd.apps.humanlinks.human_model
+    master = config.person_model
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'
 

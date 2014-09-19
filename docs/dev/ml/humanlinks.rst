@@ -3,23 +3,65 @@ Human Links
 
 .. module:: ml.humanlinks
 
-Adds Links beween persons.
+Defines "parency links" between two "persons", and a user interface to
+manage them.  This module is probably useful in combination with
+:mod:`ml.households`.
+
+.. contents:: 
+   :local:
+   :depth: 2
+
+
+Configuration
+=============
+
+.. class:: Plugin
+
+  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
+
+  .. attribute:: person_model
+
+    A string referring to the model which represents a human in your
+    application.  Default value is ``'contacts.Person'`` (referring to
+    :class:`ml.contacts.Person`).
+
+
+Choicelists
+===========
 
 .. class:: LinkTypes
 
-    List of possible choices for the `Type` field of a
-    :ddref:`humanlinks.Link`. The default demo fixture loads the
-    following data:
+    A :class:`dd.ChoiceList` of possible values for the
+    :attr:`Link.type` field. The default list contains the following
+    data:
     
     .. django2rst::
         
-        settings.SITE.login('robin').show(humanlinks.LinkTypes)
+        dd.show(humanlinks.LinkTypes)
 
 
+Models
+======
 
 .. class:: Link
 
-    A link between two persons.
+  A link between two persons.
+
+  .. attribute:: parent
+
+    Pointer to the person who is "parent".
+
+  .. attribute:: child
+
+    Pointer to the person who is "child".
+
+  .. attribute:: type
+
+    Pointer to :class:`LinkTypes`.
+
+
+Tables
+======
 
 .. class:: LinksByHuman
 

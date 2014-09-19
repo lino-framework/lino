@@ -16,7 +16,6 @@ from lino.utils import mti
 from lino.utils.xmlgen.html import E
 
 contacts = dd.resolve_app('contacts')
-humanlinks = dd.resolve_app('humanlinks')
 
 config = dd.apps.households
 mnugrp = dd.apps.contacts
@@ -195,7 +194,7 @@ class Member(dd.DatePeriod):
     role = MemberRoles.field(
         default=MemberRoles.child, blank=True, null=True)
     person = models.ForeignKey(
-        "contacts.Person",
+        config.person_model, 
         related_name='household_members')
     household = models.ForeignKey('households.Household')
     primary = models.BooleanField(
@@ -268,7 +267,7 @@ class SiblingsByPerson(Members):
     """
     label = _("Household composition")
     required = dd.required()
-    master = 'contacts.Person'
+    master = config.person_model
     column_names = 'person role start_date end_date *'
     auto_fit_column_widths = True
     slave_grid_format = 'summary'
@@ -340,7 +339,7 @@ class SiblingsByPerson(Members):
     @classmethod
     def find_links(self, ar, child, parent):
         types = {}  # mapping LinkType -> list of parents
-        for lnk in humanlinks.Link.objects.filter(child=child):
+        for lnk in dd.modules.humanlinks.Link.objects.filter(child=child):
                 # child=child, parent=p):
             tt = lnk.type.as_child(lnk.child)
             l = types.setdefault(tt, [])
@@ -362,9 +361,9 @@ class CreateHousehold(dd.Action):
     label = _("Create Household")
     parameters = dict(
         head=dd.ForeignKey(
-            'contacts.Person', verbose_name=_("Head of household")),
+            config.person_model, verbose_name=_("Head of household")),
         partner=dd.ForeignKey(
-            'contacts.Person', verbose_name=_("Partner"),
+            config.person_model, verbose_name=_("Partner"),
             blank=True, null=True),
         type=dd.ForeignKey('households.Type'))
     params_layout = """
@@ -406,11 +405,8 @@ class CreateHousehold(dd.Action):
         ar.goto_instance(hh)
 
 dd.inject_action(
-    'contacts.Person',
+    config.person_model,
     create_household=CreateHousehold())
-# dd.inject_action(
-#     'contacts.Person',
-#     show_households=dd.ShowSlaveTable('households.MembersByPerson'))
 
 
 class MembersByPerson(Members):
@@ -451,8 +447,9 @@ class MembersByPerson(Members):
         else:
             elems += [E.br(), _("Create a household"), ' : ']
             Type = dd.modules.households.Type
-            ba = dd.modules.contacts.Persons.get_action_by_name(
-                'create_household')
+            Person = dd.resolve_model(config.person_model)
+            T = Person.get_default_table()
+            ba = T.get_action_by_name('create_household')
             buttons = []
             for t in Type.objects.all():
                 apv = dict(type=t, head=obj)

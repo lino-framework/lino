@@ -1,19 +1,45 @@
+=============================
 BeId - read Belgian eId cards
 =============================
 
 .. module:: ml.beid
 
-Plugin settings
----------------
+Add this to your :meth:`ad.Site.get_installed_apps` if your Site
+should feature actions for reading electronic ID smartcards.
 
-.. attribute:: data_collector_dir
+When this app is installed, then you must also add the `.jar` files
+required by :ref:`eidreader` into your media directory, in a
+subdirectory named "eidreader".
+
+This app makes sense only if there is exactly one subclass of
+:class:`BeIdCardHolder` among your Site's models.
+
+An alternative implementation of the same functionality is
+:mod:`lino.modlib.eid_jslib.beid` which overrides this app and does
+the same except that it uses :ref:`eid_jslib` instead of
+:ref:`eidreader`.
+
+.. contents:: 
+   :local:
+   :depth: 2
+
+
+Configuration
+=============
+
+.. class:: Plugin
+
+  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
+
+  .. attribute:: data_collector_dir
 
     When this is a non-empty string containing a directory name on the
     server, then Lino writes the raw data of every eid card into a
     text file in this directory.
 
+
 Choicelists
------------
+===========
 
 .. class:: BeIdCardTypes
 
@@ -21,7 +47,7 @@ Choicelists
 
     .. lino2rst::
 
-       dd.login('robin').show(beid.BeIdCardTypes)
+       dd.show(beid.BeIdCardTypes)
 
     Didn't yet find any official reference document.
     
@@ -54,7 +80,7 @@ Choicelists
     
 
 Model mixins
-------------
+============
 
 
 .. class:: BeIdCardHolder
@@ -62,6 +88,10 @@ Model mixins
     Mixin for models which represent an eid card holder.
     Currently only Belgian eid cards are tested.
     Concrete subclasses must also inherit from :mod:`lino.mixins.Born`.
+
+
+Actions
+=======
 
 .. class:: BaseBeIdReadCardAction
 
@@ -79,8 +109,6 @@ Model mixins
 
     This is a list action, usually called from a quicklink or a main
     menu item.
-
-
 
 .. class:: BeIdReadCardAction
 

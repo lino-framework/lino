@@ -10,3 +10,13 @@ Continued to work on :doc:`/tickets/124`.
 
 - Increased :ref:`welfare` version to 1.1.17 and wrote a migrator
   :meth:`lino_welfare.projects.chatelet.migrate.Migrator.migrate_from_1_1_16`.
+
+- Added new setting :attr:`ml.humanlinks.Plugin.person_model`.
+
+- :ref:`welfare` now sets the `person_model` for both 
+  :attr:`humanlinks <ml.humanlinks.Plugin.person_model>` and
+  :attr:`household <ml.households.Plugin.person_model>`
+  to `pcsw.Client`. 
+
+
+

@@ -20,7 +20,7 @@ from lino import dd
 
 def objects():
 
-    Person = dd.modules.contacts.Person
+    Person = dd.resolve_model(dd.apps.humanlinks.person_model)
     Link = dd.modules.humanlinks.Link
     LinkTypes = dd.modules.humanlinks.LinkTypes
 

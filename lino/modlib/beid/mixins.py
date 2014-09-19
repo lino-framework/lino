@@ -37,7 +37,7 @@ config = dd.apps.get('beid', None)
 class BeIdCardTypes(dd.ChoiceList):
     "See :class:`ml.beid.BeIdCardTypes`."
 
-    app_label = 'lino'
+    # app_label = 'lino'
     required = dd.required(user_level='admin')
     verbose_name = _("eID card type")
     verbose_name_plural = _("eID card types")

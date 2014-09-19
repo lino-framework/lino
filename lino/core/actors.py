@@ -60,11 +60,8 @@ def register_actor(a):
     return a
 
 
-
 def comma():
     return ', '
-
-#~ def summary(ar,objects,separator=', ',max_items=5,before='',after='',**kw):
 
 
 def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
@@ -272,7 +269,8 @@ class ActorMetaClass(type):
                 #~ logger.debug("%s definition was after discover",cls)
                 pass
             elif not cls.__name__.startswith('unused_'):
-                #~ logger.debug("Found actor %s.",cls)
+                if classname == 'BeIdCardTypes':
+                    logger.info("20140919 Found actor %s.", cls)
                 # ~ cls.class_init() # 20120115
                 actor_classes.append(cls)
             #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
