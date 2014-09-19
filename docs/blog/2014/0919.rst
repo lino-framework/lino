@@ -6,3 +6,5 @@ Friday, September 19, 2014
   yesterday) still caused a traceback "%s expects a list of 16 values
   but got 15"
 
+- Increased :ref:`welfare` version to 1.1.17 and wrote a migrator for
+  :meth:`lino_welfare.projects.chatelet.migrate.Migrator.migrate_from_1_1_16`.

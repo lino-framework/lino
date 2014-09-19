@@ -110,8 +110,9 @@ DISCUSS
   dans l’onglet personne. Peut-on faire en sorte que ça disparaisse
   aussi d’Enrolments ?
 
-  --> Quel est le but de ce panneau? Pourquoi est-il dans
-  le premier onglet?
+  --> Quel est le but de ce panneau? Pourquoi est-il dans le premier
+  onglet?  Est-ce qu'il vous faut le panneau
+  :class:`ml.courses.SuggestedCoursesByPupil`?
 
 - Dans configuration, je ne trouve pas les emplacements pour modifier
   les Etats civils.
@@ -140,6 +141,8 @@ DISCUSS
 
 - Formations : se peut-il que les Eupenois encodent PIIS de type
   formation pour ce que vous voulez mettre dans "Formations"?
+
+- Regarder `changes.Changes` et réfléchir s'il vous le faut
 
 TODO:
 
