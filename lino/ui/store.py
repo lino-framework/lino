@@ -808,6 +808,8 @@ def create_atomizer(model, fld, name):
     if sf_class is not None:
         return sf_class(fld, name)
 
+    if isinstance(fld, fields.DummyField):
+        return None
     if isinstance(fld, dd.RequestField):
         delegate = create_atomizer(model, fld.return_type, fld.name)
         return RequestStoreField(fld, delegate, name)
@@ -867,7 +869,9 @@ class ParameterStore(BaseStore):
 
         holder = params_layout_handle.layout.get_chooser_holder()
         for pf in params_layout_handle._store_fields:
-            self.param_fields.append(create_atomizer(holder, pf, pf.name))
+            sf = create_atomizer(holder, pf, pf.name)
+            if sf is not None:
+                self.param_fields.append(sf)
 
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -1053,7 +1057,8 @@ class Store(BaseStore):
 
     def add_field_for(self, fields, df):
         sf = get_atomizer(self.actor, df, df.name)
-
+        if sf is None:  # dummy fields
+            return
         if not sf in self.all_fields:
             self.all_fields.append(sf)
 

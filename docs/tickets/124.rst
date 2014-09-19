@@ -39,8 +39,15 @@ DONE:
 - Connaissances de langue : Renommer la colonne « Parlé » en «
   Expression orale », « Ecrit » en « Expression écrite », etc.
 
+- Niveaux de connaissance de langue: Très bien, Bien, Moyen, Faible,
+  Très faible
+    
+- Compétences professionnelles:
+  Renommer «Propriété» en «Fonction» (et reprendre les métiers
+  déjà encodés dans Fonctions)
 
-TESTING
+- Freins: Nouvelle colonne "Détecté par" avec un menu déroulant pour
+  sélectionner un agent.
 
 - Liens de parenté : Faire le même type de tableau que
   Composition de ménage avec encodage libre (voir annexe).
@@ -50,20 +57,18 @@ TESTING
 
   --> je propose d'envisager l'approche suivant:
 
-- nous laissons les liens de parenté en mode "sommaire" car un
-  tableau serait peu pratique. Par exemple il ne permet pas
-  d'encoder le père et la mère d'un enfant en un seul coup.
+    - nous laissons les liens de parenté en mode "sommaire" car un
+      tableau serait peu pratique. Par exemple il ne permet pas
+      d'encoder le père et la mère d'un enfant en un seul coup.
 
-- nous convenons qu'il faut encoder les ménages précédents pour
-  pouvoir encoder les enfants provenant de ces ménages.  Notons
-  qu'il est conseillé mais pas nécessaire d'encoder le partenaire
-  d'un ménage.
+    - nous convenons qu'il faut encoder les ménages précédents pour
+      pouvoir encoder les enfants provenant de ces ménages.  Notons
+      qu'il est conseillé mais pas nécessaire d'encoder le partenaire
+      d'un ménage.
 
-- Je fais en sorte que Lino génère automatiquement les personnes et
-  liens de parenté à partir des données dans les compositions de
-  ménage (donc aussi la direction inverse de ce qu'il fait déjà).
-
-- Comment représenter/nommer un ménage de maniè re plus intuitive?
+    - Je fais en sorte que Lino génère automatiquement les personnes et
+      liens de parenté à partir des données dans les compositions de
+      ménage (donc aussi la direction inverse de ce qu'il fait déjà).
 
 - Onglet "Personne", panneau "Rendez-vous": Renommer « Utilisateur
   responsable » en « Agent traitant » --> OK
@@ -72,6 +77,12 @@ TESTING
   choisir « Pas venu » et « Pas excusé » en plus de « Recevoir » et
   « Quitter » --> OK sauf que je les appelle "Excusé" et "Absent"
 
+- Supprimer le panneau "Ateliers d'insertion sociale" (ces ateliers
+  sont transférés dans "Savoirs de base" (merge IntegEnrolments
+  into BasicEnrolments)
+
+- Les PIIS ot maintenant leur onglet à eux seuls.
+ 
 DISCUSS
 
 - Composition de ménage : Nous n’avons pas la possibilité d’encoder en
@@ -81,6 +92,8 @@ DISCUSS
 - Composition de ménage : ajouter une colonne "Suivi par"
 
   --> quelle serait la différence entre ce champ et un accompagnement?
+
+- "Intervenant" et "Accompagnement"?
 
 - Composition de ménage : ajouter un champ "Garde enfant"
 
@@ -101,10 +114,7 @@ DISCUSS
   le premier onglet?
 
 - Dans configuration, je ne trouve pas les emplacements pour modifier
-  les menus déroulants :
-
-    - Etat civil
-
+  les Etats civils.
     
   Oui, certaines listes ne sont pas prévus pour etre "directement"
   modifiables. Dis-moi ce que tu voudrais changer. 
@@ -119,25 +129,20 @@ DISCUSS
 
 - Alerte mail quand ajout nouvel intervenant.
 
+- Vocabulaire: dans les "Ateliers" ("courses") nous avons deux
+  "catégories" (CourseAreas):
+
+  - basic : "Ateliers"
+  - job : "Modules de détermination d'un projet socioprofessionnel"
+
+  Je propose de les appeler p.ex. "Ateliers ouverts" et "Ateliers
+  modulaires"
+
+- Formations : se peut-il que les Eupenois encodent PIIS de type
+  formation pour ce que vous voulez mettre dans "Formations"?
+
 TODO:
 
-- Quand on a créé un atelier, dans l’onglet inscription : Si on a fait
-  une demande pour un bénéficiaire et qu’on clique sur annulé, la
-  ligne disparaît des inscriptions mais pas du module Enrolments situé
-  dans l’onglet personne. Peut-on faire en sorte que ça disparaisse
-  aussi d’Enrolments ?
-
-- Module « Compétences professionnelles » :
-
-  - Renommer « Propriété » en « Fonction » (et reprendre les métiers
-    déjà encodés dans Fonctions)
-
-    --> nouvelle table
-
- 
-- Niveaux de connaissance de langue ("Bien", "Très bien" etc) Très
-  bien, Bien, Moyen, Faible, Très faible
-    
 
 Pages referring to this:
 
