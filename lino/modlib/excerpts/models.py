@@ -21,7 +21,7 @@ from django.utils import translation
 
 from django.core.exceptions import ValidationError
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
@@ -168,7 +168,7 @@ class ExcerptType(
 
     def get_or_create_excerpt(self, ar):
         obj = ar.selected_rows[0]
-        Excerpt = dd.modules.excerpts.Excerpt
+        Excerpt = rt.modules.excerpts.Excerpt
         ex = None
         if self.certifying:
             qs = Excerpt.objects.filter(

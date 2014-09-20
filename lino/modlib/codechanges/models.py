@@ -19,7 +19,7 @@ from django.db import models
 from django.conf import settings
 
 from lino.utils import i2d
-from lino import dd
+from lino import dd, rt
 from lino.modlib.system.models import SYSTEM_USER_LABEL
 from lino.utils.restify import restify, doc2rst
 

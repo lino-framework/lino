@@ -715,7 +715,7 @@ class Printable(object):
     def get_printable_context(self, ar, **kw):
         def translate(s):
             return _(s.decode('utf8'))
-        from lino import dd
+        from lino import dd, rt
         kw.update(
             this=self,  # preferred in new templates
             dtos=dd.fds,  # obsolete

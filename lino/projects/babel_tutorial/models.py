@@ -1,4 +1,4 @@
-from lino import dd
+from lino import dd, rt
 from django.utils.translation import ugettext_lazy as _
 
 

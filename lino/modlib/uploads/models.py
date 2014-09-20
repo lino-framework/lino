@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 # from django.utils.encoding import force_unicode
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
@@ -185,8 +185,8 @@ Note that this also works on
 subclasses for the different `_upload_area`.
 
         """
-        UploadType = dd.modules.uploads.UploadType
-        # Upload = dd.modules.uploads.Upload
+        UploadType = rt.modules.uploads.UploadType
+        # Upload = rt.modules.uploads.Upload
         elems = []
         types = []
 

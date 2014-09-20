@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.core import actions
 
 from north import dbutils

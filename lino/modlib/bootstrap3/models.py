@@ -18,7 +18,7 @@ from django.conf import settings
 from lino.core.tables import AbstractTable
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 
 class ShowAsHtml(dd.Action):

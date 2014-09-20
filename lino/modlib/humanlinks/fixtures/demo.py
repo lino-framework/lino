@@ -15,14 +15,14 @@ Creates two fictive families:
 from __future__ import unicode_literals
 
 from lino.utils.instantiator import InstanceGenerator
-from lino import dd
+from lino import dd, rt
 
 
 def objects():
 
     Person = dd.resolve_model(dd.apps.humanlinks.person_model)
-    Link = dd.modules.humanlinks.Link
-    LinkTypes = dd.modules.humanlinks.LinkTypes
+    Link = rt.modules.humanlinks.Link
+    LinkTypes = rt.modules.humanlinks.LinkTypes
 
     ig = InstanceGenerator()
     ig.add_instantiator(

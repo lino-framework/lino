@@ -69,7 +69,7 @@ class Site(Site):
         This defines default user profiles for :mod:`lino_welfare`.
         """
         #~ raise Exception(123)
-        from lino import dd
+        from lino import dd, rt
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office')
         add = dd.UserProfiles.add_item

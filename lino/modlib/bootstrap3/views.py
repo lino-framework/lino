@@ -19,7 +19,7 @@ from django.utils.translation import get_language
 
 from lino.utils.xmlgen.html import E
 
-from lino import dd
+from lino import dd, rt
 from lino.core import auth
 from lino.core import web
 from lino.core.requests import BaseRequest

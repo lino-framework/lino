@@ -22,7 +22,7 @@ class Plugin(ad.Plugin):
                 m.hide_elements('region')
     
         if False:  # see tickets/90
-            from lino import dd
+            from lino import dd, rt
             for m in (contacts.Person, contacts.Company):
                 m.define_action(merge_row=dd.MergeAction(m))
             

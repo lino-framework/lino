@@ -40,7 +40,7 @@ For example when I defined a base model and two subclasses thereof::
         @classmethod
         def get_aid_types(cls):
             ct = ConfirmationTypes.get_by_value(dd.full_model_name(cls))
-            return dd.modules.aids.AidType.objects.filter(confirmation_type=ct)
+            return rt.modules.aids.AidType.objects.filter(confirmation_type=ct)
 
     class A(Confirmation):
         ...

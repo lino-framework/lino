@@ -45,7 +45,7 @@ class Site(Site):
         """
         Defines a set of user profiles.
         """
-        from lino import dd
+        from lino import dd, rt
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset(
             '* office reception')

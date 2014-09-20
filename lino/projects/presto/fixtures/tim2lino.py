@@ -50,7 +50,7 @@ from lino.modlib.accounts.utils import AccountTypes
 from lino.core.dbutils import resolve_model, obj2str
 from lino.core.dbutils import is_valid_email
 
-from lino import dd
+from lino import dd, rt
 
 Activity = resolve_model('pcsw.Activity')
 Country = resolve_model('countries.Country')

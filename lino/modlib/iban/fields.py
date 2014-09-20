@@ -13,7 +13,7 @@ from django_iban import fields as iban_fields
 
 from django.utils.six import with_metaclass
 
-from lino import dd
+from lino import dd, rt
 
 from lino.utils.jsgen import js_code
 from lino.ui.elems import CharFieldElement

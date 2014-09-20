@@ -17,7 +17,7 @@ abbrRE = re.compile("^(.*)\s*\((.*)\)\s*", re.DOTALL)
 
 from north import dbutils
 
-from lino import dd
+from lino import dd, rt
 Concept = dd.resolve_model('concepts.Concept')
 Link = dd.resolve_model('concepts.Link')
 

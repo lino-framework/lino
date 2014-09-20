@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 from django.conf import settings
 

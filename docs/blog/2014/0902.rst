@@ -41,16 +41,15 @@ membership for the same person with another person.  And in
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings' 
->>> from lino import dd
->>> dd.startup()
->>> Person = dd.modules.contacts.Person
->>> Member = dd.modules.households.Member
+>>> from lino.runtime import *
+>>> Person = rt.modules.contacts.Person
+>>> Member = rt.modules.households.Member
 >>> Member.objects.filter(end_date__isnull=False)
 [Member #5 (u'Mr Jan Braun (Head of household)')]
 >>> p = Person.objects.get(first_name="Jan", last_name="Braun")
 >>> Member.objects.filter(person=p).count()
 2
->>> dd.show(dd.modules.households.MembersByPerson, master_instance=p)
+>>> rt.show(rt.modules.households.MembersByPerson, master_instance=p)
 ============================ =================== ========= ============ ==========
  Household                    Role                Primary   Start date   End date
 ---------------------------- ------------------- --------- ------------ ----------
@@ -59,9 +58,9 @@ membership for the same person with another person.  And in
 ============================ =================== ========= ============ ==========
 <BLANKLINE>
 
->>> SiblingsByPerson = dd.modules.households.SiblingsByPerson
+>>> SiblingsByPerson = rt.modules.households.SiblingsByPerson
 >>> SiblingsByPerson.slave_grid_format = 'grid'  # currently not necessary
->>> dd.show(SiblingsByPerson, p)
+>>> rt.show(SiblingsByPerson, p)
 ==================== =================== ============ ==========
  Person               Role                Start date   End date
 -------------------- ------------------- ------------ ----------
@@ -97,7 +96,7 @@ expected:
   profile now also has UserLevel "user" for all groups.
 
 - Fixed a bug which caused e.g. :class:`ml.ledger.Situation` to have a
-  "save" button (:class:`dd.SubmitDetail` ).
+  "save" button (:class:`dd.SubmitDetail`).
 
 - Fixed a bug which caused e.g. an :ref:`ise` "'CreateCoachingVisit'
   object has no attribute 'get_choices_text'" when trying to select a

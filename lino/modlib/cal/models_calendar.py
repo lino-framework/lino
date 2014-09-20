@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 
-from lino import dd
+from lino import dd, rt
 
 
 def default_color():

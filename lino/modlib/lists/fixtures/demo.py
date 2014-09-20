@@ -4,12 +4,12 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 
 def objects():
-    ListType = dd.modules.lists.ListType
-    List = dd.modules.lists.List
+    ListType = rt.modules.lists.ListType
+    List = rt.modules.lists.List
 
     mailing = ListType(**dd.str2kw('name', _("Mailing list")))
     yield mailing

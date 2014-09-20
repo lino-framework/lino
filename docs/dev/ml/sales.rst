@@ -21,7 +21,7 @@ Choicelists
     Typical content is as follows (but applications may redefine or
     extend this list in :meth:`ad.Site.setup_choicelists`):
 
-    .. django2rst:: dd.show("sales.InvoiceStates")
+    .. django2rst:: rt.show("sales.InvoiceStates")
 
 
 Mixins

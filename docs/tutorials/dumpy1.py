@@ -1,4 +1,4 @@
-from lino import dd
+from lino import dd, rt
 User = dd.resolve_model('users.User')
 
 def objects():

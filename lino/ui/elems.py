@@ -24,7 +24,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
 
-from lino import dd
+from lino import dd, rt
 from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Permittable

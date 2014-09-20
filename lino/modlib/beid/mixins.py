@@ -23,7 +23,7 @@ from lino.core.dbutils import get_field
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
 
-from lino import dd
+from lino import dd, rt
 
 
 from lino.utils import ssin
@@ -280,7 +280,7 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
             # (automatically) create a new Client from eid card.
 
             #~ fkw.update(national_id__isnull=True)
-            contacts = dd.modules.contacts
+            contacts = rt.modules.contacts
             pqs = contacts.Person.objects.filter(**fkw)
             if pqs.count() == 0:
                 def yes(ar2):

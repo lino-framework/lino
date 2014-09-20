@@ -62,7 +62,7 @@ False
 When setting the password for a newly created user, leave the
 field :guilabel:`Current password` empty.
 
->>> ses = dd.login('robin')
+>>> ses = rt.login('robin')
 >>> values = dict(current="", new1="1234", new2="1234")
 >>> rv = ses.run(u.change_password, action_param_values=values)
 >>> print(rv['message'])

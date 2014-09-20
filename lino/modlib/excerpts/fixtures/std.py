@@ -22,7 +22,7 @@ which inherits from :class:`Certifiable`.
 
 from django.contrib.contenttypes.models import ContentType
 
-from lino import dd
+from lino import dd, rt
 from lino.modlib.excerpts.mixins import Certifiable
 
 

@@ -6,7 +6,7 @@ How to add users to your Lino database::
 """
 
 
-from lino import dd
+from lino import dd, rt
 from django.conf import settings
 
 User = settings.SITE.user_model

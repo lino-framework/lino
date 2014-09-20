@@ -30,7 +30,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino import dd
+from lino import dd, rt
 
 cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
@@ -110,7 +110,7 @@ def create_prompt_event(
     event.save()
     if now is None:
         now = datetime.datetime.now()
-    dd.modules.cal.Guest(
+    rt.modules.cal.Guest(
         event=event,
         partner=partner,
         state=cal.GuestStates.waiting,
@@ -407,7 +407,7 @@ class WaitingVisitors(Visitors):
     @dd.displayfield(_('Position'),
                      help_text=_("Position in waiting queue (per agent)"))
     def position(self, obj, ar):
-        n = 1 + dd.modules.cal.Guest.objects.filter(
+        n = 1 + rt.modules.cal.Guest.objects.filter(
             #~ waiting_since__isnull=False,
             #~ busy_since__isnull=True,
             state=GuestStates.waiting,

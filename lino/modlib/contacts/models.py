@@ -22,7 +22,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd
+from lino import dd, rt
 
 from lino import mixins
 
@@ -57,7 +57,8 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
+# class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
+class Partner(AddressLocation, dd.Addressable):
     "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20
@@ -618,7 +619,7 @@ class ContactRelated(dd.Model):
         """
         if company is not None:
             return cls.contact_person_choices_queryset(company)
-        return dd.modules.contacts.Person.objects.order_by(
+        return rt.modules.contacts.Person.objects.order_by(
             'last_name', 'first_name')
 
     def get_contact(self):

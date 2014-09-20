@@ -7,7 +7,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd
+from lino import dd, rt
 from lino.modlib.countries import models as countries
 from lino.modlib.contacts import models as contacts
 

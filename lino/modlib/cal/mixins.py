@@ -26,7 +26,7 @@ from django.utils.encoding import force_unicode
 
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E
 
@@ -396,7 +396,7 @@ class EventGenerator(mixins.UserAuthored):
 
     def get_existing_auto_events(self):
         ot = ContentType.objects.get_for_model(self.__class__)
-        return dd.modules.cal.Event.objects.filter(
+        return rt.modules.cal.Event.objects.filter(
             owner_type=ot, owner_id=self.pk,
             auto_type__isnull=False).order_by('auto_type')
 

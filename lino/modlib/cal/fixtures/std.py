@@ -26,7 +26,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
 from north.dbutils import babel_values
 
-from lino import dd
+from lino import dd, rt
 
 cal = dd.resolve_app('cal')
 

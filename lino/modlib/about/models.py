@@ -26,7 +26,7 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.code import codetime, codefiles, SourceFile
 from north import dbutils
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 
 
 from lino.utils.xmlgen import html as xghtml

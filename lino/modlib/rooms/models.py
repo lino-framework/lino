@@ -16,7 +16,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd
+from lino import dd, rt
 
 contacts = dd.resolve_app('contacts', strict=True)
 #~ cal = dd.resolve_app('cal',strict=True)

@@ -1,4 +1,4 @@
-from lino import dd
+from lino import dd, rt
 
 DATA = [
     ["Belgium", "Eupen", 17000],

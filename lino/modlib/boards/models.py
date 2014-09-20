@@ -7,7 +7,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from lino import dd
+from lino import dd, rt
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

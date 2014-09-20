@@ -27,7 +27,7 @@ from lino.utils import dblogger
 from lino.utils import Cycler, join_words
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 
 
 from lino.utils import confirm
@@ -76,9 +76,9 @@ class EstonianDistribution(Distribution):
 
     def __init__(self):
         super(EstonianDistribution, self).__init__()
-        Country = dd.modules.countries.Country
-        Place = dd.modules.countries.Place
-        PlaceTypes = dd.modules.countries.PlaceTypes
+        Country = rt.modules.countries.Country
+        Place = rt.modules.countries.Place
+        PlaceTypes = rt.modules.countries.PlaceTypes
         self.tallinn = Place.objects.get(
             type=PlaceTypes.town, name="Tallinn")
         self.eesti = Country.objects.get(isocode="EE")
@@ -94,8 +94,8 @@ class EstonianDistribution(Distribution):
         yield demo.FEMALE_FIRST_NAMES_ESTONIA
 
     def get_streets(self):
-        Place = dd.modules.countries.Place
-        PlaceTypes = dd.modules.countries.PlaceTypes
+        Place = rt.modules.countries.Place
+        PlaceTypes = rt.modules.countries.PlaceTypes
         for streetname, linnaosa in demo.streets_of_tallinn():
             try:
                 p = Place.objects.get(
@@ -148,7 +148,7 @@ class Command(BaseCommand):
         dist = build_dist(options.get('distribution'))
         
         User = dd.resolve_model(settings.SITE.user_model)
-        Person = dd.modules.contacts.Person
+        Person = rt.modules.contacts.Person
 
         for p in Person.objects.order_by('id'):
             if User.objects.filter(partner=p).count() > 0:

@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
 
-from lino import dd
+from lino import dd, rt
 from lino.utils.xmlgen.html import E
 from lino import mixins
 from lino.core import actions

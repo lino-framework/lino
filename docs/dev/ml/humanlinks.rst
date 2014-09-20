@@ -37,7 +37,7 @@ Choicelists
     
     .. django2rst::
         
-        dd.show(humanlinks.LinkTypes)
+        rt.show(humanlinks.LinkTypes)
 
 
 Models
@@ -73,7 +73,7 @@ Tables
     :attr:`dd.Table.master_key`.
 
     It is also a cool usage example for the
-    :meth:`dd.Tableget_slave_summary` method.
+    :meth:`dd.Table.get_slave_summary` method.
 
 
 

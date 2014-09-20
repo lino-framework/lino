@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 
 from .utils import (
     Recurrencies,
@@ -495,7 +495,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def get_postable_recipients(self):
         """return or yield a list of Partners"""
         if self.project:
-            if isinstance(self.project, dd.modules.contacts.Partner):
+            if isinstance(self.project, rt.modules.contacts.Partner):
                 yield self.project
         for g in self.guest_set.all():
             yield g.partner
@@ -507,7 +507,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     def get_mailable_recipients(self):
         if self.project:
-            if isinstance(self.project, dd.modules.contacts.Partner):
+            if isinstance(self.project, rt.modules.contacts.Partner):
                 yield ('to', self.project)
         for g in self.guest_set.all():
             yield ('to', g.partner)

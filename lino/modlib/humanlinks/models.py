@@ -23,7 +23,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
 from django.db.models import Q
 
-from lino import dd
+from lino import dd, rt
 from lino.utils.xmlgen.html import E
 
 config = dd.apps.humanlinks
@@ -197,7 +197,7 @@ class LinksByHuman(Links):
         mi = ar.master_instance  # a Person
         if mi is None:
             return
-        Link = dd.modules.humanlinks.Link
+        Link = rt.modules.humanlinks.Link
         flt = Q(parent=mi) | Q(child=mi)
         return Link.objects.filter(flt).order_by(
             'child__birth_date', 'parent__birth_date')

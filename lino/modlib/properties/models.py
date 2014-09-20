@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
 
-from lino import dd
+from lino import dd, rt
 
 from lino.core.choicelists import get_choicelist, choicelist_choices
 

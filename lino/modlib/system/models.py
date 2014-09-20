@@ -17,7 +17,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.core.dbutils import resolve_field
 from lino.core import actions
 from lino.utils.xmlgen.html import E

@@ -11,11 +11,12 @@ Adds some :class:`household roles <households.Role>`.
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
+from lino import rt
 
 
 def objects():
-    Type = dd.modules.households.Type
+    Type = rt.modules.households.Type
 
     yield Type(**dd.str2kw('name', _("Married")))
     # Verheiratet / Marié

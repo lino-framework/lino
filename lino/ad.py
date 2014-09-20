@@ -528,7 +528,7 @@ class Site(Site):
                 kw[g.name+'_level'] = level
             return kw
 
-        from lino import dd
+        from lino import dd, rt
         dd.UserProfiles.reset()
         add = dd.UserProfiles.add_item
         add('000', _("Anonymous"), name='anonymous',
@@ -540,7 +540,7 @@ class Site(Site):
 
     def add_user_field(self, name, fld):
         if self.user_model:
-            from lino import dd
+            from lino import dd, rt
             #~ User = dd.resolve_model(self.user_model)
             dd.inject_field(self.user_model, name, fld)
             #~ if profile:
@@ -1084,7 +1084,7 @@ class Site(Site):
         return E.span(*p)
 
     def login(self, username=None, **kw):
-        "See :func:`dd.login`."
+        "See :func:`rt.login`."
         self.startup()
         if self.user_model is None or username is None:
             if not 'user' in kw:
@@ -1105,7 +1105,7 @@ class Site(Site):
         sc = self.site_config.site_company
         if today is None:
             today = self.today()
-        from lino import dd
+        from lino import dd, rt
         if sc and sc.city:
             return _("%(place)s, %(date)s") % dict(
                 place=unicode(sc.city.name), date=dd.fdl(today))

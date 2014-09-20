@@ -1,10 +1,10 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 A collection of tools around :doc:`/topics/mti`.
 See :doc:`/autodoc/lino.test_apps.mti`.
-Certainly not perfect, but works for me. 
+Certainly not perfect, but works for me.
 I wrote it mainly to solve ticket :doc:`/tickets/22`.
 
 
@@ -34,7 +34,8 @@ class MultiTableBase(models.Model):
 
     """
     Mixin for Models that use MTI.
-    Subclassed by :class:`lino.modlib.journals.models.Journaled`.
+    Subclassed e.g. by
+    :class:`ml.contacts.Partner`.
     """
     class Meta:
         abstract = True
@@ -50,11 +51,13 @@ class MultiTableBase(models.Model):
         return getattr(self, related_name)
 
     def get_mti_child(self, *args):
-        """
-        Return the specified specialization or `None`.
-        For example if you have two models `Place(Model)` and `Restaurant(Place)` 
-        and a `Place` instance ``p`` which is *not* also a Restaurant, then 
-        `p.get_mti_child('restaurant')` will return `None`.
+        """Return the specified specialization or `None`.
+
+        For example if you have two models `Place(Model)` and
+        `Restaurant(Place)` and a `Place` instance ``p`` which is
+        *not* also a Restaurant, then `p.get_mti_child('restaurant')`
+        will return `None`.
+
         """
         for a in args:
             try:

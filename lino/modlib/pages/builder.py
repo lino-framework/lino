@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 #~ from lino.utils.instantiator import Instantiator
 
-from lino import dd
+from lino import dd, rt
 from lino.utils import AttrDict
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """NO LONGER USED.
@@ -23,12 +23,11 @@ from django.utils import translation
 from djangosite.utils.djangotest import RemoteAuthTestCase
 from django.test.utils import override_settings
 
-#from lino.igen import models
-#from lino.modlib.contacts.models import Contact, Companies
-#from lino.modlib.countries.models import Country
 from north import dbutils
 
-from lino import dd
+from lino import dd, rt
+from lino import rt
+
 from lino.utils.instantiator import Instantiator, create_and_get
 from north.dbutils import babelkw
 
@@ -244,10 +243,10 @@ Estland''')
         # least in sqlite. we would prefer to have `['adams', 'Zybulka']`,
         # but we get `['Zybulka', 'adams']`.
 
-        contacts = dd.modules.contacts
+        contacts = rt.modules.contacts
         contacts.Partner(name="Zybulka").save()
         contacts.Partner(name="adams").save()
-        ar = dd.login().spawn(contacts.Partners)
+        ar = rt.login().spawn(contacts.Partners)
         l = [p.name for p in ar]
         expected = ['Zybulka', 'adams']
         self.assertEqual(l, expected)

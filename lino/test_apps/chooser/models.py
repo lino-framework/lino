@@ -91,7 +91,7 @@ Note that `Chooser.get_choices()` ignores any unused keyword arguments:
 """
 
 from django.db import models
-from lino import dd
+from lino import dd, rt
 from lino.utils import choosers
 from lino.dd import obj2str
 

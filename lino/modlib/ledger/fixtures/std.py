@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 from north.dbutils import babel_values
-from lino import dd
+from lino import dd, rt
 notes = dd.resolve_app('notes')
 
 

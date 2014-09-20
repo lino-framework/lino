@@ -23,9 +23,7 @@ provides data definitions for "Calendar management".
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
   ...   'lino.projects.docs.settings'
-  >>> from lino import dd
-  >>> dd.startup()
-  >>> globals().update(dd.modules)
+  >>> from lino.runtime import *
 
 
 
@@ -83,7 +81,7 @@ Models
 
     .. lino2rst::
 
-       dd.show(cal.EventTypes, limit=5)
+       rt.show(cal.EventTypes, limit=5)
 
     .. attribute:: is_appointment
 
@@ -299,7 +297,7 @@ Choicelists
 
     .. django2rst:: 
 
-            dd.show(cal.EventStates)
+            rt.show(cal.EventStates)
 
 
 .. class:: TaskStates
@@ -310,7 +308,7 @@ Choicelists
 
     .. django2rst:: 
 
-            dd.show(cal.TaskStates)
+            rt.show(cal.TaskStates)
 
 
 
@@ -318,7 +316,7 @@ Choicelists
 
     .. django2rst:: 
 
-            dd.show(cal.DurationUnits)
+            rt.show(cal.DurationUnits)
 
 
     .. method:: add_duration(self, start_value, add_value)
@@ -326,7 +324,7 @@ Choicelists
     Example:
 
     >>> from lino.utils import i2d
-    >>> DurationUnits = dd.modules.cal.DurationUnits
+    >>> DurationUnits = rt.modules.cal.DurationUnits
     >>> start_date = i2d(20111026)
     >>> DurationUnits.months.add_duration(start_date, 2)
     datetime.date(2011, 12, 26)
@@ -354,7 +352,7 @@ Choicelists
 
     .. django2rst:: 
 
-            dd.show(cal.GuestStates)
+            rt.show(cal.GuestStates)
 
     The actual content can be redefined by other apps,
     e.g. :mod:`ml.reception`. 

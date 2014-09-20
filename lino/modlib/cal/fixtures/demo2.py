@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 
 from lino.utils import Cycler
 
-from lino import dd
+from lino import dd, rt
 
 # from ..cal import models as cal
 

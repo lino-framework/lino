@@ -26,9 +26,8 @@ This app is being extended by :ref:`welfare` in
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
   ...   'lino.projects.docs.settings'
-  >>> from lino import dd
-  >>> dd.startup()
-  >>> globals().update(dd.modules)
+  >>> from lino.runtime import *
+
 
 Mixins
 ======
@@ -137,7 +136,7 @@ Models
 
     .. django2rst::
 
-       dd.show(contacts.CompanyTypes, limit=5)
+       rt.show(contacts.CompanyTypes, limit=5)
 
 .. class:: Role
 
@@ -153,7 +152,7 @@ Models
     The default database comes with the following list of 
     :class:`RoleType`:
     
-    .. django2rst:: dd.show(contacts.RoleTypes)
+    .. django2rst:: rt.show(contacts.RoleTypes)
     
 
 
@@ -187,9 +186,5 @@ Configuration
     united country since they don't need a `region` field when
     entering a postal address.  In many other countries such a field
     is required.
-
-    Example code in a local :xfile:`settings.py` file::
-
-      dd.configure_plugin('contacts', hide_region=True)
 
 

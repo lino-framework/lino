@@ -22,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 from lino.core import fields
 
 from lino.core.signals import pre_ui_delete, pre_ui_create, pre_ui_update

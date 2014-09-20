@@ -505,7 +505,7 @@ action on individual instances.
           \.. py2rst:: print contacts.Partner.print_subclasses_graph()
           
         """
-        from lino import dd
+        from lino import dd, rt
         pairs = []
 
         def collect(m):

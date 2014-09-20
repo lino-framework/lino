@@ -57,7 +57,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 #~ from lino.modlib.cal import models as cal
 
 blogs = dd.resolve_app('blogs')

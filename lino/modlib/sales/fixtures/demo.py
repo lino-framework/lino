@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from lino.utils import Cycler
 from north.dbutils import babel_values
-from lino import dd
+from lino import dd, rt
 
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')

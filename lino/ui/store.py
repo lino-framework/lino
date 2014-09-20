@@ -28,7 +28,7 @@ from lino.core import constants
 from lino.core import fields
 from lino.core import actions
 from lino.core import frames
-from lino import dd
+from lino import dd, rt
 from lino.utils import choosers
 from lino.utils import curry
 from lino.utils import iif

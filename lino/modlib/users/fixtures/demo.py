@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino import dd
+from lino import dd, rt
 
 
 def root_user(lang, **kw):

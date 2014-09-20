@@ -20,7 +20,7 @@ from django.utils import translation
 from babel.dates import format_datetime, format_date
 from north.utils import to_locale
 
-from lino import dd
+from lino import dd, rt
 
 
 def aware(d):

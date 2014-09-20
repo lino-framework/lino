@@ -32,7 +32,7 @@ from lino.ui.render import HtmlRenderer
 
 from lino.ad import Plugin
 
-from lino import dd
+from lino import dd, rt
 from lino.core import actions
 from lino.core import dbtables
 from lino.core import tables

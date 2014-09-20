@@ -2,9 +2,37 @@
 Runtime API
 ===========
 
-This section documents classes which are important at runtime.
+This section documents functions and classes which are available "at
+runtime", i.e. when the Django machine has been initialized.
 
 .. currentmodule:: rt
+
+.. function:: startup()
+
+Start up this Site. 
+
+This is called exactly once when Django has has populated it's model
+cache.
+
+It is designed to be called potentially several times in case your
+code wants to make sure that it was called.
+
+
+.. function:: login(self, username=None, **kw)
+
+    For usage from a shell.
+
+    The :meth:`login <lino.site.Site.login>` method doesn't require any
+    password because when somebody has command-line access we trust
+    that she has already authenticated. It returns a
+    :class:`BaseRequest <lino.core.requests.BaseRequest>` object which
+    has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
+
+.. function:: show
+
+  Shortcut to 
+  :meth:`Site.login`
+  :meth:`ActionRequest.show`
 
 
 The ``ActionRequest`` class
@@ -50,7 +78,7 @@ The ``ActionRequest`` class
 
     Usage in a tested doc::
 
-      >>> dd.login("robin").show('users.UsersOverview', limit=5)
+      >>> rt.login('robin').show('users.UsersOverview', limit=5)
 
     Usage in a Jinja template::
 

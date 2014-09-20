@@ -18,7 +18,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 
 concepts = dd.resolve_app('concepts')
 

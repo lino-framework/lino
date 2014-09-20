@@ -12,7 +12,7 @@ if False: # TIMTOWTDI: the following is equivalent
     ar = settings.LINO.modules.pcsw.UsersWithClients.request(user=root)
     print ar.to_rst()
 else:
-    from lino import dd
+    from lino import dd, rt
     pcsw = dd.resolve_app('pcsw')
     User = dd.resolve_model('users.User')
     root = User.objects.get(username='root')

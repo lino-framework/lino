@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from lino import dd
+from lino import dd, rt
 
 
 class Person(dd.Model):

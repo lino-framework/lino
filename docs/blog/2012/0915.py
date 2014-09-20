@@ -1,5 +1,5 @@
 from lino_welfare.modlib.pcsw import models as pcsw
-from lino import dd
+from lino import dd, rt
 pcsw = dd.resolve_app('pcsw')
 users = dd.resolve_app('users')
 root = users.User.objects.get(username='root')

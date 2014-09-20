@@ -12,12 +12,12 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-from lino import dd
+from lino import rt
 
 
 def objects():
     # create a primary Address for each Partner
-    for obj in dd.modules.contacts.Partner.objects.all():
+    for obj in rt.modules.contacts.Partner.objects.all():
         obj.get_primary_address()
         yield obj
 

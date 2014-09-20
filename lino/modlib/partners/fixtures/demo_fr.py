@@ -8,7 +8,7 @@
 from django.conf import settings
 from lino.utils import Cycler
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.utils import demonames
 
 

@@ -20,7 +20,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 from django.utils.encoding import force_unicode
 
-from lino import dd
+from lino import dd, rt
 #~ from lino.core.signals import pre_ui_delete
 
 from lino.utils.xmlgen import html as xghtml
@@ -48,7 +48,7 @@ from lino.ui import elems as ext_elems
 from django import http
 from django.views.generic import View
 
-from lino import dd
+from lino import dd, rt
 pages = dd.resolve_app('pages')
 
 

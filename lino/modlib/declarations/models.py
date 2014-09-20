@@ -21,7 +21,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
-from lino import dd
+from lino import dd, rt
 from django.utils.translation import ugettext_lazy as _
 
 # from lino.modlib.ledger.utils import FiscalYears

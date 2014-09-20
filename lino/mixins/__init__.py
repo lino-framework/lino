@@ -8,7 +8,7 @@ application.
 They are also available in :mod:`lino.dd`, so we recommend to use the
 ``dd`` shortcut::
 
-  from lino import dd
+  from lino import dd, rt
   class MyModel(dd.Controllable):
       ...
 

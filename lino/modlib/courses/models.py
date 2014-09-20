@@ -34,7 +34,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 # from north.dbutils import day_and_month
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 
 from lino.utils import join_elems
@@ -172,7 +172,7 @@ class Line(dd.BabelNamed):
     def tariff_choices(cls, fees_cat):
         if not fees_cat:
             return []
-        Product = dd.modules.products.Product
+        Product = rt.modules.products.Product
         return Product.objects.filter(cat=fees_cat)
 
     def __unicode__(self):
@@ -219,7 +219,7 @@ class EventsByTeacher(cal.Events):
             return []
         # TODO: build a list of courses, then show events by course
         qs = super(EventsByTeacher, self).get_request_queryset(ar)
-        mycourses = dd.modules.Course.objects.filter(teacher=teacher)
+        mycourses = rt.modules.Course.objects.filter(teacher=teacher)
         qs = qs.filter(course__in=teacher.course_set.all())
         return qs
 
@@ -329,7 +329,7 @@ class Course(cal.Reservation):
     def tariff_choices(cls, line):
         if not line or not line.fees_cat:
             return []
-        Product = dd.modules.products.Product
+        Product = rt.modules.products.Product
         return Product.objects.filter(cat=line.fees_cat)
 
     def update_cal_from(self, ar):
@@ -352,7 +352,7 @@ class Course(cal.Reservation):
 
     def suggest_cal_guests(self, event):
         # logger.info("20140314 suggest_guests")
-        Guest = dd.modules.cal.Guest
+        Guest = rt.modules.cal.Guest
         if self.line is None:
             return
         gr = self.line.guest_role
@@ -574,8 +574,8 @@ class Courses(dd.Table):
 
     @dd.chooser()
     def city_choices(cls):
-        Place = dd.modules.countries.Place
-        Room = dd.modules.cal.Room
+        Place = rt.modules.countries.Place
+        Room = rt.modules.cal.Room
         places = set([
             obj.company.city.id
             for obj in Room.objects.filter(company__isnull=False)])
@@ -742,7 +742,7 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
 
     @dd.chooser()
     def course_choices(cls, course_area):
-        qs = dd.modules.courses.Course.objects.all()
+        qs = rt.modules.courses.Course.objects.all()
         if course_area:
             qs = qs.filter(line__course_area=course_area)
         return qs
@@ -751,7 +751,7 @@ class Enrolment(dd.UserAuthored, sales.Invoiceable):
     def option_choices(cls, course):
         if not course.line or not course.line.options_cat:
             return []
-        Product = dd.modules.products.Product
+        Product = rt.modules.products.Product
         return Product.objects.filter(cat=course.line.options_cat)
 
     @dd.chooser()

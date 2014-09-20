@@ -16,7 +16,7 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
   
 .. 
     >>> from __future__ import print_function
-    >>> from lino import dd
+    >>> from lino import rt
     >>> from lino.runtime import *
     >>> globals().update(tables)
     >>> from north.dpy import load_fixture_from_module
@@ -25,7 +25,7 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
 >>> import tables.fixtures.demo as m
 >>> load_fixture_from_module(m)
 
->>> dd.show(Authors)
+>>> rt.show(Authors)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ============ =========== =========
  First name   Last name   Country
@@ -37,7 +37,7 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
 <BLANKLINE>
 
 
->>> dd.show(Books)
+>>> rt.show(Books)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ==================== ====================================== ===========
  author               Title                                  Published
@@ -52,7 +52,7 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
 
 
 >>> adams = Author.objects.get(last_name="Adams")
->>> dd.show(BooksByAuthor, adams)
+>>> rt.show(BooksByAuthor, adams)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 =========== ======================================
  Published   Title

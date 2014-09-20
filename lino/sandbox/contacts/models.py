@@ -11,7 +11,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 #~ from lino.utils.mti import EnableChild
 from lino.modlib.countries.models import CountryCity
 from lino.models import get_site_config

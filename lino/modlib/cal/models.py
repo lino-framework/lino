@@ -26,7 +26,7 @@ from north.dbutils import dtosl
 
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.utils import ONE_DAY
 
 from .utils import (

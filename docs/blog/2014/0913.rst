@@ -74,9 +74,9 @@ Django.
 
 For example, :mod:`djangosite.models` looked at
 `django.db.models.loading.cache.postponed` in order to run
-:func:`dd.startup`.  But it seems that Django no longer has a list of
+:func:`rt.startup`.  But it seems that Django no longer has a list of
 postponed apps.  The trick was to raise an ImportError if some other
 app was still not completely loaded, and then (when Django tries to
-import it a second time) run :func:`dd.startup`. With Django 1.7 we
+import it a second time) run :func:`rt.startup`. With Django 1.7 we
 can simply use the `AppConfig.ready` method.
 

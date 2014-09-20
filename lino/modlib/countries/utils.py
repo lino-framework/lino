@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ValidationError
 
-from lino import dd
+from lino import dd, rt
 
 from lino.utils.instantiator import InstanceGenerator
 
@@ -20,7 +20,7 @@ class PlaceGenerator(InstanceGenerator):
     def __init__(self):
         super(PlaceGenerator, self).__init__()
         self.prev_obj = None
-        EE = dd.modules.countries.Country.objects.get(isocode="EE")
+        EE = rt.modules.countries.Country.objects.get(isocode="EE")
 
         for pt in PlaceTypes.objects():
             self.add_instantiator(

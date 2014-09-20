@@ -179,7 +179,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.utils.choicelists import Choice,ChoiceList
-from lino import dd
+from lino import dd, rt
 
 DEBIT = True
 CREDIT = False

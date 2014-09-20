@@ -7,7 +7,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 contacts = dd.resolve_app('contacts')
 

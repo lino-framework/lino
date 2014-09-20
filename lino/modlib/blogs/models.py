@@ -16,7 +16,7 @@ from django.utils.encoding import force_unicode
 
 
 #~ from lino import tools
-from lino import dd
+from lino import dd, rt
 #~ from lino import reports
 #~ from lino import layouts
 from lino.utils.restify import restify

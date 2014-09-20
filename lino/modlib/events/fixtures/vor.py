@@ -5,7 +5,7 @@
 """
 from __future__ import unicode_literals
 
-from lino import dd
+from lino import dd, rt
 from lino.utils import i2d
 from north import dbutils
 Country = dd.resolve_model("countries.Country")

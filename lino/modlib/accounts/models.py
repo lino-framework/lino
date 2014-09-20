@@ -17,7 +17,7 @@ from django.db import models
 from django.conf import settings
 # settings.SITE.add_site_attribute('accounts_ref_length', 20)
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 

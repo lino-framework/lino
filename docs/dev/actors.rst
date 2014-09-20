@@ -19,7 +19,7 @@ these words are already being used very often, so in this section we
 talk about *actors*.
 
 When we say "a globally known unique thing", then we refer to the
-global namespace which is currently in :data:`dd.modules`.
+global namespace which is currently in :data:`rt.modules`.
 
 
 **Actors are classes, not instances** : Actors are never instantiated,

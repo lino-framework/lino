@@ -22,7 +22,7 @@ from north.dbutils import babel_values
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino import dd
+from lino import dd, rt
 
 
 # german names are my spontaneous guessings...

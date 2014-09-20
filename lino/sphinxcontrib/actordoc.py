@@ -45,7 +45,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
 from django.utils.encoding import force_unicode
 
-from lino import dd
+from lino import dd, rt
 
 from lino.core import actors
 from lino.core import choicelists
@@ -398,10 +398,12 @@ class Lino2rstDirective(Py2rstDirective):
 
     def get_context(self):
         from django.conf import settings
+        from lino import rt
         context = super(Lino2rstDirective, self).get_context()
         context.update(settings=settings)
         context.update(settings.SITE.modules)
         context.update(dd=dd)
+        context.update(rt=rt)
         return context
 
     def output_from_exec(self, code):

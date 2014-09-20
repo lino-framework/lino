@@ -378,7 +378,6 @@ from django.utils.importlib import import_module
 
 from django.contrib.contenttypes.models import ContentType
 
-
 # The following are not only shortcuts, they also are a preparation to
 # encapsulate the `settings.SITE` name. It is possible that after
 # Django 1.7 we no longer need a `settings.SITE`. So I plan to
@@ -387,25 +386,16 @@ from django.contrib.contenttypes.models import ContentType
 
 # site = settings.SITE
 plugins = apps = settings.SITE.plugins
-modules = settings.SITE.modules
-login = settings.SITE.login
-startup = settings.SITE.startup
-get_db_overview_rst = settings.SITE.get_db_overview_rst
-is_abstract_model = settings.SITE.is_abstract_model
-is_installed = settings.SITE.is_installed
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
 demo_date = settings.SITE.demo_date
+is_abstract_model = settings.SITE.is_abstract_model
+is_installed = settings.SITE.is_installed
+get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 
 def resolve_plugin(app_label):
     return plugins.get(app_label, None)
 
-
-def show(*args, **kw):
-    return login().show(*args, **kw)
-
-from django.utils import translation
-get_language = translation.get_language
 
 # logger.info("20140227 dd.py b %s", site)

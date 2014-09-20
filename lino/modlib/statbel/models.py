@@ -11,7 +11,7 @@ and `countries.Country`.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 
 dd.inject_field('countries.Place',

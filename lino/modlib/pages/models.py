@@ -28,7 +28,7 @@ from django.utils.encoding import force_unicode
 
 
 #~ from lino import tools
-from lino import dd
+from lino import dd, rt
 from north import dbutils
 from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml

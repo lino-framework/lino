@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from lino import dd
+from lino import dd, rt
 
 
 class UploaderAction(dd.Action):

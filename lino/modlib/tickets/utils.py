@@ -4,7 +4,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.utils.workflows import Workflow
-from lino import dd
+from lino import dd, rt
 
 
 class DependencyTypes(dd.ChoiceList):

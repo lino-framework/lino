@@ -13,12 +13,12 @@ Here is the :xfile:`models.py` file we will use for this tutorial:
 Some setup for doctest:
   
 >>> from __future__ import print_function
->>> from lino import dd
+>>> from lino import rt
 >>> from lino.runtime import *
 >>> globals().update(vtables)
 
 
->>> dd.show(CitiesAndInhabitants)
+>>> rt.show(CitiesAndInhabitants)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ========= ========= ============
  Country   City      Population

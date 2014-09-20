@@ -7,7 +7,7 @@ Loads a series of default :class:`ml.contacts.CompanyType`.
 
 .. django2rst::
 
-  dd.show('contacts.CompanyTypes')
+  rt.show('contacts.CompanyTypes')
 
 See also :doc:`/tickets/108`.
 """

@@ -17,7 +17,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from north import dbutils
 
-from lino import dd
+from lino import dd, rt
 
 from ..workflows import (TaskStates, EventStates, GuestStates)
 

@@ -23,7 +23,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 #~ from lino import reports
 from lino.core import actions

@@ -28,7 +28,7 @@ from django.conf import settings
 
 from lino import mixins
 #~ from lino.mixins import mails
-from lino import dd
+from lino import dd, rt
 from lino.core import actions
 
 

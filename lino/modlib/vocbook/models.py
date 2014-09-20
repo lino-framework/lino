@@ -18,7 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 #~ from lino.core import reports
 from lino.core import actions
 from lino.utils import dblogger

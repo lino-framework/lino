@@ -35,7 +35,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd
+from lino import dd, rt
 from lino.core.actions import SubmitInsert
 
 contacts = dd.resolve_app('contacts')

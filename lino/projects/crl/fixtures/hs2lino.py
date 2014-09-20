@@ -41,7 +41,7 @@ from lino.utils import dblogger
 from lino.utils import join_words
 from lino.modlib.contacts.utils import name2kw, street2kw
 #~ from lino.modlib.contacts.models import GENDER_MALE, GENDER_FEMALE
-from lino import dd
+from lino import dd, rt
 from lino.utils.instantiator import Instantiator
 
 from lino.core.dbutils import resolve_model, obj2str

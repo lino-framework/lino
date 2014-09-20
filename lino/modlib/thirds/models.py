@@ -16,7 +16,7 @@ from django.contrib.contenttypes import generic
 #~ import lino
 #~ logger.debug(__file__+' : started')
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 from lino.modlib.contacts import models as contacts
 

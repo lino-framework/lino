@@ -1,0 +1,17 @@
+============================
+Saturday, September 20, 2014
+============================
+
+Oops, here is an API change which caused me some code changes. But I
+think it was worth the work because it makes things *much* more clear.
+And there is hope that other developers didn't yet use it very much
+since it was not yet documented clearly:
+
+I added a new module :mod:`lino.rt` and moved the following functions
+and objects from :mod:`lino.dd` to it:
+
+- :func:`rt.startup`
+- :func:`rt.modules`
+- :func:`rt.login`
+- :func:`rt.show`
+

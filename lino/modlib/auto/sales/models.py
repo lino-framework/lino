@@ -23,7 +23,7 @@ from decimal import Decimal
 
 ZERO = Decimal()
 
-from lino import dd
+from lino import dd, rt
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
 

@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 
 
 class Certifiable(dd.Model):

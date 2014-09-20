@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.modlib.countries.models import AddressLocation
 
@@ -52,9 +52,9 @@ class AddressOwner(dd.Model):
         abstract = True
 
     def get_primary_address(self):
-        # Address = dd.modules.addresses.Address
-        # AddressTypes = dd.modules.addresses.AddressTypes
-        # ADDRESS_FIELDS = dd.modules.addresses.ADDRESS_FIELDS
+        # Address = rt.modules.addresses.Address
+        # AddressTypes = rt.modules.addresses.AddressTypes
+        # ADDRESS_FIELDS = rt.modules.addresses.ADDRESS_FIELDS
 
         kw = dict(partner=self, primary=True)
         try:
@@ -84,7 +84,7 @@ class AddressOwner(dd.Model):
         return elems
     
     def sync_primary_address(self, request):
-        Address = dd.modules.addresses.Address
+        Address = rt.modules.addresses.Address
         watcher = dd.ChangeWatcher(self)
         kw = dict(partner=self, primary=True)
         try:

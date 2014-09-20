@@ -1,4 +1,5 @@
 #~ from north.dbutils import set_language
 from django.conf import settings
-settings.SITE.startup()
-globals().update(settings.SITE.modules)
+from lino import ad, dd, rt
+rt.startup()
+globals().update(rt.modules)

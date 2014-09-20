@@ -1,4 +1,4 @@
-from lino import dd
+from lino import dd, rt
 
 Poll = dd.resolve_model('polls.Poll')
 Choice = dd.resolve_model('polls.Choice')

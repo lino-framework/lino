@@ -33,7 +33,7 @@ from django.utils import translation
 import lino
 #~ from lino import layouts
 
-from lino import dd
+from lino import dd, rt
 #~ from lino import fields
 
 from lino import mixins

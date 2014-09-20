@@ -19,7 +19,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd
+from lino import dd, rt
 
 from .workflows import GuestStates
 from .workflows import EventStates

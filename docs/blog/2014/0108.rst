@@ -14,8 +14,7 @@ status in that case, not raise an :ref:`ise`.
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.belref.settings.test'
 >>> from django.test import Client
->>> from lino import dd
->>> dd.startup()
+>>> from lino.runtime import *
 >>> client = Client()
 >>> url = '/countries/CitiesByCountry'
 >>> res = client.get(url)

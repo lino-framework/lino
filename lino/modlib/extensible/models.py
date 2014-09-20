@@ -17,7 +17,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import exceptions
-from lino import dd
+from lino import dd, rt
 from lino.core import constants
 
 from ..cal.models import Subscription, Calendars, Events

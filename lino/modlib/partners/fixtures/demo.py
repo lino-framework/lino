@@ -14,7 +14,7 @@ from lino.core.dbutils import resolve_model, obj2str
 from lino.utils.instantiator import Instantiator
 from lino import mixins
 from lino.utils import dblogger
-#~ from lino import dd
+#~ from lino import dd, rt
 #from lino import reports
 
 

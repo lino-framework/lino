@@ -25,7 +25,7 @@ from django.db import models
 
 
 #~ from lino.modlib.families import Plugin
-from lino import dd
+from lino import dd, rt
 
 
 #~ class CoupleTypes(dd.ChoiceList):

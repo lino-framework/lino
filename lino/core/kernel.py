@@ -45,7 +45,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import lino
 
-from lino import dd
+from lino import dd, rt
 
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest

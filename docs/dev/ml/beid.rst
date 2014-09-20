@@ -47,7 +47,7 @@ Choicelists
 
     .. lino2rst::
 
-       dd.show(beid.BeIdCardTypes)
+       rt.show(beid.BeIdCardTypes)
 
     Didn't yet find any official reference document.
     

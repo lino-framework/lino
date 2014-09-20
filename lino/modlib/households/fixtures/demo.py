@@ -14,13 +14,14 @@ from lino.core.dbutils import resolve_model
 
 from lino.utils import Cycler
 from lino.utils import i2d
-from lino import dd
+from lino import dd, rt
+from lino import rt
 
 
 def objects():
 
-    Member = dd.modules.households.Member
-    MemberRoles = dd.modules.households.MemberRoles
+    Member = rt.modules.households.Member
+    MemberRoles = rt.modules.households.MemberRoles
     # Household = resolve_model('households.Household')
     Person = resolve_model(dd.apps.households.person_model)
     Type = resolve_model('households.Type')
@@ -31,7 +32,7 @@ def objects():
                    .order_by('-id'))
     TYPES = Cycler(Type.objects.all())
 
-    ses = dd.login()
+    ses = rt.login()
     for i in range(5):
         pv = dict(
             head=MEN.pop(), partner=WOMEN.pop(),

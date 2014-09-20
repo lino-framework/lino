@@ -1,4 +1,4 @@
-from lino import dd
+from lino import dd, rt
 from django.db import models
 
 

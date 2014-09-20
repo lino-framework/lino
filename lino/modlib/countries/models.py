@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino import dd
+from lino import dd, rt
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
@@ -72,7 +72,7 @@ def get_address_formatter(country):
 class PlaceType(dd.Choice):
 
     def find(self, name):
-        M = dd.modules.countries.Place
+        M = rt.modules.countries.Place
         try:
             return M.objects.get(type=self, name=name)
         except M.DoesNotExist:

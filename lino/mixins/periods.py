@@ -54,7 +54,7 @@ default list has the following choices:
 
 .. django2rst::
 
-  dd.show('lino.PeriodEvents')
+  rt.show('lino.PeriodEvents')
 
     """
     app_label = 'lino'

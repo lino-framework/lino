@@ -10,7 +10,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
+from lino import rt
 from lino.utils import join_words, join_elems
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
@@ -83,7 +84,7 @@ class Household(contacts.Partner):
     # workaround for https://code.djangoproject.com/ticket/13864
 
     def add_member(self, person, role=None):
-        mbr = dd.modules.households.Member(
+        mbr = rt.modules.households.Member(
             household=self, person=person, role=role)
         mbr.full_clean()
         mbr.save()
@@ -279,7 +280,7 @@ class SiblingsByPerson(Members):
         mi = ar.master_instance  # a Person
         if mi is None:
             return
-        M = dd.modules.households.Member
+        M = rt.modules.households.Member
         mbr = M.objects.filter(person=mi)
         if mbr.count() == 1:
             ar.master_household = mbr[0].household
@@ -339,7 +340,7 @@ class SiblingsByPerson(Members):
     @classmethod
     def find_links(self, ar, child, parent):
         types = {}  # mapping LinkType -> list of parents
-        for lnk in dd.modules.humanlinks.Link.objects.filter(child=child):
+        for lnk in rt.modules.humanlinks.Link.objects.filter(child=child):
                 # child=child, parent=p):
             tt = lnk.type.as_child(lnk.child)
             l = types.setdefault(tt, [])
@@ -386,7 +387,7 @@ class CreateHousehold(dd.Action):
         if partner:
             name += '-' + partner.last_name
             prefix += ' & ' + partner.first_name
-        hh = dd.modules.households.Household(
+        hh = rt.modules.households.Household(
             type=ar.action_param_values.type,
             name=name, prefix=prefix)
         hh.full_clean()
@@ -446,7 +447,7 @@ class MembersByPerson(Members):
                 E.br(), ar.instance_action_button(obj.create_household)]
         else:
             elems += [E.br(), _("Create a household"), ' : ']
-            Type = dd.modules.households.Type
+            Type = rt.modules.households.Type
             Person = dd.resolve_model(config.person_model)
             T = Person.get_default_table()
             ba = T.get_action_by_name('create_household')
@@ -483,10 +484,10 @@ def setup_main_menu(site, ui, profile, m):
 def setup_config_menu(site, ui, profile, m):
     m = m.add_menu(mnugrp.app_label, mnugrp.verbose_name)
     # m.add_action(Roles)
-    m.add_action(Types)
+    m.add_action('households.Types')
 
 
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu(mnugrp.app_label, mnugrp.verbose_name)
-    m.add_action('households.Members')
     m.add_action('households.MemberRoles')
+    m.add_action('households.Members')

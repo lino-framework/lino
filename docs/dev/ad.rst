@@ -30,9 +30,7 @@ configure.
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
   ...   'lino.projects.docs.settings'
-  >>> from lino import dd
-  >>> dd.startup()
-  >>> globals().update(dd.modules)
+  >>> from lino.runtime import *
 
 
 
@@ -1033,7 +1031,7 @@ Configuring plugins
   This should be called *before instantiating* your :class:`Site`
   class.
 
-  For example to enable :attr:`ml.contacts.Plugin.hide_region` to
+  For example to set :attr:`ml.contacts.Plugin.hide_region` to
   True::
 
     ad.configure_plugin('contacts', hide_region=True)

@@ -294,27 +294,6 @@ an exception.
   :meth:`ad.Site.get_apps_modifiers`.
 
 
-.. function:: login(self, username=None, **kw)
-
-    For usage from a shell.
-
-    The :meth:`login <lino.site.Site.login>` method doesn't require any
-    password because when somebody has command-line access we trust
-    that she has already authenticated. It returns a
-    :class:`BaseRequest <lino.core.requests.BaseRequest>` object which
-    has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
-
-.. function:: startup()
-
-Start up this Site. 
-
-This is called exactly once when Django has has populated it's model
-cache.
-
-It is designed to be called potentially several times in case your
-code wants to make sure that it was called.
-
-
 .. function:: get_db_overview_rst
 
 .. function:: is_installed(app_label)
