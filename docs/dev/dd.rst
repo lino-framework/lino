@@ -6,10 +6,6 @@ The :mod:`lino.dd` module is a shortcut to those parts of Lino which
 are used in your :xfile:`models.py` modules.  The name ``dd`` stands
 for "Database Design".
 
-To keep your application as future-proof as possible, you should use
-these shortcuts instead of importing these classes and functions from
-their real place.
-
 .. toctree::
    :maxdepth: 2
 

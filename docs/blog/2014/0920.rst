@@ -11,7 +11,7 @@ I added a new module :mod:`lino.rt` and moved the following functions
 and objects from :mod:`lino.dd` to it:
 
 - :func:`rt.startup`
-- :func:`rt.modules`
+- :attr:`rt.modules`
 - :func:`rt.login`
 - :func:`rt.show`
 

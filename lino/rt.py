@@ -11,6 +11,4 @@ startup = settings.SITE.startup
 def show(*args, **kw):
     return login().show(*args, **kw)
 
-from django.utils import translation
-get_language = translation.get_language
 

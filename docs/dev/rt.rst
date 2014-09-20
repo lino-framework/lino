@@ -5,6 +5,10 @@ Runtime API
 This section documents functions and classes which are available "at
 runtime", i.e. when the Django machine has been initialized.
 
+You may import it but should not use it at the global namespace of a
+:xfile:`models.py` file.
+
+
 .. currentmodule:: rt
 
 .. function:: startup()
@@ -17,46 +21,34 @@ cache.
 It is designed to be called potentially several times in case your
 code wants to make sure that it was called.
 
+.. data:: modules
+
+An :class:`atelier.utils.AttrDict` with one entry per `app_label`,
+each entry holding a reference to each actor of that app.
+
 
 .. function:: login(self, username=None, **kw)
 
     For usage from a shell.
 
-    The :meth:`login <lino.site.Site.login>` method doesn't require any
+    The :meth:`rt.login` method doesn't require any
     password because when somebody has command-line access we trust
     that she has already authenticated. It returns a
-    :class:`BaseRequest <lino.core.requests.BaseRequest>` object which
-    has a :meth:`show <lino.core.requests.BaseRequest.show>` method.
+    :class:`BaseRequest <rt.BaseRequest>` object which
+    has a :meth:`rt.show <lino.core.requests.BaseRequest.show>` method.
 
 .. function:: show
 
-  Shortcut to 
-  :meth:`Site.login`
-  :meth:`ActionRequest.show`
+  Calls :meth:`BaseRequest.show` on a
+  temporary anonymous session (created using :meth:`Site.login`).
 
 
 The ``ActionRequest`` class
 ---------------------------
 
-.. class:: ActionRequest
+.. class:: BaseRequest
 
-    An action request is when a given user asks to run a given action
-    of a given actor.
-
-    Every Django web request is wrapped into an action request.
-
-    But an ActionRequest also holds extended information about the
-    "context" (like the "renderer" being used) and provides the
-    application with methods to communicate with the user.
-
-    A bare BaseRequest instance is returned as a "session" by
-    :meth:`login <lino.site.Site.login>`.
-
-
-
-  .. method:: show(self, spec, master_instance=None,
-                   column_names=None, header_level=None, 
-                   language=None, **kw)
+  .. method:: show(self, spec, master_instance=None, column_names=None, header_level=None, language=None, **kw)
 
     Show the specified table or action using the current renderer.  If
     the table is a :term:`slave table`, then a `master_instance` must
@@ -90,6 +82,25 @@ The ``ActionRequest`` class
 
     Note that this function either returns a string or prints to
     stdout and returns None, depending on the current renderer.
+
+
+.. class:: ActionRequest
+
+    An action request is when a given user asks to run a given action
+    of a given actor.
+
+    Every Django web request is wrapped into an action request.
+
+    But an ActionRequest also holds extended information about the
+    "context" (like the "renderer" being used) and provides the
+    application with methods to communicate with the user.
+
+    A bare BaseRequest instance is returned as a "session" by
+    :meth:`login <lino.site.Site.login>`.
+
+  .. method:: show()
+
+    See :meth:`BaseRequest.show`.
 
 
   .. method:: spawn(spec, **kwargs)

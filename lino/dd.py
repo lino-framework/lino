@@ -372,8 +372,6 @@ from lino.mixins.human import Human, Born
 
 from lino.mixins.periods import DatePeriod, PeriodEvents
 
-#~ from lino.utils.screenshots import register_screenshot
-
 from django.utils.importlib import import_module
 
 from django.contrib.contenttypes.models import ContentType
@@ -382,10 +380,8 @@ from django.contrib.contenttypes.models import ContentType
 # encapsulate the `settings.SITE` name. It is possible that after
 # Django 1.7 we no longer need a `settings.SITE`. So I plan to
 # deprecate direct access to settings.SITE in application code. I am
-# not yet 100% sure whether this is possible and makes sense.
+# not yet 100% sure whether this will be possible and makes sense.
 
-# site = settings.SITE
-plugins = apps = settings.SITE.plugins
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
 demo_date = settings.SITE.demo_date
@@ -394,8 +390,12 @@ is_installed = settings.SITE.is_installed
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 
+plugins = apps = settings.SITE.plugins
+
 def resolve_plugin(app_label):
     return plugins.get(app_label, None)
 
+from django.utils import translation
+get_language = translation.get_language
 
 # logger.info("20140227 dd.py b %s", site)
