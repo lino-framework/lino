@@ -31,16 +31,24 @@ import datetime
 from decimal import Decimal
 
 from dateutil.relativedelta import relativedelta
-# ONE_DAY = relativedelta(days=1)
-
-
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd
 from lino import mixins
+
+config = dd.plugins.vat
+
+
+def get_default_vat_regime():
+    return config.default_vat_regime
+
+
+def get_default_vat_class():
+    return config.default_vat_class
+
 
 partners = dd.resolve_app(settings.SITE.partners_app_label)
 accounts = dd.resolve_app('accounts')
@@ -193,59 +201,6 @@ def inject_vat_fields(sender, **kw):
             dd.inject_field('products.Product', tt.price_field_name,
                             dd.PriceField(verbose_name=tt.price_field_label,
                                           blank=True, null=True))
-
-
-CONFIG_FIELDS = dict(
-    default_vat_regime=VatRegimes.field(),
-    default_vat_class=VatClasses.field(),
-)
-
-from lino.utils import AttrDict
-
-CONFIG_VALUES = AttrDict(
-    default_vat_regime=VatRegimes.private,
-    default_vat_class=VatClasses.normal)
-
-
-def get_default_vat_regime():
-    return CONFIG_VALUES.default_vat_regime
-
-
-def get_default_vat_class():
-    return CONFIG_VALUES.default_vat_class
-
-
-def configure(**kw):
-    """
-    Sets the global default value for certain module parameters.
-    A cool new system which I will probably generalize.
-    Works for me but is not mature.
-
-    Call this from your settings.py using something like::
-    
-        def setup_choicelists(self):
-            super(Site,self).setup_choicelists()
-            self.modules.vat.configure(foo='a',bar=1,...)
-      
-    Example::
-    
-        def setup_choicelists(self):
-            super(Site,self).setup_choicelists()
-            self.modules.vat.configure(default_vat_class='exempt')
-      
-    Possible keywork arguments are:
-    
-    - default_vat_regime : one of 'private', '
-    - default_vat_class
-    
-    """
-
-    for k, v in kw.items():
-        fld = CONFIG_FIELDS[k]
-        CONFIG_VALUES[k] = fld.choicelist.get_by_name(v)
-
-
-settings.SITE.modules.define('vat', 'configure', configure)
 
 
 class PaymentTerm(dd.BabelNamed):

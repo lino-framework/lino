@@ -15,7 +15,7 @@ Some setup for doctest:
 >>> from __future__ import print_function
 >>> from lino import rt
 >>> from lino.runtime import *
->>> globals().update(vtables)
+>>> globals().update(vtables.__dict__)
 
 
 >>> rt.show(CitiesAndInhabitants)

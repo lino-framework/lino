@@ -33,7 +33,7 @@ and a table `Moos` on `Moo` defining another two action `b` and `t`.
 ..
   >>> # encoding: utf-8
   >>> from lino.runtime import *
-  >>> globals().update(actions)
+  >>> globals().update(actions.__dict__)
   >>> from pprint import pprint
 
 
@@ -52,7 +52,7 @@ You can define actions
   
 To demonstrate this, we log in and instantiate an `Moo` object:
 
->>> ses = settings.SITE.login()
+>>> ses = rt.login()
 >>> obj = Moo()
 
 Running an action programmatically is done using the 

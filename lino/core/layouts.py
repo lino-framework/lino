@@ -725,8 +725,8 @@ def create_layout_element(lh, name, **kw):
         #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
         msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
             name, de, lh.layout)
-        if de is not None:
-            msg += " Cannot handle %r" % de
+        # if de is not None:
+        #     msg += " Cannot handle %r" % de
     raise KeyError(msg)
 
 

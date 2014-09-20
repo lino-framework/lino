@@ -15,3 +15,27 @@ and objects from :mod:`lino.dd` to it:
 - :func:`rt.login`
 - :func:`rt.show`
 
+And then I did another thing which had been waiting (in my mind) for
+some time: 
+
+- The objects stored in :attr:`rt.modules` are no longer `AttrDict`\ s
+  but the :xfile:`models.py` modules themselves.
+
+
+
+
+
+Discovered a bug in :ref:`faggio`. When I create a room, I get::
+
+    [20/Sep/2014 20:20:44] "GET /api/cal/Rooms/-99999?_dc=1411233644184&an=insert&rp=ext-comp-2235&fmt=json HTTP/1.1" 200 426
+    ERROR 'NoneType' object has no attribute 'city'
+    Traceback (most recent call last):
+      File "/home/luc/hgwork/lino/lino/core/model.py", line 150, in func
+        obj, ar)
+      File "/home/luc/hgwork/lino/lino/ui/store.py", line 191, in full_value_from_object
+        return getattr(obj, self.name)
+    AttributeError: 'NoneType' object has no attribute 'city'
+    WARNING AjaxExceptionResponse:
+    AttributeError
+    'str' object has no attribute 'pk'
+

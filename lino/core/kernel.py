@@ -45,7 +45,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import lino
 
-from lino import dd, rt
+from lino import dd
 
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
@@ -54,7 +54,6 @@ from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
 from lino.core import fields
-from lino.core import choicelists
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
@@ -308,27 +307,22 @@ class Kernel(object):
             if model._meta.abstract:
                 raise Exception("Tiens?")
 
-            self.modules.define(model._meta.app_label, model.__name__, model)
+            # self.modules.define(model._meta.app_label, model.__name__, model)
 
             for f in model._meta.virtual_fields:
                 if isinstance(f, generic.GenericForeignKey):
                     settings.SITE.GFK_LIST.append(f)
-        vip_classes = (layouts.BaseLayout, fields.Dummy)
-        for a in models.get_apps():
-            app_label = a.__name__.split('.')[-2]
-            #~ logger.info("Installing %s = %s" ,app_label,a)
 
-            for k, v in a.__dict__.items():
-                if isinstance(v, type) and issubclass(v, vip_classes):
-                    #~ print "%s.%s = %r" % (app_label,k,v)
-                    self.modules.define(app_label, k, v)
-                #~ if isinstance(v,type) and issubclass(v,dd.Plugin):
-                    #~ self.plugins.append(v)
+        # vip_classes = (layouts.BaseLayout, fields.Dummy)
+        # for a in models.get_apps():
+        #     app_label = a.__name__.split('.')[-2]
 
-                #~ if isinstance(v,type)  and issubclass(v,dd.Module):
-                    #~ logger.info("20120128 Found module %s",v)
-                if k.startswith('setup_'):
-                    self.modules.define(app_label, k, v)
+        #     for k, v in a.__dict__.items():
+        #         if isinstance(v, type) and issubclass(v, vip_classes):
+        #             self.modules.define(app_label, k, v)
+
+        #         if k.startswith('setup_'):
+        #             self.modules.define(app_label, k, v)
 
         self.setup_choicelists()
         self.setup_workflows()

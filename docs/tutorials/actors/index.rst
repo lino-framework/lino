@@ -17,9 +17,8 @@ Here is the :xfile:`models.py` file we will use for this tutorial:
 Some setup for doctest:
   
 >>> from __future__ import print_function
->>> from lino import dd
 >>> from lino.runtime import *
->>> globals().update(actors)
+>>> globals().update(actors.__dict__)
 
 
 The `label` of an Actor

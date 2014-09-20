@@ -45,7 +45,7 @@ then wrote the following code snippet directly into my blog entry:
 >>> from django.test import Client
 >>> client = Client()
 >>> url = '/restful/extensible/PanelEvents?sd=05.05.2013&ed=11.05.2013&tv=true'
->>> res = client.get(url,REMOTE_USER='robin')
+>>> res = client.get(url, REMOTE_USER='robin')
 >>> print res.status_code
 200
 

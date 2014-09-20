@@ -632,23 +632,20 @@ class Table(AbstractTable):
         :class:`remote fields <lino.core.fields.RemoteField>`
         in a layout template.
         """
-        de = super(Table, self).get_data_elem(name)
         #~ cc = AbstractTable.get_data_elem(self,name)
-        if de:
-            return de
 
-        if self.model is None:
-            return None
-        if not isinstance(self.model, type) or not issubclass(self.model, models.Model):
-            raise Exception("%s.model is %r (and not a Model subclass)" %
-                            (self, self.model))
+        if self.model is not None:
+            if not isinstance(self.model, type) or not issubclass(
+                    self.model, models.Model):
+                raise Exception(
+                    "%s.model is %r (and not a Model subclass)" %
+                    (self, self.model))
 
-        # logger.info("20120202 Table.get_data_elem found nothing")
-        return self.model.get_data_elem(name)
-        #~ de = get_data_elem(self.model,name)
-        #~ if de is not None:
-            #~ return de
-        #~ return self.get_action(name)
+            # logger.info("20120202 Table.get_data_elem found nothing")
+            de = self.model.get_data_elem(name)
+            if de is not None:
+                return de
+        return super(Table, self).get_data_elem(name)
 
     #~ @classmethod
     #~ def get_detail(self):

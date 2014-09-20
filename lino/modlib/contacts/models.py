@@ -57,8 +57,7 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-# class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
-class Partner(AddressLocation, dd.Addressable):
+class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
     "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20

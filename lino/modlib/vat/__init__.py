@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from decimal import Decimal
@@ -16,6 +16,9 @@ class Plugin(ad.Plugin):
     Used by :mod:`lino.modlib.declarations`
     """
 
+    default_vat_regime = 'private'
+    default_vat_class = 'normal'
+
     def get_vat_class(self, tt, item):
         return 'normal'
 
@@ -27,3 +30,12 @@ class Plugin(ad.Plugin):
 
     def get_vat_rate(self, tt, vc, vr):
         return self.VAT_CLASS_TO_RATE[vc.name]
+
+    def on_site_startup(self, site):
+        vat = site.modules.vat
+        if isinstance(self.default_vat_regime, basestring):
+            self.default_vat_regime = vat.VatRegimes.get_by_name(
+                self.default_vat_regime)
+        if isinstance(self.default_vat_class, basestring):
+            self.default_vat_class = vat.VatClasses.get_by_name(
+                self.default_vat_class)

@@ -27,6 +27,7 @@ from lino.utils.xmlgen.html import E
 
 
 actor_classes = []
+actors_dict = None
 actors_list = None
 
 ACTOR_SEP = '.'
@@ -35,9 +36,15 @@ ACTOR_SEP = '.'
 def discover():
     global actor_classes
     global actors_list
+    global actors_dict
+
     assert actors_list is None
+    assert actors_dict is None
+
     actors_list = []
-    logger.debug("actors.discover() : registering up %d actors",
+    actors_dict = AttrDict()
+
+    logger.debug("actors.discover() : registering %d actors",
                  len(actor_classes))
     for cls in actor_classes:
         register_actor(cls)
@@ -49,13 +56,9 @@ def register_actor(a):
     if not settings.SITE.is_installed(a.app_label):
         # happens when sphinx autodoc imports a non installed module
         return
-    old = settings.SITE.modules.define(a.app_label, a.__name__, a)
-    #~ old = actors_dict.get(a.actor_id,None)
+    old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:
-        #~ logger.info("20121023 register_actor %s : %r replaced by %r",a,old,a)
         actors_list.remove(old)
-        #~ old._replaced_by = a
-    #~ actors_dict[a.actor_id] = a
     actors_list.append(a)
     return a
 
@@ -876,41 +879,27 @@ class Actor(actions.Parametrizable):
         s = name.split('.')
         if len(s) == 1:
             #~ app_label = model._meta.app_label
-            rpt = settings.SITE.modules[self.app_label].get(name, None)
+            m = settings.SITE.modules[self.app_label]
+            if m is None:
+                raise Exception("No module %s" % self.app_label)
+                return None
+            rpt = getattr(m, name, None)
+            # if rpt is None and name != name.lower():
+            #     raise Exception("20140920 No %s in %s" % (name, m))
         elif len(s) == 2:
-            if True:
-                return settings.SITE.modules.resolve(name)
-            else:
-                """
-                20130422
-                Yes it was a nice feature to silently ignore non installed app_labels
-                but mistakenly specifying "person.first_name" instead of "person__first_name"
-                did not raise an error.
-                """
-                m = settings.SITE.modules.get(s[0], None)
-                if m is None:
-                    return fields.DummyField()
-                return m.get(s[1], None)
-            # 20121113
-            # app = resolve_app(s[0])
-            # rpt = getattr(app,s[1],None)
-            # rpt = settings.SITE.modules[s[0]].get(s[1],None)
+            m = settings.SITE.modules.get(s[0], None)
+            if m is None:
+                # return fields.DummyField()
+                # 20130422 Yes it was a nice idea to silently
+                # ignore non installed app_labels, but mistakenly
+                # specifying "person.first_name" instead of
+                # "person__first_name" did not raise an error...
+                # raise Exception("No module %s" % s[0])
+                return None
+            rpt = getattr(m, s[1], None)
         else:
             raise Exception("Invalid data element name %r" % name)
-        if rpt is not None:
-            #~ if rpt.master is not None and rpt.master is not ContentType:
-                #~ ok = True
-                #~ try:
-                    #~ if not issubclass(model,rpt.master):
-                        #~ ok = False
-                # ~ except TypeError,e: # e.g. issubclass() arg 1 must be a class
-                    #~ ok = False
-                #~ if not ok:
-                    #~ raise Exception("%s.master is %r, must be subclass of %r" % (
-                        #~ name,rpt.master,model))
-            return rpt
-        #~ logger.info("20120202 Actor.get_data_elem found nothing")
-        return None
+        return rpt
 
     @classmethod
     def param_defaults(self, ar, **kw):
