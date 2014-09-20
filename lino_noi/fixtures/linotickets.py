@@ -23,7 +23,7 @@ import datetime
 
 from unipath import Path
 
-from lino import dd
+from lino import rt
 
 TICKETS = """
 #1 [closed] : Wrong layout in Chrome and FF when tab gets activated
@@ -153,9 +153,9 @@ from django.conf import settings
 
 def objects():
 
-    Project = dd.modules.tickets.Project
-    Ticket = dd.modules.tickets.Ticket
-    TicketStates = dd.modules.tickets.TicketStates
+    Project = rt.modules.tickets.Project
+    Ticket = rt.modules.tickets.Ticket
+    TicketStates = rt.modules.tickets.TicketStates
 
     prj = Project(name="Lino")
     yield prj
