@@ -141,10 +141,10 @@ class Model(models.Model):
                         model = None
 
                 def func(obj, ar=None):
-                    #~ if ar is None: raise Exception(20130802)
-                    #~ print '20130422',name,obj, [fld.name for fld in field_chain]
                     try:
                         for fld in field_chain:
+                            if obj is None:
+                                return obj
                             #~ obj = fld.value_from_object(obj)
                             obj = fld._lino_atomizer.full_value_from_object(
                                 obj, ar)
@@ -152,7 +152,9 @@ class Model(models.Model):
                             #~ obj = getattr(obj,n)
                         #~ print '20130422 %s --> %r', fld.name,obj
                         return obj
-                    except Exception, e:
+                    except Exception as e:
+                        raise Exception(
+                            "Error while computing %s: %s" % (name, e))
                         # ~ if False: # only for debugging
                         if True:  # see 20130802
                             logger.exception(e)

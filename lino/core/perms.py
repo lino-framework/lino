@@ -23,14 +23,8 @@ class UserLevel(Choice):
 
 
 class UserLevels(ChoiceList):
+    "See :class:`dd.UserLevels`."
 
-    """
-    The level of a user is one way of differenciating users when 
-    defining access permissions and workflows. 
-    
-    See :ref:`UserLevels`
-    
-    """
     verbose_name = _("User Level")
     verbose_name_plural = _("User Levels")
     app_label = 'lino'
@@ -74,16 +68,8 @@ UserLevels.SHORT_NAMES = dict(
 
 
 class UserGroups(ChoiceList):
+    "See :class:`dd.UserGroups`."
 
-    """
-    TODO: Rename this to "FunctionalGroups" or sth similar.
-    
-    Functional Groups are another way of differenciating users when 
-    defining access permissions and workflows. 
-    
-    Applications can define their functional groups
-    
-    """
     required = settings.SITE.get_default_required(user_level='admin')
     verbose_name = _("User Group")
     verbose_name_plural = _("User Groups")
@@ -103,7 +89,7 @@ class UserProfile(Choice):
 
     hidden_languages = None
     """
-    A subset of :setting:`languages` 
+    A subset of :setting:`languages`
     which should be hidden in this user profile.
     Default value is :attr:`hidden_languages <UserProfiles.hidden_languages>`.
     This is used on multilingual sites with more than 4 or 5 languages.
@@ -185,10 +171,7 @@ class UserProfile(Choice):
 
 
 class UserProfiles(ChoiceList):
-
-    """
-    Deserves a docstring.
-    """
+    "See :class:`dd.UserProfiles`."
     required = settings.SITE.get_default_required(user_level='admin')
     #~ item_class = UserProfile
     verbose_name = _("User Profile")

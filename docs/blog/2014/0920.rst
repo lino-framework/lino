@@ -2,6 +2,9 @@
 Saturday, September 20, 2014
 ============================
 
+Two API changes
+---------------
+
 Oops, here is an API change which caused me some code changes. But I
 think it was worth the work because it makes things *much* more clear.
 And there is hope that other developers didn't yet use it very much
@@ -15,17 +18,38 @@ and objects from :mod:`lino.dd` to it:
 - :func:`rt.login`
 - :func:`rt.show`
 
-And then I did another thing which had been waiting (in my mind) for
-some time: 
 
-- The objects stored in :attr:`rt.modules` are no longer `AttrDict`\ s
-  but the :xfile:`models.py` modules themselves.
+And then I did another thing which had been waiting in my mind for
+quite some time: 
+
+- The objects stored in :attr:`rt.modules` are no longer
+  :class:`AttrDict <atelier.utils.AttrDict>` instances but the
+  :xfile:`models.py` modules themselves.
+
+My general impression is that this makes Lino more beautiful because
+it is "one strange thing less".
+
+This change should officially not influence any code, but there
+exceptions when it comes to hackerish usages.  For example certain
+tested tutorial documents (like :ref:`dev.tables`) used a trick to put
+the names of models and tables to the global namespace:
+
+>>> from lino.runtime import *
+>>> globals().update(tables)
+
+This hack has become different: 
+
+>>> from lino.runtime import *
+>>> globals().update(tables.__dict__)
 
 
 
+Remote fields failed on empty values
+------------------------------------
 
-
-Discovered a bug in :ref:`faggio`. When I create a room, I get::
+I discovered a bug in :ref:`faggio`. After creating a new room, I got
+the following console message, and the list of rooms no longer
+appeared at all::
 
     [20/Sep/2014 20:20:44] "GET /api/cal/Rooms/-99999?_dc=1411233644184&an=insert&rp=ext-comp-2235&fmt=json HTTP/1.1" 200 426
     ERROR 'NoneType' object has no attribute 'city'
@@ -39,3 +63,8 @@ Discovered a bug in :ref:`faggio`. When I create a room, I get::
     AttributeError
     'str' object has no attribute 'pk'
 
+
+Wrote a new test case to reproduce this: :ref:`faggio.tested.cal`.
+The reason was a bug in :class:`lino.core.fields.RemoteField`
+triggered by the `company__city` column in the :class:`ml.cal.Rooms`
+list (but only the :ref:`faggio` variant of it.

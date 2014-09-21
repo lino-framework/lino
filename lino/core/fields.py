@@ -228,9 +228,6 @@ class FakeField(object):
         return self.default is not NOT_PROVIDED
 
 
-#~ class NullField(FakeField):
-    #~ def __init__(self,name):
-        #~ self.name = name
 class RemoteField(FakeField):
 
     """

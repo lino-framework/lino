@@ -285,8 +285,10 @@ class ddrefRole(XRefRole):
 
     def __call__(self, typ, rawtext, text, lineno, inliner,
                  options={}, content=[]):
-        
+
         typ = 'std:ref'
+        self._reporter = inliner.document.reporter
+        self._lineno = lineno
         return XRefRole.__call__(self, typ, rawtext, text, lineno,
                                  inliner, options, content)
 
@@ -305,14 +307,16 @@ class ddrefRole(XRefRole):
 
         level, x = resolve_name(target)
         if x is None:
-            raise Exception("Could not resolve name %r" % target)
+            msg = "Could not resolve name %r" % target
+            return [self._reporter.warning(msg, line=self._lineno), target]
+            # raise Exception(msg)
         # lng = env.temp_data.get('language', env.config.language)
         lng = CurrentLanguage.get_current_value(env)
         with translation.override(lng):
             if isinstance(x, models.Field):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = model_name(x.model) + '.' + x.name
-                print(target)
+                # print(target)
             elif isinstance(x, Plugin):
                 text = utils.unescape(unicode(x.verbose_name))
                 target = settings.SITE.userdocs_prefix + target

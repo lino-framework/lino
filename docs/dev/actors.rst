@@ -71,6 +71,15 @@ The ``Actor`` class
   :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
   and :class:`Frame <lino.core.frames.Frame>`.
 
+  .. attribute:: required
+
+  The permissions required to view this actor.
+  A dict with permission requirements.
+  See :func:`lino.core.perms.make_permission_handler`.
+
+  .. attribute:: update_required
+  .. attribute:: delete_required
+
   .. attribute:: parameters
 
   Either None or a dict defining the "parameters" of that actor.

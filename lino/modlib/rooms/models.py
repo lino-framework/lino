@@ -16,7 +16,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, rt
+from lino import dd
 
 contacts = dd.resolve_app('contacts', strict=True)
 #~ cal = dd.resolve_app('cal',strict=True)
@@ -213,12 +213,10 @@ class Bookings(dd.Table):
                 yield unicode(v)
 
 
-#~ class CoursesByCompany(Courses):
 class BookingsByCompany(Bookings):
     master_key = "company"
 
 
 def setup_main_menu(site, ui, profile, main):
     m = main.get_item("cal")
-    #~ m = main.add_menu("rooms",settings.SITE.plugins.rooms.verbose_name)
     m.add_action(Bookings)

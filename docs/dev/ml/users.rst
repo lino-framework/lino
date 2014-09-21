@@ -20,11 +20,20 @@ Users
     >>> from django.test import Client
     >>> client = Client()
 
-
+Models
+======
 
 .. class:: User
 
   .. attribute:: username
+
+  .. attribute:: profile
+
+  The profile of a user is what defines her or his permissions.
+ 
+  Users with an empty `profile` field are considered inactive and
+  cannot log in.
+
 
   .. attribute:: partner
 
@@ -67,4 +76,49 @@ field :guilabel:`Current password` empty.
 >>> rv = ses.run(u.change_password, action_param_values=values)
 >>> print(rv['message'])
 New password has been set for 1 users.
+
+
+
+Choicelists
+===========
+
+.. module:: dd
+
+.. class:: UserGroups
+
+    TODO: Rename this to "FunctionalGroups" or sth similar.
+    
+    Functional Groups are another way of differenciating users when 
+    defining access permissions and workflows. 
+    
+    Applications can define their functional groups
+    
+
+
+.. class:: UserLevels
+
+    The level of a user is one way of differenciating users when 
+    defining access permissions and workflows. 
+    
+    .. django2rst:: rt.show(dd.UserLevels,
+                            column_names='value name text')
+
+
+.. class:: UserProfiles
+
+    The list of user profiles available on this site. 
+    
+    Each user profile is a set of user levels 
+    (one for each functional group), 
+    leading to an individual combination of permissions.
+    
+    The demo database has defined the following user profiles:
+
+    .. django2rst:: rt.show(dd.UserProfiles,
+                            column_names='value name text level')
+
+    Note that we show here only the "general" or "system" userlevel.
+    Open :menuselection:`Explorer --> System --> User Profiles`
+    in your Lino to see all application-specific userlevels.
+
 

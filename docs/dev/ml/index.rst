@@ -16,12 +16,13 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
    cal
    contacts
    countries
+   courses
    debts
    extjs
    excerpts
+   households
    humanlinks
    ledger
    users
    sales
-   households
    reception

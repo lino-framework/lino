@@ -9,15 +9,13 @@ includes a replacement for Django's User model.
 
 .. include:: /include/wip.rst
 
-The :attr:`required <lino.core.actions.Permittable.required>` 
-attribute of a table specifies 
-which users get permission to view that table.
-
+The :attr:`required <dd.Actor.required>` attribute of a table
+specifies which users get permission to view that table.
 
 Two other attributes
-:attr:`update_required <lino.core.actors.Actor.update_required>` 
+:attr:`update_required <dd.Actor.update_required>` 
 and
-:attr:`delete_required <lino.core.actors.Actor.delete_required>` 
+:attr:`delete_required <dd.Actor.delete_required>` 
 can additionally restrict modification permissions
 for those users who can *view* a given table.
 
@@ -48,7 +46,7 @@ Example: Requires authenticated user with at least "Manager" user level.
 User Object
 -----------
 
-Main permissions object is :attr:`user_model <lino.Lino.user_model>`, 
+Main permissions object is :attr:`ad.Site.user_model`, 
 specified in Site configuration. 
 See :doc:`/topics/auth`.
 
@@ -122,16 +120,6 @@ User Groups are defined in modules by calling
     dd.add_user_group('uniqueName', _("Human readable name"))
 
 
-Teams
------
-
-Team actually does not play any role in permissions. 
-They represents some logical grouping of users to user groups and these 
-groups can be used throughout the application for different purposes.
-
-For example the :mod:`lino.modlib.cal` uses Teams to 
-implement "Send invitation to all teammates".
-
 Authorities
 -----------
 
@@ -150,8 +138,6 @@ common use-case more elegantly.
 
 User levels
 -----------
-
-
 
 Lino speaks about user *level* where Plone speaks about user *role*.
 Unlike user roles in Plone, user levels are hierarchic:
@@ -172,15 +158,14 @@ that is used when specifying different User Levels for each User Group.
 The default UserLevels
 ----------------------
 
-:class:`UserLevels <lino.core.perms.UserLevels>` has a default list of
-user levels which we recommend to use when possible. 
-Otherwise you can redefine your own by overriding 
-:meth:`lino.site.Site.setup_choicelists` and 
-resetting `dd.UserLevels`.
+:class:`dd.UserLevels` has a default list of user levels which we
+recommend to use when possible.  Otherwise you can redefine your own
+by overriding :meth:`ad.Site.setup_choicelists` and resetting
+`dd.UserLevels`.
 
 The default list of user levels is as follows:
 
-  .. django2rst:: settings.SITE.login().show(lino.UserLevels)
+  .. django2rst:: rt.show(dd.UserLevels)
   
 
 .. _UserLevels.user:
