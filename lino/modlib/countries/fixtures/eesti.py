@@ -15,7 +15,7 @@ from commondata.ee.places import root
 from commondata.ee.places import (Village, SmallBorough, Borough,
                                   Township, Town, Municipality, County)
 
-from lino import dd, rt
+from lino import dd
 
 countries = dd.resolve_app('countries')
 
@@ -23,10 +23,10 @@ countries = dd.resolve_app('countries')
 def cd2type(p):
     if isinstance(p, County):
         return countries.PlaceTypes.county
-    if isinstance(p, Town):
-        return countries.PlaceTypes.town
     if isinstance(p, Township):
         return countries.PlaceTypes.township
+    if isinstance(p, Town):
+        return countries.PlaceTypes.town
     if isinstance(p, Municipality):
         return countries.PlaceTypes.municipality
     if isinstance(p, Borough):
