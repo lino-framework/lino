@@ -411,14 +411,7 @@ class Voucher(dd.UserAuthored, dd.Registrable):
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def get_mti_leaf(self):
-        """Return the specialized form of this voucher.
-
-        For example if we have :class:`ml.ledger.Voucher` instance, we
-        can get the actual document (Invoice, PaymentOrder,
-        BankStatement, ...) by calling this method.
-
-        """
-        return mti.get_child(self.journal.voucher_type.model)
+        return mti.get_child(self, self.journal.voucher_type.model)
 
     def obj2html(self, ar):
         mc = self.get_mti_leaf()

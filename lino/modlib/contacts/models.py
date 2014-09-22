@@ -139,7 +139,11 @@ but e.g. :class:`Human` overrides this.
         return [E.b(self.name), E.br()]
 
     def get_overview_elems(self, ar):
-        elems = [self.get_mti_navigator(ar)]
+        elems = []
+        buttons = self.get_mti_buttons(ar)
+        elems.append(E.p(unicode(_("See as ")),
+                         *join_elems(buttons, ', '),
+                         style="font-size:8px;text-align:right;padding:3pt;"))
         elems += self.get_name_elems(ar)
         elems += join_elems(list(self.address_location_lines()), sep=E.br)
         elems = [
@@ -152,9 +156,10 @@ but e.g. :class:`Human` overrides this.
     def overview(self, ar):
         return E.div(*self.get_overview_elems(ar))
 
-    @dd.displayfield()
+    @dd.displayfield(_("See as "))
     def mti_navigator(self, ar):
-        return self.get_mti_navigator(ar)
+        buttons = self.get_mti_buttons(ar)
+        return E.p(*buttons)
 
 
 class PartnerDetail(dd.FormLayout):

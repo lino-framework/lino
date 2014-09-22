@@ -56,6 +56,15 @@ Models
     to a Voucher. Otherwise we would have to care ourselves about data
     integrity, and we couln't make queries on `voucher__xxx`.
 
+    .. method:: get_mti_leaf(self)
+
+    Return the specialized form of this voucher.
+
+    For example if we have :class:`ml.ledger.Voucher` instance, we
+    can get the actual document (Invoice, PaymentOrder,
+    BankStatement, ...) by calling this method.
+
+          
 .. class:: Vouchers
 
     The base :class:`dd.Table` for all tables working on :class:`Voucher`.

@@ -67,7 +67,7 @@ class Polymorphic(model.Model):
         if cls._mtinav_models is None:
             cls._mtinav_models = tuple(models_by_base(cls))
 
-    def get_mti_navigator(self, ar):
+    def get_mti_buttons(self, ar):
         forms = []
         for m in self._mtinav_models:
             if self.__class__ is m:
@@ -76,6 +76,4 @@ class Polymorphic(model.Model):
                 obj = mti.get_child(self, m)
                 if obj is not None:
                     forms.append(ar.obj2html(obj, m._meta.verbose_name))
-        return E.p(unicode(_("See as ")),
-                   *join_elems(forms, ', '),
-                   style="font-size:8px;text-align:right;padding:3pt;")
+        return forms

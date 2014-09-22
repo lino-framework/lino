@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2014 Luc Saffre
-# This file is part of the Lino project.
-# Lino is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino ; if not, see <http://www.gnu.org/licenses/>.
+# License: BSD (see file COPYING for details)
 
 """
 
@@ -97,11 +87,11 @@ class EstonianDistribution(Distribution):
         Place = rt.modules.countries.Place
         PlaceTypes = rt.modules.countries.PlaceTypes
         for streetname, linnaosa in demo.streets_of_tallinn():
+            t = PlaceTypes.township
             try:
-                p = Place.objects.get(
-                    type=PlaceTypes.district, name__iexact=linnaosa)
+                p = Place.objects.get(type=t, name__iexact=linnaosa)
             except Place.DoesNotExist:
-                raise Exception("Unknown district %r" % linnaosa)
+                raise Exception("Unknown %s %r" % (t, linnaosa))
             yield p, streetname
 
     def before_save(self, obj):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-22 04:46+0300\n"
+"POT-Creation-Date: 2014-09-22 14:21+0300\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language-Team: \n"
@@ -315,8 +315,8 @@ msgstr "Durée (unité)"
 msgid "Period from"
 msgstr "Date du"
 
-#: lino/core/actors.py:145 lino/modlib/beid/mixins.py:369
-#: lino/modlib/beid/mixins.py:425 lino/modlib/codechanges/models.py:74
+#: lino/core/actors.py:145 lino/modlib/beid/mixins.py:373
+#: lino/modlib/beid/mixins.py:429 lino/modlib/codechanges/models.py:74
 msgid "until"
 msgstr "au "
 
@@ -362,12 +362,12 @@ msgid "Yes or no"
 msgstr ""
 
 #: lino/core/choicelists.py:742 lino/core/requests.py:299
-#: lino/modlib/beid/mixins.py:223 lino/ui/store.py:545
+#: lino/modlib/beid/mixins.py:227 lino/ui/store.py:545
 msgid "Yes"
 msgstr "Oui"
 
 #: lino/core/choicelists.py:743 lino/core/requests.py:300
-#: lino/modlib/beid/mixins.py:224 lino/ui/store.py:545
+#: lino/modlib/beid/mixins.py:228 lino/ui/store.py:545
 msgid "No"
 msgstr "Non"
 
@@ -553,7 +553,7 @@ msgstr "Sistema"
 msgid "Error"
 msgstr ""
 
-#: lino/core/requests.py:255 lino/modlib/beid/mixins.py:241
+#: lino/core/requests.py:255 lino/modlib/beid/mixins.py:245
 #: lino/modlib/system/models.py:49
 msgid "Success"
 msgstr "Succès"
@@ -774,11 +774,6 @@ msgstr "Première page"
 #: lino/mixins/periods.py:91
 msgid "Date period ends before it started."
 msgstr ""
-
-#: lino/mixins/polymorphic.py:79
-#, fuzzy
-msgid "See as "
-msgstr "représenté par"
 
 #: lino/mixins/printable.py:352 lino/mixins/printable.py:654
 msgid "Build method"
@@ -1102,7 +1097,7 @@ msgstr "Date du"
 msgid "Manage addresses"
 msgstr "E-mail"
 
-#: lino/modlib/addresses/models.py:106 lino/modlib/contacts/models.py:168
+#: lino/modlib/addresses/models.py:106 lino/modlib/contacts/models.py:178
 #: lino/modlib/countries/models.py:496 lino/modlib/outbox/models.py:227
 #: lino/modlib/partners/models.py:201 lino/modlib/partners/models.py:210
 #: lino/modlib/partners/models.py:301
@@ -1252,171 +1247,171 @@ msgstr ""
 msgid "Uploader"
 msgstr "Uploader"
 
-#: lino/modlib/beid/mixins.py:42
+#: lino/modlib/beid/mixins.py:46
 #, fuzzy
 msgid "eID card type"
 msgstr "Type d'organisation"
 
-#: lino/modlib/beid/mixins.py:43
+#: lino/modlib/beid/mixins.py:47
 #, fuzzy
 msgid "eID card types"
 msgstr "Pièces jointes"
 
-#: lino/modlib/beid/mixins.py:46
+#: lino/modlib/beid/mixins.py:50
 msgid "Belgian citizen"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:48
+#: lino/modlib/beid/mixins.py:52
 msgid "Kids card (< 12 year)"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:54
+#: lino/modlib/beid/mixins.py:58
 msgid "Foreigner card A"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:58
+#: lino/modlib/beid/mixins.py:62
 msgid "Foreigner card B"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:62
+#: lino/modlib/beid/mixins.py:66
 msgid "Foreigner card C"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:66
+#: lino/modlib/beid/mixins.py:70
 msgid "Foreigner card D"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:70
+#: lino/modlib/beid/mixins.py:74
 msgid "Foreigner card E"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:74
+#: lino/modlib/beid/mixins.py:78
 msgid "Foreigner card E+"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:76
+#: lino/modlib/beid/mixins.py:80
 msgid "Foreigner card F"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:80
+#: lino/modlib/beid/mixins.py:84
 msgid "Foreigner card F+"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:85
+#: lino/modlib/beid/mixins.py:89
 msgid "Read eID card"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:89
+#: lino/modlib/beid/mixins.py:93
 #, python-format
 msgid "Sorry, I cannot handle that case: %s"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:203
+#: lino/modlib/beid/mixins.py:207
 #, python-format
 msgid "Client %s is up-to-date"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:205
+#: lino/modlib/beid/mixins.py:209
 #, python-format
 msgid "Click OK to apply the following changes for %s"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:217
+#: lino/modlib/beid/mixins.py:221
 #, fuzzy, python-format
 msgid "%s has been saved."
 msgstr "Enregistrement %s a été mis à jour."
 
-#: lino/modlib/beid/mixins.py:258
+#: lino/modlib/beid/mixins.py:262
 #, python-format
 msgid ""
 "There is more than one client with national id %(national_id)s in our "
 "database."
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:297
+#: lino/modlib/beid/mixins.py:301
 #, fuzzy, python-format
 msgid "New client %s has been created"
 msgstr "%s a été créé"
 
-#: lino/modlib/beid/mixins.py:300
+#: lino/modlib/beid/mixins.py:304
 #, python-format
 msgid "Create new client %s : Are you sure?"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:303
+#: lino/modlib/beid/mixins.py:307
 #, python-format
 msgid ""
 "Cannot create new client because there is already a person named %s in "
 "our database."
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:307 lino/modlib/beid/mixins.py:314
+#: lino/modlib/beid/mixins.py:311 lino/modlib/beid/mixins.py:318
 msgid "Oops!"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:310
+#: lino/modlib/beid/mixins.py:314
 #, python-format
 msgid ""
 "Cannot create new client because there is more than one person named %s "
 "in our database."
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:339
+#: lino/modlib/beid/mixins.py:343
 #, python-format
 msgid "National IDs %s and %s don't match "
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:352
+#: lino/modlib/beid/mixins.py:356
 msgid "National ID"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:360
+#: lino/modlib/beid/mixins.py:364
 msgid "Nationality"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:363
+#: lino/modlib/beid/mixins.py:367
 msgid "eID card number"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:366
+#: lino/modlib/beid/mixins.py:370
 msgid "ID card valid from"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:375
+#: lino/modlib/beid/mixins.py:379
 msgid "eID card issuer"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:384
+#: lino/modlib/beid/mixins.py:388
 msgid "noble condition"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:385
+#: lino/modlib/beid/mixins.py:389
 msgid "The eventual noble condition of this person."
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:389
+#: lino/modlib/beid/mixins.py:393
 #, fuzzy
 msgid "eID sheet"
 msgstr "Bilan"
 
-#: lino/modlib/beid/mixins.py:409
+#: lino/modlib/beid/mixins.py:413
 msgid "eID card"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:417
+#: lino/modlib/beid/mixins.py:421
 msgid "Card no."
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:420
+#: lino/modlib/beid/mixins.py:424
 msgid "issued by"
 msgstr ""
 
-#: lino/modlib/beid/mixins.py:424
+#: lino/modlib/beid/mixins.py:428
 #, fuzzy
 msgid "valid from"
 msgstr "Date du"
 
-#: lino/modlib/beid/mixins.py:438
+#: lino/modlib/beid/mixins.py:442
 msgid "Must read eID card!"
 msgstr ""
 
@@ -2577,7 +2572,12 @@ msgstr "est une Organisation"
 msgid "Whether this Partner is a Company."
 msgstr "Si ce partenaire est également une organisation."
 
-#: lino/modlib/contacts/models.py:176 lino/modlib/partners/models.py:309
+#: lino/modlib/contacts/models.py:144 lino/modlib/contacts/models.py:159
+#, fuzzy
+msgid "See as "
+msgstr "représenté par"
+
+#: lino/modlib/contacts/models.py:186 lino/modlib/partners/models.py:309
 #: lino/projects/min2/modlib/contacts/models.py:71
 #: lino/projects/min2/modlib/contacts/models.py:134
 #: lino/projects/min2/modlib/contacts/models.py:189
@@ -2587,94 +2587,94 @@ msgstr "Si ce partenaire est également une organisation."
 msgid "Contact"
 msgstr "Contact"
 
-#: lino/modlib/contacts/models.py:226 lino/modlib/partners/models.py:395
+#: lino/modlib/contacts/models.py:236 lino/modlib/partners/models.py:395
 #: lino/projects/min2/modlib/contacts/models.py:92
 #: lino/projects/presto/modlib/contacts/models.py:96
 msgid "Person"
 msgstr "Personne"
 
-#: lino/modlib/contacts/models.py:227 lino/modlib/partners/models.py:396
+#: lino/modlib/contacts/models.py:237 lino/modlib/partners/models.py:396
 #: lino/projects/min2/modlib/contacts/models.py:93
 #: lino/projects/presto/modlib/contacts/models.py:97
 msgid "Persons"
 msgstr "Personnes"
 
-#: lino/modlib/contacts/models.py:232 lino/modlib/pages/models.py:101
+#: lino/modlib/contacts/models.py:242 lino/modlib/pages/models.py:101
 #: lino/modlib/partners/models.py:382 lino/modlib/polls/models.py:130
 msgid "Title"
 msgstr "Allocution"
 
-#: lino/modlib/contacts/models.py:233
+#: lino/modlib/contacts/models.py:243
 msgid ""
 "Text to print before allocation and name as part of the first address "
 "line."
 msgstr ""
 
-#: lino/modlib/contacts/models.py:296
+#: lino/modlib/contacts/models.py:306
 #, fuzzy
 msgid "Organization"
 msgstr "Confirmation"
 
-#: lino/modlib/contacts/models.py:297
+#: lino/modlib/contacts/models.py:307
 #, fuzzy
 msgid "Organizations"
 msgstr "Confirmation"
 
-#: lino/modlib/contacts/models.py:365
+#: lino/modlib/contacts/models.py:375
 msgid "Function"
 msgstr "Fonction"
 
-#: lino/modlib/contacts/models.py:366
+#: lino/modlib/contacts/models.py:376
 msgid "Functions"
 msgstr "Fonctions"
 
-#: lino/modlib/contacts/models.py:388 lino/modlib/partners/models.py:598
+#: lino/modlib/contacts/models.py:398 lino/modlib/partners/models.py:598
 msgid "Contact Person"
 msgstr "Personne de contact"
 
-#: lino/modlib/contacts/models.py:389 lino/modlib/partners/models.py:599
+#: lino/modlib/contacts/models.py:399 lino/modlib/partners/models.py:599
 msgid "Contact Persons"
 msgstr "Personnes de contact"
 
-#: lino/modlib/contacts/models.py:393
+#: lino/modlib/contacts/models.py:403
 msgid "Contact Role"
 msgstr "Rôle"
 
-#: lino/modlib/contacts/models.py:461 lino/modlib/partners/models.py:645
+#: lino/modlib/contacts/models.py:471 lino/modlib/partners/models.py:645
 msgid "Contact persons"
 msgstr "Personnes de contact"
 
-#: lino/modlib/contacts/models.py:470 lino/modlib/partners/models.py:654
+#: lino/modlib/contacts/models.py:480 lino/modlib/partners/models.py:654
 msgid "Contact for"
 msgstr "contact pour"
 
-#: lino/modlib/contacts/models.py:551 lino/modlib/contacts/models.py:599
+#: lino/modlib/contacts/models.py:561 lino/modlib/contacts/models.py:609
 msgid "Company"
 msgstr "Organisation"
 
-#: lino/modlib/contacts/models.py:557 lino/modlib/contacts/models.py:606
+#: lino/modlib/contacts/models.py:567 lino/modlib/contacts/models.py:616
 #: lino/modlib/partners/models.py:749 lino/modlib/partners/models.py:794
 msgid "represented by"
 msgstr "représenté par"
 
-#: lino/modlib/contacts/models.py:612 lino/modlib/partners/models.py:799
+#: lino/modlib/contacts/models.py:622 lino/modlib/partners/models.py:799
 msgid "represented as"
 msgstr "représenté par"
 
-#: lino/modlib/contacts/models.py:699
+#: lino/modlib/contacts/models.py:709
 msgid "Next partner id"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:700
+#: lino/modlib/contacts/models.py:710
 #, fuzzy
 msgid "The next automatic id for any new partner."
 msgstr "Identifiant automatique pour la personne ounla société suivante"
 
-#: lino/modlib/contacts/models.py:708
+#: lino/modlib/contacts/models.py:718
 msgid "Site owner"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:710
+#: lino/modlib/contacts/models.py:720
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
