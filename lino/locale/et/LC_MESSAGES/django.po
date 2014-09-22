@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-22 14:21+0300\n"
-"PO-Revision-Date: 2014-09-22 15:12+0300\n"
+"PO-Revision-Date: 2014-09-22 22:35+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -562,7 +562,7 @@ msgstr "(tühi)"
 
 #: lino/core/workflows.py:109 lino/modlib/workflows/models.py:70
 msgid "State"
-msgstr ""
+msgstr "Staatus"
 
 #: lino/core/workflows.py:110
 msgid "States"
@@ -738,7 +738,7 @@ msgstr "Alustatud"
 
 #: lino/mixins/periods.py:68
 msgid "Active"
-msgstr ""
+msgstr "Aktiivne"
 
 #: lino/mixins/periods.py:69
 msgid "Ended"
@@ -747,11 +747,11 @@ msgstr "Lõpetatud"
 #: lino/mixins/periods.py:83 lino/modlib/cal/mixins.py:65
 #: lino/modlib/cal/models_event.py:70
 msgid "Start date"
-msgstr ""
+msgstr "Algab (päev)"
 
 #: lino/mixins/periods.py:86
 msgid "End date"
-msgstr ""
+msgstr "Lõpeb (päev)"
 
 #: lino/mixins/periods.py:91
 msgid "Date period ends before it started."
@@ -1143,11 +1143,11 @@ msgstr "Teenus"
 
 #: lino/modlib/auto/sales/models.py:224 lino/modlib/ledger/models.py:950
 msgid "Voucher item"
-msgstr ""
+msgstr "Dokumendi rida"
 
 #: lino/modlib/auto/sales/models.py:225 lino/modlib/ledger/models.py:951
 msgid "Voucher items"
-msgstr ""
+msgstr "Dokumendi read"
 
 #: lino/modlib/auto/sales/models.py:253
 msgid "Invoicings"
@@ -1491,9 +1491,8 @@ msgid " on "
 msgstr ""
 
 #: lino/modlib/cal/mixins.py:145
-#, fuzzy
 msgid "Update Events"
-msgstr "Isik"
+msgstr "Genereeri sündmusi"
 
 #: lino/modlib/cal/mixins.py:153
 msgid "Move down"
@@ -1510,15 +1509,15 @@ msgstr ""
 #: lino/modlib/cal/mixins.py:412 lino/modlib/cal/utils.py:183
 #: lino/modlib/courses/models.py:141
 msgid "Recurrency"
-msgstr ""
+msgstr "Korduvus"
 
 #: lino/modlib/cal/mixins.py:415 lino/modlib/courses/models.py:144
 msgid "Repeat every"
-msgstr ""
+msgstr "Korda iga"
 
 #: lino/modlib/cal/mixins.py:426
 msgid "Number of events"
-msgstr ""
+msgstr "Sündmuste arv"
 
 #: lino/modlib/cal/mixins.py:471
 msgid "Times"
@@ -1527,22 +1526,21 @@ msgstr ""
 #: lino/modlib/cal/mixins.py:476 lino/modlib/cal/models_event.py:528
 #: lino/modlib/cal/models_event.py:542 lino/modlib/events/models.py:111
 msgid "When"
-msgstr ""
+msgstr "Millal"
 
 #: lino/modlib/cal/mixins.py:484
 #, python-format
 msgid "Every %s"
-msgstr ""
+msgstr "Iga %s"
 
 #: lino/modlib/cal/mixins.py:485
 #, python-format
 msgid "Every %snd %s"
-msgstr ""
+msgstr "Iga %s. %s"
 
 #: lino/modlib/cal/mixins.py:534
-#, fuzzy
 msgid "Generate events until"
-msgstr "Isik"
+msgstr "Genereeri sündmusi kuni"
 
 #: lino/modlib/cal/models.py:88
 msgid "Remote Calendar"
@@ -1572,11 +1570,11 @@ msgstr ""
 
 #: lino/modlib/cal/models.py:131
 msgid "Room"
-msgstr ""
+msgstr "Ruum"
 
 #: lino/modlib/cal/models.py:132 lino/modlib/rooms/__init__.py:21
 msgid "Rooms"
-msgstr ""
+msgstr "Ruumid"
 
 #: lino/modlib/cal/models.py:142
 msgid "List of rooms where calendar events can happen."
@@ -2126,7 +2124,7 @@ msgstr ""
 
 #: lino/modlib/cal/workflows/__init__.py:72
 msgid "Suggested"
-msgstr ""
+msgstr "Ettepanek"
 
 #: lino/modlib/cal/workflows/__init__.py:73
 msgid "Automatically suggested.     Default state of an automatic event."
@@ -2138,7 +2136,7 @@ msgstr ""
 #: lino/modlib/polls/models.py:50 lino/modlib/polls/models.py:65
 #: lino/modlib/rooms/models.py:32 lino/modlib/sales/models.py:82
 msgid "Draft"
-msgstr ""
+msgstr "Kavand"
 
 #: lino/modlib/cal/workflows/__init__.py:77
 #: lino/modlib/cal/workflows/feedback.py:26 lino/modlib/polls/models.py:51
@@ -2156,7 +2154,7 @@ msgstr ""
 
 #: lino/modlib/cal/workflows/__init__.py:81
 msgid "Took place"
-msgstr ""
+msgstr "Leidis aset"
 
 #: lino/modlib/cal/workflows/__init__.py:83
 msgid "Omitted"
@@ -2172,7 +2170,7 @@ msgstr ""
 
 #: lino/modlib/cal/workflows/__init__.py:110
 msgid "Invited"
-msgstr ""
+msgstr "Kutsutud"
 
 #: lino/modlib/cal/workflows/__init__.py:118
 msgid "Reopen"
@@ -2186,14 +2184,13 @@ msgstr "Tänav"
 
 #: lino/modlib/cal/workflows/faggio.py:15
 #: lino/modlib/cal/workflows/feedback.py:34
-#, fuzzy
 msgid "Present"
-msgstr "Isik"
+msgstr "Kohal"
 
 #: lino/modlib/cal/workflows/faggio.py:16
 #: lino/modlib/cal/workflows/feedback.py:36
 msgid "Absent"
-msgstr ""
+msgstr "Puudus"
 
 #: lino/modlib/cal/workflows/faggio.py:46
 #: lino/modlib/cal/workflows/feedback.py:142
@@ -2645,11 +2642,11 @@ msgstr "Linn"
 
 #: lino/modlib/countries/models.py:113
 msgid "Town"
-msgstr ""
+msgstr "Linn"
 
 #: lino/modlib/countries/models.py:114
 msgid "Municipality"
-msgstr ""
+msgstr "Vald"
 
 #: lino/modlib/countries/models.py:115
 msgid "Parish"
@@ -2657,7 +2654,7 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:116
 msgid "Township"
-msgstr ""
+msgstr "Linnaosa"
 
 #: lino/modlib/countries/models.py:117
 msgid "Quarter"
@@ -2665,11 +2662,11 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:119
 msgid "Borough"
-msgstr ""
+msgstr "Alev"
 
 #: lino/modlib/countries/models.py:120
 msgid "Small borough"
-msgstr ""
+msgstr "Alevik"
 
 #: lino/modlib/countries/models.py:122
 msgid "Village"
@@ -2978,15 +2975,15 @@ msgstr "Toimuvad üritused"
 
 #: lino/modlib/courses/models.py:658
 msgid "Enrolment option"
-msgstr ""
+msgstr "Registreerimisoptioon"
 
 #: lino/modlib/courses/models.py:659
 msgid "Enrolment options"
-msgstr ""
+msgstr "Registreerimisoptioonid"
 
 #: lino/modlib/courses/models.py:664 lino/projects/babel_tutorial/models.py:17
 msgid "Price"
-msgstr ""
+msgstr "Hind"
 
 #: lino/modlib/courses/models.py:713
 msgid "Enrolment"
@@ -2997,13 +2994,12 @@ msgid "Date of request"
 msgstr "Taotluse kuupäev"
 
 #: lino/modlib/courses/models.py:731 lino/modlib/rooms/models.py:33
-#, fuzzy
 msgid "Option"
-msgstr "Nimetus"
+msgstr "Optioon"
 
 #: lino/modlib/courses/models.py:736
 msgid "Confirmation details"
-msgstr ""
+msgstr "Kinnituse täpsustused"
 
 #: lino/modlib/courses/models.py:789
 #, python-format
@@ -3564,7 +3560,7 @@ msgstr ""
 
 #: lino/modlib/extjs/linoweb.js:3545
 msgid "Quick Search"
-msgstr ""
+msgstr "Kiirotsing"
 
 #: lino/modlib/extjs/linoweb.js:3545
 msgid "Enter a text to use as quick search filter"
@@ -3580,15 +3576,15 @@ msgstr ""
 
 #: lino/modlib/extjs/linoweb.js:3591
 msgid "Page"
-msgstr ""
+msgstr "Lehekülg"
 
 #: lino/modlib/extjs/linoweb.js:3592
 msgid "of {0}"
-msgstr ""
+msgstr " / {0}"
 
 #: lino/modlib/extjs/linoweb.js:3593
 msgid "Displaying {0} - {1} of {2}"
-msgstr ""
+msgstr "Read  {0} - {1}  ({2}st)"
 
 #: lino/modlib/extjs/linoweb.js:4066
 msgid "This record is disabled"
@@ -4163,7 +4159,7 @@ msgstr ""
 
 #: lino/modlib/ledger/models.py:835
 msgid "Payments"
-msgstr ""
+msgstr "Laekumised"
 
 #: lino/modlib/ledger/models.py:835
 msgid "List of payments in this match group"
@@ -4171,43 +4167,51 @@ msgstr ""
 
 #: lino/modlib/ledger/models.py:840 lino/modlib/ledger/models.py:1258
 msgid "Balance"
-msgstr ""
+msgstr "Saldo"
 
 #: lino/modlib/ledger/models.py:900 lino/modlib/sales/models.py:86
 msgid "Paid"
-msgstr ""
+msgstr "Makstud"
 
 #: lino/modlib/ledger/models.py:931 lino/modlib/sales/models.py:129
 msgid "Your reference"
-msgstr ""
+msgstr "Teie viide"
 
 #: lino/modlib/ledger/models.py:1129
 msgid ""
 "Debit\n"
 "before"
 msgstr ""
+"Deebet\n"
+"enne"
 
 #: lino/modlib/ledger/models.py:1133
 msgid ""
 "Credit\n"
 "before"
 msgstr ""
+"Krediit\n"
+"enne"
 
 #: lino/modlib/ledger/models.py:1145
 msgid ""
 "Debit\n"
 "after"
 msgstr ""
+"Deebet\n"
+"pärast"
 
 #: lino/modlib/ledger/models.py:1149
 msgid ""
 "Credit\n"
 "after"
 msgstr ""
+"Krediit\n"
+"pärast"
 
 #: lino/modlib/ledger/models.py:1156
 msgid "General Accounts Balances"
-msgstr ""
+msgstr "Üldkontode saldod"
 
 #: lino/modlib/ledger/models.py:1166 lino/modlib/ledger/models.py:1185
 msgid "Ref"
@@ -4215,11 +4219,11 @@ msgstr ""
 
 #: lino/modlib/ledger/models.py:1191
 msgid "Client Accounts Balances"
-msgstr ""
+msgstr "Ostjate saldod"
 
 #: lino/modlib/ledger/models.py:1196
 msgid "Supplier Accounts Balances"
-msgstr ""
+msgstr "Hankijate saldod"
 
 #: lino/modlib/ledger/models.py:1278
 msgid "Debtors"
@@ -4248,7 +4252,7 @@ msgstr ""
 
 #: lino/modlib/ledger/models.py:1305
 msgid "Activity Report"
-msgstr ""
+msgstr "Tegevusaruanne"
 
 #: lino/modlib/ledger/models.py:1306
 msgid "Overview of the financial activity during a given period."
@@ -4260,26 +4264,23 @@ msgstr ""
 
 #: lino/modlib/ledger/utils.py:41
 msgid "Fiscal Year"
-msgstr ""
+msgstr "Aruandeaasta"
 
 #: lino/modlib/ledger/utils.py:42
 msgid "Fiscal Years"
-msgstr ""
+msgstr "Aruandeaastad"
 
 #: lino/modlib/lists/__init__.py:15
-#, fuzzy
 msgid "Lists"
-msgstr "Maakond"
+msgstr "Listid"
 
 #: lino/modlib/lists/models.py:39
-#, fuzzy
 msgid "List Type"
-msgstr "Firmaliik"
+msgstr "Listiliik"
 
 #: lino/modlib/lists/models.py:40
-#, fuzzy
 msgid "List Types"
-msgstr "Firmaliik"
+msgstr "Listiliigid"
 
 #: lino/modlib/lists/models.py:52
 msgid "Partner List"
@@ -4402,7 +4403,7 @@ msgstr ""
 #: lino/modlib/orders/models.py:242 lino/modlib/sales/models.py:133
 #: lino/modlib/sales/models.py:215
 msgid "Discount"
-msgstr ""
+msgstr "Allahindlus"
 
 #: lino/modlib/orders/models.py:290 lino/modlib/sales/models.py:324
 msgid "Totals"
@@ -5131,19 +5132,19 @@ msgstr "Arve saaja"
 
 #: lino/modlib/sales/models.py:84
 msgid "Signed"
-msgstr ""
+msgstr "Alla kirjutatud"
 
 #: lino/modlib/sales/models.py:99
 msgid "Shipping Mode"
-msgstr ""
+msgstr "Hankimisviis"
 
 #: lino/modlib/sales/models.py:100
 msgid "Shipping Modes"
-msgstr ""
+msgstr "Hankimisviisid"
 
 #: lino/modlib/sales/models.py:131
 msgid "Subject line"
-msgstr ""
+msgstr "Teema"
 
 #: lino/modlib/sales/models.py:166
 #: lino/modlib/sales/config/sales/Invoice/trailer.html:4
@@ -5152,7 +5153,7 @@ msgstr "Makse tähtaeg"
 
 #: lino/modlib/sales/models.py:341 lino/projects/homeworkschool/models.py:127
 msgid "More"
-msgstr "Rohkem"
+msgstr "Veel"
 
 #: lino/modlib/sales/models.py:421
 #, python-format
@@ -5608,11 +5609,11 @@ msgstr "Hoiatus"
 
 #: lino/modlib/vat/models.py:213
 msgid "Payment Term"
-msgstr ""
+msgstr "Maksetingimus"
 
 #: lino/modlib/vat/models.py:214
 msgid "Payment Terms"
-msgstr ""
+msgstr "Maksetingimused"
 
 #: lino/modlib/vat/models.py:247
 msgid "Total incl. VAT"

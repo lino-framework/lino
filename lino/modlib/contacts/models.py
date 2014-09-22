@@ -141,8 +141,8 @@ but e.g. :class:`Human` overrides this.
     def get_overview_elems(self, ar):
         elems = []
         buttons = self.get_mti_buttons(ar)
-        elems.append(E.p(unicode(_("See as ")),
-                         *join_elems(buttons, ', '),
+        buttons = join_elems(buttons, ', ')
+        elems.append(E.p(unicode(_("See as ")), *buttons,
                          style="font-size:8px;text-align:right;padding:3pt;"))
         elems += self.get_name_elems(ar)
         elems += join_elems(list(self.address_location_lines()), sep=E.br)
@@ -159,6 +159,7 @@ but e.g. :class:`Human` overrides this.
     @dd.displayfield(_("See as "))
     def mti_navigator(self, ar):
         buttons = self.get_mti_buttons(ar)
+        buttons = join_elems(buttons, ', ')
         return E.p(*buttons)
 
 
