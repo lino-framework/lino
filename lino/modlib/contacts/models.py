@@ -138,18 +138,23 @@ but e.g. :class:`Human` overrides this.
     def get_name_elems(self, ar):
         return [E.b(self.name), E.br()]
 
-    @dd.displayfield()
-    def overview(self, ar):
-        return E.div(*self.get_overview_elems(ar))
-
     def get_overview_elems(self, ar):
-        elems = self.get_name_elems(ar)
+        elems = [self.get_mti_navigator(ar)]
+        elems += self.get_name_elems(ar)
         elems += join_elems(list(self.address_location_lines()), sep=E.br)
         elems = [
             E.div(*elems,
                   style="font-size:18px;font-weigth:bold;"
                   "vertical-align:bottom;text-align:middle")]
         return elems
+
+    @dd.displayfield()
+    def overview(self, ar):
+        return E.div(*self.get_overview_elems(ar))
+
+    @dd.displayfield()
+    def mti_navigator(self, ar):
+        return self.get_mti_navigator(ar)
 
 
 class PartnerDetail(dd.FormLayout):

@@ -399,7 +399,7 @@ def make_view_permission_handler_(
                         # We need to report the guilty actor,
                         # otherwise it is difficult to locate the error.
                         raise Exception(
-                            "user_group %s required by %s does not exist" %
+                            "user_group '%s' required by %s does not exist" %
                             (g, actor))
                         return False
                     if level >= user_level:

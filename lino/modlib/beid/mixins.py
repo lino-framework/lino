@@ -31,7 +31,11 @@ from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
 
-config = dd.apps.get('beid', None)
+#config = dd.apps.get('beid', None)
+
+config = dd.plugins.beid
+
+dd.add_user_group('beid', config.verbose_name)
 
 
 class BeIdCardTypes(dd.ChoiceList):
@@ -83,7 +87,7 @@ add('18', _("Foreigner card F+"), "foreigner_f_plus")
 class BaseBeIdReadCardAction(dd.Action):
     "See :class:`ml.beid.BaseBeIdReadCardAction`."
     label = _("Read eID card")
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups='beid')
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'
     sorry_msg = _("Sorry, I cannot handle that case: %s")
