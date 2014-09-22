@@ -15,17 +15,16 @@ from django.db import models
 from django.conf import settings
 
 from lino import dd, rt
-from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
+from lino.utils import mti
 
 accounts = dd.resolve_app('accounts', strict=True)
 contacts = dd.resolve_app('contacts', strict=True)
 vat = dd.resolve_app('vat', strict=True)
-# partner_model = settings.SITE.partners_app_label + '.Partner'
 partner_model = 'contacts.Partner'
 
 ZERO = Decimal(0)
@@ -102,7 +101,7 @@ class DcAmountField(dd.VirtualField):
         return None
 
 
-class Journal(dd.BabelNamed, mixins.Sequenced, mixins.PrintableType):
+class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
 
     class Meta:
         verbose_name = _("Journal")
@@ -258,7 +257,7 @@ def VoucherNumber(**kw):
     return models.IntegerField(**kw)
 
 
-class Voucher(mixins.UserAuthored, mixins.Registrable):
+class Voucher(dd.UserAuthored, dd.Registrable):
 
     class Meta:
         verbose_name = _("Voucher")
@@ -411,18 +410,18 @@ class Voucher(mixins.UserAuthored, mixins.Registrable):
             #~ return False
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
-    def get_mti_child(self):
-        if self.id is not None:
-            try:
-                return self.journal.voucher_type.model.objects.get(id=self.id)
-            except Voucher.DoesNotExist:
-                logger.warning(
-                    "No mti child %s in %s",
-                    self.id,
-                    self.journal.voucher_type.model.objects.all().query)
+    def get_mti_leaf(self):
+        """Return the specialized form of this voucher.
+
+        For example if we have :class:`ml.ledger.Voucher` instance, we
+        can get the actual document (Invoice, PaymentOrder,
+        BankStatement, ...) by calling this method.
+
+        """
+        return mti.get_child(self.journal.voucher_type.model)
 
     def obj2html(self, ar):
-        mc = self.get_mti_child()
+        mc = self.get_mti_leaf()
         if mc is None:
             return ''
         return ar.obj2html(mc)
@@ -479,7 +478,7 @@ class VouchersByPartner(dd.VirtualTable):
         obj = ar.master_instance
         rows = []
         if obj is not None:
-            for M in dd.models_by_base(vat.VatDocument):
+            for M in rt.models_by_base(vat.VatDocument):
                 rows += list(M.objects.filter(partner=obj))
 
             def by_date(a, b):
@@ -515,12 +514,12 @@ class VouchersByPartner(dd.VirtualTable):
         sar = self.request(master_instance=obj)
         # elems += ["Partner:", unicode(ar.master_instance)]
         for voucher in sar:
-            vc = voucher.get_mti_child()
+            vc = voucher.get_mti_leaf()
             if vc and vc.state.name == "draft":
                 elems += [ar.obj2html(vc), " "]
 
         vtypes = set()
-        for m in dd.models_by_base(vat.VatDocument):
+        for m in rt.models_by_base(vat.VatDocument):
             vtypes.add(
                 VoucherTypes.get_by_value(dd.full_model_name(m)))
 
@@ -591,7 +590,7 @@ class Movement(dd.Model):
     #~ def get_default_match(self):
         #~ return unicode(self.voucher)
     def select_text(self):
-        v = self.voucher.get_mti_child()
+        v = self.voucher.get_mti_leaf()
         return "%s (%s)" % (v, v.date)
 
     @dd.virtualfield(dd.PriceField(_("Debit")))
@@ -610,8 +609,8 @@ class Movement(dd.Model):
 
     @dd.displayfield(_("Voucher"))
     def voucher_link(self, ar):
-        #~ return self.voucher.get_mti_child().obj2html(ar)
-        return ar.obj2html(self.voucher.get_mti_child())
+        #~ return self.voucher.get_mti_leaf().obj2html(ar)
+        return ar.obj2html(self.voucher.get_mti_leaf())
 
     #~ @dd.displayfield(_("Matched by"))
     #~ def matched_by(self,ar):
@@ -730,12 +729,12 @@ class DueMovement(object):
         else:
             self.has_unsatisfied_movement = True
         if self.trade_type is None:
-            voucher = mvt.voucher.get_mti_child()
+            voucher = mvt.voucher.get_mti_leaf()
             self.trade_type = voucher.get_trade_type()
         if mvt.dc == self.dc:
             self.debts.append(mvt)
             self.balance += mvt.amount
-            voucher = mvt.voucher.get_mti_child()
+            voucher = mvt.voucher.get_mti_leaf()
             due_date = voucher.get_due_date()
             if self.due_date is None or due_date < self.due_date:
                 self.due_date = due_date
@@ -830,13 +829,13 @@ class ExpectedMovements(dd.VirtualTable):
         _("Debts"), help_text=_("List of invoices in this match group"))
     def debts(self, row, ar):
         return E.p(*join_elems([
-            ar.obj2html(i.voucher.get_mti_child()) for i in row.debts]))
+            ar.obj2html(i.voucher.get_mti_leaf()) for i in row.debts]))
 
     @dd.displayfield(
         _("Payments"), help_text=_("List of payments in this match group"))
     def payments(self, row, ar):
         return E.p(*join_elems([
-            ar.obj2html(i.voucher.get_mti_child()) for i in row.payments]))
+            ar.obj2html(i.voucher.get_mti_leaf()) for i in row.payments]))
 
     @dd.virtualfield(dd.PriceField(_("Balance")))
     def balance(self, row, ar):

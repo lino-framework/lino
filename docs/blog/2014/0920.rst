@@ -47,9 +47,9 @@ This hack has become different:
 Remote fields failed on empty values
 ------------------------------------
 
-I discovered a bug in :ref:`faggio`. After creating a new room, I got
-the following console message, and the list of rooms no longer
-appeared at all::
+Discovered and fixed a bug in Lino which occured in
+:ref:`faggio`. After creating a new room, I got the following console
+message, and the list of rooms no longer appeared at all::
 
     [20/Sep/2014 20:20:44] "GET /api/cal/Rooms/-99999?_dc=1411233644184&an=insert&rp=ext-comp-2235&fmt=json HTTP/1.1" 200 426
     ERROR 'NoneType' object has no attribute 'city'

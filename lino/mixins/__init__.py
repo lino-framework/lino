@@ -781,8 +781,6 @@ class EmptyTableRow(VirtualRow, Printable):
 class EmptyTable(frames.Frame):
 
     """
-    A "Table" that has exactly one virtual row and thus is visible
-    only using a Detail view on that row.
     """
     #~ debug_permissions = True
     #~ has_navigator = False

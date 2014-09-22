@@ -28,7 +28,7 @@ from lino.modlib.excerpts.mixins import Certifiable
 
 def objects():
     ExcerptType = dd.resolve_model('excerpts.ExcerptType')
-    for cls in dd.models_by_base(Certifiable):
+    for cls in rt.models_by_base(Certifiable):
         kw = dd.str2kw('name', cls._meta.verbose_name)
         if False:
             kw.update(backward_compat=True)

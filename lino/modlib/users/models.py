@@ -12,9 +12,8 @@ from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
 
-from lino import dd, rt
+from lino import dd
 from lino.utils.xmlgen.html import E
-from lino import mixins
 from lino.core import actions
 
 
@@ -51,7 +50,7 @@ class ChangePassword(dd.Action):
         ar.success(msg, alert=True)
 
 
-class User(mixins.CreatedModified):
+class User(dd.CreatedModified):
 
     """
     Represents a :ddref:`users.User` of this site.
@@ -331,7 +330,7 @@ class UsersOverview(Users):
 #     auto_fit_column_widths = True
 
 
-class Authority(mixins.UserAuthored):
+class Authority(dd.UserAuthored):
 
     """
     An Authority is when a User gives another User the right to "represent him"

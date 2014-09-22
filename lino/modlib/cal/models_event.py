@@ -22,7 +22,6 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import mixins
 from lino import dd, rt
 
 from .utils import (
@@ -273,7 +272,7 @@ class UpdateGuests(dd.MultipleRowAction):
 
 
 class Event(Component, Ended,
-            mixins.TypedPrintable,
+            dd.TypedPrintable,
             outbox.Mailable,
             postings.Postable):
 
@@ -895,7 +894,7 @@ if settings.SITE.user_model:
 
 def update_reminders_for_user(user, ar):
     n = 0
-    for model in dd.models_by_base(EventGenerator):
+    for model in rt.models_by_base(EventGenerator):
         for obj in model.objects.filter(user=user):
             obj.update_reminders(ar)
             #~ logger.info("--> %s",unicode(obj))

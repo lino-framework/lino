@@ -255,6 +255,20 @@ The `dd.Model` class
     fields which have e.g. `on_delete=PROTECT`.
 
 
+  .. method:: print_subclasses_graph
+
+    Returns an internationalized `graphviz` directive representing
+    the polymorphic forms of this model.
+
+    Usage example::
+
+      .. django2rst:: 
+
+          with dd.translation.override('de'):
+              contacts.Partner.print_subclasses_graph()
+
+
+
 Miscellaneous functions
 -----------------------
 

@@ -15,17 +15,14 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
 
-from lino import dd, rt
+from lino import dd
 from django.utils.translation import ugettext_lazy as _
 
-# from lino.modlib.ledger.utils import FiscalYears
-#~ from lino.core.dbutils import models_by_base
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
 vat = dd.resolve_app('vat')
@@ -208,7 +205,7 @@ class Declaration(ledger.Voucher):
 
         #~ print 20121209, item_models
         #~ for m in item_models:
-        #~ for m in dd.models_by_base(VatDocument):
+        #~ for m in rt.models_by_base(VatDocument):
             #~ for item in m.objects.filter(voucher__declaration=self):
                 #~ logger.info("20121208 b document %s",doc)
                 #~ self.collect_item(sums,item)

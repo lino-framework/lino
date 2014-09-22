@@ -489,15 +489,6 @@ def site_setup(site):
             sales.InvoiceItemsByProduct
             """,
             label=MODULE_LABEL)
-    # for m in dd.models_by_base(site.modules.contacts.Partner):
-    #     t = m.get_default_table()
-    #     if not hasattr(t.detail_layout, 'sales'):
-    #         t.add_detail_tab(
-    #             "sales", """
-    #             invoice_recipient vat_id vat_regime payment_term
-    #             sales.InvoicesByPartner
-    #             """,
-    #             label=MODULE_LABEL)
 
 
 class PartnerDetailMixin(dd.Panel):

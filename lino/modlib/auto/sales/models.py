@@ -101,7 +101,7 @@ class Invoiceable(dd.Model):
             if partner.id == settings.SITE.site_config.site_company.id:
                 return
         #~ logger.info('20130711 get_invoiceables_for (%s,%s)', partner, max_date)
-        for m in dd.models_by_base(cls):
+        for m in rt.models_by_base(cls):
             flt = m.get_partner_filter(partner)
             qs = m.objects.filter(flt)
             for obj in qs.order_by(m.invoiceable_date_field):
@@ -257,29 +257,7 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct):  # 20130709
     column_names = "voucher qty title description:20x1 discount unit_price total_incl total_base total_vat"
 
 
-#~ contacts = dd.resolve_app('contacts')
-#~ class InvoiceablePartners(contacts.Partners):
-    #~ """
-    #~ TODO: read https://docs.djangoproject.com/en/dev/topics/db/aggregation/
-    #~ """
-    #~ label = _("Invoiceable partners")
-    #~ help_text = _("Table of all partners who have at least one invoiceable item.")
-    #~ model = 'contacts.Partner'
-    #~ create_invoice = CreateInvoiceForPartner()
-    #~
-    #~ @classmethod
-    #~ def get_request_queryset(self,ar):
-        #~ qs = super(InvoiceablePartners,self).get_request_queryset(ar)
-        #~ flt = Q()
-        #~ for m in dd.models_by_base(Invoiceable):
-            #~ subquery = m.objects.filter(invoice__isnull=True).values(m.invoiceable_partner_field+'__id')
-            #~ flt = flt | Q(id__in=subquery)
-        #~ return qs.filter(flt)
-        #~
-from lino.mixins.printable import CachedPrintAction
-
-
-class CreateAllInvoices(CachedPrintAction):
+class CreateAllInvoices(dd.CachedPrintAction):
     #~ icon_name = 'money'
 
     #~ label = _("Create invoices")
@@ -421,10 +399,6 @@ class InvoiceablesByPartner(dd.VirtualTable):
         for obj in Invoiceable.get_invoiceables_for(mi):
             rows.append((getattr(obj, obj.invoiceable_date_field), obj))
 
-        #~ for m in dd.models_by_base(Invoiceable):
-            #~ fkw = {m.invoiceable_partner_field:mi}
-            #~ for obj in m.objects.filter(**fkw).order_by(m.invoiceable_date_field):
-                #~ rows.append((getattr(obj,m.invoiceable_date_field),obj))
         def f(a, b):
             return cmp(a[0], b[0])
         rows.sort(f)

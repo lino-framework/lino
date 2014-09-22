@@ -500,22 +500,14 @@ action on individual instances.
 
     @classmethod
     def print_subclasses_graph(self):
-        """
-        Returns a `graphviz` directive 
-        Used in welfare.userdocs to generate a internationalized graphviz::
-        
-          \.. py2rst:: print contacts.Partner.print_subclasses_graph()
-          
-        """
-        from lino import dd, rt
+        from lino import rt
         pairs = []
 
         def collect(m):
-            for c in dd.models_by_base(m):
+            for c in rt.models_by_base(m):
                 #~ if c is not m and (m in c.__bases__):
                 #~ if c is not m:
-                #~ if m in c.__bases__:
-                if c is not m:
+                if c is not m and m in c.__bases__:
                     ok = True
                     #~ for cb in c.__bases__:
                         #~ if cb in m.mro():

@@ -218,7 +218,6 @@ class Addressable(CountryRegionCity):
         return unicode(self)
 
 
-#~ class Contact(mti.MultiTableBase,CountryCity):
 class Partner(dd.Model):
 
     """

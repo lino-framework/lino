@@ -4,53 +4,47 @@ Actors
 
 .. currentmodule:: dd
 
+.. contents:: 
+   :local:
+   :depth: 2
+
+
+
 
 Overview
 ========
 
-An :class:`Actor <dd.Actor>` is a globally known unique thing that
-offers :class:`actions <dd.Action>`.
-
-Almost every incoming web request in a Lino application is a given
-*user* who requests execution of a given *action* on a given *actor*.
+An **actor** is a globally known unique object that offers **actions**.
+Almost every incoming web request in a Lino application requests
+execution of a given *action* on a given *actor*.
 
 An alternative name for "Actor" might be "Resource" or "View", but
 these words are already being used very often, so in this section we
 talk about *actors*.
 
-When we say "a globally known unique thing", then we refer to the
-global namespace which is currently in :data:`rt.modules`.
+The most common type of actors are **tables**. A table is an actor
+which displays some data in a tabular way, i.e. interactively as a
+GridPanel or on a printable document as a table.
 
-
-**Actors are classes, not instances** : Actors are never instantiated,
-we use only the class objects.  Each subclass of an actor is
-automatically registered as a new actor.
-
-The main reason for this design choice was that it leads to more
-readable application code. This is not an absolute decision,
-however. We might decide one day that Lino creates an automatic
-singleton instance for each Actor at startup. That would avoid us to
-write all those `@classmethod` decorators.
-
-
-The most common type of actors are tables. A table is an actor which
-displays some data in a tabular way, i.e. interactively as a GridPanel
-or on a printable document as a table.
+Besides *model-based tables* (who display data coming from the
+database), Lino has *virtual tables*.
 
 :class:`AbstractTable` is the base class for 
 :class:`Table`  and
 :class:`VirtualTable` 
 
-There are VirtualTable and "normal" (model-based) tables. And then
-there is a third kind of table is special: the EmptyTable.
-
 The **columns** of a table are defined by attributes like 
 :attr:`column_names <AbstractTable.column_names>`.
 
-The **rows** of a table are defined by a method
-:meth:`AbstractTable.get_data_rows` which, in a model-based table has
-a default implementation based on the :attr:`model <Table.model>`
+The **rows** of a table are defined by a method :meth:`get_data_rows
+<AbstractTable.get_data_rows>` which, in a model-based table has a
+default implementation based on the :attr:`model <Table.model>`
 attribute.
+
+Not all actors are tables. Another type of actors are *frames* which
+display some data in some other form. One such frame actor is the
+calendar panel, another one is :class:`EmptyTable`, used to display
+reports.
 
 See also
 
@@ -60,16 +54,30 @@ See also
 
 
 
-
 The ``Actor`` class
 ===================
 
 .. class:: Actor
 
-  Base class for
-  :class:`AbstractTable <lino.core.tables.AbstractTable>`,
-  :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
-  and :class:`Frame <lino.core.frames.Frame>`.
+  This is the base class for all actors.  It is not used directly but
+  inherited by :class:`AbstractTable`, :class:`ChoiceList` and
+  :class:`Frame`.
+
+  When we say "a globally known unique object", then we refer to the
+  global namespace in :data:`rt.modules`.
+
+  **Actors are classes, not instances** : Actors are never instantiated,
+  we use only the class objects.  Lino will automatically register each
+  subclass of :class:`Actor` as an actor.
+
+  The main reason for this design choice was that it leads to more
+  readable application code. This is not an absolute decision,
+  however. We might decide one day that Lino creates an automatic
+  singleton instance for each Actor at startup. That would avoid us to
+  write all those `@classmethod` decorators.
+
+
+
 
   .. attribute:: required
 
@@ -236,8 +244,8 @@ The ``Actor`` class
     This is called when an incoming web request on this actor is being
     parsed.
 
-    If you override `parse_req`, then keep in mind that it will be
-    called *before* Lino checks the requirements.  For example the
+    If you override :meth:`parse_req`, then keep in mind that it will
+    be called *before* Lino checks the requirements.  For example the
     user may be AnonymousUser even if the requirements won't let it be
     executed.  `ar.subst_user.profile` may be None, e.g. when called
     from `find_appointment` in :ref:`welfare.pcsw.Clients`.
@@ -642,21 +650,8 @@ The ``AbstractTable`` class
     table which invokes this method.
 
 
-The ``VirtualTable`` class reference
-------------------------------------
-
-.. class:: VirtualTable
-
-    An :class:`AbstractTable` that works on an volatile (non
-    persistent) list of rows.
-
-    By nature it cannot have database fields, only virtual fields.
-
-    Subclasses must define a :meth:`get_data_rows` method.
-
-
-The ``Table`` class reference
------------------------------
+The ``Table`` class
+-------------------
 
 .. class:: Table
 
@@ -754,4 +749,26 @@ name.
     Set this to True if Lino should not open a newly created record in
     a detail window.
 
+
+The ``VirtualTable`` class
+--------------------------
+
+.. class:: VirtualTable
+
+    An :class:`AbstractTable` that works on an volatile (non
+    persistent) list of rows.
+
+    By nature it cannot have database fields, only virtual fields.
+
+    Subclasses must define a :meth:`get_data_rows` method.
+
+
+
+The ``EmptyTable`` class
+--------------------------
+
+.. class:: EmptyTable
+
+    A "Table" that has exactly one virtual row and thus is visible
+    only using a Detail view on that row.
 

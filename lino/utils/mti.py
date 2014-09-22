@@ -9,9 +9,6 @@ I wrote it mainly to solve ticket :doc:`/tickets/22`.
 
 
 
-API
----
-
 """
 import logging
 logger = logging.getLogger(__name__)
@@ -20,54 +17,12 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.db import router
 from django.db.models.deletion import Collector
-from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 
 
 from lino.core.dbutils import resolve_model
 from lino.core.fields import VirtualField
 from lino.core.signals import pre_remove_child, pre_add_child
-#~ from lino.core import changes
-
-
-class MultiTableBase(models.Model):
-
-    """
-    Mixin for Models that use MTI.
-    Subclassed e.g. by
-    :class:`ml.contacts.Partner`.
-    """
-    class Meta:
-        abstract = True
-
-    def get_child_model(self):
-        return self.__class__
-
-    def get_child_instance(self):
-        model = self.get_child_model()
-        if model is self.__class__:
-            return self
-        related_name = model.__name__.lower()
-        return getattr(self, related_name)
-
-    def get_mti_child(self, *args):
-        """Return the specified specialization or `None`.
-
-        For example if you have two models `Place(Model)` and
-        `Restaurant(Place)` and a `Place` instance ``p`` which is
-        *not* also a Restaurant, then `p.get_mti_child('restaurant')`
-        will return `None`.
-
-        """
-        for a in args:
-            try:
-                return getattr(self, a)
-            except ObjectDoesNotExist:
-                pass
-        #~ return self
-
-    def insert_child(self, *args, **attrs):
-        return insert_child(self, *args, **attrs)
 
 
 class ChildCollector(Collector):
@@ -112,10 +67,14 @@ class ChildCollector(Collector):
 
 
 def get_child(obj, child_model):
-    try:
-        return child_model.objects.get(pk=obj.pk)
-    except child_model.DoesNotExist:
-        return None
+    if obj.pk is not None:
+        try:
+            return child_model.objects.get(pk=obj.pk)
+        except child_model.DoesNotExist:
+            # logger.warning(
+            #     "No mti child %s in %s",
+            #     obj.pk, child_model.objects.all().query)
+            return None
 
 
 def delete_child(obj, child_model, ar=None, using=None):
@@ -140,15 +99,13 @@ def delete_child(obj, child_model, ar=None, using=None):
 
     #~ setattr(obj,child_model.__name__.lower(),None)
     #~ delattr(obj,child_model.__name__.lower())
-    """
-    20120531 : TODO:
-    unchecking e.g. Company.is_courseprovider deletes the child 
-    when saving the form, but the response to the PUT returns still a True value
-    because it works on the same memory instance (`obj`).
-    User sees the effect only after clicking the refresh button.
-    Fortunately there's no problem if the user unchecks 
-    the field and saves the form a second time.
-    """
+
+    # TODO: unchecking e.g. Company.is_courseprovider deletes the
+    # child when saving the form, but the response to the PUT returns
+    # still a True value because it works on the same memory instance
+    # (`obj`).  User sees the effect only after clicking the refresh
+    # button.  Fortunately there's no problem if the user unchecks the
+    # field and saves the form a second time.
 
 
 def insert_child(obj, child_model, **attrs):

@@ -1,0 +1,19 @@
+==========================
+Monday, September 22, 2014
+==========================
+
+The `overview` panel of all partners in :ref:`welfare` now have a
+"polymorphic navigator".  That is, you can easily switch between the
+different polymorphic forms of a partner ("Partner -> Person ->
+Client", "Partner -> Company -> JobProvider", ...)
+
+This long-awaited feature is technically nothing new, but it took me
+some time to imagine a satisfying way of integrating it and making it
+reusable.  Side effects:
+
+- Renamed :class:`lino.utils.mti.MultiTableBase` to
+  :class:`lino.utils.mti.Polymorphic`.
+
+- Fixed a bug in :meth:`dd.Model.print_subclasses_graph`. Example usage
+  in :ref:`welfare.de.partner`.
+

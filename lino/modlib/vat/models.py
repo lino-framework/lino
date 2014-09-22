@@ -10,13 +10,13 @@ and Model mixins designed to work both with and without
 :mod:`lino.modlib.declarations`
 installed.
 
+::
 
+    sales = dd.resolve_app('sales')
 
-sales = dd.resolve_app('sales')
-
-@dd.receiver(dd.post_init, sender=sales.Invoice)
-def set_default_item_vat(sender, instance=None,**kwargs):
-    instance.item_vat = True
+    @dd.receiver(dd.post_init, sender=sales.Invoice)
+    def set_default_item_vat(sender, instance=None,**kwargs):
+        instance.item_vat = True
 
 
 """
@@ -36,7 +36,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino import dd, rt
 from lino import mixins
 
 config = dd.plugins.vat
@@ -569,7 +569,7 @@ if False:
 
     @dd.receiver(dd.post_analyze)
     def on_post_analyze(sender, **kw):
-        for m in dd.models_by_base(VatDocument):
+        for m in rt.models_by_base(VatDocument):
             dd.post_init.connect(set_default_item_vat, sender=m)
             #~ print('20130902 on_post_analyze installed receiver for',m)
 

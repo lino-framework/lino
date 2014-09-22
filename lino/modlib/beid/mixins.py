@@ -474,7 +474,7 @@ class BeIdCardHolder(dd.Model):
 
 
 def holder_model():
-    cmc = list(dd.models_by_base(BeIdCardHolder))
+    cmc = list(rt.models_by_base(BeIdCardHolder))
     if len(cmc) != 1:
         raise Exception(
             "There must be exactly one BeIdCardHolder model in your Site!")

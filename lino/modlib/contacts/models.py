@@ -57,7 +57,7 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-class Partner(mti.MultiTableBase, AddressLocation, dd.Addressable):
+class Partner(dd.Polymorphic, AddressLocation, dd.Addressable):
     "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20
@@ -140,7 +140,7 @@ but e.g. :class:`Human` overrides this.
 
     @dd.displayfield()
     def overview(self, ar):
-        return self.get_overview_elems(ar)
+        return E.div(*self.get_overview_elems(ar))
 
     def get_overview_elems(self, ar):
         elems = self.get_name_elems(ar)

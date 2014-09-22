@@ -84,7 +84,6 @@ Inter-app relations:
 - :func:`update_model <lino.core.inject.update_model>`
 
 - :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>`
-- :func:`models_by_base <djangosite.dbutils.models_by_base>`
 
 Signals:
 
@@ -125,6 +124,7 @@ Model mixins:
 - :class:`lino.mixins.Referrable`
 - :class:`lino.mixins.Registrable`
 - :class:`lino.mixins.Hierarizable`
+- :class:`lino.mixins.polymorphic.Polymorphic`
 
 - :class:`Created <lino.mixins.Created>` and :class:`Modified
   <lino.mixins.Modified>` (and their deprecated combination
@@ -171,7 +171,6 @@ from djangosite.dbutils import obj2unicode
 from djangosite.dbutils import range_filter
 from djangosite.dbutils import inrange_filter
 from djangosite.dbutils import full_model_name
-from djangosite.dbutils import models_by_base
 
 from lino.core.model import Model
 from lino.core.merge import MergeAction
@@ -365,12 +364,14 @@ from lino.mixins import (
 from lino.mixins import Created, Modified
 from lino.mixins import CreatedModified  # deprecated
 
-from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction
+from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction, CachedPrintAction
 #~ from lino.mixins import SimplyPrintable
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born
 
 from lino.mixins.periods import DatePeriod, PeriodEvents
+
+from lino.mixins.polymorphic import Polymorphic
 
 from django.utils.importlib import import_module
 
