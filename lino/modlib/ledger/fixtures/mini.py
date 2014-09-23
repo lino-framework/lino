@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from north.dbutils import babel_values
-from lino import dd, rt
+from lino import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
@@ -59,21 +59,24 @@ def objects():
     chart = accounts.Chart(**babel_values('name',
                                           en="Minimal Accounts Chart",
                                           fr="Plan comptable réduit",
+                                          et="Minimaalne kontoplaan",
                                           de="Reduzierter Kontenplan"))
     yield chart
     #~ account = Instantiator(accounts.Account,"ref name").build
 
-    def Group(ref, type, fr, de, en):
+    def Group(ref, type, fr, de, en, et=None):
+        if et is None:
+            et = en
         global current_group
         current_group = accounts.Group(
             chart=chart,
             ref=ref,
             account_type=accounts.AccountTypes.get_by_name(type),
-            **babel_values('name', de=de, fr=fr, en=en))
+            **babel_values('name', de=de, fr=fr, en=en, et=et))
         return current_group
 
-    def Account(ref, type, fr, de, en, **kw):
-        kw.update(babel_values('name', de=de, fr=fr, en=en))
+    def Account(ref, type, fr, de, en, et, **kw):
+        kw.update(babel_values('name', de=de, fr=fr, en=en, et=et))
         return accounts.Account(
             chart=chart,
             group=current_group,
@@ -81,7 +84,7 @@ def objects():
             type=accounts.AccountTypes.get_by_name(type),
             **kw)
 
-    yield Group('10', 'capital', "Capital", "Kapital", "Capital")
+    yield Group('10', 'capital', "Capital", "Kapital", "Capital", "Kapitaal")
 
     yield Group('40', 'assets',
                 "Créances commerciales",
@@ -90,25 +93,25 @@ def objects():
 
     obj = Account(CUSTOMERS_ACCOUNT, 'assets',
                   "Clients", "Kunden",
-                  "Customers", clearable=True)
+                  "Customers", "Kliendid", clearable=True)
     yield obj
     if sales:
         settings.SITE.site_config.update(clients_account=obj)
 
     obj = Account(SUPPLIERS_ACCOUNT, 'liabilities',
                   "Fournisseurs",
-                  "Lieferanten", "Suppliers",
+                  "Lieferanten", "Suppliers", "Hankijad",
                   clearable=True)
     yield obj
     if vat:
         settings.SITE.site_config.update(suppliers_account=obj)
 
     yield Group('45', 'assets', "TVA à payer",
-                "Geschuldete MWSt", "VAT to pay")
+                "Geschuldete MWSt", "VAT to pay", "Käibemaksukonto")
     obj = Account(VAT_DUE_ACCOUNT, 'incomes',
                   "TVA due",
                   "Geschuldete MWSt",
-                  "VAT due", clearable=True)
+                  "VAT due", "Käibemaks maksta", clearable=True)
     yield obj
     if sales:
         settings.SITE.site_config.update(sales_vat_account=obj)
@@ -117,7 +120,7 @@ def objects():
         VAT_DEDUCTIBLE_ACCOUT, 'assets',
         "TVA déductible",
         "Abziehbare MWSt",
-        "VAT deductible",
+        "VAT deductible", "Enammakstud käibemaks",
         clearable=True)
     yield obj
     if ledger:
@@ -127,40 +130,45 @@ def objects():
     yield Group('55', 'assets',
                 "Institutions financières", "Finanzinstitute", "Banks")
     yield Account(BESTBANK_ACCOUNT, 'bank_accounts', "Bestbank",
-                  "Bestbank", "Bestbank")
-    yield Account(CASH_ACCOUNT, 'bank_accounts', "Caisse", "Kasse", "Cash")
+                  "Bestbank", "Bestbank", "Parimpank")
+    yield Account(CASH_ACCOUNT, 'bank_accounts', "Caisse", "Kasse",
+                  "Cash", "Sularaha")
     yield Group('58', 'assets',
                 "Transactions en cours", "Laufende Transaktionen",
                 "Running transactions")
     yield Account(PO_BESTBANK_ACCOUNT, 'bank_accounts',
                   "Ordres de paiement Bestbank",
                   "Zahlungsaufträge Bestbank",
-                  "Payment Orders Bestbank", clearable=True)
+                  "Payment Orders Bestbank",
+                  "Maksekorraldused Parimpank", clearable=True)
 
     # TODO: use another account type than bank_accounts:
     yield Account(VATDCL_ACCOUNT, 'bank_accounts',
                   "TVA à declarer",
                   "MWSt zu deklarieren",
-                  "VAT to declare")
+                  "VAT to declare", "Käibemaks deklareerimata")
 
-    yield Group('6', 'expenses', u"Charges", u"Aufwendungen", "Expenses")
+    yield Group('6', 'expenses', u"Charges", u"Aufwendungen", "Expenses", "Kulud")
     yield Account(PURCHASE_OF_GOODS, 'expenses',
                   "Achat de marchandise",
                   "Wareneinkäufe",
                   "Purchase of goods",
+                  "Varade soetamine",
                   purchases_allowed=True)
     yield Account(PURCHASE_OF_SERVICES, 'expenses',
                   "Services et biens divers",
                   "Dienstleistungen",
                   "Purchase of services",
+                  "Teenuste soetamine",
                   purchases_allowed=True)
     yield Account(PURCHASE_OF_INVESTMENTS, 'expenses',
-                  "Investissements", "Anlagen", "Purchase of investments",
+                  "Investissements", "Anlagen",
+                  "Purchase of investments", "Investeeringud",
                   purchases_allowed=True)
 
-    yield Group('7', 'incomes', "Produits", "Erträge", "Revenues")
+    yield Group('7', 'incomes', "Produits", "Erträge", "Revenues", "Tulud")
     obj = Account(SALES_ACCOUNT, 'incomes',
-                  "Ventes", "Verkäufe", "Sales",
+                  "Ventes", "Verkäufe", "Sales", "Müük",
                   sales_allowed=True)
     yield obj
     if sales:
@@ -184,7 +192,8 @@ def objects():
         **babel_values('name',
                        de="Einkaufsrechnungen",
                        fr="Factures achat",
-                       en="Purchase invoices", et="Ostuarved"))
+                       en="Purchase invoices",
+                       et="Ostuarved"))
 
     if finan:
         yield finan.BankStatement.create_journal(
@@ -205,7 +214,8 @@ def objects():
             chart=chart, account=CASH_ACCOUNT, ref="C", **kw)
         kw = babel_values(
             'name', en="Miscellaneous Journal Entries",
-            de="Diverse Buchungen", fr="Opérations diverses")
+            de="Diverse Buchungen", fr="Opérations diverses",
+            et="Muud operatsioonid")
         yield finan.JournalEntry.create_journal(
             chart=chart,
             ref="M", dc=accounts.DEBIT, **kw)
@@ -214,7 +224,7 @@ def objects():
         kw = babel_values(
             'name', en="VAT declarations",
             de="MWSt-Erklärungen", fr="Déclarations TVA",
-            et="Käibemaksu deklaratsioonid")
+            et="Käibemaksudeklaratsioonid")
         yield declarations.Declaration.create_journal(
             chart=chart,
             ref="V",
