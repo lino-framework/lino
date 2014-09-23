@@ -136,7 +136,7 @@ but e.g. :class:`Human` overrides this.
         return self  # compatibility with lino.modlib.partners
 
     def get_name_elems(self, ar):
-        return [E.b(self.name), E.br()]
+        return [E.b(self.name)]
 
     def get_overview_elems(self, ar):
         elems = []
@@ -145,6 +145,7 @@ but e.g. :class:`Human` overrides this.
         elems.append(E.p(unicode(_("See as ")), *buttons,
                          style="font-size:8px;text-align:right;padding:3pt;"))
         elems += self.get_name_elems(ar)
+        elems.append(E.br())
         elems += join_elems(list(self.address_location_lines()), sep=E.br)
         elems = [
             E.div(*elems,
@@ -268,8 +269,7 @@ class Person(mixins.Human, mixins.Born, Partner):
         if self.title:
             elems += [self.title, ' ']
         elems += [self.first_name, ' ',
-                  E.b(self.last_name),
-                  E.br()]
+                  E.b(self.last_name)]
         return elems
 
 
@@ -323,7 +323,7 @@ class Company(Partner):
         elems = []
         if self.prefix:
             elems += [self.prefix, ' ']
-        elems += [E.b(self.name), E.br()]
+        elems += [E.b(self.name)]
         return elems
 
 

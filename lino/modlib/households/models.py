@@ -104,7 +104,7 @@ class Household(contacts.Partner):
         elems = []
         if self.prefix:
             elems += [self.prefix, ' ']
-        elems += [E.b(self.name), E.br()]
+        elems += [E.b(self.name)]
         return elems
 
 
