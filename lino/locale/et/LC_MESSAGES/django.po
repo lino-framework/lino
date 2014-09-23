@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-22 14:21+0300\n"
-"PO-Revision-Date: 2014-09-23 13:26+0300\n"
+"PO-Revision-Date: 2014-09-24 02:46+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2944,7 +2944,7 @@ msgstr ""
 
 #: lino/modlib/courses/models.py:426 lino/modlib/events/models.py:155
 msgid "Events"
-msgstr ""
+msgstr "Sündmused"
 
 #: lino/modlib/courses/models.py:432
 msgid "Available places"
