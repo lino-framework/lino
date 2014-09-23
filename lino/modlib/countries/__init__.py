@@ -9,4 +9,4 @@ from lino import ad, _
 class Plugin(ad.Plugin):
 
     verbose_name = _("Places")
-
+    region_label = _("County")

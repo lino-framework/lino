@@ -12,17 +12,17 @@ class Plugin(ad.Plugin):
 
     ## settings
     hide_region = False
+    region_label = _('Region')
 
     def before_analyze(self, site):
         contacts = site.modules.contacts
-        # contacts = self.app_module
 
         if self.hide_region:
             for m in (contacts.Person, contacts.Company):
                 m.hide_elements('region')
     
         if False:  # see tickets/90
-            from lino import dd, rt
+            from lino import dd
             for m in (contacts.Person, contacts.Company):
                 m.define_action(merge_row=dd.MergeAction(m))
             

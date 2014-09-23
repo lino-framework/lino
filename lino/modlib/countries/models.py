@@ -22,51 +22,8 @@ from django.core.exceptions import ValidationError
 
 from lino.utils import join_words
 
-
-class AddressFormatter(object):
-
-    """
-    Format used in BE, DE, FR, NL...
-    """
-    def get_city_lines(me, self):
-        if self.city is not None:
-            s = join_words(self.zip_code or self.city.zip_code, self.city)
-            if s:
-                yield s
-
-
-class EstonianAddressFormatter(AddressFormatter):
-
-    """
-    Format used in Estonia.
-    Not ready and not tested.
-    """
-    def get_city_lines(me, self):
-        #lines = [self.name,street,self.addr1,self.addr2]
-        if self.region:
-            if self.city:
-                join_words(self.zip_code or self.city.zip_code, self.city)
-                if self.city.zip_code:
-                    yield unicode(self.city)
-                    yield unicode(self.city)
-            s = join_words(self.zip_code, self.region)
-        else:
-            s = join_words(self.zip_code, self.city)
-        if s:
-            yield s
-
-
-ADDRESS_FORMATTERS = dict()
-ADDRESS_FORMATTERS[None] = AddressFormatter()
-ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
-
-
-def get_address_formatter(country):
-    if country and country.isocode:
-        af = ADDRESS_FORMATTERS.get(country.isocode, None)
-        if af is not None:
-            return af
-    return ADDRESS_FORMATTERS.get(None)
+menu_root = dd.plugins.countries
+config = dd.plugins.countries
 
 
 class PlaceType(dd.Choice):
@@ -125,6 +82,78 @@ add('70', _('Village'), 'village')           # et:küla
 #~ REGION_TYPES = [PlaceTypes.get_by_value(v) for v in REGION_TYPES.split()]
 
 
+class AddressFormatter(object):
+
+    """
+    Format used in BE, DE, FR, NL...
+    """
+    def get_city_lines(me, self):
+        if self.city is not None:
+            s = join_words(self.zip_code or self.city.zip_code, self.city)
+            if s:
+                yield s
+
+    def get_street_lines(me, self):
+        if self.street:
+            s = join_words(
+                self.street_prefix, self.street,
+                self.street_no)
+            if self.street_box:
+                if self.street_box[0] in '/-':
+                    s += self.street_box
+                else:
+                    s += ' ' + self.street_box
+            yield s
+
+
+class EstonianAddressFormatter(AddressFormatter):
+
+    """
+    Format used in Estonia.
+    """
+    
+    def get_city_lines(me, self):
+        #lines = [self.name,street,self.addr1,self.addr2]
+        if self.city:
+            city = self.city
+            zip_code = self.zip_code or self.city.zip_code
+            # Tallinna linnaosade asemel kirjutakse "Tallinn"
+            if zip_code and city.type == PlaceTypes.township and city.parent:
+                city = city.parent
+            # linna puhul pole vaja maakonda
+            if city.type in (PlaceTypes.town, PlaceTypes.city):
+                s = join_words(zip_code, city)
+            else:
+                yield join_words(city, unicode(city.type).lower())
+                p = city.parent
+                while p and not CountryDrivers.EE.is_region(p):
+                    yield join_words(p, unicode(p.type).lower())
+                    p = p.parent
+                if self.region:
+                    s = join_words(zip_code, self.region)
+                elif p:
+                    s = join_words(zip_code, p, unicode(p.type).lower())
+                else:
+                    s = zip_code
+        else:
+            s = join_words(self.zip_code, self.region)
+        if s:
+            yield s
+
+
+ADDRESS_FORMATTERS = dict()
+ADDRESS_FORMATTERS[None] = AddressFormatter()
+ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
+
+
+def get_address_formatter(country):
+    if country and country.isocode:
+        af = ADDRESS_FORMATTERS.get(country.isocode, None)
+        if af is not None:
+            return af
+    return ADDRESS_FORMATTERS.get(None)
+
+
 class CountryDriver(object):
 
     def __init__(self, region_types, city_types):
@@ -132,6 +161,9 @@ class CountryDriver(object):
                              for v in region_types.split()]
         self.city_types = [PlaceTypes.get_by_value(v)
                            for v in city_types.split()]
+
+    def is_region(self, p):
+        return p and p.type and p.type in self.region_types
 
 
 class CountryDrivers:
@@ -382,7 +414,7 @@ class CountryRegionCity(CountryCity):
     region = models.ForeignKey(
         'countries.Place',
         blank=True, null=True,
-        verbose_name=_('Region'),
+        verbose_name=config.region_label,
         related_name="%(app_label)s_%(class)s_set_by_region")
         #~ related_name='regions')
 
@@ -468,16 +500,15 @@ class AddressLocation(CountryRegionCity):
     def address_location_lines(self):
         #~ lines = []
         #~ lines = [self.name]
+        af = get_address_formatter(self.country)
+
         if self.addr1:
             yield self.addr1
-        if self.street:
-            yield join_words(
-                self.street_prefix, self.street,
-                self.street_no, self.street_box)
+        for ln in af.get_street_lines(self):
+            yield ln
         if self.addr2:
             yield self.addr2
 
-        af = get_address_formatter(self.country)
         for ln in af.get_city_lines(self):
             yield ln
 
@@ -497,8 +528,6 @@ class AddressLocation(CountryRegionCity):
     def address_column(self, request):
         return self.address_location(', ')
 
-
-menu_root = dd.apps.countries
 
 
 def setup_config_menu(site, ui, profile, m):

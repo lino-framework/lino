@@ -15,7 +15,7 @@ from tempfile import gettempdir
 from os.path import join, abspath, dirname, normpath
 import lino
 
-from lino.ad import Site, configure_plugin
+from lino.ad import Site, configure_plugin, _
 
 
 def TIM2LINO_LOCAL(alias, obj):
