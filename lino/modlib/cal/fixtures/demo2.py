@@ -25,21 +25,19 @@ from lino.utils import Cycler
 
 from lino import dd, rt
 
-# from ..cal import models as cal
-
 cal = dd.resolve_app('cal')
 Event = dd.resolve_model('cal.Event')
 EventType = dd.resolve_model('cal.EventType')
-# Subscription = dd.resolve_model('cal.Subscription')
+Subscription = rt.modules.cal.Subscription
 Calendar = dd.resolve_model('cal.Calendar')
 
 
-# def subscribe_all():
+def subscribe_all():
 
-#     for u in settings.SITE.user_model.objects.exclude(profile=''):
-#         for obj in Calendar.objects.all():
-#             obj = Subscription(user=u, calendar=obj)
-#             yield obj
+    for u in settings.SITE.user_model.objects.exclude(profile=''):
+        for obj in Calendar.objects.all():
+            obj = Subscription(user=u, calendar=obj)
+            yield obj
 
 
 def objects():
@@ -95,4 +93,4 @@ def objects():
                                + DURATIONS.pop())
                 yield e
 
-    # yield subscribe_all()
+    yield subscribe_all()
