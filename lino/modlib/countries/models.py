@@ -118,7 +118,7 @@ class EstonianAddressFormatter(AddressFormatter):
             city = self.city
             zip_code = self.zip_code or self.city.zip_code
             # Tallinna linnaosade asemel kirjutakse "Tallinn"
-            if zip_code and city.type == PlaceTypes.township and city.parent:
+            if city.type == PlaceTypes.township and city.parent:
                 city = city.parent
             # linna puhul pole vaja maakonda
             if city.type in (PlaceTypes.town, PlaceTypes.city):

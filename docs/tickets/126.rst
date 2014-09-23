@@ -1,0 +1,9 @@
+===================================
+#126 : Demo Tallinn on September 26
+===================================
+
+I got the honour to present Lino at the 
+`Vaba Tarkvara Päev 2014 <http://www.bcskoolitus.ee/vtp2014>`_,
+an information day about Free software in education,
+for IT managers and directors of Estonian schools.
+
