@@ -405,16 +405,19 @@ class ExtRenderer(HtmlRenderer):
         if not ba.action.action_name:
             raise Exception(
                 "Cannot make handler for nameless action %r" % ba.action)
-        if ba.action.select_rows:
-            h = 'Lino.row_action_handler('
+        if ba.action.js_handler:
+            h = ba.action.js_handler % ba.action.__dict__
         else:
-            h = 'Lino.list_action_handler('
-            h += "'/%s/%s'," % (ba.actor.app_label, ba.actor.__name__)
-        h += "'%s'" % ba.action.action_name
-        h += ",'%s'" % ba.action.http_method
-        if ba.action.preprocessor:
-            h += "," + ba.action.preprocessor
-        h += ")"
+            if ba.action.select_rows:
+                h = 'Lino.row_action_handler('
+            else:
+                h = 'Lino.list_action_handler('
+                h += "'/%s/%s'," % (ba.actor.app_label, ba.actor.__name__)
+            h += "'%s'" % ba.action.action_name
+            h += ",'%s'" % ba.action.http_method
+            if ba.action.preprocessor:
+                h += "," + ba.action.preprocessor
+            h += ")"
         return h
 
     def row_action_handler(self, ba, obj, ar=None):

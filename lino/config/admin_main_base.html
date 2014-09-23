@@ -7,9 +7,6 @@
         {% endfor %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
         </p>
-        {%- if site.plugins.get('davlink', None) -%}
-        <p align="right"><a href="javascript:Lino.davlink_reset()">reset DavLink</a></p>
-        {%- endif -%}
         <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}
             {{ E.tostring(msg) }}

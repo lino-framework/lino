@@ -177,6 +177,7 @@ from lino.core.merge import MergeAction
 
 #~ from lino.core.table import fields_list, inject_field
 from lino.core.actors import (ParameterPanel, ObservedPeriod)
+from lino.core.actors import Actor
 from lino.core.actors import Today
 from lino.core.actors import Yearly
 from lino.core.dbtables import has_fk

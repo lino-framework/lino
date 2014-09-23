@@ -16,6 +16,7 @@ import yaml
 import base64
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from lino.core.dbutils import get_field
@@ -30,8 +31,6 @@ from lino.utils import ssin
 from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
-
-#config = dd.apps.get('beid', None)
 
 config = dd.plugins.beid
 
@@ -91,6 +90,11 @@ class BaseBeIdReadCardAction(dd.Action):
     preprocessor = 'Lino.beid_read_card_processor'
     http_method = 'POST'
     sorry_msg = _("Sorry, I cannot handle that case: %s")
+
+    def get_view_permission(self, profile):
+        if not settings.SITE.use_java:
+            return False
+        return super(BaseBeIdReadCardAction, self).get_view_permission(profile)
 
     def get_button_label(self, actor):
         return self.label

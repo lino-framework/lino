@@ -32,46 +32,15 @@ from lino.utils.xmlgen.html import E
 
 class Plugin(BasePlugin):
 
-    "Lino extension to `djangosite.Plugin`"
-
     ui_label = None
 
     media_base_url = None
-    """
-    Remote URL base for media files.
-    """
-
     media_root = None
-    """Local path where third-party media files are installed.
-
-    Only used if this app has :attr:`media_base_url` empty and
-    :attr:`media_name` non-empty, *and* if the :xfile:`media`
-    directory has no entry named :attr:`media_name`.
-
-    """
-
     media_name = None
-    """Either `None` (default) or a non-empty string with the name of the
-    subdirectory of your :xfile:`media` directory which is expected to
-    contain media files for this app.
-
-    `None` means that there this app has no media files of her own.
-
-    Best practice is to set this to the `app_label`.  Will be ignored
-    if :setting:`media_base_url` is nonempty.
-
-    """
 
     url_prefix = None
-    """
-    The url prefix under which this app should ask to
-    install its url patterns.
-    """
 
     site_js_snippets = []
-    """
-    List of js snippets to be injected into the `lino_*.js` file.
-    """
 
     renderer = None
 
@@ -222,7 +191,7 @@ class Site(Site):
 
     jasmine_root = None
     """
-    Path to the Jasmine root directory. 
+    Path to the Jasmine root directory.
     Only used on a development server
     if the `media` directory has no symbolic link to the Jasmine root directory
     and only if :attr:`use_jasmine` is True.
@@ -230,7 +199,7 @@ class Site(Site):
 
     tinymce_root = None
     """
-    Path to the tinymce root directory. 
+    Path to the tinymce root directory.
     Only to be used on a development server
     if the `media` directory has no symbolic link to the TinyMCE root directory,
     and only if :attr:`use_tinymce` is True.
@@ -245,12 +214,11 @@ class Site(Site):
     use_gridfilters = True
 
     use_eid_applet = False
-    """
-    Whether to include functionality to read Belgian id cards
-    using the official 
-    `eid-applet <http://code.google.com/p/eid-applet>`_.
-    This option is experimental and doesn't yet work.
-    See `/blog/2012/1105`.
+    """Whether to include functionality to read Belgian id cards using
+    the official `eid-applet <http://code.google.com/p/eid-applet>`_.
+    This option is experimental and doesn't yet work.  See
+    `/blog/2012/1105`.
+
     """
 
     use_esteid = False

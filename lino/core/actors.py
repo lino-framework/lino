@@ -264,9 +264,9 @@ class ActorMetaClass(type):
                 #~ cls.params.append(v)
         #~ cls.install_params_on_actor()
         if classname not in (
-            'Table', 'AbstractTable', 'VirtualTable',
-            'Action', 'Actor', 'Frame',
-            'ChoiceList', 'Workflow',
+                'Table', 'AbstractTable', 'VirtualTable',
+                'Action', 'Actor', 'Frame',
+                'ChoiceList', 'Workflow',
                 'EmptyTable', 'Dialog'):
             if actor_classes is None:
                 #~ logger.debug("%s definition was after discover",cls)
@@ -556,7 +556,9 @@ class Actor(actions.Parametrizable):
         # ~ cls._actions_list = [] # 20121129
 
         default_action = cls.get_default_action()
-        cls.default_action = cls.bind_action(default_action)
+
+        if default_action is not None:
+            cls.default_action = cls.bind_action(default_action)
 
         if cls.detail_layout:
             if default_action and isinstance(
@@ -627,6 +629,10 @@ class Actor(actions.Parametrizable):
             self._actions_dict.define(a.action_name, ba)
         self._actions_list.append(ba)
         return ba
+
+    @classmethod
+    def get_default_action(cls):
+        pass
 
     @classmethod
     def get_workflow_actions(self, ar, obj):

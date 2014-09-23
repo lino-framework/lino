@@ -16,6 +16,7 @@ from atelier import rstgen
 from djangosite.dbutils import obj2str
 
 from lino.core import actors
+from lino.core import actions
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -342,7 +343,7 @@ class Menu(MenuItem):
 
     def add_item_instance(self, mi):
         """
-        Adds the specified MenuItem to this menu after checking whether 
+        Adds the specified MenuItem to this menu after checking whether
         it has view permission.
         """
         assert isinstance(mi, MenuItem)

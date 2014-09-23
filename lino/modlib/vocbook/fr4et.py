@@ -39,7 +39,8 @@ HAS_EXERCICES = True
 
 book = Book(French, Estonian,
             title="Kutsealane prantsuse keel kokkadele",
-            input_template=os.path.join(os.path.dirname(__file__), 'Default.odt'))
+            input_template=os.path.join(
+                os.path.dirname(__file__), 'Default.odt'))
     #~ os.path.join(os.path.dirname(__file__),'cfr.odt')
 
 Pronounciation = book.add_section(u"Hääldamine", intro=u"""
@@ -131,6 +132,20 @@ if HAS_EXERCICES:
     Viktoriin = Vocabulary.add_section(u"Viktoriin")
 
 
+Intro.add_lesson(u"Esimene tund", intro=u"""
+Esimeses tunnis teeme väike soojendus huultele.
+Erinevus tugeva ja nõrda K, P või T vahel on prantsuse keeles sama
+oluline nagu inglise ja saksa keeles.
+""")
+Intro.parse_words(None, u"""
+Pierre, une bière! [pjäär ün bjäär] : Pierre, üks õlu!
+le toit et le doigt [lə twa ee lə dwa] : katus ja sõrm
+Tu veux du feu? [tü vöö dü föö] : kas tahad tuld?
+bonjour [bO~'žuur] : tere | head päeva | tere hommikust
+au revoir [orə'vwaar] : nägemiseni
+Je m'appelle... [zə ma'päl] : Minu nimi on...
+""")
+
 Intro.add_lesson(u"Tuntud sõnad", intro=u"""
 Mõned sõnad, mida sa juba tead.
 Tutvumine hääldamiskirjaga.
@@ -147,7 +162,7 @@ le garage [ga'raaž] : garaaž
 le journal [žur'nal] : päevik | ajaleht
 """)
 Intro.add_after(u"""
-Kuna hääldamine on algaja peamine raskus, 
+Kuna hääldamine on algaja peamine raskus,
 tuleb meil seda kuidagi kirja panna.
 Seda teeme sõnade taha nurksulgudes (**[]**).
 
@@ -234,9 +249,9 @@ artiklitest *le* ja *la* viimane
 täht ära ja nad muutuvad  mõlemad **l'**-ks.
 
 Artiklid *le*, *la* ja *les* nimetatakse **määravaks** artikliteks.
-Määrava artikli asemel võib ka olla **umbmäärane** artikkel: 
+Määrava artikli asemel võib ka olla **umbmäärane** artikkel:
 **un** (meessoost), **une** (naissoost) või **des** (mitmus).
-Erinevus on nagu inglise keeles, kus on olemas määrav 
+Erinevus on nagu inglise keeles, kus on olemas määrav
 artikkel **the** ja umbmäärane artikel **a**.
 Olenevalt kontekstist kasutatakse kas see või teine.
 Näiteks
@@ -325,11 +340,11 @@ if FULL_CONTENT:
 if not FULL_CONTENT:
 
     Eestlastele.add_lesson(u"Cold gold, big pigs and downtowns", u"""
-    Erinevus tugeva ja nõrda K, P või T vahel on prantsuse keeles sama 
+    Erinevus tugeva ja nõrda K, P või T vahel on prantsuse keeles sama
     oluline nagu inglise ja saksa keeles.
     """, ref="kpt")
     Eestlastele.parse_words(Autre, u"""
-    la gare [gaar] : raudteejaam
+    la gare [gaar] : raudteejaam | bussijaam
     le car [kaar] : reisibuss
     la bière [bjäär] : õlu
     la pierre [pjäär] : kivi

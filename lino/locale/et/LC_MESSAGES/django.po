@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-09-22 14:21+0300\n"
-"PO-Revision-Date: 2014-09-22 22:35+0300\n"
+"PO-Revision-Date: 2014-09-23 13:26+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: et\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2574,11 +2574,11 @@ msgstr ""
 
 #: lino/modlib/countries/__init__.py:11 lino/modlib/countries/models.py:201
 msgid "Places"
-msgstr "Kohad"
+msgstr "Asumid"
 
 #: lino/modlib/countries/models.py:90
 msgid "Place Type"
-msgstr ""
+msgstr "Asumiliik"
 
 #: lino/modlib/countries/models.py:95
 msgid "Member State"
@@ -2715,11 +2715,11 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:200
 msgid "Place"
-msgstr ""
+msgstr "Asum"
 
 #: lino/modlib/countries/models.py:212
 msgid "Part of"
-msgstr ""
+msgstr "Osa asumist"
 
 #: lino/modlib/countries/models.py:213
 msgid ""
@@ -2755,9 +2755,8 @@ msgid "Address line before street"
 msgstr "Addressi lisatext enne tänav"
 
 #: lino/modlib/countries/models.py:441 lino/modlib/partners/models.py:111
-#, fuzzy
 msgid "Street prefix"
-msgstr "Tänav"
+msgstr "Tänavanime prefiks"
 
 #: lino/modlib/countries/models.py:442
 msgid "Text to print before name of street, but to ignore for sorting."
@@ -2777,7 +2776,7 @@ msgstr "Nr."
 
 #: lino/modlib/countries/models.py:451
 msgid "House number."
-msgstr ""
+msgstr "Sisestage majanumber"
 
 #: lino/modlib/countries/models.py:454 lino/modlib/partners/models.py:120
 msgid "Box"

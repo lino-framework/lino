@@ -66,8 +66,8 @@ class Permittable(object):
 
     """Base class for objects that have view permissions control.
 
-    :class:`lino.core.actors.Actor` would be a subclass, but is a
-    special case since actors never get instantiated.
+    :class:`dd.Actor` would be a subclass, but is a special case since
+    actors never get instantiated.
 
     """
 
@@ -294,6 +294,7 @@ class Action(Parametrizable, Permittable):
     auto_save = True
 
     extjs_main_panel = None
+    js_handler = None
 
     action_name = None
     """Internally used to store the name of this action within the
@@ -437,12 +438,13 @@ class Action(Parametrizable, Permittable):
         return None
 
     def get_button_label(self, actor):
-        if actor is None:
+        if actor is None or actor.default_action is None:
             return self.label
         if self is actor.default_action.action:
             return actor.label
         else:
-            return u"%s %s" % (self.label, actor.label)
+            return self.label
+            # since 20140923 return u"%s %s" % (self.label, actor.label)
 
     def full_name(self, actor):
         if self.action_name is None:

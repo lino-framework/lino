@@ -18,6 +18,8 @@ import jinja2
 
 class Plugin(ad.Plugin):
 
+    site_js_snippets = ['davlink/davlink.js']
+
     media_name = 'davlink'
 
     def get_head_lines(self, site, request):

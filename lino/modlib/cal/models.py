@@ -11,22 +11,16 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
 import datetime
-import dateutil
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-#~ from django.utils.translation import string_concat
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
-from north.dbutils import dtosl
-
-
 from lino import mixins
-from lino import dd, rt
+from lino import dd
 from lino.utils import ONE_DAY
 
 from .utils import (

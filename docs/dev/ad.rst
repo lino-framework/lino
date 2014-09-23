@@ -760,7 +760,7 @@ The ``Site`` class
     TODO: convert `plain_prefix` to a `url_prefix` setting on the
     `lino.modlib.plain` App.
 
-    Exactly one of :setting:`admin_prefix` and :setting:`plain_prefix`
+    Exactly one of :attr:`admin_prefix` and :attr:`plain_prefix`
     must be empty.
 
 
@@ -1001,6 +1001,39 @@ The ``Plugin`` class
     The name of this app, as shown to the user. This can be
     translatable. 
 
+
+
+  .. attribute:: media_base_url
+
+    Remote URL base for media files.
+
+
+  .. attribute:: media_root
+    Local path where third-party media files are installed.
+
+    Only used if this app has :attr:`media_base_url` empty and
+    :attr:`media_name` non-empty, *and* if the :xfile:`media`
+    directory has no entry named :attr:`media_name`.
+
+  .. attribute:: media_name
+
+    Either `None` (default) or a non-empty string with the name of the
+    subdirectory of your :xfile:`media` directory which is expected to
+    contain media files for this app.
+
+    `None` means that there this app has no media files of her own.
+
+    Best practice is to set this to the `app_label`.  Will be ignored
+    if :attr:`media_base_url` is nonempty.
+
+  .. attribute:: url_prefix
+
+    The url prefix under which this app should ask to
+    install its url patterns.
+
+  .. attribute:: site_js_snippets
+
+    List of js snippets to be injected into the `lino_*.js` file.
 
   .. attribute:: extends_models
 

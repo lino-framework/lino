@@ -34,7 +34,13 @@ The ``Action`` class reference
 
   The text to appear on the button.
 
-  .. attribute:: help_text = None
+  .. attribute:: js_handler
+
+  This is usually `None`. Otherwise it is the name of a Javascript
+  callable to be called without arguments. That callable must have
+  been defined in a :attr:`ad.Plugin.site_js_snippets` of the plugin.
+
+  .. attribute:: help_text
 
     A help text that shortly explains what this action does.
     ExtJS uses this as tooltip text.
