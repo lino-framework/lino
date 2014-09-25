@@ -18,7 +18,6 @@ Sitemap
 .. toctree::
    :maxdepth: 2
 
-   screenshots/index
    demos
    about/index
    community/index

@@ -1,25 +1,7 @@
 # Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-VAT (value-added tax) related logics.
-
-This module defines some central ChoiceLists
-and Model mixins designed to work both with and without
-:mod:`lino.modlib.ledger` and
-:mod:`lino.modlib.declarations`
-installed.
-
-::
-
-    sales = dd.resolve_app('sales')
-
-    @dd.receiver(dd.post_init, sender=sales.Invoice)
-    def set_default_item_vat(sender, instance=None,**kwargs):
-        instance.item_vat = True
-
-
-"""
+"""See :mod:`ml.vat`."""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -55,19 +37,9 @@ accounts = dd.resolve_app('accounts')
 
 ZERO = Decimal('0.00')
 
-from . import Plugin
-
 
 class VatClasses(dd.ChoiceList):
 
-    """
-    A VAT class is a direct or indirect property 
-    of a trade object (e.g. a Product) which determines the VAT *rate* to be used.
-    It does not contain the actual rate because this
-    still varies depending on your country, 
-    the time and type of the operation, 
-    and possibly other factors.
-    """
     verbose_name = _("VAT Class")
 add = VatClasses.add_item
 add('0', _("Exempt"), 'exempt')    # post stamps, ...
@@ -77,9 +49,6 @@ add('2', _("Normal"), 'normal')    # everything else
 
 class VatRegime(dd.Choice):
 
-    """
-    Base class for choices of :ddref:`vat.VatRegimes`.
-    """
     item_vat = True
 
 
@@ -102,7 +71,6 @@ add('50', _("Exempt"), 'exempt', item_vat=False)
 class TradeType(dd.Choice):
 
     """
-    Base class for choices of :ddref:`vat.TradeTypes`.
     """
     price_field_name = None
     price_field_label = None
@@ -140,9 +108,6 @@ class TradeType(dd.Choice):
             getattr(settings.SITE.site_config, self.base_account_field_name)
 
     def get_catalog_price(self, product):
-        """
-        Return the catalog price of the given product for this trade type.
-        """
         return getattr(product, self.price_field_name)
 
 
@@ -156,13 +121,11 @@ TradeTypes.add_item('P', _("Purchases"), 'purchases', dc=accounts.DEBIT)
 TradeTypes.add_item('W', _("Wages"), 'wages', dc=accounts.DEBIT)
 TradeTypes.add_item('C', _("Clearings"), 'clearings', dc=accounts.DEBIT)
 
-"""
-Note that :mod:`lino.modlib.sales.models` and/or
-:mod:`lino.modlib.ledger.models` (if installed) will modify
-`TradeTypes.sales` at module level so that the following
-`inject_vat_fields` will inject the required fields to
-system.SiteConfig and products.Product (if these are installed).
-"""
+# Note that :mod:`lino.modlib.sales.models` and/or
+# :mod:`lino.modlib.ledger.models` (if installed) will modify
+# `TradeTypes.sales` at module level so that the following
+# `inject_vat_fields` will inject the required fields to
+# system.SiteConfig and products.Product (if these are installed).
 
 
 @dd.receiver(dd.pre_analyze)
@@ -205,10 +168,6 @@ def inject_vat_fields(sender, **kw):
 
 class PaymentTerm(dd.BabelNamed):
 
-    """
-    A convention on how an Invoice should be paid.
-    """
-
     class Meta:
         verbose_name = _("Payment Term")
         verbose_name_plural = _("Payment Terms")
@@ -235,11 +194,6 @@ class PaymentTerms(dd.Table):
 
 class VatTotal(dd.Model):
 
-    """Model mixin which defines the fields `total_incl`, `total_base`
-    and `total_vat`.  Used for both the document header
-    (:class:`VatDocument`) and for each item (:class:`VatItemBase`).
-
-    """
     class Meta:
         abstract = True
 
@@ -255,9 +209,6 @@ class VatTotal(dd.Model):
     """
 
     auto_compute_totals = False
-    """
-    Set this to True on subclasses who compute their totals automatically.
-    """
 
     def disabled_fields(self, ar):
         fields = super(VatTotal, self).disabled_fields(ar)
@@ -322,16 +273,9 @@ class VatTotal(dd.Model):
 
 class VatDocument(VatTotal):
 
-    """
-    This is also used for Offers and other non-ledger documents.
-    """
-
     auto_compute_totals = True
 
     refresh_after_item_edit = False
-    """
-    See :doc:`/tickets/68`
-    """
 
     class Meta:
         abstract = True
@@ -438,12 +382,6 @@ class VatDocument(VatTotal):
 
 class VatItemBase(mixins.Sequenced, VatTotal):
 
-    """Abstract Base class for InvoiceItem and OrderItem.  Subclasses
-    must define a field called "voucher" which must be a FK with
-    related_name="items" to the "owning document", which in turn must
-    be a subclass of :class:`VatDocument`).
-
-    """
     class Meta:
         abstract = True
         #~ unique_together  = ('document','seqno')
@@ -515,7 +453,7 @@ class VatItemBase(mixins.Sequenced, VatTotal):
 
     def after_ui_save(self, ar):
         """
-        after edit of a grid cell automatically show new invoice totals 
+        After editing a grid cell automatically show new invoice totals.
         See :doc:`/tickets/68`
         """
         kw = super(VatItemBase, self).after_ui_save(ar)
@@ -593,31 +531,17 @@ dd.inject_field(
     models.ForeignKey(
         PaymentTerm,
         blank=True, null=True,
-        help_text=_("The default payment term for \
-sales invoices to this customer.")))
+        help_text=_("The default payment term for "
+                    "sales invoices to this customer.")))
 
-
-
-
-if False:
-    # doesn't work because Signals work only on concrete models
-
-    @dd.receiver(dd.post_init, sender=VatDocument)
-    def set_default_item_vat(sender, instance=None, **kwargs):
-        instance.item_vat = site.get_item_vat(instance)
-        print(20130902, instance)
-
-
-#~ def setup_main_menu(site,ui,profile,m): pass
-#~ def setup_my_menu(site,ui,profile,m): pass
-#~ def setup_reports_menu(site,ui,profile,m): pass
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("vat", Plugin.verbose_name)
+    m = m.add_menu("vat", config.verbose_name)
     m.add_action(PaymentTerms)
 
+
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("vat", Plugin.verbose_name)
+    m = m.add_menu("vat", config.verbose_name)
     m.add_action(VatRegimes)
     m.add_action(TradeTypes)
     m.add_action(VatClasses)

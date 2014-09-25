@@ -26,3 +26,4 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
    users
    sales
    reception
+   vat

@@ -3,3 +3,9 @@ Thursday, September 25, 2014
 ============================
 
 Miscellaneous.
+
+Fixed a bug in :mod:`ml.cal` which had caused an AttributeError
+"'NoneType' object has no attribute 'username'".
+
+Opened new ticket :doc:`/tickets/127`.
+

@@ -1,0 +1,28 @@
+==================================
+#127 : New European VAT regulation
+==================================
+
+According to `MEMO-14-448
+<http://europa.eu/rapid/press-release_MEMO-14-448_en.htm>`_ (or also
+in `Mehrwertsteuer-System bald einfacher und gerechter
+<http://ec.europa.eu/deutschland/press/pr_releases/12513_de.htm>`_),
+we need a little change in :mod:`ml.vat`: the tax rates must be
+configurable (1) via web interface in the database and (2) must depend
+on the recipient's country.
+
+TODO:
+
+- Add a new model `VatRate`::
+
+    class VatRate(dd.DatePeriod):
+        vat_class = VatClasses.field()
+        rate = models.DecimalField()
+        country = dd.ForeignKey'countries.Country')
+
+  It inherits from :class:`dd.DatePeriod` because tax rates of a
+  country may change from time to time.
+
+- Remove :attr:`ml.vat.Plugin.VAT_CLASS_TO_RATE` and
+  :meth:`ml.vat.Plugin.get_vat_rate` and replace them by lookups into
+  the `VatRate` model.
+

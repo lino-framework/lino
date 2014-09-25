@@ -1,15 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""See :mod:`ml.vat`.
 
 >>> from decimal import Decimal
 >>> from lino.modlib.vat.utils import add_vat, remove_vat
 >>> rate = Decimal(21)
->>> add_vat(100,rate)
+>>> add_vat(100, rate)
 Decimal('121')
->>> remove_vat(Decimal('121.00'),rate)
+>>> remove_vat(Decimal('121.00'), rate)
 Decimal('100')
 
 """

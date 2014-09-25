@@ -2,6 +2,8 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""See :mod:`ml.vat`."""
+
 from decimal import Decimal
 from django.utils.translation import ugettext_lazy as _
 from lino import ad
@@ -11,10 +13,6 @@ class Plugin(ad.Plugin):
     verbose_name = _("VAT")
 
     vat_quarterly = False
-    """
-    Set this to True to support quarterly VAT declarations.
-    Used by :mod:`lino.modlib.declarations`
-    """
 
     default_vat_regime = 'private'
     default_vat_class = 'normal'
