@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 
-from lino import dd
+from lino import dd, rt
 
 
 def default_color():
@@ -125,9 +125,15 @@ class SubscriptionsByCalendar(Subscriptions):
     master_key = 'calendar'
     auto_fit_column_widths = True
 
-# __all__ = [
-#     'Calendar',
-#     'Calendars',
-#     'Subscription',
-#     'Subscriptions',
-# ]
+
+def check_subscription(user, calendar):
+    "Check whether the given subscription exists. If not, create it."
+    Subscription = rt.modules.cal.Subscription
+    if calendar is None:
+        return
+    try:
+        Subscription.objects.get(user=user, calendar=calendar)
+    except Subscription.DoesNotExist:
+        sub = Subscription(user=user, calendar=calendar)
+        sub.full_clean()
+        sub.save()

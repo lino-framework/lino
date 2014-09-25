@@ -307,7 +307,8 @@ class Company(Partner):
         verbose_name = _("Organization")
         verbose_name_plural = _("Organizations")
 
-    prefix = models.CharField(max_length=200, blank=True)
+    prefix = models.CharField(
+        _("Name prefix"), max_length=200, blank=True)
 
     type = models.ForeignKey('contacts.CompanyType', blank=True, null=True)
 
@@ -339,6 +340,9 @@ class CompanyDetail(PartnerDetail):
 class Companies(Partners):
     model = "contacts.Company"
     order_by = ["name"]
+    column_names = (
+        "name_column:20 address_column email "
+        "phone:10 gsm:10 id language:10 *")
     detail_layout = CompanyDetail()
     insert_layout = dd.FormLayout("""
     name

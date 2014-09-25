@@ -3,3 +3,5 @@ Wednesday, September 24, 2014
 =============================
 
 Continued on :doc:`/tickets/126`.
+
+Automatically generate calendar subscriptions.

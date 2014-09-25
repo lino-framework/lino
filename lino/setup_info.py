@@ -42,24 +42,17 @@ SETUP_INFO.update(long_description="""\
 Lino is a high-level framework for writing desktop-like customized
 database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
-A Lino application is technically just a Django project,
-but the application developer does not need to write any
-URLconf, HTML nor CSS (`more <http://lino-framework.org/about>`_)
-
+Lino applications are Django projects
+where the application developer does not need to write any
+URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`_).
 
 Examples of Lino applications are
 `Lino Welfare <http://welfare.lino-framework.org>`__,
 `Lino Così <http://cosi.lino-framework.org>`__
-`Lino Patrols <http://patrols.lino-framework.org>`__
 or
-`Lino Faggio <http://faggio.lino-framework.org>`__.
+`Lino Faggio <http://faggio.lino-framework.org>`__
+(`more <http://lino-framework.org/about/projects.html>`_)
 
-Lino is based on three other projects by the same author:
-`atelier <http://atelier.lino-framework.org>`__,
-`djangosite <http://site.lino-framework.org>`__
-and
-`north <http://north.lino-framework.org>`__.
-  
 """)
 
 SETUP_INFO.update(packages=[str(n) for n in """

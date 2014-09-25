@@ -15,7 +15,42 @@ The :ref:`demos` have their
 :ref:`davlink` functionality switched off 
 to avoid browser questions to first-time visitors.
 
-.. complextable::
+
+
+
+
+.. _demo1: http://demo1.lino-framework.org
+.. _demo3: http://demo4.lino-framework.org
+.. _welfare-demo: http://welfare-demo.lino-framework.org
+.. _logos-demo: http://logos-demo.lino-framework.org
+.. _polly-demo: http://polly-demo.lino-framework.org
+.. _patrols-demo: http://patrols-demo.lino-framework.org
+.. _cosi-demo: http://cosi-demo.lino-framework.org
+.. _faggio-demo: http://faggio-demo1.lino-framework.org
+.. _ylle: http://ylle.lino-framework.org
+
+
+
+============== =============================================================
+demo1_         shows the "Polls" application developed in the 
+               :ref:`lino.tutorial.polls` tutorial.
+               A minimal didactic Lino application without authentication.
+demo3_         Official online demo of :ref:`presto`.
+patrols-demo_  Official online demo of :ref:`patrols`.
+cosi-demo_     Official online demo of :ref:`cosi`.
+welfare-demo_  Official online demo of :ref:`welfare` à la Eupen
+faggio-demo_   Official online demo of :ref:`faggio` à la Roger
+ylle_          Official online demo of :ref:`faggio` à la Edmund
+logos-demo_    Official online demo of :ref:`logos` 
+               (as an early prototype for the SacredPy project)
+polly-demo_    Official online demo of :ref:`polly` 
+============== =============================================================
+    
+
+
+.. 
+
+  complextable::
 
   .. figure:: /tutorials/polls/mysite/polls1.jpg
     :scale: 30 %
@@ -28,7 +63,7 @@ to avoid browser questions to first-time visitors.
     
   <NEXTCELL>
 
-    .. figure:: /screenshots/pcsw.Client.3.jpg
+    .. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
       :scale: 27
       :target: http://welfare-demo.lino-framework.org
 
@@ -65,7 +100,7 @@ to avoid browser questions to first-time visitors.
     
   <NEXTCELL>
 
-  .. figure:: /screenshots/cosi-screenshot.png
+  .. figure:: /screenshots/cosi.contacts.Person
     :scale: 30
     :target: http://demo4.lino-framework.org
       
@@ -84,7 +119,7 @@ to avoid browser questions to first-time visitors.
     
   <NEXTCELL>
 
-  .. figure:: /screenshots/belref-screenshot.png
+  .. figure:: /screenshots/de/belref.main.png
     :scale: 30
     :target: http://belref.lino-framework.org
       
@@ -94,7 +129,7 @@ to avoid browser questions to first-time visitors.
 
   <NEXTROW>
   
-    .. figure:: /screenshots/pcsw.Client.3.jpg
+    .. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
       :scale: 27
       :target: http://polly-demo.lino-framework.org
 
@@ -104,7 +139,7 @@ to avoid browser questions to first-time visitors.
 
       <NEXTCELL>
 
-    .. figure:: /screenshots/pcsw.Client.3.jpg
+    .. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
       :scale: 27
       :target: http://logos-demo.lino-framework.org
 
@@ -113,33 +148,3 @@ to avoid browser questions to first-time visitors.
       as an early prototype for the SacredPy project.
   
 
-
-
-
-.. _demo1: http://demo1.lino-framework.org
-.. _demo3: http://demo4.lino-framework.org
-.. _welfare-demo: http://welfare-demo.lino-framework.org
-.. _logos-demo: http://logos-demo.lino-framework.org
-.. _polly-demo: http://polly-demo.lino-framework.org
-.. _patrols-demo: http://patrols-demo.lino-framework.org
-.. _cosi-demo: http://cosi-demo.lino-framework.org
-.. _faggio-demo: http://faggio-demo1.lino-framework.org
-.. _ylle: http://ylle.lino-framework.org
-
-
-
-============== =============================================================
-demo1_         shows the "Polls" application developed in the 
-               :ref:`lino.tutorial.polls` tutorial.
-               A minimal didactic Lino application without authentication.
-demo3_         Official online demo of :ref:`presto`.
-patrols-demo_  Official online demo of :ref:`patrols`.
-cosi-demo_     Official online demo of :ref:`cosi`.
-welfare-demo_  Official online demo of :ref:`welfare` à la Eupen
-faggio-demo_   Official online demo of :ref:`faggio` à la Roger
-ylle_          Official online demo of :ref:`faggio` à la Edmund
-logos-demo_    Official online demo of :ref:`logos` 
-               (as an early prototype for the SacredPy project)
-polly-demo_    Official online demo of :ref:`polly` 
-============== =============================================================
-    

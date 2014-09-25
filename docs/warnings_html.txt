@@ -1,0 +1,36 @@
+/home/luc/hgwork/lino/docs/demos.rst:56: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/demos.rst:66: ERROR: Figure caption must be a paragraph or empty comment.
+
+.. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
+  :scale: 27
+  :target: http://welfare-demo.lino-framework.org
+
+  `welfare-demo <http://welfare-demo.lino-framework.org>`_
+  shows a demo version of :ref:`welfare`.
+/home/luc/hgwork/lino/docs/demos.rst:5: WARNING: Duplicate explicit target name: "faggio-demo".
+/home/luc/hgwork/lino/docs/demos.rst:132: ERROR: Figure caption must be a paragraph or empty comment.
+
+.. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
+  :scale: 27
+  :target: http://polly-demo.lino-framework.org
+
+  `polly-demo <http://polly-demo.lino-framework.org>`_
+  shows a demo version of :ref:`polly`
+  as an early prototype for the SacredPy project.
+
+  <NEXTCELL>
+/home/luc/hgwork/lino/docs/demos.rst:142: ERROR: Figure caption must be a paragraph or empty comment.
+
+.. figure:: /screenshots/de/welfare.pcsw.Client.3.jpg
+  :scale: 27
+  :target: http://logos-demo.lino-framework.org
+
+  `logos-demo <http://logos-demo.lino-framework.org>`_
+  shows a demo version of :ref:`logos`
+  as an early prototype for the SacredPy project.
+/home/luc/hgwork/lino/docs/demos.rst:42: ERROR: Duplicate target name, cannot be used as a unique reference: "faggio-demo".
+/home/luc/hgwork/lino/docs/demos.rst:None: WARNING: image file not readable: screenshots/purchase.Invoices.html.jpg
+/home/luc/hgwork/lino/docs/demos.rst:None: WARNING: image file not readable: screenshots/cosi.contacts.Person
+/home/luc/hgwork/lino/docs/demos.rst:None: WARNING: image file not readable: screenshots/purchase.Invoices.html.jpg
+/home/luc/hgwork/lino/docs/screenshots/index.rst:2: WARNING: image file not readable: screenshots/de/cosi.contacts.Person
+/home/luc/hgwork/lino/docs/screenshots/index.rst:2: WARNING: image file not readable: screenshots/et/faggio.main.png
