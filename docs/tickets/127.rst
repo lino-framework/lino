@@ -15,14 +15,48 @@ TODO:
 - Add a new model `VatRate`::
 
     class VatRate(dd.DatePeriod):
-        vat_class = VatClasses.field()
-        rate = models.DecimalField()
-        country = dd.ForeignKey'countries.Country')
+        trade_type = TradeTypes.field(blank=True)
+        vat_class = VatClasses.field(blank=True)
+        vat_regime = VatRegimes.field(blank=True)
+        rate = models.DecimalField(default=ZERO)
+        country = dd.ForeignKey('countries.Country', blank=True, null=True)
 
   It inherits from :class:`dd.DatePeriod` because tax rates of a
   country may change from time to time.
 
 - Remove :attr:`ml.vat.Plugin.VAT_CLASS_TO_RATE` and
-  :meth:`ml.vat.Plugin.get_vat_rate` and replace them by lookups into
-  the `VatRate` model.
+  :meth:`ml.vat.Plugin.get_vat_rate` and replace them by a classmethod
+  on the `VatRate` model, something like::
+
+    @classmethod
+    def get_tax_rate(cls, trade_type, vat_regime, vat_class, country, date):
+      qs = cls.objects.filter(Q(country__isnull=True) | Q(country=country))
+      qs = qs.filter(Q(vat_class__isnull=True) | Q(vat_class=vat_class))
+      qs = qs.filter(Q(vat_regime__isnull=True) | Q(vat_regime=vat_regime))
+      qs = qs.filter(Q(trade_type__isnull=True) | Q(trade_type=trade_type))
+      qs = PeriodEvents.active.add_filter(qs, self)
+      if qs.count() == 1:
+          return qs[0]
+      else:
+          p = dict(vat_regime=vat_regime, vat_class=vat_class, 
+          country=country, date=date)
+      if qs.count() > 1:
+          raise Warning("More than one TAX rate %s" % p)
+      else:
+          raise Warning("No TAX rate configured for %s" % p)
+      return None
+
+- Add a table `VatRates`::
+
+    class VatRates(dd.Table):
+        model = 'vat.VatRate'
+
+  and add it to the Configuration menue::
+
+    def setup_config_menu(site, ui, profile, m):
+        m = m.add_menu("vat", config.verbose_name)
+        m.add_action('vat.PaymentTerms')
+        m.add_action('vat.VatRates')
+
+- Write demo fixtures, test cases and documentation.
 
