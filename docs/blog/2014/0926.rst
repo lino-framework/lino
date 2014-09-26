@@ -1,0 +1,29 @@
+==========================
+Friday, September 26, 2014
+==========================
+
+Discovered and opened :doc:`/tickets/128`.
+
+While looking at this problem, I saw that simply adding a
+:xfile:`models.py` module for :mod:`lino` with those choiceliss would
+not be enough because Django's `loading.get_apps` method does not
+return it when there is no model in it.  Installed apps without
+models, but *with* choicelists, did not get their entry in
+:attr:`rt.modules`. Until today. That's clearly odd.  I changed that
+immediately (in :func:`rt.startup`) by replacing::
+
+    for a in loading.get_apps():
+        self.modules.define(a.__name__.split('.')[-2], a)
+with::
+
+    for p in self.installed_plugins:
+        m = loading.load_app(p.app_name, False)
+        self.modules.define(p.app_label, m)
+
+
+I discovered why certain strings in :ref:`faggio` were not yet
+translated: because I had switched :attr:`ad.Site.languages` of
+:mod:`lino_faggio.projects.docs` to monolingual English.  If you do
+that (have the demo database onl in English) but still support
+multiple languages, then you must set `env.languages` in your
+project's `fabfile.py`.

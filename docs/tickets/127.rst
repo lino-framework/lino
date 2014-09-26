@@ -12,7 +12,7 @@ on the recipient's country.
 
 TODO:
 
-- Add a new model `VatRate`::
+- Add a new model :class:`ml.vat.VatRate`::
 
     class VatRate(dd.DatePeriod):
         trade_type = TradeTypes.field(blank=True)

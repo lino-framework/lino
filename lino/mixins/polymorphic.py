@@ -1,6 +1,8 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"See :class:`dd.Polymorphic`."
+
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -15,19 +17,6 @@ from lino.core import fields
 
 class Polymorphic(model.Model):
 
-    """Mixin for models that use Multiple Table Inheritance to implement
-    polymorphism.  Subclassed e.g. by
-    :class:`ml.contacts.Partner`. The recipient of an invoice can be
-    either a person or a company, a client, a job provider, an
-    employee...). A given partner can be both a person and an employee
-    at the same time.
-
-    TODO: Rename this to Polymorphic.  Because this is not used by
-    e.g. :class:`ml.ledger.Voucher` because a voucher has a pointer to
-    the journal which knows which specialization to use.  A given
-    voucher has always exactly one specialization.
-
-    """
     class Meta:
         abstract = True
 

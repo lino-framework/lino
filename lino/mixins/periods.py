@@ -24,7 +24,7 @@ from atelier.utils import AttrDict
 
 
 class PeriodEvent(Choice):
-    
+
     def add_filter(self, qs, obj):
 
         if isinstance(obj, datetime.date):
