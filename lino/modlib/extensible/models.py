@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.extensible.cal` app.
+See :mod:`ml.extensible`.
 """
 
 from __future__ import unicode_literals
@@ -50,8 +50,8 @@ class ExtDateTimeField(dd.VirtualField):
     def __init__(self, name_prefix, alt_prefix, label):
         self.name_prefix = name_prefix
         self.alt_prefix = alt_prefix
-        rt = models.DateTimeField(label)
-        dd.VirtualField.__init__(self, rt, None)
+        return_type = models.DateTimeField(label)
+        dd.VirtualField.__init__(self, return_type, None)
 
     def set_value_in_object(self, request, obj, value):
         obj.set_datetime(self.name_prefix, value)
@@ -89,10 +89,6 @@ class ExtSummaryField(dd.VirtualField):
 
 class CalendarPanel(dd.Frame):
 
-    """
-    Opens the "Calendar View" (a special window with the
-    Ext.ensible CalendarAppPanel).
-    """
     help_text = _("""Displays your events in a "calendar view" \
     with the possibility to switch between daily, weekly, monthly view.""")
     required = dd.required(user_groups='office')

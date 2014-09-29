@@ -513,32 +513,33 @@ class Table(AbstractTable):
                         #~ self.__dict__[name] = model2actor(m)
 
             if self.master_key:
-                #~ assert self.model is not None, "%s has .master_key but .model is None" % self
-                #~ self.master = resolve_model(self.master,self.app_label)
+
                 master_model = None
                 try:
-                    fk, remote, direct, m2m = self.model._meta.get_field_by_name(
-                        self.master_key)
+                    x = self.model._meta.get_field_by_name(self.master_key)
+                    fk, remote, direct, m2m = x
                     assert direct
                     assert not m2m
-                    #~ if fk.rel is None:
-                        #~ raise Exception("%s.master_key %r is not a RelatedField" % (self,self.master_key))
                     if fk.rel is not None:
                         master_model = fk.rel.to
-                except models.FieldDoesNotExist, e:
-                    #~ logger.debug("FieldDoesNotExist in %r._meta.get_field_by_name(%r)",self.model,self.master_key)
+                except models.FieldDoesNotExist as e:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
                             fk = vf
                             master_model = ContentType
                             break
                 if master_model is None:
-                    raise Exception("%s : no master for master_key %r in %s" % (
-                        self, self.master_key, self.model))
-                self.master = master_model
-                #~ self.fk = fk
-                self.master_field = fk
-                self.hidden_columns |= set([fk.name])
+                    df = getattr(self.model, self.master_key, None)
+                    if isinstance(df, fields.DummyField):
+                        self.abstract = True
+                    else:
+                        raise Exception(
+                            "%s : no master for master_key %r in %s" % (
+                                self, self.master_key, self.model))
+                else:
+                    self.master = master_model
+                    self.master_field = fk
+                    self.hidden_columns |= set([fk.name])
         #~ else:
             #~ assert self.master is None
 

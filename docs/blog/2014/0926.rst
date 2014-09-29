@@ -27,3 +27,6 @@ translated: because I had switched :attr:`ad.Site.languages` of
 that (have the demo database onl in English) but still support
 multiple languages, then you must set `env.languages` in your
 project's `fabfile.py`.
+
+A test case failed (:mod:`lino.projects.min1.tests`) due to the recent
+changes in :class:`ml.countries.EstonianAddressFormatter`.

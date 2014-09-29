@@ -19,10 +19,13 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
    courses
    debts
    extjs
+   extensible
    excerpts
    households
    humanlinks
    ledger
+   lino
+   polls
    users
    sales
    reception

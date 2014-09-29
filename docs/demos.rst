@@ -4,47 +4,49 @@
 Demo sites
 ==========
 
-Here are some examples of how Lino applications look like.
+This page lists some examples of Lino applications.  These demo
+databases contain fictive data.  All names of persons are generated.
+You may edit according to the user permissions, but any changes will
+be lost each time we reinitialize the demo data.  The :ref:`demos`
+have any Java functionality (:ref:`davlink` and :ref:`eidreader`)
+switched off to avoid browser questions.
 
-These demo databases contain fictive data. 
-All names of persons are generated.
-You may edit according to the user permissions. 
-Any changes will be lost each time we reinitialize the demo data.
-
-The :ref:`demos` have their 
-:ref:`davlink` functionality switched off 
-to avoid browser questions to first-time visitors.
-
-
-
-
-
+.. _belref: http://belref.lino-framework.org
 .. _demo1: http://demo1.lino-framework.org
-.. _demo3: http://demo4.lino-framework.org
+.. _demo3: http://demo3.lino-framework.org
 .. _welfare-demo: http://welfare-demo.lino-framework.org
 .. _logos-demo: http://logos-demo.lino-framework.org
 .. _polly-demo: http://polly-demo.lino-framework.org
 .. _patrols-demo: http://patrols-demo.lino-framework.org
 .. _cosi-demo: http://cosi-demo.lino-framework.org
-.. _faggio-demo: http://faggio-demo1.lino-framework.org
+.. _faggio-demo: http://faggio-demo.lino-framework.org
 .. _ylle: http://ylle.lino-framework.org
 .. _vtp2014: http://vtp2014.lino-framework.org
 
 
+Of general interest:
 
-============== =============================================================
-demo1_         shows the "Polls" application developed in the 
-               :ref:`lino.tutorial.polls` tutorial.
-               A minimal didactic Lino application without authentication.
-demo3_         Official online demo of :ref:`presto`.
-patrols-demo_  Official online demo of :ref:`patrols`.
-cosi-demo_     Official online demo of :ref:`cosi`.
-welfare-demo_  Official online demo of :ref:`welfare` à la Eupen
-faggio-demo_   Official online demo of :ref:`faggio` à la Roger
-ylle_          Online demo of :ref:`cosi` in Estonian
-vtp2014_       Online demo of :ref:`faggio` in Estonian
-logos-demo_    Official online demo of :ref:`logos` 
-               (as an early prototype for the SacredPy project)
-polly-demo_    Official online demo of :ref:`polly` 
-============== =============================================================
+- demo1_ shows the "Polls" application developed in the
+  :ref:`lino.tutorial.polls` tutorial. A minimal didactic Lino
+  application without authentication.
+- belref_ : Official online demo of :ref:`belref`.
+- cosi-demo_ :    Official online demo of :ref:`cosi`.
+- faggio-demo_ :  Official online demo of :ref:`faggio` à la Roger
+
+Specific to Belgium:
+
+- welfare-demo_ : Official online demo of :ref:`welfare` à la Eupen
+
+Specific to Estonia:
+
+- ylle_       :   Online demo of :ref:`cosi` in Estonian
+- vtp2014_    :   Online demo of :ref:`faggio` in Estonian
+
+Experimental:
+
+- demo3_ : Official online demo of :ref:`presto`.
+- patrols-demo_ : Official online demo of :ref:`patrols`.
+- logos-demo_ : Official online demo of :ref:`logos` (as an early
+  prototype for the SacredPy project)
+- polly-demo_ : Official online demo of :ref:`polly` 
     

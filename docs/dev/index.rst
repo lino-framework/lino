@@ -16,10 +16,10 @@ Recommended
 
    install
    /tutorials/index
+   api
    settings
    application
    startup
-   api
    perms
    workflows
    pull

@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Defines classes :class:`Frame` and :class:`FrameHandle`
@@ -9,14 +9,9 @@ logger = logging.getLogger(__name__)
 
 from lino.ui import base
 from lino.core import actors
-from lino.core import actions
 
 
 class FrameHandle(base.Handle):
-
-    """
-    Deserves more documentation.
-    """
 
     def __init__(self, frame):
         #~ assert issubclass(frame,Frame)
@@ -32,9 +27,6 @@ class FrameHandle(base.Handle):
 
 class Frame(actors.Actor):
 
-    """
-    Deserves more documentation.
-    """
     _handle_class = FrameHandle
     editable = False
 

@@ -5,7 +5,8 @@ import lino
 
 
 class LinoTestCase(TestCase):
-    demo_settings_module = "lino.projects.std.settings_test"
+    # demo_settings_module = "lino.projects.std.settings_test"
+    demo_settings_module = "lino.projects.docs.settings"
     project_root = Path(__file__).parent.parent
 
 
@@ -125,7 +126,10 @@ class UtilsTests(LinoTestCase):
     def test_08(self): self.run_simple_doctests('lino/utils/odsreader.py')
     
     def test_ssin(self): self.run_simple_doctests('lino/utils/ssin.py')
-    #~ def test_11(self): self.run_simple_doctests('lino/core/choicelists.py')
+
+    # def test_choicelists(self):
+    #     self.run_simple_doctests('lino/core/choicelists.py')
+
     def test_jsgen(self): self.run_simple_doctests('lino/utils/jsgen.py')
     def test_ranges(self): self.run_simple_doctests('lino/utils/ranges.py')
 

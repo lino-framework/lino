@@ -34,9 +34,10 @@ word to "application". Because apps are *not* applications, they are
 plugins which we happen to call "app" for historical reasons.  This
 rule shouldn't offend even the most conservative Django developer.
 
-The problem with this "vocabulary" problem is that it leaves us with
-no word left for what a software application *really* is.  That's why
-we decided to speak about a :class:`Site` class and a ``SITE``
+The problem with this "vocabulary" problem is that it leaves us (Lino
+developers) with no word left for what we would call an application.
+A Lino application is neither an "app" nor a "project".  That's why we
+decided to speak about a :class:`Site` class and a :setting:`SITE`
 setting rather than an ``Application`` class and an ``APP`` setting.
 
 
@@ -45,7 +46,7 @@ So what then is an application really?
 
 A `software application
 <http://en.wikipedia.org/wiki/Software_application>`_, is a piece of
-software which is perceived as an entity **by end-users**.
+software which is perceived as an entity *by the end-users*.
 
 The :class:`Site` is the base clase for representing a "Lino
 application".  it has attributes like :attr:`Site.verbose_name` (the

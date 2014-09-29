@@ -82,7 +82,7 @@ New password has been set for 1 users.
 Choicelists
 ===========
 
-.. module:: dd
+.. currentmodule:: dd
 
 .. class:: UserGroups
 

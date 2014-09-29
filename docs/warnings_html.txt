@@ -1,1 +1,0 @@
-/home/luc/hgwork/lino/docs/blog/2014/0926.rst:17: WARNING: Literal block ends without a blank line; unexpected unindent.

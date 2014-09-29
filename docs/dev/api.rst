@@ -11,6 +11,5 @@ pillow.
    ad
    dd
    rt
-   layouts
    ml/index
    

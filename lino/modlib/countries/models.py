@@ -113,6 +113,12 @@ class EstonianAddressFormatter(AddressFormatter):
     """
     
     def get_city_lines(me, self):
+        def placefmt(p):
+            if p.type == PlaceTypes.municipality:
+                return "%s vald" % p
+            elif p.type == PlaceTypes.county:
+                return "%s maakond" % p
+            return unicode(p)
         #lines = [self.name,street,self.addr1,self.addr2]
         if self.city:
             city = self.city
@@ -127,7 +133,7 @@ class EstonianAddressFormatter(AddressFormatter):
                 yield join_words(city, unicode(city.type).lower())
                 p = city.parent
                 while p and not CountryDrivers.EE.is_region(p):
-                    yield join_words(p, unicode(p.type).lower())
+                    yield placefmt(p)
                     p = p.parent
                 if self.region:
                     s = join_words(zip_code, self.region)

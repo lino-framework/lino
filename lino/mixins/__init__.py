@@ -780,8 +780,6 @@ class EmptyTableRow(VirtualRow, Printable):
 
 class EmptyTable(frames.Frame):
 
-    """
-    """
     #~ debug_permissions = True
     #~ has_navigator = False
     #~ hide_top_toolbar = True
@@ -821,12 +819,6 @@ class EmptyTable(frames.Frame):
 
 
 class Report(EmptyTable):
-
-    """A special kind of :class:`EmptyTable` used to quickly create
-    complex "reports". A report is a series of tables combined into a
-    single printable and previewable document.
-
-    """
 
     detail_layout = "body"
 
@@ -896,5 +888,3 @@ else:
             return babelattr(self, 'name')
 
 
-
-#~ from lino.models import Workflowable

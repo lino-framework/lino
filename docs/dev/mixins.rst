@@ -4,6 +4,268 @@ Model mixins
 
 .. currentmodule:: dd
 
+This section documents subclasses of Django's `Model
+<https://docs.djangoproject.com/en/dev/ref/models/class/>`_ class
+which are available in the :mod:`dd` module.
+
+
+.. contents:: 
+   :local:
+   :depth: 2
+
+
+Model
+=====
+
+.. class:: Model
+
+  Lino adds a series of features to Django's Model base class.  If a
+  Lino application includes plain Django Model classes, Lino will
+  "extend" these by adding the attributes and methods defined here to
+  these classes.
+
+  .. method:: full_clean
+
+    This is defined by Django.
+
+  .. method:: before_ui_save(ar)
+
+    A hook for adding customized code to be executed each time an
+    instance of this model gets updated via the user interface and
+    **before** the changes are written to the database.
+
+  .. method:: after_ui_save(ar)
+
+    Like :meth:`before_ui_save`, but 
+    **after** the changes are written to the database.
+    
+  .. method:: after_ui_create(ar)
+
+    Like :meth:`after_ui_save`, but only on a **new** instance.  
+
+    Usage example: the :class:`ml.households.Household` model in
+    :ref:`welfare` overrides this in order to call its `populate`
+    method.
+
+
+  .. method:: get_system_note_type(self, ar, silent)
+
+    Used when :mod:`lino.modlib.notes` is installed. Expected to
+    return either `None` (the default) or an existing
+    :class:`ml.notes.NoteType` instance. If this is not `None`, then
+    the system note will also be stored in the database as a
+    :class:`ml.notes.Note`.
+
+  .. method:: get_system_note_recipients(self, ar, silent)
+
+    Return a list of email recipients for a system note on this
+    object. Used by :meth:`rt.ActionRequest.add_system_note`.
+
+    Every recipient must be a string with a valid email recipient like
+    "john@example.com" or "John Doe <john@example.com>".
+
+
+  .. method:: summary_row(self, ar)
+
+    Return a HTML fragment that describes this record in a 
+    :func:`lino.core.tables.summary`.
+  
+    Example::
+  
+        def summary_row(self, ar):
+            elems = [ar.obj2html(self)]
+            if self.city:
+                elems. += [" (", ar.obj2html(self.city), ")"]
+            return E.p(*elems)
+
+  .. method:: get_print_language(self)
+
+     Return a Django language code to be activated when an instance of
+     this is being printed.
+     The default implementation returns the Site's default language.
+
+  .. method:: get_print_recipient(self)
+
+     Return either `None` or an :class:`Addressable` object (usually a
+     :class:`ml.contacts.Partner` instance) which is to be used as
+     recipient when an instance of this is being printed.  Print
+     templates
+
+  .. method:: disable_delete(self, ar)
+
+    Hook to decide whether a given record may be deleted.  
+    Return a  non-empty string 
+    
+    This should return `None` if it is okay to delete this object, or
+    otherwise a nonempty string with a message that explains why this
+    object cannot be deleted.
+
+    Example::
+    
+      def disable_delete(self,request):
+          if self.is_imported:
+              return _("Cannot delete imported records.")
+            
+    The argument `ar` contains the :class:`rt.ActionRequest` 
+    which is trying to delete. `ar` is possibly `None` when this is 
+    being called from a script or batch process.
+
+
+  .. method:: define_action(cls, **kwargs)
+
+    Adds one or several actions to this model.
+    Actions must be specified using keyword arguments.
+
+    Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
+    action to :class: `lino.modlib.users.models.User`.
+
+  .. method:: disabled_fields(self, ar)
+
+    Return a list of names of fields that should be disabled (not editable) 
+    for this record.
+    
+    Example::
+    
+      def disabled_fields(self,request):
+          if self.user == request.user: return []
+          df = ['field1']
+          if self.foo:
+            df.append('field2')
+          return df
+        
+
+  .. method:: hide_elements(cls, *names)
+
+    Mark the named data elements (fields) as hidden.  They remain in
+    the database but are not visible in the user interface.
+
+  .. method:: on_create(self, ar)
+
+    Used e.g. by :class:`ml.notes.Note`.
+    on_create gets the action request as argument.
+    Didn't yet find out how to do that using a standard Django signal.
+
+  .. method:: before_ui_save(self, ar)
+
+    Called after a PUT or POST on this row, and before saving the row.
+
+    Example in :class:`ml.cal.Event` to mark the event as user
+    modified by setting a default state.
+
+  .. method:: after_ui_save(self, ar)
+
+    Called after a PUT or POST on this row, 
+    and after the row has been saved.
+    Used by 
+    :class:`lino_welfare.modlib.debts.models.Budget` 
+    to fill default entries to a new Budget,
+    or by :class:`lino_welfare.modlib.cbss.models.CBSSRequest` 
+    to execute the request,
+    or by 
+    :class:`lino_welfare.modlib.jobs.models.Contract` 
+    :class:`lino_welfare.modlib.pcsw.models.Coaching` 
+    :class:`lino.modlib.vat.models.Vat` 
+
+  .. method:: get_row_permission(self, ar, state, ba)
+
+    Returns True or False whether this row instance gives permission
+    to the ActionRequest `ar` to run the specified action.
+
+  .. method:: setup_table(cls, t)
+
+    Called during site startup once on each Table that 
+    uses this model.
+
+  .. method:: on_duplicate(self, ar, master)
+
+    Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
+    `ar` is the action request that asked to duplicate.
+    If `master` is not None, then this is a cascaded duplicate initiated
+    be a duplicate() on the specifie `master`.
+
+
+  .. method:: FOO_choices
+
+    Return a queryset or list of allowed choices for field FOO.
+
+    For every field named "FOO", if the model has a method called
+    "FOO_choices" (which must be decorated by :func:`dd.chooser`),
+    then this method will be installed as a chooser for this field.
+
+    Example of a context-sensitive chooser method::
+  
+      country = models.ForeignKey("countries.Country", blank=True, null=True)
+      city = models.ForeignKey('countries.City', blank=True, null=True)
+          
+      @chooser()
+      def city_choices(cls,country):
+          if country is not None:
+              return country.place_set.order_by('name')
+          return cls.city.field.rel.to.objects.order_by('name')
+      
+  
+
+
+  .. method:: FOO_changed
+
+    Called when field FOO of an instance of this model has been
+    modified through the user interface.
+
+    For every field named "FOO", if the model has a method called
+    "FOO_changed", then this method will be installed as a field-level
+    post-edit trigger.
+
+    Example::
+    
+      def city_changed(self,oldvalue):
+          print("City changed from %s to %s!" % (oldvalue, self.city))
+
+  .. attribute:: active_fields
+
+    Default value for :attr:`dd.Table.active_fields`
+
+
+  .. attribute:: allow_cascaded_delete
+
+    A list of names of ForeignKey fields of this model that allow for
+    cascaded delete.
+    
+    When deleting an object through the user interface, Lino by
+    default forbids to delete an object that is referenced by other
+    objects. Users will get a message of type "Cannot delete X because
+    n Ys refer to it".
+    
+    Example: Lino should not refuse to delete a Mail just because it
+    has some Recipient.  When deleting a Mail, Lino should also delete
+    its Recipients.  That's why
+    :class:`lino.modlib.outbox.models.Recipient` has
+    ``allow_cascaded_delete = ['mail']``.
+    
+    Note that this currently is also consulted by
+    :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
+    whether slaves of a record being duplicated should be duplicated
+    as well.
+    
+    This mechanism doesn't depend on nor influence Django's `on_delete
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+    option.  But of course you should not allow_cascaded_delete for
+    fields which have e.g. `on_delete=PROTECT`.
+
+
+  .. method:: print_subclasses_graph
+
+    Returns an internationalized `graphviz` directive representing
+    the polymorphic forms of this model.
+
+    Usage example::
+
+      .. django2rst:: 
+
+          with dd.translation.override('de'):
+              contacts.Partner.print_subclasses_graph()
+
+Polymorphic
+===========
 
 .. class:: Polymorphic
 
@@ -22,6 +284,8 @@ Model mixins
 
     Implemented in :mod:`lino.mixins.polymorphic`.
 
+Addressable
+===========
 
 .. class:: Addressable
 
@@ -81,7 +345,9 @@ Model mixins
             <p class="Recipient">line1<br />line2</p>
           
         See :mod:`lino.utils.xmlgen.html`.
-          
+
+Born
+====          
 
 .. class:: Born
 
@@ -108,6 +374,8 @@ Model mixins
     or the future.
     The default value calls :meth:`dd.Site.today`.
 
+Human
+=====
 
 
 .. class:: Human
@@ -162,6 +430,8 @@ Model mixins
 
     See :ref:`lino.tutorial.human` for some examples.
 
+Printable
+=========
 
 .. class:: Printable
 
@@ -183,6 +453,9 @@ Model mixins
         See :doc:`/user/templates_api`.
         :class:`ml.notes.Note` extends this.
 
+
+CachedPrintable
+===============
 
 .. class:: CachedPrintable
 
@@ -210,6 +483,9 @@ Model mixins
         Timestamp of the built target file. Contains `None`
         if no build hasn't been called yet.
 
+TypedPrintable
+==============
+
 .. class:: TypedPrintable
 
     A :class:`CachedPrintable` that uses a "Type" for deciding which
@@ -223,6 +499,8 @@ Model mixins
     :attr:`ml.sales.SalesDocument.imode`.
 
 
+PrintableType
+=============
 
 .. class:: PrintableType
 

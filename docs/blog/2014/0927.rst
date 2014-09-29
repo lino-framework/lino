@@ -1,0 +1,16 @@
+============================
+Saturday, September 27, 2014
+============================
+
+Oops, the main Lino web server was offline for some hours this morning
+after an upgrade from `Squeeze
+<https://www.debian.org/releases/squeeze/>`_ to `Wheezy
+<https://www.debian.org/releases/wheezy/>`_.
+
+A good news: We have now two shortcut subdomains pointing to the most
+viewed parts of this website:
+
+- `demo.lino-framework.org <http://demo.lino-framework.org>`_
+- `blog.lino-framework.org <http://blog.lino-framework.org>`_
+
+

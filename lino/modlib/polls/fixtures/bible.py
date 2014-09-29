@@ -1,39 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
-from lino import dd, rt
+from lino import rt
 from lino.utils import Cycler
-
-
-polls = dd.resolve_app('polls')
 
 
 def objects():
 
-    yesno = polls.ChoiceSet(name="Yes/No")
-    yield yesno
-    yield polls.Choice(choiceset=yesno, name="Yes")
-    yield polls.Choice(choiceset=yesno, name="No")
+    polls = rt.modules.polls
 
-    maybe = polls.ChoiceSet(name="Yes/Maybe/No")
-    yield maybe
-    yield polls.Choice(choiceset=maybe, name="Yes")
-    yield polls.Choice(choiceset=maybe, name="Maybe")
-    yield polls.Choice(choiceset=maybe, name="No")
-
-    def choiceset(name, *choices):
-        cs = polls.ChoiceSet(name=name)
-        cs.save()
-        for choice in choices:
-            obj = polls.Choice(choiceset=cs, name=choice)
-            obj.full_clean()
-            obj.save()
-        return cs
-
-    yield choiceset("Rather Yes/No", "That's it!", "Rather Yes", "Neutral", "Rather No", "Never!")
-    one = choiceset("-1..+1", "-1", "0", "+1")
+    one = polls.ChoiceSet.objects.get(name="-1..+1")
 
     USERS = Cycler(settings.SITE.user_model.objects.all())
 
@@ -42,6 +20,7 @@ def objects():
             user=USERS.pop(),
             title=title.strip(),
             details=details.strip(),
+            state=polls.PollStates.published,
             questions_to_add=questions,
             default_choiceset=choiceset)
 

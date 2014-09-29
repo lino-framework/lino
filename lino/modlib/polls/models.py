@@ -3,16 +3,6 @@
 # License: BSD (see file COPYING for details)
 """The :xfile:`models` module for :mod:`lino.modlib.polls`.
 
-A Poll is a collection of Questions. Each Question has a question text
-and a ChoiceSet.  A ChoiceSet is a stored ordered set of possible
-Choices.  A Response is when a User answers to a Poll.  A Response
-contains a set of AnswerChoices, each of with represents a given
-Choice selected by that User for a given Question of the Poll.  If the
-Question is multiple choice, then there may be more than one
-AnswerChoice per Question.  A Response also contains a set of
-AnswerRemarks, each of with represents a remark written by that
-User for a given Question of the Poll.
-
 """
 
 import logging
@@ -31,7 +21,7 @@ from lino.utils.xmlgen.html import E
 from lino.modlib.polls import Plugin
 
 #~ def NullBooleanField(*args,**kw):
-    #~ kw.setdefault('default',False)
+    #~ kw.setdefault('default', False)
     #~ return models.BooleanField(*args,**kw)
 # ~ # not yet implemented:
 NullBooleanField = models.NullBooleanField
@@ -107,6 +97,7 @@ class Choice(dd.BabelNamed, dd.Sequenced):
     @dd.action()
     def select_by_response(self, ar):
         mi = ar.master_instance
+        dd.logger.info("20140929 %s", mi)
         if isinstance(mi, Response):
             AnswerChoice(response=mi, choice=self).save()
 
@@ -137,9 +128,8 @@ class Poll(dd.UserAuthored, dd.CreatedModified):
         related_name='polls',
         verbose_name=_("Default Choiceset"))
 
-    default_multiple_choices = NullBooleanField(
-        _("Allow multiple choices"))
-        #~ null=True,blank=True)
+    default_multiple_choices = models.BooleanField(
+        _("Allow multiple choices"), default=False)
 
     questions_to_add = models.TextField(
         _("Questions to add"),
@@ -165,7 +155,7 @@ class Poll(dd.UserAuthored, dd.CreatedModified):
                     q.save()
                     qkw.setdefault('seqno', q.seqno + 1)
             self.questions_to_add = ''
-            self.save()  # save again
+            self.save()  # save again because we modified afterwards
 
         super(Poll, self).after_ui_save(ar)
 
@@ -225,7 +215,8 @@ class Question(dd.Sequenced):
     poll = models.ForeignKey('polls.Poll', related_name='questions')
     text = models.TextField(verbose_name=_("Text"))
     choiceset = models.ForeignKey('polls.ChoiceSet', blank=True, null=True)
-    multiple_choices = NullBooleanField(_("Allow multiple choices"))
+    multiple_choices = models.BooleanField(
+        _("Allow multiple choices"), blank=True)
 
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
@@ -240,15 +231,12 @@ class Question(dd.Sequenced):
             return self.poll.default_choiceset
         return self.choiceset
 
-    def get_multiple_choices(self):
+    def full_clean(self, *args, **kw):
         if self.multiple_choices is None:
-            return self.poll.default_multiple_choices
-        return self.multiple_choices
-
-    #~ def full_clean(self,*args,**kw):
+            self.multiple_choices = self.poll.default_multiple_choices
         #~ if self.choiceset_id is None:
             #~ self.choiceset = self.poll.default_choiceset
-        #~ super(Question,self).full_clean()
+        super(Question, self).full_clean()
 
 
 class Questions(dd.Table):
@@ -268,9 +256,10 @@ class Response(dd.UserAuthored, dd.Registrable, dd.CreatedModified):
         verbose_name_plural = _("Responses")
         ordering = ['created']
 
-    poll = models.ForeignKey('polls.Poll', related_name='responses')
+    poll = dd.ForeignKey('polls.Poll', related_name='responses')
     state = ResponseStates.field(default=ResponseStates.draft)
     remark = models.TextField(verbose_name=_("My general remark"), blank=True)
+    partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
 
     @dd.chooser()
     def poll_choices(cls):
@@ -317,6 +306,11 @@ class ResponsesByPoll(Responses):
     column_names = 'created user state remark *'
 
 
+class ResponsesByPartner(Responses):
+    master_key = 'partner'
+    column_names = 'created user state remark *'
+
+
 class AnswerChoice(dd.Model):
 
     class Meta:
@@ -335,6 +329,7 @@ class AnswerChoice(dd.Model):
     def choice_choices(cls, question):
         return question.get_choiceset().choices.all()
 
+
 class AnswerChoices(dd.Table):
     model = 'polls.AnswerChoice'
 
@@ -350,6 +345,7 @@ class AnswerRemark(dd.Model):
     question = models.ForeignKey('polls.Question')
     remark = models.TextField(_("My remark"), blank=True)
 
+
 class AnswerRemarks(dd.Table):
     model = 'polls.AnswerRemarks'
 
@@ -357,8 +353,8 @@ FORWARD_TO_QUESTION = tuple("full_clean after_ui_save disable_delete".split())
 
 
 class Answer(object):
-    """Volatile object to represent "the one and only" answer to a
-    given question in a given response
+    """Volatile object to represent the one and only answer to a given
+    question in a given response.
 
     """
 
@@ -386,8 +382,8 @@ class AnswerRemarkField(dd.VirtualField):
     editable = True
 
     def __init__(self):
-        rt = models.TextField(_("My remark"), blank=True)
-        dd.VirtualField.__init__(self, rt, None)
+        t = models.TextField(_("My remark"), blank=True)
+        dd.VirtualField.__init__(self, t, None)
 
     def set_value_in_object(self, ar, obj, value):
         #~ e = self.get_entry_from_answer(obj)
@@ -446,7 +442,7 @@ class AnswersByResponse(dd.VirtualTable):
     @dd.displayfield(_("My answer"))
     def answer_buttons(self, obj, ar):
         l = []
-        if obj.question.get_multiple_choices():
+        if obj.question.multiple_choices:
             l.append("MC not yet implemented")
         else:
             # kw = dict(title=_("Select this value"))

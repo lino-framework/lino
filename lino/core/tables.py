@@ -976,10 +976,6 @@ class VirtualTable(AbstractTable):
 
 class VentilatingTable(AbstractTable):
 
-    """
-    A mixin for tables that have a series of automatically generated
-    columns
-    """
     ventilated_column_suffix = ':5'
 
     @fields.virtualfield(models.CharField(_("Description"), max_length=30))

@@ -27,8 +27,7 @@ class Site(Site):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
 
-    demo_fixtures = 'std few_countries few_cities few_languages demo demo2'.split(
-    )
+    demo_fixtures = 'std demo bible demo2'.split()
 
     languages = 'en de et'
 
@@ -39,7 +38,7 @@ class Site(Site):
         Defines application-specific default user profiles.
         Local site administrators can override this in their :xfile:.
         """
-        from lino import dd, rt
+        from lino import dd
         from django.utils.translation import ugettext_lazy as _
         dd.UserProfiles.reset('* office polls')
         add = dd.UserProfiles.add_item

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-## Copyright 2013 Luc Saffre
+## Copyright 2013-2014 Luc Saffre
 ## This file is part of the Lino project.
 ## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU Lesser General Public License as published by
@@ -13,27 +13,7 @@
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 """
-Adds usage of the `Extensible <http://ext.ensible.com>`_ calendar
-library.
-
-Example configuration in a :xfile:`settings.py` file or
-a :ref:`djangosite_local` module::
-
-    ad.configure_plugin(
-        'extensible',
-        calendar_start_hour=9,
-        media_root='/home/luc/snapshots/extensible-1.0.1',
-        media_base_url=None)
-
-
-.. setting:: extensible.calendar_start_hour
-
-The time at which the CalendarPanel's daily view starts.
-
-.. setting:: extensible.calendar_end_hour
-
-The time at which the CalendarPanel's daily view ends.
-
+See :mod:`ml.extensible`.
 
 """
 

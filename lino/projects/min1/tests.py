@@ -2,8 +2,7 @@
 # Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""NO LONGER USED.
-
+"""
 This module contains some relatively quick tests that don't load any
 fixtures.
 
@@ -15,15 +14,11 @@ To run only this test::
 
 from __future__ import unicode_literals
 
-from pprint import pprint
-
 from django.conf import settings
 from django.utils import translation
 
 from djangosite.utils.djangotest import RemoteAuthTestCase
 from django.test.utils import override_settings
-
-from north import dbutils
 
 from lino import dd, rt
 from lino import rt
@@ -33,8 +28,7 @@ from north.dbutils import babelkw
 
 from lino.modlib.contacts import models as contacts
 
-from lino import mixins
-Genders = mixins.Genders
+Genders = dd.Genders
 
 
 class QuickTest(RemoteAuthTestCase):
@@ -67,10 +61,14 @@ class QuickTest(RemoteAuthTestCase):
                                                     et='Belgia',
                                                     ))
 
+        PlaceTypes = rt.modules.countries.PlaceTypes
         eupen = create_and_get(
             'countries.Place', name=u'Eupen', country=be, zip_code='4700')
 
-        vigala = create_and_get('countries.Place', name=u'Vigala', country=ee)
+        vigala = create_and_get('countries.Place',
+                                name='Vigala',
+                                country=ee,
+                                type=PlaceTypes.municipality)
 
         luc = create_and_get(Person,
                              first_name='Luc', last_name='Saffre',

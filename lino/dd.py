@@ -3,14 +3,15 @@
 
 """See :doc:`/dev/dd`.
 
-Tables:
+.. currentmodule:: dd
 
-- :class:`Table <lino.core.dbtables.Table>`
-- :class:`VirtualTable <lino.core.tables.VirtualTable>`
-- :class:`VentilatingTable <lino.core.tables.VentilatingTable>`
-- :class:`EmptyTable <lino.mixins.EmptyTable>`
-- :class:`Report <lino.mixins.Report>`
-- :class:`Frame <lino.core.frames.Frame>`
+Tables:
+:class:`Table`
+:class:`VirtualTable`
+:class:`VentilatingTable`
+:class:`EmptyTable`
+:class:`Report`
+:class:`Frame`
 
 Extended Fields:
 
@@ -141,7 +142,7 @@ Model mixins:
 
 Miscellaneous:
 
-- :class:`Genders <lino.core.choicelists.Genders>`
+- :class:`Genders <lino.models.Genders>`
 
 """
 
@@ -211,8 +212,8 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core.choicelists import Genders
-from lino.core.choicelists import YesNo
+from lino.models import Genders
+from lino.models import YesNo
 from lino.core.workflows import State, Workflow, ChangeStateAction
 from lino.core.actions import NotifyingAction
 

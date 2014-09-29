@@ -9,8 +9,6 @@ Actors
    :depth: 2
 
 
-
-
 Overview
 ========
 
@@ -248,7 +246,7 @@ The ``Actor`` class
     be called *before* Lino checks the requirements.  For example the
     user may be AnonymousUser even if the requirements won't let it be
     executed.  `ar.subst_user.profile` may be None, e.g. when called
-    from `find_appointment` in :ref:`welfare.pcsw.Clients`.
+    from `find_appointment` in :class:`welfare.pcsw.Clients`.
 
 
 
@@ -772,3 +770,46 @@ The ``EmptyTable`` class
     A "Table" that has exactly one virtual row and thus is visible
     only using a Detail view on that row.
 
+
+The ``VentilatingTable`` class
+------------------------------
+
+.. class:: VentilatingTable(AbstractTable)
+
+    A mixin for tables that have a series of automatically generated
+    columns
+
+    .. attribute:: ventilated_column_suffix
+
+    .. attribute:: description
+
+    .. method:: setup_columns(self)
+    .. method:: get_ventilated_columns(self)
+
+
+
+The ``Report`` class
+------------------------------
+
+.. class:: Report
+
+
+    A special kind of :class:`EmptyTable` used to quickly create
+    complex "reports". A report is a series of tables combined into a
+    single printable and previewable document.
+
+
+    .. classmethod:: get_story(cls, obj, ar)
+
+    .. attribute:: body(cls, self, ar)
+
+
+The ``Frame`` class
+------------------------------
+
+.. class:: Frame
+
+  Base clase for actors which open a window but, but this window is
+  neither a database table nor a detail form.
+
+  Example subclass is :class:`ml.extensible.CalendarPanel`.

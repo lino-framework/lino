@@ -1,6 +1,6 @@
-===========
-Runtime API
-===========
+====================
+Runtime API (``rt``)
+====================
 
 This section documents functions and classes which are available "at
 runtime", i.e. when the Django machine has been initialized.

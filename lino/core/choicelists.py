@@ -8,10 +8,10 @@ whose value is rendered according to the current language.
 
 Usage:
 
->>> from django.conf import settings
->>> settings.SITE.startup()
->>> from lino.core.choicelists import *
 
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings'
+>>> from lino.runtime import *
 >>> from django.utils import translation
 
 >>> for value,text in choicelist_choices():
@@ -24,7 +24,7 @@ lino.UserGroups : User Groups
 lino.UserLevels : User Levels
 lino.UserProfiles : User Profiles
 
->>> Genders = settings.SITE.modules.lino.Genders
+>>> Genders = dd.Genders
 >>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male
@@ -45,7 +45,7 @@ Genders.male:M
 
 Comparing Choices uses their *value* (not the alias or text):
 
->>> from lino.core.auth import UserLevels
+>>> UserLevels = dd.UserLevels
 
 >>> UserLevels.manager > UserLevels.user
 True
@@ -76,8 +76,8 @@ Defining your own ChoiceLists
   
 The `value` must be a string.
   
->>> MyColors.add_item(1,("Green"),'green')
->>> MyColors.add_item(1,("Green"),'verbose_name_plural')
+>>> MyColors.add_item(1,("Green"), 'green')
+>>> MyColors.add_item(1,("Green"), 'verbose_name_plural')
   
 
 ChoiceListField
@@ -260,7 +260,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
 class ChoiceList(tables.AbstractTable):
 
     """
-    Used-defined choice lists must inherit from this base class.
+    User-defined choice lists must inherit from this base class.
     """
     __metaclass__ = ChoiceListMeta
 
@@ -727,36 +727,6 @@ class MultiChoiceListField(ChoiceListField):
     def get_text_for_value(self, value):
         return ', '.join([self.choicelist.get_text_for_value(bc.value) for bc in value])
 
-
-class YesNo(ChoiceList):
-
-    """
-    Used to define parameter panel fields for BooleanFields::
-    
-      foo = dd.YesNo.field(_("Foo"),blank=True)
-      
-    """
-    app_label = 'lino'
-    verbose_name_plural = _("Yes or no")
-add = YesNo.add_item
-add('y', _("Yes"), 'yes')
-add('n', _("No"), 'no')
-
-
-class Genders(ChoiceList):
-
-    """
-    Defines the two possible choices "male" and "female"
-    for the gender of a person.
-    See :ref:`lino.tutorial.human` for examples.
-    """
-    verbose_name = _("Gender")
-    app_label = 'lino'
-    #~ item_class = GenderItem
-
-add = Genders.add_item
-add('M', _("Male"), 'male')
-add('F', _("Female"), 'female')
 
 
 def _test():
