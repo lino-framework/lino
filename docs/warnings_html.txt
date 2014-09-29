@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/blog/2014/0929.rst:6: WARNING: undefined label: chatelet (if the link has no caption the label must precede a section header)

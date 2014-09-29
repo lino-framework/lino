@@ -8,7 +8,8 @@ fixtures.
 
 To run only this test::
 
-  manage.py test contacts.QuickTest
+  $ go min1
+  $ manage.py test contacts.QuickTest
 
 """
 
@@ -18,12 +19,10 @@ from django.conf import settings
 from django.utils import translation
 
 from djangosite.utils.djangotest import RemoteAuthTestCase
-from django.test.utils import override_settings
 
 from lino import dd, rt
-from lino import rt
 
-from lino.utils.instantiator import Instantiator, create_and_get
+from lino.utils.instantiator import create_and_get
 from north.dbutils import babelkw
 
 from lino.modlib.contacts import models as contacts
@@ -41,8 +40,6 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(1+1, 2)
 
         Person = dd.resolve_model("contacts.Person")
-        # person = Instantiator(Person).build
-        # company = Instantiator("contacts.Company").build
 
         ee = create_and_get('countries.Country',
                             isocode='EE', **babelkw('name',
@@ -86,28 +83,53 @@ class QuickTest(RemoteAuthTestCase):
 
         """
 
-        if settings.SITE.get_language_info('en'):
-            with translation.override('en'):
-                self.assertEquals(luc.address, u'''\
+        with translation.override('en'):
+            self.assertEquals(luc.address, u'''\
 Mr Luc SAFFRE
 Uus 1
 Vana-Vigala küla
-78003 Vigala
+78003 Vigala vald
 Estonia''')
 
-        if settings.SITE.get_language_info('de'):
-            with translation.override('de'):
-                self.assertEquals(luc.address, u'''\
+        with translation.override('de'):
+            self.assertEquals(luc.address, u'''\
 Herrn Luc SAFFRE
 Uus 1
 Vana-Vigala küla
-78003 Vigala
+78003 Vigala vald
 Estland''')
-                self.assertEquals(luc.address_html, '''\
-<p>Herrn Luc SAFFRE<br />Uus 1<br />Vana-Vigala k&#252;la<br />78003 Vigala<br />Estland</p>''')
+            self.assertEquals(luc.address_html, '''\
+<p>Herrn Luc SAFFRE<br />Uus 1<br />Vana-Vigala k&#252;la<br />78003 Vigala vald<br />Estland</p>''')
+
+        # "new" or "full" style is when the database knows the
+        # geographic hierarchy. We then just select "Vana-Vigala" as
+        # the "City".
+
+        vana_vigala = create_and_get('countries.Place',
+                                     name='Vana-Vigala',
+                                     country=ee,
+                                     parent=vigala,
+                                     type=PlaceTypes.village,
+                                     zip_code='78003')
+
+        meeli = create_and_get(Person,
+                               first_name='Meeli', last_name='Mets',
+                               gender=Genders.female,
+                               country=ee, street='Hirvepargi',
+                               street_no='123',
+                               city=vana_vigala)
+
+        with translation.override('en'):
+            self.assertEquals(meeli.address, u'''\
+Mrs Meeli METS
+Hirvepargi 123
+Vana-Vigala küla
+78003 Vigala vald
+Estonia''')
 
         u = create_and_get(settings.SITE.user_model,
-                           username='root', language='', profile=dd.UserProfiles.admin)
+                           username='root', language='',
+                           profile=dd.UserProfiles.admin)
 
         """
         disable SITE.is_imported_partner() otherwise 
@@ -186,7 +208,7 @@ Estland''')
         SiteConfigs = settings.SITE.modules.system.SiteConfigs
         elem = SiteConfigs.get_row_by_pk(None, settings.SITE.config_id)
         self.assertEqual(elem.next_partner_id,
-                         contacts.PARTNER_NUMBERS_START_AT + 1)
+                         contacts.PARTNER_NUMBERS_START_AT + 2)
 
         elem.next_partner_id = 12345
         elem.full_clean()

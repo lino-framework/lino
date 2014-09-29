@@ -371,7 +371,8 @@ from lino.mixins.printable import Printable, PrintableType, CachedPrintable, Typ
 from lino.mixins.uploadable import Uploadable
 from lino.mixins.human import Human, Born
 
-from lino.mixins.periods import DatePeriod, PeriodEvents
+from lino.mixins.periods import DatePeriod
+from lino.models import PeriodEvents
 
 from lino.mixins.polymorphic import Polymorphic
 

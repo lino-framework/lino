@@ -8,6 +8,7 @@ Defines models
 :class:`Place`.
 
 """
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -112,14 +113,17 @@ class EstonianAddressFormatter(AddressFormatter):
     Format used in Estonia.
     """
     
+    def format_place(self, p):
+        if p.type == PlaceTypes.municipality:
+            return "%s vald" % p
+        elif p.type == PlaceTypes.village:
+            return "%s küla" % p
+        elif p.type == PlaceTypes.county:
+            return "%s maakond" % p
+        return unicode(p)
+
     def get_city_lines(me, self):
-        def placefmt(p):
-            if p.type == PlaceTypes.municipality:
-                return "%s vald" % p
-            elif p.type == PlaceTypes.county:
-                return "%s maakond" % p
-            return unicode(p)
-        #lines = [self.name,street,self.addr1,self.addr2]
+        lines = []
         if self.city:
             city = self.city
             zip_code = self.zip_code or self.city.zip_code
@@ -130,21 +134,25 @@ class EstonianAddressFormatter(AddressFormatter):
             if city.type in (PlaceTypes.town, PlaceTypes.city):
                 s = join_words(zip_code, city)
             else:
-                yield join_words(city, unicode(city.type).lower())
+                lines.append(me.format_place(city))
                 p = city.parent
                 while p and not CountryDrivers.EE.is_region(p):
-                    yield placefmt(p)
+                    lines.append(me.format_place(p))
                     p = p.parent
                 if self.region:
                     s = join_words(zip_code, self.region)
                 elif p:
-                    s = join_words(zip_code, p, unicode(p.type).lower())
+                    s = join_words(zip_code, me.format_place(p))
+                elif len(lines) and zip_code:
+                    lines[-1] = zip_code + ' ' + lines[-1]
+                    s = ''
                 else:
                     s = zip_code
         else:
             s = join_words(self.zip_code, self.region)
         if s:
-            yield s
+            lines.append(s)
+        return lines
 
 
 ADDRESS_FORMATTERS = dict()

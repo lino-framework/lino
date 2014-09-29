@@ -10,6 +10,8 @@ class Site(Site):
 
     user_model = 'users.User'
 
+    languages = "en de"
+
     # default_user = 'root'
 
     demo_fixtures = 'std demo demo2'

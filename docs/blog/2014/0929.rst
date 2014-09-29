@@ -13,3 +13,6 @@ This will probably require a new feature of the framework: action
 calls with arbitrary arguments.
 
 Checkin before starting this new feature.
+
+The test suite still had some failures due to the new
+`EstonianAddressFormatter`
