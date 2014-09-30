@@ -396,6 +396,29 @@ class AnswerRemarkField(dd.VirtualField):
         return obj.remark.remark
 
 
+class ToggleChoice(dd.Action):
+    parameters = dict(
+        response=dd.ForeignKey("polls.Response"),
+        question=dd.ForeignKey("polls.Question"),
+        choice=dd.ForeignKey("polls.Choice"),
+    )
+
+    def run_from_ui(self, ar):
+        pv = ar.action_param_values
+        try:
+            obj = AnswerChoice.objects.get(**pv)
+            obj.delete()
+        except AnswerChoice.DoesNotExist:
+            if not pv.question.multiple_choices:
+                # delete any existing choice
+                qs = AnswerChoice.objects.filter(
+                    response=pv.response, question=pv.question)
+                qs.delete()
+            obj = AnswerChoice(**pv)
+            obj.full_clean()
+            obj.save()
+            
+
 class AnswersByResponse(dd.VirtualTable):
     label = _("Answers")
     editable = True
@@ -406,6 +429,8 @@ class AnswersByResponse(dd.VirtualTable):
     #~ slave_grid_format = 'html'
 
     remark = AnswerRemarkField()
+
+    toggle = ToggleChoice()
 
     @classmethod
     def get_pk_field(self):
@@ -445,14 +470,26 @@ class AnswersByResponse(dd.VirtualTable):
         if obj.question.multiple_choices:
             l.append("MC not yet implemented")
         else:
-            # kw = dict(title=_("Select this value"))
+            pv = dict(question=obj.question)
+            pv.update(response=obj.response)
+            ba = self.get_action_by_name('toggle')
             for c in obj.question.get_choiceset().choices.all():
+                pv.update(choice=c)
+                text = unicode(c)
+                try:
+                    AnswerChoice.objects.get(**pv)
+                    text = [E.b(text)]
+                except AnswerChoice.DoesNotExist:
+                    pass
+                # logger.info("20140930 %s", text)
+                sar = ar.spawn(ba, action_param_values=pv)
+                e = ar.href_to_request(sar, text)
                 # e = unicode(c)
                 # e = ar.put_button(
                 #     obj.question, unicode(c), dict(choice=c),**kw)
                 # e = self.select_choice.as_button_elem(ar, unicode(c))
-                e = ar.instance_action_button(
-                    c.select_by_response, unicode(c))
+                # e = ar.instance_action_button(
+                #     c.select_by_response, unicode(c))
                 l.append(e)
         return E.p(*join_elems(l))
 

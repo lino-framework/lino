@@ -91,14 +91,14 @@ class HtmlRenderer(object):
         """
         Returns an etree object of a "button-like" ``<a href>`` tag.
         """
-        #~ logger.info('20121002 href_button %r',unicode(text))
+        # logger.info('20121002 href_button %s', unicode(text))
         if target:
             kw.update(target=target)
         if title:
             # Remember that Python 2.6 doesn't like if title is a Promise
             kw.update(title=unicode(title))
             #~ return xghtml.E.a(text,href=url,title=title)
-        if isinstance(text, basestring):
+        if not isinstance(text, (tuple, list)):
             text = (text,)
         if url is None:
             return E.b(*text)
