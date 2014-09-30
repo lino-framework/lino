@@ -19,7 +19,7 @@ Question is *multiple choice*, then there may be more than one
 `AnswerRemarks`, each of with represents a remark written by the
 responding person for a given Question of the Poll.
 
-
+See also :ref:`tested.polly`.
 
 .. contents:: 
    :local:
@@ -79,4 +79,13 @@ Models
 
 .. class:: AnswerRemark
 
+Tables
+======
 
+.. class:: AnswersByResponse
+
+    .. attribute:: answer_buttons
+
+    A virtual field that displays the currently selected answer(s) for
+    this question, eventually (if editing is permitted) together with
+    buttons to modify the selection.

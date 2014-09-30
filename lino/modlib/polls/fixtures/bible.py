@@ -72,3 +72,5 @@ His mother Mary was engaged to Joseph, but, before the marriage took place, she 
     for p in polls.Poll.objects.exclude(questions_to_add=''):
         p.after_ui_save(None)
         #~ p.save()
+
+    yield polls.Response(poll=p, user=USERS.pop())

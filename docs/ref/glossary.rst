@@ -129,8 +129,9 @@ Glossary
     can specify "action parameters" before actually running the
     action.  
 
-    An :class:`dd.Action` is a dialog action if and only if it has
-    :attr:`dd.Action.parameters` not `None`.
+    An :class:`dd.Action` is a dialog action if it has
+    :attr:`dd.Action.parameters` defined and
+    :attr:`dd.Action.no_params_window` has not been enabled.
     
 
   Detail Window

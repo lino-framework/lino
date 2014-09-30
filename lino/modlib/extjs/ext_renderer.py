@@ -26,13 +26,13 @@ from django.utils.translation import ugettext as _
 from django.contrib.contenttypes.models import ContentType
 
 import lino
-from lino.core import constants as ext_requests
+from lino.core import constants
 from lino.ui import elems as ext_elems
 from lino.ui.render import HtmlRenderer
 
 from lino.ad import Plugin
 
-from lino import dd, rt
+from lino import dd
 from lino.core import actions
 from lino.core import dbtables
 from lino.core import tables
@@ -175,25 +175,33 @@ class ExtRenderer(HtmlRenderer):
         js = js.replace('"', '&quot;')
         return 'javascript:' + js
 
-    def get_action_status(self, ar, ba, obj, **kw):
-        #~ logger.info("get_action_status %s",ba.full_name())
+    def get_action_params(self, ar, ba, obj, **kw):  # new since 20140930
         if ba.action.parameters:
-            if ba.action.params_layout.params_store is None:
-                raise Exception("20121016 %s has no store" %
-                                ba.action.params_layout)
+            # if ba.action.params_layout.params_store is None:
+            #     raise Exception("20121016 %s has no store" %
+            #                     ba.action.params_layout)
+            fv = ba.action.params_layout.params_store.pv2list(
+                ar, ar.action_param_values)
+            kw[constants.URL_PARAM_FIELD_VALUES] = fv
+        return kw
+
+    def get_action_status(self, ar, ba, obj, **kw):
+        if ba.action.parameters:
+            # if ba.action.params_layout.params_store is None:
+            #     raise Exception("20121016 %s has no store" %
+            #                     ba.action.params_layout)
             kw.update(ar.get_status())
             kw.update(
                 field_values=ba.action.params_layout.params_store.pv2dict(
                     ba.action.action_param_defaults(ar, obj)))
 
+        # logger.info("20140930 get_action_status %s", kw)
         return kw
 
     def action_button(self, obj, ar, ba, label=None, **kw):
-        """
-        """
         if not label:
             label = ba.action.label
-        if ba.action.parameters:
+        if ba.action.parameters and not ba.action.no_params_window:
             st = self.get_action_status(ar, ba, obj)
             if obj is not None:
                 st.update(record_id=obj.pk)
@@ -203,14 +211,8 @@ class ExtRenderer(HtmlRenderer):
             st = ar.get_status()
             if obj is not None:
                 st.update(record_id=obj.pk)
-            return self.window_action_button(
-                ar,
-                ba, st, label, **kw)
+            return self.window_action_button(ar, ba, st, label, **kw)
         return self.row_action_button(obj, ar, ba, label, **kw)
-
-    def request_handler(self, ar, *args, **kw):
-        st = ar.get_status(**kw)
-        return self.action_call(ar, ar.bound_action, st)
 
     def window_action_button(
             self, ar, ba, status={},
@@ -225,14 +227,16 @@ class ExtRenderer(HtmlRenderer):
             ba, href, label, title or ba.action.help_text, **kw)
 
     def row_action_button(
-            self, obj, ar, ba, label=None, title=None, **kw):
+            self, obj, ar, ba, label=None, title=None, request_kwargs={},
+            **kw):
         """
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
         """
         #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
-        uri = 'javascript:' + self.action_call_on_instance(obj, ar, ba)
+        uri = 'javascript:' + self.action_call_on_instance(
+            obj, ar, ba, request_kwargs)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
@@ -337,7 +341,7 @@ class ExtRenderer(HtmlRenderer):
         st.update(data_record=ar.elem2rec_insert(ar.ah, elem))
         return self.window_action_button(ar, a, st, text, **options)
 
-    def action_call_on_instance(self, obj, ar, ba, **st):
+    def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
         """Return a string with Javascript code that would, when executed, run
         the given action `ba` on the given model instance `obj`. The
         second parameter (`ar`) is the calling action request.
@@ -351,19 +355,22 @@ class ExtRenderer(HtmlRenderer):
         `ar.instance_action_button` in `households.MembersByPerson`
         works.
 
+        `st` can have:
+        - record_id
+
         """
         if ar is None:
             rp = None
         else:
             rp = ar.requesting_panel
 
-        if ba.action.opens_a_window or ba.action.parameters:
-            # raise Exception("20140430 %s" % ba)
-            if ar is None:
-                sar = ba.request()
-            else:
-                sar = ar.spawn(ba)
-                # sar = ba.request(request=ar.request)
+        if ar is None:
+            sar = ba.request(**request_kwargs)
+        else:
+            sar = ar.spawn(ba, **request_kwargs)
+            # sar = ba.request(request=ar.request)
+
+        if ba.action.opens_a_window:
             st.update(self.get_action_status(sar, ba, obj))
             st.update(record_id=obj.pk)
             return "Lino.%s.run(%s,%s)" % (
@@ -374,20 +381,23 @@ class ExtRenderer(HtmlRenderer):
         # It's a custom ajax action generated by
         # js_render_custom_action().
 
-        # name = ba.full_name()
-        # name = ba.action.full_name(ar.actor or ba.actor)
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         name = ba.action.full_name(ba.actor)
-        return "Lino.%s(%s,%s)" % (name, py2js(rp), py2js(obj.pk))
+        params = self.get_action_params(sar, ba, obj)
+        return "Lino.%s(%s,%s,%s)" % (
+            name, py2js(rp), py2js(obj.pk), py2js(params))
+
+    def request_handler(self, ar, *args, **kw):
+        st = ar.get_status(**kw)
+        return self.action_call(ar, ar.bound_action, st)
 
     def action_call(self, request, bound_action, status):
-
-        if bound_action.action.opens_a_window or \
-           bound_action.action.parameters:
+        a = bound_action.action
+        if a.opens_a_window or (a.parameters and not a.no_params_window):
             if request and request.subst_user:
                 status[
-                    ext_requests.URL_PARAM_SUBST_USER] = request.subst_user
-            if isinstance(bound_action.action, actions.ShowEmptyTable):
+                    constants.URL_PARAM_SUBST_USER] = request.subst_user
+            if isinstance(a, actions.ShowEmptyTable):
                 status.update(record_id=-99998)
             if request is None:
                 rp = None
@@ -483,7 +493,7 @@ class ExtRenderer(HtmlRenderer):
             del kw['base_params']
         #~ kw = self.request2kw(rr,**kw)
         if ar.bound_action != ar.actor.default_action:
-            kw[ext_requests.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
+            kw[constants.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
         return self.build_admin_url(
             'api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
@@ -721,7 +731,7 @@ class ExtRenderer(HtmlRenderer):
             site=settings.SITE,
             settings=settings,
             lino=lino,
-            ext_requests=ext_requests,
+            ext_requests=constants,
         )
 
         context.update(_=_)
@@ -864,16 +874,13 @@ class ExtRenderer(HtmlRenderer):
 
         for rpt in actors_list:
             rh = rpt.get_handle()
-            if isinstance(rpt, type) and issubclass(rpt, (tables.AbstractTable, choicelists.ChoiceList)):
-                #~ if rpt.model is None:
-                #~ f.write('// 20120621 %s\n' % rpt)
-                    #~ continue
-
+            if isinstance(rpt, type) and issubclass(rpt, (
+                    tables.AbstractTable, choicelists.ChoiceList)):
                 for ln in self.js_render_GridPanel_class(rh):
                     f.write(ln + '\n')
 
             for ba in rpt.get_actions():
-                if ba.action.parameters:
+                if ba.action.parameters and not ba.action.no_params_window:
                     pass
                 elif ba.action.opens_a_window:
                     if isinstance(ba.action, (actions.ShowDetailAction,
@@ -961,7 +968,7 @@ class ExtRenderer(HtmlRenderer):
 
     def a2btn(self, ba, **kw):
         a = ba.action
-        if a.parameters:
+        if a.parameters and not a.no_params_window:
             kw.update(panel_btn_handler=js_code(
                 "Lino.param_action_handler(Lino.%s)" % ba.full_name()))
         elif isinstance(a, actions.SubmitInsert):
@@ -1308,10 +1315,10 @@ class ExtRenderer(HtmlRenderer):
         """Defines the non-window action handler used by
         :meth:`row_action_button`
         """
-        yield "Lino.%s = function(rp, pk) { " % action.full_name()
+        yield "Lino.%s = function(rp, pk, params) { " % action.full_name()
         yield "  var h = function() { "
         uri = rh.actor.actor_url()
-        yield "    Lino.run_row_action(rp, %s, %s, pk, %s, %s);" % (
+        yield "    Lino.run_row_action(rp, %s, %s, pk, %s, params, %s);" % (
             py2js(uri), py2js(action.action.http_method),
             py2js(action.action.action_name),
             action.action.preprocessor)
@@ -1335,7 +1342,7 @@ class ExtRenderer(HtmlRenderer):
             mainPanelClass = "Lino.%sPanel" % action.full_name()
         elif isinstance(action.action, actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-        elif action.action.parameters:
+        elif action.action.params_layout:
             params_panel = action.action.make_params_layout_handle(
                 settings.SITE.plugins.extjs)
         elif action.action.extjs_main_panel:

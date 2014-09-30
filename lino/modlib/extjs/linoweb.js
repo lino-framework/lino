@@ -1520,8 +1520,8 @@ function PseudoConsole() {
 if (typeof(console) == 'undefined') console = new PseudoConsole();
 
 Lino.notify = function(msg) {
-  {% if settings.SITE.plugins.extjs.use_statusbar %}
   if (msg == undefined) msg = ''; else console.log(msg);
+  {% if settings.SITE.plugins.extjs.use_statusbar %}
   Lino.status_bar.setStatus({
     text: msg,
     iconCls: 'ok-icon',
@@ -2145,6 +2145,7 @@ Lino.do_when_visible = function(cmp,todo) {
 /*
 */
 Lino.do_on_current_record = function(panel,fn,phantom_fn) {
+  console.log('20140930 do_on_current_record', arguments);
   var rec = panel.get_current_record();
   if (rec == undefined) {
     Lino.notify("There's no selected record.");
@@ -2204,9 +2205,11 @@ Lino.call_ajax_action = function(
 Lino.row_action_handler = function(actionName, hm, pp) {
   var p = {};
   var fn = function(panel, btn, step) {
+      // console.log('20140930 row_action_handler');
       if (pp) { p = pp(panel); if (! p) return; }
       
       if (!panel || panel.get_current_record == undefined) { // AFTER_20130725
+        // console.log('20140930 row_action_handler 2', panel);
         panel = Ext.getCmp(panel);
         if (panel == undefined) {
           Lino.notify("Invalid panel spec.");
@@ -2248,17 +2251,21 @@ Lino.param_action_handler = function(window_action) { // 20121012
 };
 
 
-//~ 20130726 Lino.run_row_action = function(requesting_panel,url,pk,actionName,pp) {
 Lino.run_row_action = function(
-    requesting_panel, url, meth, pk, actionName, preprocessor) {
+    requesting_panel, url, meth, pk, actionName, params, preprocessor) {
   //~ var panel = action.get_window().main_item;
+    console.log("20140930 Lino.run_row_action", params);
   url = '{{settings.SITE.build_admin_url("api")}}' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
-  if (preprocessor) var p = preprocessor(); else var p = {};
-  var fn = function(panel,btn,step) {
-    Lino.call_ajax_action(panel, meth, url, p, actionName, step, fn);
+  if (!params) params = {};
+  if (preprocessor) {
+      var p = preprocessor(); 
+      Ext.apply(params, p);
   }
-  fn(panel,null,null);
+  var fn = function(panel, btn, step) {
+    Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
+  }
+  fn(panel, null, null);
 }
 
 Lino.put = function(requesting_panel, pk, data) {

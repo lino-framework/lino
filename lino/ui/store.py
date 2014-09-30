@@ -863,7 +863,7 @@ class BaseStore(object):
 
 
 class ParameterStore(BaseStore):
-
+    # instantiated in `lino.core.layouts`
     def __init__(self, params_layout_handle, url_param):
         self.param_fields = []
 
@@ -886,6 +886,13 @@ class ParameterStore(BaseStore):
             v = pv.get(fld.name, None)
             fld.value2dict(v, d, None)
         return d
+
+    def pv2list(self, ar, pv, **d):  # new since 20140930
+        l = []
+        for fld in self.param_fields:
+            v = pv.get(fld.name, None)
+            l.append(v)
+        return l
 
     def parse_params(self, request, **kw):
         pv = request.REQUEST.getlist(self.url_param)

@@ -61,6 +61,17 @@ The ``Action`` class reference
     panel should be initially hidden when this table is being
     displayed.
 
+  .. attribute:: no_params_window
+
+    Set this to `True` if your action has :attr:`parameters` but you
+    do *not* want it to open a window where the user can edit these
+    parameters before calling the action.
+
+    Setting this attribute to `True` means that the developer must
+    explicitly set all parameter values.  Usage example is the
+    :attr:`ml.polls.AnswersByResponse.answer_buttons` virtual field.
+
+
 
   .. attribute:: select_rows
 

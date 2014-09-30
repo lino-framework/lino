@@ -17,7 +17,7 @@ Checkin before starting this new feature.
 The test suite still had some failures due to the new
 `EstonianAddressFormatter`
 
-
 Last checkin (at 05:00 next day) instead of "action calls with
 arbitrary arguments" we will probably do "actions with parameters but
-without window".
+without window". Selecting a choice now works... except for the
+"detail" that it opens a window which the user must confirm.

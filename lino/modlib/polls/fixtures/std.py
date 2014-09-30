@@ -31,9 +31,13 @@ def objects():
         return cs
 
     yield choiceset(
-        "Rather Yes/No", "That's it!", "Rather Yes",
+        "That's it!...Never!", "That's it!", "Rather Yes",
         "Neutral", "Rather No", "Never!")
     yield choiceset("-1..+1", "-1", "0", "+1")
 
     yield choiceset(
         _("Acquired"), _("Acquired"), _("In progress"), _("Not acquired"))
+
+    yield choiceset("1...5", "1", "2", "3", "4", "5")
+    yield choiceset("1...10",
+                    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10")

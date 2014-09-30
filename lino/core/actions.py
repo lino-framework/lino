@@ -173,18 +173,11 @@ def register_params(cls):
         for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
+
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
                 cls.parameters.keys())
         install_layout(cls, 'params_layout', cls._layout_class)
-        # if isinstance(cls.params_layout, basestring):
-        #     cls.params_layout = cls._layout_class(cls.params_layout, cls)
-        # elif isinstance(cls.params_layout, layouts.Panel):
-        #     cls.params_layout = cls._layout_class(
-        #         cls.params_layout.desc, cls, **cls.params_layout.options)
-        # else:
-        #     assert isinstance(cls.params_layout, cls._layout_class)
-        #     # but what if cls.params_layout._datasource != cls?
 
     elif cls.params_layout is not None:
         raise Exception("params_layout but no parameters ?!")
@@ -293,6 +286,8 @@ class Action(Parametrizable, Permittable):
     help_text = None
     auto_save = True
 
+    no_params_window = False
+
     extjs_main_panel = None
     js_handler = None
 
@@ -384,21 +379,7 @@ class Action(Parametrizable, Permittable):
         if self.show_in_workflow:
             self.custom_handler = True
 
-        # elif not self.show_in_bbar:
-        #     self.custom_handler = True
-
-        # if self.show_in_row_actions:
-        #     self.custom_handler = True
-
         register_params(self)
-
-        if self.parameters is not None:
-            if not isinstance(self.params_layout, self._layout_class):
-                raise Exception("20130121 %s" % self)
-            #~ assert isinstance(self.params_layout,self._layout_class)
-
-        # if hasattr(self, 'run'):
-        #     raise Exception(str(self))
 
     def __get__(self, instance, owner):
         """

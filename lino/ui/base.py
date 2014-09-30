@@ -1,4 +1,4 @@
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """

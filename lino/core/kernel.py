@@ -236,7 +236,7 @@ class Kernel(object):
         # trigger creation of params_layout.params_store
         for res in actors.actors_list:
             for ba in res.get_actions():
-                if ba.action.parameters:
+                if ba.action.params_layout is not None:
                     ba.action.params_layout.get_layout_handle(self)
         # logger.info("20140227 Kernel.__init__() done")
 
@@ -538,10 +538,11 @@ class Kernel(object):
         in a user-friendly way.
 
         """
+        a = ar.bound_action.action
         try:
-            if ar.bound_action.action.parameters is not None:
+            if a.parameters is not None and not a.no_params_window:
                 ar.set_response(close_window=True)
-            ar.bound_action.action.run_from_ui(ar)
+            a.run_from_ui(ar)
         except exceptions.ValidationError as e:
             def fieldlabel(name):
                 de = ar.ah.actor.get_data_elem(name)
@@ -578,7 +579,7 @@ class Kernel(object):
         else:
             h.list_layout = None
 
-        if h.actor.parameters:
+        if h.actor.params_layout:
             h.params_layout_handle = h.actor.make_params_layout_handle(self)
 
         h.store = ext_store.Store(h)

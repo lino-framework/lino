@@ -336,8 +336,6 @@ class BaseRequest(object):
         self.requesting_panel = other.requesting_panel
 
     def parse_req(self, request, rqdata, **kw):
-        #~ if self.actor.parameters:
-            #~ kw.update(param_values=self.ui.parse_params(self.ah,request))
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
@@ -692,8 +690,9 @@ class ActorRequest(BaseRequest):
                     self.param_values))
 
         if self.bound_action.action.parameters is not None:
+            defaults = kw.get('field_values', {})
             pv = self.bound_action.action.params_layout.params_store.pv2dict(
-                self.action_param_values)
+                self.action_param_values, **defaults)
             kw.update(field_values=pv)
 
         bp = kw.setdefault('base_params', {})

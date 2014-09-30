@@ -145,10 +145,11 @@ class HtmlRenderer(object):
             #~ s += ' ' + self.window_action_button(
                 #~ ar.ah.actor.detail_action,after_show,_("Show Last"))
             #~ s += ' ' + self.href_to_request(ar,"[%s]" % unicode(_("Show All")))
-            buttons.append(self.href_to_request(None, ar,
-                                                _("Show All"),
-                                                icon_name='application_view_list',
-                                                title=_("Show all records in a table window")))
+            buttons.append(self.href_to_request(
+                None, ar,
+                _("Show All"),
+                icon_name='application_view_list',
+                title=_("Show all records in a table window")))
         #~ return '<p>%s</p>' % s
         return E.p(*buttons)
 
@@ -169,9 +170,13 @@ class HtmlRenderer(object):
     def insert_button(self, ar, text, known_values={}, **options):
         return '[?!]'
 
-    def row_action_button(self, obj, ar, ba,
-                          label=None, title=None, **kw):
-        return '[?!]'
+    def row_action_button(
+            self, obj, ar, ba, label=None, title=None, request_kwargs={},
+            **kw):
+        label = label or ba.action.label
+        uri = None
+        return self.href_button_action(
+            ba, uri, label, title or ba.action.help_text, **kw)
 
     def href_to_request(self, sar, tar, text=None, **kw):
         return '[?!]'

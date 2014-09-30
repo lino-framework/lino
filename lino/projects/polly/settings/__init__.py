@@ -27,7 +27,7 @@ class Site(Site):
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
 
-    demo_fixtures = 'std demo bible demo2'.split()
+    demo_fixtures = 'std demo feedback demo2'.split()
 
     languages = 'en de et'
 
