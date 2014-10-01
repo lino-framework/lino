@@ -18,6 +18,7 @@ from django.contrib.contenttypes import generic
 # from lino.utils.xmlgen.html import E
 
 from lino.core import constants
+from lino.core.fields import fields_list
 
 
 class LayoutError(RuntimeError):
@@ -313,6 +314,9 @@ class BaseLayout(object):
     def set_datasource(self, ds):
         self._datasource = ds
         if ds is not None:
+            if isinstance(self.hidden_elements, basestring):
+                self.hidden_elements = set(fields_list(
+                    ds, self.hidden_elements))
             self.hidden_elements = self.hidden_elements | ds.hidden_elements
             #~ if str(ds).endswith('Partners'):
                 #~ print "20130124 set_datasource ", self,self.hidden_elements

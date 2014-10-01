@@ -429,12 +429,8 @@ class Excerpt(dd.TypedPrintable,
 
             tplname = atype.get_body_template_name()
             if tplname:
-                saved_renderer = ar.renderer
-                ar.renderer = settings.SITE.plugins.bootstrap3.renderer
-                # ar.renderer = settings.SITE.ui.plain_renderer
                 template = settings.SITE.jinja_env.get_template(tplname)
-                body = template.render(**kw)
-                ar.renderer = saved_renderer
+                body = ar.render_jinja(template, **kw)
 
         kw.update(body=body)
         # if self.owner is not None:

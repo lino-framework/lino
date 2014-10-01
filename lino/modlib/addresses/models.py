@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` module of the :mod:`lino.modlib.addresses` app.
+The :xfile:`models.py` module of the :mod:`ml.addresses` app.
 
 Defines the following actors:
 
@@ -15,9 +15,6 @@ Defines the following actors:
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,25 +22,7 @@ from lino import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.modlib.countries.models import AddressLocation
 
-
-class AddressTypes(dd.ChoiceList):
-    verbose_name = _("Address type")
-    verbose_name_plural = _("Address types")
-
-add = AddressTypes.add_item
-add('01', _("Official address"), 'official')  # IT020
-add('02', _("Unverified address"), 'unverified')  # IT042
-add('03', _("Declared address"), 'declared')  # IT214
-add('04', _("Reference address"), 'reference')
-
-
-class DataSources(dd.ChoiceList):
-    verbose_name = _("Data source")
-    verbose_name_plural = _("Data sources")
-
-add = DataSources.add_item
-add('01', _("Manually entered"), 'manually')
-add('02', _("Read from eID"), 'eid')
+from .mixins import AddressTypes, DataSources
 
 
 class AddressOwner(dd.Model):

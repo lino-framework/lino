@@ -3,6 +3,9 @@
 Polls
 =====
 
+This document tests some functionality of the :mod:`ml.polls` app
+using :ref:`polly`.
+
 .. include:: /include/tested.rst
 
 .. How to test only this document:
@@ -43,7 +46,6 @@ Rando Roosi's response to Participant feedback
 >>> url = '/api/polls/AnswersByResponse?rp=ext-comp-1351&fmt=json&mt=%d&mk=1' % mt
 >>> res = client.get(url, REMOTE_USER='robin')
 
-This returns a huge JSON structure:
 
 >>> print(res.status_code)
 200

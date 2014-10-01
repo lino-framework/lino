@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 
 
 from lino import mixins
-from lino import dd, rt
+from lino import dd
 from lino.core import actions
 
 from north import dbutils
@@ -28,20 +28,7 @@ from north import dbutils
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 
-
-class RecipientTypes(dd.ChoiceList):
-
-    """A list of possible values for the `type` field of a
-    :class:`Recipient`.
-
-    """
-    verbose_name = _("Recipient Type")
-
-add = RecipientTypes.add_item
-add('to', _("to"), 'to')
-add('cc', _("cc"), 'cc')
-add('bcc', _("bcc"), 'bcc')
-#~ add('snail',_("Snail mail"),'snail')
+from .mixins import RecipientTypes
 
 
 #~ class MailType(mixins.PrintableType,babel.BabelNamed):

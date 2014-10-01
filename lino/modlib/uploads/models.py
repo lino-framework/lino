@@ -19,6 +19,8 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+system = dd.resolve_app('system')
+
 
 class UploadAreas(dd.ChoiceList):
     verbose_name = _("Upload Area")
@@ -243,8 +245,6 @@ class UploadsByController(AreaUploads):
     description
     """
 
-
-system = dd.resolve_app('system')
 
 
 def setup_main_menu(site, ui, profile, m):

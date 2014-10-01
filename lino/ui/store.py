@@ -34,7 +34,6 @@ from lino.utils import curry
 from lino.utils import iif
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
-from lino.mixins.printable import decfmt
 
 
 class StoreField(object):
@@ -601,7 +600,7 @@ class DecimalStoreField(StoreField):
     def format_value(self, ar, v):
         if not v:
             return ''
-        return decfmt(v, places=self.field.decimal_places)
+        return dd.decfmt(v, places=self.field.decimal_places)
 
     #~ def value2html(self,ar,v,**cellattrs):
         #~ cellattrs.update(align="right")

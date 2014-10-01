@@ -14,6 +14,7 @@ from djangosite.dbutils import models_by_base
 modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup
+get_printable_context = settings.SITE.get_printable_context
 
 
 def show(*args, **kw):

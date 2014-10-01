@@ -911,7 +911,7 @@ The ``Site`` class
   .. method:: get_admin_main_items(ar)
 
     Expected to yield a sequence of "items" to be rendered on the home
-    page (:xfile:`admin_main.hml`).
+    page (:xfile:`admin_main.html`).
 
     Every item is expected to be a :class:`dd.Table` or a
     :class:`dd.VirtualTable`. These tables are rendered in that order,

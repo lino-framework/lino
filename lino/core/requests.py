@@ -300,6 +300,13 @@ class BaseRequest(object):
         cb.add_choice('no', noop, _("No"))
         self.set_callback(cb)
 
+    def render_jinja(self, template, **context):
+        saved_renderer = self.renderer
+        self.renderer = settings.SITE.plugins.bootstrap3.renderer
+        retval = template.render(**context)
+        self.renderer = saved_renderer
+        return retval
+
     def set_callback(self, *args, **kw):
         return settings.SITE.ui.set_callback(self, *args, **kw)
 

@@ -1110,6 +1110,44 @@ class Site(Site):
             raise
         #~ logger.info("Wrote %s ...", fn)
 
+    def decfmt(self, v, places=2, **kw):
+        """
+        Format a Decimal value.
+        Like :func:`lino.utils.moneyfmt`, but using the site settings
+        :attr:`lino.Lino.decimal_group_separator`
+        and
+        :attr:`lino.Lino.decimal_separator`.
+        """
+        kw.setdefault('sep', self.decimal_group_separator)
+        kw.setdefault('dp', self.decimal_separator)
+        from lino.utils import moneyfmt
+        return moneyfmt(v, places=places, **kw)
 
+    def get_printable_context(self, ar, **kw):
+        from django.conf import settings
+        from lino import dd, rt
+        from djangosite.dbutils import dtomy
+        from lino.utils import iif
 
-
+        kw.update(
+            dtos=dd.fds,  # obsolete
+            dtosl=dd.fdf,  # obsolete
+            dtomy=dtomy,  # obsolete
+            mtos=self.decfmt,
+            fds=dd.fds,
+            fdm=dd.fdm,
+            fdl=dd.fdl,
+            fdf=dd.fdf,
+            fdmy=dd.fdmy,
+            babelattr=dd.babelattr,
+            babelitem=self.babelitem,
+            tr=self.babelitem,
+            iif=iif,
+            dd=dd,
+            rt=rt,
+            settings=settings,
+            lino=self.modules,  # experimental
+            ar=ar,
+            site_config=self.site_config,
+        )
+        return kw

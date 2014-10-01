@@ -26,15 +26,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
 
-
-from djangosite.dbutils import dtomy
-
 davlink = settings.SITE.plugins.get('davlink', None)
 
 
 from lino.core import actions
 from lino.core import dbutils
-from lino.utils import iif, moneyfmt
 from lino.utils.choosers import chooser
 from lino.utils.appy_pod import Renderer
 from lino.core.model import Model
@@ -44,19 +40,6 @@ from lino.mixins.duplicable import Duplicable
 from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
-
-
-def decfmt(v, places=2, **kw):
-    """
-    Format a Decimal value.
-    Like :func:`lino.utils.moneyfmt`, but using the site settings
-    :attr:`lino.Lino.decimal_group_separator`
-    and
-    :attr:`lino.Lino.decimal_separator`.
-    """
-    kw.setdefault('sep', settings.SITE.decimal_group_separator)
-    kw.setdefault('dp', settings.SITE.decimal_separator)
-    return moneyfmt(v, places=places, **kw)
 
 
 try:
@@ -713,32 +696,13 @@ class Printable(object):
         return self.get_default_build_method()
 
     def get_printable_context(self, ar, **kw):
+        kw = settings.SITE.get_printable_context(**kw)
+        kw.update(this=self)  # preferred in new templates
+        kw.update(language=self.get_print_language())
+
         def translate(s):
             return _(s.decode('utf8'))
-        from lino import dd, rt
-        kw.update(
-            this=self,  # preferred in new templates
-            dtos=dd.fds,  # obsolete
-            dtosl=dd.fdf,  # obsolete
-            dtomy=dtomy,  # obsolete
-            mtos=decfmt,
-            fds=dd.fds,
-            fdm=dd.fdm,
-            fdl=dd.fdl,
-            fdf=dd.fdf,
-            fdmy=dd.fdmy,
-            babelattr=dd.babelattr,
-            babelitem=settings.SITE.babelitem,
-            tr=settings.SITE.babelitem,
-            iif=iif,
-            dd=dd,
-            settings=settings,
-            lino=settings.SITE.modules,  # experimental
-            ar=ar,
-            site_config=settings.SITE.site_config,
-            _=translate,
-        )
-        kw.update(language=self.get_print_language())
+        kw.update(_=translate)
         return kw
 
 

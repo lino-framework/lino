@@ -386,6 +386,7 @@ from django.contrib.contenttypes.models import ContentType
 # deprecate direct access to settings.SITE in application code. I am
 # not yet 100% sure whether this will be possible and makes sense.
 
+decfmt = settings.SITE.decfmt
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
 demo_date = settings.SITE.demo_date
