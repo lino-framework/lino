@@ -46,6 +46,7 @@ class Site(Site):
         yield 'lino.modlib.cal'
         # yield 'lino.modlib.reception'
         yield 'lino.modlib.excerpts'
+        yield 'lino.modlib.polls'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 

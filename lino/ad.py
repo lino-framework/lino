@@ -1133,7 +1133,8 @@ class Site(Site):
             dtos=dd.fds,  # obsolete
             dtosl=dd.fdf,  # obsolete
             dtomy=dtomy,  # obsolete
-            mtos=self.decfmt,
+            mtos=self.decfmt,  # obsolete
+            decfmt=self.decfmt,
             fds=dd.fds,
             fdm=dd.fdm,
             fdl=dd.fdl,
@@ -1151,3 +1152,21 @@ class Site(Site):
             site_config=self.site_config,
         )
         return kw
+
+    LOOKUP_OP = '__iexact'
+
+    def lookup_filter(self, fieldname, value, **kw):
+        """
+        Return a `models.Q` to be used if you want to search for a given 
+        string in any of the languages for the given babel field.
+        """
+        from django.db.models import Q
+        kw[fieldname + self.LOOKUP_OP] = value
+        #~ kw[fieldname] = value
+        flt = Q(**kw)
+        del kw[fieldname + self.LOOKUP_OP]
+        for lng in self.BABEL_LANGS:
+            kw[fieldname + lng.suffix + self.LOOKUP_OP] = value
+            flt = flt | Q(**kw)
+            del kw[fieldname + lng.suffix + self.LOOKUP_OP]
+        return flt

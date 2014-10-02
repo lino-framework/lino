@@ -1,0 +1,23 @@
+=========================
+Thursday, October 2, 2014
+=========================
+
+Continued on ticket :doc:`/tickets/130`.
+
+Discovered a bug: :class:`dd.BabelTextField` fields did not expand
+into their language variants in a layout.  This was due to the fact
+that the class was defined twice-- once in :ref:`north` and once in
+:mod:`lino.core.fields`.  I chose a drastic solution: move these
+classes out of :mod:`north` back into Lino. This makes north
+(definitively) useless on iths own.
+
+The :mod:`welfare.aids` module now install its menu commands under
+:mod:`welfare.pcsw`, no longer under :mod:`ml.reception`.
+
+Wrote test cases in :ref:`welfare.tested.aids`. I had quite some
+fiddling with generating demo data for these tests.
+
+Started to move German pages from `docs/de` or :ref:`welfare` to a
+separate tree `docs_de/`.  To support multiple document trees per
+project, I added new project setting
+:attr:`env.doc_trees <atelier.fablib.env.doc_trees>`.

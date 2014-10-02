@@ -25,7 +25,7 @@ using :ref:`polly`.
 >>> print(settings.SETTINGS_MODULE)
 lino.projects.polly.settings.test
 
->>> obj = polls.Response.objects.get(pk=1)
+>>> obj = polls.Response.objects.get(pk=2)
 >>> print(obj)
 Rando Roosi's response to Participant feedback
 

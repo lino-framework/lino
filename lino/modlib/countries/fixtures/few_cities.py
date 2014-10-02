@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
-from north import dbutils
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
 from north.dbutils import babel_values
@@ -32,7 +31,7 @@ def objects():
 
     def make_city(country_id, name=None, **kw):
         kw.setdefault('type', PlaceTypes.city)
-        flt = dbutils.lookup_filter(
+        flt = rt.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
         try:
             return Place.objects.get(flt)

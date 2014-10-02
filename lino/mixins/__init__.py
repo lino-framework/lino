@@ -57,7 +57,7 @@ from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
 from lino.utils import curry
-from north.dbutils import BabelCharField
+from lino.core.fields import BabelCharField
 from lino.utils.xmlgen.html import E
 
 
@@ -862,29 +862,22 @@ class Report(EmptyTable):
         return ''.join(chunks)
 
 
-if True:  # not yet convinced that it is necessary.
+class BabelNamed(model.Model):
 
-    from north.dbutils import BabelNamed
+    """Mixin for models that have a babel field `name` (labelled
+    "Description" by default) for each language.
+    
+    See usage example in :ref:`mldbc_tutorial`.
 
-else:
+    """
 
-    class BabelNamed(model.Model):
+    class Meta:
+        abstract = True
 
-        """
-        Same as :class:`north.dbutils.BabelNamed` except that we now inherit
-        from Lino's extended `Model` instead of Django's plain `Model`.
+    name = BabelCharField(max_length=200, verbose_name=_("Designation"))
 
-        The advantage is that subclasses can call super() when they
-        override one of methods in :class:`dd.Model <lino.core.model.Model>`.
+    def __unicode__(self):
+        return settings.SITE.babelattr(self, 'name')
 
-        """
-
-        class Meta:
-            abstract = True
-
-        name = BabelCharField(max_length=200, verbose_name=_("Designation"))
-
-        def __unicode__(self):
-            return babelattr(self, 'name')
 
 

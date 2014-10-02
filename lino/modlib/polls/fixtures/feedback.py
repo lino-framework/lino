@@ -25,7 +25,7 @@ def objects():
             questions_to_add=questions,
             default_choiceset=choiceset)
 
-    yield poll(five, "Customer Satisfaction Survey", """
+    yield poll(ten, "Customer Satisfaction Survey", """
 Please give your vote for each aspect of our company.
 """, """
 %(X)s has a good quality/price ratio.
@@ -36,7 +36,7 @@ I am proud to be a customer of %(X)s.
 I would recommend %(X)s to others.
 """ % dict(X="Polls Mentor Ltd."))
 
-    yield poll(ten, "Participant feedback", """
+    yield poll(five, "Participant feedback", """
 Please give your vote for each aspect of the event.
 """, """
 There was enough to eat.

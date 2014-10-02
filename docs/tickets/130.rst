@@ -7,9 +7,11 @@ DONE:
 - Bestätiger eines Beschlusses (Granting) : par défaut den primären
   Begleiter eintragen.
 
-- GrantingsByClient : 
+- GrantingsByClient: 
+
   - colum_names : auch "Bestätiger" und "Status". Gremium ist weniger
     wichtig.
+
   - insert_layout ohne "client" 
 
 - Das Feld "Sozialhilfeart" eines Klienten ist provisorisch wieder
@@ -26,21 +28,19 @@ DONE:
 - Tabelle "Meine ausstehenden Bestätigungen" (MyPendingGrantings)
   auf der Startseite.
 
+- **vom** 01.10.2014 **bis zum** 31.10.2014 statt **seit dem**
+  ... **und bis zum** ...
+
+- :attr:`welfare.aids.AidType.long_name` wird jetzt als Template
+  interpretiert.
+ 
 TODO:
 
 - Haushaltszusammensetzung in Bescheinigungen Lebensmittelbank
 
-- **vom** 01.10.2014 **bis zum** 31.10.2014 statt **seit dem**
-  ... **und bis zum** ...
-
-- `aids.AidType.long_name` als Template interpretieren
-  
 - `aids.AidType.address_type` : pro Hilfeart konfigurierbar, welche
   Adresse des Klienten gedruckt wird.  Mal ist es der offizielle
   Wohnsitz, mal die primäre Adresse.
-
-- `ConfirmationsByGranting` ist eine virtuelle Tabelle, deshalb
-  funktioniert dort weder Doppelklick noch Delete.
 
 
 DISCUSS:
@@ -53,3 +53,6 @@ DISCUSS:
   für DSBE als auch für ASD.
 - Testen, ob Periode der Bescheinigung auch innerhalb der Periode des
   Beschlusses liegt.
+- `ConfirmationsByGranting` ist eine virtuelle Tabelle, deshalb
+  funktioniert dort weder Doppelklick noch Delete.
+

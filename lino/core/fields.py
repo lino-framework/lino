@@ -26,33 +26,58 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
+from django.utils.translation import string_concat
 
 
 from djangosite.dbutils import full_model_name
 from djangosite.dbutils import obj2str
 
-from north.dbutils import contribute_to_class
-
 from lino.core.dbutils import resolve_field
 from lino.core.dbutils import resolve_model, UnresolvedModel
 #~ from lino.core.dbutils import is_installed_model_spec
 
-#~ from lino.utils import choosers
 from lino.utils import IncompleteDate, d2iso
-#~ from lino.utils.quantities import Duration
 from lino.utils import quantities
+
+LANGUAGE_CODE_MAX_LENGTH = 5
+
+
+def contribute_to_class(field, cls, fieldclass, **kw):
+    if cls._meta.abstract:
+        return
+    kw.update(blank=True)
+    for lang in settings.SITE.BABEL_LANGS:
+        kw.update(verbose_name=string_concat(
+            field.verbose_name, ' (' + lang.django_code + ')'))
+        newfield = fieldclass(**kw)
+        #~ newfield._lino_babel_field = True
+        # used by dbtools.get_data_elems
+        newfield._lino_babel_field = field.name
+        newfield._babel_language = lang
+        cls.add_to_class(field.name + '_' + lang.name, newfield)
 
 
 class PasswordField(models.CharField):
 
-    """Stored as plain text in database, but not displayed in user interface."""
+    """Stored as plain text in database, but not displayed in user
+interface.
+
+    """
     pass
 
 
-#~ TEXT_FORMAT_PLAIN = 'plain'
-#~ TEXT_FORMAT_HTML = 'html'
-#~ TEXT_FORMAT_TINYMCE = 'tinymce'
-#~ TEXT_FORMAT_VINYLFOX = 'vinylfox'
+class BabelCharField(models.CharField):
+
+    """
+    Define a variable number of `CharField` database fields, 
+    one for each language of your :attr:`ad.Site.languages`.
+    See :ref:`mldbc`.
+    """
+
+    def contribute_to_class(self, cls, name):
+        super(BabelCharField, self).contribute_to_class(cls, name)
+        contribute_to_class(self, cls, models.CharField,
+                            max_length=self.max_length)
 
 
 class RichTextField(models.TextField):
@@ -60,7 +85,7 @@ class RichTextField(models.TextField):
     """
     Only difference with Django's `models.TextField` is that you can
     specify a keyword argument `format` to
-    override the global :attr:`lino.Lino.textfield_format`.
+    override the global :attr:`ad.Site.textfield_format`.
     """
 
     def __init__(self, *args, **kw):
@@ -76,12 +101,34 @@ class BabelTextField(RichTextField):
     """
     Define a variable number of clones of the "master" field,
     one for each language .
+    See :ref:`mldbc`.
     """
 
     def contribute_to_class(self, cls, name):
         super(BabelTextField, self).contribute_to_class(cls, name)
         contribute_to_class(self, cls, RichTextField,
                             format=self.textfield_format)
+
+
+
+class LanguageField(models.CharField):
+
+    """A field that lets the user select a language from the available
+    babel languages.
+
+    """
+
+    def __init__(self, *args, **kw):
+        defaults = dict(
+            verbose_name=_("Language"),
+            choices=iter(settings.SITE.LANGUAGE_CHOICES),
+            default=settings.SITE.get_default_language,
+            #~ default=get_language,
+            max_length=LANGUAGE_CODE_MAX_LENGTH,
+        )
+        defaults.update(kw)
+        models.CharField.__init__(self, *args, **defaults)
+
 
 
 #~ class PercentageField(models.SmallIntegerField):

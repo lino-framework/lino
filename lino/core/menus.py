@@ -328,7 +328,8 @@ class Menu(MenuItem):
             return self.add_item_instance(MenuItem(None, label, **kw))
 
     def add_menu(self, name, label, **kw):
-        return self.add_item_instance(Menu(self.user_profile, name, label, self, **kw))
+        return self.add_item_instance(Menu(
+            self.user_profile, name, label, self, **kw))
 
     def get_item(self, name):
         return self.items_dict[name]
@@ -445,7 +446,7 @@ class Toolbar(Menu):
 
 def find_menu_item(spec):
     from django.conf import settings
-    from lino import dd, rt
+    from lino import dd
     profile = dd.UserProfiles.get_by_value('900')
     menu = settings.SITE.get_site_menu(settings.SITE.ui, profile)
     for mi in menu.walk_items():

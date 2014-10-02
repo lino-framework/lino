@@ -34,9 +34,9 @@ Extended Fields:
 Multilingual database content:
 
 - :class:`BabelNamed <lino.mixins.BabelNamed>`
-- :class:`BabelCharField <north.dbutils.BabelCharField>`
+- :class:`BabelCharField <lino.core.fields.BabelCharField>`
 - :class:`BabelTextField <fields.BabelTextField>`
-- :class:`LanguageField <north.dbutils.LanguageField>`
+- :class:`LanguageField <lino.core.fields.LanguageField>`
 - :class:`babelkw <north.dbutils.babelkw>`
 - :func:`babelattr <north.dbutils.babelattr>`
 - :setting:`babelitem`
@@ -253,7 +253,7 @@ from lino.utils.appy_pod import PrintLabelsAction
 
 from lino.mixins.addressable import Addressable
 
-from north.dbutils import BabelCharField, LanguageField
+from lino.core.fields import BabelCharField, LanguageField
 
 from north.dbutils import babelkw
 from north.dbutils import babelattr
@@ -336,7 +336,7 @@ class PseudoRequest:
 
 from lino.utils import IncompleteDate
 
-from north.dbutils import fds, fdm, fdl, fdf, fdmy
+from north.dbutils import fdm, fdl, fdf, fdmy
 from north.dbutils import fds as fds_
 
 

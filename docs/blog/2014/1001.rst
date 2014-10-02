@@ -2,7 +2,9 @@
 Wednesday, October 1, 2014
 ==========================
 
-Opened ticket :doc:`/tickets/130` andstarted to work on it.
+Opened ticket :doc:`/tickets/130` and started to work on it.
 
 It is now possible to specify the `hidden_fields` attribute of a
 :class:`dd.FormLayout` as a string (with space separated field names).
+
+Checked in although :ref:`welfare` currently doesn't work.

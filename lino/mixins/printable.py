@@ -696,7 +696,7 @@ class Printable(object):
         return self.get_default_build_method()
 
     def get_printable_context(self, ar, **kw):
-        kw = settings.SITE.get_printable_context(**kw)
+        kw = settings.SITE.get_printable_context(ar, **kw)
         kw.update(this=self)  # preferred in new templates
         kw.update(language=self.get_print_language())
 

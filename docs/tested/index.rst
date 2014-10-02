@@ -6,4 +6,6 @@ Tested pages
    :maxdepth: 1
    :glob:
    
-   test*
+   test_i18n
+   test_presto
+   polly

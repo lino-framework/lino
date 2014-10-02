@@ -220,7 +220,7 @@ class TextRenderer(HtmlRenderer):
     def href_to_request(self, sar, tar, text=None):
         if text is None:
             text = '#'
-        return text
+        return E.i(*text)
 
     def show_request(self, ar, *args, **kw):
         """

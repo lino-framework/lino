@@ -576,7 +576,7 @@ def create_layout_element(lh, name, **kw):
     """
     Create a layout element from the named data element.
     """
-    from north.dbutils import BabelCharField, BabelTextField
+    from lino.core.fields import BabelCharField, BabelTextField
     from lino.ui import elems as ext_elems
     from lino.core import fields
     from lino.core import tables

@@ -18,7 +18,6 @@ from djangosite.dbutils import obj2str, full_model_name
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
-from lino.core import dbutils
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
 
@@ -294,8 +293,8 @@ class Model(models.Model):
 
         if isinstance(lookup_field, basestring):
             lookup_field = model._meta.get_field(lookup_field)
-        if isinstance(lookup_field, dbutils.BabelCharField):
-            flt = dbutils.lookup_filter(
+        if isinstance(lookup_field, fields.BabelCharField):
+            flt = settings.SITE.lookup_filter(
                 lookup_field.name, value, **known_values)
         else:
             if isinstance(lookup_field, models.CharField):

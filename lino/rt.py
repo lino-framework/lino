@@ -15,6 +15,7 @@ modules = settings.SITE.modules
 login = settings.SITE.login
 startup = settings.SITE.startup
 get_printable_context = settings.SITE.get_printable_context
+lookup_filter = settings.SITE.lookup_filter
 
 
 def show(*args, **kw):
