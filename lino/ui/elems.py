@@ -378,8 +378,10 @@ class LayoutElement(VisibleComponent):
                     #~ removed.add(k)
             #~ else:
                 #~ removed.add(k)
-        #~ if str(actor) == 'cal.Guests':
-            #~ logger.info("20130720 loosen_requirements %r of %s from %s",','.join(loosened),self.layout_handle.layout,actor)
+        # if str(actor) == 'aids.GrantingsByClient':
+        #     logger.info(
+        #         "20141003 loosen_requirements %r of %s from %s",
+        #         self.required, self.layout_handle.layout, actor)
         if loosened:
             #~ self.required = new
             self.install_permission_handler()

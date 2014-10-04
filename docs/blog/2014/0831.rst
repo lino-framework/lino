@@ -37,6 +37,7 @@ Checkin and update of the :ref:`demos`.
 Removed `admin_item_limit` from :xfile:`admin_main.html`
 ========================================================
 
+:ref:`mustconfig`: 
 How to configure how many rows Lino should display in 
 :xfile:`admin_main.html` for the tables returned by
 :meth:`ad.Site.get_admin_main_items`?

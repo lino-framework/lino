@@ -6,8 +6,6 @@ Polls
 This document tests some functionality of the :mod:`ml.polls` app
 using :ref:`polly`.
 
-.. include:: /include/tested.rst
-
 .. How to test only this document:
   $ python setup.py test -s tests.DocsTests.test_polly
 

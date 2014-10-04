@@ -29,7 +29,8 @@ from lino.utils.xmlgen.html import E
 outbox = dd.require_app_models('outbox')
 postings = dd.require_app_models('postings')
 
-davlink = dd.resolve_plugin('davlink')
+davlink = settings.SITE.plugins.get('davlink', None)
+has_davlink = davlink is not None and settings.SITE.use_java
 
 from .mixins import Certifiable
 
@@ -449,7 +450,7 @@ class Excerpt(dd.TypedPrintable,
         super(Excerpt, cls).on_analyze(site)
 
 
-if davlink:
+if has_davlink:
 
     class ExcerptDetail(dd.FormLayout):
         window_size = (80, 15)
@@ -482,11 +483,12 @@ class Excerpts(dd.Table):
     required = dd.required(user_groups='office', user_level='admin')
     # label = _("Excerpts history")
     icon_name = 'script'
+    use_as_default_table = False
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
     insert_layout = """
-    excerpt_type 
+    excerpt_type
     project
     """
     column_names = ("id build_time owner excerpt_type user project *")
@@ -502,6 +504,7 @@ class MyExcerpts(mixins.ByUser, Excerpts):
 
 
 class ExcerptsByX(Excerpts):
+    use_as_default_table = True
     required = dd.required(user_groups='office')
     column_names = "build_time excerpt_type owner *"
     order_by = ['-build_time', 'id']

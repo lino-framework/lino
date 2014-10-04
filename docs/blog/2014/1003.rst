@@ -1,0 +1,26 @@
+=======================
+Friday, October 3, 2014
+=======================
+
+I rediscovered the ticket :doc:`/tickets/122`
+and merged :doc:`/tickets/130` into it.
+
+Started to prepare database migration for :ref:`dsbe`.
+
+I decided to undo the following change (:blogref:`20140919`):
+
+- :ref:`welfare` now sets the `person_model` for both 
+  :attr:`humanlinks <ml.humanlinks.Plugin.person_model>` and
+  :attr:`household <ml.households.Plugin.person_model>`
+  to `pcsw.Client`. 
+
+Because (1) this would cause lots of simple Persons to become Clients
+in Eupen and (2) it is probably no longer necessary because we have now
+the polymorphic navigator (:blogref:`20140920`).
+
+:mod:`ml.households.SiblingsByPerson` now also in Eupen no longer uses
+`slave_grid_format` "summary"
+
+The ``std``fixture for :mod:`welfare.aids` now adds a company
+"Belgisches Rotes Kreuz", to have an example of a confirmation with
+predefined recipient.

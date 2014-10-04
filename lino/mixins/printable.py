@@ -27,6 +27,7 @@ from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
 
 davlink = settings.SITE.plugins.get('davlink', None)
+has_davlink = davlink is not None and settings.SITE.use_java
 
 
 from lino.core import actions
@@ -439,7 +440,7 @@ class CachedPrintAction(BasePrintAction):
                 kw.update(message=_("Reused %s from cache.") % leaf)
             kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
-            if bm.use_webdav and davlink and ar.request is not None:
+            if bm.use_webdav and has_davlink and ar.request is not None:
                 kw.update(
                     open_davlink_url=ar.request.build_absolute_uri(mf.url))
             else:
@@ -482,8 +483,7 @@ class EditTemplate(BasePrintAction):
     required = dict(user_level='manager')
 
     def get_view_permission(self, profile):
-        if not davlink:
-            # print "20140625 no davlink"
+        if not has_davlink:
             return False
         return super(EditTemplate, self).get_view_permission(profile)
 
@@ -569,7 +569,7 @@ class DirectPrintAction(BasePrintAction):
         bm = elem.get_build_method()
         bm.build(ar, self, elem)
         url = bm.get_target_url(self, elem)
-        if ar.request is not None and bm.use_webdav and davlink:
+        if ar.request is not None and bm.use_webdav and has_davlink:
             url = ar.request.build_absolute_uri(url)
             kw.update(open_davlink_url=url)
         else:

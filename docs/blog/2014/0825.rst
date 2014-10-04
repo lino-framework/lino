@@ -31,9 +31,7 @@ overrideable library models using customizeable model abstractness:
 
         abstract = dd.is_abstract_model('notes.Note')
 
-  by
-
-  ::
+  by::
         abstract = dd.is_abstract_model(__name__, 'Note')
 
 The main reason for this change was a new feature: Lino now supports

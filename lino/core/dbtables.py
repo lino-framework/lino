@@ -229,10 +229,10 @@ def register_report(rpt):
             if not rpt.model._meta.abstract:
                 #~ logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
-            if not rpt.filter and not rpt.exclude and not rpt.known_values and rpt.use_as_default_table:
-                #~ logger.info("register %s : model_report for %s", rpt.actor_id, full_model_name(rpt.model))
-                if not rpt.model.__dict__.has_key('_lino_default_table'):
-                    rpt.model._lino_default_table = rpt
+            if not rpt.filter and not rpt.exclude and not rpt.known_values:
+                if rpt.use_as_default_table:
+                    if not '_lino_default_table' in rpt.model.__dict__:
+                        rpt.model._lino_default_table = rpt
         elif rpt.master is ContentType:
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt

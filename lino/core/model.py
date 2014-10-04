@@ -412,7 +412,7 @@ class Model(models.Model):
 
         """
         a = getattr(self, '_detail_action', None)
-        if not a is None:
+        if a is not None:
             return a
         return self.__class__.get_default_table().detail_action
 

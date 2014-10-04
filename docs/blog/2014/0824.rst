@@ -2,7 +2,8 @@
 Sunday, August 24, 2014
 =======================
 
-Database change for applications which use `lino.modlib.lists`:
+:ref:`mustmig`
+for applications which use `lino.modlib.lists`:
 `List.type` renamed to `List.list_type`. And this field is now
 nullable. And lists.Member is no longer ContactRelated but has a
 single field `partner`.

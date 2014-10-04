@@ -7,6 +7,7 @@ import os
 from django.conf import settings
 
 davlink = settings.SITE.plugins.get('davlink', None)
+has_davlink = davlink is not None and settings.SITE.use_java
 
 
 class MediaFile(object):
@@ -27,14 +28,14 @@ class MediaFile(object):
     @property
     def name(self):
         "return the filename on the server"
-        if self.editable and davlink:
+        if self.editable and has_davlink:
             return os.path.join(settings.SITE.webdav_root, *self.parts)
         return os.path.join(settings.MEDIA_ROOT, *self.parts)
 
     @property
     def url(self):
         "return the url that points to file on the server"
-        if self.editable and davlink:
+        if self.editable and has_davlink:
             return settings.SITE.webdav_url + "/".join(self.parts)
         return settings.SITE.build_media_url(*self.parts)
 

@@ -21,13 +21,33 @@ New feature
 
 .. refstothis:: new
 
+
+.. _mustmig:
+
+Change in database structure
+----------------------------
+
+.. refstothis:: mustmig
+
+
+.. _mustconfig:
+
+Change in local config
+----------------------
+
+.. refstothis:: mustconfig
+
+
 .. _regressions:
 
+Regression danger
+-----------------
 
-This change possibly introduced some regressions
-------------------------------------------------
+"Regression danger" means that this change possibly introduced some
+regressions.
 
-.. refstothis:: new
+.. refstothis:: regressions
+
 
 
 

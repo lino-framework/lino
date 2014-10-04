@@ -5,7 +5,7 @@ Thursday, August 21, 2014
 Fixed some bugs in RecurrenceSet and EventGenerator which made it
 impossible to create a RecurrentEvent with recurrency "once". 
 
-Database change: The `every_unit` field of
+:ref:`mustmig`: The `every_unit` field of
 :class:`ml.cal.RecurrentEvent` is no longer nullable.
 
 RecurrenceSet now saves the deprecated "per weekday" for `every_unit`

@@ -271,7 +271,7 @@ class SiblingsByPerson(Members):
     master = config.person_model
     column_names = 'person role start_date end_date *'
     auto_fit_column_widths = True
-    slave_grid_format = 'summary'
+    # slave_grid_format = 'summary'
     window_size = (100, 20)
 
     @classmethod

@@ -1,2 +1,0 @@
-/home/luc/hgwork/lino/docs/tested/polly.rst:9: SEVERE: Problems with "include" directive path:
-InputError: [Errno 2] No such file or directory: 'include/tested.rst'.

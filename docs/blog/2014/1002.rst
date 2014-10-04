@@ -2,7 +2,24 @@
 Thursday, October 2, 2014
 =========================
 
-Continued on ticket :doc:`/tickets/130`.
+Continued on ticket :doc:`/tickets/122`.
+
+The big new thing today is that I added "templating" to
+:class:`welfare.aids.AidType`.  This was needed because the first
+approach was too simplistic.  I also finally started to write test
+cases in a new tested document :ref:`welfare.tested.aids`.  It was
+quite some work to generate demo data for these tests.
+
+.. note:: 
+
+  Ist dieses Dokument (:ref:`welfare.tested.aids`) verständlich?  Wenn
+  ja, dann wäre das ein schönes Beispiel dafür, dass wir nicht alle
+  Dokumentation in einem Wiki schreiben sollten. Denn wenn du so was
+  in einem Wiki aktuell halten willst, wünsche ich viel Spaß...
+
+  Ich bin aber noch unschlüssig, was die Sprache betrifft. Ich habe
+  das Gefühl, dass es in Deutsch sein muss, wenn es gelesen werden
+  soll.
 
 Discovered a bug: :class:`dd.BabelTextField` fields did not expand
 into their language variants in a layout.  This was due to the fact
@@ -14,10 +31,7 @@ classes out of :mod:`north` back into Lino. This makes north
 The :mod:`welfare.aids` module now install its menu commands under
 :mod:`welfare.pcsw`, no longer under :mod:`ml.reception`.
 
-Wrote test cases in :ref:`welfare.tested.aids`. I had quite some
-fiddling with generating demo data for these tests.
-
 Started to move German pages from `docs/de` or :ref:`welfare` to a
-separate tree `docs_de/`.  To support multiple document trees per
-project, I added new project setting
-:attr:`env.doc_trees <atelier.fablib.env.doc_trees>`.
+separate tree `docs_de/` because they pollute the global keyword
+index.  To support multiple document trees per project, I added new
+project setting :attr:`env.doc_trees <atelier.fablib.env.doc_trees>`.

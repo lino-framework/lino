@@ -436,6 +436,9 @@ class ExtRenderer(HtmlRenderer):
 
     def instance_handler(self, ar, obj):
         a = obj.get_detail_action(ar)
+        if obj.__class__.__name__ == "Excerpt":
+            logger.info("20141003 instance_handler() %s %s", obj.__class__, a)
+        
         if a is not None:
             if ar is None:
                 return self.action_call(None, a, dict(record_id=obj.pk))
