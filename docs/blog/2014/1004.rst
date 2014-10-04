@@ -1,0 +1,17 @@
+=========================
+Saturday, October 4, 2014
+=========================
+
+Oh no! I had another idea!
+
+- Configuration will be much simpler when we can simply select the
+  whole `body_template` for every `AidType <welfare.aids.AidType>`,
+  instead of another template `AidType.long_name` stored in the
+  database.
+
+Afterwards I'd now rather say "Oh yes!" because it's better that I saw
+this *before* :mod:`welfare.aids` went into production.  It starts to
+be beautiful.  I am working on the documentation.  Here is in the new
+German user guide for :ref:`welfare`:
+
+http://de.welfare.lino-framework.org

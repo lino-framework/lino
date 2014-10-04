@@ -9,9 +9,9 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ungettext
 
 from lino import dd, rt
-from lino import rt
 from lino.utils import join_words, join_elems
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
@@ -195,7 +195,7 @@ class Member(dd.DatePeriod):
     role = MemberRoles.field(
         default=MemberRoles.child, blank=True, null=True)
     person = models.ForeignKey(
-        config.person_model, 
+        config.person_model,
         related_name='household_members')
     household = models.ForeignKey('households.Household')
     primary = models.BooleanField(
@@ -298,7 +298,7 @@ class SiblingsByPerson(Members):
                 else:
                     ar.no_data_text = _(
                         "%s is member of multiple households") % mi
-        
+
     @classmethod
     def get_filter_kw(self, ar, **kw):
         # hh = self.get_master_household(ar.master_instance)

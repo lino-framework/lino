@@ -30,6 +30,15 @@ class AddressOwner(dd.Model):
     class Meta:
         abstract = True
 
+    def get_address_by_type(self, address_type):
+        try:
+            return Address.objects.get(
+                partner=self, address_type=address_type)
+        except Address.DoesNotExist:
+            return self.get_primary_address()
+        except Address.MultipleObjectsReturned:
+            return self.get_primary_address()
+        
     def get_primary_address(self):
         # Address = rt.modules.addresses.Address
         # AddressTypes = rt.modules.addresses.AddressTypes

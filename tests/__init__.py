@@ -100,18 +100,19 @@ class DocsTests(LinoTestCase):
     def test_hello(self):
         self.run_django_manage_test('docs/tutorials/hello')
 
+    def test_utils(self):
+        self.run_simple_doctests('lino/utils/__init__.py')
+
 
 class UtilsTests(LinoTestCase):
 
     def test_01(self):
         self.run_simple_doctests("""
         lino/utils/instantiator.py
-        lino/utils/__init__.py
         lino/modlib/cal/utils.py
         lino/modlib/iban/utils.py
         """)
 
-    # def test_01(self): self.run_simple_doctests('lino/utils/__init__.py')
     def test_02(self): self.run_simple_doctests('lino/utils/html2odf.py')
     def test_xmlgen_html(self): self.run_simple_doctests('lino/utils/xmlgen/html.py')
     def test_xmlgen_sepa(self): 

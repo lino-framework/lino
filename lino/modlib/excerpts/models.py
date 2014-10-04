@@ -23,7 +23,6 @@ from django.core.exceptions import ValidationError
 
 from lino import dd, rt
 from lino import mixins
-from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
 
 outbox = dd.require_app_models('outbox')
@@ -85,22 +84,9 @@ class ExcerptType(
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, content_type):
-        tplgroups = [model_group(content_type.model_class()), 'excerpts']
+        tplgroups = [
+            content_type.model_class().get_template_group(), 'excerpts']
         return cls.get_template_choices(build_method, tplgroups)
-
-    @dd.chooser(simple_values=True)
-    def body_template_choices(cls, content_type):
-        # 20140617 don't remember why the "excerpts" group was useful here
-        # tplgroups = [model_group(content_type.model_class()), 'excerpts']
-        # return settings.SITE.list_templates('.body.html', *tplgroups)
-
-        tplgroup = model_group(content_type.model_class())
-        return settings.SITE.list_templates('.body.html', tplgroup)
-
-    # @dd.chooser(simple_values=True)
-    # def body_template_choices(cls):
-    #     return settings.SITE.list_templates(
-    #         '.body.html', cls.get_templates_group())
 
     def full_clean(self, *args, **kwargs):
         if self.certifying:
@@ -137,31 +123,31 @@ class ExcerptType(
     def after_ui_save(self, ar):
         super(ExcerptType, self).after_ui_save(ar)
         if self.primary:
-        # if self.update_siblings():
             ar.set_response(refresh_all=True)
 
     @classmethod
     def get_template_groups(cls):
-        raise Exception("""20140520 Not used by ExcerptType. We
-        override everything else to not call the class method.""")
+        raise Exception("""Not used by ExcerptType. \
+We override everything in Excerpt to not call the class method.""")
 
-    def get_body_template_filename(self):
-        if not self.body_template:
-            return
-        tplgroup = model_group(self.content_type.model_class())
-        return settings.SITE.find_config_file(
-            self.body_template, tplgroup)
+    @dd.chooser(simple_values=True)
+    def body_template_choices(cls, content_type):
+        # 20140617 don't remember why the "excerpts" group was useful here
+        # tplgroups = [model_group(content_type.model_class()), 'excerpts']
+        # return settings.SITE.list_templates('.body.html', *tplgroups)
 
-    def get_body_template_name(self):
-        if not self.body_template:
-            return None
-        tplgroup = model_group(self.content_type.model_class())
-        return tplgroup + '/' + self.body_template
+        tplgroup = content_type.model_class().get_template_group()
+        return settings.SITE.list_templates('.body.html', tplgroup)
+
+    @classmethod
+    def get_for_model(cls, model):
+        "Return the primary ExcerptType for the given model."
+        ct = ContentType.objects.get_for_model(dd.resolve_model(model))
+        return cls.objects.get(primary=True, content_type=ct)
 
     @classmethod
     def update_for_model(cls, model, **kw):
-        ct = ContentType.objects.get_for_model(dd.resolve_model(model))
-        obj = cls.objects.get(primary=True, content_type=ct)
+        obj = cls.get_for_model(model)
         for k, v in kw.items():
             setattr(obj, k, v)
         obj.full_clean()
@@ -294,14 +280,14 @@ class BodyTemplateContentField(dd.VirtualField):
         dd.VirtualField.__init__(self, rt, None)
 
     def value_from_object(self, obj, ar):
-        fn = obj.excerpt_type.get_body_template_filename()
+        fn = obj.get_body_template_filename()
         if not fn:
             return "(%s)" % _(
                 "Excerpt type \"%s\" has no body_template") % obj.excerpt_type
-        return file(fn).read()
+        return file(fn).read().decode('utf8')
 
     def set_value_in_object(self, ar, obj, value):
-        fn = obj.excerpt_type.get_body_template_name()
+        fn = obj.get_body_template_name()
         if not fn:
             return
             # raise Warning(
@@ -338,6 +324,29 @@ class Excerpt(dd.TypedPrintable,
     if dd.is_installed('outbox'):
         mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
+    def get_body_template(self):
+        assert self.__class__ is not self.owner.__class__
+        tplname = self.owner.get_body_template()
+        if tplname:
+            return tplname
+        return self.excerpt_type.body_template
+
+    def get_body_template_filename(self):
+        tplname = self.get_body_template()
+        if not tplname:
+            return None
+        mc = self.excerpt_type.content_type.model_class()
+        tplgroup = mc.get_template_group()
+        return settings.SITE.find_config_file(tplname, tplgroup)
+
+    def get_body_template_name(self):
+        tplname = self.get_body_template()
+        if not tplname:
+            return None
+        mc = self.excerpt_type.content_type.model_class()
+        tplgroup = mc.get_template_group()
+        return tplgroup + '/' + tplname
+
     def disabled_fields(self, ar):
         rv = super(Excerpt, self).disabled_fields(ar)
         rv = rv | set(['excerpt_type', 'project'])
@@ -353,15 +362,15 @@ class Excerpt(dd.TypedPrintable,
     def get_mailable_type(self):
         return self.excerpt_type
 
-    @property
-    def recipient(self):
-        return self.owner.get_print_recipient()
+    # @property
+    # def recipient(self):
+    #     return self.owner.get_print_recipient()
 
     def get_template_groups(self):
         ptype = self.get_printable_type()
         if ptype is None:
             raise Exception("20140520 Must have excerpt_type.")
-        grp = model_group(ptype.content_type.model_class())
+        grp = ptype.content_type.model_class().get_template_group()
         return [grp, 'excerpts']
 
     def filename_root(self):
@@ -421,23 +430,18 @@ class Excerpt(dd.TypedPrintable,
     def get_printable_context(self, ar, **kw):
         kw = super(Excerpt, self).get_printable_context(ar, **kw)
         kw.update(obj=self.owner)
-        # kw.update(excerpt=self)
         body = ''
         if self.excerpt_type_id is not None:
-            atype = self.excerpt_type
-            if atype.backward_compat:
+            etype = self.excerpt_type
+            if etype.backward_compat:
                 kw.update(this=self.owner)
 
-            tplname = atype.get_body_template_name()
+            tplname = self.get_body_template_name()
             if tplname:
                 template = settings.SITE.jinja_env.get_template(tplname)
                 body = ar.render_jinja(template, **kw)
 
         kw.update(body=body)
-        # if self.owner is not None:
-        #     kw.update(self=self.owner)
-        #     kw.update(this=self.owner)
-        #     kw.update(doc=self)
         return kw
 
     @classmethod

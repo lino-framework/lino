@@ -6,9 +6,14 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 
 
+class AddressType(dd.Choice):
+    living_text = _("living at")
+
+
 class AddressTypes(dd.ChoiceList):
     verbose_name = _("Address type")
     verbose_name_plural = _("Address types")
+    item_class = AddressType
 
 add = AddressTypes.add_item
 add('01', _("Official address"), 'official')  # IT020

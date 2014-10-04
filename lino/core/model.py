@@ -428,6 +428,15 @@ action on individual instances.
         d = getattr(cls, '_choosers_dict', {})
         return d.get(fieldname, None)
 
+    @classmethod
+    def get_template_group(cls):
+        # used by excerpts and printable
+        return cls._meta.app_label + '/' + cls.__name__
+
+    def get_body_template(self):
+        # used by excerpts
+        return ''
+
     def get_excerpt_options(self, ar, **kw):
         """Set additional fields of newly created excerpts from this.
         Used by :class:`ml.excerpts.CreateExcerpt`.
@@ -465,6 +474,7 @@ action on individual instances.
         'hidden_columns',
         'hidden_elements',
         'get_default_table',
+        'get_template_group',
         'get_related_project',
         'get_system_note_recipients',
         'get_system_note_type',

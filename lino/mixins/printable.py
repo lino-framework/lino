@@ -55,10 +55,6 @@ except ImportError:
     pyratemp = None
 
 
-def model_group(model):
-    return model._meta.app_label + '/' + model.__name__
-
-
 class BuildMethod(Choice):
 
     """Base class for all build methods.  A build method encapsulates the
@@ -677,7 +673,7 @@ class Printable(object):
         pass
 
     def get_template_groups(self):
-        return [model_group(self.__class__)]
+        return [self.__class__.get_template_group()]
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ \

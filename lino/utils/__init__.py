@@ -6,6 +6,10 @@
 function for general use. There are also many Subpackages_ and
 Submodules_.
 
+This is a tested document. To test it, run::
+
+  $ python setup.py test -s tests.DocsTests.test_utils
+
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
 
@@ -199,14 +203,14 @@ class IncompleteDate:
     Naive representation of a potentially incomplete gregorian date.
 
     Once upon a time in the year 2011:
-    >>> print IncompleteDate(2011,0,0).strftime("%d.%m.%Y")
+    >>> print IncompleteDate(2011, 0, 0).strftime("%d.%m.%Y")
     00.00.2011
 
-    >>> print IncompleteDate(1532,0,0)
+    >>> print IncompleteDate(1532, 0, 0)
     1532-00-00
-    >>> print IncompleteDate(1990,0,1)
+    >>> print IncompleteDate(1990, 0, 1)
     1990-00-01
-    >>> print IncompleteDate(0,6,1)
+    >>> print IncompleteDate(0, 6, 1)
     0000-06-01
 
     W.A. Mozart's birth date:
@@ -241,6 +245,18 @@ class IncompleteDate:
     True
     >>> print repr(d.as_date())
     datetime.date(2011, 11, 19)
+
+    >>> d = IncompleteDate.parse('2008-03-24')
+    >>> d.get_age(i2d(20131224))
+    5
+    >>> d.get_age(i2d(20140323))
+    5
+    >>> d.get_age(i2d(20140324))
+    6
+    >>> d.get_age(i2d(20140325))
+    6
+    >>> d.get_age(i2d(20141025))
+    6
 
     """
 
@@ -305,6 +321,13 @@ class IncompleteDate:
             self.month or 1,
             self.day or 1)
 
+    def get_age(self, today):
+        a = (self.month, self.day)
+        b = (today.month, today.day)
+        if a > b:
+            return today.year - self.year - 1
+        return today.year - self.year
+        
 
 #~ class Warning(Exception):
     #~ """
