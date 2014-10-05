@@ -1,8 +1,9 @@
+==============================
 #122: Endspurt Bescheinigungen
 ==============================
 
-Neue Version im ÖSHZ Eupen geplant für den 06.10.2014 (Upgrade seit
-14.08.2014)
+Upgrade nach :ref:`welfare` 1.1.17 im ÖSHZ Eupen geplant für den
+06.10.2014 (Upgrade seit 14.08.2014).
 
 Übersicht der wichtigsten Änderungen 
 
@@ -18,7 +19,7 @@ SICHTBARE ÄNDERUNGEN:
 
 - Haushaltszusammensetzung (:mod:`ml.households.SiblingsByPerson`):
 
-  (1) Ist jetzt wieder eine normale Tabelle statt eine Zusammenfassung
+  (1) Ist jetzt eine normale Tabelle statt eine Zusammenfassung
       (:attr:`slave_grid_format <dd.AbstractTable.slave_grid_format>`)
   (2) im Fall von mehreren Haushalten kann man jetzt leicht von einem
       zum anderen wechseln, indem man auf die Checkbox klickt.
@@ -31,9 +32,9 @@ SICHTBARE ÄNDERUNGEN:
   dich ich als "Bestätiger" eingetragen bin, die ich aber noch nicht
   bestätigt habe.
 
-- Neues Menü "ÖSHZ" im Hauptmenü mit bislang zwei Befehlen, die
-  sowohl für DSBE als auch für ASD existieren.
-  ("Zu unterschreibende Hilfebeschlüsse" und "Meine Begleitungen") 
+- Neues Menü "ÖSHZ" im Hauptmenü mit --fürs erste-- zwei Befehlen, die
+  sowohl für DSBE als auch für ASD existieren: "Zu unterschreibende
+  Hilfebeschlüsse" und "Meine Begleitungen".
 
 - Das Feld "Sozialhilfeart" eines Klienten ist provisorisch wieder
   sichtbar (im Reiter "Hilfen"). Dieses Feld wird momentan noch in der

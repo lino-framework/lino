@@ -2,5 +2,20 @@
 Sunday, October 5, 2014
 =======================
 
-Repaired the test suite of :ref:`welfare` which was broken after
-recent changes.
+Final sprint for ticket :doc:`/tickets/122` : repaired the test suite
+of :ref:`welfare` which was broken after recent changes.
+A last change to :meth:`lino_welafre.migrate.Migrator.migrate_from_1_1_16`.
+
+Data migration on the production site.
+Seems that everything went well.
+
+Discovered a minor Javascript-releated bug:
+`ExtRenderer.action_call_on_instance` generated the action call to
+:class:`welfare.reception.CreateCoachingVisit` as::
+
+  Lino.pcsw.Coachings.create_visit(...)
+
+which was wrong, it must be::
+
+  Lino.pcsw.Coachings.create_visit.run(...)
+

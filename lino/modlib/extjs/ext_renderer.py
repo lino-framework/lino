@@ -361,16 +361,13 @@ class ExtRenderer(HtmlRenderer):
         """
         if ar is None:
             rp = None
-        else:
-            rp = ar.requesting_panel
-
-        if ar is None:
             sar = ba.request(**request_kwargs)
         else:
+            rp = ar.requesting_panel
             sar = ar.spawn(ba, **request_kwargs)
-            # sar = ba.request(request=ar.request)
 
-        if ba.action.opens_a_window:
+        if ba.action.opens_a_window or (
+                ba.action.parameters and not ba.action.no_params_window):
             st.update(self.get_action_status(sar, ba, obj))
             st.update(record_id=obj.pk)
             return "Lino.%s.run(%s,%s)" % (
@@ -436,8 +433,6 @@ class ExtRenderer(HtmlRenderer):
 
     def instance_handler(self, ar, obj):
         a = obj.get_detail_action(ar)
-        if obj.__class__.__name__ == "Excerpt":
-            logger.info("20141003 instance_handler() %s %s", obj.__class__, a)
         
         if a is not None:
             if ar is None:
@@ -1330,32 +1325,31 @@ class ExtRenderer(HtmlRenderer):
         yield "  if(panel) panel.do_when_clean(true, h); else h();"
         yield "};"
 
-    def js_render_window_action(self, rh, action, profile):
-
+    def js_render_window_action(self, rh, ba, profile):
         rpt = rh.actor
 
-        if rpt.parameters and action.action.use_param_panel:
+        if rpt.parameters and ba.action.use_param_panel:
             params_panel = rh.params_layout_handle
         else:
             params_panel = None
 
-        if isinstance(action.action, actions.ShowDetailAction):
-            mainPanelClass = "Lino.%sPanel" % action.full_name()
-        elif isinstance(action.action, actions.InsertRow):
-            mainPanelClass = "Lino.%sPanel" % action.full_name()
-        elif isinstance(action.action, actions.GridEdit):
+        if isinstance(ba.action, actions.ShowDetailAction):
+            mainPanelClass = "Lino.%sPanel" % ba.full_name()
+        elif isinstance(ba.action, actions.InsertRow):
+            mainPanelClass = "Lino.%sPanel" % ba.full_name()
+        elif isinstance(ba.action, actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-        elif action.action.params_layout:
-            params_panel = action.action.make_params_layout_handle(
+        elif ba.action.parameters:
+            params_panel = ba.action.make_params_layout_handle(
                 settings.SITE.plugins.extjs)
-        elif action.action.extjs_main_panel:
+        elif ba.action.extjs_main_panel:
             pass
         else:
             return
 
         windowConfig = dict()
-        wl = action.get_window_layout()
-        ws = action.get_window_size()
+        wl = ba.get_window_layout()
+        ws = ba.get_window_size()
         #~ if wl is not None:
             #~ ws = wl.window_size
         if True:
@@ -1378,15 +1372,15 @@ class ExtRenderer(HtmlRenderer):
                 #~ print 20120629, action, windowConfig
 
         yield "Lino.%s = new Lino.WindowAction(%s, function(){" % (
-            action.full_name(), py2js(windowConfig))
+            ba.full_name(), py2js(windowConfig))
         #~ yield "  console.log('20120625 fn');"
-        if action.action.extjs_main_panel:
-            yield "  return %s;" % action.action.extjs_main_panel
+        if ba.action.extjs_main_panel:
+            yield "  return %s;" % ba.action.extjs_main_panel
         else:
             p = dict()
-            if action.action is settings.SITE.get_main_action(profile):
+            if ba.action is settings.SITE.get_main_action(profile):
                 p.update(is_home_page=True)
-            if action.action.hide_top_toolbar or action.actor.hide_top_toolbar or action.action.parameters:
+            if ba.action.hide_top_toolbar or ba.actor.hide_top_toolbar or ba.action.parameters:
                 p.update(hide_top_toolbar=True)
             if rpt.hide_window_title:
                 p.update(hide_window_title=True)
@@ -1394,7 +1388,7 @@ class ExtRenderer(HtmlRenderer):
             p.update(is_main_window=True)  # workaround for problem 20111206
             yield "  var p = %s;" % py2js(p)
             if params_panel:
-                if action.action.parameters:
+                if ba.action.parameters:
                     yield "  return new Lino.%s({});" % wl._formpanel_name
                 else:
                     yield "  p.params_panel = new Lino.%s({});" % params_panel.layout._formpanel_name
