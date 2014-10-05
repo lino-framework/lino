@@ -16,7 +16,7 @@ class MediaFile(object):
     Represents a file on the server with two properties `name` and `url`,
     using
     :setting:`MEDIA_ROOT`
-    :attr:`use_davlink <lino.site.Site.use_davlink>`
+    :attr:`use_davlink <ad.Site.use_davlink>`
     :attr:`webdav_root <ad.Site.webdav_root>`
     :attr:`webdav_url <ad.Site.webdav_url>`
     """
