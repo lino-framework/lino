@@ -28,9 +28,112 @@ This app is being extended by :ref:`welfare` in
   ...   'lino.projects.docs.settings'
   >>> from lino.runtime import *
 
+Models
+======
+
+- The :class:`Partner` model (and its two subclasses
+  :class:`Person` and :class:`Company`)
+
+- A :class:`CompanyType` model can be used to classify companies.
+
+- The :class:`Role` and :class:`RoleType` models store "who is who"
+  information.
+
+Partner
+-------
+
+.. class:: Partner(AddressLocation)
+
+    A Partner is any physical or moral person for which you want to
+    keep contact data (address, phone numbers, ...).
+
+    A :class:`Partner` can act as the recipient of a sales invoice, as
+    the sender of an incoming purchases invoice, ...
+
+    A Partner has at least a name and usually also an "official" address.
+
+    Predefined subclasses of Partners are :class:`Person` for physical
+    persons and :class:`Company` for companies, organisations and any
+    kind of non-formal Partners.
+
+    Lino differentiates the following subclasses of Partner:
+
+    .. django2rst:: contacts.Partner.print_subclasses_graph()
+
+
+
+  .. attribute:: name
+
+    The full name of this partner. Used for alphabetic
+    sorting. Subclasses may fill this field automatically, e.g. saving
+    a :class:`Person` will automatically set her `name` field to
+    "last_name, first_name".
+
+  .. attribute:: email
+
+    The primary email address.
+
+Person
+------
+
+.. class:: Person
+
+    Represents a physical person and an individual human being.
+    See :ref:`lino.tutorial.human`.
+
+Company
+-------
+
+.. class:: Company
+
+    Represents an organisation.  The internal name is "Company" for
+    historical reasons and because that's easier to type.
+
+    See also :doc:`/tickets/14`.
+
+  .. attribute:: type
+    
+    Pointer to the :class:`CompanyType`. 
+
+CompanyType
+-----------
+
+.. class:: CompanyType
+
+    Represents a possible choice for the :attr:`Company.type`
+    field. The :mod:`std <ml.contacts.std>` fixture fills this with
+    the following data (5 first rows only):
+
+    .. django2rst:: rt.show(contacts.CompanyTypes, limit=5)
+
+Role
+----
+
+.. class:: Role
+
+    A Role is when a given :class:`Person` plays a given
+    :class:`RoleType` in a given :class:`Company`.
+
+RoleType
+--------
+
+.. class:: RoleType
+
+    A :class:`RoleType` is "what a given :class:`Person` can be for a
+    given :class:`Company`".
+
+    The default database comes with the following list of 
+    :class:`RoleType`:
+    
+    .. django2rst:: rt.show(contacts.RoleTypes)
+    
+
 
 Mixins
 ======
+
+AddressLocation
+---------------
 
 .. class:: AddressLocation
 
@@ -69,91 +172,28 @@ Mixins
 
 
 
-Models
-======
+ContactRelated
+--------------
 
-- The :class:`Partner` model (and its two subclasses
-  :class:`Person` and :class:`Company`)
+.. class:: ContactRelated
 
-- A :class:`CompanyType` model can be used to classify companies.
+    Model mixin for things that relate to a *company*, potentially
+    represented by a *contact person* having a given *role*.
 
-- The :class:`Role` and :class:`RoleType` models store "who is who"
-  information.
+    Adds 3 fields `company`, `contact_person` and `contact_role`.
 
+    .. attribute:: company
 
-.. class:: Partner(AddressLocation)
+    Pointer to :class:`Company`.
 
-    A Partner is any physical or moral person for which you want to
-    keep contact data (address, phone numbers, ...).
+    .. attribute:: contact_person
 
-    A :class:`Partner` can act as the recipient of a sales invoice, as
-    the sender of an incoming purchases invoice, ...
+    Pointer to :class:`Person`.
 
-    A Partner has at least a name and usually also an "official" address.
+    .. attribute:: contact_role
 
-    Predefined subclasses of Partners are :class:`Person` for physical
-    persons and :class:`Company` for companies, organisations and any
-    kind of non-formal Partners.
+    Pointer to :class:`RoleType`.
 
-    Lino differentiates the following subclasses of Partner:
-
-    .. django2rst:: contacts.Partner.print_subclasses_graph()
-
-
-
-  .. attribute:: name
-
-    The full name of this partner. Used for alphabetic
-    sorting. Subclasses may fill this field automatically, e.g. saving
-    a :class:`Person` will automatically set her `name` field to
-    "last_name, first_name".
-
-  .. attribute:: email
-
-    The primary email address.
-
-.. class:: Person
-
-    Represents a physical person and an individual human being.
-    See :ref:`lino.tutorial.human`.
-
-.. class:: Company
-
-    Represents an organisation.  The internal name is "Company" for
-    historical reasons and because that's easier to type.
-
-    See also :doc:`/tickets/14`.
-
-  .. attribute:: type
-    
-    Pointer to the :class:`CompanyType`. 
-
-.. class:: CompanyType
-
-    Represents a possible choice for the :attr:`Company.type`
-    field. The :mod:`std <ml.contacts.std>` fixture fills this with
-    the following data (5 first rows only):
-
-    .. django2rst::
-
-       rt.show(contacts.CompanyTypes, limit=5)
-
-.. class:: Role
-
-    A Role is when a given :class:`Person` plays a given
-    :class:`RoleType` in a given :class:`Company`.
-
-.. class:: RoleType
-
-    A :class:`RoleType` is 
-    "what a given :class:`Person` can be for a given 
-    :class:`Company`".
-
-    The default database comes with the following list of 
-    :class:`RoleType`:
-    
-    .. django2rst:: rt.show(contacts.RoleTypes)
-    
 
 
 

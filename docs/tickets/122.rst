@@ -85,23 +85,21 @@ DONE:
 
 - Titel im Ausdruck der Bescheinigungen
 
-
-
-TODO:
-
-- RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakten.
-
-- Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
-
 - Im Detail einer EiEi-Bescheinigung fehlen die Buttons "Print" und
   "Clear Cache".
 
-- Unten links fehlt ein Stück des Rahmens
+TODO:
 
-- In GrantingsByClient kann alicia auf dem *phantom record*
-  doppelklicken und kriegt dann auch das `insert_layout` angeziegt,
-  kann da drin aber nichts bearbeiten. Alle Felder sind
-  schreibgeschützt.
+- Formatierung Ausdruck: 
+  - "U. Zeichen / N. réf."
+  - Mehr Platz zwischen "U.Zeichen" und "Bescheinigung"
+  - Eupen, den/le
+  - E-Mail-Adresse und Abteilung des Autors
+  - Alle Banken raus außer Dexia
+  - Alle "festen" Werte in Arial (sans serif) und alle "variablen"
+    Werte in Times Roman (serif)
+- Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
+- Unten links fehlt ein Stück des Rahmens
 
 DISCUSS:
 
@@ -118,6 +116,8 @@ DISCUSS:
   der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
   dann, wenn man das Dokument neu generieren lassen will. Also ein
   zweiter Link...
+- RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakten.
+
   
 
 DEFERRED
@@ -128,6 +128,11 @@ DEFERRED
   Controllable objects controlled by this.  For example the excerpts of
   a confirmation, the uploads of a client.
 - Vereinfachtes Detail Klienten für Empfang
+
+- In GrantingsByClient kann alicia auf dem *phantom record*
+  doppelklicken und kriegt dann auch das `insert_layout` angeziegt,
+  kann da drin aber nichts bearbeiten. Alle Felder sind
+  schreibgeschützt.
 
 
 Seiten, die hierher verweisen:

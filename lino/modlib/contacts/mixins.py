@@ -11,13 +11,6 @@ from lino import dd, rt
 
 class ContactRelated(dd.Model):
 
-    """Abstract class for things that relate to a company represented by
-    a person as a given role.
-
-    Adds 3 fields `company`, `contact_person` and `contact_role`.
-
-    """
-
     class Meta:
         abstract = True
 
