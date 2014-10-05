@@ -9,7 +9,7 @@ A last change to :meth:`lino_welafre.migrate.Migrator.migrate_from_1_1_16`.
 Data migration on the production site.
 Seems that everything went well.
 
-Discovered a minor Javascript-releated bug:
+Discovered and fixed a minor Javascript-releated bug:
 `ExtRenderer.action_call_on_instance` generated the action call to
 :class:`welfare.reception.CreateCoachingVisit` as::
 
@@ -18,4 +18,20 @@ Discovered a minor Javascript-releated bug:
 which was wrong, it must be::
 
   Lino.pcsw.Coachings.create_visit.run(...)
+
+Discovered and fixed an AttributeError "'NoneType' object has no
+attribute 'model'" when trying to select `body_template` on an AidType
+with empty `confirmation_type` (e.g. "Erstattung").
+
+The `excerpts/base.body.html` had a nonsense default title block
+``{{this}}`` which renderd to "Unprinted Excerpt #7". What we want
+there is rather ``{{this.excerpt_type}}``.
+
+Presence certificate did not print the "We certify that ..." block.
+New method :meth:`ml.addresses.Address.living_at_text` used in both
+:meth:`welfare.aids.Confirmation.confirmation_address`
+and the presence_certificate.body.html template::
+
+  {{obj.client.get_primary_address().living_at_text()}}
+
 

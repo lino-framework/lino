@@ -128,6 +128,10 @@ class Address(AddressLocation):
                     ar.set_response(refresh_all=True)
         mi.sync_primary_address(ar.request)
 
+    def living_at_text(self):
+        lines = list(self.address_location_lines())
+        return self.address_type.living_text + ' ' + ', '.join(lines)
+
 
 Address.ADDRESS_FIELDS = dd.fields_list(
     Address,
