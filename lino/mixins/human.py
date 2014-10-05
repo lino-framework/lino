@@ -22,7 +22,7 @@ from lino.core import fields
 from lino.core import model
 
 
-def get_salutation(gender, nominative=True):
+def get_salutation(gender, nominative=False):
     """Returns "Mr" or "Mrs" or a translation thereof, depending on the
     gender and the current language.
     
@@ -31,9 +31,10 @@ def get_salutation(gender, nominative=True):
     <http://en.wikipedia.org/wiki/Mrs.>`_ are written either *with*
     (AE) or *without* (BE) a dot.
     
-    The optional keyword argument `nominative` is used only when
-    language is "de": specifying ``nominative=False`` will return
-    "Herrn" instead of default "Herr" for male persons.
+    The optional keyword argument `nominative` is used only in certain
+    languages like German: specifying ``nominative=True`` for a male
+    person will return the nominative or direct form "Herr" instead of
+    the default (accusative or indirect form) "Herrn".
 
     """
     if not gender:
@@ -76,7 +77,7 @@ class Human(model.Model):
         return u or m
 
     def __unicode__(self):
-        return self.get_full_name()
+        return self.get_full_name(nominative=True)
 
     def get_salutation(self, **salutation_options):
         return get_salutation(

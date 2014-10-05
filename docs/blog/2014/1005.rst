@@ -27,11 +27,23 @@ The `excerpts/base.body.html` had a nonsense default title block
 ``{{this}}`` which renderd to "Unprinted Excerpt #7". What we want
 there is rather ``{{this.excerpt_type}}``.
 
-Presence certificate did not print the "We certify that ..." block.
-New method :meth:`ml.addresses.Address.living_at_text` used in both
-:meth:`welfare.aids.Confirmation.confirmation_address`
-and the presence_certificate.body.html template::
+Presence certificate (`presence_certificate.body.html` template) did
+not print correctly.
 
-  {{obj.client.get_primary_address().living_at_text()}}
+- The "We certify that ..." block was missing
 
+- New method :meth:`ml.addresses.Address.living_at_text` used in both
+  :meth:`welfare.aids.Confirmation.confirmation_address`
+  and the `presence_certificate.body.html` template::
 
+    {{obj.client.get_primary_address().living_at_text()}}
+
+- New method :func:`dd.strftime`.
+
+- :class:`VirtualGetter <lino.code.fields.VirtualGetter>` now has a 
+  ``__getattr__`` method which makes it possible to write::
+
+     {{obj.client.national_id}}
+
+- Should the default value for the `nominative` argument to
+  :func:`lino.mixins.human.get_salutation` be `True` or `False`?

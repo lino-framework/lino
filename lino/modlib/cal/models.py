@@ -212,9 +212,8 @@ Whether this is private, public or between."""))  # iCal:CLASS
         #~ if self.owner and not self.auto_type:
         html = [ar.obj2html(self)]
         if self.start_time:
-            #~ html += _(" at ") + unicode(self.start_time)
             html += [_(" at "),
-                     self.start_time.strftime(settings.SITE.time_format_strftime)]
+                     dd.strftime(self.start_time)]
         if self.state:
             html += [' [%s]' % force_unicode(self.state)]
         if self.summary:

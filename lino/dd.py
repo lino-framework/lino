@@ -389,6 +389,7 @@ from django.contrib.contenttypes.models import ContentType
 decfmt = settings.SITE.decfmt
 str2kw = settings.SITE.str2kw
 today = settings.SITE.today
+strftime = settings.SITE.strftime
 demo_date = settings.SITE.demo_date
 is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed

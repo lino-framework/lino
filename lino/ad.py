@@ -453,6 +453,11 @@ class Site(Site):
         #~ d = datetime.date(*self.parse_date(s[0]))
         #~ return datetime.combine(d,t)
 
+    def strftime(self, t):
+        if t is None:
+            return ''
+        return t.strftime(self.time_format_strftime)
+
     def resolve_virtual_fields(self):
         for vf in self.VIRTUAL_FIELDS:
             vf.lino_resolve_type()

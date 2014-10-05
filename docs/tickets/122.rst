@@ -69,13 +69,21 @@ DONE:
 - **vom** 01.10.2014 **bis zum** 31.10.2014 statt **seit dem**
   ... **und bis zum** ...
 
-- :attr:`welfare.aids.AidType.long_name` wird jetzt als Template
-  interpretiert.
+- :attr:`welfare.aids.AidType.body_template` überwirkt das
+  gleichnamige Feld :class:`ml.excerpts.ExcerptType`.
 
 - Wenn man auf einem Beschluss auf "Bescheinigung erstellen" klickt,
   soll das Dialogfenster nicht nochmal nach dem Klienten und dem
   Beschluss fragen.  Also in SimpleConfirmation.insert_layout :
   "client" und "granting" aus dem dialog raus.
+
+- Ausdruck Lebensmittelbank: Haushaltszusammensetzung
+
+- `aids.AidType.address_type` : pro Hilfeart konfigurierbar, welche
+  Adresse des Klienten gedruckt wird.  Mal ist es der offizielle
+  Wohnsitz, mal die primäre Adresse.
+
+- Titel im Ausdruck der Bescheinigungen
 
 
 
@@ -83,26 +91,12 @@ TODO:
 
 - RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakten.
 
-- Ausdruck Lebensmittelbank: Haushaltszusammensetzung
-
 - Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
-
-- `aids.AidType.address_type` : pro Hilfeart konfigurierbar, welche
-  Adresse des Klienten gedruckt wird.  Mal ist es der offizielle
-  Wohnsitz, mal die primäre Adresse.
 
 - Im Detail einer EiEi-Bescheinigung fehlen die Buttons "Print" und
   "Clear Cache".
 
-- Wenn man auf den Zeitstempel eines ausgedruckten Auszugs klickt
-  (`Certifiable.printed`), sollte direkt das Dokument kommen, nicht
-  der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
-  dann, wenn man das Dokument neu generieren lassen will. Also ein
-  zweiter Link...
-  
 - Unten links fehlt ein Stück des Rahmens
-
-- Titel im Ausdruck der Bescheinigungen
 
 - In GrantingsByClient kann alicia auf dem *phantom record*
   doppelklicken und kriegt dann auch das `insert_layout` angeziegt,
@@ -119,6 +113,12 @@ DISCUSS:
   Information aus `GrantingsByClient`: den ersten Beschluss? alle
   Beschlüsse? Und welche Hilfearten sind es, die im VSE erwähnt
   werden? Lebensmittelbank ja wahrscheinlich nicht.
+- Wenn man auf den Zeitstempel eines ausgedruckten Auszugs klickt
+  (`Certifiable.printed`), sollte direkt das Dokument kommen, nicht
+  der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
+  dann, wenn man das Dokument neu generieren lassen will. Also ein
+  zweiter Link...
+  
 
 DEFERRED
 
