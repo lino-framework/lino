@@ -1,0 +1,6 @@
+=======================
+Sunday, October 5, 2014
+=======================
+
+Repaired the test suite of :ref:`welfare` which was broken after
+recent changes.

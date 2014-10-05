@@ -937,20 +937,13 @@ class AbstractTable(actors.Actor):
     def to_rst(cls, ar, column_names=None, header_level=None, **kwargs):
         "Better name would be table2rst (analog to table2xhtml())"
         fields, headers, widths = ar.get_field_info(column_names)
-        # ~ # in case column_names contains remote fields
-        #~ settings.SITE.startup()
-        #~ settings.SITE.resolve_virtual_fields()
-
-        #~ grid = ar.ah.list_layout.main
 
         sums = [fld.zero for fld in fields]
         rows = []
         recno = 0
-        #~ for row in ar:
         for row in ar.sliced_data_iterator:
             recno += 1
             rows.append([x for x in ar.row2text(fields, row, sums)])
-            #~ rows.append([x for x in grid.row2html(ar,fields,row,sums)])
 
         has_sum = False
         for i in sums:
@@ -966,8 +959,6 @@ class AbstractTable(actors.Actor):
         if header_level is not None:
             s = E.tostring(E.h2(ar.get_title())) + s
         return s
-
-        #~ return HtmlTable(headers,rows)
 
 
 class VirtualTable(AbstractTable):

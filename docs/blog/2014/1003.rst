@@ -21,6 +21,6 @@ the polymorphic navigator (:blogref:`20140920`).
 :mod:`ml.households.SiblingsByPerson` now also in Eupen no longer uses
 `slave_grid_format` "summary"
 
-The ``std``fixture for :mod:`welfare.aids` now adds a company
+The ``std`` fixture for :mod:`welfare.aids` now adds a company
 "Belgisches Rotes Kreuz", to have an example of a confirmation with
 predefined recipient.

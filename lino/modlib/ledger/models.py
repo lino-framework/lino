@@ -17,7 +17,6 @@ from django.conf import settings
 from lino import dd, rt
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
-from lino.mixins.printable import model_group
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.utils import mti
@@ -216,7 +215,7 @@ class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
         :meth:`template_choices`.
 
         """
-        return [model_group(self.voucher_type.model)]
+        return [self.voucher_type.model.get_model_group()]
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, voucher_type):
@@ -226,7 +225,7 @@ class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
         if not voucher_type:
             return []
         #~ print 20131006, voucher_type
-        template_groups = [model_group(voucher_type.model)]
+        template_groups = [voucher_type.model.get_model_group()]
         return cls.get_template_choices(build_method, template_groups)
 
 

@@ -23,9 +23,10 @@ using :ref:`polly`.
 >>> print(settings.SETTINGS_MODULE)
 lino.projects.polly.settings.test
 
->>> obj = polls.Response.objects.get(pk=2)
+>>> pk = 2
+>>> obj = polls.Response.objects.get(pk=pk)
 >>> print(obj)
-Rando Roosi's response to Participant feedback
+Rolf Rompen's response to Participant feedback
 
 >>> rt.show(polls.AnswersByResponse, obj)
 ============================================ =============================== ===========
@@ -38,10 +39,9 @@ Rando Roosi's response to Participant feedback
 ============================================ =============================== ===========
 <BLANKLINE>
 
-
 >>> client = Client()
 >>> mt = contenttypes.ContentType.objects.get_for_model(obj.__class__).id
->>> url = '/api/polls/AnswersByResponse?rp=ext-comp-1351&fmt=json&mt=%d&mk=1' % mt
+>>> url = '/api/polls/AnswersByResponse?rp=ext-comp-1351&fmt=json&mt=%d&mk=%d' % (mt, pk)
 >>> res = client.get(url, REMOTE_USER='robin')
 
 
@@ -65,5 +65,5 @@ Rando Roosi's response to Participant feedback
 1
 
 >>> print(links[0].get('href'))
-javascript:Lino.polls.Responses.toggle_choice("ext-comp-1351",1,{ "fv": [ 7, 17 ] })
+javascript:Lino.polls.Responses.toggle_choice("ext-comp-1351",2,{ "fv": [ 7, 17 ] })
 
