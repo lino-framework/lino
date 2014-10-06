@@ -163,12 +163,13 @@ class GeneratingCommand(BaseCommand):
         logger.info("Generated %s files", self.generated_count)
 
     def generate(self, tplname, fn, **context):
+        from lino import rt
         from Cheetah.Template import Template as CheetahTemplate
 
         #~ if self.tmpl_dir:
             #~ tplname = join(self.tmpl_dir,tplname)
         #~ tplname = self.subcommand + '/' + tplname
-        tpl_filename = settings.SITE.find_config_file(tplname, self.tmpl_dir)
+        tpl_filename = rt.find_config_file(tplname, self.tmpl_dir)
         if tpl_filename is None:
             raise Exception("No file %s found" % tplname)
         if isinstance(tpl_filename, unicode):

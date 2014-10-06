@@ -21,3 +21,16 @@ to display a more intuitive text for every link.
 
 The :attr:`ml.excerpts.Certifiable.printed` field now also uses
 Django's :func:`naturaltime` function.
+
+----
+
+
+
+The :func:`rt.find_config_file` and
+:func:`rt.find_template_config_files` functions are now accessible via
+:mod:`lino.rt`.
+
+
+I started to change the :manage:`diag` command: it no longer writes a
+summary of the database content but a summary of local settings and
+environment.

@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/dev/ml/excerpts.rst:54: WARNING: undefined label: gfk (if the link has no caption the label must precede a section header)

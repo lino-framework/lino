@@ -17,6 +17,7 @@ from __future__ import unicode_literals
 import os
 import datetime
 from os.path import join, abspath, exists
+from os.path import relpath
 from urllib import urlencode
 import codecs
 
@@ -481,11 +482,9 @@ class Site(Site):
         # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
 
     def find_config_file(self, *args, **kwargs):
-        # fails if called before startup. Does not trigger Site startup.
         return self.confdirs.find_config_file(*args, **kwargs)
 
     def find_template_config_files(self, *args, **kwargs):
-        # fails if called before startup. Does not trigger Site startup.
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
     def setup_workflows(self):
@@ -628,17 +627,28 @@ class Site(Site):
             for u in p.get_used_libs(html):
                 yield u
 
+    def diagnostic_report_rst(self):
+
+        s = ''
+        s += "plugins: %s\n" % repr(self.plugins)
+        s += "config_dirs: %s\n" % repr(self.confdirs.config_dirs)
+        s += "\n"
+        for cd in self.confdirs.config_dirs:
+            ln = relpath(cd.name)
+            if cd.writeable:
+                ln += " [writeable]"
+            s += ln + '\n'
+        return s
+
     def get_db_overview_rst(self):
         from atelier import rstgen
         from lino.core.dbutils import (full_model_name,
                                        sorted_models_list, app_labels)
 
-
         #~ writeln("Lino %s" % lino.__version__)
         #~ yield (settings.SITE.verbose_name, settings.SITE.version)
         #~ writeln(settings.SITE.title)
         models_list = sorted_models_list()
-
         apps = app_labels()
         s = "%d apps: %s." % (len(apps), ", ".join(apps))
         s += "\n%d models:\n" % len(models_list)

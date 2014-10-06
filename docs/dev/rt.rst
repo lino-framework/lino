@@ -5,8 +5,9 @@ Runtime API (``rt``)
 This section documents functions and classes which are available "at
 runtime", i.e. when the Django machine has been initialized.
 
-You may import it but should not use it at the global namespace of a
-:xfile:`models.py` file.
+You may *import* it at the global namespace of a :xfile:`models.py`
+file, but you should use it only when the :func:`startup` function has
+been called.
 
 
 .. currentmodule:: rt
@@ -41,6 +42,32 @@ each entry holding a reference to each actor of that app.
 
   Calls :meth:`BaseRequest.show` on a
   temporary anonymous session (created using :meth:`Site.login`).
+
+Using the ``ConfigDirCache``
+----------------------------
+
+.. function:: find_config_file(filename, *groups)
+
+    Return the full path of the first occurence within the
+    :class:`lino.utils.config.ConfigDirCache` of a file named
+    `filename`
+
+.. function:: find_config_files(pattern, *groups)
+
+    Returns a dict of `filename` -> `config_dir` entries for each config
+    file on this site that matches the pattern.  Loops through
+    `config_dirs` and collects matching files.  When a filename is
+    provided by more than one app, then the latest app gets it.
+
+    `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
+
+
+.. function:: find_template_config_files(template_ext, *groups)
+
+    Like :func:`find_config_files`, but ignore babel variants:
+    e.g. ignore "foo_fr.html" if "foo.html" exists.
+    Note: but don't ignore "my_template.html"
+
 
 
 The ``ActionRequest`` class

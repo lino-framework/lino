@@ -1,28 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Writes a diagnostic status report about the data on this Site. 
-Used to get a quick overview on the differences in two databases. 
+Writes a diagnostic status report about the data on this Site.
 """
 
-import logging
-logger = logging.getLogger(__name__)
+from __future__ import print_function
 
-import os
-import errno
-#~ import codecs
-import sys
-from optparse import make_option
-from os.path import join
-
-from django.db import models
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_unicode
-from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-
 from django.conf import settings
 
 
@@ -30,25 +16,17 @@ class Command(BaseCommand):
     help = __doc__
     args = "output_dir"
 
-    #~ option_list = BaseCommand.option_list + (
-        #~ make_option('--noinput', action='store_false',
-            #~ dest='interactive', default=True,
-            #~ help='Do not prompt for input of any kind.'),
-    #~ )
-
     def handle(self, *args, **options):
         if args:
             raise CommandError("This command doesn't accept any arguments.")
 
-        #~ print settings.SITE.__class__
-        #~ self.options = options
-
-        #~ settings.SITE.startup()
-
         encoding = self.stdout.encoding or 'utf-8'
 
-        def writeln(ln):
+        def writeln(ln=''):
             self.stdout.write(ln.encode(encoding, "xmlcharrefreplace") + "\n")
 
         settings.SITE.startup()
-        writeln(settings.SITE.get_db_overview_rst())
+        # writeln(settings.SITE.get_db_overview_rst())
+        writeln(settings.SITE.diagnostic_report_rst())
+
+

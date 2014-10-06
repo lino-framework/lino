@@ -16,14 +16,6 @@ We cannot use the Jinja loader because Jinja's `get_template` method
 returns a `Template`, and Jinja templates don't know their filename.
 One possibility might be to write a special Jinja Template class...
 
-Die Reihenfolge in :setting:`INSTALLED_APPS` sollte sein: zuerst
-`django.contrib.*`, dann ``lino``, dann `lino.modlib.*` und dann
-`lino.projects.pcsw`.  Also vom Allgemeineren zum Spezifischeren. Und
-bei den config-Dirs soll diese Liste umgekehrt abgeklappert werden
-(und die Suche beim ersten Treffer aufhören): zuerst das eventuelle
-lokale `config_dir`, dann `lino.projects.pcsw`, dann die diversen
-`lino.modlib.*` usw.
-
 """
 
 from __future__ import unicode_literals
@@ -37,7 +29,7 @@ import sys
 import codecs
 from fnmatch import fnmatch
 
-# from django.conf import settings
+fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 
 from lino.utils import iif
 
@@ -59,13 +51,7 @@ class ConfigDir:
             self.writeable, " (writeable)", "")
 
 
-fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
-
-
 class ConfigDirCache(object):
-    """
-
-    """
     _init = False
 
     def __init__(self, site):
@@ -123,14 +109,6 @@ class ConfigDirCache(object):
                     return ffn
 
     def find_config_files(self, pattern, *groups):
-        """Returns a dict of filename -> config_dir entries for each config
-        file on this site that matches the pattern.  Loops through
-        `config_dirs` and collects matching files.  When a filename is
-        provided by more than one app, then the latest app gets gets it.
-
-        `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
-
-        """
         files = {}
         for group in groups:
             if group:
@@ -146,11 +124,6 @@ class ConfigDirCache(object):
         return files
 
     def find_template_config_files(self, template_ext, *groups):
-        """Like :func:`find_config_files`, but ignore babel variants:
-        e.g. ignore "foo_fr.html" if "foo.html" exists but don't ignore
-        "my_template.html"
-
-        """
         files = self.find_config_files('*' + template_ext, *groups)
         l = []
         template_ext
@@ -194,77 +167,6 @@ class ConfigDirCache(object):
                 logger.debug("Loading %s...", ffn)
                 s = codecs.open(ffn, encoding='utf-8').read()
                 loader(s, cd, filename)
-
-
-class Configured(object):
-
-    #~ filename = None
-    # ~ cd = None # ConfigDir
-
-    def __init__(self, filename=None, cd=None):
-        if filename is not None:
-            assert not os.pardir in filename
-            #~ assert not os.sep in filename
-            if cd is None:
-                cd = LOCAL_CONFIG_DIR
-        self.filename = filename
-        self.cd = cd
-        self.messages = set()
-
-    def save_config(self):
-        if not self.filename:
-            raise IOError('Cannot save unnamed %s' % self)
-        if self.cd is None:
-            raise IOError(
-                "Cannot save because there is no local config directory")
-
-        if not self.cd.writeable:
-            #~ print self.cd, "is not writable", self.filename
-            self.cd = LOCAL_CONFIG_DIR
-        fn = join(self.cd.name, self.filename)
-        pth = dirname(fn)
-        settings.SITE.makedirs_if_missing(pth)
-        #~ if not os.path.exists(pth):
-            #~ os.makedirs(pth)
-        f = codecs.open(fn, 'w', encoding='utf-8')
-        self.write_content(f)
-        f.close()
-        msg = "%s has been saved to %s" % (self.__class__.__name__, fn)
-        logger.info(msg)
-        return msg
-
-    def make_dummy_messages_file(self):
-        """
-        Make dummy messages file for this Configurable.
-        Calls the global :func:`make_dummy_messages_file`
-        """
-        if not self.filename:
-            return
-        if self.cd is None:
-            return
-        fn = join(self.cd.name, self.filename)
-        if self.cd.writeable:
-            logger.info("Not writing %s because %s is writeable",
-                        self.filename, self.cd.name)
-            return
-        #~ if self.messages:
-        """
-        if there are no messages, we still write a 
-        new file to remove messages from pervious versions.
-        """
-        make_dummy_messages_file(fn, self.messages)
-
-    def add_dummy_message(self, msg):
-        self.messages.add(msg)
-
-    def write_content(self, f):
-        raise NotImplementedError
-
-    def __str__(self):
-        if self.filename:
-            return u"%s (from %s)" % (self.filename, self.cd)
-        return "Dynamic " + super(Configured, self).__str__()
-        # "%s(%r)" % (self.__class__.__name__,self._desc)
 
 
 IGNORE_TIMES = False

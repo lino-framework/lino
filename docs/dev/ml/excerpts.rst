@@ -99,6 +99,12 @@ Mixins
   which inherits from :class:`Certifiable`.
   
 
+  .. attribute:: printed
+
+    Displays information about when this certifiable has been printed.
+    Clicking on it will display the excerpt pointed to by
+    :attr:`printed_by`.
+
   .. attribute:: printed_by
 
     ForeignKey to the :class:`Excerpt` which certifies this instance.

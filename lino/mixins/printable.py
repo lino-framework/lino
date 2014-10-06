@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
+from lino import rt
 
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
@@ -185,7 +186,7 @@ class SimpleBuildMethod(BuildMethod):
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + \
                 "_" + lang + self.template_ext
-            if settings.SITE.find_config_file(
+            if rt.find_config_file(
                     name, *elem.get_template_groups()):
                 return name
         return tpl_leaf
@@ -504,7 +505,8 @@ class EditTemplate(BasePrintAction):
 
         parts = ['webdav', 'config'] + parts
         url = settings.SITE.build_media_url(*parts)
-        url = ar.request.build_absolute_uri(url)
+        if ar.request is not None:
+            url = ar.request.build_absolute_uri(url)
 
         def doit(ar):
             ar.info("Going to open url: %s " % url)
@@ -521,11 +523,12 @@ class EditTemplate(BasePrintAction):
                 shutil.copy(filename, local_file)
                 doit(ar2)
 
-            ar.confirm(ok, _(
+            msg = _(
                 "Before you can edit this template we must create a "
                 "local copy on the server. "
-                "This will exclude the template from future updates."),
-                _("Are you sure?"))
+                "This will exclude the template from future updates.")
+            msg += "\n\ncp %s %s)" % (filename, local_file)
+            ar.confirm(ok, msg, _("Are you sure?"))
                 
 
 # http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
@@ -659,7 +662,7 @@ class PrintableType(Model):
     def get_template_choices(cls, build_method, template_groups):
         if not build_method:
             build_method = BuildMethods.get_system_default()
-        return settings.SITE.find_template_config_files(
+        return rt.find_template_config_files(
             build_method.template_ext, *template_groups)
 
 

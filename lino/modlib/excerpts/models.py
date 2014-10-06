@@ -122,7 +122,7 @@ class ExcerptType(
         # the model.
         super(ExcerptType, self).save(*args, **kwargs)
         self.update_siblings()
-        
+
     def after_ui_save(self, ar):
         super(ExcerptType, self).after_ui_save(ar)
         if self.primary:
@@ -340,7 +340,7 @@ class Excerpt(dd.TypedPrintable,
             return None
         mc = self.excerpt_type.content_type.model_class()
         tplgroup = mc.get_template_group()
-        return settings.SITE.find_config_file(tplname, tplgroup)
+        return rt.find_config_file(tplname, tplgroup)
 
     def get_body_template_name(self):
         tplname = self.get_body_template()
@@ -366,10 +366,6 @@ class Excerpt(dd.TypedPrintable,
 
     def get_mailable_type(self):
         return self.excerpt_type
-
-    # @property
-    # def recipient(self):
-    #     return self.owner.get_print_recipient()
 
     def get_template_groups(self):
         ptype = self.get_printable_type()

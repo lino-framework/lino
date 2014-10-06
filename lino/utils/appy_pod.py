@@ -38,6 +38,8 @@ from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
 from lino.utils.media import TmpMediaFile
 
+from lino import rt
+
 
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
@@ -544,7 +546,7 @@ class PrintTableAction(actions.Action):
             raise Exception(_("List contains more than %d rows") %
                             self.MAX_ROW_COUNT)
 
-        tplfile = settings.SITE.find_config_file(self.template_name, '')
+        tplfile = rt.find_config_file(self.template_name, '')
         if not tplfile:
             raise Exception("No file %s" % self.template_name)
 

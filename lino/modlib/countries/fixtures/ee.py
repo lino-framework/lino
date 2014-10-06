@@ -24,7 +24,6 @@ You must download the file yourself and place it into your
 """
 
 import csv
-import os
 import codecs
 
 from django.conf import settings
@@ -32,6 +31,8 @@ from django.conf import settings
 from lino.utils.instantiator import Instantiator
 
 from lino.modlib.countries.models import PlaceTypes
+
+from lino import rt
 
 if True:
 
@@ -71,7 +72,7 @@ CITY_TYPES = {
 
 def objects():
     city = Instantiator('countries.Place', country='EE').build
-    input_file = settings.SITE.find_config_file('sihtnumbrid.csv')
+    input_file = rt.find_config_file('sihtnumbrid.csv')
     settings.SITE.logger.info("Importing Estonian places from %s", input_file)
     f = codecs.open(input_file, 'r', 'latin-1', 'replace')
     #~ f = codecs.open(input_file,'r','utf-8','replace')
