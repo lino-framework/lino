@@ -109,7 +109,7 @@ add('10',
     symmetric=True)
 
 add('11',
-    'sibling',
+    'cousin',
     pgettext("male", "Cousin"), pgettext("female", "Cousin"),
     pgettext("male", "Cousin"), pgettext("female", "Cousin"),
     symmetric=True)
