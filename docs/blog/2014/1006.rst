@@ -53,4 +53,6 @@ to make it testable and write a test case:
 May 22nd 2014
 =============
 
-Oops, the production server 
+Oops, the production server had :attr:`ad.Site.the_demo_date`
+non-empty.  And the users noticed this at a place where it took me at
+least 15 minutes to understand that this was the only reason.
