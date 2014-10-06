@@ -220,7 +220,6 @@ class Model(models.Model):
     def define_action(cls, **kw):
         for k, v in kw.items():
             if k in cls.__dict__:
-            # if hasattr(cls, k):
                 raise Exception("Tried to redefine %s.%s" % (cls, k))
             setattr(cls, k, v)
 

@@ -10,10 +10,8 @@ This defines the :class:`ml.excerpts.Certifiable` model mixin.
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino import dd
 
@@ -50,9 +48,10 @@ class Certifiable(dd.Model):
 
     @dd.displayfield(_("Printed"))
     def printed(self, ar):
-        if self.printed_by is None:
+        ex = self.printed_by
+        if ex is None:
             return ''
-        return ar.obj2html(self.printed_by)
+        return ar.obj2html(ex, naturaltime(ex.build_time))
 
     def clear_cache(self):
         obj = self.printed_by

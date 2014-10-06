@@ -7,6 +7,70 @@ Excerpts
 The :mod:`lino.modlib.excerpts` package provides data definitions for
 using "database excerpts".
 
+- Lino automatically installs a "Print" action on every model of your
+  app for which the database contains an :class:`ExcerptType`
+  instance.
+
+- Note that Lino does not automatically add an action per model to
+  make the excerpt history visible from a model. If you this, add
+  yourself your preferred variant. This can be either using a
+  :class:`dd.ShowSlaveTable` button in the toolbar::
+
+    show_excerpts = dd.ShowSlaveTable('excerpts.ExcerptsByOwner')
+    show_excerpts = dd.ShowSlaveTable('excerpts.ExcerptsByProject')
+
+  Or by adding :class:`excerpts.ExcerptsByOwner <ExcerptsByOwner>` or
+  :class:`excerpts.ExcerptsByProject <ExcerptsByProject>` (or both, or
+  your own subclass of one of them) to the
+  :attr:`detail_layout <dd.Actor.detail_layout>`.
+
+
+
+
+Models
+------
+
+
+.. class:: ExcerptType
+
+
+  .. attribute:: content_type
+
+    The model on which excerpts of this type are going to work.
+
+  .. attribute:: certifying
+  .. attribute:: body_template
+  .. attribute:: primary
+  .. attribute:: backward_compat
+
+
+.. class:: Excerpt
+
+    An excerpt is a printable document that describes some aspect
+    of the current situation.
+
+  .. attribute:: owner
+
+    :ref:`gfk` to the object being printed by this excerpt.
+    Defined in :class:`dd.Controllable`.
+
+  .. attribute:: company
+
+    The optional recipient of this excerpt.
+    (ForeignKey to :class:`ml.contacts.Company`)
+
+  .. attribute:: contact_person
+
+    The optional recipient of this excerpt.
+    (ForeignKey to :class:`ml.contacts.Person`)
+
+  .. attribute:: excerpt_type
+
+  The type of this excerpt (ForeignKey to :class:`ExcerptType`).
+
+  .. attribute:: language
+
+
 Mixins
 ------
 
@@ -57,46 +121,7 @@ Mixins
             return 'date user title'
 
 
-Models
-------
 
-
-.. class:: ExcerptType
-
-  Lino will automatically install a "Print" action on every model of
-  your app for which the database contains an :class:`ExcerptType`
-  instance.
-
-  .. attribute:: content_type
-
-    The model on which excerpts of this type are going to work.
-
-  .. attribute:: certifying
-  .. attribute:: body_template
-  .. attribute:: primary
-  .. attribute:: backward_compat
-
-
-.. class:: Excerpt
-
-    An excerpt is a printable document that describes some aspect
-    of the current situation.
-
-  .. attribute:: company
-
-    The optional recipient of this excerpt.
-    (ForeignKey to :class:`ml.contacts.Company`)
-
-  .. attribute:: contact_person
-
-    The optional recipient of this excerpt.
-    (ForeignKey to :class:`ml.contacts.Person`)
-
-  .. attribute:: excerpt_type
-
-  The type of this excerpt (ForeignKey to :class:`ExcerptType`).
-
-  .. attribute:: language
 
 
 Tables
@@ -105,6 +130,13 @@ Tables
 .. class:: Excerpts
 
   Base class for all tables on :class:`Excerpt`
+
+.. class:: ExcerptsByOwner
+
+  Shows all :class:`Excerpts` whose :attr:`owner <Excerpt.owner>`
+  field is this.
+
+.. class:: ExcerptsByProject
 
 
 Actions

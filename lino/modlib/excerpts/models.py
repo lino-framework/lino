@@ -18,12 +18,15 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
+from django.contrib.humanize.templatetags.humanize import naturaltime
+
 
 from django.core.exceptions import ValidationError
 
 from lino import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
+from lino.utils import join_elems
 
 outbox = dd.require_app_models('outbox')
 postings = dd.require_app_models('postings')
@@ -356,7 +359,9 @@ class Excerpt(dd.TypedPrintable,
 
     def __unicode__(self):
         if self.build_time:
-            return unicode(self.build_time)
+            return naturaltime(self.build_time)
+            # return _("%(owner)s (printed %(time)s)") % dict(
+            #     owner=self.owner, time=naturaltime(self.build_time))
         return _("Unprinted %s #%d") % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):
@@ -386,9 +391,7 @@ class Excerpt(dd.TypedPrintable,
         return self.excerpt_type
 
     def get_print_language(self):
-        """Returns the language to be selected when rendering this
-        Excerpt. Default implementation returns the content of
-        `self.language`.
+        """Returns the language to be selected when rendering this Excerpt.
 
         """
         return self.owner.get_print_language()
@@ -491,10 +494,10 @@ class Excerpts(dd.Table):
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
-    insert_layout = """
-    excerpt_type
-    project
-    """
+    # insert_layout = """
+    # excerpt_type
+    # project
+    # """
     column_names = ("id build_time owner excerpt_type user project *")
     order_by = ["id"]
 
@@ -510,7 +513,6 @@ class MyExcerpts(mixins.ByUser, Excerpts):
 class ExcerptsByX(Excerpts):
     use_as_default_table = True
     required = dd.required(user_groups='office')
-    column_names = "build_time excerpt_type owner *"
     order_by = ['-build_time', 'id']
     auto_fit_column_widths = True
     # window_size = (70, 20)
@@ -518,52 +520,52 @@ class ExcerptsByX(Excerpts):
 
 class ExcerptsByType(ExcerptsByX):
     master_key = 'excerpt_type'
+    column_names = "build_time owner project user *"
 
 
 class ExcerptsByOwner(ExcerptsByX):
     master_key = 'owner'
     help_text = _("History of excerpts based on this data record.")
     label = _("Existing excerpts")
-
+    column_names = "build_time excerpt_type user project *"
     slave_grid_format = 'summary'
+    auto_fit_column_widths = True
 
     @classmethod
     def get_slave_summary(self, obj, ar):
-        sar = self.request(master_instance=obj)
+        sar = self.request(master_instance=obj,
+                           limit=settings.SITE.preview_limit)
         items = []
         for ex in sar:
-            items.append(E.li(ar.obj2html(ex)))
+            items.append(self.format_excerpt(ex, ar))
+            
         if len(items) == 0:
             items.append(_("No excerpts."))
-
-        # actions = []
-
-        # def add_action(btn):
-        #     if btn is None:
-        #         return False
-        #     actions.append(btn)
-        #     return True
-
-        # for lt in addable_link_types:
-        #     sar = ar.spawn(Links, known_values=dict(type=lt, parent=obj))
-        #     if add_action(sar.insert_button(
-        #             lt.as_parent(obj), icon_name=None)):
-        #         if not lt.symmetric:
-        #             actions.append('/')
-        #             sar = ar.spawn(
-        #                 Links, known_values=dict(type=lt, child=obj))
-        #             add_action(sar.insert_button(
-        #                 lt.as_child(obj), icon_name=None))
-        #         actions.append(' ')
-
-        # elems += [E.br(), _("Create relationship as ")] + actions
+        else:
+            items = join_elems(items, sep=', ')
         return E.div(*items)
+
+    @classmethod
+    def format_excerpt(self, ex, ar):
+        d = dict(time=naturaltime(ex.build_time or _("not printed")))
+        d.update(excerpt=ex.excerpt_type)
+        return ar.obj2html(ex, _("%(excerpt)s (%(time)s)") % d)
 
 
 if settings.SITE.project_model is not None:
 
-    class ExcerptsByProject(ExcerptsByX):
+    class ExcerptsByProject(ExcerptsByOwner):
         master_key = 'project'
+        column_names = "build_time excerpt_type user owner *"
+
+        @classmethod
+        def format_excerpt(self, ex, ar):
+            d = dict(time=naturaltime(ex.build_time or _("not printed")))
+            if ex.owner == ex.project:
+                d.update(excerpt=ex.excerpt_type)
+            else:
+                d.update(excerpt=ex.owner)
+            return ar.obj2html(ex, _("%(excerpt)s (%(time)s)") % d)
 
 
 system = dd.resolve_app('system')
@@ -609,11 +611,12 @@ def set_excerpts_actions(sender, **kw):
                 if atype.certifying:
                     m.define_action(
                         clear_printed=ClearPrinted())
-                else:
-                    m.define_action(
-                        show_excerpts=dd.ShowSlaveTable(
-                            'excerpts.ExcerptsByOwner'
-                        ))
+                # reved 20141006 because for pcsw.Client it was irritating:
+                # else:
+                #     m.define_action(
+                #         show_excerpts=dd.ShowSlaveTable(
+                #             'excerpts.ExcerptsByOwner'
+                #         ))
             # logger.info(
             #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
 

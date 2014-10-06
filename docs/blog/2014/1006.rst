@@ -1,0 +1,23 @@
+=======================
+Monday, October 6, 2014
+=======================
+
+The :class:`welfare.pcsw.Client` model had an action button in its
+toolbar which opened the :class:`ml.excerpts.ExcerptsByOwner` slave
+table.  This button was disturbing because it shows only the excerpts
+which are directly owned (like "CV" and "eID content") and is
+functionally represented by the :class:`ml.excerpts.ExcerptsByProject`
+panel in the "History" tab.
+
+Solution: Lino no longer adds this button automtically. If you want to
+make the excerpt history visible from a model, add yourself your
+preferred variant of this action.
+
+The :class:`ml.excerpts.ExcerptsByProject` table now inherits from
+:class:`ml.excerpts.ExcerptsByOwner` and thus gets its
+`get_slave_summary` and `slave_grid_format`.  Optimized this
+`get_slave_summary` to use Django's :func:`naturaltime` function and
+to display a more intuitive text for every link.  
+
+The :attr:`ml.excerpts.Certifiable.printed` field now also uses
+Django's :func:`naturaltime` function.
