@@ -2,6 +2,8 @@
 Monday, October 6, 2014
 =======================
 
+Last fiddlings on ticket :doc:`/tickets/122`.
+
 The :class:`welfare.pcsw.Client` model had an action button in its
 toolbar which opened the :class:`ml.excerpts.ExcerptsByOwner` slave
 table.  This button was disturbing because it shows only the excerpts

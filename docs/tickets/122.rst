@@ -88,8 +88,6 @@ DONE:
 - Im Detail einer EiEi-Bescheinigung fehlen die Buttons "Print" und
   "Clear Cache".
 
-TODO:
-
 - Formatierung Ausdruck: 
   - "U. Zeichen / N. réf."
   - Mehr Platz zwischen "U.Zeichen" und "Bescheinigung"
@@ -99,7 +97,11 @@ TODO:
   - Alle "festen" Werte in Arial (sans serif) und alle "variablen"
     Werte in Times Roman (serif)
 - Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
+
+TODO:
+
 - Unten links fehlt ein Stück des Rahmens
+  Einfachste Lösung ist voraussichtlich ein Upgrade auf neues Debian.
 
 DISCUSS:
 
