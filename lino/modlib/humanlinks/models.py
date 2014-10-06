@@ -18,6 +18,7 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
@@ -162,7 +163,8 @@ class Link(dd.Model):
     def check_autocreate(cls, parent, child):
         if parent is None or child is None:
             return False
-        assert parent != child
+        if parent == child:
+            raise ValidationError("Parent and Child must differ")
         t = (LinkTypes.parent, LinkTypes.adoptive)
         qs = cls.objects.filter(parent=parent, child=child, type__in=t)
         if qs.count() == 0:
