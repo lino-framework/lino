@@ -490,8 +490,8 @@ class EditTemplate(BasePrintAction):
         leaf = bm.get_template_leaf(self, elem)
 
         groups = elem.get_template_groups()
-        # if len(groups) != 1:
-        #     raise Exception("Oops: more than 1 group in %s" % groups)
+        if len(groups) != 1:
+            raise Exception("Oops: more than 1 group in %s" % groups)
         parts = [groups[0], leaf]
 
         lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
