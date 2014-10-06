@@ -164,7 +164,8 @@ class Link(dd.Model):
         if parent is None or child is None:
             return False
         if parent == child:
-            raise ValidationError("Parent and Child must differ")
+            return False
+            # raise ValidationError("Parent and Child must differ")
         t = (LinkTypes.parent, LinkTypes.adoptive)
         qs = cls.objects.filter(parent=parent, child=child, type__in=t)
         if qs.count() == 0:
