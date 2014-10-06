@@ -83,7 +83,7 @@ class ConfigDirCache(object):
                 config_dirs.append(self.LOCAL_CONFIG_DIR)
         #         print "20140625 Local config directory %s." % p
         #     else:
-        #         print "20140625 No local config directory."
+        #         print "20140625 No local config directory.", p
         # else:
         #     print "20140625 Not a local project directory."
 

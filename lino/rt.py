@@ -19,7 +19,8 @@ lookup_filter = settings.SITE.lookup_filter
 find_config_file = settings.SITE.confdirs.find_config_file
 find_config_files = settings.SITE.confdirs.find_config_files
 find_template_config_files = settings.SITE.confdirs.find_template_config_files
-
+makedirs_if_missing = settings.SITE.makedirs_if_missing
+relpath = settings.SITE.relpath
 
 def show(*args, **kw):
     return login().show(*args, **kw)

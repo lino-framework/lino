@@ -49,7 +49,7 @@ DONE:
 
 - Quand les travailleurs consultent la liste de leurs dossiers
   attribués, même quand ils ont noté la fin du suivi, le dossier reste
-  dans leur quota (voir mail d’Arianne ci-dessous).
+  dans leur quota.
 
 - Lino.ActionPanelForm now sets the keyboard focus to the first field.
 

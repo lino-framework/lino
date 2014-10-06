@@ -1185,3 +1185,9 @@ class Site(Site):
             flt = flt | Q(**kw)
             del kw[fieldname + lng.suffix + self.LOOKUP_OP]
         return flt
+
+    def relpath(self, p):
+        if p.startswith(self.project_dir):
+            p = "$(PRJ)" + p[len(self.project_dir):]
+        return p
+            

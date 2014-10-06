@@ -22,15 +22,35 @@ to display a more intuitive text for every link.
 The :attr:`ml.excerpts.Certifiable.printed` field now also uses
 Django's :func:`naturaltime` function.
 
-----
+`git pull` in Eupen.
 
 
+Editing document template of an excerpt
+=======================================
 
-The :func:`rt.find_config_file` and
-:func:`rt.find_template_config_files` functions are now accessible via
-:mod:`lino.rt`.
+The `edit_template` action didn't yet work correctly in cases with
+more than one template group: it considered only the first group.
+Result was that it told me that it must make a copy of the file into
+the local config directory, although such a copy already existed. The
+explanation was that it existed in `config/excerpts` and not in
+`config/Confirmation`.
 
+It took me already quite some time to find the explanation:
 
-I started to change the :manage:`diag` command: it no longer writes a
-summary of the database content but a summary of local settings and
-environment.
+- The :func:`rt.find_config_file` and
+  :func:`rt.find_template_config_files` functions are now accessible via
+  :mod:`lino.rt`.
+
+- I started to change the :manage:`diag` command: it no longer writes a
+  summary of the database content but a summary of local settings and
+  environment.
+
+Then I made some subtle changes the the `EditTemplate` action in order
+to make it testable and write a test case:
+
+- It is now viewable even if :attr:`ad.Site.use_java` is False.
+
+May 22nd 2014
+=============
+
+Oops, the production server 

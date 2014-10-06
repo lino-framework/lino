@@ -479,35 +479,40 @@ class EditTemplate(BasePrintAction):
     label = _('Edit Print Template')
     required = dict(user_level='manager')
 
-    def get_view_permission(self, profile):
-        if not has_davlink:
-            return False
-        return super(EditTemplate, self).get_view_permission(profile)
-
     def run_from_ui(self, ar, **kw):
+
+        lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
+        if lcd is None:
+            # ar.info("No local config directory in %s " %
+            #         settings.SITE.confdirs)
+            raise Warning("No local config directory. "
+                          "Contact your system administrator.")
+
         elem = ar.selected_rows[0]
         bm = elem.get_build_method()
         leaf = bm.get_template_leaf(self, elem)
 
-        groups = elem.get_template_groups()
-        if len(groups) != 1:
-            raise Exception("Oops: more than 1 group in %s" % groups)
-        parts = [groups[0], leaf]
-
-        lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
-        if lcd is None:
-            ar.info("No local config directory: %s " % lcd)
-            raise Warning("No local config directory. "
-                          "Contact your system administrator.")
-        local_file = join(lcd.name, *parts)
-
         filename = bm.get_template_file(ar, self, elem)
+        local_file = None
+        groups = elem.get_template_groups()
+        assert len(groups) > 0
+        for grp in groups:
+            parts = [grp, leaf]
+            local_file = join(lcd.name, *parts)
+            if filename == local_file:
+                break
 
         parts = ['webdav', 'config'] + parts
         url = settings.SITE.build_media_url(*parts)
         if ar.request is not None:
             url = ar.request.build_absolute_uri(url)
 
+        if not has_davlink:
+            msg = "cp %s %s" % (filename, local_file)
+            ar.info(msg)
+            raise Warning("Java is not enabled. "
+                          "Contact your system administrator.")
+            
         def doit(ar):
             ar.info("Going to open url: %s " % url)
             ar.success(open_davlink_url=url)
@@ -527,7 +532,8 @@ class EditTemplate(BasePrintAction):
                 "Before you can edit this template we must create a "
                 "local copy on the server. "
                 "This will exclude the template from future updates.")
-            msg += "\n\ncp %s %s)" % (filename, local_file)
+            ar.info("Gonna copy %s to %s",
+                    rt.relpath(filename), rt.relpath(local_file))
             ar.confirm(ok, msg, _("Are you sure?"))
                 
 
