@@ -85,12 +85,6 @@ add('05',
     _("Husband"), _("Wife"),
     _("Husband"), _("Wife"), symmetric=True)
 
-add('07',
-    'partner',
-    pgettext("male", "Partner"), pgettext("female", "Partner"),
-    pgettext("male", "Partner"), pgettext("female", "Partner"),
-    symmetric=True)
-
 add('06',
     'friend',
     pgettext("male", "Friend"), pgettext("female", "Friend"),
@@ -98,9 +92,32 @@ add('06',
     symmetric=True)
 
 add('07',
+    'partner',
+    pgettext("male", "Partner"), pgettext("female", "Partner"),
+    pgettext("male", "Partner"), pgettext("female", "Partner"),
+    symmetric=True)
+
+add('08',
     'step',
     _("Stepfather"), _("Stepmother"),
     _("Stepson"), _("Stepdaughter"))
+
+add('10',
+    'sibling',
+    pgettext("male", "Brother"), pgettext("female", "Sister"),
+    pgettext("male", "Brother"), pgettext("female", "Sister"),
+    symmetric=True)
+
+add('11',
+    'sibling',
+    pgettext("male", "Cousin"), pgettext("female", "Cousin"),
+    pgettext("male", "Cousin"), pgettext("female", "Cousin"),
+    symmetric=True)
+
+add('12',
+    'uncle',
+    _("Uncle"), _("Aunt"),
+    _("Nephew"), _("Niece"))
 
 add('80',
     'relative',
