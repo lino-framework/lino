@@ -1,0 +1,8 @@
+==========================
+Wednesday, October 8, 2014
+==========================
+
+I started the French version of the user manual for :ref:`welfare` at
+http://fr.welfare.lino-framework.org/
+
+
