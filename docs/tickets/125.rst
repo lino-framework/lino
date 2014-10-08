@@ -1,6 +1,5 @@
-===========================================
-#125 : Change Lino license from LGPL to BSD
-===========================================
+#125 [closed]  : Change Lino license from LGPL to BSD
+=====================================================
 
 After :doc:`79`, Lino is probably getting even more liberal.
 Before actually doing it, I use this ticket to explain why.

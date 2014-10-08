@@ -1,6 +1,8 @@
-==========================================
-#124 : Changements Châtelet Septembre 2014
-==========================================
+:state: closed
+:module: lino_welfare
+
+#124 [closed] : Changements Châtelet Septembre 2014
+===================================================
 
 .. currentlanguage:: fr
 
@@ -87,30 +89,7 @@ DONE:
  
 DISCUSS
 
-- Composition de ménage : ajouter une colonne "Suivi par"
-
-  --> quelle serait la différence entre ce champ et un accompagnement?
-
-- Vocabulaire: "Intervenant" et/ou "Accompagnement"?
-
-- Composition de ménage : ajouter un champ "Garde enfant"
-
-  --> pourrais-tu me raconter plus sur le champ "Garde d'enfant": Que
-  comptez-vous noter dans ce champ (nom? tél? oui/non?)? Que
-  comptez-vous faire avec cette information?
-
 - «EnrolmentsByPupil» : Renommer en "Orientations internes en attente"
-
-  Si on ajoute une orientation par ce module, il ne s’inscrit pas dans
-  l’onglet « Orientation interne »…Par contre, si on ajoute la
-  personne par l’onglet « Orientation interne », il apparaît
-  correctement dans « Enrolments ».
-
-  Quand on a créé un atelier, dans l’onglet inscription : Si on a fait
-  une demande pour un bénéficiaire et qu’on clique sur annulé, la
-  ligne disparaît des inscriptions mais pas du module Enrolments situé
-  dans l’onglet personne. Peut-on faire en sorte que ça disparaisse
-  aussi d’Enrolments ?
 
   --> Quel est le but de ce panneau? Pourquoi est-il dans le premier
   onglet?  Est-ce qu'il vous faut le panneau

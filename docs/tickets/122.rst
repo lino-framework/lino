@@ -1,11 +1,13 @@
-==============================
-#122: Endspurt Bescheinigungen
-==============================
+=======================================
+#122 [closed]: Endspurt Bescheinigungen
+=======================================
 
-Upgrade nach :ref:`welfare` 1.1.17 im ÖSHZ Eupen geplant für den
-06.10.2014 (Upgrade seit 14.08.2014).
+Hier die Übersicht der wichtigsten Änderungen beim
+Upgrade nach :ref:`welfare` 1.1.17 im ÖSHZ Eupen am
+06.10.2014 (im Rahmen des Projekts :doc:`/tickets/93`).
 
-Übersicht der wichtigsten Änderungen 
+Hauptziel dieses Upgrades war es, ein paar konkrete Beispiele von
+Bescheinigungen fertig auszuarbeiten.
 
 SICHTBARE ÄNDERUNGEN:
 
@@ -96,46 +98,29 @@ DONE:
   - Alle Banken raus außer Dexia
   - Alle "festen" Werte in Arial (sans serif) und alle "variablen"
     Werte in Times Roman (serif)
+
 - Ausdruck Übernahmescheine : Apotheke angeben, Zusatzformular wenn DMH.
 
 TODO:
 
 - Unten links fehlt ein Stück des Rahmens
-  Einfachste Lösung ist voraussichtlich ein Upgrade auf neues Debian.
+  Einfachste Lösung ist ein Upgrade auf neues Debian.
 
-DISCUSS:
-
-- Soll jeder bestätigen können?
-- GrantingsByClient : abgelaufene Beschlüsse rausfiltern?
-- `ConfirmationsByGranting` ist eine virtuelle Tabelle, deshalb
-  funktioniert dort weder Doppelklick noch Delete.
-- Wie sollen wir das Feld "Sozialhilfeart" ersetzen durch die
-  Information aus `GrantingsByClient`: den ersten Beschluss? alle
-  Beschlüsse? Und welche Hilfearten sind es, die im VSE erwähnt
-  werden? Lebensmittelbank ja wahrscheinlich nicht.
-- Wenn man auf den Zeitstempel eines ausgedruckten Auszugs klickt
-  (`Certifiable.printed`), sollte direkt das Dokument kommen, nicht
-  der Auszug. Aber manchmal will man doch auch auf den Auszug. Nämlich
-  dann, wenn man das Dokument neu generieren lassen will. Also ein
-  zweiter Link...
-- RefundConfirmation: Apotheke und Arzt vorbelegen aus Klientenkontakten.
-
-  
-
-DEFERRED
-
-- Soll Lino prüfen, ob Periode der Bescheinigung auch innerhalb der
-  Periode des Beschlusses liegt?
-- Deleting a database object should automatically delete all
-  Controllable objects controlled by this.  For example the excerpts of
-  a confirmation, the uploads of a client.
-- Vereinfachtes Detail Klienten für Empfang
+- RefundConfirmation: Apotheke vorbelegen aus Klientenkontakten.
 
 - In GrantingsByClient kann alicia auf dem *phantom record*
-  doppelklicken und kriegt dann auch das `insert_layout` angeziegt,
+  doppelklicken und kriegt dann auch das `insert_layout` angezeigt,
   kann da drin aber nichts bearbeiten. Alle Felder sind
   schreibgeschützt.
 
+DISCUSS:
+
+  http://de.welfare.lino-framework.org/todo.html
+
+DEFERRED
+
+- RefundConfirmation: Arzt vorbelegen aus Klientenkontakten geht
+  nicht, denn woher will Lino wissen, welchen Arzt man gerade braucht.
 
 Seiten, die hierher verweisen:
 

@@ -1,8 +1,8 @@
-:state: testing
+:state: closed
 :module: lino_welfare
 
-#100 : Ce qui reste à faire pour Châtelet
-=========================================
+#100 [closed] : Ce qui reste à faire pour Châtelet
+==================================================
 
 
 Questions aux utilisateurs

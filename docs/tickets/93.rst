@@ -8,14 +8,14 @@
 todo
 -----
 
+- Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
+  :doc:`/tickets/122`
+
 - Wenn man eine ungültige IBAN eingibt, dann kommt zwar die
   Fehlermeldung und es wird nicht gespeichert, aber die Zelle wird
   nicht rot markiert.
-- Summary panels don't get refreshed, e.g. when I add a new upload
-  then I must click the Refresh button in order to have the summary
-  panel updated.
 
-- Collect-Modus des eidreader einschalten.
+- Collect-Modus des :ref:`eidreader` einschalten.
 
 - Leute, deren offizieller Name "(Decl.)" enthält. Wenn dieser Text im
   Namen und/oder Vornamen der eID-Karte steht, dann wird er aus dem
@@ -31,52 +31,15 @@ todo
 Later
 -----
 
-- Validierung in drei Stufen: (grün) OK, (rot) nicht OK, (orange)
-  Warnung. Zum Beispiel "Achtung, diese BIC ist eine andere als die,
-  die Lino vorgeschlagen hätte". Ich könnte hier mit Zeilenfarben
-  arbeiten, aber dann überschneidet sich das mit der Zeilenfarbe pro
-  Status.
-
 - Write a tested document for the summary panel of UploadsByController
-
-- Informationen aus Tx25 in die Datenbank reinholen bzw. an nützlichen
-  Stellen anzeigen.
 
 - When a :term:`detail window` has more tabs than the window can hold,
   then we need something to scroll on these.
 
 
+
 feedback
 --------
-
-- `isip.Contract`, `debts.Budet` and `notes.Note` must be
-  *attestables*, not simply `CachedPrintable`.
-
-  In order to avoid manual changes in the two templates used to print
-  `isip.Contract` and `jobs.Contract`, we can override their
-  `get_printable_context` method.
-
-  And I must change the current template naming strategy.  The
-  `lino_welfare/config/attestations/Attestation` directory is okay for
-  general templates like `base.body.html` and `default.body.html`,
-  `certificate.body.html`, but e.g. `cal_Guest.body.html` should be
-  `cal/Guest/presence_cert.body.html`
-
-- Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
-
-- Badges. in Charleroi haben sie die sogenannten "tests de
-  niveau". Das sind kleine Prüfungen, die vom ÖSHZ organisiert werden,
-  und die eine Fähigkeit bestätigen. Zum Beispiel "Anstreichen",
-  "Nähen", "Französisch Stufe 1". Die Sozis halten in Lino fest,
-  welcher Kunde wann welchen test de niveau bestanden hat.  Frage:
-  Will Eupen das auch? Und wie sollen wir es nennen?
-
-- Wer darf auf den Button "zur Hauptadresse machen" klicken?
-
-- Brauchen wir wirklich die besprochene Tabelle der EiEi-Beträge
-  (Kategorie, Seit wann, Betrag) ?
-
-- AMK-Bescheinigungen
 
 - Welche Angaben aus PXS fehlen noch im Detail-Fenster 
   von Empfang-->Klienten? (mit Monika klären)
@@ -101,22 +64,28 @@ feedback
 
     - Bemerkungen, Notizen (freies Textfeld. wichtig.)
 
-- Kann ein Klient eigentlich auf zwei Agenten zugleich warten? 
-  Soll Lino das verhindern? 
-
-- Konfigurierbare Historik:
-  Historik als virtuelle Tabelle, die ihre "Chronik-Einträge" aus
-  diversen Quellen zusammensucht:
-  history.HistoricEvents.add(name,model,field)
-
-  Rückfragen: Bitte genauer definieren, welchen Zweck diese Tabelle
-  erfüllen soll.  Ich habe notiert "Wann war ein Klient das letzte Mal
-  da? Was ist alles passiert?", aber das reicht mir nicht. Bitte ein
-  konkretes Beispiel beschreiben. 
-
-
 Done
 -------
+
+- `isip.Contract`, `debts.Budet` and `notes.Note` must be
+  *attestables*, not simply `CachedPrintable`.
+
+  In order to avoid manual changes in the two templates used to print
+  `isip.Contract` and `jobs.Contract`, we can override their
+  `get_printable_context` method.
+
+  And I must change the current template naming strategy.  The
+  `lino_welfare/config/attestations/Attestation` directory is okay for
+  general templates like `base.body.html` and `default.body.html`,
+  `certificate.body.html`, but e.g. `cal_Guest.body.html` should be
+  `cal/Guest/presence_cert.body.html`
+
+- Badges. in Charleroi haben sie die sogenannten "tests de
+  niveau". Das sind kleine Prüfungen, die vom ÖSHZ organisiert werden,
+  und die eine Fähigkeit bestätigen. Zum Beispiel "Anstreichen",
+  "Nähen", "Französisch Stufe 1". Die Sozis halten in Lino fest,
+  welcher Kunde wann welchen test de niveau bestanden hat.  Frage:
+  Will Eupen das auch? Und wie sollen wir es nennen?
 
 - Siehe Änderungen Version 1.1.11 bzw. 1.1.12 in :ref:`welfare.changes`.
 
