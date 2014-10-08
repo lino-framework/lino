@@ -26,6 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
 from lino import rt
+from lino.utils.xmlgen.html import E
 
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
@@ -406,6 +407,48 @@ class BasePrintAction(actions.Action):
         return filename
 
 
+class DirectPrintAction(BasePrintAction):
+
+    """
+    A Print Action that uses a hard-coded template and no cache.
+    """
+    url_action_name = None
+    icon_name = 'printer'
+
+    #~ def __init__(self,rpt,name,label,bmname,tplname):
+    #~ def __init__(self,label=None,tplname='Default',build_method=None,**kw):
+    def __init__(self, label=None, tplname=None, build_method=None, **kw):
+        #~ if name is None: name = 'print'
+        #~ if label is None: label = _("Print")
+        #~ if tplname is None: tplname = 'Default'
+        super(DirectPrintAction, self).__init__(label, **kw)
+        self.build_method = build_method
+        self.tplname = tplname
+
+    #~ def setup(self,actor,name):
+        #~ self.url_action_name = name
+        #~ super(DirectPrintAction,self).setup(actor,name)
+
+    def get_print_templates(self, bm, elem):
+        #~ assert bm is self.bm
+        if self.tplname:
+            return [self.tplname + bm.template_ext]
+        return elem.get_print_templates(bm, self)
+        #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
+
+    def run_from_ui(self, ar, **kw):
+        elem = ar.selected_rows[0]
+        bm = elem.get_build_method()
+        bm.build(ar, self, elem)
+        url = bm.get_target_url(self, elem)
+        if ar.request is not None and bm.use_webdav and has_davlink:
+            url = ar.request.build_absolute_uri(url)
+            kw.update(open_davlink_url=url)
+        else:
+            kw.update(open_url=url)
+        ar.success(**kw)
+
+
 class CachedPrintAction(BasePrintAction):
 
     """Note that this action should rather be called 'Open a printable
@@ -432,9 +475,16 @@ class CachedPrintAction(BasePrintAction):
             leaf = mf.parts[-1]
             if obj.build_time is None:
                 obj.build_target(ar)
-                kw.update(message=_("%s has been built.") % leaf)
+                ar.info("%s has been built.", leaf)
             else:
-                kw.update(message=_("Reused %s from cache.") % leaf)
+                ar.info("Reused %s from cache.", leaf)
+            url = rt.get_help_url("print", target='_blank')
+            msg = _("Your printable document (filename %(doc)s) "
+                    "should now open in a new browser window. "
+                    "If it doesn't, please consult %(help)s "
+                    "or ask your system administrator.") % dict(
+                doc=leaf, help=E.tostring(url))
+            kw.update(message=msg, alert=True)
             kw.update(refresh=True)
             #~ kw.update(open_url=mf.url)
             if bm.use_webdav and has_davlink and ar.request is not None:
@@ -538,48 +588,6 @@ class EditTemplate(BasePrintAction):
                 
 
 # http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
-
-
-class DirectPrintAction(BasePrintAction):
-
-    """
-    A Print Action that uses a hard-coded template and no cache.
-    """
-    url_action_name = None
-    icon_name = 'printer'
-
-    #~ def __init__(self,rpt,name,label,bmname,tplname):
-    #~ def __init__(self,label=None,tplname='Default',build_method=None,**kw):
-    def __init__(self, label=None, tplname=None, build_method=None, **kw):
-        #~ if name is None: name = 'print'
-        #~ if label is None: label = _("Print")
-        #~ if tplname is None: tplname = 'Default'
-        super(DirectPrintAction, self).__init__(label, **kw)
-        self.build_method = build_method
-        self.tplname = tplname
-
-    #~ def setup(self,actor,name):
-        #~ self.url_action_name = name
-        #~ super(DirectPrintAction,self).setup(actor,name)
-
-    def get_print_templates(self, bm, elem):
-        #~ assert bm is self.bm
-        if self.tplname:
-            return [self.tplname + bm.template_ext]
-        return elem.get_print_templates(bm, self)
-        #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
-
-    def run_from_ui(self, ar, **kw):
-        elem = ar.selected_rows[0]
-        bm = elem.get_build_method()
-        bm.build(ar, self, elem)
-        url = bm.get_target_url(self, elem)
-        if ar.request is not None and bm.use_webdav and has_davlink:
-            url = ar.request.build_absolute_uri(url)
-            kw.update(open_davlink_url=url)
-        else:
-            kw.update(open_url=url)
-        ar.success(**kw)
 
 
 class ClearCacheAction(actions.Action):

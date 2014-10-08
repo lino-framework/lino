@@ -1,0 +1,48 @@
+#133 : Lebensläufe und Historie
+===============================
+
+Auslöser: Irritierend, dass der Drucker-Button jedes Mal klammheimlich
+einen neuen Auszug erstellt hat. Zum Beispiel weil Java verhindert,
+dass das Dokument geöffnet wird. Oder auch weil es gelegentlich lange
+dauert, bis davlink Wort startet. Ausserdem wurde möglicherweise das
+Panel "Historie" nicht automatisch aktualisiert.
+
+#.  Nach Erstellen eines Ausdrucks : Meldung, dass das erstellte
+    Dokument sich nun öffnen müsste.
+    
+#.  Panel "Auszüge" im Reiter "Historie":
+
+  - Summary muss intuitiv übersichtlicher werden. Z.B. gruppieren pro Datum
+
+  - filtrieren können wenn im eigenen Fenster. Nach Dokumentart, nach
+    Datumsbereich, nach Benutzer.
+
+  - Wird dieses Panel automatisch aktualisiert nach einem Ausdruck?
+
+#.  Im Reiter "Lebenslauf" einen Link zum letzten Lebenslauf oder zur
+    Tabelle aller erstellten Lebensläufe.
+
+#.  E-Mail-Ausgänge (:class:`ml.outbox.MailsByOwner`) auch ins Detail
+    eines Auszugs.
+
+Noch abzusegnen:
+
+- "Ereignisse/Notizen" umbenennen nach "Notizen".
+
+  Aber wie schreibt man dann einen Standardbrief und/oder eine E-Mail
+  an jemanden? Antwort: wie bisher. Man schreibt eine Notiz und druckt
+  sie dann aus.
+
+  Die Notizarten "E-Mail", "Brief" und "Einschreiben" bedeuten
+  weiterhin, dass ich als Benutzer ein freies Dokument selber aufsetze
+  mit dem Ziel, es auszudrucken und/oder an den Klienten oder externe
+  Partner zu verschicken.
+
+
+
+  Also alle bestehenden Notizen wie 
+
+Noch zu besprechen:
+
+- Zugriffsrechte pro Dokumentart? Z.B. Lebenslauf darf nicht jeder
+  sehen.

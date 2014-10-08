@@ -409,6 +409,8 @@ class Site(Site):
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
 
+        assert not self.help_url.endswith('/')
+
     def init_before_local(self, *args):
         super(Site, self).init_before_local(*args)
 
@@ -1191,3 +1193,12 @@ class Site(Site):
             p = "$(PRJ)" + p[len(self.project_dir):]
         return p
             
+    def get_help_url(self, docname=None, text=None, **kw):
+        if text is None:
+            text = unicode(_("the documentation"))
+        if docname is None:
+            url = self.help_url
+        else:
+            url = "%s/help/%s.html" % (self.help_url, docname)
+        return E.a(text, href=url, **kw)
+        

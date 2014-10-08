@@ -1,5 +1,3 @@
-:state:
-
 #131 : Deleting objects related by generic foreignkeys
 ======================================================
 
