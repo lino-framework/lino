@@ -72,20 +72,23 @@ Using the ``ConfigDirCache``
 Action requests
 ---------------
 
+Action requests are implemented by
+:class:`lino.core.requests.BaseRequest` and its subclasses.
+
+In application code, the traditional name for instances of action
+requests  is :class:`ar`.
+
 .. class:: ar
 
-    An action request is when a given user asks to run a given action
-    of a given actor.  
+  An action request is when a given user asks to run a given action
+  of a given actor.  
 
-    As a rough approcimation you can say that every Django web request
-    gets wrapped into an action request.  The ActionRequest just holds
-    extended information about the "context" (like the "renderer"
-    being used) and provides the application with methods to
-    communicate with the user.
-    But there are exceptions, the :attr:`ar.request` can be None.
-
-    Implemented by :class:`lino.core.requests.BaseRequest` and its
-    subclasses.
+  As a rough approcimation you can say that every Django web request
+  gets wrapped into an action request.  The ActionRequest just holds
+  extended information about the "context" (like the "renderer"
+  being used) and provides the application with methods to
+  communicate with the user.
+  But there are exceptions, the :attr:`ar.request` can be None.
 
   .. method:: show(self, spec, master_instance=None, column_names=None, header_level=None, language=None, **kw)
 

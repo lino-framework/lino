@@ -75,7 +75,7 @@ return `undefined`.
 
 `ext_renderer.py`: the optional `request` argument to
 `window_action_button` and `action_call` is now an
-:class:`rt.ActionRequest`, not a plain Django web request.
+:class:`rt.ar`, not a plain Django web request.
 
 
 Unknown key 'goto_record_id' in action response

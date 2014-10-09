@@ -14,5 +14,5 @@ I removed the following permission test in the
 Because it is not the responsibility of this method to test this.
 This exception occured rather often at :ref:`chat` in some complex
 conditions, probably when some application code instantiates itself a
-request using :meth:`rt.ActionRequest.spawn` in order to generate
+request using :meth:`rt.ar.spawn` in order to generate
 e.g. the clickable number of a :class:`dd.RequestField`.

@@ -474,6 +474,7 @@ class CachedPrintAction(BasePrintAction):
         return BasePrintAction.before_build(self, bm, elem)
 
     def run_from_ui(self, ar, **kw):
+
         if len(ar.selected_rows) == 1:
             obj = ar.selected_rows[0]
             bm = obj.get_build_method()
@@ -488,6 +489,7 @@ class CachedPrintAction(BasePrintAction):
 
             self.notify_done(ar, bm, leaf, mf.url, **kw)
             kw.update(refresh=True)
+            return
 
         def ok(ar2):
             #~ qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]

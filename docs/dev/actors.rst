@@ -199,7 +199,7 @@ The ``Actor`` class
   .. method:: get_row_classes(self, ar)
 
     If a method of this name is defined on an actor, then it must be a
-    class method which takes an :class:`rt.ActionRequest` as single
+    class method which takes an :class:`rt.ar` as single
     argument and returns either None or a string "red", "green" or
     "blue" (todo: add more colors and styles). Example::
     
@@ -217,7 +217,7 @@ The ``Actor`` class
   .. method:: get_welcome_messages(self, ar)
 
     If a method of this name is defined on an actor, then it must be a
-    class method which takes an :class:`rt.ActionRequest` as single
+    class method which takes an :class:`rt.ar` as single
     argument and returns or yields a list of :term:`welcome messages
     <welcome message>` (messages to be displayed in the welcome block
     of :xfile:`admin_main.html`).
@@ -235,7 +235,7 @@ The ``Actor`` class
     row `obj` and `ar`.
 
     `obj` is an instance of this table's row class,
-    `ar` is the :class:`rt.ActionRequest`.
+    `ar` is the :class:`rt.ar`.
 
   .. method:: parse_req(cls, ar, rqdata, **kw)
 
@@ -336,7 +336,7 @@ The ``Actor`` class
     row `obj` and `ar`.
 
     `obj` is an instance of this table's row class,
-    `ar` is the :class:`rt.ActionRequest`.
+    `ar` is the :class:`rt.ar`.
 
   .. method:: get_data_elem(self, name)
     
@@ -426,7 +426,7 @@ The ``Actor`` class
 
   .. method:: request(self, *args, **kw) 
 
-    Return a programmatically instantiated :class:`rt.ActionRequest`
+    Return a programmatically instantiated :class:`rt.ar`
     on this actor.
 
   .. method:: param_defaults(self, ar, **kw)

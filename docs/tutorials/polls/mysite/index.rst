@@ -509,15 +509,15 @@ The action method itself should have the following signature::
         ...
         return ar.success(kw)
         
-Where ``ar`` is an :class:`rt.ActionRequest` instance that holds
+Where ``ar`` is an :class:`rt.ar` instance that holds
 information about the web request and provides methods like
 
-- :meth:`callback <rt.ActionRequest.callback>` 
-  and :meth:`confirm <rt.ActionRequest.confirm>`
+- :meth:`callback <rt.ar.callback>` 
+  and :meth:`confirm <rt.ar.confirm>`
   lets you define a dialog with the user using callbacks.
 
-- :meth:`success <rt.ActionRequest.success>` and
-  :meth:`error <rt.ActionRequest.error>` are possible return values
+- :meth:`success <rt.ar.success>` and
+  :meth:`error <rt.ar.error>` are possible return values
   where you can ask the client to do certain things.
 
 

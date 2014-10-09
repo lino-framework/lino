@@ -17,7 +17,7 @@ DONE:
     `Dokumentation
     <http://de.welfare.lino-framework.org/help/print.html>`__ in
     dieser Meldung.  This link is a first usage example of the new
-    function :method:`rt.ActionRequest.get_help_url`.
+    function :method:`rt.ar.get_help_url`.
 
 
 TODO:

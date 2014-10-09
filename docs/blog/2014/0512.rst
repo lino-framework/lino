@@ -8,7 +8,7 @@ Creating a Client
 Discovered and fixed a bug caused by recent changes: Confirming the
 :term:`insert window` on Clients seemed to fail.  In fact it was just
 the :class:`ml.dedupe.CheckedSubmitInsert` action who failed to call
-:meth:`rt.ActionRequest.set_response` with `close_window=True`.
+:meth:`rt.ar.set_response` with `close_window=True`.
 
 
 Cannot `order_by` case-insensitive

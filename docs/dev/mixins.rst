@@ -59,7 +59,7 @@ Model
   .. method:: get_system_note_recipients(self, ar, silent)
 
     Return a list of email recipients for a system note on this
-    object. Used by :meth:`rt.ActionRequest.add_system_note`.
+    object. Used by :meth:`rt.ar.add_system_note`.
 
     Every recipient must be a string with a valid email recipient like
     "john@example.com" or "John Doe <john@example.com>".
@@ -106,7 +106,7 @@ Model
           if self.is_imported:
               return _("Cannot delete imported records.")
             
-    The argument `ar` contains the :class:`rt.ActionRequest` 
+    The argument `ar` contains the :class:`rt.ar` 
     which is trying to delete. `ar` is possibly `None` when this is 
     being called from a script or batch process.
 

@@ -184,7 +184,7 @@ The ``Action`` class reference
   .. method:: get_action_permission(self, ar, obj, state)
 
     Return (True or False) whether the given :class:`ar
-    <rt.ActionRequest>` should get permission to execute on the given
+    <rt.ar>` should get permission to execute on the given
     Model instance `obj` (which is in the given `state`).
 
     Derived Action classes may override this to add vetos.

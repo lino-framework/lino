@@ -15,9 +15,9 @@ problem report (original formulation by an end-user):
 
 This was a genuine bug. It is again our well-known situation after a
 :class:`dd.SubmitInsert` action.  This action calls
-:meth:`ar.goto_instance <rt.ActionRequest.goto_instance>` (to display
+:meth:`ar.goto_instance <rt.ar.goto_instance>` (to display
 the new record) and :meth:`ar.close_window
-<rt.ActionRequest.close_window>` (to close the :term:`insert window`).
+<rt.ar.close_window>` (to close the :term:`insert window`).
 
 :js:func:`Lino.handle_action_result` uses a variable `panel` for "the
 current panel".  Ater closing a window, `panel` points to the main

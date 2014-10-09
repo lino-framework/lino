@@ -13,6 +13,10 @@ logger = logging.getLogger(__name__)
 
 from os.path import join, dirname
 
+import datetime
+ONE_WEEK = datetime.timedelta(days=7)
+ONE_DAY = datetime.timedelta(days=1)
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -519,6 +523,9 @@ class ExcerptsByType(ExcerptsByX):
     master_key = 'excerpt_type'
     column_names = "build_time owner project user *"
 
+            
+MORE_LIMIT = 5
+
 
 class ExcerptsByOwner(ExcerptsByX):
     master_key = 'owner'
@@ -530,23 +537,51 @@ class ExcerptsByOwner(ExcerptsByX):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
-        sar = self.request(master_instance=obj,
-                           limit=settings.SITE.preview_limit)
         items = []
-        for ex in sar:
-            items.append(self.format_excerpt(ex, ar))
-            
-        if len(items) == 0:
-            items.append(_("No excerpts."))
-        else:
-            items = join_elems(items, sep=', ')
-        return E.div(*items)
+
+        def add(title, flt):
+            links = []
+            sar = self.request(master_instance=obj, filter=flt)
+            # logger.info("20141009 %s", sar.data_iterator.query)
+            n = sar.get_total_count()
+            if n:
+                for i, ex in enumerate(sar):
+                    txt = self.format_excerpt(ex)
+                    if ex.build_time is not None:
+                        txt += " (%s)" % naturaltime(ex.build_time)
+                    links.append(ar.obj2html(ex, txt))
+                    if i >= MORE_LIMIT:
+                        # links.append(ar.href_to_request(sar, _("more")))
+                        links.append('...')
+                        break
+
+                items.append(E.li(title, " : ", *join_elems(links, sep=', ')))
+
+        # qs = sar.data_iterator
+        Q = models.Q
+        add(_("not printed"), Q(build_time__isnull=True))
+        t0 = datetime.datetime.combine(dd.today(), datetime.time(0, 0, 0))
+        t24 = datetime.datetime.combine(dd.today(), datetime.time(23, 59, 59))
+        add(_("Today"), Q(build_time__gte=t0, build_time__lte=t24))
+        t7 = dd.today() - ONE_WEEK
+        add(_("Last week"),
+            Q(build_time__lte=dd.today(), build_time__gte=t7))
+        add(_("Older"), Q(build_time__lt=t7))
+        return E.ul(*items)
+        
+        # items = []
+        # for ex in sar:
+        #     items.append(self.format_excerpt(ex, ar))
+
+        # if len(items) == 0:
+        #     items.append(_("No excerpts."))
+        # else:
+        #     items = join_elems(items, sep=', ')
+        # return E.div(*items)
 
     @classmethod
-    def format_excerpt(self, ex, ar):
-        d = dict(time=naturaltime(ex.build_time or _("not printed")))
-        d.update(excerpt=ex.excerpt_type)
-        return ar.obj2html(ex, _("%(excerpt)s (%(time)s)") % d)
+    def format_excerpt(self, ex):
+        return unicode(ex.excerpt_type)
 
 
 if settings.SITE.project_model is not None:
@@ -556,13 +591,10 @@ if settings.SITE.project_model is not None:
         column_names = "build_time excerpt_type user owner *"
 
         @classmethod
-        def format_excerpt(self, ex, ar):
-            d = dict(time=naturaltime(ex.build_time or _("not printed")))
+        def format_excerpt(self, ex):
             if ex.owner == ex.project:
-                d.update(excerpt=ex.excerpt_type)
-            else:
-                d.update(excerpt=ex.owner)
-            return ar.obj2html(ex, _("%(excerpt)s (%(time)s)") % d)
+                return unicode(ex.excerpt_type)
+            return unicode(ex.owner)
 
 
 system = dd.resolve_app('system')
