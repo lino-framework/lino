@@ -560,9 +560,10 @@ class ExcerptsByOwner(ExcerptsByX):
         # qs = sar.data_iterator
         Q = models.Q
         add(_("not printed"), Q(build_time__isnull=True))
-        t0 = datetime.datetime.combine(dd.today(), datetime.time(0, 0, 0))
-        t24 = datetime.datetime.combine(dd.today(), datetime.time(23, 59, 59))
-        add(_("Today"), Q(build_time__gte=t0, build_time__lte=t24))
+        # t0 = datetime.datetime.combine(dd.today(), datetime.time(0, 0, 0))
+        # t24 = datetime.datetime.combine(dd.today(), datetime.time(23, 59, 59))
+        # add(_("Today"), Q(build_time__gte=t0, build_time__lte=t24))
+        add(_("Today"), Q(build_time__gte=dd.today() - ONE_DAY))
         t7 = dd.today() - ONE_WEEK
         add(_("Last week"),
             Q(build_time__lte=dd.today(), build_time__gte=t7))
