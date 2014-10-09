@@ -5,8 +5,14 @@ Wednesday, October 8, 2014
 I started the French version of the user manual for :ref:`welfare` at
 http://fr.welfare.lino-framework.org/
 
+Opened ticket :doc:`/tickets/133` and started to work on it:
 
-Opened ticket :doc:`/tickets/133` and started to work on it.
+#.  Nach Erstellen eines Ausdrucks Meldung, dass das erstellte
+    Dokument sich nun öffnen müsste.
 
+The The message 
+    
 Fixed a bug in :mod:`welfare.isip` which caused a traceback "Cannot
 use None as a query value" when trying to add a new contract.
+
+Pushed the above changes to master and pulled them to :ref:`dsbe`.

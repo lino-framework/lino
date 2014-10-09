@@ -29,6 +29,7 @@ Sitemap
 
    tickets/index
    ref/index
+   help/index
 
 
 

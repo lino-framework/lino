@@ -257,7 +257,7 @@ class AppyOdtBuildMethod(AppyBuildMethod):
     """
     Generates .odt files from .odt templates.
     
-    This method doesn't require OpenOffice nor the 
+    This method doesn't require OpenOffice nor the
     Python UNO bridge installed
     (except in some cases like updating fields).
     """
@@ -402,51 +402,58 @@ class BasePrintAction(actions.Action):
             os.remove(filename)
         else:
             #~ logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
-            settings.SITE.makedirs_if_missing(os.path.dirname(filename))
+            rt.makedirs_if_missing(os.path.dirname(filename))
         logger.debug(u"%s : %s -> %s", bm, elem, filename)
         return filename
 
+    def notify_done(self, ar, bm, leaf, url, **kw):
+        help_url = ar.get_help_url("print", target='_blank')
+        msg = _("Your printable document (filename %(doc)s) "
+                "should now open in a new browser window. "
+                "If it doesn't, please consult %(help)s "
+                "or ask your system administrator.")
+        msg %= dict(doc=leaf, help=E.tostring(help_url))
+        kw.update(message=msg, alert=True)
+        if bm.use_webdav and has_davlink and ar.request is not None:
+            kw.update(
+                open_davlink_url=ar.request.build_absolute_uri(url))
+        else:
+            kw.update(open_url=url)
+        ar.success(**kw)
+        return
+
 
 class DirectPrintAction(BasePrintAction):
+    """Print using a hard-coded template and no cache.
 
-    """
-    A Print Action that uses a hard-coded template and no cache.
     """
     url_action_name = None
     icon_name = 'printer'
 
-    #~ def __init__(self,rpt,name,label,bmname,tplname):
-    #~ def __init__(self,label=None,tplname='Default',build_method=None,**kw):
     def __init__(self, label=None, tplname=None, build_method=None, **kw):
-        #~ if name is None: name = 'print'
-        #~ if label is None: label = _("Print")
-        #~ if tplname is None: tplname = 'Default'
         super(DirectPrintAction, self).__init__(label, **kw)
         self.build_method = build_method
         self.tplname = tplname
-
-    #~ def setup(self,actor,name):
-        #~ self.url_action_name = name
-        #~ super(DirectPrintAction,self).setup(actor,name)
 
     def get_print_templates(self, bm, elem):
         #~ assert bm is self.bm
         if self.tplname:
             return [self.tplname + bm.template_ext]
         return elem.get_print_templates(bm, self)
-        #~ return super(DirectPrintAction,self).get_print_templates(bm,elem)
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
         bm = elem.get_build_method()
         bm.build(ar, self, elem)
-        url = bm.get_target_url(self, elem)
-        if ar.request is not None and bm.use_webdav and has_davlink:
-            url = ar.request.build_absolute_uri(url)
-            kw.update(open_davlink_url=url)
-        else:
-            kw.update(open_url=url)
-        ar.success(**kw)
+        mf = bm.get_target(self, elem)
+        # if ar.request is not None and bm.use_webdav and has_davlink:
+        #     url = ar.request.build_absolute_uri(url)
+        #     kw.update(open_davlink_url=url)
+        # else:
+        #     kw.update(open_url=url)
+        # ar.success(**kw)
+        leaf = mf.parts[-1]
+        self.notify_done(ar, bm, leaf, mf.url, **kw)
 
 
 class CachedPrintAction(BasePrintAction):
@@ -478,22 +485,9 @@ class CachedPrintAction(BasePrintAction):
                 ar.info("%s has been built.", leaf)
             else:
                 ar.info("Reused %s from cache.", leaf)
-            url = rt.get_help_url("print", target='_blank')
-            msg = _("Your printable document (filename %(doc)s) "
-                    "should now open in a new browser window. "
-                    "If it doesn't, please consult %(help)s "
-                    "or ask your system administrator.") % dict(
-                doc=leaf, help=E.tostring(url))
-            kw.update(message=msg, alert=True)
+
+            self.notify_done(ar, bm, leaf, mf.url, **kw)
             kw.update(refresh=True)
-            #~ kw.update(open_url=mf.url)
-            if bm.use_webdav and has_davlink and ar.request is not None:
-                kw.update(
-                    open_davlink_url=ar.request.build_absolute_uri(mf.url))
-            else:
-                kw.update(open_url=mf.url)
-            ar.success(**kw)
-            return
 
         def ok(ar2):
             #~ qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
@@ -515,7 +509,7 @@ class CachedPrintAction(BasePrintAction):
             pdfs.append(pdf)
 
         mf = TmpMediaFile(ar, 'pdf')
-        settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
+        rt.makedirs_if_missing(os.path.dirname(mf.name))
         merge_pdfs(pdfs, mf.name)
         return mf
 
@@ -574,7 +568,7 @@ class EditTemplate(BasePrintAction):
             def ok(ar2):
                 logger.info(
                     "%s made local template copy %s", ar.user, local_file)
-                settings.SITE.makedirs_if_missing(dirname(local_file))
+                rt.makedirs_if_missing(dirname(local_file))
                 shutil.copy(filename, local_file)
                 doit(ar2)
 
@@ -684,6 +678,10 @@ class Printable(object):
     "See :class:`dd.Printable`."
 
     do_print = DirectPrintAction()
+    # Note that :func:`ml.excerpts.set_excerpts_actions` possibly
+    # replaces the `do_print` action by a `excerpts.CreateExcerpt`
+    # instance.
+
     edit_template = EditTemplate()
 
     def before_printable_build(self, bm):

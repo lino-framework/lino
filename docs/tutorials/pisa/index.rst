@@ -56,7 +56,7 @@ Create a Person:
 
 Start a scripting session as `robin`
 
->>> ses = settings.SITE.login('robin',subst_user=anna)
+>>> ses = settings.SITE.login('robin', subst_user=anna)
 
 Get our Person:
 
@@ -68,8 +68,22 @@ Run the Print action:
 
 Check the result:
 
->>> print(rv)  #doctest: +NORMALIZE_WHITESPACE
-{'open_url': u'/media/cache/pisa/pisa.Person-1.pdf', 'success': True}
+>>> rv['success']
+True
+
+>>> print(rv['open_url'])
+/media/cache/pisa/pisa.Person-1.pdf
+
+>>> print(rv['message'])  #doctest: +NORMALIZE_WHITESPACE
+Your printable document (filename pisa.Person-1.pdf) should now 
+open in a new browser window. If it doesn't, please consult 
+<a href="http://www.lino-framework.org/help/print.html" 
+target="_blank">the documentation</a> 
+or ask your system administrator.
+
+The message contains a link to the page :doc:`/help/print`.  You can
+override :attr:`ad.Site.help_url` if you want to invite users to your
+own help system.
 
 Since the `media/cache` directory is not part of the Lino repository,
 we copy the resulting file to a public place:

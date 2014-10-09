@@ -21,7 +21,6 @@ find_config_files = settings.SITE.confdirs.find_config_files
 find_template_config_files = settings.SITE.confdirs.find_template_config_files
 makedirs_if_missing = settings.SITE.makedirs_if_missing
 relpath = settings.SITE.relpath
-get_help_url = settings.SITE.get_help_url
 
 def show(*args, **kw):
     return login().show(*args, **kw)

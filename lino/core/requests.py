@@ -187,6 +187,9 @@ class BaseRequest(object):
     """Base class for :class:`ActionRequest` and :class:`TableRequest
     <lino.core.tables.TableRequest>`. See :class:`rt.ActionRequest`.
 
+    A bare BaseRequest instance is returned as a "session" by
+    :meth:`rt.login`.
+
     """
     # Some of the following are needed e.g. for polls tutorial
     actor = None
@@ -652,6 +655,14 @@ class BaseRequest(object):
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))
 
         elem.after_ui_save(ar)
+
+    def get_help_url(self, docname=None, text=None, **kw):
+        if text is None:
+            text = unicode(_("the documentation"))
+        url = settings.SITE.help_url
+        if docname is not None:
+            url = "%s/help/%s.html" % (url, docname)
+        return E.a(text, href=url, **kw)
 
 
 class ActorRequest(BaseRequest):

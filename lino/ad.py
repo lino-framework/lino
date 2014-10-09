@@ -1192,13 +1192,3 @@ class Site(Site):
         if p.startswith(self.project_dir):
             p = "$(PRJ)" + p[len(self.project_dir):]
         return p
-            
-    def get_help_url(self, docname=None, text=None, **kw):
-        if text is None:
-            text = unicode(_("the documentation"))
-        if docname is None:
-            url = self.help_url
-        else:
-            url = "%s/help/%s.html" % (self.help_url, docname)
-        return E.a(text, href=url, **kw)
-        
