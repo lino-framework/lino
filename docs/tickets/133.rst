@@ -40,12 +40,11 @@ DONE:
     nicht im Reiter "Lebenslauf" ist sondern provisorisch im Reiter
     "Sonstiges".
 
-
 TODO:
     
 Zu besprechen:
 
-#.  E-Mail-Ausgänge (:class:`ml.outbox.MailsByOwner`) auch ins Detail
+#.  E-Mail-Ausgänge (:class:`ml.outbox.MailsByOwner`) auch im Detail
     eines Auszugs.
 
 #.  Auszugsarten anlegen fürs Modell `notes.Note`: Aktennotiz, Brief,

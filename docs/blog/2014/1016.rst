@@ -13,7 +13,7 @@ Continued on :doc:`/tickets/133`:
     nicht im Reiter "Lebenslauf" ist sondern provisorisch im Reiter
     "Sonstiges".
 
-Die Implementierung dieser Idee ist subtil:
+Die Implementierung des Feldes "Erstellte Lebensläufe" war subtil:
 
 First idea is to add a new field `vfield_name` on
 :class:`ml.excerpts.ExcerptType` and then extend
