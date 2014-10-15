@@ -262,8 +262,7 @@ from north.dbutils import babel_values  # alias for babelkw for backward compat
 from lino.utils.choosers import chooser, action_chooser
 from lino.utils.mti import EnableChild
 
-#~ from lino.core.auth import UserLevels, UserProfiles, UserGroups, add_user_group
-from lino.core.perms import UserLevels, UserProfiles, UserGroups, add_user_group
+from lino.modlib.users.mixins import UserLevels, UserProfiles, UserGroups, add_user_group
 
 #~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
 

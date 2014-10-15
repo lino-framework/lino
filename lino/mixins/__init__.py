@@ -45,7 +45,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
-from lino.core.perms import UserLevels
+from lino.modlib.users.mixins import UserLevels
 from lino.core import frames
 from lino.core import actions
 from lino.core import fields

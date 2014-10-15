@@ -103,14 +103,16 @@ See the following chapters of the MySQL documentation
     IntegrityError: (1217, 'Cannot delete or update a parent row: 
     a foreign key constraint fails')
 
-  One method to set this in a Debian server is to create a file
-  :file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
+  One method to set the default database storage on a Debian server is
+  to create a file :file:`/etc/mysql/conf.d/set_myisam_engine.cnf`
+  with this content::
 
     [mysqld]
     default-storage-engine=myisam
 
-  OTOH, if you insist on InnoDB, you can work around this problem by
-  doing yourself a DROP DATABASE followed by a new CREATE DATABASE.
+  If you insist on InnoDB, you can work around this problem by doing
+  yourself a `DROP DATABASE` followed by a new `CREATE DATABASE`
+  before running :manage:`initdb`.
 
 
 

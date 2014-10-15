@@ -1,0 +1,6 @@
+===========================
+Wednesday, October 15, 2014
+===========================
+
+Worked on :doc:`/tickets/128`: moved the definitions of UserLevels,
+UserGroups and UserProfiles from :mod:`lino.core.perms` to a new module :mod:`lino.modlib.users.mixins`.

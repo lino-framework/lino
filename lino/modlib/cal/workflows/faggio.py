@@ -11,9 +11,9 @@ from django.utils.translation import pgettext_lazy as pgettext
 if True:
     add = GuestStates.add_item
     #add('20', _("Accepted"),'accepted')
-    add('30', _("Excused"), 'excused')
     add('40', _("Present"), 'present', afterwards=True)
     add('50', _("Absent"), 'absent', afterwards=True)
+    add('60', _("Excused"), 'excused')
     #~ add('60', _("Visit"),'visit')
 
 
