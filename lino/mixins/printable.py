@@ -488,7 +488,7 @@ class CachedPrintAction(BasePrintAction):
                 ar.info("Reused %s from cache.", leaf)
 
             self.notify_done(ar, bm, leaf, mf.url, **kw)
-            kw.update(refresh=True)
+            ar.set_response(refresh=True)
             return
 
         def ok(ar2):

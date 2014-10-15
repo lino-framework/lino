@@ -1,6 +1,7 @@
-==================================================
-#128 : Http404 "There's no app_label u'lino' here"
-==================================================
+:state: closed
+
+#128 [closed] : Http404 "There's no app_label u'lino' here"
+===========================================================
 
 For example if user calls :menuselection:`Explorer --> System --> User
 levels`.

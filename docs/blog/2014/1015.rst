@@ -2,5 +2,16 @@
 Wednesday, October 15, 2014
 ===========================
 
+After 4 days without any time for Lino, here we go again.
+
 Worked on :doc:`/tickets/128`: moved the definitions of UserLevels,
-UserGroups and UserProfiles from :mod:`lino.core.perms` to a new module :mod:`lino.modlib.users.mixins`.
+UserGroups and UserProfiles from :mod:`lino.core.perms` to a new
+module :mod:`lino.modlib.users.mixins`.
+
+Continued on :doc:`/tickets/133`:
+
+#.  Filtern können im Panel :class:`"Auszüge"
+    <ml.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
+    Fenster geöffnet). Nach Dokumentart, nach Datumsbereich, nach
+    Benutzer.
+ 

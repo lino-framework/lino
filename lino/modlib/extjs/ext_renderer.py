@@ -273,7 +273,7 @@ class ExtRenderer(HtmlRenderer):
     def quick_upload_buttons(self, rr):
         """Returns a HTML chunk that displays "quick upload buttons": either
         one button :guilabel:`Upload` (if the given
-        :class:`TableTequest <lino.core.dbtables.TableRequest>` has no
+        :class:`TableRequest <rt.ar>` has no
         rows) or two buttons :guilabel:`Show` and :guilabel:`Edit` if
         it has one row.
         

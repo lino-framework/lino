@@ -115,6 +115,9 @@ from lino.core import tables
 from lino.core import fields
 
 
+STRICT = True
+
+
 class Choice(object):
 
     """
@@ -184,12 +187,13 @@ class Choice(object):
     def get_chooser_for_field(cls, fieldname):
         return None
 
-#~ class UnresolvedValue(Choice):
-    #~ def __init__(self,choicelist,value):
-        #~ self.choicelist = choicelist
-        #~ self.value = value
-        #~ self.text = "Unresolved value %r for %s" % (value,choicelist.__name__)
-        #~ self.name = ''
+
+class UnresolvedValue(Choice):
+    def __init__(self, choicelist, value):
+        self.choicelist = choicelist
+        self.value = value
+        self.text = "Unresolved value %r for %s" % (value, choicelist.__name__)
+        self.name = ''
 
 
 CHOICELISTS = {}
@@ -468,8 +472,10 @@ Django creates copies of them when inheriting models.
             return None
         v = cls.items_dict.get(value)
         if v is None:
-            raise Exception("Unresolved value %r for %s" % (value, cls))
-            #~ return UnresolvedValue(cls,value)
+            if STRICT:
+                raise Exception("Unresolved value %r for %s" % (value, cls))
+            else:
+                return UnresolvedValue(cls, value)
         return v
         #~ return cls.items_dict.get(value) or UnresolvedValue(cls,value)
         #~ return cls.items_dict[value]

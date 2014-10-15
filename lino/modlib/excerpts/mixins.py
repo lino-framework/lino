@@ -16,6 +16,21 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino import dd
 
 
+class Shortcut(dd.Choice):
+    model_spec = None
+
+    def __init__(self, model_spec, name, verbose_name):
+        self.model_spec = model_spec
+        value = model_spec + "." + name
+        super(Shortcut, self).__init__(value, verbose_name, name)
+
+
+class Shortcuts(dd.ChoiceList):
+    verbose_name = _("Excerpt shortcut")
+    verbose_name_plural = _("Excerpt shortcuts")
+    item_class = Shortcut
+
+
 class Certifiable(dd.Model):
 
     class Meta:
@@ -60,4 +75,5 @@ class Certifiable(dd.Model):
             self.full_clean()
             self.save()
             obj.delete()
+
 

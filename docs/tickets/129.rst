@@ -1,3 +1,5 @@
+:state: longterm
+
 =================================
 #129 : Create a "Lino foundation"
 =================================
@@ -34,3 +36,9 @@ Some thoughts:
 - I enjoy to help with managing communities but am not the right
   person to do this "seriously", i.e. investing most of my time. I
   prefer to work on Lino rather than to write about it.
+
+Pages referring to this:
+
+.. refstothis::
+
+  

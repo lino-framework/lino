@@ -1,3 +1,5 @@
+:state: active
+
 #133 : Lebensläufe und Historie
 ===============================
 
@@ -17,68 +19,31 @@ DONE:
     `Dokumentation
     <http://de.welfare.lino-framework.org/help/print.html>`__ in
     dieser Meldung.  This link is a first usage example of the new
-    function :method:`rt.ar.get_help_url`.
+    function :meth:`rt.ar.get_help_url`.
+
+#. Zusammenfassung :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>`
+   ist jetzt intuitiv übersichtlicher: Gruppieren pro Datum.
+   Fehlgeschlagene Auszüge (mit leerem Feld `build_date`) an erster
+   Stelle erwähnen.
+
+#.  Man kann jetzt Filter-Parameter setzen im Panel :class:`"Auszüge"
+    <ml.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
+    Fenster geöffnet). Nach Dokumentart, nach Datumsbereich, nach
+    Benutzer.
+ 
+#.  Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` im Reiter
+    "Historie" wurde noch nicht automatisch aktualisiert nach einem
+    Ausdruck.
+
+#.  Im Reiter "Lebenslauf" einen Link zum letzten Lebenslauf oder zur
+    Tabelle aller erstellten Lebensläufe.  --> Außer dass das Feld
+    nicht im Reiter "Lebenslauf" ist sondern provisorisch im Reiter
+    "Sonstiges".
 
 
 TODO:
     
-#.  Im Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` (im
-    Reiter "Historie"):
-
-    - Zusammenfassung muss intuitiv übersichtlicher werden: Gruppieren
-      pro Datum.  Fehlgeschlagene Auszüge (mit leerem Feld
-      `build_date`) an erster Stelle erwähnen.
-
-    - Filtern können wenn im eigenen Fenster. Nach Dokumentart, nach
-      Datumsbereich, nach Benutzer.
- 
-    - Wird dieses Panel automatisch aktualisiert nach einem Ausdruck?
-
-#.  Und irgendwann kommt sogar eine nächtliche Routine, die alle
-    ungedruckten Auszüge löscht. Denn ein ungedruckter Auszug
-    ist --abgesehen für die eventuelle Fehlerdiagnose--
-    unsinnig. (Oder?)
-
-#.  Im Reiter "Lebenslauf" einen Link zum letzten Lebenslauf oder zur
-    Tabelle aller erstellten Lebensläufe?
-
-    Nebenidee: Nicht nur für Lebenslauf, sondern allgemein ein
-    virtuelles Feld `recent_excerpts` für :class:`dd.Model`?  Nein,
-    das wäre dann ja inhaltlich das Gleiche wie die zusammengefasste
-    Historie.
-
-    Die Implementierung dieser Idee ist subtil:
-
-    First idea is to a new field `vfield_name` on
-    :class:`ml.excerpts.ExcerptType` and then extend
-    :func:`ml.excerpts.set_excerpts_actions` to install a virtual
-    field on the model for these types.  But that approach would
-    result in layouts based on database content.  Sounds dangerous and
-    hackerish.
-
-    Solution is to define a new choicelist `ExcerptShortcuts` and to
-    add a field `shortcut` :class:`ml.excerpts.ExcerptType` which
-    points to this choicelist.
-
-    In :mod:`lino_welfare.modlib.pcsw` we would do for example::
-
-      ExcerptShortcuts.add('pcsw.Client', 'cv')
-
-    And then :func:`ml.excerpts.set_excerpts_actions` would define the
-    virtual fields::
-
-      for i in ExcerptShortcuts.items():
-          def f(obj, ar):
-              try:
-                  et = ExcerptType.objects.get(shortcut=i.name)
-              except DoesNotExist:
-                  return ''
-              qs = Excerpt.objects.filter(owner=obj, excerpt_type=et)
-              ...
-          dd.inject_field(i.model, i.name, f)
-
-
-Noch zu besprechen:
+Zu besprechen:
 
 #.  E-Mail-Ausgänge (:class:`ml.outbox.MailsByOwner`) auch ins Detail
     eines Auszugs.
@@ -98,5 +63,12 @@ Noch zu besprechen:
     aufsetze mit dem Ziel, es auszudrucken und/oder an den Klienten oder
     externe Partner zu verschicken.
 
-#.  Zugriffsrechte pro Dokumentart? Z.B. Lebenslauf darf nicht jeder
-    sehen.
+#.  Zugriffsrechte pro Dokumentart? Z.B. Lebensläufe darf nicht jeder
+    sehen. (Zu präzisieren.)
+
+#.  Und irgendwann kommt sogar eine nächtliche Routine, die alle
+    ungedruckten Auszüge löscht. Denn ein ungedruckter Auszug
+    ist --abgesehen für die eventuelle Fehlerdiagnose--
+    unsinnig. (Oder?)
+
+

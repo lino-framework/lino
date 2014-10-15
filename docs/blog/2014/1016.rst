@@ -1,0 +1,45 @@
+==========================
+Thursday, October 16, 2014
+==========================
+
+Continued on :doc:`/tickets/133`:
+
+#.  Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` im Reiter
+    "Historie" wurde noch nicht automatisch aktualisiert nach einem
+    Ausdruck.
+
+#.  Im Reiter "Lebenslauf" einen Link zum letzten Lebenslauf oder zur
+    Tabelle aller erstellten Lebensläufe.  --> Außer dass das Feld
+    nicht im Reiter "Lebenslauf" ist sondern provisorisch im Reiter
+    "Sonstiges".
+
+Die Implementierung dieser Idee ist subtil:
+
+First idea is to add a new field `vfield_name` on
+:class:`ml.excerpts.ExcerptType` and then extend
+:func:`ml.excerpts.set_excerpts_actions` to install a virtual
+field on the model for these types.  But that approach would
+result in layouts based on database content.  Sounds dangerous and
+hackerish.
+
+A better approach seems to define a new choicelist
+`ExcerptShortcuts` and to add a field `shortcut` in 
+:class:`ml.excerpts.ExcerptType` which points to this choicelist.
+
+In :mod:`lino_welfare.modlib.pcsw` we would do for example::
+
+  excerpts.Shortcuts.add('pcsw.Client', 'cv')
+
+And then :func:`ml.excerpts.set_excerpts_actions` would define the
+virtual fields::
+
+  for i in ExcerptShortcuts.items():
+      def f(obj, ar):
+          try:
+              et = ExcerptType.objects.get(shortcut=i.name)
+          except DoesNotExist:
+              return ''
+          qs = Excerpt.objects.filter(owner=obj, excerpt_type=et)
+          ...
+      dd.inject_field(i.model, i.name, f)
+

@@ -38,7 +38,7 @@ postings = dd.require_app_models('postings')
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
 
-from .mixins import Certifiable
+from .mixins import Certifiable, Shortcuts
 
 
 class ExcerptType(
@@ -88,6 +88,8 @@ class ExcerptType(
                     "point to owner instead of excerpt."))
 
     print_directly = models.BooleanField(_("Print directly"), default=True)
+
+    shortcut = Shortcuts.field(blank=True)
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, content_type):
@@ -189,6 +191,11 @@ We override everything in Excerpt to not call the class method.""")
 
         return ex
 
+    def get_action_name(self):
+        if self.primary:
+            return 'do_print'
+        else:
+            return 'create_excerpt' + str(self.pk)
 
 class ExcerptTypes(dd.Table):
 
@@ -210,7 +217,7 @@ class ExcerptTypes(dd.Table):
     detail_layout = """
     id name
     content_type:15 build_method:15 template:15 \
-    body_template:15 email_template:15
+    body_template:15 email_template:15 shortcut
     primary print_directly certifying backward_compat attach_to_email
     # remark:60x5
     excerpts.ExcerptsByType
@@ -504,6 +511,34 @@ class Excerpts(dd.Table):
 
     allow_create = False
 
+    parameters = dd.ObservedPeriod(
+        puser=models.ForeignKey(
+            'users.User', blank=True, null=True),
+        pexcerpt_type=models.ForeignKey(
+            'excerpts.ExcerptType', blank=True, null=True),
+        pcertifying=dd.YesNo.field(_("Certifying excerpts"), blank=True))
+    params_layout = """
+    start_date end_date pcertifying
+    puser pexcerpt_type"""
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Excerpts, cls).get_request_queryset(ar)
+        pv = ar.param_values
+
+        if pv.pcertifying == dd.YesNo.yes:
+            qs = qs.filter(excerpt_type__certifying=True)
+        elif pv.pcertifying == dd.YesNo.no:
+            qs = qs.filter(excerpt_type__certifying=False)
+
+        if pv.puser:
+            qs = qs.filter(user=pv.puser)
+
+        if pv.pexcerpt_type:
+            qs = qs.filter(excerpt_type=pv.pexcerpt_type)
+
+        return qs
+
 
 class MyExcerpts(mixins.ByUser, Excerpts):
     required = dd.required(user_groups='office')
@@ -619,8 +654,11 @@ def setup_explorer_menu(site, ui, profile, m):
 @dd.receiver(dd.pre_analyze)
 def set_excerpts_actions(sender, **kw):
     # logger.info("20140401 %s.set_attest_actions()", __name__)
+
     # in case ExcerptType is overridden
     ExcerptType = sender.modules.excerpts.ExcerptType
+    Excerpt = sender.modules.excerpts.Excerpt
+
     try:
         etypes = [(obj, obj.content_type)
                   for obj in ExcerptType.objects.all()]
@@ -631,12 +669,8 @@ def set_excerpts_actions(sender, **kw):
     for atype, ct in etypes:
         if ct is not None:
             m = ct.model_class()
-            if atype.primary:
-                an = 'do_print'
-            else:
-                an = 'create_excerpt' + str(atype.pk)
-            m.define_action(**{an: CreateExcerpt(
-                atype, unicode(atype))})
+            an = atype.get_action_name()
+            m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
             if atype.primary:
                 if atype.certifying:
                     m.define_action(
@@ -653,3 +687,49 @@ def set_excerpts_actions(sender, **kw):
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass
     # thereof.
+
+    for i in Shortcuts.items():
+
+        def f(obj, ar):
+            if obj is None:
+                return ''
+            try:
+                et = ExcerptType.objects.get(shortcut=i)
+            except ExcerptType.DoesNotExist:
+                return ''
+            items = []
+            if True:
+                sar = ar.spawn(
+                    ExcerptsByOwner,
+                    master_instance=obj,
+                    param_values=dict(pexcerpt_type=et))
+                n = sar.get_total_count()
+                if n > 0:
+                    ex = sar.sliced_data_iterator[0]
+                    items.append(ar.obj2html(ex, _("Last")))
+
+                    ba = sar.bound_action
+                    btn = sar.renderer.action_button(
+                        obj, sar, ba, "%s (%d)" % (_("All"), n),
+                        icon_name=None)
+                    items.append(btn)
+    
+                ia = getattr(obj, et.get_action_name())
+                btn = ar.instance_action_button(
+                    ia, _("Create"), icon_name=None)
+                items.append(btn)
+
+            else:
+                ot = ContentType.objects.get_for_model(obj.__class__)
+                qs = Excerpt.objects.filter(
+                    owner_id=obj.pk, owner_type=ot, excerpt_type=et)
+                if qs.count() > 0:
+                    ex = qs[0]
+                    txt = ExcerptsByOwner.format_excerpt(ex)
+                    items.append(ar.obj2html(ex, txt))
+            return E.div(*join_elems(items, ', '))
+    
+        vf = dd.VirtualField(dd.DisplayField(i.text), f)
+        dd.inject_field(i.model_spec, i.name, vf)
+
+
