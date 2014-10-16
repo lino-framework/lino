@@ -184,7 +184,11 @@ class TestAppsTests(LinoTestCase):
 
 class DumpTests(LinoTestCase):
     def test_dump2py(self):
-        self.run_django_admin_command_cd(
-            "lino/projects/belref", 'dump2py', 'tmp')
+        for prj in ("lino/projects/belref", "lino/projects/presto"):
+            p = Path(prj)
+            tmp = p.child('tmp').absolute()
+            tmp.rmtree()
+            self.run_django_admin_command_cd(p, 'dump2py', tmp)
+            self.assertEqual(tmp.child('restore.py').exists(), True)
 
 from . import test_appy_pod
