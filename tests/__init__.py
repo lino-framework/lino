@@ -182,4 +182,9 @@ class TestAppsTests(LinoTestCase):
         self.run_django_admin_test_cd("lino/test_apps/quantityfield")
 
 
+class DumpTests(LinoTestCase):
+    def test_dump2py(self):
+        self.run_django_admin_command_cd(
+            "lino/projects/belref", 'dump2py', 'tmp')
+
 from . import test_appy_pod

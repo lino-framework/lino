@@ -2,7 +2,8 @@
 Thursday, October 16, 2014
 ==========================
 
-Continued on :doc:`/tickets/133`:
+Continued on :doc:`/tickets/133`
+================================
 
 #.  Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` im Reiter
     "Historie" wurde noch nicht automatisch aktualisiert nach einem
@@ -43,3 +44,12 @@ virtual fields::
           ...
       dd.inject_field(i.model, i.name, f)
 
+
+:manage:`dump2py` was broken
+============================
+
+Temporary bugfix in :mod:`north` before moving the command to Lino. 
+
+Added a test case::
+
+  $ python setup.py test -s tests.DumpTests
