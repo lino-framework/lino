@@ -10,7 +10,7 @@ file, but you should use it only when the :func:`startup` function has
 been called.
 
 
-.. currentmodule:: rt
+.. module:: rt
 
 .. function:: startup()
 

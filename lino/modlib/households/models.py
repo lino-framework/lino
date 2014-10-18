@@ -90,6 +90,12 @@ class Household(contacts.Partner):
         mbr.save()
         return mbr
 
+    def members_by_role(self, rolename):
+        role = MemberRoles.get_by_name(rolename)
+        # return rt.modules.households.Member.objects.filter(
+        #     household=self, role=role)
+        return self.member_set.filter(role=role)
+
     def get_full_name(self, salutation=True, **salutation_options):
         """Overrides :meth:`ml.contacts.Partner.get_full_name`."""
         return join_words(self.prefix, self.name)
@@ -106,6 +112,26 @@ class Household(contacts.Partner):
             elems += [self.prefix, ' ']
         elems += [E.b(self.name)]
         return elems
+
+    @classmethod
+    def create_household(cls, ar, head, partner, type):
+        name = head.last_name
+        prefix = head.first_name
+        if partner:
+            name += '-' + partner.last_name
+            prefix += ' & ' + partner.first_name
+        hh = cls(type=type, name=name, prefix=prefix)
+        hh.full_clean()
+        hh.save()
+        # TODO: see 20140426
+        # hh.add_member(head, Role.objects.get(pk=1))
+        if head is not None:
+            hh.add_member(head, MemberRoles.head)
+        if partner is not None:
+            hh.add_member(partner, MemberRoles.partner)
+        hh.after_ui_create(ar)
+        hh.after_ui_save(ar)
+        return hh
 
 
 class HouseholdDetail(dd.FormLayout):
@@ -239,7 +265,6 @@ class Member(dd.DatePeriod):
 
     @dd.action(help_text=_("Make this the primary household."))
     def set_primary(self, ar):
-        # logger.info("20140918 set_primary")
         self.primary = True
         self.full_clean()
         self.save()
@@ -339,6 +364,8 @@ class SiblingsByPerson(Members):
 
     @classmethod
     def find_links(self, ar, child, parent):
+        if not dd.is_installed('humanlinks'):
+            return []
         types = {}  # mapping LinkType -> list of parents
         for lnk in rt.modules.humanlinks.Link.objects.filter(child=child):
                 # child=child, parent=p):
@@ -380,26 +407,9 @@ class CreateHousehold(dd.Action):
         return kw
 
     def run_from_ui(self, ar, **kw):
-        head = ar.action_param_values.head
-        partner = ar.action_param_values.partner
-        name = head.last_name
-        prefix = head.first_name
-        if partner:
-            name += '-' + partner.last_name
-            prefix += ' & ' + partner.first_name
-        hh = rt.modules.households.Household(
-            type=ar.action_param_values.type,
-            name=name, prefix=prefix)
-        hh.full_clean()
-        hh.save()
-        # TODO: see 20140426
-        # hh.add_member(head, Role.objects.get(pk=1))
-        if head is not None:
-            hh.add_member(head, MemberRoles.head)
-        if partner is not None:
-            hh.add_member(partner, MemberRoles.partner)
-        hh.after_ui_create(ar)
-        hh.after_ui_save(ar)
+        pv = ar.action_param_values
+        hh = rt.modules.households.Household.create_household(
+            ar, pv.head, pv.partner, pv.type)
         ar.success(
             _("Household has been created"),
             close_window=True, refresh_all=True)

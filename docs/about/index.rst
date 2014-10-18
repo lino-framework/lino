@@ -11,7 +11,6 @@ About Lino
    projects
    testimonals
    faq
-   luc
    name
    history
    

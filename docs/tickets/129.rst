@@ -1,4 +1,4 @@
-:state: longterm
+:state: discuss
 
 =================================
 #129 : Create a "Lino foundation"

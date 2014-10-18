@@ -566,13 +566,18 @@ class TableRequest(ActionRequest):
                 try:  # was used to find bug 20130422
                     v = fld.field._lino_atomizer.full_value_from_object(
                         row, self)
+                    if v is None:
+                        yield ''
+                    else:
+                        sums[i] += fld.value2num(v)
+                        # # In case you want the field name in error message:
+                        # try:
+                        #     sums[i] += fld.value2num(v)
+                        # except Exception as e:
+                        #     raise e.__class__("%s %s" % (fld.field, e))
+                        yield fld.format_value(self, v)
                 except Exception as e:
-                    v = "%s:\n%s" % (fld.field, e)
-                if v is None:
-                    yield ''
-                else:
-                    sums[i] += fld.value2num(v)
-                    yield fld.format_value(self, v)
+                    yield "%s:\n%s" % (fld.field, e)
 
     def sums2html(self, columns, sums, **cellattrs):
         #~ return [fld.format_sum(self,sums,i)

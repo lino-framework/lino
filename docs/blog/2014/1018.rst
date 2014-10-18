@@ -1,0 +1,9 @@
+==========================
+Saturday, October 18, 2014
+==========================
+
+Bescheinigungen "Kleiderkammer"
+===============================
+
+Wrote test cases 
+:ref:`welfare.tested.households`

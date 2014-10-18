@@ -33,40 +33,39 @@ Continued on :doc:`/tickets/121`.
 Test case : a person with multiple household memberships
 --------------------------------------------------------
 
-The demo fixture for :mod:`ml.households` now takes a random household
-membership, puts an end_date to that membership and creates another
-membership for the same person with another person.  And in
-:mod:`lino.projects.docs` that fictive person happens to be Jan Braun:
+When a person has multiple household memberships, but only one of them
+has no end_date, `SiblingsByPerson` failed to determine the one and
+only current household. Now it works:
 
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings' 
 >>> from lino.runtime import *
->>> Person = rt.modules.contacts.Person
->>> Member = rt.modules.households.Member
+>>> Person = contacts.Person
+>>> Member = households.Member
 >>> Member.objects.filter(end_date__isnull=False)
-[Member #5 (u'Mr Jan Braun (Head of household)')]
->>> p = Person.objects.get(first_name="Jan", last_name="Braun")
+[Member #5 (u'Mr Paul Frisch (Head of household)'), Member #11 (u'Mr Albert Adam (Head of household)'), Member #17 (u'Mr Lars Braun (Head of household)'), Member #23 (u'Mr Ilja Adam (Head of household)')]
+
+>>> p = Person.objects.get(first_name="Lars", last_name="Braun")
 >>> Member.objects.filter(person=p).count()
 2
->>> rt.show(rt.modules.households.MembersByPerson, master_instance=p)
-============================ =================== ========= ============ ==========
- Household                    Role                Primary   Start date   End date
----------------------------- ------------------- --------- ------------ ----------
- Jan & Eveline Braun-Evrard   Head of household   No
- Jan & Noémie Braun-Adam      Head of household   No                     3/4/02
-============================ =================== ========= ============ ==========
+>>> rt.show(households.MembersByPerson, master_instance=p)
+=========================== =================== ========= ============ ==========
+ Household                   Role                Primary   Start date   End date
+--------------------------- ------------------- --------- ------------ ----------
+ Lars & Melba Braun-Frisch   Head of household   No
+ Lars & Pascale Braun-Adam   Head of household   No                     3/4/02
+=========================== =================== ========= ============ ==========
 <BLANKLINE>
 
->>> SiblingsByPerson = rt.modules.households.SiblingsByPerson
->>> SiblingsByPerson.slave_grid_format = 'grid'  # currently not necessary
+>>> SiblingsByPerson = households.SiblingsByPerson
 >>> rt.show(SiblingsByPerson, p)
-==================== =================== ============ ==========
- Person               Role                Start date   End date
--------------------- ------------------- ------------ ----------
- Mr Jan Braun         Head of household
- Mrs Eveline Evrard   Partner
-==================== =================== ============ ==========
+================== =================== ============ ==========
+ Person             Role                Start date   End date
+------------------ ------------------- ------------ ----------
+ Mr Lars Braun      Head of household
+ Mrs Melba Frisch   Partner
+================== =================== ============ ==========
 <BLANKLINE>
 
 

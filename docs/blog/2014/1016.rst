@@ -16,23 +16,22 @@ Continued on :doc:`/tickets/133`
 
 Die Implementierung des Feldes "Erstellte Lebensläufe" war subtil:
 
-First idea is to add a new field `vfield_name` on
+First idea was to add a new field `vfield_name` on
 :class:`ml.excerpts.ExcerptType` and then extend
-:func:`ml.excerpts.set_excerpts_actions` to install a virtual
-field on the model for these types.  But that approach would
-result in layouts based on database content.  Sounds dangerous and
-hackerish.
+:func:`ml.excerpts.set_excerpts_actions` to install a virtual field on
+the model for these types.  But that approach would result in layouts
+based on database content.  Sounds dangerous and hackerish.
 
-A better approach seems to define a new choicelist
-`ExcerptShortcuts` and to add a field `shortcut` in 
-:class:`ml.excerpts.ExcerptType` which points to this choicelist.
+So we finally did it by defining a new choicelist `Shortcuts` and to
+add a field `shortcut` in :class:`ml.excerpts.ExcerptType` which
+points to this choicelist.
 
-In :mod:`lino_welfare.modlib.pcsw` we would do for example::
+In :mod:`lino_welfare.modlib.pcsw` we now do::
 
-  excerpts.Shortcuts.add('pcsw.Client', 'cv')
+  excerpts.Shortcuts.add('pcsw.Client', 'cvs_emitted')
 
-And then :func:`ml.excerpts.set_excerpts_actions` would define the
-virtual fields::
+And then :func:`ml.excerpts.set_excerpts_actions` was extended to
+define the virtual fields::
 
   for i in ExcerptShortcuts.items():
       def f(obj, ar):
@@ -43,6 +42,10 @@ virtual fields::
           qs = Excerpt.objects.filter(owner=obj, excerpt_type=et)
           ...
       dd.inject_field(i.model, i.name, f)
+
+
+This change causes a :ref:`mustmig` for applications which use
+:mod:`ml.excerpts`.
 
 
 :manage:`dump2py` was broken

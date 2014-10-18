@@ -1,8 +1,8 @@
 :state: closed
 :module: lino
 
-#99 : How can ``dd.apps`` differ from ``settings.SITE.plugins``?
-================================================================
+#99 [closed] : How can ``dd.apps`` differ from ``settings.SITE.plugins``?
+=========================================================================
 
 Here is a problem on which I got stuck today (:blogref:`20140226`).
 

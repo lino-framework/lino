@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2014 Luc Saffre
-# This file is part of the Lino project.
-# Lino is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -147,12 +137,12 @@ class Link(dd.Model):
     parent = dd.ForeignKey(
         config.person_model,
         verbose_name=_("Parent"),
-        related_name='children')
+        related_name='humanlinks_children')
     child = dd.ForeignKey(
         config.person_model,
         blank=True, null=True,
         verbose_name=_("Child"),
-        related_name='parents')
+        related_name='humanlinks_parents')
 
     @dd.displayfield(_("Type"))
     def type_as_parent(self, ar):
@@ -189,6 +179,7 @@ class Link(dd.Model):
             obj = cls(parent=parent, child=child, type=LinkTypes.parent)
             obj.full_clean()
             obj.save()
+            # dd.logger.info("20141018 autocreated %s", obj)
             return True
         return False
 

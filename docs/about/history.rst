@@ -1,14 +1,14 @@
 History
 =======
 
-Luc Saffre, the author of Lino, is also the author of :term:`TIM`, 
-a DOS-based framework for writing database applications for small enterprises. 
-Lino is a successor for TIM.
-TIM is over 15 years old, but Luc continues to live from maintaining 
-it and giving professional support to its users. 
-TIM users have relatively wide-spread profiles, 
-ranging from the independant craftsman who writes 50 invoices per year 
-to the government agency with 30 users and hundreds of documents per day.
+:ref:`luc`, the author of Lino, is also the author of :term:`TIM`, a
+DOS-based framework for writing database applications for small
+enterprises.  Lino is a successor for TIM.  TIM is over 20 years old,
+but Luc continues to live from maintaining it and giving professional
+support to its users.  TIM users have relatively wide-spread profiles,
+ranging from the independant craftsman who writes 50 invoices per year
+to the government agency with 30 users and hundreds of documents per
+day.
 
 Luc has been working on writing a successor for TIM **since the early 1990s**.
 He has done and dropped projects in C++, PHP and Java. 

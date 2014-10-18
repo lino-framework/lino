@@ -25,7 +25,7 @@ Below are some profiles of people we would happily welcome.
   product for one of your customers.  Primary target are small and
   medium-sized companies who need a customized database application.
   Consider becoming yourself a support provider by training your
-  employees on Lino.  See also :doc:`/about/license`
+  employees on Lino.
 
 - System administrators -- Show the :ref:`demos` to your users and
   analyze whether they might need a Lino application.
@@ -37,6 +37,7 @@ Below are some profiles of people we would happily welcome.
 - Business project managers --
   Help us to find or found organizations that offer
   professional Lino support and hosting.
+  See :doc:`/tickets/129`.
 
 
  
@@ -46,10 +47,73 @@ Partners
 The following organizations are promoters of the Lino project and
 offer professional consultance for Lino applications:
 
-- `Rumma & Ko OÜ <http://saffre-rumma.net>`_
-- `Code Gears <http://www.code-gears.com>`_
-- `Active Systems OÜ <http://active.ee>`_
-- `wpj s.r.o <http://www.wpj.cz/>`_
+- `Rumma & Ko OÜ <http://saffre-rumma.net>`_ (:ref:`luc`)
+- `Code Gears <http://www.code-gears.com>`_ (:ref:`mw`)
+- `Active Systems OÜ <http://active.ee>`_ (:ref:`at`)
+- `wpj s.r.o <http://www.wpj.cz/>`_ (:ref:`joe`)
+
+
+Contributors
+============
+
+The following persons have contributed ideas or code to Lino.
+
+(TODO: write some sentences about each of them.)
+
+.. _at:
+
+Andres Toomsalu
+---------------
+
+.. _gx:
+
+Gerd Xhonneux
+-------------
+
+.. _joe:
+
+Josef Kejzlar
+-------------
+
+.. _xmj:
+
+Johannes Meixner
+----------------
+
+.. _luc:
+
+Luc Saffre
+----------
+
+See http://saffre-rumma.net/luc
+
+
+.. _mw:
+
+Manuel Weidmann
+---------------
+
+.. _md:
+
+Marc Dobrowski
+--------------
+
+.. _mj:
+
+Mathieu Jacqmin
+---------------
+
+.. _ph:
+
+Pierre Hembise
+--------------
+
+.. _rr:
+
+Roger Rauw
+----------
+
+
 
 
 Lino users
@@ -64,7 +128,7 @@ The following organizations are using a Lino application.
 
 Using :ref:`welfare` since January 2011.
 
-- Contact: Gerd Xhonneux
+- Contact: :ref:`gx`
 
 .. _chat:
 
@@ -73,7 +137,7 @@ CPAS de Châtelet
 
 Using :ref:`welfare` since March 2014.
 
-- Contact: Mathieu Jacqmin
+- Contact: :ref:`mj`
 
 
 .. _eiche:
@@ -83,5 +147,5 @@ Die Eiche VoG
 
 Using :ref:`faggio` in Eupen since October 2013.
 
-- Contact: Roger Rauw
+- Contact: :ref:`rr`
 - Website: http://die-eiche.be/

@@ -1,0 +1,50 @@
+:state: discussion
+
+#134 : The modules `ad`, `dd` and `rt` are unpythonic
+=====================================================
+
+:ref:`xmj` was the first to be honest enough to tell me that he
+doesn't like the modules :mod:`ad`, :mod:`dd` and :mod:`rt` because
+they are "against every programming style principle he has been
+taught".
+
+:ref:`joe` confirmed that they are "a collection (or a mess) of ad-hoc
+utility functions/classes, mixins, fields". He adds that *the
+principle of Python is to modularize the code as much as
+possible. That is what Python is good at. :mod:`dd` is a central point
+importing tens of other modules into one global scope and thats really
+not "pythonic".* He suggests that :mod:`dd`, :mod:`ad` and :mod:`rt`
+*could be refactored into some Django-standard modules.  For example
+all Model mixins should go to `Lino.models`, all database fields
+should go to `Lino.fields` and so on.*
+
+Of course it's sad when other developers are disturbed by ugly code.
+But I do not --yet-- fully agree with them and continue to defend this
+technique:
+
+- These modules create an abstract API which hides implementation
+  details.
+- They avoid the work overhead of adapting the `import` statements
+  when doing routine code changes.
+- Their use is optional. You can import them from their real place. (I
+  agree that documentation does not encourage this.)
+
+:ref:`joe` finally convinced me, writing *If I don't use Frame class
+at all, dd still imports it for me and it breaks "explicit is better
+than implicit" and also makes things less modularized.  Touching the
+"dd" module even in a way of 'from dd.<whatever> import something'
+instantly loads all the classes of whole Lino.  Also I don't ever
+import dd module itself. I always import directly from the module
+defining the class. Because my IDE do it for me and it seems cleaner.*
+
+First of all I'll try (once more) to move from Emacs to
+PyCharm. Because if it writes import statements for me, that would
+really be a benefit.  And if I get used to PyCharm, this will probably
+change my thinking. It is a fact that my potpourri modules are mainly
+because I am too lazy to fiddle with import statements.
+
+Pages referring to this:
+
+.. refstothis::
+
+  

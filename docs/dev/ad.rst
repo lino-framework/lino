@@ -2,7 +2,7 @@
 Application Design (``ad``) 
 ===========================
 
-.. currentmodule:: ad
+.. module:: ad
 
 The :mod:`lino.ad` module is a shortcut to those parts of Lino which
 are used in your :xfile:`settings.py` files and in the

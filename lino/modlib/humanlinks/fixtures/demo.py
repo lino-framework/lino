@@ -14,6 +14,8 @@ Creates two fictive families:
 
 from __future__ import unicode_literals
 
+from django.utils.translation import ugettext_lazy as _
+
 from lino.utils.instantiator import InstanceGenerator
 from lino import dd, rt
 
@@ -23,6 +25,14 @@ def objects():
     Person = dd.resolve_model(dd.apps.humanlinks.person_model)
     Link = rt.modules.humanlinks.Link
     LinkTypes = rt.modules.humanlinks.LinkTypes
+    ar = rt.login()
+
+    households = dd.resolve_app('households')
+    if households:
+        married = households.Type.objects.get(
+            **dd.str2kw('name', _("Married")))
+        divorced = households.Type.objects.get(
+            **dd.str2kw('name', _("Divorced")))
 
     ig = InstanceGenerator()
     ig.add_instantiator(
@@ -48,6 +58,10 @@ def objects():
     P3 = ig.person("Dora", "Drosson", 'F', '1971-12-19')
     P3A = ig.person("Dennis", NAME1, 'M', '2001-06-19')
 
+    L1 = ig.person("Laura", "Loslever", 'F', '1968-04-27')
+    L1A = ig.person("Melba", NAME1, 'F', '2002-04-05')
+    L1B = ig.person("Irma", NAME1, 'F', '2008-03-24')
+
     yield ig.flush()
 
     ig.link(opa, oma, LinkTypes.spouse)
@@ -70,7 +84,23 @@ def objects():
 
     ig.link(P, P2, LinkTypes.spouse)
 
+    ig.link(L, L1, LinkTypes.spouse)
+
+    for i in (L1A, L1B):
+        ig.link(L, i, LinkTypes.parent)
+        ig.link(L1, i, LinkTypes.parent)
+
     yield ig.flush()
+
+    if households:
+        households.Household.create_household(ar, opa, oma, married)
+
+        households.Household.create_household(ar, P, P1, divorced)
+        hh = households.Household.create_household(ar, P, P2, married)
+        hh.members_by_role('head')[0].set_primary(ar)
+        hh.members_by_role('partner')[0].set_primary(ar)
+
+        households.Household.create_household(ar, L, L1, married)
 
     A = ig.person("Albert", "Adam", 'M', '1973-07-21')
     B = ig.person("Bruno", "Braun", 'M', '1973-07-22')
@@ -114,3 +144,9 @@ def objects():
     ig.link(B, E, LinkTypes.spouse)
 
     yield ig.flush()
+
+    if households:
+        households.Household.create_household(ar, A, E, married)
+        households.Household.create_household(ar, A, F, divorced)
+        households.Household.create_household(ar, B, E, divorced)
+        households.Household.create_household(ar, B, F, married)

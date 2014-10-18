@@ -1,11 +1,14 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
-The `demo` fixture for `households`
+"""The `demo` fixture for `households`
 ===================================
 
 Creates some households by marrying a few Persons.
+
+Every third household gets divorced: we puts an `end_date` to that
+membership and create another membership for the same person with
+another person.  
 
 """
 
@@ -15,7 +18,6 @@ from lino.core.dbutils import resolve_model
 from lino.utils import Cycler
 from lino.utils import i2d
 from lino import dd, rt
-from lino import rt
 
 
 def objects():

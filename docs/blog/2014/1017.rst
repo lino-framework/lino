@@ -1,0 +1,16 @@
+========================
+Friday, October 17, 2014
+========================
+
+New tickets
+===========
+
+Opened :doc:`/tickets/134`.
+Opened :doc:`/tickets/135`.
+
+Bescheinigungen "Kleiderkammer"
+===============================
+
+Started a new attestation template `clothing_refund.body.html` for
+:ref:`welfare`.
+

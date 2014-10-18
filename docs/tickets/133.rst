@@ -1,7 +1,7 @@
-:state: active
+:state: closed
 
-#133 : Lebensläufe und Historie
-===============================
+#133 [closed] : Lebensläufe und Historie
+========================================
 
 Auslöser: Wir wollten einen Lebenslauf erstellen und das manuelle
 Bearbeiten/Speichern testen.  :ref:`davlink` aber funktionierte nicht,
@@ -40,9 +40,7 @@ DONE:
     nicht im Reiter "Lebenslauf" ist sondern provisorisch im Reiter
     "Sonstiges".
 
-TODO:
-    
-Zu besprechen:
+DEFERRED:
 
 #.  E-Mail-Ausgänge (:class:`ml.outbox.MailsByOwner`) auch im Detail
     eines Auszugs.
@@ -63,11 +61,11 @@ Zu besprechen:
     externe Partner zu verschicken.
 
 #.  Zugriffsrechte pro Dokumentart? Z.B. Lebensläufe darf nicht jeder
-    sehen. (Zu präzisieren.)
+    sehen. Zu präzisieren.
 
 #.  Und irgendwann kommt sogar eine nächtliche Routine, die alle
     ungedruckten Auszüge löscht. Denn ein ungedruckter Auszug
     ist --abgesehen für die eventuelle Fehlerdiagnose--
-    unsinnig. (Oder?)
+    unsinnig. Oder?
 
 

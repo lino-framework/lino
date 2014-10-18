@@ -1,8 +1,8 @@
 Lino running in Czechia
 -----------------------
 
-Interview held by Luc in September 2013 with Josef Kejzlar
-<joe@wpj.cz> from wpj s.r.o. in Vrchlabí (Czechia).
+Interview held by Luc in September 2013 with :ref:`joe` <joe@wpj.cz>
+from wpj s.r.o. in Vrchlabí (Czechia).
 
 Joe, your CTMS project is the first time in the history of Lino that
 somebody other than me wrote a functional Lino application. I thought

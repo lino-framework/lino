@@ -1,0 +1,12 @@
+:state: contrib
+
+#135 : As Anonyme you have no permission to run this action
+===========================================================
+
+Diese Fehlermeldungen kommen, weil in der Nacht eine Datenmigration
+gemacht habe, und dabei werden offene Sitzungen nicht übernommen. Die
+Leute sind gewohnt, dass sie über Nacht in Lino bleiben können. Das
+funktioniert normalerweise. Nur eben nach einer Migration kriegen sie
+dann keine Daten angezeigt. Ihr Lino-Menü haben sie noch, aber sie
+können keine Daten mehr sehen. Ich habe leider noch keine Methode
+gefunden, um in dieser Situation korrekt zu reagieren.
