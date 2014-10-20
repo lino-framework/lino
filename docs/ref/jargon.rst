@@ -2,6 +2,15 @@ Jargon
 =============
 
 
+
+.. _gfk:
+
+GenericForeignKey
+-----------------
+
+See `Django docs
+<https://docs.djangoproject.com/en/dev/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericForeignKey>`_
+
 .. _ise:
 
 Internal Server Error

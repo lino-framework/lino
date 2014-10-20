@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-16 02:32+0300\n"
+"POT-Creation-Date: 2014-10-20 06:01+0300\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Reports"
 msgstr ""
 
-#: lino/ad.py:911 lino/modlib/excerpts/models.py:482
+#: lino/ad.py:911 lino/modlib/excerpts/models.py:486
 msgid "Configure"
 msgstr ""
 
@@ -297,7 +297,7 @@ msgid "%s has been created."
 msgstr ""
 
 #: lino/core/actions.py:942 lino/modlib/changes/models.py:45
-#: lino/modlib/excerpts/models.py:719
+#: lino/modlib/excerpts/models.py:723
 msgid "Create"
 msgstr ""
 
@@ -311,7 +311,7 @@ msgstr ""
 msgid "Summary"
 msgstr ""
 
-#: lino/core/actions.py:1010 lino/core/model.py:374 lino/core/tables.py:972
+#: lino/core/actions.py:1010 lino/core/model.py:374 lino/core/tables.py:977
 #: lino/modlib/cal/mixins.py:126 lino/modlib/cal/mixins.py:467
 #: lino/modlib/cal/models_calendar.py:45 lino/modlib/cal/models_event.py:58
 #: lino/modlib/cal/models_event.py:159 lino/modlib/courses/models.py:138
@@ -451,7 +451,7 @@ msgid "User abandoned"
 msgstr ""
 
 #: lino/core/layouts.py:431 lino/modlib/cal/fixtures/std.py:64
-#: lino/modlib/courses/models.py:498 lino/modlib/excerpts/models.py:479
+#: lino/modlib/courses/models.py:498 lino/modlib/excerpts/models.py:483
 #: lino/modlib/finan/models.py:284 lino/modlib/finan/models.py:296
 #: lino/modlib/finan/models.py:303 lino/modlib/ledger/models.py:975
 #: lino/modlib/polls/models.py:185 lino/modlib/rooms/models.py:164
@@ -466,55 +466,55 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: lino/core/merge.py:45
+#: lino/core/merge.py:41
 msgid "Cannot merge an instance to itself."
 msgstr ""
 
-#: lino/core/merge.py:67
+#: lino/core/merge.py:63
 #, python-format
 msgid "Merge %(origin)s into %(target)s"
 msgstr ""
 
-#: lino/core/merge.py:97
+#: lino/core/merge.py:93
 msgid "will be deleted."
 msgstr ""
 
-#: lino/core/merge.py:98
+#: lino/core/merge.py:94
 msgid "will get reassigned."
 msgstr ""
 
-#: lino/core/merge.py:100
+#: lino/core/merge.py:96
 #, python-format
 msgid "%s will be deleted"
 msgstr ""
 
-#: lino/core/merge.py:101
+#: lino/core/merge.py:97
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
 msgstr ""
 
-#: lino/core/merge.py:133
+#: lino/core/merge.py:129
 #, python-format
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
-#: lino/core/merge.py:143
+#: lino/core/merge.py:139
 msgid "Merge this object into another object of same class."
 msgstr ""
 
-#: lino/core/merge.py:144 lino/modlib/changes/models.py:50
+#: lino/core/merge.py:140 lino/modlib/changes/models.py:50
 msgid "Merge"
 msgstr ""
 
-#: lino/core/merge.py:163
+#: lino/core/merge.py:151
 msgid "into..."
 msgstr ""
 
-#: lino/core/merge.py:164
+#: lino/core/merge.py:152
 msgid "Reason"
 msgstr ""
 
-#: lino/core/merge.py:207
+#: lino/core/merge.py:195
 msgid "Also reassign volatile related objects"
 msgstr ""
 
@@ -623,7 +623,7 @@ msgstr ""
 msgid "Move"
 msgstr ""
 
-#: lino/mixins/__init__.py:596 lino/modlib/humanlinks/models.py:149
+#: lino/mixins/__init__.py:596 lino/modlib/humanlinks/models.py:139
 #: lino/modlib/tickets/models.py:119
 msgid "Parent"
 msgstr ""
@@ -718,7 +718,7 @@ msgstr ""
 msgid "Build method"
 msgstr ""
 
-#: lino/mixins/printable.py:373 lino/modlib/excerpts/models.py:237
+#: lino/mixins/printable.py:373 lino/modlib/excerpts/models.py:241
 #: lino/modlib/postings/models.py:53
 msgid "Print"
 msgstr ""
@@ -839,7 +839,7 @@ msgid "Value"
 msgstr ""
 
 #: lino/modlib/about/models.py:227 lino/modlib/cal/models.py:86
-#: lino/modlib/humanlinks/models.py:157 lino/modlib/humanlinks/models.py:162
+#: lino/modlib/humanlinks/models.py:147 lino/modlib/humanlinks/models.py:152
 msgid "Type"
 msgstr ""
 
@@ -1036,7 +1036,7 @@ msgid "Address"
 msgstr ""
 
 #: lino/modlib/addresses/models.py:106 lino/modlib/excerpts/models.py:78
-#: lino/modlib/excerpts/models.py:105 lino/modlib/households/models.py:202
+#: lino/modlib/excerpts/models.py:105 lino/modlib/households/models.py:228
 #: lino/modlib/sepa/models.py:64
 msgid "Primary"
 msgstr ""
@@ -1781,7 +1781,7 @@ msgstr ""
 msgid "Appointments today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:789 lino/modlib/excerpts/models.py:601
+#: lino/modlib/cal/models_event.py:789 lino/modlib/excerpts/models.py:605
 msgid "Today"
 msgstr ""
 
@@ -2357,11 +2357,11 @@ msgstr ""
 msgid "Region"
 msgstr ""
 
-#: lino/modlib/contacts/mixins.py:20 lino/modlib/contacts/mixins.py:191
+#: lino/modlib/contacts/mixins.py:20 lino/modlib/contacts/mixins.py:194
 msgid "Company"
 msgstr ""
 
-#: lino/modlib/contacts/mixins.py:27 lino/modlib/contacts/mixins.py:198
+#: lino/modlib/contacts/mixins.py:27 lino/modlib/contacts/mixins.py:201
 #: lino/modlib/partners/models.py:749 lino/modlib/partners/models.py:794
 msgid "represented by"
 msgstr ""
@@ -2379,7 +2379,7 @@ msgid "Organization types"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:68 lino/modlib/households/models.py:54
-#: lino/modlib/households/models.py:367 lino/modlib/ledger/models.py:1246
+#: lino/modlib/households/models.py:394 lino/modlib/ledger/models.py:1246
 #: lino/modlib/partners/models.py:245
 #: lino/projects/presto/modlib/contacts/models.py:32
 msgid "Partner"
@@ -3227,7 +3227,7 @@ msgstr ""
 msgid "Whether an excerpt of this type is a unique printout."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:65 lino/modlib/excerpts/models.py:336
+#: lino/modlib/excerpts/models.py:65 lino/modlib/excerpts/models.py:340
 msgid "Body template"
 msgstr ""
 
@@ -3270,84 +3270,84 @@ msgstr ""
 msgid "Cannot set %(c)s for non.certifiable model %(m)s"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:238
+#: lino/modlib/excerpts/models.py:242
 msgid "Create an excerpt in order to print this data record."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:257
+#: lino/modlib/excerpts/models.py:261
 msgid "Clear print cache"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:259
+#: lino/modlib/excerpts/models.py:263
 msgid ""
 "Mark this object as not printed. A subsequent call to print will generate"
 " a new cache file."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:271
+#: lino/modlib/excerpts/models.py:275
 msgid "Oops."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:276
+#: lino/modlib/excerpts/models.py:280
 msgid "Print cache file has been cleared."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:280
+#: lino/modlib/excerpts/models.py:284
 #, python-format
 msgid "Going to clear the print cache file of %s"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:299
+#: lino/modlib/excerpts/models.py:303
 #, python-format
 msgid "Excerpt type \"%s\" has no body_template"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:332
+#: lino/modlib/excerpts/models.py:336
 msgid "Excerpt"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:333
+#: lino/modlib/excerpts/models.py:337
 msgid "Excerpts"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:376
+#: lino/modlib/excerpts/models.py:380
 #, python-format
 msgid "Unprinted %s #%d"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:434
+#: lino/modlib/excerpts/models.py:438
 msgid "Preview"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:519
+#: lino/modlib/excerpts/models.py:523
 msgid "Certifying excerpts"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:567
+#: lino/modlib/excerpts/models.py:571
 msgid "History of excerpts based on this data record."
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:568
+#: lino/modlib/excerpts/models.py:572
 msgid "Existing excerpts"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:597
+#: lino/modlib/excerpts/models.py:601
 msgid "not printed"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:603
+#: lino/modlib/excerpts/models.py:607
 msgid "Last week"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:605
+#: lino/modlib/excerpts/models.py:609
 msgid "Older"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:709 lino/modlib/extjs/linoweb.js:2795
+#: lino/modlib/excerpts/models.py:713 lino/modlib/extjs/linoweb.js:2795
 msgid "Last"
 msgstr ""
 
-#: lino/modlib/excerpts/models.py:713
+#: lino/modlib/excerpts/models.py:717
 msgid "All"
 msgstr ""
 
@@ -3586,6 +3586,7 @@ msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
 
 #: lino/modlib/families/models.py:48 lino/modlib/households/fixtures/std.py:21
+#: lino/modlib/humanlinks/fixtures/demo.py:33
 msgid "Married"
 msgstr ""
 
@@ -3594,14 +3595,15 @@ msgid "Married in"
 msgstr ""
 
 #: lino/modlib/families/models.py:52 lino/modlib/households/fixtures/std.py:24
+#: lino/modlib/humanlinks/fixtures/demo.py:35
 msgid "Divorced"
 msgstr ""
 
-#: lino/modlib/families/models.py:119 lino/modlib/humanlinks/models.py:70
+#: lino/modlib/families/models.py:119 lino/modlib/humanlinks/models.py:60
 msgid "Father"
 msgstr ""
 
-#: lino/modlib/families/models.py:123 lino/modlib/humanlinks/models.py:70
+#: lino/modlib/families/models.py:123 lino/modlib/humanlinks/models.py:60
 msgid "Mother"
 msgstr ""
 
@@ -3707,7 +3709,7 @@ msgstr ""
 msgid "Roles"
 msgstr ""
 
-#: lino/modlib/households/models.py:52 lino/modlib/households/models.py:365
+#: lino/modlib/households/models.py:52 lino/modlib/households/models.py:392
 msgid "Head of household"
 msgstr ""
 
@@ -3719,7 +3721,7 @@ msgstr ""
 msgid "Cohabitant"
 msgstr ""
 
-#: lino/modlib/households/models.py:56 lino/modlib/humanlinks/models.py:154
+#: lino/modlib/households/models.py:56 lino/modlib/humanlinks/models.py:144
 msgid "Child"
 msgstr ""
 
@@ -3735,72 +3737,72 @@ msgstr ""
 msgid "Household"
 msgstr ""
 
-#: lino/modlib/households/models.py:190
+#: lino/modlib/households/models.py:216
 msgid "Household Member"
 msgstr ""
 
-#: lino/modlib/households/models.py:191 lino/modlib/households/models.py:258
+#: lino/modlib/households/models.py:217 lino/modlib/households/models.py:283
 msgid "Household Members"
 msgstr ""
 
-#: lino/modlib/households/models.py:204
+#: lino/modlib/households/models.py:230
 msgid ""
 "Whether this is the primary household of this person. Checking this field"
 " will automatically disable any other primary memberships."
 msgstr ""
 
-#: lino/modlib/households/models.py:240
+#: lino/modlib/households/models.py:266
 msgid "Make this the primary household."
 msgstr ""
 
-#: lino/modlib/households/models.py:269
+#: lino/modlib/households/models.py:294
 msgid "Household composition"
 msgstr ""
 
-#: lino/modlib/households/models.py:288
+#: lino/modlib/households/models.py:313
 #, python-format
 msgid "%s is not member of any household"
 msgstr ""
 
-#: lino/modlib/households/models.py:299
+#: lino/modlib/households/models.py:324
 #, python-format
 msgid "%s is member of multiple households"
 msgstr ""
 
-#: lino/modlib/households/models.py:354 lino/modlib/reception/models.py:454
+#: lino/modlib/households/models.py:381 lino/modlib/reception/models.py:454
 msgid " and "
 msgstr ""
 
-#: lino/modlib/households/models.py:355 lino/modlib/humanlinks/models.py:252
+#: lino/modlib/households/models.py:382 lino/modlib/humanlinks/models.py:243
 msgid " of "
 msgstr ""
 
-#: lino/modlib/households/models.py:362
+#: lino/modlib/households/models.py:389
 msgid "Create Household"
 msgstr ""
 
-#: lino/modlib/households/models.py:404
+#: lino/modlib/households/models.py:414
 msgid "Household has been created"
 msgstr ""
 
-#: lino/modlib/households/models.py:415
+#: lino/modlib/households/models.py:425
 msgid "Household memberships"
 msgstr ""
 
-#: lino/modlib/households/models.py:434
+#: lino/modlib/households/models.py:444
 msgid " in "
 msgstr ""
 
-#: lino/modlib/households/models.py:443 lino/modlib/humanlinks/models.py:258
+#: lino/modlib/households/models.py:453 lino/modlib/humanlinks/models.py:249
 #, python-format
 msgid "%s is"
 msgstr ""
 
-#: lino/modlib/households/models.py:449
+#: lino/modlib/households/models.py:459
 msgid "Create a household"
 msgstr ""
 
-#: lino/modlib/households/models.py:475
+#: lino/modlib/households/models.py:485
 msgid "is Household"
 msgstr ""
 
@@ -3820,181 +3822,181 @@ msgstr ""
 msgid "Parency links"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:64
+#: lino/modlib/humanlinks/models.py:54
 msgid "Parency type"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:65
+#: lino/modlib/humanlinks/models.py:55
 msgid "Parency types"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:71
+#: lino/modlib/humanlinks/models.py:61
 msgid "Son"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:71
+#: lino/modlib/humanlinks/models.py:61
 msgid "Daughter"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:75
+#: lino/modlib/humanlinks/models.py:65
 msgid "Adoptive father"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:75
+#: lino/modlib/humanlinks/models.py:65
 msgid "Adoptive mother"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:76
+#: lino/modlib/humanlinks/models.py:66
 msgid "Adopted son"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:76
+#: lino/modlib/humanlinks/models.py:66
 msgid "Adopted daughter"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:80
+#: lino/modlib/humanlinks/models.py:70
 msgid "Grandfather"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:80
+#: lino/modlib/humanlinks/models.py:70
 msgid "Grandmother"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:81
+#: lino/modlib/humanlinks/models.py:71
 msgid "Grandson"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:81
+#: lino/modlib/humanlinks/models.py:71
 msgid "Granddaughter"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:85 lino/modlib/humanlinks/models.py:86
+#: lino/modlib/humanlinks/models.py:75 lino/modlib/humanlinks/models.py:76
 msgid "Husband"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:85 lino/modlib/humanlinks/models.py:86
+#: lino/modlib/humanlinks/models.py:75 lino/modlib/humanlinks/models.py:76
 msgid "Wife"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:90 lino/modlib/humanlinks/models.py:91
+#: lino/modlib/humanlinks/models.py:80 lino/modlib/humanlinks/models.py:81
 msgctxt "male"
 msgid "Friend"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:90 lino/modlib/humanlinks/models.py:91
+#: lino/modlib/humanlinks/models.py:80 lino/modlib/humanlinks/models.py:81
 msgctxt "female"
 msgid "Friend"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:96 lino/modlib/humanlinks/models.py:97
+#: lino/modlib/humanlinks/models.py:86 lino/modlib/humanlinks/models.py:87
 msgctxt "male"
 msgid "Partner"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:96 lino/modlib/humanlinks/models.py:97
+#: lino/modlib/humanlinks/models.py:86 lino/modlib/humanlinks/models.py:87
 msgctxt "female"
 msgid "Partner"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:102
+#: lino/modlib/humanlinks/models.py:92
 msgid "Stepfather"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:102
+#: lino/modlib/humanlinks/models.py:92
 msgid "Stepmother"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:103
+#: lino/modlib/humanlinks/models.py:93
 msgid "Stepson"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:103
+#: lino/modlib/humanlinks/models.py:93
 msgid "Stepdaughter"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:107 lino/modlib/humanlinks/models.py:108
+#: lino/modlib/humanlinks/models.py:97 lino/modlib/humanlinks/models.py:98
 msgctxt "male"
 msgid "Brother"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:107 lino/modlib/humanlinks/models.py:108
+#: lino/modlib/humanlinks/models.py:97 lino/modlib/humanlinks/models.py:98
 msgctxt "female"
 msgid "Sister"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:113 lino/modlib/humanlinks/models.py:114
+#: lino/modlib/humanlinks/models.py:103 lino/modlib/humanlinks/models.py:104
 msgctxt "male"
 msgid "Cousin"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:113 lino/modlib/humanlinks/models.py:114
+#: lino/modlib/humanlinks/models.py:103 lino/modlib/humanlinks/models.py:104
 msgctxt "female"
 msgid "Cousin"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:119
+#: lino/modlib/humanlinks/models.py:109
 msgid "Uncle"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:119
+#: lino/modlib/humanlinks/models.py:109
 msgid "Aunt"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:120
+#: lino/modlib/humanlinks/models.py:110
 msgid "Nephew"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:120
+#: lino/modlib/humanlinks/models.py:110
 msgid "Niece"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:124 lino/modlib/humanlinks/models.py:125
+#: lino/modlib/humanlinks/models.py:114 lino/modlib/humanlinks/models.py:115
 msgctxt "male"
 msgid "Relative"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:124 lino/modlib/humanlinks/models.py:125
+#: lino/modlib/humanlinks/models.py:114 lino/modlib/humanlinks/models.py:115
 msgctxt "female"
 msgid "Relative"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:130 lino/modlib/humanlinks/models.py:131
+#: lino/modlib/humanlinks/models.py:120 lino/modlib/humanlinks/models.py:121
 msgctxt "male"
 msgid "Other"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:130 lino/modlib/humanlinks/models.py:131
+#: lino/modlib/humanlinks/models.py:120 lino/modlib/humanlinks/models.py:121
 msgctxt "female"
 msgid "Other"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:143
+#: lino/modlib/humanlinks/models.py:133
 msgid "Personal Link"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:144
+#: lino/modlib/humanlinks/models.py:134
 msgid "Personal Links"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:170
+#: lino/modlib/humanlinks/models.py:160
 #, python-format
 msgid "%(child)s is %(what)s"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:175
+#: lino/modlib/humanlinks/models.py:165
 #, python-format
 msgid "%(type)s of %(parent)s"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:209
+#: lino/modlib/humanlinks/models.py:200
 msgid "Human Links"
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:261
+#: lino/modlib/humanlinks/models.py:252
 msgid "No relationships."
 msgstr ""
 
-#: lino/modlib/humanlinks/models.py:284
+#: lino/modlib/humanlinks/models.py:275
 msgid "Create relationship as "
 msgstr ""
 

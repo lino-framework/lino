@@ -1,0 +1,49 @@
+========================
+Monday, October 20, 2014
+========================
+
+I found a last bug (in the fixture which generates demo data) which
+caused the example document in the `Beispiele
+<http://de.welfare.lino-framework.org/excerpts.html#beispiele>`__
+section of the German user manual to be wrong.  Now I finally dare to
+link to it: a `cost transfer attestation
+<http://de.welfare.lino-framework.org/dl/excerpts/aids.SimpleConfirmation-13.pdf>`_
+for :ref:`paulfrisch`!
+
+Vocabulary:
+
+- Rückerstattung - Refund
+- Kostenübernahme - Cost transfer
+- Clothing costs transfer - Kostenübernahme Kleidung
+
+However there were still some "details" to fix.  For example the
+following user request turned out to be rather tricky:
+
+- Wenn eine Bescheinigung keinen Empfänger hat, soll der entsprechende
+  Platz für die Adresse dennoch gedruckt werden.
+
+The `excerpts/Excerpt/Default.odt` template is designed to be
+overridden by local site administrators in order to match their letter
+paper. To minimize their configuration work, the template should work
+for any type of excerpt, not only for confirmations.
+
+To solve this, I removed the `get_print_recipient` method from
+:class:`dd.Model`, added a new field
+:attr:`ml.excerpts.ExcerptType.print_recipient` and replaced in
+`excerpts/Excerpt/Default.odt` the test ``do text if
+obj.get_print_recipient()`` by ``do text if
+this.excerpt_type.print_recipient)``.  This was also inspired by
+:ref:`joe`\ 's suggestions for ticket :doc:`/tickets/134`: developers
+who don't use the :mod:`ml.excerpts` module should not be bothered
+with a method like `get_print_recipient` in Lino's :class:`dd.Model`
+class.
+
+:ref:`mustconfig` : Adapt local `excerpts/Excerpt/Default.odt`
+template.
+
+:ref:`mustmig` : new field :attr:`ml.excerpts.ExcerptType.print_recipient`.
+
+And I discovered that it was no longer possible to specify a recipient
+for a presence certificate.  So :class:`ml.excerpts.Excerpt` now is a
+:class:`ml.contacts.ContactRelated` again. 
+

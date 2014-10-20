@@ -38,6 +38,7 @@ postings = dd.require_app_models('postings')
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
 
+from lino.modlib.contacts.mixins import ContactRelated
 from .mixins import Certifiable, Shortcuts
 
 
@@ -86,6 +87,11 @@ class ExcerptType(
         default=False,
         help_text=_("Check this to have `this` in template context "
                     "point to owner instead of excerpt."))
+
+    print_recipient = models.BooleanField(
+        _("Print recipient"),
+        default=True,
+        help_text=_("Whether to print a recipient field in document."))
 
     print_directly = models.BooleanField(_("Print directly"), default=True)
 
@@ -150,6 +156,7 @@ We override everything in Excerpt to not call the class method.""")
 
     @classmethod
     def get_for_model(cls, model):
+
         "Return the primary ExcerptType for the given model."
         ct = ContentType.objects.get_for_model(dd.resolve_model(model))
         return cls.objects.get(primary=True, content_type=ct)
@@ -164,6 +171,9 @@ We override everything in Excerpt to not call the class method.""")
 
     def get_or_create_excerpt(self, ar):
         obj = ar.selected_rows[0]
+        model = self.content_type.model_class()
+        if not isinstance(obj, model):
+            raise Exception("%s is not an instance of %s" % (obj, model))
         Excerpt = rt.modules.excerpts.Excerpt
         ex = None
         if self.certifying:
@@ -197,6 +207,7 @@ We override everything in Excerpt to not call the class method.""")
         else:
             return 'create_excerpt' + str(self.pk)
 
+
 class ExcerptTypes(dd.Table):
 
     """
@@ -217,8 +228,9 @@ class ExcerptTypes(dd.Table):
     detail_layout = """
     id name
     content_type:15 build_method:15 template:15 \
-    body_template:15 email_template:15 shortcut
-    primary print_directly certifying backward_compat attach_to_email
+      body_template:15 email_template:15 shortcut
+    primary print_directly certifying print_recipient \
+      backward_compat attach_to_email
     # remark:60x5
     excerpts.ExcerptsByType
     """
@@ -318,12 +330,9 @@ class BodyTemplateContentField(dd.VirtualField):
         file(local_file, "w").write(value)
 
 
-class Excerpt(dd.TypedPrintable,
-              dd.UserAuthored,
-              dd.Controllable,
-              dd.ProjectRelated,
-              outbox.Mailable,
-              postings.Postable):
+class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
+              mixins.Controllable, mixins.ProjectRelated,
+              ContactRelated, outbox.Mailable, postings.Postable):
 
     manager_level_field = 'office_level'
 
@@ -393,6 +402,14 @@ class Excerpt(dd.TypedPrintable,
             return super(Excerpt, self).filename_root()
         o = self.owner
         return o._meta.app_label + '.' + o.__class__.__name__ + '-' + str(o.pk)
+
+    def get_recipient_html(self, **kw):
+        rec = self.recipient
+        if rec is None and hasattr(self.owner, 'recipient'):
+            rec = self.owner.recipient
+        if rec is not None:
+            return rec.get_address_html(**kw)
+        return ''
 
     def get_printable_type(self):
         return self.excerpt_type
@@ -475,6 +492,7 @@ if has_davlink:
             id excerpt_type:25 project
             user:10 build_method
             owner build_time
+            company contact_person contact_role
             # preview
             """, label=_("General"))
         config = dd.Panel(
@@ -490,6 +508,7 @@ else:
         id excerpt_type:25 project
         user:10 build_method
         owner build_time
+        company contact_person contact_role
         # preview
         """
 
@@ -502,10 +521,10 @@ class Excerpts(dd.Table):
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
-    # insert_layout = """
-    # excerpt_type
-    # project
-    # """
+    insert_layout = """
+    excerpt_type project
+    company contact_person contact_role
+    """
     column_names = ("id build_time owner excerpt_type user project *")
     order_by = ["id"]
 

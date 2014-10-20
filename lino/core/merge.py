@@ -19,19 +19,15 @@ If should not be used on models that have MTI children.
 import logging
 logger = logging.getLogger(__name__)
 
-#~ import copy
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
 from lino.core import actions
 from lino.core import layouts
-from lino.core import fields
 from lino.core.signals import pre_merge
-from djangosite.dbutils import obj2str, full_model_name
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from djangosite.dbutils import full_model_name
+from lino.utils.xmlgen.html import E
 
 
 class MergePlan(object):
@@ -148,14 +144,6 @@ class MergeAction(actions.Action):
     readonly = False
     required = dict(user_level='admin')
 
-    #~ params_layout = layouts.Panel("""
-    #~ merge_to
-    #~ notify
-    #~ """,window_size=(50,'auto'))
-
-    #~ icon_name = 'x-tbar-duplicate'
-    #~ action_name = 'duplicate'
-    #~ params = dict(merge_to=)
     def __init__(self, model, **kw):
 
         fields = dict(
@@ -221,7 +209,7 @@ class MergeAction(actions.Action):
 
     def run_from_ui(self, ar):
         """
-        Implements :meth:`lino.core.actions.Action.run_from_ui`.
+        Implements :meth:`dd.Action.run_from_ui`.
         """
         obj = ar.selected_rows[0]
         mp = MergePlan(obj, ar.action_param_values.merge_to,

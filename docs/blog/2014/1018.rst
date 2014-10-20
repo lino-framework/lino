@@ -5,5 +5,13 @@ Saturday, October 18, 2014
 Bescheinigungen "Kleiderkammer"
 ===============================
 
-Wrote test cases 
-:ref:`welfare.tested.households`
+While the new :xfile:`clothing_refund.body.html` template itself
+probably worked already yesterday, it took me a few additional hours
+to generate corresponding demo data, write test cases and adapt the
+test suite. 
+Tests are in a new tested document :ref:`welfare.tested.households`.
+
+Example document in the `Beispiele
+<http://de.welfare.lino-framework.org/excerpts.html#beispiele>`__
+section of the German user manual.
+

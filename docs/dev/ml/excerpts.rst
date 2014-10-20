@@ -42,6 +42,8 @@ Models
   .. attribute:: body_template
   .. attribute:: primary
   .. attribute:: backward_compat
+  .. attribute:: print_recipient
+  .. attribute:: print_directly
 
 
 .. class:: Excerpt
