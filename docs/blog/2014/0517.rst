@@ -11,7 +11,7 @@ cases. It took me some time to realize that I need indeed a
 :mod:`lino_welfare.projects` package to manage all those sets of
 settings.
 
-Moved and renamed many files. Some examples::
+Moved and renamed many files. Some examples:
 
 =============================== =======================================
 `lino_welfare.settings.eupen`   `lino_welfare.projects.eupen.settings`

@@ -2,6 +2,9 @@
 Monday, October 20, 2014
 ========================
 
+Still working on :doc:`/tickets/135`
+------------------------------------
+
 I found a last bug (in the fixture which generates demo data) which
 caused the example document in the `Beispiele
 <http://de.welfare.lino-framework.org/excerpts.html#beispiele>`__
@@ -38,12 +41,27 @@ who don't use the :mod:`ml.excerpts` module should not be bothered
 with a method like `get_print_recipient` in Lino's :class:`dd.Model`
 class.
 
-:ref:`mustconfig` : Adapt local `excerpts/Excerpt/Default.odt`
-template.
-
-:ref:`mustmig` : new field :attr:`ml.excerpts.ExcerptType.print_recipient`.
-
 And I discovered that it was no longer possible to specify a recipient
 for a presence certificate.  So :class:`ml.excerpts.Excerpt` now is a
 :class:`ml.contacts.ContactRelated` again. 
 
+:ref:`mustconfig` : Adapt local `excerpts/Excerpt/Default.odt`
+template.
+
+:ref:`mustmig` : 
+New field :attr:`ml.excerpts.ExcerptType.print_recipient`.
+New fields in :class:`ml.excerpts.Excerpt` because it now is a
+:class:`ml.contacts.ContactRelated` again. 
+
+
+
+
+Two changes in :ref:`atelier`
+------------------------------
+
+The `doc_trees` parameter is no longer in :xfile:`fabfile.py` but in
+the project's main module.  This was necessary in order to load also
+non-standard doc trees into the `intersphinx_mapping`.
+
+`intersphinx_url` changed to `intersphinx_urls` and is now expected to
+be a dict with one URL for every name in `doc_trees`.

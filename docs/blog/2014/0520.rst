@@ -68,7 +68,7 @@ list of possible choices for the :attr:`ml.excerpts.Excerpt.template`
 field is a combination of a files found in all groups.
 
 Another question is about the template context of an excerpt: Should
-``this``refer to the `Excerpt` instance? Or rather to the
+``this`` refer to the `Excerpt` instance? Or rather to the
 `Excerpt.owner`, i.e. the object being printed?
 
 Added a subtle new feature: 
