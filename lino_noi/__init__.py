@@ -17,5 +17,5 @@ import os
 execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
 __version__ = SETUP_INFO['version']
 
-intersphinx_url = "http://noi.lino-framework.org"
+intersphinx_urls = dict(docs="http://noi.lino-framework.org")
 srcref_url = 'https://github.com/lsaffre/lino-noi/blob/master/%s'
