@@ -1,0 +1,12 @@
+=========================
+Tuesday, October 21, 2014
+=========================
+
+I started to use PyCharm. Together with :ref:`mw` we are experimenting with the Git integration.
+
+Beginner's questions:
+
+- When I open some file, PC warns me about a problem:
+
+    Package requirements 'appy==0.8.4', 'django==1.5.1' ... [Install requirements] [Ignore requirements]
+
