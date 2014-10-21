@@ -13,7 +13,9 @@ from lino.core.choicelists import Choice, ChoiceList
 
 class YesNo(ChoiceList):
     """
-    Boolean?
+    Used e.g. for table parameters. TODO: write usage example.
+
+
     """
     verbose_name_plural = _("Yes or no")
 add = YesNo.add_item
