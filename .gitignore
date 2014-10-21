@@ -27,4 +27,4 @@ lino.egg-info
 htmlcov
 warnings_linkcheck.txt
 .DS_Store
-
+.idea

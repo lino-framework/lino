@@ -2,11 +2,33 @@
 Tuesday, October 21, 2014
 =========================
 
-I started to use PyCharm. Together with :ref:`mw` we are experimenting with the Git integration.
+I started to use PyCharm. Together with :ref:`mw` we experimented with
+the Git integration.
 
-Beginner's questions:
+After several hours I abandoned PyCharm once more and switched back to
+:ref:`fab_commands` and Emacs.  This is not a definitive decision.  I
+am willing to believe that I would find solutions to my beginner's
+problems if I would invest more time into it.  Here are some of these
+problems which I could not solve:
 
 - When I open some file, PC warns me about a problem:
 
     Package requirements 'appy==0.8.4', 'django==1.5.1' ... [Install requirements] [Ignore requirements]
+
+  And I did not find any explanation.
+
+- It seems that I must define a "run environment" for everything I
+  want to run from PyCharm.  Seems complicated.  I prefer my
+  :ref:`fab_commands`.
+
+- I could not get any test run to execute. It looked as if Django was
+  not installed.
+
+- Does PC multiple Django settings per project?
+
+- Is it true that PC `cannot easily wrap long lines into a paragraph?
+  <http://andrewbrookins.com/tech/wrap-comments-and-text-to-column-width-in-intellij-editors/>`_
+
+- Even with PC it is necessary to learn more about how to use Git.
+  Worked on my :doc:`/dev/git`.
 
