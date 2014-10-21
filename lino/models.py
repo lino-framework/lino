@@ -14,6 +14,7 @@ from lino.core.choicelists import Choice, ChoiceList
 class YesNo(ChoiceList):
     """
     Used e.g. for table parameters. TODO: write usage example.
+    Änderung.
 
 
     """

@@ -33,6 +33,9 @@ Models
 
 .. class:: ExcerptType
 
+  .. attribute:: template
+
+    The main template to be used when printing an excerpt of this type.
 
   .. attribute:: content_type
 
@@ -152,4 +155,17 @@ Actions
 
 .. class:: CreateExcerpt
 .. class:: ClearPrinted
+
+
+Document templates
+------------------
+
+.. xfile:: excerpts/Excerpt/Default.odt
+
+This template is the default value, used by many excerpt types in
+their :attr:`ExcerptType.template` field.  It is designed to be
+locally overridden by local site administrators in order to match
+their letter paper.
+
+
 

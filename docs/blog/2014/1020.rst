@@ -2,16 +2,18 @@
 Monday, October 20, 2014
 ========================
 
-Still working on :doc:`/tickets/135`
-------------------------------------
+Still working on :doc:`/tickets/136`
+
+Bestätigung "Kleiderkammer" fertig
+----------------------------------
 
 I found a last bug (in the fixture which generates demo data) which
-caused the example document in the `Beispiele
+caused example of the :xfile:`clothing_bank.body.html` for
+:ref:`paulfrisch` in the `Beispiele
 <http://de.welfare.lino-framework.org/excerpts.html#beispiele>`__
 section of the German user manual to be wrong.  Now I finally dare to
-link to it: a `cost transfer attestation
-<http://de.welfare.lino-framework.org/dl/excerpts/aids.SimpleConfirmation-13.pdf>`_
-for :ref:`paulfrisch`!
+link to it: `here it is
+<http://de.welfare.lino-framework.org/dl/excerpts/aids.SimpleConfirmation-13.pdf>`_!
 
 Vocabulary:
 
@@ -19,13 +21,16 @@ Vocabulary:
 - Kostenübernahme - Cost transfer
 - Clothing costs transfer - Kostenübernahme Kleidung
 
+Recipient of an excerpt
+-----------------------
+
 However there were still some "details" to fix.  For example the
-following user request turned out to be rather tricky:
+following item turned out to be rather tricky:
 
-- Wenn eine Bescheinigung keinen Empfänger hat, soll der entsprechende
-  Platz für die Adresse dennoch gedruckt werden.
+-   Wenn kein Empfänger angegeben ist, trotzdem den entsprechenden Platz
+    vorsehen
 
-The `excerpts/Excerpt/Default.odt` template is designed to be
+The :xfile:`excerpts/Excerpt/Default.odt` template is designed to be
 overridden by local site administrators in order to match their letter
 paper. To minimize their configuration work, the template should work
 for any type of excerpt, not only for confirmations.
@@ -33,7 +38,7 @@ for any type of excerpt, not only for confirmations.
 To solve this, I removed the `get_print_recipient` method from
 :class:`dd.Model`, added a new field
 :attr:`ml.excerpts.ExcerptType.print_recipient` and replaced in
-`excerpts/Excerpt/Default.odt` the test ``do text if
+:xfile:`excerpts/Excerpt/Default.odt` the test ``do text if
 obj.get_print_recipient()`` by ``do text if
 this.excerpt_type.print_recipient)``.  This was also inspired by
 :ref:`joe`\ 's suggestions for ticket :doc:`/tickets/134`: developers
@@ -45,8 +50,12 @@ And I discovered that it was no longer possible to specify a recipient
 for a presence certificate.  So :class:`ml.excerpts.Excerpt` now is a
 :class:`ml.contacts.ContactRelated` again. 
 
-:ref:`mustconfig` : Adapt local `excerpts/Excerpt/Default.odt`
-template.
+:ref:`mustconfig` : 
+Adapt local :xfile:`excerpts/Excerpt/Default.odt`
+template: replace the condition 
+``do text if obj.get_print_recipient()`` 
+by 
+``do text if this.excerpt_type.print_recipient)``.
 
 :ref:`mustmig` : 
 New field :attr:`ml.excerpts.ExcerptType.print_recipient`.
@@ -55,8 +64,7 @@ New fields in :class:`ml.excerpts.Excerpt` because it now is a
 
 
 
-
-Two changes in :ref:`atelier`
+Two changes in :mod:`atelier`
 ------------------------------
 
 The `doc_trees` parameter is no longer in :xfile:`fabfile.py` but in

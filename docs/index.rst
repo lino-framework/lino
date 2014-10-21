@@ -4,7 +4,9 @@
 The Lino framework
 ==================
 
-Welcome to the project homepage of the Lino framework. 
+Blabla.
+
+Welcome to the project homepage of the Lino framework.
 
 .. py2rst::
 

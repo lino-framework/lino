@@ -2,14 +2,18 @@
 Saturday, October 18, 2014
 ==========================
 
+
+
 Bescheinigungen "Kleiderkammer"
 ===============================
 
-While the new :xfile:`clothing_refund.body.html` template itself
+Working on :doc:`/tickets/136`.
+
+While the new :xfile:`clothing_bank.body.html` template itself
 probably worked already yesterday, it took me a few additional hours
 to generate corresponding demo data, write test cases and adapt the
-test suite. 
-Tests are in a new tested document :ref:`welfare.tested.households`.
+test suite.  Tests are in a new tested document
+:ref:`welfare.tested.households`.
 
 Example document in the `Beispiele
 <http://de.welfare.lino-framework.org/excerpts.html#beispiele>`__

@@ -11,7 +11,9 @@ Opened :doc:`/tickets/135`.
 Bescheinigungen "Kleiderkammer"
 ===============================
 
-Started a new attestation template :xfile:`clothing_refund.body.html`
+Opened :doc:`/tickets/136`.
+
+Started a new attestation template :xfile:`clothing_bank.body.html`
 which uses the new table
 :class:`welfare.households.RefundsByPerson`.
 
