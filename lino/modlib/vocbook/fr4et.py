@@ -2300,6 +2300,59 @@ Muu:
 """)
 
 
+if output_format == "rst":
+    Files = book.add_section(u"Lingid", intro=u"""
+
+Apprenez le français avec Vincent:
+
+- `Home page <https://www.youtube.com/user/imagiers/>`_
+
+- Learn French with 10 time-lapses and videos:
+  `1 <https://www.youtube.com/watch?v=V_q59qWBsNk>`_
+  `2 <https://www.youtube.com/watch?v=cVXWXcVBdl8>`_
+  `3 <https://www.youtube.com/watch?v=_F_p09pHdj4>`_
+  `4 <https://www.youtube.com/watch?v=tGsWmnDtynM>`_
+  `9 <https://www.youtube.com/watch?v=ff5NmumRc8g>`_
+
+- `La nourriture <https://www.youtube.com/watch?v=MjDcUT-UEBY>`_
+
+- `Les légumes <https://www.youtube.com/watch?v=Wm7qZp_1gvg>`_
+
+- `Dans la cuisine (Vol 1) <https://www.youtube.com/watch?v=EZhyOg0irCY>`_
+
+- `Dans la cuisine (Vol 2)
+  <https://www.youtube.com/watch?v=BcyJECjjCfo>`_
+
+Chansons:
+
+- 
+  `Je l'aime à mourir <https://www.youtube.com/watch?v=bMZVtFCU0ZQ>`_
+  (Francis Cabrel)
+- `C'était l'hiver <https://www.youtube.com/watch?v=YgiSLsdBN0g>`_
+  (Isabelle Boulay)
+
+- Jacques Brel:
+  `Dans le port d'Amsterdam <https://www.youtube.com/watch?v=r8lWkNnhJB0>`_
+  /
+  `Ne me quite pas <https://www.youtube.com/watch?v=5N0KLu4vfkE>`_
+  /
+  Les bourgeois (`vidéo <https://www.youtube.com/watch?v=dCHi5apc1lQ>`_ /
+  `chant et texte <https://www.youtube.com/watch?v=KP5TtgwvWaM>`_)
+
+- Edith Piaf:
+  `Non, je ne regrette rien <https://www.youtube.com/watch?v=Q3Kvu6Kgp88>`_ /
+  `La vie en rose <https://www.youtube.com/watch?v=kFzViYkZAz4>`_
+
+- Renaud:
+  `Manu <https://www.youtube.com/watch?v=DtCbYUcYK50>`_ /
+  `Laisse béton <https://www.youtube.com/watch?v=iC5eMh1FuaU>`_ /
+  `Hexagone <https://www.youtube.com/watch?v=2RQHsn2ilfA>`_ /
+  `Mistral Gagnant <https://www.youtube.com/watch?v=jYb_aYgmGP4&list=PLFA40C2CDA5827B3D>`_ (chanté par `Coeur de pirate <https://www.youtube.com/watch?v=iRGGTaAhexc>`_)
+  
+
+""")
+
+
 if __name__ == '__main__':
     if output_format == "rst":
         book.add_index(u"Sõnaraamat")
