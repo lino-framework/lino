@@ -12,6 +12,9 @@ from lino.core.choicelists import Choice, ChoiceList
 
 
 class YesNo(ChoiceList):
+    """
+    Boolean?
+    """
     verbose_name_plural = _("Yes or no")
 add = YesNo.add_item
 add('y', _("Yes"), 'yes')
