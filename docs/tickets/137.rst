@@ -1,0 +1,28 @@
+===================================
+#137 : Switch from Emacs to PyCharm
+===================================
+
+Here are some of these problems which I could not solve during my
+second attempt to move from Emacs to PyCharm.
+
+- When I open some file, PC warns me about a problem:
+
+    Package requirements 'appy==0.8.4', 'django==1.5.1' ... [Install requirements] [Ignore requirements]
+
+  And I did not find any explanation.
+
+- It seems that I must define a "run environment" for everything I
+  want to run from PyCharm.  Seems complicated.  I prefer my
+  :ref:`fab_commands`.
+
+- I could not get any test run to execute. It looked as if Django was
+  not installed.
+
+- Does PC support multiple Django settings per project?
+
+- Is it true that PC `cannot easily wrap long lines into a paragraph
+  <http://andrewbrookins.com/tech/wrap-comments-and-text-to-column-width-in-intellij-editors/>`_?
+
+- Even with PC it is necessary to learn more about how to use Git (see
+  :doc:`/dev/git`).
+
