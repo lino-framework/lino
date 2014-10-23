@@ -49,8 +49,9 @@ offer professional consultance for Lino applications:
 
 - `Rumma & Ko OÜ <http://saffre-rumma.net>`_ (:ref:`luc`)
 - `Code Gears <http://www.code-gears.com>`_ (:ref:`mw`)
-- `Active Systems OÜ <http://active.ee>`_ (:ref:`at`)
 - `wpj s.r.o <http://www.wpj.cz/>`_ (:ref:`joe`)
+- `Active Systems OÜ <http://active.ee>`_ (:ref:`at`)
+- `APC <http://www.apc.be>`_ (:ref:`ap`)
 
 
 Contributors
@@ -59,6 +60,11 @@ Contributors
 The following persons have contributed ideas or code to Lino.
 
 (TODO: write some sentences about each of them.)
+
+.. _ap:
+
+Andreas Peil
+------------
 
 .. _at:
 

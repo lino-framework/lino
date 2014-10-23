@@ -2,6 +2,9 @@
 Thursday, October 23, 2014
 ==========================
 
+Recipient of an excerpt
+=======================
+
 Continued on ticket :doc:`/tickets/136`.
 
 Finished the following item:
@@ -28,6 +31,9 @@ It seems that `appy.pod` does not look into frames, so I use a simple
 paragraph with border.  A trick which in turn needed a new positional
 argument `min_height` to :meth:`get_address_html
 <ml.excerpts.Excerpt.get_address_html>`.
+
+Adapted the :xfile:`excerpts/Default.odt` template in :ref:`lino`.
+
 
 Miscellaneous changes while working on the above:
 
@@ -56,3 +62,13 @@ Miscellaneous changes while working on the above:
 
 - Removed :file:`/docs/about/license.rst` since these considerations
   are now obsolete.
+
+
+
+Directory structure in :ref:`cosi`
+==================================
+
+I noticed that the `projects` directory structure in :ref:`cosi` was
+very obsolete.  Since :ref:`mw` will soon dive into this, I decided to
+adapt it to the modern style.
+

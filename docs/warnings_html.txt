@@ -1,0 +1,280 @@
+/home/luc/hgwork/lino/docs/admin/install_windows.rst:212: WARNING: Include file u'/home/luc/hgwork/lino/docs/admin/settings.py' not found or reading it failed
+/home/luc/hgwork/lino/lino/modlib/awesomeuploader/__init__.py:docstring of lino.modlib.awesomeuploader:15: WARNING: Literal block ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/modlib/print_pisa/__init__.py:docstring of lino.modlib.print_pisa:7: ERROR: Unknown interpreted text role "settings".
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:26: ERROR: Unknown target name: "section title".
+/home/luc/hgwork/lino/docs/blog/2013/0420.rst:93: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0511.rst:30: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0704.rst:30: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0712.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:103: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/0818.rst:3: WARNING: Duplicate explicit target name: "wikivs".
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:61: ERROR: Unknown interpreted text role "src".
+/home/luc/hgwork/lino/docs/blog/2013/0910.rst:63: ERROR: Unknown interpreted text role "function".
+/home/luc/hgwork/lino/docs/blog/2013/0916.rst:54: WARNING: Inline strong start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:118: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/blog/2013/1011.rst:119: WARNING: Block quote ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/blog/2013/1015.rst:16: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:63: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1122.rst:64: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2013/1123.rst:38: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/docs/blog/2013/1222.rst:122: WARNING: Line spec '367-': no lines pulled from include file u'/home/luc/hgwork/lino/docs/blog/2013/1222a.log'
+/home/luc/hgwork/lino/docs/blog/2014/0101.rst:68: ERROR: Unknown interpreted text role "ffile".
+/home/luc/hgwork/lino/docs/blog/2014/0109.rst:13: ERROR: Unknown interpreted text role "role".
+/home/luc/hgwork/lino/docs/blog/2014/0111.rst:10: ERROR: Unknown interpreted text role "role".
+/home/luc/hgwork/lino/docs/blog/2014/0111.rst:10: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2014/0114.rst:24: ERROR: Unknown interpreted text role "role".
+/home/luc/hgwork/lino/docs/blog/2014/0116.rst:48: WARNING: Inline literal start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2014/0120.rst:7: ERROR: Unknown interpreted text role "role".
+/home/luc/hgwork/lino/docs/blog/2014/0213.rst:19: WARNING: Inline emphasis start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:55: WARNING: Bullet list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/blog/2014/0222.rst:70: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2014/0226.rst:9: ERROR: Unknown interpreted text role "fab_command".
+/home/luc/hgwork/lino/docs/blog/2014/0609.rst:3: WARNING: Duplicate explicit target name: "commondata".
+/home/luc/hgwork/lino/docs/blog/2014/0610.rst:39: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/blog/2014/0926.rst:17: WARNING: Literal block ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/davlink/usage.rst:14: ERROR: Unknown target name: "davlink.jar <https://github.com/lsaffre/davlink/blob/master/example/davlink.jar?raw=true>>".
+/home/luc/hgwork/lino/docs/dev/apps.rst:100: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/dev/ml/sales.rst:105: WARNING: Explicit markup ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/dev/userdocs.rst:21: WARNING: duplicate description of role ddref, other instance in /home/luc/hgwork/lino/docs/api/lino.sphinxcontrib.actordoc.rst
+/home/luc/hgwork/lino/docs/dev/userdocs.rst:28: WARNING: duplicate description of directive actor, other instance in /home/luc/hgwork/lino/docs/api/lino.sphinxcontrib.actordoc.rst
+/home/luc/hgwork/lino/docs/index.rst:5: WARNING: Duplicate explicit target name: "more".
+/home/luc/hgwork/lino/docs/tickets/122.rst:100: ERROR: Unexpected indentation.
+/home/luc/hgwork/lino/docs/todo.rst:656: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/todo.rst:657: WARNING: Enumerated list ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/docs/tutorials/watch_tutorial/index.rst:27: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+include/tellme.rst:3: WARNING: unknown document: /about/luc
+/home/luc/hgwork/lino/docs/about/name.rst:14: WARNING: unknown document: why_gpl
+/home/luc/hgwork/lino/docs/admin/install.rst:81: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/ad.py:docstring of lino.ad.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:12: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
+/home/luc/hgwork/lino/docs/api/lino.utils.mti.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/blog/2013/0111.rst:7: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/blog/2013/0116.rst:98: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/blog/2013/0130.rst:9: WARNING: term not in glossary: ddt
+/home/luc/hgwork/lino/docs/blog/2013/0201.rst:10: WARNING: unknown document: ../2012/0704
+/home/luc/hgwork/lino/docs/blog/2013/0209.rst:7: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/blog/2013/0211.rst:7: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/blog/2013/0227.rst:7: WARNING: unknown document: /tutorials/quickstart
+/home/luc/hgwork/lino/docs/blog/2013/0311.rst:19: WARNING: unknown document: /tutorials/quickstart
+/home/luc/hgwork/lino/docs/blog/2013/0312.rst:9: WARNING: unknown document: /tutorials/quickstart
+/home/luc/hgwork/lino/docs/blog/2013/0313.rst:8: WARNING: unknown document: /tutorials/quickstart
+/home/luc/hgwork/lino/docs/blog/2013/0314.rst:125: WARNING: unknown document: /tutorials/quickstart
+/home/luc/hgwork/lino/docs/blog/2013/0319.rst:31: WARNING: undefined label: welfare.jobs.candidature (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0320.rst:9: WARNING: undefined label: lino.countries.country (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0320.rst:9: WARNING: undefined label: lino.ui.plain (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0320.rst:59: WARNING: undefined label: lino.modlib.cal (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0321.rst:104: WARNING: undefined label: welfare.jobs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0321.rst:108: WARNING: undefined label: welfare.debts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0321.rst:110: WARNING: undefined label: welfare.userman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0321.rst:128: WARNING: undefined label: welfare.debts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0325.rst:6: WARNING: undefined label: welfare.debts.budget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0325.rst:6: WARNING: undefined label: welfare.debts.budget.print_empty_rows (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0325.rst:6: WARNING: undefined label: welfare.debts.budget.ignore_yearly_incomes (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0330.rst:5: WARNING: undefined label: welfare.jobs.jobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0404.rst:8: WARNING: undefined label: welfare.jobs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0404.rst:8: WARNING: undefined label: welfare.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0408.rst:8: WARNING: undefined label: welfare.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:20: WARNING: undefined label: welfare.isip.contract (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:20: WARNING: undefined label: welfare.jobs.contract (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:42: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:59: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:85: WARNING: undefined label: welfare.courses.courserequeststates (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0423.rst:89: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0424.rst:13: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0424.rst:20: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0424.rst:70: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0424.rst:81: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0424.rst:91: WARNING: undefined label: welfare.courses.pendingcourserequests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0425.rst:8: WARNING: undefined label: welfare.pcsw.clientcontact (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0425.rst:86: WARNING: undefined label: welfare.jobs.newjobsoverview (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0502.rst:26: WARNING: undefined label: welfare.debts.budget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:8: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:12: WARNING: undefined label: welfare.accounts.accounts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:15: WARNING: undefined label: welfare.pcsw.clientstest (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0504.rst:19: WARNING: undefined label: welfare.debts.entriesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0506.rst:20: WARNING: undefined label: welfare.debts.liabilitiesbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0507.rst:8: WARNING: undefined label: welfare.debts.entries (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0513.rst:6: WARNING: undefined label: welfare.pcsw.client (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0514.rst:20: WARNING: undefined label: welfare.cbss (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0516.rst:77: WARNING: undefined label: welfare.cbss (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0516.rst:149: WARNING: undefined label: welfare.pcsw.coachingendings (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0603.rst:10: WARNING: undefined label: welfare.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0610.rst:26: WARNING: undefined label: welfare.debts.mybudgets (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0610.rst:26: WARNING: undefined label: welfare.debts.budgets (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0612.rst:7: WARNING: undefined label: welfare.pcsw.userswithclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:8: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:9: WARNING: undefined label: faggio.contacts.partners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:50: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0714.rst:105: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0715.rst:29: WARNING: undefined label: welfare.cal.guestsbyevent (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0716.rst:8: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0717.rst:46: WARNING: undefined label: welfare.cal.calendar (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0718.rst:5: WARNING: undefined label: welfare.cal.guestsbypartner (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0718.rst:10: WARNING: undefined label: welfare.cal.events (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0718.rst:13: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0720.rst:17: WARNING: undefined label: welfare.pcsw.userswithclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0720.rst:17: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:8: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:10: WARNING: undefined label: welfare.reception.expectedguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:10: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:94: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0722.rst:176: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0723.rst:144: WARNING: undefined label: welfare.receptions (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0723.rst:248: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0723.rst:248: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0724.rst:5: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0724.rst:66: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0724.rst:74: WARNING: undefined label: welfare.reception.expectedguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0725.rst:21: WARNING: undefined label: welfare.reception.expectedguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0725.rst:42: WARNING: undefined label: faggio.sales.invoicestoissue (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0726.rst:39: WARNING: undefined label: faggio.sales.invoicestocreate (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0726.rst:88: WARNING: undefined label: welfare.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0726.rst:90: WARNING: undefined label: patrols.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0802.rst:26: WARNING: undefined label: welfare.reception.appointmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0802.rst:72: WARNING: undefined label: patrols.models (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0804.rst:25: WARNING: undefined label: welfare.notes.note (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0806.rst:11: WARNING: undefined label: welfare.reception.client (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0806.rst:11: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0807.rst:8: WARNING: undefined label: welfare.cal.myeventstoday (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0809.rst:5: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0810.rst:5: WARNING: undefined label: modlib.notes.note (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:5: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:33: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:36: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:50: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0813.rst:54: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0814.rst:5: WARNING: undefined label: welfare.reception.waitingguests (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0816.rst:120: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:10: WARNING: undefined label: welfare.cal.myevents (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:73: WARNING: undefined label: welfare.cal.event (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:78: WARNING: undefined label: welfare.reception.appontmentsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0817.rst:95: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0824.rst:43: WARNING: undefined label: lino.welfare (if the link has no caption the label must precede a section header)
+include/tellme.rst:3: WARNING: unknown document: /about/luc
+/home/luc/hgwork/lino/docs/blog/2013/0829.rst:8: WARNING: undefined label: eventstates.scheduled (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:8: WARNING: undefined label: faggio.sales.invoicestocreate (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:42: WARNING: undefined label: faggio.sales.invoicestocreate (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:53: WARNING: undefined label: faggio.sales.invoicestocreate (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0831.rst:74: WARNING: undefined label: dev.actions (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0901.rst:15: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:6: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:22: WARNING: undefined label: welfare.pcsw.allclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:30: WARNING: undefined label: welfare.jobs.experience (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:30: WARNING: undefined label: welfare.jobs.study (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:128: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:135: WARNING: undefined label: welfare.debts.budget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0905.rst:145: WARNING: undefined label: welfare.reception.coachingsbyclient (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0907.rst:61: WARNING: undefined label: dev.actors (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0907.rst:76: WARNING: undefined label: welfare.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/0908.rst:5: WARNING: undefined label: welfare.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1012.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1026.rst:30: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1123.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:8: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1125.rst:123: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1126.rst:132: WARNING: undefined label: tx25. (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1204.rst:56: WARNING: undefined label: welfare.pcsw.client (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1210.rst:29: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:11: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: hoppel (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:13: WARNING: undefined label: testlino (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2013/1223.rst:18: WARNING: unknown document: /tickets/2013/1
+/home/luc/hgwork/lino/docs/blog/2013/1224.rst:8: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2014/0106.rst:26: WARNING: undefined label: cosi.userdocs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0110.rst:9: WARNING: unknown document: /about/proprietary
+/home/luc/hgwork/lino/docs/blog/2014/0110.rst:9: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2014/0110.rst:9: WARNING: unknown document: /about/why_gpl
+/home/luc/hgwork/lino/docs/blog/2014/0111.rst:5: WARNING: unknown document: /tickets
+/home/luc/hgwork/lino/docs/blog/2014/0111.rst:10: WARNING: undefined label: welfare.pcsw.client (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0114.rst:42: WARNING: undefined label: llb (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0116.rst:22: WARNING: undefined label: dog (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0116.rst:28: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0119.rst:24: WARNING: undefined label: ise: (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0120.rst:5: WARNING: undefined label: welfare.tour (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0122.rst:5: WARNING: unknown document: /tickets
+/home/luc/hgwork/lino/docs/blog/2014/0125.rst:12: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2014/0129.rst:91: WARNING: undefined label: welfare.users.userdetail (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0203.rst:87: WARNING: undefined label: welfare.pcsw.clientaddress (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:10: WARNING: undefined label: welfare.pcsw.clientaddress (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:21: WARNING: undefined label: welfare.humanlink.parentsbyhuman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:21: WARNING: undefined label: welfare.humanlink.childrenbyhuman (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0204.rst:25: WARNING: undefined label: welfare.reception.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0211.rst:149: WARNING: unknown document: /java
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:37: WARNING: undefined label: welfare.debts.budget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:37: WARNING: undefined label: welfare.jobs.contract (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:37: WARNING: undefined label: welfare.isip.contract (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:37: WARNING: undefined label: welfare.cbss.retrievetigroupsrequest (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0214.rst:37: WARNING: undefined label: welfare.notes.note (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0220.rst:18: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0304.rst:20: WARNING: undefined label: welfare.beid (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0305.rst:17: WARNING: undefined label: welfare.debts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0305.rst:17: WARNING: undefined label: welfare.courses (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0305.rst:39: WARNING: undefined label: lino_welfare.modlib.courses (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0306.rst:59: WARNING: undefined label: welfare.integ.activityreport (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0315.rst:11: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0315.rst:18: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0506.rst:44: WARNING: undefined label: dev.tables (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:31: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:37: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0528.rst:43: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0605.rst:77: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0610.rst:16: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0610.rst:41: WARNING: undefined label: pull (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0611.rst:44: WARNING: undefined label: commondata (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0611.rst:46: WARNING: undefined label: cosi.tested.estonia (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0612.rst:6: WARNING: undefined label: commondata (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0625.rst:8: WARNING: undefined label: watch_tim (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0730.rst:69: WARNING: undefined label: chatelet (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0911.rst:5: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2014/0912.rst:41: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/blog/2014/0920.rst:32: WARNING: undefined label: dev.tables (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/0929.rst:6: WARNING: undefined label: chatelet (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/dev/ml/beid.rst:17: WARNING: undefined label: eid_jslib (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/dev/ml/extjs.rst:13: WARNING: unknown document: /about/license
+/home/luc/hgwork/lino/docs/dev/userdocs.rst:17: WARNING: undefined label: atelier (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/ref/files.rst:62: WARNING: unknown document: /admin/translate
+/home/luc/hgwork/lino/docs/ref/glossary.rst:12: WARNING: undefined label: admin.install (if the link has no caption the label must precede a section header)
+None:None: WARNING: unknown document: /about/proprietary
+None:None: WARNING: unknown document: /about/license
+None:None: WARNING: unknown document: /about/why_gpl
+/home/luc/hgwork/lino/docs/releases/1.3.4.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.5.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.6.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/releases/1.3.7.rst:4: WARNING: unknown document: /download
+/home/luc/hgwork/lino/docs/tickets/10.rst:4: WARNING: unknown document: /releases/2010/1027
+/home/luc/hgwork/lino/docs/tickets/119.rst:19: WARNING: undefined label: phantom row (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/31.rst:23: WARNING: unknown document: /topics/http_auth
+/home/luc/hgwork/lino/docs/tickets/32.rst:4: WARNING: unknown document: /dsbe/index
+/home/luc/hgwork/lino/docs/tickets/34.rst:1: WARNING: term not in glossary: .dtl
+/home/luc/hgwork/lino/docs/tickets/45.rst:27: WARNING: unknown document: /davlink
+/home/luc/hgwork/lino/docs/tickets/51.rst:5: WARNING: unknown document: /blog/2011/1122
+/home/luc/hgwork/lino/docs/tickets/51.rst:54: WARNING: unknown document: /blog/2011/1207
+/home/luc/hgwork/lino/docs/tickets/65.rst:4: WARNING: unknown document: /blog/2011/0311
+/home/luc/hgwork/lino/docs/tickets/70.rst:12: WARNING: unknown document: /tutorials/uiless
+/home/luc/hgwork/lino/docs/tickets/72.rst:33: WARNING: unknown document: /2013/0203
+/home/luc/hgwork/lino/docs/tickets/80.rst:16: WARNING: undefined label: welfare.system.siteconfig (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/80.rst:16: WARNING: undefined label: welfare.pcsw.clientcontacttype (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/80.rst:27: WARNING: undefined label: welfare.debts.entry (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/80.rst:36: WARNING: undefined label: welfare.debts.debtsbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/80.rst:36: WARNING: undefined label: welfare.debts.bailiffdebtsbybudget (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/81.rst:10: WARNING: undefined label: welfare.pcsw.clients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/81.rst:10: WARNING: undefined label: welfare.isip.contracts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/81.rst:10: WARNING: undefined label: welfare.jobs.contracts (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tickets/81.rst:104: WARNING: undefined label: welfare.integ.userswithclients (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/topics/minimal_apps.rst:15: WARNING: unknown document: /ref/modlib
+/home/luc/hgwork/lino/docs/topics/mti.rst:26: WARNING: unknown document: /autodoc/lino.test_apps.mti
+/home/luc/hgwork/lino/docs/topics/startup.rst:19: WARNING: unknown document: /admin/lino_local
+/home/luc/hgwork/lino/docs/topics/ui.rst:16: WARNING: undefined label: lino.ui.extjs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/topics/ui.rst:21: WARNING: undefined label: lino.ui.plain (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/topics/ui.rst:35: WARNING: undefined label: lino.ui.extjs (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/topics/ui.rst:43: WARNING: undefined label: lino.ui.renderers (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/actions/index.rst:7: WARNING: undefined label: dev.actions (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/actors/index.rst:7: WARNING: undefined label: dev.actors (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/tables/index.rst:7: WARNING: undefined label: dev.actors (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/tutorials/watch_tutorial/index.rst:59: WARNING: unknown document: ../workflow_tutorial/index
