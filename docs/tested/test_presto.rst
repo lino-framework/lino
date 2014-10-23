@@ -3,8 +3,8 @@
 Exporting to Excel
 ==================
 
-.. to run (almost) only this test:
-  $ python setup.py test -s tests.DocsTests.test_docs
+.. to run only this test:
+  $ python setup.py test -s tests.DocsTests.test_presto
 
 General stuff:
 
@@ -27,4 +27,7 @@ General stuff:
 [u'open_url', u'success']
 >>> print(result['open_url'])
 /media/cache/appyxls/127.0.0.1/countries.Countries.xls
+
+
+>>> url = "http://127.0.0.1:8000/api/cal/MyEvents?_dc=1414086313105&cw=197&cw=139&cw=197&cw=36&cw=133&cw=68&cw=133&cw=106&cw=106&cw=106&cw=139&cw=87&cw=55&cw=87&cw=55&cw=80&cw=36&cw=36&cw=133&cw=68&cw=133&cw=133&cw=87&cw=133&cw=68&ch=&ch=&ch=&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=true&ch=false&ch=false&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ci=when_text&ci=summary&ci=workflow_buttons&ci=id&ci=owner_type&ci=owner_id&ci=user&ci=modified&ci=created&ci=build_time&ci=build_method&ci=start_date&ci=start_time&ci=end_date&ci=end_time&ci=access_class&ci=sequence&ci=auto_type&ci=event_type&ci=transparent&ci=room&ci=priority&ci=state&ci=assigned_to&ci=owner&name=0&pv=23.10.2014&pv=&pv=&pv=&pv=1&pv=&pv=&pv=&pv=y&an=export_excel&sr=72"
 

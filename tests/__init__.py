@@ -61,11 +61,16 @@ class DocsTests(LinoTestCase):
         docs/user/templates_api.rst
         docs/tutorials/dumpy.rst
         docs/tested/test_i18n.rst
-        docs/tested/test_presto.rst
         """)
 
     def test_polly(self):
         self.run_simple_doctests("docs/tested/polly.rst")
+
+    def test_presto(self):
+        self.run_simple_doctests("docs/tested/test_presto.rst")
+
+    def test_min1(self):
+        self.run_simple_doctests("docs/tested/min1.rst")
 
     def test_settings(self):
         self.run_simple_doctests('docs/dev/ad.rst')

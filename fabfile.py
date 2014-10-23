@@ -7,9 +7,8 @@ env.tolerate_sphinx_warnings = True
 env.demo_databases.append('lino.projects.docs.settings')
 env.demo_databases.append('lino.projects.belref.settings.demo')
 env.demo_databases.append('lino.projects.polly.settings.demo')
-# env.demo_databases.append('lino.projects.cosi.settings.demo')
 env.demo_databases.append('lino.projects.presto.settings.demo')
-env.demo_databases.append('lino.projects.min1.settings')
+env.demo_databases.append('lino.projects.min1.settings.demo')
 env.demo_databases.append('lino.projects.i18n.settings')
 env.demo_databases.append('lino.projects.events.settings')
 

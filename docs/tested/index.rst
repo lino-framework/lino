@@ -9,3 +9,4 @@ Tested pages
    test_i18n
    test_presto
    polly
+   min1

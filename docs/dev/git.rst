@@ -200,7 +200,7 @@ Reactivate master and merge the changes::
      lino/modlib/export_excel/models.py | 21 +++++++++++++++++++--
      1 file changed, 19 insertions(+), 2 deletions(-)
     
-Note: is the ``--no-ff` option necessary?
+Note: is the ``--no-ff`` option necessary?
 
 Push everything to the master::    
     

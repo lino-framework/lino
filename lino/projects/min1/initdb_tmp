@@ -1,0 +1,2 @@
+django-admin.py initdb_demo --noinput --traceback --settings=lino.projects.min1.settings.memory
+

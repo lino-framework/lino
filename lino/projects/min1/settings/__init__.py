@@ -34,8 +34,3 @@ class Site(Site):
     def get_admin_main_items(self):
         yield self.modules.cal.MyEvents
 
-SITE = Site(globals(), no_local=True)
-
-SECRET_KEY = "20227"  # see :djangoticket:`20227`
-
-DEBUG = True
