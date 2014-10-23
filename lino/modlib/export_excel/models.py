@@ -13,8 +13,8 @@
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
 import os
+import datetime
 from django.conf import settings
-from django.db import models
 from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
@@ -91,10 +91,27 @@ class ExcelRenderer(TableRenderer):
             sheet.write(0, c, self.column_name, header_style)
             sheet.col(c).width = min(256 * self.column_width / 7, 65535)  # 256 == 1 character width, max width=65535
 
+        default_style = xlwt.XFStyle()
+
+        date_style = xlwt.XFStyle()
+        date_style.num_format_str = 'yyyy-mm-dd'
+
+        datetime_style = xlwt.XFStyle()
+        datetime_style.num_format_str = 'yyyy-mm-dd h:mm:ss'
+
         for c, column in enumerate(self.columns):
             for r, row in enumerate(self.rows, start=1):
                 try:
-                    sheet.write(r, c, self.value)
+                    value = self.value
+                    style = default_style
+
+                    if isinstance(value, datetime.date):
+                        style = date_style
+
+                    if isinstance(value, datetime.datetime):
+                        style = datetime_style
+
+                    sheet.write(r, c, value, style=style)
                 except Exception:
                     sheet.write(r, c, self.value_as_text)
 
