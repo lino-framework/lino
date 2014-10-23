@@ -173,8 +173,8 @@ lino.projects.i18n
 lino.projects.igen
 lino.projects.igen.tests
 lino.projects.min1
-lino.projects.min1
-lino.projects.min2.settings
+lino.projects.min1.settings
+lino.projects.min2
 lino.projects.min2.modlib
 lino.projects.min2.modlib.contacts
 lino.projects.min2.modlib.contacts.fixtures

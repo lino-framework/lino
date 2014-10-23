@@ -16,9 +16,17 @@ General stuff:
 >>> from django.test import Client
 >>> client = Client()
 
+When exporting to `.xls`, the URL is rather long because it includes
+detailed information about the grid columns: their widths (``cw``),
+whether they are hidden (``ch``) and their ordering (``ci``).
 
+>>> url = "/api/cal/MyEvents?_dc=1414106085710"
+>>> url += "&cw=411&cw=287&cw=411&cw=73&cw=274&cw=140&cw=274&cw=220&cw=220&cw=220&cw=287&cw=181&cw=114&cw=181&cw=114&cw=170&cw=73&cw=73&cw=274&cw=140&cw=274&cw=274&cw=181&cw=274&cw=140"
+>>> url += "&ch=&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true"
+>>> url += "&ci=when_text&ci=summary&ci=workflow_buttons&ci=id&ci=owner_type&ci=owner_id&ci=user&ci=modified&ci=created&ci=build_time&ci=build_method&ci=start_date&ci=start_time&ci=end_date&ci=end_time&ci=access_class&ci=sequence&ci=auto_type&ci=event_type&ci=transparent&ci=room&ci=priority&ci=state&ci=assigned_to&ci=owner&name=0"
+>>> url += "&pv=23.10.2014&pv=&pv=&pv=&pv=2&pv=&pv=&pv=&pv=y"
+>>> url += "&an=export_excel&sr=61"
 
->>> url = "/api/cal/MyEvents?_dc=1414086313105&cw=197&cw=139&cw=197&cw=36&cw=133&cw=68&cw=133&cw=106&cw=106&cw=106&cw=139&cw=87&cw=55&cw=87&cw=55&cw=80&cw=36&cw=36&cw=133&cw=68&cw=133&cw=133&cw=87&cw=133&cw=68&ch=&ch=&ch=&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=true&ch=false&ch=false&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ci=when_text&ci=summary&ci=workflow_buttons&ci=id&ci=owner_type&ci=owner_id&ci=user&ci=modified&ci=created&ci=build_time&ci=build_method&ci=start_date&ci=start_time&ci=end_date&ci=end_time&ci=access_class&ci=sequence&ci=auto_type&ci=event_type&ci=transparent&ci=room&ci=priority&ci=state&ci=assigned_to&ci=owner&name=0&pv=23.10.2014&pv=&pv=&pv=&pv=1&pv=&pv=&pv=&pv=y&an=export_excel&sr=72"
 >>> res = client.get(url, REMOTE_USER='robin')
 >>> print(res.status_code)
 200
@@ -28,13 +36,16 @@ General stuff:
 >>> print(result['open_url'])
 /media/cache/appyxls/127.0.0.1/cal.MyEvents.xls
 
+The action performed without error.
+But does the file exist?
+
 >>> from unipath import Path
 >>> p = Path(settings.MEDIA_ROOT, 
 ...    'cache', 'appyxls', '127.0.0.1', 'cal.MyEvents.xls')
 >>> p.exists()
 True
 
-Now we test whether the file is really okay.
+Now test whether the file is really okay.
 
 >>> import xlrd
 >>> wb = xlrd.open_workbook(p)
@@ -45,9 +56,15 @@ Note that long titles are truncated:
 >>> print(s.name.strip())
 My events (Dates 23.10.2014 to
 
-It has 8 columns and 13 rows:
+It has 4 columns and 13 rows:
 
 >>> print(s.ncols, s.nrows)
-(8, 13)
+(4, 13)
+
+>>> print(s.row(0))
+[text:u'When', text:u'Created', text:u'Start date', text:u'Start time']
+
+>>> print(s.row(1))
+[text:u'Thu 10/23/14 (08:30)', xldate:41935.88606481482, xldate:41935.0, xldate:0.3541666666666667]
 
 

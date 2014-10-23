@@ -71,6 +71,17 @@ def sheet_name(s):
 
 
 class ExcelRenderer(TableRenderer):
+    default_style = xlwt.XFStyle()
+
+    date_style = xlwt.XFStyle()
+    date_style.num_format_str = 'yyyy-mm-dd'
+
+    datetime_style = xlwt.XFStyle()
+    datetime_style.num_format_str = 'yyyy-mm-dd h:mm:ss'
+
+    time_style = xlwt.XFStyle()
+    time_style.num_format_str = 'h:mm:ss'
+
     def render(self):
         workbook = xlwt.Workbook(encoding='utf-8')
 
@@ -79,27 +90,23 @@ class ExcelRenderer(TableRenderer):
         header_style = xlwt.easyxf("font: bold on;")
         for c, column in enumerate(self.columns):
             sheet.write(0, c, self.column_name, header_style)
-            sheet.col(c).width = min(256 * self.column_width / 7, 65535)  # 256 == 1 character width, max width=65535
-
-        default_style = xlwt.XFStyle()
-
-        date_style = xlwt.XFStyle()
-        date_style.num_format_str = 'yyyy-mm-dd'
-
-        datetime_style = xlwt.XFStyle()
-        datetime_style.num_format_str = 'yyyy-mm-dd h:mm:ss'
+            sheet.col(c).width = min(256 * self.column_width / 7, 65535)
+            # 256 == 1 character width, max width=65535
 
         for c, column in enumerate(self.columns):
             for r, row in enumerate(self.rows, start=1):
                 try:
                     value = self.value
-                    style = default_style
+                    style = self.default_style
 
                     if isinstance(value, datetime.date):
-                        style = date_style
+                        style = self.date_style
 
                     if isinstance(value, datetime.datetime):
-                        style = datetime_style
+                        style = self.datetime_style
+
+                    if isinstance(value, datetime.time):
+                        style = self.time_style
 
                     sheet.write(r, c, value, style=style)
                 except Exception:

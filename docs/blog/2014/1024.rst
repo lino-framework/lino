@@ -1,0 +1,17 @@
+========================
+Friday, October 24, 2014
+========================
+
+Date and time fields in :mod:`lino.modlib.export_excel`
+=======================================================
+
+(Continued from :doc:`yesterday <1024>`.)
+
+The new test case :ref:`lino.tested.min1` did *not* yet cover the
+actual problem. Now it also tests the cell values of the generated
+file.
+
+While testing this I saw that `time` values could be handled the same
+way and added them.  I also moved the variables `date_style`: instead
+of instantiating them for every column, I defined them as class
+variables.
