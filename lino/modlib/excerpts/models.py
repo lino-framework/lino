@@ -492,7 +492,7 @@ if has_davlink:
             id excerpt_type:25 project
             user:10 build_method
             owner build_time
-            company contact_person contact_role
+            company contact_person
             # preview
             """, label=_("General"))
         config = dd.Panel(
@@ -508,9 +508,13 @@ else:
         id excerpt_type:25 project
         user:10 build_method
         owner build_time
-        company contact_person contact_role
+        company contact_person
         # preview
         """
+dd.update_field(Excerpt, 'company',
+                verbose_name=_("Recipient (Organization)"))
+dd.update_field(Excerpt, 'contact_person',
+                verbose_name=_("Recipient (Person)"))
 
 
 class Excerpts(dd.Table):
@@ -523,7 +527,7 @@ class Excerpts(dd.Table):
     detail_layout = ExcerptDetail()
     insert_layout = """
     excerpt_type project
-    company contact_person contact_role
+    company contact_person
     """
     column_names = ("id build_time owner excerpt_type user project *")
     order_by = ["id"]
@@ -711,11 +715,11 @@ def set_excerpts_actions(sender, **kw):
 
         def f(obj, ar):
             if obj is None:
-                return ''
+                return E.div()
             try:
                 et = ExcerptType.objects.get(shortcut=i)
             except ExcerptType.DoesNotExist:
-                return ''
+                return E.div()
             items = []
             if True:
                 sar = ar.spawn(

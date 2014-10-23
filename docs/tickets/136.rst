@@ -29,7 +29,7 @@ DONE:
 
 TODO:
 
-#.  vcs_emitted in den Reiter "Lebenslauf". Ganz unten.
+#.  `vcs_emitted` in den Reiter "Lebenslauf". Ganz unten.
 
 #.  Anwesenheitsbescheinigung: bis-Zeit ist bisher die Zeit des Ausdrucks
     der Bescheinigung.

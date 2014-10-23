@@ -48,6 +48,14 @@ Models
   .. attribute:: print_recipient
   .. attribute:: print_directly
 
+  .. attribute:: shortcut
+
+  Links this excerpt type to a shortcut field.
+  A pointer to :class:`Shortcuts`.
+
+  If this is not empty, then the given shortcut field will manage
+  excerpts of this type.
+
 
 .. class:: Excerpt
 
@@ -155,6 +163,12 @@ Actions
 
 .. class:: CreateExcerpt
 .. class:: ClearPrinted
+
+
+Choicelists
+-----------
+
+.. class:: Shortcuts
 
 
 Document templates

@@ -1,0 +1,21 @@
+==========================
+Thursday, October 23, 2014
+==========================
+
+Continued on ticket :doc:`/tickets/136`.
+
+#.  :attr:`cvs_emitted <welfare.pcsw.Client.cvs_emitted>` vom Reiter
+    "Verschiedene" in den Reiter "Lebenslauf" verschieben. Ganz unten.
+
+This caused miscellaneous changes :
+
+- Removed the field `contact_role` from layouts of
+  :mod:`ml.excerpts.Excerpt` (i.e. it is no longer visible).
+
+- When there is no content, the function of a shortcut field
+  (:class:`ml.excerpts.Shortcuts`) now returns an empty `<DIV>` tag.
+  Otherwise the layout manager failed in these cases.
+
+- :mod:`welfare.aids` : When representing a Granting or a Confirmation
+  as a string, the name of the aid type is now at the *beginning*. For
+  example "22.05.14/EiEi/116/1" becomes "EiEi/22.05.14/116/1".
