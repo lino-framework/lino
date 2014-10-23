@@ -157,8 +157,12 @@ Check that there are no local changes in my repo::
 
     $ go lino
     $ git status
+    On branch master
+    Your branch is up-to-date with 'origin/master'.
+    nothing to commit, working directory clean
 
-Check out his branch into a new branch ``inbox`` and test the changes::
+Check out his branch into a new branch ``inbox`` in order to test the
+changes::
 
     $ git checkout -b inbox master
     $ git pull git@github.com:cuchac/lino.git export_excel_datetime
