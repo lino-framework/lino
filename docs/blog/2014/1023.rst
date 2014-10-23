@@ -82,3 +82,6 @@ I want to learn.
 
 Adapted the copyright headers in the files of this app, adding Joe's
 name.
+
+Wrote a new test case :ref:`lino.tested.min1` which exports a table
+with dates.  (Not sure whether this covers the problem though.)

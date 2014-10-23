@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/blog/2013/0716.rst:8: WARNING: undefined label: faggio.sales.invoiceablepartners (if the link has no caption the label must precede a section header)
