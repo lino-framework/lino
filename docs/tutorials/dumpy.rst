@@ -4,6 +4,11 @@
 Playing with Python fixtures
 ============================
 
+.. to run only this test:
+  $ python setup.py test -s tests.DocsTests.test_dumpy
+
+
+
 This tutorial explains what :ref:`dpy` are and shows how to use them.
 
 
@@ -110,7 +115,8 @@ the :setting:`demo_fixtures` setting.
 The `min1` app has the following demo fixtures:
 
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+    ...    'lino.projects.min1.settings.demo'
     >>> from django.conf import settings
     >>> settings.SITE.demo_fixtures
     'std demo demo2'
