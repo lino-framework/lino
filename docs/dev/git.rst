@@ -145,6 +145,33 @@ I had started a branch in my local copy of ablog::
     $ git push origin trans_estonian 
     Everything up-to-date
 
+
+
+Accept a pull request
+---------------------
+
+Example: cuchac posted a pull request for a branch which he named
+``export_excel_datetime`` (on his fork of my project `lino`).
+
+Check that there are no local changes in my repo::
+
+    $ go lino
+    $ git status
+
+Check out his branch into a new branch ``inbox`` and test the changes::
+
+    $ git checkout -b inbox master
+    $ git pull git@github.com:cuchac/lino.git export_excel_datetime
+
+Merge the changes and push them to the master::
+
+    $ git checkout master
+    $ git merge --no-ff inbox
+    $ git push origin master
+
+TODO: why to ``--no-ff`option
+
+
 Bibliography
 ------------
 
