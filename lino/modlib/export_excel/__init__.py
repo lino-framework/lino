@@ -1,4 +1,4 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014 Josef Kejzlar, Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This app installs a button to "export" any table to excel xls format.

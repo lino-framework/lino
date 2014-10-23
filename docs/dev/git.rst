@@ -166,14 +166,61 @@ changes::
 
     $ git checkout -b inbox master
     $ git pull git@github.com:cuchac/lino.git export_excel_datetime
+    remote: Counting objects: 6, done.
+    remote: Compressing objects: 100% (3/3), done.
+    remote: Total 6 (delta 4), reused 5 (delta 3)
+    Unpacking objects: 100% (6/6), done.
+    From github.com:cuchac/lino
+     * branch            export_excel_datetime -> FETCH_HEAD
+    Merge made by the 'recursive' strategy.
+     lino/modlib/export_excel/models.py | 21 +++++++++++++++++++--
+     1 file changed, 19 insertions(+), 2 deletions(-)
+    
+Test the changes::
+    
+    $ fab test
+    [localhost] local: python setup.py -q test
+    ...........................................
+    ----------------------------------------------------------------------
+    Ran 43 tests in 36.290s
 
-Merge the changes and push them to the master::
+    OK
+
+    Done.
+
+Reactivate master and merge the changes::
 
     $ git checkout master
+    M	docs/tutorials/pisa/pisa.Person-1.pdf
+    Switched to branch 'master'
+    Your branch is up-to-date with 'origin/master'.
+    
     $ git merge --no-ff inbox
-    $ git push origin master
+    Merge made by the 'recursive' strategy.
+     lino/modlib/export_excel/models.py | 21 +++++++++++++++++++--
+     1 file changed, 19 insertions(+), 2 deletions(-)
+    
+Note: is the ``--no-ff` option necessary?
 
-TODO: why to ``--no-ff`option
+Push everything to the master::    
+    
+    $ git push origin master
+    Counting objects: 43, done.
+    Delta compression using up to 4 threads.
+    Compressing objects: 100% (11/11), done.
+    Writing objects: 100% (11/11), 1.39 KiB | 0 bytes/s, done.
+    Total 11 (delta 8), reused 0 (delta 0)
+    To git@github.com:lsaffre/lino.git
+       988adf9..55961b9  master -> master
+
+And finally delete the ``inbox`` branch::
+
+    $ git branch -v --merged
+      inbox  bfd3f39 Merge branch 'export_excel_datetime' of github.com:cuchac/lino into inbox
+    * master 55961b9 Merge branch 'inbox'
+    
+    $ git branch -d inbox
+    Deleted branch inbox (was bfd3f39).
 
 
 Bibliography
