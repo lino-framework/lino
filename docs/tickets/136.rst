@@ -27,9 +27,10 @@ DONE:
 #.  Wenn kein Empfänger angegeben ist, trotzdem den entsprechenden Platz
     vorsehen
 
-TODO:
+#.  :attr:`cvs_emitted <welfare.pcsw.Client.cvs_emitted>` vom Reiter
+    "Verschiedene" in den Reiter "Lebenslauf" verschieben. Ganz unten.
 
-#.  `vcs_emitted` in den Reiter "Lebenslauf". Ganz unten.
+TODO:
 
 #.  Anwesenheitsbescheinigung: bis-Zeit ist bisher die Zeit des Ausdrucks
     der Bescheinigung.

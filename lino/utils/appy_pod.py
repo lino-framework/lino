@@ -588,7 +588,7 @@ class PrintLabelsAction(PrintTableAction):
     """
     Add this action to your table, which is expected to execute on a
     model which implements
-    :class:`Addressable <lino.mixins.addressable.Addressable>`
+    :class:`Addressable <lino.utils.addressable.Addressable>`
 
     """
     label = _("Labels")

@@ -403,14 +403,14 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
         o = self.owner
         return o._meta.app_label + '.' + o.__class__.__name__ + '-' + str(o.pk)
 
-    def get_recipient_html(self, **kw):
-        rec = self.recipient
+    def get_recipient(self):
+        rec = super(Excerpt, self).get_recipient()
         if rec is None and hasattr(self.owner, 'recipient'):
-            rec = self.owner.recipient
-        if rec is not None:
-            return rec.get_address_html(**kw)
-        return ''
+            return self.owner.recipient
+        return rec
 
+    recipient = property(get_recipient)
+        
     def get_printable_type(self):
         return self.excerpt_type
 

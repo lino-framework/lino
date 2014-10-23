@@ -4,18 +4,55 @@ Thursday, October 23, 2014
 
 Continued on ticket :doc:`/tickets/136`.
 
+Finished the following item:
+
 #.  :attr:`cvs_emitted <welfare.pcsw.Client.cvs_emitted>` vom Reiter
     "Verschiedene" in den Reiter "Lebenslauf" verschieben. Ganz unten.
 
-This caused miscellaneous changes :
-
-- Removed the field `contact_role` from layouts of
-  :mod:`ml.excerpts.Excerpt` (i.e. it is no longer visible).
+This needed another little change :
 
 - When there is no content, the function of a shortcut field
   (:class:`ml.excerpts.Shortcuts`) now returns an empty `<DIV>` tag.
   Otherwise the layout manager failed in these cases.
 
+Then once more back to the following item:
+
+#.  Wenn kein Empfänger angegeben ist, trotzdem den entsprechenden Platz
+    vorsehen
+
+The basic system was already okay, but we also want a border around
+the address.  This caused some fiddling in
+:xfile:`excerpts/Default.odt`.  
+
+It seems that `appy.pod` does not look into frames, so I use a simple
+paragraph with border.  A trick which in turn needed a new positional
+argument `min_height` to :meth:`get_address_html
+<ml.excerpts.Excerpt.get_address_html>`.
+
+Miscellaneous changes while working on the above:
+
+- Removed the field `contact_role` from layouts of
+  :mod:`ml.excerpts.Excerpt` (i.e. it is no longer visible).  
+
+  TODO: Maybe we should split `ContactRelated` into `Recipient` and
+  `Represented`.
+
 - :mod:`welfare.aids` : When representing a Granting or a Confirmation
   as a string, the name of the aid type is now at the *beginning*. For
   example "22.05.14/EiEi/116/1" becomes "EiEi/22.05.14/116/1".
+
+- Changed `verbose_name` of :class:`ml.cal.Guest` from "Guest" to
+  "Presence".  Because a presence is not a guest.
+
+- As a result of :doc:`/tickets/134`, the `Addressable` mixin is no
+  longer in :mod:`lino.dd`. Application code must import it directly
+  from its true place :mod:`lino.utils.addressable`.  Renamed its
+  `address_lines` method to :meth:`get_address_lines
+  <lino.utils.addressable.Addressable.get_address_lines>`.  Adapted
+  documentation and test cases.
+
+- Removed the ``lino.modlib.partners`` module because it had become
+  obsolete and was never used.
+
+- Removed :file:`/docs/about/license.rst` since these considerations
+  are now obsolete.

@@ -42,16 +42,10 @@ Third test
 #~ logger = logging.getLogger(__name__)
 
 
-import os
 import sys
-import locale
-import types
-import time
 import datetime
 import re
-import fnmatch
 from decimal import Decimal
-import stat
 
 # encapsulate where they come from:
 

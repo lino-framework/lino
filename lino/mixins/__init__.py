@@ -878,6 +878,3 @@ class BabelNamed(model.Model):
 
     def __unicode__(self):
         return settings.SITE.babelattr(self, 'name')
-
-
-

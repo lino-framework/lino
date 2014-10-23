@@ -3,11 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 
-"""The :xfile:`models.py` module for the :mod:`lino.modlib.contacs`
-app.
-
-
-See :mod:`ml.contacts`.
+"""The :xfile:`models.py` module for the :mod:`ml.contacs` app.
 
 """
 
@@ -22,7 +18,6 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd
-
 from lino import mixins
 
 from lino.utils import join_words
@@ -34,6 +29,7 @@ from lino.modlib.contacts import Plugin
 
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
+from lino.utils.addressable import Addressable
 
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 
@@ -57,7 +53,7 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-class Partner(dd.Polymorphic, AddressLocation, dd.Addressable):
+class Partner(dd.Polymorphic, AddressLocation, Addressable):
     "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20
@@ -387,37 +383,29 @@ class RoleTypes(dd.Table):
 
 
 #~ class Contact(dd.Model):
-class Role(dd.Model, dd.Addressable):
+class Role(dd.Model, Addressable):
 
-    """
+    """A Contact (historical model name :class:`Role`) is a
+    :class:`Person` that has a given role (:class:`ContactType`) in a
+    given :class:`Company`.
     
-    A Contact (historical model name :class:`Role`) 
-    is a :class:`Person` 
-    that has a given  role (:class:`ContactType`) 
-    in a given :class:`Company`. 
-    
-    TODO: rename "Role" to "Contact".
+    TODO: rename model "Role" to "Contact", `RoleType` to `Role` and
+    field `type` to `role`
+
     """
 
     class Meta:
         verbose_name = _("Contact Person")
         verbose_name_plural = _("Contact Persons")
 
-    type = models.ForeignKey('contacts.RoleType',
-                             blank=True, null=True,
-                             verbose_name=_("Contact Role"))
-    person = models.ForeignKey("contacts.Person", related_name='rolesbyperson')
+    type = models.ForeignKey(
+        'contacts.RoleType',
+        blank=True, null=True,
+        verbose_name=_("Contact Role"))
+    person = models.ForeignKey(
+        "contacts.Person", related_name='rolesbyperson')
     company = models.ForeignKey(
         "contacts.Company", related_name='rolesbycompany')
-    #~ type = models.ForeignKey('contacts.ContactType',blank=True,null=True,
-      #~ verbose_name=_("contact type"))
-
-    #~ def __unicode__(self):
-        #~ if self.person_id is None:
-            #~ return super(Contact,self).__unicode__()
-        #~ if self.type is None:
-            #~ return unicode(self.person)
-        #~ return u"%s (%s)" % (self.person, self.type)
 
     def __unicode__(self):
         if self.person_id is None:
@@ -426,19 +414,7 @@ class Role(dd.Model, dd.Addressable):
             return unicode(self.person)
         return u"%s (%s)" % (self.person, self.type)
 
-    #~ def address_lines(self):
-        #~ for ln in self.person.address_person_lines():
-            #~ yield ln
-        #~ if self.company:
-            #~ for ln in self.company.address_person_lines():
-                #~ yield ln
-            #~ for ln in self.company.address_location_lines():
-                #~ yield ln
-        #~ else:
-            #~ for ln in self.person.address_location_lines():
-                #~ yield ln
     def address_person_lines(self):
-        #~ yield self.name
         if self.company:
             for ln in self.company.address_person_lines():
                 yield ln
@@ -450,17 +426,6 @@ class Role(dd.Model, dd.Addressable):
             return self.company.address_location_lines()
         else:
             return self.person.address_location_lines()
-
-#~ class ContactsByCompany(dd.Table):
-    #~ model = 'contacts.RoleOccurence'
-    #~ master_key = 'company'
-    #~ column_names = 'person type *'
-
-#~ class ContactsByPerson(dd.Table):
-    #~ label = _("Contact for")
-    #~ model = 'contacts.RoleOccurence'
-    #~ master_key = 'person'
-    #~ column_names = 'company type *'
 
 
 class Roles(dd.Table):

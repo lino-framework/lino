@@ -141,8 +141,6 @@ lino.modlib.orders
 lino.modlib.changes
 lino.modlib.comments
 lino.modlib.concepts
-lino.modlib.partners
-lino.modlib.partners.fixtures
 lino.modlib.declarations
 lino.modlib.events
 lino.modlib.events.fixtures

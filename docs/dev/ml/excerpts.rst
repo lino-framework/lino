@@ -83,6 +83,23 @@ Models
 
   .. attribute:: language
 
+  .. method:: get_address_html
+
+  Return the address of *the recipient of this excerpt* as a string
+  containing html markup.  The markup defines exactly one paragraph,
+  even if this excerpt has no recipient (in which case the paragraph
+  is empty).
+
+  Any arguments are forwarded to :meth:`lines2p
+  <lino.utils.xmlgen.html.lines2p>` which is used to pack the address
+  lines into a paragraph.
+
+  The "recipent of this excerpt" is either the :attr:`company` or
+  :attr:`contact_person` of this excerpt (if one of these fields is
+  non-empty), or the recipient of the :attr:`owner`.
+
+  
+
 
 Mixins
 ------
@@ -174,7 +191,7 @@ Choicelists
 Document templates
 ------------------
 
-.. xfile:: excerpts/Excerpt/Default.odt
+.. xfile:: excerpts/Default.odt
 
 This template is the default value, used by many excerpt types in
 their :attr:`ExcerptType.template` field.  It is designed to be

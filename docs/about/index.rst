@@ -14,7 +14,6 @@ About Lino
    name
    history
    
-   license
    lino_and_django
    thanks
    compared

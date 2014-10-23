@@ -251,7 +251,7 @@ class Member(dd.DatePeriod):
             return unicode(self.person)
         return u"%s (%s)" % (self.person, self.role)
 
-    def address_lines(self):
+    def get_address_lines(self):
         for ln in self.person.address_person_lines():
             yield ln
         if self.household:

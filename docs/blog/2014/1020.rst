@@ -30,7 +30,7 @@ following item turned out to be rather tricky:
 -   Wenn kein Empfänger angegeben ist, trotzdem den entsprechenden Platz
     vorsehen
 
-The :xfile:`excerpts/Excerpt/Default.odt` template is designed to be
+The :xfile:`excerpts/Default.odt` template is designed to be
 overridden by local site administrators in order to match their letter
 paper. To minimize their configuration work, the template should work
 for any type of excerpt, not only for confirmations.
@@ -38,7 +38,7 @@ for any type of excerpt, not only for confirmations.
 To solve this, I removed the `get_print_recipient` method from
 :class:`dd.Model`, added a new field
 :attr:`ml.excerpts.ExcerptType.print_recipient` and replaced in
-:xfile:`excerpts/Excerpt/Default.odt` the test ``do text if
+:xfile:`excerpts/Default.odt` the test ``do text if
 obj.get_print_recipient()`` by ``do text if
 this.excerpt_type.print_recipient)``.  This was also inspired by
 :ref:`joe`\ 's suggestions for ticket :doc:`/tickets/134`: developers
@@ -51,7 +51,7 @@ for a presence certificate.  So :class:`ml.excerpts.Excerpt` now is a
 :class:`ml.contacts.ContactRelated` again. 
 
 :ref:`mustconfig` : 
-Adapt local :xfile:`excerpts/Excerpt/Default.odt`
+Adapt local :xfile:`excerpts/Default.odt`
 template: replace the condition 
 ``do text if obj.get_print_recipient()`` 
 by 

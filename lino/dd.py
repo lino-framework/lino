@@ -138,7 +138,6 @@ Model mixins:
 - :class:`lino.mixins.uploadable.Uploadable`
 - :class:`lino.mixins.human.Human`
 - :class:`lino.mixins.human.Born`
-- :class:`Addressable <lino.mixins.addressable.Addressable>`
 
 Miscellaneous:
 
@@ -250,8 +249,6 @@ from lino.core.fields import CharField
 from lino.mixins import BabelNamed
 from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
-
-from lino.mixins.addressable import Addressable
 
 from lino.core.fields import BabelCharField, LanguageField
 

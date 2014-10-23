@@ -7,6 +7,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino import dd, rt
+from lino.utils.xmlgen.html import E, lines2p
 
 
 class ContactRelated(dd.Model):
@@ -76,6 +77,12 @@ class ContactRelated(dd.Model):
     `contact_person` field.
     If both fields are empty, then `partner` contains `None`.
     """
+
+    def get_address_html(self, *args, **kwargs):
+        rec = self.get_recipient()
+        if rec is None:
+            return E.tostring(lines2p([], *args, **kwargs))
+        return rec.get_address_html(*args, **kwargs)
 
     def contact_person_changed(self, ar):
         #~ print '20120929 contact_person_changed'

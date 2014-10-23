@@ -48,17 +48,16 @@ class GuestRoles(dd.Table):
     """
 
 
-# class Guest(outbox.Mailable):
 class Guest(dd.Model):
-
+    # TODO: rename to `Presence`
     workflow_state_field = 'state'
 
     allow_cascaded_delete = ['event']
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Guest')
-        verbose_name = _("Guest")
-        verbose_name_plural = _("Guests")
+        verbose_name = _("Presence")
+        verbose_name_plural = _("Presences")
 
     event = models.ForeignKey('cal.Event',
                               verbose_name=_("Event"))

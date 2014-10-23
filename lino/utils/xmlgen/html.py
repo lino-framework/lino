@@ -5,6 +5,12 @@
 # Copyright (c) 1999-2004 by Fredrik Lundh
 # --------------------------------------------------------------------
 
+# This document is part of the Lino test suite. To test only this
+# document, run::
+#
+#   $ python setup.py test -s tests.UtilsTests.test_xmlgen_html
+
+
 
 """
 A set of HTML generator tags for building HTML documents.
@@ -14,7 +20,7 @@ Usage::
     >>> from lino.utils.xmlgen.html import E
     >>> html = E.html(
     ...            E.head( E.title("Hello World") ),
-    ...            E.body( 
+    ...            E.body(
     ...              E.h1("Hello World !"),
     ...              class_="main"
     ...            )
@@ -46,6 +52,7 @@ from __future__ import unicode_literals
 
 from xml.etree import ElementTree as ET
 from atelier import rstgen
+from lino.utils import join_elems
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import Namespace
 
@@ -375,6 +382,33 @@ A table containing elementtree HTML:
         if etree.iselement(v):
             return html2rst(v)
         return super(RstTable, self).format_value(v)
+
+
+def lines2p(lines, min_height=0, **attrs):
+    """Examples:
+
+    >>> print(E.tostring(lines2p(['first', 'second'])))
+    <p>first<br />second</p>
+
+    >>> print(E.tostring(lines2p(['first', 'second'], min_height=5)))
+    <p>first<br />second<br /><br /><br /></p>
+
+    If `min_height` is specified, and `lines` contains more items,
+    then we don't truncate:
+
+    >>> print(E.tostring(lines2p(['a', 'b', 'c', 'd', 'e'], min_height=4)))
+    <p>a<br />b<br />c<br />d<br />e</p>
+
+    This also works:
+
+    >>> print(E.tostring(lines2p([], min_height=5)))
+    <p><br /><br /><br /><br /></p>
+
+    """
+    while len(lines) < min_height:
+        lines.append('')
+    lines = join_elems(lines, E.br)
+    return E.p(*lines, **attrs)
 
 
 def _test():
