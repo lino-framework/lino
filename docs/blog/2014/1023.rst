@@ -83,7 +83,8 @@ app.  I installed it via the command line and updated :doc:`/dev/git`
 because I want to learn.
 
 Adapted the copyright headers in the files of this app, adding Joe's
-name.
+name. Because after :doc:`/tickets/125` it is rather unlikely that
+somebody someday would have to open a law suit.
 
 Wrote a new test case :ref:`lino.tested.export_excel` which exports a
 table with dates.  Not sure whether this covers the problem though.
