@@ -446,7 +446,14 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
         "Used in templates"
         if self.build_time:
             return self.build_time.date()
-        return settings.SITE.today()
+        return dd.today()
+
+    @property
+    def time(self):
+        "Used in templates"
+        if self.build_time:
+            return self.build_time.time()
+        return datetime.datetime.now()
 
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self, ar):

@@ -394,6 +394,7 @@ get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 plugins = apps = settings.SITE.plugins
 
+
 def resolve_plugin(app_label):
     return plugins.get(app_label, None)
 

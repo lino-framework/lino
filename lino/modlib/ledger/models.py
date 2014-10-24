@@ -215,7 +215,7 @@ class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
         :meth:`template_choices`.
 
         """
-        return [self.voucher_type.model.get_model_group()]
+        return [self.voucher_type.model.get_template_group()]
 
     @dd.chooser(simple_values=True)
     def template_choices(cls, build_method, voucher_type):
@@ -225,7 +225,7 @@ class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
         if not voucher_type:
             return []
         #~ print 20131006, voucher_type
-        template_groups = [voucher_type.model.get_model_group()]
+        template_groups = [voucher_type.model.get_template_group()]
         return cls.get_template_choices(build_method, template_groups)
 
 

@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-10-23 06:05+0300\n"
-"PO-Revision-Date: 2014-10-23 06:09+0300\n"
+"PO-Revision-Date: 2014-10-24 04:41+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3304,9 +3304,8 @@ msgid "Whether an excerpt of this type is a unique printout."
 msgstr "Ob Auszüge dieser Art als einmalige Ausdrucke behandelt werden sollen."
 
 #: lino/modlib/excerpts/models.py:66 lino/modlib/excerpts/models.py:345
-#, fuzzy
 msgid "Body template"
-msgstr "URL-Vorlage"
+msgstr "Textkörper-Vorlage"
 
 #: lino/modlib/excerpts/models.py:73 lino/modlib/importfilters/models.py:34
 #: lino/modlib/system/models.py:204
@@ -3335,9 +3334,8 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:92
-#, fuzzy
 msgid "Print recipient"
-msgstr "Empfänger"
+msgstr "Empfänger drucken"
 
 #: lino/modlib/excerpts/models.py:94
 msgid "Whether to print a recipient field in document."
@@ -3430,27 +3428,24 @@ msgid "Existing excerpts"
 msgstr "Bestehende Auszüge"
 
 #: lino/modlib/excerpts/models.py:620
-#, fuzzy
 msgid "not printed"
-msgstr "Gedruckte Postsendungen"
+msgstr "Unausgedruckt"
 
 #: lino/modlib/excerpts/models.py:626
 msgid "Last week"
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:628
-#, fuzzy
 msgid "Older"
-msgstr "Rolle"
+msgstr "Älter"
 
 #: lino/modlib/excerpts/models.py:732 lino/modlib/extjs/linoweb.js:2795
 msgid "Last"
 msgstr "Letzter"
 
 #: lino/modlib/excerpts/models.py:736
-#, fuzzy
 msgid "All"
-msgstr "ganztags"
+msgstr "Alle"
 
 #: lino/modlib/export_excel/__init__.py:19
 msgid "Export to Excel xls format"
@@ -3924,7 +3919,7 @@ msgstr "Legale Wohngemeinschaft"
 
 #: lino/modlib/households/fixtures/std.py:33
 msgid "Isolated"
-msgstr ""
+msgstr "Getrennt"
 
 #: lino/modlib/humanlinks/__init__.py:13
 msgid "Parency links"
@@ -4023,47 +4018,40 @@ msgid "Stepdaughter"
 msgstr "Stieftochter"
 
 #: lino/modlib/humanlinks/models.py:97 lino/modlib/humanlinks/models.py:98
-#, fuzzy
 msgctxt "male"
 msgid "Brother"
-msgstr "Mutter"
+msgstr "Bruder"
 
 #: lino/modlib/humanlinks/models.py:97 lino/modlib/humanlinks/models.py:98
-#, fuzzy
 msgctxt "female"
 msgid "Sister"
-msgstr "Registrieren"
+msgstr "Schwester"
 
 #: lino/modlib/humanlinks/models.py:103 lino/modlib/humanlinks/models.py:104
-#, fuzzy
 msgctxt "male"
 msgid "Cousin"
-msgstr "Buchhaltung"
+msgstr "Vetter"
 
 #: lino/modlib/humanlinks/models.py:103 lino/modlib/humanlinks/models.py:104
-#, fuzzy
 msgctxt "female"
 msgid "Cousin"
-msgstr "Buchhaltung"
+msgstr "Kusine"
 
 #: lino/modlib/humanlinks/models.py:109
-#, fuzzy
 msgid "Uncle"
-msgstr "einmalig"
+msgstr "Onkel"
 
 #: lino/modlib/humanlinks/models.py:109
-#, fuzzy
 msgid "Aunt"
-msgstr "bis"
+msgstr "Tante"
 
 #: lino/modlib/humanlinks/models.py:110
 msgid "Nephew"
-msgstr ""
+msgstr "Neffe"
 
 #: lino/modlib/humanlinks/models.py:110
-#, fuzzy
 msgid "Niece"
-msgstr "einmalig"
+msgstr "Nichte"
 
 #: lino/modlib/humanlinks/models.py:114 lino/modlib/humanlinks/models.py:115
 msgctxt "male"

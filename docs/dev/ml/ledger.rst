@@ -33,6 +33,11 @@ Models
 
     A sequence of numbered vouchers.
 
+    .. attribute:: template
+
+    See :attr:`PrintableType.template
+    <lino.mixins.printable.PrintableType.template>`.
+
     .. method:: create_voucher(self, **kw)
 
         Create an instance of this Journal's voucher model

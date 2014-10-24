@@ -182,7 +182,7 @@ class PaymentTerm(dd.BabelNamed):
         #~ print type(date1),type(relativedelta(months=self.months,days=self.days))
         d = date1 + relativedelta(months=self.months, days=self.days)
         if self.end_of_month:
-            d = date(d.year, d.month + 1, 1)
+            d = datetime.date(d.year, d.month + 1, 1)
             d = relativedelta(d, days=-1)
         return d
 
@@ -203,10 +203,8 @@ class VatTotal(dd.Model):
     total_vat = dd.PriceField(_("VAT"), blank=True, null=True)
 
     _total_fields = set('total_vat total_base total_incl'.split())
-    """
-    For internal use.
-    This is the list of field names to disable when `auto_compute_totals` is True.
-    """
+    # For internal use.  This is the list of field names to disable
+    # when `auto_compute_totals` is True.
 
     auto_compute_totals = False
 

@@ -23,23 +23,18 @@ DONE:
     - über 18 Jahre : 20€
     - unter 18 Jahre : 18€ (oder ähnlich)
 
-
 #.  Wenn kein Empfänger angegeben ist, trotzdem den entsprechenden Platz
     vorsehen
 
 #.  :attr:`cvs_emitted <welfare.pcsw.Client.cvs_emitted>` vom Reiter
     "Verschiedene" in den Reiter "Lebenslauf" verschieben. Ganz unten.
 
-TODO:
+#.  Dokumentieren: Unterschied zwischen "Ausdruck" und "Auszug". 
 
 #.  Anwesenheitsbescheinigung: bis-Zeit ist bisher die Zeit des Ausdrucks
     der Bescheinigung.
 
+TODO:
+
 #.  Faltmarkierung am linken Seitenrand
 
-#.  Dokumentieren: Unterschied zwischen "Ausdruck" und "Auszug". Ein
-    Auszug ist in der Praxis das Gleiche wie ein Ausdruck. Aber ein
-    Auszug kann entweder "ausgedruckt" sein oder auch nicht (was
-    normalerweise irgendeinen technischen Grund hat). Ungedruckte
-    Auszüge werden voraussichtlich in Zukunft mal jede Nacht
-    automatisch gelöscht.
