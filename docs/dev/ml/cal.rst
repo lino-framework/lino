@@ -96,6 +96,13 @@ Models
 
    
 
+.. class:: Guest
+
+   Represents the fact that a given person is expected to attend to a
+   given event.
+
+   TODO: Rename this to "Presence".
+
 .. class:: Task
 
     A Task is when a user plans to to something 

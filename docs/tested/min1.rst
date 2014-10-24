@@ -1,7 +1,9 @@
-.. _lino.tested.min1:
+.. _lino.tested.export_excel:
 
 Exporting to Excel
 ==================
+
+This document obsoletes :doc:`test_presto`.
 
 .. to run only this test:
   $ python setup.py test -s tests.DocsTests.test_min1

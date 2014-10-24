@@ -15,8 +15,8 @@ from lino.utils.xmlgen.html import E, lines2p
 
 
 class Addressable(object):
-    """Interface (abstract base class) to encapsulates the generating of
-    "traditional" ("snail") mail addresses.
+    """Mixin to encapsulate the generating of "traditional" ("snail") mail
+    addresses.
 
     It differentiates between the "person" and the "location" part of
     an address.  For example::
@@ -25,7 +25,8 @@ class Addressable(object):
         Rumma & Ko OÜ      | person
         Uus 1              | location
         Vana-Vigala küla   | location
-        ...                | location
+        Vigala vald        | location
+        Estonia            | location
 
     .. attribute:: address
 
@@ -34,7 +35,7 @@ class Addressable(object):
     .. attribute:: address_html
 
         A property which calls :meth:`get_address_html`.
-    
+
     """
     def address_person_lines(self):
         """Expected to yield one or more unicode strings, one for each line
@@ -66,16 +67,15 @@ class Addressable(object):
     address = property(get_address)
 
     def get_address_html(self, *args, **kwargs):
-        """
-        Returns the full postal address a a string containing html
+        """Returns the full postal address a a string containing html
         markup of style::
         
             <p>line1<br/>line2...</p>
 
-        If `min_height` is specified, make sure that the string
-        contains at least that many lines. Add as many empty lines
-        (``<br/>``) as needed.  This option is useful in a template
-        which wants to get a given height for every address.
+        If `min_height` is specified, makes sure that the string
+        contains at least that many lines. Adds as many empty lines
+        (``<br/>``) as needed.  This is useful in a template which
+        wants to get a given height for every address.
           
         Optional attributes for the enclosing `<p>` tag can be
         specified as keyword arguments. Example::
@@ -89,11 +89,13 @@ class Addressable(object):
             >>> print(addr.get_address_html(class_="Recipient"))
             <p class="Recipient">line1<br />line2</p>
           
-        See :mod:`lino.utils.xmlgen.html`.
+        This is done using the :func:`lino.utils.xmlgen.html.lines2p`
+        function (see there for more examples).
 
         """
         lines = list(self.get_address_lines())
         return E.tostring(lines2p(lines, *args, **kwargs))
+
     address_html = property(get_address_html)
 
 

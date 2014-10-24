@@ -32,7 +32,8 @@ paragraph with border.  A trick which in turn needed a new positional
 argument `min_height` to :meth:`get_address_html
 <ml.excerpts.Excerpt.get_address_html>`.
 
-Adapted the :xfile:`excerpts/Default.odt` template in :ref:`lino`.
+Adapted the general :xfile:`excerpts/Default.odt` template (until now
+I had been focussed on the template in :ref:`welfare`).
 
 
 Miscellaneous changes while working on the above:
@@ -50,9 +51,10 @@ Miscellaneous changes while working on the above:
 - Changed `verbose_name` of :class:`ml.cal.Guest` from "Guest" to
   "Presence".  Because a presence is not a guest.
 
-- As a result of :doc:`/tickets/134`, the `Addressable` mixin is no
-  longer in :mod:`lino.dd`. Application code must import it directly
-  from its true place :mod:`lino.utils.addressable`.  Renamed its
+- As a result of :doc:`/tickets/134`, the :class:`Addressable
+  <lino.utils.addressable.Addressable>` mixin is no longer in
+  :mod:`lino.dd`. Application code must import it directly from its
+  true place :mod:`lino.utils.addressable`.  Renamed its
   `address_lines` method to :meth:`get_address_lines
   <lino.utils.addressable.Addressable.get_address_lines>`.  Adapted
   documentation and test cases.
@@ -83,5 +85,6 @@ because I want to learn.
 Adapted the copyright headers in the files of this app, adding Joe's
 name.
 
-Wrote a new test case :ref:`lino.tested.min1` which exports a table
-with dates.  (Not sure whether this covers the problem though.)
+Wrote a new test case :ref:`lino.tested.export_excel` which exports a
+table with dates.  Not sure whether this covers the problem though.
+Continued :doc:`tomorrow <1024>`.
