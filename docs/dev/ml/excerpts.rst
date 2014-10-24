@@ -83,6 +83,10 @@ Models
 
   .. attribute:: language
 
+  .. attribute:: date
+
+  .. attribute:: time
+
   .. method:: get_address_html
 
   Return the address of *the recipient of this excerpt* as a string

@@ -417,3 +417,11 @@ Actions
 
 
 
+Document templates
+------------------
+
+.. xfile:: presence_certificate.body.html
+
+In :ref:`welfare`, used to print a presence certificate from a
+:class:`Presence <Guest>` instance.
+

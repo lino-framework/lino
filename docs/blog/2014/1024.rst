@@ -42,5 +42,5 @@ Changed this to::
   {% set times = (dd.strftime(obj.waiting_since),
   dd.strftime(obj.gone_since or this.time)) %}
 
-And added a new property :attr:`time <ml.excerpts.Excerpt.time>`.
+And added a new property :attr:`ml.excerpts.Excerpt.time`.
 

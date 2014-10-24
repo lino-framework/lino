@@ -67,6 +67,7 @@ It has 4 columns and 13 rows:
 [text:u'When', text:u'Created', text:u'Start date', text:u'Start time']
 
 >>> print(s.row(1))
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
 [text:u'Thu 10/23/14 (08:30)', xldate:41935.88606481482, xldate:41935.0, xldate:0.3541666666666667]
 
 

@@ -34,7 +34,7 @@ DONE:
 #.  Anwesenheitsbescheinigung: bis-Zeit ist bisher die Zeit des Ausdrucks
     der Bescheinigung.
 
-TODO:
+TODO (Gemeinsam):
 
 #.  Faltmarkierung am linken Seitenrand
 
