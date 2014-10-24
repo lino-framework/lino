@@ -68,6 +68,6 @@ It has 4 columns and 13 rows:
 
 >>> print(s.row(1))
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-[text:u'Thu 10/23/14 (08:30)', xldate:41935.88606481482, xldate:41935.0, xldate:0.3541666666666667]
+[text:u'Thu 10/23/14 (08:30)', xldate:..., xldate:..., xldate:...]
 
 
