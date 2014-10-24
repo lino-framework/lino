@@ -10,9 +10,9 @@ DONE:
 
 #.  "Kleiderkammer" ersetzt durch "Kostenübernahme Kleidung".  -->
     Nach internen Experimenten schlage ich vor: die Bezeichnung der
-    Hilfeart (:attr:`name <welfare.aids.AidType.name>`) bleibt
-    "Kleiderkammer", aber auf dem Ausdruck steht als Titel
-    "Kostenübernahme Kleidung" (:attr:`excerpt_title
+    Hilfeart bleibt "Kleiderkammer", aber auf dem Ausdruck steht als
+    Titel "Kostenübernahme Kleidung" (vgl. :attr:`name
+    <welfare.aids.AidType.name>` und :attr:`excerpt_title
     <welfare.aids.AidType.excerpt_title>`).
 
 #.  Kleiderkammer: Außerdem in dieser Bescheinigung noch was
@@ -34,7 +34,7 @@ DONE:
 #.  Anwesenheitsbescheinigung: bis-Zeit ist bisher die Zeit des Ausdrucks
     der Bescheinigung.
 
-TODO (Gemeinsam):
+TODO (gemeinsam):
 
 #.  Faltmarkierung am linken Seitenrand
 

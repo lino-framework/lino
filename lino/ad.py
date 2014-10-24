@@ -56,7 +56,13 @@ class Plugin(BasePlugin):
         pass
 
     def __repr__(self):
-        return "%s %s" % (self.__class__, self.app_label)
+        l = []
+        for k in ('media_name', 'media_root', 'media_base_url',
+                  'extends_models'):
+            v = getattr(self, k, None)
+            if v is not None:
+                l.append('%s=%s' % (k, v))
+        return "%s [%s]" % (self.app_name, ', '.join(l))
 
     def get_patterns(self, ui):
         """Return a list of url patterns to be added to the Site's patterns.
@@ -633,7 +639,9 @@ class Site(Site):
 
         s = ''
         s += "plugins: %s\n" % repr(self.plugins)
-        s += "config_dirs: %s\n" % repr(self.confdirs.config_dirs)
+        for k, p in self.plugins.items():
+            s += "%s : %s\n" % (k, p)
+        # s += "config_dirs: %s\n" % repr(self.confdirs.config_dirs)
         s += "\n"
         for cd in self.confdirs.config_dirs:
             ln = relpath(cd.name)

@@ -24,12 +24,14 @@ Vocabulary
 
 Printable documents may be either **editable** (.odt, .doc, .rtf) or **non-editable** (.pdf, .ps).
 
-Printable documents may be **delivered** (1) either to the end-user who will view them
-and possibly print them out on her printer, or (2) sent directly from the application server 
-to a printer in a local area network.
+Printable documents may be **delivered** (1) either to the end-user
+who will view them and possibly print them out on her printer, or (2)
+sent directly from the application server to a printer in a local area
+network.
 
-**Templates** are files managed by a local site administrator that serve as *master documents* 
-into which Lino will insert data from the database.
+**Templates** are files managed by a local site administrator that
+serve as *master documents* into which Lino will insert data from the
+database.
 
 Templates are either **WYSIWYG** (.odt, .rtf) or **Markup** (.html, .tex).
 
