@@ -2,6 +2,12 @@
 # Copyright 2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""Une série de questionnaires utilisés par les CPAS dans leur
+interviews avec les bénéficiaires dans le cadre d'un project de
+recherche active d'emploi.
+
+"""
+
 from __future__ import unicode_literals
 
 from django.conf import settings

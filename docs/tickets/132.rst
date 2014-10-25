@@ -1,6 +1,121 @@
 :state: active
 :module: lino_welfare
 
-#132 : Release à Châtelet Octobre 2014
+========================================
+#132 : Changements Châtelet Octobre 2014
+========================================
+
+DONE (à évaluer après l'installation)
+=====================================
+
+- Renommer "Utilisateur responsable" d'un rendez-vous en "Traité par"
+  (pas en "Agent traitant" comme demandé).
+
+- Le tableau "Demandes d'intervention" (utilisé pour les interventions
+  psychosociales) se trouve maintenant dans l'onglet "Intervenants".
+
+- Dans l'onglet "Interventants", supprimer le champ "Refusal Reason".
+
+- Comment vous plaît mon idee de parler *d'interviews* et de
+  questionnaires?  On pourrait configurer dans Lino des
+  "Questionnaires", càd des séries de questions prédéfinies, et on
+  peut à tout instant décider de faire une "interview" avec un
+  bénéficiaire (càd noter ce que le bénéficiaire répond aux questions
+  d'un questionnaire donné). Il y aurait un questionnaire "Recherche
+  d'emploi active - Bilan initial" et un ou plusieurs autres
+  questionnaires "Pour commencer ma recherche d'emploi, je dois" et
+  "Est-ce que je sais..."
+ 
+- Formations: vous avez demandé d'ajouter une case "Evaluation" (texte
+  libre) et une case date juste après (et la placer après la case
+  "Statut"). J'ai alors compris que les formations sont plutôt des
+  experiences professionnelles que des études. Et donc encore un essai
+  de ma part pour vous éviter de créer une troisième table.
+
+
+TODO (j'y travaille, pas de questions)
 ======================================
+
+- "Insérer dans Ateliers d'insertion sociale" : dans les choix de
+  l'atelier Lino propose aussi les autres catégories (`course_area`).
+
+- Détail gênant du framework: quand on a inséré un object et ferme la
+  fenetre de detail pour revenir vers la vue "tableau", il est
+  irritant de ne pas voir l'objet que l'on vient de créer.
+
+- Disponibilité et mobilité:
+
+  - Temps de travail acceptés (temps-plein, 3/4, 1/2, quelques heures
+    par semaine)
+  - Régimes de travail acceptés (de nuit, de jour, horaire décalé,
+    pauses, WE, pas de réserve)
+    
+- Mettre les questions "Recherche d'emploi" posées au premier bilan
+  dans une fixture du dossier démo (dans
+  :mod:`lino.modlib.polls.fixtures.checklist`)
+
+  - Cherchez-vous du travail actuellement?
+  - C.V. (Avez-vous un CV à jour?)
+  - Présentation au FOREM (Est-ce que vous vous présentéz
+    régulièrement au FOREM?
+  - Petites annonces (Est-ce que vous consultez les PA?)
+  - Demande à l'entourage
+  - Candidature spontanée
+  - Remaques/détail
+  - Avez-vous des antécédents judiciaires qui pourraient qui
+    pourraient être préjudiciables à votre recherce d'emploi?
+
+- Études : renommer la case "Succès" en "Certificat/diplôme" (et
+  transformer en menu déroulant)
+
+- :class:`ml.polls.ResponsesByPartner` : ajouter un summary
+  panel. Ajouter un champ `polls.Poll.short_name`.
+
+
+Questions ouvertes
+==================
+
+- Convictions (Antécédents judiciaires, Vorstrafen)
+
+  ======================= ============
+  Désignation             préjudiciale
+  ======================= ============
+  Vol                     oui
+  Stupéfiants             oui
+  Dépassement de vitesse  non
+  ======================= ============
+
+  Questions:
+
+  - Faut-il une table avec les "types de crime" possibles ("Vol",
+    "Stupéfiants", ...)? 
+  - Combien de types aurait-il dans cette table?
+  - Le champ "préjudiciale (oui/non)" vient-il par type?  (Est-ce
+    qu'un dépassement de vitesse est *toujours* non préjudiciale;
+    est-ce qu'un délit stupéfiants est *toujours* préjudiciale?)
+
+- Zone géographique : champ de texte libre? ou boite de sélection?
+
+- Comment traduire l'état de dossier "Coached"? "Accompagné"? "En
+  intervention"? "Intégré"?
+
+- Les octrois d'aide (actuellement dans l'onglet "Divers") servent
+  actuellement lors de l'impression d'un PIIS.  Elles pourrait
+  également servir pour imprimer une attestation de revenu.
+
+- Pourquoi demandez-vous de transférer le bouton "a besoin d’un permis
+  de travail" (actuellement dans l'onglet "Recherche d'emploi") dans
+  "Personne"?
+
+- Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
+  d’emploi active".  --> Y a-t-il de la recherche d’emploi qui n'est
+  pas active?  Oubien pensez-vous à "Recherche active d’emploi", terme
+  utilisé par `actiris
+  <http://www.actiris.be/tabid/117/language/fr-BE/Qui-sont-nos-partenaires--.aspx?t=vtp&idType=3>`_?
+
+- Renommer le champ de texte "Freins" en "Remarque".  --> Mais il y a
+  déjà un champ "Remarques" dans l'onglet "Divers".
+
+- Freins: modifier la case «valeur» en «Détecté par..." (avec un menu
+  déroulant).  Préciser.
 

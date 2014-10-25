@@ -1,6 +1,9 @@
-=====================================
-#121 : Changements Châtelet Août 2014
-=====================================
+:state: closed
+:module: lino_welfare
+
+==============================================
+#121 [closed] : Changements Châtelet Août 2014
+==============================================
 
 .. currentlanguage:: fr
 
@@ -174,73 +177,32 @@ DONE
 
 
 
-TODO
-====
-
-- "Insérer dans Ateliers d'insertion sociale" : dans les choix de
-  l'atelier Lino propose aussi les autres catégories (`course_area`).
-
-- Dans l'onglet "Accompagnement", supprimer le champ «Refusal
-  Reason».
-  
-- Études : renommer la case "Succès" en "Certificat/diplôme" (et
-  transformer en menu déroulant)
-
-- Renommer le champ de texte "Freins" en "Remarque"
-
-- Détail gênant du framework: quand on a inséré un object et ferme la
-  fenetre de detail pour revenir vers la vue "tableau", il est
-  irritant de ne pas voir l'objet que l'on vient de créer.
-
-en attente
-==========
-
-- Ajouter deux champs "Nombre d'heures" et "Taux de présence" dans
-  `courses.Enrolment`.
-
-
-
 à discuter
 ==========
 
 - Renommer "Quand" en "Date" (dans Onglet "Personne", panneau
-  "Rendez-vous"). Mais ce champ montre également l'heure (si elle est
+  "Rendez-vous"). 
+  --> Mais ce champ montre également l'heure (si elle est
   spécifiée), donc "Date" me semble faux.
 
-- Est-ce que accompagnant et accompagnement sont des mots utilisés?
-  Intervenants?
+- Est-ce que "accompagnant" et "accompagnement" sont des mots utilisés?
+  --> Non. On parle d'intervenants et d'interventions.
 
 - Supprimer l'onglet "Aide sociale" et transférer les cases suivantes
   dans l'onglet "Personne" (...). 
 
-- Je propose de ne pas supprimer les octrois d'aide.  Servent p.ex. à
-  imprimer une attestation de revenu, mais également pour l'impression
-  d'un PIIS.
-
 - Dans module "Rendez-vous", une fois qu’on a indiqué que la personne
   a «quitté», l’info peut disparaitre vu qu’elle s’indique de toute
-  façon dans l’onglet "Calendrier", module "Evènements". --> Mais si
-  l'on veut imprimer une attestation de présence?
-
-- transférer le bouton "a besoin d’un permis de travail" (actuellement
-  dans l'onglet "Recherche d'emploi") dans "Personne"
-
-- renommer "Utilisateur responsable" d'un rendez-vous en "Agent
-  traitant".
-
-- Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
-  d’emploi active".  Il faut préférer des noms d'onglet courts car la
-  place est limitée.
+  façon dans l’onglet "Calendrier", module "Evènements". 
+  --> Mais si l'on veut imprimer une attestation de présence?
 
 - Panneau "Compétences professionnelles":
 
    - renommer "Propriété" en "Secteur" (à laisser en menu déroulant)
    - renommer la case "Remarque" en "Compétences" (texte libre)
 
-- Freins: modifier la case «valeur» en «Détecté par…" (avec un menu déroulant)
+- Ajouter deux champs "Nombre d'heures" et "Taux de présence" dans
+  `courses.Enrolment`.
+  --> à revoir plus tard.
 
-- Voir document "LINO - Onglet Recherche d'emploi active"
-
-- Formation: ajouter une case "Evaluation" (texte libre) et une case
-  date juste après (et la placer après la case "Statut")
 
