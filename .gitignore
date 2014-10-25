@@ -17,4 +17,5 @@ docs/api
 .build
 .DS_Store
 
+.idea
 
