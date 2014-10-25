@@ -32,18 +32,23 @@ DONE (à évaluer après l'installation)
   experiences professionnelles que des études. Et donc encore un essai
   de ma part pour vous éviter de créer une troisième table.
 
+- Résolu un détail gênant du framework: quand on a inséré un object et
+  ferme la fenetre de detail pour revenir vers la vue "tableau", il
+  est irritant de ne pas voir l'objet que l'on vient de créer.
+
 
 TODO (j'y travaille, pas de questions)
 ======================================
 
+- :class:`ml.polls.ResponsesByPartner` : ajouter un summary panel avec
+  une énumération "short_name : response dates" et des liens pour
+  entamer une nouvelle interview. Ajouter un champ
+  `polls.Poll.short_name`.
+
 - "Insérer dans Ateliers d'insertion sociale" : dans les choix de
   l'atelier Lino propose aussi les autres catégories (`course_area`).
 
-- Détail gênant du framework: quand on a inséré un object et ferme la
-  fenetre de detail pour revenir vers la vue "tableau", il est
-  irritant de ne pas voir l'objet que l'on vient de créer.
-
-- Disponibilité et mobilité:
+- Disponibilité et mobilité: nouvelles tables auxiliaires:
 
   - Temps de travail acceptés (temps-plein, 3/4, 1/2, quelques heures
     par semaine)
@@ -56,8 +61,7 @@ TODO (j'y travaille, pas de questions)
 
   - Cherchez-vous du travail actuellement?
   - C.V. (Avez-vous un CV à jour?)
-  - Présentation au FOREM (Est-ce que vous vous présentéz
-    régulièrement au FOREM?
+  - FOREM (Est-ce que vous vous présentéz régulièrement au FOREM?
   - Petites annonces (Est-ce que vous consultez les PA?)
   - Demande à l'entourage
   - Candidature spontanée
@@ -67,10 +71,6 @@ TODO (j'y travaille, pas de questions)
 
 - Études : renommer la case "Succès" en "Certificat/diplôme" (et
   transformer en menu déroulant)
-
-- :class:`ml.polls.ResponsesByPartner` : ajouter un summary
-  panel. Ajouter un champ `polls.Poll.short_name`.
-
 
 Questions ouvertes
 ==================
