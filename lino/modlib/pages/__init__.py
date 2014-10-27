@@ -16,10 +16,10 @@ class Plugin(Plugin):
 
     media_name = 'pages'
 
-    def __init__(self, *args, **kw):
-        super(Plugin, self).__init__(*args, **kw)
-        from lino.modlib.plain.plain_renderer import PlainRenderer
-        self.renderer = PlainRenderer(self)
+    # def __init__(self, *args, **kw):
+    #     super(Plugin, self).__init__(*args, **kw)
+    #     from lino.modlib.plain.plain_renderer import PlainRenderer
+    #     self.renderer = PlainRenderer(self)
 
     def get_patterns(self, ui):
         from django.conf.urls import patterns

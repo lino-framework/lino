@@ -3,6 +3,6 @@
   File "/home/luc/hgwork/atelier/atelier/__init__.py", line 48, in get_project_info
     raise Exception("No %s in %s" % (root_dir, _PROJECTS_DICT.keys()))
 Exception: No /home/luc/hgwork/lino/docs in [Path('/home/luc/hgwork/patrols'), Path('/home/luc/hgwork/faggio'), Path('/home/luc/hgwork/lino'), Path('/home/luc/hgwork/site'), Path('/home/luc/hgwork/atelier'), Path('/home/luc/hgwork/north'), Path('/home/luc/hgwork/logos'), Path('/home/luc/hgwork/welfare'), Path('/home/luc/hgwork/ee'), Path('/home/luc/hgwork/noi'), Path('/home/luc/hgwork/cosi'), Path('/home/luc/mypy/lino_local/jsvv'), Path('/home/luc/mypy/lino_local/luc'), Path('/home/luc/mypy/lino_local/et'), Path('/home/luc/hgwork/be'), Path('/home/luc/hgwork/cd')]
-[31;01mThe full traceback has been saved in /tmp/sphinx-err-dZv74U.log, if you want to report the issue to the developers.[39;49;00m
+[31;01mThe full traceback has been saved in /tmp/sphinx-err-PouN96.log, if you want to report the issue to the developers.[39;49;00m
 Please also report this if it was a user error, so that a better error message can be provided next time.
 A bug report can be filed in the tracker at <https://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!

@@ -1,0 +1,9 @@
+========================
+Monday, October 27, 2014
+========================
+
+A thing which had been waiting for a long time because it is purely
+internal: I changed the format of the `atelier` config file.  This had
+become necessary recent changes had broken the possibility to manage
+Sphinx doctrees without a corresponding Python module.
+
