@@ -29,9 +29,6 @@ Da steht doch tatsächlich genau das dokumentiert,
 was ich vor ein paar Tagen (:blogref:`20130311`) 
 programmiert habe:
 
->>> import sys
->>> print(sys.path)
-
 >>> import datetime
 >>> from babel.dates import format_date
 >>> d = datetime.date(2013,3,15)

@@ -10,8 +10,8 @@ SETUP_INFO = dict(
     install_requires=[
         'North', 'djangosite', 'odfpy',
         'jinja2', 'appy', 'pytidylib', 'PyYAML'],
-    description="A framework for writing desktop-like web applications \
-    using Django and ExtJS",
+    description="A framework for writing desktop-like web applications "
+    "using Django and ExtJS",
     license='BSD License',
     include_package_data=True,
     zip_safe=False,

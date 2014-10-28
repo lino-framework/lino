@@ -1,0 +1,24 @@
+:state: discuss
+
+============================
+#138 : Luc's commit messages
+============================
+
+This ticket is to collect opinions about my way of writing commit
+messages.  My basic idea is that I often want to edit commit messages
+afterwards.  I believe that this is useful.  So instead of typing a
+few sentences for every commit, I just send a link to the daily blog
+entry of that day.
+
+One problem with this system is that the URL of my blog has changed in
+the past (and may change again in the future).  
+
+For example when you see a commit messages like this:
+
+  http://docs.lino-framework.org/blog/2014/0729.html
+
+then you cannot simply click on that link fails because the URL of my
+blog has changed meanwhile.  So you must convert the URL manually to:
+
+  http://www.lino-framework.org/blog/2014/0729.html
+

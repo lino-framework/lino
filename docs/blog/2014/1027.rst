@@ -4,6 +4,27 @@ Monday, October 27, 2014
 
 A thing which had been waiting for a long time because it is purely
 internal: I changed the format of the `atelier` config file.  This had
-become necessary recent changes had broken the possibility to manage
-Sphinx doctrees without a corresponding Python module.
+become necessary because recent changes had broken the possibility to
+manage Sphinx doctrees without a corresponding Python module.
 
+
+:ref:`mw` stumbled over a bug that had passed the test suite on my
+development machine because I had not tidied up my `.pyc` files for
+several months.
+
+The bug itself was trivial, :mod:`lino.modlib.pages` still did::
+
+   from lino.modlib.plain.renderer import PlainRenderer
+
+Which (since :blogref:`20140729`) should have been::
+
+   from lino.modlib.bootstrap3.renderer import Renderer
+
+But it is of course rather time-consuming to diagnose such bugs.
+
+How can I make sure to avoid this problem? IOW How to tidy up `.pyc`
+files in a repository which I never pull from outside?  
+Okay I wrote a :command:`fab pyc` command which removes `.pyc`
+files that don't have a corresponding `.py` file.
+
+Opened ticket :doc:`/tickets/138`.
