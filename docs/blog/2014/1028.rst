@@ -2,9 +2,39 @@
 Tuesday, October 28, 2014
 =========================
 
+
+Getting started as a Lino developer
+=====================================
+
 Continued on :doc:`yesterday's <1027>` changes and checked in.
 
 Opened ticket :doc:`/tickets/138`.
 
+In a consultation with :ref:`mw`, we decided to add django-iban_ and
+xlwt_ to `install_requires` and bs4_ to `tests_require` (in Lino's
+:xfile:`setup_info.py`).
 
+Yes, this is annoying for people who don't use the apps who require
+them (:mod:`lino.modlib.iban` requires django-iban_,
+:mod:`lino.modlib.export_excel` requires xlwt_, and some tested docs
+need bs4_).
+
+But it is even more annoying for these people when the test suite
+fails because these packages are not installed.  So currently Lino
+depends on these packages, and :doc:`/tickets/139` opens discussion
+about how to solve this dependency.
+
+
+.. _django-iban: https://github.com/benkonrath/django-iban
+.. _xlwt: http://www.python-excel.org/
+.. _bs4: http://www.crummy.com/software/BeautifulSoup/bs4/doc/
+
+
+Kostenübernahme Kleindung
+=========================
+
+Die neue Bescheinigung :xfile:`clothing_bank.body.html`
+(:doc:`/tickets/136`) hat begeistertes Lob bekommen, und unsere
+Großbaustelle :doc:`tickets/93` kommt langsam in die Zielgerade.
+Noch ein paar Kleinigkeiten.
 

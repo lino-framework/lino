@@ -1,0 +1,95 @@
+:state: discuss
+
+===================================================
+#139 : Roadmap "General structure of Lino projects"
+===================================================
+
+Observations:
+
+- Lino's :xfile:`setup_info.py` specifies some seemingly `useless
+  dependencies`_.
+
+- We don't know (and cannot imagine) anybody who uses :ref:`north` or
+  :ref:`djangosite` without also using Lino.
+
+Suggestions:
+
+- Move most of :mod:`lino.modlib` into a new project ``lino-erp``.
+- Merge :mod:`north` into Lino
+- Merge :mod:`djangosite` into Lino
+
+
+
+
+Useless dependencies
+---------------------
+
+Lino's :xfile:`setup_info.py` currently
+has  django-iban_ and xlwt_ in `install_requires`, 
+and bs4_ in `tests_require`.
+
+Because :mod:`lino.modlib.iban` requires django-iban_,
+:mod:`lino.modlib.export_excel` requires xlwt_, 
+and some tested docs need bs4_.
+
+This is annoying for people who don't use the apps who require
+these packages.
+
+
+Current structure
+--------------------
+
+.. graphviz:: 
+   
+   digraph foo {
+
+    north -> djangosite -> atelier
+    lino -> north
+    lino_cosi -> lino
+    lino_welfare -> lino
+    lino_faggio -> lino
+    lino_patrols -> lino
+    lino_sunto -> lino
+
+   }
+
+
+Suggestions
+-----------
+
+- Move most of :mod:`lino.modlib` into a new project ``lino-erp``.
+
+
+    .. graphviz:: 
+
+       digraph foo {
+
+        north -> djangosite -> atelier
+        lino -> north
+        lino_patrols -> lino
+        lino_sunto -> lino
+        lino_erp -> lino
+        lino_cosi -> lino_erp
+        lino_welfare -> lino_erp
+        lino_faggio -> lino_erp
+
+       }
+
+
+
+
+.. graphviz:: 
+   
+   digraph foo {
+
+    export_excel -> xlwt
+    iban -> django_iban
+
+   }
+
+
+
+Pages referring to this:    
+    
+.. refstothis::
+    
