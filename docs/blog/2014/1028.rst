@@ -2,7 +2,9 @@
 Tuesday, October 28, 2014
 =========================
 
-Continued on :doc:`yesterday's <1027>` changes.
+Continued on :doc:`yesterday's <1027>` changes and checked in.
 
 Opened ticket :doc:`/tickets/138`.
+
+
 

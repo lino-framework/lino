@@ -7,9 +7,11 @@ from __future__ import unicode_literals
 SETUP_INFO = dict(
     name='lino',
     version='1.6.14',
+    test_requires=['bs4'],
     install_requires=[
         'North', 'djangosite', 'odfpy',
-        'jinja2', 'appy', 'pytidylib', 'PyYAML'],
+        'jinja2', 'appy', 'pytidylib', 'PyYAML', 
+        'django-iban', 'xlwt'],
     description="A framework for writing desktop-like web applications "
     "using Django and ExtJS",
     license='BSD License',
