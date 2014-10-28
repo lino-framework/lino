@@ -101,4 +101,3 @@ Traceback (most recent call last):
   File "/home/luc/hgwork/atelier/atelier/utils.py", line 51, in __getattr__
     name, ', '.join(self.keys())))
 AttributeError: AttrDict instance has no key 'vat' (keys are addresses, sales, accounts, newcomers, aids, jobs, excerpts, dedupe, cv, badges, bootstrap3, households, appypod, contacts, debts, djangosite, system, extjs, languages, contenttypes, humanize, export_excel, humanlinks, davlink, uploads, beid, cbss, north, users, sessions, pcsw, lino, lino_welfare, iban, outbox, properties, about, boards, countries, sepa, notes, isip, integ, courses, statbel, extensible, reception, cal, changes)
-/home/luc/hgwork/lino/docs/blog/2014/1028.rst:36: WARNING: unknown document: tickets/93

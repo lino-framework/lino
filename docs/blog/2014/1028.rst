@@ -35,7 +35,7 @@ Kostenübernahme Kleidung
 
 Die neue Bescheinigung :xfile:`clothing_bank.body.html`
 (:doc:`/tickets/136`) hat begeistertes Lob bekommen, und unsere
-Großbaustelle :doc:`tickets/93` kommt langsam in die Zielgerade.  Nur
+Großbaustelle :doc:`/tickets/93` kommt langsam in die Zielgerade.  Nur
 noch ein paar "Kleinigkeiten".
 
 DONE:
@@ -90,4 +90,27 @@ TODO (gemeinsam):
 - Datum : oben rechts: simply replace the calls to `fds` by `fdm`.
 
   
+(Dringende) medizinische Hilfe
+==============================
+
+
+Excerpt from `(Urgent) medical care
+<http://www.mi-is.be/en/public-social-welfare-centers/urgent-medicale-care>`_
+
+    (Urgent) medical care - 
+    Aide médicale (urgente) - 
+    (Dringende) Medische Hulp
+
+    Die dringende medizinische Hilfe ist eine medizinische Hilfe in Form
+    einer finanziellen Beteiligung durch das ÖSHZ an den medizinischen
+    Kosten einer Person, die sich illegal in Belgien aufhält.
+
+    Die dringende medizinische Hilfe ist keine finanzielle Hilfe, die
+    direkt an die Person gezahlt wird, sondern die Illegalen lediglich den
+    Zugang zur medizinischen Hilfe durch die Bezahlung des Arztes, des
+    Krankenhauses, des Apothekers sicherstellen möchte.
+
+
+Added a new body template 
+:xfile:`urgent_medical_care.body.html`.
 
