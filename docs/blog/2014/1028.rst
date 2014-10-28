@@ -2,3 +2,7 @@
 Tuesday, October 28, 2014
 =========================
 
+Continued on :doc:`yesterday's <1027>` changes.
+
+Opened ticket :doc:`/tickets/138`.
+

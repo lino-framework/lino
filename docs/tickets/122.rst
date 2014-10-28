@@ -91,9 +91,11 @@ DONE:
   "Clear Cache".
 
 - Formatierung Ausdruck: 
+
   - "U. Zeichen / N. réf."
   - Mehr Platz zwischen "U.Zeichen" und "Bescheinigung"
-  - Eupen, den/le
+  - "Eupen, den/le" statt der sprachspezifischen Version (weil es zum
+    Gesamtlayout gehört und deshalb nicht ändern sollte)
   - E-Mail-Adresse und Abteilung des Autors
   - Alle Banken raus außer Dexia
   - Alle "festen" Werte in Arial (sans serif) und alle "variablen"

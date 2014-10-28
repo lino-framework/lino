@@ -1,8 +1,103 @@
-
-[31;01mException occurred:[39;49;00m
-  File "/home/luc/hgwork/atelier/atelier/sphinxconf/base.py", line 118, in get_blog_url
-    if not atelier.BLOG_URL:
-AttributeError: 'module' object has no attribute 'BLOG_URL'
-[31;01mThe full traceback has been saved in /tmp/sphinx-err-kj3d41.log, if you want to report the issue to the developers.[39;49;00m
-Please also report this if it was a user error, so that a better error message can be provided next time.
-A bug report can be filed in the tracker at <https://bitbucket.org/birkenfeld/sphinx/issues/>. Thanks!
+/home/luc/hgwork/lino/docs/api/lino.modlib.auto.sales.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.auto.sales.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/auto/sales/models.py", line 37, in <module>
+    from lino.modlib.sales.models import *
+  File "/home/luc/hgwork/lino/lino/modlib/sales/models.py", line 41, in <module>
+    ledger = dd.resolve_app('ledger', strict=True)
+  File "/home/luc/hgwork/lino/lino/core/dbutils.py", line 69, in resolve_app
+    (app_label, settings.INSTALLED_APPS))
+ImportError: No app_label u'ledger' in ('django.contrib.sessions', 'lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'lino', 'north', 'lino_welfare.modlib.system', 'django.contrib.contenttypes', 'django.contrib.humanize', 'lino_welfare.modlib.users', 'lino.modlib.changes', 'lino.modlib.countries', 'lino.modlib.properties', 'lino_welfare.modlib.contacts', 'lino.modlib.addresses', 'lino_welfare.modlib.uploads', 'lino.modlib.outbox', 'lino.modlib.extensible', 'lino_welfare.modlib.cal', 'lino_welfare.modlib.reception', 'lino.modlib.languages', 'lino.modlib.accounts', 'lino_welfare.modlib.badges', 'lino.modlib.iban', 'lino_welfare.modlib.sepa', 'lino.modlib.excerpts', 'lino.modlib.dedupe', 'lino.modlib.boards', 'lino_welfare', 'lino.modlib.statbel', 'lino_welfare.modlib.sales', 'lino_welfare.modlib.pcsw', 'lino_welfare.modlib.cv', 'lino_welfare.modlib.isip', 'lino_welfare.modlib.jobs', 'lino_welfare.modlib.integ', 'lino_welfare.modlib.courses', 'lino_welfare.modlib.newcomers', 'lino_welfare.modlib.cbss', 'lino_welfare.modlib.households', 'lino.modlib.humanlinks', 'lino_welfare.modlib.debts', 'lino_welfare.modlib.notes', 'lino_welfare.modlib.aids', 'lino.modlib.beid', 'lino.modlib.davlink', 'lino.modlib.appypod', 'lino.modlib.export_excel', 'djangosite')
+/home/luc/hgwork/lino/docs/api/lino.modlib.courses.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.courses.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/courses/models.py", line 206, in <module>
+    class EventsByTeacher(cal.Events):
+  File "/home/luc/hgwork/lino/lino/modlib/courses/models.py", line 208, in EventsByTeacher
+    master = config.teacher_model
+AttributeError: 'Plugin' object has no attribute 'teacher_model'
+/home/luc/hgwork/lino/docs/api/lino.modlib.courses.workflows.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.courses.workflows'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/courses/workflows.py", line 28, in <module>
+    from lino.modlib.courses.models import EnrolmentStates
+  File "/home/luc/hgwork/lino/lino/modlib/courses/models.py", line 63, in <module>
+    class CourseAreas(dd.ChoiceList):
+  File "/home/luc/hgwork/lino/lino/core/choicelists.py", line 252, in __new__
+    register_choicelist(cls)
+  File "/home/luc/hgwork/lino/lino/core/choicelists.py", line 209, in register_choicelist
+    "already defined by %r" % (cl, k, CHOICELISTS[k]))
+Exception: Cannot register <class 'lino.modlib.courses.models.CourseAreas'> : actor name 'courses.CourseAreas' already defined by <class 'lino.modlib.courses.models.CourseAreas'>
+/home/luc/hgwork/lino/docs/api/lino.modlib.declarations.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.declarations.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/declarations/models.py", line 73, in <module>
+    if settings.SITE.plugins.vat.vat_quarterly:
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 51, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'vat' (keys are addresses, sales, accounts, newcomers, aids, jobs, excerpts, dedupe, cv, badges, bootstrap3, households, appypod, contacts, debts, djangosite, system, extjs, languages, contenttypes, humanize, export_excel, humanlinks, davlink, uploads, beid, cbss, north, users, sessions, pcsw, lino, lino_welfare, iban, outbox, properties, about, boards, countries, sepa, notes, isip, integ, courses, statbel, extensible, reception, cal, changes)
+/home/luc/hgwork/lino/docs/api/lino.modlib.finan.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.finan.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/finan/models.py", line 71, in <module>
+    class Voucher(ledger.Voucher):
+AttributeError: 'NoneType' object has no attribute 'Voucher'
+/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.fixtures.mini.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.ledger.fixtures.mini'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/ledger/fixtures/mini.py", line 37, in <module>
+    CUSTOMERS_ACCOUNT = pcmnref('customers', '4000')
+  File "/home/luc/hgwork/lino/lino/modlib/ledger/fixtures/mini.py", line 33, in pcmnref
+    if settings.SITE.plugins.ledger.use_pcmn:
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 51, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'ledger' (keys are addresses, sales, accounts, newcomers, aids, jobs, excerpts, dedupe, cv, badges, bootstrap3, households, appypod, contacts, debts, djangosite, system, extjs, languages, contenttypes, humanize, export_excel, humanlinks, davlink, uploads, beid, cbss, north, users, sessions, pcsw, lino, lino_welfare, iban, outbox, properties, about, boards, countries, sepa, notes, isip, integ, courses, statbel, extensible, reception, cal, changes)
+/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.ledger.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/ledger/models.py", line 26, in <module>
+    vat = dd.resolve_app('vat', strict=True)
+  File "/home/luc/hgwork/lino/lino/core/dbutils.py", line 69, in resolve_app
+    (app_label, settings.INSTALLED_APPS))
+ImportError: No app_label u'vat' in ('django.contrib.sessions', 'lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'lino', 'north', 'lino_welfare.modlib.system', 'django.contrib.contenttypes', 'django.contrib.humanize', 'lino_welfare.modlib.users', 'lino.modlib.changes', 'lino.modlib.countries', 'lino.modlib.properties', 'lino_welfare.modlib.contacts', 'lino.modlib.addresses', 'lino_welfare.modlib.uploads', 'lino.modlib.outbox', 'lino.modlib.extensible', 'lino_welfare.modlib.cal', 'lino_welfare.modlib.reception', 'lino.modlib.languages', 'lino.modlib.accounts', 'lino_welfare.modlib.badges', 'lino.modlib.iban', 'lino_welfare.modlib.sepa', 'lino.modlib.excerpts', 'lino.modlib.dedupe', 'lino.modlib.boards', 'lino_welfare', 'lino.modlib.statbel', 'lino_welfare.modlib.sales', 'lino_welfare.modlib.pcsw', 'lino_welfare.modlib.cv', 'lino_welfare.modlib.isip', 'lino_welfare.modlib.jobs', 'lino_welfare.modlib.integ', 'lino_welfare.modlib.courses', 'lino_welfare.modlib.newcomers', 'lino_welfare.modlib.cbss', 'lino_welfare.modlib.households', 'lino.modlib.humanlinks', 'lino_welfare.modlib.debts', 'lino_welfare.modlib.notes', 'lino_welfare.modlib.aids', 'lino.modlib.beid', 'lino.modlib.davlink', 'lino.modlib.appypod', 'lino.modlib.export_excel', 'djangosite')
+/home/luc/hgwork/lino/docs/api/lino.modlib.orders.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.orders.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/orders/models.py", line 54, in <module>
+    class Order(sales.SalesDocument, mixins.ProjectRelated, mixins.Registrable):
+AttributeError: 'module' object has no attribute 'SalesDocument'
+/home/luc/hgwork/lino/docs/api/lino.modlib.pages.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.pages.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/pages/models.py", line 40, in <module>
+    PAGES = settings.SITE.plugins.pages
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 51, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'pages' (keys are addresses, sales, accounts, newcomers, aids, jobs, excerpts, dedupe, cv, badges, bootstrap3, households, appypod, contacts, debts, djangosite, system, extjs, languages, contenttypes, humanize, export_excel, humanlinks, davlink, uploads, beid, cbss, north, users, sessions, pcsw, lino, lino_welfare, iban, outbox, properties, about, boards, countries, sepa, notes, isip, integ, courses, statbel, extensible, reception, cal, changes)
+/home/luc/hgwork/lino/docs/api/lino.modlib.sales.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.sales.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/sales/models.py", line 41, in <module>
+    ledger = dd.resolve_app('ledger', strict=True)
+  File "/home/luc/hgwork/lino/lino/core/dbutils.py", line 69, in resolve_app
+    (app_label, settings.INSTALLED_APPS))
+ImportError: No app_label u'ledger' in ('django.contrib.sessions', 'lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'lino', 'north', 'lino_welfare.modlib.system', 'django.contrib.contenttypes', 'django.contrib.humanize', 'lino_welfare.modlib.users', 'lino.modlib.changes', 'lino.modlib.countries', 'lino.modlib.properties', 'lino_welfare.modlib.contacts', 'lino.modlib.addresses', 'lino_welfare.modlib.uploads', 'lino.modlib.outbox', 'lino.modlib.extensible', 'lino_welfare.modlib.cal', 'lino_welfare.modlib.reception', 'lino.modlib.languages', 'lino.modlib.accounts', 'lino_welfare.modlib.badges', 'lino.modlib.iban', 'lino_welfare.modlib.sepa', 'lino.modlib.excerpts', 'lino.modlib.dedupe', 'lino.modlib.boards', 'lino_welfare', 'lino.modlib.statbel', 'lino_welfare.modlib.sales', 'lino_welfare.modlib.pcsw', 'lino_welfare.modlib.cv', 'lino_welfare.modlib.isip', 'lino_welfare.modlib.jobs', 'lino_welfare.modlib.integ', 'lino_welfare.modlib.courses', 'lino_welfare.modlib.newcomers', 'lino_welfare.modlib.cbss', 'lino_welfare.modlib.households', 'lino.modlib.humanlinks', 'lino_welfare.modlib.debts', 'lino_welfare.modlib.notes', 'lino_welfare.modlib.aids', 'lino.modlib.beid', 'lino.modlib.davlink', 'lino.modlib.appypod', 'lino.modlib.export_excel', 'djangosite')
+/home/luc/hgwork/lino/docs/api/lino.modlib.vat.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.vat.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/vat/models.py", line 24, in <module>
+    config = dd.plugins.vat
+  File "/home/luc/hgwork/atelier/atelier/utils.py", line 51, in __getattr__
+    name, ', '.join(self.keys())))
+AttributeError: AttrDict instance has no key 'vat' (keys are addresses, sales, accounts, newcomers, aids, jobs, excerpts, dedupe, cv, badges, bootstrap3, households, appypod, contacts, debts, djangosite, system, extjs, languages, contenttypes, humanize, export_excel, humanlinks, davlink, uploads, beid, cbss, north, users, sessions, pcsw, lino, lino_welfare, iban, outbox, properties, about, boards, countries, sepa, notes, isip, integ, courses, statbel, extensible, reception, cal, changes)

@@ -2,6 +2,19 @@
 Polls
 ========
 
+.. note:: 
+
+  This is a tested document. You can test it using::
+
+    $ python setup.py test -s tests.DocsTests.test_docs
+
+.. 
+  >>> import os
+  >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+  ...   'lino.projects.polly.settings'
+  >>> from lino.runtime import *
+
+
 .. module:: ml.polls
 
 The :mod:`lino.modlib.polls` package provides data definitions for
@@ -24,19 +37,6 @@ See also :ref:`tested.polly`.
 .. contents:: 
    :local:
    :depth: 2
-
-
-.. note:: 
-
-  This is a tested document. You can test it using::
-
-    $ python setup.py test -s tests.DocsTests.test_docs
-
-.. 
-  >>> import os
-  >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-  ...   'lino.projects.polly.settings'
-  >>> from lino.runtime import *
 
 
 Choicelists
