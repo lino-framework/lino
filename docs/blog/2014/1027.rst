@@ -25,7 +25,8 @@ Which (since :blogref:`20140729`) should have been::
 But it is of course rather time-consuming to diagnose such bugs.
 
 How can I make sure to avoid this problem? IOW How to tidy up `.pyc`
-files in a repository which I never pull from outside?  
-Okay I wrote a :cmd:`fab pyc` command which removes `.pyc`
-files that don't have a corresponding `.py` file.
+files in a repository which I never pull from outside?  Okay I wrote a
+`fab pyc` command which removes `.pyc` files that don't have a
+corresponding `.py` file.  But will I remember to run this command
+when it is time to do so?
 

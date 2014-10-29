@@ -402,7 +402,6 @@ class Lino2rstDirective(Py2rstDirective):
 
     def get_context(self):
         from django.conf import settings
-        from lino import rt
         context = super(Lino2rstDirective, self).get_context()
         context.update(settings=settings)
         context.update(settings.SITE.modules)
