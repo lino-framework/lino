@@ -19,6 +19,17 @@ Suggestions:
 - Merge :mod:`djangosite` into Lino
 
 
+Atelier
+-------
+
+:mod:`atelier` is "a collection of tools for developers like me".
+Not very precise...
+
+- project management & fab commands
+- Sphinx extensions & Co in :mod:`atelier.sphinxconf`
+- :mod:`atelier.rstgen`
+- :mod:`atelier.test`
+- :mod:`atelier.utils`
 
 
 Useless dependencies

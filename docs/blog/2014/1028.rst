@@ -93,13 +93,13 @@ TODO (gemeinsam):
 (Dringende) medizinische Hilfe
 ==============================
 
+Added a new body template 
+:xfile:`urgent_medical_care.body.html`.
 
-Excerpt from `(Urgent) medical care
-<http://www.mi-is.be/en/public-social-welfare-centers/urgent-medicale-care>`_
+Here is also an interesting excerpt from `www.mi-is.be
+<http://www.mi-is.be/en/public-social-welfare-centers/urgent-medicale-care>`_:
 
-    (Urgent) medical care - 
-    Aide médicale (urgente) - 
-    (Dringende) Medische Hulp
+    **(Dringende) medizinische Hilfe**
 
     Die dringende medizinische Hilfe ist eine medizinische Hilfe in Form
     einer finanziellen Beteiligung durch das ÖSHZ an den medizinischen
@@ -111,6 +111,7 @@ Excerpt from `(Urgent) medical care
     Krankenhauses, des Apothekers sicherstellen möchte.
 
 
-Added a new body template 
-:xfile:`urgent_medical_care.body.html`.
+    - EN: (Urgent) medical care
+    - FR: Aide médicale (urgente)
+    - NL: (Dringende) Medische Hulp
 

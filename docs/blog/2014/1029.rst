@@ -1,0 +1,7 @@
+===========================
+Wednesday, October 29, 2014
+===========================
+
+The online example documents under
+:xfile:`urgent_medical_care.body.html` have not yet been updated.  It
+seems that this is a bug somewhere in atelier.
