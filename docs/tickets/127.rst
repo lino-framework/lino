@@ -2,8 +2,6 @@
 #127 : New European VAT regulation
 ==================================
 
-Currently assigned to :ref:`xmj`.
-
 According to `MEMO-14-448
 <http://europa.eu/rapid/press-release_MEMO-14-448_en.htm>`_ (or also
 in `Mehrwertsteuer-System bald einfacher und gerechter

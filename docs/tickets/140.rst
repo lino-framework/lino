@@ -1,0 +1,12 @@
+:module: lino_cosi
+=============================
+#140 : Lino Così for Pierre
+=============================
+
+TODO:
+
+- Check from :doc:`95` whether there are relevant items to do
+- :doc:`127`
+- :doc:`141`
+- French translations are incomplete.
+

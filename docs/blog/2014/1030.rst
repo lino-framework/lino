@@ -1,0 +1,14 @@
+==========================
+Thursday, October 30, 2014
+==========================
+
+Removed the demo project ``start`` of :ref:`cosi` because it was not
+used.
+
+Added a new demo project :mod:`lino_cosi.projects.pierre` (for
+:ref:`ph` who is the first to show :ref:`cosi` it to French-speaking
+Belgians).
+
+Opened tickets :doc:`/tickets/140` and :doc:`/tickets/141`.
+
+
