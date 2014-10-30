@@ -81,37 +81,9 @@ TODO:
 
     What am I doing wrong?
 
-TODO (gemeinsam):
-
-- Faltmarkierung am linken Seitenrand
-
-- "Dexia" ersetzen durch "Belfius".
-
-- Datum : oben rechts: simply replace the calls to `fds` by `fdm`.
-
-  
-(Dringende) medizinische Hilfe
-==============================
+Dringende medizinische Hilfe
+============================
 
 Added a new body template 
 :xfile:`urgent_medical_care.body.html`.
-
-Here is also an interesting excerpt from `www.mi-is.be
-<http://www.mi-is.be/en/public-social-welfare-centers/urgent-medicale-care>`_:
-
-    **(Dringende) medizinische Hilfe**
-
-    Die dringende medizinische Hilfe ist eine medizinische Hilfe in Form
-    einer finanziellen Beteiligung durch das ÖSHZ an den medizinischen
-    Kosten einer Person, die sich illegal in Belgien aufhält.
-
-    Die dringende medizinische Hilfe ist keine finanzielle Hilfe, die
-    direkt an die Person gezahlt wird, sondern die Illegalen lediglich den
-    Zugang zur medizinischen Hilfe durch die Bezahlung des Arztes, des
-    Krankenhauses, des Apothekers sicherstellen möchte.
-
-
-    - EN: (Urgent) medical care
-    - FR: Aide médicale (urgente)
-    - NL: (Dringende) Medische Hulp
 

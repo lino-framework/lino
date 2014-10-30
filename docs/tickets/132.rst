@@ -36,6 +36,10 @@ DONE (à évaluer après l'installation)
   ferme la fenetre de detail pour revenir vers la vue "tableau", il
   est irritant de ne pas voir l'objet que l'on vient de créer.
 
+- Situation familiale: ajouter Frère – Sœur – Cousin – Cousine – Oncle
+  – Tante
+
+
 
 TODO (j'y travaille, pas de questions)
 ======================================
@@ -72,10 +76,16 @@ TODO (j'y travaille, pas de questions)
 - Études : renommer la case "Succès" en "Certificat/diplôme" (et
   transformer en menu déroulant)
 
+- Dans les "Compétences professionnelles" (Onglet "Compétences"),
+  remettre la colonne "Valeur" (en liste déroulante que nous
+  compléterons avec : Déclaratif, Certificat, Attestation, Diplôme,
+  Validation de compétences).
+
+
 Questions ouvertes
 ==================
 
-- Convictions (Antécédents judiciaires, Vorstrafen)
+- Antécédents judiciaires (en: Convictions, de: Vorstrafen)
 
   ======================= ============
   Désignation             préjudiciale
@@ -105,7 +115,7 @@ Questions ouvertes
 
 - Pourquoi demandez-vous de transférer le bouton "a besoin d’un permis
   de travail" (actuellement dans l'onglet "Recherche d'emploi") dans
-  "Personne"?
+  "Personne"? Et pourquoi pas aussi l'autre bouton (permis de séjour))
 
 - Renommer le nom de l’onglet "Recherche d’emploi" en "Recherche
   d’emploi active".  --> Y a-t-il de la recherche d’emploi qui n'est
@@ -119,3 +129,44 @@ Questions ouvertes
 - Freins: modifier la case «valeur» en «Détecté par..." (avec un menu
   déroulant).  Préciser.
 
+- Renommer l'onglet "Art 60§7" en "Mise à l’emploi".  Dans cet onglet,
+  renommer "Candidatures" en "Art 61" et "Contrats de mise au travail"
+  en "Art 60§7".  Est-ce que "Jours ONSS" est le champ "duration"
+  actuel?  
+
+  La *Mise à l’emploi* comprend deux types de mesures appelées *Art
+  60§7* et *Art. 61*.  En plus, pour les Article 60§7 il faut
+  spécifier s'il s'agit d'\ *économie sociale* ou pas.
+
+  Pour l'instant Lino met tout cela "dans un meme pot" et fait la
+  différenciation (*économie sociale*) au niveau des types de
+  contrats.
+
+- Garde d'enfant. Vous demandez d'avoir un champ texte libre
+  (multi-lignes) pour mettre les informations suivantes (pour
+  documenter la disponibilité de la personne pour l'emploi):
+
+  1) Garde officielle jugement - Si séparé, est-ce garde alternée, les
+     w-e, ...
+  2) Si la personne travaille ou est en formation, a-t-elle des
+     solutions de garde.  On note aussi l'école de l'enfant avec les
+     possibilités de garderie.
+
+  Question: ce champ vient-il (a) par ménage ou (b) par bénéficiaire?
+
+  Idée: Ce serait plutot un champ "dans le dossier RAE". D'habitude il
+  y a un dossier RAE par bénéficiaire. Mais regardons s'il est
+  possible d'en avoir plusieurs.
+
+  Dossier RAE:
+  - cherche du travail
+  - depuis ...
+  - suspendue jusque
+  - garde d'enfant
+
+  
+- Les dates d’évaluation ne se mettent pas automatiquement dans le
+  calendrier/événement du travailleur social. à préciser.
+
+- Nouvel onglet "Stages".
+  --> Pour cela il y a l'état d'une candidature.

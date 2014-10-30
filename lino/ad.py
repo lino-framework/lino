@@ -759,7 +759,7 @@ class Site(Site):
     def is_imported_partner(self, obj):
         """
         Return whether the specified
-        :class:`Partner <lino.modlib.contacts.models.Partner>` instance
+        :class:`Partner <ml.contacts.Partner>` instance
         `obj` is to be considered as imported from some legacy database.
         """
         #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
@@ -829,25 +829,6 @@ class Site(Site):
         """
         self._site_config = None
         #~ print "20130320 clear_site_config"
-
-    #~ def on_site_config_saved(self,sc):
-        #~ """
-        #~ Used internally. Called by SiteConfig.save() to update the cached instance.
-        #~ """
-        #~ pass
-        #~ self._site_config = sc
-        #~ from lino.core.dbutils import obj2str
-        #~ print '20120801 site_config saved', obj2str(sc,True)
-
-    def is_imported_partner(self, obj):
-        """
-        Return whether the specified
-        :class:`Partner <lino.modlib.contacts.models.Partner>` instance
-        `obj` is to be considered as imported from some legacy database.
-        """
-        #~ return obj.id is not None and (obj.id < 200000 or obj.id > 299999)
-        return False
-        #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
 
     def get_quicklinks(self, ar):
         from lino.core import menus

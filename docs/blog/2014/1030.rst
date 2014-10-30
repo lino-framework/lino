@@ -12,3 +12,21 @@ Belgians).
 Opened tickets :doc:`/tickets/140` and :doc:`/tickets/141`.
 
 
+
+Bescheinigungen
+---------------
+
+Nachtrag zu :doc:`/tickets/136`:
+Fixed 3 last details in local configuration:
+
+- Faltmarkierung am linken Seitenrand
+- "Dexia" ersetzen durch "Belfius".
+- Datum : oben rechts: simply replace the calls to :func:`fds` by calls to
+  `fdm`.
+
+  
+Disabled fields in Firefox
+--------------------------------------
+
+Opened :doc:`/tickets/142`.
+
