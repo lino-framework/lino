@@ -8,8 +8,8 @@
 todo
 -----
 
-- Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten.
-  :doc:`/tickets/122`
+- Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten
+  (:doc:`/tickets/122` und :doc:`/tickets/136`)
 
 - Wenn man eine ungültige IBAN eingibt, dann kommt zwar die
   Fehlermeldung und es wird nicht gespeichert, aber die Zelle wird

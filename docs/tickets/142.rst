@@ -1,6 +1,7 @@
-=============================================
-#142 : Cannot copy disabled fields in Firefox
-=============================================
+:state: sleeping
+========================================================
+#142 [sleeping] : Cannot copy disabled fields in Firefox
+========================================================
 
 Users want to be able to select text in disabled fields in order to 
 copy it to their clipboard.
@@ -39,4 +40,25 @@ Observations
     <input type="text" size="24" autocomplete="off" id="ext-comp-1256"
     name="gender" class="x-form-text x-form-field" style="width: 105px;"
     disabled="">
+    
+- This is a well-known bug: `Bug 253870 - Can't copy text from
+  disabled textarea or text
+  input. <https://bugzilla.mozilla.org/show_bug.cgi?id=253870>`_
 
+- Die dort besprochene "Lösung", *readonly* statt *disabled* zu
+  verwenden, habe ich probiert und kann bestätigen, dass das nicht
+  zumutbar ist.  Die Felder sehen dann genau so aus als seien sie
+  editierbar, auch das Markierungsverhalten ist genau so, aber wenn
+  man dann eine Taste drückt, reagiert er nicht.  Allerdings habe ich
+  nicht begonnen, im CSS zu frickeln um eventuell mit Hintergrundfarbe
+  zu spielen.
+
+- A possible workaround is to use Chromium instead of Firefox
+
+Resolution
+----------
+   
+The original user problem report is about copying data from fields of
+an imported :class:`welfare.pcsw.Client`\ 's detail window. This
+situation will anyway disappear soon. So the ticket is set to sleep
+until there is a serious reason to wake it up.

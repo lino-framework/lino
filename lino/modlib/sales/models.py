@@ -360,6 +360,7 @@ class Invoices(SalesDocuments):
     partner date
     subject
     """, window_size=(40, 'auto'))
+    start_at_bottom = True
 
     @classmethod
     def get_request_queryset(cls, ar):
@@ -374,7 +375,7 @@ class Invoices(SalesDocuments):
         return qs
 
     @classmethod
-    def param_defaults(cls, ar, **kw):
+    def unused_param_defaults(cls, ar, **kw):
         kw = super(Invoices, cls).param_defaults(ar, **kw)
         kw.update(year=ledger.FiscalYears.from_date(settings.SITE.today()))
         return kw

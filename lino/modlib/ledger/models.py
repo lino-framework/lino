@@ -447,12 +447,13 @@ class Vouchers(dd.Table):
 class ByJournal(dd.Table):
     order_by = ["number"]
     master_key = 'journal'  # see django issue 10808
-    #master = journals.Journal
+    start_at_bottom = True
 
     @classmethod
     def get_title_base(self, ar):
-        """
-        Without this override we would have a title like "Invoices of journal <Invoices>"
+        """Without this override we would have a title like "Invoices of
+        journal <Invoices>".  But we want just "Invoices".
+
         """
         return unicode(ar.master_instance)
 
@@ -994,6 +995,7 @@ class Invoices(dd.Table):
     journal partner
     date total_incl
     """
+    start_at_bottom = True
 
     @classmethod
     def get_request_queryset(cls, ar):
@@ -1007,7 +1009,7 @@ class Invoices(dd.Table):
         return qs
 
     @classmethod
-    def param_defaults(cls, ar, **kw):
+    def unused_param_defaults(cls, ar, **kw):
         kw = super(Invoices, cls).param_defaults(ar, **kw)
         kw.update(pyear=FiscalYears.from_date(settings.SITE.today()))
         return kw

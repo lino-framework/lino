@@ -3328,23 +3328,11 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     } else {
         var ps = this.grid_panel.calculatePageSize();
         if (!ps) {
-            //~ this.gridpanel.on('render',this.load())
-          //~ console.log("20120814 GridStore.load() failed to calculate pagesize");
+          // console.log("GridStore.load() failed to calculate pagesize");
           return false;
-            //~ params.$URL_PARAM_LIMIT = 1;
-            //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
-            //~ return;
         } 
         options.params.{{ext_requests.URL_PARAM_LIMIT}} = ps;
       
-        //~ options.params.{{ext_requests.URL_PARAM_START}} = this.grid_panel.getTopToolbar().cursor;
-        //~ if (this.grid_panel.getTopToolbar().pageSize !=  ps) {
-          //~ console.log("20120206 abort load because toolbar says pagesize",
-            //~ this.grid_panel.getTopToolbar().pageSize,
-            //~ "while actual pagesize is",ps);
-            //~ return;
-        //~ }
-        
         this.grid_panel.getTopToolbar().pageSize =  ps;
         if (options.params.{{ext_requests.URL_PARAM_START}} == undefined)
             options.params.{{ext_requests.URL_PARAM_START}} = this.grid_panel.getTopToolbar().cursor;
@@ -3354,9 +3342,6 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     this.grid_panel.add_param_values(options.params);
     //~ Lino.insert_subst_user(options.params);
     //~ console.log("20120814 GridStore.load()",options.params,this.baseParams);
-    //~ if (FOO > 0) {
-        //~ foo.bar = baz;
-    //~ } else FOO += 1;
     return Lino.GridStore.superclass.load.call(this, options);
   }
   // ,insert : function(index, records) {
@@ -4399,19 +4384,12 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
     // p = Ext.form.ComboBox.superclass.getParams.call(this, q);
     // causes "Ext.form.ComboBox.superclass.getParams is undefined"
     var p = {};
-    //p[this.queryParam] = q;
     if(this.pageSize){
-        //~ p.start = 0;
-        //~ p.limit = this.pageSize;
         p['{{ext_requests.URL_PARAM_START}}'] = 0;
         p['{{ext_requests.URL_PARAM_LIMIT}}'] = this.pageSize;
     }
     // now my code:
-    if(this.contextParams) Ext.apply(p,this.contextParams);
-    //~ if(this.contextParams && this.contextValues) {
-      //~ for(i = 0; i <= this.contextParams.length; i++)
-        //~ p[this.contextParams[i]] = this.contextValues[i];
-    //~ }
+    if(this.contextParams) Ext.apply(p, this.contextParams);
     return p;
   },
   setContextValue : function(name,value) {

@@ -156,11 +156,15 @@ class TableRequest(ActionRequest):
 
         try:
             self._data_iterator = self.get_data_iterator()
-        except Warning, e:
+        except Warning as e:
             #~ logger.info("20130809 Warning %s",e)
             self.no_data_text = unicode(e)
             self._data_iterator = []
-        except Exception, e:
+        except Exception as e:
+            # Report this exception. But since such errors may occur
+            # rather often and since exception loggers usually send an
+            # email to the local system admin, make sure to log an
+            # exception only once.
             self.no_data_text = unicode(e)
             w = WARNINGS_LOGGED.get(str(e))
             if w is None:
@@ -169,12 +173,26 @@ class TableRequest(ActionRequest):
             self._data_iterator = []
 
         self._sliced_data_iterator = self._data_iterator
-        if self.offset is not None:
-            self._sliced_data_iterator = self._sliced_data_iterator[
-                self.offset:]
-        if self.limit is not None:
-            self._sliced_data_iterator = self._sliced_data_iterator[
-                :self.limit]
+        if False:  # self.actor.start_at_bottom:
+            if self.offset is not None:
+                assert self.limit is not None
+                num = self.get_total_count()
+                max_pages = int(num / self.limit)
+                page = self.offset / self.limit
+                page = max_pages - page
+                offset = self.limit * page
+                # offset = max_offset - self.offset
+                self._sliced_data_iterator = self._sliced_data_iterator[
+                    offset:]
+                self._sliced_data_iterator = self._sliced_data_iterator[
+                    :self.limit]
+        else:
+            if self.offset is not None:
+                self._sliced_data_iterator = self._sliced_data_iterator[
+                    self.offset:]
+            if self.limit is not None:
+                self._sliced_data_iterator = self._sliced_data_iterator[
+                    :self.limit]
 
     def must_execute(self):
         return self._data_iterator is None
@@ -208,7 +226,7 @@ class TableRequest(ActionRequest):
 
     def get_total_count(self):
         """
-        Calling `len()` on a QuerySet will execute the whole SELECT.
+        Calling `len()` on a QuerySet would execute the whole SELECT.
         See `/blog/2012/0124`
         """
         di = self.data_iterator
@@ -690,6 +708,8 @@ class AbstractTable(actors.Actor):
     hide_zero_rows = False
 
     column_names = '*'
+
+    start_at_bottom = False
 
     group_by = None
     """

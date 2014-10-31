@@ -1,11 +1,12 @@
 :module: lino_cosi
 =============================
-#140 : Lino Così for Pierre
+#140 : Final sprint Lino Così
 =============================
 
 TODO:
 
 - Check from :doc:`95` whether there are relevant items to do
+- :doc:`119`
 - :doc:`127`
 - :doc:`141`
 - French translations are incomplete.
