@@ -43,6 +43,7 @@ Topic :: Office/Business :: Scheduling
 
 SETUP_INFO.update(packages=[
     'lino_noi',
+    'lino_noi.fixtures',
     'lino_noi.settings',
 ])
 
