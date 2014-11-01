@@ -1,0 +1,7 @@
+==========================
+Saturday, November 1, 2014
+==========================
+
+Fixed a bug in the `event_took_place` function in
+:mod:`ml.cal.workflows.feedback` which could cause a server traceback
+"DoesNotExist : Guest has no event."

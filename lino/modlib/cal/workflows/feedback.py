@@ -80,7 +80,7 @@ def my_guest_workflows(sender=None, **kw):
     #~ def allow_transition(obj,user,new_state):
     def event_took_place(action, user, obj, state):
         #~ if new_state.name in ('present','absent'):
-        return obj.event.state == EventStates.took_place
+        return obj.event_id and (obj.event.state == EventStates.took_place)
 
     #~ kw = dict(allow=allow_transition)
     #~ GuestStates.invited.add_transition(_("Invite"),states='_',owner=True)
