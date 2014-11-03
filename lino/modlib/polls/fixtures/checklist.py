@@ -26,8 +26,6 @@ def objects():
     name = dd.str2kw('name', _("Yes/Maybe/No"))['name']
     yesmaybeno = polls.ChoiceSet.objects.get(name=name)
 
-
-
     USERS = Cycler(settings.SITE.user_model.objects.all())
 
     def poll(choiceset, title, details, questions):
