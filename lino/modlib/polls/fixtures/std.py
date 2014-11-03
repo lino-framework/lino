@@ -10,16 +10,16 @@ def objects():
 
     polls = rt.modules.polls
 
-    yesno = polls.ChoiceSet(name="Yes/No")
-    yield yesno
-    yield polls.Choice(choiceset=yesno, name="Yes")
-    yield polls.Choice(choiceset=yesno, name="No")
+    # yesno = polls.ChoiceSet(name="Yes/No")
+    # yield yesno
+    # yield polls.Choice(choiceset=yesno, name="Yes")
+    # yield polls.Choice(choiceset=yesno, name="No")
 
-    maybe = polls.ChoiceSet(name="Yes/Maybe/No")
-    yield maybe
-    yield polls.Choice(choiceset=maybe, name="Yes")
-    yield polls.Choice(choiceset=maybe, name="Maybe")
-    yield polls.Choice(choiceset=maybe, name="No")
+    # maybe = polls.ChoiceSet(name=)
+    # yield maybe
+    # yield polls.Choice(choiceset=maybe, name="Yes")
+    # yield polls.Choice(choiceset=maybe, name="Maybe")
+    # yield polls.Choice(choiceset=maybe, name="No")
 
     def choiceset(name, *choices):
         cs = polls.ChoiceSet(name=name)
@@ -30,6 +30,10 @@ def objects():
             obj.save()
         return cs
 
+    yesno = choiceset(_("Yes/No"), _("Yes"), _("No"))
+    yield yesno
+    maybe = choiceset(_("Yes/Maybe/No"), _("Yes"), _("Maybe"), _("No"))
+    yield maybe
     yield choiceset(
         "That's it!...Never!", "That's it!", "Rather Yes",
         "Neutral", "Rather No", "Never!")

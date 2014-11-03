@@ -23,6 +23,11 @@ def objects():
     name = dd.str2kw('name', _("Acquired"))['name']
     acquired = polls.ChoiceSet.objects.get(name=name)
 
+    name = dd.str2kw('name', _("Yes/Maybe/No"))['name']
+    yesmaybeno = polls.ChoiceSet.objects.get(name=name)
+
+
+
     USERS = Cycler(settings.SITE.user_model.objects.all())
 
     def poll(choiceset, title, details, questions):
@@ -80,4 +85,18 @@ Utiliser le téléphone pour relancer ma candidature
 "Trouver et imprimer les formulaires de demandes d’aides à l’embauche se trouvant 
 sur le site de l’ONEm"
 
+""")
+
+    yield poll(
+        yesmaybeno,
+        "Recherche active d'emploi", """
+Veuillez sélectionner votre réponse pour chaque question
+""", """
+Cherchez-vous du travail actuellement?
+Avez-vous un CV à jour?
+Est-ce que vous vous présentéz régulièrement au FOREM?
+Est-ce que vous consultez les petites annonces?
+Demande à l’entourage?
+Candidature spontanée?
+Avez-vous des antécédents judiciaires qui pourraient qui pourraient être préjudiciables à votre recherce d’emploi?
 """)
