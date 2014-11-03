@@ -2,6 +2,7 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+from lino import dd
 from lino import rt
 from lino.ad import _
 
@@ -22,10 +23,12 @@ def objects():
     # yield polls.Choice(choiceset=maybe, name="No")
 
     def choiceset(name, *choices):
-        cs = polls.ChoiceSet(name=name)
+        namekw = dd.str2kw('name', name)
+        cs = polls.ChoiceSet(**namekw)
         cs.save()
         for choice in choices:
-            obj = polls.Choice(choiceset=cs, name=choice)
+            namekw = dd.str2kw('name', choice)
+            obj = polls.Choice(choiceset=cs, **namekw)
             obj.full_clean()
             obj.save()
         return cs

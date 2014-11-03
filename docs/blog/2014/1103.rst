@@ -4,3 +4,4 @@ Monday, November 3, 2014
 
 French translations for :mod:`ml.polls`.
 Upgrade in :ref:`chat`.
+Added the third poll to :mod:`lino.modlib.polls.fixtures.checklist`.
