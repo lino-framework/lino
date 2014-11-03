@@ -402,15 +402,15 @@ class BaseRequest(object):
             notes.add_system_note(self, owner, subject, body)
         #~ if silent:
             #~ return
+        sender = self.get_user().email or settings.SERVER_EMAIL
+        if not sender or '@example.com' in sender:
+            return
         recipients = []
         for addr in settings.SITE.get_system_note_recipients(
                 self, owner, silent):
             if not '@example.com' in addr:
                 recipients.append(addr)
         if not len(recipients):
-            return
-        sender = self.get_user().email or settings.SERVER_EMAIL
-        if not sender or '@example.com' in sender:
             return
         msg = EmailMessage(subject=subject,
                            from_email=sender, body=body, to=recipients)

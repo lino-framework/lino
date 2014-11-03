@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 The :term:`dummy module` for `outbox`, 
 used by :func:`lino.core.dbutils.resolve_app`.
 """
-from lino import dd, rt
+from lino import dd
 
 
 class Mailable(object):

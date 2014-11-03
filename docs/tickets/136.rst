@@ -5,6 +5,8 @@
 
 Noch eine Liste von Punkten, die :ref:`gx` und ich am 16.10.2014
 beschlossen haben.
+Im Rahmen des Projekts :doc:`/tickets/93`.
+
 
 DONE:
 

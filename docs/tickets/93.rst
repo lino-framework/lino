@@ -26,6 +26,7 @@ todo
   TIM. Am einfachsten ist es, die Daten schon dort zu validieren. 
 
 - :doc:`/tickets/104`
+- :doc:`/tickets/144`
 
 
 Later
@@ -41,8 +42,8 @@ Later
 feedback
 --------
 
-- Welche Angaben aus PXS fehlen noch im Detail-Fenster 
-  von Empfang-->Klienten? (mit Monika klären)
+- (mit Monika klären) Welche Angaben aus PXS fehlen noch im
+  Detail-Fenster von Empfang-->Klienten?
 
     - `Krankenkasse` und `Vollmacht` : Leute, bei denen
       Medikamentenkosten vorgestreckt wurden, müssen eine Vollmacht

@@ -76,6 +76,14 @@ TODO (j'y travaille, pas de questions)
 Questions ouvertes
 ==================
 
+- Quand les utilisateurs passent directement par l’onglet cours…
+  …voici la configuration que nous voudrions (suite en dessous de
+  l’image):
+
+  Le module "description" serait une reprise des données introduites
+  dans l’onglet "Configuration à cours à topics"
+
+ 
 - Comment traduire l'état de dossier "Coached"? "Accompagné"? "En
   intervention"? "Intégré"?
 

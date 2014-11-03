@@ -33,11 +33,11 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 outbox = dd.require_app_models('outbox')
-postings = dd.require_app_models('postings')
 
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
 
+from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
 from .mixins import Certifiable, Shortcuts
 
@@ -332,7 +332,7 @@ class BodyTemplateContentField(dd.VirtualField):
 
 class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
               mixins.Controllable, mixins.ProjectRelated,
-              ContactRelated, outbox.Mailable, postings.Postable):
+              ContactRelated, outbox.Mailable, Postable):
 
     manager_level_field = 'office_level'
 
@@ -344,8 +344,10 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
     excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
     body_template_content = BodyTemplateContentField(_("Body template"))
 
-    if dd.is_installed('outbox'):
-        mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
+    language = dd.LanguageField()
+
+    # if dd.is_installed('outbox'):
+    #     mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
     def get_body_template(self):
         assert self.__class__ is not self.owner.__class__
@@ -415,10 +417,7 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
         return self.excerpt_type
 
     def get_print_language(self):
-        """Returns the language to be selected when rendering this Excerpt.
-
-        """
-        return self.owner.get_print_language()
+        return self.language
 
     def on_create(self, ar):
         """When creating an Excerpt by double clicking in
@@ -431,6 +430,7 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
         if not self.owner_id:
             if self.project:
                 self.owner = self.project
+        self.language = self.owner.get_print_language()
 
     @dd.chooser()
     def excerpt_type_choices(cls, owner):
@@ -483,24 +483,25 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
     def on_analyze(cls, site):
         cls.PRINTABLE_FIELDS = dd.fields_list(
             cls,
-            'project excerpt_type  \
-            body_template_content \
-            user build_method')
+            "project excerpt_type  "
+            "body_template_content "
+            "company contact_person language "
+            "user build_method")
         super(Excerpt, cls).on_analyze(site)
 
 
 if has_davlink:
 
     class ExcerptDetail(dd.FormLayout):
-        window_size = (80, 15)
+        window_size = (80, 20)
         main = "general config"
         general = dd.Panel(
             """
             id excerpt_type:25 project
             user:10 build_method
+            company contact_person language
             owner build_time
-            company contact_person
-            # preview
+            outbox.MailsByController
             """, label=_("General"))
         config = dd.Panel(
             "body_template_content",
@@ -510,13 +511,13 @@ if has_davlink:
 else:
 
     class ExcerptDetail(dd.FormLayout):
-        window_size = (80, 'auto')
+        window_size = (80, 20)
         main = """
         id excerpt_type:25 project
         user:10 build_method
+        company contact_person language
         owner build_time
-        company contact_person
-        # preview
+        outbox.MailsByController
         """
 dd.update_field(Excerpt, 'company',
                 verbose_name=_("Recipient (Organization)"))
@@ -536,7 +537,8 @@ class Excerpts(dd.Table):
     excerpt_type project
     company contact_person
     """
-    column_names = ("id build_time owner excerpt_type user project *")
+    column_names = ("id build_time owner excerpt_type user project "
+                    "company contact_person language *")
     order_by = ["id"]
 
     allow_create = False

@@ -18,9 +18,9 @@ from lino import dd, rt
 from lino import mixins
 from django.conf import settings
 
+from lino.modlib.postings.mixins import Postable
 
 outbox = dd.resolve_app('outbox')
-postings = dd.resolve_app('postings')
 contacts = dd.resolve_app('contacts')
 
 
@@ -100,7 +100,7 @@ class Note(dd.TypedPrintable,
            contacts.ContactRelated,
            dd.ProjectRelated,
            outbox.Mailable,
-           postings.Postable,
+           Postable,
            ):
 
     """

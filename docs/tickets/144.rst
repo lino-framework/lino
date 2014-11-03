@@ -1,0 +1,39 @@
+============================
+#144 : Welfare 1.18 in Eupen
+============================
+
+
+Upgrade nach :ref:`welfare` 1.1.18 im ÖSHZ Eupen am 04.11.2014(?).
+
+Ticket im Rahmen des Projekts :doc:`/tickets/93`.
+
+
+DONE:
+
+- The `language` field on :class:`ml.excerpts.Excerpt` is back.  And the
+  `language` field on :class:`welfare.aids.Confirmation` is no longer
+  needed.
+
+- Feld "Sozialhilfeart" ersetzen durch Hilfebeschluss. Wird beim
+  Ausdruck eines VSE benutzt. Wie soll Lino konfiguriert bekommen,
+  welcher Hilfebeschluss in einem VSE gedruckt wird? -->
+  Konfigurierung Hilfearten. Hier muss man das neue Feld
+  `is_integ_duty` ankreuzen für die Hilfearten "EiEi" und
+  "Ausländerbeihilfe".
+  Und irgendwann dann die Dokumentvorlage anpassen:
+  ``obj.client.aid_type``
+  ersetzen durch 
+  :meth:`obj.get_aid_type <welfare.isip.BaseContract.get_aid_type>`.
+
+  --> New field :attr:`welfare.aids.AidType.is_integ_duty`.
+  New method :meth:`welfare.isip.BaseContract.get_granting`.
+
+- The list of outgoing mails of an Excerpt is now again visible as
+  slave table in the detail of the excerpt (instead of just a
+  button). Looks more natural.
+
+DISCUSS:
+
+- Neue Tabelle "Ausbildungen", also "Studien" und "Ausbildungen"
+  voneinander trennen.
+

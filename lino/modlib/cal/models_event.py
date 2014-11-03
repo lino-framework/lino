@@ -24,6 +24,8 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from lino import dd, rt
 
+from lino.modlib.postings.mixins import Postable
+
 from .utils import (
     Recurrencies,
     when_text,
@@ -39,7 +41,6 @@ from .models import Component
 from .models import Priority
 from .workflows import EventStates
 
-postings = dd.resolve_app('postings')
 outbox = dd.resolve_app('outbox')
 
 
@@ -274,7 +275,7 @@ class UpdateGuests(dd.MultipleRowAction):
 class Event(Component, Ended,
             dd.TypedPrintable,
             outbox.Mailable,
-            postings.Postable):
+            Postable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Event')

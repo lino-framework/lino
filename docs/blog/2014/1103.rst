@@ -2,6 +2,62 @@
 Monday, November 3, 2014
 ========================
 
-French translations for :mod:`ml.polls`.
+Database migration
+==================
+
 Upgrade in :ref:`chat`.
+French translations for :mod:`ml.polls`.
 Added the third poll to :mod:`lino.modlib.polls.fixtures.checklist`.
+
+I wanted to load the demo fixtures of :mod:`ml.polls` into the
+production server.  So I wrote a local :cmd:`run` script
+:file:`initdb_polls.py` as follows::
+
+    from lino.modlib.polls.fixtures import std
+    from lino.modlib.polls.fixtures import checklist
+
+    from lino import rt
+    rt.modules.polls.ChoiceSet.objects.all().delete()
+    rt.modules.polls.Poll.objects.all().delete()
+
+    for o in std.objects():
+        o.full_clean()
+        o.save()
+
+    for o in checklist.objects():
+        o.full_clean()
+        o.save()
+
+
+TODO:
+
+- The toggle_choice action is broken. Selecting an answer gives an
+  error message "There's no partner with primary key 3"
+
+
+
+`SMTPRecipientsRefused` and system notes
+========================================
+
+Fixed a bug in :meth:`dd.Model.get_system_note_recipients` methods of
+:class:`welfare.pcsw.Client` and :class:`welfare.pcsw.Coaching` which
+caused an `SMTPRecipientsRefused` server traceback when a user
+
+
+The language of an excerpt
+==========================
+
+Started :doc:`/tickets/144`:
+
+- The `language` field on :class:`ml.excerpts.Excerpt` is back.  And the
+  `language` field on :class:`welfare.aids.Confirmation` is no longer
+  needed.
+
+- New table `aids.ContractGrantingsByClient` (just a first draft).
+
+- New field :attr:`welfare.aids.AidType.is_integ_duty`
+  New methods 
+  :meth:`welfare.isip.BaseContract.get_granting` and
+  :meth:`welfare.isip.BaseContract.get_aid_type`.
+
+  TODO: test these.
