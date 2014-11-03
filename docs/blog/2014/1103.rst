@@ -1,0 +1,6 @@
+========================
+Monday, November 3, 2014
+========================
+
+French translations for :mod:`ml.polls`.
+Upgrade in :ref:`chat`.
