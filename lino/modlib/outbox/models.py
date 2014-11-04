@@ -15,12 +15,11 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
 
 
 from lino import mixins
-from lino import dd
+from lino import dd, rt
 from lino.core import actions
 
 from north import dbutils
@@ -87,7 +86,8 @@ when creating an email from a mailable of this type.
 
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):
-        return settings.SITE.list_templates('.eml.html', cls.templates_group)
+        tplgroups = cls.get_template_groups()
+        return settings.SITE.list_templates('.eml.html', *tplgroups)
 
 
 class CreateMail(dd.Action):
@@ -98,7 +98,6 @@ class CreateMail(dd.Action):
     url_action_name = 'email'
     icon_name = 'email_add'
     help_text = _('Create an email from this')
-    #~ label = pgettext_lazy(u'verb',u'Mail')
     label = _('Create email')
 
     callable_from = (actions.GridEdit,
@@ -175,18 +174,15 @@ class Mailable(dd.Model):
         name = mt.email_template
         if not name:
             return ''
-        if mt.templates_group is not None:
-            #~ prefix = os.path.join(*(mt.templates_group.split('/')))
-            #~ name = os.path.join(prefix,name)
-            name = mt.templates_group + "/" + name
-        tpl = settings.SITE.jinja_env.get_template(name)
-        context = dict(
-            instance=self,
-            dtosl=dbutils.dtosl,
-            dtos=dbutils.dtos,
-            ar=ar,
-        )
-        return tpl.render(**context)
+        for group in self.get_template_groups():
+            filename = rt.find_config_file(name, group)
+            if filename:
+                tpl = settings.SITE.jinja_env.get_template(group+"/"+name)
+                context = self.get_printable_context(ar)
+                # context = dict(
+                #     instance=self,
+                # )
+                return ar.render_jinja(tpl, **context)
 
     def get_mailable_subject(self):
         """

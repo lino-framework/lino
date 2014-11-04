@@ -38,7 +38,7 @@ def list_templates(self, ext, *groups):
     Return a list of possible choices for a field that contains a
     template name.
     """
-    logger.info("20140617 list_templates(%r, %r)", ext, groups)
+    # logger.info("20140617 list_templates(%r, %r)", ext, groups)
     if len(groups):
         retval = []
         for group in groups:

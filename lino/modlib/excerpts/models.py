@@ -97,12 +97,6 @@ class ExcerptType(
 
     shortcut = Shortcuts.field(blank=True)
 
-    @dd.chooser(simple_values=True)
-    def template_choices(cls, build_method, content_type):
-        tplgroups = [
-            content_type.model_class().get_template_group(), 'excerpts']
-        return cls.get_template_choices(build_method, tplgroups)
-
     def full_clean(self, *args, **kwargs):
         if self.certifying:
             if not self.primary:
@@ -146,17 +140,27 @@ class ExcerptType(
 We override everything in Excerpt to not call the class method.""")
 
     @dd.chooser(simple_values=True)
+    def template_choices(cls, build_method, content_type):
+        tplgroups = [
+            content_type.model_class().get_template_group(), 'excerpts']
+        return cls.get_template_choices(build_method, tplgroups)
+
+    @dd.chooser(simple_values=True)
     def body_template_choices(cls, content_type):
         # 20140617 don't remember why the "excerpts" group was useful here
         # tplgroups = [model_group(content_type.model_class()), 'excerpts']
         # return settings.SITE.list_templates('.body.html', *tplgroups)
 
         tplgroup = content_type.model_class().get_template_group()
-        return settings.SITE.list_templates('.body.html', tplgroup)
+        return settings.SITE.list_templates('.body.html', tplgroup, 'excerpts')
+
+    @dd.chooser(simple_values=True)
+    def email_template_choices(cls, content_type):
+        tplgroup = content_type.model_class().get_template_group()
+        return settings.SITE.list_templates('.eml.html', tplgroup, 'excerpts')
 
     @classmethod
     def get_for_model(cls, model):
-
         "Return the primary ExcerptType for the given model."
         ct = ContentType.objects.get_for_model(dd.resolve_model(model))
         return cls.objects.get(primary=True, content_type=ct)
@@ -388,6 +392,9 @@ class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
 
     def get_mailable_type(self):
         return self.excerpt_type
+
+    def get_mailable_subject(self):
+        return unicode(self.owner)  # .get_mailable_subject()
 
     def get_template_groups(self):
         ptype = self.get_printable_type()
