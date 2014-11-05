@@ -4,6 +4,15 @@ My Git cheat sheet
 
 .. highlight:: bash
 
+
+Make a pull request
+-------------------
+
+- http://git-scm.com/book/en/Distributed-Git-Contributing-to-a-Project
+- https://help.github.com/articles/creating-a-pull-request
+
+
+
 Branching
 ---------
 

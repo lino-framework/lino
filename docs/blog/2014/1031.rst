@@ -5,10 +5,3 @@ Friday, October 31, 2014
 Opened :doc:`/tickets/143` because I understood that this is a serious
 show stopper for :ref:`cosi`.
 
-My current big projects are:
-
-- :doc:`/tickets/140` 
-- :doc:`/tickets/93` 
-- :doc:`/tickets/123`
-- :doc:`/tickets/132`
-

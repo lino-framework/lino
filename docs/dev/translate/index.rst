@@ -2,18 +2,13 @@
 Instructions for translators
 ============================
 
+..
+  >>> from lino.runtime import *
+  >>> print(settings.SITE.languages)
+  (LanguageInfo(django_code=u'en', name=u'en', index=0, suffix=''), LanguageInfo(django_code=u'es', name=u'es', index=1, suffix='_es'))
+
+
 Here is how your can help translating Lino into your own language.
-
-Preliminaries
--------------
-
-We suppose that you have installed the *development version* (not a
-released version from PyPI) for both Lino and the application you want
-to translate.  We suppose that :ref:`cosi` is the application you want
-to translate, and that you have installed it as explained in
-:ref:`cosi.install`.  And let's say for example that you want to
-translate them to *Spanish*.
-
 
 Overview
 --------
@@ -27,24 +22,25 @@ latter. On Debian you install it with ``apt-get install poedit``.
 
 .. _Poedit: http://www.poedit.net
 
-When you are satisfied with your work, you will make a pull request to
-ask me to integrate your changes into the public repositories of Lino
-and :ref:`cosi`.
-More about pull requests:
 
-- http://git-scm.com/book/en/Distributed-Git-Contributing-to-a-Project
-- https://help.github.com/articles/creating-a-pull-request
+Set up a site
+-------------
 
-Note about copyright: you will be contributing your :file:`.po` files
-to Lino. These files are *per definitionem* your spiritual property.
-You express this by writing your name and email address to the headers
-of these :file:`.po` files (Poedit_ does this for you if you fill your
-preferences correctly). By contributing your work to the Lino project,
-you implicitly declare that you give us the permission to publish your
-work together with Lino under the LGPL.
+Before starting to translate, you must set up a site (a Django
+project) on which you can see your work while you are evolving. You
+cannot simply translate all those messages and then believe that they
+are correct.
 
-Instructions
-------------
+
+- We suppose that you have installed the :ref:`development version
+  <lino.dev.install>` of Lino.  
+
+- We also suppose that :ref:`cosi` is the application you want to
+  translate, and that you have installed it as explained in
+  :ref:`cosi.install`.
+
+- And let's say for example that you want to translate them to
+  *Spanish*.
 
 Go to your local project directory::
 
@@ -55,14 +51,23 @@ looks as follows:
 
 .. literalinclude:: settings.py
 
-That is, you specify your own language distribution. See
+That is, you specify your own language distribution, consisting of
+English as first language and Spanish (your language) as second. See
 :attr:`ad.Site.languages` for details.  Note that the first language
 cannot currently be Spanish because the demo fixtures would fail
 (:doc:`/tickets/108`).
 
+If your language is not yet covered for Lino, then you must `Create a
+demo user for your language`_ before going on.
+
 Initialize the demo database::
 
   $ python manage.py initdb_demo
+
+
+Run your rdevelopment server
+----------------------------
+
 
 Run the development server on the demo database::
 
@@ -73,8 +78,11 @@ Point your browser to view the application. Log in as the Spanish user.
 .. image:: translate_1.png
   :scale: 80
 
+Find the translatable strings
+-----------------------------
+
 The translatable strings on this page (`gettext` and Poedit_ call them
-"messages" ) are for exampe the menu labels ("Contacts", "Producs"
+"messages") are for exampe the menu labels ("Contacts", "Producs"
 etc), but also content texts like "Welcome", "Hi, Rodrigo!" or "This
 is a Lino demo site."
 
@@ -88,6 +96,9 @@ Note: You must go to the *Lino* repository because these strings are
 part of Lino, not of :ref:`cosi`. In fact :ref:`cosi` has almost no
 translatable string of its own, it is mostly a combination of
 different modules from :mod:`lino.modlib`.
+
+Translate
+---------
 
 Launch Poedit_, specifying the :file:`.po` file for the Spanish
 translation (international language code for Spanish is ``es``)::
@@ -125,6 +136,32 @@ Refresh your browser page:
 .. image:: cosi_es_hola.png
   :scale: 80
 
+Submit your work
+---------------------
+
+When you are satisfied with your work, you will make a pull request to
+ask us to integrate your changes into the public repositories of Lino
+and :ref:`cosi`.
+
+More about pull requests in :doc:`/dev/git`.
+
+
+
+Create a demo user for your language
+------------------------------------
+
+If Lino does not yet have a default demo administrator for your
+language (:mod:`ml.users.fixtures.demo`), then you need to
+create a local fixture which adds a demo user for your language.  It's
+easy::
+
+  $ mkdir fixtures
+  $ touch fixtures/__init__.py
+  $ nano fixtures/demo.py
+
+The :file:`demo.py` file should look as folloas:
+
+.. literalinclude:: fixtures/demo.py
 
 
 Trucs et astuces

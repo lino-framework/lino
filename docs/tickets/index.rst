@@ -3,6 +3,15 @@ Tickets
 =======
 
 
+Luc and Manuel are working on:
+
+- :doc:`/tickets/145`
+- :doc:`/tickets/140`
+- :doc:`/tickets/93`
+- :doc:`/tickets/123`
+- :doc:`/tickets/132`
+
+
 Open for contribution
 ---------------------
 

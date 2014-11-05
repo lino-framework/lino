@@ -3,9 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-This installs fictive root users (administrators), one for each language.
-We are trying to sound realistic without actually hitting any real person.
-These names are also visible in the :doc:`Lino demo sites </demos>`.
+See :mod:`ml.users.fixtures.demo`.
 
 """
 
@@ -16,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino import dd, rt
+from lino import dd
 
 
 def root_user(lang, **kw):
@@ -53,7 +51,8 @@ def objects():
     User = settings.SITE.user_model
     if User is not None:
         for lang in settings.SITE.languages:
-            if settings.SITE.hidden_languages is None or not lang.django_code in settings.SITE.hidden_languages:
+            if settings.SITE.hidden_languages is None \
+               or not lang.django_code in settings.SITE.hidden_languages:
                 kw = root_user(lang)
                 if kw:
                     u = User(**kw)

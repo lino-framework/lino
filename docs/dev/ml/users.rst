@@ -122,3 +122,24 @@ Choicelists
     in your Lino to see all application-specific userlevels.
 
 
+Fixtures
+========
+
+.. module:: ml.users.fixtures.demo
+
+The :mod:`lino.modlib.users.fixtures.demo` module installs fictive
+root users (administrators), one for each language.  These names are
+being used by the :doc:`Online demo sites </demos>`.
+
+Lino currently knows demo users for the following languages:
+
+.. django2rst::
+
+  from lino.runtime import *
+  ses = rt.login()
+  ses.show(users.Users, 
+    column_names="username first_name last_name language")
+
+We are trying to sound realistic without actually hitting any real
+person.  If one of the above names happens to match yours, just let us
+know and we will change it.

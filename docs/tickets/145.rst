@@ -1,0 +1,33 @@
+#145 : Using character types in an `.odt` template
+==================================================
+
+I asked for help from the `appy forum
+<https://answers.launchpad.net/appy/+question/256313>`_:
+
+    When using the "do text from xhtml()" clause, I want to get
+    certain parts of a paragraph in a different font (e.g. Times Roman
+    while the default font is Arial).
+
+    The `documentation
+    <http://www.appyframework.org/podWritingAdvancedTemplates.html>`_
+    says:
+
+    pod uses the styles found in the pod template and tries to make a
+    correspondence between style information in the XHTML chunk and
+    styles present in the pod template. By default, when pod
+    encounters a XHTML element: * it checks if a "class" attribute is
+    defined on this element. If yes, and if a style with the same
+    "display name" is found in the OpenDocument template, this style
+    will be used. The "display name" of an OpenDocument style is the
+    name of the style as it appears in OpenOffice, for example;
+
+    Now I tried the following::
+
+      <p class="MyStyle">Foo <font class="VariableText">bar</font></p>
+
+    on a template with a paragraph style named "MyStyle" and a
+    Character style named "VariableText".  The paragraph style is
+    being applied, but the character style not.
+
+    What am I doing wrong?
+

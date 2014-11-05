@@ -1,0 +1,5 @@
+===========================
+Wednesday, November 5, 2014
+===========================
+
+I updated :doc:`/dev/translate/index`.

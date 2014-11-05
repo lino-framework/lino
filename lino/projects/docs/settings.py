@@ -24,7 +24,8 @@ class Site(Site):
     project_model = 'contacts.Person'
     user_model = 'users.User'
 
-    languages = 'en de fr'
+    # languages = 'en de fr'
+    languages = 'en de fr et nl pt-br es'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
