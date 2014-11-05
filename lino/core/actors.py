@@ -313,6 +313,9 @@ class Actor(actions.Parametrizable):
 
     hidden_elements = frozenset()
 
+    detail_html_template = 'bootstrap3/detail.html'
+    list_html_template = 'bootstrap3/table.html'
+
     model = None
 
     @classmethod

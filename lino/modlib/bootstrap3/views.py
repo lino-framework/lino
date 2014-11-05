@@ -12,14 +12,13 @@ logger = logging.getLogger(__name__)
 from django import http
 from django.conf import settings
 from django.views.generic import View
-#~ from django.utils import simplejson as json
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
 from lino.utils.xmlgen.html import E
 
-from lino import dd, rt
+from lino import dd
 from lino.core import auth
 from lino.core import web
 from lino.core.requests import BaseRequest
@@ -29,14 +28,14 @@ from lino.ui.views import action_request
 MENUS = dict()
 
 
-def http_response(ui, request, tplname, context):
+def http_response(request, tplname, context):
     "Deserves a docstring"
     u = request.subst_user or request.user
     lang = get_language()
     k = (u.profile, lang)
     menu = MENUS.get(k, None)
     if menu is None:
-        menu = settings.SITE.get_site_menu(ui, u.profile)
+        menu = settings.SITE.get_site_menu(None, u.profile)
         bs3 = settings.SITE.plugins.bootstrap3
         assert bs3.renderer is not None
         url = bs3.build_plain_url()
@@ -68,8 +67,7 @@ class List(View):
             main=ar.as_bootstrap_html(),
         )
         context.update(ar=ar)
-        return http_response(
-            settings.SITE.ui, request, 'bootstrap3/table.html', context)
+        return http_response(request, ar.actor.list_html_template, context)
 
 
 class Element(View):
@@ -79,7 +77,6 @@ class Element(View):
     """
 
     def get(self, request, app_label=None, actor=None, pk=None):
-        ui = settings.SITE.ui
         ar = action_request(app_label, actor, request, request.GET, False)
         ar.renderer = dd.plugins.bootstrap3.renderer
 
@@ -91,8 +88,7 @@ class Element(View):
         )
         #~ template = web.jinja_env.get_template('detail.html')
         context.update(ar=ar)
-
-        return http_response(ui, request, 'bootstrap3/detail.html', context)
+        return http_response(request, ar.actor.detail_html_template, context)
 
 
 class Index(View):
@@ -102,8 +98,7 @@ class Index(View):
     """
 
     def get(self, request, *args, **kw):
-        # ui = settings.SITE.ui
-        ui = settings.SITE.plugins.bootstrap3
+        ui = dd.plugins.bootstrap3
         assert ui.renderer is not None
         context = dict(
             title=settings.SITE.title,
@@ -128,4 +123,4 @@ class Index(View):
             # TODO: let ar generate main
             # context.update(main=ui.bs3_renderer.action_call(request,a,{}))
         context.update(ar=ar)
-        return http_response(ui, request, 'bootstrap3/index.html', context)
+        return http_response(request, 'bootstrap3/index.html', context)

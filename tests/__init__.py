@@ -78,7 +78,7 @@ class DocsTests(LinoTestCase):
         self.run_simple_doctests('docs/dev/ad.rst')
 
     def test_translate(self):
-        self.run_django_manage_test('docs/translate')
+        self.run_django_manage_test('docs/dev/translate')
 
     def test_de_BE(self):
         self.run_django_manage_test('docs/tutorials/de_BE')

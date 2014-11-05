@@ -11,7 +11,7 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-from os.path import join, abspath, dirname, isdir
+from os.path import join, dirname, isdir
 import datetime
 import jinja2
 

@@ -585,7 +585,7 @@ def create_layout_element(lh, name, **kw):
     if settings.SITE.catch_layout_exceptions:
         try:
             de = lh.get_data_elem(name)
-        except Exception, e:
+        except Exception as e:
             # logger.exception(e) removed 20130422 because it caused
             # disturbing output when running tests
             de = None

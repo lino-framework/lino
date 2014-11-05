@@ -58,6 +58,7 @@ from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
 from lino.utils import curry
 from lino.core.fields import BabelCharField
+from lino.core.perms import AnonymousUser
 from lino.utils.xmlgen.html import E
 
 
@@ -230,7 +231,9 @@ if settings.SITE.user_model:
         def setup_request(self, ar):
             #~ logger.info("mixins.ByUser.setup_request")
             if ar.master_instance is None:
-                ar.master_instance = ar.get_user()
+                u = ar.get_user()
+                if not isinstance(u, AnonymousUser):
+                    ar.master_instance = u
             super(ByUser, self).setup_request(ar)
 
         @classmethod
@@ -238,8 +241,6 @@ if settings.SITE.user_model:
             if not profile.authenticated:
                 return False
             return super(ByUser, self).get_view_permission(profile)
-
-
 
 else:
 

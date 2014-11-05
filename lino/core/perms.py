@@ -357,6 +357,7 @@ class AnonymousUser(object):
     partner = None
     language = None
     #~ id = None
+    pk = None
 
     _instance = None
 

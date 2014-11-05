@@ -687,8 +687,6 @@ class ShowDetailAction(Action):
         #~ return _("%s (Detail)")  % unicode(elem)
 
     def as_bootstrap_html(self, ar, pk):
-        ah = ar.ah
-        ba = ar.bound_action
         rpt = ar.actor
 
         navigator = None
@@ -732,13 +730,14 @@ class ShowDetailAction(Action):
         #~ if len(items) == 0: return ""
         main = E.form(*items)
         #~ print 20120901, lh.main.__html__(ar)
-        """
-        The method="html" argument isn't available in Python 2.6, only 2.7
-        It is useful to avoid side effects in case of empty elements:
-        the default method (xml) writes an empty E.div() as "<div/>"
-        while in HTML5 it must be "<div></div>" (the ending / is ignored)
-        """
-        #~ return E.tostring(main,method="html")
+        
+        # The `method="html"` argument isn't available in Python 2.6,
+        # only 2.7.  It is useful to avoid side effects in case of
+        # empty elements: the default method (xml) writes an empty
+        # E.div() as "<div/>" while in HTML5 it must be "<div></div>"
+        # (and the ending / is ignored).
+        
+        #~ return E.tostring(main, method="html")
         #~ return E.tostring(main)
         return main
 

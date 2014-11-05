@@ -18,7 +18,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.core.exceptions import PermissionDenied
+# from django.core.exceptions import PermissionDenied
 
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
@@ -903,11 +903,15 @@ class AbstractTable(actors.Actor):
                     self.master)
                 if not isinstance(master_instance, self.master):
                     # e.g. a ByUser table descendant called by AnonymousUser
-                    raise PermissionDenied(
-                        "%r is not a %s (%s.master_key = '%s')" % (
-                            master_instance.__class__,
-                            self.master, self,
-                            self.master_key))
+                    msg = "%r is not a %s (%s.master_key = '%s')" % (
+                        master_instance.__class__,
+                        self.master, self,
+                        self.master_key)
+                    logger.warning(msg)
+                    # raise Exception(msg)
+                    # raise PermissionDenied(msg)
+                    # master_instance = None
+                    return  # cannot add rows to this table
             kw[self.master_field.name] = master_instance
 
         return kw

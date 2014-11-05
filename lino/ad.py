@@ -884,8 +884,8 @@ class Site(Site):
 
         These functions, if present, will be called with three
         positional arguments: `ui`, `profile` and `menu`.
-
-        Deserves more documentation.
+        The first argument `ui` should not be used.
+        TODO: remove that argument from API.
 
         """
         from django.utils.translation import ugettext_lazy as _

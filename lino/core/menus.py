@@ -15,6 +15,7 @@ from django.db import models
 from atelier import rstgen
 from djangosite.dbutils import obj2str
 
+
 from lino.core import actors
 from lino.core import actions
 from lino.utils.xmlgen import html as xghtml
