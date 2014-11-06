@@ -23,8 +23,6 @@ from djangosite.dbutils import obj2unicode
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
-from lino.utils import get_class_attr
-
 from lino.core import constants
 
 from lino.core.dbutils import resolve_model
@@ -431,7 +429,7 @@ class Action(Parametrizable, Permittable):
         if self.action_name is None:
             raise Exception("Tried to full_name() on %r" % self)
             #~ return repr(self)
-        if self.parameters:
+        if self.parameters and not self.no_params_window:
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
 

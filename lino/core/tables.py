@@ -626,7 +626,8 @@ class TableRequest(ActionRequest):
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
             else:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
-                if ContentType._meta.installed:
+                if ContentType._meta.installed \
+                   and isinstance(self.master_instance, models.Model):
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
                     bp[constants.URL_PARAM_MASTER_TYPE] = mt

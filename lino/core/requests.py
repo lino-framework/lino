@@ -510,7 +510,6 @@ class BaseRequest(object):
         return self.renderer.window_action_button(self, *args, **kw)
 
     def row_action_button(self, obj, a, *args, **kw):
-        # use the same renderer, but do *not* parse the web request data.
         return self.renderer.row_action_button(
             obj, None, a, *args, **kw)
 
@@ -520,7 +519,7 @@ class BaseRequest(object):
         ``ai`` must be an instance of :class:`InstanceAction
         <lino.core.actions.InstanceAction>`.
         """
-        # use the same renderer, but do *not* parse the web request data.
+        # logger.info("20141106 %s", ai.instance)
         return self.renderer.row_action_button(
             ai.instance, self, ai.bound_action, *args, **kw)
 

@@ -1339,7 +1339,7 @@ class ExtRenderer(HtmlRenderer):
             mainPanelClass = "Lino.%sPanel" % ba.full_name()
         elif isinstance(ba.action, actions.GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
-        elif ba.action.parameters:
+        elif ba.action.parameters and not ba.action.no_params_window:
             params_panel = ba.action.make_params_layout_handle(
                 settings.SITE.plugins.extjs)
         elif ba.action.extjs_main_panel:
