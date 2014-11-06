@@ -14,17 +14,14 @@
 import os
 from unipath import Path
 
+extensions = []
+
 from atelier.sphinxconf import configure
 configure(globals(), 'lino.projects.docs.settings')
 
-if False:
-    import settings
-    if Path(settings.__file__).parent != Path(__file__).parent :
-        raise Exception("""
-Oops: `import settings` finds a settings module in %s.
-See `blog/2013/0812.rst` and clean up your Python path!""" % Path(settings.__file__).parent)
 
 extensions += ['atelier.sphinxconf.blog']
+extensions += ['atelier.sphinxconf.complex_tables']
 extensions += ['lino.sphinxcontrib.logo']
 extensions += ['lino.sphinxcontrib.actordoc']
 extensions += ['sphinxcontrib.taglist']

@@ -33,26 +33,6 @@ DONE (à évaluer après l'installation)
 - Situation familiale: ajouter Frère – Sœur – Cousin – Cousine – Oncle
   – Tante
 
-
-
-TODO (j'y travaille, pas de questions)
-======================================
-
-- :class:`ml.polls.ResponsesByPartner` : ajouter un summary panel avec
-  une énumération "short_name : response dates" et des liens pour
-  entamer une nouvelle interview. Ajouter un champ
-  `polls.Poll.short_name`.
-
-- Insérer dans "Ateliers d'insertion sociale" : dans les choix de
-  l'atelier Lino propose aussi les autres catégories (`course_area`).
-
-- Disponibilité et mobilité: nouvelles tables auxiliaires:
-
-  - Temps de travail acceptés (temps-plein, 3/4, 1/2, quelques heures
-    par semaine)
-  - Régimes de travail acceptés (de nuit, de jour, horaire décalé,
-    pauses, WE, pas de réserve)
-    
 - Mettre les questions "Recherche d'emploi" posées au premier bilan
   dans une fixture du dossier démo (dans
   :mod:`lino.modlib.polls.fixtures.checklist`)
@@ -66,6 +46,28 @@ TODO (j'y travaille, pas de questions)
   - Remaques/détail
   - Avez-vous des antécédents judiciaires qui pourraient qui
     pourraient être préjudiciables à votre recherce d'emploi?
+
+- Disponibilité et mobilité: les informations suivantes pourraient
+  venir dans un questionnaire. Oubien faut-il des nouvelles tables
+  auxiliaires?
+
+  - Temps de travail acceptés (temps-plein, 3/4, 1/2, quelques heures
+    par semaine)
+  - Régimes de travail acceptés (de nuit, de jour, horaire décalé,
+    pauses, WE, pas de réserve)
+    
+
+
+TODO (j'y travaille, pas de questions)
+======================================
+
+- :class:`ml.polls.ResponsesByPartner` : ajouter un summary panel avec
+  une énumération "short_name : response dates" et des liens pour
+  entamer une nouvelle interview. Ajouter un champ
+  `polls.Poll.short_name`.
+
+- Insérer dans "Ateliers d'insertion sociale" : dans les choix de
+  l'atelier Lino propose aussi les autres catégories (`course_area`).
 
 - Dans les "Compétences professionnelles" (Onglet "Compétences"),
   remettre la colonne "Valeur" (en liste déroulante que nous
@@ -82,7 +84,6 @@ Questions ouvertes
 
   Le module "description" serait une reprise des données introduites
   dans l’onglet "Configuration à cours à topics"
-
  
 - Comment traduire l'état de dossier "Coached"? "Accompagné"? "En
   intervention"? "Intégré"?
