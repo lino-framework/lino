@@ -14,7 +14,7 @@ DONE (à évaluer après l'installation)
 - Le tableau "Demandes d'intervention" (utilisé pour les interventions
   psychosociales) se trouve maintenant dans l'onglet "Intervenants".
 
-- Dans l'onglet "Interventants", supprimer le champ "Refusal Reason".
+- Dans l'onglet "Intervenants", supprimé le champ "Refusal Reason".
 
 - Comment vous plaît mon idee de parler *d'interviews* et de
   questionnaires?  On pourrait configurer dans Lino des
