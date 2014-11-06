@@ -1,7 +1,5 @@
-:state: active
-
-#136 : Kleiderkammer und Anwesenheitsbescheinigung
-==================================================
+#136 {closed] : Kleiderkammer und Anwesenheitsbescheinigung
+===========================================================
 
 Noch eine Liste von Punkten, die :ref:`gx` und ich am 16.10.2014
 beschlossen haben.

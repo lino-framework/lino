@@ -222,7 +222,9 @@ subclasses for the different `_upload_area`.
                     files.append(edit)
             if ut.wanted and (
                     ut.max_number < 0 or len(files) < ut.max_number):
-                files.append(sar.insert_button())
+                btn = sar.insert_button()
+                if btn is not None:
+                    files.append(btn)
             if len(files) > 0:
                 e = E.p(unicode(ut), ': ', *join_elems(files, ', '))
                 types.append(e)

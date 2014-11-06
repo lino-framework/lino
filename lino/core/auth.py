@@ -184,7 +184,6 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
             #~ raise Exception(
             #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator."
             #~ logger.info("Unknown or inactive username %r.",username)
-            logger.info("20141105 a")
             raise exceptions.PermissionDenied()
 
         return user
