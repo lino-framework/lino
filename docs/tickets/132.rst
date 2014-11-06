@@ -8,7 +8,7 @@
 DONE (à évaluer après l'installation)
 =====================================
 
-- Renommer "Utilisateur responsable" d'un rendez-vous en "Traité par"
+- Renommé "Utilisateur responsable" d'un rendez-vous en "Traité par"
   (pas en "Agent traitant" comme demandé).
 
 - Le tableau "Demandes d'intervention" (utilisé pour les interventions

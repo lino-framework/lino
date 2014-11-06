@@ -85,7 +85,7 @@ sur le site de l’ONEm"
 
 """)
 
-    yield poll(
+    rae = poll(
         yesmaybeno,
         "Recherche active d'emploi", """
 Veuillez sélectionner votre réponse pour chaque question
@@ -98,3 +98,18 @@ Demande à l’entourage?
 Candidature spontanée?
 Avez-vous des antécédents judiciaires qui pourraient qui pourraient être préjudiciables à votre recherce d’emploi?
 """)
+
+    yield rae
+    temps = polls.ChoiceSet(name="Temps de travail")
+    yield temps
+    for s in """
+    temps-plein
+    3/4
+    1/2
+    quelques heures par semaine
+    """.splitlines():
+        s = s.strip()
+        if s:
+            yield polls.Choice(choiceset=temps, name=s)
+    yield polls.Question(text="Temps de travail acceptés", poll=rae,
+                         choiceset=temps)

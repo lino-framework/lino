@@ -1,8 +1,7 @@
-:state: done
 :module: lino_welfare
 
-#104 : Aktive Begleitung weitergeben
-====================================
+#104 [closed] : Aktive Begleitung weitergeben
+=============================================
 
 Beispiel: Ein Klient hat eine Art-60§7-Konvention, die vom 17.02.2014
 bis zum 16.08.2015 läuft und von Mélanie unterschrieben wurde. Und da
