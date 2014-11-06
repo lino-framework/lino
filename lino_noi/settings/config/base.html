@@ -1,0 +1,12 @@
+<html>
+<body>
+{% block header %}
+<h1>{{settings.SITE.title}}</h1>
+{% endblock %}
+{% block main %}
+<div>
+{{settings.SITE.welcome_html()}}.
+</div>
+{% endblock %}
+</body>
+</html>

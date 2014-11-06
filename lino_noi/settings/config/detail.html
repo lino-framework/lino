@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block header %}
+<h1>{{obj}}</h1>
+{% endblock %}
+{% block main %}
+<div>
+{{obj.as_rst()}}
+</div>
+{% endblock %}

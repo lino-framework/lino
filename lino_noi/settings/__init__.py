@@ -41,11 +41,12 @@ class Site(Site):
         yield 'lino.modlib.lists'
 
         yield 'lino.modlib.excerpts'
+        yield 'lino.modlib.outbox'
+        yield 'lino.modlib.uploads'
         yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.smtpd'
 
-        yield 'lino.modlib.uploads'
         yield 'lino.modlib.awesomeuploader'
 
         yield 'lino_noi'
