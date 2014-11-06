@@ -122,9 +122,15 @@ add('90',
     symmetric=True)
 
 
-addable_link_types = (LinkTypes.parent, LinkTypes.adoptive,
-                      LinkTypes.spouse,
-                      LinkTypes.relative, LinkTypes.other)
+addable_link_types = (
+    LinkTypes.parent, LinkTypes.adoptive,
+    LinkTypes.spouse,
+    LinkTypes.partner,
+    LinkTypes.step,
+    LinkTypes.sibling,
+    LinkTypes.cousin,
+    LinkTypes.uncle,
+    LinkTypes.relative, LinkTypes.other)
 
 
 class Link(dd.Model):
