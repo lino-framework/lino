@@ -1,0 +1,23 @@
+===================================
+20141107 (Friday, 07 November 2014)
+===================================
+
+
+I recently had modified :mod:`ml.beid` to add a new `user_group`. This
+change turned out yesterday to cause a regression in :ref:`chat`:
+the "Read eID card" button had disappeared for everybody.
+
+
+Komiya Takeshi wrote a `survey of Sphinx extensions
+<http://sphinxext-survey.readthedocs.org/en/latest/>`_.  This inspired
+me to work a bit on :mod:`atelier.sphinxconf`:
+
+- :mod:`atelier.sphinxconf.blog` no longer requires a
+  `DJANGO_SETTINGS_MODULE` to be defined. This was due to a stupid
+  dependency for the `month_name` function.
+
+- moved two directives from :mod:`atelier.sphinxconf.insert_input`
+  to a separate module :mod:`atelier.sphinxconf.complex_tables`.
+
+One day I should move them out of :mod:`atelier` into a series
+of `sphinxcontrib` projects...
