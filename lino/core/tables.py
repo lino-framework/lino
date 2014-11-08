@@ -188,8 +188,14 @@ class TableRequest(ActionRequest):
                     :self.limit]
         else:
             if self.offset is not None:
+                offset = self.offset
+                if offset == -1:
+                    assert self.limit is not None
+                    num = self.get_total_count()
+                    page_num = int(num / self.limit)
+                    offset = self.limit * page_num
                 self._sliced_data_iterator = self._sliced_data_iterator[
-                    self.offset:]
+                    offset:]
             if self.limit is not None:
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     :self.limit]

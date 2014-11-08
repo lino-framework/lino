@@ -1,11 +1,26 @@
 #143 : Add a `Table.start_at_bottom` option
 ===========================================
 
-Set this to `True` if you want your table to *start at the bottom*.
+Started: 201411.
 
-Unlike reverse ordering, the rows remain in their natural order, but
-we want to see the last page at first when we open a grid on this
-table.
+When displaying e.g. sales invoices, TIM users are used to "see them
+all", but to have the grid "start at the bottom", i.e. to show the
+last page (instead of the first) when it opens.
+
+DONE:
+
+- Added the :attr:`dd.AbstractTable.start_at_bottom` option attribute
+
+TODO:
+
+- the `PagingToolbar.cursor` is set to -1, which leads to a wrong
+  value for `getPageData().activePage`. Add an onload handler on
+  `Lino.GridPanel` or `Lino.GridStore` which sets it to the correct
+  value when it is -1.
+
+- test for side effects
+
+IMPLEMENTATION NOTES
 
 The number of the last page depends on the number of rows per page,
 which is known only when the table has been rendered on screen.
@@ -41,3 +56,8 @@ The `pageSize
 property of the `Ext.PagingToolbar` is dynamically calculated when the
 grid has been rendered.  It is the SQL `limit` clause and the
 `URL_PARAM_LIMIT` of the AJAX request.
+
+Pages referring to this:
+
+.. refstothis::
+

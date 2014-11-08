@@ -75,8 +75,6 @@ The ``Actor`` class
   write all those `@classmethod` decorators.
 
 
-
-
   .. attribute:: required
 
   The permissions required to view this actor.
@@ -572,6 +570,19 @@ The ``AbstractTable`` class
     Note that active fields are active only in a :term:`detail
     window`, not in an :term:`insert window`.  That's because there
     they would lead to the unexpected behaviour of closing the window.
+
+  .. attribute:: start_at_bottom
+
+    Set this to `True` if you want your table to *start at the bottom*.
+    Unlike reverse ordering, the rows remain in their natural order,
+    but when we open a grid on this table, we want it to start on the
+    last page.
+    
+    First use case are :class:`ml.sales.InvoicesByJournal`
+    and
+    :class:`ml.ledger.InvoicesByJournal`.
+
+    New since :doc:`/tickets/143`.
 
 
   .. attribute:: slave_grid_format

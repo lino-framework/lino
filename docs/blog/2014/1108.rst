@@ -1,0 +1,24 @@
+==========================
+Saturday, November 8, 2014
+==========================
+
+Rien n'est simple
+-----------------
+
+:ref:`cosi` failed because it uses
+:mod:`ml.excerpts`
+which in turn depends on 
+:mod:`ml.outbox`
+(which in turn depends on :mod:`ml.uploads`),
+but does not install these dependencies.
+
+The test suite failed to reveal this problem because
+:ref:`cosi.tested.demo` was not being tested.
+
+:ref:`new`: Thte new attribute :attr:`ad.Site.needs_plugins` makes it
+possible to resolve such dependencies transparently.
+
+
+A first success for :doc:`/tickets/143` : the
+:attr:`dd.AbstractTable.start_at_bottom` option starts to work.  Yes,
+this is quite tricky. See the source code.

@@ -3319,9 +3319,10 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
     options.params.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.grid_panel.getId();
     Lino.insert_subst_user(options.params); // since 20121016
       
+    var start = this.grid_panel.start_at_bottom ? -1 : 0;
     if (this.grid_panel.hide_top_toolbar) {
         //~ console.log("20120206 GridStore.load() toolbar is hidden");
-        options.params.{{ext_requests.URL_PARAM_START}} = 0;
+        options.params.{{ext_requests.URL_PARAM_START}} = start;
         if (this.grid_panel.preview_limit) {
           options.params.{{ext_requests.URL_PARAM_LIMIT}} = this.grid_panel.preview_limit;
         }
@@ -3335,8 +3336,11 @@ Lino.GridStore = Ext.extend(Ext.data.ArrayStore,{
       
         this.grid_panel.getTopToolbar().pageSize =  ps;
         if (options.params.{{ext_requests.URL_PARAM_START}} == undefined)
-            options.params.{{ext_requests.URL_PARAM_START}} = this.grid_panel.getTopToolbar().cursor;
+            // if (start != -1) 
+            //     start = this.grid_panel.getTopToolbar().cursor
+            options.params.{{ext_requests.URL_PARAM_START}} = start;
       
+        // console.log("20141108 GridStore.load() ", options.params);
     }
       
     this.grid_panel.add_param_values(options.params);
@@ -3366,6 +3370,7 @@ Lino.GridPanel = Ext.extend(Ext.grid.EditorGridPanel, Lino.MainPanel);
 Lino.GridPanel = Ext.extend(Lino.GridPanel, Lino.PanelMixin);
 Lino.GridPanel = Ext.extend(Lino.GridPanel, {
   quick_search_text : '',
+  start_at_bottom : false,
   is_searching : false,
   disabled_in_insert_window : true,
   clicksToEdit:2,
@@ -4192,6 +4197,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       end: function() {tbar.moveLast(); },
       scope: this
     });
+
   },
   after_delete : function() {
     //~ console.log('Lino.GridPanel.after_delete');

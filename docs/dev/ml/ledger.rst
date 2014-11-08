@@ -33,6 +33,10 @@ Models
 
     A sequence of numbered vouchers.
 
+    .. attribute:: voucher_type
+
+    Pointer to :class:`VoucherTypes`.
+
     .. attribute:: template
 
     See :attr:`PrintableType.template
@@ -96,7 +100,6 @@ Models
     amounts (not e.g. products, quantities, discounts).
 
 
-
 Model mixins
 ============
 
@@ -135,6 +138,15 @@ ChoiceLists
     Return the :class:`VoucherType` for the given model.
 
 .. class:: InvoiceStates
+
+
+Tables
+======
+
+.. class:: InvoicesByJournal
+
+    Shows all invoices of a given journal (whose
+    :attr:`Journal.voucher_type` must be :class:`AccountInvoice`)
 
 
 

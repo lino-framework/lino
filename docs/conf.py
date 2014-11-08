@@ -19,6 +19,7 @@ extensions = []
 from atelier.sphinxconf import configure
 configure(globals(), 'lino.projects.docs.settings')
 
+language = 'en'
 
 extensions += ['atelier.sphinxconf.blog']
 extensions += ['atelier.sphinxconf.complex_tables']

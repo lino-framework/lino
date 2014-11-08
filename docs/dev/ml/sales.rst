@@ -82,8 +82,9 @@ Models
 
 .. class:: Invoice(SalesDocument)
 
-  An invoice is a legal document which describes that something
-  (the invoice items) has been sold to a given partner. 
+  A sales invoice is a legal document which describes that something
+  (the invoice items) has been sold to a given partner. The partner
+  can be either a private person or an organization.
 
   Inherits from :class:`ml.ledger.Voucher`.
 
@@ -107,6 +108,10 @@ has a chance to pay them in time.
 Tables
 ======
 
+.. class:: InvoicesByJournal
+
+    Shows all invoices of a given journal (whose :attr:`voucher_type
+    <ml.ledger.Journal.voucher_type>` must be :class:`Invoice`)
 
 .. class:: ItemsByInvoice
 

@@ -47,6 +47,15 @@ The ``Site`` class
   The :class:`Site` class is what you are going to instantiate and store
   in your :setting:`SITE` setting.
 
+  .. attribute:: needs_plugins
+
+    A list of names of apps that this app depends on.
+    Lino will automatically add these to your
+    `INSTALLED_APPS` if necessary.
+    Note that Lino will add them *after* your app.
+    To have them *before* your app, specify them explicitly.
+
+
   .. attribute:: confdirs
 
     This attribute is available only after site startup.

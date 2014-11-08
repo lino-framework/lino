@@ -1,1 +1,1 @@
-/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/dev/ml/sales.rst:106: WARNING: Explicit markup ends without a blank line; unexpected unindent.

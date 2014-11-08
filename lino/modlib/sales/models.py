@@ -385,6 +385,7 @@ class InvoicesByJournal(Invoices):
     order_by = ["number"]
     master_key = 'journal'  # see django issue 10808
     params_panel_hidden = True
+    start_at_bottom = True
     #master = journals.Journal
     column_names = "number date due_date " \
         "partner " \
