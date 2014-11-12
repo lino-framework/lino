@@ -724,7 +724,7 @@ class Referrable(model.Model):
     def get_by_ref(cls, ref, default=models.NOT_PROVIDED):
         try:
             return cls.objects.get(ref=ref)
-        except cls.DoesNotExist, e:
+        except cls.DoesNotExist:
             if default is models.NOT_PROVIDED:
                 raise cls.DoesNotExist(
                     "No %s with reference %r" % (unicode(cls._meta.verbose_name), ref))

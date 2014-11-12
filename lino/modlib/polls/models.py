@@ -17,8 +17,9 @@ from lino.utils import join_elems
 
 from lino.utils.xmlgen.html import E
 
+from lino.mixins import Referrable
 
-from lino.modlib.polls import Plugin
+config = dd.plugins.polls
 
 #~ def NullBooleanField(*args,**kw):
     #~ kw.setdefault('default', False)
@@ -110,7 +111,7 @@ class ChoicesBySet(Choices):
     master_key = 'choiceset'
 
 
-class Poll(dd.UserAuthored, dd.CreatedModified):
+class Poll(dd.UserAuthored, dd.CreatedModified, Referrable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Poll')
@@ -140,7 +141,7 @@ class Poll(dd.UserAuthored, dd.CreatedModified):
     state = PollStates.field(default=PollStates.draft)
 
     def __unicode__(self):
-        return self.title
+        return self.ref or self.title
 
     def after_ui_save(self, ar):
         if self.questions_to_add:
@@ -334,12 +335,40 @@ class MyResponses(dd.ByUser, Responses):
 
 class ResponsesByPoll(Responses):
     master_key = 'poll'
-    column_names = 'created user state remark *'
+    column_names = 'created user state partner remark *'
 
 
 class ResponsesByPartner(Responses):
     master_key = 'partner'
     column_names = 'created user state remark *'
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        if obj is None:
+            return
+        qs = Response.objects.filter(partner=obj).order_by(
+            'poll__ref', 'modified')
+        polls_with_responses = []
+        current = None
+        for resp in qs:
+            if current is None:
+                current = (resp.poll, [])
+            if resp.poll != current[0]:
+                polls_with_responses.append(current)
+                current = (resp.poll, [])
+            current[1].append(resp)
+        if current is not None:
+            polls_with_responses.append(current)
+            
+        items = []
+        for poll, responses in polls_with_responses:
+            elems = [unicode(poll), ' : ']
+            elems += join_elems(
+                [ar.obj2html(r, dd.fds(r.modified))
+                 for r in responses], sep=', ')
+            items.append(E.li(*elems))
+        return E.div(E.ul(*items))
 
 
 class AnswerChoice(dd.Model):
@@ -548,18 +577,18 @@ class PollResult(Questions):
 
 
 def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("polls", Plugin.verbose_name)
+    m = m.add_menu("polls", config.verbose_name)
     m.add_action('polls.MyPolls')
     m.add_action('polls.MyResponses')
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("polls", Plugin.verbose_name)
+    m = m.add_menu("polls", config.verbose_name)
     m.add_action('polls.ChoiceSets')
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("polls", Plugin.verbose_name)
+    m = m.add_menu("polls", config.verbose_name)
     m.add_action('polls.Polls')
     m.add_action('polls.Questions')
     m.add_action('polls.Choices')
@@ -569,4 +598,4 @@ def setup_explorer_menu(site, ui, profile, m):
     #~ m.add_action('polls.Answers')
 
 
-dd.add_user_group('polls', Plugin.verbose_name)
+dd.add_user_group('polls', config.verbose_name)
