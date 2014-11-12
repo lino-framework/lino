@@ -1,1 +1,0 @@
-/home/luc/hgwork/lino/docs/dev/ml/sales.rst:106: WARNING: Explicit markup ends without a blank line; unexpected unindent.

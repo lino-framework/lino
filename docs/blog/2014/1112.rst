@@ -7,7 +7,7 @@ Somaire pour panneau "Interviews" d'un client
 
 Working on `#3 <https://trac.mylino.org/ticket/3>`_.
 
-The demo database for chatelet now also contains some some responses
+The demo database for chatelet now also contains some responses
 to polls:
 
 - New module :mod:`lino_welfare.modlib.polls` which inherits from
@@ -16,3 +16,7 @@ to polls:
   fixture to 
   :mod:`lino_welfare.modlib.polls.fixtures.jobsearch` because it
   is PCSW specific. 
+
+`polls.Poll` is now Referrable (which added a new field `ref`).
+
+Added the summary panel to `ml.polls.ResponsesByPartner`
