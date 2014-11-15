@@ -258,6 +258,7 @@ class EventGenerator(mixins.UserAuthored):
         for ae in wanted.values():
             self.before_auto_event_save(ae)
             ae.save()
+            ae.update_guests(ar)
         #~ logger.info("20130528 update_auto_events done")
         return count
 
@@ -399,6 +400,9 @@ class EventGenerator(mixins.UserAuthored):
         return rt.modules.cal.Event.objects.filter(
             owner_type=ot, owner_id=self.pk,
             auto_type__isnull=False).order_by('auto_type')
+
+    def suggest_cal_guests(self, event):
+        return []
 
 
 class RecurrenceSet(Started, Ended):

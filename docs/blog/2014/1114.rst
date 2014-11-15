@@ -1,0 +1,45 @@
+=========================
+Friday, November 14, 2014
+=========================
+
+Worked on :ticket:`8`:
+
+- `cal.Event.update_guests` was (until now) designed to *not* generate
+  any guest on virgin events (whose :meth:`is_user_modified` returned
+  `False`).  The idea was to avoid filling the database with lots of
+  useless stuff.  We remove that rule since it turns out that this
+  stuff is not as useless.
+
+- EventStates : `suggested` and `draft` now have `edit_guests=True`.
+
+- AttributeError `'Contract' object has no attribute
+  'suggest_cal_guests'`
+
+
+Encore une question: nous avons dit que Lino doit ajouter "la collègue
+du service social" comme participant d'un rendez-vous d'évaluation.
+Mais comment faut-il dire à Lino qui c'est?
+
+À première vue on pourrait dire: ce sont les deux utilisateurs définis
+dans le contrat (:attr:`user <welfare.isip.ContractBase.user>` et
+:attr:`user_asd <welfare.isip.ContractBase.user_asd>`).  Mais cette
+approche serait trop simple car les intervenants peuvent changer
+pendant la durée d'un contrat.  Lino doit consulter les interventions
+définies pour le bénéficiaire pour chaque rendez-vous généré.
+
+a) Lino va en principe mettre tous les intervenants actifs dans la
+   liste des participants de chaque rendez-vous d'évaluation.
+
+b) Sauf évidemment l'auteur du contrat puisque celui-ci est l'agent
+   traitant. L'agent traitant d'un rendez-vous est toujours considéré
+   comme participant "implicite" qui n'est pas spécifié explicitement
+   dans la liste des participants.
+
+c) Nous ne voulons y voir que les agents sociaux, pas par exemple un
+   médiateur de dettes éventuel. Donc au lieu de les mettre *tous*, il
+   va encore vérifier le *service* en question.  Donc un nouveau champ
+   "role de l'interventant aux évaluations" 
+   :attr:`welfare.pcsw.CoachingType.eval_guestrole`
+   dans la liste
+   `Configuration --> CPAS --> Services`.
+

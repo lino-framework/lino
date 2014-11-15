@@ -413,9 +413,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         #~ print "20130717 add_guests"
         if settings.SITE.loading_from_dump:
             return 0
-        if not self.is_user_modified():
-            ar.info("not is_user_modified")
-            return 0
         if not self.state.edit_guests:
             ar.info("not state.edit_guests")
             return 0

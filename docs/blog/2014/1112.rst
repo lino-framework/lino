@@ -5,7 +5,7 @@ Wednesday, November 12, 2014
 Somaire pour panneau "Interviews" d'un client
 ---------------------------------------------
 
-Working on `#3 <https://trac.mylino.org/ticket/3>`_.
+Working on :ticket:`3`.
 
 The demo database for chatelet now also contains some responses
 to polls:

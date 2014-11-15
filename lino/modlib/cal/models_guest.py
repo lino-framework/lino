@@ -264,7 +264,9 @@ if settings.SITE.is_installed('contacts'):
         @classmethod
         def param_defaults(self, ar, **kw):
             kw = super(MyPresences, self).param_defaults(ar, **kw)
-            kw.update(partner=ar.get_user().partner)
+            u = ar.get_user()
+            if u is not None:
+                kw.update(partner=u.partner)
             #~ kw.update(guest_state=GuestStates.invited)
             #~ kw.update(start_date=settings.SITE.today())
             return kw

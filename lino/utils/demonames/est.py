@@ -2,8 +2,7 @@
 # Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Example usage:
+"""Example usage:
 
 Some fictive Estonians (each couple one male & one female):
 
@@ -31,19 +30,15 @@ Abaja tn (Pirita)
 
 Sources:
 
-The raw data was originally copied from:
-
-- Estonian last names:
+- Estonian last names were originally extracted from
   `www.ekspress.ee <http://www.ekspress.ee/news/paevauudised/eestiuudised/top-500-eesti-koige-levinumad-perekonnanimed.d?id=27677149>`_
-  (I manually added some less frequent names)
+  (I manually added some less frequent names).
 
 - Estonian first names are extracted from my personal database.
 
-- Streets of Tallinn (STREETS_OF_TALLINN) are originally from
-  http://www.eki.ee/knab/tallinn1.htm
-
-
-
+- Streets of Tallinn are originally from `www.eki.ee
+  <http://www.eki.ee/knab/tallinn1.htm>`_ (Peter Päll confirmed
+  permission to use it here on 2014-11-07).
 
 """
 
@@ -2182,7 +2177,7 @@ Eike
 Elis
 Elisa
 Eloliis
-Emily Melissa
+Emily
 Ene
 Ene
 Eneli
@@ -2223,7 +2218,6 @@ Ilona
 Imbi
 Inge
 Jaanika
-Jacqueline
 Jana
 Jana
 Jana
@@ -2258,6 +2252,7 @@ Katrin
 Katrin
 Katrin
 Kelli
+Kendra
 Kerle
 Kersti
 Kersti
@@ -2267,8 +2262,6 @@ Kersti
 Kerstin
 Kertu
 Kirsti
-Kitti
-Kjersti
 Krista
 Krista
 Krista
@@ -2355,6 +2348,7 @@ Marliese
 Martti
 Meeli
 Meeli
+Melissa
 Merike
 Merike
 Merilin
@@ -2512,8 +2506,8 @@ Arvo
 Arvo
 Daniel
 Diego
-Dmitri
 Eerik
+Egert
 Einar
 Elmar
 Enn
@@ -2530,9 +2524,7 @@ Fred
 Frédéric
 Frederik
 Gabriel
-Gordon
 Gunnar
-Guy
 Hannes
 Hannes
 Hannes
@@ -2573,7 +2565,6 @@ Jaanus
 Janari
 Janek
 Jasper
-Jens
 Johannes
 Joonas
 Joosep
@@ -2592,6 +2583,7 @@ Karl Villem
 Karla
 Karlis
 Kaur
+Kenert
 Klaus
 Kristjan
 Kristjan
@@ -2604,7 +2596,6 @@ Lehari
 Lembit
 Leo
 Leo
-Luc
 Maarjo
 Madis
 Madis
@@ -2727,10 +2718,8 @@ Veiko
 Veiko
 Velio
 Vello
-Vesal
 Villu
 Virgo
-Volker
 William
 William
 Ülo
