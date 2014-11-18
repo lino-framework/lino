@@ -62,7 +62,7 @@ Manuel Weidmann
 
 .. _md:
 
-Marc Dobrowski
+Marc Dubrowski
 --------------
 
 .. _mj:
@@ -75,10 +75,23 @@ Mathieu Jacqmin
 Pierre Hembise
 --------------
 
+.. refstothis:: ph
+
+
 .. _rr:
 
 Roger Rauw
 ----------
+
+.. refstothis:: rr
+
+
+.. _sw:
+
+Steve Woellenweber
+------------------
+
+.. refstothis:: sw
 
 
 

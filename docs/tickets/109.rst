@@ -1,5 +1,7 @@
 :state: feedback
 
+.. _commondata:
+
 #109 : Loading city names into a database
 =========================================
 

@@ -279,7 +279,7 @@ def setup(app):
 
 extlinks.update({
     'ticket': (
-        'http://trac.mylino.org/%s', '#'),
+        'https://trac.mylino.org/ticket/%s', '#'),
     'issue': (
         'http://code.google.com/p/lino/issues/detail?id=%s', '# '),
     'checkin': (

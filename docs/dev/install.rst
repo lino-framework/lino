@@ -91,6 +91,7 @@ everything worked well.
      $ pip install 'reportlab==2.7'
      $ pip install pisa
      $ pip install django-iban
+     $ pip install pytidylib
 
   fabric_ is a command-line tool systems to streamline administration tasks. 
 
@@ -118,7 +119,7 @@ Where to go from here
 
 - :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
 
-- Try to install one or several of the out-of-the-box Lino
+- Install one or several of the out-of-the-box Lino
   applications: :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or
   :ref:`logos`
 
