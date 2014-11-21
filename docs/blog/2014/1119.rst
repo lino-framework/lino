@@ -1,0 +1,40 @@
+============================
+Wednesday, November 19, 2014
+============================
+
+Worked on the tickets for :ref:`chat`.
+
+User requests:
+
+- Ajouter un champ texte "Description" par atelier. En créant un
+  nouvel atelier, recopier la description de la série d'ateliers qui
+  sert donc de modèle. Il faut la recopier car elle évolue.
+
+- Enlever module "octrois d'aide".
+
+Changes:
+
+- Documentation and first translations.
+
+- Changes in the :mod:`lino_welfare.modlib.courses` module (the one
+  used in :ref:`dsbe`):
+
+    - PEP 8
+    - courses.Course is no longer `Printable` (admins now must define
+      an `ExcerptType` in order to make it printable).
+
+- Changes in the :mod:`lino.modlib.courses` module (the one used in
+  :ref:`chat`):
+
+    - Added new field `Course.description`. :ref:`needs_mig`
+
+    - Extended the method :meth:`Course.full_clean
+      <dd.Model.full_clean>` to copy the `description` from Line to
+      every new Course.
+
+- The module :mod:`lino_welfare.modlib.aids` is now removable. For
+  this I added a test ``if dd.is_installed('aids')`` in certain
+  fixtures.
+
+Checked in these changes 20141121 although the welfare test suite is
+currently broken due to changes in demo fixtures.

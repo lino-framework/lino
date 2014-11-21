@@ -277,6 +277,7 @@ class Course(cal.Reservation):
         blank=True, null=True)
     #~ room = models.ForeignKey(Room,blank=True,null=True)
     slot = models.ForeignKey(Slot, blank=True, null=True)
+    description = dd.BabelTextField(_("Description"), blank=True)
     remark = models.TextField(_("Remark"), blank=True)
 
     quick_search_fields = ('line__name', 'line__topic__name')
@@ -376,7 +377,12 @@ class Course(cal.Reservation):
         return self.max_places - used_places
 
     def full_clean(self, *args, **kw):
-        if self.line is not None:
+        if self.line_id is not None:
+            if self.id is None:
+                descs = dd.field2kw(self.line, 'description')
+                descs = dd.babelkw('description', **descs)
+                for k, v in descs.items():
+                    setattr(self, k, v)
             if self.every_unit is None:
                 self.every_unit = self.line.every_unit
             if self.every is None:
@@ -488,14 +494,17 @@ class CourseDetail(dd.FormLayout):
     #~ end = "end_date end_time"
     #~ freq = "every every_unit"
     #~ start end freq
-    main = "general courses.EnrolmentsByCourse"
+    main = "general events courses.EnrolmentsByCourse"
     general = dd.Panel("""
     line teacher start_date end_date start_time end_time
     user room #slot workflow_buttons id:8
+    description
+    """, label=_("General"))
+    events = dd.Panel("""
     max_places max_events max_date every_unit every
     monday tuesday wednesday thursday friday saturday sunday
     cal.EventsByController
-    """, label=_("General"))
+    """, label=_("Events"))
     # enrolments = dd.Panel("""
     # OptionsByCourse:20 EnrolmentsByCourse:40
     # """, label=_("Enrolments"))

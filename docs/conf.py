@@ -14,6 +14,7 @@
 import os
 from unipath import Path
 
+extlinks = {}
 extensions = []
 
 from atelier.sphinxconf import configure
@@ -277,9 +278,8 @@ def setup(app):
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 
+extlinks.update(ticket=('https://trac.mylino.org/ticket/%s', '#'))
 extlinks.update({
-    'ticket': (
-        'https://trac.mylino.org/ticket/%s', '#'),
     'issue': (
         'http://code.google.com/p/lino/issues/detail?id=%s', '# '),
     'checkin': (

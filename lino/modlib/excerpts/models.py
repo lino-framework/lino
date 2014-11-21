@@ -708,20 +708,15 @@ def set_excerpts_actions(sender, **kw):
     for atype, ct in etypes:
         if ct is not None:
             m = ct.model_class()
-            an = atype.get_action_name()
-            m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
-            if atype.primary:
-                if atype.certifying:
-                    m.define_action(
-                        clear_printed=ClearPrinted())
-                # reved 20141006 because for pcsw.Client it was irritating:
-                # else:
-                #     m.define_action(
-                #         show_excerpts=dd.ShowSlaveTable(
-                #             'excerpts.ExcerptsByOwner'
-                #         ))
-            # logger.info(
-            #     "20140618 %s.define_action('%s') from %s ", ct, an, atype)
+            if m is not None:  # e.g. database contains types for
+                               # models that existed before but have
+                               # been removed
+                an = atype.get_action_name()
+                m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
+                if atype.primary:
+                    if atype.certifying:
+                        m.define_action(
+                            clear_printed=ClearPrinted())
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass

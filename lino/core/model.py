@@ -210,12 +210,6 @@ class Model(models.Model):
     def disabled_fields(self, ar):
         return set()
 
-    def on_create(self, ar):
-        pass
-
-    def before_ui_save(self, ar):
-        pass
-
     @classmethod
     def define_action(cls, **kw):
         for k, v in kw.items():
@@ -229,6 +223,12 @@ class Model(models.Model):
             if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self, name))
         self.hidden_elements = self.hidden_elements | set(names)
+
+    def on_create(self, ar):
+        pass
+
+    def before_ui_save(self, ar):
+        pass
 
     def after_ui_create(self, ar):
         pass
