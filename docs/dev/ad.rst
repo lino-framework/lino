@@ -235,7 +235,7 @@ The ``Site`` class
             return kw
 
     It is theoretically possible but not recommended to replace an
-    existing app_label by an app with a different app_label. For
+    existing `app_label` by an app with a different `app_label`. For
     example, the following might work but is not recommended::
 
             kw.update(courses='my.modlib.mycourses')

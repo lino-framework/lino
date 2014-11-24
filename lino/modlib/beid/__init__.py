@@ -13,6 +13,7 @@ class Plugin(ad.Plugin):  # was: use_eidreader
     media_name = 'eidreader'
 
     data_collector_dir = None
+    read_only_simulate = False
 
     def get_head_lines(self, site, request):
         if not site.use_java:

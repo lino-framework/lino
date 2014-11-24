@@ -210,19 +210,23 @@ class BaseBeIdReadCardAction(dd.Action):
             return self.goto_client_response(
                 ar, obj, _("Client %s is up-to-date") % unicode(obj))
 
-        msg = unicode(_("Click OK to apply the following changes for %s") %
-                      obj)
+        msg = _("Click OK to apply the following changes for %s") % obj
+        if config.read_only_simulate:
+            msg = "(%s:) %s" % (_("Simulation"), msg)
         msg += ' :<br/>'
         msg += '\n<br/>'.join(diffs)
 
         def yes(ar2):
-            for o in objects:
-                o.full_clean()
-                o.save()
+            msg = _("%s has been saved.") % dd.obj2unicode(obj)
+            if not config.read_only_simulate:
+                for o in objects:
+                    o.full_clean()
+                    o.save()
+            else:
+                msg = "(%s:) %s" % (_("Simulation"), msg)
             watcher.send_update(ar2.request)
             #~ return self.saved_diffs_response(ar,obj)
-            return self.goto_client_response(
-                ar2, obj, _("%s has been saved.") % dd.obj2unicode(obj))
+            return self.goto_client_response(ar2, obj, msg)
 
         def no(ar2):
             return self.goto_client_response(ar2, oldobj)
@@ -294,15 +298,19 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
                 def yes(ar2):
                     obj = holder_model()(**attrs)
                     obj.full_clean()
-                    obj.save()
+                    if not config.read_only_simulate:
+                        obj.save()
                     objects, diffs = obj.get_beid_diffs(attrs)
                     for o in objects:
                         o.full_clean()
-                        o.save()
+                        if not config.read_only_simulate:
+                            o.save()
                     #~ changes.log_create(ar.request,obj)
                     dd.pre_ui_create.send(obj, request=ar2.request)
-                    return self.goto_client_response(
-                        ar2, obj, _("New client %s has been created") % obj)
+                    msg = _("New client %s has been created") % obj
+                    if config.read_only_simulate:
+                        msg = "(%s:) %s" % (_("Simulation"), msg)
+                    return self.goto_client_response(ar2, obj, msg)
                 return ar.confirm(
                     yes,
                     _("Create new client %s : Are you sure?") % full_name)
