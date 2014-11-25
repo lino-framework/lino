@@ -3,4 +3,13 @@ Tuesday, November 25, 2014
 ==========================
 
 Theresia (the reception clerk in the demo databases of :ref:`welfare`)
-did not have permission to see a client's detai.
+did not have permission to see a client's detail.  Current solution is
+to give view permission on `pcsw.Clients` to everybody.
+
+
+Moved the registration of change watchers from 
+:mod:`lino_welfare.models` 
+to
+a :meth:`ad.Site.startup` method
+in :class:`lino_welfare.projects.eupen.settings.Site`.
+Because :ref:`chat` don't need it.
