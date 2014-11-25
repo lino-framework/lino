@@ -318,10 +318,7 @@ class BaseRequest(object):
 
     def goto_instance(self, obj, **kw):
         js = self.instance_handler(obj)
-        if js is None:
-            self.error("No detail handler for %s " % obj)
-        else:
-            kw.update(eval_js=js)
+        kw.update(eval_js=js)
         self.set_response(**kw)
 
     def close_window(self, **kw):
