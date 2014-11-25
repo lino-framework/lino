@@ -1,0 +1,6 @@
+==========================
+Tuesday, November 25, 2014
+==========================
+
+Theresia (the reception clerk in the demo databases of :ref:`welfare`)
+did not have permission to see a client's detai.

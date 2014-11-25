@@ -318,7 +318,10 @@ class BaseRequest(object):
 
     def goto_instance(self, obj, **kw):
         js = self.instance_handler(obj)
-        kw.update(eval_js=js)
+        if js is None:
+            self.error("No detail handler for %s " % obj)
+        else:
+            kw.update(eval_js=js)
         self.set_response(**kw)
 
     def close_window(self, **kw):
@@ -755,9 +758,10 @@ class ActorRequest(BaseRequest):
            or self.actor.detail_action is None:
            # or self.requesting_panel is None:
             return super(ActorRequest, self).goto_instance(obj, **kw)
+        detail_action = obj.get_detail_action(self)
         # self.set_response(actor_url=self.actor.actor_url())
         self.set_response(
-            detail_handler_name=self.actor.detail_action.full_name())
+            detail_handler_name=detail_action.full_name())
         if self.actor.handle_uploaded_files is not None:
             self.set_response(record_id=obj.pk)
         else:

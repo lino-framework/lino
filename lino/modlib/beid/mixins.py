@@ -37,6 +37,12 @@ config = dd.plugins.beid
 dd.add_user_group('beid', config.verbose_name)
 
 
+def simulate_wrap(msg):
+    if config.read_only_simulate:
+        msg = "(%s:) %s" % (unicode(_("Simulation")), msg)
+    return msg
+
+
 class BeIdCardTypes(dd.ChoiceList):
     "See :class:`ml.beid.BeIdCardTypes`."
 
@@ -211,8 +217,7 @@ class BaseBeIdReadCardAction(dd.Action):
                 ar, obj, _("Client %s is up-to-date") % unicode(obj))
 
         msg = _("Click OK to apply the following changes for %s") % obj
-        if config.read_only_simulate:
-            msg = "(%s:) %s" % (_("Simulation"), msg)
+        msg = simulate_wrap(msg)
         msg += ' :<br/>'
         msg += '\n<br/>'.join(diffs)
 
@@ -222,10 +227,8 @@ class BaseBeIdReadCardAction(dd.Action):
                 for o in objects:
                     o.full_clean()
                     o.save()
-            else:
-                msg = "(%s:) %s" % (_("Simulation"), msg)
-            watcher.send_update(ar2.request)
-            #~ return self.saved_diffs_response(ar,obj)
+                watcher.send_update(ar2.request)
+            msg = simulate_wrap(msg)
             return self.goto_client_response(ar2, obj, msg)
 
         def no(ar2):
@@ -297,23 +300,23 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
             if pqs.count() == 0:
                 def yes(ar2):
                     obj = holder_model()(**attrs)
-                    obj.full_clean()
-                    if not config.read_only_simulate:
-                        obj.save()
-                    objects, diffs = obj.get_beid_diffs(attrs)
-                    for o in objects:
-                        o.full_clean()
-                        if not config.read_only_simulate:
-                            o.save()
-                    #~ changes.log_create(ar.request,obj)
-                    dd.pre_ui_create.send(obj, request=ar2.request)
                     msg = _("New client %s has been created") % obj
                     if config.read_only_simulate:
-                        msg = "(%s:) %s" % (_("Simulation"), msg)
-                    return self.goto_client_response(ar2, obj, msg)
-                return ar.confirm(
-                    yes,
-                    _("Create new client %s : Are you sure?") % full_name)
+                        msg = simulate_wrap(msg)
+                        return ar2.warning(msg)
+                    else:
+                        obj.full_clean()
+                        obj.save()
+                        objects, diffs = obj.get_beid_diffs(attrs)
+                        for o in objects:
+                            o.full_clean()
+                            o.save()
+                        #~ changes.log_create(ar.request,obj)
+                        dd.pre_ui_create.send(obj, request=ar2.request)
+                        return self.goto_client_response(ar2, obj, msg)
+                msg = _("Create new client %s : Are you sure?") % full_name
+                msg = simulate_wrap(msg)
+                return ar.confirm(yes, msg)
             elif pqs.count() == 1:
                 return ar.error(
                     self.sorry_msg % _(
