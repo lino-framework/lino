@@ -18,3 +18,10 @@ A Chooser is now callable. This allowed us to write the following code::
 Until now it was necessary to write::
 
         qs = self.pharmacy_choices.get_choices(granting=self.granting)
+
+
+Checkin at 11:47 because it seems to work (but test suite is probably
+broken since I changed :mod:`lino_welfare.modlib.aids.fixtures.demo`
+
+
+Repairing the test suite was again quite some benedictine work.
