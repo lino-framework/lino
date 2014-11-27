@@ -1631,7 +1631,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
 
 Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
-    // console.log('20140504 Lino.handle_action_result()', result);
+    // console.log('20141127 Lino.handle_action_result()', result);
     
     // if (panel instanceof Lino.GridPanel) {
     //     gridmode = true;
@@ -2144,8 +2144,8 @@ Lino.do_when_visible = function(cmp,todo) {
 
 /*
 */
-Lino.do_on_current_record = function(panel,fn,phantom_fn) {
-  console.log('20140930 do_on_current_record', arguments);
+Lino.do_on_current_record = function(panel, fn, phantom_fn) {
+  // console.log('20140930 do_on_current_record', arguments);
   var rec = panel.get_current_record();
   if (rec == undefined) {
     Lino.notify("There's no selected record.");

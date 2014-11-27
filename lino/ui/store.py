@@ -986,12 +986,13 @@ class Store(BaseStore):
                 """
                 Django's Field.__cmp__() does::
                 
-                  return cmp(self.creation_counter, other.creation_counter) 
+                  return cmp(self.creation_counter, other.creation_counter)
                   
-                which causes an exception when trying to compare a field with an object of other type.
+                which causes an exception when trying to compare a field
+                with an object of other type.
                 """
-                #~ if type(fld.field) == type(self.pk) and fld.field == self.pk:
-                if (fld.field.__class__ is self.pk.__class__) and fld.field == self.pk:
+                if (fld.field.__class__ is self.pk.__class__) \
+                   and fld.field == self.pk:
                     #~ self.pk = fld.field
                     found = True
                     break
@@ -1008,22 +1009,14 @@ class Store(BaseStore):
         if rh.actor.editable:  # condition added 20131017
 
             addfield(DisabledFieldsStoreField(self))
+
         addfield(DisabledActionsStoreField(self))
 
-            #~ sf = DisabledFieldsStoreField(self)
-            #~ self.fields.append(sf)
-            #~ self.list_fields.append(sf)
-            #~ self.detail_fields.append(sf)
-        #~ if rh.report.disable_editing is not None:
-        #~ if rh.report.submit_action is not None:
         if rh.actor.editable:
             addfield(DisableEditingStoreField(self))
 
         if rh.actor.get_row_classes is not None:
             addfield(RowClassStoreField(self))
-
-        #~ self.fields.append(PropertiesStoreField)
-        #~ self.fields_dict = dict([(f.field.name,f) for f in self.fields])
 
         # virtual fields must come last so that Store.form2obj()
         # processes "real" fields first.
@@ -1032,8 +1025,6 @@ class Store(BaseStore):
         ] + [
             f for f in self.all_fields if isinstance(f, VirtStoreField)
         ]
-        #~ if str(self.report) == "cal.PanelEvents":
-            #~ logger.info("20120119 %s",self.all_fields)
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
@@ -1053,7 +1044,6 @@ class Store(BaseStore):
                     pk_found = True
                     if self.pk is None:
                         self.pk = df
-                #~ fields.add(fld)
 
         if self.pk is None:
             self.pk = self.actor.get_pk_field()

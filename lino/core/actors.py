@@ -382,7 +382,7 @@ class Actor(actions.Parametrizable):
     def get_pk_field(self):
         """
         Return the Django field object used to represent the primary key
-        when filling selected_pks
+        when filling `selected_pks`.
         """
         return None
 

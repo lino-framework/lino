@@ -36,3 +36,28 @@ appending directly to
 :attr:`env.demo_databases <atelier.env.demo_databases>`.
 Checkin at 15:40.
 
+
+And then I solved :ticket:`15`. This was subtle.  
+
+The :class:`welfare.aids.ConfirmationsByGranting` table is a
+`dd.VirtualTable` because :class:`welfare.aids.Confirmation` is an
+abstract model.  Like any virtual table it has neither a print action
+nor a detail action.
+
+But OTOH it operates on normal database objects, and their concrete
+model is known at runtime via the :class:`master_instance`.
+
+That's why it was difficult to accept that double-clicking on a row
+did not open the corresponding detail or that you could not print a
+confirmation it by right-clicking on a row.
+
+In order to have a detail and a print function, we must turn it into a
+"pseudo-virtual" table: We define two methods :meth:`get_pk_field
+<lino.core.actors.Actor.get_pk_field>` and :meth:`get_row_by_pk
+<lino.core.actors.Actor.get_row_by_pk>` needed by the data store to
+identify the selected row.
+
+I also learned that the :func:`dd.action` decorator is allowed only on
+a model, it doesn't work on a table because Lino fails to adapt the
+signature of the wrapped function.
+

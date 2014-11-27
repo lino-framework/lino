@@ -278,7 +278,7 @@ def setup(app):
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
 
-extlinks.update(ticket=('https://trac.lino-framework.org/ticket/%s', '#'))
+extlinks.update(ticket=('http://trac.lino-framework.org/ticket/%s', '#'))
 extlinks.update({
     'issue': (
         'http://code.google.com/p/lino/issues/detail?id=%s', '# '),
