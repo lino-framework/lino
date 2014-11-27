@@ -1,45 +1,49 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2013 Luc Saffre
+# Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :mod:`lino.utils.ranges` module contains utility methods 
-for working with "ranges".
+"""The :mod:`lino.utils.ranges` module contains utility methods for
+working with "ranges".
 
-A range is basically a tuple of two values `a` and `b`,
-called also limits,
-who indicate the start and the end of the range.
+This docstring is part of the Lino test suite. To test only this
+module, run::
+
+  $ python setup.py test -s tests.UtilsTests.test_ranges
+
+A range is basically a tuple of two values `a` and `b`, called also
+limits, who indicate the start and the end of the range.
 
 An open range is a range that has at least one limit set to `None`.
 
 
->>> constrain(-1,2,5)
-2
->>> constrain(1,2,5)
-2
->>> constrain(0,2,5)
-2
->>> constrain(2,2,5)
-2
->>> constrain(3,2,5)
-3
->>> constrain(5,2,5)
-5
->>> constrain(6,2,5)
-5
->>> constrain(10,2,5)
-5
-
-
-:func:`overlaps` (test whether two ranges overlap)
---------------------------------------------------
-
 
 """
-from north import dbutils
 
 
 def constrain(value, lowest, highest):
+    """Test whether `value` is within the range `(highest, lowest)`.
+    Return `value` if it is inside the range, otherwise return
+    `highest` if the value is *above* the range or `lowest` it the value
+    is *below* the range.
+
+    >>> constrain(-1, 2, 5)
+    2
+    >>> constrain(1, 2, 5)
+    2
+    >>> constrain(0, 2, 5)
+    2
+    >>> constrain(2, 2, 5)
+    2
+    >>> constrain(3, 2, 5)
+    3
+    >>> constrain(5, 2, 5)
+    5
+    >>> constrain(6, 2, 5)
+    5
+    >>> constrain(10, 2, 5)
+    5
+
+    """
     return min(highest, max(value, lowest))
 
 
@@ -47,18 +51,22 @@ def encompass(a, b):
     """
     Test whether range `a` encompasses (is wider than) range `b`.
     
-    >>> encompass((1,4),(2,3))
+    >>> encompass((1, 4), (2, 3))
     True
-    >>> encompass((1,3),(2,4))
+    >>> encompass((1, 3), (2, 4))
     False
-    >>> encompass((None,None),(1,4))
+    >>> encompass((None, None), (1, 4))
     True
-    >>> encompass((1,None),(1,4))
+    >>> encompass((1, None), (1, 4))
     True
-    >>> encompass((2,None),(1,None))
+    >>> encompass((2, None), (1, None))
     False
-    >>> encompass((1,None),(2,None))
+    >>> encompass((1, None), (2, None))
     True
+    >>> encompass((1, 4), (1, 4))
+    True
+    >>> encompass((1, 2), (1, None))
+    False
     """
     if a[0] is None:
         if a[1] is None:
@@ -98,26 +106,26 @@ def overlap2(a, b):
 
 
 def overlap(a1, a2, b1, b2):
-    """
-    Test whether two value ranges overlap.
+    """Test whether two value ranges overlap.
     
-    This function is typically used with date values, but it also 
-    works with integers or other comparable values.
-    The following examples use integer values to be more readable.
+    This function is typically used with date values, but it also
+    works with integers or other comparable values.  The following
+    examples use integer values to be more readable.
 
-    Unlike the test presented at <http://bytes.com/topic/python/answers/457949-determing-whether-two-ranges-overlap>,
-    this works also with "open" ranges 
-    (the open end being indicated by a `None` value).
+    Unlike the test presented at
+    <http://bytes.com/topic/python/answers/457949-determing-whether-two-ranges-overlap>,
+    this works also with "open" ranges (the open end being indicated
+    by a `None` value).
     
     Types of constellations::
     
-      -   o---o  o---o             
+      -   o---o  o---o
       -   o---o  o--->
       -   <---o  o---o
       -   <---o  o--->
                 
       -   o------------->
-                o---o                
+                o---o
                 
       -   o---o
             o---o
@@ -168,6 +176,7 @@ def overlap(a1, a2, b1, b2):
     False
     >>> overlap(2,3,1,2)
     False
+
     """
 
     #~ return a2 > b1 and a1 < b2

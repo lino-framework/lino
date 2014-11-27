@@ -14,8 +14,14 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
+from north.dbutils import fds
+
 from lino.core.model import Model
 from lino.utils.ranges import isrange
+
+
+def rangefmt(r):
+    return fds(r[0]) + '...' + fds(r[1])
 
 
 class DatePeriod(Model):
@@ -40,4 +46,5 @@ end are date fields.
             raise ValidationError(_("Date period ends before it started."))
         super(DatePeriod, self).full_clean(*args, **kw)
 
-
+    def get_period(self):
+        return (self.start_date, self.end_date)

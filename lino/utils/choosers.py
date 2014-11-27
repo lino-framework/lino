@@ -146,8 +146,16 @@ class Chooser(FieldChooser):
                 #~ return vf
         #~ return self.model._meta.get_field(name)
 
+    def __call__(self, *args, **kw):
+        for i, v in enumerate(args):
+            kw[self.context_fields[i]] = v
+        return self.get_choices(**kw)
+
     def get_choices(self, **context):  # 20120918b
-        "Return a list of choices for this chooser, using keyword parameters as context."
+        """Return a list of choices for this chooser, using keyword parameters
+        as context.
+
+        """
         args = []
         for varname in self.context_params:
             args.append(context.get(varname, None))

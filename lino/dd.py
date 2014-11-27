@@ -347,7 +347,6 @@ def fds(d):
 # backward compatibility
 dtos = fds
 from north.dbutils import fdl as dtosl
-#~ from north.dbutils import dtos as dtos_
 
 babelitem = settings.SITE.babelitem
 field2kw = settings.SITE.field2kw
