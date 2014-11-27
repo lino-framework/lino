@@ -2,7 +2,9 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This defines :class:`dd.Actor` and related classes.
+"""This defines :class:`Actor` and related classes.
+
+See :doc:`/dev/actors`.
 
 """
 
@@ -294,39 +296,178 @@ class ActorMetaClass(type):
 
 
 class Actor(actions.Parametrizable):
+    """
+    The base class for all actors.  It is not used directly but
+    inherited by :class:`lino.core.tables.AbstractTable`,
+    :class:`lino.core.choicelists.ChoiceList` and
+    :class:`lino.core.frames.Frame`.
 
+    """
     __metaclass__ = ActorMetaClass
-
-    _layout_class = layouts.ParamsLayout
-
-    stay_in_grid = False
-
-    sort_index = None
-    """
-    The sort_index to be used for a ShowSlaveTable action on this actor.
-    """
-
-    icon_name = None
-    """
-    The icon_name to be used for a ShowSlaveTable action on this actor.
-    """
-
-    hidden_elements = frozenset()
-
-    detail_html_template = 'bootstrap3/detail.html'
-    list_html_template = 'bootstrap3/table.html'
 
     model = None
 
+    app_label = None
+    """
+    Specify this if you want to "override" an existing actor.
+    
+    The default value is deduced from the module where the subclass is
+    defined.
+    
+    Note that this attribute is not inherited from base classes.
+    
+    :func:`lino.core.table.table_factory` also uses this.
+    """
+
+    master_key = None
+    master = None
+    master_field = None
+
+    _layout_class = layouts.ParamsLayout
+    stay_in_grid = False
+
+    sort_index = None
+    """The :attr:`lino.core.actions.Action.sort_index` to be used for a
+    :class:`lino.core.actions.ShowSlaveTable` action on this actor.
+
+    """
+
+    icon_name = None
+    """The :attr:`lino.core.actions.Action.icon_name` to be used for a
+    :class:`lino.core.actions.ShowSlaveTable` action on this actor.
+
+    """
+
+    hidden_elements = frozenset()
+    detail_html_template = 'bootstrap3/detail.html'
+    list_html_template = 'bootstrap3/table.html'
+
+    get_welcome_messages = None
+    get_row_classes = None
+    window_size = None
+    """
+    Set this to a tuple of (height, width) in pixels to have this
+    actor display in a modal non-maximized window.
+    """
+
+    default_list_action_name = 'grid'
+    default_elem_action_name = 'detail'
+
+    debug_permissions = False
+    """
+    Whether to log :ref:`debug_permissions` for this actor.
+    """
+
+    required = settings.SITE.get_default_required()
+    update_required = dict()
+    delete_required = dict()
+    editable = None
+
+    hide_sums = False
+    """
+    Set this to True if you don't want Lino to display sums in a table
+    view.
+    """
+
+    insert_layout_width = 60
+    """
+    When specifying an :attr:`insert_layout` using a simple a multline
+    string, then Lino will instantiate a FormPanel with this width.
+    """
+
+    workflow_state_field = None
+    """
+    The name of the field that contains the workflow state of an
+    object.  Subclasses may override this.
+    """
+
+    workflow_owner_field = None
+    """
+    The name of the field that contains the user who is considered to
+    own an object when `Rule.owned_only` is checked.
+    """
+
+    hide_window_title = False
+    """
+    This is set to `True` e.h. in home pages
+    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
+
+    """
+
+    allow_create = True
+    """
+    If this is False, then then Actor won't have no insert_action.
+    """
+
+    hide_top_toolbar = False
+    """
+    Whether a Detail Window should have navigation buttons, a "New"
+    and a "Delete" buttons.  In ExtJS UI also influences the title of
+    a Detail Window to specify only the current element without
+    prefixing the Tables's title.
+    
+    This option is True in
+    :class:`lino.models.SiteConfigs`,
+    :class:`lino_welfare.pcsw.models.Home`,
+    :class:`lino.modlib.users.models.Mysettings`.
+
+    """
+    _label = None
+    _editable = None
+    _known_values = {}
+
+    title = None
+    """
+    The text to appear e.g. as window title when the actor's default
+    action has been called.  If this is not set, Lino will use the
+    :attr:`label` as title.
+    """
+
+    label = None
+    """
+    The text to appear e.g. on a button that will call the default
+    action of an actor.  This attribute is *not* inherited to
+    subclasses.  For :class:`dd.Table` subclasses that don't have a
+    label, Lino will call :meth:`get_actor_label`.
+    """
+
+    default_action = None
+    actor_id = None
+
+    detail_layout = None
+    """
+    Define the form layout to use for the detail window.  Actors
+    without :attr:`detail_layout` don't have a show_detail action.
+    """
+
+    insert_layout = None
+    """
+    Define the form layout to use for the insert window.  If there's a
+    :attr:`detail_layout` but no :attr:`insert_layout`, Lino will use
+    :attr:`detail_layout` for the insert window.
+    """
+
+    detail_template = None    # deprecated: use insert_layout instead
+    insert_template = None    # deprecated: use detail_layout instead
+    help_text = None
+    detail_action = None
+    update_action = None
+    insert_action = None
+    # create_action = None
+    delete_action = None
+    _handle_class = None  # For internal use.
+    get_handle_name = None
+
+    abstract = False
+    """
+    Set this to `True` to prevent Lino from generating useless
+    JavaScript if this is just an abstract base class to be inherited
+    by other actors.
+    """
+
+
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
-        """
-        Actor-level hook for overriding the formating when rendering
-        this table as plain html.
-
-        For example :class:`lino.modlib.cal.models.Events`
-        overrides this.
-        """
         pass
 
     @classmethod
@@ -337,10 +478,6 @@ class Actor(actions.Parametrizable):
     def get_chooser_for_field(cls, fieldname):
         d = getattr(cls, '_choosers_dict', {})
         return d.get(fieldname, None)
-
-    # @classmethod
-    # def get_chooser_model(self):
-    #     return self
 
     @classmethod
     def register_class_attribute(cls, k, v):
@@ -358,25 +495,6 @@ class Actor(actions.Parametrizable):
         # called from auth.add_user_group()
         setattr(cls, name, fld)
         cls.register_class_attribute(name, fld)
-
-    get_welcome_messages = None
-    get_row_classes = None
-    app_label = None
-    window_size = None
-    default_list_action_name = 'grid'
-    default_elem_action_name = 'detail'
-    debug_permissions = False
-    required = settings.SITE.get_default_required()
-    update_required = dict()
-    delete_required = dict()
-    master_key = None
-    master = None
-    master_field = None
-    editable = None
-    hide_sums = False
-    insert_layout_width = 60
-    workflow_state_field = None
-    workflow_owner_field = None
 
     @classmethod
     def get_pk_field(self):
@@ -397,29 +515,6 @@ class Actor(actions.Parametrizable):
     def disabled_fields(cls, obj, ar):
         return set()
 
-    hide_window_title = False
-    allow_create = True
-    hide_top_toolbar = False
-    _label = None
-    _editable = None
-    _known_values = {}
-    title = None
-    label = None
-    default_action = None
-    actor_id = None
-    detail_layout = None
-    insert_layout = None
-    detail_template = None    # deprecated: use insert_layout instead
-    insert_template = None    # deprecated: use detail_layout instead
-    help_text = None
-    detail_action = None
-    update_action = None
-    insert_action = None
-    # create_action = None
-    delete_action = None
-    _handle_class = None  # For internal use.
-    get_handle_name = None
-
     @classmethod
     def get_request_handle(self, ar):
         # don't override
@@ -434,8 +529,6 @@ class Actor(actions.Parametrizable):
     @classmethod
     def make_params_layout_handle(self, ui):
         return actions.make_params_layout_handle(self, ui)
-
-    abstract = False
 
     @classmethod
     def is_abstract(cls):
@@ -790,7 +883,7 @@ class Actor(actions.Parametrizable):
         # disabled because UsersWithClients defines virtual fields on
         # connection_created
         if False:
-            if cls.virtual_fields.has_key(name):
+            if name in cls.virtual_fields:
                 raise Exception("Duplicate add_virtual_field() %s.%s" %
                                 (cls, name))
         cls.virtual_fields[name] = vf
@@ -997,4 +1090,3 @@ class Actor(actions.Parametrizable):
         ar = ar.spawn(self, master_instance=obj)
         # ar = ar.spawn(self, master_instance=ar.master_instance)
         return qs2summary(ar, ar.data_iterator, E.br)
-

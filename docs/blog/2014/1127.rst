@@ -4,6 +4,8 @@ Thursday, November 27, 2014
 
 More updates to the community docs.
 
+Solved two tickets
+==================
 
 Worked on :ticket:`17` and :ticket:`18`
 
@@ -24,9 +26,11 @@ Checkin with these changes at 11:47 because it seems to work.  But the
 test suite is probably broken since I changed
 :mod:`lino_welfare.modlib.aids.fixtures.demo`.
 
-
 Repairing the test suite was again quite some benedictine work.
 Checkin at 15:00.
+
+`fabfile.py` imported twice
+===========================
 
 I discovered that :mod:`atelier` imports the :xfile:`fabfile.py`
 twice, which caused duplicate entries in
@@ -36,6 +40,8 @@ appending directly to
 :attr:`env.demo_databases <atelier.env.demo_databases>`.
 Checkin at 15:40.
 
+Pseudo-virtual tables
+=====================
 
 And then I solved :ticket:`15`. This was subtle.  
 
@@ -52,12 +58,37 @@ did not open the corresponding detail or that you could not print a
 confirmation it by right-clicking on a row.
 
 In order to have a detail and a print function, we must turn it into a
-"pseudo-virtual" table: We define two methods :meth:`get_pk_field
-<lino.core.actors.Actor.get_pk_field>` and :meth:`get_row_by_pk
-<lino.core.actors.Actor.get_row_by_pk>` needed by the data store to
-identify the selected row.
+"pseudo-virtual" table: We define two methods
+:meth:`lino.core.actors.Actor.get_pk_field` and
+:meth:`lino.core.actors.Actor.get_row_by_pk` needed by the data store
+to identify the selected row.
 
 I also learned that the :func:`dd.action` decorator is allowed only on
 a model, it doesn't work on a table because Lino fails to adapt the
 signature of the wrapped function.
 
+Checkin at 17:12.
+
+`autodoc` : to use or not to use?
+=================================
+
+After our discussion in :doc:`/tickets/134` I continue to struggle
+with the question of where to use `autodoc` and where not.
+
+There are two modes of documenting an API: an "overview" mode and a
+"reference" mode. Both are useful and necessary.  "Overview mode" is
+prosaic and must not depend on the internal structures.  "Reference
+mode" is what autodoc generates.  But how to connect them?  Which
+information to put to the one and which to the other?
+
+One thing seems clear: the reference documentation about
+:class:`lino.core.actors.Actor` should be generated using docstrings
+and autodoc.  So I started to move some documentation from the
+manually authored page at :doc:`/dev/actors` back to docstrings in the
+source code.
+
+Another thing seems clear: the reference documentation of everything
+below :mod:`lino.modlib` must be written manually because (1) a same
+model can have different implementing classes, (2) we want to document
+multiple possible Lino applications in a same doctree (but there can
+be only one `DJANGO_SETTINGS_MODULE` per `autodoc` run).

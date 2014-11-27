@@ -64,12 +64,18 @@ class Permittable(object):
 
     """Base class for objects that have view permissions control.
 
-    :class:`dd.Actor` would be a subclass, but is a special case since
-    actors never get instantiated.
+    :class:`lino.core.actors.Actor` would be a subclass, but is a
+    special case since actors never get instantiated.
 
     """
 
     required = {}
+    """
+    The permissions required to view this actor.
+    A dict with permission requirements.
+    See :func:`lino.core.perms.make_permission_handler`.
+    """
+
 
     # internally needed for make_permission_handler
     workflow_state_field = None
@@ -205,7 +211,16 @@ class Parametrizable(object):
     master_field = None
 
     parameters = None
+    """
+    Either None or a dict defining the "parameters" of that actor.
+    TODO: write documentation.
+    """
+
     params_layout = None
+    """
+    The layout to be used for the parameter panel.
+    """
+
     params_panel_hidden = False
 
     _layout_class = NotImplementedError

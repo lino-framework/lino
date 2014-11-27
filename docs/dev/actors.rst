@@ -27,17 +27,17 @@ GridPanel or on a printable document as a table.
 Besides *model-based tables* (who display data coming from the
 database), Lino has *virtual tables*.
 
-:class:`AbstractTable` is the base class for 
-:class:`Table`  and
-:class:`VirtualTable` 
+:class:`lino.core.tables.AbstractTable` is the base class for 
+:class:`lino.core.tables.Table`  and
+:class:`lino.core.tables.VirtualTable` 
 
 The **columns** of a table are defined by attributes like 
-:attr:`column_names <AbstractTable.column_names>`.
+:attr:`column_names <lino.core.tables.AbstractTable.column_names>`.
 
 The **rows** of a table are defined by a method :meth:`get_data_rows
-<AbstractTable.get_data_rows>` which, in a model-based table has a
-default implementation based on the :attr:`model <Table.model>`
-attribute.
+<lino.core.tables.AbstractTable.get_data_rows>` which, in a
+model-based table has a default implementation based on the
+:attr:`model <lino.core.tables.Table.model>` attribute.
 
 Not all actors are tables. Another type of actors are *frames* which
 display some data in some other form. One such frame actor is the
@@ -50,6 +50,37 @@ See also
 - :doc:`/tutorials/tables/index`
 - :doc:`/tutorials/actors/index`
 
+The application namespace
+=========================
+
+When we say that actors are "globally known unique objects", then we
+refer to what we call the **application namespace**.
+
+Actually the application namespace is split across two places:
+:data:`dd.plugins`
+:data:`rt.modules`
+
+
+
+Actors are classes, not instances
+=================================
+
+Actors are never instantiated, we use only the class objects.  Lino
+will automatically register each subclass of :class:`Actor` as an
+actor.
+
+The main reason for this design choice is that it leads to more
+readable application code.  But it has some disadvantages:
+
+- Every method of an actor must have a `@classmethod` decorator.
+
+- Concepts like `Parametrizable` are common to actions and actors, but
+  need a "class method" and an "instance method" version of their
+  logic.
+
+We might decide one day that Lino creates an automatic singleton
+instance for each Actor at startup.
+
 
 
 The ``Actor`` class
@@ -57,142 +88,42 @@ The ``Actor`` class
 
 .. class:: Actor
 
-  This is the base class for all actors.  It is not used directly but
-  inherited by :class:`AbstractTable`, :class:`ChoiceList` and
-  :class:`Frame`.
-
-  When we say "a globally known unique object", then we refer to the
-  global namespace in :data:`rt.modules`.
-
-  **Actors are classes, not instances** : Actors are never instantiated,
-  we use only the class objects.  Lino will automatically register each
-  subclass of :class:`Actor` as an actor.
-
-  The main reason for this design choice was that it leads to more
-  readable application code. This is not an absolute decision,
-  however. We might decide one day that Lino creates an automatic
-  singleton instance for each Actor at startup. That would avoid us to
-  write all those `@classmethod` decorators.
-
-
   .. attribute:: required
-
-  The permissions required to view this actor.
-  A dict with permission requirements.
-  See :func:`lino.core.perms.make_permission_handler`.
-
   .. attribute:: update_required
   .. attribute:: delete_required
-
   .. attribute:: parameters
-
-  Either None or a dict defining the "parameters" of that actor.
-  TODO: write documentation.
-
   .. attribute:: params_layout
-
-  The layout to be used for the parameter panel.
-
   .. attribute:: detail_layout
-
-    Define the form layout to use for the detail window.  Actors
-    without :attr:`detail_layout` don't have a show_detail action.
-
   .. attribute:: insert_layout
-
-    Define the form layout to use for the insert window.  If there's a
-    :attr:`detail_layout` but no :attr:`insert_layout`, Lino will use
-    :attr:`detail_layout` for the insert window.
-    
   .. attribute:: title
-
-    The text to appear e.g. as window title when the actor's default
-    action has been called.  If this is not set, Lino will use the
-    :attr:`label` as title.
-
   .. attribute:: hide_top_toolbar
-
-    Whether a Detail Window should have navigation buttons, a "New"
-    and a "Delete" buttons.  In ExtJS UI also influences the title of
-    a Detail Window to specify only the current element without
-    prefixing the Tables's title.
-    
-    This option is True in 
-    :class:`lino.models.SiteConfigs`,
-    :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.models.Mysettings`.
-
-
-
   .. attribute:: debug_permissions
-
-    Whether to log :ref:`debug_permissions` for this actor.
-
-
   .. attribute:: label
-
-    The text to appear e.g. on a button that will call the default
-    action of an actor.  This attribute is *not* inherited to
-    subclasses.  For :class:`dd.Table` subclasses that don't have a
-    label, Lino will call :meth:`get_actor_label`.
-
   .. attribute:: insert_layout_width
-
-    When specifying an :attr:`insert_layout` using a simple a multline
-    string, then Lino will instantiate a FormPanel with this width.
-
   .. attribute:: workflow_state_field
-
-    The name of the field that contains the workflow state of an
-    object.  Subclasses may override this.
-
   .. attribute:: workflow_owner_field
-
-    The name of the field that contains the user who is considered to
-    own an object when `Rule.owned_only` is checked.
-
   .. attribute:: hide_sums
-
   .. attribute:: hide_window_title
-
-    This is set to `True` e.h. in home pages
-    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
-
-
-    Set this to True if you don't want Lino to display sums in a table
-    view.
-
   .. attribute:: window_size
-
-    Set this to a tuple of (height, width) in pixels to have this
-    actor display in a modal non-maximized window.
-
   .. attribute:: app_label
-
-    Specify this if you want to "override" an existing actor.
-    
-    The default value is deduced from the module where the subclass is
-    defined.
-    
-    Note that this attribute is not inherited from base classes.
-    
-    :func:`lino.core.table.table_factory` also uses this.
-
-
   .. attribute:: abstract
-
-    Set this to `True` to prevent Lino from generating useless
-    JavaScript if this is just an abstract base class to be inherited
-    by other actors.
-
   .. attribute:: allow_create
-
-    If this is False, then then Actor won't have no insert_action.
+  .. attribute:: sort_index
+  .. attribute:: icon_name
+  .. method:: get_pk_field(self)
+  .. method:: get_row_by_pk(self, ar, pk)
 
   .. method:: get_create_permission(self, ar)
 
     Dynamic test per request.
     This is being called only when :attr:`allow_create` is True.
+
+  .. method:: apply_cell_format(self, ar, row, col, recno, td)
+
+    Actor-level hook for overriding the formating when rendering
+    this table as plain html.
+
+    For example :class:`ml.cal.Events` overrides this.
 
   .. method:: get_row_classes(self, ar)
 
