@@ -20,8 +20,19 @@ Until now it was necessary to write::
         qs = self.pharmacy_choices.get_choices(granting=self.granting)
 
 
-Checkin at 11:47 because it seems to work (but test suite is probably
-broken since I changed :mod:`lino_welfare.modlib.aids.fixtures.demo`
+Checkin with these changes at 11:47 because it seems to work.  But the
+test suite is probably broken since I changed
+:mod:`lino_welfare.modlib.aids.fixtures.demo`.
 
 
 Repairing the test suite was again quite some benedictine work.
+Checkin at 15:00.
+
+I discovered that :mod:`atelier` imports the :xfile:`fabfile.py`
+twice, which caused duplicate entries in
+:attr:`atelier.env.demo_databases`.  Current workaround is to use the
+new function :func:`atelier.fablib.add_demo_database` instead of
+appending directly to
+:attr:`env.demo_databases <atelier.env.demo_databases>`.
+Checkin at 15:40.
+
