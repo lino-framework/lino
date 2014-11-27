@@ -1,8 +1,12 @@
+=========
 Tutorials
 =========
 
 After having :doc:`installed the framework </dev/install>`
 you'll now want to learn how to use it.
+
+Beginner
+========
 
 .. toctree::
    :maxdepth: 1
@@ -10,6 +14,13 @@ you'll now want to learn how to use it.
    hello/index
    polls/mysite/index
    dumpy
+
+Intermediate
+============
+
+.. toctree::
+   :maxdepth: 1
+
    lets
    babel
    layouts

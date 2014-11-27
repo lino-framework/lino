@@ -1,0 +1,14 @@
+============================
+Wednesday, November 26, 2014
+============================
+
+Community
+=========
+
+After reading `a posting on LinkedIn
+<https://www.linkedin.com/groups/Joining-python-projects-101591.S.5942845549660094465>`_
+(and influenced by miscellaneous meetings during the last weeks), I
+updated the docs at :doc:`/community/get_involved` and the `Jobs
+<http://www.saffre-rumma.net/jobs>`_ page of my employer.
+
+
