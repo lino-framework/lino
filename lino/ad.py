@@ -502,15 +502,16 @@ class Site(Site):
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
         
+        from lino.modlib.users.mixins import UserProfiles, UserGroups
+
         def grouplevels(level):
             kw = dict(level=level)
-            for g in dd.UserGroups.items():
+            for g in UserGroups.items():
                 kw[g.name+'_level'] = level
             return kw
 
-        from lino import dd, rt
-        dd.UserProfiles.reset()
-        add = dd.UserProfiles.add_item
+        UserProfiles.reset()
+        add = UserProfiles.add_item
         add('000', _("Anonymous"), name='anonymous',
             readonly=self.user_model is not None,
             authenticated=False,
@@ -520,7 +521,7 @@ class Site(Site):
 
     def add_user_field(self, name, fld):
         if self.user_model:
-            from lino import dd, rt
+            from lino import dd
             #~ User = dd.resolve_model(self.user_model)
             dd.inject_field(self.user_model, name, fld)
             #~ if profile:

@@ -45,11 +45,11 @@ class Site(Site):
         """
         Defines a set of user profiles.
         """
-        from lino import dd, rt
         from django.utils.translation import ugettext_lazy as _
-        dd.UserProfiles.reset(
+        from lino.modlib.users.mixins import UserProfiles
+        UserProfiles.reset(
             '* office reception')
-        add = dd.UserProfiles.add_item
+        add = UserProfiles.add_item
         add('000', _("Anonymous"),      '_ _ _',
             name='anonymous',
             readonly=True,

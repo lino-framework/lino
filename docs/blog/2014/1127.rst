@@ -76,10 +76,10 @@ After our discussion in :doc:`/tickets/134` I continue to struggle
 with the question of where to use `autodoc` and where not.
 
 There are two modes of documenting an API: an "overview" mode and a
-"reference" mode. Both are useful and necessary.  "Overview mode" is
+"reference" mode.  Both are useful and necessary.  "Overview mode" is
 prosaic and must not depend on the internal structures.  "Reference
-mode" is what autodoc generates.  But how to connect them?  Which
-information to put to the one and which to the other?
+mode" is what `autodoc` generates.  But how to connect them?  Which
+information to put to the reference and which to the overview?
 
 One thing seems clear: the reference documentation about
 :class:`lino.core.actors.Actor` should be generated using docstrings

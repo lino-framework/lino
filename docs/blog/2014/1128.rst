@@ -1,0 +1,9 @@
+===================================
+20141128 (Friday, 28 November 2014)
+===================================
+
+While working on :ticket:`16`, I stumbled over an relatively old
+problem which I registered as :ticket:`20` and then fixed.
+
+The checkin at 13:54 fixes #20.
+

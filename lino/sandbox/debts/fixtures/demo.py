@@ -17,7 +17,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
 from north.dbutils import babel_values
 
-from lino.core.perms import UserProfiles
+from lino.modlib.users.mixins import UserProfiles
 
 
 from lino.modlib.debts.models import AccountType

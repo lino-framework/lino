@@ -16,6 +16,7 @@ from lino import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 
+from .mixins import UserProfiles, UserLevels, UserGroups
 
 class ChangePassword(dd.Action):
     label = _("Change password")
@@ -75,7 +76,7 @@ class User(dd.CreatedModified):
 
     password = models.CharField(_('Password'), max_length=128)
 
-    profile = dd.UserProfiles.field(
+    profile = UserProfiles.field(
         blank=True,
         help_text=_("Users with an empty `profile` field are considered \
 inactive and cannot log in."))
@@ -130,7 +131,7 @@ inactive and cannot log in."))
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if user.profile.level < dd.UserLevels.admin:
+                if user.profile.level < UserLevels.admin:
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
@@ -143,7 +144,7 @@ inactive and cannot log in."))
         #~ if ar.get_user().is_superuser:
         #~ if request.user.is_superuser:
         rv = super(User, self).disabled_fields(ar)
-        if ar.get_user().profile.level < dd.UserLevels.admin:
+        if ar.get_user().profile.level < UserLevels.admin:
             rv.add('profile')
         return rv
 
@@ -354,7 +355,7 @@ class Authority(dd.UserAuthored):
     def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
             profile=None)
-            #~ profile=dd.UserProfiles.blank_item) 20120829
+            #~ profile=UserProfiles.blank_item) 20120829
         if user is not None:
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)

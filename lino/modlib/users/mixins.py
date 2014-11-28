@@ -15,11 +15,10 @@ class UserLevel(Choice):
 
 
 class UserLevels(ChoiceList):
-    "See :class:`dd.UserLevels`."
+    "See :class:`ml.users.UserLevels`."
 
     verbose_name = _("User Level")
     verbose_name_plural = _("User Levels")
-    # app_label = 'lino'
     required = settings.SITE.get_default_required(user_level='admin')
     short_name = models.CharField(
         _("Short name"), max_length=2,
@@ -141,12 +140,11 @@ class UserProfile(Choice):
 
 
 class UserProfiles(ChoiceList):
-    "See :class:`dd.UserProfiles`."
+    "See :class:`ml.users.UserProfiles`."
     required = settings.SITE.get_default_required(user_level='admin')
     #~ item_class = UserProfile
     verbose_name = _("User Profile")
     verbose_name_plural = _("User Profiles")
-    # app_label = 'lino'
     show_values = True
     max_length = 20
     membership_keys = ('level',)
@@ -204,12 +202,11 @@ class UserProfiles(ChoiceList):
 
 
 class UserGroups(ChoiceList):
-    "See :class:`dd.UserGroups`."
+    "See :class:`ml.users.UserGroups`."
 
     required = settings.SITE.get_default_required(user_level='admin')
     verbose_name = _("User Group")
     verbose_name_plural = _("User Groups")
-    # app_label = 'lino'
     show_values = True
     max_length = 20
     """

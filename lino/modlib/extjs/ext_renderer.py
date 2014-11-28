@@ -38,7 +38,6 @@ from lino.core import dbtables
 from lino.core import tables
 
 from lino.utils import AttrDict
-from lino.utils import choosers
 from lino.core import choicelists
 from lino.core import menus
 from lino.core import auth
@@ -54,6 +53,7 @@ else:
     def jscompress(s):
         return s
 
+from lino.modlib.users.mixins import UserProfiles, UserLevels
 
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
@@ -534,7 +534,7 @@ class ExtRenderer(HtmlRenderer):
         System admins use this feature to test the permissions of other users.
         """
         user = request.user
-        if user.profile.level >= dd.UserLevels.admin:
+        if user.profile.level >= UserLevels.admin:
             if request.subst_user:
                 user = request.subst_user
         if not settings.SITE.build_js_cache_on_startup:
@@ -604,7 +604,7 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=unicode(user)))
 
-                if user.profile.level >= dd.UserLevels.admin:
+                if user.profile.level >= UserLevels.admin:
                     authorities = [
                         (u.id, unicode(u))
                         for u in settings.SITE.user_model.objects.exclude(
@@ -690,7 +690,7 @@ class ExtRenderer(HtmlRenderer):
             for lng in settings.SITE.languages:
                 with translation.override(lng.django_code):
                 #~ dd.set_language(lng.django_code)
-                    for profile in dd.UserProfiles.objects():
+                    for profile in UserProfiles.objects():
                         count += self.build_js_cache_for_profile(profile,
                                                                  force)
             #~ qs = users.User.objects.exclude(profile='')

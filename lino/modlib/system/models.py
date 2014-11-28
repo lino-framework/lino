@@ -24,6 +24,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.mixins.printable import BuildMethods
+from lino.modlib.users.mixins import UserProfiles
 
 
 class BuildSiteCache(dd.Action):
@@ -328,11 +329,12 @@ def setup_config_menu(site, ui, profile, m):
 def setup_explorer_menu(site, ui, profile, m):
     office = m.add_menu("office", OFFICE_MODULE_LABEL)
     system = m.add_menu("system", SYSTEM_USER_LABEL)
+
     if site.user_model:
         system.add_action(site.modules.users.Authorities)
         system.add_action(dd.UserGroups)
         system.add_action(dd.UserLevels)
-        system.add_action(dd.UserProfiles)
+        system.add_action(UserProfiles)
         office.add_action(TextFieldTemplates)
 
 
@@ -341,7 +343,7 @@ dd.add_user_group('office', OFFICE_MODULE_LABEL)
 
 if settings.SITE.user_model == 'auth.User':
     dd.inject_field(settings.SITE.user_model,
-                    'profile', dd.UserProfiles.field())
+                    'profile', UserProfiles.field())
     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
 
 

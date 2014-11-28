@@ -20,9 +20,9 @@ cal.AccessClasses : AccessClasses
 cal.DurationUnits : DurationUnits
 cal.Weekdays : Weekdays
 lino.Genders : Genders
-lino.UserGroups : User Groups
-lino.UserLevels : User Levels
-lino.UserProfiles : User Profiles
+users.UserGroups : User Groups
+users.UserLevels : User Levels
+users.UserProfiles : User Profiles
 
 >>> Genders = dd.Genders
 >>> for bc,text in Genders.choices:

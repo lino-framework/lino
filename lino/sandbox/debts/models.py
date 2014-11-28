@@ -50,7 +50,7 @@ from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
-from lino.utils.perms import UserProfiles
+from lino.modlib.users.mixins import UserProfiles
 from lino.utils.choicelists import ChoiceList
 # ~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson

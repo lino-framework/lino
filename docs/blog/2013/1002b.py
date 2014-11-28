@@ -6,11 +6,11 @@ How to add users to your Lino database::
 """
 
 
-from lino import dd, rt
 from django.conf import settings
+from lino.modlib.users.mixins import UserProfiles
 
 User = settings.SITE.user_model
-u = User(username="rolf",profile=dd.UserProfiles.admin)
+u = User(username="rolf", profile=UserProfiles.admin)
 u.save()
 u.set_password('1234')
                     

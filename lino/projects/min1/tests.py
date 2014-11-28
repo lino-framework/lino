@@ -26,6 +26,7 @@ from lino.utils.instantiator import create_and_get
 from north.dbutils import babelkw
 
 from lino.modlib.contacts import models as contacts
+from lino.modlib.users.mixins import UserProfiles
 
 Genders = dd.Genders
 
@@ -129,7 +130,7 @@ Estonia''')
 
         u = create_and_get(settings.SITE.user_model,
                            username='root', language='',
-                           profile=dd.UserProfiles.admin)
+                           profile=UserProfiles.admin)
 
         """
         disable SITE.is_imported_partner() otherwise 

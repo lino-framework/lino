@@ -38,10 +38,10 @@ class Site(Site):
         Defines application-specific default user profiles.
         Local site administrators can override this in their :xfile:.
         """
-        from lino import dd
         from django.utils.translation import ugettext_lazy as _
-        dd.UserProfiles.reset('* office polls')
-        add = dd.UserProfiles.add_item
+        from lino.modlib.users.mixins import UserProfiles
+        UserProfiles.reset('* office polls')
+        add = UserProfiles.add_item
         add('000', _("Anonymous"),       '_ _ _',
             'anonymous', readonly=True, authenticated=False)
         add('100', _("User"),            'U U U', 'user')

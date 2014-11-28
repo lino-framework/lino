@@ -103,7 +103,6 @@ Actions:
 
 Permissions:
 
-- :class:`UserProfiles <lino.core.auth.UserProfiles>`
 - :class:`UserGroups <lino.core.auth.UserGroups>`
 - :class:`UserLevels <lino.core.auth.UserLevels>`
 - :func:`add_user_group <lino.core.auth.add_user_group>` 
@@ -259,16 +258,10 @@ from north.dbutils import babel_values  # alias for babelkw for backward compat
 from lino.utils.choosers import chooser, action_chooser
 from lino.utils.mti import EnableChild
 
-from lino.modlib.users.mixins import UserLevels, UserProfiles, UserGroups, add_user_group
-
-#~ from lino.base.utils import UserLevels, UserGroups, UserProfiles
+from lino.modlib.users.mixins import UserLevels, UserGroups, add_user_group
 
 from lino.core.layouts import FormLayout, Panel
 from lino.core.layouts import ParamsLayout
-#~ from lino.core.layouts import ActionParamsLayout
-#~ DetailLayout = InsertLayout = FormLayout
-
-#~ from lino.core.layouts import DetailLayout, InsertLayout
 
 
 from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
