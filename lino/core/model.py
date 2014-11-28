@@ -237,8 +237,6 @@ class Model(models.Model):
         pass
 
     def get_row_permission(self, ar, state, ba):
-        #~ if ba.action.action_name == 'wf7':
-            #~ logger.info("20130424 Model.get_row_permission() gonna call %r.get_bound_action_permission()",ba)
         return ba.get_bound_action_permission(ar, self, state)
 
     def update_owned_instance(self, controllable):

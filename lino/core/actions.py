@@ -556,14 +556,6 @@ class Action(Parametrizable, Permittable):
 
 class TableAction(Action):
 
-    """TODO: get_action_permission and required_states are needed here
-    because `disabled_actions` also asks InsertRow whether it's
-    permitted on that row. It's in fact not correct to ask this for
-    the Insert button. Has to do with the fact that the Insert button
-    is in the bottom toolbar though it should be in the top toolbar...
-
-    """
-
     def get_action_title(self, ar):
         return ar.get_title()
 

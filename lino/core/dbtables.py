@@ -601,11 +601,10 @@ class Table(AbstractTable):
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):
+        """Returns True if the given action is allowed for the given instance
+        `obj` and the given user.
+
         """
-        Returns True if the given action is allowed for the given instance `obj`
-        and the given user.
-        """
-        #~ logger.info("20121020 dbtables.Table.get_row_permission %s",unicode(ba.action.label))
         if obj is None:
             return True
         return obj.get_row_permission(ar, state, ba)

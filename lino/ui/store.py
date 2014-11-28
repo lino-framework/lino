@@ -490,6 +490,9 @@ class DisableEditingStoreField(SpecialStoreField):
             return True  # disable editing if there's no update_action
         v = actor.get_row_permission(
             obj, ar, actor.get_row_state(obj), actor.update_action)
+        # if str(actor).startswith('aids.'):
+        #     logger.info("20141128 store.py %s %s value=%s",
+        #                 actor, actor.update_action, v)
         return not v
 
 

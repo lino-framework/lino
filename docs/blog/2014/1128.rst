@@ -2,8 +2,22 @@
 20141128 (Friday, 28 November 2014)
 ===================================
 
+Worked on the German docs about :ref:`welfare`.
+
 While working on :ticket:`16`, I stumbled over an relatively old
 problem which I registered as :ticket:`20` and then fixed.
 
-The checkin at 13:54 fixes #20.
+Checkin at 13:54 fixes :ticket:`20`.
 
+It took me then a few hours to find the explanation for :ticket:`16`:
+
+The problem occurs only when acting as another user.  E.g. I am Rolf
+and acting as Theresia (who is not manager).  I ask to create a new
+Confirmation.  A Confirmation is a UserAuthored.  When Lino creates a
+UserAuthored instance, the author will be set to Rolf because this is
+my *real* identity. And then Theresia is not allowed to modify other
+users' work because she is not a manager.
+
+The solution will be very subtle, but now I need to stop working.
+Before thinking about a solution, I'll probably also move the
+`UserAuthored` mixin to :mod:`ml.users`.
