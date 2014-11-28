@@ -18,6 +18,18 @@ UserAuthored instance, the author will be set to Rolf because this is
 my *real* identity. And then Theresia is not allowed to modify other
 users' work because she is not a manager.
 
-The solution will be very subtle, but now I need to stop working.
-Before thinking about a solution, I'll probably also move the
-`UserAuthored` mixin to :mod:`ml.users`.
+The solution was very subtle: `get_row_permission` must be a bit more
+permissive: when user A is acting as user B, then neither A nor B are
+considered to be "other user".
+
+TODO: 
+
+- I'll probably also move the `UserAuthored` mixin to
+  :mod:`ml.users`.
+
+- Maybe also make it configurable whether on_create puts `user` or
+  `subst_user`.
+
+- Write test cases to verify these subtleties.
+
+

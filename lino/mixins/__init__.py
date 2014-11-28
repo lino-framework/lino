@@ -206,7 +206,10 @@ class UserAuthored(model.Model):
             #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         user = ar.get_user()
-        if self.user != user and getattr(user.profile, self.manager_level_field) < UserLevels.manager:
+        if self.user != ar.user and \
+           (ar.subst_user is None or self.user != ar.subst_user) \
+           and getattr(user.profile, self.manager_level_field) < \
+           UserLevels.manager:
             return ba.action.readonly
         return True
 
