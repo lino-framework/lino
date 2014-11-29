@@ -3,7 +3,9 @@
 # License: BSD (see file COPYING for details)
 
 """
-Writes a diagnostic status report about the data on this Site.
+.. management_command:: diag
+
+Writes a diagnostic status report about this Site.
 """
 
 from __future__ import print_function

@@ -28,6 +28,9 @@ Secondary changes:
   :meth:`welfare.aids.Confirmation.get_urgent_granting`.
   :class:`welfare.isip.Contract` no longer has a `get_grantings` method.
 
+Other changes *en passant*:
+
+- Minor changes in :ref:`welfare.tested.general`.
 
 TODO (needs user feedback)
 

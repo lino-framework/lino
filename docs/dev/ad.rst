@@ -949,7 +949,7 @@ The ``Site`` class
   .. method:: get_db_overview_rst(self)
 
     Return a reStructredText-formatted "database overview" report.
-    Used by the :manage:`diag` command and in test cases.
+    Used by test cases in tested documents.
 
   .. method:: site_header(self)
 
