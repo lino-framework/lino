@@ -32,6 +32,13 @@ Other changes *en passant*:
 
 - Minor changes in :ref:`welfare.tested.general`.
 
+- :mod:`atelier.fablib` almost destroyed the README files of
+  `commondata <https://github.com/lsaffre/commondata>`_ and its
+  children. These are projects with only one page of documentation,
+  i.e. without a tree of Sphinx docs. So their README file contains
+  that single page and is manually written. And `setup.py` loads
+  `long_description` from that file.
+
 TODO (needs user feedback)
 
 - The text of the additional page generated in
