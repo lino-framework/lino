@@ -1,0 +1,1 @@
+/home/luc/hgwork/lino/docs/blog/2014/0611.rst:46: WARNING: undefined label: cosi.tested.estonia (if the link has no caption the label must precede a section header)

@@ -3,9 +3,9 @@ Thursday, June 12, 2014
 =======================
 
 
-I continued on :ref:`commondata`.  There was a last stupid problem,
-not even related to the real problem but which blocks the demo. See
-next section.
+Continued on `commondata.ee`.  There was a last stupid problem, not
+even related to the real problem but which blocks the demo. See next
+section.
 
 
 Soodi and Söödi

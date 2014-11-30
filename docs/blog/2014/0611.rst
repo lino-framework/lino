@@ -41,7 +41,7 @@ TODO:
 Free default data for places and zip codes
 ------------------------------------------
 
-Continued on :ref:`commondata`.
+Continued on :doc:`/tickets/109`.
 
 :ref:`dpy` : Django sometimes seems to also load fixtures from current
 directory.  This was disturbing while writing :ref:`cosi.tested.estonia`
