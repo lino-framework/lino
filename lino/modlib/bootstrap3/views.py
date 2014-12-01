@@ -116,7 +116,11 @@ class Index(View):
         else:
             if not a.get_view_permission(user.profile):
                 raise exceptions.PermissionDenied(
-                    "Action not allowed for %s" % user.profile)
+                    "As %s you have no permission to run this action."
+                    % user.profile)
+                # The text of an Exception may not be
+                # internationalized because some error handling code
+                # may want to write it to a plain ascii stream.
             kw.update(renderer=ui.renderer)
             ar = a.request(request=request, **kw)
             context.update(title=ar.get_title())

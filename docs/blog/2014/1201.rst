@@ -1,0 +1,52 @@
+========================
+Monday, December 1, 2014
+========================
+
+I received another unicode error::
+
+  UnicodeEncodeError at /api/sales/InvoicesByJournal
+  'ascii' codec can't encode character u'\xfc' in position 64: ordinal not in range(128)
+
+It happened when Lino tried to say "As Anonymous you have no
+permission to run this action" in German (where the internationlized
+text (u'Als Anonym haben Sie nicht die Berechtigung, diese Aktion
+auszuf\xfchren.') contains non-ascii characters.
+
+I finally wrote a tested document :ref:`cosi.tested.bel_de`.  which
+reproduces this situation.  
+
+The explanation was that :mod:`lino.utils.ajax` did the following::
+
+    (exc_type, exc_info, tb) = sys.exc_info()
+    ...
+    response += "%s\n\n" % exc_info
+
+which failed when the `exc_info` of our `PermissionDenied` exception
+was a unicode string with non-ascii characters.
+
+One solution would have been to explicitly turn the target string of
+the ``%`` operation into a unicode string::
+
+    response += u"%s\n\n" % exc_info
+
+But I preferred to add `from __future__ import unicode_literals`.
+
+While this fixed our bug, it did not solve another problem in
+Python's doctest::
+
+    Traceback (most recent call last):
+      ...
+      File "/usr/lib/python2.7/doctest.py", line 1331, in __run
+        if check(example.want, got, self.optionflags):
+      File "/usr/lib/python2.7/doctest.py", line 1591, in check_output
+        if _ellipsis_match(want, got):
+      File "/usr/lib/python2.7/doctest.py", line 289, in _ellipsis_match
+        if got.startswith(w):
+    UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 81: ordinal not in range(128)
+
+So I removed the translation (the call to `_()`) on the message.
+
+Remeber: The text of an Exception should rather not be
+internationalized because some error handling code may want to write
+it to a plain ascii stream.
+

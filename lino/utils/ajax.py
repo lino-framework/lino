@@ -2,7 +2,13 @@
 # Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Originally inspired by http://djangosnippets.org/snippets/650
+"""When an exception occurs during an AJAX call, Lino should not
+respond with Django's detailed HTML formatted error report but with a
+simple traceback.  Because that's more readable when seen in a browser
+conseole.  This middleware is automatically being installed on every
+Lino site.
+
+Originally inspired by http://djangosnippets.org/snippets/650
 
 Additions by LS:
 
@@ -15,6 +21,8 @@ Additions by LS:
   right answer to an AJAX call.
 
 """
+
+from __future__ import unicode_literals
 
 import sys
 import traceback

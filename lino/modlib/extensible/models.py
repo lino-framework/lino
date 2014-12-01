@@ -188,11 +188,6 @@ class PanelEvents(Events):
 
         flt = models.Q(**fkw)
 
-        if False:  # not request.user.profile.authenticated:
-            raise exceptions.PermissionDenied(
-                _("As %s you have no permission to run this action.")
-                % request.user.profile)
-
         # who am i ?
         me = request.subst_user or request.user
 
@@ -206,7 +201,7 @@ class PanelEvents(Events):
             for_me = for_me | models.Q(guest__partner=me.partner)
 
         if False:
-            # currently disabled. this is needed ony when you want to
+            # currently disabled. this is needed only when you want to
             # support private events, i.e. events which are never
             # visible to other users.
 

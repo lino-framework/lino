@@ -13,7 +13,6 @@ from django import http
 from django.db import models
 from django.conf import settings
 from django.core import exceptions
-from django.utils.translation import ugettext as _
 
 from lino.utils.jsgen import py2js
 
@@ -85,8 +84,11 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
     if True:  # False:  # 20130829
         if not a.get_view_permission(user.profile):
             raise exceptions.PermissionDenied(
-                _("As %s you have no permission to run this action.")
+                "As %s you have no permission to run this action."
                 % user.profile)
+                # The text of an Exception may not be
+                # internationalized because some error handling code
+                # may want to write it to a plain ascii stream.
     ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
     return ar
 
