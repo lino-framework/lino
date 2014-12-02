@@ -22,7 +22,7 @@ provides data definitions for "Calendar management".
 .. 
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-  ...   'lino.projects.docs.settings'
+  ...   'lino.projects.docs.settings.demo'
   >>> from lino.runtime import *
 
 

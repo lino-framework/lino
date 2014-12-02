@@ -18,7 +18,7 @@ extlinks = {}
 extensions = []
 
 from atelier.sphinxconf import configure
-configure(globals(), 'lino.projects.docs.settings')
+configure(globals(), 'lino.projects.docs.settings.demo')
 
 language = 'en'
 

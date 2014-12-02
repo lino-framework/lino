@@ -13,7 +13,8 @@ Users
     General stuff:
 
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+    ...     'lino.projects.docs.settings.demo'
     >>> import json
     >>> from lino.runtime import *
     >>> from lino import dd

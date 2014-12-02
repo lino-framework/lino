@@ -78,6 +78,7 @@ lino.modlib.cal.fixtures
 lino.modlib.cal.management
 lino.modlib.cal.management.commands
 lino.modlib.cal.workflows
+lino.modlib.cv
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.contacts.management
@@ -177,6 +178,7 @@ lino.projects.igen.tests
 lino.projects.min1
 lino.projects.min1.settings
 lino.projects.min2
+lino.projects.min2.settings
 lino.projects.min2.modlib
 lino.projects.min2.modlib.contacts
 lino.projects.min2.modlib.contacts.fixtures
@@ -194,6 +196,7 @@ lino.projects.std
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 lino.projects.docs
+lino.projects.docs.settings
 lino.sphinxcontrib
 lino.sphinxcontrib.logo
 lino.test_apps

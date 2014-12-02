@@ -103,7 +103,7 @@ tag for :ref:`eidreader` did not set `codebase`, and thus OpenJava
 failed to load the third-party jar files.  It is strange that this
 problem does not seem to have occured earlier.
 
-Added :mod:`lino.projects.docs.settings` to `fabfile.py` in `lino`, in
+Added :mod:`lino.projects.docs.settings.demo` to `fabfile.py` in `lino`, in
 order to avoid error messages when generating the docs.
 :mod:`lino.modlib.households.fixtures.demo` caused `fab initdb` in
 `lino` to fail because it sorted existing persons by `birth_date` and

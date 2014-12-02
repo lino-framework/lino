@@ -34,6 +34,7 @@ class Site(Site):
         yield 'django.contrib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.changes'
+        yield 'lino.modlib.languages'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
@@ -48,6 +49,7 @@ class Site(Site):
         # yield 'lino.modlib.reception'
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.polls'
+        yield 'lino.modlib.cv'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 
@@ -65,4 +67,3 @@ class Site(Site):
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'
 
-SITE = Site(globals())

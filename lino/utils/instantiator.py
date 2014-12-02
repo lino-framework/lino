@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
-used mainly for :doc:`/topics/dumpy`.
+used for generating database objects in :ref:`python fixtures <dpy>`.
 
 Example values:
 
@@ -15,6 +15,7 @@ null,{ &quot;record_id&quot;: 116 })">BASTIAENSEN Laurent (116)</a>'
 null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
 >>> GFK_HACK.match(s).groups()
 (u'cal.Guests', u'6')
+
 """
 
 from __future__ import unicode_literals
@@ -45,9 +46,6 @@ from lino.core.dbutils import obj2str
 
 class DataError(Exception):
     pass
-
-
-#~ import django.dispatch
 
 
 class Converter(object):
@@ -217,20 +215,11 @@ def make_converter(f, lookup_fields={}):
 
 class Instantiator:
 
-    def is_active(self):
-
-        if isinstance(self.model, UnresolvedModel):
-            return False
-        if self.model._meta.pk is None:
-            return False
-        return True
-
     def __init__(self, model, fieldnames=None, converter_classes={}, **kw):
         #~ self.model = resolve_model(model,strict=True)
         self.model = resolve_model(model)
-        #~ if isinstance(self.model,UnresolvedModel):
-            #~ logger.warning("20120818 unresolved model %s",model)
-            #~ return
+        if isinstance(self.model, UnresolvedModel):
+            raise Exception("Instantiator on unresolved model %s", model)
         if not self.is_active():
             def noop(*values, **kw):
                 pass
@@ -271,6 +260,14 @@ class Instantiator:
                 self.converters.append(cv)
         #~ for f in model_class._meta.many_to_many:
             #~ print "foo", f.name
+
+    def is_active(self):
+
+        if isinstance(self.model, UnresolvedModel):
+            return False
+        if self.model._meta.pk is None:
+            return False
+        return True
 
     def build(self, *values, **kw):
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
@@ -330,8 +327,6 @@ class InstanceGenerator(object):
         rv = self._objects
         self._objects = []
         return rv
-
-
 
 
 def create_and_get(model, **kw):

@@ -2,6 +2,9 @@
 Monday, December 1, 2014
 ========================
 
+UnicodeEncodeError
+==================
+
 I received another unicode error::
 
   UnicodeEncodeError at /api/sales/InvoicesByJournal
@@ -46,7 +49,39 @@ Python's doctest::
 
 So I removed the translation (the call to `_()`) on the message.
 
-Remeber: The text of an Exception should rather not be
+Remember: The text of an Exception should rather not be
 internationalized because some error handling code may want to write
 it to a plain ascii stream.
 
+
+The new ``cv`` module
+=====================
+
+After quite some discussions with :ref:`mj` I seem finally to see where
+we need to go:
+
+- Add a new model `Training` which is quite similar to `Study`.
+  But e.g. their lists of types are different.
+
+- Add a model `StudyResult`
+
+- Create a new module :mod:`lino.modlib.cv` which unites the
+  CV-related models from :mod:`lino_welfare.modlib.jobs`,
+  :mod:`lino_welfare.modlib.isip`,
+  :mod:`lino_welfare.modlib.cv`,
+  and
+  :mod:`lino_welfare.projects.chatelet.modlib.jobs`.
+
+  - Études (Study, StudyType)
+  - Expériences professionnelles (Experience), 
+
+
+:ref:`mustmig`:
+
+- new models `Training`, `TrainingType`, `StudyResult`
+- moved models from `jobs` to `cv` : Study, Experience
+- moved models from `isip` to `cv` : StudyType, EducationLevel,
+  Status, Regime, Sector
+
+- renamed field `started` to `start_date` and `stopped` to `end_date`
+  in: `cv.Study`, `cv.Experience`

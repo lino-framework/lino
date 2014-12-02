@@ -5,8 +5,7 @@ import lino
 
 
 class LinoTestCase(TestCase):
-    # demo_settings_module = "lino.projects.std.settings_test"
-    demo_settings_module = "lino.projects.docs.settings"
+    demo_settings_module = "lino.projects.docs.settings.demo"
     project_root = Path(__file__).parent.parent
 
 

@@ -39,7 +39,7 @@ only current household. Now it works:
 
 
 >>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings' 
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo' 
 >>> from lino.runtime import *
 >>> Person = contacts.Person
 >>> Member = households.Member

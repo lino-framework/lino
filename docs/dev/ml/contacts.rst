@@ -25,7 +25,7 @@ This app is being extended by :ref:`welfare` in
 .. 
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-  ...   'lino.projects.docs.settings'
+  ...   'lino.projects.docs.settings.demo'
   >>> from lino.runtime import *
 
 Models

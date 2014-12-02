@@ -1,0 +1,7 @@
+/home/luc/hgwork/lino/lino/modlib/awesomeuploader/__init__.py:docstring of lino.modlib.awesomeuploader:15: WARNING: Literal block ends without a blank line; unexpected unindent.
+/home/luc/hgwork/lino/lino/ad.py:docstring of lino.ad.Site.webdav_url:7: WARNING: term not in glossary: runserver
+/home/luc/hgwork/lino/lino/core/requests.py:docstring of lino.core.requests.BaseRequest.set_response:5: WARNING: undefined label: set_response (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/mixins/printable.py:docstring of lino.mixins.printable.PisaBuildMethod:1: WARNING: undefined label: lino.tutorials.pisa (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/api/lino.modlib.reception.rst:12: WARNING: undefined label: welfare.reception (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/lino/tutorials/lets1/fixtures/demo.py:docstring of lino.tutorials.lets1.fixtures.demo.objects:1: WARNING: term not in glossary: north
+/home/luc/hgwork/lino/docs/api/lino.utils.mti.rst:7: WARNING: unknown document: /autodoc/lino.test_apps.mti
