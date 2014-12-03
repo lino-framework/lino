@@ -56,8 +56,8 @@ class Guest(dd.Model):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Guest')
-        verbose_name = _("Presence")
-        verbose_name_plural = _("Presences")
+        verbose_name = _("Participant")
+        verbose_name_plural = _("Participants")
 
     event = models.ForeignKey('cal.Event',
                               verbose_name=_("Event"))
@@ -278,7 +278,7 @@ if settings.SITE.is_installed('contacts'):
 
     #~ class MyPendingInvitations(Guests):
     class MyPendingPresences(MyPresences):
-        label = _("My pending presences")
+        label = _("My pending invitations")
         help_text = _(
             """Received invitations which I must accept or reject.""")
         #~ filter = models.Q(state=GuestStates.invited)
@@ -298,7 +298,6 @@ if settings.SITE.is_installed('contacts'):
         label = _("My guests")
         required = dd.required(user_groups='office')
         order_by = ['event__start_date', 'event__start_time']
-        label = _("My guests")
         column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
 
         @classmethod

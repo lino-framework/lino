@@ -1,0 +1,8 @@
+===========================
+Wednesday, December 3, 2014
+===========================
+
+
+Added new model :class:`welfare.pcsw.Conviction`
+and table :class:`welfare.pcsw.ConvictionsByClient`.
+

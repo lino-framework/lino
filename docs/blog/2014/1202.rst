@@ -2,7 +2,7 @@
 Tuesday, December 2, 2014
 =========================
 
-Continued the changes started yesterday.
+Continued the changes started :doc:`yesterday <1201>`.
 
 Converted :mod:`lino.projects.docs` to the now recommended structure
 with Django settings in a separate directory::
@@ -10,5 +10,6 @@ with Django settings in a separate directory::
   mkdir settings
   mv settings.py settings/__init.py
  
-
 and then create files :xfile:`demo.py` and :xfile:`memory.py`.
+
+Checkin and upgrade on :ref:`lf`.

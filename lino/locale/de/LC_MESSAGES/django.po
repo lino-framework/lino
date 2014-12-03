@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-12-02 19:22+0200\n"
-"PO-Revision-Date: 2014-12-02 19:58+0300\n"
+"POT-Creation-Date: 2014-12-03 11:56+0200\n"
+"PO-Revision-Date: 2014-12-03 11:56+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -400,7 +400,7 @@ msgstr "Wert"
 #: lino/core/choicelists.py:352 lino/modlib/addresses/models.py:103
 #: lino/modlib/blogs/models.py:45 lino/modlib/cal/models_guest.py:74
 #: lino/modlib/courses/models.py:281 lino/modlib/courses/models.py:743
-#: lino/modlib/cv/models.py:383 lino/modlib/cv/models.py:407
+#: lino/modlib/cv/models.py:388 lino/modlib/cv/models.py:412
 #: lino/modlib/excerpts/models.py:62 lino/modlib/finan/models.py:208
 #: lino/modlib/lists/models.py:91 lino/modlib/notes/models.py:39
 #: lino/modlib/notes/models.py:76 lino/modlib/sepa/models.py:61
@@ -548,7 +548,7 @@ msgid "Error"
 msgstr "Fehler"
 
 #: lino/core/requests.py:258 lino/modlib/beid/mixins.py:256
-#: lino/modlib/cv/mixins.py:17 lino/modlib/cv/models.py:264
+#: lino/modlib/cv/mixins.py:17 lino/modlib/cv/models.py:269
 #: lino/modlib/system/models.py:50
 msgid "Success"
 msgstr "Erfolgreich abgeschlossen"
@@ -1885,13 +1885,13 @@ msgstr "Gastrollen"
 msgid "The role of a guest expresses what the partner is going to do there."
 msgstr ""
 
-#: lino/modlib/cal/models_guest.py:59
-msgid "Presence"
-msgstr "Anwesenheit"
+#: lino/modlib/cal/models_guest.py:59 lino/modlib/courses/models.py:1041
+msgid "Participant"
+msgstr "Teilnehmer"
 
-#: lino/modlib/cal/models_guest.py:60 lino/modlib/cal/models_guest.py:236
-msgid "Presences"
-msgstr "Anwesenheiten"
+#: lino/modlib/cal/models_guest.py:60
+msgid "Participants"
+msgstr "Teilnehmer"
 
 #: lino/modlib/cal/models_guest.py:63 lino/modlib/cal/models_guest.py:94
 msgid "Event"
@@ -1921,6 +1921,10 @@ msgstr "Zustand Gast"
 msgid "Only rows having this guest state."
 msgstr ""
 
+#: lino/modlib/cal/models_guest.py:236
+msgid "Presences"
+msgstr "Anwesenheiten"
+
 #: lino/modlib/cal/models_guest.py:245
 msgid "My presences"
 msgstr "Meine Anwesenheiten"
@@ -1931,15 +1935,14 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:281
-#, fuzzy
-msgid "My pending presences"
-msgstr "Meine Anwesenheiten"
+msgid "My pending invitations"
+msgstr ""
 
 #: lino/modlib/cal/models_guest.py:282
 msgid "Received invitations which I must accept or reject."
 msgstr ""
 
-#: lino/modlib/cal/models_guest.py:298 lino/modlib/cal/models_guest.py:301
+#: lino/modlib/cal/models_guest.py:298
 msgid "My guests"
 msgstr "Meine Gäste"
 
@@ -2480,7 +2483,7 @@ msgid "Fax"
 msgstr "Fax"
 
 #: lino/modlib/contacts/models.py:77 lino/modlib/cv/models.py:141
-#: lino/modlib/cv/models.py:449 lino/modlib/lists/models.py:56
+#: lino/modlib/cv/models.py:454 lino/modlib/lists/models.py:56
 #: lino/modlib/users/models.py:89
 msgid "Remarks"
 msgstr "Bemerkungen"
@@ -3065,10 +3068,6 @@ msgstr "Offene Einschreibungsanfragen"
 msgid "Pending confirmed enrolments"
 msgstr "Auszustellende Teilnahmebescheinigungen"
 
-#: lino/modlib/courses/models.py:1041
-msgid "Participant"
-msgstr "Teilnehmer"
-
 #: lino/modlib/courses/models.py:1070
 msgid "Suggested courses"
 msgstr "Kursvorschläge"
@@ -3222,7 +3221,7 @@ msgstr "Lehrenarten"
 msgid "Establishment"
 msgstr "Einrichtung"
 
-#: lino/modlib/cv/models.py:147 lino/modlib/cv/models.py:447
+#: lino/modlib/cv/models.py:147 lino/modlib/cv/models.py:452
 msgid "Training"
 msgstr "Ausbildung"
 
@@ -3231,94 +3230,99 @@ msgid "Trainings"
 msgstr "Lehren"
 
 #: lino/modlib/cv/models.py:155
+#, fuzzy
+msgid "Training content"
+msgstr "Lehrenart"
+
+#: lino/modlib/cv/models.py:160
 msgid "Certificates"
 msgstr "Diplome"
 
-#: lino/modlib/cv/models.py:199
+#: lino/modlib/cv/models.py:204
 msgid "Education Level"
 msgstr "Akademischer Grad"
 
-#: lino/modlib/cv/models.py:200
+#: lino/modlib/cv/models.py:205
 msgid "Education Levels"
 msgstr "Akademische Grade"
 
-#: lino/modlib/cv/models.py:218
+#: lino/modlib/cv/models.py:223
 msgid "Study Type"
 msgstr "Studienart"
 
-#: lino/modlib/cv/models.py:219
+#: lino/modlib/cv/models.py:224
 msgid "Study Types"
 msgstr "Studienarten"
 
-#: lino/modlib/cv/models.py:250
+#: lino/modlib/cv/models.py:255
 msgid "study or education"
 msgstr "Ausbildung oder Studium"
 
-#: lino/modlib/cv/models.py:251
+#: lino/modlib/cv/models.py:256
 msgid "Studies & education"
 msgstr "Ausbildungen und Studien"
 
-#: lino/modlib/cv/models.py:258
+#: lino/modlib/cv/models.py:267
 msgid "Study content"
 msgstr "Ausbildungsinhalt"
 
-#: lino/modlib/cv/models.py:327
+#: lino/modlib/cv/models.py:332
 msgid "Status"
 msgstr "Zustand"
 
-#: lino/modlib/cv/models.py:328
+#: lino/modlib/cv/models.py:333
 msgid "Statuses"
 msgstr "Statuus"
 
-#: lino/modlib/cv/models.py:345
+#: lino/modlib/cv/models.py:350
 msgid "Work Regime"
 msgstr ""
 
-#: lino/modlib/cv/models.py:346
+#: lino/modlib/cv/models.py:351
 msgid "Work Regimes"
 msgstr "Arbeitsregimes"
 
-#: lino/modlib/cv/models.py:361
+#: lino/modlib/cv/models.py:366
 msgid "Contract Duration"
 msgstr "Vertragsdauer"
 
-#: lino/modlib/cv/models.py:362
+#: lino/modlib/cv/models.py:367
 msgid "Contract Durations"
 msgstr "Vertragsdauern"
 
-#: lino/modlib/cv/models.py:378
+#: lino/modlib/cv/models.py:383
 msgid "Job Sector"
 msgstr "Sektor"
 
-#: lino/modlib/cv/models.py:379
+#: lino/modlib/cv/models.py:384
 msgid "Job Sectors"
 msgstr "Sektoren"
 
-#: lino/modlib/cv/models.py:402
+#: lino/modlib/cv/models.py:407
 msgid "Job Function"
 msgstr "Funktion"
 
-#: lino/modlib/cv/models.py:403
+#: lino/modlib/cv/models.py:408
 msgid "Job Functions"
 msgstr "Funktionen"
 
-#: lino/modlib/cv/models.py:436
+#: lino/modlib/cv/models.py:441
 msgid "Job Experience"
 msgstr "Berufserfahrung"
 
-#: lino/modlib/cv/models.py:437
+#: lino/modlib/cv/models.py:442
 msgid "Job Experiences"
 msgstr "Berufserfahrungen"
 
-#: lino/modlib/cv/models.py:440
+#: lino/modlib/cv/models.py:445
 msgid "company"
 msgstr "Firma"
 
-#: lino/modlib/cv/models.py:443
+#: lino/modlib/cv/models.py:448
 msgid "job title"
 msgstr "Bezeichnung"
 
-#: lino/modlib/cv/models.py:454
+#: lino/modlib/cv/models.py:459
 msgid "Termination reason"
 msgstr "Beendigungsgrund"
 
@@ -6807,3 +6811,15 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "As %s you have no permission to run this action."
 #~ msgstr "Als %s haben Sie nicht die Berechtigung, diese Aktion auszuführen."
+
+#~ msgid "Presence"
+#~ msgstr "Anwesenheit"
+
+#~ msgid "My pending presences"
+#~ msgstr "Meine Anwesenheiten"
+
+#~ msgid "Participation"
+#~ msgstr "Teilnahmegebühr"
+
+#~ msgid "Participations"
+#~ msgstr "Teilnahmegebühr"

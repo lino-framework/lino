@@ -149,6 +149,11 @@ class Training(Schooling):
 
     type = models.ForeignKey('cv.TrainingType')
 
+    content = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Training content"))
+
     certificates = models.CharField(
         max_length=200,
         blank=True,  # null=True,
@@ -184,8 +189,8 @@ class TrainingsByType(Trainings):
 
 class TrainingsByPerson(HistoryByPerson, Trainings):
     required = dd.required(user_groups='integ')
-    column_names = 'type start_date end_date country \
-    city school state remarks *'
+    column_names = 'type content start_date end_date \
+    school country state certificates *'
     auto_fit_column_widths = True
 
 
@@ -252,14 +257,14 @@ class Study(Schooling):
 
     type = models.ForeignKey('cv.StudyType')
 
-    content = models.CharField(
-        max_length=200,
-        blank=True,  # null=True,
-        verbose_name=_("Study content"))
-
     education_level = dd.ForeignKey(
         'cv.EducationLevel',
         null=True, blank=True)
+
+    content = models.CharField(
+        max_length=200,
+        blank=True,
+        verbose_name=_("Study content"))
 
     success = models.BooleanField(verbose_name=_("Success"), default=False)
 
@@ -313,8 +318,8 @@ class StudiesByType(Studies):
 
 class StudiesByPerson(HistoryByPerson, Studies):
     required = dd.required(user_groups='integ')
-    column_names = 'type content start_date end_date country \
-    city school state remarks *'
+    column_names = 'type content start_date end_date school country \
+    state education_level *'
     auto_fit_column_widths = True
 
 
@@ -483,11 +488,10 @@ class ExperiencesByFunction(Experiences):
 
 
 class ExperiencesByPerson(HistoryByPerson, Experiences):
-    "List of job experiences for a known person"
     required = dd.required(user_groups='integ')
     auto_fit_column_widths = True
-    column_names = "company start_date end_date title status \
-    country remarks sector function"
+    column_names = "company start_date end_date function title \
+    status duration country remarks *"
 
 
 class ExperiencesByStatus(Experiences):
