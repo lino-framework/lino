@@ -6,3 +6,8 @@ Wednesday, December 3, 2014
 Added new model :class:`welfare.pcsw.Conviction`
 and table :class:`welfare.pcsw.ConvictionsByClient`.
 
+
+
+
+:mod:`lino_welfare.modlib.debts.models` now adds a customized
+`detail_layout` to to `accounts.Accounts`.
