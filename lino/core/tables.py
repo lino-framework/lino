@@ -729,12 +729,9 @@ class AbstractTable(actors.Actor):
     Used internally to store :class:`groups <Group>` defined by this Table.
     """
 
-    preview_limit = settings.SITE.preview_limit
-
     get_data_rows = None
-
+    preview_limit = settings.SITE.preview_limit
     variable_row_height = False
-
     auto_fit_column_widths = False
     active_fields = frozenset()
     hidden_columns = frozenset()

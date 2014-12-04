@@ -22,13 +22,10 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
-
-from lino.modlib.contacts.models import ContactRelated
-# contacts = dd.resolve_app('contacts')
+from lino import dd, mixins
 
 
-class ListType(dd.BabelNamed):
+class ListType(mixins.BabelNamed):
 
     """Represents a possible choice for the `list_type` field of a
     :class:`List`.
@@ -46,7 +43,7 @@ class ListTypes(dd.Table):
     column_names = 'name *'
 
 
-class List(dd.BabelNamed, dd.Referrable):
+class List(mixins.BabelNamed, mixins.Referrable):
 
     class Meta:
         verbose_name = _("Partner List")
@@ -78,7 +75,7 @@ class Lists(dd.Table):
     """)
 
 
-class Member(dd.Sequenced):
+class Member(mixins.Sequenced):
 
     class Meta:
         verbose_name = _("List memberships")

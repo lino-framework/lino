@@ -5,7 +5,7 @@ from lino import dd, rt
 from django.utils.translation import ugettext_lazy as _
 
 
-class Entry(dd.CreatedModified, dd.UserAuthored):
+class Entry(mixins.CreatedModified, mixins.UserAuthored):
 
     class Meta:
         verbose_name = _("Entry")
@@ -36,7 +36,7 @@ class EntriesByCompany(Entries):
     master_key = 'company'
 
 
-class MyEntries(Entries, dd.ByUser):
+class MyEntries(Entries, mixins.ByUser):
     pass
 
 

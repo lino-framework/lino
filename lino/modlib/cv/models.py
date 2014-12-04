@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.encoding import force_unicode
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 from lino.utils.xmlgen.html import E
 from lino.utils.htmlgen import UL
 from lino.modlib.countries.models import CountryCity
@@ -109,7 +109,7 @@ class KnowledgesByLanguage(LanguageKnowledges):
 ## Trainings
 
 
-class TrainingType(dd.BabelNamed):
+class TrainingType(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Training Type")
@@ -198,7 +198,7 @@ class TrainingsByPerson(HistoryByPerson, Trainings):
 ## Studies
 ##
 
-class EducationLevel(dd.BabelNamed, dd.Sequenced):
+class EducationLevel(mixins.BabelNamed, mixins.Sequenced):
 
     class Meta:
         verbose_name = _("Education Level")
@@ -217,7 +217,7 @@ class EducationLevels(dd.Table):
     """
 
 
-class StudyType(dd.BabelNamed):
+class StudyType(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Study Type")
@@ -326,7 +326,7 @@ class StudiesByPerson(HistoryByPerson, Studies):
 ## Work Experiences
 
 
-class Status(dd.BabelNamed):
+class Status(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Status")
@@ -344,7 +344,7 @@ class Statuses(dd.Table):
     """
 
 
-class Regime(dd.BabelNamed):
+class Regime(mixins.BabelNamed):
     # e.g. "38h/week"
     class Meta:
         verbose_name = _("Work Regime")
@@ -361,7 +361,7 @@ class Regimes(dd.Table):
     """
 
 
-class Duration(dd.BabelNamed):
+class Duration(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Contract Duration")
         verbose_name_plural = _('Contract Durations')
@@ -377,7 +377,7 @@ class Durations(dd.Table):
     """
 
 
-class Sector(dd.BabelNamed):
+class Sector(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Job Sector")
@@ -400,7 +400,7 @@ class Sectors(dd.Table):
     """
 
 
-class Function(dd.BabelNamed):
+class Function(mixins.BabelNamed):
 
     """Each Job may have a Function."""
     class Meta:

@@ -24,7 +24,7 @@ users.UserGroups : User Groups
 users.UserLevels : User Levels
 users.UserProfiles : User Profiles
 
->>> Genders = dd.Genders
+>>> Genders = mixins.Genders
 >>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male

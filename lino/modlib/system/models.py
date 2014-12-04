@@ -326,6 +326,11 @@ def setup_config_menu(site, ui, profile, m):
         #~ m.add_action(site.modules.lino.Workflows)
 
 
+def setup_reports_menu(site, ui, profile, m):
+    system = m.add_menu("system", SYSTEM_USER_LABEL)
+    system.add_action('lino.OrphanedControllables')
+
+
 def setup_explorer_menu(site, ui, profile, m):
     office = m.add_menu("office", OFFICE_MODULE_LABEL)
     system = m.add_menu("system", SYSTEM_USER_LABEL)

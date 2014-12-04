@@ -46,7 +46,8 @@ because I believed that RTD cannot work on a development version.
 Added a `requirements.txt` file and checked the `Use virtualenv`
 option in :menuselection` Admin --> Advanced Settings`.
 
-:: 
+Next problem was:: 
+
     Exception occurred:
       File "/home/docs/checkouts/readthedocs.org/user_builds/atelier/envs/latest/local/lib/python2.7/site-packages/atelier-0.0.4-py2.7.egg/atelier/sphinxconf/base.py", line 257, in command_parse
         signode += addnodes.literal_strong(sig, sig)
@@ -57,6 +58,70 @@ in `Sphinx 1.3 <http://sphinx-doc.org/latest/changes.html>`_.
 That version of Sphinx is not yet released and thus not available on RTF.
 So I use now `literal_emphasis` instead of `literal_strong`.
 
-Got it working (at least for :mod:`atelier`) at 9:52
+Got it working at least for `atelier
+<http://atelier.readthedocs.org/en/latest/>`_ .  That's enough for
+this time.
 
-That's enough for this time.
+
+Using milestones in Trac
+========================
+
+I am learning how to organize my work using Trac.  
+This is an important step for Lino.
+Started a new document :doc:`/community/team`.
+
+For :ref:`dsbe` we have one big project which we call
+"Sozialsekretariat".  The project has already seen quite some
+releases, demonstrations, discussions...  
+
+And yesterday we had a phone session where :ref:`gx` forwarded some
+problem reported by their users. These problems are not part of the
+"Sozialsekretariat" project but should get solved ASAP. That is, with
+the next :term:`upgrade`.
+
+This example shows us that we must create one "milestone" in
+:term:`trac` for every :term:`upgrade`.  Which means that I must
+rename the current milestone "Sozialsekretariat 1.0" to something like
+"gx-2014-12".
+
+*Naming milestones* is another discussion topic.  We cannot use
+release numbers since every :term:`upgrade` needs a milestone and we
+have more than one upgrades before we do a release.
+
+Another topic of discussion is: theroetically we should create one
+trac ticket for every reported problem. But in this case I created a
+"grouped" ticket: :ticket:`23`.
+
+
+Tickets
+=======
+
+:ref:`gx` reported some more quick problems:
+   
+- Ausdruck AMK : Unterzeichner steht hinter den Anlagen
+- Ausdruck AMK : "für den Zeitraum <NIX> Anrecht auf Übernahme
+  folgende..."
+- NB: auch im Ausdruck EiEi fehlt die Periode (z.B. Auszug 974)
+
+Which I registered as three tickets:
+
+- :ticket:`30`
+- :ticket:`29`
+- :ticket:`28`
+
+
+Since I considered that table with orphaned controllables should be
+`lino.OrphanedControllables` and not e.g.
+`system.OrphanedControllables`, I stumbled again over
+:doc:`/tickets/134`. And made a rather heavy step (considering that
+there are more urgent things to do): :mod:`lino.dd` no longer imports
+anything from :mod:`lino.mixins`. :ref:`joe` and :ref:`xmj` and will
+like it. And I agree that they were right at least for this part of
+:mod:`dd`.
+
+
+The body templates of aids confirmations use a context variable
+`{{when}}` which contains the covered period. But this context
+variable was not defined.
+
+

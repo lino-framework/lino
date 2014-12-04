@@ -70,7 +70,7 @@ add('10', _("Jargon"), 'jargon')
 add('20', _("Obsoletes"), 'obsoletes')
 
 
-class Concept(dd.BabelNamed):
+class Concept(mixins.BabelNamed):
 
     """
     """

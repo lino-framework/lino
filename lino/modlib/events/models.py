@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.utils.xmlgen.html import E
-from lino import dd, rt
+from lino import dd, mixins
 from lino.core.constants import _handle_attr_name
 
 
@@ -27,7 +27,7 @@ def sepjoin(items, sep=', '):
     return rv
 
 
-class Place(dd.BabelNamed):
+class Place(mixins.BabelNamed):
     city = dd.ForeignKey(
         'countries.Place',
         related_name='events_place_set',
@@ -38,7 +38,7 @@ class Places(dd.Table):
     model = Place
 
 
-class Feature(dd.BabelNamed):
+class Feature(mixins.BabelNamed):
     pass
 
 
@@ -46,7 +46,7 @@ class Features(dd.Table):
     model = Feature
 
 
-class Type(dd.BabelNamed):
+class Type(mixins.BabelNamed):
     
     events_column_names = models.CharField(
         max_length="100",
@@ -66,7 +66,7 @@ class Types(dd.Table):
     model = Type
 
 
-class Event(dd.BabelNamed):
+class Event(mixins.BabelNamed):
     date = models.DateField(_("Date"))
     place = dd.ForeignKey(Place, blank=True, null=True)
     type = dd.ForeignKey(Type)
@@ -76,7 +76,7 @@ class Event(dd.BabelNamed):
     url = models.URLField(blank=True)
 
 
-class Stage(dd.Sequenced):
+class Stage(mixins.Sequenced):
     event = dd.ForeignKey('events.Event', related_name="stages")
     city = dd.ForeignKey('countries.Place', related_name="stages")
 

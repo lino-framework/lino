@@ -20,7 +20,7 @@ from django.utils import translation
 
 from djangosite.utils.djangotest import RemoteAuthTestCase
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 from lino.utils.instantiator import create_and_get
 from north.dbutils import babelkw
@@ -28,7 +28,7 @@ from north.dbutils import babelkw
 from lino.modlib.contacts import models as contacts
 from lino.modlib.users.mixins import UserProfiles
 
-Genders = dd.Genders
+Genders = mixins.Genders
 
 
 class QuickTest(RemoteAuthTestCase):

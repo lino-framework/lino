@@ -37,7 +37,7 @@ contacts = dd.resolve_app('contacts')
 from lino.modlib.sales.models import *
 
 
-class InvoicingMode(dd.PrintableType, dd.BabelNamed):
+class InvoicingMode(mixins.PrintableType, mixins.BabelNamed):
 
     "See :class:``"
     class Meta:
@@ -257,7 +257,7 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct):  # 20130709
     column_names = "voucher qty title description:20x1 discount unit_price total_incl total_base total_vat"
 
 
-class CreateAllInvoices(dd.CachedPrintAction):
+class CreateAllInvoices(mixins.CachedPrintAction):
     #~ icon_name = 'money'
 
     #~ label = _("Create invoices")

@@ -34,7 +34,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 from lino.core.choicelists import get_choicelist, choicelist_choices
 
@@ -75,7 +75,7 @@ add('3', _("quite well"))
 add('4', _("very well"))
 
 
-class PropType(dd.BabelNamed):
+class PropType(mixins.BabelNamed):
 
     """
     The type of the values that a property accepts.
@@ -193,7 +193,7 @@ class PropChoice(dd.Model):
         return dd.babelattr(self, 'text')
 
 
-class PropGroup(dd.BabelNamed):
+class PropGroup(mixins.BabelNamed):
 
     """A Property Group defines a list of Properties that fit together
     under a common name.  Examples of Property Groups: Skills, Soft
@@ -205,7 +205,7 @@ class PropGroup(dd.BabelNamed):
         verbose_name_plural = _("Property Groups")
 
 
-class Property(dd.BabelNamed):
+class Property(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Property")

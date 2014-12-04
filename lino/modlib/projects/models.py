@@ -17,7 +17,7 @@ from lino import dd, rt
 from lino import mixins
 
 
-class ProjectType(dd.BabelNamed):
+class ProjectType(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Project Type")

@@ -14,7 +14,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.ledger.utils import FiscalYears
 from lino.utils.xmlgen.html import E
@@ -100,7 +100,7 @@ class DcAmountField(dd.VirtualField):
         return None
 
 
-class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
+class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
 
     class Meta:
         verbose_name = _("Journal")
@@ -176,8 +176,8 @@ class Journal(dd.BabelNamed, dd.Sequenced, dd.PrintableType):
             s += " (%s)" % self.ref
             #~ return '%s (%s)' % (d.BabelNamed.__unicode__(self),self.ref or self.id)
         return s
-            #~ return self.ref +'%s (%s)' % dd.BabelNamed.__unicode__(self)
-            #~ return self.id +' (%s)' % dd.BabelNamed.__unicode__(self)
+            #~ return self.ref +'%s (%s)' % mixins.BabelNamed.__unicode__(self)
+            #~ return self.id +' (%s)' % mixins.BabelNamed.__unicode__(self)
 
     def save(self, *args, **kw):
         #~ self.before_save()
@@ -256,7 +256,7 @@ def VoucherNumber(**kw):
     return models.IntegerField(**kw)
 
 
-class Voucher(dd.UserAuthored, dd.Registrable):
+class Voucher(mixins.UserAuthored, mixins.Registrable):
 
     class Meta:
         verbose_name = _("Voucher")
@@ -632,7 +632,7 @@ class Movements(dd.Table):
         ppartner=models.ForeignKey(partner_model, blank=True, null=True),
         paccount=models.ForeignKey('accounts.Account', blank=True, null=True),
         pjournal=JournalRef(blank=True),
-        cleared=dd.YesNo.field(_("Show cleared movements"), blank=True))
+        cleared=mixins.YesNo.field(_("Show cleared movements"), blank=True))
     params_layout = """
     start_date end_date cleared
     pjournal pyear ppartner paccount"""
@@ -641,9 +641,9 @@ class Movements(dd.Table):
     def get_request_queryset(cls, ar):
         qs = super(Movements, cls).get_request_queryset(ar)
 
-        if ar.param_values.cleared == dd.YesNo.yes:
+        if ar.param_values.cleared == mixins.YesNo.yes:
             qs = qs.filter(satisfied=True)
-        elif ar.param_values.cleared == dd.YesNo.no:
+        elif ar.param_values.cleared == mixins.YesNo.no:
             qs = qs.filter(satisfied=False)
 
         if ar.param_values.ppartner:
@@ -673,7 +673,7 @@ class MovementsByPartner(Movements):
     @classmethod
     def param_defaults(cls, ar, **kw):
         kw = super(MovementsByPartner, cls).param_defaults(ar, **kw)
-        kw.update(cleared=dd.YesNo.no)
+        kw.update(cleared=mixins.YesNo.no)
         kw.update(pyear='')
         return kw
 
@@ -689,7 +689,7 @@ class MovementsByAccount(Movements):
     def param_defaults(cls, ar, **kw):
         kw = super(MovementsByAccount, cls).param_defaults(ar, **kw)
         if ar.master_instance is not None and ar.master_instance.clearable:
-            kw.update(cleared=dd.YesNo.no)
+            kw.update(cleared=mixins.YesNo.no)
             kw.update(pyear='')
         return kw
 
@@ -1285,7 +1285,7 @@ class Creditors(DebtorsCreditors):
 ##
 
 
-class Situation(dd.Report):
+class Situation(mixins.Report):
     label = _("Situation")
     help_text = _("Overview of the financial situation on a given date.")
     required = dd.required(user_groups='accounts')
@@ -1295,7 +1295,7 @@ class Situation(dd.Report):
     report_items = (Debtors, Creditors)
 
 
-class ActivityReport(dd.Report):
+class ActivityReport(mixins.Report):
     label = _("Activity Report")
     help_text = _("Overview of the financial activity during a given period.")
     required = dd.required(user_groups='accounts')

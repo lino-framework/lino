@@ -47,7 +47,7 @@ class Filters(dd.Table):
     """
 
 
-class Item(dd.Sequenced):
+class Item(mixins.Sequenced):
 
     class Meta:
         verbose_name = _("Import Filter Item")

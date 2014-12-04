@@ -17,14 +17,13 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 
 def default_color():
@@ -33,7 +32,7 @@ def default_color():
     return n + 1
 
 
-class Calendar(dd.BabelNamed):
+class Calendar(mixins.BabelNamed):
 
     COLOR_CHOICES = [i + 1 for i in range(32)]
 
@@ -65,7 +64,7 @@ class Calendars(dd.Table):
     """
 
 
-class Subscription(dd.UserAuthored):
+class Subscription(mixins.UserAuthored):
 
     """
     A Suscription is when a User subscribes to a Calendar.
@@ -107,7 +106,7 @@ class Subscriptions(dd.Table):
     #~ description
     #~ """
 
-#~ class MySubscriptions(Subscriptions,dd.ByUser):
+#~ class MySubscriptions(Subscriptions,mixins.ByUser):
     #~ pass
 
 #~ class SubscriptionsByCalendar(Subscriptions):

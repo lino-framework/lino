@@ -20,10 +20,10 @@ system = dd.resolve_app('system')
 
 
 class Comment(
-        dd.CreatedModified,
-        dd.UserAuthored,
-        dd.Hierarizable,
-        dd.Controllable):
+        mixins.CreatedModified,
+        mixins.UserAuthored,
+        mixins.Hierarizable,
+        mixins.Controllable):
     """The model definition."""
 
     class Meta:

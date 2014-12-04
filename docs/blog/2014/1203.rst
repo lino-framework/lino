@@ -14,7 +14,8 @@ and table :class:`welfare.pcsw.ConvictionsByClient`.
 Schuldnerberatung
 =================
 
-Gerd reported a few user requests for the :mod:`welfare.debts` module.
+:ref:`gx` reported a few user requests for the :mod:`welfare.debts`
+module. I solved some of them immediately.
 
 DONE:
 

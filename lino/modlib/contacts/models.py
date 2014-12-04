@@ -37,7 +37,7 @@ from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
 
 
-class CompanyType(dd.BabelNamed):
+class CompanyType(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Organization type")
@@ -53,7 +53,7 @@ class CompanyTypes(dd.Table):
     #~ label = _("Company types")
 
 
-class Partner(dd.Polymorphic, AddressLocation, Addressable):
+class Partner(mixins.Polymorphic, AddressLocation, Addressable):
     "See :class:`ml.contacts.Partner`."
 
     preferred_foreignkey_width = 20
@@ -363,8 +363,8 @@ class Companies(Partners):
     #~ """,window_size=(40,'auto'))
 
 
-# class ContactType(dd.BabelNamed):
-class RoleType(dd.BabelNamed):
+# class ContactType(mixins.BabelNamed):
+class RoleType(mixins.BabelNamed):
 
     """
     TODO: rename "RoleType" to "Function" or "ContactType".

@@ -1,4 +1,4 @@
-from lino import dd, rt
+from lino import dd, mixins
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -12,7 +12,7 @@ Categories.add_item("03", _("Accessories"), 'accessories')
 Categories.add_item("04", _("Software"), 'software')
 
 
-class Product(dd.BabelNamed):
+class Product(mixins.BabelNamed):
 
     price = dd.PriceField(_("Price"), blank=True, null=True)
 

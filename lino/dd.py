@@ -138,9 +138,6 @@ Model mixins:
 - :class:`lino.mixins.human.Human`
 - :class:`lino.mixins.human.Born`
 
-Miscellaneous:
-
-- :class:`Genders <lino.models.Genders>`
 
 """
 
@@ -157,8 +154,6 @@ logger = logging.getLogger(__name__)
 # from lino.ad import Plugin
 
 from lino.core.tables import VirtualTable
-from lino.mixins import EmptyTable
-from lino.mixins import Report
 
 
 from north.dbutils import resolve_model, UnresolvedModel
@@ -210,8 +205,6 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 #~ from lino.core.actions import Calendar
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.models import Genders
-from lino.models import YesNo
 from lino.core.workflows import State, Workflow, ChangeStateAction
 from lino.core.actions import NotifyingAction
 
@@ -245,7 +238,6 @@ from lino.core.fields import ForeignKey
 from lino.core.fields import BabelTextField
 from lino.core.fields import CharField
 
-from lino.mixins import BabelNamed
 from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
 
@@ -344,25 +336,33 @@ from north.dbutils import fdl as dtosl
 babelitem = settings.SITE.babelitem
 field2kw = settings.SITE.field2kw
 
-from lino.mixins import (
-    ProjectRelated, UserAuthored, ByUser,
-    Duplicable, Duplicate,
-    Sequenced, Hierarizable, Referrable,
-    Registrable,
-    Controllable)
+if False:
 
-from lino.mixins import Created, Modified
-from lino.mixins import CreatedModified  # deprecated
+    from lino.mixins import EmptyTable
+    from lino.mixins import Report
+    
+    from lino.models import Genders
+    from lino.models import YesNo
+    from lino.mixins import BabelNamed
+    
+    from lino.mixins import (
+        ProjectRelated, UserAuthored, ByUser,
+        Duplicable, Duplicate,
+        Sequenced, Hierarizable, Referrable,
+        Registrable,
+        Controllable)
 
-from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction, CachedPrintAction
-#~ from lino.mixins import SimplyPrintable
-from lino.mixins.uploadable import Uploadable
-from lino.mixins.human import Human, Born
+    from lino.mixins import Created, Modified
+    from lino.mixins import CreatedModified  # deprecated
 
-from lino.mixins.periods import DatePeriod
-from lino.models import PeriodEvents
+    from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction, CachedPrintAction
+    from lino.mixins.uploadable import Uploadable
+    from lino.mixins.human import Human, Born
 
-from lino.mixins.polymorphic import Polymorphic
+    from lino.mixins.periods import DatePeriod
+    # from lino.models import PeriodEvents
+
+    from lino.mixins.polymorphic import Polymorphic
 
 from django.utils.importlib import import_module
 

@@ -708,16 +708,6 @@ class Printable(object):
         # TypedPrintable  overrides this
         return self.get_default_build_method()
 
-    def get_printable_context(self, ar, **kw):
-        kw = settings.SITE.get_printable_context(ar, **kw)
-        kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
-
-        def translate(s):
-            return _(s.decode('utf8'))
-        kw.update(_=translate)
-        return kw
-
 
 class CachedPrintable(Duplicable, Printable):
     "See :class:`dd.CachedPrintable`."

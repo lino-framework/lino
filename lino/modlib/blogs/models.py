@@ -30,7 +30,7 @@ from django.conf import settings
 #~ TEMPLATE_GROUP = 'notes'
 
 
-class EntryType(dd.BabelNamed, mixins.PrintableType):
+class EntryType(mixins.BabelNamed, mixins.PrintableType):
 
     templates_group = 'blogs/Entry'
 

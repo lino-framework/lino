@@ -11,7 +11,7 @@ from lino import dd, rt
 
 contacts = dd.resolve_app('contacts')
 
-class EntryType(dd.BabelNamed):
+class EntryType(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Entry Type")
         verbose_name_plural = _("Entry Types")
@@ -23,7 +23,7 @@ class EntryTypes(dd.Table):
     model = EntryType
     
     
-class Entry(dd.UserAuthored):
+class Entry(mixins.UserAuthored):
     
     class Meta:
         verbose_name = _("Entry")
@@ -89,7 +89,7 @@ class Entries(dd.Table):
 class EntriesByCompany(Entries):
     master_key = 'company'
     
-#~ class MyEntries(Entries,dd.ByUser):
+#~ class MyEntries(Entries,mixins.ByUser):
     #~ pass
     
     

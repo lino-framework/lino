@@ -140,9 +140,9 @@ class Plugin(BeIdPlugin):  # was: use_eid_jslib
 
         def sex2gender(sex):
             if sex == 'M':
-                return dd.Genders.male
+                return mixins.Genders.male
             if sex in 'FVW':
-                return dd.Genders.female
+                return mixins.Genders.female
             logger.warning("%s : invalid gender code %r", msg1, sex)
         kw.update(gender=sex2gender(data['sex']))
 

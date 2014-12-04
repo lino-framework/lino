@@ -1,6 +1,7 @@
-from lino import dd, rt
+from lino import mixins
 
-class Person(dd.Human, dd.Printable):
+
+class Person(mixins.Human, mixins.Printable):
     pass
 
 

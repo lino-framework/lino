@@ -527,7 +527,7 @@ class RecurrenceSet(Started, Ended):
 dd.update_field(RecurrenceSet, 'start_date', default=settings.SITE.today)
 
 
-class Reservation(RecurrenceSet, EventGenerator, dd.Registrable):
+class Reservation(RecurrenceSet, EventGenerator, mixins.Registrable):
 
     class Meta:
         abstract = True

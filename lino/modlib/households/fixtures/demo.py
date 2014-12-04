@@ -17,7 +17,7 @@ from lino.core.dbutils import resolve_model
 
 from lino.utils import Cycler
 from lino.utils import i2d
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 
 def objects():
@@ -28,9 +28,9 @@ def objects():
     Person = resolve_model(dd.apps.households.person_model)
     Type = resolve_model('households.Type')
 
-    MEN = Cycler(Person.objects.filter(gender=dd.Genders.male)
+    MEN = Cycler(Person.objects.filter(gender=mixins.Genders.male)
                  .order_by('-id'))
-    WOMEN = Cycler(Person.objects.filter(gender=dd.Genders.female)
+    WOMEN = Cycler(Person.objects.filter(gender=mixins.Genders.female)
                    .order_by('-id'))
     TYPES = Cycler(Type.objects.all())
 

@@ -54,7 +54,7 @@ class DebitOrCreditField(models.BooleanField):
         models.BooleanField.__init__(self, *args, **kw)
 
 
-class Chart(dd.BabelNamed):
+class Chart(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Account Chart")
@@ -82,10 +82,10 @@ class Charts(dd.Table):
     """
 
 
-#~ class Group(dd.BabelNamed,mixins.Sequenced):
+#~ class Group(mixins.BabelNamed,mixins.Sequenced):
 
 
-class Group(dd.BabelNamed):
+class Group(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Account Group")
@@ -128,7 +128,7 @@ class GroupsByChart(Groups):
     column_names = 'ref name account_type *'
 
 
-class Account(dd.BabelNamed, mixins.Sequenced):
+class Account(mixins.BabelNamed, mixins.Sequenced):
 
     class Meta:
         verbose_name = _("Account")

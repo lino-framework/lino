@@ -93,7 +93,7 @@ InvoiceStates.draft.add_transition(
 #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
-class ShippingMode(dd.BabelNamed):
+class ShippingMode(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Shipping Mode")

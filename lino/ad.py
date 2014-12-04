@@ -1155,7 +1155,7 @@ class Site(Site):
             rt=rt,
             settings=settings,
             lino=self.modules,  # experimental
-            ar=ar,
+            # ar=ar,
             site_config=self.site_config,
         )
         return kw

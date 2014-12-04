@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.core.exceptions import ValidationError
@@ -187,7 +187,7 @@ class CountryDrivers:
     FR = CountryDriver('24', '50 51 52 70')
 
 
-class Country(dd.BabelNamed):
+class Country(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Country")
@@ -240,7 +240,7 @@ class Countries(dd.Table):
 FREQUENT_COUNTRIES = ['BE', 'NL', 'DE', 'FR', 'LU']
 
 
-class Place(dd.BabelNamed):
+class Place(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Place")

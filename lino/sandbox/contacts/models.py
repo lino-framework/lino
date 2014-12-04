@@ -19,14 +19,14 @@ from lino.utils.choicelists import Gender
 from lino.utils import join_words
 
 
-#~ class AddressType(dd.BabelNamed):
+#~ class AddressType(mixins.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Address Type")
         #~ verbose_name_plural = _("Address Types")
 #~ class AddressTypes(dd.Table):
     #~ model = AddressType
     #~ column_names = 'name *'
-class Role(dd.BabelNamed):
+class Role(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Role")

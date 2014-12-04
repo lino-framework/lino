@@ -7,12 +7,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from lino import dd, rt
+from lino import dd, mixins
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-class Board(dd.BabelNamed, dd.DatePeriod):
+class Board(mixins.BabelNamed, mixins.DatePeriod):
 
     class Meta:
         verbose_name = _("Board")
@@ -70,7 +70,7 @@ class MembersByBoard(Members):
     order_by = ["role"]
 
 
-class BoardDecision(dd.UserAuthored):
+class BoardDecision(mixins.UserAuthored):
     # base class for aids.Confirmation
     class Meta:
         abstract = True

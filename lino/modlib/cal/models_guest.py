@@ -19,7 +19,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, rt
+from lino import dd, mixins
 
 from .workflows import GuestStates
 from .workflows import EventStates
@@ -27,8 +27,8 @@ from .workflows import EventStates
 # outbox = dd.resolve_app('outbox')
 
 
-# class GuestRole(outbox.MailableType, dd.BabelNamed):
-class GuestRole(dd.BabelNamed):
+# class GuestRole(outbox.MailableType, mixins.BabelNamed):
+class GuestRole(mixins.BabelNamed):
     templates_group = 'cal/Guest'
 
     class Meta:

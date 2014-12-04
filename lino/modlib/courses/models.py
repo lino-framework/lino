@@ -109,7 +109,7 @@ class Slots(dd.Table):
     """
 
 
-class Topic(dd.BabelNamed, dd.Printable):
+class Topic(mixins.BabelNamed, mixins.Printable):
 
     class Meta:
         verbose_name = _("Topic")
@@ -126,7 +126,7 @@ class Topics(dd.Table):
     """
 
 
-class Line(dd.BabelNamed):
+class Line(mixins.BabelNamed):
     # a line (series) of courses. 
     class Meta:
         verbose_name = _("Course Line")
@@ -300,7 +300,7 @@ class Course(cal.Reservation):
     enrolments_until = models.DateField(
         _("Enrolments until"), blank=True, null=True)
 
-    duplicate = dd.Duplicate()
+    duplicate = mixins.Duplicate()
 
     def on_duplicate(self, ar, master):
         self.state = CourseStates.draft
@@ -535,7 +535,7 @@ class Courses(dd.Table):
             settings.SITE.user_model,
             blank=True, null=True),
         state=CourseStates.field(blank=True),
-        active=dd.YesNo.field(blank=True),
+        active=mixins.YesNo.field(blank=True),
     )
     params_layout = """topic line city teacher user state active:10"""
 
@@ -560,9 +560,9 @@ class Courses(dd.Table):
             qs = qs.filter(flt)
         flt = Q(enrolments_until__isnull=True) | \
               Q(enrolments_until__gte=dd.today())
-        if ar.param_values.active == dd.YesNo.yes:
+        if ar.param_values.active == mixins.YesNo.yes:
             qs = qs.filter(flt)
-        elif ar.param_values.active == dd.YesNo.no:
+        elif ar.param_values.active == mixins.YesNo.no:
             qs = qs.exclude(flt)
         # logger.info("20140820 %s", dd.today())
         return qs
@@ -607,7 +607,7 @@ class CoursesByLine(Courses):
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.registered)
-        kw.update(active=dd.YesNo.yes)
+        kw.update(active=mixins.YesNo.yes)
         return kw
 
 
@@ -639,7 +639,7 @@ class DraftCourses(Courses):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.draft)
         kw.update(user=ar.get_user())
-        # kw.update(active=dd.YesNo.yes)
+        # kw.update(active=mixins.YesNo.yes)
         return kw
 
 
@@ -655,12 +655,12 @@ class ActiveCourses(Courses):
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.registered)
-        kw.update(active=dd.YesNo.yes)
+        kw.update(active=mixins.YesNo.yes)
         return kw
 
 if False:
 
-    class Option(dd.BabelNamed):
+    class Option(mixins.BabelNamed):
 
         class Meta:
             abstract = dd.is_abstract_model(__name__, 'Option')
@@ -712,7 +712,7 @@ class ConfirmedSubmitInsert(dd.SubmitInsert):
         ar.set_response(close_window=True)
 
 
-class Enrolment(dd.UserAuthored, sales.Invoiceable):
+class Enrolment(mixins.UserAuthored, sales.Invoiceable):
 
     invoiceable_date_field = 'request_date'
     workflow_state_field = 'state'
@@ -1086,7 +1086,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
-        # kw.update(active=dd.YesNo.yes)
+        # kw.update(active=mixins.YesNo.yes)
         pupil = ar.master_instance
         if pupil and pupil.city:
             kw.update(city=pupil.city)

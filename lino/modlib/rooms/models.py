@@ -62,7 +62,7 @@ def setup_BookingStates_workflow(sender=None, **kw):
         icon_name='cross')
 
 
-class Booking(contacts.ContactRelated, Reservation, dd.Printable):
+class Booking(contacts.ContactRelated, Reservation, mixins.Printable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Booking')

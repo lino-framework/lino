@@ -16,6 +16,9 @@ from lino import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 
+from lino.mixins import CreatedModified
+from lino.mixins import UserAuthored
+
 from .mixins import UserProfiles, UserLevels, UserGroups
 
 class ChangePassword(dd.Action):
@@ -51,7 +54,7 @@ class ChangePassword(dd.Action):
         ar.success(msg, alert=True)
 
 
-class User(dd.CreatedModified):
+class User(CreatedModified):
 
     """
     Represents a :ddref:`users.User` of this site.
@@ -295,43 +298,8 @@ class UsersOverview(Users):
     column_names = 'username profile language'
     exclude = dict(profile='')
 
-#~ if settings.SITE.user_model:
 
-
-# class Team(mixins.BabelNamed):
-
-#     class Meta:
-#         verbose_name = _("Team")
-#         verbose_name_plural = _("Teams")
-
-
-# class Teams(dd.Table):
-#     required = dict(user_level='manager')
-#     model = Team
-
-
-# class Membership(mixins.UserAuthored):
-
-#     class Meta:
-#         verbose_name = _("Membership")
-#         verbose_name_plural = _("Memberships")
-
-#     team = models.ForeignKey('users.Team')
-
-
-# class Memberships(dd.Table):
-#     required = dict(user_level='manager')
-#     model = Membership
-
-
-# class MembershipsByUser(mixins.ByUser, Memberships):
-#     #~ required = dict()
-#     master_key = 'user'
-#     column_names = 'team'
-#     auto_fit_column_widths = True
-
-
-class Authority(dd.UserAuthored):
+class Authority(UserAuthored):
 
     """
     An Authority is when a User gives another User the right to "represent him"

@@ -11,7 +11,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 from lino.utils import join_words, join_elems
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
@@ -22,7 +22,7 @@ config = dd.apps.households
 mnugrp = dd.apps.contacts
 
 
-class Type(dd.BabelNamed):
+class Type(mixins.BabelNamed):
 
     """
     Type of a household.
@@ -177,7 +177,7 @@ class HouseholdsByType(Households):
     #~ column_names = 'person role *'
 
 
-# class Role(dd.BabelNamed):
+# class Role(mixins.BabelNamed):
 #     """
 #     The role of a :class:`Member` in a :class:`Household`.
 #     """
@@ -206,7 +206,7 @@ class HouseholdsByType(Households):
 #     """
 
 
-class Member(dd.DatePeriod):
+class Member(mixins.DatePeriod):
     """
     The role of a given :class:`Person` in a given :class:`Household`.
     """
@@ -317,7 +317,7 @@ class SiblingsByPerson(Members):
                 ar.master_household = mbr[0].household
             else:
                 mbr = M.objects.filter(person=mi)
-                mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
+                mbr = mixins.PeriodEvents.active.add_filter(mbr, dd.today())
                 if mbr.count() == 1:
                     ar.master_household = mbr[0].household
                 else:

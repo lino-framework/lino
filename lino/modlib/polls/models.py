@@ -9,10 +9,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd, mixins
 from lino.utils import join_elems
 
 from lino.utils.xmlgen.html import E
@@ -69,7 +68,7 @@ ResponseStates.draft.add_transition(_("Deregister"), states="registered")
 #~ add('10', _("Draft"),'draft',editable=True)
 
 
-class ChoiceSet(dd.BabelNamed):
+class ChoiceSet(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Choice Set")
@@ -84,7 +83,7 @@ class ChoiceSets(dd.Table):
     """
 
 
-class Choice(dd.BabelNamed, dd.Sequenced):
+class Choice(mixins.BabelNamed, mixins.Sequenced):
 
     class Meta:
         verbose_name = _("Choice")
@@ -111,7 +110,7 @@ class ChoicesBySet(Choices):
     master_key = 'choiceset'
 
 
-class Poll(dd.UserAuthored, dd.CreatedModified, Referrable):
+class Poll(mixins.UserAuthored, mixins.CreatedModified, Referrable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Poll')
@@ -203,11 +202,11 @@ class Polls(dd.Table):
     """, window_size=(60, 15))
 
 
-class MyPolls(dd.ByUser, Polls):
+class MyPolls(mixins.ByUser, Polls):
     column_names = 'created title state *'
 
 
-class Question(dd.Sequenced):
+class Question(mixins.Sequenced):
 
     class Meta:
         verbose_name = _("Question")
@@ -279,7 +278,7 @@ class ToggleChoice(dd.Action):
         # dd.logger.info("20140930 %s", obj)
             
 
-class Response(dd.UserAuthored, dd.Registrable, dd.CreatedModified):
+class Response(mixins.UserAuthored, mixins.Registrable, mixins.CreatedModified):
 
     class Meta:
         verbose_name = _("Response")
@@ -329,7 +328,7 @@ class Responses(dd.Table):
         return _("%(user)s's %(what)s") % dict(user=obj.user, what=txt)
 
 
-class MyResponses(dd.ByUser, Responses):
+class MyResponses(mixins.ByUser, Responses):
     column_names = 'created poll state remark *'
 
 

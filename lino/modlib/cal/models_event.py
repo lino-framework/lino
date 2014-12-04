@@ -22,7 +22,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 from lino.modlib.postings.mixins import Postable
 
@@ -44,7 +44,7 @@ from .workflows import EventStates
 outbox = dd.resolve_app('outbox')
 
 
-class EventType(dd.BabelNamed, dd.Sequenced,
+class EventType(mixins.BabelNamed, mixins.Sequenced,
                 outbox.MailableType):
 
     templates_group = 'cal/Event'
@@ -121,7 +121,7 @@ class EventTypes(dd.Table):
         #~ return cal
 
 
-#~ class EventType(mixins.PrintableType,outbox.MailableType,dd.BabelNamed):
+#~ class EventType(mixins.PrintableType,outbox.MailableType,mixins.BabelNamed):
     #~ """The type of an Event.
     #~ Determines which build method and template to be used for printing the event.
     #~ """
@@ -149,7 +149,7 @@ class EventTypes(dd.Table):
         #~ self.end_time = end_time
 
 
-class RecurrentEvent(dd.BabelNamed, RecurrenceSet, EventGenerator):
+class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
 
     class Meta:
         verbose_name = _("Recurrent Event")
@@ -273,7 +273,7 @@ class UpdateGuests(dd.MultipleRowAction):
 
 
 class Event(Component, Ended,
-            dd.TypedPrintable,
+            mixins.TypedPrintable,
             outbox.Mailable,
             Postable):
 
@@ -652,7 +652,7 @@ class Events(dd.Table):
                                 help_text=_("Only rows having this state.")),
         #~ unclear = models.BooleanField(_("Unclear events"))
         observed_event=EventEvents.field(blank=True),
-        show_appointments=dd.YesNo.field(_("Appointments"), blank=True),
+        show_appointments=mixins.YesNo.field(_("Appointments"), blank=True),
     )
 
     params_layout = """
@@ -682,9 +682,9 @@ class Events(dd.Table):
         if pv.event_type:
             qs = qs.filter(event_type=pv.event_type)
         else:
-            if pv.show_appointments == dd.YesNo.yes:
+            if pv.show_appointments == mixins.YesNo.yes:
                 qs = qs.filter(event_type__is_appointment=True)
-            elif pv.show_appointments == dd.YesNo.no:
+            elif pv.show_appointments == mixins.YesNo.no:
                 qs = qs.filter(event_type__is_appointment=False)
 
         if pv.state:
@@ -756,7 +756,7 @@ class EventsByDay(Events):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(EventsByDay, self).param_defaults(ar, **kw)
-        kw.update(show_appointments=dd.YesNo.yes)
+        kw.update(show_appointments=mixins.YesNo.yes)
         kw.update(start_date=settings.SITE.today())
         kw.update(end_date=settings.SITE.today())
         return kw
@@ -855,7 +855,7 @@ if settings.SITE.user_model:
         def param_defaults(self, ar, **kw):
             kw = super(MyEvents, self).param_defaults(ar, **kw)
             kw.update(user=ar.get_user())
-            kw.update(show_appointments=dd.YesNo.yes)
+            kw.update(show_appointments=mixins.YesNo.yes)
             #~ kw.update(assigned_to=ar.get_user())
             #~ logger.info("20130807 %s %s",self,kw)
             kw.update(start_date=settings.SITE.today())

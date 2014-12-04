@@ -70,7 +70,7 @@ register_calendartype('local', LocalCalendar())
 register_calendartype('google', GoogleCalendar())
 
 
-class RemoteCalendar(dd.Sequenced):
+class RemoteCalendar(mixins.Sequenced):
 
     """
     Remote calendars will be synchronized by
@@ -112,7 +112,7 @@ class RemoteCalendars(dd.Table):
     required = dd.required(user_groups='office', user_level='manager')
 
 
-class Room(dd.BabelNamed):
+class Room(mixins.BabelNamed):
 
     """
     A location where Events can happen.
@@ -126,7 +126,7 @@ class Room(dd.BabelNamed):
         verbose_name_plural = _("Rooms")
 
     #~ def __unicode__(self):
-        #~ s = dd.BabelNamed.__unicode__(self)
+        #~ s = mixins.BabelNamed.__unicode__(self)
         #~ if self.company and self.company.city:
             #~ s = '%s (%s)' % (self.company.city,s)
         #~ return s
@@ -142,7 +142,7 @@ class Rooms(dd.Table):
     """
 
 
-class Priority(dd.BabelNamed):
+class Priority(mixins.BabelNamed):
 
     "The priority of a Task or Event."
     class Meta:

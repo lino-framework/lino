@@ -66,7 +66,7 @@ from lino.modlib.tickets.utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
 
 
-class ProjectType(mixins.PrintableType, dd.BabelNamed):
+class ProjectType(mixins.PrintableType, mixins.BabelNamed):
 
     "Deserves more documentation."
 
@@ -82,7 +82,7 @@ class ProjectTypes(dd.Table):
     column_names = 'name build_method template *'
 
 
-class SessionType(dd.BabelNamed):
+class SessionType(mixins.BabelNamed):
 
     "Deserves more documentation."
 

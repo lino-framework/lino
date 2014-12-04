@@ -29,7 +29,7 @@ add = UploadAreas.add_item
 add('90', _("Uploads"), 'general')
 
 
-class UploadType(dd.BabelNamed):
+class UploadType(mixins.BabelNamed):
     """The type of an upload."""
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'UploadType')
@@ -79,9 +79,9 @@ def filename_leaf(name):
 
 
 class Upload(
-        dd.Uploadable,
-        dd.UserAuthored,
-        dd.Controllable):
+        mixins.Uploadable,
+        mixins.UserAuthored,
+        mixins.Controllable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Upload')

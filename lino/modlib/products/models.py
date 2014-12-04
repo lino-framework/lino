@@ -5,12 +5,12 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd, mixins
 
 vat = dd.resolve_app('vat')
 
 
-class ProductCat(dd.BabelNamed):
+class ProductCat(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Product Category")
@@ -33,7 +33,7 @@ class ProductCats(dd.Table):
     """
 
 
-class Product(dd.BabelNamed):
+class Product(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Product")

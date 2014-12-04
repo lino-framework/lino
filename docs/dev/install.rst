@@ -23,10 +23,11 @@ Preliminaries
 
 - You will need git_ to get the source files.
 
-- We assume you have pip_ installed.
+- We assume you have pip_ installed. `pip` is not automatically
+  bundled with Python 2, but it has become the de-facto standard.
 
-- We recommend to use virtualenv_ and to activate a new
-  environment. Something like this::
+- We recommend to use virtualenv_ (`pip install virtualenv`) and to
+  activate a new environment. Something like this::
 
     $ virtualenv tmp
     $ . tmp/bin/activate
@@ -78,6 +79,21 @@ Notes:
       ...
 
 
+Configure fab
+--------------
+
+Create a directory :file:`.atelier` in your HOME directory, then
+create a file :file:`config.py` in that directory with the following
+content::
+
+  add_project(r'C:\mypy\repositories\atelier')
+  add_project(r'C:\mypy\repositories\djangosite')
+  add_project(r'C:\mypy\repositories\north')
+  add_project(r'C:\mypy\repositories\lino')
+
+
+
+
 Run Lino's test suite
 ---------------------
 
@@ -88,15 +104,13 @@ everything worked well.
 
      $ pip install fabric
      $ pip install html5lib
-     $ pip install 'reportlab==2.7'
+     $ pip install reportlab
      $ pip install pisa
-     $ pip install django-iban
-     $ pip install pytidylib
 
   fabric_ is a command-line tool systems to streamline administration tasks. 
 
-  pisa complains that "Reportlab Version 2.1+ is needed!" with
-  reportlab 3, so we install 2.7 (the latest 2.x version)
+  If pisa complains that "Reportlab Version 2.1+ is needed!" with
+  reportlab 3, then try to install 2.7 (the latest 2.x version)
 
 - And here we go for the test suite::
 

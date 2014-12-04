@@ -12,3 +12,4 @@ This is the time for pioneers to join us!
 
    get_involved
    whoswho
+   team

@@ -372,7 +372,7 @@ class BudgetsByPartner(Budgets):
     master_key = 'partner'
 
 
-class AccountGroup(mixins.Sequenced, dd.BabelNamed):
+class AccountGroup(mixins.Sequenced, mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Budget Account Group")
@@ -387,7 +387,7 @@ class AccountGroups(dd.Table):
     required_user_groups = ['debts']
 
 
-class Account(mixins.Sequenced, dd.BabelNamed):
+class Account(mixins.Sequenced, mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Budget Account")
@@ -756,7 +756,7 @@ class AssetsSummaryByBudget(EntriesSummaryByBudget, EntriesByType):
     _account_type = AccountType.asset
 
 
-#~ class DebtType(dd.BabelNamed):
+#~ class DebtType(mixins.BabelNamed):
     #~ class Meta:
         #~ verbose_name = _("Debt Type")
         #~ verbose_name_plural = _("Debt Types")

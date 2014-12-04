@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2010-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -46,6 +47,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
 from lino.modlib.users.mixins import UserLevels
+from lino.core.choicelists import ChoiceList, Choice
 from lino.core import frames
 from lino.core import actions
 from lino.core import fields
@@ -699,14 +701,16 @@ class ProjectRelated(model.Model):
             yield p
 
 
+from lino.core import actions
+
 from lino.mixins.printable import (Printable, PrintableType,
                                    CachedPrintable, TypedPrintable,
-                                   DirectPrintAction)
+                                   DirectPrintAction, CachedPrintAction)
 
+from lino.mixins.periods import DatePeriod
+from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
-from lino.mixins.human import Human, Born, Genders
 
-from lino.core import actions
 from lino.mixins import printable
 
 
@@ -882,3 +886,64 @@ class BabelNamed(model.Model):
 
     def __unicode__(self):
         return settings.SITE.babelattr(self, 'name')
+
+
+class YesNo(ChoiceList):
+    """
+    Used e.g. for table parameters. TODO: write usage example.
+    Änderung.
+
+
+    """
+    verbose_name_plural = _("Yes or no")
+add = YesNo.add_item
+add('y', _("Yes"), 'yes')
+add('n', _("No"), 'no')
+
+
+class Genders(ChoiceList):
+    verbose_name = _("Gender")
+
+add = Genders.add_item
+add('M', _("Male"), 'male')
+add('F', _("Female"), 'female')
+
+
+class PeriodEvent(Choice):
+
+    def add_filter(self, qs, obj):
+
+        if isinstance(obj, datetime.date):
+            obj = AttrDict(start_date=obj, end_date=obj)
+
+        if obj.start_date is None or obj.end_date is None:
+            return qs
+
+        if self.name == 'started':
+            qs = qs.filter(start_date__gte=obj.start_date)
+            qs = qs.filter(start_date__lte=obj.end_date)
+        elif self.name == 'ended':
+            qs = qs.filter(end_date__isnull=False)
+            qs = qs.filter(end_date__gte=obj.start_date)
+            qs = qs.filter(end_date__lte=obj.end_date)
+        elif self.name == 'active':
+            qs = qs.filter(models.Q(start_date__isnull=True) |
+                           models.Q(start_date__lte=obj.end_date))
+            qs = qs.filter(models.Q(end_date__isnull=True) |
+                           models.Q(end_date__gte=obj.start_date))
+        return qs
+
+
+class PeriodEvents(ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+    item_class = PeriodEvent
+
+
+add = PeriodEvents.add_item
+add('10', _("Started"), 'started')
+add('20', _("Active"), 'active')
+add('30', _("Ended"), 'ended')
+
+
+from lino.mixins.human import Human, Born

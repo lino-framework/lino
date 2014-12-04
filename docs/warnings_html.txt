@@ -1,0 +1,14 @@
+/home/luc/hgwork/lino/docs/api/lino.modlib.importfilters.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.importfilters.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/importfilters/models.py", line 50, in <module>
+    class Item(mixins.Sequenced):
+NameError: name 'mixins' is not defined
+/home/luc/hgwork/lino/docs/api/lino.modlib.rooms.models.rst:4: WARNING: autodoc: failed to import module u'lino.modlib.rooms.models'; the following exception was raised:
+Traceback (most recent call last):
+  File "/home/luc/repositories/sphinx/sphinx/ext/autodoc.py", line 367, in import_object
+    __import__(self.modname)
+  File "/home/luc/hgwork/lino/lino/modlib/rooms/models.py", line 65, in <module>
+    class Booking(contacts.ContactRelated, Reservation, mixins.Printable):
+NameError: name 'mixins' is not defined

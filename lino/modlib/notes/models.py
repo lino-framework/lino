@@ -24,7 +24,7 @@ outbox = dd.resolve_app('outbox')
 contacts = dd.resolve_app('contacts')
 
 
-class NoteType(dd.BabelNamed, mixins.PrintableType, outbox.MailableType):
+class NoteType(mixins.BabelNamed, mixins.PrintableType, outbox.MailableType):
 
     templates_group = 'notes/Note'
 
@@ -63,7 +63,7 @@ class NoteTypes(dd.Table):
     """
 
 
-class EventType(dd.BabelNamed):
+class EventType(mixins.BabelNamed):
 
     """
     A possible choice for :attr:`Note.event_type`.
@@ -94,11 +94,11 @@ class EventTypes(dd.Table):
     """
 
 
-class Note(dd.TypedPrintable,
-           dd.UserAuthored,
-           dd.Controllable,
+class Note(mixins.TypedPrintable,
+           mixins.UserAuthored,
+           mixins.Controllable,
            contacts.ContactRelated,
-           dd.ProjectRelated,
+           mixins.ProjectRelated,
            outbox.Mailable,
            Postable,
            ):

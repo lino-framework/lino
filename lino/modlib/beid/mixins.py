@@ -180,9 +180,9 @@ class BaseBeIdReadCardAction(dd.Action):
 
         def sex2gender(sex):
             if sex == 'MALE':
-                return dd.Genders.male
+                return mixins.Genders.male
             if sex == 'FEMALE':
-                return dd.Genders.female
+                return mixins.Genders.female
             logger.warning("%s : invalid gender code %r", msg1, sex)
         kw.update(gender=sex2gender(data.gender))
 

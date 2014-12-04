@@ -37,7 +37,7 @@ values.
 It's a concept introduceed by Lino and deserves more documentation,
 but here is at least a short introduction to choicelists:
 
->>> from lino.dd import Genders
+>>> from lino.mixins import Genders
 
 >>> print(Genders)
 lino.Genders
@@ -58,12 +58,12 @@ The **value** is what gets stored when this choice is assigned to a
 database field.
 
 >>> [g.value for g in Genders.objects()]
-['M', 'F']
+[u'M', u'F']
 
 The **name** is how Python code can refer to this choice.
 
 >>> [g.name for g in Genders.objects()]
-['male', 'female']
+[u'male', u'female']
 
 >>> print(repr(Genders.male))
 <Genders.male:M>

@@ -443,6 +443,16 @@ action on individual instances.
     def get_print_language(self):
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
+    def get_printable_context(self, ar, **kw):
+        kw = settings.SITE.get_printable_context(ar, **kw)
+        kw.update(this=self)  # preferred in new templates
+        kw.update(language=self.get_print_language())
+
+        def translate(s):
+            return _(s.decode('utf8'))
+        kw.update(_=translate)
+        return kw
+
     LINO_MODEL_ATTRIBS = (
         'get_chooser_for_field',
         'get_detail_action',

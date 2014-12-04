@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from .workflows import EntryStates
 
 
-class Entry(dd.CreatedModified,dd.UserAuthored):
+class Entry(mixins.CreatedModified,mixins.UserAuthored):
     
     workflow_state_field = 'state'
     
@@ -38,7 +38,7 @@ class EntriesByCompany(Entries):
     master_key = 'company'
     column_names = "modified user subject workflow_buttons *"
     
-class MyEntries(Entries,dd.ByUser):
+class MyEntries(Entries,mixins.ByUser):
     column_names = "modified subject workflow_buttons *"
     
 

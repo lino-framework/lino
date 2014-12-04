@@ -166,7 +166,7 @@ def inject_vat_fields(sender, **kw):
                                           blank=True, null=True))
 
 
-class PaymentTerm(dd.BabelNamed):
+class PaymentTerm(mixins.BabelNamed):
 
     class Meta:
         verbose_name = _("Payment Term")

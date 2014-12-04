@@ -79,6 +79,7 @@ lino.modlib.cal.management
 lino.modlib.cal.management.commands
 lino.modlib.cal.workflows
 lino.modlib.cv
+lino.modlib.cv.fixtures
 lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.contacts.management
