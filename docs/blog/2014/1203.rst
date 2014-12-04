@@ -3,11 +3,49 @@ Wednesday, December 3, 2014
 ===========================
 
 
+Antécédents judiciaires
+-----------------------
+
 Added new model :class:`welfare.pcsw.Conviction`
 and table :class:`welfare.pcsw.ConvictionsByClient`.
 
 
 
+Schuldnerberatung
+=================
 
-:mod:`lino_welfare.modlib.debts.models` now adds a customized
-`detail_layout` to to `accounts.Accounts`.
+Gerd reported a few user requests for the :mod:`welfare.debts` module.
+
+DONE:
+
+- Konfigurierung Buchhaltung Konten : Periodizität kann nicht
+  konfiguriert werden.
+
+  - :mod:`lino_welfare.modlib.debts.models` now adds a customized
+    `detail_layout` to to `accounts.Accounts`.
+
+- "Debt collection agency" übersetzen : "Schuldeneintreiber"
+
+- Budget Vorschau Zusammenfassung : Gesamtbetrag der Schuld anzeigen
+
+TODO:
+
+- Ausdruck Budget: Tabelle "Guthaben, Schulden, Verbindlichkeit"
+  Spalte "Gerichtsvollzieher" weg und nur die Schulden ohne
+  `bailiff`. Darunter pro Schuldeneintreiber eine ebensolche Tabelle
+  mit dem Schuldeneintreiber als Überschrift und den gleichen
+  Kolonnen.
+
+- Ausdruck Budget: Tabelle "Guthaben, Schulden, Verbindlichkeit" : in
+  Kolonne "Beschreibung" die Kontobezeichnung wegfallen lassen.
+
+- Ausdruck Budget: Tabelle "Monatliche Ausgaben" : Bemerkung in
+  getrennter Kolonne
+
+- Ausdruck Budget: Tabellen "Steuern" und "Versicherungen" : 2 neue
+  Kolonnen "Betrag jährlich" und "Bemerkung"
+
+- Wenn man auf Speichern klickt, springt Bild auf Reiter "Allgemein"
+
+- Startseite: Tabelle "Benutzer und Klienten" nur für DSBE-Benutzer
+  anzeigen
