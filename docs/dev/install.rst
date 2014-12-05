@@ -41,13 +41,11 @@ working copies of version-controlled software projects,
 
   $ git clone https://github.com/lsaffre/atelier.git
   $ git clone https://github.com/lsaffre/djangosite.git
-  $ git clone https://github.com/lsaffre/north.git
   $ git clone https://github.com/lsaffre/lino.git
 
-You should now have 4 subdirectories called `atelier`, `djangosite`,
-`north`, `lino`. Each of them should contain a file :xfile:`setup.py`,
-a file :xfile:`README.rst` and a whole tree of other files and
-directories.
+You should now have 3 subdirectories called `atelier`, `djangosite`,
+`lino`. Each of them should contain a file :xfile:`setup.py`, a file
+:xfile:`README.rst` and a whole tree of other files and directories.
 
 Installation
 ------------
@@ -60,7 +58,6 @@ Commands::
 
   $ pip install -e atelier
   $ pip install -e djangosite 
-  $ pip install -e north
   $ pip install -e lino
 
 Notes:
@@ -82,13 +79,12 @@ Notes:
 Configure fab
 --------------
 
-Create a directory :file:`.atelier` in your HOME directory, then
-create a file :file:`config.py` in that directory with the following
-content::
+Create a directory :file:`.atelier` (or :file:`_atelier` under
+Windows) in your HOME directory, then create a file :file:`config.py`
+in that directory with the following content::
 
   add_project(r'C:\mypy\repositories\atelier')
   add_project(r'C:\mypy\repositories\djangosite')
-  add_project(r'C:\mypy\repositories\north')
   add_project(r'C:\mypy\repositories\lino')
 
 

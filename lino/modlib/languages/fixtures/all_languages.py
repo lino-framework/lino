@@ -26,7 +26,7 @@ from django.conf import settings
 
 from lino.utils import dblogger as logger
 
-from north.dbutils import babel_values
+from lino import dd
 from lino.modlib.languages.models import Language
 
 
@@ -795,7 +795,7 @@ def objects():
     n = 0
     for code, kw in LANGUAGES.items():
         iso2 = kw['iso2']
-        kw = babel_values('name', **kw)
+        kw = dd.babel_values('name', **kw)
         if kw.get('name'):
             n += 1
             kw.update(iso2=iso2)

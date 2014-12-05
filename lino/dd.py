@@ -31,17 +31,6 @@ Extended Fields:
 - :class:`DummyField <lino.core.fields.DummyField>`
 - :func:`ForeignKey <lino.core.fields.ForeignKey>`
 
-Multilingual database content:
-
-- :class:`BabelNamed <lino.mixins.BabelNamed>`
-- :class:`BabelCharField <lino.core.fields.BabelCharField>`
-- :class:`BabelTextField <fields.BabelTextField>`
-- :class:`LanguageField <lino.core.fields.LanguageField>`
-- :class:`babelkw <north.dbutils.babelkw>`
-- :func:`babelattr <north.dbutils.babelattr>`
-- :setting:`babelitem`
-- :setting:`field2kw`
-
 Virtual Fields:
 
 - :class:`Constant <lino.core.fields.Constant>` and
@@ -77,7 +66,7 @@ Utilities:
 Inter-app relations:
 
 - :func:`resolve_field <lino.core.dbutils.resolve_field>`
-- :func:`resolve_model <north.dbutils.resolve_model>`
+- :func:`resolve_model <lino.core.dbutils.resolve_model>`
 - :func:`resolve_app <lino.core.dbutils.resolve_app>`
 - :func:`update_field <lino.core.inject.update_field>`
 - :func:`inject_field <lino.core.inject.inject_field>`
@@ -156,7 +145,7 @@ logger = logging.getLogger(__name__)
 from lino.core.tables import VirtualTable
 
 
-from north.dbutils import resolve_model, UnresolvedModel
+from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.core.dbutils import resolve_app, require_app_models
 from lino.core.dbutils import resolve_field, get_field
@@ -240,12 +229,9 @@ from lino.core.fields import CharField
 from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
 
-from lino.mixins.babel import BabelTextField
-from lino.mixins.babel import BabelCharField, LanguageField
-
-from north.dbutils import babelkw
-from north.dbutils import babelattr
-from north.dbutils import babel_values  # alias for babelkw for backward compat
+from lino.core.dbutils import babelkw
+from lino.core.dbutils import babelattr
+from lino.core.dbutils import babel_values  # alias for babelkw for backward compat
 
 from lino.utils.choosers import chooser, action_chooser
 from lino.utils.mti import EnableChild
@@ -317,8 +303,8 @@ class PseudoRequest:
 
 from lino.utils import IncompleteDate
 
-from north.dbutils import fdm, fdl, fdf, fdmy
-from north.dbutils import fds as fds_
+from lino.utils.format_date import fdm, fdl, fdf, fdmy
+from lino.utils.format_date import fds as fds_
 
 
 def fds(d):
@@ -331,26 +317,29 @@ def fds(d):
 
 # backward compatibility
 dtos = fds
-from north.dbutils import fdl as dtosl
+from lino.utils.format_date import fdl as dtosl
 
 babelitem = settings.SITE.babelitem
 field2kw = settings.SITE.field2kw
 
+from lino.utils.mldbc.fields import BabelTextField
+from lino.utils.mldbc.fields import BabelCharField, LanguageField
+
 if False:
+
 
     from lino.mixins import EmptyTable
     from lino.mixins import Report
     
     from lino.models import Genders
     from lino.models import YesNo
-    from lino.mixins import BabelNamed
+    from lino.utils.mldbc.mixins import BabelNamed
     
     from lino.mixins import (
         ProjectRelated, UserAuthored, ByUser,
         Duplicable, Duplicate,
         Sequenced, Hierarizable, Referrable,
-        Registrable,
-        Controllable)
+        Registrable)
 
     from lino.mixins import Created, Modified
     from lino.mixins import CreatedModified  # deprecated
@@ -365,8 +354,6 @@ if False:
     from lino.mixins.polymorphic import Polymorphic
 
 from django.utils.importlib import import_module
-
-from django.contrib.contenttypes.models import ContentType
 
 # The following are not only shortcuts, they also are a preparation to
 # encapsulate the `settings.SITE` name. It is possible that after

@@ -10,18 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from django.contrib.contenttypes import models as contenttypes
 from django.utils.encoding import force_unicode
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino import mixins
-from lino import dd, rt
-from lino.core.dbutils import resolve_field
+from lino import dd
 from lino.core import actions
-from lino.utils.xmlgen.html import E
-from lino.utils import join_elems
 
 from lino.mixins.printable import BuildMethods
 from lino.modlib.users.mixins import UserProfiles
@@ -158,103 +154,6 @@ class SiteConfigs(dd.Table):
     do_build = BuildSiteCache()
 
 
-if settings.SITE.is_installed('contenttypes'):
-
-    class ContentTypes(dd.Table):
-
-        """
-        Deserves more documentation.
-        """
-        model = contenttypes.ContentType
-
-        required = dd.required(user_level='manager')
-
-        detail_layout = """
-      id name app_label model base_classes
-      system.HelpTextsByModel
-      """
-
-        @dd.displayfield(_("Base classes"))
-        def base_classes(self, obj, ar):
-            chunks = []
-
-            def add(cl):
-                for b in cl.__bases__:
-                    add(b)
-                # :
-                if issubclass(cl, dd.Model) and cl is not dd.Model \
-                   and cl._meta.managed:
-                    if getattr(cl, '_meta', False) and not cl._meta.abstract:
-                        #~ logger.info("20120205 adding(%r)",cl)
-                        ct = contenttypes.ContentType.objects.get_for_model(cl)
-                        chunks.append(
-                            ar.obj2html(ct, unicode(cl._meta.verbose_name)))
-            if obj is not None:
-                #~ add(obj.model_class())
-                for b in obj.model_class().__bases__:
-                    add(b)
-            return E.p(*join_elems(chunks, sep=', '))
-
-    class HelpText(dd.Model):
-
-        class Meta:
-            verbose_name = _("Help Text")
-            verbose_name_plural = _("Help Texts")
-
-        content_type = models.ForeignKey(contenttypes.ContentType,
-                                         verbose_name=_("Model"))
-        field = models.CharField(_("Field"), max_length=200)
-
-        help_text = dd.RichTextField(_("HelpText"),
-                                     blank=True, null=True, format='plain')
-
-        def __unicode__(self):
-            return self.content_type.app_label + '.' \
-                + self.content_type.model + '.' + self.field
-
-        @dd.chooser(simple_values=True)
-        def field_choices(cls, content_type):
-            l = []
-            if content_type is not None:
-                model = content_type.model_class()
-                meta = model._meta
-                for f in meta.fields:
-                    if not getattr(f, '_lino_babel_field', False):
-                        l.append(f.name)
-                for f in meta.many_to_many:
-                    l.append(f.name)
-                for f in meta.virtual_fields:
-                    l.append(f.name)
-                for a in model.get_default_table().get_actions():
-                    l.append(a.action.action_name)
-                l.sort()
-            return l
-
-        #~ def get_field_display(cls,fld):
-            #~ return fld
-
-        @dd.virtualfield(models.CharField(_("Verbose name"), max_length=200))
-        def verbose_name(self, request):
-            m = self.content_type.model_class()
-            de = m.get_default_table().get_data_elem(self.field)
-            if isinstance(de, models.Field):
-                return "%s (%s)" % (unicode(de.verbose_name),
-                                    unicode(_("database field")))
-            if isinstance(de, dd.VirtualField):
-                return unicode(de.return_type.verbose_name)
-            if isinstance(de, actions.Action):
-                return unicode(de.label)
-            return str(de)
-
-    class HelpTexts(dd.Table):
-        required = dd.required(user_level='manager')
-        model = HelpText
-        column_names = "field verbose_name help_text id content_type"
-
-    class HelpTextsByModel(HelpTexts):
-        master_key = 'content_type'
-
-
 if settings.SITE.user_model:
 
     class TextFieldTemplate(mixins.AutoUser):
@@ -320,15 +219,6 @@ def setup_config_menu(site, ui, profile, m):
         # system.add_action(site.modules.users.Teams)
         office.add_action(MyTextFieldTemplates)
     #~ m.add_action(site.modules.users.Users)
-    if site.is_installed('contenttypes'):
-        system.add_action(site.modules.system.ContentTypes)
-        system.add_action(site.modules.system.HelpTexts)
-        #~ m.add_action(site.modules.lino.Workflows)
-
-
-def setup_reports_menu(site, ui, profile, m):
-    system = m.add_menu("system", SYSTEM_USER_LABEL)
-    system.add_action('lino.OrphanedControllables')
 
 
 def setup_explorer_menu(site, ui, profile, m):
@@ -351,24 +241,3 @@ if settings.SITE.user_model == 'auth.User':
                     'profile', UserProfiles.field())
     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
 
-
-@dd.receiver(dd.pre_ui_build)
-def my_pre_ui_build(sender, **kw):
-    self = settings.SITE
-    if self.is_installed('contenttypes'):
-
-        from django.db.utils import DatabaseError
-        from django.db.models import FieldDoesNotExist
-        try:
-
-            HelpText = dd.resolve_model('system.HelpText')
-            for ht in HelpText.objects.filter(help_text__isnull=False):
-                #~ logger.info("20120629 %s.help_text", ht)
-                try:
-                    resolve_field(unicode(ht)).help_text = ht.help_text
-                except FieldDoesNotExist as e:
-                    #~ logger.debug("No help texts : %s",e)
-                    pass
-        except DatabaseError, e:
-            logger.debug("No help texts : %s", e)
-            pass

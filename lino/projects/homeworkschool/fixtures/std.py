@@ -9,19 +9,19 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from django.conf import settings
-from north.dbutils import babel_values
+from lino import dd
 
 
 def objects():
 
     mailType = Instantiator('notes.NoteType').build
 
-    yield mailType(**babel_values('name',
+    yield mailType(**dd.babel_values('name',
                                   en="Enrolment",
                                   fr=u'Inscription', de=u"Einschreibeformular"))
-    yield mailType(**babel_values('name',
+    yield mailType(**dd.babel_values('name',
                                   en="Timetable",
                                   fr=u'Horaire', de=u"Stundenplan"))
-    yield mailType(**babel_values('name',
+    yield mailType(**dd.babel_values('name',
                                   en="Letter",
                                   fr=u'Lettre', de=u"Brief"))

@@ -18,8 +18,6 @@ Original sources:
 
 """
 
-from north.dbutils import babel_values
-
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino import dd, rt
@@ -2903,6 +2901,6 @@ def objects():
             if len(args) != 4:
                 raise Exception("Invalid format : \n%s" % ln)
             args = [x.strip() for x in args]
-            o = city(zip_code=args[0], **babel_values('name',
+            o = city(zip_code=args[0], **dd.babel_values('name',
                      nl=args[1], fr=args[2], de=args[3], en=args[3]))
             yield o

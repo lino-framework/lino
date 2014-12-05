@@ -23,6 +23,8 @@ from lino import mixins
 from lino import dd
 from lino.utils import ONE_DAY
 
+from lino.modlib.contenttypes.mixins import Controllable
+
 from .utils import (
     DurationUnits, Recurrencies,
     setkw, dt2kw,
@@ -161,7 +163,7 @@ class Priorities(dd.Table):
 class Component(StartedSummaryDescription,
                 mixins.ProjectRelated,
                 mixins.UserAuthored,
-                mixins.Controllable,
+                Controllable,
                 mixins.CreatedModified):
 
     """

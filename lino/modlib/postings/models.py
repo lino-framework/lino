@@ -16,6 +16,7 @@ from django.core.exceptions import ValidationError
 from lino import mixins
 from lino import dd
 
+from lino.modlib.contenttypes.mixins import Controllable
 
 class PostingStates(dd.Workflow):
 
@@ -51,7 +52,7 @@ class PrintPosting(dd.Action):
         #~ return kw
 
 
-class Posting(mixins.AutoUser, mixins.ProjectRelated, mixins.Controllable):
+class Posting(mixins.AutoUser, mixins.ProjectRelated, Controllable):
 
     """
     A Posting is the fact that a letter or other item 

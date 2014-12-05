@@ -43,7 +43,7 @@ from django.core.exceptions import ValidationError
 from lino.utils import dbfreader
 from lino.utils import dblogger
 from lino.utils import mti
-from north import dpy
+from lino.utils import dpy
 
 from lino.modlib.accounts.utils import AccountTypes
 

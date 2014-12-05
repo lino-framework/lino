@@ -15,9 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 #~ from django.utils.translation import string_concat
 
-from north import dbutils
-
-from lino import dd, rt
+from lino import dd
 
 from ..workflows import (TaskStates, EventStates, GuestStates)
 
@@ -50,7 +48,7 @@ class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):
     def get_notify_subject(self, ar, obj):
         return self.notify_subject % dict(
             guest=obj.partner,
-            day=dbutils.dtos(obj.event.start_date),
+            day=dd.fds(obj.event.start_date),
             time=str(obj.event.start_time))
 
 

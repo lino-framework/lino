@@ -14,7 +14,7 @@ Unlike Marco's reader this one doesn't store any data in memory,
 it just loops over the rows.
 
 OdsReader is used to import data from .ods files into a 
-Django database using a :mod:`north.dpy` fixture,
+Django database using a :ref:`dpy` fixture,
 but not limited to this usage.
 
 State : works for me, but very young and probably full of bugs.

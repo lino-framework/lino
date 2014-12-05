@@ -19,6 +19,7 @@ from lino import mixins
 from django.conf import settings
 
 from lino.modlib.postings.mixins import Postable
+from lino.modlib.contenttypes.mixins import Controllable
 
 outbox = dd.resolve_app('outbox')
 contacts = dd.resolve_app('contacts')
@@ -96,7 +97,7 @@ class EventTypes(dd.Table):
 
 class Note(mixins.TypedPrintable,
            mixins.UserAuthored,
-           mixins.Controllable,
+           Controllable,
            contacts.ContactRelated,
            mixins.ProjectRelated,
            outbox.Mailable,

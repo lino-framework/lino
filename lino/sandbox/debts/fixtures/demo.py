@@ -15,7 +15,7 @@ from django.utils.translation import ugettext as _
 from lino.utils import i2d
 from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
-from north.dbutils import babel_values
+from lino import dd
 
 from lino.modlib.users.mixins import UserProfiles
 
@@ -29,125 +29,125 @@ def n2dec(v):
 
 def objects():
     group = Instantiator('debts.AccountGroup').build
-    g = group(account_type=AccountType.income, **babel_values('name',
+    g = group(account_type=AccountType.income, **dd.babel_values('name',
                                                               de=u"Monatliche Einkünfte",
                                                               fr=u"Revenus mensuels",
                                                               en=u"Monthly incomes"
                                                               ))
     yield g
     account = Instantiator('debts.Account', group=g).build
-    yield account(required_for_person=True, **babel_values('name',
+    yield account(required_for_person=True, **dd.babel_values('name',
                                                            de=u"Gehälter",
                                                            fr=u"Salaires",
                                                            en=u"Salaries"
                                                            ))
-    yield account(required_for_person=True, **babel_values('name',
+    yield account(required_for_person=True, **dd.babel_values('name',
                                                            de=u"Renten",
                                                            fr=u"Pension",
                                                            en=u"Pension"
                                                            ))
-    yield account(required_for_person=True, **babel_values('name',
+    yield account(required_for_person=True, **dd.babel_values('name',
                                                            de=u"Integrationszulage",
                                                            fr=u"Allocation d'intégration",
                                                            en=u"Integration aid"
                                                            ))
 
-    g = group(account_type=AccountType.income, **babel_values('name',
+    g = group(account_type=AccountType.income, **dd.babel_values('name',
                                                               de=u"Jährliche Einkünfte",
                                                               fr=u"Revenus annuels",
                                                               en=u"Yearly incomes"
                                                               ))
     yield g
     account = Instantiator('debts.Account', group=g).build
-    yield account(required_for_person=True, **babel_values('name',
+    yield account(required_for_person=True, **dd.babel_values('name',
                                                            de=u"Urlaubsgeld",
                                                            fr=u"Congé payé",
                                                            en=u"Paid holiday"
                                                            ))
-    yield account(required_for_person=True, **babel_values('name',
+    yield account(required_for_person=True, **dd.babel_values('name',
                                                            de=u"Jahresendzulage",
                                                            fr=u"Prime de fin d'année",
                                                            en=u"Year-end prime"
                                                            ))
 
-    g = group(account_type=AccountType.expense, **babel_values('name',
+    g = group(account_type=AccountType.expense, **dd.babel_values('name',
                                                                de=u"Monatliche Ausgaben",
                                                                fr=u"Dépenses mensuelles",
                                                                en=u"Monthly expenses"
                                                                ))
     yield g
     account = Instantiator('debts.Account', group=g).build
-    yield account(required_for_household=True, **babel_values('name',
+    yield account(required_for_household=True, **dd.babel_values('name',
                                                               de=u"Miete",
                                                               fr=u"Loyer",
                                                               en=u"Rent"
                                                               ))
-    yield account(required_for_household=True, **babel_values('name',
+    yield account(required_for_household=True, **dd.babel_values('name',
                                                               de=u"Strom",
                                                               fr=u"Electricité",
                                                               en=u"Electricity"
                                                               ))
 
-    g = group(account_type=AccountType.expense, **babel_values('name',
+    g = group(account_type=AccountType.expense, **dd.babel_values('name',
                                                                de=u"Steuern",
                                                                fr=u"Taxes",
                                                                en=u"Taxes"
                                                                ))
     yield g
     account = Instantiator('debts.Account', group=g, periods=12).build
-    yield account(required_for_household=True, **babel_values('name',
+    yield account(required_for_household=True, **dd.babel_values('name',
                                                               de=u"Müllsteuer",
                                                               fr=u"Taxe déchets",
                                                               en=u"Waste tax"
                                                               ))
 
-    g = group(account_type=AccountType.asset, **babel_values('name',
+    g = group(account_type=AccountType.asset, **dd.babel_values('name',
                                                              de=u"Aktiva, Vermögen, Kapital",
                                                              fr=u"Actifs",
                                                              en=u"Assets"
                                                              ))
     yield g
     account = Instantiator('debts.Account', group=g).build
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Vermögen",
                                  fr=u"Propriété",
                                  en=u"Assets"
                                  ))
     account = Instantiator('debts.Account', group=g).build
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Haus",
                                  fr=u"Maison",
                                  en=u"House"
                                  ))
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Auto",
                                  fr=u"Voiture",
                                  en=u"Car"
                                  ))
 
-    g = group(account_type=AccountType.liability, **babel_values('name',
+    g = group(account_type=AccountType.liability, **dd.babel_values('name',
                                                                  de=u"Guthaben, Schulden, Verbindlichkeit",
                                                                  fr=u"Créances et dettes",
                                                                  en=u"Liabilities"
                                                                  ))
     yield g
     account = Instantiator('debts.Account', group=g).build
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Kredite",
                                  fr=u"Crédits",
                                  en=u"Loans"
                                  ))
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Schulden",
                                  fr=u"Emprunts",
                                  en=u"Debts"
                                  ))
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Gerichtsvollzieher",
                                  fr=u"Juge",
                                  en=u"Judge"
                                  ))
-    yield account(**babel_values('name',
+    yield account(**dd.babel_values('name',
                                  de=u"Zahlungsrückstände",
                                  fr=u"Factures à payer",
                                  en=u"Invoices to pay"

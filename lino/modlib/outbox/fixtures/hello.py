@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
@@ -10,9 +10,6 @@ from django.db import models
 
 from lino.utils.instantiator import Instantiator, i2d
 from lino.core.dbutils import resolve_model
-from north.dbutils import babel_values
-#~ from lino.modlib.mails.utils import RecipientType
-#~ from lino.mixins import mails
 
 
 #~ from lino.modlib.properties import models as properties

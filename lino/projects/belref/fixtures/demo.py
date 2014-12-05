@@ -15,9 +15,8 @@ import re
 abbrRE = re.compile("^(.*)\s*\((.*)\)\s*", re.DOTALL)
 
 
-from north import dbutils
+from lino import dd
 
-from lino import dd, rt
 Concept = dd.resolve_model('concepts.Concept')
 Link = dd.resolve_model('concepts.Link')
 
@@ -37,8 +36,8 @@ def C(en, de, fr='', nl='', jargon=None, obsoletes=None, **kw):
                 name[lang] = mo.group(2).strip()
             else:
                 name[lang] = t
-    kw.update(dbutils.babel_values('name', **name))
-    kw.update(dbutils.babel_values('abbr', **abbr))
+    kw.update(dd.babel_values('name', **name))
+    kw.update(dd.babel_values('abbr', **abbr))
     obj = Concept(**kw)
     yield obj
     if obsoletes is not None:

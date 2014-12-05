@@ -24,7 +24,6 @@ from lino.utils import AttrDict
 from lino.utils.xmlgen import html as xghtml
 
 from lino.utils.code import codetime, codefiles, SourceFile
-from north import dbutils
 from lino import mixins
 from lino import dd, rt
 
@@ -285,7 +284,7 @@ class About(mixins.EmptyTable):
                 dt = datetime.datetime.fromtimestamp(dt)
                 #~ raise ValueError("Expected float, go %r" % dt)
             return unicode(_("%(date)s at %(time)s")) % dict(
-                date=dbutils.dtosl(dt.date()),
+                date=dd.fdf(dt.date()),
                 time=dt.time())
 
         items = []
@@ -294,7 +293,7 @@ class About(mixins.EmptyTable):
         label = _("Server uptime")
         body.append(E.p(unicode(label), ' : ', E.b(dtfmt(value))))
         body.append(E.p(unicode(_("Source timestamps:"))))
-        for src in ("lino", "lino_welfare", 'django', 'djangosite', 'north', 'atelier'):
+        for src in ("lino", "lino_welfare", 'django', 'djangosite', 'atelier'):
             label = src
             value = codetime('%s.*' % src)
             if value is not None:

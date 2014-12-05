@@ -29,6 +29,7 @@ import traceback
 from django.conf import settings
 from django.http import HttpResponseServerError
 from django.http import HttpResponseForbidden
+from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied
 
 
@@ -42,8 +43,8 @@ class AjaxExceptionResponse:
             if settings.DEBUG:
                 response += "TRACEBACK:\n"
                 for tb in traceback.format_tb(tb):
-                    #~ response += "%s\n" % tb
-                    response += tb
+                    # response += "%r\n" % tb
+                    response += smart_text(tb)
                 settings.SITE.logger.warning(
                     "AjaxExceptionResponse:\n" + response)
             else:

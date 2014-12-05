@@ -11,7 +11,7 @@ def findbyname(model, name):
 
 def objects():
     """
-    This will be called by the :term:`north` deserializer and 
+    This will be called by the :ref:`dpy` deserializer and 
     must yield a list of object instances to be saved.
     """
     Place = resolve_model('lets.Place')

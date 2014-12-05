@@ -14,17 +14,12 @@ to be loaded by :mod:`lino.modlib.countries.fixtures.be`.
 import requests
 from bs4 import BeautifulSoup
 
-import urllib2
-
-#~ from north.dbutils import babel_values
-
 
 def tostring(x):
     return ' '.join(x.stripped_strings)
 
 
 def extract(url):
-    #~ text = urllib2.urlopen(url)
     r = requests.get(url)
     soup = BeautifulSoup(r.text)
     table = soup.find('table', attrs={"class": "wikitable sortable"})

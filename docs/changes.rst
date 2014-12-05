@@ -30,6 +30,14 @@ Change in database structure
 .. refstothis:: mustmig
 
 
+.. _apichange:
+
+API change
+----------
+
+.. refstothis:: apichange
+
+
 .. _mustconfig:
 
 Change in local config

@@ -25,7 +25,7 @@ the data used here comes from uncertain sources.
 #~ logger = logging.getLogger(__name__)
 
 
-from north.dbutils import babel_values
+from lino import dd
 from lino.core.dbutils import resolve_model
 from lino.utils import dblogger as logger
 
@@ -3647,7 +3647,7 @@ def objects():
     if False:
 
         def find_country(names):
-            kw = babel_values('name', fr=names[0], nl=names[1], de=names[2])
+            kw = dd.babel_values('name', fr=names[0], nl=names[1], de=names[2])
             for k, v in kw.items():
                 try:
                     return Country.objects.get(**{k: v})

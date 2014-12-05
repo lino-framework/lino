@@ -5,11 +5,11 @@ from __future__ import unicode_literals
 from lino import dd, rt
 
 Product = dd.resolve_model('babel_tutorial.Product')
-from north.dbutils import babel_values
 
 
 def P(en, de, fr, cat):
-    return Product(category=cat, **babel_values('name', en=en, de=de, fr=fr))
+    return Product(
+        category=cat, **dd.babel_values('name', en=en, de=de, fr=fr))
 
 
 def objects():

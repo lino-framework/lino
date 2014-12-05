@@ -11,10 +11,7 @@ from django.utils.translation import ugettext as _
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from north.dbutils import babel_values
-#~ from lino.utils.choicelists import Gender
-#~ from lino.utils.perms import UserLevels
-#~ from lino.core.perms import UserProfiles
+from lino import dd
 from lino.utils import dblogger
 from lino.utils import Cycler
 
@@ -76,12 +73,12 @@ def objects():
     COUNT += 1
     dblogger.info("Started contacts demo fixture %d", COUNT)
 
-    #~ yield addresstype(**babel_values('name',en="Default",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
+    #~ yield addresstype(**dd.babel_values('name',en="Default",fr=u'Gérant',de=u"Geschäftsführer",et=u"Manager"))
 
-    yield role(**babel_values('name', en="Manager", fr=u'Gérant', de=u"Geschäftsführer", et=u"Manager"))
-    yield role(**babel_values('name', en="Director", fr=u'Directeur', de=u"Direktor", et=u"Direktor"))
-    yield role(**babel_values('name', en="Secretary", fr=u'Sécrétaire', de=u"Sekretär", et=u"Sekretär"))
-    yield role(**babel_values('name', en="IT Manager", fr=u'Gérant informatique', de=u"EDV-Manager", et=u"IT manager"))
+    yield role(**dd.babel_values('name', en="Manager", fr=u'Gérant', de=u"Geschäftsführer", et=u"Manager"))
+    yield role(**dd.babel_values('name', en="Director", fr=u'Directeur', de=u"Direktor", et=u"Direktor"))
+    yield role(**dd.babel_values('name', en="Secretary", fr=u'Sécrétaire', de=u"Sekretär", et=u"Sekretär"))
+    yield role(**dd.babel_values('name', en="IT Manager", fr=u'Gérant informatique', de=u"EDV-Manager", et=u"IT manager"))
 
     yield company(u"Rumma & Ko OÜ", 'EE', '10115', 'Tallinn', u'Tartu mnt', '71')
 

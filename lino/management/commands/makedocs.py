@@ -27,7 +27,6 @@ import lino
 from lino.core.dbutils import app_labels
 from lino.utils import confirm, curry
 from lino.utils import rstgen
-from north import dbutils
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 

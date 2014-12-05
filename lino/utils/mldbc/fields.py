@@ -20,7 +20,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from lino.core import model
 from lino.core.fields import RichTextField
 
 LANGUAGE_CODE_MAX_LENGTH = 5
@@ -87,21 +86,5 @@ class LanguageField(models.CharField):
         )
         defaults.update(kw)
         models.CharField.__init__(self, *args, **defaults)
-
-
-class BabelNamed(model.Model):
-
-    """Mixin for models that have a babel field `name` (labelled
-    "Description" by default) for each language.
-    
-    """
-
-    class Meta:
-        abstract = True
-
-    name = BabelCharField(max_length=200, verbose_name=_("Designation"))
-
-    def __unicode__(self):
-        return settings.SITE.babelattr(self, 'name')
 
 

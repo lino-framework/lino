@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from north.dbutils import babel_values
 from lino import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
@@ -56,7 +55,7 @@ current_group = None
 
 
 def objects():
-    chart = accounts.Chart(**babel_values('name',
+    chart = accounts.Chart(**dd.babel_values('name',
                                           en="Minimal Accounts Chart",
                                           fr="Plan comptable réduit",
                                           et="Minimaalne kontoplaan",
@@ -72,11 +71,11 @@ def objects():
             chart=chart,
             ref=ref,
             account_type=accounts.AccountTypes.get_by_name(type),
-            **babel_values('name', de=de, fr=fr, en=en, et=et))
+            **dd.babel_values('name', de=de, fr=fr, en=en, et=et))
         return current_group
 
     def Account(ref, type, fr, de, en, et, **kw):
-        kw.update(babel_values('name', de=de, fr=fr, en=en, et=et))
+        kw.update(dd.babel_values('name', de=de, fr=fr, en=en, et=et))
         return accounts.Account(
             chart=chart,
             group=current_group,
@@ -179,7 +178,7 @@ def objects():
         #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
     else:
         MODEL = ledger.AccountInvoice
-    kw = babel_values('name', de="Verkaufsrechnungen",
+    kw = dd.babel_values('name', de="Verkaufsrechnungen",
                       fr="Factures vente",
                       en="Sales invoices",
                       et="Müügiarved")
@@ -189,7 +188,7 @@ def objects():
         'purchases',
         chart=chart,
         ref="P",
-        **babel_values('name',
+        **dd.babel_values('name',
                        de="Einkaufsrechnungen",
                        fr="Factures achat",
                        en="Purchase invoices",
@@ -199,20 +198,20 @@ def objects():
         yield finan.BankStatement.create_journal(
             chart=chart,
             name="Bestbank", account=BESTBANK_ACCOUNT, ref="B")
-        kw = babel_values(
+        kw = dd.babel_values(
             'name', de="Zahlungsaufträge", fr="Ordres de paiement",
             en="Payment Orders", et="Maksekorraldused")
         yield finan.PaymentOrder.create_journal(
             'purchases', chart=chart,
             account=PO_BESTBANK_ACCOUNT,
             ref="PO", **kw)
-        kw = babel_values(
+        kw = dd.babel_values(
             'name', en="Cash",
             de="Kasse", fr="Caisse",
             et="Kassa")
         yield finan.BankStatement.create_journal(
             chart=chart, account=CASH_ACCOUNT, ref="C", **kw)
-        kw = babel_values(
+        kw = dd.babel_values(
             'name', en="Miscellaneous Journal Entries",
             de="Diverse Buchungen", fr="Opérations diverses",
             et="Muud operatsioonid")
@@ -221,7 +220,7 @@ def objects():
             ref="M", dc=accounts.DEBIT, **kw)
 
     if declarations:
-        kw = babel_values(
+        kw = dd.babel_values(
             'name', en="VAT declarations",
             de="MWSt-Erklärungen", fr="Déclarations TVA",
             et="Käibemaksudeklaratsioonid")

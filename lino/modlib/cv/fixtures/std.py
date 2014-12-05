@@ -8,8 +8,6 @@ from __future__ import unicode_literals
 from lino.utils.instantiator import Instantiator
 from django.utils.translation import ugettext_lazy as _
 
-from north.dbutils import babel_values
-
 from lino import dd
 
 
@@ -30,64 +28,64 @@ def objects():
     """
 
     eduLevel = Instantiator('cv.EducationLevel').build
-    yield eduLevel(**babel_values('name',
+    yield eduLevel(**dd.babel_values('name',
                                   de="Primär",
                                   fr="Primaire",
                                   en="Primary"))
-    yield eduLevel(**babel_values('name',
+    yield eduLevel(**dd.babel_values('name',
                                   de="Sekundär",
                                   fr="Secondaire",
                                   en="Secondary"))
-    yield eduLevel(**babel_values('name',
+    yield eduLevel(**dd.babel_values('name',
                                   de="Hochschule",
                                   fr="Supérieur",
                                   en="Higher"))
-    yield eduLevel(**babel_values('name',
+    yield eduLevel(**dd.babel_values('name',
                                   de="Bachelor",
                                   fr="Bachelor",
                                   en="Bachelor"))
-    yield eduLevel(**babel_values('name',
+    yield eduLevel(**dd.babel_values('name',
                                   de="Master",
                                   fr="Master",
                                   en="Master"))
 
     studyType = Instantiator('cv.StudyType').build
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Schule",
                                    fr=u"École",
                                    en=u"School",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Sonderschule",
                                    fr=u"École spéciale",
                                    en=u"Special school",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Ausbildung",
                                    fr=u"Formation",
                                    en=u"Training",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Lehre",
                                    fr=u"Apprentissage",
                                    en=u"Apprenticeship",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Hochschule",
                                    fr=u"École supérieure",
                                    en=u"Highschool",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Universität",
                                    fr=u"Université",
                                    en=u"University",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Teilzeitunterricht",
                                    fr=u"Cours à temps partiel",
                                    en=u"Part-time study",
                                    ))
-    yield studyType(**babel_values('name',
+    yield studyType(**dd.babel_values('name',
                                    de=u"Fernkurs",
                                    fr=u"Cours à distance",
                                    en=u"Remote study",

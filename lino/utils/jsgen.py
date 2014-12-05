@@ -425,8 +425,6 @@ def declare_vars(v):
             yield "this.%s = %s;" % (v.ext_name, v.js_value())
 
 
-#~ from north import LanguageInfo
-
 def py2js(v):
     """
     Note that None values are rendered as ``null`` (not ``undefined``.

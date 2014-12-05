@@ -84,7 +84,7 @@ And then enter the following Python instructions there:
 
 >>> from django.conf import settings
 >>> settings.INSTALLED_APPS
-('lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'lino', 'polls', 'north', 'djangosite')
+('lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'lino', 'polls', 'djangosite')
 
 This shows that your 'polls' app has been embedded into a series of
 other apps. The details of this is not important right now. Just note
@@ -532,7 +532,6 @@ Tables and Actions
 The result of this tutorial is available as a public 
 live demo at http://demo1.lino-framework.org
 
-You might compare this with :ref:`north.tutorial.polls`.
 
 
 

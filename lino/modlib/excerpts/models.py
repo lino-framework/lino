@@ -32,6 +32,8 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+from lino.modlib.contenttypes.mixins import Controllable
+
 outbox = dd.require_app_models('outbox')
 
 davlink = settings.SITE.plugins.get('davlink', None)
@@ -335,7 +337,7 @@ class BodyTemplateContentField(dd.VirtualField):
 
 
 class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
-              mixins.Controllable, mixins.ProjectRelated,
+              Controllable, mixins.ProjectRelated,
               ContactRelated, outbox.Mailable, Postable):
 
     manager_level_field = 'office_level'

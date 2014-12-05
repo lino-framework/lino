@@ -117,7 +117,7 @@ parameters you want to set.  Available parameters are:
 :param logger_names:  A list or tuple of names of loggers to configure.
                       If this is a string, Lino converts it to a list 
                       (expecting it to be a space-separated list of names).
-                      Default value is 'djangosite north lino'.
+                      Default value is 'djangosite lino'.
                  
 If there is a logfile, then console messages will never be more
 verbose than INFO because too many messages on the screen are
@@ -137,7 +137,7 @@ production server with :setting:`DEBUG` False.
         logging.info(msg)
         return
 
-    #~ logger_names = config.get('logger_names','djangosite north lino')
+    #~ logger_names = config.get('logger_names','djangosite lino')
     logger_names = config.get('logger_names', None)
     #~ print 20130826, logger_names
     if not logger_names:

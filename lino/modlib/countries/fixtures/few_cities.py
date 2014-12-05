@@ -14,7 +14,6 @@ from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from north.dbutils import babel_values
 
 
 from lino import dd, rt
@@ -57,8 +56,8 @@ def objects():
     yield make_city('BE', 'Ouren', type=PlaceTypes.township, parent=reuland)
 
     yield Place(country=BE, zip_code='4720', type=PlaceTypes.city,
-                **babel_values('name', de='Kelmis', fr='La Calamine',
-                               en="Kelmis", et="Kelmis"))
+                **dd.babel_values('name', de='Kelmis', fr='La Calamine',
+                                  en="Kelmis", et="Kelmis"))
     yield make_city('BE', 'Kettenis', zip_code='4701', type=PlaceTypes.village)
     yield make_city('BE', 'Raeren', zip_code='4730', type=PlaceTypes.village)
     yield make_city('BE', 'Angleur', zip_code='4031')
@@ -76,10 +75,10 @@ def objects():
     def be_province(de, fr, nl):
         return Place(
             country=BE, type=PlaceTypes.province,
-            **babel_values('name', de=de, fr=fr, nl=nl, en=fr, et=fr))
+            **dd.babel_values('name', de=de, fr=fr, nl=nl, en=fr, et=fr))
 
     def be_city(zip_code, de=None, fr=None, nl=None, en=None, **kw):
-        kw.update(babel_values('name', de=de, fr=fr, nl=nl, en=en, et=en))
+        kw.update(dd.babel_values('name', de=de, fr=fr, nl=nl, en=en, et=en))
         kw.setdefault('type', PlaceTypes.city)
         return Place(country=BE, zip_code=zip_code, **kw)
 
@@ -158,20 +157,20 @@ def objects():
 
     #~ yield make_city(u'Aachen','DE')
     yield Place(country=DE, type=PlaceTypes.city,
-                **babel_values('name', de='Aachen',
+                **dd.babel_values('name', de='Aachen',
                                fr='Aix-la-Chapelle', nl="Aken",
                                en="Aachen", et="Aachen"))
     yield Place(country=DE, type=PlaceTypes.city,
-                **babel_values('name', de='Köln',
+                **dd.babel_values('name', de='Köln',
                                fr='Cologne', nl="Keulen",
                                en="Cologne", et="Köln"))
     yield make_city('DE', 'Berlin')
     yield make_city('DE', 'Hamburg')
     yield Place(country=DE, type=PlaceTypes.city,
-                **babel_values('name', de='München',
+                **dd.babel_values('name', de='München',
                                fr='Munich', en="Munich", et="München"))
     yield Place(country=DE, type=PlaceTypes.city,
-                **babel_values('name', de='Monschau',
+                **dd.babel_values('name', de='Monschau',
                                fr='Montjoie', en="Monschau", et="Monschau"))
 
     yield make_city('NL', 'Maastricht')
@@ -182,10 +181,10 @@ def objects():
     yield make_city('NL', 'Breda')
 
     yield Place(country=FR, type=PlaceTypes.city,
-                **babel_values('name', de='Paris', fr='Paris',
+                **dd.babel_values('name', de='Paris', fr='Paris',
                                en="Paris", et="Pariis", nl="Parijs"))
     yield Place(country=FR, type=PlaceTypes.city,
-                **babel_values('name', de='Nizza',
+                **dd.babel_values('name', de='Nizza',
                                fr='Nice', en="Nice", et="Nizza"))
     yield make_city('FR', 'Metz')
     yield make_city('FR', 'Strasbourg')

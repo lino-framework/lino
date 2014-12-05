@@ -23,8 +23,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.template.loader import BaseLoader
 from django.template.base import TemplateDoesNotExist
 
-from north import dbutils
 from lino.utils import iif
+from lino.utils import format_date
+
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 from jinja2.exceptions import TemplateNotFound
@@ -129,8 +130,8 @@ def site_setup(self):
     self.jinja_env.globals.update(
         settings=settings,
         site=self,
-        dtos=dbutils.dtos,
-        dtosl=dbutils.dtosl,
+        dtos=format_date.fds,
+        dtosl=format_date.fdl,
         as_ul=as_ul,
         as_table=as_table,
         iif=iif,

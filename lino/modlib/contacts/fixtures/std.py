@@ -134,7 +134,7 @@ def objects():
 
         from django.contrib.contenttypes.models import ContentType
 
-        I = Instantiator('system.HelpText',
+        I = Instantiator('contenttypes.HelpText',
                          'content_type field help_text').build
 
         Person = resolve_model("contacts.Person")

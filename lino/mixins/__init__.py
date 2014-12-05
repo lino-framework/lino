@@ -24,18 +24,7 @@ application.
 
 
 
-We recommend to use them in applications as follows::
-
-  from lino import mixins
-  class MyModel(mixins.Controllable):
-      ...
-
-This is because the `Controllable` class might some day move into a
-separate module.  Using the ``dd`` shortcut hides the actual location
-of a given mixin class.
-
-So the following is just an alphabetical list of classes defined
-here. See the documentation of :mod:`lino.dd` for an overview.
+See the documentation of :mod:`lino.dd` for an overview.
 
 """
 
@@ -49,10 +38,7 @@ import datetime
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -72,84 +58,6 @@ from lino.utils import AttrDict
 from lino.utils import curry
 from lino.core.perms import AnonymousUser
 from lino.utils.xmlgen.html import E
-
-
-class Controllable(model.Model):
-
-    """Mixin for models that are "controllable" by another database object.
-
-    Defines three fields `owned_type`, `owned_id` and `owned`.
-    And a class attribute :attr:`owner_label`.
-
-    For example in :mod:`lino.modlibs.cal`, the owner of a Task or Event
-    is some other database object that caused the task's or event's
-    creation.
-
-    Or in :mod:`lino.modlib.sales` and :mod:`lino.modlib.purchases`,
-    an invoice may cause one or several Tasks
-    to be automatically generated when a certain payment mode
-    is specified.
-
-    Controllable objects are "governed" or "controlled" by their
-    controller: If the controller gets modified, it may decide to
-    delete or modify some or all of her controlled objects.
-
-    Non-automatic tasks always have an empty `controller` field.
-    Some fields are read-only on an automatic Task because
-    it makes no sense to modify them.
-
-    """
-    # Translators: will also be concatenated with '(type)' '(object)'
-    owner_label = _('Controlled by')
-    """
-    The labels (`verbose_name`) of the fields
-    `owned_type`, `owned_id` and `owned`
-    are derived from this attribute which
-    may be overridden by subclasses.
-    """
-
-    controller_is_optional = True
-    """
-    Whether the controller is optional (may be NULL)
-    """
-
-    class Meta:
-        abstract = True
-
-    owner_type = fields.ForeignKey(
-        ContentType,
-        editable=True,
-        blank=controller_is_optional, null=controller_is_optional,
-        verbose_name=string_concat(owner_label, ' ', _('(type)')))
-
-    owner_id = fields.GenericForeignKeyIdField(
-        owner_type,
-        editable=True,
-        blank=controller_is_optional, null=controller_is_optional,
-        verbose_name=string_concat(owner_label, ' ', _('(object)')))
-
-    owner = fields.GenericForeignKey(
-        'owner_type', 'owner_id',
-        verbose_name=owner_label)
-
-    def update_owned_instance(self, controllable):
-        """
-        If this (acting as a controller) is itself controlled,
-        forward the call to the controller.
-        """
-        if self.owner:
-            self.owner.update_owned_instance(controllable)
-        super(Controllable, self).update_owned_instance(controllable)
-
-    def save(self, *args, **kw):
-        if settings.SITE.loading_from_dump:
-            super(Controllable, self).save(*args, **kw)
-        else:
-            if self.owner:
-                self.owner.update_owned_instance(self)
-            super(Controllable, self).save(*args, **kw)
-            if self.owner:
-                self.owner.after_update_owned_instance(self)
 
 
 class UserAuthored(model.Model):
@@ -718,7 +626,9 @@ from lino.mixins.printable import (Printable, PrintableType,
 from lino.mixins.periods import DatePeriod
 from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
-from lino.mixins.babel import BabelNamed, BabelCharField, BabelTextField
+
+from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+from lino.utils.mldbc.mixins import BabelNamed
 
 from lino.mixins import printable
 
@@ -770,7 +680,15 @@ class EmptyTableRow(VirtualRow, Printable):
         return unicode(self._table.label)
 
     def get_print_language(self):
+        # same as Model.get_print_language
         return settings.SITE.DEFAULT_LANGUAGE.django_code
+
+    def get_printable_context(self, **kw):
+        # same as Model.get_printable_context
+        kw = settings.SITE.get_printable_context(**kw)
+        kw.update(this=self)  # preferred in new templates
+        kw.update(language=self.get_print_language())
+        return kw
 
     def get_template_groups(self):
         return [self._table.app_label + '/' + self._table.__name__]

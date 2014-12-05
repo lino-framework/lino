@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
 from __future__ import unicode_literals
 
-from north.dbutils import babelkw 
+from lino import dd
 from de_BE.models import Expression
 
-def O(fr,en,de,de_BE):
-    return Expression(**babelkw('name',de=de,de_BE=de_BE,en=en,fr=fr))
+
+def O(fr, en, de, de_BE):
+    return Expression(**dd.babelkw('name', de=de, de_BE=de_BE, en=en, fr=fr))
+
 
 def objects():
     yield O("l'atelier","the workshop","die Werkstatt","das Atelier")

@@ -212,4 +212,4 @@ class EnableChild(VirtualField):
                 insert_child(obj, self.child_model)
 
 
-from north.dpy import create_mti_child as create_child
+from lino.utils.dpy import create_mti_child as create_child

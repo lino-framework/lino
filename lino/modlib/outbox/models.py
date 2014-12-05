@@ -22,10 +22,9 @@ from lino import mixins
 from lino import dd, rt
 from lino.core import actions
 
-from north import dbutils
-
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
+from lino.modlib.contenttypes.mixins import Controllable
 
 from .mixins import RecipientTypes
 
@@ -356,7 +355,7 @@ class SendMail(dd.Action):
 
 
 class Mail(mixins.AutoUser, mixins.Printable,
-           mixins.ProjectRelated, mixins.Controllable):
+           mixins.ProjectRelated, Controllable):
 
     class Meta:
         verbose_name = _("Outgoing Mail")
@@ -506,7 +505,7 @@ class SentByPartner(Mails):
         return qs
 
 
-class Attachment(mixins.Controllable):
+class Attachment(Controllable):
 
     allow_cascaded_delete = ['mail']
 

@@ -20,17 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import get_language
 
-
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
-
-
-#~ from lino import tools
 from lino import dd, rt
-from north import dbutils
-from lino.utils import iif
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -120,7 +110,7 @@ class Page(mixins.Referrable, mixins.Hierarizable):
 
     def get_sidebar_caption(self):
         if self.title:
-            return dbutils.babelattr(self, 'title')
+            return dd.babelattr(self, 'title')
         if self.ref == 'index':
             return unicode(_('Home'))
         if self.ref:
@@ -163,7 +153,7 @@ class Page(mixins.Referrable, mixins.Hierarizable):
         #~ if qs is not None:
         for obj in qs:
             if obj.ref and obj.title:
-                yield ('/' + obj.ref, obj.ref, dbutils.babelattr(obj, 'title'))
+                yield ('/' + obj.ref, obj.ref, dd.babelattr(obj, 'title'))
             #~ else:
                 #~ yield ('/','index',obj.title)
 

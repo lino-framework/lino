@@ -2,32 +2,13 @@
 # Copyright 2009-2012 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-import os
-import sys
-import cgi
-import datetime
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-from django.db import IntegrityError
-from django.utils.encoding import force_unicode
 
 
-#~ from lino import tools
-from lino import dd, rt
-#~ from lino import reports
-#~ from lino import layouts
-from lino.utils.restify import restify
-#~ from lino.utils import printable
+from lino import dd
 from lino import mixins
-from django.conf import settings
-#~ from lino import choices_method, simple_choices_method
-#~ from lino.modlib.contacts import models as contacts
-#~ contacts = dd.resolve_app('contacts')
-
-#~ TEMPLATE_GROUP = 'notes'
+from lino.modlib.contenttypes.mixins import Controllable
 
 
 class EntryType(mixins.BabelNamed, mixins.PrintableType):
@@ -68,7 +49,7 @@ class EntryTypes(dd.Table):
 class Entry(mixins.TypedPrintable,
             mixins.CreatedModified,
             mixins.AutoUser,
-            mixins.Controllable):
+            Controllable):
 
     """
     Deserves more documentation.

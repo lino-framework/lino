@@ -23,7 +23,6 @@ from djangosite.utils.djangotest import RemoteAuthTestCase
 from lino import dd, rt, mixins
 
 from lino.utils.instantiator import create_and_get
-from north.dbutils import babelkw
 
 from lino.modlib.contacts import models as contacts
 from lino.modlib.users.mixins import UserProfiles
@@ -43,7 +42,7 @@ class QuickTest(RemoteAuthTestCase):
         Person = dd.resolve_model("contacts.Person")
 
         ee = create_and_get('countries.Country',
-                            isocode='EE', **babelkw('name',
+                            isocode='EE', **dd.babelkw('name',
                                                     de="Estland",
                                                     fr='Estonie',
                                                     en="Estonia",
@@ -51,7 +50,7 @@ class QuickTest(RemoteAuthTestCase):
                                                     et='Eesti',
                                                     ))
         be = create_and_get('countries.Country',
-                            isocode='BE', **babelkw('name',
+                            isocode='BE', **dd.babelkw('name',
                                                     de="Belgien",
                                                     fr='Belgique',
                                                     en="Belgium",

@@ -3,12 +3,11 @@
 # License: BSD (see file COPYING for details)
 
 
-from lino import dd, rt
+
 from lino.utils.instantiator import Instantiator, i2d
-#~ from lino.core.dbutils import resolve_model
 from django.utils.translation import ugettext_lazy as _
 
-from north.dbutils import babelkw
+from lino import dd
 
 
 def objects():
@@ -30,12 +29,12 @@ def objects():
 
     courses = dd.resolve_app('courses')
 
-    yield courses.Line(**babelkw('name',
+    yield courses.Line(**dd.babelkw('name',
                                  de=u"Deutsch Anfänger",
                                  fr=u"Allemand débutants",
                                  en=u"German beginners",
                                  ))
-    yield courses.Line(**babelkw('name',
+    yield courses.Line(**dd.babelkw('name',
                                  de=u"Französisch Anfänger",
                                  fr=u"Français débutants",
                                  en=u"French beginners",

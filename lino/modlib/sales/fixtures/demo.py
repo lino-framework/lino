@@ -11,17 +11,15 @@
 # GNU Lesser General Public License for more details.
 # You should have received a copy of the GNU Lesser General Public License
 # along with Lino ; if not, see <http://www.gnu.org/licenses/>.
-"""
-Generates 20 fictive sales invoices, 
-distributed over more than one month.
+"""Generates 20 fictive sales invoices, distributed over more than
+one month.
 
 """
 from __future__ import unicode_literals
 
 from django.conf import settings
 from lino.utils import Cycler
-from north.dbutils import babel_values
-from lino import dd, rt
+from lino import dd
 
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
@@ -39,7 +37,7 @@ def objects():
 
     if False:
         yield sales.InvoicingMode(
-            **babel_values(
+            **dd.babel_values(
                 'name',
                 en='Default', de="Standard", fr="Standard"))
 

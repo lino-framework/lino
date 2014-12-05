@@ -12,19 +12,18 @@ from __future__ import unicode_literals
 
 from lino.utils.instantiator import Instantiator
 
-from north.dbutils import babel_values
-
+from lino import dd
 
 def objects():
 
     productcat = Instantiator('products.ProductCat').build
     product = Instantiator('products.Product', "cat name").build
 
-    food = productcat(**babel_values(
+    food = productcat(**dd.babel_values(
         'name',
         en="Food", et="Toit", de="Lebensmittel", fr="Alimentaire"))
     yield food
-    yield product(food, "Le petit Fagnard", **babel_values(
+    yield product(food, "Le petit Fagnard", **dd.babel_values(
         'description',
         en="Handmade cheese from Hautes Ardennes",
         et="Käsitsi valmistatud juust Ardenne'idest",

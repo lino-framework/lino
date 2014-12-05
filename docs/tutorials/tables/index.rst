@@ -18,7 +18,7 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
     >>> from __future__ import print_function
     >>> from lino.runtime import *
     >>> globals().update(tables.__dict__)
-    >>> from north.dpy import load_fixture_from_module
+    >>> from lino.utils.dpy import load_fixture_from_module
 
 
 >>> import tables.fixtures.demo as m

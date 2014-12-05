@@ -37,28 +37,7 @@ from lino import dd, rt
 #~ from lino import fields
 
 from lino import mixins
-#~ from lino.utils import join_words
-from north import dbutils
-#~ from lino.models import get_site_config
 
-#~ from lino.modlib.contacts.utils import Genders
-
-#~ from lino.modlib.countries.models import CountryCity
-#~ from lino.modlib.countries.models import CountryRegionCity
-
-#~ from lino.modlib.contacts.utils import get_salutation
-#~ from lino.modlib.contacts.utils import GENDER_CHOICES, get_salutation
-
-#~ from lino.utils import mti
-
-
-#~ class ConceptTypes(dd.ChoiceList):
-    #~ verbose_name = _("Concept Type")
-    #~ verbose_name_plural = _("Concept Types")
-
-#~ add = ConceptTypes.add_item
-#~ add('10', _("Context"),'context')
-#~ add('20', _("Jargon"),'context')
 
 class LinkTypes(dd.ChoiceList):
     verbose_name = _("Link Type")
@@ -91,8 +70,8 @@ class Concept(mixins.BabelNamed):
 
     def summary_row(self, ar=None):
         if self.abbr:
-            return ["%s (%s)" % (dbutils.babelattr(self, 'name'), dbutils.babelattr(self, 'abbr'))]
-        return [dbutils.babelattr(self, 'name')]
+            return ["%s (%s)" % (dd.babelattr(self, 'name'), dd.babelattr(self, 'abbr'))]
+        return [dd.babelattr(self, 'name')]
 
 
 class Concepts(dd.Table):

@@ -27,22 +27,3 @@ SITE = Site(globals(), 'lino.tutorials.lets1.lets')
 
 DEBUG = True
 
-#~ DATABASES = {
-    #~ 'default': {
-        #~ 'ENGINE': 'django.db.backends.sqlite3',
-        #~ 'NAME': abspath(join(
-            #~ dirname(__file__),'test.db')),
-    #~ }
-#~ }
-
-#~ INSTALLED_APPS = (
-  #~ 'django.contrib.contenttypes',
-  #~ 'lino.modlib.users',
-  #~ 'lino',
-  #~ 'lino.tutorials.lets1.lets'
-#~ )
-
-#~ LOGGING = dict(level='DEBUG')
-#~ logdir = join(SITE.project_dir,'log')
-#~ if os.path.exists(logdir):
-    #~ LOGGING.update(filename=join(logdir,'system.log'))

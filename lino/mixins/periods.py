@@ -14,10 +14,10 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from north.dbutils import fds
 
 from lino.core.model import Model
 from lino.utils.ranges import isrange
+from lino.utils.format_date import fds
 
 
 def rangefmt(r):

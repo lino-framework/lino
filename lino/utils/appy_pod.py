@@ -29,10 +29,8 @@ from odf.style import TableColumnProperties, TableRowProperties, TableCellProper
 from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
-from north import dbutils
-
-#~ from lino.utils import jsgen
 from lino.core import actions
+from lino.utils import format_date
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
@@ -565,9 +563,9 @@ class PrintTableAction(actions.Action):
         return dict(
             ar=ar,
             title=unicode(ar.get_title()),
-            dtos=dbutils.dtos,
-            dtosl=dbutils.dtosl,
-            dtomy=dbutils.fdmy,
+            dtos=format_date.dtos,
+            dtosl=format_date.dtosl,
+            dtomy=format_date.fdmy,
             babelattr=settings.SITE.babelattr,
             babelitem=settings.SITE.babelitem,
             tr=settings.SITE.babelitem,

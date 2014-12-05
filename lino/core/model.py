@@ -241,14 +241,14 @@ class Model(models.Model):
 
     def update_owned_instance(self, controllable):
         """
-        Called by :class:`lino.mixins.Controllable`.
+        Called by :class:`ml.contenttypes.Controllable`.
         """
         #~ print '20120627 tools.Model.update_owned_instance'
         pass
 
     def after_update_owned_instance(self, controllable):
         """
-        Called by :class:`lino.mixins.Controllable`.
+        Called by :class:`ml.contenttypes.Controllable`.
         """
         pass
 
@@ -284,13 +284,16 @@ class Model(models.Model):
         :attr:`auto_create <lino.core.signals.auto_create>` signal.
         
         """
+
+        from lino.utils.mldbc.fields import BabelCharField
+
         #~ logger.info("2013011 lookup_or_create")
         fkw = dict()
         fkw.update(known_values)
 
         if isinstance(lookup_field, basestring):
             lookup_field = model._meta.get_field(lookup_field)
-        if isinstance(lookup_field, fields.BabelCharField):
+        if isinstance(lookup_field, BabelCharField):
             flt = settings.SITE.lookup_filter(
                 lookup_field.name, value, **known_values)
         else:
@@ -441,16 +444,14 @@ action on individual instances.
         return kw
 
     def get_print_language(self):
+        # same as mixins,EmptyTableRow.get_print_language
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
     def get_printable_context(self, **kw):
+        # same as mixins,EmptyTableRow.get_printable_context
         kw = settings.SITE.get_printable_context(**kw)
         kw.update(this=self)  # preferred in new templates
         kw.update(language=self.get_print_language())
-
-        def translate(s):
-            return _(s.decode('utf8'))
-        kw.update(_=translate)
         return kw
 
     LINO_MODEL_ATTRIBS = (

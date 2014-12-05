@@ -9,7 +9,7 @@ SETUP_INFO = dict(
     version='1.6.14',
     tests_require=['beautifulsoup4'],
     install_requires=[
-        'North', 'djangosite', 'odfpy',
+        'djangosite', 'odfpy',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'django-iban', 'xlwt'],
     description="A framework for writing desktop-like web applications "
@@ -84,6 +84,8 @@ lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.contacts.management
 lino.modlib.contacts.management.commands
+lino.modlib.contenttypes
+lino.modlib.contenttypes.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.davlink
@@ -223,6 +225,7 @@ lino.tutorials.lets1.lets
 lino.ui
 lino.utils
 lino.utils.demonames
+lino.utils.mldbc
 lino.utils.xmlgen
 lino.utils.xmlgen.intervat
 lino.utils.xmlgen.cbss

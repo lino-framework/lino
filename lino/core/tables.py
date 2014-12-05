@@ -23,8 +23,6 @@ from django.contrib.contenttypes import generic
 from django.db.models.query import QuerySet
 from django.utils.translation import ugettext_lazy as _
 
-from north import dbutils
-
 from lino.core import constants
 from lino.core import actors
 from lino.core import actions
@@ -632,11 +630,16 @@ class TableRequest(ActionRequest):
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
             else:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
-                if ContentType._meta.installed \
+                # if ContentType._meta.installed fails since 20141205
+                if settings.SITE.is_installed('contenttypes') \
                    and isinstance(self.master_instance, models.Model):
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
                     bp[constants.URL_PARAM_MASTER_TYPE] = mt
+                else:
+                    logger.warning("20141205 %s %s",
+                                   self.master_instance,
+                                   ContentType)
         return kw
 
     def __repr__(self):
@@ -940,7 +943,6 @@ class AbstractTable(actors.Actor):
         Not yet stable. Used by print_tx25.py.
         To be combined with the `show` management command.
         """
-        dbutils.set_language(None)
         settings.SITE.startup()
         #~ settings.SITE.ui
         if pk is not None:

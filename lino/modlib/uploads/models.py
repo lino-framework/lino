@@ -19,6 +19,8 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+from lino.modlib.contenttypes.mixins import Controllable
+
 system = dd.resolve_app('system')
 
 
@@ -81,7 +83,7 @@ def filename_leaf(name):
 class Upload(
         mixins.Uploadable,
         mixins.UserAuthored,
-        mixins.Controllable):
+        Controllable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Upload')
@@ -246,7 +248,6 @@ class UploadsByController(AreaUploads):
     type
     description
     """
-
 
 
 def setup_main_menu(site, ui, profile, m):

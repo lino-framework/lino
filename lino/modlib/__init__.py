@@ -26,6 +26,7 @@ This is :doc:`/topics/modlib`.
     comments
     concepts
     contacts
+    contenttypes
     countries
     courses
     cv

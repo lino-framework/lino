@@ -32,8 +32,6 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-# from north.dbutils import day_and_month
-
 from lino import dd, rt
 from lino import mixins
 

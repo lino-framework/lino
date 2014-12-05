@@ -99,7 +99,7 @@ from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm
 from atelier import rstgen
 from atelier.utils import i2d
 from atelier.utils import i2t
-from north.utils import Cycler
+from lino.utils.cycler import Cycler
 from lino.utils.code import codefiles, codetime
 
 

@@ -22,6 +22,7 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import translation
 
 from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
@@ -238,7 +239,8 @@ class AppyBuildMethod(SimpleBuildMethod):
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
                     tpl, target, lang, settings.SITE.appy_params)
 
-        def f():
+        with translation.override(lang):
+
             context = elem.get_printable_context(ar=ar)
 
             # backwards compat for existing .odt templates.  Cannot
@@ -248,7 +250,6 @@ class AppyBuildMethod(SimpleBuildMethod):
 
             Renderer(ar, tpl, context, target,
                      **settings.SITE.appy_params).run()
-        dbutils.run_with_language(lang, f)
         return os.path.getmtime(target)
 
 

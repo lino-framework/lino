@@ -33,7 +33,9 @@ import logging
 logger = logging.getLogger('lino')
 
 from django.conf import settings
-from north.dbutils import babel_values
+
+from lino import dd
+
 
 TABLE2 = """
 BQAQ 	ATB 	000 British Antarctic Territory
@@ -98,7 +100,7 @@ def objects():
             #~ print name.firstChild.data
             names[str(name.attributes['lang'].value)] = name.firstChild.data
 
-        kw = babel_values('name', **names)
+        kw = dd.babel_values('name', **names)
         iso2 = coun.getElementsByTagName('coun:alpha2')[0].childNodes[0].data
         if Country.objects.filter(pk=iso2).count() > 0:
             logger.debug("ISO code %r already exists %s", iso2, coun)

@@ -1,4 +1,4 @@
-## Copyright 2013 Luc Saffre
+## Copyright 2013-2014 Luc Saffre
 ## This file is part of the Lino project.
 
 from lino.projects.std.settings import *
@@ -13,7 +13,7 @@ class Site(Site):
         
         yield super(Site, self).get_installed_apps()
             
-        #~ yield 'django.contrib.contenttypes'
+        #~ yield 'lino.modlib.contenttypes'
         yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         #~ yield 'lino.modlib.changes'
@@ -42,7 +42,7 @@ SITE = Site(globals())
 
 #~ LOGGING=dict(filename=None,
     #~ level='INFO',
-    #~ logger_names='djangosite north lino',
+    #~ logger_names='djangosite lino',
     #~ disable_existing_loggers=True, # Django >= 1.5
     #~ )
 

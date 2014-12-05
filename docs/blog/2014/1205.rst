@@ -2,10 +2,41 @@
 Friday, December 5, 2014
 ========================
 
+My decision where to place our new table `OrphanedControllables`
+(combined with our ticket :doc:`/tickets/134`) took some more time and
+caused some avalanches.
+
+It is now called "Stale Controllables" (yet to translate).
+
+:ref:`north` has passed away! Requiescat in pace! Everything that was
+in North is now integrated into Lino.
 
 .. currentmodule:: lino.mixins.babel
 
 Moved :class:`BabelNamed`, :class:`LanguageField`,
-:class:`BabelCharField` and :class:`BabelTextField` to a new module
-:mod:`lino.mixins.babel`.
+:class:`BabelCharField` and :class:`BabelTextField` to a new package
+:mod:`lino.utils.mldbc`.
 
+`Controllable` is no longer in :mod:`lino.modlib.mixins` but in a new
+module :mod:`lino.modlib.contenttypes` (which extends
+`django.contrib.contenttypes`.  `system.HelpText` is now
+`contenttypes.HelpText`.
+
+:ref:`apichange`: Applications who yield `django.contrib.contenttypes`
+in their :meth:`ad.Site.get_installed_apps` should replace this by
+`lino.modlib.contenttypes`.
+
+There are at least two problems with the new
+:mod:`lino.modlib.contenttypes` module:
+
+- we don't have Django's translation strings for
+  `django.contrib.contenttypes`.  Extending a non-Lino pure Django app
+  is maybe a bit hackerish.
+
+- The Django trick of testing `if M._meta.installed` does not work as
+  expected for models whose plugin has been overridden. So Lino
+  applications should avoid to use this and should use
+  :meth:`dd.Site.is_installed` instead.
+
+Checkin at 16:10 because the test suite passes. But I think that I am
+also going to merge :ref:`site` into Lino this weekend.

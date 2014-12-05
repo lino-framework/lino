@@ -24,7 +24,7 @@ from lino.core.dbutils import get_field
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
 
-from lino import dd, rt
+from lino import dd, rt, mixins
 
 
 from lino.utils import ssin

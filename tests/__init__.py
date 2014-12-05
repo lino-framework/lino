@@ -53,13 +53,15 @@ class DocsTests(LinoTestCase):
     def test_docs(self):
         self.run_simple_doctests("""
         docs/dev/ml/users.rst
-        docs/dev/ad.rst
         docs/dev/ml/cal.rst
         docs/dev/ml/contacts.rst
         docs/dev/mixins.rst
         docs/user/templates_api.rst
         docs/tested/test_i18n.rst
         """)
+
+    def test_ad(self):
+        self.run_simple_doctests("docs/dev/ad.rst")
 
     def test_dumpy(self):
         self.run_simple_doctests("docs/tutorials/dumpy.rst")
@@ -122,13 +124,21 @@ class UtilsTests(LinoTestCase):
         lino/modlib/iban/utils.py
         """)
 
-    def test_02(self): self.run_simple_doctests('lino/utils/html2odf.py')
-    def test_xmlgen_html(self): self.run_simple_doctests('lino/utils/xmlgen/html.py')
-    def test_xmlgen_sepa(self): 
+    def test_html2odf(self):
+        self.run_simple_doctests('lino/utils/html2odf.py')
+
+    def test_xmlgen_html(self):
+        self.run_simple_doctests('lino/utils/xmlgen/html.py')
+
+    def test_xmlgen_sepa(self):
         # self.run_simple_doctests('lino/utils/xmlgen/sepa.py')
         self.run_simple_doctests('lino/utils/xmlgen/sepa/__init__.py')
-    def test_05(self): self.run_simple_doctests('lino/utils/memo.py')
-    def test_06(self): self.run_simple_doctests('lino/utils/html2xhtml.py')
+
+    def test_memo(self):
+        self.run_simple_doctests('lino/utils/memo.py')
+
+    def test_06(self):
+        self.run_simple_doctests('lino/utils/html2xhtml.py')
 
     def test_demonames(self):
         self.run_simple_doctests("""
@@ -136,25 +146,41 @@ class UtilsTests(LinoTestCase):
         lino/utils/demonames/est.py
         """)
 
-    def test_08(self): self.run_simple_doctests('lino/utils/odsreader.py')
+    def test_odsreader(self):
+        self.run_simple_doctests('lino/utils/odsreader.py')
     
-    def test_ssin(self): self.run_simple_doctests('lino/utils/ssin.py')
+    def test_ssin(self):
+        self.run_simple_doctests('lino/utils/ssin.py')
 
     # def test_choicelists(self):
     #     self.run_simple_doctests('lino/core/choicelists.py')
 
-    def test_jsgen(self): self.run_simple_doctests('lino/utils/jsgen.py')
-    def test_ranges(self): self.run_simple_doctests('lino/utils/ranges.py')
+    def test_jsgen(self):
+        self.run_simple_doctests('lino/utils/jsgen.py')
+
+    def test_format_date(self):
+        self.run_simple_doctests('lino/utils/format_date.py')
+
+    def test_ranges(self):
+        self.run_simple_doctests('lino/utils/ranges.py')
 
     def test_vat_utils(self):
         self.run_simple_doctests('lino/modlib/vat/utils.py')
 
-    def test_ledger_utils(self): self.run_simple_doctests('lino/modlib/ledger/utils.py')
-    def test_accounts_utils(self): self.run_simple_doctests('lino/modlib/accounts/utils.py')
-    def test_contacts_utils(self): self.run_simple_doctests('lino/modlib/contacts/utils.py')
+    def test_ledger_utils(self):
+        self.run_simple_doctests('lino/modlib/ledger/utils.py')
+
+    def test_accounts_utils(self):
+        self.run_simple_doctests('lino/modlib/accounts/utils.py')
+
+    def test_contacts_utils(self):
+        self.run_simple_doctests('lino/modlib/contacts/utils.py')
 
     def test_addressable(self):
         self.run_simple_doctests('lino/utils/addressable.py')
+
+    def test_cycler(self):
+        self.run_simple_doctests('lino/utils/cycler.py')
 
 
 class ProjectsTests(LinoTestCase):
