@@ -22,11 +22,14 @@ configure(globals(), 'lino.projects.docs.settings.demo')
 
 language = 'en'
 
+extensions += ['sphinx.ext.autosummary']
+autosummary_generate = True
+
+extensions += ['sphinxcontrib.taglist']
 extensions += ['atelier.sphinxconf.blog']
 extensions += ['atelier.sphinxconf.complex_tables']
 extensions += ['lino.sphinxcontrib.logo']
 extensions += ['lino.sphinxcontrib.actordoc']
-extensions += ['sphinxcontrib.taglist']
 
 extensions += ['atelier.sphinxconf.sigal_image']
 sigal_base_url = 'http://sigal.saffre-rumma.net'
@@ -323,3 +326,4 @@ todo_include_todos = True
 
 #~ New in version 1.1
 gettext_compact = True
+

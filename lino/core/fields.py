@@ -2,13 +2,10 @@
 # Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Defines extended field classes like
-:class:`RichTextField`
-:class:`BabelTextField`
-and
-:class:`PercentageField`,
-utility functions like :func:`dd.fields_list`.
+"""Defines extended field classes like :class:`RichTextField` and
+:class:`PercentageField`, utility functions like
+:func:`dd.fields_list`.
+
 """
 
 import logging
@@ -23,10 +20,8 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
-from django.utils.translation import string_concat
 
 
 from djangosite.dbutils import full_model_name
@@ -39,23 +34,6 @@ from lino.core.dbutils import resolve_model, UnresolvedModel
 from lino.utils import IncompleteDate, d2iso
 from lino.utils import quantities
 
-LANGUAGE_CODE_MAX_LENGTH = 5
-
-
-def contribute_to_class(field, cls, fieldclass, **kw):
-    if cls._meta.abstract:
-        return
-    kw.update(blank=True)
-    for lang in settings.SITE.BABEL_LANGS:
-        kw.update(verbose_name=string_concat(
-            field.verbose_name, ' (' + lang.django_code + ')'))
-        newfield = fieldclass(**kw)
-        #~ newfield._lino_babel_field = True
-        # used by dbtools.get_data_elems
-        newfield._lino_babel_field = field.name
-        newfield._babel_language = lang
-        cls.add_to_class(field.name + '_' + lang.name, newfield)
-
 
 class PasswordField(models.CharField):
 
@@ -64,20 +42,6 @@ interface.
 
     """
     pass
-
-
-class BabelCharField(models.CharField):
-
-    """
-    Define a variable number of `CharField` database fields, 
-    one for each language of your :attr:`ad.Site.languages`.
-    See :ref:`mldbc`.
-    """
-
-    def contribute_to_class(self, cls, name):
-        super(BabelCharField, self).contribute_to_class(cls, name)
-        contribute_to_class(self, cls, models.CharField,
-                            max_length=self.max_length)
 
 
 class RichTextField(models.TextField):
@@ -94,41 +58,6 @@ class RichTextField(models.TextField):
 
     def set_format(self, fmt):
         self.textfield_format = fmt
-
-
-class BabelTextField(RichTextField):
-
-    """
-    Define a variable number of clones of the "master" field,
-    one for each language .
-    See :ref:`mldbc`.
-    """
-
-    def contribute_to_class(self, cls, name):
-        super(BabelTextField, self).contribute_to_class(cls, name)
-        contribute_to_class(self, cls, RichTextField,
-                            format=self.textfield_format)
-
-
-
-class LanguageField(models.CharField):
-
-    """A field that lets the user select a language from the available
-    babel languages.
-
-    """
-
-    def __init__(self, *args, **kw):
-        defaults = dict(
-            verbose_name=_("Language"),
-            choices=iter(settings.SITE.LANGUAGE_CHOICES),
-            default=settings.SITE.get_default_language,
-            #~ default=get_language,
-            max_length=LANGUAGE_CODE_MAX_LENGTH,
-        )
-        defaults.update(kw)
-        models.CharField.__init__(self, *args, **defaults)
-
 
 
 #~ class PercentageField(models.SmallIntegerField):
@@ -390,7 +319,7 @@ class VirtualGetter(object):
         return getattr(obj, name)
 
 
-class VirtualField(FakeField):  # (Field):
+class VirtualField(FakeField):
     "See :class:`dd.VirtualField`."
 
     def __init__(self, return_type, get):
@@ -610,187 +539,6 @@ class MethodField(VirtualField):
         return m(obj, *self.args, **self.kw)
 
 
-#~ class DynamicForeignKey(models.PositiveIntegerField):
-    #~ """
-
-    #~ """
-    #~ def __init__(self, link_field, *args, **kw):
-        #~ self.link_field = link_field
-        #~ models.PositiveIntegerField.__init__(self,*args, **kw)
-
-
-class unused_LinkedForeignKey(generic.GenericForeignKey):
-
-    """
-    Like a GenericForeignKey, but the content type is not stored in another model.
-    Code partly copied from django.contrib.contenttypes GenericForeignKey.
-    Used by :mod:`lino.modlib.links`.
-
-    """
-    editable = True
-    verbose_name = None
-    primary_key = False
-    choices = None
-    blank = True
-    drop_zone = None
-
-    def __init__(self, type_fk, name, *args, **kw):
-        """
-        type_fk is a regular ForeignKey field that points to a model whose
-        instances hold the ContentType.
-        `name` is the prefix for both fields names.
-        """
-        self.type_fk = type_fk
-        self.type_fieldname = name + '_type'
-        self.fk_field = name + '_id'
-        for k, v in kw.items():
-            assert hasattr(self, k)
-            setattr(self, k, v)
-
-    # the following dummy methods are needed when using a DisplayField
-    # as return_type of a VirtualField
-    #~ def to_python(self,*args,**kw): raise NotImplementedError
-    #~ def save_form_data(self,*args,**kw): raise NotImplementedError
-    #~ def value_to_string(self,*args,**kw): raise NotImplementedError
-
-    def instance_pre_init(self, signal, sender, args, kwargs, **_kwargs):
-        """
-        Handles initializing an object with the generic FK insteed of
-        content-type/object-id fields.
-        """
-        if self.name in kwargs:
-            value = kwargs.pop(self.name)
-            #~ kwargs[self.ct_field] = self.get_content_type(obj=value)
-            kwargs[self.fk_field] = value._get_pk_val()
-
-    def get_content_type(self, obj):
-        if not getattr(obj, self.type_fk.name + '_id'):
-            #~ logger.info("20111209 get_contenttype() no type_id in %s", obj2str(obj))
-            return None
-        link_type = getattr(obj, self.type_fk.name)
-        #~ link_type = obj.type
-        return getattr(link_type, self.type_fieldname)
-
-    def __get__(self, instance, instance_type=None):
-        if instance is None:  # accessed as a class attribute
-            return self
-        try:
-            return getattr(instance, self.cache_attr)
-        except AttributeError:
-            rel_obj = None
-            ct = self.get_content_type(instance)
-            if ct is not None:
-                pk = getattr(instance, self.fk_field)
-                if pk:
-                    model = ct.model_class()
-                    rel_obj = ct.get_object_for_this_type(pk=pk)
-            setattr(instance, self.cache_attr, rel_obj)
-            return rel_obj
-
-    def __set__(self, instance, value):
-        ct = None
-        fk = None
-        if value is not None:
-            ct = self.get_content_type(instance)
-            fk = value._get_pk_val()
-
-        ct = self.get_content_type(instance)
-        if ct is None:
-            raise ValueError(
-                "Cannot store value % because content type is undefined" % value)
-        if not isinstance(value, ct.model_class()):
-            raise ValueError("Expected %s instance but got %r" %
-                             (ct.model_class(), value))
-
-        #~ setattr(instance, self.ct_field, ct)
-        setattr(instance, self.fk_field, fk)
-        setattr(instance, self.cache_attr, value)
-
-    def value_from_object(self, obj):
-        return self.__get__(obj)
-
-
-#~ class DynamicGeneralForeignKey(models.PositiveIntegerField):
-#~ class DynamicForeignKey(models.ForeignKey):
-class unused_DynamicForeignKey(object):
-
-    """
-    Used to define the two fields 'a' and 'b' on the Link model.
-    """
-    #~ __metaclass__ = models.SubfieldBase
-
-    #~ def __init__(self,fk_field,type_field_name,*args,**kw):
-    def __init__(self, linkfield, *args, **kw):
-        self.fk_field = linkfield.fk_field
-        self.type_field_name = type_field_name
-        models.PositiveIntegerField.__init__(self, *args, **kw)
-
-    def to_python(self, value):
-        if isinstance(value, models.Model):
-            return value
-        if not value:
-            return value
-        raise Exception("Cannot know contenttype for %r" % value)
-        #~ ct = self.get_contenttype(obj)
-        #~ if ct is None:
-            #~ return None
-        #~ return ct.get_object_for_this_type(pk=pk)
-
-        #~ return value
-
-    def get_prep_value(self, value):
-        if value:
-            return value.pk
-        return None
-
-    def value_to_string(self, obj):
-        value = self._get_val_from_obj(obj)
-        return self.get_prep_value(value)
-        #~ return self.get_db_prep_value(value,connection)
-
-    #~ def save_form_data(self, instance, data):
-        #~ setattr(instance, self.name, data)
-
-    #~ def get_text_for_value(self,value):
-        #~ return self.choicelist.get_text_for_value(value.value)
-
-    def __get__(self, obj):
-        return self.get_value(obj)
-
-    def get_value(self, obj, request=None):
-        """
-        The optional 2nd argument `request` (passed from
-        `VirtualField.value_from_object`) is ignored.
-        """
-        pk = getattr(obj, self.name + '_id')
-        if pk is None:
-            return None
-        ct = self.get_contenttype(obj)
-        if ct is None:
-            return None
-        return ct.get_object_for_this_type(pk=pk)
-
-        #~ try:
-            #~ return ct.get_object_for_this_type(pk=pk)
-        #~ except model.DoesNotExist:
-            #~ return None
-
-    def set_value_in_object(self, request, obj, v):
-        raise Exception("20111208")
-        if not v:
-            setattr(obj, self.name, None)
-            return
-
-        ct = self.get_contenttype(obj)
-        if ct is None:
-            raise Exception("20111209")
-            return None
-
-        if not isinstance(v, ct.model_class()):
-            raise Exception("20111209")
-        setattr(obj, self.name, v.pk)
-
-
 class GenericForeignKeyIdField(models.PositiveIntegerField):
 
     """
@@ -863,21 +611,6 @@ class GenericForeignKey(generic.GenericForeignKey):
             setattr(cls, fk_display_name, fk_display)
 
 
-#~ class FieldSet:
-    #~ """
-    #~ A group of fields that have a common label (`verbose_name`)
-    #~ to be displayed and translated.
-    #~ """
-    #~ def __init__(self,verbose_name,desc=None,**child_labels):
-        #~ self.verbose_name = verbose_name
-        #~ self.desc = desc
-        #~ self.child_labels = child_labels
-
-    #~ def get_child_label(self,name):
-        #~ s = self.child_labels.get(name,None)
-        #~ return s
-
-
 class CharField(models.CharField):
 
     """
@@ -917,9 +650,6 @@ class CharField(models.CharField):
 
 
 class QuantityField(CharField):
-#~ class QuantityField(models.CharField):
-#~ class QuantityField(models.DecimalField):
-#~ class QuantityField(models.Field):
 
     """
     A field that accepts both

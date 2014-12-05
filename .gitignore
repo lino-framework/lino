@@ -21,7 +21,7 @@ docs/media
 media
 docs/*/appdocs
 docs/dl/*
-docs/api
+docs/_api
 lino.egg-info
 .build
 htmlcov

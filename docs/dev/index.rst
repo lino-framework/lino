@@ -48,7 +48,7 @@ Other
 
    /changes
    /todo
-   Generated API </api/lino>
+   /api
    /tested/index
    git
 

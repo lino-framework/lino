@@ -6,14 +6,25 @@
 by :mod:`lino.modlib`. None of them is mandatory for a Lino
 application.
 
-They are also available in :mod:`lino.dd`, so we recommend to use the
-``dd`` shortcut::
+.. currentmodule:: lino.mixins
 
-  from lino import dd, rt
-  class MyModel(dd.Controllable):
-      ...
+.. toctree::
 
-The following usage, in an application, is **not** recommended ::
+.. autosummary::
+   :toctree: _mixins
+
+    babel
+    duplicable
+    human
+    periods
+    polymorphic
+    printable
+    uploadable
+
+
+
+
+We recommend to use them in applications as follows::
 
   from lino import mixins
   class MyModel(mixins.Controllable):
@@ -59,7 +70,6 @@ from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
 from lino.utils import curry
-from lino.core.fields import BabelCharField
 from lino.core.perms import AnonymousUser
 from lino.utils.xmlgen.html import E
 
@@ -701,8 +711,6 @@ class ProjectRelated(model.Model):
             yield p
 
 
-from lino.core import actions
-
 from lino.mixins.printable import (Printable, PrintableType,
                                    CachedPrintable, TypedPrintable,
                                    DirectPrintAction, CachedPrintAction)
@@ -710,6 +718,7 @@ from lino.mixins.printable import (Printable, PrintableType,
 from lino.mixins.periods import DatePeriod
 from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
+from lino.mixins.babel import BabelNamed, BabelCharField, BabelTextField
 
 from lino.mixins import printable
 
@@ -868,24 +877,6 @@ class Report(EmptyTable):
                 raise Exception("Cannot handle %r" % item)
 
         return ''.join(chunks)
-
-
-class BabelNamed(model.Model):
-
-    """Mixin for models that have a babel field `name` (labelled
-    "Description" by default) for each language.
-    
-    See usage example in :ref:`mldbc_tutorial`.
-
-    """
-
-    class Meta:
-        abstract = True
-
-    name = BabelCharField(max_length=200, verbose_name=_("Designation"))
-
-    def __unicode__(self):
-        return settings.SITE.babelattr(self, 'name')
 
 
 class YesNo(ChoiceList):

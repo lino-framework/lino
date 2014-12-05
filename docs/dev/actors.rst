@@ -595,15 +595,15 @@ The ``Table`` class
 
 .. class:: Table
 
-A table that works on a Django Model using a QuerySet.
+  A table that works on a Django Model using a QuerySet.
 
-A table inherits from :class:`AbstractTable` and adds attributes like
-:attr:`model` and :attr:`master` and :attr:`master_key` who are
-important because Lino handles relations automagically.
+  A table inherits from :class:`AbstractTable` and adds attributes like
+  :attr:`model` and :attr:`master` and :attr:`master_key` who are
+  important because Lino handles relations automagically.
 
-Another class of attributes are `filter`, `exclude` and `sort_order`
-which are thin wrappers to Django's query lookup parameters of same
-name.
+  Another class of attributes are `filter`, `exclude` and `sort_order`
+  which are thin wrappers to Django's query lookup parameters of same
+  name.
 
   .. attribute:: model
 

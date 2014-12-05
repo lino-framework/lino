@@ -1,0 +1,11 @@
+========================
+Friday, December 5, 2014
+========================
+
+
+.. currentmodule:: lino.mixins.babel
+
+Moved :class:`BabelNamed`, :class:`LanguageField`,
+:class:`BabelCharField` and :class:`BabelTextField` to a new module
+:mod:`lino.mixins.babel`.
+

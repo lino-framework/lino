@@ -26,7 +26,7 @@ class OrphanedControllables(VirtualTable):
 
     @displayfield(_("Model"))
     def owner_model(self, obj, ar):
-        return E.p(unicode(obj.__class__))
+        # return E.p(unicode(obj.__class__))
         return dd.full_model_name(obj.__class__)
     
     @virtualfield(models.IntegerField(_("Primary key")))

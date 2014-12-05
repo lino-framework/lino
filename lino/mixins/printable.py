@@ -239,7 +239,7 @@ class AppyBuildMethod(SimpleBuildMethod):
                     tpl, target, lang, settings.SITE.appy_params)
 
         def f():
-            context = elem.get_printable_context(ar)
+            context = elem.get_printable_context(ar=ar)
 
             # backwards compat for existing .odt templates.  Cannot
             # set this earlier because that would cause "render() got

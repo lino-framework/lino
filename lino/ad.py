@@ -1130,7 +1130,7 @@ class Site(Site):
         from lino.utils import moneyfmt
         return moneyfmt(v, places=places, **kw)
 
-    def get_printable_context(self, ar, **kw):
+    def get_printable_context(self, **kw):
         from django.conf import settings
         from lino import dd, rt
         from djangosite.dbutils import dtomy
@@ -1155,7 +1155,6 @@ class Site(Site):
             rt=rt,
             settings=settings,
             lino=self.modules,  # experimental
-            # ar=ar,
             site_config=self.site_config,
         )
         return kw

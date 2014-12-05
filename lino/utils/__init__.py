@@ -10,6 +10,52 @@ This is a tested document. To test it, run::
 
   $ python setup.py test -s tests.DocsTests.test_utils
 
+
+
+.. toctree::
+
+.. autosummary::
+   :toctree: _utils
+
+    addressable
+    editing
+    log
+    requests
+    ajax
+    html2odf
+    mdbtools
+    restify
+    appy_pod
+    html2text
+    media
+    screenshots
+    choosers
+    html2xhtml
+    memo
+    sqllog
+    code
+    htmlgen
+    mti
+    ssin
+    config          
+    odsreader   
+    test
+    daemoncommand   
+    instantiator  
+    pdf         
+    textfields
+    dataserializer  
+    jscompressor  
+    pyuca       
+    ucsv
+    dbfreader
+    jsgen
+    quantities
+    dblogger
+    latex
+    ranges
+
+
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
 

@@ -235,13 +235,13 @@ from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
-from lino.core.fields import BabelTextField
 from lino.core.fields import CharField
 
 from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
 
-from lino.core.fields import BabelCharField, LanguageField
+from lino.mixins.babel import BabelTextField
+from lino.mixins.babel import BabelCharField, LanguageField
 
 from north.dbutils import babelkw
 from north.dbutils import babelattr
