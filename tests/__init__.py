@@ -13,7 +13,7 @@ ROOTDIR = Path(__file__).parent.parent
 # load  SETUP_INFO:
 execfile(ROOTDIR.child('lino_noi', 'project_info.py'), globals())
 
-from djangosite.utils.pythontest import TestCase
+from lino.utils.pythontest import TestCase
 
 import os
 os.environ['DJANGO_SETTINGS_MODULE'] = "lino_noi.settings.test"
