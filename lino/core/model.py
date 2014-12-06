@@ -14,7 +14,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from djangosite.dbutils import obj2str, full_model_name
+from lino.core.dbutils import obj2str, full_model_name
+from lino.core.dbutils import ChangeWatcher
+
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
@@ -343,7 +345,7 @@ class Model(models.Model):
 
     def set_workflow_state(row, ar, state_field, target_state):
 
-        watcher = signals.ChangeWatcher(row)
+        watcher = ChangeWatcher(row)
 
         #~ old = row.state
         old = getattr(row, state_field.attname)

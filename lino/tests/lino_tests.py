@@ -20,7 +20,7 @@ without any fixture. You can run only these tests by issuing::
 """
 
 from django.conf import settings
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.utils.djangotest import RemoteAuthTestCase
 from lino import dd, rt
 
 # import logging

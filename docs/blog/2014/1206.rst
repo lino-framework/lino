@@ -1,0 +1,7 @@
+==========================
+Saturday, December 6, 2014
+==========================
+
+Ich hatte es ja geahnt... eigentlich wollte ich das korrekte Löschen
+von controlled objects beginnen (:ticket:`29`). Als erstes schrieb ich
+den Testcase. Den schrieb ich in :mod:`lino.projects.min2`. 

@@ -12,14 +12,14 @@ database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
 Lino applications are Django projects
 where the application developer does not need to write any
-URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`_).
+URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
 
 Examples of Lino applications are
 `Lino Welfare <http://welfare.lino-framework.org>`__,
 `Lino Così <http://cosi.lino-framework.org>`__
 or
 `Lino Faggio <http://faggio.lino-framework.org>`__
-(`more <http://lino-framework.org/about/projects.html>`_)
+(`more <http://lino-framework.org/about/projects.html>`__)
 
 
 

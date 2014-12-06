@@ -5,7 +5,7 @@ http://groups.google.com/group/django-developers/browse_thread/thread/89787edc27
 >>> a = Animal()
 >>> print a.owner
 None
->>> a.save() 
+>>> a.save()
 
 >>> t = Thing()
 >>> print t.owner_id

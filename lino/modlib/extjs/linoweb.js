@@ -2912,9 +2912,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         tp.setActiveTab(status.active_tab);
         //~ this.main_item.items.get(0).activate(status.active_tab);
       } else {
-        tp.setActiveTab(0);
+        if (! status.data_record) {  // 20141206
+            tp.setActiveTab(0);
+        }
       }
-      }
+    }
     
     if (status.data_record) {
       /* defer because set_window_title() didn't work otherwise */
@@ -3160,18 +3162,20 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       return '{{settings.SITE.build_admin_url("api")}}' + this.ls_url;
     
   },
-  get_permalink_params : function() {
-    var p = {};
-    //~ var p = {an:'detail'};
-    if (this.action_name)
-        p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
-    //~ var p = {an:this.action_name};
+  add_param_tab : function(p) {
     var main = this.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
       //~ console.log('main.activeTab',tab,main.activeTab);
       if (tab) p.{{ext_requests.URL_PARAM_TAB}} = tab;
     }
+  },
+  get_permalink_params : function() {
+    var p = {};
+    //~ var p = {an:'detail'};
+    if (this.action_name)
+        p.{{ext_requests.URL_PARAM_ACTION_NAME}} = this.action_name;
+    this.add_param_tab(p)
     this.add_param_values(p)
     return p;
   }
@@ -3215,6 +3219,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     Ext.apply(p, this.get_base_params());
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
+    this.add_param_tab(p)
     var submit_config = {
         params: p, 
         scope: this,

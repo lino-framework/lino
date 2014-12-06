@@ -7,6 +7,29 @@ This defines Lino's standard system signals.
 
 from django.dispatch import Signal, receiver
 
+pre_startup = Signal()
+post_startup = Signal()
+"""
+Sent exactly once per process at site startup,
+just before any application-specific startup actions.
+
+sender:
+  the Site instance
+  
+"""
+
+testcase_setup = Signal()
+"""
+Emitted each time `lino.core.utils.TestCase.setUp` is called.
+lino.ui.Site uses this signal to reset its SiteConfig cache.
+It is necessary because (afaics) the Django test runner doesn't 
+send a 'connected' signal when it restores the database to a 
+virgin state before running a new test case.
+"""
+
+database_ready = Signal()
+
+
 pre_analyze = Signal(['models_list'])
 """
 Sent exactly once per process at site startup, 
@@ -77,29 +100,4 @@ database_connected = Signal()
 #~ database_ready = Signal()
 
 
-from django.db.models.fields import NOT_PROVIDED
 
-
-class ChangeWatcher(object):
-
-    """
-    Utility to watch changes and send pre_ui_update
-    """
-
-    def __init__(self, watched):
-        self.original_state = dict(watched.__dict__)
-        self.watched = watched
-        #~ self.is_new = is_new
-        #~ self.request
-
-    def is_dirty(self):
-        #~ if self.is_new:
-            #~ return True
-        for k, v in self.original_state.iteritems():
-            if v != self.watched.__dict__.get(k, NOT_PROVIDED):
-                return True
-        return False
-
-    def send_update(self, request):
-        #~ print "ChangeWatcher.send_update()", self.watched
-        pre_ui_update.send(sender=self, request=request)

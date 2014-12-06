@@ -8,8 +8,6 @@ The :mod:`lino` package is a Django app which gets automatically
 installed.  It does not define any models but some choicelists which
 are available in :mod:`dd`.
 
-.. currentmodule:: dd
-
 
 Choicelists
 ===========
@@ -22,7 +20,8 @@ Choicelists
 
     .. django2rst:: 
 
-            rt.show(lino.Genders)
+            from lino.mixins import Genders
+            rt.show(Genders)
 
 
 .. class:: YesNo(dd.ChoiceList)
@@ -33,7 +32,8 @@ Choicelists
       
     .. django2rst:: 
 
-            rt.show(lino.YesNo)
+            from lino.mixins import YesNo
+            rt.show(YesNo)
 
 
 .. class:: PeriodEvents(dd.ChoiceList):
@@ -43,5 +43,6 @@ Choicelists
 
     .. django2rst::
 
-      rt.show(lino.PeriodEvents)
+        from lino.mixins import PeriodEvents
+        rt.show(PeriodEvents)
 

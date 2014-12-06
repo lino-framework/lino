@@ -6,7 +6,7 @@
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
-from djangosite.dbutils import models_by_base
+from lino.core.dbutils import models_by_base
 
 from lino.utils import mti
 from lino.utils import join_elems

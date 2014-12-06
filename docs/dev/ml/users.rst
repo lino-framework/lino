@@ -83,7 +83,7 @@ New password has been set for 1 users.
 Choicelists
 ===========
 
-.. currentmodule:: dd
+.. currentmodule:: ml.users
 
 .. class:: UserGroups
 
@@ -101,7 +101,7 @@ Choicelists
     The level of a user is one way of differenciating users when 
     defining access permissions and workflows. 
     
-    .. django2rst:: rt.show(dd.UserLevels,
+    .. django2rst:: rt.show(users.UserLevels,
                             column_names='value name text')
 
 
@@ -115,7 +115,7 @@ Choicelists
     
     The demo database has defined the following user profiles:
 
-    .. django2rst:: rt.show(dd.UserProfiles,
+    .. django2rst:: rt.show(users.UserProfiles,
                             column_names='value name text level')
 
     Note that we show here only the "general" or "system" userlevel.

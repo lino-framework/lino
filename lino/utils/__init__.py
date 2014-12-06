@@ -18,42 +18,43 @@ This is a tested document. To test it, run::
    :toctree: _utils
 
     addressable
-    editing
-    log
-    requests
     ajax
-    html2odf
-    mdbtools
-    restify
     appy_pod
-    html2text
-    media
-    screenshots
     choosers
-    html2xhtml
-    memo
-    sqllog
     code
-    htmlgen
-    mti
-    ssin
-    config          
-    odsreader   
-    test
-    daemoncommand   
-    instantiator  
-    pdf         
-    textfields
-    dataserializer  
-    jscompressor  
-    pyuca       
-    ucsv
+    config
+    daemoncommand
+    dataserializer
     dbfreader
-    jsgen
-    quantities
     dblogger
+    editing
+    html2odf
+    html2text
+    html2xhtml
+    htmlgen
+    instantiator
+    jscompressor
+    jsgen
     latex
+    log
+    mdbtools
+    media
+    memo
+    mldbc
+    mti
+    odsreader
+    pdf
+    pyuca
+    quantities
     ranges
+    requests
+    restify
+    screenshots
+    sqllog
+    ssin
+    test
+    textfields
+    ucsv
 
 
 :func:`str2hex` and :func:`hex2str`

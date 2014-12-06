@@ -38,5 +38,5 @@ There are at least two problems with the new
   applications should avoid to use this and should use
   :meth:`dd.Site.is_installed` instead.
 
-Checkin at 16:10 because the test suite passes. But I think that I am
-also going to merge :ref:`site` into Lino this weekend.
+Checkin at 20:40 because the test suite passes. But I think that I am
+also going to merge :ref:`site` into Lino this weekend...

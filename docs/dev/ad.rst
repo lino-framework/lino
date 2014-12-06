@@ -309,37 +309,37 @@ The ``Site`` class
     >>> from django.utils import translation
     >>> from lino.ad import TestSite as Site
     >>> from pprint import pprint
-    >>> pprint(Site().django_settings)  #doctest: +ELLIPSIS
+    >>> pprint(Site().django_settings)  
+    ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
     {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                                'NAME': '.../default.db'}},
      'FIXTURE_DIRS': (),
      'INSTALLED_APPS': ('lino.modlib.about',
                         'lino.modlib.extjs',
                         'lino.modlib.bootstrap3',
-                        'lino',
-                        'djangosite'),
+                        'lino'),
      'LANGUAGES': [],
      'LOCALE_PATHS': (),
      'LOGGING': {'disable_existing_loggers': True,
                  'filename': None,
-                 'level': u'INFO',
-                 'logger_names': u'atelier djangosite lino'},
-     'LOGGING_CONFIG': u'lino.utils.log.configure',
-     'MEDIA_ROOT': u'lino/media',
-     'MEDIA_URL': u'/media/',
-     'MIDDLEWARE_CLASSES': (u'django.middleware.common.CommonMiddleware',
-                            u'lino.core.auth.NoUserMiddleware',
-                            u'lino.utils.ajax.AjaxExceptionResponse'),
-     'ROOT_URLCONF': u'lino.ui.urls',
-     'SECRET_KEY': u'20227',
-     'SERIALIZATION_MODULES': {u'py': u'lino.utils.dpy'},
-     'TEMPLATE_CONTEXT_PROCESSORS': (u'django.core.context_processors.debug',
-                                     u'django.core.context_processors.i18n',
-                                     u'django.core.context_processors.media',
-                                     u'django.core.context_processors.static'),
-     'TEMPLATE_LOADERS': (u'lino.core.web.Loader',
-                          u'django.template.loaders.filesystem.Loader',
-                          u'django.template.loaders.app_directories.Loader'),
+                 'level': 'INFO',
+                 'logger_names': 'atelier lino'},
+     'LOGGING_CONFIG': 'lino.utils.log.configure',
+     'MEDIA_ROOT': 'lino/core/media',
+     'MEDIA_URL': '/media/',
+     'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
+                            'lino.core.auth.NoUserMiddleware',
+                            'lino.utils.ajax.AjaxExceptionResponse'),
+     'ROOT_URLCONF': 'lino.ui.urls',
+     'SECRET_KEY': '20227',
+     'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
+     'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
+                                     'django.core.context_processors.i18n',
+                                     'django.core.context_processors.media',
+                                     'django.core.context_processors.static'),
+     'TEMPLATE_LOADERS': ('lino.core.web.Loader',
+                          'django.template.loaders.filesystem.Loader',
+                          'django.template.loaders.app_directories.Loader'),
      '__file__': '...'}
 
     >>> pprint(Site(languages="en fr de").languages)
@@ -366,7 +366,7 @@ The ``Site`` class
     >>> pprint(site.language_dict)
     {'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
      'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
-     u'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+     'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
      'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
      'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
 

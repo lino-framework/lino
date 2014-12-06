@@ -1021,7 +1021,7 @@ class VentilatingTable(AbstractTable):
         return []
 
 
-from djangosite.signals import database_ready
+from lino.core.signals import database_ready
 
 
 @signals.receiver(database_ready)

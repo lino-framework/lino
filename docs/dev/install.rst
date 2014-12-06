@@ -93,32 +93,40 @@ in that directory with the following content::
 Run Lino's test suite
 ---------------------
 
-The following commands are a recommended check to see whether
-everything worked well.
+In order to check to see whether everything worked well, we are now
+going to run the test suite.  
 
-- First we install some more Python modules needed by the test suite::
+And before running the test suite, we must initialize the demo
+databases because the test suite has many test cases which would fail
+if these demo databases were missing or not in their virgin state.
 
-     $ pip install fabric
+The easiest way to initialize the demo databases is to run the
+:cmd:`fab initdb` command.  Which requires fabric_, a command-line
+tool systems to streamline administration tasks.
+
+So we must do::
+
+    $ pip install fabric
+    $ cd ~/repositories/lino
+    $ fab initdb
+
+
+- (This item theroetically no longer needed) First we install some
+  more Python modules needed by the test suite::
+
      $ pip install html5lib
      $ pip install reportlab
      $ pip install pisa
 
-  fabric_ is a command-line tool systems to streamline administration tasks. 
-
   If pisa complains that "Reportlab Version 2.1+ is needed!" with
   reportlab 3, then try to install 2.7 (the latest 2.x version)
 
-- And here we go for the test suite::
+- And here we go for the test suite itself::
 
     $ cd ~/repositories/lino
-    $ fab initdb
     $ fab test
 
-- The :cmd:`fab initdb` command initializes the demo databases. These
-  are used by the test suite which would fail if these demo databases
-  were missing.
-
-- The :cmd:`fab test` command simply runs the test suite, it is a short
+  The :cmd:`fab test` command simply runs the test suite, it is a short
   for ``python setup.py test``
 
 

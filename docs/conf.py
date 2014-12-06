@@ -306,7 +306,7 @@ on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
     intersphinx_mapping = {}
     for n in """python django
-    djangosite atelier lino
+    atelier lino
     lino-welfare lino-faggio lino-patrols""".split():
         intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
 else:        

@@ -7,9 +7,14 @@ from __future__ import unicode_literals
 SETUP_INFO = dict(
     name='lino',
     version='1.6.14',
-    tests_require=['beautifulsoup4'],
+    tests_require=[
+        'beautifulsoup4', 'fabric', 'html5lib', 'reportlab==2.7', 'pisa'],
+    # pisa has a bug which makes it complain that "Reportlab Version
+    # 2.1+ is needed!" when reportlab 3 is installed.
+    # So we install reportlab 2.7 (the latest 2.x version)
+
     install_requires=[
-        'djangosite', 'odfpy',
+        'odfpy',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'django-iban', 'xlwt'],
     description="A framework for writing desktop-like web applications "
@@ -46,14 +51,14 @@ database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
 Lino applications are Django projects
 where the application developer does not need to write any
-URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`_).
+URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
 
 Examples of Lino applications are
 `Lino Welfare <http://welfare.lino-framework.org>`__,
 `Lino Così <http://cosi.lino-framework.org>`__
 or
 `Lino Faggio <http://faggio.lino-framework.org>`__
-(`more <http://lino-framework.org/about/projects.html>`_)
+(`more <http://lino-framework.org/about/projects.html>`__)
 
 """)
 

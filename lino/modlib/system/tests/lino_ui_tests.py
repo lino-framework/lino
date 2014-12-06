@@ -23,8 +23,8 @@ from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
 #~ from lino import dd, rt
-from djangosite.utils.djangotest import NoAuthTestCase
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.utils.djangotest import NoAuthTestCase
+from lino.utils.djangotest import RemoteAuthTestCase
 
 
 class NoAuthTest(NoAuthTestCase):

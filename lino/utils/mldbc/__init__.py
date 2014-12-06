@@ -29,26 +29,3 @@ Multilingual database content:
 
 """
 
-import collections
-LanguageInfo = collections.namedtuple(
-    'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
-
-
-def to_locale(language):
-    """Simplified copy of `django.utils.translation.to_locale`, but we
-    need it while the `settings` module is being loaded, i.e. we
-    cannot yet import django.utils.translation.  Also we don't need
-    the to_lower argument.
-
-    """
-    p = language.find('-')
-    if p >= 0:
-        # Get correct locale for sr-latn
-        if len(language[p + 1:]) > 2:
-            return language[:p].lower() + '_' \
-                + language[p + 1].upper() + language[p + 2:].lower()
-        return language[:p].lower() + '_' + language[p + 1:].upper()
-    else:
-        return language.lower()
-
-

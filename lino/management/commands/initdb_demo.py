@@ -14,8 +14,8 @@ Introduction see :ref:`lino.tutorial.hello`.
 """
 
 from django.conf import settings
-from djangosite.management.commands.initdb import Command as BaseCommand
-from djangosite.management.commands.initdb import CommandError
+from lino.management.commands.initdb import Command as BaseCommand
+from lino.management.commands.initdb import CommandError
 
 
 class Command(BaseCommand):

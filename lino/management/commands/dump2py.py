@@ -2,9 +2,7 @@
 # Copyright 2013-2014 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
-"""
-
-.. management_command:: dump2py
+""".. management_command:: dump2py
 
 To make a python dump of your database (be it for daily backup or
 before a migration), go to your project directory and say::
@@ -19,8 +17,7 @@ other `.py` files (currently one for every model) which are being
 :func:`execfile`\ d from that :xfile:`restore.py`.
 
 To restore such a dump to your database, simply run the `restore.py`
-script using the :mod:`run <djangosite.management.commands.run>`
-management command::
+script using the :manage:`run` management command::
 
   $ python manage.py run mydump/restore.py
 
@@ -56,7 +53,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 
-from djangosite.dbutils import sorted_models_list, full_model_name
+from lino.core.dbutils import sorted_models_list, full_model_name
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 

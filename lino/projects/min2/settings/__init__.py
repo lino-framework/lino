@@ -6,11 +6,8 @@
 from lino.projects.std.settings import *
 
 class Site(Site):
-    title = "Lino/MinimalApp 2"
-    #~ help_url = "http://lino.saffre-rumma.net/az/index.html"
+    title = "Lino Mini 2"
 
-    #~ project_model = 'contacts.Person'
-    #~ project_model = 'contacts.Person'
     project_model = 'projects.Project'
     user_model = "users.User"
 
@@ -24,6 +21,9 @@ class Site(Site):
         yield 'lino.modlib.changes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
+        # yield 'lino.modlib.uploads'
+        # yield 'lino.modlib.outbox'
+        yield 'lino.modlib.excerpts'
         yield 'lino.projects.min2.modlib.contacts'
         yield 'lino.modlib.addresses'
         yield 'lino.modlib.reception'
@@ -31,12 +31,10 @@ class Site(Site):
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.notes'
         yield 'lino.modlib.projects'
-        yield 'lino.modlib.uploads'
         yield 'lino.modlib.humanlinks'
         yield 'lino.modlib.households'
         yield 'lino.modlib.cal'
         # yield 'lino.modlib.extensible'
-        yield 'lino.modlib.outbox'
         yield 'lino.modlib.pages'
         #~ yield 'lino.projects.min2'
         yield 'lino.modlib.export_excel'

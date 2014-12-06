@@ -3,13 +3,13 @@
 
 """
 
-- :func:`models_by_base <djangosite.dbutils.models_by_base>`
+- :func:`models_by_base <lino.core.dbutils.models_by_base>`
 
 """
 
 from django.conf import settings
 
-from djangosite.dbutils import models_by_base
+from lino.core.dbutils import models_by_base
 
 modules = settings.SITE.modules
 login = settings.SITE.login

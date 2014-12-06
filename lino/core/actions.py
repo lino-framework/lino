@@ -18,7 +18,7 @@ from django.conf import settings
 from django import http
 from django.db import models
 
-from djangosite.dbutils import obj2unicode
+from lino.core.dbutils import obj2unicode
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -29,7 +29,8 @@ from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
-from lino.core.signals import pre_ui_create, ChangeWatcher, pre_ui_delete
+from lino.core.signals import pre_ui_create, pre_ui_delete
+from lino.core.dbutils import ChangeWatcher
 
 PLAIN_PAGE_LENGTH = 15
 

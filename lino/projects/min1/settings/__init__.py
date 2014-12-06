@@ -4,7 +4,6 @@
 
 from lino.projects.std.settings import *
 
-
 class Site(Site):
     title = "Lino Mini 1"
 

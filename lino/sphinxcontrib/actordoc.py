@@ -48,20 +48,17 @@ from django.utils.encoding import force_unicode
 from lino import dd, rt
 
 from lino.core import actors
+from lino.core import actions
 from lino.core import choicelists
 from lino.core import dbtables
 from atelier.utils import unindent
 from atelier import rstgen
-from djangosite.dbutils import full_model_name
-#~ from djangosite.dbutils import set_language
-from djangosite import Plugin
+from lino.core.dbutils import full_model_name
+from lino.ad import Plugin
 
 from atelier.sphinxconf.insert_input import Py2rstDirective
 
-
 import lino.ui.urls  # hack: trigger ui instantiation
-
-from lino.core import actions
 
 
 def actor_name(a):

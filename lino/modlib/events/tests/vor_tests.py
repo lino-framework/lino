@@ -24,7 +24,7 @@ from django.utils import translation
 
 from lino import dd, rt
 from lino.utils import i2d
-from djangosite.utils.djangotest import TestCase
+from lino.utils.djangotest import TestCase
 
 
 class DemoTest(TestCase):

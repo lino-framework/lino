@@ -37,7 +37,7 @@ from django.utils.encoding import force_text
 from django.db import models
 from django.contrib.contenttypes import generic
 
-from djangosite.signals import database_ready
+from lino.core.signals import database_ready
 from django.conf.urls import patterns, include
 from django.conf.urls import url
 

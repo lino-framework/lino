@@ -55,11 +55,11 @@ Parameter panels:
   
 Utilities:
 
-- :func:`obj2str <djangosite.dbutils.obj2str>`
-- :func:`obj2unicode <djangosite.dbutils.obj2unicode>`
-- :func:`range_filter <djangosite.dbutils.range_filter>`,
-  :func:`inrange_filter <djangosite.dbutils.inrange_filter>`
-- :func:`full_model_name <djangosite.dbutils.full_model_name>`
+- :func:`obj2str <lino.core.dbutils.obj2str>`
+- :func:`obj2unicode <lino.core.dbutils.obj2unicode>`
+- :func:`range_filter <lino.core.dbutils.range_filter>`,
+  :func:`inrange_filter <lino.core.dbutils.inrange_filter>`
+- :func:`full_model_name <lino.core.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`chooser <lino.utils.choosers.chooser>`
 
@@ -139,8 +139,6 @@ logger = logging.getLogger(__name__)
 
 # logger.info("20140227 dd.py a")
 
-# from djangosite import Plugin
-# from lino.ad import Plugin
 
 from lino.core.tables import VirtualTable
 
@@ -149,11 +147,11 @@ from lino.core.dbutils import resolve_model, UnresolvedModel
 
 from lino.core.dbutils import resolve_app, require_app_models
 from lino.core.dbutils import resolve_field, get_field
-from djangosite.dbutils import obj2str
-from djangosite.dbutils import obj2unicode
-from djangosite.dbutils import range_filter
-from djangosite.dbutils import inrange_filter
-from djangosite.dbutils import full_model_name
+from lino.core.dbutils import obj2str
+from lino.core.dbutils import obj2unicode
+from lino.core.dbutils import range_filter
+from lino.core.dbutils import inrange_filter
+from lino.core.dbutils import full_model_name
 
 from lino.core.model import Model
 from lino.core.merge import MergeAction
@@ -242,13 +240,12 @@ from lino.core.layouts import FormLayout, Panel
 from lino.core.layouts import ParamsLayout
 
 
-from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update, ChangeWatcher
+from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update
+from lino.core.dbutils import ChangeWatcher
+
 from lino.core.signals import database_connected
-#~ from lino.core.signals import database_ready
-from djangosite.signals import database_ready
-
-from djangosite.signals import pre_startup, post_startup
-
+from lino.core.signals import database_ready
+from lino.core.signals import pre_startup, post_startup
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze
 from lino.core.signals import auto_create

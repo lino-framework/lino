@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 
 # from django.conf import settings
 from django.core.exceptions import ValidationError
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.utils.djangotest import RemoteAuthTestCase
 
 # from lino import dd, rt
 

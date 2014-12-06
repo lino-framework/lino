@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 
 from lino.runtime import *
 
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.utils.djangotest import RemoteAuthTestCase
 
 
 class QuickTest(RemoteAuthTestCase):

@@ -293,7 +293,7 @@ class About(mixins.EmptyTable):
         label = _("Server uptime")
         body.append(E.p(unicode(label), ' : ', E.b(dtfmt(value))))
         body.append(E.p(unicode(_("Source timestamps:"))))
-        for src in ("lino", "lino_welfare", 'django', 'djangosite', 'atelier'):
+        for src in ("lino", "lino_welfare", 'django', 'atelier'):
             label = src
             value = codetime('%s.*' % src)
             if value is not None:

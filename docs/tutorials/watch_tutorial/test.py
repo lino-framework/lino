@@ -1,1 +1,1 @@
-from djangosite.tests import DocTest
+from lino.utils.test import DocTest

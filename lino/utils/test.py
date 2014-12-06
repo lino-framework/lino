@@ -24,8 +24,12 @@ This is the database defined by...
 
 from __future__ import print_function
 
-from djangosite.utils.pythontest import TestCase as PythonTestCase
-from djangosite.utils.djangotest import CommonTestCase
+import os
+import unittest
+import doctest
+
+from lino.utils.pythontest import TestCase as PythonTestCase
+from lino.utils.djangotest import CommonTestCase
 from django.test import Client
 from django.conf import settings
 
@@ -33,6 +37,28 @@ import collections
 HttpQuery = collections.namedtuple(
     'HttpQuery',
     ['username', 'url_base', 'json_fields', 'expected_rows', 'kwargs'])
+
+
+class DocTest(unittest.TestCase):
+
+    """
+    Looks for a file "index.rst" in your project_dir and (if it exists) 
+    run doctest on it.
+    """
+    doctest_files = ["index.rst"]
+
+    def test_files(self):
+        #~ g = dict(print_=six.print_)
+        g = dict()
+        g.update(settings=settings)
+        for n in self.doctest_files:
+            f = os.path.join(settings.SITE.project_dir, n)
+            if os.path.exists(f):
+                #~ print f
+                res = doctest.testfile(f, module_relative=False, globs=g)
+                if res.failed:
+                    self.fail("Failed doctest %s" % f)
+
 
 
 class DemoTestCase(PythonTestCase, CommonTestCase):
@@ -54,7 +80,7 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
                 response = self.client.get(url)
                 self.fail("Expected '%s'" % msg)
                 #~ raise Exception("Expected '%s'" % msg)
-            except Exception as e:
+            except Exception:
                 pass
                 #~ self.tc.assertEqual(str(e),msg)
                 #~ if str(e) != msg:

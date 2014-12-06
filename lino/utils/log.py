@@ -28,7 +28,7 @@ A simple common example::
 
   LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
 
-Another example using :attr:`djangosite.Site.project_dir`::
+Another example using :attr:`ad.Site.project_dir`::
 
   ...
   SITE = Site(globals())
@@ -117,7 +117,7 @@ parameters you want to set.  Available parameters are:
 :param logger_names:  A list or tuple of names of loggers to configure.
                       If this is a string, Lino converts it to a list 
                       (expecting it to be a space-separated list of names).
-                      Default value is 'djangosite lino'.
+                      Default value is 'lino'.
                  
 If there is a logfile, then console messages will never be more
 verbose than INFO because too many messages on the screen are

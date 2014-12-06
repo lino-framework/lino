@@ -8,6 +8,7 @@ indirectly) into your local :xfile:`settings.py` using::
 
 """
 
+
 import os
 import sys
 import datetime
@@ -16,7 +17,6 @@ from os.path import join, abspath, dirname, normpath
 import lino
 
 from lino.ad import Site, configure_plugin, _
-
 
 def TIM2LINO_LOCAL(alias, obj):
     """Hook for local special treatment on instances that have been

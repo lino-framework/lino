@@ -27,12 +27,34 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.runtime import *
+from lino import rt
 
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.modlib.contenttypes.mixins import Controllable
+
+from lino.utils.djangotest import RemoteAuthTestCase
+
+from lino.core.dbutils import full_model_name
 
 
 class QuickTest(RemoteAuthTestCase):
 
+    fixtures = ['std', 'few_countries']
+
     def test00(self):
         self.assertEqual(1 + 1, 2)
+
+    def test_controllables(self):
+        # When I delete a database object, Lino also deletes those
+        # objects who are related through a GenericForeignKey
+        found = []
+        for M in rt.models_by_base(Controllable):
+            found.append(full_model_name(M))
+        expected = """excerpts.Excerpt outbox.Mail outbox.Attachment
+        notes.Note uploads.Upload cal.Task cal.Event""".split()
+        self.assertEqual(found, expected)
+
+        Country = rt.modules.countries.Country
+        Note = rt.modules.notes.Note
+        self.assertEqual(Country.objects.count(), 8)
+        be = Country.objects.get(isocode="BE")
+        

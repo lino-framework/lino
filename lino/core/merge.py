@@ -26,7 +26,7 @@ from django.utils.translation import ugettext as _
 from lino.core import actions
 from lino.core import layouts
 from lino.core.signals import pre_merge
-from djangosite.dbutils import full_model_name
+from lino.core.dbutils import full_model_name
 from lino.utils.xmlgen.html import E
 
 

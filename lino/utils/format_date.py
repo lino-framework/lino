@@ -38,7 +38,7 @@ from babel.dates import format_date as babel_format_date
 from django.utils import translation
 from django.template import defaultfilters
 
-from lino.utils.mldbc import to_locale
+from lino.core.site_def import to_locale
 
 
 def monthname(n):

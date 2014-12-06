@@ -15,7 +15,7 @@ from django import http
 from django.core.mail import EmailMessage
 from django.core import exceptions
 
-from djangosite.dbutils import obj2unicode
+from lino.core.dbutils import obj2unicode
 
 from lino.utils import AttrDict
 from lino.utils import curry
@@ -28,7 +28,9 @@ from lino.core.dbutils import navinfo
 
 from lino.utils.xmlgen.html import E
 
-from lino.core.signals import pre_ui_create, ChangeWatcher
+from lino.core.signals import pre_ui_create
+from lino.core.dbutils import ChangeWatcher
+
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 

@@ -13,7 +13,6 @@ application.
 .. autosummary::
    :toctree: _mixins
 
-    babel
     duplicable
     human
     periods

@@ -18,7 +18,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.utils import translation
 
-from djangosite.utils.djangotest import RemoteAuthTestCase
+from lino.utils.djangotest import RemoteAuthTestCase
 
 from lino import dd, rt, mixins
 

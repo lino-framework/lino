@@ -23,7 +23,7 @@ from lino.modlib.contacts.utils import street2kw
 
 from lino.runtime import courses, countries
 from lino import dd, rt
-from djangosite.dbutils import is_valid_email
+from lino.core.dbutils import is_valid_email
 
 
 def string2date(s):

@@ -24,8 +24,8 @@ from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
 
 
-from djangosite.dbutils import full_model_name
-from djangosite.dbutils import obj2str
+from lino.core.dbutils import full_model_name
+from lino.core.dbutils import obj2str
 
 from lino.core.dbutils import resolve_field
 from lino.core.dbutils import resolve_model, UnresolvedModel

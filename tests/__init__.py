@@ -1,6 +1,6 @@
 from unipath import Path
 
-from djangosite.utils.pythontest import TestCase
+from lino.utils.pythontest import TestCase
 import lino
 
 
@@ -114,6 +114,12 @@ class DocsTests(LinoTestCase):
     def test_utils(self):
         self.run_simple_doctests('lino/utils/__init__.py')
 
+    def test_float2decimal(self):
+        self.run_django_manage_test("docs/tested/float2decimal")
+
+    def test_integer_pk(self):
+        self.run_django_manage_test("docs/tested/integer_pk")
+
 
 class UtilsTests(LinoTestCase):
 
@@ -188,16 +194,16 @@ class ProjectsTests(LinoTestCase):
     def test_events(self):
         self.run_django_manage_test("lino/projects/events")
 
-    def test_belref(self): 
+    def test_belref(self):
         self.run_django_manage_test("lino/projects/belref")
 
-    def test_babel_tutorial(self): 
+    def test_babel_tutorial(self):
         self.run_django_manage_test("lino/projects/babel_tutorial")
 
-    def test_min1(self): 
+    def test_min1(self):
         self.run_django_manage_test("lino/projects/min1")
 
-    def test_min2(self): 
+    def test_min2(self):
         self.run_django_manage_test("lino/projects/min2")
 
 

@@ -95,7 +95,7 @@ def my_handler(sender, **kw):
     dd.database_connected.send(sender)
     #~ dd.database_connected.send(sender,**kw)
 
-from djangosite.utils.djangotest import testcase_setup
+from lino.utils.djangotest import testcase_setup
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)
 models.signals.post_syncdb.connect(my_handler)
@@ -106,7 +106,7 @@ models.signals.post_syncdb.connect(my_handler)
     #~ settings.SITE.clear_site_config()
 #~ dd.connection_created.connect(my_callback)
 #~ models.signals.post_syncdb.connect(my_callback)
-#~ from djangosite.utils.djangotest import testcase_setup
+#~ from lino.utils.djangotest import testcase_setup
 #~ testcase_setup.connect(my_callback)
 #~ dd.startup.connect(my_callback)
 #~ models.signals.post_save.connect(my_callback,sender=SiteConfig)
