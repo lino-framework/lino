@@ -40,4 +40,3 @@ if not AFTER17:
             raise ImportError(msg)
 
     startup()
-

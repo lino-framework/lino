@@ -654,7 +654,7 @@ class Site(object):
         """
         if False:
             for name in kwargs.keys():
-                if self.django_settings.has_key(name):
+                if name in self.django_settings:
                     raise Exception(
                         "Tried to define existing Django setting %s" % name)
         self.django_settings.update(kwargs)
@@ -671,7 +671,10 @@ class Site(object):
 
         # self.override_defaults()  # 20140227
 
-        if not self._starting_up:
+        if self._starting_up:
+            # raise Exception("Startup called while still starting up.")
+            pass
+        else:
             self._starting_up = True
 
             from lino.core.signals import pre_startup, post_startup
@@ -1741,9 +1744,9 @@ class Site(object):
         yield 'lino.modlib.about'
         yield 'lino.modlib.extjs'
         yield 'lino.modlib.bootstrap3'
-        yield "lino"
         for a in self.user_apps:
             yield a
+        yield "lino"
 
     site_prefix = '/'
 
