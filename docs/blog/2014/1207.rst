@@ -1,0 +1,6 @@
+===================================
+20141207 (Sunday, 07 December 2014)
+===================================
+
+I found a way to make :mod:`atelier` work when there is no local
+configuration file.

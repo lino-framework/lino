@@ -51,5 +51,6 @@ Other
    /api
    /tested/index
    git
+   /ref/index
 
 

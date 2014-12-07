@@ -21,15 +21,9 @@ Sitemap
    demos
    about/index
    community/index
-   /blog/index
-
-   dev/index
-   admin/index
-   user/index
-
+   blog/index
+   documentation/index
    tickets/index
-   ref/index
-   help/index
 
 
 
