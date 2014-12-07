@@ -4,3 +4,7 @@ Traceback (most recent call last):
     __import__(self.modname)
 ImportError: No module named babel
 /home/luc/hgwork/lino/docs/_api/_mixins/lino.mixins.babel.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/blog/2014/1205.rst:11: WARNING: undefined label: north (if the link has no caption the label must precede a section header)
+/home/luc/hgwork/lino/docs/blog/2014/1205.rst:41: WARNING: undefined label: site (if the link has no caption the label must precede a section header)
+
+interrupted!

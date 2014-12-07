@@ -32,48 +32,42 @@ Preliminaries
     $ virtualenv tmp
     $ . tmp/bin/activate
 
+
 Get the sources
 ---------------
 
-Create a directory (e.g. :file:`~/repositories`) meant to hold your 
-working copies of version-controlled software projects,
-`cd` to that directory and and do::
+Create a directory (e.g. :file:`~/repositories`) meant to hold your
+working copies of version-controlled software projects, `cd` to that
+directory and and do::
 
-  $ git clone https://github.com/lsaffre/atelier.git
-  $ git clone https://github.com/lsaffre/djangosite.git
   $ git clone https://github.com/lsaffre/lino.git
 
-You should now have 3 subdirectories called `atelier`, `djangosite`,
-`lino`. Each of them should contain a file :xfile:`setup.py`, a file
-:xfile:`README.rst` and a whole tree of other files and directories.
+You should now have a subdirectory called `lino`, which contains a
+file :xfile:`setup.py`, a file :xfile:`README.rst` and a whole tree of
+other files and directories.
 
 Installation
 ------------
 
-Now you are ready to "install" these projects, i.e. to tell your
-Python interpreter where they are, so that you can import them from
-within any Python program.
+Now you are ready to "install" Lino, i.e. to tell your Python
+interpreter where the source file are, so that you can import them
+from within any Python program.
 
 Commands::
 
-  $ pip install -e atelier
-  $ pip install -e djangosite 
   $ pip install -e lino
 
 Notes:
 
 - The ``-e`` command-line switch for `pip` causes it to use the
-  "development" mode.  The first argument after ``-e`` is not a
-  *project name* but a *directory*.  Development mode means that these
-  modules run "directly from source".  `pip` does not *copy* the
-  sources to your Python `site_packages`, but instead adds a link to
-  them.
+  "development" mode.  Development mode means that these modules run
+  "directly from source".  `pip` does not *copy* the sources to your
+  Python `site_packages`, but instead adds a link to them.  The first
+  argument after ``-e`` is not a *project name* but a *directory*.
 
 - Alternatively (without pip_) you could have done::
 
-      $ cd atelier ; python setup.py develop ; cd ..
-      $ cd djangosite ; python setup.py develop ; cd ..
-      ...
+      $ cd lino ; python setup.py develop ; cd ..
 
 
 Configure fab
@@ -83,8 +77,6 @@ Create a directory :file:`.atelier` (or :file:`_atelier` under
 Windows) in your HOME directory, then create a file :file:`config.py`
 in that directory with the following content::
 
-  add_project(r'C:\mypy\repositories\atelier')
-  add_project(r'C:\mypy\repositories\djangosite')
   add_project(r'C:\mypy\repositories\lino')
 
 
