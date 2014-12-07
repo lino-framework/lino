@@ -15,8 +15,8 @@ SETUP_INFO = dict(
 
     install_requires=[
         'django<1.7', 'Sphinx',
-        'atelier', 'unipath', 'python_dateutil'
-        'Babel' 'odfpy',
+        'atelier', 'unipath', 'python_dateutil',
+        'Babel', 'odfpy',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'django-iban', 'xlwt'],
     description="A framework for writing desktop-like web applications "
