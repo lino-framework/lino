@@ -2,3 +2,54 @@
 20141208 (Monday, 08 December 2014)
 ===================================
 
+
+Delete generic related objects when deleting an object
+======================================================
+
+I started to work on :ticket:`30`.
+
+
+Run subprocesses on Windows
+===========================
+
+Taavi reported the following problem on a Windows computer::
+
+
+    FAIL: test_jsgen (tests.UtilsTests)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+      File "c:\mypy\repositories\lino\tests\__init__.py", line 146, in test_jsgen
+        def test_jsgen(self): self.run_simple_doctests('lino/utils/jsgen.py')
+      File "c:\mypy\repositories\atelier\atelier\test.py", line 70, in run_simple_doctests
+        self.run_subprocess(args, **kw)
+      File "c:\mypy\repositories\atelier\atelier\test.py", line 54, in run_subprocess
+        self.fail(msg)
+    AssertionError: C:\Python27\python.exe -m atelier.doctest_utf8 lino/utils/jsgen.py ({}) returned 1:
+    -----
+    Traceback (most recent call last):
+      File "C:\Python27\lib\runpy.py", line 162, in _run_module_as_main
+        "__main__", fname, loader, pkg_name)
+      File "C:\Python27\lib\runpy.py", line 72, in _run_code
+        exec code in run_globals
+      File "c:\mypy\repositories\atelier\atelier\doctest_utf8.py", line 16, in <module>
+        import doctest
+      File "C:\Python27\lib\doctest.py", line 99, in <module>
+        import unittest, difflib, pdb, tempfile
+      File "C:\Python27\lib\tempfile.py", line 35, in <module>
+        from random import Random as _Random
+      File "C:\Python27\lib\random.py", line 885, in <module>
+        _inst = Random()
+      File "C:\Python27\lib\random.py", line 97, in __init__
+        self.seed(x)
+      File "C:\Python27\lib\random.py", line 113, in seed
+        a = long(_hexlify(_urandom(2500)), 16)
+    WindowsError: [Error -2146893818] Invalid Signature
+
+
+I guess that this was because on Windows some system environment variables are
+needed when you ask for a temporary file name. 
+
+To solve this, I changed
+:meth:`atelier.utils.SubProcessParent.build_environment` 
+method so that it is filled from `os.environ`.
+

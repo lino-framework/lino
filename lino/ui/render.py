@@ -223,8 +223,10 @@ class TextRenderer(HtmlRenderer):
         return E.i(*text)
 
     def show_request(self, ar, *args, **kw):
-        """
-        Returns a string representing this request in reStructuredText markup.
-        """
-        print(ar.to_rst(*args, **kw))
+        """Returns and prints a string representing this request in
+        reStructuredText markup.
 
+        """
+        s = ar.to_rst(*args, **kw)
+        print(s)
+        return s

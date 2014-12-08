@@ -1058,14 +1058,8 @@ and :class:`Frame <lino.core.frames.Frame>`.
         return meth
 
     @classmethod
-    def show(self, master_instance=None, column_names=None, **known_values):
-        kw = dict()
-        if master_instance is not None:
-            kw.update(master_instance=master_instance)
-        kw.update(actor=self)
-        kw.update(known_values=known_values)
-        kw.update(renderer=settings.SITE.ui.text_renderer)
-        self.request(**kw).show(column_names)
+    def show(self, *args, **kw):
+        return self.request().show(self, *args, **kw)
 
     @classmethod
     def to_html(self, **kw):

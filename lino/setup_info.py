@@ -7,18 +7,18 @@ from __future__ import unicode_literals
 SETUP_INFO = dict(
     name='lino',
     version='1.6.14',
+    install_requires=[
+        'django<1.7', 'Sphinx',
+        'atelier', 'unipath', 'python_dateutil',
+        'Babel', 'odfpy',
+        'jinja2', 'appy', 'pytidylib', 'PyYAML',
+        'django-iban', 'xlwt', 'xlrd'],
     tests_require=[
         'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa'],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.
     # So we install reportlab 2.7 (the latest 2.x version)
 
-    install_requires=[
-        'django<1.7', 'Sphinx',
-        'atelier', 'unipath', 'python_dateutil',
-        'Babel', 'odfpy',
-        'jinja2', 'appy', 'pytidylib', 'PyYAML',
-        'django-iban', 'xlwt'],
     description="A framework for writing desktop-like web applications "
     "using Django and ExtJS",
     license='BSD License',

@@ -29,9 +29,8 @@ a &lt; b
 A `<div>` inside a `<span>` is not valid XHTML.
 Neither is a `<li>` inside a `<strong>`.
 
-But how to convert it? 
-Inline tags must be "temporarily" closed before 
-and reopended after a block element.
+But how to convert it?  Inline tags must be "temporarily" closed
+before and reopended after a block element.
 
 >>> print(html2xhtml('<p>foo<span class="c">bar<div> oops </div>baz</span>bam</p>'))
 <p>foo<span class="c">bar</span></p>

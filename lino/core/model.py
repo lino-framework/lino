@@ -198,7 +198,7 @@ class Model(models.Model):
         """
         return unicode(self)
 
-    def disable_delete(self, ar):
+    def disable_delete(self, ar=None):
         return self._lino_ddh.disable_delete_on_object(self)
 
     @classmethod
@@ -211,6 +211,15 @@ class Model(models.Model):
 
     def disabled_fields(self, ar):
         return set()
+
+    def delete(self, **kw):
+        kernel = settings.SITE.kernel
+        # print "20141208 generic related objects for %s:" % obj
+        for gfk, qs in kernel.get_generic_related(self):
+            if gfk.name in qs.model.allow_cascaded_delete:
+                for obj in qs:
+                    obj.delete()
+        super(Model, self).delete(**kw)
 
     @classmethod
     def define_action(cls, **kw):

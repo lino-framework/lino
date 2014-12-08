@@ -12,12 +12,16 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""
-This module contains "quick" tests that are run on a demo database
-without any fixture. You can run only these tests by issuing::
+"""This module contains "quick" tests that are run on a demo database
+without any fixture. You can run only these tests by issuing either::
 
   $ go min2
   $ python manage.py test
+
+or::
+
+  $ go lino
+  $ python setup.py test -s tests.ProjectsTests.test_min2
 
 """
 
@@ -53,8 +57,34 @@ class QuickTest(RemoteAuthTestCase):
         notes.Note uploads.Upload cal.Task cal.Event""".split()
         self.assertEqual(found, expected)
 
-        Country = rt.modules.countries.Country
+        Person = rt.modules.contacts.Person
         Note = rt.modules.notes.Note
-        self.assertEqual(Country.objects.count(), 8)
-        be = Country.objects.get(isocode="BE")
-        
+        self.assertEqual(Person.objects.count(), 0)
+        self.assertEqual(Note.objects.count(), 0)
+
+        def create(m, **kw):
+            obj = m(**kw)
+            obj.full_clean()
+            obj.save()
+            return obj
+
+        doe = create(Person, first_name="John", last_name="Doe")
+        note = create(Note, owner=doe, body="John Doe is a fink!")
+
+#         ses = rt.login()
+#         s = rt.modules.notes.Notes.to_rst(ar, column_names="id owner")
+#         # s = ses.show('notes.Notes', column_names="id owner")
+#         self.assertEqual(s, """\
+# ==== ===============
+#  ID   Controlled by
+# ---- ---------------
+#  1    **John Doe**
+# ==== ===============
+# """)
+
+        self.assertEqual(note.disable_delete(), None)
+        self.assertEqual(Note.allow_cascaded_delete, [])
+        self.assertEqual(
+            doe.disable_delete(),
+            "Cannot delete John Doe because 1 Notes refer to it.")
+

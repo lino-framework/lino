@@ -520,7 +520,6 @@ class Site(object):
         self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
         self.update_settings(LOCALE_PATHS=tuple(settings_subdirs('locale')))
 
-        self.GFK_LIST = []
         self.VIRTUAL_FIELDS = []
 
         self.update_settings(
@@ -901,18 +900,6 @@ class Site(object):
             dd.inject_field(self.user_model, name, fld)
             #~ if profile:
                 #~ self.user_profile_fields.append(name)
-
-    def get_generic_related(self, obj):
-        """
-        Yield all database objects in database which have a GenericForeignKey
-        that points to the object `obj`.
-        """
-        from django.contrib.contenttypes.models import ContentType
-        for gfk in self.GFK_LIST:
-            ct = ContentType.objects.get_for_model(gfk.model)
-            kw = dict()
-            kw[gfk.fk_field] = obj.pk
-            yield gfk, ct.get_all_objects_for_this_type(**kw)
 
     def get_used_libs(self, html=None):
         "See :meth:`ad.Site.get_used_libs`."

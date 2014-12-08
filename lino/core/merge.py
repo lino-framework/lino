@@ -48,12 +48,13 @@ class MergePlan(object):
         self.related = []
         for m, fk in self.obj._lino_ddh.fklist:
             qs = m.objects.filter(**{fk.name: self.obj})
-            if fk.name in m.allow_cascaded_delete and not self.keep_volatiles.get(full_model_name(m, '_')):
+            if fk.name in m.allow_cascaded_delete and \
+               not self.keep_volatiles.get(full_model_name(m, '_')):
                 self.volatiles.append((fk, qs))
             else:
                 self.related.append((fk, qs))
         self.generic_related = []
-        for gfk, qs in settings.SITE.get_generic_related(self.obj):
+        for gfk, qs in settings.SITE.kernel.get_generic_related(self.obj):
             if not getattr(gfk, 'dont_merge', False):
                 self.generic_related.append((gfk, qs))
 

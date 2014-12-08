@@ -36,6 +36,7 @@ from django.utils.encoding import force_text
 
 from django.db import models
 from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.models import ContentType
 
 from lino.core.signals import database_ready
 from django.conf.urls import patterns, include
@@ -66,7 +67,8 @@ from lino.core.dbutils import is_devserver
 from lino.ui.render import TextRenderer
 from lino.ui import views
 
-from lino.ad import Plugin as LinoPlugin
+from .plugin import Plugin
+from .ddh import DisableDeleteHandler
 
 
 def set_default_verbose_name(f):
@@ -129,51 +131,6 @@ class Callback(object):
         return cbc
 
 
-class DisableDeleteHandler():
-    """Used to find out whether a known object can be deleted or not.
-    Lino's default behaviour is to forbit deletion if there is any
-    other object in the database that refers to this. To implement
-    this, Lino installs a DisableDeleteHandler instance on each model
-    during :func:`analyze_models`. In an attribute `_lino_ddh`.
-
-    """
-
-    def __init__(self, model):
-        self.model = model
-        self.fklist = []
-
-    def add_fk(self, model, fk):
-        self.fklist.append((model, fk))
-
-    def __str__(self):
-        return ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])
-
-    def disable_delete_on_object(self, obj):
-        #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
-        #~ h = getattr(self.model,'disable_delete',None)
-        #~ if h is not None:
-            #~ msg = h(obj,ar)
-        #~     if msg is not None:
-            #~     return msg
-        for m, fk in self.fklist:
-            #~ kw = {}
-            #~ kw[fk.name] = obj
-            #~ if not getattr(m,'allow_cascaded_delete',False):
-            if not fk.name in m.allow_cascaded_delete:
-                n = m.objects.filter(**{fk.name: obj}).count()
-                if n:
-                    msg = _(
-                        "Cannot delete %(self)s "
-                        "because %(count)d %(refs)s refer to it."
-                    ) % dict(
-                        self=obj, count=n,
-                        refs=m._meta.verbose_name_plural
-                        or m._meta.verbose_name + 's')
-                    #~ print msg
-                    return msg
-        return None
-
-
 class Kernel(object):
     """This is the class of the object stored in :attr:`ad.Site.kernel`.
 
@@ -194,6 +151,7 @@ class Kernel(object):
         # logger.info("20140227 Kernel.__init__() a")
         self.pending_threads = {}
         self.site = site
+        self.GFK_LIST = []
         self.kernel_startup(site)
 
         if site.build_js_cache_on_startup is None:
@@ -220,7 +178,7 @@ class Kernel(object):
             names.add(n)
 
         for p in site.installed_plugins:
-            if isinstance(p, LinoPlugin):
+            if isinstance(p, Plugin):
                 p.on_ui_init(self)
 
         ui = self.site.plugins.resolve(self.site.default_ui)
@@ -241,13 +199,17 @@ class Kernel(object):
         # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(kernel, self):
-        """This is a part of a Lino site setup.  The Django Model definitions
-        are done, now Lino analyzes them and does certain actions:
+        """This is a part of a Lino site startup.  The Django Model
+        definitions are done, now Lino analyzes them and does certain
+        actions:
 
-        - Verify that there are no more pending injects
-        - Install a DisableDeleteHandler for each Model into `_lino_ddh`
-        - Install :class:`lino.dd.Model` attributes and methods into
-          Models that don't inherit from it.
+        - Verify that there are no more pending injects Install a
+          :class:`DisableDeleteHandler
+          <lino.core.ddh.DisableDeleteHandler>` for each Model into
+          `_lino_ddh`.
+
+        - Install :class:`lino.dd.Model` attributes and
+          methods into Models that don't inherit from it.
 
         """
         if len(sys.argv) == 0:
@@ -267,8 +229,9 @@ class Kernel(object):
         # this also triggers django.db.models.loading.cache._populate()
 
         if self.user_model:
-            self.user_model = dd.resolve_model(self.user_model,
-                                               strict="Unresolved model '%s' in user_model.")
+            self.user_model = dd.resolve_model(
+                self.user_model,
+                strict="Unresolved model '%s' in user_model.")
 
         if self.project_model:
             self.project_model = dd.resolve_model(
@@ -311,7 +274,7 @@ class Kernel(object):
 
             for f in model._meta.virtual_fields:
                 if isinstance(f, generic.GenericForeignKey):
-                    settings.SITE.GFK_LIST.append(f)
+                    kernel.GFK_LIST.append(f)
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
         # for a in models.get_apps():
@@ -358,7 +321,7 @@ class Kernel(object):
                         f.rel.to._lino_ddh.add_fk(m or model, f)
 
         for p in self.installed_plugins:
-            if isinstance(p, LinoPlugin):
+            if isinstance(p, Plugin):
                 p.before_analyze(self)
 
         dd.pre_analyze.send(self, models_list=models_list)
@@ -368,11 +331,11 @@ class Kernel(object):
 
         for model in models_list:
 
-            """
-            Virtual fields declared on the model must have 
-            been attached before calling Model.site_setup(), 
-            e.g. because pcsw.Person.site_setup() 
-            declares `is_client` as imported field.
+            """Virtual fields declared on the model must have been attached
+            before calling Model.site_setup(), e.g. because
+            pcsw.Person.site_setup() declares `is_client` as imported
+            field.
+
             """
 
             model.on_analyze(self)
@@ -399,7 +362,6 @@ class Kernel(object):
         for a in actors.actors_list:
             a.on_analyze(self)
 
-        #~ logger.info("20130121 GFK_LIST is %s",['%s.%s'%(full_model_name(f.model),f.name) for f in settings.SITE.GFK_LIST])
         dd.post_analyze.send(self, models_list=models_list)
 
         logger.info("Languages: %s. %d apps, %d models, %s actors.",
@@ -427,6 +389,18 @@ class Kernel(object):
         self.resolve_virtual_fields()
 
         #~ logger.info("20130827 startup_site done")
+
+    def get_generic_related(self, obj):
+        """Yield all database objects in database for which the given
+        GenericForeignKey gfk points to the object `obj`.
+        """
+        obj_ct = ContentType.objects.get_for_model(obj.__class__)
+        for gfk in self.GFK_LIST:
+            kw = dict()
+            kw[gfk.fk_field] = obj.pk
+            kw[gfk.ct_field] = obj_ct
+            ct = ContentType.objects.get_for_model(gfk.model)
+            yield gfk, ct.get_all_objects_for_this_type(**kw)
 
     def abandon_response(self):
         return self.success(_("User abandoned"))
@@ -620,7 +594,7 @@ class Kernel(object):
         #             'bootstrap', 'bootstrap_root')
 
         for p in self.site.installed_plugins:
-            if isinstance(p, LinoPlugin):
+            if isinstance(p, Plugin):
                 p.setup_media_links(self, urlpatterns)
 
         if self.site.use_tinymce:
@@ -660,7 +634,7 @@ class Kernel(object):
         #     '', ('^$', self.default_renderer.plugin.get_index_view()))
 
         for p in self.site.installed_plugins:
-            if isinstance(p, LinoPlugin):
+            if isinstance(p, Plugin):
                 # urlpatterns += p.get_patterns(self)
                 pat = p.get_patterns(self)
                 if p.url_prefix:
