@@ -6,7 +6,9 @@
 Delete generic related objects when deleting an object
 ======================================================
 
-I started to work on :ticket:`30`.
+I worked on :ticket:`30`.  Seems that I solved the problem, but the
+test suite is broken due to these changes. And I plan to write more
+test cases.
 
 
 Run subprocesses on Windows
