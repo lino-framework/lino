@@ -2,7 +2,7 @@
 .. toctree::
 
 .. autosummary::
-   :toctree: _core
+   :toctree:
 
     actions
     actors
@@ -25,7 +25,6 @@
     tables
     web
     workflows
-
 
 
 """

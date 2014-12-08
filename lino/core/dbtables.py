@@ -307,9 +307,26 @@ def model2actor(m):
 
 
 class Table(AbstractTable):
-    "See :class:`dd.Table`."
+    """An :class:`AbstractTable <lino.core.tables.AbstractTable>` that works
+    on a Django Model using a QuerySet.
+
+    A Table inherits from :class:`AbstractTable
+    <lino.core.tables.AbstractTable>` and adds attributes like
+    :attr:`model` and :attr:`master` and :attr:`master_key` who are
+    important because Lino handles relations automagically.
+
+    Another class of attributes are `filter`, `exclude` and `sort_order`
+    which are thin wrappers to Django's query lookup parameters of same
+    name.
+
+    See :class:`dd.Table`.
+
+    """
     
     model = None
+    """The model on which this table iterates.
+
+    """
 
     debug_sql = False
 
@@ -321,6 +338,10 @@ class Table(AbstractTable):
     """
 
     use_as_default_table = True
+    """ Set this to `False` if this Table should *not* become the
+    Model's default table.
+
+       """
 
     expand_memos = False
     """(No longer used; see :doc:`/tickets/44`).  Whether multi-line text

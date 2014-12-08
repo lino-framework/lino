@@ -8,14 +8,14 @@ Startup signals:
 - :attr:`post_syncdb <django.signals.post_syncdb>`
 - :attr:`pre_analyze <lino.core.signals.pre_analyze>`
 - :attr:`post_analyze <lino.core.signals.post_analyze>`
-- :attr:`pre_startup <djangosite.signals.pre_startup>`
-- :attr:`post_startup <djangosite.signals.post_startup>`
+- :attr:`pre_startup <lino.core.signals.pre_startup>`
+- :attr:`post_startup <lino.core.signals.post_startup>`
 
 - :attr:`database_connected <lino.core.signals.database_connected>`
   Database connection is opened.
   The database is not guaranteed to be initialized.
   
-- :attr:`database_ready <djangosite.signals.database_ready>`:
+- :attr:`database_ready <lino.core.signals.database_ready>`:
   Fired when database initialized and all fixtures have been loaded.
 
 - :attr:`pre_ui_build <lino.core.signals.pre_ui_build>`
@@ -23,8 +23,8 @@ Startup signals:
 
 Test-specific signals:  
 
-- :attr:`testcase_setup <djangosite.signals.testcase_setup>`
-  Fired in :meth:`djangosite.utils.djangotest.TestCase.setUp`,
+- :attr:`testcase_setup <lino.core.signals.testcase_setup>`
+  Fired in :meth:`lino.utils.djangotest.TestCase.setUp`,
   i.e. at the beginning of each test case.
   
 Runtime signals:

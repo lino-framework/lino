@@ -42,8 +42,8 @@ Django settings. For example
 
 - `DATABASES 
   <https://docs.djangoproject.com/en/dev/ref/settings/#databases>`_ :
-  djangosite sets this to a sqlite on a file `default.db` in your 
-  :attr:`project_dir <djangosite.Site.project_dir>`.
+  Lino sets this to `SQLite` on a file `default.db` in your 
+  :attr:`project_dir <ad.Site.project_dir>`.
   
 - `INSTALLED_APPS
   <https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps>`_
@@ -94,5 +94,5 @@ When a :class:`ad.Site` gets instantiated, it will try to import an
 module named ``djangosite_local``, and if that module exists and has a
 function named ``setup_site``, will call this function.  
 
-This mechanism is used on servers where many djangosite sites are
-running to provide local server-wide default settings.
+This mechanism is used on servers where many Lino sites are running to
+provide local server-wide default settings.

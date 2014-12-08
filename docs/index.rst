@@ -22,7 +22,7 @@ Sitemap
    about/index
    community/index
    blog/index
-   documentation/index
+   documentation
    tickets/index
 
 

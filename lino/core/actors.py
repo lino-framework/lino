@@ -6,6 +6,7 @@
 
 See :doc:`/dev/actors`.
 
+
 """
 
 import logging
@@ -296,16 +297,19 @@ class ActorMetaClass(type):
 
 
 class Actor(actions.Parametrizable):
-    """
-    The base class for all actors.  It is not used directly but
-    inherited by :class:`lino.core.tables.AbstractTable`,
-    :class:`lino.core.choicelists.ChoiceList` and
-    :class:`lino.core.frames.Frame`.
+    """The base class for all actors.  Inherited by
+:class:`AbstractTable  <lino.core.tables.AbstractTable>`,
+:class:`Table  <lino.core.dbtables.Table>`,
+:class:`ChoiceList <lino.core.choicelists.ChoiceList>`
+and :class:`Frame <lino.core.frames.Frame>`.
 
     """
     __metaclass__ = ActorMetaClass
 
     model = None
+    """
+    Set this on
+    """
 
     app_label = None
     """
@@ -465,9 +469,14 @@ class Actor(actions.Parametrizable):
     by other actors.
     """
 
-
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
+        """
+        Actor-level hook for overriding the formating when rendering
+        this table as plain html.
+
+        For example :class:`ml.cal.Events` overrides this.
+        """
         pass
 
     @classmethod
@@ -629,6 +638,10 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_create_permission(self, ar):
+        """Dynamic test per request.  This is being called only when
+        :attr:`allow_create` is True.
+
+        """
         if ar.get_user().profile.readonly:
             return False
         return True
@@ -755,6 +768,13 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_title(self, ar):
+        """Return the title of this actor for the given request `ar`.
+
+        Override this if your Table's title should mention for example
+        filter conditions.  See also :meth:`Table.get_title
+        <lino.core.dbtables.Table.get_title>`.
+
+        """
         # NOTE: similar code in dbtables
         title = self.get_title_base(ar)
         tags = list(self.get_title_tags(ar))
@@ -964,6 +984,9 @@ class Actor(actions.Parametrizable):
     
     @classmethod
     def get_data_elem(self, name):
+        """Find data element in this actor by name.
+
+        """
         c = self._constants.get(name, None)
         if c is not None:
             return c
@@ -1062,6 +1085,14 @@ class Actor(actions.Parametrizable):
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, obj, ar):
+        """
+        A virtual field that displays the workflow buttons for the given
+        row `obj` and `ar`.
+
+        `obj` is an instance of this table's row class,
+        `ar` is the :class:`rt.ar`.
+
+        """
         #~ logger.info('20120930 workflow_buttons %r', obj)
         actor = ar.actor
         #~ print 20120621 , actor,  self

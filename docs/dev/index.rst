@@ -12,7 +12,16 @@ Recommended
 
    prerequisites
    install
+
    /tutorials/index
+
+   actors
+   tables
+   fields
+   layouts
+   actions
+   mixins
+
    api
    settings
    application
@@ -21,6 +30,10 @@ Recommended
    workflows
    pull
    translate/index
+
+
+
+
 
 Drafts
 ------

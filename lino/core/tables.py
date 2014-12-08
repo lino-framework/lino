@@ -713,6 +713,15 @@ class Group(object):
 
 class AbstractTable(actors.Actor):
 
+    """An AbstractTable is the definition of a tabular data view,
+    usually displayed in a Grid (but it's up to the user
+    interface to decide how to implement this).
+
+    Base class for :class:`Table <lino.core.dbtables.Table<` and
+    :class:`VirtualTable <lino.core.tables.VirtualTable>`.
+
+    """
+
     _handle_class = TableHandle
 
     hide_zero_rows = False
@@ -997,6 +1006,15 @@ class AbstractTable(actors.Actor):
 
 
 class VirtualTable(AbstractTable):
+    """
+    An :class:`AbstractTable` that works on an volatile (non
+    persistent) list of rows.
+
+    By nature it cannot have database fields, only virtual fields.
+
+    Subclasses must define a :meth:`get_data_rows` method.
+
+    """
     pass
 
 

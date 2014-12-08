@@ -44,10 +44,12 @@ The basic trick is to simply send the signal "at the end of your last
 app's models.py file" as described by `Ross McFarland on Sun 24 June
 2012 <http://www.xormedia.com/django-startup-signal/>`_.
 
-That's why `djangosite` must be the *last* item of your
+That's why :mod:`lino`  must be the *last* item of your
 :setting:`INSTALLED_APPS`.
 
-Although djangosite doesn't have any model of its own, it
+.. currentmodule:: ad
+
+Although :mod:`lino` doesn't have any model of its own, it
 does have a `models` module which invokes
 the :meth:`startup <Site.startup>` method.
 The :meth:`startup <Site.startup>` method

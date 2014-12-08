@@ -65,7 +65,7 @@ Version 1.6.14 (not yet released)
 
 - A "plugin" is an app which defines in
   her `__init__.py` a class named "Plugin" which must be a subclass of
-  :class:`djangosite.djangosite_site.Plugin`. 
+  :class:`dd.Plugin`. 
   We could also call them "new-style apps". 
   A Plugin can have additional configuration.  
 
