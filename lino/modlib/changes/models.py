@@ -59,6 +59,8 @@ class Change(dd.Model):
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
 
+    allow_cascaded_delete = ['master', 'object']
+
     time = models.DateTimeField()
     type = ChangeTypes.field()
     if settings.SITE.user_model:
@@ -134,9 +136,20 @@ class Changes(dd.Table):
         return qs
 
 
-class ChangesByMaster(Changes):
+class ChangesByObject(Changes):
+    """Slave Table showing the direct changes related to the current
+    object.
+
     """
-    Slave Table showing the changes related to the current object
+    required = dd.required()
+    master_key = 'object'
+    column_names = 'time user type master diff master_type master_id'
+
+
+class ChangesByMaster(Changes):
+    """Slave Table showing the changes related to the current object,
+    including thos applied to "child" objects.
+
     """
     required = dd.required()
     master_key = 'master'

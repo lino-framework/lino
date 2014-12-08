@@ -6,9 +6,23 @@
 Delete generic related objects when deleting an object
 ======================================================
 
-I worked on :ticket:`30`.  Seems that I solved the problem, but the
-test suite is broken due to these changes. And I plan to write more
-test cases.
+I worked on :ticket:`30` and closed it.
+
+:mod:`lino.projects.min2.tests.test_min2` is the basic test case which
+demonstrates the new feature.  
+
+Another confirmation is that
+`lino_welfare.projects.eupen.tests.test_watch_tim` failed: it said
+"ValidationError: [u'Kann Müller Max Moritz (5088) nicht löschen weil
+1 Änderungen darauf verweisen.']".  I had to define an
+:attr:`allow_cascaded_delete <dd.Model.allow_cascaded_delete>` on
+:class:`ml.changes.Change` as `['master', 'object']`. Yes, when we
+delete a database object, we indeed automatically want to forget any
+change records related to this object. Anyway these change records
+would have a stale owner. (TODO: Except when we want to keep track of
+the fact that some object has been deleted. For example in Eupen it
+happened that we wanted to that a given partner id had been used for a
+given time. Added new :ticket:`32`.
 
 
 Run subprocesses on Windows
@@ -47,11 +61,29 @@ Taavi reported the following problem on a Windows computer::
         a = long(_hexlify(_urandom(2500)), 16)
     WindowsError: [Error -2146893818] Invalid Signature
 
-
-I guess that this was because on Windows some system environment variables are
-needed when you ask for a temporary file name. 
+   
+`Tim Golden
+<https://mail.python.org/pipermail/python-bugs-list/2011-December/154015.html>`_
+helped me to undestand that this was because on Windows some system
+environment variables are needed when you ask for a temporary file
+name.
 
 To solve this, I changed
 :meth:`atelier.utils.SubProcessParent.build_environment` 
 method so that it is filled from `os.environ`.
+
+
+Developing on Windows? No thanks!
+=================================
+
+After two hours of fiddling we still didn't get the test suite to pass
+on Taavi's Windows machine.  The last thing before we stopped was a
+test failure in :mod:`lino.utils.html2xhtml`.  I am afraid that this
+is due to the fact that the developers of HtmlTidy don't seem to care
+very much about a Windows binary version.
+See
+`PyTidyLib <http://countergram.com/open-source/pytidylib/docs/index.html>`__
+and
+`HtmlTidy <http://tidy.sourceforge.net/>`__.
+
 

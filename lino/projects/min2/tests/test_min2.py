@@ -71,16 +71,15 @@ class QuickTest(RemoteAuthTestCase):
         doe = create(Person, first_name="John", last_name="Doe")
         note = create(Note, owner=doe, body="John Doe is a fink!")
 
-#         ses = rt.login()
-#         s = rt.modules.notes.Notes.to_rst(ar, column_names="id owner")
-#         # s = ses.show('notes.Notes', column_names="id owner")
-#         self.assertEqual(s, """\
-# ==== ===============
-#  ID   Controlled by
-# ---- ---------------
-#  1    **John Doe**
-# ==== ===============
-# """)
+        ar = rt.modules.notes.Notes.request()
+        s = ar.to_rst(column_names="id owner")
+        self.assertEqual(s, """\
+==== ===============
+ ID   Controlled by
+---- ---------------
+ 1    John Doe
+==== ===============
+""")
 
         self.assertEqual(note.disable_delete(), None)
         self.assertEqual(Note.allow_cascaded_delete, [])
