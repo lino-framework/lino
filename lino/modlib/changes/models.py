@@ -22,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd
 from lino.core import fields
 
 from lino.core.signals import pre_ui_delete, pre_ui_create, pre_ui_update
@@ -59,7 +59,7 @@ class Change(dd.Model):
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
 
-    allow_cascaded_delete = ['master', 'object']
+    allow_stale_generic_foreignkey = 'master object'
 
     time = models.DateTimeField()
     type = ChangeTypes.field()

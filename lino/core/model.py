@@ -30,7 +30,16 @@ class Model(models.Model):
     class Meta:
         abstract = True
 
-    allow_cascaded_delete = []
+    allow_cascaded_delete = frozenset()
+    allow_stale_generic_foreignkey = frozenset()
+    """A `frozenset` of names of GenericForeignKeyIdField on this model
+    that are allowed to become "stale". 
+
+    Application code can specify this as a single string of
+    space-separated field names. Lino will convert this into a
+    frozenset.
+
+    """
 
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
@@ -479,6 +488,7 @@ action on individual instances.
         'preferred_foreignkey_width',
         'before_ui_save',
         'allow_cascaded_delete',
+        'allow_stale_generic_foreignkey',
         'workflow_state_field',
         'workflow_owner_field',
         'disabled_fields',

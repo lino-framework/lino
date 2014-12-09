@@ -56,11 +56,15 @@ class DisableDeleteHandler():
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
         for gfk, qs in kernel.get_generic_related(obj):
-            if not gfk.name in qs.model.allow_cascaded_delete:
-                n = qs.count()
-                # print "20141208 - %s %s %s" % (gfk.model, gfk.name, qs.query)
-                if n:
-                    return veto(obj, qs.model, n)
+            if gfk.name in qs.model.allow_cascaded_delete:
+                continue
+            if gfk.name in qs.model.allow_stale_generic_foreignkey:
+                continue
+            n = qs.count()
+            # print "20141208 - %s %s %s" % (
+            #     gfk.model, gfk.name, qs.query)
+            if n:
+                return veto(obj, qs.model, n)
         return None
 
 

@@ -264,8 +264,13 @@ class Kernel(object):
                     dd.fields_list(model, model.active_fields))
 
             if isinstance(model.allow_cascaded_delete, basestring):
-                model.allow_cascaded_delete = tuple(
+                model.allow_cascaded_delete = frozenset(
                     dd.fields_list(model, model.allow_cascaded_delete))
+
+            if isinstance(model.allow_stale_generic_foreignkey, basestring):
+                model.allow_stale_generic_foreignkey = frozenset(
+                    dd.fields_list(model,
+                                   model.allow_stale_generic_foreignkey))
 
             if model._meta.abstract:
                 raise Exception("Tiens?")

@@ -1,0 +1,20 @@
+=========================
+Tuesday, December 9, 2014
+=========================
+
+Keep change records when partner gets deleted?
+==============================================
+
+Working on :ticket:`32`.  After one night of sleep I understood that
+we cannot simply allow cascaded delete for change records.  The goal
+of :class:`lino.modlib.changes` is to keep track of changes and to
+*not* forget about them. Even if this leads to stale generic foreign
+keys. OTOH we cannot forbit to delete a (watched) database object just
+because it has changes recorded.
+
+.. currentmodule:: lino.core.models
+
+So I added a new attribute :attr:`Model.allow_stale_generic_foreignkey`.
+
+:attr:`Model.allow_cascaded_delete`
+

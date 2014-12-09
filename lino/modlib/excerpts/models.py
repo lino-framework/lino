@@ -335,12 +335,16 @@ class BodyTemplateContentField(dd.VirtualField):
         logger.info("Wrote body_template_content %s", local_file)
         file(local_file, "w").write(value)
 
+##
+##
+
 
 class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
               Controllable, mixins.ProjectRelated,
               ContactRelated, outbox.Mailable, Postable):
 
     manager_level_field = 'office_level'
+    allow_cascaded_delete = "owner"
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Excerpt')

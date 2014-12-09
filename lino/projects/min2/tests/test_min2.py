@@ -12,8 +12,10 @@
 # You should have received a copy of the GNU General Public License
 # along with Lino; if not, see <http://www.gnu.org/licenses/>.
 
-"""This module contains "quick" tests that are run on a demo database
-without any fixture. You can run only these tests by issuing either::
+"""Test some things which happen when a database object is deleted.
+
+This module is part of the Lino test suite. You can test only this
+module by issuing either::
 
   $ go min2
   $ python manage.py test
@@ -22,6 +24,20 @@ or::
 
   $ go lino
   $ python setup.py test -s tests.ProjectsTests.test_min2
+
+
+When I delete a database object, Lino also deletes those objects who
+are related through a GenericForeignKey.
+
+For example excerpts (`excerpts.Excerpt`) are related to their
+"controller" or "owner" via a *generic* foreign key (as every
+Controllable).  What happens to an excerpt when you delete its owner?
+The default behaviour is to delete them silently (cascaded delete).
+
+Another example are notes (`notes.Note`) who are also Controllable.
+But unlike excerpts, we don't want them to vanish when we delete their
+owner. We want Lino to tell us "Cannot delete this record because
+other database objects are referring to it".
 
 """
 
@@ -48,8 +64,6 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(1 + 1, 2)
 
     def test_controllables(self):
-        # When I delete a database object, Lino also deletes those
-        # objects who are related through a GenericForeignKey
         found = []
         for M in rt.models_by_base(Controllable):
             found.append(full_model_name(M))
@@ -59,8 +73,12 @@ class QuickTest(RemoteAuthTestCase):
 
         Person = rt.modules.contacts.Person
         Note = rt.modules.notes.Note
-        self.assertEqual(Person.objects.count(), 0)
-        self.assertEqual(Note.objects.count(), 0)
+        Excerpt = rt.modules.excerpts.Excerpt
+        ExcerptType = rt.modules.excerpts.ExcerptType
+        ContentType = rt.modules.contenttypes.ContentType
+        self.assertEqual(len(Person.allow_cascaded_delete), 0)
+        self.assertEqual(len(Note.allow_cascaded_delete), 0)
+        self.assertEqual(len(Excerpt.allow_cascaded_delete), 1)
 
         def create(m, **kw):
             obj = m(**kw)
@@ -70,6 +88,14 @@ class QuickTest(RemoteAuthTestCase):
 
         doe = create(Person, first_name="John", last_name="Doe")
         note = create(Note, owner=doe, body="John Doe is a fink!")
+        ct = ContentType.objects.get_for_model(Note)
+        etype = create(ExcerptType, name="Note", content_type=ct)
+        excerpt = create(Excerpt, owner=note,
+                         excerpt_type=etype)
+
+        self.assertEqual(Person.objects.count(), 1)
+        self.assertEqual(Note.objects.count(), 1)
+        self.assertEqual(Excerpt.objects.count(), 1)
 
         ar = rt.modules.notes.Notes.request()
         s = ar.to_rst(column_names="id owner")
@@ -81,9 +107,22 @@ class QuickTest(RemoteAuthTestCase):
 ==== ===============
 """)
 
+        ar = rt.modules.excerpts.Excerpts.request()
+        s = ar.to_rst(column_names="id owner")
+        self.assertEqual(s, """\
+==== ===============
+ ID   Controlled by
+---- ---------------
+ 1    Note #1
+==== ===============
+""")
+
+        self.assertEqual(excerpt.disable_delete(), None)
         self.assertEqual(note.disable_delete(), None)
-        self.assertEqual(Note.allow_cascaded_delete, [])
         self.assertEqual(
             doe.disable_delete(),
             "Cannot delete John Doe because 1 Notes refer to it.")
 
+        note.delete()
+        self.assertEqual(Excerpt.objects.count(), 0)
+        self.assertEqual(ExcerptType.objects.count(), 1)

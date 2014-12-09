@@ -52,14 +52,14 @@ before I patched my copy of `sphinx-apidoc`::
     :mod:`djangosite` Package
     -------------------------
 
-    .. automodule:: djangosite.__init__  <<<------------- PROBLEM
+    \.. automodule:: djangosite.__init__  <<<------------- PROBLEM
         :members:
         :show-inheritance:
 
     :mod:`dbutils` Module
     ---------------------
 
-    .. automodule:: djangosite.dbutils
+    \.. automodule:: djangosite.dbutils
         :members:
         :show-inheritance:
 
