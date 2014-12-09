@@ -1,4 +1,4 @@
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 import logging

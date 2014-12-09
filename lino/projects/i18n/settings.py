@@ -1,10 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-
-import os
-import lino
 
 from lino.projects.min1.settings import *
 

@@ -58,4 +58,4 @@ directory where you can run::
 
 (While you are here and comfortable with this example application, 
 you might as well read another tutorial which uses this application 
-to explain how to use workflows: :doc:`../workflow_tutorial/index`).
+to explain how to use workflows: :doc:`../workflows_tutorial/index`).

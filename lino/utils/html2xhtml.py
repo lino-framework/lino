@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2013 Luc Saffre
+# Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 ur"""
-Defines the :func:`html2xhtml` function which converts 
+Defines the :func:`html2xhtml` function which converts
 HTML to valid XHTML. It is far from being perfect but
 activaly being used in :mod:`lino.utils.appy_pod`.
 
@@ -45,8 +45,8 @@ before and reopended after a block element.
 </ul>
 
 In HTML it was tolerated to not end certain tags.
-For example, a string "<p>foo<p>bar<p>baz" converts 
-to  "<p>foo</p><p>bar</p><p>baz</p>". 
+For example, a string "<p>foo<p>bar<p>baz" converts
+to "<p>foo</p><p>bar</p><p>baz</p>".
 
 >>> print(html2xhtml('<p>foo<p>bar<p>baz'))
 <p>foo</p>
@@ -77,7 +77,7 @@ def html2xhtml(html, **options):
 
 
 # The remaining part is not used and just an illustration of how much
-# time people can waste before realizing that they are reinventing the wheel
+# time people can waste before realizing that they are reinventing the wheel.
 from xml.sax.saxutils import quoteattr
 
 from HTMLParser import HTMLParser

@@ -18,3 +18,10 @@ So I added a new attribute :attr:`Model.allow_stale_generic_foreignkey`.
 
 :attr:`Model.allow_cascaded_delete`
 
+
+View permissions in Lino Welfare
+================================
+
+Fixed :ticket:`25` (Tabelle "Benutzer und Klienten" in Startseite nur
+für DSBE-Benutzer anzeigen) which was seemingly just an analysis
+mistake.

@@ -86,4 +86,6 @@ See
 and
 `HtmlTidy <http://tidy.sourceforge.net/>`__.
 
+The easiest solution to all these problems is that Taavi moves from
+Windows to Linux.
 

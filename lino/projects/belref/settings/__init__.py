@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -11,7 +11,6 @@ from django.utils.translation import ugettext_lazy as _
 
 class Site(Site):
 
-    #~ title = __name__
     verbose_name = "Lino Belref"
     description = _("Belgian Reference")
     version = "0.1"
@@ -20,7 +19,6 @@ class Site(Site):
     author_email = 'luc.saffre@gmail.com'
 
     demo_fixtures = 'demo all_countries be inscodes'
-    #~ demo_fixtures = 'demo'
 
     #~ admin_prefix = 'admin'
     # default_ui = 'plain'

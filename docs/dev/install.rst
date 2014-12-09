@@ -7,6 +7,7 @@ Installing Lino (development version)
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
 .. _fabric: http://www.fabfile.org/
+.. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
 
 This document describes how you should install Lino if you want
@@ -70,50 +71,28 @@ Notes:
       $ cd lino ; python setup.py develop ; cd ..
 
 
-Configure fab
---------------
-
-Create a directory :file:`.atelier` (or :file:`_atelier` under
-Windows) in your HOME directory, then create a file :file:`config.py`
-in that directory with the following content::
-
-  add_project(r'C:\mypy\repositories\lino')
-
-
-
-
 Run Lino's test suite
 ---------------------
 
 In order to check to see whether everything worked well, we are now
 going to run the test suite.  
 
-And before running the test suite, we must initialize the demo
-databases because the test suite has many test cases which would fail
-if these demo databases were missing or not in their virgin state.
+And before running the test suite, we must initialize the **demo
+databases** because the test suite has many test cases which would
+fail if these demo databases were missing or not in their virgin
+state.
 
 The easiest way to initialize the demo databases is to run the
-:cmd:`fab initdb` command.  Which requires fabric_, a command-line
-tool systems to streamline administration tasks.
+:cmd:`fab initdb` command.  Which requires atelier_ (my personal
+collection of general Pyton utilities).
 
 So we must do::
 
-    $ pip install fabric
+    $ pip install atelier
     $ cd ~/repositories/lino
     $ fab initdb
 
-
-- (This item theroetically no longer needed) First we install some
-  more Python modules needed by the test suite::
-
-     $ pip install html5lib
-     $ pip install reportlab
-     $ pip install pisa
-
-  If pisa complains that "Reportlab Version 2.1+ is needed!" with
-  reportlab 3, then try to install 2.7 (the latest 2.x version)
-
-- And here we go for the test suite itself::
+And here we go for the test suite itself::
 
     $ cd ~/repositories/lino
     $ fab test
@@ -124,6 +103,9 @@ So we must do::
 
 Where to go from here 
 ---------------------
+
+Congratulations if you got the test suite to pass. Here are some more
+*suggestions du chef* for getting acquaintaned with Lino:
 
 - :ref:`lino.tutorial.hello`
 

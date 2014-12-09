@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -7,18 +7,7 @@ The :xfile:`models` module for the :mod:`lino.projects.belref` app.
 
 """
 
-import os
-import cgi
-import datetime
-
-from django.db import models
-#~ from django.db.models import Q
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-
-
-from lino import mixins
-from lino import dd, rt
+from lino import dd
 
 concepts = dd.resolve_app('concepts')
 
