@@ -333,9 +333,11 @@ class ChoiceList(tables.AbstractTable):
     #~ hidden_columns = frozenset()
     hidden_columns = frozenset(['workflow_buttons'])
 
-    @classmethod
-    def get_column_names(self, ar):
-        return 'value name text *'
+    # @classmethod
+    # def get_column_names(self, ar):
+    #     return 'value name text *'
+
+    column_names = 'value name text *'
 
     @classmethod
     def get_data_elem(self, name):

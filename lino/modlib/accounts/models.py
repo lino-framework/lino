@@ -21,37 +21,7 @@ from lino import dd, rt
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.accounts.utils import AccountTypes, DEBIT, CREDIT, DCLABELS
-
-
-from lino.ui.store import BooleanStoreField
-
-
-class DebitOrCreditStoreField(BooleanStoreField):
-
-    """
-    This is used as `lino_atomizer_class` for :class:`DebitOrCreditField`.
-    """
-
-    def format_value(self, ar, v):
-        return unicode(DCLABELS[v])
-
-
-class DebitOrCreditField(models.BooleanField):
-
-    """A field that stores either :attr:`DEBIT
-    <lino.modlib.accounts.utils.DEBIT>` or :attr:`CREDIT
-    <lino.modlib.accounts.utils.CREDIT>` (see
-    :mod:`lino.modlib.accounts.utils`).
-
-    """
-    lino_atomizer_class = DebitOrCreditStoreField
-
-    def __init__(self, *args, **kw):
-        kw.setdefault('help_text',
-                      _("Debit (checked) or Credit (not checked)"))
-        kw.setdefault('default', None)
-        models.BooleanField.__init__(self, *args, **kw)
+from .utils import (AccountTypes, DEBIT, CREDIT, DCLABELS, DebitOrCreditField)
 
 
 class Chart(mixins.BabelNamed):

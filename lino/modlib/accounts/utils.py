@@ -2,38 +2,46 @@
 # Copyright 2012-2013 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""
-This module is a Python implementation of the basic truths of accounting.
+r"""This module is a Python implementation of some basic truths of
+accounting.
 
-It has a hard-coded list of "account types", 
-including the "top-level accounts".
+This module is part of the Lino test suite. You can test only this
+module by issuing::
 
-It has a hard-coded list of the Sheets
+  $ python setup.py test -s tests.UtilsTests.test_accounts_utils
+
+It has a hard-coded list of `account types`_, including the "top-level
+accounts".
+
+It has a hard-coded list of the Sheets used in annual accounting
+reports.
 
 Debit and Credit
 ----------------
 
-An accounting transaction is either Debit or Credit.
-We represent this internally as a boolean, but define two names DEBIT and CREDIT:
+An accounting transaction is either Debit or Credit.  We represent
+this internally as a boolean, but define two names `DEBIT` and
+`CREDIT`:
 
 >>> DEBIT
 True
 >>> CREDIT
 False
 
+Account types
+-------------
 
 Accounting Equation:
 
   Assets = Liabilities + Capital
  
-Expanded accounting equation: 
+Expanded accounting equation:
 
     Assets + Expenses = Liabilities + Equity + Revenue
     
-Accounts on the left side of the equation (Assets and Expenses) 
-are normally DEBITed and have DEBIT balances. 
-
-That's what the :attr:`dc <AccountType.dc>` attribute means.
+Accounts on the left side of the equation (Assets and Expenses) are
+normally DEBITed and have DEBIT balances.  That's what the :attr:`dc
+<AccountType.dc>` attribute means:
 
 
 >>> print unicode(DCLABELS[AccountTypes.assets.dc])
@@ -44,9 +52,9 @@ Debit
 >>> print isinstance(AccountTypes.bank_accounts,Assets)
 True
 
-  
-`Wikipedia <http://en.wikipedia.org/wiki/Debits_and_credits>`_ gives a 
-Summary table of standard increasing and decreasing attributes for the 
+
+`Wikipedia <http://en.wikipedia.org/wiki/Debits_and_credits>`_ gives a
+Summary table of standard increasing and decreasing attributes for the
 five accounting elements:
 
 ============= ===== ======
@@ -61,7 +69,8 @@ Equity        \−     \+
   
 The equivalent in Python is:
 
->>> for t in AccountTypes.filter(top_level=True): #doctest: +NORMALIZE_WHITESPACE
+>>> for t in AccountTypes.filter(top_level=True):
+... #doctest: +NORMALIZE_WHITESPACE
 ...     print "%-12s|%-15s|%-6s" % (t.name, unicode(t), DCLABELS[t.dc])
 assets      |Assets         |Debit
 liabilities |Liabilities    |Credit
@@ -118,6 +127,25 @@ Income and Expenses are listed in the Profit & Loss statement.
 
 >>> print CashFlow.account_types()
 []
+
+
+As a summary here once more this hard-coded table of basic account
+types:
+
+>>> from lino import rt
+>>> rt.show('accounts.AccountTypes')
+==================== =============== =============== ======== ==========
+ value                name            text            D/C      Sheet
+-------------------- --------------- --------------- -------- ----------
+ A                    assets          Assets          Debit    Balance
+ L                    liabilities     Liabilities     Credit   Balance
+ I                    incomes         Incomes         Credit   Earnings
+ E                    expenses        Expenses        Debit    Earnings
+ C                    capital         Capital         Credit   Balance
+ B                    bank_accounts   Bank accounts   Debit    Balance
+ **Total (6 rows)**                                   **3**
+==================== =============== =============== ======== ==========
+<BLANKLINE>
 
 
 
@@ -179,7 +207,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.utils.choicelists import Choice,ChoiceList
-from lino import dd, rt
+from lino import dd
 
 DEBIT = True
 CREDIT = False
@@ -188,6 +216,37 @@ DCLABELS = {
     DEBIT: _("Debit"),
     CREDIT: _("Credit")
 }
+
+
+from lino.ui.store import BooleanStoreField
+from django.db import models
+
+
+class DebitOrCreditStoreField(BooleanStoreField):
+
+    """
+    This is used as `lino_atomizer_class` for :class:`DebitOrCreditField`.
+    """
+
+    def format_value(self, ar, v):
+        return unicode(DCLABELS[v])
+
+
+class DebitOrCreditField(models.BooleanField):
+
+    """A field that stores either :attr:`DEBIT
+    <lino.modlib.accounts.utils.DEBIT>` or :attr:`CREDIT
+    <lino.modlib.accounts.utils.CREDIT>` (see
+    :mod:`lino.modlib.accounts.utils`).
+
+    """
+    lino_atomizer_class = DebitOrCreditStoreField
+
+    def __init__(self, *args, **kw):
+        kw.setdefault('help_text',
+                      _("Debit (checked) or Credit (not checked)"))
+        kw.setdefault('default', None)
+        models.BooleanField.__init__(self, *args, **kw)
 
 
 class Sheet(object):
@@ -324,6 +383,15 @@ class BankAccounts(Assets):
 class AccountTypes(dd.ChoiceList):
     verbose_name = _("Account Type")
     item_class = AccountType
+    column_names = 'value name text dc sheet'
+
+    @dd.virtualfield(DebitOrCreditField(_("D/C")))
+    def dc(cls, choice, ar):
+        return choice.dc
+
+    @dd.virtualfield(models.CharField(_("Sheet"), max_length=20))
+    def sheet(cls, choice, ar):
+        return choice.sheet.__name__
 
 
 add = AccountTypes.add_item
