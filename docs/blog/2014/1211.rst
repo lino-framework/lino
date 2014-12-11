@@ -1,0 +1,7 @@
+===========================
+Thursday, December 11, 2014
+===========================
+
+Finished the "stories" started yesterday. Works for printed document
+and preview. Cool. No more filigrane business logic in the `.odt`
+template.

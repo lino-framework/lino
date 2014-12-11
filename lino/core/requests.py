@@ -19,6 +19,7 @@ from lino.core.dbutils import obj2unicode
 
 from lino.utils import AttrDict
 from lino.utils import curry
+from lino.utils import isiterable
 
 from lino.core import constants as ext_requests
 from lino.core import actions
@@ -454,6 +455,26 @@ class BaseRequest(object):
     # def show_slaves(self, master_instance, *args, **kwargs):
     #     for spec in args:
     #         self.show(spec, master_instance, **kwargs)
+
+    def story2html(self, story, *args, **kw):
+        """
+        Convert a stream of story items into a stream of HTML elements.
+        """
+        from lino.core.actors import Actor
+        from lino.core.tables import TableRequest
+        for item in story:
+            if E.iselement(item):
+                yield item
+            elif isinstance(item, type) and issubclass(item, Actor):
+                yield self.show(item, *args, **kw)
+            elif isinstance(item, TableRequest):
+                assert item.renderer is not None
+                yield self.renderer.show_request(item)
+            elif isiterable(item):
+                for i in self.story2html(item, *args, **kw):
+                    yield i
+            else:
+                raise Exception("Cannot handle %r" % item)
 
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, **kw):

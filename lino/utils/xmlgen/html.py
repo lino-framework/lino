@@ -60,7 +60,7 @@ from lino.utils.xmlgen import Namespace
 def HtmlNamespace(Namespace):
 
     def tostring(self, element, *args, **kw):
-        kw.update(method='html')
+        kw.setdefault('method', 'html')
         return super(HtmlNamespace, self).tostring(element, *args, **kw)
 
 

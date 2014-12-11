@@ -50,13 +50,14 @@ from lino.core import fields
 from lino.core import dbtables
 from lino.core import model
 from lino.core.requests import VirtualRow
-from lino.core.actors import Actor
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
 from lino.utils import curry
 from lino.core.perms import AnonymousUser
 from lino.utils.xmlgen.html import E
+from lino.core.actors import Actor
+from lino.utils.html2odf import html2odf, toxml
 
 
 class UserAuthored(model.Model):
@@ -760,40 +761,28 @@ class Report(EmptyTable):
 
     @classmethod
     def get_story(cls, self, ar):
+        """Yield a sequence of story items. These can be (1)
+        ElementTree elements or (2) AbstractTable or (3) action
+        requests.
+
+        """
         for A in cls.report_items:
-            yield E.h2(A.label)
+            yield E.h2(unicode(A.label))
             if A.help_text:
                 yield E.p(unicode(A.help_text))
             yield A
 
     @fields.virtualfield(fields.HtmlBox())
     def body(cls, self, ar):
-        html = []
-        for item in self.get_story(ar):
-            if E.iselement(item):
-                html.append(item)
-            elif isinstance(item, type) and issubclass(item, Actor):
-                html.append(ar.show(item, master_instance=self))
-            else:
-                raise Exception("Cannot handle %r" % item)
-
-        return E.div(*html)
+        elems = tuple(ar.story2html(
+            self.get_story(ar), master_instance=self))
+        return E.div(*elems)
 
     @classmethod
     def as_appy_pod_xml(cls, self, apr):
-        from lino.utils.html2odf import html2odf, toxml
-
-        chunks = []
-        for item in self.get_story(apr.ar):
-            if E.iselement(item):
-                chunks.append(toxml(html2odf(item)))
-            elif isinstance(item, type) and issubclass(item, Actor):
-                sar = apr.ar.spawn(item, master_instance=self)
-                chunks.append(apr.insert_table(sar))
-            else:
-                raise Exception("Cannot handle %r" % item)
-
-        return ''.join(chunks)
+        chunks = tuple(apr.story2odt(
+            self.get_story(apr.ar), master_instance=self))
+        return str('').join(chunks)  # must be utf8 encoded
 
 
 class YesNo(ChoiceList):

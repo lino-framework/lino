@@ -107,7 +107,7 @@ from lino.utils.code import codefiles, codetime
 def isiterable(x):
     "Returns `True` if the specified object is iterable."
     try:
-        it = iter(x)
+        iter(x)
     except TypeError:
         return False
     return True

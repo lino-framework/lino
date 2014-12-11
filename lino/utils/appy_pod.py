@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from django.conf import settings
 
+import odf
 from odf.opendocument import OpenDocumentText
 from odf.style import Style, TextProperties, ParagraphProperties, TableProperties
 from odf.text import ListStyle
@@ -30,11 +31,12 @@ from odf import text
 from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
 
 from lino.core import actions
-from lino.utils import format_date
+from lino.utils import format_date, isiterable
 from lino.utils.restify import restify
 from lino.utils.html2xhtml import html2xhtml
 from lino.utils.html2odf import html2odf, toxml
 from lino.utils.media import TmpMediaFile
+from lino.utils.xmlgen.html import E
 
 from lino import rt
 
@@ -60,8 +62,7 @@ UL_LIST_STYLE = """\
 
 class Renderer(AppyRenderer):
 
-    """
-    An extended :term:`appy.pod` renderer that installs additional functions
+    """An extended :term:`appy.pod` renderer that installs additional functions
     to be used in `do text|section|table... from ...
     <http://appyframework.org/podWritingAdvancedTemplates.html>`__
     statements.
@@ -91,8 +92,8 @@ class Renderer(AppyRenderer):
       (generated using :mod:`lino.utils.xmlgen.html`)
       by passing it to :mod:`lino.utils.html2odf`.
 
-    - `table(ar,column_names=None)` : render an :class:`lino.core.tables.TableRequest`
-      as a table.
+    - `table(ar, column_names=None)` : render an
+      :class:`lino.core.tables.TableRequest` as a table.
 
     """
 
@@ -104,7 +105,7 @@ class Renderer(AppyRenderer):
         context.update(jinja=self.jinja_func)
         context.update(table=self.insert_table)
         context.update(as_odt=self.as_odt)
-        #~ context.update(story=self.insert_story)
+        context.update(story=self.insert_story)
         #~ context.update(html2odf=html2odf)
         context.update(ehtml=html2odf)
         context.update(toxml=toxml)
@@ -168,11 +169,13 @@ class Renderer(AppyRenderer):
         """
         if not html:
             return ''
-        #~ logger.debug("html_func() got:<<<\n%s\n>>>",html)
-        #~ print __file__, ">>>"
-        #~ print html
-        #~ print "<<<", __file__
+        if E.iselement(html):
+            html = E.tostring(html)
         html = html2xhtml(html)
+        # logger.debug("20141210 html_func() got:<<<\n%s\n>>>", html)
+        # print __file__, ">>>"
+        # print html
+        # print "<<<", __file__
         if isinstance(html, unicode):
             # some sax parsers refuse unicode strings.
             # appy.pod always expects utf-8 encoding.
@@ -226,17 +229,29 @@ class Renderer(AppyRenderer):
         #~ self.my_styles[name] = e
         return e
 
-    #~ def insert_story(self,story):
-        #~ from lino.core.actors import Actor
-        #~ chunks = []
-        #~ for item in story:
-            #~ if E.iselement(item):
-                #~ chunks.append(html2odf(item))
-            #~ elif isinstance(item,type) and issubclass(item,Actor):
-                #~ chunks.append(self.ar.show(item,master_instance=self))
-            #~ else:
-                #~ raise Exception("Cannot handle %r" % item)
-        #~ return ''.join(chunks)
+    def story2odt(self, story, *args, **kw):
+        "Yield a sequence of ODT chunks (as utf8 encoded strings)."
+        from lino.core.actors import Actor
+        from lino.core.tables import TableRequest
+        for item in story:
+            if E.iselement(item):
+                yield toxml(html2odf(item))
+            elif isinstance(item, type) and issubclass(item, Actor):
+                sar = self.ar.spawn(item, *args, **kw)
+                yield self.insert_table(sar)
+            elif isinstance(item, TableRequest):
+                # logger.info("20141211 story2odt %s", item)
+                yield self.insert_table(item)
+            elif isiterable(item):
+                for i in self.story2odt(item, *args, **kw):
+                    yield i
+            else:
+                raise Exception("Cannot handle %r" % item)
+
+    def insert_story(self, story):
+        chunks = tuple(self.story2odt(story))
+        return str('').join(chunks)
+        
     def as_odt(self, obj):
         return obj.as_appy_pod_xml(self)
 
