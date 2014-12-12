@@ -2,6 +2,45 @@
 Thursday, December 11, 2014
 ===========================
 
-Finished the "stories" started yesterday. Works for printed document
-and preview. Cool. No more filigrane business logic in the `.odt`
-template.
+Finished the first item of :ticket:`27` (Änderungen Ausdruck Budget).
+
+So this item turned out to be challenge which took me two days of time.
+And Lino did it and has grown better:
+no more filigrane business logic in the `.odt` template.
+
+The concept of :doc:`/topics/stories` now works for both printed
+document and preview. 
+
+The next items are:
+
+- Tabelle "Guthaben, Schulden, Verbindlichkeit" : in Kolonne
+  "Beschreibung" die Kontobezeichnung wegfallen lassen.
+- Tabelle "Monatliche Ausgaben" : Bemerkung in getrennter Kolonne 
+- Tabellen "Steuern" und "Versicherungen" : 2 neue Kolonnen "Betrag
+  jährlich" und "Bemerkung"
+
+Changes:
+
+- In `PrintEntriesByBudget`, renamed `description` to
+  `full_description` and added `description`, `remarks` and
+  `yearly_amount`.
+
+- In `PrintLiabilitiesByBudget`, replaced column ``full_description`` by
+  ``remarks`` (both `periods` and `description` are not used for
+  liailities entries).
+
+- In `PrintExpensesByBudget`, replaced ``full_description`` by
+  ``description remarks yearly_amount``.
+
+Bemerkung : Die Kolonne "Betrag jährlich" kommt nicht nur in den
+Tabellen "Steuern" und "Versicherungen", sondern auch in "Monatliche
+Ausgaben". Obschon sie dort keinen Sinn macht (theoretisch immer leer
+ist). Das liegt daran, dass das beim Ausdruck verwendete
+Tabellenlayout *pro Kontenart* definiert wird (und alle drei Tabellen
+zur Kontenart "Ausgaben" gehören).  Eigentlich müsstet ihr das
+Tabellenlayout pro Kontengruppe definieren können.  Das habe ich als
+neues Feature (:ticket:`35`) notiert.
+
+
+
+

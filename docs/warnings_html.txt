@@ -1,3 +1,10 @@
+<autodoc>:0: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+<autodoc>:0: WARNING: Literal block expected; none found.
+/home/luc/hgwork/lino/lino/utils/__init__.py:docstring of lino.utils:4: ERROR: Unknown target name: "subpackages".
+/home/luc/hgwork/lino/lino/utils/__init__.py:docstring of lino.utils:4: ERROR: Unknown target name: "submodules".
+<autodoc>:0: WARNING: Inline interpreted text or phrase reference start-string without end-string.
+/home/luc/hgwork/lino/docs/dev/ml/cv.rst:35: WARNING: u"Unknown element 'isip.ContractsByStudyType' (None) referred in layout <FormLayout on cv.StudyTypes>."
+/home/luc/hgwork/lino/docs/dev/ml/cv.rst:70: WARNING: u"Unknown element 'isip.ContractsByStudyType' (None) referred in layout <FormLayout on cv.StudyTypes>."
 /home/luc/hgwork/lino/docs/_api/_utils/lino.utils.addressable.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/_api/_utils/lino.utils.ajax.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/_api/_utils/lino.utils.appy_pod.rst:: WARNING: document isn't included in any toctree

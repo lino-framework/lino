@@ -3,9 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Adds models like Study, Experience, ... 
-which contain data for printing a CV 
-of a person
+See :mod:`ml.cv`.
 """
 
 from __future__ import unicode_literals

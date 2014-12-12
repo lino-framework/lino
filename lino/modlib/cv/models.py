@@ -2,19 +2,8 @@
 # Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This module is for managing information about the *career* or
-*curriculum vitae* of a person.
-
-- A **Language knowledge** is when a given person knows a given language.
-
-- A **Schooling** (fr: Éducation, de: Ausbildung) is when a given person
-  has followed lessons in a given *school* for a given *period*.  There
-  are two basic types of schooling: **Study** (fr: Études, de: Studium)
-  and **Training** (fr: Formation, de: Lehre).
-
-- An **Work experience** (fr: Expérience professionnelle, de:
-  Berufserfahrung) is when a given person has worked in a given
-  *organisation* for a given *period*.
+"""
+See :mod:`ml.cv`.
 
 """
 
@@ -51,8 +40,6 @@ config = dd.plugins.cv
 
 class LanguageKnowledge(dd.Model):
 
-    """Specifies how well a certain Person knows a certain Language.
-    Deserves more documentation."""
     class Meta:
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")

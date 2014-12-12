@@ -20,8 +20,7 @@ columns right aligned).  A body template generates HTML which is then
 convered to XHTML. But this way the generated tables are not
 well-formatted.
 
-So I needed to invent stories.  Or rather to extend and generalize the
-concept of "stories" which I had already begun once upon a time.
+So I needed to invent :doc:`/topics/stories`.  Or rather to extend and
+generalize the concept of "stories" which I had already begun once
+upon a time (for the :class:`ad.Report` class).
 
-A story is a sequence of "chunks" of a bigger document. These chunks
-can be eiterh an HTML element or a :class:`rt.TableRequest` instance.

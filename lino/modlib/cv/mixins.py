@@ -2,6 +2,10 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""
+See :mod:`ml.cv`.
+"""
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 

@@ -1,0 +1,13 @@
+=========================
+Friday, December 12, 2014
+=========================
+
+
+Started to write database migration for upgrading to :ref:`welfare`
+1.1.19.
+
+Manually edit `restore.py`
+
+- Replace "from north.dpy" by "from lino.utils.dpy".
+- Replace "from north.dbutils" by "from lino.core.dbutils".
+
