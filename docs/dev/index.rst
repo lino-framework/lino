@@ -1,8 +1,12 @@
-==========
-Developers
-==========
+=================
+Developer's Guide
+=================
 
-This section is for Lino application developers. 
+This is the central meeting place for Lino application developers.  We
+are doing our best to grow this into a pedagogically meaningful
+sequence of articles.
+
+.. include:: /include/wip.rst
 
 Getting started
 ===============
@@ -17,14 +21,14 @@ Getting started
    /tutorials/lets
 
 
-Intermediate
-============
+Getting acquaintained
+=====================
 
 .. toctree::
    :maxdepth: 1
 
-   /tutorials/actors/index
    /tutorials/tables/index
+   menu
    /tutorials/layouts
    /tutorials/vtables/index
    /tutorials/actions/index
@@ -34,12 +38,15 @@ Intermediate
    /tutorials/human/index
    /tutorials/pisa/index
    
+
+
 Reference
 =========
 
 .. toctree::
    :maxdepth: 1
 
+   application
    actors
    tables
    fields
@@ -49,43 +56,34 @@ Reference
 
    api
 
+
 Special topics
 ==============
 
 .. toctree::
    :maxdepth: 1
 
-   /tutorials/tested_docs/index
+   /tutorials/actors/index
    /tutorials/de_BE/index
    /tutorials/watch_tutorial/index
    /tutorials/workflows_tutorial/index
    /tutorials/matrix_tutorial/index
 
 
-Miscellaneous
-=============
 
+Drafts
+======
+   
 .. toctree::
    :maxdepth: 1
 
-
+   /tutorials/tested_docs/index
    settings
-   application
    startup
    perms
    workflows
    pull
    translate/index
-
-
-
-
-
-Drafts
-------
-   
-.. toctree::
-   :maxdepth: 1
 
    apps
    testing

@@ -1,16 +1,29 @@
-==============
-Tables
-==============
+=========================
+An introduction to Tables
+=========================
 
-.. include:: /include/wip.rst
+In a Lino application, you don't only write *models* but also
+*tables*.
 
-This is a tutorial to illustrate stuff explained in :ref:`dev.actors`.
+**Models** describe how data is to be structured when stored in the
+database.
+**Tables** describe how this data is to be presented to users in
+ tabular form.
 
-Here is the :xfile:`models.py` file we will use for this tutorial:
+
+Please have a look at the :xfile:`models.py` file which we will use in
+this tutorial:
 
 .. literalinclude:: models.py
 
-Here is the :ref:`fixture <dpy>` we use to fill some demo data:
+- For every model (conventionally a word in singular form) we have at
+  least one table (conventionally a word in plural form).
+- There may be more than one table for a given model
+- Tables may inherit from other tables (e.g. `BooksByAuthor`)
+- We suggest to write your table definitions in the same file as their
+  models. But that's a matter of taste.
+
+Here is a :ref:`fixture <dpy>` we use to fill some demo data:
 
 .. literalinclude:: fixtures/demo.py
   
@@ -20,9 +33,19 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
     >>> globals().update(tables.__dict__)
     >>> from lino.utils.dpy import load_fixture_from_module
 
+We will now initialize our database with this fixture::
 
->>> import tables.fixtures.demo as m
->>> load_fixture_from_module(m)
+  $ python manage.py initdb_demo
+
+.. 
+    >>> import tables.fixtures.demo as m
+    >>> load_fixture_from_module(m)
+    
+At this point, we cannot yet fire up a web browser (we need to explain
+a few more concepts like menus and layouts before we can do that), but
+we can already play with our data using Django's console shell::
+
+  $ python manage.py shell
 
 >>> rt.show(Authors)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
@@ -61,3 +84,8 @@ Here is the :ref:`fixture <dpy>` we use to fill some demo data:
  **3968**
 =========== ======================================
 <BLANKLINE>
+
+
+The important point of these examples is that tables are Python
+classes which describe tabular data views in an abstract way,
+i.e. independently of the user interface.

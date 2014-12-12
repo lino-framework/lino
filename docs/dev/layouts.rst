@@ -17,9 +17,9 @@ table.
 This section applies to the following attributes of your actors:
 
 - :attr:`column_names <dd.AbstractTable.column_names>`
-- :attr:`detail_layout <dd.Actor.detail_layout>` 
-- :attr:`insert_layout <dd.Actor.insert_layout>`
-- :attr:`params_layout <dd.Actor.params_layout>`
+- :attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
+- :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`
+- :attr:`params_layout <lino.core.actors.Actor.params_layout>`
 - and for the :attr:`params_layout <dd.Action.params_layout>` of a
   custom action.
 

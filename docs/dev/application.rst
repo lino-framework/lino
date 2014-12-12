@@ -14,7 +14,6 @@ What is a software application?
     -- Luc Saffre
 
 
-
 .. currentmodule:: ad
 
 An application is not an app
@@ -59,18 +58,20 @@ The :class:`Site` is the base clase for representing a "Lino
 application".  It has attributes like :attr:`Site.verbose_name` (the
 "short" user-visible name) and the :attr:`Site.version` which are used
 by the method :meth:`Site.welcome_text`.  It also defines a
-:meth:`Site.startup` method and signals, which is the concrete reason
-why you might want a bare :class:`Site`.
+:meth:`Site.startup` method and signals which fire exactly once when
+the application starts up.
 
-But then it is designed to be subclassed.  It is subclassed by
-:class:`north.Site`, which is subclassed by :class:`lino.Site`, then
-subclassed by the application developer
+And then it is designed to be subclassed by the application developer
 (e.g. :class:`lino.projects.min1.settings.Site`), then imported into a
-local :xfile:`settings.py`, where the system administrator may
-subclass it another time before finally instantiating it, and
-assigning it to the :setting:`SITE` variable.
+local :xfile:`settings.py`, where a local system administrator may
+subclass it another time.
 
-Such a Site instance would then be a "project" for Django.
+A Lino application finally starts to "live" when such a :class:`Site`
+class gets **instantiated** and assigned to the :setting:`SITE`
+variable in a :xfile:`settings.py`.
+
+Such a :class:`Site` instance would then roughly correspond to a
+"project" for Django.
 
 This brings an additional level of encapsulation to Django.  A `Site`
 is a kind of "master app" or "project template".  A Site is a
@@ -78,7 +79,6 @@ is a kind of "master app" or "project template".  A Site is a
 
 A Site is usually meant to work for a given set of Django apps.  There
 are different mechanisms to define "automatic" ways of building the
-content of :setting:`INSTALLED_APPS` setting.  (TODO: write more about
-it)
+content of :setting:`INSTALLED_APPS` setting.
 
 
