@@ -18,9 +18,9 @@ class SchoolingStates(dd.ChoiceList):
     verbose_name = _("State")
 
 add = SchoolingStates.add_item
-add('0', _("Success"))
-add('1', _("Failure"))
-add('2', _("Ongoing"))
+add('0', _("Success"), 'success')
+add('1', _("Failure"), 'failure')
+add('2', _("Ongoing"), 'ongoing')
 
 
 class HowWell(dd.ChoiceList):

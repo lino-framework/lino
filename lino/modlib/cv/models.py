@@ -239,8 +239,8 @@ class StudyTypesByLevel(StudyTypes):
 class Study(Schooling):
 
     class Meta:
-        verbose_name = _("study or education")
-        verbose_name_plural = _("Studies & education")
+        verbose_name = _("Study")
+        verbose_name_plural = _("Studies")
 
     type = models.ForeignKey('cv.StudyType')
 
@@ -253,7 +253,7 @@ class Study(Schooling):
         blank=True,
         verbose_name=_("Study content"))
 
-    success = models.BooleanField(verbose_name=_("Success"), default=False)
+    # success = models.BooleanField(verbose_name=_("Success"), default=False)
 
     def __unicode__(self):
         return unicode(self.type)
