@@ -15,7 +15,7 @@ This is a tested document. To test it, run::
 .. toctree::
 
 .. autosummary::
-   :toctree:
+   :toctree: _api
 
     addressable
     ajax

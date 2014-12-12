@@ -47,6 +47,8 @@ Josef Kejzlar
 Johannes Meixner
 ----------------
 
+.. refstothis:: xmj
+
 .. _luc:
 
 Luc Saffre
@@ -82,8 +84,6 @@ Pierre Hembise
 
 Roger Rauw
 ----------
-
-.. refstothis:: rr
 
 
 .. _sw:

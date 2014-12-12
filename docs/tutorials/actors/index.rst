@@ -1,12 +1,14 @@
-==============
-Actors
-==============
+======================
+The label of the actor
+======================
+
+This is a rather subtle tutorial about the 
+:attr:`label <lino.core.actors.Actor.label>`. 
+of an :class:`Actor<lino.core.actors.Actor>`
+It was started as a doctest for
+:blogref:`20130907`.
 
 .. include:: /include/wip.rst
-
-This is a tutorial to illustrate stuff explained in :ref:`dev.actors`.
-This tutorial was started as a doctest for :blogref:`20130907`.
-
 
 Actors are one of the concepts which Lino adds to Django.
 

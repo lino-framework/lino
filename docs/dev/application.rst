@@ -4,6 +4,17 @@
 What is a software application?
 ===============================
 
+
+    "In information technology, an application is a computer program
+    designed to help people perform an activity."
+    -- `Wikipedia <http://en.wikipedia.org/wiki/Software_application>`_
+
+    A software application is a piece of software which is perceived
+    as an entity by end-users.
+    -- Luc Saffre
+
+
+
 .. currentmodule:: ad
 
 An application is not an app
@@ -44,12 +55,8 @@ setting rather than an ``Application`` class and an ``APP`` setting.
 So what then is an application really?
 ======================================
 
-A `software application
-<http://en.wikipedia.org/wiki/Software_application>`_, is a piece of
-software which is perceived as an entity *by the end-users*.
-
 The :class:`Site` is the base clase for representing a "Lino
-application".  it has attributes like :attr:`Site.verbose_name` (the
+application".  It has attributes like :attr:`Site.verbose_name` (the
 "short" user-visible name) and the :attr:`Site.version` which are used
 by the method :meth:`Site.welcome_text`.  It also defines a
 :meth:`Site.startup` method and signals, which is the concrete reason

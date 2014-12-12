@@ -85,7 +85,7 @@ class Site(object):
     """
 
     the_demo_date = None
-    verbose_name = None  # "Unnamed Lino Application"
+    verbose_name = "yet another Lino site"
     version = None
     url = None
     make_missing_dirs = True
@@ -792,11 +792,10 @@ class Site(object):
 
     def site_version(self):
         "See :meth:`ad.Site.site_version`."
-        if self.verbose_name:
-            assert ispure(self.verbose_name)
-            if self.version:
-                return self.verbose_name + ' ' + self.version
-            return self.verbose_name
+        assert ispure(self.verbose_name)
+        if self.version:
+            return self.verbose_name + ' ' + self.version
+        return self.verbose_name
 
     def configure_plugin(self, app_label, **kw):
         raise Exception("Replace SITE.configure_plugin by ad.configure_plugin")

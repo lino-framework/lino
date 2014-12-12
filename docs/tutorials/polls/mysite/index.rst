@@ -17,7 +17,7 @@ Create a local Django project
 
 Before reading on, please follow
 `Part 1 of the Django tutorial
-<https://docs.djangoproject.com/en/1.4/intro/tutorial01/>`_,
+<https://docs.djangoproject.com/en/1.6/intro/tutorial01/>`_,
 which applies entirely for a Lino application.
 Afterwards we meet here again. See you later!
 

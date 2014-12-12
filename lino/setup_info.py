@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.14',
+    version='1.6.15',  # not yet released
     install_requires=[
         'django<1.7', 'Sphinx',
         'atelier', 'unipath', 'python_dateutil',

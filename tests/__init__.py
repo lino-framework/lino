@@ -111,6 +111,9 @@ class DocsTests(LinoTestCase):
     def test_hello(self):
         self.run_django_manage_test('docs/tutorials/hello')
 
+    def test_mldbc(self):
+        self.run_django_manage_test('docs/tutorials/mldbc')
+
     def test_utils(self):
         self.run_simple_doctests('lino/utils/__init__.py')
 

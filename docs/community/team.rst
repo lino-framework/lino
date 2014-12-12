@@ -63,12 +63,9 @@ a new product version.
 Naming milestones
 -----------------
 
-Because milestones cannot easily be renamed, we need some more or less
-water-proof naming conventions.
-
 *Release milestones* are named ``XXXX-version", where XXXX is our
-internal codename (atelier, site, north, lino, welfare...) and version
-is a string like "1.6.18".
+internal codename (atelier, lino, welfare...) and version is a string
+like "1.6.18".
 
 *Upgrade milestones* are named ``XXXX-YYYY-MM``, where
 
@@ -76,7 +73,8 @@ is a string like "1.6.18".
   names like "dsbe", "chat", "lf", "eiche", "fijal" and so on).
 
 - `YYYY-MM` the month of the (initial) schedule date. 
+
 - If there is more than one upgrade for a given site in a given month,
-  then we add a sequence number: "XXXX-YYYYMM-2"
+  then we add a sequence number: "XXXX-YYYY-MM-2"
 
 

@@ -1,8 +1,8 @@
 .. _lino.dev.install:
 
-=====================================
-Installing Lino (development version)
-=====================================
+================================
+Installing Lino (for developers)
+================================
 
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
@@ -10,19 +10,14 @@ Installing Lino (development version)
 .. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
 
-This document describes how you should install Lino if you want
-to use Lino's newest features even before they get officially 
-released on PyPI, or if you possibly want to contribute to 
-one of the involved software projects. 
+This document describes how to install Lino.
 
 
 Preliminaries
 -------------
 
-- Lino requires Python 2. It is not yet converted to Python 3.  See
-  :doc:`/tickets/117` if you want to discuss this.
-
-- You will need git_ to get the source files.
+- Lino requires Python 2. It is not yet converted to Python 3.
+  See :ticket:`36` if you want to discuss this.
 
 - We assume you have pip_ installed. `pip` is not automatically
   bundled with Python 2, but it has become the de-facto standard.
@@ -34,8 +29,50 @@ Preliminaries
     $ . tmp/bin/activate
 
 
+Using the latest released version
+---------------------------------
+
+That said, installing Lino is easy:
+
+.. code-block:: bash
+
+  $ pip install lino
+  Downloading/unpacking lino
+  ...
+  Successfully installed lino django Sphinx atelier unipath python-dateutil Babel odfpy jinja2 appy pytidylib PyYAML django-iban xlwt xlrd Pygments docutils fabric six pytz markupsafe django-countries paramiko pycrypto ecdsa
+  Cleaning up...
+
+
+This might take some time since it will install all dependencies.
+
+If you want to see which version you have, you can always say "hello" to Lino:
+
+.. code-block:: bash
+
+    $ python -m lino.hello
+    This is yet another Lino site using Lino 1.6.15, Django 1.6.7, Python 2.7.4,
+    Babel 1.3, Jinja 2.7.2, Sphinx 1.3a0, python-dateutil 2.1, OdfPy ODFPY/0.9.6, 
+    docutils 0.11, suds 0.4, PyYaml 3.10, Appy 0.9.0 (2014/06/23 22:15).
+
+If you can now continue here:
+
+- :ref:`lino.tutorial.hello`
+- :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
+
+
+Using the development version
+-----------------------------
+
+But if you want to use Lino's newest features before they get
+officially released on PyPI, or if you possibly want to contribute to
+the project.
+
+
+
 Get the sources
 ---------------
+
+You will need git_ to get the source files.
 
 Create a directory (e.g. :file:`~/repositories`) meant to hold your
 working copies of version-controlled software projects, `cd` to that
@@ -106,10 +143,6 @@ Where to go from here
 
 Congratulations if you got the test suite to pass. Here are some more
 *suggestions du chef* for getting acquaintaned with Lino:
-
-- :ref:`lino.tutorial.hello`
-
-- :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
 
 - Install one or several of the out-of-the-box Lino
   applications: :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or

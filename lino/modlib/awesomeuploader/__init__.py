@@ -24,7 +24,7 @@ a :ref:`djangosite_local` module::
     ad.configure_plugin(
         'awesomeuploader',
         maxFileSizeBytes=3145728
-)
+    )
 
 
 .. setting:: awesomeuploader.maxFileSizeBytes

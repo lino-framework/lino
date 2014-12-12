@@ -5,9 +5,14 @@
 """Date formatting functions
 -------------------------
 
+To run the Lino test suite on this module::
+
+  $ python setup.py test -s tests.UtilsTests.test_format_date
+
 This module provides shortcuts to `python-babel`'s `date formatting
 functions <http://babel.pocoo.org/docs/dates/>`_.
 
+>>> import datetime
 >>> d = datetime.date(2013,8,26)
 >>> print(fds(d)) # short
 8/26/13
@@ -19,6 +24,39 @@ August 26, 2013
 Monday, August 26, 2013
 >>> print(fdmy(d)) # full
 August 2013
+
+
+
+The :func:`lino.core.dbutils.format_date` function is a thin wrapper 
+to the corresponding function in `babel.dates`, 
+filling the `locale` parameter according to Django's 
+current language (and doing the conversion).
+
+The major advantage over using `date_format` from `django.utils.formats` 
+is that Babel offers a "full" format:
+
+>>> today = datetime.date(2013,01,18)
+
+>>> print(format_date(today,'full'))
+Friday, January 18, 2013
+
+>>> with translation.override('fr'):
+...    print(format_date(today,'full'))
+vendredi 18 janvier 2013
+
+>>> with translation.override('de'):
+...    print(format_date(today,'full'))
+Freitag, 18. Januar 2013
+
+You can use this also for languages that aren't on your site:
+
+>>> with translation.override('et'):
+...    print(format_date(today,'full'))
+reede, 18. jaanuar 2013
+
+>>> with translation.override('nl'):
+...    print(format_date(today,'full'))
+vrijdag 18 januari 2013
 
 
 >>> print(fds('')) # empty string is tolerated
