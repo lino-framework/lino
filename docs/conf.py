@@ -12,16 +12,15 @@
 # serve to show the default.
 
 import os
-
 import sys
-sys.path.insert(0, os.path.dirname(__file__))
-
 from unipath import Path
+from atelier.sphinxconf import configure
+
+sys.path.insert(0, Path(__file__).parent.absolute())
 
 extlinks = {}
 extensions = []
 
-from atelier.sphinxconf import configure
 configure(globals(), 'lino.projects.docs.settings.demo')
 
 language = 'en'
