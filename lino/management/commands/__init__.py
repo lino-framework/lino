@@ -2,7 +2,7 @@
 .. toctree::
 
 .. autosummary::
-   :toctree: _management
+   :toctree:
 
     diag
     initdb_demo

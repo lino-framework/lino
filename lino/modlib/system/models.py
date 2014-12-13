@@ -22,6 +22,8 @@ from lino.core import actions
 from lino.mixins.printable import BuildMethods
 from lino.modlib.users.mixins import UserProfiles
 
+from .mixins import *
+
 
 class BuildSiteCache(dd.Action):
 

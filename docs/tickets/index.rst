@@ -2,6 +2,9 @@
 Tickets
 =======
 
+This section is obsolete. The Lino community grows and we need an
+independant ticketing system which is currently hosted at
+http://trac.lino-framework.org
 
 Open for contribution
 ---------------------

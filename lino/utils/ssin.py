@@ -42,6 +42,8 @@ the same day (odd numbers for men and even numbers for women), and
 And a function :func:`generate_ssin` is mainly used to generate
 fictive demo data.  For example, here is the national number of the
 25th boy born in Belgium on June 1st, 1968:
+
+>>> import datetime
     
 >>> n = generate_ssin(datetime.date(1968,6,1), Genders.male, 53)
 >>> print n
@@ -92,9 +94,9 @@ the check digits.
 In order to say whether the person is born in 19xx or 20xx,
 we need to look at the check digits.
 
-For example, the 25th boy born on June 1st in **1912** will 
-get another check-digit than a similar boy exactly 100 
-years later (in **2012**):
+For example, the 25th boy born on June 1st in **1912** will get
+another check-digit than a similar boy exactly 100 years later (in
+**2012**):
 
 >>> format_ssin('12060105317')
 '120601 053-17'
@@ -102,9 +104,9 @@ years later (in **2012**):
 >>> format_ssin('12060105346')
 '120601 053=46'
 
-Question to mathematicians: is it sure that there is no combination 
-of birth date and sequence number for which the check digits are 
-the same?
+Question to mathematicians: is it sure that there is no combination of
+birth date and sequence number for which the check digits are the
+same?
 
 Functions
 ---------
@@ -112,20 +114,11 @@ Functions
 """
 
 
-#~ import logging
-#~ logger = logging.getLogger(__name__)
-
-import os
-import cgi
-import datetime
-
-#~ os.environ.setdefault('DJANGO_SETTINGS_MODULE','lino.projects.std.settings')
-
 from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from lino.mixins import Genders
+from lino.dd import Genders
 
 
 YEAR2000 = '='

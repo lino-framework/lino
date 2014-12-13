@@ -2,13 +2,12 @@
 An introduction to Tables
 =========================
 
-In a Lino application, you don't only write *models* but also
-*tables*.
+In a Lino application you don't write only *models*, you must also
+write *tables*.
 
 **Models** describe how data is to be structured when stored in the
-database.
-**Tables** describe how this data is to be presented to users in
- tabular form.
+database.  **Tables** describe how this data is to be presented in
+tabular form.
 
 
 Please have a look at the :xfile:`models.py` file which we will use in

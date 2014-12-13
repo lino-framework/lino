@@ -146,7 +146,7 @@ class Command(BaseCommand):
                 pass
             else:
                 p.last_name = dist.LAST_NAMES.pop()
-                if p.gender == mixins.Genders.male:
+                if p.gender == dd.Genders.male:
                     p.first_name = dist.MALES.pop()
                     dist.FEMALES.pop()
                 else:

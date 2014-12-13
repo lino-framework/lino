@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 ur"""
-Utility for defining hard-coded multi-lingual choice lists 
+Utility for defining hard-coded internationalized choice lists
 whose value is rendered according to the current language.
 
 Usage:
@@ -24,7 +24,7 @@ users.UserGroups : User Groups
 users.UserLevels : User Levels
 users.UserProfiles : User Profiles
 
->>> Genders = mixins.Genders
+>>> Genders = dd.Genders
 >>> for bc,text in Genders.choices:
 ...     print "%s : %s" % (bc.value, unicode(text))
 M : Male

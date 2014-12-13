@@ -563,7 +563,7 @@ class Excerpts(dd.Table):
             'users.User', blank=True, null=True),
         pexcerpt_type=models.ForeignKey(
             'excerpts.ExcerptType', blank=True, null=True),
-        pcertifying=mixins.YesNo.field(_("Certifying excerpts"), blank=True))
+        pcertifying=dd.YesNo.field(_("Certifying excerpts"), blank=True))
     params_layout = """
     start_date end_date pcertifying
     puser pexcerpt_type"""
@@ -573,9 +573,9 @@ class Excerpts(dd.Table):
         qs = super(Excerpts, cls).get_request_queryset(ar)
         pv = ar.param_values
 
-        if pv.pcertifying == mixins.YesNo.yes:
+        if pv.pcertifying == dd.YesNo.yes:
             qs = qs.filter(excerpt_type__certifying=True)
-        elif pv.pcertifying == mixins.YesNo.no:
+        elif pv.pcertifying == dd.YesNo.no:
             qs = qs.filter(excerpt_type__certifying=False)
 
         if pv.puser:

@@ -327,35 +327,35 @@ def load_P_(row):
     title = row['PQ']
     if title:
         if title == 'Mme':
-            kw.update(language='fr', gender=mixins.Genders.female)
+            kw.update(language='fr', gender=dd.Genders.female)
         elif title == 'Mlle':
-            kw.update(language='fr', gender=mixins.Genders.female)
+            kw.update(language='fr', gender=dd.Genders.female)
         elif title == 'M.':
-            kw.update(language='fr', gender=mixins.Genders.male)
+            kw.update(language='fr', gender=dd.Genders.male)
         elif title == 'dHr':
-            kw.update(language='nl', gender=mixins.Genders.male)
+            kw.update(language='nl', gender=dd.Genders.male)
         elif title == 'Mvw':
-            kw.update(language='nl', gender=mixins.Genders.female)
+            kw.update(language='nl', gender=dd.Genders.female)
         elif title == 'Mr':
-            kw.update(language='en', gender=mixins.Genders.male)
+            kw.update(language='en', gender=dd.Genders.male)
         elif title == 'Mrs':
-            kw.update(language='en', gender=mixins.Genders.female)
+            kw.update(language='en', gender=dd.Genders.female)
         elif title == 'Hrrn':
-            kw.update(language='de', gender=mixins.Genders.male)
+            kw.update(language='de', gender=dd.Genders.male)
         elif title == 'Fr':
-            kw.update(language='de', gender=mixins.Genders.female)
+            kw.update(language='de', gender=dd.Genders.female)
         elif title == 'Fr.':
-            kw.update(language='fr', gender=mixins.Genders.male, title=u"Frère")
+            kw.update(language='fr', gender=dd.Genders.male, title=u"Frère")
         elif title == 'Frl':
-            kw.update(language='de', gender=mixins.Genders.female)
+            kw.update(language='de', gender=dd.Genders.female)
         elif title == 'Bx':
-            kw.update(gender=mixins.Genders.male, title="Bx")
+            kw.update(gender=dd.Genders.male, title="Bx")
         elif title == 'Bse':
-            kw.update(gender=mixins.Genders.female, title="Bse")
+            kw.update(gender=dd.Genders.female, title="Bse")
         elif title == 'St':
-            kw.update(gender=mixins.Genders.male, title="St")
+            kw.update(gender=dd.Genders.male, title="St")
         elif title == 'Ste':
-            kw.update(gender=mixins.Genders.female, title="Ste")
+            kw.update(gender=dd.Genders.female, title="Ste")
         else:
             dblogger.warning("Ignored PQ value %r" % title)
 

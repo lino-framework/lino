@@ -5,10 +5,8 @@
 This is :doc:`/topics/modlib`.
 
 
-.. toctree::
-
 .. autosummary::
-   :toctree: _modlib
+   :toctree:
 
     about
     accounts

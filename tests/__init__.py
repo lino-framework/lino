@@ -69,6 +69,9 @@ class DocsTests(LinoTestCase):
     def test_polly(self):
         self.run_simple_doctests("docs/tested/polly.rst")
 
+    def test_choicelists(self):
+        self.run_simple_doctests("docs/dev/choicelists.rst")
+
     def test_presto(self):
         self.run_simple_doctests("docs/tested/test_presto.rst")
 

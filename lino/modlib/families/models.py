@@ -38,8 +38,8 @@ from lino import dd, rt
     #~ verbose_name = _("Link type")
     #~
 #~ add = LinkTypes.add_item
-#~ add('100', _('Father'),'father',gender=mixins.Genders.male)
-#~ add('101', _('Mother'),'mother',gender=mixins.Genders.female)
+#~ add('100', _('Father'),'father',gender=dd.Genders.male)
+#~ add('101', _('Mother'),'mother',gender=dd.Genders.female)
 class Couple(dd.Model):
     father = dd.ForeignKey('contacts.Person', blank=True,
                            null=True, related_name='couples_as_father')
@@ -139,11 +139,11 @@ class Child(dd.Model):
 
     @dd.chooser()
     def father_choices(self):
-        return contacts.Person.objects.filter(gender=mixins.Genders.male).order_by('last_name', 'first_name')
+        return contacts.Person.objects.filter(gender=dd.Genders.male).order_by('last_name', 'first_name')
 
     @dd.chooser()
     def mother_choices(self):
-        return contacts.Person.objects.filter(gender=mixins.Genders.female).order_by('last_name', 'first_name')
+        return contacts.Person.objects.filter(gender=dd.Genders.female).order_by('last_name', 'first_name')
 
 #~ class Link(dd.Model):
     #~ parent = dd.ForeignKey('contacts.Person')

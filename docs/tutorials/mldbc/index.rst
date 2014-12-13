@@ -88,7 +88,7 @@ shell::
 
   $ python manage.py shell
 
-And typing the following::
+And typing the following:
 
 >>> from django.core.management import call_command
 >>> call_command('initdb', 'demo', interactive=False)

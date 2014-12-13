@@ -10,8 +10,6 @@ Tables
 The ``AbstractTable`` class
 ---------------------------
 
-.. autoclass:: lino.core.tables.AbstractTable
-  :members:
 
   .. attribute:: variable_row_height
 
@@ -208,10 +206,6 @@ The ``Table`` class
 -------------------
 
 
-.. autoclass:: lino.core.dbtables.Table
-  :members:
-  :inherited-members:
-
   .. attribute:: master
 
     Automatically set to the model pointed to by the
@@ -286,13 +280,6 @@ The ``Table`` class
     Set this to True if Lino should not open a newly created record in
     a detail window.
 
-
-The ``VirtualTable`` class
---------------------------
-
-
-.. autoclass:: lino.core.tables.VirtualTable
-    :members:
 
 
 

@@ -784,7 +784,6 @@ class InsertRow(TableAction):
 
 class ShowEmptyTable(ShowDetailAction):
     use_param_panel = True
-    #~ callable_from = tuple()
     action_name = 'show'
     default_format = 'html'
     #~ hide_top_toolbar = True
@@ -793,9 +792,6 @@ class ShowEmptyTable(ShowDetailAction):
 
     def is_callable_from(self, caller):
         return isinstance(caller, GridEdit)
-
-    #~ def is_callable_from(self,caller):
-        #~ return True
 
     def attach_to_actor(self, actor, name):
         self.label = actor.label

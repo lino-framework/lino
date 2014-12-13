@@ -27,7 +27,7 @@ from lino.utils.instantiator import create_and_get
 from lino.modlib.contacts import models as contacts
 from lino.modlib.users.mixins import UserProfiles
 
-Genders = mixins.Genders
+Genders = dd.Genders
 
 
 class QuickTest(RemoteAuthTestCase):

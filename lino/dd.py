@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -139,9 +140,7 @@ logger = logging.getLogger(__name__)
 
 # logger.info("20140227 dd.py a")
 
-
 from lino.core.tables import VirtualTable
-
 
 from lino.core.dbutils import resolve_model, UnresolvedModel
 
@@ -184,12 +183,10 @@ from lino.core.actions import MultipleRowAction
 #~ Action = CustomAction
 from lino.core.actions import ShowSlaveTable
 
-from lino.mixins import AuthorAction
-#~ from lino.core.actions import ListAction
+# from lino.mixins import AuthorAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
-#~ from lino.core.actions import Calendar
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.workflows import State, Workflow, ChangeStateAction
@@ -328,8 +325,6 @@ if False:
     from lino.mixins import EmptyTable
     from lino.mixins import Report
     
-    from lino.models import Genders
-    from lino.models import YesNo
     from lino.utils.mldbc.mixins import BabelNamed
     
     from lino.mixins import (
@@ -349,6 +344,9 @@ if False:
     # from lino.models import PeriodEvents
 
     from lino.mixins.polymorphic import Polymorphic
+
+
+from lino.modlib.system.mixins import Genders, PeriodEvents, YesNo
 
 from django.utils.importlib import import_module
 

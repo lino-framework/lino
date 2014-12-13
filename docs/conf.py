@@ -24,6 +24,7 @@ language = 'en'
 
 extensions += ['sphinx.ext.autosummary']
 autosummary_generate = True
+autodoc_default_flags = ['members']
 
 extensions += ['sphinxcontrib.taglist']
 extensions += ['atelier.sphinxconf.blog']

@@ -2,7 +2,7 @@
 .. toctree::
 
 .. autosummary::
-   :toctree: _ui
+   :toctree:
 
     base
     elems

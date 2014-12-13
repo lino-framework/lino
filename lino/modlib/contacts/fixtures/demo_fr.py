@@ -29,7 +29,7 @@ def objects():
         yield Person(
             first_name=male_first_names.pop(),
             last_name=last_names.pop(),
-            gender=mixins.Genders.male,
+            gender=dd.Genders.male,
             city=CITIES.pop(),
             street=STREETS.pop(),
             **common
@@ -37,7 +37,7 @@ def objects():
         yield Person(
             first_name=female_first_names.pop(),
             last_name=last_names.pop(),
-            gender=mixins.Genders.female,
+            gender=dd.Genders.female,
             city=CITIES.pop(),
             street=STREETS.pop(),
             **common

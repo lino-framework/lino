@@ -15,89 +15,23 @@ we define a single model `Person` which just inherits
 .. 
   >>> from __future__ import print_function 
   >>> from human.models import Person
+  >>> from lino.modlib.system.mixins import Genders
+  >>> from django.utils import translation
 
 
-Overview
----------
+Database fields
+---------------
 
-The Human mixins defines four properties: `first_name`, `middle_name`,
-`last_name` and `gender`.  All these fields may be blank (except if
-your application changed that rule using :func:`dd.update_field`).
+The Human mixin defines four database fields: `first_name`,
+`middle_name`, `last_name` and `gender`.
 
+The `gender` field is a pointer to
+the :class:`lino.modlib.system.mixins.Genders` choicelist.
 
-Gender
--------
-
-The :class:`dd.Genders` choicelist defines the possible values for the
-`gender` field of a Human.
-
-A :class:`dd.ChoiceList` is a "hard-coded" list of translatable
-values.
-
-It's a concept introduceed by Lino and deserves more documentation,
-but here is at least a short introduction to choicelists:
-
->>> from lino.mixins import Genders
-
->>> print(Genders)
-lino.Genders
-
-A Choicelist is an "Actor", another Lino concept which deserves more
-documentation, but basically this means that it is globally accessible
-using the above name.
-
-A ChoiceList has an `objects` method (not attribute) which returns an
-iterator over the "Choices":
-
->>> print(Genders.objects())
-[<Genders.male:M>, <Genders.female:F>]
-
-Each Choice has a "value", a "name" and a "text". 
-
-The **value** is what gets stored when this choice is assigned to a
-database field.
-
->>> [g.value for g in Genders.objects()]
-[u'M', u'F']
-
-The **name** is how Python code can refer to this choice.
-
->>> [g.name for g in Genders.objects()]
-[u'male', u'female']
-
->>> print(repr(Genders.male))
-<Genders.male:M>
-
-The **text** is what the user sees.
-It is a translatable string, 
-implemented using Django's i18n machine:
-
->>> [g.text for g in Genders.objects()] # doctest: +ELLIPSIS
-[<django.utils.functional.__proxy__ object at ...>, <django.utils.functional.__proxy__ object at ...>]
-
-Calling `unicode` of a choice is (usually) the same as calling unicode on its `text` attribute:
-
->>> [unicode(g) for g in Genders.objects()]
-[u'Male', u'Female']
->>> [unicode(g.text) for g in Genders.objects()]
-[u'Male', u'Female']
+All these fields may be blank (except if your application changed that
+rule using :func:`dd.update_field`).
 
 
-The text of a choice depends on the current user language.
-
->>> from django.utils import translation
-
->>> with translation.override('fr'):
-...     [unicode(g) for g in Genders.objects()]
-[u'Masculin', u'F\xe9minin']
-
->>> with translation.override('de'):
-...     [unicode(g) for g in Genders.objects()]
-[u'M\xe4nnlich', u'Weiblich']
-
->>> with translation.override('et'):
-...     [unicode(g) for g in Genders.objects()]
-[u'Mees', u'Naine']
 
 
 Salutation
@@ -106,10 +40,10 @@ Salutation
 The default `__unicode__` method of a Human includes 
 the "salutation" which indicates the gender:
 
->>> print(Person(first_name="John", last_name="Smith",gender=Genders.male))
+>>> print(Person(first_name="John", last_name="Smith", gender=Genders.male))
 Mr John Smith
 
->>> print(Person(last_name="Smith",gender=Genders.female))
+>>> print(Person(last_name="Smith", gender=Genders.female))
 Mrs Smith
 
 If you don't specify a gender, Lino doesn't print any salutation:

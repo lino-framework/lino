@@ -26,7 +26,6 @@ even if they succeeded at the second attempt.
 
 from lino import AFTER17, startup
 
-
 if not AFTER17:
 
     from django.db.models import loading

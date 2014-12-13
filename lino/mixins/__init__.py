@@ -6,24 +6,17 @@
 by :mod:`lino.modlib`. None of them is mandatory for a Lino
 application.
 
-.. currentmodule:: lino.mixins
-
-.. toctree::
-
 .. autosummary::
-   :toctree: _mixins
+   :toctree:
 
     duplicable
+    sequenced
     human
     periods
     polymorphic
     printable
     uploadable
 
-
-
-
-See the documentation of :mod:`lino.dd` for an overview.
 
 """
 
@@ -44,20 +37,13 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.users.mixins import UserLevels
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core import frames
 from lino.core import actions
 from lino.core import fields
 from lino.core import dbtables
 from lino.core import model
-from lino.core.requests import VirtualRow
-from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.core.dbutils import navinfo
 from lino.utils import AttrDict
-from lino.utils import curry
 from lino.core.perms import AnonymousUser
-from lino.utils.xmlgen.html import E
-from lino.core.actors import Actor
-from lino.utils.html2odf import html2odf, toxml
 
 
 class UserAuthored(model.Model):
@@ -265,7 +251,6 @@ class Registrable(model.Model):
             #~ self.register(None)
             #~ self.save()
 
-
 class Modified(model.Model):
 
     class Meta:
@@ -308,250 +293,6 @@ class CreatedModified(Created, Modified):
 
     class Meta:
         abstract = True
-
-
-class MoveUp(actions.Action):
-    label = _("Up")
-    #~ label = "\u2191" thin arrow up
-    # ~ label = "\u25b2" # triangular arrow up
-    custom_handler = True
-    icon_name = 'arrow_up'
-    #~ icon_file = 'arrow_up.png'
-    help_text = _("Move this row one row upwards")
-    readonly = False
-
-    def get_action_permission(self, ar, obj, state):
-        if ar.data_iterator is None:
-            return False
-        if not super(MoveUp, self).get_action_permission(ar, obj, state):
-            return False
-        #~ logger.info("20130927 %r", ar.data_iterator.__class__)
-        if ar.data_iterator.count() == 0:
-            return False
-        if ar.data_iterator[0] == obj:
-            return False
-        return True
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        obj.swap_seqno(ar, -1)
-        #~ obj.move_up()
-        kw = dict()
-        #~ kw.update(refresh=True)
-        kw.update(refresh_all=True)
-        kw.update(message=_("Moved up."))
-        ar.success(**kw)
-
-
-class MoveDown(actions.Action):
-    label = _("Down")
-    #~ label = "\u2193"
-    # ~ label = "\u25bc" # triangular arrow down
-    custom_handler = True
-    icon_name = 'arrow_down'
-    #~ icon_file = 'arrow_down.png'
-    help_text = _("Move this row one row downwards")
-    readonly = False
-
-    def get_action_permission(self, ar, obj, state):
-        if ar.data_iterator is None:
-            return False
-        if not super(MoveDown, self).get_action_permission(ar, obj, state):
-            return False
-        if ar.data_iterator.count() == 0:
-            return False
-        if ar.data_iterator[ar.data_iterator.count() - 1] == obj:
-            return False
-        #~ if obj.__class__.__name__=='Entry' and obj.seqno == 25:
-            #~ print 20130706, ar.data_iterator.count(), ar.data_iterator
-        return True
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        obj.swap_seqno(ar, 1)
-        #~ obj.move_down()
-        kw = dict()
-        #~ kw.update(refresh=True)
-        kw.update(refresh_all=True)
-        kw.update(message=_("Moved down."))
-        ar.success(**kw)
-
-
-class DuplicateSequenced(Duplicate):
-
-    def run_from_code(self, ar, **kw):
-        obj = ar.selected_rows[0]
-
-        #~ print '20120605 duplicate', self.seqno, self.account
-        seqno = obj.seqno
-        qs = obj.get_siblings().filter(seqno__gte=seqno).reverse()
-        if qs is None:
-            raise Exception(
-                "20121227 TODO: Tried to duplicate a root element?")
-        for s in qs:
-            #~ print '20120605 duplicate inc', s.seqno, s.account
-            s.seqno += 1
-            s.save()
-        kw.update(seqno=seqno)
-        return super(DuplicateSequenced, self).run_from_code(ar, **kw)
-
-
-class Sequenced(Duplicable):
-
-    """
-    Abstract base class for models that have a field `seqno`
-    containing a "sequence number".
-    """
-
-    class Meta:
-        abstract = True
-        ordering = ['seqno']
-
-    seqno = models.IntegerField(
-        blank=True, null=False,
-        verbose_name=_("Seq.No."))
-
-    duplicate = DuplicateSequenced()
-    move_up = MoveUp()
-    move_down = MoveDown()
-
-    def __unicode__(self):
-        return unicode(_("Row # %s") % self.seqno)
-
-    def get_siblings(self):
-        """Return a Django Queryset with all siblings of this,
-        or `None` if this is a root element which cannot have any siblings.
-
-        Siblings are all objects that belong to a same sequence.
-        This is needed for automatic management of the `seqno` field.
-
-        The queryset will of course include `self`.
-        The default implementation uses a global sequencing
-        by returning all objects of `self`'s model.
-
-        A common case for overriding this method is when numbering
-        restarts for each master.  For example if you have a master
-        model `Product` and a sequenced slave model `Property` with a
-        ForeignKey field `product` which points to the Product, then
-        you'll define::
-
-          class Property(dd.Sequenced):
-
-              def get_siblings(self):
-                  return Property.objects.filter(
-                      product=self.product).order_by('seqno')
-
-        Overridden e.g. in
-        :class:`lino.modlib.thirds.models.Third`
-        or
-        :class:`lino_welfare.modlib.debts.models.Entry`.
-
-        """
-        return self.__class__.objects.order_by('seqno')
-
-    def set_seqno(self):
-        """
-        Initialize `seqno` to the `seqno` of eldest sibling + 1.
-        """
-        qs = self.get_siblings()
-        if qs is None:
-            self.seqno = 0
-        else:
-            n = qs.count()
-            if n == 0:
-                self.seqno = 1
-            else:
-                last = qs[n - 1]
-                self.seqno = last.seqno + 1
-
-    def full_clean(self, *args, **kw):
-        if self.seqno is None:
-            self.set_seqno()
-        super(Sequenced, self).full_clean(*args, **kw)
-
-    def swap_seqno(self, ar, offset):
-        """
-        Move this row "up or down" within its siblings
-        """
-        #~ qs = self.get_siblings()
-        qs = ar.data_iterator
-        if qs is None:
-            return
-        nav = AttrDict(**navinfo(qs, self))
-        if not nav.recno:
-            return
-        new_recno = nav.recno + offset
-        if new_recno <= 0:
-            return
-        if new_recno > qs.count():
-            return
-        other = qs[new_recno - 1]
-        prev_seqno = other.seqno
-        other.seqno = self.seqno
-        self.seqno = prev_seqno
-        self.save()
-        other.save()
-
-    @fields.displayfield(_("Move"), preferred_width=5)
-    def move_buttons(obj, ar):
-        """
-        Displays the buttons for this row and this user.
-        """
-        actor = ar.actor
-        l = []
-        state = None  # TODO: support a possible state?
-        for n in ('move_up', 'move_down'):
-            ba = actor.get_action_by_name(n)
-            if ba.get_bound_action_permission(ar, obj, state):
-                l.append(ar.renderer.action_button(obj, ar, ba))
-                l.append(' ')
-        return E.p(*l)
-
-
-class Hierarizable(Sequenced):
-
-    """
-    Abstract model mixin for things that have a "parent" and "siblings".
-    """
-    class Meta:
-        abstract = True
-
-    parent = models.ForeignKey('self',
-                               verbose_name=_("Parent"),
-                               null=True, blank=True,
-                               related_name='children')
-
-    def get_siblings(self):
-        if self.parent:
-            return self.parent.children.all()
-        return self.__class__.objects.filter(parent__isnull=True)
-
-    #~ def save(self, *args, **kwargs):
-        #~ super(Hierarizable, self).save(*args, **kwargs)
-    def full_clean(self, *args, **kwargs):
-        p = self.parent
-        while p is not None:
-            if p == self:
-                raise ValidationError("Cannot be your own ancestor")
-            p = p.parent
-        super(Hierarizable, self).full_clean(*args, **kwargs)
-
-    def is_parented(self, other):
-        if self == other:
-            return True
-        p = self.parent
-        while p is not None:
-            if p == other:
-                return True
-            p = p.parent
-
-    def get_parents(self):
-        rv = []
-        p = self.parent
-        while p is not None:
-            rv.insert(p)
-            p = p.parent
-        return rv
 
 
 class ProjectRelated(model.Model):
@@ -619,20 +360,6 @@ class ProjectRelated(model.Model):
             yield p
 
 
-from lino.mixins.printable import (Printable, PrintableType,
-                                   CachedPrintable, TypedPrintable,
-                                   DirectPrintAction, CachedPrintAction)
-
-from lino.mixins.periods import DatePeriod
-from lino.mixins.polymorphic import Polymorphic
-from lino.mixins.uploadable import Uploadable
-
-from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-from lino.utils.mldbc.mixins import BabelNamed
-
-from lino.mixins import printable
-
-
 class Referrable(model.Model):
 
     """
@@ -663,184 +390,20 @@ class Referrable(model.Model):
         return super(Referrable, self).__unicode__() + " (" + self.ref + ")"
 
 
-class EmptyTableRow(VirtualRow, Printable):
 
-    """
-    Base class for virtual rows of an :class:`EmptyTable`.
-    An EmptyTableRow instance
-    """
+from lino.mixins.printable import (Printable, PrintableType,
+                                   CachedPrintable, TypedPrintable,
+                                   DirectPrintAction, CachedPrintAction)
 
-    pk = -99998
+from lino.mixins.duplicable import Duplicable, Duplicate
+from lino.mixins.sequenced import Sequenced, Hierarizable
+from lino.mixins.periods import DatePeriod
+from lino.mixins.polymorphic import Polymorphic
+from lino.mixins.uploadable import Uploadable
 
-    def __init__(self, table, **kw):
-        self._table = table
-        VirtualRow.__init__(self, **kw)
-
-    def __unicode__(self):
-        return unicode(self._table.label)
-
-    def get_print_language(self):
-        # same as Model.get_print_language
-        return settings.SITE.DEFAULT_LANGUAGE.django_code
-
-    def get_printable_context(self, **kw):
-        # same as Model.get_printable_context
-        kw = settings.SITE.get_printable_context(**kw)
-        kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
-        return kw
-
-    def get_template_groups(self):
-        return [self._table.app_label + '/' + self._table.__name__]
-
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-
-    def __getattr__(self, name):
-        """
-        Since there is only one EmptyTableRow class, we simulate a
-        getter here by manually creating an InstanceAction.
-        """
-        v = getattr(self._table, name)
-        if isinstance(v, actions.Action):
-            return actions.InstanceAction(v, self._table, self, None)
-        # 20130525 dd.Report calls `get_story` on `self`, not on the `cls`
-        if callable(v):
-            return curry(v, self)
-        #~ return v
-        #~ raise Exception("")
-        raise AttributeError(
-            "EmptyTableRow on %s has no action and no callable '%s'" % (self._table, name))
-
-
-class EmptyTable(frames.Frame):
-
-    #~ debug_permissions = True
-    #~ has_navigator = False
-    #~ hide_top_toolbar = True
-    hide_navigator = True
-    default_list_action_name = 'show'
-    default_elem_action_name = 'show'
-
-    do_print = DirectPrintAction()
-
-    @classmethod
-    def get_default_action(cls):
-        return actions.ShowEmptyTable()
-
-    @classmethod
-    def create_instance(self, ar, **kw):
-        if self.parameters:
-            kw.update(ar.param_values)
-
-        #~ for k,v in req.param_values.items():
-            #~ kw[k] = v
-        #~ for k,f in self.parameters.items():
-            #~ kw[k] = f.value_from_object(None)
-        obj = EmptyTableRow(self, **kw)
-        kw = ar.ah.store.row2dict(ar, obj)
-        obj._data = kw
-        obj.update(**kw)
-        return obj
-
-    @classmethod
-    def get_data_elem(self, name):
-        de = super(EmptyTable, self).get_data_elem(name)
-        if de is not None:
-            return de
-        a = name.split('.')
-        if len(a) == 2:
-            return getattr(getattr(settings.SITE.modules, a[0]), a[1])
-
-
-class Report(EmptyTable):
-
-    detail_layout = "body"
-
-    report_items = NotImplementedError
-
-    @classmethod
-    def get_story(cls, self, ar):
-        """Yield a sequence of story items. These can be (1)
-        ElementTree elements or (2) AbstractTable or (3) action
-        requests.
-
-        """
-        for A in cls.report_items:
-            yield E.h2(unicode(A.label))
-            if A.help_text:
-                yield E.p(unicode(A.help_text))
-            yield A
-
-    @fields.virtualfield(fields.HtmlBox())
-    def body(cls, self, ar):
-        elems = tuple(ar.story2html(
-            self.get_story(ar), master_instance=self))
-        return E.div(*elems)
-
-    @classmethod
-    def as_appy_pod_xml(cls, self, apr):
-        chunks = tuple(apr.story2odt(
-            self.get_story(apr.ar), master_instance=self))
-        return str('').join(chunks)  # must be utf8 encoded
-
-
-class YesNo(ChoiceList):
-    """
-    Used e.g. for table parameters. TODO: write usage example.
-    Änderung.
-
-
-    """
-    verbose_name_plural = _("Yes or no")
-add = YesNo.add_item
-add('y', _("Yes"), 'yes')
-add('n', _("No"), 'no')
-
-
-class Genders(ChoiceList):
-    verbose_name = _("Gender")
-
-add = Genders.add_item
-add('M', _("Male"), 'male')
-add('F', _("Female"), 'female')
-
-
-class PeriodEvent(Choice):
-
-    def add_filter(self, qs, obj):
-
-        if isinstance(obj, datetime.date):
-            obj = AttrDict(start_date=obj, end_date=obj)
-
-        if obj.start_date is None or obj.end_date is None:
-            return qs
-
-        if self.name == 'started':
-            qs = qs.filter(start_date__gte=obj.start_date)
-            qs = qs.filter(start_date__lte=obj.end_date)
-        elif self.name == 'ended':
-            qs = qs.filter(end_date__isnull=False)
-            qs = qs.filter(end_date__gte=obj.start_date)
-            qs = qs.filter(end_date__lte=obj.end_date)
-        elif self.name == 'active':
-            qs = qs.filter(models.Q(start_date__isnull=True) |
-                           models.Q(start_date__lte=obj.end_date))
-            qs = qs.filter(models.Q(end_date__isnull=True) |
-                           models.Q(end_date__gte=obj.start_date))
-        return qs
-
-
-class PeriodEvents(ChoiceList):
-    verbose_name = _("Observed event")
-    verbose_name_plural = _("Observed events")
-    item_class = PeriodEvent
-
-
-add = PeriodEvents.add_item
-add('10', _("Started"), 'started')
-add('20', _("Active"), 'active')
-add('30', _("Ended"), 'ended')
-
+from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+from lino.utils.mldbc.mixins import BabelNamed
 
 from lino.mixins.human import Human, Born
+
+# from lino.core.report import Report

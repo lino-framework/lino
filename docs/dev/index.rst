@@ -29,6 +29,7 @@ Getting acquaintained
 
    /tutorials/tables/index
    menu
+   choicelists
    /tutorials/layouts
    /tutorials/vtables/index
    /tutorials/actions/index
@@ -109,5 +110,4 @@ Other
    /tested/index
    git
    /ref/index
-
-
+   /tickets/index

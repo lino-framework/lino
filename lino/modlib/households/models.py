@@ -317,7 +317,7 @@ class SiblingsByPerson(Members):
                 ar.master_household = mbr[0].household
             else:
                 mbr = M.objects.filter(person=mi)
-                mbr = mixins.PeriodEvents.active.add_filter(mbr, dd.today())
+                mbr = dd.PeriodEvents.active.add_filter(mbr, dd.today())
                 if mbr.count() == 1:
                     ar.master_household = mbr[0].household
                 else:

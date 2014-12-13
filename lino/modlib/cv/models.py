@@ -222,7 +222,6 @@ class StudyTypes(dd.Table):
     order_by = ["name"]
     detail_layout = """
     name education_level id
-    isip.ContractsByStudyType
     cv.StudiesByType
     """
 

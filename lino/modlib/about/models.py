@@ -20,16 +20,13 @@ from django.db import models
 from django.conf import settings
 
 
+from lino.core.report import EmptyTable
 from lino.utils import AttrDict
-from lino.utils.xmlgen import html as xghtml
 
 from lino.utils.code import codetime, codefiles, SourceFile
-from lino import mixins
-from lino import dd, rt
+from lino.utils.xmlgen.html import E
 
-
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from lino import dd
 
 
 class Models(dd.VirtualTable):
@@ -239,7 +236,7 @@ class Inspector(dd.VirtualTable):
     #~ """
 
 
-class About(mixins.EmptyTable):
+class About(EmptyTable):
 
     """
     A modal window displaying information about this server.

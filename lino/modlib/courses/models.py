@@ -533,7 +533,7 @@ class Courses(dd.Table):
             settings.SITE.user_model,
             blank=True, null=True),
         state=CourseStates.field(blank=True),
-        active=mixins.YesNo.field(blank=True),
+        active=dd.YesNo.field(blank=True),
     )
     params_layout = """topic line city teacher user state active:10"""
 
@@ -558,9 +558,9 @@ class Courses(dd.Table):
             qs = qs.filter(flt)
         flt = Q(enrolments_until__isnull=True) | \
               Q(enrolments_until__gte=dd.today())
-        if ar.param_values.active == mixins.YesNo.yes:
+        if ar.param_values.active == dd.YesNo.yes:
             qs = qs.filter(flt)
-        elif ar.param_values.active == mixins.YesNo.no:
+        elif ar.param_values.active == dd.YesNo.no:
             qs = qs.exclude(flt)
         # logger.info("20140820 %s", dd.today())
         return qs
@@ -605,7 +605,7 @@ class CoursesByLine(Courses):
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.registered)
-        kw.update(active=mixins.YesNo.yes)
+        kw.update(active=dd.YesNo.yes)
         return kw
 
 
@@ -637,7 +637,7 @@ class DraftCourses(Courses):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.draft)
         kw.update(user=ar.get_user())
-        # kw.update(active=mixins.YesNo.yes)
+        # kw.update(active=dd.YesNo.yes)
         return kw
 
 
@@ -653,7 +653,7 @@ class ActiveCourses(Courses):
     def param_defaults(self, ar, **kw):
         kw = super(Courses, self).param_defaults(ar, **kw)
         kw.update(state=CourseStates.registered)
-        kw.update(active=mixins.YesNo.yes)
+        kw.update(active=dd.YesNo.yes)
         return kw
 
 if False:
@@ -1084,7 +1084,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
-        # kw.update(active=mixins.YesNo.yes)
+        # kw.update(active=dd.YesNo.yes)
         pupil = ar.master_instance
         if pupil and pupil.city:
             kw.update(city=pupil.city)

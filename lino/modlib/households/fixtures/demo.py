@@ -28,9 +28,9 @@ def objects():
     Person = resolve_model(dd.apps.households.person_model)
     Type = resolve_model('households.Type')
 
-    MEN = Cycler(Person.objects.filter(gender=mixins.Genders.male)
+    MEN = Cycler(Person.objects.filter(gender=dd.Genders.male)
                  .order_by('-id'))
-    WOMEN = Cycler(Person.objects.filter(gender=mixins.Genders.female)
+    WOMEN = Cycler(Person.objects.filter(gender=dd.Genders.female)
                    .order_by('-id'))
     TYPES = Cycler(Type.objects.all())
 

@@ -7,6 +7,14 @@ This app should usually be installed in every Lino application.
 But there are exceptions, e.g. :ref:`lino.tutorial.polls`
 or :doc:`/tutorials/de_BE/index` don't.
 
+.. autosummary::
+   :toctree:
+
+   models
+   mixins
+   tests
+
+
 """
 
 from lino import ad

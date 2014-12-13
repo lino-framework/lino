@@ -1,0 +1,7 @@
+===========================
+Saturday, December 13, 2014
+===========================
+
+I continued to work in the documentation. And there are again classes
+moving around.  So I recommend to use the latest development version
+until the next release.

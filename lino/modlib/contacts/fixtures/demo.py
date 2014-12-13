@@ -74,72 +74,72 @@ def objects():
     eupen = Place.objects.get(name__exact='Eupen')
     person = Instantiator("contacts.Person", "first_name last_name",
                           country='BE', city=eupen, zip_code='4700').build
-    yield person('Andreas',  'Arens', gender=mixins.Genders.male)
-    yield person('Annette',  'Arens', gender=mixins.Genders.female)
-    yield person('Hans',     'Altenberg', gender=mixins.Genders.male)
-    yield person('Alfons',   'Ausdemwald', gender=mixins.Genders.male)
-    yield person('Laurent',  'Bastiaensen', gender=mixins.Genders.male)
-    yield person('Charlotte', 'Collard', gender=mixins.Genders.female)
-    yield person('Ulrike',   'Charlier', gender=mixins.Genders.female)
-    yield person('Marc',  'Chantraine', gender=mixins.Genders.male)
-    yield person('Daniel',   'Dericum', gender=mixins.Genders.male)
-    yield person('Dorothée', 'Demeulenaere', gender=mixins.Genders.female)
+    yield person('Andreas',  'Arens', gender=dd.Genders.male)
+    yield person('Annette',  'Arens', gender=dd.Genders.female)
+    yield person('Hans',     'Altenberg', gender=dd.Genders.male)
+    yield person('Alfons',   'Ausdemwald', gender=dd.Genders.male)
+    yield person('Laurent',  'Bastiaensen', gender=dd.Genders.male)
+    yield person('Charlotte', 'Collard', gender=dd.Genders.female)
+    yield person('Ulrike',   'Charlier', gender=dd.Genders.female)
+    yield person('Marc',  'Chantraine', gender=dd.Genders.male)
+    yield person('Daniel',   'Dericum', gender=dd.Genders.male)
+    yield person('Dorothée', 'Demeulenaere', gender=dd.Genders.female)
     yield person('Dorothée', 'Dobbelstein-Demeulenaere',
-                 gender=mixins.Genders.female)
-    yield person('Dorothée', 'Dobbelstein', gender=mixins.Genders.female)
-    yield person('Berta',    'Ernst', gender=mixins.Genders.female)
-    yield person('Bernd',    'Evertz', gender=mixins.Genders.male)
-    yield person('Eberhart', 'Evers', gender=mixins.Genders.male)
-    yield person('Daniel',   'Emonts', gender=mixins.Genders.male)
-    yield person('Edgar',    'Engels', gender=mixins.Genders.male)
-    yield person('Luc',      'Faymonville', gender=mixins.Genders.male)
-    yield person('Germaine', 'Gernegroß', gender=mixins.Genders.female)
-    yield person('Gregory',  'Groteclaes', gender=mixins.Genders.male)
-    yield person('Hildegard', 'Hilgers', gender=mixins.Genders.female)
-    yield person('Henri',    'Hilgers', gender=mixins.Genders.male)
-    yield person('Irene',    'Ingels', gender=mixins.Genders.female)
-    yield person('Jérémy',   'Jansen', gender=mixins.Genders.male)
-    yield person('Jacqueline', 'Jacobs', gender=mixins.Genders.female)
-    yield person('Johann', 'Johnen', gender=mixins.Genders.male)
-    yield person('Josef', 'Jonas', gender=mixins.Genders.male)
-    yield person('Jan',   'Jousten', gender=mixins.Genders.male)
-    yield person('Karl',  'Kaivers', gender=mixins.Genders.male)
-    yield person('Guido', 'Lambertz', gender=mixins.Genders.male)
-    yield person('Laura', 'Laschet', gender=mixins.Genders.female)
-    yield person('Line', 'Lazarus', gender=mixins.Genders.female)
-    yield person('Josefine', 'Leffin', gender=mixins.Genders.female)
-    yield person('Marc', 'Malmendier', gender=mixins.Genders.male)
-    yield person('Melissa', 'Meessen', gender=mixins.Genders.female)
-    yield person('Michael', 'Mießen', gender=mixins.Genders.male)
-    yield person('Marie-Louise', 'Meier', gender=mixins.Genders.female)
+                 gender=dd.Genders.female)
+    yield person('Dorothée', 'Dobbelstein', gender=dd.Genders.female)
+    yield person('Berta',    'Ernst', gender=dd.Genders.female)
+    yield person('Bernd',    'Evertz', gender=dd.Genders.male)
+    yield person('Eberhart', 'Evers', gender=dd.Genders.male)
+    yield person('Daniel',   'Emonts', gender=dd.Genders.male)
+    yield person('Edgar',    'Engels', gender=dd.Genders.male)
+    yield person('Luc',      'Faymonville', gender=dd.Genders.male)
+    yield person('Germaine', 'Gernegroß', gender=dd.Genders.female)
+    yield person('Gregory',  'Groteclaes', gender=dd.Genders.male)
+    yield person('Hildegard', 'Hilgers', gender=dd.Genders.female)
+    yield person('Henri',    'Hilgers', gender=dd.Genders.male)
+    yield person('Irene',    'Ingels', gender=dd.Genders.female)
+    yield person('Jérémy',   'Jansen', gender=dd.Genders.male)
+    yield person('Jacqueline', 'Jacobs', gender=dd.Genders.female)
+    yield person('Johann', 'Johnen', gender=dd.Genders.male)
+    yield person('Josef', 'Jonas', gender=dd.Genders.male)
+    yield person('Jan',   'Jousten', gender=dd.Genders.male)
+    yield person('Karl',  'Kaivers', gender=dd.Genders.male)
+    yield person('Guido', 'Lambertz', gender=dd.Genders.male)
+    yield person('Laura', 'Laschet', gender=dd.Genders.female)
+    yield person('Line', 'Lazarus', gender=dd.Genders.female)
+    yield person('Josefine', 'Leffin', gender=dd.Genders.female)
+    yield person('Marc', 'Malmendier', gender=dd.Genders.male)
+    yield person('Melissa', 'Meessen', gender=dd.Genders.female)
+    yield person('Michael', 'Mießen', gender=dd.Genders.male)
+    yield person('Marie-Louise', 'Meier', gender=dd.Genders.female)
 
     raeren = Place.objects.get(name__exact='Raeren')
     person = Instantiator(
         "contacts.Person", "first_name last_name",
         country='BE', language=settings.SITE.DEFAULT_LANGUAGE.django_code,
         city=raeren, zip_code='4730').build
-    yield person('Erich',    'Emonts', gender=mixins.Genders.male)
-    yield person('Erwin',    'Emontspool', gender=mixins.Genders.male)
-    yield person('Erna',     'Emonts-Gast', gender=mixins.Genders.female)
-    yield person('Alfons',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Berta',     'Radermacher', gender=mixins.Genders.female)
-    yield person('Christian',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Daniela',     'Radermacher', gender=mixins.Genders.female)
-    yield person('Edgard',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Fritz',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Guido',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Hans',     'Radermacher', gender=mixins.Genders.male)
-    yield person('Hedi',     'Radermacher', gender=mixins.Genders.female)
-    yield person('Inge',     'Radermacher', gender=mixins.Genders.female)
-    yield person('Jean',     'Radermacher', gender=mixins.Genders.male)
+    yield person('Erich',    'Emonts', gender=dd.Genders.male)
+    yield person('Erwin',    'Emontspool', gender=dd.Genders.male)
+    yield person('Erna',     'Emonts-Gast', gender=dd.Genders.female)
+    yield person('Alfons',     'Radermacher', gender=dd.Genders.male)
+    yield person('Berta',     'Radermacher', gender=dd.Genders.female)
+    yield person('Christian',     'Radermacher', gender=dd.Genders.male)
+    yield person('Daniela',     'Radermacher', gender=dd.Genders.female)
+    yield person('Edgard',     'Radermacher', gender=dd.Genders.male)
+    yield person('Fritz',     'Radermacher', gender=dd.Genders.male)
+    yield person('Guido',     'Radermacher', gender=dd.Genders.male)
+    yield person('Hans',     'Radermacher', gender=dd.Genders.male)
+    yield person('Hedi',     'Radermacher', gender=dd.Genders.female)
+    yield person('Inge',     'Radermacher', gender=dd.Genders.female)
+    yield person('Jean',     'Radermacher', gender=dd.Genders.male)
 
     # special challenges for alphabetic ordering
-    yield person('Didier',  'di Rupo', gender=mixins.Genders.male)
-    yield person('David',   'da Vinci', gender=mixins.Genders.male)
-    yield person('Vincent', 'van Veen', gender=mixins.Genders.male)
-    yield person('Õie',     'Õunapuu', gender=mixins.Genders.female)
-    yield person('Otto',   'Östges', gender=mixins.Genders.male)
-    yield person('Erna',   'Ärgerlich', gender=mixins.Genders.female)
+    yield person('Didier',  'di Rupo', gender=dd.Genders.male)
+    yield person('David',   'da Vinci', gender=dd.Genders.male)
+    yield person('Vincent', 'van Veen', gender=dd.Genders.male)
+    yield person('Õie',     'Õunapuu', gender=dd.Genders.female)
+    yield person('Otto',   'Östges', gender=dd.Genders.male)
+    yield person('Erna',   'Ärgerlich', gender=dd.Genders.female)
 
     person = Instantiator("contacts.Person", country='BE',
                           city=Place.objects.get(name__exact='Angleur')).build
@@ -150,29 +150,29 @@ def objects():
                           city=Place.objects.get(
                               name__exact='Amsterdam')).build
     yield person(first_name='Mark', last_name='Martelaer',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Rik', last_name='Radermecker',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Marie-Louise', last_name='Vandenmeulenbos',
-                 gender=mixins.Genders.female)
+                 gender=dd.Genders.female)
 
     person = Instantiator("contacts.Person", country='DE').build
     yield person(first_name='Emil', last_name='Eierschal',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Lisa', last_name='Lahm',
-                 gender=mixins.Genders.female)
+                 gender=dd.Genders.female)
     yield person(first_name='Bernd', last_name='Brecht',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Karl', last_name='Keller',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
 
     person = Instantiator("contacts.Person", country='FR').build
     yield person(first_name='Robin', last_name='Dubois',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Denis', last_name='Denon',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
     yield person(first_name='Jérôme', last_name='Jeanémart',
-                 gender=mixins.Genders.male)
+                 gender=dd.Genders.male)
 
     s = u"""\
 Aachener Straße
