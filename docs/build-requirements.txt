@@ -1,11 +1,8 @@
 Babel
-North==0.1.6
-atelier==0.0.2
+atelier
 lino
-lino-welfare
-djangosite==0.1.7
-Django==1.5.1
-Fabric==1.6.0
+Django==1.6.8
+Fabric
 Jinja2==2.6
 PIL==1.1.7
 PyYAML==3.10
