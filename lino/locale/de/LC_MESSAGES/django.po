@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-12-12 07:20+0200\n"
-"PO-Revision-Date: 2014-12-12 07:25+0300\n"
+"PO-Revision-Date: 2014-12-13 07:08+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3282,7 +3282,7 @@ msgstr "Ausbildungsart"
 
 #: lino/modlib/cv/models.py:103
 msgid "Training Types"
-msgstr "Lehrenarten"
+msgstr "Ausbildungsarten"
 
 #: lino/modlib/cv/models.py:123
 msgid "Establishment"
