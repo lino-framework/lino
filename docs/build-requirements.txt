@@ -1,6 +1,5 @@
 Babel
 atelier
-lino
 Django==1.6.7
 Fabric
 Jinja2==2.6
