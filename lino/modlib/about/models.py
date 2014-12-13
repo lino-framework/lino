@@ -20,7 +20,7 @@ from django.db import models
 from django.conf import settings
 
 
-from lino.core.report import EmptyTable
+from lino.utils.report import EmptyTable
 from lino.utils import AttrDict
 
 from lino.utils.code import codetime, codefiles, SourceFile

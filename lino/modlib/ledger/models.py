@@ -16,7 +16,7 @@ from django.conf import settings
 
 from lino import dd, rt, mixins
 from django.utils.translation import ugettext_lazy as _
-from lino.core.report import Report
+from lino.utils.report import Report
 from lino.modlib.ledger.utils import FiscalYears
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
