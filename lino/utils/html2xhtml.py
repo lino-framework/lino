@@ -94,8 +94,11 @@ try:
         return document.strip()
 
 
-except ImportError:
-    raise
+except OSError:
+    # happens on on readthedocs.org:
+    # OSError: Could not load libtidy using any of these names: libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,libtidy.dylib,tidy
+    # we can simply ignore it since it is just for building the docs.
+    
     from mytidylib import html2xhtml
     #  TODO: emulate it well enough so that at least the test suite passes
 
