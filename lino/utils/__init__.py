@@ -31,6 +31,7 @@ This is a tested document. To test it, run::
     html2odf
     html2text
     html2xhtml
+    mytidylib
     htmlgen
     instantiator
     jscompressor
