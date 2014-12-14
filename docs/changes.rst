@@ -58,10 +58,19 @@ regressions.
 
 
 
+Version 1.6.16 (released 2014-12-14)
+====================================
 
+- Minor release because new module :mod:`lino.hello` is referred on
+  :doc:`/dev/install`.
 
-Version 1.6.14 (not yet released)
-=================================
+- :doc:`/dev/install` is getting better. I am working on it for
+  :ticket:`40`.
+
+Version 1.6.15 (released 2014-12-12)
+====================================
+
+- Integrated :ref:`north` and :ref:`site` into Lino.
 
 - A "plugin" is an app which defines in
   her `__init__.py` a class named "Plugin" which must be a subclass of
