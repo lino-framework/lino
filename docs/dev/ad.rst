@@ -158,11 +158,6 @@ The ``Site`` class
     Read-only.
     The leaf name of your local project directory.
 
-  .. attribute:: verbose_name
-
-    Used as display name to end-users at different places.
-
-
   .. attribute:: hidden_apps
 
     No longer used. Replaced by :meth:`get_apps_modifiers`.
@@ -836,15 +831,9 @@ The ``Site`` class
     :mod:`lino.modlib.countries`.
 
 
-
-  .. method:: welcome_text()
-
-    Text to display in a console window when this Site starts.
-
   .. method:: using_text()
 
     Text to display in a console window when Lino starts.
-
 
   .. method:: get_used_libs(html=None)
 

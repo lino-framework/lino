@@ -64,7 +64,7 @@ pillow.
    rt
    ml/index
    
-   /api/index
+   api/index
 
 
 Special topics

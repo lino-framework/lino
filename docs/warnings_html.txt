@@ -1,3 +1,8 @@
 /home/luc/hgwork/lino/docs/belref/index.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/polly/index.rst:: WARNING: document isn't included in any toctree
 /home/luc/hgwork/lino/docs/presto/index.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/lino/core/site_def.py:docstring of lino.core.site_def.Site:22: WARNING: unknown document: /usage
+/home/luc/hgwork/lino/lino/core/site_def.py:docstring of lino.core.site_def.Site:23: WARNING: unknown document: /settings
+/home/luc/hgwork/lino/lino/core/site_def.py:docstring of lino.core.site_def.Site.run_djangosite_local:1: WARNING: unknown document: /djangosite_local
+/home/luc/hgwork/lino/lino/core/site_def.py:docstring of lino.core.site_def.Site.update_settings:1: WARNING: unknown document: /djangosite_local
+/home/luc/hgwork/lino/lino/core/site_def.py:docstring of lino.core.site_def.Site.webdav_url:7: WARNING: term not in glossary: runserver

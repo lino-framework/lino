@@ -97,7 +97,11 @@ class Site(object):
     """
 
     the_demo_date = None
+
     verbose_name = "yet another Lino site"
+    """
+    Used as display name to end-users at different places.
+    """
 
     version = None
     "The version number."
@@ -835,7 +839,10 @@ class Site(object):
         return self.the_demo_date or datetime.date.today()
 
     def welcome_text(self):
-        "See :meth:`ad.Site.welcome_text`."
+        """Returns the text to display in a console window when this Site
+        starts.
+
+        """
         return "This is %s using %s." % (
             self.site_version(), self.using_text())
 
