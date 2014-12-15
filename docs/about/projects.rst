@@ -7,14 +7,10 @@ Ready-to-use Lino applications
 Included with Lino
 ------------------
 
-The following Lino applications are included with Lino:
+Lino comes with a collection of example applications used by the test
+suite and for learning:
 
-.. toctree::
-    :maxdepth: 1
-    
-    /polly/index
-    /belref/index
-    /presto/index
+- :mod:`lino.projects`
 
 
 Separate projects

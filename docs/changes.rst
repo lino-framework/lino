@@ -61,8 +61,12 @@ regressions.
 Version 1.6.16 (released 2014-12-14)
 ====================================
 
-- Minor release because new module :mod:`lino.hello` is referred on
-  :doc:`/dev/install`.
+A minor release because 
+
+- New module :mod:`lino.hello`.
+
+- Some classes changed their place while working on it for
+  :ticket:`39`
 
 - :doc:`/dev/install` is getting better. I am working on it for
   :ticket:`40`.

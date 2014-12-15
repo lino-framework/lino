@@ -2,9 +2,22 @@
 # Copyright 2002-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The ``lino`` module can be imported even from a Django :xfile:`settings.py`
-file since it does not import any django module.
+"""This is the main module of the Lino framework.
+
+.. autosummary::
+   :toctree:
+
+   core
+   hello
+   ad
+   dd
+   utils
+   ui
+   mixins
+   projects
+   modlib
+   management.commands
+
 
 """
 

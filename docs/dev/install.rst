@@ -10,8 +10,11 @@ Installing Lino (for developers)
 .. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
 
-This document describes how to install Lino.
-
+This document describes how to install Lino.  It is meant for people
+who plan to write their own Lino application.  Alternativaly you might
+prefer to install one of the existing Lino applications, e.g.  `Lino
+Così <http://cosi.lino-framework.org/install/index.html>`__ of `Lino
+Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 
 Preliminaries
 -------------
@@ -45,7 +48,8 @@ That said, installing Lino is easy:
 
 This might take some time since it will install all dependencies.
 
-If you want to see which version you have, you can always say "hello" to Lino:
+If you want to see which version you have, you can always say "hello"
+to Lino:
 
 .. code-block:: bash
 
@@ -54,18 +58,16 @@ If you want to see which version you have, you can always say "hello" to Lino:
     Babel 1.3, Jinja 2.7.2, Sphinx 1.3a0, python-dateutil 2.1, OdfPy ODFPY/0.9.6, 
     docutils 0.11, suds 0.4, PyYaml 3.10, Appy 0.9.0 (2014/06/23 22:15).
 
-If you can now continue here:
-
-- :ref:`lino.tutorial.hello`
-- :ref:`Lino Polls tutorial <lino.tutorial.polls>` 
+The above launches Python with the `-m` switch which basically
+instructs it to just import the specified the :mod:`lino.hello` module.
 
 
 Using the development version
 -----------------------------
 
-But if you want to use Lino's newest features before they get
-officially released on PyPI, or if you possibly want to contribute to
-the project.
+You should install the development version if you want to use Lino's
+newest features before they get officially released on PyPI, or if you
+possibly want to contribute to the project.
 
 
 
@@ -134,17 +136,9 @@ And here we go for the test suite itself::
     $ cd ~/repositories/lino
     $ fab test
 
-  The :cmd:`fab test` command simply runs the test suite, it is a short
-  for ``python setup.py test``
+The :cmd:`fab test` command simply runs the test suite, it is a short
+for ``python setup.py test``
 
+Congratulations if you got the test suite to pass. 
 
-Where to go from here 
----------------------
-
-Congratulations if you got the test suite to pass. Here are some more
-*suggestions du chef* for getting acquaintaned with Lino:
-
-- Install one or several of the out-of-the-box Lino
-  applications: :ref:`cosi`, :ref:`faggio`, :ref:`welfare` or
-  :ref:`logos`
 

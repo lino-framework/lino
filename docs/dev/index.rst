@@ -44,6 +44,10 @@ Getting acquaintained
 Reference
 =========
 
+Lino application developers should keep this document under their
+pillow.
+
+
 .. toctree::
    :maxdepth: 1
 
@@ -55,7 +59,12 @@ Reference
    actions
    mixins
 
-   api
+   ad
+   dd
+   rt
+   ml/index
+   
+   /api/index
 
 
 Special topics
@@ -106,7 +115,6 @@ Other
 
    /changes
    /todo
-   /api
    /tested/index
    git
    /ref/index

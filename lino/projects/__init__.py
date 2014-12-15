@@ -1,5 +1,6 @@
 """This package contains example applications included with Lino.
 
+See also :doc:`/tutorials/hello` which explains how to try them out.
 
 Examples with their own documentation entry:
 
@@ -12,6 +13,8 @@ Examples with their own documentation entry:
 
 Poorly documented examples at different development states:
 
+- :mod:`lino.projects.min1`
+- :mod:`lino.projects.min2`
 - :mod:`lino.projects.cms` ---
   :doc:`/tickets/66`
 - :mod:`lino.projects.crl`
@@ -19,8 +22,6 @@ Poorly documented examples at different development states:
   See :blogref:`20140203`
 - :mod:`lino.projects.homeworkschool`
 - :mod:`lino.projects.igen`
-- :mod:`lino.projects.min1`
-- :mod:`lino.projects.min2`
 - :mod:`lino.projects.start`
 
 Examples covered by a tutorial:
@@ -33,8 +34,8 @@ Examples covered by a tutorial:
 
 Technical
 
-- :mod:`lino.projects.docs` -- A fictive application needed to make
-  autodoc happy when generating the API documentation for :mod:`lino`.
+- :mod:`lino.projects.docs` -- A fictive application needed to satisfy
+  autodoc when generating the API documentation for :mod:`lino`.
 
 - :mod:`lino.projects.std` --
   The parent of every Lino application.

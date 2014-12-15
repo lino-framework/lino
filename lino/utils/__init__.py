@@ -27,6 +27,7 @@ This is a tested document. To test it, run::
     dataserializer
     dbfreader
     dblogger
+    dpy
     editing
     html2odf
     html2text

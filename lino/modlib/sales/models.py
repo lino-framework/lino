@@ -353,14 +353,14 @@ class Invoices(SalesDocuments):
         state=InvoiceStates.field(blank=True),
         journal=ledger.JournalRef(blank=True))
     model = 'sales.Invoice'
-    order_by = ["id"]
+    order_by = ["-id"]
     column_names = "id date partner total_incl user *"
     detail_layout = InvoiceDetail()
     insert_layout = dd.FormLayout("""
     partner date
     subject
     """, window_size=(40, 'auto'))
-    start_at_bottom = True
+    # start_at_bottom = True
 
     @classmethod
     def get_request_queryset(cls, ar):
@@ -382,10 +382,10 @@ class Invoices(SalesDocuments):
 
 
 class InvoicesByJournal(Invoices):
-    order_by = ["number"]
+    order_by = ["-date", '-id']
     master_key = 'journal'  # see django issue 10808
     params_panel_hidden = True
-    start_at_bottom = True
+    # start_at_bottom = True
     #master = journals.Journal
     column_names = "number date due_date " \
         "partner " \
@@ -437,7 +437,7 @@ class DocumentsToSign(Invoices):
 
 class InvoicesByPartner(Invoices):
     #~ model = 'sales.Invoice'
-    order_by = ["date"]
+    order_by = ["-date", '-id']
     master_key = 'partner'
     column_names = "date total_incl total_base total_vat *"
 

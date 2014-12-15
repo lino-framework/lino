@@ -446,9 +446,9 @@ class Vouchers(dd.Table):
 
 #~ class VouchersByJournal(dd.Table):
 class ByJournal(dd.Table):
-    order_by = ["number"]
+    order_by = ["-number"]
     master_key = 'journal'  # see django issue 10808
-    start_at_bottom = True
+    # start_at_bottom = True
 
     @classmethod
     def get_title_base(self, ar):
@@ -461,7 +461,7 @@ class ByJournal(dd.Table):
 
 class VouchersByPartner(dd.VirtualTable):
     label = _("VAT vouchers")
-    order_by = ["-date"]
+    order_by = ["-date", '-id']
     master = 'contacts.Partner'
     column_names = "date voucher total_incl total_base total_vat"
 
@@ -984,7 +984,7 @@ class InvoiceDetail(dd.FormLayout):
 
 class Invoices(dd.Table):
     model = 'ledger.AccountInvoice'
-    order_by = ["date", "id"]
+    order_by = ["-id"]
     column_names = "date id number partner total_incl user *"
     parameters = dict(
         pyear=FiscalYears.field(blank=True),
@@ -996,7 +996,7 @@ class Invoices(dd.Table):
     journal partner
     date total_incl
     """
-    start_at_bottom = True
+    # start_at_bottom = True
 
     @classmethod
     def get_request_queryset(cls, ar):

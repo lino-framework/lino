@@ -61,18 +61,21 @@ The :manage:`initdb` command performs three actions in one:
 - and finally runs Django's `loaddata` command to load 
   the specified fixtures.
 
-Removing all existing tables
-may sound dangerous, but that's what we want when we have a 
-:doc:`Python dump </topics/dpy>` to restore our database.
-Keep in mind that you should rather not let 
-Lino and some other application share the same database.
-
 So the above line is roughly equivalent to::
 
   $ python manage.py flush
   $ python manage.py syncdb
   $ python manage.py loaddata std all_countries few_cities all_languages props demo 
   
+Removing all existing tables may sound dangerous, but that's what we
+want when we want to "just have a look at this application", or when
+are developing a prototype and just made some changes to the database
+structure.  We assume that nobody will ever let a Lino application and
+some other application share the same database.
+
+Playing with the fixture files
+------------------------------
+
 Have a look at the following fixture files
 
 - :srcref:`few_countries </lino/modlib/countries/fixtures/few_countries.py>`
