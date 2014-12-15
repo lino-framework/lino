@@ -1,5 +1,4 @@
 """
-.. toctree::
 
 .. autosummary::
    :toctree:
@@ -21,8 +20,10 @@
     merge
     model
     perms
+    plugin
     requests
     signals
+    site_def
     tables
     web
     workflows

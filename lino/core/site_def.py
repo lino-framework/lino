@@ -69,7 +69,18 @@ class NOT_PROVIDED:
 
 
 class Site(object):
-    """This is the base for every Lino Site.
+    """The base class for a Lino application.  Your :setting:`SITE`
+    setting is expected to contain an instance of a subclass of this.
+
+    Note that we call it :class:`Site` class (and a :setting:`SITE`
+    setting) rather than ``Application`` class (and e.g.
+    ``APPLICATION``) setting because of the vocabulary problem
+    described in :doc:`/dev/application`.
+
+
+    This class is designed to be overridden by the application
+    developer and/or the local site administrator.
+
 
     Instantiating this class in a :xfile:`settings.py` file will
     automatically set default values for Django's
@@ -82,13 +93,28 @@ class Site(object):
     - :doc:`/usage`
     - :doc:`/settings`
     - :ref:`application`
+
     """
 
     the_demo_date = None
     verbose_name = "yet another Lino site"
+
     version = None
+    "The version number."
+
     url = None
+    """
+    The URL of the website that describes this application.
+    Used e.g. in a :menuselection:`Site --> About` dialog bix.
+    """
+
     make_missing_dirs = True
+    """
+    Set this to `False` if you don't want this Site to automatically
+    create missing directories when needed (but to raise an exception
+    in these cases, asking you to create it yourself)
+
+    """
     userdocs_prefix = ''
     project_name = None
     project_dir = None
@@ -543,7 +569,35 @@ class Site(object):
         return rv
 
     def get_apps_modifiers(self, **kw):
-        "See :meth:`dd.Site.get_apps_modifiers`."
+        """This will be called during Site instantiation (i.e. may not import
+        any Django modules) and is expected to return a dict of
+        `app_label` to `full_python_path` mappings. The default
+        returns an empty dict.
+
+        These mappings will be applied to the apps returned by
+        :meth:`get_installed_apps`.
+
+        Mapping an app_label to `None` will remove (not install) that
+        app from your Site.
+
+        You can use this to override or hide individual apps without
+        changing their order. Example::
+
+            def get_apps_modifiers(self, **kw):
+                kw.update(debts=None)
+                kw.update(courses='lino.modlib.courses')
+                kw.update(pcsw='lino_welfare.settings.chatelet.pcsw')
+                return kw
+
+        It is theoretically possible but not recommended to replace an
+        existing `app_label` by an app with a different
+        `app_label`. For example, the following might work but is not
+        recommended::
+
+                kw.update(courses='my.modlib.mycourses')
+
+        """
+
         return kw
 
     def load_plugins(self):
@@ -1716,12 +1770,29 @@ class Site(object):
         return web.render_from_request(request, 'admin_main.html')
 
     def get_welcome_messages(self, ar):
+        """
+        Yields a list of "welcome messages" (see
+        :meth:`lino.core.actors.Actor.get_welcome_messages`) of all
+        actors.  This is being called from :xfile:`admin_main.html`.
+        """
+
         for a in self._welcome_actors:
             for msg in a.get_welcome_messages(ar):
                 yield msg
 
     def get_installed_apps(self):
-        "See :meth:`dd.Site.get_installed_apps`."
+        """
+        Yield the list of apps to be installed on this site.  This will be
+        stored to :setting:`INSTALLED_APPS` when the Site instantiates.  
+
+        Each item must be either a string (unicode being converted to str)
+        or a *generator* which will be iterated recursively (again
+        expecting either strings or generators of strings).
+
+        Note also the :meth:`get_apps_modifiers` method which will be
+        applied to the result of :meth:`get_installed_apps`.
+
+        """
 
         if self.user_model is not None and self.remote_user_header is None:
             yield 'django.contrib.sessions'  # 20121103

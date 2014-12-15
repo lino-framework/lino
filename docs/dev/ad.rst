@@ -43,22 +43,6 @@ The ``Site`` class
 
 .. class:: Site(settings_globals, user_apps=[], **kwargs)
 
-  Base class for the Site instance to be stored in :setting:`SITE`.
-
-  This may be overridden by the application developer and/or the local
-  site administrator.
-
-  The :class:`Site` class is what you are going to instantiate and store
-  in your :setting:`SITE` setting.
-
-  .. attribute:: needs_plugins
-
-    A list of names of apps that this app depends on.
-    Lino will automatically add these to your
-    `INSTALLED_APPS` if necessary.
-    Note that Lino will add them *after* your app.
-    To have them *before* your app, specify them explicitly.
-
 
   .. attribute:: confdirs
 
@@ -174,75 +158,14 @@ The ``Site`` class
     Read-only.
     The leaf name of your local project directory.
 
-  .. attribute:: url
-
-      The URL of the website that describes this application.
-      Used e.g. in a :menuselection:`Site --> About` dialog bix.
-
-  .. attribute:: version
-
-    The version number.
-
   .. attribute:: verbose_name
 
     Used as display name to end-users at different places.
 
 
-  .. attribute:: make_missing_dirs
-
-    Set this to `False` if you don't want this Site to automatically
-    create missing directories when needed (but to raise an exception
-    in these cases, asking you to create it yourself)
-
-
-  .. method:: get_welcome_messages()
-
-    Yields a list of "welcome messages" (see
-    :meth:`dd.Actor.get_welcome_messages`) of all actors.  This is
-    being called from :xfile:`admin_main.html`.
-
-  .. method:: get_installed_apps()
-
-    Yield the list of apps to be installed on this site.  This will be
-    stored to :setting:`INSTALLED_APPS` when the Site instantiates.  
-
-    Each item must be either a string (unicode being converted to str)
-    or a *generator* which will be iterated recursively (again
-    expecting either strings or generators of strings).
-
-    Note also the :meth:`get_apps_modifiers` method which will be
-    applied to the result of :meth:`get_installed_apps`.
-
   .. attribute:: hidden_apps
 
     No longer used. Replaced by :meth:`get_apps_modifiers`.
-
-  .. method:: get_apps_modifiers(**kw)
-
-    This will be called during Site instantiation (i.e. may not import any
-    Django modules) and is expected to return a dict of `app_label` to
-    `full_python_path` mappings. The default returns an empty dict.
-
-    These mappings will be applied to the apps returned by
-    :meth:`get_installed_apps`. 
-
-    Mapping an app_label to `None` will remove (not install) that app from
-    your Site.
-
-    You can use this to override or hide individual apps without changing
-    their order. Example::
-
-        def get_apps_modifiers(self, **kw):
-            kw.update(debts=None)
-            kw.update(courses='lino.modlib.courses')
-            kw.update(pcsw='lino_welfare.settings.chatelet.pcsw')
-            return kw
-
-    It is theoretically possible but not recommended to replace an
-    existing `app_label` by an app with a different `app_label`. For
-    example, the following might work but is not recommended::
-
-            kw.update(courses='my.modlib.mycourses')
 
   .. attribute:: override_modlib_models
 
@@ -1003,34 +926,6 @@ The ``Plugin`` class
 
 
 .. class:: Plugin
-
-    The base class for all plugins.
-
-    A :class:`Plugin` is an optional descriptor for an app which gets
-    defined and configured before Django models start to load.
-
-    The `ad.Plugin` class is comparable to Django's `AppConfig
-    <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
-    which has been added in version 1.7.  It is probable that Lino's
-    Plugins will once become subclasses of Django's AppConfigs. When we
-    drop support for older Django versions.
-
-    Plugins are defined in your app's :xfile:`__init__.py` file. For
-    example::
-
-        from lino import ad, _
-
-        class Plugin(ad.Plugin):
-
-            verbose_name = _("Places")
-
-    Unlike Django's AppConfig, you *cannot* define a `Plugin` in your
-    :xfile:`models.py` file, you *must* define it in your app's
-    :xfile:`__init__.py`.  This limitation has the advantage of making
-    certain things possible which are not possible in plain Django.
-
-    Plugins get instiantiated exactly once when the :class:`Site`
-    object instantiates (i.e. before Django settings are ready).
 
   .. attribute:: verbose_name
 

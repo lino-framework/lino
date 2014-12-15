@@ -38,24 +38,33 @@ much work to fix it because the word is used in variables like
 vocabulary" problem.  We have to live with it and forgive Django its
 oddness.
 
-We suggest to differentiate between "app" and "application".  We can
-continue to call them "apps", but should refrain from expanding that
-word to "application". Because apps are *not* applications, they are
-plugins which we happen to call "app" for historical reasons.  This
-rule shouldn't offend even the most conservative Django developer.
-
 The problem with this "vocabulary" problem is that it leaves us (Lino
 developers) with no word left for what we would call an application.
-A Lino application is neither an "app" nor a "project".  That's why we
-decided to speak about a :class:`Site` class and a :setting:`SITE`
-setting rather than an ``Application`` class and an ``APP`` setting.
+A Lino application is neither an "app" nor a "project".
+
+That's why we suggest to differentiate between "app" and
+"application".  We can continue to call them "apps", but should
+refrain from expanding that word to "application". Because apps are
+*not* applications, they are plugins which we happen to call "app" for
+historical reasons.  This rule shouldn't offend even the most
+conservative Django developer.
+
+Unfortunately, the Django developers did not know about these
+considerations when the worked on version 1.7. That's why they
+continue to speak about `Applications
+<https://docs.djangoproject.com/en/dev/ref/applications/>`_, ignoring
+our vocabulary problem.
 
 
 So what then is an application really?
 ======================================
 
-The :class:`Site` is the base clase for representing a "Lino
-application".  It has attributes like :attr:`Site.verbose_name` (the
+.. currentmodule:: lino.core.site_def
+
+The :class:`Site` is the base class for representing a "Lino
+application".
+
+It has attributes like :attr:`Site.verbose_name` (the
 "short" user-visible name) and the :attr:`Site.version` which are used
 by the method :meth:`Site.welcome_text`.  It also defines a
 :meth:`Site.startup` method and signals which fire exactly once when
@@ -82,3 +91,13 @@ are different mechanisms to define "automatic" ways of building the
 content of :setting:`INSTALLED_APPS` setting.
 
 
+.. currentmodule:: lino.core.plugin
+
+And then Lino has another class, called :class:`Plugin`, which is a
+wrapper around a Django app. Lino creates one :class:`Plugin` instance
+for every installed app.
+
+:class:`Plugin` is comparable to Django's `AppConfig
+<https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
+which has been added in version 1.7, but they make certain things
+possible which are not possible in plain Django.

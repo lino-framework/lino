@@ -2,12 +2,51 @@
 # Copyright 2008-2014 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
+"""This defines the :class:`Plugin` class.  See also
+:ref:`application`.
+
+"""
+
 from os.path import exists
 
 from urllib import urlencode
 
 
 class Plugin(object):
+    """The base class for all plugins.
+
+    A :class:`Plugin` is an optional descriptor for an app which gets
+    defined and configured before Django models start to load.
+
+    The :class:`Plugin` class is comparable to Django's `AppConfig
+    <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
+    which has been added in version 1.7.. But there is at least one
+    fundamental difference: the :class:`Plugin` instances for all
+    installed apps are available (in :attr:`Site.plugins
+    <lino.core.site_def.Site.plugins>`) when the
+    :xfile:`settings.py` file has been loaded and *before* Django
+    starts to load the first :xfile:`models.py`.  This is possible
+    because Plugins are defined in your app's :xfile:`__init__.py`
+    file.
+
+    For example::
+
+        from lino import ad
+        from django.utils.translation import ugettext_lazy as _
+
+        class Plugin(ad.Plugin):
+
+            verbose_name = _("Places")
+
+    Unlike Django's `AppConfig`, you *cannot* define a `Plugin` in
+    your :xfile:`models.py` file, you *must* define it in your app's
+    :xfile:`__init__.py`.  This limitation has the advantage of making
+    certain things possible which are not possible in plain Django.
+
+    Plugins get instiantiated exactly once when the :class:`Site`
+    object instantiates (i.e. before Django settings are ready).
+
+    """
 
     verbose_name = None
     """
@@ -16,6 +55,14 @@ class Plugin(object):
     """
 
     needs_plugins = []
+    """A list of names of plugins on which this plugin depends.
+
+    Lino will automatically add these to your
+    `INSTALLED_APPS` if necessary.
+    Note that Lino will add them *after* your app.
+    To have them *before* your app, specify them explicitly.
+
+    """
 
     needed_by = None
     """If not None, then it is the Plugin instance which caused this
