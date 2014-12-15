@@ -1,0 +1,9 @@
+=========================
+Monday, December 15, 2014
+=========================
+
+Motivated by Mahmoud from Egypt, I invested some time this week-end to
+make the Lino :doc:`/dev/index` readable (:ticket:`36`).  I am still
+far from being satisfied, but it's now much better than 2 days ago. At
+least the "Getting started" section (5 chapters) should me more or
+less comprehensible.
