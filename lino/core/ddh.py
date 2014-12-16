@@ -6,7 +6,6 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from lino.core.dbutils import full_model_name as fmn
 
 
 class DisableDeleteHandler():

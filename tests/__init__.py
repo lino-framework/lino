@@ -170,6 +170,9 @@ class UtilsTests(LinoTestCase):
     def test_jsgen(self):
         self.run_simple_doctests('lino/utils/jsgen.py')
 
+    def test_site(self):
+        self.run_simple_doctests('lino/core/site_def.py')
+
     def test_format_date(self):
         self.run_simple_doctests('lino/utils/format_date.py')
 

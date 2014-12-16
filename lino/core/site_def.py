@@ -26,7 +26,7 @@ from atelier.utils import AttrDict, ispure, date_offset
 
 from django.utils.translation import ugettext_lazy as _
 
-from .plugin import Plugin
+from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
@@ -94,9 +94,45 @@ class Site(object):
     - :doc:`/settings`
     - :ref:`application`
 
+    Obsolete attributes:
+
+    .. attribute:: use_davlink
+
+        No longer used. Replaced by :class:`lino.modlib.davlink`.
+
+    .. attribute:: use_eidreader
+
+        No longer used. Replaced by :class:`lino.modlib.beid`.
+
+
+
+    """
+
+    confdirs = None
+    """This attribute is available only after site startup.  See
+    :mod:`lino.utils.config`.
+    """
+    
+    kernel = None
+    """
+    This attribute is available only after site startup.
+    See :mod:`lino.core.kernel`.
+
+    """
+    ui = None
+    """
+    Alias for :attr:`kernel`.
+
     """
 
     the_demo_date = None
+    """
+    Specify a fixed date instead of the process startup time to be
+    used by :meth:`demo_date`. For example the :ref:`welfare` test
+    suite has a fixed demo date because certain tests for generating
+    events rely on a fixed date.
+
+    """
 
     verbose_name = "yet another Lino site"
     """
@@ -120,32 +156,188 @@ class Site(object):
 
     """
     userdocs_prefix = ''
-    project_name = None
-    project_dir = None
-    languages = ''
 
-    site_config = None  # Overridden by `lino.lino_site.Site.site_config`.
+    project_name = None
+    """
+    Read-only.
+    The leaf name of your local project directory.
+
+    """
+
+    project_dir = None
+    """
+    Full path to your local project directory. 
+    Read-only.
+    Local subclasses should not override this variable.
+    
+    The local project directory is where 
+    local configuration files are stored:
+    
+    - Your :xfile:`settings.py`
+    - Optionally the :xfile:`manage.py` and :xfile:`urls.py` files
+    - Your :xfile:`media` directory
+    - Optional local :xfile:`config` and :xfile:`fixtures` directories
+
+    """
+
+    languages = None
+    """The language distribution used on this site.
+
+    This must be either `None` or an iterable of language codes, or a
+    string containing a space-separated suite of language codes.
+
+    Examples::
+
+      languages = "en de fr nl et".split()
+      languages = ['en']
+      languages = 'en fr'
+
+    See :meth:`apply_languages` for more detailed description.
+
+    The first language in this list will be the site's default
+    language.
+
+    Changing this setting affects your database structure if your
+    application uses babel fields, and thus require a :ref:`data
+    migration <datamig>`.
+
+    If this is not `None`, Site will set the Django settings
+    :setting:`USE_L10N` and :setting:`LANGUAGE_CODE`.
+
+
+    >>> from django.utils import translation
+    >>> from lino.ad import TestSite as Site
+    >>> from pprint import pprint
+    >>> pprint(Site().django_settings)
+    ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
+    {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
+                               'NAME': '.../default.db'}},
+     'FIXTURE_DIRS': (),
+     'INSTALLED_APPS': ('lino.modlib.about',
+                        'lino.modlib.extjs',
+                        'lino.modlib.bootstrap3',
+                        'lino'),
+     'LANGUAGES': [],
+     'LOCALE_PATHS': (),
+     'LOGGING': {'disable_existing_loggers': True,
+                 'filename': None,
+                 'level': 'INFO',
+                 'logger_names': 'atelier lino'},
+     'LOGGING_CONFIG': 'lino.utils.log.configure',
+     'MEDIA_ROOT': 'lino/core/media',
+     'MEDIA_URL': '/media/',
+     'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
+                            'lino.core.auth.NoUserMiddleware',
+                            'lino.utils.ajax.AjaxExceptionResponse'),
+     'ROOT_URLCONF': 'lino.ui.urls',
+     'SECRET_KEY': '20227',
+     'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
+     'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
+                                     'django.core.context_processors.i18n',
+                                     'django.core.context_processors.media',
+                                     'django.core.context_processors.static'),
+     'TEMPLATE_LOADERS': ('lino.core.web.Loader',
+                          'django.template.loaders.filesystem.Loader',
+                          'django.template.loaders.app_directories.Loader'),
+     '__file__': '...'}
+
+    >>> pprint(Site(languages="en fr de").languages)
+    (LanguageInfo(django_code='en', name='en', index=0, suffix=''),
+     LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
+     LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
+
+    >>> pprint(Site(languages="de-ch de-be").languages)
+    (LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
+     LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
+
+    If we have more than languages en-us and en-gb *on a same Site*, 
+    then it is not allowed to specify just "en". 
+    But in most cases it is allowed to just say "en", which will 
+    mean "the English variant used on this Site".
+
+    >>> site = Site(languages="en-us fr de-be de")
+    >>> pprint(site.languages)
+    (LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+     LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
+     LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
+     LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
+
+    >>> pprint(site.language_dict)
+    {'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
+     'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
+     'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+     'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+     'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
+
+    >>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
+    [('de', 'German'), ('fr', 'French')]
+
+    """
+
     not_found_msg = '(not installed)'
+
     django_settings = None
+    """
+    This is where the Site stores the `globals()` dictionary of your
+    :xfile:`settings.py` file (the one you provided when 
+    instantiating the Site object).
+
+    """
+
     startup_time = None
+    """
+    The time when this Site has been instantiated,
+    in other words the startup time of this Django process.
+    Don't modify this. 
+
+    """
+
     plugins = None
     modules = AttrDict()
 
     is_local_project_dir = False
-    """
-    This is automatically set when a :class:`Site` is instantiated. 
+    """Contains `True` if this is a "local" project.  For local projects,
+    Lino checks for local fixtures and config directories and adds
+    them to the default settings.
+
+    This is automatically set when a :class:`Site` is instantiated.
     Don't override it.
-    Contains `True` if this is a "local" project.
-    For local projects, Lino checks for local fixtures and config directories
-    and adds them to the default settings.
+
     """
 
     loading_from_dump = False
+    """
+    This is normally `False`, except when the process is loading data from
+    a :ref:`Python dump <dpy>`.
+
+    The Python dump then calls
+    :func:`lino.utils.dpy.install_migrations` which sets this to
+    `True`.
+
+    Application code should not change this setting (except for certain
+    special test cases).
+
+
+    """
 
     # see docs/settings.rst
     migration_class = None
-    languages = None
+    """
+    If you maintain a data migrator module for your application, 
+    specify its name here.
+
+    See :ref:`datamig` and/or :func:`lino.utils.dpy.install_migrations`.
+
+    """
+
     hidden_languages = None
+    """A string with a space-separated list of django codes of languages
+    that should be hidden.
+
+    :ref:`welfare` uses this because the demo database has 4
+    languages, but `nl` is currently hidden bu default.
+
+    """
 
     BABEL_LANGS = tuple()
 
@@ -178,6 +370,16 @@ class Site(object):
 
     #~ user_model = "users.User"
     user_model = None
+    """Most Lino application will set this to ``"users.User"`` if you use
+    `lino.modlib.users`.
+
+    Default value us `None`, meaning that this site has no user management
+    (feature used by e.g. :mod:`lino.test_apps.1`)
+
+    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
+    `lino.modlib.users` (not tested).
+
+    """
 
     auth_middleware = None
 
@@ -191,15 +393,44 @@ class Site(object):
     never_build_site_cache = False
     show_internal_field_names = False
     build_js_cache_on_startup = False
+
     use_java = True
+    """
+    A site-wide option to disable everything that needs Java.  Note that
+    it is up to the apps which include Java applications to respect this
+    setting. Usage example is :mod:`lino.modlib.beid`.
+
+    """
+
     use_experimental_features = False
     site_config_defaults = {}
 
     default_build_method = "appypdf"
 
     is_demo_site = True
+    """
+    When this is `True`, then this site runs in "demo" mode.     
+    "Demo mode" means:
+    
+    - the welcome text for anonymous users says "This demo site has X 
+      users, they all have "1234" as password", 
+      followed by a list of available usernames.
+    
+    Default value is `True`.
+    On a production site you will of course set this to `False`.
+    
+    See also :attr:`demo_fixtures`.
+
+    """
+
     demo_email = 'demo@example.com'
+
     demo_fixtures = ['std', 'demo', 'demo2']
+    """
+    The list of fixtures to be loaded by the :manage:`initdb_demo`
+    command.
+
+    """
 
     use_spinner = False  # doesn't work. leave this to False
 
@@ -212,8 +443,23 @@ class Site(object):
 
     start_year = 2011
     time_format_extjs = 'H:i'
+    """
+    Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+
+    """
+
     date_format_extjs = 'd.m.Y'
+    """Format (in ExtJS syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+
+    """
+
     alt_date_formats_extjs = 'd/m/Y|Y-m-d'
+    """Alternative date entry formats accepted by ExtJS Date widgets.
+
+    """
+
     #~ default_number_format_extjs = '0,000.00/i'
     default_number_format_extjs = '0,00/i'
 
@@ -239,7 +485,20 @@ class Site(object):
     """
 
     default_user = None
+    """
+    Username to be used if a request with 
+    no REMOTE_USER header makes its way through to Lino. 
+    Which may happen on a development server and if Apache is 
+    configured to allow it.
+    Used by :mod:`lino.core.auth`.
+
+    """
+
     anonymous_user_profile = '000'
+    """
+    The user profile to be assigned to anonymous user.
+    
+    """
     #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
     ldap_auth_server = None
@@ -327,9 +586,27 @@ class Site(object):
         subst w: <dev_project_path>\media\webdav
         
     """
+
     sidebar_width = 0
+    """
+    Used by :mod:`lino.modlib.plain`.
+    Width of the sidebar in 1/12 of total screen width.
+    Meaningful values are 0 (no sidebar), 2 or 3.
+
+    """
 
     config_id = 1
+    """The primary key of the one and only :class:`SiteConfig
+    <lino.modlib.system.models.SiteConfig>` instance of this
+    :class:`Site`. Default value is 1.
+
+    This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
+    Lino applications don't need ``django.contrib.sites`` (`The "sites"
+    framework
+    <https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_) because
+    this functionality is integral part of :mod:`lino.modlib.system`.
+
+    """
 
     preview_limit = 15
 
@@ -362,9 +639,20 @@ class Site(object):
     """
 
     verbose_client_info_message = False
+    """
+    Set this to True if actions should send debug messages to the client.
+    These will be shown in the client's Javascript console only.
+
+    """
 
     help_url = "http://www.lino-framework.org"
+
     help_email = "users@lino-framework.org"
+    """
+    An e-mail address where users can get help. This is included in
+    :xfile:`admin_main.html`.
+
+    """
     title = "Unnamed Lino site"
 
     catch_layout_exceptions = True
@@ -402,6 +690,11 @@ class Site(object):
     """
 
     auto_configure_logger_names = 'atelier lino'
+    """
+    A string with a space-separated list of logger names to be
+    automatically configured. See :mod:`lino.utils.log`.
+
+    """
 
     appy_params = dict(ooPort=8100)
     """
@@ -423,18 +716,63 @@ class Site(object):
     """
 
     time_format_strftime = '%H:%M'
+    """
+    Format (in strftime syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_time`.
+
+    """
+
     date_format_strftime = '%d.%m.%Y'
+    """
+    Format (in strftime syntax) to use for displaying dates to the user.
+    If you change this setting, you also need to override :meth:`parse_date`.
+
+    """
+
     date_format_regex = "/^[0123]?\d\.[01]?\d\.-?\d+$/"
+    """
+    Format (in Javascript regex syntax) to use for displaying dates to
+    the user.  If you change this setting, you also need to override
+    :meth:`parse_date`.
+
+    """
+
     datetime_format_strftime = '%Y-%m-%dT%H:%M:%S'
+    """
+    Format (in strftime syntax) to use for formatting timestamps in
+    AJAX responses.  If you change this setting, you also need to
+    override :meth:`parse_datetime`.
+
+    """
+
     datetime_format_extjs = 'Y-m-d\TH:i:s'
+    """
+    Format (in ExtJS syntax) to use for formatting timestamps in AJAX
+    calls.  If you change this setting, you also need to override
+    :meth:`parse_datetime`.
+
+    """
 
     ignore_dates_before = None
+    """
+    Ignore dates before the given date.  Set this to `None` if you want
+    no limit.
+    Default value is "7 days before server startup".
+
+    """
+
     ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
+    """
+    Ignore dates after the given date.  This should never be `None`.
+    Default value is approximately 5 years after server startup.
+
+    """
 
     # for internal use:
     _welcome_actors = []
     _site_config = None
     _logger = None
+    override_modlib_models = None
 
     def __init__(self, settings_globals, user_apps=[], **kwargs):
         """
@@ -561,8 +899,6 @@ class Site(object):
                 disable_existing_loggers=True,  # Django >= 1.5
             ),
         )
-
-    override_modlib_models = None
 
     def is_abstract_model(self, module_name, model_name):
         "See :func:`dd.is_abstract_model`."
@@ -831,11 +1167,27 @@ class Site(object):
                 func(p.app_name, p.app_module, *args, **kw)
 
     def demo_date(self, *args, **kwargs):
-        "See :attr:`ad.Site.demo_date`."
+        """
+        Compute a date using :func:`atelier.utils.date_offset` based on
+        the process startup time (or :attr:`the_demo_date` if this is
+        set).
+
+        Used in Python fixtures and unit tests.
+
+        """
         base = self.the_demo_date or self.startup_time.date()
         return date_offset(base, *args, **kwargs)
 
     def today(self):
+        """This is almost equivalent to calling :func:`datetime.date.today`.
+
+        The difference is when :attr:`the_demo_date` is set, in which
+        case :meth:`today` will return that date.
+
+        Needed in test cases like :ref:`welfare.tested.integ` where the
+        age of people would otherwise change.
+
+        """
         return self.the_demo_date or datetime.date.today()
 
     def welcome_text(self):
@@ -876,16 +1228,30 @@ class Site(object):
         return kw
 
     def parse_date(self, s):
+        """Convert a string formatted using :attr:`date_format_strftime` or
+        :attr:`date_format_extjs` into a `(y,m,d)` tuple (not a
+        `datetime.date` instance).  See `/blog/2010/1130`.
+
+        """
         ymd = tuple(reversed(map(int, s.split('.'))))
         assert len(ymd) == 3
         return ymd
         #~ return datetime.date(*ymd)
 
     def parse_time(self, s):
+        """Convert a string formatted using :attr:`time_format_strftime` or
+        :attr:`time_format_extjs` into a `datetime.time` instance.
+
+        """
         hms = map(int, s.split(':'))
         return datetime.time(*hms)
 
     def parse_datetime(self, s):
+        """Convert a string formatted using :attr:`datetime_format_strftime`
+        or :attr:`datetime_format_extjs` into a `datetime.datetime`
+        instance.
+
+        """
         #~ print "20110701 parse_datetime(%r)" % s
         #~ s2 = s.split()
         s2 = s.split('T')
@@ -933,6 +1299,37 @@ class Site(object):
         self.on_each_app('setup_workflows')
 
     def setup_choicelists(self):
+        """
+        This is a hook for code to be run *after* all plugins have been
+        instantiated and *before* the models are being discovered.
+
+        This is especially useful for redefining your application's
+        ChoiceLists.
+
+        Especially used to define application-specific
+        :class:`UserProfiles <lino.core.perms.UserProfiles>`.
+
+        Lino by default has two user profiles "User" and "Administrator",
+        defined in :mod:`lino.core.perms`.
+
+        Application developers who use group-based requirements can
+        override this in their application's :xfile:`settings.py` to
+        provide a default list of user profiles for their application.
+
+        See the source code of :mod:`lino.projects.presto` or
+        :mod:`lino_welfare.settings` for a usage example.
+
+        Local site administrators may again override this in their
+        :xfile:`settings.py`.
+
+        Note that you may not specify values longer than `max_length` when
+        redefining your choicelists.  This limitation is because these
+        redefinitions happen at a moment where database fields have
+        already been instantiated, so it is too late to change their
+        max_length.  Note that this limitation is only for the *values*,
+        not for the names or texts of choices.
+
+        """
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
         
@@ -1230,14 +1627,14 @@ class Site(object):
         
         >>> from lino.ad import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
-        LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
+        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
         
         On a site with two locales of a same language (e.g. 'en-us'
         and 'en-gb'), the simple code 'en' yields that first variant:
         
         >>> site = Site(languages="en-us en-gb")
         >>> print site.get_language_info('en')
-        LanguageInfo(django_code='en-us', name=u'en_US', index=0, suffix='')
+        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
 
         """
         return self.language_dict.get(code, None)
@@ -1292,6 +1689,43 @@ class Site(object):
         return self.DEFAULT_LANGUAGE.django_code
 
     def str2kw(self, name, txt,  **kw):
+        """
+        Return a dictionary which maps the internal field names for
+        babelfield `name` to their respective translation of the given
+        lazy translatable string `text`.
+
+        >>> from django.utils.translation import ugettext_lazy as _
+        >>> from lino.ad import TestSite as Site
+        >>> site = Site(languages='de fr es')
+        >>> site.str2kw('name', _("January"))
+        {'name_fr': u'janvier', 'name': u'Januar', 'name_es': u'Enero'}
+        >>> site = Site(languages='fr de es')
+        >>> site.str2kw('name', _("January"))
+        {'name_de': u'Januar', 'name': u'janvier', 'name_es': u'Enero'}
+
+      .. method:: field2kw(obj, name, **known_values)
+
+        Examples:
+
+        >>> from lino.ad import TestSite as Site
+        >>> from atelier.utils import AttrDict
+        >>> def testit(site_languages):
+        ...     site = Site(languages=site_languages)
+        ...     obj = AttrDict(site.babelkw(
+        ...         'name', de="Hallo", en="Hello", fr="Salut"))
+        ...     return site,obj
+
+
+        >>> site, obj = testit('de en')
+        >>> site.field2kw(obj, 'name')
+        {'de': 'Hallo', 'en': 'Hello'}
+
+        >>> site, obj = testit('fr et')
+        >>> site.field2kw(obj, 'name')
+        {'fr': 'Salut'}
+
+
+        """
         from django.utils import translation
         for simple, info in self.language_dict.items():
             with translation.override(simple):
@@ -1373,6 +1807,62 @@ class Site(object):
         #~ return l
 
     def babelitem(self, *args, **values):
+        """
+        Given a dictionary with babel values, return the 
+        value corresponding to the current language.
+
+        This is available in templates as a function `tr`.
+
+        >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
+
+        >>> from lino.ad import TestSite as Site
+        >>> from django.utils import translation
+
+        A Site with default language "de":
+
+        >>> site = Site(languages="de en")
+        >>> tr = site.babelitem
+        >>> with translation.override('de'):
+        ...    tr(**kw)
+        'Hallo'
+
+        >>> with translation.override('en'):
+        ...    tr(**kw)
+        'Hello'
+
+        If the current language is not found in the specified `values`,
+        then it returns the site's default language:
+
+        >>> with translation.override('jp'):
+        ...    tr(en="Hello", de="Hallo", fr="Salut")
+        'Hello'
+
+        Testing detail: default language should be "de" in our example, but
+        we are playing here with more than one Site instance while Django
+        knows only one "default language" which is the one specified in 
+        `lino.projects.docs.settings`.
+
+        Another way is to specify an explicit default value using a
+        positional argument. In that case the language's default language
+        doesn'n matter:
+
+        >>> with translation.override('jp'):
+        ...    tr("Tere", de="Hallo", fr="Salut")
+        'Tere'
+
+        >>> with translation.override('de'):
+        ...     tr("Tere", de="Hallo", fr="Salut")
+        'Hallo'
+
+        You may not specify more than one default value:
+
+        >>> tr("Hello", "Hallo")
+        Traceback (most recent call last):
+        ...
+        ValueError: ('Hello', 'Hallo') is more than 1 default value.
+
+
+        """
         from django.utils import translation
         if len(args) == 0:
             info = self.language_dict.get(
@@ -1402,6 +1892,58 @@ class Site(object):
             return self.babelitem(**v)
 
     def babelattr(self, obj, attrname, default=NOT_PROVIDED, language=None):
+        """
+        Return the value of the specified babel field `attrname` of `obj`
+        in the current language.
+
+        This is to be used in multilingual document templates.  For
+        example in a document template of a Contract you may use the
+        following expression::
+
+          babelattr(self.type, 'name')
+
+        This will return the correct value for the current language.
+
+        Examples:
+
+        >>> from django.utils import translation
+        >>> from lino.ad import TestSite as Site
+        >>> from atelier.utils import AttrDict
+        >>> def testit(site_languages):
+        ...     site = Site(languages=site_languages)
+        ...     obj = AttrDict(site.babelkw(
+        ...         'name', de="Hallo", en="Hello", fr="Salut"))
+        ...     return site, obj
+
+
+        >>> site,obj = testit('de en')
+        >>> with translation.override('de'):
+        ...     site.babelattr(obj,'name')
+        'Hallo'
+
+        >>> with translation.override('en'):
+        ...     site.babelattr(obj,'name')
+        'Hello'
+
+        If the object has no translation for a given language, return
+        the site's default language.  Two possible cases:
+
+        The language exists on the site, but the object has no
+        translation for it:
+
+        >>> site,obj = testit('en es')
+        >>> with translation.override('es'):
+        ...     site.babelattr(obj, 'name')
+        'Hello'
+
+        Or a language has been activated which doesn't exist on the site:
+
+        >>> with translation.override('fr'):
+        ...     site.babelattr(obj, 'name')
+        'Hello'
+
+
+        """
         if language is None:
             from django.utils import translation
             language = translation.get_language()
@@ -1575,7 +2117,17 @@ class Site(object):
 
     @property
     def site_config(self):
+        """
+        This property holds a cached version of the one and only
+        :class:`ml.system.SiteConfig` row that holds site-wide
+        database-stored and web-editable Site configuration parameters.
 
+        If no instance exists (which happens in a virgin database), we
+        create it using default values from :attr:`site_config_defaults`.
+
+        This is always `None` when :mod:`lino.modlib.system` is not installed.
+
+        """
         if not 'system' in self.modules:
             return None
 
@@ -1788,16 +2340,17 @@ class Site(object):
                 yield msg
 
     def get_installed_apps(self):
-        """
-        Yield the list of apps to be installed on this site.  This will be
-        stored to :setting:`INSTALLED_APPS` when the Site instantiates.  
+        """Yield the list of apps to be installed on this site.  This will be
+        stored to :setting:`INSTALLED_APPS` when the Site
+        instantiates.
 
         Each item must be either a string (unicode being converted to str)
         or a *generator* which will be iterated recursively (again
         expecting either strings or generators of strings).
 
-        Note also the :meth:`get_apps_modifiers` method which will be
-        applied to the result of :meth:`get_installed_apps`.
+        Note that the result of :meth:`get_installed_apps` will then
+        possibly altered once more by :meth:`get_apps_modifiers`
+        method.
 
         """
 
@@ -1813,6 +2366,19 @@ class Site(object):
         yield "lino"
 
     site_prefix = '/'
+    """This must be set if your project is not being served at the "root"
+    URL of your server.  It must start *and* end with a
+    *slash*. Default value is ``'/'``.  For example if you have::
+    
+        WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
+      
+    Then your :xfile:`settings.py` should specify::
+    
+        site_prefix = '/foo/'
+    
+    See also :ref:`mass_hosting`.
+
+    """
 
     def buildurl(self, *args, **kw):
         #~ url = '/' + ("/".join(args))
@@ -2023,3 +2589,9 @@ class TestSite(Site):
         translation._default = None
 
 
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()

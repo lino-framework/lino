@@ -7,6 +7,8 @@ In this tutorial we are going to take the "Polls"
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
+.. currentmodule:: lino.core.site_def
+
 .. contents:: Table of Contents
  :local:
  :depth: 2
@@ -54,7 +56,7 @@ several customers.
 A few explanations:
 
 This instantiates your local :setting:`SITE` setting.  Every Lino application
-requires a setting named :setting:`SITE` which must be a :class:`ad.Site`
+requires a setting named :setting:`SITE` which must be a :class:`Site`
 instance.
 
 The first argument of the instantiator is the built-in Python variable
@@ -89,7 +91,7 @@ And then enter the following Python instructions there:
 This shows that your 'polls' app has been embedded into a series of
 other apps. The details of this is not important right now. Just note
 that Lino modifies your :setting:`INSTALLED_APPS` setting, and this
-magic happens when your :class:`ad.Site` object gets instantiated.
+magic happens when your :class:`Site` object gets instantiated.
 
 Other Django setting for which Lino sets default values are:
 
@@ -99,7 +101,7 @@ Other Django setting for which Lino sets default values are:
   think the best choice for beginners.
   
 - :setting:`USE_L10N` and :setting:`LANGUAGE_CODE` (see
-  :attr:`ad.Site.languages` for details on these)
+  :attr:`Site.languages` for details on these)
 
 
 - More documentation about the :setting:`LOGGING` 
@@ -172,46 +174,45 @@ Lino suggests a slightly different approach to the whole topic, and
 this approach starts here.  We are now going to add a **demo
 fixture**.
 
-- In your project directory, create a directory named :file:`fixtures`.
-
-- Create an empty file named :xfile:`__init__.py` in that same
+- Create a directory named :file:`fixtures` in your :file:`polls`
   directory.
 
-- Create a file named ``demo.py`` with the following content:
+- Create an empty file named :xfile:`__init__.py` in that directory.
+
+- Still in the same directory, create another file named ``demo.py``
+  with the following content:
 
   .. literalinclude:: ../polls/fixtures/demo1.py
+
+  Or, if you prefer, the following does exactly the same but has the
+  advantage of being more easy to maintain:
+
+  .. literalinclude:: ../polls/fixtures/demo.py
 
 - Run the following command (from your project directory) 
   to install these fixtures::
 
     python manage.py initdb demo
+
+  The output should be::
+
+      Creating tables ...
+      Creating table polls_poll
+      Creating table polls_choice
+      Installing custom SQL ...
+      Installing indexes ...
+      Installed 13 object(s) from 1 fixture(s)
+
+..
+  >>> from django.core.management import call_command
+  >>> call_command('initdb', 'demo', interactive=False)
+  Creating tables ...
+  Creating table polls_poll
+  Creating table polls_choice
+  Installing custom SQL ...
+  Installing indexes ...
+  Installed 13 object(s) from 1 fixture(s)
     
-  The output should be similar to::
-  
-    INFO Analyzing models...
-    We are going to flush your database (C:\mysite\test.db).
-    Are you sure (y/n) ?y
-    INFO Lino initdb ('demo',) started on database C:\mysite\test.db.
-    INFO Using Lino 1.4.9, Django 1.5.dev17937, python-dateutil 1.5, Cheetah 2.4.4, 
-    OdfPy ODFPY/0.9.4, docutils 0.7, suds 0.4.1, PyYaml 3.08, Appy 0.8.0 (2011/12/15 22:41), 
-    Python 2.7.1.
-    Creating tables ...
-    Creating table lino_siteconfig
-    Creating table polls_poll
-    Creating table polls_choice
-    Installing custom SQL ...
-    Installing indexes ...
-    Installed 0 object(s) from 0 fixture(s)
-    INFO Saved 13 instances from C:\mysite\polls\fixtures\demo.py.
-    Installed 13 object(s) from 1 fixture(s)
-    INFO Lino initdb done ('demo',) on database C:\mysite\polls\test.db.  
-    
-- Replace your file ``demo.py`` by something like the file
-  :srcref:`polls/fixtures/demo.py
-  <docs/tutorials/polls/polls/fixtures/demo.py>` from the Lino
-  repository. They are functionally equivalent.  Read more about
-  :doc:`/tutorials/dumpy` if you haven't done that yet.
-  
 Now we are ready to start the development web server on our project.
   
 Starting the web interface

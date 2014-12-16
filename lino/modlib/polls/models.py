@@ -3,6 +3,22 @@
 # License: BSD (see file COPYING for details)
 """The :xfile:`models` module for :mod:`lino.modlib.polls`.
 
+Models overview:
+
+A :class:`Poll` is a collection of :class:`Questions <Question>` which
+we want to ask repeatedly to different people. Each Question has a
+*question text* and a :class:`ChoiceSet`, i.e. a stored ordered set of
+possible choices.  A :class:`Response` is when somebody answers to a
+`Poll`.  A Response contains a set of :class:`AnswerChoices
+<AnswerChoice>`, each of which represents a given Choice selected by
+the questioned person for a given `Question` of the `Poll`.  If the
+Question is *multiple choice*, then there may be more than one
+`AnswerChoice` per `Question`.  A `Response` also contains a set of
+`AnswerRemarks`, each of with represents a remark written by the
+responding person for a given Question of the Poll.
+
+See also :ref:`tested.polly`.
+
 """
 
 import logging
@@ -18,54 +34,13 @@ from lino.utils.xmlgen.html import E
 
 from lino.mixins import Referrable
 
+from .utils import ResponseStates, PollStates
+
 config = dd.plugins.polls
 
-#~ def NullBooleanField(*args,**kw):
-    #~ kw.setdefault('default', False)
-    #~ return models.BooleanField(*args,**kw)
-# ~ # not yet implemented:
 NullBooleanField = models.NullBooleanField
 
-
-class PollStates(dd.Workflow):
-
-    """
-    State of a Calendar Task. Used as Workflow selector.
-    """
-    verbose_name_plural = _("Poll States")
-    required = dd.required(user_level='admin')
-
-
-add = PollStates.add_item
-add('10', _("Draft"), 'draft')
-add('20', _("Published"), 'published')
-add('30', _("Closed"), 'closed')
-
-
-class ResponseStates(dd.Workflow):
-
-    """
-    Possible states of a Response.
-    """
-    verbose_name_plural = _("Response States")
-    required = dd.required(user_level='admin')
-
-
-add = ResponseStates.add_item
-add('10', _("Draft"), 'draft', editable=True)
-add('20', _("Registered"), 'registered', editable=False)
-
-
-ResponseStates.registered.add_transition(_("Register"), states='draft')
-ResponseStates.draft.add_transition(_("Deregister"), states="registered")
-
-
-#~ class QuestionTypes(dd.ChoiceList):
-    #~ verbose_name_plural = _("Question Types")
-    #~ required = dd.required(user_level='admin')
-    #~
-#~ add = QuestionTypes.add_item
-#~ add('10', _("Draft"),'draft',editable=True)
+NUMBERED_TITLE_FORMAT = "%s) %s"
 
 
 class ChoiceSet(mixins.BabelNamed):
@@ -146,14 +121,27 @@ class Poll(mixins.UserAuthored, mixins.CreatedModified, Referrable):
         if self.questions_to_add:
             #~ print "20131106 self.questions_to_add", self.questions_to_add
             #~ qkw = dict(choiceset=self.default_choiceset)
+            q = None
             qkw = dict()
+            number = 1
             for ln in self.questions_to_add.splitlines():
                 ln = ln.strip()
                 if ln:
-                    q = Question(poll=self, text=ln, **qkw)
+                    if ln.startswith('#'):
+                        q.details = ln[1:]
+                        q.save()
+                        continue
+                    elif ln.startswith('='):
+                        q = Question(poll=self, title=ln[1:],
+                                     is_heading=True, **qkw)
+                        number = 1
+                    else:
+                        q = Question(poll=self, title=ln,
+                                     number=str(number), **qkw)
+                        number += 1
                     q.full_clean()
                     q.save()
-                    qkw.setdefault('seqno', q.seqno + 1)
+                    qkw.update(seqno=q.seqno + 1)
             self.questions_to_add = ''
             self.save()  # save again because we modified afterwards
 
@@ -213,20 +201,30 @@ class Question(mixins.Sequenced):
         verbose_name_plural = _("Questions")
 
     poll = models.ForeignKey('polls.Poll', related_name='questions')
-    text = models.TextField(verbose_name=_("Text"))
+
+    title = models.CharField(_("Title"), max_length=200)
+    details = models.TextField(_("Details"), blank=True)
+    number = models.CharField(_("No."), max_length=20, blank=True)
+
+    # text = models.TextField(verbose_name=_("Text"))
     choiceset = models.ForeignKey('polls.ChoiceSet', blank=True, null=True)
     multiple_choices = models.BooleanField(
         _("Allow multiple choices"), blank=True)
+    is_heading = models.BooleanField(_("Title"), default=False)
 
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
-        return self.text
+        if self.number:
+            return NUMBERED_TITLE_FORMAT % (self.number, self.title)
+        return self.title
 
     def get_siblings(self):
         #~ return self.choiceset.choices.order_by('seqno')
         return self.poll.questions.order_by('seqno')
 
     def get_choiceset(self):
+        if self.is_heading:
+            return None
         if self.choiceset is None:
             return self.poll.default_choiceset
         return self.choiceset
@@ -245,7 +243,7 @@ class Questions(dd.Table):
 
 class QuestionsByPoll(Questions):
     master_key = 'poll'
-    column_names = 'text choiceset multiple_choices'
+    column_names = 'title choiceset multiple_choices is_heading'
     auto_fit_column_widths = True
 
 
@@ -262,10 +260,10 @@ class ToggleChoice(dd.Action):
         if response is None:
             return
         pv = ar.action_param_values
-        try:
-            obj = AnswerChoice.objects.get(response=response, **pv)
-            obj.delete()
-        except AnswerChoice.DoesNotExist:
+        qs = AnswerChoice.objects.filter(response=response, **pv)
+        if qs.count() == 1:
+            qs[0].delete()
+        elif qs.count() == 0:
             if not pv.question.multiple_choices:
                 # delete any other choice which might exist
                 qs = AnswerChoice.objects.filter(
@@ -274,11 +272,15 @@ class ToggleChoice(dd.Action):
             obj = AnswerChoice(response=response, **pv)
             obj.full_clean()
             obj.save()
+        else:
+            raise Exception(
+                "Oops: %s returned %d rows." % (qs.query, qs.count()))
         ar.success(refresh=True)
         # dd.logger.info("20140930 %s", obj)
             
 
-class Response(mixins.UserAuthored, mixins.Registrable, mixins.CreatedModified):
+class Response(mixins.UserAuthored, mixins.Registrable,
+               mixins.CreatedModified):
 
     class Meta:
         verbose_name = _("Response")
@@ -456,6 +458,15 @@ class AnswerRemarkField(dd.VirtualField):
 
 
 class AnswersByResponse(dd.VirtualTable):
+    """This is the table used for answering to a poll.
+
+.. attribute:: answer_buttons
+
+    A virtual field that displays the currently selected answer(s) for
+    this question, eventually (if editing is permitted) together with
+    buttons to modify the selection.
+
+    """
     label = _("Answers")
     editable = True
     master = 'polls.Response'
@@ -496,21 +507,34 @@ class AnswersByResponse(dd.VirtualTable):
 
     @dd.displayfield(_("Question"))
     def question(self, obj, ar):
-        return E.p(unicode(obj.question))
+        if obj.question.number:
+            txt = NUMBERED_TITLE_FORMAT % (
+                obj.question.number, obj.question.title)
+        else:
+            txt = obj.question.title
+        if obj.question.is_heading:
+            txt = E.b(txt)
+        return E.p(txt)
 
     @dd.displayfield(_("My answer"))
     def answer_buttons(self, obj, ar):
         l = []
         pv = dict(question=obj.question)
         ia = obj.response.toggle_choice
-        for c in obj.question.get_choiceset().choices.all():
+        cs = obj.question.get_choiceset()
+        if cs is None:
+            return ''
+        for c in cs.choices.all():
             pv.update(choice=c)
             text = unicode(c)
-            try:
-                AnswerChoice.objects.get(**pv)
+            qs = AnswerChoice.objects.filter(response=obj.response, **pv)
+            if qs.count() == 1:
                 text = [E.b('[', text, ']')]
-            except AnswerChoice.DoesNotExist:
+            elif qs.count() == 0:
                 pass
+            else:
+                raise Exception(
+                    "Oops: %s returned %d rows." % (qs.query, qs.count()))
             request_kwargs = dict(action_param_values=pv)
             e = ar.instance_action_button(
                 ia, text, request_kwargs=request_kwargs,
@@ -520,6 +544,7 @@ class AnswersByResponse(dd.VirtualTable):
 
 
 class PollResult(Questions):
+    "Shows a summay of responses to this poll."
     master_key = 'poll'
     column_names = "question choiceset answers a1"
 

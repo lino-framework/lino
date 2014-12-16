@@ -28,9 +28,11 @@ def objects():
     yield poll(ten, "Customer Satisfaction Survey", """
 Please give your vote for each aspect of our company.
 """, """
+=First section
 %(X)s has a good quality/price ratio.
 %(X)s is better than their concurrents.
 %(X)s has an attractive website.
+=Second section
 %(X)s values my money.
 I am proud to be a customer of %(X)s.
 I would recommend %(X)s to others.

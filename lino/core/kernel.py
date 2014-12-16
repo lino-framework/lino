@@ -399,6 +399,8 @@ class Kernel(object):
         """Yield all database objects in database for which the given
         GenericForeignKey gfk points to the object `obj`.
         """
+        if len(self.GFK_LIST) == 0:
+            return  # e.g. if contenttypes is not installed
         obj_ct = ContentType.objects.get_for_model(obj.__class__)
         for gfk in self.GFK_LIST:
             kw = dict()

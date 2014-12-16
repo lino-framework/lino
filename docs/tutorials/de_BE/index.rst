@@ -36,7 +36,7 @@ Now we wrote a Python fixture with some data:
 We load this fixture using Django's standard loaddata command:
 
 >>> from django.core.management import call_command
->>> call_command('initdb_demo',interactive=False)
+>>> call_command('initdb_demo', interactive=False)
 Creating tables ...
 Creating table de_BE_expression
 Installing custom SQL ...

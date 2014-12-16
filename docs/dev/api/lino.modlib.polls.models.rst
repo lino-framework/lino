@@ -1,0 +1,61 @@
+lino.modlib.polls.models
+========================
+
+.. automodule:: lino.modlib.polls.models
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      get_poll_result
+      join_elems
+      setup_config_menu
+      setup_explorer_menu
+      setup_main_menu
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Answer
+      AnswerChoice
+      AnswerChoices
+      AnswerRemark
+      AnswerRemarkField
+      AnswerRemarks
+      AnswersByResponse
+      Choice
+      ChoiceSet
+      ChoiceSets
+      Choices
+      ChoicesBySet
+      MyPolls
+      MyResponses
+      NullBooleanField
+      Poll
+      PollDetail
+      PollResult
+      PollStates
+      Polls
+      Question
+      Questions
+      QuestionsByPoll
+      Referrable
+      Response
+      ResponseStates
+      Responses
+      ResponsesByPartner
+      ResponsesByPoll
+      ToggleChoice
+   
+   
+
+   
+   
+   

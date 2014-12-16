@@ -14,18 +14,6 @@ class Poll(dd.Model):
     #~ pub_date = models.DateTimeField('Date published',auto_now_add=True)
     pub_date = models.DateTimeField('Date published', default=dd.today)
     
-    input_mask_test = dd.CharField(
-        "Question text",
-        blank=True,
-        max_length=200,
-        help_text="""This field is here to play with the
-        CharField parameters regex, mask_re and strip_chars_re.
-        By default it accepts all letters except Z.
-        """,
-        #~ regex='/^[a-yA-Y]*$/')
-        mask_re='/^[a-yA-Y]*$/')
-        #~ strip_chars_re='/^[a-yA-Y]*$/')
-    
     class Meta:
         verbose_name = 'Poll'
         verbose_name_plural = 'Polls'
@@ -70,7 +58,7 @@ class Polls(dd.Table):
 
     detail_layout = """
     id question
-    hidden pub_date input_mask_test
+    hidden pub_date
     ChoicesByPoll
     """
 

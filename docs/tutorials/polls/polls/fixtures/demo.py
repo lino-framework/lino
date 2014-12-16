@@ -1,13 +1,11 @@
-from lino import dd, rt
-
-Poll = dd.resolve_model('polls.Poll')
-Choice = dd.resolve_model('polls.Choice')
+from polls.models import Poll, Choice
 
 DATA = """
 What is your preferred colour? | Blue | Red | Yellow | other
 Do you like Django? | Yes | No | Not yet decided
 Do you like ExtJS? | Yes | No | Not yet decided
 """
+
 
 def objects():
     for ln in DATA.splitlines():
@@ -16,4 +14,4 @@ def objects():
             p = Poll(question=a[0].strip())
             yield p
             for choice in a[1:]:
-                yield Choice(choice=choice.strip(),poll=p)
+                yield Choice(choice=choice.strip(), poll=p)

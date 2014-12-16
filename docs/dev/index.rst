@@ -38,6 +38,7 @@ Getting acquaintained
    /tutorials/auto_create/index
    /tutorials/human/index
    /tutorials/pisa/index
+   /tutorials/input_mask/index
    
 
 

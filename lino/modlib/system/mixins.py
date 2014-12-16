@@ -21,7 +21,16 @@ from lino.utils import AttrDict
 
 class YesNo(ChoiceList):
     """
-    Used e.g. for table parameters. TODO: write usage example.
+    A choicelist with two values "Yes" and "No".
+
+    .. django2rst::
+
+            rt.show(YesNo)
+
+    Used e.g. to define parameter panel fields for BooleanFields::
+    
+      foo = dd.YesNo.field(_("Foo"), blank=True)
+      
 
     """
     verbose_name_plural = _("Yes or no")
@@ -31,7 +40,16 @@ add('n', _("No"), 'no')
 
 
 class Genders(ChoiceList):
-    """A choicelist with two choices ``male`` and ``female``. 
+    """
+    Defines the two possible choices "male" and "female"
+    for the gender of a person.
+
+    .. django2rst::
+
+            rt.show(Genders)
+
+
+    See :ref:`lino.tutorial.human` for examples.
     See :doc:`/dev/choicelists`.
     """
 
@@ -68,6 +86,15 @@ class PeriodEvent(Choice):
 
 
 class PeriodEvents(ChoiceList):
+    """The list of things you can observe on a
+    :class:`DatePeriod`. The default list has the following
+    choices:
+
+    .. django2rst::
+
+        rt.show(PeriodEvents)
+
+    """
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
     item_class = PeriodEvent

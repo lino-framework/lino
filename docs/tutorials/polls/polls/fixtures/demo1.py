@@ -1,4 +1,3 @@
-
 from polls.models import Poll, Choice
 
 
