@@ -330,9 +330,9 @@ def on_merge(sender=None, request=None, **kw):
                master, sender.obj, sender.logmsg())
 
 
-from lino.modlib.system.models import SYSTEM_USER_LABEL
+menu_group = dd.plugins.system
 
 
 def setup_explorer_menu(site, ui, profile, m):
-    system = m.add_menu("system", SYSTEM_USER_LABEL)
-    system.add_action(Changes)
+    system = m.add_menu(menu_group.app_label, menu_group.verbose_name)
+    system.add_action('changes.Changes')

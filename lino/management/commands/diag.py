@@ -19,8 +19,8 @@ class Command(BaseCommand):
     args = "output_dir"
 
     def handle(self, *args, **options):
-        if args:
-            raise CommandError("This command doesn't accept any arguments.")
+        # if args:
+        #     raise CommandError("This command doesn't accept any arguments.")
 
         encoding = self.stdout.encoding or 'utf-8'
 
@@ -29,6 +29,6 @@ class Command(BaseCommand):
 
         settings.SITE.startup()
         # writeln(settings.SITE.get_db_overview_rst())
-        writeln(settings.SITE.diagnostic_report_rst())
+        writeln(settings.SITE.diagnostic_report_rst(*args))
 
 

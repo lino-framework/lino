@@ -23,6 +23,7 @@ import collections
 from urllib import urlencode
 
 from atelier.utils import AttrDict, ispure, date_offset
+from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -1962,29 +1963,30 @@ class Site(object):
                 #~ return v
         #~ return getattr(obj,attrname,*args)
 
-    def diagnostic_report_rst(self):
+    def diagnostic_report_rst(self, *args):
 
         s = ''
-        s += "plugins: %s\n" % repr(self.plugins)
-        for k, p in self.plugins.items():
-            s += "%s : %s\n" % (k, p)
+        s += rstgen.header(1, "Plugins")
+        for n, kp in enumerate(self.plugins.items()):
+            s += "%d. " % (n + 1)
+            s += "%s : %s\n" % kp
         # s += "config_dirs: %s\n" % repr(self.confdirs.config_dirs)
         s += "\n"
-        for cd in self.confdirs.config_dirs:
+        s += rstgen.header(1, "Config directories")
+        for n, cd in enumerate(self.confdirs.config_dirs):
+            s += "%d. " % (n + 1)
             ln = relpath(cd.name)
             if cd.writeable:
                 ln += " [writeable]"
             s += ln + '\n'
+        # for arg in args:
+        #     p = self.plugins[arg]
         return s
 
     def get_db_overview_rst(self):
-        from atelier import rstgen
         from lino.core.dbutils import (full_model_name,
                                        sorted_models_list, app_labels)
 
-        #~ writeln("Lino %s" % lino.__version__)
-        #~ yield (settings.SITE.verbose_name, settings.SITE.version)
-        #~ writeln(settings.SITE.title)
         models_list = sorted_models_list()
         apps = app_labels()
         s = "%d apps: %s." % (len(apps), ", ".join(apps))
@@ -1993,7 +1995,7 @@ class Site(object):
         headers = [
             #~ "No.",
             "Name",
-            #~ "Class",
+            "Default table",
             #~ "M",
             "#fields",
             "#rows",
@@ -2001,19 +2003,19 @@ class Site(object):
         ]
         rows = []
         for model in models_list:
-            if model._meta.managed:
+            if True:  # model._meta.managed:
                 i += 1
                 cells = []
                 #~ cells.append(str(i))
                 cells.append(full_model_name(model))
+                cells.append(model.get_default_table())
                 #~ cells.append(str(model))
                 #~ if model._meta.managed:
                 #~ cells.append('X')
                 #~ else:
                 #~ cells.append('')
                 cells.append(str(len(model._meta.fields)))
-                #~ qs = model.objects.all()
-                qs = model.objects.order_by('pk')
+                qs = model.objects.all()
                 n = qs.count()
                 cells.append(str(n))
                 #~ if n:

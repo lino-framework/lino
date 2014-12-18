@@ -375,12 +375,6 @@ def resolve_field(name, app_label=None):
     #~ return UnresolvedField(name)
 
 
-def get_model_report(model):
-    if not hasattr(model, '_lino_default_table'):
-        raise Exception("%r has no _lino_default_table" % model)
-    return model._lino_default_table
-
-
 def navinfo(qs, elem):
     """
     Return a dict with navigation information for the given model 

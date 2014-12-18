@@ -132,7 +132,8 @@ class Callback(object):
 
 
 class Kernel(object):
-    """This is the class of the object stored in :attr:`ad.Site.kernel`.
+    """This is the class of the object stored in :attr:`Site.kernel
+<lino.core.site_def.Site.kernel>`.
 
     """
 

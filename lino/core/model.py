@@ -212,9 +212,10 @@ class Model(models.Model):
 
     @classmethod
     def get_default_table(self):
-        """
-        Used internally. Lino chooses during the kernel startup, for each model, 
-        one of the discovered Table subclasses as the "default table".
+        """Used internally. Lino chooses during the kernel startup, for each
+        model, one of the discovered Table subclasses as the "default
+        table".
+
         """
         return self._lino_default_table
 
@@ -427,14 +428,20 @@ class Model(models.Model):
         return self
 
     def get_detail_action(self, ar):
-        """Used by instance_handler. E.g. for a `pcsw.Client` the
-        detail_action depends on the user profile.
+        """Return the detail action to use for this object with the given
+        action request. Return None if no detail action is defined, or
+        if the request has no view permission.
+
+        Once upon a time we wanted that e.g. for a `pcsw.Client` the
+        detail_action depends on the user profile.  This feature is no
+        longer used.
 
         """
         a = getattr(self, '_detail_action', None)
-        if a is not None:
+        if a is None:
+            a = self.__class__.get_default_table().detail_action
+        if a.get_view_permission(ar.get_user().profile):
             return a
-        return self.__class__.get_default_table().detail_action
 
     def is_attestable(self):
         """Override this to disable the :class:`ml.excerpts.CreateExcerpt`

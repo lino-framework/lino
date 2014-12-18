@@ -29,14 +29,14 @@ lino.projects.polly.settings.test
 Rolf Rompen's response to Participant feedback
 
 >>> rt.show(polls.AnswersByResponse, obj)
-============================================ =============================== ===========
- Question                                     My answer                       My remark
--------------------------------------------- ------------------------------- -----------
- There was enough to eat.                     **1** **2** **3** **4** **5**
- The stewards were nice and attentive.        **1** **2** **3** **4** **5**
- The participation fee was worth the money.   **1** **2** **3** **4** **5**
- Next time I will participate again.          **1** **2** **3** **4** **5**
-============================================ =============================== ===========
+=============================================== =============================== ===========
+ Question                                        My answer                       My remark
+----------------------------------------------- ------------------------------- -----------
+ 1) There was enough to eat.                     **1** **2** **3** **4** **5**
+ 2) The stewards were nice and attentive.        **1** **2** **3** **4** **5**
+ 3) The participation fee was worth the money.   **1** **2** **3** **4** **5**
+ 4) Next time I will participate again.          **1** **2** **3** **4** **5**
+=============================================== =============================== ===========
 <BLANKLINE>
 
 >>> client = Client()
@@ -53,17 +53,43 @@ Rolf Rompen's response to Participant feedback
 5
 
 >>> print(d['rows'][0][0])
-<p>There was enough to eat.</p>
+<p>1) There was enough to eat.</p>
+
+
+The "My answer" column for the first row has 5 links:
 
 >>> soup = BeautifulSoup(d['rows'][0][1])
 >>> links = soup.find_all('a')
 >>> len(links)
 5
 
+The first of them displays a "1":
+
 >>> print(links[0].string)
 ... #doctest: +NORMALIZE_WHITESPACE
 1
 
+And clicking on it would run the following Javascript code:
+
 >>> print(links[0].get('href'))
-javascript:Lino.polls.Responses.toggle_choice("ext-comp-1351",2,{ "fv": [ 7, 17 ] })
+javascript:Lino.polls.Responses.toggle_choice("ext-comp-1351",2,{ "fv": [ 9, 17 ] })
+
+The 2 is the id of the Response we are acting on:
+
+>>> polls.Response.objects.get(pk=2)
+Response #2 (u"Rolf Rompen's response to Participant feedback")
+
+
+"fv" stands for "field values". 
+It refers to the two `parameters` of the 
+:class:`lino.modlib.polls.models.ToggleChoice` action.
+The 9 is the id of a `polls.Question`, 
+the 17 is the id of a `polls.Choice`.
+
+>>> polls.Question.objects.get(pk=9)
+Question #9 (u'1) There was enough to eat.')
+
+>>> polls.Choice.objects.get(pk=17)
+Choice #17 (u'1')
+
 

@@ -235,6 +235,65 @@ class Inspector(dd.VirtualTable):
     #~ about.Models:70x10
     #~ """
 
+from lino.modlib.users.mixins import UserProfiles
+
+
+def have_action(ba):
+    if ba is None:
+        return _("N/A")
+    visible = []
+    hidden = []
+    for p in UserProfiles.objects():
+        if ba.get_view_permission(p):
+            visible.append(p)
+        else:
+            hidden.append(p)
+    if len(hidden) == 0:
+        return _("all")
+    if len(visible) == 0:
+        return _("nobody")
+    if len(hidden) < len(visible):
+        return _("all except %s") % ', '.join([p.name for p in hidden])
+    return ', '.join([p.name for p in visible])
+
+
+class DetailLayouts(dd.VirtualTable):
+    column_names = "datasource viewable_for fields"
+
+    @classmethod
+    def get_data_rows(self, ar):
+        coll = set()
+        from lino.core.actors import actors_list
+        for a in actors_list:
+            if a.detail_layout:
+                coll.add(a.detail_layout)
+        #from lino.core.dbtables import master_reports as l
+
+        l = list(coll)
+        # l = l[:5]
+
+        def f(a, b):
+            return cmp(str(a._datasource), str(b._datasource))
+        return sorted(l, f)
+
+    @dd.displayfield(_("Datasource"))
+    def datasource(self, obj, ar):
+        return str(obj._datasource)
+
+    @dd.displayfield(_("Viewable for"))
+    def viewable_for(self, obj, ar):
+        return have_action(obj._datasource.detail_action)
+
+    @dd.displayfield(_("Fields"))
+    def fields(self, obj, ar):
+        lh = obj.get_layout_handle(settings.SITE.ui)
+        # elems = [e.name for e in lh._names.values() if not e.hidden]
+        elems = [f.name for f in lh._store_fields]
+        if len(elems) > 5:
+            elems = elems[:3] + ['...'] + elems[-2:]
+        return ' '.join(elems)
+        # return (obj.detail_layout.desc)
+
 
 class About(EmptyTable):
 

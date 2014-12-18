@@ -942,7 +942,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         pw = self.field.rel.to.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width', pw)
-        #~ actor = dbtables.get_model_report(self.field.rel.to)
         actor = self.field.rel.to.get_default_table()
         if not isinstance(self.layout_handle.layout, layouts.ListLayout):
             a1 = actor.detail_action

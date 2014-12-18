@@ -515,7 +515,7 @@ class ActorDirective(Lino2rstDirective):
                                        cls._meta.verbose_name)
                 s += fields_ul(cls._meta.fields)
 
-                action_list = cls._lino_default_table.get_actions()
+                action_list = cls.get_default_table().get_actions()
                 action_list = [
                     ba for ba in action_list
                     if not isinstance(ba.action, IGNORED_ACTIONS)]

@@ -28,7 +28,6 @@ from lino.core import frames
 
 from lino.core.dbutils import full_model_name
 from lino.core.dbutils import resolve_model, resolve_field, get_field, UnresolvedModel
-from lino.core.dbutils import get_model_report
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 
 from lino.utils.xmlgen.html import E
@@ -188,6 +187,14 @@ def register_frame(frm):
     frames_list.append(frm)
 
 
+def is_candidate(T):
+    if T.filter or T.exclude or T.known_values:
+        return False
+    if not T.use_as_default_table:
+        return False
+    return True
+
+
 def register_report(rpt):
     #~ logger.debug("20120103 register_report %s", rpt.actor_id)
     #rptclass.app_label = rptclass.__module__.split('.')[-2]
@@ -223,16 +230,15 @@ def register_report(rpt):
 
     #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
     #~ rptname_choices.append(rpt.actor_id)
-
+    
     if issubclass(rpt, Table):
         if rpt.master is None:
             if not rpt.model._meta.abstract:
                 #~ logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
-            if not rpt.filter and not rpt.exclude and not rpt.known_values:
-                if rpt.use_as_default_table:
-                    if not '_lino_default_table' in rpt.model.__dict__:
-                        rpt.model._lino_default_table = rpt
+            if not '_lino_default_table' in rpt.model.__dict__:
+                if is_candidate(rpt):
+                    rpt.model._lino_default_table = rpt
         elif rpt.master is ContentType:
             #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
@@ -341,7 +347,7 @@ class Table(AbstractTable):
     """ Set this to `False` if this Table should *not* become the
     Model's default table.
 
-       """
+    """
 
     expand_memos = False
     """(No longer used; see :doc:`/tickets/44`).  Whether multi-line text

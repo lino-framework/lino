@@ -180,16 +180,18 @@ class NoteDetail(dd.FormLayout):
 
 
 class Notes(dd.Table):
-    required = dd.required(user_groups='office', user_level='admin')
-
+    required = dd.required(user_groups='office')
     model = 'notes.Note'
     detail_layout = NoteDetail()
     column_names = "date time id user event_type type project subject * body"
     order_by = ["date", "time"]
 
 
+class AllNotes(Notes):
+    required = dd.required(user_groups='office', user_level='admin')
+
+
 class MyNotes(mixins.ByUser, Notes):
-    required = dd.required(user_groups='office')
     column_names = "date time event_type type subject project body *"
     order_by = ["date", "time"]
 
@@ -207,7 +209,7 @@ class NotesByEventType(Notes):
 
 
 class NotesByX(Notes):
-    required = dd.required(user_groups='office')
+    abstract = True
     column_names = "date time event_type type subject user *"
     order_by = ["-date", "-time"]
 
@@ -281,6 +283,6 @@ def setup_config_menu(site, ui, profile, m):
 
 def setup_explorer_menu(site, ui, profile, m):
     m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('notes.Notes')
+    m.add_action('notes.AllNotes')
 
 customize_siteconfig()

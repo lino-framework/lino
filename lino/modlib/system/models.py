@@ -201,7 +201,8 @@ if settings.SITE.user_model:
         required = dd.required(user_groups='office')
 
 
-SYSTEM_USER_LABEL = _("System")
+config = dd.plugins.system
+# SYSTEM_USER_LABEL = _("System")
 OFFICE_MODULE_LABEL = _("Office")
 
 
@@ -213,7 +214,7 @@ def setup_main_menu(site, ui, profile, m):
 
 def setup_config_menu(site, ui, profile, m):
     office = m.add_menu("office", OFFICE_MODULE_LABEL)
-    system = m.add_menu("system", SYSTEM_USER_LABEL)
+    system = m.add_menu("system", config.verbose_name)
     #~ m.add_action('links.LinkTypes')
     system.add_instance_action(site.site_config)
     if site.user_model and profile.authenticated:
@@ -225,7 +226,7 @@ def setup_config_menu(site, ui, profile, m):
 
 def setup_explorer_menu(site, ui, profile, m):
     office = m.add_menu("office", OFFICE_MODULE_LABEL)
-    system = m.add_menu("system", SYSTEM_USER_LABEL)
+    system = m.add_menu("system", config.verbose_name)
 
     if site.user_model:
         system.add_action(site.modules.users.Authorities)

@@ -6,18 +6,19 @@ Tuesday, December 16, 2014
 .. currentmodule:: lino.modlib.polls.models
 
 I started to work on :ticket:`44`. Seems easier than expected.  It is
-clear that :mod:`lino.modlib.polls` is still very simplistic. Should
-questions be numbered? Yes they should. Added new field
+clear that :mod:`lino.modlib.polls` is still very simplistic. 
+
+Should questions be numbered? Yes they should. Added new field
 :attr:`Question.number`.
 
 I started to think that we need another model :class:`Section` instead
 of the `is_heading` checkbox. But what about simple polls with just
 one section? It would be a pity to have a QuestionsByPoll with only
 one line for these polls. Maybe rather "background sections" as in
-Writer.
+Writer.  The :class:`AnswersByResponse` table then becomes even more
+virtual since it adds rows for these background sections.
 
-The :class:`AnswersByResponse` table becomes even more virtual since
-it adds rows for these background sections.
+Side effects:
 
 I started to move documentation content back from the narrative API to
 the generated API. (Because the maintenance of a narrative API is
@@ -28,10 +29,12 @@ Mahmoud reported several problems in
 :doc:`/tutorials/polls/mysite/index`, which I updated.  For example
 the `input_mask_test` was not the right thing to show in a beginner's
 tutorial. I moved it on its own tutorial page
-:doc:`/tutorials/input_mask/index`.
+:doc:`/tutorials/input_mask/index`.  This revealed a bug in
+:meth:`lino.core.kernel.Kernel.get_generic_related` (which occured
+only when :mod:`lino.modlib.contenttypes` is not installed).
 
-He also reported that the :file:`requirements.txt` is confusing.  I
-read Donald Stufft's article `setup.py vs requirements.txt
-<https://caremad.io/2013/07/setup-vs-requirement/>` and then decided
+Mahmoud also reported that the :file:`requirements.txt` is confusing.
+I read Donald Stufft's article `setup.py vs requirements.txt
+<https://caremad.io/2013/07/setup-vs-requirement/>`_ and then decided
 that indeed this file is useless for Lino.  Another useless file was
 :file:`genapidoc.py` which, by the way, was 11 years old.
