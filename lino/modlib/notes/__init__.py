@@ -14,6 +14,14 @@
 
 """
 Adds a multipurpose model "Note"
+
+.. autosummary::
+   :toctree:
+
+   models
+   fixtures.demo
+   fixtures.std
+
 """
 
 from lino import ad

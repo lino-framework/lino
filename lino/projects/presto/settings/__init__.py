@@ -8,7 +8,7 @@ class Site(Site):
 
     verbose_name = "Lino Presto"
     version = "0.1"
-    url = "http://lino-framework.org/presto/"
+    url = "http://lino-framework.org/examples/presto/"
 
     demo_fixtures = 'std few_languages props democfg demo demo2'.split()
 

@@ -33,7 +33,7 @@ It does nothing else than to call
 
 The **demo fixtures** is a predefined set of fixture names,
 defined by the application developer in 
-the :setting:`demo_fixtures` setting.
+the :attr:`demo_fixtures <lino.core.site_def.Site.demo_fixtures>` setting.
 The `min1` app has the following demo fixtures:
 
     >>> import os
@@ -93,6 +93,14 @@ Play with them::
   python manage.py initdb std few_languages few_countries few_cities demo 
   ...
 
+Note that Python fixtures can also be used manually with
+:manage:`loaddata`, in that case they behave like normal fixtures.
+
+  python manage.py initdb
+  python manage.py loaddata std
+  python manage.py loaddata few_languages few_countries few_cities demo 
+  ...
+
 
 
 Writing your own fixture
@@ -125,19 +133,34 @@ Try to apply this fixture::
   INFO Lino initdb done ('dumpy1',) on database t:\data\luc\lino\dsbe\dsbe_test.db.
 
 
-Second step
------------
+.. _tutorial.instantiator:
 
-Since `.py` fixtures are normal Python modules, there are 
-no limits to our phantasy when creating new objects.
+Introducing the ``Instantiator`` class
+--------------------------------------
 
-A first thing that drops into mind is: there should be a more compact 
-way to create many records of a same table. That's why 
-:class:`lino.utils.instantiator.Instantiator` was written.
-Here is the same fixture in a more compact way:
+Since `.py` fixtures are normal Python modules, there are no more
+limits to our phantasy when creating new objects.  A first thing that
+drops into mind is: there should be a more "compact" way to create
+many records of a same table.
+
+A quick generic method for for writing more compact fixtures this is
+the :class:`lino.utils.instantiator.Instantiator` class.  Here is the
+same fixture in a more compact wayusing an instantiator:
 
 .. literalinclude:: dumpy2.py
     :linenos:
+
+
+The :class:`lino.utils.instantiator.Instantiator` class just helps to
+eliminate some lines of the code, nothing more (and nothing
+less). Compare the two `demo.py` files on this page and imagine you
+want to maintain these fixtures and ask: which one will be easier to
+maintain. For example add a third user, or add a new field for every
+user.
+
+You can also use python fixtures to generate random and massive amount
+of data. Look for example at the source code of
+:mod:`lino.modlib.notes.fixtures.demo`.
 
 
 Third step

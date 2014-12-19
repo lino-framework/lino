@@ -214,6 +214,12 @@ def make_converter(f, lookup_fields={}):
 
 
 class Instantiator:
+    """A utility class to make python fixtures more compact. See
+    :ref:`tutorial.instantiator`.
+
+    An instantiator is a
+
+    """
 
     def __init__(self, model, fieldnames=None, converter_classes={}, **kw):
         #~ self.model = resolve_model(model,strict=True)
@@ -270,6 +276,12 @@ class Instantiator:
         return True
 
     def build(self, *values, **kw):
+        """Instantiate an object using the default values of this
+        instantiator, overridden by the given specified values. The
+        number of positional arguments may not exceed the number of
+        fieldnames specified when creating this :class:`Instantiator.
+
+        """
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
         #~ i = 0
         kw['_m2m'] = {}

@@ -16,6 +16,7 @@ This defines the  :class:`Plugin` and  :class:`Site` classes.
 import os
 from os.path import normpath, dirname, join, isdir, abspath, relpath
 import inspect
+import time
 import datetime
 import warnings
 import codecs
@@ -394,6 +395,23 @@ class Site(object):
     never_build_site_cache = False
     show_internal_field_names = False
     build_js_cache_on_startup = False
+
+    keep_erroneous_cache_files = False
+    """When some exception occurs during :meth:`make_cache_file`, Lino
+    usually removes the partly generated file to make sure that it
+    will try to generate it again (and report the same error message)
+    for every subsequent next request.
+
+    Set this to `True` if you need to see the partly generated cache
+    file.  **Don't forget to remove this** when you have inspected the
+    file and fixed the reason of the exception, because if this is
+    `True` and some next exception occurs (which will happen sooner or
+    later), then all subsequent requests will usually end up to the
+    user with a blank screen and (if they notice it), a message
+    :message:`TypeError: Lino.main_menu is undefined` in their
+    Javascript console.
+
+    """
 
     use_java = True
     """
@@ -2470,12 +2488,15 @@ class Site(object):
         return []
 
     def make_cache_file(self, fn, write, force=False):
+        """Make the specified cache file.  This is used internally at server
+startup.
 
+        """
         if not force and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > self.kernel.code_mtime:
-                # logger.info(
-                #     "20140401 %s (%s) is up to date.", fn, time.ctime(mtime))
+                self.logger.info(
+                    "%s (%s) is up to date.", fn, time.ctime(mtime))
                 return 0
 
         self.logger.info("Building %s ...", fn)
@@ -2486,13 +2507,9 @@ class Site(object):
             f.close()
             return 1
         except Exception:
-            """
-            If some error occurs, remove the partly generated file
-            to make sure that Lino will try to generate it again
-            (and report the same error message) on next request.
-            """
             f.close()
-            #~ os.remove(fn)
+            if not self.keep_erroneous_cache_files:  #
+                os.remove(fn)
             raise
         #~ logger.info("Wrote %s ...", fn)
 

@@ -2,22 +2,18 @@
 # Copyright 2009-2012 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-TODO: this fixture fails if settings.SITE.project_model is 
-empty or points to a model that has no `name` field.
-"""
+"""Generate one houndred notes.
 
-import decimal
+TODO: this fixture fails if `settings.SITE.project_model` is empty or
+points to a model that has no `name` field.
+
+"""
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
-from lino.utils import i2d, Cycler
-
-
-#~ from django.contrib.auth import models as auth
-from lino.modlib.users import models as auth
+from lino.utils import Cycler
 
 
 def objects():
@@ -41,7 +37,7 @@ def objects():
     #~ u = User.objects.get(username='root')
 
     notetype = Instantiator('notes.NoteType').build
-    tel = notetype(name="phone report", build_method='appyodt')
+    tel = notetype(name="phone report")
     yield tel
     yield notetype(name="todo")
 

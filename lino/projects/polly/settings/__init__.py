@@ -23,7 +23,7 @@ class Site(Site):
     verbose_name = "Lino Polly"
     description = _("a Lino application to make surveys and polls.")
     version = "0.1"
-    url = "http://www.lino-framework.org/polly"
+    url = "http://www.lino-framework.org/examples/polly"
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
 

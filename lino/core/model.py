@@ -433,13 +433,15 @@ class Model(models.Model):
         if the request has no view permission.
 
         Once upon a time we wanted that e.g. for a `pcsw.Client` the
-        detail_action depends on the user profile.  This feature is no
-        longer used.
+        detail_action depends on the user profile.  This feature is
+        currently not used.
 
         """
         a = getattr(self, '_detail_action', None)
         if a is None:
             a = self.__class__.get_default_table().detail_action
+        if ar is None:
+            return a
         if a.get_view_permission(ar.get_user().profile):
             return a
 

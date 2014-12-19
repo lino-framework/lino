@@ -1,9 +1,7 @@
 # Copyright 2009-2014 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-
-.. management_command:: initdb
+""".. management_command:: initdb
 
 Performs an initialization of the database, replacing all data by default
 data (according to the specified fixtures).
@@ -12,18 +10,24 @@ This command REMOVES *all existing tables* from the database
 (not only Django tables), then runs Django's `syncdb`
 and `loaddata` commands to load the specified fixtures for all applications.
 
-That may sound dangerous, but that's what you want when you ask to
-restore the factory settings of a Django application.
-
-Django's `reset` command may fail after an upgrade if the new Lino
-version defines new tables. In that case, flush sends a DROP TABLE
-which fails because that table doesn't exist.
+This may sound dangerous, but it is what you want when you ask to
+restore the factory settings of a Lino application.
 
 This reimplements a simplified version of Django's `reset` command,
-without the possibility of deleting only *some* data (the thing which
-caused so big problems that Django 1.3. decided to `deprecate this command
-<https://docs.djangoproject.com/en/dev/releases/1.3\
+without the possibility of deleting *only some* data (the thing which
+caused so big problems that Django 1.3. decided to `deprecate this
+command <https://docs.djangoproject.com/en/dev/releases/1.3\
 /#reset-and-sqlreset-management-commands>`__.
+
+Truncating the database (i.e. dropping all tables without dropping the
+database itself) is not always trivial, and Lino's :manage:`initdb`
+sometimes fails on this task.  For example when the dbms is severe
+when checking foreign key integrity.
+
+TODO: Django now has a `flush
+<https://docs.djangoproject.com/en/dev/ref/django-admin/#flush>`_
+command which is hopefully the part of "reset" which we are
+reimplimenting here. Ticket :ticket:`48`.
 
 """
 

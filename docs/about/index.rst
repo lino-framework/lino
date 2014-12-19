@@ -10,12 +10,18 @@ About Lino
    what
    projects
    testimonals
-   faq
    name
    history
-   
+   /examples/index
    lino_and_django
    thanks
+
+Drafts
+   
+.. toctree::
+   :maxdepth: 1
+
+   faq
    compared
    why_extjs
    ui

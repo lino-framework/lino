@@ -5,6 +5,7 @@
    :toctree:
 
     diag
+    initdb
     initdb_demo
     makedocs
     makescreenshots

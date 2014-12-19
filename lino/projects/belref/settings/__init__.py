@@ -14,7 +14,7 @@ class Site(Site):
     verbose_name = "Lino Belref"
     description = _("Belgian Reference")
     version = "0.1"
-    url = "http://www.lino-framework.org/belref.html"
+    url = "http://www.lino-framework.org/examples/belref.html"
     author = 'Luc Saffre'
     author_email = 'luc.saffre@gmail.com'
 
