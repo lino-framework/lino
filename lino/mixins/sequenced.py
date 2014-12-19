@@ -10,10 +10,13 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from .duplicable import Duplicable, Duplicate
 
 from lino.core import actions
 from lino.core import fields
+from lino.utils.xmlgen.html import E
+from lino.utils import AttrDict
+
+from .duplicable import Duplicable, Duplicate
 
 
 class MoveUp(actions.Action):
