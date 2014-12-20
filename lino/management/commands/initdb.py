@@ -80,15 +80,18 @@ class Command(BaseCommand):
     def try_sql(self, cursor, sql_list):
         hope = False
         pending = []
+        errors = []
         for sql in sql_list:
             try:
                 cursor.execute(sql)
                 hope = True
-            except IntegrityError:
+            except IntegrityError as e:
                 pending.append(sql)
+                errors.append(str(e))
         if not hope:
-            msg = "%d pending SQL statements failed: %s" % (
-                len(pending), ', '.join(pending))
+            msg = "%d pending SQL statements failed:" % len(pending)
+            for i, sql in pending:
+                msg += \n%s (%s) % (sql, errors[i])
             raise Exception(msg)
         return pending
 
