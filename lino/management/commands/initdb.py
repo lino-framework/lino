@@ -38,7 +38,7 @@ from optparse import make_option
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db.utils import IntegrityError
+from django.db.utils import IntegrityError, OperationalError
 
 from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
@@ -121,8 +121,11 @@ Are you sure (y/n) ?""" % dbname):
             # TODO: this works only for mysql
             from django.db import connection
             cursor = connection.cursor()
-            cursor.execute("DROP DATABASE %s;" % dbname)
-            cursor.execute("CREATE DATABASE %s charset 'utf8';" % dbname)
+            try:
+                cursor.execute("DROP DATABASE '%s';" % dbname)
+            except OperationalError:
+                pass
+            cursor.execute("CREATE DATABASE '%s' charset 'utf8';" % dbname)
 
         else:
 
