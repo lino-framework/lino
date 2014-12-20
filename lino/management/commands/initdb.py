@@ -87,7 +87,9 @@ class Command(BaseCommand):
             except IntegrityError:
                 pending.append(sql)
         if not hope:
-            raise Exception("All %d pending SQL failed" % len(sql_list))
+            msg = "%d pending SQL statements failed: %s" % (
+                len(pending), ', '.join(pending))
+            raise Exception(msg)
         return pending
 
 
