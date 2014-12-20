@@ -122,7 +122,7 @@ Are you sure (y/n) ?""" % dbname):
             from django.db import connection
             cursor = connection.cursor()
             cursor.execute("DROP DATABASE %s;" % dbname)
-            cursor.execute("CREATE DATABASE %s charset 'utf-8';" % dbname)
+            cursor.execute("CREATE DATABASE %s charset 'utf8';" % dbname)
 
         else:
 
