@@ -53,7 +53,7 @@ from atelier.utils import confirm
 
 USE_SQLDELETE = True
 
-USE_DROP_CREATE = False  # tried, but doesn't seem to work
+USE_DROP_CREATE = True  # tried, but doesn't seem to work
 """
 http://stackoverflow.com/questions/3414247/django-drop-all-tables-from-database
 http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
@@ -108,6 +108,7 @@ class Command(BaseCommand):
         #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
+        engine = settings.DATABASES[using]['ENGINE']
         if options.get('interactive'):
             if not confirm("""We are going to flush your database (%s).
 Are you sure (y/n) ?""" % dbname):
@@ -116,12 +117,10 @@ Are you sure (y/n) ?""" % dbname):
         options.update(interactive=False)
         #~ dblogger.info("Lino initdb %s started on database %s.", args, dbname)
 
-        if USE_DROP_CREATE:
-
+        if USE_DROP_CREATE and engine == 'django.db.backends.mysql':
+            # TODO: this works only for mysql
             from django.db import connection
             cursor = connection.cursor()
-            #~ cursor.execute("DROP DATABASE %s;", [connection.settings_dict['NAME']])
-            #~ cursor.execute("CREATE DATABASE %s;", [connection.settings_dict['NAME']])
             cursor.execute("DROP DATABASE %s;" % dbname)
             cursor.execute("CREATE DATABASE %s charset 'utf-8';" % dbname)
 
