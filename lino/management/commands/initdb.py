@@ -90,7 +90,7 @@ class Command(BaseCommand):
                 errors.append(str(e))
         if not hope:
             msg = "%d pending SQL statements failed:" % len(pending)
-            for i, sql in pending:
+            for i, sql in enumerate(pending):
                 msg += "\n%s (%s)" % (sql, errors[i])
             raise Exception(msg)
         return pending
