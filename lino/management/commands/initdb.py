@@ -154,9 +154,11 @@ Are you sure (y/n) ?""" % dbname):
             if len(sql_list):
                 try:
                     cursor = conn.cursor()
+                    conn.disable_constraint_checking()
                     pending = self.try_sql(cursor, sql_list)
                     while len(pending):
                         pending = self.try_sql(cursor, pending)
+                    conn.enable_constraint_checking()
 
                 except Exception:
                     transaction.rollback_unless_managed(using=using)
