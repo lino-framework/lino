@@ -121,11 +121,8 @@ Are you sure (y/n) ?""" % dbname):
             # TODO: this works only for mysql
             from django.db import connection
             cursor = connection.cursor()
-            try:
-                cursor.execute("DROP DATABASE '%s';" % dbname)
-            except OperationalError:
-                pass
-            cursor.execute("CREATE DATABASE '%s' charset 'utf8';" % dbname)
+            cursor.execute("DROP DATABASE %s;" % dbname)
+            cursor.execute("CREATE DATABASE %s charset 'utf8';" % dbname)
 
         else:
 
