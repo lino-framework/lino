@@ -95,7 +95,6 @@ class Command(BaseCommand):
             raise Exception(msg)
         return pending
 
-
     def handle(self, *args, **options):
 
         #~ from lino.core.kernel import analyze_models
@@ -124,7 +123,7 @@ Are you sure (y/n) ?""" % dbname):
             #~ cursor.execute("DROP DATABASE %s;", [connection.settings_dict['NAME']])
             #~ cursor.execute("CREATE DATABASE %s;", [connection.settings_dict['NAME']])
             cursor.execute("DROP DATABASE %s;" % dbname)
-            cursor.execute("CREATE DATABASE %s;" % dbname)
+            cursor.execute("CREATE DATABASE %s charset 'utf-8';" % dbname)
 
         else:
 
