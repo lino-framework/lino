@@ -209,9 +209,7 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         abstract = True
 
     product = models.ForeignKey('products.Product', blank=True, null=True)
-    #~ title = models.CharField(max_length=200,blank=True)
     description = dd.RichTextField(_("Description"), blank=True, null=True)
-    #~ discount = models.IntegerField(_("Discount"),default=0)
     discount = dd.PercentageField(_("Discount"), blank=True, null=True)
 
     def get_base_account(self, tt):
@@ -220,13 +218,6 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         return tt.get_product_base_account(self.product)
         #~ return self.voucher.journal.chart.get_account_by_ref(ref)
 
-    #~ def get_vat_class(self,tt):
-        #~ name = settings.SITE.get_product_vat_class(tt,self.product)
-        #~ return vat.VatClasses.get_by_name(name)
-
-    #~ def full_clean(self,*args,**kw):
-        #~ super(ProductDocItem,self).full_clean(*args,**kw)
-
     def discount_changed(self, ar):
         if not self.product:
             return
@@ -234,23 +225,27 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         tt = self.voucher.get_trade_type()
         catalog_price = tt.get_catalog_price(self.product)
 
-        if catalog_price is not None:
-            #~ assert self.vat_class == self.product.vat_class
-            if self.voucher.vat_regime.item_vat:
-                rate = self.get_vat_rate()  # rate of this item
-            else:
-                rate = ZERO
-            catalog_rate = settings.SITE.plugins.vat.get_vat_rate(
-                tt, self.vat_class, vat.get_default_vat_regime)
-            if rate != catalog_rate:
-                catalog_price = remove_vat(catalog_price, catalog_rate)
-                catalog_price = add_vat(catalog_price, rate)
-            if self.discount is None:
-                self.unit_price = catalog_price
-            else:
-                self.unit_price = catalog_price * \
-                    (HUNDRED - self.discount) / HUNDRED
-            self.unit_price_changed(ar)
+        if catalog_price is None:
+            return
+        #~ assert self.vat_class == self.product.vat_class
+        if self.voucher.vat_regime.item_vat:
+            rate = self.get_vat_rate()  # rate of this item
+        else:
+            rate = ZERO
+
+        catalog_rate = rt.modules.vat.VatRate.find_vat_rate(
+            tt, vat.get_default_vat_regime, self.get_vat_class(tt),
+            dd.plugins.vat.get_country(),
+            dd.today())
+        if rate != catalog_rate:
+            catalog_price = remove_vat(catalog_price, catalog_rate)
+            catalog_price = add_vat(catalog_price, rate)
+        if self.discount is None:
+            self.unit_price = catalog_price
+        else:
+            self.unit_price = catalog_price * \
+                (HUNDRED - self.discount) / HUNDRED
+        self.unit_price_changed(ar)
 
     def product_changed(self, ar):
         if self.product:

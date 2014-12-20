@@ -275,6 +275,9 @@ class Instantiator:
             return False
         return True
 
+    def __call__(self, *values, **kw):
+        return self.build(*values, **kw)
+
     def build(self, *values, **kw):
         """Instantiate an object using the default values of this
         instantiator, overridden by the given specified values. The

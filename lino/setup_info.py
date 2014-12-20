@@ -2,6 +2,14 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+# This module has no docstring because is is being `execfile`'d in the
+# global namespace of other modules.
+
+# This module is part of the Lino test suite. 
+# To test only this module:
+#
+#   $ python setup.py test -s tests.PackagesTests
+
 from __future__ import unicode_literals
 
 SETUP_INFO = dict(
@@ -143,6 +151,7 @@ lino.modlib.polls.fixtures
 lino.modlib.postings
 lino.modlib.accounts
 lino.modlib.vat
+lino.modlib.vat.fixtures
 lino.modlib.households
 lino.modlib.households.fixtures
 lino.modlib.courses

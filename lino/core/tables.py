@@ -989,14 +989,15 @@ class AbstractTable(actors.Actor):
             recno += 1
             rows.append([x for x in ar.row2text(fields, row, sums)])
 
-        has_sum = False
-        for i in sums:
-            if i:
-                #~ print '20120914 zero?', repr(i)
-                has_sum = True
-                break
-        if has_sum:
-            rows.append([x for x in ar.sums2html(fields, sums)])
+        if not cls.hide_sums:
+            has_sum = False
+            for i in sums:
+                if i:
+                    #~ print '20120914 zero?', repr(i)
+                    has_sum = True
+                    break
+            if has_sum:
+                rows.append([x for x in ar.sums2html(fields, sums)])
 
         t = RstTable(headers, **kwargs)
         s = t.to_rst(rows)

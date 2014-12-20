@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 
 """
-Defines the :class:`DatePeriod` model mixin. and :class:`PeriodEvents`.
+Defines the :class:`DatePeriod` model mixin.
 """
 
 import logging
@@ -27,7 +27,10 @@ def rangefmt(r):
 class DatePeriod(Model):
 
     """A model mixin for models which represent a period whose start and
-end are date fields.
+    end are date fields.
+
+    Designed for usage with
+    :class:`lino.modlib.system.mixins.PeriodEvents`.
 
     """
 

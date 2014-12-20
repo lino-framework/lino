@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""The :xfile:`models` module for :mod:`lino.modlib.polls`.
+"""The :xfile:`models.py` module for :mod:`lino.modlib.polls`.
 
-Models overview:
+.. rubric:: Models overview
 
 A :class:`Poll` is a collection of :class:`Questions <Question>` which
 we want to ask repeatedly to different people. Each Question has a

@@ -19,6 +19,9 @@ from lino.projects.std.settings import *
 
 class Site(Site):
 
+    demo_fixtures = 'std few_countries euvatrates furniture \
+    demo demo2'.split()
+
     verbose_name = "Lino Docs"
 
     project_model = 'contacts.Person'
@@ -66,4 +69,8 @@ class Site(Site):
         yield 'lino.modlib.beid'
         #~ yield 'lino.projects.cosi'
         #~ yield 'lino'
+
+    def setup_plugins(self):
+        self.plugins.vat.configure(country_code='BE')
+        super(Site, self).setup_plugins()
 
