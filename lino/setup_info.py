@@ -2,8 +2,9 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-# This module has no docstring because is is being `execfile`'d in the
-# global namespace of other modules.
+#~ Note that this module may not have a docstring because any
+#~ global variable defined here will override the global
+#~ namespace of lino/__init__.py who includes it with execfile.
 
 # This module is part of the Lino test suite. 
 # To test only this module:

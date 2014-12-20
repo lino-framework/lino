@@ -57,6 +57,10 @@ USE_DROP_CREATE = False  # tried, but doesn't seem to work
 """
 http://stackoverflow.com/questions/3414247/django-drop-all-tables-from-database
 http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
+
+The problem is that it accepts the DROP DATABASE, but afterwards I get
+"no database selected" when I run syncdb.
+
 """
 
 

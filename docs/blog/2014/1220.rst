@@ -27,4 +27,9 @@ Everything went as planned:
   <lino.core.actors.Actor.hide_sums>` was being ignored by
   :meth:`lino.core.actors.Actor.to_rst`.
 
-Installed latest development version on :ref:`lf`.
+
+
+Installed latest development version on :ref:`lf`.  And another good
+news: It seems that :manage:`initdb` now works also on InnoDB because
+it calls :meth:`disable_constraint_checking`. So the problem described
+in :ref:`innodb` has gone.

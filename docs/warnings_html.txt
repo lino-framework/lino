@@ -1,1 +1,0 @@
-/home/luc/hgwork/lino/lino/utils/instantiator.py:docstring of lino.utils.instantiator.Instantiator.build:1: WARNING: Inline interpreted text or phrase reference start-string without end-string.
