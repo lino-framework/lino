@@ -38,6 +38,7 @@ from optparse import make_option
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import IntegrityError
 
 from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
@@ -75,6 +76,20 @@ class Command(BaseCommand):
             help='Nominates a database to reset. '
             'Defaults to the "default" database.'),
     )
+
+    def try_sql(self, cursor, sql_list):
+        hope = False
+        pending = []
+        for sql in sql_list:
+            try:
+                cursor.execute(sql)
+                hope = True
+            except IntegrityError:
+                pending.append(sql)
+        if not hope:
+            raise Exception("All %d pending SQL failed" % len(sql_list))
+        return pending
+
 
     def handle(self, *args, **options):
 
@@ -133,14 +148,16 @@ Are you sure (y/n) ?""" % dbname):
 
             #~ print sql_list
 
-            try:
-                cursor = conn.cursor()
-                for sql in sql_list:
-                    # print sql
-                    cursor.execute(sql)
-            except Exception:
-                transaction.rollback_unless_managed(using=using)
-                raise
+            if len(sql_list):
+                try:
+                    cursor = conn.cursor()
+                    pending = self.try_sql(cursor, sql_list)
+                    while len(pending):
+                        pending = self.try_sql(cursor, pending)
+
+                except Exception:
+                    transaction.rollback_unless_managed(using=using)
+                    raise
 
             transaction.commit_unless_managed()
 

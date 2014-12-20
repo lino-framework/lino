@@ -26,3 +26,5 @@ Everything went as planned:
 - En passant I noticed that :attr:`hide_sums
   <lino.core.actors.Actor.hide_sums>` was being ignored by
   :meth:`lino.core.actors.Actor.to_rst`.
+
+Installed latest development version on :ref:`lf`.
