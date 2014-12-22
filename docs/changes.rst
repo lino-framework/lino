@@ -58,8 +58,8 @@ regressions.
 
 
 
-Version 1.6.16 (released 2014-12-14)
-====================================
+Version 1.6.16 (released :blogref:`20141214`)
+=============================================
 
 A minor release because 
 

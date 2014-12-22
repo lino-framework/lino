@@ -15,3 +15,5 @@ While I was there: the :cmd:`fab release` command now also reminds me
 of the things to check before a release, and especiallay it now
 communicates with PyPI and displays information about the last
 official release.
+
+Released :ref:`atelier` 0.0.6.
