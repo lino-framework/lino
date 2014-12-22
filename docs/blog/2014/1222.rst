@@ -1,0 +1,17 @@
+===================================
+20141222 (Monday, 22 December 2014)
+===================================
+
+Inspired by Daniel Greenfield's post about `setup.py tricks
+<http://www.pydanny.com/python-dot-py-tricks.html>`_, I enhanced my
+:cmd:`fab release` to also do `git tag`. 
+
+Until now I have never (seriously) used revision tags in my repos
+because I have never been in a situation where I would have needed
+them.  But it is probable that we will soon need them as Lino is
+growing.  
+
+While I was there: the :cmd:`fab release` command now also reminds me
+of the things to check before a release, and especiallay it now
+communicates with PyPI and displays information about the last
+official release.

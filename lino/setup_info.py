@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.16',  # released 2014-12-14
+    version='1.6.16',
     install_requires=[
         'django<1.7', 'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
@@ -33,6 +33,7 @@ SETUP_INFO = dict(
     license='BSD License',
     include_package_data=True,
     zip_safe=False,
+    obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
     author_email='luc.saffre@gmail.com',
     url="http://www.lino-framework.org",

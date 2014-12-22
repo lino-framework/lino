@@ -805,7 +805,7 @@ def install_migrations(self, loader):
 
 def load_fixture_from_module(m, **options):
     """
-    Used in unit tests to manually load a given fixture.
+    Used in unit tests to manually load a given fixture module.
     E.g. in Lino `/tutorials/tables/index`.
     """
     #~ filename = m.__file__[:-1]

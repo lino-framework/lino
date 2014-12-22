@@ -13,6 +13,6 @@ add_demo_database('lino.projects.presto.settings.demo')
 add_demo_database('lino.projects.i18n.settings')
 add_demo_database('lino.projects.events.settings')
 
-env.use_mercurial = False
+env.revision_control_system = 'git'
 
 env.apidoc_exclude_pathnames = ['lino/projects']
