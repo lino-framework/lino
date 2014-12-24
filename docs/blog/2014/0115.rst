@@ -55,5 +55,5 @@ reference to this blog entry. A simulation:
 
 
     
-:doc:`/tickets/80`
+:srcref:`docs/tickets/80`
 

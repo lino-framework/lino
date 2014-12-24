@@ -26,15 +26,17 @@ should be attributed.  In this example, every change to *Entry*,
 
 We define our own subclass of `Site` for this tutorial (which is the
 recommended way except for very simple examples).  Here is the
-`settings.py' file:
+:xfile:`settings.py` file:
 
 .. literalinclude:: settings.py
 
+.. currentmodule:: lino.core.site_def
+
 We need to redefine the default list of user profiles by overriding
-:setting:`setup_choicelists` because `contacts` adds a user group
+:meth:`Site.setup_choicelists` because `contacts` adds a user group
 "office", required to see most commands.
 
-The :setting:`get_installed_apps` shows that 
+The :meth:`Site.get_installed_apps` shows that 
 :mod:`lino.modlib.changes` depends on the following apps:
 :mod:`lino.modlib.users`, 
 :mod:`lino.modlib.system` and

@@ -2,8 +2,8 @@
 Monday, June 23, 2014
 =====================
 
-Finishing on :doc:`/tickets/110`
---------------------------------
+Finishing on :srcref:`docs/tickets/110`
+----------------------------------------
 
 - :mod:`lino_welfare.fixtures.demo` now adds some contract
   partners (:class:`welfare.isip.ContractPartner`).

@@ -5,7 +5,7 @@ Thursday, April 17, 2014
 Customized SubmitInsert actions
 -------------------------------
 
-Updated :doc:`/tickets/93` after two hours of efficient talk with
+Updated :srcref:`docs/tickets/93` after two hours of efficient talk with
 Gerd.
 
 The first thing I plan to do is an important surgery for Lino: make it

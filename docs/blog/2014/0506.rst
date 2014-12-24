@@ -41,7 +41,7 @@ Oops, and then I started to write a two new tested tutorials:
 - :ref:`dev.vtables` is based on a non-tested example that was in the
   docstring of :mod:`lino.core.tables`
 
-- :ref:`dev.tables` 
+- `dev.tables` 
 
 I noticed that none of the tutorials was being tested because Django's
 test discovery had changed in 1.6. Added a file test.py for each of

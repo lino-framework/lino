@@ -3,7 +3,7 @@ Tuesday, May 27, 2014
 =====================
 
 
-Preparing for :doc:`/tickets/104`:
+Preparing for :srcref:`docs/tickets/104`:
 Added new fields does_asd and does_integ to `pcsw.CoachingType`.
 
 Discovered a Javascript bug: double clicking in a grid of a table with
@@ -16,11 +16,11 @@ commit
 
 Discovered and fixed an oddness: `farest_future` ("Don't generate
 automatic events past that date.") was a database field in
-`SiteConfig` while :attr:`ad.Site.ignore_dates_before` was a Site
+`SiteConfig` while :attr:`lino.core.site_def.Site.ignore_dates_before` was a Site
 class attribute. They should be both in the same place. And since
 normal web interface users should not need to worry about these
 parameters, we remove `farest_future` from `SiteConfig` and replace it
-by a new attribute :attr:`ad.Site.ignore_dates_after`.
+by a new attribute :attr:`lino.core.site_def.Site.ignore_dates_after`.
 
 commit
 

@@ -8,7 +8,7 @@ Getting started as a Lino developer
 
 Continued on :doc:`yesterday's <1027>` changes and checked in.
 
-Opened ticket :doc:`/tickets/138`.
+Opened ticket :srcref:`docs/tickets/138`.
 
 In a consultation with :ref:`mw`, we decided to add django-iban_ and
 xlwt_ to `install_requires` and bs4_ to `tests_require` (in Lino's
@@ -21,7 +21,7 @@ need bs4_).
 
 But it is even more annoying for these people when the test suite
 fails because these packages are not installed.  So currently Lino
-depends on these packages, and :doc:`/tickets/139` opens discussion
+depends on these packages, and :srcref:`docs/tickets/139` opens discussion
 about how to solve this dependency.
 
 
@@ -34,8 +34,8 @@ Kostenübernahme Kleidung
 =========================
 
 Die neue Bescheinigung :xfile:`clothing_bank.body.html`
-(:doc:`/tickets/136`) hat begeistertes Lob bekommen, und unsere
-Großbaustelle :doc:`/tickets/93` kommt langsam in die Zielgerade.  Nur
+(:srcref:`docs/tickets/136`) hat begeistertes Lob bekommen, und unsere
+Großbaustelle :srcref:`docs/tickets/93` kommt langsam in die Zielgerade.  Nur
 noch ein paar "Kleinigkeiten".
 
 DONE:
@@ -51,7 +51,7 @@ TODO:
 - "U. Zeichen : X/Y/Z" : Das "U. Zeichen" in Arial (sans serif), aber
   "X/Y/Z" in Roman.
 
-  This is not trivial. Opened :doc:`/tickets/145`
+  This is not trivial. Opened :srcref:`docs/tickets/145`
 
 Dringende medizinische Hilfe
 ============================

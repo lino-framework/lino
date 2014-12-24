@@ -6,6 +6,7 @@
     actions
     actors
     auth
+    boundaction
     choicelists
     constants
     dbtables
@@ -15,6 +16,7 @@
     frames
     inject
     kernel
+    keyboard
     layouts
     menus
     merge
@@ -25,6 +27,7 @@
     signals
     site_def
     tables
+    tablerequest
     web
     workflows
 

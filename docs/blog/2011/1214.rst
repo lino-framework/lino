@@ -27,7 +27,7 @@ I just forgot to remove them from the todo list:
 
 
 
-Continued on on :doc:`/tickets/52`
+Continued on on :srcref:`docs/tickets/52`
 ----------------------------------
 
 - new field Calendar.description

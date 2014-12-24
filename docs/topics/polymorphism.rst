@@ -20,7 +20,7 @@ To use Martin Frowler's classification:
 
 Lino also provides methods to make the implementation 
 choice itself transparent
-(we are working on it: :doc:`/tickets/72`)
+(we are working on it: :srcref:`docs/tickets/72`)
 
 Polymorphism without using MTI:
 

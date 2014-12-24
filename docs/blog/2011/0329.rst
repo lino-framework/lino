@@ -25,7 +25,7 @@ Wenn ein Report nur ein :xfile:`.dtl` hat, fungiert
 glaube ich das Window selber als Hauptcontainer.
 N.B.: Später wird Lino auch mal GroupBoxes ermöglichen, 
 aber dazu muss ich das Format der :xfile:`.dtl`-Dateien revidieren.
-Siehe :doc:`/tickets/34`.
+Siehe :srcref:`docs/tickets/34`.
 
 Erstmal spalte ich `lino.AppWindow` aus dem bisherigen `lino.TableWindow` raus.
 Weil das DetailWindow ebenfalls ein `lino.AppWindow` sein wird. 

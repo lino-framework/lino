@@ -5,7 +5,7 @@ Tuesday, June 17, 2014
 Release to PyPI?
 ----------------
 
-Before starting to work on :doc:`/tickets/110` I'd like to do an
+Before starting to work on :srcref:`docs/tickets/110` I'd like to do an
 official release on PyPI of the current version of Lino,
 :ref:`welfare`, :ref:`cosi` & Co.  And also :ref:`faggio`.  Before
 this it would be good to do an upgrade for Roger who will soon

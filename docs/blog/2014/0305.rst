@@ -15,8 +15,8 @@ A first real-world usage case for :setting:`hidden_apps`
 --------------------------------------------------------
 
 A first real-world usage case for :setting:`hidden_apps`: the
-:ref:`welfare` in Châtelet does not need the :ref:`welfare.debts` and
-:ref:`welfare.courses` modules.
+:ref:`welfare` in Châtelet does not need the `debts` and
+`courses` modules.
 
 So I hide them in :mod:`lino_welfare.settings.fr`::
 
@@ -37,7 +37,7 @@ individual :setting:`setup_choicelists` for
 :mod:`lino_welfare.settings.fr`.
 
 Another problem occured in :mod:`lino_welfare.fixtures.demo`.  Had to
-move the demo fixture for :ref:`lino_welfare.modlib.courses` to their
+move the demo fixture for `lino_welfare.modlib.courses` to their
 own module. Normal.
 
 Another problem is::

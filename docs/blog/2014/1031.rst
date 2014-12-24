@@ -2,6 +2,6 @@
 Friday, October 31, 2014
 ========================
 
-Opened :doc:`/tickets/143` because I understood that this is a serious
+Opened :srcref:`docs/tickets/143` because I understood that this is a serious
 show stopper for :ref:`cosi`.
 

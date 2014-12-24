@@ -59,16 +59,6 @@ PAGES = settings.SITE.plugins.pages
     #~ """
 
 
-#~ class Page(mixins.TypedPrintable,
-      #~ mixins.AutoUser,
-      #~ mixins.Controllable,
-      #~ mixins.CreatedModified,
-      #~ mixins.ProjectRelated,
-      #~ outbox.Mailable,
-      #~ postings.Postable,
-      #~ ):
-
-#~ class Page(dd.Model):
 class Page(mixins.Referrable, mixins.Hierarizable):
 
     """
@@ -188,7 +178,7 @@ class Pages(dd.Table):
     order_by = ["ref"]
 
 
-#~ class MyPages(mixins.ByUser,Pages):
+#~ class MyPages(ByUser,Pages):
     #~ required = dict(user_groups='office')
     #~ column_names = "modified title type project *"
     #~ label = _("My pages")

@@ -12,7 +12,7 @@ from lino.core import actors
 
 
 class FrameHandle(base.Handle):
-
+    
     def __init__(self, frame):
         #~ assert issubclass(frame,Frame)
         self.actor = frame
@@ -26,7 +26,12 @@ class FrameHandle(base.Handle):
 
 
 class Frame(actors.Actor):
+    """Base clase for actors which open a window but, but this window is
+    neither a database table nor a detail form.
 
+    Example subclass is :class:`lino.modlib.extensible.CalendarPanel`.
+
+    """
     _handle_class = FrameHandle
     editable = False
 

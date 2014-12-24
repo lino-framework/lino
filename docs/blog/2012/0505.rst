@@ -1,7 +1,7 @@
 20120505
 ========
 
-Worked on :doc:`/tickets/63`.
+Worked on :srcref:`docs/tickets/63`.
 
 Renamed :mod:`lino.modlib.families` to :mod:`lino.modlib.households`
 because a "Household" is more general than a "Family". 

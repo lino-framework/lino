@@ -5,7 +5,7 @@
 """
 Starts a daemon (or, if daemons are not supported, a nomal console process) 
 that watches for changes in remote calendars.
-See also :doc:`/tickets/47`
+See also :srcref:`docs/tickets/47`
 
 """
 

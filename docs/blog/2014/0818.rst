@@ -2,7 +2,7 @@
 Monday, August 18, 2014
 =======================
 
-Started to work on :doc:`/tickets/123`. 
+Started to work on :srcref:`docs/tickets/123`. 
 I realized that the ActiveCourses table (a
 global list of active courses) is probably longer needed now that we
 have `ActiveCoursesByPupil`.

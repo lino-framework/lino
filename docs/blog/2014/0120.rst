@@ -4,8 +4,8 @@
 
 - Started new document :ref:`welfare.tour`.
 
-- :mod:`lino.utils.actordoc` now supports :role:`ddref` referring to
-  an *action*. 
+- :mod:`lino.utils.actordoc` now supports :rst:role:`ddref` referring
+  to an *action*.
 
   TODO: the action's label appears correctly but they are not yet
   clickable; if the action has an icon, insert this into the text.

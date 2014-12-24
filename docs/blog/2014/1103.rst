@@ -47,7 +47,7 @@ caused an `SMTPRecipientsRefused` server traceback when a user
 The language of an excerpt
 ==========================
 
-Started :doc:`/tickets/144`:
+Started :srcref:`docs/tickets/144`:
 
 - The `language` field on :class:`ml.excerpts.Excerpt` is back.  And the
   `language` field on :class:`welfare.aids.Confirmation` is no longer

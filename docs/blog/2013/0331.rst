@@ -13,7 +13,7 @@ Now I did it for both :mod:`djangosite` and :mod:`north`.
 See also :ref:`djangosite.changes` and :ref:`north.changes`.
 Lino itself must yet remain GPL as long as the ExtJS and Ext.ensible 
 user interface are still integrated. The same applies to Lino-Welfare.
-See :doc:`/tickets/16`
+See :srcref:`docs/tickets/16`
 
 Why do I switch from GPL to BSD? 
 

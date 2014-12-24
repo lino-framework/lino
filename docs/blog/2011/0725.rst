@@ -12,7 +12,7 @@ Zwei Stunden Fehlerjagd für folgendes Problem:
     man muss mehrmals die drei Reiter "durchklicken", bis 
     die Felder korrekt angezeigt werden. Das Problem ist *nicht* durch die 
     aktiven Felder gekommen.
-    Ist sehr ähnlich wie :doc:`/tickets/1`.
+    Ist sehr ähnlich wie :srcref:`docs/tickets/1`.
     
 Es hatte überhaupt nichts mit Ticket #1 zu tun, sondern in meiner 
 Lino.RichTextPanel war noch ein Bug: `refresh()` erzeugte einen TypeError 

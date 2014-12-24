@@ -82,7 +82,7 @@ target="_blank">the documentation</a>
 or ask your system administrator.
 
 The message contains a link to the page :doc:`/help/print`.  You can
-override :attr:`ad.Site.help_url` if you want to invite users to your
+override :attr:`lino.core.site_def.Site.help_url` if you want to invite users to your
 own help system.
 
 Since the `media/cache` directory is not part of the Lino repository,

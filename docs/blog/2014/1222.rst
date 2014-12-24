@@ -2,18 +2,47 @@
 20141222 (Monday, 22 December 2014)
 ===================================
 
+Releases
+========
+
 Inspired by Daniel Greenfield's post about `setup.py tricks
 <http://www.pydanny.com/python-dot-py-tricks.html>`_, I enhanced my
-:cmd:`fab release` to also do `git tag`. 
-
-Until now I have never (seriously) used revision tags in my repos
-because I have never been in a situation where I would have needed
-them.  But it is probable that we will soon need them as Lino is
-growing.  
+:cmd:`fab release` to also do `git tag`.  Until now I have never
+(seriously) used revision tags in my repos because I have never been
+in a situation where I would have needed them.  But it is probable
+that we will soon need them as Lino is growing.
 
 While I was there: the :cmd:`fab release` command now also reminds me
 of the things to check before a release, and especiallay it now
 communicates with PyPI and displays information about the last
 official release.
 
-Released :ref:`atelier` 0.0.6.
+Released :mod:`atelier` 0.0.6 with above changes, shortly followed by
+0.0.7.
+
+In :mod:`atelier`: renamed `fab docs` to `fab md`, 
+renamed `fab pub` to :cmd:`fab pd`.
+
+Developers guide
+================
+
+I noticed that Lino 1.6.16 was *not* released on :blogref:`20141214`.
+Released it now.
+
+This means that the "Telling your Lino version" section of the
+:ref:`lino.dev.install` has not been working.  
+
+Which reminded me an old wish: I wrote a new method
+:meth:`shell_block
+<atelier.sphinxconf.insert_input.Py2rstDirective.shell_block>` and
+made use of it.
+
+And I slightly changed the output of :mod:`lino.hello`: it no longer
+starts with "This is yet another Lino site" (because having Lino
+installed does not yet mean that you have a Lino
+site). :meth:`lino.core.site_def.Site.using_text` instead of
+:meth:`lino.core.site_def.Site.welcome_text`.
+
+Continued to move docstrings back from :mod:`lino.ad` to the source
+code.
+

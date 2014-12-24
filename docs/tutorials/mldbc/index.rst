@@ -31,12 +31,12 @@ Products table like this:
   | Keyboard     | Clavier          | Accessories |  4.95 | 5  |
   +--------------+------------------+-------------+-------+----+
 
-Now imagine that your :ref:`application <application>` is being used
-both in Canada and the US.  Of course, your US customers don't want to
-have a "useless" column for the French designation of their
-products. With :ref:`north` you can simply set the :attr:`languages
-<ad.Site.languages>` attribute to `["en"]` for US customers and to
-`['en', 'fr']` for Canadian customers.
+Now imagine that your application is being used both in Canada and the
+US.  Of course, your US customers don't want to have a "useless"
+column for the French designation of their products. With :mod:`north`
+you can simply set the :attr:`languages
+<lino.core.site_def.Site.languages>` attribute to `["en"]` for US
+customers and to `['en', 'fr']` for Canadian customers.
 
 
 
@@ -52,7 +52,7 @@ Let's create a little Site with the following
   
 
 The :xfile:`settings.py` file is where you specify the 
-:attr:`languages <ad.Site.languages>` 
+:attr:`languages <lino.core.site_def.Site.languages>` 
 setting of a given Site instance:
 
 .. literalinclude:: settings.py
@@ -66,7 +66,7 @@ Now we install some demo data. Here is a :ref:`Python fixture <dpy>`:
 .. literalinclude:: fixtures/demo.py
 
 Note how the application developer doesn't know which :attr:`languages
-<ad.Site.languages>` will be set at runtime.
+<lino.core.site_def.Site.languages>` will be set at runtime.
 
 Of course the fixture above supposes a single person who knows all the
 languages, but that's just because we are simplifying.  In reality you

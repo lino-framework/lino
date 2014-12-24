@@ -15,7 +15,7 @@ Sozialsekretariat
 -----------------
 
 
-Worked on :doc:`/tickets/93`.  Tried the idea "Nicht neue app
+Worked on :srcref:`docs/tickets/93`.  Tried the idea "Nicht neue app
 `attestations`, sondern bestehende `outbox` verwenden."  and
 understood that this was bullshit: `outbox` can't replace
 `attestations`.  Because an `outbox.Mail` also has a subject and a
@@ -88,7 +88,8 @@ The following item is also done, but this was complex. Needs
 documentation. The cal module no longer uses `add_detail_panel` and
 add_detail_tab. These methods should be deprecated because they are not overrideable. Use a UserDetailMixin panel instead.
 
-#.  Feld "User.calendar" fehlt im :ref:`welfare.users.UserDetail`
+#.  Feld "User.calendar" fehlt im
+    :class:`lino_welfare.modlib.users.models.UserDetail`
 
 
 

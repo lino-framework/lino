@@ -34,10 +34,9 @@ and I beg your pardon for daring to explain my decisions here.
   wrong place" and forces application developers to write redundant 
   code.
   
-- Lino suggests (but doesn't enfore) to use :ref:`north` 
-  migrations instead of Django's default `Migrations
-  <https://docs.djangoproject.com/en/dev/topics/migrations/>`_ 
-  system.
+- Lino suggests (but doesn't enfore) to use :ref:`dpy` migrations
+  instead of Django's default `Migrations
+  <https://docs.djangoproject.com/en/dev/topics/migrations/>`_ system.
   
 - Lino prefers Jinja2 templates over the 
   `default Django engine <https://docs.djangoproject.com/en/dev/topics/templates/>`_

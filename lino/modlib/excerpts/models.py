@@ -33,6 +33,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 outbox = dd.require_app_models('outbox')
 
@@ -339,7 +340,7 @@ class BodyTemplateContentField(dd.VirtualField):
 ##
 
 
-class Excerpt(mixins.TypedPrintable, mixins.UserAuthored,
+class Excerpt(mixins.TypedPrintable, UserAuthored,
               Controllable, mixins.ProjectRelated,
               ContactRelated, outbox.Mailable, Postable):
 
@@ -587,7 +588,7 @@ class Excerpts(dd.Table):
         return qs
 
 
-class MyExcerpts(mixins.ByUser, Excerpts):
+class MyExcerpts(ByUser, Excerpts):
     required = dd.required(user_groups='office')
     column_names = "build_time excerpt_type project *"
     order_by = ["-build_time"]

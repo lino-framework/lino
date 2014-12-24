@@ -4,7 +4,7 @@ BeId - read Belgian eId cards
 
 .. module:: ml.beid
 
-Add this to your :meth:`ad.Site.get_installed_apps` if your Site
+Add this to your :meth:`lino.core.site_def.Site.get_installed_apps` if your Site
 should feature actions for reading electronic ID smartcards.
 
 When this app is installed, then you must also add the `.jar` files
@@ -16,7 +16,7 @@ This app makes sense only if there is exactly one subclass of
 
 An alternative implementation of the same functionality is
 :mod:`lino.modlib.eid_jslib.beid` which overrides this app and does
-the same except that it uses :ref:`eid_jslib` instead of
+the same except that it uses `eidjslib` instead of
 :ref:`eidreader`.
 
 .. contents:: 
@@ -29,7 +29,7 @@ Configuration
 
 .. class:: Plugin
 
-  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
+  Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
 
   .. attribute:: data_collector_dir
 

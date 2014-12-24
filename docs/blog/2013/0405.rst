@@ -34,7 +34,7 @@ Moving towards a pluggable user interface
 -----------------------------------------
 
 I am working on moving towards a pluggable user interface.
-One benefit of this will be :doc:`/tickets/16`.
+One benefit of this will be :srcref:`docs/tickets/16`.
 
 The :meth:`lino.ui.base.Handle.__init__` no longer 
 takes the `ui` as argument.

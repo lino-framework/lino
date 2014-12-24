@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-This defines the :class:`dd.Table` class.
+This defines the :class:`Table` class.
 """
 
 import logging
@@ -250,7 +250,8 @@ def register_report(rpt):
 
 
 def discover():
-    """
+    """This is being called at startup.
+    
     - Each model can receive a number of "slaves".
       Slaves are tables whose data depends on an instance
       of another model (their master).
@@ -350,12 +351,19 @@ class Table(AbstractTable):
     """
 
     expand_memos = False
-    """(No longer used; see :doc:`/tickets/44`).  Whether multi-line text
+    """(No longer used; see :srcref:`docs/tickets/44`).  Whether multi-line text
     fields in Grid views should be expanded in by default or not.
 
     """
 
     details_of_master_template = _("%(details)s of %(master)s")
+    """
+    Used to build the title of a request on this table when it is a
+    slave of a given master. The default value is defined as follows::
+
+        details_of_master_template = _("%(details)s of %(master)s")
+
+    """
 
     handle_uploaded_files = None
     """
@@ -587,7 +595,7 @@ class Table(AbstractTable):
                             fieldname)
                         assert direct
                         assert not m2m
-                    except models.FieldDoesNotExist, e:
+                    except models.FieldDoesNotExist:
                         raise Exception("Unknown fieldname %r in %s.order_by" %
                                         (fieldname, self))
 
@@ -834,3 +842,4 @@ def table_factory(model):
 def column_choices(rptname):
     rpt = actors.get_actor(rptname)
     return rpt.column_choices()
+

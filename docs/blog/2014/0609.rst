@@ -2,14 +2,12 @@
 Monday, June 9, 2014
 ====================
 
-.. _commondata:
-
 Common Knowledge
 ----------------
 
 Last Friday (:blogref:`20140606`) I wrote about my vision of "using
 :ref:`dpy` as data format for maintaining the list of places of a
-country".
+country". 
 
 During the week-end this vision made another evolution step: I
 understood that :ref:`dpy` as data format is too limiting.  The data
@@ -39,7 +37,6 @@ At the end of the day I had opened three new projects on GitHub:
 TODO: adapt :mod:`lino.modlib.countries.fixtures.ee` and
 :mod:`lino.modlib.countries.fixtures.be` to use this data.
 
-
-
+See also :mod:`commondata`.
 
 

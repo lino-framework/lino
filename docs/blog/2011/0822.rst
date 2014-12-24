@@ -33,7 +33,7 @@ Checkin 20110822a
 b) Changes in :mod:`lino.modlib.contacts`
 -----------------------------------------
 
-I opened :doc:`/tickets/48`.
+I opened :srcref:`docs/tickets/48`.
 
 A few changes in the database structure, 
 but a big step in Lino's evolution:

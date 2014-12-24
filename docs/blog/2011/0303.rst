@@ -88,7 +88,7 @@ Logisch, da waren also noch ein paar Details in der .dpy-Datei zu beachten::
       return PropType(id=id,name=name,choicelist=choicelist,limit_to_choices=limit_to_choices,multiple_choices=
 
 (Wenn irgendwann mal mehr Linos in der Welt rumlaufen, muss ich solche 
-Upgrades natürlich automatisiseren: :doc:`/tickets/28`.
+Upgrades natürlich automatisiseren: :srcref:`docs/tickets/28`.
 
 Das Resultat ist jetzt richtig schön. Weil die Deferred-Meldungen 
 nun INFO sind, werden sie live am Bildschirm angezeigt::

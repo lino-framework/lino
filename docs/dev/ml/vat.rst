@@ -22,7 +22,7 @@ Model mixins
 
     .. attribute:: refresh_after_item_edit = False
  
-    See :doc:`/tickets/68`
+    See :srcref:`docs/tickets/68`
 
     .. attribute:: partner
 

@@ -9,7 +9,7 @@ Choosers for parameters of a table
 field of :attr:`dd.Actor.parameters`.  Now it is.  :ref:`regressions`.
 
 This feature was needed for solving the following problem (from
-:doc:`/tickets/123`):
+:srcref:`docs/tickets/123`):
 
 - Die Tabelle :class:`ml.courses.SuggestedCoursesByPupil` muss noch
   ein bisschen intelligenter und ergonomischer werden: die
@@ -23,7 +23,7 @@ area covered by the site owner. Every room gets assigned one region.
 The :attr:`dd.Actor.parameters` (and :attr:`dd.Actor.params_layout`)
 must then become "dynamic", adding one checkbox per region (replacing
 the current combox `city`).  "dynamic" means here: after
-:meth:`ad.Site.setup_choicelists` but before generating the
+:meth:`lino.core.site_def.Site.setup_choicelists` but before generating the
 :xfile:`linolib.js`. This wll probably require some other cool new
 features.
 

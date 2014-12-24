@@ -136,6 +136,6 @@ dass jetzt ein Ecolo-Geist mitredet.
 New naming ideas 
 ----------------
 
-Continued to think on :doc:`/tickets/74`.
+Continued to think on :srcref:`docs/tickets/74`.
 
 

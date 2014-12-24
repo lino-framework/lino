@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-"""
-Just a copy & paste of the :mod:`docutils.examples` module (as instructed there).
+"""Just a copy & paste of the :mod:`docutils.examples` module (as
+instructed there).
 
 :func:`restify` is an alias for :func:`html_body`.
 
-:func:`latex_body` deduced from :func:`html_body`
+:func:`latex_body` deduced from :func:`html_body`.
 
 """
 
@@ -154,12 +154,10 @@ class Writer(html4css1.Writer):
         self.translator_class = HTMLTranslator
 
 
-"""
-simply importing the sphinx.roles module 
-causes these text roles to be installed
-"""
+# simply importing the sphinx.roles module causes these text roles to
+# be installed:
+
 import sphinx.roles
-#~ from sphinx import roles
 
 from docutils.parsers.rst import roles
 
@@ -234,8 +232,8 @@ def restify(input_string, source_path=None, destination_path=None,
 
 def rst2odt(input_string, source_path=None, destination_path=None,
             input_encoding='unicode', doctitle=1, initial_header_level=1):
-    u"""
-    Renders the given reST string into
+    """
+    Renders the given reST string into ODT xml.
     """
     from docutils.writers.odf_odt import Writer, Reader
 
@@ -289,7 +287,7 @@ def rst2odt(input_string, source_path=None, destination_path=None,
 def old_restify(s, **kw):
     """
     (Didn't work when the reST text contained a root title).
-    See `/blog/2011/0525`.
+    See :blogref:`20110525`.
     """
     html = html_body(s, **kw)
     if html.startswith('<div class="document">\n') and html.endswith('</div>\n'):
@@ -332,7 +330,7 @@ def rst2latex(input_string,
               doctitle=1,
               initial_header_level=1):
     """
-    returns a dict containing the following keys::
+    returns a dict containing the following keys:
 
       'body',
       'latex_preamble',
@@ -380,12 +378,12 @@ Test example
 
 This is a reST__ document containg non-ascii latin-1 chars::
 
-  Ä Ë Ï Ö Ü 
+  Ä Ë Ï Ö Ü
   ä ë ï ö ü ÿ
-  à è ì ò ù 
+  à è ì ò ù
   á é í ó ú
-  ã õ ñ 
-  ç ß 
+  ã õ ñ
+  ç ß
 
 __ http://docutils.sf.net/rst.html
 

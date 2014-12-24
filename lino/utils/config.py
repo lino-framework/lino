@@ -3,10 +3,11 @@
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
-and installs as :attr:`ad.Site.confdirs`.
+and installs as :attr:`SITE.confdirs
+<lino.core.site_def.Site.confdirs>`.
 
 It creates a list `config_dirs` of all configuration directories by
-looping through :attr:`ad.Site.installed_plugins` and taking those
+looping through :attr:`lino.core.site_def.Site.installed_plugins` and taking those
 whose source directory has a :xfile:`config` subdir.
 
 The mechanism in this module emulates the behaviour of Django's and
@@ -94,6 +95,12 @@ class ConfigDirCache(object):
         #     repr(cd) for cd in config_dirs]))
 
     def find_config_file(self, fn, *groups):
+        """
+        Return the full path of the first occurence within the
+        :class:`lino.utils.config.ConfigDirCache` of a file named
+        `filename`
+
+        """
         if os.path.isabs(fn):
             return fn
         if len(groups) == 0:
@@ -109,6 +116,15 @@ class ConfigDirCache(object):
                     return ffn
 
     def find_config_files(self, pattern, *groups):
+        """
+        Returns a dict of `filename` -> `config_dir` entries for each config
+        file on this site that matches the pattern.  Loops through
+        `config_dirs` and collects matching files.  When a filename is
+        provided by more than one app, then the latest app gets it.
+
+        `groups` is a tuple of strings, e.g. '', 'foo', 'foo/bar', ...
+
+        """
         files = {}
         for group in groups:
             if group:
@@ -124,6 +140,11 @@ class ConfigDirCache(object):
         return files
 
     def find_template_config_files(self, template_ext, *groups):
+        """
+        Like :func:`find_config_files`, but ignore babel variants:
+        e.g. ignore "foo_fr.html" if "foo.html" exists.
+        Note: but don't ignore "my_template.html"
+        """
         files = self.find_config_files('*' + template_ext, *groups)
         l = []
         template_ext

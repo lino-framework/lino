@@ -4,7 +4,7 @@
 
 """
 Defines :class:`Renderer`
-and :class:`PrintTableAction`
+and :class:`PrintTableAction`.
 """
 
 from __future__ import unicode_literals
@@ -62,9 +62,8 @@ UL_LIST_STYLE = """\
 
 class Renderer(AppyRenderer):
 
-    """An extended :term:`appy.pod` renderer that installs additional functions
-    to be used in `do text|section|table... from ...
-    <http://appyframework.org/podWritingAdvancedTemplates.html>`__
+    """An extended :term:`appy.pod` renderer that installs additional
+    functions to be used in `do text|section|table from <http://appyframework.org/podWritingAdvancedTemplates.html>`__
     statements.
 
 
@@ -601,7 +600,7 @@ class PrintLabelsAction(PrintTableAction):
     """
     Add this action to your table, which is expected to execute on a
     model which implements
-    :class:`Addressable <lino.utils.addressable.Addressable>`
+    :class:`Addressable <lino.utils.addressable.Addressable>`.
 
     """
     label = _("Labels")

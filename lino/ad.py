@@ -9,6 +9,8 @@ Example::
     class Plugin(ad.Plugin):
         extends = 'lino.modlib.cal'
         depends = ['lino.modlib.contacts']
+
+.. autosummary::
     
 """
 

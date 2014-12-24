@@ -1,5 +1,5 @@
 20110917
 ========
 
-Worked on :doc:`/tickets/45`.
+Worked on :srcref:`docs/tickets/45`.
 

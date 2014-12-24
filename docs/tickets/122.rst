@@ -4,7 +4,7 @@
 
 Hier die Übersicht der wichtigsten Änderungen beim
 Upgrade nach :ref:`welfare` 1.1.17 im ÖSHZ Eupen am
-06.10.2014 (im Rahmen des Projekts :doc:`/tickets/93`).
+06.10.2014 (im Rahmen des Projekts :srcref:`docs/tickets/93`).
 
 Hauptziel dieses Upgrades war es, ein paar konkrete Beispiele von
 Bescheinigungen fertig auszuarbeiten.

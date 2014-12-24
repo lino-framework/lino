@@ -40,7 +40,7 @@ umzustellen.
 :mod:`lino.ui.extjs3`
 ---------------------
 
-Ticket :doc:`/tickets/41` muss mal kurz warten:
+Ticket :srcref:`docs/tickets/41` muss mal kurz warten:
 ein kleines Release in Eupen ist nötig. 
 Als erstes sollen die Erinnerungen im Hauptbildschirm chronologisch andersrum 
 sortiert sein, die neuesten zuerst. 

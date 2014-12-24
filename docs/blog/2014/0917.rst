@@ -2,7 +2,7 @@
 Wednesday, September 17, 2014
 =============================
 
-Continued to work on ticket :doc:`/tickets/124`.
+Continued to work on ticket :srcref:`docs/tickets/124`.
 
 I removed most "partner" information from the detail of a household. A
 household (in :ref:`welfare`) is now mostly the list of its members.

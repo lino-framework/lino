@@ -7,11 +7,11 @@ von controlled objects beginnen (:ticket:`29`). Als erstes schrieb ich
 den Testcase. Den schrieb ich in :mod:`lino.projects.min2`. Dabei
 stieß ich auf eine kleine Optimierung, die gemacht werden wollte:
 nachdem ich :mod:`lino.modlib.excerpts` in die
-:meth:`ad.Site.get_installed_apps` hinzugefügt hatte, bekam ich eine
+:meth:`lino.core.site_def.Site.get_installed_apps` hinzugefügt hatte, bekam ich eine
 Fehlermeldung, dass :mod:`lino.modlib.uploads` jetzt doppelt
 installiert sei.  Stimmt, dass ist logisch, weil
 :mod:`lino.modlib.excerpts` die in ihrem
-:attr:`ad.Plugin.needs_plugins` angibt.  Was mich störte, war dass
+:attr:`lino.core.plugin.Plugin.needs_plugins` angibt.  Was mich störte, war dass
 diese dependency aus der Fehlermeldung nicht deutlich hervorging. Wenn
 ich den Grund nicht geahnt hätte, hätte ich lange gesucht.  Und als
 ich dann schon mal in `djangosite` anfing, da kam es dann sozusagen

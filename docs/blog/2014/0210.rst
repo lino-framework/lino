@@ -52,7 +52,7 @@ Miscellaneous changes:
 - Lino didn't yet support context-sensitive choosers with a
   GenericForeignKey field in the context.
   And `Attestation.type_choice` needs this.
-  Started :doc:`/tickets/97`. 
+  Started :srcref:`docs/tickets/97`. 
   The current solution 
   (:class:`lino.utils.instantiator.GenericForeignKeyConverter`)
   is rather hackerish but works for me.

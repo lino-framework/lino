@@ -3,11 +3,11 @@
 
 - Release :doc:`/releases/2011/0218` in Eupen.
 
-- Wurstelei am Ticket :doc:`/tickets/21`.
+- Wurstelei am Ticket :srcref:`docs/tickets/21`.
 
 Ticket 21 ist lästig, weil ich dazu nochmal wieder einen Showcase schreiben muss.
 
-In diesem Zusammenhang habe ich bemerkt, dass die URLs meiner :doc:`/tickets/index` 
+In diesem Zusammenhang habe ich bemerkt, dass die URLs meiner :srcref:`docs/tickets/index` 
 besser konstant bleiben sollten. 
 Also nicht in ein Unterverzeichnis "closed" verschieben 
 (und dann bewusst alle Referenzen auf dieses Ticket ändern müssen).

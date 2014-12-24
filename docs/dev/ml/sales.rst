@@ -19,7 +19,7 @@ Choicelists
     List of the possible values for the state of an :class:`Invoice`.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`ad.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
 
     .. django2rst:: rt.show("sales.InvoiceStates")
 
@@ -102,8 +102,8 @@ Models
 
   .. attribute:: advance_days
 
-      How many days in advance invoices should be posted so that the customer
-has a chance to pay them in time.
+      How many days in advance invoices should be posted so that the
+      customer has a chance to pay them in time.
 
 Tables
 ======

@@ -3,12 +3,12 @@ Friday, December 5, 2014
 ========================
 
 My decision where to place our new table `OrphanedControllables`
-(combined with our ticket :doc:`/tickets/134`) took some more time and
+(combined with our ticket :srcref:`docs/tickets/134`) took some more time and
 caused some avalanches.
 
 It is now called "Stale Controllables" (yet to translate).
 
-:ref:`north` has passed away! Requiescat in pace! Everything that was
+:mod:`north` has passed away! Requiescat in pace! Everything that was
 in North is now integrated into Lino.
 
 .. currentmodule:: lino.mixins.babel
@@ -23,7 +23,7 @@ module :mod:`lino.modlib.contenttypes` (which extends
 `contenttypes.HelpText`.
 
 :ref:`apichange`: Applications who yield `django.contrib.contenttypes`
-in their :meth:`ad.Site.get_installed_apps` should replace this by
+in their :meth:`lino.core.site_def.Site.get_installed_apps` should replace this by
 `lino.modlib.contenttypes`.
 
 There are at least two problems with the new
@@ -39,4 +39,4 @@ There are at least two problems with the new
   :meth:`dd.Site.is_installed` instead.
 
 Checkin at 20:40 because the test suite passes. But I think that this
-weekend I might also be going to merge :ref:`site` into Lino ...
+weekend I might also be going to merge :mod:`djangosite` into Lino ...

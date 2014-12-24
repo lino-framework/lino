@@ -3,9 +3,9 @@
 
 """
 A collection of tools around :doc:`/topics/mti`.
-See :doc:`/autodoc/lino.test_apps.mti`.
+See the source code of :mod:`lino.test_apps.mti`.
 Certainly not perfect, but works for me.
-I wrote it mainly to solve ticket :doc:`/tickets/22`.
+I wrote it mainly to solve ticket :srcref:`docs/tickets/22`.
 
 
 

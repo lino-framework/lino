@@ -30,6 +30,7 @@ lino.modlib.polls.models
       AnswerRemarkField
       AnswerRemarks
       AnswersByResponse
+      ByUser
       Choice
       ChoiceSet
       ChoiceSets
@@ -53,6 +54,7 @@ lino.modlib.polls.models
       ResponsesByPartner
       ResponsesByPoll
       ToggleChoice
+      UserAuthored
    
    
 

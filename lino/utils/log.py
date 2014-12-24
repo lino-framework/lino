@@ -28,7 +28,7 @@ A simple common example::
 
   LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
 
-Another example using :attr:`ad.Site.project_dir`::
+Another example using :attr:`lino.core.site_def.Site.project_dir`::
 
   ...
   SITE = Site(globals())
@@ -74,7 +74,7 @@ flag that it is a non interactive application and not use magic to
 determine whether that is the case or not.".  Any comments are
 welcome.
 
-See also :doc:`/tickets/15`
+See also :srcref:`docs/tickets/15`
 
 """
 

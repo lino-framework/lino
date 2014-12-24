@@ -33,7 +33,7 @@ class Person(contacts.Person, mixins.Born):
 
     class Meta(contacts.Person.Meta):
         app_label = 'contacts'
-        # ~ # see :doc:`/tickets/14`
+        # ~ # see :srcref:`docs/tickets/14`
         #~ verbose_name = _("Person")
         #~ verbose_name_plural = _("Persons")
 
@@ -80,7 +80,7 @@ class PersonDetail(contacts.PersonDetail):
 #~ class Company(contacts.Partner,contacts.CompanyMixin):
     #~ class Meta(contacts.CompanyMixin.Meta):
         #~ app_label = 'contacts'
-        # ~ # see :doc:`/tickets/14`
+        # ~ # see :srcref:`docs/tickets/14`
         #~ verbose_name = _("Company")
         #~ verbose_name_plural = _("Companies")
 #~ class Event(cal.Event):

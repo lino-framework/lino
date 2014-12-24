@@ -4,7 +4,8 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
-   dev/index
-   admin/index
-   user/index
-   help/index
+   Developers </dev/index>
+   Administrators </admin/index>
+   Users </user/index>
+   /help/index
+   /dev/api/index

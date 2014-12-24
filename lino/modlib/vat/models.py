@@ -58,7 +58,7 @@ class VatClasses(dd.ChoiceList):
     possibly other factors.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`ad.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
 
     .. django2rst:: rt.show("vat.VatRegimes")
 
@@ -172,7 +172,7 @@ class TradeTypes(dd.ChoiceList):
 operation.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`ad.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
 
        .. django2rst:: rt.show("vat.TradeTypes")
 
@@ -591,7 +591,7 @@ class VatItemBase(Sequenced, VatTotal):
     def after_ui_save(self, ar):
         """
         After editing a grid cell automatically show new invoice totals.
-        See :doc:`/tickets/68`
+        See :srcref:`docs/tickets/68`
         """
         kw = super(VatItemBase, self).after_ui_save(ar)
         if self.voucher.refresh_after_item_edit:

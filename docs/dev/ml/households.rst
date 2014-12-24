@@ -17,7 +17,7 @@ Configuration
 
 .. class:: Plugin
 
-  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
+  Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
 
   .. attribute:: person_model
 

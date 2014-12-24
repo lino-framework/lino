@@ -2,12 +2,13 @@
 ## This file is part of the Lino project.
 
 from django.db import models
-from lino import dd, rt
+from lino import dd
 from django.utils.translation import ugettext_lazy as _
 from .workflows import EntryStates
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
-class Entry(mixins.CreatedModified,mixins.UserAuthored):
+class Entry(mixins.CreatedModified, UserAuthored):
     
     workflow_state_field = 'state'
     
@@ -38,7 +39,7 @@ class EntriesByCompany(Entries):
     master_key = 'company'
     column_names = "modified user subject workflow_buttons *"
     
-class MyEntries(Entries,mixins.ByUser):
+class MyEntries(Entries, ByUser):
     column_names = "modified subject workflow_buttons *"
     
 

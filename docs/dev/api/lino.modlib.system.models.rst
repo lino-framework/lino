@@ -26,6 +26,7 @@ lino.modlib.system.models
       AttrDict
       BuildMethods
       BuildSiteCache
+      ByUser
       Choice
       ChoiceList
       Genders
@@ -37,6 +38,7 @@ lino.modlib.system.models
       SiteConfigs
       TextFieldTemplate
       TextFieldTemplates
+      UserAuthored
       UserProfiles
       YesNo
    

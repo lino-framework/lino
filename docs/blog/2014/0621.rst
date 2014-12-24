@@ -6,5 +6,5 @@ More than one contract partner
 ------------------------------
 
 Lino is cool: it took me only about 2 hours to implement
-:doc:`/tickets/110`. (Except for data migration and adapting document
+:srcref:`docs/tickets/110`. (Except for data migration and adapting document
 template)

@@ -38,6 +38,7 @@ from lino import mixins
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.modlib.contacts.utils import parse_name
+from lino.modlib.users.mixins import UserAuthored
 
 
 config = settings.SITE.plugins.courses
@@ -710,7 +711,7 @@ class ConfirmedSubmitInsert(dd.SubmitInsert):
         ar.set_response(close_window=True)
 
 
-class Enrolment(mixins.UserAuthored, sales.Invoiceable):
+class Enrolment(UserAuthored, sales.Invoiceable):
 
     invoiceable_date_field = 'request_date'
     workflow_state_field = 'state'

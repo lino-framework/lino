@@ -14,7 +14,7 @@
 
 Check-In um 16.16 Uhr.
 
-- Worked on :doc:`/tickets/2`:
+- Worked on :srcref:`docs/tickets/2`:
 
 Ich will mal den Patch zum :djangoticket:`7539` testen.
 Zuerst ein Upgrade meiner Django-Version von 14001 nach 14140.
@@ -25,7 +25,7 @@ Bevor ich da selber dran fummle, frage ich lieber
 ob jemand einen neuen Patch machen kann.
 
 
-- Worked on :doc:`/tickets/1`
+- Worked on :srcref:`docs/tickets/1`
 
 Strange: there's still no answer to my post after 4 days.
 Maybe nobody isn't interested in 3.2.1 bugs anymore 
@@ -60,7 +60,7 @@ Giving up for today.
 Webseite
 --------
 
-Ich habe heute eine neue Seite :doc:`/tickets/index` begonnen 
+Ich habe heute eine neue Seite :srcref:`docs/tickets/index` begonnen 
 und dort auch die bisherigen "posts" (Questions to others") eingebaut.
 Weil laufende Nummern einfacher zu behalten sind als achtstellige Zahlen.
 Aber ein Ticketing-System wird das leider so schnell nicht werden, 

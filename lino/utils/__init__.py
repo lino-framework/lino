@@ -3,16 +3,12 @@
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
-function for general use. There are also many Subpackages_ and
-Submodules_.
+function for general use. It has also many subpackages and submodules.
 
 This is a tested document. To test it, run::
 
   $ python setup.py test -s tests.DocsTests.test_utils
 
-
-
-.. toctree::
 
 .. autosummary::
    :toctree:
@@ -125,7 +121,7 @@ def join_words(*words):
 
 def join_elems(elems, sep=' '):
     """
-    Examples::
+    Examples:
     >>> join_elems([1,2,3])
     [1, ' ', 2, ' ', 3]
     >>> join_elems([1,2,3],' / ')

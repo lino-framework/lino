@@ -27,11 +27,14 @@ Getting acquaintained
 .. toctree::
    :maxdepth: 1
 
+   application
    /tutorials/tables/index
    menu
    choicelists
+   actors
    /tutorials/layouts
    /tutorials/vtables/index
+   actions
    /tutorials/actions/index
    /tutorials/mini
    /tutorials/mldbc/index
@@ -52,12 +55,7 @@ pillow.
 .. toctree::
    :maxdepth: 1
 
-   application
-   actors
-   tables
-   fields
    layouts
-   actions
    mixins
 
    ad
@@ -65,8 +63,6 @@ pillow.
    rt
    ml/index
    
-   api/index
-
 
 Special topics
 ==============
@@ -119,4 +115,12 @@ Other
    /tested/index
    git
    /ref/index
-   /tickets/index
+
+
+
+.. toctree::
+   :hidden:
+
+   tables
+   fields
+

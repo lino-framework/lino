@@ -6,7 +6,7 @@
 """
 Work in progress.
 
-See :doc:`/tickets/92`.
+See :srcref:`docs/tickets/92`.
 
 """
 

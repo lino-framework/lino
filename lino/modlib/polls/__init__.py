@@ -7,8 +7,6 @@ functionality for managing Polls.
 This is the main app for :ref:`polly`.
 It is also used in :ref:`welfare`.
 
-
-
 .. autosummary::
    :toctree:
 

@@ -113,7 +113,7 @@ Which I registered as three tickets:
 Since I considered that table with orphaned controllables should be
 `lino.OrphanedControllables` and not e.g.
 `system.OrphanedControllables`, I stumbled again over
-:doc:`/tickets/134`. And made a rather heavy step (considering that
+:srcref:`docs/tickets/134`. And made a rather heavy step (considering that
 there are more urgent things to do): :mod:`lino.dd` no longer imports
 anything from :mod:`lino.mixins`. :ref:`joe` and :ref:`xmj` and will
 like it. And I agree that they were right at least for this part of

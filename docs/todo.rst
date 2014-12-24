@@ -1,7 +1,7 @@
 To-do list
 ==========
 
-(This document is migrating to :doc:`/tickets/index`)
+(This document is migrating to :srcref:`docs/tickets/index`)
 
 Bugs
 ----
@@ -106,7 +106,7 @@ Feature requests
 #.  [pdf] button : generate html table without THEAD, TFOOT and TBODY.
     Am besten sogar separate Methoden Table.header_html() und
     Table.body_html().  Dazu muss ich vielleicht voerher den Store
-    generalisieren :doc:`/tickets/57`.  "StoreField" wird nach
+    generalisieren :srcref:`docs/tickets/57`.  "StoreField" wird nach
     "Atomizer" umbenannt und im Model gespeichert
     
 #.  Listings 
@@ -157,7 +157,7 @@ Feature requests
     Stellen zugetragen werden, schnell ein geeigneter Kandidat gefunden
     werden kann.
 
-#.  Remote calendars (:doc:`/tickets/47`):
+#.  Remote calendars (:srcref:`docs/tickets/47`):
 
     - recursion rules and recursive events
     - get calendarserver running on :term:`Jana`.
@@ -209,9 +209,9 @@ Feature requests
 
 #.  Externe Links (Lesezeichen) und Uploads per drag & drop machen können, 
     indem man sie von einer anderen Anwendung auf die HtmlBox zieht.
-    (u.a. :doc:`/tickets/8`)
+    (u.a. :srcref:`docs/tickets/8`)
 
-#.  :doc:`Benutzerspezifische Gridkonfiguration </tickets/39>`
+#.  Benutzerspezifische Gridkonfiguration
     
 #.  Doppelklick auf Memo-Text einer Note in einer Grid
     bewirkt *nichts*. 
@@ -439,7 +439,7 @@ http://lino/api/pcsw/LanguageKnowledgesByPerson?_dc=1315554805581&sort=written&d
 #.  Wenn man in einer Grid das Detail eines Records aufruft, 
     dann erscheint kein "Bitte warten" bis das Fenster erscheint.
     Und bei Personen dauert das mehrere Sekunden.
-    :doc:`/tickets/21`.
+    :srcref:`docs/tickets/21`.
 
 
 Later
@@ -635,7 +635,7 @@ Long-term
 #. relative imports don't work in python fixtures 
 
 
-#. :doc:`/tickets/12`
+#. :srcref:`docs/tickets/12`
 
 #. Abfragen mit komplexen Bedingungen zur Suche nach Personen
 
@@ -654,12 +654,12 @@ Long-term
 
 
 #. Prüfen, ob Dokumentvorlagen im `XSL-FO-Format
-  <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären.  `Apache FOP
-  <http://xmlgraphics.apache.org/fop/>`__ als Formatierer.  Warum
-  OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel.
-  AbiWord dagegen soll es können (laut `1
-  <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2
-  <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
+   <http://de.wikipedia.org/wiki/XSL-FO>`__ besser wären.  `Apache FOP
+   <http://xmlgraphics.apache.org/fop/>`__ als Formatierer.  Warum
+   OpenOffice.org nicht schon lange XSL-FO kann, ist mir ein Rätsel.
+   AbiWord dagegen soll es können (laut `1
+   <http://www.ibm.com/developerworks/xml/library/x-xslfo/>`__ und `2
+   <http://searjeant.blogspot.com/2008/09/generating-pdf-from-xml-with-xsl-fo.html>`__).
 
 #. Inwiefern überschneiden sich :mod:`lino.modlib.system.models.SiteConfig` und :mod:`django.contrib.sites`? 
 
@@ -757,7 +757,7 @@ Long-term
     Maybe rather only one central event manager because if any data gets changed, 
     basically all open windows may need a refresh.
 
-#.  :doc:`/tickets/16`
+#.  :srcref:`docs/tickets/16`
 
 #.  Mehr über Nuxeo lesen: http://doc.nuxeo.org/5.3/books/nuxeo-book/html/index.html
 
@@ -779,9 +779,9 @@ Long-term
 #.  Chrome 10 hat scheinbar ein Problem mit ExtJS:
     http://www.google.com/support/forum/p/Chrome/thread?tid=5d3cce9457a1ebb1&hl=en    
     
-#.  :doc:`/tickets/25`
+#.  :srcref:`docs/tickets/25`
 
-#.  :doc:`/tickets/26`
+#.  :srcref:`docs/tickets/26`
 
 #.  Check whether Lino should use
     http://django-rest-framework.org/

@@ -66,4 +66,3 @@ class DisableDeleteHandler():
                 return veto(obj, qs.model, n)
         return None
 
-

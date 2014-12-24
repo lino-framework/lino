@@ -20,11 +20,11 @@ Lösung:
 Anpassungen im :class:`lino.core.kernel.DisableDeleteHandler`
 
 Aber ein Bug ist noch drin:
-:doc:`/tickets/26`
+:srcref:`docs/tickets/26`
 
 Um den zu finden, habe ich begonnen, site docs zu generieren.
 Unter Verwendung von Cheetah
-(sh. u. a. :doc:`/tickets/24`).
+(sh. u. a. :srcref:`docs/tickets/24`).
 Zunächst statisch beim Server-Startup, dann dynamisch 
 mit :meth:`lino.ui.ext_ui.ExtUI.about_view`.
 Aber wenn ich Cheetahs template inheriting nutzen will, 

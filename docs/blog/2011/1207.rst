@@ -36,7 +36,7 @@ Seitdem war das mein Hauptanliegen in Lino,
 
 Und das obwohl ich die ganze Zeit über wusste, dass 
 ich eigentlich theoretisch zuerst mal die Frage 
-:doc:`/tickets/51` klären sollte. 
+:srcref:`docs/tickets/51` klären sollte. 
 
 Aber ich hatte ja erstens keine Lust, 
 daran zu arbeiten, und zweitens warten die Benutzer in Eupen relativ 
@@ -79,7 +79,7 @@ für die eigenen Schwächen, oder ein ausgeprägtes Selbstvertrauen.
 Wenn ich dieses ganze komplexe Erlebnis mal wie einen Traum deute, 
 dann lautet meine Schlussfolgerung: 
 das war ein weiterer Wink Gottes, dass ich 
-die Frage :doc:`/tickets/51` getrost abschließen und mit voller Energie 
+die Frage :srcref:`docs/tickets/51` getrost abschließen und mit voller Energie 
 an Lino weiter machen soll!
 
 

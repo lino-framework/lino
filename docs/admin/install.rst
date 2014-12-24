@@ -78,7 +78,7 @@ fabric
     
 python-daemon 
 
-    Needed if you run :ref:`watch_tim` or some other daemon process 
+    Needed if you run `watch_tim` or some other daemon process
     (probably not).
 
 

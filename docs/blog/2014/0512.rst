@@ -87,13 +87,13 @@ user wants to write a postal address.
 
 This idea is worth a case study when we have more time. For now we
 prefer to concentrate on more urgent issues in 
-:doc:`/tickets/93`.
+:srcref:`docs/tickets/93`.
 
 
 Weiter nach Baustellenbesichtigung
 -----------------------------------
 
-:doc:`/tickets/93`
+:srcref:`docs/tickets/93`
 
 
 The default color of a Calendar is now dynamically computed (maximum

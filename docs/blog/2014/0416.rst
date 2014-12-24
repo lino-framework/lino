@@ -2,6 +2,6 @@
 Wednesday, April 16, 2014
 =========================
 
-Finishing :doc:`/tickets/93`. 
+Finishing :srcref:`docs/tickets/93`. 
 Preparing testlino in Eupen for Gerd.
 

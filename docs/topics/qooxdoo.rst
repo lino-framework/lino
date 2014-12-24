@@ -21,7 +21,7 @@ How to use it
 - Each time you changed something in your :xfile:`settings.py` 
   you also need to run the :term:`makeui` command.
   (This is currently required only when using Qooxdoo, but 
-  we'll probably adapt the ExtJS version, see ticket :doc:`/tickets/35`)
+  we'll probably adapt the ExtJS version, see ticket :srcref:`docs/tickets/35`)
 
 - Now you can invoke :command:`python manage.py runserver` 
   and point your browser to one of the following URIs:
@@ -66,5 +66,5 @@ where
 It's actually not very polite that Lino writes 
 into the source tree of your Qooxdoo SDK.
 But we didn't yet find a better solution.
-See :doc:`/tickets/30`
+See :srcref:`docs/tickets/30`
 

@@ -8,7 +8,7 @@ using the Django test runner (i.e. without creating a temporary test
 database).
 
 It expects the persistent test database to be initialized, and it
-works only in an environment with :attr:`ad.Site.remote_user_header`
+works only in an environment with :attr:`lino.core.site_def.Site.remote_user_header`
 set to ``'REMOTE_USER'``. Concretely
 
 

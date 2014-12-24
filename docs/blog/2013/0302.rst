@@ -2,7 +2,7 @@
 ========
 
 Yesterday evening I concluded that 
-:doc:`/tickets/74` is impossible to solve.
+:srcref:`docs/tickets/74` is impossible to solve.
 But after some hours of sleep I changed my mind again:
 
   `settings.LINO` will become `settings.SITE`,

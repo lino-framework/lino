@@ -2,7 +2,7 @@
 Wednesday, October 1, 2014
 ==========================
 
-Opened ticket :doc:`/tickets/130` and started to work on it.
+Opened ticket :srcref:`docs/tickets/130` and started to work on it.
 
 :ref:`new`:
 It is now possible to specify the `hidden_fields` attribute of a

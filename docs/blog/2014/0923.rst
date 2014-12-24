@@ -5,7 +5,7 @@ Tuesday, September 23, 2014
 Preparing an upgrade in :ref:`dsbe`. Making the test suites pass.
 
 Changed a detail in the implementation of :mod:`ml.beid`: Until
-yesterday, when `ad.Site.use_java` was False, ``beid`` and ``davlink``
+yesterday, when `lino.core.site_def.Site.use_java` was False, ``beid`` and ``davlink``
 were *not installed* at all.  This was a strange behaviour which
 caused quite some subtle problems.  The :class:`ml.beid.BeIdCardTypes`
 choicelist now has `app_label` ``beid`` instead of ``lino``.
@@ -15,5 +15,5 @@ Oh dear, and then I yet did another thing which nobody asked: I moved
 `linoweb.js` and `admin_main_base.html` into the :mod:`ml.davlink`
 module.  This is also the first action which Nobody asked for it and
 it potentially brings bugs, *but* it make Lino more understandable and
-is a preparation for :doc:`/tickets/101`.  And the danger is
+is a preparation for :srcref:`docs/tickets/101`.  And the danger is
 relatively low.

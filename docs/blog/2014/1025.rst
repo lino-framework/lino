@@ -2,4 +2,4 @@
 Saturday, October 25, 2014
 ==========================
 
-Worked on :doc:`/tickets/132`.
+Worked on :srcref:`docs/tickets/132`.

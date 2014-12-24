@@ -285,23 +285,87 @@ class ActorMetaClass(type):
 
     @property
     def label(cls):
+        """The text to appear e.g. on a button that will call the default
+        action of an actor.  This attribute is *not* inherited to
+        subclasses.  For :class:`Actor` subclasses that don't have a
+        label, Lino will call :meth:`get_actor_label`.
+
+        """
+        
         return cls.get_actor_label()
 
     @property
     def known_values(cls):
+        """
+        A `dict` of `fieldname` -> `value` pairs that specify "known values".
+
+        Requests will automatically be filtered to show only existing
+        records with those values.  This is like :attr:`filter`, but new
+        instances created in this Table will automatically have these
+        values set.
+
+        """
         return cls.get_known_values()
 
     @property
     def editable(cls):
+        """Set this explicitly to `True` or `False` to make the Actor per se
+        editable or not.  Otherwise Lino will set it during startup:
+        to `False` if the actor is a Table and has a `get_data_rows`
+        method (otherwise to `True`).
+
+        Non-editable actors won't even call `get_view_permission` for
+        actions which are not readonly.
+
+        The :class:`lino.modlib.changes.models.Changes` table is an
+        example where this is being used: nobody should ever edit
+        something in the table of Changes.  The user interface uses this
+        to generate optimized JS code for this case.
+
+        """
         return cls.get_actor_editable()
 
 
 class Actor(actions.Parametrizable):
-    """The base class for all actors.  Inherited by
-:class:`AbstractTable  <lino.core.tables.AbstractTable>`,
-:class:`Table  <lino.core.dbtables.Table>`,
-:class:`ChoiceList <lino.core.choicelists.ChoiceList>`
-and :class:`Frame <lino.core.frames.Frame>`.
+    """The base class for all actors.  Inherited by :class:`AbstractTable
+    <lino.core.tables.AbstractTable>`, :class:`Table
+    <lino.core.dbtables.Table>`, :class:`ChoiceList
+    <lino.core.choicelists.ChoiceList>` and :class:`Frame
+    <lino.core.frames.Frame>`.
+
+    The following class methods are `None` in the default
+    implementation. Subclass can define them.
+
+    .. classmethod:: get_handle_name(self, ar)
+
+        Most actors use the same UI handle for each request.  But
+        e.g. :class:`welfare.debts.PrintEntriesByBudget` overrides this to
+        implement dynamic columns depending on it's master_instance.
+
+
+    .. classmethod:: get_row_classes(self, ar)
+
+        If a method of this name is defined on an actor, then it must be a
+        class method which takes an :class:`rt.ar` as single
+        argument and returns either None or a string "red", "green" or
+        "blue" (todo: add more colors and styles). Example::
+
+            @classmethod
+            def get_row_classes(cls,obj,ar):
+                if obj.client_state == pcsw.ClientStates.newcomer:
+                    return 'green'
+
+        Defining this method will cause an additional special
+        `RowClassStoreField` field in the :class:`lino.ui.Store` objects
+        of this actor.
+
+    .. classmethod:: get_welcome_messages(self, ar)
+
+        If a method of this name is defined on an actor, then it must be a
+        class method which takes an :class:`rt.ar` as single
+        argument and returns or yields a list of :term:`welcome messages
+        <welcome message>` (messages to be displayed in the welcome block
+        of :xfile:`admin_main.html`).
 
     """
     __metaclass__ = ActorMetaClass
@@ -323,12 +387,24 @@ and :class:`Frame <lino.core.frames.Frame>`.
     :func:`lino.core.table.table_factory` also uses this.
     """
 
-    master_key = None
     master = None
-    master_field = None
+    """The class of the "master" for this actor.  Currently used only on
+    tables. Setting this to something else than `None` will turn the
+    table into a :term:`slave table`.
+
+    """
+
+    master_key = None
+    """The name of a ForeignKey field of this table's :attr:`model` that
+    points to it's :attr:`master`.  The :attr:`master_key` is
+    automatically added to :attr:`hidden_columns`.
+
+    """
+
+    parameters = None
+    "See :attr:`lino.core.actions.Parametrizable.parameters`."
 
     _layout_class = layouts.ParamsLayout
-    stay_in_grid = False
 
     sort_index = None
     """The :attr:`lino.core.actions.Action.sort_index` to be used for a
@@ -522,6 +598,31 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def disabled_fields(cls, obj, ar):
+        """
+        Return a set of field names that should not be editable
+        for the specified `obj` and `request`.
+
+        If defined in the Actor, this must be a class method that accepts
+        two arguments `obj` and `ar` (an `ActionRequest`)::
+
+          @classmethod
+          def disabled_fields(cls, obj, ar):
+              ...
+              return set()
+
+        If not defined in the Table, Lino will look whether the Table's
+        model has a `disabled_fields` method and install a wrapper to this
+        model method.  When defined on the model, is must be an *instance*
+        method::
+
+          def disabled_fields(self,ar):
+              ...
+              return set()
+
+        See also :srcref:`docs/tickets/2`.
+
+
+        """
         return set()
 
     @classmethod
@@ -615,6 +716,9 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def get_actor_label(self):
+        """Compute the label of this actor.
+
+        """
         return self._label or self.__name__
 
     @classmethod
@@ -634,6 +738,10 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def get_view_permission(self, profile):
+        """Return True if this actor as a whole is visible for users with the
+        given profile.
+
+        """
         return True
 
     @classmethod
@@ -648,6 +756,10 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):
+        """Returns True or False whether the given action request
+        ActionRequest `ar` is allowed on the given row instance `row`.
+
+        """
         if ba.action.readonly:
             return True
         if ar.get_user().profile.readonly:
@@ -760,10 +872,22 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def get_detail_title(self, ar, obj):
+        """Return the string to use when building the title of a detail
+        window on a given row of this actor.
+
+        """
         return unicode(obj)
 
     @classmethod
     def get_choices_text(self, obj, request, field):
+        """
+        Return the text to be displayed in a combo box
+        for the field `field` of this actor to represent
+        the choice `obj`.
+        Override this if you want a customized representation.
+        For example :class:`lino_faggio.models.InvoiceItems`
+
+        """
         return obj.get_choices_text(request, self, field)
 
     @classmethod
@@ -792,6 +916,20 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def setup_request(self, ar):
+        """Customized versions may e.g. set `master_instance` before calling
+        super().  
+
+        Used e.g. by :class:`lino.modlib.outbox.models.MyOutbox` or
+        :class:`lino.modlib.users.mixins.ByUser`.
+
+        Other usages are more hackerish:
+
+        - :class:`lino.modlib.households.models.SiblingsByPerson`
+        - :class:`lino_welfare.modlib.cal.models.EventsByClient`
+        - :class:`lino_welfare.pcsw.models.Home`,
+        - :class:`lino.modlib.users.models.MySettings`.
+
+        """
         pass
 
     @classmethod
@@ -813,10 +951,26 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def disabled_actions(self, ar, obj):
+        """
+        Returns a dictionary containg the names of the actions
+        that are disabled  for the given object instance `obj`
+        and the user who issued the given ActionRequest `ar`.
+
+        Application developers should not need to override this method.
+
+        Default implementation returns an empty dictionary.
+        Overridden by :class:`dd.Table`
+
+        """
         return {}
 
     @classmethod
     def override_column_headers(self, ar, **kwargs):
+        """A hook to dynamically override the column headers. This has no
+        effect on a GridPanel, only in printed documents or plain
+        html.
+
+        """
         return kwargs
 
     @classmethod
@@ -828,12 +982,27 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def set_detail_layout(self, *args, **kw):
-        "See :meth:`dd.Actor.set_detail_layout`"
+        """
+        Update the :attr:`detail_layout` of this actor, or create a new
+        layout if there wasn't one before.
+
+        The first argument can be either a string or a :class:`FormLayout
+        <dd.FormLayout>` instance.  If it is a string, it will replace the
+        currently defined 'main' panel.  With the special case that if the
+        current main panel is horizontal (i.e. the layout has tabs) it
+        replaces the 'general' tab.
+
+        """
         return self.set_form_layout('detail_layout', *args, **kw)
 
     @classmethod
     def set_insert_layout(self, *args, **kw):
-        "See :meth:`dd.Actor.set_insert_layout`"
+        """
+        Update the :attr:`insert_layout` of this actor,
+        or create a new layout if there wasn't one before.
+        Otherwise same usage as :meth:`set_detail_layout`.
+
+        """
         return self.set_form_layout('insert_layout', *args, **kw)
 
     @classmethod
@@ -1029,6 +1198,29 @@ and :class:`Frame <lino.core.frames.Frame>`.
     @classmethod
     def param_defaults(self, ar, **kw):
         """
+        Return a dict with default values for the :attr:`parameters`.
+        This will be called per request.
+
+        Usage example. The Clients table has a parameter `coached_since`
+        whose default value is empty::
+
+          class Clients(dd.Table):
+              parameters = dd.ParameterPanel(
+                ...
+                coached_since=models.DateField(blank=True))
+
+        But `NewClients` is a subclass of `Clients` with the only
+        difference that the default value is `amonthago`::
+
+
+          class NewClients(Clients):
+              @classmethod
+              def param_defaults(self,ar,**kw):
+                  kw = super(NewClients,self).param_defaults(ar,**kw)
+                  kw.update(coached_since=amonthago())
+                  return kw
+
+
         """
         for k, pf in self.parameters.items():
             # if not isinstance(pf, fields.DummyField):
@@ -1037,28 +1229,22 @@ and :class:`Frame <lino.core.frames.Frame>`.
 
     @classmethod
     def request(self, *args, **kw):
+        """Return a programmatically instantiated :class:`ActionRequest
+        <lino.core.requests.ActionRequest>` on this actor.
+
+        """
         kw.update(actor=self)
         return ActionRequest(*args, **kw)
 
     @classmethod
-    def slave_as_html_meth(self):
-        """
-        Creates and returns the method to be used when
-        :attr:`AbstractTable.slave_grid_format` is `html`.
-        """
-        def meth(master, ar):
-            #~ ar = self.request(ui,request=ar.request,
-                #~ master_instance=master,param_values={})
-            ar = self.request(master, request=ar.request, param_values={})
-            ar.renderer = settings.SITE.ui.default_renderer
-            #~ s = ui.table2xhtml(ar).tostring()
-            return ar.table2xhtml()
-            #~ s = etree.tostring(ui.table2xhtml(ar))
-            #~ return s
-        return meth
-
-    @classmethod
     def show(self, master_instance=None, column_names=None, **known_values):
+        """
+        Creates an action request for this actor and calls its
+        :meth:`show <lino.core.requests.ActionRequest.show>`
+        method.
+        This is a shortcut for usage in tested document snippets.
+
+        """
         kw = dict()
         if master_instance is not None:
             kw.update(master_instance=master_instance)
@@ -1117,7 +1303,32 @@ and :class:`Frame <lino.core.frames.Frame>`.
         return E.p(*l)
 
     @classmethod
+    def slave_as_html_meth(self):
+        """Creates and returns the method to be used when
+        :attr:`slave_grid_format` is `html`.
+
+        """
+        def meth(master, ar):
+            #~ ar = self.request(ui,request=ar.request,
+                #~ master_instance=master,param_values={})
+            ar = self.request(master, request=ar.request, param_values={})
+            ar.renderer = settings.SITE.ui.default_renderer
+            #~ s = ui.table2xhtml(ar).tostring()
+            return ar.table2xhtml()
+            #~ s = etree.tostring(ui.table2xhtml(ar))
+            #~ return s
+        return meth
+
+    @classmethod
     def get_slave_summary(self, obj, ar):
+        """
+        Return the HTML paragraph to be displayed in the
+        TableSummaryPanel when :attr:`slave_grid_format` is `summary`.
+
+        Lino internally creates a virtualfield ``slave_summary`` on each
+        table which invokes this method.
+
+        """
         ar = ar.spawn(self, master_instance=obj)
         # ar = ar.spawn(self, master_instance=ar.master_instance)
         return qs2summary(ar, ar.data_iterator, E.br)

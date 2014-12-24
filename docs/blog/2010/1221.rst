@@ -16,7 +16,7 @@ Done:
     wenn ich auf einer extra-Kolonne sortieren will, dann darf ich nicht 
     das normale `order_by` benutzen, sondern das muss ich 
     in `extra(order_by=['foo']` deklarieren.
-    Aber das reicht noch nicht: siehe Ticket :doc:`/tickets/19`.
+    Aber das reicht noch nicht: siehe Ticket :srcref:`docs/tickets/19`.
     En attendant habe ich die Sortierung von Personen wieder auf den 
     Standardwert (ASCII) gesetzt, also Kleinbuchstaben kommen wieder 
     hinter den Großbuchstaben.

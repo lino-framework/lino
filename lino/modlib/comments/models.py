@@ -16,6 +16,7 @@ from lino.modlib.contenttypes.mixins import Controllable
 from lino import dd, rt
 from lino import mixins
 from django.conf import settings
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
 system = dd.resolve_app('system')
@@ -23,7 +24,7 @@ system = dd.resolve_app('system')
 
 class Comment(
         mixins.CreatedModified,
-        mixins.UserAuthored,
+        UserAuthored,
         mixins.Hierarizable,
         Controllable):
     """The model definition."""
@@ -65,7 +66,7 @@ class Comments(dd.Table):
     #~ label = _("Notes")
 
 
-class MyComments(mixins.ByUser, Comments):
+class MyComments(ByUser, Comments):
     required = dd.required()
     auto_fit_column_widths = True
     #~ master_key = 'user'

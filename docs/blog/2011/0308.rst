@@ -52,7 +52,7 @@ Step 2 : Running a Qooxdoo application on a Django server
 Here is how I do it for the moment.
 Unfortunately I need to do a :command:`generate.py build`
 each time I want to test a code change.
-See :doc:`/tickets/30`
+See :srcref:`docs/tickets/30`
 
    
 #.  On the development server I have in my 

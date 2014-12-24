@@ -4,13 +4,13 @@ Monday, September 29, 2014
 
 
 I discovered that :mod:`ml.polls` is (maybe) what we need in
-:ref:`chatelet` for making the "plans d'action".  There is of course
-some work to do since this module was not actually in a finished
-state.  Especially the `answer_buttons` field ("My answer") does not
-yet work at all: it was not yet adapted to the multiple choices
-feature which I had added shortly before interrupting this project.
-This will probably require a new feature of the framework: action
-calls with arbitrary arguments.
+:ref:`chat` for making the "plans d'action".  There is of course some
+work to do since this module was not actually in a finished state.
+Especially the `answer_buttons` field ("My answer") does not yet work
+at all: it was not yet adapted to the multiple choices feature which I
+had added shortly before interrupting this project.  This will
+probably require a new feature of the framework: action calls with
+arbitrary arguments.
 
 Checkin before starting this new feature.
 

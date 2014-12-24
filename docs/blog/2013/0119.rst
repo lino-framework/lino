@@ -3,4 +3,4 @@
 
 I invested a few hours into the question 
 "How to make Lino more Django-like?" and opened
-:doc:`/tickets/70`.
+:srcref:`docs/tickets/70`.

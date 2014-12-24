@@ -2,7 +2,7 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-This defines the :class:`dd.MergeAction` class.
+This defines the :class:`MergeAction` class.
 
 Usage example::
 
@@ -137,6 +137,10 @@ class MergePlan(object):
 
 
 class MergeAction(actions.Action):
+    """Action which merges the selected object into another object of same
+    class. It has an automatically generated parameters window.
+
+    """
     help_text = _("Merge this object into another object of same class.")
     label = _("Merge")
     icon_name = 'arrow_join'

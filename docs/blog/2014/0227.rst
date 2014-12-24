@@ -4,7 +4,7 @@
 
 
 
-Uff, the explanation for :doc:`/tickets/99` was complex:
+Uff, the explanation for :srcref:`docs/tickets/99` was complex:
 
 First I had to learn that this was a case of logging *before*
 :func:`lino.utils.log.configure` was run. That's why my first series

@@ -2,5 +2,5 @@
 Wednesday, August 27, 2014
 ==========================
 
-Worked on :doc:`/tickets/121`.
+Worked on :srcref:`docs/tickets/121`.
 

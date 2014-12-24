@@ -2,7 +2,7 @@
 20140329 (Saturday, 29 March 2014)
 ==================================
 
-Worked on :doc:`/tickets/93`.
+Worked on :srcref:`docs/tickets/93`.
 
 Bevor man einen Neuantrag zuweist, kann man jetzt die neue 
 Tabelle "Ähnliche Personen" anzeigen.

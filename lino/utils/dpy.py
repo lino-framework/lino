@@ -37,58 +37,35 @@ from lino.core.dbutils import obj2str, sorted_models_list, full_model_name
 SUFFIX = '.py'
 
 
-def create_mti_child(parent_model, pk_, child_model, **kw):
-    """
-    Similar to :func:`insert_child`, but very tricky.
+def create_mti_child(parent_model, pk, child_model, **kw):
+    """Similar to :func:`lino.utils.mti.insert_child`, but very tricky.
     Used in Python dumps.
 
-    The return value is an "almost normal" model instance,
-    whose `save` and `full_clean` methods have been hacked.
-    They are the only methods that will be
-    called by :class:`lino.utils.dpy.Deserializer`.
-    You should not use this instance for anything else
-    and throw it away when the save() has been called.
+    The return value is an "almost normal" model instance, whose
+    `save` and `full_clean` methods have been hacked.  These are the
+    only methods that will be called by :class:`Deserializer`.  You
+    should not use this instance for anything else and throw it away
+    when the save() has been called.
 
     """
     parent_link_field = child_model._meta.parents.get(parent_model, None)
     if parent_link_field is None:
         raise ValidationError("A %s cannot be parent for a %s" % (
             parent_model.__name__, child_model.__name__))
-    if True:
-        ignored = {}
-        for f in parent_model._meta.fields:
-            if f.name in kw:
-                ignored[f.name] = kw.pop(f.name)
-        kw[parent_link_field.name + "_id"] = pk_
-        if ignored:
-            raise Exception(
-                "create_mti_child() %s %s from %s : ignored non-local fields %s" % (
-                    child_model.__name__,
-                    pk_,
-                    parent_model.__name__,
-                    ignored))
-        child_obj = child_model(**kw)
-    else:
-        attrs = {}
-        attrs[parent_link_field.name + "_id"] = pk_
-        #~ for lf in child_model._meta.local_fields:
-        # backwards compat 20111211 : python fixtures created by Version 1.2.8 still
-        # specify also field values of parent_model. Ignore these silently
-        # otherwise Django would also try to create a parent_model record.
-        for f, m in child_model._meta.get_fields_with_model():
-            if m is None or not issubclass(m, child_model):
-            #~ if m is None or m is child_model or not issubclass(m,parent_model):
-                if f.name in kw:
-                    attrs[f.name] = kw.pop(f.name)
-        if kw:
-            logging.warning(
-                "create_mti_child() %s %s from %s : ignored non-local fields %s",
+    ignored = {}
+    for f in parent_model._meta.fields:
+        if f.name in kw:
+            ignored[f.name] = kw.pop(f.name)
+    kw[parent_link_field.name + "_id"] = pk
+    if ignored:
+        raise Exception(
+            "create_mti_child() %s %s from %s : "
+            "ignored non-local fields %s" % (
                 child_model.__name__,
-                pk_,
+                pk,
                 parent_model.__name__,
-                kw)
-
-        child_obj = child_model(**attrs)
+                ignored))
+    child_obj = child_model(**kw)
 
     def full_clean(*args, **kw):
         pass
@@ -190,12 +167,10 @@ def bv2kw(fieldname,values):
                 if getattr(f, 'auto_now_add', False):
                     raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
                         full_model_name(model), f.name))
-            #~ fields = model._meta.local_fields
-            #~ fields = [f for f in model._meta.fields if f.serialize]
-            #~ fields = [f for f in model._meta.local_fields if f.serialize]
+            field_names = [f.attname for f in fields
+                           if not getattr(f, '_lino_babel_field', False)]
             self.stream.write('def create_%s(%s):\n' % (
-                model._meta.db_table, ', '.join([f.attname
-                                                 for f in fields if not getattr(f, '_lino_babel_field', False)])))
+                model._meta.db_table, ', '.join(field_names)))
             if model._meta.parents:
                 if len(model._meta.parents) != 1:
                     msg = "%s : model._meta.parents is %r" % (
@@ -209,19 +184,20 @@ def bv2kw(fieldname,values):
                         for f in child_fields])
                 else:
                     attrs = ''
-                #~ self.stream.write('    return insert_child(%s.objects.get(pk=%s),%s%s)\n' % (
-                    #~ full_model_name(pm,'_'),pf.attname,full_model_name(model,'_'),attrs))
-                self.stream.write('    return create_mti_child(%s,%s,%s%s)\n' % (
-                    full_model_name(pm, '_'), pf.attname, full_model_name(model, '_'), attrs))
+                tpl = '    return create_mti_child(%s, %s, %s%s)\n'
+                self.stream.write(tpl % (
+                    full_model_name(pm, '_'),
+                    pf.attname, full_model_name(model, '_'), attrs))
             else:
                 self.stream.write("    kw = dict()\n")
                 for f in fields:
                     if getattr(f, '_lino_babel_field', False):
                         continue
                     elif isinstance(f, (BabelCharField, BabelTextField)):
+                        tpl = '    if %s is not None:'
+                        tpl += ' kw.update(bv2kw(%r, %s))\n'
                         self.stream.write(
-                            '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
-                                f.attname, f.attname, f.attname))
+                            tpl % (f.attname, f.attname, f.attname))
                     else:
                         if isinstance(f, models.DecimalField):
                             self.stream.write(

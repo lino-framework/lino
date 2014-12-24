@@ -9,7 +9,7 @@ While I was there I slightly changed the the API for defining
 overrideable library models using customizeable model abstractness:
 
 
-- In :attr:`ad.Plugin.extends_models` the named models must not any
+- In :attr:`lino.core.plugin.Plugin.extends_models` the named models must not any
   more include the app_label. Until now you had to define::
 
     from lino.modlib.notes import Plugin

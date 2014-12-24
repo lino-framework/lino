@@ -8,6 +8,6 @@ because this concept didn't yet exist when I started.
 
 - The concept sounds good
 - The old function-based views will be deprecated in Django 1.5
-- Ticket :doc:`/tickets/64` is waiting for this.
+- Ticket :srcref:`docs/tickets/64` is waiting for this.
 
 

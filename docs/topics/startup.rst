@@ -21,7 +21,7 @@ In `Entry point hook for Django projects
 (2013-02-14), 
 Brian Rosner describes a method for "running code when Django starts",
 but this is not the same problem, 
-it is rather what I describe in :doc:`/admin/lino_local`.
+it is rather what I describe in :doc:`/admin/djangosite_local`.
 We don't want to run code *when* Django starts, 
 but *after* Django has finished to start.
 The difference is important if you want to analyze all installed models.

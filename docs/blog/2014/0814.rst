@@ -94,4 +94,4 @@ DONE:
 
 
 Die restlichen Tuduhs packe ich ein, weil die jetzt 4 Wochen warten
-dürfen: :doc:`/tickets/122`.
+dürfen: :srcref:`docs/tickets/122`.

@@ -2,7 +2,7 @@
 20140124 (Friday, 24 January 2014)
 ==================================
 
-Worked on :doc:`/tickets/84`.
+Worked on :srcref:`docs/tickets/84`.
 
 - New module :mod:`lino.modlib.lists`. `lists.List` is a list of 
   Partners (or a list of :class:`ContactRelated 
@@ -15,7 +15,7 @@ Worked on :doc:`/tickets/84`.
 - "Groups" or "Organisations"? I decided to change the label of the
   `contacts.Company` model once more: from "Group" to "Organization".
   And it seems that "Organization" has won over "Organisation",
-  despite what I believed when I wrote :doc:`/tickets/72`.
+  despite what I believed when I wrote :srcref:`docs/tickets/72`.
 
   That new (and hopefully last) change is because I seem to have
   decided now that a List itself is **not** also a Partner. It is

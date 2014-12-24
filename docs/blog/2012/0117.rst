@@ -49,7 +49,7 @@ Checkin um 12 Uhr :
 
 - En passant habe ich die "Druckerfreundliche" [html]-Ansicht mal ein wenig gestylt, 
   dass es wenigstens nicht ganz so weh tut, sie anzuschauen. 
-  Das Thema :doc:`/tickets/55` ist aber noch nicht abgeschlossen...
+  Das Thema :srcref:`docs/tickets/55` ist aber noch nicht abgeschlossen...
   
 Checkin um 16 Uhr:
 

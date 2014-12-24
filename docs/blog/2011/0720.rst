@@ -125,5 +125,5 @@ http://www.wintotal.de/tipparchiv/?id=1062
 Hier eine ähnliche Problemstellung im Chrome Help Forum: 
 http://www.google.com/support/forum/p/Chrome/thread?tid=54ce24f888fb210a&hl=en
 
-:doc:`/tickets/45`
+:srcref:`docs/tickets/45`
 

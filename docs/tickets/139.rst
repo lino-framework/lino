@@ -36,12 +36,12 @@ Useless dependencies
 ---------------------
 
 Lino's :xfile:`setup_info.py` currently
-has  django-iban_ and xlwt_ in `install_requires`, 
-and bs4_ in `tests_require`.
+has  "django-iban" and "xlwt" in `install_requires`, 
+and "bs4" in `tests_require`.
 
-Because :mod:`lino.modlib.iban` requires django-iban_,
-:mod:`lino.modlib.export_excel` requires xlwt_, 
-and some tested docs need bs4_.
+Because :mod:`lino.modlib.iban` requires "django-iban",
+:mod:`lino.modlib.export_excel` requires "xlwt", and some tested docs
+need "bs4".
 
 This is annoying for people who don't use the apps who require
 these packages.

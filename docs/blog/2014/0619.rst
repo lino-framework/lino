@@ -2,8 +2,8 @@
 Thursday, June 19, 2014
 =======================
 
-New Site attribute :attr:`ad.Site.confdirs`
--------------------------------------------
+New Site attribute `confdirs`
+-----------------------------
 
 I noticed a bug which had been living for some time: the internal list
 of :xfile:`config` directories had duplicate entries.
@@ -13,9 +13,12 @@ variables because I thought that this might be the reason.  It wasn't
 the reason, but has the advantage of removing one pitfall: until now
 it was not allowed to import this module at the global level of a
 models module because importing it will fill the config dirs,
-i.e. will try to import every installed `models` module.
+i.e. will try to import every installed `models` module.  That's why
+we have the new Site attribute
+:attr:`lino.core.site_def.Site.confdirs`
 
-The true reason was a bug in :meth:`dd.for_each_app`.
+The true reason was a bug in
+:meth:`lino.core.site_def.Site.for_each_app`.
 
 
 Editing print templates

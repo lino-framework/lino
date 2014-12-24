@@ -9,7 +9,6 @@ lino.core.requests
 
    .. autosummary::
    
-      curry
       isiterable
       navinfo
       obj2unicode

@@ -37,5 +37,7 @@ lino.management.commands.initdb
    .. autosummary::
    
       CommandError
+      IntegrityError
+      OperationalError
    
    

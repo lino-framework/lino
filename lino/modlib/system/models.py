@@ -15,7 +15,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import mixins
+from lino.modlib.users.mixins import UserAuthored, ByUser
 from lino import dd
 from lino.core import actions
 
@@ -158,7 +158,7 @@ class SiteConfigs(dd.Table):
 
 if settings.SITE.user_model:
 
-    class TextFieldTemplate(mixins.AutoUser):
+    class TextFieldTemplate(UserAuthored):
 
         """A reusable block of text that can be selected from a text editor to
         be inserted into the text being edited.
@@ -197,7 +197,7 @@ if settings.SITE.user_model:
         text
         """
 
-    class MyTextFieldTemplates(TextFieldTemplates, mixins.ByUser):
+    class MyTextFieldTemplates(TextFieldTemplates, ByUser):
         required = dd.required(user_groups='office')
 
 

@@ -2,7 +2,7 @@
 ========
 
 Am Samstag habe ich begonnen, Lino nach ExtJS 4 zu migrieren
-(:doc:`/tickets/41`). Ist gar nicht so einfach.
+(:srcref:`docs/tickets/41`). Ist gar nicht so einfach.
 Und eigentlich gehört das auch nicht zu den momentan dringenden Dingen. 
 Sencha kümmert sich scheinbar nur noch recht wenig um die alte 
 Version. 
@@ -15,7 +15,7 @@ Und zumindest versprechen sie "
   
 Ich werde heute aber noch etwas weiter am Umstieg arbeiten, denn:
 
-- Lebensnotwendig ist das Ticket :doc:`/tickets/39` nicht.
+- Lebensnotwendig ist das Ticket :srcref:`docs/tickets/39` nicht.
 - Meine Arbeit von Samstag müsste ich irgendwann quasi neu beginnen, 
   wenn ich das jetzt nicht durchziehe.
   Mindestens 2 kleine Bugs habe ich im Lauf der Arbeiten gefunden, 

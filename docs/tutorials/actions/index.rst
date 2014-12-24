@@ -1,26 +1,13 @@
 ==============
-Actions
+Custom actions
 ==============
 
 .. include:: /include/wip.rst
 
-For a complete reference see :ref:`dev.actions`
+For an introduction, see :ref:`dev.actions`.
 
-Actions are one of the concepts which Lino adds to Django.
-
-The whole system is not yet fully stable, 
-but this tutorial is a tested document, so you can rely on it ;-)
-
-An Action in Lino is something "which a user can do". 
-It is usually represented as a clickable button.
-
-Each Actor has a *default action*. For `dd.Table` this is 
-"GridEdit", which means "open a window showing a grid on this table".
-That's why you can define a menu item by simply naming an actor.
-
-Other standard actions on `dd.Table` are things like 
-"Save", "Delete", "Insert".
-
+The action API is not yet fully stable, but this tutorial is a tested
+document, so you can rely on it ;-)
 
 Here is the :xfile:`models.py` file we will use for this tutorial:
 

@@ -25,6 +25,7 @@ from lino.core import actions
 from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import UserAuthored
 
 from .mixins import RecipientTypes
 
@@ -354,7 +355,7 @@ class SendMail(dd.Action):
         ar.success(**kw)
 
 
-class Mail(mixins.AutoUser, mixins.Printable,
+class Mail(UserAuthored, mixins.Printable,
            mixins.ProjectRelated, Controllable):
 
     class Meta:

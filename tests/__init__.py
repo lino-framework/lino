@@ -60,9 +60,6 @@ class DocsTests(LinoTestCase):
         docs/tested/test_i18n.rst
         """)
 
-    def test_ad(self):
-        self.run_simple_doctests("docs/dev/ad.rst")
-
     def test_dumpy(self):
         self.run_simple_doctests("docs/tutorials/dumpy.rst")
 
@@ -98,6 +95,9 @@ class DocsTests(LinoTestCase):
 
     def test_actors(self):
         self.run_django_manage_test('docs/tutorials/actors')
+
+    def test_watch(self):
+        self.run_django_manage_test('docs/tutorials/watch_tutorial')
     
     def test_vtables(self):
         self.run_django_manage_test('docs/tutorials/vtables')
@@ -125,6 +125,12 @@ class DocsTests(LinoTestCase):
 
     def test_integer_pk(self):
         self.run_django_manage_test("docs/tested/integer_pk")
+
+
+class CoreTests(LinoTestCase):
+
+    def test_site(self):
+        self.run_simple_doctests('lino/core/site_def.py')
 
 
 class UtilsTests(LinoTestCase):
@@ -169,9 +175,6 @@ class UtilsTests(LinoTestCase):
 
     def test_jsgen(self):
         self.run_simple_doctests('lino/utils/jsgen.py')
-
-    def test_site(self):
-        self.run_simple_doctests('lino/core/site_def.py')
 
     def test_format_date(self):
         self.run_simple_doctests('lino/utils/format_date.py')

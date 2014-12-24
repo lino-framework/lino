@@ -2,15 +2,30 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-Defines classes :class:`BaseRequest` and :class:`ActionRequest`.
+An action request is when a given user asks to run a given action of a
+given actor.
+
+Action requests are implemented by
+:class:`lino.core.requests.BaseRequest` and its subclasses.
+
+In application code, the traditional name for instances of action
+requests  is :class:`ar`.
+
+As a rough approximation you can say that every Django web request
+gets wrapped into an action request.  The ActionRequest just holds
+extended information about the "context" (like the "renderer"
+being used) and provides the application with methods to
+communicate with the user.
+But there are exceptions, the :attr:`ar.request` can be None.
+
 """
 
 import logging
 logger = logging.getLogger(__name__)
 
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
-from django.conf import settings
 from django import http
 from django.core.mail import EmailMessage
 from django.core import exceptions
@@ -18,14 +33,13 @@ from django.core import exceptions
 from lino.core.dbutils import obj2unicode
 
 from lino.utils import AttrDict
-from lino.utils import curry
 from lino.utils import isiterable
 
 from lino.core import constants as ext_requests
-from lino.core import actions
 
 from lino.core.dbutils import resolve_app
 from lino.core.dbutils import navinfo
+from lino.core.boundaction import BoundAction
 
 from lino.utils.xmlgen.html import E
 
@@ -59,107 +73,6 @@ Action responses supported by `Lino.action_handler`
 """
 
 
-class BoundAction(object):
-
-    """
-    An Action which is bound to an Actor.
-    If an Actor has subclasses, each subclass "inherits" its actions.
-    """
-
-    def __init__(self, actor, action):
-
-        if not isinstance(action, actions.Action):
-            raise Exception("%s : %r is not an Action" % (actor, action))
-        self.action = action
-        self.actor = actor
-
-        required = dict()
-        if action.readonly:
-            required.update(actor.required)
-        #~ elif isinstance(action,InsertRow):
-            #~ required.update(actor.create_required)
-        elif isinstance(action, actions.DeleteSelected):
-            required.update(actor.delete_required)
-        else:
-            required.update(actor.update_required)
-        required.update(action.required)
-        #~ print 20120628, str(a), required
-        #~ def wrap(a,required,fn):
-            #~ return fn
-
-        debug_permissions = actor.debug_permissions and \
-            action.debug_permissions
-
-        if debug_permissions:
-            if settings.DEBUG:
-                logger.info("debug_permissions active for %r (required=%s)",
-                            self, required)
-            else:
-                raise Exception(
-                    "settings.DEBUG is False, but `debug_permissions` "
-                    "for %r (required=%s) is active." % (self, required))
-
-        from lino.core.perms import (
-            make_permission_handler, make_view_permission_handler)
-        self.allow_view = curry(make_view_permission_handler(
-            self, action.readonly, debug_permissions, **required), action)
-        self._allow = curry(make_permission_handler(
-            action, actor, action.readonly,
-            debug_permissions, **required), action)
-        #~ if debug_permissions:
-            #~ logger.info("20130424 _allow is %s",self._allow)
-        #~ actor.actions.define(a.action_name,ba)
-
-    def get_window_layout(self):
-        return self.action.get_window_layout(self.actor)
-
-    def get_window_size(self):
-        return self.action.get_window_size(self.actor)
-
-    def full_name(self):
-        return self.action.full_name(self.actor)
-        #~ if self.action.action_name is None:
-            #~ raise Exception("%r action_name is None" % self.action)
-        #~ return str(self.actor) + '.' + self.action.action_name
-
-    def request(self, *args, **kw):
-        kw.update(action=self)
-        return self.actor.request(*args, **kw)
-
-    def get_button_label(self, *args):
-        return self.action.get_button_label(self.actor, *args)
-
-    #~ def get_panel_btn_handler(self,*args):
-        #~ return self.action.get_panel_btn_handler(self.actor,*args)
-
-    def setup_action_request(self, *args):
-        return self.action.setup_action_request(self.actor, *args)
-
-    def get_row_permission(self, ar, obj, state):
-        #~ if self.actor is None: return False
-        return self.actor.get_row_permission(obj, ar, state, self)
-
-    def get_bound_action_permission(self, ar, obj, state):
-        if not self.action.get_action_permission(ar, obj, state):
-            return False
-        return self._allow(ar.get_user(), obj, state)
-
-    def get_view_permission(self, profile):
-        """
-        Return True if this bound action is visible for users of this
-        profile.
-        """
-        if not self.actor.get_view_permission(profile):
-            return False
-        if not self.action.get_view_permission(profile):
-            return False
-        return self.allow_view(profile)
-
-    def __repr__(self):
-        return "<%s(%s,%r)>" % (
-            self.__class__.__name__, self.actor, self.action)
-
-
 class VirtualRow(object):
 
     def __init__(self, **kw):
@@ -188,10 +101,10 @@ class PhantomRow(VirtualRow):
 class BaseRequest(object):
 
     """Base class for :class:`ActionRequest` and :class:`TableRequest
-    <lino.core.tables.TableRequest>`. See :class:`rt.ActionRequest`.
+    <lino.core.tables.TableRequest>`. 
 
-    A bare BaseRequest instance is returned as a "session" by
-    :meth:`rt.login`.
+    A bare `BaseRequest` instance is returned as a "session" by
+    :func:`rt.login`.
 
     """
     # Some of the following are needed e.g. for polls tutorial
@@ -199,6 +112,11 @@ class BaseRequest(object):
     action_param_values = None
     param_values = None
     bound_action = None
+
+    request = None
+    """
+    The Django HttpRequest object which caused this action request.
+    """
 
     renderer = None
     selected_rows = []
@@ -279,9 +197,11 @@ class BaseRequest(object):
         self.set_response(**kw)
 
     def success(self, message=None, alert=None, **kw):
-        """
-        Shortcut for building a success response.
+        """Tell the client to consider the action as successful. This is the
+        same as :meth:`BaseRequest.set_response` with `success=True`.
+
         First argument should be a textual message.
+
         """
         kw.update(success=True)
         if alert is not None:
@@ -374,6 +294,10 @@ class BaseRequest(object):
         self.set_response(**kw)
 
     def close_window(self, **kw):
+        """Ask client to close the current window. This is the same as
+        :meth:`BaseRequest.set_response` with `close_window=True`.
+
+        """
         kw.update(close_window=True)
         self.set_response(**kw)
 
@@ -398,6 +322,10 @@ class BaseRequest(object):
         self.requesting_panel = other.requesting_panel
 
     def parse_req(self, request, rqdata, **kw):
+        """
+        Parse the given Django HttpRequest and setup from it.
+        
+        """
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
@@ -448,6 +376,22 @@ class BaseRequest(object):
         return self.subst_user or self.user
 
     def add_system_note(self, owner, subject, body, silent):
+        """Send a system note with given `subject` and `body` and attached to
+        database object `owner`.
+
+        A system note is a text message attached to a given database
+        object instance (`owner`) and propagated through a series of
+        customizable and configurable channels.
+
+        The text part consists basically of a subject and a body, both
+        usually generated by the application and edited by the user in
+        an action's parameters dialog box.
+
+        This method will build the list of email recipients by calling the
+        global :meth:`lino.core.site_def.Site.get_system_note_recipients` method and send
+        an email to each of these recipients.
+
+        """
         #~ logger.info("20121016 add_system_note() '%s'",subject)
         notes = resolve_app('notes')
         if notes:
@@ -471,7 +415,11 @@ class BaseRequest(object):
                     subject, sender, recipients)
 
     def spawn(self, spec, **kw):
-        "See :meth:`rt.ActionRequest.spawn`."
+        """
+        Create a new ActionRequest using default values from this one and
+        the action specified by `spec`.
+
+        """
 
         if isinstance(spec, ActionRequest):
             for k, v in kw.items():
@@ -527,7 +475,42 @@ class BaseRequest(object):
 
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, **kw):
-        "See :meth:`rt.ActionRequest.show`."
+        """
+        Show the specified table or action using the current renderer.  If
+        the table is a :term:`slave table`, then a `master_instance` must
+        be specified as second argument.
+
+        The first argument, `spec` can be:
+        - a string with the name of a model, actor or action
+        - another action request
+        - a bound action (i.e. a :class:`BoundAction` instance)
+
+        Optional keyword arguments are
+
+        - `column_names` overrides default list of columns
+        - `header_level` show also the header (using specified level)
+        - `language` overrides the default language used for headers and
+          translatable data
+
+        Any other keyword arguments are forwarded to :meth:`spawn`.
+
+        Usage in a tested doc::
+
+          >>> rt.login('robin').show('users.UsersOverview', limit=5)
+
+        Usage in a Jinja template::
+
+          {{ar.show('users.UsersOverview')}}
+
+        Usage in an appy.pod template::
+
+          do text from ar.show('users.UsersOverview')
+
+        Note that this function either returns a string or prints to
+        stdout and returns None, depending on the current renderer.
+
+
+        """
         # 20130905 added master_instance positional arg. but finally didn't use
         # it.
         if master_instance is not None:
@@ -595,10 +578,22 @@ class BaseRequest(object):
         return self.renderer.row_action_button(
             ai.instance, self, ai.bound_action, *args, **kw)
 
-    def action_button(self, ba, obj, *args, **kw):
-        return self.renderer.action_button(obj, self, ba, *args, **kw)
+    def action_button(self, ba, obj, *args, **kwargs):
+        """
+        Returns the HTML of an action link which will run the specified
+        action.
+
+        ``kwargs`` may contain additional html attributes like `style`.
+
+        """
+        return self.renderer.action_button(obj, self, ba, *args, **kwargs)
 
     def insert_button(self, *args, **kw):
+        """
+        Returns the HTML of an action link which will open the
+        :term:`insert window` of this request.
+
+        """
         return self.renderer.insert_button(self, *args, **kw)
 
     def get_detail_title(self, elem):
@@ -728,6 +723,22 @@ class BaseRequest(object):
         elem.after_ui_save(ar)
 
     def get_help_url(self, docname=None, text=None, **kw):
+        """Generate a link to the help section of the documentation (whose
+        base is defined by :attr:`lino.core.site_def.Site.help_url`)
+
+        Usage example::
+
+            help = ar.get_help_url("foo", target='_blank')
+            msg = _("You have a problem with foo."
+                    "Please consult %(help)s "
+                    "or ask your system administrator.")
+            msg %= dict(help=E.tostring(help))
+            kw.update(message=msg, alert=True)
+
+        The :ref:`lino.tutorial.pisa` tutorial shows a resulting message
+        generated by the print action.
+
+        """
         if text is None:
             text = unicode(_("the documentation"))
         url = settings.SITE.help_url
@@ -794,6 +805,10 @@ class ActorRequest(BaseRequest):
         return kw
 
     def spawn(self, actor, **kw):
+        """Same as :meth:`BaseRequest.spawn`, except that the first positional
+        argument is an `actor`.
+
+        """
         if actor is None:
             actor = self.actor
         return super(ActorRequest, self).spawn(actor, **kw)

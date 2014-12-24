@@ -21,7 +21,7 @@ Concretely:
   It generates local Qooxdoo source files, then runs 
   Qooxdoo's `generate build` on them.
   This takes only 30 seconds, 
-  so :doc:`/tickets/30` is less urgent.
+  so :srcref:`docs/tickets/30` is less urgent.
   
 - Concretely I'm currently hoping for help from the 
   Qooxdoo forum:

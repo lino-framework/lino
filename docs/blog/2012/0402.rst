@@ -11,7 +11,7 @@ Ticket 59
 ---------
 
 Renamed "BCSS" to "CBSS" and `lino.apps.dsbe` to :mod:`lino.apps.pcsw`.
-Das hatte ich ja schon seit längerem vor (:doc:`/tickets/59`).
+Das hatte ich ja schon seit längerem vor (:srcref:`docs/tickets/59`).
 
 PCSW seems the most official English 
 abbreviation for a 

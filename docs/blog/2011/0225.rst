@@ -6,7 +6,7 @@
 
 Noch bevor ich meine Frage zum Posten fertig hatte,
 hatte ich die prinzipielle Lösung für mein 
-Ticket :doc:`/tickets/22` selbst gefunden. 
+Ticket :srcref:`docs/tickets/22` selbst gefunden. 
 Die Formulierung dieser Frage hat mich 
 diese Woche allerdings ca. 25 
 Arbeitsstunden gekostet...
@@ -60,7 +60,7 @@ Unkomplette Liste dessen, was ich gemacht habe:
     
     
     
-#.  Und Ticket :doc:`/tickets/11` ist noch immer da.
+#.  Und Ticket :srcref:`docs/tickets/11` ist noch immer da.
     Updated to revision 15648.
     
     Und oh je, sie haben in `tests/modeltests/model_inheritance` wieder Änderungen gemacht, 

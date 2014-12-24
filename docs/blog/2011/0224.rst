@@ -5,17 +5,17 @@ Viele Ideen
 -----------
 
 Ich musste mal all meine Ideen sortieren und aufschreiben.
-:doc:`/tickets/22`
-und :doc:`/tickets/23` sind die eigentlich dringenden Tickets, 
+:srcref:`docs/tickets/22`
+und :srcref:`docs/tickets/23` sind die eigentlich dringenden Tickets, 
 weil für die Demo am kommenden Freitag nützlich sein werden.
 
-:doc:`/tickets/24` kann ich bis auf weiteres abschließen und durch
-:doc:`/tickets/25` ersetzen, denn die site docs sollten einen 
+:srcref:`docs/tickets/24` kann ich bis auf weiteres abschließen und durch
+:srcref:`docs/tickets/25` ersetzen, denn die site docs sollten einen 
 Produktionsserver nicht bei jedem Request belasten. 
 Auch nicht bei jedem Server-Restart, sondern ein management command reicht.
 Und wenn sie schon statisch generiert werden, dann ist es am effizientesten, 
 Sphinx dazu zu benutzen.
-Und :doc:`/tickets/26` (der Auslöser von #24 und #25) ist eigentlich eher belanglos.
+Und :srcref:`docs/tickets/26` (der Auslöser von #24 und #25) ist eigentlich eher belanglos.
 
 Beim Generieren der Doku hatte ich folgendes Problem::
 
@@ -62,8 +62,8 @@ Metamorphosen
 -------------
 
 Weiter mit den eigentlich dringenden Tickets
-:doc:`/tickets/22`
-und :doc:`/tickets/23`.
+:srcref:`docs/tickets/22`
+und :srcref:`docs/tickets/23`.
 Also im Modul :mod:`lino.utils.mti` und :mod:`lino.test_apps.mti.models`
 
 

@@ -240,7 +240,7 @@ def update_model(model_spec, **actions):
 def inject_field(model_spec, name, field, doc=None):
     """
     Add the given field to the given model.
-    See also :doc:`/tickets/49`.
+    See also :srcref:`docs/tickets/49`.
     
     Since `inject_field` is usually called at the global level 
     of `models modules`, it cannot know whether the given `model_spec` 

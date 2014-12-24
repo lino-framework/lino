@@ -2,6 +2,6 @@
 # License: BSD (see file COPYING for details)
 
 """
-Defines an Upload model as PartnerDocument and AutoUser.
+Defines an Upload model as PartnerDocument and UserAuthored.
 
 """

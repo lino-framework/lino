@@ -1,7 +1,7 @@
 20110823
 ========
 
-Continued to work on :doc:`/tickets/48`.
+Continued to work on :srcref:`docs/tickets/48`.
 
 - renamed Attendance to Attendee and AttendanceRole to AttendeeRole
   because an "attendance role" is a sheet where attendees write their name. 

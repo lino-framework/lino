@@ -73,7 +73,7 @@ But as things got more and more complex, it became difficult to define
 this manually. And it was *useless* work because every app *does* know
 which library models it is going to override.  But how to load that
 information from an app before actually importing it?  I then
-discovered that Django doesn't use the :ffile:`__init__.py` files of
+discovered that Django doesn't use the :xfile:`__init__.py` files of
 installed apps.  And of course I was lucky to have a `djangosite.Site`
 class which is being *instantiated* before `settings` have finished to
 load...

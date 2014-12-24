@@ -8,7 +8,7 @@ that GPL remains my choice *for the moment*.
 For those who are interested, please read the following page 
 and tell me your advice about how I should decide:
 
-  :doc:`/tickets/16`
+  :srcref:`docs/tickets/16`
 
 I also noticed that the file :srcref:`/COPYING.txt` 
 was mistakenly still a version 2 of the GPL. 

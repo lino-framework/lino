@@ -1,7 +1,7 @@
 20111019
 ========
 
-- Worked on :doc:`/tickets/45`:
+- Worked on :srcref:`docs/tickets/45`:
   :srcref:`/media/applets/davopen_test.html`
   :srcref:`/java`
   

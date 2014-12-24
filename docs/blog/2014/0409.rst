@@ -5,7 +5,7 @@ Wednesday, April 9, 2014
 The title of a blog entry
 -------------------------
 
-:doc:`/tickets/88`.
+:srcref:`docs/tickets/88`.
 Fiddled with the date format in the header of daily blog entries.  It
 uses now `babel's
 <http://babel.edgewall.org/wiki/Documentation/dates.html>`_ default
@@ -22,7 +22,7 @@ abandoning completely ;-)
 Allgemeine Medizinische Kosten
 ------------------------------
 
-:doc:`/tickets/93`.  I found a last thing to do before doing an
+:srcref:`docs/tickets/93`.  I found a last thing to do before doing an
 upgrade of testlino in Eupen: write a demo case of a medical aid
 printout.
 

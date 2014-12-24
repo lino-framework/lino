@@ -1,5 +1,6 @@
-Administrators
-==============
+=====================
+Administrator's Guide
+=====================
 
 This section is for system administrators who set up or maintain a 
 server which hosts one or several Lino applications.
@@ -41,7 +42,6 @@ Other
     snapshot
     settings
     which_lino
-    install_windows
     pythonpath
    
     mass_hosting

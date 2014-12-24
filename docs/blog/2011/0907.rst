@@ -16,7 +16,7 @@ and never found any (because I prefer `std`).
 
 
 I reverted my yesterday's changes to initdb 
-(see ticket :doc:`/tickets/50`).
+(see ticket :srcref:`docs/tickets/50`).
 Django's `flush` 
 command caused the following error during the 
 database migration::
@@ -37,7 +37,7 @@ Released :doc:`/releases/2011/0907` and installed in Eupen.
 Another method for initdb
 =========================
 
-Another idea I tried for ticket :doc:`/tickets/50`, 
+Another idea I tried for ticket :srcref:`docs/tickets/50`, 
 but which turned out to be nonsense 
 (because "flush" only empties all tables does not drop them).
 

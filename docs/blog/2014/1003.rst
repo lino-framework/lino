@@ -2,8 +2,8 @@
 Friday, October 3, 2014
 =======================
 
-I rediscovered the ticket :doc:`/tickets/122`
-and merged :doc:`/tickets/130` into it.
+I rediscovered the ticket :srcref:`docs/tickets/122`
+and merged :srcref:`docs/tickets/130` into it.
 
 Started to prepare database migration for :ref:`dsbe`.
 

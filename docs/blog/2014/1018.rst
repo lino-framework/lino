@@ -7,7 +7,7 @@ Saturday, October 18, 2014
 Bescheinigungen "Kleiderkammer"
 ===============================
 
-Working on :doc:`/tickets/136`.
+Working on :srcref:`docs/tickets/136`.
 
 While the new :xfile:`clothing_bank.body.html` template itself
 probably worked already yesterday, it took me a few additional hours

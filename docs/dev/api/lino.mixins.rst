@@ -10,7 +10,6 @@ lino.mixins
    .. autosummary::
    
       naturaltime
-      navinfo
    
    
 
@@ -20,19 +19,12 @@ lino.mixins
 
    .. autosummary::
    
-      AnonymousUser
-      AttrDict
-      AuthorAction
-      AutoUser
       BabelCharField
       BabelNamed
       BabelTextField
       Born
-      ByUser
       CachedPrintAction
       CachedPrintable
-      Choice
-      ChoiceList
       Created
       CreatedModified
       DatePeriod
@@ -51,17 +43,9 @@ lino.mixins
       Sequenced
       TypedPrintable
       Uploadable
-      UserAuthored
-      UserLevels
    
    
 
    
-   
-   .. rubric:: Exceptions
-
-   .. autosummary::
-   
-      ValidationError
    
    

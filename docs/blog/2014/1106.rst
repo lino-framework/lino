@@ -11,7 +11,7 @@ set to True).
 
 :mod:`ml.humanlinks` : uncle, cousin etc are now `addable_link_types`.
 
-In :doc:`/tickets/104` there was a last detail: 
+In :srcref:`docs/tickets/104` there was a last detail: 
 
 The :class:`welfare.newcomers.AvailableCoaches` table no longer
 displays coaches only for newcomers. So you can now use this table on

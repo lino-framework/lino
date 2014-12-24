@@ -28,7 +28,7 @@ After::
   SITE = Site(globals(), "myapp1", "myapp2")
   # ... your settings here
 
-That is, you import the :class:`ad.Site` class (or -more often- some
+That is, you import the :class:`lino.core.site_def.Site` class (or --more often-- some
 subclass thereof), then assign an instance of it to a setting variable
 whose name *must* be ``SITE``.
 
@@ -36,9 +36,16 @@ whose name *must* be ``SITE``.
 most other Django settings, ``SITE`` contains a **Python object**
 which has methods that you can call at runtime.
 
-When instantiating a :class:`Site <ad.Site>`, the first parameter must
-be ``globals()``, because Lino is going to automatically set certain
-Django settings. For example
+When instantiating a :class:`Site <ad.Site>` in a :xfile:`settings.py`
+file, the first parameter must be ``globals()``, because Lino is going
+to automatically set certain Django settings. For example
+
+    :setting:`INSTALLED_APPS`
+    :setting:`LANGUAGE_CODE`
+    :setting:`SERIALIZATION_MODULES`
+    :setting:`FIXTURE_DIRS`
+
+
 
 - `DATABASES 
   <https://docs.djangoproject.com/en/dev/ref/settings/#databases>`_ :
@@ -55,13 +62,13 @@ The optional second positional argument should be the value of your
 original :setting:`INSTALLED_APPS` (to which Lino will automatically
 add some).  If you don't specifiy this argument, then you should
 specify your installed apps by overriding
-:meth:`ad.Site.get_installed_apps`.
+:meth:`lino.core.site_def.Site.get_installed_apps`.
 
 Besides this you can override any class argument using a keyword
 argment of same name:
 
-- :attr:`ad.Site.title`
-- :attr:`ad.Site.verbose_name`
+- :attr:`lino.core.site_def.Site.title`
+- :attr:`lino.core.site_def.Site.verbose_name`
 
 You've maybe heard that it is not allowed to modify Django's settings
 once it has started.  But there's nothing illegal with this here
@@ -90,7 +97,7 @@ The ``djangosite_local.py`` file
 The :ref:`djangosite_local.py <djangosite_local>` file is another
 technique which Lino adds to plain Django.
 
-When a :class:`ad.Site` gets instantiated, it will try to import an
+When a :class:`lino.core.site_def.Site` gets instantiated, it will try to import an
 module named ``djangosite_local``, and if that module exists and has a
 function named ``setup_site``, will call this function.  
 

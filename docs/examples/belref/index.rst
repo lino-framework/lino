@@ -34,7 +34,7 @@ See also :doc:`/topics/gpdn`.
 A side effect with potentially more concrete impact is that this 
 is also our test field for the 
 new light-weight user interface for Lino
-(see :ref:`plain`).
+(see :ref:`lino.ui.plain`).
 
 
 

@@ -20,6 +20,7 @@ from django.conf import settings
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 outbox = dd.resolve_app('outbox')
 contacts = dd.resolve_app('contacts')
@@ -96,7 +97,7 @@ class EventTypes(dd.Table):
 
 
 class Note(mixins.TypedPrintable,
-           mixins.UserAuthored,
+           UserAuthored,
            Controllable,
            contacts.ContactRelated,
            mixins.ProjectRelated,
@@ -145,17 +146,8 @@ class Note(mixins.TypedPrintable,
             s += [' ', self.subject]
         return s
 
-    #~ def update_owned_instance(self,task):
-        #~ mixins.AutoUser.update_owned_instance(self,task)
-        #~ contacts.PartnerDocument.update_owned_instance(self,task)
-        #~ super(ContractBase,self).update_owned_instance(other)
-
     def get_mailable_type(self):
         return self.type
-
-    #~ def get_person(self):
-        #~ return self.project
-    #~ person = property(get_person)
 
     def get_print_language(self):
         return self.language
@@ -191,7 +183,7 @@ class AllNotes(Notes):
     required = dd.required(user_groups='office', user_level='admin')
 
 
-class MyNotes(mixins.ByUser, Notes):
+class MyNotes(ByUser, Notes):
     column_names = "date time event_type type subject project body *"
     order_by = ["date", "time"]
 

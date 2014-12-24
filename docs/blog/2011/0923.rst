@@ -15,7 +15,7 @@ module will be helpful to explore them.
 startfile.js
 ------------
 
-News for :doc:`/tickets/45`:
+News for :srcref:`docs/tickets/45`:
 I found the answer to my question "Is there a method in Firefox to find out the full path 
 application associated with a given file type in the client's desktop?"
 (a question which I posted also in the German 

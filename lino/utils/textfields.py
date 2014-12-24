@@ -10,7 +10,7 @@ I added the extract_summary() function.
 
 Lino never really used this module. 
 It was added and dropped the same day 
-for the server-side approach of :doc:`/tickets/44`.
+for the server-side approach of :srcref:`docs/tickets/44`.
 """
 
 from HTMLParser import HTMLParser

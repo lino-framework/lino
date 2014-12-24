@@ -16,8 +16,8 @@ lino.core.dbtables
       discover
       full_model_name
       get_field
-      get_model_report
       has_fk
+      is_candidate
       model2actor
       quick_search_filter
       rc_name

@@ -53,9 +53,9 @@ looks as follows:
 
 That is, you specify your own language distribution, consisting of
 English as first language and Spanish (your language) as second. See
-:attr:`ad.Site.languages` for details.  Note that the first language
+:attr:`lino.core.site_def.Site.languages` for details.  Note that the first language
 cannot currently be Spanish because the demo fixtures would fail
-(:doc:`/tickets/108`).
+(:srcref:`docs/tickets/108`).
 
 If your language is not yet covered for Lino, then you must `Create a
 demo user for your language`_ before going on.

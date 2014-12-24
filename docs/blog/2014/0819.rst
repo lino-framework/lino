@@ -2,7 +2,7 @@
 Tuesday, August 19, 2014
 ========================
 
-Continued with :doc:`/tickets/123`. 
+Continued with :srcref:`docs/tickets/123`. 
 
 In a first version 
 

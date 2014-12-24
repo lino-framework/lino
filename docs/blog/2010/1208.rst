@@ -38,5 +38,5 @@ Und eine Antwort lautet "Typically you're not going to return Json to the user's
 browser directly through a normal form submittal... ".
 
 Oh je, Problem noch lange nicht gelöst! Und jetzt muss ich Feierabend machen...
-Das wird Ticket :doc:`/tickets/18`
+Das wird Ticket :srcref:`docs/tickets/18`
 

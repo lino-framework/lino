@@ -7,5 +7,5 @@ Miscellaneous.
 Fixed a bug in :mod:`ml.cal` which had caused an AttributeError
 "'NoneType' object has no attribute 'username'".
 
-Opened new ticket :doc:`/tickets/127`.
+Opened new ticket :srcref:`docs/tickets/127`.
 

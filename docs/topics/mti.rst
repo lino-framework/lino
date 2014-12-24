@@ -22,5 +22,5 @@ by adding some features:
 
 See also:
 
-- :doc:`/tickets/22` gives an introduction to MTI
-- :doc:`/autodoc/lino.test_apps.mti`.
+- :srcref:`docs/tickets/22` gives an introduction to MTI
+- :mod:`lino.test_apps.mti`.

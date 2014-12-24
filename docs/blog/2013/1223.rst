@@ -17,7 +17,7 @@ now also works *after* Site instantiation.
 
 Oops, it seems that there is yet another "little problem": the jnlp
 file needs a codebase attribute.  Ouch! And the last "little" problem
-(:doc:`/tickets/2013/1`) took me several weeks!
+(:srcref:`docs/tickets/2013/1`) took me several weeks!
 
 I am not the first one who encounters this problem. Kohsuke Kawaguchi
 did some research in 2009: `Why can't we get rid of JNLP @codebase?

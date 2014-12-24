@@ -22,6 +22,9 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.utils import mti
 
+from lino.modlib.users.mixins import UserAuthored
+
+
 accounts = dd.resolve_app('accounts', strict=True)
 contacts = dd.resolve_app('contacts', strict=True)
 vat = dd.resolve_app('vat', strict=True)
@@ -257,7 +260,7 @@ def VoucherNumber(**kw):
     return models.IntegerField(**kw)
 
 
-class Voucher(mixins.UserAuthored, mixins.Registrable):
+class Voucher(UserAuthored, mixins.Registrable):
 
     class Meta:
         verbose_name = _("Voucher")

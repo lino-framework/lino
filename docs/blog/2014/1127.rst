@@ -72,7 +72,7 @@ Checkin at 17:12.
 `autodoc` : to use or not to use?
 =================================
 
-After our discussion in :doc:`/tickets/134` I continue to struggle
+After our discussion in :srcref:`docs/tickets/134` I continue to struggle
 with the question of where to use `autodoc` and where not.
 
 There are two modes of documenting an API: an "overview" mode and a

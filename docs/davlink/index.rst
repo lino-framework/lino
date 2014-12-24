@@ -19,7 +19,7 @@ on GitHub <https://github.com/lsaffre/davlink>`_. The documentation is
 here as a part of the Lino project.
 
 DavLink is actively being used since 2011 as a solution for
-:doc:`/tickets/45`.
+:srcref:`docs/tickets/45`.
 
 
 .. toctree::

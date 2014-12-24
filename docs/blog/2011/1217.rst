@@ -4,7 +4,7 @@
 Termine erstellen vom Kalender aus
 ----------------------------------
 
-Continued on :doc:`/tickets/52`.
+Continued on :srcref:`docs/tickets/52`.
 
 `Lino.on_eventadd()` starts to work. 
 There is now a caching problem: the eventStore doesn't add a `_dc` 

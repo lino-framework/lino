@@ -33,7 +33,7 @@ Below are some profiles of people we would happily welcome.
 - Business project managers --
   Help us to find or found organizations that offer
   professional Lino support and hosting.
-  See :doc:`/tickets/129`.
+  See :srcref:`docs/tickets/129`.
 
 - Friends --
   Follow what's going on and tell us your opinion about Lino. 

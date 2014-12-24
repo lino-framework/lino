@@ -46,7 +46,7 @@ mit folgenden Änderungen:
       return get_template_choices(cls.get_templates_group(),build_method)
     TypeError: unbound method get_templates_group() must be called with ContractType instance as first argument (got nothing instead)
     
-#. :func:`lino.tools.obj2str` war betroffen durch das in :doc:`/tickets/17` 
+#. :func:`lino.tools.obj2str` war betroffen durch das in :srcref:`docs/tickets/17` 
    beschriebene Problem.
 
 #. Feld `Person.user` wurde nicht korrekt importiert. Behoben.

@@ -31,8 +31,8 @@ it is "one strange thing less".
 
 This change should officially not influence any code, but there
 exceptions when it comes to hackerish usages.  For example certain
-tested tutorial documents (like :ref:`dev.tables`) used a trick to put
-the names of models and tables to the global namespace:
+tested tutorial documents (like :doc:`/tutorials/tables/index`) used a
+trick to put the names of models and tables to the global namespace:
 
 >>> from lino.runtime import *
 >>> globals().update(tables)

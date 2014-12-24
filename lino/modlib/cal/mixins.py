@@ -30,12 +30,12 @@ from lino import dd, rt
 from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E
 
-from lino.core import actions
-
 from .utils import Recurrencies
 from .utils import Weekdays
 
 from .workflows import EventStates
+
+from lino.modlib.users.mixins import UserAuthored
 
 
 def format_time(t):
@@ -165,7 +165,7 @@ class MoveEventNext(dd.MultipleRowAction):
         return 1
 
 
-class EventGenerator(mixins.UserAuthored):
+class EventGenerator(UserAuthored):
 
     class Meta:
         abstract = True

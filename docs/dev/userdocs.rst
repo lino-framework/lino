@@ -15,7 +15,7 @@ use two distinct Sphinx document trees:
 - `/userdocs` for user documentation (translated)
 
 See also the :ref:`atelier.sphinxext` documentation page 
-of :ref:`atelier`.
+of :mod:`atelier`.
 
 
 .. rst:role:: ddref

@@ -4,7 +4,7 @@ Wednesday, November 5, 2014
 
 Updated :doc:`/dev/translate/index`.
 
-A spontaneous experiment for :doc:`/tickets/66`: added a ``www``
+A spontaneous experiment for :srcref:`docs/tickets/66`: added a ``www``
 setting for :ref:`noi`.  This is not yet working. The idea is to have
 two wsgi scripts running on the same web server, one for authenticated
 users with the admin interface, and another one for a simple read-only

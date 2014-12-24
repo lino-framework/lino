@@ -10,7 +10,7 @@ would become visible.
 Lino and content management
 ---------------------------
 
-:doc:`/tickets/66`.
+:srcref:`docs/tickets/66`.
 
 During the Christmas days I learned a lot about 
 the `Bootstrap CSS toolkit 
@@ -62,5 +62,5 @@ is the "plain HTML" view:
 
 When I play with this I can't get resist to open a 
 ticket and to dream at least about it:
-:doc:`/tickets/67`.
+:srcref:`docs/tickets/67`.
 

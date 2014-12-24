@@ -46,7 +46,7 @@ Example: Requires authenticated user with at least "Manager" user level.
 User Object
 -----------
 
-Main permissions object is :attr:`ad.Site.user_model`, 
+Main permissions object is :attr:`lino.core.site_def.Site.user_model`, 
 specified in Site configuration. 
 See :doc:`/topics/auth`.
 
@@ -160,7 +160,7 @@ The default UserLevels
 
 :class:`dd.UserLevels` has a default list of user levels which we
 recommend to use when possible.  Otherwise you can redefine your own
-by overriding :meth:`ad.Site.setup_choicelists` and resetting
+by overriding :meth:`lino.core.site_def.Site.setup_choicelists` and resetting
 `dd.UserLevels`.
 
 The default list of user levels is as follows:

@@ -16,7 +16,7 @@ merge actually had been done.
 Testing today
 -------------
 
-New method :meth:`ad.Site.today`.  This method was truly necessary!
+New method :meth:`lino.core.site_def.Site.today`.  This method was truly necessary!
 
 Because there are more and more test cases for :ref:`welfare` which
 test for subtle conditions that arise when generating automatic
@@ -24,7 +24,7 @@ calendar events. For example to not work on holidays, managing
 conflicting events etc. And I think the best approch is to say once
 for all that our demo database "lives" on a constant date. This date
 happens to be `2014-05-22` because that was when I added the
-:attr:`ad.Site.the_demo_date` attribute.
+:attr:`lino.core.site_def.Site.the_demo_date` attribute.
 
 And today I finally understood that this wasn't enough. Many tables
 used Python's :func:`datetime.date.today` function, causing the

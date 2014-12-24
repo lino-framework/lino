@@ -12,7 +12,7 @@ Trying it using a self-signed certificate
 Basically you need to:
 
 - Download `DavLink.jar
-  <https://github.com/lsaffre/davlink/blob/master/example/DavLink.jar?raw=true>>`_
+  <https://github.com/lsaffre/davlink/blob/master/example/DavLink.jar?raw=true>`_
   and make it available on your web server.
   
 - Include the applet in your web page, using some code like::

@@ -9,14 +9,14 @@ Added a new demo project :mod:`lino_cosi.projects.pierre` (for
 :ref:`ph` who is the first to show :ref:`cosi` it to French-speaking
 Belgians).
 
-Opened tickets :doc:`/tickets/140` and :doc:`/tickets/141`.
+Opened tickets :srcref:`docs/tickets/140` and :srcref:`docs/tickets/141`.
 
 
 
 Bescheinigungen
 ---------------
 
-Nachtrag zu :doc:`/tickets/136`:
+Nachtrag zu :srcref:`docs/tickets/136`:
 Fixed 3 last details in local configuration:
 
 - Faltmarkierung am linken Seitenrand
@@ -28,7 +28,7 @@ Fixed 3 last details in local configuration:
 Disabled fields in Firefox
 --------------------------
 
-Opened :doc:`/tickets/142`, and after some research we decided to let
+Opened :srcref:`docs/tickets/142`, and after some research we decided to let
 it sleep.
 
 

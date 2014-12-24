@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 from lino import mixins
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
 class EntryType(mixins.BabelNamed, mixins.PrintableType):
@@ -48,7 +49,7 @@ class EntryTypes(dd.Table):
 
 class Entry(mixins.TypedPrintable,
             mixins.CreatedModified,
-            mixins.AutoUser,
+            UserAuthored,
             Controllable):
 
     """
@@ -88,7 +89,7 @@ class Entries(dd.Table):
     #~ label = _("Notes")
 
 
-class MyEntries(mixins.ByUser, Entries):
+class MyEntries(ByUser, Entries):
     #~ master_key = 'user'
     column_names = "modified type title body *"
     #~ column_names = "date event_type type subject body *"

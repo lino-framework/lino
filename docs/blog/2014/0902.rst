@@ -5,7 +5,7 @@ Tuesday, September 2, 2014
 Chatelet
 ========
 
-Continued on :doc:`/tickets/121`.
+Continued on :srcref:`docs/tickets/121`.
 
 - Enlevé le mode sommaire pour "Composition de ménage" (the chatelet
   version of :ref:`welfare` patches
@@ -89,7 +89,7 @@ expected:
 
 - I discovered why anonymous users in :ref:`noi` were allowed to edit
   things: simply because the "Anonymous" user profile created by the
-  default :meth:`ad.Site.setup_choicelists` was not readonly. I
+  default :meth:`lino.core.site_def.Site.setup_choicelists` was not readonly. I
   changed that to `self.user_model is not None` which means that on a
   site without user management it is False.  The default Anonymous
   profile now also has UserLevel "user" for all groups.

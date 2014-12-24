@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
+from lino.modlib.users.mixins import UserAuthored
 
 from lino import dd, rt, mixins
 
@@ -64,7 +65,7 @@ class Calendars(dd.Table):
     """
 
 
-class Subscription(mixins.UserAuthored):
+class Subscription(UserAuthored):
 
     """
     A Suscription is when a User subscribes to a Calendar.
@@ -106,7 +107,7 @@ class Subscriptions(dd.Table):
     #~ description
     #~ """
 
-#~ class MySubscriptions(Subscriptions,mixins.ByUser):
+#~ class MySubscriptions(Subscriptions, ByUser):
     #~ pass
 
 #~ class SubscriptionsByCalendar(Subscriptions):

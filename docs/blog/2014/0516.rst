@@ -4,7 +4,7 @@ Friday, May 16, 2014
 
 I discovered that :class:`ml.excerpts.CreateExcerpt`, like every
 :term:`dialog action`, cannot be in the top toolbar because these
-actions must be statically renderable.  This is :doc:`/tickets/105`.
+actions must be statically renderable.  This is :srcref:`docs/tickets/105`.
 
 I discovered that Lino didn't yet support choosers on actions with a
 parameter window.

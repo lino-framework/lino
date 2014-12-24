@@ -68,11 +68,15 @@ class EmptyTableRow(VirtualRow, Printable):
         #~ return v
         #~ raise Exception("")
         raise AttributeError(
-            "EmptyTableRow on %s has no action and no callable '%s'" % (self._table, name))
-
+            "EmptyTableRow on %s has no action and no callable '%s'" % (
+                self._table, name))
 
 
 class EmptyTable(Frame):
+    """
+    A "Table" that has exactly one virtual row and thus is visible
+    only using a Detail view on that row.
+    """
 
     #~ debug_permissions = True
     #~ has_navigator = False
@@ -113,6 +117,13 @@ class EmptyTable(Frame):
 
 
 class Report(EmptyTable):
+    """
+    A special kind of :class:`EmptyTable` used to quickly create
+    complex "reports". A report is a series of tables combined into a
+    single printable and previewable document.
+
+
+    """
 
     detail_layout = "body"
 

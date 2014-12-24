@@ -74,7 +74,7 @@ fatal) bugs in :mod:`lino.projects.min1`.
 - :doc:`/dev/application`
 - :doc:`/dev/startup`
 
-Most content was previously in :ref:`site` which I plan to merge back
+Most content was previously in :mod:`djangosite` which I plan to merge back
 into Lino some day.
 
 

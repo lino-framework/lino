@@ -6,7 +6,7 @@
 The Lino logo
 -------------
 
-:doc:`/tickets/94`.
+:srcref:`docs/tickets/94`.
 
 After long discussions and meditations, also with Manuel, Ly now
 presents an almost final version for the Lino logo:

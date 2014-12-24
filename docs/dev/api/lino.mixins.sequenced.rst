@@ -13,6 +13,7 @@ lino.mixins.sequenced
 
    .. autosummary::
    
+      AttrDict
       Duplicable
       Duplicate
       DuplicateSequenced

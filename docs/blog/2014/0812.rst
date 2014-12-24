@@ -45,5 +45,5 @@ More changes after evaluation with Gerd:
   summary im detail_layout einer `aids.Confirmation`.
 
 A 3 hours phone meeting with Mathieu resulted in a new ticket
-:doc:`/tickets/121`.
+:srcref:`docs/tickets/121`.
 

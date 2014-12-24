@@ -21,7 +21,7 @@ Der folgende Bug ist in manchen Konfigurationen doch noch nicht raus:
     Sprache in "Sprachkenntnisse" kommt eine Fehlermitteilung Server-side
     failure: {'language': [u"Wert u'fij' ist keine g\xfcltige Option."]}
     
-Ticket :doc:`/tickets/38`
+Ticket :srcref:`docs/tickets/38`
 
 Rätselhaft. Schauen wir uns das mal genau an. Zum Beispiel DSBE. 
 

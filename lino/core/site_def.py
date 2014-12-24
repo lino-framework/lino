@@ -2,16 +2,97 @@
 # Copyright 2009-2014 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-This defines the  :class:`Plugin` and  :class:`Site` classes.
+"""This defines the :class:`Site` class.
+
+.. This document is part of the Lino test suite. You can test only
+   this document using::
+
+    $ python setup.py test -s tests.CoreTests.test_site
+
+See :doc:`/dev/settings` for a detailed introduction.
+
+The following examples use the :class:`TestSite` class just to show
+certain things which apply also to "real" Sites.
+
+These are the Django settings which Lino will override:
+
+>>> from django.utils import translation
+>>> from lino.ad import TestSite as Site
+>>> from pprint import pprint
+>>> pprint(Site().django_settings)
+... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
+{'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
+                           'NAME': '.../default.db'}},
+ 'FIXTURE_DIRS': (),
+ 'INSTALLED_APPS': ('lino.modlib.about',
+                    'lino.modlib.extjs',
+                    'lino.modlib.bootstrap3',
+                    'lino'),
+ 'LANGUAGES': [],
+ 'LOCALE_PATHS': (),
+ 'LOGGING': {'disable_existing_loggers': True,
+             'filename': None,
+             'level': 'INFO',
+             'logger_names': 'atelier lino'},
+ 'LOGGING_CONFIG': 'lino.utils.log.configure',
+ 'MEDIA_ROOT': 'lino/core/media',
+ 'MEDIA_URL': '/media/',
+ 'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
+                        'lino.core.auth.NoUserMiddleware',
+                        'lino.utils.ajax.AjaxExceptionResponse'),
+ 'ROOT_URLCONF': 'lino.ui.urls',
+ 'SECRET_KEY': '20227',
+ 'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
+ 'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
+                                 'django.core.context_processors.i18n',
+                                 'django.core.context_processors.media',
+                                 'django.core.context_processors.static'),
+ 'TEMPLATE_LOADERS': ('lino.core.web.Loader',
+                      'django.template.loaders.filesystem.Loader',
+                      'django.template.loaders.app_directories.Loader'),
+ '__file__': '...'}
+
+
+Application code usually specifies :attr:`Site.languages` as a single
+string with a space-separated list of language codes.  The
+:class:`Site` will analyze this string during instantiation and
+convert it into a tuple of :data:`LanguageInfo` objects.
+
+>>> pprint(Site(languages="en fr de").languages)
+(LanguageInfo(django_code='en', name='en', index=0, suffix=''),
+ LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
+ LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
+
+>>> pprint(Site(languages="de-ch de-be").languages)
+(LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
+ LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
+
+If we have more than one locale of a same language *on a same Site*
+(e.g. 'en-us' and 'en-gb') then it is not allowed to specify just
+'en'.  But otherwise it is allowed to just say "en", which will mean
+"the English variant used on this Site".
+
+>>> site = Site(languages="en-us fr de-be de")
+>>> pprint(site.languages)
+(LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+ LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
+ LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
+ LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
+
+>>> pprint(site.language_dict)
+{'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
+ 'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
+ 'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+ 'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
+ 'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
+
+>>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
+[('de', 'German'), ('fr', 'French')]
 
 """
 
 # from __future__ import unicode_literals
 # from __future__ import print_function
-
-# import logging
-# logger = logging.getLogger(__name__)
 
 import os
 from os.path import normpath, dirname, join, isdir, abspath, relpath
@@ -36,6 +117,15 @@ from lino.utils.xmlgen.html import E
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
+"""
+A named tuple with four fields:
+
+- `django_code` -- how Django calls this language
+- `name` --        how Lino calls it
+- `index` --       the position in the :attr:`Site.languages` tuple
+- `suffix` --      the suffix to append to babel fields for this language
+
+"""
 
 
 def to_locale(language):
@@ -62,6 +152,22 @@ PLUGIN_CONFIGS = {}
 
 
 def configure_plugin(app_label, **kwargs):
+    """Set one ore several configuration settings of the given plugin.
+
+    The :func:`configure_plugin` function is a simple interface for
+    locally configuring plugins.
+
+    This should be called *before instantiating* your :class:`Site`
+    class.
+
+    For example to set :attr:`ml.contacts.Plugin.hide_region` to
+    `True`::
+
+      ad.configure_plugin('contacts', hide_region=True)
+
+    See :doc:`/admin/settings` for more details.
+
+    """
     cfg = PLUGIN_CONFIGS.setdefault(app_label, {})
     cfg.update(kwargs)
 
@@ -71,42 +177,12 @@ class NOT_PROVIDED:
 
 
 class Site(object):
-    """The base class for a Lino application.  Your :setting:`SITE`
-    setting is expected to contain an instance of a subclass of this.
+    """The base class for a Lino application.  This class is designed to
+    be overridden by the application developer and/or the local site
+    administrator.  Your :setting:`SITE` setting is expected to
+    contain an instance of a subclass of this.
 
-    Note that we call it :class:`Site` class (and a :setting:`SITE`
-    setting) rather than ``Application`` class (and e.g.
-    ``APPLICATION``) setting because of the vocabulary problem
-    described in :doc:`/dev/application`.
-
-
-    This class is designed to be overridden by the application
-    developer and/or the local site administrator.
-
-
-    Instantiating this class in a :xfile:`settings.py` file will
-    automatically set default values for Django's
-    :setting:`SERIALIZATION_MODULES` :setting:`FIXTURE_DIRS` settings.
-
-    See :class:`dd.Site`.
-
-    See also:
-
-    - :doc:`/usage`
-    - :doc:`/settings`
-    - :ref:`application`
-
-    Obsolete attributes:
-
-    .. attribute:: use_davlink
-
-        No longer used. Replaced by :class:`lino.modlib.davlink`.
-
-    .. attribute:: use_eidreader
-
-        No longer used. Replaced by :class:`lino.modlib.beid`.
-
-
+    See :doc:`/dev/application`.
 
     """
 
@@ -200,79 +276,8 @@ class Site(object):
     language.
 
     Changing this setting affects your database structure if your
-    application uses babel fields, and thus require a :ref:`data
+    application uses babel fields, and thus might require a :ref:`data
     migration <datamig>`.
-
-    If this is not `None`, Site will set the Django settings
-    :setting:`USE_L10N` and :setting:`LANGUAGE_CODE`.
-
-
-    >>> from django.utils import translation
-    >>> from lino.ad import TestSite as Site
-    >>> from pprint import pprint
-    >>> pprint(Site().django_settings)
-    ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
-    {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
-                               'NAME': '.../default.db'}},
-     'FIXTURE_DIRS': (),
-     'INSTALLED_APPS': ('lino.modlib.about',
-                        'lino.modlib.extjs',
-                        'lino.modlib.bootstrap3',
-                        'lino'),
-     'LANGUAGES': [],
-     'LOCALE_PATHS': (),
-     'LOGGING': {'disable_existing_loggers': True,
-                 'filename': None,
-                 'level': 'INFO',
-                 'logger_names': 'atelier lino'},
-     'LOGGING_CONFIG': 'lino.utils.log.configure',
-     'MEDIA_ROOT': 'lino/core/media',
-     'MEDIA_URL': '/media/',
-     'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
-                            'lino.core.auth.NoUserMiddleware',
-                            'lino.utils.ajax.AjaxExceptionResponse'),
-     'ROOT_URLCONF': 'lino.ui.urls',
-     'SECRET_KEY': '20227',
-     'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
-     'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
-                                     'django.core.context_processors.i18n',
-                                     'django.core.context_processors.media',
-                                     'django.core.context_processors.static'),
-     'TEMPLATE_LOADERS': ('lino.core.web.Loader',
-                          'django.template.loaders.filesystem.Loader',
-                          'django.template.loaders.app_directories.Loader'),
-     '__file__': '...'}
-
-    >>> pprint(Site(languages="en fr de").languages)
-    (LanguageInfo(django_code='en', name='en', index=0, suffix=''),
-     LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
-     LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
-
-    >>> pprint(Site(languages="de-ch de-be").languages)
-    (LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
-     LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
-
-    If we have more than languages en-us and en-gb *on a same Site*, 
-    then it is not allowed to specify just "en". 
-    But in most cases it is allowed to just say "en", which will 
-    mean "the English variant used on this Site".
-
-    >>> site = Site(languages="en-us fr de-be de")
-    >>> pprint(site.languages)
-    (LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
-     LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
-     LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
-     LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
-
-    >>> pprint(site.language_dict)
-    {'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
-     'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
-     'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
-     'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
-     'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
-
-    >>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
-    [('de', 'German'), ('fr', 'French')]
 
     """
 
@@ -295,7 +300,17 @@ class Site(object):
     """
 
     plugins = None
+    """An :class:`AttrDict` object with one entry for each installed app,
+    mapping to the :class:`lino.core.plugin.Plugin` instance
+    corresponding to that app.
+
+    """
+
     modules = AttrDict()
+    """
+    An :class:`atelier.utils.AttrDict` with one entry per `app_label`,
+    each entry holding a reference to each actor of that app.
+    """
 
     is_local_project_dir = False
     """Contains `True` if this is a "local" project.  For local projects,
@@ -354,8 +369,25 @@ class Site(object):
     max_actor_name_length = 100
 
     trusted_templates = False
+    """
+    Set this to True if you are sure that the users of your site won't try to 
+    misuse Jinja's capabilities.
+
+    """
 
     allow_duplicate_cities = False
+    """In a default configuration (when :attr:`allow_duplicate_cities` is
+    False), Lino declares a UNIQUE clause for :class:`Places
+    <lino.modlib.countries.models.Places>` to make sure that your
+    database never contains duplicate cities.  This behaviour mighr
+    disturb e.g. when importing legacy data that did not have this
+    restriction.  Set it to True to remove the UNIQUE clause.
+    
+    Changing this setting might affect your database structure and
+    thus require a :doc:`/topics/datamig` if your application uses
+    :mod:`lino.modlib.countries`.
+
+    """
 
     uid = 'myuid'
     """A universal identifier for this Site.  This is needed when
@@ -369,6 +401,15 @@ class Site(object):
     """
 
     project_model = None
+    """
+    Deprecated because this is an obsolete pattern.
+
+    Optionally set this to the <applabel.ModelName> of a model used as
+    "central project" in your application.  Which concretely means that
+    certain other models like notes.Note, outbox.Mail, ... have an
+    additional ForeignKey to this model.
+
+    """
 
     #~ user_model = "users.User"
     user_model = None
@@ -384,17 +425,58 @@ class Site(object):
     """
 
     auth_middleware = None
+    """
+    Override used Authorisation middlewares with supplied tuple of
+    middleware class names.
+
+    If None, use logic described in :doc:`/topics/auth`
+  
+
+    """
 
     legacy_data_path = None
+    """
+    Used by custom fixtures that import data from some legacy
+    database.
+
+    """
 
     propvalue_max_length = 200
     """
     Used by :mod:`lino.modlib.properties`.
     """
 
-    never_build_site_cache = False
     show_internal_field_names = False
+    """
+    Whether the internal field names should be visible.  Default is
+    `False`.  ExtUI implements this by prepending them to the tooltip,
+    which means that :attr:`use_quicktips` must also be `True`.
+
+    """
+
+    never_build_site_cache = False
+    """Set this to `True` if you want that Lino never (re)builds the site
+    cache, even when asked.  This can be useful on a development
+    server when you are debugging directly on the generated
+    :xfile:`lino*.js`.  Or for certain unit test cases.
+
+    """
+
     build_js_cache_on_startup = False
+    """Whether the Javascript cache files should be built on startup for
+    all user profiles and languages.
+    
+    On a production server this should be `True` for best performance,
+    but often this is not necessary, so default value is `False`,
+    which means that each file is built upon need (when a first
+    request comes in).
+    
+    You can also set it to `None`, which means that Lino decides
+    automatically during startup: it becomes `False` if either
+    :func:`lino.core.dbutils.is_devserver` returns True or
+    setting:`DEBUG` is set.
+
+    """
 
     keep_erroneous_cache_files = False
     """When some exception occurs during :meth:`make_cache_file`, Lino
@@ -422,7 +504,18 @@ class Site(object):
     """
 
     use_experimental_features = False
+    """Whether to include "experimental features".
+    """
     site_config_defaults = {}
+    """
+    Default values to be used when creating the :attr:`site_config`.
+    
+    Usage example::
+    
+      site_config_defaults = dict(default_build_method='appypdf')
+      
+
+    """
 
     default_build_method = "appypdf"
 
@@ -457,10 +550,18 @@ class Site(object):
     django_admin_prefix = None
     """
     The prefix to use for Django admin URLs.
-    Leave this unchanged as long as :doc:`/tickets/70` is not solved.
+    Leave this unchanged as long as :srcref:`docs/tickets/70` is not solved.
     """
 
     start_year = 2011
+    """An integer with the calendar year in which this site starts working.
+
+    Used e.g.  by :mod:`lino.modlib.ledger.utils` to fill the default
+    list of FixcalYears.  Or by
+    :mod:`lino.modlib.ledger.fixtures.mini` to generate demo invoices.
+
+    """
+
     time_format_extjs = 'H:i'
     """
     Format (in ExtJS syntax) to use for displaying dates to the user.
@@ -483,6 +584,11 @@ class Site(object):
     default_number_format_extjs = '0,00/i'
 
     uppercase_last_name = False
+    """
+    Whether last name of persons should (by default) be printed with
+    uppercase letters.  See :mod:`lino.test_apps.human`
+
+    """
 
     tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
     "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
@@ -520,7 +626,21 @@ class Site(object):
     """
     #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
+    """
+    The name of the header (set by the web server) that Lino should
+    consult for finding the user of a request.  The default value `None`
+    means that http authentication is not used.  Apache's default value is
+    ``"REMOTE_USER"``.
+
+    """
     ldap_auth_server = None
+    """
+    This should be a string with the domain name and DNS (separated by a
+    space) of the LDAP server to be used for authentication.  Example::
+
+      ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
+
+    """
 
     use_gridfilters = True
 
@@ -590,20 +710,18 @@ class Site(object):
     """
 
     webdav_url = None
-    """
-    The URL prefix for webdav files.
-    In a normal production configuration you should leave this to `None`, 
-    Lino will set a default value "/media/webdav/",
-    supposing that your Apache is configured as described in 
-    :doc:`/admin/webdav`.
+    """The URL prefix for webdav files.  In a normal production
+    configuration you should leave this to `None`, Lino will set a
+    default value "/media/webdav/", supposing that your Apache is
+    configured as described in :doc:`/admin/webdav`.
     
-    This may be used to simulate a :term:`WebDAV` location 
-    on a development server.
-    For example on a Windows machine, you may set it to ``w:\``,      
-    and before invoking :term:`runserver`, you issue in a command prompt::
+    This may be used to simulate a :term:`WebDAV` location on a
+    development server.  For example on a Windows machine, you may set
+    it to ``w:\``, and before invoking :manage:`runserver`, you issue in
+    a command prompt::
     
         subst w: <dev_project_path>\media\webdav
-        
+
     """
 
     sidebar_width = 0
@@ -628,16 +746,20 @@ class Site(object):
     """
 
     preview_limit = 15
+    """Default value for the :attr:`preview_limit
+    <lino.core.tables.AbstractTable.preview_limit>` parameter of all
+    tables who don't specify their own one.  Default value is 15.
+
+    """
 
     default_ui = 'extjs'
 
     textfield_format = 'plain'
-    """
-    The default format for text fields.
+    """The default format for text fields.
     Valid choices are currently 'plain' and 'html'.
 
-    Text fields are either Django's `models.TextField`
-    or :class:`lino.fields.RichTextField`.
+    Text fields are either Django's `models.TextField` or
+    :class:`lino.core.fields.RichTextField`.
 
     You'll probably better leave the global option as 'plain',
     and specify explicitly the fields you want as html by declaring
@@ -673,25 +795,26 @@ class Site(object):
 
     """
     title = "Unnamed Lino site"
+    """
+    TODO: Stop using this. Use :attr:`verbose_name` instead.
+    """
 
     catch_layout_exceptions = True
-    """
-    Lino usually catches any exception during 
-    :meth:`lino.ui.extjs3.ExtUI.create_layout_element`
-    to report errors of style 
-    "Unknown element "postings.PostingsByController ('postings')" 
-    referred in layout <PageDetail on pages.Pages>."
+    """Lino usually catches any exception during startup (in
+    :func:`create_layout_element
+    <lino.core.layouts.create_layout_element>`) to report errors of
+    style "Unknown element "postings.PostingsByController
+    ('postings')" referred in layout <PageDetail on pages.Pages>."
     
-    Setting this to `False` is
-    useful when there's some problem *within* the framework.
-    
+    Setting this to `False` is useful when there's some problem
+    *within* the framework.
+
     """
 
     csv_params = dict()
-    """
-    Site-wide default parameters for CSV generation.
-    This must be a dictionary that will be used 
-    as keyword parameters to Python `csv.writer()
+    """Site-wide default parameters for CSV generation.  This must be a
+    dictionary that will be used as keyword parameters to Python
+    `csv.writer()
     <http://docs.python.org/library/csv.html#csv.writer>`_
     
     Possible keys include:
@@ -705,7 +828,7 @@ class Site(object):
     - many more allowed keys are explained in
       `Dialects and Formatting Parameters
       <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
-    
+
     """
 
     auto_configure_logger_names = 'atelier lino'
@@ -793,7 +916,7 @@ class Site(object):
     _logger = None
     override_modlib_models = None
 
-    def __init__(self, settings_globals, user_apps=[], **kwargs):
+    def __init__(self, settings_globals=None, user_apps=[], **kwargs):
         """
         Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -801,6 +924,8 @@ class Site(object):
         """
         # self.logger.info("20140226 Site.__init__() a %s", self)
         #~ print "20130404 ok?"
+        if settings_globals is None:
+            settings_globals = {}
         self.init_before_local(settings_globals, user_apps)
         no_local = kwargs.pop('no_local', False)
         if not no_local:
@@ -819,7 +944,7 @@ class Site(object):
 
     def run_djangosite_local(self):
         """
-        See :doc:`/djangosite_local`
+        See :doc:`/admin/djangosite_local`
         """
         try:
             from djangosite_local import setup_site
@@ -846,19 +971,11 @@ class Site(object):
 
         if isinstance(user_apps, basestring):
             user_apps = [user_apps]
-        #~ self.django_settings = dict()
-        #~ self.django_settings.update(settings_globals)
-        self.django_settings = settings_globals
-        project_file = settings_globals['__file__']
-
-        #~ memory_db = kwargs.pop('memory_db',False)
-        #~ nolocal = kwargs.pop('nolocal',False)
-
-        #~ if django_settings.has_key('LINO'):
-            #~ raise Exception("Oops: rename settings.LINO to settings.SITE")
-        #~ if django_settings.has_key('Lino'):
-            #~ raise Exception("Oops: rename settings.Lino to settings.Site")
         self.user_apps = user_apps
+
+        self.django_settings = settings_globals
+        project_file = settings_globals.get('__file__', '.')
+
         self.project_dir = normpath(dirname(project_file))
         self.project_name = os.path.split(self.project_dir)[-1]
 
@@ -920,7 +1037,13 @@ class Site(object):
         )
 
     def is_abstract_model(self, module_name, model_name):
-        "See :func:`dd.is_abstract_model`."
+        """Return True if the named model is declared as being extended by
+        :attr:`lino.core.plugin.Plugin.extends_models`.
+
+        `name` must be a string with the full model name,
+        e.g. ``"myapp.MyModel"``.
+
+        """
         name = '.'.join(module_name.split('.')[:-1])
         name += '.' + model_name
         rv = name in self.override_modlib_models
@@ -1037,16 +1160,19 @@ class Site(object):
         # raise Exception("20140825 %s", self.override_modlib_models)
 
     def is_hidden_app(self, app_label):
-        "See :func:`dd.is_hidden_app`."
+        """
+        Return True if the app is known, but has been disabled using
+        :meth:`get_apps_modifiers`.
+
+        """
         am = self.get_apps_modifiers()
         if am.get(app_label, 1) is None:
             return True
 
     def update_settings(self, **kw):
-        """
-        This may be called from within a 
-        :doc:`djangosite_local.setup_site </djangosite_local>` 
-        function.
+        """This may be called from within a :doc:`djangosite_local.setup_site
+        </admin/djangosite_local>` function.
+
         """
         self.django_settings.update(**kw)
 
@@ -1072,7 +1198,16 @@ class Site(object):
         self.django_settings.update(kwargs)
 
     def startup(self):
-        "See :func:`dd.startup`."
+        """
+        Start up this Site.
+
+        This is called exactly once when Django has has populated it's model
+        cache.
+
+        It is designed to be called potentially several times in case your
+        code wants to make sure that it was called.
+
+        """
         
         # This code can run several times at once when running
         # e.g. under mod_wsgi: another thread has started and not yet
@@ -1115,11 +1250,20 @@ class Site(object):
         return self._logger
 
     def setup_plugins(self):
-        "See :meth:`ad.Site.setup_plugins`."
+        """
+        This method is called exactly once during site startup, after
+        :meth:`load_plugins` and before models are being populated.
+
+        """
         pass
 
     def get_settings_subdirs(self, subdir_name):
-        "See :meth:`ad.Site.get_settings_subdirs`."
+        """
+        Yield all (existing) directories named `subdir_name` of this
+        site's project directory and it's inherited project
+        directories.
+
+        """
 
         # if local settings.py doesn't subclass Site:
         if self.project_dir != normpath(dirname(
@@ -1150,7 +1294,11 @@ class Site(object):
         return self.is_installed(app_label)
 
     def makedirs_if_missing(self, dirname):
-        "See :func:`dd.makedirs_if_missing`."
+        """
+        Make missing directories if they don't exist
+        and if :attr:`lino.core.site_def.Site.make_missing_dirs` is `True`.
+
+        """
         if dirname and not isdir(dirname):
             if self.make_missing_dirs:
                 os.makedirs(dirname)
@@ -1159,11 +1307,19 @@ class Site(object):
                                 dirname)
 
     def is_installed(self, app_label):
-        "See :func:`dd.is_installed`."
+        """
+        Return `True` if :setting:`INSTALLED_APPS` contains an item
+        which ends with the specified `app_label`.
+
+        """
         return app_label in self.plugins
 
     def on_each_app(self, methname, *args):
-        "See :func:`dd.on_each_app`."
+        """
+        Call the named method on the :xfile:`models.py` module of each
+        installed app.
+
+        """
         from django.db.models import loading
         for mod in loading.get_apps():
             meth = getattr(mod, methname, None)
@@ -1171,7 +1327,15 @@ class Site(object):
                 meth(self, *args)
 
     def for_each_app(self, func, *args, **kw):
-        "See :func:`dd.for_each_app`."
+        """
+        Call the named method on the :xfile:`models.py` module of each
+        installed app.
+        Successor of :meth:`on_each_app`.  This also loops over
+
+        - apps that don't have a models module
+        - inherited apps
+
+        """
 
         from django.utils.importlib import import_module
         done = set()
@@ -1218,12 +1382,17 @@ class Site(object):
             self.site_version(), self.using_text())
 
     def using_text(self):
-        "See :meth:`ad.Site.using_text`."
+        """
+        Text to display in a console window when Lino starts.
+        """
         return ', '.join(["%s %s" % (n, v)
                           for n, v, u in self.get_used_libs()])
 
     def site_version(self):
-        "See :meth:`ad.Site.site_version`."
+        """
+        Used in footnote or header of certain printed documents.
+
+        """
         assert ispure(self.verbose_name)
         if self.version:
             return self.verbose_name + ' ' + self.version
@@ -1240,6 +1409,10 @@ class Site(object):
         install_migrations(self, *args)
 
     def get_default_required(self, **kw):
+        """Return a dict with the default value for the
+        :attr:`dd.Actor.required` attribute of every actor.
+
+        """
         #~ if not kw.has_key('auth'):
             #~ kw.update(auth=True)
         if self.user_model is not None:
@@ -1296,7 +1469,16 @@ class Site(object):
         self.VIRTUAL_FIELDS.append(vf)
 
     def do_site_startup(self):
-        "See :meth:`ad.Site.do_site_setup`."
+        """
+        This method is called exactly once during site startup,
+        just between the pre_startup and the post_startup signals.
+        A hook for subclasses.
+
+        If you override it, don't forget to call the super method
+        which calls :meth:`Plugin.on_site_startup` for each
+        installed plugin.
+
+        """
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
         
         from lino.core.kernel import Kernel
@@ -1378,8 +1560,15 @@ class Site(object):
                 #~ self.user_profile_fields.append(name)
 
     def get_used_libs(self, html=None):
-        "See :meth:`ad.Site.get_used_libs`."
-        
+        """
+        Yield a list of (name, version, url) tuples describing the
+        third-party software used on this Site.
+
+        This function is used by :meth:`using_text` which is used by
+        :meth:`welcome_text`.
+
+        """
+
         import lino
         yield ("Lino", lino.SETUP_INFO['version'], lino.SETUP_INFO['url'])
 
@@ -1635,14 +1824,13 @@ class Site(object):
                            if x[0] in self.LANGUAGE_DICT])
 
     def get_language_info(self, code):
-        """Use this in Python fixtures or tests to test whether a 
-        Site instance supports a given language. 
-        `code` must be a Django-style language code
-        If that specified language
+        """Use this in Python fixtures or tests to test whether a Site
+        instance supports a given language.  `code` must be a
+        Django-style language code.
         
         On a site with only one locale of a language (and optionally
         some other languages), you can use only the language code to
-        get a tuple of `(django_code, babel_locale)`:
+        get a tuple of :data:`LanguageInfo` objects.
         
         >>> from lino.ad import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
@@ -1722,28 +1910,6 @@ class Site(object):
         >>> site.str2kw('name', _("January"))
         {'name_de': u'Januar', 'name': u'janvier', 'name_es': u'Enero'}
 
-      .. method:: field2kw(obj, name, **known_values)
-
-        Examples:
-
-        >>> from lino.ad import TestSite as Site
-        >>> from atelier.utils import AttrDict
-        >>> def testit(site_languages):
-        ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.babelkw(
-        ...         'name', de="Hallo", en="Hello", fr="Salut"))
-        ...     return site,obj
-
-
-        >>> site, obj = testit('de en')
-        >>> site.field2kw(obj, 'name')
-        {'de': 'Hallo', 'en': 'Hello'}
-
-        >>> site, obj = testit('fr et')
-        >>> site.field2kw(obj, 'name')
-        {'fr': 'Salut'}
-
-
         """
         from django.utils import translation
         for simple, info in self.language_dict.items():
@@ -1806,6 +1972,30 @@ class Site(object):
         return kw
 
     def field2kw(self, obj, name, **known_values):
+        """Return a `dict` with all values of the BabelField `name` in the
+given object `obj`. The dict will have one key for each
+:attr:`languages`.
+
+        Examples:
+
+        >>> from lino.ad import TestSite as Site
+        >>> from atelier.utils import AttrDict
+        >>> def testit(site_languages):
+        ...     site = Site(languages=site_languages)
+        ...     obj = AttrDict(site.babelkw(
+        ...         'name', de="Hallo", en="Hello", fr="Salut"))
+        ...     return site,obj
+
+
+        >>> site, obj = testit('de en')
+        >>> site.field2kw(obj, 'name')
+        {'de': 'Hallo', 'en': 'Hello'}
+
+        >>> site, obj = testit('fr et')
+        >>> site.field2kw(obj, 'name')
+        {'fr': 'Salut'}
+
+        """
         #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
             v = getattr(obj, name + lng.suffix, None)
@@ -2002,6 +2192,10 @@ class Site(object):
         return s
 
     def get_db_overview_rst(self):
+        """Return a reStructredText-formatted "database overview" report.
+        Used by test cases in tested documents.
+
+        """
         from lino.core.dbutils import (full_model_name,
                                        sorted_models_list, app_labels)
 
@@ -2123,6 +2317,19 @@ class Site(object):
         #~ return obj.id is not None and (obj.id > 10 and obj.id < 21)
 
     def site_header(self):
+        """Used in footnote or header of certain printed documents.
+
+        The convention is to call it as follows from an appy.pod template
+        (use the `html` function, not `xhtml`)
+        ::
+
+          do text
+          from html(settings.SITE.site_header())
+
+        Note that this is expected to return a unicode string possibly
+        containing valid HTML (not XHTML) tags for formatting.
+
+        """
         if self.is_installed('contacts'):
             if self.site_config.site_company:
                 return self.site_config.site_company.get_address('<br/>')
@@ -2426,11 +2633,28 @@ class Site(object):
         return self.build_media_url('tinymce', url)
 
     def get_system_note_recipients(self, ar, obj, silent):
-        "See :meth:`ad.Site.get_system_note_recipients`."
+        """
+        Return or yield a list of recipients
+        (i.e. strings like "John Doe  <john@example.com>" )
+        to be notified by email about a system note issued
+        by action request `ar` about the object instance `obj`.
+
+        Default behaviour is to simply forward it to the `obj`'s
+        :meth:`get_system_note_recipients
+        <dd.Model.get_system_note_recipients>`, but here is a hook to
+        define local exceptions to the application specific default rules.
+
+        """
         return obj.get_system_note_recipients(ar, silent)
 
     def welcome_html(self, ui=None):
-        "See :meth:`ad.Site.welcome_html`."
+        """
+        Return a HTML version of the "This is APPLICATION
+        version VERSION using ..." text. to be displayed in the
+        About dialog, in the plain html footer, and maybe at other
+        places.
+
+        """
         from django.utils.translation import ugettext as _
 
         p = []
@@ -2456,7 +2680,16 @@ class Site(object):
         return E.span(*p)
 
     def login(self, username=None, **kw):
-        "See :func:`rt.login`."
+        """Open a session as the user with the given `username`.
+    
+        For usage from a shell.  Does not require any password because
+        when somebody has command-line access we trust that she has
+        already authenticated.
+    
+        It returns a
+        :class:`BaseRequest <lino.core.requests.BaseRequest>` object.
+
+        """
         self.startup()
         if self.user_model is None or username is None:
             if not 'user' in kw:
@@ -2473,7 +2706,9 @@ class Site(object):
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):
-        "See :meth:`ad.Site.get_letter_date_text`."
+        """Returns a string like "Eupen, den 26. August 2013".
+
+        """
         sc = self.site_config.site_company
         if today is None:
             today = self.today()
@@ -2484,7 +2719,14 @@ class Site(object):
         return fdl(today)
 
     def get_admin_main_items(self):
-        "See :func:`ad.Site.get_admin_main_items`."
+        """Expected to yield a sequence of "items" to be rendered on the home
+        page (:xfile:`admin_main.html`).
+
+        Every item is expected to be a :class:`dd.Table` or a
+        :class:`dd.VirtualTable`. These tables are rendered in that order,
+        with a limit of :attr:`dd.AbstractTable.preview_limit` rows.
+
+        """
         return []
 
     def make_cache_file(self, fn, write, force=False):

@@ -5,12 +5,6 @@ lino.core.ddh
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-   
-      fmn
-   
    
 
    

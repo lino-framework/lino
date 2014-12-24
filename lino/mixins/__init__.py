@@ -31,146 +31,14 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
-from lino.modlib.users.mixins import UserLevels
-from lino.core.choicelists import ChoiceList, Choice
-from lino.core import actions
 from lino.core import fields
-from lino.core import dbtables
 from lino.core import model
-from lino.core.dbutils import navinfo
-from lino.utils import AttrDict
-from lino.core.perms import AnonymousUser
-
-
-class UserAuthored(model.Model):
-
-    """
-    Mixin for models that have a `user` field which is automatically
-    set to the requesting user.
-    Also defines a `ByUser` base table which fills the master instance
-    from the web request.
-    """
-    required = dict(auth=True)
-
-    class Meta:
-        abstract = True
-
-    if settings.SITE.user_model:
-
-        workflow_owner_field = 'user'
-
-        user = models.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Author"),
-            related_name="%(app_label)s_%(class)s_set_by_user",
-            blank=True, null=True
-        )
-
-    else:
-
-        user = fields.DummyField()
-
-    def on_create(self, ar):
-        """
-        Adds the requesting user to the `user` field.
-
-        When acting as another user, the default implementation
-        still inserts the real user, not subst_user.
-        This is important for cal.Event.
-        """
-        if self.user_id is None:
-            #~ u = ar.get_user()
-            u = ar.user
-            if u is not None:
-                self.user = u
-        super(UserAuthored, self).on_create(ar)
-
-    manager_level_field = 'level'
-    """Only system managers can edit other users' work.  But if the
-    application defines customized UserGroups, then we may want to
-    permit it also to department managers.  If an application defines
-    a UserGroup `foo`, then it can set this attribute to `'foo_level'`
-    on a model to specify that a manager level for the foo department
-    is enough to get edit permission on other users' instances.
-    
-    Usage examples see
-    :class:`lino.modlib.notes.models.Note`
-    or
-    :class:`lino.modlib.cal.models.Component`.
-
-    """
-
-    def get_row_permission(self, ar, state, ba):
-        """
-        Only system managers can edit other users' work.
-        """
-        if not super(UserAuthored, self).get_row_permission(ar, state, ba):
-            #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
-            return False
-        user = ar.get_user()
-        if self.user != ar.user and \
-           (ar.subst_user is None or self.user != ar.subst_user) \
-           and getattr(user.profile, self.manager_level_field) < \
-           UserLevels.manager:
-            return ba.action.readonly
-        return True
-
-AutoUser = UserAuthored  # backwards compatibility
-
-
-if settings.SITE.user_model:
-
-    class ByUser(dbtables.Table):
-        master_key = 'user'
-        #~ details_of_master_template = _("%(details)s of %(master)s")
-        details_of_master_template = _("%(details)s")
-
-        @classmethod
-        def get_actor_label(self):
-            if self.model is None:
-                return self._label or self.__name__
-            return self._label or \
-                _("My %s") % self.model._meta.verbose_name_plural
-
-        @classmethod
-        def setup_request(self, ar):
-            #~ logger.info("mixins.ByUser.setup_request")
-            if ar.master_instance is None:
-                u = ar.get_user()
-                if not isinstance(u, AnonymousUser):
-                    ar.master_instance = u
-            super(ByUser, self).setup_request(ar)
-
-        @classmethod
-        def get_view_permission(self, profile):
-            if not profile.authenticated:
-                return False
-            return super(ByUser, self).get_view_permission(profile)
-
-else:
-
-    # dummy Table for userless sites
-    class ByUser(dbtables.Table):
-        pass
-
-
-class AuthorAction(actions.Action):
-
-    """
-    """
-    manager_level_field = 'level'
-
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        if obj.user != user and getattr(
-                user.profile, self.manager_level_field) < UserLevels.manager:
-            return self.readonly
-        return super(
-            actions.AuthorAction, self).get_action_permission(ar, obj, state)
+# from lino.modlib.users.mixins import UserLevels
+# from lino.core.dbutils import navinfo
+# from lino.utils import AttrDict
 
 
 class Registrable(model.Model):
@@ -303,7 +171,7 @@ class ProjectRelated(model.Model):
 
     Whether an application has such a concept of "project",
     and which model has this privileged status,
-    is set in :attr:`ad.Site.project_model`.
+    is set in :attr:`lino.core.site_def.Site.project_model`.
 
     For example in :ref:`welfare` the "project" is a Client.
 

@@ -9,7 +9,7 @@ todo
 -----
 
 - Ein paar konkrete Beispiele von Bescheinigungen fertig ausarbeiten
-  (:doc:`/tickets/122` und :doc:`/tickets/136`)
+  (:srcref:`docs/tickets/122` und :srcref:`docs/tickets/136`)
 
 - Wenn man eine ungültige IBAN eingibt, dann kommt zwar die
   Fehlermeldung und es wird nicht gespeichert, aber die Zelle wird
@@ -25,8 +25,8 @@ todo
 - Datenmigration: hier sind noch ein paar ungültige BICs oder IBANs im
   TIM. Am einfachsten ist es, die Daten schon dort zu validieren. 
 
-- :doc:`/tickets/104`
-- :doc:`/tickets/144`
+- :srcref:`docs/tickets/104`
+- :srcref:`docs/tickets/144`
 
 
 Later

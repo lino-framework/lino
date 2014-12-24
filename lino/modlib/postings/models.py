@@ -17,6 +17,8 @@ from lino import mixins
 from lino import dd
 
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import ByUser, UserAuthored
+
 
 class PostingStates(dd.Workflow):
 
@@ -52,7 +54,7 @@ class PrintPosting(dd.Action):
         #~ return kw
 
 
-class Posting(mixins.AutoUser, mixins.ProjectRelated, Controllable):
+class Posting(UserAuthored, mixins.ProjectRelated, Controllable):
 
     """
     A Posting is the fact that a letter or other item 
@@ -108,7 +110,7 @@ class Postings(dd.Table):
         #~ return r
 
 
-class MyPostings(Postings, mixins.ByUser):
+class MyPostings(Postings, ByUser):
     required = dd.Required(user_groups='office')
     #~ required = dict()
     #~ master_key = 'owner'

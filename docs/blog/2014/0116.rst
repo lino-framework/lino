@@ -13,19 +13,19 @@ plus the new :mod:`sphinxconf.dailyblog.refstothis` module.
 A new project means a decision about the license. Sigh!
 
 I only recently found a consensus with Joe that for Lino I want the
-LGPL (see :doc:`/tickets/79`).  Now I went to look for instructions on
+LGPL (see :srcref:`docs/tickets/79`).  Now I went to look for instructions on
 `how to apply the LGPL to my code
 <http://www.gnu.org/licenses/gpl-howto>`_.  Where I stumbled over the
 article `Why you shouldn't use the Lesser GPL for your next library
 <http://www.gnu.org/licenses/why-not-lgpl>`_.
 
 People who write proprietary software anyway won't use Sphinx to
-document it, so :ref:`dog` can be GPL (and not LGPL).
+document it, so `dog` can be GPL (and not LGPL).
 
 namespace packages
 ------------------
 
-:ref:`atelier` did not yet support Python namespace packages.
+:mod:`atelier` did not yet support Python namespace packages.
 
 http://stackoverflow.com/questions/1675734/how-do-i-create-a-namespace-package-in-python
 
@@ -49,7 +49,7 @@ I guess that the reason is that I installed
 `sphinxcontrib-newsfeed` and
 `sphinxcontrib-taglist`
 using a simple ``pip install``, but then I used 
-``pip install -e``to install
+``pip install -e`` to install
 `sphinxcontrib-dailyblog`.
 Package namespaces have a problem when mixing released
 and development packages of a same namespace.

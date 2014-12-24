@@ -3,7 +3,7 @@
 
 I discovered that my first implementation of the new 
 "remote fields"  feature
-(part of :doc:`/tickets/54`)
+(part of :srcref:`docs/tickets/54`)
 was too simple. Worked another 5 hours to get it running:
 
 .. image:: 0109.jpg

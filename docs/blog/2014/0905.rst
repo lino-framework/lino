@@ -2,6 +2,6 @@
 Friday, September 5, 2014
 =========================
 
-Final sprint for :doc:`/tickets/121`.
+Final sprint for :srcref:`docs/tickets/121`.
 
 

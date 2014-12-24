@@ -9,13 +9,12 @@ lino_faggio.tests.QuickTest
 Okay, the tested doc :ref:`faggio.tested.courses` is not useful for
 testing Roger's problems with event generation because these actions
 modify the database (in a rather complex manner, i.e. difficult to
-undo, i.e. needs an :fab_command:`initdb` almost each time)
+undo, i.e. needs an :manage:`initdb` almost each time)
 
 Started a new unit test suite::
 
   $ go faggio
   $ python manage.py test lino_faggio.tests.QuickTest
-
 
 
 This currently fails with a traceback for which I have no explanation
@@ -35,7 +34,7 @@ It looks as if there were two different instances of the "extjs" plugin::
 
 
 
-Opened :doc:`/tickets/99`.
+Opened :srcref:`docs/tickets/99`.
 
 
 

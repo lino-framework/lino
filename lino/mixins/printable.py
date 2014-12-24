@@ -142,7 +142,7 @@ class PisaBuildMethod(DjangoBuildMethod):
 
     """
     Generates .pdf files from .html templates.
-    Usage example see :ref:`lino.tutorials.pisa`.
+    Usage example see :doc:`/tutorials/pisa/index`.
     """
     # name = 'pisa'
     target_ext = '.pdf'
@@ -518,7 +518,18 @@ class CachedPrintAction(BasePrintAction):
 
 
 class EditTemplate(BasePrintAction):
-    """
+    """Edit the print template, i.e. the file specified by
+    :meth:`Printable.get_print_templates`.
+
+    The action becomes automatically visible for users with
+    `UserLevel` "manager" and when :mod:`lino.modlib.davlink` is
+    installed.
+
+    If it is visible, then it still works only when your
+    :xfile:`webdav` directory (1) is published by your server under
+    "/webdav" and (2) has a symbolic link named `config` which points
+    to your local config directory. And (3) the local config directory
+    must be writable by `www-data`.
 
     """
     sort_index = 51

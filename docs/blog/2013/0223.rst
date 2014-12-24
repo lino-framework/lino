@@ -52,7 +52,7 @@ Was ist :class:`lino.Lino` eigentlich für ein Ding?
 Aber der Name ist nicht gut, weil ``settings.LINO`` nichts aussagt 
 über all dies.
 
-Weiter geht's im eigens dafür eröffneten Ticket :doc:`/tickets/74`.
+Weiter geht's im eigens dafür eröffneten Ticket :srcref:`docs/tickets/74`.
 
 
 A quick release
@@ -81,7 +81,7 @@ Renamed `lino.apps` to `lino.projects`
 Uff: I renamed the `lino.apps` package to `lino.projects`.
 This was another move inspired (or encouraged) by 
 `Two scoops of Django <https://django.2scoops.org/>`_
-(see also :doc:`/tickets/72`).
+(see also :srcref:`docs/tickets/72`).
 
 I still think that Django's vocabulary is unfortunate:
 Django's "apps" are in fact "plugins" or "modules", 

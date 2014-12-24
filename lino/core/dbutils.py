@@ -229,7 +229,7 @@ class UnresolvedModel:
 
 def resolve_model(model_spec, app_label=None, strict=False):
     """Return the class object of the specified model.  This works also in
-    combination with :attr:`ad.Site.override_modlib_models`, so you
+    combination with :attr:`lino.core.site_def.Site.override_modlib_models`, so you
     don't need to worry about where the real class definition is.
     
     Attention: this function **does not** trigger a loading of
@@ -338,7 +338,7 @@ class UnresolvedField(object):
     """
     Returned by :func:`resolve_field` if the specified field doesn't exist.
     This case happens when sphinx autodoc tries to import a module.
-    See ticket :doc:`/tickets/4`.
+    See ticket :srcref:`docs/tickets/4`.
     """
 
     def __init__(self, name):

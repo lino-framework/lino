@@ -50,7 +50,7 @@ from lino.modlib.uploads import models as uploads
 from lino.modlib.cal import models as cal
 #~ from lino.modlib.users import models as users
 from lino.utils.choicelists import HowWell, Gender
-from lino.modlib.users.mixins import UserProfiles
+from lino.modlib.users.mixins import ByUser
 from lino.utils.choicelists import ChoiceList
 # ~ from lino.modlib.properties.utils import KnowledgeField #, StrengthField
 #~ from lino.modlib.uploads.models import UploadsByPerson
@@ -141,7 +141,7 @@ class PeriodsField(models.DecimalField):
         super(PeriodsField, self).__init__(*args, **defaults)
 
 
-class Budget(mixins.AutoUser, mixins.CachedPrintable):
+class Budget(UserAuthored, mixins.CachedPrintable):
 
     """
     Deserves more documentation.
@@ -361,7 +361,7 @@ class Budgets(dd.Table):
     #~ column_names = "language native spoken written cef_level"
 
 
-class MyBudgets(Budgets, mixins.ByUser):
+class MyBudgets(Budgets, ByUser):
 
     """
     """

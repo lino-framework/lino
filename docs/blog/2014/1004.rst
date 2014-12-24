@@ -2,7 +2,7 @@
 Saturday, October 4, 2014
 =========================
 
-Oh no! I had another idea for ticket :doc:`/tickets/122`!
+Oh no! I had another idea for ticket :srcref:`docs/tickets/122`!
 
 - Configuration will be much simpler when we can simply select the
   whole `body_template` for every :class:`AidType

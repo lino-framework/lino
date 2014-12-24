@@ -2,12 +2,12 @@
 ========
 
 - Finished :doc:`yesterday's <0308>` blog entry.
-  New ticket :doc:`/tickets/30`.
+  New ticket :srcref:`docs/tickets/30`.
   Commit 20110309a.
 
 - I'd now consider :mod:`lino.modlib.auth` 
   as a valid alternative to :mod:`django.contrib.auth`.
-  Wrote new ticket :doc:`/tickets/31` to request for comments.
+  Wrote new ticket :srcref:`docs/tickets/31` to request for comments.
   Commit 20110309b.
   
   So weit ich sehen kann, wird Lino immer ein RESTful Server sein.
@@ -15,7 +15,7 @@
   http://stackoverflow.com/questions/2502842/way-to-maintain-a-session-in-a-rest-application    
   
   
-- New ticket :doc:`/tickets/32`.
+- New ticket :srcref:`docs/tickets/32`.
   Commit `20110309c 
   <http://code.google.com/p/lino/source/detail?r=66883edb9c0ad819a15aaa9341a1e53b769d539c>`_.
   

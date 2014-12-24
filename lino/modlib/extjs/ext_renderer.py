@@ -277,7 +277,7 @@ class ExtRenderer(HtmlRenderer):
         rows) or two buttons :guilabel:`Show` and :guilabel:`Edit` if
         it has one row.
         
-        See also :doc:`/tickets/56`.
+        See also :srcref:`docs/tickets/56`.
 
         """
         if rr.get_total_count() == 0:

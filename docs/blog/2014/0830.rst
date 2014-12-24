@@ -13,13 +13,13 @@ for certain tests):
 
 - it now installs :mod:`ml.cal` (a basic calendar module)
 
-- it now defines a :meth:`ad.Site.get_admin_main_items` method which
+- it now defines a :meth:`lino.core.site_def.Site.get_admin_main_items` method which
   yields :class:`ml.cal.MyEvents`::
 
     def get_admin_main_items(self, ar):
         yield self.modules.cal.MyEvents
 
-  The :meth:`ad.Site.get_admin_main_items` method is expected to yield
+  The :meth:`lino.core.site_def.Site.get_admin_main_items` method is expected to yield
   a list of tables to be displayed in the body of the main page using
   "plain html".
 

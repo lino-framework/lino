@@ -49,9 +49,12 @@ class Plugin(object):
     """
 
     verbose_name = None
-    """
+    """The name of this app, as shown to the user. This can be a lazily
+    translated string.
+
     TODO: if this is not None, then Lino will automatically
     add a UserGroup.
+
     """
 
     needs_plugins = []
@@ -73,7 +76,7 @@ class Plugin(object):
     extends_models = None
     """If specified, a list of model names for which this app provides a
     subclass.
-    
+
     For backwards compatibility this has no effect
     when :setting:`override_modlib_models` is set.
 
@@ -82,12 +85,45 @@ class Plugin(object):
     ui_label = None
 
     media_base_url = None
+    """
+    Remote URL base for media files.
+
+    """
+
     media_root = None
+    """
+    Local path where third-party media files are installed.
+
+    Only used if this app has :attr:`media_base_url` empty and
+    :attr:`media_name` non-empty, *and* if the :xfile:`media`
+    directory has no entry named :attr:`media_name`.
+
+    """
+
     media_name = None
+    """
+    Either `None` (default) or a non-empty string with the name of the
+    subdirectory of your :xfile:`media` directory which is expected to
+    contain media files for this app.
+
+    `None` means that there this app has no media files of her own.
+
+    Best practice is to set this to the `app_label`.  Will be ignored
+    if :attr:`media_base_url` is nonempty.
+
+    """
 
     url_prefix = None
+    """
+    The url prefix under which this app should ask to
+    install its url patterns.
+    """
 
     site_js_snippets = []
+    """
+    List of js snippets to be injected into the `lino_*.js` file.
+
+    """
 
     renderer = None
 
@@ -112,6 +148,13 @@ class Plugin(object):
         # super(Plugin, self).__init__()
 
     def configure(self, **kw):
+        """Set the given parameter(s) of this Plugin instance.  Any number of
+        parameters can be specified as keyword arguments.
+
+        Raise an exception if caller specified a key that does not
+        have a corresponding attribute.
+
+        """
         for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self, k))
@@ -121,6 +164,9 @@ class Plugin(object):
         return []
 
     def on_site_startup(self, site):
+        """This will be called exactly once, when models are ready.
+
+        """
         pass
 
     def extends_from(self):

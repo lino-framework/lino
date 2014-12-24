@@ -1,11 +1,14 @@
 ## This file is part of the Lino project.
 
 from django.db import models
-from lino import dd, rt
+from lino import dd
+from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
-class Entry(mixins.CreatedModified, mixins.UserAuthored):
+
+class Entry(mixins.CreatedModified, UserAuthored):
 
     class Meta:
         verbose_name = _("Entry")
@@ -36,7 +39,7 @@ class EntriesByCompany(Entries):
     master_key = 'company'
 
 
-class MyEntries(Entries, mixins.ByUser):
+class MyEntries(Entries, ByUser):
     pass
 
 

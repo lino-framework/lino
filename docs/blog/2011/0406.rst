@@ -4,7 +4,7 @@
 Qooxdoo muss warten
 -------------------
 
-Es sieht nun leider ziemlich klar danach aus, dass :doc:`/tickets/37` 
+Es sieht nun leider ziemlich klar danach aus, dass :srcref:`docs/tickets/37` 
 eine Weile lang warten muss. Weil ich zwei Anfragen von 
 Kunden vorliegen habe, denen das ExtJS-Interface genügt. 
 Eine oder gar zwei weitere Anwendungen halte ich momentan für 
@@ -18,7 +18,7 @@ Drei Bugs weniger im ExtJS-UI
     failure: {'language': [u"Wert u'fij' ist keine g\xfcltige Option."]}
     
     Die Problemmeldung war eher unscheinbar, aber ich habe 3 Stunden danach gesucht! 
-    Ticket :doc:`/tickets/38`.
+    Ticket :srcref:`docs/tickets/38`.
     Der Bug ist wahrscheinlich schon immer dagewesen und fand immer dann statt, 
     wenn in einem Slave und seinem Master gleichnamige Felder existierten. Also 
     z.B. auch wenn man in

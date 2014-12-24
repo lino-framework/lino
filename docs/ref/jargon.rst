@@ -3,6 +3,15 @@ Jargon
 
 
 
+.. _pk:
+
+primary key
+-----------
+
+The **primary key** of a database table (which we call "Model" in
+Lino) is one of it fields which holds the unique identification of
+each row.  This field is often not shown to the user.
+
 .. _gfk:
 
 GenericForeignKey

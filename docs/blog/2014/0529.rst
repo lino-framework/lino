@@ -125,7 +125,7 @@ This helped me to fix a bug which I introduced myself into Joe's code.
 How to reach the host machine from a virtual client
 ---------------------------------------------------
 
-Worked on :doc:`/tickets/106`. 
+Worked on :srcref:`docs/tickets/106`. 
 
 Trying to reproduce it myself.  In my case the problematic client is
 under Windows in a VirtualBox.

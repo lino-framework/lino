@@ -1,6 +1,7 @@
 """This package contains example applications included with Lino.
 
-See also :doc:`/tutorials/hello` which explains how to try them out.
+See also :doc:`/tutorials/hello/index` which explains how to try them
+out.
 
 Examples with their own documentation entry:
 
@@ -16,7 +17,7 @@ Poorly documented examples at different development states:
 - :mod:`lino.projects.min1`
 - :mod:`lino.projects.min2`
 - :mod:`lino.projects.cms` ---
-  :doc:`/tickets/66`
+  :srcref:`docs/tickets/66`
 - :mod:`lino.projects.crl`
 - :mod:`lino.projects.events`
   See :blogref:`20140203`

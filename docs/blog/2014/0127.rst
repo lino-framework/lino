@@ -2,7 +2,7 @@
 20140127 (Monday, 27 January 2014)
 ==================================
 
-Worked on :doc:`/tickets/95`:
+Worked on :srcref:`docs/tickets/95`:
 
 - `products.Products` table had no :aa:`insert_layout`
 - `accounts.Accounts` table had no :aa:`insert_layout`

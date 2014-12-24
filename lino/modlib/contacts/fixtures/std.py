@@ -9,7 +9,7 @@ Loads a series of default :class:`ml.contacts.CompanyType`.
 
   rt.show('contacts.CompanyTypes')
 
-See also :doc:`/tickets/108`.
+See also :srcref:`docs/tickets/108`.
 """
 
 from __future__ import unicode_literals

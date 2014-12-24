@@ -5,7 +5,7 @@ Repairing iGen
 --------------
 
 
-:mod:`lino.apps.igen` was broken after :doc:`/tickets/48`.
+:mod:`lino.apps.igen` was broken after :srcref:`docs/tickets/48`.
 Started to repair it.
 
 Added `related_name` 
@@ -14,7 +14,7 @@ to :attr:`lino.mixins.AutoUser.user` to avoid name clashes in
 
 New function :func:`lino.tools.makedirs_if_missing`.
 
-Noted new ticket :doc:`/tickets/49`.
+Noted new ticket :srcref:`docs/tickets/49`.
 
 Check-in 20110902.
 

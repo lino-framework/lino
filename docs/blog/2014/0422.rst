@@ -2,7 +2,7 @@
 Tuesday, April 22, 2014
 =======================
 
-Working on :doc:`/tickets/93`.
+Working on :srcref:`docs/tickets/93`.
 
 "Must read eID card" action in `newcomers.NewClients` 
 ------------------------------------------------------
@@ -64,7 +64,7 @@ many tests are still going to change.
 Multiple addresses per Client
 -----------------------------
 
-Started to work on the next item of :doc:`/tickets/93`: 
+Started to work on the next item of :srcref:`docs/tickets/93`: 
 multiple client addresses.
 
 It is the first time that we want SubmitInsert to *not* switch to

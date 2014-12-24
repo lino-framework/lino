@@ -80,7 +80,7 @@ Result: negative. This code runs without problem. Hm...
 New feature "out-of-the-box doctemplates"
 -----------------------------------------
 
-Opened ticket :doc:`/tickets/46` because this was not trivial and 
+Opened ticket :srcref:`docs/tickets/46` because this was not trivial and 
 I thought to let this ticket wait until real need grows.
 Later I changed my mind and did it right now.
 

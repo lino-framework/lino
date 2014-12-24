@@ -276,13 +276,17 @@ class Instantiator:
         return True
 
     def __call__(self, *values, **kw):
+        """Calling an instantiator is the same as callig its :meth:`build`
+        method.
+
+        """
         return self.build(*values, **kw)
 
     def build(self, *values, **kw):
         """Instantiate an object using the default values of this
         instantiator, overridden by the given specified values. The
         number of positional arguments may not exceed the number of
-        fieldnames specified when creating this :class:`Instantiator.
+        fieldnames specified when creating this :class:`Instantiator`.
 
         """
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)

@@ -6,7 +6,7 @@
 
 This module is much more simple and does not require
 :mod:`django.contrib.sessions` to be installed.
-See :doc:`/tickets/31` for discussion.
+See :srcref:`docs/tickets/31` for discussion.
 
 To use it, you must override :setting:`user_model` and
 :setting:`get_installed_apps` in your

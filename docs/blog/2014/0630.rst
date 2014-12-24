@@ -2,7 +2,7 @@
 Monday, June 30, 2014
 =====================
 
-Cool! I finished :doc:`/tickets/113`. The last point is solved:
+Cool! I finished :srcref:`docs/tickets/113`. The last point is solved:
 
 - Lino does not show the detail window on the created invoice
 
@@ -13,9 +13,9 @@ display a data_record or not, the action result now contains a
 
 
 Okay, but before I can ask Steve and Ülle to test this, here is
-already a next problem: :doc:`/tickets/114`.
+already a next problem: :srcref:`docs/tickets/114`.
 
-And another one: :doc:`/tickets/115`
+And another one: :srcref:`docs/tickets/115`
 
-And a third one: :doc:`/tickets/116`.
+And a third one: :srcref:`docs/tickets/116`.
 

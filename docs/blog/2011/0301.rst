@@ -14,7 +14,7 @@ Die Antwort lautet übrigens "Ja", und das hätte ich ohne
 unit tests in 5 Minuten rausgefunden.
 
 Mit unit tests hat es den ganzen Tag gebraucht
-(was ich genauer bescheibe in :doc:`/tickets/27`).
+(was ich genauer bescheibe in :srcref:`docs/tickets/27`).
 
 Der Unterschied ist natürlich, 
 dass dieser Fall in Zukunft nun jedesmal 

@@ -25,7 +25,7 @@ Added a test case for each of them to :ref:`cosi.tested.ledger`.
 
 Added them to user documentation
 and made it available on :ref:`lf` as
-:ref:`cosi.userdocs`.
+`cosi.userdocs`.
 
 Added a new `ledger.Situation` report.
 But that's not yet what we need. 

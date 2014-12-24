@@ -6,7 +6,7 @@ Settings API
 .. setting:: SITE
 
 Lino expects one important variable ``SITE`` in your :xfile:`settings.py`.
-See :ref:`djangosite`.
+See :doc:`/dev/application`.
 
 
 Lino and the Django `settings.py` file
@@ -36,9 +36,17 @@ https://docs.djangoproject.com/en/dev/ref/settings/#logging-config
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#use-l10n
 
+Lino sets this automatically when
+:attr:`lino.core.site_def.Site.languages` is not `None`.
+
 .. setting:: LANGUAGE_CODE
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
+
+Lino sets this automatically when
+:attr:`lino.core.site_def.Site.languages` is not `None`.
+
+
 
 .. setting:: ROOT_URL
 

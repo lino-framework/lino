@@ -3,7 +3,7 @@ Saturday, June 28, 2014
 =======================
 
 :mod:`lino_welfare.projects.chatelet` now have their own
-:meth:`ad.Site.get_admin_main_items`.
+:meth:`lino.core.site_def.Site.get_admin_main_items`.
 
 Discovered Steve Johnson's `sphinx-better-theme
 <http://sphinx-better-theme.readthedocs.org/en/latest/index.html>`_.
@@ -12,5 +12,5 @@ Looks promising! And easy to try!  So I tried it on the docs for
 <https://github.com/irskep/sphinx-better-theme/issues/29>`_ and hoping
 for help.
 
-Opened ticket :doc:`/tickets/113`.
-Marked ticket :doc:`/tickets/112` as closed.
+Opened ticket :srcref:`docs/tickets/113`.
+Marked ticket :srcref:`docs/tickets/112` as closed.

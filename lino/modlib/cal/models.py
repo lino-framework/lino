@@ -24,6 +24,8 @@ from lino import dd
 from lino.utils import ONE_DAY
 
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import UserAuthored
+
 
 from .utils import (
     DurationUnits, Recurrencies,
@@ -38,6 +40,7 @@ from .workflows import (
 from .workflows import take
 
 from .mixins import StartedSummaryDescription
+
 
 DEMO_START_YEAR = 2013
 
@@ -162,7 +165,7 @@ class Priorities(dd.Table):
 
 class Component(StartedSummaryDescription,
                 mixins.ProjectRelated,
-                mixins.UserAuthored,
+                UserAuthored,
                 Controllable,
                 mixins.CreatedModified):
 

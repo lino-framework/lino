@@ -2,7 +2,7 @@
 ========
 
 - `Russell Keith-Magee <http://cecinestpasun.com/about/>`_ 
-  has worked on :djangoticket:`14390` (my :doc:`/tickets/19/`).
+  has worked on :djangoticket:`14390` (my :srcref:`docs/tickets/19/`).
   He closed it because it were due to a Python bug 
   (which I'll try to confirm when I have some spare time).
   But I won't pay too much energy to this ticket since it 

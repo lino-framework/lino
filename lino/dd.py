@@ -2,9 +2,13 @@
 # Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :doc:`/dev/dd`.
+"""
+The :mod:`lino.dd` module is a shortcut to those parts of Lino which
+are used in your :xfile:`models.py` modules.  The name ``dd`` stands
+for "Database Design".
 
-.. currentmodule:: dd
+
+
 
 Tables:
 :class:`Table`
@@ -107,8 +111,6 @@ Workflows:
 Model mixins:
 
 - :class:`lino.mixins.ProjectRelated`
-- :class:`lino.mixins.UserAuthored`
-- :class:`lino.mixins.ByUser`
 - :class:`Sequenced <lino.mixins.Sequenced>`
 - :class:`Duplicable <lino.mixins.duplicable.Duplicable>`
 - :class:`lino.mixins.Referrable`
@@ -137,6 +139,9 @@ from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
+"""
+Shortcut to the main Lino logger.
+"""
 
 # logger.info("20140227 dd.py a")
 
@@ -326,9 +331,11 @@ if False:
     from lino.mixins import Report
     
     from lino.utils.mldbc.mixins import BabelNamed
+
+    from lino.modlib.users.mixins import UserAuthored, ByUser
     
     from lino.mixins import (
-        ProjectRelated, UserAuthored, ByUser,
+        ProjectRelated,
         Duplicable, Duplicate,
         Sequenced, Hierarizable, Referrable,
         Registrable)
@@ -366,7 +373,9 @@ is_installed = settings.SITE.is_installed
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 
 
-plugins = apps = settings.SITE.plugins
+apps = plugins = settings.SITE.plugins
+# `apps` is an alias for `plugins`. We recommend plugins since `apps`
+# is being used by Django 1.7
 
 
 def resolve_plugin(app_label):

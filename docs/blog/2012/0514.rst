@@ -4,7 +4,7 @@
 Schuldnerberatung
 -----------------
 
-Continued with :doc:`/tickets/63`.
+Continued with :srcref:`docs/tickets/63`.
 Removed field `Entry.name`.
 
 The new field `periods` means: for how many months 

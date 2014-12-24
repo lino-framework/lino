@@ -2,7 +2,7 @@
 Sunday, October 5, 2014
 =======================
 
-Final sprint for ticket :doc:`/tickets/122` : repaired the test suite
+Final sprint for ticket :srcref:`docs/tickets/122` : repaired the test suite
 of :ref:`welfare` which was broken after recent changes.
 A last change to :meth:`lino_welafre.migrate.Migrator.migrate_from_1_1_16`.
 

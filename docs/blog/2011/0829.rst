@@ -4,7 +4,7 @@
 20110829a Export to remote calendars
 ------------------------------------
 
-Continuing on remote calendars (:doc:`/tickets/47`).
+Continuing on remote calendars (:srcref:`docs/tickets/47`).
 So far Lino can import data from remote calendars, now I'll 
 start the opposite direction: modifying an event through 
 the Lino must trigger an update of the remote calendar.

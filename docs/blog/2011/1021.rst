@@ -4,7 +4,7 @@
 Launch Office application on webdav link using Applet
 -----------------------------------------------------
 
-Worked on :doc:`/tickets/45` using a Java Applet.
+Worked on :srcref:`docs/tickets/45` using a Java Applet.
 Files :srcref:`/media/applets/davopen_test.html` and :srcref:`/java`
   
 Insgesamt ist es erschreckend, wie kompliziert diese Lösung wird!

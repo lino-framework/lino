@@ -1,7 +1,7 @@
 20121229
 ========
 
-Worked on :doc:`/tickets/67`.
+Worked on :srcref:`docs/tickets/67`.
 
 - New view :class:`lino.ui.extjs3.views.PlainIndex`
 

@@ -28,8 +28,8 @@ Fixed a bug which caused the combobox on
 TODO: add the :mod:`lino.modlib.notes` module to :ref:`cosi` and add a
 possibility to write payment reminders.
 
-Continued on :doc:`/tickets/136`
---------------------------------
+Continued on :srcref:`docs/tickets/136`
+---------------------------------------
 
 Until now I had the following template code (in
 :xfile:`presence_certificate.body.html`)::

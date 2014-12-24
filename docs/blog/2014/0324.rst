@@ -22,7 +22,7 @@ situation as follows:
 - But just don't panic. It's as in Matthew 10:16-39.
 
 I added a new section "Open for contribution" in
-:doc:`/tickets/index`. The idea is to have a central entry place for
+:srcref:`docs/tickets/index`. The idea is to have a central entry place for
 potential new contributors.  Also updated the `Lino Core Developer
 <http://saffre-rumma.net/jobs/coredev.html>`_ job announcment.
 

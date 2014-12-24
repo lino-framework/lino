@@ -10,6 +10,6 @@ to give view permission on `pcsw.Clients` to everybody.
 Moved the registration of change watchers from 
 :mod:`lino_welfare.models` 
 to
-a :meth:`ad.Site.startup` method
+a :meth:`lino.core.site_def.Site.startup` method
 in :class:`lino_welfare.projects.eupen.settings.Site`.
 Because :ref:`chat` don't need it.

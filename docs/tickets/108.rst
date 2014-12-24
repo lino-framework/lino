@@ -6,10 +6,10 @@
 
 In :doc:`/dev/translate/index` we discovered that some demo fixtures
 used by :ref:`cosi` fail when the default language (the first code
-specified in :attr:`ad.Site.languages`) is something else than `en`,
+specified in :attr:`lino.core.site_def.Site.languages`) is something else than `en`,
 `de` or `fr`.
 
-If you set :attr:`ad.Site.languages` to ``"es en"`` and run
+If you set :attr:`lino.core.site_def.Site.languages` to ``"es en"`` and run
 :manage:`initdb_demo`, you get::
 
     INFO Loading /home/luc/hgwork/lino/lino/modlib/contacts/fixtures/std.py...

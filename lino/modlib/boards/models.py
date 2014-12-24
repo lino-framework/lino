@@ -11,6 +11,7 @@ from lino import dd, mixins
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from lino.modlib.users.mixins import UserAuthored
 
 class Board(mixins.BabelNamed, mixins.DatePeriod):
 
@@ -70,7 +71,7 @@ class MembersByBoard(Members):
     order_by = ["role"]
 
 
-class BoardDecision(mixins.UserAuthored):
+class BoardDecision(UserAuthored):
     # base class for aids.Confirmation
     class Meta:
         abstract = True

@@ -2,7 +2,7 @@
 ========
 
 - Updated :doc:`/about/license`.
-  Consider :doc:`/tickets/16` as closed for the moment.
+  Consider :srcref:`docs/tickets/16` as closed for the moment.
   
 - :mod:`lino.modlib.tickets` : I want to have a virtual column 
   `time` in `TicketsByProject` which is the sum of the related 

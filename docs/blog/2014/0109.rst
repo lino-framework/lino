@@ -14,8 +14,8 @@ in :doc:`/dev/userdocs`.  My motivation is a meeting scheduled for Jan
   subtle problem when documenting multilingual Lino applications: I
   want to write tickets in the language of the user who reported
   it. That language is not necessarily English. I don't want to
-  translate tickets. But I want to expand :role:`ddref` roles into the
-  user's language, not to English.
+  translate tickets. But I want to expand :rst:role:`ddref` roles into
+  the user's language, not to English.
 
 - Added two directives and roles called :rst:dir:`directive` and
   :rst:dir:`role` in :mod:`atelier.sphinxconf`.

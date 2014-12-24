@@ -2,7 +2,7 @@
 Thursday, October 2, 2014
 =========================
 
-Continued on ticket :doc:`/tickets/122`.
+Continued on ticket :srcref:`docs/tickets/122`.
 
 The big new thing today is that I added "templating" to
 :class:`welfare.aids.AidType`.  This was needed because the first
@@ -23,7 +23,7 @@ quite some work to generate demo data for these tests.
 
 Discovered a bug: :class:`dd.BabelTextField` fields did not expand
 into their language variants in a layout.  This was due to the fact
-that the class was defined twice-- once in :ref:`north` and once in
+that the class was defined twice-- once in :mod:`north` and once in
 :mod:`lino.core.fields`.  I chose a drastic solution: move these
 classes out of :mod:`north` back into Lino. This makes north
 (definitively) useless on iths own.

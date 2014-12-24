@@ -15,13 +15,14 @@ Lino is for you, if...
   published as open source under a free license and can be used by
   others.
 
+:doc:`values`
+
 How to get Lino
 
 #. You learn yourself how to write and run Lino applications.
-   Welcome to the :doc:`/tutorials/index` page.
+   Welcome to the :doc:`/dev/index` page.
 
 #. You choose somebody whom you trust and delegate this work to them.
 
-   
+  
 
-:doc:`values`

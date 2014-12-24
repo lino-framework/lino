@@ -5,7 +5,7 @@
 Fixed a typo bug in :manage:`watch_tim`.
 
 
-:doc:`/tickets/94` : 
+:srcref:`docs/tickets/94` : 
 I asked my wife to create a logo for Lino, 
 and she asked me to first tell her: "What is Lino?".
 I answered "It's a framework for writing database applications 

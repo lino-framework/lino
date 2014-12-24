@@ -1,7 +1,7 @@
 Versioning and release process
 ==============================
 
-Your application's version is in :attr:`ad.Site.version`.
+Your application's version is in :attr:`lino.core.site_def.Site.version`.
 
 
 

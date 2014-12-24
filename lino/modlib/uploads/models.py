@@ -20,6 +20,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import UserAuthored, ByUser
 
 system = dd.resolve_app('system')
 
@@ -82,7 +83,7 @@ def filename_leaf(name):
 
 class Upload(
         mixins.Uploadable,
-        mixins.UserAuthored,
+        UserAuthored,
         Controllable):
 
     class Meta:
@@ -149,7 +150,7 @@ class UploadsByType(Uploads):
     column_names = "file description user * "
 
 
-class MyUploads(Uploads, mixins.ByUser):
+class MyUploads(Uploads, ByUser):
     """Shows only my Uploads (i.e. those whose author is current user)."""
     required = dd.required()
     column_names = "file description user owner *"

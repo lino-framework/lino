@@ -67,7 +67,7 @@ Which assumes the following database model and tables::
 Remarks:
 
 - See :mod:`lino.utils.xmlgen.html`
-- `ar ` is the calling request, i.e. a web request asking "give me the
+- `ar` is the calling request, i.e. a web request asking "give me the
   detail information about this product instance"
 - `self` is the Product instance
 - :meth:`quick_manage_toolbar 

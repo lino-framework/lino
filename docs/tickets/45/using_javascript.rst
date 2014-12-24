@@ -1,7 +1,7 @@
 Using JavaScript
 ================
 
-This might become a solution for :doc:`/tickets/45`.
+This might become a solution for :srcref:`docs/tickets/45`.
 
 Using JavaScript implies that we must use browser-specific methods.
 

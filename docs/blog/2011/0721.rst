@@ -4,7 +4,7 @@
 Einfügetexte für TinyMCE
 ------------------------
 
-Ticket :doc:`/tickets/45` : 
+Ticket :srcref:`docs/tickets/45` : 
 Ich habe das Problem (hoffentlich verständlich) in
 Englisch formuliert und lass das mal was sacken, d.h. arbeite jetzt
 erstmal an den Einfügetexten weiter, immerhin wäre ja mein Traum, dass

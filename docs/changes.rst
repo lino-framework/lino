@@ -10,63 +10,21 @@ See the author's :ref:`Developer Blog <blog>`
 to get detailed news.
 The final truth about what's going on is only 
 the source code.
+See also :doc:`marked_changes`.
 
-Lists of marked blog entries
-============================
+.. toctree::
+    :hidden:
 
-.. _new:
+    marked_changes
 
-New feature
------------
-
-.. refstothis:: new
-
-
-.. _mustmig:
-
-Change in database structure
-----------------------------
-
-.. refstothis:: mustmig
-
-
-.. _apichange:
-
-API change
-----------
-
-.. refstothis:: apichange
-
-
-.. _mustconfig:
-
-Change in local config
-----------------------
-
-.. refstothis:: mustconfig
-
-
-.. _regressions:
-
-Regression danger
------------------
-
-"Regression danger" means that this change possibly introduced some
-regressions.
-
-.. refstothis:: regressions
-
-
-
-Version 1.6.16 (released :blogref:`20141214`)
+Version 1.6.16 (released :blogref:`20141222`)
 =============================================
 
 A minor release because 
 
 - New module :mod:`lino.hello`.
 
-- Some classes changed their place while working on it for
-  :ticket:`39`
+- Some classes changed their place while working on :ticket:`39`
 
 - :doc:`/dev/install` is getting better. I am working on it for
   :ticket:`40`.
@@ -74,7 +32,8 @@ A minor release because
 Version 1.6.15 (released 2014-12-12)
 ====================================
 
-- Integrated :ref:`north` and :ref:`site` into Lino.
+- Integrated my ``north`` and ``djangosite`` projects into Lino.
+  The independent projects are now obsolete and no longer maintained.
 
 - A "plugin" is an app which defines in
   her `__init__.py` a class named "Plugin" which must be a subclass of
@@ -297,10 +256,9 @@ Version 1.6.5 (released :blogref:`20130422`)
   See :blogref:`20130401`.
 
 
-Older releases
-==============
+.. Older releases
 
-.. toctree::
-   :maxdepth: 1
-   
-   /releases/index
+    .. toctree::
+       :maxdepth: 1
+
+       /releases/index

@@ -52,7 +52,7 @@ Denn das ist zu doof, dass die ihre Felder nicht selber definieren.
 Meine Probleme damit beim letzten Mal kamen wahrscheinlich 
 lediglich daher, dass ich meinen 
 Patch :srcref:`/patches/10808b.diff` 
-zu Problem :doc:`/tickets/11` nicht installiert hatte.
+zu Problem :srcref:`docs/tickets/11` nicht installiert hatte.
   
 Zunächst mal ein `svn update` für meine Kopie von Django. 
 Updated to revision 14404.

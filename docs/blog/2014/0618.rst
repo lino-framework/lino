@@ -51,7 +51,7 @@ Changed API
 -----------
 
 I think it is still okay to change the signature of
-:meth:`ad.Site.str2kw` method introduced recently: I inverted the
+:meth:`lino.core.site_def.Site.str2kw` method introduced recently: I inverted the
 order of the two positional arguments ``txt` and ``name``.
 
 

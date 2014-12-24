@@ -9,7 +9,7 @@ Glossary
     See :doc:`/topics/customization`.
     
   mod_wsgi
-    See :ref:`admin.install`
+   :doc:`/admin/install`
     
   dummy module
     See :func:`lino.core.dbutils.resolve_app`.

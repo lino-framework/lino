@@ -5,7 +5,7 @@ The "Sandbox étude" started
 :doc:`a few days ago <0225>` 
 was still haunting 
 me.
-Opened ticket :doc:`/tickets/60` and understood that the existing 
+Opened ticket :srcref:`docs/tickets/60` and understood that the existing 
 :mod:`lino.modlib.contacts` is in fact almost perfect, 
 except that some names are wrong. We should one day rename 
 "Contact" to "Partner", "Role" to "Contact" and "RoleType" to "Role".

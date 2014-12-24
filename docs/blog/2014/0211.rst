@@ -150,7 +150,7 @@ It seems that an old version of eidreader is still stored somewhere...
 How to flush the Java cache?  `stackoverflow
 <http://stackoverflow.com/questions/8828643/java-web-start-how-to-clear-cache-or-update-the-app-from-users-perspective>`_
 did not help me this time.  I even started a new entry
-:ref:`java.flush` in my :doc:`/java`.
+:ref:`java.flush` in `/java`.
 
 After having tested all these, I found the solution: I had inserted my
 Estonian id card instead of the Belgian one.  Die dümmsten Fehler sind

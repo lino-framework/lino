@@ -28,7 +28,7 @@ That is, we delete the cached `Ext.Window` instance for those actions
 that are callable from the :xfile:`admin_main.html`. 
 
 This workaround also required us to remove the `ar` argument from the
-signature of :meth:`ad.Site.get_admin_main_items`.
+signature of :meth:`lino.core.site_def.Site.get_admin_main_items`.
 
 Not very elegant, but it works.
 
@@ -40,7 +40,7 @@ Removed `admin_item_limit` from :xfile:`admin_main.html`
 :ref:`mustconfig`: 
 How to configure how many rows Lino should display in 
 :xfile:`admin_main.html` for the tables returned by
-:meth:`ad.Site.get_admin_main_items`?
+:meth:`lino.core.site_def.Site.get_admin_main_items`?
 
 Until now I had a parameter `admin_item_limit` defined as a template
 variable::

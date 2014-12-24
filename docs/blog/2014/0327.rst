@@ -23,8 +23,8 @@ a single module (or package), but not together with settings.
 Usage example: module :mod:`lino_welfare.settings.chatelet.migrate`.
 
 Note: yes, Django 1.7 will have its own migrations, basically inspired
-by South. That might look as a clear reason to abandon :ref:`north`
-and start using Django migrations.  Note that if you don't like north,
+by South. That might look as a clear reason to abandon `north` and
+start using Django migrations.  Note that if you don't like `north`,
 you can simply use South or Django 1.7 migrations.  But:
 
 - There is no immediate need for me to learn. I'll wait at least until

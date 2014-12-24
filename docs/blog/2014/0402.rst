@@ -2,7 +2,7 @@
 20140402 (Wednesday, 02 April 2014)
 ===================================
 
-Continued on :doc:`/tickets/93`.
+Continued on :srcref:`docs/tickets/93`.
 
 Was already fixed:
 

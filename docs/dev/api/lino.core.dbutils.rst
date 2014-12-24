@@ -15,7 +15,6 @@ lino.core.dbutils
       babelkw
       full_model_name
       get_field
-      get_model_report
       import_module
       inrange_filter
       is_devserver

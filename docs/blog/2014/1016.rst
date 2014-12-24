@@ -2,8 +2,8 @@
 Thursday, October 16, 2014
 ==========================
 
-Continued on :doc:`/tickets/133`
-================================
+Continued on :srcref:`docs/tickets/133`
+========================================
 
 #.  Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` im Reiter
     "Historie" wurde noch nicht automatisch aktualisiert nach einem
@@ -51,7 +51,7 @@ This change causes a :ref:`mustmig` for applications which use
 :manage:`dump2py` was broken
 ============================
 
-Temporary bugfix in :mod:`north` before moving the command to Lino. 
+Temporary bugfix in `north` before moving the command to Lino. 
 
 Added a test case::
 

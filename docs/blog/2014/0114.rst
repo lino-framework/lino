@@ -7,7 +7,7 @@ Adding tags to my blog
 ----------------------
 
 These last days I have been thinking and experimenting on the 
-question :doc:`/tickets/88`:
+question :srcref:`docs/tickets/88`:
 Nikola, Fiddling with my own Sphinx extensions, identi.ca, Wordpress.
 
 Probably the important thing missing on my current documentation and
@@ -21,7 +21,7 @@ which seems to be the solution.
 Hm, but I cannot figure out how to get this working.  I tried the
 following:
 
-- inserted some tags to the present page using either the :role:`tag`
+- inserted some tags to the present page using either the :rst:role:`tag`
   role (lets insert :tag:`blog` and :tag:`docs` for this page) or the
   :rst:dir:`tag` directive.
 
@@ -40,7 +40,7 @@ Sent a mail to the author.
 
 
 :mod:`atelier.fablib`: The :cmd:`fab blog` command now also works in
-docs-only projects like :ref:`llb` which have no Python code at all.
+docs-only projects like `llb` which have no Python code at all.
 
 
-:doc:`/tickets/80`
+:srcref:`docs/tickets/80`

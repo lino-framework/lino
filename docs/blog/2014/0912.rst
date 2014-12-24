@@ -38,7 +38,7 @@ some problems.
   :file:`projects` directory, which was annoying because
   auto-completion needed a second shoot to differenciate them.
 
-- Continued to meditate (in :doc:`/about/license`) about the question
+- Continued to meditate (in `/about/license.rst`) about the question
   "BSD or GPL".
 
 

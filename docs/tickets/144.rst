@@ -3,7 +3,7 @@
 =====================================
 
 Upgrade nach :ref:`welfare` 1.1.18 im ÖSHZ Eupen am 03.11.2014.
-Noch ein Ticket im Rahmen des Projekts :doc:`/tickets/93`.
+Noch ein Ticket im Rahmen des Projekts :srcref:`docs/tickets/93`.
 
 
 DONE:

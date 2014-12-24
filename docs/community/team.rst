@@ -63,7 +63,7 @@ a new product version.
 Naming milestones
 -----------------
 
-*Release milestones* are named ``XXXX-version", where XXXX is our
+*Release milestones* are named ``XXXX-version``, where XXXX is our
 internal codename (atelier, lino, welfare...) and version is a string
 like "1.6.18".
 

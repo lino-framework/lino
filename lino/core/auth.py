@@ -21,7 +21,8 @@ from django import http
 
 
 from lino.core import constants
-from lino.core.perms import AnonymousUser
+
+from lino.modlib.users.mixins import AnonymousUser
 
 
 class AuthMiddleWareBase(object):
@@ -192,8 +193,8 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 class NoUserMiddleware(AuthMiddleWareBase):
 
     """Middleware automatically installed by
-    :meth:`ad.Site.get_middleware_classes` when
-    :attr:`ad.Site.user_model` is None.
+    :meth:`lino.core.site_def.Site.get_middleware_classes` when
+    :attr:`lino.core.site_def.Site.user_model` is None.
 
     """
 

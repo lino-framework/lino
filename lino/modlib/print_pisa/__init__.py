@@ -5,7 +5,7 @@
 Pisa.
 
 To use it, simply add the following line to your
-:meth:`ad.Site.get_installed_apps`::
+:meth:`lino.core.site_def.Site.get_installed_apps`::
 
     yield 'lino.modlib.print_pisa'
 

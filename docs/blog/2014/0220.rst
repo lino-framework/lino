@@ -15,7 +15,7 @@ Lino documentation (mainly :doc:`/dev/install`)
 
 
 
-- Fixed `AttributeError: work_root` in :ref:`atelier`
+- Fixed `AttributeError: work_root` in :mod:`atelier`
   occuring when there was no
   `work_root` in user's :xfile:`.fabricrc` file.  The `work_root` env
   setting is no longer used.

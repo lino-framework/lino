@@ -25,10 +25,6 @@ configure(globals(), 'lino.projects.docs.settings.demo')
 
 language = 'en'
 
-extensions += ['sphinx.ext.autosummary']
-autosummary_generate = True
-autodoc_default_flags = ['members']
-
 extensions += ['sphinxcontrib.taglist']
 extensions += ['atelier.sphinxconf.blog']
 extensions += ['atelier.sphinxconf.complex_tables']
@@ -143,8 +139,11 @@ exclude_patterns = [
     'blog/2010/*',
     'blog/2011/*',
     'blog/2012/*',
-    'releases/2010/*',
-    'releases/2011/*',
+    'blog/2013/*',
+    'releases/*',
+    'tickets/*',
+    # 'releases/2010/*',
+    # 'releases/2011/*',
     'include/*',
 ]
 

@@ -68,8 +68,3 @@ To do
   but requires end-users willing to invest their time.)
   
 
-Pages referring to this:
-
-.. refstothis::
-
-

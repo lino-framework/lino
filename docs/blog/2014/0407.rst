@@ -27,8 +27,8 @@ TODO:
 
 
 Encore un upgrade à Chatelet: migration & traductions.  Updated
-:doc:`/tickets/100`. 
+:srcref:`docs/tickets/100`. 
 
 Pour :ref:`welfare` je dois maintentant attendre feedback des
-utilisateurs.  Pour les deux tickets :doc:`/tickets/93` et
-:doc:`/tickets/100`.
+utilisateurs.  Pour les deux tickets :srcref:`docs/tickets/93` et
+:srcref:`docs/tickets/100`.

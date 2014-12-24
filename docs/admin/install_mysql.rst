@@ -103,15 +103,15 @@ drop tables due to InnoDB's more severe integrity contraints.  Using
 InnoDB can cause the following error message when trying to run
 :manage:`initdb` a *second* time::
 
-IntegrityError: (1217, 'Cannot delete or update a parent row: 
-a foreign key constraint fails')
+    IntegrityError: (1217, 'Cannot delete or update a parent row: 
+    a foreign key constraint fails')
 
 One method to set the default database storage on a Debian server is
 to create a file :file:`/etc/mysql/conf.d/set_myisam_engine.cnf`
 with this content::
 
-[mysqld]
-default-storage-engine=myisam
+    [mysqld]
+    default-storage-engine=myisam
 
 If you insist on InnoDB, you can work around this problem by doing
 yourself a `DROP DATABASE` followed by a new `CREATE DATABASE`

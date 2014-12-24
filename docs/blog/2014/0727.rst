@@ -2,4 +2,4 @@
 Sunday, July 27, 2014
 =====================
 
-Started :doc:`/tickets/118`.
+Started :srcref:`docs/tickets/118`.

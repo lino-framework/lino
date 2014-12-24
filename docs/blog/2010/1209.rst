@@ -4,7 +4,7 @@
 Erste Sitzung
 -------------
 
-#. Die Lösung für Ticket :doc:`/tickets/18` war einfach: ich darf nicht **application/json** 
+#. Die Lösung für Ticket :srcref:`docs/tickets/18` war einfach: ich darf nicht **application/json** 
    als content type angeben, sondern muss **text/html** sagen. 
    Obschon das ja eigentlich falsch ist. 
    Aber weil es nicht ganz einfach ist, Formulare mit file uploads per Ajax abzuschicken,

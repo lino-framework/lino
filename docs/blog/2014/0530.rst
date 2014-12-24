@@ -6,7 +6,7 @@ Den Seinen gibt es der Herr im Schlaf (Ps 127,2)
 ------------------------------------------------
 
 Yesterday I went to sleep with the following problem (for
-:doc:`/tickets/106`):
+:srcref:`docs/tickets/106`):
 
     I didn't yet manage to reproduce this problem.  On a Windows XP
     machine with Java 7u60 everything seems to work perfectly. I don't
@@ -33,5 +33,5 @@ And this morning I understood the explanation:
 And thus the explanation is that I changed the public version of
 :ref:`davlink` to be self-signed (not certified).
 
-Updated :doc:`/tickets/106`, opened new ticket :doc:`/tickets/107`.
+Updated :srcref:`docs/tickets/106`, opened new ticket :srcref:`docs/tickets/107`.
 

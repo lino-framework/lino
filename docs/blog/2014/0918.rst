@@ -11,7 +11,7 @@ form from actually reloading when :meth:`set_status` is called after a
 child window closed.
 
 
-Opened ticket :doc:`/tickets/125`.
+Opened ticket :srcref:`docs/tickets/125`.
 ... and in the evening also did it for Lino and :ref:`welfare`.
 
 The Emacs manual explains who to do a `replace operation across more
@@ -24,10 +24,10 @@ than one file
 - `Y` to accept all replacements in all files.
 
 
-:doc:`/tickets/124`
--------------------
+:srcref:`docs/tickets/124`
+---------------------------
 
-Continued to work on :doc:`/tickets/124`.
+Continued to work on :srcref:`docs/tickets/124`.
 
 - Added a clickable checkbox indicating the primary household in 
   the summary view of :class:`ml.households.MembersByPerson`.

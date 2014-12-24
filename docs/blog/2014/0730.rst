@@ -66,7 +66,7 @@ Changes in :mod:`lino.modlib.beid.mixins`.
 Appointments today
 ------------------
 
-The reception clerks in :ref:`chatelet` don't need the calendar panel,
+The reception clerks in :ref:`chat` don't need the calendar panel,
 they just want a plain list of all appointments of today.
 
 - Extended the existing :class:`ml.cal.EventsByDay` so that it can be
@@ -90,5 +90,5 @@ Added translations to French.
 Discovered that :meth:`lino_welfare.migrate.migrate_from_1_1_15` and
 :meth:`lino_welfare.migrate.migrate_from_1_1_16` conflict with each
 other when both are being applied in a single migration.  Opened
-:doc:`/tickets/120`.
+:srcref:`docs/tickets/120`.
 

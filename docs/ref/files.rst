@@ -32,7 +32,7 @@ directory that is to be considered as a package.  Read the `Modules
 Python Tutorial for more.
 
 The :xfile:`__init__.py` files of a Django app are often empty, but
-with Lino these files can contain :class:`ad.Plugin` class
+with Lino these files can contain :class:`lino.core.plugin.Plugin` class
 definitions.
 
 .. xfile:: media
@@ -62,7 +62,7 @@ the second part is purely generated from your models and reports).
 :xfile:`.po` files are gettext catalogs. 
 They contain chunks of English text as they appear in Lino, 
 together with their translation into a given language.
-See :doc:`/admin/translate`.
+See :doc:`/dev/translate/index`.
 
 .. xfile:: admin_main.html
 

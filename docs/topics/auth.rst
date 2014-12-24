@@ -73,7 +73,7 @@ One advantage of this is that Lino does not need any sessions.
 
 See also
 
-- :doc:`/tickets/31`
+- :srcref:`docs/tickets/31`
 - :mod:`lino.modlib.users`
 - :doc:`/admin/ApacheHttpAuth`
 

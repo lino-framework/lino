@@ -2,9 +2,18 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This defines the :class:`dd.Action` class, together with some
-helper classes like :class:`InstanceAction` and the :func:`dd.action`
-decorator.
+"""This defines the :class:`Action` class and the :func:`action`
+decorator, together with some of the predefined actions and some
+helper classes like :class:`InstanceAction`
+
+See also:
+
+- :ref:`dev.actions`.
+- :doc:`/tutorials/actions/index`
+
+
+.. |disk| image:: ../../../lino/media/extjs/images/mjames/disk.png
+
 
 """
 
@@ -29,36 +38,11 @@ from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
+from lino.core import keyboard
 from lino.core.signals import pre_ui_create, pre_ui_delete
 from lino.core.dbutils import ChangeWatcher
 
 PLAIN_PAGE_LENGTH = 15
-
-
-class Hotkey:
-    keycode = None
-    shift = False
-    ctrl = False
-    alt = False
-    inheritable = ('keycode', 'shift', 'ctrl', 'alt')
-
-    def __init__(self, **kw):
-        for k, v in kw.items():
-            setattr(self, k, v)
-
-    def __call__(self, **kw):
-        for n in self.inheritable:
-            if not n in kw:
-                kw[n] = getattr(self, n)
-            return Hotkey(**kw)
-
-# ExtJS src/core/EventManager-more.js
-RETURN = Hotkey(keycode=13)
-ESCAPE = Hotkey(keycode=27)
-PAGE_UP = Hotkey(keycode=33)
-PAGE_DOWN = Hotkey(keycode=34)
-INSERT = Hotkey(keycode=44)
-DELETE = Hotkey(keycode=46)
 
 
 class Permittable(object):
@@ -77,7 +61,6 @@ class Permittable(object):
     See :func:`lino.core.perms.make_permission_handler`.
     """
 
-
     # internally needed for make_permission_handler
     workflow_state_field = None
     # internally needed for make_permission_handler
@@ -85,6 +68,10 @@ class Permittable(object):
     #~ readonly = True
 
     debug_permissions = False
+    """
+    Whether to log :ref:`debug_permissions` for this action.
+    
+    """
 
     def add_requirements(self, **kw):
         return add_requirements(self, **kw)
@@ -206,23 +193,44 @@ def make_params_layout_handle(self, ui):
 
 
 class Parametrizable(object):
-    #  Base class for both Actors and Actions.
+    """Base class for both Actors and Actions.
+
+
+    .. method:: FOO_choices
+
+        For every parameter field named "FOO", if the action has a method
+        called "FOO_choices" (which must be decorated by
+        :func:`dd.chooser`), then this method will be installed as a
+        chooser for this parameter field.
+
+
+    """
 
     active_fields = None  # 20121006
     master_field = None
 
     parameters = None
     """
-    Either None or a dict defining the "parameters" of that actor.
+    User-definable parameter fields for this actor or action.
+    Set this to a `dict` of `name = models.XyzField()` pairs.
+
     TODO: write documentation.
     """
 
     params_layout = None
     """
     The layout to be used for the parameter panel.
+    If this table or action has parameters, specify here how they
+    should be laid out in the parameters panel.
     """
 
     params_panel_hidden = False
+    """
+    If this table has parameters, set this to True if the parameters
+    panel should be initially hidden when this table is being
+    displayed.
+
+    """
 
     _layout_class = NotImplementedError
 
@@ -286,36 +294,127 @@ class InstanceAction(object):
 
 
 class Action(Parametrizable, Permittable):
-    "See :class:`dd.Action`."
+    """
+    Abstract base class for all actions.
+    """
 
     #~ __metaclass__ = ActionMetaClass
+    _layout_class = layouts.ActionParamsLayout
+
+    label = None
+    """
+    The text to appear on the button.
+    """
+
     debug_permissions = False
     save_action_name = None
+
     icon_name = None
-    _layout_class = layouts.ActionParamsLayout
-    hidden_elements = frozenset()
-    combo_group = None
-    sort_index = 90
-    label = None
-    help_text = None
-    auto_save = True
-
-    no_params_window = False
-
-    extjs_main_panel = None
-    js_handler = None
-
-    action_name = None
-    """Internally used to store the name of this action within the
-    defining Actor's namespace.
+    """
+    The class name of an icon to be used for this action when rendered
+    as toolbar button.
 
     """
+
+    hidden_elements = frozenset()
+    combo_group = None
+    """
+    The name of another action to which to "attach" this action.
+    Both actions will then be rendered as a single combobutton.
+
+    """
+
+    parameters = None
+    "See :attr:`Parametrizable.parameters`."
+
     use_param_panel = False
     """Used internally. This is True for window actions whose window use
     the parameter panel: grid and emptytable (but not showdetail)
 
     """
 
+    no_params_window = False
+    """Set this to `True` if your action has :attr:`parameters` but you
+    do *not* want it to open a window where the user can edit these
+    parameters before calling the action.
+
+    Setting this attribute to `True` means that the calling code must
+    explicitly set all parameter values.  Usage example is the
+    :attr:`lino.modlib.polls.models.AnswersByResponse.answer_buttons`
+    virtual field.
+
+    """
+
+    sort_index = 90
+    """
+    Determins the sort order in which the actions will be presented to
+    the user.
+
+    List actions are negative and come first.
+
+    Predefined `sort_index` values are:
+
+    ===== =================================
+    value action
+    ===== =================================
+    -1    :class:`as_pdf <lino.utils.appy_pod.PrintTableAction>`
+    10    :class:`InsertRow`, :class:`SubmitDetail`
+    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
+    20    :class:`detail <ShowDetailAction>`
+    30    :class:`delete <DeleteSelected>`
+    31    :class:`merge <MergeAction>`
+    50    :class:`Print <lino.mixins.printable.BasePrintAction>`
+    51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
+    60    :class:`ShowSlaveTable`
+    90    default for all custom row actions
+    ===== =================================
+
+    """
+
+    help_text = None
+    """A help text that shortly explains what this action does.
+    :mod:`lino.modlib.extjs` shows this as tooltip text.
+
+    """
+
+    auto_save = True
+    """
+    What to do when this action is being called while the user is on a
+    dirty record.
+    
+    - `False` means: forget any changes in current record and run the
+      action.
+
+    - `True` means: save any changes in current record before running
+      the action.  `None` means: ask the user.
+
+    """
+
+    extjs_main_panel = None
+    """Used by :mod:`lino.modlib.extensible` and
+    :mod:`lino.modlib.awesome_uploader`.
+
+    Example::
+
+        class CalendarAction(dd.Action):
+            extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
+            ...
+
+    """
+
+    js_handler = None
+    """
+    This is usually `None`. Otherwise it is the name of a Javascript
+    callable to be called without arguments. That callable must have
+    been defined in a :attr:`lino.core.plugin.Plugin.site_js_snippets` of the plugin.
+
+    """
+
+    action_name = None
+    """Internally used to store the name of this action within the
+    defining Actor's namespace.
+
+    """
     defining_actor = None
     """Internally used to store the :class:`lino.core.actors.Actor` who
     defined this action.
@@ -324,14 +423,8 @@ class Action(Parametrizable, Permittable):
 
     key = None
     """
-    The hotkey.
+    The hotkey to associate to this action in a user interface.
     """
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, (GridEdit, ShowDetailAction))
-        #~ if self.select_rows:
-            #~ return isinstance(caller,(GridEdit,ShowDetailAction))
-        #~ return isinstance(caller,GridEdit)
 
     default_format = 'html'
     """
@@ -339,6 +432,21 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
+    """
+    Whether this action possibly modifies data *in the given object*.
+    
+    This means that :class:`InsertRow` is a `readonly` action.
+    Actions like :class:`InsertRow` and :class:`Duplicable
+    <lino.mixins.duplicable.Duplicate>` which do not modify the given
+    object but *do* modify the database, must override their
+    `get_action_permission`::
+    
+      def get_action_permission(self,ar,obj,state):
+          if user.profile.readonly:
+              return False
+          return super(Duplicate,self).get_action_permission(ar,obj,state)
+
+    """
 
     opens_a_window = False
     """
@@ -358,9 +466,40 @@ class Action(Parametrizable, Permittable):
     """
 
     show_in_bbar = True
+    """
+    Whether this action should be displayed as a button in the toolbar
+    and the context menu.
+
+    For example :class:`ml.beid.FindByBeIdAction` has
+    :attr:`show_in_bbar` explicitly set to `False`, otherwise it
+    would be visible in the toolbar.
+
+    """
+
     show_in_workflow = False
+    """
+    Used internally.  Whether this action should be displayed as the
+    :meth:`workflow_buttons <dd.Model.workflow_buttons>`
+    column. If this is True, then Lino will automatically set
+    :attr:`custom_handler` to True.
+
+    """
+
     custom_handler = False
+    """
+    Whether this action is implemented as Javascript function call.
+    This is necessary if you want your action to be callable using an
+    "action link" (html button).
+
+    """
+
     select_rows = True
+    """
+    True if this action should be called on a single row (ignoring
+    multiple row selection).  Set this to False if this action is a
+    list action, not a row action.
+    """
+
     http_method = 'GET'
     """
     HTTP method to use when this action is called using an AJAX call.
@@ -408,6 +547,12 @@ class Action(Parametrizable, Permittable):
     # @classmethod
     # def make_chooser(cls, wrapped):
     #     return wrapped
+
+    def is_callable_from(self, caller):
+        return isinstance(caller, (GridEdit, ShowDetailAction))
+        #~ if self.select_rows:
+            #~ return isinstance(caller,(GridEdit,ShowDetailAction))
+        #~ return isinstance(caller,GridEdit)
 
     def get_chooser_for_field(self, fieldname):
         d = getattr(self, '_choosers_dict', {})
@@ -521,15 +666,30 @@ class Action(Parametrizable, Permittable):
         return force_unicode(self.label)
 
     def get_action_permission(self, ar, obj, state):
-        "See :meth:`dd.Action.get_action_permission`."
+        """Return (True or False) whether the given :class:`ActionRequest
+        <lino.core.requests.BaseRequest>` `ar` should get permission
+        to execute on the given Model instance `obj` (which is in the
+        given `state`).
+
+        Derived Action classes may override this to add vetos.
+        E.g. the MoveUp action of a Sequenced is not available on the
+        first row of given `ar`.
+
+        """
         return True
 
     def get_view_permission(self, profile):
-        "See :meth:`dd.Action.get_view_permission`."
+        """
+        Return True if this action is visible for users of given profile.
+
+        """
         return True
 
     def run_from_ui(self, ar, **kw):
-        "See :meth:`dd.Action.run_from_ui`."
+        """Execute the action.  `ar` is an :class:`ActionRequest
+        <lino.core.requests.BaseRequest>` object representing the
+        context where the action is running.
+        """
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)
 
@@ -545,7 +705,13 @@ class Action(Parametrizable, Permittable):
         return ia.run_from_session(ses, **kw)
 
     def action_param_defaults(self, ar, obj, **kw):
-        "See :meth:`dd.Action.action_param_defaults` ."
+        """Same as :meth:`lino.core.actors.Actor.param_defaults`, except that
+        on an action it is a instance method.
+
+        Note that this method is not called for actions which are rendered
+        in a toolbar (:srcref:`docs/tickets/105`)
+
+        """
 
         for k, pf in self.parameters.items():
             kw[k] = pf.get_default()
@@ -582,6 +748,9 @@ def buttons2pager(buttons, title=None):
 
 
 class GridEdit(TableAction):
+    """
+    Open a window with a grid editor on this table as main item.
+    """
 
     #~ debug_permissions = 20130704
 
@@ -663,7 +832,9 @@ class GridEdit(TableAction):
 
 
 class ShowDetailAction(Action):
-
+    """
+    Open the :term:`detail Window` on a row of this table.
+    """
     icon_name = 'application_form'
     #~ icon_file = 'application_form.png'
     opens_a_window = True
@@ -749,7 +920,11 @@ class ShowDetailAction(Action):
 
 
 class InsertRow(TableAction):
+    """
+    Open the Insert window filled with a blank row.  The new row will
+    be actually created only when this window gets submitted.
 
+    """
     save_action_name = 'submit_insert'
 
     label = _("New")
@@ -763,7 +938,7 @@ class InsertRow(TableAction):
     # ~ readonly = False # see blog/2012/0726
     required = dict(user_level='user')
     action_name = 'insert'
-    key = INSERT  # (ctrl=True)
+    key = keyboard.INSERT  # (ctrl=True)
 
     def get_action_title(self, ar):
         return _("Insert into %s") % force_unicode(ar.get_title())
@@ -808,6 +983,11 @@ class UpdateRowAction(Action):
 
 
 class SaveRow(Action):
+    """
+    Called when user edited a cell of a non-phantom record in a grid.
+    Installed as `update_action` on every :class:`Actor`.
+
+    """
     sort_index = 10
     show_in_workflow = False
     action_name = 'grid_put'
@@ -874,8 +1054,12 @@ class ValidateForm(Action):
 
 
 class SubmitDetail(SaveRow):
-    """Called when the OK button of a Detail Window was clicked.
-    Installed as `submit_detail` on every :class:`dd.Actor`.
+    """The "Save" button of a :term:`detail window`.
+    Rendered as a button with a disk (|disk|).
+
+    Called when the OK button of a Detail Window was clicked.
+    Installed as `submit_detail` on every actor.
+
     """
     icon_name = 'disk'
     help_text = _("Save changes in this form")
@@ -1091,6 +1275,7 @@ class MultipleRowAction(Action):
 
 
 class DeleteSelected(MultipleRowAction):
+    "Delete the row(s) on which it is being executed."
 
     action_name = 'delete_selected'  # because...
     icon_name = 'delete'
@@ -1104,7 +1289,7 @@ class DeleteSelected(MultipleRowAction):
     #~ needs_selection = True
     label = _("Delete")
     #~ url_action_name = 'delete'
-    key = DELETE  # (ctrl=True)
+    key = keyboard.DELETE  # (ctrl=True)
     #~ client_side = True
 
     def run_from_ui(self, ar, **kw):
@@ -1143,6 +1328,18 @@ class DeleteSelected(MultipleRowAction):
 
 
 def action(*args, **kw):
+    """Decorator to define custom actions.
+    
+    The decorated function will be installed as the actions's
+    :meth:`run_from_ui <Action.run_from_ui>` method.
+
+    Same signature as :meth:`Action.__init__`.
+    In practice you'll possibly use:
+    :attr:`label <Action.label>`,
+    :attr:`help_text <Action.help_text>` and
+    :attr:`required <Action.required>`.
+
+    """
     def decorator(fn):
         # print 20140422, fn.__name__
         kw.setdefault('custom_handler', True)

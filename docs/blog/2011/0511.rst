@@ -18,7 +18,7 @@ Der Hauptpartner (oder einfach nur "Partner") einer Notiz
 ist entweder eine Person (die im Feld "Person" angegeben wird), 
 oder eine Firma (die im Feld "Firma" angegeben wird), 
 oder eine Kombination der beiden.
-Diese beiden Felder kriegen irgendwann (wenn Ticket :doc:`/tickets/34` 
+Diese beiden Felder kriegen irgendwann (wenn Ticket :srcref:`docs/tickets/34` 
 fertig ist) im Detail einer Notiz 
 noch eine Feldgruppenbezeichnung "Partner".
 

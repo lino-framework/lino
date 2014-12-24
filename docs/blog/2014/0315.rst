@@ -2,20 +2,20 @@
 20140315 (Saturday, 15 March 2014)
 ==================================
 
-- :doc:`/tickets/100`
+- :srcref:`docs/tickets/100`
 
 - Fixed a bug in :mod:`atelier.sphinxconf`: The
   :rst:dir:`tickets_table` was not able to handle documents with
   backticks (``\```) in the title.
 
-- Also added `scripts/shotwell2blog.py` to the :ref:`atelier`
+- Also added `scripts/shotwell2blog.py` to the :mod:`atelier`
   repository. In fact it has not really to do with atelier, but I
   didn't want to create a project just for this.
 
 
 
 
-Change in :ref:`site`: the :setting:`hidden_apps` setting was not
+Change in `djangosite`: the :setting:`hidden_apps` setting was not
 enough. I replaced it by :setting:`get_apps_modifiers`.
 
 The week in Chatelet taught me that we will probably have many

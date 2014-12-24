@@ -23,7 +23,7 @@ The `centeredlogo` thing was not a generally useful extension.
   files and css.
 
 
-Worked on :doc:`/tickets/113`. Two points are now solved:
+Worked on :srcref:`docs/tickets/113`. Two points are now solved:
 
 - VouchersByPartner should show a shortcurt link to unregistered
   vouchers (i.e. to their MTI children).

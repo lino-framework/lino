@@ -17,7 +17,7 @@ Written in Python:
   purpose application platform under the license GPL-3 written in
   Python and using PostgreSQL as database engine.  It is the core base
   of a complete business solution providing modularity, scalability
-  and security. See :doc:`/tickets/51`.
+  and security. See :srcref:`docs/tickets/51`.
 
 Written in other languages:
 

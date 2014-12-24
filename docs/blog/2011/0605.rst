@@ -1,7 +1,7 @@
 20110605
 ========
 
-Opened :doc:`/tickets/44`. 
+Opened :srcref:`docs/tickets/44`. 
 Tried a solution :mod:`lino.utils.textfields`, but dropped it again and 
 even removed the "expand_memos" attribute from Report
 and the "memos" button from Lino.GridPanel

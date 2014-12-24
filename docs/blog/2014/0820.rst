@@ -2,7 +2,7 @@
 Wednesday, August 20, 2014
 ==========================
 
-Continued with :doc:`/tickets/123`. 
+Continued with :srcref:`docs/tickets/123`. 
 
 - added new field `courses.Line.fees_cat` to avoid users seeing *all*
   products when selecting a fee.

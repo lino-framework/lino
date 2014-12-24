@@ -1,7 +1,7 @@
 20120426
 ========
 
-Started working on :doc:`/tickets/62`.
+Started working on :srcref:`docs/tickets/62`.
 
 Preliminary studies using :mod:`lino.apps.min1`.
 I wanted to make it a really minimal application by also removing 

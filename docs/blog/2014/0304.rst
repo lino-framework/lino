@@ -19,7 +19,7 @@ needed if the action calls ar.
 
 First unit tests in :mod:`lino_welfare.tests.test_beid`.
 Most functionality is in :mod:`lino.modlib.beid.mixins`. 
-Started to write user documentation in :ref:`welfare.beid`.
+Started to write user documentation in `welfare.beid`.
 
 I had to replace `exclude_trees
 <http://sphinx-doc.org/config.html#confval-exclude_trees>`_ by

@@ -2,7 +2,7 @@
 Friday, September 26, 2014
 ==========================
 
-Discovered and opened :doc:`/tickets/128`.
+Discovered and opened :srcref:`docs/tickets/128`.
 
 While looking at this problem, I saw that simply adding a
 :xfile:`models.py` module for :mod:`lino` with those choiceliss would
@@ -14,6 +14,7 @@ immediately (in :func:`rt.startup`) by replacing::
 
     for a in loading.get_apps():
         self.modules.define(a.__name__.split('.')[-2], a)
+
 with::
 
     for p in self.installed_plugins:
@@ -22,7 +23,7 @@ with::
 
 
 I discovered why certain strings in :ref:`faggio` were not yet
-translated: because I had switched :attr:`ad.Site.languages` of
+translated: because I had switched :attr:`lino.core.site_def.Site.languages` of
 :mod:`lino_faggio.projects.docs` to monolingual English.  If you do
 that (have the demo database onl in English) but still support
 multiple languages, then you must set `env.languages` in your

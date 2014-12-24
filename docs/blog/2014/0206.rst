@@ -178,7 +178,7 @@ Miscellaneous
 Attestations
 ------------
 
-Continued on :doc:`/tickets/93`.  How to issue a presence attestation
+Continued on :srcref:`docs/tickets/93`.  How to issue a presence attestation
 (Anwesenheitsbescheinigung)?
 
 Das ist eine der heftigsten Änderungen in der Benutzerschnittstelle,

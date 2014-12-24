@@ -29,7 +29,7 @@ And of course the thing which caused all these evolutions: the new
 new Sphinx extension module :mod:`atelier.sphinxconf.refstothis`.
 
 TODO: continue to tidy up.
-Opened new ticket :doc:`/tickets/89`.
+Opened new ticket :srcref:`docs/tickets/89`.
 
 The modules 
 :mod:`atelier.sphinxconf.insert_input`,
@@ -67,7 +67,7 @@ hides the field.
 
 I also tried to add the MergeAction unconditionally to every Person
 and Company, but that turned out to not be so easy. 
-See :doc:`/tickets/90`.
+See :srcref:`docs/tickets/90`.
 
 TODO: The `few_cities` fixture doesn't yet set the `parent` field for 
 Eupen,  Kettenis and other places.

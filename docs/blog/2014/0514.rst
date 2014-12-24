@@ -2,7 +2,7 @@
 Wednesday, May 14, 2014
 =======================
 
-Tried to solve :doc:`/tickets/97`.  A real solution would require
+Tried to solve :srcref:`docs/tickets/97`.  A real solution would require
 changes in `store.py` and `elems.py`, take much more time than I
 currently have and would bring unstability.
 
@@ -54,8 +54,8 @@ Getting Lino development version to run on Windows.
   Song, Concert and Performance
 
 
-Continued on  :doc:`/tickets/93`
---------------------------------
+Continued on  :srcref:`docs/tickets/93`
+-----------------------------------------
 
 - The DELETE key failed to invoke the DeleteSelected action (after
   converting this to a customizable action). Now it works again. And

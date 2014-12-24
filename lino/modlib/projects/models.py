@@ -13,8 +13,9 @@ Adds tables Project and ProjectType
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from lino import dd, rt
+from lino import dd
 from lino import mixins
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
 class ProjectType(mixins.BabelNamed):
@@ -33,7 +34,7 @@ class ProjectTypes(dd.Table):
 #
 
 
-class Project(mixins.AutoUser, mixins.CachedPrintable):
+class Project(UserAuthored, mixins.CachedPrintable):
 
     class Meta:
         verbose_name = _("Project")
@@ -68,7 +69,7 @@ class Projects(dd.Table):
     """
 
 
-class MyProjects(Projects, mixins.ByUser):
+class MyProjects(Projects, ByUser):
     pass
 
 

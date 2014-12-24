@@ -4,7 +4,7 @@
 
 Committed yesterday's changes at 02:21.
 
-Continued to work for :doc:`/tickets/84`:
+Continued to work for :srcref:`docs/tickets/84`:
 
 - Noch eine Benutzerfrage zu :ref:`faggio`:
   :ref:`faq.delete_event`

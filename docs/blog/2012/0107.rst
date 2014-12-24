@@ -43,14 +43,14 @@ TODO: the default value for `preferred_width` isn't correct.
 New ideas
 ---------
 
-- Opened :doc:`/tickets/53`, but this is going to wait until 
+- Opened :srcref:`docs/tickets/53`, but this is going to wait until 
   there's concrete need.
 
 - I realized that before continuing with 
-  :doc:`/tickets/52`
+  :srcref:`docs/tickets/52`
   (the last steps will probably be rather stupid routine work), 
   I prefer to find a 
   solution for generating printed reports more easily.
-  Opened :doc:`/tickets/54`.
+  Opened :srcref:`docs/tickets/54`.
   
 

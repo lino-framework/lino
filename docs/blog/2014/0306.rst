@@ -56,7 +56,7 @@ wrong?
 'module' object has no attribute 'CoachingEvents'
 -------------------------------------------------
 
-Fixed a bug: Trying to get a :ref:`welfare.integ.ActivityReport`
+Fixed a bug: Trying to get a `welfare.integ.ActivityReport`
 failed with an AttributeError 'module' object has no attribute
 'CoachingEvents'.
 

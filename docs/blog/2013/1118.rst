@@ -10,7 +10,7 @@ Does Lino need a new name?
 
 
 My wife and I were thinking about a logo for Lino 
-(:doc:`/tickets/94`), and I noticed that I feel
+(:srcref:`docs/tickets/94`), and I noticed that I feel
 certain problems:
 
 - Resemblance with "Linux" (e.g. my non-programmer friends usually

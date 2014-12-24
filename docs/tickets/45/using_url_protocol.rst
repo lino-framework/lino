@@ -16,10 +16,10 @@ as handler for ``webdav:`` URLs:
 
 .. literalinclude:: webdav.reg
 
-To try it: download :srcref:`/docs/tickets/45/webdav.reg` and doubleclick on it.
+To try it: download :srcref:`docs/tickets/45/webdav.reg` and doubleclick on it.
 
 Here is a similar file for MS Office:
-:srcref:`/docs/tickets/45/webdav_mso.reg`.
+:srcref:`docs/tickets/45/webdav_mso.reg`.
 
 Problem: The specified URL protocol handler then receives 
 ``webdav://host/path.rtf`` 

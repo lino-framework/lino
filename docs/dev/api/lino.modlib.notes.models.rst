@@ -26,6 +26,7 @@ lino.modlib.notes.models
    .. autosummary::
    
       AllNotes
+      ByUser
       Controllable
       EventType
       EventTypes
@@ -43,6 +44,7 @@ lino.modlib.notes.models
       NotesByType
       NotesByX
       Postable
+      UserAuthored
    
    
 

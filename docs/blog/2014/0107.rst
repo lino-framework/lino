@@ -5,7 +5,7 @@
 Gerichtsvollzieher und Inkasso-Unternehmen
 ------------------------------------------
 
-:ref:`welfare`: I opened ticket :doc:`/tickets/80` and started to work
+:ref:`welfare`: I opened ticket :srcref:`docs/tickets/80` and started to work
 on it.
 
 
@@ -48,7 +48,7 @@ Inkasso-Schulden
 ----------------
 
 Kerstin phoned me.
-Opened new ticket :doc:`/tickets/80`.
+Opened new ticket :srcref:`docs/tickets/80`.
 Wrote a first implementation.
   
 

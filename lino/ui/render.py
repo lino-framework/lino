@@ -120,7 +120,7 @@ class HtmlRenderer(object):
         (if the request has rows) by a :guilabel:`[Show last]` 
         and a :guilabel:`[Show all]` button.
         
-        See also :doc:`/tickets/56`.
+        See also :srcref:`docs/tickets/56`.
         
         """
         buttons = []

@@ -2,14 +2,14 @@
 20140122 (Wednesday, 22 January 2014)
 =====================================
 
-Tidied up under :doc:`/tickets`.
+Tidied up under :srcref:`docs/tickets`.
 
-Worked on :doc:`/tickets/93` : 
+Worked on :srcref:`docs/tickets/93` : 
 Started new module :mod:`lino.modlib.attestations`
 
 
 Besichtigung :ref:`faggio` mit Sven und Roger
-(:doc:`/tickets/84`).
+(:srcref:`docs/tickets/84`).
 
 #.  Preis manuell anpassbar pro Einschreibung und/oder pro Kurs
 

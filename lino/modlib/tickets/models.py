@@ -64,6 +64,7 @@ blogs = dd.resolve_app('blogs')
 
 from lino.modlib.tickets.utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
+from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
 class ProjectType(mixins.PrintableType, mixins.BabelNamed):
@@ -95,7 +96,7 @@ class SessionTypes(dd.Table):
     model = SessionType
     column_names = 'name *'
 
-#~ class Repository(mixins.UserAuthored):
+#~ class Repository(UserAuthored):
     #~ class Meta:
         #~ verbose_name = _("Repository")
         #~ verbose_name_plural = _('Repositories')
@@ -104,7 +105,7 @@ class SessionTypes(dd.Table):
     #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
 
-class Project(mixins.UserAuthored, mixins.Printable, mixins.Referrable):
+class Project(UserAuthored, mixins.Printable, mixins.Referrable):
 
     """
     The `user` ("Autor") of a project is the User who manages that Project.
@@ -223,7 +224,7 @@ class MilestonesByProject(Milestones):
     column_names = "ref expected reached *"
 
 
-class Ticket(mixins.AutoUser, mixins.CreatedModified):
+class Ticket(UserAuthored, mixins.CreatedModified):
 
     """
     """
@@ -436,7 +437,7 @@ class ParentsByTicket(Dependencies):
     column_names = "dependency_type parent *"
 
 
-class Session(mixins.AutoUser):
+class Session(UserAuthored):
 
     """
     A Session is when a user works on a given ticket.
@@ -510,7 +511,7 @@ class SessionsByTicket(Sessions):
 
 if settings.SITE.user_model:
 
-    class MySessions(Sessions, mixins.ByUser):
+    class MySessions(Sessions, ByUser):
         order_by = ['date', 'start_time']
         column_names = 'date start_time end_time break_time ticket summary *'
 
@@ -589,15 +590,15 @@ else:
 
 if settings.SITE.user_model:
 
-    class MyProjects(Projects, mixins.ByUser):
+    class MyProjects(Projects, ByUser):
         order_by = ["name"]
         column_names = 'ref name id *'
 
-    class MyTickets(Tickets, mixins.ByUser):
+    class MyTickets(Tickets, ByUser):
         order_by = ["-created", "id"]
         column_names = 'created id project summary state *'
 
-    # class MyOpenTickets(Tickets, mixins.ByUser):
+    # class MyOpenTickets(Tickets, ByUser):
     #     order_by = ["-created", "id"]
     #     column_names = 'created id project summary state *'
     #     filter = models.Q(closed__isnull=True)

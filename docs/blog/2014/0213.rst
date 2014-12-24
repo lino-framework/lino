@@ -16,7 +16,7 @@ Google then leads me to a page `LiveConnect changes in 7u45
 <https://blogs.oracle.com/java-platform-group/entry/liveconnect_changes_in_7u45>`_,
 of which I understand only fragments, and which has comments like:
 
-- "Adding "Caller-Allowable-Codebase: *" to the JAR's manifest file
+- "Adding ``Caller-Allowable-Codebase: *`` to the JAR's manifest file
   isn't making the error go away. Any ideas?"
 
 - "Please keep 'improving' the applet experience Oracle, each time you
@@ -96,7 +96,7 @@ and verifying that it works again.
 Attestations
 ------------
 
-:doc:`/tickets/93`
+:srcref:`docs/tickets/93`
 
 .. currentmodule:: lino.modlib.attestations
 
@@ -115,7 +115,7 @@ that Lino finds them back now that they are an
 Blogging
 --------
 
-:doc:`/tickets/88`
+:srcref:`docs/tickets/88`
 
 I stumbled over an article for which I'd like to write a blog entry,
 mostly in order to find it back when I need it in 3 years or so.

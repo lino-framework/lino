@@ -89,7 +89,7 @@ Company
     Represents an organisation.  The internal name is "Company" for
     historical reasons and because that's easier to type.
 
-    See also :doc:`/tickets/14`.
+    See also :srcref:`docs/tickets/14`.
 
   .. attribute:: type
     
@@ -216,7 +216,7 @@ Configuration
 
 .. class:: Plugin
 
-  Extends :class:`ad.Plugin`. See also :doc:`/dev/ad`.
+  Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
 
   .. attribute:: hide_region
 

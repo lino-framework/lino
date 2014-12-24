@@ -22,5 +22,5 @@ Between 16.20 and 16.30 the demo databases on :ref:`lf` were down
 because I did a ``git pull`` and a :manage:`initdb_demo`.
 
 Note that I did this in the Tallinn airport while waiting for my plane
-to Brussels, because a second :ref:`ise:` had come in. 
-Somebody obviously trying :ref:`cosi`. Now it works. 
+to Brussels, because a second :ref:`ise` had come in.  Somebody
+obviously trying :ref:`cosi`. Now it works.

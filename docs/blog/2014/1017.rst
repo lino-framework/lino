@@ -5,13 +5,13 @@ Friday, October 17, 2014
 New tickets
 ===========
 
-Opened :doc:`/tickets/134`.
-Opened :doc:`/tickets/135`.
+Opened :srcref:`docs/tickets/134`.
+Opened :srcref:`docs/tickets/135`.
 
 Bescheinigungen "Kleiderkammer"
 ===============================
 
-Opened :doc:`/tickets/136`.
+Opened :srcref:`docs/tickets/136`.
 
 Started a new attestation template :xfile:`clothing_bank.body.html`
 which uses the new table

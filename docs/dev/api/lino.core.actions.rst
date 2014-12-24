@@ -38,7 +38,6 @@ lino.core.actions
       CreateRow
       DeleteSelected
       GridEdit
-      Hotkey
       InsertRow
       InstanceAction
       MultipleRowAction

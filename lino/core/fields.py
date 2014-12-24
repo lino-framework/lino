@@ -49,7 +49,7 @@ class RichTextField(models.TextField):
     """
     Only difference with Django's `models.TextField` is that you can
     specify a keyword argument `format` to
-    override the global :attr:`ad.Site.textfield_format`.
+    override the global :attr:`lino.core.site_def.Site.textfield_format`.
     """
 
     def __init__(self, *args, **kw):
@@ -320,7 +320,12 @@ class VirtualGetter(object):
 
 
 class VirtualField(FakeField):
-    "See :class:`dd.VirtualField`."
+    """
+    Represents a virtual field. Virtual fields are not stored in the
+    database, but computed each time they are read. Django doesn't see
+    them.
+
+    """
 
     def __init__(self, return_type, get):
         self.return_type = return_type  # a Django Field instance
@@ -452,6 +457,9 @@ class VirtualField(FakeField):
 
 
 def virtualfield(return_type):
+    """
+    Decorator to turn a method into a :class:`VirtualField`.
+    """
     def decorator(fn):
         return VirtualField(return_type, fn)
     return decorator
@@ -478,7 +486,9 @@ def constant():
 
 
 class RequestField(VirtualField):
-    "See :class:`dd.RequestField`."
+    """
+    A :class:`VirtualField` whose values are action request.
+    """
     def __init__(self, get, *args, **kw):
         kw.setdefault('max_length', 8)
         VirtualField.__init__(self, DisplayField(*args, **kw), get)
@@ -775,7 +785,10 @@ class Dummy(object):
 
 
 class DummyField(FakeField):
-    "See :class:`dd.DummyField`."
+    """
+    Represents a field that doesn't exist in the current configuration but
+    might exist in other configurations.
+    """
     # choices = []
     # primary_key = False
 
@@ -809,7 +822,24 @@ class RecurrenceField(models.CharField):
 
 
 def fields_list(model, field_names):
-    "See :func:`dd.fields_list`."
+    """
+    Return a set with the names of the specified fields, checking whether
+    each of them exists.
+
+    **Arguments:** `model` is any subclass of `django.db.models.Model`. It
+    may be a string with the full name of a model
+    (e.g. ``"myapp.MyModel"``).  `field_names` is a single string with a
+    space-separated list of field names.
+
+    If one of the names refers to a :class:`DummyField`, this name
+    will be ignored silently.
+
+    For example if you have a model `MyModel` with two fields `foo` and
+    `bar`, then ``dd.fields_list(MyModel,"foo bar")`` will return
+    ``['foo','bar']`` and ``dd.fields_list(MyModel,"foo baz")`` will raise
+    an exception.
+
+    """
     lst = set()
     for name in field_names.split():
         e = model.get_data_elem(name)
@@ -822,7 +852,14 @@ def fields_list(model, field_names):
 
 
 def ForeignKey(othermodel, *args, **kw):
-    "See :class:`dd.ForeignKey`."
+    """A wrapper function which returns a Django `ForeignKey
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`
+    field, with a subtle difference in the signature: it supports
+    `othermodel` being `None` or the name of some non-installed
+    model and returns a :class:`DummyField` in that case.  This
+    difference is useful when designing reusable models.
+
+    """
     if othermodel is None:
         return DummyField(othermodel, *args, **kw)
     if isinstance(othermodel, basestring):
@@ -832,8 +869,20 @@ def ForeignKey(othermodel, *args, **kw):
 
 
 class CustomField(object):
-    "See :class:`dd.CustomField`."
+    """
+    Mixin to create a custom field. It defines a single method
+    :meth:`dd.CustomField.create_layout_elem`
+
+    """
     def create_layout_elem(self, layout_handle, field, **kw):
+        """Instantiate and return some subclass of
+        :class:`lino.ui.elems.LayoutElement` to be used in
+        `layout_handle`.
+
+        `self` and `field` are identical unless `self` is a
+        :class`RemoteField` or a :class:`VirtualField`.
+
+        """
         return None
 
 

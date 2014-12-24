@@ -11,7 +11,7 @@ Die Idee ist, dass der Server dem Client auf manche Ajax-Calls
 antworten kann "Das dauert was. 
 Hier hast du die Prozessnummer, 
 frag später nochmal nach, wie es gelaufen ist."
-:doc:`/tickets/61`.
+:srcref:`docs/tickets/61`.
 
 Um das zu ermöglichen bräuchte es rein serverseitig 
 schon eine ganze Menge von Zutaten, 

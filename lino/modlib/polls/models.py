@@ -34,6 +34,8 @@ from lino.utils.xmlgen.html import E
 
 from lino.mixins import Referrable
 
+from lino.modlib.users.mixins import ByUser, UserAuthored
+
 from .utils import ResponseStates, PollStates
 
 config = dd.plugins.polls
@@ -85,7 +87,7 @@ class ChoicesBySet(Choices):
     master_key = 'choiceset'
 
 
-class Poll(mixins.UserAuthored, mixins.CreatedModified, Referrable):
+class Poll(UserAuthored, mixins.CreatedModified, Referrable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Poll')
@@ -190,7 +192,7 @@ class Polls(dd.Table):
     """, window_size=(60, 15))
 
 
-class MyPolls(mixins.ByUser, Polls):
+class MyPolls(ByUser, Polls):
     column_names = 'created title state *'
 
 
@@ -279,7 +281,7 @@ class ToggleChoice(dd.Action):
         # dd.logger.info("20140930 %s", obj)
             
 
-class Response(mixins.UserAuthored, mixins.Registrable,
+class Response(UserAuthored, mixins.Registrable,
                mixins.CreatedModified):
 
     class Meta:
@@ -330,7 +332,7 @@ class Responses(dd.Table):
         return _("%(user)s's %(what)s") % dict(user=obj.user, what=txt)
 
 
-class MyResponses(mixins.ByUser, Responses):
+class MyResponses(ByUser, Responses):
     column_names = 'created poll state remark *'
 
 

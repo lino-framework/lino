@@ -30,7 +30,7 @@ That statement was a challenge to me.
 I had to either *understand* 
 that they are right or *show* that they are wrong.
 
-I had to reopen ticket :doc:`/tickets/22`!
+I had to reopen ticket :srcref:`docs/tickets/22`!
 Sigh!
 Everything there seemed so clear to me!
 
@@ -56,9 +56,9 @@ This also caused some small optimizations:
 - Better error messages at some internal places
 
 But this proof of concept is not finised.
-The main challenge is :doc:`/tickets/73`.
+The main challenge is :srcref:`docs/tickets/73`.
 
-Also opened new ticket :doc:`/tickets/72`.
+Also opened new ticket :srcref:`docs/tickets/72`.
 
 
 Pre-release rush

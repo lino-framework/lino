@@ -15,7 +15,7 @@ Which Python installer to use
 
 Yet another move inspired by 
 `Two scoops of Django <https://django.2scoops.org/>`_
-(see also :doc:`/tickets/72`) 
+(see also :srcref:`docs/tickets/72`) 
 is to start using pip-installer and virtualenv.
 
 In the

@@ -220,7 +220,7 @@ Mixins
   .. method:: update_cal_until(self)
 
     Return the limit date until which to generate events.  None means
-    "no limit" (which de facto becomes :attr:`ad.Site.ignore_dates_after`)
+    "no limit" (which de facto becomes :attr:`lino.core.site_def.Site.ignore_dates_after`)
 
   .. method:: update_cal_calendar(self)
 
@@ -300,7 +300,7 @@ Choicelists
 
     Possible values for the state of a task. The list of choices for
     the :attr:`Event.state` field. By default it contains the following
-    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+    values (which can be redefined in :meth:`lino.core.site_def.Site.setup_choicelists`):
 
     .. django2rst:: 
 
@@ -311,7 +311,7 @@ Choicelists
 
     Possible values for the state of a task. The list of choices for
     the :attr:`Task.state` field. By default it contains the following
-    values (which can be redefined in :meth:`ad.Site.setup_choicelists`):
+    values (which can be redefined in :meth:`lino.core.site_def.Site.setup_choicelists`):
 
     .. django2rst:: 
 

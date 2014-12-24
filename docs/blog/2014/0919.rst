@@ -2,7 +2,7 @@
 Friday, September 19, 2014
 ==========================
 
-Continued to work on :doc:`/tickets/124`.
+Continued to work on :srcref:`docs/tickets/124`.
 
 - Using DummyFields in a Layout : the new feature (introduced
   yesterday) still caused a traceback "%s expects a list of 16 values

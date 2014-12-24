@@ -62,12 +62,12 @@ Wenn ich das ausführe, kommt folgendes::
 
 Da steht wohlbemerkt nicht "répertoire", sondern "r▒pertoire". 
 Bis auf weiteres nehme ich an, dass das ein Bug in Python sein könnte.
-Das kommt nach :doc:`/tickets/17`.
+Das kommt nach :srcref:`docs/tickets/17`.
 
 Der Auslöser der Fehlermeldung war ein Bug in Lino 
 (er suchte nach dem Template im fr-Verzeichnis obwohl es dort kein Template gibt), 
 der ist jetzt behoben und folglich kann
-:doc:`/tickets/17` zur Zeit warten.
+:srcref:`docs/tickets/17` zur Zeit warten.
 
 
 Localized templates in `appy.pod`

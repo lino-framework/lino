@@ -17,9 +17,9 @@ from lino.utils.xmlgen.html import E
 from lino.core import actions
 
 from lino.mixins import CreatedModified
-from lino.mixins import UserAuthored
 
-from .mixins import UserProfiles, UserLevels, UserGroups
+from .mixins import UserProfiles, UserLevels, UserGroups, UserAuthored
+
 
 class ChangePassword(dd.Action):
     label = _("Change password")

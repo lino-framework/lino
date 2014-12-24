@@ -5,9 +5,9 @@
 Sozialsekretariat
 -----------------
 
-Worked on :doc:`/tickets/93`.
+Worked on :srcref:`docs/tickets/93`.
 
-Continued on model :ref:`welfare.pcsw.ClientAddress`.
+Continued on model :class:`pcsw.ClientAddress`.
 
 Checkin and upgrade on testlino for Gerd because I need user feedback
 about how to layout all this new data (and coming data, e.g. personal
@@ -19,10 +19,10 @@ not 3. Now it returns `None` in that case.
 
 
 Lino has a new app: :mod:`lino.modlib.humanlinks` which adds two
-tables :ref:`welfare.humanlink.ParentsByHuman` and
-:ref:`welfare.humanlink.ChildrenByHuman`.
+tables `welfare.humanlink.ParentsByHuman` and
+`welfare.humanlink.ChildrenByHuman`.
 
-:ref:`welfare.reception.Clients` no longer has its own
+`welfare.reception.Clients` no longer has its own
 `detail_layout`.  Although this was a nice demo of what Lino can do,
 it seems that it is already hard enough do remember the layout of
 every detail of an application, but when you also need to

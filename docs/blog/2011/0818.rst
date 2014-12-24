@@ -17,7 +17,7 @@ The package `lino.mixins` should be only for "general" mixins.
 Continued with CalDAV
 ---------------------
 
-Continued to work on :doc:`/tickets/47`.
+Continued to work on :srcref:`docs/tickets/47`.
 
 :class:`lino.modlib.cal.Event` needs a new field `uid`.
 

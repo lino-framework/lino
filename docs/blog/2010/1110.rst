@@ -1,7 +1,7 @@
 20101110
 ========
 
-- Opened new ticket :doc:`/tickets/14`
+- Opened new ticket :srcref:`docs/tickets/14`
 
 - Deutsche Übersetzungen aktualisiert. Da waren inzwischen viele Löcher entstanden.
 

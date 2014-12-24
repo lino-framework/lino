@@ -17,7 +17,7 @@ A new test case in the documentation :class:`ml.users` verifies
 this.
 
 
-Opened new ticket :doc:`/tickets/124` and started to work on it.
+Opened new ticket :srcref:`docs/tickets/124` and started to work on it.
 Especially in :mod:`ml.households`.
 
 Optimization to the framework in :xfile:`linoweb.js`:

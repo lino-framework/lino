@@ -5,7 +5,7 @@ Lino and OpenERP
 ----------------
 
 I assisted to a free webinar held by http://www.openbig.org, very interesting.
-Opened :doc:`/tickets/51`.
+Opened :srcref:`docs/tickets/51`.
 
 
 
@@ -62,7 +62,7 @@ Some little user wishes
 Lino and OpenERP
 ----------------
 
-Started ticket :doc:`/tickets/51`.
+Started ticket :srcref:`docs/tickets/51`.
 
 
 Data migration

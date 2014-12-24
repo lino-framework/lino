@@ -4,7 +4,7 @@
 Ostermontag : Heute habe ich in weniger als 4 Stunden zwei Punkte geschafft, 
 für die ich eigentlich mehr Zeitaufwand befürchtet hatte. 
 
-#.  Ich habe eine erste Lösung für Ticket :doc:`/tickets/40`.
+#.  Ich habe eine erste Lösung für Ticket :srcref:`docs/tickets/40`.
     Konkret kann man jetzt im Feld "Stadt" den Namen einer Stadt eintippen, 
     die Lino noch nicht kennt, und die wird dann automatisch angelegt.
     Das funktioniert sowohl auf Personen und Firmen wie auch in `Ausbildung`.

@@ -5,7 +5,7 @@
 --------------------------
 
 Beim Aufräumen auf der Webseite stieß ich auf 
-:doc:`/tickets/59`.
+:srcref:`docs/tickets/59`.
 Gedanken zu den Namen der Module :mod:`lino.modlib.jobs`
 und :mod:`lino.modlib.isip`.
 Diese internen Bezeichnungen sind nicht optimal:

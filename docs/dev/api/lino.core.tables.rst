@@ -9,8 +9,6 @@ lino.core.tables
 
    .. autosummary::
    
-      column_header
-      obj2str
       setup_ventilated_columns
    
    
@@ -22,10 +20,8 @@ lino.core.tables
    .. autosummary::
    
       AbstractTable
-      ActionRequest
       ContentType
       Group
-      QuerySet
       RstTable
       TableHandle
       TableRequest

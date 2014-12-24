@@ -10,7 +10,7 @@ Fehlerjagd vor dem Release.
     <a href='javascript:Lino.uploads.UploadsByOwner.insert({ "base_params": { "mt": 18, "type": 2, "mk": 200007 } },{ "data_record": { "phantom": true, "data": { "valid_until": null, "description": "", "created": null, "userHidden": 200067, "modified": null, "typeHidden": 2, "user": "lsaffre", "file": "", "owner": "<a href=\"javascript:Lino.dsbe.AllPersons.detail(undefined,{},{record_id:200007})\">MUSTERMANN Max (200007)</a>", "type": "Aufenthaltserlaubnis", "id": null }, "title": "Uploads von MUSTERMANN Max (200007)" } })'>Upload</a>
     
   Der erste Parameter, `caller` fehlte.  
-  Außerdem habe ich Ticket :doc:`/tickets/56` eröffnet.
+  Außerdem habe ich Ticket :srcref:`docs/tickets/56` eröffnet.
 
 
 - Beim Ausdruck der `contacts/Person/eid-content.odt` 

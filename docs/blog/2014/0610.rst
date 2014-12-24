@@ -13,7 +13,7 @@ Already yesterday I thought what a pity that I cannot simply run
 :cmd:`ci` on them! And that they won't get included when I do :cmd:`pp
 fab ci` or :cmd:`pp fab test`!
 
-But now :ref:`atelier` can handle projects like these!  The drawback
+But now :mod:`atelier` can handle projects like these!  The drawback
 (or in fact a new requirement which I dare to consider an improvement
 after reading a question `setup.py should use if __name__ ==
 '__main__', right?
@@ -36,11 +36,11 @@ one place.  Their `__file__` attribute is unpredictable::
 davlink
 -------
 
-:ref:`davlink` is now again with a codegears-signed `DavLink.jar'.
+:ref:`davlink` is now again with a codegears-signed `DavLink.jar`.
 
 Release in Eupen.  Or rather "upgrade" than "release".  This was
 mainly to re-get the signed version of the davlink applet. I made a
-general :ref:`pull` for all repositories because it is in general
+general `pull` for all repositories because it is in general
 recommended to pull all projects together. Because I still don't have
 a strict procedure for managing "releases".  It would be overhead to
 impose a stricter procedure as long as I am the only person who does

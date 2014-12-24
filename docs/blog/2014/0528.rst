@@ -28,19 +28,20 @@ bump certain version numbers and tag the repositories.
   difference with South or the coming Django migration system, who use
   an individual "version" counters for every app.)
 
-- :ref:`lino`, :ref:`north` and :ref:`site` need a new version number
-  because they might have influence on the :ref:`welfare` database
-  structure, and thus :ref:`welfare` needs to be able to specify "I
-  want *this* version of lino, of north and/or of djangosite".
+- :ref:`lino`, :mod:`north` and :mod:`djangosite` need a new version
+  number because they might have influence on the :ref:`welfare`
+  database structure, and thus :ref:`welfare` needs to be able to
+  specify "I want *this* version of lino, of north and/or of
+  djangosite".
 
 
 - The "anything else" above is not absolute.  We are talking about
   changes in trunk/master of :mod:`djangosite`, :mod:`north`,
   :mod:`lino` and :mod:`lino_welfare` itself.  But for example
-  :ref:`atelier`, :ref:`davlink` and :ref:`eidreader` are special
+  :mod:`atelier`, :ref:`davlink` and :ref:`eidreader` are special
   because they have no influence on the database.
 
-- Changing the version number is itself easy thanks to :ref:`atelier`:
+- Changing the version number is itself easy thanks to :mod:`atelier`:
   I just need to change the :xfile:`project_info.py` file, which
   currently contains::
 
@@ -162,7 +163,7 @@ because still old-style coding, I simply **removed the original**.
 
 This means that existing applications should include
 :mod:`lino.modlib.export_excel` to their
-:meth:`ad.Site.get_installed_apps` method.
+:meth:`lino.core.site_def.Site.get_installed_apps` method.
 
 I changed the action's label from "To Excel" to "Export to .xls"
 because it doesn't require any given proprietary produce, it works

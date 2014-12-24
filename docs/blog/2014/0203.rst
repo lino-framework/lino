@@ -84,7 +84,8 @@ System ausgedacht:
 
 Changes:
 
-- New model :ref:`welfare.pcsw.ClientAddress`
+- New model `pcsw.ClientAddress`
+  (:class:`lino_welfare.modlib.pcsw.client_address.ClientAddress`)
 - moved some code from :mod:`lino_welfare.modlib.pcsw` to a new module
   :mod:`lino_welfare.modlib.pcsw.coaching`
 - Moved parts from `contacts.Partner` to a `contacts.AddressLocation` mixin.

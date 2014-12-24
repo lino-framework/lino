@@ -12,10 +12,10 @@ There are two classes of predefined applications:
 and 
 (b) the minimal applications used for testing, demonstrations and didactical purposes.
 
-Minimal applications are used for testing, demonstrations and didactical purposes.
-They are minimal in the sense that they don't define any applicaton logic 
-for themselves, they just use a combination of modules 
-from :doc:`/ref/modlib`.  
+Minimal applications are used for testing, demonstrations and
+didactical purposes.  They are minimal in the sense that they don't
+define any applicaton logic for themselves, they just use a
+combination of modules from :mod:`lino.modlib`.
 
 Currently Lino has the following minimal applications:
 

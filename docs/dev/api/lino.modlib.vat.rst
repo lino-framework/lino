@@ -13,7 +13,6 @@ lino.modlib.vat
 
    .. autosummary::
    
-      Decimal
       Plugin
    
    

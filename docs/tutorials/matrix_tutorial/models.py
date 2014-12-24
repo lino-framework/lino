@@ -1,15 +1,17 @@
 ## Copyright 2013 Luc Saffre
 ## This file is part of the Lino project.
 
-import datetime
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd
+from lino import mixins
+from lino.modlib.users.mixins import UserAuthored
 
 contacts = dd.resolve_app('contacts')
+
 
 class EntryType(mixins.BabelNamed):
     class Meta:
@@ -18,12 +20,13 @@ class EntryType(mixins.BabelNamed):
         
     #~ def after_ui_save(self,ar):
         #~ CompaniesWithEntryTypes.setup_columns()
+
     
 class EntryTypes(dd.Table):
     model = EntryType
     
     
-class Entry(mixins.UserAuthored):
+class Entry(UserAuthored):
     
     class Meta:
         verbose_name = _("Entry")
@@ -31,12 +34,13 @@ class Entry(mixins.UserAuthored):
         
     date = models.DateField(_("Date"))
     entry_type = models.ForeignKey(EntryType)
-    subject = models.CharField(_("Subject"),blank=True,max_length=200)
-    body = dd.RichTextField(_("Body"),blank=True)
+    subject = models.CharField(_("Subject"), blank=True, max_length=200)
+    body = dd.RichTextField(_("Body"), blank=True)
     company = models.ForeignKey('contacts.Company')
-    
+
+
 class Entries(dd.Table):
-    model = Entry    
+    model = Entry
     detail_layout = """
     id user date company
     subject
@@ -47,24 +51,25 @@ class Entries(dd.Table):
     subject
     """
     parameters = dd.ObservedPeriod(
-        entry_type = models.ForeignKey(EntryType,
-            blank=True,null=True,
+        entry_type=models.ForeignKey(
+            EntryType, blank=True, null=True,
             help_text=_("Show only entries of this type.")),
-        company = models.ForeignKey('contacts.Company',
-            blank=True,null=True,
+        company=models.ForeignKey(
+            'contacts.Company',
+            blank=True, null=True,
             help_text=_("Show only entries of this company.")),
-        user = models.ForeignKey(settings.SITE.user_model,
-            blank=True,null=True,
-            help_text=_("Show only entries by this user.")),
-            )
+        user=models.ForeignKey(
+            settings.SITE.user_model,
+            blank=True, null=True,
+            help_text=_("Show only entries by this user.")))
     params_layout = """
-    user start_date end_date 
-    company entry_type 
+    user start_date end_date
+    company entry_type
     """
     
     @classmethod
-    def get_request_queryset(cls,ar):
-        qs = super(Entries,cls).get_request_queryset(ar)
+    def get_request_queryset(cls, ar):
+        qs = super(Entries, cls).get_request_queryset(ar)
         if ar.param_values.end_date:
             qs = qs.filter(date__lte=ar.param_values.end_date)
         if ar.param_values.start_date:
@@ -78,22 +83,17 @@ class Entries(dd.Table):
         return qs
     
     @classmethod
-    def param_defaults(cls,ar,**kw):
-        kw = super(Entries,cls).param_defaults(ar,**kw)
+    def param_defaults(cls, ar, **kw):
+        kw = super(Entries, cls).param_defaults(ar, **kw)
         kw.update(user=ar.get_user())
         return kw
         
 
-    
-    
 class EntriesByCompany(Entries):
     master_key = 'company'
-    
-#~ class MyEntries(Entries,mixins.ByUser):
-    #~ pass
-    
-    
-class CompaniesWithEntryTypes(dd.VentilatingTable,contacts.Companies):
+
+
+class CompaniesWithEntryTypes(dd.VentilatingTable, contacts.Companies):
     label = _("Companies with Entry Types")
     hide_zero_rows = True
     parameters = dd.ObservedPeriod()

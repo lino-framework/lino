@@ -2,14 +2,19 @@
 20140110 (Friday, 10 January 2014)
 ==================================
 
-.. tag:: [java] 
-    Started new ticket :doc:`/tickets/78`.
-    Started new article :doc:`/java/index`.
+Java
+----
 
-.. tag:: [gpl] 
-    Started new ticket :doc:`/tickets/79`, which includes a
-    new article :doc:`/about/proprietary` and changes in
-    :doc:`/about/license` and :doc:`/about/why_gpl`.
+Started new ticket :srcref:`docs/tickets/78`.
+Started new article :doc:`/java/index`.
+
+
+GPL
+---
+
+Started new ticket :srcref:`docs/tickets/79`, which includes a new article
+`/about/proprietary` and changes in `/about/license` and
+`/about/why_gpl`.
 
 
 

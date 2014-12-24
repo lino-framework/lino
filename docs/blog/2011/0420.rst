@@ -1,7 +1,7 @@
 20110420
 ========
 
-Lino-Ticket :doc:`/tickets/32` lag gar nicht an 
+Lino-Ticket :srcref:`docs/tickets/32` lag gar nicht an 
 Django-Ticket :djangoticket:`15578`, sondern an der 
 Testsuite von :mod:`lino.modlib.contacts`.
 

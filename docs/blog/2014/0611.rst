@@ -20,14 +20,14 @@ DONE:
   instance for every model which inherits from
   :class:`ml.excerpts.Certifiable`.
 
-- Cool: the new method :meth:`ad.Site.str2kw` used for the above
-  fixture is also the beginning of a solution for :doc:`/tickets/108`.
+- Cool: the new method :meth:`lino.core.site_def.Site.str2kw` used for the above
+  fixture is also the beginning of a solution for :srcref:`docs/tickets/108`.
 
 So :class:`ml.sales.Invoice` is no longer `TypedPrintable` but
 :class:`ml.excerpts.Certifiable`. This currently means that every app
 which uses :mod:`ml.sales` must also install :mod:`ml.excerpts`.
 Hm... Can we leave this as this? Do we need automatic management of
-dependencies (i.e. :attr:`ad.Plugin.requires`)?
+dependencies (i.e. :attr:`lino.core.plugin.Plugin.requires`)?
 
 - Another example why we need app dependencies is sepa and iban.
 
@@ -41,10 +41,10 @@ TODO:
 Free default data for places and zip codes
 ------------------------------------------
 
-Continued on :doc:`/tickets/109`.
+Continued on :srcref:`docs/tickets/109`.
 
 :ref:`dpy` : Django sometimes seems to also load fixtures from current
-directory.  This was disturbing while writing :ref:`cosi.tested.estonia`
+directory.  This was disturbing while writing `cosi.tested.estonia`
 because the following then caused a "Fixture has no attribute
 objects":
 

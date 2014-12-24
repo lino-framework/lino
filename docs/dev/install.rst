@@ -48,18 +48,20 @@ That said, installing Lino is easy:
 
 This might take some time since it will install all dependencies.
 
-If you want to see which version you have, you can always say "hello"
-to Lino:
+Telling your Lino version
+-------------------------
 
-.. code-block:: bash
+When you want to see which version you have, you can say "hello" to
+Lino:
 
-    $ python -m lino.hello
-    This is yet another Lino site using Lino 1.6.15, Django 1.6.7, Python 2.7.4,
-    Babel 1.3, Jinja 2.7.2, Sphinx 1.3a0, python-dateutil 2.1, OdfPy ODFPY/0.9.6, 
-    docutils 0.11, suds 0.4, PyYaml 3.10, Appy 0.9.0 (2014/06/23 22:15).
+
+.. py2rst::
+
+    self.shell_block(["python", "-m", "lino.hello"])
+
 
 The above launches Python with the `-m` switch which basically
-instructs it to just import the specified the :mod:`lino.hello` module.
+instructs it to just import the specified module :mod:`lino.hello`.
 
 
 Using the development version

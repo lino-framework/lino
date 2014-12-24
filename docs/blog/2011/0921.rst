@@ -1,7 +1,7 @@
 20110921
 ========
 
-Worked on :doc:`/tickets/45`.
+Worked on :srcref:`docs/tickets/45`.
 
 
 global name 'country' is not defined

@@ -61,7 +61,7 @@ This was because I called `setuptools.setup()` with a `name` of
 After the release, besides restoring 
 :meth:`lino.core.actors.Actor.get_workflow_actions`,
 I fiddled again with :xfile:`setup.py`.
-Opened :doc:`/tickets/69`.
+Opened :srcref:`docs/tickets/69`.
 
 
 Sales invoices (continued)
@@ -75,7 +75,7 @@ shouldn't be editable.
 
 The total fields of a sales invoice should of course always 
 be the sum of the invoice's items.
-Opened new ticket :doc:`/tickets/68`.
+Opened new ticket :srcref:`docs/tickets/68`.
 Currently, users must hit the Save button of their invoice in 
 order to see the updated totals.
 

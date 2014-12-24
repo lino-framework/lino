@@ -5,7 +5,7 @@
 Meeting with Gerd and MélanieL
 ------------------------------
 
-Done 2 items from :doc:`/tickets/93`:
+Done 2 items from :srcref:`docs/tickets/93`:
 
 #.  Feld "NoteType.is_attestation" fehlt im Detail und der Liste
 
