@@ -9,6 +9,7 @@ lino.core.actors
 
    .. autosummary::
    
+      add_requirements
       comma
       curry
       discover
@@ -30,10 +31,6 @@ lino.core.actors
       ActorMetaClass
       AttrDict
       BoundAction
-      ObservedPeriod
-      ParameterPanel
-      Today
-      Yearly
    
    
 

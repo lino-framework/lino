@@ -17,6 +17,11 @@ See also :doc:`marked_changes`.
 
     marked_changes
 
+Development
+===========
+
+- Documentation now builds without warnings. :blogref:`20141223` 
+
 Version 1.6.16 (released :blogref:`20141222`)
 =============================================
 
@@ -32,8 +37,11 @@ A minor release because
 Version 1.6.15 (released 2014-12-12)
 ====================================
 
-- Integrated my ``north`` and ``djangosite`` projects into Lino.
-  The independent projects are now obsolete and no longer maintained.
+- Integrated my `north <https://github.com/lsaffre/north>`_ 
+  and `djangosite <https://github.com/lsaffre/djangosite>`_ 
+  projects into Lino.
+  These independent github projects are now obsolete and no longer
+  maintained.
 
 - A "plugin" is an app which defines in
   her `__init__.py` a class named "Plugin" which must be a subclass of

@@ -17,6 +17,13 @@ application.
     printable
     uploadable
 
+Parameter panels:
+
+- :class:`ObservedPeriod <lino.mixins.periods.ObservedPeriod>`
+- :class:`Yearly <lino.mixins.periods.Yearly>`
+- :class:`Today <lino.mixins.periods.Today>`
+
+  
 
 """
 
@@ -266,6 +273,7 @@ from lino.mixins.printable import (Printable, PrintableType,
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarizable
 from lino.mixins.periods import DatePeriod
+from lino.mixins.periods import ObservedPeriod, Yearly, Today
 from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
 

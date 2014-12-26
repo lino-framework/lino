@@ -634,7 +634,7 @@ class Events(dd.Table):
 
     params_panel_hidden = True
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         user=dd.ForeignKey(settings.SITE.user_model,
                            verbose_name=_("Managed by"),
                            blank=True, null=True,

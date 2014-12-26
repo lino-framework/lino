@@ -1,9 +1,15 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
+"""Defines the model mixins :class:`Sequenced` and
+:class:`Hierarizable`.
+
+A `Sequenced` is something which has a sequence number and thus a sort
+order which can be manipulated by the user using actions
+:class:`MoveUp` and :class:`MoveDown`.
+
+:class:`Hierarizable` is a :class:`Sequenced` with a `parent` field.
 
 .. autosummary::
-
 
 """
 
@@ -20,6 +26,7 @@ from .duplicable import Duplicable, Duplicate
 
 
 class MoveUp(actions.Action):
+    "Move current row one upwards."
     label = _("Up")
     #~ label = "\u2191" thin arrow up
     # ~ label = "\u25b2" # triangular arrow up
@@ -53,6 +60,7 @@ class MoveUp(actions.Action):
 
 
 class MoveDown(actions.Action):
+    "Move current row one downwards."
     label = _("Down")
     #~ label = "\u2193"
     # ~ label = "\u25bc" # triangular arrow down
@@ -106,10 +114,9 @@ class DuplicateSequenced(Duplicate):
 
 
 class Sequenced(Duplicable):
-
-    """
-    Abstract base class for models that have a field `seqno`
+    """Abstract base class for models that have a field `seqno`
     containing a "sequence number".
+
     """
 
     class Meta:
@@ -218,9 +225,9 @@ class Sequenced(Duplicable):
 
 
 class Hierarizable(Sequenced):
+    """Abstract model mixin for things that have a "parent" and
+    "siblings".
 
-    """
-    Abstract model mixin for things that have a "parent" and "siblings".
     """
     class Meta:
         abstract = True

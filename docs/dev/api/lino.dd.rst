@@ -97,7 +97,6 @@ lino.dd
       NOT_PROVIDED
       NotifyingAction
       NullCharField
-      ObservedPeriod
       Panel
       ParameterPanel
       ParamsLayout
@@ -118,7 +117,6 @@ lino.dd
       SubmitDetail
       SubmitInsert
       Table
-      Today
       UnresolvedModel
       UserGroups
       UserLevels
@@ -126,7 +124,6 @@ lino.dd
       VirtualField
       VirtualTable
       Workflow
-      Yearly
       YesNo
    
    

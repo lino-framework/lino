@@ -12,8 +12,6 @@ See :doc:`/dev/actors`.
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -25,6 +23,7 @@ from lino.core.dbutils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.requests import BoundAction
 from lino.core.constants import _handle_attr_name
+from lino.core.utils import add_requirements
 from lino.utils import curry, AttrDict
 from lino.utils.xmlgen.html import E
 
@@ -88,85 +87,6 @@ def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
             break
             #~ return E.p(*elems)
     return E.p(*elems)
-
-
-class ParameterPanel(object):
-
-    def __init__(self, **kw):
-        self.fields = kw
-
-    def values(self, *args, **kw):
-        return self.fields.values(*args, **kw)
-
-    def keys(self, *args, **kw):
-        return self.fields.keys(*args, **kw)
-
-    def __iter__(self, *args, **kw):
-        return self.fields.__iter__(*args, **kw)
-
-    def __len__(self, *args, **kw):
-        return self.fields.__len__(*args, **kw)
-
-    def __getitem__(self, *args, **kw):
-        return self.fields.__getitem__(*args, **kw)
-
-    def get(self, *args, **kw):
-        return self.fields.get(*args, **kw)
-
-    def items(self, *args, **kw):
-        return self.fields.items(*args, **kw)
-
-
-class Today(ParameterPanel):
-    "Parameter panel which defines a field `today` which defaults to today"
-    def __init__(self, **kw):
-        kw.update(
-            today=models.DateField(
-                _("Situation on"),
-                blank=True, null=True,
-                default=settings.SITE.today,
-                help_text="""Date of observation"""),
-        )
-        super(Today, self).__init__(**kw)
-
-
-class ObservedPeriod(ParameterPanel):
-    """Parameter panel which defines two fields `start_date`
-    and `end_date` which default to empty"""
-
-    get_default_start_date = None
-    get_default_end_date = None
-
-    def __init__(self, **kw):
-        kw.update(
-            start_date=models.DateField(
-                _("Period from"),
-                blank=True, null=True,
-                default=self.get_default_start_date,
-                help_text="""Start date of observed period"""),
-            end_date=models.DateField(
-                _("until"),
-                blank=True, null=True,
-                default=self.get_default_end_date,
-                help_text="""End date of observed period"""),
-        )
-        super(ObservedPeriod, self).__init__(**kw)
-
-
-class Yearly(ObservedPeriod):
-
-    """An :class:`ObservedPeriod` for which `start_date` defaults to Jan
-    1st and `end_date` to Dec 31 of the current year.
-
-    """
-
-    def get_default_start_date(self):
-        D = datetime.date
-        return D(D.today().year, 1, 1)
-
-    def get_default_end_date(self):
-        D = datetime.date
-        return D(D.today().year, 12, 31)
 
 
 #~ class ClassProperty(property):
@@ -734,7 +654,7 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def add_view_requirements(cls, **kw):
-        return actions.add_requirements(cls, **kw)
+        return add_requirements(cls, **kw)
 
     @classmethod
     def get_view_permission(self, profile):
@@ -1211,7 +1131,6 @@ class Actor(actions.Parametrizable):
 
         But `NewClients` is a subclass of `Clients` with the only
         difference that the default value is `amonthago`::
-
 
           class NewClients(Clients):
               @classmethod

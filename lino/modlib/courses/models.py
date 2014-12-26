@@ -523,7 +523,7 @@ class Courses(dd.Table):
     order_by = ['name']
     auto_fit_column_widths = True
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),
         topic=models.ForeignKey('courses.Topic', blank=True, null=True),
         city=models.ForeignKey('countries.Place', blank=True, null=True),
@@ -856,7 +856,7 @@ class Enrolments(dd.Table):
     required = dd.required(user_level='manager')
     model = 'courses.Enrolment'
     stay_in_grid = True
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         author=dd.ForeignKey(
             settings.SITE.user_model, blank=True, null=True),
         state=EnrolmentStates.field(blank=True, null=True),

@@ -559,7 +559,7 @@ class Excerpts(dd.Table):
 
     allow_create = False
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         puser=models.ForeignKey(
             'users.User', blank=True, null=True),
         pexcerpt_type=models.ForeignKey(

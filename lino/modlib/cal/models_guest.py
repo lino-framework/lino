@@ -140,7 +140,7 @@ class Guests(dd.Table):
     role
     """, window_size=(60, 'auto'))
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         user=dd.ForeignKey(settings.SITE.user_model,
                            verbose_name=_("Responsible user"),
                            blank=True, null=True,

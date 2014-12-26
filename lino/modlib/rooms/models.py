@@ -14,9 +14,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd
+from lino import dd, mixins
 
 contacts = dd.resolve_app('contacts', strict=True)
 #~ cal = dd.resolve_app('cal',strict=True)
@@ -181,7 +180,7 @@ class Bookings(dd.Table):
     column_names = "start_date company room  *"
     order_by = ['start_date']
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         company=models.ForeignKey('contacts.Company', blank=True, null=True),
         state=BookingStates.field(blank=True),
     )

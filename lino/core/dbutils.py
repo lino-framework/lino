@@ -5,6 +5,8 @@
 """A collection of utilities which require Django settings to be
 importable.
 
+TODO: Merge this module and :mod:`lino.core.utils`.
+
 """
 
 from __future__ import unicode_literals
@@ -27,7 +29,8 @@ from django.db.models.fields import NOT_PROVIDED
 from lino import AFTER17
 from lino.core.signals import pre_ui_update
 
-from django.core.validators import validate_email, ValidationError, URLValidator
+from django.core.validators import (
+    validate_email, ValidationError, URLValidator)
 
 validate_url = URLValidator()
 
@@ -49,11 +52,10 @@ def is_valid_email(s):
 
 
 def is_devserver():
-    """
-    Returns True if we are running a development server.
+    """Returns True if we are running a development server.
     
-    Thanks to Aryeh Leib Taurog in 
-    `How can I tell whether my Django application is running on development server or not?
+    Thanks to Aryeh Leib Taurog in `How can I tell whether my Django
+    application is running on development server or not?
     <http://stackoverflow.com/questions/1291755>`_
     
     My additions:
@@ -61,7 +63,7 @@ def is_devserver():
     - Added the `len(sys.argv) > 1` test because in a 
       wsgi application the process is called without arguments.
     - Not only for `runserver` but also for `testserver` and `test`.
-    
+
     """
     #~ print 20130315, sys.argv[1]
     return len(sys.argv) > 1 and sys.argv[1] in (
@@ -82,9 +84,9 @@ def obj2unicode(i):
 
 
 def obj2str(i, force_detailed=False):
-    """
-    Returns a human-readable ascii string representation of a model instance, 
-    even in some edge cases.
+    """Returns a human-readable ascii string representation of a model
+    instance, even in some edge cases.
+
     """
     if not isinstance(i, models.Model):
         if isinstance(i, long):
@@ -184,9 +186,6 @@ def inrange_filter(fld, rng, **kw):
     return Q(**kw)
 
 
-
-
-
 def babelkw(*args, **kw):
     return settings.SITE.babelkw(*args, **kw)
 
@@ -198,20 +197,19 @@ babel_values = babelkw  # old alias for backwards compatibility
 
 class UnresolvedModel:
 
-    """
-    This is the object returned by :func:`resolve_model` 
-    if the specified model is not installed.
+    """The object returned by :func:`resolve_model` if the specified model
+    is not installed.
     
-    We don't want resolve_model to raise an Exception because there are 
-    cases of :ref:`datamig` where it would disturb. 
-    Asking for a non-installed model is not a sin, but trying to use it is.
+    We don't want :func:`resolve_model` to raise an Exception because
+    there are cases of :ref:`datamig` where it would disturb.  Asking
+    for a non-installed model is not a sin, but trying to use it is.
     
-    I didn't yet bother very much about finding a way to make the 
-    model_spec appear in error messages such as
-    ``AttributeError: UnresolvedModel instance has no attribute '_meta'``.
-    Current workaround is to uncomment the ``print`` statement 
-    below in such situations...
-    
+    I didn't yet bother very much about finding a way to make the
+    `model_spec` appear in error messages such as
+    :message:`AttributeError: UnresolvedModel instance has no
+    attribute '_meta'`.  Current workaround is to uncomment the
+    ``print`` statement below in such situations...
+
     """
 
     def __init__(self, model_spec, app_label):
@@ -320,9 +318,12 @@ def resolve_app(app_label, strict=False):
 def require_app_models(app_label):
     return resolve_app(app_label, True)
 
+
 def get_field(model, name):
-    '''Returns the field descriptor of the named field in the specified model.
-    '''
+    """Returns the field descriptor of the named field in the specified
+    model.
+
+    """
     for vf in model._meta.virtual_fields:
         if vf.name == name:
             return vf
@@ -347,9 +348,9 @@ class UnresolvedField(object):
 
 
 def resolve_field(name, app_label=None):
-    """
-    Returns the field descriptor specified by the string `name` which 
+    """Returns the field descriptor specified by the string `name` which
     should be either `model.field` or `app_label.model.field`.
+
     """
     l = name.split('.')
     if len(l) == 3:
@@ -376,10 +377,9 @@ def resolve_field(name, app_label=None):
 
 
 def navinfo(qs, elem):
-    """
-    Return a dict with navigation information for the given model 
-    instance `elem` within the given queryset. 
-    The dictionary contains the following keys:
+    """Return a dict with navigation information for the given model
+    instance `elem` within the given queryset.  The dictionary
+    contains the following keys:
     
     :recno:   row number (index +1) of elem in qs
     :first:   pk of the first element in qs (None if qs is empty)
@@ -387,8 +387,7 @@ def navinfo(qs, elem):
     :next:    pk of the next element in qs (None if qs is empty)
     :last:    pk of the last element in qs (None if qs is empty)
     :message: text "Row x of y" or "No navigation"
-    
-    
+
     """
     first = None
     prev = None

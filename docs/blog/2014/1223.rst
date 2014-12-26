@@ -20,12 +20,11 @@ is some stupid problem they encounter with the documentation or the
 "internal beauty" of the code.  So I said to myself that my customers
 need to wait anyway, and that the whole Lino project makes no sense if
 I remain the only developer.  That's why decided to tidy up
-documentation during the next workdays.
+documentation during the next workdays.  Here is what I did:
 
-My concrete aim was to get the docs to build without the
-`env.tolerate_sphinx_warnings = True` in Lino's :xfile:`fabfile.py`.
-
-Here is what I did:
+- My concrete aim was to get the docs to build without warnings
+  (i.e. with the `env.tolerate_sphinx_warnings = True` in Lino's
+  :xfile:`fabfile.py`). That's done now.
 
 - Lots of content restructuring.
 

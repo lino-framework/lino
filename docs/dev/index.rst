@@ -21,6 +21,16 @@ Getting started
    /tutorials/lets
 
 
+Becoming a Lino developer
+=========================
+
+.. toctree::
+   :maxdepth: 1
+
+   prerequisites
+   learning
+
+
 Getting acquaintained
 =====================
 
@@ -38,19 +48,11 @@ Getting acquaintained
    /tutorials/actions/index
    /tutorials/mini
    /tutorials/mldbc/index
-   /tutorials/auto_create/index
    /tutorials/human/index
-   /tutorials/pisa/index
-   /tutorials/input_mask/index
    
-
 
 Reference
 =========
-
-Lino application developers should keep this document under their
-pillow.
-
 
 .. toctree::
    :maxdepth: 1
@@ -58,9 +60,6 @@ pillow.
    layouts
    mixins
 
-   ad
-   dd
-   rt
    ml/index
    
 
@@ -76,6 +75,9 @@ Special topics
    /tutorials/workflows_tutorial/index
    /tutorials/matrix_tutorial/index
 
+   /tutorials/auto_create/index
+   /tutorials/pisa/index
+   /tutorials/input_mask/index
 
 
 Drafts
@@ -123,4 +125,6 @@ Other
 
    tables
    fields
-
+   ad
+   dd
+   rt

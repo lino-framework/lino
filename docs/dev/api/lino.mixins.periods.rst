@@ -23,6 +23,10 @@ lino.mixins.periods
    
       DatePeriod
       Model
+      ObservedPeriod
+      ParameterPanel
+      Today
+      Yearly
    
    
 

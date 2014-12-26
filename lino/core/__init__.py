@@ -28,6 +28,7 @@
     site_def
     tables
     tablerequest
+    utils
     web
     workflows
 

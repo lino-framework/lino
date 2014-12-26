@@ -8,15 +8,13 @@ are used in your :xfile:`models.py` modules.  The name ``dd`` stands
 for "Database Design".
 
 
-
-
 Tables:
-:class:`Table`
-:class:`VirtualTable`
-:class:`VentilatingTable`
-:class:`EmptyTable`
-:class:`Report`
-:class:`Frame`
+
+- :class:`Table <lino.core.dbtables.Table>`
+- :class:`VirtualTable`
+- :class:`VentilatingTable`
+- :class:`Frame <lino.core.frames.Frame>`
+- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
 
 Extended Fields:
 
@@ -51,13 +49,6 @@ Layouts:
 - :class:`FormLayout <lino.core.layouts.FormLayout>`
 - :class:`Panel <lino.core.layouts.Panel>`
 
-Parameter panels:
-
-- :class:`dd.ObservedPeriod <lino.core.actors.ObservedPeriod>`
-- :class:`dd.Yearly <lino.core.actors.Yearly>`
-- :class:`dd.Today <lino.core.actors.Today>`
-
-  
 Utilities:
 
 - :func:`obj2str <lino.core.dbutils.obj2str>`
@@ -67,6 +58,8 @@ Utilities:
 - :func:`full_model_name <lino.core.dbutils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`chooser <lino.utils.choosers.chooser>`
+- :class: `ParameterPanel <lino.core.utils.ParameterPanel>`
+
 
 Inter-app relations:
 
@@ -86,7 +79,6 @@ Signals:
 
 Actions:
 
-- :class:`AuthorAction <lino.mixins.AuthorAction>`
 - :class:`Action <lino.core.actions.Action>`
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
 - :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
@@ -97,38 +89,15 @@ Actions:
 
 Permissions:
 
-- :class:`UserGroups <lino.core.auth.UserGroups>`
-- :class:`UserLevels <lino.core.auth.UserLevels>`
-- :func:`add_user_group <lino.core.auth.add_user_group>` 
+- :class:`UserGroups <lino.modlib.users.mixins.UserGroups>`
+- :class:`UserLevels <lino.modlib.users.mixins.UserLevels>`
+- :func:`add_user_group <lino.modlib.users.mixins.add_user_group>`
 
 
 Workflows:
 
-- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
 - :class:`Workflow <lino.core.workflows.Workflow>`
 - :class:`State <lino.core.workflows.State>`
-
-Model mixins:
-
-- :class:`lino.mixins.ProjectRelated`
-- :class:`Sequenced <lino.mixins.Sequenced>`
-- :class:`Duplicable <lino.mixins.duplicable.Duplicable>`
-- :class:`lino.mixins.Referrable`
-- :class:`lino.mixins.Registrable`
-- :class:`lino.mixins.Hierarizable`
-- :class:`lino.mixins.polymorphic.Polymorphic`
-
-- :class:`Created <lino.mixins.Created>` and :class:`Modified
-  <lino.mixins.Modified>` (and their deprecated combination
-  :class:`CreatedModified <lino.mixins.CreatedModified>`)
-
-- :class:`lino.mixins.printable.Printable`
-- :class:`lino.mixins.printable.PrintableType`
-- :class:`lino.mixins.printable.TypedPrintable`
-- :class:`lino.mixins.printable.CachedPrintable`
-- :class:`lino.mixins.uploadable.Uploadable`
-- :class:`lino.mixins.human.Human`
-- :class:`lino.mixins.human.Born`
 
 
 """
@@ -160,35 +129,22 @@ from lino.core.dbutils import full_model_name
 from lino.core.model import Model
 from lino.core.merge import MergeAction
 
-#~ from lino.core.table import fields_list, inject_field
-from lino.core.actors import (ParameterPanel, ObservedPeriod)
 from lino.core.actors import Actor
-from lino.core.actors import Today
-from lino.core.actors import Yearly
+
 from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist
 from django.db import models
 from django.conf import settings
-#~ Model = models.Model
-#~ from lino.core import table
-#~ Table = table.Table
-
-#~ from lino.core.dbtables import summary, summary_row
 
 from lino.core.frames import Frame
 from lino.core.tables import VentilatingTable
-#~ from lino.core.dialogs import Dialog
 
 from lino.core.actions import action
-#~ from lino.core.actions import Action
 from lino.core.actions import Action
 from lino.core.actions import MultipleRowAction
-#~ RowAction = CustomAction
-#~ Action = CustomAction
 from lino.core.actions import ShowSlaveTable
 
-# from lino.mixins import AuthorAction
 from lino.core.actions import GridEdit, ShowDetailAction
 from lino.core.actions import InsertRow, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
@@ -236,8 +192,6 @@ from lino.core.dbutils import babel_values  # alias for babelkw for backward com
 from lino.utils.choosers import chooser, action_chooser
 from lino.utils.mti import EnableChild
 
-from lino.modlib.users.mixins import UserLevels, UserGroups, add_user_group
-
 from lino.core.layouts import FormLayout, Panel
 from lino.core.layouts import ParamsLayout
 
@@ -278,6 +232,12 @@ from lino.core.inject import update_model
 from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
+
+from lino.core.utils import ParameterPanel
+
+from lino.modlib.users.mixins import UserLevels, UserGroups, add_user_group
+
+
 
 # from lino.core.actors import get_default_required as required
 
@@ -323,35 +283,6 @@ field2kw = settings.SITE.field2kw
 
 from lino.utils.mldbc.fields import BabelTextField
 from lino.utils.mldbc.fields import BabelCharField, LanguageField
-
-if False:
-
-
-    from lino.mixins import EmptyTable
-    from lino.mixins import Report
-    
-    from lino.utils.mldbc.mixins import BabelNamed
-
-    from lino.modlib.users.mixins import UserAuthored, ByUser
-    
-    from lino.mixins import (
-        ProjectRelated,
-        Duplicable, Duplicate,
-        Sequenced, Hierarizable, Referrable,
-        Registrable)
-
-    from lino.mixins import Created, Modified
-    from lino.mixins import CreatedModified  # deprecated
-
-    from lino.mixins.printable import Printable, PrintableType, CachedPrintable, TypedPrintable, DirectPrintAction, CachedPrintAction
-    from lino.mixins.uploadable import Uploadable
-    from lino.mixins.human import Human, Born
-
-    from lino.mixins.periods import DatePeriod
-    # from lino.models import PeriodEvents
-
-    from lino.mixins.polymorphic import Polymorphic
-
 
 from lino.modlib.system.mixins import Genders, PeriodEvents, YesNo
 

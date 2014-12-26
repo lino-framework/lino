@@ -306,7 +306,7 @@ class Tickets(dd.Table):
     project
     """, window_size=(50, 'auto'))
 
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         user=dd.ForeignKey(settings.SITE.user_model,
                            blank=True, null=True,
                            help_text=_("Only rows authored by this user.")),

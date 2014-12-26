@@ -34,6 +34,7 @@ lino.mixins
       Hierarizable
       Human
       Modified
+      ObservedPeriod
       Polymorphic
       Printable
       PrintableType
@@ -41,8 +42,10 @@ lino.mixins
       Referrable
       Registrable
       Sequenced
+      Today
       TypedPrintable
       Uploadable
+      Yearly
    
    
 

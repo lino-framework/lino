@@ -2,9 +2,8 @@
 Community
 =========
 
-Lino is a young framework with a small but growing community.
-There's much to do.
-This is the time for pioneers to join us!
+Lino is a young framework with a small but growing community.  There's
+much to do.  This is the time for pioneers to join us!
 
 
 .. toctree::
@@ -13,3 +12,5 @@ This is the time for pioneers to join us!
    get_involved
    whoswho
    team
+   mentoring
+   lad

@@ -23,7 +23,6 @@ from lino.core import model
 
 
 class Duplicate(actions.Action):
-
     """
     Duplicate the row on which it is being executed.
     """

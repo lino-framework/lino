@@ -631,7 +631,7 @@ class Movements(dd.Table):
     model = Movement
     column_names = 'voucher_link account debit credit *'
     editable = False
-    parameters = dd.ObservedPeriod(
+    parameters = mixins.ObservedPeriod(
         pyear=FiscalYears.field(blank=True),
         ppartner=models.ForeignKey(partner_model, blank=True, null=True),
         paccount=models.ForeignKey('accounts.Account', blank=True, null=True),
@@ -1207,7 +1207,7 @@ class DebtorsCreditors(dd.VirtualTable):
     slave_grid_format = 'html'
     abstract = True
 
-    parameters = dd.Today()
+    parameters = mixins.Today()
     # params_layout = "today"
 
     d_or_c = NotImplementedError
@@ -1294,7 +1294,7 @@ class Situation(Report):
     help_text = _("Overview of the financial situation on a given date.")
     required = dd.required(user_groups='accounts')
 
-    parameters = dd.Today()
+    parameters = mixins.Today()
 
     report_items = (Debtors, Creditors)
 
@@ -1304,7 +1304,7 @@ class ActivityReport(Report):
     help_text = _("Overview of the financial activity during a given period.")
     required = dd.required(user_groups='accounts')
 
-    parameters = dd.Yearly(
+    parameters = mixins.Yearly(
         # include_vat = models.BooleanField(
         #     verbose_name=dd.apps.vat.verbose_name),
     )

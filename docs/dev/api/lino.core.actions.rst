@@ -10,7 +10,6 @@ lino.core.actions
    .. autosummary::
    
       action
-      add_requirements
       buttons2pager
       check_for_chooser
       discover_choosers

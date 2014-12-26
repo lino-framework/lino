@@ -3,8 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
-decorator, together with some of the predefined actions and some
-helper classes like :class:`InstanceAction`
+decorator, together with some of the predefined actions.
 
 See also:
 
@@ -27,13 +26,11 @@ from django.conf import settings
 from django import http
 from django.db import models
 
-from lino.core.dbutils import obj2unicode
-
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
 from lino.core import constants
-
+from lino.core.dbutils import obj2unicode
 from lino.core.dbutils import resolve_model
 from lino.core.dbutils import navinfo
 from lino.core import layouts
@@ -41,65 +38,10 @@ from lino.core import fields
 from lino.core import keyboard
 from lino.core.signals import pre_ui_create, pre_ui_delete
 from lino.core.dbutils import ChangeWatcher
+from lino.core.utils import Permittable, Parametrizable, InstanceAction
+from lino.utils.choosers import Chooser
 
 PLAIN_PAGE_LENGTH = 15
-
-
-class Permittable(object):
-
-    """Base class for objects that have view permissions control.
-
-    :class:`lino.core.actors.Actor` would be a subclass, but is a
-    special case since actors never get instantiated.
-
-    """
-
-    required = {}
-    """
-    The permissions required to view this actor.
-    A dict with permission requirements.
-    See :func:`lino.core.perms.make_permission_handler`.
-    """
-
-    # internally needed for make_permission_handler
-    workflow_state_field = None
-    # internally needed for make_permission_handler
-    workflow_owner_field = None
-    #~ readonly = True
-
-    debug_permissions = False
-    """
-    Whether to log :ref:`debug_permissions` for this action.
-    
-    """
-
-    def add_requirements(self, **kw):
-        return add_requirements(self, **kw)
-
-    def get_view_permission(self, profile):
-        raise NotImplementedError()
-
-
-def add_requirements(obj, **kw):
-    """
-    Add the specified requirements to `obj`.
-    `obj` can be an 
-    :class:`lino.core.actors.Actor` or any 
-    :class:`lino.core.actions.Permittable`.
-    Application code uses this indirectly through the shortcut methods
-    :meth:`lino.core.actors.Actor.add_view_requirements` or a 
-    :meth:`lino.core.actions.Permittable.add_requirements`.
-    
-    """
-    #~ logger.info("20120927 perms.set_required %r",kw)
-    new = dict()
-    #~ new.update(getattr(obj,'required',{}))
-    new.update(obj.required)
-    new.update(kw)
-    obj.required = new
-
-
-from lino.utils.choosers import Chooser
 
 
 def check_for_chooser(holder, field):
@@ -192,107 +134,6 @@ def make_params_layout_handle(self, ui):
     return self.params_layout.get_layout_handle(ui)
 
 
-class Parametrizable(object):
-    """Base class for both Actors and Actions.
-
-
-    .. method:: FOO_choices
-
-        For every parameter field named "FOO", if the action has a method
-        called "FOO_choices" (which must be decorated by
-        :func:`dd.chooser`), then this method will be installed as a
-        chooser for this parameter field.
-
-
-    """
-
-    active_fields = None  # 20121006
-    master_field = None
-
-    parameters = None
-    """
-    User-definable parameter fields for this actor or action.
-    Set this to a `dict` of `name = models.XyzField()` pairs.
-
-    TODO: write documentation.
-    """
-
-    params_layout = None
-    """
-    The layout to be used for the parameter panel.
-    If this table or action has parameters, specify here how they
-    should be laid out in the parameters panel.
-    """
-
-    params_panel_hidden = False
-    """
-    If this table has parameters, set this to True if the parameters
-    panel should be initially hidden when this table is being
-    displayed.
-
-    """
-
-    _layout_class = NotImplementedError
-
-    def get_window_layout(self, actor):
-        return self.params_layout
-
-    def get_window_size(self, actor):
-        wl = self.get_window_layout(actor)
-        if wl is not None:
-            return wl.window_size
-
-
-class InstanceAction(object):
-    """Volatile object which wraps a given action to be run on a given
-    model instance.
-
-    """
-
-    def __init__(self, action, actor, instance, owner):
-        #~ print "Bar"
-        #~ self.action = action
-        self.bound_action = actor.get_action_by_name(action.action_name)
-        if self.bound_action is None:
-            raise Exception("%s has not action %r" % (actor, action))
-            # Happened 20131020 from lino.modlib.beid.eid_info() :
-            # When `use_eid_jslib` was False, then
-            # `Action.attach_to_actor` returned False.
-        self.instance = instance
-        self.owner = owner
-
-    def run_from_code(self, ar, **kw):
-        ar.selected_rows = [self.instance]
-        return self.bound_action.action.run_from_code(ar)
-
-    def run_from_ui(self, ar, **kw):
-        ar.selected_rows = [self.instance]
-        self.bound_action.action.run_from_ui(ar)
-
-    def run_from_session(self, ses, **kw):
-        #~ print self,args, kw
-        ar = self.bound_action.request(**kw)
-        ar.setup_from(ses)
-        ar.selected_rows = [self.instance]
-        self.bound_action.action.run_from_code(ar)
-        return ar.response
-
-    def __call__(self, *args, **kwargs):
-        return self.run_from_session(*args, **kwargs)
-
-    def as_button_elem(self, ar, label=None, **kwargs):
-        return settings.SITE.ui.row_action_button(
-            self.instance, ar, self.bound_action, label, **kwargs)
-
-    def as_button(self, *args, **kwargs):
-        """Return a HTML chunk with a "button" which, when clicked, will
-        execute this action on this instance.  This is being used in
-        the :ref:`lino.tutorial.polls`.
-
-        """
-        return E.tostring(self.as_button_elem(*args, **kwargs))
-
-
 class Action(Parametrizable, Permittable):
     """
     Abstract base class for all actions.
@@ -362,7 +203,7 @@ class Action(Parametrizable, Permittable):
     11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
     20    :class:`detail <ShowDetailAction>`
     30    :class:`delete <DeleteSelected>`
-    31    :class:`merge <MergeAction>`
+    31    :class:`merge <lino.core.merge.MergeAction>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     60    :class:`ShowSlaveTable`
@@ -1275,7 +1116,10 @@ class MultipleRowAction(Action):
 
 
 class DeleteSelected(MultipleRowAction):
-    "Delete the row(s) on which it is being executed."
+    """The action used to delete the selected row(s). Automatically
+    installed on every editable actor.
+
+    """
 
     action_name = 'delete_selected'  # because...
     icon_name = 'delete'
