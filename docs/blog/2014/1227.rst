@@ -2,42 +2,50 @@
 Saturday, December 27, 2014
 ===========================
 
-New Year is approaching. My family and I have tagged "the best
-pictures of 2014" in our Shotwell collection. Now I noticed that
-`shotwell2blog.py` needs some more features: (1) make sure they are
-sorted by exposure_time and (2) optional new output format as
-:rst:dir:`sigal_image` directives.
+New Year is approaching 
+=======================
 
-The `shotwell2blog.py` script was previously included with
-:mod:`atelier`, but now I created `a separate project on GitHub for it
-<https://github.com/lsaffre/shotwell2blog>`_ and removed it from the
-:mod:`atelier` repo.  This is my first single-script project.
+My family and I have tagged "the best pictures of 2014" in our photo
+collection. Now I noticed that `shotwell2blog.py` needs some more
+features: (1) make sure they are sorted by exposure time and (2)
+optional new output format as :rst:dir:`sigal_image` directives.
 
-I stumbled over a discussion about `Python string formatting: %
-vs. .format
-<http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format>`_,
-and learned about :pep:`3101`. I fully agree with that PEP, I just
-didn't realize until now that it exists.  That's why my projects are
-full of ``%`` string formatting.  I'll do my best to get used to the
-new notation. Better late than never.
+The `shotwell2blog.py` script was included with :mod:`atelier` until
+now, which was rather nonsense. Now I created `a separate project on
+GitHub for it <https://github.com/lsaffre/shotwell2blog>`_ and removed
+it from the :mod:`atelier` repo.  This is my first single-script
+project.
 
 And here is the result: http://luc.saffre-rumma.net/blog/2014/1227/
 
-TODO: write some comments for some of them, make a separate list of
-the top 10 because nobody has time to watch 150 photos,...
+TODO: write some textbetween the pictures, make a separate list of the
+top 10 because nobody has time to watch 150 photos,...
 
-Two optimizations in :mod:`atelier` (thanks to Mahmout who reported
-these problems):
+While doing the above, I stumbled over a discussion about `Python
+string formatting: % vs. .format
+<http://stackoverflow.com/questions/5082452/python-string-formatting-vs-format>`_,
+and learned about :pep:`3101`. I didn't realize until now that this
+PEP exists.  That's why my projects are full of ``%`` string
+formatting.  I'll do my best to get used to the new notation. Better
+late than never.
 
-- The command :cmd:`fab blog` failed when the user had only `VISUAL`
-  and no `EDITOR` set. But it seems that "Nowadays, you can leave
-  `EDITOR` unset or set it to ``vi -e``" (according to `andcoz
+
+Released :mod:`atelier` version 0.0.9
+=====================================
+
+Two optimizations in :mod:`atelier` (thanks to Mahmout who fell into
+these traps):
+
+- The command :cmd:`fab blog` failed when the user had only
+  :envvar:`VISUAL` and not :envvar:`EDITOR` set. But it seems that
+  "Nowadays, you can leave :envvar:`EDITOR` unset or set it to ``vi
+  -e``" (according to `andcoz
   <http://unix.stackexchange.com/questions/4859/visual-vs-editor-whats-the-difference>`_). So
   I changed :mod:`atelier.fablib` to handle this situation.  New
   :func:`atelier.utils.get_visual_editor`.
 
 - The command :cmd:`fab blog` failed when the directory for the
   current year didn't yet exist.  Now it automatically wishes "Happy
-  New Year" and creates both the directory and the default `index.rst`
+  New Year" and creates both the directory and the default :file:`index.rst`
   file for that year (containing the :rst:dir:`blogger_year`
   directive).
