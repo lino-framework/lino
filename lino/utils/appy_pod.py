@@ -420,7 +420,7 @@ class Renderer(AppyRenderer):
             #~ self.my_automaticstyles.append(cs)
             table_columns.addElement(TableColumn(stylename=name))
 
-        from lino.ui import elems
+        from lino.core import elems
 
         def fldstyle(fld):
             #~ if isinstance(fld,ext_store.VirtStoreField):

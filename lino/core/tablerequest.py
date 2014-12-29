@@ -511,21 +511,26 @@ class TableRequest(ActionRequest):
     def row2text(self, fields, row, sums):
         for i, fld in enumerate(fields):
             if fld.field is not None:
-                try:  # was used to find bug 20130422
-                    v = fld.field._lino_atomizer.full_value_from_object(
-                        row, self)
-                    if v is None:
-                        yield ''
-                    else:
-                        sums[i] += fld.value2num(v)
-                        # # In case you want the field name in error message:
-                        # try:
-                        #     sums[i] += fld.value2num(v)
-                        # except Exception as e:
-                        #     raise e.__class__("%s %s" % (fld.field, e))
-                        yield fld.format_value(self, v)
-                except Exception as e:
-                    yield "%s:\n%s" % (fld.field, e)
+                getter = fld.field._lino_atomizer.full_value_from_object
+                if False:
+                    try:  # was used to find bug 20130422
+                        v = getter(row, self)
+                    except Exception as e:
+                        yield "%s:\n%s" % (fld.field, e)
+                        continue
+                else:
+                    v = getter(row, self)
+                    
+                if v is None:
+                    yield ''
+                else:
+                    sums[i] += fld.value2num(v)
+                    # # In case you want the field name in error message:
+                    # try:
+                    #     sums[i] += fld.value2num(v)
+                    # except Exception as e:
+                    #     raise e.__class__("%s %s" % (fld.field, e))
+                    yield fld.format_value(self, v)
 
     def sums2html(self, columns, sums, **cellattrs):
         #~ return [fld.format_sum(self,sums,i)

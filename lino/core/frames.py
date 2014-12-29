@@ -7,16 +7,16 @@ Defines classes :class:`Frame` and :class:`FrameHandle`
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.ui import base
+from lino.core.utils import Handle
 from lino.core import actors
 
 
-class FrameHandle(base.Handle):
+class FrameHandle(Handle):
     
     def __init__(self, frame):
         #~ assert issubclass(frame,Frame)
         self.actor = frame
-        base.Handle.__init__(self)
+        Handle.__init__(self)
 
     def get_actions(self, *args, **kw):
         return self.actor.get_actions(*args, **kw)

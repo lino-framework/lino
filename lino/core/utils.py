@@ -15,7 +15,21 @@ TODO: Merge this module and :mod:`lino.core.dbutils`.
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db import models
+from django import http
+from django.core import exceptions
+
 from lino.utils.xmlgen.html import E
+
+
+class Handle:
+
+    def __init__(self):
+        self.ui = settings.SITE.ui
+
+    def setup(self, ar):
+        self.ui.setup_handle(self, ar)
+        #~ settings.SITE.ui.setup_handle(self,ar)
 
 
 class Parametrizable(object):
@@ -105,15 +119,12 @@ class Permittable(object):
 
 
 def add_requirements(obj, **kw):
-    """
-    Add the specified requirements to `obj`.
-    `obj` can be an 
-    :class:`lino.core.actors.Actor` or any 
-    :class:`lino.core.actions.Permittable`.
+    """Add the specified requirements to `obj`.  `obj` can be an
+    :class:`lino.core.actors.Actor` or any :class:`Permittable`.
     Application code uses this indirectly through the shortcut methods
-    :meth:`lino.core.actors.Actor.add_view_requirements` or a 
-    :meth:`lino.core.actions.Permittable.add_requirements`.
-    
+    :meth:`lino.core.actors.Actor.add_view_requirements` or a
+    :meth:`Permittable.add_requirements`.
+
     """
     #~ logger.info("20120927 perms.set_required %r",kw)
     new = dict()
@@ -219,5 +230,6 @@ class Requirements(object):
     allow = None
     auth = True
     owner = None
+
 
 

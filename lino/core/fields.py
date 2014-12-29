@@ -23,15 +23,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
 
-
 from lino.core.dbutils import full_model_name
-from lino.core.dbutils import obj2str
-
 from lino.core.dbutils import resolve_field
-from lino.core.dbutils import resolve_model, UnresolvedModel
-#~ from lino.core.dbutils import is_installed_model_spec
+from lino.core.dbutils import resolve_model
 
-from lino.utils import IncompleteDate, d2iso
+from lino.utils.format_date import IncompleteDate
 from lino.utils import quantities
 
 
@@ -225,7 +221,7 @@ class RemoteField(FakeField):
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
-        from lino.ui import store
+        from lino.core import store
         store.get_atomizer(self.rel, self, name)
 
     #~ def lino_resolve_type(self):
@@ -391,7 +387,7 @@ class VirtualField(FakeField):
             setattr(self, k, getattr(self.return_type, k, None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
 
-        from lino.ui import store
+        from lino.core import store
         #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self.model, self, self.name)
 
@@ -732,7 +728,7 @@ class IncompleteDateField(models.CharField):
     """
     A field that behaves like a DateField, but accepts
     incomplete dates represented using
-    :class:`lino.utils.IncompleteDate`.
+    :class:`lino.utils.format_date.IncompleteDate`.
     """
     __metaclass__ = models.SubfieldBase
 
@@ -876,7 +872,7 @@ class CustomField(object):
     """
     def create_layout_elem(self, layout_handle, field, **kw):
         """Instantiate and return some subclass of
-        :class:`lino.ui.elems.LayoutElement` to be used in
+        :class:`lino.core.elems.LayoutElement` to be used in
         `layout_handle`.
 
         `self` and `field` are identical unless `self` is a

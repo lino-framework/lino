@@ -22,7 +22,7 @@ from lino import dd
 from lino.core import auth
 from lino.core import web
 from lino.core.requests import BaseRequest
-from lino.ui.views import action_request
+from lino.core.views import action_request
 
 
 MENUS = dict()

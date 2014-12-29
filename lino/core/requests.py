@@ -494,9 +494,10 @@ class BaseRequest(object):
 
         Any other keyword arguments are forwarded to :meth:`spawn`.
 
-        Usage in a tested doc::
+        Usage in a tested doc:
 
-          >>> rt.login('robin').show('users.UsersOverview', limit=5)
+        >>> from lino import rt
+        >>> rt.login('robin').show('users.UsersOverview', limit=5)
 
         Usage in a Jinja template::
 

@@ -28,10 +28,10 @@ from lino.core import constants
 from lino.core import fields
 from lino.core import actions
 from lino.core import frames
-from lino import dd, rt
 from lino.utils import choosers
 from lino.utils import curry
 from lino.utils import iif
+from lino.utils.format_date import fds
 from lino.core.requests import PhantomRow
 from lino.utils import IncompleteDate
 
@@ -419,7 +419,8 @@ class DisabledFieldsStoreField(SpecialStoreField):
             if f.field is not None:
                 if isinstance(f, VirtStoreField):
                     if not f.vf.editable:
-                        if not isinstance(f.vf.return_type, dd.DisplayField):
+                        if not isinstance(
+                                f.vf.return_type, fields.DisplayField):
                             self.always_disabled.add(f.name)
                             #~ print "20121010 always disabled:", f
                 elif not isinstance(f.field, generic.GenericForeignKey):
@@ -603,7 +604,7 @@ class DecimalStoreField(StoreField):
     def format_value(self, ar, v):
         if not v:
             return ''
-        return dd.decfmt(v, places=self.field.decimal_places)
+        return settings.SITE.decfmt(v, places=self.field.decimal_places)
 
     #~ def value2html(self,ar,v,**cellattrs):
         #~ cellattrs.update(align="right")
@@ -631,7 +632,8 @@ class AutoStoreField(StoreField):
     def form2obj(self, ar, obj, post_data, is_new):
         #~ logger.info("20121022 AutoStoreField.form2obj(%r)",ar.bound_action.full_name())
         if isinstance(ar.bound_action.action, actions.InsertRow):
-            return super(AutoStoreField, self).form2obj(ar, obj, post_data, is_new)
+            return super(AutoStoreField, self).form2obj(
+                ar, obj, post_data, is_new)
 
 
 class DateStoreField(StoreField):
@@ -650,12 +652,11 @@ class DateStoreField(StoreField):
         return v
 
     def format_value(self, ar, v):
+        """Return a plain textual representation of this value as a unicode
+        string.
+
         """
-        Return a plain textual representation of this value as a unicode string.
-        """
-        return dd.dtos(v)
-        #~ return settings.SITE.format_date(v)
-        #~ return force_unicode(v)
+        return fds(v)
 
 
 class IncompleteDateStoreField(StoreField):
@@ -812,23 +813,23 @@ def create_atomizer(model, fld, name):
 
     if isinstance(fld, fields.DummyField):
         return None
-    if isinstance(fld, dd.RequestField):
+    if isinstance(fld, fields.RequestField):
         delegate = create_atomizer(model, fld.return_type, fld.name)
         return RequestStoreField(fld, delegate, name)
-    if isinstance(fld, dd.VirtualField):
+    if isinstance(fld, fields.VirtualField):
         delegate = create_atomizer(model, fld.return_type, fld.name)
         return VirtStoreField(fld, delegate, name)
     if isinstance(fld, models.FileField):
         return FileFieldStoreField(fld, name)
     if isinstance(fld, models.ManyToManyField):
         return StoreField(fld, name)
-    if isinstance(fld, dd.PasswordField):
+    if isinstance(fld, fields.PasswordField):
         return PasswordStoreField(fld, name)
     if isinstance(fld, models.OneToOneField):
         return OneToOneStoreField(fld, name)
     if isinstance(fld, generic.GenericForeignKey):
         return GenericForeignKeyField(fld, name)
-    if isinstance(fld, dd.GenericForeignKeyIdField):
+    if isinstance(fld, fields.GenericForeignKeyIdField):
         return ComboStoreField(fld, name)
     if isinstance(fld, models.ForeignKey):
         return ForeignKeyStoreField(fld, name)
@@ -836,7 +837,7 @@ def create_atomizer(model, fld, name):
         return TimeStoreField(fld, name)
     if isinstance(fld, models.DateTimeField):
         return DateTimeStoreField(fld, name)
-    if isinstance(fld, dd.IncompleteDateField):
+    if isinstance(fld, fields.IncompleteDateField):
         return IncompleteDateStoreField(fld, name)
     if isinstance(fld, models.DateField):
         return DateStoreField(fld, name)
@@ -849,7 +850,7 @@ def create_atomizer(model, fld, name):
         #~ kw.update(type='int')
     if isinstance(fld, models.SmallIntegerField):
         return IntegerStoreField(fld, name)
-    if isinstance(fld, dd.DisplayField):
+    if isinstance(fld, fields.DisplayField):
         return DisplayStoreField(fld, name)
     if isinstance(fld, models.IntegerField):
         return IntegerStoreField(fld, name)

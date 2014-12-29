@@ -118,6 +118,10 @@ URL_FORMAT_PRINTER = 'printer'
 URL_FORMAT_HTML = 'html'
 
 
+#~ DEFAULT_GC_NAME = 'std'
+DEFAULT_GC_NAME = 0
+
+
 def dict2kw(d):
     newd = {}
     for k, v in d.items():

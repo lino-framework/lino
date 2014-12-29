@@ -40,7 +40,7 @@ These are the Django settings which Lino will override:
  'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
                         'lino.core.auth.NoUserMiddleware',
                         'lino.utils.ajax.AjaxExceptionResponse'),
- 'ROOT_URLCONF': 'lino.ui.urls',
+ 'ROOT_URLCONF': 'lino.core.urls',
  'SECRET_KEY': '20227',
  'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
  'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
@@ -1177,18 +1177,15 @@ class Site(object):
         self.django_settings.update(**kw)
 
     def define_settings(self, **kwargs):
-        """
-        Same as :meth:`update_settings`,        
-        but raises an exception if a setting already exists.
+        """Same as :meth:`update_settings`, but raises an exception if a
+        setting already exists.
         
-        TODO: Currently this exception is deactivated.
-        Because it doesn't work as expected. 
-        For some reason 
-        (maybe because settings is being imported twice on a devserver)
-        it raises a false exception when 
-        :meth:`lino.ui.Site.override_defaults` 
-        tries to use it on `MIDDLEWARE_CLASSES`...
-        
+        TODO: Currently this exception is deactivated.  Because it
+        doesn't work as expected.  For some reason (maybe because
+        settings is being imported twice on a devserver) it raises a
+        false exception when :meth:`override_defaults` tries to use it
+        on `MIDDLEWARE_CLASSES`...
+
         """
         if False:
             for name in kwargs.keys():
@@ -2272,7 +2269,7 @@ given object `obj`. The dict will have one key for each
                 MEDIA_ROOT=join(self.project_dir, 'media'))
 
         self.update_settings(
-            ROOT_URLCONF='lino.ui.urls'
+            ROOT_URLCONF='lino.core.urls'
         )
         self.update_settings(
             MEDIA_URL='/media/'
@@ -2702,7 +2699,7 @@ given object `obj`. The dict will have one key for each
             kw.update(renderer=self.ui.text_renderer)
 
         from lino.core import requests
-        import lino.ui.urls  # hack: trigger ui instantiation
+        import lino.core.urls  # hack: trigger ui instantiation
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):

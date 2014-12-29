@@ -12,6 +12,7 @@
     dbtables
     dbutils
     ddh
+    elems
     fields
     frames
     inject
@@ -23,12 +24,16 @@
     model
     perms
     plugin
+    renderer
     requests
     signals
     site_def
+    store
     tables
     tablerequest
+    urls
     utils
+    views
     web
     workflows
 

@@ -26,14 +26,13 @@ Monday, August 26, 2013
 August 2013
 
 
+The :func:`lino.core.format_date.format_date` function is a thin
+wrapper to the corresponding function in `babel.dates`, filling the
+`locale` parameter according to Django's current language (and doing
+the conversion).
 
-The :func:`lino.core.dbutils.format_date` function is a thin wrapper 
-to the corresponding function in `babel.dates`, 
-filling the `locale` parameter according to Django's 
-current language (and doing the conversion).
-
-The major advantage over using `date_format` from `django.utils.formats` 
-is that Babel offers a "full" format:
+The major advantage over using `date_format` from
+`django.utils.formats` is that Babel offers a "full" format:
 
 >>> today = datetime.date(2013,01,18)
 
@@ -64,7 +63,7 @@ vrijdag 18 januari 2013
 >>> print(fds('2014-10-12')) # not tolerated
 Traceback (most recent call last):
   ...
-AssertionError
+Exception: Not a date: u'2014-10-12'
 
 """
 
@@ -77,6 +76,7 @@ from django.utils import translation
 from django.template import defaultfilters
 
 from lino.core.site_def import to_locale
+from lino.utils import IncompleteDate
 
 
 def monthname(n):
@@ -99,6 +99,10 @@ def fdmy(d):
 def format_date(d, format='medium'):
     if not d:
         return ''
+    if isinstance(d, IncompleteDate):
+        d = d.as_date()
+    if not isinstance(d, datetime.date):
+        raise Exception("Not a date: {0!r}".format(d))
     return babel_format_date(
         d, format=format, locale=to_locale(translation.get_language()))
 

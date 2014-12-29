@@ -130,7 +130,7 @@ class Model(models.Model):
                 # logger.warning("20120406 RemoteField %s in %s",name,self)
                 #~ model = self.model
 
-                from lino.ui import store
+                from lino.core import store
 
                 field_chain = []
                 for n in parts:

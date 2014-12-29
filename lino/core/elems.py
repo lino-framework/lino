@@ -19,12 +19,10 @@ from cgi import escape
 import decimal
 
 from django.db import models
-from django.contrib.contenttypes import generic
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
 
-from lino import dd, rt
 from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Permittable
@@ -35,7 +33,6 @@ from lino.utils import jsgen
 from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, js_code
-from lino.utils import choosers
 from lino.utils import join_elems
 
 from lino.utils.xmlgen import etree
@@ -52,9 +49,6 @@ FULLWIDTH = '-20'
 FULLHEIGHT = '-10'
 
 USED_NUMBER_FORMATS = dict()
-
-#~ DEFAULT_GC_NAME = 'std'
-DEFAULT_GC_NAME = 0
 
 DEFAULT_PADDING = 2
 
@@ -2116,13 +2110,13 @@ class TabPanel(Panel):
 
 _FIELD2ELEM = (
     #~ (dd.Constant, ConstantElement),
-    (dd.RecurrenceField, RecurrenceElement),
-    (dd.HtmlBox, HtmlBoxElement),
+    (fields.RecurrenceField, RecurrenceElement),
+    (fields.HtmlBox, HtmlBoxElement),
     #~ (dd.QuickAction, QuickActionElement),
     #~ (dd.RequestField, RequestFieldElement),
-    (dd.DisplayField, DisplayElement),
-    (dd.QuantityField, QuantityFieldElement),
-    (dd.IncompleteDateField, IncompleteDateFieldElement),
+    (fields.DisplayField, DisplayElement),
+    (fields.QuantityField, QuantityFieldElement),
+    (fields.IncompleteDateField, IncompleteDateFieldElement),
     #~ (dd.LinkedForeignKey, LinkedForeignKeyElement),
     (models.URLField, URLFieldElement),
     (models.FileField, FileFieldElement),
@@ -2130,11 +2124,11 @@ _FIELD2ELEM = (
     #~ (dd.HtmlTextField, HtmlTextFieldElement),
     #~ (dd.RichTextField, RichTextFieldElement),
     (models.TextField, TextFieldElement),  # also dd.RichTextField
-    (dd.PasswordField, PasswordFieldElement),
+    (fields.PasswordField, PasswordFieldElement),
     (models.CharField, CharFieldElement),
-    (dd.MonthField, MonthFieldElement),
+    (fields.MonthField, MonthFieldElement),
     (models.DateTimeField, DateTimeFieldElement),
-    (dd.DatePickerField, DatePickerFieldElement),
+    (fields.DatePickerField, DatePickerFieldElement),
     (models.DateField, DateFieldElement),
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
@@ -2187,13 +2181,13 @@ def field2elem(layout_handle, field, **kw):
             kw.setdefault('preferred_width', 20)
             return ChoicesFieldElement(layout_handle, field, **kw)
 
-    if isinstance(field, dd.RequestField):
+    if isinstance(field, fields.RequestField):
         return RequestFieldElement(layout_handle, field, **kw)
 
     selector_field = field
     if isinstance(field, fields.RemoteField):
         selector_field = field.field
-    if isinstance(selector_field, dd.VirtualField):
+    if isinstance(selector_field, fields.VirtualField):
         selector_field = selector_field.return_type
     # remember the case of RemoteField to VirtualField
 
@@ -2212,7 +2206,7 @@ def field2elem(layout_handle, field, **kw):
     for df, cl in _FIELD2ELEM:
         if isinstance(selector_field, df):
             return cl(layout_handle, field, **kw)
-    if isinstance(field, dd.VirtualField):
+    if isinstance(field, fields.VirtualField):
         raise NotImplementedError(
             "No LayoutElement for VirtualField %s on %s in %s" % (
                 field.name, field.return_type.__class__,

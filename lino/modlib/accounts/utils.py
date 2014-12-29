@@ -218,7 +218,7 @@ DCLABELS = {
 }
 
 
-from lino.ui.store import BooleanStoreField
+from lino.core.store import BooleanStoreField
 from django.db import models
 
 

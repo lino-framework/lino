@@ -37,14 +37,13 @@ import json
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
-from lino import dd, rt
+from lino import dd
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
 from lino.utils.jsgen import py2js
 from lino.utils import ucsv
-from lino.utils import choosers
 from lino.utils import isiterable
 from lino.utils import dblogger
 from lino.core import auth
@@ -52,12 +51,10 @@ from lino.core import auth
 from lino.core import actions
 from lino.core import dbtables
 
-from lino.ui.views import requested_actor, action_request
-from lino.ui.views import json_response, json_response_kw
-
+from lino.core.views import requested_actor, action_request
+from lino.core.views import json_response, json_response_kw
 
 from lino.core import constants as ext_requests
-from lino.ui import elems as ext_elems
 
 MAX_ROW_COUNT = 300
 
@@ -693,7 +690,6 @@ class ApiList(View):
 
 class GridConfig(View):
 
-    #~ def grid_config_view(self,request,app_label=None,actor=None):
     def put(self, request, app_label=None, actor=None):
         ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
@@ -715,7 +711,7 @@ class GridConfig(View):
 
         name = PUT.get('name', None)
         if name is None:
-            name = ext_elems.DEFAULT_GC_NAME
+            name = ext_requests.DEFAULT_GC_NAME
         else:
             name = int(name)
 

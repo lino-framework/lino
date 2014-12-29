@@ -240,7 +240,6 @@ lino.tutorials.mini
 lino.tutorials.lets1
 lino.tutorials.lets1.fixtures
 lino.tutorials.lets1.lets
-lino.ui
 lino.utils
 lino.utils.demonames
 lino.utils.mldbc

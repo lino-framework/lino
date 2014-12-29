@@ -366,7 +366,7 @@ class IncompleteDate:
         if a > b:
             return today.year - self.year - 1
         return today.year - self.year
-        
+
 
 #~ class Warning(Exception):
     #~ """

@@ -28,7 +28,7 @@ from lino.core import signals
 
 from .tablerequest import TableRequest
 
-from lino.ui import base
+from lino.core.utils import Handle
 
 from lino.utils.xmlgen.html import E
 # from lino.utils.appy_pod import PrintTableAction, PortraitPrintTableAction
@@ -109,13 +109,13 @@ if False:  # 20130710
             f.write(yaml.dump(self.data))
 
 
-class TableHandle(base.Handle):
+class TableHandle(Handle):
 
     _layouts = None
 
     def __init__(self, actor):
         self.actor = actor
-        base.Handle.__init__(self)
+        Handle.__init__(self)
         #~ super(TableHandle,self).__init__()
 
     def __str__(self):

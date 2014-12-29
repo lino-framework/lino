@@ -13,10 +13,10 @@ from django_iban import fields as iban_fields
 
 from django.utils.six import with_metaclass
 
-from lino import dd, rt
+from lino import dd
 
 from lino.utils.jsgen import js_code
-from lino.ui.elems import CharFieldElement
+from lino.core.elems import CharFieldElement
 
 
 class UppercaseTextFieldElement(CharFieldElement):

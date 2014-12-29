@@ -1,25 +1,19 @@
-# -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2010-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Utility functions used by :mod:`lino.modlib.extjs.views`.
 
 """
 
-"""
+from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-
-from django import http
-from django.db import models
 from django.conf import settings
+from django.db import models
+from django import http
 from django.core import exceptions
 
-from lino.utils.jsgen import py2js
-
-from lino.core import actors
 from lino.core import constants
-
-MAX_ROW_COUNT = 300
+from lino.core import actors
+from lino.utils.jsgen import py2js
 
 
 def json_response_kw(**kw):

@@ -9,8 +9,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from lino.core import constants as ext_requests
-from lino.ui.render import HtmlRenderer
-from lino.ui.render import add_user_language
+from lino.core.renderer import HtmlRenderer
+from lino.core.renderer import add_user_language
 
 
 class Renderer(HtmlRenderer):

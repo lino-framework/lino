@@ -61,11 +61,11 @@ from lino.core import constants
 from lino.core import web
 from lino.core.signals import pre_ui_build, post_ui_build
 
-from lino.ui import store as ext_store
+from lino.core import store as ext_store
 
 from lino.core.dbutils import is_devserver
-from lino.ui.render import TextRenderer
-from lino.ui import views
+from lino.core.renderer import TextRenderer
+from lino.core import views
 
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
@@ -422,7 +422,7 @@ class Kernel(object):
     def run_callback(self, request, thread_id, button_id):
         """
         Return an existing (pending) callback.
-        This is called from `lino.ui.views.Callbacks`.
+        This is called from `lino.core.views.Callbacks`.
         """
         # logger.info("20131212 get_callback %s %s", thread_id, button_id)
 

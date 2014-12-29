@@ -1,0 +1,22 @@
+=========================
+Monday, December 29, 2014
+=========================
+
+
+Merged `lino.ui` into `lino.core`
+=================================
+
+I merged the content of the `lino.ui` package into :mod:`lino.core`,
+because this differentiation was historical and irritating.
+
+- Moved class `lino.ui.base.Handle` to :class:`lino.core.utils.Handle`.
+
+- File renames::
+
+    mv ui/elems.py core/
+    mv ui/store.py core/
+    mv ui/urls.py core/
+    mv ui/render.py core/renderer.py
+    rm ui/ui.py
+    rm ui/base.py
+

@@ -513,8 +513,8 @@ class ParamsLayout(BaseLayout):
         return self._datasource.get_param_elem(name)
 
     def setup_handle(self, lh):
-        from lino.ui import store
-        self.params_store = store.ParameterStore(lh, self.url_param_name)
+        from lino.core.store import ParameterStore
+        self.params_store = ParameterStore(lh, self.url_param_name)
 
 
 class ActionParamsLayout(ParamsLayout):
@@ -540,7 +540,7 @@ def create_layout_panel(lh, name, vertical, elems, **kw):
     This also must translate ui-agnostic parameters
     like `label_align` to their ExtJS equivalent `labelAlign`.
     """
-    from lino.ui import elems as ext_elems
+    from lino.core import elems as ext_elems
     pkw = dict()
     pkw.update(labelAlign=kw.pop('label_align', 'top'))
     pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels', True))
@@ -577,7 +577,7 @@ def create_layout_element(lh, name, **kw):
     Create a layout element from the named data element.
     """
     from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-    from lino.ui import elems as ext_elems
+    from lino.core import elems as ext_elems
     from lino.core import fields
     from lino.core import tables
     from lino.utils.jsgen import js_code
@@ -776,7 +776,7 @@ def create_meth_element(lh, name, meth, rt, **kw):
 
 def create_field_element(lh, field, **kw):
     #~ e = lh.main_class.field2elem(lh,field,**kw)
-    from lino.ui import elems as ext_elems
+    from lino.core import elems as ext_elems
     e = ext_elems.field2elem(lh, field, **kw)
     assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
     lh.add_store_field(e.field)
