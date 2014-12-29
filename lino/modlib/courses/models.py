@@ -442,7 +442,8 @@ class Course(cal.Reservation):
 
     @property
     def events_by_course(self):
-        ct = dd.ContentType.objects.get_for_model(self.__class__)
+        ct = rt.modules.contenttypes.ContentType.objects.get_for_model(
+            self.__class__)
         return cal.Event.objects.filter(owner_type=ct, owner_id=self.id)
 
     @dd.requestfield(_("Requested"))

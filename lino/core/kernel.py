@@ -706,6 +706,6 @@ class Kernel(object):
                 try:
                     symlink(source, target)
                 except OSError as e:
-                    raise OSError(
-                        "Failed to create symlink %s -> %s : %s",
-                        target, source, e)
+                    msg = "Failed to symlink {0} to {1} : {2}"
+                    msg = msg.format(source, target, e)
+                    raise OSError(msg)

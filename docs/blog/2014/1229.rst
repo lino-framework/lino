@@ -47,9 +47,94 @@ know more in three days...
 Released :mod:`atelier` version 0.0.10, mainly for :ref:`mma`.
 
 
+AttributeError 'module' object has no attribute 'ContentType'
+=============================================================
+
+File `lino/modlib/courses/models.py` in `events_by_course`, line 444
+
+This was a simple typo bug which occurred in :ref:`faggio`.
+Fixed. 
+
+TODO: write test case which would have detected it.
+
+
 'NoneType' object has no attribute 'get_view_permission'
 ========================================================
 
 The above error message came when editing or displaying objects in a
 table without :attr:`detail_layout
 <lino.core.actors.Actor.detail_layout>`. Fixed.
+
+
+The `<head>` block of Lino's html contained many empty lines, which
+made it difficult to read for humans. Fixed.
+
+
+
+TypeError: H is undefined
+=========================
+
+This error message came in the JavaScript console in :ref:`chat` after
+upgrading.  And caused the detail window for clients to not open but
+to produce another Javascript error :message:`TypeError:
+Lino.pcsw.Clients.detail is undefined`.
+
+
+
+AssertionError at /
+
+No exception message supplied
+
+Request Method: 	GET
+Request URL: 	http://lino-chatelet:8080/
+Django Version: 	1.6.2
+Exception Type: 	AssertionError
+Exception Location: 	/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py in write_lino_js, line 748
+
+201412-29 12:50:50 ERROR base : Internal Server Error: /
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/django/core/handlers/base.py", line 114, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/views.py", line 129, in get
+    return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 540, in html_page
+    self.build_js_cache_for_profile(user.profile, False)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 722, in build_js_cache_for_profile
+    return settings.SITE.make_cache_file(fn, write, force)
+  File "/usr/local/repositories/lino/lino/core/site_def.py", line 2745, in make_cache_file
+    write(f)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 720, in write
+    self.write_lino_js(f, profile)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 748, in write_lino_js
+    assert profile == jsgen._for_user_profile
+AssertionError
+
+
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python2.7/dist-packages/django/core/handlers/base.py", line 114, in get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 69, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 87, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/views.py", line 129, in get
+    return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 540, in html_page
+    self.build_js_cache_for_profile(user.profile, False)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 722, in build_js_cache_for_profile
+    return settings.SITE.make_cache_file(fn, write, force)
+  File "/usr/local/repositories/lino/lino/core/site_def.py", line 2745, in make_cache_file
+    write(f)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 720, in write
+    self.write_lino_js(f, profile)
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 847, in write_lino_js
+    for ln in self.js_render_ParamsPanelSubclass(lh):
+  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 1064, in js_render_ParamsPanelSubclass
+    raise Exception("%r of %s has no variables" % (dh.main, dh))
+Exception: <ParamsPanel main in ParamsLayout on newcomers.AvailableCoaches> of LayoutHandle for ParamsLayout on newcomers.AvailableCoaches has no variables
+

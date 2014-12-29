@@ -1,115 +1,94 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-
 {# ###### Macro definitions ###### #}
 {%- macro stylesheet(url) -%}
     <link rel="stylesheet" type="text/css" href="{{ url }}" />
 {%- endmacro -%}
-
 {%- macro javascript(url) -%}
     <script type="text/javascript" src="{{ url }}"></script>
 {%- endmacro -%}
-
 <head>
-{% block head %}
+{%- block head -%}
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title id="title">{{ site.title or site.verbose_name }}</title>
-
     {# ###### CSS files ###### #}
-    {% block css %}
+    {%- block css -%}
         {# CSS files from plugins #}
-        {% block css_plugins %}
-            {% for p in site.installed_plugins %}
-                {% if p.get_css_includes %}
-                    {% for name in p.get_css_includes(site) %}
+        {%- block css_plugins -%}
+            {%- for p in site.installed_plugins -%}
+                {%- if p.get_css_includes -%}
+                    {%- for name in p.get_css_includes(site) -%}
                         {{ stylesheet(name) }}
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-        {% endblock css_plugins %}
-    
-        {% block css_legacy %}
-            {% if run_jasmine %}
+                    {%- endfor -%}
+                {%- endif -%}
+            {%- endfor -%}
+        {%- endblock css_plugins -%}
+        {%- block css_legacy -%}
+            {%- if run_jasmine -%}
                 {{ stylesheet(site.build_media_url("jasmine/jasmine.css")) }}
-            {% endif %}
-    
-            {% if site.use_vinylfox %}
+            {%- endif -%}
+            {%- if site.use_vinylfox -%}
                 {{ stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css')) }}
-            {% endif %}
-    
-            {% if site.use_filterRow %}
+            {%- endif -%}
+            {%- if site.use_filterRow -%}
                 {{ stylesheet(site.build_media_url('lino/filterRow/filterRow.css')) }}
-            {% endif %}
-    
-            {% if site.use_gridfilters %}
+            {%- endif -%}
+            {%- if site.use_gridfilters -%}
                 {{ stylesheet(site.build_extjs_url("examples/ux/statusbar/css/statusbar.css")) }}
                 {{ stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/GridFilters.css")) }}
                 {{ stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/RangeMenu.css")) }}
-            {% endif %}
-    
+            {%- endif -%}
             {{ stylesheet(site.build_extjs_url("examples/ux/fileuploadfield/css/fileuploadfield.css")) }}
-            
             {{ stylesheet(site.build_media_url("lino/extjs/lino.css")) }}
-    
-            {% if site.use_awesome_uploader %}
+            {%- if site.use_awesome_uploader -%}
                 {{ stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader.css"))}}
                 {{ stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))}}
-            {% endif %}
-        {% endblock css_legacy %}
-    {% endblock css %}
-    
+            {%- endif -%}
+        {%- endblock css_legacy -%}
+    {%- endblock css -%}
     {# ###### JavaScript files ###### #}
-    {% block js %}
-        {% if settings.DEBUG %}
+    {%- block js -%}
+        {%- if settings.DEBUG -%}
             {{ javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))}}
             {{ javascript(site.build_extjs_url('ext-all-debug.js')) }}
-        {% else %}
+        {%- else -%}
             {{ javascript(site.build_extjs_url('adapter/ext/ext-base.js')) }}
             {{ javascript(site.build_extjs_url('ext-all.js')) }}
-        {% endif %}
-    {% endblock js %}
-    
-    {% if language != 'en' %}
+        {%- endif -%}
+    {%- endblock js -%}
+    {%- if language != 'en' -%}
         {{ javascript(site.build_extjs_url('src/locale/ext-lang-' + language + '.js')) }}
-    {% endif %}
-
+    {%- endif -%}
     {{ javascript(site.build_extjs_url('examples/ux/statusbar/StatusBar.js')) }}
-
-    {% if site.use_spinner %}
+    {%- if site.use_spinner -%}
         {{ javascript(site.build_extjs_url('examples/ux/Spinner.js')) }}
-    {% endif %}
-
-    {% if site.use_tinymce %}
+    {%- endif -%}
+    {%- if site.use_tinymce -%}
         {{ javascript(site.build_tinymce_url("tiny_mce.js")) }}
         {{ javascript(site.build_media_url(
             "lino/tinymce/Ext.ux.TinyMCE.js")) }}
-
         <script language="javascript" type="text/javascript">
             tinymce.init({
                     theme : "advanced"
                     // , mode : "textareas"
             });
         </script>
-    {% endif %}
-
+    {%- endif -%}
     {{ javascript(site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js")) }}
-
-    {% if run_jasmine %}  {# site.use_jasmine #}
+    {%- if run_jasmine -%}  {# site.use_jasmine #}
         {{ javascript(site.build_media_url("jasmine/jasmine.js")) }}
         {{ javascript(site.build_media_url("jasmine/jasmine-html.js")) }}
         {{ javascript(site.build_media_url("lino/jasmine/specs.js")) }}
-    {% endif %}
-
-    {% for p in site.installed_plugins %}
-        {% if p.get_js_includes %}
-            {% for name in p.get_js_includes(settings, language) %}
+    {%- endif -%}
+    {%- for p in site.installed_plugins -%}
+        {%- if p.get_js_includes -%}
+            {%- for name in p.get_js_includes(settings, language) -%}
                 {{ javascript(name) }}
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
-
-    {% if site.use_gridfilters %}
-        {% set p = site.build_extjs_url('examples/ux/gridfilters') %}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- if site.use_gridfilters -%}
+        {%- set p = site.build_extjs_url('examples/ux/gridfilters') -%}
         {{ javascript(p + "/menu/RangeMenu.js") }}
         {{ javascript(p + "/menu/ListMenu.js") }}
         {{ javascript(p + "/GridFilters.js") }}
@@ -119,17 +98,15 @@
         {{ javascript(p + "/filter/ListFilter.js") }}
         {{ javascript(p + "/filter/NumericFilter.js") }}
         {{ javascript(p + "/filter/BooleanFilter.js") }}
-    {% endif %}
-
+    {%- endif -%}
     {{ javascript(site.build_extjs_url("examples/ux/fileuploadfield/FileUploadField.js")) }}
 
-    {% if site.use_filterRow %}
-        {% set p = site.build_media_url('lino', 'filterRow') %}
+    {%- if site.use_filterRow -%}
+        {%- set p = site.build_media_url('lino', 'filterRow') -%}
         {{ javascript(p + "/filterRow.js") }}
-    {% endif %}
-
-    {% if site.use_vinylfox %}
-        {% set p = site.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor' %}
+    {%- endif -%}
+    {%- if site.use_vinylfox -%}
+        {%- set p = site.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor' -%}
         {{ javascript(p + ".MidasCommand.js") }}
         {{ javascript(p + ".Divider.js") }}
         {{ javascript(p + ".HR.js") }}
@@ -145,79 +122,68 @@
         {{ javascript(p + ".UndoRedo.js") }}
         {{ javascript(p + ".Heading.js") }}
         {{ javascript(p + ".Plugins.js") }}
-    {% endif %}
-
-    {% if site.use_awesome_uploader %}
-        {% set p = site.build_media_url() + '/lino/AwesomeUploader/' %}
+    {%- endif -%}
+    {%- if site.use_awesome_uploader -%}
+        {%- set p = site.build_media_url() + '/lino/AwesomeUploader/' -%}
         {{ javascript(p + "/Ext.ux.XHRUpload.js") }}
         {{ javascript(p + "/swfupload.js") }}
      {# {{ javascript(p + "/swfupload.swfobject.js") }} #}
         {{ javascript(p + "/Ext.ux.AwesomeUploaderLocalization.js") }}
         {{ javascript(p + "/Ext.ux.AwesomeUploader.js") }}
-    {% endif %}
-
+    {%- endif -%}
     {# Main Lino js code #}
     {{ javascript(site.build_media_url(*renderer.lino_js_parts(user.profile))) }}
-    
     {# ###### OnReady JS code ###### #}
     <script type="text/javascript">
-    Ext.onReady(function()
-    {
+    Ext.onReady(function() {
     {% block js_onready %}
         //console.time('onReady');
-    
         {# Render current user items #}
-        {% for ln in renderer.html_page_user(request, site) %}
+        {%- for ln in renderer.html_page_user(request, site) -%}
             {{ ln }}
-        {% endfor %}
-    
+        {%- endfor -%}
         {# anonymous request using permalink: forward request.path as "on_login" URL #}
-        {% if settings.SITE.user_model and not request.user.profile.authenticated and on_ready %}
-            {% set on_ready = "Lino.show_login_window(" + py2js(request.path) + ")" %}
-        {% endif %}
-    
+        {%- if settings.SITE.user_model and not request.user.profile.authenticated and on_ready -%}
+            {%- set on_ready = "Lino.show_login_window(" + py2js(request.path) + ")" -%}
+        {%- endif -%}
         {# Render main window #}
-        {% set win = renderer.html_page_main_window(on_ready, request, site) %}
-        {% for ln in jsgen.declare_vars(win) %}
+        {%- set win = renderer.html_page_main_window(on_ready, request, site) -%}
+        {%- for ln in jsgen.declare_vars(win) -%}
             {{ ln }}
-        {% endfor %}
-    
+        {%- endfor -%}
         Lino.viewport = new Lino.Viewport({items: {{ py2js(win) }} });
-    
-        {% if site.use_esteid %}
+        {%- if site.use_esteid -%}
             Lino.init_esteid();
-        {% endif %}
-    
-        {% if run_jasmine %} {# site.use_jasmine #}
+        {%- endif -%}
+        {%- if run_jasmine -%} {# site.use_jasmine #}
             jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
             jasmine.getEnv().execute();
-        {% else %}
+        {%- else -%}
             Lino.viewport.render("body");
             {{ on_ready }}
-        {% endif %}
-    
+        {%- endif -%}
         //console.timeEnd('onReady');"
     {% endblock %}
     }); // end of onReady()"
     </script>
-{% endblock head %}
+{%- endblock head -%}
 </head>
 
 <body>
-{% block body %}
-    {% if  site.use_esteid %}
+{%- block body -%}
+    {%- if  site.use_esteid -%}
         <object id="esteid" type="application/x-esteid" style="width: 1px; height: 1px;"></object>
-    {% endif %}
+    {%- endif -%}
 
-    {% for p in site.installed_plugins %}
-        {% if p.get_head_lines %}
-            {% for ln in p.get_head_lines(site, request) %}
+    {%- for p in site.installed_plugins -%}
+        {%- if p.get_head_lines -%}
+            {%- for ln in p.get_head_lines(site, request) -%}
                 {{ ln }}
-            {% endfor %}
-        {% endif %}
-    {% endfor %}
+            {%- endfor -%}
+        {%- endif -%}
+    {%- endfor -%}
 
     <div id="body"></div>
-{% endblock body %}
+{%- endblock body -%}
 </body>
 </html>
