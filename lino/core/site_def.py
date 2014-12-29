@@ -1569,6 +1569,13 @@ class Site(object):
         import lino
         yield ("Lino", lino.SETUP_INFO['version'], lino.SETUP_INFO['url'])
 
+        try:
+            import mod_wsgi
+            version = "{0}.{1}".format(*mod_wsgi.version)
+            yield ("mod_wsgi", version, "http://www.modwsgi.org/")
+        except ImportError:
+            pass
+
         import django
         yield ("Django", django.get_version(), "http://www.djangoproject.com")
 

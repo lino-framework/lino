@@ -65,76 +65,87 @@ The above error message came when editing or displaying objects in a
 table without :attr:`detail_layout
 <lino.core.actors.Actor.detail_layout>`. Fixed.
 
-
-The `<head>` block of Lino's html contained many empty lines, which
-made it difficult to read for humans. Fixed.
-
+Optimization *en passant*: The `<head>` block of Lino's html contained
+many empty lines, which made it difficult to read for humans. Fixed.
 
 
-TypeError: H is undefined
-=========================
+Problems with mod_wsgi in daemon mode
+=====================================
 
-This error message came in the JavaScript console in :ref:`chat` after
-upgrading.  And caused the detail window for clients to not open but
-to produce another Javascript error :message:`TypeError:
-Lino.pcsw.Clients.detail is undefined`.
+Wow. I had a few hours of stress after an upgrade of the production
+server in :ref:`chat`.
 
+- :message:`TypeError: H is undefined` in the JavaScript console in
+  :ref:`chat` after upgrading.  And this caused the detail window for
+  clients to not open but to produce another Javascript error
+  :message:`TypeError: Lino.pcsw.Clients.detail is undefined`.
 
+- :message:`AssertionError at /` and
+  :message:`No exception message supplied`, and the system.log showing::
+  
 
-AssertionError at /
+    File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 748, in write_lino_js
+        assert profile == jsgen._for_user_profile
+    AssertionError
+    
+  or::
 
-No exception message supplied
+     Exception: <ParamsPanel main in ParamsLayout on newcomers.AvailableCoaches> of LayoutHandle for ParamsLayout on newcomers.AvailableCoaches has no variables
+    
+All these diverse phenomens had a single cause: a wrong configuration
+of mod_wsgi.
 
-Request Method: 	GET
-Request URL: 	http://lino-chatelet:8080/
-Django Version: 	1.6.2
-Exception Type: 	AssertionError
-Exception Location: 	/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py in write_lino_js, line 748
+Some ``print`` statements in the :xfile:`wsgi.py` file were useful for
+diagnosing the problem::
 
-201412-29 12:50:50 ERROR base : Internal Server Error: /
-Traceback (most recent call last):
-  File "/usr/local/lib/python2.7/dist-packages/django/core/handlers/base.py", line 114, in get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 69, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 87, in dispatch
-    return handler(request, *args, **kwargs)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/views.py", line 129, in get
-    return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 540, in html_page
-    self.build_js_cache_for_profile(user.profile, False)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 722, in build_js_cache_for_profile
-    return settings.SITE.make_cache_file(fn, write, force)
-  File "/usr/local/repositories/lino/lino/core/site_def.py", line 2745, in make_cache_file
-    write(f)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 720, in write
-    self.write_lino_js(f, profile)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 748, in write_lino_js
-    assert profile == jsgen._for_user_profile
-AssertionError
+    print sys.path
+    import mod_wsgi
+    print mod_wsgi.version
+    from lino import hello
 
+After this I added `mod_wsgi` to the items reported by 
+:attr:`get_used_libs <lino.core.site_def.Site.get_used_libs>`.
+The `mod_wsgi.version` on this server is `(3, 3)`.
 
+The output of aptitude confirmed the mod_wsgi version::
 
-Traceback (most recent call last):
-  File "/usr/local/lib/python2.7/dist-packages/django/core/handlers/base.py", line 114, in get_response
-    response = wrapped_callback(request, *callback_args, **callback_kwargs)
-  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 69, in view
-    return self.dispatch(request, *args, **kwargs)
-  File "/usr/local/lib/python2.7/dist-packages/django/views/generic/base.py", line 87, in dispatch
-    return handler(request, *args, **kwargs)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/views.py", line 129, in get
-    return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 540, in html_page
-    self.build_js_cache_for_profile(user.profile, False)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 722, in build_js_cache_for_profile
-    return settings.SITE.make_cache_file(fn, write, force)
-  File "/usr/local/repositories/lino/lino/core/site_def.py", line 2745, in make_cache_file
-    write(f)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 720, in write
-    self.write_lino_js(f, profile)
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 847, in write_lino_js
-    for ln in self.js_render_ParamsPanelSubclass(lh):
-  File "/usr/local/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 1064, in js_render_ParamsPanelSubclass
-    raise Exception("%r of %s has no variables" % (dh.main, dh))
-Exception: <ParamsPanel main in ParamsLayout on newcomers.AvailableCoaches> of LayoutHandle for ParamsLayout on newcomers.AvailableCoaches has no variables
+    $ aptitude show libapache2-mod-wsgi
+    Package: libapache2-mod-wsgi             
+    State: installed
+    Automatically installed: no
+    Version: 3.3-4+deb7u1
+    Priority: optional
+    ...
 
+The guilty was that the different threads got activated using
+different version of Python, Django and Lino.
+
+The `Django docs <https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/>`_ say:
+    
+    “Daemon mode” is the recommended mode for running mod_wsgi (...)
+    **if you use daemon mode is that you can’t use WSGIPythonPath;
+    instead you should use the python-path option to
+    WSGIDaemonProcess, for example::
+    
+      WSGIDaemonProcess example.com python-path=/path/to/mysite.com:/path/to/venv/lib/python2.7/site-packages
+      WSGIProcessGroup example.com
+
+    
+
+This led me to try this option to `WSGIDaemonProcess`.
+
+  python-path=/var/www/vhosts/prod/env/local/lib/python2.7/site-packages
+
+And it solved all problems.    
+Until today the following trick in the :xfile:`djangosite_local.py`
+had worked well::
+
+  site.addsitedir(join(home_dir, "env/local/lib/python2.7/site-packages"))
+   
+I ignore the details, but I guess that it stopped to work after some
+update.
+
+Note that I still recommend to create your virtualenvs in an
+independent system-wide place (e.g. `/usr/local/virtualenvs`) and
+then, in your project directories, make a symbolic link called "env"
+which points to one of these virtualenvs.
