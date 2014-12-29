@@ -13,7 +13,7 @@ offer professional consultance for Lino applications:
 - `wpj s.r.o <http://www.wpj.cz/>`_ (:ref:`joe`)
 - `Active Systems OÜ <http://active.ee>`_ (:ref:`at`)
 - `APC <http://www.apc.be>`_ (:ref:`ap`)
-
+- `ExcellentServ <http://www.xservx.com/>`__  (:ref:`mma`)
 
 Contributors
 ============
@@ -56,6 +56,13 @@ Luc Saffre
 
 See http://saffre-rumma.net/luc
 
+
+.. _mma:
+
+Mahmoud Mamdouh Abbas
+---------------------
+
+.. refstothis:: mma
 
 .. _mw:
 

@@ -3,6 +3,20 @@ Monday, December 29, 2014
 =========================
 
 
+Welcome to new team member Mahmoud from Egypt
+=============================================
+
+I think it is time to present our new team member :ref:`mma` who
+agreed to assist me at least for a few months. And of course we hope
+that this is just the beginning of a long releationship.  Mahmoud is
+my "assistant". He will help me to develop and maintain Lino. In a
+first phase he must still learn. While teaching him, I will build
+reusable documentation for future team members. The long-term goal is
+that he works independently on tasks which we assign to him after
+consultation.
+
+
+
 Merged `lino.ui` into `lino.core`
 =================================
 
@@ -29,3 +43,13 @@ There was a problem for generating the calendar view of a
 not clickable although a blog entry existed.  I think it is because
 today we are already in week 1 of 2015.  It is possible that we will
 know more in three days...
+
+Released :mod:`atelier` version 0.0.10, mainly for :ref:`mma`.
+
+
+'NoneType' object has no attribute 'get_view_permission'
+========================================================
+
+The above error message came when editing or displaying objects in a
+table without :attr:`detail_layout
+<lino.core.actors.Actor.detail_layout>`. Fixed.

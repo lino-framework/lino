@@ -440,7 +440,7 @@ class Model(models.Model):
         a = getattr(self, '_detail_action', None)
         if a is None:
             a = self.__class__.get_default_table().detail_action
-        if ar is None:
+        if a is None or ar is None:
             return a
         if a.get_view_permission(ar.get_user().profile):
             return a
