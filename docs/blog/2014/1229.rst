@@ -103,9 +103,12 @@ diagnosing the problem::
     print mod_wsgi.version
     from lino import hello
 
-After this I added `mod_wsgi` to the items reported by 
-:attr:`get_used_libs <lino.core.site_def.Site.get_used_libs>`.
-The `mod_wsgi.version` on this server is `(3, 3)`.
+The `mod_wsgi.version` on this server is `(3, 3)`.  
+
+
+To see this more easily in the future, I added `mod_wsgi` to the items
+reported by :attr:`get_used_libs
+<lino.core.site_def.Site.get_used_libs>`.
 
 The output of aptitude confirmed the mod_wsgi version::
 
@@ -123,20 +126,15 @@ different version of Python, Django and Lino.
 The `Django docs <https://docs.djangoproject.com/en/1.7/howto/deployment/wsgi/modwsgi/>`_ say:
     
     “Daemon mode” is the recommended mode for running mod_wsgi (...)
-    **if you use daemon mode is that you can’t use WSGIPythonPath;
-    instead you should use the python-path option to
-    WSGIDaemonProcess, for example::
+    in daemon mode **you can’t use WSGIPythonPath; instead you should
+    use the python-path option to WSGIDaemonProcess**.
     
-      WSGIDaemonProcess example.com python-path=/path/to/mysite.com:/path/to/venv/lib/python2.7/site-packages
-      WSGIProcessGroup example.com
+This led me to try this option to `WSGIDaemonProcess`::
 
-    
-
-This led me to try this option to `WSGIDaemonProcess`.
-
-  python-path=/var/www/vhosts/prod/env/local/lib/python2.7/site-packages
+  WSGIDaemonProcess lino_prod threads=15 python-path=/var/www/vhosts/prod/env/local/lib/python2.7/site-packages
 
 And it solved all problems.    
+    
 Until today the following trick in the :xfile:`djangosite_local.py`
 had worked well::
 
