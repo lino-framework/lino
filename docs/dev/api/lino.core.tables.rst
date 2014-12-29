@@ -22,6 +22,7 @@ lino.core.tables
       AbstractTable
       ContentType
       Group
+      Handle
       RstTable
       TableHandle
       TableRequest

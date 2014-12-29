@@ -1,7 +1,7 @@
-lino.ui.elems
-=============
+lino.core.elems
+===============
 
-.. automodule:: lino.ui.elems
+.. automodule:: lino.core.elems
 
    
    

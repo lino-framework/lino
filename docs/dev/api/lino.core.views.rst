@@ -1,7 +1,7 @@
-lino.ui.views
-=============
+lino.core.views
+===============
 
-.. automodule:: lino.ui.views
+.. automodule:: lino.core.views
 
    
    

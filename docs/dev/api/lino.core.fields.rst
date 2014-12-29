@@ -12,12 +12,10 @@ lino.core.fields
       ForeignKey
       chooser
       constant
-      d2iso
       displayfield
       fields_list
       full_model_name
       htmlbox
-      obj2str
       requestfield
       resolve_field
       resolve_model
@@ -57,7 +55,6 @@ lino.core.fields
       RemoteField
       RequestField
       RichTextField
-      UnresolvedModel
       VirtualField
       VirtualGetter
    

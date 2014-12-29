@@ -1,7 +1,7 @@
-lino.ui.render
-==============
+lino.core.renderer
+==================
 
-.. automodule:: lino.ui.render
+.. automodule:: lino.core.renderer
 
    
    

@@ -1,7 +1,7 @@
-lino.ui.store
-=============
+lino.core.store
+===============
 
-.. automodule:: lino.ui.store
+.. automodule:: lino.core.store
 
    
    
@@ -11,6 +11,7 @@ lino.ui.store
    
       create_atomizer
       curry
+      fds
       force_unicode
       get_atomizer
       iif

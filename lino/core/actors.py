@@ -547,7 +547,10 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_request_handle(self, ar):
-        # don't override
+        """Return the dynamic (per-request) handle for this actor for the
+        renderer used by specified action request.  Don't override.
+
+        """
         if self.get_handle_name is None:
             return self._get_handle(ar, _handle_attr_name)
         return self._get_handle(ar, self.get_handle_name(ar))
@@ -598,6 +601,7 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_handle(self):
+        """Return a static handle for this actor for the given renderer."""
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
         if self.get_handle_name is not None:

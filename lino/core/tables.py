@@ -110,6 +110,9 @@ if False:  # 20130710
 
 
 class TableHandle(Handle):
+    """
+    For every table we create one "handle" per renderer.
+    """
 
     _layouts = None
 

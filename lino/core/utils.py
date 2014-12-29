@@ -15,15 +15,19 @@ TODO: Merge this module and :mod:`lino.core.dbutils`.
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db import models
-from django import http
-from django.core import exceptions
 
 from lino.utils.xmlgen.html import E
 
 
 class Handle:
+    """Base class for :class:`lino.core.tables.TableHandle`,
+    :class:`lino.core.frames.FrameHandle` etc.
 
+    The "handle" of an actor is responsible for expanding layouts into
+    sets of (renderer-specific) widgets (called "elements"). This
+    operation is done once per actor per renderer.
+
+    """
     def __init__(self):
         self.ui = settings.SITE.ui
 
@@ -230,6 +234,4 @@ class Requirements(object):
     allow = None
     auth = True
     owner = None
-
-
 

@@ -12,7 +12,6 @@
    ad
    dd
    utils
-   ui
    mixins
    projects
    modlib

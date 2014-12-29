@@ -9,8 +9,6 @@ Merged `lino.ui` into `lino.core`
 I merged the content of the `lino.ui` package into :mod:`lino.core`,
 because this differentiation was historical and irritating.
 
-- Moved class `lino.ui.base.Handle` to :class:`lino.core.utils.Handle`.
-
 - File renames::
 
     mv ui/elems.py core/
@@ -20,3 +18,14 @@ because this differentiation was historical and irritating.
     rm ui/ui.py
     rm ui/base.py
 
+- Moved class `lino.ui.base.Handle` to :class:`lino.core.utils.Handle`.
+
+
+Calendar
+========
+
+There was a problem for generating the calendar view of a
+:rst:dir:`blogger_year`: the cell for today (December 29, 2014) was
+not clickable although a blog entry existed.  I think it is because
+today we are already in week 1 of 2015.  It is possible that we will
+know more in three days...

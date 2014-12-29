@@ -19,6 +19,7 @@ lino.core.utils
 
    .. autosummary::
    
+      Handle
       InstanceAction
       ParameterPanel
       Parametrizable

@@ -58,8 +58,6 @@ from lino.ad import Plugin
 
 from atelier.sphinxconf.insert_input import Py2rstDirective
 
-import lino.ui.urls  # hack: trigger ui instantiation
-
 
 def actor_name(a):
     return fully_normalize_name(settings.SITE.userdocs_prefix + str(a))
