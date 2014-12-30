@@ -9,4 +9,5 @@ collaborate.
    :maxdepth: 2
 
    devblog
+   projects
    trac

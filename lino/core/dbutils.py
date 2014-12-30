@@ -36,6 +36,10 @@ validate_url = URLValidator()
 
 
 def is_valid_url(s):
+    """Returns `True` if the given string is a valid URL.  This calls
+Django's `URLValidator()`, but does not raise an exception.
+
+    """
     try:
         validate_url(s)
         return True
@@ -44,6 +48,10 @@ def is_valid_url(s):
 
 
 def is_valid_email(s):
+    """Returns `True` if the given string is a valid email.  This calls
+Django's `validate_email()`, but does not raise an exception.
+
+    """
     try:
         validate_email(s)
         return True
@@ -52,7 +60,7 @@ def is_valid_email(s):
 
 
 def is_devserver():
-    """Returns True if we are running a development server.
+    """Returns `True` if this process is running as a development server.
     
     Thanks to Aryeh Leib Taurog in `How can I tell whether my Django
     application is running on development server or not?
@@ -60,8 +68,8 @@ def is_devserver():
     
     My additions:
     
-    - Added the `len(sys.argv) > 1` test because in a 
-      wsgi application the process is called without arguments.
+    - Added the `len(sys.argv) > 1` test because in a wsgi application
+      the process is called without arguments.
     - Not only for `runserver` but also for `testserver` and `test`.
 
     """
