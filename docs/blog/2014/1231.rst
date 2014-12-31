@@ -1,0 +1,62 @@
+============================
+Wednesday, December 31, 2014
+============================
+
+
+[logos] AttrDict instance has no key 'contacts'
+===============================================
+
+The online demo of :ref:`logos` had caused a traceback::
+
+  AttrDict instance has no key 'contacts' (keys are languages, about, users, sessions, bibles, system, comments, lino, contenttypes, humanize, extjs, bootstrap3)
+
+This caused a nice new feature and maybe the solution to a subtle problem.
+
+The :mod:`lino.modlib.languages` is a small plugin which defines only
+one menu item into the :ref:`Configuration <config_menu>` menu.
+
+The subtle problem is: into which menu group should the `languages`
+plugin integrate?  It makes no sense (and is irritating for the user)
+if such a small plugin creates its own menu group.
+
+I started to write :doc:`/dev/menu`. For example :ref:`menu.groups`.
+
+When this plugin was written, we "spontaneously" said that this table
+fits into the "Contacts" menu group. Here is who we wrote this::
+
+    def setup_config_menu(site, ui, profile, m):
+        m = m.add_menu('contacts', _("Contacts"))
+        m.add_action(Languages)
+    
+A bit later (when Lino's plugin system was ready), we changed this
+to::
+
+    def setup_config_menu(site, ui, profile, m):
+        m = m.add_menu('contacts', dd.plugins.contacts.verbose_name)
+        m.add_action(Languages)
+    
+Now I discovered that this caused a problem in :ref:`logos` which has
+no :mod:`lino.modlib.contacts` installed.
+
+And then the idea: I wrote a new plugin method :meth:`get_menu_group
+<lino.core.plugin.Plugin.get_menu_group>` which looks at the
+:attr:`lino.core.plugin.Plugin.needed_by` attribute.
+And the
+:mod:`lino.modlib.languages` plugin is the first usage example.
+Firstly its `models.py` specifies::
+
+
+    def setup_config_menu(site, ui, profile, m):
+        p = dd.plugins.languages.get_menu_group()
+        m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('languages.Languages')
+    
+And secondly, I no longer explicitly yield it in te
+:meth:`get_installed_apps
+<lino.core.site_def.Site.get_installed_apps>` methods of :ref:`welfare` and :ref:`logos`.
+
+The thirdly, I add it to the
+:attr:`lino.core.plugin.Plugin.needs_plugins` attribute
+of :mod:`lino.modlib.cv` and :mod:`lino_logos.apps.bibles`.
+
+Cool! 

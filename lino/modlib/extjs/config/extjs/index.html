@@ -148,20 +148,20 @@
         {%- endif -%}
         {# Render main window #}
         {%- set win = renderer.html_page_main_window(on_ready, request, site) -%}
-        {%- for ln in jsgen.declare_vars(win) -%}
+        {% for ln in jsgen.declare_vars(win) -%}
             {{ ln }}
-        {%- endfor -%}
+        {%- endfor %}
         Lino.viewport = new Lino.Viewport({items: {{ py2js(win) }} });
-        {%- if site.use_esteid -%}
+        {% if site.use_esteid -%}
             Lino.init_esteid();
-        {%- endif -%}
-        {%- if run_jasmine -%} {# site.use_jasmine #}
+        {%- endif %}
+        {% if run_jasmine -%} {# site.use_jasmine #}
             jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
             jasmine.getEnv().execute();
         {%- else -%}
             Lino.viewport.render("body");
             {{ on_ready }}
-        {%- endif -%}
+        {%- endif %}
         //console.timeEnd('onReady');"
     {% endblock %}
     }); // end of onReady()"

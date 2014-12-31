@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Defines the
-:class:`Language`
-model.
+"""Defines the :class:`Language` model.
 
 """
 
@@ -28,10 +25,11 @@ class Language(mixins.BabelNamed):
 
 
 class Languages(dd.Table):
-    model = Language
+    model = 'languages.Language'
     required = dd.required(user_groups='office')
 
 
 def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", dd.plugins.contacts.verbose_name)
-    m.add_action(Languages)
+    p = dd.plugins.languages.get_menu_group()
+    m = m.add_menu(p.app_label, p.verbose_name)
+    m.add_action('languages.Languages')

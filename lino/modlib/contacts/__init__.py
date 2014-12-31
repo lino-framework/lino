@@ -1,7 +1,25 @@
 # Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.contacts`."
+"""
+The :mod:`lino.modlib.contacts` package provides models and
+functionality for managing contacts.
+
+See also :mod:`ml.contacts`.
+
+.. autosummary::
+   :toctree:
+
+    models
+    utils
+    mixins
+    dummy
+    fixtures.std
+    fixtures.demo
+    fixtures.demo_ee
+    fixtures.demo_fr
+
+"""
 
 from lino import ad, _
 

@@ -16,4 +16,6 @@ from django.utils.translation import ugettext_lazy as _
 class Plugin(ad.Plugin):
 
     verbose_name = _("Career")
+    needs_plugins = ['lino.modlib.languages']
+
     person_model = 'contacts.Person'

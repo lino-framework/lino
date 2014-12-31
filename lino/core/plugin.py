@@ -249,4 +249,9 @@ class Plugin(object):
                 (source, self))
         ui.setup_media_link(urlpatterns, self.media_name, source=source)
 
+    def get_menu_group(self):
+        """Return the :class:`Plugin` instance into whose menu this plugin
+        wants to be inserted.
 
+        """
+        return self.needed_by or self

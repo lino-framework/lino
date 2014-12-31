@@ -114,7 +114,7 @@ class TrainingTypes(dd.Table):
 
 
 class Schooling(PersonHistoryEntry, CountryCity):
-    # abstract base class for Training and Study
+    "abstract base class for :class:`Training` and :class:`Study`."
     class Meta:
         abstract = True
 
