@@ -114,6 +114,9 @@ class DocsTests(LinoTestCase):
     def test_hello(self):
         self.run_django_manage_test('docs/tutorials/hello')
 
+    def test_lets(self):
+        self.run_django_manage_test('docs/tutorials/lets')
+
     def test_mldbc(self):
         self.run_django_manage_test('docs/tutorials/mldbc')
 
@@ -224,8 +227,6 @@ class ProjectsTests(LinoTestCase):
 
 
 class Tutorials(LinoTestCase):
-    def test_lets(self):
-        self.run_django_manage_test("lino/tutorials/lets1")
 
     def test_mini(self):
         self.run_django_manage_test("lino/tutorials/mini")

@@ -1,5 +1,3 @@
-# -*- coding: UTF-8 -*-
-
 from lino import rt
 
 
@@ -30,30 +28,40 @@ def objects():
             product=findbyname(Product, what),
             customer=findbyname(Member, who))
 
+    def member(name, place, email=''):
+        return rt.modules.lets.Member(
+            name=name, email=email,
+            place=findbyname(Place, place))
+
     yield Place(name="Tallinn")
     yield Place(name="Tartu")
     yield Place(name="Vigala")
     yield Place(name="Haapsalu")
 
-    yield Member(name="Fred", place=findbyname(Place, "Tallinn"))
-    yield Member(name="Argo", place=findbyname(Place, "Haapsalu"))
-    yield Member(name="Peter", place=findbyname(Place, "Vigala"))
-    yield Member(name="Anne", place=findbyname(Place, "Tallinn"))
-    yield Member(name="Jaanika", place=findbyname(Place, "Tallinn"))
-
-    yield Member(name="Henri", place=findbyname(Place, "Tallinn"))
-    yield Member(name="Mare", place=findbyname(Place, "Tartu"))
-    yield Member(name="Katrin", place=findbyname(Place, "Vigala"))
-
     yield Product(name="Bread")
     yield Product(name="Buckwheat")
     yield Product(name="Eggs")
+    yield Product(name="Sanitary repair work")
+    yield Product(name="Building repair work")
+    yield Product(name="Electricity repair work")
+
+    yield member("Fred", "Tallinn", 'fred@example.com')
+    yield member("Argo", "Haapsalu", 'argo@example.com')
+    yield member("Peter", "Vigala", 'peter@example.com')
+    yield member("Anne", "Tallinn", 'anne@example.com')
+    yield member("Jaanika", "Tallinn", 'jaanika@example.com')
+
+    yield member("Henri", "Tallinn", 'henri@example.com')
+    yield member("Mari", "Tartu", 'mari@example.com')
+    yield member("Katrin", "Vigala", 'katrin@example.com')
 
     yield offer("Bread", "Fred")
     yield offer("Buckwheat", "Fred")
     yield offer("Buckwheat", "Anne")
+    yield offer("Electricity repair work", "Henri")
+    yield offer("Electricity repair work", "Argo")
 
     yield demand("Buckwheat", "Henri")
     yield demand("Eggs", "Henri")
-    yield demand("Eggs", "Mare")
+    yield demand("Eggs", "Mari")
 

@@ -19,7 +19,7 @@ class Site(Site):
 
     def get_admin_main_items(self):
 
-        yield self.modules.lets.Products
+        yield self.modules.lets.ActiveProducts
 
 SITE = Site(globals(), 'lets')
 

@@ -237,9 +237,6 @@ lino.test_apps.nomti
 lino.tests
 lino.tutorials
 lino.tutorials.mini
-lino.tutorials.lets1
-lino.tutorials.lets1.fixtures
-lino.tutorials.lets1.lets
 lino.utils
 lino.utils.demonames
 lino.utils.mldbc

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from lino import dd
 
 
@@ -16,13 +17,30 @@ class Members(dd.Table):
 
 class Products(dd.Table):
     model = 'lets.Product'
+    order_by = ['name']
 
     detail_layout = """
     id name
     OffersByProduct DemandsByProduct
     """
 
+    column_names = 'id name'
+
+
+class ActiveProducts(Products):
+    
+    label = "Active products"
     column_names = 'name offered_by demanded_by'
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        # add filter condition to the queryset so that only "active"
+        # products are shown, i.e. for which there is at least one
+        # offer or one demand.
+        qs = super(ActiveProducts, cls).get_request_queryset(ar)
+        qs = qs.filter(Q(offer__isnull=False) | Q(demand__isnull=False))
+        qs = qs.distinct()
+        return qs
 
 
 class Offers(dd.Table):

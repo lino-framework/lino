@@ -3,3 +3,29 @@ Saturday, January 3, 2015
 =========================
 
 I updated :doc:`/tutorials/lets/index` after feedback from :ref:`mma`.
+
+The Sphinx developers moved from bitbucket to github.  I revised the
+Trove classifiers for :mod:`atelier` :
+
+- added `Framework :: Sphinx :: Extension`
+- changed `Development Status` to `5 - Production/Stable`
+
+And they successfully migrated my two open problem reports:
+
+- `1654 <https://github.com/sphinx-doc/sphinx/issues/1654>`_
+  ("autosummary should ignore imported members", created
+  :blogref:`20141219`, actually a duplicate of `1061
+  <https://github.com/sphinx-doc/sphinx/issues/1061>`_)
+
+- `1656 <https://github.com/sphinx-doc/sphinx/issues/1656>`_ ("autodoc
+  warns without giving the source file name", created
+  :blogref:`20141223`).
+
+I forked and cloned the Sphinx project and noted that my patch for
+1654 was not yet applied and the issue not solved, although Takayuki
+marked it as closed.  I re-applied my patches for these issues
+(unfortunately I now have them both in a single branch), pushed them
+to my fork and submitted a pull request for these two issues.
+
+
+Added a :file:`.travis.yml` file to :mod:`atelier` and pushed.

@@ -4,10 +4,18 @@
 A Local Exchange Trade System
 =============================
 
-In this tutorial we are going to write a new Lino application from
-scratch.
+.. this document is part of the Lino test suite. To test only this
+  document, run::
 
-Our application is a website of a Local Exchange Trade System (`LETS
+   $ python setup.py test -s tests.DocsTests.test_lets
+
+In this tutorial we are going to write a new Lino application from
+scratch.  It is also an illustration for our way of describing an
+application.  We hope that this encourages you to start writing your
+own Lino application.
+
+Our fictive application is a website of a Local Exchange Trade System
+(`LETS
 <http://en.wikipedia.org/wiki/Local_exchange_trading_system>`_). The
 members of that site would register the products and services they
 want to sell or to buy. The goal is to connect the providers and the
@@ -17,140 +25,182 @@ customers.
 .. contents::
    :local:
 
+What is a technical specification?
+==================================
 
-Database structure
-==================
+The "technical specification" of an application is a document which
+describes what an application does (or is expected to do).
 
-We imagine that you (or some other team member) have :doc:`analyzed
-</team/analysis>` the needs of your future customer and want the
-following database structure:
+Such a description is an important document when doing software
+development in a team.  Writing this document is the job of the
+:doc:`analyst </team/analyst>`.  The analyst communicates directly
+with the customer and formulates their needs. The salesman then uses
+this document when discussion with the customer about the price.  The
+developer must be able to understand this document and to discuss with
+the analyst about it.
 
-- **Products** : one row for every product or service. We keep it
-  simple and just record the designation for our products. We don't
-  even record a price.
+The salesman, the analyst and the developer can be a single person in
+a small team. But even then it is a good habit to write a technical
+specification.
 
-- **Members** : the people who use this site to register their offers
-  and demands. For each member we record their contact data such as
-  place and email.
+For a Lino application, the technical specification will include the
+following elements.
 
-- An **Offer** is when a given member declares that they want to *sell*
-  a given product.
+- the **database structure** : i.e. the list of **models** to be used.
+  Each model has a name and a list of **fields**.  Each field of a
+  model has at least a name and a type.
 
-- A **Demand** is when a given member declares that they want to *buy* a
-  given product.
+- a **menu structure**
 
-Here is a graphical representation of that structure:
+- the **layout** of detail forms
 
+- the content of the **main page**
 
-.. digraph:: foo
-
-   node [shape=box, fontname="Helvetica"];  Product;
-   node [shape=box];  Offer, Demand;
-   node [shape=box, fontname="Helvetica"];  Member, Place;
-
-   Offer -> Product;
-   Demand -> Product;
-   Offer -> Member;
-   Demand -> Member;
-   Member ->  Place;
+- the **user profiles**
 
 
-Notes:
+Describing a database structure
+===============================
 
-- Every **arrow** on the diagram represents a `ForeignKey` in our
-  :xfile:`models.py`. This way of representing a database structure is a
-  bit uncommon, but we find it to be intuitive and useful. 
+A **textual** description of your models makes certain things clear
+between the customer and the developer. It is good to agree with your
+customer on the meaning of certain words.  
 
-- There are two `many-to-many relationships
-  <https://docs.djangoproject.com/en/1.7/topics/db/examples/many_to_many/>`_
-  between Member and Product which we might call "offered" and
-  "wanted".  You might define something like this::
-  
-    class Member(Model):
-        offered_products = ManyToManyField(Product, through=Offer)
-        wanted_products = ManyToManyField(Product, through=Demand)
+Here is a textual description for our fictive application:
+
+.. admonition:: Database models
+
+    - **Products** : one row for every product or service. We keep it
+      simple and just record the designation for our products. We don't
+      even record a price.
+
+    - **Members** : the people who use this site to register their offers
+      and demands. For each member we record their contact data such as
+      place and email.
+
+    - An **Offer** is when a given member declares that they want to *sell*
+      a given product.
+
+    - A **Demand** is when a given member declares that they want to *buy* a
+      given product.
+
+    - Every member is located in a given **Place**. And in a future
+      version we want to add filtering on offers and demands limited to
+      the place.
+
+Note that we don't pretend that this structure is actually useful,
+optimal and cool.  It is probably a bit too simple for a real-life
+website.  But we *imagine* that this is what our customer *asks* us to
+do.
+
+While words are good, a picture says more than a thousand words.  So
+here is a **graphical representation** of our structure:
+
+.. graphviz:: 
+
+   digraph foo  {
+
+       graph [renderer="neato"]
+
+       node [shape=box]
+       node [style=filled]
+           node [fontname="times bold", fillcolor=red]  
+              Product Member
+           node [fontname="times" fillcolor=gold]  Offer  Demand
+           node [fontname="times italic" fillcolor=lightblue]  Place
+
+       Product -> Offer[arrowhead="inv"]
+       Product -> Demand[arrowhead="inv"]
+    
+       Offer -> Member[taillabel="provider", labelangle="-90", labeldistance="2"];
+       Demand -> Member[taillabel="customer", labelangle="90", labeldistance="2"];
+       Member ->  Place;
+
+  }
+
+This way of visualizing a database structure is a bit uncommon
+(because Luc "invented" it before the `UML
+<https://de.wikipedia.org/wiki/Unified_Modeling_Language>`_ was
+formulated), but we find it intuitive and useful.  The basic rules
+are:
+
+- Every **node** on the diagram represents a database model.
+- Every **arrow** on the diagram represents a `ForeignKey`.  We prefer
+  to use the word *pointer* instead of *ForeignKey* when talking with
+  a customer because that's more intuitive.
+
+- We display the **name of a pointer** only if it differs from the
+  model it points to. For example the arrow from *Offer* to *Product*
+  is a FK field called `product`, defined on the *Offer* model. We do
+  not display the name `product` on our diagram because that would be
+  a waste of place.
+
+The colors of this diagram are our habit of grouping the models into
+three "data categories":
+
+- **red** is for **master data** (i.e. relatively stable data)
+- **yellow** is for **moving data** (i.e. data which changes
+  relatively often)
+- **blue** is for **configuration data** (i.e. data which is rather in
+  background and accessible only to site administrators)
+
 
 Now here is the :srcref:`models.py </docs/tutorials/lets/models.py>`
 file which defines these database models:
 
 .. literalinclude:: models.py
 
-We don't pretend that this structure is actually useful, optimal and
-cool.  Actually it's a bit too simple.  But we *imagine* that this is
-what our customer *asks* us to do.
-
 Yes, the two `displayfield` deserve some explanation. These are
 virtual fields defined on the model.
 
 
-Form layouts
-============
+Note about many-to-many relationships
+=====================================
+
+There are two `many-to-many relationships
+<https://docs.djangoproject.com/en/1.7/topics/db/examples/many_to_many/>`_
+between *Member* and *Product* which we might call "offered" and "wanted".
+You might define something like this::
+  
+    class Member(Model):
+        offered_products = ManyToManyField(Product, through=Offer)
+        wanted_products = ManyToManyField(Product, through=Demand)
+
+IOW, *Offer* is the "intermediate model" used "to govern the m2m
+relationship "offered_products" between *Member* and *Product*.  And
+*Demand* is another intermediate model used to govern another m2m
+relationship "wanted_products" between *Member* and *Product*.
+
+But we believe that Django's `ManyToManyField
+<https://docs.djangoproject.com/en/1.7/ref/models/fields/#ref-manytomany>`_
+is a rather contra-productive concept which causes more confusion than
+clarity.  A *ManyToManyField* is almost nothing more than a shortcut
+for telling Django to create an automatic, "invisible", additional
+model, with two ForeignKey fields.  But in most real-life situations
+you anyway want to define what Django calls "`extra fields on
+many-to-many relationships
+<https://docs.djangoproject.com/en/1.7/topics/db/models/#intermediary-manytomany>`_",
+and thus you must explicitly name that "intermediate model" of your
+ManyToManyField.
+
+That's why we recommend to always explicitly name the intermediate
+models of your m2m relations.
+
+
+Tables
+======
 
 For every database model there should be at least one :class:`Table
 <lino.core.dbtables.Table>`. Database *models* are usually named in
 *singular* form, tables in *plural* form.
 
-I usually define my tables together with the models in my
+You may define your tables together with the models in your
 :file:`models.py` file, but for this tutorial we defined them in a
 separate file :file:`tables.py`. It's a matter of taste, but if you
 separate them, then you must import the :file:`tables.py` file from
 within your :file:`models.py` so that they get imported at startup.
 
-
 .. literalinclude:: tables.py
-
-Note the `detail_layout` attributes of certain tables.
-These are another thing to discuss with your customer during :doc:`analysis
-</team/analysis>`.
-
-They define the **layout** of the **detail window** for these database
-models.  A detail window is what Lino opens when the user
-double-clicks on a given row.  Layouts are defined per *table*, not
-per *model*.
-
-.. textimage:: t3a-3.jpg
-    :scale: 50%
-
-    The detail window of a **Product** should show the data fields and
-    two slave tables, one showing the the **offers** and another with
-    the **demands** for this product.
-
-    Here is the code for this::
-
-        detail_layout = """
-        id name
-        OffersByProduct DemandsByProduct
-        """
-    
-When seeing the code on the left, you should be able to imagine
-something like the picture on the right.
-
-
-
-Menu structure
-==============
-
-And a last thing to discuss with your customer during :doc:`analysis
-</team/analysis>` is the **menu structure**. We imagine that they want
-something like this:
-
-- **Master** contains "master data" (i.e. relatively stable data):
-
-  - Products -- show the list of products
-  - Members -- show the list of members
-
-- **Market**
-
-  - Offers  -- show the full list of all offers
-  - Demands  -- show the full list of all demands
-
-
-We imagine that they want the main page to display a simple catalog of
-the things available for exchange.
-
-Here is how we express these things in our :xfile:`settings.py` file.
-
-.. literalinclude:: settings.py
 
 
 Demo data
@@ -193,55 +243,114 @@ Creating table lets_offer
 Creating table lets_demand
 Installing custom SQL ...
 Installing indexes ...
-Installed 21 object(s) from 1 fixture(s)
+Installed 26 object(s) from 1 fixture(s)
 
     
 Show the list of members:    
 
 >>> rt.show(lets.Members)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-==== ========= ========== =======
+==== ========= ========== =====================
  ID   name      place      email
----- --------- ---------- -------
- 1    Fred      Tallinn
- 2    Argo      Haapsalu
- 3    Peter     Vigala
- 4    Anne      Tallinn
- 5    Jaanika   Tallinn
- 6    Henri     Tallinn
- 7    Mare      Tartu
- 8    Katrin    Vigala
-==== ========= ========== =======
+---- --------- ---------- ---------------------
+ 1    Fred      Tallinn    fred@example.com
+ 2    Argo      Haapsalu   argo@example.com
+ 3    Peter     Vigala     peter@example.com
+ 4    Anne      Tallinn    anne@example.com
+ 5    Jaanika   Tallinn    jaanika@example.com
+ 6    Henri     Tallinn    henri@example.com
+ 7    Mari      Tartu      mari@example.com
+ 8    Katrin    Vigala     katrin@example.com
+==== ========= ========== =====================
 <BLANKLINE>
 
-Show the list of products:    
+The `Products` table shows all products in alphabetical order:
 
 >>> rt.show(lets.Products)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-=========== ==================== =====================
- name        Offered by           Wanted by
------------ -------------------- ---------------------
- Bread       **Fred**
- Buckwheat   **Fred**, **Anne**   **Henri**
- Eggs                             **Henri**, **Mare**
-=========== ==================== =====================
+==== =========================
+ ID   name
+---- -------------------------
+ 1    Bread
+ 2    Buckwheat
+ 5    Building repair work
+ 3    Eggs
+ 6    Electricity repair work
+ 4    Sanitary repair work
+==== =========================
 <BLANKLINE>
 
-Show the list of offers:    
+
+The `Offers` table show all offers.
 
 >>> rt.show(lets.Offers)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-==== ======== =========== =============
- ID   member   product     valid until
----- -------- ----------- -------------
+==== ======== ========================= =============
+ ID   member   product                   valid until
+---- -------- ------------------------- -------------
  1    Fred     Bread
  2    Fred     Buckwheat
  3    Anne     Buckwheat
-==== ======== =========== =============
+ 4    Henri    Electricity repair work
+ 5    Argo     Electricity repair work
+==== ======== ========================= =============
 <BLANKLINE>
 
 
-Show the main menu:
+The *ActiveProducts* table is an example of how to handle customized
+complex filter conditions.  It is a subclass of `Products`, but adds
+filter conditions so that only "active" products are shown, i.e. for
+which there is at least one offer or one demand.  It also specifies
+`column_names` to show the two virtual fields `offered_by` and
+`wanted_by`.
+
+>>> rt.show(lets.ActiveProducts)
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+========================= ===================== =====================
+ name                      Offered by            Wanted by
+------------------------- --------------------- ---------------------
+ Bread                     **Fred**
+ Buckwheat                 **Fred**, **Anne**    **Henri**
+ Eggs                                            **Henri**, **Mari**
+ Electricity repair work   **Henri**, **Argo**
+========================= ===================== =====================
+<BLANKLINE>
+
+
+Menu structure and main page
+============================
+
+Another thing to discuss with your customer during analysis is the
+**menu structure**. 
+
+We imagine that they want something like this:
+
+.. admonition:: Main menu 
+
+    - **Master**:
+
+      - Products -- show the list of products
+      - Members -- show the list of members
+
+    - **Market**
+
+      - Offers  -- show the full list of all offers
+      - Demands  -- show the full list of all demands
+
+
+We imagine that they want the **main page** to display a list of
+products available for exchange (in other words the *ActiveProducts*
+table defined above).
+
+Here is how we express these things by defining two methods
+:meth:`setup_menu <lino.core.site_def.Site.setup_menu>` and
+:meth:`get_admin_main_items
+<lino.core.site_def.Site.get_admin_main_items>` in our
+:xfile:`settings.py` file.
+
+.. literalinclude:: settings.py
+
+We can show the main menu in a doctest:
 
 >>> ses = rt.login()
 >>> ses.show_menu()
@@ -249,6 +358,39 @@ Show the main menu:
 - Master : members, products
 - Market : offers, demands
 - Configure : places
+
+
+
+
+Form layouts
+============
+
+Note the `detail_layout` attributes of certain tables.  They define
+the **layout** of the **detail window** for these database models (a
+detail window is what Lino opens when the user double-clicks on a
+given row).
+
+Layouts are another thing to discuss with your customer during
+analysis, and therefore they should be part of a specification.
+
+
+.. textimage:: t3a-3.jpg
+    :scale: 50%
+
+    The detail window of a **Product** should show the data fields and
+    two slave tables, one showing the the **offers** and another with
+    the **demands** for this product.
+
+    Here is the code for this::
+
+        detail_layout = """
+        id name
+        OffersByProduct DemandsByProduct
+        """
+    
+When seeing the code on the left, you should be able to imagine
+something like the picture on the right.
+
 
 
 The web interface
@@ -275,18 +417,28 @@ And point your browser to http://127.0.0.1:8000/
 
 Here are some screenshots.
 
-.. image:: t3a-1.jpg
+.. image:: a.png
     :scale: 70
     
-.. image:: t3a-2.jpg
+.. image:: b.png
     :scale: 70
     
-.. image:: t3a-3.jpg
+.. image:: c.png
     :scale: 70
+    
+.. image:: d.png
+    :scale: 70
+    
+.. image:: e.png
+    :scale: 70
+    
 
+Summary
+=======
 
-Conclusion
-==========
+In this tutorial you learned about **analysis**: why it is important
+to write a technical specification, how it should look like, how you
+translate it into Lino source code.
 
-We hope that this encourages you to start writing your own Lino
-application.
+You also started your own copy of the example application, you can run
+the development server and reproduce the screenshots on your machine.
