@@ -70,24 +70,43 @@ Notes:
         offered_products = ManyToManyField(Product, through=Offer)
         wanted_products = ManyToManyField(Product, through=Demand)
 
-- We don't pretend that this structure is actually useful, optimal an
-  cool.  Actually it's a bit too simple.  But we *imagine* that this
-  is what our customer *asks* us to do.
-
-
-:srcref:`models.py </docs/tutorials/lets/models.py>`                defines the database models and tables
-
+Now here is the :srcref:`models.py </docs/tutorials/lets/models.py>`
+file which defines these database models:
 
 .. literalinclude:: models.py
+
+We don't pretend that this structure is actually useful, optimal and
+cool.  Actually it's a bit too simple.  But we *imagine* that this is
+what our customer *asks* us to do.
+
+Yes, the two `displayfield` deserve some explanation. These are
+virtual fields defined on the model.
 
 
 Form layouts
 ============
 
-Another thing to discuss with your customer during :doc:`analysis
-</team/analysis>` is the **layout** of the **detail window** for
-certain database models.  A detail window is what Lino opens when the
-user double-clicks on a given row.
+For every database model there should be at least one :class:`Table
+<lino.core.dbtables.Table>`. Database *models* are usually named in
+*singular* form, tables in *plural* form.
+
+I usually define my tables together with the models in my
+:file:`models.py` file, but for this tutorial we defined them in a
+separate file :file:`tables.py`. It's a matter of taste, but if you
+separate them, then you must import the :file:`tables.py` file from
+within your :file:`models.py` so that they get imported at startup.
+
+
+.. literalinclude:: tables.py
+
+Note the `detail_layout` attributes of certain tables.
+These are another thing to discuss with your customer during :doc:`analysis
+</team/analysis>`.
+
+They define the **layout** of the **detail window** for these database
+models.  A detail window is what Lino opens when the user
+double-clicks on a given row.  Layouts are defined per *table*, not
+per *model*.
 
 .. textimage:: t3a-3.jpg
     :scale: 50%
@@ -105,16 +124,6 @@ user double-clicks on a given row.
     
 When seeing the code on the left, you should be able to imagine
 something like the picture on the right.
-
-Layouts are defined per *table*, not per *model*.
-
-I usually define my tables directly in my :file:`models.py` file, but
-for this tutorial I defined them in a separate file
-:file:`tables.py`. It's a matter of taste, but if you separate them,
-then you must take car that they get imported from within your
-:file:`models.py`.
-
-.. literalinclude:: tables.py
 
 
 
@@ -138,6 +147,8 @@ something like this:
 
 We imagine that they want the main page to display a simple catalog of
 the things available for exchange.
+
+Here is how we express these things in our :xfile:`settings.py` file.
 
 .. literalinclude:: settings.py
 
