@@ -2,5 +2,4 @@
 Saturday, January 3, 2015
 =========================
 
-:ref:`mma` gave feedback about :doc:`/tutorials/lets/index`, and I
-worked a bit on it.
+I updated :doc:`/tutorials/lets/index` after feedback from :ref:`mma`.

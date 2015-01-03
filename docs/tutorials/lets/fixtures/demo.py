@@ -1,5 +1,4 @@
 # -*- coding: UTF-8 -*-
-from __future__ import unicode_literals
 
 from lino import rt
 
@@ -36,22 +35,22 @@ def objects():
     yield Place(name="Vigala")
     yield Place(name="Haapsalu")
 
-    yield Member(name="Priit", place=findbyname(Place, "Tallinn"))
+    yield Member(name="Fred", place=findbyname(Place, "Tallinn"))
     yield Member(name="Argo", place=findbyname(Place, "Haapsalu"))
-    yield Member(name="Tõnis", place=findbyname(Place, "Vigala"))
+    yield Member(name="Peter", place=findbyname(Place, "Vigala"))
     yield Member(name="Anne", place=findbyname(Place, "Tallinn"))
     yield Member(name="Jaanika", place=findbyname(Place, "Tallinn"))
 
     yield Member(name="Henri", place=findbyname(Place, "Tallinn"))
     yield Member(name="Mare", place=findbyname(Place, "Tartu"))
-    yield Member(name="Külliki", place=findbyname(Place, "Vigala"))
+    yield Member(name="Katrin", place=findbyname(Place, "Vigala"))
 
     yield Product(name="Bread")
     yield Product(name="Buckwheat")
     yield Product(name="Eggs")
 
-    yield offer("Bread", "Priit")
-    yield offer("Buckwheat", "Priit")
+    yield offer("Bread", "Fred")
+    yield offer("Buckwheat", "Fred")
     yield offer("Buckwheat", "Anne")
 
     yield demand("Buckwheat", "Henri")

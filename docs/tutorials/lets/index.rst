@@ -18,7 +18,6 @@ customers.
    :local:
 
 
-
 Database structure
 ==================
 
@@ -76,6 +75,12 @@ Notes:
   is what our customer *asks* us to do.
 
 
+:srcref:`models.py </docs/tutorials/lets/models.py>`                defines the database models and tables
+
+
+.. literalinclude:: models.py
+
+
 Form layouts
 ============
 
@@ -101,27 +106,16 @@ user double-clicks on a given row.
 When seeing the code on the left, you should be able to imagine
 something like the picture on the right.
 
+Layouts are defined per *table*, not per *model*.
 
-We also define detail layouts for **Member**::
+I usually define my tables directly in my :file:`models.py` file, but
+for this tutorial I defined them in a separate file
+:file:`tables.py`. It's a matter of taste, but if you separate them,
+then you must take car that they get imported from within your
+:file:`models.py`.
 
-    class Members(dd.Table):
-        model = Member
+.. literalinclude:: tables.py
 
-        detail_layout = """
-        id name place email
-        OffersByMember DemandsByMember
-        """
-
-
-The content of the main page
-============================
-
-Another thing to discuss with your customer during :doc:`analysis
-</team/analysis>` is: what information should be on the main page of
-your application.
-
-We imagine that they want the main page to display a simple catalog of
-the things available for exchange.
 
 
 Menu structure
@@ -142,32 +136,123 @@ something like this:
   - Demands  -- show the full list of all demands
 
 
+We imagine that they want the main page to display a simple catalog of
+the things available for exchange.
+
+.. literalinclude:: settings.py
 
 
-The first prototype
-===================
+Demo data
+=========
+
+It is important to get some fictive data which corresponds more or
+less to the reality of your customer.  Here is the demo data for this
+tutorial.
+
+.. literalinclude:: fixtures/demo.py
+
+
+As soon as you have written such a fixture, you can start to write
+test cases.  The following code snippets are so-called "doctests",
+they are both a **visualisation of your demo data** (which you might
+show to your customer) and a part of the test suite of your
+application (which you invoke with::
+
+  $ python manage.py test
+
+The above command will run the following code snippets in a subprocess
+and check whether their output is the same as the one displayed here.
+
+Doctests usually need to do some initialization.
+
+>>> from __future__ import print_function
+>>> from lino.runtime import *
+>>> from lino import rt
+
+Since doctests run on a temporary database, we need to load our
+fixture each time this document is being tested.
+
+>>> from django.core.management import call_command
+>>> call_command('initdb', 'demo', interactive=False)
+Creating tables ...
+Creating table lets_place
+Creating table lets_member
+Creating table lets_product
+Creating table lets_offer
+Creating table lets_demand
+Installing custom SQL ...
+Installing indexes ...
+Installed 21 object(s) from 1 fixture(s)
+
+    
+Show the list of members:    
+
+>>> rt.show(lets.Members)
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+==== ========= ========== =======
+ ID   name      place      email
+---- --------- ---------- -------
+ 1    Fred      Tallinn
+ 2    Argo      Haapsalu
+ 3    Peter     Vigala
+ 4    Anne      Tallinn
+ 5    Jaanika   Tallinn
+ 6    Henri     Tallinn
+ 7    Mare      Tartu
+ 8    Katrin    Vigala
+==== ========= ========== =======
+<BLANKLINE>
+
+Show the list of products:    
+
+>>> rt.show(lets.Products)
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+=========== ==================== =====================
+ name        Offered by           Wanted by
+----------- -------------------- ---------------------
+ Bread       **Fred**
+ Buckwheat   **Fred**, **Anne**   **Henri**
+ Eggs                             **Henri**, **Mare**
+=========== ==================== =====================
+<BLANKLINE>
+
+Show the list of offers:    
+
+>>> rt.show(lets.Offers)
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+==== ======== =========== =============
+ ID   member   product     valid until
+---- -------- ----------- -------------
+ 1    Fred     Bread
+ 2    Fred     Buckwheat
+ 3    Anne     Buckwheat
+==== ======== =========== =============
+<BLANKLINE>
+
+
+Show the main menu:
+
+>>> ses = rt.login()
+>>> ses.show_menu()
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+- Master : members, products
+- Market : offers, demands
+- Configure : places
+
+
+The web interface
+=================
 
 Now you are ready to write a "first draft" prototype.  The goal of
 such a prototype is to have something to show to your customer that
 looks a little bit like the final product, and with wich you can play
 to test whether your analysis of the database structure is okay.  
 
-The code for such a first draft is in :srcref:`docs/tutorials/lets`.
-Please explore these files:
- 
-=================================================================== =========================
-:srcref:`models.py </docs/tutorials/lets/models.py>`                defines the database models and tables
-:srcref:`settings.py </docs/tutorials/lets/settings.py>`            contains the main menu and other application settings
-:srcref:`manage.py </docs/tutorials/lets/manage.py>`                (you may need to adapt this so that it sets a correct value for `DJANGO_SETTINGS_MODULE`)
-:srcref:`fixtures/demo.py </docs/tutorials/lets/fixtures/demo.py>`  defines demo data
-=================================================================== =========================
+Please explore the files in :srcref:`docs/tutorials/lets`, copy them
+to a local project directory and try to get the prototype running.
 
-
-Now copy these files to a local project directory and try to get the
-prototype running.
-
-First you must run the following command to populate your database
-with some demo data::
+You will need run the following command to populate your database with
+some demo data::
 
   python manage.py initdb_demo
   
@@ -187,6 +272,7 @@ Here are some screenshots.
     
 .. image:: t3a-3.jpg
     :scale: 70
+
 
 Conclusion
 ==========
