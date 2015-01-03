@@ -122,9 +122,9 @@ def join_words(*words):
 def join_elems(elems, sep=' '):
     """
     Examples:
-    >>> join_elems([1,2,3])
+    >>> join_elems([1, 2, 3])
     [1, ' ', 2, ' ', 3]
-    >>> join_elems([1,2,3],' / ')
+    >>> join_elems([1, 2, 3],' / ')
     [1, ' / ', 2, ' / ', 3]
     >>> join_elems([])
     []

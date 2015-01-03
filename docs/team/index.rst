@@ -11,3 +11,4 @@ collaborate.
    devblog
    projects
    trac
+   analysis

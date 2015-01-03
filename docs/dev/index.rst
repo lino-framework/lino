@@ -18,7 +18,7 @@ Getting started
    /tutorials/hello/index
    /tutorials/polls/mysite/index
    /tutorials/dumpy
-   /tutorials/lets
+   /tutorials/lets/index
 
 
 Becoming a Lino developer

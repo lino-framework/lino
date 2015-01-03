@@ -1,6 +1,7 @@
-
 from django.db import models
-from lino import dd, rt
+from lino import dd
+from lino.utils import join_elems
+from lino.utils.xmlgen.html import E
 
 
 class Place(dd.Model):
@@ -14,7 +15,7 @@ class Places(dd.Table):
     model = Place
 
 
-class Provider(dd.Model):
+class Member(dd.Model):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place, blank=True, null=True)
     email = models.EmailField(max_length=200, blank=True)
@@ -23,30 +24,12 @@ class Provider(dd.Model):
         return self.name
 
 
-class Providers(dd.Table):
-    model = Provider
+class Members(dd.Table):
+    model = Member
 
     detail_layout = """
     id name place email
-    OffersByProvider
-    """
-
-
-class Customer(dd.Model):
-    name = models.CharField(max_length=200)
-    place = models.ForeignKey(Place, blank=True, null=True)
-    email = models.EmailField(max_length=200, blank=True)
-
-    def __unicode__(self):
-        return self.name
-
-
-class Customers(dd.Table):
-    model = Customer
-
-    detail_layout = """
-    id name place email
-    DemandsByCustomer
+    OffersByMember DemandsByMember
     """
 
 
@@ -55,6 +38,20 @@ class Product(dd.Model):
 
     def __unicode__(self):
         return self.name
+
+    @dd.displayfield("Offered by")
+    def offered_by(self, ar):
+        items = [ar.obj2html(o.provider)
+                 for o in OffersByProduct.request(self)]
+        items = join_elems(items, sep=', ')
+        return E.p(*items)
+
+    @dd.displayfield("Wanted by")
+    def demanded_by(self, ar):
+        items = [ar.obj2html(o.customer)
+                 for o in DemandsByProduct.request(self)]
+        items = join_elems(items, sep=', ')
+        return E.p(*items)
 
 
 class Products(dd.Table):
@@ -65,9 +62,11 @@ class Products(dd.Table):
     OffersByProduct DemandsByProduct
     """
 
+    column_names = 'name offered_by demanded_by'
+
 
 class Offer(dd.Model):
-    provider = models.ForeignKey(Provider)
+    provider = models.ForeignKey(Member)
     product = models.ForeignKey(Product)
     valid_until = models.DateField(blank=True, null=True)
 
@@ -79,7 +78,7 @@ class Offers(dd.Table):
     model = Offer
 
 
-class OffersByProvider(Offers):
+class OffersByMember(Offers):
     master_key = 'provider'
 
 
@@ -88,7 +87,7 @@ class OffersByProduct(Offers):
 
 
 class Demand(dd.Model):
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Member)
     product = models.ForeignKey(Product)
 
     def __unicode__(self):
@@ -99,7 +98,7 @@ class Demands(dd.Table):
     model = Demand
 
 
-class DemandsByCustomer(Demands):
+class DemandsByMember(Demands):
     master_key = 'customer'
 
 
