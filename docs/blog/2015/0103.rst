@@ -25,7 +25,23 @@ I forked and cloned the Sphinx project and noted that my patch for
 1654 was not yet applied and the issue not solved, although Takayuki
 marked it as closed.  I re-applied my patches for these issues
 (unfortunately I now have them both in a single branch), pushed them
-to my fork and submitted a pull request for these two issues.
+to my fork and submitted a pull request for these two issues.  
 
+I then saw the message "The Travis CI build failed" for my pull
+request, clicked on `Details
+<https://travis-ci.org/sphinx-doc/sphinx/jobs/45791041>`_ and was
+impressed: a brave worker job had silently tested my pull request in a
+dozen of different environments and disclosed the fact that my change
+would break Sphinx's test suite.
 
-Added a :file:`.travis.yml` file to :mod:`atelier` and pushed.
+That's called "a hosted continuous integration service". I had been
+reading about it earlier, and had thought "nice gimmick to use some
+day in the future", but now I felt that I also want it *now* for *my*
+projects!  Learned how to `get started
+<http://docs.travis-ci.com/user/getting-started/>`_.
+
+Added a :file:`.travis.yml` file to :mod:`atelier` and :mod:`lino` and
+activated Travis projects `Atelier
+<https://travis-ci.org/lsaffre/atelier>`_ and `Lino
+<https://travis-ci.org/lsaffre/lino>`_.
+
