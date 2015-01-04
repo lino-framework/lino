@@ -2,7 +2,7 @@
 Sunday, January 4, 2015
 =======================
 
-Of course, the test suite on travis fails because :cmd:`fab initdb`
+Of course! The test suite on travis fails because :cmd:`fab initdb`
 has not been running. So in Lino's :file:`.travis.yml` I replace::
 
   script: python setup.py test 
@@ -11,4 +11,18 @@ by::
 
   script: fab initdb test
 
+And yes (Python is cool): it works. The next build successfully
+`initializes all demo databases
+<https://travis-ci.org/lsaffre/lino/jobs/45813031>`_.  But still some
+test cases fail with an :message:`OperationalError: no such table:
+users_user`. Strange.
+
+I can reproduce it locally::
+
+  $ cd ~/tmp
+  $ virtualenv 0104
+  $ . 0104/bin/activate
+  $ go lino
+  $ pip install .
+  $ fab initdb test
 
