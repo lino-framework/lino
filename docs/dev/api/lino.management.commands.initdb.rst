@@ -38,6 +38,5 @@ lino.management.commands.initdb
    
       CommandError
       IntegrityError
-      OperationalError
    
    

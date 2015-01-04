@@ -31,7 +31,7 @@ such table: users_user`. Strange.  I can reproduce it locally::
   $ fab initdb test
 
 Maybe it is because the database files (`default.db`) get written to
-the source tree.
+the source tree?  To be continued...
 
 
 Error reporting :mod:`atelier`
@@ -48,8 +48,7 @@ I optimized :mod:`atelier` error reporting in some edge situations:
   :message:`ImportError: No module named fabfile` even when a fab
   command was invoked from another project.
 
-- :message:`Check doc_trees in your project's main module.` replaced
-  by :message:`Check your project's doc_trees setting.`
-
-
+- I reformulated the error message :message:`Check doc_trees in your
+  project's main module.` by :message:`Check your project's doc_trees
+  setting.`
 
