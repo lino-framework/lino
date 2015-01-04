@@ -2,15 +2,17 @@
 Saturday, January 3, 2015
 =========================
 
-I updated :doc:`/tutorials/lets/index` after feedback from :ref:`mma`.
+Most of today went again into Lino's documentation: I updated
+:doc:`/tutorials/lets/index` after feedback from :ref:`mma`.
 
-The Sphinx developers moved from bitbucket to github.  I revised the
-Trove classifiers for :mod:`atelier` :
+It was already late when I saw Georg Brandl's mail which announced
+that the Sphinx developers moved from bitbucket to github.  I revised
+the Trove classifiers for :mod:`atelier` :
 
 - added `Framework :: Sphinx :: Extension`
 - changed `Development Status` to `5 - Production/Stable`
 
-And they successfully migrated my two open problem reports:
+I saw that they successfully migrated my two open problem reports:
 
 - `1654 <https://github.com/sphinx-doc/sphinx/issues/1654>`_
   ("autosummary should ignore imported members", created
@@ -21,27 +23,32 @@ And they successfully migrated my two open problem reports:
   warns without giving the source file name", created
   :blogref:`20141223`).
 
-I forked and cloned the Sphinx project and noted that my patch for
-1654 was not yet applied and the issue not solved, although Takayuki
-marked it as closed.  I re-applied my patches for these issues
-(unfortunately I now have them both in a single branch), pushed them
-to my fork and submitted a pull request for these two issues.  
+I forked and cloned the Sphinx project and noted that this broke my
+:cmd:`fab bd`.  Which was normal since my patch for 1656 had not yet
+been accepted. Aha, and my patch for 1654 was not yet applied and the
+issue not solved (although Takayuki marked it as closed).  So I
+re-applied my patches for these issues (unfortunately I now have them
+both in a single branch), pushed them to my fork and submitted a pull
+request for these two issues.
 
 I then saw the message "The Travis CI build failed" for my pull
 request, clicked on `Details
 <https://travis-ci.org/sphinx-doc/sphinx/jobs/45791041>`_ and was
-impressed: a brave worker job had silently tested my pull request in a
-dozen of different environments and disclosed the fact that my change
-would break Sphinx's test suite.
+impressed: the brave worker job at `travis.org` had silently tested my
+pull request in a dozen of different environments and disclosed the
+fact that my change would break Sphinx's test suite.
 
 That's called "a hosted continuous integration service". I had been
 reading about it earlier, and had thought "nice gimmick to use some
-day in the future", but now I felt that I also want it *now* for *my*
-projects!  Learned how to `get started
+day in the future", but now I felt that I also want it *now* and for
+*my own* projects!  Learned how to `get started
 <http://docs.travis-ci.com/user/getting-started/>`_.
 
 Added a :file:`.travis.yml` file to :mod:`atelier` and :mod:`lino` and
 activated Travis projects `Atelier
 <https://travis-ci.org/lsaffre/atelier>`_ and `Lino
-<https://travis-ci.org/lsaffre/lino>`_.
+<https://travis-ci.org/lsaffre/lino>`_.  Got the Atelier test suite to
+pass on Travis.
 
+TODO: Make the Lino test suite also pass. Currently it fails:
+https://travis-ci.org/lsaffre/lino/jobs/45810912

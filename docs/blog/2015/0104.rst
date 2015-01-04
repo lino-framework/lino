@@ -1,0 +1,14 @@
+=======================
+Sunday, January 4, 2015
+=======================
+
+Of course, the test suite on travis fails because :cmd:`fab initdb`
+has not been running. So in Lino's :file:`.travis.yml` I replace::
+
+  script: python setup.py test 
+
+by::
+
+  script: fab initdb test
+
+
