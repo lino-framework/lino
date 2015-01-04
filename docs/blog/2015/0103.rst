@@ -23,13 +23,13 @@ I saw that they successfully migrated my two open problem reports:
   warns without giving the source file name", created
   :blogref:`20141223`).
 
-I forked and cloned the Sphinx project and noted that this broke my
-:cmd:`fab bd`.  Which was normal since my patch for 1656 had not yet
-been accepted. Aha, and my patch for 1654 was not yet applied and the
-issue not solved (although Takayuki marked it as closed).  So I
-re-applied my patches for these issues (unfortunately I now have them
-both in a single branch), pushed them to my fork and submitted a pull
-request for these two issues.
+I forked and cloned the Sphinx project and noted that this broke the
+Lino docs (they produced warnings during build).  Which was normal
+since my patch for 1656 had not yet been accepted. Aha, and my patch
+for 1654 was not yet applied and the issue not solved (although
+Takayuki marked it as closed).  So I re-applied my patches for these
+issues (unfortunately I now have them both in a single branch), pushed
+them to my fork and submitted a pull request for these two issues.
 
 I then saw the message "The Travis CI build failed" for my pull
 request, clicked on `Details

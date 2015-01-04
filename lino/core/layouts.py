@@ -605,7 +605,11 @@ def create_layout_element(lh, name, **kw):
 
     if isinstance(de, SingleRelatedObjectDescriptor):
         return ext_elems.SingleRelatedObjectElement(lh, de.related, **kw)
-        #~ return create_field_element(lh,de.related.field,**kw)
+
+    if isinstance(de, models.ManyToManyField):
+        return None
+    # if isinstance(de, ManyRelatedObjectDescriptor):
+    #     return None
 
     if isinstance(de, fields.RemoteField):
         return create_field_element(lh, de, **kw)

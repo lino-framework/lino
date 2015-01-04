@@ -38,7 +38,7 @@ from optparse import make_option
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db.utils import IntegrityError, OperationalError
+from django.db.utils import IntegrityError
 
 from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
@@ -46,6 +46,8 @@ from django.core.management.color import no_style
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db import models
 
+
+from lino import dd
 
 from lino.core.dbutils import app_labels
 from lino import AFTER17
@@ -119,7 +121,9 @@ Are you sure (y/n) ?""" % dbname):
                 raise CommandError("User abort.")
 
         options.update(interactive=False)
-        #~ dblogger.info("Lino initdb %s started on database %s.", args, dbname)
+        # the following log message was useful on Travis 20150104
+        dd.logger.info(
+            "`initdb %s` started on database %s.", ' '.join(args), dbname)
 
         if USE_DROP_CREATE and engine == 'django.db.backends.mysql':
             # TODO: this works only for mysql
@@ -170,33 +174,6 @@ Are you sure (y/n) ?""" % dbname):
 
             transaction.commit_unless_managed()
 
-        #~ call_command('reset',*apps,**options)
-        #~ call_command('syncdb',load_initial_data=False,**options)
-        #~ if USE_SQLDELETE:
-
-        #~ tried to call `syncdb` with `verbosity=0` to avoid the
-        #~ irritating message "No fixtures found" (which comes because there
-        #~ are no `initial_data` fixtures):
-        #~ syncdb_options = dict(**options)
-        #~ syncdb_options.update(verbosity=0)
-        #~ call_command('syncdb',**syncdb_options)
-        #~ not good because all other messages "Creating table..." also disappear.
-
-        #~ """
-        #~ When loading a full dump back into the database,
-        #~ initdb must disable the post_syncdb signal emitted by syncdb
-        #~ which would cause automatisms like
-        #~ `django.contrib.auth.management.create_permissions`
-        #~ `django.contrib.auth.management.create_superuser`
-        #~ `django.contrib.sites.management.create_default_site`
-        #~ """
-        #~ if options.get('dumped'):
-            #~ class NullSignal:
-                #~ def connect(*args,**kw):
-                    #~ pass
-                #~ def send(*args,**kw):
-                    #~ pass
-            #~ models.signals.post_syncdb = NullSignal()
 
         settings.SITE._site_config = None  # clear cached instance
 

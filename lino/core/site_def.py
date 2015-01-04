@@ -964,7 +964,7 @@ class Site(object):
             user_apps = [user_apps]
         if not isinstance(settings_globals, dict):
             raise Exception("""
-            Oops, the first argument when instantiating a %s 
+            Oops, the first argument when instantiating a %s
             must be your settings.py file's `globals()`
             and not %r
             """ % (self.__class__.__name__, settings_globals))

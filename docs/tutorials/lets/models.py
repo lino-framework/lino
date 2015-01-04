@@ -26,20 +26,23 @@ class Member(dd.Model):
 class Product(dd.Model):
     name = models.CharField(max_length=200)
 
+    providers = models.ManyToManyField(
+        'lets.Member', through='lets.Offer', related_name='offered_products')
+    customers = models.ManyToManyField(
+        'lets.Member', through='lets.Demand', related_name='wanted_products')
+
     def __unicode__(self):
         return self.name
 
     @dd.displayfield("Offered by")
     def offered_by(self, ar):
-        items = [ar.obj2html(o.provider)
-                 for o in OffersByProduct.request(self)]
+        items = [ar.obj2html(o) for o in self.providers.all()]
         items = join_elems(items, sep=', ')
         return E.p(*items)
 
     @dd.displayfield("Wanted by")
     def demanded_by(self, ar):
-        items = [ar.obj2html(o.customer)
-                 for o in DemandsByProduct.request(self)]
+        items = [ar.obj2html(o) for o in self.customers.all()]
         items = join_elems(items, sep=', ')
         return E.p(*items)
 
