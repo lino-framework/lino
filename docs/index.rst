@@ -27,3 +27,9 @@ Sitemap
 
 
 
+
+.. toctree::
+   :hidden:
+
+   copyright
+

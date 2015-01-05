@@ -9,7 +9,8 @@ per day), which is part of some `Sphinx <http://sphinx-doc.org/>`_
 documentation tree.
 
 This way of blogging was developed and is used by :ref:`luc`.  We
-recommend that you also start your own developer blog.
+recommend that you also start your own developer blog.  You may of
+course use another system, but we recommend that you try it at least.
 
 
 Documenting what you do
@@ -84,3 +85,11 @@ The `dblog` project template
 To help you get started with blogging in your own developer blog,
 there is a project template at https://github.com/lsaffre/dblog
 
+
+How to configure your blog
+==========================
+
+- Interesting files are:
+  :srcref:`docs/conf.py`
+  :srcref:`docs/.templates/layout.html`
+  :srcref:`docs/.templates/links.html`

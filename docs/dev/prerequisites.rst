@@ -2,7 +2,7 @@
 Things to know
 ==============
 
-A list of things you should know as a :doc:`/community/lad`.
+A list of things you should know as a :doc:`/team/lad`.
 
 
 Python
@@ -25,9 +25,14 @@ Sphinx
 Documentation about Lino is written using `Sphinx
 <http://sphinx-doc.org>`_.
 
-- You know how Sphinx works and why we use it.
+- You know how Sphinx works and why we use it. Important chapters of
+  the Sphinx documentation include
+  `The build configuration file <http://sphinx-doc.org/config.html>`_
+
 - You are able to use the same blogging system as Luc and to document
-  your own contributions to Lino in a developer blog.
+  your own contributions to Lino in a :doc:`developer blog
+  </team/devblog>`.  
+
 
 Django
 ======

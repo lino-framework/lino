@@ -12,3 +12,5 @@ collaborate.
    projects
    trac
    analyst
+   mentoring
+   lad

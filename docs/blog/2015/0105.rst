@@ -2,9 +2,80 @@
 Monday, January 5, 2015
 =======================
 
+
+Updated tutorial
+================
+
 It took me some time, but I finally understood that it is *not*
 contra-productive to explicitly define many-to-many relationships
 using `ManyToManyField
 <https://docs.djangoproject.com/en/1.7/ref/models/fields/#ref-manytomany>`_.
 Updated :doc:`/tutorials/lets/index` accordingly.
  
+
+
+Trying ``git rebase``
+=====================
+
+I am still fiddling on `my first pull request to Sphinx
+<https://github.com/sphinx-doc/sphinx/pull/1663>`_. It is
+theoretically done, the test suites pass on Travis for all
+environments, but *on 04/01/15 20:58, Georg Brandl wrote*:
+
+    BTW, now with git it's easier to remove unwanted changesets. Just to a
+    `git rebase -i`, remove the offending commits, and then push with `-f`.
+    Github will automatically update the pull request.
+
+Thanks for your hint, Georg. I am still rather new to git and have
+never used rebase before, but want to learn. So I read the `tutorial
+section about rebase
+<https://www.atlassian.com/git/tutorials/rewriting-history/git-rebase-i>`_
+I didn't understand every detail, but the grand picture seems easy. So
+I tried::
+
+  $ git rebase -i
+  $ git rebase -i master
+
+This opened my editor on a file named :file:`git-rebase-todo` with the
+following content::
+
+    noop
+
+    # Rebase 59422e5..59422e5 onto 59422e5
+    #
+    # Commands:
+    #  p, pick = use commit
+    #  r, reword = use commit, but edit the commit message
+    #  e, edit = use commit, but stop for amending
+    #  s, squash = use commit, but meld into previous commit
+    #  f, fixup = like "squash", but discard this commit's log message
+    #  x, exec = run command (the rest of the line) using shell
+    #
+    # These lines can be re-ordered; they are executed from top to bottom.
+    #
+    # If you remove a line here THAT COMMIT WILL BE LOST.
+    #
+    # However, if you remove everything, the rebase will be aborted.
+    #
+    # Note that empty commits are commented out
+
+The process did not wait until I finish editing that file (my `EDITOR`
+and `VISUAL` are ``'emacsclient -n'``). The command line said::
+
+  Successfully rebased and updated refs/heads/master.
+
+And AFAICS nothing has changed::
+
+    $ git push
+    Everything up-to-date
+    $ git status
+    On branch master
+    Your branch is up-to-date with 'origin/master'.
+
+    nothing to commit, working directory clean
+    $ 
+
+Hmm... okay, without help from outside it would be suboptimal to
+continue. If you followed until here and see a possible explanation,
+then don't hesitate to drop me a mail.
+    
