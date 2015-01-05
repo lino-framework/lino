@@ -1,0 +1,10 @@
+=======================
+Monday, January 5, 2015
+=======================
+
+It took me some time, but I finally understood that it is *not*
+contra-productive to explicitly define many-to-many relationships
+using `ManyToManyField
+<https://docs.djangoproject.com/en/1.7/ref/models/fields/#ref-manytomany>`_.
+Updated :doc:`/tutorials/lets/index` accordingly.
+ 

@@ -4,33 +4,41 @@
 About developer blogs
 =====================
 
-Every team member keeps his or her **developer blog**.  This is a "way
-of blogging" developed and used by :ref:`luc` which we are going to
-introduce here.
-
-
-What is a developer blog?
-=========================
-
-A developer blog is a blog with daily entries (maximum one blog entry
+A **developer blog** is a blog with daily entries (maximum one blog entry
 per day), which is part of some `Sphinx <http://sphinx-doc.org/>`_
 documentation tree.
 
-The basic idea is that you should document "everything you do" in a
-central place.  A developer uses some editor for writing code, and
-wants to use that same editor for writing his blog.  A developer
-usually works on more than one software projects, but usually has only
-one blog.
+This way of blogging was developed and is used by :ref:`luc`.  We
+recommend that you also start your own developer blog.
+
+
+Documenting what you do
+=======================
+
+The basic idea of a developer blog is that you should document
+"everything you do" in a central place.
+
+A developer uses some editor for writing code, and wants to use that
+same editor for writing his blog.
+
+A developer usually works on more than one software projects at a
+time, modifying source code, pushing changes to public repositories,
+writing comments in forums, surfing around and discovering new
+knowledge.
+
+A developer should not be locked just because there is no internet
+connection available for a few hours.
 
 What should I write into my developer's blog?
 =============================================
 
-You describe what you are doing.  It is your diary.  A developer blog
-should be understandable at least for yourself and for other team
-members. It *doesn't need* to be cool, popular, easy to follow. It
-should rather be *complete* (e.g. not forget to mention any important
-code change you did) and *concise* (use references to point to places
-where the reader can continue if they are interested).
+You describe what you are doing.  It is your diary.
+
+A developer blog should be understandable at least for yourself and
+for other team members. It *doesn't need* to be cool, popular, easy to
+follow. It should rather be *complete* (e.g. not forget to mention any
+important code change you did) and *concise* (use references to point
+to places where the reader can continue if they are interested).
 
 For example, Luc's developer blog is currently part of the Lino
 documentation tree (see :ref:`blog`). That's because Luc is currently

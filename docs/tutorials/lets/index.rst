@@ -159,32 +159,43 @@ Note about many-to-many relationships
 
 There are two `many-to-many relationships
 <https://docs.djangoproject.com/en/1.7/topics/db/examples/many_to_many/>`_
-between *Member* and *Product* which we might call "offered" and "wanted".
-You might define something like this::
-  
-    class Member(Model):
-        offered_products = ManyToManyField(Product, through=Offer)
-        wanted_products = ManyToManyField(Product, through=Demand)
+between *Member* and *Product*: 
 
-IOW, *Offer* is the "intermediate model" used "to govern the m2m
-relationship "offered_products" between *Member* and *Product*.  And
-*Demand* is another intermediate model used to govern another m2m
-relationship "wanted_products" between *Member* and *Product*.
+- A given member can *offer* multiple products, and a given product
+  can *be offered* by multiple members. We can call this the
+  **providers** of a product.
 
-But we believe that Django's `ManyToManyField
-<https://docs.djangoproject.com/en/1.7/ref/models/fields/#ref-manytomany>`_
-is a rather contra-productive concept which causes more confusion than
-clarity.  A *ManyToManyField* is almost nothing more than a shortcut
-for telling Django to create an automatic, "invisible", additional
-model, with two ForeignKey fields.  But in most real-life situations
-you anyway want to define what Django calls "`extra fields on
-many-to-many relationships
+- A given member can *want* multiple products, and a given product can
+  *be wanted* by multiple members. We can call this the **customers** of
+  a product.
+
+Using Django's interface for `many-to-many relationships
+<https://docs.djangoproject.com/en/1.7/topics/db/examples/many_to_many/>`_, 
+we can express this as follows::
+
+    providers = models.ManyToManyField(
+        'lets.Member', through='lets.Offer', related_name='offered_products')
+    customers = models.ManyToManyField(
+        'lets.Member', through='lets.Demand', related_name='wanted_products')
+
+
+Which you can read as follows:
+
+- *Offer* is the "intermediate model" used "to govern the m2m relation
+  *Product.providers* / *Member.offered_products*.
+
+- *Demand* is the intermediate model used to govern the m2m relation
+  *Product.customers* / *Member.wanted_products*.
+
+A *ManyToManyField* is originally a shortcut for telling Django to
+create an automatic, "invisible", additional model, with two
+ForeignKey fields.  But in most real-life situations you anyway want
+to define what Django calls "`extra fields on many-to-many
+relationships
 <https://docs.djangoproject.com/en/1.7/topics/db/models/#intermediary-manytomany>`_",
 and thus you must explicitly name that "intermediate model" of your
-ManyToManyField.
-
-That's why we recommend to always explicitly name the intermediate
-models of your m2m relations.
+ManyToManyField.  That's why we recommend to always explicitly name
+the intermediate models of your m2m relations.
 
 
 Tables
