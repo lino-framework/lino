@@ -37,7 +37,7 @@ Installed 236 object(s) from 10 fixture(s)
 
 
 
-Verifying our emitters
+Verifying our configuration
 ===========================
 
 The following tests check whether the setup is as expected:
@@ -59,6 +59,25 @@ Emitter('contacts.Partner')
 A `Country` instance has no emitter:
 
 >>> find_emitter(countries.Country.objects.all()[0])
+
+
+Templates
+=========
+
+Here are the templates used for this tutorial (your own templates
+might be more elaborated):
+
+:file:`create_body.eml`
+
+.. literalinclude:: config/create_body.eml
+
+:file:`update_body.eml`
+
+.. literalinclude:: config/update_body.eml
+
+
+
+
 
 
 Simulating a change
