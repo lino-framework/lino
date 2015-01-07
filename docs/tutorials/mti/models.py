@@ -51,3 +51,5 @@ class Meal(dd.Model):
     def __unicode__(self):
         return "%s eats %s at %s" % (
             self.person, self.what, self.restaurant.name)
+
+from .tables import *
