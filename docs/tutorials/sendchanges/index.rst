@@ -69,11 +69,11 @@ might be more elaborated):
 
 :file:`create_body.eml`
 
-.. literalinclude:: config/create_body.eml
+.. literalinclude:: config/created_body.eml
 
 :file:`update_body.eml`
 
-.. literalinclude:: config/update_body.eml
+.. literalinclude:: config/updated_body.eml
 
 
 

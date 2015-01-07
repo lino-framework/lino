@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
+
+import logging
+logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -29,13 +32,7 @@ class DisableDeleteHandler():
         return ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])
 
     def disable_delete_on_object(self, obj):
-        #~ print 20101104, "called %s.disable_delete(%s)" % (obj,self)
-        #~ h = getattr(self.model,'disable_delete',None)
-        #~ if h is not None:
-            #~ msg = h(obj,ar)
-        #~     if msg is not None:
-            #~     return msg
-
+        # logger.info("20101104 called %s.disable_delete(%s)", obj, self)
         def veto(obj, m, n):
             msg = _(
                 "Cannot delete %(self)s "

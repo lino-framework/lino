@@ -310,6 +310,9 @@ class VirtualGetter(object):
     def __call__(self, ar=None):
         return self.vf.value_from_object(self.instance, ar)
 
+    # def __get__(self, instance, owner):
+    #     return self.vf.value_from_object(instance, None)
+
     def __getattr__(self, name):
         obj = self.vf.value_from_object(self.instance, None)
         return getattr(obj, name)

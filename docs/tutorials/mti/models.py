@@ -1,6 +1,6 @@
 from django.db import models
 from lino.utils.mti import EnableChild
-from lino import dd, rt
+from lino import dd
 
 
 class Person(dd.Model):
@@ -16,9 +16,9 @@ class Place(dd.Model):
     is_restaurant = EnableChild('Restaurant', verbose_name="is a restaurant")
 
     def __unicode__(self):
-        return "#%s (name=%s,owners=%s)" % (
+        return "#%s (name=%s, owners=%s)" % (
             self.pk, self.name,
-            ','.join([unicode(o) for o in self.owners.all()]))
+            ', '.join([unicode(o) for o in self.owners.all()]))
 
 
 class Restaurant(Place):
@@ -26,10 +26,10 @@ class Restaurant(Place):
     cooks = models.ManyToManyField(Person)
 
     def __unicode__(self):
-        return "#%d (name=%s,owners=%s,cooks=%s)" % (
+        return "#%d (name=%s, owners=%s, cooks=%s)" % (
             self.pk, self.name,
-            ','.join([unicode(o) for o in self.owners.all()]),
-            ','.join([unicode(o) for o in self.cooks.all()]))
+            ', '.join([unicode(o) for o in self.owners.all()]),
+            ', '.join([unicode(o) for o in self.cooks.all()]))
 
 
 class Visit(dd.Model):

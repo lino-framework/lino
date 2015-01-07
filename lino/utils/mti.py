@@ -12,11 +12,11 @@ I wrote it mainly to solve ticket :srcref:`docs/tickets/22`.
 """
 import logging
 logger = logging.getLogger(__name__)
-
+import six
 
 from django.db import models
 from django.db import router
-from django.db.models.deletion import Collector
+from django.db.models.deletion import Collector, DO_NOTHING
 from django.core.exceptions import ValidationError
 
 
@@ -32,8 +32,49 @@ class ChildCollector(Collector):
     """
 
     def collect(self, objs, source=None, nullable=False, collect_related=True,
-                source_attr=None, collect_parents=True):
+        source_attr=None, reverse_dependency=False):
+        # modified copy of django.db.models.deletion.Collector.collect()
+        # changes:
+        # DOES NOT Recursively collect concrete model's parent models.
+        # calls get_all_related_objects() with local_only=True
 
+        if self.can_fast_delete(objs):
+            self.fast_deletes.append(objs)
+            return
+        new_objs = self.add(objs, source, nullable,
+                            reverse_dependency=reverse_dependency)
+        if not new_objs:
+            return
+
+        model = new_objs[0].__class__
+
+        if collect_related:
+            for related in model._meta.get_all_related_objects(
+                    include_hidden=True, include_proxy_eq=True,
+                    local_only=True):
+                field = related.field
+                if field.rel.on_delete == DO_NOTHING:
+                    continue
+                sub_objs = self.related_objects(related, new_objs)
+                if self.can_fast_delete(sub_objs, from_field=field):
+                    self.fast_deletes.append(sub_objs)
+                elif sub_objs:
+                    field.rel.on_delete(self, field, sub_objs, self.using)
+            for field in model._meta.virtual_fields:
+                if hasattr(field, 'bulk_related_objects'):
+                    # Its something like generic foreign key.
+                    sub_objs = field.bulk_related_objects(new_objs, self.using)
+                    self.collect(sub_objs,
+                                 source=model,
+                                 source_attr=field.rel.related_name,
+                                 nullable=True)
+
+
+class OldChildCollector(Collector):
+    # version which worked for Django 1.5
+    def collect(self, objs, source=None, nullable=False, collect_related=True,
+                source_attr=None, collect_parents=True):
+        # modified copy from original Django code
         new_objs = self.add(objs, source, nullable)
         if not new_objs:
             return
@@ -44,6 +85,7 @@ class ChildCollector(Collector):
             for related in model._meta.get_all_related_objects(include_hidden=True, local_only=True):
                 field = related.field
                 if related.model._meta.auto_created:
+                    # Django 1.5.x:
                     self.add_batch(related.model, field, new_objs)
                 else:
                     sub_objs = self.related_objects(related, new_objs)
@@ -52,10 +94,11 @@ class ChildCollector(Collector):
                         continue
                     field.rel.on_delete(self, field, sub_objs, self.using)
 
-            # TODO This entire block is only needed as a special case to
-            # support cascade-deletes for GenericRelation. It should be
-            # removed/fixed when the ORM gains a proper abstraction for virtual
-            # or composite fields, and GFKs are reworked to fit into that.
+            # TODO This entire block is only needed as a special case
+            # to support cascade-deletes for GenericRelation. It
+            # should be removed/fixed when the ORM gains a proper
+            # abstraction for virtual or composite fields, and GFKs
+            # are reworked to fit into that.
             for relation in model._meta.many_to_many:
                 if not relation.rel.through:
                     sub_objs = relation.bulk_related_objects(
@@ -92,9 +135,26 @@ def delete_child(obj, child_model, ar=None, using=None):
     if msg:
         raise ValidationError(msg)
     #~ logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
-    collector = ChildCollector(using=using)
-    collector.collect([child], source=obj.__class__,
-                      nullable=True, collect_parents=False)
+    if True:
+        collector = ChildCollector(using=using)
+        collector.collect([child])
+        # raise Exception(repr(collector.data))
+        # model = obj.__class__
+
+        # remove the collected MTI parents so they are not deleted
+        # (this idea didnt work: yes the parents were saved, but not
+        # their related objects).
+
+        # concrete_model = child_model._meta.concrete_model
+        # for ptr in six.itervalues(concrete_model._meta.parents):
+        #     if ptr:
+        #         # raise Exception(repr(ptr.rel.to))
+        #         del collector.data[ptr.rel.to]
+
+    else:
+        collector = ChildCollector(using=using)
+        collector.collect([child], source=obj.__class__,
+                          nullable=True, collect_parents=False)
     collector.delete()
 
     #~ setattr(obj,child_model.__name__.lower(),None)

@@ -232,7 +232,6 @@ lino.test_apps.properties
 lino.test_apps.example
 lino.test_apps.quantityfield
 lino.test_apps.20121124
-lino.test_apps.mti
 lino.test_apps.nomti
 lino.tests
 lino.tutorials

@@ -297,7 +297,9 @@ class Kernel(object):
         self.setup_workflows()
 
         for model in models_list:
-
+            if model._meta.auto_created:
+                continue  # automatic intermediat models created by
+                          # ManyToManyField should not disable delete
             for f, m in model._meta.get_fields_with_model():
 
                 # Refuse nullable CharFields, but don't trigger on

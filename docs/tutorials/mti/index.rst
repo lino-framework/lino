@@ -1,4 +1,7 @@
-""".. currentmodule:: lino.utils.mti
+Multi-table inheritance (MTI)
+=============================
+
+.. currentmodule:: lino.utils.mti
 
 .. contents::
    :local:
@@ -8,9 +11,7 @@
   on this document. Sphinx removes them because they are a 
   comment, but doctest executes them.
   
-  >>> from django.conf import settings
-  >>> settings.SITE.startup()
-  >>> mti = settings.SITE.modules.mti
+  >>> from lino.runtime import *
   >>> Person = mti.Person
   >>> Restaurant = mti.Restaurant
   >>> Place = mti.Place
@@ -18,35 +19,32 @@
   >>> Meal = mti.Meal
 
 
-The database models
--------------------
+The example database
+--------------------
 
-Here is the :file:`models.py` file used for this example.
+Here is the :xfile:`models.py` file used for this example.  This is
+classical Django know-how: `Restaurant` inherits from `Place`, and
+`Place` is *not* abstract.  That's what Django calls `multi table
+inheritance
+<https://docs.djangoproject.com/en/1.7/topics/db/models/#multi-table-inheritance>`_.
 
-This is classical Django know-how:
-`Restaurant` inherits from `Place`, and `Place` is *not* abstract.
-That's what we call multi table inheritance.
+.. literalinclude:: models.py
 
-Note that we add a special virtual field `is_restaurant` 
-(we'll talk about that later)
+The only Non-Django thing here is that we add a special virtual field
+`is_restaurant` of type :class:`EnableChild
+<lino.utils.mti.EnableChild>`, we'll talk about that later.
 
-.. literalinclude:: ../../lino/test_apps/mti/models.py
-
-
-Populating the database
------------------------
-
-Create some data:
+Create some initial data:
 
 >>> Person(name="Alfred").save()
 >>> Person(name="Bert").save()
 >>> Person(name="Claude").save()
 >>> Person(name="Dirk").save()
->>> r = Restaurant(id=1,name="First")
+>>> r = Restaurant(id=1, name="First")
 >>> r.save()
->>> for i in 1,2:
+>>> for i in 1, 2:
 ...     r.owners.add(Person.objects.get(pk=i))
->>> for i in 3,4:
+>>> for i in 3, 4:
 ...     r.cooks.add(Person.objects.get(pk=i))
 
 Here is our data:
@@ -54,21 +52,26 @@ Here is our data:
 >>> Person.objects.all()
 [Person #1 (u'Alfred'), Person #2 (u'Bert'), Person #3 (u'Claude'), Person #4 (u'Dirk')]
 >>> Restaurant.objects.all()
-[Restaurant #1 (u'#1 (name=First,owners=Alfred,Bert,cooks=Claude,Dirk)')]
+[Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=Claude, Dirk)')]
 >>> Place.objects.all()
-[Place #1 (u'#1 (name=First,owners=Alfred,Bert)')]
+[Place #1 (u'#1 (name=First, owners=Alfred, Bert)')]
 
 
 The :func:`delete_child` function
 ---------------------------------
 
-Now imagine that a user of our application 
-discovers that Restaurant #1 isn't actually a `Restaurant`, 
-it's just a `Place`.
-They would like to "remove it's Restaurant data" from 
-the database, but keep the `Place` data.
-Especially the primary key and related objects should remain unchanged.
-That's a case where :func:`delete_child` is needed.
+Imagine that a user of our application discovers that Restaurant #1
+isn't actually a `Restaurant`, it's just a `Place`.  They would like
+to "remove it's Restaurant data" from the database, but keep the
+`Place` data.  Especially the primary key (#1) and the related objects
+(the owners) should remain unchanged. But the cooks must be deleted
+since they exist only for restaurants.
+
+It seems that this is not trivial in Django (`How do you delete child
+class object without deleting parent class object?
+<http://stackoverflow.com/questions/9439730>`__).  That's why we wrote
+the :func:`delete_child` function.
+
 
 >>> from lino.utils.mti import delete_child
 
@@ -76,14 +79,17 @@ Here is how to "reduce" a Restaurant to a `Place` by
 calling the :func:`delete_child` function:
 
 >>> p = Place.objects.get(id=1)
->>> delete_child(p,Restaurant)
+>>> delete_child(p, Restaurant)
 
-The Place now no longer exists as a Restaurant:
+The Place still exists, but no longer as a Restaurant:
+
+>>> Place.objects.get(pk=1)
+Place #1 (u'#1 (name=First, owners=Alfred, Bert)')
 
 >>> Restaurant.objects.get(pk=1)
 Traceback (most recent call last):
 ...
-DoesNotExist: Restaurant matching query does not exist...
+DoesNotExist: Restaurant matching query does not exist.
 
 The :func:`insert_child` function
 ----------------------------------
@@ -95,25 +101,25 @@ is done using :func:`insert_child`.
   
 Let's first create a simple Place #2 with a single owner.
 
->>> obj = Place(id=2,name="Second")
+>>> obj = Place(id=2, name="Second")
 >>> obj.save()
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-Place #2 (u'#2 (name=Second,owners=Bert)')
+Place #2 (u'#2 (name=Second, owners=Bert)')
 
 Now this Place becomes a Restaurant and hires 2 cooks:
 
->>> obj = insert_child(obj,Restaurant)
->>> for i in 3,4:
+>>> obj = insert_child(obj, Restaurant)
+>>> for i in 3, 4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj
-Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Claude,Dirk)')
+Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')
 
 If you try to promote a Person to a Restaurant, you'll get an exception:
 
 >>> person = Person.objects.get(pk=2)
->>> insert_child(person,Restaurant).save()
+>>> insert_child(person, Restaurant).save()
 Traceback (most recent call last):
 ...
 ValidationError: [u'A Person cannot be parent for a Restaurant']
@@ -129,16 +135,16 @@ used by Lino, and thus is Lino-specific.
 After the above examples our database looks like this:
 
 >>> Place.objects.all()
-[Place #1 (u'#1 (name=First,owners=Alfred,Bert)'), Place #2 (u'#2 (name=Second,owners=Bert)')]
+[Place #1 (u'#1 (name=First, owners=Alfred, Bert)'), Place #2 (u'#2 (name=Second, owners=Bert)')]
 >>> Restaurant.objects.all()
-[Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Claude,Dirk)')]
+[Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')]
 
 Let's take Place #1 and look at it.
 
 >>> obj = Place.objects.get(pk=1)
 >>> obj
-Place #1 (u'#1 (name=First,owners=Alfred,Bert)')
->>> obj.is_restaurant
+Place #1 (u'#1 (name=First, owners=Alfred, Bert)')
+>>> obj.is_restaurant()
 False
 
 
@@ -150,15 +156,15 @@ by calling the method
 
 
 >>> for instance in Place.objects.all():
-...    print instance.is_restaurant, instance
-False #1 (name=First,owners=Alfred,Bert)
-True #2 (name=Second,owners=Bert)
+...    print instance.is_restaurant(), instance
+False #1 (name=First, owners=Alfred, Bert)
+True #2 (name=Second, owners=Bert)
 
 Let's promote First (currently a simple Place) to a Restaurant:
 
->>> Place.is_restaurant.set_value_in_object(None,obj,True)
+>>> Place.is_restaurant.set_value_in_object(None, obj, True)
 >>> Restaurant.objects.get(pk=1)
-Restaurant #1 (u'#1 (name=First,owners=Alfred,Bert,cooks=)')
+Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=)')
 
 And Second stops being a Restaurant:
 
@@ -166,28 +172,28 @@ And Second stops being a Restaurant:
 >>> Place.is_restaurant.value_from_object(second)
 True
 
->>> Place.is_restaurant.set_value_in_object(None,second,False) 
+>>> Place.is_restaurant.set_value_in_object(None, second, False) 
 
 This operation has removed the related Restaurant instance:
 
 >>> Restaurant.objects.get(pk=2) 
 Traceback (most recent call last):
 ...
-DoesNotExist: Restaurant matching query does not exist...
+DoesNotExist: Restaurant matching query does not exist.
 
 And finally, rather to explain why Restaurants sometimes 
 close and later reopen:
 
 >>> bert = Person.objects.get(pk=2)
 >>> second = Place.objects.get(pk=2)
->>> Place.is_restaurant.set_value_in_object(None,second,True) 
+>>> Place.is_restaurant.set_value_in_object(None, second, True) 
 
 Now we can see this place again as a Restaurant
 
 >>> second = Restaurant.objects.get(pk=2)
 >>> second.cooks.add(bert)
 >>> second
-Restaurant #2 (u'#2 (name=Second,owners=Bert,cooks=Bert)')
+Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Bert)')
 
 
 
@@ -217,7 +223,7 @@ Now we reduce Second to a Place:
 >>> second = Place.objects.get(pk=2)
 >>> second.is_restaurant = False
 >>> second
-Place #2 (u'#2 (name=Second,owners=Bert)')
+Place #2 (u'#2 (name=Second, owners=Bert)')
 
 Setting an EnableChild virtual field doesn't 
 wait until you call `save()` on the instance. It is executed immediately. 
@@ -226,7 +232,7 @@ Restaurant #2 no longer exists:
 >>> Restaurant.objects.get(pk=2)
 Traceback (most recent call last):
 ...
-DoesNotExist: Restaurant matching query does not exist...
+DoesNotExist: Restaurant matching query does not exist.
 
 Note that `Meal` has :attr:`allow_cascaded_delete 
 <lino.core.model.Model.allow_cascaded_delete>`
@@ -270,10 +276,10 @@ That's why :func:`create_child` was written for.
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-Place #3 (u'#3 (name=Third,owners=Bert)')
+Place #3 (u'#3 (name=Third, owners=Bert)')
 
 >>> from lino.utils.mti import create_child
->>> obj = create_child(Place,3,Restaurant)
+>>> obj = create_child(Place, 3, Restaurant)
 
 The return value is technically a normal model instance,
 but whose `save` and `full_clean` methods have been 
@@ -292,19 +298,19 @@ To test whether `create_child` did her job,
 we must re-read an instance:
 
 >>> Restaurant.objects.get(pk=3)
-Restaurant #3 (u'#3 (name=Third,owners=Bert,cooks=)')
+Restaurant #3 (u'#3 (name=Third, owners=Bert, cooks=)')
 
 Note that 
 create_child() doesn't allow to also change the `name`
 because that field is defined in the Place model, 
 not in Restaurant. 
 
->>> obj = Place(id=4,name="Fourth")
+>>> obj = Place(id=4, name="Fourth")
 >>> obj.save()
->>> ow = create_child(Place,4,Restaurant,name="A new name")
+>>> ow = create_child(Place, 4, Restaurant, name="A new name")
 Traceback (most recent call last):
 ...
-Exception: create_child() Restaurant 4 from Place : ignored non-local fields {'name': 'A new name'}
+Exception: create_mti_child() Restaurant 4 from Place : ignored non-local fields {'name': 'A new name'}
 
 (Until 20120930 this it was silently ignored
 for backwards compatibility (`/blog/2011/1210`).
@@ -335,4 +341,3 @@ Related documents
   
 - `Figure out child type with Django MTI or specify type as field? <http://stackoverflow.com/questions/3990470/figure-out-child-type-with-django-mti-or-specify-type-as-field>`_
 
-"""
