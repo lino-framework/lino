@@ -39,8 +39,6 @@ lino.core.dbutils
 
    .. autosummary::
    
-      ChangeWatcher
-      NOT_PROVIDED
       Q
       URLValidator
       UnresolvedField

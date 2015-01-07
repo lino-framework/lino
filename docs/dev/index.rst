@@ -69,6 +69,7 @@ Special topics
 .. toctree::
    :maxdepth: 1
 
+   /tutorials/sendchanges/index
    /tutorials/actors/index
    /tutorials/de_BE/index
    /tutorials/watch_tutorial/index

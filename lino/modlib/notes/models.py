@@ -226,18 +226,18 @@ class NotesByPerson(NotesByX):
     column_names = "date time event_type type subject user *"
 
 
-def add_system_note(ar, owner, subject, body, **kw):
+def add_system_note(request, owner, subject, body, **kw):
     #~ if not settings.SITE.site_config.system_note_type:
         #~ return
-    nt = owner.get_system_note_type(ar)
+    nt = owner.get_system_note_type(request)
     if not nt:
         return
-    prj = owner.get_related_project(ar)
+    prj = owner.get_related_project()
     if prj:
         kw.update(project=prj)
     #~ note = Note(type=nt,owner=owner,
     note = Note(event_type=nt, owner=owner,
-                subject=subject, body=body, user=ar.get_user(), **kw)
+                subject=subject, body=body, user=request.user, **kw)
     #~ owner.update_system_note(note)
     note.save()
 

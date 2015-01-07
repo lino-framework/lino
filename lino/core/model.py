@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core.dbutils import obj2str, full_model_name
-from lino.core.dbutils import ChangeWatcher
+from lino.core.utils import ChangeWatcher
 
 from lino.core import fields
 from lino.core import signals
@@ -400,15 +400,15 @@ class Model(models.Model):
     def __repr__(self):
         return obj2str(self)
 
-    def get_related_project(self, ar):
+    def get_related_project(self):
         if settings.SITE.project_model:
             if isinstance(self, settings.SITE.project_model):
                 return self
 
-    def get_system_note_type(self, ar):
+    def get_system_note_type(self, request):
         return None
 
-    def get_system_note_recipients(self, ar, silent):
+    def get_system_note_recipients(self, request, silent):
         return []
 
     def to_html(self, **kw):

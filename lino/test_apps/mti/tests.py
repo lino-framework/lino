@@ -1,8 +1,5 @@
 """.. currentmodule:: lino.utils.mti
 
-Warning: This document is **deprecated**. 
-See :mod:`lino.test_apps.nomti`
-
 .. contents::
    :local:
    :depth: 2   

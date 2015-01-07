@@ -1,4 +1,4 @@
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """This defines some helper classes like 
 
@@ -15,6 +15,8 @@ TODO: Merge this module and :mod:`lino.core.dbutils`.
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.db.models.fields import NOT_PROVIDED
+from lino.core.signals import on_ui_updated
 
 from lino.utils.xmlgen.html import E
 
@@ -234,4 +236,52 @@ class Requirements(object):
     allow = None
     auth = True
     owner = None
+
+
+class ChangeWatcher(object):
+    """Lightweight volatile object to watch changes and send the
+    :attr:`on_ui_updated <lino.core.signals.on_ui_updated>` signal.
+
+    The receiver function can use:
+
+    - `sender.watched` : .
+
+    - `original_state`: a `dict` containing (fieldname --> value)
+      before the change.
+
+    """
+
+    watched = None
+    """The model instance which has been changed and caused the signal."""
+
+    def __init__(self, watched):
+        self.original_state = dict(watched.__dict__)
+        self.watched = watched
+        #~ self.is_new = is_new
+        #~ self.request
+
+    def get_updates(self, ignored_fields=frozenset(), watched_fields=None):
+        """Yield a list of (fieldname, oldvalue, newvalue) tuples for each
+        modified field. Optional argument `ignored_fields` can be a
+        set of fieldnames to be ignored.
+
+        """
+        for k, old in self.original_state.iteritems():
+            if not k in ignored_fields:
+                if watched_fields is None or k in watched_fields:
+                    new = self.watched.__dict__.get(k, NOT_PROVIDED)
+                    if old != new:
+                        yield k, old, new
+
+    def is_dirty(self):
+        #~ if self.is_new:
+            #~ return True
+        for k, v in self.original_state.iteritems():
+            if v != self.watched.__dict__.get(k, NOT_PROVIDED):
+                return True
+        return False
+
+    def send_update(self, request):
+        #~ print "ChangeWatcher.send_update()", self.watched
+        on_ui_updated.send(sender=self, request=request)
 

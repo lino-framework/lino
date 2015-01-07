@@ -1,4 +1,4 @@
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -76,20 +76,31 @@ Sent when a model instance is being merged into another instance.
 
 pre_remove_child = Signal(['request', 'child'])
 pre_add_child = Signal(['request'])
-pre_ui_create = Signal(['request'])
+
+
+on_ui_created = Signal(['request'])
 """
 Sent when a new model instance has been created and saved.
 """
-pre_ui_update = Signal(['request'])
+
+
+on_ui_updated = Signal(['request'])
+"""Sent when a model instance has been modified and saved.  This will
+be called each time some database object has been updated.
+
+Unlike Django's `post_save` signal, the `sender` is a
+:class:`lino.core.utils.ChangeWatcher` instance, and the HttpRequest
+will be passed to the receiver.
+
+"""
 
 pre_ui_delete = Signal(['request'])
-"""
-Sent just before a model instance is being deleted using 
-the user interface.
+"""Sent just before a model instance is being deleted using the user
+interface.
 
 ``request``:
   The HttpRequest object
-  
+
 """
 
 pre_ui_build = Signal()

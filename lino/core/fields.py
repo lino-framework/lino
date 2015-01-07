@@ -4,7 +4,7 @@
 
 """Defines extended field classes like :class:`RichTextField` and
 :class:`PercentageField`, utility functions like
-:func:`dd.fields_list`.
+:func:`fields_list`.
 
 """
 

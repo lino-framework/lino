@@ -9,6 +9,7 @@ that's designed for unit tests *within a particular* Django project
 (run using `djange-admin test`).
 
 """
+import os
 import sys
 import doctest
 import warnings
@@ -108,7 +109,7 @@ class TestCase(TestCase):
         has not been initialized (in that case, run `fab initdb`).
         """
         filename = 'docs/' + filename
-        sys.path.insert(0, 'docs')
+        sys.path.insert(0,  os.path.abspath('docs'))
         import conf  # trigger Django startup
 
         res = doctest.testfile(filename, module_relative=False,

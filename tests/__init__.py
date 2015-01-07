@@ -84,6 +84,9 @@ class DocsTests(LinoTestCase):
     def test_de_BE(self):
         self.run_django_manage_test('docs/tutorials/de_BE')
 
+    def test_sendchanges(self):
+        self.run_django_manage_test('docs/tutorials/sendchanges')
+
     def test_auto_create(self):
         self.run_django_manage_test('docs/tutorials/auto_create')
     

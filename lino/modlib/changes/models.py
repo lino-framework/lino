@@ -1,10 +1,11 @@
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The :xfile:`models.py` module for :mod:`lino.modlib.changes`.
 
-It defines the :class:`Change` model and the :func:`watch_changes`
-function.  It also adds a menu entry to the `Explorer` menu.
+It defines the :class:`Change` model, and the functions
+:func:`watch_changes` and :func:`watch_all_changes`.  It also adds a
+menu entry to the `Explorer` menu.
 
 See also :ref:`lino.tutorial.watch`.
 
@@ -25,7 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd
 from lino.core import fields
 
-from lino.core.signals import pre_ui_delete, pre_ui_create, pre_ui_update
+from lino.core.signals import pre_ui_delete, on_ui_created, on_ui_updated
 from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child, pre_remove_child
 from lino.core.signals import receiver
@@ -184,10 +185,12 @@ def return_self(obj):
 
 
 def watch_changes(model, ignore=[], master_key=None, **options):
-    """
-    Declare the specified model to be "observed" ("watched") for changes.
+    """Declare the specified model to be "observed" ("watched") for changes.
     Each change to an object comprising at least one watched field
     will lead to an entry to the `Changes` table.
+
+    `ignore` should be a string with a space-separated list of field
+    names to be ignored.
     
     All calls to watch_changes will be grouped by model.
 
@@ -247,9 +250,11 @@ def log_change(type, request, master, obj, msg=''):
         diff=msg).save()
 
 
-@receiver(pre_ui_update)
+@receiver(on_ui_updated)
 def on_update(sender=None, request=None, **kw):
-    # Note that sender is a Watcher instance
+    """
+    Log a Change if there is a `change_watcher_spec`.
+    """
     master = get_master(sender.watched)
     if master is None:
         # No master, nothing to log
@@ -257,12 +262,9 @@ def on_update(sender=None, request=None, **kw):
 
     cs = sender.watched.change_watcher_spec
     changes = []
-    for k, old in sender.original_state.iteritems():
-        if not k in cs.ignored_fields:
-            new = sender.watched.__dict__.get(k, dd.NOT_PROVIDED)
-            if old != new:
-                changes.append("%s : %s --> %s" %
-                               (k, dd.obj2str(old), dd.obj2str(new)))
+    for k, old, new in sender.get_updates(cs.ignored_fields):
+        changes.append("%s : %s --> %s" %
+                       (k, dd.obj2str(old), dd.obj2str(new)))
     if len(changes) == 0:
         msg = '(no changes)'
     elif len(changes) == 1:
@@ -288,7 +290,7 @@ def on_delete(sender=None, request=None, **kw):
                sender, dd.obj2str(sender, True))
 
 
-@receiver(pre_ui_create)
+@receiver(on_ui_created)
 def on_create(sender=None, request=None, **kw):
     """To be called when a new instance has actually been created and
     saved.

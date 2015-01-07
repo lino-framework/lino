@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import dd, rt
 from lino.utils.xmlgen.html import E
+from lino.core.utils import ChangeWatcher
 from lino.modlib.countries.models import AddressLocation
 
 from .mixins import AddressTypes, DataSources
@@ -73,7 +74,7 @@ class AddressOwner(dd.Model):
     
     def sync_primary_address(self, request):
         Address = rt.modules.addresses.Address
-        watcher = dd.ChangeWatcher(self)
+        watcher = ChangeWatcher(self)
         kw = dict(partner=self, primary=True)
         try:
             pa = Address.objects.get(**kw)

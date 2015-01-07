@@ -47,6 +47,7 @@ This is a tested document. To test it, run::
     ranges
     requests
     restify
+    sendchanges
     screenshots
     sqllog
     ssin

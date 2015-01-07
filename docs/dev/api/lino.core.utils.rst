@@ -19,8 +19,10 @@ lino.core.utils
 
    .. autosummary::
    
+      ChangeWatcher
       Handle
       InstanceAction
+      NOT_PROVIDED
       ParameterPanel
       Parametrizable
       Permittable

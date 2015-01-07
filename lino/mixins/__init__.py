@@ -196,7 +196,7 @@ class ProjectRelated(model.Model):
     else:
         project = fields.DummyField()
 
-    def get_related_project(self, ar):
+    def get_related_project(self):
         if settings.SITE.project_model:
             return self.project
 

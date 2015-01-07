@@ -28,7 +28,6 @@ lino.core.requests
       BaseRequest
       BoundAction
       ChangeWatcher
-      EmailMessage
       PhantomRow
       VirtualRow
    

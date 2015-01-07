@@ -21,10 +21,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
 from lino.core.dbutils import get_field
 
+from lino.core.utils import ChangeWatcher
+
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
 
-from lino import dd, rt, mixins
+from lino import dd, rt
 
 
 from lino.utils import ssin
@@ -209,7 +211,7 @@ class BaseBeIdReadCardAction(dd.Action):
 
         """
         oldobj = obj
-        watcher = dd.ChangeWatcher(obj)
+        watcher = ChangeWatcher(obj)
         objects, diffs = obj.get_beid_diffs(attrs)
 
         if len(diffs) == 0:
@@ -312,7 +314,7 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
                             o.full_clean()
                             o.save()
                         #~ changes.log_create(ar.request,obj)
-                        dd.pre_ui_create.send(obj, request=ar2.request)
+                        dd.on_ui_created.send(obj, request=ar2.request)
                         return self.goto_client_response(ar2, obj, msg)
                 msg = _("Create new client %s : Are you sure?") % full_name
                 msg = simulate_wrap(msg)

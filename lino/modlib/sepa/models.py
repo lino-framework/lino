@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,7 +19,9 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino import dd
+
+from lino.core.utils import ChangeWatcher
 
 config = dd.apps.sepa
 
@@ -79,7 +81,7 @@ class Account(IbanBicHolder):
                     o.primary = False
                     o.save()
                     ar.set_response(refresh_all=True)
-            watcher = dd.ChangeWatcher(mi)
+            watcher = ChangeWatcher(mi)
             for k in PRIMARY_FIELDS:
                 setattr(mi, k, getattr(self, k))
             mi.save()

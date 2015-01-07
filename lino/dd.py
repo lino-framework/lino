@@ -196,8 +196,7 @@ from lino.core.layouts import FormLayout, Panel
 from lino.core.layouts import ParamsLayout
 
 
-from lino.core.signals import pre_ui_create, pre_ui_delete, pre_ui_update
-from lino.core.dbutils import ChangeWatcher
+from lino.core.signals import on_ui_created, pre_ui_delete, on_ui_updated
 
 from lino.core.signals import database_connected
 from lino.core.signals import database_ready

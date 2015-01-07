@@ -67,7 +67,6 @@ lino.dd
       BabelCharField
       BabelTextField
       ChangeStateAction
-      ChangeWatcher
       CharField
       Choice
       ChoiceList

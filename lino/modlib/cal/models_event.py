@@ -514,8 +514,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #~ def get_mailable_body(self,ar):
         #~ return self.description
 
-    def get_system_note_recipients(self, ar, silent):
-        if self.user != ar.user:
+    def get_system_note_recipients(self, request, silent):
+        if self.user != request.user:
             yield "%s <%s>" % (unicode(self.user), self.user.email)
         if silent:
             return

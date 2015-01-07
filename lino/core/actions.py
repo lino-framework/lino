@@ -36,8 +36,8 @@ from lino.core.dbutils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
-from lino.core.signals import pre_ui_create, pre_ui_delete
-from lino.core.dbutils import ChangeWatcher
+from lino.core.signals import on_ui_created, pre_ui_delete
+from lino.core.utils import ChangeWatcher
 from lino.core.utils import Permittable, Parametrizable, InstanceAction
 from lino.utils.choosers import Chooser
 
@@ -937,8 +937,8 @@ class CreateRow(Action):
     def save_new_instance(self, ar, elem):
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
-        # yes, `pre_ui_create` comes *after* save()
-        pre_ui_create.send(elem, request=ar.request)
+        # yes, `on_ui_created` comes *after* save()
+        on_ui_created.send(elem, request=ar.request)
         elem.after_ui_create(ar)
         elem.after_ui_save(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))

@@ -1,0 +1,8 @@
+==========================
+Wednesday, January 7, 2015
+==========================
+
+Lino has another cool feature: :mod:`lino.utils.sendchanges` and a new
+tutorial :doc:`/tutorials/sendchanges/index` which demonstrates and
+tests it.  See :blogref:`20150106` for the introduction.
+
