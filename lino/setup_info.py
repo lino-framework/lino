@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.16',
+    version='1.6.17',
     install_requires=[
         'django<1.7', 'Sphinx',
         'atelier', 'unipath', 'python_dateutil',

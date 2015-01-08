@@ -20,6 +20,19 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+Version 1.6.17 (released :blogref:`20150108`)
+=============================================
+
+- :func:`lino.utils.mti.delete_child` was no longer working with recent
+  Django versions. :blogref:`20150108` 
+
+- New feature: :mod:`lino.utils.sendchanges`.
+
+- Miscellaneous internal changes.
+
+- new plugin method :meth:`get_menu_group
+  <lino.core.plugin.Plugin.get_menu_group>`. :blogref:`20141231` 
+
 - Documentation now builds without warnings. :blogref:`20141223` 
 
 Version 1.6.16 (released :blogref:`20141222`)

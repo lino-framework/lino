@@ -2,15 +2,24 @@
 Thursday, January 8, 2015
 =========================
 
-New tutorial :doc:`/tutorials/mti/index`.  These tests actually are
-old. Until now they were in `lino.test_apps.mti`, where nobody could
-find them. And furthermore they were not being tested. And when I
-added them to the test suite, this revealed that
+ChildCollector has no attribute "add_batch"
+-------------------------------------------
+
+I wrote a new tutorial :doc:`/tutorials/mti/index`.  This content is
+actually old. Until now they were in `lino.test_apps.mti.tests`, where
+nobody could find them.  And furthermore they were not being
+tested. And when I added them to the test suite, this revealed that
 :func:`lino.utils.mti.delete_child` was no longer working with recent
-Django versions. I didn't investigate when exactly it stopped to work:
-theoretically it should have stopped with 1.6.x but, the online demos
-use Django 1.6.5 and seem to not have a problem.
+Django versions. It failed with above error message.  I didn't
+investigate when exactly it stopped to work: theoretically it should
+have stopped with Django 1.6.x but, the online demos use Django 1.6.5
+and seem to not have a problem.
 
-And yet another new tutorial, dedicated to :ref:`mma`:
-:doc:`/tutorials/letsmti/index` brings polyformy into the LETS tutorial.
+And yet another new tutorial, especially for :ref:`mma`:
+:doc:`/tutorials/letsmti/index` adds polymorphism to the LETS
+tutorial.
 
+Released Lino 1.6.17
+--------------------
+
+I released Lino 1.6.17 on PyPI.
