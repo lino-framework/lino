@@ -42,6 +42,7 @@ Getting acquaintained
    menu
    choicelists
    actors
+   /tutorials/letsmti/index
    /tutorials/layouts
    /tutorials/vtables/index
    actions

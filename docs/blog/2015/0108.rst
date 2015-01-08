@@ -10,3 +10,7 @@ added them to the test suite, this revealed that
 Django versions. I didn't investigate when exactly it stopped to work:
 theoretically it should have stopped with 1.6.x but, the online demos
 use Django 1.6.5 and seem to not have a problem.
+
+And yet another new tutorial, dedicated to :ref:`mma`:
+:doc:`/tutorials/letsmti/index` brings polyformy into the LETS tutorial.
+

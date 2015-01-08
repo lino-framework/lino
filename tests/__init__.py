@@ -123,6 +123,9 @@ class DocsTests(LinoTestCase):
     def test_lets(self):
         self.run_django_manage_test('docs/tutorials/lets')
 
+    def test_letsmti(self):
+        self.run_django_manage_test('docs/tutorials/letsmti')
+
     def test_mldbc(self):
         self.run_django_manage_test('docs/tutorials/mldbc')
 
