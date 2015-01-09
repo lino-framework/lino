@@ -1,0 +1,10 @@
+=======================
+Friday, January 9, 2015
+=======================
+
+The German translation of the label of the user group "newcomers" is
+now "Erstempfang" (instead of
+"Neuanträge"). 
+:mod:`lino_welfare.modlib.newcomers`
+now has an :xfile:`__init__.py`.
+Moved some documentation of :mod:`lino_welfare.modlib.isip` into the module.
