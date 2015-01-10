@@ -265,11 +265,35 @@ class ExtAllDayField(dd.VirtualField):
 
 
 class UpdateGuests(dd.MultipleRowAction):
+    """Decide whether it is time to add Guest instances for this event,
+    and if yes, call :meth:`suggest_guests` to instantiate them.
+
+    - No guests added when loading from dump
+    - The Event must be in a state which allows editing the guests
+    - If there are already at least one guests, no guests will be added
+
+    """
+
     label = _('Update Guests')
     icon_name = 'lightning'
 
     def run_on_row(self, obj, ar):
-        return obj.update_guests(ar)
+        #~ print "20130722 Event.save"
+        #~ print "20130717 add_guests"
+        if settings.SITE.loading_from_dump:
+            return 0
+        if not obj.state.edit_guests:
+            ar.info("not state.edit_guests")
+            return 0
+        if obj.guest_set.all().count() > 0:
+            ar.info("guest_set not empty")
+            return 0
+        n = 0
+        for g in obj.suggest_guests():
+            g.save()
+            n += 1
+            #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
+        return n
 
 
 class Event(Component, Ended,
@@ -283,7 +307,7 @@ class Event(Component, Ended,
         verbose_name = pgettext(u"cal", u"Event")
         verbose_name_plural = pgettext(u"cal", u"Events")
 
-    do_update_guests = UpdateGuests()
+    update_guests = UpdateGuests()
 
     event_type = models.ForeignKey('cal.EventType', blank=True, null=True)
 
@@ -404,32 +428,14 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     #     self.add_guests()
     #     return r
 
-    def update_guests(self, ar):
-        """
-        Decide whether it is time to add Guest instances for this event,
-        and if yes, call :meth:`suggest_guests` to instantiate them.
-        """
-        #~ print "20130722 Event.save"
-        #~ print "20130717 add_guests"
-        if settings.SITE.loading_from_dump:
-            return 0
-        if not self.state.edit_guests:
-            ar.info("not state.edit_guests")
-            return 0
-        if self.guest_set.all().count() > 0:
-            ar.info("guest_set not empty")
-            return 0
-        n = 0
-        for g in self.suggest_guests():
-            g.save()
-            n += 1
-            #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
-        return n
+    def after_ui_create(self, ar):
+        super(Event, self).after_ui_create(ar)
+        self.update_guests.run_from_code(ar)
 
     def suggest_guests(self):
         """
-        Yield a list of Partner instances to be invited to this Event.
-        This method is called when :meth:`add_guests` decided so.
+        Yield the list of Guest instances to be added to this Event.
+        This method is called when :meth:`update_guests` decided so.
         """
         if self.owner:
             for obj in self.owner.suggest_cal_guests(self):
