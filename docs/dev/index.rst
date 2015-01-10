@@ -47,7 +47,6 @@ Getting acquaintained
    /tutorials/vtables/index
    actions
    /tutorials/actions/index
-   /tutorials/mini
    /tutorials/mldbc/index
    /tutorials/human/index
    
