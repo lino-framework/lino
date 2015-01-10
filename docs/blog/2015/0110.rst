@@ -39,4 +39,12 @@ needed two changes in Welfare's test suite:
 - `docs/tested/general.rst`
 
 
+I moved to documentation in :mod:`ml.cal` back to the source code. See
+:mod:`lino.modlib.cal`.
+
+Note: I also tried to convert :mod:`lino.modlib.cal.models` into a
+package, but this caused "the hell to break loose", as Andrew Cooke
+explained already 2009 in a post titled `Using a Directory (Package)
+for Django's Model <http://www.acooke.org/cute/UsingaDire0.html>`_.
+
 

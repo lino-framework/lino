@@ -49,7 +49,12 @@ class GuestRoles(dd.Table):
 
 
 class Guest(dd.Model):
-    # TODO: rename to `Presence`
+    """Represents the fact that a given person is expected to attend to a
+   given event.
+
+   TODO: Rename this to "Presence".
+
+    """
     workflow_state_field = 'state'
 
     allow_cascaded_delete = ['event']

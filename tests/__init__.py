@@ -53,7 +53,6 @@ class DocsTests(LinoTestCase):
     def test_docs(self):
         self.run_simple_doctests("""
         docs/dev/ml/users.rst
-        docs/dev/ml/cal.rst
         docs/dev/ml/contacts.rst
         docs/dev/mixins.rst
         docs/user/templates_api.rst
@@ -137,6 +136,9 @@ class DocsTests(LinoTestCase):
 
     def test_integer_pk(self):
         self.run_django_manage_test("docs/tested/integer_pk")
+
+    def test_cal_utils(self):
+        self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 
 class CoreTests(LinoTestCase):

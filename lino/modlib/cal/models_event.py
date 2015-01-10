@@ -46,7 +46,27 @@ outbox = dd.resolve_app('outbox')
 
 class EventType(mixins.BabelNamed, mixins.Sequenced,
                 outbox.MailableType):
+    """
+    The possible value of the :attr:`Event.type` field.
+    Example content:
 
+    .. lino2rst::
+
+       rt.show(cal.EventTypes, limit=5)
+
+    .. attribute:: is_appointment
+
+        Whether events of this type should be considered
+        "appointments" (i.e. whose time and place have been agreed
+        upon with other users or external parties).
+
+        The table (:class:`EventsByDay` and
+        :class:`MyEvents`) show only events whose type has the
+        `is_appointment` field checked.
+     
+
+   
+    """
     templates_group = 'cal/Event'
 
     class Meta:
@@ -150,7 +170,8 @@ class EventTypes(dd.Table):
 
 
 class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
-
+    """An event that recurs at intervals.
+    """
     class Meta:
         verbose_name = _("Recurrent Event")
         verbose_name_plural = _("Recurrent Events")
@@ -190,7 +211,9 @@ dd.update_field(
 
 
 class RecurrentEvents(dd.Table):
+    """The list of all recurrent events (:class:`RecurrentEvent`).
 
+    """
     model = 'cal.RecurrentEvent'
     required = dd.required(user_groups='office', user_level='manager')
     column_names = "start_date end_date name every_unit event_type *"
@@ -300,7 +323,30 @@ class Event(Component, Ended,
             mixins.TypedPrintable,
             outbox.Mailable,
             Postable):
+    """
+    A calendar event is a lapse of time to be visualized in a calendar.
 
+    .. attribute:: user
+
+         The responsible user.
+
+    .. attribute:: assigned_to
+
+        This field is usually empty.  Setting it to another user means "I
+        am not fully responsible for this event".  This will cause the
+        other user to see this event in his :class:`MyAssignedEvents`
+        table.
+
+        This field is cleared when somebody calls :class:`TakeEvent` on
+        the event.
+
+    .. attribute:: type
+
+         The type of this event. Every calendar event should have this
+         field pointing to a given :class:`EventType`, which holds
+         extended configurable information about this event.
+
+    """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
@@ -620,6 +666,8 @@ add('20', _("Pending"), 'pending')
 
 
 class Events(dd.Table):
+    """Table which shows all calendar events. """
+
     help_text = _("A List of calendar entries. Each entry is called an event.")
     model = 'cal.Event'
     required = dd.required(user_groups='office', user_level='manager')
@@ -753,6 +801,14 @@ class EventsByType(Events):
 
 
 class EventsByDay(Events):
+    """
+    This table is usually labelled "Appointments today". It has no
+    "date" column because it shows events of a given date.
+
+    The default filter parameters are set to show only
+    :term:`appointments <appointment>`.
+
+    """
     label = _("Appointments today")
     column_names = 'room summary owner workflow_buttons *'
     required = dd.required(user_groups='office')
@@ -851,6 +907,13 @@ class OneEvent(Events):
 if settings.SITE.user_model:
 
     class MyEvents(Events):
+        """
+        Table which shows today's and future appointments of the requesting
+        user.
+        The default filter parameters are set to show only
+        :term:`appointments <appointment>`.
+
+        """
         label = _("My events")
         help_text = _("Table of all my calendar events.")
         required = dd.required(user_groups='office')
@@ -873,6 +936,14 @@ if settings.SITE.user_model:
             return super(MyEvents, self).create_instance(ar, **kw)
 
     class MyAssignedEvents(MyEvents):
+        """
+        The table of events which are *assigned* to me. That is, whose
+        :attr:`Event.assigned_to` field refers to the requesting user.
+
+        This table also causes a :term:`welcome message` "X events have been
+        assigned to you" in case it is not empty.
+
+        """
         label = _("Events assigned to me")
         help_text = _("Table of events assigned to me.")
         #~ master_key = 'assigned_to'

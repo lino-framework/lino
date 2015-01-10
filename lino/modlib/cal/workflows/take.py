@@ -22,6 +22,22 @@ from ..workflows import (TaskStates, EventStates, GuestStates)
 
 
 class TakeEvent(dd.Action):
+    """
+    This action means that you declare to become the fully responsible
+    user for this event.  Accordingly, this action is available only
+    when you are not already fully responsible. You are fully
+    responsible when (1) :attr:`Event.user` is set to *you*
+    **and** (2) :attr:`Event.assigned_to` is *not empty*.
+
+    Basically anybody can take any event, even if it is not assigned
+    to them.
+
+    .. |flag_green| image:: ../../../lino/media/extjs/images/mjames/flag_green.png
+  
+    Represented by a green flag (|flag_green|) button.
+
+
+    """
     label = _("Take")
     show_in_workflow = True
 

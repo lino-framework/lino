@@ -28,7 +28,15 @@ from .workflows import TaskStates
 
 
 class Task(Component):
+    """A Task is when a user plans to to something
+    (and optionally wants to get reminded about it).
 
+    .. attribute:: state
+     
+        The state of this Task. one of :class:`TaskStates`
+
+
+    """
     class Meta:
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")

@@ -5,6 +5,20 @@
 """
 Some calendar utilities
 
+.. autosummary::
+
+
+.. This is a tested document. You can test it using:
+
+    $ python setup.py test -s tests.DocsTests.test_cal_utils
+
+..
+  >>> import os
+  >>> os.environ['DJANGO_SETTINGS_MODULE'] = \\
+  ...     'lino.projects.docs.settings.demo'
+  >>> from lino.runtime import *
+
+
 """
 
 from __future__ import unicode_literals
@@ -24,19 +38,20 @@ from lino import dd
 
 
 def aware(d):
+    "Convert the given datetime into a timezone-aware datetime."
     return datetime.datetime(d.year, d.month, d.day, tzinfo=tzlocal())
 
 
 def dt2kw(dt, name, **d):
-    """
-    Store given timestamp `dt` in a field dict. 
-    `name` is the base name of the fields. 
+    """Store given timestamp `dt` in a field dict.  `name` is the base
+    name of the fields.
+
     Examples:
     
     >>> dt = datetime.datetime(2013,12,25,17,15,00)
     >>> dt2kw(dt,'foo')
     {u'foo_date': datetime.date(2013, 12, 25), u'foo_time': datetime.time(17, 15)}
-    
+
     """
     if dt:
         if isinstance(dt, datetime.datetime):
@@ -90,6 +105,14 @@ def when_text(d, t=None):
 
 
 class Weekdays(dd.ChoiceList):
+    """A choicelist with the seven days of a week.
+
+    .. django2rst::
+
+            rt.show(cal.Weekdays)
+
+
+    """
     verbose_name = _("Weekday")
 add = Weekdays.add_item
 add('1', _('Monday'), 'monday')
@@ -103,9 +126,14 @@ add('7', _('Sunday'), 'sunday')
 WORKDAYS = frozenset([
     Weekdays.get_by_name(k)
     for k in 'monday tuesday wednesday thursday friday'.split()])
+"The five workdays of the week (Monday to Friday)."
 
 
 class DurationUnit(dd.Choice):
+    """Base class for the choices in the :class:`DurationUnits`
+    choicelist.
+
+    """
 
     def add_duration(unit, orig, value):
         """Return a date or datetime obtained by adding `value`
@@ -115,11 +143,30 @@ class DurationUnit(dd.Choice):
         This is intended for use as a `curried magic method` of a
         specified list item:
         
+        Examples:
+    
         >>> start_date = datetime.date(2011, 10, 26)
         >>> DurationUnits.months.add_duration(start_date, 2)
         datetime.date(2011, 12, 26)
         
-        See more usage examples in :mod:`lino.modlib.cal.tests.test_cal`.
+        >>> from lino.utils import i2d
+        >>> start_date = i2d(20111026)
+        >>> DurationUnits.months.add_duration(start_date, 2)
+        datetime.date(2011, 12, 26)
+        >>> DurationUnits.months.add_duration(start_date, -2)
+        datetime.date(2011, 8, 26)
+
+        >>> start_date = i2d(20110131)
+        >>> DurationUnits.months.add_duration(start_date, 1)
+        datetime.date(2011, 2, 28)
+        >>> DurationUnits.months.add_duration(start_date, -1)
+        datetime.date(2010, 12, 31)
+        >>> DurationUnits.months.add_duration(start_date, -2)
+        datetime.date(2010, 11, 30)
+
+        >>> start_date = i2d(20140401)
+        >>> DurationUnits.months.add_duration(start_date, 3)
+        datetime.date(2014, 7, 1)
 
         """
         if orig is None:
@@ -159,7 +206,13 @@ class DurationUnit(dd.Choice):
 
 class DurationUnits(dd.ChoiceList):
 
-    """A list of possible values for the `duration_unit` field of an :class:`Event`.
+    """A list of possible values for the `duration_unit` field of an
+:class:`Event`.
+
+    .. django2rst::
+
+            rt.show(cal.DurationUnits)
+
     """
     verbose_name = _("Duration Unit")
     item_class = DurationUnit

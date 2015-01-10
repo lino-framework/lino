@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -20,9 +20,15 @@ from lino import dd
 
 
 class TaskStates(dd.Workflow):
+    """Possible values for the state of a :class:`Task`. The list of
+    choices for the :attr:`Task.state` field. By default it contains
+    the following values (which can be redefined in
+    :meth:`lino.core.site_def.Site.setup_choicelists`):
 
-    """
-    State of a Calendar Task. Used as Workflow selector.
+    .. django2rst::
+
+            rt.show(cal.TaskStates)
+
     """
     verbose_name_plural = _("Task states")
     required = dd.required(user_level='admin')
@@ -50,6 +56,16 @@ class EventState(dd.State):
 
 
 class EventStates(dd.Workflow):
+    """Possible values for the state of a task. The list of choices for
+    the :attr:`Event.state` field. By default it contains the
+    following values (which can be redefined in
+    :meth:`lino.core.site_def.Site.setup_choicelists`):
+
+    .. django2rst::
+
+            rt.show(cal.EventStates)
+
+    """
     verbose_name_plural = _("Event states")
     required = dd.required(user_level='admin')
     help_text = _("""The possible states of a calendar event.""")
@@ -92,9 +108,18 @@ class GuestState(dd.State):
 
 
 class GuestStates(dd.Workflow):
-
     """
-    State of a Calendar Event Guest. Used as Workflow selector.
+    Possible values for the state of a Guest. The list of choices for
+    the :attr:`Guest.state` field.  Example data:
+
+    .. django2rst::
+
+            rt.show(cal.GuestStates)
+
+    The actual content can be redefined by other apps,
+    e.g. :mod:`ml.reception`.
+
+
     """
     verbose_name_plural = _("Guest states")
     required = dd.required(user_level='admin')

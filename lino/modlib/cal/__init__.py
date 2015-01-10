@@ -1,10 +1,48 @@
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This is Lino's Calendar module.
+"""
+The :mod:`lino.modlib.cal` package
+provides data definitions for "Calendar management".
+This is Lino's Calendar module.
+
+
+
+.. autosummary::
+   :toctree:
+
+    mixins
+    utils
+    models
+    models_calendar
+    models_event
+    models_guest
+    models_task
+
+
+
+Glossary
+========
+
+.. glossary::
+
+  event
+
+    Something that happens at a given date and (optionally) time.
+    A planned ("scheduled") lapse of time where something happens.
+    Stored in :class:`Event`.
+
+  appointment
+
+    An appointment (french "Rendez-vous", german "Termin") is an
+    :term:`event` whose :class:`type <EventType>` has the
+    :attr:`EventType.is_appointment` field checked.
+
+
+
 
 There is no "Calendar" field per Event
---------------------------------------
+======================================
 
 Note that the default implementation has no "Calendar" field per
 Event. The `Event` model instead has a `get_calendar` method.
