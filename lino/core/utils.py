@@ -54,6 +54,7 @@ class Parametrizable(object):
 
     active_fields = None  # 20121006
     master_field = None
+    known_values = None
 
     parameters = None
     """
