@@ -306,9 +306,13 @@ class Site(object):
     """
 
     modules = AttrDict()
-    """
-    An :class:`atelier.utils.AttrDict` with one entry per `app_label`,
-    each entry holding a reference to each actor of that app.
+    """A shortcut to the :xfile:`models.py` modules of installed apps.
+
+    Implemented as an :class:`atelier.utils.AttrDict` with one entry
+    per `app_label`.
+
+    Available as :mod:`lino.rt.modules`.
+
     """
 
     is_local_project_dir = False

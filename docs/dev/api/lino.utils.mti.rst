@@ -9,6 +9,7 @@ lino.utils.mti
 
    .. autosummary::
    
+      DO_NOTHING
       create_child
       delete_child
       get_child
@@ -26,6 +27,7 @@ lino.utils.mti
       ChildCollector
       Collector
       EnableChild
+      OldChildCollector
       VirtualField
    
    

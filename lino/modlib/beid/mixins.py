@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Adds actions to read Belgian eID card.
+Actions and Choicelists used to read Belgian eID cards.
+
 See unit tests in :mod:`lino_welfare.tests.test_beid`.
+
+.. autosummary::
 
 """
 
@@ -46,7 +49,43 @@ def simulate_wrap(msg):
 
 
 class BeIdCardTypes(dd.ChoiceList):
-    "See :class:`ml.beid.BeIdCardTypes`."
+    """
+    List of Belgian identity card types:
+
+    .. lino2rst::
+
+       rt.show(beid.BeIdCardTypes)
+
+    Didn't yet find any official reference document.
+    
+    The eID applet returns a field `documentType` which contains a
+    numeric code.  For example 1 is for "Belgian citizen", 6 for "Kids
+    card",...
+    
+    The eID viewer, when saving a card as xml file, doesn't save these
+    values nowhere, it saves a string equivalent (1 becomes
+    "belgian_citizen", 6 becomes "kids_card", 17 becomes
+    "foreigner_f", 16 becomes "foreigner_e_plus",...
+    
+    Sources:
+    | [1] https://securehomes.esat.kuleuven.be/~decockd/wiki/bin/view.cgi/EidForums/ForumEidCards0073
+    | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
+
+
+    Excerpts from [1]: 
+    
+    - Johan: A document type of 7 is used for bootstrap cards ? What
+      is a bootstrap card (maybe some kind of test card?)  Danny: A
+      bootstrap card was an eID card that was used in the early start
+      of the eID card introduction to bootstrap the computers at the
+      administration. This type is no longer issued.
+    
+    - Johan: A document type of 8 is used for a
+      "habilitation/machtigings" card ? Is this for refugees or asylum
+      seekers? Danny: A habilitation/machtigings card was aimed at
+      civil servants. This type is also no longer used.
+    
+    """
 
     # app_label = 'lino'
     required = dd.required(user_level='admin')
@@ -92,7 +131,10 @@ add('18', _("Foreigner card F+"), "foreigner_f_plus")
 
 
 class BaseBeIdReadCardAction(dd.Action):
-    "See :class:`ml.beid.BaseBeIdReadCardAction`."
+    """
+    Common base for all "Read eID card" actions.
+
+    """
     label = _("Read eID card")
     required = dd.Required(user_groups='beid')
     preprocessor = 'Lino.beid_read_card_processor'
@@ -100,6 +142,8 @@ class BaseBeIdReadCardAction(dd.Action):
     sorry_msg = _("Sorry, I cannot handle that case: %s")
 
     def get_view_permission(self, profile):
+        """Make invisible when :attr:`lino.core.site_def.Site.use_java` is
+`False`."""
         if not settings.SITE.use_java:
             return False
         return super(BaseBeIdReadCardAction, self).get_view_permission(profile)
@@ -118,6 +162,10 @@ class BaseBeIdReadCardAction(dd.Action):
             BaseBeIdReadCardAction, self).attach_to_actor(actor, name)
 
     def card2client(self, data):
+        """Convert the data coming from the card into database fields to be
+        stored in the CardH
+
+        """
         countries = dd.resolve_app('countries', strict=True)
 
         kw = dict()
@@ -262,7 +310,14 @@ NAMES = tuple('last_name middle_name first_name'.split())
 
 
 class FindByBeIdAction(BaseBeIdReadCardAction):
-    "See :class:`ml.beid.FindByBeIdAction`."
+    """
+    Read an eID card without being on a holder. Either show the holder
+    or ask to create a new holder.
+
+    This is a list action, usually called from a quicklink or a main
+    menu item.
+
+    """
 
     select_rows = False
     show_in_bbar = False
@@ -340,6 +395,15 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
 
 
 class BeIdReadCardAction(BaseBeIdReadCardAction):
+    """Read eId card and store the data on the selected holder.
+
+    This is a row action (called on a given holder).
+
+    When the selected holder has an empty `national_id`, and when
+    there is no holder yet with that `national_id` in the database,
+    then we want to update the existing holder from the card.
+
+    """
     sort_index = 90
     icon_name = 'vcard'
 
@@ -363,6 +427,12 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
 
 
 class BeIdCardHolder(dd.Model):
+    """
+    Mixin for models which represent an eid card holder.
+    Currently only Belgian eid cards are tested.
+    Concrete subclasses must also inherit from :mod:`lino.mixins.Born`.
+
+    """
     class Meta:
         abstract = True
 

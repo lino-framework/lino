@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
@@ -23,7 +23,7 @@ from lino import mixins
 from lino.utils import join_words
 from lino.utils import join_elems
 
-from lino.modlib.countries.models import AddressLocation
+from lino.modlib.countries.mixins import AddressLocation
 
 from lino.modlib.contacts import Plugin
 

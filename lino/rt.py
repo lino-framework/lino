@@ -1,4 +1,4 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -18,6 +18,8 @@ from django.conf import settings
 from lino.core.dbutils import models_by_base
 
 modules = settings.SITE.modules
+"Shortcut to :attr:`lino.core.site_def.Site.modules`."
+
 login = settings.SITE.login
 startup = settings.SITE.startup
 get_printable_context = settings.SITE.get_printable_context

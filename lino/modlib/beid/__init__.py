@@ -1,6 +1,29 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""The :mod:`lino.modlib.beid` package
+defines actions for reading electronic ID smartcards.
+
+Installing this package makes sense only if there is exactly one
+subclass of the :class:`BeIdCardHolder` model mixin among your
+application's models.
+
+When this app is installed, then you must also add the `.jar` files
+required by :ref:`eidreader` into your media directory, in a
+subdirectory named "eidreader".
+
+An alternative implementation of the same functionality is
+:mod:`lino.modlib.eid_jslib.beid` which overrides this app and does
+the same except that it uses `eidjslib` instead of
+:ref:`eidreader`.
+
+.. autosummary::
+   :toctree:
+
+    mixins
+    models
+
+"""
 
 import os
 
@@ -8,11 +31,20 @@ from lino import ad
 
 
 class Plugin(ad.Plugin):  # was: use_eidreader
+    """
+    Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
+    """
 
     site_js_snippets = ['beid/eidreader.js']
     media_name = 'eidreader'
 
     data_collector_dir = None
+    """
+    When this is a non-empty string containing a directory name on the
+    server, then Lino writes the raw data of every eid card into a
+    text file in this directory.
+    """
+
     read_only_simulate = False
 
     def get_head_lines(self, site, request):

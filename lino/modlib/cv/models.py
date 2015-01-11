@@ -26,7 +26,7 @@ from django.utils.encoding import force_unicode
 from lino import dd, rt, mixins
 from lino.utils.xmlgen.html import E
 from lino.utils.htmlgen import UL
-from lino.modlib.countries.models import CountryCity
+from lino.modlib.countries.mixins import CountryCity
 
 
 from .mixins import (SectorFunction, PersonHistoryEntry,

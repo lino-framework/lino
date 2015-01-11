@@ -7,7 +7,6 @@ provides data definitions for "Calendar management".
 This is Lino's Calendar module.
 
 
-
 .. autosummary::
    :toctree:
 

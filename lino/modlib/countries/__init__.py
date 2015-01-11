@@ -1,7 +1,25 @@
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.countries`."
+"""The :mod:`lino.modlib.countries` package
+defines models and choicelists for managing geographic places.
+
+
+.. autosummary::
+   :toctree:
+
+    choicelists
+    mixins
+    models
+    utils
+    fixtures.few_countries
+    fixtures.few_cities
+    fixtures.be
+    fixtures.ee
+    fixtures.eesti
+
+
+"""
 
 from lino import ad, _
 

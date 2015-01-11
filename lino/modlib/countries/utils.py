@@ -1,19 +1,116 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""
+Utilities for :mod:`lino.modlib.countries`.
+
+Defines models
+:class:`AddressFormatter` and
+:class:`CountryDrivers`.
+
+"""
 from __future__ import print_function
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ValidationError
 
-from lino import dd, rt
-
+from lino import rt
+from lino.utils import join_words
 from lino.utils.instantiator import InstanceGenerator
 
-from .models import PlaceTypes
+from .choicelists import PlaceTypes
+from .choicelists import CountryDrivers
+
+
+class AddressFormatter(object):
+
+    """
+    Format used in BE, DE, FR, NL...
+    """
+    def get_city_lines(me, self):
+        if self.city is not None:
+            s = join_words(self.zip_code or self.city.zip_code, self.city)
+            if s:
+                yield s
+
+    def get_street_lines(me, self):
+        if self.street:
+            s = join_words(
+                self.street_prefix, self.street,
+                self.street_no)
+            if self.street_box:
+                if self.street_box[0] in '/-':
+                    s += self.street_box
+                else:
+                    s += ' ' + self.street_box
+            yield s
+
+
+class EstonianAddressFormatter(AddressFormatter):
+
+    """
+    Format used in Estonia.
+    """
+    
+    def format_place(self, p):
+        if p.type == PlaceTypes.municipality:
+            return "%s vald" % p
+        elif p.type == PlaceTypes.village:
+            return "%s küla" % p
+        elif p.type == PlaceTypes.county:
+            return "%s maakond" % p
+        return unicode(p)
+
+    def get_city_lines(me, self):
+        lines = []
+        if self.city:
+            city = self.city
+            zip_code = self.zip_code or self.city.zip_code
+            # Tallinna linnaosade asemel kirjutakse "Tallinn"
+            if city.type == PlaceTypes.township and city.parent:
+                city = city.parent
+            # linna puhul pole vaja maakonda
+            if city.type in (PlaceTypes.town, PlaceTypes.city):
+                s = join_words(zip_code, city)
+            else:
+                lines.append(me.format_place(city))
+                p = city.parent
+                while p and not CountryDrivers.EE.is_region(p):
+                    lines.append(me.format_place(p))
+                    p = p.parent
+                if self.region:
+                    s = join_words(zip_code, self.region)
+                elif p:
+                    s = join_words(zip_code, me.format_place(p))
+                elif len(lines) and zip_code:
+                    lines[-1] = zip_code + ' ' + lines[-1]
+                    s = ''
+                else:
+                    s = zip_code
+        else:
+            s = join_words(self.zip_code, self.region)
+        if s:
+            lines.append(s)
+        return lines
+
+
+ADDRESS_FORMATTERS = dict()
+ADDRESS_FORMATTERS[None] = AddressFormatter()
+ADDRESS_FORMATTERS['EE'] = EstonianAddressFormatter()
+
+
+def get_address_formatter(country):
+    """Return the address formatter (an :class:`AddressFormatter`
+instance) for the given country."""
+    if country and country.isocode:
+        af = ADDRESS_FORMATTERS.get(country.isocode, None)
+        if af is not None:
+            return af
+    return ADDRESS_FORMATTERS.get(None)
 
 
 class PlaceGenerator(InstanceGenerator):

@@ -21,7 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
-from lino.modlib.countries.models import AddressLocation
+from lino.modlib.countries.mixins import AddressLocation
 
 from .mixins import AddressTypes, DataSources
 
