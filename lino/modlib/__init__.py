@@ -1,14 +1,35 @@
 # Copyright 2008-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-This is :doc:`/topics/modlib`.
+"""The standard model library included with Lino.
 
+The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
+(as Django calls them) for Lino applications.
+
+"System apps"
+=============
 
 .. autosummary::
    :toctree:
 
     about
+    bootstrap3
+    changes
+    contenttypes
+    excerpts
+    export_excel
+    extensible
+    extjs
+    users
+    system
+
+
+"Enterprise Resources"
+======================
+
+.. autosummary::
+   :toctree:
+
     accounts
     addresses
     appypod
@@ -17,14 +38,11 @@ This is :doc:`/topics/modlib`.
     beid
     blogs
     boards
-    bootstrap3
     cal
-    changes
     codechanges
     comments
     concepts
     contacts
-    contenttypes
     countries
     courses
     cv
@@ -33,10 +51,6 @@ This is :doc:`/topics/modlib`.
     dedupe
     eid_jslib
     events
-    excerpts
-    export_excel
-    extensible
-    extjs
     families
     finan
     households
@@ -62,11 +76,9 @@ This is :doc:`/topics/modlib`.
     sepa
     smtpd
     statbel
-    system
     thirds
     tickets
     uploads
-    users
     vat
     vocbook
     workflows

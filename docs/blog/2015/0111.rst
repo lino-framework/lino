@@ -2,13 +2,11 @@
 Sunday, January 11, 2015
 ========================
 
-I continued that dirty work of moving back documentation from
-:mod:`ml` to their real place.
+I continued the dirty work of moving back documentation from :mod:`ml`
+to their real place.
 
-:mod:`lino.modlib.beid`
-and
-:mod:`lino.modlib.countries`
-are now converted.
+:mod:`lino.modlib.beid` and :mod:`lino.modlib.countries` are now
+converted.
 
 I discovered that the "(source code)" links in the summary table of a
 package where not as intended.

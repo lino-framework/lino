@@ -39,19 +39,18 @@ I wrote two actions on Client which are supposed to open the calendar
 panel, for a user to be selected manually.  When creating an
 appointment in that panel, the Client would automatically be set.
 
-One is a dialog action where the agent is selected in a combobox.  But
-it seems that this combination (dialog action with JS instead of AJAX
-call) is not yet possible.
+One (`find_date_dlg`) is a dialog action where the agent is selected
+in a combobox.  But it seems that this combination (dialog action with
+JS instead of AJAX call) is not yet possible. So this version is
+currently ifed out.  But we might change the False to True because
+looking at it helps to imagine how it would look and whether it's
+worth to make it possible.
 
-The other implementation uses a ButtonsTable. It has the advantage
-that it works. And in fact I think it is easier to use because you
-just click once on the name. Instead of selecting it from a combobox
-and then click "Submit".  I am not sure whether this is still true
-when there are 30 or 50 users. But we will see. 
-
-I leave the dialog action as well (though doesn't work) because it
-helps to imagine how it would look and whether it's worth to make it
-possible.
+The other implementation (`find_date`) uses a ButtonsTable. It has the
+advantage that it works. And in fact I think it is easier to use
+because you just click once on the name. Instead of selecting it from
+a combobox and then click "Submit".  I am not sure whether this is
+still true when there are 30 or 50 users. But we will see.
 
 TODO: after creating an appointment, the client is not automatically
 added as a Guest to that appointment.  

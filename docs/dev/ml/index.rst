@@ -2,20 +2,17 @@
 The standard library ``modlib``
 ===============================
 
-.. module:: ml
+This document is being migrated to :mod:`lino.modlib`.
 
-The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
-(as Django calls them) for Lino applications.
+.. module:: ml
 
 .. toctree::
    :maxdepth: 2
 
    addresses
-   beid
    boards
    cal
    contacts
-   countries
    courses
    cv
    debts
@@ -29,5 +26,12 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
    polls
    users
    sales
-   reception
    vat
+
+
+.. toctree::
+   :hidden:
+
+   beid
+   countries
+   reception
