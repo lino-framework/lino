@@ -232,20 +232,25 @@ class UnresolvedModel:
 
 
 def resolve_model(model_spec, app_label=None, strict=False):
-    """Return the class object of the specified model.  This works also in
-    combination with :attr:`lino.core.site_def.Site.override_modlib_models`, so you
-    don't need to worry about where the real class definition is.
+    """Return the class object of the specified model. `model_spec` is
+    usually the global model name (i.e. a string like
+    ``'contacts.Person'``).
+
+    If `model_spec` does not refer to a known model, the function
+    returns :class:`UnresolvedModel` (unless `strict=True` is
+    specified).
+
+    Using this method is better than simply importing the class
+    object, because Lino applications can override the model
+    implementation.
     
-    Attention: this function **does not** trigger a loading of
-    Django's model cache, so you should not use it at module-level
-    unless you know what you do.
-    
-    For example, ``dd.resolve_model("contacts.Person")`` will return
-    the `Person` model even if the concrete Person model is not
-    defined in :mod:`lino.modlib.contacts.models` because it is in
-    :attr:`dd.Site.override_modlib_models`.
-    
-    See also django.db.models.fields.related.add_lazy_relation()
+    This function **does not** trigger a loading of Django's model
+    cache, so you should not use it at module-level of a
+    :xfile:`models.py` module.
+
+    In general we recommend to use ``from lino import rt`` and
+    ``rt.modules.contacts.Person`` over
+    ``resolve_model('contacts.Person')``.
 
     """
     # ~ models.get_apps() # trigger django.db.models.loading.cache._populate()

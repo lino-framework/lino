@@ -17,16 +17,16 @@ The project directory
 
 Create an empty directory which will become your project directory::
 
-    $ mkdir ~/mysite
-    $ cd ~/mysite
+    $ mkdir ~/projects/mysite
+    $ cd ~/projects/mysite
 
-Create two files :file:`settings.py` and  :xfile:`manage.py` 
-in this directory as described hereafter.
+Create two files :xfile:`settings.py` and :xfile:`manage.py` in this
+directory as described hereafter.
 
 The ``settings.py`` file
 -------------------------
 
-Your first :file:`settings.py` file should look as follows:
+Your first :xfile:`settings.py` file should look as follows:
 
 .. literalinclude:: settings.py
 
@@ -40,14 +40,16 @@ Explanations:
     the wildcard ``*``. This is necessary because that's how Django
     wants settings.
    
-#.  Then we define a :setting:`SITE` setting::
+#.  Then comes the important trick which turns your Django project
+    into a Lino application::
 
        SITE = Site(globals(), ...)
 
-    This is the important trick which turns your Django project into a
-    Lino application.  It will set default values for all required
-    Django settings (e.g. :setting:`DATABASES` and
-    :setting:`LOGGING`).  More about this in :ref:`settings`.
+    That is, you **instantiate** a :class:`Site
+    <lino.core.site_def.Site>` class and store this object as
+    :setting:`SITE` in your Django settings. It will set default
+    values for all required Django settings (e.g. :setting:`DATABASES`
+    and :setting:`LOGGING`).  More about this in :ref:`settings`.
     
 You might add ``DEBUG = True`` or other settings of your choice.
 
@@ -55,8 +57,8 @@ You might add ``DEBUG = True`` or other settings of your choice.
 The ``manage.py`` file
 ----------------------
 
-We suggest the following content for your project's :xfile:`manage.py`
-file:
+It's not absolutele necessary, but we suggest that you also add a
+:xfile:`manage.py` file with the following content::
 
 .. literalinclude:: manage.py
 
@@ -71,23 +73,25 @@ Initial data
 ------------
 
 Next we create your database and populate it with some demo content.
-This is just one command to type::
+
+With a normal Lino application this is just one command to type::
 
     $ python manage.py initdb_demo
 
 That is, you run the :manage:`initdb_demo` management command that
-comes with every Lino application.  It will ask you::
+comes with every Lino application.
 
-  INFO Started manage.py initdb_demo (using mysite.settings) --> PID 3848
-  INFO This is Lino Così 0.1 using Python 2.7.3, Django 1.4.5, django-site 0.0.2, North 0.0.2, Lino 1.6.0, Jinja 2.6, Sphinx 1.1.3, python-dat
-  eutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.10, suds 0.4, PyYaml 3.10, Appy 0.8.3 (2013/02/22 15:29).
-  INFO Languages: en, de, fr. 16 apps, 37 models, 93 actors.
-  We are going to flush your database (/home/luc/mysite/mysite/default.db).
-  Are you sure (y/n) ?
+It will ask you::
+
+    INFO Started manage.py initdb_demo (using settings) --> PID 28463
+    INFO This is yet another Lino site using Lino 1.6.17, Django 1.6.9, Python 2.7.4, Babel 1.3, Jinja 2.7.3, Sphinx 1.3b3, python-dateutil 2.1, OdfPy ODFPY/0.9.6, docutils 0.11, suds 0.4, PyYaml 3.10, Appy 0.9.0 (2014/06/23 22:15).
+    INFO Languages: en, de. 12 apps, 26 models, 81 actors.
+    We are going to flush your database (/home/luc/hgwork/lino/docs/tutorials/hello/default.db).
+    Are you sure (y/n) ?
 
 If you answer "y" here, then Lino will delete everything in the given
-database file and replace it with its "factory default" demo data.
-That's what you want, don't you? So go on and type ``y``::
+database and replace it with its "factory default" demo data.  Yes,
+that's what you want. So go on and type ``y``::
 
   Creating tables ...
   Creating table ui_siteconfig
@@ -99,7 +103,6 @@ That's what you want, don't you? So go on and type ``y``::
   INFO Loading /home/luc/hgwork/lino/lino/projects/cosi/fixtures/userman.py...
   Installed 361 object(s) from 14 fixture(s)
   INFO Stopped manage.py initdb_demo (PID 3780)  
-
 
 There's a lot to say about what we just did.  Lino applications use to
 make abundant use of :ref:`dpy` in order to have a rich set of "demo
@@ -126,5 +129,5 @@ which should output something like::
 And then point our web browser to http://127.0.0.1:8000 and you should
 see some welcome text and instructions for logging in.
 
-Congratulations! Enjoy your first Lino application.
-
+Congratulations! Enjoy the first Lino application running on your
+machine!

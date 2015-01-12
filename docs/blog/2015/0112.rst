@@ -37,8 +37,6 @@ feature which might be useful to implement some day: ticket
 It is now possible to specify a `master_field` attribute to
 :func:`lino.utils.sendchanges.register`.  Usage example::
 
-::
-
     def do_site_startup(self):
 
         super(Site, self).do_site_startup()
@@ -49,7 +47,12 @@ It is now possible to specify a `master_field` attribute to
                  'first_name last_name birth_date national_id',
                  'created_body.eml', 'updated_body.eml')
 
+        from django.utils.translation import ugettext as _
         e = register('addresses.Address', 
                      'street city street_no street_box region',
                      master_field='partner')
-        e.update_subect = _("Updated: {obj.address_type} {master}")
+        e.update_subject = _("Updated: {obj.address_type} of {master}")
+
+
+
+

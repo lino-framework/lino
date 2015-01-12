@@ -106,6 +106,7 @@ class Emitter(object):
             return
         updates = list(cw.get_updates(watched_fields=self.watched_fields))
         if len(updates) == 0:
+            logger.info("20150112 no updates for %s", cw)
             return
         context.update(obj=cw.watched)
         context.update(master=self.get_master(cw.watched))

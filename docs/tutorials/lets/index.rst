@@ -25,6 +25,22 @@ customers.
 .. contents::
    :local:
 
+
+Your first application development project
+==========================================
+
+(Not finished. Don't hesitate to ask Luc.)
+
+Start your own local project, called "mylets" as a copy of this tutorial::
+
+  $ mkdir ~/projects/mylets
+  $ cd ~/projects/mylets
+  $ cp -a ~/repositories/lino/docs/tutorials/lets/* .
+
+Edit your copies of certain files:
+
+- In :xfile:`manage.py `
+
 What is a technical specification?
 ==================================
 
@@ -198,8 +214,8 @@ ManyToManyField.  That's why we recommend to always explicitly name
 the intermediate models of your m2m relations.
 
 
-Tables
-======
+Designing your tables
+=====================
 
 For every database model there should be at least one :class:`Table
 <lino.core.dbtables.Table>`. Database *models* are usually named in
@@ -214,8 +230,8 @@ within your :file:`models.py` so that they get imported at startup.
 .. literalinclude:: tables.py
 
 
-Demo data
-=========
+Writing demo data
+=================
 
 It is important to get some fictive data which corresponds more or
 less to the reality of your customer.  Here is the demo data for this
@@ -225,7 +241,12 @@ tutorial.
 
 
 As soon as you have written such a fixture, you can start to write
-test cases.  The following code snippets are so-called "doctests",
+test cases.  
+
+Writing test cases
+==================
+
+The following code snippets are so-called "doctests",
 they are both a **visualisation of your demo data** (which you might
 show to your customer) and a part of the test suite of your
 application (which you invoke with::
@@ -447,9 +468,9 @@ Here are some screenshots.
 Summary
 =======
 
-In this tutorial you learned about **analysis**: why it is important
-to write a technical specification, how it should look like, how you
-translate it into Lino source code.
+In this tutorial you learned about the workflow of developing Lino
+applications. Why it is important to write a technical specification,
+how it should look like, how you translate it into Lino source code.
 
 You also started your own copy of the example application, you can run
 the development server and reproduce the screenshots on your machine.

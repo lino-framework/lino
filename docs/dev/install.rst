@@ -16,8 +16,8 @@ prefer to install one of the existing Lino applications, e.g.  `Lino
 Così <http://cosi.lino-framework.org/install/index.html>`__ of `Lino
 Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 
-Preliminaries
--------------
+System requirements
+-------------------
 
 - Lino requires Python 2. It is not yet converted to Python 3.
   See :ticket:`36` if you want to discuss this.
@@ -60,8 +60,10 @@ Lino:
     self.shell_block(["python", "-m", "lino.hello"])
 
 
-The above launches Python with the `-m` switch which basically
-instructs it to just import the specified module :mod:`lino.hello`.
+The above launches Python with the `-m
+<https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
+command-line switch which basically instructs it to just import the
+specified module :mod:`lino.hello`.
 
 
 Using the development version
@@ -82,11 +84,13 @@ Create a directory (e.g. :file:`~/repositories`) meant to hold your
 working copies of version-controlled software projects, `cd` to that
 directory and and do::
 
+  $ mkdir ~/repositories
+  $ cd ~/repositories
   $ git clone https://github.com/lsaffre/lino.git
 
-You should now have a subdirectory called `lino`, which contains a
-file :xfile:`setup.py`, a file :xfile:`README.rst` and a whole tree of
-other files and directories.
+You should now have a directory called `~/repositories/lino`, which
+contains a file :xfile:`setup.py`, a file :xfile:`README.rst` and a
+whole tree of other files and directories.
 
 Installation
 ------------
@@ -101,10 +105,12 @@ Commands::
 
 Notes:
 
-- The ``-e`` command-line switch for `pip` causes it to use the
-  "development" mode.  Development mode means that these modules run
-  "directly from source".  `pip` does not *copy* the sources to your
-  Python `site_packages`, but instead adds a link to them.  The first
+- The `-e
+  <https://pip.pypa.io/en/latest/reference/pip_install.html#cmdoption-e>`_
+  command-line switch for :command:`pip` causes it to use the "development"
+  mode.  Development mode means that these modules run "directly from
+  source".  `pip` does not *copy* the sources to your Python
+  `site_packages`, but instead adds a link to them.  The first
   argument after ``-e`` is not a *project name* but a *directory*.
 
 - Alternatively (without pip_) you could have done::

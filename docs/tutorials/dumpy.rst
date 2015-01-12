@@ -52,14 +52,13 @@ The :manage:`initdb` command
 
 The :manage:`initdb` command performs three actions in one:
 
-- it flushes your database, removing *all existing tables* (not only
-  Django tables) from the database specified in your
-  :xfile:`settings.py`,
+- it flushes the database specified in your :xfile:`settings.py`,
+  i.e. issues a ``DROP TABLE`` for every table used by your application.
  
 - then runs Django's `syncdb` command to re-create all tables,
 
-- and finally runs Django's `loaddata` command to load 
-  the specified fixtures.
+- and finally runs Django's `loaddata` command to load the specified
+  fixtures.
 
 So the above line is roughly equivalent to::
 
@@ -67,14 +66,14 @@ So the above line is roughly equivalent to::
   $ python manage.py syncdb
   $ python manage.py loaddata std all_countries few_cities all_languages props demo 
   
-Removing all existing tables may sound dangerous, but that's what we
-want when we want to "just have a look at this application", or when
-are developing a prototype and just made some changes to the database
+Removing all tables may sound dangerous, but that's what we want when
+we want to "just have a look at this application", or when are
+developing a prototype and just made some changes to the database
 structure.  We assume that nobody will ever let a Lino application and
 some other application share the same database.
 
-Playing with the fixture files
-------------------------------
+Playing with fixtures
+---------------------
 
 Have a look at the following fixture files
 
@@ -106,9 +105,10 @@ Note that Python fixtures can also be used manually with
 Writing your own fixture
 ------------------------
 
-Create a directory `fixtures` in your local project directory::
+Create a directory named :xfile:`fixtures` in your local project
+directory::
 
-   mkdir ~/mysite/fixtures
+   mkdir ~/projects/mysite/fixtures
    
 Create a file `dumpy1.py` in that directory as the following.
 But put your real name and data, this is your local file.
