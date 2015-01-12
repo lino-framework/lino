@@ -28,12 +28,11 @@ def parsedate(s):
 
 
 class CalendarAction(dd.Action):
-
+    """The Action for opening the calendar panel."""
     extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
     opens_a_window = True
     action_name = 'grid'  # because...
     default_format = 'html'
-    #~ icon_name = 'x-tbar-calendar'
     icon_name = 'calendar'
 
 
@@ -88,7 +87,7 @@ class ExtSummaryField(dd.VirtualField):
 
 
 class CalendarPanel(dd.Frame):
-
+    """Open a window with a classical "Calendar" view. """
     help_text = _("""Displays your events in a "calendar view" \
     with the possibility to switch between daily, weekly, monthly view.""")
     required = dd.required(user_groups='office')

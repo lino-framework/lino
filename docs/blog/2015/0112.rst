@@ -5,10 +5,9 @@ Monday, January 12, 2015
 
 Some fine-tuning in :mod:`lino_welfare.modlib.reception`.
 
-.. currentmodule:: lino_welfare.modlib.reception.models
-
 Renamed `CreateEventActionsByClient` to
-:class:`FindDateByClientTable`.  Moved `ButtonsTable` to
+:class:`lino_welfare.modlib.reception.models.FindDateByClientTable
+<FindDateByClientTable>`.  Moved `ButtonsTable` to
 :class:`lino.core.tables.ButtonsTable`.
 
 We had the following ordering of buttons on pcsw.Client:
@@ -22,8 +21,10 @@ specified on the table to the :attr:`sort_index
 <lino.core.actions.Action.sort_index>`.  of the action.  Yet another
 bug in the framework fixed!
 
-The list of users to display in :class:`FindDateByClientTable` must
-not include `watch_tim`.  New function :func:`find_date_with_users`.
+The list of users to display in `FindDateByClientTable` must not
+include `watch_tim`.  The selection criteria is now centralized in a
+function :func:`appointable_users
+<lino_welfare.modlib.reception.models.appointable_users>`.
 
 Note that we cannot currently make that list depend on the client's
 :attr:`lino_welfare.modlib.pcsw.models.Client.client_state` or the
@@ -32,3 +33,23 @@ requesting user nor the `master_instance` of the query.  A missing
 feature which might be useful to implement some day: ticket
 :ticket:`56`.
 
+
+It is now possible to specify a `master_field` attribute to
+:func:`lino.utils.sendchanges.register`.  Usage example::
+
+::
+
+    def do_site_startup(self):
+
+        super(Site, self).do_site_startup()
+
+        from lino.utils.sendchanges import subscribe, register
+        
+        register('pcsw.Client', 
+                 'first_name last_name birth_date national_id',
+                 'created_body.eml', 'updated_body.eml')
+
+        e = register('addresses.Address', 
+                     'street city street_no street_box region',
+                     master_field='partner')
+        e.update_subect = _("Updated: {obj.address_type} {master}")

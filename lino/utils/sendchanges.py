@@ -10,7 +10,7 @@ Importing this module will add a receiver to the
 :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
 signals.
 
-Typical usage (taken from :doc:`/tutorials/sendchanges/index`)::
+Usage example (taken from :doc:`/tutorials/sendchanges/index`)::
 
     class Site(Site):
         title = "sendchanges example"
@@ -51,16 +51,34 @@ EMITTERS = []
 
 
 class Emitter(object):
-    create_tpl = None
+    """
+    The object returned by :func:`register`.
+
+    """
+    created_tpl = None
     update_tpl = None
     delete_tpl = None
+    created_subject = _("Created: {obj}")
+    updated_subject = _("Updated: {obj}")
+    deleted_subject = _("Deleted: {obj}")
+    master_field = None
 
     def __init__(self, model, watched_fields,
-                 create_tpl=None, update_tpl=None, delete_tpl=None):
+                 created_tpl=None, update_tpl=None, delete_tpl=None,
+                 master_field=None):
+        """`model` is either a class object or a string with the global name
+        of a model (e.g. ``'contacts.Person'``). `watched_fields` is a
+        string with a space-separated list of field names to watch.
+        `master_field` can optionally specify a field which points to
+        the "master".
+
+        """
         self.model = resolve_model(model, strict=True)
         self.watched_fields = fields_list(self.model, watched_fields)
-        if create_tpl:
-            self.create_tpl = rt.get_template(create_tpl)
+        if master_field:
+            self.master_field = master_field
+        if created_tpl:
+            self.created_tpl = rt.get_template(created_tpl)
         if update_tpl:
             self.update_tpl = rt.get_template(update_tpl)
         if delete_tpl:
@@ -69,12 +87,18 @@ class Emitter(object):
     def __repr__(self):
         return "Emitter('{0}')".format(fmn(self.model))
 
+    def get_master(self, obj):
+        if self.master_field is None:
+            return None
+        return getattr(obj, self.master_field)
+
     def emit_created(self, request, obj, **context):
         """Send "created" mails for the given model instance `obj`."""
-        if self.create_tpl:
-            subject = _("Created: {0}").format(obj)
+        if self.created_tpl:
             context.update(obj=obj)
-            self.sendmails(request, subject, self.create_tpl, **context)
+            context.update(master=self.get_master(obj))
+            subject = self.created_subject.format(**object)
+            self.sendmails(request, subject, self.created_tpl, **context)
 
     def emit_updated(self, request, cw, **context):
         """Send "updated" mails for the given ChangeWatcher `cw`."""
@@ -83,17 +107,19 @@ class Emitter(object):
         updates = list(cw.get_updates(watched_fields=self.watched_fields))
         if len(updates) == 0:
             return
-        subject = _("Updated: {0}").format(cw.watched)
         context.update(obj=cw.watched)
+        context.update(master=self.get_master(cw.watched))
         context.update(old=cw.original_state)
         context.update(updates=updates)
+        subject = self.updated_subject.format(**context)
         self.sendmails(request, subject, self.update_tpl, **context)
         
     def emit_deleted(self, request, obj, **context):
         """Send "deleted" mails for the given model instance `obj`."""
         if self.delete_tpl:
-            subject = _("Deleted: {0}").format(obj)
             context.update(obj=obj)
+            context.update(master=self.get_master(obj))
+            subject = self.deleted_subject.format(**context)
             self.sendmails(request, subject, self.delete_tpl, **context)
 
     def sendmails(self, request, subject, template, **context):
@@ -105,12 +131,16 @@ class Emitter(object):
 
 
 def subscribe(addr):
+    """Subscribe the given email address for getting notified about
+    changes.
+
+    """
     SUBSCRIPTIONS.append(addr)
 
 
 def register(*args, **kwargs):
-    """Register an :class:`Emitter` for the given model (`args` and
-    `kwargs` see :meth:`Emitter.__init__`.
+    """Register an :class:`Emitter` for the given model. `args` and
+    `kwargs` are forwarded to :meth:`Emitter.__init__`.
 
     """
     sub = Emitter(*args, **kwargs)

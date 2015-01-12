@@ -10,7 +10,8 @@ class Site(Site):
     title = "sendchanges example"
 
     def send_email(self, subject, sender, body, recipients):
-        # print locals()
+        # override for this test so that it does not actually send
+        # anything.
         recipients = ', '.join(recipients)
         print EMAIL_TEMPLATE.format(**locals())
 
