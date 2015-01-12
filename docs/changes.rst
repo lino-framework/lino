@@ -20,6 +20,13 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+- :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>` did not
+  yet copy over the :attr:`sort_index
+  <lino.core.actors.Actor.sort_index>` specified on a table to the
+  :attr:`sort_index <lino.core.actions.Action.sort_index>` of the
+  action.  Bug fixed.
+
+
 Version 1.6.17 (released :blogref:`20150108`)
 =============================================
 

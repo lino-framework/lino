@@ -1,4 +1,6 @@
 """
+The ``lino.core`` package
+=========================
 
 .. autosummary::
    :toctree:

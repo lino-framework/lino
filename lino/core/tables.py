@@ -703,6 +703,25 @@ class VentilatingTable(AbstractTable):
         return []
 
 
+class ButtonsTable(VirtualTable):
+    """A :class:`VirtualTable` with only one column and whose rows are
+    action buttons.  Subclasses must implement `get_data_rows` to
+    yield action buttons.
+
+    Usage example
+    `lino_welfare.modlib.reception.models.FindDateByClientTable`.
+
+    """
+    column_names = 'button'
+    auto_fit_column_widths = True
+    window_size = (60, 20)
+    hide_top_toolbar = True
+
+    @fields.displayfield(_("Button"))
+    def button(self, obj, ar):
+        return obj
+
+
 from lino.core.signals import database_ready
 
 

@@ -326,9 +326,10 @@ class Actor(actions.Parametrizable):
 
     _layout_class = layouts.ParamsLayout
 
-    sort_index = None
-    """The :attr:`lino.core.actions.Action.sort_index` to be used for a
-    :class:`lino.core.actions.ShowSlaveTable` action on this actor.
+    sort_index = 60
+    """The :attr:`sort_index <lino.core.actions.Action.sort_index>` to be
+    used when this table is being used by a :class:`ShowSlaveTable
+    <lino.core.actions.ShowSlaveTable>`.
 
     """
 

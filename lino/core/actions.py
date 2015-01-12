@@ -986,10 +986,14 @@ class SubmitInsert(CreateRow):
 
 
 class ShowSlaveTable(Action):
-    TABLE2ACTION_ATTRS = tuple('help_text icon_name label'.split())
+    """A action which opens a window showing a table.  The table must be
+    specified when instantiating the action.
+
+    """
+    TABLE2ACTION_ATTRS = tuple('help_text icon_name label sort_index'.split())
     #~ label = "ShowSlaveTable"
     show_in_bbar = True
-    sort_index = 60
+    # sort_index = 60
 
     def __init__(self, slave_table, **kw):
         self.slave_table = slave_table
