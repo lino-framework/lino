@@ -1,5 +1,6 @@
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Database models for :mod:`lino.modlib.users`."""
 
 #~ import logging
 #~ logger = logging.getLogger(__name__)
@@ -42,7 +43,8 @@ class ChangePassword(dd.Action):
             return
         count = 0
         for obj in ar.selected_rows:
-            if obj.password == '' or obj.check_password(pv.current):
+            if not obj.has_usable_password() \
+               or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
                 obj.save()
@@ -81,8 +83,8 @@ class User(CreatedModified):
 
     profile = UserProfiles.field(
         blank=True,
-        help_text=_("Users with an empty `profile` field are considered \
-inactive and cannot log in."))
+        help_text=_("Users with an empty `profile` field are considered "
+                    "inactive and cannot log in."))
 
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)

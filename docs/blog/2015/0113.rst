@@ -1,0 +1,9 @@
+=========================
+Tuesday, January 13, 2015
+=========================
+
+Moved the content of :doc:`/dev/mixins` to the docstrings in
+:mod:`lino.core.model` and :mod:`lino.mixins`.
+
+Fixed :ticket:`7`. When a new user had been created through the web
+interface, it was not possible to change their password.

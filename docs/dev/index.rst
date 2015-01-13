@@ -81,7 +81,6 @@ Reference
    :maxdepth: 1
 
    layouts
-   mixins
 
    ml/index
    
@@ -153,3 +152,4 @@ Other
    ad
    dd
    rt
+   mixins

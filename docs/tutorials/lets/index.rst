@@ -39,7 +39,8 @@ Start your own local project, called "mylets" as a copy of this tutorial::
 
 Edit your copies of certain files:
 
-- In :xfile:`manage.py `
+- In :xfile:`manage.py` ...
+- In :xfile:`settings.py` ...
 
 What is a technical specification?
 ==================================

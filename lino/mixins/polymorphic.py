@@ -16,7 +16,21 @@ from lino.core import fields
 
 
 class Polymorphic(model.Model):
+    """
+    Mixin for models that use Multiple Table Inheritance to implement
+    polymorphism.  
 
+    Subclassed e.g. by :class:`ml.contacts.Partner`: the recipient of
+    an invoice can be a person, a company, a client, a job provider,
+    an employee...). A given partner can be both a person and an
+    employee at the same time.
+
+    Note that not every usage of Multiple Table Inheritance means
+    polymorphism. For example :class:`ml.ledger.Voucher` has a pointer
+    to the journal which knows which specialization to use.  A given
+    voucher has always exactly one specialization.
+
+    """
     class Meta:
         abstract = True
 

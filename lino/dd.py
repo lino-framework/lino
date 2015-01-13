@@ -127,6 +127,8 @@ from lino.core.dbutils import inrange_filter
 from lino.core.dbutils import full_model_name
 
 from lino.core.model import Model
+"Shortcut to :class:`lino.core.model.Model`."
+
 from lino.core.merge import MergeAction
 
 from lino.core.actors import Actor
