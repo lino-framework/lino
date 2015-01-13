@@ -17,7 +17,7 @@ from lino.utils.instantiator import Instantiator
 from lino.core.dbutils import resolve_model
 from lino import dd
 
-from lino.modlib.users.mixins import UserProfiles
+from lino.modlib.users.choicelists import UserProfiles
 
 
 from lino.modlib.debts.models import AccountType

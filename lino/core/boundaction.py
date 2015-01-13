@@ -51,7 +51,7 @@ class BoundAction(object):
                     "settings.DEBUG is False, but `debug_permissions` "
                     "for %r (required=%s) is active." % (self, required))
 
-        from lino.modlib.users.mixins import (
+        from lino.modlib.users.utils import (
             make_permission_handler, make_view_permission_handler)
         self.allow_view = curry(make_view_permission_handler(
             self, action.readonly, debug_permissions, **required), action)

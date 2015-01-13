@@ -26,7 +26,7 @@ class Site(Site):
         
     def setup_choicelists(self):
         
-        from lino.modlib.users.mixins import UserProfiles
+        from lino.modlib.users.choicelists import UserProfiles
         from django.utils.translation import ugettext_lazy as _
         UserProfiles.reset('* office')
         add = UserProfiles.add_item

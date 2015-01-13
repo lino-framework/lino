@@ -39,7 +39,7 @@ class Site(Site):
         Local site administrators can override this in their :xfile:.
         """
         from django.utils.translation import ugettext_lazy as _
-        from lino.modlib.users.mixins import UserProfiles
+        from lino.modlib.users.choicelists import UserProfiles
         UserProfiles.reset('* office polls')
         add = UserProfiles.add_item
         add('000', _("Anonymous"),       '_ _ _',

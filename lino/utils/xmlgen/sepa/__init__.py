@@ -1,9 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+u"""
 A set of generator tags for building SEPA documents.
+
+..
+
+  $ python setup.py test -s tests.UtilsTests.test_xmlgen_sepa
 
 Usage:
 
@@ -14,7 +18,7 @@ Usage:
 ...     E.CreDtTm("2013-06-21T02:20:43") ,
 ...     E.NbOfTxs("8") ,
 ...     E.Grpg("MIXD") ,
-...     E.InitgPty(E.Nm("ÖSHZ Nispert")) )
+...     E.InitgPty(E.Nm(u"ÖSHZ Nispert")) )
 ...   )
 >>> print E.tostring_pretty(x)
 <pain.001.001.02 xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.02">
@@ -28,7 +32,7 @@ Usage:
 </InitgPty>
 </GrpHdr>
 </pain.001.001.02>
-    
+
 """
 
 from __future__ import unicode_literals

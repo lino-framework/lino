@@ -2,7 +2,7 @@
 # administrator for your language.
 
 from django.conf import settings
-from lino.modlib.users.mixins import UserProfiles
+from lino.modlib.users.choicelists import UserProfiles
 
 
 def objects():

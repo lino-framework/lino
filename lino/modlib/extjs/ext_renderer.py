@@ -52,7 +52,7 @@ else:
     def jscompress(s):
         return s
 
-from lino.modlib.users.mixins import UserProfiles, UserLevels
+from lino.modlib.users.choicelists import UserProfiles, UserLevels
 
 if settings.SITE.user_model:
     from lino.modlib.users import models as users

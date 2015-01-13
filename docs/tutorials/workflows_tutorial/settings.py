@@ -27,7 +27,7 @@ class Site(Site):
     def setup_choicelists(self):
         
         from django.utils.translation import ugettext_lazy as _
-        from lino.modlib.users.mixins import UserProfiles
+        from lino.modlib.users.choicelists import UserProfiles
         UserProfiles.reset('* office')
         add = UserProfiles.add_item
         add('000', _("Anonymous"),                  '_ _',

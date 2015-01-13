@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2006-2013 Luc Saffre
+# Copyright 2006-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r"""
@@ -13,6 +13,7 @@ Usage example
 
 Instantiate a parser:
 
+>>> from lino.utils.memo import Parser
 >>> p = Parser()
 
 We declare a "command handler" function `url2html` and register it:

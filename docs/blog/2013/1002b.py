@@ -7,7 +7,7 @@ How to add users to your Lino database::
 
 
 from django.conf import settings
-from lino.modlib.users.mixins import UserProfiles
+from lino.modlib.users.choicelists import UserProfiles
 
 User = settings.SITE.user_model
 u = User(username="rolf", profile=UserProfiles.admin)

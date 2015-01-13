@@ -56,6 +56,8 @@ This is a tested document. To test it, run::
     ucsv
 
 
+>>> from lino.utils import *
+
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
 
@@ -129,6 +131,7 @@ def join_elems(elems, sep=' '):
     [1, ' / ', 2, ' / ', 3]
     >>> join_elems([])
     []
+
     """
     if not callable(sep):
         sep_value = sep
@@ -489,6 +492,7 @@ def camelize(s):
     'Abc def'
     >>> camelize("eID")
     'eID'
+
     """
     def f(k):
         if k.upper() != k:

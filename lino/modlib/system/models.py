@@ -16,11 +16,11 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.choicelists import UserProfiles, UserLevels, UserGroups
 from lino import dd
 from lino.core import actions
 
 from lino.mixins.printable import BuildMethods
-from lino.modlib.users.mixins import UserProfiles
 
 from .mixins import *
 
@@ -230,8 +230,8 @@ def setup_explorer_menu(site, ui, profile, m):
 
     if site.user_model:
         system.add_action(site.modules.users.Authorities)
-        system.add_action(dd.UserGroups)
-        system.add_action(dd.UserLevels)
+        system.add_action(UserGroups)
+        system.add_action(UserLevels)
         system.add_action(UserProfiles)
         office.add_action(TextFieldTemplates)
 

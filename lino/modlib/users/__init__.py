@@ -4,6 +4,17 @@
 """Lino's :mod:`lino.modlib.users` is an alternative to Django's
 :mod:`django.contrib.auth` module.
 
+.. autosummary::
+   :toctree:
+
+    models
+    utils
+    mixins
+    choicelists
+    fixtures.demo
+    fixtures.demo2
+
+
 This module is much more simple and does not require
 :mod:`django.contrib.sessions` to be installed.
 See :srcref:`docs/tickets/31` for discussion.

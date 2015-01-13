@@ -20,6 +20,7 @@ lino.core.tables
    .. autosummary::
    
       AbstractTable
+      ButtonsTable
       ContentType
       Group
       Handle

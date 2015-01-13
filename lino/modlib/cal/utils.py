@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -10,9 +10,10 @@ Some calendar utilities
 
 .. This is a tested document. You can test it using:
 
-    $ python setup.py test -s tests.DocsTests.test_cal_utils
+    $ python setup.py test -s tests.LibTests.test_cal_utils
 
 ..
+  >>> import datetime
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \\
   ...     'lino.projects.docs.settings.demo'

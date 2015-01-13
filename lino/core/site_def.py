@@ -1536,7 +1536,7 @@ class Site(object):
         #~ raise Exception("20130302 setup_choicelists()")
         #~ logger.info("20130302 setup_choicelists()")
         
-        from lino.modlib.users.mixins import UserProfiles, UserGroups
+        from lino.modlib.users.choicelists import UserProfiles, UserGroups
 
         def grouplevels(level):
             kw = dict(level=level)

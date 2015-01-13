@@ -1,6 +1,12 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Database models for :mod:`lino.modlib.users`."""
+"""Database models for :mod:`lino.modlib.users`.
+
+.. autosummary::
+
+See also :doc:`/dev/users`
+
+"""
 
 #~ import logging
 #~ logger = logging.getLogger(__name__)
@@ -19,10 +25,14 @@ from lino.core import actions
 
 from lino.mixins import CreatedModified
 
-from .mixins import UserProfiles, UserLevels, UserGroups, UserAuthored
+from .choicelists import UserProfiles, UserLevels
+from .mixins import UserAuthored
 
 
 class ChangePassword(dd.Action):
+    """Dialog action to change the password of a user.
+
+    """
     label = _("Change password")
     parameters = dict(
         current=dd.PasswordField(_("Current password"), blank=True),
@@ -57,9 +67,31 @@ class ChangePassword(dd.Action):
 
 
 class User(CreatedModified):
-
     """
-    Represents a :ddref:`users.User` of this site.
+    Represents a user of this site.
+
+    .. attribute:: username
+    
+        The primary key.
+
+    .. attribute:: profile
+
+        The profile of a user is what defines her or his permissions.
+
+        Users with an empty `profile` field are considered inactive and
+        cannot log in.
+
+
+    .. attribute:: partner
+
+        Pointer to the :class:`ml.contacts.Partner` instance related to
+        this user.
+
+        This is a DummyField when :mod:`ml.contacts` is not installed.
+
+
+
+
     """
 
     class Meta:

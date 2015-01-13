@@ -24,7 +24,6 @@ This document is being migrated to :mod:`lino.modlib`.
    ledger
    lino
    polls
-   users
    sales
    vat
 
@@ -35,3 +34,4 @@ This document is being migrated to :mod:`lino.modlib`.
    beid
    countries
    reception
+   users

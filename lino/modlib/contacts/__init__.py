@@ -5,8 +5,6 @@
 The :mod:`lino.modlib.contacts` package provides models and
 functionality for managing contacts.
 
-See also :mod:`ml.contacts`.
-
 .. autosummary::
    :toctree:
 

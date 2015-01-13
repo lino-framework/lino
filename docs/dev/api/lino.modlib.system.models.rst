@@ -39,7 +39,6 @@ lino.modlib.system.models
       TextFieldTemplate
       TextFieldTemplates
       UserAuthored
-      UserProfiles
       YesNo
    
    

@@ -1,8 +1,8 @@
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` for the :mod:`lino.modlib.about` app.
+Dataase models for :mod:`lino.modlib.about`.
 
 """
 
@@ -27,6 +27,8 @@ from lino.utils.code import codetime, codefiles, SourceFile
 from lino.utils.xmlgen.html import E
 
 from lino import dd
+
+from lino.modlib.users.choicelists import UserProfiles
 
 
 class Models(dd.VirtualTable):
@@ -235,7 +237,6 @@ class Inspector(dd.VirtualTable):
     #~ about.Models:70x10
     #~ """
 
-from lino.modlib.users.mixins import UserProfiles
 
 
 def have_action(ba):

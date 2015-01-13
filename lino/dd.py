@@ -236,7 +236,8 @@ from lino.core.inject import do_when_prepared, when_prepared
 
 from lino.core.utils import ParameterPanel
 
-from lino.modlib.users.mixins import UserLevels, UserGroups, add_user_group
+from lino.modlib.users.choicelists import UserLevels, UserGroups
+from lino.modlib.users.utils import add_user_group
 
 
 

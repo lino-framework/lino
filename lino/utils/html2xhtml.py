@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 ur"""
@@ -8,9 +8,11 @@ Defines the :func:`html2xhtml` function which converts
 HTML to valid XHTML. It is far from being perfect but
 activaly being used in :mod:`lino.utils.appy_pod`.
 
-This document is a part of the test suite.
+.. This document is a part of the test suite.
 
   $ python setup.py test -s tests.UtilsTests.test_tidy
+
+  >>> from lino.utils.html2xhtml import *
 
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
