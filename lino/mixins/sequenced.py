@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
 :class:`Hierarizable`.
@@ -19,6 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import fields
+from lino.core.dbutils import navinfo
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
 
@@ -26,7 +27,11 @@ from .duplicable import Duplicable, Duplicate
 
 
 class MoveUp(actions.Action):
-    "Move current row one upwards."
+    """Move current row one upwards. This action is available on any
+:class:`Sequenced` object as :attr:`Sequenced.move_up`.
+
+    """
+
     label = _("Up")
     #~ label = "\u2191" thin arrow up
     # ~ label = "\u25b2" # triangular arrow up
@@ -60,7 +65,10 @@ class MoveUp(actions.Action):
 
 
 class MoveDown(actions.Action):
-    "Move current row one downwards."
+    """Move current row one downwards. This action is available on any
+:class:`Sequenced` object as :attr:`Sequenced.move_down`.
+
+    """
     label = _("Down")
     #~ label = "\u2193"
     # ~ label = "\u25bc" # triangular arrow down
@@ -123,13 +131,22 @@ class Sequenced(Duplicable):
         abstract = True
         ordering = ['seqno']
 
-    seqno = models.IntegerField(
-        blank=True, null=False,
-        verbose_name=_("Seq.No."))
+    seqno = models.IntegerField(_("Seq.No."), blank=True, null=False)
 
     duplicate = DuplicateSequenced()
+    """The :class:`DuplicateSequenced` action for this object.
+
+    """
+
     move_up = MoveUp()
+    """The :class:`MoveUp` action on this object.
+
+    """
+
     move_down = MoveDown()
+    """The :class:`MoveDown` action on this object.
+
+    """
 
     def __unicode__(self):
         return unicode(_("Row # %s") % self.seqno)

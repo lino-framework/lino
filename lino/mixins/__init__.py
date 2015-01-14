@@ -44,7 +44,6 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino.core import fields
 from lino.core import model
 # from lino.modlib.users.mixins import UserLevels
-# from lino.core.dbutils import navinfo
 # from lino.utils import AttrDict
 
 

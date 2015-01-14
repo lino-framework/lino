@@ -57,3 +57,16 @@ in
 still there for :ref:`chat` but I gues that they will also want
 it.
 
+
+
+global name 'navinfo' is not defined
+====================================
+
+This error occured when you tried to run
+:class:`lino.mixins.sequenced.MoveUp` or
+:class:`lino.mixins.sequenced.MoveDown`.  Fixed.
+
+TODO: write a test case which would have discoled this error before
+the release.
+
+

@@ -133,6 +133,7 @@ lino.modlib.products
 lino.modlib.products.fixtures
 lino.modlib.projects
 lino.modlib.properties
+lino.modlib.properties.fixtures
 lino.modlib.rooms
 lino.modlib.sales
 lino.modlib.sales.fixtures
