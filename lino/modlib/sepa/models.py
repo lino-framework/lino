@@ -101,6 +101,3 @@ class AccountsByPartner(Accounts):
     auto_fit_column_widths = True
 
 
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(config.app_label, config.verbose_name)
-    m.add_action('sepa.Accounts')

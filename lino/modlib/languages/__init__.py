@@ -23,3 +23,14 @@ Note that this has nothing to do with the list of languages in your
     fixtures.all_languages
 
 """
+from lino import ad, _
+
+
+class Plugin(ad.Plugin):
+
+    verbose_name = _("Boards")
+
+    def setup_config_menu(self, site, profile, m):
+        p = self.get_menu_group()
+        m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('languages.Languages')

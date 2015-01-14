@@ -617,31 +617,3 @@ if settings.SITE.user_model:
         #~ """)
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("tickets", _("Tickets"))
-    m.add_action(MyProjects)
-    # m.add_action(MyOpenTickets)
-    m.add_action(MyTickets)
-    m.add_action(MySessions)
-    m.add_action(MySessionsByDate)
-
-
-def setup_my_menu(site, ui, profile, m):
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("tickets", _("Tickets"))
-    m.add_action(ProjectTypes)
-    #~ m.add_action(TicketStates)
-    m.add_action(SessionTypes)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("tickets", _("Tickets"))
-    m.add_action(Projects)
-    m.add_action(Tickets)
-    m.add_action(Sessions)
-    m.add_action('tickets.Milestones')
-    m.add_action('tickets.Dependencies')
-    m.add_action('tickets.Votes')

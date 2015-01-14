@@ -14,3 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 class Plugin(ad.Plugin):
     "Ceci n'est pas une documentation."
     verbose_name = _("SEPA")
+
+    def setup_explorer_menu(config, site, profile, m):
+        m = m.add_menu(config.app_label, config.verbose_name)
+        m.add_action('sepa.Accounts')

@@ -37,14 +37,6 @@ class UploaderPanel(dd.Frame):
         return UploaderAction()
 
 
-system = dd.resolve_app('system')
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('awesomeuploader.UploaderPanel')
-
-
 def setup_quicklinks(site, ar, m):
     m.add_action('awesomeuploader.UploaderPanel')
 

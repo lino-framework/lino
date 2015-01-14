@@ -13,9 +13,6 @@ lino.modlib.notes.models
       customize_siteconfig
       html_text
       pgettext_lazy
-      setup_config_menu
-      setup_explorer_menu
-      setup_main_menu
    
    
 

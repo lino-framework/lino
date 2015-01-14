@@ -12,7 +12,6 @@ lino.modlib.about.models
       codefiles
       codetime
       have_action
-      setup_site_menu
    
    
 
@@ -32,6 +31,7 @@ lino.modlib.about.models
       Models
       SourceFile
       SourceFiles
+      UserProfiles
    
    
 

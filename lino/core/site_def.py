@@ -315,6 +315,16 @@ class Site(object):
 
     """
 
+    top_level_menus = [
+        ("master", _("Master")),
+        ("main", None),
+        ("reports", _("Reports")),
+        ("config", _("Configure")),
+        ("explorer", _("Explorer")),
+        ("site", _("Site")),
+    ]
+    "The list of top-level menu items. See :meth:`setup_menu`."
+
     is_local_project_dir = False
     """Contains `True` if this is a "local" project.  For local projects,
     Lino checks for local fixtures and config directories and adds
@@ -1117,6 +1127,9 @@ class Site(object):
 
         def install_plugin(app_name, needed_by=None):
             app_mod = import_module(app_name)
+
+            # Can an `__init__.py` file may explicitly set ``Plugin =
+            # None``? Is that feature being used?
             app_class = getattr(app_mod, 'Plugin', None)
             if app_class is None:
                 app_class = Plugin
@@ -1328,8 +1341,7 @@ class Site(object):
 
     def for_each_app(self, func, *args, **kw):
         """
-        Call the named method on the :xfile:`models.py` module of each
-        installed app.
+        Call the given function on each installed app.
         Successor of :meth:`on_each_app`.  This also loops over
 
         - apps that don't have a models module
@@ -2424,17 +2436,10 @@ given object `obj`. The dict will have one key for each
         Must be a :class:`lino.core.menus.Toolbar` instance.
         Applications usually should not need to override this.
         """
-        from django.utils.translation import ugettext_lazy as _
         from lino.core import menus
         main = menus.Toolbar(profile, 'main')
-        self.setup_menu(ui, profile, main)
+        self.setup_menu(profile, main)
         main.compress()
-        #~ url = self.admin_url
-        #~ if not url:
-            #~ url = "/"
-        #~ main.add_url_button(url,label=_("Home"))
-        #~ url = "javascript:Lino.close_all_windows()"
-        #~ main.add_url_button(url,label=_("Home"))
         return main
 
     def setup_quicklinks(self, ar, m):
@@ -2446,16 +2451,10 @@ given object `obj`. The dict will have one key for each
         """
         self.on_each_app('setup_quicklinks', ar, m)
 
-    def setup_menu(self, ui, profile, main):
-        """
-        Set up the application's menu structure.
-
-        The default implementation uses a system of
-        predefined top-level items that are filled by the
-        different :setting:`INSTALLED_APPS`.
-        To use this system, application programmers
-        define one or several of the following functions in
-        their `models` module:
+    def setup_menu_old(self, ui, profile, main):
+        """Old system. Using this system, application programmers defined one
+        or several of the following functions in their `models`
+        module:
 
         - `setup_master_menu`
         - `setup_main_menu`
@@ -2473,9 +2472,6 @@ given object `obj`. The dict will have one key for each
         from django.utils.translation import ugettext_lazy as _
         m = main.add_menu("master", _("Master"))
         self.on_each_app('setup_master_menu', ui, profile, m)
-        #~ if not profile.readonly:
-            #~ m = main.add_menu("my",_("My menu"))
-            #~ self.on_each_app('setup_my_menu',ui,profile,m)
         self.on_each_app('setup_main_menu', ui, profile, main)
         m = main.add_menu("reports", _("Reports"))
         self.on_each_app('setup_reports_menu', ui, profile, m)
@@ -2486,6 +2482,44 @@ given object `obj`. The dict will have one key for each
         m = main.add_menu("site", _("Site"))
         self.on_each_app('setup_site_menu', ui, profile, m)
         return main
+
+    def setup_menu(self, profile, main):
+        """Set up the application's menu structure.
+
+        The default implementation uses a system of predefined
+        top-level items that are filled by the different installed
+        plugins.
+
+        - `setup_master_menu`
+        - `setup_main_menu`
+        - `setup_reports_menu`
+        - `setup_config_menu`
+        - `setup_explorer_menu`
+        - `setup_site_menu`
+
+
+        """
+
+        from django.utils.translation import ugettext_lazy as _
+        from django.db.models import loading
+
+        for k, label in self.top_level_menus:
+            methname = "setup_{0}_menu".format(k)
+    
+            for mod in loading.get_apps():
+                if hasattr(mod, methname):
+                    msg = "{0} still has a function {1}(). \
+Please convert to Plugin method".format(mod, methname)
+                    raise Exception(msg)
+    
+            if label is None:
+                menu = main
+            else:
+                menu = main.add_menu(k, label)
+            for p in self.installed_plugins:
+                meth = getattr(p, methname)
+                meth(self, profile, menu)
+    
 
     def get_middleware_classes(self):
         """

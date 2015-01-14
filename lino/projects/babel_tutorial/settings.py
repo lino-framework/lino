@@ -15,6 +15,10 @@ class Site(Site):
         yield 'lino.modlib.system'
         yield 'lino.projects.babel_tutorial'
 
+    def setup_menu(self, profile, main):
+        m = main.add_menu("products", "Products")
+        m.add_action(self.modules.babel_tutorial.Products)
+    
 SITE = Site(globals())
 
 DEBUG = True

@@ -22,8 +22,6 @@ from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
 
-system = dd.resolve_app('system')
-
 
 class UploadAreas(dd.ChoiceList):
     verbose_name = _("Upload Area")
@@ -251,17 +249,3 @@ class UploadsByController(AreaUploads):
     """
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('uploads.MyUploads')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('uploads.UploadTypes')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('uploads.Uploads')
-    m.add_action('uploads.UploadAreas')

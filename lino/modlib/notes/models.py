@@ -261,20 +261,4 @@ Note Type used by system notes.
 If this is empty, then system notes won't create any entry to the Notes table.""")))
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('notes.MyNotes')
-
-
-def setup_config_menu(site, ui, profile, m):
-    #~ m  = m.add_menu("notes",_("~Notes"))
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('notes.NoteTypes')
-    m.add_action('notes.EventTypes')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('notes.AllNotes')
-
 customize_siteconfig()

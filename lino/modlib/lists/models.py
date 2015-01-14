@@ -105,19 +105,3 @@ class MembersByPartner(Members):
     order_by = ['list__ref']
 
 
-MODULE_LABEL = settings.SITE.plugins.contacts.verbose_name
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", MODULE_LABEL)
-    m.add_action('lists.Lists')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", MODULE_LABEL)
-    m.add_action('lists.ListTypes')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", MODULE_LABEL)
-    m.add_action('lists.Members')

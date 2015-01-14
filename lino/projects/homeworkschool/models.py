@@ -144,9 +144,10 @@ def site_setup(site):
                                               window_size=(60, 'auto'))
 
 
-def setup_main_menu(site, ui, profile, main):
+# TODO : move to plugin
+def setup_main_menu(config, site, profile, main):
     m = main.get_item("contacts")
-    m.add_action(Schools)
+    m.add_action('homeworkschool.Schools')
 
 
 def customize_school():

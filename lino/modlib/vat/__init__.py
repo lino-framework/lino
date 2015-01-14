@@ -68,3 +68,15 @@ class Plugin(ad.Plugin):
         if isinstance(self.default_vat_class, basestring):
             self.default_vat_class = vat.VatClasses.get_by_name(
                 self.default_vat_class)
+
+    def setup_config_menu(config, site, profile, m):
+        m = m.add_menu("vat", config.verbose_name)
+        m.add_action('vat.PaymentTerms')
+        m.add_action('vat.VatRates')
+
+    def setup_explorer_menu(config, site, profile, m):
+        m = m.add_menu("vat", config.verbose_name)
+        m.add_action('vat.VatRegimes')
+        m.add_action('vat.TradeTypes')
+        m.add_action('vat.VatClasses')
+

@@ -282,13 +282,6 @@ class LinksByHuman(Links):
         return E.div(*elems)
 
 
-def setup_explorer_menu(site, ui, profile, m):
-    p = dd.apps.contacts
-    m = m.add_menu(p.app_label, p.verbose_name)
-    m.add_action(Links)
-    m.add_action(LinkTypes)
-
-
 __all__ = [
     'LinkTypes',
     'Link',

@@ -554,28 +554,4 @@ class AttachmentsByController(Attachments):
     master_key = 'owner'
 
 
-MODULE_LABEL = _("Outbox")
-
-system = dd.resolve_app('system')
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action(MyOutbox)
-
-
-#~ def setup_config_menu(site,ui,user,m):
-    #~ if user.level >= UserLevels.manager:
-    #~ m  = m.add_menu("outbox",MODULE_LABEL)
-    #~ m.add_action(MailTypes)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    #~ if user.level >= UserLevels.manager:
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    #~ m  = m.add_menu("outbox",MODULE_LABEL)
-    m.add_action(Mails)
-    m.add_action(Attachments)
-
-
 dd.update_field(Mail, 'user', verbose_name=_("Sender"))

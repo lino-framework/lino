@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` module for the :mod:`lino.modlib.rooms` app.
+Database models for :mod:`lino.modlib.rooms`.
 """
 
 from __future__ import unicode_literals
@@ -216,6 +216,3 @@ class BookingsByCompany(Bookings):
     master_key = "company"
 
 
-def setup_main_menu(site, ui, profile, main):
-    m = main.get_item("cal")
-    m.add_action(Bookings)

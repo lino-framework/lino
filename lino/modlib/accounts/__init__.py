@@ -27,3 +27,10 @@ class Plugin(ad.Plugin):
 You probably want to replace this by:
 ad.configure_plugins("accounts", accounts_ref_length=%r)
 """ % (self.site, v))
+
+    def setup_config_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('accounts.Charts')
+        m.add_action('accounts.Groups')
+        m.add_action('accounts.Accounts')
+

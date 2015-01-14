@@ -55,18 +55,14 @@ several customers.
 
 A few explanations:
 
-This instantiates your local :setting:`SITE` setting.  Every Lino application
-requires a setting named :setting:`SITE` which must be a :class:`Site`
-instance.
+This instantiates your local :setting:`SITE` setting.  Every Lino
+application requires a setting named :setting:`SITE` which must be a
+:class:`Site <lino.core.site_def.Site>` instance.
 
-The first argument of the instantiator is the built-in Python variable
-``__file__``.  This is how Lino knows the full path of your local
-settings file.
-  
-The second argument (``globals()``) is the global namespace of your
-settings module.  Lino uses this to fill "intelligent default values"
-to your settings.  That's why these lines should be at the *beginning*
-of your file.
+The first argument of the instantiator (``globals()``) is the global
+namespace of your settings module.  Lino uses this to fill
+"intelligent default values" to your settings.  That's why these lines
+should be at the *beginning* of your file.
 
 All remaining positional arguments will go into the
 :setting:`INSTALLED_APPS` setting.  In our example we have only one

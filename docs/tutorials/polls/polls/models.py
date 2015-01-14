@@ -76,7 +76,3 @@ class ChoicesByPoll(Choices):
     master_key = 'poll'
 
 
-def setup_main_menu(site, ui, profile, main):
-    m = main.add_menu("polls", "Polls")
-    m.add_action('polls.Polls')
-    m.add_action('polls.Choices')

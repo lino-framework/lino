@@ -151,6 +151,3 @@ class Child(dd.Model):
     #~ type = LinkTypes.field()
 
 
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", settings.SITE.plugins.contacts.verbose_name)
-    m.add_action(Couples)

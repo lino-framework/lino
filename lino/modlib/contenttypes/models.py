@@ -193,23 +193,6 @@ class StaleControllablesByModel(StaleControllables):
     def get_row_permission(cls, obj, ar, state, ba):
         return True
 
-hook = dd.plugins.system
-
-
-def setup_reports_menu(site, ui, profile, m):
-    m = m.add_menu(hook.app_label, hook.verbose_name)
-    m.add_action(site.modules.contenttypes.StaleControllables)
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu(hook.app_label, hook.verbose_name)
-    m.add_action(site.modules.contenttypes.HelpTexts)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(hook.app_label, hook.verbose_name)
-    m.add_action(site.modules.contenttypes.ContentTypes)
-
 
 @dd.receiver(dd.pre_ui_build)
 def my_pre_ui_build(sender, **kw):

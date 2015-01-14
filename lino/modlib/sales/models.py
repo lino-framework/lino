@@ -497,12 +497,3 @@ class PartnerDetailMixin(dd.Panel):
         label=MODULE_LABEL)
 
 
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("sales", MODULE_LABEL)
-    # m.add_action(InvoicingModes)
-    m.add_action(ShippingModes)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    pass
-

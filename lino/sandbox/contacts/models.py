@@ -331,17 +331,17 @@ NAME = "contacts"
 LABEL = _("Contacts")
 
 
-def setup_main_menu(site, ui, profile, m):
+def setup_main_menu(config, site, profile, m):
     m.add_action(Companies)
     m.add_action(Persons)
     #~ m.add_action(Contacts)
 
 
-def setup_my_menu(site, ui, profile, m):
+def setup_my_menu(config, site, profile, m):
     pass
 
 
-def setup_config_menu(site, ui, profile, m):
+def setup_config_menu(config, site, profile, m):
     #~ m = m.add_menu(NAME,LABEL)
     #~ m.add_action(AddressTypes)
     m.add_action(Roles)
@@ -349,7 +349,7 @@ def setup_config_menu(site, ui, profile, m):
     m.add_action(site.modules.countries.Cities)
 
 
-def setup_explorer_menu(site, ui, profile, m):
+def setup_explorer_menu(config, site, profile, m):
     #~ m = m.add_menu(NAME,LABEL)
     m.add_action(Contacts)
     if not settings.SITE.abstract_address:

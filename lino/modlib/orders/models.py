@@ -322,30 +322,3 @@ class OrdersByPartner(Orders):
     column_names = "start_date total_incl total_base total_vat *"
 
 
-#~ def customize_contacts():
-    #~ dd.inject_field('contacts.Partner',
-        #~ 'is_customer',
-        #~ mti.EnableChild('sales.Customer',verbose_name=_("is Customer")),
-        #~ """Whether this Partner is also a Customer."""
-        #~ )
-MODULE_LABEL = _("Orders")
-
-
-def setup_main_menu(site, ui, profile, m):
-    #~ m = m.add_menu("sales",MODULE_LABEL)
-    m = m.add_menu(vat.TradeTypes.sales.name, vat.TradeTypes.sales.text)
-    m.add_action(Orders)
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("sales", MODULE_LABEL)
-    m.add_action(InvoicingModes)
-    m.add_action(ShippingModes)
-    m.add_action(PaymentTerms)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    pass
-
-#~ customize_contacts()
-#~ customize_siteconfig()

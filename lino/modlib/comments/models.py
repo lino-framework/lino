@@ -19,9 +19,6 @@ from django.conf import settings
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
-system = dd.resolve_app('system')
-
-
 class Comment(
         mixins.CreatedModified,
         UserAuthored,
@@ -98,11 +95,3 @@ class CommentsByController(CommentsByX):
         yield ")"
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('comments.MyComments')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('comments.Comments')

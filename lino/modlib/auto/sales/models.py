@@ -415,9 +415,3 @@ class InvoiceablesByPartner(dd.VirtualTable):
 contacts.Partner.show_invoiceables = dd.ShowSlaveTable(InvoiceablesByPartner)
 
 
-#~ f = setup_main_menu
-def setup_main_menu(site, ui, profile, m):
-    #~ f(site,ui,profile,m)
-    m = m.add_menu("sales", MODULE_LABEL)
-    #~ m.add_action('sales.InvoiceablePartners')
-    m.add_action('sales.InvoicesToCreate')

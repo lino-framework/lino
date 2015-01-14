@@ -516,20 +516,3 @@ ledger.VoucherTypes.add_item(JournalEntry, JournalEntriesByJournal)
 ledger.VoucherTypes.add_item(PaymentOrder, PaymentOrdersByJournal)
 ledger.VoucherTypes.add_item(BankStatement, BankStatementsByJournal)
 
-MODULE_LABEL = _("Financial")
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu('finan', MODULE_LABEL)
-
-    for jnl in ledger.Journal.objects.filter(trade_type=''):
-        m.add_action(jnl.voucher_type.table_class,
-                     label=unicode(jnl),
-                     params=dict(master_instance=jnl))
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu('finan', MODULE_LABEL)
-    m.add_action('finan.BankStatements')
-    m.add_action('finan.JournalEntries')
-    m.add_action('finan.PaymentOrders')

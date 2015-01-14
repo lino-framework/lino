@@ -121,21 +121,3 @@ class Children(Links):
     label = _("Children")
 
 
-MODULE_LABEL = _("Concepts")
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("concepts", MODULE_LABEL)
-    m.add_action(Concepts)
-
-
-def setup_master_menu(site, ui, profile, m):
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    pass
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    pass

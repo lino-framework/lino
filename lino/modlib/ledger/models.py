@@ -1334,37 +1334,6 @@ def site_setup(site):
                 label=MODULE_LABEL)
 
 
-def setup_main_menu(site, ui, profile, main):
-    for tt in vat.TradeTypes.objects():
-        m = main.add_menu(tt.name, tt.text)
-        for jnl in Journal.objects.filter(trade_type=tt):
-            m.add_action(jnl.voucher_type.table_class,
-                         label=unicode(jnl),
-                         params=dict(master_instance=jnl))
-
-
-def setup_reports_menu(site, ui, profile, m):
-    m = m.add_menu("accounts", MODULE_LABEL)
-    m.add_action(Situation)
-    m.add_action(ActivityReport)
-    m.add_action(Debtors)
-    m.add_action(Creditors)
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("accounts", MODULE_LABEL)
-    m.add_action(Journals)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("accounts", MODULE_LABEL)
-    m.add_action(Invoices)
-    m.add_action(Vouchers)
-    m.add_action(VoucherTypes)
-    m.add_action(Movements)
-    m.add_action(FiscalYears)
-
-
 def customize_accounts():
 
     for tt in vat.TradeTypes.objects():

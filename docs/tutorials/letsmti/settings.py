@@ -5,7 +5,7 @@ class Site(Site):
 
     title = "Lino LETS MTI Tutorial"
 
-    def setup_menu(self, ui, profile, main):
+    def setup_menu(self, profile, main):
         m = main.add_menu("master", "Master")
         m.add_action(self.modules.letsmti.Members)
         m.add_action(self.modules.letsmti.Customers)

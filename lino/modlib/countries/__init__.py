@@ -28,3 +28,9 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Places")
     region_label = _("County")
+
+    def setup_config_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('countries.Countries')
+        m.add_action('countries.Places')
+

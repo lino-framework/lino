@@ -80,6 +80,6 @@ def my_change_watchers(sender, **kw):
         'entries', 'watch_tutorial.EntriesByCompany')
 
 
-def setup_main_menu(site, ui, profile, m):
+def setup_main_menu(config, site, profile, m):
     m = m.add_menu("entries", _("Entries"))
     m.add_action(MyEntries)

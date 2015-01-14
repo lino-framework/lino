@@ -152,16 +152,3 @@ class EventsByType(Events):
         return hname
 
 
-MODULE_LABEL = _("Events")
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("events", MODULE_LABEL)
-    m.add_action(Types)
-    m.add_action(Places)
-    m.add_action(Features)
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("events", MODULE_LABEL)
-    m.add_action(Events)

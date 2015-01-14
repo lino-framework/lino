@@ -1,0 +1,59 @@
+===========================
+Wednesday, January 14, 2015
+===========================
+
+The modular menu system
+========================
+
+I finally did a change which has been waiting a long time.  I hadn't
+done it if I had I known how much work it would be. What a chance that
+I didn't know!
+
+It have been waiting for so long because it is a backwards
+incompatible API change which caused quite much code changes.
+Fortunately AFAIK only in applications maintained by myself. 
+
+I had to do it now because :ref:`mma` is soon going to learn about
+:doc:`/dev/menu`, and it would have been a shame to do this on the
+system as is was until now.  And anyway it is better to do it now than
+when other developers have started to use it.
+
+API changes:
+
+Instead of writing in your :xfile:`models.py`::
+
+    def setup_FOO_menu(site, ui, profile, m):
+        m = m.add_menu('pcsw', _("PCSW"))
+        m.add_action('pcsw.MyCoachings')
+
+We now must write in the app's :xfile:`__init__.py`::
+
+    def setup_FOO_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('pcsw.MyCoachings')
+
+And :meth:`Site.setup_menu <lino.core.site_def.Site.setup_menu>` has a
+new signature.  
+
+Before::
+
+    def setup_menu(self, profile, main):
+
+After::
+
+    def setup_menu(self, ui, profile, main):
+
+
+Neuanträge
+==========
+
+The new table 
+:class:`AgentsByClient <lino_welfare.modlib.reception.models.AgentsByClient>` 
+in
+:mod:`lino_welfare.modlib.reception.models` solves :ticket:`60`.
+
+:class:`CoachingsByClient
+<lino_welfare.modlib.reception.models.CoachingsByClient>` is
+still there for :ref:`chat` but I gues that they will also want
+it.
+

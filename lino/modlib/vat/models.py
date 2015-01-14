@@ -676,15 +676,3 @@ dd.inject_field(
                     "sales invoices to this customer.")))
 
 
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("vat", config.verbose_name)
-    m.add_action('vat.PaymentTerms')
-    m.add_action('vat.VatRates')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("vat", config.verbose_name)
-    m.add_action(VatRegimes)
-    m.add_action(TradeTypes)
-    m.add_action(VatClasses)
-

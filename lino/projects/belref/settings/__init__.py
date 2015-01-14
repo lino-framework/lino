@@ -59,13 +59,13 @@ class Site(Site):
         # yield 'lino.modlib.bootstrap3'
         yield 'lino.projects.belref'
 
-    def setup_menu(self, ui, profile, main):
+    def setup_menu(self, profile, main):
         """
         We create a new menu from scratch because the default menu structure
         wouldn't fit.
         """
         from django.utils.translation import ugettext_lazy as _
-        from lino import dd, rt
+        from lino import dd
         concepts = dd.resolve_app('concepts')
         m = main.add_menu("concepts", concepts.MODULE_LABEL)
         m.add_action(self.modules.concepts.Concepts)

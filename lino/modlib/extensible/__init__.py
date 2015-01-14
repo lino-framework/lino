@@ -55,3 +55,10 @@ class Plugin(ad.Plugin):
             yield self.build_media_url(
                 'src', 'locale',
                 'extensible-lang-' + language + '.js')
+
+    def setup_main_menu(config, site, profile, m):
+        m = m.add_menu("cal", site.plugins.cal.verbose_name)
+        # m = m.add_menu("cal", _("Calendar"))
+        m.add_action('extensible.CalendarPanel')
+
+

@@ -5,15 +5,15 @@ lino.modlib.products
 
    
    
-   .. rubric:: Functions
+   
+
+   
+   
+   .. rubric:: Classes
 
    .. autosummary::
    
-      lino_setup
-   
-   
-
-   
+      Plugin
    
    
 

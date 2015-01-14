@@ -183,13 +183,6 @@ class AddressesByPartner(Addresses):
     # def get_slave_summary(self, obj, ar):
     #     return obj.get_overview_elems(ar)
 
-config = dd.apps.contacts
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(config.app_label, config.verbose_name)
-    m.add_action('addresses.AddressTypes')
-    m.add_action('addresses.Addresses')
 
 
 __all__ = [

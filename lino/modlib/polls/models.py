@@ -602,26 +602,4 @@ class PollResult(Questions):
     #~ settings.SITE.resolve_virtual_fields()
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("polls", config.verbose_name)
-    m.add_action('polls.MyPolls')
-    m.add_action('polls.MyResponses')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("polls", config.verbose_name)
-    m.add_action('polls.ChoiceSets')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("polls", config.verbose_name)
-    m.add_action('polls.Polls')
-    m.add_action('polls.Questions')
-    m.add_action('polls.Choices')
-    m.add_action('polls.Responses')
-    m.add_action('polls.AnswerChoices')
-    m.add_action('polls.AnswerRemarks')
-    #~ m.add_action('polls.Answers')
-
-
 dd.add_user_group('polls', config.verbose_name)

@@ -427,7 +427,7 @@ def customize_users():
         ))
 
 
-MODULE_LABEL = settings.SITE.plugins.cal.verbose_name
+MODULE_LABEL = dd.plugins.cal.verbose_name
 
 
 class UserDetailMixin(dd.Panel):
@@ -467,50 +467,6 @@ def unused_site_setup(site):
         """,
         MODULE_LABEL,
         required=dict(user_groups='office'))
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("cal", MODULE_LABEL)
-
-    m.add_action('cal.MyEvents')  # string spec to allow overriding
-
-    #~ m.add_separator('-')
-    #~ m  = m.add_menu("tasks",_("Tasks"))
-    m.add_action('cal.MyTasks')
-    #~ m.add_action(MyTasksToDo)
-
-    m.add_action('cal.MyGuests')
-
-    m.add_action('cal.MyPresences')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("cal", MODULE_LABEL)
-    m.add_action('cal.Calendars')
-    #~ m.add_action('cal.MySubscriptions')
-    m.add_action('cal.Rooms')
-    m.add_action('cal.Priorities')
-    m.add_action('cal.RecurrentEvents')
-    #~ m.add_action(AccessClasses)
-    #~ m.add_action(EventStatuses)
-    #~ m.add_action(TaskStatuses)
-    #~ m.add_action(EventTypes)
-    m.add_action('cal.GuestRoles')
-    #~ m.add_action(GuestStatuses)
-    m.add_action('cal.EventTypes')
-    m.add_action('cal.RemoteCalendars')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("cal", MODULE_LABEL)
-    m.add_action('cal.Tasks')
-    m.add_action('cal.Guests')
-    m.add_action('cal.Subscriptions')
-    #~ m.add_action(Memberships)
-    m.add_action('cal.EventStates')
-    m.add_action('cal.GuestStates')
-    m.add_action('cal.TaskStates')
-    #~ m.add_action(RecurrenceSets)
 
 
 customize_users()

@@ -164,36 +164,3 @@ class PostingsByProject(Postings):
     master_key = 'project'
     column_names = 'date partner state workflow_buttons *'
 
-
-#~ MODULE_LABEL = _("Outbox")
-MODULE_LABEL = _("Postings")
-
-system = dd.resolve_app('system')
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m = m.add_menu("postings", MODULE_LABEL)
-    m.add_action(MyPostings)
-    m.add_action(PostingsReady)
-    m.add_action(PostingsPrinted)
-    m.add_action(PostingsSent)
-
-
-#~ def setup_main_menu(site,ui,profile,m): pass
-#~ def setup_my_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("postings",MODULE_LABEL)
-    #~ m.add_action(MyInbox)
-    #~ m.add_action(MySent)
-def setup_config_menu(site, ui, profile, m):
-    pass
-    #~ if user.level >= UserLevels.manager:
-    #~ m  = m.add_menu("outbox",MODULE_LABEL)
-    #~ m.add_action(MailTypes)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    #~ if user.level >= UserLevels.manager:
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    #~ m  = m.add_menu("postings",MODULE_LABEL)
-    m.add_action(Postings)

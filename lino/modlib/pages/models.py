@@ -211,22 +211,5 @@ def lookup(ref, *args, **kw):
 from lino.modlib.pages.dummy import render_node
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu('pages', settings.SITE.plugins.pages.verbose_name)
-    m.add_action('pages.Pages')
-
-system = dd.resolve_app('system')
-
-
-# def setup_config_menu(site, ui, profile, m):
-    # m = m.add_menu('pages', settings.SITE.plugins.pages.verbose_name)
-    # m.add_action('pages.Pages')
-    #~ m.add_action(PageTypes)
-
-#~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("office",system.OFFICE_MODULE_LABEL)
-    #~ m.add_action(Pages)
-
-
 def get_all_pages():
     return Page.objects.all()

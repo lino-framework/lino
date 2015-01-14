@@ -332,9 +332,3 @@ def on_merge(sender=None, request=None, **kw):
                master, sender.obj, sender.logmsg())
 
 
-menu_group = dd.plugins.system
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    system = m.add_menu(menu_group.app_label, menu_group.verbose_name)
-    system.add_action('changes.Changes')

@@ -206,9 +206,3 @@ class PlacesByCountry(Places):
     details_of_master_template = _("%(details)s in %(master)s")
 
 
-def setup_config_menu(site, ui, profile, m):
-    g = dd.plugins.countries
-    m = m.add_menu(g.app_label, g.verbose_name)
-    m.add_action('countries.Countries')
-    m.add_action('countries.Places')
-

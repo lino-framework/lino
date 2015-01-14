@@ -29,7 +29,3 @@ class Languages(dd.Table):
     required = dd.required(user_groups='office')
 
 
-def setup_config_menu(site, ui, profile, m):
-    p = dd.plugins.languages.get_menu_group()
-    m = m.add_menu(p.app_label, p.verbose_name)
-    m.add_action('languages.Languages')

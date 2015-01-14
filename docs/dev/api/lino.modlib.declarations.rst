@@ -9,6 +9,12 @@ lino.modlib.declarations
 
    
    
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Plugin
+   
    
 
    

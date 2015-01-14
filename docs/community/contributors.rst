@@ -43,8 +43,8 @@ See http://saffre-rumma.net/luc
 
 .. _mma:
 
-Mahmoud Mamdouh Abbas
----------------------
+Mahmoud Abbas
+-------------
 
 .. refstothis:: mma
 

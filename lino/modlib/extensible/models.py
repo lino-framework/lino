@@ -226,12 +226,6 @@ class PanelEvents(Events):
         return obj
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("cal", settings.SITE.plugins.cal.verbose_name)
-    # m = m.add_menu("cal", _("Calendar"))
-    m.add_action('extensible.CalendarPanel')
-
-
 def setup_quicklinks(site, ar, m):
     m.add_action('extensible.CalendarPanel')
 

@@ -5,12 +5,6 @@ lino.modlib.languages.models
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-   
-      setup_config_menu
-   
    
 
    

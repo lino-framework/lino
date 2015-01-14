@@ -201,42 +201,7 @@ if settings.SITE.user_model:
         required = dd.required(user_groups='office')
 
 
-config = dd.plugins.system
-# SYSTEM_USER_LABEL = _("System")
-OFFICE_MODULE_LABEL = _("Office")
-
-
-def setup_main_menu(site, ui, profile, m):
-    #~ office = m.add_menu("office",OFFICE_MODULE_LABEL)
-    #~ office.add_action(MyTextFieldTemplates)
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    office = m.add_menu("office", OFFICE_MODULE_LABEL)
-    system = m.add_menu("system", config.verbose_name)
-    #~ m.add_action('links.LinkTypes')
-    system.add_instance_action(site.site_config)
-    if site.user_model and profile.authenticated:
-        system.add_action(site.user_model)
-        # system.add_action(site.modules.users.Teams)
-        office.add_action(MyTextFieldTemplates)
-    #~ m.add_action(site.modules.users.Users)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    office = m.add_menu("office", OFFICE_MODULE_LABEL)
-    system = m.add_menu("system", config.verbose_name)
-
-    if site.user_model:
-        system.add_action(site.modules.users.Authorities)
-        system.add_action(UserGroups)
-        system.add_action(UserLevels)
-        system.add_action(UserProfiles)
-        office.add_action(TextFieldTemplates)
-
-
-dd.add_user_group('office', OFFICE_MODULE_LABEL)
+dd.add_user_group('office', dd.plugins.system.OFFICE_MODULE_LABEL)
 
 
 if settings.SITE.user_model == 'auth.User':

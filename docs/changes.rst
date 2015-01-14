@@ -20,6 +20,8 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+- New way to define modular menus. :blogref:`20150114`.
+
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>` did not
   yet copy over the :attr:`sort_index
   <lino.core.actors.Actor.sort_index>` specified on a table to the

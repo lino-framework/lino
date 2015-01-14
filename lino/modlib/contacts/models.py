@@ -516,38 +516,5 @@ def company_tables_alias(sender, **kw):
     sender.modules.contacts.Organisations = sender.modules.contacts.Companies
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", Plugin.verbose_name)
-    # We use the string representations and not the classes because
-    # other installed applications may want to override these tables.
-    for a in ('contacts.Persons', 'contacts.Companies', 'contacts.Partners'):
-        m.add_action(a)
-
-
-def setup_master_menu(site, ui, profile, m):
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    config_contacts = m.add_menu("contacts", Plugin.verbose_name)
-    config_contacts.add_action(CompanyTypes)
-    config_contacts.add_action(RoleTypes)
-    #~ config_contacts.add_action(site.modules.countries.Countries)
-    #~ config_contacts.add_action(site.modules.countries.Places)
-    #~ config_contacts.add_action(site.modules.countries.Languages)
-
-    #~ m  = m.add_menu("contacts",_("~Contacts"))
-    #~ m.add_action('contacts.RoleTypes')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("contacts", Plugin.verbose_name)
-    m.add_action(site.modules.contacts.Roles)
-    #~ m.add_action(site.modules.countries.Places)
-
-#~ def setup_quicklinks(site,ui,user,m):
-    #~ m.add_action(Person.detail_action)
-
-
 def PartnerField(**kw):
     return models.ForeignKey(Partner, **kw)

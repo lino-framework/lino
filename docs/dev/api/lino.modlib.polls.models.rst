@@ -11,9 +11,6 @@ lino.modlib.polls.models
    
       get_poll_result
       join_elems
-      setup_config_menu
-      setup_explorer_menu
-      setup_main_menu
    
    
 

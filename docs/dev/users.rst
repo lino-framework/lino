@@ -27,13 +27,12 @@ Don't take the following statements as my definitive opinion.  I
 formulated them in order to get feedback and to understand if I were
 missing something.
 
-- The :mod:`lino.modlib.users` module is useful
-  on Django sites with :doc:`/topics/http_auth`
-  where a central user management system is already 
-  running.
+- The :mod:`lino.modlib.users` module is useful on Django sites with
+  HTTP authentication where a central user management system is
+  already running.
 
 - Django's 
-  `django.contrib.users <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
+  `django.contrib.auth <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
   module is overkill in such cases.
   
 - Not only overkill, but also it's tests suite reports 

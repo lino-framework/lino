@@ -41,7 +41,26 @@ class Plugin(ad.Plugin):
             from lino import dd
             for m in (contacts.Person, contacts.Company):
                 m.define_action(merge_row=dd.MergeAction(m))
-            
+
+    def setup_main_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        # We use the string representations and not the classes because
+        # other installed applications may want to override these tables.
+        for a in ('contacts.Persons', 'contacts.Companies',
+                  'contacts.Partners'):
+            m.add_action(a)
+
+    def setup_config_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('contacts.CompanyTypes')
+        m.add_action('contacts.RoleTypes')
+
+    def setup_explorer_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('contacts.Roles')
+
+
+
             
 # @dd.when_prepared('contacts.Person', 'contacts.Company')
 # def hide_region(model):

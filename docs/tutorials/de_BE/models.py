@@ -15,6 +15,3 @@ class Expressions(dd.Table):
     #~ column_names = 'name'
 
 
-def setup_master_menu(site, ui, profile, m):
-    m.add_action(Expressions)
-  

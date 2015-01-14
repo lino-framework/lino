@@ -3,6 +3,7 @@
 
 from lino.projects.std.settings import *
 
+
 class Site(Site):
     
     user_model = 'users.User'
@@ -34,6 +35,10 @@ class Site(Site):
             name='anonymous', readonly=True, authenticated=False)
         add('100', _("User"),                       'U U', name='user')
         add('900', _("Administrator"),              'A A', name='admin')
-        
 
+    def setup_menu(self, profile, main):
+        m = main.add_menu("entries", _("Entries"))
+        m.add_action(MyEntries)
+    
 SITE = Site(globals())
+

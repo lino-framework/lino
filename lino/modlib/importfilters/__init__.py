@@ -12,3 +12,14 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
     verbose_name = _("Import filters")
+
+    def setup_config_menu(config, site, profile, m):
+        p = site.plugins.importfilters
+        m = m.add_menu('filters', p.verbose_name)
+        m.add_action('importfilters.Filters')
+        m.add_action('importfilters.Import')
+
+    def setup_explorer_menu(config, site, profile, m):
+        p = site.plugins.importfilters
+        m = m.add_menu('filters', p.verbose_name)
+        m.add_action('importfilters.Filters')

@@ -12,8 +12,6 @@ lino.modlib.vat.models
       get_default_vat_class
       get_default_vat_regime
       inject_vat_fields
-      setup_config_menu
-      setup_explorer_menu
    
    
 

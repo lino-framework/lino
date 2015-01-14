@@ -322,18 +322,3 @@ class ChoicesByType(PropChoices):
     column_names = 'value text *'
 
 
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("props", _("Properties"))
-    m.add_action('properties.Properties')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("props", _("Properties"))
-    m.add_action('properties.PropGroups')
-    m.add_action('properties.PropTypes')
-    for pg in PropGroup.objects.all():
-        m.add_action(
-            PropsByGroup,
-            params=dict(master_instance=pg),
-            #~ label=pg.name)
-            label=unicode(pg))

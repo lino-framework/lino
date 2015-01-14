@@ -9,6 +9,12 @@ lino.modlib.tickets
 
    
    
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      Plugin
+   
    
 
    

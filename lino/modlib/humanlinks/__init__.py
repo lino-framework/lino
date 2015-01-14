@@ -15,3 +15,10 @@ class Plugin(ad.Plugin):
     ## settings
     person_model = 'contacts.Person'
 
+    def setup_explorer_menu(config, site, profile, m):
+        p = site.plugins.contacts
+        m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('humanlinks.Links')
+        m.add_action('humanlinks.LinkTypes')
+
+

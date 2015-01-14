@@ -506,23 +506,3 @@ def set_detail_layouts(sender=None, **kwargs):
     """)
 
 
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu(config.app_label, config.verbose_name)
-    m.add_action('cv.TrainingTypes')
-    m.add_action('cv.StudyTypes')
-    m.add_action('cv.EducationLevels')
-    m.add_action('cv.Sectors')
-    m.add_action('cv.Functions')
-    m.add_action('cv.Regimes')
-    m.add_action('cv.Statuses')
-    m.add_action('cv.Durations')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(config.app_label, config.verbose_name)
-    m.add_action('cv.LanguageKnowledges')
-    m.add_action('cv.Trainings')
-    m.add_action('cv.Studies')
-    m.add_action('cv.Experiences')
-
-

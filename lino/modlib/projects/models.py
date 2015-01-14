@@ -73,30 +73,3 @@ class MyProjects(Projects, ByUser):
     pass
 
 
-MODULE_NAME = _("Projects")
-
-
-def site_setup(site):
-    pass
-
-
-def setup_main_menu(site, ui, profile, m):
-    pass
-
-#~ def setup_master_menu(site,ui,profile,m): pass
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("projects", MODULE_NAME)
-    m.add_action(MyProjects)
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("projects", MODULE_NAME)
-    #~ m.add_action(Accounts)
-    m.add_action(ProjectTypes)
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("projects", MODULE_NAME)
-    m.add_action(Projects)

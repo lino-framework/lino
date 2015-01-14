@@ -118,14 +118,3 @@ class Import(dd.VirtualTable):
         return dd.obj2unicode(obj)
 
 
-def setup_config_menu(site, ui, profile, m):
-    p = site.plugins.importfilters
-    m = m.add_menu('filters', p.verbose_name)
-    m.add_action('importfilters.Filters')
-    m.add_action('importfilters.Import')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    p = site.plugins.importfilters
-    m = m.add_menu('filters', p.verbose_name)
-    m.add_action('importfilters.Filters')

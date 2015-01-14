@@ -20,7 +20,6 @@ from django.conf import settings
 
 from lino.utils import i2d
 from lino import dd, rt
-from lino.modlib.system.models import SYSTEM_USER_LABEL
 from lino.utils.restify import restify, doc2rst
 
 #~ CHANGES_LIST = []
@@ -101,6 +100,3 @@ class CodeChanges(dd.VirtualTable):
         return obj.module
 
 
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("system", SYSTEM_USER_LABEL)
-    m.add_action(CodeChanges)

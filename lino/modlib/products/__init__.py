@@ -1,25 +1,27 @@
-# Copyright 2009 Luc Saffre.
-# This file is part of the Lino project.
+# Copyright 2008-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
-# Lino is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+"""
+Adds functionality for managing products.
 
-# Lino is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
+.. autosummary::
+   :toctree:
 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Lino; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    models
+    fixtures.food
+    fixtures.furniture
 
-#
-# menu setup
-#
+"""
+
+from lino import ad, _
 
 
-def lino_setup(lino):
-    from . import models
-    models.lino_setup(lino)
+class Plugin(ad.Plugin):
+
+    verbose_name = _("Products")
+
+    def setup_main_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('products.Products')
+        m.add_action('products.ProductCats')
+

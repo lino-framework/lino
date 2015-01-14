@@ -681,24 +681,6 @@ if settings.SITE.project_model is not None:
             return unicode(ex.owner)
 
 
-system = dd.resolve_app('system')
-
-
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('excerpts.MyExcerpts')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('excerpts.ExcerptTypes')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
-    m.add_action('excerpts.Excerpts')
-
-
 @dd.receiver(dd.pre_analyze)
 def set_excerpts_actions(sender, **kw):
     # logger.info("20140401 %s.set_attest_actions()", __name__)

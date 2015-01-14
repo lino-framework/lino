@@ -36,10 +36,7 @@ class Products(dd.Table):
 
     insert_layout = dd.FormLayout("""
     name
-    category price 
+    category price
     """, window_size=(40, 'auto'))
 
 
-def setup_main_menu(self, ui, profile, main):
-    m = main.add_menu("products", "Products")
-    m.add_action(self.modules.babel_tutorial.Products)

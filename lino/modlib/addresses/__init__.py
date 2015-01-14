@@ -14,3 +14,10 @@ class Plugin(ad.Plugin):
     "Ceci n'est pas une documentation."
     verbose_name = _("Addresses")
 
+    def setup_explorer_menu(self, site, profile, m):
+        # mg = self.get_menu_group()
+        mg = site.plugins.contacts
+        m = m.add_menu(mg.app_label, mg.verbose_name)
+        m.add_action('addresses.AddressTypes')
+        m.add_action('addresses.Addresses')
+

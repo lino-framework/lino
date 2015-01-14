@@ -80,3 +80,42 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
     verbose_name = _("Calendar")
+
+    def setup_main_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('cal.MyEvents')  # string spec to allow overriding
+        #~ m.add_separator('-')
+        #~ m  = m.add_menu("tasks",_("Tasks"))
+        m.add_action('cal.MyTasks')
+        #~ m.add_action(MyTasksToDo)
+        m.add_action('cal.MyGuests')
+        m.add_action('cal.MyPresences')
+
+    def setup_config_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('cal.Calendars')
+        #~ m.add_action('cal.MySubscriptions')
+        m.add_action('cal.Rooms')
+        m.add_action('cal.Priorities')
+        m.add_action('cal.RecurrentEvents')
+        #~ m.add_action(AccessClasses)
+        #~ m.add_action(EventStatuses)
+        #~ m.add_action(TaskStatuses)
+        #~ m.add_action(EventTypes)
+        m.add_action('cal.GuestRoles')
+        #~ m.add_action(GuestStatuses)
+        m.add_action('cal.EventTypes')
+        m.add_action('cal.RemoteCalendars')
+
+    def setup_explorer_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('cal.Tasks')
+        m.add_action('cal.Guests')
+        m.add_action('cal.Subscriptions')
+        #~ m.add_action(Memberships)
+        m.add_action('cal.EventStates')
+        m.add_action('cal.GuestStates')
+        m.add_action('cal.TaskStates')
+        #~ m.add_action(RecurrenceSets)
+
+

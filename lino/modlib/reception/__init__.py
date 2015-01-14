@@ -22,3 +22,18 @@ from django.utils.translation import ugettext_lazy as _
 class Plugin(ad.Plugin):
     verbose_name = _("Reception")
     depends = ['cal']
+
+    def setup_main_menu(config, site, profile, m):
+        app = site.plugins.reception
+        m = m.add_menu(app.app_name, app.verbose_name)
+
+        m.add_action('cal.EventsByDay')
+
+        m.add_action('reception.WaitingVisitors')
+        m.add_action('reception.BusyVisitors')
+        m.add_action('reception.GoneVisitors')
+
+        # MyWaitingVisitors is maybe not needed as a menu entry since it
+        # is also a get_admin_main_items. if i remove it then i must edit
+        # `pcsw_tests.py`.  Waiting for user feedback before doing this.
+        m.add_action('reception.MyWaitingVisitors')

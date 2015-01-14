@@ -20,9 +20,6 @@ lino.modlib.cal.models
       pre_analyze
       register_calendartype
       setkw
-      setup_config_menu
-      setup_explorer_menu
-      setup_main_menu
       unused_site_setup
       update_auto_component
       update_auto_event

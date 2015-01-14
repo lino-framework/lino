@@ -89,15 +89,5 @@ class BoardDecision(UserAuthored):
         return qs
 
 
-menu_host = dd.apps.contacts
 
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu(menu_host.app_label, menu_host.verbose_name)
-    m.add_action('boards.Boards')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(menu_host.app_label, menu_host.verbose_name)
-    m.add_action('boards.Members')
 

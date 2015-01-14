@@ -1,25 +1,33 @@
-# Copyright 2009 Luc Saffre.
-# This file is part of the Lino project.
+# Copyright 2008-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
-# Lino is free software; you can redistribute it and/or modify it
-# under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 2 of the License, or
-# (at your option) any later version.
+"""
+Adds functionality for managing financial stuff.
 
-# Lino is distributed in the hope that it will be useful, but WITHOUT
-# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
+.. autosummary::
+   :toctree:
 
-# You should have received a copy of the GNU Lesser General Public License
-# along with Lino; if not, write to the Free Software Foundation,
-# Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    models
 
-#
-# menu setup
-#
+"""
+
+from lino import ad, _
 
 
-def lino_setup(lino):
-    from . import models
-    models.lino_setup(lino)
+class Plugin(ad.Plugin):
+
+    verbose_name = _("Financial")
+
+    def setup_main_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        ledger = site.modules.ledger
+        for jnl in ledger.Journal.objects.filter(trade_type=''):
+            m.add_action(jnl.voucher_type.table_class,
+                         label=unicode(jnl),
+                         params=dict(master_instance=jnl))
+
+    def setup_explorer_menu(self, site, profile, m):
+        m = m.add_menu(self.app_label, self.verbose_name)
+        m.add_action('finan.BankStatements')
+        m.add_action('finan.JournalEntries')
+        m.add_action('finan.PaymentOrders')

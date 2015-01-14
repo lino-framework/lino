@@ -156,40 +156,5 @@ class AccountsByGroup(Accounts):
     column_names = "ref name *"
 
 
-MODULE_LABEL = _("Accounting")
+dd.add_user_group('accounts', dd.plugins.accounts.verbose_name)
 
-dd.add_user_group('accounts', MODULE_LABEL)
-
-#~ settings.SITE.add_user_field('debts_level',UserLevel.field(MODULE_LABEL))
-#~ settings.SITE.add_user_group('debts',MODULE_LABEL)
-
-
-def site_setup(site):
-    pass
-
-
-def setup_main_menu(site, ui, profile, m):
-    pass
-
-
-def setup_master_menu(site, ui, profile, m):
-    pass
-
-
-def setup_my_menu(site, ui, profile, m):
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    #~ if user.profile.debts_level < UserLevels.manager:
-        #~ return
-    m = m.add_menu("accounts", MODULE_LABEL)
-    m.add_action(Charts)
-    m.add_action(Groups)
-    m.add_action(Accounts)
-
-#~ def setup_explorer_menu(site,ui,profile,m):
-    #~ m  = m.add_menu("accounts",MODULE_LABEL)
-    #~ m.add_action(AccountTypes)
-
-#~ dd.add_user_group('debts',MODULE_LABEL)

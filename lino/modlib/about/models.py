@@ -405,15 +405,3 @@ class SourceFiles(dd.VirtualTable):
     def module_name(self, obj, ar):
         return obj.modulename
 
-
-#~ def _test():
-    #~ import doctest
-    #~ doctest.testmod()
-#~ if __name__ == "__main__":
-    #~ _test()
-def setup_site_menu(site, ui, profile, m):
-    m.add_action(site.modules.about.About)
-    if settings.SITE.use_experimental_features:
-        m.add_action(site.modules.about.Models)
-        m.add_action(site.modules.about.Inspector)
-        m.add_action(site.modules.about.SourceFiles)

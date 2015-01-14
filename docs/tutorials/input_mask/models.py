@@ -35,6 +35,3 @@ class Foos(dd.Table):
     """
 
 
-def setup_main_menu(site, ui, profile, main):
-    m = main.add_menu("foos", "Input Mask")
-    m.add_action('input_mask.Foos')

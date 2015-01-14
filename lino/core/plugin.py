@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre.
+# Copyright 2008-2015 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.  See also
@@ -248,6 +248,24 @@ class Plugin(object):
                 "Directory %s (specified in %s.media_root) does not exist" %
                 (source, self))
         ui.setup_media_link(urlpatterns, self.media_name, source=source)
+
+    def setup_main_menu(self, site, profile, m):
+        pass
+
+    def setup_master_menu(self, site, profile, m):
+        pass
+
+    def setup_reports_menu(self, site, profile, m):
+        pass
+
+    def setup_config_menu(self, site, profile, m):
+        pass
+
+    def setup_explorer_menu(self, site, profile, m):
+        pass
+
+    def setup_site_menu(self, site, profile, m):
+        pass
 
     def get_menu_group(self):
         """Return the :class:`Plugin` instance into whose menu this plugin

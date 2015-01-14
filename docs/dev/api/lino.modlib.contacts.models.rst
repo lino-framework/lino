@@ -14,10 +14,6 @@ lino.modlib.contacts.models
       company_tables_alias
       join_elems
       join_words
-      setup_config_menu
-      setup_explorer_menu
-      setup_main_menu
-      setup_master_menu
       site_setup
    
    

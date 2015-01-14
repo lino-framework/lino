@@ -11,9 +11,6 @@ lino.modlib.system.models
    
       force_unicode
       my_handler
-      setup_config_menu
-      setup_explorer_menu
-      setup_main_menu
    
    
 
@@ -39,6 +36,9 @@ lino.modlib.system.models
       TextFieldTemplate
       TextFieldTemplates
       UserAuthored
+      UserGroups
+      UserLevels
+      UserProfiles
       YesNo
    
    

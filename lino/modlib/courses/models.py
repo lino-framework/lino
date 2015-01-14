@@ -1115,27 +1115,4 @@ class SuggestedCoursesByPupil(ActiveCourses):
         return E.div(btn)
 
 
-def setup_main_menu(site, ui, profile, main):
-    m = main.add_menu("courses", config.verbose_name)
-    m.add_action('courses.Courses')
-    m.add_action('courses.Lines')
-    m.add_action('courses.PendingRequestedEnrolments')
-    m.add_action('courses.PendingConfirmedEnrolments')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu("courses", config.verbose_name)
-    #~ m.add_action(Rooms)
-    m.add_action('courses.Topics')
-    m.add_action('courses.Slots')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("courses", config.verbose_name)
-    #~ m.add_action(Presences)
-    #~ m.add_action(Events)
-    m.add_action('courses.Enrolments')
-    # m.add_action('courses.Options')
-    m.add_action('courses.EnrolmentStates')
-
 dd.add_user_group('courses', config.verbose_name)

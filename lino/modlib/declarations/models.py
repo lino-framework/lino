@@ -304,26 +304,4 @@ def customize_ledger():
 customize_ledger()
 
 
-def site_setup(site):
-    pass
-
-
-def setup_main_menu(site, ui, profile, m):
-    pass
-
-
-def setup_reports_menu(site, ui, profile, m):
-    pass
-
-
-def setup_config_menu(site, ui, profile, m):
-    pass
-#~ def setup_explorer_menu(site,ui,profile,m): pass
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu("vat", settings.SITE.plugins.vat.verbose_name)
-    m.add_action(Declarations)
-
-
 ledger.VoucherTypes.add_item(Declaration, DeclarationsByJournal)

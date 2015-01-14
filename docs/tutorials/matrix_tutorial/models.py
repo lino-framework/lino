@@ -141,8 +141,3 @@ def my_details_setup(sender, **kw):
         'entries', 'matrix_tutorial.EntriesByCompany')
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu("entries", _("Entries"))
-    m.add_action(Entries)
-    m.add_action(EntryTypes)
-    m.add_action(CompaniesWithEntryTypes)

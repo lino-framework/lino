@@ -34,15 +34,13 @@ class Site(Site):
             name='anonymous', readonly=True, authenticated=False)
         add('100', _("User"),                       'U U', name='user')
         add('900', _("Administrator"),              'A A', name='admin')
-        
+
+    def setup_menu(self, profile, main):
+        m = main.add_menu("entries", _("Entries"))
+        m.add_action(Entries)
+        m.add_action(EntryTypes)
+        m.add_action(CompaniesWithEntryTypes)
+
 
 SITE = Site(globals())
-
-#~ LOGGING = {}
-
-#~ LOGGING=dict(filename=None,
-    #~ level='INFO',
-    #~ logger_names='djangosite lino',
-    #~ disable_existing_loggers=True, # Django >= 1.5
-    #~ )
 

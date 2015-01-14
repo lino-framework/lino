@@ -19,7 +19,6 @@ from lino.utils.xmlgen.html import E
 contacts = dd.resolve_app('contacts')
 
 config = dd.apps.households
-mnugrp = dd.apps.contacts
 
 
 class Type(mixins.BabelNamed):
@@ -486,18 +485,3 @@ dd.inject_field(
         help_text=("Whether this Partner is a Household.")))
 
 
-def setup_main_menu(site, ui, profile, m):
-    m = m.add_menu(mnugrp.app_label, mnugrp.verbose_name)
-    m.add_action('households.Households')
-
-
-def setup_config_menu(site, ui, profile, m):
-    m = m.add_menu(mnugrp.app_label, mnugrp.verbose_name)
-    # m.add_action(Roles)
-    m.add_action('households.Types')
-
-
-def setup_explorer_menu(site, ui, profile, m):
-    m = m.add_menu(mnugrp.app_label, mnugrp.verbose_name)
-    m.add_action('households.MemberRoles')
-    m.add_action('households.Members')
