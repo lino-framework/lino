@@ -23,3 +23,11 @@ All this is implemented in
 example for the new
 :meth:`lino.core.workflows.Workflow.override_transition` method.
 
+
+Ordering of tasks
+=================
+
+:class:`lino.modlib.cal.models.MyTasks` was ordered decending, but for
+tasks this is not intuitive.  Now ordered ascending.  The same is true
+for all tasks lists, so in fact I just change it on
+:class:`lino.modlib.cal.models.Tasks`.

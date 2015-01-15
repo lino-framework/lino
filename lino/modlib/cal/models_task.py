@@ -95,8 +95,8 @@ class Task(Component):
     @classmethod
     def on_analyze(cls, lino):
         #~ lino.TASK_AUTO_FIELDS = dd.fields_list(cls,
-        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
-            '''start_date start_time summary''')
+        cls.DISABLED_AUTO_FIELDS = dd.fields_list(
+            cls, """start_date start_time summary""")
         super(Task, cls).on_analyze(lino)
 
     #~ def __unicode__(self):
@@ -104,28 +104,20 @@ class Task(Component):
 
 
 class Tasks(dd.Table):
-    help_text = _("""A calendar task is something you need to do.
-    """)
-    #~ debug_permissions = True
+    help_text = _("""A calendar task is something you need to do.""")
     model = 'cal.Task'
     required = dd.required(user_groups='office', user_level='manager')
     column_names = 'start_date summary workflow_buttons *'
-    order_by = ["-start_date", "-start_time"]
-    #~ hidden_columns = set('owner_id owner_type'.split())
+    order_by = ["start_date", "start_time"]
 
-    #~ detail_layout = """
-    #~ start_date status due_date user
-    #~ summary
-    # ~ created:20 modified:20 owner #owner_type #owner_id
-    # ~ description #notes.NotesByTask
-    #~ """
     detail_layout = """
-    start_date due_date id workflow_buttons 
-    summary 
-    user project 
+    start_date due_date id workflow_buttons
+    summary
+    user project
     #event_type owner created:20 modified:20
     description #notes.NotesByTask
     """
+
     insert_layout = dd.FormLayout("""
     summary
     user project
@@ -204,21 +196,19 @@ class TasksByController(Tasks):
 
 if settings.SITE.user_model:
 
-    #~ class RemindersByUser(dd.Table):
     class TasksByUser(Tasks):
-
         """
         Shows the list of automatically generated tasks for this user.
         """
-        #~ model = Task
-        #~ label = _("Reminders")
         master_key = 'user'
         required = dd.required(user_groups='office')
-        #~ column_names = "start_date summary *"
-        #~ order_by = ["start_date"]
-        #~ filter = Q(auto_type__isnull=False)
 
     class MyTasks(Tasks):
+        """All my tasks.  Only those whose start_date is today or in the
+future.  This table is used in
+:meth:`lino_welfare.projects.base.Site.get_admin_item`.
+
+        """
         label = _("My tasks")
         required = dd.required(user_groups='office')
         #~ required = dict()
@@ -234,15 +224,6 @@ if settings.SITE.user_model:
             kw.update(start_date=settings.SITE.today())
             return kw
 
-    class unused_MyTasksToDo(MyTasks):
-        help_text = _("Table of my tasks marked 'to do'.")
-        column_names = 'start_date summary workflow_buttons *'
-        label = _("To-do list")
-        filter = Q(
-            start_date__lte=settings.SITE.today() +
-            dateutil.relativedelta.relativedelta(
-                days=1),
-            state__in=(TaskStates.todo, TaskStates.started))
 
 if settings.SITE.project_model:
 
@@ -251,6 +232,3 @@ if settings.SITE.project_model:
         master_key = 'project'
         column_names = 'start_date user summary workflow_buttons *'
 
-
-# __all__ = ['Task', 'Tasks']
-#~ __all__ = ['Task','Tasks','MyTasks','TasksByUser','TasksByController','TasksByProject']
