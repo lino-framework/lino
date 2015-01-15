@@ -473,8 +473,6 @@ class Action(Parametrizable, Permittable):
         assert self.action_name is None
         self.action_name = name
         self.defining_actor = wf
-        #~ logger.info("20121009 %r attach_to_workflow(%s)",self,self.full_name(wf))
-        # setup_params_choosers(self.__class__)
         setup_params_choosers(self)
 
     def attach_to_actor(self, actor, name):

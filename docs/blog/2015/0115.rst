@@ -1,0 +1,25 @@
+==========================
+Thursday, January 15, 2015
+==========================
+
+Overriding workflow transition actions
+======================================
+
+Wow. Lino has another cool feature: overriding workflow transition
+actions.
+
+The :mod:`lino.modlib.cal.workflows.feedback` workflow defines an
+event state "took place" with a simple transition, represented by a
+smilie, which marks the event has "took place".  This is the default
+behaviour for :mod:`feedback <lino.modlib.cal.workflows.feedback>`.
+
+But in :ref:`welfare` they want more. They requested that clicking the
+smilie should not only mark the meeting as "took place", but should
+also check out all participants, after asking for a user confirmation
+before doing so.
+
+All this is implemented in
+:class:`lino_welfare.modlib.cal.models.CloseMeeting`, the first usage
+example for the new
+:meth:`lino.core.workflows.Workflow.override_transition` method.
+

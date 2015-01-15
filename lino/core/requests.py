@@ -376,7 +376,8 @@ class BaseRequest(object):
 
     def add_system_note(self, owner, subject, body, silent):
         settings.SITE.emit_system_note(
-            self.reqwuest, owner, subject, body, silent)
+            self.request, owner, subject, body, silent)
+
     def spawn(self, spec, **kw):
         """
         Create a new ActionRequest using default values from this one and

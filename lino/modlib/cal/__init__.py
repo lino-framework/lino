@@ -1,10 +1,7 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :mod:`lino.modlib.cal` package
-provides data definitions for "Calendar management".
-This is Lino's Calendar module.
+"""This is Lino's Calendar module.
 
 
 .. autosummary::
@@ -17,6 +14,11 @@ This is Lino's Calendar module.
     models_event
     models_guest
     models_task
+    workflows
+    fixtures.std
+    fixtures.demo
+    fixtures.demo2
+
 
 
 

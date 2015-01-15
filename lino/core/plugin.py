@@ -249,24 +249,6 @@ class Plugin(object):
                 (source, self))
         ui.setup_media_link(urlpatterns, self.media_name, source=source)
 
-    def setup_main_menu(self, site, profile, m):
-        pass
-
-    def setup_master_menu(self, site, profile, m):
-        pass
-
-    def setup_reports_menu(self, site, profile, m):
-        pass
-
-    def setup_config_menu(self, site, profile, m):
-        pass
-
-    def setup_explorer_menu(self, site, profile, m):
-        pass
-
-    def setup_site_menu(self, site, profile, m):
-        pass
-
     def get_menu_group(self):
         """Return the :class:`Plugin` instance into whose menu this plugin
         wants to be inserted.

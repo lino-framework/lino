@@ -2,9 +2,15 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""Some standard workflow definition modules for
+:mod:`lino.modlib.cal`.
 
-Minimal workflow definition for :mod:`lino.modlib.cal`.
+.. autosummary::
+   :toctree:
+
+    feedback
+    take
+    faggio
 
 """
 
@@ -87,8 +93,8 @@ class EventStates(dd.Workflow):
 add = EventStates.add_item
 add('10', _("Suggested"), 'suggested',
     edit_guests=True,
-    help_text=_("Automatically suggested. \
-    Default state of an automatic event."))
+    help_text=_("Automatically suggested. "
+                "Default state of an automatic event."))
 add('20', _("Draft"), 'draft', edit_guests=True)
 if False:
     add('40', _("Published"), 'published')

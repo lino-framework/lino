@@ -2517,8 +2517,9 @@ Please convert to Plugin method".format(mod, methname)
             else:
                 menu = main.add_menu(k, label)
             for p in self.installed_plugins:
-                meth = getattr(p, methname)
-                meth(self, profile, menu)
+                meth = getattr(p, methname, None)
+                if meth is not None:
+                    meth(self, profile, menu)
     
 
     def get_middleware_classes(self):

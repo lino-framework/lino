@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Defines models for :mod:`ml.reception`.
+Database models for :mod:`lino.modlib.reception`.
 
 Guest
 
@@ -35,9 +35,8 @@ from lino import dd, rt
 cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
 
-from ..cal.models import GuestStates, EventStates
+from lino.modlib.cal.workflows import GuestStates, EventStates
 
-#~ EventStates.add_item('30', _("Visit"), 'visit',fixed=False)
 
 add = GuestStates.add_item
 add('44', _("Waiting"), 'waiting')
@@ -90,8 +89,7 @@ def beware(sender, instance=None, **kw):
 
 
 def create_prompt_event(
-        project, partner, user, summary,
-        guest_role, now=None):
+        project, partner, user, summary, guest_role, now=None):
     """
     Create a "prompt event".
     """
@@ -217,6 +215,20 @@ Visitor leaves             X               X              X
 """
 
 
+def checkout_guest(obj, ar):
+    obj.gone_since = datetime.datetime.now()
+    if obj.busy_since is None:
+        obj.busy_since = obj.gone_since
+    if not obj.event.end_time:
+        if ar is not None:
+            ar.info("event.end_time has been set")
+        obj.event.end_time = obj.gone_since
+        obj.event.save()
+
+    obj.state = GuestStates.gone
+    obj.save()
+
+
 class CheckoutVisitor(dd.Action):
     label = _("Checkout")
     help_text = _("Visitor left the centre")
@@ -229,22 +241,10 @@ class CheckoutVisitor(dd.Action):
         obj = ar.selected_rows[0]
 
         def ok(ar2):
-            obj.gone_since = datetime.datetime.now()
-            if obj.busy_since is None:
-                obj.busy_since = obj.gone_since
-            if not obj.event.end_time:
-                ar.info("event.end_time has been set")
-                obj.event.end_time = obj.gone_since
-                obj.event.save()
-
-            obj.state = GuestStates.gone
-            obj.save()
+            checkout_guest(obj, ar)
             kw.update(refresh=True)
             ar2.success(**kw)
 
-        #~ if obj.busy_since is None:
-            #~ msg = _("%(guest)s leaves without being received.") % dict(guest=obj.partner)
-        #~ else:
         msg = _("%(guest)s leaves after meeting with %(user)s.") % dict(
             guest=obj.partner, user=obj.user)
         ar.confirm(ok, msg, _("Are you sure?"))

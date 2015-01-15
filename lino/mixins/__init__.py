@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This package contains Model mixins, some of which are heavily used
@@ -281,4 +281,3 @@ from lino.utils.mldbc.mixins import BabelNamed
 
 from lino.mixins.human import Human, Born
 
-# from lino.core.report import Report
