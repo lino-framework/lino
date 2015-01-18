@@ -424,16 +424,11 @@ class Site(object):
 
     """
 
-    #~ user_model = "users.User"
     user_model = None
-    """Most Lino application will set this to ``"users.User"`` if you use
-    `lino.modlib.users`.
-
-    Default value us `None`, meaning that this site has no user management
-    (feature used by e.g. :mod:`lino.test_apps.1`)
-
-    Set this to ``"auth.User"`` if you use `django.contrib.auth` instead of
-    `lino.modlib.users` (not tested).
+    """If :mod:`lino.modlib.users` is installed, this holds a reference to
+    the model class which represents a user of the system. Default
+    value is `None`, meaning that this application has no user
+    management.  See also :meth:`set_user_model`
 
     """
 
@@ -943,17 +938,13 @@ class Site(object):
         no_local = kwargs.pop('no_local', False)
         if not no_local:
             self.run_djangosite_local()
-        self.override_defaults(**kwargs)
+        self.override_settings(**kwargs)
         self.load_plugins()
-        #~ self.apply_languages()
         self.setup_plugins()
-        # self.logger.info("20140226 djangosite.Site.__init__() b")
-        # if len(self.logger.handlers) == 0:
-        #     raise Exception(self.logger.name)
+        self.install_settings()
+
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
-
-        assert not self.help_url.endswith('/')
 
     def run_djangosite_local(self):
         """
@@ -1048,6 +1039,24 @@ class Site(object):
                 disable_existing_loggers=True,  # Django >= 1.5
             ),
         )
+
+    def set_user_model(self, spec):
+        """This can be called during :meth:`Plugin.on_init
+        <lino.core.plugin.Plugin.on_init>` of apps which provide user
+        management (the only candidate is currently
+        :mod:`lino.modlib.users`).
+
+        """
+        if self.user_model is not None:
+            msg = "Site.user_model was already set!"
+            # Theoretically this should raise an exception. But in a
+            # transitional phase after 20150116 we just ignore it. A
+            # warning would be nice, but we cannot use the logger here
+            # since it is not yet configured.
+            if False:
+                # self.logger.warning(msg)
+                raise Exception(msg)
+        self.user_model = spec
 
     def is_abstract_model(self, module_name, model_name):
         """Return True if the named model is declared as being extended by
@@ -1228,8 +1237,6 @@ class Site(object):
         if self._startup_done:
             # self.logger.info("20140227 Lino startup already done")
             return
-
-        # self.override_defaults()  # 20140227
 
         if self._starting_up:
             # raise Exception("Startup called while still starting up.")
@@ -1767,19 +1774,16 @@ class Site(object):
 
         self.languages = tuple(new_languages)
         self.DEFAULT_LANGUAGE = self.languages[0]
-        #~ self.BABEL_LANGS = tuple([to_locale(code) for code in self.languages[1:]])
+
         self.BABEL_LANGS = tuple(self.languages[1:])
-        #~ self.AVAILABLE_LANGUAGES = self.AVAILABLE_LANGUAGES + self.BABEL_LANGS
 
         if must_set_language_code:
-            #~ self.update_settings(LANGUAGE_CODE = self.get_default_language())
             self.update_settings(LANGUAGE_CODE=self.languages[0].django_code)
-            """
-            Note: LANGUAGE_CODE is what *Django* believes to be the default language.
-            This should be some variant of English ('en' or 'en-us') 
-            if you use `django.contrib.humanize`
-            https://code.djangoproject.com/ticket/20059
-            """
+            # Note: LANGUAGE_CODE is what *Django* believes to be the
+            # default language.  This should be some variant of
+            # English ('en' or 'en-us') if you use
+            # `django.contrib.humanize`
+            # https://code.djangoproject.com/ticket/20059
 
         self.setup_languages()
 
@@ -2263,11 +2267,13 @@ given object `obj`. The dict will have one key for each
         return s
 
     def override_defaults(self, **kwargs):
-        """
-        Called internally during `__init__` method.
-        Also called from :mod:`lino.utils.djangotest`
+        self.override_settings(**kwargs)
+        self.install_settings()
 
-        """
+    def override_settings(self, **kwargs):
+        # Called internally during `__init__` method.
+        # Also called from :mod:`lino.utils.djangotest`
+
         #~ logger.info("20130404 lino.site.Site.override_defaults")
 
         for k, v in kwargs.items():
@@ -2276,6 +2282,10 @@ given object `obj`. The dict will have one key for each
             setattr(self, k, v)
 
         self.apply_languages()
+
+    def install_settings(self):
+
+        assert not self.help_url.endswith('/')
 
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
@@ -2307,7 +2317,7 @@ given object `obj`. The dict will have one key for each
             ]))
 
         tcp = []
-        if self.user_model == 'auth.User':
+        if self.user_model == 'auth.User':  # not tested
             self.update_settings(LOGIN_URL='/accounts/login/')
             self.update_settings(LOGIN_REDIRECT_URL="/")
             tcp += ['django.contrib.auth.context_processors.auth']
@@ -2520,21 +2530,19 @@ Please convert to Plugin method".format(mod, methname)
                 meth = getattr(p, methname, None)
                 if meth is not None:
                     meth(self, profile, menu)
-    
 
     def get_middleware_classes(self):
-        """
-        Yields the strings to be stored in
+        """Yields the strings to be stored in
         the :setting:`MIDDLEWARE_CLASSES` setting.
 
-        In case you don't want to use this method
-        for defining :setting:`MIDDLEWARE_CLASSES`,
-        you can simply set :setting:`MIDDLEWARE_CLASSES`
-        in your :xfile:`settings.py`
-        after the :class:`lino.site.Site` has been instantiated.
+        In case you don't want to use this method for defining
+        :setting:`MIDDLEWARE_CLASSES`, you can simply set
+        :setting:`MIDDLEWARE_CLASSES` in your :xfile:`settings.py`
+        after the :class:`Site` has been instantiated.
 
         `Django and standard HTTP authentication
         <http://stackoverflow.com/questions/152248/can-i-use-http-basic-authentication-with-django>`_
+
         """
 
         yield 'django.middleware.common.CommonMiddleware'

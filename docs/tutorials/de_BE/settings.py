@@ -3,7 +3,6 @@ from lino.projects.std.settings import *
 class Site(Site):
 
     languages = 'en de de-be'
-    user_model = None
 
     def setup_menu(self, profile, main):
         m = main.add_menu("master", "Master")

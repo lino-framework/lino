@@ -31,3 +31,53 @@ Ordering of tasks
 tasks this is not intuitive.  Now ordered ascending.  The same is true
 for all tasks lists, so in fact I just change it on
 :class:`lino.modlib.cal.models.Tasks`.
+
+Upgrade in Eupen
+================
+
+Upgrade in Eupen. Noticed that the reception.AgentsByClient
+(:ticket:`60`) doesn't yet work: find_date gets the record_id of the
+Coaching and interprets it as the id of the partner.
+
+
+
+"am heutigen Tage"
+==================
+
+The text of presence certificates
+(:xfile:`presence_certificate.body.html`) had a bug: it said always
+"was present today" ("am heutigen Tage") even when you issued it on a
+presence at another date.
+
+
+Neither VISUAL nor EDITOR environment variable is set!
+======================================================
+
+Typing :cmd:`fab blog` failed when neither `VISUAL` nor `EDITOR`
+environment variable were set. As :ref:`mma` describes in `his blog
+<http://iamdevops.com/blog/2015/0114.html>`_.
+
+This is the time to speak about another problem.  Actually, :cmd:`fab
+blog` should use neither `VISUAL` nor `EDITOR`.  Because these
+variables are expected for use cases when the calling program **waits
+until the editor terminates**. Like `git commit`, `git merge` and `git
+rebase -i`. 
+
+But when we invoke :cmd:`fab blog`, we want to **not wait** for the
+editor to terminate.  We want it to launch the editor with our blog
+entry and then we want to return back to the command line.
+
+Since I never seriously used `git commit`, `git merge` and `git rebase
+-i`, I had my `EDITOR` set to `emacsclient --no-wait` and was happy.
+
+But see :blogref:`20150105` for example.
+
+That's why I had 
+
+
+
+		Don't wait for the server to return
+
+
+
+I changed `get_visual_editor`

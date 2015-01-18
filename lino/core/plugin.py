@@ -135,7 +135,7 @@ class Plugin(object):
         """
         # site.logger.info("20140226 Plugin.__init__() %s",
         #                  app_label)
-        if site._startup_done:
+        if site._startup_done:  # djangotest.TestCase.__call__
             raise Exception(20140227)
         self.site = site
         self.app_name = app_name
@@ -144,6 +144,7 @@ class Plugin(object):
         self.needed_by = needed_by
         if self.verbose_name is None:
             self.verbose_name = app_label.title()
+        self.on_init()
         # import pdb; pdb.set_trace()
         # super(Plugin, self).__init__()
 
@@ -162,6 +163,14 @@ class Plugin(object):
 
     def get_used_libs(self, html=None):
         return []
+
+    def on_init(self):
+        """This will be called when the Plugin is being instantiated (i.e.
+        even before the :class:`Site` instantiation has finished. User by
+        :mod:`lino.modlib.users` to set :attr:`user_model`.
+
+        """
+        pass
 
     def on_site_startup(self, site):
         """This will be called exactly once, when models are ready.

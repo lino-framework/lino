@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -20,7 +20,7 @@ from django.utils import translation
 
 from lino.utils.djangotest import RemoteAuthTestCase
 
-from lino import dd, rt, mixins
+from lino import dd, rt
 
 from lino.utils.instantiator import create_and_get
 
@@ -36,8 +36,12 @@ class QuickTest(RemoteAuthTestCase):
         """
         Tests some basic funtionality.
         """
-        #~ self.assertEqual(settings.MIDDLEWARE_CLASSES,1)
-        self.assertEqual(1+1, 2)
+        self.assertEqual(
+            settings.MIDDLEWARE_CLASSES, (
+                'django.middleware.common.CommonMiddleware',
+                'django.middleware.locale.LocaleMiddleware',
+                'lino.core.auth.RemoteUserMiddleware',
+                'lino.utils.ajax.AjaxExceptionResponse'))
 
         Person = dd.resolve_model("contacts.Person")
 

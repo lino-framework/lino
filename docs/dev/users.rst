@@ -65,7 +65,6 @@ Suggested readings related to the topic:
 Passwords
 =========
 
-
 Note that the `password` field of a newly created user is empty,
 and the account therefore cannot be used to log in.  If you create
 a new user manually using the web interface, you must click their

@@ -9,7 +9,6 @@ class Site(Site):
     title = "Lino Mini 2"
 
     project_model = 'projects.Project'
-    user_model = "users.User"
 
     #~ languages = ('de', 'fr')
     languages = 'en et'

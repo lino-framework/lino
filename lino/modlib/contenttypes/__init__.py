@@ -1,8 +1,8 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Extends `django.contrib.contenttypes`.
+"""Extends `django.contrib.contenttypes`.  This module must be installed if your models contain GenericForeignKey
+fields or inherit from the :class:`Controllable <lino.modlib.contenttypes.mixins.Controllable>` mixin.
 
 .. autosummary::
    :toctree:

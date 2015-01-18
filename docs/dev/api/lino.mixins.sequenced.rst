@@ -5,6 +5,12 @@ lino.mixins.sequenced
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      navinfo
+   
    
 
    

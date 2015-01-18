@@ -26,7 +26,6 @@ class Site(Site):
     languages = 'en de fr'
 
     project_model = 'tickets.Project'
-    user_model = 'users.User'
 
     sidebar_width = 3
 

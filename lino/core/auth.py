@@ -152,10 +152,11 @@ class AuthMiddleWareBase(object):
 
 class RemoteUserMiddleware(AuthMiddleWareBase):
 
-    """Middleware automatically installed by
-    :meth:`get_middleware_classes
-    <lino.site.Site.get_middleware_classes>` when both
-    :setting:`remote_user_header` and :setting:`user_model` are not
+    """Middleware automatically installed by :meth:`get_middleware_classes
+    <lino.core.site_def.Site.get_middleware_classes>` when both
+    :attr:`remote_user_header
+    <lino.core.site_def.Site.remote_user_header>` and
+    :attr:`user_model <lino.core.site_def.Site.user_model>` are not
     empty.
     
     This does the same as

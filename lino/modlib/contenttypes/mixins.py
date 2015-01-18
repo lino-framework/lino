@@ -17,17 +17,16 @@ class Controllable(dd.Model):
 
     """Mixin for models that are "controllable" by another database object.
 
-    Defines three fields `owned_type`, `owned_id` and `owned`.
-    And a class attribute :attr:`owner_label`.
+    Defines three fields `owned_type`, `owned_id` and `owned`. And a class
+    attribute :attr:`owner_label`.
 
     For example in :mod:`lino.modlibs.cal`, the owner of a Task or Event
     is some other database object that caused the task's or event's
     creation.
 
     Or in :mod:`lino.modlib.sales` and :mod:`lino.modlib.purchases`,
-    an invoice may cause one or several Tasks
-    to be automatically generated when a certain payment mode
-    is specified.
+    an invoice may cause one or several Tasks to be automatically generated
+    when a certain payment mode is specified.
 
     Controllable objects are "governed" or "controlled" by their
     controller: If the controller gets modified, it may decide to
@@ -40,12 +39,9 @@ class Controllable(dd.Model):
     """
     # Translators: will also be concatenated with '(type)' '(object)'
     owner_label = _('Controlled by')
-    """
-    The labels (`verbose_name`) of the fields
-    `owned_type`, `owned_id` and `owned`
-    are derived from this attribute which
-    may be overridden by subclasses.
-    """
+    """The labels (`verbose_name`) of the fields `owned_type`, `owned_id`
+    and `owned` are derived from this attribute which may be overridden by
+    subclasses. """
 
     controller_is_optional = True
     """Whether the controller is optional (i.e. whether the field `owner`

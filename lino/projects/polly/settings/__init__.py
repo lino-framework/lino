@@ -31,8 +31,6 @@ class Site(Site):
 
     languages = 'en de et'
 
-    user_model = 'users.User'
-
     def setup_choicelists(self):
         """
         Defines application-specific default user profiles.

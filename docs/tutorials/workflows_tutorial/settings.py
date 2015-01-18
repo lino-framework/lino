@@ -6,7 +6,6 @@ from lino.projects.std.settings import *
 
 class Site(Site):
     
-    user_model = 'users.User'
     demo_fixtures = "std demo demo2"
     languages = 'en'
     

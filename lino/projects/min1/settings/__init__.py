@@ -7,8 +7,6 @@ from lino.projects.std.settings import *
 class Site(Site):
     title = "Lino Mini 1"
 
-    user_model = 'users.User'
-
     languages = "en de"
 
     # default_user = 'root'

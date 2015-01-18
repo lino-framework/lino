@@ -36,7 +36,7 @@ not modify the database.
 
 
 It took me some time to understand how easy it actually is: 
-I just wrote a module `lino.projects.presto.test_settings`, 
+I just wrote a module `lino.projects.presto.settings.doctest`, 
 then wrote the following code snippet directly into my blog entry:
 
 >>> import os

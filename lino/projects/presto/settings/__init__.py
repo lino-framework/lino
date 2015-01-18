@@ -15,7 +15,6 @@ class Site(Site):
     languages = 'en de fr et'
 
     project_model = 'tickets.Project'
-    user_model = 'users.User'
 
     # p = None
     # override_modlib_models = {

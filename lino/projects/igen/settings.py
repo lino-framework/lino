@@ -19,10 +19,6 @@ class Site(Site):
     domain = "igen-demo.saffre-rumma.net"
     help_url = "http://lino.saffre-rumma.net/igen/index.html"
 
-    #~ person_model = "contacts.Person"
-    #~ company_model = "contacts.Company"
-    user_model = "users.User"
-
     #~ residence_permit_upload_type = None
     #~ work_permit_upload_type = None
     #~ driving_licence_upload_type = None

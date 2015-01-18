@@ -26,7 +26,6 @@ class Site(Site):
     #~ project_model = 'courses.Pupil'
     project_model = 'courses.Course'
     #~ project_model = None
-    user_model = 'users.User'
 
     languages = ('en', 'de', 'fr')
 

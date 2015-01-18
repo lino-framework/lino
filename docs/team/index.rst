@@ -2,8 +2,8 @@
 Teamwork guide
 ==============
 
-This section describes how the Lino developers team members
-collaborate.
+This section describes how the Lino developers team members collaborate.
+
 
 .. toctree::
    :maxdepth: 2
@@ -14,3 +14,15 @@ collaborate.
    analyst
    mentoring
    lad
+
+
+Becoming a Lino developer
+=========================
+
+.. toctree::
+   :maxdepth: 1
+
+   /dev/prerequisites
+   /dev/learning
+
+

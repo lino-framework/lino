@@ -171,7 +171,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
     def __call__(self, *args, **kw):
         """
         Does some initialization and sends the 
-        :attr:`testcase_setup <lino.utils.testcase_setup>` 
+3        :attr:`testcase_setup <lino.utils.testcase_setup>` 
         signal, then calls super.
         """
         if self.override_djangosite_settings:

@@ -25,7 +25,6 @@ class Site(Site):
     verbose_name = "Lino Docs"
 
     project_model = 'contacts.Person'
-    user_model = 'users.User'
 
     # languages = 'en de fr'
     languages = 'en de fr et nl pt-br es'

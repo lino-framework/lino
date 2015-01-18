@@ -20,6 +20,8 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+- No more need to set `user_model` :blogref:`20150116`.
+
 - New way to define modular menus. :blogref:`20150114`.
 
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>` did not

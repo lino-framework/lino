@@ -43,22 +43,25 @@ Getting started
   data. Writing test cases. Menu structure and main page. Form layouts.
 
 
-
-Becoming a Lino developer
-=========================
-
-.. toctree::
-   :maxdepth: 1
-
-   prerequisites
-   learning
-
-
 Getting acquaintained
 =====================
 
+-  :doc:`application` : An app is not an application. Introducing the :class:`Site` class.
+-  :doc:`/tutorials/tables/index` :
+-  :doc:`menu` :
+-  :doc:`choicelists` :
+-  :doc:`actors` :
+-  :doc:`/tutorials/letsmti/index` :
+-  :doc:`/tutorials/layouts` :
+-  :doc:`/tutorials/vtables/index` :
+-  :doc:`actions` :
+-  :doc:`/tutorials/actions/index` :
+-  :doc:`/tutorials/mldbc/index` :
+-  :doc:`/tutorials/human/index` :
+
 .. toctree::
    :maxdepth: 1
+   :hidden:
 
    application
    /tutorials/tables/index

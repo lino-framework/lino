@@ -22,7 +22,6 @@ lino.modlib.cal.models_task
       TasksByController
       TasksByProject
       TasksByUser
-      unused_MyTasksToDo
    
    
 

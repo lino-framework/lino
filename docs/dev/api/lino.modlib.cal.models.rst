@@ -111,7 +111,6 @@ lino.modlib.cal.models
       UserAuthored
       UserDetailMixin
       Weekdays
-      unused_MyTasksToDo
    
    
 
