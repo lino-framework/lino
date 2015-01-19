@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -26,11 +26,8 @@ from lino.core import actors
 from lino.core import frames
 
 
-from lino.core.dbutils import full_model_name
-from lino.core.dbutils import resolve_model, resolve_field, get_field, UnresolvedModel
+from lino.core.dbutils import resolve_model, get_field, UnresolvedModel
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
-
-from lino.utils.xmlgen.html import E
 
 
 def unused_parse_js_date(s, name):
@@ -625,11 +622,6 @@ class Table(AbstractTable):
             return True
         return self.abstract
 
-    #~ @classmethod
-    #~ def setup_permissions(self):
-        #~ if self.model is not None:
-        #~ super(Table,self).setup_permissions()
-
     @classmethod
     def disabled_fields(cls, obj, ar):
         return obj.disabled_fields(ar)
@@ -682,20 +674,6 @@ class Table(AbstractTable):
                 return de
         return super(Table, self).get_data_elem(name)
 
-    #~ @classmethod
-    #~ def get_detail(self):
-        #~ return self.model._lino_detail
-    #~ @classmethod
-    #~ def get_title(self,ar):
-        #~ """
-        #~ See also :meth:`lino.core.actors.Table.get_title`
-        #~ """
-        # ~ # NOTE: similar code in tables
-        #~ title = self.get_title_base(ar)
-        #~ tags = list(self.get_title_tags(ar))
-        #~ if len(tags):
-            #~ title += " (%s)" % (', '.join(tags))
-        #~ return title
     @classmethod
     def get_title_base(self, ar):
         """

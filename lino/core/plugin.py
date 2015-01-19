@@ -185,8 +185,10 @@ class Plugin(object):
                 return p.__module__
         raise Exception("20140825 extends_from failed")
 
-    def before_analyze(self, site):
-        """This is called when the kernel is being instantiated.
+    def before_analyze(self):
+        """This is called during startup, when all models modules have been
+        imported, and before Lino starts to analyze them.
+
         """
         pass
 

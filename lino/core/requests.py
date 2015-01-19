@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 An action request is when a given user asks to run a given action of a
@@ -36,7 +36,6 @@ from lino.utils import isiterable
 
 from lino.core import constants as ext_requests
 
-from lino.core.dbutils import resolve_app
 from lino.core.dbutils import navinfo
 from lino.core.boundaction import BoundAction
 
@@ -285,8 +284,6 @@ class BaseRequest(object):
         should simply get updated to the given record. Otherwise open a
         new detail window.
 
-
-
         """
         js = self.instance_handler(obj)
         kw.update(eval_js=js)
@@ -410,13 +407,6 @@ class BaseRequest(object):
         """
         return thing.run_from_session(self, *args, **kw)
 
-    #~ def set_language(self,*args):
-        #~ set_language(*args)
-
-    # def show_slaves(self, master_instance, *args, **kwargs):
-    #     for spec in args:
-    #         self.show(spec, master_instance, **kwargs)
-
     def story2html(self, story, *args, **kw):
         """
         Convert a stream of story items into a stream of HTML elements.
@@ -533,11 +523,19 @@ class BaseRequest(object):
         return self.renderer.row_action_button(
             obj, None, a, *args, **kw)
 
+    def row_action_button_ar(self, obj, *args, **kw):
+        """Return an HTML element with a button (or a button-like href) which,
+        when clicked, will run this action request on the given
+        database object. Does not spawn yet another request.
+
+        """
+        return self.renderer.row_action_button_ar(obj, self, *args, **kw)
+
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button (or a button-like href) which,
-        when clicked, will run the given instance action ``ai``.
-        ``ai`` must be an instance of :class:`InstanceAction
-        <lino.core.actions.InstanceAction>`.
+        when clicked, will run the given :class:`InstanceAction
+        <lino.core.actions.InstanceAction>` ``ai``.
+
         """
         # logger.info("20141106 %s", ai.instance)
         return self.renderer.row_action_button(
@@ -862,8 +860,6 @@ class ActionRequest(ActorRequest):
     def __init__(self, actor=None,
                  request=None, action=None, renderer=None,
                  rqdata=None,
-                 param_values=None,
-                 action_param_values=None,
                  **kw):
         """
         An ActionRequest is instantiated from different shortcut methods:
@@ -872,13 +868,32 @@ class ActionRequest(ActorRequest):
         - :meth:`lino.core.actions.Action.request`
         
         """
-        #~ ActionRequest.__init__(self,ui,action)
         self.actor = actor
         self.rqdata = rqdata
         self.bound_action = action or actor.default_action
-        action = self.bound_action.action
         BaseRequest.__init__(self, request=request, renderer=renderer, **kw)
         self.ah = actor.get_request_handle(self)
+
+    def setup(self,
+              known_values=None,
+              param_values=None,
+              action_param_values=None,
+              **kw):
+        BaseRequest.setup(self, **kw)
+        #~ 20120111
+        #~ self.known_values = known_values or self.report.known_values
+        #~ if self.report.known_values:
+        #~ d = dict(self.report.known_values)
+        kv = dict()
+        for k, v in self.actor.known_values.items():
+            kv.setdefault(k, v)
+        if known_values:
+            kv.update(known_values)
+        self.known_values = kv
+
+        action = self.bound_action.action
+        request = self.request
+
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
 
@@ -898,10 +913,10 @@ class ActionRequest(ActorRequest):
                 if k in pv:
                     pv[k] = v
 
-            # New since 20120914.  MyClientsByGroup has a known group,
-            # this must also appear as `group` parameter value.  Lino
-            # now understands tables where the master_key is also a
-            # parameter.
+            # New since 20120914.  MyClientsByGroup has a `group` as
+            # master, this must also appear as `group` parameter
+            # value.  Lino now understands tables where the master_key
+            # is also a parameter.
 
             if self.actor.master_key is not None:
                 if self.actor.master_key in pv:
@@ -910,14 +925,15 @@ class ActionRequest(ActorRequest):
             if param_values is None:
                 if request is not None:
                     ps = self.actor.params_layout.params_store
-                    pv.update(ps.parse_params(request))
+                    if ps is not None:
+                        pv.update(ps.parse_params(request))
             else:
                 for k in param_values.keys():
                     if not k in pv:
                         raise Exception(
                             "Invalid key '%s' in param_values of %s "
                             "request (possible keys are %s)" % (
-                                k, actor, pv.keys()))
+                                k, self.actor, pv.keys()))
                 pv.update(param_values)
 
             self.param_values = AttrDict(**pv)
@@ -927,37 +943,17 @@ class ActionRequest(ActorRequest):
             if request is not None:
                 apv.update(
                     action.params_layout.params_store.parse_params(request))
-            #~ logger.info("20130122 action_param_defaults() returned %s",apv)
             if action_param_values is not None:
                 for k in action_param_values.keys():
                     if not k in apv:
                         raise Exception(
                             "Invalid key '%s' in action_param_values "
                             "of %s request (possible keys are %s)" %
-                            (k, actor, apv.keys()))
+                            (k, self.actor, apv.keys()))
                 apv.update(action_param_values)
             self.action_param_values = AttrDict(**apv)
 
         self.bound_action.setup_action_request(self)
-        # if str(self.actor).startswith('uploads.'):
-        #     logger.info("20140503 %s --> edit_mode is %s",
-        #                 self, self.edit_mode)
-
-    def setup(self,
-              #~ param_values={},
-              known_values=None,
-              **kw):
-        BaseRequest.setup(self, **kw)
-        #~ 20120111
-        #~ self.known_values = known_values or self.report.known_values
-        #~ if self.report.known_values:
-        #~ d = dict(self.report.known_values)
-        kv = dict()
-        for k, v in self.actor.known_values.items():
-            kv.setdefault(k, v)
-        if known_values:
-            kv.update(known_values)
-        self.known_values = kv
 
     def get_data_iterator(self):
         raise NotImplementedError

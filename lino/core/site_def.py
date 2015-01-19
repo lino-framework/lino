@@ -2197,7 +2197,10 @@ given object `obj`. The dict will have one key for each
         #~ return getattr(obj,attrname,*args)
 
     def diagnostic_report_rst(self, *args):
+        """Returns a string with a diagnostic report about this
+site. :manage:`diag` is a command-line shortcut to this.
 
+        """
         s = ''
         s += rstgen.header(1, "Plugins")
         for n, kp in enumerate(self.plugins.items()):

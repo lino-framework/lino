@@ -1,6 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
+Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
+"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -178,7 +181,7 @@ class HtmlRenderer(object):
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
-    def href_to_request(self, sar, tar, text=None, **kw):
+    def href_to_request(self, sar, tar, text=None, **ignored):
         return '[?!]'
         
     def window_action_button(
@@ -200,8 +203,10 @@ class HtmlRenderer(object):
 
 
 class TextRenderer(HtmlRenderer):
+    """The renderer used when rendering to .rst files and console output.
 
-    "The renderer used when rendering to .rst files and console output."
+    """
+
     user = None
 
     def __init__(self, *args, **kw):
@@ -217,10 +222,10 @@ class TextRenderer(HtmlRenderer):
     def get_request_url(self, ar, *args, **kw):
         return None
 
-    def href_to_request(self, sar, tar, text=None):
+    def href_to_request(self, sar, tar, text=None, **ignored):
         if text is None:
-            text = '#'
-        return E.i(*text)
+            text = '??'
+        return "**{0}**".format(text)
 
     def show_request(self, ar, *args, **kw):
         """Prints a string to stdout representing this request in

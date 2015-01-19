@@ -12,7 +12,6 @@ lino.core.requests
       isiterable
       navinfo
       obj2unicode
-      resolve_app
    
    
 

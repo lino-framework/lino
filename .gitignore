@@ -19,12 +19,11 @@ lino/sandbox/*/media
 */test.db
 docs/media
 media
-docs/*/appdocs
 docs/dl/*
-docs/_api
 lino.egg-info
 .build
 htmlcov
 warnings_linkcheck.txt
 .DS_Store
 .idea
+docs/api/lino.*

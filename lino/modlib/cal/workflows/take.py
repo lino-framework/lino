@@ -32,7 +32,7 @@ class TakeEvent(dd.Action):
     Basically anybody can take any event, even if it is not assigned
     to them.
 
-    .. |flag_green| image:: ../../../lino/media/extjs/images/mjames/flag_green.png
+    .. |flag_green| image:: ../../lino/media/extjs/images/mjames/flag_green.png
   
     Represented by a green flag (|flag_green|) button.
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the classes `AbstractTable` and :class:`VirtualTable`.
@@ -24,20 +24,14 @@ from lino.core import actors
 from lino.core import actions
 from lino.core import fields
 from lino.core import signals
-
-
-from .tablerequest import TableRequest
-
+from lino.core.tablerequest import TableRequest
 from lino.core.utils import Handle
-
 from lino.utils.xmlgen.html import E
-# from lino.utils.appy_pod import PrintTableAction, PortraitPrintTableAction
+from lino.utils.xmlgen.html import RstTable
 
 
 class InvalidRequest(Exception):
     pass
-
-from lino.utils.xmlgen.html import RstTable
 
 
 if False:  # 20130710
@@ -647,6 +641,8 @@ class AbstractTable(actors.Actor):
         for row in ar.sliced_data_iterator:
             recno += 1
             rows.append([x for x in ar.row2text(fields, row, sums)])
+        if len(rows) == 0:
+            return "\n{0}\n".format(unicode(ar.no_data_text))
 
         if not cls.hide_sums:
             has_sum = False

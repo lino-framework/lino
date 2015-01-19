@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2014 Luc Saffre
+ Copyright 2009-2015 Luc Saffre
  License: BSD (see file COPYING for details)
 */
 
@@ -2615,10 +2615,18 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     // function on_success() { self.get_containing_window().close(); };
     // see 20131004 and 20140430
     var url = '{{settings.SITE.build_admin_url("api")}}';
-    if (panel) 
-        url += panel.ls_url;
-    else 
+
+    // 20150119 : The OK button on AgentsByClient.create_visit went to
+    // /api/pcsw/Clients/ instead of /api/pcsw/Coachings/
+    // if (panel) 
+    //     url += panel.ls_url;
+    // else 
+    //     url += this.ls_url;
+
+    if (this.ls_url) 
         url += this.ls_url;
+    else 
+        url += panel.ls_url;
     url += '/' + pk;
     // prepare possible recursive call
     var fn = function(panel, btn, step) {

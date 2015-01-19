@@ -1,4 +1,4 @@
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -23,16 +23,31 @@ from lino import ad, _
 
 
 class Plugin(ad.Plugin):
+    """Extends :class:`lino.core.plugin.Plugin`, adding
+:attr:`hide_region` and a default menu structure.
 
+    """
     verbose_name = _("Contacts")
 
     ## settings
     hide_region = False
+    """Whether to hide the `region` field in postal addresses.  Set this
+    to `True` if you live in a country like Belgium.  Belgium is
+    --despite their constant language disputes-- obviously a very
+    united country since they don't need a `region` field when
+    entering a postal address.  In Belgium, when you write a letter,
+    you just say the zip code and name of the city.  In many other
+    countries there is a mandatory intermediate field.
+
+    """
+
     region_label = _('Region')
+    """The `verbose_name` of the `region` field.
+    """
 
-    def before_analyze(self, site):
-        contacts = site.modules.contacts
-
+    def before_analyze(self):
+        super(Plugin, self).before_analyze()
+        contacts = self.site.modules.contacts
         if self.hide_region:
             for m in (contacts.Person, contacts.Company):
                 m.hide_elements('region')

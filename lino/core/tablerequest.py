@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
@@ -21,7 +21,6 @@ from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
-
 
 from .requests import ActionRequest
 
@@ -265,9 +264,7 @@ class TableRequest(ActionRequest):
               title=None,
               master_instance=None,
               master_id=None,
-              #~ layout=None,
               filter=None,
-              #~ create_rows=None,
               gridfilters=None,
               exclude=None,
               extra=None,
@@ -480,14 +477,9 @@ class TableRequest(ActionRequest):
         return fields, headers, widths
 
     def row2html(self, recno, columns, row, sums, **cellattrs):
-        #~ logger.info("20130123 row2html %s",fields)
-        #~ for i,fld in enumerate(self.list_fields):
         has_numeric_value = False
         cells = []
         for i, col in enumerate(columns):
-            #~ if fld.name == 'person__gsm':
-            #~ logger.info("20120406 Store.row2list %s -> %s", fld, fld.field)
-            #~ import pdb; pdb.set_trace()
             v = col.field._lino_atomizer.full_value_from_object(row, self)
             if v is None:
                 td = E.td(**cellattrs)
@@ -495,10 +487,6 @@ class TableRequest(ActionRequest):
                 nv = col.value2num(v)
                 if nv != 0:
                     sums[i] += nv
-                    #~ try:
-                        #~ sums[i] += nv
-                    #~ except TypeError as e:
-                        #~ raise Exception("Cannot compute %r + %r" % (sums[i],nv))
                     has_numeric_value = True
                 td = col.value2html(self, v, **cellattrs)
             col.apply_cell_format(td)
@@ -533,13 +521,8 @@ class TableRequest(ActionRequest):
                     yield fld.format_value(self, v)
 
     def sums2html(self, columns, sums, **cellattrs):
-        #~ return [fld.format_sum(self,sums,i)
-          #~ for i,fld in enumerate(fields)]
         return [fld.sum2html(self, sums, i, **cellattrs)
                 for i, fld in enumerate(columns)]
-
-        #~ return [fld.sum2html(self.ui,sums[i])
-          #~ for i,fld in enumerate(fields)]
 
     def get_title(self):
         if self.title is not None:
@@ -574,10 +557,8 @@ class TableRequest(ActionRequest):
         return kw
 
     def __repr__(self):
-        #~ kw = dict(actor=str(self.actor))
         kw = dict()
         if self.master_instance is not None:
-            #~ kw.update(master_instance=self.master_instance.pk)
             kw.update(master_instance=obj2str(self.master_instance))
         if self.filter is not None:
             kw.update(filter=repr(self.filter))
@@ -586,8 +567,6 @@ class TableRequest(ActionRequest):
         u = self.get_user()
         if u is not None:
             kw.update(user=u.username)
-        #~ return self.__class__.__name__ + '(%s)' % kw
-        #~ return self.__class__.__name__ + ' '+str(self.bound_action)+'(%s)' % kw
         return "<%s %s(%s)>" % (
             self.__class__.__name__, self.bound_action.full_name(), kw)
 

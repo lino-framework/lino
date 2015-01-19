@@ -11,7 +11,7 @@ See also:
 - :doc:`/tutorials/actions/index`
 
 
-.. |disk| image:: ../../../lino/media/extjs/images/mjames/disk.png
+.. |disk| image:: ../../lino/media/extjs/images/mjames/disk.png
 
 
 """

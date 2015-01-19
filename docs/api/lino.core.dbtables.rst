@@ -14,7 +14,6 @@ lino.core.dbtables
       base_attrs
       column_choices
       discover
-      full_model_name
       get_field
       has_fk
       is_candidate
@@ -23,7 +22,6 @@ lino.core.dbtables
       rc_name
       register_frame
       register_report
-      resolve_field
       resolve_model
       table_factory
       unused_parse_js_date

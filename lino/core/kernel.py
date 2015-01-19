@@ -330,7 +330,7 @@ class Kernel(object):
 
         for p in self.installed_plugins:
             if isinstance(p, Plugin):
-                p.before_analyze(self)
+                p.before_analyze()
 
         dd.pre_analyze.send(self, models_list=models_list)
         # MergeActions are defined in pre_analyze.

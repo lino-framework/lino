@@ -131,8 +131,8 @@ add('18', _("Foreigner card F+"), "foreigner_f_plus")
 
 
 class BaseBeIdReadCardAction(dd.Action):
-    """
-    Common base for all "Read eID card" actions.
+    """Common base for all "Read eID card" actions
+    (:class:FindByBeIdAction and :class:`BeIdReadCardAction`).
 
     """
     label = _("Read eID card")
@@ -296,12 +296,7 @@ class BaseBeIdReadCardAction(dd.Action):
 :meth:`ar.goto_instance <rt.ActionRequest.goto_instance>`.
 
         """
-        # kw.update(goto_record_id=obj.pk)
         ar.goto_instance(obj)
-        #~ ba = self.defining_actor.detail_action
-        #~ kw.update(eval_js=ar.row_action_handler(ba,obj,ar))
-        #~ kw.update(eval_js=ar.instance_handler(obj))
-        #~ kw.update(refresh=True)
         if msg:
             return ar.success(msg, _("Success"), **kw)
         return ar.success(msg, **kw)
@@ -319,8 +314,11 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
 
     """
 
+    help_text = _("Find or create client from eID card")
+    icon_name = 'vcard_add'
     select_rows = False
-    show_in_bbar = False
+    # show_in_bbar = False
+    sort_index = 91
 
     def run_from_ui(self, ar, **kw):
         attrs = self.card2client(ar.request.POST)
@@ -361,16 +359,16 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
                     if config.read_only_simulate:
                         msg = simulate_wrap(msg)
                         return ar2.warning(msg)
-                    else:
-                        obj.full_clean()
-                        obj.save()
-                        objects, diffs = obj.get_beid_diffs(attrs)
-                        for o in objects:
-                            o.full_clean()
-                            o.save()
-                        #~ changes.log_create(ar.request,obj)
-                        dd.on_ui_created.send(obj, request=ar2.request)
-                        return self.goto_client_response(ar2, obj, msg)
+                    obj.full_clean()
+                    obj.save()
+                    objects, diffs = obj.get_beid_diffs(attrs)
+                    for o in objects:
+                        o.full_clean()
+                        o.save()
+                    #~ changes.log_create(ar.request,obj)
+                    dd.on_ui_created.send(obj, request=ar2.request)
+                    msg = _("New client %s has been created") % obj
+                    return self.goto_client_response(ar2, obj, msg)
                 msg = _("Create new client %s : Are you sure?") % full_name
                 msg = simulate_wrap(msg)
                 return ar.confirm(yes, msg)
@@ -406,6 +404,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     """
     sort_index = 90
     icon_name = 'vcard'
+    help_text = _("Update of this client from eID card")
 
     def run_from_ui(self, ar, **kw):
         attrs = self.card2client(ar.request.POST)
@@ -464,7 +463,7 @@ class BeIdCardHolder(dd.Model):
     card_issuer = models.CharField(max_length=50,
                                    blank=True,  # null=True,
                                    verbose_name=_("eID card issuer"))
-    "The administration who issued this ID card. Imported from TIM."
+    "The administration who issued this ID card."
 
     read_beid = BeIdReadCardAction()
     find_by_beid = FindByBeIdAction()

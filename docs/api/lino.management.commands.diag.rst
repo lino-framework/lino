@@ -20,10 +20,4 @@ lino.management.commands.diag
 
    
    
-   .. rubric:: Exceptions
-
-   .. autosummary::
-   
-      CommandError
-   
    

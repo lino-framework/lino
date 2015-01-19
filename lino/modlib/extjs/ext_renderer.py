@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -232,10 +232,23 @@ class ExtRenderer(HtmlRenderer):
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
         """
-        #~ label = unicode(label or ba.get_button_label())
         label = label or ba.action.label
         uri = 'javascript:' + self.action_call_on_instance(
             obj, ar, ba, request_kwargs)
+        return self.href_button_action(
+            ba, uri, label, title or ba.action.help_text, **kw)
+
+    def row_action_button_ar(
+            self, obj, ar, label=None, title=None, request_kwargs={},
+            **kw):
+        """
+        Return a HTML fragment that displays a button-like link
+        which runs the bound action `ba` when clicked.
+        """
+        ba = ar.bound_action
+        label = label or ba.action.label
+        uri = 'javascript:' + self.action_call_on_instance(
+            obj, ar, ba)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
@@ -359,15 +372,19 @@ class ExtRenderer(HtmlRenderer):
 
         """
         if ar is None:
-            rp = None
+            # rp = None
             sar = ba.request(**request_kwargs)
         else:
-            rp = ar.requesting_panel
+            # rp = ar.requesting_panel
             sar = ar.spawn(ba, **request_kwargs)
+        return self.request_call_on_instance(sar, obj, **st)
 
+    def request_call_on_instance(self, ar, obj, **st):
+        rp = ar.requesting_panel
+        ba = ar.bound_action
         if ba.action.opens_a_window or (
                 ba.action.parameters and not ba.action.no_params_window):
-            st.update(self.get_action_status(sar, ba, obj))
+            st.update(self.get_action_status(ar, ba, obj))
             st.update(record_id=obj.pk)
             return "Lino.%s.run(%s,%s)" % (
                 ba.full_name(),
@@ -379,7 +396,7 @@ class ExtRenderer(HtmlRenderer):
 
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         name = ba.action.full_name(ba.actor)
-        params = self.get_action_params(sar, ba, obj)
+        params = self.get_action_params(ar, ba, obj)
         return "Lino.%s(%s,%s,%s)" % (
             name, py2js(rp), py2js(obj.pk), py2js(params))
 
@@ -453,14 +470,6 @@ class ExtRenderer(HtmlRenderer):
         uri = 'javascript:' + self.request_handler(tar)
         return self.href_button_action(
             tar.bound_action, uri, text or tar.get_title(), **kw)
-
-    def unused_action_href_http(self, a, label=None, **params):
-        """
-        Return a HTML chunk for a button that will execute
-        this action using a *HTTP* link to this action.
-        """
-        label = cgi.escape(force_unicode(label or a.get_button_label()))
-        return '[<a href="%s">%s</a>]' % (self.action_url_http(a, **params), label)
 
     def build_admin_url(self, *args, **kw):
         return self.plugin.build_plain_url(*args, **kw)

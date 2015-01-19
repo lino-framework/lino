@@ -9,4 +9,4 @@ Documentation
    Administrators </admin/index>
    Users </user/index>
    /help/index
-   /dev/api/index
+   /api/index

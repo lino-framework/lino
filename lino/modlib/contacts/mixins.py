@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Model mixins for :mod:`lino.modlib.contacts`.
+"""
 
 from django.db import models
 from django.conf import settings
@@ -11,6 +13,22 @@ from lino.utils.xmlgen.html import E, lines2p
 
 
 class ContactRelated(dd.Model):
+    """
+    Model mixin for things that relate to a *company*, potentially
+    represented by a *contact person* having a given *role*.
+
+    Adds 3 fields `company`, `contact_person` and `contact_role`.
+
+    .. attribute:: company
+
+    Pointer to :class:`Company`.
+
+    .. attribute:: contact_person
+
+    Pointer to :class:`Person`.
+
+
+    """
 
     class Meta:
         abstract = True
@@ -32,6 +50,7 @@ class ContactRelated(dd.Model):
         related_name="%(app_label)s_%(class)s_set_by_contact_role",
         blank=True, null=True,
         verbose_name=_("represented as"))
+    """Pointer to :class:`RoleType`."""
 
     @dd.chooser()
     def contact_person_choices(cls, company):
