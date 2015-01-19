@@ -25,8 +25,6 @@ class Site(Site):
 
     version = '0.0.1'
 
-    user_model = 'users.User'
-    
     demo_fixtures = ['std', 'demo', 'demo2', 'linotickets']
 
     def get_installed_apps(self):
