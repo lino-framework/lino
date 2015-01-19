@@ -1,8 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :mod:`lino.modlib.contacts` package provides models and
+"""The :mod:`lino.modlib.contacts` package provides models and
 functionality for managing contacts.
 
 .. autosummary::

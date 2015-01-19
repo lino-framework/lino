@@ -1,20 +1,22 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
 from __future__ import print_function
 
-"""
-The :xfile:`models.py` module for the :mod:`lino.modlib.courses` app.
+"""Database models for :mod:`lino.modlib.courses`.
 
 Models:
 
-Slot
-Topic
-Line
-Course
-Enrolment
+- A :class:`Course` is a series of scheduled calendar events where a
+  given teacher teaches a given group of participants about a given
+  topic.
+
+- :class:`Line` 
+- :class:`Enrolment` 
+- :class:`Slot`
+- :class:`Topic`
 
 """
 
@@ -40,10 +42,10 @@ from lino.utils.xmlgen.html import E
 from lino.modlib.contacts.utils import parse_name
 from lino.modlib.users.mixins import UserAuthored
 
+from .choicelists import EnrolmentStates, CourseStates
 
 config = settings.SITE.plugins.courses
 
-users = dd.resolve_app('users')
 cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
@@ -221,37 +223,6 @@ class EventsByTeacher(cal.Events):
         mycourses = rt.modules.Course.objects.filter(teacher=teacher)
         qs = qs.filter(course__in=teacher.course_set.all())
         return qs
-
-
-class CourseStates(dd.Workflow):
-    required = dd.required(user_level='admin')
-
-add = CourseStates.add_item
-add('10', _("Draft"), 'draft', editable=True)
-add('20', _("Registered"), 'registered', editable=False)
-# add('30', _("Started"), 'started', editable=False)
-# add('40', _("Ended"), 'ended', editable=False)
-# add('50', _("Cancelled"), 'cancelled', editable=True)
-
-# #~ ACTIVE_COURSE_STATES = set((CourseStates.published,CourseStates.started))
-# ACTIVE_COURSE_STATES = set((CourseStates.registered, CourseStates.started))
-
-
-class EnrolmentStates(dd.Workflow):
-    verbose_name_plural = _("Enrolment states")
-    required = dd.required(user_level='admin')
-    invoiceable = models.BooleanField(_("invoiceable"), default=True)
-    uses_a_place = models.BooleanField(_("Uses a place"), default=True)
-
-add = EnrolmentStates.add_item
-add('10', _("Requested"), 'requested', invoiceable=False, uses_a_place=False)
-add('20', _("Confirmed"), 'confirmed', invoiceable=True, uses_a_place=True)
-add('30', _("Cancelled"), 'cancelled', invoiceable=False, uses_a_place=False)
-# add('40', _("Certified"), 'certified', invoiceable=True, uses_a_place=True)
-#~ add('40', _("Started"),'started')
-#~ add('50', _("Success"),'success')
-#~ add('60', _("Award"),'award')
-#~ add('90', _("Abandoned"),'abandoned')
 
 
 class Course(cal.Reservation):
