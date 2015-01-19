@@ -64,10 +64,9 @@ class Site(Site):
         We create a new menu from scratch because the default menu structure
         wouldn't fit.
         """
-        from django.utils.translation import ugettext_lazy as _
         from lino import dd
-        concepts = dd.resolve_app('concepts')
-        m = main.add_menu("concepts", concepts.MODULE_LABEL)
+        mg = dd.plugins.concepts
+        m = main.add_menu(mg.app_label, mg.verbose_name)
         m.add_action(self.modules.concepts.Concepts)
         m.add_action(self.modules.countries.Countries)
         m.add_action(self.modules.countries.Places)
