@@ -32,7 +32,7 @@ We now must write in the app's :xfile:`__init__.py`::
         m = m.add_menu(self.app_label, self.verbose_name)
         m.add_action('pcsw.MyCoachings')
 
-And :meth:`Site.setup_menu <lino.core.site_def.Site.setup_menu>` has a
+And :meth:`Site.setup_menu <lino.core.site.Site.setup_menu>` has a
 new signature.  
 
 Before::

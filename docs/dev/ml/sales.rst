@@ -19,7 +19,7 @@ Choicelists
     List of the possible values for the state of an :class:`Invoice`.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site.Site.setup_choicelists`):
 
     .. django2rst:: rt.show("sales.InvoiceStates")
 

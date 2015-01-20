@@ -12,7 +12,7 @@ and :class:`Schooling <lino.modlib.cv.models.Schooling>` models have a
 <lino.modlib.langguages.models.Language>` model.
 
 Note that this has nothing to do with the list of languages in your
-:attr:`languages <lino.core.site_def.Site.languages>` setting.
+:attr:`languages <lino.core.site.Site.languages>` setting.
 
 
 .. autosummary::

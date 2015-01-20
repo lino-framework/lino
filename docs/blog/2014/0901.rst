@@ -26,7 +26,7 @@ One important new thing in :ref:`noi` is the fact that it publishes
 the whole database as is. Anonymous requests may not modify anything,
 but they can see everything.  
 
-- Added new method `lino.core.site_def.Site.get_default_required`, and :ref:`noi`
+- Added new method `lino.core.site.Site.get_default_required`, and :ref:`noi`
   overrides this to make all tables visible for everybody.  
 
 - Discovered that readonly user profiles don't work (they are not

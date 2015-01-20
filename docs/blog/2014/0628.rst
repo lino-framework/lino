@@ -3,7 +3,7 @@ Saturday, June 28, 2014
 =======================
 
 :mod:`lino_welfare.projects.chatelet` now have their own
-:meth:`lino.core.site_def.Site.get_admin_main_items`.
+:meth:`lino.core.site.Site.get_admin_main_items`.
 
 Discovered Steve Johnson's `sphinx-better-theme
 <http://sphinx-better-theme.readthedocs.org/en/latest/index.html>`_.

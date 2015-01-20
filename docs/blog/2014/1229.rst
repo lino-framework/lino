@@ -108,7 +108,7 @@ The `mod_wsgi.version` on this server is `(3, 3)`.
 
 To see this more easily in the future, I added `mod_wsgi` to the items
 reported by :attr:`get_used_libs
-<lino.core.site_def.Site.get_used_libs>`.
+<lino.core.site.Site.get_used_libs>`.
 
 The output of aptitude confirmed the mod_wsgi version::
 

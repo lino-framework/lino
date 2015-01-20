@@ -23,6 +23,7 @@ Create an empty directory which will become your project directory::
 Create two files :xfile:`settings.py` and :xfile:`manage.py` in this
 directory as described hereafter.
 
+
 The ``settings.py`` file
 -------------------------
 
@@ -46,7 +47,7 @@ Explanations:
        SITE = Site(globals(), ...)
 
     That is, you **instantiate** a :class:`Site
-    <lino.core.site_def.Site>` class and store this object as
+    <lino.core.site.Site>` class and store this object as
     :setting:`SITE` in your Django settings. It will set default
     values for all required Django settings (e.g. :setting:`DATABASES`
     and :setting:`LOGGING`).  More about this in :ref:`settings`.

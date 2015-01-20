@@ -34,7 +34,7 @@ class FiscalYears(dd.ChoiceList):
     """If the fiscal year of your company is the same as the calendar
     year, then the default entries in this should do.  Otherwise you
     can always override this in your
-    :meth:`lino.core.site_def.Site.setup_choicelists`.
+    :meth:`lino.core.site.Site.setup_choicelists`.
 
     """
     item_class = FiscalYear

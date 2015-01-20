@@ -19,11 +19,11 @@ The :mod:`lino.modlib.users` plugin now automatically sets
 Until now, application developers had to set :attr:`user_model
 <lino.core.Site.user_model>` to ``'users.User'`` **and** add
 :mod:`lino.modlib.users` to their
-:meth:`lino.core.site_def.Site.get_installed_apps` in order to enable
+:meth:`lino.core.site.Site.get_installed_apps` in order to enable
 :doc:`user management </dev/users>`.
 
 To make the implementation more clean, I added new methods
 :meth:`lino.core.plugin.Plugin.on_init`
 and
-:meth:`lino.core.site_def.Site.set_user_model`.
+:meth:`lino.core.site.Site.set_user_model`.
 

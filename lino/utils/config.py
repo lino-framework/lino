@@ -4,10 +4,10 @@
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
 and installs as :attr:`SITE.confdirs
-<lino.core.site_def.Site.confdirs>`.
+<lino.core.site.Site.confdirs>`.
 
 It creates a list `config_dirs` of all configuration directories by
-looping through :attr:`lino.core.site_def.Site.installed_plugins` and taking those
+looping through :attr:`lino.core.site.Site.installed_plugins` and taking those
 whose source directory has a :xfile:`config` subdir.
 
 The mechanism in this module emulates the behaviour of Django's and

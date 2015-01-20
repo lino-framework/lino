@@ -20,8 +20,8 @@ groups).
 Standard items of a main menu
 =============================
 
-:meth:`lino.core.site_def.Site.setup_menu`
-:attr:`lino.core.site_def.Site.top_level_menus`
+:meth:`lino.core.site.Site.setup_menu`
+:attr:`lino.core.site.Site.top_level_menus`
 
 
 The Main menu

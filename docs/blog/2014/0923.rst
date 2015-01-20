@@ -5,7 +5,7 @@ Tuesday, September 23, 2014
 Preparing an upgrade in :ref:`dsbe`. Making the test suites pass.
 
 Changed a detail in the implementation of :mod:`ml.beid`: Until
-yesterday, when `lino.core.site_def.Site.use_java` was False, ``beid`` and ``davlink``
+yesterday, when `lino.core.site.Site.use_java` was False, ``beid`` and ``davlink``
 were *not installed* at all.  This was a strange behaviour which
 caused quite some subtle problems.  The :class:`ml.beid.BeIdCardTypes`
 choicelist now has `app_label` ``beid`` instead of ``lino``.

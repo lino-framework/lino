@@ -33,7 +33,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
 
 from babel.dates import format_datetime, format_date
-from lino.core.site_def import to_locale
+from lino.core.site import to_locale
 
 from lino import dd
 

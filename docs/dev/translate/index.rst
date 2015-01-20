@@ -53,7 +53,7 @@ looks as follows:
 
 That is, you specify your own language distribution, consisting of
 English as first language and Spanish (your language) as second. See
-:attr:`lino.core.site_def.Site.languages` for details.  Note that the first language
+:attr:`lino.core.site.Site.languages` for details.  Note that the first language
 cannot currently be Spanish because the demo fixtures would fail
 (:srcref:`docs/tickets/108`).
 

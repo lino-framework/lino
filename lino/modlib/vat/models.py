@@ -58,7 +58,7 @@ class VatClasses(dd.ChoiceList):
     possibly other factors.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site.Site.setup_choicelists`):
 
     .. django2rst:: rt.show("vat.VatRegimes")
 
@@ -83,7 +83,7 @@ class VatRegimes(dd.ChoiceList):
     handled, e.g. whether and how it is to be paid.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site.Site.setup_choicelists`):
 
     .. django2rst:: rt.show("vat.VatClasses")
 
@@ -172,7 +172,7 @@ class TradeTypes(dd.ChoiceList):
 operation.
 
     Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`lino.core.site_def.Site.setup_choicelists`):
+    extend this list in :meth:`lino.core.site.Site.setup_choicelists`):
 
        .. django2rst:: rt.show("vat.TradeTypes")
 

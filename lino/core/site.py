@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre.
+# Copyright 2009-2015 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""This defines the :class:`Site` class.
+"""Defines the :class:`Site` class.
+
+.. autosummary::
 
 .. This document is part of the Lino test suite. You can test only
    this document using::
@@ -58,12 +60,14 @@ string with a space-separated list of language codes.  The
 :class:`Site` will analyze this string during instantiation and
 convert it into a tuple of :data:`LanguageInfo` objects.
 
->>> pprint(Site(languages="en fr de").languages)
+>>> SITE = Site(languages="en fr de")
+>>> pprint(SITE.languages)
 (LanguageInfo(django_code='en', name='en', index=0, suffix=''),
  LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
  LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
 
->>> pprint(Site(languages="de-ch de-be").languages)
+>>> SITE = Site(languages="de-ch de-be")
+>>> pprint(SITE.languages)
 (LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
  LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
 
@@ -90,9 +94,6 @@ If we have more than one locale of a same language *on a same Site*
 [('de', 'German'), ('fr', 'French')]
 
 """
-
-# from __future__ import unicode_literals
-# from __future__ import print_function
 
 import os
 from os.path import normpath, dirname, join, isdir, abspath, relpath
@@ -618,12 +619,17 @@ class Site(object):
     """
 
     default_user = None
-    """
-    Username to be used if a request with 
-    no REMOTE_USER header makes its way through to Lino. 
-    Which may happen on a development server and if Apache is 
-    configured to allow it.
-    Used by :mod:`lino.core.auth`.
+    """Username to be used if a request with no remote user header (see
+    :attr:`remote_user_header`) makes its way through to Lino.  Which
+    may happen on a development server, in a test environment, or on a
+    real web server if it is configured to allow it.
+
+    This setting is ignored when no :attr:`user_model` is set.
+
+    Setting this to a nonempty value will activate remote
+    authentication (see :meth:`get_middleware_classes`).  If this is
+    nonempty and :attr:`remote_user_header` is *empty*, the
+    `default_user` will be used for *every* request.
 
     """
 
@@ -1316,7 +1322,7 @@ class Site(object):
     def makedirs_if_missing(self, dirname):
         """
         Make missing directories if they don't exist
-        and if :attr:`lino.core.site_def.Site.make_missing_dirs` is `True`.
+        and if :attr:`make_missing_dirs` is `True`.
 
         """
         if dirname and not isdir(dirname):
@@ -1704,7 +1710,7 @@ class Site(object):
         This function is called when a Site objects get instantiated,
         i.e. while Django is still loading the settings. It analyzes
         the attribute `languages` and converts it to a tuple of
-        `LanguageInfo` objects.
+        :data:`LanguageInfo` objects.
         
         """
 
@@ -2556,16 +2562,14 @@ Please convert to Plugin method".format(mod, methname)
         #~ if self.user_model:
         #~ if self.user_model is None:
             #~ yield 'lino.core.auth.NoUserMiddleware'
-        #~ elif self.remote_user_header:
 
         if self.auth_middleware:
             yield self.auth_middleware
         else:
             if self.user_model is None:
                 yield 'lino.core.auth.NoUserMiddleware'
-            elif self.remote_user_header:
+            elif self.remote_user_header or self.default_user:
                 yield 'lino.core.auth.RemoteUserMiddleware'
-                #~ yield 'django.middleware.doc.XViewMiddleware'
             else:
                 # not using remote http auth, so we need sessions
                 yield 'django.contrib.sessions.middleware.SessionMiddleware'
@@ -2715,8 +2719,7 @@ Please convert to Plugin method".format(mod, methname)
         an action's parameters dialog box.
 
         This method will build the list of email recipients by calling
-        the global :meth:`get_system_note_recipients
-        <lino.core.site_def.Site.get_system_note_recipients>` method
+        the global :meth:`get_system_note_recipients` method
         and send an email to each of these recipients.
 
         """

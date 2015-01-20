@@ -149,7 +149,7 @@ class DocsTests(LinoTestCase):
 class CoreTests(LinoTestCase):
 
     def test_site(self):
-        self.run_simple_doctests('lino/core/site_def.py')
+        self.run_simple_doctests('lino/core/site.py')
 
     # TODO: implement pseudo tests for QuantityField
     # def test_fields(self):

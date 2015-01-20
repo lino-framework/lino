@@ -7,7 +7,7 @@
 .. management_command:: initdb_demo
 
 Calls :manage:`initdb` using the application's
-:attr:`lino.core.site_def.Site.demo_fixtures`.
+:attr:`lino.core.site.Site.demo_fixtures`.
 
 Introduction see :ref:`lino.tutorial.hello`.
 

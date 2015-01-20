@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 by Luc Saffre.
+# Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Date formatting functions
@@ -75,7 +75,7 @@ from babel.dates import format_date as babel_format_date
 from django.utils import translation
 from django.template import defaultfilters
 
-from lino.core.site_def import to_locale
+from lino.core.site import to_locale
 from lino.utils import IncompleteDate
 
 

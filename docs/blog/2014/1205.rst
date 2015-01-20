@@ -23,7 +23,7 @@ module :mod:`lino.modlib.contenttypes` (which extends
 `contenttypes.HelpText`.
 
 :ref:`apichange`: Applications who yield `django.contrib.contenttypes`
-in their :meth:`lino.core.site_def.Site.get_installed_apps` should replace this by
+in their :meth:`lino.core.site.Site.get_installed_apps` should replace this by
 `lino.modlib.contenttypes`.
 
 There are at least two problems with the new

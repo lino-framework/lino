@@ -18,7 +18,7 @@ from django.conf import settings
 from lino.core.dbutils import models_by_base
 
 modules = settings.SITE.modules
-"Shortcut to :attr:`lino.core.site_def.Site.modules`."
+"Shortcut to :attr:`lino.core.site.Site.modules`."
 
 login = settings.SITE.login
 startup = settings.SITE.startup
@@ -33,7 +33,7 @@ relpath = settings.SITE.relpath
 
 def get_template(*args, **kw):
     """Shortcut to :meth:`get_template` on the global `jinja2.Environment`
-    (:attr:`jinja_env <lino.core.site_def.Site.jinja_env>`, see
+    (:attr:`jinja_env <lino.core.site.Site.jinja_env>`, see
     :mod:`lino.core.web`).
 
     """
@@ -49,10 +49,10 @@ def show(*args, **kw):
 
 
 def emit_system_note(*args, **kw):
-    "Shortcut to :meth:`lino.core.site_def.Site.emit_system_note`."
+    "Shortcut to :meth:`lino.core.site.Site.emit_system_note`."
     return settings.SITE.emit_system_note(*args, **kw)
 
 
 def send_email(*args, **kw):
-    "Shortcut to :meth:`lino.core.site_def.Site.send_email`."
+    "Shortcut to :meth:`lino.core.site.Site.send_email`."
     return settings.SITE.send_email(*args, **kw)

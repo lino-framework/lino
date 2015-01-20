@@ -30,7 +30,7 @@ recommended way except for very simple examples).  Here is the
 
 .. literalinclude:: settings.py
 
-.. currentmodule:: lino.core.site_def
+.. currentmodule:: lino.core.site
 
 We need to redefine the default list of user profiles by overriding
 :meth:`Site.setup_choicelists` because `contacts` adds a user group

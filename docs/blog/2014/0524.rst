@@ -7,7 +7,7 @@ didn't work. In fact I want to have this option activated in the
 `online demo <http://demo4.lino-framework.org/>`__.
 
 Added new function :func:`ad.configure_plugin`.
-And :meth:`lino.core.site_def.Site.configure_plugin` now raises an exception.
+And :meth:`lino.core.site.Site.configure_plugin` now raises an exception.
 
 Worked on the documentation in general. There's still much to do.
 

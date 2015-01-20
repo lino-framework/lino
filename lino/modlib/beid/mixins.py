@@ -142,7 +142,7 @@ class BaseBeIdReadCardAction(dd.Action):
     sorry_msg = _("Sorry, I cannot handle that case: %s")
 
     def get_view_permission(self, profile):
-        """Make invisible when :attr:`lino.core.site_def.Site.use_java` is
+        """Make invisible when :attr:`lino.core.site.Site.use_java` is
 `False`."""
         if not settings.SITE.use_java:
             return False

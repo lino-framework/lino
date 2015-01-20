@@ -369,9 +369,9 @@ products available for exchange (in other words the *ActiveProducts*
 table defined above).
 
 Here is how we express these things by defining two methods
-:meth:`setup_menu <lino.core.site_def.Site.setup_menu>` and
+:meth:`setup_menu <lino.core.site.Site.setup_menu>` and
 :meth:`get_admin_main_items
-<lino.core.site_def.Site.get_admin_main_items>` in our
+<lino.core.site.Site.get_admin_main_items>` in our
 :xfile:`settings.py` file.
 
 .. literalinclude:: settings.py

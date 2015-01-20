@@ -33,6 +33,6 @@ Added explanations to :srcref:`docs/tickets/105`.
 The French translations are now more or less ready.
 
 Moved more docstrings from miscellaneous source files to
-:class:`lino.core.site_def.Site`.
+:class:`lino.core.site.Site`.
 
 The next young man discovered Lino and wants to learn it.

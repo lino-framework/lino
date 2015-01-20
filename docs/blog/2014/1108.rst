@@ -15,7 +15,7 @@ but does not install these dependencies.
 The test suite failed to reveal this problem because
 :ref:`cosi.tested.demo` was not being tested.
 
-:ref:`new`: Thte new attribute :attr:`lino.core.site_def.Site.needs_plugins` makes it
+:ref:`new`: Thte new attribute :attr:`lino.core.site.Site.needs_plugins` makes it
 possible to resolve such dependencies transparently.
 
 

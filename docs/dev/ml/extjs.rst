@@ -7,8 +7,8 @@ ExtJS - User Interface using ExtJS 3
 This page documents the :mod:`lino.modlib.extjs` app.
 
 It is being automatically included by every Lino application unless
-you specify ``extjs`` in :meth:`lino.core.site_def.Site.get_apps_modifiers` (or
-override your :meth:`lino.core.site_def.Site.get_installed_apps` method).
+you specify ``extjs`` in :meth:`lino.core.site.Site.get_apps_modifiers` (or
+override your :meth:`lino.core.site.Site.get_installed_apps` method).
 
 When your Lino application uses the ExtJS user interface, then you may
 need a commercial license from Sencha if your site is (1) your

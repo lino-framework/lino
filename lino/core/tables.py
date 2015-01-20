@@ -248,7 +248,7 @@ class AbstractTable(actors.Actor):
     The maximum number of rows to fetch when this table is being
     displayed in "preview mode", i.e. (1) as a slave table in a detail
     window or (2) as an item of the :xfile:`admin_main.html` returned
-    by :meth:`lino.core.site_def.Site.get_admin_main_items`.
+    by :meth:`lino.core.site.Site.get_admin_main_items`.
 
     The default value for this is the :attr:`preview_limit
     <ad.Site.preview_limit>` class attribute of your

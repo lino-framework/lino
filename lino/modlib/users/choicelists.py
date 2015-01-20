@@ -225,7 +225,7 @@ class UserProfiles(ChoiceList):
         return cls.add_item_instance(UserProfile(
             cls, value, text, name, memberships, **kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.core.site_def.Site.setup_choicelists`
+#~ UserProfiles choicelist is going to be filled in `lino.core.site.Site.setup_choicelists`
 #~ because the attributes of each item depend on UserGroups
 
 

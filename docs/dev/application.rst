@@ -4,7 +4,7 @@
 The ``Site`` class
 ==================
 
-.. currentmodule:: lino.core.site_def
+.. currentmodule:: lino.core.site
 
 One of the important things to understand when you learn Lino is the
 :class:`Site` class.  

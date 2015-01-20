@@ -7,7 +7,7 @@
 Writes a diagnostic status report about this Site.
 
 This is a command-line shortcut for calling
-:meth:`lino.core.site_def.Site.diagnostic_report_rst`.
+:meth:`lino.core.site.Site.diagnostic_report_rst`.
 
 """
 

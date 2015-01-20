@@ -15,10 +15,10 @@ it was not allowed to import this module at the global level of a
 models module because importing it will fill the config dirs,
 i.e. will try to import every installed `models` module.  That's why
 we have the new Site attribute
-:attr:`lino.core.site_def.Site.confdirs`
+:attr:`lino.core.site.Site.confdirs`
 
 The true reason was a bug in
-:meth:`lino.core.site_def.Site.for_each_app`.
+:meth:`lino.core.site.Site.for_each_app`.
 
 
 Editing print templates

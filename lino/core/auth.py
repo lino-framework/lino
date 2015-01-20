@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 
 Lino's authentification middleware
+
+.. autosummary::
 
 
 """
@@ -153,10 +155,10 @@ class AuthMiddleWareBase(object):
 class RemoteUserMiddleware(AuthMiddleWareBase):
 
     """Middleware automatically installed by :meth:`get_middleware_classes
-    <lino.core.site_def.Site.get_middleware_classes>` when both
+    <lino.core.site.Site.get_middleware_classes>` when both
     :attr:`remote_user_header
-    <lino.core.site_def.Site.remote_user_header>` and
-    :attr:`user_model <lino.core.site_def.Site.user_model>` are not
+    <lino.core.site.Site.remote_user_header>` and
+    :attr:`user_model <lino.core.site.Site.user_model>` are not
     empty.
     
     This does the same as
@@ -194,8 +196,8 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 class NoUserMiddleware(AuthMiddleWareBase):
 
     """Middleware automatically installed by
-    :meth:`lino.core.site_def.Site.get_middleware_classes` when
-    :attr:`lino.core.site_def.Site.user_model` is None.
+    :meth:`lino.core.site.Site.get_middleware_classes` when
+    :attr:`lino.core.site.Site.user_model` is None.
 
     """
 

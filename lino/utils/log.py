@@ -28,7 +28,7 @@ A simple common example::
 
   LOGGING = dict(filename='/var/log/lino/system.log',level='INFO')
 
-Another example using :attr:`lino.core.site_def.Site.project_dir`::
+Another example using :attr:`lino.core.site.Site.project_dir`::
 
   ...
   SITE = Site(globals())

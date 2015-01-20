@@ -50,11 +50,11 @@ It took me already quite some time to find the explanation:
 Then I made some subtle changes the the `EditTemplate` action in order
 to make it testable and write a test case:
 
-- It is now viewable even if :attr:`lino.core.site_def.Site.use_java` is False.
+- It is now viewable even if :attr:`lino.core.site.Site.use_java` is False.
 
 May 22nd 2014
 =============
 
-Oops, the production server had :attr:`lino.core.site_def.Site.the_demo_date`
+Oops, the production server had :attr:`lino.core.site.Site.the_demo_date`
 non-empty.  And the users noticed this at a place where it took me at
 least 15 minutes to understand that this was the only reason.

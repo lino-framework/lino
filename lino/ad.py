@@ -8,7 +8,7 @@ are used in your :xfile:`settings.py` files and in the
 import of your Django **settings** and **before** your **models** get
 imported.
 
-Lino defines two classes :class:`Site <lino.core.site_def.Site>` and
+Lino defines two classes :class:`Site <lino.core.site.Site>` and
 :class:`Plugin <lino.core.plugin.Plugin>` which are heavily used to do
 lots of magic and to make apps more pleasant to configure.
 
@@ -31,7 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 from lino.core.plugin import Plugin
-from lino.core.site_def import Site, TestSite, configure_plugin
+from lino.core.site import Site, TestSite, configure_plugin
 
 
 __all__ = ['Site', 'TestSite', 'Plugin', 'configure_plugin', '_']

@@ -23,7 +23,7 @@ area covered by the site owner. Every room gets assigned one region.
 The :attr:`dd.Actor.parameters` (and :attr:`dd.Actor.params_layout`)
 must then become "dynamic", adding one checkbox per region (replacing
 the current combox `city`).  "dynamic" means here: after
-:meth:`lino.core.site_def.Site.setup_choicelists` but before generating the
+:meth:`lino.core.site.Site.setup_choicelists` but before generating the
 :xfile:`linolib.js`. This wll probably require some other cool new
 features.
 

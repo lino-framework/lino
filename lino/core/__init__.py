@@ -29,7 +29,7 @@ The ``lino.core`` package
     renderer
     requests
     signals
-    site_def
+    site
     store
     tables
     tablerequest

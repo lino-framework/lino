@@ -23,7 +23,7 @@ class Plugin(object):
     which has been added in version 1.7.. But there is at least one
     fundamental difference: the :class:`Plugin` instances for all
     installed apps are available (in :attr:`Site.plugins
-    <lino.core.site_def.Site.plugins>`) when the
+    <lino.core.site.Site.plugins>`) when the
     :xfile:`settings.py` file has been loaded and *before* Django
     starts to load the first :xfile:`models.py`.  This is possible
     because Plugins are defined in your app's :xfile:`__init__.py`

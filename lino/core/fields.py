@@ -45,7 +45,7 @@ class RichTextField(models.TextField):
     """
     Only difference with Django's `models.TextField` is that you can
     specify a keyword argument `format` to
-    override the global :attr:`lino.core.site_def.Site.textfield_format`.
+    override the global :attr:`lino.core.site.Site.textfield_format`.
     """
 
     def __init__(self, *args, **kw):

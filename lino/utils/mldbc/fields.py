@@ -44,7 +44,7 @@ def contribute_to_class(field, cls, fieldclass, **kw):
 class BabelCharField(models.CharField):
 
     """Define a variable number of `CharField` database fields, one for
-    each language of your :attr:`lino.core.site_def.Site.languages`.  See
+    each language of your :attr:`lino.core.site.Site.languages`.  See
     :ref:`mldbc`.
 
     """

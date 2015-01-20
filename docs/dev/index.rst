@@ -50,6 +50,7 @@ Getting started
 Getting acquaintained
 =====================
 
+-  :doc:`settings` :
 -  :doc:`application` : An app is not an application. Introducing the :class:`Site` class.
 -  :doc:`menu` :
 -  :doc:`choicelists` :
@@ -66,6 +67,7 @@ Getting acquaintained
    :maxdepth: 1
    :hidden:
 
+   settings
    application
    menu
    choicelists
@@ -116,7 +118,6 @@ Drafts
    :maxdepth: 1
 
    /tutorials/tested_docs/index
-   settings
    startup
    perms
    workflows

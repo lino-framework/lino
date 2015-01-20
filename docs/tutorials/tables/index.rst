@@ -74,10 +74,10 @@ Please note:
 What is a table?
 ================
 
-A table in general is a rectangular thing divided into rows and
+A table, in general, is a rectangular thing divided into rows and
 columns, used to display data.
 
-For example, here is the ``Authors`` table of our database:
+For example, here is the "Authors" table of our database:
 
 ============ =========== =========
  First name   Last name   Country
@@ -114,10 +114,6 @@ queryset. For example we set :attr:`hide_sums
 <lino.core.tables.AbstractTable.hide_sums>` to `True` on the ``Books``
 table because otherwise Lino would display a sum for the "published"
 column.
-
-
-Tables are class objects
-========================
 
 
 Using tables without a web server

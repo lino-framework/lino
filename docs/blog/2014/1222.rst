@@ -40,8 +40,8 @@ made use of it.
 And I slightly changed the output of :mod:`lino.hello`: it no longer
 starts with "This is yet another Lino site" (because having Lino
 installed does not yet mean that you have a Lino
-site). :meth:`lino.core.site_def.Site.using_text` instead of
-:meth:`lino.core.site_def.Site.welcome_text`.
+site). :meth:`lino.core.site.Site.using_text` instead of
+:meth:`lino.core.site.Site.welcome_text`.
 
 Continued to move docstrings back from :mod:`lino.ad` to the source
 code.

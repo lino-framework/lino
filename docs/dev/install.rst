@@ -1,8 +1,8 @@
 .. _lino.dev.install:
 
-================================
-Installing Lino (for developers)
-================================
+===============
+Installing Lino
+===============
 
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv

@@ -65,13 +65,13 @@ abstract or not.
 This is why the above code calls the :setting:`is_abstract_model`
 method.  The implementation of this method has evolved in time.  The
 first implementation used a simple set of strings in a class attribute
-of :class:`lino.core.site_def.Site`.  That might have been a standard Django setting.
+of :class:`lino.core.site.Site`.  That might have been a standard Django setting.
 But as things got more and more complex, it became difficult to define
 this manually. And it was redundant because every app *does* know
 which library models it is going to override.  But how to load that
 information from an app before actually importing it?  I then
 discovered that Django doesn't use the :file:`__init__.py` files of
-installed apps.  And of course I was lucky to have a :class:`lino.core.site_def.Site`
+installed apps.  And of course I was lucky to have a :class:`lino.core.site.Site`
 class which is being *instantiated* before `settings` have finished to
 load...
 

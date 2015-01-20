@@ -687,7 +687,7 @@ class BaseRequest(object):
 
     def get_help_url(self, docname=None, text=None, **kw):
         """Generate a link to the help section of the documentation (whose
-        base is defined by :attr:`lino.core.site_def.Site.help_url`)
+        base is defined by :attr:`lino.core.site.Site.help_url`)
 
         Usage example::
 

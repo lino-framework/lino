@@ -7,7 +7,7 @@ In this tutorial we are going to take the "Polls"
 application from Django's excellent tutorial and turn it 
 into a Lino application.
 
-.. currentmodule:: lino.core.site_def
+.. currentmodule:: lino.core.site
 
 .. contents:: Table of Contents
  :local:
@@ -57,7 +57,7 @@ A few explanations:
 
 This instantiates your local :setting:`SITE` setting.  Every Lino
 application requires a setting named :setting:`SITE` which must be a
-:class:`Site <lino.core.site_def.Site>` instance.
+:class:`Site <lino.core.site.Site>` instance.
 
 The first argument of the instantiator (``globals()``) is the global
 namespace of your settings module.  Lino uses this to fill

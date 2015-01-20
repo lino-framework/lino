@@ -3,7 +3,6 @@
 """Send an email to a configurable list of addresses when a
 configurable database item has been changed.
 
-
 Importing this module will add a receiver to the
 :attr:`on_ui_created <lino.core.signals.on_ui_created>`,
 :attr:`on_ui_updated <lino.core.signals.on_ui_updated>` and
@@ -16,15 +15,14 @@ Usage example (taken from :doc:`/tutorials/sendchanges/index`)::
         title = "sendchanges example"
 
         def do_site_startup(self):
-
             super(Site, self).do_site_startup()
-
-            from lino.utils.sendchanges import subscribe
-
-            subscribe('contacts.Person', 'first_name last_name birth_date',
-                      'created_body.eml', 'updated_body.eml')
-            subscribe('contacts.Partner', 'name',
-                      'created_body.eml', 'updated_body.eml')
+            from lino.utils.sendchanges import register, subscribe
+            register('contacts.Person', 'first_name last_name birth_date',
+                     'created_body.eml', 'updated_body.eml')
+            e = register('contacts.Partner', 'name',
+                         'created_body.eml', 'updated_body.eml')
+            e.updated_subject = "Change in partner {master}"
+            subscribe('john.doe@example.org')
 
 
 Note that the order of subscription is important when the watched
@@ -97,7 +95,7 @@ class Emitter(object):
         if self.created_tpl:
             context.update(obj=obj)
             context.update(master=self.get_master(obj))
-            subject = self.created_subject.format(**object)
+            subject = self.created_subject.format(**context)
             self.sendmails(request, subject, self.created_tpl, **context)
 
     def emit_updated(self, request, cw, **context):

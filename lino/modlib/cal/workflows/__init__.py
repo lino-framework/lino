@@ -29,7 +29,7 @@ class TaskStates(dd.Workflow):
     """Possible values for the state of a :class:`Task`. The list of
     choices for the :attr:`Task.state` field. By default it contains
     the following values (which can be redefined in
-    :meth:`lino.core.site_def.Site.setup_choicelists`):
+    :meth:`lino.core.site.Site.setup_choicelists`):
 
     .. django2rst::
 
@@ -65,7 +65,7 @@ class EventStates(dd.Workflow):
     """Possible values for the state of a task. The list of choices for
     the :attr:`Event.state` field. By default it contains the
     following values (which can be redefined in
-    :meth:`lino.core.site_def.Site.setup_choicelists`):
+    :meth:`lino.core.site.Site.setup_choicelists`):
 
     .. django2rst::
 

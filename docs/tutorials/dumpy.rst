@@ -33,7 +33,7 @@ It does nothing else than to call
 
 The **demo fixtures** is a predefined set of fixture names,
 defined by the application developer in 
-the :attr:`demo_fixtures <lino.core.site_def.Site.demo_fixtures>` setting.
+the :attr:`demo_fixtures <lino.core.site.Site.demo_fixtures>` setting.
 The `min1` app has the following demo fixtures:
 
     >>> import os

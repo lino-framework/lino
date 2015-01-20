@@ -177,7 +177,7 @@ class ProjectRelated(model.Model):
 
     Whether an application has such a concept of "project",
     and which model has this privileged status,
-    is set in :attr:`lino.core.site_def.Site.project_model`.
+    is set in :attr:`lino.core.site.Site.project_model`.
 
     For example in :ref:`welfare` the "project" is a Client.
 

@@ -163,7 +163,7 @@ because still old-style coding, I simply **removed the original**.
 
 This means that existing applications should include
 :mod:`lino.modlib.export_excel` to their
-:meth:`lino.core.site_def.Site.get_installed_apps` method.
+:meth:`lino.core.site.Site.get_installed_apps` method.
 
 I changed the action's label from "To Excel" to "Export to .xls"
 because it doesn't require any given proprietary produce, it works

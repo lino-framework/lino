@@ -23,7 +23,7 @@ with::
 
 
 I discovered why certain strings in :ref:`faggio` were not yet
-translated: because I had switched :attr:`lino.core.site_def.Site.languages` of
+translated: because I had switched :attr:`lino.core.site.Site.languages` of
 :mod:`lino_faggio.projects.docs` to monolingual English.  If you do
 that (have the demo database onl in English) but still support
 multiple languages, then you must set `env.languages` in your

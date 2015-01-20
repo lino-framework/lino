@@ -20,7 +20,7 @@ DONE:
   instance for every model which inherits from
   :class:`ml.excerpts.Certifiable`.
 
-- Cool: the new method :meth:`lino.core.site_def.Site.str2kw` used for the above
+- Cool: the new method :meth:`lino.core.site.Site.str2kw` used for the above
   fixture is also the beginning of a solution for :srcref:`docs/tickets/108`.
 
 So :class:`ml.sales.Invoice` is no longer `TypedPrintable` but

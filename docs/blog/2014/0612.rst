@@ -39,7 +39,7 @@ Preparation work: collect document about :class:`ml.cal.EventGenerator`
 into :mod:`ml.cal`.
 
 A first change is that the general hard-coded default value for
-:attr:`lino.core.site_def.Site.ignore_dates_before` is no longer
+:attr:`lino.core.site.Site.ignore_dates_before` is no longer
 `datetime.date.today() + datetime.timedelta(days=-7)` but simply
 `None`.  This is a better default value. We need constant conditions
 in our test databases.

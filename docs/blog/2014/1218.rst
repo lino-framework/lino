@@ -57,7 +57,7 @@ Miscellaneous
 - Updated the docs for :manage:`initdb`
 
 - Added new application setting :attr:`keep_erroneous_cache_files
-  <lino.core.site_def.Site.keep_erroneous_cache_files>`. Some time ago
+  <lino.core.site.Site.keep_erroneous_cache_files>`. Some time ago
   I had commented out the call to ``os.remove`` because I had that
   rather rare situation of wanting to see the partly generated chache
   file, **and I forgot to reactivate that line of code** after having

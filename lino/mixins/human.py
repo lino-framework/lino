@@ -126,7 +126,7 @@ class Human(model.Model):
 
         The optional keyword argument `upper` can be specified to
         override the Site's default value
-        (:attr:`lino.core.site_def.Site.uppercase_last_name`). `True`
+        (:attr:`lino.core.site.Site.uppercase_last_name`). `True`
         means to convert the last name to uppercase as is usually done
         in French.
 

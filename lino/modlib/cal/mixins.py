@@ -231,7 +231,7 @@ class EventGenerator(UserAuthored):
 
     def update_cal_until(self):
         """Return the limit date until which to generate events.  None means
-        "no limit" (which de facto becomes :attr:`lino.core.site_def.Site.ignore_dates_after`)
+        "no limit" (which de facto becomes :attr:`lino.core.site.Site.ignore_dates_after`)
         """
 
         return None

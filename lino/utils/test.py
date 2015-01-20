@@ -2,13 +2,7 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the :class:`DemoTestCase` class, used to define tests that
-are to be run tests directly in the demo database, *without* using the
-Django test runner (i.e. without creating a temporary test database).
-
-It expects the demo database to be initialized, and it works only in
-an environment with :attr:`lino.core.site_def.Site.remote_user_header`
-set to ``'REMOTE_USER'``.
+"""Defines the :class:`DocTest` and :class:`DemoTestCase` classes.
 
 """
 
@@ -30,12 +24,17 @@ HttpQuery = collections.namedtuple(
 
 
 class DocTest(unittest.TestCase):
+    """Looks for a file "index.rst" in your project_dir and (if it exists)
+    runs doctest on it.
+
+    This is for tests to be run by the Django test runner on a
+    temporary test database.
 
     """
-    Looks for a file "index.rst" in your project_dir and (if it exists) 
-    run doctest on it.
-    """
     doctest_files = ["index.rst"]
+    """The files to be tested.
+
+    """
 
     def test_files(self):
         #~ g = dict(print_=six.print_)
@@ -44,16 +43,23 @@ class DocTest(unittest.TestCase):
         for n in self.doctest_files:
             f = os.path.join(settings.SITE.project_dir, n)
             if os.path.exists(f):
-                #~ print f
                 res = doctest.testfile(f, module_relative=False, globs=g)
                 if res.failed:
                     self.fail("Failed doctest %s" % f)
-
+            else:
+                self.fail("No such file: %s" % f)
 
 
 class DemoTestCase(PythonTestCase, CommonTestCase):
+    """Used to define tests that are to be run directly in the demo
+    database, *without* using the Django test runner (i.e. without
+    creating a temporary test database).
 
-    "The class definition"
+    It expects the demo database to be initialized, and it works only in
+    an environment with :attr:`lino.core.site.Site.remote_user_header`
+    set to ``'REMOTE_USER'``.
+
+    """
     def __call__(self, *args, **kw):
         self.client = Client()
         return super(DemoTestCase, self).__call__(*args, **kw)
