@@ -378,11 +378,19 @@ class AbstractTable(actors.Actor):
     """
 
     order_by = None
+    """If specified, this must be a tuple or list of field names which
+will be passed to Django's `order_by
+<https://docs.djangoproject.com/en/1.6/ref/models/querysets/#order-by>`__
+method in order to sort the rows of the queryset.
+
+    """
 
     filter = None
-    """
-    If specified, this must be a `models.Q` object (not a dict of
-    (fieldname -> value) pairs) which will be used as a filter.
+    """If specified, this must be a `models.Q` object (not a dict of
+    (fieldname -> value) pairs) which will be passed to Django's
+    `filter
+    <https://docs.djangoproject.com/en/1.6/ref/models/querysets/#filter>`__
+    method.
 
     Unlike :attr:`known_values`, this can use the full range of
     Django's `field lookup methods
@@ -397,10 +405,15 @@ class AbstractTable(actors.Actor):
     field, then you'll prefer to use :attr:`known_values` instead of
     :attr:`filter.`
 
-
     """
 
     exclude = None
+    """If specified, this must be dict which will be passed to Django's
+    `exclude
+    <https://docs.djangoproject.com/en/1.6/ref/models/querysets/#exclude>`__
+    method on the queryset.
+
+    """
 
     extra = None
     """
@@ -413,6 +426,12 @@ class AbstractTable(actors.Actor):
     List of SQL functions and which RDBMS supports them:
     http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
     
+    """
+
+    hide_sums = False
+    """
+    Set this to True if you don't want Lino to display sums in a table
+    view.
     """
 
     def __init__(self, *args, **kw):

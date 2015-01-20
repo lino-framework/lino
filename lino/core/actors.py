@@ -364,12 +364,6 @@ class Actor(actions.Parametrizable):
     delete_required = dict()
     editable = None
 
-    hide_sums = False
-    """
-    Set this to True if you don't want Lino to display sums in a table
-    view.
-    """
-
     insert_layout_width = 60
     """
     When specifying an :attr:`insert_layout` using a simple a multline

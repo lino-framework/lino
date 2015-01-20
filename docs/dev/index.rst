@@ -20,6 +20,7 @@ Getting started
    /tutorials/hello/index
    /tutorials/polls/mysite/index
    /tutorials/dumpy
+   /tutorials/tables/index
    /tutorials/lets/index
 
 - :doc:`/dev/install` : How to install Lino. System requirements. "Released
@@ -38,6 +39,9 @@ Getting started
 - :doc:`/tutorials/dumpy` : The ``initdb`` and ``initdb_demo``
   commands.  Playing with fixtures.  Writing your own fixture.
 
+- :doc:`/tutorials/tables/index` : Models, tables and views. What is a
+  table? Designing your tables. Using tables without a web server.
+
 - :doc:`/tutorials/lets/index` : What is a technical specification?
   Describing a database structure. Designing your tables. Writing demo
   data. Writing test cases. Menu structure and main page. Form layouts.
@@ -47,7 +51,6 @@ Getting acquaintained
 =====================
 
 -  :doc:`application` : An app is not an application. Introducing the :class:`Site` class.
--  :doc:`/tutorials/tables/index` :
 -  :doc:`menu` :
 -  :doc:`choicelists` :
 -  :doc:`actors` :
@@ -64,7 +67,6 @@ Getting acquaintained
    :hidden:
 
    application
-   /tutorials/tables/index
    menu
    choicelists
    actors

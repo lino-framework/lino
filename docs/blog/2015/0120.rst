@@ -2,6 +2,6 @@
 Tuesday, January 20, 2015
 =========================
 
-(I went to bed yesterday, but couldn't sleep because :ref:`faggio` was
-broken.)
+The last thing I did yesterday before going to sleep was to upgrade
+:ref:`lf`. Which revealed that :ref:`faggio` was still broken.
 

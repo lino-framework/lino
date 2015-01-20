@@ -218,15 +218,8 @@ the intermediate models of your m2m relations.
 Designing your tables
 =====================
 
-For every database model there should be at least one :class:`Table
-<lino.core.dbtables.Table>`. Database *models* are usually named in
-*singular* form, tables in *plural* form.
-
-You may define your tables together with the models in your
-:file:`models.py` file, but for this tutorial we defined them in a
-separate file :file:`tables.py`. It's a matter of taste, but if you
-separate them, then you must import the :file:`tables.py` file from
-within your :file:`models.py` so that they get imported at startup.
+For this tutorial we defined the tables in a separate file
+:file:`tables.py`.
 
 .. literalinclude:: tables.py
 
