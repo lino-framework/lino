@@ -70,6 +70,8 @@ lino.modlib.cal.models
       GuestsByPartner
       GuestsByRole
       LocalCalendar
+      Mailable
+      MailableType
       MaxValueValidator
       MinValueValidator
       MoveEventNext

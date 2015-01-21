@@ -8,7 +8,7 @@ Noch ein Ticket im Rahmen des Projekts :srcref:`docs/tickets/93`.
 
 DONE:
 
-- The `language` field on :class:`ml.excerpts.Excerpt` is back.  And the
+- The `language` field on :class:`lino.modlib.excerpts.Excerpt` is back.  And the
   `language` field on :class:`welfare.aids.Confirmation` is no longer
   needed.
 

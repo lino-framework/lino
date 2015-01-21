@@ -3,6 +3,9 @@
 # License: BSD (see file COPYING for details)
 """
 Database models for :mod:`lino.modlib.excerpts`.
+
+.. autosummary::
+
 """
 
 from __future__ import unicode_literals
@@ -35,23 +38,36 @@ from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
-outbox = dd.require_app_models('outbox')
-
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
+from lino.modlib.outbox.mixins import Mailable, MailableType
 
 from .mixins import Certifiable
 from .choicelists import Shortcuts
 
 
-class ExcerptType(
-        mixins.BabelNamed,
-        mixins.PrintableType,
-        outbox.MailableType):
+class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
+                  MailableType):
+    """
+    
+    .. attribute:: shortcut
 
+        Optional pointer to a shortcut field.  If this is not empty, then
+        the given shortcut field will manage excerpts of this type.
+
+        See also :class:`Shortcuts`.
+        See also :class:`lino.modlib.excerpts.choicelists.Shortcuts`.
+
+    .. attribute:: template
+ 
+        The main template to be used when printing an excerpt of this type.
+
+
+
+    """
     # templates_group = 'excerpts/Excerpt'
 
     class Meta:
@@ -79,6 +95,7 @@ class ExcerptType(
         related_name='excerpt_types',
         # null=True, blank=True,
         help_text=_("The model that can issue printouts of this type."))
+    """The model on which excerpts of this type are going to work."""
 
     primary = models.BooleanField(
         _("Primary"),
@@ -218,7 +235,6 @@ We override everything in Excerpt to not call the class method.""")
 
 
 class ExcerptTypes(dd.Table):
-
     """
     Displays all rows of :class:`ExcerptType`.
     """
@@ -254,6 +270,7 @@ class ExcerptTypes(dd.Table):
 
 
 class CreateExcerpt(dd.Action):
+    """Action to create an excerpt in order to print this data record."""
     icon_name = 'printer'
     label = _('Print')
     help_text = _('Create an excerpt in order to print this data record.')
@@ -274,6 +291,8 @@ class CreateExcerpt(dd.Action):
 
 
 class ClearPrinted(dd.Action):
+    """Action to clear the print cache (i.e. the generated printable
+document)."""
     sort_index = 51
     label = _('Clear print cache')
     icon_name = 'printer_delete'
@@ -344,7 +363,47 @@ class BodyTemplateContentField(dd.VirtualField):
 
 class Excerpt(mixins.TypedPrintable, UserAuthored,
               Controllable, mixins.ProjectRelated,
-              ContactRelated, outbox.Mailable, Postable):
+              ContactRelated, Mailable, Postable):
+    """A printable document that describes some aspect of the current
+    situation.
+
+    .. attribute:: owner
+
+      :ref:`gfk` to the object being printed by this excerpt.
+      Defined in :class:`dd.Controllable`.
+
+    .. attribute:: company
+
+      The optional recipient of this excerpt.
+      (ForeignKey to :class:`ml.contacts.Company`)
+
+    .. attribute:: contact_person
+
+      The optional recipient of this excerpt.
+      (ForeignKey to :class:`ml.contacts.Person`)
+
+    .. attribute:: language
+
+    .. attribute:: date
+
+    .. attribute:: time
+
+    .. method:: get_address_html
+
+    Return the address of *the recipient of this excerpt* as a string
+    containing html markup.  The markup defines exactly one paragraph,
+    even if this excerpt has no recipient (in which case the paragraph
+    is empty).
+
+    Any arguments are forwarded to :meth:`lines2p
+    <lino.utils.xmlgen.html.lines2p>` which is used to pack the address
+    lines into a paragraph.
+
+    The "recipent of this excerpt" is either the :attr:`company` or
+    :attr:`contact_person` of this excerpt (if one of these fields is
+    non-empty), or the recipient of the :attr:`owner`.
+
+    """
 
     manager_level_field = 'office_level'
     allow_cascaded_delete = "owner"
@@ -355,6 +414,10 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         verbose_name_plural = _("Excerpts")
 
     excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
+    """The type of this excerpt (ForeignKey to :class:`ExcerptType`).
+
+    """
+
     body_template_content = BodyTemplateContentField(_("Body template"))
 
     language = dd.LanguageField()
@@ -544,6 +607,7 @@ dd.update_field(Excerpt, 'contact_person',
 
 
 class Excerpts(dd.Table):
+    """Base class for all tables on :class:`Excerpt`."""
     required = dd.required(user_groups='office', user_level='admin')
     # label = _("Excerpts history")
     icon_name = 'script'
@@ -613,6 +677,11 @@ MORE_LIMIT = 5
 
 
 class ExcerptsByOwner(ExcerptsByX):
+    """Shows all excerpts whose :attr:`owner <Excerpt.owner>` field is
+    this.
+
+    """
+    
     master_key = 'owner'
     help_text = _("History of excerpts based on this data record.")
     label = _("Existing excerpts")
@@ -676,6 +745,11 @@ if settings.SITE.project_model is not None:
 
 @dd.receiver(dd.pre_analyze)
 def set_excerpts_actions(sender, **kw):
+    """Installs (1) print management actions on models for which there is
+an excerpt type and (2) the excerpt shortcut fields defined in
+:class:`lino.modlib.excerpts.choicelists.Shortcuts`.
+
+    """
     # logger.info("20140401 %s.set_attest_actions()", __name__)
 
     # in case ExcerptType is overridden

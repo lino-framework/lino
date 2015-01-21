@@ -108,6 +108,7 @@ lino.modlib.countries.fixtures
 lino.modlib.davlink
 lino.modlib.dedupe
 lino.modlib.excerpts
+lino.modlib.excerpts.fixtures
 lino.modlib.export_excel
 lino.modlib.extensible
 lino.modlib.extjs

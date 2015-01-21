@@ -37,17 +37,17 @@ for any type of excerpt, not only for confirmations.
 
 To solve this, I removed the `get_print_recipient` method from
 :class:`dd.Model`, added a new field
-:attr:`ml.excerpts.ExcerptType.print_recipient` and replaced in
+:attr:`lino.modlib.excerpts.ExcerptType.print_recipient` and replaced in
 :xfile:`excerpts/Default.odt` the test ``do text if
 obj.get_print_recipient()`` by ``do text if
 this.excerpt_type.print_recipient)``.  This was also inspired by
 :ref:`joe`\ 's suggestions for ticket :srcref:`docs/tickets/134`: developers
-who don't use the :mod:`ml.excerpts` module should not be bothered
+who don't use the :mod:`lino.modlib.excerpts` module should not be bothered
 with a method like `get_print_recipient` in Lino's :class:`dd.Model`
 class.
 
 And I discovered that it was no longer possible to specify a recipient
-for a presence certificate.  So :class:`ml.excerpts.Excerpt` now is a
+for a presence certificate.  So :class:`lino.modlib.excerpts.Excerpt` now is a
 :class:`ml.contacts.ContactRelated` again. 
 
 :ref:`mustconfig` : 
@@ -58,8 +58,8 @@ by
 ``do text if this.excerpt_type.print_recipient)``.
 
 :ref:`mustmig` : 
-New field :attr:`ml.excerpts.ExcerptType.print_recipient`.
-New fields in :class:`ml.excerpts.Excerpt` because it now is a
+New field :attr:`lino.modlib.excerpts.ExcerptType.print_recipient`.
+New fields in :class:`lino.modlib.excerpts.Excerpt` because it now is a
 :class:`ml.contacts.ContactRelated` again. 
 
 

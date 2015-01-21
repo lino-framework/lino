@@ -21,12 +21,11 @@ from django.conf import settings
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
+from lino.modlib.outbox.mixins import MailableType, Mailable
+from lino.modlib.contacts.mixins import ContactRelated
 
-outbox = dd.resolve_app('outbox')
-contacts = dd.resolve_app('contacts')
 
-
-class NoteType(mixins.BabelNamed, mixins.PrintableType, outbox.MailableType):
+class NoteType(mixins.BabelNamed, mixins.PrintableType, MailableType):
 
     templates_group = 'notes/Note'
 
@@ -99,9 +98,9 @@ class EventTypes(dd.Table):
 class Note(mixins.TypedPrintable,
            UserAuthored,
            Controllable,
-           contacts.ContactRelated,
+           ContactRelated,
            mixins.ProjectRelated,
-           outbox.Mailable,
+           Mailable,
            Postable,
            ):
 

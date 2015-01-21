@@ -49,7 +49,7 @@ The language of an excerpt
 
 Started :srcref:`docs/tickets/144`:
 
-- The `language` field on :class:`ml.excerpts.Excerpt` is back.  And the
+- The `language` field on :class:`lino.modlib.excerpts.Excerpt` is back.  And the
   `language` field on :class:`welfare.aids.Confirmation` is no longer
   needed.
 

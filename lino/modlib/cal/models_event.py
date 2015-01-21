@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -25,6 +25,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino import dd, rt, mixins
 
 from lino.modlib.postings.mixins import Postable
+from lino.modlib.outbox.mixins import MailableType, Mailable
 
 from .utils import (
     Recurrencies,
@@ -45,7 +46,7 @@ outbox = dd.resolve_app('outbox')
 
 
 class EventType(mixins.BabelNamed, mixins.Sequenced,
-                outbox.MailableType):
+                MailableType):
     """
     The possible value of the :attr:`Event.type` field.
     Example content:
@@ -321,7 +322,7 @@ class UpdateGuests(dd.MultipleRowAction):
 
 class Event(Component, Ended,
             mixins.TypedPrintable,
-            outbox.Mailable,
+            Mailable,
             Postable):
     """
     A calendar event is a lapse of time to be visualized in a calendar.

@@ -2,7 +2,7 @@
 Friday, May 16, 2014
 ====================
 
-I discovered that :class:`ml.excerpts.CreateExcerpt`, like every
+I discovered that :class:`lino.modlib.excerpts.CreateExcerpt`, like every
 :term:`dialog action`, cannot be in the top toolbar because these
 actions must be statically renderable.  This is :srcref:`docs/tickets/105`.
 

@@ -70,8 +70,8 @@ which had been occuring for some time when building the docs for
 
 A default implementation of :meth:`dd.Model.get_print_language` is now
 defined on every model. No need to explicitly declare it as
-:class:`dd.Printable`.  This is because :mod:`ml.excerpts` makes
+:class:`dd.Printable`.  This is because :mod:`lino.modlib.excerpts` makes
 printability "dynamic": it makes it possible to turn any model into a
-"printable" just by creating an :class:`ml.excerpts.ExcerptType` for
+"printable" just by creating an :class:`lino.modlib.excerpts.ExcerptType` for
 it.  Another such method is :meth:`dd.Model.get_print_recipient` which
 returns `None` by default.

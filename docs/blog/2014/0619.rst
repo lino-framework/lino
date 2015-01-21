@@ -30,7 +30,7 @@ for every library template whether it should be editable locally by
 copying the file manually to the local config directory.  This is now
 done in a user-friendly way through the web interface.
 
-When using :mod:`ml.excerpts`, the `body_template` is often more
+When using :mod:`lino.modlib.excerpts`, the `body_template` is often more
 important than the main template. This template is now also editable
 through the web interface: New virtual field `body_template_content`
 on any excerpt.

@@ -10,8 +10,14 @@ again.
 It depends on :mod:`lino.modlib.cal`. It does not add any model, but
 adds some workflow states, actions and tables.
 
-
 Extended by :mod:`lino_welfare.modlib.reception`.
+
+
+.. autosummary::
+   :toctree:
+
+    models
+
 
 """
 from lino import ad

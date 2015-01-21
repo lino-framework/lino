@@ -13,12 +13,10 @@ This document is being migrated to :mod:`lino.modlib`.
    boards
    cal
    contacts
-   courses
    cv
    debts
    extjs
    extensible
-   excerpts
    households
    humanlinks
    ledger
@@ -31,7 +29,9 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :hidden:
 
+   excerpts
    beid
    countries
    reception
    users
+   courses

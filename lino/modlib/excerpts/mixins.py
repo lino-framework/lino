@@ -17,7 +17,58 @@ from lino import dd
 
 
 class Certifiable(dd.Model):
+    """
+    Any model which inherits from this mixin becomes "certifiable".
+    That is:
 
+      - it has a `printed_by` field and a corresponding virtual field
+        `printed` which point to the excerpt that is the "definitive"
+        ("Certifying") printout of this object.
+
+      - It may define a list of "certifiable" fields. 
+        See :meth:`get_certifiable_fields`.
+
+    Usage example::
+
+        from lino.modlib.excerpts.mixins import Certifiable
+
+        class MyModel(dd.UserAuthored, Certifiable, dd.Duplicable):
+            ...
+
+    The :mod:`lino.modlib.excerpts.fixtures.std` fixture automatically
+    creates a certifying :class:`ExcerptType` instance for every model
+    which inherits from :class:`Certifiable`.
+
+
+    .. attribute:: printed
+
+      Displays information about when this certifiable has been printed.
+      Clicking on it will display the excerpt pointed to by
+      :attr:`printed_by`.
+
+    .. attribute:: printed_by
+
+      ForeignKey to the :class:`Excerpt` which certifies this instance.
+
+      A :class:`Certifiable` is considered "certified" when this this is
+      not `None`.
+
+    .. method:: get_certifiable_fields()
+
+      Expected to return a string with a space-separated list of field
+      names.  These files will automaticaly become disabled (readonly)
+      when the document is "certified". The default implementation
+      returns an empty string, which means that no field will become
+      disabled when the row is "certified".
+
+      Example::
+
+          @classmethod
+          def get_certifiable_fields(cls):
+              return 'date user title'
+
+
+    """
     class Meta:
         abstract = True
 

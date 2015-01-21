@@ -86,5 +86,5 @@ The :class:`lino.mixins.duplicable.Duplicate` action caused an
 Fixed.
 
 :class:`ml.debts.Budget` now also uses 
-:meth:`ml.excerpts.Certifiable.get_certifiable_fields`
+:meth:`lino.modlib.excerpts.Certifiable.get_certifiable_fields`
 

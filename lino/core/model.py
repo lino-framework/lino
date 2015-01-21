@@ -648,7 +648,7 @@ class Model(models.Model):
             return a
 
     def is_attestable(self):
-        """Override this to disable the :class:`ml.excerpts.CreateExcerpt`
+        """Override this to disable the :class:`lino.modlib.excerpts.CreateExcerpt`
 action on individual instances.
 
         """
@@ -670,7 +670,7 @@ action on individual instances.
 
     def get_excerpt_options(self, ar, **kw):
         """Set additional fields of newly created excerpts from this.
-        Used by :class:`ml.excerpts.CreateExcerpt`.
+        Used by :class:`lino.modlib.excerpts.CreateExcerpt`.
         """
         return kw
 

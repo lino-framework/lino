@@ -64,7 +64,7 @@ template group `excerpts`. But apps must be able to define
 model-specific templates (as :file:`cv.odt`, :file:`eid-content.odt`,
 :file:`art60-7.odt`). And these should not get mixed up with each
 other, so they should use in their model-based template group. So the
-list of possible choices for the :attr:`ml.excerpts.Excerpt.template`
+list of possible choices for the :attr:`lino.modlib.excerpts.Excerpt.template`
 field is a combination of a files found in all groups.
 
 Another question is about the template context of an excerpt: Should

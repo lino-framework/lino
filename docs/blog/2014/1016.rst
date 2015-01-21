@@ -5,7 +5,7 @@ Thursday, October 16, 2014
 Continued on :srcref:`docs/tickets/133`
 ========================================
 
-#.  Feld :class:`"Auszüge" <ml.excerpts.ExcerptsByProject>` im Reiter
+#.  Feld :class:`"Auszüge" <lino.modlib.excerpts.ExcerptsByProject>` im Reiter
     "Historie" wurde noch nicht automatisch aktualisiert nach einem
     Ausdruck.
 
@@ -17,20 +17,20 @@ Continued on :srcref:`docs/tickets/133`
 Die Implementierung des Feldes "Erstellte Lebensläufe" war subtil:
 
 First idea was to add a new field `vfield_name` on
-:class:`ml.excerpts.ExcerptType` and then extend
-:func:`ml.excerpts.set_excerpts_actions` to install a virtual field on
+:class:`lino.modlib.excerpts.ExcerptType` and then extend
+:func:`lino.modlib.excerpts.set_excerpts_actions` to install a virtual field on
 the model for these types.  But that approach would result in layouts
 based on database content.  Sounds dangerous and hackerish.
 
 So we finally did it by defining a new choicelist `Shortcuts` and to
-add a field `shortcut` in :class:`ml.excerpts.ExcerptType` which
+add a field `shortcut` in :class:`lino.modlib.excerpts.ExcerptType` which
 points to this choicelist.
 
 In :mod:`lino_welfare.modlib.pcsw` we now do::
 
   excerpts.Shortcuts.add('pcsw.Client', 'cvs_emitted')
 
-And then :func:`ml.excerpts.set_excerpts_actions` was extended to
+And then :func:`lino.modlib.excerpts.set_excerpts_actions` was extended to
 define the virtual fields::
 
   for i in ExcerptShortcuts.items():
@@ -45,7 +45,7 @@ define the virtual fields::
 
 
 This change causes a :ref:`mustmig` for applications which use
-:mod:`ml.excerpts`.
+:mod:`lino.modlib.excerpts`.
 
 
 :manage:`dump2py` was broken

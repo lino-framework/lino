@@ -24,9 +24,12 @@ lino.modlib.notes.models
    
       AllNotes
       ByUser
+      ContactRelated
       Controllable
       EventType
       EventTypes
+      Mailable
+      MailableType
       MyNotes
       Note
       NoteDetail

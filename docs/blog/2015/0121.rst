@@ -15,6 +15,17 @@ now deprecated
 The first upload shortcut is `id_document`, visible for newcomer
 agents in the Coachings panel of a pcsw.Client.
 
+You are busy with ...
+=====================
+
+Meditating about
+:meth:`lino.modlib.reception.models.MyBusyVisitors.get_welcome_messages`.
+In fact they maybe don't want a list of guests but a list of events.
+The difference is rather theoretical for the moment because they will
+use it for individual consultations with one guest. But if there's
+more than one guest, they want to be able to close the meeting with a
+single click (followed by a confirmation).
+
 
 Lino in Egypt
 =============
@@ -40,5 +51,18 @@ Charlie hebdo. Lino becomes part of the world's prayer for peace on
 earth :-)
 
 
+Worked on API documentation
+===========================
 
+I converted the docstrings of some more modules 
+:mod:`lino.modlib.excerpts`,
+:mod:`lino.modlib.outbox` and
+:mod:`lino.modlib.courses`.
+
+Mahmoud started with Lino Così
+==============================
+
+In a one hour voice session I made a presentation of :ref:`cosi` to
+Mahmoud. We discovered lots of small and serious problems.  One of
+them is :ticket:`67` (Payment suggestion mixes up debit with credit).
 

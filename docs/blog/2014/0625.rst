@@ -3,7 +3,7 @@ Wednesday, June 25, 2014
 ========================
 
 - Fixed a bug which caused the :class:`dd.EditTemplate` action to be
-  missing on :class:`ml.excerpts.Excerpts`.
+  missing on :class:`lino.modlib.excerpts.Excerpts`.
 
 - :manage:`watch_tim` now logs a warning "Ignoring invalid email
   address %s" when the case occurs.

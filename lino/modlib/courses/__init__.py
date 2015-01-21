@@ -1,16 +1,29 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
-# This file is part of the Lino-Welfare project.
-# Lino-Welfare is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino-Welfare is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# You should have received a copy of the GNU Lesser General Public License
-# along with Lino-Welfare; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2013-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
+
+"""Adds functionality for managing courses.
+
+A **Course** is a series of scheduled calendar events where a
+given teacher teaches a given group of participants about a given
+topic.
+
+There is a configurable list of **topics**.
+Courses are grouped into **Lines** (meaning "series") of courses.
+A course line is a series of courses on a same **topic**.
+
+The participants of a course are stored as **Enrolments**.
+
+
+.. autosummary::
+   :toctree:
+
+   models
+   choicelists
+   workflows
+
+"""
+
 
 from lino import ad
 

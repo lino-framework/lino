@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-.. currentmodule:: ml.excerpts
-
-Creates a certifying :class:`ExcerptType` instance for every model
+"""Creates a certifying :class:`ExcerptType` instance for every model
 which inherits from :class:`Certifiable`.
 
 """

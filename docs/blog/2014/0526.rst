@@ -17,7 +17,7 @@ This took me some time.  Problems that come when the ``import`` of
 some part of a Django project fails are sometimes difficult to track
 because Django adds some magic there.
 
-I moved :class:`ml.excerpts.Certifiable` to a separate module
+I moved :class:`lino.modlib.excerpts.Certifiable` to a separate module
 :mod:`lino.modlib.excerpts.mixins` because I believed that this was the
 reason. 
 

@@ -11,7 +11,7 @@ module :mod:`lino.modlib.users.mixins`.
 Continued on :srcref:`docs/tickets/133`:
 
 #.  Filtern können im Panel :class:`"Auszüge"
-    <ml.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
+    <lino.modlib.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
     Fenster geöffnet). Nach Dokumentart, nach Datumsbereich, nach
     Benutzer.
  

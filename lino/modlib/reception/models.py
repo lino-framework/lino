@@ -433,10 +433,13 @@ class MyWaitingVisitors(MyVisitors, WaitingVisitors):
 
 
 class MyBusyVisitors(MyVisitors, BusyVisitors):
+    """Shows the visitors with whom I am busy."""
     label = _("Visitors busy with me")
 
     @classmethod
     def get_welcome_messages(cls, ar):
+        """Yield :message:`You are busy with` messages for the welcome
+page."""
         guests = []
         sar = ar.spawn(cls)
         for g in sar:

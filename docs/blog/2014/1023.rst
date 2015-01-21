@@ -15,7 +15,7 @@ Finished the following item:
 This needed another little change :
 
 - When there is no content, the function of a shortcut field
-  (:class:`ml.excerpts.Shortcuts`) now returns an empty `<DIV>` tag.
+  (:class:`lino.modlib.excerpts.Shortcuts`) now returns an empty `<DIV>` tag.
   Otherwise the layout manager failed in these cases.
 
 Then once more back to the following item:
@@ -30,7 +30,7 @@ the address.  This caused some fiddling in
 It seems that `appy.pod` does not look into frames, so I use a simple
 paragraph with border.  A trick which in turn needed a new positional
 argument `min_height` to :meth:`get_address_html
-<ml.excerpts.Excerpt.get_address_html>`.
+<lino.modlib.excerpts.Excerpt.get_address_html>`.
 
 Adapted the general :xfile:`excerpts/Default.odt` template (until now
 I had been focussed on the template in :ref:`welfare`).
@@ -39,7 +39,7 @@ I had been focussed on the template in :ref:`welfare`).
 Miscellaneous changes while working on the above:
 
 - Removed the field `contact_role` from layouts of
-  :mod:`ml.excerpts.Excerpt` (i.e. it is no longer visible).  
+  :mod:`lino.modlib.excerpts.Excerpt` (i.e. it is no longer visible).  
 
   TODO: Maybe we should split `ContactRelated` into `Recipient` and
   `Represented`.

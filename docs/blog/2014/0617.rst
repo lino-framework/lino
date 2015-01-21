@@ -12,26 +12,26 @@ this it would be good to do an upgrade for Roger who will soon
 reactivate.
 
 This upgrade needs a decision:
-(1) convert :ref:`faggio` to use :mod:`ml.excerpts`
-or (2) convert :mod:`ml.excerpts` to be optional?
+(1) convert :ref:`faggio` to use :mod:`lino.modlib.excerpts`
+or (2) convert :mod:`lino.modlib.excerpts` to be optional?
 
-The :mod:`ml.excerpts` module seems a great concept which will be of
+The :mod:`lino.modlib.excerpts` module seems a great concept which will be of
 wide use. But (1) Roger did not ask for it, (2) it is annoying for
 that I must now care about database migration.
 
 I must care about database migration because :mod:`ml.cal` and
-:mod:`ml.notes` *did* convert to use :mod:`ml.excerpts`. It is a bit
+:mod:`ml.notes` *did* convert to use :mod:`lino.modlib.excerpts`. It is a bit
 suboptimal for the :ref:`faggio` users when :mod:`ml.courses` does
 *not* use it.
 
 The (2) alternative above means that I see a strategic injustice: two
 modules (:mod:`ml.cal` and :mod:`ml.notes`) *force* an application
-(:ref:`faggio`) to use a given new module (:mod:`ml.excerpts`). While
+(:ref:`faggio`) to use a given new module (:mod:`lino.modlib.excerpts`). While
 this is okay in the given case (for Faggio it is anyway a good thing),
 this is fundamentally wrong.  I don't yet see a solution for it.  It
-comes because the choice of using :mod:`ml.excerpts` is done per app
+comes because the choice of using :mod:`lino.modlib.excerpts` is done per app
 and not per application: All "printable" objects must inherit either
-from :class:`ml.excerpts.Certifiable` or from
+from :class:`lino.modlib.excerpts.Certifiable` or from
 :class:`lino.mixins.printable.BasePrintable` Resolution: this
 conversion can wait. It is not such a big catastrophe that
 :class:`ml.courses.Topic` :class:`ml.courses.Course` and
@@ -61,7 +61,7 @@ Miscellaneous
 
 - Excerpts should never get created manually. So I set
   :attr:`dd.Actor.allow_create` to False on
-  :class:`ml.excerpts.Excerpts`.  
+  :class:`lino.modlib.excerpts.Excerpts`.  
 
 
 Social aids
@@ -73,7 +73,7 @@ some first problems.
 - Error message 
   `coercing to Unicode: need string or buffer, list found`
   came when trying to select a 
-  :attr:`ml.excerpts.ExcerptType.body_template`.
+  :attr:`lino.modlib.excerpts.ExcerptType.body_template`.
 
 - The `insert_layout` of :class:`welfare.aids.AidsByClient` was too
   minimal, the amount was missing in `detail_layout`, ...

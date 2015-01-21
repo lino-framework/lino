@@ -8,24 +8,24 @@ Excerpts also for Così
 
 DONE:
 
-- Added :mod:`ml.excerpts` to :ref:`cosi`.  
-  :class:`ml.sales.Invoice` is now :class:`ml.excerpts.Certifiable`.
+- Added :mod:`lino.modlib.excerpts` to :ref:`cosi`.  
+  :class:`ml.sales.Invoice` is now :class:`lino.modlib.excerpts.Certifiable`.
 
 - Started to document :mod:`ml.sales`.
 - Renamed field "invoicing_address" to "invoice_recipient"
 
 
 - The new :mod:`lino.modlib.excerpts.fixtures.std` fixture
-  automatically creates a certifying :class:`ml.excerpts.ExcerptType`
+  automatically creates a certifying :class:`lino.modlib.excerpts.ExcerptType`
   instance for every model which inherits from
-  :class:`ml.excerpts.Certifiable`.
+  :class:`lino.modlib.excerpts.Certifiable`.
 
 - Cool: the new method :meth:`lino.core.site.Site.str2kw` used for the above
   fixture is also the beginning of a solution for :srcref:`docs/tickets/108`.
 
 So :class:`ml.sales.Invoice` is no longer `TypedPrintable` but
-:class:`ml.excerpts.Certifiable`. This currently means that every app
-which uses :mod:`ml.sales` must also install :mod:`ml.excerpts`.
+:class:`lino.modlib.excerpts.Certifiable`. This currently means that every app
+which uses :mod:`ml.sales` must also install :mod:`lino.modlib.excerpts`.
 Hm... Can we leave this as this? Do we need automatic management of
 dependencies (i.e. :attr:`lino.core.plugin.Plugin.requires`)?
 

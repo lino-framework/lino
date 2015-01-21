@@ -10,7 +10,7 @@ to solve this is to move the business logic from the
 :xfile:`Default.odt` file into a body template
 :xfile:`budget.body.html` (and to convert the current template into a
 document which uses the :attr:`body_template
-<ml.excerpts.ExcerptType.body_template>` field).
+<lino.modlib.excerpts.ExcerptType.body_template>` field).
 
 It took me another few hours to discover that unfortunately this was
 **not** yet the solution. I cannot use a body template for generating

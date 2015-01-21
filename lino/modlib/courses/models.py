@@ -7,16 +7,7 @@ from __future__ import print_function
 
 """Database models for :mod:`lino.modlib.courses`.
 
-Models:
-
-- A :class:`Course` is a series of scheduled calendar events where a
-  given teacher teaches a given group of participants about a given
-  topic.
-
-- :class:`Line` 
-- :class:`Enrolment` 
-- :class:`Slot`
-- :class:`Topic`
+.. autosummary::
 
 """
 
@@ -128,7 +119,10 @@ class Topics(dd.Table):
 
 
 class Line(mixins.BabelNamed):
-    # a line (series) of courses. 
+    """A line (of Courses) is a series which groups courses into a
+    configurable list of categories.
+
+    """
     class Meta:
         verbose_name = _("Course Line")
         verbose_name_plural = _('Course Lines')
@@ -230,6 +224,16 @@ class Course(cal.Reservation):
     teacher in a given room to speak about a given subject.
 
     The subject of a course is expressed by the :class:`Line`.
+
+    Notes about automatic event generation:
+    
+    - When an automatically generated event is to be moved to another
+      date, e.g. because it falls into a vacation period, then you
+      simply change it's date.  Lino will automatically adapt all
+      subsequent events.
+      
+    - Marking an automatically generated event as "Cancelled" will not
+      create a replacement event.
 
     """
 

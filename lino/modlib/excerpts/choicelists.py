@@ -25,6 +25,14 @@ class Shortcut(dd.Choice):
 
 
 class Shortcuts(dd.ChoiceList):
+    """The list of excerpt shortcut fields.  An excerpt shortcut field is
+a virtual display field with actions for quickly managing, from a
+given database object, the excerpt for this object of a given type.
+
+These virtual fields are being installed during pre_analyze by
+:func:`lino.modlib.excerpts.models.set_excerpts_actions`.
+
+    """
     verbose_name = _("Excerpt shortcut")
     verbose_name_plural = _("Excerpt shortcuts")
     item_class = Shortcut

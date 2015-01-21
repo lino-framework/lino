@@ -701,7 +701,7 @@ class Printable(object):
     """
 
     do_print = DirectPrintAction()
-    # Note that :func:`ml.excerpts.set_excerpts_actions` possibly
+    # Note that :func:`lino.modlib.excerpts.set_excerpts_actions` possibly
     # replaces the `do_print` action by a `excerpts.CreateExcerpt`
     # instance.
 

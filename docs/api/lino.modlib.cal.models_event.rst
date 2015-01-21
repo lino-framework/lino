@@ -41,6 +41,8 @@ lino.modlib.cal.models_event
       EventsByRoom
       EventsByType
       ExtAllDayField
+      Mailable
+      MailableType
       MoveEventNext
       MyAssignedEvents
       MyEvents

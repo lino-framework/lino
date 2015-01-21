@@ -6,7 +6,7 @@ Rien n'est simple
 -----------------
 
 :ref:`cosi` failed because it uses
-:mod:`ml.excerpts`
+:mod:`lino.modlib.excerpts`
 which in turn depends on 
 :mod:`ml.outbox`
 (which in turn depends on :mod:`ml.uploads`),

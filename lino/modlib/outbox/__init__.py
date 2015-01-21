@@ -1,7 +1,18 @@
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.outbox`."
+"""Adds functionality for sending emails from within a Lino application.
+
+.. autosummary::
+   :toctree:
+
+   models
+   mixins
+   choicelists
+   fixtures.hello
+
+
+"""
 
 from lino import ad
 from django.utils.translation import ugettext_lazy as _
@@ -25,5 +36,3 @@ class Plugin(ad.Plugin):
         m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
         m.add_action('outbox.Mails')
         m.add_action('outbox.Attachments')
-
-
