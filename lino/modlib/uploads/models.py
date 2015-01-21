@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-
 """
+Database models for :mod:`lino.modlib.uploads`.
 """
 
 import logging
@@ -12,7 +12,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-# from django.utils.encoding import force_unicode
+from django.contrib.contenttypes.models import ContentType
 
 from lino import dd, rt
 from lino import mixins
@@ -22,12 +22,7 @@ from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
 
-
-class UploadAreas(dd.ChoiceList):
-    verbose_name = _("Upload Area")
-    verbose_name_plural = _("Upload Areas")
-add = UploadAreas.add_item
-add('90', _("Uploads"), 'general')
+from .choicelists import Shortcuts, UploadAreas
 
 
 class UploadType(mixins.BabelNamed):
@@ -49,6 +44,8 @@ class UploadType(mixins.BabelNamed):
         _("Wanted"), default=False,
         help_text=_("Add a (+) button when there is no upload of this type."))
 
+    shortcut = Shortcuts.field(blank=True)
+
 
 class UploadTypes(dd.Table):
     """The table with all existing upload types.
@@ -57,7 +54,7 @@ This usually is accessible via the `Configure` menu.
     """
     required = dd.required(user_level='admin')
     model = 'uploads.UploadType'
-    column_names = "upload_area name *"
+    column_names = "upload_area name max_number wanted shortcut *"
     order_by = ["upload_area", "name"]
 
     insert_layout = """
@@ -66,7 +63,7 @@ This usually is accessible via the `Configure` menu.
     """
 
     detail_layout = """
-    id upload_area wanted max_number
+    id upload_area wanted max_number shortcut
     name
     uploads.UploadsByType
     """
@@ -141,6 +138,26 @@ class Uploads(dd.Table):
     file
     user
     """
+
+    parameters = mixins.ObservedPeriod(
+        puser=models.ForeignKey(
+            'users.User', blank=True, null=True),
+        pupload_type=models.ForeignKey(
+            'uploads.UploadType', blank=True, null=True))
+    params_layout = "start_date end_date puser pupload_type"
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Uploads, cls).get_request_queryset(ar)
+        pv = ar.param_values
+
+        if pv.puser:
+            qs = qs.filter(user=pv.puser)
+
+        if pv.pupload_type:
+            qs = qs.filter(type=pv.pupload_type)
+
+        return qs
 
 
 class UploadsByType(Uploads):
@@ -247,5 +264,73 @@ class UploadsByController(AreaUploads):
     type
     description
     """
+
+    @classmethod
+    def format_upload(self, obj):
+        return unicode(obj.type)
+
+
+@dd.receiver(dd.pre_analyze)
+def set_upload_shortcuts(sender, **kw):
+    """This is the successor for `quick_upload_buttons`."""
+
+    # we must not use the classes defined above in case models have
+    # been overridden.
+    UploadType = sender.modules.uploads.UploadType
+    Upload = sender.modules.uploads.Upload
+
+    for i in Shortcuts.items():
+
+        def f(obj, ar):
+            if obj is None:
+                return E.div()
+            try:
+                et = UploadType.objects.get(shortcut=i)
+            except UploadType.DoesNotExist:
+                return E.div()
+            items = []
+            
+            sar = ar.spawn(
+                UploadsByController,
+                master_instance=obj,
+                known_values=dict(type=et))
+                # param_values=dict(pupload_type=et))
+            n = sar.get_total_count()
+            if n == 0:
+                btn = sar.insert_button(
+                    _("Upload"), icon_name="page_add",
+                    title=_("Upload a file from your PC to the server."))
+                items.append(btn)
+            elif n == 1:
+                after_show = ar.get_status()
+                obj = sar.data_iterator[0]
+                items.append(sar.renderer.href_button(
+                    settings.SITE.build_media_url(obj.file.name),
+                    _("show"),
+                    target='_blank',
+                    icon_name='page_go',
+                    style="vertical-align:-30%;",
+                    title=_("Open the uploaded file in a "
+                            "new browser window")))
+                after_show.update(record_id=obj.pk)
+                items.append(sar.window_action_button(
+                    sar.ah.actor.detail_action,
+                    after_show,
+                    _("Edit"), icon_name='application_form',
+                    title=_("Edit metadata of the uploaded file.")))
+            else:
+                obj = sar.sliced_data_iterator[0]
+                items.append(ar.obj2html(obj, _("Last")))
+
+                ba = sar.bound_action
+                btn = sar.renderer.action_button(
+                    obj, sar, ba, "%s (%d)" % (_("All"), n),
+                    icon_name=None)
+                items.append(btn)
+
+            return E.div(*join_elems(items, ', '))
+
+        vf = dd.VirtualField(dd.DisplayField(i.text), f)
+        dd.inject_field(i.model_spec, i.name, vf)
 
 

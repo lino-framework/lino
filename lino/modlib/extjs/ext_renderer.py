@@ -288,6 +288,9 @@ class ExtRenderer(HtmlRenderer):
         :class:`TableRequest <rt.ar>` has no
         rows) or two buttons :guilabel:`Show` and :guilabel:`Edit` if
         it has one row.
+
+        Deprecated. Use
+        :class:`lino.modlib.uploads.choicelists.Shortcuts` instead
         
         See also :srcref:`docs/tickets/56`.
 

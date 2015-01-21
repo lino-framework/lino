@@ -1,0 +1,44 @@
+===========================
+Wednesday, January 21, 2015
+===========================
+
+
+Upload shortcuts
+================
+
+Another new feature: Lino now has "upload shortcuts". These are
+technically similar to Excerpt shortcuts (much code was copied and
+configuration is similar). They are the long-awaited successor for the
+now deprecated
+:meth:`lino.modlib.extjs.ext_renderer.Renderer.quick_upload_buttons`.
+
+The first upload shortcut is `id_document`, visible for newcomer
+agents in the Coachings panel of a pcsw.Client.
+
+
+Lino in Egypt
+=============
+
+Mahmoud finished a first draft of `commondata-eg
+<https://github.com/ExcellentServ/commondata-eg>`__.  This is his first
+full-fledged Python project which might theoretically be useful to
+other people.
+
+`commondata-eg` is for Egypt what `commondata.be
+<https://github.com/lsaffre/commondata-be>`_ is for Belgium and
+`commondata.ee <https://github.com/lsaffre/commondata-ee>`_ for
+Estonia: a central place for maintaining public and free common data
+in a more semantic form than Wikipedia.  I wanted him to do this in
+order to get in touch with my way of doing projects.
+
+If you read the README of `commondata-eg
+<https://github.com/ExcellentServ/commondata-eg>`__ until the end, you
+can see that this project provides Egyptian place names in both
+English and Arabic. For me, this is a visible sign of hope for a
+nonviolent relation between Christian and Muslim world in a time after
+Charlie hebdo. Lino becomes part of the world's prayer for peace on
+earth :-)
+
+
+
+

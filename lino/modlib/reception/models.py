@@ -339,7 +339,6 @@ if False:
 
 
 class Visitors(cal.Guests):
-
     """
     No subclass should be editable because deleting would leave the
     useless cal.Event.

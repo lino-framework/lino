@@ -1,7 +1,17 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.excerpts`."
+"""See :mod:`ml.excerpts`.
+
+.. autosummary::
+   :toctree:
+
+   models
+   mixins
+   choicelists
+   fixtures.std
+
+"""
 
 from lino import ad
 from django.utils.translation import ugettext_lazy as _

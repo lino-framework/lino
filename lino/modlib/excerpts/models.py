@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-The :xfile:`models.py` file for :mod:`ml.excerpts`.
+Database models for :mod:`lino.modlib.excerpts`.
 """
 
 from __future__ import unicode_literals
@@ -42,7 +42,9 @@ has_davlink = davlink is not None and settings.SITE.use_java
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
-from .mixins import Certifiable, Shortcuts
+
+from .mixins import Certifiable
+from .choicelists import Shortcuts
 
 
 class ExcerptType(
@@ -653,15 +655,6 @@ class ExcerptsByOwner(ExcerptsByX):
         add(_("Older"), Q(build_time__lt=t7))
         return E.ul(*items)
         
-        # items = []
-        # for ex in sar:
-        #     items.append(self.format_excerpt(ex, ar))
-
-        # if len(items) == 0:
-        #     items.append(_("No excerpts."))
-        # else:
-        #     items = join_elems(items, sep=', ')
-        # return E.div(*items)
 
     @classmethod
     def format_excerpt(self, ex):

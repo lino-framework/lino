@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-This defines the :class:`ml.excerpts.Certifiable` model mixin.
+This defines the :class:`Certifiable` model mixin.
 
 """
 
@@ -14,21 +14,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino import dd
-
-
-class Shortcut(dd.Choice):
-    model_spec = None
-
-    def __init__(self, model_spec, name, verbose_name):
-        self.model_spec = model_spec
-        value = model_spec + "." + name
-        super(Shortcut, self).__init__(value, verbose_name, name)
-
-
-class Shortcuts(dd.ChoiceList):
-    verbose_name = _("Excerpt shortcut")
-    verbose_name_plural = _("Excerpt shortcuts")
-    item_class = Shortcut
 
 
 class Certifiable(dd.Model):

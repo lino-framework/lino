@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 ur"""
@@ -448,9 +448,10 @@ class ChoiceList(tables.AbstractTable):
         if len(i.value) > cls.max_length:
             if len(cls._fields) > 0:
                 raise Exception(
-                    "%s cannot add value %r because fields exist and max_length is %d."
+                    "%s cannot add value %r because fields exist "
+                    "and max_length is %d."
                     % (cls, i.value, cls.max_length) + """\
-When fields have been created, we cannot simply change their max_length because 
+When fields have been created, we cannot simply change their max_length because
 Django creates copies of them when inheriting models.
 """)
             cls.max_length = len(i.value)
