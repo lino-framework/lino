@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
+.. autosummary::
+
+"""
 
 import logging
 logger = logging.getLogger(__name__)
@@ -70,9 +74,6 @@ class BoundAction(object):
 
     def full_name(self):
         return self.action.full_name(self.actor)
-        #~ if self.action.action_name is None:
-            #~ raise Exception("%r action_name is None" % self.action)
-        #~ return str(self.actor) + '.' + self.action.action_name
 
     def request(self, *args, **kw):
         kw.update(action=self)

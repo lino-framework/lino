@@ -491,8 +491,8 @@ Lino.MainPanel = {
 
   Lino.MainPanel.set_status() : the status can have the following keys:
 
-  - field_values
-  - param_values
+  - param_values : values of parameter fields
+  - field_values : values of action parameter fields
   - base_params
   - record_id
   - active_tab

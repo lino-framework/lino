@@ -532,9 +532,9 @@ class BaseRequest(object):
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)
 
     def instance_action_button(self, ai, *args, **kw):
-        """Return an HTML element with a button (or a button-like href) which,
-        when clicked, will run the given :class:`InstanceAction
-        <lino.core.actions.InstanceAction>` ``ai``.
+        """Return an HTML element with a button which would run the given
+        :class:`InstanceAction <lino.core.actions.InstanceAction>`
+        ``ai`` on the client.
 
         """
         # logger.info("20141106 %s", ai.instance)
@@ -542,8 +542,7 @@ class BaseRequest(object):
             ai.instance, self, ai.bound_action, *args, **kw)
 
     def action_button(self, ba, obj, *args, **kwargs):
-        """
-        Returns the HTML of an action link which will run the specified
+        """Returns the HTML of an action link which will run the specified
         action.
 
         ``kwargs`` may contain additional html attributes like `style`.

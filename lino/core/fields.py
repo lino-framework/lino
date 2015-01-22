@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines extended field classes like :class:`RichTextField` and
@@ -495,7 +495,7 @@ class RequestField(VirtualField):
 
 def displayfield(*args, **kw):
     """
-    Decorator shortcut to turn a method into a DisplayField.
+    Decorator to turn a method into a :class:`DisplayField`.
     """
     return virtualfield(DisplayField(*args, **kw))
 

@@ -79,3 +79,5 @@ i.e. the :class:`AgentsByClient
 <lino_welfare.modlib.reception.models.AgentsByClient>` table), for
 which there is already a test case in :ref:`welfare.tested.reception`.
 
+This ticket took so long because there was still a missing feature in
+the actions API.

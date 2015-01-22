@@ -212,8 +212,8 @@ request `tar`."""
         which runs the bound action `ba` when clicked.
         """
         label = label or ba.action.label
-        uri = self.js2url(self.action_call_on_instance(
-            obj, ar, ba, request_kwargs))
+        js = self.action_call_on_instance(obj, ar, ba, request_kwargs)
+        uri = self.js2url(js)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
