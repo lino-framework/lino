@@ -1,0 +1,54 @@
+==========================
+Thursday, January 22, 2015
+==========================
+
+You are busy with ...
+=====================
+
+Wow, Lino has two new features.
+
+After meditating about how :ref:`welfare` should inform users that
+they "are busy with" a client.  Yesterday I wrote that they want to be
+able to close such a meeting with a single click from their main page
+(plus another click on a confirmation naming all these guests).  And
+they want it even if there's more than one guest.
+
+This is a new kind of welcome message. We don't want to see a table of
+"all my active meetings" because that table would never show more than
+one row.  So makes no sense here to bind the message handler (the
+callable which builds the message) to an existing :class:`Table
+<lino.core.dbtables.Table>`.
+
+Until now, welcome messages were defined by writing a method
+:meth:`get_welcome_messages
+<lino.core.actors.Actor.get_welcome_messages>` on some table.  This
+method is still useful if your message is of style "you have x rows in
+foos" and clicking on it would open that table.
+
+But now you can alternatively use the new method
+:mod:`dd.add_welcome_handler
+<lino.core.site.Site.add_welcome_handler>` to define welcome messages
+which are not bound to any :class:`Table <lino.core.dbtables.Table>`.
+
+Our first use case is
+:func:`lino_welfare.modlib.cal.models.you_are_busy_messages` which
+does exactly what we want for :ref:`welfare`.
+
+There was another problem: The normal way to include into my welcome
+message, a button which invokes that action is something like::
+
+  ar.instance_action_button(evt.close_meeting)
+
+But the `CloseMeeting` action is a workflow action (declared using
+:meth:`lino.core.workflows.State.add_transition`), and thus it is
+not explicitly declared on the model using the usual method::
+
+  close_meeting = CloseMeeting()
+
+So here is yet another (very subtle) feature: named workflow actions
+are now automatically declared on the model as a class attribute. So
+that I can now write above code.
+
+
+
+

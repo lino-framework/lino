@@ -268,6 +268,8 @@ class ChoiceList(tables.AbstractTable):
     """
     __metaclass__ = ChoiceListMeta
 
+    workflow_actions = []
+
     #~ _handle_class = tables.TableHandle
 
     item_class = Choice
@@ -627,6 +629,15 @@ class ChoiceListField(models.CharField):
         #~ models.SmallIntegerField.__init__(self,*args, **defaults)
         models.CharField.__init__(self, verbose_name, **defaults)
 
+    # def contribute_to_class(self, cls, name):
+    #     super(ChoiceListField, self).contribute_to_class(cls, name)
+    #     # add workflow actions to the model so that we can access them
+    #     # as InstanceActions
+    #     logger.info("20150122 %s %s", cls, name)
+    #     for a in self.choicelist.workflow_actions:
+    #         logger.info("20150122 %s %s", a.action_name, a)
+    #         setattr(cls, a.action_name, a)
+    
     def deconstruct(self):
         # needed for Django 1.7
         # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method

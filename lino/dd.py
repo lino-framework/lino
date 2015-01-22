@@ -304,7 +304,7 @@ demo_date = settings.SITE.demo_date
 is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
 get_db_overview_rst = settings.SITE.get_db_overview_rst
-
+add_welcome_handler = settings.SITE.add_welcome_handler
 
 apps = plugins = settings.SITE.plugins
 # `apps` is an alias for `plugins`. We recommend plugins since `apps`

@@ -1,15 +1,16 @@
 # -*- coding: UTF-8 -*-
-# LS 20120430 adapted copy from lxml\src\lxml\html\builder.py
+# Adapted copy from lxml\src\lxml\html\builder.py
 # --------------------------------------------------------------------
 # The ElementTree toolkit is
 # Copyright (c) 1999-2004 by Fredrik Lundh
+# Modifications in this file are
+# Copyright (c) 2012-2015 Luc Saffre
 # --------------------------------------------------------------------
 
 # This document is part of the Lino test suite. To test only this
 # document, run::
 #
 #   $ python setup.py test -s tests.UtilsTests.test_xmlgen_html
-
 
 
 """
@@ -131,7 +132,7 @@ object
 ol 
 optgroup 
 option 
-p 
+p
 param 
 pre 
 q 
@@ -179,6 +180,7 @@ data-toggle
 tabindex
 placeholder
 """)
+"""The HTML namespace."""
 
 
 def table_header_row(*headers, **kw):

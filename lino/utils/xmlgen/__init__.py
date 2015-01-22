@@ -1,10 +1,19 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Inspired by Frederik Lundh's
 `ElementTree Builder
 <http://effbot.org/zone/element-builder.htm>`_
+
+.. autosummary::
+   :toctree:
+
+   html
+   intervat
+   odf
+   cbss
+   sepa
 
 
 >>> E = Namespace('http://my.ns',

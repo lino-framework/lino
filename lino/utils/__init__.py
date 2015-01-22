@@ -54,6 +54,7 @@ This is a tested document. To test it, run::
     test
     textfields
     ucsv
+    xmlgen
 
 
 >>> from lino.utils import *

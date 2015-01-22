@@ -64,8 +64,7 @@ class Guest(dd.Model):
         verbose_name = _("Participant")
         verbose_name_plural = _("Participants")
 
-    event = models.ForeignKey('cal.Event',
-                              verbose_name=_("Event"))
+    event = models.ForeignKey('cal.Event')
 
     partner = dd.ForeignKey('contacts.Partner')
 

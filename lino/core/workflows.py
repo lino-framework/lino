@@ -2,10 +2,8 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-Defines classes
-:class:`State`
-:class:`Workflow`
-:class:`ChangeStateAction`
+.. autosummary::
+
 """
 
 from django.utils.functional import Promise
@@ -18,9 +16,8 @@ from lino.core import choicelists
 
 class State(choicelists.Choice):
     """A `State` is a specialized :class:`Choice
-    <lino.core.choicelists.Choice>` that adds the `add_transition`
-    method.  `Choice.add_transition` declares or creates a
-    `ChangeStateAction` which makes the object enter this state.
+    <lino.core.choicelists.Choice>` that adds the
+    :meth:`add_transition` method.
 
     """
 
@@ -32,7 +29,9 @@ class State(choicelists.Choice):
                        icon_name=None,
                        debug_permissions=None,
                        **required):
-        """`label` can be either a string or a subclass of ChangeStateAction.
+        """Declare or create a `ChangeStateAction` which makes the object
+enter this state.  `label` can be either a string or a subclass of
+ChangeStateAction.
 
         You can specify an explicit `name` in order to allow replacing
         the transition action later by another action.
@@ -94,12 +93,24 @@ class Workflow(choicelists.ChoiceList):
     states of a workflow.
 
     """
-    workflow_actions = []
-
     item_class = State
 
     verbose_name = _("State")
     verbose_name_plural = _("States")
+
+    @classmethod
+    def on_analyze(cls, site):
+        """Add workflow actions to the models using this workflow so that we
+        can access them as InstanceActions.
+
+        """
+        super(Workflow, cls).on_analyze(site)
+        for fld in cls._fields:
+            model = getattr(fld, 'model', None)
+            if model:
+                for a in cls.workflow_actions:
+                    if not a.action_name.startswith('wf'):
+                        setattr(model, a.action_name, a)
 
     @classmethod
     def before_state_change(cls, obj, ar, oldstate, newstate):

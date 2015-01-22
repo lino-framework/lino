@@ -925,7 +925,8 @@ class Site(object):
     """
 
     # for internal use:
-    _welcome_actors = []
+    # _welcome_actors = []
+    _welcome_handlers = []
     _site_config = None
     _logger = None
     override_modlib_models = None
@@ -2621,9 +2622,24 @@ Please convert to Plugin method".format(mod, methname)
         actors.  This is being called from :xfile:`admin_main.html`.
         """
 
-        for a in self._welcome_actors:
-            for msg in a.get_welcome_messages(ar):
+        for h in self._welcome_handlers:
+            for msg in h(ar):
                 yield msg
+        # for a in self._welcome_actors:
+        #     for msg in a.get_welcome_messages(ar):
+        #         yield msg
+
+    def add_welcome_handler(self, func):
+        """Add the given callable as a "welcome handler".  Lino will call
+        every welcome handler for every incoming request, passing them
+        a :class:`BaseRequest <lino.core.requests.BaseRequest>`
+        instance representing this request as positional argument.
+        The callable is expected to yield a series of messages
+        (usually either 0 or 1). Each message must be either a string
+        or a :class:`E.span <lino.utils.xmlgen.html.E>` element.
+
+        """
+        self._welcome_handlers.append(func)
 
     def get_installed_apps(self):
         """Yield the list of apps to be installed on this site.  This will be

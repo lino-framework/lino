@@ -437,7 +437,7 @@ class MyBusyVisitors(MyVisitors, BusyVisitors):
     label = _("Visitors busy with me")
 
     @classmethod
-    def get_welcome_messages(cls, ar):
+    def unused_get_welcome_messages(cls, ar):
         """Yield :message:`You are busy with` messages for the welcome
 page."""
         guests = []

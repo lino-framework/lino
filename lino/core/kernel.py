@@ -163,7 +163,8 @@ class Kernel(object):
 
         for a in actors.actors_list:
             if a.get_welcome_messages is not None:
-                site._welcome_actors.append(a)
+                # site._welcome_actors.append(a)
+                site.add_welcome_handler(a.get_welcome_messages)
 
         pre_ui_build.send(self)
 
@@ -363,9 +364,6 @@ class Kernel(object):
         dbtables.discover()
         #~ choosers.discover()
         actions.discover_choosers()
-
-        #~ from lino.core import ui
-        #~ ui.site_setup(self)
 
         for a in actors.actors_list:
             a.on_analyze(self)
