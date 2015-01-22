@@ -380,7 +380,9 @@ class AnonymousUser(object):
             try:
                 cls._instance.profile = UserProfiles.get_by_value(
                     settings.SITE.anonymous_user_profile)
-                
+                if cls._instance.profile is None:
+                    raise Exception("20150122 %s" %
+                                    settings.SITE.anonymous_user_profile)
                 # if cls._instance.profile.authenticated:
                 #     logger.warning(
                 #         "20121121 profile specified by \

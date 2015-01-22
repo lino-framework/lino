@@ -94,7 +94,7 @@ class AuthMiddleWareBase(object):
         overrides user.language.
 
         """
-        #~ logger.info("20130923 on_login(%s)" % user)
+        # logger.info("20130923 on_login(%s)" % user)
 
         request.user = user
 
@@ -202,7 +202,6 @@ class NoUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
-
         return AnonymousUser.instance()
 
 

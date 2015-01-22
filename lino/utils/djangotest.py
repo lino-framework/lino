@@ -1,4 +1,4 @@
-# Copyright: Copyright 2011-2014 by Luc Saffre.
+# Copyright: Copyright 2011-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """An extended `django.test.TestCase` to be run using Django's test
@@ -7,8 +7,6 @@ runner (i.e. `manage.py test`).
 """
 
 from __future__ import print_function
-
-import os
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,6 +17,7 @@ from django.conf import settings
 import json
 from django.utils.importlib import import_module
 from django.test import TestCase as DjangoTestCase
+from django.test import Client
 from django.db import connection, reset_queries
 
 from lino.core.signals import testcase_setup, database_ready
@@ -133,6 +132,20 @@ class CommonTestCase(unittest.TestCase):
             pass
 
 
+class WebIndexTestCase(DjangoTestCase):
+    def test_get_root(self):
+        # self.assertEqual(settings.SETTINGS_MODULE, '')
+        # self.assertEqual(settings.SITE.user_model, [])
+        # self.assertEqual(settings.MIDDLEWARE_CLASSES, [])
+        client = Client()
+        url = '/'
+        res = client.get(url)
+        self.assertEqual(
+            res.status_code, 200,
+            "Status code %s other than 200 for anonymous on GET %s" % (
+                res.status_code, url))
+
+
 class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     """
@@ -236,12 +249,11 @@ class NoAuthTestCase(DjangoManageTestCase):
     def __call__(self, *args, **kw):
         # these tests use remote http authentication, so we override the run()
         # method to simulate
-        #~ settings.SITE.remote_user_header = 'REMOTE_USER'
         settings.SITE.override_defaults(remote_user_header=None)
         mysettings = dict()
         for k in ('MIDDLEWARE_CLASSES',):
             mysettings[k] = settings.SITE.django_settings.get(k)
-        #~ MIDDLEWARE_CLASSES = settings.SITE.django_settings.get('MIDDLEWARE_CLASSES')
+
         with self.settings(**mysettings):
             return super(NoAuthTestCase, self).__call__(*args, **kw)
 

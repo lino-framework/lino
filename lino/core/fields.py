@@ -2,9 +2,9 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines extended field classes like :class:`RichTextField` and
-:class:`PercentageField`, utility functions like
-:func:`fields_list`.
+"""Defines extended field classes like :class:`DisplayField`,
+:class:`RichTextField` and :class:`PercentageField`, utility functions
+like :func:`fields_list`.
 
 """
 
@@ -821,14 +821,13 @@ class RecurrenceField(models.CharField):
 
 
 def fields_list(model, field_names):
-    """
-    Return a set with the names of the specified fields, checking whether
+    """Return a set with the names of the specified fields, checking whether
     each of them exists.
 
-    **Arguments:** `model` is any subclass of `django.db.models.Model`. It
+    Arguments: `model` is any subclass of `django.db.models.Model`. It
     may be a string with the full name of a model
-    (e.g. ``"myapp.MyModel"``).  `field_names` is a single string with a
-    space-separated list of field names.
+    (e.g. ``"myapp.MyModel"``).  `field_names` is a single string with
+    a space-separated list of field names.
 
     If one of the names refers to a :class:`DummyField`, this name
     will be ignored silently.
@@ -852,11 +851,11 @@ def fields_list(model, field_names):
 
 def ForeignKey(othermodel, *args, **kw):
     """A wrapper function which returns a Django `ForeignKey
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`_
     field, with a subtle difference in the signature: it supports
-    `othermodel` being `None` or the name of some non-installed
-    model and returns a :class:`DummyField` in that case.  This
-    difference is useful when designing reusable models.
+    `othermodel` being `None` or the name of some non-installed model
+    and returns a :class:`DummyField` in that case.  This difference
+    is useful when designing reusable models.
 
     """
     if othermodel is None:

@@ -1557,8 +1557,9 @@ class Site(object):
         not for the names or texts of choices.
 
         """
-        if not self.user_model:
-            return
+
+        # Note that even if self.user_model is None, we must fill
+        # UserProfiles so that AnonymousUser has a profile
 
         from lino.modlib.users.choicelists import UserProfiles, UserGroups
 

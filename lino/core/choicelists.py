@@ -541,14 +541,14 @@ Django creates copies of them when inheriting models.
 
     @classmethod
     def get_by_value(self, value, *args):
-        """
-        Return the item (a :class:`Choice` instance) 
-        corresponding to the specified `value`.
+        """Return the item (a :class:`Choice` instance) corresponding to the
+        specified `value`.
+
         """
         if not isinstance(value, basestring):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
-        #~ return self.items_dict.get(value,None)
+        #~ return self.items_dict.get(value, None)
         #~ return self.items_dict.get(value)
         return self.items_dict.get(value, *args)
 
