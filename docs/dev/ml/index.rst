@@ -15,7 +15,6 @@ This document is being migrated to :mod:`lino.modlib`.
    contacts
    cv
    debts
-   extjs
    extensible
    households
    humanlinks
@@ -35,3 +34,4 @@ This document is being migrated to :mod:`lino.modlib`.
    reception
    users
    courses
+   extjs

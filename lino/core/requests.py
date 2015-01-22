@@ -524,9 +524,9 @@ class BaseRequest(object):
             obj, None, a, *args, **kw)
 
     def row_action_button_ar(self, obj, *args, **kw):
-        """Return an HTML element with a button (or a button-like href) which,
-        when clicked, will run this action request on the given
-        database object. Does not spawn yet another request.
+        """Return an HTML element with a button for running this action
+         request on the given database object. Does not spawn another
+         request.
 
         """
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)

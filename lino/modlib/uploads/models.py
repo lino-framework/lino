@@ -26,7 +26,16 @@ from .choicelists import Shortcuts, UploadAreas
 
 
 class UploadType(mixins.BabelNamed):
-    """The type of an upload."""
+    """The type of an upload.
+
+    .. attribute:: shortcut
+
+        Optional pointer to a virtual **upload shortcut** field.  If
+        this is not empty, then the given shortcut field will manage
+        uploads of this type.  See also :class:`Shortcuts
+        <lino.modlib.uploads.choicelists.Shortcuts>`.
+
+    """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'UploadType')
         verbose_name = _("Upload Type")
@@ -45,7 +54,6 @@ class UploadType(mixins.BabelNamed):
         help_text=_("Add a (+) button when there is no upload of this type."))
 
     shortcut = Shortcuts.field(blank=True)
-
 
 class UploadTypes(dd.Table):
     """The table with all existing upload types.

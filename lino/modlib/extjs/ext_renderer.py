@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-This contains the definition of the :class:`ExtRenderer` class.
+Defines the :class:`ExtRenderer` class.
 """
 
 from __future__ import unicode_literals
@@ -73,7 +73,6 @@ def prepare_label(mi):
 
 
 class ExtRenderer(HtmlRenderer):
-
     """
     A HTML renderer that uses the ExtJS Javascript toolkit.
 
@@ -95,7 +94,7 @@ class ExtRenderer(HtmlRenderer):
         if h is None:
             return cgi.escape(force_unicode(obj))
         uri = self.js2url(h)
-        return self.href(uri, text or cgi.escape(force_unicode(obj)))
+        return self.href(uri, text or force_unicode(obj))
 
     def py2js_converter(self, v):
         """
@@ -169,11 +168,6 @@ class ExtRenderer(HtmlRenderer):
             return dict(text=prepare_label(v), href=url)
         return v
 
-    def js2url(self, js):
-        js = cgi.escape(js)
-        js = js.replace('"', '&quot;')
-        return 'javascript:' + js
-
     def get_action_params(self, ar, ba, obj, **kw):  # new since 20140930
         if ba.action.parameters:
             # if ba.action.params_layout.params_store is None:
@@ -224,33 +218,6 @@ class ExtRenderer(HtmlRenderer):
         href = 'javascript:' + self.action_call(ar, ba, status)
         return self.href_button_action(
             ba, href, label, title or ba.action.help_text, **kw)
-
-    def row_action_button(
-            self, obj, ar, ba, label=None, title=None, request_kwargs={},
-            **kw):
-        """
-        Return a HTML fragment that displays a button-like link
-        which runs the bound action `ba` when clicked.
-        """
-        label = label or ba.action.label
-        uri = 'javascript:' + self.action_call_on_instance(
-            obj, ar, ba, request_kwargs)
-        return self.href_button_action(
-            ba, uri, label, title or ba.action.help_text, **kw)
-
-    def row_action_button_ar(
-            self, obj, ar, label=None, title=None, request_kwargs={},
-            **kw):
-        """
-        Return a HTML fragment that displays a button-like link
-        which runs the bound action `ba` when clicked.
-        """
-        ba = ar.bound_action
-        label = label or ba.action.label
-        uri = 'javascript:' + self.action_call_on_instance(
-            obj, ar, ba)
-        return self.href_button_action(
-            ba, uri, label, title or ba.action.help_text, **kw)
 
     def put_button(self, ar, obj, text, data, **kw):
 
@@ -357,14 +324,9 @@ class ExtRenderer(HtmlRenderer):
         return self.window_action_button(ar, a, st, text, **options)
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
-        """Return a string with Javascript code that would, when executed, run
-        the given action `ba` on the given model instance `obj`. The
-        second parameter (`ar`) is the calling action request.
-
-        Note that `ba.actor` may differ from `ar.actor` when defined
-        on a different actor. Remember e.g. the "Must read eID card"
-        action button in eid_info of newcomers.NewClients
-        (20140422).
+        """Note that `ba.actor` may differ from `ar.actor` when defined on a
+        different actor. Remember e.g. the "Must read eID card" action
+        button in eid_info of newcomers.NewClients (20140422).
 
         See also :ref:`welfare.tested.integ` which tests whether the
         `ar.instance_action_button` in `households.MembersByPerson`
@@ -469,11 +431,6 @@ class ExtRenderer(HtmlRenderer):
         # e = xghtml.E.a(*text, href=uri)
         # return e
 
-    def href_to_request(self, sar, tar, text=None, **kw):
-        uri = 'javascript:' + self.request_handler(tar)
-        return self.href_button_action(
-            tar.bound_action, uri, text or tar.get_title(), **kw)
-
     def build_admin_url(self, *args, **kw):
         return self.plugin.build_plain_url(*args, **kw)
 
@@ -509,10 +466,6 @@ class ExtRenderer(HtmlRenderer):
     def get_detail_url(self, obj, *args, **kw):
         return self.build_admin_url(
             'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
-
-    #~ def request_href_js(self,rr,text=None):
-        #~ url = self.request_handler(rr)
-        #~ return self.href(url,text or cgi.escape(force_unicode(rr.label)))
 
     def show_request(self, ar, **kw):
         """

@@ -11,6 +11,8 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
+from cgi import escape
+
 from django.conf import settings
 from django.utils.encoding import force_unicode
 
@@ -59,6 +61,8 @@ class HtmlRenderer(object):
     """
     Deserves more documentation.
     """
+    # not_implemented_js = "alert('Not implemented')"
+    not_implemented_js = None
     is_interactive = False
     row_classes_map = {}
 
@@ -66,8 +70,14 @@ class HtmlRenderer(object):
         self.plugin = plugin
         # self.ui = plugin.site.ui
 
+    def js2url(self, js):
+        if not js:
+            return None
+        js = escape(js)
+        # js = js.replace('"', '&quot;')
+        return 'javascript:' + js
+
     def href(self, url, text):
-        #~ return '<a href="%s">%s</a>' % (url,text)
         return E.a(text, href=url)
 
     def show_request(self, ar, **kw):
@@ -76,6 +86,28 @@ class HtmlRenderer(object):
         """
         #~ return ar.table2xhtml(**kw)
         return E.tostring(ar.table2xhtml(**kw))
+
+    def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
+        """Return a string with Javascript code that would run the given
+        action `ba` on the given model instance `obj`. The second
+        parameter (`ar`) is the calling action request.
+
+        """
+        return self.not_implemented_js
+
+    def request_handler(self, ar, *args, **kw):
+        """Return a string with Javascript code that would run the given
+        action request `ar`.
+
+        """
+        return self.not_implemented_js
+        
+    def href_to_request(self, sar, tar, text=None, **kw):
+        """Return a string with an URL which would run the given target
+request `tar`."""
+        uri = self.js2url(self.request_handler(tar))
+        return self.href_button_action(
+            tar.bound_action, uri, text or tar.get_title(), **kw)
 
     def href_button_action(
             self, ba, url, text=None, title=None, icon_name=NOT_GIVEN, **kw):
@@ -116,15 +148,14 @@ class HtmlRenderer(object):
             return E.a(*text, **kw)
 
     def quick_add_buttons(self, ar):
-        """
-        Returns a HTML chunk that displays "quick add buttons"
-        for the given :class:`action request <lino.core.dbtables.TableRequest>`:
-        a button  :guilabel:`[New]` followed possibly 
-        (if the request has rows) by a :guilabel:`[Show last]` 
-        and a :guilabel:`[Show all]` button.
+        """Returns a HTML chunk that displays "quick add buttons" for the
+        given :class:`action request
+        <lino.core.dbtables.TableRequest>`: a button :guilabel:`[New]`
+        followed possibly (if the request has rows) by a
+        :guilabel:`[Show last]` and a :guilabel:`[Show all]` button.
         
         See also :srcref:`docs/tickets/56`.
-        
+
         """
         buttons = []
         btn = ar.insert_button(_("New"))
@@ -176,14 +207,29 @@ class HtmlRenderer(object):
     def row_action_button(
             self, obj, ar, ba, label=None, title=None, request_kwargs={},
             **kw):
+        """
+        Return a HTML fragment that displays a button-like link
+        which runs the bound action `ba` when clicked.
+        """
         label = label or ba.action.label
-        uri = None
+        uri = self.js2url(self.action_call_on_instance(
+            obj, ar, ba, request_kwargs))
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
-    def href_to_request(self, sar, tar, text=None, **ignored):
-        return '[?!]'
-        
+    def row_action_button_ar(
+            self, obj, ar, label=None, title=None, request_kwargs={},
+            **kw):
+        """
+        Return a HTML fragment that displays a button-like link
+        which runs the bound action `ba` when clicked.
+        """
+        ba = ar.bound_action
+        label = label or ba.action.label
+        uri = self.js2url(self.action_call_on_instance(obj, ar, ba))
+        return self.href_button_action(
+            ba, uri, label, title or ba.action.help_text, **kw)
+
     def window_action_button(
             self, request, ba,
             after_show={}, label=None, title=None, **kw):
@@ -191,7 +237,7 @@ class HtmlRenderer(object):
         Return a HTML chunk for a button that will execute this action.
         """
         label = unicode(label or ba.get_button_label())
-        url = 'javascript:' + self.action_call(request, ba, after_show)
+        url = self.js2url(self.action_call(request, ba, after_show))
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         return self.href_button_action(ba, url, label,
                                        title or ba.action.help_text, **kw)
@@ -222,10 +268,10 @@ class TextRenderer(HtmlRenderer):
     def get_request_url(self, ar, *args, **kw):
         return None
 
-    def href_to_request(self, sar, tar, text=None, **ignored):
-        if text is None:
-            text = '??'
-        return "**{0}**".format(text)
+    # def href_to_request(self, sar, tar, text=None, **ignored):
+    #     if text is None:
+    #         text = '??'
+    #     return "**{0}**".format(text)
 
     def show_request(self, ar, *args, **kw):
         """Prints a string to stdout representing this request in

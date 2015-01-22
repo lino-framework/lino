@@ -387,7 +387,11 @@ A table containing elementtree HTML:
 
 
 def lines2p(lines, min_height=0, **attrs):
-    """Examples:
+    """Convert the given list of text lines `lines` into a paragraph
+(``<p>``) with one ``<br>`` between each line. If optional
+`min_height` is given, add empty lines if necessary.
+
+    Examples:
 
     >>> print(E.tostring(lines2p(['first', 'second'])))
     <p>first<br />second</p>

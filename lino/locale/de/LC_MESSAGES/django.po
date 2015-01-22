@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-01-21 07:49+0200\n"
-"PO-Revision-Date: 2015-01-21 07:50+0300\n"
+"PO-Revision-Date: 2015-01-22 11:01+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2303,12 +2303,10 @@ msgid "%(guest)s confirmed invitation %(day)s at %(time)s"
 msgstr "%(guest)s sagt Termin am %(day)s um %(time)s ab"
 
 #: lino/modlib/cal/workflows/feedback.py:94
-#, fuzzy
 msgid "Close meeting"
-msgstr "Postsendung"
+msgstr "Versammlung beenden"
 
 #: lino/modlib/cal/workflows/feedback.py:95
-#, fuzzy
 msgid "The event took place."
 msgstr "Der Termin hat stattgefunden"
 

@@ -480,20 +480,19 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         self.update_guests.run_from_code(ar)
 
     def suggest_guests(self):
-        """
-        Yield the list of Guest instances to be added to this Event.
-        This method is called when :meth:`update_guests` decided so.
+        """Yield the list of Guest instances to be added to this Event.  This
+        method is called from :meth:`update_guests`.
+
         """
         if self.owner:
             for obj in self.owner.suggest_cal_guests(self):
                 yield obj
 
     def get_event_summary(event, ar):
-        """
-        How this event should be summarized in contexts 
-        where possibly another user is looking 
-        (i.e. currently in invitations of guests, or in the extensible calendar 
-        panel).
+        """How this event should be summarized in contexts where possibly
+        another user is looking (i.e. currently in invitations of
+        guests, or in the extensible calendar panel).
+
         """
         #~ from django.utils.translation import ugettext as _
         s = event.summary

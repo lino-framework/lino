@@ -2,7 +2,26 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.extjs`."
+"""Adds the default Lino user interface based on ExtJS.
+
+It is being automatically included by every Lino application unless
+you specify ``extjs`` in
+:meth:`lino.core.site.Site.get_apps_modifiers` (or override your
+:meth:`lino.core.site.Site.get_installed_apps` method).
+
+When your Lino application uses the ExtJS user interface, then you may
+need a commercial license from Sencha if your site is (1) your
+application is not available under the GPL **and** (2) used by other
+people than the empoyees of the company who wrote the application.
+
+
+.. autosummary::
+   :toctree:
+
+   views
+   ext_renderer
+
+"""
 
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -12,10 +31,16 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(Plugin):
-
+    """
+    Extends :class:`lino.core.plugin.Plugin`. 
+    """
     ui_label = _("Admin")
 
     use_statusbar = False
+    """
+    Whether to use a status bar to display certain messages to the user.
+    Default is `False` since currently this is not really useful.
+    """
 
     url_prefix = "admin"
 
@@ -23,8 +48,29 @@ class Plugin(Plugin):
 
     media_base_url = "http://extjs-public.googlecode.com/" + \
                      "svn/tags/extjs-3.3.1/release/"
+    """The URL from where to include the ExtJS library files.
+    
+    The default value points to the `extjs-public
+    <http://code.google.com/p/extjs-public/>`_ repository and thus
+    requires the clients to have an internet connection.  This
+    relieves newcomers from the burden of having to specify a download
+    location in their :xfile:`settings.py`.
+    
+    On a production site you'll probably want to download and serve
+    these files yourself by setting this to `None` and setting
+    :attr:`extjs_root` (or a symbolic link "extjs" in your
+    :xfile:`media` directory) to point to the local directory where
+    ExtJS 3.3.1 is installed).
+
+    """
 
     media_root = None
+    """
+    Path to the ExtJS root directory.  Only used when
+    :attr:`media_base_url` is None, and when the `media` directory has
+    no symbolic link named `extjs` pointing to the ExtJS root
+    directory.
+    """
 
     def on_ui_init(self, kernel):
         # logger.info("20140227 extjs.Plugin.on_ui_init() a")

@@ -6,17 +6,21 @@ Wednesday, January 21, 2015
 Upload shortcuts
 ================
 
-Another new feature: Lino now has "upload shortcuts". These are
-technically similar to Excerpt shortcuts (much code was copied and
-configuration is similar). They are the long-awaited successor for the
-now deprecated
-:meth:`lino.modlib.extjs.ext_renderer.Renderer.quick_upload_buttons`.
+Worked on :ticket:`47`.  Another new feature: Lino now has the concept
+of :class:`upload shortcuts
+<lino.modlib.uploads.choicelists.Shortcuts>`.  These are technically
+like :class:`excerpt shortcuts
+<lino.modlib.excerpts.choicelists.Shortcuts>`, which means that much
+code was copied, and that configuration is similar. They are the
+long-awaited successor for the now deprecated
+:meth:`quick_upload_buttons
+<lino.modlib.extjs.ext_renderer.ExtRenderer.quick_upload_buttons>` hack.
 
 The first upload shortcut is `id_document`, visible for newcomer
 agents in the Coachings panel of a pcsw.Client.
 
-You are busy with ...
-=====================
+You are busy with ... (:ticket:`61`)
+====================================
 
 Meditating about
 :meth:`lino.modlib.reception.models.MyBusyVisitors.get_welcome_messages`.

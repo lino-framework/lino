@@ -23,8 +23,9 @@ class Shortcut(dd.Choice):
 
 
 class Shortcuts(dd.ChoiceList):
-    """Choices are added e.g. in
-:mod:`lino_welfare.modlib.pcsw.models`."""
+    """The list of upload shortcut fields.
+Choices to this list are added e.g. in :mod:`lino_welfare.modlib.pcsw.models`.
+"""
     verbose_name = _("Upload shortcut")
     verbose_name_plural = _("Upload shortcuts")
     item_class = Shortcut

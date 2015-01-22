@@ -12,7 +12,7 @@ I renamed :mod:`lino.core.site_def` to :mod:`lino.core.site`.
 Fixed a typo bug in
 :meth:`lino.utils.sendchanges.Emitter.emit_created` which caused a
 TypeError :message:`format() argument after ** must be a mapping, not
-type`.
+type` (ticket :ticket:`69`).
 
 Added more content to :doc:`/tutorials/sendchanges/index` in order to
 cover this.

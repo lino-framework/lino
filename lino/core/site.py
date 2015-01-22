@@ -1019,6 +1019,8 @@ class Site(object):
             "py": "lino.utils.dpy",
         })
 
+
+        ## Local project directory
         modname = self.__module__
         i = modname.rfind('.')
         if i != -1:
@@ -1524,19 +1526,15 @@ class Site(object):
     def find_template_config_files(self, *args, **kwargs):
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
-    def setup_workflows(self):
-        self.on_each_app('setup_workflows')
-
     def setup_choicelists(self):
-        """
-        This is a hook for code to be run *after* all plugins have been
+        """This is a hook for code to be run *after* all plugins have been
         instantiated and *before* the models are being discovered.
 
-        This is especially useful for redefining your application's
-        ChoiceLists.
+        This is useful for redefining your application's ChoiceLists.
 
-        Especially used to define application-specific
-        :class:`UserProfiles <lino.core.perms.UserProfiles>`.
+        Application developers override this to define
+        application-specific :class:`UserProfiles
+        <lino.core.perms.UserProfiles>`.
 
         Lino by default has two user profiles "User" and "Administrator",
         defined in :mod:`lino.core.perms`.
@@ -1559,9 +1557,9 @@ class Site(object):
         not for the names or texts of choices.
 
         """
-        #~ raise Exception("20130302 setup_choicelists()")
-        #~ logger.info("20130302 setup_choicelists()")
-        
+        if not self.user_model:
+            return
+
         from lino.modlib.users.choicelists import UserProfiles, UserGroups
 
         def grouplevels(level):
@@ -1579,13 +1577,13 @@ class Site(object):
         add('100', _("User"), name='user', **grouplevels('user'))
         add('900', _("Administrator"), name='admin', **grouplevels('admin'))
 
+    def setup_workflows(self):
+        self.on_each_app('setup_workflows')
+
     def add_user_field(self, name, fld):
         if self.user_model:
             from lino import dd
-            #~ User = dd.resolve_model(self.user_model)
             dd.inject_field(self.user_model, name, fld)
-            #~ if profile:
-                #~ self.user_profile_fields.append(name)
 
     def get_used_libs(self, html=None):
         """

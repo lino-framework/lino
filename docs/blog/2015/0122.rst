@@ -2,10 +2,10 @@
 Thursday, January 22, 2015
 ==========================
 
-You are busy with ...
-=====================
+You are busy with ... (:ticket:`61`)
+====================================
 
-Wow, Lino has two new features.
+Wow, Lino has two new features. 
 
 After meditating about how :ref:`welfare` should inform users that
 they "are busy with" a client.  Yesterday I wrote that they want to be
@@ -50,5 +50,32 @@ are now automatically declared on the model as a class attribute. So
 that I can now write above code.
 
 
+Restore the :ref:`welfare` test suite
+=====================================
 
+It's time to have a look at the :ref:`welfare` test suite which had
+been neglected for some time after recent changes.
+
+The shortcut fields are now defined in
+:mod:`lino_welfare.projects.base` by overriding
+:meth:`setup_choicelists
+<lino.core.site.Site.setup_choicelists>`. That was necessary and is
+elegant, but it caused a subtle problem:
+:mod:`lino_welfare.projects.chatelet` wants these shortcut fields,
+too, but defines their own list of user profiles and cannot call
+`super()` for these because it has no :mod:`lino_welfare.modlib.debts`
+(and anyway it is not elegant to let the UserProfiles get filled just
+to reset them again afterwards). That's why User profiles for
+:ref:`welfare` are no longer be defined in :meth:`setup_choicelists
+<lino.core.site.Site.setup_choicelists>` but in the new Site method
+:meth:`setup_user_profiles`.
+
+The test suite revealed one bug for which I am glad that I didn't do a
+quick release this morning: Contract evaluation events got a duplicate
+Guest entry for their client.
+
+I also continued on :ticket:`60` ("Termine machen für Neuzugänge",
+i.e. the :class:`AgentsByClient
+<lino_welfare.modlib.reception.models.AgentsByClient>` table), for
+which there is already a test case in :ref:`welfare.tested.reception`.
 

@@ -1,8 +1,14 @@
-# Copyright 2010-2011 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Defines an Upload model.
+"""Adds functionality for uploading files to the server and managing
+them.
+
+.. autosummary::
+   :toctree:
+
+   models
+   choicelists
 
 """
 from lino import ad

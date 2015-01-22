@@ -15,6 +15,8 @@ import inspect
 import types
 import datetime
 
+from textwrap import fill
+
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
@@ -290,9 +292,9 @@ class DetailLayouts(dd.VirtualTable):
         lh = obj.get_layout_handle(settings.SITE.ui)
         # elems = [e.name for e in lh._names.values() if not e.hidden]
         elems = [f.name for f in lh._store_fields]
-        if len(elems) > 5:
-            elems = elems[:3] + ['...'] + elems[-2:]
-        return ' '.join(elems)
+        # if len(elems) > 5:
+        #     elems = elems[:3] + ['...'] + elems[-2:]
+        return fill(' '.join(elems), 60)
         # return (obj.detail_layout.desc)
 
 
