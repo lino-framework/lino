@@ -31,7 +31,7 @@ class Site(Site):
 
     languages = 'en de et'
 
-    def setup_choicelists(self):
+    def setup_user_profiles(self):
         """
         Defines application-specific default user profiles.
         Local site administrators can override this in their :xfile:.

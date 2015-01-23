@@ -38,7 +38,7 @@ class Site(Site):
         #~ yield 'lino.projects.min2'
         yield 'lino.modlib.export_excel'
 
-    def setup_choicelists(self):
+    def setup_user_profiles(self):
         """
         Defines a set of user profiles.
         """

@@ -3,7 +3,7 @@
 
 """Model mixins for :mod:`lino.modlib.users`.
 
-:class:`UserAuthored`
+.. autosummary::
 
 """
 
@@ -28,12 +28,10 @@ from .utils import AnonymousUser
 
 
 class UserAuthored(model.Model):
+    """Model mixin for database objects that have a `user` field which
+    points to the "author" of this object. The default user is
+    automatically set to the requesting user.
 
-    """
-    Mixin for models that have a `user` field which is automatically
-    set to the requesting user.
-    Also defines a `ByUser` base table which fills the master instance
-    from the web request.
     """
     required = dict(auth=True)
 
@@ -100,47 +98,46 @@ class UserAuthored(model.Model):
             return ba.action.readonly
         return True
 
-AutoUser = UserAuthored  # backwards compatibility
+AutoUser = UserAuthored  # old name for backwards compatibility
 
 
-if settings.SITE.user_model:
+class ByUser(dbtables.Table):
+    """Base table which fills the master instance from the web request.
 
-    class ByUser(dbtables.Table):
-        master_key = 'user'
-        #~ details_of_master_template = _("%(details)s of %(master)s")
-        details_of_master_template = _("%(details)s")
+    """
+    master_key = 'user'
+    #~ details_of_master_template = _("%(details)s of %(master)s")
+    details_of_master_template = _("%(details)s")
 
-        @classmethod
-        def get_actor_label(self):
-            if self.model is None:
-                return self._label or self.__name__
-            return self._label or \
-                _("My %s") % self.model._meta.verbose_name_plural
+    @classmethod
+    def get_actor_label(self):
+        if self.model is None:
+            return self._label or self.__name__
+        return self._label or \
+            _("My %s") % self.model._meta.verbose_name_plural
 
-        @classmethod
-        def setup_request(self, ar):
-            #~ logger.info("ByUser.setup_request")
-            if ar.master_instance is None:
-                u = ar.get_user()
-                if not isinstance(u, AnonymousUser):
-                    ar.master_instance = u
-            super(ByUser, self).setup_request(ar)
+    @classmethod
+    def setup_request(self, ar):
+        #~ logger.info("ByUser.setup_request")
+        if ar.master_instance is None:
+            u = ar.get_user()
+            if not isinstance(u, AnonymousUser):
+                ar.master_instance = u
+        super(ByUser, self).setup_request(ar)
 
-        @classmethod
-        def get_view_permission(self, profile):
-            if not profile.authenticated:
-                return False
-            return super(ByUser, self).get_view_permission(profile)
+    @classmethod
+    def get_view_permission(self, profile):
+        if not profile.authenticated:
+            return False
+        return super(ByUser, self).get_view_permission(profile)
 
-else:
+if settings.SITE.user_model is None:
 
     # dummy Table for userless sites
-    class ByUser(dbtables.Table):
-        pass
+    ByUser = dbtables.Table
 
 
 class AuthorAction(actions.Action):
-
     """
     """
     manager_level_field = 'level'

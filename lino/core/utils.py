@@ -1,6 +1,6 @@
 # Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""This defines some helper classes like 
+"""This defines some helper classes like
 
 - :class:`Parametrizable` and :class:`Permittable` ("mixins" with
   common functionality for both actors and actions),

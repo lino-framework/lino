@@ -63,7 +63,7 @@ class Site(Site):
         yield 'lino.modlib.courses'
         yield 'lino.projects.homeworkschool'
 
-    def setup_choicelists(self):
+    def setup_user_profiles(self):
         """
         This defines default user profiles for :mod:`lino_welfare`.
         """

@@ -24,7 +24,7 @@ from django import http
 
 from lino.core import constants
 
-from lino.modlib.users.mixins import AnonymousUser
+from lino.modlib.users.utils import AnonymousUser
 
 
 class AuthMiddleWareBase(object):

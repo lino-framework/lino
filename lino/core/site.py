@@ -603,48 +603,47 @@ class Site(object):
     "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
 
     jasmine_root = None
-    """
-    Path to the Jasmine root directory.
-    Only used on a development server
-    if the `media` directory has no symbolic link to the Jasmine root directory
-    and only if :attr:`use_jasmine` is True.
+    """Path to the Jasmine root directory.  Only used on a development
+    server if the `media` directory has no symbolic link to the
+    Jasmine root directory and only if :attr:`use_jasmine` is True.
+
     """
 
     tinymce_root = None
-    """
-    Path to the tinymce root directory.
-    Only to be used on a development server
-    if the `media` directory has no symbolic link to the TinyMCE root directory,
-    and only if :attr:`use_tinymce` is True.
+    """Path to the tinymce root directory.  Only to be used on a
+    development server if the `media` directory has no symbolic link
+    to the TinyMCE root directory, and only if :attr:`use_tinymce` is
+    True.
+
     """
 
     default_user = None
     """Username to be used if a request with no remote user header (see
     :attr:`remote_user_header`) makes its way through to Lino.  Which
     may happen on a development server, in a test environment, or on a
-    real web server if it is configured to allow it.
+    real web server which is configured to allow it.
 
-    This setting is ignored when no :attr:`user_model` is set.
+    This setting is ignored when :attr:`user_model` is `None`.
 
     Setting this to a nonempty value will activate remote
-    authentication (see :meth:`get_middleware_classes`).  If this is
-    nonempty and :attr:`remote_user_header` is *empty*, the
-    `default_user` will be used for *every* request.
+    authentication (see :meth:`get_auth_method`).  If this is nonempty
+    and :attr:`remote_user_header` is *empty*, the
+    :attr:`default_user` will be used for *every* request.
 
     """
 
     anonymous_user_profile = '000'
+    """The user profile to be assigned to the anonymous user
+(:class:`AnonymousUser <lino.modlib.users.utils.AnonymousUser>`).
+
     """
-    The user profile to be assigned to anonymous user.
-    
-    """
+
     #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
-    """
-    The name of the header (set by the web server) that Lino should
-    consult for finding the user of a request.  The default value `None`
-    means that http authentication is not used.  Apache's default value is
-    ``"REMOTE_USER"``.
+    """The name of the header (set by the web server) that Lino should
+    consult for finding the user of a request.  The default value
+    `None` means that http authentication is not used.  Apache's
+    default value is ``"REMOTE_USER"``.
 
     """
     ldap_auth_server = None
@@ -1067,19 +1066,24 @@ class Site(object):
                 raise Exception(msg)
         self.user_model = spec
 
-    def is_abstract_model(self, module_name, model_name):
-        """Return True if the named model is declared as being extended by
-        :attr:`lino.core.plugin.Plugin.extends_models`.
+    def get_auth_method(self):
+        """Returns the authentication method used on this site. This is one of
+        `None`, `'remote'` or `'session'`.
 
-        `name` must be a string with the full model name,
-        e.g. ``"myapp.MyModel"``.
+        It depends on the values in  :attr:`user_model`,
+        :attr:`default_user` and
+        :attr:`remote_user_header`.
+
+        It influences the results of
+        :meth:`get_middleware_classes` and
+        :meth:`get_installed_apps`.
 
         """
-        name = '.'.join(module_name.split('.')[:-1])
-        name += '.' + model_name
-        rv = name in self.override_modlib_models
-        # self.logger.info("20140825 is_abstract_model %s -> %s", name, rv)
-        return rv
+        if self.user_model is None:
+            return None
+        if self.default_user is None and self.remote_user_header is None:
+            return 'session'
+        return 'remote'
 
     def get_apps_modifiers(self, **kw):
         """This will be called during Site instantiation (i.e. may not import
@@ -1135,9 +1139,9 @@ class Site(object):
                 # if it's not a string, then it's an iterable of strings
                 for xi in x:
                     add(xi)
+
         for x in self.get_installed_apps():
             add(x)
-        # add('djangosite')
 
         plugins = []
         auto_apps = []
@@ -1174,6 +1178,10 @@ class Site(object):
             install_plugin(app_name)
 
         installed_apps.extend(auto_apps)
+
+        if self.get_auth_method() == 'session':
+            installed_apps.insert(0, str('django.contrib.sessions'))
+            install_plugin(str('django.contrib.sessions'))
 
         self.update_settings(INSTALLED_APPS=tuple(installed_apps))
         self.installed_plugins = tuple(plugins)
@@ -1308,6 +1316,32 @@ class Site(object):
                 if isdir(pth):
                     yield pth
 
+    def makedirs_if_missing(self, dirname):
+        """Make missing directories if they don't exist and if
+        :attr:`make_missing_dirs` is `True`.
+
+        """
+        if dirname and not isdir(dirname):
+            if self.make_missing_dirs:
+                os.makedirs(dirname)
+            else:
+                raise Exception("Please create yourself directory %s" %
+                                dirname)
+
+    def is_abstract_model(self, module_name, model_name):
+        """Return True if the named model is declared as being extended by
+        :attr:`lino.core.plugin.Plugin.extends_models`.
+
+        `name` must be a string with the full model name,
+        e.g. ``"myapp.MyModel"``.
+
+        """
+        name = '.'.join(module_name.split('.')[:-1])
+        name += '.' + model_name
+        rv = name in self.override_modlib_models
+        # self.logger.info("20140825 is_abstract_model %s -> %s", name, rv)
+        return rv
+
     def is_installed_model_spec(self, model_spec):
         """Deprecated. This feature was a bit too automagic and caused bugs
         to pass silently.  See e.g. :blogref:`20131025`.
@@ -1321,19 +1355,6 @@ class Site(object):
             return True
         app_label, model_name = model_spec.split(".")
         return self.is_installed(app_label)
-
-    def makedirs_if_missing(self, dirname):
-        """
-        Make missing directories if they don't exist
-        and if :attr:`make_missing_dirs` is `True`.
-
-        """
-        if dirname and not isdir(dirname):
-            if self.make_missing_dirs:
-                os.makedirs(dirname)
-            else:
-                raise Exception("Please create yourself directory %s" %
-                                dirname)
 
     def is_installed(self, app_label):
         """
@@ -1526,18 +1547,18 @@ class Site(object):
     def find_template_config_files(self, *args, **kwargs):
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
-    def setup_choicelists(self):
-        """This is a hook for code to be run *after* all plugins have been
-        instantiated and *before* the models are being discovered.
+    def setup_user_profiles(self):
+        """Application developers override this to define application-specific
+        :class:`UserProfiles
+        <lino.modllib.users.choicelists.UserProfiles>`.
 
-        This is useful for redefining your application's ChoiceLists.
+        Lino by default has three user profiles: "Anonymous", "User"
+        and "Administrator".
 
-        Application developers override this to define
-        application-specific :class:`UserProfiles
-        <lino.core.perms.UserProfiles>`.
-
-        Lino by default has two user profiles "User" and "Administrator",
-        defined in :mod:`lino.core.perms`.
+        This is done even if :attr:`user_model` is None (i.e.
+        :mod:`lino.modlib.users` is not installed) because we want
+        also the anonymous user to have a profile.  See
+        :attr:`anonymous_user_profile`.
 
         Application developers who use group-based requirements can
         override this in their application's :xfile:`settings.py` to
@@ -1549,17 +1570,7 @@ class Site(object):
         Local site administrators may again override this in their
         :xfile:`settings.py`.
 
-        Note that you may not specify values longer than `max_length` when
-        redefining your choicelists.  This limitation is because these
-        redefinitions happen at a moment where database fields have
-        already been instantiated, so it is too late to change their
-        max_length.  Note that this limitation is only for the *values*,
-        not for the names or texts of choices.
-
         """
-
-        # Note that even if self.user_model is None, we must fill
-        # UserProfiles so that AnonymousUser has a profile
 
         from lino.modlib.users.choicelists import UserProfiles, UserGroups
 
@@ -1577,6 +1588,24 @@ class Site(object):
             **grouplevels('user'))
         add('100', _("User"), name='user', **grouplevels('user'))
         add('900', _("Administrator"), name='admin', **grouplevels('admin'))
+
+    def setup_choicelists(self):
+        """This is a hook for code to be run *after* all plugins have been
+        instantiated and *before* the models are being discovered.
+
+        This is useful for redefining your application's ChoiceLists.
+
+        The default implementation just calls :meth:`setup_user_profiles`.
+
+        Note that you may not specify values longer than `max_length` when
+        redefining your choicelists.  This limitation is because these
+        redefinitions happen at a moment where database fields have
+        already been instantiated, so it is too late to change their
+        max_length.  Note that this limitation is only for the *values*,
+        not for the names or texts of choices.
+
+        """
+        self.setup_user_profiles()
 
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
@@ -2641,22 +2670,18 @@ Please convert to Plugin method".format(mod, methname)
         self._welcome_handlers.append(func)
 
     def get_installed_apps(self):
-        """Yield the list of apps to be installed on this site.  This will be
-        stored to :setting:`INSTALLED_APPS` when the Site
-        instantiates.
-
-        Each item must be either a string (unicode being converted to str)
-        or a *generator* which will be iterated recursively (again
+        """Yield the list of apps to be installed on this site.  Each item
+        must be either a string (unicode being converted to str) or a
+        *generator* which will be iterated recursively (again
         expecting either strings or generators of strings).
 
-        Note that the result of :meth:`get_installed_apps` will then
-        possibly altered once more by :meth:`get_apps_modifiers`
-        method.
+        Lino will call this method exactly once when the :class:`Site`
+        instantiates.  The resulting list of names will then possibly
+        altered by the :meth:`get_apps_modifiers` method before being
+        assigned to the :setting:`INSTALLED_APPS` setting.
 
         """
 
-        if self.user_model is not None and self.remote_user_header is None:
-            yield 'django.contrib.sessions'  # 20121103
         if self.django_admin_prefix:
             yield 'django.contrib.admin'
         yield 'lino.modlib.about'

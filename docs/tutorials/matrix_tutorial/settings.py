@@ -23,7 +23,7 @@ class Site(Site):
         
         yield 'matrix_tutorial'
         
-    def setup_choicelists(self):
+    def setup_user_profiles(self):
         
         from lino.modlib.users.choicelists import UserProfiles
         from django.utils.translation import ugettext_lazy as _

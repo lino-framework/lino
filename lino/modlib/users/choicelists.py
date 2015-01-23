@@ -78,7 +78,7 @@ class UserProfile(Choice):
     which should be hidden in this user profile.
     Default value is :attr:`hidden_languages <UserProfiles.hidden_languages>`.
     This is used on multilingual sites with more than 4 or 5 languages.
-    See the source code of :meth:`lino_welfare.settings.Site.setup_choicelists`
+    See the source code of :meth:`lino_welfare.settings.Site.setup_user_profiles`
     for a usage example.
     """
 
@@ -225,7 +225,7 @@ class UserProfiles(ChoiceList):
         return cls.add_item_instance(UserProfile(
             cls, value, text, name, memberships, **kw))
 
-#~ UserProfiles choicelist is going to be filled in `lino.core.site.Site.setup_choicelists`
+#~ UserProfiles choicelist is going to be filled in `lino.core.site.Site.setup_user_profiles`
 #~ because the attributes of each item depend on UserGroups
 
 

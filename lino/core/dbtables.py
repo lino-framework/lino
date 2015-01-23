@@ -194,14 +194,6 @@ def is_candidate(T):
 
 def register_report(rpt):
     #~ logger.debug("20120103 register_report %s", rpt.actor_id)
-    #rptclass.app_label = rptclass.__module__.split('.')[-2]
-
-    #~ if rpt.typo_check:
-        #~ myattrs = set(rpt.__dict__.keys())
-        #~ for attr in base_attrs(rpt):
-            #~ myattrs.discard(attr)
-        #~ if len(myattrs):
-            #~ logger.warning("%s defines new attribute(s) %s", rpt, ",".join(myattrs))
 
     if issubclass(rpt, Table) and rpt.model is None:
         #~ logger.debug("20111113 %s is an abstract report", rpt)
@@ -278,6 +270,8 @@ def discover():
         #~ logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
         if rpt is None:
             rpt = table_factory(model)
+            if rpt is None:
+                raise Exception("table_factory() failed for %r." % model)
             register_report(rpt)
             rpt.class_init()
             #~ rpt.collect_actions()
@@ -796,24 +790,6 @@ def table_factory(model):
     app_label = model._meta.app_label
     name = model.__name__ + "Table"
     cls = type(name, bases, dict(model=model, app_label=app_label))
-    #~ cls.class_init()
-    #~ cls.setup()
-
-    #~ """
-    #~ 20120104 We even add the factored class to the module because
-    #~ actor lookup needs it. Otherwise we'd get a
-    #~ `'module' object has no attribute 'DataControlListingTable'` error.
-
-    #~ We cannot simply do ``settings.SITE.modules.define(app_label,name,cls)``
-    #~ because this code is executed when `settings.SITE.modules` doesn't yet exist.
-    #~ """
-
-    #~ m = import_module(model.__module__)
-    #~ if getattr(m,name,None) is not None:
-        #~ raise Exception(
-          #~ "Name of factored class %s clashes with existing name in %s"
-          #~ %(cls,m))
-    #~ setattr(m,name,cls)
     return actors.register_actor(cls)
 
 

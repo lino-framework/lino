@@ -2,7 +2,10 @@
 # License: BSD (see file COPYING for details)
 
 """Lino's :mod:`lino.modlib.users` is Lino's replacement for Django's
-:mod:`django.contrib.auth` module. See also :doc:`/dev/users`.
+:mod:`django.contrib.auth` module.  This module does not require
+:mod:`django.contrib.sessions` to be installed.  See also
+:doc:`/dev/users`. Note that parts of this module are being used by
+Lino's core even if it is not among the installed apps.
 
 .. autosummary::
    :toctree:
@@ -13,10 +16,6 @@
     choicelists
     fixtures.demo
     fixtures.demo2
-
-
-This module does not require :mod:`django.contrib .sessions` to be
-installed. See :srcref:`docs/tickets/31` for discussion.
 
 """
 

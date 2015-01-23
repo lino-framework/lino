@@ -1,9 +1,9 @@
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Utilities for :mod:`lino.modlib.users`.
 
-:func:`add_user_group`, :class:`AnonymousUser`
+.. autosummary::
 
 """
 from __future__ import unicode_literals
@@ -22,10 +22,10 @@ from .choicelists import UserProfiles, UserGroups, UserLevels
 
 
 def add_user_group(name, label):
-    """
-    Add a user group to the :class:`UserGroups <lino.core.perms.UserGroups>` 
-    choicelist. If a group with that name already exists, add `label` to the 
-    existing group.
+    """Add a user group to the :class:`UserGroups
+    <lino.modlib.users.choicelists.UserGroups>` choicelist. If a group
+    with that name already exists, add `label` to the existing group.
+
     """
     #~ logging.info("add_user_group(%s,%s)",name,label)
     #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
@@ -92,31 +92,38 @@ def make_permission_handler(*args, **kw):
         An additional custom permission handler
         
     `auth`
-        If True, permission is given for any authenticated user 
-        (and not for :class:`AnonymousUser`).
+
+        If True, permission is given only to authenticated users.
         
     `owner`
-        If True, permission is given only to the author of the object. 
-        If False, permission is given only to users who are not the author of the object. 
-        This requirement is allowed only on models that have a field `user` 
-        which is supposed to contain the author.
-        Usually a subclass of :class:`lino.modlib.users.mixins.UserAuthored`,
-        but e.g. :class:`lino.modlib.cal.models.Guest` 
-        defines a property `user` because it has no own `user` field).
+
+        If True, permission is given only to the author of the object.
+        If False, permission is given only to users who are not the
+        author of the object.  This requirement is allowed only on
+        models that have a field `user` which is supposed to contain
+        the author.  Usually a subclass of
+        :class:`lino.modlib.users.mixins.UserAuthored`, but
+        e.g. :class:`lino.modlib.cal.models.Guest` defines a property
+        `user` because it has no own `user` field).
 
     """
-    #~ try:
+    # try:
     return make_permission_handler_(*args, **kw)
-    #~ except Exception,e:
-        #~ raise Exception("Exception while making permissions for %s: %s" % (actor,e))
+    # except Exception,e:
+        # raise Exception("Exception while making permission handler "
+        # "for %s: %s" % (actor,e))
 
 
 def make_view_permission_handler(*args, **kw):
+    """Similar to :func:`make_permission_handler`, but for static view
+    permissions which don't have an object nor states.
+
     """
-    Similar to :func:`make_permission_handler`, but for static view permissions 
-    which don't have an object nor states.
-    """
+    # try:
     return make_view_permission_handler_(*args, **kw)
+    # except Exception,e:
+        # raise Exception("Exception while making view permission handler "
+        # "for %s: %s" % (actor,e))
 
 
 def make_view_permission_handler_(

@@ -159,8 +159,6 @@ def check_pending_injects(sender, models_list=None, **kw):
         model._meta._fill_fields_cache()
         fix_field_cache(model)
 
-#~ from lino.core.dbutils import is_installed_model_spec
-
 
 def do_when_prepared(todo, *model_specs):
     """
@@ -184,8 +182,6 @@ def do_when_prepared(todo, *model_specs):
             continue
 
         if isinstance(model_spec, basestring):
-            #~ if not settings.SITE.is_installed_model_spec(model_spec):
-                #~ continue
             k = model_spec
             model = PREPARED_MODELS.get(k, None)
             if model is None:

@@ -24,7 +24,7 @@ class Site(Site):
         
         yield 'workflows_tutorial'
         
-    def setup_choicelists(self):
+    def setup_user_profiles(self):
         
         from django.utils.translation import ugettext_lazy as _
         from lino.modlib.users.choicelists import UserProfiles
