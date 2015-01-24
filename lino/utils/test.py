@@ -64,8 +64,6 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         self.client = Client()
         return super(DemoTestCase, self).__call__(*args, **kw)
 
-        
-
     def demo_get(self, username, url_base, json_fields, expected_rows,
                  **kwargs):
         case = HttpQuery(username, url_base, json_fields,

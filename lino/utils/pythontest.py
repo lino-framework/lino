@@ -1,12 +1,7 @@
-# Copyright 2013-2014 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""An extended `unittest.TestCase` to be run using `setup.py` in the
-root of a project which may contain several Django projects.
-
-We cannot import :mod:`lino.utils.djangotest` here because
-that's designed for unit tests *within a particular* Django project
-(run using `djange-admin test`).
+""".. autosummary::
 
 """
 import os
@@ -18,11 +13,17 @@ from atelier.test import TestCase
 
 
 class TestCase(TestCase):
+    """An extended :class:`atelier.test.TestCase` to be run using
+    :xfile:`setup.py` in the root of a project which may contain
+    several Django projects.
+
+    This is different from the classes in :mod:`lino.utils.djangotest`
+    which are designed for unit tests to be run using `djange-admin
+    test` within a particular Django project.
 
     """
-    """
 
-    demo_settings_module = None
+    django_settings_module = None
     """
     The `DJANGO_SETTINGS_MODULE` to set for each subprocess
     launched by this test case.
@@ -30,13 +31,13 @@ class TestCase(TestCase):
 
     def build_environment(self):
         env = super(TestCase, self).build_environment()
-        if self.demo_settings_module:
-            env.update(DJANGO_SETTINGS_MODULE=self.demo_settings_module)
+        if self.django_settings_module:
+            env.update(DJANGO_SETTINGS_MODULE=self.django_settings_module)
         return env
 
     def setUp(self):
 
-        if self.demo_settings_module:
+        if self.django_settings_module:
             from lino.core.signals import testcase_setup
             testcase_setup.send(self)
         super(TestCase, self).setUp()
@@ -95,9 +96,8 @@ class TestCase(TestCase):
         self.run_subprocess(args, **kw)
 
     def run_docs_doctests(self, filename):
-        """
-        Run a simple doctest for specified file after importing the
-        docs `conf.py` (which causes the demo database to be activated).
+        """Run a simple doctest for specified file after importing the docs
+        `conf.py` (which causes the demo database to be activated).
         
         This is used e.g. for testing pages like those below
         :doc:`/tested/index`.
@@ -107,6 +107,7 @@ class TestCase(TestCase):
         
         These tests may fail for the simple reason that the demo database
         has not been initialized (in that case, run `fab initdb`).
+
         """
         filename = 'docs/' + filename
         sys.path.insert(0,  os.path.abspath('docs'))

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -104,9 +104,8 @@ class PeriodEvents(ChoiceList):
 
 
 add = PeriodEvents.add_item
-add('10', _("Started"), 'started')
-add('20', _("Active"), 'active')
-add('30', _("Ended"), 'ended')
-
+add('10', _("Starts"), 'started')
+add('20', _("Is active"), 'active')
+add('30', _("Ends"), 'ended')
 
 

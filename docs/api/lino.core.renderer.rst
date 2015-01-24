@@ -10,6 +10,7 @@ lino.core.renderer
    .. autosummary::
    
       add_user_language
+      escape
       force_unicode
       get_language
       jscompress

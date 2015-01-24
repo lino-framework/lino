@@ -14,53 +14,26 @@ from Django.
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
     ...     'lino.projects.docs.settings.demo'
-    >>> import json
-    >>> from lino.runtime import *
-    >>> from lino import dd
-    >>> from django.test import Client
-    >>> client = Client()
+    >>> from lino.api.doctest import *
 
-Discussion
-==========
+.. contents::
 
-Don't take the following statements as my definitive opinion.  I
-formulated them in order to get feedback and to understand if I were
-missing something.
+Why do we replace Django's user management?
+===========================================
 
-- The :mod:`lino.modlib.users` module is useful on Django sites with
-  HTTP authentication where a central user management system is
-  already running.
+Django's `django.contrib.auth
+<https://docs.djangoproject.com/en/dev/topics/auth/>`_ module has a
+few problems which are solved by Lino's :mod:`lino.modlib.users`
+module.
 
-- Django's 
-  `django.contrib.auth <https://docs.djangoproject.com/en/dev/topics/auth/>`_ 
-  module is overkill in such cases.
-  
-- Not only overkill, but also it's tests suite reports 
-  failures for things that are not used in the above 
-  configuration.
-  
-The `Django documentation 
-<https://docs.djangoproject.com/en/dev/topics/auth/#permissions>`_ says:
+- Django's permission system is not suitable for developing complex
+  applications because maintaining permissions becomes a hell when you
+  develop an application which runs on different sites. Also it provides
+  no means for defining instance-specific permissions and has no
+  built-in concept of user profiles.
 
-  Permissions are set globally per type of object, not per specific
-  object instance. For example, it's possible to say "Mary may change
-  news stories," but it's not currently possible to say "Mary may
-  change news stories, but only the ones she created herself" or "Mary
-  may only change news stories that have a certain status, publication
-  date or ID." The latter functionality is something Django developers
-  are currently discussing.
+- 
 
-Suggested readings related to the topic:
-
-- Documentation of module :mod:`lino.modlib.users`
-- The `Other authentication sources
-  <http://docs.djangoproject.com/en/dev/topics/auth/#other-authentication-sources>`_
-  section in the Django docs.
-- `Authentication using REMOTE_USER
-  <http://docs.djangoproject.com/en/dev/howto/auth-remote-user/>`_
-- `Role-based access control
-  <http://en.wikipedia.org/wiki/Role-based_access_control>`_  
-  
 
 Passwords
 =========

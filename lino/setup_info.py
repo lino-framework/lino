@@ -76,6 +76,7 @@ or
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
+lino.api
 lino.core
 lino.history
 lino.management

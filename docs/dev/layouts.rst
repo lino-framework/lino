@@ -1,20 +1,17 @@
 .. _layouts:
 
-=======
-Layouts
-=======
+=======================
+Introduction to layouts
+=======================
 
-.. currentmodule:: dd
-
-
-Overview
---------
+.. currentmodule:: lino.core.layouts
 
 A layout is an abstract pythonical description of how to visually
 arrange the fields, columns and other data elements of a form or a
 table.
 
-This section applies to the following attributes of your actors:
+Layouts are used for the following attributes of your tables and
+actions:
 
 - :attr:`column_names <dd.AbstractTable.column_names>`
 - :attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
@@ -35,13 +32,14 @@ template. For example::
   """
 
 Lino will automatically convert such string templates into instances
-of :class:`ListLayout`, :class:`FormLayout`.  :class:`ParamsLayout` or
+of :class:`ColumnsLayout`, :class:`FormLayout`.  :class:`ParamsLayout` or
 :class:`ActionParamsLayout`.
 
 See also:
 
 - Tutorial: :doc:`/tutorials/layouts`
 - :ref:`lino.tutorial.polls`.
+- Layouts API: :mod:`lino.core.layouts`
  
 Some blog entries with more examples of layout definition:
 
@@ -61,7 +59,7 @@ name of a *data element*.
 - :term:`slave tables <slave table>`
 - panels
 
-This is for :class:`ListLayout` and :class:`FormLayout`.
+This is for :class:`ColumnsLayout` and :class:`FormLayout`.
 
 :class:`ParamsLayout` are special but similar: their data elements
 refer to the *parameters* of an actor defined in
@@ -152,66 +150,4 @@ a newline somewhere in your main's template. Example::
       main = """
       left:60 right:30
       """
-
-
-Classes reference
------------------
-
-.. class:: BaseLayout
-
-    Base class for all Layouts (:class:`FormLayout`, :class:`ListLayout`
-    and  :class:`ParamsLayout`).
-
-    A Layout instance just holds the string templates.
-    It is designed to be subclassed by applications programmers.
-
-
-    In some cases we still use the (reprecated)  methods
-    :meth:`set_detail_layout <dd.Actor.set_detail_layout>`,
-    :meth:`set_insert_layout <dd.Actor.set_insert_layout>`,
-    :meth:`add_detail_panel <dd.Actor.add_detail_panel>`
-    and
-    :meth:`add_detail_tab <dd.Actor.add_detail_tab>`
-    on the :class:`Actor <dd.Actor>`.
-
-
-.. class:: FormLayout
-
-    A Layout description for a Detail Window or an Insert Window.
-
-    Lino instantiates this for every 
-    :attr:`detail_layout <dd.Actor.detail_layout>` 
-    and for every 
-    :attr:`insert_layout <dd.Actor.insert_layout>`.
-
-
-.. class:: ListLayout
-
-    A layout for describing the columns of a table.
-
-    Lino automatically creates one instance of this for every table
-    using the string specified in that table's :attr:`column_names
-    <dd.AbstractTable.column_names>` attribute.
-    
-
-.. class:: ParamsLayout
-
-    A Layout description for a table parameter panel.
-
-    Lino instantiates this for every actor with 
-    :attr:`parameters <dd.Actor.parameters>`,
-    based on that actor's
-    :attr:`params_layout <dd.Actor.params_layout>`.
-
-.. class:: ActionParamsLayout
-
-   A Layout description for an action parameter panel.
-
-   Lino instantiates this for every :attr:`params_layout
-   <dd.Action.params_layout>` of a custom action.
-
-   A subclass of :class:`ParamsLayout`. 
-
- 
-
 

@@ -183,10 +183,10 @@ class AbstractTable(actors.Actor):
 
     Default value is ``'*'``.
 
-    Lino will automatically create a :class:`dd.ListLayout` from this.
+    Lino will automatically create a :class:`dd.ColumnsLayout` from this.
 
     This string must not contain any newline characters because a
-    ListLayout's `main` panel descriptor must be horizontal.
+    ColumnsLayout's `main` panel descriptor must be horizontal.
 
 
 

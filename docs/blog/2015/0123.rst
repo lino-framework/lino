@@ -2,13 +2,17 @@
 Friday, January 23, 2015
 ========================
 
-A test case in :ref:`cosi` failed: :ref:`cosi.tested.bel_de`. This was
-a bit tricky to solve.  The problem was about how to decide whether
-``django.contrib.sessions`` needs to be installed. This decision
-cannot be made by :meth:`get_installed_apps
-<lino.core.site.Site.get_installed_apps>` since it depends on
-:attr:`user_model <lino.core.site.Site.user_model>`, which in turn
-depends on the result of :meth:`get_installed_apps
+Authentiation
+=============
+
+A test case in :ref:`cosi` failed: :ref:`cosi.tested.bel_de`.  A late
+side-effect of :ticket:`70`.  This was a bit tricky to solve.  The
+problem was about how to decide whether ``django.contrib.sessions``
+needs to be installed. This decision cannot be made by
+:meth:`get_installed_apps <lino.core.site.Site.get_installed_apps>`
+since it depends on :attr:`user_model
+<lino.core.site.Site.user_model>`, which in turn depends on the result
+of :meth:`get_installed_apps
 <lino.core.site.Site.get_installed_apps>`.
 
 Added new method :meth:`SITE.get_auth_method
@@ -23,3 +27,36 @@ though they used by the core also when :mod:`lino.modlib.users` is
 they need to have an `app_label`.  So I generalized the
 :meth:`setup_user_profiles <lino.core.site.Site.setup_user_profiles>`
 trick from :ref:`welfare` to all Lino applications.
+
+
+Uploads
+=======
+
+Continued on :ticket:`47` : added a new field `needed` to
+:class:`lino_welfare.modlib.uploads.models.Upload`.  Wrote a new demo
+fixture :mod:`lino_welfare.modlib.uploads.fixtures.demo`.
+
+Wrote a new tested document about :ref:`welfare.tested.uploads` which
+revealed some more subtleties which would have caused problem reports.
+
+:class:`lino_welfare.modlib.uploads.models.Upload` is now a
+:class:`lino.mixins.DatePeriod` instead of manually adding two date
+:class:fields for the validity period.  Which means that the database
+:class:fields `valid_from` and `valid_until` must get migrated to
+:class:`start_date` and `end_date`.
+
+
+Optimizations :
+
+- In :mod:`lino.core.layouts` I renamed `ListLayout` to `ColumnsLayout`. 
+- And I added two subclasses of `FormLayout`, called `DetailLayout`
+  and `InsertLayout`. Maybe I should even remove `FormLayout` one
+  day.
+
+- And I moved the `ad`, `dd` and `rt` modules into a separate package
+  :mod:`lino.api`. For backwards compatibility, the old names will still
+  work for some time
+
+- TODO: should we rename `column_names` to `columns_layout` or
+  `grid_layout`?
+

@@ -617,16 +617,16 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def class_init(cls):
-        """
-        Called internally a site startup. Don't override.
+        """Called internally a site startup. Don't override.
+
         """
         master = getattr(cls, 'master', None)
         if master is not None:
             cls.master = resolve_model(master)
 
-        actions.install_layout(cls, 'detail_layout', layouts.FormLayout)
+        actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
         actions.install_layout(
-            cls, 'insert_layout', layouts.FormLayout,
+            cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
 
     @classmethod

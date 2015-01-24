@@ -1410,17 +1410,21 @@ class Site(object):
         base = self.the_demo_date or self.startup_time.date()
         return date_offset(base, *args, **kwargs)
 
-    def today(self):
+    def today(self, *args, **kwargs):
         """This is almost equivalent to calling :func:`datetime.date.today`.
 
         The difference is when :attr:`the_demo_date` is set, in which
         case :meth:`today` will return that date.
 
+        Another difference is that any arguments are forwarded to
+        :func:`atelier.utils.date_offset`.
+
         Needed in test cases like :ref:`welfare.tested.integ` where the
         age of people would otherwise change.
 
         """
-        return self.the_demo_date or datetime.date.today()
+        base = self.the_demo_date or datetime.date.today()
+        return date_offset(base, *args, **kwargs)
 
     def welcome_text(self):
         """Returns the text to display in a console window when this Site

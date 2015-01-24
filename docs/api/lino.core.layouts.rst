@@ -27,10 +27,12 @@ lino.core.layouts
    
       ActionParamsLayout
       BaseLayout
+      ColumnsLayout
+      DetailLayout
       FieldLayout
       FormLayout
+      InsertLayout
       LayoutHandle
-      ListLayout
       NOT_PROVIDED
       Panel
       ParamsLayout

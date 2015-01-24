@@ -552,7 +552,7 @@ class Kernel(object):
             return
 
         if isinstance(h, tables.TableHandle):
-            ll = layouts.ListLayout(
+            ll = layouts.ColumnsLayout(
                 h.actor.get_column_names(ar),
                 h.actor,
                 hidden_elements=h.actor.hidden_columns

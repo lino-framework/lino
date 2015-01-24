@@ -1,7 +1,9 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :doc:`/dev/layouts`."
+"""See :doc:`/dev/layouts`.
+
+"""
 
 from __future__ import unicode_literals
 
@@ -261,7 +263,7 @@ class LayoutHandle:
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):
             return False
-        if isinstance(self.layout, ListLayout):
+        if isinstance(self.layout, ColumnsLayout):
             if de.name == self.layout._datasource.master_key:
                 return False
         return True
@@ -276,6 +278,23 @@ class LayoutHandle:
 
 
 class BaseLayout(object):
+    """
+    Base class for all Layouts (:class:`FormLayout`, :class:`ColumnsLayout`
+    and  :class:`ParamsLayout`).
+
+    A Layout instance just holds the string templates.
+    It is designed to be subclassed by applications programmers.
+
+
+    In some cases we still use the (reprecated)  methods
+    :meth:`set_detail_layout <dd.Actor.set_detail_layout>`,
+    :meth:`set_insert_layout <dd.Actor.set_insert_layout>`,
+    :meth:`add_detail_panel <dd.Actor.add_detail_panel>`
+    and
+    :meth:`add_detail_tab <dd.Actor.add_detail_tab>`
+    on the :class:`Actor <dd.Actor>`.
+
+    """
 
     _handle_class = LayoutHandle
 
@@ -489,22 +508,51 @@ class FieldLayout(BaseLayout):
 
 
 class FormLayout(FieldLayout):
+    """
+    A Layout description for a Detail Window or an Insert Window.
 
+    Lino instantiates this for every 
+    :attr:`detail_layout <dd.Actor.detail_layout>` 
+    and for every 
+    :attr:`insert_layout <dd.Actor.insert_layout>`.
+    """
     join_str = "\n"
 
 
-class ListLayout(FieldLayout):
+class DetailLayout(FormLayout):
+    pass
 
+
+class InsertLayout(FormLayout):
+    pass
+
+
+class ColumnsLayout(FieldLayout):
+    """
+    A layout for describing the columns of a table.
+
+    Lino automatically creates one instance of this for every table
+    using the string specified in that table's :attr:`column_names
+    <dd.AbstractTable.column_names>` attribute.
+    
+    """
     join_str = " "
 
     def set_datasource(self, ds):
         if ds is None:
             raise Exception("20130327 No datasource for %r" % self)
-        super(ListLayout, self).set_datasource(ds)
+        super(ColumnsLayout, self).set_datasource(ds)
 
 
 class ParamsLayout(BaseLayout):
+    """
+    A Layout description for a table parameter panel.
 
+    Lino instantiates this for every actor with 
+    :attr:`parameters <dd.Actor.parameters>`,
+    based on that actor's
+    :attr:`params_layout <dd.Actor.params_layout>`.
+    """
     join_str = " "
     url_param_name = constants.URL_PARAM_PARAM_VALUES
     params_store = None
@@ -518,6 +566,14 @@ class ParamsLayout(BaseLayout):
 
 
 class ActionParamsLayout(ParamsLayout):
+    """
+    A Layout description for an action parameter panel.
+
+    Lino instantiates this for every :attr:`params_layout
+    <lino.core.actions.Action.params_layout>` of a custom action.
+
+    A subclass of :class:`ParamsLayout`.
+    """
     join_str = "\n"
     window_size = (50, 'auto')
     url_param_name = constants.URL_PARAM_FIELD_VALUES
@@ -553,7 +609,7 @@ def create_layout_panel(lh, name, vertical, elems, **kw):
     if kw:
         raise Exception("Unknown panel attributes %r for %s" % (kw, lh))
     if name == 'main':
-        if isinstance(lh.layout, ListLayout):
+        if isinstance(lh.layout, ColumnsLayout):
             e = ext_elems.GridElement(
                 lh, name, lh.layout._datasource, *elems, **pkw)
         elif isinstance(lh.layout, ActionParamsLayout):

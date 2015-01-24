@@ -501,9 +501,7 @@ class Table(AbstractTable):
 
             for b in self.model.mro():
                 for k, v in b.__dict__.items():
-                    # ~ v = self.model.__dict__.get(k,v) # 20131025 allow disabling inherited actions
                     if isinstance(v, actions.Action):
-                        #~ print "20130326 %s.%s = action %s from %s" % (self,k,v,b)
                         existing_value = self.__dict__.get(k, NOT_PROVIDED)
                         if existing_value is NOT_PROVIDED:
                             setattr(self, k, v)
@@ -511,19 +509,15 @@ class Table(AbstractTable):
                             if existing_value is None:  # 20130820
                                 pass
                                 #~ logger.info("%s disables model action '%s'",self,k)
-                                #~ self.unbind_action(k)
                             else:
-                                if not isinstance(existing_value, actions.Action):
+                                if not isinstance(
+                                        existing_value, actions.Action):
                                     raise Exception(
-                                        "%s cannot install model action %s because name is already used for %r" %
-                                        self, k, existing_value)
+                                        "%s cannot install model action %s because name is already used for %r" % self, k, existing_value)
 
             for name in ('workflow_state_field', 'workflow_owner_field'):
                 if getattr(self, name) is None:
                     setattr(self, name, getattr(self.model, name))
-                    #~ v = getattr(self.model,name,None)
-                    #~ if v is not None:
-                        #~ setattr(self,name,v)
 
             for name in (  # 'disabled_fields',
                 'handle_uploaded_files',
@@ -548,7 +542,7 @@ class Table(AbstractTable):
                     assert not m2m
                     if fk.rel is not None:
                         master_model = fk.rel.to
-                except models.FieldDoesNotExist as e:
+                except models.FieldDoesNotExist:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
                             fk = vf
@@ -566,8 +560,6 @@ class Table(AbstractTable):
                     self.master = master_model
                     self.master_field = fk
                     self.hidden_columns |= set([fk.name])
-        #~ else:
-            #~ assert self.master is None
 
         super(Table, self).class_init()
 

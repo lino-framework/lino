@@ -268,7 +268,7 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         super(ProductDocItem, self).before_ui_save(ar)
 
 
-#~ class ItemsByDocumentListLayout(layouts.ListLayout):
+#~ class ItemsByDocumentListLayout(layouts.ColumnsLayout):
     #~ title_box = """
     #~ product
     #~ title

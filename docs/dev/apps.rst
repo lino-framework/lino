@@ -1,23 +1,16 @@
-=======================================
-Patterns for communication between apps
-=======================================
-
-Vocabulary
-==========
-
-.. glossary::
-
-    Apps library
-
-      A collection of reusable apps which are designed to work together.
-
 .. _app_inheritance:
 
-App inheritance
-===============
+==================
+Plugin inheritance
+==================
 
-We call "app inheritance" a pattern used by Lino's :ref:`modlib` and
-possibly other apps libraries.
+**Plugin inheritance** is a series of guidelines and programming
+patterns used by Lino's :mod:`lino.modlib` and possibly other plugin
+libraries.
+
+A **plugin library** is a collection of reusable plugins which are
+designed to work together.
+
 
 Let's take :ref:`faggio`.  It uses Lino's standard calendar module
 :mod:`lino.modlib.cal`, but extends the `Room` model defined there:
@@ -87,10 +80,7 @@ now contains this information in the `extends_models` attribute::
 
 
 
-
-
-
-The :mod:`lino.ad` module
+The :mod:`lino.api.ad` module
 
 The :class:`lino.core.plugin.Plugin` class.
 

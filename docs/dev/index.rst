@@ -6,8 +6,6 @@ This is the central meeting place for Lino application developers.  We
 are doing our best to grow this into a pedagogically meaningful
 sequence of articles.
 
-.. include:: /include/wip.rst
-
 Getting started
 ===============
 
@@ -52,6 +50,7 @@ Getting acquaintained
 
 -  :doc:`settings` :
 -  :doc:`application` : An app is not an application. Introducing the :class:`Site` class.
+-  :doc:`users` : Why do we replace Django's user management. Passwords.
 -  :doc:`menu` :
 -  :doc:`choicelists` :
 -  :doc:`actors` :
@@ -62,6 +61,7 @@ Getting acquaintained
 -  :doc:`/tutorials/actions/index` :
 -  :doc:`/tutorials/mldbc/index` :
 -  :doc:`/tutorials/human/index` :
+-  :doc:`apps` : 
 
 .. toctree::
    :maxdepth: 1
@@ -69,6 +69,7 @@ Getting acquaintained
 
    settings
    application
+   users
    menu
    choicelists
    actors
@@ -79,6 +80,7 @@ Getting acquaintained
    /tutorials/actions/index
    /tutorials/mldbc/index
    /tutorials/human/index
+   apps
    
 
 Reference
@@ -124,7 +126,6 @@ Drafts
    pull
    translate/index
 
-   apps
    testing
    
    help_texts
@@ -134,7 +135,6 @@ Drafts
    style
    datamig
    versioning
-   users
 
 
 Other

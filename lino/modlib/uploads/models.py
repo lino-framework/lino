@@ -12,13 +12,11 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.contrib.contenttypes.models import ContentType
 
 from lino import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
-
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
 
@@ -54,6 +52,7 @@ class UploadType(mixins.BabelNamed):
         help_text=_("Add a (+) button when there is no upload of this type."))
 
     shortcut = Shortcuts.field(blank=True)
+
 
 class UploadTypes(dd.Table):
     """The table with all existing upload types.
@@ -128,17 +127,20 @@ class Upload(
         super(Upload, self).save(*args, **kw)
 
 
+dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
+
+
 class Uploads(dd.Table):
     "Shows all Uploads"
     required = dd.required(user_level='admin')
     model = 'uploads.Upload'
     column_names = "file type user owner description *"
 
-    detail_layout = """
+    detail_layout = dd.DetailLayout("""
     file user
     upload_area type description
     owner
-    """
+    """, window_size=(80, 'auto'))
 
     insert_layout = """
     type
@@ -149,7 +151,8 @@ class Uploads(dd.Table):
 
     parameters = mixins.ObservedPeriod(
         puser=models.ForeignKey(
-            'users.User', blank=True, null=True),
+            'users.User', blank=True, null=True,
+            verbose_name=_("Uploaded by")),
         pupload_type=models.ForeignKey(
             'uploads.UploadType', blank=True, null=True))
     params_layout = "start_date end_date puser pupload_type"
@@ -265,7 +268,7 @@ subclasses for the different `_upload_area`.
 class UploadsByController(AreaUploads):
     "UploadsByController"
     master_key = 'owner'
-    column_names = "file type description user * "
+    column_names = "file type description user needed * "
 
     insert_layout = """
     file
@@ -276,69 +279,5 @@ class UploadsByController(AreaUploads):
     @classmethod
     def format_upload(self, obj):
         return unicode(obj.type)
-
-
-@dd.receiver(dd.pre_analyze)
-def set_upload_shortcuts(sender, **kw):
-    """This is the successor for `quick_upload_buttons`."""
-
-    # we must not use the classes defined above in case models have
-    # been overridden.
-    UploadType = sender.modules.uploads.UploadType
-    Upload = sender.modules.uploads.Upload
-
-    for i in Shortcuts.items():
-
-        def f(obj, ar):
-            if obj is None:
-                return E.div()
-            try:
-                et = UploadType.objects.get(shortcut=i)
-            except UploadType.DoesNotExist:
-                return E.div()
-            items = []
-            
-            sar = ar.spawn(
-                UploadsByController,
-                master_instance=obj,
-                known_values=dict(type=et))
-                # param_values=dict(pupload_type=et))
-            n = sar.get_total_count()
-            if n == 0:
-                btn = sar.insert_button(
-                    _("Upload"), icon_name="page_add",
-                    title=_("Upload a file from your PC to the server."))
-                items.append(btn)
-            elif n == 1:
-                after_show = ar.get_status()
-                obj = sar.data_iterator[0]
-                items.append(sar.renderer.href_button(
-                    settings.SITE.build_media_url(obj.file.name),
-                    _("show"),
-                    target='_blank',
-                    icon_name='page_go',
-                    style="vertical-align:-30%;",
-                    title=_("Open the uploaded file in a "
-                            "new browser window")))
-                after_show.update(record_id=obj.pk)
-                items.append(sar.window_action_button(
-                    sar.ah.actor.detail_action,
-                    after_show,
-                    _("Edit"), icon_name='application_form',
-                    title=_("Edit metadata of the uploaded file.")))
-            else:
-                obj = sar.sliced_data_iterator[0]
-                items.append(ar.obj2html(obj, _("Last")))
-
-                ba = sar.bound_action
-                btn = sar.renderer.action_button(
-                    obj, sar, ba, "%s (%d)" % (_("All"), n),
-                    icon_name=None)
-                items.append(btn)
-
-            return E.div(*join_elems(items, ', '))
-
-        vf = dd.VirtualField(dd.DisplayField(i.text), f)
-        dd.inject_field(i.model_spec, i.name, vf)
 
 

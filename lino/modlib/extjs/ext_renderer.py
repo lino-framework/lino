@@ -965,7 +965,7 @@ class ExtRenderer(HtmlRenderer):
         return kw
 
     def build_on_render(self, main):
-        "dh is a FormLayout or a ListLayout"
+        "dh is a FormLayout or a ColumnsLayout"
         on_render = []
         elems_by_field = {}
         field_elems = []

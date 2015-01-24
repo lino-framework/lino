@@ -11,6 +11,7 @@ lino.modlib.about.models
    
       codefiles
       codetime
+      fill
       have_action
    
    

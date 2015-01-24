@@ -14,16 +14,16 @@ Examples with their own documentation entry:
 
 Poorly documented examples at different development states:
 
-- :mod:`lino.projects.min1`
-- :mod:`lino.projects.min2`
-- :mod:`lino.projects.cms` ---
-  :srcref:`docs/tickets/66`
-- :mod:`lino.projects.crl`
-- :mod:`lino.projects.events`
-  See :blogref:`20140203`
-- :mod:`lino.projects.homeworkschool`
-- :mod:`lino.projects.igen`
-- :mod:`lino.projects.start`
+.. autosummary::
+   :toctree:
+
+   lino.projects.min1
+   lino.projects.min2
+   lino.projects.cms
+   lino.projects.crl
+   lino.projects.events
+   lino.projects.homeworkschool
+   lino.projects.igen
 
 Examples covered by a tutorial:
 
@@ -35,11 +35,12 @@ Examples covered by a tutorial:
 
 Technical
 
-- :mod:`lino.projects.docs` -- A fictive application needed to satisfy
-  autodoc when generating the API documentation for :mod:`lino`.
+.. autosummary::
+   :toctree:
 
-- :mod:`lino.projects.std` --
-  The parent of every Lino application.
+   lino.projects.std
+   lino.projects.docs
+
 
 """
 
