@@ -10,7 +10,7 @@ from unipath import Path
 
 ROOTDIR = Path(__file__).parent.parent
 
-# load  SETUP_INFO:
+# load SETUP_INFO:
 execfile(ROOTDIR.child('lino_noi', 'project_info.py'), globals())
 
 from lino.utils.pythontest import TestCase
@@ -21,7 +21,7 @@ os.environ['DJANGO_SETTINGS_MODULE'] = "lino_noi.settings.test"
 
 class BaseTestCase(TestCase):
     project_root = ROOTDIR
-    demo_settings_module = 'lino_noi.settings.test'
+    django_settings_module = 'lino_noi.settings.test'
 
 
 class DocsTests(BaseTestCase):
@@ -37,7 +37,7 @@ class DemoTests(BaseTestCase):
     """
     $ python setup.py test -s tests.DemoTests.test_admin
     """
-    #~ demo_settings_module = "lino_cosi.settings.demo"
+
     def test_admin(self):
         self.run_django_manage_test()
 
