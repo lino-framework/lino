@@ -2,96 +2,14 @@
 # Copyright 2009-2015 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :class:`Site` class.
-
-.. autosummary::
+"""Defines the :class:`Site` class. For an overview see :doc:`/dev/site`.
 
 .. This document is part of the Lino test suite. You can test only
    this document using::
 
     $ python setup.py test -s tests.CoreTests.test_site
 
-See :doc:`/dev/settings` for a detailed introduction.
-
-The following examples use the :class:`TestSite` class just to show
-certain things which apply also to "real" Sites.
-
-These are the Django settings which Lino will override:
-
->>> from django.utils import translation
->>> from lino.ad import TestSite as Site
->>> from pprint import pprint
->>> pprint(Site().django_settings)
-... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
-{'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
-                           'NAME': '.../default.db'}},
- 'FIXTURE_DIRS': (),
- 'INSTALLED_APPS': ('lino.modlib.about',
-                    'lino.modlib.extjs',
-                    'lino.modlib.bootstrap3',
-                    'lino'),
- 'LANGUAGES': [],
- 'LOCALE_PATHS': (),
- 'LOGGING': {'disable_existing_loggers': True,
-             'filename': None,
-             'level': 'INFO',
-             'logger_names': 'atelier lino'},
- 'LOGGING_CONFIG': 'lino.utils.log.configure',
- 'MEDIA_ROOT': 'lino/core/media',
- 'MEDIA_URL': '/media/',
- 'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
-                        'lino.core.auth.NoUserMiddleware',
-                        'lino.utils.ajax.AjaxExceptionResponse'),
- 'ROOT_URLCONF': 'lino.core.urls',
- 'SECRET_KEY': '20227',
- 'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
- 'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
-                                 'django.core.context_processors.i18n',
-                                 'django.core.context_processors.media',
-                                 'django.core.context_processors.static'),
- 'TEMPLATE_LOADERS': ('lino.core.web.Loader',
-                      'django.template.loaders.filesystem.Loader',
-                      'django.template.loaders.app_directories.Loader'),
- '__file__': '...'}
-
-
-Application code usually specifies :attr:`Site.languages` as a single
-string with a space-separated list of language codes.  The
-:class:`Site` will analyze this string during instantiation and
-convert it into a tuple of :data:`LanguageInfo` objects.
-
->>> SITE = Site(languages="en fr de")
->>> pprint(SITE.languages)
-(LanguageInfo(django_code='en', name='en', index=0, suffix=''),
- LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
- LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
-
->>> SITE = Site(languages="de-ch de-be")
->>> pprint(SITE.languages)
-(LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
- LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
-
-If we have more than one locale of a same language *on a same Site*
-(e.g. 'en-us' and 'en-gb') then it is not allowed to specify just
-'en'.  But otherwise it is allowed to just say "en", which will mean
-"the English variant used on this Site".
-
->>> site = Site(languages="en-us fr de-be de")
->>> pprint(site.languages)
-(LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
- LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
- LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
-
->>> pprint(site.language_dict)
-{'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
- 'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
- 'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- 'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- 'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
-
->>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
-[('de', 'German'), ('fr', 'French')]
+.. autosummary::
 
 """
 
@@ -179,11 +97,9 @@ class NOT_PROVIDED:
 
 class Site(object):
     """The base class for a Lino application.  This class is designed to
-    be overridden by the application developer and/or the local site
-    administrator.  Your :setting:`SITE` setting is expected to
+    be overridden by both application developers and local site
+    administrators.  Your :setting:`SITE` setting is expected to
     contain an instance of a subclass of this.
-
-    See :doc:`/dev/application`.
 
     """
 
@@ -930,7 +846,7 @@ class Site(object):
     _logger = None
     override_modlib_models = None
 
-    def __init__(self, settings_globals=None, user_apps=[], **kwargs):
+    def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """
         Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -940,7 +856,7 @@ class Site(object):
         #~ print "20130404 ok?"
         if settings_globals is None:
             settings_globals = {}
-        self.init_before_local(settings_globals, user_apps)
+        self.init_before_local(settings_globals, local_apps)
         no_local = kwargs.pop('no_local', False)
         if not no_local:
             self.run_djangosite_local()
@@ -963,15 +879,15 @@ class Site(object):
         else:
             setup_site(self)
 
-    def init_before_local(self, settings_globals, user_apps):
+    def init_before_local(self, settings_globals, local_apps):
         """
         If your `project_dir` contains no :file:`models.py`,
         but *does* contain a `fixtures` subdir,
         then Lino automatically adds this as "local fixtures directory"
         to Django's `FIXTURE_DIRS`.
         """
-        if isinstance(user_apps, basestring):
-            user_apps = [user_apps]
+        if isinstance(local_apps, basestring):
+            local_apps = [local_apps]
         if not isinstance(settings_globals, dict):
             raise Exception("""
             Oops, the first argument when instantiating a %s
@@ -979,9 +895,9 @@ class Site(object):
             and not %r
             """ % (self.__class__.__name__, settings_globals))
 
-        if isinstance(user_apps, basestring):
-            user_apps = [user_apps]
-        self.user_apps = user_apps
+        if isinstance(local_apps, basestring):
+            local_apps = [local_apps]
+        self.local_apps = local_apps
 
         self.django_settings = settings_globals
         project_file = settings_globals.get('__file__', '.')
@@ -1024,7 +940,7 @@ class Site(object):
         i = modname.rfind('.')
         if i != -1:
             modname = modname[:i]
-        self.is_local_project_dir = not modname in self.user_apps
+        self.is_local_project_dir = not modname in self.local_apps
 
         def settings_subdirs(name):
             lst = []
@@ -1896,7 +1812,7 @@ class Site(object):
         some other languages), you can use only the language code to
         get a tuple of :data:`LanguageInfo` objects.
         
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
         LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
         
@@ -1916,7 +1832,7 @@ class Site(object):
         
         Examples:
         
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> lst = Site(languages="en fr de nl et pt").resolve_languages('en fr')
         >>> [i.name for i in lst]
         ['en', 'fr']
@@ -1966,7 +1882,7 @@ class Site(object):
         lazy translatable string `text`.
 
         >>> from django.utils.translation import ugettext_lazy as _
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> site = Site(languages='de fr es')
         >>> site.str2kw('name', _("January"))
         {'name_fr': u'janvier', 'name': u'Januar', 'name_es': u'Enero'}
@@ -1988,7 +1904,7 @@ class Site(object):
 
         You have some hard-coded multilingual content in a fixture:
 
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
         The field names where this info gets stored depends on the
@@ -2042,7 +1958,7 @@ given object `obj`. The dict will have one key for each
 
         Examples:
 
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
@@ -2088,7 +2004,7 @@ given object `obj`. The dict will have one key for each
 
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> from django.utils import translation
 
         A Site with default language "de":
@@ -2180,7 +2096,7 @@ given object `obj`. The dict will have one key for each
         Examples:
 
         >>> from django.utils import translation
-        >>> from lino.ad import TestSite as Site
+        >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
@@ -2691,7 +2607,7 @@ Please convert to Plugin method".format(mod, methname)
         yield 'lino.modlib.about'
         yield 'lino.modlib.extjs'
         yield 'lino.modlib.bootstrap3'
-        for a in self.user_apps:
+        for a in self.local_apps:
             yield a
         yield "lino"
 
@@ -2987,7 +2903,7 @@ class TestSite(Site):
     >> from lino.ad import Site
     >> Site(globals(), ...)
     
-    >> from lino.ad import TestSite as Site
+    >> from lino.core.site import TestSite as Site
     >> Site(...)
 
     """

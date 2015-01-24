@@ -1,25 +1,21 @@
 .. _application:
 
-==================
-The ``Site`` class
-==================
+============================
+An app is not an application
+============================
 
 .. currentmodule:: lino.core.site
 
 One of the important things to understand when you learn Lino is the
-:class:`Site` class.  
+:class:`Site` class.  But if you know Django, then we need to tidy up
+your brain first.
 
-But first we need to tidy up your brain:
+    In information technology, an **application** is a computer
+    program designed to help people perform an activity.  --
+    `Wikipedia <http://en.wikipedia.org/wiki/Software_application>`_
 
-An app is not an application
-============================
-
-A **software application** is a standalone piece of software which is
-perceived as an entity by end-users.
-
-    In information technology, an application is a computer program
-    designed to help people perform an activity.
-    -- `Wikipedia <http://en.wikipedia.org/wiki/Software_application>`_
+A *software application* is a standalone piece of software which is
+*perceived as an entity* by *end-users*.
 
 Unfortunately, Django comes with a rather special use of the word
 "app".  Daniel and Audrey (`Two scoops of Django
@@ -55,52 +51,9 @@ our vocabulary problem.
 The "only" problem with this vocabulary problem is that it leaves us
 (Lino developers) with no word left for what **we** would want to call
 an application.  A Lino application is neither an "app" nor a
-"project". 
+"project".
 
-But that's why we finally use the name "Site" for describing a "Lino
-application".
-
-
-
-Introducing the :class:`Site` class
-===================================
-
-The :class:`Site` is the base class for representing a "Lino
-application".  The :class:`Site` class brings an additional level of
-encapsulation to Django.  A :class:`Site` *class* is a kind of "master
-app" or "project template".  A :class:`Site` *instance* roughly
-corresponds to a "project" for Django.
-
-
-A `Site` has attributes like :attr:`Site.verbose_name` (the "short"
-user-visible name) and the :attr:`Site.version` which are used by the
-method :meth:`Site.welcome_text`.  It also defines a
-:meth:`Site.startup` method and signals which fire exactly once when
-the application starts up.
-
-And then it is designed to be subclassed by the application developer
-(e.g. :class:`lino.projects.min1.settings.Site`), then imported into a
-local :xfile:`settings.py`, where a local system administrator may
-subclass it another time.
-
-A Lino application starts to "live" when such a :class:`Site` class
-gets **instantiated**.  This instance of your application is then
-stored in the :setting:`SITE` variable of a :xfile:`settings.py`.
-
-
-A `Site` is usually meant to work for a given set of Django apps
-(i.e. what's in the :setting:`INSTALLED_APPS` setting).  It is a
-"collection of apps" which make up a whole.  To define this
-collection, the application developper usually overrides the
-:meth:`Site.get_installed_apps` method.
-
-.. currentmodule:: lino.core.plugin
-
-And then Lino has another class, called :class:`Plugin`, which is a
-wrapper around a Django app. Lino creates one :class:`Plugin` instance
-for every installed app.
-
-The :class:`Plugin` class is comparable to Django's `AppConfig
-<https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
-which has been added in version 1.7, but they make certain things
-possible which are not possible in plain Django.
+But that's why we finally use the name :class:`Site
+<lino.core.site.Site>` for describing an application, and
+:class:`Plugin <lino.core.plugin.Plugin>` as a wrapper for what Django
+calls "apps".

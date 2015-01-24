@@ -18,6 +18,8 @@ class Plugin(object):
     A :class:`Plugin` is an optional descriptor for an app which gets
     defined and configured before Django models start to load.
 
+    Lino creates one :class:`Plugin` instance for every installed app.
+    
     The :class:`Plugin` class is comparable to Django's `AppConfig
     <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
     which has been added in version 1.7.. But there is at least one

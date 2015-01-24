@@ -48,20 +48,22 @@ Getting started
 Getting acquaintained
 =====================
 
--  :doc:`settings` :
--  :doc:`application` : An app is not an application. Introducing the :class:`Site` class.
--  :doc:`users` : Why do we replace Django's user management. Passwords.
--  :doc:`menu` :
--  :doc:`choicelists` :
--  :doc:`actors` :
--  :doc:`/tutorials/letsmti/index` :
--  :doc:`/tutorials/layouts` :
--  :doc:`/tutorials/vtables/index` :
--  :doc:`actions` :
--  :doc:`/tutorials/actions/index` :
--  :doc:`/tutorials/mldbc/index` :
--  :doc:`/tutorials/human/index` :
--  :doc:`apps` : 
+- :doc:`settings` : The Django settings module. How Lino integrates
+  into Django settings. Inheriting settings.
+- :doc:`application` : An app is not an application.
+- :doc:`users` : Why do we replace Django's user management. Passwords.
+- :doc:`site` : 
+- :doc:`menu` :
+- :doc:`choicelists` :
+- :doc:`actors` :
+- :doc:`/tutorials/letsmti/index` :
+- :doc:`/tutorials/layouts` :
+- :doc:`/tutorials/vtables/index` :
+- :doc:`actions` :
+- :doc:`/tutorials/actions/index` :
+- :doc:`/tutorials/mldbc/index` :
+- :doc:`/tutorials/human/index` :
+- :doc:`apps` : 
 
 .. toctree::
    :maxdepth: 1
@@ -69,6 +71,7 @@ Getting acquaintained
 
    settings
    application
+   site
    users
    menu
    choicelists
