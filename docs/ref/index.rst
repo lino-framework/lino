@@ -8,7 +8,6 @@ Reference
    glossary
    links
    files
-   fixtures
    settings
    javascript
    jargon

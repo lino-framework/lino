@@ -54,7 +54,7 @@ in
 
 :class:`CoachingsByClient
 <lino_welfare.modlib.reception.models.CoachingsByClient>` is
-still there for :ref:`chat` but I gues that they will also want
+still there for :ref:`welcht` but I gues that they will also want
 it.
 
 

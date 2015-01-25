@@ -11,7 +11,7 @@ converts it to `SchoolingStates.success` in `cv.Study.state`.
 Released Lino 1.6.14 and :ref:`welfare` 1.1.19 to PyPI.
 
 
-What is more urgent? (1) working for :ref:`chat` who are waiting
+What is more urgent? (1) working for :ref:`welcht` who are waiting
 already so long for their next version, or (2) finding a second core
 developer who helps me to make Lino better?  For today afternoon I
 chose the latter.

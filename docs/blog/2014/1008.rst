@@ -15,4 +15,4 @@ The The message
 Fixed a bug in :mod:`welfare.isip` which caused a traceback "Cannot
 use None as a query value" when trying to add a new contract.
 
-Pushed the above changes to master and pulled them to :ref:`dsbe`.
+Pushed the above changes to master and pulled them to :ref:`weleup`.

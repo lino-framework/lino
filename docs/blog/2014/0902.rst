@@ -17,7 +17,7 @@ Continued on :srcref:`docs/tickets/121`.
   case below.
 
 - activated the "Client projects" (Demandes d'intervention) app for
-  :ref:`chat`.
+  :ref:`welcht`.
 
 - Removed the different specific UploadAreas in :ref:`welfare`. Only
   one area (as in the standard modlib app).

@@ -41,7 +41,7 @@ and :mod:lino.ui.store`.
 
 :ref:`welfare.jobs.NewJobsOverview` implements the new user-requested 
 layout and works very well... on `hoppel` and on `lf.org`, 
-but *not* on `dsbe`.
+but *not* on `weleup`.
 
 Here is a table with some first observations:
 

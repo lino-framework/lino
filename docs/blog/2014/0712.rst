@@ -19,4 +19,4 @@ I saw only now that test :ref:`welfare` test suite is broken due to a
 "UnicodeEncodeError: 'ascii' codec can't encode character u'\xe9' in
 position 70: ordinal not in range(128)" due to the recent changes in
 :mod:`ml.beid`. Before fixing this I wait for more test results from
-:ref:`chat`.
+:ref:`welcht`.

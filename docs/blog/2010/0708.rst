@@ -72,6 +72,6 @@ Mehrere Check-Ins und zum Schluss:
 Release Lino 0.8.2 & DSBE 0.1.1
 -------------------------------
 
-Diese Versionen laufen jetzt im :term:`DSBE` und auf :term:`Tups`. Es sind noch viele Bugs drin, aber ich wollte mal sehen, wie die Performance auf einem "Produktionsserver" ist. Mein erster Eindruck: eher besorgniserregend... aber jetzt ist Feierabend.
+Diese Versionen laufen jetzt im :ref:`weleup` und auf :term:`Tups`. Es sind noch viele Bugs drin, aber ich wollte mal sehen, wie die Performance auf einem "Produktionsserver" ist. Mein erster Eindruck: eher besorgniserregend... aber jetzt ist Feierabend.
 
 

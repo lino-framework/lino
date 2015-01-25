@@ -24,7 +24,7 @@ gemeldet.
 - Nachtrag 09.09.: Nachdem FF sich auf 3.6.9 aktualisiert hat, funktioniert wieder alles. Das incremental upgrade funktionierte übrigens nicht, aber der Updater entschied dann automatisch, ein komplettes Ugprade zu machen.
 
 
-Release im :term:`DSBE`
+Release im :ref:`weleup`
 -----------------------
 
 In :doc:`/admin/install` habe ich die Anweisungen zur Installation von :term:`appy_pod` hinzugefügt. 
@@ -181,5 +181,5 @@ Und :js:func:`Lino.build_buttons` verarbeitet die "actions" von a2btn ja dann zu
 
 Das Insert-Fenster hatte auch Navigations-Buttons und ein Quickfilter-Feld, was natürlich Quatsch ist.
 
-Check-in zwischendurch im Rahmen des :doc:`/releases/2010/0824` (und Install im :term:`DSBE`).
+Check-in zwischendurch im Rahmen des :doc:`/releases/2010/0824` (und Install im :ref:`weleup`).
 

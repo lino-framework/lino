@@ -73,10 +73,10 @@ Problems with mod_wsgi in daemon mode
 =====================================
 
 Wow. I had a few hours of stress after an upgrade of the production
-server in :ref:`chat`.
+server in :ref:`welcht`.
 
 - :message:`TypeError: H is undefined` in the JavaScript console in
-  :ref:`chat` after upgrading.  And this caused the detail window for
+  :ref:`welcht` after upgrading.  And this caused the detail window for
   clients to not open but to produce another Javascript error
   :message:`TypeError: Lino.pcsw.Clients.detail is undefined`.
 

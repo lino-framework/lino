@@ -2,7 +2,7 @@
 Thursday, November 6, 2014
 ==========================
 
-Pulled in :ref:`chat` to production server and migrated the database.
+Pulled in :ref:`welcht` to production server and migrated the database.
 
 Fixed a bug in :mod:`lino.core.actions` which caused the
 `toggle_choice` action to fail. `toggle_choice` is our first action

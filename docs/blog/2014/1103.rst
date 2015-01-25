@@ -5,7 +5,7 @@ Monday, November 3, 2014
 Database migration
 ==================
 
-Upgrade in :ref:`chat`.
+Upgrade in :ref:`welcht`.
 French translations for :mod:`ml.polls`.
 Added the third poll to :mod:`lino.modlib.polls.fixtures.checklist`.
 

@@ -100,3 +100,4 @@ See `Django doc
 <https://docs.djangoproject.com/en/1.6/ref/settings/#serialization-modules>`_.
 
 .. setting:: FIXTURE_DIRS
+

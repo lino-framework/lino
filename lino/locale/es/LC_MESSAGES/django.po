@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-01-23 21:03+0200\n"
+"POT-Creation-Date: 2015-01-25 07:53+0200\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -341,7 +341,7 @@ msgstr ""
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/layouts.py:431 lino/modlib/cal/fixtures/std.py:44
+#: lino/core/layouts.py:450 lino/modlib/cal/fixtures/std.py:44
 #: lino/modlib/courses/models.py:477 lino/modlib/excerpts/models.py:586
 #: lino/modlib/finan/models.py:284 lino/modlib/finan/models.py:296
 #: lino/modlib/finan/models.py:303 lino/modlib/ledger/models.py:980
@@ -458,36 +458,36 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: lino/core/site.py:320 lino/core/site.py:2525
+#: lino/core/site.py:236 lino/core/site.py:2441
 #: lino/modlib/changes/models.py:83
 msgid "Master"
 msgstr ""
 
-#: lino/core/site.py:322 lino/core/site.py:2528
+#: lino/core/site.py:238 lino/core/site.py:2444
 msgid "Reports"
 msgstr ""
 
-#: lino/core/site.py:323 lino/core/site.py:2530
+#: lino/core/site.py:239 lino/core/site.py:2446
 #: lino/modlib/excerpts/models.py:589
 msgid "Configure"
 msgstr ""
 
-#: lino/core/site.py:324 lino/core/site.py:2532
+#: lino/core/site.py:240 lino/core/site.py:2448
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:325 lino/core/site.py:2534
+#: lino/core/site.py:241 lino/core/site.py:2450
 msgid "Site"
 msgstr ""
 
-#: lino/core/site.py:1589 lino/projects/homeworkschool/settings/__init__.py:76
+#: lino/core/site.py:1505 lino/projects/homeworkschool/settings/__init__.py:76
 #: lino/projects/min2/settings/__init__.py:50
 #: lino/projects/polly/settings/__init__.py:43
 #: lino/projects/presto/settings/__init__.py:36
 msgid "Anonymous"
 msgstr ""
 
-#: lino/core/site.py:1593 lino/modlib/users/choicelists.py:66
+#: lino/core/site.py:1509 lino/modlib/users/choicelists.py:66
 #: lino/modlib/users/models.py:98
 #: lino/projects/homeworkschool/settings/__init__.py:78
 #: lino/projects/min2/settings/__init__.py:54
@@ -496,7 +496,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: lino/core/site.py:1594 lino/modlib/users/choicelists.py:68
+#: lino/core/site.py:1510 lino/modlib/users/choicelists.py:68
 #: lino/projects/homeworkschool/settings/__init__.py:79
 #: lino/projects/min2/settings/__init__.py:55
 #: lino/projects/polly/settings/__init__.py:46
@@ -504,19 +504,19 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/site.py:1850 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:1766 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:2816
+#: lino/core/site.py:2732
 msgid "This is "
 msgstr ""
 
-#: lino/core/site.py:2825
+#: lino/core/site.py:2741
 msgid " using "
 msgstr ""
 
-#: lino/core/site.py:2870
+#: lino/core/site.py:2786
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""

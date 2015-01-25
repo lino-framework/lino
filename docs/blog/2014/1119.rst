@@ -2,7 +2,7 @@
 Wednesday, November 19, 2014
 ============================
 
-Worked on the tickets for :ref:`chat`.
+Worked on the tickets for :ref:`welcht`.
 
 User requests:
 
@@ -17,14 +17,14 @@ Changes:
 - Documentation and first translations.
 
 - Changes in the :mod:`lino_welfare.modlib.courses` module (the one
-  used in :ref:`dsbe`):
+  used in :ref:`weleup`):
 
     - PEP 8
     - courses.Course is no longer `Printable` (admins now must define
       an `ExcerptType` in order to make it printable).
 
 - Changes in the :mod:`lino.modlib.courses` module (the one used in
-  :ref:`chat`):
+  :ref:`welcht`):
 
     - Added new field `Course.description`. :ref:`mustmig`
 

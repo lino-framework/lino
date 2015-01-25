@@ -2,5 +2,5 @@
 20140326 (Wednesday, 26 March 2014)
 ===================================
 
-Development upgrade in :ref:`chat`.
+Development upgrade in :ref:`welcht`.
 

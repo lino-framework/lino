@@ -66,7 +66,7 @@ Changes in :mod:`lino.modlib.beid.mixins`.
 Appointments today
 ------------------
 
-The reception clerks in :ref:`chat` don't need the calendar panel,
+The reception clerks in :ref:`welcht` don't need the calendar panel,
 they just want a plain list of all appointments of today.
 
 - Extended the existing :class:`ml.cal.EventsByDay` so that it can be
@@ -82,8 +82,8 @@ reception"`. Won't this cause problems in an application which has
 `cal` but not `reception`?
 
 
-Upgrade in :ref:`chat`
-----------------------
+Upgrade im :ref:`welcht`
+------------------------
 
 Added translations to French.
 

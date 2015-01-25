@@ -12,4 +12,4 @@ Moved the registration of change watchers from
 to
 a :meth:`lino.core.site.Site.startup` method
 in :class:`lino_welfare.projects.eupen.settings.Site`.
-Because :ref:`chat` don't need it.
+Because :ref:`welcht` don't need it.

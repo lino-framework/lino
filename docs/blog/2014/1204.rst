@@ -70,7 +70,7 @@ I am learning how to organize my work using Trac.  This is an
 important step for Lino.  Started a new document `/community/team`
 (which meanwhile moved to :doc:`/team/trac`).
 
-For :ref:`dsbe` we have one big project which we call
+For :ref:`weleup` we have one big project which we call
 "Sozialsekretariat".  The project has already seen quite some
 releases, demonstrations, discussions...  
 

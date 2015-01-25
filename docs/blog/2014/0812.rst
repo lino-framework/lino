@@ -30,7 +30,7 @@ Physicians."
 
 Updated German translations for :ref:`welfare`.
 
-Checkin. Upgrade at :ref:`dsbe`.
+Checkin. Upgrade at :ref:`weleup`.
 
 More changes after evaluation with Gerd:
 

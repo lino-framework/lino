@@ -6,7 +6,7 @@
 
 .. currentlanguage:: fr
 
-Propositions de changement par :ref:`chat` en septembre 2014.
+Propositions de changement par :ref:`welcht` en septembre 2014.
 
 DONE:
 

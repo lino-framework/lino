@@ -3,7 +3,7 @@
 
 Upps, mir sind noch zwei Punte für die kurzfristige Todo-Liste eingefallen:
 
-- Man muss im :term:`DSBE` z.B. auf Sprachfähikeiten filtern können. Die sind ja aber in einer separaten Tabelle :class:`dsbe.LanguageKnowledge`. Die eleganteste Lösung scheint mir, dass ich Slave-Reports auch als Kolonnen in einer Grid rendere, und dass dort dann eine spezielle Kolonnenfilterart funktioniert. Eine provisorische Implementierung dieser Lösung wäre eine neue Methode :meth:`lino.reports.Report.as_string()`, die par défaut die Records als comma-separated strings zurück gibt, und in der man dann filtern kann. Richtig gut wäre, wenn man in diesen Kolonnen keinen einfachen Stringfilter hätte, sondern jede einzelne Kolonne des Slave-Reports befiltern könnte.
+- Man muss im :ref:`weleup` z.B. auf Sprachfähikeiten filtern können. Die sind ja aber in einer separaten Tabelle :class:`dsbe.LanguageKnowledge`. Die eleganteste Lösung scheint mir, dass ich Slave-Reports auch als Kolonnen in einer Grid rendere, und dass dort dann eine spezielle Kolonnenfilterart funktioniert. Eine provisorische Implementierung dieser Lösung wäre eine neue Methode :meth:`lino.reports.Report.as_string()`, die par défaut die Records als comma-separated strings zurück gibt, und in der man dann filtern kann. Richtig gut wäre, wenn man in diesen Kolonnen keinen einfachen Stringfilter hätte, sondern jede einzelne Kolonne des Slave-Reports befiltern könnte.
 
 - Es fehlt noch die Tabelle oder das Feld für die "Personen zu Lasten". Die einfachste Form wäre ein schlichtes IntegerField.
 

@@ -8,7 +8,7 @@ far from being satisfied, but it's now much better than 2 days ago. At
 least the "Getting started" section (5 chapters) should me more or
 less comprehensible.
 
-And now I finally have time to continue to work for :ref:`chat`.  The
+And now I finally have time to continue to work for :ref:`welcht`.  The
 biggest news is that I added a new module
 :mod:`lino_welfare.modlib.active_job_search` :ticket:`43`. This module
 is not visible in Eupen. It also solves :ticket:`21` (Garde d'enfant).

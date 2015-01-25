@@ -1,7 +1,7 @@
 2010-08-24
 ==========
 
-Treffen im :term:`DSBE`. 
+Treffen im :ref:`weleup`. 
 
 - Datenaustausch mit `Banque-Carrefour <http://statbel.fgov.be/fr/entreprises/BCE/index.jsp>`__ : 
   wartet auf Antwort.

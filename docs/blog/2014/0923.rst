@@ -2,7 +2,7 @@
 Tuesday, September 23, 2014
 ===========================
 
-Preparing an upgrade in :ref:`dsbe`. Making the test suites pass.
+Preparing an upgrade in :ref:`weleup`. Making the test suites pass.
 
 Changed a detail in the implementation of :mod:`ml.beid`: Until
 yesterday, when `lino.core.site.Site.use_java` was False, ``beid`` and ``davlink``

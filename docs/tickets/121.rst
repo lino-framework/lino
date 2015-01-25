@@ -7,7 +7,7 @@
 
 .. currentlanguage:: fr
 
-Propositions de changement pour :ref:`chat`.
+Propositions de changement pour :ref:`welcht`.
 
 DONE
 ====

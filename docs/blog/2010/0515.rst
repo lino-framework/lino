@@ -59,6 +59,6 @@ Das muss nun warten, weil http://www.extjs.com/deploy/dev/docs/ nicht online ist
 In den models-Modulen muss ich ugettext_lazy verwenden. Und dann muss ich an einigen Stellen explizit `unicode()` aufrufen, damit die Übersetzung stattfindet. Dann musste ich in den betreffenden Modulen `#coding: utf8` durch `#coding: UTF-8` ersetzen, weil xgettext das sonst nicht versteht.
 
 `django django-admin.py makemessages -l de` funktioniert nun, zumindest in 
-`dsbe` und in `lino.modlib.contacts`.
+`weleup` und in `lino.modlib.contacts`.
 
 Auch `django django-admin.py compilemessages` funktioniert, und die ersten Labels erscheinen nun in übersetztem Deutsch. Aber jetzt mach ich erstmal Feierabend. Dritter Check-in für heute.

@@ -16,7 +16,7 @@ aus .dtl-Dateien und :xfile:`linolin.js` darf natürlich nicht nach
 
 Das hängt zusammen mit einem weiteren Problem 
 (das mir gestern einen Demo-Effekt beschert hat):
-Es gibt momentan zwei Verzeichnisse `dsbe` bzw. `igen`: 
+Es gibt momentan zwei Verzeichnisse `weleup` bzw. `igen`: 
 lino.sites.igen und lino.modlib.igen.
 
 Änderungen:

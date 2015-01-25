@@ -14,7 +14,7 @@ DONE:
 
 TODO:
 
-- Release machen im :term:`DSBE`.
+- Release machen im :ref:`weleup`.
 - Insert in countries.Countries funktioniert nicht.
 - Beim Navigieren im Detail von contacts.Persons macht er zwar jetzt nicht mehr die unnützen load_slavegrid() (wenn der Reiter mit diesen Komponenten nicht angezeigt ist), aber wenn man auf den betreffenden Reiter klickt, dann vergißt er, die Ajax-Aufrufe nachzuholen...
 

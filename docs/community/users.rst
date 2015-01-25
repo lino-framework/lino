@@ -4,6 +4,7 @@ Users
 
 The following organizations are using a Lino application.
 
+.. _weleup:
 .. _dsbe:
 
 ÖSHZ Eupen
@@ -13,6 +14,8 @@ Using :ref:`welfare` since January 2011.
 
 - Contact: :ref:`gx`
 
+
+.. _welcht:
 .. _chat:
 
 CPAS de Châtelet
@@ -21,6 +24,9 @@ CPAS de Châtelet
 Using :ref:`welfare` since March 2014.
 
 - Contact: :ref:`mj`
+
+.. refstothis:: chat
+
 
 
 .. _eiche:

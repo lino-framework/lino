@@ -29,6 +29,6 @@ DONE:
 
 DISCUSS:
 
-- Neue Tabelle "Ausbildungen" wie in :ref:`chat`? Also "Studien" und
+- Neue Tabelle "Ausbildungen" wie in :ref:`welcht`? Also "Studien" und
   "Ausbildungen" voneinander trennen?  --> Nein.
 
