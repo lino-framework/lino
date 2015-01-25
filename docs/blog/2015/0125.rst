@@ -8,12 +8,15 @@ are now running version 1.1.21.
 Marked :ticket:`47` as fixed because the most visible part is done
 and needs feedback. Split remaining part into new :ticket:`71`.
 
-Layout changes and translations for :ref:`welcht`.
+Layout changes and translations for :ref:`welcht`. Some vocabulary:
 
-A meeting is any kind of calendar event which has guests.
+    A meeting is any kind of calendar event which has guests.
 
-============ ============ ==============
-meeting      entrevue     Treffen
-checkout     congédier    Verabschieden
-consultation consultation Visite
-============ ============ ==============
+    ============ ============ ==============
+    meeting      entrevue     Treffen
+    checkout     congédier    Verabschieden
+    consultation consultation Visite
+    ============ ============ ==============
+
+Mahmoud reported his first real bug in his `today's blog entry
+<http://iamdevops.com/blog/2015/0125.html>`_

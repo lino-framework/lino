@@ -268,7 +268,7 @@ subclasses for the different `_upload_area`.
 class UploadsByController(AreaUploads):
     "UploadsByController"
     master_key = 'owner'
-    column_names = "file type description user needed * "
+    column_names = "file type description user *"
 
     insert_layout = """
     file

@@ -1,8 +1,10 @@
 # Copyright: Copyright 2011-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""An extended `django.test.TestCase` to be run using Django's test
+"""Two TestCase classes for writing tests be run using Django's test
 runner (i.e. `manage.py test`).
+
+.. autosummary::
 
 """
 
@@ -24,9 +26,9 @@ from lino.core.signals import testcase_setup, database_ready
 
 
 def check_json_result(response, expected_keys=None, msg=None):
-    """
-    Checks the result of response which is expected to return 
-    a JSON-encoded dictionary with the expected_keys.
+    """Checks the result of response which is expected to return a
+    JSON-encoded dictionary with the expected_keys.
+
     """
     #~ print("20110301 response is %r" % response.content)
     if response.status_code != 200:
@@ -43,9 +45,9 @@ def check_json_result(response, expected_keys=None, msg=None):
 
 
 class CommonTestCase(unittest.TestCase):
+    """An extended `django.test.TestCase`.
 
-    def unused_check_json_result(self, *args, **kw):
-        return check_json_result(*args, **kw)
+    """
 
     def check_json_result(self, response, expected_keys=None, msg=None):
         """
@@ -67,10 +69,10 @@ class CommonTestCase(unittest.TestCase):
         return result
 
     def assertEquivalent(self, a, b, report_plain=False):
-        """
-        Compares to strings, ignoring whitespace repetitions and
-        writing a logger message in case they are different.
-        For long strings it's then more easy to find the difference.
+        """Compares to strings, ignoring whitespace repetitions and writing a
+        logger message in case they are different.  For long strings
+        it's then more easy to find the difference.
+
         """
         if a == b:
             return
@@ -87,10 +89,10 @@ class CommonTestCase(unittest.TestCase):
         self.fail("EXPECTED and GOT are not equivalent")
 
     def request_PUT(self, url, data, **kw):
-        """
-        Sends a PUT request using Djangos test client, 
-        overriding the `content_type` keyword.
-        This is how ExtJS grids behave by default.
+        """Sends a PUT request using Djangos test client, overriding the
+        `content_type` keyword.  This is how ExtJS grids behave by
+        default.
+
         """
         kw.update(content_type='application/x-www-form-urlencoded')
         response = self.client.put(url, data, **kw)
@@ -98,9 +100,9 @@ class CommonTestCase(unittest.TestCase):
         return response
 
     def check_sql_queries(self, *expected):
-        """
-        Checks whether the specified expected SQL queries match to those 
+        """Checks whether the specified expected SQL queries match to those
         who actually have been emitted.
+
         """
         for i, x1 in enumerate(expected):
             if len(connection.queries) <= i:
@@ -132,33 +134,18 @@ class CommonTestCase(unittest.TestCase):
             pass
 
 
-class WebIndexTestCase(DjangoTestCase):
-    def test_get_root(self):
-        # self.assertEqual(settings.SETTINGS_MODULE, '')
-        # self.assertEqual(settings.SITE.user_model, [])
-        # self.assertEqual(settings.MIDDLEWARE_CLASSES, [])
-        client = Client()
-        url = '/'
-        res = client.get(url)
-        self.assertEqual(
-            res.status_code, 200,
-            "Status code %s other than 200 for anonymous on GET %s" % (
-                res.status_code, url))
-
-
 class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
+    """Adds some extensions to the Django TestCase.
 
-    """
-    Adds some extensions to the Django TestCase.
-    
     """
 
     longMessage = True  # see unittest. used for check_json_result
 
     override_djangosite_settings = dict()
-    """
-    If specified, this is a dict of :class:`Site <ad.Site>`
-    attributes to override before running the test.
+    """If specified, this is a dict of :class:`Site
+    <lino.core.site.Site>` attributes to override before running the
+    test.
+
     """
 
     #~ never_build_site_cache = True
@@ -169,65 +156,55 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
     #~ """
 
     defining_module = None
-    """
-    When you decorate your subclass of TestCase, you must also specify::
+    """When you decorate your subclass of TestCase, you must also specify::
     
         defining_module = __name__
 
-    Because a decorator will change 
-    your class's  `__module__` attribute 
-    and :meth:`test_them_all` would search 
-    for test methods in the wrong module.
-    
+    Because a decorator will change your class's `__module__`
+    attribute and :meth:`test_them_all` would search for test methods
+    in the wrong module.
+
     """
 
     def __call__(self, *args, **kw):
-        """
-        Does some initialization and sends the 
-3        :attr:`testcase_setup <lino.utils.testcase_setup>` 
-        signal, then calls super.
+        """Does some initialization and sends the :attr:`testcase_setup
+        <lino.utils.testcase_setup>` signal, then calls super.
+
         """
         if self.override_djangosite_settings:
             settings.SITE.override_defaults(
                 **self.override_djangosite_settings)
-        #~ settings.SITE.never_build_site_cache = self.never_build_site_cache
         testcase_setup.send(self)
-        #~ database_ready.send(self)
         return super(DjangoManageTestCase, self).__call__(*args, **kw)
 
     def tearDown(self):
-        #~ settings.SITE.shutdown()
         super(DjangoManageTestCase, self).tearDown()
 
     def setUp(self):
-        #~ settings.SITE.never_build_site_cache = self.never_build_site_cache
-        # ~ # settings.SITE.remote_user_header = 'REMOTE_USER'
-        # ~ # raise Exception("20130704 logger.level is %s" % logger.level)
-        # ~ # logger.info("20130704 fire testcase_setup in %s", settings.SITE.title)
-        # ~ # print("20130704 send testcase_setup signal %s" % settings.SITE.title)
-        #~ testcase_setup.send(self)
         super(DjangoManageTestCase, self).setUp()
         database_ready.send(self)
 
 
-#~ class DocTest(unittest.TestCase):
-    #~ """
-    #~ """
-    #~ doctest_files = ["index.rst"]
-    #~ def test_files(self):
-        #~ g = dict(print_=six.print_)
-        #~ g.update(settings=settings)
-        #~ for n in self.doctest_files:
-            #~ f = os.path.join(settings.SITE.project_dir,n)
-            #~ if os.path.exists(f):
-                #~ print(f)
-                #~ res = doctest.testfile(f,module_relative=False,globs=g)
-                #~ if res.failed:
-                    #~ self.fail("Failed doctest %s" % f)
+class WebIndexTestCase(DjangoManageTestCase):
+    """Designed to be just imported. No subclassing needed."""
+
+    override_djangosite_settings = dict(build_js_cache_on_startup=True)
+
+    def test_get_root(self):
+        # self.assertEqual(settings.SETTINGS_MODULE, '')
+        # self.assertEqual(settings.SITE.user_model, [])
+        # self.assertEqual(settings.MIDDLEWARE_CLASSES, [])
+        # self.assertEqual(1, 2)
+        client = Client()
+        url = '/'
+        res = client.get(url)
+        self.assertEqual(
+            res.status_code, 200,
+            "Status code %s other than 200 for anonymous on GET %s" % (
+                res.status_code, url))
+
+
 class RemoteAuthTestCase(DjangoManageTestCase):
-    #~ fixtures = [ 'std', 'few_countries', 'ee', 'be', 'demo', 'demo_ee']
-    #~ fixtures = 'few_countries few_languages demo_cities std demo demo_ee'.split()
-    #~ fixtures = 'std few_countries few_cities few_languages props demo'.split()
 
     def __call__(self, *args, **kw):
         # these tests use remote http authentication, so we override the run()
@@ -237,7 +214,7 @@ class RemoteAuthTestCase(DjangoManageTestCase):
         mysettings = dict()
         for k in ('MIDDLEWARE_CLASSES',):
             mysettings[k] = settings.SITE.django_settings.get(k)
-        #~ MIDDLEWARE_CLASSES = settings.SITE.django_settings.get('MIDDLEWARE_CLASSES')
+
         with self.settings(**mysettings):
             return super(RemoteAuthTestCase, self).__call__(*args, **kw)
 
