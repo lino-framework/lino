@@ -18,5 +18,9 @@ Layout changes and translations for :ref:`welcht`. Some vocabulary:
     consultation consultation Visite
     ============ ============ ==============
 
-Mahmoud reported his first real bug in his `today's blog entry
-<http://iamdevops.com/blog/2015/0125.html>`_
+Mahmoud reported two bugs in his `today's blog entry
+<http://iamdevops.com/blog/2015/0125.html>`_.  One was a wrong test
+case, the other was a real bug which had passed undetected through the
+test suite.
+
+I added some test cases so that it would have been detected.
