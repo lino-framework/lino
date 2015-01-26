@@ -295,7 +295,7 @@ The `Products` table shows all products in alphabetical order:
 >>> rt.show(lets.Products)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ==== ========================= ===================== =====================
- ID   name                      providers             customers
+ ID   name                      Offered by            Wanted by 
 ---- ------------------------- --------------------- ---------------------
  1    Bread                     **Fred**
  2    Buckwheat                 **Fred**, **Anne**    **Henri**
