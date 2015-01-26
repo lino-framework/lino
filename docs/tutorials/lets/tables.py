@@ -1,5 +1,5 @@
 from django.db.models import Q
-from lino import dd
+from lino.api import dd
 
 
 class Places(dd.Table):
@@ -9,7 +9,6 @@ class Places(dd.Table):
 class Members(dd.Table):
     model = 'lets.Member'
 
-    # column_names = "name email place DemandsByMember OffersByMember"
     column_names = "name email place offered_products wanted_products"
 
     detail_layout = """
@@ -31,7 +30,7 @@ class Products(dd.Table):
 
 
 class ActiveProducts(Products):
-    
+
     label = "Active products"
     column_names = 'name offered_by wanted_by'
 
@@ -53,17 +52,9 @@ class Offers(dd.Table):
 class OffersByMember(Offers):
     master_key = 'provider'
 
-    @classmethod
-    def summary_row(cls, ar, obj, **kw):
-        return [ar.obj2html(obj.product)]
-
 
 class OffersByProduct(Offers):
     master_key = 'product'
-
-    @classmethod
-    def summary_row(cls, ar, obj, **kw):
-        return [ar.obj2html(obj.provider)]
 
 
 class Demands(dd.Table):
@@ -73,14 +64,7 @@ class Demands(dd.Table):
 class DemandsByMember(Demands):
     master_key = 'customer'
 
-    @classmethod
-    def summary_row(cls, ar, obj, **kw):
-        return [ar.obj2html(obj.product)]
-
 
 class DemandsByProduct(Demands):
     master_key = 'product'
 
-    @classmethod
-    def summary_row(cls, ar, obj, **kw):
-        return [ar.obj2html(obj.customer)]

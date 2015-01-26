@@ -28,9 +28,11 @@ class Product(dd.Model):
     name = models.CharField(max_length=200)
 
     providers = models.ManyToManyField(
-        'lets.Member', through='lets.Offer', related_name='offered_products')
+        'lets.Member', verbose_name="Offered by",
+        through='lets.Offer', related_name='offered_products')
     customers = models.ManyToManyField(
-        'lets.Member', through='lets.Demand', related_name='wanted_products')
+        'lets.Member', verbose_name="Wanted by",
+        through='lets.Demand', related_name='wanted_products')
 
     def __unicode__(self):
         return self.name
