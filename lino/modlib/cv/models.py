@@ -1,9 +1,24 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-See :mod:`ml.cv`.
+"""Manage information about the *career* or *curriculum vitae* of a
+person.
+
+- A **Language knowledge** is when a given person knows a given language.
+
+- A **Schooling** (fr: Éducation, de: Ausbildung) is when a given person
+  has followed lessons in a given *school* for a given *period*.  There
+  are two basic types of schooling: **Study** (fr: Études, de: Studium)
+  and **Training** (fr: Formation, de: Lehre).
+
+- An **Work experience** (fr: Expérience professionnelle, de:
+  Berufserfahrung) is when a given person has worked in a given
+  *organisation* for a given *period*.
+
+.. contents::
+   :local:
+   :depth: 2
 
 """
 
@@ -12,20 +27,16 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import cgi
 import datetime
 ONE_DAY = datetime.timedelta(days=1)
 
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-from django.utils.encoding import force_unicode
 
-from lino import dd, rt, mixins
-from lino.utils.xmlgen.html import E
-from lino.utils.htmlgen import UL
+from lino.api import dd, rt
+from lino import mixins
 from lino.modlib.countries.mixins import CountryCity
 
 
@@ -39,7 +50,9 @@ config = dd.plugins.cv
 ## Language knowledge
 
 class LanguageKnowledge(dd.Model):
-
+    """
+    Specifies how well a certain Person knows a certain Language.
+    """
     class Meta:
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")
@@ -104,6 +117,9 @@ class TrainingType(mixins.BabelNamed):
 
 
 class TrainingTypes(dd.Table):
+    """The default table showing all :class:`TrainingType` instances.
+
+    """
     required = dd.required(user_groups='integ', user_level='admin')
     model = 'cv.TrainingType'
     order_by = ["name"]
@@ -114,7 +130,7 @@ class TrainingTypes(dd.Table):
 
 
 class Schooling(PersonHistoryEntry, CountryCity):
-    "abstract base class for :class:`Training` and :class:`Study`."
+    "Abstract base class for :class:`Training` and :class:`Study`."
     class Meta:
         abstract = True
 
@@ -151,6 +167,9 @@ class Training(Schooling):
 
 
 class Trainings(dd.Table):
+    """The default table showing all :class:`Trainings` instances.
+
+    """
 
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Training'
@@ -193,6 +212,9 @@ class EducationLevel(mixins.BabelNamed, mixins.Sequenced):
 
 
 class EducationLevels(dd.Table):
+    """The default table showing all :class:`EducationLevel` instances.
+    """
+
     required = dict(user_groups='integ', user_level='manager')
     model = 'cv.EducationLevel'
     column_names = 'name *'
@@ -205,7 +227,19 @@ class EducationLevels(dd.Table):
 
 
 class StudyType(mixins.BabelNamed):
+    """
+    Used in :attr:`Contract.study_type` and by :attr:`jobs.Study.type`.
 
+    .. attribute:: education_level
+
+        Pointer to the :class:`EducationLevel`.
+
+    .. attribute:: study_regime
+
+        One choice from :class:`StudyRegimes`.
+
+
+    """
     class Meta:
         verbose_name = _("Study Type")
         verbose_name_plural = _("Study Types")
@@ -216,6 +250,8 @@ class StudyType(mixins.BabelNamed):
 
 
 class StudyTypes(dd.Table):
+    """The default table showing all :class:`StudyType` instances.
+    """
     required = dd.required(user_groups='integ', user_level='admin')
     #~ label = _('Study types')
     model = StudyType
@@ -259,8 +295,9 @@ class Study(Schooling):
 
 
 class Studies(dd.Table):
+    """The default table showing all :class:`Study` instances.
+    """
 
-    "General list of Studies (all Persons)"
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Study'
     order_by = "country city type content".split()
@@ -284,7 +321,6 @@ class StudiesByLevel(Studies):
 
 
 class StudiesByPlace(Studies):
-
     """
     Lists all Studies in a given Place.
     Used as slave grid in Places detail.
@@ -320,6 +356,8 @@ class Status(mixins.BabelNamed):
 
 
 class Statuses(dd.Table):
+    """The default table showing all :class:`Status` instances.
+    """
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Status'
     order_by = ['name']
@@ -338,6 +376,8 @@ class Regime(mixins.BabelNamed):
 
 
 class Regimes(dd.Table):
+    """The default table showing all :class:`Regime` instances.
+    """
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Regime'
     order_by = ['name']
@@ -354,6 +394,8 @@ class Duration(mixins.BabelNamed):
 
 
 class Durations(dd.Table):
+    """The default table showing all :class:`Duration` instances.
+    """
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Duration'
     order_by = ['name']
@@ -375,6 +417,8 @@ class Sector(mixins.BabelNamed):
 
 
 class Sectors(dd.Table):
+    """The default table showing all :class:`Sector` instances.
+    """
     required = dd.required(user_groups='integ', user_level='manager')
     model = Sector
     order_by = ['name']
@@ -404,6 +448,8 @@ class Function(mixins.BabelNamed):
 
 
 class Functions(dd.Table):
+    """The default table showing all :class:`Function` instances.
+    """
     #~ debug_permissions = 20130704
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Function'
@@ -449,6 +495,8 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
 
 
 class Experiences(dd.Table):
+    """The default table showing all :class:`Experience` instances.
+    """
     required = dd.required(user_groups='integ', user_level='manager')
     model = 'cv.Experience'
     # stay_in_grid = True

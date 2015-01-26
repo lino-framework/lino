@@ -1,6 +1,6 @@
-===============================
-The standard library ``modlib``
-===============================
+============================
+The model library ``modlib``
+============================
 
 This document is being migrated to :mod:`lino.modlib`.
 
@@ -13,7 +13,6 @@ This document is being migrated to :mod:`lino.modlib`.
    boards
    cal
    contacts
-   cv
    debts
    extensible
    households
@@ -28,9 +27,10 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :hidden:
 
-   excerpts
    beid
    countries
+   cv
+   excerpts
    reception
    users
    courses

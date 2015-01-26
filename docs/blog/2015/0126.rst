@@ -11,3 +11,21 @@ list. TODO: add some management buttons, How can we specify a
 verbose_name fotr offered_products and wanted_products?
 
 
+
+Worked on :ticket:`5`. This was almost done, except for a new field
+`proof` (Nachweis, Preuve) and a model `Proof`.  Default data for this
+table in :mod:`lino_welfare.projects.chatelet.modlib.cv.fixtures.std`
+according to Mathieu's request "colonne “Valeur” (en liste déroulante
+que nous compléterons avec : Déclaratif, Certificat, Attestation,
+Diplôme, Validation de compétences)".
+
+Moved :doc:`/dev/ml/cv` to the source code.  Added a new Site
+attribute :attr:`lino.core.site.Site.ignore_model_errors` because I
+thought it would help, but then discovered that I cannot show table
+data in docstrings for the cv2 module because the Lino docs are built
+during a single Python process and thus cannot use more than one
+:xfile:`settings.py`. Started a new tested document
+:ref:`welfare.tested.cv2`.
+
+Added two tickets :ticket:`75` and :ticket:`76` after meeting with
+:ref:`gx`.

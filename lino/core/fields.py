@@ -802,7 +802,15 @@ class DummyField(FakeField):
 
     def contribute_to_class(self, cls, name):
         self.name = name
-        assert not hasattr(cls, name)
+        v = getattr(cls, name, NOT_PROVIDED)
+        if v is not NOT_PROVIDED:
+            msg = ("{0} cannot contribute to {1} because it has already "
+                   "an attribute '{2}'.")
+            msg = msg.format(self, cls, name)
+            if settings.SITE.ignore_model_errors:
+                logger.warning(msg)
+            else:
+                raise Exception(msg)
         setattr(cls, name, self)
 
     def set_attributes_from_name(self, k):

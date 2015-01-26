@@ -160,13 +160,11 @@ class Site(object):
     """
 
     project_dir = None
-    """
-    Full path to your local project directory. 
-    Read-only.
-    Local subclasses should not override this variable.
+    """Full path to your local project directory.  Read-only.  Local
+    subclasses should not override this variable.
     
-    The local project directory is where 
-    local configuration files are stored:
+    The local project directory is where local configuration files are
+    stored:
     
     - Your :xfile:`settings.py`
     - Optionally the :xfile:`manage.py` and :xfile:`urls.py` files
@@ -249,6 +247,12 @@ class Site(object):
 
     This is automatically set when a :class:`Site` is instantiated.
     Don't override it.
+
+    """
+
+    ignore_model_errors = False
+    """Not yet sure whether this is needed. Maybe when generating
+documentation.
 
     """
 

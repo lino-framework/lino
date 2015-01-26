@@ -1,4 +1,4 @@
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The standard model library included with Lino.
