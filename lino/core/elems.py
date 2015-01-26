@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
-:class:`GridColumn`
-:class:`Toolbar`
-:class:`LayoutElement`
-:class:`FieldElement`
-:class:`TextFieldElement`
+.. autosummary::
 
 
 """
@@ -34,6 +30,7 @@ from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, js_code
 from lino.utils import join_elems
+from lino.core.actors import qs2summary
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import html as xghtml
@@ -1366,10 +1363,9 @@ class BooleanFieldElement(BooleanMixin, FieldElement):
 
 
 class SingleRelatedObjectElement(DisplayElement):
-
-    """
-    The widget used to render a `SingleRelatedObjectDescriptor`,
+    """The widget used to render a `SingleRelatedObjectDescriptor`,
     i.e. the other side of a `OneToOneField`.
+
     """
 
     def __init__(self, lh, relobj, **kw):
@@ -1419,8 +1415,8 @@ class RecurrenceElement(DisplayElement):
 
 
 class HtmlBoxElement(DisplayElement):
-    """
-    Element that renders to a `Lino.HtmlBoxPanel`.
+    """Element that renders to a `Lino.HtmlBoxPanel`.
+
     """
     ext_suffix = "_htmlbox"
     value_template = "new Lino.HtmlBoxPanel(%s)"
@@ -1457,13 +1453,41 @@ is 'summary'.
 
     """
     def __init__(self, lh, actor, **kw):
-        # kw.update(help_text=actor.help_text)
-        # kw.update(name=actor.__name__)
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
         fld = fields.VirtualField(box, actor.get_slave_summary)
         fld.name = actor.__name__
         fld.lino_resolve_type()
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
+
+
+class ManyRelatedObjectElement(HtmlBoxElement):
+
+    def __init__(self, lh, relobj, **kw):
+        name = relobj.field.rel.related_name
+
+        def f(obj, ar):
+            return qs2summary(ar, getattr(obj, name).all())
+
+        box = fields.HtmlBox(name)
+        fld = fields.VirtualField(box, f)
+        fld.name = name
+        fld.lino_resolve_type()
+        super(ManyRelatedObjectElement, self).__init__(lh, fld, **kw)
+
+
+class ManyToManyElement(HtmlBoxElement):
+
+    def __init__(self, lh, relobj, **kw):
+        name = relobj.field.name
+
+        def f(obj, ar):
+            return qs2summary(ar, getattr(obj, name).all())
+
+        box = fields.HtmlBox(relobj.field.verbose_name)
+        fld = fields.VirtualField(box, f)
+        fld.name = name
+        fld.lino_resolve_type()
+        super(ManyToManyElement, self).__init__(lh, fld, **kw)
 
 
 class Container(LayoutElement):

@@ -565,8 +565,8 @@ class Model(models.Model):
         pass
 
     def summary_row(self, ar, **kw):
-        """Return a series of HTML elements that describes this record in a
-        :func:`lino.core.tables.summary`.
+        """Return or yield a series of HTML elements that describes this
+        record in a :func:`lino.core.tables.summary`.
 
         Example::
 

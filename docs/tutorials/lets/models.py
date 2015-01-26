@@ -2,6 +2,7 @@ from django.db import models
 from lino import dd
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
+from lino.core.actors import qs2summary
 
 # We must import it so that it gets loaded together with the models.
 from .tables import *
@@ -36,15 +37,11 @@ class Product(dd.Model):
 
     @dd.displayfield("Offered by")
     def offered_by(self, ar):
-        items = [ar.obj2html(o) for o in self.providers.all()]
-        items = join_elems(items, sep=', ')
-        return E.p(*items)
+        return qs2summary(ar, self.providers.all())
 
     @dd.displayfield("Wanted by")
-    def demanded_by(self, ar):
-        items = [ar.obj2html(o) for o in self.customers.all()]
-        items = join_elems(items, sep=', ')
-        return E.p(*items)
+    def wanted_by(self, ar):
+        return qs2summary(ar, self.customers.all())
 
 
 class Offer(dd.Model):
@@ -61,8 +58,7 @@ class Demand(dd.Model):
     product = models.ForeignKey(Product)
 
     def __unicode__(self):
-        return "%s (%s)" % (self.product, self.provider)
-
+        return "%s (%s)" % (self.product, self.customer)
 
 
 

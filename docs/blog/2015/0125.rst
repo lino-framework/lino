@@ -24,3 +24,7 @@ case, the other was a real bug which had passed undetected through the
 test suite.
 
 I added some test cases so that it would have been detected.
+
+I worked on :doc:`/tutorials/lets/index`.  Lino now again supports
+slave tables in a ColumnsLayout (i.e. in column_names).
+

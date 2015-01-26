@@ -276,34 +276,34 @@ Show the list of members:
 
 >>> rt.show(lets.Members)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-==== ========= ========== =====================
- ID   name      place      email
----- --------- ---------- ---------------------
- 1    Fred      Tallinn    fred@example.com
- 2    Argo      Haapsalu   argo@example.com
- 3    Peter     Vigala     peter@example.com
- 4    Anne      Tallinn    anne@example.com
- 5    Jaanika   Tallinn    jaanika@example.com
- 6    Henri     Tallinn    henri@example.com
- 7    Mari      Tartu      mari@example.com
- 8    Katrin    Vigala     katrin@example.com
-==== ========= ========== =====================
+========= ===================== ========== ============================= =========================
+ name      email                 place      offered_products              wanted_products
+--------- --------------------- ---------- ----------------------------- -------------------------
+ Fred      fred@example.com      Tallinn    **Bread**, **Buckwheat**
+ Argo      argo@example.com      Haapsalu   **Electricity repair work**
+ Peter     peter@example.com     Vigala
+ Anne      anne@example.com      Tallinn    **Buckwheat**
+ Jaanika   jaanika@example.com   Tallinn
+ Henri     henri@example.com     Tallinn    **Electricity repair work**   **Buckwheat**, **Eggs**
+ Mari      mari@example.com      Tartu                                    **Eggs**
+ Katrin    katrin@example.com    Vigala
+========= ===================== ========== ============================= =========================
 <BLANKLINE>
 
 The `Products` table shows all products in alphabetical order:
 
 >>> rt.show(lets.Products)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-==== =========================
- ID   name
----- -------------------------
- 1    Bread
- 2    Buckwheat
+==== ========================= ===================== =====================
+ ID   name                      providers             customers
+---- ------------------------- --------------------- ---------------------
+ 1    Bread                     **Fred**
+ 2    Buckwheat                 **Fred**, **Anne**    **Henri**
  5    Building repair work
- 3    Eggs
- 6    Electricity repair work
+ 3    Eggs                                            **Henri**, **Mari**
+ 6    Electricity repair work   **Henri**, **Argo**
  4    Sanitary repair work
-==== =========================
+==== ========================= ===================== =====================
 <BLANKLINE>
 
 

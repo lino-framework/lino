@@ -70,10 +70,10 @@ def comma():
 
 
 def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
-    """
-    Render a collection of objects as a single paragraph.
+    """Render a collection of objects as a single paragraph.
 
     :param max_items: don't include more than the specified number of items.
+
     """
     elems = []
     n = 0
@@ -85,7 +85,6 @@ def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
         if n >= max_items:
             elems += [separator(), '...']
             break
-            #~ return E.p(*elems)
     return E.p(*elems)
 
 
@@ -1237,16 +1236,19 @@ class Actor(actions.Parametrizable):
             #~ return s
         return meth
 
+    summary_sep = E.br
+
     @classmethod
     def get_slave_summary(self, obj, ar):
-        """
-        Return the HTML paragraph to be displayed in the
-        TableSummaryPanel when :attr:`slave_grid_format` is `summary`.
+        """Return the HTML paragraph to be displayed by
+        :class:`lino.core.elems.TableSummaryPanel`.  That is (1) in a
+        detail form when :attr:`slave_grid_format` is `summary` or (2)
+        in a grid.
 
-        Lino internally creates a virtualfield ``slave_summary`` on each
-        table which invokes this method.
+        Lino internally creates a virtualfield ``slave_summary`` on
+        each table which invokes this method.
 
         """
         ar = ar.spawn(self, master_instance=obj)
-        # ar = ar.spawn(self, master_instance=ar.master_instance)
-        return qs2summary(ar, ar.data_iterator, E.br)
+        return qs2summary(ar, ar.data_iterator, self.summary_sep)
+

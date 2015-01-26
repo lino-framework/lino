@@ -1,0 +1,13 @@
+========================
+Monday, January 26, 2015
+========================
+
+Continued to work on :doc:`/tutorials/lets/index`.  
+
+I wrote a first proof of concept for :ticket:`52`: Not a displayfield
+but a HtmlBox (because there might be more than one line of
+text). Otherwise as expected, simply a clickable comma-separate
+list. TODO: add some management buttons, How can we specify a
+verbose_name fotr offered_products and wanted_products?
+
+

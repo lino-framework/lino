@@ -15,6 +15,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields import NOT_PROVIDED
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
+from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 from django.contrib.contenttypes import generic
 
 # from lino.utils.xmlgen.html import E
@@ -659,16 +660,22 @@ def create_layout_element(lh, name, **kw):
     if isinstance(de, fields.Constant):
         return ext_elems.ConstantElement(lh, de, **kw)
 
+    if isinstance(de, fields.RemoteField):
+        return create_field_element(lh, de, **kw)
+
     if isinstance(de, SingleRelatedObjectDescriptor):
         return ext_elems.SingleRelatedObjectElement(lh, de.related, **kw)
 
-    if isinstance(de, models.ManyToManyField):
-        return None
-    # if isinstance(de, ManyRelatedObjectDescriptor):
-    #     return None
+    if isinstance(de, ManyRelatedObjectsDescriptor):
+        e = ext_elems.ManyRelatedObjectElement(lh, de.related, **kw)
+        lh.add_store_field(e.field)
+        return e
 
-    if isinstance(de, fields.RemoteField):
-        return create_field_element(lh, de, **kw)
+    if isinstance(de, models.ManyToManyField):
+        e = ext_elems.ManyToManyElement(lh, de.related, **kw)
+        lh.add_store_field(e.field)
+        return e
+
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
             if len(settings.SITE.BABEL_LANGS) > 0:
@@ -687,9 +694,6 @@ def create_layout_element(lh, name, **kw):
 
     if isinstance(de, generic.GenericForeignKey):
         # create a horizontal panel with 2 comboboxes
-        #~ print 20111123, name,de.ct_field + ' ' + de.fk_field
-        #~ return lh.desc2elem(panelclass,name,de.ct_field + ' ' + de.fk_field,**kw)
-        #~ return ext_elems.GenericForeignKeyField(lh,name,de,**kw)
         de.primary_key = False  # for ext_store.Store()
         lh.add_store_field(de)
         return ext_elems.GenericForeignKeyElement(lh, de, **kw)
@@ -698,11 +702,11 @@ def create_layout_element(lh, name, **kw):
         # The data element refers to a table.
         kw.update(master_panel=js_code("this"))
         if isinstance(lh.layout, FormLayout):
-            # When a table is specified in the layout a DetailWindow,
-            # then it will be rendered as a panel that displays a
-            # "summary" of that table. The panel will have a tool
-            # button to "open that table in its own window". The
-            # format of that summary is defined by the
+            # When a table is specified in the layout of a
+            # DetailWindow, then it will be rendered as a panel that
+            # displays a "summary" of that table. The panel will have
+            # a tool button to "open that table in its own
+            # window". The format of that summary is defined by the
             # `slave_grid_format` of the table. `slave_grid_format` is
             # a string with one of the following values:
 
@@ -741,12 +745,8 @@ def create_layout_element(lh, name, **kw):
                     "Invalid slave_grid_format %r" % de.slave_grid_format)
 
         else:
-            raise Exception("No longer supported. Is it being used at all?")
-            field = fields.HtmlBox(verbose_name=de.label)
-            field.name = de.__name__
-            field._return_type_for_method = de.slave_as_summary_meth(', ')
-            lh.add_store_field(field)
-            e = ext_elems.HtmlBoxElement(lh, field, **kw)
+            e = ext_elems.SlaveSummaryPanel(lh, de, **kw)
+            lh.add_store_field(e.field)
             return e
 
     if isinstance(de, fields.VirtualField):

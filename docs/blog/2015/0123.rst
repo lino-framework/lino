@@ -34,7 +34,7 @@ Uploads
 
 Continued on :ticket:`47` : added a new field `needed` to
 :class:`lino_welfare.modlib.uploads.models.Upload`.  Wrote a new demo
-fixture :mod:`lino_welfare.modlib.uploads.fixtures.demo`.
+fixture :mod:`lino_welfare.modlib.uploads.fixtures.demo2`.
 
 Wrote a new tested document about :ref:`welfare.tested.uploads` which
 revealed some more subtleties which would have caused problem reports.
