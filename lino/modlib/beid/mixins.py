@@ -314,7 +314,7 @@ class FindByBeIdAction(BaseBeIdReadCardAction):
 
     """
 
-    help_text = _("Find or create client from eID card")
+    help_text = _("Find or create card holder from eID card")
     icon_name = 'vcard_add'
     select_rows = False
     # show_in_bbar = False
@@ -404,7 +404,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
     """
     sort_index = 90
     icon_name = 'vcard'
-    help_text = _("Update of this client from eID card")
+    help_text = _("Update card holder data from eID card")
 
     def run_from_ui(self, ar, **kw):
         attrs = self.card2client(ar.request.POST)

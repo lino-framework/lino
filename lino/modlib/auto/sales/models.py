@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 "See :mod:`ml.sales`."
@@ -38,8 +38,9 @@ from lino.modlib.sales.models import *
 
 
 class InvoicingMode(mixins.PrintableType, mixins.BabelNamed):
+    """The method of issuing/sending invoices.
 
-    "See :class:``"
+    """
     class Meta:
         verbose_name = _("Invoicing Mode")
         verbose_name_plural = _("Invoicing Modes")
@@ -55,9 +56,9 @@ Additional fee charged when using this invoicing mode."""))
                 #~ """)
     advance_days = models.IntegerField(
         default=0,
-        help_text="""
-How many days in advance invoices should be posted so that the customer
-has a chance to pay them in time.""")
+        help_text=_("How many days in advance invoices should be "
+                    "posted so that the customer has a chance to "
+                    "pay them in time."""))
 
     #~ def __unicode__(self):
         #~ return unicode(dd.babelattr(self,'name'))
@@ -68,28 +69,53 @@ class InvoicingModes(dd.Table):
 
 
 class Invoiceable(dd.Model):
+    """Mixin for things that are "invoiceable", i.e. for which a customer
+    is going to receive an invoice.
 
-    "See :class:`ml.sales.Invoiceable`."
+    .. attribute:: invoice
+
+    """
 
     invoiceable_date_field = ''
+    """The name of the field which holds the invoiceable date.  Must be
+    set by subclasses.
+
+    """
 
     class Meta:
         abstract = True
 
-    invoice = dd.ForeignKey('sales.Invoice',
-                            blank=True, null=True)
+    invoice = dd.ForeignKey('sales.Invoice', blank=True, null=True)
 
     @classmethod
     def get_partner_filter(cls, partner):
+        """
+        To be implemented by subclasses.
+        Return the filter to apply to :class:`ml.contacts.Partner` in
+        order to get the partner who must receive the invoice.
+
+        """
         raise NotImplementedError()
 
     def get_invoiceable_product(self):
+        """To be implemented by subclasses.  Return the product to put into
+      the invoice item.
+
+        """
         return None
 
     def get_invoiceable_qty(self):
+        """To be implemented by subclasses.  Return the quantity to put into
+        the invoice item.
+
+        """
         return None
 
     def get_invoiceable_title(self):
+        """Return the title to put into the invoice item.  May be overridden
+        by subclasses.
+
+        """
         return unicode(self)
 
     def get_invoiceable_amount(self):
@@ -133,7 +159,9 @@ def create_invoice_for(obj, ar):
 
 
 class CreateInvoice(dd.Action):
-    "See :class:`ml.sales.CreateInvoice`."
+    """Create invoice from invoiceables for this partner.
+
+    """
     icon_name = 'money'
     sort_index = 50
     label = _("Create invoice")
@@ -165,6 +193,9 @@ class CreateInvoice(dd.Action):
 
 
 class CreateInvoiceForPartner(CreateInvoice):
+    """Create invoice from invoiceables for this partner
+
+    """
     help_text = _("Create invoice from invoiceables for this partner")
 
     def get_partners(self, ar):
@@ -258,6 +289,10 @@ class InvoicingsByInvoiceable(InvoiceItemsByProduct):  # 20130709
 
 
 class CreateAllInvoices(mixins.CachedPrintAction):
+    """Create and print the invoice for each selected row, making these
+rows disappear from this table
+
+    """
     #~ icon_name = 'money'
 
     #~ label = _("Create invoices")
@@ -289,6 +324,12 @@ min_amount = Decimal()
 
 
 class InvoicesToCreate(dd.VirtualTable):
+    """
+    Table of all partners who should receive an invoice.
+
+    This table holds the :class:`CreateAllInvoices` action.
+
+    """
     label = _("Invoices to create")
     cell_edit = False
     help_text = _("Table of all partners who should receive an invoice.")
@@ -380,6 +421,9 @@ class InvoicesToCreate(dd.VirtualTable):
 
 
 class InvoiceablesByPartner(dd.VirtualTable):
+    """List of invoiceable items for this partner.
+
+    """
     icon_name = 'basket'
     sort_index = 50
     label = _("Invoices to create")

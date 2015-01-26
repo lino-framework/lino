@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The :mod:`lino.modlib.vat` package provides models and business
@@ -51,7 +51,7 @@ class Plugin(ad.Plugin):
     """
 
     def get_vat_class(self, tt, item):
-        return 'normal'
+        return self.default_vat_class
 
     def get_country(self):
         return self.site.modules.countries.Country.objects.get(

@@ -33,7 +33,6 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     accounts
     addresses
     appypod
-    auto
     awesomeuploader
     beid
     blogs
@@ -73,6 +72,7 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     reception
     rooms
     sales
+    auto.sales
     sepa
     smtpd
     statbel

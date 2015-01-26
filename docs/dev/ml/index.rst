@@ -18,10 +18,6 @@ This document is being migrated to :mod:`lino.modlib`.
    households
    humanlinks
    ledger
-   lino
-   polls
-   sales
-   vat
 
 
 .. toctree::
@@ -35,3 +31,7 @@ This document is being migrated to :mod:`lino.modlib`.
    users
    courses
    extjs
+   sales
+   vat
+   lino
+   polls

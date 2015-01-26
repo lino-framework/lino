@@ -1,5 +1,21 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+
+"""Functionality for writing sales invoices.
+
+It is implemented by :mod:`lino.modlib.sales` (basic functionality) or
+:mod:`lino.modlib.auto.sales` (adds common definitions for automatic
+generation of invoices).
+
+.. autosummary::
+    :toctree:
+
+    models
+    fixtures.demo
+
+
+
+"""
 
 from lino import ad
 from django.utils.translation import ugettext_lazy as _

@@ -1,8 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-#from lino import ad
+"""
+
+.. autosummary::
+    :toctree:
+
+    models
+
+"""
 
 from lino.modlib.sales import Plugin
 

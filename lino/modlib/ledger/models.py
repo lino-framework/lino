@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :mod:`ml.ledger`."""
+"""Database models for :mod:`lino.modlib.ledger`."""
 
 from __future__ import unicode_literals
 
@@ -105,6 +105,33 @@ class DcAmountField(dd.VirtualField):
 
 
 class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
+    """A sequence of numbered vouchers.
+
+    **Fields:**
+
+    .. attribute:: ref
+    .. attribute:: trade_type
+
+    Pointer to :class:`TradeTypes`.
+
+    .. attribute:: voucher_type
+
+    Pointer to :class:`VoucherTypes`.
+
+    .. attribute:: force_sequence
+
+    .. attribute:: chart
+    .. attribute:: account
+    .. attribute:: printed_name
+    .. attribute:: dc
+
+    .. attribute:: template
+
+    See :attr:`PrintableType.template
+    <lino.mixins.printable.PrintableType.template>`.
+
+
+    """
 
     class Meta:
         verbose_name = _("Journal")
@@ -113,6 +140,7 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
     ref = dd.NullCharField(max_length=20, unique=True)
     trade_type = vat.TradeTypes.field(blank=True)
     voucher_type = VoucherTypes.field()
+
     force_sequence = models.BooleanField(
         _("Force chronological sequence"), default=False)
     chart = dd.ForeignKey('accounts.Chart')
@@ -126,6 +154,9 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         return accounts.Account.objects.filter(chart=chart, **fkw)
 
     def get_doc_model(self):
+        """The model of vouchers in this Journal.
+
+        """
         # print self,DOCTYPE_CLASSES, self.doctype
         return self.voucher_type.model
         #~ return DOCTYPES[self.doctype][0]
@@ -140,6 +171,10 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         return cl.objects.get(**kw)
 
     def create_voucher(self, **kw):
+        """Create an instance of this Journal's voucher model
+        (:meth:`get_doc_model`).
+
+        """
         cl = self.get_doc_model()
         kw.update(journal=self)
         try:
@@ -234,6 +269,9 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
 
 
 class Journals(dd.Table):
+    """The default table showing all instances of :class:`Journal`.
+
+    """
     model = Journal
     order_by = ["seqno"]
     column_names = "ref:5 name trade_type voucher_type force_sequence * seqno id"
@@ -261,6 +299,16 @@ def VoucherNumber(**kw):
 
 
 class Voucher(UserAuthored, mixins.Registrable):
+    """
+    A Voucher is a document that represents a monetary transaction.
+    Subclasses must define a field `state`.  This model is subclassed
+    by sales.Invoice, ledger.AccountInvoice, finan.Statement etc...
+    
+    It is *not* abstract so that :class:`Movement` can have a ForeignKey
+    to a Voucher. Otherwise we would have to care ourselves about data
+    integrity, and we couln't make queries on `voucher__xxx`.
+
+    """
 
     class Meta:
         verbose_name = _("Voucher")
@@ -414,6 +462,15 @@ class Voucher(UserAuthored, mixins.Registrable):
         #~ return super(Voucher,self).get_row_permission(ar,state,ba)
 
     def get_mti_leaf(self):
+        """
+        Return the specialized form of this voucher.
+
+        For example if we have :class:`ml.ledger.Voucher` instance, we
+        can get the actual document (Invoice, PaymentOrder,
+        BankStatement, ...) by calling this method.
+
+
+        """
         return mti.get_child(self, self.journal.voucher_type.model)
 
     def obj2html(self, ar):
@@ -440,7 +497,9 @@ class Voucher(UserAuthored, mixins.Registrable):
 
 
 class Vouchers(dd.Table):
-
+    """
+    The default table for all tables working on :class:`Voucher`.
+    """
     model = Voucher
     editable = False
     order_by = ["date", "number"]
@@ -463,6 +522,12 @@ class ByJournal(dd.Table):
 
 
 class VouchersByPartner(dd.VirtualTable):
+    """
+    A :class:`dd.VirtualTable` which shows all vat.VatDocument
+    vouchers by :class:`ml.contacts.Partner`. It has a customized
+    slave summary.
+
+    """
     label = _("VAT vouchers")
     order_by = ["-date", '-id']
     master = 'contacts.Partner'
@@ -543,7 +608,9 @@ class VouchersByPartner(dd.VirtualTable):
 
 
 class Movement(dd.Model):
+    """Represents an accounting movement in the ledger.
 
+    """
     allow_cascaded_delete = ['voucher']
 
     class Meta:
@@ -623,10 +690,15 @@ class Movement(dd.Model):
 
 
 class Movements(dd.Table):
+    """
+    The base table for all tables working on :class:`Movement`.
 
-    # This is also the base class for :class:`MovementsByVoucher`,
-    # :class:`MovementsByAccount` and :class:`MovementsByPartner` and
-    # defines e.g. filtering parameters.
+    Displayed by :menuselection:`Explorer --> Accounting --> Movements`.
+
+    This is also the base class for :class:`MovementsByVoucher`,
+    :class:`MovementsByAccount` and :class:`MovementsByPartner` and
+    defines e.g. filtering parameters.
+    """
     
     model = Movement
     column_names = 'voucher_link account debit credit *'
@@ -920,7 +992,10 @@ class Matchable(dd.Model):
 
 
 class AccountInvoice(vat.VatDocument, Voucher, Matchable):
-
+    """
+    An invoice for which the user enters just the bare accounts and
+    amounts (not e.g. products, quantities, discounts).
+    """
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")

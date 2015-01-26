@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.sales`."
+"Database models for :mod:`lino.modlib.sales`."
 
 from __future__ import unicode_literals
 
@@ -76,6 +76,9 @@ dd.inject_field(
 
 
 class InvoiceStates(dd.Workflow):
+    """List of the possible values for the state of an :class:`Invoice`.
+
+    """
     pass
 
 add = InvoiceStates.add_item
@@ -94,7 +97,13 @@ InvoiceStates.draft.add_transition(
 
 
 class ShippingMode(mixins.BabelNamed):
+    """
+    Represents a possible method of how the items described in a
+    :class:`SalesDocument` are to be transferred from us to our customer.
 
+    .. attribute:: price
+
+    """
     class Meta:
         verbose_name = _("Shipping Mode")
         verbose_name_plural = _("Shipping Modes")
@@ -111,9 +120,12 @@ class SalesDocument(
         vat.VatDocument,
         ledger.Matchable,
         Certifiable):
+    """Common base class for `orders.Order` and :class:`Invoice`.
 
-    # Subclasses must either add themselves a date field (as does
-    # Order) or inherit it from Voucher (as does Invoice)
+    Subclasses must either add themselves a date field (as does
+    Order) or inherit it from Voucher (as does Invoice)
+
+    """
 
     auto_compute_totals = True
 
@@ -158,6 +170,13 @@ class SalesDocuments(dd.Table):
 
 
 class Invoice(SalesDocument, ledger.Voucher):
+    """A sales invoice is a legal document which describes that something
+    (the invoice items) has been sold to a given partner. The partner
+    can be either a private person or an organization.
+
+    Inherits from :class:`lino.modlib.ledger.models.Voucher`.
+
+    """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Invoice')
         verbose_name = _("Invoice")
@@ -377,6 +396,10 @@ class Invoices(SalesDocuments):
 
 
 class InvoicesByJournal(Invoices):
+    """Shows all invoices of a given journal (whose `voucher_type` must be
+    :class:`Invoice`)
+
+    """
     order_by = ["-date", '-id']
     master_key = 'journal'  # see django issue 10808
     params_panel_hidden = True

@@ -1,8 +1,33 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""This is Lino's standard app for General Ledger.  It defines the
+following classes:
+
+.. autosummary::
+    :toctree:
+
+    models
+
+- Models :class:`Journal`, :class:`Voucher` and :class:`Movement`
+
+- The :class:`DueMovement` class, a volatile object representing a
+  group of matching movements.
+
+- :class:`DebtsByAccount` and :class:`DebtsByPartner` are two reports
+  based on :class:`ExpectedMovements`
+
+- :class:`GeneralAccountsBalance`, :class:`ClientAccountsBalance` and
+  :class:`SupplierAccountsBalance` three reports based on
+  :class:`AccountsBalance` and :class:`PartnerAccountsBalance`
+
+- :class:`Debtors` and :class:`Creditors` are tables with one row for
+  each partner who has a positive balance (either debit or credit).
+  Accessible via :menuselection:`Reports --> Ledger --> Debtors` and
+  :menuselection:`Reports --> Ledger --> Creditors`
+
+
 
 .. setting:: ledger.use_pcmn
 

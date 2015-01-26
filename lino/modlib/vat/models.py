@@ -330,8 +330,6 @@ class VatTotal(dd.Model):
     A :class:`dd.PriceField` which stores the amount of VAT.
 
 
-
-
     """
     class Meta:
         abstract = True
@@ -407,6 +405,29 @@ class VatTotal(dd.Model):
 
 
 class VatDocument(VatTotal):
+    """
+    Abstract base class for invoices, offers and other vouchers.
+
+    .. attribute:: refresh_after_item_edit = False
+ 
+    See :srcref:`docs/tickets/68`
+
+    .. attribute:: partner
+
+    The recipient of this document. A pointer to
+    :class:`ml.contacts.Partner`.
+
+    .. attribute:: vat_regime
+
+    The VAT regime to be used in this document.  A pointer to
+    :class:`VatRegimes`.
+
+    .. attribute:: payment_term
+
+    The payment terms to be used in this document.  A pointer to
+    :class:`PaymentTerm`.
+
+    """
 
     auto_compute_totals = True
 
@@ -516,7 +537,21 @@ class VatDocument(VatTotal):
 
 
 class VatItemBase(Sequenced, VatTotal):
-    "Model mixin for items of a :class:`VatTotal`."
+    """Model mixin for items of a :class:`VatTotal`.
+
+    Abstract Base class for :class:`ml.ledger.InvoiceItem`, i.e. the
+    lines of invoices *without* unit prices and quantities.
+
+    Subclasses must define a field called "voucher" which must be a
+    ForeignKey with related_name="items" to the "owning document",
+    which in turn must be a subclass of :class:`VatDocument`).
+
+    .. attribute:: vat_class
+
+    The VAT class to be applied for this item. A pointer to
+    :class:`VatClasses`.
+
+    """
 
     class Meta:
         abstract = True
@@ -605,6 +640,10 @@ class VatItemBase(Sequenced, VatTotal):
 class QtyVatItemBase(VatItemBase):
     """Model mixin for items of a :class:`VatTotal`, adds `unit_price` and
 `qty`.
+
+    Abstract Base class for :class:`lino.modlib.sales.InvoiceItem` and
+    :class:`lino.modlib.sales.OrderItem`, i.e. the lines of invoices
+    *with* unit prices and quantities.
 
     """
 

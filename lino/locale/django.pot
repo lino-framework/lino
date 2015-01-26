@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.17\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-01-25 07:53+0200\n"
+"POT-Creation-Date: 2015-01-26 21:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -248,12 +248,12 @@ msgstr ""
 msgid "Are you sure ?"
 msgstr ""
 
-#: lino/core/actors.py:900
+#: lino/core/actors.py:899
 #, python-format
 msgid "Total (%d rows)"
 msgstr ""
 
-#: lino/core/actors.py:1190
+#: lino/core/actors.py:1189
 msgid "Workflow"
 msgstr ""
 
@@ -264,7 +264,7 @@ msgstr ""
 #: lino/core/choicelists.py:356 lino/modlib/addresses/models.py:104
 #: lino/modlib/blogs/models.py:27 lino/modlib/cal/models_guest.py:78
 #: lino/modlib/courses/models.py:255 lino/modlib/courses/models.py:718
-#: lino/modlib/cv/models.py:374 lino/modlib/cv/models.py:398
+#: lino/modlib/cv/models.py:416 lino/modlib/cv/models.py:442
 #: lino/modlib/excerpts/models.py:83 lino/modlib/finan/models.py:208
 #: lino/modlib/lists/models.py:88 lino/modlib/notes/models.py:40
 #: lino/modlib/notes/models.py:77 lino/modlib/sepa/models.py:63
@@ -309,12 +309,12 @@ msgstr ""
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: lino/core/elems.py:951
+#: lino/core/elems.py:948
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: lino/core/elems.py:1345 lino/modlib/extjs/ext_renderer.py:289
+#: lino/core/elems.py:1342 lino/modlib/extjs/ext_renderer.py:289
 #: lino/modlib/uploads/choicelists.py:108
 msgid "show"
 msgstr ""
@@ -341,7 +341,7 @@ msgstr ""
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/layouts.py:450 lino/modlib/cal/fixtures/std.py:44
+#: lino/core/layouts.py:451 lino/modlib/cal/fixtures/std.py:44
 #: lino/modlib/courses/models.py:477 lino/modlib/excerpts/models.py:586
 #: lino/modlib/finan/models.py:284 lino/modlib/finan/models.py:296
 #: lino/modlib/finan/models.py:303 lino/modlib/ledger/models.py:980
@@ -458,36 +458,36 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: lino/core/site.py:236 lino/core/site.py:2441
+#: lino/core/site.py:234 lino/core/site.py:2445
 #: lino/modlib/changes/models.py:83
 msgid "Master"
 msgstr ""
 
-#: lino/core/site.py:238 lino/core/site.py:2444
+#: lino/core/site.py:236 lino/core/site.py:2448
 msgid "Reports"
 msgstr ""
 
-#: lino/core/site.py:239 lino/core/site.py:2446
+#: lino/core/site.py:237 lino/core/site.py:2450
 #: lino/modlib/excerpts/models.py:589
 msgid "Configure"
 msgstr ""
 
-#: lino/core/site.py:240 lino/core/site.py:2448
+#: lino/core/site.py:238 lino/core/site.py:2452
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:241 lino/core/site.py:2450
+#: lino/core/site.py:239 lino/core/site.py:2454
 msgid "Site"
 msgstr ""
 
-#: lino/core/site.py:1505 lino/projects/homeworkschool/settings/__init__.py:76
+#: lino/core/site.py:1509 lino/projects/homeworkschool/settings/__init__.py:76
 #: lino/projects/min2/settings/__init__.py:50
 #: lino/projects/polly/settings/__init__.py:43
 #: lino/projects/presto/settings/__init__.py:36
 msgid "Anonymous"
 msgstr ""
 
-#: lino/core/site.py:1509 lino/modlib/users/choicelists.py:66
+#: lino/core/site.py:1513 lino/modlib/users/choicelists.py:66
 #: lino/modlib/users/models.py:98
 #: lino/projects/homeworkschool/settings/__init__.py:78
 #: lino/projects/min2/settings/__init__.py:54
@@ -496,7 +496,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: lino/core/site.py:1510 lino/modlib/users/choicelists.py:68
+#: lino/core/site.py:1514 lino/modlib/users/choicelists.py:68
 #: lino/projects/homeworkschool/settings/__init__.py:79
 #: lino/projects/min2/settings/__init__.py:55
 #: lino/projects/polly/settings/__init__.py:46
@@ -504,19 +504,19 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/site.py:1766 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:1770 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:2732
+#: lino/core/site.py:2736
 msgid "This is "
 msgstr ""
 
-#: lino/core/site.py:2741
+#: lino/core/site.py:2745
 msgid " using "
 msgstr ""
 
-#: lino/core/site.py:2786
+#: lino/core/site.py:2790
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -1282,7 +1282,7 @@ msgid "%s has been saved."
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:317
-msgid "Find or create client from eID card"
+msgid "Find or create card holder from eID card"
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:328
@@ -1321,7 +1321,7 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:407
-msgid "Update of this client from eID card"
+msgid "Update card holder data from eID card"
 msgstr ""
 
 #: lino/modlib/beid/mixins.py:423
@@ -2458,8 +2458,8 @@ msgstr ""
 msgid "Fax"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:77 lino/modlib/cv/models.py:128
-#: lino/modlib/cv/models.py:440 lino/modlib/lists/models.py:53
+#: lino/modlib/contacts/models.py:77 lino/modlib/cv/models.py:144
+#: lino/modlib/cv/models.py:486 lino/modlib/lists/models.py:53
 #: lino/modlib/users/models.py:126
 msgid "Remarks"
 msgstr ""
@@ -3200,162 +3200,162 @@ msgstr ""
 msgid "proficient use of language"
 msgstr ""
 
-#: lino/modlib/cv/models.py:44
+#: lino/modlib/cv/models.py:57
 msgid "language knowledge"
 msgstr ""
 
-#: lino/modlib/cv/models.py:45
+#: lino/modlib/cv/models.py:58
 msgid "language knowledges"
 msgstr ""
 
-#: lino/modlib/cv/models.py:51
+#: lino/modlib/cv/models.py:64
 msgid "Spoken"
 msgstr ""
 
-#: lino/modlib/cv/models.py:52
+#: lino/modlib/cv/models.py:65
 msgid "Written"
 msgstr ""
 
-#: lino/modlib/cv/models.py:53
+#: lino/modlib/cv/models.py:66
 msgid "Spoken (passively)"
 msgstr ""
 
-#: lino/modlib/cv/models.py:55
+#: lino/modlib/cv/models.py:68
 msgid "Written (passively)"
 msgstr ""
 
-#: lino/modlib/cv/models.py:57
+#: lino/modlib/cv/models.py:70
 msgid "native language"
 msgstr ""
 
-#: lino/modlib/cv/models.py:66
+#: lino/modlib/cv/models.py:79
 #, python-format
 msgid "%s (s/w)"
 msgstr ""
 
-#: lino/modlib/cv/models.py:68
+#: lino/modlib/cv/models.py:81
 #, python-format
 msgid "%s (s)"
 msgstr ""
 
-#: lino/modlib/cv/models.py:70
+#: lino/modlib/cv/models.py:83
 #, python-format
 msgid "%s (w)"
 msgstr ""
 
-#: lino/modlib/cv/models.py:102
+#: lino/modlib/cv/models.py:115
 msgid "Training Type"
 msgstr ""
 
-#: lino/modlib/cv/models.py:103
+#: lino/modlib/cv/models.py:116
 msgid "Training Types"
 msgstr ""
 
-#: lino/modlib/cv/models.py:123
+#: lino/modlib/cv/models.py:139
 msgid "Establishment"
 msgstr ""
 
-#: lino/modlib/cv/models.py:134 lino/modlib/cv/models.py:438
+#: lino/modlib/cv/models.py:150 lino/modlib/cv/models.py:484
 msgid "Training"
 msgstr ""
 
-#: lino/modlib/cv/models.py:135
+#: lino/modlib/cv/models.py:151
 msgid "Trainings"
 msgstr ""
 
-#: lino/modlib/cv/models.py:142
+#: lino/modlib/cv/models.py:158
 msgid "Training content"
 msgstr ""
 
-#: lino/modlib/cv/models.py:147
+#: lino/modlib/cv/models.py:163
 msgid "Certificates"
 msgstr ""
 
-#: lino/modlib/cv/models.py:191
+#: lino/modlib/cv/models.py:210
 msgid "Education Level"
 msgstr ""
 
-#: lino/modlib/cv/models.py:192
+#: lino/modlib/cv/models.py:211
 msgid "Education Levels"
 msgstr ""
 
-#: lino/modlib/cv/models.py:210
+#: lino/modlib/cv/models.py:244
 msgid "Study Type"
 msgstr ""
 
-#: lino/modlib/cv/models.py:211
+#: lino/modlib/cv/models.py:245
 msgid "Study Types"
 msgstr ""
 
-#: lino/modlib/cv/models.py:241
+#: lino/modlib/cv/models.py:277
 msgid "Study"
 msgstr ""
 
-#: lino/modlib/cv/models.py:242
+#: lino/modlib/cv/models.py:278
 msgid "Studies"
 msgstr ""
 
-#: lino/modlib/cv/models.py:253
+#: lino/modlib/cv/models.py:289
 msgid "Study content"
 msgstr ""
 
-#: lino/modlib/cv/models.py:318
+#: lino/modlib/cv/models.py:354
 msgid "Status"
 msgstr ""
 
-#: lino/modlib/cv/models.py:319
+#: lino/modlib/cv/models.py:355
 msgid "Statuses"
 msgstr ""
 
-#: lino/modlib/cv/models.py:336
+#: lino/modlib/cv/models.py:374
 msgid "Work Regime"
 msgstr ""
 
-#: lino/modlib/cv/models.py:337
+#: lino/modlib/cv/models.py:375
 msgid "Work Regimes"
 msgstr ""
 
-#: lino/modlib/cv/models.py:352
+#: lino/modlib/cv/models.py:392
 msgid "Contract Duration"
 msgstr ""
 
-#: lino/modlib/cv/models.py:353
+#: lino/modlib/cv/models.py:393
 msgid "Contract Durations"
 msgstr ""
 
-#: lino/modlib/cv/models.py:369
+#: lino/modlib/cv/models.py:411
 msgid "Job Sector"
 msgstr ""
 
-#: lino/modlib/cv/models.py:370
+#: lino/modlib/cv/models.py:412
 msgid "Job Sectors"
 msgstr ""
 
-#: lino/modlib/cv/models.py:393
+#: lino/modlib/cv/models.py:437
 msgid "Job Function"
 msgstr ""
 
-#: lino/modlib/cv/models.py:394
+#: lino/modlib/cv/models.py:438
 msgid "Job Functions"
 msgstr ""
 
-#: lino/modlib/cv/models.py:427
+#: lino/modlib/cv/models.py:473
 msgid "Job Experience"
 msgstr ""
 
-#: lino/modlib/cv/models.py:428
+#: lino/modlib/cv/models.py:474
 msgid "Job Experiences"
 msgstr ""
 
-#: lino/modlib/cv/models.py:431
+#: lino/modlib/cv/models.py:477
 msgid "company"
 msgstr ""
 
-#: lino/modlib/cv/models.py:434
+#: lino/modlib/cv/models.py:480
 msgid "job title"
 msgstr ""
 
-#: lino/modlib/cv/models.py:445
+#: lino/modlib/cv/models.py:491
 msgid "Termination reason"
 msgstr ""
 
