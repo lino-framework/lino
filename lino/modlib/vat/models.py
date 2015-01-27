@@ -270,7 +270,7 @@ class VatRate(Sequenced, DatePeriod):
                 Q(trade_type__isnull=True) | Q(trade_type=trade_type))
         qs = PeriodEvents.active.add_filter(qs, date)
         if qs.count() == 0:
-            return ZERO
+            return ZERO#1 # why zero
             # p = dict(vat_regime=vat_regime, vat_class=vat_class,
             #          country=country, date=date)
             # raise Warning(_("No TAX rate configured for %s.)" % p)
@@ -361,7 +361,7 @@ class VatTotal(dd.Model):
     def reset_totals(self, ar):
         pass
 
-    def get_vat_rate(self, *args, **kw):
+    def get_vat_rate(self, *args, **kw):# never returned !!
         return ZERO
 
     def total_base_changed(self, ar):
@@ -371,9 +371,16 @@ class VatTotal(dd.Model):
             if self.total_base is None:
                 return
         #~ assert not isinstance(self.total_base,basestring)
-        rate = self.get_vat_rate()
+        # rate = self.get_vat_rate()
         #~ logger.info("20121206 total_base_changed %s",rate)
-        self.total_vat = self.total_base * rate
+        # if rate != ZERO:
+        #     self.total_vat = self.total_base * rate
+        # else:
+        #     self.total_vat = self.total_incl - self.total_base
+        # if self.total_vat == None:
+        #     self.total_vat = ZERO
+        #or
+        self.total_vat = self.total_vat and self.total_vat or ZERO
         self.total_incl = self.total_base + self.total_vat
 
     def total_vat_changed(self, ar):
@@ -382,8 +389,15 @@ class VatTotal(dd.Model):
             if self.total_vat is None:
                 return
         #~ assert not isinstance(self.total_vat,basestring)
-        rate = self.get_vat_rate()
-        self.total_base = self.total_vat * rate
+        # rate = self.get_vat_rate()
+        # if rate != ZERO:
+        #     self.total_base = self.total_vat / rate
+        # else:
+        #     self.total_base = self.total_incl - self.total_vat
+        # if self.total_base == None:
+        #     self.total_base = ZERO
+        # or
+        self.total_base = self.total_base and self.total_base or ZERO
         self.total_incl = self.total_base + self.total_vat
 
     def total_incl_changed(self, ar):
@@ -394,8 +408,13 @@ class VatTotal(dd.Model):
         #~ assert not isinstance(self.total_incl,basestring)
         rate = self.get_vat_rate()
         #~ logger.info("20121206 total_incl_changed %s",rate)
-        self.total_base = self.total_incl / (1 + rate)
-        self.total_vat = self.total_incl - self.total_base
+        self.total_incl = self.total_incl and self.total_incl or ZERO
+        self.total_vat = self.total_vat and self.total_vat or ZERO
+        if rate != ZERO:
+            self.total_base = self.total_incl / (1 + rate)
+        else:
+            self.total_base = self.total_incl - self.total_vat
+        # self.total_vat = self.total_incl - self.total_base
 
     #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
     #~ def total_incl(self,ar=None):
@@ -412,7 +431,7 @@ class VatDocument(VatTotal):
     Abstract base class for invoices, offers and other vouchers.
 
     .. attribute:: refresh_after_item_edit = False
- 
+
     See :srcref:`docs/tickets/68`
 
     .. attribute:: partner
@@ -467,7 +486,7 @@ class VatDocument(VatTotal):
             return
         base = Decimal()
         vat = Decimal()
-        for i in self.items.order_by('seqno'):
+        for i in self.items.order_by('seqno'):# whyyyyy!
             if i.total_base is not None:
                 base += i.total_base
                 vat += i.total_vat
@@ -600,12 +619,20 @@ class VatItemBase(Sequenced, VatTotal):
         rate = self.get_vat_rate()
         if self.voucher.vat_regime.item_vat:  # unit_price_includes_vat
             self.total_incl = amount
-            self.total_base = self.total_incl / (1 + rate)
-            self.total_vat = self.total_incl - self.total_base
+            self.total_vat = self.total_vat and self.total_vat or ZERO
+            if rate != ZERO:
+                self.total_base = self.total_incl / (1 + rate)
+            else:
+                self.total_base = self.total_incl - self.total_vat
+            # self.total_vat = self.total_incl - self.total_base
         else:
             self.total_base = amount
-            self.total_vat = self.total_base * rate
-            self.total_incl = self.total_base + self.total_vat
+            self.total_incl = self.total_incl and self.total_incl or ZERO
+            if rate != ZERO:
+                self.total_vat = self.total_base / rate
+            else:
+                self.total_vat = self.total_incl - self.total_base
+            # self.total_incl = self.total_base + self.total_vat
 
     def reset_totals(self, ar):
         if not self.voucher.auto_compute_totals:
@@ -715,5 +742,3 @@ dd.inject_field(
         blank=True, null=True,
         help_text=_("The default payment term for "
                     "sales invoices to this customer.")))
-
-
