@@ -2,7 +2,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Model mixins for :mod:`lino.modlib.countries`.
+"""Model mixins for `lino.modlib.countries`.
 
 These include :class:`CountryCity`, :class:`CountryRegionCity` and
 :class:`AddressLocation`.
@@ -153,7 +153,21 @@ class CountryRegionCity(CountryCity):
 
 
 class AddressLocation(CountryRegionCity):
-    "See :class:`ml.contacts.AddressLocation`."
+    """A mixin for models which contain a postal address location.
+
+    .. attribute:: addr1
+    .. attribute:: street_prefix
+    .. attribute:: street
+    .. attribute:: street_no
+    .. attribute:: street_box
+    .. attribute:: addr2
+    
+    .. attribute:: addess_column
+
+    Virtual field which returns the location as a comma-separated
+    one-line string.
+
+    """
     class Meta:
         abstract = True
 
@@ -206,16 +220,33 @@ class AddressLocation(CountryRegionCity):
             yield ln
 
         if self.country is not None:
-            sc = settings.SITE.site_config  # get_site_config()
-            #~ print 20130228, sc.site_company_id
-            if sc.site_company is None \
-               or self.country != sc.site_company.country:
+            kodu = dd.plugins.countries.get_my_country()
+            if kodu is None or self.country != kodu:
                 # (if self.country != sender's country)
                 yield unicode(self.country)
 
         #~ logger.debug('%s : as_address() -> %r',self,lines)
 
     def address_location(self, linesep="\n"):
+        """Return the plain text postal address location part.  Lines are
+        separated by `linesep` which defaults to ``"\\n"``.
+
+        The following example creates a Partner, then calls its
+        :meth:`address_location` method:
+
+        >>> BE = countries.Country.objects.get(pk='BE')
+        >>> p = contacts.Partner(
+        ...   name="Foo",
+        ...   street_prefix="Rue de l'", street="Abattoir", 
+        ...   street_no=5, country=BE, zip_code="4000")
+        >>> p.full_clean()
+        >>> p.save()
+        >>> print(p.address_location())
+        Rue de l' Abattoir 5
+        4000 Liège
+        Belgium
+
+        """
         return linesep.join(self.address_location_lines())
 
     @dd.displayfield(_("Address"))

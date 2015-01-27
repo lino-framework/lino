@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Choicelists for :mod:`lino.modlib.countries`.
+Choicelists for `lino.modlib.countries`.
 
 .. autosummary::
 
@@ -72,9 +72,6 @@ add('61', _('Borough'), 'borough')           # et:alev
 add('62', _('Small borough'), 'smallborough')     # et:alevik
 
 add('70', _('Village'), 'village')           # et:küla
-
-#~ REGION_TYPES = '10 11 12 13 14 15 20 21 22 23 24 25 26 27 28'
-#~ REGION_TYPES = [PlaceTypes.get_by_value(v) for v in REGION_TYPES.split()]
 
 
 class CountryDriver(object):

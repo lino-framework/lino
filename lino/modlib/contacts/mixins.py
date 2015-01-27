@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Model mixins for :mod:`lino.modlib.contacts`.
+"""Model mixins for `lino.modlib.contacts`.
 """
 
 from django.db import models

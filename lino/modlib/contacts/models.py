@@ -2,8 +2,19 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.contacts`.
+"""Database models for `lino.modlib.contacts`.
+
+- The :class:`Partner` model (and its two subclasses
+  :class:`Person` and :class:`Company`)
+
+- A :class:`CompanyType` model can be used to classify companies.
+
+- The :class:`Role` and :class:`RoleType` models store "who is who"
+  information.
+
+  TODO: rename :class:`Role` to "Contact", :class:`RoleType` to "Role"
+  and field `Contact.type` to `role`.  Move Partner, Person and
+  Company into a separate plugin "partners".
 
 .. autosummary::
 
@@ -40,25 +51,33 @@ from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
 
 
-class CompanyType(mixins.BabelNamed):
-
-    class Meta:
-        verbose_name = _("Organization type")
-        verbose_name_plural = _("Organization types")
-
-    abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
-
-
-class CompanyTypes(dd.Table):
-    required = dd.required(user_level='manager')
-    model = 'contacts.CompanyType'
-    column_names = 'name *'
-    #~ label = _("Company types")
-
-
 class Partner(mixins.Polymorphic, AddressLocation, Addressable):
-    "See :class:`ml.contacts.Partner`."
+    """
+    A Partner is any physical or moral person for which you want to
+    keep contact data (address, phone numbers, ...).
 
+    A :class:`Partner` can act as the recipient of a sales invoice, as
+    the sender of an incoming purchases invoice, ...
+
+    A Partner has at least a name and usually also an "official" address.
+
+    Predefined subclasses of Partners are :class:`Person` for physical
+    persons and :class:`Company` for companies, organisations and any
+    kind of non-formal Partners.
+
+    .. attribute:: name
+
+    The full name of this partner. Used for alphabetic
+    sorting. Subclasses may fill this field automatically, e.g. saving
+    a :class:`Person` will automatically set her `name` field to
+    "last_name, first_name".
+
+    .. attribute:: email
+
+    The primary email address.
+
+
+    """
     preferred_foreignkey_width = 20
     # preferred width for ForeignKey fields to a Partner
 
@@ -231,7 +250,11 @@ class PartnersByCountry(Partners):
 
 
 class Person(mixins.Human, mixins.Born, Partner):
+    """
+    A physical person and an individual human being.
+    See :ref:`lino.tutorial.human`.
 
+    """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
@@ -298,8 +321,35 @@ class Persons(Partners):
     """, window_size=(60, 'auto'))
 
 
-class Company(Partner):
+class CompanyType(mixins.BabelNamed):
+    """A type of organization. Used by :attr:`Company.type` field.
 
+    """
+    class Meta:
+        verbose_name = _("Organization type")
+        verbose_name_plural = _("Organization types")
+
+    abbr = dd.BabelCharField(_("Abbreviation"), max_length=30, blank=True)
+
+
+class CompanyTypes(dd.Table):
+    required = dd.required(user_level='manager')
+    model = 'contacts.CompanyType'
+    column_names = 'name *'
+    #~ label = _("Company types")
+
+
+class Company(Partner):
+    """An organisation.  The internal name is "Company" for historical
+    reasons and because that's easier to type.
+
+    See also :srcref:`docs/tickets/14`.
+
+  .. attribute:: type
+    
+    Pointer to the :class:`CompanyType`.
+
+    """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Company')
         app_label = 'contacts'
@@ -369,11 +419,14 @@ class Companies(Partners):
 # class ContactType(mixins.BabelNamed):
 class RoleType(mixins.BabelNamed):
 
-    """
+    """A :class:`RoleType` is "what a given :class:`Person` can be for a
+    given :class:`Company`".
+
     TODO: rename "RoleType" to "Function" or "ContactType".
     
-    RoleType,name is used at "in seiner Eigenschaft als ..." 
-    in document templates for contracts.    
+    RoleType,name is used at "in seiner Eigenschaft als ..."  in
+    document templates for contracts.
+
     """
     class Meta:
         verbose_name = _("Function")
@@ -389,12 +442,9 @@ class RoleTypes(dd.Table):
 class Role(dd.Model, Addressable):
 
     """A Contact (historical model name :class:`Role`) is a
-    :class:`Person` that has a given role (:class:`ContactType`) in a
+    :class:`Person` who has a given role (:class:`ContactType`) in a
     given :class:`Company`.
     
-    TODO: rename model "Role" to "Contact", `RoleType` to `Role` and
-    field `type` to `role`
-
     """
 
     class Meta:

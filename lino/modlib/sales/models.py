@@ -24,22 +24,14 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
 
-#~ from lino import reports
 from lino.core import actions
 from lino import mixins
-from lino.utils import mti
-#~ from lino.utils.quantities import Duration
 
 from lino.modlib.excerpts.mixins import Certifiable
 
-from ..vat.utils import add_vat, remove_vat
+from lino.modlib.vat.utils import add_vat, remove_vat
 
-#~ journals = resolve_app('journals')
-#~ journals = models.get_app('journals')
-#~ auth = resolve_app('auth')
-#~ from lino.modlib.users import models as auth
 partners = dd.resolve_app(settings.SITE.partners_app_label)
-#~ accounts = dd.resolve_app('accounts')
 ledger = dd.resolve_app('ledger', strict=True)
 vat = dd.resolve_app('vat', strict=True)
 products = dd.resolve_app('products', strict=True)
@@ -256,7 +248,7 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
 
         catalog_rate = rt.modules.vat.VatRate.find_vat_rate(
             tt, vat.get_default_vat_regime, self.get_vat_class(tt),
-            dd.plugins.vat.get_country(),
+            dd.plugins.countries.get_my_country(),
             dd.today())
         if rate != catalog_rate:
             catalog_price = remove_vat(catalog_price, catalog_rate)

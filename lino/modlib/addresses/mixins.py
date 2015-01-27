@@ -1,33 +1,86 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+
+"""
+Database models of `lino.modlib.addresses`.
+
+"""
+
+from __future__ import unicode_literals
+from __future__ import print_function
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd
+from lino.api import dd, rt
+from lino.utils.xmlgen.html import E
+from lino.core.utils import ChangeWatcher
+
+from .choicelists import AddressTypes
 
 
-class AddressType(dd.Choice):
-    living_text = _("living at")
+class AddressOwner(dd.Model):
+    """Base class for the "addressee" of any address.
 
+    """
+    class Meta:
+        abstract = True
 
-class AddressTypes(dd.ChoiceList):
-    verbose_name = _("Address type")
-    verbose_name_plural = _("Address types")
-    item_class = AddressType
+    def get_address_by_type(self, address_type):
+        Address = rt.modules.addresses.Address
+        try:
+            return rt.modules.addresses.Address.objects.get(
+                partner=self, address_type=address_type)
+        except Address.DoesNotExist:
+            return self.get_primary_address()
+        except Address.MultipleObjectsReturned:
+            return self.get_primary_address()
+        
+    def get_primary_address(self):
+        Address = rt.modules.addresses.Address
+        # AddressTypes = rt.modules.addresses.AddressTypes
+        # ADDRESS_FIELDS = rt.modules.addresses.ADDRESS_FIELDS
 
-add = AddressTypes.add_item
-add('01', _("Official address"), 'official')  # IT020
-add('02', _("Unverified address"), 'unverified')  # IT042
-add('03', _("Declared address"), 'declared')  # IT214
-add('04', _("Reference address"), 'reference')
+        kw = dict(partner=self, primary=True)
+        try:
+            return Address.objects.get(**kw)
+        except Address.DoesNotExist:
+            kw.update(address_type=AddressTypes.official)
+            has_values = False
+            for fldname in Address.ADDRESS_FIELDS:
+                v = getattr(self, fldname)
+                kw[fldname] = v
+                if v:
+                    has_values = True
+            if has_values:
+                addr = Address(**kw)
+                addr.full_clean()
+                addr.save()
+                return addr
 
-
-class DataSources(dd.ChoiceList):
-    verbose_name = _("Data source")
-    verbose_name_plural = _("Data sources")
-
-add = DataSources.add_item
-add('01', _("Manually entered"), 'manually')
-add('02', _("Read from eID"), 'eid')
+    def get_overview_elems(self, ar):
+        elems = super(AddressOwner, self).get_overview_elems(ar)
+        sar = ar.spawn('addresses.AddressesByPartner',
+                       master_instance=self)
+        # btn = sar.as_button(_("Manage addresses"), icon_name="wrench")
+        btn = sar.as_button(_("Manage addresses"))
+        # elems.append(E.p(btn, align="right"))
+        elems.append(E.p(btn))
+        return elems
+    
+    def sync_primary_address(self, request):
+        Address = rt.modules.addresses.Address
+        watcher = ChangeWatcher(self)
+        kw = dict(partner=self, primary=True)
+        try:
+            pa = Address.objects.get(**kw)
+            for k in Address.ADDRESS_FIELDS:
+                setattr(self, k, getattr(pa, k))
+        except Address.DoesNotExist:
+            pa = None
+            for k in Address.ADDRESS_FIELDS:
+                fld = self._meta.get_field(k)
+                setattr(self, k, fld.get_default())
+        self.save()
+        watcher.send_update(request)
 
 

@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Utilities for :mod:`lino.modlib.countries`.
+Utilities for `lino.modlib.countries`.
 
 Defines models
 :class:`AddressFormatter` and
@@ -27,9 +27,8 @@ from .choicelists import CountryDrivers
 
 
 class AddressFormatter(object):
+    """Format used in BE, DE, FR, NL...
 
-    """
-    Format used in BE, DE, FR, NL...
     """
     def get_city_lines(me, self):
         if self.city is not None:
@@ -52,8 +51,8 @@ class AddressFormatter(object):
 
 class EstonianAddressFormatter(AddressFormatter):
 
-    """
-    Format used in Estonia.
+    """Format used in Estonia.
+
     """
     
     def format_place(self, p):
@@ -170,5 +169,3 @@ county."""
         if pt == PlaceTypes.municipality:
             return PlaceTypes.town
         return pt
-    
-

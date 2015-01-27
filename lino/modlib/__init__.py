@@ -59,6 +59,7 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     ledger
     lists
     notes
+    office
     orders
     outbox
     pages

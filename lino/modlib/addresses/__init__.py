@@ -1,11 +1,22 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This adds multiple addresses per Partner.
+"""Adds functionality and models to handle multiple addresses per
+:class:`lino.modlib.contacts.models.Partner`. When this module is
+installed, your application usually has a "Manage addresses" button
+per partner.
+
+.. autosummary::
+   :toctree:
+
+    choicelists
+    mixins
+    models
+
 
 """
 
-from lino import ad
+from lino.api import ad
 
 from django.utils.translation import ugettext_lazy as _
 

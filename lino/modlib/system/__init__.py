@@ -26,25 +26,21 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("System")
 
-    OFFICE_MODULE_LABEL = _("Office")  # TODO: add `lino.modlib.office`
+    needs_plugins = ['lino.modlib.office']  # because of TextFieldTemplate
 
     def setup_config_menu(self, site, profile, m):
-        office = m.add_menu("office", self.OFFICE_MODULE_LABEL)
         system = m.add_menu(self.app_label, self.verbose_name)
         system.add_instance_action(site.site_config)
         if site.user_model and profile.authenticated:
             system.add_action(site.user_model)
-            office.add_action('system.MyTextFieldTemplates')
 
     def setup_explorer_menu(self, site, profile, m):
-        office = m.add_menu("office", self.OFFICE_MODULE_LABEL)
         system = m.add_menu(self.app_label, self.verbose_name)
 
         if site.user_model:
-            system.add_action(site.modules.users.Authorities)
-            system.add_action('system.UserGroups')
-            system.add_action('system.UserLevels')
-            system.add_action('system.UserProfiles')
-            office.add_action('system.TextFieldTemplates')
+            system.add_action('users.Authorities')
+            system.add_action('users.UserGroups')
+            system.add_action('users.UserLevels')
+            system.add_action('users.UserProfiles')
 
 

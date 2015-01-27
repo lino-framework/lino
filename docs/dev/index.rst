@@ -105,6 +105,7 @@ Special topics
 .. toctree::
    :maxdepth: 1
 
+   /tutorials/addrloc/index
    /tutorials/mti/index
    /tutorials/sendchanges/index
    /tutorials/actors/index

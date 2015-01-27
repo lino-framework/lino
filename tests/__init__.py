@@ -121,6 +121,9 @@ class DocsTests(LinoTestCase):
     def test_tables(self):
         self.run_django_manage_test('docs/tutorials/tables')
     
+    def test_addrloc(self):
+        self.run_django_manage_test('docs/tutorials/addrloc')
+    
     def test_pisa(self):
         self.run_django_manage_test('docs/tutorials/pisa')
     

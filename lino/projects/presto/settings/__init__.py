@@ -76,6 +76,6 @@ class Site(Site):
         yield 'lino.projects.presto'
 
     def setup_plugins(self):
-        self.plugins.vat.configure(country_code='BE')
+        self.plugins.countries.configure(country_code='BE')
         super(Site, self).setup_plugins()
 

@@ -163,6 +163,7 @@ lino.modlib.courses
 lino.modlib.about
 lino.modlib.pages
 lino.modlib.pages.fixtures
+lino.modlib.office
 lino.modlib.orders
 lino.modlib.changes
 lino.modlib.comments

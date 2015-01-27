@@ -19,8 +19,6 @@ installed.
 
 
 
-See :mod:`ml.vat`.
-
 """
 
 from django.utils.translation import ugettext_lazy as _
@@ -32,6 +30,8 @@ class Plugin(ad.Plugin):
 
     """
     verbose_name = _("VAT")
+
+    needs_plugins = ['lino.modlib.countries']
 
     vat_quarterly = False
     """
@@ -48,13 +48,6 @@ class Plugin(ad.Plugin):
 
     """
 
-    country_code = None
-    """The 2-letter ISO code of the country where the site owner is
-    located.  This may not be empty, and there must be a country with
-    that ISO code in :class:`lino.modlib.countries.models.Country`.
-
-    """
-
     def get_vat_class(self, tt, item):
         """Return the VAT class to be used for given trade type and given
 invoice item. Return value must be an item of
@@ -63,14 +56,7 @@ invoice item. Return value must be an item of
         """
         return self.default_vat_class
 
-    def get_country(self):
-        return self.site.modules.countries.Country.objects.get(
-            pk=self.country_code)
-
     def on_site_startup(self, site):
-        if self.country_code is None:
-            raise Exception(
-                "VAT plugin requires nonempty `country_code` setting.")
         vat = site.modules.vat
         if isinstance(self.default_vat_regime, basestring):
             self.default_vat_regime = vat.VatRegimes.get_by_name(

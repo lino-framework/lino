@@ -79,9 +79,10 @@ def configure_plugin(app_label, **kwargs):
     This should be called *before instantiating* your :class:`Site`
     class.
 
-    For example to set :attr:`ml.contacts.Plugin.hide_region` to
-    `True`::
+    For example to set :attr:`lino.modlib.contacts.Plugin.hide_region`
+    to `True`::
 
+      from lino.api import ad
       ad.configure_plugin('contacts', hide_region=True)
 
     See :doc:`/admin/settings` for more details.
@@ -1207,8 +1208,7 @@ documentation.
         return self._logger
 
     def setup_plugins(self):
-        """
-        This method is called exactly once during site startup, after
+        """This method is called exactly once during site startup, after
         :meth:`load_plugins` and before models are being populated.
 
         """

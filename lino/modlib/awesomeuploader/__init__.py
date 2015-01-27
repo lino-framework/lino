@@ -58,8 +58,8 @@ class Plugin(ad.Plugin):
         yield self.build_media_url('AwesomeUploader.js')
 
     def setup_main_menu(config, site, profile, m):
-        system = site.plugins.system
-        m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
+        mg = site.plugins.office
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('awesomeuploader.UploaderPanel')
 
 

@@ -25,18 +25,18 @@ class Plugin(ad.Plugin):
     verbose_name = _("Notes")
 
     def setup_main_menu(config, site, profile, m):
-        system = site.plugins.system
-        m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
+        mg = site.plugins.office
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('notes.MyNotes')
 
     def setup_config_menu(config, site, profile, m):
-        system = site.plugins.system
-        m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
+        mg = site.plugins.office
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('notes.NoteTypes')
         m.add_action('notes.EventTypes')
 
     def setup_explorer_menu(config, site, profile, m):
-        system = site.plugins.system
-        m = m.add_menu("office", system.OFFICE_MODULE_LABEL)
+        mg = site.plugins.office
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('notes.AllNotes')
 

@@ -201,9 +201,6 @@ if settings.SITE.user_model:
         required = dd.required(user_groups='office')
 
 
-dd.add_user_group('office', dd.plugins.system.OFFICE_MODULE_LABEL)
-
-
 if settings.SITE.user_model == 'auth.User':
     dd.inject_field(settings.SITE.user_model,
                     'profile', UserProfiles.field())

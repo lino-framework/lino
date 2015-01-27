@@ -4,6 +4,14 @@ Tuesday, January 27, 2015
 
 More tidy-up routine in the documentation.
 
-There was yet another problem with
+There was yet another problem ("choicelists.get_by_name expected
+string") due to a bug in
 :attr:`lino.modlib.vat.Plugin.default_vat_class`.
 
+I finally created the plugin :mod:`lino.modlib.office`.
+
+And yet another tutorial: :doc:`/tutorials/addrloc/index`.
+
+And I moved the :attr:`country_code
+<lino.modlib.countries.Plugin.country_code>` setting from
+:mod:`lino.modlib.vat` to :mod:`lino.modlib.countries`.

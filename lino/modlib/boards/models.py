@@ -53,7 +53,22 @@ class Boards(dd.Table):
 
 
 class Member(dd.Model):
+    """A Member is when a given :class:`ml.contacts.Person`
+    belongs to a given :class:`Board`.
 
+    .. attribute:: board
+
+    Pointer to the :class:`Board`.
+
+    .. attribute:: person
+
+    Pointer to the :class:`ml.contacts.Person`.
+
+    .. attribute:: role
+
+    What the person is supposed to do in this board.  Pointer to the
+    :class:`ml.contacts.RoleType`.
+    """
     class Meta:
         verbose_name = _("Board member")
         verbose_name_plural = _("Board members")

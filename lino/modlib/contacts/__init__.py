@@ -1,8 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino.modlib.contacts` package provides models and
-functionality for managing contacts.
+"""Adds functionality for managing contacts.
 
 .. autosummary::
    :toctree:
@@ -15,6 +14,24 @@ functionality for managing contacts.
     fixtures.demo
     fixtures.demo_ee
     fixtures.demo_fr
+
+This plugin is being extended by :ref:`welfare` in
+:mod:`lino_welfare.modlib.contacts` or by :ref:`faggio` in
+:mod:`lino_faggio.modlib.contacts`.
+
+
+Lino differentiates the following subclasses of Partner:
+
+.. django2rst:: contacts.Partner.print_subclasses_graph()
+
+
+The default database comes with the following list of 
+:class:`RoleType`:
+
+.. django2rst:: rt.show(contacts.RoleTypes)
+    
+
+
 
 """
 

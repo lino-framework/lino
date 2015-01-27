@@ -70,6 +70,6 @@ class Site(Site):
         #~ yield 'lino'
 
     def setup_plugins(self):
-        self.plugins.vat.configure(country_code='BE')
         super(Site, self).setup_plugins()
+        self.plugins.countries.configure(country_code='BE')
 

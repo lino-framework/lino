@@ -9,10 +9,6 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :maxdepth: 2
 
-   addresses
-   boards
-   cal
-   contacts
    debts
    extensible
    households
@@ -23,7 +19,11 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :hidden:
 
+   contacts
+   addresses
    beid
+   boards
+   cal
    countries
    cv
    excerpts
