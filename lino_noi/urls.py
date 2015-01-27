@@ -1,4 +1,4 @@
-from lino import dd
+from lino.api import dd
 
 urlpatterns = dd.plugins.bootstrap3.get_patterns(None)
 

@@ -1,6 +1,6 @@
 from email.parser import Parser
 
-from lino import dd
+from lino.api import dd
 from lino.modlib.smtpd.signals import mail_received
 
 
