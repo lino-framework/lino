@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
+Database models for `lino.modlib.orders`.
+
+.. autosummary::
 
 """
 
@@ -23,7 +26,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 #~ from lino import reports
 from lino.core import actions
@@ -244,13 +247,6 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
     def get_base_account(self, tt):
         ref = tt.get_product_base_account(self.product)
         return self.voucher.journal.chart.get_account_by_ref(ref)
-
-    #~ def get_vat_class(self,tt):
-        #~ name = settings.SITE.get_product_vat_class(tt,self.product)
-        #~ return vat.VatClasses.get_by_name(name)
-
-    #~ def full_clean(self,*args,**kw):
-        #~ super(ProductDocItem,self).full_clean(*args,**kw)
 
     def product_changed(self, ar):
         if self.product:

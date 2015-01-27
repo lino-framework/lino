@@ -2,6 +2,12 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""Database models for `lino.modlib.courses`.
+
+"""
+
+
+
 from __future__ import unicode_literals
 from __future__ import print_function
 
@@ -25,7 +31,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 
 from lino.utils import join_elems

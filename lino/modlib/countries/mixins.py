@@ -18,7 +18,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from .choicelists import CountryDrivers, PlaceTypes
 from .utils import get_address_formatter

@@ -1,9 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-See :mod:`ml.cv`.
+Manage information about the *career* or *curriculum vitae* of a
+person.
+
 """
 
 from __future__ import unicode_literals
@@ -14,6 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     verbose_name = _("Career")
     needs_plugins = ['lino.modlib.languages']

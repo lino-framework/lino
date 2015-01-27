@@ -1,4 +1,4 @@
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
     verbose_name = _("Comments")
 
     def setup_main_menu(config, site, profile, m):

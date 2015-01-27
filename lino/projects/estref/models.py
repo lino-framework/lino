@@ -7,7 +7,7 @@ The :xfile:`models` module for :ref:`estref` app.
 
 """
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 def site_setup(site):

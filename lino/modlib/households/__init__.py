@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from lino import ad
@@ -8,6 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
     verbose_name = _("Households")
     person_model = "contacts.Person"
 

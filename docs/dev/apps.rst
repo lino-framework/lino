@@ -55,18 +55,19 @@ to make a model abstract "afterwards".  IOW we need a central place
 where models modules can ask whether it wants a given model to be
 abstract or not.
 
-This is why the above code calls the :setting:`is_abstract_model`
-method.  The implementation of this method has evolved in time.  The
-first implementation used a simple set of strings in a class attribute
-of :class:`lino.core.site.Site`.  That might have been a standard Django setting.
-But as things got more and more complex, it became difficult to define
-this manually. And it was redundant because every app *does* know
-which library models it is going to override.  But how to load that
-information from an app before actually importing it?  I then
+This is why the above code calls the :meth:`is_abstract_model
+<lino.core.site.Site.is_abstract_model>` method.  The implementation
+of this method has evolved in time.  The first implementation used a
+simple set of strings in a class attribute of
+:class:`lino.core.site.Site`.  That might have been a standard Django
+setting.  But as things got more and more complex, it became difficult
+to define this manually. And it was redundant because every app *does*
+know which library models it is going to override.  But how to load
+that information from an app before actually importing it?  I then
 discovered that Django doesn't use the :file:`__init__.py` files of
-installed apps.  And of course I was lucky to have a :class:`lino.core.site.Site`
-class which is being *instantiated* before `settings` have finished to
-load...
+installed apps.  And of course I was lucky to have a
+:class:`lino.core.site.Site` class which is being *instantiated*
+before `settings` have finished to load...
 
 The trick here is that the :file:`lino_faggio/cal/__init__.py` file
 now contains this information in the `extends_models` attribute::
@@ -80,9 +81,10 @@ now contains this information in the `extends_models` attribute::
 
 
 
-The :mod:`lino.api.ad` module
+The :mod:`lino.api.ad` module.
 
-The :class:`lino.core.plugin.Plugin` class.
+Fixtures and management commands
+================================
 
 What needs special handling when doing app inheritance are the
 fixtures and the management commands.

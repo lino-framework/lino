@@ -2,8 +2,10 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Manage information about the *career* or *curriculum vitae* of a
-person.
+"""
+Database models for `lino.modlib.cv`.
+
+.. autosummary::
 
 - A **Language knowledge** is when a given person knows a given language.
 

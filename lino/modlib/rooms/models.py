@@ -2,8 +2,8 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for :mod:`lino.modlib.rooms`.
+"""Database models for `lino.modlib.rooms`.
+
 """
 
 from __future__ import unicode_literals

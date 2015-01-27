@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-This module defines the tables 
-- :class:`Partner` (and their specializations :class:`Person` and :class:`Company`)
-- :class:`Role` and :class:`RoleType`
+"""Database models for `lino.modlib.concepts`.
 
 """
 
@@ -16,25 +13,10 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-import datetime
-from dateutil.relativedelta import relativedelta
-
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.conf import settings
-from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-#~ from django.utils.translation import ugettext
 
-from django import forms
-from django.utils import translation
-
-
-import lino
-#~ from lino import layouts
-
-from lino import dd, rt
-#~ from lino import fields
+from lino.api import dd, rt
 
 from lino import mixins
 
@@ -50,8 +32,7 @@ add('20', _("Obsoletes"), 'obsoletes')
 
 
 class Concept(mixins.BabelNamed):
-
-    """
+    """A word and its translation in different languages.
     """
 
     class Meta:
@@ -119,5 +100,4 @@ class Parents(Links):
 class Children(Links):
     master_key = 'parent'
     label = _("Children")
-
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -25,6 +25,7 @@ from lino import ad, _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     verbose_name = _("Events")
 

@@ -48,7 +48,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
-    """The Plugin class."""
+    "See :doc:`/dev/plugins`."
+
     verbose_name = _("Excerpts")
 
     needs_plugins = ['lino.modlib.outbox']

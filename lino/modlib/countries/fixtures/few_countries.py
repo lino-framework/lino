@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 Country = dd.resolve_model('countries.Country')
 

@@ -8,7 +8,7 @@ from __future__ import unicode_literals
 from lino.utils.instantiator import Instantiator
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 
 
 def objects():

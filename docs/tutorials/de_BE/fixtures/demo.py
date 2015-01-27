@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from __future__ import unicode_literals
 
-from lino import dd
+from lino.api import dd
 from de_BE.models import Expression
 
 

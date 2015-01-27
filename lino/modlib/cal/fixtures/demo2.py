@@ -23,7 +23,7 @@ from django.utils.translation import ugettext as _
 
 from lino.utils import Cycler
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 cal = dd.resolve_app('cal')
 Event = dd.resolve_model('cal.Event')

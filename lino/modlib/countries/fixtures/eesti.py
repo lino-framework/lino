@@ -15,7 +15,7 @@ from commondata.ee.places import root
 from commondata.ee.places import (Village, SmallBorough, Borough,
                                   Township, Town, Municipality, County)
 
-from lino import dd
+from lino.api import dd
 
 countries = dd.resolve_app('countries')
 

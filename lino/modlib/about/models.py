@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Dataase models for :mod:`lino.modlib.about`.
+Database models for `lino.modlib.about`.
 
 """
 
@@ -28,7 +28,7 @@ from lino.utils import AttrDict
 from lino.utils.code import codetime, codefiles, SourceFile
 from lino.utils.xmlgen.html import E
 
-from lino import dd
+from lino.api import dd
 
 from lino.modlib.users.choicelists import UserProfiles
 

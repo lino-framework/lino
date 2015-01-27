@@ -1,4 +1,4 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 "See :mod:`ml.humanlinks`."
@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
-    "Ceci n'est pas une documentation."
+    "See :doc:`/dev/plugins`."
     verbose_name = _("Parency links")
 
     ## settings

@@ -6,7 +6,7 @@
 A :term:`dummy module` for `postings`, used by 
 """
 
-from lino import dd
+from lino.api import dd
 
 
 class Postable(object):

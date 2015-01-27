@@ -7,7 +7,7 @@ The :xfile:`models` module for the :mod:`lino.projects.belref` app.
 
 """
 
-from lino import dd
+from lino.api import dd
 
 concepts = dd.resolve_app('concepts')
 

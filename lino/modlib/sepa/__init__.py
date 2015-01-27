@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
-    "Ceci n'est pas une documentation."
+    "See :doc:`/dev/plugins`."
     verbose_name = _("SEPA")
 
     def setup_explorer_menu(config, site, profile, m):

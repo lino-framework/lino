@@ -2,7 +2,29 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for :mod:`lino.modlib.ledger`."""
+"""Database models for `lino.modlib.ledger`.
+
+- Models :class:`Journal`, :class:`Voucher` and :class:`Movement`
+
+- The :class:`DueMovement` class, a volatile object representing a
+  group of matching movements.
+
+- :class:`DebtsByAccount` and :class:`DebtsByPartner` are two reports
+  based on :class:`ExpectedMovements`
+
+- :class:`GeneralAccountsBalance`, :class:`ClientAccountsBalance` and
+  :class:`SupplierAccountsBalance` three reports based on
+  :class:`AccountsBalance` and :class:`PartnerAccountsBalance`
+
+- :class:`Debtors` and :class:`Creditors` are tables with one row for
+  each partner who has a positive balance (either debit or credit).
+  Accessible via :menuselection:`Reports --> Ledger --> Debtors` and
+  :menuselection:`Reports --> Ledger --> Creditors`
+
+
+
+
+"""
 
 from __future__ import unicode_literals
 

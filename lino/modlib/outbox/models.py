@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` module for :mod:`lino.modlib.outbox`.
+The :xfile:`models.py` module for `lino.modlib.outbox`.
 """
 
 import logging
@@ -19,7 +19,7 @@ from django.core.exceptions import ValidationError
 
 
 from lino import mixins
-from lino import dd
+from lino.api import dd
 from lino.core import actions
 
 from lino.utils.html2text import html2text

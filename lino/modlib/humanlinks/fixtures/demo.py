@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.instantiator import InstanceGenerator
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 def objects():

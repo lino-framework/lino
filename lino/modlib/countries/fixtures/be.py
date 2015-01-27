@@ -20,7 +20,7 @@ Original sources:
 
 from lino.core.dbutils import resolve_model
 from lino.utils.instantiator import Instantiator
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 # german names are my spontaneous guessings...

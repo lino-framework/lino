@@ -2,7 +2,7 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-Database models for :mod:`lino.modlib.excerpts`.
+Database models for `lino.modlib.excerpts`.
 
 .. autosummary::
 
@@ -30,7 +30,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from django.core.exceptions import ValidationError
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems

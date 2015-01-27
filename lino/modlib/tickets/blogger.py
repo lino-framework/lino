@@ -13,7 +13,7 @@ from django.conf import settings
 from lino.utils import i2d, i2t
 from lino.utils.restify import restify, doc2rst
 
-from lino import dd, rt
+from lino.api import dd, rt
 blogs = dd.resolve_app('blogs')
 tickets = dd.resolve_app('tickets')
 

@@ -1,7 +1,11 @@
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
+Database models for `lino.modlib.davlink`.
+
+.. autosummary::
+
 """
 
 from __future__ import unicode_literals
@@ -12,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 
 
 class ResetDavLink(dd.Action):

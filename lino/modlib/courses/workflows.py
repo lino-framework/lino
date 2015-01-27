@@ -23,7 +23,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.modlib.courses.models import EnrolmentStates
 from lino.modlib.courses.models import CourseStates

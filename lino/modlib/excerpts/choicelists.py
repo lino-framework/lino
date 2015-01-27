@@ -12,7 +12,7 @@ from __future__ import print_function
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 
 
 class Shortcut(dd.Choice):

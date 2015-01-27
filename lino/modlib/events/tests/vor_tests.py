@@ -22,7 +22,7 @@ from django.utils import translation
 #from lino.modlib.contacts.models import Contact, Companies
 #from lino.modlib.countries.models import Country
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils import i2d
 from lino.utils.djangotest import TestCase
 

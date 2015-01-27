@@ -2,11 +2,15 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""Database models for `lino.modlib.blogs`.
+
+"""
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored

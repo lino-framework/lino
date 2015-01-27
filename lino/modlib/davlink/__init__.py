@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Add this to your :setting:`get_installed_apps` if your Site should
-feature actions that ask the client to launch webdav office documents.
+"""Adds actions that ask the client to launch webdav office documents.
 
 When this app is installed, then you must also add the `.jar` files
 required by :ref:`davlink` into your media directory, in a
@@ -17,6 +16,7 @@ import jinja2
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     site_js_snippets = ['davlink/davlink.js']
 

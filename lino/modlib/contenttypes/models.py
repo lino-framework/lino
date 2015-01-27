@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
+Database models for `lino.modlib.contenttypes`.
 
 .. autosummary::
 
@@ -19,7 +20,7 @@ from django.utils.translation import string_concat
 from django.db.utils import DatabaseError
 from django.db.models import FieldDoesNotExist
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 

@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino import dd
+from lino.api import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')

@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models.py` module of the :mod:`ml.addresses` app.
+The :xfile:`models.py` module of :mod:`lino.modlib.addresses`.
 
 Defines the following actors:
 
@@ -18,7 +18,7 @@ from __future__ import print_function
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
 from lino.modlib.countries.mixins import AddressLocation

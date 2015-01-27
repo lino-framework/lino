@@ -7,7 +7,7 @@
 from lino.utils.instantiator import Instantiator, i2d
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 
 
 def objects():

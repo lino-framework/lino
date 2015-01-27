@@ -22,10 +22,8 @@ from lino import ad, _
 
 
 class Plugin(ad.Plugin):
-    """Extends :class:`lino.core.plugin.Plugin`, adding
-:attr:`hide_region` and a default menu structure.
+    "See :doc:`/dev/plugins`."
 
-    """
     verbose_name = _("Contacts")
 
     ## settings
@@ -41,8 +39,7 @@ class Plugin(ad.Plugin):
     """
 
     region_label = _('Region')
-    """The `verbose_name` of the `region` field.
-    """
+    """The `verbose_name` of the `region` field."""
 
     def before_analyze(self):
         super(Plugin, self).before_analyze()
@@ -52,7 +49,7 @@ class Plugin(ad.Plugin):
                 m.hide_elements('region')
     
         if False:  # see tickets/90
-            from lino import dd
+            from lino.api import dd
             for m in (contacts.Person, contacts.Company):
                 m.define_action(merge_row=dd.MergeAction(m))
 

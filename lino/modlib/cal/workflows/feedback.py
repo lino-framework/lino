@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd
+from lino.api import dd
 
 from lino.modlib.cal.workflows import EventStates, GuestStates
 

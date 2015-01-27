@@ -20,6 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 
 class Plugin(ad.Plugin):
 
+    "See :doc:`/dev/plugins`."
+
     verbose_name = _("Notes")
 
     def setup_main_menu(config, site, profile, m):

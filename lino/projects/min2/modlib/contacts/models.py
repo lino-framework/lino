@@ -21,7 +21,7 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.modlib.contacts.models import *
 

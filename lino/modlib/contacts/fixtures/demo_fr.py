@@ -7,7 +7,7 @@
 
 from lino.utils import Cycler
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils import demonames
 
 

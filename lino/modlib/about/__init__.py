@@ -15,6 +15,7 @@ from lino import ad, _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     def setup_site_menu(config, site, profile, m):
         m.add_action(site.modules.about.About)

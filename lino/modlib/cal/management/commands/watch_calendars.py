@@ -41,7 +41,7 @@ from django.db import models
 
 import lino
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.utils import confirm, iif
 from lino.utils import dblogger

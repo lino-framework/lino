@@ -17,7 +17,7 @@ from lino.utils import dblogger
 from lino.utils import Cycler, join_words
 
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 from lino.utils import confirm

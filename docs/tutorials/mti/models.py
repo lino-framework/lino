@@ -1,6 +1,6 @@
 from django.db import models
 from lino.utils.mti import EnableChild
-from lino import dd
+from lino.api import dd
 
 
 class Person(dd.Model):

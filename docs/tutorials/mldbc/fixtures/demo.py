@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from lino import dd
+from lino.api import dd
 
 Product = dd.resolve_model('mldbc.Product')
 

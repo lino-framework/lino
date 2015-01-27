@@ -1,7 +1,7 @@
 ## This file is part of the Lino project.
 
 from django.db import models
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 

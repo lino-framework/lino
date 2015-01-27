@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
+Part of the :xfile:`models.py` module for `lino.modlib.cal`.
 
 Defines the :class:`Guest` model and its tables.
 """

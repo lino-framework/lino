@@ -1,8 +1,8 @@
 # Copyright 2009-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :xfile:`models.py` module of the :mod:`lino.modlib.system` app.
+"""Database models for `lino.modlib.system`.
+
 """
 
 import logging
@@ -17,7 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.mixins import UserAuthored, ByUser
 from lino.modlib.users.choicelists import UserProfiles, UserLevels, UserGroups
-from lino import dd
+from lino.api import dd
 from lino.core import actions
 
 from lino.mixins.printable import BuildMethods

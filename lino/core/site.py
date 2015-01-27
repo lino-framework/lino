@@ -1536,7 +1536,7 @@ documentation.
 
     def add_user_field(self, name, fld):
         if self.user_model:
-            from lino import dd
+            from lino.api import dd
             dd.inject_field(self.user_model, name, fld)
 
     def get_used_libs(self, html=None):
@@ -2844,7 +2844,7 @@ startup.
     def get_printable_context(self, **kw):
         from django.conf import settings
         from django.utils.translation import ugettext_lazy as _
-        from lino import dd, rt
+        from lino.api import dd, rt
         from lino.utils import iif
 
         kw.update(

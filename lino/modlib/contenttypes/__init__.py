@@ -1,8 +1,10 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Extends `django.contrib.contenttypes`.  This module must be installed if your models contain GenericForeignKey
-fields or inherit from the :class:`Controllable <lino.modlib.contenttypes.mixins.Controllable>` mixin.
+"""Extends `django.contrib.contenttypes`.  This module must be
+installed if your models contain GenericForeignKey fields or inherit
+from the :class:`Controllable
+<lino.modlib.contenttypes.mixins.Controllable>` mixin.
 
 .. autosummary::
    :toctree:
@@ -16,6 +18,7 @@ from lino import ad
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     def setup_reports_menu(config, site, profile, m):
         hook = site.plugins.system

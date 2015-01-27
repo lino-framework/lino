@@ -26,7 +26,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from lino.utils import Cycler
-from lino import dd
+from lino.api import dd
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')

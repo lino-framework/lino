@@ -8,7 +8,7 @@
 
 from __future__ import unicode_literals
 
-from lino import dd
+from lino.api import dd
 notes = dd.resolve_app('notes')
 
 

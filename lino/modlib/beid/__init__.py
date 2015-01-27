@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""The :mod:`lino.modlib.beid` package
-defines actions for reading electronic ID smartcards.
+"""Defines actions for reading electronic ID smartcards.
 
 Installing this package makes sense only if there is exactly one
 subclass of the :class:`BeIdCardHolder` model mixin among your
@@ -31,9 +30,7 @@ from lino import ad
 
 
 class Plugin(ad.Plugin):  # was: use_eidreader
-    """
-    Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
-    """
+    "See :doc:`/dev/plugins`."
 
     site_js_snippets = ['beid/eidreader.js']
     media_name = 'eidreader'

@@ -1,4 +1,4 @@
-from lino import dd
+from lino.api import dd
 
 
 class Authors(dd.Table):

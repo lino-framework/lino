@@ -38,7 +38,6 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     blogs
     boards
     cal
-    codechanges
     comments
     concepts
     contacts

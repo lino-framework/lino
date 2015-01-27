@@ -2,7 +2,9 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"Database models for :mod:`lino.modlib.sales`."
+"""Database models for `lino.modlib.sales`.
+
+"""
 
 from __future__ import unicode_literals
 
@@ -20,7 +22,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 #~ from lino import reports
 from lino.core import actions

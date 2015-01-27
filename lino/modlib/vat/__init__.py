@@ -2,8 +2,7 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino.modlib.vat` package provides models and business
-logic for handling value-added tax (VAT).
+"""Adds functionality for handling value-added tax (VAT).
 
 This module is designed to work both *with* and *without*
 :mod:`lino.modlib.ledger` and :mod:`lino.modlib.declarations`
@@ -29,8 +28,8 @@ from lino import ad
 
 
 class Plugin(ad.Plugin):
-    """
-    Extends :class:`lino.core.plugin.Plugin`. See also :doc:`/dev/ad`.
+    """See :doc:`/dev/plugins`.
+
     """
     verbose_name = _("VAT")
 
@@ -41,7 +40,13 @@ class Plugin(ad.Plugin):
     """
 
     default_vat_regime = 'private'
+
     default_vat_class = 'normal'
+    """The default VAT class. If this is specified as a string, Lino will
+    resolve it at startup into an item of :class:`VatClasses
+    <lino.modlib.vat.models.VatClasses>`.
+
+    """
 
     country_code = None
     """The 2-letter ISO code of the country where the site owner is
@@ -51,6 +56,11 @@ class Plugin(ad.Plugin):
     """
 
     def get_vat_class(self, tt, item):
+        """Return the VAT class to be used for given trade type and given
+invoice item. Return value must be an item of
+:class:`lino.modlib.vat.models.VatClasses`.
+
+        """
         return self.default_vat_class
 
     def get_country(self):
@@ -70,12 +80,12 @@ class Plugin(ad.Plugin):
                 self.default_vat_class)
 
     def setup_config_menu(config, site, profile, m):
-        m = m.add_menu("vat", config.verbose_name)
+        m = m.add_menu(config.app_label, config.verbose_name)
         m.add_action('vat.PaymentTerms')
         m.add_action('vat.VatRates')
 
     def setup_explorer_menu(config, site, profile, m):
-        m = m.add_menu("vat", config.verbose_name)
+        m = m.add_menu(config.app_label, config.verbose_name)
         m.add_action('vat.VatRegimes')
         m.add_action('vat.TradeTypes')
         m.add_action('vat.VatClasses')

@@ -9,7 +9,7 @@ See :mod:`ml.cv`.
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.mixins.periods import DatePeriod
 

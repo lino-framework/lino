@@ -1,7 +1,7 @@
 ## Copyright 2013 Luc Saffre
 ## This file is part of the Lino project.
 
-from lino import dd, rt
+from lino.api import dd, rt
 from django.utils.translation import ugettext_lazy as _
 
 class EntryStates(dd.Workflow):

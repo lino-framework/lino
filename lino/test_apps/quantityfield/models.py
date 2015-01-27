@@ -38,7 +38,7 @@ from __future__ import unicode_literals
 
 
 from django.db import models
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 class Item(dd.Model):

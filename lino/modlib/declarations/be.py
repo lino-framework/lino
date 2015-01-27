@@ -15,7 +15,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 #~ from lino.core.dbutils import full_model_name
 #~ from lino.utils.choicelists import ChoiceList

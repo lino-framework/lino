@@ -34,7 +34,7 @@ logger = logging.getLogger('lino')
 
 from django.conf import settings
 
-from lino import dd
+from lino.api import dd
 
 
 TABLE2 = """

@@ -47,7 +47,7 @@ from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db import models
 
 
-from lino import dd
+from lino.api import dd
 
 from lino.core.dbutils import app_labels
 from lino import AFTER17

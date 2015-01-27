@@ -2,7 +2,7 @@ import datetime
 from django.utils import timezone
 from django.db import models
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 class Poll(dd.Model):

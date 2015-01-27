@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Database models for `lino.modlib.households`.
+
+"""
+
 
 from __future__ import unicode_literals
 

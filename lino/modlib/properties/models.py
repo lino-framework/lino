@@ -1,24 +1,20 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""Database models for `lino.modlib.properties`.
 
-:class:`PropType`
-:class:`PropChoice`
-:class:`PropGroup`
+This module is deprecated.
 
-A :class:`PropOccurence` is when a given "property owner" 
-has a given :class:`Property`. 
-"Property owner" can be anything: 
-a person, a company, a product, an upload, 
-it depends on the implementation of :class:`PropOccurence`.
-For example :mod:`lino.projects.pcsw.models.PersonProperty`.
+A :class:`PropOccurence` is when a given "property owner" has a given
+:class:`Property`.  "Property owner" can be anything: a person, a
+company, a product, an upload, it depends on the implementation of
+:class:`PropOccurence`.  For example
+:mod:`lino.projects.pcsw.models.PersonProperty`.
 
 A :class:`Property` defines the configuration of a property.
 
-This module would deserve more documentation.
-
+.. autosummary::
 
 """
 

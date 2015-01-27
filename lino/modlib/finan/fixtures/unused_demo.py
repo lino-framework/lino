@@ -10,7 +10,7 @@
 from decimal import Decimal
 from django.conf import settings
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils import Cycler
 from lino.utils.instantiator import Instantiator, i2d
 from lino.core.dbutils import resolve_model

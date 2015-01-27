@@ -2,7 +2,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-Database models for :mod:`lino.modlib.uploads`.
+Database models for `lino.modlib.uploads`.
 """
 
 import logging
@@ -13,7 +13,7 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems

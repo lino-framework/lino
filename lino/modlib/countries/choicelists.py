@@ -11,7 +11,7 @@ Choicelists for :mod:`lino.modlib.countries`.
 from __future__ import unicode_literals
 
 
-from lino import dd, rt
+from lino.api import dd, rt
 from django.utils.translation import ugettext_lazy as _
 
 

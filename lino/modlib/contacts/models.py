@@ -2,10 +2,13 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""
+Database models for `lino.modlib.contacts`.
 
-"""The :xfile:`models.py` module for the :mod:`ml.contacs` app.
+.. autosummary::
 
 """
+
 
 from __future__ import unicode_literals
 
@@ -17,7 +20,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 
 from lino.utils import join_words

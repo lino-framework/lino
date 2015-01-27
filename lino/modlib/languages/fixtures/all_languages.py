@@ -26,7 +26,7 @@ from django.conf import settings
 
 from lino.utils import dblogger as logger
 
-from lino import dd
+from lino.api import dd
 from lino.modlib.languages.models import Language
 
 

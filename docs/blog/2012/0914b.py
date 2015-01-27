@@ -1,4 +1,4 @@
-from lino import dd, rt
+from lino.api import dd, rt
 pcsw = dd.resolve_app('pcsw')
 users = dd.resolve_app('users')
 alicia = users.User.objects.get(username='alicia')

@@ -2,7 +2,7 @@
 ## This file is part of the Lino project.
 
 from django.db import models
-from lino import dd
+from lino.api import dd
 from django.utils.translation import ugettext_lazy as _
 from .workflows import EntryStates
 from lino.modlib.users.mixins import ByUser, UserAuthored

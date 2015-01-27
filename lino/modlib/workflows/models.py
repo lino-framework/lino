@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import lino
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 #~ from lino import commands
 from lino.core import actors
 from lino.mixins import printable

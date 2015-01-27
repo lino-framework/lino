@@ -2,7 +2,7 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from lino import dd
+from lino.api import dd
 from lino import rt
 from lino.ad import _
 

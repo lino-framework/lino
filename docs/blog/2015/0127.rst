@@ -1,0 +1,9 @@
+=========================
+Tuesday, January 27, 2015
+=========================
+
+More tidy-up routine in the documentation.
+
+There was yet another problem with
+:attr:`lino.modlib.vat.Plugin.default_vat_class`.
+

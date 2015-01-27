@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :xfile:`models.py` for the :mod:`lino.modlib.accounts` app.
+"""Database models for `lino.modlib.accounts`.
 
 """
 
@@ -15,9 +14,8 @@ from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
-# settings.SITE.add_site_attribute('accounts_ref_length', 20)
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
@@ -25,7 +23,7 @@ from .utils import (AccountTypes, DEBIT, CREDIT, DCLABELS, DebitOrCreditField)
 
 
 class Chart(mixins.BabelNamed):
-
+    "A collection of accounts."
     class Meta:
         verbose_name = _("Account Chart")
         verbose_name_plural = _("Account Charts")
@@ -56,7 +54,7 @@ class Charts(dd.Table):
 
 
 class Group(mixins.BabelNamed):
-
+    "A group of accounts."
     class Meta:
         verbose_name = _("Account Group")
         verbose_name_plural = _("Account Groups")
@@ -71,7 +69,8 @@ class Group(mixins.BabelNamed):
 
 
 class Groups(dd.Table):
-    model = Group
+    
+    model = 'accounts.Group'
     required = dd.required(user_level='manager')
     order_by = ['chart', 'ref']
     column_names = 'chart ref name account_type *'

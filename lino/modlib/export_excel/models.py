@@ -1,9 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Josef Kejzlar, Luc Saffre
+# Copyright 2014-2015 Josef Kejzlar, Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""The :xfile:`models.py` for `lino.modlib.export_excel`.
+
+"""
 import os
 import datetime
+
 from django.conf import settings
 from lino.core import actions
 from lino.core.tables import AbstractTable

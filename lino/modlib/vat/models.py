@@ -1,7 +1,10 @@
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :xfile:`models.py` module for :mod:`lino.modlib.vat`.
+"""
+Database models for `lino.modlib.excerpts`.
+
+.. autosummary::
 
 It defines two database models :class:`VatRate` and
 :class:`PaymentTerm`, and a series of mixins which are used in
@@ -30,7 +33,7 @@ from lino.mixins import Sequenced
 from lino.mixins import BabelNamed
 from lino.modlib.system.mixins import PeriodEvents
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 config = dd.plugins.vat
 
@@ -560,8 +563,7 @@ class VatItemBase(Sequenced, VatTotal):
     vat_class = VatClasses.field(blank=True, default=get_default_vat_class)
 
     def get_vat_class(self, tt):
-        name = dd.plugins.vat.get_vat_class(tt, self)
-        return VatClasses.get_by_name(name)
+        return dd.plugins.vat.get_vat_class(tt, self)
 
     def vat_class_changed(self, ar):
         #~ logger.info("20121204 vat_class_changed")

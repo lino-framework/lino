@@ -1,5 +1,5 @@
 from django.db.models import Q
-from lino import dd
+from lino.api import dd
 
 
 class Places(dd.Table):

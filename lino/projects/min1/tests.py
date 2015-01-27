@@ -20,7 +20,7 @@ from django.utils import translation
 
 from lino.utils.djangotest import RemoteAuthTestCase
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.utils.instantiator import create_and_get
 

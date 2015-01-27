@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""The :xfile:`models.py` module for :mod:`lino.modlib.polls`.
+"""Database models for `lino.modlib.polls`.
 
 .. rubric:: Models overview
 
@@ -27,7 +27,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, mixins
+from lino.api import dd
+from lino import mixins
 from lino.utils import join_elems
 
 from lino.utils.xmlgen.html import E

@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Part of the :xfile:`models` module for the :mod:`lino.modlib.cal` app.
+Part of the :xfile:`models.py` module for `lino.modlib.cal`.
 
 Defines the following models and their tables:
 

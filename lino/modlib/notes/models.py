@@ -1,8 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-The :xfile:`models.py` file for :mod:`lino.modlib.notes`.
+Database models for `lino.modlib.notes`.
+
+.. autosummary::
+
 """
 
 import logging
@@ -14,7 +17,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from django.conf import settings
 

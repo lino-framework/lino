@@ -6,7 +6,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from lino.modlib.users.mixins import UserAuthored
 

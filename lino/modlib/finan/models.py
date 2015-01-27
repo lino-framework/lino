@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino import mixins
 
 from decimal import Decimal

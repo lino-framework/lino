@@ -6,7 +6,7 @@
 The :term:`dummy module` for `outbox`, 
 used by :func:`lino.core.dbutils.resolve_app`.
 """
-from lino import dd
+from lino.api import dd
 
 
 class Mailable(object):

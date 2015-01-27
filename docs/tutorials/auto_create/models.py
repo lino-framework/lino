@@ -1,5 +1,5 @@
 from django.db import models
-from lino import dd, rt
+from lino.api import dd, rt
 
 class Tag(dd.Model):
   

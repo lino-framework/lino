@@ -25,7 +25,7 @@ the data used here comes from uncertain sources.
 #~ logger = logging.getLogger(__name__)
 
 
-from lino import dd
+from lino.api import dd
 from lino.core.dbutils import resolve_model
 from lino.utils import dblogger as logger
 

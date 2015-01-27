@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r"""This module is a Python implementation of some basic truths of
@@ -207,7 +207,7 @@ from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
 #~ from lino.utils.choicelists import Choice,ChoiceList
-from lino import dd
+from lino.api import dd
 
 DEBIT = True
 CREDIT = False

@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
-The :xfile:`models.py` file for :mod:`lino.modlib.comments`.
+"""Database models for `lino.modlib.comments`.
+
 """
 
 import logging
@@ -13,9 +13,8 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.contenttypes.mixins import Controllable
 
-from lino import dd, rt
+from lino.api import dd
 from lino import mixins
-from django.conf import settings
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 

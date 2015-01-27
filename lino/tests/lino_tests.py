@@ -21,7 +21,7 @@ without any fixture. You can run only these tests by issuing::
 
 from django.conf import settings
 from lino.utils.djangotest import RemoteAuthTestCase
-from lino import dd, rt
+from lino.api import dd, rt
 
 # import logging
 # logger = logging.getLogger(__file__)

@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
 
-from lino import dd
+from lino.api import dd
 
 cal = dd.resolve_app('cal')
 

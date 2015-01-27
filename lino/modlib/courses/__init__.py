@@ -31,6 +31,7 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
     verbose_name = _("Courses")
     teacher_model = 'contacts.Person'
     pupil_model = 'contacts.Person'

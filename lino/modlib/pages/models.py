@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -20,7 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from django.utils.translation import get_language
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 

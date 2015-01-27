@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Defines models for :mod:`lino.modlib.postings`.
+Database models for `lino.modlib.postings`.
 """
 
 import logging
@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 
 from lino import mixins
-from lino import dd
+from lino.api import dd
 
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored

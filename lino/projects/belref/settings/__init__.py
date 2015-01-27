@@ -64,7 +64,7 @@ class Site(Site):
         We create a new menu from scratch because the default menu structure
         wouldn't fit.
         """
-        from lino import dd
+        from lino.api import dd
         mg = dd.plugins.concepts
         m = main.add_menu(mg.app_label, mg.verbose_name)
         m.add_action(self.modules.concepts.Concepts)

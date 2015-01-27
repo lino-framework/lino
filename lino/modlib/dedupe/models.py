@@ -1,12 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Overrides the :attr:`submit_insert <dd.Model.submit_insert>` action
-of :class:`ml.contacts.Person` with :class:`CheckedSubmitInsert`, a
-customized variant of the standard :class:`SubmitInsert
-<dd.SubmitInsert>` that checks for duplicate persons and asks a user
-confirmation when necessary.
+"""Database models for `lino.modlib.dedupe`.
+
+Overrides the :attr:`submit_insert <dd.Model.submit_insert>` action
+of :class:`lino.modlib.contacts.contacts.Person` with
+:class:`CheckedSubmitInsert`, a customized variant of the standard
+:class:`SubmitInsert <dd.SubmitInsert>` that checks for duplicate
+persons and asks a user confirmation when necessary.
 
 The current implementation of the detection algorithm is rather
 primitive.  We might one day add another table with NYSIIS or SOUNDEX
@@ -35,7 +37,7 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.core.actions import SubmitInsert
 
 contacts = dd.resolve_app('contacts')

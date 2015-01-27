@@ -1,5 +1,5 @@
 from django.db import models
-from lino import dd
+from lino.api import dd
 from lino.mixins import Human
 
 

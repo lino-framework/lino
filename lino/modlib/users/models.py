@@ -1,6 +1,6 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Database models for :mod:`lino.modlib.users`.
+"""Database models for `lino.modlib.users`.
 
 .. autosummary::
 
@@ -19,7 +19,7 @@ from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
 
-from lino import dd
+from lino.api import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 

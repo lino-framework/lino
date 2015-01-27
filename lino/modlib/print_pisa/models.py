@@ -1,3 +1,7 @@
+"""Database models for `lino.modlib.print_pisa`.
+
+"""
+
 import logging
 import os
 import cStringIO

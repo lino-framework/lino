@@ -1,15 +1,15 @@
 # coding: UTF-8
 # Copyright 2011-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Database models for `lino.modlib.thirds`.
 
-"""Deserves more documentation.
 """
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from lino.modlib.contacts import models as contacts
 from lino.modlib.contenttypes.mixins import Controllable

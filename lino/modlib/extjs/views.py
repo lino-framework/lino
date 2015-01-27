@@ -37,7 +37,7 @@ import json
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 
-from lino import dd
+from lino.api import dd
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E

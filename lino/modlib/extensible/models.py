@@ -1,10 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-See :mod:`ml.extensible`.
+Database models for `lino.modlib.extensible`.
+
+.. autosummary::
+
 """
+
 
 from __future__ import unicode_literals
 
@@ -17,7 +21,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core import exceptions
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.core import constants
 
 from ..cal.models import Subscription, Calendars, Events

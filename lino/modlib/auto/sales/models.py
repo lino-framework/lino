@@ -1,16 +1,18 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
+Database models for `lino.modlib.auto.sales`.
 
-"See :mod:`ml.sales`."
+.. autosummary::
+
+"""
 
 from __future__ import unicode_literals
 
 
 import logging
 logger = logging.getLogger(__name__)
-
-import datetime
 
 from django.db import models
 from django.conf import settings
@@ -23,7 +25,7 @@ from decimal import Decimal
 
 ZERO = Decimal()
 
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
 
@@ -91,7 +93,7 @@ class Invoiceable(dd.Model):
     def get_partner_filter(cls, partner):
         """
         To be implemented by subclasses.
-        Return the filter to apply to :class:`ml.contacts.Partner` in
+        Return the filter to apply to :class:`lino.modlib.contacts.models.Partner` in
         order to get the partner who must receive the invoice.
 
         """
@@ -305,7 +307,7 @@ rows disappear from this table
         def ok(ar2):
             invoices = []
             for row in ar.selected_rows:
-                partner = contacts.Partner.objects.get(pk=row.pk)
+                partner = rt.modules.contacts.Partner.objects.get(pk=row.pk)
                 invoice = create_invoice_for(partner, ar)
                 invoices.append(invoice)
             #~ for obj in ar:
@@ -339,7 +341,7 @@ class InvoicesToCreate(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(self, ar):
-        qs = contacts.Partner.objects.all()
+        qs = rt.modules.contacts.Partner.objects.all()
         if ar.quick_search is not None:
             qs = dbtables.add_quick_search_filter(qs, ar.quick_search)
         if ar.gridfilters is not None:
@@ -383,11 +385,11 @@ class InvoicesToCreate(dd.VirtualTable):
     @classmethod
     def get_pk_field(self):
         #~ print 20130831,repr(contacts.Partner._meta.pk)
-        return contacts.Partner._meta.pk
+        return rt.modules.contacts.Partner._meta.pk
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
-        partner = contacts.Partner.objects.get(pk=pk)
+        partner = rt.modules.contacts.Partner.objects.get(pk=pk)
         return self.get_row_for(partner)
 
     @dd.virtualfield(models.DateField(_("First date")))

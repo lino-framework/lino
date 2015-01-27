@@ -35,7 +35,7 @@ from django.utils import translation
 from babel.dates import format_datetime, format_date
 from lino.core.site import to_locale
 
-from lino import dd
+from lino.api import dd
 
 
 def aware(d):

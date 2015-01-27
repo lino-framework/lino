@@ -26,7 +26,7 @@ from django.utils.encoding import force_unicode
 
 
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E
 

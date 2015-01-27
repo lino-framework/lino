@@ -1,8 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
+Database models for `lino.modlib.vocbook`.
+
+.. autosummary::
+
 Work in progress.
 
 See :srcref:`docs/tickets/92`.
@@ -18,7 +22,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 #~ from lino.core import reports
 from lino.core import actions
 from lino.utils import dblogger

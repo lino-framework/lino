@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :xfile:`models.py` module for the :mod:`lino.modlib.cal` app.
+"""Database models for `lino.modlib.cal`.
+
 """
 
 from __future__ import unicode_literals
@@ -20,7 +20,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
-from lino import dd
+from lino.api import dd
 from lino.utils import ONE_DAY
 
 from lino.modlib.contenttypes.mixins import Controllable

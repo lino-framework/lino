@@ -73,7 +73,7 @@ class Plugin(BeIdPlugin):  # was: use_eid_jslib
         self = cls
 
         from lino.utils import ssin
-        from lino import dd, rt
+        from lino.api import dd, rt
         from lino.mixins.beid import BeIdCardTypes
         from lino.utils import join_words
         from lino.utils import IncompleteDate

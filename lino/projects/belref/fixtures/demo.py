@@ -15,7 +15,7 @@ import re
 abbrRE = re.compile("^(.*)\s*\((.*)\)\s*", re.DOTALL)
 
 
-from lino import dd
+from lino.api import dd
 
 Concept = dd.resolve_model('concepts.Concept')
 Link = dd.resolve_model('concepts.Link')

@@ -11,7 +11,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 class CreatePostings(dd.Action):

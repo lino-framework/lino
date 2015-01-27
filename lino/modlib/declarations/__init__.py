@@ -5,6 +5,7 @@ from lino import ad
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
 
     def setup_explorer_menu(self, site, profile, m):
         m = m.add_menu("vat", site.plugins.vat.verbose_name)

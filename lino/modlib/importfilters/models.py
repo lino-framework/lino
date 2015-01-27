@@ -1,9 +1,10 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""Database models for `lino.modlib.importfilter`.
+
 """
-The :xfile:`models.py` module of the :mod:`lino.modlib.system` app.
-"""
+
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,7 +20,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 from lino.utils.instantiator import Instantiator
 

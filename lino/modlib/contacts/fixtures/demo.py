@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 from django.conf import settings
 from lino.utils.instantiator import Instantiator
 from lino import mixins
-from lino import dd, rt
+from lino.api import dd, rt
 
 
 def objects():

@@ -13,7 +13,7 @@ from __future__ import print_function
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-from lino import dd
+from lino.api import dd
 
 
 class Certifiable(dd.Model):

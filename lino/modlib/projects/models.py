@@ -13,7 +13,7 @@ Adds tables Project and ProjectType
 from django.db import models
 from django.utils.translation import ugettext as _
 
-from lino import dd
+from lino.api import dd
 from lino import mixins
 from lino.modlib.users.mixins import ByUser, UserAuthored
 

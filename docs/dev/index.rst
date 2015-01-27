@@ -51,6 +51,7 @@ Getting acquaintained
 - :doc:`settings` : The Django settings module. How Lino integrates
   into Django settings. Inheriting settings.
 - :doc:`application` : An app is not an application.
+- :doc:`plugins` : Why we need plugins. Configuring plugins.
 - :doc:`users` : Why do we replace Django's user management. Passwords.
 - :doc:`site` : 
 - :doc:`menu` :
@@ -63,7 +64,7 @@ Getting acquaintained
 - :doc:`/tutorials/actions/index` :
 - :doc:`/tutorials/mldbc/index` :
 - :doc:`/tutorials/human/index` :
-- :doc:`apps` : 
+- :doc:`apps` : Plugin inheritance
 
 .. toctree::
    :maxdepth: 1
@@ -71,6 +72,7 @@ Getting acquaintained
 
    settings
    application
+   plugins
    site
    users
    menu

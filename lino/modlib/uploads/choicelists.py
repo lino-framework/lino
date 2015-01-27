@@ -37,7 +37,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino import dd
+from lino.api import dd
 
 
 class Shortcut(dd.Choice):

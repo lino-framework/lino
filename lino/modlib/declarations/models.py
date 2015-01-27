@@ -1,12 +1,10 @@
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-VAT (value-added tax) related logics.
+"""Database models for `lino.modlib.vat`.
 
-This module defines some central ChoiceLists 
-and Model mixins designed to work both with and without 
-:mod:`lino.modlib.ledger` installed.
+This module defines some central ChoiceLists and Model mixins designed
+to work both with and without :mod:`lino.modlib.ledger` installed.
 
 """
 
@@ -20,7 +18,7 @@ from decimal import Decimal
 from django.db import models
 from django.conf import settings
 
-from lino import dd
+from lino.api import dd
 from django.utils.translation import ugettext_lazy as _
 
 partner_model = settings.SITE.partners_app_label + '.Partner'

@@ -1,5 +1,5 @@
 from django.db import models
-from lino import dd
+from lino.api import dd
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.core.actors import qs2summary

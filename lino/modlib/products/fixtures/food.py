@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 
 from lino.utils.instantiator import Instantiator
 
-from lino import dd
+from lino.api import dd
 
 def objects():
 

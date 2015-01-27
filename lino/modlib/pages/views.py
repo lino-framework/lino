@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 from django import http
 from django.views.generic import View
 
-from lino import dd
+from lino.api import dd
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E

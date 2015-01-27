@@ -1,5 +1,9 @@
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Database models for `lino.modlib.boards`.
+
+"""
+
 
 from __future__ import unicode_literals
 

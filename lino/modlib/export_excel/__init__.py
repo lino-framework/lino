@@ -1,4 +1,4 @@
-# Copyright 2014 Josef Kejzlar, Luc Saffre
+# Copyright 2014-2015 Josef Kejzlar, Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This app installs a button to "export" any table to excel xls format.
@@ -16,5 +16,6 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(ad.Plugin):
+    "See :doc:`/dev/plugins`."
     verbose_name = _("Export to Excel xls format")
 

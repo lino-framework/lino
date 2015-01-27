@@ -2,7 +2,7 @@
 
 from __future__ import unicode_literals
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 Product = dd.resolve_model('babel_tutorial.Product')
 

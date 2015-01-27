@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Database models for :mod:`lino.modlib.reception`.
+Database models for `lino.modlib.reception`.
 
 Guest
 
@@ -30,7 +30,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino import dd, rt
+from lino.api import dd, rt
 
 cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
