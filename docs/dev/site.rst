@@ -108,6 +108,7 @@ lino.modlib.countries
 lino.modlib.contacts
 lino.modlib.cal
 lino.modlib.export_excel
+lino.modlib.office
 
 
 As an application developer you won't specifiy this argument,

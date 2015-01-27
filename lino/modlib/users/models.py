@@ -25,7 +25,7 @@ from lino.core import actions
 
 from lino.mixins import CreatedModified
 
-from .choicelists import UserProfiles, UserLevels
+from .choicelists import UserProfiles, UserLevels, UserGroups
 from .mixins import UserAuthored
 
 
