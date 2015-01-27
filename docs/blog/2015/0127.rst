@@ -36,17 +36,18 @@ How to reproduce it:
 
 The solution was rather complex and tricky:
 
-- :meth:`lino.modlib.contacts.Person.full_clean` now reacts if
-  `first_name` and `last_name` are both empty but `name` is *not*
-  empty. In that case it uses :func:`lino.contacts.utils.name2kw` to
-  fill both fields.
+- The :meth:`full_clean <lino.core.model.Model.full_clean>` method of
+  :class:`lino.modlib.contacts.models.Person` now reacts if `first_name`
+  and `last_name` are both empty and `name` is *not* empty. In that case
+  it uses :func:`lino.modlib.contacts.utils.name2kw` to fill both
+  fields.
 
 - :class:`lino.utils.mti.EnableChild`
   now calls 
   :func:`lino.utils.mti.insert_child` 
   with the new keyword parameter `full_clean`.
   Which has the effect of calling
-  :meth:`full_clean :<lino.core.model.Model.full_clean>` 
+  :meth:`full_clean <lino.core.model.Model.full_clean>` 
   on the new child.
 
 - New function :func:`lino.core.utils.error2str` with the side effect
