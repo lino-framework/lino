@@ -39,13 +39,14 @@ from lino.utils import join_elems
 
 from lino.modlib.countries.mixins import AddressLocation
 
-from lino.modlib.contacts import Plugin
-
 from lino.utils import mti
 from lino.utils.xmlgen.html import E
 from lino.utils.addressable import Addressable
 
+
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
+
+from .utils import name2kw
 
 
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
@@ -275,7 +276,13 @@ class Person(mixins.Human, mixins.Born, Partner):
         search on Persons.
 
         """
-        self.name = join_words(self.last_name, self.first_name)
+        name = join_words(self.last_name, self.first_name)
+        if name:
+            self.name = name
+        else:
+            for k, v in name2kw(self.name).items():
+                setattr(self, k, v)
+            # self.last_name = self.name
         super(Person, self).full_clean(*args, **kw)
 
     def address_person_lines(self, *args, **kw):

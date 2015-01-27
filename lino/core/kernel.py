@@ -31,7 +31,6 @@ from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from django.conf import settings
 from django.core import exceptions
-from django.utils.encoding import force_unicode
 from django.utils.encoding import force_text
 
 from django.db import models
@@ -526,16 +525,8 @@ class Kernel(object):
                 ar.set_response(close_window=True)
             a.run_from_ui(ar)
         except exceptions.ValidationError as e:
-            def fieldlabel(name):
-                de = ar.ah.actor.get_data_elem(name)
-                return force_unicode(getattr(de, 'verbose_name', name))
-            md = getattr(e, 'message_dict', None)
-            if md is not None:
-                e = '<br>'.join(["%s : %s" % (fieldlabel(k), v)
-                                for k, v in md.items()])
-            else:
-                e = '<br>'.join(e.messages)
-            ar.error(e, alert=True)
+            logger.info("20150127 run_action %r", e)
+            ar.error(ar.ah.actor.error2str(e), alert=True)
 
         except Warning as e:
             ar.error(unicode(e), alert=True)

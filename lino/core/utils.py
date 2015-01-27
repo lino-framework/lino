@@ -17,6 +17,8 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from lino.core.signals import on_ui_updated
+from django.core import exceptions
+from django.utils.encoding import force_unicode
 
 from lino.utils.xmlgen.html import E
 
@@ -286,3 +288,20 @@ class ChangeWatcher(object):
         #~ print "ChangeWatcher.send_update()", self.watched
         on_ui_updated.send(sender=self, request=request)
 
+
+def error2str(self, e):
+    """Convert the given Exception object into a string, but handling
+    ValidationError specially.
+    """
+    if isinstance(e, exceptions.ValidationError):
+        md = getattr(e, 'message_dict', None)
+        if md is not None:
+            def fieldlabel(name):
+                de = self.get_data_elem(name)
+                return force_unicode(getattr(de, 'verbose_name', name))
+            return '\n'.join([
+                "%s : %s" % (
+                    fieldlabel(k), self.error2str(v))
+                for k, v in md.items()])
+        return '\n'.join(e.messages)
+    return unicode(e)

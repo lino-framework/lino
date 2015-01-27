@@ -14,6 +14,7 @@ lino.modlib.contacts.models
       company_tables_alias
       join_elems
       join_words
+      name2kw
       site_setup
    
    
@@ -44,7 +45,6 @@ lino.modlib.contacts.models
       Person
       PersonDetail
       Persons
-      Plugin
       Role
       RoleType
       RoleTypes

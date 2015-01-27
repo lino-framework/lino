@@ -9,7 +9,6 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :maxdepth: 2
 
-   debts
    extensible
    households
    humanlinks
@@ -19,6 +18,7 @@ This document is being migrated to :mod:`lino.modlib`.
 .. toctree::
    :hidden:
 
+   debts
    contacts
    addresses
    beid

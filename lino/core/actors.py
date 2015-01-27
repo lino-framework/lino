@@ -24,6 +24,7 @@ from lino.core.requests import ActionRequest
 from lino.core.requests import BoundAction
 from lino.core.constants import _handle_attr_name
 from lino.core.utils import add_requirements
+from lino.core.utils import error2str
 from lino.utils import curry, AttrDict
 from lino.utils.xmlgen.html import E
 
@@ -1251,4 +1252,8 @@ class Actor(actions.Parametrizable):
         """
         ar = ar.spawn(self, master_instance=obj)
         return qs2summary(ar, ar.data_iterator, self.summary_sep)
+
+    @classmethod
+    def error2str(self, e):
+        return error2str(self, e)
 

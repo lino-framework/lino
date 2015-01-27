@@ -13,6 +13,7 @@ lino.core.actors
       comma
       curry
       discover
+      error2str
       field_getter
       qs2summary
       register_actor

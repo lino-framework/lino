@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -12,17 +12,17 @@ I wrote it mainly to solve ticket :srcref:`docs/tickets/22`.
 """
 import logging
 logger = logging.getLogger(__name__)
-import six
 
 from django.db import models
 from django.db import router
 from django.db.models.deletion import Collector, DO_NOTHING
 from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 from lino.core.dbutils import resolve_model
 from lino.core.fields import VirtualField
-from lino.core.signals import pre_remove_child, pre_add_child
+from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
 
 
 class ChildCollector(Collector):
@@ -168,9 +168,13 @@ def delete_child(obj, child_model, ar=None, using=None):
     # field and saves the form a second time.
 
 
-def insert_child(obj, child_model, **attrs):
-    """
-    Create and save an instance of `child_model` from existing `obj`.
+def insert_child(obj, child_model, full_clean=False, **attrs):
+    """Create and save an instance of `child_model` from existing `obj`.
+
+    If `full_clean` is True, call full_clean on the newly created
+    object. Default is `False` because this was the historic
+    behaviour.
+
     """
     #~ assert child_model != obj.__class__
     #~ if child_model == obj.__class__:
@@ -193,8 +197,23 @@ def insert_child(obj, child_model, **attrs):
         #~ obj.__class__.__name__,child_model.__name__)
     new_obj = child_model(**attrs)
     #~ logger.info("20120830 insert_child %s",obj2str(new_obj))
+
     new_obj.save()
+    # on_add_child.send(sender=obj, child=new_obj)
+    if full_clean:
+        try:
+            new_obj.full_clean()
+            new_obj.save()
+        except ValidationError as e:
+            msg = obj.error2str(e)
+            raise ValidationError(
+                _("Problem while inserting %(child)s "
+                  "child of %(parent)s: %(message)s") %
+                dict(child=child_model.__name__,
+                     parent=obj.__class__.__name__,
+                     message=msg))
     return new_obj
+        
 
 #~ def insert_child_and_save(obj,child_model,**attrs):
     #~ """
@@ -207,9 +226,9 @@ def insert_child(obj, child_model, **attrs):
 
 class EnableChild(VirtualField):
 
-    """
-    Rendered as a checkbox that indicates whether an mti 
-    child of the given model exists.
+    """Rendered as a checkbox that indicates whether an mti child of the
+    given model exists.
+
     """
 
     editable = True
@@ -221,9 +240,9 @@ class EnableChild(VirtualField):
         VirtualField.__init__(self, models.BooleanField(**kw), self.has_child)
 
     def is_enabled(self, lh):
-        """
-        When a FormLayout is inherited by an MTI 
-        child, EnableChild fields must be disabled.
+        """When a FormLayout is inherited by an MTI child, EnableChild fields
+        must be disabled.
+
         """
         return lh.layout._datasource.model != self.child_model \
             and issubclass(self.child_model, lh.layout._datasource.model)
@@ -234,10 +253,10 @@ class EnableChild(VirtualField):
         VirtualField.attach_to_model(self, model, name)
 
     def has_child(self, obj, request=None):
-        """
-        Returns True if `obj` has an MTI child in `self.child_model`.
-        The optional 2nd argument `request` (passed from
+        """Returns True if `obj` has an MTI child in `self.child_model`.  The
+        optional 2nd argument `request` (passed from
         `VirtualField.value_from_object`) is ignored.
+
         """
         try:
             getattr(obj, self.child_model.__name__.lower())
@@ -257,8 +276,8 @@ class EnableChild(VirtualField):
             if not v:
                 if ar is not None:
                     pre_remove_child.send(
-                        sender=obj, request=ar.request, child=self.child_model)
-                    #~ changes.log_remove_child(ar.request,obj,self.child_model)
+                        sender=obj, request=ar.request,
+                        child=self.child_model)
                 delete_child(obj, self.child_model, ar)
         else:
             #~ logger.debug('set_value_in_object : %s has no child %s',
@@ -267,9 +286,9 @@ class EnableChild(VirtualField):
                 # child doesn't exist. insert if it should
                 if ar is not None:
                     pre_add_child.send(
-                        sender=obj, request=ar.request, child=self.child_model)
-                    #~ changes.log_add_child(ar.request,obj,self.child_model)
-                insert_child(obj, self.child_model)
+                        sender=obj, request=ar.request,
+                        child=self.child_model)
+                insert_child(obj, self.child_model, full_clean=True)
 
 
 from lino.utils.dpy import create_mti_child as create_child

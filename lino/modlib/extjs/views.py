@@ -88,7 +88,7 @@ def delete_element(ar, elem):
     msg = ar.actor.disable_delete(elem, ar)
     if msg is not None:
         ar.error(None, msg, alert=True)
-        return settings.SITE.ui.render_action_response(ar)
+        return settings.SITE.kernel.render_action_response(ar)
 
     #~ dblogger.log_deleted(ar.request,elem)
 
@@ -104,7 +104,7 @@ def delete_element(ar, elem):
                 ) % dict(record=dd.obj2unicode(elem), error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         ar.error(None, msg)
-        return settings.SITE.ui.render_action_response(ar)
+        return settings.SITE.kernel.render_action_response(ar)
         #~ raise Http404(msg)
 
     return HttpResponseDeleted()
@@ -119,7 +119,7 @@ class AdminIndex(View):
     def get(self, request, *args, **kw):
         #~ logger.info("20130719 AdminIndex")
         settings.SITE.startup()
-        ui = settings.SITE.ui
+        ui = settings.SITE.kernel
         if settings.SITE.user_model is not None:
             user = request.subst_user or request.user
             a = settings.SITE.get_main_action(user)
@@ -134,7 +134,7 @@ class MainHtml(View):
     def get(self, request, *args, **kw):
         #~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
-        ui = settings.SITE.ui
+        ui = settings.SITE.kernel
         #~ raise Exception("20131023")
         from lino.core import requests
         ar = requests.BaseRequest(request)
@@ -164,7 +164,7 @@ class Authenticate(View):
             from lino.core import requests
             ar = requests.BaseRequest(request)
             ar.success("User %r logged out." % username)
-            return settings.SITE.ui.render_action_response(ar)
+            return settings.SITE.kernel.render_action_response(ar)
         raise http.Http404()
 
     def post(self, request, *args, **kw):
@@ -175,11 +175,11 @@ class Authenticate(View):
         ar = requests.BaseRequest(request)
         if user is None:
             ar.error("Could not authenticate %r" % username)
-            return settings.SITE.ui.render_action_response(ar)
+            return settings.SITE.kernel.render_action_response(ar)
         request.session['username'] = username
         request.session['password'] = password
         ar.success(("Now logged in as %r" % username))
-        return settings.SITE.ui.render_action_response(ar)
+        return settings.SITE.kernel.render_action_response(ar)
 
 
 class RunJasmine(View):
@@ -188,7 +188,7 @@ class RunJasmine(View):
     """
 
     def get(self, request, *args, **kw):
-        ui = settings.SITE.ui
+        ui = settings.SITE.kernel
         return http.HttpResponse(
             ui.extjs_renderer.html_page(request, run_jasmine=True))
 
@@ -199,14 +199,14 @@ class EidAppletService(View):
     """
 
     def post(self, request, *args, **kw):
-        ui = settings.SITE.ui
+        ui = settings.SITE.kernel
         return ui.success(html='Hallo?')
 
 
 class Callbacks(View):
 
     def get(self, request, thread_id, button_id):
-        return settings.SITE.ui.run_callback(request, thread_id, button_id)
+        return settings.SITE.kernel.run_callback(request, thread_id, button_id)
 
 
 #~ if settings.SITE.user_model:
@@ -469,7 +469,7 @@ class Restful(View):
         data = json.loads(data)
         a = rpt.get_url_action(rpt.default_list_action_name)
         ar = rpt.request(request=request, action=a)
-        ar.renderer = settings.SITE.ui.extjs_renderer
+        ar.renderer = settings.SITE.kernel.extjs_renderer
         ar.form2obj_and_save(data, elem, False)
         # Ext.ensible needs list_fields, not detail_fields
         ar.set_response(
@@ -480,7 +480,7 @@ class Restful(View):
 class ApiElement(View):
 
     def get(self, request, app_label=None, actor=None, pk=None):
-        ui = settings.SITE.ui
+        ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
 
         action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
@@ -547,35 +547,35 @@ class ApiElement(View):
             elem = ar.create_instance()
             ar.selected_rows = [elem]
 
-        return settings.SITE.ui.run_action(ar)
+        return settings.SITE.kernel.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):
         ar = action_request(
             app_label, actor, request, request.POST, True,
-            renderer=settings.SITE.ui.extjs_renderer)
+            renderer=settings.SITE.kernel.extjs_renderer)
         if pk == '-99998':
             elem = ar.create_instance()
             ar.selected_rows = [elem]
         else:
             ar.set_selected_pks(pk)
-        return settings.SITE.ui.run_action(ar)
+        return settings.SITE.kernel.run_action(ar)
 
     def put(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
         # logger.info("20141206 %s", data)
         ar = action_request(
             app_label, actor, request, data, False,
-            renderer=settings.SITE.ui.extjs_renderer)
+            renderer=settings.SITE.kernel.extjs_renderer)
         ar.set_selected_pks(pk)
-        return settings.SITE.ui.run_action(ar)
+        return settings.SITE.kernel.run_action(ar)
 
     def delete(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)
         ar = action_request(
             app_label, actor, request, data, False,
-            renderer=settings.SITE.ui.extjs_renderer)
+            renderer=settings.SITE.kernel.extjs_renderer)
         ar.set_selected_pks(pk)
-        return settings.SITE.ui.run_action(ar)
+        return settings.SITE.kernel.run_action(ar)
         
     def old_delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
@@ -589,12 +589,12 @@ class ApiList(View):
 
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
-        ar.renderer = settings.SITE.ui.extjs_renderer
-        return settings.SITE.ui.run_action(ar)
+        ar.renderer = settings.SITE.kernel.extjs_renderer
+        return settings.SITE.kernel.run_action(ar)
 
     def get(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = settings.SITE.ui.extjs_renderer
+        ar.renderer = settings.SITE.kernel.extjs_renderer
         rh = ar.ah
 
         fmt = request.GET.get(
@@ -679,19 +679,18 @@ class ApiList(View):
             doc = xghtml.Document(force_unicode(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
-            #~ settings.SITE.ui.ar2html(ar,t,ar.data_iterator)
+            #~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)
             ar.dump2html(t, ar.data_iterator)
             doc.write(response, encoding='utf-8')
             return response
 
-        return settings.SITE.ui.run_action(ar)
+        return settings.SITE.kernel.run_action(ar)
         #~ raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 
 
 class GridConfig(View):
 
     def put(self, request, app_label=None, actor=None):
-        ui = settings.SITE.ui
         rpt = requested_actor(app_label, actor)
         PUT = http.QueryDict(request.body)  # raw_post_data before Django 1.4
         gc = dict(
@@ -721,9 +720,9 @@ class GridConfig(View):
         except IOError, e:
             msg = _("Error while saving GC for %(table)s: %(error)s") % dict(
                 table=rpt, error=e)
-            return settings.SITE.ui.error(None, msg, alert=True)
+            return settings.SITE.kernel.error(None, msg, alert=True)
         #~ logger.info(msg)
-        settings.SITE.ui.extjs_renderer.build_site_cache(True)
-        return settings.SITE.ui.success(msg)
+        settings.SITE.kernel.extjs_renderer.build_site_cache(True)
+        return settings.SITE.kernel.success(msg)
 
 

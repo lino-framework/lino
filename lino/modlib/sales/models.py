@@ -492,7 +492,7 @@ def add_voucher_type(sender, **kw):
             #~ related_name='customers_account'))
 
 
-MODULE_LABEL = settings.SITE.plugins.sales.verbose_name  # _("Sales")
+MODULE_LABEL = dd.plugins.sales.verbose_name
 
 
 def site_setup(site):

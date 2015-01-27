@@ -9,6 +9,7 @@ lino.core.model
 
    .. autosummary::
    
+      error2str
       full_model_name
       get_class_attr
       obj2str

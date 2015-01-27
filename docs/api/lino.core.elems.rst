@@ -22,6 +22,7 @@ lino.core.elems
       join_elems
       py2html
       py2js
+      qs2summary
       string_concat
    
    
@@ -63,6 +64,8 @@ lino.core.elems
       IncompleteDateFieldElement
       IntegerFieldElement
       LayoutElement
+      ManyRelatedObjectElement
+      ManyToManyElement
       MonthFieldElement
       NumberFieldElement
       Panel

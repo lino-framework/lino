@@ -13,7 +13,6 @@ lino.core.kernel
       dirname
       exists
       force_text
-      force_unicode
       include
       is_devserver
       join

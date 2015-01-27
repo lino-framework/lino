@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2013 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -24,7 +24,7 @@ name_prefixes2 = ("VAN DEN", "VAN DER", "VAN DE",
 def name2kw(s, last_name_first=True):
     """
 Split a string that contains both last_name and first_name.
-The caller must indicate whether the string contains 
+The caller must indicate whether the string contains
 last_name first (e.g. Saffre Luc) or first_name first (e.g. Luc Saffre).
 
 Examples:
@@ -49,17 +49,17 @@ In more complicated cases, a comma is required to help:
 
 Some examples with `first_name` first:
 
->>> name2kw("Luc Saffre",False)
+>>> name2kw("Luc Saffre", False)
 {'first_name': 'Luc', 'last_name': 'Saffre'}
->>> name2kw("Rainer Maria Rilke",False)
+>>> name2kw("Rainer Maria Rilke", False)
 {'first_name': 'Rainer Maria', 'last_name': 'Rilke'}
->>> name2kw("Herman Van Rompuy",False)
+>>> name2kw("Herman Van Rompuy", False)
 {'first_name': 'Herman', 'last_name': 'Van Rompuy'}
 >>> name2kw("Jan 'T Jampens",False)
 {'first_name': 'Jan', 'last_name': "'T Jampens"}
->>> name2kw("Marc Antoine Bernard Van den Bossche",False)
+>>> name2kw("Marc Antoine Bernard Van den Bossche", False)
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
->>> name2kw("Marc Antoine Bernard Den Tandt",False)
+>>> name2kw("Marc Antoine Bernard Den Tandt", False)
 {'first_name': 'Marc Antoine Bernard', 'last_name': 'Den Tandt'}
 
 Edge cases:

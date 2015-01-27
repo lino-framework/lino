@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ungettext
 
 from lino import dd, rt, mixins
 from lino.utils import join_words, join_elems
@@ -100,7 +99,10 @@ class Household(contacts.Partner):
         return self.member_set.filter(role=role)
 
     def get_full_name(self, salutation=True, **salutation_options):
-        """Overrides :meth:`ml.contacts.Partner.get_full_name`."""
+        """Overrides
+        :meth:`lino.modlib.contacts.models.Partner.get_full_name`.
+
+        """
         return join_words(self.prefix, self.name)
     full_name = property(get_full_name)
 

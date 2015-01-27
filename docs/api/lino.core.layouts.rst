@@ -33,6 +33,7 @@ lino.core.layouts
       FormLayout
       InsertLayout
       LayoutHandle
+      ManyRelatedObjectsDescriptor
       NOT_PROVIDED
       Panel
       ParamsLayout

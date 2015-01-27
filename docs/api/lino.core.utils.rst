@@ -10,6 +10,8 @@ lino.core.utils
    .. autosummary::
    
       add_requirements
+      error2str
+      force_unicode
    
    
 

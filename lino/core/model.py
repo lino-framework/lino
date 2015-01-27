@@ -20,6 +20,7 @@ from lino.core.utils import ChangeWatcher
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
+from lino.core.utils import error2str
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
 
@@ -583,6 +584,9 @@ class Model(models.Model):
     def description_column(self, ar):
         return ar.obj2html(self)
 
+    def error2str(self, e):
+        return error2str(self, e)
+
     def __repr__(self):
         return obj2str(self)
 
@@ -733,6 +737,7 @@ action on individual instances.
         'lookup_or_create',
         'on_duplicate',
         'on_create',
+        'error2str',
         'get_typed_instance',
         'print_subclasses_graph',
         'grid_post', 'submit_insert')
