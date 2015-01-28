@@ -6,7 +6,7 @@ Database models for `lino.modlib.excerpts`.
 
 .. autosummary::
 
-It defines two database models :class:`VatRate` and
+It defines two database models :class:`VatRule` and
 :class:`PaymentTerm`, and a series of mixins which are used in
 :mod:`lino.modlib.ledger`, :mod:`lino.modlib.sales` and other apps.
 
@@ -239,11 +239,11 @@ def inject_vat_fields(sender, **kw):
                                           blank=True, null=True))
 
 
-class VatRate(Sequenced, DatePeriod):
+class VatRule(Sequenced, DatePeriod):
     """The demo database comes with the following VAT rate definitions
     (defined in :mod:`lino.modlib.vat.fixtures.euvatrates`):
 
-    .. django2rst:: rt.show("vat.VatRates")
+    .. django2rst:: rt.show("vat.VatRules")
 
     """
     class Meta:
@@ -255,31 +255,41 @@ class VatRate(Sequenced, DatePeriod):
     vat_regime = VatRegimes.field(blank=True)
     rate = models.DecimalField(default=ZERO, decimal_places=4, max_digits=7)
     country = dd.ForeignKey('countries.Country', blank=True, null=True)
+    can_edit = models.BooleanField(_("Editable amount"), default=True)
 
     @classmethod
-    def find_vat_rate(cls, trade_type, vat_regime, vat_class, country, date):
+    def find_vat_rule(cls, trade_type, vat_regime, vat_class, country, date):
+        """Return the one and only VatRule object to be applied for the given
+criteria.
+
+        """
         qs = cls.objects.order_by('seqno')
         qs = qs.filter(Q(country__isnull=True) | Q(country=country))
         if vat_class is not None:
-            qs = qs.filter(Q(vat_class__isnull=True) | Q(vat_class=vat_class))
+            qs = qs.filter(Q(vat_class='') | Q(vat_class=vat_class))
         if vat_regime is not None:
             qs = qs.filter(
-                Q(vat_regime__isnull=True) | Q(vat_regime=vat_regime))
+                Q(vat_regime='') | Q(vat_regime=vat_regime))
         if trade_type is not None:
             qs = qs.filter(
-                Q(trade_type__isnull=True) | Q(trade_type=trade_type))
+                Q(trade_type='') | Q(trade_type=trade_type))
         qs = PeriodEvents.active.add_filter(qs, date)
-        if qs.count() == 0:
-            return ZERO#1 # why zero
-            # p = dict(vat_regime=vat_regime, vat_class=vat_class,
-            #          country=country, date=date)
-            # raise Warning(_("No TAX rate configured for %s.)" % p)
-        return qs[0].rate
+        if qs.count() == 1:
+            return qs[0]
+        msg = _("Found {num} VAT rules for %{context}!)").format(
+            num=qs.count(), context=dict(
+                trade_type=trade_type,
+                vat_regime=vat_regime, vat_class=vat_class,
+                country=country.isocode, date=dd.fds(date)))
+        msg += " (SQL query was {0})".format(qs.query)
+        rt.show(VatRules)
+        raise Warning(msg)
 
 
-class VatRates(dd.Table):
-    model = 'vat.VatRate'
-    column_names = "seqno vat_class country trade_type vat_regime rate *"
+class VatRules(dd.Table):
+    model = 'vat.VatRule'
+    column_names = "seqno country vat_class trade_type vat_regime \
+    start_date end_date rate *"
     hide_sums = True
 
 
@@ -605,9 +615,9 @@ class VatItemBase(Sequenced, VatTotal):
         if self.vat_class is None:
             self.vat_class = self.get_vat_class(tt)
         # return settings.SITE.plugins.vat.get_vat_rate(
-        return VatRate.find_vat_rate(
+        return VatRule.find_vat_rule(
             tt, self.voucher.vat_regime, self.vat_class,
-            self.voucher.partner.country, self.voucher.date)
+            self.voucher.partner.country, self.voucher.date).rate
 
     #~ def save(self,*args,**kw):
         #~ super(VatItemBase,self).save(*args,**kw)

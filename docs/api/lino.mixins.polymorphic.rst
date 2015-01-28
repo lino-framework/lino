@@ -11,6 +11,7 @@ lino.mixins.polymorphic
    
       join_elems
       models_by_base
+      resolve_model
    
    
 
@@ -20,6 +21,10 @@ lino.mixins.polymorphic
 
    .. autosummary::
    
+      Action
+      ChildAction
+      DeleteChild
+      InsertChild
       Polymorphic
    
    

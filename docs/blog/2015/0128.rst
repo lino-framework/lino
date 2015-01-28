@@ -24,3 +24,42 @@ Internal optimizations while experimenting about this:
   enough.
 
 - Merged :mod:`lino.core.dbutils` into :mod:`lino.core.utils`.
+
+Result: cool! Lino's MTI navigator now includes buttons for adding and
+deleting MTI children.
+
+
+Getting the Lino docs to build
+==============================
+
+I removed the requirement of `sphinxcontrib.taglist
+<https://github.com/spinus/sphinxcontrib-taglist>`_ since that module
+is no longer maintained.
+
+
+More about VAT
+==============
+
+Congratulations to Mahmoud who contributed `his first pull request
+<https://github.com/lsaffre/lino/pull/25>`_.
+
+We then discovered that there are still armies of bugs sitting in the
+djungle of these modules. And I get the feeling that this is indeed a
+job for me. I need to do some more work on this, otherwise nobody has
+any chance to understand it.
+
+.. currentmodule:: lino.modlib.vat
+
+In :mod:`lino.modlib.vat`, I renamed `VatRate` to :class:`VatRule`.
+
+Renamed :meth:`VatRate.find_vat_rate` to
+:meth:`VatRule.find_vat_rule`. It now returns the database object, not
+just the value of the :attr:`VatRule.rate` field.  And if there is not
+exactly one row, it now raises a warning instead of returning ZERO.
+These changes cause :ref:`cosi` to fail for the moment.
+
+But at least for Lino it should now work::
+
+  $ go lino
+  $ fab initdb test bd
+

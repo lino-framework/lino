@@ -246,13 +246,13 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         else:
             rate = ZERO
 
-        catalog_rate = rt.modules.vat.VatRate.find_vat_rate(
+        vat_rule = rt.modules.vat.VatRule.find_vat_rule(
             tt, vat.get_default_vat_regime, self.get_vat_class(tt),
             dd.plugins.countries.get_my_country(),
             dd.today())
-        if rate != catalog_rate:
-            catalog_price = remove_vat(catalog_price, catalog_rate)
-            catalog_price = add_vat(catalog_price, rate)
+        if rate != vat_rule.rate:
+            catalog_price = remove_vat(catalog_price, vat_rule.rate)
+            catalog_price = add_vat(catalog_price, vat_rule.rate)
         if self.discount is None:
             self.unit_price = catalog_price
         else:

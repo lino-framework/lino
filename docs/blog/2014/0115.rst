@@ -5,10 +5,9 @@
 More about taglist
 ------------------
 
-.. tag:: [docs]    
-    The author of `sphinxcontrib-taglist
-    <https://github.com/spinus/sphinxcontrib-taglist>`_
-    helped me to understand how to use it. 
+The author of `sphinxcontrib-taglist
+<https://github.com/spinus/sphinxcontrib-taglist>`_
+helped me to understand how to use it. 
         
 His explanation:
 

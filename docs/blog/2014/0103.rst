@@ -39,9 +39,8 @@ Here is our chat:
 API docs still pointed to google code repository
 ------------------------------------------------
     
-.. tag:: [docs]
-    I noticed that the API docs still pointed to the google code
-    repository because `srcref_url` was not set correctly. Fixed.
+I noticed that the API docs still pointed to the google code
+repository because `srcref_url` was not set correctly. Fixed.
 
 Merged `lino.examples` to `lino.projects`
 -----------------------------------------

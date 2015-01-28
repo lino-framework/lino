@@ -20,5 +20,4 @@ Because I realized that
 I admit that my ticket management is still rather poor. 
 Still looking for ideas.
 
-.. tag:: blog docs
 

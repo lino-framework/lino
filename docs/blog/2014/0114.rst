@@ -21,17 +21,15 @@ which seems to be the solution.
 Hm, but I cannot figure out how to get this working.  I tried the
 following:
 
-- inserted some tags to the present page using either the :rst:role:`tag`
-  role (lets insert :tag:`blog` and :tag:`docs` for this page) or the
-  :rst:dir:`tag` directive.
+- inserted some tags to the present page using either the
+  :rst:role:`tag` role (lets insert `blog` and `docs` for this page)
+  or the :rst:dir:`tag` directive.
 
-.. tag:: blog docs
-
-- I created a new page :doc:`/ref/tags` with a :rst:dir:`taglist` 
+- I created a new page `/docs/ref/tags.rst` with a :rst:dir:`taglist`
   directive.
 
 The tags are nicely formatted as tags should be, but they are not
-clickable, and the :doc:`/ref/tags` page does not give a list of tagged
+clickable, and the `/ref/tags` page does not give a list of tagged
 entries.
 
 Tried cloning from Github and using the development version 

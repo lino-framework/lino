@@ -10,8 +10,29 @@ lino.core.utils
    .. autosummary::
    
       add_requirements
+      app_labels
+      babel_values
+      babelattr
+      babelkw
       error2str
       force_unicode
+      full_model_name
+      get_field
+      import_module
+      inrange_filter
+      is_devserver
+      is_valid_email
+      is_valid_url
+      models_by_base
+      navinfo
+      obj2str
+      obj2unicode
+      range_filter
+      require_app_models
+      resolve_app
+      resolve_field
+      resolve_model
+      sorted_models_list
    
    
 
@@ -28,10 +49,21 @@ lino.core.utils
       ParameterPanel
       Parametrizable
       Permittable
+      Q
       Requirements
+      URLValidator
+      UnresolvedField
+      UnresolvedModel
    
    
 
    
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      FieldDoesNotExist
+      ValidationError
    
    

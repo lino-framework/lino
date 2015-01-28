@@ -68,7 +68,7 @@ invoice item. Return value must be an item of
     def setup_config_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)
         m.add_action('vat.PaymentTerms')
-        m.add_action('vat.VatRates')
+        m.add_action('vat.VatRules')
 
     def setup_explorer_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)

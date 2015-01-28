@@ -25,7 +25,7 @@ configure(globals(), 'lino.projects.docs.settings.demo')
 
 language = 'en'
 
-extensions += ['sphinxcontrib.taglist']
+# extensions += ['sphinxcontrib.taglist']
 extensions += ['atelier.sphinxconf.blog']
 extensions += ['atelier.sphinxconf.complex_tables']
 extensions += ['lino.sphinxcontrib.logo']

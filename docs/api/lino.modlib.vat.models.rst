@@ -35,10 +35,10 @@ lino.modlib.vat.models
       VatClasses
       VatDocument
       VatItemBase
-      VatRate
-      VatRates
       VatRegime
       VatRegimes
+      VatRule
+      VatRules
       VatTotal
       relativedelta
    

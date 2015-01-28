@@ -9,10 +9,13 @@ lino.core.dbutils
 
    .. autosummary::
    
+      add_requirements
       app_labels
       babel_values
       babelattr
       babelkw
+      error2str
+      force_unicode
       full_model_name
       get_field
       import_module
@@ -39,7 +42,15 @@ lino.core.dbutils
 
    .. autosummary::
    
+      ChangeWatcher
+      Handle
+      InstanceAction
+      NOT_PROVIDED
+      ParameterPanel
+      Parametrizable
+      Permittable
       Q
+      Requirements
       URLValidator
       UnresolvedField
       UnresolvedModel

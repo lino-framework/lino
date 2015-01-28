@@ -11,7 +11,6 @@ Reference
    settings
    javascript
    jargon
-   tags
    obsolete
    /topics/index
    

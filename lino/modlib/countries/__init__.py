@@ -12,6 +12,7 @@ defines models and choicelists for managing geographic places.
     mixins
     models
     utils
+    fixtures.demo
     fixtures.few_countries
     fixtures.few_cities
     fixtures.be
