@@ -35,6 +35,8 @@ from lino.modlib.system.mixins import PeriodEvents
 
 from lino.api import dd, rt
 
+from .utils import remove_vat
+
 config = dd.plugins.vat
 
 
@@ -50,6 +52,7 @@ partners = dd.resolve_app(settings.SITE.partners_app_label)
 accounts = dd.resolve_app('accounts')
 
 ZERO = Decimal('0.00')
+ONE = Decimal('1.00')
 
 
 class VatClasses(dd.ChoiceList):
@@ -240,25 +243,36 @@ def inject_vat_fields(sender, **kw):
 
 
 class VatRule(Sequenced, DatePeriod):
-    """The demo database comes with the following VAT rate definitions
-    (defined in :mod:`lino.modlib.vat.fixtures.euvatrates`):
+    """Example data see :mod:`lino.modlib.vat.fixtures.euvatrates`
 
-    .. django2rst:: rt.show("vat.VatRules")
+    .. attribute:: country
+    .. attribute:: vat_class
+    .. attribute:: vat_regime
+    .. attribute:: rate
+    
+    The VAT rate to be applied. Note that a VAT rate of 20 percent is
+    stored as `0.20` (not `20`).
+
+    .. attribute:: can_edit
+
+    Whether the VAT amount can be modified by the user. This applies
+    only for documents with :attr:`VatTotal.auto_compute_totals` set
+    to `False`.
 
     """
     class Meta:
-        verbose_name = _("VAT rate")
-        verbose_name_plural = _("VAT rates")
+        verbose_name = _("VAT rule")
+        verbose_name_plural = _("VAT rules")
 
-    trade_type = TradeTypes.field(blank=True)
+    country = dd.ForeignKey('countries.Country', blank=True, null=True)
+    # trade_type = TradeTypes.field(blank=True)
     vat_class = VatClasses.field(blank=True)
     vat_regime = VatRegimes.field(blank=True)
     rate = models.DecimalField(default=ZERO, decimal_places=4, max_digits=7)
-    country = dd.ForeignKey('countries.Country', blank=True, null=True)
     can_edit = models.BooleanField(_("Editable amount"), default=True)
 
     @classmethod
-    def find_vat_rule(cls, trade_type, vat_regime, vat_class, country, date):
+    def get_vat_rule(cls, vat_regime, vat_class, country, date):
         """Return the one and only VatRule object to be applied for the given
 criteria.
 
@@ -270,27 +284,34 @@ criteria.
         if vat_regime is not None:
             qs = qs.filter(
                 Q(vat_regime='') | Q(vat_regime=vat_regime))
-        if trade_type is not None:
-            qs = qs.filter(
-                Q(trade_type='') | Q(trade_type=trade_type))
         qs = PeriodEvents.active.add_filter(qs, date)
         if qs.count() == 1:
             return qs[0]
+        rt.show(VatRules)
         msg = _("Found {num} VAT rules for %{context}!)").format(
             num=qs.count(), context=dict(
-                trade_type=trade_type,
                 vat_regime=vat_regime, vat_class=vat_class,
                 country=country.isocode, date=dd.fds(date)))
-        msg += " (SQL query was {0})".format(qs.query)
-        rt.show(VatRules)
-        raise Warning(msg)
+        # msg += " (SQL query was {0})".format(qs.query)
+        logger.info(msg)
+        # raise Warning(msg)
+        return None
+
+    def __unicode__(self):
+        kw = dict(
+            vat_regime=self.vat_regime,
+            vat_class=self.vat_class,
+            rate=self.rate,
+            country=self.country, seqno=self.seqno)
+        return "{country} {vat_class} {rate}".format(**kw)
 
 
 class VatRules(dd.Table):
     model = 'vat.VatRule'
-    column_names = "seqno country vat_class trade_type vat_regime \
-    start_date end_date rate *"
+    column_names = "seqno country vat_class vat_regime \
+    start_date end_date rate can_edit *"
     hide_sums = True
+    auto_fit_column_widths = True
 
 
 class PaymentTerm(BabelNamed):
@@ -358,82 +379,103 @@ class VatTotal(dd.Model):
 
     auto_compute_totals = False
     """Set this to `True` on subclasses who compute their totals
-    automatically.
+    automatically, i.e. the fields :attr:`total_base`,
+    :attr:`total_vat` and :attr:`total_incl` are disabled.  This is
+    set to `True` for :class:`lino.modlib.sales.models.SalesDocument`.
 
     """
 
     def disabled_fields(self, ar):
+        """Disable all three total fields if `auto_compute_totals` is set,
+        otherwise disable :attr:`total_vat` if
+        :attr:`VatRule.can_edit` is False.
+
+        """
         fields = super(VatTotal, self).disabled_fields(ar)
         if self.auto_compute_totals:
-            fields = fields | self._total_fields
+            fields |= self._total_fields
+        else:
+            rule = self.get_vat_rule()
+            if rule is not None and not rule.can_edit:
+                fields.add('total_vat')
         return fields
 
     def reset_totals(self, ar):
         pass
 
-    def get_vat_rate(self, *args, **kw):# never returned !!
-        return ZERO
+    def get_vat_rule(self):
+        """Called when user edits a total field in the document header when
+        `auto_compute_totals` is False.
+
+        """
+        return None
 
     def total_base_changed(self, ar):
-        #~ logger.info("20121204 total_base_changed %r",self.total_base)
+        """Called when user has edited the `total_base` field.  If total_base
+        has been set to blank, then Lino fills it using
+        :meth:`reset_totals`. If user has entered a value, compute
+        :attr:`total_vat` and :attr:`total_incl` from this value using
+        the vat rate. If there is no VatRule, `total_incl` and
+        `total_vat` are set to None.
+
+        If there are rounding differences, `total_vat` will get them.
+
+        """
+        logger.info("20150128 total_base_changed %r", self.total_base)
         if self.total_base is None:
             self.reset_totals(ar)
             if self.total_base is None:
                 return
-        #~ assert not isinstance(self.total_base,basestring)
-        # rate = self.get_vat_rate()
-        #~ logger.info("20121206 total_base_changed %s",rate)
-        # if rate != ZERO:
-        #     self.total_vat = self.total_base * rate
-        # else:
-        #     self.total_vat = self.total_incl - self.total_base
-        # if self.total_vat == None:
-        #     self.total_vat = ZERO
-        #or
-        self.total_vat = self.total_vat and self.total_vat or ZERO
-        self.total_incl = self.total_base + self.total_vat
+
+        rule = self.get_vat_rule()
+        logger.info("20150128 %r", rule)
+        if rule is None:
+            self.total_incl = None
+            self.total_vat = None
+        else:
+            self.total_incl = self.total_base * (ONE + rule.rate)
+            self.total_vat = self.total_incl - self.total_base
 
     def total_vat_changed(self, ar):
+        """Called when user has edited the `total_vat` field.  If it has been
+        set to blank, then Lino fills it using
+        :meth:`reset_totals`. If user has entered a value, compute
+        :attr:`total_incl`. If there is no VatRule, `total_incl` is
+        set to None.
+
+        """
         if self.total_vat is None:
             self.reset_totals(ar)
             if self.total_vat is None:
                 return
-        #~ assert not isinstance(self.total_vat,basestring)
-        # rate = self.get_vat_rate()
-        # if rate != ZERO:
-        #     self.total_base = self.total_vat / rate
-        # else:
-        #     self.total_base = self.total_incl - self.total_vat
-        # if self.total_base == None:
-        #     self.total_base = ZERO
-        # or
-        self.total_base = self.total_base and self.total_base or ZERO
-        self.total_incl = self.total_base + self.total_vat
+
+        if self.total_base is None:
+            self.total_base = ZERO
+        self.total_incl = self.total_vat + self.total_base
 
     def total_incl_changed(self, ar):
+        """Called when user has edited the `total_incl` field.  If total_incl
+        has been set to blank, then Lino fills it using
+        :meth:`reset_totals`. If user enters a value, compute
+        :attr:`total_base` and :attr:`total_vat` from this value using
+        the vat rate. If there is no VatRule, `total_incl` should be
+        disabled, so this method will never be called.
+
+        If there are rounding differences, `total_vat` will get them.
+
+        """
         if self.total_incl is None:
             self.reset_totals(ar)
             if self.total_incl is None:
                 return
         #~ assert not isinstance(self.total_incl,basestring)
-        rate = self.get_vat_rate()
-        #~ logger.info("20121206 total_incl_changed %s",rate)
-        self.total_incl = self.total_incl and self.total_incl or ZERO
-        self.total_vat = self.total_vat and self.total_vat or ZERO
-        if rate != ZERO:
-            self.total_base = self.total_incl / (1 + rate)
+        rule = self.get_vat_rule()
+        if rule is None:
+            self.total_base = None
+            self.total_vat = None
         else:
-            self.total_base = self.total_incl - self.total_vat
-        # self.total_vat = self.total_incl - self.total_base
-
-    #~ @dd.virtualfield(dd.PriceField(_("Total incl. VAT")))
-    #~ def total_incl(self,ar=None):
-        #~ """
-        #~ Virtual field returning the sum of `total_base` and `total_vat`.
-        #~ """
-        #~ if self.total_base is None:
-            #~ return None
-        #~ return self.total_base + self.total_vat
+            self.total_base = self.total_incl / (ONE + rule.rate)
+            self.total_vat = self.total_incl - self.total_base
 
 
 class VatDocument(VatTotal):
@@ -496,7 +538,7 @@ class VatDocument(VatTotal):
             return
         base = Decimal()
         vat = Decimal()
-        for i in self.items.order_by('seqno'):# whyyyyy!
+        for i in self.items.all():
             if i.total_base is not None:
                 base += i.total_base
                 vat += i.total_vat
@@ -571,8 +613,9 @@ class VatDocument(VatTotal):
 class VatItemBase(Sequenced, VatTotal):
     """Model mixin for items of a :class:`VatTotal`.
 
-    Abstract Base class for :class:`ml.ledger.InvoiceItem`, i.e. the
-    lines of invoices *without* unit prices and quantities.
+    Abstract Base class for
+    :class:`lino.modlib.ledger.models.InvoiceItem`, i.e. the lines of
+    invoices *without* unit prices and quantities.
 
     Subclasses must define a field called "voucher" which must be a
     ForeignKey with related_name="items" to the "owning document",
@@ -587,7 +630,6 @@ class VatItemBase(Sequenced, VatTotal):
 
     class Meta:
         abstract = True
-        #~ unique_together  = ('document','seqno')
 
     vat_class = VatClasses.field(blank=True, default=get_default_vat_class)
 
@@ -610,14 +652,16 @@ class VatItemBase(Sequenced, VatTotal):
     def get_siblings(self):
         return self.voucher.items.all()
 
-    def get_vat_rate(self, *args, **kw):
-        tt = self.voucher.get_trade_type()
+    def get_vat_rule(self):
         if self.vat_class is None:
+            tt = self.voucher.get_trade_type()
             self.vat_class = self.get_vat_class(tt)
-        # return settings.SITE.plugins.vat.get_vat_rate(
-        return VatRule.find_vat_rule(
-            tt, self.voucher.vat_regime, self.vat_class,
-            self.voucher.partner.country, self.voucher.date).rate
+        rule = VatRule.get_vat_rule(
+            self.voucher.vat_regime, self.vat_class,
+            self.voucher.partner.country or
+            dd.plugins.countries.get_my_country(),
+            self.voucher.date)
+        return rule
 
     #~ def save(self,*args,**kw):
         #~ super(VatItemBase,self).save(*args,**kw)
@@ -626,25 +670,21 @@ class VatItemBase(Sequenced, VatTotal):
 
     def set_amount(self, ar, amount):
         self.voucher.fill_defaults()
-        rate = self.get_vat_rate()
+        rule = self.get_vat_rule()
+        if rule is None:
+            rate = ZERO
+        else:
+            rate = rule.rate
         if self.voucher.vat_regime.item_vat:  # unit_price_includes_vat
             self.total_incl = amount
-            self.total_vat = self.total_vat and self.total_vat or ZERO
-            if rate != ZERO:
-                self.total_base = self.total_incl / (1 + rate)
-            else:
-                self.total_base = self.total_incl - self.total_vat
-            # self.total_vat = self.total_incl - self.total_base
+            self.total_incl_changed(ar)
         else:
             self.total_base = amount
-            self.total_incl = self.total_incl and self.total_incl or ZERO
-            if rate != ZERO:
-                self.total_vat = self.total_base / rate
-            else:
-                self.total_vat = self.total_incl - self.total_base
-            # self.total_incl = self.total_base + self.total_vat
+            self.total_base_changed(ar)
 
     def reset_totals(self, ar):
+        """
+        """
         if not self.voucher.auto_compute_totals:
             total = Decimal()
             for item in self.voucher.items.exclude(id=self.id):
@@ -709,8 +749,6 @@ class QtyVatItemBase(VatItemBase):
 
         if self.unit_price is not None and self.qty is not None:
             self.set_amount(ar, self.unit_price * self.qty)
-
-
 
 
 if False:

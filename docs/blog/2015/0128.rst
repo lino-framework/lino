@@ -44,22 +44,32 @@ Congratulations to Mahmoud who contributed `his first pull request
 <https://github.com/lsaffre/lino/pull/25>`_.
 
 We then discovered that there are still armies of bugs sitting in the
-djungle of these modules. And I get the feeling that this is indeed a
-job for me. I need to do some more work on this, otherwise nobody has
-any chance to understand it.
+:mod:`lino.modlib.vat` djungle. And I get the feeling that this is
+indeed a job for me. I need to do some more work on this, otherwise
+nobody has any chance to understand anything.
 
 .. currentmodule:: lino.modlib.vat
 
-In :mod:`lino.modlib.vat`, I renamed `VatRate` to :class:`VatRule`.
+- Renamed `VatRate` to :class:`VatRule`. I plan to move the fields
+  `purchases_vat_account` and `sales_vat_account` (which are currently
+  in `system.SiteConfig`) to this model as well. Because probably
+  there will be users who want Lino to book vat amounts into different
+  accounts for different countries. 
 
-Renamed :meth:`VatRate.find_vat_rate` to
-:meth:`VatRule.find_vat_rule`. It now returns the database object, not
-just the value of the :attr:`VatRule.rate` field.  And if there is not
-exactly one row, it now raises a warning instead of returning ZERO.
-These changes cause :ref:`cosi` to fail for the moment.
+- Renamed :meth:`VatRate.find_vat_rate` to
+  :meth:`VatRule.get_vat_rule`. It now returns the database object, not
+  just the value of the :attr:`VatRule.rate` field.  And there must be
+  exactly one row, it now raises a warning instead of returning ZERO.
 
-But at least for Lino it should now work::
+
+Commit at 18.00 : 
+above changes caused :ref:`cosi` to fail for the moment.
+But at least for Lino it should now be possible to build the docs::
 
   $ go lino
   $ fab initdb test bd
 
+
+Commit at 23.40 : lots of changes. purchase and sales invoices seem to
+work now. demo_bookings no longer generates bank statements because
+these seem to not work yet.

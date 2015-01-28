@@ -1,4 +1,4 @@
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 The :xfile:`models` module for the :mod:`lino.modlib.finan` app.
@@ -347,15 +347,15 @@ class BankStatements(JournalEntries):
     detail_layout = BankStatementDetail()
 
 
-class PaymentOrdersByJournal(PaymentOrders, ledger.ByJournal):
+class PaymentOrdersByJournal(ledger.ByJournal, PaymentOrders):
     pass
 
 
-class JournalEntriesByJournal(JournalEntries, ledger.ByJournal):
+class JournalEntriesByJournal(ledger.ByJournal, JournalEntries):
     pass
 
 
-class BankStatementsByJournal(BankStatements, ledger.ByJournal):
+class BankStatementsByJournal(ledger.ByJournal, BankStatements):
     pass
 
 

@@ -528,9 +528,9 @@ class Vouchers(dd.Table):
     column_names = "date number *"
 
 
-#~ class VouchersByJournal(dd.Table):
 class ByJournal(dd.Table):
-    order_by = ["-number"]
+    order_by = ["-date", '-id']
+    # order_by = ["-number"]
     master_key = 'journal'  # see django issue 10808
     # start_at_bottom = True
 

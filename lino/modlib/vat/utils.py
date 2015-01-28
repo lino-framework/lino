@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :mod:`ml.vat`.
+"""Utility function for `lino.modlib.vat`.
 
 >>> from decimal import Decimal
 >>> from lino.modlib.vat.utils import add_vat, remove_vat

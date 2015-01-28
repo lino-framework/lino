@@ -15,12 +15,6 @@ lino.modlib.vat.fixtures.euvatrates
 
    
    
-   .. rubric:: Classes
-
-   .. autosummary::
-   
-      Instantiator
-   
    
 
    

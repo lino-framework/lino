@@ -188,8 +188,9 @@ def objects():
             invoice.register(REQUEST)
             invoice.save()
 
-        # last month not yet done
-        if finan and (end_date - date) > MORE_THAN_A_MONTH:
+        if False:
+          if finan and (end_date - date) > MORE_THAN_A_MONTH:
+            # last month not yet done
             #~ po = finan.PaymentOrder(journal=JOURNAL_PO,
             JOURNAL_PO = ledger.Journal.objects.get(ref="PO")
             po = JOURNAL_PO.create_voucher(

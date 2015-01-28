@@ -241,18 +241,19 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         if catalog_price is None:
             return
         #~ assert self.vat_class == self.product.vat_class
-        if self.voucher.vat_regime.item_vat:
-            rate = self.get_vat_rate()  # rate of this item
-        else:
-            rate = ZERO
-
-        vat_rule = rt.modules.vat.VatRule.find_vat_rule(
-            tt, vat.get_default_vat_regime, self.get_vat_class(tt),
+        rule = self.get_vat_rule()
+        if rule is None:
+            return
+        cat_rule = rt.modules.vat.VatRule.get_vat_rule(
+            vat.get_default_vat_regime, self.get_vat_class(tt),
             dd.plugins.countries.get_my_country(),
             dd.today())
-        if rate != vat_rule.rate:
-            catalog_price = remove_vat(catalog_price, vat_rule.rate)
-            catalog_price = add_vat(catalog_price, vat_rule.rate)
+        if cat_rule is None:
+            return
+        if rule.rate != cat_rule.rate:
+            catalog_price = remove_vat(catalog_price, cat_rule.rate)
+            catalog_price = add_vat(catalog_price, cat_rule.rate)
+
         if self.discount is None:
             self.unit_price = catalog_price
         else:
@@ -389,41 +390,23 @@ class Invoices(SalesDocuments):
         return kw
 
 
-class InvoicesByJournal(Invoices):
+class InvoicesByJournal(ledger.ByJournal, Invoices):
     """Shows all invoices of a given journal (whose `voucher_type` must be
     :class:`Invoice`)
 
     """
-    order_by = ["-date", '-id']
-    master_key = 'journal'  # see django issue 10808
     params_panel_hidden = True
-    # start_at_bottom = True
-    #master = journals.Journal
     column_names = "number date due_date " \
         "partner " \
         "total_incl order subject:10 " \
         "total_base total_vat user *"
                   #~ "ledger_remark:10 " \
 
-    @classmethod
-    def get_title_base(self, ar):
-        """
-        Without this override we would have a title like "Invoices of journal <Invoices>"
-        """
-        return unicode(ar.master_instance)
-
-
-#~ if settings.SITE.project_model:
-  #~
-    #~ class InvoicesByProject(Invoices):
-        #~ order_by = ['-date']
-        #~ master_key = 'project'
 
 class SignAction(actions.Action):
     label = "Sign"
 
     def run_from_ui(self, ar):
-        obj = ar.selected_rows[0]
 
         def ok(ar):
             for row in ar.selected_rows:
@@ -431,10 +414,10 @@ class SignAction(actions.Action):
                 row.instance.save()
             ar.success(refresh=True)
 
-        ar.confirm(ok,
-                   _("Going to sign %d documents as user %s. Are you sure?") % (
-                       len(ar.selected_rows),
-                       ar.get_user()))
+        ar.confirm(
+            ok, _("Going to sign %d documents as user %s. Are you sure?") % (
+                len(ar.selected_rows),
+                ar.get_user()))
 
 
 class DocumentsToSign(Invoices):
