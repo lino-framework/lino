@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -124,25 +125,31 @@ class Polymorphic(model.Model):
             models = list(models_by_base(cls))
 
             def f(a, b):
-                if a is b:
-                    return 0
-                if issubclass(a, b):
-                    return 1
-                return -1
-            models.sort(f)
+                level = 0
+                if b in a.__bases__:
+                    level -= a.__bases__.index(b)
+                if a in b.__bases__:
+                    level += b.__bases__.index(a)
+                return level
+                # if a is b:
+                #     return 0
+                # if issubclass(a, b):
+                #     return 1
+                # return -1
+
+            # models.sort(f)
             cls._mtinav_models = tuple(models)
 
             # cls._mti_ins_actions = []
             # cls._mti_del_actions = []
 
-            # def add(m, l, cl):
-            #     a = cl(m)
-            #     cls.define_action(**{a.get_action_name(): a})
-            #     l.append(a)
+            def add(m, cl):
+                a = cl(m)
+                cls.define_action(**{a.get_action_name(): a})
 
-            # for m in cls._mtinav_models:
-            #     add(m, cls._mti_del_actions, DeleteChild)
-            #     add(m, cls._mti_ins_actions, InsertChild)
+            for m in cls._mtinav_models:
+                add(m, DeleteChild)
+                add(m, InsertChild)
 
             # cls._mti_ins_actions = tuple(cls._mti_ins_actions)
             # cls._mti_del_actions = tuple(cls._mti_del_actions)
@@ -187,17 +194,25 @@ class Polymorphic(model.Model):
                         item = [unicode(m._meta.verbose_name)]
                         k = InsertChild.name_prefix + m.__name__.lower()
                         ba = ar.actor.get_action_by_name(k)
-                        if ba.get_row_permission(ar, self, None):
-                            btn = ar.row_action_button(self, ba, _("+"))
+                        if ba and ba.get_row_permission(ar, self, None):
+                            # btn = ar.row_action_button(self, ba, _("+"))
+                            btn = ar.row_action_button(self, ba, _(u"➕"))
+                            # Heavy Plus Sign U+2795
+                            # btn = ar.row_action_button(self, ba,
+                            #                            icon_name='add')
                             item += [" [", btn, "]"]
 
                 else:
                     item = [ar.obj2html(obj, m._meta.verbose_name)]
-                    k = DeleteChild.name_prefix + m.__name__.lower()
-                    ba = ar.actor.get_action_by_name(k)
-                    if ba.get_row_permission(ar, self, None):
-                        btn = ar.row_action_button(self, ba, _("-"))
-                        item += [" [", btn, "]"]
+                    # no DeleteChild for my parents
+                    if self.__class__ in m.mro():
+                        k = DeleteChild.name_prefix + m.__name__.lower()
+                        ba = ar.actor.get_action_by_name(k)
+                        if ba and ba.get_row_permission(ar, self, None):
+                            # btn = ar.row_action_button(self, ba, _("-"))
+                            btn = ar.row_action_button(self, ba, _(u"❌"))
+                            # Cross Mark U+274C
+                            item += [" [", btn, "]"]
 
             if item is not None:
                 if sep is None:

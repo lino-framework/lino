@@ -1,9 +1,16 @@
+# -*- coding: UTF-8 -*-
+# Copyright 2015 Luc Saffre
+# License: BSD (see file COPYING for details)
+
+"""A selection of names to be used in tested documents."""
+
 from lino.runtime import *
 from django.utils import translation
 from django.test import Client
 import json
 from bs4 import BeautifulSoup
 from lino.utils import AttrDict
+from lino.utils import i2d
 
 client = Client()
 
