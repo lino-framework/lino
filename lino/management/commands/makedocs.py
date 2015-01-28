@@ -24,13 +24,13 @@ from django.db.models import loading
 #~ from lino.utils import get_class_attr
 
 import lino
-from lino.core.dbutils import app_labels
+from lino.core.utils import app_labels
 from lino.utils import confirm, curry
 from lino.utils import rstgen
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
-#~ from lino.core.dbutils import makedirs_if_missing, full_model_name
+#~ from lino.core.utils import makedirs_if_missing, full_model_name
 from lino.dd import full_model_name
 
 

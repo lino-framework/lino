@@ -20,7 +20,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.core.fields import VirtualField
 from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
 
@@ -225,7 +225,6 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
 
 
 class EnableChild(VirtualField):
-
     """Rendered as a checkbox that indicates whether an mti child of the
     given model exists.
 
@@ -292,3 +291,4 @@ class EnableChild(VirtualField):
 
 
 from lino.utils.dpy import create_mti_child as create_child
+

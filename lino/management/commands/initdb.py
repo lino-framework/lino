@@ -49,7 +49,7 @@ from django.db import models
 
 from lino.api import dd
 
-from lino.core.dbutils import app_labels
+from lino.core.utils import app_labels
 from lino import AFTER17
 from atelier.utils import confirm
 

@@ -15,7 +15,7 @@ file, but you should *use* it (access its members) only when the
 
 from django.conf import settings
 
-from lino.core.dbutils import models_by_base
+from lino.core.utils import models_by_base
 
 modules = settings.SITE.modules
 "Shortcut to :attr:`lino.core.site.Site.modules`."

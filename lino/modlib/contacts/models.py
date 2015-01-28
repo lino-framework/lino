@@ -154,13 +154,14 @@ but e.g. :class:`Human` overrides this.
     def get_partner_instance(self):
         return self  # compatibility with lino.modlib.partners
 
-    def get_name_elems(self, ar):
-        return [E.b(self.name)]
+    @dd.displayfield()
+    def overview(self, ar):
+        return E.div(*self.get_overview_elems(ar))
 
     def get_overview_elems(self, ar):
         elems = []
         buttons = self.get_mti_buttons(ar)
-        buttons = join_elems(buttons, ', ')
+        # buttons = join_elems(buttons, ', ')
         elems.append(E.p(unicode(_("See as ")), *buttons,
                          style="font-size:8px;text-align:right;padding:3pt;"))
         elems += self.get_name_elems(ar)
@@ -172,15 +173,8 @@ but e.g. :class:`Human` overrides this.
                   "vertical-align:bottom;text-align:middle")]
         return elems
 
-    @dd.displayfield()
-    def overview(self, ar):
-        return E.div(*self.get_overview_elems(ar))
-
-    @dd.displayfield(_("See as "))
-    def mti_navigator(self, ar):
-        buttons = self.get_mti_buttons(ar)
-        buttons = join_elems(buttons, ', ')
-        return E.p(*buttons)
+    def get_name_elems(self, ar):
+        return [E.b(self.name)]
 
 
 class PartnerDetail(dd.FormLayout):

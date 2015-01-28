@@ -4,7 +4,7 @@
 
 """
 The :term:`dummy module` for `outbox`, 
-used by :func:`lino.core.dbutils.resolve_app`.
+used by :func:`lino.core.utils.resolve_app`.
 """
 from lino.api import dd
 

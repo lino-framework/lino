@@ -23,9 +23,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
 
-from lino.core.dbutils import full_model_name
-from lino.core.dbutils import resolve_field
-from lino.core.dbutils import resolve_model
+from lino.core.utils import full_model_name
+from lino.core.utils import resolve_field
+from lino.core.utils import resolve_model
 
 from lino.utils.format_date import IncompleteDate
 from lino.utils import quantities
@@ -42,10 +42,10 @@ interface.
 
 class RichTextField(models.TextField):
 
-    """
-    Only difference with Django's `models.TextField` is that you can
-    specify a keyword argument `format` to
-    override the global :attr:`lino.core.site.Site.textfield_format`.
+    """Only difference with Django's `models.TextField` is that you can
+    specify a keyword argument `format` to override the global
+    :attr:`lino.core.site.Site.textfield_format`.
+
     """
 
     def __init__(self, *args, **kw):
@@ -169,11 +169,8 @@ class NullCharField(models.CharField):  # subclass the CharField
 
 
 class FakeField(object):
+    """Base class for :class:`RemoteField` and :class:`DisplayField`.
 
-    """
-    Base class for
-    :class:`RemoteField`
-    :class:`DisplayField`
     """
     model = None
     choices = []
@@ -201,10 +198,9 @@ class FakeField(object):
 
 
 class RemoteField(FakeField):
+    """A field on a related object.  LayoutHandle instantiates
+    a RemoteField for example when
 
-    """
-    Represents a field on a related object.
-    LayoutHandle instantiates a RemoteField for example when
     """
     #~ primary_key = False
     #~ editable = False
@@ -227,10 +223,10 @@ class RemoteField(FakeField):
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer
     def value_from_object(self, obj, ar=None):
-        """
-        Return the value of this field in the specified model instance `obj`.
-        `ar` may be `None`, it's forwarded to the getter method who may
-        decide to return values depending on it.
+        """Return the value of this field in the specified model instance
+        `obj`.  `ar` may be `None`, it's forwarded to the getter
+        method who may decide to return values depending on it.
+
         """
         m = self.func
         return m(obj, ar)
@@ -242,14 +238,19 @@ class RemoteField(FakeField):
 
 
 class DisplayField(FakeField):
-    """
-    Deserves more documentation.
+    """A field to be rendered like a normal read-only form field, but with
+    plain HTML instead of an ``<input>`` tag.  This is to be used as
+    the `return_type` of a :class:`VirtualField`.
+
+    The value to be represented is either some unicode text, a
+    translatable text or a :mod:`HTML element
+    <lino.utils.xmlgen.html>`.
+
     """
     choices = None
     blank = True
     drop_zone = None
     max_length = None
-    #~ bbar = None
 
     def __init__(self, verbose_name=None, **kw):
         self.verbose_name = verbose_name
@@ -273,34 +274,19 @@ class DisplayField(FakeField):
     def value_from_object(self, obj, ar=None):
         return ''
 
-#~ class DynamicForeignKey(DisplayField):
-    #~ """
-    #~ A pointer to "the" one and only MTI child.
-    #~ This assumes that there is always one and only one child instance among the given models.
-    #~ """
-    #~ def __init__(self,get_child,**kw):
-        #~ self.get_child = get_child
-        #~ VirtualField.__init__(self,models.ForeignKey(**kw),self.has_child)
-
 
 class HtmlBox(DisplayField):
+    """Like :class:`DisplayField`, but to be rendered as a panel rather
+than as a form field.
 
-    """
-    Deserves more documentation.
     """
     pass
 
-#~ class QuickAction(DisplayField):
-    #~ pass
-
-#~ from django.db.models.fields import Field
-
 
 class VirtualGetter(object):
+    """A wrapper object for getting the content of a virtual field
+    programmatically.
 
-    """
-    A wrapper object for getting the content of
-    a virtual field programmatically.
     """
 
     def __init__(self, vf, instance):
@@ -319,10 +305,14 @@ class VirtualGetter(object):
 
 
 class VirtualField(FakeField):
-    """
-    Represents a virtual field. Virtual fields are not stored in the
+    """Represents a virtual field. Virtual fields are not stored in the
     database, but computed each time they are read. Django doesn't see
     them.
+
+    A virtual field must have a `return_type`, which can be either a
+    Django field type (CharField, TextField, IntegerField,
+    BooleanField, ...) or one of Lino's custom fields
+    :class:`DisplayField`, :class:`HtmlBox` or :class:`RequestField`.
 
     """
 
@@ -485,8 +475,10 @@ def constant():
 
 
 class RequestField(VirtualField):
-    """
-    A :class:`VirtualField` whose values are action request.
+    """A :class:`VirtualField` whose values are table action requests to
+be rendered as a clickable integer containing the number of rows.
+Clicking on it will open a window with the table.
+
     """
     def __init__(self, get, *args, **kw):
         kw.setdefault('max_length', 8)
@@ -494,23 +486,24 @@ class RequestField(VirtualField):
 
 
 def displayfield(*args, **kw):
-    """
-    Decorator to turn a method into a :class:`DisplayField`.
+    """Decorator to turn a method into a :class:`VirtualField` of type
+:class:`DisplayField`.
+
     """
     return virtualfield(DisplayField(*args, **kw))
 
 
 def htmlbox(*args, **kw):
-    """
-    Decorator shortcut to turn a method into a HtmlBox.
+    """Decorator shortcut to turn a method into a a :class:`VirtualField`
+of type :class:`HtmlBox`.
+
     """
     return virtualfield(HtmlBox(*args, **kw))
 
 
 def requestfield(*args, **kw):
-    """
-    Decorator to make a RequestField from a method.
-    The method to decorate must return either None or a TableRequest object.
+    """Decorator shortcut to turn a method into a a :class:`VirtualField`
+of type :class:`RequestField`.
     """
     def decorator(fn):
         #~ def wrapped(*args):

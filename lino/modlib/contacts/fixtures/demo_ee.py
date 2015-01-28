@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.utils.instantiator import Instantiator
 #from lino import reports
 #contacts = reports.get_app('contacts')

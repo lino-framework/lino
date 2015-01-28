@@ -4,7 +4,7 @@
 
 """
 The :term:`dummy module` for `contacts`, 
-used by :func:`lino.core.dbutils.resolve_app`.
+used by :func:`lino.core.utils.resolve_app`.
 """
 
 

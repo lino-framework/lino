@@ -53,7 +53,7 @@ Rolf Rompen's response to Participant feedback
 5
 
 >>> print(d['rows'][0][0])
-<p>1) There was enough to eat.</p>
+<span>1) There was enough to eat.</span>
 
 
 The "My answer" column for the first row has 5 links:

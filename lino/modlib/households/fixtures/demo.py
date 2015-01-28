@@ -12,7 +12,7 @@ another person.
 
 """
 
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 
 
 from lino.utils import Cycler

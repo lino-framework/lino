@@ -22,7 +22,7 @@ from django.utils.translation import ugettext as _
 
 from lino.dd import babel_values
 
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.utils.instantiator import Instantiator
 
 

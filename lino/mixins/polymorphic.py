@@ -1,41 +1,151 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :class:`dd.Polymorphic`."
+"""Defines the :class:`Polymorphic` model mixin.
+
+"""
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
 
-from lino.core.dbutils import models_by_base
+from lino.core.utils import models_by_base
 
 from lino.utils import mti
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.core import model
 from lino.core import fields
+from lino.core.actions import Action
+from lino.core.utils import resolve_model
+from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
+
+
+class ChildAction(Action):
+
+    readonly = False
+    show_in_bbar = False
+
+    def __init__(self, child_model, *args, **kw):
+        self.child_model = child_model
+        super(ChildAction, *args, **kw)
+
+    def get_action_name(self):
+        return self.name_prefix + self.child_model.__name__.lower()
+
+    def attach_to_actor(self, actor, name):
+        self.child_model = resolve_model(self.child_model)
+        self.label = self.child_model._meta.verbose_name
+        return super(ChildAction, self).attach_to_actor(actor, name)
+
+    def get_child(self, obj):
+        """Returns the MTI child in `self.child_model` if it exists, otherwise
+return None.
+
+        """
+        try:
+            return self.child_model.objects.get(pk=obj.pk)
+        except self.child_model.DoesNotExist:
+            return None
+
+    def run_from_ui(self, ar, **kw):
+        assert len(ar.selected_rows) == 1
+        self.run_on_row(ar.selected_rows[0], ar)
+
+
+class DeleteChild(ChildAction):
+    name_prefix = 'del_'
+
+    def get_action_permission(self, ar, obj, state):
+        if self.get_child(obj) is None:
+            return False
+        return super(DeleteChild, self).get_action_permission(ar, obj, state)
+
+    def run_on_row(self, obj, ar):
+    
+        if ar is not None:
+            pre_remove_child.send(
+                sender=obj, request=ar.request,
+                child=self.child_model)
+        mti.delete_child(obj, self.child_model, ar)
+        ar.set_response(refresh=True)
+
+
+class InsertChild(ChildAction):
+
+    name_prefix = 'ins_'
+
+    def get_action_permission(self, ar, obj, state):
+        parent_link_field = self.child_model._meta.parents.get(
+            obj.__class__, None)
+        if parent_link_field is None:
+            return False
+        if self.get_child(obj) is not None:
+            return False
+
+        return super(InsertChild, self).get_action_permission(ar, obj, state)
+
+    def run_on_row(self, obj, ar):
+        if ar is not None:
+            mti.pre_add_child.send(
+                sender=obj, request=ar.request,
+                child=self.child_model)
+        mti.insert_child(obj, self.child_model, full_clean=True)
+        ar.set_response(refresh=True)
 
 
 class Polymorphic(model.Model):
-    """
-    Mixin for models that use Multiple Table Inheritance to implement
-    polymorphism.  
+    """Mixin for models that use Multiple Table Inheritance to implement
+    polymorphism.
 
-    Subclassed e.g. by :class:`ml.contacts.Partner`: the recipient of
-    an invoice can be a person, a company, a client, a job provider,
-    an employee...). A given partner can be both a person and an
-    employee at the same time.
+    Subclassed e.g. by :class:`lino.modlib.contacts.models.Partner`:
+    the recipient of an invoice can be a person, a company, a client,
+    a job provider, an employee..., and a given partner can be both a
+    person and an employee at the same time.
 
     Note that not every usage of Multiple Table Inheritance means
     polymorphism. For example :class:`ml.ledger.Voucher` has a pointer
     to the journal which knows which specialization to use.  A given
     voucher has always exactly one specialization.
 
+    .. attribute:: mti_navigator
+
+    A virtual field which defines buttons for switching between the
+    different views.
+
     """
     class Meta:
         abstract = True
 
-    # def get_child_model(self):
-    #     return self.__class__
+    _mtinav_models = None
+
+    @classmethod
+    def on_analyze(cls, site):
+        if cls._mtinav_models is None:
+            models = list(models_by_base(cls))
+
+            def f(a, b):
+                if a is b:
+                    return 0
+                if issubclass(a, b):
+                    return 1
+                return -1
+            models.sort(f)
+            cls._mtinav_models = tuple(models)
+
+            # cls._mti_ins_actions = []
+            # cls._mti_del_actions = []
+
+            # def add(m, l, cl):
+            #     a = cl(m)
+            #     cls.define_action(**{a.get_action_name(): a})
+            #     l.append(a)
+
+            # for m in cls._mtinav_models:
+            #     add(m, cls._mti_del_actions, DeleteChild)
+            #     add(m, cls._mti_ins_actions, InsertChild)
+
+            # cls._mti_ins_actions = tuple(cls._mti_ins_actions)
+            # cls._mti_del_actions = tuple(cls._mti_del_actions)
 
     # def get_mti_leaf(self):
     #     model = self.get_child_model()
@@ -60,23 +170,67 @@ class Polymorphic(model.Model):
                 pass
         #~ return self
 
-    # def insert_child(self, *args, **attrs):
-    #     return insert_child(self, *args, **attrs)
-
-    _mtinav_models = None
-
-    @classmethod
-    def on_analyze(cls, site):
-        if cls._mtinav_models is None:
-            cls._mtinav_models = tuple(models_by_base(cls))
-
     def get_mti_buttons(self, ar):
-        forms = []
+        """"""
+        elems = []
+        sep = None
         for m in self._mtinav_models:
+            item = None
             if self.__class__ is m:
-                forms.append(unicode(m._meta.verbose_name))
+                item = [E.b(unicode(m._meta.verbose_name))]
             else:
                 obj = mti.get_child(self, m)
-                if obj is not None:
-                    forms.append(ar.obj2html(obj, m._meta.verbose_name))
-        return forms
+                if obj is None:
+                    # parent link field
+                    p = m._meta.parents.get(self.__class__, None)
+                    if p is not None:
+                        item = [unicode(m._meta.verbose_name)]
+                        k = InsertChild.name_prefix + m.__name__.lower()
+                        ba = ar.actor.get_action_by_name(k)
+                        if ba.get_row_permission(ar, self, None):
+                            btn = ar.row_action_button(self, ba, _("+"))
+                            item += [" [", btn, "]"]
+
+                else:
+                    item = [ar.obj2html(obj, m._meta.verbose_name)]
+                    k = DeleteChild.name_prefix + m.__name__.lower()
+                    ba = ar.actor.get_action_by_name(k)
+                    if ba.get_row_permission(ar, self, None):
+                        btn = ar.row_action_button(self, ba, _("-"))
+                        item += [" [", btn, "]"]
+
+            if item is not None:
+                if sep is None:
+                    sep = ', '
+                else:
+                    elems.append(sep)
+                elems += item
+        return elems
+
+    @fields.displayfield(_("See as "))
+    def mti_navigator(self, ar):
+        buttons = self.get_mti_buttons(ar)
+        # buttons = join_elems(buttons, ', ')
+        return E.span(*buttons)
+
+    # @fields.displayfield(_("Polymorphy manager"))
+    # def mti_manager(self, ar):
+
+    #     def collect(elems, label, actions):
+    #         l = []
+    #         for a in actions:
+    #             if self.__class__ is not a.child_model:
+    #                 ba = ar.actor.get_action_by_name(a.action_name)
+    #                 if ba.get_row_permission(ar, self, None):
+    #                     l.append(ar.row_action_button(self, ba))
+
+    #         if len(l):
+    #             elems.append(label)
+    #             elems += join_elems(l)
+            
+    #     elems = []
+    #     collect(elems, _("Extend: "), self._mti_ins_actions)
+    #     collect(elems, _("Reduce: "), self._mti_del_actions)
+
+    #     return E.div(*elems)
+            

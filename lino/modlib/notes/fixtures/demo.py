@@ -12,7 +12,7 @@ points to a model that has no `name` field.
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from lino.utils.instantiator import Instantiator
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.utils import Cycler
 
 

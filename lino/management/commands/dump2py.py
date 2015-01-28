@@ -53,7 +53,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 
-from lino.core.dbutils import sorted_models_list, full_model_name
+from lino.core.utils import sorted_models_list, full_model_name
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 
@@ -113,7 +113,7 @@ from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from lino.utils.dpy import create_mti_child
 from lino.utils.dpy import DpyLoader
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
         
 def new_content_type_id(m):
     if m is None: return m

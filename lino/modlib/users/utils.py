@@ -16,7 +16,7 @@ from django.db.models.fields import NOT_PROVIDED
 from django.conf import settings
 
 from lino.core import workflows
-from lino.core.dbutils import obj2str
+from lino.core.utils import obj2str
 
 from .choicelists import UserProfiles, UserGroups, UserLevels
 

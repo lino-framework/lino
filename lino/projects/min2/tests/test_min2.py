@@ -53,7 +53,7 @@ from lino.modlib.contenttypes.mixins import Controllable
 
 from lino.utils.djangotest import RemoteAuthTestCase
 
-from lino.core.dbutils import full_model_name
+from lino.core.utils import full_model_name
 
 
 class QuickTest(RemoteAuthTestCase):

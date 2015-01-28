@@ -62,7 +62,7 @@ from lino.core.signals import pre_ui_build, post_ui_build
 
 from lino.core import store as ext_store
 
-from lino.core.dbutils import is_devserver
+from lino.core.utils import is_devserver
 from lino.core.renderer import TextRenderer
 from lino.core import views
 
@@ -573,7 +573,7 @@ class Kernel(object):
 
     def get_media_urls(self):
         #~ print "20121110 get_media_urls"
-        from lino.core.dbutils import is_devserver
+        from lino.core.utils import is_devserver
         from django.conf import settings
 
         urlpatterns = []

@@ -6,7 +6,7 @@
 from django.utils.translation import ugettext_lazy as _
 
 from lino.utils.instantiator import Instantiator, i2d
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 
 
 def objects():

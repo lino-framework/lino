@@ -17,7 +17,7 @@ from django.conf import settings
 
 from lino.api import dd, rt
 from lino import mixins
-#~ from lino.core.dbutils import full_model_name
+#~ from lino.core.utils import full_model_name
 #~ from lino.utils.choicelists import ChoiceList
 #contacts = reports.get_app('contacts')
 #~ from lino.modlib.journals import models as journals

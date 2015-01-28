@@ -91,7 +91,7 @@ from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
 
-#~ from lino.core.dbutils import obj2str
+#~ from lino.core.utils import obj2str
 from lino.utils import curry
 
 

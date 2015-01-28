@@ -29,14 +29,14 @@ from django.utils import translation
 from django import http
 from django.core import exceptions
 
-from lino.core.dbutils import obj2unicode
+from lino.core.utils import obj2unicode
 
 from lino.utils import AttrDict
 from lino.utils import isiterable
 
 from lino.core import constants as ext_requests
 
-from lino.core.dbutils import navinfo
+from lino.core.utils import navinfo
 from lino.core.boundaction import BoundAction
 
 from lino.utils.xmlgen.html import E
@@ -519,9 +519,9 @@ class BaseRequest(object):
     def window_action_button(self, *args, **kw):
         return self.renderer.window_action_button(self, *args, **kw)
 
-    def row_action_button(self, obj, a, *args, **kw):
+    def row_action_button(self, obj, ba, *args, **kw):
         return self.renderer.row_action_button(
-            obj, None, a, *args, **kw)
+            obj, None, ba, *args, **kw)
 
     def row_action_button_ar(self, obj, *args, **kw):
         """Return an HTML element with a button for running this action
@@ -583,7 +583,7 @@ class BaseRequest(object):
                     l.append(ar.put_button(
                         self, _("Undo"), dict(choice=None),
                         title=_("Undo your vote")))
-                return E.p(*join_elems(l))
+                return E.span(*join_elems(l))
 
         
         """

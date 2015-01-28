@@ -403,7 +403,7 @@ documentation.
     
     You can also set it to `None`, which means that Lino decides
     automatically during startup: it becomes `False` if either
-    :func:`lino.core.dbutils.is_devserver` returns True or
+    :func:`lino.core.utils.is_devserver` returns True or
     setting:`DEBUG` is set.
 
     """
@@ -2183,7 +2183,7 @@ site. :manage:`diag` is a command-line shortcut to this.
         Used by test cases in tested documents.
 
         """
-        from lino.core.dbutils import (full_model_name,
+        from lino.core.utils import (full_model_name,
                                        sorted_models_list, app_labels)
 
         models_list = sorted_models_list()
@@ -2354,8 +2354,8 @@ site. :manage:`diag` is a command-line shortcut to this.
         if self._site_config is None:
             #~ raise Exception(20130301)
             #~ print '20130320 create _site_config'
-            #~ from lino.core.dbutils import resolve_model
-            #~ from lino.core.dbutils import obj2str
+            #~ from lino.core.utils import resolve_model
+            #~ from lino.core.utils import obj2str
             #~ from lino.utils import dblogger as logger
             #~ SiteConfig = resolve_model('system.SiteConfig')
             SiteConfig = self.modules.system.SiteConfig

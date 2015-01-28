@@ -13,7 +13,7 @@ from django.conf import settings
 from django.db import models
 
 from atelier import rstgen
-from lino.core.dbutils import obj2str
+from lino.core.utils import obj2str
 
 
 from lino.core import actors

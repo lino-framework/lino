@@ -1093,7 +1093,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
         else:
             txt = _("Show enrolment")
             btn = ar.obj2html(sar.data_iterator[0])
-        return E.div(btn)
+        return E.span(btn)  # E.p(...) until 20150128
 
 
 dd.add_user_group('courses', config.verbose_name)

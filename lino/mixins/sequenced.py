@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import fields
-from lino.core.dbutils import navinfo
+from lino.core.utils import navinfo
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
 

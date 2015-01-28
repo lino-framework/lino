@@ -26,7 +26,7 @@ the data used here comes from uncertain sources.
 
 
 from lino.api import dd
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.utils import dblogger as logger
 
 ISO2INS = {

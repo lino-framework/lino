@@ -51,11 +51,11 @@ Layouts:
 
 Utilities:
 
-- :func:`obj2str <lino.core.dbutils.obj2str>`
-- :func:`obj2unicode <lino.core.dbutils.obj2unicode>`
-- :func:`range_filter <lino.core.dbutils.range_filter>`,
-  :func:`inrange_filter <lino.core.dbutils.inrange_filter>`
-- :func:`full_model_name <lino.core.dbutils.full_model_name>`
+- :func:`obj2str <lino.core.utils.obj2str>`
+- :func:`obj2unicode <lino.core.utils.obj2unicode>`
+- :func:`range_filter <lino.core.utils.range_filter>`,
+  :func:`inrange_filter <lino.core.utils.inrange_filter>`
+- :func:`full_model_name <lino.core.utils.full_model_name>`
 - :func:`fields_list <lino.core.fields.fields_list>`
 - :func:`chooser <lino.utils.choosers.chooser>`
 - :class: `ParameterPanel <lino.core.utils.ParameterPanel>`
@@ -63,9 +63,9 @@ Utilities:
 
 Inter-app relations:
 
-- :func:`resolve_field <lino.core.dbutils.resolve_field>`
-- :func:`resolve_model <lino.core.dbutils.resolve_model>`
-- :func:`resolve_app <lino.core.dbutils.resolve_app>`
+- :func:`resolve_field <lino.core.utils.resolve_field>`
+- :func:`resolve_model <lino.core.utils.resolve_model>`
+- :func:`resolve_app <lino.core.utils.resolve_app>`
 - :func:`update_field <lino.core.inject.update_field>`
 - :func:`inject_field <lino.core.inject.inject_field>`
 - :func:`inject_action <lino.core.inject.inject_action>`
@@ -116,15 +116,15 @@ Shortcut to the main Lino logger.
 
 from lino.core.tables import VirtualTable
 
-from lino.core.dbutils import resolve_model, UnresolvedModel
+from lino.core.utils import resolve_model, UnresolvedModel
 
-from lino.core.dbutils import resolve_app, require_app_models
-from lino.core.dbutils import resolve_field, get_field
-from lino.core.dbutils import obj2str
-from lino.core.dbutils import obj2unicode
-from lino.core.dbutils import range_filter
-from lino.core.dbutils import inrange_filter
-from lino.core.dbutils import full_model_name
+from lino.core.utils import resolve_app, require_app_models
+from lino.core.utils import resolve_field, get_field
+from lino.core.utils import obj2str
+from lino.core.utils import obj2unicode
+from lino.core.utils import range_filter
+from lino.core.utils import inrange_filter
+from lino.core.utils import full_model_name
 
 from lino.core.model import Model
 "Shortcut to :class:`lino.core.model.Model`."
@@ -187,9 +187,9 @@ from lino.core.fields import CharField
 from lino.utils.appy_pod import PrintTableAction
 from lino.utils.appy_pod import PrintLabelsAction
 
-from lino.core.dbutils import babelkw
-from lino.core.dbutils import babelattr
-from lino.core.dbutils import babel_values  # alias for babelkw for backward compat
+from lino.core.utils import babelkw
+from lino.core.utils import babelattr
+from lino.core.utils import babel_values  # alias for babelkw for backward compat
 
 from lino.utils.choosers import chooser, action_chooser
 from lino.utils.mti import EnableChild

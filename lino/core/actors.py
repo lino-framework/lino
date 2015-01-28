@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.requests import BoundAction
 from lino.core.constants import _handle_attr_name
@@ -162,9 +162,7 @@ class ActorMetaClass(type):
         cls.virtual_fields = {}
         cls._constants = {}
         cls._actions_dict = AttrDict()
-        # ~ cls._actions_list = None # 20121129
         cls._actions_list = []  # 20121129
-        #~ cls._replaced_by = None
 
         # inherit virtual fields defined on parent Actors
         for b in bases:
@@ -693,7 +691,6 @@ class Actor(actions.Parametrizable):
         Before this we create `insert_action` and `detail_action` if necessary.
         Also fill _actions_list.
         """
-        # ~ cls._actions_list = [] # 20121129
 
         default_action = cls.get_default_action()
 
@@ -751,16 +748,10 @@ class Actor(actions.Parametrizable):
                         if v.attach_to_actor(cls, k):
                             cls.bind_action(v)
 
-        #~ cls._actions_list = cls._actions_dict.values()
-        #~ cls._actions_list += cls.get_shared_actions()
         def f(a, b):
             return cmp(a.action.sort_index, b.action.sort_index)
         cls._actions_list.sort(f)
         cls._actions_list = tuple(cls._actions_list)
-        # if cls.__name__ == 'AttestationsByProject':
-        #     logger.info(
-        #         '20120614 %s : %s', cls,
-        #         [str(a) for a in cls._actions_list])
 
     @classmethod
     def bind_action(self, a):
@@ -1044,9 +1035,6 @@ class Actor(actions.Parametrizable):
     @classmethod
     def get_action_by_name(self, name):
         return self._actions_dict.get(name, None)
-        #~ a = self._actions_dict.get(name,None)
-        #~ if a is not None:
-            #~ return actions.BoundAction(self,a)
     get_url_action = get_action_by_name
 
     @classmethod
@@ -1218,7 +1206,7 @@ class Actor(actions.Parametrizable):
             l.append(ar.action_button(ba, obj))
             sep = ' '
             # sep = E.br()
-        return E.p(*l)
+        return E.span(*l)
 
     @classmethod
     def slave_as_html_meth(self):

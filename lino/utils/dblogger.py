@@ -23,7 +23,7 @@ debug = logger.debug
 #~ getLevel = logger.getLevel
 #~ setLevel = logger.setLevel
 
-from lino.core.dbutils import obj2str
+from lino.core.utils import obj2str
 
 
 def log_deleted(request, elem):

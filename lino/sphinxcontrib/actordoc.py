@@ -53,7 +53,7 @@ from lino.core import choicelists
 from lino.core import dbtables
 from atelier.utils import unindent
 from atelier import rstgen
-from lino.core.dbutils import full_model_name
+from lino.core.utils import full_model_name
 from lino.ad import Plugin
 
 from atelier.sphinxconf.insert_input import Py2rstDirective

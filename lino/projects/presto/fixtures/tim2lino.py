@@ -47,8 +47,8 @@ from lino.utils import dpy
 
 from lino.modlib.accounts.utils import AccountTypes
 
-from lino.core.dbutils import resolve_model, obj2str
-from lino.core.dbutils import is_valid_email
+from lino.core.utils import resolve_model, obj2str
+from lino.core.utils import is_valid_email
 
 from lino.api import dd, rt
 

@@ -9,7 +9,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model
 from lino.utils.instantiator import Instantiator
 from lino.api import dd
 from lino.utils import dblogger

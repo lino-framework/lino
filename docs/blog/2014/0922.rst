@@ -12,7 +12,7 @@ some time to imagine a satisfying way of integrating it and making it
 reusable.  Side effects:
 
 - Renamed :class:`lino.utils.mti.MultiTableBase` to
-  :class:`dd.Polymorphic`.
+  :class:`lino.mixins.polymorphic.Polymorphic`.
 
 - Fixed a bug in :meth:`dd.Model.print_subclasses_graph`. Example usage
   in :ref:`welfare.de.partner`.

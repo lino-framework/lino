@@ -32,7 +32,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 from django.utils import translation
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-from lino.core.dbutils import obj2str, sorted_models_list, full_model_name
+from lino.core.utils import obj2str, sorted_models_list, full_model_name
 
 SUFFIX = '.py'
 

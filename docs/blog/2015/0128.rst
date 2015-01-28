@@ -1,0 +1,26 @@
+===========================
+Wednesday, January 28, 2015
+===========================
+
+Yesterday's work on :ticket:`80` (Convert Partner to Person) made be
+think about The :class:`lino.utils.mti.EnableChild` field. This field
+is not really user-friendly. Can't I write something equivalent using
+action buttons? A "Polymorphy manager" field. Or should it be
+integrated with the polymorphy navigator?
+
+Internal optimizations while experimenting about this:
+
+- The virtual field `mti_navigator` is no longer defined on
+  :class:`lino.modlib.contacts.models.Partner` but on
+  :class:`lino.mixins.polymorphic.Polymorphic`.
+
+- I finally wrote some actual documentation into the docstrings of
+  :class:`DisplayField<lino.core.fields.DisplayField>`,
+  :class:`HtmlBox<lino.core.fields.HtmlBox>`,
+  :class:`RequestField<lino.core.fields.RequestField>`,
+  :class:`VirtualField<lino.core.fields.VirtualField>` etc...
+
+- Some displayfield methods returned a ``<p>`` where a ``<span>`` is
+  enough.
+
+- Merged :mod:`lino.core.dbutils` into :mod:`lino.core.utils`.

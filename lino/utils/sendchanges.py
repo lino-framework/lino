@@ -41,8 +41,8 @@ from lino import rt
 from lino.core.signals import receiver
 from lino.core.signals import on_ui_created, on_ui_updated, pre_ui_delete
 from lino.core.fields import fields_list
-from lino.core.dbutils import resolve_model
-from lino.core.dbutils import full_model_name as fmn
+from lino.core.utils import resolve_model
+from lino.core.utils import full_model_name as fmn
 
 SUBSCRIPTIONS = []
 EMITTERS = []

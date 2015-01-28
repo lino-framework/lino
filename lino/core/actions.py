@@ -30,9 +30,9 @@ from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
 from lino.core import constants
-from lino.core.dbutils import obj2unicode
-from lino.core.dbutils import resolve_model
-from lino.core.dbutils import navinfo
+from lino.core.utils import obj2unicode
+from lino.core.utils import resolve_model
+from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
@@ -282,10 +282,10 @@ class Action(Parametrizable, Permittable):
     object but *do* modify the database, must override their
     `get_action_permission`::
     
-      def get_action_permission(self,ar,obj,state):
+      def get_action_permission(self, ar, obj, state):
           if user.profile.readonly:
               return False
-          return super(Duplicate,self).get_action_permission(ar,obj,state)
+          return super(Duplicate, self).get_action_permission(ar, obj, state)
 
     """
 

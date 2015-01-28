@@ -34,13 +34,13 @@ from django.db.models import loading
 import lino
 from lino.core import dbtables
 from lino.core import actions
-from lino.core.dbutils import app_labels
+from lino.core.utils import app_labels
 from lino.utils import confirm
 from lino.utils import rstgen
 from lino.core.menus import Menu, MenuItem
 #~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen
-#~ from lino.core.dbutils import makedirs_if_missing
+#~ from lino.core.utils import makedirs_if_missing
 from lino.management.commands.makedocs import GeneratingCommand
 
 

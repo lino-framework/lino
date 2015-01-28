@@ -22,7 +22,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
-from lino.core.dbutils import get_field
+from lino.core.utils import get_field
 
 from lino.core.utils import ChangeWatcher
 

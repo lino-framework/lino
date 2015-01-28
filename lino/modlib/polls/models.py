@@ -517,7 +517,7 @@ class AnswersByResponse(dd.VirtualTable):
             txt = obj.question.title
         if obj.question.is_heading:
             txt = E.b(txt)
-        return E.p(txt)
+        return E.span(txt)
 
     @dd.displayfield(_("My answer"))
     def answer_buttons(self, obj, ar):
@@ -543,7 +543,7 @@ class AnswersByResponse(dd.VirtualTable):
                 ia, text, request_kwargs=request_kwargs,
                 style="text-decoration:none")
             l.append(e)
-        return E.p(*join_elems(l))
+        return E.span(*join_elems(l))
 
 
 class PollResult(Questions):

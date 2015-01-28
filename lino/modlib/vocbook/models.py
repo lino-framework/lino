@@ -26,4 +26,4 @@ from lino.api import dd, rt
 #~ from lino.core import reports
 from lino.core import actions
 from lino.utils import dblogger
-from lino.core.dbutils import resolve_model
+from lino.core.utils import resolve_model

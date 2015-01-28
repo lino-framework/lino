@@ -44,11 +44,11 @@ from lino.modlib.contacts.utils import name2kw, street2kw
 from lino.api import dd, rt
 from lino.utils.instantiator import Instantiator
 
-from lino.core.dbutils import resolve_model, obj2str
+from lino.core.utils import resolve_model, obj2str
 import lino
 
 from lino.utils import confirm, iif
-from lino.core.dbutils import app_labels
+from lino.core.utils import app_labels
 from lino.projects.crl.models import CRL
 
 Country = resolve_model('countries.Country')

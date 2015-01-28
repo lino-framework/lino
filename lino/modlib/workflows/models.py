@@ -29,8 +29,8 @@ from lino.api import dd, rt
 from lino.core import actors
 from lino.mixins import printable
 #~ from lino import choices_method, simple_choices_method
-from lino.core.dbutils import obj2str, sorted_models_list
-from lino.core.dbutils import resolve_field
+from lino.core.utils import obj2str, sorted_models_list
+from lino.core.utils import resolve_field
 from lino.utils.choosers import chooser
 from lino.core import actions
 #~ from lino.utils.choicelists import UserLevel, UserGroup

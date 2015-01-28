@@ -919,13 +919,13 @@ class ExpectedMovements(dd.VirtualTable):
     @dd.displayfield(
         _("Debts"), help_text=_("List of invoices in this match group"))
     def debts(self, row, ar):
-        return E.p(*join_elems([
+        return E.span(*join_elems([   # E.p(...) until 20150128
             ar.obj2html(i.voucher.get_mti_leaf()) for i in row.debts]))
 
     @dd.displayfield(
         _("Payments"), help_text=_("List of payments in this match group"))
     def payments(self, row, ar):
-        return E.p(*join_elems([
+        return E.span(*join_elems([    # E.p(...) until 20150128
             ar.obj2html(i.voucher.get_mti_leaf()) for i in row.payments]))
 
     @dd.virtualfield(dd.PriceField(_("Balance")))
@@ -1366,7 +1366,7 @@ class DebtorsCreditors(dd.VirtualTable):
     @dd.displayfield(_("Actions"))
     def actions(self, row, ar):
         # TODO
-        return E.p("[Show debts] [Issue reminder]")
+        return E.span("[Show debts] [Issue reminder]")
 
 
 class Debtors(DebtorsCreditors):

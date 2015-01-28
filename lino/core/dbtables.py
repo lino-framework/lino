@@ -26,7 +26,7 @@ from lino.core import actors
 from lino.core import frames
 
 
-from lino.core.dbutils import resolve_model, get_field, UnresolvedModel
+from lino.core.utils import resolve_model, get_field, UnresolvedModel
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 
 

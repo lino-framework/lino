@@ -16,7 +16,7 @@ from django.conf import settings
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.models import ContentType
 
-from lino.core.dbutils import obj2str
+from lino.core.utils import obj2str
 from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E

@@ -14,7 +14,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino.core.dbutils import obj2str, full_model_name
+from lino.core.utils import obj2str, full_model_name
 from lino.core.utils import ChangeWatcher
 
 from lino.core import fields

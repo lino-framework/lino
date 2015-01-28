@@ -2,5 +2,5 @@
 Database Design (``dd``)
 ========================
 
-Content moved to :mod:`lino.rt`.
+Content moved to :mod:`lino.api.dd`.
 
