@@ -12,13 +12,10 @@ imported.
 
 """
 
-from __future__ import unicode_literals
-
 from django.utils.translation import ugettext_lazy as _
-
 
 from lino.core.plugin import Plugin
 from lino.core.site import Site, TestSite, configure_plugin
 
 
-__all__ = ['Site', 'TestSite', 'Plugin', 'configure_plugin', '_']
+# __all__ = ['Site', 'TestSite', 'Plugin', 'configure_plugin', '_']

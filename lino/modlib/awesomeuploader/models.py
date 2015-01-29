@@ -41,4 +41,4 @@ def setup_quicklinks(site, ar, m):
     m.add_action('awesomeuploader.UploaderPanel')
 
 
-__all__ = ['UploaderPanel']
+# __all__ = ['UploaderPanel']

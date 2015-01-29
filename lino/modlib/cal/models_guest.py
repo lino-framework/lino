@@ -313,6 +313,3 @@ if settings.SITE.is_installed('contacts'):
             return kw
 
 
-# __all__ = [
-#     'Guest', 'Guests',
-# ]

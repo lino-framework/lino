@@ -9,14 +9,93 @@ I noticed that some test cases in :ref:`welfare` were not being run
 during the test suite. For example
 :mod:`lino_welfare.projects.docs.tests`.  Fixed.
 
+The :envvar:`LINO_CACHE_ROOT` environment variable
+==================================================
+
+Lino now makes use of a :envvar:`LINO_CACHE_ROOT` environment
+variable.  If this variable is set, then the cached data of demo
+databases are no longer written into the file tree of the source code
+repository but below the given directory.
+
+On my machnie I have now the following line in my :file:`.bashrc` file::
+
+  export LINO_CACHE_ROOT=/home/luc/tmp/cache
+
+Note that the path should be absolute and without a ``~``.
+
+This feature was needed because we want to get Lino build on CI sites
+such as Travis. To enable it for Travis, I modified Lino's
+:srcref:`.travis.yml` file, changing::
+
+  script: fab initdb test
+
+into::
+
+  script: export LINO_CACHE_ROOT=$(TRAVIS_BUILD_DIR) ; fab initdb test
+
+(To be honest, I *hope* that this was the reason. Confirmation will
+follow.)
+
+This feature caused quite some subtle internal changes. The changes
+which might cause problems when upgrading are:
+
+- The Site attributes :attr:`project_dir
+  <lino.core.site.Site.project_dir>` and :attr:`project_name
+  <lino.core.site.Site.project_name>` have slightly different meanings
+  and default values, and they are no longer simple strings but
+  `unipath.Path <https://github.com/mikeorr/Unipath>`__ objects.
+
+- New Site attribute :attr:`cache_dir<lino.core.site.Site.cache_dir>`.
+
+
+New API for defining demo databases
+===================================
+
+Users of :mod:`atelier.fablib` must adapt their :xfile:`fabfile.py` of
+their projects which define "demo databases" (which we now call
+"Django demo projects", see :attr:`atelier.fablib.env.demo_projects`).
+
+Before::
+
+  add_demo_database('lino_welfare.projects.docs.settings.demo')
+
+After::
+
+  add_demo_project('lino_welfare/projects/docs')
+
+(I guess that I am the only one who needed to do this...)
+
+
+
+About ``__all__``
+=================
+
+I removed the ``__all__`` definitions from all modules.
+
+The first reason is that they caused a problem when Mahmoud tried to
+build the docs::
+
+    Warning, treated as error:
+    /...lino/docs/api/lino.api.ad.rst:4: WARNING: __all__ should be a list of strings, not [u'Site', u'TestSite', u'Plugin', u'configure_plugin', u'_'] (in module lino.api.ad) -- ignoring __all__
+    
+Note that this warning is rather a false alert, and thus 
+I'd call it a bug in the latest Sphinx version.
+    
+OTOH I am not a friend of ``__all__``. Anyway it is not
+recommended to do ``from xxx import *``. I never recommend to use it
+except for some special situations:
+    
+- :srcref:`lino/ad.py` imports ``*`` from :srcref:`lino/api/ad.py`. This
+  module exists only for backwards compatibility.
+- Another good reason for ``import *`` is when you extend a
+  :class:`lino.core.plugin.Plugin`.
+
+
 TODO:
 
-- :mod:`atelier.fablib` : change `add_demo_database` to
-  `add_demo_project`, and instead of specifying them as Python
-  modules, specify the directory. Which is supposed to contain a file
-  :xfile:`manage.py`.
+- Haushalt erstellen vom Partner aus: funktioniert nicht
+- Wenn man bei den Neuanträgen jemanden ablehnt, kommt ein internal
+  server error
 - Add a TestCase which automatically runs ``python manage.py test`` in
-  all these directories.
-- Add a config parameter `cache_dir`, and have Lino create a local
-  project dir below this for every demo_project, and have the
-  `default.db` files and :xfile:`media` subdirs be created there.
+  every demo project.
+

@@ -137,10 +137,10 @@ class AddressesByPartner(Addresses):
 
 
 
-__all__ = [
-    'AddressTypes',
-    'DataSources',
-    'AddressOwner',
-    'Address',
-    'Addresses',
-    'AddressesByPartner']  # 'ADDRESS_FIELDS']
+# __all__ = [
+#     'AddressTypes',
+#     'DataSources',
+#     'AddressOwner',
+#     'Address',
+#     'Addresses',
+#     'AddressesByPartner']  # 'ADDRESS_FIELDS']

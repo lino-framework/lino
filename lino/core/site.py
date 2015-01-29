@@ -11,6 +11,22 @@
 
 .. autosummary::
 
+
+.. envvar:: LINO_CACHE_ROOT
+
+If an environment variable :envvar:`LINO_CACHE_ROOT` is set, then the
+cached data of demo projects (the :xfile:`default.db` files and the
+:xfile:`media` directories) are not written into the file tree of the
+source code repository but below the given directory.  See
+:attr:`atelier.fablib.env.demo_projects`.
+
+For example you can add the following line to your :file:`.bashrc`
+file::
+
+  export LINO_CACHE_ROOT=/home/luc/tmp/cache
+
+Note that the path should be absolute and without a ``~``.
+
 """
 
 import os
@@ -23,6 +39,7 @@ import codecs
 import collections
 from urllib import urlencode
 
+from unipath import Path
 from atelier.utils import AttrDict, ispure, date_offset
 from atelier import rstgen
 
@@ -154,23 +171,36 @@ class Site(object):
     userdocs_prefix = ''
 
     project_name = None
+    """A nickname for this project. This is used to set :attr:`cache_dir`
+    and therefore should be unique for all Lino projects on a given
+    machine.
+
+    If this is None, Lino will find a default value by splitting
+    :attr:`project_dir` and taking the last part (or the second-last
+    if the last part is 'settings'.
+
     """
-    Read-only.
-    The leaf name of your local project directory.
+
+    cache_dir = None
+    """This is either the same as :attr:`project_dir` or (if
+    :envvar:`LINO_CACHE_ROOT` is set), will be set to
+    :envvar:`LINO_CACHE_ROOT` + :attr:`project_name`.
+
+    Lino will create temporary data for demo projects into this
+    directory. This includes the :xfile:`media` directory and the
+    :xfile:`default.db` file.
 
     """
 
     project_dir = None
-    """Full path to your local project directory.  Read-only.  Local
-    subclasses should not override this variable.
+    """Full path to your local project directory.  Local subclasses should
+    not override this variable.
     
-    The local project directory is where local configuration files are
-    stored:
-    
-    - Your :xfile:`settings.py`
-    - Optionally the :xfile:`manage.py` and :xfile:`urls.py` files
-    - Your :xfile:`media` directory
-    - Optional local :xfile:`config` and :xfile:`fixtures` directories
+    Lino sets this to the directory of the :xfile:`settings.py` file
+    (or however your :envvar:`DJANGO_SETTINGS_MODULE` is named).
+
+    If it countains a :xfile:`config` directory, this will be added to
+    the config search path.
 
     """
 
@@ -247,7 +277,6 @@ class Site(object):
     them to the default settings.
 
     This is automatically set when a :class:`Site` is instantiated.
-    Don't override it.
 
     """
 
@@ -640,7 +669,7 @@ documentation.
     webdav_root = None
     """
     The path on server to store webdav files.
-    Default is "PROJECT_DIR/media/webdav".
+    Default is :attr:`cache_dir` + ´/media/webdav'.
     """
 
     webdav_url = None
@@ -885,11 +914,11 @@ documentation.
             setup_site(self)
 
     def init_before_local(self, settings_globals, local_apps):
-        """
-        If your `project_dir` contains no :file:`models.py`,
-        but *does* contain a `fixtures` subdir,
-        then Lino automatically adds this as "local fixtures directory"
-        to Django's `FIXTURE_DIRS`.
+        """If your :attr:`project_dir` contains no :file:`models.py`, but
+        *does* contain a `fixtures` subdir, then Lino automatically
+        adds this as "local fixtures directory" to Django's
+        `FIXTURE_DIRS`.
+
         """
         if isinstance(local_apps, basestring):
             local_apps = [local_apps]
@@ -907,8 +936,37 @@ documentation.
         self.django_settings = settings_globals
         project_file = settings_globals.get('__file__', '.')
 
-        self.project_dir = normpath(dirname(project_file))
-        self.project_name = os.path.split(self.project_dir)[-1]
+        self.project_dir = Path(dirname(project_file)).absolute()
+        if self.project_name is None:
+            parts = reversed(self.project_dir.split(os.sep))
+            # print(20150129, list(parts))
+            for part in parts:
+                if part != 'settings':
+                    self.project_name = part
+                    break
+
+        cache_root = os.environ.get('LINO_CACHE_ROOT', None)
+        if cache_root:
+            cr = Path(cache_root).absolute()
+            if not cr.exists():
+                msg = "LINO_CACHE_ROOT ({0}) does not exist!".format(cr)
+                raise Exception(msg)
+            self.cache_dir = cr.child(self.project_name)
+            self.makedirs_if_missing(self.cache_dir)
+
+            # avoid duplicate use of same cache directory:
+            stamp = self.cache_dir.child('lino_cache.txt')
+            if stamp.exists():
+                other = stamp.read_file()
+                if other != self.project_dir:
+                    msg = "Oops : {0} used for {1} and {2}".format(
+                        stamp, other, self.project_dir)
+                    raise Exception(msg)
+            else:
+                stamp.write_file(self.project_dir)
+        else:
+            self.cache_dir = Path(self.project_dir).absolute()
+
 
         #~ self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
         #~ self.dummy_messages = set()
@@ -918,9 +976,7 @@ documentation.
         #~ self._response = None
         self.startup_time = datetime.datetime.now()
 
-        dbname = join(self.project_dir, 'default.db')
-        #~ if memory_db:
-            #~ dbname  = ':memory:'
+        dbname = join(self.cache_dir, 'default.db')
         self.django_settings.update(DATABASES={
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -938,7 +994,6 @@ documentation.
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
         })
-
 
         ## Local project directory
         modname = self.__module__
@@ -2252,17 +2307,16 @@ site. :manage:`diag` is a command-line shortcut to this.
         if self.webdav_url is None:
             self.webdav_url = '/media/webdav/'
         if self.webdav_root is None:
-            self.webdav_root = join(
-                abspath(self.project_dir), 'media', 'webdav')
+            self.webdav_root = join(self.cache_dir, 'media', 'webdav')
 
         if not self.django_settings.get('MEDIA_ROOT', False):
             """
             Django's default value for MEDIA_ROOT is an empty string.
             In certain test cases there migth be no MEDIA_ROOT key at all.
-            Lino's default value for MEDIA_ROOT is ``<project_dir>/media``.
+            Lino's default value for MEDIA_ROOT is ``<cache_dir>/media``.
             """
             self.django_settings.update(
-                MEDIA_ROOT=join(self.project_dir, 'media'))
+                MEDIA_ROOT=join(self.cache_dir, 'media'))
 
         self.update_settings(
             ROOT_URLCONF='lino.core.urls'
@@ -2893,6 +2947,10 @@ startup.
         return flt
 
     def relpath(self, p):
+        """Used by :class:`lino.mixins.printable.EditTemplate` in order to
+        write a testable message...
+
+        """
         if p.startswith(self.project_dir):
             p = "$(PRJ)" + p[len(self.project_dir):]
         return p

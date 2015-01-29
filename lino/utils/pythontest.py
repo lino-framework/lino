@@ -122,3 +122,4 @@ class TestCase(TestCase):
 
         if res.failed:
             self.fail("doctest.testfile() failed. See earlier messages.")
+

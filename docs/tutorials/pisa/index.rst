@@ -5,7 +5,7 @@ Printing using Pisa
 
 Continued from :ref:`lino.tutorial.human` 
 
-We have Person model inherit from `dd.Printable`:
+We have Person model inherit from :class:`lino.mixins.printable.Printable`:
 
 .. literalinclude:: models.py
 
@@ -29,7 +29,7 @@ such things using scripts.
 Note that you need to manually add `pip install pisa`.
 
 >>> from __future__ import print_function 
->>> from lino.runtime import *
+>>> from lino.api.runtime import *
 >>> from django.test import Client
 >>> from pisa.models import Person
 
@@ -88,9 +88,9 @@ own help system.
 Since the `media/cache` directory is not part of the Lino repository,
 we copy the resulting file to a public place:
 
+>>> p = settings.SITE.cache_dir.child('media', 'cache', 'pisa',
+...     'pisa.Person-1.pdf')
 >>> import shutil
->>> shutil.copyfile(
-...    'media/cache/pisa/pisa.Person-1.pdf',
-...    'pisa.Person-1.pdf')
+>>> shutil.copyfile(p, 'pisa.Person-1.pdf')
 
 

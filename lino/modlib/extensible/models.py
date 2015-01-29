@@ -234,4 +234,4 @@ def setup_quicklinks(site, ar, m):
     m.add_action('extensible.CalendarPanel')
 
 
-__all__ = ['CalendarPanel']
+# __all__ = ['CalendarPanel']

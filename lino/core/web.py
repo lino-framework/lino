@@ -1,7 +1,9 @@
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""This initializes the `SITE.jinja_env` object.  Compare with
+:mod:`lino.utils.config` which also walks through the `config`
+directories. TODO: do only one common loop for both.
 
 """
 
@@ -30,14 +32,13 @@ from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 from jinja2.exceptions import TemplateNotFound
 
-#~ SUBDIR_NAME = 'templates_jinja'
 SUBDIR_NAME = 'config'
 
 
 def list_templates(self, ext, *groups):
-    """
-    Return a list of possible choices for a field that contains a
+    """Return a list of possible choices for a field that contains a
     template name.
+
     """
     # logger.info("20140617 list_templates(%r, %r)", ext, groups)
     if len(groups):
@@ -63,7 +64,7 @@ def site_setup(self):
     for building Jinja's template loader. It looks for
     a "config" subfolder in the following places:
     
-    - the directory where your settings.py is defined.
+    - the project directory :attr:`lino.core.site.Site.project_dir`
     - the directories of each installed app
     
     """

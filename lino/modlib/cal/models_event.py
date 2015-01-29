@@ -998,7 +998,3 @@ def pre_analyze(sender, **kw):
     sender.user_model.define_action(update_reminders=UpdateUserReminders())
 
 
-# __all__ = [
-#     'UpdateEvents',
-#     'Event', 'Events', 'EventsByController',
-#     'EventType', 'EventTypes', 'EventsByDay']

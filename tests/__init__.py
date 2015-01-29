@@ -232,6 +232,10 @@ class UtilsTests(LinoTestCase):
 
 class ProjectsTests(LinoTestCase):
     
+    # def test_all(self):
+    #     from atelier.fablib import run_in_demo_projects
+    #     run_in_demo_projects('test')
+
     def test_events(self):
         self.run_django_manage_test("lino/projects/events")
 

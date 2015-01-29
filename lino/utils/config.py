@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
@@ -71,8 +71,6 @@ class ConfigDirCache(object):
                 # logger.info("add_config_dir %s %s", name, pth)
                 config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
 
-        # for p in site.installed_plugins:
-        #     add_config_dir(p.app_name, p.app_module.__file__)
         site.for_each_app(add_config_dir)
 
         self.LOCAL_CONFIG_DIR = None
