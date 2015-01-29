@@ -17,15 +17,16 @@ variable.  If this variable is set, then the cached data of demo
 databases are no longer written into the file tree of the source code
 repository but below the given directory.
 
-On my machnie I have now the following line in my :file:`.bashrc` file::
+On my machine I have now the following line in my :file:`.bashrc` file::
 
   export LINO_CACHE_ROOT=/home/luc/tmp/cache
 
 Note that the path should be absolute and without a ``~``.
 
-This feature was needed because we want to get Lino build on CI sites
-such as Travis. To enable it for Travis, I modified Lino's
-:srcref:`.travis.yml` file, changing::
+This feature was needed because we want to get Lino build on a
+continuous integratio site such as `Travis CI
+<https://en.wikipedia.org/wiki/Travis_CI>`_. To enable it for Travis,
+I modified Lino's :srcref:`.travis.yml` file, changing::
 
   script: fab initdb test
 
@@ -51,9 +52,10 @@ which might cause problems when upgrading are:
 New API for defining demo databases
 ===================================
 
-Users of :mod:`atelier.fablib` must adapt their :xfile:`fabfile.py` of
-their projects which define "demo databases" (which we now call
-"Django demo projects", see :attr:`atelier.fablib.env.demo_projects`).
+Users of :mod:`atelier.fablib` who used "demo databases" (which we now
+call "Django demo projects", see
+:attr:`atelier.fablib.env.demo_projects`) must adapt their
+:xfile:`fabfile.py` as follows:
 
 Before::
 
@@ -99,3 +101,16 @@ TODO:
 - Add a TestCase which automatically runs ``python manage.py test`` in
   every demo project.
 
+
+
+Results from travis
+===================
+
+Here is the first feedback from travis::
+
+    $ export LINO_CACHE_ROOT=$(TRAVIS_BUILD_DIR) ; fab initdb test
+    /home/travis/build.sh: line 41: TRAVIS_BUILD_DIR: command not found
+
+The following might work::
+
+    $ export LINO_CACHE_ROOT=$TRAVIS_BUILD_DIR ; fab initdb test

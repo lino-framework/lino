@@ -41,7 +41,7 @@ then wrote the following code snippet directly into my blog entry:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.settings.doctests'
->>> from lino.runtime import *
+>>> from lino.api.runtime import *
 >>> from django.test import Client
 >>> client = Client()
 >>> url = '/restful/extensible/PanelEvents?sd=05.05.2013&ed=11.05.2013&tv=true'
