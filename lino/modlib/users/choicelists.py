@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the choicelists for :mod:`lino.modlib.users`, i.e.

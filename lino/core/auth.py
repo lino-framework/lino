@@ -21,9 +21,7 @@ from django.utils import translation
 from django.conf import settings
 from django import http
 
-
 from lino.core import constants
-
 from lino.modlib.users.utils import AnonymousUser
 
 
@@ -36,9 +34,13 @@ class AuthMiddleWareBase(object):
     # Singleton instance
     _instance = None
 
+    class NOT_NEEDED:
+        pass
+
     def __init__(self):
         # Save singleton instance
         AuthMiddleWareBase._instance = self
+        # print("20150129 Middleware is {0}".format(self.__class__))
 
     def get_user_from_request(self, request):
         raise NotImplementedError
@@ -53,11 +55,8 @@ class AuthMiddleWareBase(object):
 
         self.on_login(request, user)
 
-    class NOT_NEEDED:
-        pass
-
     def authenticate(self, username, password=NOT_NEEDED):
-        #~ logger.info("20130923 authenticate %s,%s" % (username,password))
+        # logger.info("20150129 authenticate %s, %s" % (username, password))
 
         if not username:
             return AnonymousUser.instance()
@@ -184,7 +183,8 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
         user = self.authenticate(username)
 
         if user is None:
-            #~ logger.info("20130514 Unknown username %s from request %s",username, request)
+            # print("20130514 Unknown username %s from request %s" % (
+            #     username, request))
             #~ raise Exception(
             #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator."
             #~ logger.info("Unknown or inactive username %r.",username)

@@ -9,6 +9,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import os
+
 from django.conf import settings
 
 from lino.utils import curry
@@ -53,7 +55,8 @@ class BoundAction(object):
             else:
                 raise Exception(
                     "settings.DEBUG is False, but `debug_permissions` "
-                    "for %r (required=%s) is active." % (self, required))
+                    "for %r (required=%s) is active (settings=%s)." % (
+                        self, required, os.environ['DJANGO_SETTINGS_MODULE']))
 
         from lino.modlib.users.utils import (
             make_permission_handler, make_view_permission_handler)

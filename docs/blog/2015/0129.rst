@@ -1,0 +1,22 @@
+==========================
+Thursday, January 29, 2015
+==========================
+
+Some tests where not being run
+==============================
+
+I noticed that some test cases in :ref:`welfare` were not being run
+during the test suite. For example
+:mod:`lino_welfare.projects.docs.tests`.  Fixed.
+
+TODO:
+
+- :mod:`atelier.fablib` : change `add_demo_database` to
+  `add_demo_project`, and instead of specifying them as Python
+  modules, specify the directory. Which is supposed to contain a file
+  :xfile:`manage.py`.
+- Add a TestCase which automatically runs ``python manage.py test`` in
+  all these directories.
+- Add a config parameter `cache_dir`, and have Lino create a local
+  project dir below this for every demo_project, and have the
+  `default.db` files and :xfile:`media` subdirs be created there.

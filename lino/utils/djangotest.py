@@ -25,7 +25,7 @@ from django.db import connection, reset_queries
 from lino.core.signals import testcase_setup, database_ready
 
 
-def check_json_result(response, expected_keys=None, msg=None):
+def unused_check_json_result(response, expected_keys=None, msg=None):
     """Checks the result of response which is expected to return a
     JSON-encoded dictionary with the expected_keys.
 
@@ -49,15 +49,15 @@ class CommonTestCase(unittest.TestCase):
 
     """
 
-    def check_json_result(self, response, expected_keys=None, msg=None):
+    def check_json_result(self, response, expected_keys=None, msg=''):
+        """Checks the result of response which is expected to return a
+        JSON-encoded dictionary with the expected_keys.
+
         """
-        Checks the result of response which is expected to return
-        a JSON-encoded dictionary with the expected_keys.
-        """
-        #~ print("20110301 response is %r" % response.content)
+        # print("20150129 response is %r" % response.content)
         self.assertEqual(
             response.status_code, 200,
-            "%s returned %s instead of 200" % (
+            "Response status ({0}) was {1} instead of 200".format(
                 msg, response.status_code))
         try:
             result = json.loads(response.content)
@@ -148,13 +148,6 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     """
 
-    #~ never_build_site_cache = True
-    #~ """
-    #~ Test cases usually don't need the site cache, so this is switched off.
-    #~ But e.g. :mod:`lino_welfare.modlib.cbss.tests.cbss_tests` switches
-    #~ it on because there it is needed.
-    #~ """
-
     defining_module = None
     """When you decorate your subclass of TestCase, you must also specify::
     
@@ -188,7 +181,12 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 class WebIndexTestCase(DjangoManageTestCase):
     """Designed to be just imported. No subclassing needed."""
 
-    override_djangosite_settings = dict(build_js_cache_on_startup=True)
+    override_djangosite_settings = dict(
+        build_js_cache_on_startup=True)
+
+    # def __call__(self, *args, **kw):
+    #     self.fail(settings.SETTINGS_MODULE)
+    #     return super(WebIndexTestCase, self).__call__(*args, **kw)
 
     def test_get_root(self):
         # self.assertEqual(settings.SETTINGS_MODULE, '')
