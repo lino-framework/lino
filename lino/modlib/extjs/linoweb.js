@@ -2259,7 +2259,7 @@ Lino.param_action_handler = function(window_action) { // 20121012
 Lino.run_row_action = function(
     requesting_panel, url, meth, pk, actionName, params, preprocessor) {
   //~ var panel = action.get_window().main_item;
-    console.log("20140930 Lino.run_row_action", params);
+  // console.log("20140930 Lino.run_row_action", params);
   url = '{{settings.SITE.build_admin_url("api")}}' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
   if (!params) params = {};
@@ -2267,7 +2267,8 @@ Lino.run_row_action = function(
       var p = preprocessor(); 
       Ext.apply(params, p);
   }
-  Ext.apply(params, panel.get_base_params());
+  if (panel) 
+      Ext.apply(params, panel.get_base_params());
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
   }
@@ -2639,6 +2640,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       var p = {};
       self.add_field_values(p)
 
+      Ext.apply(p, panel.get_base_params());
+      delete p.{{ext_requests.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{ext_requests.URL_PARAM_PARAM_VALUES}});
 
       Lino.call_ajax_action(

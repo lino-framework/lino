@@ -32,3 +32,28 @@ what we want because the current case is furthermore special: the
 `create_household` action is called from `pcsw.Clients` but defined on
 the `contacts.Person` model.
 
+:ref:`checkin`.
+
+And here is already a destructive side-effect of above solution.  The
+following comes when I tried to assign a newcomer to a coach::
+
+    AttributeError 'NoneType' object has no attribute '__dict__'
+
+    TRACEBACK:
+      ...
+      File "welfare/lino_welfare/modlib/newcomers/models.py", line 453, in run_from_ui
+        watcher = ChangeWatcher(client)
+      File "lino/lino/core/utils.py", line 694, in __init__
+        self.original_state = dict(watched.__dict__)
+
+Okay the parameter values (:data:`pv
+<lino.core.constants.URL_PARAM_PARAM_VALUES>`) must *maybe* never go
+to the AJAX call, but the :data:`mt
+<lino.core.constants.URL_PARAM_MASTER_TYPE>` and :data:`mk
+<lino.core.constants.URL_PARAM_MASTER_PK>` are always needed. For
+example the
+:class:`AssignCoach<lino_welfare.modlib.newcomers.models.AssignCoach>`
+action in :class:`AvailableCoachesByClient
+<lino_welfare.modlib.newcomers.models.AvailableCoachesByClient>` needs
+the `master_instance`.  The URL was
+    `/api/newcomers/AvailableCoachesByClient/200078?_dc=1422586734332&fv=...&fv=...&fv=false&an=assign_coach&sr=200078`

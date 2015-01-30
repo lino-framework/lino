@@ -1,6 +1,7 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines explicit code names for URL parameters
+
 """
 
 _handle_attr_name = '_lino_ui_handle'
@@ -17,7 +18,10 @@ URL_PARAM_END_DATE = 'ed'
 URL_PARAM_START_DATE = 'sd'
 
 URL_PARAM_PARAM_VALUES = 'pv'
+"""Array of values of table parameters."""
+
 URL_PARAM_FIELD_VALUES = 'fv'
+"""Array of values of action parameters."""
 
 URL_PARAM_ACTION_NAME = 'an'
 
@@ -25,13 +29,12 @@ URL_PARAM_FORMAT = 'fmt'
 URL_PARAM_REQUESTING_PANEL = 'rp'
 
 URL_PARAM_MASTER_TYPE = 'mt'
-"""
-The pk of the ContentType of the master model.
+"""The content type of the master instance.
+
 """
 
 URL_PARAM_MASTER_PK = 'mk'
-"""
-The pk of the master instance.
+"""The primary key of the master instance.
 """
 
 URL_PARAM_USER_LANGUAGE = 'ul'
