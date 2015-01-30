@@ -2,11 +2,9 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur"""
-
-Defines the :func:`html2xhtml` function which converts
-HTML to valid XHTML. It is far from being perfect but
-activaly being used in :mod:`lino.utils.appy_pod`.
+ur""" Defines the :func:`html2xhtml` function which converts HTML to
+valid XHTML. It is far from being perfect but activaly being used in
+:mod:`lino.utils.appy_pod`.
 
 .. This document is a part of the test suite.
 
@@ -96,7 +94,7 @@ try:
         return document.strip()
 
 except OSError:
-    # happens on on readthedocs.org:
+    # happens on readthedocs.org:
     # OSError: Could not load libtidy using any of these names: libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,libtidy.dylib,tidy
     # we can simply ignore it since it is just for building the docs.
     

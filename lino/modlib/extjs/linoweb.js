@@ -2174,7 +2174,9 @@ Lino.call_ajax_action = function(
           panel = Lino.current_window.main_item;
       else panel = Lino.viewport;
   }
-  Ext.apply(p, panel.get_base_params());
+  // console.log("20150130 a", p.{{ext_requests.URL_PARAM_PARAM_VALUES}});
+  // Ext.apply(p, panel.get_base_params());
+  // console.log("20150130 b", p.{{ext_requests.URL_PARAM_PARAM_VALUES}});
 
   if (panel.get_selected) {
       var selected_recs = panel.get_selected();
@@ -2220,6 +2222,7 @@ Lino.row_action_handler = function(actionName, hm, pp) {
       Lino.do_on_current_record(panel, function(rec) {
           //~ console.log(panel);
           panel.add_param_values(p, true);
+          Ext.apply(p, panel.get_base_params());
           Lino.call_ajax_action(
               panel, hm, panel.get_record_url(rec.id), 
               p, actionName, step, fn);
@@ -2234,8 +2237,10 @@ Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
   var fn = function(panel,btn,step) {
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       if (pp) { p = pp(panel);  if (! p) return; }
-      if (panel)  // may be undefined when called e.g. from quicklink
-          panel.add_param_values(p,true);
+      if (panel) { // may be undefined when called e.g. from quicklink
+          panel.add_param_values(p, true);
+          Ext.apply(p, panel.get_base_params());
+      }
       Lino.call_ajax_action(panel, hm,url, p, actionName, step, fn);
   };
   return fn;
@@ -2262,6 +2267,7 @@ Lino.run_row_action = function(
       var p = preprocessor(); 
       Ext.apply(params, p);
   }
+  Ext.apply(params, panel.get_base_params());
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
   }
@@ -2628,10 +2634,13 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     else 
         url += panel.ls_url;
     url += '/' + pk;
-    // prepare possible recursive call
+    // wrap into function to prepare possible recursive call
     var fn = function(panel, btn, step) {
       var p = {};
       self.add_field_values(p)
+
+      // console.log("20150130", p.{{ext_requests.URL_PARAM_PARAM_VALUES}});
+
       Lino.call_ajax_action(
           panel, 'GET', url, p, actionName, step, fn); //  , on_success);
     }

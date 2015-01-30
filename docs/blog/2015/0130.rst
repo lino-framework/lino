@@ -1,0 +1,34 @@
+========================
+Friday, January 30, 2015
+========================
+
+Submitting an ActionFormPanel no longer forwards `param_values`
+===============================================================
+
+Uff! Ticket :ticket:`49` is fixed. :ref:`gx` and Melanie discovered
+yesterday how to reproduce it. The trick was to open the detail panel
+*via the table view*, not (as I usually do) by clicking on some client
+in the welcome page.
+
+As expected, this was subtle and required several hours of debugging
+and a change in :xfile:`linoweb.js`. I also wrote a new test case
+:mod:`lino_welfare.projects.docs.tests.test_households` which helped
+me to understand the problem.
+
+Explanation: `Lino.call_ajax_action` also asked the requesting panel
+to add its base params to the parameters of the AJAX call::
+
+  Ext.apply(p, panel.get_base_params());
+
+In our case (user clicks on one of the `create_household` links in the
+summary panel of
+:class:`MembersByPerson<lino.modlib.households.models.MembersByPerson>`)
+the requesting panel is the detail window of the client.  Which (when
+opened via the table view) included the parameter values (:data:`pv
+<lino.core.constants.URL_PARAM_PARAM_VALUES>`) of that view.  But at
+least in our case we do *not* want to add these when sending the `OK`
+of the `ActionFormPanel`.  I am not yet sure whether this is generally
+what we want because the current case is furthermore special: the
+`create_household` action is called from `pcsw.Clients` but defined on
+the `contacts.Person` model.
+

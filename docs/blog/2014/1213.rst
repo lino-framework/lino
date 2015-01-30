@@ -27,5 +27,5 @@ Solution for Lino is to use `output-xhtml
 instead of `output-xml
 <http://tidy.sourceforge.net/docs/quickref.html#output-xml>`_.
 
-On readthedocs.org the build still failed because they don't have the
+On readthedocs.org the build still fails because they don't have the
 binary HtmlTidy library installed.

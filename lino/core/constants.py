@@ -1,13 +1,7 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-
-#~ from django.db import models
-#~ from django.http import HttpResponse, Http404
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from django.contrib.contenttypes import generic
-#~ from django.utils import simplejson as json
-#~ from django.conf import settings
-
+"""Defines explicit code names for URL parameters
+"""
 
 _handle_attr_name = '_lino_ui_handle'
 
