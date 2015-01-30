@@ -62,6 +62,9 @@ URL_PARAM_ACTION_STEP = "as"
 URL_PARAM_GRIDFILTER = 'filter'
 URL_PARAM_FILTER = 'query'
 URL_PARAM_TAB = 'tab'
+"""The number of the active tab panel.
+"""
+
 #~ URL_PARAM_EXPAND = 'expand'
 #~ """
 #~ A string entered in the quick search field or in the text field of a combobox.

@@ -1679,19 +1679,8 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     var ns = {};  // new status
     if (result.close_window) {
         
-        if(result.record_id || result.data_record) {
-            var ww = Lino.calling_window();
-            if (ww && ww.window.main_item instanceof Lino.FormPanel) {
-                if (ww.window.main_item.ls_detail_handler == detail_handler) {
-                    ns.record_id = result.record_id;
-                    ns.data_record = result.data_record;
-                    console.log("20140630 use new status.");
-                }
-            }
-        }
-
         // Subsequent processing expects that `panel` is "the current
-        // panel". Since we close the window, `panel` should now point
+        // panel". But if we close the window, `panel` must point
         // to the previous window. Note the case of an insert window
         // that has been invoked by double-clicking on the phantom row
         // of a slave table in a detail window. In that case we want
@@ -1701,6 +1690,17 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         // link (e.g. generated using ar.insert_button), then
         // Lino.close_window can return `undefined`.
 
+        if(result.record_id || result.data_record) {
+            var ww = Lino.calling_window();
+            if (ww && ww.window.main_item instanceof Lino.FormPanel) {
+                if (ww.window.main_item.ls_detail_handler == detail_handler) {
+                    ns.record_id = result.record_id;
+                    ns.data_record = result.data_record;
+                    // console.log("20140630 use new status.");
+                }
+            }
+        }
+
         panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
         if (!panel) 
             panel = Lino.current_window.main_item;
@@ -1709,19 +1709,23 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
     if(result.record_id || result.data_record) {
         if (! (ns.record_id || ns.data_record)) {
+          // no close_window, so we must update record data in current
+          // panel (if it is the detail_handler for this record) or
+          // open the detail handler.
+          var st = {
+              record_id: result.record_id,
+              data_record: result.data_record
+          };
+          if (result.active_tab) st.active_tab = result.active_tab;
           if (panel instanceof Lino.FormPanel 
               && panel.ls_detail_handler == detail_handler) 
             {
               // console.log("20140630 use panel.set_status().");
-              panel.set_status({
-                  record_id: result.record_id,
-                  data_record: result.data_record});
+              panel.set_status(st);
           } else {
               // console.log("20140630 run detail_handler.");
-              detail_handler.run(null, {
-                  record_id: result.record_id,
-                  data_record: result.data_record,
-                  base_params: panel.get_base_params()});
+              st.base_params = panel.get_base_params();
+              detail_handler.run(null, st);
           }
 
           // if (panel instanceof Lino.FormPanel 
@@ -3186,8 +3190,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     var main = this.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
-      //~ console.log('main.activeTab',tab,main.activeTab);
+      console.log('20150130 main.activeTab', tab, main.activeTab);
       if (tab) p.{{ext_requests.URL_PARAM_TAB}} = tab;
+    } else {
+      console.log('20150130 no main.activeTab');
     }
   },
   get_permalink_params : function() {
@@ -3233,13 +3239,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     }
     var panel = this;
     if (this.has_file_upload) this.form.fileUpload = true;
-    //~ console.log('FormPanel.save()',rec);
     this.loadMask.show();
     var p = {};
     Ext.apply(p, this.get_base_params());
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
     this.add_param_tab(p)
+    console.log('20150130 FormPanel.save()', rec, 
+                p.{{ext_requests.URL_PARAM_TAB}});
     var submit_config = {
         params: p, 
         scope: this,

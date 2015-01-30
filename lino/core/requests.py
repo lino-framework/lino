@@ -53,21 +53,24 @@ ACTION_RESPONSES = frozenset((
     'html',
     'rows',
     'data_record',
-    # 'actor_url',
     'detail_handler_name',
     'record_id',
-    # 'goto_record_id',
     'refresh', 'refresh_all',
     'close_window',
     'record_deleted',
     'xcallback',
-    'open_url', 'open_davlink_url',
+    'open_url',
+    'open_davlink_url',
     'info_message',
     'warning_message',  # deprecated
-    'eval_js'))
-"""
-Action responses supported by `Lino.action_handler`
+    'eval_js',
+    'active_tab'))
+"""Action responses supported by :js:func:`Lino.handle_action_result`
 (defined in :xfile:`linolib.js`).
+
+These are the allowed keyword arguments for
+:meth:`ar.set_response <BaseRequest.set_response>`.
+
 """
 
 
@@ -159,6 +162,7 @@ class BaseRequest(object):
         - ``info_message``
         - ``warning_message``
         - ``eval_js``
+        - ``active_tab``
 
         This does not yet respond anything, it is stored until the action
         has finished. The response might be overwritten by subsequent
@@ -318,9 +322,9 @@ class BaseRequest(object):
         self.requesting_panel = other.requesting_panel
 
     def parse_req(self, request, rqdata, **kw):
-        """
-        Parse the given Django HttpRequest and setup from it.
-        
+        """Parse the given incoming HttpRequest and set up this action
+request from it.
+
         """
         kw.update(user=request.user)
         kw.update(subst_user=request.subst_user)
@@ -328,8 +332,19 @@ class BaseRequest(object):
         kw.update(current_project=rqdata.get(
             ext_requests.URL_PARAM_PROJECT, None))
 
+        # If the incoming request specifies an active tab, then the
+        # response must forward this information. Otherwise Lino would
+        # forget the current tab when a user saves a detail form for
+        # the first time.  The `active_tab` is not (yet) used directly
+        # by Python code, so we don't store it as attribute on `self`,
+        # just in the response.
+        tab = rqdata.get(ext_requests.URL_PARAM_TAB, None)
+        if tab is not None:
+            tab = int(tab)
+            # logger.info("20150130 b %s", tab)
+            self.set_response(active_tab=tab)
+
         selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
-        #~ kw.update(selected_rows = [self.actor.get_row_by_pk(pk) for pk in selected])
         kw.update(selected_pks=selected)
 
         #~ if settings.SITE.user_model:

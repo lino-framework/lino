@@ -32,7 +32,7 @@ what we want because the current case is furthermore special: the
 `create_household` action is called from `pcsw.Clients` but defined on
 the `contacts.Person` model.
 
-:ref:`checkin`.
+Commit and push.
 
 And here is already a destructive side-effect of above solution.  The
 following comes when I tried to assign a newcomer to a coach::
@@ -55,5 +55,17 @@ example the
 :class:`AssignCoach<lino_welfare.modlib.newcomers.models.AssignCoach>`
 action in :class:`AvailableCoachesByClient
 <lino_welfare.modlib.newcomers.models.AvailableCoachesByClient>` needs
-the `master_instance`.  The URL was
-    `/api/newcomers/AvailableCoachesByClient/200078?_dc=1422586734332&fv=...&fv=...&fv=false&an=assign_coach&sr=200078`
+the `master_instance`.
+
+Commit and push.
+
+Remember the active tab when saving
+===================================
+
+And then another Javascript problem solved: :ticket:`68`. The problem was:
+
+- When I save a detail form for the first time, Lino forgets to add
+  the current tab to the AJAX call.
+
+Added new keyword argument `active_tab` to :meth:`ar.set_response
+<BaseRequest.set_response>`. 

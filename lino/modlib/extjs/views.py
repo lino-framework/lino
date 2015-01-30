@@ -562,7 +562,7 @@ class ApiElement(View):
 
     def put(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
-        # logger.info("20141206 %s", data)
+        # logger.info("20150130 %s", data)
         ar = action_request(
             app_label, actor, request, data, False,
             renderer=settings.SITE.kernel.extjs_renderer)
