@@ -21,10 +21,6 @@ lino.modlib.cal.models
       register_calendartype
       setkw
       unused_site_setup
-      update_auto_component
-      update_auto_event
-      update_auto_task
-      update_reminder
       update_reminders_for_user
       when_text
    
@@ -41,7 +37,6 @@ lino.modlib.cal.models
       CalendarType
       Calendars
       Component
-      ContentType
       Controllable
       DurationUnits
       Ended

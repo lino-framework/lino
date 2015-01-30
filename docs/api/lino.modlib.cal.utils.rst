@@ -12,10 +12,15 @@ lino.modlib.cal.utils
       amonthago
       aware
       dt2kw
+      force_unicode
       format_date
       format_datetime
       setkw
       to_locale
+      update_auto_component
+      update_auto_event
+      update_auto_task
+      update_reminder
       when_text
    
    
@@ -27,6 +32,7 @@ lino.modlib.cal.utils
    .. autosummary::
    
       AccessClasses
+      ContentType
       DurationUnit
       DurationUnits
       Recurrencies

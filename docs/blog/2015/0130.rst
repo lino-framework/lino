@@ -49,23 +49,40 @@ following comes when I tried to assign a newcomer to a coach::
 Okay the parameter values (:data:`pv
 <lino.core.constants.URL_PARAM_PARAM_VALUES>`) must *maybe* never go
 to the AJAX call, but the :data:`mt
-<lino.core.constants.URL_PARAM_MASTER_TYPE>` and :data:`mk
-<lino.core.constants.URL_PARAM_MASTER_PK>` are always needed. For
+<lino.core.constants.URL_PARAM_MASTER_TYPE>` and 
+:data:`mk <lino.core.constants.URL_PARAM_MASTER_PK>` 
+are always needed. For
 example the
 :class:`AssignCoach<lino_welfare.modlib.newcomers.models.AssignCoach>`
 action in :class:`AvailableCoachesByClient
 <lino_welfare.modlib.newcomers.models.AvailableCoachesByClient>` needs
 the `master_instance`.
 
-Commit and push.
+Commit and push. Upgrade in :ref:`weleup`.
 
 Remember the active tab when saving
 ===================================
 
 And then another Javascript problem solved: :ticket:`68`. The problem was:
 
-- When I save a detail form for the first time, Lino forgets to add
-  the current tab to the AJAX call.
+- When I save a detail form for the first time, Lino switches back to
+  the first tab even if I was in another tab when clicking the Save
+  button.
 
-Added new keyword argument `active_tab` to :meth:`ar.set_response
-<BaseRequest.set_response>`. 
+Note that Lino did *not* forget to add the :data:`tab
+<lino.core.constants.URL_PARAM_TAB>` url parameter to the AJAX
+call. But the response did not return it back.  Added new keyword
+argument `active_tab` to :meth:`ar.set_response
+<lino.core.requests.BaseRequest.set_response>`, changed
+:js:func:`Lino.handle_action_result` (in :xfile:`linolib.js`) to
+handle this keyword, and changed :meth:`ar.parse_req
+<lino.core.requests.BaseRequest.parse_req>` to detect the :data:`tab
+<lino.core.constants.URL_PARAM_TAB>` url parameter on incoming calls.
+
+Commit and push.
+
+Immersion trainings
+===================
+
+Worked on :ticket:`72`.
+I added a new module :mod:`lino_welfare.modlib.trainings`.

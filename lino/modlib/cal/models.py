@@ -16,7 +16,6 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
 from lino import mixins
@@ -26,16 +25,13 @@ from lino.utils import ONE_DAY
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
 
-
 from .utils import (
     DurationUnits, Recurrencies,
     setkw, dt2kw,
     when_text,
     Weekdays, AccessClasses)
 
-
-from .workflows import (
-    TaskStates, EventStates, GuestStates)
+from .workflows import (TaskStates, EventStates, GuestStates)
 
 from .workflows import take
 
@@ -257,83 +253,6 @@ Whether this is private, public or between."""))  # iCal:CLASS
             #~ return False
         #~ return True
 
-
-def update_auto_event(
-        autotype, user, date, summary, owner, **defaults):
-        #~ model = dd.resolve_model('cal.Event')
-    return update_auto_component(Event, autotype, user, date, summary, owner, **defaults)
-
-
-def update_auto_task(
-        autotype, user, date, summary, owner, **defaults):
-    Task = dd.resolve_model('cal.Task')
-    return update_auto_component(
-        Task, autotype, user, date, summary, owner, **defaults)
-
-
-def update_auto_component(
-        model, autotype, user, date, summary, owner, **defaults):
-    """
-    Creates, updates or deletes the
-    automatic :class:`calendar component <Component>`
-    of the specified `auto_type` and `owner`.
-
-    Specifying `None` for `date` means that
-    the automatic component should be deleted.
-    """
-    #~ print "20120729 update_auto_component", model,autotype,user, date, settings.SITE.loading_from_dump
-    #~ if SKIP_AUTO_TASKS: return
-    if settings.SITE.loading_from_dump:
-            #~ print "20111014 loading_from_dump"
-        return None
-    ot = ContentType.objects.get_for_model(owner.__class__)
-    if date and date >= settings.SITE.today() + datetime.timedelta(days=-7):
-        #~ defaults = owner.get_auto_task_defaults(**defaults)
-        #~ print "20120729 b"
-        defaults.setdefault('user', user)
-        obj, created = model.objects.get_or_create(
-            defaults=defaults,
-            owner_id=owner.pk,
-            owner_type=ot,
-            auto_type=autotype)
-        if not obj.is_user_modified():
-            original_state = dict(obj.__dict__)
-            if obj.user != user:
-                obj.user = user
-            summary = force_unicode(summary)
-            if obj.summary != summary:
-                obj.summary = summary
-            if obj.start_date != date:
-                obj.start_date = date
-            if created or obj.__dict__ != original_state:
-                #~ obj.full_clean()
-                obj.save()
-        return obj
-    else:
-        #~ print "20120729 c"
-        # delete task if it exists
-        try:
-            obj = model.objects.get(owner_id=owner.pk,
-                                    owner_type=ot, auto_type=autotype)
-        except model.DoesNotExist:
-            pass
-        else:
-            if not obj.is_user_modified():
-                obj.delete()
-
-
-def update_reminder(type, owner, user, orig, msg, num, unit):
-    """
-    Shortcut for calling :func:`update_auto_task`
-    for automatic "reminder tasks".
-    A reminder task is a message about something that will
-    happen in the future.
-    """
-    update_auto_task(
-        type, user,
-        unit.add_duration(orig, -num),
-        msg,
-        owner)
 
 
 def migrate_reminder(obj, reminder_date, reminder_text,
