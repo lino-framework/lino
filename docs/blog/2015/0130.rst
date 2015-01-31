@@ -84,5 +84,11 @@ Commit and push.
 Immersion trainings
 ===================
 
-Worked on :ticket:`72`.
-I added a new module :mod:`lino_welfare.modlib.trainings`.
+I started to work on :ticket:`72`. It was almost done in less than 2
+hours: a new module :mod:`lino_welfare.modlib.trainings`.
+
+But the :mod:`demo fixture
+<lino_welfare.modlib.trainings.fixtures.demo>` took some more
+time. See :doc:`tomorrow <0131>`.
+
+

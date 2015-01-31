@@ -25,13 +25,11 @@ Lino differentiates the following subclasses of Partner:
 .. django2rst:: contacts.Partner.print_subclasses_graph()
 
 
-The default database comes with the following list of 
+The default database comes with the following list of
 :class:`RoleType`:
 
 .. django2rst:: rt.show(contacts.RoleTypes)
     
-
-
 
 """
 
@@ -39,7 +37,7 @@ from lino import ad, _
 
 
 class Plugin(ad.Plugin):
-    "See :doc:`/dev/plugins`."
+    "See :class:`lino.core.plugin.Plugin`."
 
     verbose_name = _("Contacts")
 

@@ -14,6 +14,7 @@ This section describes how the Lino developers team members collaborate.
    analyst
    mentoring
    lad
+   sysadm
 
 
 Becoming a Lino developer

@@ -654,12 +654,6 @@ class Excerpts(dd.Table):
         return qs
 
 
-class MyExcerpts(ByUser, Excerpts):
-    required = dd.required(user_groups='office')
-    column_names = "build_time excerpt_type project *"
-    order_by = ["-build_time"]
-
-
 class ExcerptsByX(Excerpts):
     use_as_default_table = True
     required = dd.required(user_groups='office')
@@ -668,14 +662,16 @@ class ExcerptsByX(Excerpts):
     # window_size = (70, 20)
 
 
+class MyExcerpts(ByUser, ExcerptsByX):
+    required = dd.required(user_groups='office')
+    column_names = "build_time excerpt_type project *"
+
+
 class ExcerptsByType(ExcerptsByX):
     master_key = 'excerpt_type'
     column_names = "build_time owner project user *"
 
             
-MORE_LIMIT = 5
-
-
 class ExcerptsByOwner(ExcerptsByX):
     """Shows all excerpts whose :attr:`owner <Excerpt.owner>` field is
     this.
@@ -688,6 +684,7 @@ class ExcerptsByOwner(ExcerptsByX):
     column_names = "build_time excerpt_type user project *"
     slave_grid_format = 'summary'
     auto_fit_column_widths = True
+    MORE_LIMIT = 5
 
     @classmethod
     def get_slave_summary(self, obj, ar):
@@ -704,7 +701,7 @@ class ExcerptsByOwner(ExcerptsByX):
                     if ex.build_time is not None:
                         txt += " (%s)" % naturaltime(ex.build_time)
                     links.append(ar.obj2html(ex, txt))
-                    if i >= MORE_LIMIT:
+                    if i >= self.MORE_LIMIT:
                         # links.append(ar.href_to_request(sar, _("more")))
                         links.append('...')
                         break

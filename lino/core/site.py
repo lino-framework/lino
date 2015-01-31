@@ -937,6 +937,9 @@ documentation.
         project_file = settings_globals.get('__file__', '.')
 
         self.project_dir = Path(dirname(project_file)).absolute()
+
+        # inherit `project_name` from parent?
+        # if self.__dict__.get('project_name') is None:
         if self.project_name is None:
             parts = reversed(self.project_dir.split(os.sep))
             # print(20150129, list(parts))
@@ -952,18 +955,7 @@ documentation.
                 msg = "LINO_CACHE_ROOT ({0}) does not exist!".format(cr)
                 raise Exception(msg)
             self.cache_dir = cr.child(self.project_name)
-            self.makedirs_if_missing(self.cache_dir)
-
-            # avoid duplicate use of same cache directory:
-            stamp = self.cache_dir.child('lino_cache.txt')
-            if stamp.exists():
-                other = stamp.read_file()
-                if other != self.project_dir:
-                    msg = "Oops : {0} used for {1} and {2}".format(
-                        stamp, other, self.project_dir)
-                    raise Exception(msg)
-            else:
-                stamp.write_file(self.project_dir)
+            self.setup_cache_directory()
         else:
             self.cache_dir = Path(self.project_dir).absolute()
 
@@ -1023,6 +1015,27 @@ documentation.
                 disable_existing_loggers=True,  # Django >= 1.5
             ),
         )
+
+    def setup_cache_directory(self):
+        """When :envvar:`LINO_CACHE_ROOT` is set, Lino adds a stamp file to
+        every project's cache directory in order to avoid duplicate
+        use of same cache directory.
+
+        """
+
+        stamp = self.cache_dir.child('lino_cache.txt')
+        if stamp.exists():
+            other = stamp.read_file()
+            if other != self.project_dir:
+                msg = ("Oops : cannot use {cache_dir} for {this} "
+                       "because it is used for {other}.")
+                msg = msg.format(
+                    cache_dir=self.cache_dir,
+                    this=self.project_dir, other=other)
+                raise Exception(msg)
+        else:
+            self.makedirs_if_missing(self.cache_dir)
+            stamp.write_file(self.project_dir)
 
     def set_user_model(self, spec):
         """This can be called during :meth:`Plugin.on_init

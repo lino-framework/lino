@@ -14,3 +14,6 @@ a convenient name for different usage contexts.
    doctest
 
 """
+
+from django.utils.translation import ugettext_lazy as _
+

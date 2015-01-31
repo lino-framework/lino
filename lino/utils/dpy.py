@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 by Luc Saffre.
+# Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
 """
 Documented in :ref:`dpy`.
 
 """
+
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -393,9 +395,7 @@ if SUPPORT_EMPTY_FIXTURES:
 
 
 class FakeDeserializedObject(base.DeserializedObject):
-
-    """
-    Imitates DeserializedObject required by loaddata.
+    """Imitates DeserializedObject required by loaddata.
 
     Unlike normal DeserializedObject, we *don't want* to bypass
     pre_save and validation methods on the individual objects.
@@ -432,7 +432,10 @@ class FakeDeserializedObject(base.DeserializedObject):
             if m is not None:
                 m()
             if not self.deserializer.quick:
-                obj.full_clean()
+                try:
+                    obj.full_clean()
+                except ValidationError as e:
+                    raise Exception("{0} : {1}".format(obj2str(obj), e))
             obj.save(*args, **kw)
             logger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()

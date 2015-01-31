@@ -2,8 +2,9 @@
 # Copyright 2008-2015 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""This defines the :class:`Plugin` class.  See also
-:ref:`application`.
+"""This defines the :class:`Plugin` class.
+See :doc:`/dev/plugins` before reading this.
+
 
 """
 

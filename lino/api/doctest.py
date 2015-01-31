@@ -11,6 +11,7 @@ import json
 from bs4 import BeautifulSoup
 from lino.utils import AttrDict
 from lino.utils import i2d
+from lino.utils.xmlgen.html import E
 
 client = Client()
 
