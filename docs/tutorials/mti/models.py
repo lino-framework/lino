@@ -3,7 +3,7 @@ from lino.api import dd
 from lino.mixins.polymorphic import Polymorphic
 
 
-class Person(dd.Model):
+class Person(models.Model):
     name = models.CharField(max_length=50)
 
     def __unicode__(self):
@@ -31,7 +31,7 @@ class Restaurant(Place):
             ', '.join([unicode(o) for o in self.cooks.all()]))
 
 
-class Visit(dd.Model):
+class Visit(models.Model):
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
     purpose = models.CharField(max_length=50)
@@ -41,7 +41,7 @@ class Visit(dd.Model):
             self.purpose, self.person, self.place.name)
 
 
-class Meal(dd.Model):
+class Meal(models.Model):
     allow_cascaded_delete = ['restaurant']
     person = models.ForeignKey(Person)
     restaurant = models.ForeignKey(Restaurant)

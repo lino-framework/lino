@@ -29,11 +29,15 @@ classical Django know-how: `Restaurant` inherits from `Place`, and
 inheritance
 <https://docs.djangoproject.com/en/1.7/topics/db/models/#multi-table-inheritance>`_.
 
-.. literalinclude:: models.py
+The only Non-Django things in this code are:
+- models inherit from lino.core.model.Model
+- we have the
+`Place` model inherit from :class:`Polymorphic
+<lino.mixins.polymorphic.Polymorphic>`.  We'll talk about that later.
+- :attr:`allow_cascaded_delete <lino.core.model.Model.allow_cascaded_delete>`
 
-The only Non-Django thing here is that we inherit from
-:class:`dd.Polymorphic <lino.mixins.polymorphic.Polymorphic>`.  We'll
-talk about that later.
+
+.. literalinclude:: models.py
 
 Create some initial data:
 
@@ -51,7 +55,8 @@ Create some initial data:
 Here is our data:
 
 >>> Person.objects.all()
-[Person #1 (u'Alfred'), Person #2 (u'Bert'), Person #3 (u'Claude'), Person #4 (u'Dirk')]
+[<Person: Alfred>, <Person: Bert>, <Person: Claude>, <Person: Dirk>]
+
 >>> Restaurant.objects.all()
 [Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=Claude, Dirk)')]
 >>> Place.objects.all()
@@ -202,14 +207,14 @@ Bert, the owner of Restaurant #2 does two visits:
 >>> Visit(purpose="Say hello", person=bert, place=second).save()
 >>> Visit(purpose="Hang around", person=bert, place=second).save()
 >>> second.visit_set.all()
-[Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
+[<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
 
 Claude and Dirk, now workless, still go to eat in restaurants:
 
 >>> Meal(what="Fish",person=Person.objects.get(pk=3),restaurant=second).save()
 >>> Meal(what="Meat",person=Person.objects.get(pk=4),restaurant=second).save()
 >>> second.meal_set.all()
-[Meal #1 (u'Claude eats Fish at Second'), Meal #2 (u'Dirk eats Meat at Second')]
+[<Meal: Claude eats Fish at Second>, <Meal: Dirk eats Meat at Second>]
 
 Now we reduce Second to a Place:
 
@@ -238,7 +243,7 @@ The owner and visits have been taken over:
 
 >>> second = Place.objects.get(pk=2)
 >>> second.visit_set.all()
-[Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
+[<Visit: Say hello visit by Bert at Second>, <Visit: Hang around visit by Bert at Second>]
 
 
 The :func:`create_child` function
