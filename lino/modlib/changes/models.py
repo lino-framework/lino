@@ -1,7 +1,7 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :xfile:`models.py` module for :mod:`lino.modlib.changes`.
+"""The :xfile:`models.py` module for `lino.modlib.changes`.
 
 It defines the :class:`Change` model, and the functions
 :func:`watch_changes` and :func:`watch_all_changes`.  It also adds a
@@ -52,8 +52,11 @@ add('M', _("Merge"), 'merge')
 
 
 class Change(dd.Model):
-    """
-    Each database change of a watched object will generate one Change record.
+    """A registered change in the database.
+
+    Each database change of a watched object will generate one Change
+    record.
+
     """
 
     class Meta:
@@ -90,6 +93,9 @@ class Change(dd.Model):
 
 
 class Changes(dd.Table):
+    """The default table for :class:`Change`.
+    """
+
     param_object_type = models.ForeignKey(
         ContentType, verbose_name=_("Object type"), blank=True)
     parameters = {

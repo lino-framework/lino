@@ -4,14 +4,20 @@ Recording database changes
 
 See :ref:`lino.tutorial.watch` for an introduction.
 
+.. autosummary::
+   :toctree:
+
+    models
+
+
 """
-from lino import ad, _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    verbose_name = _("Boards")
+    verbose_name = _("Changes")
 
     def setup_explorer_menu(config, site, profile, m):
         menu_group = site.plugins.system

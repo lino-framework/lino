@@ -7,6 +7,3 @@ install: pip install .
 # command to run tests, e.g. python setup.py test
 script:  export LINO_CACHE_ROOT=$TRAVIS_BUILD_DIR ; fab initdb test
 
-# TRAVIS_BUILD_DIR contains the absolute path to the directory where
-  the repository being built has been copied on the worker.
-

@@ -18,3 +18,12 @@ I changed the default value for `title` from `"Unnamed Lino site"` to
 another Lino application".
 
 
+Miscellaneous
+=============
+
+I noticed that Travis has been saying "config missing" for several
+days now. Maybe a syntax error in my :xfile:`.travis.xml`?
+
+Hint for :ticket:`85` : this is another case of a table which must
+explicitly set :attr:`editable <lino.core.actors.Actor.editable>` to
+True.

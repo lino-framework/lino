@@ -203,18 +203,33 @@ class ActorMetaClass(type):
 
     @property
     def label(cls):
-        """The text to appear e.g. on a button that will call the default
-        action of an actor.  This attribute is *not* inherited to
-        subclasses.  For :class:`Actor` subclasses that don't have a
-        label, Lino will call :meth:`get_actor_label`.
-
-        """
-        
         return cls.get_actor_label()
 
     @property
     def known_values(cls):
-        """
+        return cls.get_known_values()
+
+    @property
+    def editable(cls):
+        return cls.get_actor_editable()
+
+
+class Actor(actions.Parametrizable):
+    """The base class for all actors.  Subclassed by :class:`AbstractTable
+    <lino.core.tables.AbstractTable>`, :class:`Table
+    <lino.core.dbtables.Table>`, :class:`ChoiceList
+    <lino.core.choicelists.ChoiceList>` and :class:`Frame
+    <lino.core.frames.Frame>`.
+
+    .. attribute:: label
+
+        The text to appear e.g. on a button that will call the default
+        action of an actor.  This attribute is *not* inherited to
+        subclasses.  For :class:`Actor` subclasses that don't have a
+        label, Lino will call :meth:`get_actor_label`.
+
+    .. attribute:: known_values
+
         A `dict` of `fieldname` -> `value` pairs that specify "known values".
 
         Requests will automatically be filtered to show only existing
@@ -222,51 +237,24 @@ class ActorMetaClass(type):
         instances created in this Table will automatically have these
         values set.
 
-        """
-        return cls.get_known_values()
-
-    @property
-    def editable(cls):
-        """Set this explicitly to `True` or `False` to make the Actor per se
-        editable or not.  Otherwise Lino will set it during startup:
-        to `False` if the actor is a Table and has a `get_data_rows`
-        method (otherwise to `True`).
-
-        Non-editable actors won't even call `get_view_permission` for
-        actions which are not readonly.
-
-        The :class:`lino.modlib.changes.models.Changes` table is an
-        example where this is being used: nobody should ever edit
-        something in the table of Changes.  The user interface uses this
-        to generate optimized JS code for this case.
-
-        """
-        return cls.get_actor_editable()
-
-
-class Actor(actions.Parametrizable):
-    """The base class for all actors.  Inherited by :class:`AbstractTable
-    <lino.core.tables.AbstractTable>`, :class:`Table
-    <lino.core.dbtables.Table>`, :class:`ChoiceList
-    <lino.core.choicelists.ChoiceList>` and :class:`Frame
-    <lino.core.frames.Frame>`.
-
     The following class methods are `None` in the default
     implementation. Subclass can define them.
 
     .. classmethod:: get_handle_name(self, ar)
 
         Most actors use the same UI handle for each request.  But
-        e.g. :class:`welfare.debts.PrintEntriesByBudget` overrides this to
-        implement dynamic columns depending on it's master_instance.
+        e.g. :class:`lino_welfare.modlib.debts.models.PrintEntriesByBudget`
+        overrides this to implement dynamic columns depending on it's
+        master_instance.
 
 
     .. classmethod:: get_row_classes(self, ar)
 
-        If a method of this name is defined on an actor, then it must be a
-        class method which takes an :class:`rt.ar` as single
-        argument and returns either None or a string "red", "green" or
-        "blue" (todo: add more colors and styles). Example::
+        If a method of this name is defined on an actor, then it must
+        be a class method which takes an :class:`ar
+        <lino.core.requests.BaseRequest>` as single argument and
+        returns either None or a string "red", "green" or "blue"
+        (todo: add more colors and styles). Example::
 
             @classmethod
             def get_row_classes(cls,obj,ar):
@@ -279,11 +267,12 @@ class Actor(actions.Parametrizable):
 
     .. classmethod:: get_welcome_messages(self, ar)
 
-        If a method of this name is defined on an actor, then it must be a
-        class method which takes an :class:`rt.ar` as single
-        argument and returns or yields a list of :term:`welcome messages
-        <welcome message>` (messages to be displayed in the welcome block
-        of :xfile:`admin_main.html`).
+        If a method of this name is defined on an actor, then it must
+        be a class method which takes an :class:`ar
+        <lino.core.requests.BaseRequest>` as single argument and
+        returns or yields a list of :term:`welcome messages <welcome
+        message>` (messages to be displayed in the welcome block of
+        :xfile:`admin_main.html`).
 
     """
     __metaclass__ = ActorMetaClass
@@ -360,7 +349,26 @@ class Actor(actions.Parametrizable):
     required = settings.SITE.get_default_required()
     update_required = dict()
     delete_required = dict()
+
     editable = None
+    """Set this explicitly to `True` or `False` to make the whole table
+    editable or not.  Otherwise Lino will guess what you want during
+    startup and set it to `False` if the actor is a Table and has a
+    `get_data_rows` method (which usually means that it is a virtual
+    table), otherwise to `True`.
+
+    Non-editable actors won't even call :meth:`get_view_permission`
+    for actions whose :attr:`readonly
+    <lino.core.actions.Action.readonly>` is `False`.
+
+    The
+    :class:`changes.Changes<lino.modlib.changes.models.Changes>`
+    table is an example where this is being used: nobody should
+    ever edit something in the table of Changes.  The user
+    interface uses this to generate optimized JS code for this
+    case.
+
+    """
 
     insert_layout_width = 60
     """
