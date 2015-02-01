@@ -1,6 +1,6 @@
 from django.db import models
-from lino.utils.mti import EnableChild
 from lino.api import dd
+from lino.mixins.polymorphic import Polymorphic
 
 
 class Person(dd.Model):
@@ -10,10 +10,9 @@ class Person(dd.Model):
         return self.name
 
 
-class Place(dd.Model):
+class Place(Polymorphic):
     name = models.CharField(max_length=50)
     owners = models.ManyToManyField(Person)
-    is_restaurant = EnableChild('Restaurant', verbose_name="is a restaurant")
 
     def __unicode__(self):
         return "#%s (name=%s, owners=%s)" % (

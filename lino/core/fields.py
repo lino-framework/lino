@@ -189,8 +189,6 @@ class FakeField(object):
         """
         Overridden by mti.EnableChild
         """
-        #~ return False
-        #~ return True
         return self.editable
 
     def has_default(self):

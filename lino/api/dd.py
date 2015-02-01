@@ -19,7 +19,6 @@ Tables:
 Extended Fields:
 
 - :class:`CharField <fields.CharField>`
-- :class:`EnableChild <lino.utils.mti.EnableChild>`
 - :class:`NullCharField <lino.core.fields.NullCharField>`
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
 - :class:`PasswordField <lino.core.fields.PasswordField>`
@@ -192,7 +191,6 @@ from lino.core.utils import babelattr
 from lino.core.utils import babel_values  # alias for babelkw for backward compat
 
 from lino.utils.choosers import chooser, action_chooser
-from lino.utils.mti import EnableChild
 
 from lino.core.layouts import FormLayout, DetailLayout, InsertLayout, Panel
 from lino.core.layouts import ParamsLayout

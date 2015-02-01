@@ -2,8 +2,8 @@ from django.db import models
 
 from lino.api import dd
 from lino.utils import join_elems
-from lino.utils import mti
 from lino.utils.xmlgen.html import E
+from lino.mixins.polymorphic import Polymorphic
 
 
 class Place(dd.Model):
@@ -13,15 +13,10 @@ class Place(dd.Model):
         return self.name
 
 
-class Member(dd.Model):
+class Member(Polymorphic):
     name = models.CharField(max_length=200)
     place = models.ForeignKey(Place, blank=True, null=True)
     email = models.EmailField(max_length=200, blank=True)
-
-    is_customer = mti.EnableChild('Customer',
-                                  verbose_name="is a customer")
-    is_supplier = mti.EnableChild('Supplier',
-                                  verbose_name="is a supplier")
 
     def __unicode__(self):
         return self.name
@@ -79,6 +74,7 @@ class Demand(dd.Model):
         return "%s (%s)" % (self.product, self.supplier)
 
 
-# We must import it so that it gets loaded together with the models.
+# We must import all from tables it so that it gets loaded together
+# with the models.
 from .tables import *
 

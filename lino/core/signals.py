@@ -77,7 +77,7 @@ Sent when a model instance is being merged into another instance.
 pre_remove_child = Signal(['request', 'child'])
 pre_add_child = Signal(['request'])
 """
-Sent when an EnableChild field has been checked. Arguments to the handler are:
+Sent when an MTI child has been added. Arguments to the handler are:
 - `sender` : the parent (a database object instance)
 - `request` : the HttpRequest which asks to create an MTI child
 - `child` : the child model (a class object)

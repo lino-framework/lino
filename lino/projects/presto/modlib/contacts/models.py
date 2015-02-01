@@ -1,32 +1,18 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
-# This file is part of the Lino Welfare project.
-# Lino Welfare is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino Welfare is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino Welfare; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2013-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
-
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 
 from lino.modlib.contacts.models import *
 
 from lino.modlib.cal.workflows import take, feedback
+from lino.modlib.addresses.mixins import AddressOwner
 
-addresses = dd.resolve_app('addresses')
 
-
-class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
+class Partner(Partner, AddressOwner, mixins.CreatedModified):
 
     class Meta:
         verbose_name = _("Partner")
@@ -43,7 +29,7 @@ class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
         # want to get the `get_overview_elems` from AddressOwner, not
         # from Partner (i.e. AddressLocation).
         elems = super(Partner, self).get_overview_elems(ar)
-        elems += addresses.AddressOwner.get_overview_elems(self, ar)
+        elems += AddressOwner.get_overview_elems(self, ar)
         return elems
 
 
@@ -83,7 +69,7 @@ class PartnerDetail(PartnerDetail):
     """
 
     misc = dd.Panel("""
-    is_person is_company is_household created modified
+    created modified
     """, label=_("Miscellaneous"))
 
 

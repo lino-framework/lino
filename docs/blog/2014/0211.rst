@@ -119,7 +119,7 @@ I finally decided to add the signed third-party jars to the eidreader
 repository. The reasons why this had to wait until now were my fears
 of (1) doing something illegal and/or (2) opening a possibility for
 others to peruse my signature.
-Fear (1) is explained in :ref:`third_party_jars`.
+Fear (1) is explained in `third_party_jars <https://github.com/lsaffre/eidreader/blob/master/example/readme.rst>`_.
 Fear (2) has gone away after checking documents like `Signing Applets
 Using RSA Certificates
 <http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/rsa_signing.html>`_. Yes,

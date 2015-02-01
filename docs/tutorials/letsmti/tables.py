@@ -10,8 +10,7 @@ class Members(dd.Table):
     model = 'Member'
 
     detail_layout = """
-    id name place email
-    is_customer is_supplier
+    id name place email mti_navigator
     """
 
 
@@ -19,7 +18,7 @@ class Customers(dd.Table):
     model = 'Customer'
 
     detail_layout = """
-    id name place email
+    id name place email mti_navigator
     customer_remark
     DemandsByCustomer
     """
@@ -29,7 +28,7 @@ class Suppliers(dd.Table):
     model = 'Supplier'
 
     detail_layout = """
-    id name place email
+    id name place email mti_navigator
     supplier_remark
     OffersBySupplier
     """

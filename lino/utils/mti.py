@@ -234,6 +234,8 @@ class EnableChild(VirtualField):
     #~ default = models.NOT_PROVIDED
 
     def __init__(self, child_model, **kw):
+        raise Exception("No longer recommended. "
+                        "Use `lino.mixins.polymorphic` instead.")
         kw.update(default=False)
         self.child_model = child_model
         VirtualField.__init__(self, models.BooleanField(**kw), self.has_child)

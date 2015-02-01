@@ -113,6 +113,9 @@ class Polymorphic(model.Model):
     A virtual field which defines buttons for switching between the
     different views.
 
+    Usage example in :doc:`/tutorials/mti/index` and
+    :doc:`/tutorials/letsmti/index`.
+
     """
     class Meta:
         abstract = True
@@ -225,27 +228,5 @@ class Polymorphic(model.Model):
     @fields.displayfield(_("See as "))
     def mti_navigator(self, ar):
         buttons = self.get_mti_buttons(ar)
-        # buttons = join_elems(buttons, ', ')
         return E.span(*buttons)
 
-    # @fields.displayfield(_("Polymorphy manager"))
-    # def mti_manager(self, ar):
-
-    #     def collect(elems, label, actions):
-    #         l = []
-    #         for a in actions:
-    #             if self.__class__ is not a.child_model:
-    #                 ba = ar.actor.get_action_by_name(a.action_name)
-    #                 if ba.get_row_permission(ar, self, None):
-    #                     l.append(ar.row_action_button(self, ba))
-
-    #         if len(l):
-    #             elems.append(label)
-    #             elems += join_elems(l)
-            
-    #     elems = []
-    #     collect(elems, _("Extend: "), self._mti_ins_actions)
-    #     collect(elems, _("Reduce: "), self._mti_del_actions)
-
-    #     return E.div(*elems)
-            

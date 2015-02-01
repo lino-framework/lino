@@ -78,7 +78,7 @@ class PartnerDetail(PartnerDetail):
     """
 
     misc = dd.Panel("""
-    is_person is_company is_household created modified
+    created modified
     changes.ChangesByMaster
     """, label=_("Miscellaneous"))
 

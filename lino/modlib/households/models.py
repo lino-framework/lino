@@ -476,18 +476,3 @@ class MembersByPerson(Members):
         return E.div(*elems)
 
 
-# class MembersByRole(Members):
-#     required = dd.required()
-#     master_key = 'role'
-#     column_names = 'person household start_date end_date *'
-
-
-dd.inject_field(
-    'contacts.Partner',
-    'is_household',
-    mti.EnableChild(
-        'households.Household',
-        verbose_name=_("is Household"),
-        help_text=("Whether this Partner is a Household.")))
-
-

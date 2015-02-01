@@ -99,16 +99,6 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
 
-    is_person = mti.EnableChild(
-        "contacts.Person",
-        verbose_name=_("is Person"),
-        help_text=_("Whether this Partner is a Person."))
-
-    is_company = mti.EnableChild(
-        "contacts.Company",
-        verbose_name=_("is Company"),
-        help_text=_("Whether this Partner is a Company."))
-
     print_labels = dd.PrintLabelsAction()
 
     def on_create(self, ar):
@@ -202,7 +192,6 @@ class PartnerDetail(dd.FormLayout):
 
     bottom_box = """
     remarks
-    is_person is_company #is_user
     """
 
     name_box = "name"
@@ -528,20 +517,6 @@ dd.inject_field(
         This is used e.g. as sender in documents.
         Or, newly created partners inherit the country of the site owner.
         """)))
-
-
-#~ dd.inject_field(Partner,
-    #~ 'is_person',
-    #~ mti.EnableChild(
-        #~ settings.SITE.person_model,
-        #~ verbose_name=_("is Person"),
-        #~ help_text=_("Whether this Partner is a Person.")))
-#~ dd.inject_field(Partner,
-    #~ 'is_company',
-    #~ mti.EnableChild(
-        #~ "contacts.Company",
-        #~ verbose_name=_("is Company"),
-        #~ help_text=_("Whether this Partner is a Company.")))
 
 
 def site_setup(site):

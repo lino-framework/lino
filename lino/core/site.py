@@ -2490,38 +2490,6 @@ site. :manage:`diag` is a command-line shortcut to this.
         """
         self.on_each_app('setup_quicklinks', ar, m)
 
-    def setup_menu_old(self, ui, profile, main):
-        """Old system. Using this system, application programmers defined one
-        or several of the following functions in their `models`
-        module:
-
-        - `setup_master_menu`
-        - `setup_main_menu`
-        - `setup_reports_menu`
-        - `setup_config_menu`
-        - `setup_explorer_menu`
-        - `setup_site_menu`
-
-        These functions, if present, will be called with three
-        positional arguments: `ui`, `profile` and `menu`.
-        The first argument `ui` should not be used.
-        TODO: remove that argument from API.
-
-        """
-        from django.utils.translation import ugettext_lazy as _
-        m = main.add_menu("master", _("Master"))
-        self.on_each_app('setup_master_menu', ui, profile, m)
-        self.on_each_app('setup_main_menu', ui, profile, main)
-        m = main.add_menu("reports", _("Reports"))
-        self.on_each_app('setup_reports_menu', ui, profile, m)
-        m = main.add_menu("config", _("Configure"))
-        self.on_each_app('setup_config_menu', ui, profile, m)
-        m = main.add_menu("explorer", _("Explorer"))
-        self.on_each_app('setup_explorer_menu', ui, profile, m)
-        m = main.add_menu("site", _("Site"))
-        self.on_each_app('setup_site_menu', ui, profile, m)
-        return main
-
     def setup_menu(self, profile, main):
         """Set up the application's menu structure.
 

@@ -85,3 +85,23 @@ Miscellaneous
   TODO: move :mod:`lino.modlib.beid` into the `eidreader` project and
   document all these things there.
 
+
+- :mod:`lino_welfare.modlib.uploads.fixtures.demo2.py` failed on
+  :ref:`lf` due to an assertion::
+
+    assert newcomer.client_state == ClientStates.newcomer
+
+  Yes, okay, `Client.objects.get(id=121)` is not always a `newcomer`
+  because that depends on database language and sorting order.
+
+
+Adieu, good old EnableChild field!
+==================================
+
+Yesterday :ref:`gx` confirmed that the
+:attr:`lino.mixins.polymorphic.Polymorphic.mti_navigator` is a full
+success.  Now I removed all usages of
+:class:`lino.utils.mti.EnableChild` from my projects (besides Lino,
+these were :ref:`welfare` and :ref:`faggio`). The biggest work was to
+adapt :doc:`/tutorials/mti/index` and :doc:`/tutorials/letsmti/index`.
+

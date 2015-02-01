@@ -12,7 +12,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
-#~ from lino.utils.mti import EnableChild
 from lino.modlib.countries.models import CountryCity
 from lino.models import get_site_config
 from lino.utils.choicelists import Gender

@@ -3,7 +3,7 @@ from lino.projects.std.settings import *
 
 class Site(Site):
 
-    title = "Lino LETS MTI Tutorial"
+    verbose_name = "Lino LETS MTI Tutorial"
 
     def setup_menu(self, profile, main):
         m = main.add_menu("master", "Master")

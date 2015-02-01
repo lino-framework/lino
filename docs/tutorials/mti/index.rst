@@ -11,7 +11,8 @@ Multi-table inheritance (MTI)
   on this document. Sphinx removes them because they are a 
   comment, but doctest executes them.
   
-  >>> from lino.runtime import *
+  >>> from __future__ import print_function
+  >>> from lino.api.runtime import *
   >>> Person = mti.Person
   >>> Restaurant = mti.Restaurant
   >>> Place = mti.Place
@@ -30,9 +31,9 @@ inheritance
 
 .. literalinclude:: models.py
 
-The only Non-Django thing here is that we add a special virtual field
-`is_restaurant` of type :class:`EnableChild
-<lino.utils.mti.EnableChild>`, we'll talk about that later.
+The only Non-Django thing here is that we inherit from
+:class:`dd.Polymorphic <lino.mixins.polymorphic.Polymorphic>`.  We'll
+talk about that later.
 
 Create some initial data:
 
@@ -71,7 +72,6 @@ It seems that this is not trivial in Django (`How do you delete child
 class object without deleting parent class object?
 <http://stackoverflow.com/questions/9439730>`__).  That's why we wrote
 the :func:`delete_child` function.
-
 
 >>> from lino.utils.mti import delete_child
 
@@ -144,35 +144,24 @@ Let's take Place #1 and look at it.
 >>> obj = Place.objects.get(pk=1)
 >>> obj
 Place #1 (u'#1 (name=First, owners=Alfred, Bert)')
->>> obj.is_restaurant()
-False
 
+How to see whether a given Place is a Restaurant?
 
-EnableField doesn't (yet) add a setter handler: 
-To modify the values that are "stored" in virtual fields,
-we must behave like a lino.ui would do, 
-by calling the method
-:meth:`set_value_in_object <lino.core.fields.VirtualField.set_value_in_object>`:
-
-
->>> for instance in Place.objects.all():
-...    print instance.is_restaurant(), instance
-False #1 (name=First, owners=Alfred, Bert)
-True #2 (name=Second, owners=Bert)
+>>> for i in Place.objects.all():
+...    print("{0} -> {1}".format(i, i.get_mti_child('restaurant')))
+#1 (name=First, owners=Alfred, Bert) -> None
+#2 (name=Second, owners=Bert) -> #2 (name=Second, owners=Bert, cooks=Claude, Dirk)
 
 Let's promote First (currently a simple Place) to a Restaurant:
 
->>> Place.is_restaurant.set_value_in_object(None, obj, True)
->>> Restaurant.objects.get(pk=1)
+>>> insert_child(obj, Restaurant)
 Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=)')
+
 
 And Second stops being a Restaurant:
 
 >>> second = Place.objects.get(pk=2)
->>> Place.is_restaurant.value_from_object(second)
-True
-
->>> Place.is_restaurant.set_value_in_object(None, second, False) 
+>>> delete_child(second, Restaurant)
 
 This operation has removed the related Restaurant instance:
 
@@ -186,11 +175,15 @@ close and later reopen:
 
 >>> bert = Person.objects.get(pk=2)
 >>> second = Place.objects.get(pk=2)
->>> Place.is_restaurant.set_value_in_object(None, second, True) 
+>>> insert_child(second, Restaurant)
+Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=)')
 
 Now we can see this place again as a Restaurant
 
 >>> second = Restaurant.objects.get(pk=2)
+
+And engage for example a new cook:
+
 >>> second.cooks.add(bert)
 >>> second
 Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Bert)')
@@ -201,13 +194,13 @@ Related objects
 ---------------
 
 Now let's have a more detailed look at what happens to the related 
-objects (Person, Visit and Meal)
+objects (Person, Visit and Meal).
 
 Bert, the owner of Restaurant #2 does two visits:
 
 >>> second = Restaurant.objects.get(pk=2)
->>> Visit(purpose="Say hello",person=bert,place=second).save()
->>> Visit(purpose="Hang around",person=bert,place=second).save()
+>>> Visit(purpose="Say hello", person=bert, place=second).save()
+>>> Visit(purpose="Hang around", person=bert, place=second).save()
 >>> second.visit_set.all()
 [Visit #1 (u'Say hello visit by Bert at Second'), Visit #2 (u'Hang around visit by Bert at Second')]
 
@@ -221,12 +214,8 @@ Claude and Dirk, now workless, still go to eat in restaurants:
 Now we reduce Second to a Place:
 
 >>> second = Place.objects.get(pk=2)
->>> second.is_restaurant = False
->>> second
-Place #2 (u'#2 (name=Second, owners=Bert)')
+>>> delete_child(second, Restaurant)
 
-Setting an EnableChild virtual field doesn't 
-wait until you call `save()` on the instance. It is executed immediately. 
 Restaurant #2 no longer exists:
 
 >>> Restaurant.objects.get(pk=2)
@@ -234,13 +223,12 @@ Traceback (most recent call last):
 ...
 DoesNotExist: Restaurant matching query does not exist.
 
-Note that `Meal` has :attr:`allow_cascaded_delete 
-<lino.core.model.Model.allow_cascaded_delete>`
-set to `['restaurant']`, 
-otherwise the above code would have raised a
-ValidationError "Cannot delete #2 
-(name=Second,owners=Bert,cooks=Bert) because 2 meals refer to it."
-But the meals have been deleted:
+Note that `Meal` has :attr:`allow_cascaded_delete
+<lino.core.model.Model.allow_cascaded_delete>` set to
+`['restaurant']`, otherwise the above code would have raised a
+ValidationError :message:`Cannot delete #2
+(name=Second,owners=Bert,cooks=Bert) because 2 meals refer to it.` But
+the meals have been deleted:
 
 >>> Meal.objects.all()
 []
@@ -262,16 +250,13 @@ This function is for rather internal use.
 :class:`lino.utils.dpy.Serializer` use this function for creating MTI
 children instances without having to lookup their parent.
 
-In a Python dump we are in a special situation:
-All Place instances are being generated first,
-and in another step we are going to create all 
-the Restaurant instances.
-So how can we create a Restaurant whose Place already 
-exists *without first having to do a lookup of the 
-Place record*?
-That's why :func:`create_child` was written for.
+In a Python dump we are in a special situation: All Place instances
+are being generated first, and in another step we are going to create
+all the Restaurant instances.  So how can we create a Restaurant whose
+Place already exists *without first having to do a lookup of the Place
+record*?  That's why :func:`create_child` was written for.
 
->>> obj = Place(id=3,name="Third")
+>>> obj = Place(id=3, name="Third")
 >>> obj.save()
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
@@ -314,6 +299,14 @@ Exception: create_mti_child() Restaurant 4 from Place : ignored non-local fields
 
 (Until 20120930 this it was silently ignored
 for backwards compatibility (`/blog/2011/1210`).
+
+
+The user interface
+==================
+
+.. literalinclude:: tables.py
+
+
 
 
 Related documents
