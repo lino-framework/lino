@@ -30,7 +30,7 @@ Note that the path should be absolute and without a ``~``.
 """
 
 import os
-from os.path import normpath, dirname, join, isdir, abspath, relpath
+from os.path import normpath, dirname, join, isdir, relpath
 import inspect
 import time
 import datetime
@@ -40,7 +40,7 @@ import collections
 from urllib import urlencode
 
 from unipath import Path
-from atelier.utils import AttrDict, ispure, date_offset
+from atelier.utils import AttrDict, date_offset
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
@@ -1462,7 +1462,6 @@ documentation.
         """Used in footnote or header of certain printed documents.
 
         """
-        assert ispure(self.verbose_name)
         if self.version:
             return self.verbose_name + ' ' + self.version
         return self.verbose_name

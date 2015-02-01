@@ -17,14 +17,10 @@ plugin using :ref:`polly`.
 
 >>> from lino.api.doctest import *
     
-This documents uses the :mod:`lino_welfare.projects.chatelet` test
-database:
+This document uses the :mod:`lino.projects.polly` test database:
 
 >>> print(settings.SETTINGS_MODULE)
 lino.projects.polly.settings.doctests
-
->>> print(settings.SETTINGS_MODULE)
-lino.projects.polly.settings.test
 
 >>> pk = 2
 >>> obj = polls.Response.objects.get(pk=pk)
