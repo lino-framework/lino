@@ -1,5 +1,4 @@
 from django.db import models
-from lino.api import dd
 from lino.mixins.polymorphic import Polymorphic
 
 
