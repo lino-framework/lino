@@ -341,7 +341,7 @@ class Voucher(UserAuthored, mixins.Registrable):
 
     #~ controller_is_optional = False
 
-    date = models.DateField(_("Date"), default=settings.SITE.today)
+    date = models.DateField(_("Date"), default=dd.today)
 
     journal = JournalRef()
     year = FiscalYears.field(blank=True)

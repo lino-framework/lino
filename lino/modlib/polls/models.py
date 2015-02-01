@@ -17,7 +17,7 @@ Question is *multiple choice*, then there may be more than one
 `AnswerRemarks`, each of with represents a remark written by the
 responding person for a given Question of the Poll.
 
-See also :ref:`tested.polly`.
+See also :doc:`/tested/polly`.
 
 """
 
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd
 from lino import mixins
@@ -204,16 +205,15 @@ class Question(mixins.Sequenced):
         verbose_name_plural = _("Questions")
 
     poll = models.ForeignKey('polls.Poll', related_name='questions')
-
-    title = models.CharField(_("Title"), max_length=200)
-    details = models.TextField(_("Details"), blank=True)
     number = models.CharField(_("No."), max_length=20, blank=True)
+    title = models.CharField(pgettext("polls", "Title"), max_length=200)
+    details = models.TextField(_("Details"), blank=True)
 
     # text = models.TextField(verbose_name=_("Text"))
     choiceset = models.ForeignKey('polls.ChoiceSet', blank=True, null=True)
     multiple_choices = models.BooleanField(
         _("Allow multiple choices"), blank=True)
-    is_heading = models.BooleanField(_("Title"), default=False)
+    is_heading = models.BooleanField(_("Heading"), default=False)
 
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
@@ -242,6 +242,7 @@ class Question(mixins.Sequenced):
 
 class Questions(dd.Table):
     model = 'polls.Question'
+    column_names = "poll number title choiceset is_heading"
 
 
 class QuestionsByPoll(Questions):
@@ -282,15 +283,15 @@ class ToggleChoice(dd.Action):
         # dd.logger.info("20140930 %s", obj)
             
 
-class Response(UserAuthored, mixins.Registrable,
-               mixins.CreatedModified):
+class Response(UserAuthored, mixins.Registrable):
 
     class Meta:
         verbose_name = _("Response")
         verbose_name_plural = _("Responses")
-        ordering = ['created']
+        ordering = ['date']
 
     poll = dd.ForeignKey('polls.Poll', related_name='responses')
+    date = models.DateField(_("Date"), default=dd.today)
     state = ResponseStates.field(default=ResponseStates.draft)
     remark = models.TextField(verbose_name=_("My general remark"), blank=True)
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
@@ -316,12 +317,12 @@ class Response(UserAuthored, mixins.Registrable,
 class Responses(dd.Table):
     model = 'polls.Response'
     detail_layout = """
-    user poll state created modified
+    user poll date state
     polls.AnswersByResponse
     remark
     """
     insert_layout = """
-    user
+    user date
     poll
     """
 
@@ -334,17 +335,17 @@ class Responses(dd.Table):
 
 
 class MyResponses(ByUser, Responses):
-    column_names = 'created poll state remark *'
+    column_names = 'date poll state remark *'
 
 
 class ResponsesByPoll(Responses):
     master_key = 'poll'
-    column_names = 'created user state partner remark *'
+    column_names = 'date user state partner remark *'
 
 
 class ResponsesByPartner(Responses):
     master_key = 'partner'
-    column_names = 'created user state remark *'
+    column_names = 'date user state remark *'
     slave_grid_format = 'summary'
 
     @classmethod
@@ -574,33 +575,6 @@ class PollResult(Questions):
         #~ return Answer.objects.filter(question=obj,choice=c)
         return AnswerChoices.request(
             known_values=dict(question=obj, choice=c))
-
-   #~
-#~ @dd.receiver(dd.database_ready)
-#~ def on_database_ready(sender,**kw):
-    #~ """
-    #~ Builds columns dynamically from the :class:`PersonGroup` database table.
-    #~
-    #~ This must also be called before each test case.
-    #~ """
-    #~ self = PollResult
-    #~ self.column_names = 'seqno text'
-    #~ for obj in Questions.objects.filter(ref_name__isnull=False).order_by('ref_name'):
-        #~ def w(pg):
-            # ~ # we must evaluate `today` for each request, not only once when `database_ready`
-            #~ today = datetime.date.today()
-            #~ def func(self,obj,ar):
-                #~ return Clients.request(
-                    #~ param_values=dict(group=pg,
-                        #~ coached_by=obj,start_date=today,end_date=today))
-            #~ return func
-        #~ vf = dd.RequestField(w(pg),verbose_name=pg.name)
-        #~ self.add_virtual_field('G'+pg.ref_name,vf)
-        #~ self.column_names += ' ' + vf.name
-        #~
-    #~ self.column_names += ' primary_clients active_clients row_total'
-    # ~ self.clear_handle() # avoid side effects when running multiple test cases
-    #~ settings.SITE.resolve_virtual_fields()
 
 
 dd.add_user_group('polls', config.verbose_name)

@@ -50,12 +50,30 @@ So :meth:`Site.setup_cache_directory` must use `Path.resolve()
 <https://github.com/mikeorr/Unipath#calculating-paths>`_ when checking
 whether they are different.
 
+Note: this was not the explanation. Tilt! Next idea: it is because
+:command:`fab initdb` uses the uninstalled Lino version while
+:command:`fab test` uses the installed one. TODO: 
+
+- :command:`fab
+  initdb` must not simply cd to the given directory, but must construct
+  the path using something like `join(dirname(lino.__file__), path)`.
+
+- And while we are there: change (once more) the whole system of
+  declaring demo projects by defining them in the main module, not in
+  the :xfile:`fabfile.py`.
 
 
-$ mkdir a
-$ ln -s a b
-$ ls -l
-total 8
-drwxrwxr-x  2 luc luc 4096 Feb  1 14:21 a/
-lrwxrwxrwx  1 luc luc    1 Feb  1 14:21 b -> a/
--rw-rw-r--  1 luc luc   25 Feb  1 14:21 tmp.py
+Recurrent polls
+===============
+
+I started to work on a user request by :ref:`welcht`:
+
+- Interviews: il faut que les agents puissent voir, pour chaque
+  question, ce que le bénéficiaire a répondu les entrevues
+  précédentes.
+
+Started a new document :ref:`welfare.tested.polls` in English with all
+the explanations.
+
+:mod:`lino_welfare.modlib.polls.fixtures.jobsearch`
+

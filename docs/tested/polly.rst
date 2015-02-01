@@ -3,8 +3,8 @@
 Polls
 =====
 
-This document tests some functionality of the :mod:`ml.polls` app
-using :ref:`polly`.
+This document tests some functionality of the :mod:`lino.modlib.polls`
+plugin using :ref:`polly`.
 
 .. How to test only this document:
   $ python setup.py test -s tests.DocsTests.test_polly
@@ -13,12 +13,15 @@ using :ref:`polly`.
     >>> from __future__ import print_function
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.polly.settings.test'
-    >>> from lino.runtime import *
-    >>> from django.utils import translation
-    >>> from django.test import Client
-    >>> import json
-    >>> from bs4 import BeautifulSoup
+    ...    'lino.projects.polly.settings.doctests'
+
+>>> from lino.api.doctest import *
+    
+This documents uses the :mod:`lino_welfare.projects.chatelet` test
+database:
+
+>>> print(settings.SETTINGS_MODULE)
+lino.projects.polly.settings.doctests
 
 >>> print(settings.SETTINGS_MODULE)
 lino.projects.polly.settings.test
