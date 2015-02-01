@@ -1,0 +1,20 @@
+========================
+Sunday, February 1, 2015
+========================
+
+About the `title` and the `verbose_name` of a `Site`
+====================================================
+
+.. currentmodule:: lino.core.site
+
+The docstring for :attr:`Site.title` was wrong, it said "TODO: Stop
+using `title`, use :attr:`Site.verbose_name` instead."
+
+In fact these are different things: `title` is the title of the site,
+while `verbose_name` is the verbose name of the application.
+
+I changed the default value for `title` from `"Unnamed Lino site"` to
+`None`, and for `verbose_name` from "yet another Lino site" to "yet
+another Lino application".
+
+

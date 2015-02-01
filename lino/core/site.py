@@ -147,9 +147,36 @@ class Site(object):
 
     """
 
-    verbose_name = "yet another Lino site"
+    title = None
+    """The title of this web site to appear in the browser window.  If
+    this is None, Lino will use :attr:`verbose_name` as default value.
+
     """
-    Used as display name to end-users at different places.
+
+    verbose_name = "yet another Lino application"
+    """The name of this application, to be displayed to end-users at
+    different places.
+
+    Note the difference between :attr:`title` and
+    :attr:`verbose_name`:
+
+    - :attr:`title` may be None, :attr:`verbose_name` not.
+
+    - :attr:`title` is used by the
+      :srcref:`index.html <lino/modlib/extjs/config/extjs/index.html>` for
+      :mod:`lino.modlib.extjs`.
+
+    - :attr:`title` and :attr:`verbose_name` are used by
+      :xfile:`admin_main.html` to generate the fragments "Welcome to the
+      **title** site" and "We are running **verbose_name** version
+      **x.y**"  (the latter only if :attr:`version` is set).
+
+    - :meth:`site_version` uses :attr:`verbose_name` (not :attr:`title`)
+
+    IOW, the :attr:`title` is rather for usage by :doc:`local system
+    administrators </team/sysadm>`, while the :attr:`verbose_name` is
+    rather for usage by :doc:`application developers </team/lad>`.
+
     """
 
     version = None
@@ -756,10 +783,6 @@ documentation.
     An e-mail address where users can get help. This is included in
     :xfile:`admin_main.html`.
 
-    """
-    title = "Unnamed Lino site"
-    """
-    TODO: Stop using this. Use :attr:`verbose_name` instead.
     """
 
     catch_layout_exceptions = True
@@ -1430,8 +1453,7 @@ documentation.
                           for n, v, u in self.get_used_libs()])
 
     def site_version(self):
-        """
-        Used in footnote or header of certain printed documents.
+        """Used in footnote or header of certain printed documents.
 
         """
         assert ispure(self.verbose_name)
