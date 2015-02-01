@@ -959,7 +959,7 @@ documentation.
         self.django_settings = settings_globals
         project_file = settings_globals.get('__file__', '.')
 
-        self.project_dir = Path(dirname(project_file)).absolute()
+        self.project_dir = Path(dirname(project_file)).absolute().resolve()
 
         # inherit `project_name` from parent?
         # if self.__dict__.get('project_name') is None:
@@ -977,7 +977,7 @@ documentation.
             if not cr.exists():
                 msg = "LINO_CACHE_ROOT ({0}) does not exist!".format(cr)
                 raise Exception(msg)
-            self.cache_dir = cr.child(self.project_name)
+            self.cache_dir = cr.child(self.project_name).resolve()
             self.setup_cache_directory()
         else:
             self.cache_dir = Path(self.project_dir).absolute()
@@ -1040,9 +1040,15 @@ documentation.
         )
 
     def setup_cache_directory(self):
-        """When :envvar:`LINO_CACHE_ROOT` is set, Lino adds a stamp file to
-        every project's cache directory in order to avoid duplicate
-        use of same cache directory.
+        """When :envvar:`LINO_CACHE_ROOT` is set, Lino adds a stamp file
+        called :xfile:`lino_cache.txt` to every project's cache
+        directory in order to avoid duplicate use of same cache
+        directory.
+
+        .. xfile:: lino_cache.txt
+
+        A small text file with one line of text which Contains the
+        path of the project which uses this cache directory.
 
         """
 

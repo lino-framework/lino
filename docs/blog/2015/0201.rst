@@ -18,12 +18,44 @@ I changed the default value for `title` from `"Unnamed Lino site"` to
 another Lino application".
 
 
-Miscellaneous
-=============
-
-I noticed that Travis has been saying "config missing" for several
-days now. Maybe a syntax error in my :xfile:`.travis.xml`?
+Editable tables
+===============
 
 Hint for :ticket:`85` : this is another case of a table which must
 explicitly set :attr:`editable <lino.core.actors.Actor.editable>` to
 True.
+
+
+Travis CI
+=============
+
+I noticed that Travis has been saying "config missing" for several
+days now. This was a syntax error in my :file:`.travis.xml`.
+
+And yes, my :envvar:`LINO_CACHE_ROOT` is active and works.  But here
+is the next challenge. It says::
+
+  Exception: Oops : cannot use
+  /home/travis/build/lsaffre/lino/lino_docs for
+  /home/travis/build/lsaffre/lino/lino/projects/docs/settings 
+  because it is used for
+  /home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/projects/docs/settings.
+
+What's happening there? It remindes me that the :xfile:`default.db`
+has previously been created at different places. As it seemed. But are
+they really different? I rather guess that the latter is a symlink to
+the former.
+
+So :meth:`Site.setup_cache_directory` must use `Path.resolve()
+<https://github.com/mikeorr/Unipath#calculating-paths>`_ when checking
+whether they are different.
+
+
+
+$ mkdir a
+$ ln -s a b
+$ ls -l
+total 8
+drwxrwxr-x  2 luc luc 4096 Feb  1 14:21 a/
+lrwxrwxrwx  1 luc luc    1 Feb  1 14:21 b -> a/
+-rw-rw-r--  1 luc luc   25 Feb  1 14:21 tmp.py
