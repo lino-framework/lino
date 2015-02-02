@@ -1,4 +1,4 @@
-from ..settings import *
+from .demo import *
 SITE = Site(
     globals(),
     no_local=True,

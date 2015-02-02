@@ -1,4 +1,4 @@
-from ..settings import *
+from lino_noi.settings import *
 
 SITE = Site(globals())
 
