@@ -37,3 +37,9 @@ I removed the `languages` definitions in
 configuration is now English. For
 :mod:`lino_welfare.projects.eupen.settings` this is yet to
 do. Changing Eupen to English would break a series of unit tests.
+
+
+- Commit and push. 
+  Travis now failed because it needs the newest version of Atelier.
+  Released Atelier 0.0.12.
+
