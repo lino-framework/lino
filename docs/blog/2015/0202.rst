@@ -26,6 +26,13 @@ caused by the ``from ..settings import *`` statements used by many
 :file:`demo.py` files: fixtures and settings. That's a name clash
 which causes almost no problems.
 
+After a Commit and push, Travis still failed because it needs the
+newest version of Atelier.  Released Atelier 0.0.12 and commited
+again.  It then still failed because `pisa` doesn't seem to get
+(correctly) installed before the test suite runs. Changed the import
+statement in :mod:`lino.mixins.printable` so that the `ImportError`
+becomes visible.
+
 
 Recurrent polls
 ===============
@@ -38,8 +45,4 @@ configuration is now English. For
 :mod:`lino_welfare.projects.eupen.settings` this is yet to
 do. Changing Eupen to English would break a series of unit tests.
 
-
-- Commit and push. 
-  Travis now failed because it needs the newest version of Atelier.
-  Released Atelier 0.0.12.
 

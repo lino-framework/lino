@@ -47,12 +47,6 @@ from lino.utils.pdf import merge_pdfs
 
 
 try:
-    import ho.pisa as pisa
-    # pisa.showLogging()
-except ImportError:
-    pisa = None
-
-try:
     import pyratemp
 except ImportError:
     pyratemp = None
@@ -149,6 +143,8 @@ class PisaBuildMethod(DjangoBuildMethod):
     template_ext = '.pisa.html'
 
     def build(self, ar, action, elem):
+        import ho.pisa as pisa
+        # pisa.showLogging()
         tpl = self.get_template(action, elem)
         filename = action.before_build(self, elem)
         if filename is None:
