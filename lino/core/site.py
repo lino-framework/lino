@@ -1052,19 +1052,31 @@ documentation.
 
         """
 
+        def class2str(cl):
+            return cl.__module__ + '.' + cl.__name__
         stamp = self.cache_dir.child('lino_cache.txt')
+        this = class2str(self.__class__)
         if stamp.exists():
             other = stamp.read_file()
-            if other != self.project_dir:
+            if other == this:
+                ok = True
+            else:
+                ok = False
+                for parent in self.__class__.__mro__:
+                    if other == class2str(parent):
+                        ok = True
+                        break
+            if not ok:
                 msg = ("Oops : cannot use {cache_dir} for {this} "
                        "because it is used for {other}.")
                 msg = msg.format(
                     cache_dir=self.cache_dir,
-                    this=self.project_dir, other=other)
+                    this=this,
+                    other=other)
                 raise Exception(msg)
         else:
             self.makedirs_if_missing(self.cache_dir)
-            stamp.write_file(self.project_dir)
+            stamp.write_file(this)
 
     def set_user_model(self, spec):
         """This can be called during :meth:`Plugin.on_init

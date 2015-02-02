@@ -95,7 +95,7 @@ class Poll(UserAuthored, mixins.CreatedModified, Referrable):
         abstract = dd.is_abstract_model(__name__, 'Poll')
         verbose_name = _("Poll")
         verbose_name_plural = _("Polls")
-        ordering = ['created']
+        ordering = ['ref']
 
     title = models.CharField(_("Title"), max_length=200)
 
@@ -185,7 +185,7 @@ class PollDetail(dd.FormLayout):
 
 class Polls(dd.Table):
     model = 'polls.Poll'
-    column_names = 'created title user state *'
+    column_names = 'ref title user state *'
     detail_layout = PollDetail()
     insert_layout = dd.FormLayout("""
     title
@@ -195,7 +195,7 @@ class Polls(dd.Table):
 
 
 class MyPolls(ByUser, Polls):
-    column_names = 'created title state *'
+    column_names = 'ref title state *'
 
 
 class Question(mixins.Sequenced):
@@ -482,6 +482,14 @@ class AnswersByResponse(dd.VirtualTable):
     remark = AnswerRemarkField()
 
     @classmethod
+    def get_data_rows(self, ar):
+        response = ar.master_instance
+        if response is None:
+            return
+        for q in Question.objects.filter(poll=response.poll):
+            yield Answer(response, q)
+
+    @classmethod
     def get_pk_field(self):
         return Question._meta.pk
         #~ return AnswerPKField()
@@ -500,14 +508,6 @@ class AnswersByResponse(dd.VirtualTable):
     @classmethod
     def disable_delete(self, obj, ar):
         return "Not deletable"
-
-    @classmethod
-    def get_data_rows(self, ar):
-        response = ar.master_instance
-        if response is None:
-            return
-        for q in Question.objects.filter(poll=response.poll):
-            yield Answer(response, q)
 
     @dd.displayfield(_("Question"))
     def question(self, obj, ar):

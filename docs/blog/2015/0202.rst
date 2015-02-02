@@ -1,0 +1,39 @@
+========================
+Monday, February 2, 2015
+========================
+
+
+Getting Lino to build on Travis CI
+==================================
+
+Continued from yesterday. Next idea: it is because :command:`fab
+initdb` uses the uninstalled Lino version while :command:`fab test`
+uses the installed one.
+
+So once again I change the whole system of declaring demo
+projects. The parameter to :func:`atelier.fablib.add_demo_project`
+cannot be a path, it must be a Django settings module. 
+
+And :func:`atelier.fablib.run_in_demo_projects` must set the current
+working directory to the :attr:`cache_dir
+<lino.core.site.Site.cache_dir>`, not the :attr:`project_dir
+<lino.core.site.Site.project_dir>`. One reason for this is that
+Django's `loaddata` command also looks for fixtures in the current
+directory. Which IMO is a bit odd. But we cannot change it. This was,
+BTW the explanation for a traceback "Cannot import beyond top-level"
+caused by the ``from ..settings import *`` statements used by many
+:file:`demo.py` settings files.  Yes, Lino uses two kinds of
+:file:`demo.py` files: fixtures and settings. That's a name clash
+which causes almost no problems.
+
+
+Recurrent polls
+===============
+
+Continued in :ref:`welfare.tested.polls`.
+
+I removed the `languages` definitions in
+:mod:`lino_welfare.projects.chatelet.settings` so that the default
+configuration is now English. For
+:mod:`lino_welfare.projects.eupen.settings` this is yet to
+do. Changing Eupen to English would break a series of unit tests.

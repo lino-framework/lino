@@ -1,4 +1,4 @@
-from ..settings import *
+from lino.projects.min1.settings import *
 from lino.utils import i2d
 
 

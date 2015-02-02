@@ -11,6 +11,7 @@ lino.modlib.polls.models
    
       get_poll_result
       join_elems
+      pgettext
    
    
 

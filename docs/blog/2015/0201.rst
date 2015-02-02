@@ -26,8 +26,8 @@ explicitly set :attr:`editable <lino.core.actors.Actor.editable>` to
 True.
 
 
-Travis CI
-=============
+Getting Lino to build on Travis CI
+==================================
 
 I noticed that Travis has been saying "config missing" for several
 days now. This was a syntax error in my :file:`.travis.xml`.
@@ -50,18 +50,9 @@ So :meth:`Site.setup_cache_directory` must use `Path.resolve()
 <https://github.com/mikeorr/Unipath#calculating-paths>`_ when checking
 whether they are different.
 
-Note: this was not the explanation. Tilt! Next idea: it is because
+Note: this was not the explanation. Next idea: it is because
 :command:`fab initdb` uses the uninstalled Lino version while
-:command:`fab test` uses the installed one. TODO: 
-
-- :command:`fab
-  initdb` must not simply cd to the given directory, but must construct
-  the path using something like `join(dirname(lino.__file__), path)`.
-
-- And while we are there: change (once more) the whole system of
-  declaring demo projects by defining them in the main module, not in
-  the :xfile:`fabfile.py`.
-
+:command:`fab test` uses the installed one. 
 
 Recurrent polls
 ===============
