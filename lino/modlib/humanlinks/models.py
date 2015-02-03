@@ -228,6 +228,10 @@ class LinksByHuman(Links):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
+        """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
+        for :class:`LinksByHuman`.
+
+        """
         sar = self.request(master_instance=obj)
         links = []
         for lnk in sar:
@@ -273,19 +277,19 @@ class LinksByHuman(Links):
             return True
 
         for lt in addable_link_types:
-            sar = ar.spawn(Links, known_values=dict(type=lt, parent=obj))
+            sar = ar.spawn(self, known_values=dict(type=lt, parent=obj))
             if add_action(sar.insert_button(
                     lt.as_parent(obj), icon_name=None)):
                 if not lt.symmetric:
                     actions.append('/')
                     sar = ar.spawn(
-                        Links, known_values=dict(type=lt, child=obj))
+                        self, known_values=dict(type=lt, child=obj))
                     add_action(sar.insert_button(
                         lt.as_child(obj), icon_name=None))
                 actions.append(' ')
 
-        # elems += [E.br(), obj.populate_humanlinks.as_button_elem(ar), ' ']
-        elems += [E.br(), _("Create relationship as ")] + actions
+        if len(actions) > 0:
+            elems += [E.br(), _("Create relationship as ")] + actions
         return E.div(*elems)
 
 

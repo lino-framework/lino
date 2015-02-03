@@ -205,9 +205,9 @@ class ExtRenderer(HtmlRenderer):
     def window_action_button(
             self, ar, ba, status={},
             label=None, title=None, **kw):
-        """
-        Return a HTML chunk for a button that will execute this
-        action using a *Javascript* link to this action.
+        """Return a HTML chunk for a button that will execute this action
+        using a Javascript link to this action.
+
         """
         label = unicode(label or ba.get_button_label())
         href = 'javascript:' + self.action_call(ar, ba, status)
@@ -244,67 +244,8 @@ class ExtRenderer(HtmlRenderer):
         assert manage_btn is not None
         return E.p(insert_btn, manage_btn)
 
-    def quick_upload_buttons(self, rr):
-        """Returns a HTML chunk that displays "quick upload buttons": either
-        one button :guilabel:`Upload` (if the given
-        :class:`TableRequest <rt.ar>` has no
-        rows) or two buttons :guilabel:`Show` and :guilabel:`Edit` if
-        it has one row.
-
-        Deprecated. Use
-        :class:`lino.modlib.uploads.choicelists.Shortcuts` instead
-        
-        See also :srcref:`docs/tickets/56`.
-
-        """
-        if rr.get_total_count() == 0:
-            if True:  # after 20130809
-                return rr.insert_button(
-                    _("Upload"),
-                    icon_name='page_add',
-                    title=_("Upload a file from your PC to the server."))
-            else:
-                a = rr.actor.insert_action
-                if a is not None:
-                    after_show = rr.get_status()
-                    elem = rr.create_instance()
-                    after_show.update(
-                        data_record=rr.elem2rec_insert(rr.ah, elem))
-                    #~ after_show.update(record_id=-99999)
-                    # see tickets/56
-                    return self.window_action_button(
-                        rr, a, after_show, _("Upload"),
-                        #~ icon_file='attach.png',
-                        #~ icon_file='world_add.png',
-                        icon_name='page_add',
-                        title=_("Upload a file from your PC to the server."))
-                      #~ icon_name='x-tbar-upload')
-        if rr.get_total_count() == 1:
-            after_show = rr.get_status()
-            obj = rr.data_iterator[0]
-            chunks = []
-            #~ chunks.append(xghtml.E.a(_("show"),
-              #~ href=self.ui.media_url(obj.file.name),target='_blank'))
-            chunks.append(self.href_button(
-                settings.SITE.build_media_url(obj.file.name), _("show"),
-                target='_blank',
-                icon_name='page_go',
-                style="vertical-align:-30%;",
-                title=_("Open the uploaded file in a new browser window")))
-            chunks.append(' ')
-            after_show.update(record_id=obj.pk)
-            chunks.append(self.window_action_button(
-                rr,
-                rr.ah.actor.detail_action,
-                after_show,
-                _("Edit"), icon_name='application_form',
-                title=_("Edit metadata of the uploaded file.")))
-            return xghtml.E.p(*chunks)
-
-        return '[?!]'
-
     def insert_button(self, ar, text=None, known_values=None, **options):
-        "See :meth:`rt.ActionRequest.insert_button`."
+        "Called via :meth:`lino.core.requests.ActionRequest.insert_button`."
         # changed 20140812 : known_values now defaults to ar's known_values
         a = ar.actor.insert_action
         if a is None:

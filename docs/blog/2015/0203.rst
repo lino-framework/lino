@@ -22,3 +22,36 @@ Started to write documentation (but yes, there is much to do):
 - :doc:`/dev/html`
 - :doc:`/dev/custom_actions`
 
+
+Cannot create humanlinks.Links when working as Alicia
+=====================================================
+
+Created, reproduced and fixed :ticket:`88`.
+
+.. currentmodule:: lino.modlib.humanlinks
+
+The quick solution was simply to replace ``sar = ar.spawn(Links,
+...)`` by ``sar = ar.spawn(self, ...)`` in
+:meth:`LinksByPerson.get_slave_summary`.
+
+But why was the button there, although the insert action was not
+available?  This shows that :meth:`insert_button
+<lino.core.requests.BaseRequest.insert_button>` is not a good API.
+
+
+Code cleanup en passant: I removed `quick_upload_buttons` method from
+:class:`lino.modlib.extjs.ext_renderer.ExtRenderer`, and the three
+deprecated fields `residence_permit` `work_permit` and
+`driving_license` from
+:class:`lino_welfare.modlib.pcsw.models.Client.`
+
+Show all appointable users in `create_visit`
+============================================
+
+.. currentmodule:: lino_welfare.modlib.reception.models
+
+The user field of :class:`CreateClientVisit`, the "manual" dialog
+action for creating a prompt meeting, now shows all appointable users,
+not only those whose `newcomer_consultations` checkbox is checked.
+
+
