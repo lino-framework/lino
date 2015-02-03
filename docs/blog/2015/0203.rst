@@ -2,6 +2,9 @@
 Tuesday, February 3, 2015
 =========================
 
+Recurrent polls
+===============
+
 Wow. I finished a first proof of concept for the
 :ref:`welfare.tested.polls` as the users in Chatelet want them.
 
@@ -18,3 +21,4 @@ Started to write documentation (but yes, there is much to do):
 - :doc:`/dev/ar`
 - :doc:`/dev/html`
 - :doc:`/dev/custom_actions`
+

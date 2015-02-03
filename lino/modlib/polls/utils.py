@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Utilities, choicelists, mixins used by :mod:`lino.modlib.polls`.
 
@@ -26,6 +26,10 @@ add = PollStates.add_item
 add('10', _("Draft"), 'draft')
 add('20', _("Published"), 'published')
 add('30', _("Closed"), 'closed')
+
+PollStates.published.add_transition(_("Publish"), states='draft')
+PollStates.closed.add_transition(_("Close"), states='draft published')
+PollStates.draft.add_transition(_("Reopen"), states='published closed')
 
 
 class ResponseStates(dd.Workflow):

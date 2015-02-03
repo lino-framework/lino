@@ -92,14 +92,14 @@ class ChoicesBySet(Choices):
 
 
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
-
+    """A series of questions."""
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Poll')
         verbose_name = _("Poll")
         verbose_name_plural = _("Polls")
         ordering = ['ref']
 
-    title = models.CharField(_("Title"), max_length=200)
+    title = models.CharField(_("Heading"), max_length=200)
 
     details = models.TextField(_("Details"), blank=True)
 
@@ -120,13 +120,15 @@ class Poll(UserAuthored, mixins.CreatedModified, Referrable):
 
     state = PollStates.field(default=PollStates.draft)
 
+    workflow_state_field = 'state'
+
     def __unicode__(self):
         return self.ref or self.title
 
     def after_ui_save(self, ar):
         if self.questions_to_add:
-            #~ print "20131106 self.questions_to_add", self.questions_to_add
-            #~ qkw = dict(choiceset=self.default_choiceset)
+            # print "20150203 self.questions_to_add", self,
+            # self.questions_to_add
             q = None
             qkw = dict()
             number = 1
@@ -172,13 +174,14 @@ class PollDetail(dd.DetailLayout):
     main = "general results"
 
     general = dd.Panel("""
-    title state
+    ref title workflow_buttons
     details
-    user created modified default_choiceset default_multiple_choices
+    default_choiceset default_multiple_choices
     polls.QuestionsByPoll
     """, label=_("General"))
 
     results = dd.Panel("""
+    id user created modified state
     polls.ResponsesByPoll
     # result
     PollResult
@@ -189,8 +192,8 @@ class Polls(dd.Table):
     model = 'polls.Poll'
     column_names = 'ref title user state *'
     detail_layout = PollDetail()
-    insert_layout = dd.FormLayout("""
-    title
+    insert_layout = dd.InsertLayout("""
+    ref title
     default_choiceset default_multiple_choices
     questions_to_add
     """, window_size=(60, 15))
@@ -201,10 +204,12 @@ class MyPolls(ByUser, Polls):
 
 
 class Question(mixins.Sequenced):
-
+    """A question of a poll."""
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
+
+    allow_cascaded_delete = ['poll']
 
     poll = models.ForeignKey('polls.Poll', related_name='questions')
     number = models.CharField(_("No."), max_length=20, blank=True)
@@ -540,9 +545,8 @@ class AnswersByResponse(dd.VirtualTable):
         """
         if response is None:
             return
-        ar.master_instance = response  # must set it because
-                                       # get_data_rows() will need it.
-
+        if response.poll_id is None:
+            return 
         all_responses = rt.modules.polls.Response.objects.filter(
             poll=response.poll, partner=response.partner).order_by('date')
         ht = xghtml.Table()
@@ -555,6 +559,8 @@ class AnswersByResponse(dd.VirtualTable):
             else:
                 headers.append(ar.obj2html(r, dd.fds(r.date)))
         ht.add_header_row(*headers, **cellattrs)
+        ar.master_instance = response  # must set it because
+                                       # get_data_rows() needs it.
         for answer in self.get_data_rows(ar):
             cells = [self.question.value_from_object(answer, ar)]
             for r in all_responses:
