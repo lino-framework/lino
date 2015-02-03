@@ -27,7 +27,7 @@ lino.projects.polly.settings.doctests
 >>> print(obj)
 Rolf Rompen's response to Participant feedback
 
->>> rt.show(polls.AnswersByResponse, obj)
+>>> rt.login(obj.user.username).show(polls.AnswersByResponse, obj)
 =============================================== =============================== ===========
  Question                                        My answer                       My remark
 ----------------------------------------------- ------------------------------- -----------
@@ -41,7 +41,7 @@ Rolf Rompen's response to Participant feedback
 >>> client = Client()
 >>> mt = contenttypes.ContentType.objects.get_for_model(obj.__class__).id
 >>> url = '/api/polls/AnswersByResponse?rp=ext-comp-1351&fmt=json&mt=%d&mk=%d' % (mt, pk)
->>> res = client.get(url, REMOTE_USER='robin')
+>>> res = client.get(url, REMOTE_USER=obj.user.username)
 
 
 >>> print(res.status_code)

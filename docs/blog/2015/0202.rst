@@ -31,7 +31,67 @@ newest version of Atelier.  Released Atelier 0.0.12 and commited
 again.  It then still failed because `pisa` doesn't seem to get
 (correctly) installed before the test suite runs. Changed the import
 statement in :mod:`lino.mixins.printable` so that the `ImportError`
-becomes visible.
+becomes visible. Excerpt from the `build <https://travis-ci.org/lsaffre/lino/jobs/49148339>`_::
+
+    [localhost] local: python setup.py -q test
+    zip_safe flag not set; analyzing archive contents...
+    ho.__init__: module references __path__
+    ho.__init__: module references __path__
+    sx.__init__: module references __path__
+    sx.__init__: module references __path__
+    Installed /home/travis/build/lsaffre/lino/pisa-3.0.33-py2.7.egg
+    Searching for reportlab==2.7
+    ...
+    Installed /home/travis/build/lsaffre/lino/beautifulsoup4-4.3.2-py2.7.egg
+    running egg_info
+    creating lino.egg-info
+    writing requirements to lino.egg-info/requires.txt
+    writing lino.egg-info/PKG-INFO
+    writing top-level names to lino.egg-info/top_level.txt
+    writing dependency_links to lino.egg-info/dependency_links.txt
+    writing manifest file 'lino.egg-info/SOURCES.txt'
+    reading manifest file 'lino.egg-info/SOURCES.txt'
+    reading manifest template 'MANIFEST.in'
+    writing manifest file 'lino.egg-info/SOURCES.txt'
+    running build_ext
+    ...................python manage.py test --noinput --failfast ({'cwd': 'docs/tutorials/pisa'}) returned 1:
+    -----
+    F
+    ======================================================================
+    FAIL: test_files (lino.utils.test.DocTest)
+    ----------------------------------------------------------------------
+    Traceback (most recent call last):
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/utils/test.py", line 48, in test_files
+    self.fail("Failed doctest %s" % f)
+    AssertionError: Failed doctest /home/travis/build/lsaffre/lino/docs/tutorials/pisa/index.rst
+    ----------------------------------------------------------------------
+    Ran 1 test in 0.049s
+    FAILED (failures=1)
+    Creating test database for alias 'default'...
+    **********************************************************************
+    File "/home/travis/build/lsaffre/lino/docs/tutorials/pisa/index.rst", line 67, in index.rst
+    Failed example:
+    rv = ses.run(obj.do_print)
+    Exception raised:
+    Traceback (most recent call last):
+    File "/opt/python/2.7.9/lib/python2.7/doctest.py", line 1315, in __run
+    compileflags, 1) in test.globs
+    File "<doctest index.rst[12]>", line 1, in <module>
+    rv = ses.run(obj.do_print)
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/core/requests.py", line 423, in run
+    return thing.run_from_session(self, *args, **kw)
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/core/utils.py", line 610, in run_from_session
+    self.bound_action.action.run_from_code(ar)
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/core/actions.py", line 536, in run_from_code
+    self.run_from_ui(ar, **kw)
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/mixins/printable.py", line 444, in run_from_ui
+    bm.build(ar, self, elem)
+    File "/home/travis/virtualenv/python2.7.9/lib/python2.7/site-packages/lino/mixins/printable.py", line 146, in build
+    import ho.pisa as pisa
+    ImportError: No module named ho.pisa
+
+Strange... my next guess is that pisa gets installed into the wrong
+environment. Leaving this problem open for meditation.
 
 
 Recurrent polls
@@ -41,8 +101,13 @@ Continued in :ref:`welfare.tested.polls`.
 
 I removed the `languages` definitions in
 :mod:`lino_welfare.projects.chatelet.settings` so that the default
-configuration is now English. For
-:mod:`lino_welfare.projects.eupen.settings` this is yet to
-do. Changing Eupen to English would break a series of unit tests.
+configuration is now English. (For
+:mod:`lino_welfare.projects.eupen.settings` this is yet to do, but it
+would break a series of unit tests).
 
+(Not finished. Continued tomorrow.)
 
+Miscellaneous
+=============
+
+The value of a `DummyField` is now always `None`.

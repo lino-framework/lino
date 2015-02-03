@@ -70,6 +70,13 @@ class HtmlRenderer(object):
         self.plugin = plugin
         # self.ui = plugin.site.ui
 
+    def ar2js(self, ar, obj, **status):
+        """Return the Javascript code which would run this `ar` on the
+        client.
+
+        """
+        return self.not_implemented_js
+
     def js2url(self, js):
         if not js:
             return None
@@ -204,6 +211,15 @@ request `tar`."""
     def insert_button(self, ar, text, known_values={}, **options):
         return '[?!]'
 
+    def ar2button(self, ar, obj, label=None, title=None, **kw):
+        ba = ar.bound_action
+        label = label or ba.action.label
+        status = ar.get_status()
+        js = self.ar2js(ar, obj, **status)
+        uri = self.js2url(js)
+        return self.href_button_action(
+            ba, uri, label, title or ba.action.help_text, **kw)
+
     def row_action_button(
             self, obj, ar, ba, label=None, title=None, request_kwargs={},
             **kw):
@@ -222,11 +238,12 @@ request `tar`."""
             **kw):
         """
         Return a HTML fragment that displays a button-like link
-        which runs the bound action `ba` when clicked.
+        which runs the action request `ar` when clicked.
         """
         ba = ar.bound_action
         label = label or ba.action.label
-        uri = self.js2url(self.action_call_on_instance(obj, ar, ba))
+        js = self.action_call_on_instance(obj, ar, ba)
+        uri = self.js2url(js)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 

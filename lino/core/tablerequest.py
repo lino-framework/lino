@@ -564,6 +564,8 @@ class TableRequest(ActionRequest):
             kw.update(filter=repr(self.filter))
         if self.known_values:
             kw.update(known_values=self.known_values)
+        if self.requesting_panel:
+            kw.update(requesting_panel=self.requesting_panel)
         u = self.get_user()
         if u is not None:
             kw.update(user=u.username)

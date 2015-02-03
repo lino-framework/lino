@@ -318,7 +318,8 @@ class ExtRenderer(HtmlRenderer):
         st.update(data_record=ar.elem2rec_insert(ar.ah, elem))
         return self.window_action_button(ar, a, st, text, **options)
 
-    def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **kw):
+    def action_call_on_instance(
+            self, obj, ar, ba, request_kwargs={}, **status):
         """Note that `ba.actor` may differ from `ar.actor` when defined on a
         different actor. Remember e.g. the "Must read eID card" action
         button in eid_info of newcomers.NewClients (20140422).
@@ -335,10 +336,10 @@ class ExtRenderer(HtmlRenderer):
             sar = ba.request(**request_kwargs)
         else:
             sar = ar.spawn(ba, **request_kwargs)
-        return self.ar2js(sar, obj, **kw)
+        return self.ar2js(sar, obj, **status)
 
     def ar2js(self, ar, obj, **status):
-        """Return the Javascript code which would run this `ar` on the client.
+        """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
 
         """
         rp = ar.requesting_panel

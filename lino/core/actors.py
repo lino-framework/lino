@@ -161,7 +161,7 @@ class ActorMetaClass(type):
 
         cls.virtual_fields = {}
         cls._constants = {}
-        cls._actions_dict = AttrDict()
+        cls.actions = AttrDict()
         cls._actions_list = []  # 20121129
 
         # inherit virtual fields defined on parent Actors
@@ -280,6 +280,12 @@ class Actor(actions.Parametrizable):
     model = None
     """
     Set this on
+    """
+
+    actions = None
+    """An :class:`AttrDict <atelier.utils.AttrDict>` containing the
+    actions available on this actor.
+
     """
 
     app_label = None
@@ -752,7 +758,7 @@ class Actor(actions.Parametrizable):
                 # None in subclass.
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
-                    if not k in cls._actions_dict:
+                    if not k in cls.actions:
                         if v.attach_to_actor(cls, k):
                             cls.bind_action(v)
 
@@ -765,7 +771,7 @@ class Actor(actions.Parametrizable):
     def bind_action(self, a):
         ba = BoundAction(self, a)
         if a.action_name is not None:
-            self._actions_dict.define(a.action_name, ba)
+            self.actions.define(a.action_name, ba)
         self._actions_list.append(ba)
         return ba
 
@@ -1042,12 +1048,12 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_action_by_name(self, name):
-        return self._actions_dict.get(name, None)
+        return self.actions.get(name, None)
     get_url_action = get_action_by_name
 
     @classmethod
     def get_url_action_names(self):
-        return self._actions_dict.keys()
+        return self.actions.keys()
 
     @classmethod
     def get_toolbar_actions(self, cf):

@@ -10,7 +10,7 @@ field, then you should consider using a choicelist instead.
 ..
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
-    >>> from lino.runtime import *
+    >>> from lino.api.doctests import *
     
 
 For example the :class:`lino.modlib.system.mixins.Genders` choicelist.

@@ -775,9 +775,12 @@ class Dummy(object):
 
 
 class DummyField(FakeField):
-    """
-    Represents a field that doesn't exist in the current configuration but
-    might exist in other configurations.
+    """Represents a field that doesn't exist in the current configuration
+    but might exist in other configurations. The "value" of a
+    DummyField is always `None`.
+
+    See e.g. :func:`ForeignKey` and :func:`fields_list`.
+
     """
     # choices = []
     # primary_key = False
@@ -785,8 +788,10 @@ class DummyField(FakeField):
     def __init__(self, *args, **kw):
         pass
 
-    # def __getattr__(self, name):
-    #     return None
+    def __get__(self, instance, owner):
+        if instance is None:
+            return self
+        return None
 
     def get_default(self):
         return None

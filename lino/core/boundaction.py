@@ -82,6 +82,14 @@ class BoundAction(object):
         kw.update(action=self)
         return self.actor.request(*args, **kw)
 
+    def request_from(self, ar, *args, **kw):
+        """Create a request of this action from parent request `ar`.
+
+        """
+        sar = self.request(*args, **kw)
+        sar.setup_from(ar)
+        return sar
+
     def get_button_label(self, *args):
         return self.action.get_button_label(self.actor, *args)
 

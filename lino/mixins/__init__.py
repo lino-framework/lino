@@ -66,9 +66,21 @@ class Registrable(model.Model):
 
     @classmethod
     def get_registrable_fields(cls, site):
-        """
-        Return a list of the fields which are *disabled* when this is
+        """Return a list of the fields which are *disabled* when this is
         *registered* (i.e. `state` is not `editable`).
+
+        Usage example::
+
+            class MyModel(dd.Registrable):
+
+                @classmethod
+                def get_registrable_fields(self, site):
+                    for f in super(MyModel, self).get_registrable_fields(site):
+                        yield f
+                    yield 'user'
+                    yield 'date'
+
+
         """
         return []
         #~ yield 'date'
@@ -85,12 +97,12 @@ class Registrable(model.Model):
         return super(Registrable, self).disabled_fields(ar)
 
     def get_row_permission(self, ar, state, ba):
+        """Only rows in an editable state may be edited.
+
         """
-        Only rows in an editable state may be edited.
-        """
-        #~ if isinstance(ba.action,actions.DeleteSelected):
-            #~ logger.info("20130128 Registrable.get_row_permission %s %s %s %s",
-                #~ self,state,ba.action,ar.bound_action.action.readonly)
+        # logger.info(
+        #     "20150202 Registrable.get_row_permission %s %s %s %s",
+        #     self, state, ba.action, ar.bound_action.action.readonly)
         if state and not state.editable:
             if not ar.bound_action.action.readonly:
                 return False

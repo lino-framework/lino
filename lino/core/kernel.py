@@ -45,11 +45,6 @@ from django.utils.translation import ugettext_lazy as _
 
 import lino
 
-from lino.api import dd
-
-from lino.utils import class_dict_items
-from lino.core.requests import ActorRequest
-
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
@@ -58,14 +53,16 @@ from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
 from lino.core import web
-from lino.core.signals import pre_ui_build, post_ui_build
-
-from lino.core import store as ext_store
-
+from lino.core import views
+from lino.utils import class_dict_items
+from lino.core.requests import ActorRequest
+from lino.core.model import Model
+from lino.core.utils import resolve_model
+from lino.core.store import Store
 from lino.core.utils import is_devserver
 from lino.core.renderer import TextRenderer
-from lino.core import views
-
+from lino.core.signals import (pre_ui_build, post_ui_build,
+                               pre_analyze, post_analyze)
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 
@@ -209,7 +206,7 @@ class Kernel(object):
           <lino.core.ddh.DisableDeleteHandler>` for each Model into
           `_lino_ddh`.
 
-        - Install :class:`lino.dd.Model` attributes and
+        - Install :class:`lino.core.model.Model` attributes and
           methods into Models that don't inherit from it.
 
         """
@@ -230,12 +227,12 @@ class Kernel(object):
         # this also triggers django.db.models.loading.cache._populate()
 
         if self.user_model:
-            self.user_model = dd.resolve_model(
+            self.user_model = resolve_model(
                 self.user_model,
                 strict="Unresolved model '%s' in user_model.")
 
         if self.project_model:
-            self.project_model = dd.resolve_model(
+            self.project_model = resolve_model(
                 self.project_model,
                 strict="Unresolved model '%s' in project_model.")
 
@@ -243,7 +240,7 @@ class Kernel(object):
             # app_name_model is the full installed app module name +
             # the model name. It certainly contains at least one dot.
             m = '.'.join(app_name_model.split('.')[-2:])
-            dd.resolve_model(
+            resolve_model(
                 m,
                 strict="%s plugin tries to extend unresolved model '%%s'" %
                 p.__class__.__module__)
@@ -254,24 +251,24 @@ class Kernel(object):
 
             model._lino_ddh = DisableDeleteHandler(model)
 
-            dd.Model.django2lino(model)
+            Model.django2lino(model)
 
             if isinstance(model.hidden_columns, basestring):
                 model.hidden_columns = frozenset(
-                    dd.fields_list(model, model.hidden_columns))
+                    fields.fields_list(model, model.hidden_columns))
 
             if isinstance(model.active_fields, basestring):
                 model.active_fields = frozenset(
-                    dd.fields_list(model, model.active_fields))
+                    fields.fields_list(model, model.active_fields))
 
             if isinstance(model.allow_cascaded_delete, basestring):
                 model.allow_cascaded_delete = frozenset(
-                    dd.fields_list(model, model.allow_cascaded_delete))
+                    fields.fields_list(model, model.allow_cascaded_delete))
 
             if isinstance(model.allow_stale_generic_foreignkey, basestring):
                 model.allow_stale_generic_foreignkey = frozenset(
-                    dd.fields_list(model,
-                                   model.allow_stale_generic_foreignkey))
+                    fields.fields_list(model,
+                                       model.allow_stale_generic_foreignkey))
 
             if model._meta.abstract:
                 raise Exception("Tiens?")
@@ -332,7 +329,7 @@ class Kernel(object):
             if isinstance(p, Plugin):
                 p.before_analyze()
 
-        dd.pre_analyze.send(self, models_list=models_list)
+        pre_analyze.send(self, models_list=models_list)
         # MergeActions are defined in pre_analyze.
         # And MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles
@@ -349,7 +346,7 @@ class Kernel(object):
             model.on_analyze(self)
 
             for k, v in class_dict_items(model):
-                if isinstance(v, dd.VirtualField):
+                if isinstance(v, fields.VirtualField):
                     v.attach_to_model(model, k)
 
         #~ logger.info("20130817 attached model vfs")
@@ -367,7 +364,7 @@ class Kernel(object):
         for a in actors.actors_list:
             a.on_analyze(self)
 
-        dd.post_analyze.send(self, models_list=models_list)
+        post_analyze.send(self, models_list=models_list)
 
         logger.info("Languages: %s. %d apps, %d models, %s actors.",
                     ', '.join([li.django_code for li in self.languages]),
@@ -555,7 +552,7 @@ class Kernel(object):
         if h.actor.params_layout:
             h.params_layout_handle = h.actor.make_params_layout_handle(self)
 
-        h.store = ext_store.Store(h)
+        h.store = Store(h)
 
     def render_action_response(self, ar):
         """Builds a JSON response from response information stored in given

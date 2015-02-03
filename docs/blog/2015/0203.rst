@@ -1,0 +1,20 @@
+=========================
+Tuesday, February 3, 2015
+=========================
+
+Wow. I finished a first proof of concept for the
+:ref:`welfare.tested.polls` as the users in Chatelet want them.
+
+Especially :meth:`AnswersByResponse.answer_buttons
+<lino.modlib.polls.models.AnswersByResponse.answer_buttons>` and
+:meth:`AnswersByResponse.get_slave_summary
+<lino.modlib.polls.models.AnswersByResponse.get_slave_summary>` were a
+challenge.
+
+I invented some new API methods for working with action requests.
+:attr:`lino.core.actors.Actor.actions` is now part of the public API.
+Started to write documentation (but yes, there is much to do):
+
+- :doc:`/dev/ar`
+- :doc:`/dev/html`
+- :doc:`/dev/custom_actions`

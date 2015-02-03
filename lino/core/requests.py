@@ -2,21 +2,9 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-An action request is when a given user asks to run a given action of a
-given actor.
+See introduction in :doc:`/dev/ar`.
 
-Action requests are implemented by
-:class:`lino.core.requests.BaseRequest` and its subclasses.
-
-In application code, the traditional name for instances of action
-requests  is :class:`ar`.
-
-As a rough approximation you can say that every Django web request
-gets wrapped into an action request.  The ActionRequest just holds
-extended information about the "context" (like the "renderer"
-being used) and provides the application with methods to
-communicate with the user.
-But there are exceptions, the :attr:`ar.request` can be None.
+.. autosummary::
 
 """
 
@@ -101,11 +89,7 @@ class PhantomRow(VirtualRow):
 
 class BaseRequest(object):
 
-    """Base class for :class:`ActionRequest` and :class:`TableRequest
-    <lino.core.tables.TableRequest>`. 
-
-    A bare `BaseRequest` instance is returned as a "session" by
-    :func:`rt.login`.
+    """Base class of all action requests.
 
     """
     # Some of the following are needed e.g. for polls tutorial
@@ -137,6 +121,107 @@ class BaseRequest(object):
         #~ 20120605 self.ah = actor.get_handle(ui)
         self.setup(**kw)
 
+    def setup(self,
+              user=None,
+              subst_user=None,
+              current_project=None,
+              selected_pks=None,
+              requesting_panel=None,
+              renderer=None):
+        self.requesting_panel = requesting_panel
+        self.user = user
+        self.current_project = current_project
+        if renderer is not None:
+            self.renderer = renderer
+        self.subst_user = subst_user
+
+        if selected_pks is not None:
+            self.set_selected_pks(*selected_pks)
+
+    def parse_req(self, request, rqdata, **kw):
+        """Parse the given incoming HttpRequest and set up this action
+request from it.
+
+        """
+        kw.update(user=request.user)
+        kw.update(subst_user=request.subst_user)
+        kw.update(requesting_panel=request.requesting_panel)
+        kw.update(current_project=rqdata.get(
+            ext_requests.URL_PARAM_PROJECT, None))
+
+        # If the incoming request specifies an active tab, then the
+        # response must forward this information. Otherwise Lino would
+        # forget the current tab when a user saves a detail form for
+        # the first time.  The `active_tab` is not (yet) used directly
+        # by Python code, so we don't store it as attribute on `self`,
+        # just in the response.
+        tab = rqdata.get(ext_requests.URL_PARAM_TAB, None)
+        if tab is not None:
+            tab = int(tab)
+            # logger.info("20150130 b %s", tab)
+            self.set_response(active_tab=tab)
+
+        selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
+        kw.update(selected_pks=selected)
+
+        #~ if settings.SITE.user_model:
+            #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
+            #~ if username:
+                #~ try:
+                    #~ kw.update(subst_user=settings.SITE.user_model.objects.get(username=username))
+                #~ except settings.SITE.user_model.DoesNotExist, e:
+                    #~ pass
+        # logger.info("20140503 ActionRequest.parse_req() %s", kw)
+        return kw
+
+    def setup_from(self, other):
+        """Copy certain values (renderer, user, subst_user &
+        requesting_panel) from this request to the other.
+
+        """
+        if not self.must_execute():
+            return
+            #~ raise Exception("Request %r was already executed" % other)
+        self.renderer = other.renderer
+        self.user = other.user
+        self.subst_user = other.subst_user
+        self.requesting_panel = other.requesting_panel
+
+    def spawn(self, spec, **kw):
+        """
+        Create a new ActionRequest using default values from this one and
+        the action specified by `spec`.
+
+        """
+
+        if isinstance(spec, ActionRequest):
+            for k, v in kw.items():
+                assert hasattr(spec, k)
+                setattr(spec, k, v)
+            spec.setup_from(self)
+        elif isinstance(spec, BoundAction):
+            spec = spec.request(**kw)
+            spec.setup_from(self)
+        else:
+            from lino.core.menus import create_item
+            mi = create_item(spec)
+            kw.setdefault('user', self.user)
+            kw.setdefault('subst_user', self.subst_user)
+            kw.setdefault('renderer', self.renderer)
+            kw.setdefault('requesting_panel', self.requesting_panel)
+            spec = mi.bound_action.request(**kw)
+        return spec
+
+    def set_selected_pks(self, *selected_pks):
+        #~ print 20131003, selected_pks
+        self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
+
+    def get_permission(self, obj, **kw):
+        """Whether this request has permission to run on the given database
+object."""
+        state = self.bound_action.actor.get_row_state(obj)
+        return self.bound_action.get_row_permission(self, obj, state)
+        
     def set_response(self, **kw):
         """Set (some part of) the response to be sent when the action request
         finishes.  Allowed keywords are:
@@ -308,76 +393,6 @@ class BaseRequest(object):
     def must_execute(self):
         return True
 
-    def setup_from(self, other):
-        """Copy certain values (renderer, user, subst_user &
-        requesting_panel) from this request to the other.
-
-        """
-        if not self.must_execute():
-            return
-            #~ raise Exception("Request %r was already executed" % other)
-        self.renderer = other.renderer
-        self.user = other.user
-        self.subst_user = other.subst_user
-        self.requesting_panel = other.requesting_panel
-
-    def parse_req(self, request, rqdata, **kw):
-        """Parse the given incoming HttpRequest and set up this action
-request from it.
-
-        """
-        kw.update(user=request.user)
-        kw.update(subst_user=request.subst_user)
-        kw.update(requesting_panel=request.requesting_panel)
-        kw.update(current_project=rqdata.get(
-            ext_requests.URL_PARAM_PROJECT, None))
-
-        # If the incoming request specifies an active tab, then the
-        # response must forward this information. Otherwise Lino would
-        # forget the current tab when a user saves a detail form for
-        # the first time.  The `active_tab` is not (yet) used directly
-        # by Python code, so we don't store it as attribute on `self`,
-        # just in the response.
-        tab = rqdata.get(ext_requests.URL_PARAM_TAB, None)
-        if tab is not None:
-            tab = int(tab)
-            # logger.info("20150130 b %s", tab)
-            self.set_response(active_tab=tab)
-
-        selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
-        kw.update(selected_pks=selected)
-
-        #~ if settings.SITE.user_model:
-            #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
-            #~ if username:
-                #~ try:
-                    #~ kw.update(subst_user=settings.SITE.user_model.objects.get(username=username))
-                #~ except settings.SITE.user_model.DoesNotExist, e:
-                    #~ pass
-        # logger.info("20140503 ActionRequest.parse_req() %s", kw)
-        return kw
-
-    def setup(self,
-              user=None,
-              subst_user=None,
-              current_project=None,
-              selected_pks=None,
-              requesting_panel=None,
-              renderer=None):
-        self.requesting_panel = requesting_panel
-        self.user = user
-        self.current_project = current_project
-        if renderer is not None:
-            self.renderer = renderer
-        self.subst_user = subst_user
-
-        if selected_pks is not None:
-            self.set_selected_pks(*selected_pks)
-
-    def set_selected_pks(self, *selected_pks):
-        #~ print 20131003, selected_pks
-        self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
-
     def get_user(self):
         """Return the :class:`User <ml.users.User>` instance of the user who
         issued the request.  If the authenticated user is acting as
@@ -390,34 +405,9 @@ request from it.
         settings.SITE.emit_system_note(
             self.request, owner, subject, body, silent)
 
-    def spawn(self, spec, **kw):
-        """
-        Create a new ActionRequest using default values from this one and
-        the action specified by `spec`.
-
-        """
-
-        if isinstance(spec, ActionRequest):
-            for k, v in kw.items():
-                assert hasattr(spec, k)
-                setattr(spec, k, v)
-            spec.setup_from(self)
-        elif isinstance(spec, BoundAction):
-            spec = spec.request(**kw)
-            spec.setup_from(self)
-        else:
-            from lino.core.menus import create_item
-            mi = create_item(spec)
-            kw.setdefault('user', self.user)
-            kw.setdefault('subst_user', self.subst_user)
-            kw.setdefault('renderer', self.renderer)
-            kw.setdefault('requesting_panel', self.requesting_panel)
-            spec = mi.bound_action.request(**kw)
-        return spec
-
     def run(self, thing, *args, **kw):
-        """The first parameter `thing` may be an InstanceAction or a Model
-        instance.
+        """The first parameter `thing` may be an :class:`InstanceAction
+        <lino.core.utils.InstanceAction>` or a Model instance.
 
         """
         return thing.run_from_session(self, *args, **kw)
@@ -546,9 +536,17 @@ request from it.
         """
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)
 
+    def ar2button(self, obj, *args, **kw):
+        """Return an HTML element with a button for running this action
+         request on the given database object. Does not spawn another
+         request.
+
+        """
+        return self.renderer.ar2button(self, obj, *args, **kw)
+
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button which would run the given
-        :class:`InstanceAction <lino.core.actions.InstanceAction>`
+        :class:`InstanceAction <lino.core.utils.InstanceAction>`
         ``ai`` on the client.
 
         """
@@ -578,7 +576,7 @@ request from it.
 
     def put_button(self, obj, text, data, **kw):
         """
-        Render a button which when clicked will send a PUT 
+        Render a button which when clicked will send a PUT
         for the given row with the specified data.
         
         Usage example::
@@ -592,7 +590,6 @@ request from it.
                         l.append(
                             ar.put_button(self,
                             unicode(c), dict(choice=c),**kw))
-                        #~ l.append(self.select_choice.as_button_elem(ar, unicode(c)))
                 else:
                     l.append(E.b(unicode(self.choice)))
                     l.append(ar.put_button(
@@ -853,16 +850,16 @@ class ActorRequest(BaseRequest):
 
 
 class ActionRequest(ActorRequest):
-
-    """
-    Holds information about an indivitual web request and provides methods like
+    """Holds information about an indivitual web request and provides
+    methods like
 
     - :meth:`get_user <lino.core.actions.BaseRequest.get_user>`
     - :meth:`confirm <lino.core.actions.BaseRequest.confirm>`
     - :meth:`spawn <lino.core.actions.BaseRequest.spawn>`
     
-    An `ActionRequest` is also a :class:`BaseRequest` and inherits its methods.
-    
+    An `ActionRequest` is also a :class:`BaseRequest` and inherits its
+    methods.
+
     """
     create_kw = None
     renderer = None
@@ -891,7 +888,7 @@ class ActionRequest(ActorRequest):
     def setup(self,
               known_values=None,
               param_values=None,
-              action_param_values=None,
+              action_param_values={},
               **kw):
         BaseRequest.setup(self, **kw)
         #~ 20120111
@@ -905,7 +902,6 @@ class ActionRequest(ActorRequest):
             kv.update(known_values)
         self.known_values = kv
 
-        action = self.bound_action.action
         request = self.request
 
         if self.actor.parameters is not None:
@@ -951,23 +947,25 @@ class ActionRequest(ActorRequest):
                 pv.update(param_values)
 
             self.param_values = AttrDict(**pv)
-
+        action = self.bound_action.action
         if action.parameters is not None:
             apv = action.action_param_defaults(self, None)
             if request is not None:
                 apv.update(
                     action.params_layout.params_store.parse_params(request))
-            if action_param_values is not None:
-                for k in action_param_values.keys():
-                    if not k in apv:
-                        raise Exception(
-                            "Invalid key '%s' in action_param_values "
-                            "of %s request (possible keys are %s)" %
-                            (k, self.actor, apv.keys()))
-                apv.update(action_param_values)
             self.action_param_values = AttrDict(**apv)
-
+            self.set_action_param_values(**action_param_values)
         self.bound_action.setup_action_request(self)
+
+    def set_action_param_values(self, **action_param_values):
+        apv = self.action_param_values
+        for k in action_param_values.keys():
+            if not k in apv:
+                raise Exception(
+                    "Invalid key '%s' in action_param_values "
+                    "of %s request (possible keys are %s)" %
+                    (k, self.actor, apv.keys()))
+        apv.update(action_param_values)
 
     def get_data_iterator(self):
         raise NotImplementedError

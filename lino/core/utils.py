@@ -594,6 +594,9 @@ class InstanceAction(object):
         self.instance = instance
         self.owner = owner
 
+    def __str__(self):
+        return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
+
     def run_from_code(self, ar, **kw):
         ar.selected_rows = [self.instance]
         return self.bound_action.action.run_from_code(ar)
@@ -624,6 +627,12 @@ class InstanceAction(object):
 
         """
         return E.tostring(self.as_button_elem(*args, **kwargs))
+
+    def get_row_permission(self, ar):
+        state = self.bound_action.actor.get_row_state(self.instance)
+        logger.info("20150202 ia.get_row_permission() %s using %s",
+                    self, state)
+        return self.bound_action.get_row_permission(ar, self.instance, state)
 
 
 class ParameterPanel(object):

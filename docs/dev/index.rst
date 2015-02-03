@@ -53,10 +53,16 @@ Getting acquaintained
 - :doc:`application` : An app is not an application.
 - :doc:`plugins` : Why we need plugins. Configuring plugins.
 - :doc:`users` : Why do we replace Django's user management. Passwords.
-- :doc:`site` : 
-- :doc:`menu` :
+- :doc:`site` : Instantiating a `Site`.  Specifying the
+  `INSTALLED_APPS`. Additional local apps.
+- :doc:`menu` : Standard items of a main menu
 - :doc:`choicelists` :
 - :doc:`actors` :
+
+- :doc:`ar` : Using action requests
+- :doc:`html` : Generating HTML
+- :doc:`custom_actions` : Writing custom actions
+
 - :doc:`/tutorials/letsmti/index` :
 - :doc:`/tutorials/layouts` :
 - :doc:`/tutorials/vtables/index` :
@@ -78,6 +84,9 @@ Getting acquaintained
    menu
    choicelists
    actors
+   ar
+   html
+   custom_actions
    /tutorials/letsmti/index
    /tutorials/layouts
    /tutorials/vtables/index
