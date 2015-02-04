@@ -43,10 +43,23 @@ For example::
             self.plugins.countries.configure(country_code='BE')
 
 
-As a :doc:`/team/sysadm` your can override these configuration
-defaults using the :meth:`configure_plugin
-<lino.core.site.Site.configure_plugin>` method. For example::
+As a :doc:`/team/sysadm` you can override these configuration defaults
+in your project's :xfile:`settings.py` using the
+:meth:`configure_plugin <lino.core.site.Site.configure_plugin>`
+method.  This function must be called *before* the :setting:`SITE` has
+been instantiated, otherwise *they will be ignored silently*.  For
+example, if you want to set the :attr:`country_code
+<lino.modlib.countries.Plugin.country_code>` of
+:mod:`lino.modlib.countries` to `'DE'`::
 
     from lino_cosi.projects.apc.settings import *
-    configure_plugin('countries', country_code='BE')
+    configure_plugin('countries', country_code='DE')
     SITE = Site(globals())
+
+Uncomplete list of configurable plugin attributes:
+
+- :attr:`lino.modlib.countries.Plugin.country_code` 
+- :attr:`lino.modlib.contacts.Plugin.hide_region`
+
+See also :doc:`/admin/settings`.
+

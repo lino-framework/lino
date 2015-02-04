@@ -47,6 +47,7 @@ lino.modlib.polls.models
       QuestionsByPoll
       Referrable
       Response
+      ResponseDetail
       ResponseStates
       Responses
       ResponsesByPartner

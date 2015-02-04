@@ -55,3 +55,25 @@ action for creating a prompt meeting, now shows all appointable users,
 not only those whose `newcomer_consultations` checkbox is checked.
 
 
+Fehlermeldung nach "Neuzugang zuweisen"
+=======================================
+
+Ticket :ticket:`87` was a tough one. But it seems that I got it.
+
+I observed that the Save button sends a PUT to
+`/api/newcomers/NewClients/121`, but this PUT returns with
+:attr:`detail_handler_name
+<lino.core.requests.ValidActionResponses.detail_handler_name>` set to
+"pcsw.Clients.detail". This is wrong. And BTW it opens a second Detail
+window: if you click now the window's "Close" button, you see the
+"same" detail a second time. The `newcomers.NewClients` and
+`pcsw.Clients` tables share the same `detail_layout`, but they have
+different `parameters`.
+
+The mystery lied in the collaboration of :meth:`ar.goto_instance
+<lino.core.requests.ActorRequest.goto_instance>` and
+:meth:`obj.get_detail_action
+<lino.core.model.Model.get_detail_action>`.
+If the action requests's actor can be used for the object instance, then it must have priority over the object's default table.
+
+

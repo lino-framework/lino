@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Defines the classes :class:`MenuItem`
+Defines the classes :class:`MenuItem` and :class:`Menu`
 """
 
 import logging
@@ -14,18 +14,14 @@ from django.db import models
 
 from atelier import rstgen
 from lino.core.utils import obj2str
-
-
 from lino.core import actors
-from lino.core import actions
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from lino.utils.xmlgen.html import E
 
 
 class MenuItem:
+    """A menu item. Note that this is subclassed by :class:`Menu`: a menu
+    is also a menu item.
 
-    """
-    Represents a menu item
     """
     HOTKEY_MARKER = '~'
 
@@ -169,14 +165,13 @@ class MenuItem:
         #~ return E.li(E.a(self.label,href=url,tabindex="-1"))
         return unicode(self.label)
 
-
-def has_items(menu):
-    for i in menu.items:
-        if i.label is None:
-            raise Exception("20130907 %r has no label" % i)
-        if not i.label.startswith('-'):
-            return True
-    return False
+    def has_items(menu):
+        for i in menu.items:
+            if i.label is None:
+                raise Exception("20130907 %r has no label" % i)
+            if not i.label.startswith('-'):
+                return True
+        return False
 
 
 def create_item(spec, action=None, help_text=None, **kw):
@@ -226,7 +221,7 @@ def create_item(spec, action=None, help_text=None, **kw):
 class Menu(MenuItem):
 
     """
-    Represents a menu. A menu is conceptually a :class:`MenuItem` 
+    Represents a menu. A menu is conceptually a :class:`MenuItem`
     which contains other menu items.
     """
 
@@ -277,7 +272,7 @@ class Menu(MenuItem):
 
         for mi in self.items:
             if isinstance(mi, Menu):
-                if has_items(mi):
+                if mi.has_items():
                     if not self.avoid_lonely_items:
                         newitems.append(mi)
                     elif len(mi.items) == 1:
@@ -297,28 +292,17 @@ class Menu(MenuItem):
         mi = create_item(*args, **kw)
         return self.add_item_instance(mi)
 
-    #~ def add_action_(self,action,**kw):
-        #~ return self.add_item_instance(MenuItem(self,action,**kw))
-
-    #~ def add_item(self,**kw):
-        #~ return self.add_item_instance(Action(self,**kw))
-
-    #~ def add_request_action(self,ar,**kw):
-        #~ kw.update(request=ar)
-        #~ return self.add_item_instance(MenuItem(self,ar.action,**kw))
-
     def add_instance_action(self, obj, **kw):
-        """
-        Add an action which displays the given object (a Django model instance)
-        in a detail form for editing.
-        Used e.g. for the SiteConfig object.
+        """Add an action which displays the given database object instance in
+        a detail form for editing.  Used e.g. for the
+        :class:`lino.modlib.system.models.SiteConfig` object.
+
         """
         kw.update(instance=obj)
         da = kw.get('action', None)
         if da is None:
             da = obj.get_default_table().detail_action
             kw.update(action=da)
-        #~ obj._detail_action = da
         return self.add_item_instance(MenuItem(**kw))
 
     def add_item(self, name, label, **kw):
@@ -438,9 +422,8 @@ class Menu(MenuItem):
 
 
 class Toolbar(Menu):
+    """A top-level :class:`Menu`.
 
-    """
-    A Toolbar is a top-level :class:`Menu`.
     """
     pass
 

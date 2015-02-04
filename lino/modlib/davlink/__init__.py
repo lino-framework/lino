@@ -48,9 +48,8 @@ class Plugin(ad.Plugin):
         f.write(tpl.render(**context))
 
     def get_patterns(self, ui):
-        from django.conf import settings
-        fn = os.path.join(settings.MEDIA_ROOT, *self.jnlp_file_parts())
-        ui.site.make_cache_file(fn, self.write_jnlp_file)
+        fn = os.path.join(*self.jnlp_file_parts())
+        ui.make_cache_file(fn, self.write_jnlp_file)
         return []
 
     def jnlp_file_parts(self):

@@ -32,10 +32,8 @@ Note that the path should be absolute and without a ``~``.
 import os
 from os.path import normpath, dirname, join, isdir, relpath
 import inspect
-import time
 import datetime
 import warnings
-import codecs
 import collections
 from urllib import urlencode
 
@@ -82,27 +80,18 @@ def to_locale(language):
         return language.lower()
 
 
+def class2str(cl):
+    return cl.__module__ + '.' + cl.__name__
+
 gettext_noop = lambda s: s
 
 PLUGIN_CONFIGS = {}
 
 
 def configure_plugin(app_label, **kwargs):
-    """Set one ore several configuration settings of the given plugin.
-
-    The :func:`configure_plugin` function is a simple interface for
-    locally configuring plugins.
-
-    This should be called *before instantiating* your :class:`Site`
-    class.
-
-    For example to set :attr:`lino.modlib.contacts.Plugin.hide_region`
-    to `True`::
-
-      from lino.api import ad
-      ad.configure_plugin('contacts', hide_region=True)
-
-    See :doc:`/admin/settings` for more details.
+    """Set one ore several configuration settings of the given plugin
+    *before* the :setting:`SITE` has been instantiated.
+    See :doc:`/dev/plugins`.
 
     """
     cfg = PLUGIN_CONFIGS.setdefault(app_label, {})
@@ -465,10 +454,11 @@ documentation.
     """
 
     keep_erroneous_cache_files = False
-    """When some exception occurs during :meth:`make_cache_file`, Lino
-    usually removes the partly generated file to make sure that it
-    will try to generate it again (and report the same error message)
-    for every subsequent next request.
+    """When some exception occurs during
+    :meth:`lino.core.kernel.Kernel.make_cache_file`, Lino usually
+    removes the partly generated file to make sure that it will try to
+    generate it again (and report the same error message) for every
+    subsequent next request.
 
     Set this to `True` if you need to see the partly generated cache
     file.  **Don't forget to remove this** when you have inspected the
@@ -1052,8 +1042,6 @@ documentation.
 
         """
 
-        def class2str(cl):
-            return cl.__module__ + '.' + cl.__name__
         stamp = self.cache_dir.child('lino_cache.txt')
         this = class2str(self.__class__)
         if stamp.exists():
@@ -2362,11 +2350,10 @@ site. :manage:`diag` is a command-line shortcut to this.
             self.webdav_root = join(self.cache_dir, 'media', 'webdav')
 
         if not self.django_settings.get('MEDIA_ROOT', False):
-            """
-            Django's default value for MEDIA_ROOT is an empty string.
-            In certain test cases there migth be no MEDIA_ROOT key at all.
-            Lino's default value for MEDIA_ROOT is ``<cache_dir>/media``.
-            """
+            # Django's default value for MEDIA_ROOT is an empty
+            # string.  In certain test cases there might be no
+            # MEDIA_ROOT key at all.  Lino's default value for
+            # MEDIA_ROOT is ``<cache_dir>/media``.
             self.django_settings.update(
                 MEDIA_ROOT=join(self.cache_dir, 'media'))
 
@@ -2875,32 +2862,6 @@ signature as `django.core.mail.EmailMessage`.
 
         """
         return []
-
-    def make_cache_file(self, fn, write, force=False):
-        """Make the specified cache file.  This is used internally at server
-startup.
-
-        """
-        if not force and os.path.exists(fn):
-            mtime = os.stat(fn).st_mtime
-            if mtime > self.kernel.code_mtime:
-                self.logger.info(
-                    "%s (%s) is up to date.", fn, time.ctime(mtime))
-                return 0
-
-        self.logger.info("Building %s ...", fn)
-        self.makedirs_if_missing(os.path.dirname(fn))
-        f = codecs.open(fn, 'w', encoding='utf-8')
-        try:
-            write(f)
-            f.close()
-            return 1
-        except Exception:
-            f.close()
-            if not self.keep_erroneous_cache_files:  #
-                os.remove(fn)
-            raise
-        #~ logger.info("Wrote %s ...", fn)
 
     def decfmt(self, v, places=2, **kw):
         """

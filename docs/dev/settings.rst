@@ -17,19 +17,25 @@ is. You can specify this either using the
 :envvar:`DJANGO_SETTINGS_MODULE` environment variable or the
 `--settings` command-line option of certain management commands.
 
+It must be importable. That is, if it contains e.g. ``foo.bar.baz``,
+then Django will do an equivalent of ``import foo.bar.baz`` before it
+is able to do anything else.
+
+See also :doc:`/admin/settings`.
+
 .. envvar:: DJANGO_SETTINGS_MODULE
   
 The :envvar:`DJANGO_SETTINGS_MODULE` environment variable is expected
-to contain the *Python name* of an importable module. That is, if it
-contains e.g. ``foo.bar.baz``, then Django will do an equivalent of
-``import foo.bar.baz`` before it is able to do anything else.
+to contain the *Python name* of the `Django settings module`_. 
 
 .. xfile:: settings.py
 
-The actual filename of a Django settings module is not important, but
-it is often in a file named :xfile:`settings.py`.  That's why we
-sometimes speak about "the :xfile:`settings.py` file" when actually we
-mean the Django settings module.
+When we speak about "the :xfile:`settings.py` file", then we actually
+mean the `Django settings module`_.  That's because the filename of a
+Django settings module is often in a file named :xfile:`settings.py`.
+But in reality it can be some arbitrary filename.
+
+
 
 
 How Lino integrates into Django settings

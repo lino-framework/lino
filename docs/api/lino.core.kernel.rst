@@ -17,6 +17,7 @@ lino.core.kernel
       is_devserver
       join
       patterns
+      resolve_model
       set_default_verbose_name
       url
    
@@ -34,8 +35,10 @@ lino.core.kernel
       ContentType
       DisableDeleteHandler
       Kernel
+      Model
       Plugin
       Requirement
+      Store
       TextRenderer
    
    

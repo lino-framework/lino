@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Defines the :class:`MediaFile` class.
+"""
 
 import os
 
@@ -11,14 +13,15 @@ has_davlink = davlink is not None and settings.SITE.use_java
 
 
 class MediaFile(object):
+    """Represents a file on the server below :setting:`MEDIA_ROOT` with
+    two properties :attr:`name` and :attr:`url`.
+   
+    It also takes into consideration the settings
+    :attr:`use_davlink <lino.core.site.Site.use_davlink>`
+    :attr:`webdav_root <lino.core.site.Site.webdav_root>`
+    and
+    :attr:`webdav_url <lino.core.site.Site.webdav_url>`
 
-    """
-    Represents a file on the server with two properties `name` and `url`,
-    using
-    :setting:`MEDIA_ROOT`
-    :attr:`use_davlink <ad.Site.use_davlink>`
-    :attr:`webdav_root <ad.Site.webdav_root>`
-    :attr:`webdav_url <ad.Site.webdav_url>`
     """
 
     def __init__(self, editable, *parts):
@@ -44,8 +47,8 @@ class TmpMediaFile(MediaFile):
 
     def __init__(self, ar, fmt):
         ip = ar.request.META.get('REMOTE_ADDR', 'unknown_ip')
-        super(TmpMediaFile, self).__init__(False, 'cache',
-                                           'appy' + fmt, ip, str(ar.actor) + '.' + fmt)
+        super(TmpMediaFile, self).__init__(
+            False, 'cache', 'appy' + fmt, ip, str(ar.actor) + '.' + fmt)
 
 
 def _test():

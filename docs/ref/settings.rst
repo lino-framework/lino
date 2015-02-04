@@ -86,9 +86,13 @@ positional arguments when instantiating the :class:`Site
 
 .. setting:: MEDIA_ROOT
 
-Used by FileSystemStorage.
-Used by :meth:`lino.ui.extjs.ext_ui.ExtUI.build_site_js` 
-and Printable to determine the location of the cache.
+The root directory of the media files used on this site.  If the
+directory specified by :setting:`MEDIA_ROOT` does not exist, then Lino
+does not create any cache files. Which means that the web interface
+won't work.
+
+Used e.g. by :mod:`lino.utils.media` :mod:`lino.modlib.extjs` and
+:mod:`lino.mixins.printable`.
 
 .. setting:: DEBUG
 

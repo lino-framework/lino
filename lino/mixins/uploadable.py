@@ -1,4 +1,4 @@
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 import logging
@@ -6,7 +6,6 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext as _
 from django.db import models
-from django.conf import settings
 
 from lino.core.model import Model
 
@@ -45,8 +44,6 @@ class Uploadable(Model):
         #~ dir,name = os.path.split(f.name)
         #~ if name != f.name:
             #~ print "Aha: %r contains a path! (%s)" % (f.name,__file__)
-
-        #~ name = os.path.join(settings.MEDIA_ROOT,'uploads',name)
 
         self.size = uf.size
         self.mimetype = uf.content_type

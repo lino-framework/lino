@@ -1,0 +1,34 @@
+===========================
+Wednesday, February 4, 2015
+===========================
+
+Final sprint before an upgrade in :ref:`weleup`.
+
+I moved :meth:`make_cache_file
+<lino.core.kernel.Kernel.make_cache_file>` from :class:`Site
+<lino.core.site.Site>` to :class:`Kernel <lino.core.kernel.Kernel>`.
+This probably fixes a rather internal problem: Our basic strategy is
+that Lino does not create any cache files when the directory specified
+by :setting:`MEDIA_ROOT` does not exist.  In certain cases it got
+created nevertheless, but became available only after restarting the
+development server.
+
+In yesterday's blog entry I can now easily refer e.g. to
+:attr:`detail_handler_name
+<lino.core.requests.ValidActionResponses.detail_handler_name>` using a
+cool trick: the new :class:`lino.core.requests.ValidActionResponses`
+class is a placeholder for defining the allowed keywords to
+:meth:`ar.set_response
+<lino.core.requests.BaseRequest.set_response>`.
+
+Resolved :ticket:`81`.  The
+:attr:`doctor_tye<lino_welfare.modlib.aids.models.RefundConfirmation.doctor_tye>`
+of a
+:class:`RefundConfirmation<lino_welfare.modlib.aids.models.RefundConfirmation>`
+can now be left blank, and in that case the doctor's
+client_contact_type will be used. A positive side effect: if no
+doctor_type is given, the selection list for doctor no longer shows
+all persons but only those who have a refundable client contact type
+(i.e. :attr:`ClientContactType.can_refund
+<lino_welfare.modlib.pcsw.models.ClientContactType.can_refund>` is
+checked.)

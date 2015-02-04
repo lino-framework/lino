@@ -11,7 +11,6 @@ lino.core.menus
    
       create_item
       find_menu_item
-      has_items
       obj2str
    
    

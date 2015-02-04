@@ -634,8 +634,19 @@ class Model(models.Model):
 
     def get_detail_action(self, ar):
         """Return the detail action to use for this object with the given
-        action request. Return None if no detail action is defined, or
-        if the request has no view permission.
+        action request.
+
+        If `self` has a special attribute `_detail_action` defined,
+        return this.  This magic is used by
+        :meth:`Menu.add_instance_action
+        <lino.core.menus.Menu.add_instance_action>`.
+
+        If the action requests's actor can be used for this object,
+        then use its `detail_action`. Otherwise use the
+        `detail_action` of this object's default table.
+
+        Return `None` if no detail action is defined, or if the
+        request has no view permission.
 
         Once upon a time we wanted that e.g. for a `pcsw.Client` the
         detail_action depends on the user profile.  This feature is
@@ -644,8 +655,11 @@ class Model(models.Model):
         """
         a = getattr(self, '_detail_action', None)
         if a is None:
-            a = self.__class__.get_default_table().detail_action
-        # if ar is None:
+            if ar and ar.actor and ar.actor.model \
+               and isinstance(self, ar.actor.model):
+                a = ar.actor.detail_action
+            else:
+                a = self.__class__.get_default_table().detail_action
         if a is None or ar is None:
             return a
         if a.get_view_permission(ar.get_user().profile):

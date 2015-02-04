@@ -618,12 +618,12 @@ class ExtRenderer(HtmlRenderer):
         """
         jsgen.set_for_user_profile(profile)
 
-        fn = os.path.join(settings.MEDIA_ROOT, *self.lino_js_parts(profile))
+        fn = os.path.join(*self.lino_js_parts(profile))
 
         def write(f):
             self.write_lino_js(f, profile)
 
-        return settings.SITE.make_cache_file(fn, write, force)
+        return settings.SITE.kernel.make_cache_file(fn, write, force)
 
     def write_lino_js(self, f, profile):
 

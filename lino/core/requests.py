@@ -22,7 +22,7 @@ from lino.core.utils import obj2unicode
 from lino.utils import AttrDict
 from lino.utils import isiterable
 
-from lino.core import constants as ext_requests
+from lino.core import constants
 
 from lino.core.utils import navinfo
 from lino.core.boundaction import BoundAction
@@ -35,31 +35,75 @@ from lino.core.utils import ChangeWatcher
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
-ACTION_RESPONSES = frozenset((
-    'message', 'success', 'alert',
-    'errors',
-    'html',
-    'rows',
-    'data_record',
-    'detail_handler_name',
-    'record_id',
-    'refresh', 'refresh_all',
-    'close_window',
-    'record_deleted',
-    'xcallback',
-    'open_url',
-    'open_davlink_url',
-    'info_message',
-    'warning_message',  # deprecated
-    'eval_js',
-    'active_tab'))
-"""Action responses supported by :js:func:`Lino.handle_action_result`
-(defined in :xfile:`linolib.js`).
 
-These are the allowed keyword arguments for
-:meth:`ar.set_response <BaseRequest.set_response>`.
+class ValidActionResponses:
+    """These are the allowed keyword arguments for :meth:`ar.set_response
+    <BaseRequest.set_response>`, and the action responses supported by
+    :js:func:`Lino.handle_action_result` (defined in :xfile:`linolib.js`).
 
-"""
+    This class is never instantiated, but used as a placeholder for
+    these names and their documentation.
+
+    """
+
+    message = None
+    """a string with a message to be shown to the user.
+    """
+
+    alert = None
+    """ True to specify that the message is rather important
+    and should alert and should be presented in a dialog box to be
+    confirmed by the user.
+    """
+
+    success = None
+
+    errors = None
+    html = None
+    rows = None
+    data_record = None
+
+    record_id = None
+    refresh = None
+    refresh_all = None
+    close_window = None
+    record_deleted = None
+    xcallback = None
+    open_url = None
+    open_davlink_url = None
+    info_message = None
+    warning_message = None
+    "deprecated"
+
+    eval_js = None
+    active_tab = None
+
+    detail_handler_name = None
+    """The name of the detail handler to be used.  Application code should
+    not need to use this.  It is automatically set by
+    :meth:`ActorRequest.goto_instance`.
+
+    """
+
+
+# ACTION_RESPONSES = frozenset((
+#     'message', 'success', 'alert',
+#     'errors',
+#     'html',
+#     'rows',
+#     'data_record',
+#     'detail_handler_name',
+#     'record_id',
+#     'refresh', 'refresh_all',
+#     'close_window',
+#     'record_deleted',
+#     'xcallback',
+#     'open_url',
+#     'open_davlink_url',
+#     'info_message',
+#     'warning_message',  # deprecated
+#     'eval_js',
+#     'active_tab'))
 
 
 class VirtualRow(object):
@@ -147,7 +191,7 @@ request from it.
         kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(
-            ext_requests.URL_PARAM_PROJECT, None))
+            constants.URL_PARAM_PROJECT, None))
 
         # If the incoming request specifies an active tab, then the
         # response must forward this information. Otherwise Lino would
@@ -155,17 +199,17 @@ request from it.
         # the first time.  The `active_tab` is not (yet) used directly
         # by Python code, so we don't store it as attribute on `self`,
         # just in the response.
-        tab = rqdata.get(ext_requests.URL_PARAM_TAB, None)
+        tab = rqdata.get(constants.URL_PARAM_TAB, None)
         if tab is not None:
             tab = int(tab)
             # logger.info("20150130 b %s", tab)
             self.set_response(active_tab=tab)
 
-        selected = rqdata.getlist(ext_requests.URL_PARAM_SELECTED)
+        selected = rqdata.getlist(constants.URL_PARAM_SELECTED)
         kw.update(selected_pks=selected)
 
         #~ if settings.SITE.user_model:
-            #~ username = rqdata.get(ext_requests.URL_PARAM_SUBST_USER,None)
+            #~ username = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
             #~ if username:
                 #~ try:
                     #~ kw.update(subst_user=settings.SITE.user_model.objects.get(username=username))
@@ -224,30 +268,8 @@ object."""
         
     def set_response(self, **kw):
         """Set (some part of) the response to be sent when the action request
-        finishes.  Allowed keywords are:
-
-        - ``message`` -- a string with a message to be shown to the user.
-
-        - ``alert`` -- True to specify that the message is rather important
-          and should alert and should be presented in a dialog box to be
-          confirmed by the user.
-
-        - ``success``
-        - ``errors``
-        - ``html``
-        - ``rows``
-        - ``data_record``
-        - ``goto_record_id``
-        - ``refresh``
-        - ``refresh_all``
-        - ``close_window``
-        - ``xcallback``
-        - ``open_url``
-        - ``open_davlink_url``
-        - ``info_message``
-        - ``warning_message``
-        - ``eval_js``
-        - ``active_tab``
+        finishes.  Allowed keywords are documented in
+        :class:`ValidActionResponses`.
 
         This does not yet respond anything, it is stored until the action
         has finished. The response might be overwritten by subsequent
@@ -261,7 +283,7 @@ object."""
 
         """
         for k in kw.keys():
-            if not k in ACTION_RESPONSES:
+            if not hasattr(ValidActionResponses, k):
                 raise Exception("Unknown key %r in action response." % k)
         self.response.update(kw)
             
@@ -777,10 +799,10 @@ class ActorRequest(BaseRequest):
         bp = kw.setdefault('base_params', {})
 
         if self.current_project is not None:
-            bp[ext_requests.URL_PARAM_PROJECT] = self.current_project
+            bp[constants.URL_PARAM_PROJECT] = self.current_project
 
         if self.subst_user is not None:
-            bp[ext_requests.URL_PARAM_SUBST_USER] = self.subst_user.id
+            bp[constants.URL_PARAM_SUBST_USER] = self.subst_user.id
         return kw
 
     def spawn(self, actor, **kw):
@@ -814,19 +836,28 @@ class ActorRequest(BaseRequest):
         return self.bound_action.action.render_to_dict(self)
 
     def goto_instance(self, obj, **kw):
-        "See :meth:`BaseRequest.goto_instance`"
+        """Ask the client to open a detail window on this object.  The effect
+        is like :meth:`BaseRequest.goto_instance`, but if the detail
+        layout of the current actor can be used for the object to be
+        displayed, we don't want to open a new detail window.
+
+        This calls :meth:`obj.get_detail_action
+        <lino.core.model.Model.get_detail_action>`.
+
+        """
         # e.g. find_by_beid is called from viewport, so there is no
         # requesting_panel.
-        if self.actor.model is None \
-           or not isinstance(obj, self.actor.model) \
-           or self.actor.detail_action is None:
-           # or self.requesting_panel is None:
-            return super(ActorRequest, self).goto_instance(obj, **kw)
+        # if self.actor.model is None \
+        #    or not isinstance(obj, self.actor.model) \
+        #    or self.actor.detail_action is None:
+        #     return super(ActorRequest, self).goto_instance(obj, **kw)
         da = obj.get_detail_action(self)
         if da is None:
             return
-        self.set_response(
-            detail_handler_name=da.full_name())
+        if da.actor != self.actor:
+            return super(ActorRequest, self).goto_instance(obj, **kw)
+        # da = self.actor.detail_action
+        self.set_response(detail_handler_name=da.full_name())
         if self.actor.handle_uploaded_files is not None:
             self.set_response(record_id=obj.pk)
         else:

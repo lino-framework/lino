@@ -7,14 +7,16 @@ from __future__ import unicode_literals
 """This defines the :class:`Kernel` class.
 
 The "kernel" of a Lino site is (like `SITE` itself) a "de facto
-singleton".  It encapsulates a bunch of functionality which remains an
-independent class/object instance and is not merged into the Site
-because it gets imported and instantiated only when Django has
-finished the models loading.
+singleton", available to application code as ``SITE.kernel`` (and its
+alias for backwards compatibility: ``SITE.ui``).
 
-TODO: Rename this to something else.  Because "kernel" suggests
-something which is loaded *in first place*, but this object is
-rather loaded at the end (of the startup process).
+The kernel is instantiated at the end of the startup process, when the
+:settings`SITE` has been instantiated and models have been loaded.  It
+encapsulates a bunch of functionality which becomes available only
+then.
+
+TODO: Rename "kernel" to something else.  Because "kernel" suggests
+something which is loaded *in first place*, but
 
 """
 
@@ -26,6 +28,8 @@ import os
 from os.path import join, dirname, exists
 
 import sys
+import time
+import codecs
 import atexit
 from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
@@ -649,6 +653,35 @@ class Kernel(object):
                                     )
 
         return urlpatterns
+
+    def make_cache_file(self, fn, write, force=False):
+        """Make the specified cache file.  This is used internally at server
+startup.
+
+        """
+        if not exists(settings.MEDIA_ROOT):
+            logger.info("MEDIA_ROOT does not exist: %s", settings.MEDIA_ROOT)
+            return 0
+        fn = join(settings.MEDIA_ROOT, fn)
+        if not force and os.path.exists(fn):
+            mtime = os.stat(fn).st_mtime
+            if mtime > self.code_mtime:
+                logger.info("%s (%s) is up to date.", fn, time.ctime(mtime))
+                return 0
+
+        logger.info("Building %s ...", fn)
+        self.site.makedirs_if_missing(dirname(fn))
+        f = codecs.open(fn, 'w', encoding='utf-8')
+        try:
+            write(f)
+            f.close()
+            return 1
+        except Exception:
+            f.close()
+            if not self.site.keep_erroneous_cache_files:  #
+                os.remove(fn)
+            raise
+        #~ logger.info("Wrote %s ...", fn)
 
     def setup_media_link(self, urlpatterns, short_name,
                          attr_name=None, source=None):
