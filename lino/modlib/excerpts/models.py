@@ -233,6 +233,14 @@ We override everything in Excerpt to not call the class method.""")
         else:
             return 'create_excerpt' + str(self.pk)
 
+    @dd.displayfield(_("Model"))
+    def content_type_display(self, ar):
+        model = self.content_type.model_class()
+        
+        label = "{0} ({1})".format(
+            dd.full_model_name(model), model._meta.verbose_name)
+        return ar.obj2html(self.content_type, label)
+
 
 class ExcerptTypes(dd.Table):
     """
@@ -240,9 +248,9 @@ class ExcerptTypes(dd.Table):
     """
     model = 'excerpts.ExcerptType'
     required = dd.required(user_level='admin', user_groups='office')
-    column_names = ("content_type primary certifying name build_method "
-                    "template *")
-    order_by = ["content_type", "name"]
+    column_names = ("content_type_display primary certifying name "
+                    "build_method  template body_template *")
+    order_by = ["content_type__app_label", "content_type__model", "name"]
 
     insert_layout = """
     name

@@ -56,3 +56,14 @@ participates as guest. Changed `insert_layout` and
 :meth:`get_filter_kw <lino.core.tables.AbstractTable.get_filter_kw>`
 of :class:`EventsByClient
 <lino_welfare.modlib.cal.models.EventsByClient>`.
+
+Commit & push
+
+Started to evaluate whether :ticket:`76` is difficult to solve.
+
+I discovered that eupen and chatelet could not print any
+:xfile:`
+forgot to load standard excerpt
+types.
+
+Wrote a new tested document :ref:`welfare.tested.excerpts`.
