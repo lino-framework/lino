@@ -1,9 +1,17 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.boards`."
+"""See :mod:`ml.boards`.
 
-from lino import ad, _
+.. autosummary::
+   :toctree:
+
+    models
+    mixins
+
+"""
+
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

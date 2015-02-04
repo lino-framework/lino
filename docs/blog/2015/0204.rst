@@ -32,3 +32,27 @@ all persons but only those who have a refundable client contact type
 (i.e. :attr:`ClientContactType.can_refund
 <lino_welfare.modlib.pcsw.models.ClientContactType.can_refund>` is
 checked.)
+
+
+Commit, push and upgrade on :ref:`lf`.
+
+Resolved :ticket:`59`.  The default value for :attr:`Granting.signer
+<lino_welfare.modlib.aids.models.Granting.signer>` was set in
+:meth:`after_ui_create <lino.core.model.Model.after_ui_create>`, but
+did not save the object again.  It is now set in :meth:`full_clean
+<lino.core.model.Model.full_clean>`, which means that users cannot set
+that field to `empty` for confirmations whose `aid_type` has
+:attr:`confirmed_by_primary_coach
+<lino_welfare.modlib.aids.models.AidType.confirmed_by_primary_coach>`
+checked. Which anyway was just a theoretic possibility.
+
+
+Resolved :ticket:`53`. The tricky part here is that
+:class:`EventsByClient
+<lino_welfare.modlib.cal.models.EventsByClient>` shows two types of
+events: those who are "directly" linked to the client through their
+:attr:`Event.project` field, **and** those where this client
+participates as guest. Changed `insert_layout` and
+:meth:`get_filter_kw <lino.core.tables.AbstractTable.get_filter_kw>`
+of :class:`EventsByClient
+<lino_welfare.modlib.cal.models.EventsByClient>`.

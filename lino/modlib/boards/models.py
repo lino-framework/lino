@@ -11,11 +11,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from lino import dd, mixins
-from django.db import models
+from lino.api import dd
+from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.users.mixins import UserAuthored
+from .mixins import BoardDecision
+
 
 class Board(mixins.BabelNamed, mixins.DatePeriod):
 
@@ -88,25 +89,5 @@ class MembersByBoard(Members):
     master_key = 'board'
     column_names = "role person"
     order_by = ["role"]
-
-
-class BoardDecision(UserAuthored):
-    # base class for aids.Confirmation
-    class Meta:
-        abstract = True
-
-    decision_date = models.DateField(
-        verbose_name=_('Decided'), blank=True, null=True)
-    board = models.ForeignKey('boards.Board', blank=True, null=True)
-
-    @dd.chooser()
-    def board_choices(self, decision_date):
-        M = dd.resolve_model('boards.Board')
-        qs = M.objects.all()
-        if decision_date:
-            qs = dd.PeriodEvents.active.add_filter(qs, decision_date)
-        return qs
-
-
 
 

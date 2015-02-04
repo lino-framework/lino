@@ -341,7 +341,7 @@ class Event(Component, Ended,
         This field is cleared when somebody calls :class:`TakeEvent` on
         the event.
 
-    .. attribute:: type
+    .. attribute:: event_type
 
          The type of this event. Every calendar event should have this
          field pointing to a given :class:`EventType`, which holds
