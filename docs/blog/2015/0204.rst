@@ -60,10 +60,14 @@ of :class:`EventsByClient
 Commit & push
 
 Started to evaluate whether :ticket:`76` is difficult to solve.
+Discovered that eupen and chatelet could not print any presence
+certificate.  They forgot to load the standard excerpt types (which
+are in `std2` now).  Wrote a new tested document
+:ref:`welfare.tested.excerpts`.
 
-I discovered that eupen and chatelet could not print any
-:xfile:`
-forgot to load standard excerpt
-types.
+Commit, push and upgrade on :ref:`weleup`.
 
-Wrote a new tested document :ref:`welfare.tested.excerpts`.
+The online demo of :ref:`faggio` was broken because i forgot to remove
+`is_pupil` and `is_teacher` from a layout.
+
+Commit, push and upgrade on :ref:`lf`.

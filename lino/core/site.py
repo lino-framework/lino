@@ -1149,7 +1149,7 @@ documentation.
         def add(x):
             if isinstance(x, basestring):
                 app_label = x.split('.')[-1]
-                x = apps_modifiers.get(app_label, x)
+                x = apps_modifiers.pop(app_label, x)
                 if x:
                     # convert unicode to string
                     installed_apps.append(str(x))
@@ -1160,6 +1160,11 @@ documentation.
 
         for x in self.get_installed_apps():
             add(x)
+
+        if apps_modifiers:
+            raise Exception(
+                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
+                    apps_modifiers.keys()[0]))
 
         plugins = []
         auto_apps = []

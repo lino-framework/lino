@@ -1,0 +1,16 @@
+==========================
+Thursday, February 5, 2015
+==========================
+
+Before going into production, I renamed
+``lino_welfare.modlib.trainings`` to
+:mod:`lino_welfare.modlib.immersion`, and within this module the
+`Training` model to `Contract`.
+
+
+Lino now verifies whether all "plugin modifiers" returned by
+:meth:`lino.core.site.Site.get_apps_modifiers` are valid, and
+otherwise raises an exception :message:`Invalid app_label 'X in your
+get_apps_modifiers!`
+
+
