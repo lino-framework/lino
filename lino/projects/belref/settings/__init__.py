@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -38,7 +38,7 @@ class Site(Site):
     def get_apps_modifiers(self, **kk):
         kw = super(Site, self).get_apps_modifiers(**kk)
         kw.update(extjs=None)
-        kw.update(plain=None)
+        # kw.update(plain=None)
         return kw
 
     def get_installed_apps(self):
