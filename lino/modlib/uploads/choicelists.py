@@ -37,7 +37,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino.api import dd
+from lino.api import dd, rt
 
 
 class Shortcut(dd.Choice):
@@ -51,6 +51,11 @@ class Shortcut(dd.Choice):
         self.model_spec = model_spec
         value = model_spec + "." + name
         super(Shortcut, self).__init__(value, verbose_name, name)
+
+    def get_uploads(self, **kw):
+        """Return a queryset with the uploads of this shortcut."""
+        return rt.modules.uploads.Upload.objects.filter(
+            type__shortcut=self, **kw)
 
 
 class Shortcuts(dd.ChoiceList):

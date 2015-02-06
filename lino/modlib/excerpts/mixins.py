@@ -112,4 +112,10 @@ class Certifiable(dd.Model):
             self.save()
             obj.delete()
 
+    def get_excerpt_title(self):
+        """A string to be used in templates as the title of the certifying
+        document.
+
+        """
+        return unicode(self)
 

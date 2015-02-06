@@ -141,11 +141,10 @@ class ContactRelated(dd.Model):
 
 class PartnerDocument(dd.Model):
 
-    """
-    Adds two fields 'partner' and 'person' to this model, 
-    making it something that refers to a "partner". 
-    `person` means a "contact person" for the partner.
-    
+    """Adds two fields 'partner' and 'person' to this model, making it
+    something that refers to a "partner".  `person` means a "contact
+    person" for the partner.
+
     """
 
     class Meta:

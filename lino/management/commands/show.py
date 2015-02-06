@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+""".. management_command:: show
+
+Show the content of a specified table to standard output.
 
 """
 
@@ -18,11 +20,11 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option(
-            '--username', action='store', dest='username',
-            default='root',
-            help='The username to act as. Default is "root".'),
+            '-u', '--username', action='store', dest='username',
+            default=None,
+            help='The username to act as. Default is `None`.'),
         make_option(
-            '--language', action='store', dest='language',
+            '-l', '--language', action='store', dest='language',
             help="The language to use. "
             "Default is the site's default language."),
     )

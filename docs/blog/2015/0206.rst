@@ -1,0 +1,26 @@
+========================
+Friday, February 6, 2015
+========================
+
+Job supplying
+=============
+
+The new module :class:`lino_welfare.modlib.art61` solves ticket
+:ticket:`84`.
+
+
+I replaced the word "job supply" by either "job supplyment" (a
+contract) or "job supplying" (the act of).
+
+I discovered that `mi-is.be
+<http://www.mi-is.be/be-fr/cpas/article-61>`_ uses the expression
+"employment assignment" for translating "mise au travail".
+
+It seems that "Mise à l'emploi" is newer and more correct than "Mise
+au travail", but the latter is still frequently used.
+
+Job provider = Job supplier
+
+The problem I had some days ago with generating demo data for the
+immersion module is now fixed by
+:mod:`lino_welfare.modlib.integ.fixtures.demo`.

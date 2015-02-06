@@ -7,10 +7,40 @@ Before going into production, I renamed
 :mod:`lino_welfare.modlib.immersion`, and within this module the
 `Training` model to `Contract`.
 
-
 Lino now verifies whether all "plugin modifiers" returned by
 :meth:`lino.core.site.Site.get_apps_modifiers` are valid, and
 otherwise raises an exception :message:`Invalid app_label 'X in your
 get_apps_modifiers!`
 
+Miscellaneous
+=============
 
+- Gerd reported ticket :ticket:`92`. Yes, the following was bullshit:
+
+    Acting as another user won't give you the access permissions of
+    that user.  A secretary who has authority to act as her boss in
+    order to manage his calendar should not also see e.g. statistic
+    reports to which she has no access.  For system admins it is
+    different: when a system admin acts as another user, he inherits
+    this user's access permissions.  System admins use this feature to
+    test the permissions of other users.
+
+  The truth is: independently of whether you are admin or not, acting as
+  another user means that you get that other user's menu.
+
+
+- :manage:`show` is now a bit more user friendly: uses `None` instead
+  of "root" as default username, and gives a meaningfule message when
+  the specified username does not exist.
+
+
+
+- :class:`lino_welfare.modlib.pcsw.models.ClientsTest` caused a traceback.
+  Fixed.
+  And this table is now covered by  :ref:`welfare.tested.pcsw`.
+  And en passant I solved ticket :ticket:`71`.
+
+- New method :meth:`lino.modlib.uploads.choicelists.Shortcut.get_queryset`.
+
+- :attr:`lino_welfare.modlib.pcsw.models.Client.primary_coach` is now
+  a displayfield (was a property)

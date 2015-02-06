@@ -2830,12 +2830,16 @@ signature as `django.core.mail.EmailMessage`.
 
         """
         self.startup()
-        if self.user_model is None or username is None:
+        User = self.user_model
+        if User is None or username is None:
             if not 'user' in kw:
                 from lino.core.auth import AnonymousUser
                 kw.update(user=AnonymousUser.instance())
         else:
-            kw.update(user=self.user_model.objects.get(username=username))
+            try:
+                kw.update(user=User.objects.get(username=username))
+            except User.DoesNotExist:
+                raise Exception("'{0}' : no such user".format(username))
 
         if not 'renderer' in kw:
             kw.update(renderer=self.ui.text_renderer)
