@@ -1157,6 +1157,12 @@ class Actor(actions.Parametrizable):
         return ActionRequest(*args, **kw)
 
     @classmethod
+    def request_from(self, ar, *args, **kw):
+        sar = self.request(*args, **kw)
+        sar.setup_from(ar)
+        return sar
+
+    @classmethod
     def show(self, master_instance=None, column_names=None, **known_values):
         """
         Creates an action request for this actor and calls its

@@ -589,9 +589,9 @@ object."""
         """Returns the HTML of an action link which will open the
         :term:`insert window` of this request.
 
-        TODO: This is not a good API. Checking permissions should not
-        be delegated to the renderer.  It would be more intuitive to
-        create these unsaved Link objects and then use a method
+        TODO: This is not a good API. Checking permissions should
+        *not* be delegated to the renderer.  It would be more
+        intuitive to create this unsaved object and then use a method
         `obj2button()`.  Replace `ExtRenderer.insert_button` by a
         method :meth:`obj2button`.
 

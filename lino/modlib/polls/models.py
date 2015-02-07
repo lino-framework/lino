@@ -395,25 +395,26 @@ class ResponsesByPartner(Responses):
         """
         if obj is None:
             return
-        qs = Response.objects.filter(partner=obj).order_by('date', 'poll__ref')
-        polls_with_responses = []
-        current = None
+
+        visible_polls = Poll.objects.filter(state__in=(
+            PollStates.published, PollStates.closed)).order_by('ref')
+
+        qs = Response.objects.filter(partner=obj).order_by('date')
+        polls_responses = {}
         for resp in qs:
-            if current is None:
-                current = (resp.poll, [])
-            if resp.poll != current[0]:
-                polls_with_responses.append(current)
-                current = (resp.poll, [])
-            current[1].append(resp)
-        if current is not None:
-            polls_with_responses.append(current)
+            polls_responses.setdefault(resp.poll.pk, []).append(resp)
             
+        sar = self.request_from(ar, obj)
         items = []
-        for poll, responses in polls_with_responses:
+        for poll in visible_polls:
             elems = [unicode(poll), ' : ']
+            responses = polls_responses.get(poll.pk, [])
             elems += join_elems(
                 [ar.obj2html(r, dd.fds(r.date))
                  for r in responses], sep=', ')
+            if poll.state == PollStates.published:
+                elems += [' ', sar.insert_button(known_values=dict(
+                    poll=poll))]
             items.append(E.li(*elems))
         return E.div(E.ul(*items))
 
@@ -509,7 +510,7 @@ class AnswerRemarkField(dd.VirtualField):
 
 
 class AnswersByResponse(dd.VirtualTable):
-    """This is the table used for answering to a poll.
+    """The table used for answering to a poll.
 
 .. attribute:: answer_buttons
 
@@ -548,7 +549,7 @@ class AnswersByResponse(dd.VirtualTable):
         if response is None:
             return
         if response.poll_id is None:
-            return 
+            return
         all_responses = rt.modules.polls.Response.objects.filter(
             poll=response.poll, partner=response.partner).order_by('date')
         ht = xghtml.Table()
@@ -680,10 +681,12 @@ class PollResult(Questions):
 
     @dd.requestfield(_("A1"))
     def a1(self, obj, ar):
-        c = iter(obj.get_choiceset().choices.all()).next()
-        #~ return Answer.objects.filter(question=obj,choice=c)
-        return AnswerChoices.request(
-            known_values=dict(question=obj, choice=c))
+        cs = obj.get_choiceset()
+        if cs is not None:
+            c = iter(cs.choices.all()).next()
+            #~ return Answer.objects.filter(question=obj,choice=c)
+            return AnswerChoices.request(
+                known_values=dict(question=obj, choice=c))
 
 
-dd.add_user_group('polls', config.verbose_name)
+dd.add_user_group(config.app_name, config.verbose_name)
