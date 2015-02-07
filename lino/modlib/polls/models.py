@@ -208,6 +208,7 @@ class Question(mixins.Sequenced):
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
+        ordering = ['seqno']
 
     allow_cascaded_delete = ['poll']
 
