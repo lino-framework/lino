@@ -5,7 +5,7 @@ Friday, February 6, 2015
 Job supplying
 =============
 
-The new module :class:`lino_welfare.modlib.art61` solves ticket
+The new module :mod:`lino_welfare.modlib.art61` solves ticket
 :ticket:`84`.
 
 
@@ -24,3 +24,4 @@ Job provider = Job supplier
 The problem I had some days ago with generating demo data for the
 immersion module is now fixed by
 :mod:`lino_welfare.modlib.integ.fixtures.demo`.
+

@@ -1,0 +1,28 @@
+==========================
+Saturday, February 7, 2015
+==========================
+
+Trying to explore some minor problems with the polls.  In :ref:`chat`
+they didn't yet start to manually configure polls, I use the following
+script in order to initialize the polls::
+
+    from lino.api import rt
+    rt.startup()
+
+    rt.modules.polls.ChoiceSet.objects.all().delete()
+    rt.modules.polls.Question.objects.all().delete()
+    rt.modules.polls.Poll.objects.all().delete()
+    rt.modules.polls.AnswerChoice.objects.all().delete()
+    rt.modules.polls.AnswerRemark.objects.all().delete()
+    rt.modules.polls.Response.objects.all().delete()
+
+    from lino.modlib.polls.fixtures import std
+    from lino_welfare.modlib.polls.fixtures import jobsearch
+
+    from lino.utils.dpy import load_fixture_from_module
+
+    load_fixture_from_module(std)
+    load_fixture_from_module(jobsearch)
+
+    obj = rt.modules.polls.Poll.get_by_ref("RAE")
+    rt.show(rt.modules.polls.QuestionsByPoll, obj)

@@ -249,17 +249,18 @@ class Question(mixins.Sequenced):
 
 class Questions(dd.Table):
     model = 'polls.Question'
-    column_names = "poll number title choiceset is_heading"
+    column_names = "seqno poll number title choiceset is_heading *"
     detail_layout = """
     poll number is_heading choiceset multiple_choices
     title
     details
     """
+    order_by = ['poll', 'seqno']
 
 
 class QuestionsByPoll(Questions):
     master_key = 'poll'
-    column_names = 'title choiceset multiple_choices is_heading *'
+    column_names = 'seqno number title is_heading *'
     auto_fit_column_widths = True
 
 
