@@ -2,7 +2,7 @@
 20150209 (Monday, 09 February 2015)
 ===================================
 
-I restarted to work on :ref:`lino_noi` because Mahmoud and I are maybe
+I restarted to work on :ref:`noi` because Mahmoud and I are maybe
 going to use it as ticketing system.  Added a new fixture
 :mod:`lino_noi.fixtures.tractickets`.  Changes in
 :mod:`ino.modlib.tickets`. New class `TimeInvestment`. I stopped to

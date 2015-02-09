@@ -10,7 +10,7 @@ lino.modlib.tickets.models
    .. autosummary::
    
       daterange_text
-      force_unicode
+      you_are_busy_messages
    
    
 
@@ -22,13 +22,14 @@ lino.modlib.tickets.models
    
       ByUser
       ChildrenByTicket
-      ContentType
       Dependencies
       Dependency
       DependencyTypes
+      Ended
       Milestone
       Milestones
       MilestonesByProject
+      MyOpenTickets
       MyProjects
       MySessions
       MySessionsByDate
@@ -46,6 +47,7 @@ lino.modlib.tickets.models
       SessionTypes
       Sessions
       SessionsByTicket
+      Started
       Ticket
       TicketEvents
       TicketStates
@@ -53,6 +55,7 @@ lino.modlib.tickets.models
       TicketsByProject
       TicketsFixed
       TicketsReported
+      TimeInvestment
       UnassignedTickets
       UserAuthored
       Vote
