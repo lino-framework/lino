@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Adds functionality for managing foos.
+Adds functionality for managing tickets.
 
 .. autosummary::
    :toctree:
@@ -11,7 +11,7 @@ Adds functionality for managing foos.
 
 """
 
-from lino import ad, _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

@@ -361,7 +361,7 @@ class AbstractTable(actors.Actor):
     - `'summary'` to render a summary in a HtmlBoxPanel.
     - `'html'` to render plain html a HtmlBoxPanel.
 
-    Example: :class:`ml.households.SiblingsByPerson`.
+    Example: :class:`lino.modlib.households.models.SiblingsByPerson`.
 
     """
 

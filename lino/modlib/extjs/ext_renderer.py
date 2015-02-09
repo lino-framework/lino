@@ -42,7 +42,6 @@ from lino.core import menus
 from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
-from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 
 if False:
@@ -411,8 +410,10 @@ class ExtRenderer(HtmlRenderer):
         Returns a HTML element representing this request as a table.
         Used by appy_pod rendered.
         """
-        return ar.table2xhtml(**kw)
-        #~ return E.tostring(ar.table2xhtml())
+        if ar.actor.slave_grid_format == 'summary':
+            return ar.actor.get_slave_summary(ar.master_instance, ar)
+        else:
+            return ar.table2xhtml(**kw)
 
     def handler_item(self, mi, handler, help_text):
         #~ handler = "function(){%s}" % handler

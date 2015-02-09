@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
@@ -69,9 +69,9 @@ class Controllable(dd.Model):
         verbose_name=owner_label)
 
     def update_owned_instance(self, controllable):
-        """
-        If this (acting as a controller) is itself controlled,
-        forward the call to the controller.
+        """If this (acting as a controller) is itself controlled, forward the
+        call to the controller.
+
         """
         if self.owner:
             self.owner.update_owned_instance(controllable)

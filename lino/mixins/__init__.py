@@ -271,7 +271,8 @@ class Referrable(model.Model):
         #~ return self.ref or unicode(_('(Root)'))
 
     def __unicode__(self):
-        return super(Referrable, self).__unicode__() + " (" + self.ref + ")"
+        # return super(Referrable, self).__unicode__() + " (" + self.ref + ")"
+        return unicode(super(Referrable, self)) + " (" + self.ref + ")"
 
 
 

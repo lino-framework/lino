@@ -23,13 +23,13 @@ class TicketStates(dd.Workflow):
     #~ label = _("Ticket State")
 
     @classmethod
-    def allow_state_accepted(cls, self, user):
+    def allow_state_active(cls, self, user):
         if not self.reported:
             return False
         return True
 
     @classmethod
-    def allow_state_working(cls, self, user):
+    def allow_state_assigned(cls, self, user):
         if not self.user:
             return False
         return True
@@ -43,18 +43,17 @@ class TicketStates(dd.Workflow):
 
 add = TicketStates.add_item
 
-add('10', _("Accepted"), 'accepted')
-add('20', _("Working"), 'working',
-    required=dict(states=['', 'accepted']),
+add('10', _("Assigned"), 'assigned',
+    required=dict(states=['', 'active']),
     action_name=_("Start"),
-    help_text=_("Ticket has been assigned to somebody who is working on it."))
+    help_text=_("Ticket has been assigned to somebody who is assigned on it."))
+add('20', _("Active"), 'active')
 add('30', _("Waiting"), 'waiting',
-    required=dict(states=['working']),
+    required=dict(states=['assigned']),
     action_name=_("Wait for feedback"),
     help_text=_("Waiting for feedback from partner."))
-#~ add('20',_("Assigned"),'assigned')
 add('40', _("Fixed"), 'fixed',
-    required=dict(states=['working']),
+    required=dict(states=['assigned']),
     help_text=_("Has been fixed. Waiting for test results."))
 add('50', _("Tested"), 'tested',
     required=dict(states=['fixed']),
@@ -63,5 +62,5 @@ add('60', _("Closed"), 'closed',
     required=dict(states=['tested']),
     help_text=_("Definitively closed. Cannot be undone."))
 add('90', _("Cancelled"), 'cancelled',
-    required=dict(states=['working']),
+    required=dict(states=['assigned']),
     help_text=_("Has been cancelled for some reason."))

@@ -17,7 +17,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino import mixins
 from django.conf import settings
 
@@ -124,12 +124,12 @@ class Note(mixins.TypedPrintable,
         blank=True, null=True,
         verbose_name=_("Time"),
         default=datetime.datetime.now)
-    type = models.ForeignKey(
-        NoteType,
+    type = dd.ForeignKey(
+        'notes.NoteType',
         blank=True, null=True,
         verbose_name=_('Note Type (Content)'))
-    event_type = models.ForeignKey(
-        EventType,
+    event_type = dd.ForeignKey(
+        'notes.EventType',
         blank=True, null=True,
         verbose_name=_('Event Type (Form)'))
     subject = models.CharField(_("Subject"), max_length=200, blank=True)
@@ -229,17 +229,16 @@ class NotesByPerson(NotesByX):
 
 
 def add_system_note(request, owner, subject, body, **kw):
-    #~ if not settings.SITE.site_config.system_note_type:
-        #~ return
+    """Create a system note."""
     nt = owner.get_system_note_type(request)
     if not nt:
         return
     prj = owner.get_related_project()
     if prj:
         kw.update(project=prj)
-    #~ note = Note(type=nt,owner=owner,
-    note = Note(event_type=nt, owner=owner,
-                subject=subject, body=body, user=request.user, **kw)
+    note = rt.modules.notes.Note(
+        event_type=nt, owner=owner,
+        subject=subject, body=body, user=request.user, **kw)
     #~ owner.update_system_note(note)
     note.save()
 
@@ -251,13 +250,13 @@ def customize_siteconfig():
     """
     Injects application-specific fields to :class:`SiteConfig <lino.modlib.system.SiteConfig>`.
     """
-    dd.inject_field('system.SiteConfig',
-                    'system_note_type',
-                    #~ models.ForeignKey(NoteType,
-                    models.ForeignKey(EventType,
-                                      blank=True, null=True,
-                                      verbose_name=_(
-                                          "Default system note type"),
+    dd.inject_field(
+        'system.SiteConfig',
+        'system_note_type',
+        dd.ForeignKey(
+            'notes.EventType',
+            blank=True, null=True,
+            verbose_name=_("Default system note type"),
             help_text=_("""\
 Note Type used by system notes.
 If this is empty, then system notes won't create any entry to the Notes table.""")))
