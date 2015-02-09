@@ -20,6 +20,7 @@ Content
 
    install/index
    tested/index
+   api/index
    todo
    changes
    

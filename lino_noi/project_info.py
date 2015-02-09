@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
-# This file is part of the Lino-Cosi project.
-# Lino-Cosi is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino-Cosi is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino-Cosi; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2014-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 SETUP_INFO = dict(
     name='lino-noi',
@@ -20,14 +10,14 @@ SETUP_INFO = dict(
     description="A Lino application for managing local communities",
     long_description="""\
 Lino Noi is a `Lino <http://www.lino-framework.org>`_ application
-to manage local communities.  The name comes from Italian "noi" which
-means "we".
+for managing teams who use a ticketing system.  The name comes from
+Italian "noi" which means "we".
 
 """,
     author='Luc Saffre',
     author_email='luc.saffre@gmail.com',
     url="http://noi.lino-framework.org",
-    license='GPL',
+    license='BSD License',
     classifiers="""\
 Programming Language :: Python
 Programming Language :: Python :: 2

@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2014 Luc Saffre
-# This file is part of the Lino project.
-# Lino is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino; if not, see <http://www.gnu.org/licenses/>.
+# License: BSD (see file COPYING for details)
 
 
 from __future__ import print_function
@@ -25,7 +15,9 @@ class Site(Site):
 
     version = '0.0.1'
 
-    demo_fixtures = ['std', 'demo', 'demo2', 'linotickets']
+    demo_fixtures = ['std', 'demo', 'demo2',
+                     # 'linotickets',
+                     'tractickets']
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
@@ -43,7 +35,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.smtpd'
 
-        yield 'lino.modlib.awesomeuploader'
+        # yield 'lino.modlib.awesomeuploader'
 
         yield 'lino_noi'
 
@@ -53,6 +45,7 @@ class Site(Site):
         return kw
 
     def get_admin_main_items(self):
+        yield self.modules.tickets.MyOpenTickets
         yield self.modules.tickets.RecentTickets
 
 # the following line should not be active in a checked-in version
