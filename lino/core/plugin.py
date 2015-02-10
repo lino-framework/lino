@@ -52,14 +52,22 @@ class Plugin(object):
     """
 
     verbose_name = None
-    """The name of this app, as shown to the user. This can be a lazily
-    translated string.
+    """The verbose name of this plugin, as shown to the user.  This can be
+    a lazily translated string.
 
-    TODO: if this is not None, then Lino will automatically
-    add a UserGroup.
+    TODO: if this is not None, Lino might automatically add a
+    UserGroup.
 
     """
 
+    short_name = None
+    """The abbreviated name of this plugin, shown to the user in places
+    where shortness is important, e.g. as the label of the tabs of a
+    detail layout.  This can be a lazily translated string. Defaults
+    to :attr:`verbose_name`.
+
+    """
+    
     needs_plugins = []
     """A list of names of plugins on which this plugin depends.
 
@@ -147,6 +155,8 @@ class Plugin(object):
         self.needed_by = needed_by
         if self.verbose_name is None:
             self.verbose_name = app_label.title()
+        if self.short_name is None:
+            self.short_name = self.verbose_name
         self.on_init()
         # import pdb; pdb.set_trace()
         # super(Plugin, self).__init__()

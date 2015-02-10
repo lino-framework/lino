@@ -33,18 +33,18 @@ def DEBUG_LAYOUTS(lo):
 
 class Panel(object):
 
-    """
-    This is available as `dd.Panel`.
-    Used when a panel is more complex than what can be expressed
-    using a simple template string.
+    """This is available in :mod:`lino.api.dd`.  To be used when a panel
+    is more complex than what can be expressed using a simple template
+    string.
 
     The `options` parameter can be:
 
     - label
     - required
 
-    Unlike a :class:`FormPanel` it cannot have any child panels
+    Unlike a :class:`FormLayout` it cannot have any child panels
     and cannot become a tabbed panel.
+
     """
 
     def __init__(self, desc, label=None, **options):
@@ -119,17 +119,17 @@ class LayoutHandle:
     def ext_lines(self, request):
         return self.main.ext_lines(request)
 
-    def desc2elem(self, elemname, desc, **kw):
+    def desc2elem(self, elemname, desc, **kwargs):
         from lino.modlib.extjs.elems import create_layout_panel
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
 
         if isinstance(desc, Panel):
-            if len(kw):
+            if len(kwargs):
                 newkw = dict(desc.options)
-                newkw.update(kw)
-                kw = newkw
+                newkw.update(kwargs)
+                kwargs = newkw
             else:
-                kw = desc.options
+                kwargs = desc.options
             desc = desc.desc
 
         # flatten continued lines:
@@ -140,7 +140,7 @@ class LayoutHandle:
             explicit_specs = set()
             for spec in desc.split():
                 if spec != '*':
-                    name, kw = self.splitdesc(spec)
+                    name, kwargs = self.splitdesc(spec)
                     explicit_specs.add(name)
             wildcard_names = [de.name for de in
                               self.layout._datasource.wildcard_data_elems()
@@ -185,10 +185,9 @@ class LayoutHandle:
         if len(elems) == 0:
             return None
         if len(elems) == 1 and elemname != 'main':
-            elems[0].setup(**kw)
+            elems[0].setup(**kwargs)
             return elems[0]
-        e = create_layout_panel(self, elemname, vertical, elems, **kw)
-        return e
+        return create_layout_panel(self, elemname, vertical, elems, **kwargs)
 
     def define_panel(self, name, desc, **kw):
         if not desc:
@@ -283,12 +282,12 @@ class BaseLayout(object):
 
 
     In some cases we still use the (reprecated)  methods
-    :meth:`set_detail_layout <dd.Actor.set_detail_layout>`,
-    :meth:`set_insert_layout <dd.Actor.set_insert_layout>`,
-    :meth:`add_detail_panel <dd.Actor.add_detail_panel>`
+    :meth:`set_detail_layout <lino.core.actors.Actor.set_detail_layout>`,
+    :meth:`set_insert_layout <lino.core.actors.Actor.set_insert_layout>`,
+    :meth:`add_detail_panel <lino.core.actors.Actor.add_detail_panel>`
     and
-    :meth:`add_detail_tab <dd.Actor.add_detail_tab>`
-    on the :class:`Actor <dd.Actor>`.
+    :meth:`add_detail_tab <lino.core.actors.Actor.add_detail_tab>`
+    on the :class:`Actor <lino.core.actors.Actor>`.
 
     """
 
@@ -350,7 +349,7 @@ class BaseLayout(object):
 
     def remove_element(self, *args):
         """
-        Removes specified element names from this Panel's `main` template.
+        Removes specified element names from this layout's `main` template.
         """
         for name in args:
             self.main = self.main.replace(name, '')
@@ -362,11 +361,9 @@ class BaseLayout(object):
         pass
 
     def update(self, **kw):
+        """Update the template of one or more panels.
+
         """
-        Update the template of one or more panels.
-        """
-        #~ if hasattr(self,'_extjs3_handle'):
-            #~ raise Exception("Cannot update form layout after UI has been set up.")
         for k, v in kw.items():
             if DEBUG_LAYOUTS(self):
                 msg = """\

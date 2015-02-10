@@ -275,6 +275,7 @@ class VisibleComponent(Component, Permittable):
     height = None
     preferred_width = 10
     preferred_height = 1
+    # help_text = None
     #flex = None
 
     def __init__(self, name, **kw):
@@ -307,6 +308,7 @@ class VisibleComponent(Component, Permittable):
 
     def setup(self, width=None, height=None, label=None,
               preferred_width=None,
+              # help_text=None,
               required=NOT_PROVIDED,
               **kw):
         self.value.update(kw)
@@ -321,6 +323,8 @@ class VisibleComponent(Component, Permittable):
             self.label = label
         if required is not NOT_PROVIDED:
             self.required = required
+        # if help_text is not None:
+        #     self.help_text = help_text
 
     def __str__(self):
         "This shows how elements are specified"

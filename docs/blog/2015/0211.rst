@@ -1,0 +1,20 @@
+============================
+Wednesday, February 11, 2015
+============================
+
+We won't let ticket :ticket:`95` touch as deep into Lino's heart as I
+thought yesterday.  I created ticket :ticket:`96` instead and simply
+use another layout as a workaround. And that other layout is maybe even
+better than our original plan.
+
+Two new features:
+
+- New :class:`Plugin <lino.core.plugin.Plugin>` attribute
+  :attr:`short_name <lino.core.plugin.Plugin.short_name>`.
+
+- The tab panel of a detail window no has its `enableTabScroll
+  <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.TabPanel-cfg-enableTabScroll>`
+  set to True to enable scrolling to tabs that may be invisible due to
+  overflowing the overall TabPanel width.
+
+

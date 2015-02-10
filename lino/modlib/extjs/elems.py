@@ -424,16 +424,13 @@ class LayoutElement(VisibleComponent):
                 raise Exception(
                     "Item %s of tabbed %s has no label!" % (
                         self, self.layout_handle))
-            #~ if self.value_template != 'new Lino.VBorderPanel(%s)':
-            #~ if self.value_template == "%s":
-            #~ if self.value_template == "new Ext.Container":
-            #~ if self.value_template == "new Ext.Container(%s)":
-                #~ self.value_template = "new Ext.Panel(%s)"
-            #~ else:
-                #~ logger.info("20120217 value_template %s",self.value_template)
-            self.update(title=self.label)
-            self.update(
+            ukw = dict(title=self.label)
+            ukw.update(
                 listeners=dict(activate=js_code("Lino.on_tab_activate")))
+            # add_help_text(
+            #     ukw, self.help_text, 'title',
+            #     self.layout_handle.layout._datasource, self.name)
+            self.update(**ukw)
         if self.xtype is not None:
             self.update(xtype=self.xtype)
         if self.collapsible:
@@ -1956,17 +1953,12 @@ class ParamsPanel(Panel):
     value_template = "%s"
 
 
-#~ class ParamsForm(Panel):
-#~ class DialogPanel(Panel):
 class ActionParamsPanel(Panel):
 
     """
     The optional Panel for `parameters` of an Action.
     """
     xtype = None
-    #~ value_template = "%s"
-    #~ value_template = "new Ext.form.FormPanel(%s)"
-    #~ value_template = "new Lino.ActionParamsPanel({layout:'fit', autoHeight: true, frame: true, items:new Ext.Panel(%s)})"
     value_template = "new Lino.ActionParamsPanel(%s)"
 
 
@@ -1981,12 +1973,13 @@ class TabPanel(Panel):
             # ~ layoutOnTabChange=True, # 20101028
             # ~ forceLayout=True, # 20101028
             # ~ deferredRender=False, # 20120212
-            #~ autoScroll=True,
+            enableTabScroll=True,
             # ~ width=300, # ! http://code.google.com/p/lino/wiki/20100513
             #~ items=elems,
             # http://www.extjs.com/forum/showthread.php?26564-Solved-FormPanel-in-a-TabPanel
             #~ listeners=dict(activate=js_code("function(p) {p.doLayout();}"),single=True),
         )
+
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
 
@@ -2089,22 +2082,24 @@ def field2elem(layout_handle, field, **kw):
         "No LayoutElement for %s (%s) in %s" % (
             field.name, field.__class__, layout_handle.layout))
 
-def create_layout_panel(lh, name, vertical, elems, **kw):
+
+def create_layout_panel(lh, name, vertical, elems, **kwargs):
     """
     This also must translate ui-agnostic parameters
     like `label_align` to their ExtJS equivalent `labelAlign`.
     """
     pkw = dict()
-    pkw.update(labelAlign=kw.pop('label_align', 'top'))
-    pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels', True))
-    pkw.update(label=kw.pop('label', None))
-    pkw.update(width=kw.pop('width', None))
-    pkw.update(height=kw.pop('height', None))
-    v = kw.pop('required', NOT_PROVIDED)
+    pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
+    pkw.update(hideCheckBoxLabels=kwargs.pop('hideCheckBoxLabels', True))
+    pkw.update(label=kwargs.pop('label', None))
+    pkw.update(width=kwargs.pop('width', None))
+    pkw.update(height=kwargs.pop('height', None))
+    # pkw.update(help_text=kwargs.pop('help_text', None))
+    v = kwargs.pop('required', NOT_PROVIDED)
     if v is not NOT_PROVIDED:
         pkw.update(required=v)
-    if kw:
-        raise Exception("Unknown panel attributes %r for %s" % (kw, lh))
+    if kwargs:
+        raise Exception("Unknown panel attributes %r for %s" % (kwargs, lh))
     if name == 'main':
         if isinstance(lh.layout, ColumnsLayout):
             e = GridElement(
