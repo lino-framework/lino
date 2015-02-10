@@ -11,7 +11,7 @@
 
 """
 
-from lino import ad, _
+from lino.api import ad
 
 
 class Plugin(ad.Plugin):
@@ -23,3 +23,6 @@ class Plugin(ad.Plugin):
             m.add_action(site.modules.about.Models)
             m.add_action(site.modules.about.Inspector)
             m.add_action(site.modules.about.SourceFiles)
+            m.add_action(site.modules.about.DetailLayouts)
+            m.add_action(site.modules.about.WindowActions)
+            m.add_action(site.modules.about.FormPanels)

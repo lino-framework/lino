@@ -443,7 +443,7 @@ class TableRequest(ActionRequest):
             if column_names:
                 from lino.core import layouts
                 ll = layouts.ColumnsLayout(column_names, datasource=ar.actor)
-                lh = ll.get_layout_handle(settings.SITE.ui)
+                lh = ll.get_layout_handle()
                 columns = lh.main.columns
                 columns = [e for e in columns if not e.hidden]
             else:

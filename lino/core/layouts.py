@@ -471,7 +471,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
 
-    def get_layout_handle(self, ui):
+    def get_layout_handle(self):
         """
         Same code as lino.ui.base.Handled.get_handle,
         except that here it's an instance method.

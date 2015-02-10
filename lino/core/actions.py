@@ -131,7 +131,7 @@ def setup_params_choosers(self):
 
 
 def make_params_layout_handle(self, ui):
-    return self.params_layout.get_layout_handle(ui)
+    return self.params_layout.get_layout_handle()
 
 
 class Action(Parametrizable, Permittable):
@@ -395,6 +395,14 @@ class Action(Parametrizable, Permittable):
             #~ return isinstance(caller,(GridEdit,ShowDetailAction))
         #~ return isinstance(caller,GridEdit)
 
+    def is_window_action(self):
+        """Return `True` if this is a "window action" (i.e. which opens a GUI
+        window on the client before executin).
+
+        """
+        return self.opens_a_window or (
+            self.parameters and not self.no_params_window)
+
     def get_chooser_for_field(self, fieldname):
         d = getattr(self, '_choosers_dict', {})
         return d.get(fieldname, None)
@@ -435,28 +443,14 @@ class Action(Parametrizable, Permittable):
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
 
-    #~ def as_button(self,obj,request,label=None):
-        #~ """
-        #~ Return
-        #~ This is being used in the :ref:`lino.tutorial.polls`.
-        #~ """
-        #~ ba = self.defining_actor.get_url_action(self.action_name)
-        #~ btn = settings.SITE.ui.row_action_button(obj,request,ba,label)
-        #~ return E.tostring(btn)
-
     def get_action_title(self, ar):
         return ar.get_title()
 
     def __repr__(self):
-        #~ return "<%s %s.%s>" % (self.__class__.__name__,self.defining_actor,self.action_name)
         if self.label is None:
             return "<%s %s>" % (self.__class__.__name__, self.action_name)
-        return "<%s %s (%r)>" % (self.__class__.__name__, self.action_name, unicode(self.label))
-
-    #~ def __str__(self):
-        #~ if self.defining_actor is None:
-            #~ return repr(self)
-        #~ return unicode(self.defining_actor.label).encode('ascii','replace') + ' : ' + unicode(self.label).encode('ascii','replace')
+        return "<%s %s (%r)>" % (
+            self.__class__.__name__, self.action_name, unicode(self.label))
 
     def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)")
@@ -736,7 +730,7 @@ class ShowDetailAction(Action):
 
         wl = ar.bound_action.get_window_layout()
         #~ print 20120901, wl.main
-        lh = wl.get_layout_handle(settings.SITE.ui)
+        lh = wl.get_layout_handle()
 
         #~ items = list(render_detail(ar,elem,lh.main))
         items = list(lh.main.as_plain_html(ar, elem))

@@ -1,0 +1,19 @@
+==========================
+Tuesday, February 10, 2015
+==========================
+
+Some optimizations while diving into :ticket:`95`:
+
+- New method :meth:`lino.core.actions.Action.is_window_action`.
+
+- In :mod:`lino.modlib.about` I functionally replaced
+  :class:`DetailLayouts` by :class:`WindowActions`. The latter is more
+  complete since it includes insert layouts and action parameter
+  layouts. Both tables are used in :ref:`welfare.tested.general`.
+
+- :meth:`lino.core.layouts.BaseLayout.get_layout_handle` no longer
+  expects an argument because anyway this argument was not used.
+
+One thing seems clear: :ticket:`95` touches deep into Lino's
+heart. The :mod:`lino.core.elems` module should be moved to
+:mod:`lino.modlib.extjs`.

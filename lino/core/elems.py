@@ -1609,23 +1609,13 @@ class Container(LayoutElement):
         A Panel which doesn't contain a single visible element
         becomes itself hidden.
         """
-        #~ if self.value.get("title") == "CBSS":
-        #~ if str(self.layout_handle.layout) == 'ClientDetail on pcsw.Clients':
-            #~ if self.name == 'cbss':
-                #~ print '20120925 ext_elems', self.name,
-                #~ if jsgen.Permittable.get_view_permission(self,user):
-                #~ if super(Container,self).get_view_permission(user):
-                    #~ logger.warning("Expected %r to be invisible for %s", self,user)
-            #~ print "20120525 Container.get_view_permission()", self
-
-        # if the Panel itself is invisble, no need to loop through the children
+        # if the Panel itself is invisble, no need to loop through the
+        # children
         if not super(Container, self).get_view_permission(profile):
-        #~ if not Permittable.get_view_permission(self,user):
             return False
-        #~ if self.value.get("title") == "CBSS":
-            #~ print "20120525 Container.get_view_permission() passed", self
         for e in self.elements:
-            if (not isinstance(e, Permittable)) or e.get_view_permission(profile):
+            if (not isinstance(e, Permittable)) or \
+               e.get_view_permission(profile):
                 # one visble child is enough, no need to continue loop
                 return True
         #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
@@ -1694,33 +1684,22 @@ class Wrapper(VisibleComponent):
 
 class Panel(Container):
 
-    """
-    A vertical Panel is vflex if and only if at least one of its children is vflex.
-    A horizontal Panel is vflex if and only if *all* its children are vflex
-    (if vflex and non-vflex elements are together in a hbox, then the
-    vflex elements will get the height of the highest non-vflex element).
+    """A vertical Panel is vflex if and only if at least one of its
+    children is vflex.  A horizontal Panel is vflex if and only if
+    *all* its children are vflex (if vflex and non-vflex elements are
+    together in a hbox, then the vflex elements will get the height of
+    the highest non-vflex element).
+
     """
     ext_suffix = "_panel"
     active_child = False
     value_template = "new Ext.Panel(%s)"
-    #~ declare_type = jsgen.DECLARE_VAR
-    #~ value_template = "new Ext.Panel(%s)"
 
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
         self.vertical = vertical
-        #~ if name == 'cbss':
-            #~ logger.info("20120925 Panel.__init__() %r",kw)
-        #~ if self.vertical:
-            #~ vflex_elems = [e for e in elements if e.vflex]
-            #~ if len(flex_elems) > 0:
-                #~ assert len(kw) == 0, "%r is not empty" % kw
-                #~ vfix_elems = [e for e in elements if not e.vflex]
-                #~ flex_panel = Panel(layout_handle,name,vertical,*vflex_elems)
-                #~ fix_panel = Panel(layout_handle,name,vertical,*vfix_elems)
 
         self.vflex = not vertical
         stretch = False
-        #~ monitorResize = False
         for e in elements:
             #~ if e.collapsible:
                 #~ monitorResize = True
@@ -1732,7 +1711,7 @@ class Panel(Container):
             else:
                 if not e.vflex:
                     self.vflex = False
-                    #~ print 20100615, self.layout_handle.layout, self, "hbox loses vflex because of", e
+
         if len(elements) > 1 and self.vflex:
             if self.vertical:
                 """
@@ -1917,25 +1896,8 @@ class Panel(Container):
         # hide scrollbars
         d.update(autoScroll=False)
 
-        #~ if self.collapsible:
-            #~ d.update(xtype='panel')
-            #~ js = "function(cmp,aw,ah,rw,rh) { console.log('Panel.collapse',this,cmp,aw,ah,rw,rh); this.main_panel.doLayout(); }"
-            #~ d.update(listeners=dict(scope=js_code('this'),collapse=js_code(js),expand=js_code(js)))
-            # d.update(monitorResize=True)
-        #~ else:
-            #~ d.update(xtype='container')
-        # d.update(margins='0')
-        # d.update(style=dict(padding='0px'))
-
-        #~ d.update(items=self.elements)
-        #l = [e.as_ext() for e in self.elements ]
-        #d.update(items=js_code("[\n  %s\n]" % (", ".join(l))))
-        # d.update(items=js_code("this.elements"))
-        #~ if self.label and not isinstance(self,MainPanel) and not isinstance(self.parent,MainPanel):
-
         if self.is_fieldset:
             d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
-        #~ if len(self.elements) > 1 and self.vertical:
         if self.parent is None or (len(self.elements) > 1 and self.vertical):
             """
             The `self.parent is None` test is e.g. for Parameter

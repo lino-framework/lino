@@ -22,6 +22,7 @@ from django.db import models
 from django.conf import settings
 
 
+from lino.core.elems import Panel
 from lino.utils.report import EmptyTable
 from lino.utils import AttrDict
 
@@ -31,6 +32,23 @@ from lino.utils.xmlgen.html import E
 from lino.api import dd
 
 from lino.modlib.users.choicelists import UserProfiles
+
+
+def get_window_actions():
+    from lino.core.actors import actors_list
+    coll = dict()
+    for a in actors_list:
+        for ba in a.get_actions():
+            if ba.action.is_window_action():
+                wl = ba.get_window_layout() or ba.action.params_layout
+                if wl is not None:
+                    if not wl in coll:
+                        lh = wl.get_layout_handle()
+                        for e in lh.main.walk():
+                            e.loosen_requirements(a)
+                        coll[wl] = ba
+    return coll
+
 
 
 class Models(dd.VirtualTable):
@@ -240,7 +258,6 @@ class Inspector(dd.VirtualTable):
     #~ """
 
 
-
 def have_action(ba):
     if ba is None:
         return _("N/A")
@@ -261,19 +278,22 @@ def have_action(ba):
 
 
 class DetailLayouts(dd.VirtualTable):
+    """Shows a list of all detail layouts
+    (:attr:`lino.core.actors.Actor.detail_layout`) defined in this
+    application.
+
+    """
     column_names = "datasource viewable_for fields"
 
     @classmethod
     def get_data_rows(self, ar):
-        coll = set()
         from lino.core.actors import actors_list
+        coll = set()
         for a in actors_list:
             if a.detail_layout:
                 coll.add(a.detail_layout)
-        #from lino.core.dbtables import master_reports as l
 
         l = list(coll)
-        # l = l[:5]
 
         def f(a, b):
             return cmp(str(a._datasource), str(b._datasource))
@@ -289,13 +309,86 @@ class DetailLayouts(dd.VirtualTable):
 
     @dd.displayfield(_("Fields"))
     def fields(self, obj, ar):
-        lh = obj.get_layout_handle(settings.SITE.ui)
+        lh = obj.get_layout_handle()
         # elems = [e.name for e in lh._names.values() if not e.hidden]
         elems = [f.name for f in lh._store_fields]
-        # if len(elems) > 5:
-        #     elems = elems[:3] + ['...'] + elems[-2:]
         return fill(' '.join(elems), 60)
-        # return (obj.detail_layout.desc)
+
+
+class WindowActions(dd.VirtualTable):
+    """Shows a list of all window actions defined in this application.
+
+    """
+    column_names = "full_name viewable_for fields"
+
+    @classmethod
+    def get_data_rows(self, ar):
+        l = list(get_window_actions().values())
+
+        def f(a, b):
+            return cmp(a.full_name(), b.full_name())
+        return sorted(l, f)
+
+    @dd.displayfield(_("Name"))
+    def full_name(self, obj, ar):
+        return obj.full_name()
+
+    @dd.displayfield(_("Viewable for"))
+    def viewable_for(self, obj, ar):
+        return have_action(obj)
+
+    @dd.displayfield(_("Fields"))
+    def fields(self, obj, ar):
+        wl = obj.get_window_layout() or obj.action.params_layout
+        if wl is None:
+            return ''
+        lh = wl.get_layout_handle()
+        elems = [str(f.name) for f in lh._store_fields]
+        #return ' '.join([repr(type(e)) for e in elems])
+        # print 20150210, elems
+        # return str(len(elems))
+        # return ' '.join(elems)
+        return fill(' '.join(elems), 50)
+
+
+class FormPanels(dd.VirtualTable):
+    """Shows a list of all form panels defined in this application.
+
+    """
+    column_names = "full_name viewable_for fields"
+
+    @classmethod
+    def get_data_rows(self, ar):
+        coll = set()
+        for ba in get_window_actions().values():
+            wl = ba.get_window_layout() or ba.action.params_layout
+            if wl is not None:
+                lh = wl.get_layout_handle()
+                for e in lh.main.walk():
+                    if e.__class__ is Panel:
+                        if e.label is not None:
+                            coll.add(e)
+
+        def f(a, b):
+            return cmp(
+                str(a.layout_handle.layout._datasource),
+                str(b.layout_handle.layout._datasource))
+        return sorted(list(coll), f)
+
+    @dd.displayfield(_("Name"))
+    def full_name(self, obj, ar):
+        return "{0}.{1}\n{2}".format(
+            obj.layout_handle.layout._datasource, obj.name,
+            unicode(obj.label))
+
+    @dd.displayfield(_("Viewable for"))
+    def viewable_for(self, obj, ar):
+        return have_action(obj)
+
+    @dd.displayfield(_("Fields"))
+    def fields(self, obj, ar):
+        elems = [e.name for e in obj.walk()]
+        return fill(' '.join(elems), 40)
 
 
 class About(EmptyTable):
