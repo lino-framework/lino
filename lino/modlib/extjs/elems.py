@@ -18,6 +18,10 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
+from django.db.models.fields.related import SingleRelatedObjectDescriptor
+from django.db.models.fields.related import ManyRelatedObjectsDescriptor
+from django.contrib.contenttypes import generic
+from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
 from lino.core import fields
@@ -32,9 +36,14 @@ from lino.utils.jsgen import py2js, js_code
 from lino.utils import join_elems
 from lino.core.actors import qs2summary
 
+from lino.core.layouts import (FormLayout, ParamsLayout,
+                               ColumnsLayout, ActionParamsLayout)
+
+from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+from lino.core import tables
+
 from lino.utils.xmlgen import etree
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from lino.utils.xmlgen.html import E
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -74,15 +83,17 @@ def py2html(obj, name):
 
 
 def get_view_permission(e):
-    if isinstance(e, Permittable) and not e.get_view_permission(jsgen._for_user_profile):
+    if isinstance(e, Permittable) and not e.get_view_permission(
+            jsgen._for_user_profile):
         return False
-    #~ e.g. pcsw.ClientDetail has a tab "Other", visible only to system admins
-    #~ but the "Other" contains a GridElement RolesByPerson which is not per se reserved for system admins.
-    #~ js of normal users should not try to call on_master_changed() on it
+    # e.g. pcsw.ClientDetail has a tab "Other", visible only to system
+    # admins but the "Other" contains a GridElement RolesByPerson
+    # which is not per se reserved for system admins.  js of normal
+    # users should not try to call on_master_changed() on it
     parent = e.parent
     while parent is not None:
-    #~ if e.parent is not None:
-        if isinstance(parent, Permittable) and not parent.get_view_permission(jsgen._for_user_profile):
+        if isinstance(parent, Permittable) and not parent.get_view_permission(
+                jsgen._for_user_profile):
             return False  # bug 3 (bcss_summary) blog/2012/09/27
         parent = parent.parent
     return True
@@ -95,7 +106,6 @@ def before_row_edit(panel):
     for e in panel.active_children:
         if not get_view_permission(e):
             continue
-        #~ if not e.get_view_permission(jsgen._for_user_profile):
         if isinstance(e, GridElement):
             l.append("%s.on_master_changed();" % e.as_ext())
         #~ elif isinstance(e,PictureElement):
@@ -243,9 +253,6 @@ class ComboBox(jsgen.Component):
 
 class ExtPanel(jsgen.Component):
     value_template = "new Ext.Panel(%s)"
-
-#~ class FormPanel(Component):
-    #~ value_template = "new Ext.form.FormPanel(%s)"
 
 
 class Calendar(jsgen.Component):
@@ -1155,10 +1162,6 @@ class RequestFieldElement(IntegerFieldElement):
         url = 'javascript:' + ar.renderer.request_handler(v)
         return E.td(E.a(str(n), href=url), **cellattrs)
 
-        #~ s = self.format_value(ar,v)
-        #~ if not s: return s
-        #~ return xghtml.RAW(s)
-
     def format_value(self, ar, v):
         # logger.info("20121116 format_value(%s)", v)
         #~ raise Exception("20130131 %s" % v)
@@ -1596,18 +1599,14 @@ class Container(LayoutElement):
 
     def ext_options(self, **kw):
         kw = LayoutElement.ext_options(self, **kw)
-        #~ not necessary to filter here, jsgen does that
-        #~ items = [e for e in self.elements if e.get_view_permission()]
-        #~ if items != self.elements:
-            #~ print "20120525", self.layout_handle, self, items
-        #~ kw.update(items=items)
+        # not necessary to filter here, jsgen does that
         kw.update(items=self.elements)
         return kw
 
     def get_view_permission(self, profile):
-        """
-        A Panel which doesn't contain a single visible element
-        becomes itself hidden.
+        """A Panel which doesn't contain a single visible element becomes
+        itself hidden.
+
         """
         # if the Panel itself is invisble, no need to loop through the
         # children
@@ -1653,9 +1652,6 @@ class Wrapper(VisibleComponent):
             #~ e.update(anchor="-25")
             e.update(anchor=FULLWIDTH)
             e.update(autoHeight=True)  # 20130924
-        #~ e.update(padding=DEFAULT_PADDING)
-        #~ self.allow_read = e.allow_read
-        #~ self.get_view_permission = e.get_view_permission
 
     def get_view_permission(self, profile):
         return self.wrapped.get_view_permission(profile)
@@ -1665,7 +1661,6 @@ class Wrapper(VisibleComponent):
 
     def walk(self):
         for e in self.wrapped.walk():
-            #~ if e.get_view_permission():
             yield e
         yield self
 
@@ -1779,44 +1774,25 @@ class Panel(Container):
                 d.update(layout='hbox', autoHeight=True)  # 20101028
 
         if d['layout'] == 'form':
-            #~ if not self.vflex:
-                # ~ d.update(autoHeight=True) # since 20130924
             assert self.vertical
-            #~ self.update(labelAlign=self.labelAlign)
             self.update(labelAlign=self.label_align)
             self.wrap_formlayout_elements()
-            #~ d.update(autoHeight=True)
             if len(self.elements) == 1 and self.elements[0].vflex:
-                #~ 20120630 self.elements[0].update(anchor="100% 100%")
-                #~ self.elements[0].update(anchor="-25 -25")
                 self.elements[0].update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
-                # ~ self.update(autoHeight=self.elements[0].autoHeight) # since 20130924
-
             else:
                 for e in self.elements:
-                    #~ 20120630 e.update(anchor="100%")
-                    #~ e.update(anchor="-25")
                     e.update(anchor=FULLWIDTH)
 
         elif d['layout'] == 'hbox':
-
-            #~ if self.as_ext() == 'main_1_panel187':
-                #~ logger.info("20120210 b main_1_panel187 : %r",[repr(e) for e in self.elements])
-
             self.wrap_formlayout_elements()
             for e in self.elements:
-                """
-                20120210
-                a hbox having at least one child with explicit height
-                will become itself vflex
-                """
+                # a hbox having at least one child with explicit
+                # height will become itself vflex
                 if e.height:
-                    #~ logger.info("20120210 %s becomes vflex because %s has height",self,e)
                     self.vflex = True
 
                 if e.hflex:
                     w = e.width or e.preferred_width
-                    # ~ e.value.update(columnWidth=float(w)/self.preferred_width) # 20100615
                     e.value.update(flex=int(w * 100 / self.preferred_width))
 
             if not self.vflex:  # 20101028
@@ -1824,7 +1800,8 @@ class Panel(Container):
                 d.update(layoutConfig=dict(align='stretchmax'))
 
         elif d['layout'] == 'vbox':
-            "a vbox with 2 or 3 elements, of which at least two are vflex will be implemented as a VBorderPanel"
+            # a vbox with 2 or 3 elements, of which at least two are
+            # vflex will be implemented as a VBorderPanel.
             assert len(self.elements) > 1
             self.wrap_formlayout_elements()
             vflex_count = 0
@@ -1835,13 +1812,9 @@ class Panel(Container):
                     e.update(flex=int(eh * 100 / h))
                     vflex_count += 1
             if vflex_count >= 2 and len(self.elements) <= 3:
-            #~ if vflex_count >= 1 and len(self.elements) <= 3:
                 self.remove('layout', 'layoutConfig')
                 self.value_template = 'new Lino.VBorderPanel(%s)'
                 for e in self.elements:
-                    #~ if self.ext_name == 'main_panel627':
-                        #~ print 20110715, e.height, e.preferred_height
-                    # ~ if e.vflex: # """as long as there are bugs, make also non-vflex resizable"""
                     if e.vflex:
                         e.update(flex=e.height or e.preferred_height)
                     e.update(split=True)
@@ -1855,9 +1828,7 @@ class Panel(Container):
             raise Exception("layout is %r" % d['layout'])
 
     def wrap_formlayout_elements(self):
-        #~ if layout_handle.main_class is DetailMainPanel:
         def wrap(e):
-            #~ if isinstance(e,Panel): return e
             if not isinstance(e, FieldElement):
                 return e
             if e.label is None:
@@ -1872,11 +1843,6 @@ class Panel(Container):
         self.elements = [wrap(e) for e in self.elements]
 
     def ext_options(self, **d):
-        #~ if not self.label and self.value_template == "new Ext.Panel(%s)":
-            # if not self.parent or len(self.parent.elements) == 1:
-            # if self.parent and len(self.parent.elements) > 1:
-            #~ if self.parent is not None:
-                #~ self.value_template = "new Ext.Container(%s)"
 
         if self.label:
             if not isinstance(self.parent, TabPanel):
@@ -1885,12 +1851,7 @@ class Panel(Container):
                 self.update(frame=False)
                 self.update(bodyBorder=True)
                 self.update(border=True)
-            #~ elif isinstance(self.parent,DetailMainPanel):
-                #~ if self.value_template == "new Ext.Container(%s)":
-                    #~ self.value_template = "new Ext.Panel(%s)"
 
-            #~ else:
-                #~ self.value_template = "new Ext.Panel(%s)"
         d = Container.ext_options(self, **d)
 
         # hide scrollbars
@@ -1904,11 +1865,9 @@ class Panel(Container):
             Panels which are usually not vertical but still want a frame
             since they are the main panel.
             """
-            # ~ d.update(autoHeight=True) # since 20130924
             d.update(frame=True)
             d.update(bodyBorder=False)
             d.update(border=False)
-            #~ 20120115 d.update(labelAlign=self.labelAlign)
             # d.update(style=dict(padding='0px'),color='green')
         else:
             d.update(frame=False)
@@ -1999,7 +1958,7 @@ class GridElement(Container):
                     kw = {constants.URL_PARAM_SORT: e.name}
                     url = ar.renderer.get_request_url(ar, **kw)
                     if url is not None:
-                        txt = [xghtml.E.a(*txt, href=url)]
+                        txt = [E.a(*txt, href=url)]
 
             #~ logger.info("20130119 headers2html %s %s",fields,headers)
             th = E.th(*txt, **cellattrs)
@@ -2014,32 +1973,16 @@ class GridElement(Container):
         #~ yield ar.ui.table2xhtml(sar,10)
 
 
-#~ class DetailMainPanel(Panel,MainPanel):
 class DetailMainPanel(Panel):
-    #~ declare_type = jsgen.DECLARE_THIS
-    #~ xtype = 'form'
     xtype = None
-    #~ value_template = "new Ext.form.FormPanel(%s)"
     value_template = "new Ext.Panel(%s)"
 
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
-        #~ self.rh = layout_handle.datalink
-        #~ 20111126 self.report = layout_handle.rh.report
-        #~ MainPanel.__init__(self)
-        #~ DataElementMixin.__init__(self,layout_handle.link)
         kw.update(autoScroll=True)
-        #~ kw.update(height=800, autoScroll=True)
         Panel.__init__(self, layout_handle, name, vertical, *elements, **kw)
-        # layout_handle.needs_store(self.rh)
 
     def ext_options(self, **kw):
-        #~ self.setup()
         kw = Panel.ext_options(self, **kw)
-        #~ if self.layout_handle.layout.label:
-            #~ kw.update(title=_(self.layout_handle.layout.label))
-        #~ ws = self.layout_handle.layout._window_size
-        #~ if ws is not None and ws[1] == 'auto':
-            #~ kw.update(autoHeight=True)
         if self.layout_handle.main.label:
             kw.update(title=_(self.layout_handle.main.label))
         return kw
@@ -2132,24 +2075,15 @@ def field2elem(layout_handle, field, **kw):
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
     if ch:
-        #~ if ch.on_quick_insert is not None:
-        #~ if ch.meth.quick_insert_field is not None:
-        #~ if ch.multiple:
-            #~ raise Exception("20120616")
         if ch.can_create_choice or not ch.force_selection:
             kw.update(forceSelection=False)
-            #~ print 20110425, field.name, layout_handle
         if ch.simple_values:
-            #~ kw.update(forceSelection=False)
             return SimpleRemoteComboFieldElement(layout_handle, field, **kw)
         else:
             if isinstance(field, models.OneToOneField):
-                #~ return SingleRelatedObjectElement(layout_handle,field,**kw)
                 return GenericForeignKeyElement(layout_handle, field, **kw)
             if isinstance(field, models.ForeignKey):
                 return ForeignKeyElement(layout_handle, field, **kw)
-            #~ elif isinstance(field,fields.GenericForeignKeyIdField):
-                #~ return ComplexRemoteComboFieldElement(layout_handle,field,**kw)
             else:
                 return ComplexRemoteComboFieldElement(
                     layout_handle, field, **kw)
@@ -2174,10 +2108,6 @@ def field2elem(layout_handle, field, **kw):
         selector_field = selector_field.return_type
     # remember the case of RemoteField to VirtualField
 
-    #~ if str(layout_handle.layout._datasource) == 'pcsw.UsersWithClients':
-        #~ if field is not selector_field:
-            #~ print 20130131, field.name, field, selector_field
-
     if isinstance(selector_field, fields.CustomField):
         e = selector_field.create_layout_elem(layout_handle, field, **kw)
         if e is not None:
@@ -2201,3 +2131,212 @@ def field2elem(layout_handle, field, **kw):
     raise NotImplementedError(
         "No LayoutElement for %s (%s) in %s" % (
             field.name, field.__class__, layout_handle.layout))
+
+def create_layout_panel(lh, name, vertical, elems, **kw):
+    """
+    This also must translate ui-agnostic parameters
+    like `label_align` to their ExtJS equivalent `labelAlign`.
+    """
+    pkw = dict()
+    pkw.update(labelAlign=kw.pop('label_align', 'top'))
+    pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels', True))
+    pkw.update(label=kw.pop('label', None))
+    pkw.update(width=kw.pop('width', None))
+    pkw.update(height=kw.pop('height', None))
+    v = kw.pop('required', NOT_PROVIDED)
+    if v is not NOT_PROVIDED:
+        pkw.update(required=v)
+    if kw:
+        raise Exception("Unknown panel attributes %r for %s" % (kw, lh))
+    if name == 'main':
+        if isinstance(lh.layout, ColumnsLayout):
+            e = GridElement(
+                lh, name, lh.layout._datasource, *elems, **pkw)
+        elif isinstance(lh.layout, ActionParamsLayout):
+            e = ActionParamsPanel(lh, name, vertical, *elems, **pkw)
+        elif isinstance(lh.layout, ParamsLayout):
+            e = ParamsPanel(lh, name, vertical, *elems, **pkw)
+        elif isinstance(lh.layout, FormLayout):
+            if len(elems) == 1 or vertical:
+                e = DetailMainPanel(
+                    lh, name, vertical, *elems, **pkw)
+            else:
+                e = TabPanel(lh, name, *elems, **pkw)
+        else:
+            raise Exception("No element class for layout %r" % lh.layout)
+        return e
+    return Panel(lh, name, vertical, *elems, **pkw)
+
+
+def create_layout_element(lh, name, **kw):
+    """
+    Create a layout element from the named data element.
+    """
+
+    if settings.SITE.catch_layout_exceptions:
+        try:
+            de = lh.get_data_elem(name)
+        except Exception as e:
+            # logger.exception(e) removed 20130422 because it caused
+            # disturbing output when running tests
+            de = None
+            name += " (" + str(e) + ")"
+    else:
+        de = lh.get_data_elem(name)
+
+    if isinstance(de, type) and issubclass(de, fields.Dummy):
+        return None
+
+    if isinstance(de, fields.DummyField):
+        lh.add_store_field(de)
+        return None
+
+    if isinstance(de, fields.Constant):
+        return ConstantElement(lh, de, **kw)
+
+    if isinstance(de, fields.RemoteField):
+        return create_field_element(lh, de, **kw)
+
+    if isinstance(de, SingleRelatedObjectDescriptor):
+        return SingleRelatedObjectElement(lh, de.related, **kw)
+
+    if isinstance(de, ManyRelatedObjectsDescriptor):
+        e = ManyRelatedObjectElement(lh, de.related, **kw)
+        lh.add_store_field(e.field)
+        return e
+
+    if isinstance(de, models.ManyToManyField):
+        e = ManyToManyElement(lh, de.related, **kw)
+        lh.add_store_field(e.field)
+        return e
+
+    if isinstance(de, models.Field):
+        if isinstance(de, (BabelCharField, BabelTextField)):
+            if len(settings.SITE.BABEL_LANGS) > 0:
+                elems = [create_field_element(lh, de, **kw)]
+                for lang in settings.SITE.BABEL_LANGS:
+                    #~ bf = lh.get_data_elem(name+'_'+lang)
+                    bf = lh.get_data_elem(name + lang.suffix)
+                    elems.append(create_field_element(lh, bf, **kw))
+                return elems
+        return create_field_element(lh, de, **kw)
+
+    if isinstance(de, generic.GenericForeignKey):
+        # create a horizontal panel with 2 comboboxes
+        de.primary_key = False  # for ext_store.Store()
+        lh.add_store_field(de)
+        return GenericForeignKeyElement(lh, de, **kw)
+
+    if isinstance(de, type) and issubclass(de, tables.AbstractTable):
+        # The data element refers to a table.
+        kw.update(master_panel=js_code("this"))
+        if isinstance(lh.layout, FormLayout):
+            # When a table is specified in the layout of a
+            # DetailWindow, then it will be rendered as a panel that
+            # displays a "summary" of that table. The panel will have
+            # a tool button to "open that table in its own
+            # window". The format of that summary is defined by the
+            # `slave_grid_format` of the table. `slave_grid_format` is
+            # a string with one of the following values:
+
+            kw.update(tools=[
+                js_code("Lino.show_in_own_window_button(Lino.%s)" %
+                      de.default_action.full_name())])
+            if de.slave_grid_format == 'grid':
+                kw.update(hide_top_toolbar=True)
+                if de.preview_limit is not None:
+                    kw.update(preview_limit=de.preview_limit)
+                return GridElement(lh, name, de, **kw)
+
+            elif de.slave_grid_format == 'html':
+                if de.editable:
+                    a = de.insert_action
+                    if a is not None:
+                        kw.update(ls_insert_handler=js_code("Lino.%s" %
+                                  a.full_name()))
+                        kw.update(ls_bbar_actions=[
+                            settings.SITE.plugins.extjs.renderer.a2btn(a)])
+                field = fields.HtmlBox(verbose_name=de.label)
+                field.name = de.__name__
+                field.help_text = de.help_text
+                field._return_type_for_method = de.slave_as_html_meth()
+                lh.add_store_field(field)
+                e = HtmlBoxElement(lh, field, **kw)
+                e.add_requirements(**de.required)
+                return e
+
+            elif de.slave_grid_format == 'summary':
+                e = SlaveSummaryPanel(lh, de, **kw)
+                lh.add_store_field(e.field)
+                return e
+            else:
+                raise Exception(
+                    "Invalid slave_grid_format %r" % de.slave_grid_format)
+
+        else:
+            e = SlaveSummaryPanel(lh, de, **kw)
+            lh.add_store_field(e.field)
+            return e
+
+    if isinstance(de, fields.VirtualField):
+        return create_vurt_element(lh, name, de, **kw)
+
+    if callable(de):
+        rt = getattr(de, 'return_type', None)
+        if rt is not None:
+            return create_meth_element(lh, name, de, rt, **kw)
+
+    if not name in ('__str__', '__unicode__', 'name', 'label'):
+        value = getattr(lh, name, None)
+        if value is not None:
+            return value
+
+    # One last possibility is that the app has been hidden. In that
+    # case we want the element to simply disappear, similar as if the
+    # user had no view permission.
+
+    s = name.split('.')
+    if len(s) == 2:
+        if settings.SITE.is_hidden_app(s[0]):
+            return None
+
+    # Now we tried everything. Build an error message.
+
+    if hasattr(lh, 'rh'):
+        msg = "Unknown element '%s' (%r) referred in layout <%s of %s>." % (
+            name, de, lh.layout, lh.rh.actor)
+        l = [wde.name for wde in lh.rh.actor.wildcard_data_elems()]
+        # VirtualTables don't have a model
+        model = getattr(lh.rh.actor, 'model', None)
+        if getattr(model, '_lino_slaves', None):
+            l += [str(rpt) for rpt in model._lino_slaves.values()]
+        msg += " Possible names are %s." % ', '.join(l)
+    else:
+        msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
+            name, de, lh.layout)
+        # if de is not None:
+        #     msg += " Cannot handle %r" % de
+    raise KeyError(msg)
+
+
+def create_vurt_element(lh, name, vf, **kw):
+    e = create_field_element(lh, vf, **kw)
+    if not vf.is_enabled(lh):
+        e.editable = False
+    return e
+
+
+def create_meth_element(lh, name, meth, rt, **kw):
+    rt.name = name
+    rt._return_type_for_method = meth
+    if meth.func_code.co_argcount < 2:
+        raise Exception("Method %s has %d arguments (must have at least 2)" %
+                        (meth, meth.func_code.co_argcount))
+    return create_field_element(lh, rt, **kw)
+
+
+def create_field_element(lh, field, **kw):
+    e = field2elem(lh, field, **kw)
+    assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
+    lh.add_store_field(e.field)
+    return e

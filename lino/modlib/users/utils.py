@@ -130,11 +130,7 @@ def make_view_permission_handler_(
         actor, readonly, debug_permissions,
         user_level=None, user_groups=None,
         allow=None, auth=False, owner=None, states=None):
-    #~ if states is not None:
-        #~ logger.info("20121121 ignoring required states %s for %s",states,actor)
-    #~ if owner is not None:
-        #~ logger.info("20121121 ignoring required owner %s for %s",owner,actor)
-    #~ if allow is None:
+
     if allow is not None:
         if not isinstance(actor.action, workflows.ChangeStateAction):
             raise Exception("20130724 %s" % actor)

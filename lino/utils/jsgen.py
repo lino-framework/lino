@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r"""
@@ -77,22 +77,17 @@ import decimal
 import fractions
 
 
-#~ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
-#~ from django.utils import simplejson as json
 import json
 from django.utils.functional import Promise
 from django.utils.encoding import force_unicode
-
-
-import lino
+from django.db.models.fields import NOT_PROVIDED
 
 from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
-
-#~ from lino.core.utils import obj2str
 from lino.utils import curry
+from lino.core.utils import Permittable
 
 
 def dict2js(d):
@@ -274,26 +269,6 @@ class Component(Variable):
                 yield e
 
 
-#~ class Function(Variable):
-    #~ def __init__(self,name=None):
-        #~ Variable.__init__(self,name,None)
-    #~ def js_value(self):
-        #~ for ln in self.js_render():
-            #~ yield ln
-#~ class Object(Function):
-    #~ def __init__(self,name,params='this'):
-        #~ assert isinstance(params,basestring)
-        #~ self.params = params
-        #~ Function.__init__(self,name)
-    #~ def js_value(self):
-        #~ yield "new "
-        #~ for ln in self.js_render():
-            #~ yield "  " + ln
-        #~ yield "(" + self.params + ")"
-from django.db.models.fields import NOT_PROVIDED
-
-from lino.core.actions import Permittable
-
 
 class VisibleComponent(Component, Permittable):
     vflex = False
@@ -324,10 +299,6 @@ class VisibleComponent(Component, Permittable):
 
         from lino.modlib.users.utils import make_view_permission_handler
 
-        # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-            #~ logger.info("20121130 install_permission_handler() %s %s",self,self.required)
-            #~ if self.required.get('user_groups') ==  'integ':
-                #~ raise Exception("20121130")
         self.allow_read = curry(make_view_permission_handler(
             self, True,
             self.debug_permissions,

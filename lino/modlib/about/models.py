@@ -22,7 +22,7 @@ from django.db import models
 from django.conf import settings
 
 
-from lino.core.elems import Panel
+from lino.modlib.extjs.elems import Panel
 from lino.utils.report import EmptyTable
 from lino.utils import AttrDict
 

@@ -1,4 +1,4 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # class UppercaseFieldElement(CharFieldElement):
@@ -16,7 +16,7 @@ from django.utils.six import with_metaclass
 from lino.api import dd
 
 from lino.utils.jsgen import js_code
-from lino.core.elems import CharFieldElement
+from lino.modlib.extjs.elems import CharFieldElement
 
 
 class UppercaseTextFieldElement(CharFieldElement):
@@ -27,9 +27,8 @@ class UppercaseTextFieldElement(CharFieldElement):
 
 class IBANFieldElement(UppercaseTextFieldElement):
     def get_column_options(self, **kw):
-        """Return a string to be used as
-`ext.grid.Column.renderer
-<http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.grid.Column-cfg-renderer>`.
+        """Return a string to be used as `Ext.grid.Column.renderer
+        <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.grid.Column-cfg-renderer>`.
 
         """
         kw = super(

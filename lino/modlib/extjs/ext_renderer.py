@@ -27,7 +27,6 @@ from django.contrib.contenttypes.models import ContentType
 
 import lino
 from lino.core import constants
-from lino.core import elems as ext_elems
 from lino.core.renderer import HtmlRenderer
 
 from lino.ad import Plugin
@@ -50,6 +49,8 @@ if False:
 else:
     def jscompress(s):
         return s
+
+from . import elems as ext_elems
 
 from lino.modlib.users.choicelists import UserProfiles, UserLevels
 

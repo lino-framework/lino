@@ -10,15 +10,8 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.db.models.fields import NOT_PROVIDED
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
-from django.db.models.fields.related import ManyRelatedObjectsDescriptor
-from django.contrib.contenttypes import generic
-
-# from lino.utils.xmlgen.html import E
 
 from lino.core import constants
 from lino.core.fields import fields_list
@@ -127,6 +120,7 @@ class LayoutHandle:
         return self.main.ext_lines(request)
 
     def desc2elem(self, elemname, desc, **kw):
+        from lino.modlib.extjs.elems import create_layout_panel
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
 
         if isinstance(desc, Panel):
@@ -210,6 +204,7 @@ class LayoutHandle:
         return e
 
     def create_element(self, desc_name):
+        from lino.modlib.extjs.elems import create_layout_element
         #~ logger.debug("create_element(%r)", desc_name)
         name, pkw = self.splitdesc(desc_name)
         if name in self._names:
@@ -302,10 +297,13 @@ class BaseLayout(object):
     _datasource = None
 
     window_size = None
-    """
-    A tuple `(width, height)` that specifies the size of the window to be used for this layout.
-    For example, specifying `window_size=(50, 30)` means "50 characters wide and 30 lines high".
-    The `height` value can also be the string ``'auto'``.
+    """A tuple `(width, height)` that specifies the size of the window to
+    be used for this layout.
+
+    For example, specifying `window_size=(50, 30)` means "50
+    characters wide and 30 lines high".  The `height` value can also
+    be the string ``'auto'``.
+
     """
 
     main = None
@@ -592,253 +590,3 @@ class ActionParamsLayout(ParamsLayout):
             field.name, **kw)
 
 
-def create_layout_panel(lh, name, vertical, elems, **kw):
-    """
-    This also must translate ui-agnostic parameters
-    like `label_align` to their ExtJS equivalent `labelAlign`.
-    """
-    from lino.core import elems as ext_elems
-    pkw = dict()
-    pkw.update(labelAlign=kw.pop('label_align', 'top'))
-    pkw.update(hideCheckBoxLabels=kw.pop('hideCheckBoxLabels', True))
-    pkw.update(label=kw.pop('label', None))
-    pkw.update(width=kw.pop('width', None))
-    pkw.update(height=kw.pop('height', None))
-    v = kw.pop('required', NOT_PROVIDED)
-    if v is not NOT_PROVIDED:
-        pkw.update(required=v)
-    if kw:
-        raise Exception("Unknown panel attributes %r for %s" % (kw, lh))
-    if name == 'main':
-        if isinstance(lh.layout, ColumnsLayout):
-            e = ext_elems.GridElement(
-                lh, name, lh.layout._datasource, *elems, **pkw)
-        elif isinstance(lh.layout, ActionParamsLayout):
-            e = ext_elems.ActionParamsPanel(lh, name, vertical, *elems, **pkw)
-        elif isinstance(lh.layout, ParamsLayout):
-            e = ext_elems.ParamsPanel(lh, name, vertical, *elems, **pkw)
-        elif isinstance(lh.layout, FormLayout):
-            if len(elems) == 1 or vertical:
-                e = ext_elems.DetailMainPanel(
-                    lh, name, vertical, *elems, **pkw)
-            else:
-                e = ext_elems.TabPanel(lh, name, *elems, **pkw)
-        else:
-            raise Exception("No element class for layout %r" % lh.layout)
-        return e
-    return ext_elems.Panel(lh, name, vertical, *elems, **pkw)
-
-
-def create_layout_element(lh, name, **kw):
-    """
-    Create a layout element from the named data element.
-    """
-    from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-    from lino.core import elems as ext_elems
-    from lino.core import fields
-    from lino.core import tables
-    from lino.utils.jsgen import js_code
-
-    if settings.SITE.catch_layout_exceptions:
-        try:
-            de = lh.get_data_elem(name)
-        except Exception as e:
-            # logger.exception(e) removed 20130422 because it caused
-            # disturbing output when running tests
-            de = None
-            name += " (" + str(e) + ")"
-    else:
-        de = lh.get_data_elem(name)
-
-    if isinstance(de, type) and issubclass(de, fields.Dummy):
-        return None
-
-    if isinstance(de, fields.DummyField):
-        lh.add_store_field(de)
-        return None
-
-    if isinstance(de, fields.Constant):
-        return ext_elems.ConstantElement(lh, de, **kw)
-
-    if isinstance(de, fields.RemoteField):
-        return create_field_element(lh, de, **kw)
-
-    if isinstance(de, SingleRelatedObjectDescriptor):
-        return ext_elems.SingleRelatedObjectElement(lh, de.related, **kw)
-
-    if isinstance(de, ManyRelatedObjectsDescriptor):
-        e = ext_elems.ManyRelatedObjectElement(lh, de.related, **kw)
-        lh.add_store_field(e.field)
-        return e
-
-    if isinstance(de, models.ManyToManyField):
-        e = ext_elems.ManyToManyElement(lh, de.related, **kw)
-        lh.add_store_field(e.field)
-        return e
-
-    if isinstance(de, models.Field):
-        if isinstance(de, (BabelCharField, BabelTextField)):
-            if len(settings.SITE.BABEL_LANGS) > 0:
-                elems = [create_field_element(lh, de, **kw)]
-                for lang in settings.SITE.BABEL_LANGS:
-                    #~ bf = lh.get_data_elem(name+'_'+lang)
-                    bf = lh.get_data_elem(name + lang.suffix)
-                    elems.append(create_field_element(lh, bf, **kw))
-                return elems
-        return create_field_element(lh, de, **kw)
-
-    #~ if isinstance(de,fields.LinkedForeignKey):
-        # ~ de.primary_key = False # for ext_store.Store()
-        #~ lh.add_store_field(de)
-        #~ return ext_elems.LinkedForeignKeyElement(lh,de,**kw)
-
-    if isinstance(de, generic.GenericForeignKey):
-        # create a horizontal panel with 2 comboboxes
-        de.primary_key = False  # for ext_store.Store()
-        lh.add_store_field(de)
-        return ext_elems.GenericForeignKeyElement(lh, de, **kw)
-
-    if isinstance(de, type) and issubclass(de, tables.AbstractTable):
-        # The data element refers to a table.
-        kw.update(master_panel=js_code("this"))
-        if isinstance(lh.layout, FormLayout):
-            # When a table is specified in the layout of a
-            # DetailWindow, then it will be rendered as a panel that
-            # displays a "summary" of that table. The panel will have
-            # a tool button to "open that table in its own
-            # window". The format of that summary is defined by the
-            # `slave_grid_format` of the table. `slave_grid_format` is
-            # a string with one of the following values:
-
-            kw.update(tools=[
-                js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                      de.default_action.full_name())])
-            if de.slave_grid_format == 'grid':
-                kw.update(hide_top_toolbar=True)
-                if de.preview_limit is not None:
-                    kw.update(preview_limit=de.preview_limit)
-                return ext_elems.GridElement(lh, name, de, **kw)
-
-            elif de.slave_grid_format == 'html':
-                if de.editable:
-                    a = de.insert_action
-                    if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" %
-                                  a.full_name()))
-                        kw.update(ls_bbar_actions=[
-                            settings.SITE.plugins.extjs.renderer.a2btn(a)])
-                field = fields.HtmlBox(verbose_name=de.label)
-                field.name = de.__name__
-                field.help_text = de.help_text
-                field._return_type_for_method = de.slave_as_html_meth()
-                lh.add_store_field(field)
-                e = ext_elems.HtmlBoxElement(lh, field, **kw)
-                e.add_requirements(**de.required)
-                return e
-
-            elif de.slave_grid_format == 'summary':
-                e = ext_elems.SlaveSummaryPanel(lh, de, **kw)
-                lh.add_store_field(e.field)
-                return e
-            else:
-                raise Exception(
-                    "Invalid slave_grid_format %r" % de.slave_grid_format)
-
-        else:
-            e = ext_elems.SlaveSummaryPanel(lh, de, **kw)
-            lh.add_store_field(e.field)
-            return e
-
-    if isinstance(de, fields.VirtualField):
-        return create_vurt_element(lh, name, de, **kw)
-
-    if callable(de):
-        rt = getattr(de, 'return_type', None)
-        if rt is not None:
-            return create_meth_element(lh, name, de, rt, **kw)
-
-    if not name in ('__str__', '__unicode__', 'name', 'label'):
-        value = getattr(lh, name, None)
-        if value is not None:
-            return value
-
-    # One last possibility is that the app has been hidden. In that
-    # case we want the element to simply disappear, similar as if the
-    # user had no view permission.
-
-    s = name.split('.')
-    if len(s) == 2:
-        if settings.SITE.is_hidden_app(s[0]):
-            return None
-
-    # Now we tried everything. Build an error message.
-
-    if hasattr(lh, 'rh'):
-        msg = "Unknown element '%s' (%r) referred in layout <%s of %s>." % (
-            name, de, lh.layout, lh.rh.actor)
-        l = [wde.name for wde in lh.rh.actor.wildcard_data_elems()]
-        # VirtualTables don't have a model
-        model = getattr(lh.rh.actor, 'model', None)
-        if getattr(model, '_lino_slaves', None):
-            l += [str(rpt) for rpt in model._lino_slaves.values()]
-        msg += " Possible names are %s." % ', '.join(l)
-    else:
-        #~ logger.info("20121023 create_layout_element %r",lh.layout._datasource)
-        #~ l = [de.name for de in lh.layout._datasource.wildcard_data_elems()]
-        #~ print(20130202, [f.name for f in lh.layout._datasource.model._meta.fields])
-        #~ print(20130202, lh.layout._datasource.model._meta.get_all_field_names())
-        msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
-            name, de, lh.layout)
-        # if de is not None:
-        #     msg += " Cannot handle %r" % de
-    raise KeyError(msg)
-
-
-def create_vurt_element(lh, name, vf, **kw):
-    #~ assert vf.get.func_code.co_argcount == 2, (name, vf.get.func_code.co_varnames)
-    e = create_field_element(lh, vf, **kw)
-    if not vf.is_enabled(lh):
-        e.editable = False
-    return e
-
-
-def create_meth_element(lh, name, meth, rt, **kw):
-    #~ if hasattr(rt,'_return_type_for_method'):
-        #~ raise Exception(
-          #~ "%s.%s : %r has already an attribute '_return_type_for_method'" % (
-            #~ lh,name,rt))
-    rt.name = name
-    rt._return_type_for_method = meth
-    if meth.func_code.co_argcount < 2:
-        raise Exception("Method %s has %d arguments (must have at least 2)" %
-                        (meth, meth.func_code.co_argcount))
-        #~ , (name, meth.func_code.co_varnames)
-    #~ kw.update(editable=False)
-    e = create_field_element(lh, rt, **kw)
-    #~ if lh.rh.actor.actor_id == 'contacts.Persons':
-        #~ print 'ext_ui.py create_meth_element',name,'-->',e
-    #~ if name == 'preview':
-        #~ print 20110714, 'ext_ui.create_meth_element', meth, repr(e)
-    return e
-    #~ e = lh.main_class.field2elem(lh,return_type,**kw)
-    #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
-    #~ lh._store_fields.append(e.field)
-    #~ return e
-
-    #~ if rt is None:
-        #~ rt = models.TextField()
-
-    #~ e = ext_elems.MethodElement(lh,name,meth,rt,**kw)
-    #~ assert e.field is not None,"e.field is None for %s.%s" % (lh.layout,name)
-    #~ lh._store_fields.append(e.field)
-    #~ return e
-
-
-def create_field_element(lh, field, **kw):
-    #~ e = lh.main_class.field2elem(lh,field,**kw)
-    from lino.core import elems as ext_elems
-    e = ext_elems.field2elem(lh, field, **kw)
-    assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
-    lh.add_store_field(e.field)
-    return e
-    # return FieldElement(field,**kw)

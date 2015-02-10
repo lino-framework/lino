@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -40,6 +40,8 @@ from lino.utils.xmlgen.html import E
 
 from lino import rt
 
+from lino.modlib.extjs.elems import NumberFieldElement
+
 
 OAS = '<office:automatic-styles>'
 OFFICE_STYLES = '<office:styles>'
@@ -63,7 +65,8 @@ UL_LIST_STYLE = """\
 class Renderer(AppyRenderer):
 
     """An extended :term:`appy.pod` renderer that installs additional
-    functions to be used in `do text|section|table from <http://appyframework.org/podWritingAdvancedTemplates.html>`__
+    functions to be used in `do text|section|table from
+    <http://appyframework.org/podWritingAdvancedTemplates.html>`__
     statements.
 
 
@@ -385,12 +388,14 @@ class Renderer(AppyRenderer):
             border="0.002cm solid #000000"))
 
         header_row_style = add_style(
-            name="Lino Header Row", family="table-row", parentstylename=cell_style)
+            name="Lino Header Row", family="table-row",
+            parentstylename=cell_style)
         header_row_style.addElement(
             TableRowProperties(backgroundcolor="#eeeeee"))
 
         total_row_style = add_style(
-            name="Lino Total Row", family="table-row", parentstylename=cell_style)
+            name="Lino Total Row", family="table-row",
+            parentstylename=cell_style)
         total_row_style.addElement(
             TableRowProperties(backgroundcolor="#ffffff"))
 
@@ -420,12 +425,10 @@ class Renderer(AppyRenderer):
             #~ self.my_automaticstyles.append(cs)
             table_columns.addElement(TableColumn(stylename=name))
 
-        from lino.core import elems
-
         def fldstyle(fld):
             #~ if isinstance(fld,ext_store.VirtStoreField):
                 #~ fld = fld.delegate
-            if isinstance(fld, elems.NumberFieldElement):
+            if isinstance(fld, NumberFieldElement):
                 return "Number Cell"
             return "Table Contents"
 
