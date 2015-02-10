@@ -1502,50 +1502,26 @@ class Container(LayoutElement):
     vertical = False
     hpad = 1
     is_fieldset = False
-    #~ xtype = 'container'
     value_template = "new Ext.Container(%s)"
     hideCheckBoxLabels = True
     label_align = layouts.LABEL_ALIGN_TOP
 
-    #declare_type = jsgen.DECLARE_INLINE
     declare_type = jsgen.DECLARE_VAR
-    #~ declare_type = jsgen.DECLARE_THIS
-    #~ declare_type = jsgen.DECLARE_THIS
 
     def __init__(self, layout_handle, name, *elements, **kw):
-        #~ if name == 'cbss':
-            #~ logger.info("20120925 Container.__init__() 1 %r",kw)
-        #~ self.has_frame = layout_handle.layout.has_frame
-        #~ self.labelAlign = layout_handle.layout.label_align
-        #~ self.hideCheckBoxLabels = layout_handle.layout.hideCheckBoxLabels
         self.active_children = []
         self.elements = elements
         if elements:
-            #~ self.has_fields = False
             for e in elements:
-                #~ v = getattr(self,e.name,None)
-                #~ if v is not None:
-                    #~ raise Exception("%s has already %s = %s" % (self,e.name,v))
-                #~ setattr(self,e.name,e)
                 e.set_parent(self)
-                #~ if isinstance(e,FieldElement):
-                    #~ self.has_fields = True
                 if not isinstance(e, LayoutElement):
                     raise Exception("%r is not a LayoutElement" % e)
                 if e.active_child:
                     self.active_children.append(e)
                 elif isinstance(e, Panel):
                     self.active_children += e.active_children
-                    #~ self.has_fields = True
-            #~ kw.update(items=elements)
 
         LayoutElement.__init__(self, layout_handle, name, **kw)
-
-        #~ if self.required:
-            #~ if layout_handle.layout._datasource.__name__.startswith('IntegClient'):
-                #~ print 20120924, layout_handle, self.required
-        #~ if name == 'cbss':
-            #~ logger.info("20120925 Container.__init__() 2 %r",self.required)
 
     def as_plain_html(self, ar, obj):
         children = []
@@ -1629,35 +1605,24 @@ class Wrapper(VisibleComponent):
 
     def __init__(self, e, **kw):
         kw.update(layout='form')
-        # ~ if e.value.get('autoHeight',False): # since 20130924
-            #~ kw.update(autoHeight=True)
-        # ~ if False: # since 20130924
         if not isinstance(e, TextFieldElement):
             kw.update(autoHeight=True)
-        #~ kw.update(labelAlign=e.parent.labelAlign)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e, xtype='panel')
         VisibleComponent.__init__(self, e.name + "_ct", **kw)
         self.wrapped = e
-        for n in ('width', 'height', 'preferred_width', 'preferred_height', 'vflex', 'loosen_requirements'):
+        for n in ('width', 'height', 'preferred_width', 'preferred_height',
+                  'vflex', 'loosen_requirements'):
             setattr(self, n, getattr(e, n))
-        #~ e.update(anchor="100%")
 
         if e.vflex:
-            #~ 20120630 e.update(anchor="100% 100%")
-            #~ e.update(anchor="-25 -25")
             e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
         else:
-            #~ e.update(anchor="100%")
-            #~ e.update(anchor="-25")
             e.update(anchor=FULLWIDTH)
             e.update(autoHeight=True)  # 20130924
 
     def get_view_permission(self, profile):
         return self.wrapped.get_view_permission(profile)
-
-    #~ def allow_read(self,*args):
-        #~ return self.wrapped.allow(user)
 
     def walk(self):
         for e in self.wrapped.walk():
@@ -1694,12 +1659,7 @@ class Panel(Container):
         self.vertical = vertical
 
         self.vflex = not vertical
-        stretch = False
         for e in elements:
-            #~ if e.collapsible:
-                #~ monitorResize = True
-            if e.vflex:
-                stretch = True
             if self.vertical:
                 if e.vflex:
                     self.vflex = True
@@ -1721,11 +1681,8 @@ class Panel(Container):
                 kw.update(layout='hbox', layoutConfig=dict(align='stretch'))
 
         for e in elements:
-            #~ e.set_parent(self)
             if isinstance(e, FieldElement):
                 self.is_fieldset = True
-                #~ if self.label_width < e.label_width:
-                    #~ self.label_width = e.label_width
                 if e.label:
                     w = len(e.label) + 1  # +1 for the ":"
                     if self.label_width < w:

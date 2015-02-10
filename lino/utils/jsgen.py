@@ -245,7 +245,6 @@ class Component(Variable):
 
     def js_value(self):
         value = self.ext_options()
-        #~ value = self.ext_options(**self.value)
         return self.value_template % py2js(value)
 
     def ext_options(self, **kw):
@@ -257,7 +256,7 @@ class Component(Variable):
 
     def remove(self, *keys):
         for k in keys:
-            if self.value.has_key(k):
+            if k in self.value:
                 del self.value[k]
 
     def walk(self):
@@ -267,7 +266,6 @@ class Component(Variable):
         for i in items:
             for e in i.walk():
                 yield e
-
 
 
 class VisibleComponent(Component, Permittable):
@@ -305,8 +303,6 @@ class VisibleComponent(Component, Permittable):
             **self.required), self)
 
     def get_view_permission(self, profile):
-        # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-            #~ logger.info("20121130 get_view_permission() %s %s",self,self.required)
         return self.allow_read(profile)
 
     def setup(self, width=None, height=None, label=None,
@@ -325,8 +321,6 @@ class VisibleComponent(Component, Permittable):
             self.label = label
         if required is not NOT_PROVIDED:
             self.required = required
-            # ~ if self.name == 'newcomers_left': # required.has_key('user_groups'):
-                #~ logger.info("20121130 setup() %s %s",self,self.required)
 
     def __str__(self):
         "This shows how elements are specified"
@@ -348,9 +342,9 @@ class VisibleComponent(Component, Permittable):
 
     def debug_lines(self):
         sep = u"</td><td>"
-        cols = """ext_name name parent label __class__.__name__ 
+        cols = """ext_name name parent label __class__.__name__
         elements js_value
-        label_align vertical width preferred_width height 
+        label_align vertical width preferred_width height
         preferred_height vflex""".split()
         yield '<tr><td>' + sep.join(cols) + '</td></tr>'
         for e in self.walk():
