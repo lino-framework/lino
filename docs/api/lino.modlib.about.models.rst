@@ -12,6 +12,7 @@ lino.modlib.about.models
       codefiles
       codetime
       fill
+      get_window_actions
       have_action
    
    
@@ -27,12 +28,15 @@ lino.modlib.about.models
       DetailLayouts
       EmptyTable
       FieldsByModel
+      FormPanels
       Inspected
       Inspector
       Models
+      Panel
       SourceFile
       SourceFiles
       UserProfiles
+      WindowActions
    
    
 

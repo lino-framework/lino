@@ -14,7 +14,6 @@ The ``lino.core`` package
     dbtables
     dbutils
     ddh
-    elems
     fields
     frames
     inject

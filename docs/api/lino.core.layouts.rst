@@ -10,11 +10,6 @@ lino.core.layouts
    .. autosummary::
    
       DEBUG_LAYOUTS
-      create_field_element
-      create_layout_element
-      create_layout_panel
-      create_meth_element
-      create_vurt_element
       fields_list
    
    
@@ -33,8 +28,6 @@ lino.core.layouts
       FormLayout
       InsertLayout
       LayoutHandle
-      ManyRelatedObjectsDescriptor
-      NOT_PROVIDED
       Panel
       ParamsLayout
    

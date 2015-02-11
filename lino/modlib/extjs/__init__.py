@@ -18,6 +18,7 @@ people than the empoyees of the company who wrote the application.
 .. autosummary::
    :toctree:
 
+   elems
    views
    ext_renderer
 
@@ -31,8 +32,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class Plugin(Plugin):
-    """
-    Extends :class:`lino.core.plugin.Plugin`. 
+    """Extends :class:`lino.core.plugin.Plugin`.
+
     """
     ui_label = _("Admin")
 

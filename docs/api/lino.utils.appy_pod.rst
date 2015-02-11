@@ -42,6 +42,7 @@ lino.utils.appy_pod
    .. autosummary::
    
       AppyRenderer
+      NumberFieldElement
       PortraitPrintTableAction
       PrintLabelsAction
       PrintTableAction

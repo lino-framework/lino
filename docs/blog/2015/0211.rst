@@ -13,7 +13,7 @@ Two new features:
   :attr:`short_name <lino.core.plugin.Plugin.short_name>`.
 
 - The tab panel of a detail window no has its `enableTabScroll
-  <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.TabPanel-cfg-enableTabScroll>`
+  <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.TabPanel-cfg-enableTabScroll>`_
   set to True to enable scrolling to tabs that may be invisible due to
   overflowing the overall TabPanel width.
 

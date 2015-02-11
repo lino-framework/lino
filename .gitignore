@@ -18,7 +18,6 @@ lino/projects/*/media
 lino/sandbox/*/media
 */test.db
 docs/media
-media
 docs/dl/*
 lino.egg-info
 .build
