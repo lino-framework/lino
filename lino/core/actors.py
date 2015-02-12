@@ -780,17 +780,6 @@ class Actor(actions.Parametrizable):
         pass
 
     @classmethod
-    def get_workflow_actions(self, ar, obj):
-        """
-        Return the actions to be displayed in a `workflow_buttons` field.
-        """
-        state = self.get_row_state(obj)
-        for ba in self.get_actions():
-            if ba.action.show_in_workflow:
-                if self.get_row_permission(obj, ar, state, ba):
-                    yield ba
-
-    @classmethod
     def get_label(self):
         return self.label
 
@@ -1194,39 +1183,6 @@ class Actor(actions.Parametrizable):
         Don't worry if you don't understand.
         """
         return []
-
-    @fields.displayfield(_("Workflow"))
-    def workflow_buttons(self, obj, ar):
-        """
-        A virtual field that displays the workflow buttons for the given
-        row `obj` and `ar`.
-
-        `obj` is an instance of this table's row class,
-        `ar` is the :class:`rt.ar`.
-
-        """
-        #~ logger.info('20120930 workflow_buttons %r', obj)
-        actor = ar.actor
-        #~ print 20120621 , actor,  self
-        #~ print 20120618, ar
-        l = []
-        state = actor.get_row_state(obj)
-        if state:
-            #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-            l.append(E.b(unicode(state)))
-            #~ l.append(u" » ")
-            #~ l.append(u" \u25b8 ")
-            #~ l.append(u" \u2192 ")
-            #~ sep = u" \u25b8 "
-            sep = u" \u2192 "
-        else:
-            sep = ''
-        for ba in ar.actor.get_workflow_actions(ar, obj):
-            l.append(sep)
-            l.append(ar.action_button(ba, obj))
-            sep = ' '
-            # sep = E.br()
-        return E.span(*l)
 
     @classmethod
     def slave_as_html_meth(self):

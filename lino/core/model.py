@@ -32,6 +32,11 @@ class Model(models.Model):
     classes, Lino will "extend" these by adding the attributes and
     methods defined here to these classes.
 
+    .. attribute:: workflow_buttons
+
+        A virtual field that displays the workflow buttons for this
+        row and the given action request.
+
     .. method:: full_clean
 
         This is defined by Django.
@@ -583,6 +588,31 @@ class Model(models.Model):
     @fields.displayfield(_("Description"))
     def description_column(self, ar):
         return ar.obj2html(self)
+
+    @fields.displayfield(_("Workflow"))
+    def workflow_buttons(obj, ar):
+        #~ logger.info('20120930 workflow_buttons %r', obj)
+        actor = ar.actor
+        l = []
+        state = actor.get_row_state(obj)
+        if state:
+            #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
+            l.append(E.b(unicode(state)))
+            #~ l.append(u" » ")
+            #~ l.append(u" \u25b8 ")
+            #~ l.append(u" \u2192 ")
+            #~ sep = u" \u25b8 "
+            sep = u" \u2192 "
+        else:
+            sep = ''
+
+        for ba in actor.get_actions():
+            if ba.action.show_in_workflow:
+                if actor.get_row_permission(obj, ar, state, ba):
+                    l.append(sep)
+                    l.append(ar.action_button(ba, obj))
+                    sep = ' '
+        return E.span(*l)
 
     def error2str(self, e):
         return error2str(self, e)

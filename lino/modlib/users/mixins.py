@@ -33,10 +33,30 @@ class UserAuthored(model.Model):
     automatically set to the requesting user.
 
     """
-    required = dict(auth=True)
 
     class Meta:
         abstract = True
+
+    required = dict(auth=True)
+
+    manager_level_field = 'level'
+    """By default, only system managers can edit other users' work.  
+
+    If the application defines customized UserGroups, then we may want
+    to permit it also to department managers.  If an application
+    defines a UserGroup `foo`, then it can set this attribute to
+    `'foo_level'` on a model to specify that a manager level for the
+    foo department is enough to get edit permission on other users'
+    instances.
+
+    Setting :attr:`manager_level_field` on your model to `None` will
+    disable this behaviour (i.e. everybody can edit the work of other
+    users).
+
+    Usage examples see :class:`lino.modlib.notes.models.Note` or
+    :class:`lino.modlib.cal.models.Component`.
+
+    """
 
     if settings.SITE.user_model:
 
@@ -62,37 +82,21 @@ class UserAuthored(model.Model):
         This is important for cal.Event.
         """
         if self.user_id is None:
-            #~ u = ar.get_user()
             u = ar.user
             if u is not None:
                 self.user = u
         super(UserAuthored, self).on_create(ar)
 
-    manager_level_field = 'level'
-    """Only system managers can edit other users' work.  But if the
-    application defines customized UserGroups, then we may want to
-    permit it also to department managers.  If an application defines
-    a UserGroup `foo`, then it can set this attribute to `'foo_level'`
-    on a model to specify that a manager level for the foo department
-    is enough to get edit permission on other users' instances.
-    
-    Usage examples see
-    :class:`lino.modlib.notes.models.Note`
-    or
-    :class:`lino.modlib.cal.models.Component`.
-
-    """
-
     def get_row_permission(self, ar, state, ba):
-        """
-        Only system managers can edit other users' work.
+        """Only system managers can edit other users' work.
+
         """
         if not super(UserAuthored, self).get_row_permission(ar, state, ba):
-            #~ logger.info("20120919 no permission to %s on %s for %r",action,self,user)
             return False
         user = ar.get_user()
-        if self.user != ar.user and \
-           (ar.subst_user is None or self.user != ar.subst_user) \
+        if self.manager_level_field is not None \
+           and self.user != ar.user \
+           and (ar.subst_user is None or self.user != ar.subst_user) \
            and getattr(user.profile, self.manager_level_field) < \
            UserLevels.manager:
             return ba.action.readonly

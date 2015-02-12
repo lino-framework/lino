@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Used by :class:`lino.utils.appy_pod.PrintLabelsAction` and
-:mod:`ml.contacts`.
+:mod:`lino.modlib.contacts`.
 
 $ python setup.py test -s tests.UtilsTests.test_addressable
 

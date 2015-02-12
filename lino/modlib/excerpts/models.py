@@ -217,6 +217,7 @@ We override everything in Excerpt to not call the class method.""")
                 excerpt_type=self)
             akw = obj.get_excerpt_options(ar, **akw)
             ex = Excerpt(**akw)
+            ex.on_create(ar)
             ex.full_clean()
             ex.save()
 
@@ -468,7 +469,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             return naturaltime(self.build_time)
             # return _("%(owner)s (printed %(time)s)") % dict(
             #     owner=self.owner, time=naturaltime(self.build_time))
-        return _("Unprinted %s #%d") % (self._meta.verbose_name, self.pk)
+        return _("Unprinted %s #%s") % (self._meta.verbose_name, self.pk)
 
     def get_mailable_type(self):
         return self.excerpt_type
@@ -492,13 +493,13 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         o = self.owner
         return o._meta.app_label + '.' + o.__class__.__name__ + '-' + str(o.pk)
 
-    def get_recipient(self):
-        rec = super(Excerpt, self).get_recipient()
-        if rec is None and hasattr(self.owner, 'recipient'):
-            return self.owner.recipient
-        return rec
+    # def get_recipient(self):
+    #     rec = super(Excerpt, self).get_recipient()
+    #     if rec is None and hasattr(self.owner, 'recipient'):
+    #         return self.owner.recipient
+    #     return rec
 
-    recipient = property(get_recipient)
+    # recipient = property(get_recipient)
         
     def get_printable_type(self):
         return self.excerpt_type
@@ -506,13 +507,8 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
     def get_print_language(self):
         return self.language
 
-    def on_create(self, ar):
-        """When creating an Excerpt by double clicking in
-        ExcerptsByProject, then the `project` field gets filled
-        automatically, but we also want to set the `owner` field to
-        the project.
-
-        """
+    def unused_on_create(self, ar):
+        # replaced by signal below
         super(Excerpt, self).on_create(ar)
         if not self.owner_id:
             if self.project:
@@ -579,6 +575,33 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         super(Excerpt, cls).on_analyze(site)
 
 
+from django.db.models.signals import post_init
+
+
+@dd.receiver(post_init, sender=Excerpt)
+def my_handler(sender, instance=None, **kwargs):
+    self = instance
+    if not self.owner_id:
+        # When creating an Excerpt by double-clicking in
+        # ExcerptsByProject, then the `project` field gets filled
+        # automatically, but we also want to set the `owner` field to
+        # the project.
+        if self.project_id:
+            self.owner = self.project
+    if isinstance(self.owner, ContactRelated):
+        self.company = self.owner.company
+        self.contact_person = self.owner.contact_person
+        self.contact_role = self.owner.contact_role
+        # print("on_create 20150212", self)
+
+    # default language : recipient overrides owner
+    rec = self.recipient
+    if rec is not None:
+        self.language = rec.get_print_language()
+    else:
+        self.language = self.owner.get_print_language()
+
+
 if has_davlink:
 
     class ExcerptDetail(dd.FormLayout):
@@ -627,8 +650,8 @@ class Excerpts(dd.Table):
     excerpt_type project
     company contact_person
     """
-    column_names = ("id build_time owner excerpt_type user project "
-                    "company contact_person language *")
+    column_names = ("id excerpt_type owner project "
+                    "company language build_time *")
     order_by = ["id"]
 
     allow_create = False
@@ -728,7 +751,6 @@ class ExcerptsByOwner(ExcerptsByX):
             Q(build_time__lte=dd.today(), build_time__gte=t7))
         add(_("Older"), Q(build_time__lt=t7))
         return E.ul(*items)
-        
 
     @classmethod
     def format_excerpt(self, ex):

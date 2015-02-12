@@ -39,7 +39,6 @@ from lino.utils import join_elems
 
 from lino.modlib.countries.mixins import AddressLocation
 
-from lino.utils import mti
 from lino.utils.xmlgen.html import E
 from lino.utils.addressable import Addressable
 
@@ -165,6 +164,9 @@ but e.g. :class:`Human` overrides this.
 
     def get_name_elems(self, ar):
         return [E.b(self.name)]
+
+    def get_print_language(self):
+        return self.language
 
 
 class PartnerDetail(dd.FormLayout):
@@ -465,10 +467,18 @@ class Role(dd.Model, Addressable):
             yield ln
 
     def address_location_lines(self):
-        if self.company:
+        if self.company_id:
             return self.company.address_location_lines()
-        else:
+        if self.person_id:
             return self.person.address_location_lines()
+        return super(Role, self).__unicode__()
+
+    def get_print_language(self):
+        if self.company_id:
+            return self.company.language
+        if self.person_id:
+            return self.person.language
+        return super(Role, self).get_print_language()
 
 
 class Roles(dd.Table):
