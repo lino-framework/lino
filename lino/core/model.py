@@ -395,6 +395,9 @@ class Model(models.Model):
         instance of this model gets updated via the user interface and
         **before** the changes are written to the database.
 
+        Deprecated.  Use the :data:`pre_ui_save
+        <lino.core.signals.pre_ui_save>` signal instead.
+
         Example in :class:`lino.modlib.cal.models_event.Event` to mark
         the event as user modified by setting a default state.
 

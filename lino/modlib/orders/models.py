@@ -259,18 +259,6 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
                     (HUNDRED - self.discount) / HUNDRED
                 self.unit_price_changed(ar)
 
-    def before_ui_save(self, ar):
-        #~ if self.product:
-            #~ if not self.title:
-                #~ self.title = self.product.name
-            #~ if not self.description:
-                #~ self.description = self.product.description
-            #~ if self.unit_price is None:
-                #~ if self.product.price is not None:
-                    #~ self.unit_price = self.product.price * (100 - self.discount) / 100
-                    #~ self.unit_price_changed(ar)
-        super(ProductDocItem, self).before_ui_save(ar)
-
 
 class OrderItem(sales.ProductDocItem):
     voucher = models.ForeignKey(Order, related_name='items')

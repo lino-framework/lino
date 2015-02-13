@@ -269,25 +269,7 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
                 self.qty = Decimal("1")
             self.discount_changed(ar)
 
-    def before_ui_save(self, ar):
-        #~ if self.product:
-            #~ if not self.title:
-                #~ self.title = self.product.name
-            #~ if not self.description:
-                #~ self.description = self.product.description
-            #~ if self.unit_price is None:
-                #~ if self.product.price is not None:
-                    #~ self.unit_price = self.product.price * (100 - self.discount) / 100
-                    #~ self.unit_price_changed(ar)
-        super(ProductDocItem, self).before_ui_save(ar)
 
-
-#~ class ItemsByDocumentListLayout(layouts.ColumnsLayout):
-    #~ title_box = """
-    #~ product
-    #~ title
-    #~ """
-    #~ main = "pos:3 title_box description:20x1 discount unit_price qty total"
 class ItemsByDocument(dd.Table):
     column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
     master_key = 'voucher'

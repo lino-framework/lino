@@ -36,7 +36,7 @@ from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
-from lino.core.signals import on_ui_created, pre_ui_delete
+from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
 from lino.core.utils import Permittable, Parametrizable, InstanceAction
 from lino.utils.choosers import Chooser
@@ -842,6 +842,7 @@ class SaveRow(Action):
         elem.full_clean()
 
         if watcher.is_dirty():
+            pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
             elem.before_ui_save(ar)
             elem.save(force_update=True)
             watcher.send_update(ar.request)
@@ -912,7 +913,6 @@ class SubmitDetail(SaveRow):
 
 class CreateRow(Action):
     """Called when user edited a cell of a phantom record in a grid.
-    Installed as `grid_post` on every :class:`dd.Model`.
     """
     sort_index = 10
     auto_save = False
@@ -927,6 +927,7 @@ class CreateRow(Action):
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
+        pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()

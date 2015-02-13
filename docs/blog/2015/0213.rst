@@ -16,3 +16,74 @@ This change might have introduced unwanted side effects which are not
 yet covered by the test suite.  But it has the advantage that things
 get unified. And anywhere there is still quite some testing, analysis
 and documentation to do about all these filter criteria.
+
+
+Automatically setting cv.Obstacle.user to the requesting user
+=============================================================
+
+My usual way would have been to write a :meth:`before_ui_save
+<lino.core.model.Model.before_ui_save>` for :class:`cv.Obstacle
+<lino_welfare.projects.chatelet.modlib.cv.models.Obstacle>`.
+
+But then I discovered that I can implement this using a custom signal
+:data:`pre_ui_save <lino.core.signals.pre_ui_save>`.  So my
+:meth:`before_ui_save <lino.core.model.Model.before_ui_save>` is maybe
+not necessary. I marked it as deprecated. And the same is maybe true
+for all these signal-like methods!
+
+One theoretical difference between signals and signal-like methods is
+that application code can decide whether some previously defined
+"signal handler" should be executed or not. But in practice there is
+maybe no usage for this until now.
+
+
+Added a new testcase:
+:mod:`lino_welfare.projects.chatelet.tests.test_chatelet`.
+
+
+Evaluation de la version du 06 février
+======================================
+
+- `immersion.ContractsByClient` and `art61.ContractsByClient`:
+
+  - column_names as in the document.
+  - remove `user_asd`
+
+- jobs.Jobs : show more columns
+
+- rendez-vous d'évaluation automatiques : ne fonctionne pas
+  correctement s'il y a deux coachings actifs en cette date.
+  Lino devrait sélectionner le primaire. (vraiment?)
+  En tout cas il n'y a jamais deux agents présents.
+
+- taches automatiques par contrat:
+
+  - se font pour l'auteur du contrat, mais là aussi il faut les memes
+    règeles que pour les rendez-vous.
+
+- polls : AnswersByResponse : html view : use bigger font size (same
+  as for normal fields)
+
+- quand j'ajoute un RAE dans ResponsesByPartner, Lino n'inscrit pas le
+  partenaire. (NBN Seulement pour RAE, pas pour INI)
+
+- "Préjudicial" -> "Préjudiciable"
+
+- QuestionsByPoll : stay_in_grid = True. Respect stay_in_grid also for
+  DuplicateRow.
+
+- Il n'est pas possible d'encoder des textes libres
+
+- Dans « temps de travail accepté », on ne sait en sélectionner qu’un à
+  la fois alors qu’on devrait pouvoir en sélectionner plusieurs.
+
+- Dans « Mes rendez-vous aujourd’hui »:
+
+    - Supprimer la colonne « Attribué à »
+
+    - Ajouter la colonne « Type d’événement » de manière à ce qu’on voit
+      si c’est un entretien en interne ou en externe.
+
+- Dans le dossier d’une personne onglet « Personne », les rendez-vous
+  s'indiquent 2 x
+

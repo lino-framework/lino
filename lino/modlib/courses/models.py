@@ -784,11 +784,6 @@ class Enrolment(UserAuthored, sales.Invoiceable):
             self.compute_amount()
         super(Enrolment, self).save(*args, **kw)
 
-    #~ def before_ui_save(self,ar):
-        #~ if self.amount is None:
-            #~ self.compute_amount()
-        #~ super(Enrolment,self).before_ui_save(ar)
-
     def get_print_templates(self, bm, action):
         #~ if self.state:
         return [self.state.name + bm.template_ext]

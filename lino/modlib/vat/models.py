@@ -699,8 +699,6 @@ class VatItemBase(Sequenced, VatTotal):
         if self.total_incl is None:
             self.reset_totals(ar)
         super(VatItemBase, self).before_ui_save(ar)
-        #~ super(VatItemBase,self).full_clean(*args,**kw)
-    #~ before_save.alters_data = True
 
     def after_ui_save(self, ar):
         """

@@ -29,7 +29,7 @@ from lino.core.boundaction import BoundAction
 
 from lino.utils.xmlgen.html import E
 
-from lino.core.signals import on_ui_created
+from lino.core.signals import on_ui_created, pre_ui_save
 from lino.core.utils import ChangeWatcher
 
 
@@ -701,7 +701,7 @@ object."""
         elem.full_clean()
 
         if is_new or watcher.is_dirty():
-
+            pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
             elem.before_ui_save(ar)
 
             kw2save = {}

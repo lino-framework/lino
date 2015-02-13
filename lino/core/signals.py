@@ -31,22 +31,18 @@ database_ready = Signal()
 
 
 pre_analyze = Signal(['models_list'])
-"""
-Sent exactly once per process at site startup, 
-just before Lino analyzes the models.
+"""Sent exactly once per process at site startup, just before Lino
+analyzes the models.
 
-sender: 
-  the Site instance
-  
-models_list:
-  list of models 
-  
+:sender:      the Site instance
+:models_list: list of models
+
 """
 
 post_analyze = Signal(['models_list'])
-"""
-Sent exactly once per process at site startup, 
-just after Site has finished to analyze the models.
+"""Sent exactly once per process at site startup, just after Site has
+finished to analyze the models.
+
 """
 
 
@@ -58,10 +54,10 @@ The :attr:`auto_create` signal is sent when
 Arguments sent with this signal:
 
 ``sender``
-    The model instance that has been created. 
+    The model instance that has been created.
     
 ``field``
-    The database field 
+    The database field
 
 ``known_values``
     The specified known values
@@ -70,8 +66,8 @@ Arguments sent with this signal:
 
 
 pre_merge = Signal(['request'])
-"""
-Sent when a model instance is being merged into another instance.
+"""Sent when a model instance is being merged into another instance.
+
 """
 
 pre_remove_child = Signal(['request', 'child'])
@@ -90,10 +86,9 @@ Sent when an MTI child has been added. Arguments to the handler are:
 # """
 
 on_ui_created = Signal(['request'])
-"""
-Sent when a new model instance has been created and saved.
-"""
+"""Sent when a new model instance has been created and saved.
 
+"""
 
 on_ui_updated = Signal(['request'])
 """Sent when a model instance has been modified and saved.  This will
@@ -102,6 +97,14 @@ be called each time some database object has been updated.
 Unlike Django's `post_save` signal, the `sender` is a
 :class:`lino.core.utils.ChangeWatcher` instance, and the HttpRequest
 will be passed to the receiver.
+
+"""
+
+pre_ui_save = Signal(['instance', 'ar'])
+"""
+:sender:   the database model
+:instance: the database object which is going to be saved.
+:ar: the action request
 
 """
 
@@ -118,8 +121,4 @@ pre_ui_build = Signal()
 post_ui_build = Signal()
 
 database_connected = Signal()
-
-#~ database_ready = Signal()
-
-
 
