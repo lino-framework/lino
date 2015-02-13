@@ -1,0 +1,18 @@
+=========================
+Friday, February 13, 2015
+=========================
+
+Filter parameters of newcomers.NewClients
+=========================================
+
+Fixed :ticket:`91`.  The filter parameters of
+:class:`newcomers.NewClients
+<lino_welfare.modlib.newcomers.models.NewClients>` now inherit the
+parameters of :class:`pcsw.Clients
+<lino_welfare.modlib.pcsw.models.Clients>`.  Added more content to
+test case :ref:`welfare.tested.newcomers`.
+
+This change might have introduced unwanted side effects which are not
+yet covered by the test suite.  But it has the advantage that things
+get unified. And anywhere there is still quite some testing, analysis
+and documentation to do about all these filter criteria.

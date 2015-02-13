@@ -91,4 +91,5 @@ Filter parameters of newcomers.NewClients
 =========================================
 
 :ticket:`91` (newcomers.NewClients : new parameter & default values)
-is for tomorrow. But I added a test case to prepare for it.
+is for tomorrow. But I added a test case
+(:ref:`welfare.tested.newcomers`) to prepare for it.
