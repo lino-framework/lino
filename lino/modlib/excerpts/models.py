@@ -598,7 +598,7 @@ def my_handler(sender, instance=None, **kwargs):
     rec = self.recipient
     if rec is not None:
         self.language = rec.get_print_language()
-    else:
+    elif self.owner_id:
         self.language = self.owner.get_print_language()
 
 
