@@ -26,7 +26,7 @@ My usual way would have been to write a :meth:`before_ui_save
 <lino_welfare.projects.chatelet.modlib.cv.models.Obstacle>`.
 
 But then I discovered that I can implement this using a custom signal
-:data:`pre_ui_save <lino.core.signals.pre_ui_save>`.  So my
+:const:`pre_ui_save <lino.core.signals.pre_ui_save>`.  So my
 :meth:`before_ui_save <lino.core.model.Model.before_ui_save>` is maybe
 not necessary. I marked it as deprecated. And the same is maybe true
 for all these signal-like methods!
@@ -36,13 +36,14 @@ that application code can decide whether some previously defined
 "signal handler" should be executed or not. But in practice there is
 maybe no usage for this until now.
 
-
 Added a new testcase:
 :mod:`lino_welfare.projects.chatelet.tests.test_chatelet`.
 
 
 Evaluation de la version du 06 février
 ======================================
+
+TODO:
 
 - `immersion.ContractsByClient` and `art61.ContractsByClient`:
 

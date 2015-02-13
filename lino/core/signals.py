@@ -1,8 +1,26 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-This defines Lino's standard system signals.
+"""This defines Lino's standard system signals.
+
+.. data:: pre_ui_save
+
+    Sent before a database object gets saved using the web user
+    interface.
+    
+    :sender:   the database model
+    :instance: the database object which is going to be saved.
+    :ar: the action request
+
+.. data:: on_ui_updated
+
+    Sent when a model instance has been modified and saved.  This will
+    be called each time some database object has been updated.
+
+    Unlike Django's `post_save` signal, the `sender` is a
+    :class:`lino.core.utils.ChangeWatcher` instance, and the HttpRequest
+    will be passed to the receiver.
+
 """
 
 from django.dispatch import Signal, receiver
@@ -91,22 +109,8 @@ on_ui_created = Signal(['request'])
 """
 
 on_ui_updated = Signal(['request'])
-"""Sent when a model instance has been modified and saved.  This will
-be called each time some database object has been updated.
-
-Unlike Django's `post_save` signal, the `sender` is a
-:class:`lino.core.utils.ChangeWatcher` instance, and the HttpRequest
-will be passed to the receiver.
-
-"""
 
 pre_ui_save = Signal(['instance', 'ar'])
-"""
-:sender:   the database model
-:instance: the database object which is going to be saved.
-:ar: the action request
-
-"""
 
 pre_ui_delete = Signal(['request'])
 """Sent just before a model instance is being deleted using the user
