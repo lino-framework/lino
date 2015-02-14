@@ -487,6 +487,10 @@ class Actor(actions.Parametrizable):
         return '/' + self.app_label + '/' + self.__name__
 
     @classmethod
+    def get_widget_options(self, name, **options):
+        return options
+
+    @classmethod
     def get_chooser_for_field(cls, fieldname):
         d = getattr(cls, '_choosers_dict', {})
         return d.get(fieldname, None)

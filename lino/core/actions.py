@@ -38,7 +38,8 @@ from lino.core import fields
 from lino.core import keyboard
 from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
-from lino.core.utils import Permittable, Parametrizable, InstanceAction
+from lino.core.utils import (Permittable, Parametrizable,
+                             InstanceAction)
 from lino.utils.choosers import Chooser
 
 PLAIN_PAGE_LENGTH = 15
@@ -385,10 +386,6 @@ class Action(Parametrizable, Permittable):
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
 
-    # @classmethod
-    # def make_chooser(cls, wrapped):
-    #     return wrapped
-
     def is_callable_from(self, caller):
         return isinstance(caller, (GridEdit, ShowDetailAction))
         #~ if self.select_rows:
@@ -425,6 +422,10 @@ class Action(Parametrizable, Permittable):
         if self.parameters:
             return self.parameters.get(name, None)
         return None
+
+    def get_widget_options(self, name, **options):
+        # same as in Actor but here it is an instance method
+        return options
 
     def get_button_label(self, actor):
         if actor is None or actor.default_action is None:

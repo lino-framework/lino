@@ -138,7 +138,10 @@ class Duplicate(actions.Action):
                   dict(old=obj, new=new))
         #~ kw.update(new_status=dict(record_id=new.pk))
         ar.success(**kw)
-        ar.goto_instance(new)
+        if ar.actor.stay_in_grid:
+            ar.set_response(refresh_all=True)
+        else:
+            ar.goto_instance(new)
 
 
 class Duplicable(model.Model):

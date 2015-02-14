@@ -205,15 +205,15 @@ class LayoutHandle:
     def create_element(self, desc_name):
         from lino.modlib.extjs.elems import create_layout_element
         #~ logger.debug("create_element(%r)", desc_name)
-        name, pkw = self.splitdesc(desc_name)
+        name, options = self.splitdesc(desc_name)
         if name in self._names:
             raise Exception(
                 'Duplicate element definition %s = %r in %s'
                 % (name, desc_name, self.layout))
         desc = getattr(self.layout, name, None)
         if desc is not None:
-            return self.define_panel(name, desc, **pkw)
-        e = create_layout_element(self, name, **pkw)
+            return self.define_panel(name, desc, **options)
+        e = create_layout_element(self, name, **options)
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
@@ -229,31 +229,30 @@ class LayoutHandle:
         self._names[name] = e
         return e
 
-    def splitdesc(self, picture):
-        kw = dict()
-        if picture.endswith(')'):
-            raise Exception("No longer supported since 20120630")
-            a = picture.split("(", 1)
-            if len(a) == 2:
-                pkw = eval('dict(' + a[1])
-                kw.update(pkw)
-                picture = a[0]
-                #~ return a[0],kw
+    def splitdesc(self, picture, **options):
+        """Parse the given element descriptor and return a tuple `(name,
+        options)` where `name` is the element name and `options` is a
+        `dict` with keyword arguments to be forwarded to the widget
+        constructor (:class:`LayoutElement`).
+
+        """
         a = picture.split(":", 1)
         if len(a) == 1:
-            return picture, {}
-        if len(a) == 2:
+            name = picture
+        elif len(a) == 2:
             name = a[0]
             a = a[1].split("x", 1)
             if len(a) == 1:
-                kw.update(width=int(a[0]))
-                #~ return name, dict(width=int(a[0]))
-                return name, kw
+                options.update(width=int(a[0]))
             elif len(a) == 2:
-                kw.update(width=int(a[0]), height=int(a[1]))
-                #~ return name, dict(width=int(a[0]),height=int(a[1]))
-                return name, kw
-        raise Exception("Invalid picture descriptor %s" % picture)
+                options.update(width=int(a[0]), height=int(a[1]))
+            else:
+                raise Exception("Invalid picture '%s'" % picture)
+        else:
+            raise Exception("Invalid picture '%s'" % picture)
+
+        options = self.layout._datasource.get_widget_options(name, **options)
+        return name, options
 
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):

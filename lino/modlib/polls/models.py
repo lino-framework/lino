@@ -247,6 +247,8 @@ class Question(mixins.Sequenced):
             #~ self.choiceset = self.poll.default_choiceset
         super(Question, self).full_clean()
 
+Question.set_widget_options('number', width=5)
+
 
 class Questions(dd.Table):
     model = 'polls.Question'
@@ -261,8 +263,9 @@ class Questions(dd.Table):
 
 class QuestionsByPoll(Questions):
     master_key = 'poll'
-    column_names = 'seqno number title is_heading *'
+    column_names = 'seqno number title:50 is_heading *'
     auto_fit_column_widths = True
+    stay_in_grid = True
 
 
 class ToggleChoice(dd.Action):
@@ -553,7 +556,7 @@ class AnswersByResponse(dd.VirtualTable):
         all_responses = rt.modules.polls.Response.objects.filter(
             poll=response.poll, partner=response.partner).order_by('date')
         ht = xghtml.Table()
-        ht.attrib.update(cellspacing="3px", bgcolor="#ffffff", width="100%")
+        ht.attrib.update(cellspacing="5px", bgcolor="#ffffff", width="100%")
         cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
         headers = [_("Question")]
         for r in all_responses:
@@ -572,10 +575,12 @@ class AnswersByResponse(dd.VirtualTable):
                 else:
                     other_answer = Answer(r, answer.question)
                     btn = unicode(other_answer)
+                if answer.remark.remark:
+                    btn = E.p(btn, E.br(), answer.remark.remark)
                 cells.append(btn)
             ht.add_body_row(*cells, **cellattrs)
         
-        return ht.as_element()  # rstgen.table(headers, rows)
+        return E.div(ht.as_element(), class_="htmlText")
 
     @dd.displayfield(_("My answer"))
     def answer_buttons(self, obj, ar):
@@ -615,7 +620,7 @@ class AnswersByResponse(dd.VirtualTable):
             sar.set_action_param_values(**pv)
             e = sar.ar2button(obj.response, text, style="text-decoration:none")
             elems.append(e)
-        return E.span(*join_elems(elems))
+        return E.span(*join_elems(elems), class_="htmlText")
 
     # @classmethod
     # def get_row_state(self, obj):
@@ -648,10 +653,10 @@ class AnswersByResponse(dd.VirtualTable):
                 obj.question.number, obj.question.title)
         else:
             txt = obj.question.title
+
+        attrs = dict(class_="htmlText")
         if obj.question.details:
-            attrs = dict(title=obj.question.details)
-        else:
-            attrs = dict()
+            attrs.update(title=obj.question.details)
         if obj.question.is_heading:
             txt = E.b(txt, **attrs)
         return E.span(txt, **attrs)

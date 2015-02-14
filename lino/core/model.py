@@ -188,6 +188,8 @@ class Model(models.Model):
     Internally used by :meth:`watch_changes`
     """
 
+    _widget_options = {}
+
     def as_list_item(self, ar):
         return E.li(unicode(self))
 
@@ -734,6 +736,27 @@ action on individual instances.
         # same as EmptyTableRow.get_print_language
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
+    @classmethod
+    def set_widget_options(self, name, **options):
+        """Set default values for the widget options of a given element.
+
+        Example::
+
+            JobSupplyment.set_widget_options('duration', width=10)
+
+        has the same effect as specifying ``duration:10`` each time
+        when using this element in a layout.
+
+        """
+        self._widget_options = dict(**self._widget_options)
+        d = self._widget_options.setdefault(name, {})
+        d.update(options)
+
+    @classmethod
+    def get_widget_options(self, name, **options):
+        options.update(self._widget_options.get(name, {}))
+        return options
+
     def get_printable_context(self, **kw):
         """Defines certain names of a template context.
 
@@ -749,6 +772,9 @@ action on individual instances.
         return kw
 
     LINO_MODEL_ATTRIBS = (
+        '_widget_options',
+        'set_widget_options',
+        'get_widget_options',
         'get_chooser_for_field',
         'get_detail_action',
         'get_print_language',

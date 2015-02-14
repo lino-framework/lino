@@ -1,0 +1,14 @@
+===========================
+Saturday, February 14, 2015
+===========================
+
+I started to work on the TODO list defined :doc:`0213`.
+
+Lino has another subtle feature:
+:meth:`lino.core.model.Model.set_widget_options`.
+I wanted this for the
+:attr:`duration <lino_welfare.modlib.jobs.mixins.JobSupplyment.duration>`
+of any job supplyment (
+:class:`jobs <lino_welfare.modlib.jobs.models.Contract>`
+or :class:`art61 <lino_welfare.modlib.art61.models.Contract>`
+)

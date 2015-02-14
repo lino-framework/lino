@@ -507,8 +507,7 @@ class Parametrizable(object):
     """
 
     params_panel_hidden = False
-    """
-    If this table has parameters, set this to True if the parameters
+    """If this table has parameters, set this to True if the parameters
     panel should be initially hidden when this table is being
     displayed.
 

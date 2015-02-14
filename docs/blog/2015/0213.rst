@@ -43,37 +43,33 @@ Added a new testcase:
 Evaluation de la version du 06 février
 ======================================
 
-TODO:
+DONE:
 
-- `immersion.ContractsByClient` and `art61.ContractsByClient`:
-
-  - column_names as in the document.
-  - remove `user_asd`
-
+- "Préjudicial" -> "Préjudiciable"
+- immersion.Contract : keep together company, contact_person and contact_role
+- immersion.Contract and art61.Contract : remove `user_asd` from detail
+- `ContractsByClient` (both `immersion` and `art61`): `column_names`
+  as in their document.
 - jobs.Jobs : show more columns
+- polls : AnswersByResponse : html view : use bigger font size (same
+  as for normal fields)
+- Il n'est pas possible d'encoder des textes libres
+- QuestionsByPoll : stay_in_grid = True.
+- QuestionsByPoll : Respect stay_in_grid also for DuplicateRow.
+
+TODO:
 
 - rendez-vous d'évaluation automatiques : ne fonctionne pas
   correctement s'il y a deux coachings actifs en cette date.
   Lino devrait sélectionner le primaire. (vraiment?)
   En tout cas il n'y a jamais deux agents présents.
 
-- taches automatiques par contrat:
-
-  - se font pour l'auteur du contrat, mais là aussi il faut les memes
-    règeles que pour les rendez-vous.
-
-- polls : AnswersByResponse : html view : use bigger font size (same
-  as for normal fields)
+- Les tâches automatiques par contrat se font actuellement pour
+  l'auteur du contrat, mais il faut les mêmes règles que pour les
+  rendez-vous.
 
 - quand j'ajoute un RAE dans ResponsesByPartner, Lino n'inscrit pas le
-  partenaire. (NBN Seulement pour RAE, pas pour INI)
-
-- "Préjudicial" -> "Préjudiciable"
-
-- QuestionsByPoll : stay_in_grid = True. Respect stay_in_grid also for
-  DuplicateRow.
-
-- Il n'est pas possible d'encoder des textes libres
+  partenaire. (NB Seulement pour RAE, pas pour INI)
 
 - Dans « temps de travail accepté », on ne sait en sélectionner qu’un à
   la fois alors qu’on devrait pouvoir en sélectionner plusieurs.
