@@ -31,6 +31,10 @@ The solution was in `subprocess.Popen.wait()
     blocks waiting for the OS pipe buffer to accept more data. Use
     communicate() to avoid that.
 
+Fixed a bug in :meth:`atelier.test.TestCase.run_subprocess` which
+could cause a subprocess to deadlock when it generated more output
+than the OS pipe buffer would swallow.
+
 I also noticed that I appearently re-run the process a second time
 when it returned with a non-zero code.
 
