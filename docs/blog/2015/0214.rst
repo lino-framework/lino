@@ -12,3 +12,27 @@ of any job supplyment (
 :class:`jobs <lino_welfare.modlib.jobs.models.Contract>`
 or :class:`art61 <lino_welfare.modlib.art61.models.Contract>`
 )
+
+
+Hah! The Python docs 
+contained the explanation for a "mysterious" deadlock which had caused
+me some "fun" during the last days. Problem:
+
+    For some reason yet to be discovered, the following test
+    snippets can cause doctest to enter an endless loop (while `python
+    manage.py show about.DetailLayouts` or `python manage.py show
+    about.WindowActions` work as expected).
+
+The solution was in `subprocess.Popen.wait()
+<https://docs.python.org/2.7/library/subprocess.html#subprocess.Popen.wait>`_:
+
+    This will deadlock when using stdout=PIPE and/or stderr=PIPE and
+    the child process generates enough output to a pipe such that it
+    blocks waiting for the OS pipe buffer to accept more data. Use
+    communicate() to avoid that.
+
+I also noticed that I appearently re-run the process a second time
+when it returned with a non-zero code.
+
+
+Result is visible in :ref:`welfare.tested.general`
