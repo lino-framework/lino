@@ -1,15 +1,17 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-
-This module is a shortcut to miscellaneous functions and classes which
+"""This module is a shortcut to miscellaneous functions and classes which
 are available "at runtime", i.e. when the Django machine has been
 initialized.
 
 You may *import* it at the global namespace of a :xfile:`models.py`
-file, but you should *use* it (access its members) only when the
-:func:`startup` function has been called.
+file, but you can *use* most of it only when the :func:`startup`
+function has been called.  
+
+.. attribute:: modules
+
+    Shortcut to :attr:`lino.core.site.Site.modules`
 
 """
 
@@ -18,7 +20,6 @@ from django.conf import settings
 from lino.core.utils import models_by_base
 
 modules = settings.SITE.modules
-"Shortcut to :attr:`lino.core.site.Site.modules`."
 
 login = settings.SITE.login
 startup = settings.SITE.startup

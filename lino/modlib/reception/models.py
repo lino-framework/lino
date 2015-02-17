@@ -258,9 +258,9 @@ cal.Guest.checkout = CheckoutVisitor(sort_index=102)
 @dd.receiver(dd.pre_analyze)
 def my_guest_workflows(sender=None, **kw):
     GuestStates.excused.add_transition(
-        states='invited waiting accepted absent')
+        states='invited accepted absent')
     GuestStates.absent.add_transition(
-        states='waiting invited accepted excused')
+        states='invited accepted excused')
 
 
 class AppointmentsByPartner(dd.Table):
@@ -403,8 +403,8 @@ class WaitingVisitors(Visitors):
     def since(self, obj, ar):
         return naturaltime(obj.waiting_since)
 
-    @dd.displayfield(_('Position'),
-                     help_text=_("Position in waiting queue (per agent)"))
+    @dd.displayfield(
+        _('Position'), help_text=_("Position in waiting queue (per agent)"))
     def position(self, obj, ar):
         n = 1 + rt.modules.cal.Guest.objects.filter(
             #~ waiting_since__isnull=False,

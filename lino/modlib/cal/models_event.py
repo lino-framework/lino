@@ -651,9 +651,9 @@ class EventDetail(dd.FormLayout):
 
 class EventInsert(EventDetail):
     main = """
-    event_type summary 
-    start end 
-    room priority access_class transparent 
+    event_type summary
+    start end
+    room priority access_class transparent
     """
 
 
@@ -810,7 +810,7 @@ class EventsByDay(Events):
 
     """
     label = _("Appointments today")
-    column_names = 'room summary owner workflow_buttons *'
+    column_names = 'room event_type summary owner workflow_buttons *'
     required = dd.required(user_groups='office')
     auto_fit_column_widths = True
     params_panel_hidden = False
@@ -904,67 +904,65 @@ class OneEvent(Events):
     use_as_default_table = False
     required = dd.required(user_groups='office')
 
-if settings.SITE.user_model:
 
-    class MyEvents(Events):
-        """
-        Table which shows today's and future appointments of the requesting
-        user.
-        The default filter parameters are set to show only
-        :term:`appointments <appointment>`.
+class MyEvents(Events):
+    """Table which shows today's and future appointments of the
+    requesting user.  The default filter parameters are set to show
+    only :term:`appointments <appointment>`.
 
-        """
-        label = _("My events")
-        help_text = _("Table of all my calendar events.")
-        required = dd.required(user_groups='office')
-        column_names = 'when_text project summary workflow_buttons *'
-        auto_fit_column_widths = True
+    """
+    label = _("My appointments")
+    help_text = _("Table of my appointments.")
+    required = dd.required(user_groups='office')
+    column_names = 'when_text project event_type summary workflow_buttons *'
+    auto_fit_column_widths = True
 
-        @classmethod
-        def param_defaults(self, ar, **kw):
-            kw = super(MyEvents, self).param_defaults(ar, **kw)
-            kw.update(user=ar.get_user())
-            kw.update(show_appointments=dd.YesNo.yes)
-            #~ kw.update(assigned_to=ar.get_user())
-            #~ logger.info("20130807 %s %s",self,kw)
-            kw.update(start_date=settings.SITE.today())
-            return kw
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(MyEvents, self).param_defaults(ar, **kw)
+        kw.update(user=ar.get_user())
+        kw.update(show_appointments=dd.YesNo.yes)
+        #~ kw.update(assigned_to=ar.get_user())
+        #~ logger.info("20130807 %s %s",self,kw)
+        kw.update(start_date=settings.SITE.today())
+        return kw
 
-        @classmethod
-        def create_instance(self, ar, **kw):
-            kw.update(start_date=ar.param_values.start_date)
-            return super(MyEvents, self).create_instance(ar, **kw)
+    @classmethod
+    def create_instance(self, ar, **kw):
+        kw.update(start_date=ar.param_values.start_date)
+        return super(MyEvents, self).create_instance(ar, **kw)
 
-    class MyAssignedEvents(MyEvents):
-        """
-        The table of events which are *assigned* to me. That is, whose
-        :attr:`Event.assigned_to` field refers to the requesting user.
 
-        This table also causes a :term:`welcome message` "X events have been
-        assigned to you" in case it is not empty.
+class MyAssignedEvents(MyEvents):
+    """
+    The table of events which are *assigned* to me. That is, whose
+    :attr:`Event.assigned_to` field refers to the requesting user.
 
-        """
-        label = _("Events assigned to me")
-        help_text = _("Table of events assigned to me.")
-        #~ master_key = 'assigned_to'
-        required = dd.required(user_groups='office')
-        #~ column_names = 'when_text:20 project summary workflow_buttons *'
-        #~ known_values = dict(assigned_to=EventStates.assigned)
+    This table also causes a :term:`welcome message` "X events have been
+    assigned to you" in case it is not empty.
 
-        @classmethod
-        def param_defaults(self, ar, **kw):
-            kw = super(MyAssignedEvents, self).param_defaults(ar, **kw)
-            kw.update(user=None)
-            kw.update(assigned_to=ar.get_user())
-            return kw
+    """
+    label = _("Events assigned to me")
+    help_text = _("Table of events assigned to me.")
+    #~ master_key = 'assigned_to'
+    required = dd.required(user_groups='office')
+    #~ column_names = 'when_text:20 project summary workflow_buttons *'
+    #~ known_values = dict(assigned_to=EventStates.assigned)
 
-        @classmethod
-        def get_welcome_messages(cls, ar, **kw):
-            sar = ar.spawn(cls)
-            count = sar.get_total_count()
-            if count > 0:
-                txt = _("%d events have been assigned to you.") % count
-                yield ar.href_to_request(sar, txt)
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(MyAssignedEvents, self).param_defaults(ar, **kw)
+        kw.update(user=None)
+        kw.update(assigned_to=ar.get_user())
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            txt = _("%d events have been assigned to you.") % count
+            yield ar.href_to_request(sar, txt)
 
 
 def update_reminders_for_user(user, ar):

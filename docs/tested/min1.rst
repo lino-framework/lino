@@ -56,7 +56,7 @@ Now test whether the file is really okay.
 Note that long titles are truncated:
 
 >>> print(s.name.strip())
-My events (Dates 23.10.2014 to
+My appointments (Dates 23.10.20
 
 It has 4 columns and 13 rows:
 

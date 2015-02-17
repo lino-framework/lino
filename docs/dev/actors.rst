@@ -60,9 +60,17 @@ Actually the application namespace is split across two places:
 Actors are classes, not instances
 =================================
 
-Actors are never instantiated, we use only the class objects.  Lino
-will automatically register each subclass of :class:`Actor` as an
-actor.
+Actors are never instantiated, we use only the class objects.
+
+
+Here is an example:
+
+.. literalinclude:: actors1.py
+
+The output will be::
+
+  This is <class '__main__.MyJournals'> with parameters = {'foo': 1, 'bar': 2}
+
 
 The main reason for this design choice is that it leads to more
 readable application code.  But it has some disadvantages:
@@ -75,6 +83,12 @@ readable application code.  But it has some disadvantages:
 
 We might decide one day that Lino creates an automatic singleton
 instance for each Actor at startup.
+
+
+
+
+Lino will automatically register each subclass of :class:`Actor` as an
+actor.
 
 
 

@@ -58,6 +58,7 @@ Getting acquaintained
 - :doc:`menu` : Standard items of a main menu
 - :doc:`choicelists` :
 - :doc:`actors` :
+- :doc:`parameters` :
 
 - :doc:`ar` : Using action requests
 - :doc:`html` : Generating HTML
@@ -84,6 +85,7 @@ Getting acquaintained
    menu
    choicelists
    actors
+   parameters
    ar
    html
    custom_actions

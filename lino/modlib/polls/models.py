@@ -269,6 +269,7 @@ class Questions(dd.Table):
     poll number is_heading choiceset multiple_choices
     title
     details
+    AnswersByQuestion
     """
     order_by = ['poll', 'seqno']
 
@@ -621,7 +622,7 @@ class AnswersByResponse(dd.VirtualTable):
                                        # get_data_rows() needs it.
         editable = Responses.update_action.request_from(ar).get_permission(
             response)
-        kv = dict(response=r)
+        kv = dict(response=response)
         insert = AnswerRemarks.insert_action.request_from(
             ar, known_values=kv)
         detail = AnswerRemarks.detail_action.request_from(ar)
@@ -729,6 +730,67 @@ class AnswersByResponse(dd.VirtualTable):
         if obj.question.is_heading:
             txt = E.b(txt, **attrs)
         return E.span(txt, **attrs)
+
+
+class AnswersByQuestionRow(object):
+    """Volatile object to represent a row of :class:`AnswersByQuestion`.
+
+    """
+    FORWARD_TO_RESPONSE = tuple(
+        "full_clean after_ui_save disable_delete".split())
+
+    def __init__(self, response, question):
+        self.response = response
+        self.question = question
+        # Needed by AnswersByQuestion.get_row_by_pk
+        self.pk = self.id = response.pk
+        try:
+            self.remark = AnswerRemark.objects.get(
+                question=question, response=response).remark
+        except AnswerRemark.DoesNotExist:
+            self.remark = ''
+
+        self.choices = AnswerChoice.objects.filter(
+            question=question, response=response)
+        for k in self.FORWARD_TO_RESPONSE:
+            setattr(self, k, getattr(question, k))
+
+    def __unicode__(self):
+        if self.choices.count() == 0:
+            return unicode(_("N/A"))
+        return ', '.join([unicode(ac.choice) for ac in self.choices])
+
+
+class AnswersByQuestion(dd.VirtualTable):
+    """The rows of this table are volatile :class:`AnswersByQuestionRow`
+instances.
+
+    """
+    label = _("Answers")
+    master = 'polls.Question'
+    column_names = 'response:40 answer:30 remark:20 *'
+    variable_row_height = True
+    auto_fit_column_widths = True
+
+    @classmethod
+    def get_data_rows(self, ar):
+        question = ar.master_instance
+        if question is None:
+            return
+        for r in rt.modules.polls.Response.objects.filter(poll=question.poll):
+            yield AnswersByQuestionRow(r, question)
+
+    @dd.displayfield(_("Response"))
+    def response(self, obj, ar):
+        return ar.obj2html(obj.response)
+
+    @dd.displayfield(_("Remark"))
+    def remark(self, obj, ar):
+        return obj.remark
+
+    @dd.displayfield(_("Answer"))
+    def answer(self, obj, ar):
+        return unicode(obj)
 
 
 class PollResult(Questions):
