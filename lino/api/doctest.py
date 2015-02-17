@@ -15,7 +15,12 @@ from lino.utils.xmlgen.html import E
 
 client = Client()
 
+
 def get_json_soup(username, uri, fieldname, an='detail'):
+    """Being authentified as `username`, perform a web request to `uri` of
+    the test client.
+
+    """
     url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
     res = client.get(url, REMOTE_USER=username)
     assert res.status_code == 200

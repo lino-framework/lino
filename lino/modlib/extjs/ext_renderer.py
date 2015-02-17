@@ -73,8 +73,7 @@ def prepare_label(mi):
 
 
 class ExtRenderer(HtmlRenderer):
-    """
-    A HTML renderer that uses the ExtJS Javascript toolkit.
+    """An HTML renderer that uses the ExtJS Javascript toolkit.
 
     """
     is_interactive = True
@@ -210,9 +209,9 @@ class ExtRenderer(HtmlRenderer):
 
         """
         label = unicode(label or ba.get_button_label())
-        href = 'javascript:' + self.action_call(ar, ba, status)
+        uri = self.js2url(self.action_call(ar, ba, status))
         return self.href_button_action(
-            ba, href, label, title or ba.action.help_text, **kw)
+            ba, uri, label, title or ba.action.help_text, **kw)
 
     def put_button(self, ar, obj, text, data, **kw):
 
@@ -221,10 +220,11 @@ class ExtRenderer(HtmlRenderer):
             fld = obj._meta.get_field(k)
             fld._lino_atomizer.value2dict(v, put_data, obj)
 
-        uri = 'javascript:Lino.put(%s,%s,%s)' % (
+        js = 'Lino.put(%s,%s,%s)' % (
             py2js(ar.requesting_panel),
             py2js(obj.pk),
             py2js(put_data))
+        uri = self.js2url(js)
         return self.href_button(uri, text, **kw)
 
     def quick_manage_toolbar(self, ar, obj):
@@ -362,12 +362,10 @@ class ExtRenderer(HtmlRenderer):
     def obj2html(self, ar, obj, text=None, **kw):
         if not text:
             text = unicode(obj)
+
         h = self.instance_handler(ar, obj)
-        if h is None:
-            return self.href_button(None, text, **kw)
-        return self.href_button('javascript:' + h, text, **kw)
-        # e = xghtml.E.a(*text, href=uri)
-        # return e
+        uri = self.js2url(h)
+        return self.href_button(uri, text, **kw)
 
     def build_admin_url(self, *args, **kw):
         return self.plugin.build_plain_url(*args, **kw)

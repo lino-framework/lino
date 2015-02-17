@@ -1080,12 +1080,12 @@ class Store(BaseStore):
                         if m is not None:
                             changed_triggers.append(m)
                 except exceptions.ValidationError as e:
-                    logger.warning("20150127 store (field %s) : %s",
-                                   f.name, e)
+                    # logger.warning("20150127 store (field %s) : %s",
+                    #                f.name, e)
                     raise exceptions.ValidationError({f.name: e.messages})
                 except ValueError as e:
-                    logger.warning("20150127 store (field %s) : %s",
-                                   f.name, e)
+                    # logger.warning("20150127 store (field %s) : %s",
+                    #                f.name, e)
                     raise exceptions.ValidationError(
                         {f.name: _("Invalid value for this field (%s).") % e})
                 except Exception as e:

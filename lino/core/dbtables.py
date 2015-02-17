@@ -279,7 +279,9 @@ def discover():
 
     logger.debug("Analyze %d slave tables...", len(slave_reports))
     for rpt in slave_reports:
-        rpt.master = resolve_model(rpt.master)
+        if isinstance(rpt.master, basestring):
+            raise Exception("20150216")
+        # rpt.master = resolve_model(rpt.master)
         slaves = getattr(rpt.master, "_lino_slaves", None)
         if slaves is None:
             slaves = {}
@@ -442,6 +444,11 @@ class Table(AbstractTable):
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
+        """Implements :meth:`get_row_by_pk
+        <lino.core.actors.Actor.get_row_by_pk>` for a database
+        table.
+
+        """
         try:
             return self.model.objects.get(pk=pk)
         except ValueError:

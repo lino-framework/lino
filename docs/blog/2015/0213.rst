@@ -53,9 +53,11 @@ DONE:
 - jobs.Jobs : show more columns
 - polls : AnswersByResponse : html view : use bigger font size (same
   as for normal fields)
-- Il n'est pas possible d'encoder des textes libres
 - QuestionsByPoll : stay_in_grid = True.
 - QuestionsByPoll : Respect stay_in_grid also for DuplicateRow.
+- quand j'ajoute un RAE dans ResponsesByPartner, Lino n'inscrit pas le
+  partenaire. (NB Seulement pour RAE, pas pour INI)
+- Il n'est pas possible d'encoder des textes libres.
 
 TODO:
 
@@ -67,9 +69,6 @@ TODO:
 - Les tâches automatiques par contrat se font actuellement pour
   l'auteur du contrat, mais il faut les mêmes règles que pour les
   rendez-vous.
-
-- quand j'ajoute un RAE dans ResponsesByPartner, Lino n'inscrit pas le
-  partenaire. (NB Seulement pour RAE, pas pour INI)
 
 - Dans « temps de travail accepté », on ne sait en sélectionner qu’un à
   la fois alors qu’on devrait pouvoir en sélectionner plusieurs.

@@ -262,7 +262,9 @@ request from it.
 
     def get_permission(self, obj, **kw):
         """Whether this request has permission to run on the given database
-object."""
+        object.
+
+        """
         state = self.bound_action.actor.get_row_state(obj)
         return self.bound_action.get_row_permission(self, obj, state)
         
@@ -561,7 +563,7 @@ object."""
     def ar2button(self, obj, *args, **kw):
         """Return an HTML element with a button for running this action
          request on the given database object. Does not spawn another
-         request.
+         request. Does not check permission.
 
         """
         return self.renderer.ar2button(self, obj, *args, **kw)
@@ -790,11 +792,7 @@ class ActorRequest(BaseRequest):
                 param_values=self.actor.params_layout.params_store.pv2dict(
                     self.param_values))
 
-        if self.bound_action.action.parameters is not None:
-            defaults = kw.get('field_values', {})
-            pv = self.bound_action.action.params_layout.params_store.pv2dict(
-                self.action_param_values, **defaults)
-            kw.update(field_values=pv)
+        kw = self.bound_action.action.get_status(self, **kw)
 
         bp = kw.setdefault('base_params', {})
 

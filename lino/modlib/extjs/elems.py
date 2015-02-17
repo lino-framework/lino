@@ -419,6 +419,8 @@ class LayoutElement(VisibleComponent):
                     self.preferred_width += len(self.label)
 
     def ext_options(self, **kw):
+        if self.hidden:
+            kw.update(hidden=True)
         if isinstance(self.parent, TabPanel):
             if not self.label:
                 raise Exception(

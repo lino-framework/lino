@@ -38,10 +38,10 @@ class Plugin(ad.Plugin):
 
     def setup_explorer_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
-        m.add_action('polls.Polls')
+        m.add_action('polls.AllPolls')
         m.add_action('polls.Questions')
         m.add_action('polls.Choices')
-        m.add_action('polls.Responses')
+        m.add_action('polls.AllResponses')
         m.add_action('polls.AnswerChoices')
-        m.add_action('polls.AnswerRemarks')
+        m.add_action('polls.AllAnswerRemarks')
         #~ m.add_action('polls.Answers')

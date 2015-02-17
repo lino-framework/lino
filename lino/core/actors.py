@@ -528,6 +528,20 @@ class Actor(actions.Parametrizable):
         return None
 
     @classmethod
+    def get_master_instance(self, ar, pk):
+        """Return the `master_instance` corresponding to the specified primary
+        key. `ar` is an action request on this actor.
+
+        """
+        try:
+            return self.master.objects.get(pk=pk)
+        except ValueError:
+            return None
+        except self.master.DoesNotExist:
+            return None
+
+
+    @classmethod
     def disabled_fields(cls, obj, ar):
         """
         Return a set of field names that should not be editable
@@ -637,7 +651,7 @@ class Actor(actions.Parametrizable):
 
         """
         master = getattr(cls, 'master', None)
-        if master is not None:
+        if isinstance(master, basestring):
             cls.master = resolve_model(master)
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)

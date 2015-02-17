@@ -2764,7 +2764,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log("20111201 containing_window",this.containing_window,this);
 
 
-    var actions = Lino.build_buttons(this,this.ls_bbar_actions);
+    var actions = Lino.build_buttons(this, this.ls_bbar_actions);
     if (actions) {
         this.bbar = actions.bbar;
     //~ } else {
@@ -3190,10 +3190,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     var main = this.items.get(0);
     if (main.activeTab) {
       var tab = main.items.indexOf(main.activeTab);
-      console.log('20150130 main.activeTab', tab, main.activeTab);
+      // console.log('20150130 main.activeTab', tab, main.activeTab);
       if (tab) p.{{ext_requests.URL_PARAM_TAB}} = tab;
-    } else {
-      console.log('20150130 no main.activeTab');
+    // } else {
+    //   console.log('20150130 no main.activeTab');
     }
   },
   get_permalink_params : function() {
@@ -3245,8 +3245,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
     this.add_param_tab(p)
-    console.log('20150130 FormPanel.save()', rec, 
-                p.{{ext_requests.URL_PARAM_TAB}});
+    console.log('20150216 FormPanel.save()', rec, this.form);
     var submit_config = {
         params: p, 
         scope: this,

@@ -46,8 +46,6 @@ config = dd.plugins.polls
 
 NullBooleanField = models.NullBooleanField
 
-NUMBERED_TITLE_FORMAT = "%s) %s"
-
 
 class ChoiceSet(mixins.BabelNamed):
 
@@ -57,7 +55,8 @@ class ChoiceSet(mixins.BabelNamed):
 
 
 class ChoiceSets(dd.Table):
-    model = ChoiceSet
+    required = dd.Required(user_level='manager')
+    model = 'polls.ChoiceSet'
     detail_layout = """
     name
     ChoicesBySet
@@ -85,10 +84,12 @@ class Choice(mixins.BabelNamed, mixins.Sequenced):
 
 class Choices(dd.Table):
     model = 'polls.Choice'
+    required = dd.Required(user_level='manager')
 
 
 class ChoicesBySet(Choices):
     master_key = 'choiceset'
+    required = dd.Required()
 
 
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
@@ -199,12 +200,21 @@ class Polls(dd.Table):
     """, window_size=(60, 15))
 
 
+class AllPolls(Polls):
+    required = dd.Required(user_level='manager')
+    column_names = 'id ref title user state *'
+
+
 class MyPolls(ByUser, Polls):
     column_names = 'ref title state *'
 
 
 class Question(mixins.Sequenced):
-    """A question of a poll."""
+    """A question of a poll.
+
+.. attribute:: number
+
+    """
     class Meta:
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
@@ -217,16 +227,17 @@ class Question(mixins.Sequenced):
     title = models.CharField(pgettext("polls", "Title"), max_length=200)
     details = models.TextField(_("Details"), blank=True)
 
-    # text = models.TextField(verbose_name=_("Text"))
     choiceset = models.ForeignKey('polls.ChoiceSet', blank=True, null=True)
     multiple_choices = models.BooleanField(
         _("Allow multiple choices"), blank=True)
     is_heading = models.BooleanField(_("Heading"), default=False)
 
+    NUMBERED_TITLE_FORMAT = "%s) %s"
+
     def __unicode__(self):
         #~ return self.text[:40].strip() + ' ...'
         if self.number:
-            return NUMBERED_TITLE_FORMAT % (self.number, self.title)
+            return self.NUMBERED_TITLE_FORMAT % (self.number, self.title)
         return self.title
 
     def get_siblings(self):
@@ -251,6 +262,7 @@ Question.set_widget_options('number', width=5)
 
 
 class Questions(dd.Table):
+    required = dd.Required(user_level='manager')
     model = 'polls.Question'
     column_names = "seqno poll number title choiceset is_heading *"
     detail_layout = """
@@ -262,6 +274,7 @@ class Questions(dd.Table):
 
 
 class QuestionsByPoll(Questions):
+    required = dd.Required()
     master_key = 'poll'
     column_names = 'seqno number title:50 is_heading *'
     auto_fit_column_widths = True
@@ -362,14 +375,9 @@ class Responses(dd.Table):
     poll
     """
 
-    # workflow_state_field = 'state'
 
-    @classmethod
-    def unused_get_detail_title(self, ar, obj):
-        txt = _("response to %(poll)s") % dict(poll=obj.poll)
-        if obj.user == ar.get_user():
-            return _("My %s") % txt
-        return _("%(user)s's %(what)s") % dict(user=obj.user, what=txt)
+class AllResponses(Responses):
+    required = dd.Required(user_level='manager')
 
 
 class MyResponses(ByUser, Responses):
@@ -392,7 +400,7 @@ class ResponsesByPartner(Responses):
 
     @classmethod
     def get_slave_summary(self, obj, ar):
-        """Displays a summary of all responses for this partner. This is a
+        """Displays a summary of all responses for a given partner using a
         bullet list grouped by poll.
 
         """
@@ -407,17 +415,16 @@ class ResponsesByPartner(Responses):
         for resp in qs:
             polls_responses.setdefault(resp.poll.pk, []).append(resp)
             
-        sar = self.request_from(ar, obj)
         items = []
         for poll in visible_polls:
+            sar = self.request_from(ar, obj, known_values=dict(poll=poll))
             elems = [unicode(poll), ' : ']
             responses = polls_responses.get(poll.pk, [])
             elems += join_elems(
                 [ar.obj2html(r, dd.fds(r.date))
                  for r in responses], sep=', ')
             if poll.state == PollStates.published:
-                elems += [' ', sar.insert_button(known_values=dict(
-                    poll=poll))]
+                elems += [' ', sar.insert_button()]
             items.append(E.li(*elems))
         return E.div(E.ul(*items))
 
@@ -442,6 +449,7 @@ class AnswerChoice(dd.Model):
 
 
 class AnswerChoices(dd.Table):
+    required = dd.Required(user_level='admin')
     model = 'polls.AnswerChoice'
 
 
@@ -456,32 +464,75 @@ class AnswerRemark(dd.Model):
     question = models.ForeignKey('polls.Question')
     remark = models.TextField(_("My remark"), blank=True)
 
+    def __unicode__(self):
+        # return _("Remark for {0}").format(self.question)
+        return unicode(self.question)
+
 
 class AnswerRemarks(dd.Table):
-    model = 'polls.AnswerRemarks'
+    model = 'polls.AnswerRemark'
+    detail_layout = dd.DetailLayout("""
+    remark
+    response question
+    """, window_size=(60, 10))
+    hidden_elements = dd.fields_list(AnswerRemark, 'response question')
+    stay_in_grid = True
 
-FORWARD_TO_QUESTION = tuple("full_clean after_ui_save disable_delete".split())
+
+class AnswerRemarksByAnswer(AnswerRemarks):
+    use_as_default_table = False
+    hide_top_toolbar = True
 
 
-class Answer(object):
+class AllAnswerRemarks(AnswerRemarks):
+    required = dd.Required(user_level='admin')
+
+# class RemarksByAnswer(AnswerRemarks):
+#     pass
+    # master = Answer
+    # master_key = 'question'
+    # detail_layout = dd.DetailLayout("""
+    # remark
+    # """, window_size=(60, 10))
+
+    # @classmethod
+    # def get_master_instance(self, ar, pk):
+    #     response = ar.master_instance
+    #     q = Question.objects.get(pk=pk)
+    #     return Answer(response, q)
+
+    # @classmethod
+    # def get_filter_kw(self, ar, **kw):
+    #     kw.update(response=ar.master_instance.response)
+    #     return kw
+
+
+class AnswersByResponseRow(object):
     """Volatile object to represent the one and only answer to a given
     question in a given response.
+    
+    Used by :class:`AnswersByResponse` whose rows are instances of
+    this.
 
     """
+    FORWARD_TO_QUESTION = tuple(
+        "full_clean after_ui_save disable_delete".split())
 
     def __init__(self, response, question):
         self.response = response
         self.question = question
+        # Needed by AnswersByResponse.get_row_by_pk
         self.pk = self.id = question.pk
         try:
             self.remark = AnswerRemark.objects.get(
                 question=question, response=response)
         except AnswerRemark.DoesNotExist:
-            self.remark = AnswerRemark(question=question, response=response)
+            self.remark = AnswerRemark(
+                question=question, response=response)
 
         self.choices = AnswerChoice.objects.filter(
             question=question, response=response)
-        for k in FORWARD_TO_QUESTION:
+        for k in self.FORWARD_TO_QUESTION:
             setattr(self, k, getattr(question, k))
 
     def __unicode__(self):
@@ -491,7 +542,6 @@ class Answer(object):
 
 
 class AnswerRemarkField(dd.VirtualField):
-
     """
     An editable virtual field.
     """
@@ -513,13 +563,14 @@ class AnswerRemarkField(dd.VirtualField):
 
 
 class AnswersByResponse(dd.VirtualTable):
-    """The table used for answering to a poll.
+    """The table used for answering to a poll. The rows of this table are
+    volatile :class:`AnswersByResponseRow` instances.
 
-.. attribute:: answer_buttons
+    .. attribute:: answer_buttons
 
-    A virtual field that displays the currently selected answer(s) for
-    this question, eventually (if editing is permitted) together with
-    buttons to modify the selection.
+        A virtual field that displays the currently selected answer(s) for
+        this question, eventually (if editing is permitted) together with
+        buttons to modify the selection.
 
     """
     label = _("Answers")
@@ -538,8 +589,8 @@ class AnswersByResponse(dd.VirtualTable):
         response = ar.master_instance
         if response is None:
             return
-        for q in Question.objects.filter(poll=response.poll):
-            yield Answer(response, q)
+        for q in rt.modules.polls.Question.objects.filter(poll=response.poll):
+            yield AnswersByResponseRow(response, q)
 
     @classmethod
     def get_slave_summary(self, response, ar):
@@ -553,6 +604,7 @@ class AnswersByResponse(dd.VirtualTable):
             return
         if response.poll_id is None:
             return
+        AnswerRemarks = rt.modules.polls.AnswerRemarksByAnswer
         all_responses = rt.modules.polls.Response.objects.filter(
             poll=response.poll, partner=response.partner).order_by('date')
         ht = xghtml.Table()
@@ -567,17 +619,43 @@ class AnswersByResponse(dd.VirtualTable):
         ht.add_header_row(*headers, **cellattrs)
         ar.master_instance = response  # must set it because
                                        # get_data_rows() needs it.
+        editable = Responses.update_action.request_from(ar).get_permission(
+            response)
+        kv = dict(response=r)
+        insert = AnswerRemarks.insert_action.request_from(
+            ar, known_values=kv)
+        detail = AnswerRemarks.detail_action.request_from(ar)
+        # editable = insert.get_permission(response)
         for answer in self.get_data_rows(ar):
             cells = [self.question.value_from_object(answer, ar)]
             for r in all_responses:
-                if r == response:
-                    btn = self.answer_buttons.value_from_object(answer, ar)
+                if editable and r == response:
+                    insert.known_values.update(question=answer.question)
+                    detail.known_values.update(question=answer.question)
+                    items = [
+                        self.answer_buttons.value_from_object(answer, ar)]
+                    if answer.remark.remark:
+                        items += [E.br(), answer.remark.remark]
+                    if answer.remark.pk:
+                        items += [
+                            ' ',
+                            detail.ar2button(
+                                answer.remark, _("Remark"),
+                                icon_name=None)]
+                            # ar.obj2html(answer.remark, _("Remark"))]
+                    else:
+                        btn = insert.ar2button(
+                            answer.remark, _("Remark"), icon_name=None)
+                        # sar = RemarksByAnswer.request_from(ar, answer)
+                        # btn = sar.insert_button(_("Remark"), icon_name=None)
+                        items += [" (", btn, ")"]
+                        
                 else:
-                    other_answer = Answer(r, answer.question)
-                    btn = unicode(other_answer)
-                if answer.remark.remark:
-                    btn = E.p(btn, E.br(), answer.remark.remark)
-                cells.append(btn)
+                    other_answer = AnswersByResponseRow(r, answer.question)
+                    items = [unicode(other_answer)]
+                    if other_answer.remark.remark:
+                        items += [E.br(), answer.remark.remark]
+                cells.append(E.p(*items))
             ht.add_body_row(*cells, **cellattrs)
         
         return E.div(ht.as_element(), class_="htmlText")
@@ -591,9 +669,7 @@ class AnswersByResponse(dd.VirtualTable):
 
         elems = []
         pv = dict(question=obj.question)
-        # ia = obj.response.toggle_choice
 
-        # ba = Responses.get_action_by_name('toggle_choice')
         ba = Responses.actions.toggle_choice
         if ba is None:
             raise Exception("No toggle_choice on {0}?".format(ar.actor))
@@ -606,10 +682,12 @@ class AnswersByResponse(dd.VirtualTable):
         if not sar.get_permission(obj.response):
             return unicode(obj)
 
+        AnswerChoice = rt.modules.polls.AnswerChoice
         for c in cs.choices.all():
             pv.update(choice=c)
             text = unicode(c)
-            qs = AnswerChoice.objects.filter(response=obj.response, **pv)
+            qs = AnswerChoice.objects.filter(
+                response=obj.response, **pv)
             if qs.count() == 1:
                 text = [E.b('[', text, ']')]
             elif qs.count() == 0:
@@ -622,25 +700,16 @@ class AnswersByResponse(dd.VirtualTable):
             elems.append(e)
         return E.span(*join_elems(elems), class_="htmlText")
 
-    # @classmethod
-    # def get_row_state(self, obj):
-    #     return obj.response.state
-
     @classmethod
     def get_pk_field(self):
         return Question._meta.pk
-        #~ return AnswerPKField()
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
         response = ar.master_instance
         #~ if response is None: return
-        q = Question.objects.get(pk=pk)
-        return Answer(response, q)
-
-    # @classmethod
-    # def get_row_permission(cls, obj, ar, state, ba):
-    #     return obj.response.get_row_permission(ar, state, ba)
+        q = rt.modules.polls.Question.objects.get(pk=pk)
+        return AnswersByResponseRow(response, q)
 
     @classmethod
     def disable_delete(self, obj, ar):
@@ -649,7 +718,7 @@ class AnswersByResponse(dd.VirtualTable):
     @dd.displayfield(_("Question"))
     def question(self, obj, ar):
         if obj.question.number:
-            txt = NUMBERED_TITLE_FORMAT % (
+            txt = obj.question.NUMBERED_TITLE_FORMAT % (
                 obj.question.number, obj.question.title)
         else:
             txt = obj.question.title

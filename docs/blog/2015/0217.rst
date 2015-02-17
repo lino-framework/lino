@@ -1,0 +1,46 @@
+==========================
+Tuesday, February 17, 2015
+==========================
+
+Cool: It is now possible to answer free text via the summary view of
+:class:`polls.AnswersByResponse
+<lino.modlib.polls.models.AnswersByResponse>` (asked by Mathieu
+:doc:`0213`).  This change was quite a challenge.  It took me two days
+and caused some subtle new features to Lino:
+
+- Fields specified as :attr:`hidden_elements
+  <lino.core.actor.Actor.hidden_elements>` of an actor used to simply
+  have no effect in any :class:`FormLayout
+  <lino.core.layouts.FormLayout>`. Now they have: they are included as
+  hidden fields, so they can hold data, and submitting the form will
+  transmit their data.  The actual change is in
+  :meth:`LayoutHandle.create_element
+  <lino.core.layouts.LayoutHandle.create_element>`.
+
+- It is now possible to define a slave table with a `master` which is
+  not a subclass of `django.db.models.Model`. This feature is not used
+  however. I thought that I would need it, then realized that the
+  master for AnswersByResponse is a normal database model
+  'polls.Response'.
+
+- It is now possible to replace::
+
+    btn = ar.insert_button(...)
+
+  by::
+
+    sar = insert_action.request_from(ar, ...)
+    btn = sar.ar2button(...)
+
+  The summary view of :class:`polls.AnswersByResponse
+  <lino.modlib.polls.models.AnswersByResponse>` shows why it is
+  important that :meth:`ar2button
+  <lino.core.requests.BaseRequest.ar2button>` does not check
+  permissions.
+
+  This change includes the new method
+  :meth:`lino.core.actions.Action.get_status`.  (TODO: Formalize the
+  "status" using a class object :class:`ValidWindowStates
+  <lino.core.requests.ValidWindowStates>`, similar to
+  :class:`ValidActionResponses
+  <lino.core.requests.ValidActionResponses>`).

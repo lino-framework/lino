@@ -44,16 +44,13 @@ class TableRequest(ActionRequest):
     master_instance = None
     master = None
 
-    #~ instance = None
     extra = None
     title = None
-    #~ layout = None
     filter = None
     known_values = None
 
     limit = None
     offset = None
-    #~ create_rows = None
 
     _data_iterator = None
     _sliced_data_iterator = None
@@ -152,15 +149,32 @@ class TableRequest(ActionRequest):
         return self.data_iterator.__iter__()
 
     def parse_req(self, request, rqdata, **kw):
+        """Parse the incoming HttpRequest and translate it into keyword
+        arguments to be used by :meth:`setup`.
+
+        The `mt` url param is parsed only when needed. Usually it is
+        not needed because the `master_class` is constant and known
+        per actor. But there are exceptions:
+
+        - `master` is `ContentType`
+
+        - `master` is some abstract model
+
+        - `master` is not a subclass of Model, e.g.
+          :class:`lino.modlib.polls.models.AnswersByResponse`, a
+          virtual table which defines :meth:`get_row_by_pk
+          <lino.core.actors.Actor.get_row_by_pk>`.
+
+        """
         #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master', self.actor.master)
         if master is not None:
-            """
-            If `master` is `ContentType` or some abstract model, then
-            """
-            #~ if master is ContentType or master is models.Model:
-            if master is ContentType or master._meta.abstract:
+
+            if not isinstance(master, type):
+                raise Exception("20150216 not a type: %r" % master)
+            if issubclass(master, models.Model) and (
+                    master is ContentType or master._meta.abstract):
                 mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
                 try:
                     master = kw['master'] = ContentType.objects.get(
@@ -178,18 +192,12 @@ class TableRequest(ActionRequest):
                 if pk is None:
                     kw['master_instance'] = None
                 else:
-                    try:
-                        kw['master_instance'] = master.objects.get(pk=pk)
-                    except ValueError:
+                    mi = self.actor.get_master_instance(self, pk)
+                    if mi is None:
                         raise Exception(
-                            "Invalid primary key %r for %s",
-                            pk, master.__name__)
-                    except master.DoesNotExist:
-                        # todo: ReportRequest should become a subclass of
-                        # Dialog and this exception should call dlg.error()
-                        raise Exception(
-                            "%s : There's no %s with primary key %r" %
-                            (self.actor, master.__name__, pk))
+                            "Invalid master key {0} for {1}".format(
+                                pk, self.actor))
+                    kw['master_instance'] = mi
                 # ~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
 
@@ -294,29 +302,15 @@ class TableRequest(ActionRequest):
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
 
-        #~ if master is not None:
-            #~ if not isinstance(master_instance,master):
-                #~ raise Exception("%r is not a %r" % (master_instance,master))
-
         self.master_instance = master_instance
 
-        #~ AbstractTableRequest.setup(self,**kw)
-
-        """
-        Table.page_length is not a default value for ReportRequest.limit
-        For example CSVReportRequest wants all rows.
-        """
+        # Table.page_length is not a default value for ReportRequest.limit
+        # For example CSVReportRequest wants all rows.
         self.page_length = self.actor.page_length
 
         #~ logger.info("20120121 %s.setup() done",self)
 
-        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
-            #~ print '20130327 1 tables.py', kw.get('master_instance')
-
         ActionRequest.setup(self, **kw)
-
-        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
-            #~ print '20130327 2 tables.py', self, self.master_instance
 
         # 20120519 : outbox.MyOutbox had no phantom record when called
         # from menu.  When called by permalink it had. Because
@@ -550,10 +544,10 @@ class TableRequest(ActionRequest):
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
                     bp[constants.URL_PARAM_MASTER_TYPE] = mt
-                else:
-                    logger.warning("20141205 %s %s",
-                                   self.master_instance,
-                                   ContentType)
+                # else:
+                #     logger.warning("20141205 %s %s",
+                #                    self.master_instance,
+                #                    ContentType)
         return kw
 
     def __repr__(self):

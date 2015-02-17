@@ -400,6 +400,14 @@ class Action(Parametrizable, Permittable):
         return self.opens_a_window or (
             self.parameters and not self.no_params_window)
 
+    def get_status(self, ar, **kw):
+        if self.parameters is not None:
+            defaults = kw.get('field_values', {})
+            pv = self.params_layout.params_store.pv2dict(
+                ar.action_param_values, **defaults)
+            kw.update(field_values=pv)
+        return kw
+
     def get_chooser_for_field(self, fieldname):
         d = getattr(self, '_choosers_dict', {})
         return d.get(fieldname, None)
@@ -789,6 +797,12 @@ class InsertRow(TableAction):
         if settings.SITE.user_model and ar.get_user().profile.readonly:
             return False
         return super(InsertRow, self).get_action_permission(ar, obj, state)
+
+    def get_status(self, ar, **kw):
+        kw = super(InsertRow, self).get_status(ar, **kw)
+        elem = ar.create_instance()
+        kw.update(data_record=ar.elem2rec_insert(ar.ah, elem))
+        return kw
 
 
 class ShowEmptyTable(ShowDetailAction):

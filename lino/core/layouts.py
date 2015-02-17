@@ -208,7 +208,7 @@ class LayoutHandle:
         name, options = self.splitdesc(desc_name)
         if name in self._names:
             raise Exception(
-                'Duplicate element definition %s = %r in %s'
+                'Duplicate element usage %s = %r in %s'
                 % (name, desc_name, self.layout))
         desc = getattr(self.layout, name, None)
         if desc is not None:
@@ -217,8 +217,9 @@ class LayoutHandle:
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
-            if isinstance(self.layout, FormLayout):
-                return None
+            # 20150216 hidden formpanel fields
+            # if isinstance(self.layout, FormLayout):
+            #     return None
             if isinstance(e, list):  # it is a babelfield
                 for be in e:
                     be.hidden = True
