@@ -21,13 +21,17 @@ lino.modlib.polls.models
 
    .. autosummary::
    
-      Answer
+      AllAnswerRemarks
+      AllPolls
+      AllResponses
       AnswerChoice
       AnswerChoices
       AnswerRemark
       AnswerRemarkField
       AnswerRemarks
+      AnswerRemarksByAnswer
       AnswersByResponse
+      AnswersByResponseRow
       ByUser
       Choice
       ChoiceSet
