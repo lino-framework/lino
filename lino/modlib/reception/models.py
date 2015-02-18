@@ -266,11 +266,8 @@ def my_guest_workflows(sender=None, **kw):
 class AppointmentsByPartner(dd.Table):
     label = _("Appointments")
     model = 'cal.Guest'
-    #~ detail_layout = cal.Guests.detail_layout
     master_key = 'partner'
-    #~ column_names = 'event__start_date event__user workflow_buttons'
     column_names = 'event__when_text event__user workflow_buttons'
-    #~ slave_grid_format = 'html'
     editable = False
     auto_fit_column_widths = True
     variable_row_height = True
@@ -282,9 +279,10 @@ class AppointmentsByPartner(dd.Table):
         if isinstance(qs, list):
             return qs
         start_date = settings.SITE.today() - datetime.timedelta(days=17)
-        end_date = settings.SITE.today() + datetime.timedelta(days=17)
-        qs = qs.filter(event__start_date__gte=start_date,
-                       event__start_date__lte=end_date)
+        # end_date = settings.SITE.today() + datetime.timedelta(days=17)
+        # qs = qs.filter(event__start_date__gte=start_date,
+        #                event__start_date__lte=end_date)
+        qs = qs.filter(event__start_date__gte=start_date),
         return qs
 
 
