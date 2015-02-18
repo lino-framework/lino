@@ -93,16 +93,18 @@ def set_upload_shortcuts(sender, **kw):
             except UploadType.DoesNotExist:
                 return E.div()
             items = []
-            
-            sar = ar.spawn(
-                i.target,
+            target = sender.modules.resolve(i.target)
+            sar = ar.spawn_request(
+                actor=target,
                 master_instance=obj,
                 known_values=dict(type=utype))
                 # param_values=dict(pupload_type=et))
             n = sar.get_total_count()
             if n == 0:
-                btn = sar.insert_button(
-                    _("Upload"), icon_name="page_add",
+                iar = target.insert_action.request_from(
+                    sar, master_instance=obj)
+                btn = iar.ar2button(
+                    None, _("Upload"), icon_name="page_add",
                     title=_("Upload a file from your PC to the server."))
                 items.append(btn)
             elif n == 1:

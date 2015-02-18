@@ -131,27 +131,33 @@ class PhantomRow(VirtualRow):
         return unicode(self._ar.get_action_title())
 
 
+inheritable_attrs = frozenset(
+    'user subst_user renderer requesting_panel master_instance'.split())
+
+
 class BaseRequest(object):
 
     """Base class of all action requests.
 
     """
-    # Some of the following are needed e.g. for polls tutorial
     actor = None
     action_param_values = None
     param_values = None
     bound_action = None
+    known_values = {}
+    master_instance = None
 
     request = None
-    """
-    The Django HttpRequest object which caused this action request.
+    """The incoming Django HttpRequest object which caused this action
+    request.
+
     """
 
     renderer = None
     selected_rows = []
     content_type = 'application/json'
 
-    def __init__(self, request=None, **kw):
+    def __init__(self, request=None, parent=None, **kw):
         self.request = request
         self.response = dict()
         if request is not None:
@@ -163,6 +169,20 @@ class BaseRequest(object):
                 rqdata = request.REQUEST
             kw = self.parse_req(request, rqdata, **kw)
         #~ 20120605 self.ah = actor.get_handle(ui)
+        if parent is not None:
+            for k in inheritable_attrs:
+                if k in kw:
+                    if kw[k] is None:
+                        raise Exception("%s : %s=None" % (kw, k))
+                else:
+                    kw[k] = getattr(parent, k)
+            kv = kw.setdefault('known_values', {})
+            kv.update(parent.known_values)
+            # kw.setdefault('user', parent.user)
+            # kw.setdefault('subst_user', parent.subst_user)
+            # kw.setdefault('renderer', parent.renderer)
+            # kw.setdefault('requesting_panel', parent.requesting_panel)
+            
         self.setup(**kw)
 
     def setup(self,
@@ -170,13 +190,20 @@ class BaseRequest(object):
               subst_user=None,
               current_project=None,
               selected_pks=None,
+              master_instance=None,
               requesting_panel=None,
               renderer=None):
         self.requesting_panel = requesting_panel
-        self.user = user
+        self.master_instance = master_instance
+        if user is None:
+            from lino.modlib.users.utils import AnonymousUser
+            self.user = AnonymousUser.instance()
+        else:
+            self.user = user
         self.current_project = current_project
-        if renderer is not None:
-            self.renderer = renderer
+        if renderer is None:
+            renderer = settings.SITE.kernel.text_renderer
+        self.renderer = renderer
         self.subst_user = subst_user
 
         if selected_pks is not None:
@@ -229,30 +256,35 @@ request from it.
         self.renderer = other.renderer
         self.user = other.user
         self.subst_user = other.subst_user
+        # self.master_instance = other.master_instance  # added 20150218
         self.requesting_panel = other.requesting_panel
 
-    def spawn(self, spec, **kw):
+    def spawn_request(self, **kw):
+        """Create a new ActionRequest which inherits from this one.
+
+        """
+        kw.update(parent=self)
+        return self.__class__(**kw)
+
+    def spawn(self, spec=None, **kw):
         """
         Create a new ActionRequest using default values from this one and
         the action specified by `spec`.
 
         """
-
         if isinstance(spec, ActionRequest):
             for k, v in kw.items():
                 assert hasattr(spec, k)
                 setattr(spec, k, v)
             spec.setup_from(self)
         elif isinstance(spec, BoundAction):
+            kw.update(parent=self)
             spec = spec.request(**kw)
-            spec.setup_from(self)
+            # spec.setup_from(self)
         else:
             from lino.core.menus import create_item
             mi = create_item(spec)
-            kw.setdefault('user', self.user)
-            kw.setdefault('subst_user', self.subst_user)
-            kw.setdefault('renderer', self.renderer)
-            kw.setdefault('requesting_panel', self.requesting_panel)
+            kw.update(parent=self)
             spec = mi.bound_action.request(**kw)
         return spec
 
@@ -260,12 +292,16 @@ request from it.
         #~ print 20131003, selected_pks
         self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
 
-    def get_permission(self, obj, **kw):
+    def get_permission(self, obj=None, **kw):
         """Whether this request has permission to run on the given database
-        object.
+        object. `obj` can be None if the action is a list action
+        (whose `select_rows` is `False`).
 
         """
-        state = self.bound_action.actor.get_row_state(obj)
+        if obj is None:
+            state = None
+        else:
+            state = self.bound_action.actor.get_row_state(obj)
         return self.bound_action.get_row_permission(self, obj, state)
         
     def set_response(self, **kw):
@@ -479,7 +515,7 @@ request from it.
 
         Usage in a tested doc:
 
-        >>> from lino import rt
+        >>> from lino.api import rt
         >>> rt.login('robin').show('users.UsersOverview', limit=5)
 
         Usage in a Jinja template::
@@ -495,8 +531,8 @@ request from it.
 
 
         """
-        # 20130905 added master_instance positional arg. but finally didn't use
-        # it.
+        # 20130905 added master_instance positional arg. but finally
+        # didn't use it.
         if master_instance is not None:
             kw.update(master_instance=master_instance)
 
@@ -560,13 +596,13 @@ request from it.
         """
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)
 
-    def ar2button(self, obj, *args, **kw):
+    def ar2button(self, *args, **kw):
         """Return an HTML element with a button for running this action
-         request on the given database object. Does not spawn another
-         request. Does not check permission.
+         request. Does not spawn another request. Does not check
+         permission.
 
         """
-        return self.renderer.ar2button(self, obj, *args, **kw)
+        return self.renderer.ar2button(self, *args, **kw)
 
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button which would run the given
@@ -586,19 +622,6 @@ request from it.
 
         """
         return self.renderer.action_button(obj, self, ba, *args, **kwargs)
-
-    def insert_button(self, *args, **kw):
-        """Returns the HTML of an action link which will open the
-        :term:`insert window` of this request.
-
-        TODO: This is not a good API. Checking permissions should
-        *not* be delegated to the renderer.  It would be more
-        intuitive to create this unsaved object and then use a method
-        `obj2button()`.  Replace `ExtRenderer.insert_button` by a
-        method :meth:`obj2button`.
-
-        """
-        return self.renderer.insert_button(self, *args, **kw)
 
     def get_detail_title(self, elem):
         return self.actor.get_detail_title(self, elem)
@@ -642,23 +665,23 @@ request from it.
         rec.update(data=rh.store.row2dict(ar, elem))
         return rec
 
-    def elem2rec_insert(ar, ah, elem):
+    def elem2rec_insert(self, ah, elem):
         """
         Returns a dict of this record, designed for usage by an InsertWindow.
         """
-        rec = ar.elem2rec1(ah, elem)
-        rec.update(title=ar.get_action_title())
+        rec = self.elem2rec1(ah, elem)
+        rec.update(title=self.get_action_title())
         rec.update(phantom=True)
         return rec
 
     def elem2rec_detailed(ar, elem, **rec):
-        """Adds additional information for this record, used only by
-    detail views.
+        """Adds additional information for this record, used only by detail
+        views.
 
         The "navigation information" is a set of pointers to the next,
         previous, first and last record relative to this record in
         this report.  (This information can be relatively expensive
-        for records that are towards the end of the report.  See
+        for records that are towards the end of the queryset.  See
         `/blog/2010/0716`, `/blog/2010/0721`, `/blog/2010/1116`,
         `/blog/2010/1207`.)
 
@@ -903,7 +926,7 @@ class ActionRequest(ActorRequest):
     order_by = None
 
     def __init__(self, actor=None,
-                 request=None, action=None, renderer=None,
+                 unused_request=None, action=None, unused_renderer=None,
                  rqdata=None,
                  **kw):
         """
@@ -913,10 +936,12 @@ class ActionRequest(ActorRequest):
         - :meth:`lino.core.actions.Action.request`
         
         """
+        assert unused_renderer is None
+        assert unused_request is None
         self.actor = actor
         self.rqdata = rqdata
         self.bound_action = action or actor.default_action
-        BaseRequest.__init__(self, request=request, renderer=renderer, **kw)
+        BaseRequest.__init__(self, **kw)
         self.ah = actor.get_request_handle(self)
 
     def setup(self,

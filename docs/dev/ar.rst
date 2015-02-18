@@ -24,8 +24,6 @@ provides the application with methods to communicate with the user.
 But there are exceptions to this approximaton.
 
 
-
-
 - :meth:`show <lino.core.requests.BaseRequest.show>` 
 
 - :meth:`set_response <lino.core.requests.BaseRequest.set_response>` 

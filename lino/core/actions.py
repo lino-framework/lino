@@ -336,7 +336,8 @@ class Action(Parametrizable, Permittable):
     """
 
     select_rows = True
-    """
+    """True if this action needs an object to act on.
+
     True if this action should be called on a single row (ignoring
     multiple row selection).  Set this to False if this action is a
     list action, not a row action.
@@ -352,6 +353,8 @@ class Action(Parametrizable, Permittable):
     Name of a Javascript function to be invoked on the web client when
     this action is called.
     """
+
+    hide_virtual_fields = False
 
     def __init__(self, label=None, **kw):
         """The first argument is the optional `label`, other arguments should
@@ -761,9 +764,27 @@ class ShowDetailAction(Action):
         return main
 
 
+class ShowEmptyTable(ShowDetailAction):
+    use_param_panel = True
+    action_name = 'show'
+    default_format = 'html'
+    #~ hide_top_toolbar = True
+    hide_navigator = True
+    icon_name = None
+
+    def is_callable_from(self, caller):
+        return isinstance(caller, GridEdit)
+
+    def attach_to_actor(self, actor, name):
+        self.label = actor.label
+        return super(ShowEmptyTable, self).attach_to_actor(actor, name)
+
+    def as_bootstrap_html(self, ar):
+        return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
+
+
 class InsertRow(TableAction):
-    """
-    Open the Insert window filled with a blank row.  The new row will
+    """Open the Insert window filled with a blank row.  The new row will
     be actually created only when this window gets submitted.
 
     """
@@ -781,6 +802,7 @@ class InsertRow(TableAction):
     required = dict(user_level='user')
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
+    hide_virtual_fields = True
 
     def get_action_title(self, ar):
         return _("Insert into %s") % force_unicode(ar.get_title())
@@ -800,28 +822,21 @@ class InsertRow(TableAction):
 
     def get_status(self, ar, **kw):
         kw = super(InsertRow, self).get_status(ar, **kw)
+        if 'record_id' in kw:
+            return kw
+        if 'data_record' in kw:
+            return kw
+        # raise Exception("20150218 %s" % self)
         elem = ar.create_instance()
-        kw.update(data_record=ar.elem2rec_insert(ar.ah, elem))
+        # existing = getattr(ar, '_elem', None)
+        # if existing is not None:
+        #     raise Exception("20150218 %s %s", elem, existing)
+        #     if existing == elem:
+        #         return kw
+        # ar._elem = elem
+        rec = ar.elem2rec_insert(ar.ah, elem)
+        kw.update(data_record=rec)
         return kw
-
-
-class ShowEmptyTable(ShowDetailAction):
-    use_param_panel = True
-    action_name = 'show'
-    default_format = 'html'
-    #~ hide_top_toolbar = True
-    hide_navigator = True
-    icon_name = None
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, GridEdit)
-
-    def attach_to_actor(self, actor, name):
-        self.label = actor.label
-        return super(ShowEmptyTable, self).attach_to_actor(actor, name)
-
-    def as_bootstrap_html(self, ar):
-        return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
 
 
 class UpdateRowAction(Action):

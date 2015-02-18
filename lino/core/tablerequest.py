@@ -41,7 +41,6 @@ class TableRequest(ActionRequest):
 
     """
 
-    master_instance = None
     master = None
 
     extra = None
@@ -270,16 +269,12 @@ class TableRequest(ActionRequest):
               offset=None, limit=None,
               master=None,
               title=None,
-              master_instance=None,
               master_id=None,
               filter=None,
               gridfilters=None,
               exclude=None,
               extra=None,
               **kw):
-
-        #~ if self.actor.__name__ == 'PrintExpensesByBudget':
-            #~ assert master_instance is not None
 
         self.quick_search = quick_search
         self.order_by = order_by
@@ -299,10 +294,10 @@ class TableRequest(ActionRequest):
             self.title = title
 
         if master_id is not None:
+            raise Exception("20150218 deprecated?")
             assert master_instance is None
             master_instance = self.master.objects.get(pk=master_id)
 
-        self.master_instance = master_instance
 
         # Table.page_length is not a default value for ReportRequest.limit
         # For example CSVReportRequest wants all rows.
@@ -494,10 +489,12 @@ class TableRequest(ActionRequest):
         for i, fld in enumerate(fields):
             if fld.field is not None:
                 getter = fld.field._lino_atomizer.full_value_from_object
-                if False:
-                    try:  # was used to find bug 20130422
+                if True:
+                    try:
                         v = getter(row, self)
                     except Exception as e:
+                        raise Exception("20150218 %s: %s" % (fld.field, e))
+                        # was used to find bug 20130422:
                         yield "%s:\n%s" % (fld.field, e)
                         continue
                 else:

@@ -13,7 +13,9 @@ from lino.utils import AttrDict
 from lino.utils import i2d
 from lino.utils.xmlgen.html import E
 
-client = Client()
+test_client = Client()
+# naming it simply "client" caused conflict with a
+# `lino_welfare.pcsw.models.Client`
 
 
 def get_json_soup(username, uri, fieldname, an='detail'):
@@ -22,7 +24,7 @@ def get_json_soup(username, uri, fieldname, an='detail'):
 
     """
     url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
-    res = client.get(url, REMOTE_USER=username)
+    res = test_client.get(url, REMOTE_USER=username)
     assert res.status_code == 200
     d = json.loads(res.content)
     html = d['data'][fieldname]

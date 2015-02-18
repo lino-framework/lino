@@ -418,14 +418,16 @@ class ResponsesByPartner(Responses):
             
         items = []
         for poll in visible_polls:
-            sar = self.request_from(ar, obj, known_values=dict(poll=poll))
+            iar = self.insert_action.request_from(
+                ar, obj, known_values=dict(poll=poll))
             elems = [unicode(poll), ' : ']
             responses = polls_responses.get(poll.pk, [])
             elems += join_elems(
                 [ar.obj2html(r, dd.fds(r.date))
                  for r in responses], sep=', ')
             if poll.state == PollStates.published:
-                elems += [' ', sar.insert_button()]
+                elems += [' ', iar.ar2button()]
+                #elems += [' ', iar.insert_button()]
             items.append(E.li(*elems))
         return E.div(E.ul(*items))
 

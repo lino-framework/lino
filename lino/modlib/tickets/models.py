@@ -55,7 +55,7 @@ from django.conf import settings
 from django.db import models
 
 from lino import mixins
-from lino.api import dd, _
+from lino.api import dd, rt, _
 
 from lino.utils.xmlgen.html import E
 from lino.modlib.cal.mixins import Started, Ended
@@ -594,15 +594,17 @@ class MyOpenTickets(MyTickets):
     @classmethod
     def get_slave_summary(self, obj, ar):
         buttons = []
-        sar = ar.spawn(self, master_instance=ar.get_user())
+        # sar = ar.spawn(self, master_instance=ar.get_user())
+        sar = self.insert_action.request_from(
+            ar, known_values=dict(user=ar.get_user()),
+            master_instance=ar.get_user())
         qs = Ticket.objects.filter(user=ar.get_user())
         # qs = qs.exclude(state=TicketStates.active)
         for ticket in qs:
             # btn = ar.instance_action_button(
             #     ticket.start_session, label=str(ticket.id))
-            kv = dict(user=ar.get_user())
-            kv.update(ticket=ticket)
-            btn = ar.insert_button(sar, str(ticket.id), known_values=kv)
+            sar.known_values.update(ticket=ticket)
+            btn = sar.ar2button(None, str(ticket.id))
             buttons.append(btn)
 
         return E.div(*buttons)

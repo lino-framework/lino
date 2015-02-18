@@ -311,6 +311,17 @@ class VirtStoreField(StoreField):
         return '(virtual)' + self.delegate.__class__.__name__ + ' ' + self.name
 
     def full_value_from_object(self, obj, ar):
+        # 20150218 : added new rule that virtual fields are never
+        # computed for unsaved instances. This is because
+        # `InsertRow.get_status` otherwise generated lots of useless
+        # slave summaries which furthermore caused an endless
+        # recursion problem. See test case in
+        # :ref:`welfare.tested.pcsw`. Note that `obj` does not need to
+        # be a database object. See
+        # e.g. :doc:`/tutorials/vtables/index`.
+        if ar.bound_action.action.hide_virtual_fields:
+        # if isinstance(obj, models.Model) and not obj.pk:
+            return None
         return self.vf.value_from_object(obj, ar)
 
 

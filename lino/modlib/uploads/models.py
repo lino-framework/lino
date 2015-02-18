@@ -221,8 +221,7 @@ subclasses for the different `_upload_area`.
         elems = []
         types = []
 
-        for ut in UploadType.objects.filter(
-                upload_area=self._upload_area):
+        for ut in UploadType.objects.filter(upload_area=self._upload_area):
             sar = ar.spawn(
                 self, master_instance=obj,
                 known_values=dict(type_id=ut.id))
@@ -251,7 +250,9 @@ subclasses for the different `_upload_area`.
                     files.append(edit)
             if ut.wanted and (
                     ut.max_number < 0 or len(files) < ut.max_number):
-                btn = sar.insert_button()
+                btn = self.insert_action.request_from(
+                    sar, master_instance=obj,
+                    known_values=dict(type_id=ut.id)).ar2button()
                 if btn is not None:
                     files.append(btn)
             if len(files) > 0:

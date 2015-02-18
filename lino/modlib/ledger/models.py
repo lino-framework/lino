@@ -617,13 +617,12 @@ class VouchersByPartner(dd.VirtualTable):
 
         for vt in vtypes:
             for jnl in vt.get_journals():
-                sar = ar.spawn(
-                    vt.table_class,
-                    master_instance=jnl,
+                sar = vt.table_class.insert_action.request_from(
+                    ar, master_instance=jnl,
                     known_values=dict(partner=obj))
-                if add_action(sar.insert_button(unicode(jnl),
-                                                icon_name=None)):
-                    actions.append(' ')
+                actions.append(
+                    sar.ar2button(unicode(jnl), icon_name=None))
+                actions.append(' ')
 
         elems += [E.br(), _("Create voucher in journal ")] + actions
         return E.div(*elems)

@@ -76,8 +76,8 @@ Defining your own ChoiceLists
   
 The `value` must be a string.
   
->>> MyColors.add_item(1,("Green"), 'green')
->>> MyColors.add_item(1,("Green"), 'verbose_name_plural')
+>>> MyColors.add_item(1, _("Green"), 'green')
+>>> MyColors.add_item(1, _("Green"), 'verbose_name_plural')
   
 
 ChoiceListField
@@ -327,6 +327,8 @@ class ChoiceList(tables.AbstractTable):
     another value for the trigger button.
 
     """
+
+    pk = True  # added 20150218.
 
     @classmethod
     def get_default_action(cls):

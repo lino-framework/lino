@@ -165,8 +165,11 @@ request `tar`."""
 
         """
         buttons = []
-        btn = ar.insert_button(_("New"))
-        if btn is not None:
+        # btn = ar.insert_button(_("New"))
+        # if btn is not None:
+        sar = ar.actor.insert_action.request_from(ar)
+        if sar.get_permission():
+            btn = sar.ar2button(None, _("New"))
             buttons.append(btn)
             buttons.append(' ')
                 #~ after_show = ar.get_status()
@@ -208,10 +211,10 @@ request `tar`."""
     def quick_upload_buttons(self, rr):
         return '[?!]'
 
-    def insert_button(self, ar, text, known_values={}, **options):
-        return '[?!]'
+    # def insert_button(self, ar, text, known_values={}, **options):
+    #     return '[?!]'
 
-    def ar2button(self, ar, obj, label=None, title=None, **kw):
+    def ar2button(self, ar, obj=None, label=None, title=None, **kw):
         ba = ar.bound_action
         label = label or ba.action.label
         status = ar.get_status()

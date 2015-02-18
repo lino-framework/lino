@@ -1080,15 +1080,17 @@ class SuggestedCoursesByPupil(ActiveCourses):
         # if not ct:
         #     return ''
         # free = course.get_free_places()
-        sar = ar.spawn(EnrolmentsByPupil,
-                       master_instance=mi, known_values=kv)
+        sar = ar.spawn_request(
+            actor=EnrolmentsByPupil, master_instance=mi, known_values=kv)
         if sar.get_total_count() == 0:
             txt = _("Enrol")
-            btn = sar.insert_button(txt, icon_name=None)
+            iar = EnrolmentsByPupil.insert_action.request_from(sar)
+            btn = iar.ar2button(txt, icon_name=None)
+            # btn = sar.insert_button(txt, icon_name=None)
         else:
             txt = _("Show enrolment")
             btn = ar.obj2html(sar.data_iterator[0])
         return E.span(btn)  # E.p(...) until 20150128
 
 
-dd.add_user_group('courses', config.verbose_name)
+dd.add_user_group(config.app_label, config.verbose_name)

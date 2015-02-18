@@ -630,12 +630,10 @@ class ApiList(View):
                 after_show.update(
                     show_params_panel=ext_requests.parse_boolean(sp))
 
-            if isinstance(ar.bound_action.action, actions.InsertRow):
-                elem = ar.create_instance()
-                #~ print 20120630
-                #~ print elem.national_id
-                rec = ar.elem2rec_insert(rh, elem)
-                after_show.update(data_record=rec)
+            # if isinstance(ar.bound_action.action, actions.InsertRow):
+            #     elem = ar.create_instance()
+            #     rec = ar.elem2rec_insert(rh, elem)
+            #     after_show.update(data_record=rec)
 
             kw = dict(on_ready=
                       ar.renderer.action_call(

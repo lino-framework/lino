@@ -23,27 +23,32 @@ and caused some subtle new features to Lino:
   master for AnswersByResponse is a normal database model
   'polls.Response'.
 
-- It is now possible to replace::
+- Another series of `Changes in the action API`_ (see below).
+
+Changes in the action API
+=========================
+
+It is now possible to replace::
 
     btn = ar.insert_button(...)
 
-  by::
+by::
 
     sar = insert_action.request_from(ar, ...)
     btn = sar.ar2button(...)
 
-  The summary view of :class:`polls.AnswersByResponse
-  <lino.modlib.polls.models.AnswersByResponse>` shows why it is
-  important that :meth:`ar2button
-  <lino.core.requests.BaseRequest.ar2button>` does not check
-  permissions.
+The summary view of :class:`polls.AnswersByResponse
+<lino.modlib.polls.models.AnswersByResponse>` shows why it is
+important that :meth:`ar2button
+<lino.core.requests.BaseRequest.ar2button>` does not check
+permissions.
 
-  This change includes the new method
-  :meth:`lino.core.actions.Action.get_status`.  (TODO: Formalize the
-  "status" using a class object :class:`ValidWindowStates
-  <lino.core.requests.ValidWindowStates>`, similar to
-  :class:`ValidActionResponses
-  <lino.core.requests.ValidActionResponses>`).
+This change includes the new method
+:meth:`lino.core.actions.Action.get_status`.  (TODO: Formalize the
+"status" using a class object :class:`ValidWindowStates
+<lino.core.requests.ValidWindowStates>`, similar to
+:class:`ValidActionResponses
+<lino.core.requests.ValidActionResponses>`).
 
 
 Listes de rendez-vous
@@ -69,8 +74,7 @@ not necessary, we can use `newcomer_quota` instead.
 
 We don't need to differentiate between consultations and
 appointments. Every user with nonzero `newcomer_quota` (and nonempty
-`calendar`) will be listed
-
+`calendar`) will be listed:
 
     Mon coup suivant sera d'enlever ces deux cases à cocher car j'ai
     compris qu'elles sont inutiles. C'est le champ "Quota nouvelles
