@@ -271,6 +271,7 @@ class AppointmentsByPartner(dd.Table):
     editable = False
     auto_fit_column_widths = True
     variable_row_height = True
+    order_by = ['event__start_date', 'event__start_time']
 
     @classmethod
     def get_request_queryset(self, ar):
