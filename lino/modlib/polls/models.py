@@ -488,25 +488,6 @@ class AnswerRemarksByAnswer(AnswerRemarks):
 class AllAnswerRemarks(AnswerRemarks):
     required = dd.Required(user_level='admin')
 
-# class RemarksByAnswer(AnswerRemarks):
-#     pass
-    # master = Answer
-    # master_key = 'question'
-    # detail_layout = dd.DetailLayout("""
-    # remark
-    # """, window_size=(60, 10))
-
-    # @classmethod
-    # def get_master_instance(self, ar, pk):
-    #     response = ar.master_instance
-    #     q = Question.objects.get(pk=pk)
-    #     return Answer(response, q)
-
-    # @classmethod
-    # def get_filter_kw(self, ar, **kw):
-    #     kw.update(response=ar.master_instance.response)
-    #     return kw
-
 
 class AnswersByResponseRow(object):
     """Volatile object to represent the one and only answer to a given

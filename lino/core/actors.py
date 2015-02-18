@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 from lino.core import fields
 from lino.core import actions
@@ -314,6 +315,15 @@ class Actor(actions.Parametrizable):
 
     """
 
+    details_of_master_template = _("%(details)s of %(master)s")
+    """Used to build the title of a request on this table when it is a
+    slave table (i.e. :attr:`master` is not None). The default value
+    is defined as follows::
+
+        details_of_master_template = _("%(details)s of %(master)s")
+
+    """
+
     parameters = None
     "See :attr:`lino.core.actions.Parametrizable.parameters`."
 
@@ -528,18 +538,26 @@ class Actor(actions.Parametrizable):
         return None
 
     @classmethod
-    def get_master_instance(self, ar, pk):
+    def get_master_instance(self, ar, model, pk):
         """Return the `master_instance` corresponding to the specified primary
-        key. `ar` is an action request on this actor.
+        key.
+
+        Override this only on actors whose :attr:`master` is something
+        else than a database model (a feature which is a not yet
+        tested).
+
+        `ar` is the action request on this actor. `model` is the
+        :attr:`master_class`, except if :attr:`master` is
+        `ContentType` (in which case `model` is the requested master
+        model).
 
         """
         try:
-            return self.master.objects.get(pk=pk)
+            return model.objects.get(pk=pk)
         except ValueError:
             return None
-        except self.master.DoesNotExist:
+        except model.DoesNotExist:
             return None
-
 
     @classmethod
     def disabled_fields(cls, obj, ar):
@@ -823,7 +841,11 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_title(self, ar):
-        """Return the title of this actor for the given request `ar`.
+        """Return the title of this actor for the given action request `ar`.
+
+        The default implementation calls :meth:`get_title_base` and
+        :meth:`get_title_tags` and returns a string of type `BASE [
+        (TAG, TAG...)]`.
 
         Override this if your Table's title should mention for example
         filter conditions.  See also :meth:`Table.get_title
@@ -839,10 +861,25 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_title_base(self, ar):
-        return self.title or self.label
+        """Return the base part of the title. This should be a translatable
+        string. This is called by :meth:`get_title` to construct the
+        actual title.
+
+        """
+        title = self.title or self.label
+        if self.master is not None:
+            title = self.details_of_master_template % dict(
+                details=title,
+                master=ar.master_instance)
+        return title
 
     @classmethod
     def get_title_tags(self, ar):
+        """Return a list of translatable strings to be added to the base part
+        of the title. This is called by :meth:`get_title` to construct
+        the actual title.
+
+        """
         return []
 
     @classmethod

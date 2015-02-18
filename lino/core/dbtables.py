@@ -349,15 +349,6 @@ class Table(AbstractTable):
 
     """
 
-    details_of_master_template = _("%(details)s of %(master)s")
-    """
-    Used to build the title of a request on this table when it is a
-    slave of a given master. The default value is defined as follows::
-
-        details_of_master_template = _("%(details)s of %(master)s")
-
-    """
-
     handle_uploaded_files = None
     """
     Handler for uploaded files.
@@ -670,17 +661,6 @@ class Table(AbstractTable):
             if de is not None:
                 return de
         return super(Table, self).get_data_elem(name)
-
-    @classmethod
-    def get_title_base(self, ar):
-        """
-        """
-        title = self.title or self.label
-        if self.master is not None:
-            title = self.details_of_master_template % dict(
-                details=title,
-                master=ar.master_instance)
-        return title
 
     @classmethod
     def get_queryset(self, ar):

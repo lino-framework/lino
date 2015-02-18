@@ -192,7 +192,7 @@ class TableRequest(ActionRequest):
                 if pk is None:
                     kw['master_instance'] = None
                 else:
-                    mi = self.actor.get_master_instance(self, pk)
+                    mi = self.actor.get_master_instance(self, master, pk)
                     if mi is None:
                         raise Exception(
                             "Invalid master key {0} for {1}".format(

@@ -60,6 +60,9 @@ DONE:
 - Il n'est pas possible d'encoder des textes libres.
 - Dans «temps de travail accepté», on ne sait en sélectionner qu’un à
   la fois alors qu’on devrait pouvoir en sélectionner plusieurs.
+- Dans «Rendez-vous aujourd'hui», ajouter la colonne «Type
+  d’événement» de manière à ce qu’on voit si c’est un entretien en
+  interne ou en externe.
 
 TODO:
 
@@ -67,17 +70,10 @@ TODO:
   correctement s'il y a deux coachings actifs en cette date.  Lino
   devrait sélectionner le primaire. (vraiment?)  En tout cas il n'y a
   jamais deux agents présents.
-
 - Les tâches automatiques par contrat se font actuellement pour
   l'auteur du contrat, mais il faut les mêmes règles que pour les
   rendez-vous.
-
-- Dans «Rendez-vous aujourd'hui»:
-
-    - Supprimer la colonne «Attribué à»
-    - Ajouter la colonne «Type d’événement» de manière à ce qu’on voit
-      si c’est un entretien en interne ou en externe.
-
+- Dans «Rendez-vous aujourd'hui», supprimer la colonne «Attribué à»
 - Dans le dossier d'une personne onglet «Personne», les rendez-vous
   s'indiquent 2x
 

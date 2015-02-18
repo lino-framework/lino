@@ -440,11 +440,11 @@ documentation.
     Used by :mod:`lino.modlib.properties`.
     """
 
-    show_internal_field_names = False
-    """
-    Whether the internal field names should be visible.  Default is
-    `False`.  ExtUI implements this by prepending them to the tooltip,
-    which means that :attr:`use_quicktips` must also be `True`.
+    show_internal_field_names = True
+    """Whether the internal field names should be visible.  ExtUI
+    implements this by prepending them to the tooltip, which means
+    that :attr:`use_quicktips` must also be `True`.  Default is
+    `True`.
 
     """
 
@@ -665,28 +665,29 @@ documentation.
 
     use_awesome_uploader = False
     """
-    Whether to use AwesomeUploader. 
+    Whether to use AwesomeUploader.
     This option was experimental and doesn't yet work (and maybe never will).
     """
 
     use_tinymce = True
     """
-    Whether to use TinyMCE instead of Ext.form.HtmlEditor. 
+    Whether to use TinyMCE instead of Ext.form.HtmlEditor.
     See also :attr:`tinymce_root`.
     See `/blog/2011/0523`.
     """
 
     use_jasmine = False
-    """
-    Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_ testing library.
+    """Whether to use the `Jasmine <https://github.com/pivotal/jasmine>`_
+    testing library.
+
     """
 
     use_quicktips = True
-    """
-    Whether to make use of `Ext.QuickTips
-    <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_
-    when displaying :ref:`help_texts`.
-    
+    """Whether to make use of `Ext.QuickTips
+    <http://docs.sencha.com/ext-js/3-4/#!/api/Ext.QuickTips>`_ for
+    displaying :ref:`help_texts` and internal field names (if
+    :attr:`show_internal_field_names`).
+
     """
 
     use_css_tooltips = False
