@@ -282,7 +282,7 @@ class AppointmentsByPartner(dd.Table):
         # end_date = settings.SITE.today() + datetime.timedelta(days=17)
         # qs = qs.filter(event__start_date__gte=start_date,
         #                event__start_date__lte=end_date)
-        qs = qs.filter(event__start_date__gte=start_date),
+        qs = qs.filter(event__start_date__gte=start_date)
         return qs
 
 
