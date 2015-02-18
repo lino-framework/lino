@@ -8,7 +8,9 @@ Discovered and fixed a bug introduced by the new untested feature
 <lino.core.actors.Actor.master>` was `ContentType` (which is the case
 on every XxxByController` table), Lino did not correctly set the
 `master_instance` of the action request (a :class:`TableRequest
-<lino.core.tablerequest.TableRequest>`).
+<lino.core.tablerequest.TableRequest>`).  Added a section to
+:ref:`welfare.tested.integ` which would have detected this.
 
-Added a section to :ref:`welfare.tested.integ` which would have
-detected this.
+:class:`lino.modlib.cal.AppointmentsByPartner` (Table "Rendez-vous"
+dans l'onglet "Personne" ) no longer removes events more than 17 days
+in the future. And it now shows events in correct sort order.

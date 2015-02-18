@@ -260,10 +260,17 @@ def my_guest_workflows(sender=None, **kw):
     GuestStates.excused.add_transition(
         states='invited accepted absent')
     GuestStates.absent.add_transition(
-        states='invited accepted excused')
+        states='accepted excused')
 
 
 class AppointmentsByPartner(dd.Table):
+    """Show the participations in upcoming calendar events for a given
+    partner.
+
+    TODO: rename this to `GuestsByPartner` or
+    `ParticipationsByPartner` and add filter parameters.
+
+    """
     label = _("Appointments")
     model = 'cal.Guest'
     master_key = 'partner'
