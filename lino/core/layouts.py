@@ -217,9 +217,12 @@ class LayoutHandle:
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
+            # if str(self.layout._datasource).endswith(
+            #         'IncomeConfirmationsByGranting'):
+            #     logger.info("20150219 gonna hide %s in %s" % (name, self))
             # 20150216 hidden formpanel fields
-            # if isinstance(self.layout, FormLayout):
-            #     return None
+            if isinstance(self.layout, FormLayout):
+                return None
             if isinstance(e, list):  # it is a babelfield
                 for be in e:
                     be.hidden = True
@@ -327,6 +330,10 @@ class BaseLayout(object):
             #~ if not hasattr(self,k):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
+        # if str(self._datasource).endswith(
+        #         'IncomeConfirmationsByGranting'):
+        #     logger.info("20150219 %s hidden_elements=%s" % (
+        #         self, self.hidden_elements))
 
     def set_datasource(self, ds):
         self._datasource = ds
