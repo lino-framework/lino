@@ -117,16 +117,15 @@ class AdminIndex(View):
     """
 
     def get(self, request, *args, **kw):
-        #~ logger.info("20130719 AdminIndex")
+        # logger.info("20130719 AdminIndex")
         settings.SITE.startup()
-        ui = settings.SITE.kernel
+        renderer = dd.plugins.extjs.renderer
         if settings.SITE.user_model is not None:
             user = request.subst_user or request.user
             a = settings.SITE.get_main_action(user)
             if a is not None and a.get_view_permission(user.profile):
-                kw.update(on_ready=ui.extjs_renderer.action_call(
-                    request, a, {}))
-        return http.HttpResponse(ui.extjs_renderer.html_page(request, **kw))
+                kw.update(on_ready=renderer.action_call(request, a, {}))
+        return http.HttpResponse(renderer.html_page(request, **kw))
 
 
 class MainHtml(View):

@@ -136,6 +136,9 @@ class Plugin(object):
 
     """
 
+    ui_handle_attr_name = None
+    """Currently only implemented by :mod:`lino.modlib.extjs`. """
+
     renderer = None
 
     def __init__(self, site, app_label, app_name, app_module, needed_by):

@@ -279,7 +279,6 @@ class LayoutElement(VisibleComponent):
     #~ grid_column_template = "new Ext.grid.Column(%s)"
     grid_column_template = None
     collapsible = False
-    hidden = False
     active_child = True
     refers_to_ww = False
 
@@ -1576,6 +1575,11 @@ class Container(LayoutElement):
         kw = LayoutElement.ext_options(self, **kw)
         # not necessary to filter here, jsgen does that
         kw.update(items=self.elements)
+        # if all my children are hidden, i am myself hidden
+        for e in self.elements:
+            if e.is_visible():
+                return kw
+        kw.update(hidden=True)
         return kw
 
     def get_view_permission(self, profile):
@@ -1589,7 +1593,7 @@ class Container(LayoutElement):
             return False
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
-               e.get_view_permission(profile):
+               e.get_view_permission(jsgen._for_user_profile):
                 # one visble child is enough, no need to continue loop
                 return True
         #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
@@ -1619,6 +1623,9 @@ class Wrapper(VisibleComponent):
         else:
             e.update(anchor=FULLWIDTH)
             e.update(autoHeight=True)  # 20130924
+
+    def is_visible(self):
+        return self.wrapped.is_visible()
 
     def get_view_permission(self, profile):
         return self.wrapped.get_view_permission(profile)

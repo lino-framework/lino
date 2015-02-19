@@ -36,6 +36,7 @@ from lino.modlib.users.choicelists import UserProfiles
 
 def get_window_actions():
     from lino.core.actors import actors_list
+    ui = settings.SITE.kernel.default_ui
     coll = dict()
     for a in actors_list:
         for ba in a.get_actions():
@@ -43,12 +44,11 @@ def get_window_actions():
                 wl = ba.get_window_layout() or ba.action.params_layout
                 if wl is not None:
                     if not wl in coll:
-                        lh = wl.get_layout_handle()
+                        lh = wl.get_layout_handle(ui)
                         for e in lh.main.walk():
                             e.loosen_requirements(a)
                         coll[wl] = ba
     return coll
-
 
 
 class Models(dd.VirtualTable):
@@ -309,7 +309,7 @@ class DetailLayouts(dd.VirtualTable):
 
     @dd.displayfield(_("Fields"))
     def fields(self, obj, ar):
-        lh = obj.get_layout_handle()
+        lh = obj.get_layout_handle(settings.SITE.kernel.default_ui)
         # elems = [e.name for e in lh._names.values() if not e.hidden]
         elems = [f.name for f in lh._store_fields]
         return fill(' '.join(elems), 60)
@@ -342,7 +342,7 @@ class WindowActions(dd.VirtualTable):
         wl = obj.get_window_layout() or obj.action.params_layout
         if wl is None:
             return ''
-        lh = wl.get_layout_handle()
+        lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
         elems = [str(f.name) for f in lh._store_fields]
         #return ' '.join([repr(type(e)) for e in elems])
         # print 20150210, elems
@@ -363,7 +363,7 @@ class FormPanels(dd.VirtualTable):
         for ba in get_window_actions().values():
             wl = ba.get_window_layout() or ba.action.params_layout
             if wl is not None:
-                lh = wl.get_layout_handle()
+                lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
                 for e in lh.main.walk():
                     if e.__class__ is Panel:
                         if e.label is not None:

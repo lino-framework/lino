@@ -986,12 +986,12 @@ class Store(BaseStore):
 
         form = rh.actor.detail_layout
         if form:
-            dh = form.get_layout_handle()
+            dh = form.get_layout_handle(settings.SITE.kernel.default_ui)
             self.collect_fields(self.detail_fields, dh)
 
         form = rh.actor.insert_layout
         if form:
-            dh = form.get_layout_handle()
+            dh = form.get_layout_handle(settings.SITE.kernel.default_ui)
             self.collect_fields(self.detail_fields, dh)
 
         if self.pk is not None:

@@ -715,7 +715,7 @@ class ExtRenderer(HtmlRenderer):
             if fl._datasource is None:
                 return  # 20130804
             try:
-                lh = fl.get_layout_handle()
+                lh = fl.get_layout_handle(self.plugin)
             except Exception as e:
                 logger.exception(e)
                 raise Exception("Could not define %s for %r: %s" % (
@@ -745,17 +745,17 @@ class ExtRenderer(HtmlRenderer):
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in param_panels:
-            lh = fl.get_layout_handle()
+            lh = fl.get_layout_handle(self.plugin)
             for ln in self.js_render_ParamsPanelSubclass(lh):
                 f.write(ln + '\n')
 
         for fl in action_param_panels:
-            lh = fl.get_layout_handle()
+            lh = fl.get_layout_handle(self.plugin)
             for ln in self.js_render_ActionFormPanelSubclass(lh):
                 f.write(ln + '\n')
 
         for fl in form_panels:
-            lh = fl.get_layout_handle()
+            lh = fl.get_layout_handle(self.plugin)
             for ln in self.js_render_FormPanelSubclass(lh):
                 f.write(ln + '\n')
 

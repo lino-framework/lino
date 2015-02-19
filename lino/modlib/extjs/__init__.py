@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds the default Lino user interface based on ExtJS.
@@ -73,6 +73,8 @@ class Plugin(Plugin):
     directory.
     """
 
+    ui_handle_attr_name = 'extjs_handle'
+
     def on_ui_init(self, kernel):
         # logger.info("20140227 extjs.Plugin.on_ui_init() a")
         # raise Exception(20140227)
@@ -81,6 +83,11 @@ class Plugin(Plugin):
         kernel.extjs_renderer = self.renderer
         # ui.extjs_renderer = ui.default_renderer = self.renderer
         # logger.info("20140227 extjs.Plugin.on_ui_init() b")
+
+        from .elems import create_layout_panel, create_layout_element
+        self.create_layout_panel = create_layout_panel
+        self.create_layout_element = create_layout_element
+
 
     def get_css_includes(self, site):
         yield self.build_media_url('resources/css/ext-all.css')
@@ -124,8 +131,8 @@ class Plugin(Plugin):
 
         ui.code_mtime = codetime()
 
-        #~ print("20121110 get_urls")
-        ui.extjs_renderer.build_site_cache()
+        # ui.extjs_renderer.build_site_cache()
+        self.renderer.build_site_cache()
 
         rx = '^'
         urlpatterns = patterns(

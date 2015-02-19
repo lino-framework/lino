@@ -2,7 +2,9 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""
+r"""A framework for generating Javascript from Python.
+
+.. autosummary::
 
 Example:
 
@@ -102,9 +104,11 @@ def register_converter(func):
 _for_user_profile = None
 
 
-def set_for_user_profile(up):
+def set_user_profile(up):
     global _for_user_profile
     _for_user_profile = up
+
+set_for_user_profile = set_user_profile
 
 
 def key2js(s):
@@ -233,10 +237,9 @@ class Variable(Value):
 
 
 class Component(Variable):
-
-    """
-    A Component is a Variable whose value is a dict of otpions.
+    """A Component is a Variable whose value is a dict of otpions.
     Deserves more documentation.
+
     """
 
     def __init__(self, name=None, **options):
@@ -269,6 +272,8 @@ class Component(Variable):
 
 
 class VisibleComponent(Component, Permittable):
+    """A visible component
+    """
     vflex = False
     hflex = True
     width = None
@@ -277,21 +282,12 @@ class VisibleComponent(Component, Permittable):
     preferred_height = 1
     # help_text = None
     #flex = None
+    hidden = False
 
     def __init__(self, name, **kw):
         Component.__init__(self, name)
-        # install `allow_read` permission handler:
         self.setup(**kw)
-        # ~ Permittable.__init__(self,False) # name.startswith('cbss'))
-
-        #~ def __init__(self,debug_permissions):
-        #~ if type(debug_permissions) != bool:
-            #~ raise Exception("20120925 %s %r",self,self)
-        #~ if self.required is None:
-            #~ self.allow_read = curry(make_permission_handler(
-                #~ self,self,True,
-                #~ debug_permissions),self)
-        #~ else:
+        # install `allow_read` permission handler:
         self.install_permission_handler()
 
     def install_permission_handler(self):
@@ -302,6 +298,11 @@ class VisibleComponent(Component, Permittable):
             self, True,
             self.debug_permissions,
             **self.required), self)
+
+    def is_visible(self):
+        if self.hidden:
+            return False
+        return self.get_view_permission(_for_user_profile)
 
     def get_view_permission(self, profile):
         return self.allow_read(profile)
@@ -380,14 +381,14 @@ def declare_vars(v):
                 yield ln
         # DON'T return
     elif isinstance(v, Value):
-        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
+        #~ 20120616 if not v.is_visible(): return
         #~ ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
 
     if isinstance(v, Variable):
-        #~ 20120616 if not v.get_view_permission(_for_user_profile): return
+        #~ 20120616 if not v.is_visible(): return
         if v.declare_type == DECLARE_VAR:
             yield "var %s = %s;" % (v.ext_name, v.js_value())
         elif v.declare_type == DECLARE_THIS:
@@ -395,8 +396,8 @@ def declare_vars(v):
 
 
 def py2js(v):
-    """
-    Note that None values are rendered as ``null`` (not ``undefined``.
+    """Note that None values are rendered as ``null`` (not ``undefined``.
+
     """
     #~ assert _for_user_profile is not None
     #~ logger.debug("py2js(%r)",v)
@@ -528,7 +529,7 @@ def py2js(v,**kw):
     if isinstance(v,Variable):
         return v.as_ext(**kw)
     assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    return json.dumps(v,cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    return json.dumps(v, cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
     
 """
 

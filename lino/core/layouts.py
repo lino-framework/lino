@@ -15,6 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import constants
 from lino.core.fields import fields_list
+from lino.core.plugin import Plugin
 
 
 class LayoutError(RuntimeError):
@@ -78,9 +79,11 @@ class LayoutHandle:
     The same class is used for all kinds of BaseLayout instances.
     """
 
-    def __init__(self, layout):
+    def __init__(self, layout, ui):
         assert isinstance(layout, BaseLayout)
+        assert isinstance(ui, Plugin)
         self.layout = layout
+        self.ui = ui
         self.hidden_elements = layout.hidden_elements
         self._store_fields = []
         self._names = {}
@@ -120,7 +123,6 @@ class LayoutHandle:
         return self.main.ext_lines(request)
 
     def desc2elem(self, elemname, desc, **kwargs):
-        from lino.modlib.extjs.elems import create_layout_panel
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
 
         if isinstance(desc, Panel):
@@ -187,7 +189,8 @@ class LayoutHandle:
         if len(elems) == 1 and elemname != 'main':
             elems[0].setup(**kwargs)
             return elems[0]
-        return create_layout_panel(self, elemname, vertical, elems, **kwargs)
+        return self.ui.create_layout_panel(
+            self, elemname, vertical, elems, **kwargs)
 
     def define_panel(self, name, desc, **kw):
         if not desc:
@@ -203,7 +206,7 @@ class LayoutHandle:
         return e
 
     def create_element(self, desc_name):
-        from lino.modlib.extjs.elems import create_layout_element
+        # from lino.modlib.extjs.elems import create_layout_element
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
         if name in self._names:
@@ -213,16 +216,13 @@ class LayoutHandle:
         desc = getattr(self.layout, name, None)
         if desc is not None:
             return self.define_panel(name, desc, **options)
-        e = create_layout_element(self, name, **options)
+        e = self.ui.create_layout_element(self, name, **options)
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
-            # if str(self.layout._datasource).endswith(
-            #         'IncomeConfirmationsByGranting'):
-            #     logger.info("20150219 gonna hide %s in %s" % (name, self))
             # 20150216 hidden formpanel fields
-            if isinstance(self.layout, FormLayout):
-                return None
+            # if isinstance(self.layout, FormLayout):
+            #     return None
             if isinstance(e, list):  # it is a babelfield
                 for be in e:
                     be.hidden = True
@@ -330,10 +330,6 @@ class BaseLayout(object):
             #~ if not hasattr(self,k):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
-        # if str(self._datasource).endswith(
-        #         'IncomeConfirmationsByGranting'):
-        #     logger.info("20150219 %s hidden_elements=%s" % (
-        #         self, self.hidden_elements))
 
     def set_datasource(self, ds):
         self._datasource = ds
@@ -473,17 +469,20 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
 
-    def get_layout_handle(self):
+    def get_layout_handle(self, ui):
         """
-        Same code as lino.ui.base.Handled.get_handle,
-        except that here it's an instance method.
+        `ui` is a :class:`Plugin` instance.
         """
-        hname = constants._handle_attr_name
+        # hname = constants._handle_attr_name
+        hname = ui.ui_handle_attr_name
+        if hname is None:
+            raise Exception(
+                "{0} has no `ui_handle_attr_name`!".format(ui))
 
         # we do not want any inherited handle
         h = self.__dict__.get(hname, None)
         if h is None:
-            h = self._handle_class(self)
+            h = self._handle_class(self, ui)
             setattr(self, hname, h)
         return h
 

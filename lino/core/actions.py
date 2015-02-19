@@ -132,7 +132,7 @@ def setup_params_choosers(self):
 
 
 def make_params_layout_handle(self, ui):
-    return self.params_layout.get_layout_handle()
+    return self.params_layout.get_layout_handle(settings.SITE.kernel.default_ui)
 
 
 class Action(Parametrizable, Permittable):
@@ -742,7 +742,7 @@ class ShowDetailAction(Action):
 
         wl = ar.bound_action.get_window_layout()
         #~ print 20120901, wl.main
-        lh = wl.get_layout_handle()
+        lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
 
         #~ items = list(render_detail(ar,elem,lh.main))
         items = list(lh.main.as_plain_html(ar, elem))

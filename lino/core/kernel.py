@@ -190,6 +190,7 @@ class Kernel(object):
                 % self.site.default_ui)
         ui.url_prefix = None
         self.default_renderer = ui.renderer
+        self.default_ui = ui
 
         post_ui_build.send(self)
 
@@ -197,7 +198,7 @@ class Kernel(object):
         for res in actors.actors_list:
             for ba in res.get_actions():
                 if ba.action.params_layout is not None:
-                    ba.action.params_layout.get_layout_handle()
+                    ba.action.params_layout.get_layout_handle(ui)
         # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(kernel, self):
@@ -549,7 +550,7 @@ class Kernel(object):
                 h.actor,
                 hidden_elements=h.actor.hidden_columns
                 | h.actor.hidden_elements)
-            h.list_layout = ll.get_layout_handle()
+            h.list_layout = ll.get_layout_handle(self.default_ui)
         else:
             h.list_layout = None
 
