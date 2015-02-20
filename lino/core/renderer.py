@@ -22,6 +22,7 @@ from django.utils.translation import get_language
 from lino.core import constants as ext_requests
 
 from lino.utils.xmlgen.html import E
+from . import elems
 
 if False:
     from lino.utils.jscompressor import JSCompressor
@@ -210,6 +211,12 @@ request `tar`."""
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
+
+    def create_layout_element(self, *args, **kw):
+        return elems.create_layout_element(*args, **kw)
+
+    def create_layout_panel(self, *args, **kw):
+        return elems.create_layout_panel(*args, **kw)
 
     # def insert_button(self, ar, text, known_values={}, **options):
     #     return '[?!]'

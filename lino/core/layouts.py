@@ -189,7 +189,7 @@ class LayoutHandle:
         if len(elems) == 1 and elemname != 'main':
             elems[0].setup(**kwargs)
             return elems[0]
-        return self.ui.create_layout_panel(
+        return self.ui.renderer.create_layout_panel(
             self, elemname, vertical, elems, **kwargs)
 
     def define_panel(self, name, desc, **kw):
@@ -216,7 +216,7 @@ class LayoutHandle:
         desc = getattr(self.layout, name, None)
         if desc is not None:
             return self.define_panel(name, desc, **options)
-        e = self.ui.create_layout_element(self, name, **options)
+        e = self.ui.renderer.create_layout_element(self, name, **options)
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:

@@ -208,7 +208,7 @@ class Plugin(object):
         """
         pass
 
-    def on_ui_init(cls, kernel):
+    def on_ui_init(self, kernel):
         """This is called when the kernel is being instantiated.
         """
         pass
@@ -282,3 +282,4 @@ class Plugin(object):
 
         """
         return self.needed_by or self
+

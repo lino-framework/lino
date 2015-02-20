@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from lino.ad import Plugin
-from django.utils.translation import ugettext_lazy as _
+from lino.api.ad import Plugin, _
 
 
 class Plugin(Plugin):
@@ -16,8 +15,9 @@ class Plugin(Plugin):
 
     media_name = 'pages'
 
-    def __init__(self, *args, **kw):
-        super(Plugin, self).__init__(*args, **kw)
+    def on_ui_init(self, kernel):
+        """This is called when the kernel is being instantiated.
+        """
         from lino.modlib.bootstrap3.renderer import Renderer
         self.renderer = Renderer(self)
 

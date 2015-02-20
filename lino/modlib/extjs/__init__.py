@@ -77,17 +77,11 @@ class Plugin(Plugin):
 
     def on_ui_init(self, kernel):
         # logger.info("20140227 extjs.Plugin.on_ui_init() a")
-        # raise Exception(20140227)
         from .ext_renderer import ExtRenderer
         self.renderer = ExtRenderer(self)
         kernel.extjs_renderer = self.renderer
-        # ui.extjs_renderer = ui.default_renderer = self.renderer
+
         # logger.info("20140227 extjs.Plugin.on_ui_init() b")
-
-        from .elems import create_layout_panel, create_layout_element
-        self.create_layout_panel = create_layout_panel
-        self.create_layout_element = create_layout_element
-
 
     def get_css_includes(self, site):
         yield self.build_media_url('resources/css/ext-all.css')

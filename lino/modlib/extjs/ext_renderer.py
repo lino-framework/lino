@@ -810,6 +810,12 @@ class ExtRenderer(HtmlRenderer):
             os.path.dirname(__file__)))
         return env.get_template('linoweb.js')
 
+    def create_layout_element(self, *args, **kw):
+        return ext_elems.create_layout_element(*args, **kw)
+
+    def create_layout_panel(self, *args, **kw):
+        return ext_elems.create_layout_panel(*args, **kw)
+
     def toolbar(self, action_list):
         """
         This also manages action groups

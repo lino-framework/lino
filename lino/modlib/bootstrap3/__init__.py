@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This started as a copy of :mod:`lino.modlib.plain` and moved to the
@@ -8,13 +8,14 @@ toolkit.
 
 """
 
-from lino.ad import Plugin
-from django.utils.translation import ugettext_lazy as _
+from lino.api.ad import Plugin, _
 
 
 class Plugin(Plugin):
 
     ui_label = _("Bootstrap")
+
+    ui_handle_attr_name = 'bootstrap3_handle'
 
     # site_js_snippets = ['snippets/plain.js']
 
