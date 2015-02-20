@@ -96,5 +96,6 @@ I also wrote a tested document :ref:`welfare.tested.addresses`.
 The pharmacy of a RefundConfirmation
 ====================================
 
+Solved :ticket:`103`.
 Added a section "The pharmacy of a RefundConfirmation" to 
 :ref:`welfare.tested.aids`
