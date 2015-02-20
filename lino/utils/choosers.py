@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Extends the possibilities for defining choices for fields of a
@@ -171,7 +171,7 @@ class Chooser(FieldChooser):
     #~ def get_request_choices(self,ar,tbl):
     def get_request_choices(self, request, tbl):
         """
-        Return a list of choices for this chooser, 
+        Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
         kw = {}
@@ -181,17 +181,17 @@ class Chooser(FieldChooser):
             mt = request.REQUEST.get(constants.URL_PARAM_MASTER_TYPE)
             try:
                 master = ContentType.objects.get(pk=mt).model_class()
-            except ContentType.DoesNotExist, e:
-                pass
+            except ContentType.DoesNotExist:
+                master = None
 
             pk = request.REQUEST.get(constants.URL_PARAM_MASTER_PK, None)
-            if pk:
+            if pk and master:
                 try:
                     kw[tbl.master_field.name] = master.objects.get(pk=pk)
-                except ValueError, e:
+                except ValueError:
                     raise Exception(
                         "Invalid primary key %r for %s", pk, master.__name__)
-                except master.DoesNotExist, e:
+                except master.DoesNotExist:
                     # todo: ReportRequest should become a subclass of Dialog
                     # and this exception should call dlg.error()
                     raise Exception("There's no %s with primary key %r" %

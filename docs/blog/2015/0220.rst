@@ -91,3 +91,10 @@ Moved streets of Eupen to :mod:`lino.utils.demonames.bel`.
 
 I also wrote a tested document :ref:`welfare.tested.addresses`.
 
+
+
+The pharmacy of a RefundConfirmation
+====================================
+
+Added a section "The pharmacy of a RefundConfirmation" to 
+:ref:`welfare.tested.aids`
