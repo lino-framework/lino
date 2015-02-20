@@ -524,7 +524,8 @@ request from it.
 
         Usage in an appy.pod template::
 
-          do text from ar.show('users.UsersOverview')
+          do text
+          from html(ar.show('users.UsersOverview'))
 
         Note that this function either returns a string or prints to
         stdout and returns None, depending on the current renderer.

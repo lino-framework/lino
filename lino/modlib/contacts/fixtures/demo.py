@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -11,8 +11,11 @@ from __future__ import unicode_literals
 
 from django.conf import settings
 from lino.utils.instantiator import Instantiator
-from lino import mixins
+from lino.utils import Cycler
 from lino.api import dd, rt
+
+from lino.utils.demonames.bel import streets_of_eupen
+STREETS = Cycler(streets_of_eupen())
 
 
 def objects():
@@ -174,120 +177,9 @@ def objects():
     yield person(first_name='Jérôme', last_name='Jeanémart',
                  gender=dd.Genders.male)
 
-    s = u"""\
-Aachener Straße
-Akazienweg
-Alter Malmedyer Weg
-Am Bahndamm
-Am Berg
-Am Waisenbüschchen
-Auenweg
-Auf dem Spitzberg
-Auf'm Rain
-August-Thonnar-Str.
-Bahnhofsgasse
-Bahnhofstraße
-Bellmerin
-Bennetsborn
-Bergkapellstraße
-Bergstraße
-Binsterweg
-Brabantstraße
-Buchenweg
-Edelstraße
-Euregiostraße
-Favrunpark
-Feldstraße
-Fränzel
-Gewerbestraße
-Gospert
-Gülcherstraße
-Haagenstraße
-Haasberg
-Haasstraße
-Habsburgerweg
-Heidberg
-Heidgasse
-Heidhöhe
-Herbesthaler Straße
-Hisselsgasse
-Hochstraße
-Hook
-Hostert
-Hufengasse
-Hugo-Zimmermann-Str.
-Hütte
-Hütterprivatweg
-Im Peschgen
-In den Siepen
-Industriestraße
-Johannesstraße
-Judenstraße
-Kaperberg
-Kaplan-Arnolds-Str.
-Karl-Weiß-Str.
-Kehrweg
-Kirchgasse
-Kirchstraße
-Klinkeshöfchen
-Kügelgasse
-Langesthal
-Lascheterweg
-Limburgerweg
-Lindenweg
-Lothringerweg
-Malmedyer Straße
-Maria-Theresia-Straße
-Marktplatz
-Monschauer Straße
-Mühlenweg
-Neustraße
-Nikolausfeld
-Nispert
-Noereth
-Obere Ibern
-Obere Rottergasse
-Oestraße
-Olengraben
-Panorama
-Paveestraße
-Peter-Becker-Str.
-Rosenweg
-Rot-Kreuz-Str.
-Rotenberg
-Rotenbergplatz
-Schilsweg
-Schlüsselhof
-Schnellewindgasse
-Schönefeld
-Schorberg
-Schulstraße
-Selterschlag
-Simarstraße
-Steinroth
-Stendrich
-Stockbergerweg
-Stockem
-Theodor-Mooren-Str.
-Untere Ibern
-Vervierser Straße
-Vossengasse
-Voulfeld
-Werthplatz
-Weserstraße
-"""
-
-    streets_of_eupen = [line.strip()
-                        for line in s.splitlines() if len(line.strip()) > 0]
-
-    i = 0
     nr = 1
-    for p in dd.resolve_model("contacts.Person").objects.filter(city=eupen):
-        p.street = streets_of_eupen[i]
+    for p in rt.modules.contacts.Person.objects.filter(city=eupen):
+        p.street = STREETS.pop()
         p.stret_no = str(nr)
         p.save()
         nr += 1
-        if i < len(streets_of_eupen):
-            i += 1
-        else:
-            i = 0

@@ -288,8 +288,6 @@ class BaseBeIdReadCardAction(dd.Action):
         cb.add_choice('yes', yes, _("Yes"))
         cb.add_choice('no', no, _("No"))
         ar.set_callback(cb)
-        #~ cb.add_choice('cancel',no,_("Don't apply"))
-        #~ return cb
 
     def goto_client_response(self, ar, obj, msg=None, **kw):
         """Called from different places but always the same result.  Calls

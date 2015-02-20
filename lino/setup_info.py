@@ -86,6 +86,7 @@ lino.modlib
 lino.modlib.auto
 lino.modlib.auto.sales
 lino.modlib.addresses
+lino.modlib.addresses.fixtures
 lino.modlib.appypod
 lino.modlib.awesomeuploader
 lino.modlib.beid

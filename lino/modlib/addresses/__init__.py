@@ -12,6 +12,7 @@ per partner.
     choicelists
     mixins
     models
+    fixtures.demo2
 
 
 """

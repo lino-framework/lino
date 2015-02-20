@@ -1,11 +1,12 @@
 What are choicelists?
 =====================
 
-A :class:`lino.core.choicelists.ChoiceList` is a "hard-coded" list of
-translatable values.
+A :class:`ChoiceList <lino.core.choicelists.ChoiceList>` is a
+"hard-coded" list of translatable values.
 
-In plain Django, whenever you use a `choices` attribute on a database
-field, then you should consider using a choicelist instead.
+Wherever you use a `choices` attribute on a database field in a plain
+Django application, you should consider using a :class:`ChoiceList
+<lino.core.choicelists.ChoiceList>` instead.
 
 ..
     >>> import os
@@ -16,20 +17,20 @@ field, then you should consider using a choicelist instead.
 For example the :class:`lino.modlib.system.mixins.Genders` choicelist.
 
 
-Choicelists are actors. This means that they are globally accessible
+ChoiceLists are actors. This means that they are globally accessible
 using their actor name.
 
 >>> print(rt.modules.system.Genders)
 system.Genders
 
-Choicelists are never instantiated. They are just the class object
-itself.
+Like every Actor, ChoiceLists are never instantiated. They are just
+the class object itself:
 
 >>> from lino.modlib.system.mixins import Genders
 >>> Genders is rt.modules.system.Genders
 True
 
-Choicelists can be represented as tables:
+ChoiceLists can be rendered as tables:
 
 >>> rt.show(Genders)
 ======= ======== ========

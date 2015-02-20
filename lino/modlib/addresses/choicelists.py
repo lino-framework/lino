@@ -1,9 +1,7 @@
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from django.utils.translation import ugettext_lazy as _
-
-from lino.api import dd
+from lino.api import dd, _
 
 
 class AddressType(dd.Choice):

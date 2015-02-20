@@ -68,3 +68,26 @@ site's default language only at runtime.
 
 The only interpretation is when something is being printed, i.e. in
 :mod:`lino.mixins.printable`.
+
+
+setup() got an unexpected keyword argument 'known_values'
+=========================================================
+
+This error occured in :ref:`welcht` in a version from two days ago. It
+should be covered by :mod:`lino_welfare.projects.std.tests.test_beid`,
+so I suppose that I fixed it unconsciously.
+
+
+Working on :xfile:`file_sheet.odt`
+==================================
+
+I identified another lack in the Developer Guide:
+:doc:`/dev/printing`.
+And :doc:`/dev/languages` deserves its own chapter.
+
+In order to have demo data, I needed to 
+write a new fixture :mod:`lino.modlib.addresses.fixtures.demo2`.
+Moved streets of Eupen to :mod:`lino.utils.demonames.bel`.
+
+I also wrote a tested document :ref:`welfare.tested.addresses`.
+

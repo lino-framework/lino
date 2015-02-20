@@ -136,9 +136,6 @@ Technical details
 =================
 
 
-The following examples use the :class:`TestSite` class just to show
-certain things which apply also to "real" Sites.
-
 These are the Django settings which Lino will override:
 
 >>> from django.utils import translation
@@ -176,44 +173,5 @@ These are the Django settings which Lino will override:
                       'django.template.loaders.filesystem.Loader',
                       'django.template.loaders.app_directories.Loader'),
  '__file__': '...'}
-
-
-Application code usually specifies :attr:`Site.languages` as a single
-string with a space-separated list of language codes.  The
-:class:`Site` will analyze this string during instantiation and
-convert it into a tuple of :data:`LanguageInfo` objects.
-
->>> SITE = Site(languages="en fr de")
->>> pprint(SITE.languages)
-(LanguageInfo(django_code='en', name='en', index=0, suffix=''),
- LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
- LanguageInfo(django_code='de', name='de', index=2, suffix='_de'))
-
->>> SITE = Site(languages="de-ch de-be")
->>> pprint(SITE.languages)
-(LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
- LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
-
-If we have more than one locale of a same language *on a same Site*
-(e.g. 'en-us' and 'en-gb') then it is not allowed to specify just
-'en'.  But otherwise it is allowed to just say "en", which will mean
-"the English variant used on this Site".
-
->>> site = Site(languages="en-us fr de-be de")
->>> pprint(site.languages)
-(LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr'),
- LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
- LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
-
->>> pprint(site.language_dict)
-{'de': LanguageInfo(django_code='de', name='de', index=3, suffix='_de'),
- 'de_BE': LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
- 'en': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- 'en_US': LanguageInfo(django_code='en-us', name='en_US', index=0, suffix=''),
- 'fr': LanguageInfo(django_code='fr', name='fr', index=1, suffix='_fr')}
-
->>> pprint(site.django_settings['LANGUAGES'])  #doctest: +ELLIPSIS
-[('de', 'German'), ('fr', 'French')]
 
 

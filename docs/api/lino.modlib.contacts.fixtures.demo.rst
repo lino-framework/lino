@@ -10,6 +10,7 @@ lino.modlib.contacts.fixtures.demo
    .. autosummary::
    
       objects
+      streets_of_eupen
    
    
 
@@ -19,6 +20,7 @@ lino.modlib.contacts.fixtures.demo
 
    .. autosummary::
    
+      Cycler
       Instantiator
    
    

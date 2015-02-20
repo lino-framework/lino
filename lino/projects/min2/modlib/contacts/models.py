@@ -1,19 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
-# This file is part of the Lino Welfare project.
-# Lino Welfare is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino Welfare is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino Welfare; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2013-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 """
-The `models` module for :mod:`lino_welfare.modlib.contacts`.
+The `models` module for `lino.projects.min2.modlib.contacts`.
 """
 
 from __future__ import unicode_literals
@@ -27,10 +17,10 @@ from lino.modlib.contacts.models import *
 
 from lino.modlib.cal.workflows import take, feedback
 
-addresses = dd.resolve_app('addresses')
+from lino.modlib.addresses.mixins import AddressOwner
 
 
-class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
+class Partner(Partner, AddressOwner, mixins.CreatedModified):
 
     hidden_columns = 'created modified'
 
@@ -40,7 +30,7 @@ class Partner(Partner, addresses.AddressOwner, mixins.CreatedModified):
         # want to get the `get_overview_elems` from AddressOwner, not
         # from Partner (i.e. AddressLocation).
         elems = super(Partner, self).get_overview_elems(ar)
-        elems += addresses.AddressOwner.get_overview_elems(self, ar)
+        elems += AddressOwner.get_overview_elems(self, ar)
         return elems
 
 

@@ -55,9 +55,11 @@ Getting acquaintained
 - :doc:`users` : Why do we replace Django's user management. Passwords.
 - :doc:`site` : Instantiating a `Site`.  Specifying the
   `INSTALLED_APPS`. Additional local apps.
+- :doc:`languages` : if you write applications for users who don't
+  speak English.
 - :doc:`menu` : Standard items of a main menu
-- :doc:`choicelists` :
 - :doc:`actors` :
+- :doc:`choicelists` :
 - :doc:`parameters` :
 
 - :doc:`ar` : Using action requests
@@ -72,6 +74,7 @@ Getting acquaintained
 - :doc:`/tutorials/mldbc/index` :
 - :doc:`/tutorials/human/index` :
 - :doc:`apps` : Plugin inheritance
+- :doc:`printing` : (TODO)
 
 .. toctree::
    :maxdepth: 1
@@ -81,10 +84,11 @@ Getting acquaintained
    application
    plugins
    site
+   languages
    users
    menu
-   choicelists
    actors
+   choicelists
    parameters
    ar
    html
@@ -97,6 +101,7 @@ Getting acquaintained
    /tutorials/mldbc/index
    /tutorials/human/index
    apps
+   printing
    
 
 Reference

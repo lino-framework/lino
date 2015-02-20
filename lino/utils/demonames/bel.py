@@ -2,6 +2,8 @@
 # Copyright 2012-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+# $ python setup.py test -s tests.UtilsTests.test_demonames
+
 """
 Example usage:
 
@@ -4832,20 +4834,139 @@ Zareb
 Zashawn
 """
 
+STREETS_OF_EUPEN = u"""\
+Aachener Straße
+Akazienweg
+Alter Malmedyer Weg
+Am Bahndamm
+Am Berg
+Am Waisenbüschchen
+Auenweg
+Auf dem Spitzberg
+Auf'm Rain
+August-Thonnar-Str.
+Bahnhofsgasse
+Bahnhofstraße
+Bellmerin
+Bennetsborn
+Bergkapellstraße
+Bergstraße
+Binsterweg
+Brabantstraße
+Buchenweg
+Edelstraße
+Euregiostraße
+Favrunpark
+Feldstraße
+Fränzel
+Gewerbestraße
+Gospert
+Gülcherstraße
+Haagenstraße
+Haasberg
+Haasstraße
+Habsburgerweg
+Heidberg
+Heidgasse
+Heidhöhe
+Herbesthaler Straße
+Hisselsgasse
+Hochstraße
+Hook
+Hostert
+Hufengasse
+Hugo-Zimmermann-Str.
+Hütte
+Hütterprivatweg
+Im Peschgen
+In den Siepen
+Industriestraße
+Johannesstraße
+Judenstraße
+Kaperberg
+Kaplan-Arnolds-Str.
+Karl-Weiß-Str.
+Kehrweg
+Kirchgasse
+Kirchstraße
+Klinkeshöfchen
+Kügelgasse
+Langesthal
+Lascheterweg
+Limburgerweg
+Lindenweg
+Lothringerweg
+Malmedyer Straße
+Maria-Theresia-Straße
+Marktplatz
+Monschauer Straße
+Mühlenweg
+Neustraße
+Nikolausfeld
+Nispert
+Noereth
+Obere Ibern
+Obere Rottergasse
+Oestraße
+Olengraben
+Panorama
+Paveestraße
+Peter-Becker-Str.
+Rosenweg
+Rot-Kreuz-Str.
+Rotenberg
+Rotenbergplatz
+Schilsweg
+Schlüsselhof
+Schnellewindgasse
+Schönefeld
+Schorberg
+Schulstraße
+Selterschlag
+Simarstraße
+Steinroth
+Stendrich
+Stockbergerweg
+Stockem
+Theodor-Mooren-Str.
+Untere Ibern
+Vervierser Straße
+Vossengasse
+Voulfeld
+Werthplatz
+Weserstraße
+"""
+
+
+def streets_of_eupen():
+    r"""Yield an almost complete list of street names in Eupen.
+
+    >>> list(streets_of_eupen())[:5]
+    [u'Aachener Stra\xdfe', u'Akazienweg', u'Alter Malmedyer Weg', u'Am Bahndamm', u'Am Berg']
+
+    """
+    for ln in STREETS_OF_EUPEN.splitlines():
+        ln = ln.strip()
+        if ln:
+            yield ln
+
 
 def streets_of_liege():
-    def fn():
-        #~ streets = []
-        for ln in STREETS_OF_LIEGE.splitlines():
-            if ln and ln[0] == '*':
-                m = re.match(STREET_RE, ln)
-                if m:
-                    s = m.group(1).strip()
-                    if '|' in s:
-                        s = s.split('|')[1]
-                    yield s
-                    #~ streets.append(s)
-    return Cycler(fn())
+    r"""Yield an almost complete list of street names in Liège.
+
+    >>> list(streets_of_liege())[:5]
+    [u'Place du 20-Ao\xfbt', u"Rue de l'Abattoir", u'Rue des Abeilles', u'Rue des Acacias', u"Rue de l'Acad\xe9mie"]
+
+    """
+    for ln in STREETS_OF_LIEGE.splitlines():
+        if ln and ln[0] == '*':
+            m = re.match(STREET_RE, ln)
+            if m:
+                s = m.group(1).strip()
+                if '|' in s:
+                    s = s.split('|')[1]
+                yield s
+                #~ streets.append(s)
 
 
 LAST_NAMES_BELGIUM = Cycler(splitter1(LAST_NAMES_BELGIUM))

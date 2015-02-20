@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 """
 
 from lino.utils import Cycler
-from lino import mixins
 from lino.api import dd, rt
 from lino.utils import demonames
 
@@ -17,12 +16,12 @@ def objects():
     male_first_names = demonames.MALE_FIRST_NAMES_FRANCE
     female_first_names = demonames.FEMALE_FIRST_NAMES_FRANCE
 
-    Person = dd.resolve_model("contacts.Person")
-    Place = dd.resolve_model('countries.Place')
+    Person = rt.modules.contacts.Person
+    Place = rt.modules.countries.Place
 
     CITIES = Cycler(
         Place.objects.filter(country_id='BE', zip_code__startswith='40'))
-    STREETS = demonames.streets_of_liege()
+    STREETS = Cycler(demonames.streets_of_liege())
 
     common = dict(language='fr', country_id='BE')
     for i in range(100):

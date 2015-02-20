@@ -248,25 +248,8 @@ class Site(object):
     """
 
     languages = None
-    """The language distribution used on this site.
-
-    This must be either `None` or an iterable of language codes, or a
-    string containing a space-separated suite of language codes.
-
-    Examples::
-
-      languages = "en de fr nl et".split()
-      languages = ['en']
-      languages = 'en fr'
-
-    See :meth:`apply_languages` for more detailed description.
-
-    The first language in this list will be the site's default
-    language.
-
-    Changing this setting affects your database structure if your
-    application uses babel fields, and thus might require a :ref:`data
-    migration <datamig>`.
+    """The language distribution used on this site.  It has its own
+    chapter :doc:`/dev/languages` in the Developers Guide.
 
     """
 
@@ -835,8 +818,23 @@ documentation.
     """
 
     appy_params = dict(ooPort=8100)
-    """
-    Used by :class:`lino.mixins.printable.AppyBuildMethod`.
+    """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
+
+    Allowed keyword arguments for `appy.pod.renderer.Render` are::
+
+      pythonWithUnoPath=None,
+      ooPort=2002
+      stylesMapping={}
+      forceOoCall=False,
+      finalizeFunction=None
+      overwriteExisting=False
+      raiseOnError=False
+      imageResolver=None
+
+    See `the source code
+    <http://bazaar.launchpad.net/~appy-dev/appy/trunk/view/head:/pod/renderer.py>`_
+    for details.
+
     """
 
     #~ decimal_separator = '.'
@@ -1779,12 +1777,11 @@ documentation.
                 yield u
 
     def apply_languages(self):
-        """
-        This function is called when a Site objects get instantiated,
+        """This function is called when a Site object gets instantiated,
         i.e. while Django is still loading the settings. It analyzes
-        the attribute `languages` and converts it to a tuple of
+        the :attr:`languages` attribute and converts it to a tuple of
         :data:`LanguageInfo` objects.
-        
+
         """
 
         if isinstance(self.languages, tuple) \
