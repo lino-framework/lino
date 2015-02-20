@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the fields :class:`LanguageField`, :class:`BabelCharField`
-and :class:`BabelTextField`, and the model mixin :class:`BabelNamed`.
-
-See usage example in :ref:`mldbc_tutorial`.
+"""Defines the model mixin :class:`BabelNamed`.
 
 """
 

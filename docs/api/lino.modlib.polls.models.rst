@@ -30,6 +30,8 @@ lino.modlib.polls.models
       AnswerRemarkField
       AnswerRemarks
       AnswerRemarksByAnswer
+      AnswersByQuestion
+      AnswersByQuestionRow
       AnswersByResponse
       AnswersByResponseRow
       ByUser

@@ -180,7 +180,7 @@ class SimpleBuildMethod(BuildMethod):
                 "exactly 1 template (got %r)" % (
                     elem.__class__.__name__, tpls))
         tpl_leaf = tpls[0]
-        lang = elem.get_print_language()
+        lang = elem.get_print_language() or settings.SITE.DEFAULT_LANGUAGE.django_code
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
             name = tpl_leaf[:-len(self.template_ext)] + \
                 "_" + lang + self.template_ext
@@ -231,7 +231,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         When the source string contains non-ascii characters, then
         we must convert it to a unicode string.
         """
-        lang = str(elem.get_print_language())
+        lang = str(elem.get_print_language() or settings.SITE.DEFAULT_LANGUAGE.django_code)
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
                     tpl, target, lang, settings.SITE.appy_params)
 

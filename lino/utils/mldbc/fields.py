@@ -1,11 +1,21 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the fields :class:`LanguageField`, :class:`BabelCharField`
-and :class:`BabelTextField`, and the model mixin :class:`BabelNamed`.
+"""Defines the babel field classes (:class:`BabelCharField` and
+:class:`BabelTextField`) and the :class:`LanguageField` class.
 
-See usage example in :ref:`mldbc_tutorial`.
+**Babel fields** are fields which "generate" in the Django model a
+series of normal CharFields (or TextFields), one for each
+:attr:`lino.core.site.Site.language`.
+
+Example::
+
+  class Foo(models.Model):
+      name = BabelCharField(_("Foo"), max_length=200)
+      
+
+.. autosummary::
 
 """
 
@@ -72,7 +82,9 @@ class BabelTextField(RichTextField):
 class LanguageField(models.CharField):
 
     """A field that lets the user select a language from the available
-    babel languages.
+    :attr:`lino.core.site.Site.languages`.
+
+    See also :meth:`lino.core.model.Model.get_print_language`.
 
     """
 
@@ -80,7 +92,8 @@ class LanguageField(models.CharField):
         defaults = dict(
             verbose_name=_("Language"),
             choices=iter(settings.SITE.LANGUAGE_CHOICES),
-            default=settings.SITE.get_default_language,
+            blank=True,
+            # default=settings.SITE.get_default_language,
             #~ default=get_language,
             max_length=LANGUAGE_CODE_MAX_LENGTH,
         )

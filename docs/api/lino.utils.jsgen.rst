@@ -19,6 +19,7 @@ lino.utils.jsgen
       py2js
       register_converter
       set_for_user_profile
+      set_user_profile
    
    
 

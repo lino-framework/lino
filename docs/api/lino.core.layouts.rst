@@ -30,6 +30,7 @@ lino.core.layouts
       LayoutHandle
       Panel
       ParamsLayout
+      Plugin
    
    
 

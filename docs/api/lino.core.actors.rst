@@ -32,6 +32,7 @@ lino.core.actors
       ActorMetaClass
       AttrDict
       BoundAction
+      ContentType
    
    
 

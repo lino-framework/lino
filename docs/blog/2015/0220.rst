@@ -1,0 +1,70 @@
+=========================
+Friday, February 20, 2015
+=========================
+
+New Household Member Role "Other"
+=================================
+
+I added a new choice "other" to
+:class:`lino.modlib.households.choicelists.MemberRoles`. Because
+Mathieu asked:
+
+
+  On ne sait pas créer de lien de parenté avec une personne qui n’est pas
+  « bénéficiaire », est-ce normal ? Peut-on avoir un champs qui permette
+  de compléter librement le nom, prénom et numéro de contact d’une personne ?
+
+And I answered:
+
+    Oui c'est "normal", càd tu es le premier à demander cette possibilité.
+
+    En effet on pourrait imaginer, pour les liens de parenté, un
+    système similaire que celui des membres de ménage. Mais ce serait
+    une redondance superflue. Pour encoder des personnes de contact
+    "privées", il vaut mieux toujours passer par la "Composition de
+    ménage". Quitte à définir un nouveau type de ménage "Célibataire"
+    ou "Isolé". Les liens de parenté sont plutot réservés aux liens
+    "biologiques" et se remplissent automatiquement pour certains
+    roles de membres de ménage.
+
+    - J'ai donc ajouté un nouveau choice "Autre" dans MemberRoles (role de
+      ménage)
+
+    - Je pourrais également ajouter une colonne "numéro de contact" (ou
+      "GSM") dans le tableau "Composition de ménage". J'attends votre
+      confirmation avant de commencer.
+
+
+New field `aids.Confirmation.language`
+=======================================
+
+It turned out that we need a field :attr:`language
+<lino_welfare.modlib.aids.mixins.Confirmation.language>` for every Aid
+confirmation (:class:`aids.Confirmation
+<lino_welfare.modlib.aids.mixins.Confirmation>`) . I wrote to Gerd:
+
+    (#76) Bescheinigungen wurden bisher immer in Deutsch ausgedruckt. Ab
+    jetzt immer in der Sprache des Empfängers (wenn es einen gibt) und
+    ansonsten in der des Klienten.
+    Manuell die Sprache einer individuellen Bescheinigung zu wählen ist
+    weiterhin umständlich, aber ich erwarte jetzt euer Feedback (mit
+    Beispielen), wann das jetzt noch nötig ist.
+
+and he answered:
+
+    Nach Rücksprache mit den Kolleginnen vom Empfang ist es absolut
+    unabdingbar, dass die Sprache der Bescheinigung manuell ausgewählt
+    werden kann. Es kommt regelmäßig vor, dass beispielsweise ein
+    deutschsprachiger Klient eine französischsprachige Bescheinigung
+    braucht, für die es keinen nominativen Empfänger gibt.
+
+A `language` field now can be blank
+===================================
+
+This caused a related change which might have consequences:
+:class:`LanguageField <lino.utils.mldbc.fields.LanguageField>` is now
+`blank=True`, and an empty `language` will be interpreted to the
+site's default language only at runtime.
+
+The only interpretation is when something is being printed, i.e. in
+:mod:`lino.mixins.printable`.

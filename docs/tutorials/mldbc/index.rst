@@ -4,44 +4,61 @@
 Multilingual database content
 =============================
 
-One nice feature of Lino is its built-in support for
-:ref:`multilingual database content <mldbc>`.  This tutorial explains
-what it is.
+One feature of Lino is its built-in support for :ref:`single-table
+multilingual database content <mldbc>`.  This tutorial explains what
+it is.
+
+Note that we are **not** talking about Internationalization (i18n)
+here.  *Internationalization* is when the *user interface* is in
+different languages.  Lino has nothing to add to the existing Django
+techniques about `Internationalization
+<https://docs.djangoproject.com/en/dev/topics/i18n/>`__, that's why we
+deliberately didn't translate the user interface in this tutorial.
+
+
 
 When to use BabelFields
 -----------------------
 
-For example, a Canadian company might want to print catalogs and price
+Imagine a Canadian company which wants to print catalogs and price
 offers in an English and a French version, depending on the customer's
-preferred language.  The prices are the same in French and in English,
-so they don't want to maintain different product tables.  They need a
-Products table like this:
+preferred language.  They don't want to maintain different product
+tables because it is one company, one accounting, and prices are the
+same in French and in English.  They need a Products table like this:
 
-  +--------------+------------------+-------------+-------+----+
-  | Designation  | Designation (fr) | Category    | Price | ID |
-  +==============+==================+=============+=======+====+
-  | Chair        | Chaise           | Accessories | 29.95 | 1  |
-  +--------------+------------------+-------------+-------+----+
-  | Table        | Table            | Accessories | 89.95 | 2  |
-  +--------------+------------------+-------------+-------+----+
-  | Monitor      | Écran            | Hardware    | 19.95 | 3  |
-  +--------------+------------------+-------------+-------+----+
-  | Mouse        | Souris           | Accessories |  2.95 | 4  |
-  +--------------+------------------+-------------+-------+----+
-  | Keyboard     | Clavier          | Accessories |  4.95 | 5  |
-  +--------------+------------------+-------------+-------+----+
+  +------------------+------------------+-------------+-------+----+
+  | Designation (en) | Designation (fr) | Category    | Price | ID |
+  +==================+==================+=============+=======+====+
+  | Chair            | Chaise           | Accessories | 29.95 | 1  |
+  +------------------+------------------+-------------+-------+----+
+  | Table            | Table            | Accessories | 89.95 | 2  |
+  +------------------+------------------+-------------+-------+----+
+  | Monitor          | Écran            | Hardware    | 19.95 | 3  |
+  +------------------+------------------+-------------+-------+----+
+  | Mouse            | Souris           | Accessories |  2.95 | 4  |
+  +------------------+------------------+-------------+-------+----+
+  | Keyboard         | Clavier          | Accessories |  4.95 | 5  |
+  +------------------+------------------+-------------+-------+----+
 
-Now imagine that your application is being used both in Canada and the
-US.  Of course, your US customers don't want to have a "useless"
-column for the French designation of their products. With :mod:`north`
-you can simply set the :attr:`languages
-<lino.core.site.Site.languages>` attribute to `["en"]` for US
-customers and to `['en', 'fr']` for Canadian customers.
+Now imagine that your application is being used not only in Canada but
+also in the United States.  Of course, your US customers don't want to
+have a "useless" column for the French designation of their products.
 
+This is where you want multi-lingual database content.
 
+In that case you would simply
 
-Let's create a little Site with the following 
-:xfile:`models.py` file:
+- use :class:`BabelCharField <lino.utils.mldbc.fields.BabelCharField>`
+  instead of Django's `CharField` for every translatable field and
+
+- set the :attr:`languages <lino.core.site.Site.languages>` attribute
+  to ``"en"`` for US customers and to ``"en fr"`` for Canadian
+  customers.
+
+An example
+==========
+
+Let's create a little Site with the following :xfile:`models.py` file:
 
 .. literalinclude:: models.py
 
@@ -51,9 +68,9 @@ Let's create a little Site with the following
   >>> Product = mldbc.Product
   
 
-The :xfile:`settings.py` file is where you specify the 
-:attr:`languages <lino.core.site.Site.languages>` 
-setting of a given Site instance:
+The :xfile:`settings.py` file is where you specify the
+:attr:`languages <lino.core.site.Site.languages>` setting of a given
+Site instance:
 
 .. literalinclude:: settings.py
   
@@ -61,7 +78,7 @@ setting of a given Site instance:
 The `demo` fixture
 ------------------
 
-Now we install some demo data. Here is a :ref:`Python fixture <dpy>`:
+Now we install some demo data using a :ref:`Python fixture <dpy>`:
 
 .. literalinclude:: fixtures/demo.py
 
@@ -162,13 +179,6 @@ The screenshots on the left have been taken on a server with
 ``languages = ['en']``,
 those on the right on a server with 
 ``languages = ['de','fr']``.
-
-Note that we are **not** talking about Internationalization (i18n) here.
-*Internationalization* is when the *user interface* is in different languages.
-Lino has nothing to add to the existing Django techniques about
-`Internationalization
-<https://docs.djangoproject.com/en/dev/topics/i18n/>`__,
-that's why we deliberately didn't translate the user interface in this tutorial.
 
 
 .. image:: babel1a.jpg

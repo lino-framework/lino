@@ -2,9 +2,23 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from lino import ad
+"""Adds functionality for managing households (i.e. groups of humans
+who live together in a same house).
 
-from django.utils.translation import ugettext_lazy as _
+.. autosummary::
+   :toctree:
+
+    models
+    choicelists
+    fixtures.std
+    fixtures.demo
+
+This plugin is being extended by :ref:`welfare` in
+:mod:`lino_welfare.modlib.households`.
+
+"""
+
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

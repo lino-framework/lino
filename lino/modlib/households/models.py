@@ -5,23 +5,22 @@
 
 """
 
-
 from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, rt, mixins
+from lino import dd, rt, _, mixins
 from lino.utils import join_words, join_elems
-from lino.utils import mti
 from lino.utils.xmlgen.html import E
+
+from .choicelists import MemberRoles
 
 contacts = dd.resolve_app('contacts')
 
-config = dd.apps.households
+config = dd.plugins.households
 
 
 class Type(mixins.BabelNamed):
@@ -42,30 +41,6 @@ class Types(dd.Table):
     name
     HouseholdsByType
     """
-
-
-class MemberRoles(dd.ChoiceList):
-    """The list of allowed choices for the role of a household member.
-    """
-    verbose_name = _("Role")
-    verbose_name_plural = _("Roles")
-
-add = MemberRoles.add_item
-add('01', _("Head of household"), 'head')
-add('02', _("Spouse"), 'spouse')
-add('03', _("Partner"), 'partner')
-add('04', _("Cohabitant"), 'cohabitant')
-add('05', _("Child"), 'child')
-add('07', _("Adopted child"), 'adopted')
-add('06', _("Relative"), 'relative')
-# add('10', _("Child of head"), 'child_of_head')
-# add('11', _("Child of partner"), 'child_of_partner')
-
-parent_roles = (MemberRoles.head, MemberRoles.spouse,
-                MemberRoles.partner, MemberRoles.cohabitant)
-
-child_roles = (MemberRoles.child, MemberRoles.adopted)
-               # MemberRoles.child_of_head, MemberRoles.child_of_partner)
 
 
 class Household(contacts.Partner):
