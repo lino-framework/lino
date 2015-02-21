@@ -84,14 +84,12 @@ class Model(models.Model):
         abstract = True
 
     allow_cascaded_delete = frozenset()
-    """
-    A list of names of ForeignKey fields of this model that allow for
+    """A list of names of ForeignKey fields of this model that allow for
     cascaded delete.
     
-    When deleting an object through the user interface, Lino by
-    default forbids to delete an object that is referenced by other
-    objects. Users will get a message of type "Cannot delete X because
-    n Ys refer to it".
+    Lino by default forbids to delete (using the web interface) any
+    object that is referenced by other objects. Users will get a
+    message of type "Cannot delete X because n Ys refer to it".
     
     Example: Lino should not refuse to delete a Mail just because it
     has some Recipient.  When deleting a Mail, Lino should also delete
@@ -106,14 +104,14 @@ class Model(models.Model):
     
     This mechanism doesn't depend on nor influence Django's `on_delete
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-    option.  But of course you should not allow_cascaded_delete for
+    option.  But of course you should not `allow_cascaded_delete` for
     fields which have e.g. `on_delete=PROTECT`.
 
     """
 
     allow_stale_generic_foreignkey = frozenset()
     """A `frozenset` of names of GenericForeignKeyIdField on this model
-    that are allowed to become "stale". 
+    that are allowed to become "stale".
 
     Application code can specify this as a single string of
     space-separated field names. Lino will convert this into a
@@ -338,6 +336,8 @@ class Model(models.Model):
         return set()
 
     def delete(self, **kw):
+        """It seems that this is useless because Django does it too.
+        See :blogref:`20150221`."""
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
         for gfk, qs in kernel.get_generic_related(self):

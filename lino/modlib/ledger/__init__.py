@@ -60,7 +60,7 @@ class Plugin(ad.Plugin):
     def setup_explorer_menu(self, site, profile, m):
         mg = site.plugins.accounts
         m = m.add_menu(mg.app_label, mg.verbose_name)
-        m.add_action('ledger.Invoices')
+        m.add_action('ledger.AccountInvoices')
         m.add_action('ledger.Vouchers')
         m.add_action('ledger.VoucherTypes')
         m.add_action('ledger.Movements')

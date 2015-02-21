@@ -300,7 +300,7 @@ class Kernel(object):
 
         for model in models_list:
             if model._meta.auto_created:
-                continue  # automatic intermediat models created by
+                continue  # automatic intermediate models created by
                           # ManyToManyField should not disable delete
             for f, m in model._meta.get_fields_with_model():
 

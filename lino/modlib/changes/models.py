@@ -1,7 +1,7 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :xfile:`models.py` module for `lino.modlib.changes`.
+"""Database models for `lino.modlib.changes`.
 
 It defines the :class:`Change` model, and the functions
 :func:`watch_changes` and :func:`watch_all_changes`.  It also adds a
@@ -64,6 +64,7 @@ class Change(dd.Model):
         verbose_name_plural = _("Changes")
 
     allow_stale_generic_foreignkey = 'master object'
+    # see blog/2015/0221
 
     time = models.DateTimeField()
     type = ChangeTypes.field()
@@ -336,5 +337,4 @@ def on_merge(sender=None, request=None, **kw):
         return
     log_change(ChangeTypes.merge, request,
                master, sender.obj, sender.logmsg())
-
 

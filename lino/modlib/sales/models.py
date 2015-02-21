@@ -159,7 +159,7 @@ class SalesDocument(
         return super(SalesDocument, self).add_voucher_item(**kw)
 
 
-class SalesDocuments(dd.Table):
+class SalesDocuments(ledger.PartnerVouchers):
     pass
 
 
@@ -338,11 +338,10 @@ class InvoiceDetail(dd.FormLayout):
 
 
 class Invoices(SalesDocuments):
-    #~ parameters = dict(pyear=journals.YearRef())
     parameters = dict(
-        year=ledger.FiscalYears.field(blank=True),
         state=InvoiceStates.field(blank=True),
-        journal=ledger.JournalRef(blank=True))
+        **SalesDocuments.parameters)
+
     model = 'sales.Invoice'
     order_by = ["-id"]
     column_names = "id date partner total_incl user *"
@@ -356,20 +355,10 @@ class Invoices(SalesDocuments):
     @classmethod
     def get_request_queryset(cls, ar):
         qs = super(Invoices, cls).get_request_queryset(ar)
-        if not isinstance(qs, list):
-            pv = ar.param_values
-            #~ print 20120825, ar
-            if pv.year:
-                qs = qs.filter(year=pv.year)
-            if pv.journal:
-                qs = qs.filter(journal=pv.journal)
+        pv = ar.param_values
+        if pv.state:
+            qs = qs.filter(state=pv.state)
         return qs
-
-    @classmethod
-    def unused_param_defaults(cls, ar, **kw):
-        kw = super(Invoices, cls).param_defaults(ar, **kw)
-        kw.update(year=ledger.FiscalYears.from_date(settings.SITE.today()))
-        return kw
 
 
 class InvoicesByJournal(ledger.ByJournal, Invoices):
@@ -378,6 +367,7 @@ class InvoicesByJournal(ledger.ByJournal, Invoices):
 
     """
     params_panel_hidden = True
+    params_layout = "partner year state"
     column_names = "number date due_date " \
         "partner " \
         "total_incl order subject:10 " \

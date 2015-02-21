@@ -10,22 +10,17 @@ Database models for `lino.modlib.contenttypes`.
 """
 
 
-# from django.contrib.contenttypes.models import *
 from django.contrib.contenttypes.models import ContentType, models
 
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
 from django.db.utils import DatabaseError
 from django.db.models import FieldDoesNotExist
 
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
-
-
-from .mixins import Controllable
 
 
 class ContentTypes(dd.Table):
@@ -40,7 +35,7 @@ class ContentTypes(dd.Table):
     detail_layout = """
     id name app_label model base_classes
     HelpTextsByModel
-    StaleControllablesByModel
+    StaleGenericRelatedsByModel
     """
 
     @dd.displayfield(_("Base classes"))
@@ -127,22 +122,50 @@ class HelpTextsByModel(HelpTexts):
     master_key = 'content_type'
 
 
-class StaleControllables(dd.VirtualTable):
+def get_stale_generic_related(model):
+    gfks = [f for f in settings.SITE.kernel.GFK_LIST if f.model is model]
+    if len(gfks):
+        for gfk in gfks:
+            kw = {gfk.ct_field+'__isnull': False}
+            qs = model.objects.filter(**kw)
+            for obj in qs:
+                # if getattr(obj, gfk.name) is None:
+                pk = getattr(obj, gfk.fk_field)
+                try:
+                    gfk.model.objects.get(pk=pk)
+                    # obj._message += " (ok)"
+                    # yield obj
+                except gfk.model.DoesNotExist as e:
+                    msg = "{0} points to {1} in {2}"
+                    obj._message = msg.format(gfk.name, pk, gfk.model)
+                    obj._message += " ({0})".format(e)
+                    yield obj
 
+
+class StaleGenericRelateds(dd.VirtualTable):
+    """Shows a table of all database objects (model instances) who """
     label = _("Stale Controllables")
 
-    column_names = "database_object owner_model owner_id"
+    column_names = "database_object owner_model owner_id message"
 
     @classmethod
     def get_data_rows(self, ar):
-        for M in rt.models_by_base(Controllable):
-            for obj in M.objects.filter(owner_id__isnull=False):
-                if obj.owner is None:
-                    yield obj
+        for model in models.get_models(include_auto_created=True):
+            for obj in get_stale_generic_related(model):
+                yield obj
+    
+        # for M in rt.models_by_base(Controllable):
+        #     for obj in M.objects.filter(owner_id__isnull=False):
+        #         if obj.owner is None:
+        #             yield obj
 
     @dd.displayfield(_("Database object"))
     def database_object(self, obj, ar):
         return ar.obj2html(obj)
+
+    @dd.displayfield(_("Message"))
+    def message(self, obj, ar):
+        return obj._message
 
     @dd.virtualfield(models.IntegerField(_("Primary key")))
     def owner_id(self, obj, ar):
@@ -155,23 +178,23 @@ class StaleControllables(dd.VirtualTable):
         # return dd.full_model_name(obj.__class__)
 
 
-class StaleControllablesByModel(StaleControllables):
+class StaleGenericRelatedsByModel(StaleGenericRelateds):
     master = 'contenttypes.ContentType'
 
-    column_names = "database_object owner_id"
+    column_names = "database_object owner_id message"
 
     @classmethod
     def get_data_rows(self, ar):
-        rows = []
         mi = ar.master_instance
-        # TODO: find them using a real database request
+        # TODO: find them using a single database request
         if mi is not None:
-            M = mi.model_class()
-            if issubclass(M, Controllable):
-                for obj in M.objects.filter(owner_id__isnull=False):
-                    if obj.owner is None:
-                        rows.append(obj)
-        return rows
+            for obj in get_stale_generic_related(mi.model_class()):
+                yield obj
+
+            # if issubclass(M, Controllable):
+            #     for obj in M.objects.filter(owner_id__isnull=False):
+            #         if obj.owner is None:
+            #             rows.append(obj)
 
     @classmethod
     def get_pk_field(self):

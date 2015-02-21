@@ -335,19 +335,11 @@ class Voucher(UserAuthored, mixins.Registrable):
     class Meta:
         verbose_name = _("Voucher")
         verbose_name_plural = _("Vouchers")
-        #~ abstract = True
-
-    #~ required_to_deregister = dict(states='registered paid')
-
-    #~ controller_is_optional = False
 
     date = models.DateField(_("Date"), default=dd.today)
-
     journal = JournalRef()
     year = FiscalYears.field(blank=True)
     number = VoucherNumber(blank=True, null=True)
-    #~ ledger_remark = models.CharField("Remark for ledger",
-      #~ max_length=200,blank=True)
     narration = models.CharField(_("Narration"), max_length=200, blank=True)
 
     #~ @classmethod
@@ -526,6 +518,21 @@ class Vouchers(dd.Table):
     editable = False
     order_by = ["date", "number"]
     column_names = "date number *"
+    parameters = dict(
+        year=FiscalYears.field(blank=True),
+        journal=JournalRef(blank=True))
+    params_layout = "year journal"
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Vouchers, cls).get_request_queryset(ar)
+        if not isinstance(qs, list):
+            pv = ar.param_values
+            if pv.year:
+                qs = qs.filter(year=pv.year)
+            if pv.journal:
+                qs = qs.filter(journal=pv.journal)
+        return qs
 
 
 class ByJournal(dd.Table):
@@ -1021,13 +1028,10 @@ class AccountInvoice(vat.VatDocument, Voucher, Matchable):
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    your_ref = models.CharField(_("Your reference"),
-                                max_length=200, blank=True)
-
+    your_ref = models.CharField(
+        _("Your reference"), max_length=200, blank=True)
     due_date = models.DateField(_("Due date"), blank=True, null=True)
-
     state = InvoiceStates.field(default=InvoiceStates.draft)
-
     workflow_state_field = 'state'
 
     def get_due_date(self):
@@ -1081,15 +1085,31 @@ class InvoiceDetail(dd.FormLayout):
     """, label=_("Ledger"))
 
 
-class Invoices(dd.Table):
+class PartnerVouchers(Vouchers):
+    parameters = dict(
+        partner=models.ForeignKey(
+            partner_model, blank=True, null=True),
+        **Vouchers.parameters)
+    params_layout = "journal year partner"
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(PartnerVouchers, cls).get_request_queryset(ar)
+        pv = ar.param_values
+        if pv.partner:
+            qs = qs.filter(partner=pv.partner)
+        return qs
+
+
+class AccountInvoices(PartnerVouchers):
     model = 'ledger.AccountInvoice'
     order_by = ["-id"]
-    column_names = "date id number partner total_incl user *"
     parameters = dict(
-        pyear=FiscalYears.field(blank=True),
-        ppartner=models.ForeignKey(partner_model, blank=True, null=True),
-        pjournal=JournalRef(blank=True))
-    params_layout = "pjournal pyear ppartner"
+        state=InvoiceStates.field(blank=True),
+        **PartnerVouchers.parameters)
+    params_layout = "partner state journal year"
+    params_panel_hidden = True
+    column_names = "date id number partner total_incl user *"
     detail_layout = InvoiceDetail()
     insert_layout = """
     journal partner
@@ -1099,29 +1119,26 @@ class Invoices(dd.Table):
 
     @classmethod
     def get_request_queryset(cls, ar):
-        qs = super(Invoices, cls).get_request_queryset(ar)
-        if ar.param_values.ppartner:
-            qs = qs.filter(partner=ar.param_values.ppartner)
-        if ar.param_values.pyear:
-            qs = qs.filter(year=ar.param_values.pyear)
-        if ar.param_values.pjournal:
-            qs = qs.filter(journal=ar.param_values.pjournal)
+        qs = super(AccountInvoices, cls).get_request_queryset(ar)
+        pv = ar.param_values
+        if pv.state:
+            qs = qs.filter(state=pv.state)
         return qs
 
     @classmethod
     def unused_param_defaults(cls, ar, **kw):
-        kw = super(Invoices, cls).param_defaults(ar, **kw)
+        kw = super(AccountInvoices, cls).param_defaults(ar, **kw)
         kw.update(pyear=FiscalYears.from_date(settings.SITE.today()))
         return kw
 
 
-class InvoicesByJournal(ByJournal, Invoices):
+class InvoicesByJournal(AccountInvoices, ByJournal):
+    params_layout = "partner state year"
     column_names = "number date due_date " \
         "partner " \
         "total_incl " \
         "total_base total_vat user workflow_buttons *"
                   #~ "ledger_remark:10 " \
-    params_panel_hidden = True
     insert_layout = """
     partner
     date total_incl
