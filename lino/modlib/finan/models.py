@@ -244,7 +244,7 @@ class VoucherItem(mixins.Sequenced, ledger.VoucherItem, ledger.Matchable):
                     if match.trade_type is not None:
                         self.account = match.trade_type.get_partner_account()
                     self.dc = match.dc
-                    self.amount = match.balance
+                    self.amount = -match.balance
                     self.match = match.match
                 if self.account_id is None:
                     raise ValidationError(
