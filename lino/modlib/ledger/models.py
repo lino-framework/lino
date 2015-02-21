@@ -514,7 +514,7 @@ class Vouchers(dd.Table):
     """
     The default table for all tables working on :class:`Voucher`.
     """
-    model = Voucher
+    model = 'ledger.Voucher'
     editable = False
     order_by = ["date", "number"]
     column_names = "date number *"
@@ -628,7 +628,7 @@ class VouchersByPartner(dd.VirtualTable):
                     ar, master_instance=jnl,
                     known_values=dict(partner=obj))
                 actions.append(
-                    sar.ar2button(unicode(jnl), icon_name=None))
+                    sar.ar2button(label=unicode(jnl), icon_name=None))
                 actions.append(' ')
 
         elems += [E.br(), _("Create voucher in journal ")] + actions
@@ -1086,6 +1086,8 @@ class InvoiceDetail(dd.FormLayout):
 
 
 class PartnerVouchers(Vouchers):
+    editable = True
+
     parameters = dict(
         partner=models.ForeignKey(
             partner_model, blank=True, null=True),

@@ -216,6 +216,78 @@ class Invoice(SalesDocument, ledger.Voucher):
         #~ yield 'item_vat'
 
 
+class InvoiceDetail(dd.FormLayout):
+    main = "general more ledger"
+
+    totals = dd.Panel("""
+    # discount
+    total_base
+    total_vat
+    total_incl
+    workflow_buttons
+    """, label=_("Totals"))
+
+    invoice_header = dd.Panel("""
+    date partner vat_regime
+    order subject your_ref
+    payment_term due_date:20
+    shipping_mode
+    """, label=_("Header"))  # sales_remark
+
+    general = dd.Panel("""
+    invoice_header:60 totals:20
+    ItemsByInvoice
+    """, label=_("General"))
+
+    more = dd.Panel("""
+    id user language #project #item_vat
+    intro
+    """, label=_("More"))
+
+    ledger = dd.Panel("""
+    journal year number narration
+    ledger.MovementsByVoucher
+    """, label=_("Ledger"))
+
+
+class Invoices(SalesDocuments):
+    model = 'sales.Invoice'
+    order_by = ["-id"]
+    column_names = "id date partner total_incl user *"
+    detail_layout = InvoiceDetail()
+    insert_layout = dd.FormLayout("""
+    partner date
+    subject
+    """, window_size=(40, 'auto'))
+    parameters = dict(
+        state=InvoiceStates.field(blank=True),
+        **SalesDocuments.parameters)
+
+    # start_at_bottom = True
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Invoices, cls).get_request_queryset(ar)
+        pv = ar.param_values
+        if pv.state:
+            qs = qs.filter(state=pv.state)
+        return qs
+
+
+class InvoicesByJournal(Invoices, ledger.ByJournal):
+    """Shows all invoices of a given journal (whose `voucher_type` must be
+    :class:`Invoice`)
+
+    """
+    params_panel_hidden = True
+    params_layout = "partner year state"
+    column_names = "number date due_date " \
+        "partner " \
+        "total_incl order subject:10 " \
+        "total_base total_vat user *"
+                  #~ "ledger_remark:10 " \
+
+
 class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
 
     class Meta:
@@ -288,7 +360,8 @@ class ItemsByInvoice(ItemsByDocument):
     #~ debug_permissions = 20130128
     model = 'sales.InvoiceItem'
     auto_fit_column_widths = True
-    column_names = "seqno:3 product title description:20x1 discount unit_price qty total_incl *"
+    column_names = "seqno:3 product title description:20x1 \
+    discount unit_price qty total_incl *"
     hidden_columns = "seqno description total_base total_vat"
 
 
@@ -298,81 +371,10 @@ class ItemsByInvoicePrint(ItemsByInvoice):
 
 class InvoiceItemsByProduct(ItemsByInvoice):
     master_key = 'product'
-    column_names = "voucher voucher__partner qty title description:20x1 discount unit_price total_incl total_base total_vat"
+    column_names = "voucher voucher__partner qty title \
+description:20x1 discount unit_price total_incl total_base total_vat"
     editable = False
     #~ auto_fit_column_widths = True
-
-
-class InvoiceDetail(dd.FormLayout):
-    main = "general more ledger"
-
-    totals = dd.Panel("""
-    # discount
-    total_base
-    total_vat
-    total_incl
-    workflow_buttons
-    """, label=_("Totals"))
-
-    invoice_header = dd.Panel("""
-    date partner vat_regime
-    order subject your_ref
-    payment_term due_date:20
-    shipping_mode
-    """, label=_("Header"))  # sales_remark
-
-    general = dd.Panel("""
-    invoice_header:60 totals:20
-    ItemsByInvoice
-    """, label=_("General"))
-
-    more = dd.Panel("""
-    id user language #project #item_vat
-    intro
-    """, label=_("More"))
-
-    ledger = dd.Panel("""
-    journal year number narration
-    ledger.MovementsByVoucher
-    """, label=_("Ledger"))
-
-
-class Invoices(SalesDocuments):
-    parameters = dict(
-        state=InvoiceStates.field(blank=True),
-        **SalesDocuments.parameters)
-
-    model = 'sales.Invoice'
-    order_by = ["-id"]
-    column_names = "id date partner total_incl user *"
-    detail_layout = InvoiceDetail()
-    insert_layout = dd.FormLayout("""
-    partner date
-    subject
-    """, window_size=(40, 'auto'))
-    # start_at_bottom = True
-
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Invoices, cls).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.state:
-            qs = qs.filter(state=pv.state)
-        return qs
-
-
-class InvoicesByJournal(ledger.ByJournal, Invoices):
-    """Shows all invoices of a given journal (whose `voucher_type` must be
-    :class:`Invoice`)
-
-    """
-    params_panel_hidden = True
-    params_layout = "partner year state"
-    column_names = "number date due_date " \
-        "partner " \
-        "total_incl order subject:10 " \
-        "total_base total_vat user *"
-                  #~ "ledger_remark:10 " \
 
 
 class SignAction(actions.Action):

@@ -9,9 +9,9 @@ lino.modlib.contenttypes.models
 
    .. autosummary::
    
+      get_stale_generic_related
       join_elems
       my_pre_ui_build
-      string_concat
    
    
 
@@ -23,12 +23,11 @@ lino.modlib.contenttypes.models
    
       ContentType
       ContentTypes
-      Controllable
       HelpText
       HelpTexts
       HelpTextsByModel
-      StaleControllables
-      StaleControllablesByModel
+      StaleGenericRelateds
+      StaleGenericRelatedsByModel
    
    
 
