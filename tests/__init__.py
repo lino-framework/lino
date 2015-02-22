@@ -67,6 +67,9 @@ class DocsTests(LinoTestCase):
         docs/tested/test_i18n.rst
         """)
 
+    def test_accounting(self):
+        self.run_simple_doctests('docs/dev/accounting.rst')
+
     def test_dumpy(self):
         self.run_simple_doctests("docs/tutorials/dumpy.rst")
 
@@ -219,9 +222,6 @@ class UtilsTests(LinoTestCase):
 
     def test_ledger_utils(self):
         self.run_simple_doctests('lino/modlib/ledger/utils.py')
-
-    def test_accounts_utils(self):
-        self.run_simple_doctests('lino/modlib/accounts/utils.py')
 
     def test_contacts_utils(self):
         self.run_simple_doctests('lino/modlib/contacts/utils.py')

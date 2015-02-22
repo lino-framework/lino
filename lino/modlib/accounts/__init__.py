@@ -2,19 +2,19 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""The top-level plugin for doing accounting stuff with a Lino
+application.  See :doc:`/dev/accounting`.
+
 .. autosummary::
     :toctree:
 
     models
     utils
-
-
+    fields
 
 """
 
-from lino import ad
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

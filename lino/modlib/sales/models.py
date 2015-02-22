@@ -8,18 +8,10 @@
 
 from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-import datetime
-
 from decimal import Decimal
-HUNDRED = Decimal('100')
-ZERO = Decimal(0)
 
 from django.db import models
 from django.conf import settings
-#~ from django.contrib.auth import models as auth
-from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
@@ -29,15 +21,17 @@ from lino import mixins
 
 from lino.modlib.excerpts.mixins import Certifiable
 
-from lino.modlib.vat.utils import add_vat, remove_vat
+from lino.modlib.vat.utils import add_vat, remove_vat, HUNDRED
+from lino.modlib.vat.choicelists import TradeTypes
+from lino.modlib.vat.mixins import QtyVatItemBase, VatDocument
+from lino.modlib.vat.mixins import get_default_vat_regime
 
-partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger', strict=True)
 vat = dd.resolve_app('vat', strict=True)
 products = dd.resolve_app('products', strict=True)
 
 
-vat.TradeTypes.sales.update(
+TradeTypes.sales.update(
     price_field_name='sales_price',
     price_field_label=_("Sales price"),
     base_account_field_name='sales_account',
@@ -47,11 +41,11 @@ vat.TradeTypes.sales.update(
     partner_account_field_name='clients_account',
     partner_account_field_label=_("Clients account"))
 
-vat.TradeTypes.wages.update(
+TradeTypes.wages.update(
     partner_account_field_name='wages_account',
     partner_account_field_label=_("Wages account"))
 
-vat.TradeTypes.clearings.update(
+TradeTypes.clearings.update(
     partner_account_field_name='clearings_account',
     partner_account_field_label=_("Clearings account"))
 
@@ -111,7 +105,7 @@ class ShippingModes(dd.Table):
 
 
 class SalesDocument(
-        vat.VatDocument,
+        VatDocument,
         ledger.Matchable,
         Certifiable):
     """Common base class for `orders.Order` and :class:`Invoice`.
@@ -145,7 +139,7 @@ class SalesDocument(
         return self.language
 
     def get_trade_type(self):
-        return vat.TradeTypes.sales
+        return TradeTypes.sales
 
     def add_voucher_item(self, product=None, qty=None, **kw):
         if product is not None:
@@ -288,7 +282,7 @@ class InvoicesByJournal(Invoices, ledger.ByJournal):
                   #~ "ledger_remark:10 " \
 
 
-class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
+class ProductDocItem(ledger.VoucherItem, QtyVatItemBase):
 
     class Meta:
         abstract = True
@@ -317,7 +311,7 @@ class ProductDocItem(ledger.VoucherItem, vat.QtyVatItemBase):
         if rule is None:
             return
         cat_rule = rt.modules.vat.VatRule.get_vat_rule(
-            vat.get_default_vat_regime, self.get_vat_class(tt),
+            get_default_vat_regime, self.get_vat_class(tt),
             dd.plugins.countries.get_my_country(),
             dd.today())
         if cat_rule is None:

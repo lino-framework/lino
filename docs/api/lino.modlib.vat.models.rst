@@ -9,9 +9,6 @@ lino.modlib.vat.models
 
    .. autosummary::
    
-      get_default_vat_class
-      get_default_vat_regime
-      inject_vat_fields
       remove_vat
    
    
@@ -24,19 +21,15 @@ lino.modlib.vat.models
    
       BabelNamed
       DatePeriod
-      Decimal
       PaymentTerm
       PaymentTerms
       PeriodEvents
       Q
-      QtyVatItemBase
       Sequenced
-      TradeType
       TradeTypes
       VatClasses
       VatDocument
       VatItemBase
-      VatRegime
       VatRegimes
       VatRule
       VatRules

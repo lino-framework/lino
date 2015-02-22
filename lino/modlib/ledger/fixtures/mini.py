@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from lino.api import dd
+from lino.modlib.accounts.utils import DEBIT
+
 accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
@@ -55,11 +57,11 @@ current_group = None
 
 
 def objects():
-    chart = accounts.Chart(**dd.babel_values('name',
-                                          en="Minimal Accounts Chart",
-                                          fr="Plan comptable réduit",
-                                          et="Minimaalne kontoplaan",
-                                          de="Reduzierter Kontenplan"))
+    chart = accounts.Chart(**dd.babel_values(
+        'name', en="Minimal Accounts Chart",
+        fr="Plan comptable réduit",
+        et="Minimaalne kontoplaan",
+        de="Reduzierter Kontenplan"))
     yield chart
     #~ account = Instantiator(accounts.Account,"ref name").build
 
@@ -217,7 +219,7 @@ def objects():
             et="Muud operatsioonid")
         yield finan.JournalEntry.create_journal(
             chart=chart,
-            ref="M", dc=accounts.DEBIT, **kw)
+            ref="M", dc=DEBIT, **kw)
 
     if declarations:
         kw = dd.babel_values(

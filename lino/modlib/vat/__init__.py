@@ -15,6 +15,8 @@ installed.
 
     models
     utils
+    choicelists
+    mixins
     fixtures.euvatrates
 
 

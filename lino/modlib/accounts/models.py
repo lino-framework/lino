@@ -9,17 +9,14 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
-from decimal import Decimal
-
 from django.db import models
 from django.conf import settings
 
-from lino.api import dd, rt
+from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from .utils import (AccountTypes, DEBIT, CREDIT, DCLABELS, DebitOrCreditField)
+from .choicelists import AccountTypes
 
 
 class Chart(mixins.BabelNamed):

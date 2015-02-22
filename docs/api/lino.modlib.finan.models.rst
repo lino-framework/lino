@@ -18,9 +18,17 @@ lino.modlib.finan.models
       BankStatementItem
       BankStatements
       BankStatementsByJournal
-      Decimal
+      DcAmountField
       FillSuggestions
+      FinancialVoucher
+      FinancialVoucherItem
+      Grouper
+      GrouperDetail
+      GrouperItem
+      Groupers
+      GroupersByJournal
       ItemsByBankStatement
+      ItemsByGrouper
       ItemsByJournalEntry
       ItemsByPaymentOrder
       ItemsByVoucher
@@ -38,18 +46,10 @@ lino.modlib.finan.models
       SuggestionsByJournalEntry
       SuggestionsByPaymentOrder
       SuggestionsByVoucher
-      Voucher
-      VoucherItem
-      VoucherStates
+      VoucherTypes
    
    
 
    
-   
-   .. rubric:: Exceptions
-
-   .. autosummary::
-   
-      ValidationError
    
    

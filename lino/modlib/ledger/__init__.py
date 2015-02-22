@@ -8,7 +8,7 @@
     :toctree:
 
     models
-
+    mixins
 
 """
 

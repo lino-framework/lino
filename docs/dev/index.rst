@@ -75,6 +75,7 @@ Getting acquaintained
 - :doc:`/tutorials/human/index` :
 - :doc:`apps` : Plugin inheritance
 - :doc:`printing` : (TODO)
+- :doc:`accounting` : Accounting explained to Python developers.
 
 .. toctree::
    :maxdepth: 1
@@ -102,6 +103,7 @@ Getting acquaintained
    /tutorials/human/index
    apps
    printing
+   accounting
    
 
 Reference

@@ -8,133 +8,41 @@ The :xfile:`models` module for the :mod:`lino.modlib.finan` app.
 import logging
 logger = logging.getLogger(__name__)
 
-import sys
-import decimal
-
-#~ from django import forms
-
-from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
 
+from lino.modlib.accounts.utils import ZERO, DEBIT, CREDIT
+from lino.modlib.ledger.fields import DcAmountField
+from lino.modlib.ledger.choicelists import VoucherTypes
+from lino.api import dd, _
 
-from lino.api import dd, rt
-from lino import mixins
+from .mixins import FinancialVoucher, FinancialVoucherItem
 
-from decimal import Decimal
-ZERO = Decimal()
-
-
-#~ from lino import fields
-#~ from lino.core.utils import resolve_model
-
-partners = dd.resolve_app(settings.SITE.partners_app_label)
 ledger = dd.resolve_app('ledger')
-#~ from lino.modlib.ledger import models as ledger
-#~ journals = dd.resolve_app('journals')
-accounts = dd.resolve_app('accounts')
-
-partner_model = settings.SITE.partners_app_label + '.Partner'
 
 
-#~ Contact = dd.resolve_model('contacts.Contact')
-#~ Person = resolve_model('contacts.Person')
-#~ Company = resolve_model('contacts.Company')
-
-#~ def _functionId(nFramesUp):
-    # ~ # thanks to:
-    # ~ # http://nedbatchelder.com/blog/200410/file_and_line_in_python.html
-    #~ """ Create a string naming the function n frames up on the stack.
-    #~ """
-    #~ co = sys._getframe(nFramesUp+1).f_code
-    #~ return "%s (%s:%d)" % (co.co_name, co.co_filename, co.co_firstlineno)
-#~
-
-#~ def todo_notice(msg):
-    #~ print "[todo] in %s :\n       %s" % (_functionId(1),msg)
-
-
-class VoucherStates(dd.Workflow):
-    #~ label = _("State")
-    pass
-add = VoucherStates.add_item
-add('10', _("Draft"), 'draft', editable=True)
-add('20', _("Registered"), 'registered', editable=False)
-
-VoucherStates.registered.add_transition(
-    _("Register"), states='draft', icon_name='accept')
-VoucherStates.draft.add_transition(
-    _("Deregister"), states="registered", icon_name='pencil')
-
-
-class Voucher(ledger.Voucher):
-
-    state = VoucherStates.field(default=VoucherStates.draft)
-
-    class Meta:
-        abstract = True
-
-    def register(self, ar):
-        super(Voucher, self).register(ar)
-        self.update_satisfied()
-
-    def deregister(self, ar):
-        super(Voucher, self).deregister(ar)
-        self.update_satisfied()
-
-    def update_satisfied(self):
-        partners = set()
-        #~ matches = dict()
-        for i in self.items.all():
-            if i.partner:
-                partners.add(i.partner)
-        for p in partners:
-            ledger.update_partner_satisfied(p)
-
-    def get_wanted_movements(self):
-        amount, movements = self.get_finan_movements()
-        if amount:
-            raise Exception("Missing amount %s in movements" % amount)
-        return movements
-
-    def get_finan_movements(self):
-        amount = decimal.Decimal(0)
-        mvts = []
-        for i in self.items.all():
-            if i.dc == self.journal.dc:
-                amount += i.amount
-            else:
-                amount -= i.amount
-            if i.match:
-                match = i.match
-            elif i.partner:
-                match = "%s#%s-%s" % (self.journal.ref, self.pk, i.seqno)
-            else:
-                match = ''
-            b = self.create_movement(
-                i.account, i.dc, i.amount,
-                seqno=i.seqno,
-                match=match,
-                partner=i.partner)
-            mvts.append(b)
-
-        return amount, mvts
-
-
-class JournalEntry(Voucher):
+class Grouper(FinancialVoucher):
+    """A **matcher** is a rather internal journal entry used to group a
+    series of matches .
 
     """
-    This is the model for "operations diverses" ("journal entries")
-    but also base for :class:`PaymentOrder`
-    and :class:`BankStatement`.
+    class Meta:
+        verbose_name = _("Grouper")
+        verbose_name_plural = _("Groupers")
+
+    partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
+    account = dd.ForeignKey('accounts.Account', blank=True, null=True)
+
+
+class JournalEntry(FinancialVoucher):
+    """This is the model for "journal entries" ("operations diverses").
+
     """
     class Meta:
         verbose_name = _("Journal Entry")
         verbose_name_plural = _("Journal Entries")
 
 
-class PaymentOrder(Voucher):
+class PaymentOrder(FinancialVoucher):
 
     class Meta:
         verbose_name = _("Payment Order")
@@ -155,7 +63,7 @@ class PaymentOrder(Voucher):
         yield self.create_movement(a, self.journal.dc, -amount)
 
 
-class BankStatement(Voucher):
+class BankStatement(FinancialVoucher):
 
     class Meta:
         verbose_name = _("Bank Statement")
@@ -193,86 +101,30 @@ class BankStatement(Voucher):
             yield m
         yield self.create_movement(a, not self.journal.dc, amount)
 
-
-class VoucherItem(mixins.Sequenced, ledger.VoucherItem, ledger.Matchable):
-
-    """
-    """
-    class Meta:
-        abstract = True
-        verbose_name = _("Item")
-        verbose_name_plural = _("Items")
-
-    amount = dd.PriceField(default=0)
-    dc = accounts.DebitOrCreditField()
-    remark = models.CharField(_("Remark"), max_length=200, blank=True)
-    account = dd.ForeignKey('accounts.Account', blank=True)
-    partner = dd.ForeignKey(partner_model, blank=True, null=True)
-
-    def get_default_match(self):
-        return str(self.date)
-
-    def get_siblings(self):
-        return self.voucher.items.all()
-
-    def match_changed(self, ar):
-        if self.match:
-            dc = not self.voucher.journal.dc
-            m = ledger.DueMovement(dc, self)
-            self.dc = dc
-            self.amount = m.balance
-            #~ if m.balance > 0:
-                #~ self.dc = not self.voucher.journal.dc
-                #~ self.amount = m.balance
-            #~ else:
-                #~ self.dc = self.voucher.journal.dc
-                #~ self.amount = - m.balance
-
-    def full_clean(self, *args, **kw):
-        if self.account_id is None:
-            if self.partner is not None:
-                flt = dict(partner=self.partner, satisfied=False)
-                if self.match:
-                    flt.update(match=self.match)
-                matches = ledger.get_due_movements(
-                    self.voucher.journal.dc, **flt)
-                try:
-                    match = matches.next()
-                except StopIteration:
-                    pass
-                else:
-                    if match.trade_type is not None:
-                        self.account = match.trade_type.get_partner_account()
-                    self.dc = match.dc
-                    self.amount = -match.balance
-                    self.match = match.match
-                if self.account_id is None:
-                    raise ValidationError(
-                        _("Could not determine the general account"))
-        if self.dc is None:
-            self.dc = self.voucher.journal.dc
-        #~ if self.amount < 0:
-            #~ self.amount = - self.amount
-            #~ self.dc = not self.dc
-        return super(VoucherItem, self).full_clean(*args, **kw)
+class GrouperItem(FinancialVoucherItem):
+    """An item of a :class:`Grouper`."""
+    voucher = dd.ForeignKey('finan.Grouper', related_name='items')
 
 
-class JournalEntryItem(VoucherItem):
-    voucher = dd.ForeignKey(JournalEntry, related_name='items')
+class JournalEntryItem(FinancialVoucherItem):
+    """An item of a :class:`JournalEntry`."""
+    voucher = dd.ForeignKey('finan.JournalEntry', related_name='items')
     date = models.DateField(blank=True, null=True)
-    debit = ledger.DcAmountField(accounts.DEBIT, _("Debit"))
-    credit = ledger.DcAmountField(accounts.CREDIT, _("Credit"))
+    debit = DcAmountField(DEBIT, _("Debit"))
+    credit = DcAmountField(CREDIT, _("Credit"))
 
 
-class BankStatementItem(VoucherItem):
-    voucher = dd.ForeignKey(BankStatement, related_name='items')
+class BankStatementItem(FinancialVoucherItem):
+    """An item of a :class:`BankStatement`."""
+    voucher = dd.ForeignKey('finan.BankStatement', related_name='items')
     date = models.DateField(blank=True, null=True)
-    debit = ledger.DcAmountField(accounts.DEBIT, _("Income"))
-    credit = ledger.DcAmountField(accounts.CREDIT, _("Expense"))
+    debit = DcAmountField(DEBIT, _("Income"))
+    credit = DcAmountField(CREDIT, _("Expense"))
 
 
-class PaymentOrderItem(VoucherItem):
-    voucher = dd.ForeignKey(PaymentOrder, related_name='items')
+class PaymentOrderItem(FinancialVoucherItem):
+    """An item of a :class:`PaymentOrder`."""
+    voucher = dd.ForeignKey('finan.PaymentOrder', related_name='items')
 
 
 class JournalEntryDetail(dd.FormLayout):
@@ -300,6 +152,13 @@ class BankStatementDetail(JournalEntryDetail):
     general = dd.Panel("""
     date balance1 balance2 user workflow_buttons
     finan.ItemsByBankStatement
+    """, label=_("General"))
+
+
+class GrouperDetail(JournalEntryDetail):
+    general = dd.Panel("""
+    date partner user workflow_buttons
+    finan.ItemsByGrouper
     """, label=_("General"))
 
 
@@ -335,16 +194,25 @@ class PaymentOrders(JournalEntries):
     detail_layout = PaymentOrderDetail()
 
 
+class Groupers(JournalEntries):
+    model = 'finan.Grouper'
+    column_names = "date id number partner user workflow_buttons"
+    detail_layout = GrouperDetail()
+    insert_layout = """
+    date user
+    partner
+    """
+
+
 class BankStatements(JournalEntries):
     model = 'finan.BankStatement'
     column_names = "date id number balance1 balance2 user *"
-    insert_layout = dd.FormLayout("""
-    date user
-    balance1 
-    balance2
-    """, window_size=(40, 'auto'))
-
     detail_layout = BankStatementDetail()
+    insert_layout = """
+    date user
+    balance1
+    balance2
+    """
 
 
 class PaymentOrdersByJournal(ledger.ByJournal, PaymentOrders):
@@ -359,6 +227,10 @@ class BankStatementsByJournal(ledger.ByJournal, BankStatements):
     pass
 
 
+class GroupersByJournal(ledger.ByJournal, Groupers):
+    pass
+
+
 class ItemsByVoucher(dd.Table):
     order_by = ["seqno"]
     column_names = "date partner account match remark debit credit seqno *"
@@ -368,19 +240,23 @@ class ItemsByVoucher(dd.Table):
 
 
 class ItemsByJournalEntry(ItemsByVoucher):
-    model = JournalEntryItem
+    model = 'finan.JournalEntryItem'
     column_names = "date partner account match remark debit credit seqno *"
 
 
 class ItemsByBankStatement(ItemsByVoucher):
-    model = BankStatementItem
+    model = 'finan.BankStatementItem'
     column_names = "date partner account match remark debit credit seqno *"
 
 
 class ItemsByPaymentOrder(ItemsByVoucher):
-    model = PaymentOrderItem
-    column_names = "seqno partner match amount remark"
-    hidden_columns = 'id dc'
+    model = 'finan.PaymentOrderItem'
+    column_names = "seqno partner match amount remark *"
+
+
+class ItemsByGrouper(ItemsByVoucher):
+    model = 'finan.GrouperItem'
+    column_names = "seqno partner match amount remark *"
 
 
 class FillSuggestions(dd.Action):
@@ -512,7 +388,8 @@ class SuggestionsByBankStatement(SuggestionsByVoucher):
 BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
 
 
-ledger.VoucherTypes.add_item(JournalEntry, JournalEntriesByJournal)
-ledger.VoucherTypes.add_item(PaymentOrder, PaymentOrdersByJournal)
-ledger.VoucherTypes.add_item(BankStatement, BankStatementsByJournal)
+VoucherTypes.add_item(JournalEntry, JournalEntriesByJournal)
+VoucherTypes.add_item(PaymentOrder, PaymentOrdersByJournal)
+VoucherTypes.add_item(BankStatement, BankStatementsByJournal)
+VoucherTypes.add_item(Grouper, GroupersByJournal)
 

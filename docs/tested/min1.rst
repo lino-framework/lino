@@ -13,10 +13,7 @@ General stuff:
 >>> import os
 >>> import json
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.doctests'
->>> from lino.runtime import *
->>> from lino import dd
->>> from django.test import Client
->>> client = Client()
+>>> from lino.api.doctest import *
 
 When exporting to `.xls`, the URL is rather long because it includes
 detailed information about the grid columns: their widths (``cw``),
@@ -29,7 +26,7 @@ whether they are hidden (``ch``) and their ordering (``ci``).
 >>> url += "&pv=23.10.2014&pv=&pv=&pv=&pv=2&pv=&pv=&pv=&pv=y"
 >>> url += "&an=export_excel&sr=61"
 
->>> res = client.get(url, REMOTE_USER='robin')
+>>> res = test_client.get(url, REMOTE_USER='robin')
 >>> print(res.status_code)
 200
 >>> result = json.loads(res.content)

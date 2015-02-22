@@ -17,8 +17,11 @@ Decimal('100')
 from __future__ import unicode_literals
 
 from decimal import Decimal
+from lino.modlib.accounts.utils import ZERO
+
 HUNDRED = Decimal('100')
-ZERO = Decimal(0)
+# ZERO = Decimal('0.00')
+ONE = Decimal('1.00')
 
 
 def add_vat(base, rate):

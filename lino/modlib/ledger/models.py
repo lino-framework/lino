@@ -31,8 +31,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from decimal import Decimal
-
 from django.db import models
 from django.conf import settings
 
@@ -45,17 +43,18 @@ from lino.utils import join_elems
 from lino.utils import mti
 
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.accounts.utils import DEBIT, CREDIT, ZERO
+from lino.modlib.accounts.choicelists import AccountTypes
+from lino.modlib.accounts.fields import DebitOrCreditField
+from lino.modlib.vat.choicelists import TradeTypes
+from lino.modlib.vat.mixins import VatDocument, VatItemBase
+
+from .mixins import Matchable
+from .fields import MatchField
+from .choicelists import VoucherTypes
 
 
-accounts = dd.resolve_app('accounts', strict=True)
-contacts = dd.resolve_app('contacts', strict=True)
-vat = dd.resolve_app('vat', strict=True)
-partner_model = 'contacts.Partner'
-
-ZERO = Decimal(0)
-
-
-vat.TradeTypes.purchases.update(
+TradeTypes.purchases.update(
     #~ price_field_name='sales_price',
     #~ price_field_label=_("Sales price"),
     base_account_field_name='purchases_account',
@@ -64,66 +63,6 @@ vat.TradeTypes.purchases.update(
     vat_account_field_label=_("Purchases VAT account"),
     partner_account_field_name='suppliers_account',
     partner_account_field_label=_("Suppliers account"))
-
-
-class VoucherType(dd.Choice):
-
-    def __init__(self, model, table_class):
-        self.table_class = table_class
-        model = dd.resolve_model(model)
-        self.model = model
-        value = dd.full_model_name(model)
-        text = model._meta.verbose_name + ' (%s)' % dd.full_model_name(model)
-        # text = model._meta.verbose_name + ' (%s.%s)' % (
-        #     model.__module__, model.__name__)
-        name = None
-        super(VoucherType, self).__init__(value, text, name)
-
-    def get_journals(self):
-        return Journal.objects.filter(voucher_type=self)
-
-
-class VoucherTypes(dd.ChoiceList):
-    item_class = VoucherType
-    max_length = 100
-
-    @classmethod
-    def get_for_model(self, model):
-        for o in self.objects():
-            # ~ o.model = dd.resolve_model(o.model) # TODO: resolve only once
-            if o.model is model:
-                return o
-
-    @classmethod
-    def add_item(cls, model, table_class):
-        return cls.add_item_instance(VoucherType(model, table_class))
-
-
-class MatchField(models.CharField):
-
-    def __init__(self, verbose_name=None, **kw):
-        if verbose_name is None:
-            verbose_name = _("Match")
-        kw.setdefault('max_length', 20)
-        models.CharField.__init__(self, verbose_name, **kw)
-
-
-class DcAmountField(dd.VirtualField):
-
-    editable = True
-
-    def __init__(self, dc, *args, **kw):
-        self.dc = dc
-        dd.VirtualField.__init__(self, dd.PriceField(*args, **kw), None)
-
-    def set_value_in_object(self, request, obj, value):
-        obj.amount = value
-        obj.dc = self.dc
-
-    def value_from_object(self, obj, ar):
-        if obj.dc == self.dc:
-            return obj.amount
-        return None
 
 
 class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
@@ -160,7 +99,7 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         verbose_name_plural = _("Journals")
 
     ref = dd.NullCharField(max_length=20, unique=True)
-    trade_type = vat.TradeTypes.field(blank=True)
+    trade_type = TradeTypes.field(blank=True)
     voucher_type = VoucherTypes.field()
 
     force_sequence = models.BooleanField(
@@ -168,12 +107,12 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
     chart = dd.ForeignKey('accounts.Chart')
     account = dd.ForeignKey('accounts.Account', blank=True, null=True)
     printed_name = dd.BabelCharField(max_length=100, blank=True)
-    dc = accounts.DebitOrCreditField()
+    dc = DebitOrCreditField()
 
     @dd.chooser()
     def account_choices(cls, chart):
-        fkw = dict(type=accounts.AccountTypes.bank_accounts)
-        return accounts.Account.objects.filter(chart=chart, **fkw)
+        fkw = dict(type=AccountTypes.bank_accounts)
+        return rt.modules.accounts.Account.objects.filter(chart=chart, **fkw)
 
     def get_doc_model(self):
         """The model of vouchers in this Journal.
@@ -218,7 +157,7 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         if self.trade_type:
             kw[self.trade_type.name + '_allowed'] = True
         kw.update(chart=self.chart)
-        return accounts.Account.objects.filter(**kw)
+        return rt.modules.accounts.Account.objects.filter(**kw)
 
     def get_next_number(self, voucher):
         # ~ self.save() # 20131005 why was this?
@@ -374,7 +313,7 @@ class Voucher(UserAuthored, mixins.Registrable):
             account = chart.get_account_by_ref(account)
             #~ account = account.Account.objects.get(chart=chart,ref=account)
         if isinstance(trade_type, basestring):
-            trade_type = vat.TradeTypes.get_by_name(trade_type)
+            trade_type = TradeTypes.get_by_name(trade_type)
         vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         kw.update(chart=chart)
         if account is not None:
@@ -443,7 +382,7 @@ class Voucher(UserAuthored, mixins.Registrable):
         raise NotImplementedError()
 
     def create_movement(self, account, dc, amount, **kw):
-        assert isinstance(account, accounts.Account)
+        assert isinstance(account, rt.modules.accounts.Account)
         kw['voucher'] = self
         #~ account = accounts.Account.objects.get(group__ref=account)
         #~ account = self.journal.chart.get_account_by_ref(account)
@@ -551,10 +490,9 @@ class ByJournal(dd.Table):
 
 
 class VouchersByPartner(dd.VirtualTable):
-    """
-    A :class:`dd.VirtualTable` which shows all vat.VatDocument
-    vouchers by :class:`ml.contacts.Partner`. It has a customized
-    slave summary.
+    """A :class:`dd.VirtualTable` which shows all VatDocument
+    vouchers by :class:`lino.modlib.contacts.models.Partner`. It has a
+    customized slave summary.
 
     """
     label = _("VAT vouchers")
@@ -569,7 +507,7 @@ class VouchersByPartner(dd.VirtualTable):
         obj = ar.master_instance
         rows = []
         if obj is not None:
-            for M in rt.models_by_base(vat.VatDocument):
+            for M in rt.models_by_base(VatDocument):
                 rows += list(M.objects.filter(partner=obj))
 
             def by_date(a, b):
@@ -610,7 +548,7 @@ class VouchersByPartner(dd.VirtualTable):
                 elems += [ar.obj2html(vc), " "]
 
         vtypes = set()
-        for m in rt.models_by_base(vat.VatDocument):
+        for m in rt.models_by_base(VatDocument):
             vtypes.add(
                 VoucherTypes.get_by_value(dd.full_model_name(m)))
 
@@ -652,12 +590,12 @@ class Movement(dd.Model):
         verbose_name=_("Seq.No."))
 
     #~ pos = models.IntegerField("Position",blank=True,null=True)
-    account = dd.ForeignKey(accounts.Account)
-    partner = dd.ForeignKey(partner_model, blank=True, null=True)
+    account = dd.ForeignKey('accounts.Account')
+    partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
     amount = dd.PriceField(default=0)
-    dc = accounts.DebitOrCreditField()
+    dc = DebitOrCreditField()
 
-    match = MatchField(blank=True)
+    match = MatchField(blank=True, null=True)
 
     satisfied = models.BooleanField(_("Satisfied"), default=False)
     #~ match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
@@ -733,7 +671,7 @@ class Movements(dd.Table):
     editable = False
     parameters = mixins.ObservedPeriod(
         pyear=FiscalYears.field(blank=True),
-        ppartner=models.ForeignKey(partner_model, blank=True, null=True),
+        ppartner=models.ForeignKey('contacts.Partner', blank=True, null=True),
         paccount=models.ForeignKey('accounts.Account', blank=True, null=True),
         pjournal=JournalRef(blank=True),
         cleared=dd.YesNo.field(_("Show cleared movements"), blank=True))
@@ -799,7 +737,11 @@ class MovementsByAccount(Movements):
 
 
 class DueMovement(object):
+    """A **due movement** is a movement which a partner should do in order
+    to satisfy their debt.  Or which we should do in order to satisfy
+    our debt.
 
+    """
     def __init__(self, dc, mvt):
         self.dc = dc
         self.partner = mvt.partner
@@ -854,11 +796,22 @@ class DueMovement(object):
 
 
 def get_due_movements(dc, **flt):
+    """Analyze the movements corresponding to the given filter condition
+    `flt` and yield a series of :class:`DueMovement` objects which
+    --if they were booked-- would satisfy the given movements.
+    
+    There will be at most one :class:`DueMovement` per (account,
+    partner, match), each of them grouping the movements with same
+    partner, account and match.
+
+    The balances of the :class:`DueMovement` objects will be positive
+    or negative depending on the specified `dc`.
+
+    """
     if dc is None:
         return
     qs = Movement.objects.filter(**flt)
     qs = qs.order_by('voucher__date')
-    #~ logger.info("20130921 %s %s",partner,qs)
     matches_by_account = dict()
     for mvt in qs:
         k = (mvt.account, mvt.partner)
@@ -876,16 +829,16 @@ class ExpectedMovements(dd.VirtualTable):
     auto_fit_column_widths = True
     parameters = dd.ParameterPanel(
         date_until=models.DateField(_("Date until"), blank=True, null=True),
-        trade_type=vat.TradeTypes.field(blank=True))
+        trade_type=TradeTypes.field(blank=True))
         #~ journal=dd.ForeignKey(Journal,blank=True))
-        #~ dc=accounts.DebitOrCreditField(default=accounts.DEBIT))
+        #~ dc=DebitOrCreditField(default=accounts.DEBIT))
     params_layout = "trade_type date_until"
 
     #~ DUE_DC = accounts.DEBIT
 
     @classmethod
     def get_dc(cls, ar=None):
-        return accounts.DEBIT
+        return DEBIT
 
     @classmethod
     def get_data_rows(cls, ar, **flt):
@@ -973,7 +926,7 @@ class DebtsByPartner(ExpectedMovements):
 
     @classmethod
     def get_dc(cls, ar=None):
-        return accounts.CREDIT
+        return CREDIT
 
     @classmethod
     def get_data_rows(cls, ar, **flt):
@@ -1002,24 +955,7 @@ InvoiceStates.draft.add_transition(
     _("Deregister"), states="registered", icon_name='pencil')
 
 
-class Matchable(dd.Model):
-
-    class Meta:
-        abstract = True
-
-    match = MatchField(blank=True)
-
-    @dd.chooser(simple_values=True)
-    def match_choices(cls, partner):
-        #~ DC = voucher.journal.dc
-        #~ choices = []
-        qs = Movement.objects.filter(partner=partner, satisfied=False)
-        qs = qs.order_by('voucher__date')
-        #~ qs = qs.distinct('match')
-        return qs.values_list('match', flat=True)
-
-
-class AccountInvoice(vat.VatDocument, Voucher, Matchable):
+class AccountInvoice(VatDocument, Voucher, Matchable):
     """
     An invoice for which the user enters just the bare accounts and
     amounts (not e.g. products, quantities, discounts).
@@ -1090,7 +1026,7 @@ class PartnerVouchers(Vouchers):
 
     parameters = dict(
         partner=models.ForeignKey(
-            partner_model, blank=True, null=True),
+            'contacts.Partner', blank=True, null=True),
         **Vouchers.parameters)
     params_layout = "journal year partner"
 
@@ -1150,7 +1086,7 @@ class InvoicesByJournal(AccountInvoices, ByJournal):
 VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 
 
-class InvoiceItem(VoucherItem, vat.VatItemBase):
+class InvoiceItem(VoucherItem, VatItemBase):
     voucher = dd.ForeignKey('ledger.AccountInvoice', related_name='items')
 
     #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
@@ -1163,7 +1099,7 @@ class InvoiceItem(VoucherItem, vat.VatItemBase):
     def account_choices(self, voucher):
         if voucher and voucher.journal:
             fkw = {voucher.journal.trade_type.name + '_allowed': True}
-            return accounts.Account.objects.filter(
+            return rt.modules.accounts.Account.objects.filter(
                 chart=voucher.journal.chart, **fkw)
         return []
 
@@ -1217,18 +1153,18 @@ class AccountsBalance(dd.VirtualTable):
             row.old = Balance(
                 mvtsum(
                     voucher__date__lt=mi.start_date,
-                    dc=accounts.DEBIT, **flt),
+                    dc=DEBIT, **flt),
                 mvtsum(
                     voucher__date__lt=mi.start_date,
-                    dc=accounts.CREDIT, **flt))
+                    dc=CREDIT, **flt))
             row.during_d = mvtsum(
                 voucher__date__gte=mi.start_date,
                 voucher__date__lte=mi.end_date,
-                dc=accounts.DEBIT, **flt)
+                dc=DEBIT, **flt)
             row.during_c = mvtsum(
                 voucher__date__gte=mi.start_date,
                 voucher__date__lte=mi.end_date,
-                dc=accounts.CREDIT, **flt)
+                dc=CREDIT, **flt)
             if row.old.d or row.old.c or row.during_d or row.during_c:
                 row.new = Balance(row.old.d + row.during_d,
                                   row.old.c + row.during_c)
@@ -1270,7 +1206,7 @@ class GeneralAccountsBalance(AccountsBalance):
 
     @classmethod
     def get_request_queryset(self, ar):
-        return accounts.Account.objects.order_by('group__ref', 'ref')
+        return rt.modules.accounts.Account.objects.order_by('group__ref', 'ref')
 
     @classmethod
     def rowmvtfilter(self, row):
@@ -1287,7 +1223,7 @@ class PartnerAccountsBalance(AccountsBalance):
 
     @classmethod
     def get_request_queryset(self, ar):
-        return contacts.Partner.objects.order_by('name')
+        return rt.modules.contacts.Partner.objects.order_by('name')
 
     @classmethod
     def rowmvtfilter(self, row):
@@ -1302,12 +1238,12 @@ class PartnerAccountsBalance(AccountsBalance):
 
 class ClientAccountsBalance(PartnerAccountsBalance):
     label = _("Client Accounts Balances")
-    trade_type = vat.TradeTypes.sales
+    trade_type = TradeTypes.sales
 
 
 class SupplierAccountsBalance(PartnerAccountsBalance):
     label = _("Supplier Accounts Balances")
-    trade_type = vat.TradeTypes.purchases
+    trade_type = TradeTypes.purchases
 
 
 ##
@@ -1342,7 +1278,7 @@ class DebtorsCreditors(dd.VirtualTable):
         else:   # called from Situation report
             end_date = mi.today
         
-        qs = contacts.Partner.objects.order_by('name')
+        qs = rt.modules.contacts.Partner.objects.order_by('name')
         for row in qs:
             row._balance = ZERO
             row._due_date = None
@@ -1391,7 +1327,7 @@ class Debtors(DebtorsCreditors):
     label = _("Debtors")
     help_text = _("List of partners (usually clients) \
     who are in debt towards us.")
-    d_or_c = accounts.CREDIT
+    d_or_c = CREDIT
 
 
 class Creditors(DebtorsCreditors):
@@ -1399,7 +1335,7 @@ class Creditors(DebtorsCreditors):
     help_text = _("List of partners (usually suppliers) \
     who are giving credit to us.")
 
-    d_or_c = accounts.DEBIT
+    d_or_c = DEBIT
 
 ##
 
@@ -1451,7 +1387,7 @@ def site_setup(site):
 
 def customize_accounts():
 
-    for tt in vat.TradeTypes.objects():
+    for tt in TradeTypes.objects():
         dd.inject_field(
             'accounts.Account',
             tt.name + '_allowed',
@@ -1470,5 +1406,5 @@ def update_partner_satisfied(p):
     This is called when a voucher has been (un)registered  on each 
     partner for whom the voucher caused at least one movement.
     """
-    for m in get_due_movements(accounts.DEBIT, partner=p):
+    for m in get_due_movements(DEBIT, partner=p):
         m.update_satisfied()
