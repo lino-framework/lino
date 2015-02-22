@@ -24,9 +24,8 @@ from lino.utils import join_elems
 
 
 class ContentTypes(dd.Table):
+    """Default table for `django.contrib.ContentType`.
 
-    """
-    Deserves more documentation.
     """
     model = 'contenttypes.ContentType'
 
@@ -35,7 +34,7 @@ class ContentTypes(dd.Table):
     detail_layout = """
     id name app_label model base_classes
     HelpTextsByModel
-    StaleGenericRelatedsByModel
+    BrokenGFKsByModel
     """
 
     @dd.displayfield(_("Base classes"))
@@ -129,24 +128,29 @@ def get_stale_generic_related(model):
             kw = {gfk.ct_field+'__isnull': False}
             qs = model.objects.filter(**kw)
             for obj in qs:
-                # if getattr(obj, gfk.name) is None:
-                pk = getattr(obj, gfk.fk_field)
+                fk = getattr(obj, gfk.fk_field)
+                ct = getattr(obj, gfk.ct_field)
+                pointed_model = ct.model_class()
+                # pointed_model = ContentType.objects.get_for_id(ct)
                 try:
-                    gfk.model.objects.get(pk=pk)
+                    pointed_model.objects.get(pk=fk)
                     # obj._message += " (ok)"
                     # yield obj
-                except gfk.model.DoesNotExist as e:
-                    msg = "{0} points to {1} in {2}"
-                    obj._message = msg.format(gfk.name, pk, gfk.model)
-                    obj._message += " ({0})".format(e)
+                except pointed_model.DoesNotExist:
+                    msg = "Invalid primary key {1} for {2} in `{0}`"
+                    obj._message = msg.format(
+                        gfk.fk_field, fk, dd.full_model_name(pointed_model))
                     yield obj
 
 
-class StaleGenericRelateds(dd.VirtualTable):
-    """Shows a table of all database objects (model instances) who """
-    label = _("Stale Controllables")
+class BrokenGFKs(dd.VirtualTable):
+    """Shows all database objects (model instances) who have a broken
+    GeneriForeignKey field.
 
-    column_names = "database_object owner_model owner_id message"
+    """
+    label = _("Broken GFKs")
+
+    column_names = "database_model database_object message"
 
     @classmethod
     def get_data_rows(self, ar):
@@ -167,21 +171,25 @@ class StaleGenericRelateds(dd.VirtualTable):
     def message(self, obj, ar):
         return obj._message
 
-    @dd.virtualfield(models.IntegerField(_("Primary key")))
-    def owner_id(self, obj, ar):
-        return obj.owner_id
+    # @dd.virtualfield(models.IntegerField(_("Primary key")))
+    # def owner_id(self, obj, ar):
+    #     return obj.owner_id
 
-    @dd.displayfield(_("Controlling model"))
-    def owner_model(self, obj, ar):
+    # @dd.virtualfield('contenttypes.HelpText.content_type')
+    # def owner_model(self, obj, ar):
+    #     return ar.obj2html(obj.owner_type)
+
+    @dd.displayfield(_("Database model"))
+    def database_model(self, obj, ar):
         ct = ContentType.objects.get_for_model(obj.__class__)
         return ar.obj2html(ct)
         # return dd.full_model_name(obj.__class__)
 
 
-class StaleGenericRelatedsByModel(StaleGenericRelateds):
+class BrokenGFKsByModel(BrokenGFKs):
     master = 'contenttypes.ContentType'
 
-    column_names = "database_object owner_id message"
+    column_names = "database_object message"
 
     @classmethod
     def get_data_rows(self, ar):

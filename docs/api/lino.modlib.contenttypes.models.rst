@@ -21,13 +21,13 @@ lino.modlib.contenttypes.models
 
    .. autosummary::
    
+      BrokenGFKs
+      BrokenGFKsByModel
       ContentType
       ContentTypes
       HelpText
       HelpTexts
       HelpTextsByModel
-      StaleGenericRelateds
-      StaleGenericRelatedsByModel
    
    
 

@@ -39,3 +39,16 @@ I started with the implementation:
 
 But decided to leave it half-finished because two production releases
 for :ref:`welfare` are more urgent.
+
+Continued in :mod:`lino.molib.contenttypes.models`. 
+Renamed `StaleGenericRelated` to 
+:class:`lino.molib.contenttypes.models.BrokenGFKs`.
+
+New unit test :doc:`/docs/tutorials/broken_gfks/index`.
+
+Upgrade in Eupen: restoring the database from snapshot (without
+migration) gave an error message on two objects:
+
+Deferred IncomeConfirmation #24
+(u'Ausl\xe4nderbeihilfe/5/1/12/6517/24') : 'Role' object has no
+attribute 'language'

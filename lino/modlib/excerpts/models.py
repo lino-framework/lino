@@ -595,11 +595,12 @@ def my_handler(sender, instance=None, **kwargs):
         # print("on_create 20150212", self)
 
     # default language : recipient overrides owner
-    rec = self.recipient
-    if rec is not None:
-        self.language = rec.get_print_language()
-    elif self.owner is not None:
-        self.language = self.owner.get_print_language()
+    if not self.language:
+        rec = self.recipient
+        if rec is not None:
+            self.language = rec.get_print_language()
+        if not self.language and self.owner is not None:
+            self.language = self.owner.get_print_language()
 
 
 if has_davlink:

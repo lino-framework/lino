@@ -23,7 +23,7 @@ class Plugin(ad.Plugin):
     def setup_reports_menu(config, site, profile, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
-        m.add_action(site.modules.contenttypes.StaleGenericRelateds)
+        m.add_action(site.modules.contenttypes.BrokenGFKs)
 
     def setup_config_menu(config, site, profile, m):
         hook = site.plugins.system
