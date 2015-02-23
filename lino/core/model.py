@@ -41,6 +41,20 @@ class Model(models.Model):
 
         This is defined by Django.
 
+    .. method:: FOO_changed
+
+        Called when field FOO of an instance of this model has been
+        modified through the user interface.
+
+        For every field named "FOO", if the model has a method called
+        "FOO_changed", then this method will be installed as a field-level
+        post-edit trigger.
+
+        Example::
+
+          def city_changed(self,oldvalue):
+              print("City changed from %s to %s!" % (oldvalue, self.city))
+
     .. method:: FOO_choices
 
         Return a queryset or list of allowed choices for field FOO.
@@ -64,19 +78,14 @@ class Model(models.Model):
               return cls.city.field.rel.to.objects.order_by('name')
 
 
-    .. method:: FOO_changed
+    .. method:: create_FOO_choice
 
-        Called when field FOO of an instance of this model has been
-        modified through the user interface.
+        For every field named "FOO" (which must have a chooser), if
+        the model has a method called "create_FOO_choice", then this
+        chooser will be a "learning" chooser.  That is, users can
+        enter text into the combobox, and Lino will create a new
+        database object from it.
 
-        For every field named "FOO", if the model has a method called
-        "FOO_changed", then this method will be installed as a field-level
-        post-edit trigger.
-
-        Example::
-
-          def city_changed(self,oldvalue):
-              print("City changed from %s to %s!" % (oldvalue, self.city))
 
     """
 

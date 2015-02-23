@@ -29,3 +29,15 @@ def get_json_soup(username, uri, fieldname, an='detail'):
     d = json.loads(res.content)
     html = d['data'][fieldname]
     return BeautifulSoup(html)
+
+
+def post_json_dict(username, url, data, **extra):
+    """Send a POST with given username, url and data. The client is
+    expected to respond with a JSON encoded response. Parse the
+    response's content (which is expected to contain a dict), convert
+    this dict to an AttrDict before returning it.
+
+    """
+    res = test_client.post(url, data, REMOTE_USER=username, **extra)
+    assert res.status_code == 200
+    return AttrDict(json.loads(res.content))

@@ -3245,7 +3245,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     p.{{ext_requests.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
     this.add_param_tab(p)
-    console.log('20150216 FormPanel.save()', rec, this.form);
+    // console.log('20150216 FormPanel.save()', rec, this.form);
     var submit_config = {
         params: p, 
         scope: this,

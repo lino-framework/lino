@@ -6,7 +6,7 @@ About GenericForeignKey fields
 ==============================
 
 I continued to research and document about GFK fields in
-:doc:`/dev/gfks`.  :doc:`/tutorials/gfks/index`.
+:doc:`/dev/gfks` and  :doc:`/tutorials/gfks/index`.
 
 I understood that the `allow_stale_generic_foreignkey` attribute can
 be replaced by a nullable `ForeignKey`, so I removed this feature and
@@ -17,16 +17,16 @@ I added a column "Action" to the :class:`BrokenGFKs
 :meth:`get_broken_generic_related
 <lino.core.kernel.Kernel.get_broken_generic_related>`.
 
-TODO: A hopefully last thing is a management command to cleanup broken
-GFK fields. This would execute the suggested actions (delete and
-clear) without any further user interaction.
+TODO: a management command to cleanup broken GFK fields. This would
+execute the suggested actions (delete and clear) without any further
+user interaction.
 
 
 RefundConfirmation has no doctor_type
 =====================================
 
-This bug occured in Eupen in yesterday's version.  The reason was that
-:meth:`create_doctor_choice
+This error message occured in Eupen in yesterday's version.  The
+reason was that :meth:`create_doctor_choice
 <lino_welfare.modlib.aids.models.RefundConfirmation.create_doctor_choice>`
 may not do::
 
@@ -50,3 +50,11 @@ I also wrote a docstring for
 :meth:`ForeignKeyStoreField.parse_form_value
 <lino.core.store.ForeignKeyStoreField.parse_form_value>`.
 
+I added a section "Creating a doctor" in :ref:`welfare.tested.aids` to
+test this.
+
+I changed the language distribution of
+:mod:`lino_welfare.projects.eupen` from `"de fr nl"` to `"de fr en"`.
+Which --as expected-- caused some changes in the test suite.  But I
+think that it is necessary so that Mahmoud an optential other future
+team members can follow.
