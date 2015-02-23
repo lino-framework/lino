@@ -123,28 +123,6 @@ class HelpTextsByModel(HelpTexts):
     master_key = 'content_type'
 
 
-def get_stale_generic_related(model):
-    gfks = [f for f in settings.SITE.kernel.GFK_LIST if f.model is model]
-    if len(gfks):
-        for gfk in gfks:
-            kw = {gfk.ct_field+'__isnull': False}
-            qs = model.objects.filter(**kw)
-            for obj in qs:
-                fk = getattr(obj, gfk.fk_field)
-                ct = getattr(obj, gfk.ct_field)
-                pointed_model = ct.model_class()
-                # pointed_model = ContentType.objects.get_for_id(ct)
-                try:
-                    pointed_model.objects.get(pk=fk)
-                    # obj._message += " (ok)"
-                    # yield obj
-                except pointed_model.DoesNotExist:
-                    msg = "Invalid primary key {1} for {2} in `{0}`"
-                    obj._message = msg.format(
-                        gfk.fk_field, fk, dd.full_model_name(pointed_model))
-                    yield obj
-
-
 class BrokenGFKs(dd.VirtualTable):
     """Shows all database objects (model instances) who have a broken
     GeneriForeignKey field.
@@ -153,19 +131,15 @@ class BrokenGFKs(dd.VirtualTable):
     """
     label = _("Broken GFKs")
 
-    column_names = "database_model database_object message"
+    column_names = "database_model database_object message todo"
 
     @classmethod
     def get_data_rows(self, ar):
+        f = settings.SITE.kernel.get_broken_generic_related
         for model in models.get_models(include_auto_created=True):
-            for obj in get_stale_generic_related(model):
+            for obj in f(model):
                 yield obj
     
-        # for M in rt.models_by_base(Controllable):
-        #     for obj in M.objects.filter(owner_id__isnull=False):
-        #         if obj.owner is None:
-        #             yield obj
-
     @dd.displayfield(_("Database object"))
     def database_object(self, obj, ar):
         return ar.obj2html(obj)
@@ -174,38 +148,28 @@ class BrokenGFKs(dd.VirtualTable):
     def message(self, obj, ar):
         return obj._message
 
-    # @dd.virtualfield(models.IntegerField(_("Primary key")))
-    # def owner_id(self, obj, ar):
-    #     return obj.owner_id
-
-    # @dd.virtualfield('contenttypes.HelpText.content_type')
-    # def owner_model(self, obj, ar):
-    #     return ar.obj2html(obj.owner_type)
+    @dd.displayfield(_("Action"))
+    def todo(self, obj, ar):
+        return obj._todo
 
     @dd.displayfield(_("Database model"))
     def database_model(self, obj, ar):
         ct = ContentType.objects.get_for_model(obj.__class__)
         return ar.obj2html(ct)
-        # return dd.full_model_name(obj.__class__)
 
 
 class BrokenGFKsByModel(BrokenGFKs):
     master = 'contenttypes.ContentType'
 
-    column_names = "database_object message"
+    column_names = "database_object message todo"
 
     @classmethod
     def get_data_rows(self, ar):
         mi = ar.master_instance
-        # TODO: find them using a single database request
+        f = settings.SITE.kernel.get_broken_generic_related
         if mi is not None:
-            for obj in get_stale_generic_related(mi.model_class()):
+            for obj in f(mi.model_class()):
                 yield obj
-
-            # if issubclass(M, Controllable):
-            #     for obj in M.objects.filter(owner_id__isnull=False):
-            #         if obj.owner is None:
-            #             rows.append(obj)
 
     @classmethod
     def get_pk_field(self):

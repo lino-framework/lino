@@ -106,7 +106,6 @@ class Note(mixins.TypedPrintable,
            Mailable,
            Postable,
            ):
-
     """
     Deserves more documentation.
     """

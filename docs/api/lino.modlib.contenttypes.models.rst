@@ -9,7 +9,6 @@ lino.modlib.contenttypes.models
 
    .. autosummary::
    
-      get_stale_generic_related
       join_elems
       my_pre_ui_build
    

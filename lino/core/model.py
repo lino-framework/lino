@@ -97,7 +97,7 @@ class Model(models.Model):
     :class:`lino.modlib.outbox.models.Recipient` has
     ``allow_cascaded_delete = ['mail']``.
     
-    Note that this currently is also consulted by
+    Note that this is also used by
     :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
     whether slaves of a record being duplicated should be duplicated
     as well.
@@ -106,16 +106,6 @@ class Model(models.Model):
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
     option.  But of course you should not `allow_cascaded_delete` for
     fields which have e.g. `on_delete=PROTECT`.
-
-    """
-
-    allow_stale_generic_foreignkey = frozenset()
-    """A `frozenset` of names of GenericForeignKeyIdField on this model
-    that are allowed to become "stale".
-
-    Application code can specify this as a single string of
-    space-separated field names. Lino will convert this into a
-    frozenset.
 
     """
 
@@ -351,13 +341,11 @@ class Model(models.Model):
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
         must_cascade = []
-        for gfk, qs in kernel.get_generic_related(self):
+        for gfk, fk_field, qs in kernel.get_generic_related(self):
             if gfk.name in qs.model.allow_cascaded_delete:
                 must_cascade.append(qs)
             else:
-                fld, remote_model, direct, m2m = \
-                    qs.model._meta.get_field_by_name(gfk.fk_field)
-                if fld.null:  # clear nullable GFKs
+                if fk_field.null:  # clear nullable GFKs
                     for obj in qs:
                         setattr(obj, gfk.name, None)
                 elif qs.count():
@@ -825,7 +813,6 @@ action on individual instances.
         'preferred_foreignkey_width',
         'before_ui_save',
         'allow_cascaded_delete',
-        'allow_stale_generic_foreignkey',
         'workflow_state_field',
         'workflow_owner_field',
         'disabled_fields',

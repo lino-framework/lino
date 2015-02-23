@@ -50,16 +50,10 @@ settings. Including for example :setting:`INSTALLED_APPS` and
 
 >>> from lino.projects.min1.settings import Site
 >>> pseudoglobals = {}
->>> SITE = Site(pseudoglobals)
->>> pseudoglobals.keys()
+>>> SITE = Site(pseudoglobals, no_local=True)
+>>> sorted(pseudoglobals.keys())
 ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
-['EMAIL_SUBJECT_PREFIX', 'LOGGING', 'LANGUAGE_CODE',
-'MIDDLEWARE_CLASSES', 'LANGUAGES', 'DEBUG', 'USE_L10N',
-'ROOT_URLCONF', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'SERVER_EMAIL',
-'TEMPLATE_CONTEXT_PROCESSORS', 'SERIALIZATION_MODULES', 'MEDIA_ROOT',
-'LOGGING_CONFIG', 'TEMPLATE_LOADERS', 'DATABASES', 'ADMINS',
-'DEFAULT_FROM_EMAIL', 'LOCALE_PATHS', 'ALLOWED_HOSTS', 'EMAIL_HOST',
-'MEDIA_URL']
+['DATABASES', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'LANGUAGES', 'LANGUAGE_CODE', 'LOCALE_PATHS', 'LOGGING', 'LOGGING_CONFIG', 'MEDIA_ROOT', 'MEDIA_URL', 'MIDDLEWARE_CLASSES', 'ROOT_URLCONF', 'SERIALIZATION_MODULES', 'TEMPLATE_CONTEXT_PROCESSORS', 'TEMPLATE_LOADERS', 'USE_L10N']
 
 A more detailed description of the Django settings managed by Lino is
 in :doc:`/ref/settings`.

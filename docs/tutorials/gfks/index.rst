@@ -85,28 +85,44 @@ All objects are still there:
 >>> print status()
 [1, 1, 1, 1]
 
-Django does **not** prevent us from deleting the member, and it will
-leave both the note and the memo in the database:
+Django does **not** prevent us from deleting the member:
 
 >>> from django.db import models
 >>> models.Model.delete(mbr)
+
+And it will leave the GFK-related objects in the database.
+
 >>> print status()
 [0, 1, 1, 1]
 
-
-Users can see them by opening the :class:`BrokenGFKs
-<lino.modlib.contenttypes.models.BrokenGFKs>` table:
+The users of a Lino application can see these broken GFKs by opening
+the :class:`BrokenGFKs <lino.modlib.contenttypes.models.BrokenGFKs>`
+table:
 
 >>> rt.show(contenttypes.BrokenGFKs)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-================ ==================== =====================================================
- Database model   Database object      Message
----------------- -------------------- -----------------------------------------------------
- **comment**      **Comment object**   Invalid primary key 1 for gfks.Member in `owner_id`
- **note**         **Note object**      Invalid primary key 1 for gfks.Member in `owner_id`
- **memo**         **Memo object**      Invalid primary key 1 for gfks.Member in `owner_id`
-================ ==================== =====================================================
+================ ==================== ===================================================== ========
+ Database model   Database object      Message                                               Action
+---------------- -------------------- ----------------------------------------------------- --------
+ **comment**      **Comment object**   Invalid primary key 1 for gfks.Member in `owner_id`   delete
+ **note**         **Note object**      Invalid primary key 1 for gfks.Member in `owner_id`   manual
+ **memo**         **Memo object**      Invalid primary key 1 for gfks.Member in `owner_id`   clear
+================ ==================== ===================================================== ========
 <BLANKLINE>
+
+TODO: a management command to cleanup broken GFK fields. This would
+execute the suggested actions (delete and clear) without any further
+user interaction.
+
+Note that in plain Django you can achieve some of the above things by
+using `GenericRelation
+<https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
+fields.  That is, if we define a GenericRelation from Member to every
+model which potentially points to it.  In our case three
+GenericRelation objects. 
+
+A detailed comparison is yet to be written, but it seems that Django's
+approach is uncomplete compared to what Lino can do.
 
 
 Tested twice

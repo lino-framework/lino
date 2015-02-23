@@ -83,7 +83,7 @@ Working on :xfile:`file_sheet.odt`
 
 I identified another lack in the Developer Guide:
 :doc:`/dev/printing`.
-And :doc:`/dev/languages` deserves its own chapter.
+And also :doc:`/dev/languages` deserves its own chapter.
 
 In order to have demo data, I needed to 
 write a new fixture :mod:`lino.modlib.addresses.fixtures.demo2`.

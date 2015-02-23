@@ -238,7 +238,7 @@ class ComboStoreField(StoreField):
 
 
 class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
-
+    """An atomizer used for all ForeignKey fields."""
     #~ def cell_html(self,req,row):
         #~ obj = self.full_value_from_object(req,row)
         #~ if obj is None:
@@ -255,6 +255,18 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             return (v.pk, unicode(v))
 
     def parse_form_value(self, v, obj):
+        """Convert the form field value (expected to contain a primary key)
+        into the corresponding database object. If it is an invalid
+        primary key, return None.
+
+        If this comes from a *learning* ExtJS ComboBox
+        (i.e. :attr:`can_create_choice
+        <lino.core.choosers.Chooser.can_create_choice>` is True) the
+        value will be the text entered by the user. In that case, call
+        :meth:`create_choice
+        <lino.core.choosers.Chooser.create_choice>`.
+
+        """
         relto_model = self.get_rel_to(obj)
         if not relto_model:
             #~ logger.info("20111209 get_value_text: no relto_model")

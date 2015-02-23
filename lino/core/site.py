@@ -945,10 +945,9 @@ documentation.
             setup_site(self)
 
     def init_before_local(self, settings_globals, local_apps):
-        """If your :attr:`project_dir` contains no :file:`models.py`, but
-        *does* contain a `fixtures` subdir, then Lino automatically
-        adds this as "local fixtures directory" to Django's
-        `FIXTURE_DIRS`.
+        """If your :attr:`project_dir` contains no :xfile:`models.py`, but
+        *does* contain a `fixtures` subdir, then Lino automatically adds this
+        as a local fixtures directory to Django's :setting:`FIXTURE_DIRS`.
 
         """
         if isinstance(local_apps, basestring):

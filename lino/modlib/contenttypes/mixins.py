@@ -17,7 +17,7 @@ class Controllable(dd.Model):
 
     """Mixin for models that are "controllable" by another database object.
 
-    Defines three fields `owned_type`, `owned_id` and `owned`. And a class
+    Defines three fields :attr:`owned_type`, :attr:`owned_id` and :attr:`owned`. And a class
     attribute :attr:`owner_label`.
 
     For example in :mod:`lino.modlibs.cal`, the owner of a Task or Event
@@ -29,12 +29,17 @@ class Controllable(dd.Model):
     when a certain payment mode is specified.
 
     Controllable objects are "governed" or "controlled" by their
-    controller: If the controller gets modified, it may decide to
-    delete or modify some or all of her controlled objects.
+    controller (stored in a field called :attr:`owner`): If the
+    controller gets modified, it may decide to delete or modify some
+    or all of her controlled objects.
 
-    Non-automatic tasks always have an empty `controller` field.
-    Some fields are read-only on an automatic Task because
-    it makes no sense to modify them.
+    Non-automatic tasks always have an empty :attr:`owner` field.
+    Some fields are read-only on an automatic Task because it makes no
+    sense to modify them.
+
+    .. attribute:: owner
+    .. attribute:: owner_id
+    .. attribute:: owner_type
 
     """
     # Translators: will also be concatenated with '(type)' '(object)'
@@ -44,8 +49,8 @@ class Controllable(dd.Model):
     subclasses. """
 
     controller_is_optional = True
-    """Whether the controller is optional (i.e. whether the field `owner`
-    may be NULL)
+    """Whether the controller is optional (i.e. whether the :attr:`owner`
+    field may be NULL)
 
     """
 

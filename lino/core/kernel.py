@@ -61,14 +61,15 @@ from lino.core import views
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
-from lino.core.utils import resolve_model
 from lino.core.store import Store
-from lino.core.utils import is_devserver
 from lino.core.renderer import TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_analyze, post_analyze)
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
+from .utils import resolve_model
+from .utils import is_devserver
+from .utils import full_model_name as fmn
 
 
 def set_default_verbose_name(f):
@@ -270,11 +271,6 @@ class Kernel(object):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
 
-            if isinstance(model.allow_stale_generic_foreignkey, basestring):
-                model.allow_stale_generic_foreignkey = frozenset(
-                    fields.fields_list(model,
-                                       model.allow_stale_generic_foreignkey))
-
             if model._meta.abstract:
                 raise Exception("Tiens?")
 
@@ -398,20 +394,64 @@ class Kernel(object):
         #~ logger.info("20130827 startup_site done")
 
     def get_generic_related(self, obj):
-        """Yield a serieas of (gfk, queryset) tuples, all database objects for
-         which the given GenericForeignKey gfk points to the object
-         `obj`. See also :doc:`/dev/gfks`.
+        """Yield a series of `(gfk, fk_field, queryset)` tuples which together
+         will return all database objects for which the given
+         GenericForeignKey gfk points to the object `obj`. See also
+         :doc:`/dev/gfks`.
 
         """
         if len(self.GFK_LIST) == 0:
             return  # e.g. if contenttypes is not installed
         obj_ct = ContentType.objects.get_for_model(obj.__class__)
         for gfk in self.GFK_LIST:
+            fk_field, remote_model, direct, m2m = \
+                gfk.model._meta.get_field_by_name(gfk.fk_field)
+
             kw = dict()
             kw[gfk.fk_field] = obj.pk
             kw[gfk.ct_field] = obj_ct
             ct = ContentType.objects.get_for_model(gfk.model)
-            yield gfk, ct.get_all_objects_for_this_type(**kw)
+            yield gfk, fk_field, ct.get_all_objects_for_this_type(**kw)
+
+    def get_broken_generic_related(self, model):
+        """Yield all database objects of this model which have some broken
+        GFK field.
+    
+        This is a slow query which does an additional database request
+        for each row. (Is there a possibility to do this in a single
+        SQL query?)
+    
+        Each yeld object has two special attributes:
+    
+        - `_message` : a textual description of the problem
+        - `_todo` : 'delete', 'clear' or 'manual'
+
+        """
+        gfks = [f for f in self.GFK_LIST if f.model is model]
+        if len(gfks):
+            for gfk in gfks:
+                fk_field, remote_model, direct, m2m = \
+                    gfk.model._meta.get_field_by_name(gfk.fk_field)
+                kw = {gfk.ct_field+'__isnull': False}
+                qs = model.objects.filter(**kw)
+                for obj in qs:
+                    fk = getattr(obj, gfk.fk_field)
+                    ct = getattr(obj, gfk.ct_field)
+                    pointed_model = ct.model_class()
+                    # pointed_model = ContentType.objects.get_for_id(ct)
+                    try:
+                        pointed_model.objects.get(pk=fk)
+                    except pointed_model.DoesNotExist:
+                        msg = "Invalid primary key {1} for {2} in `{0}`"
+                        obj._message = msg.format(
+                            gfk.fk_field, fk, fmn(pointed_model))
+                        if gfk.name in model.allow_cascaded_delete:
+                            obj._todo = 'delete'
+                        elif fk_field.null:
+                            obj._todo = 'clear'
+                        else:
+                            obj._todo = 'manual'
+                        yield obj
 
     def abandon_response(self):
         return self.success(_("User abandoned"))

@@ -109,9 +109,9 @@ class QuickTest(RemoteAuthTestCase):
 
         self.assertEqual(excerpt.disable_delete(), None)
         self.assertEqual(note.disable_delete(), None)
-        self.assertEqual(
-            doe.disable_delete(),
-            "Cannot delete John Doe because 1 Notes refer to it.")
+        self.assertEqual(doe.disable_delete(), None)
+        # it is not "Cannot delete John Doe because 1 Notes refer to
+        # it." because Note.owner is nullable.
 
         note.delete()
         self.assertEqual(Excerpt.objects.count(), 0)

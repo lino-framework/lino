@@ -37,18 +37,19 @@ class DisableDeleteHandler():
             if not fk.name in m.allow_cascaded_delete:
                 n = m.objects.filter(**{fk.name: obj}).count()
                 if n:
-                    return veto(obj, m, n)
+                    return obj.delete_veto_message(m, n)
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
-        for gfk, qs in kernel.get_generic_related(obj):
+        for gfk, fk_field, qs in kernel.get_generic_related(obj):
             if gfk.name in qs.model.allow_cascaded_delete:
                 continue
-            if gfk.name in qs.model.allow_stale_generic_foreignkey:
+            elif fk_field.null:  # a nullable GFK is no reason to veto
                 continue
-            n = qs.count()
-            # print "20141208 - %s %s %s" % (
-            #     gfk.model, gfk.name, qs.query)
-            if n:
-                return obj.delete_veto_message(qs.model, n)
+            else:
+                n = qs.count()
+                # print "20141208 - %s %s %s" % (
+                #     gfk.model, gfk.name, qs.query)
+                if n:
+                    return obj.delete_veto_message(qs.model, n)
         return None
 

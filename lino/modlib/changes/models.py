@@ -63,8 +63,7 @@ class Change(dd.Model):
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
 
-    allow_stale_generic_foreignkey = 'master object'
-    # see blog/2015/0221
+    allow_cascaded_delete = 'master'
 
     time = models.DateTimeField()
     type = ChangeTypes.field()
@@ -73,17 +72,19 @@ class Change(dd.Model):
     else:
         user = dd.DummyField()
 
-    object_type = models.ForeignKey(ContentType,
-                                    related_name='changes_by_object',
-                                    verbose_name=_("Object type"))
-    object_id = dd.GenericForeignKeyIdField(object_type)
+    object_type = models.ForeignKey(
+        ContentType, blank=True, null=True,
+        verbose_name=_("Object type"),
+        related_name='changes_by_object')
+    object_id = dd.GenericForeignKeyIdField(
+        object_type, blank=True, null=True)
     object = dd.GenericForeignKey('object_type', 'object_id', _("Object"))
     # see blog/2013/0123
 
-    master_type = models.ForeignKey(ContentType,
-                                    related_name='changes_by_master',
-                                    verbose_name=_("Master type"))
-    master_id = dd.GenericForeignKeyIdField(master_type)
+    master_type = models.ForeignKey(
+        ContentType,
+        verbose_name=_("Master type"), related_name='changes_by_master')
+    master_id = dd.GenericForeignKeyIdField(master_type, )
     master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)

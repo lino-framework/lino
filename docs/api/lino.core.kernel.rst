@@ -12,6 +12,7 @@ lino.core.kernel
       class_dict_items
       dirname
       exists
+      fmn
       force_text
       include
       is_devserver
