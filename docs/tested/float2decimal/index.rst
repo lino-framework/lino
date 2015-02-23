@@ -4,7 +4,7 @@ Assigning float values to a DecimalField
 .. include:: /include/wip.rst
 
 .. This document is part of the test suite.  
-.. To test only this  document, run::
+.. To test only this  document, run:
 
     $ python setup.py test -s tests.DocsTests.test_float2decimal
 

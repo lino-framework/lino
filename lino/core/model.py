@@ -288,24 +288,28 @@ class Model(models.Model):
         return unicode(self)
 
     def disable_delete(self, ar=None):
-        """
-        Hook to decide whether a given record may be deleted.  
-        Return a  non-empty string 
-
-        This should return `None` if it is okay to delete this object, or
-        otherwise a nonempty string with a message that explains why this
+        """Decide whether this database object may be deleted.  Return `None`
+        if it is okay to delete this object, otherwise a nonempty
+        translatable string with a message that explains why this
         object cannot be deleted.
 
-        Example::
+        The argument `ar` contains the action request which is trying
+        to delete. `ar` is possibly `None` when this is being called
+        from a script or batch process.
 
-          def disable_delete(self,request):
+        The default behaviour checks whether there are any related
+        objects which would not get cascade-deleted and thus produce a
+        database integrity error.
+
+        You can override this method e.g. for defining additional
+        conditions.  Example::
+
+          def disable_delete(self, ar=None):
+              msg = super(MyModel, self).disable_delete(ar)
+              if msg is not None:
+                  return msg
               if self.is_imported:
                   return _("Cannot delete imported records.")
-
-        The argument `ar` contains the :class:`rt.ar` 
-        which is trying to delete. `ar` is possibly `None` when this is 
-        being called from a script or batch process.
-
 
         """
         return self._lino_ddh.disable_delete_on_object(self)
@@ -336,15 +340,48 @@ class Model(models.Model):
         return set()
 
     def delete(self, **kw):
-        """It seems that this is useless because Django does it too.
-        See :blogref:`20150221`."""
+        """Before actually deleting an object, we override Django's behaviour
+        concerning objects related via a GFK field.
+        See also :doc:`/dev/gfks`.
+
+        It seems that this is useless because Django does it too.
+        See :blogref:`20150221`.
+
+        """
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
+        must_cascade = []
         for gfk, qs in kernel.get_generic_related(self):
             if gfk.name in qs.model.allow_cascaded_delete:
-                for obj in qs:
-                    obj.delete()
+                must_cascade.append(qs)
+            else:
+                fld, remote_model, direct, m2m = \
+                    qs.model._meta.get_field_by_name(gfk.fk_field)
+                if fld.null:  # clear nullable GFKs
+                    for obj in qs:
+                        setattr(obj, gfk.name, None)
+                elif qs.count():
+                    raise Warning(self.delete_veto_message(
+                        qs.model, qs.count()))
+        for qs in must_cascade:
+            for obj in qs:
+                obj.delete()
         super(Model, self).delete(**kw)
+
+    def delete_veto_message(self, m, n):
+        """Return the message :message:`Cannot delete X because N Ys refer to
+        it.`
+
+        """
+        msg = _(
+            "Cannot delete %(self)s "
+            "because %(count)d %(refs)s refer to it."
+        ) % dict(
+            self=self, count=n,
+            refs=m._meta.verbose_name_plural
+            or m._meta.verbose_name + 's')
+        #~ print msg
+        return msg
 
     @classmethod
     def define_action(cls, **kw):

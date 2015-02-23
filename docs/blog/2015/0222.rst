@@ -37,18 +37,23 @@ I started with the implementation:
 
 - Moved some documentation to :doc:`/dev/accounting`.
 
-But decided to leave it half-finished because two production releases
+But decided to leave this half-finished because two production releases
 for :ref:`welfare` are more urgent.
 
-Continued in :mod:`lino.molib.contenttypes.models`. 
-Renamed `StaleGenericRelated` to 
-:class:`lino.molib.contenttypes.models.BrokenGFKs`.
+Upgrade in Eupen
+================
 
-New unit test :doc:`/docs/tutorials/broken_gfks/index`.
+Continued in :mod:`lino.modlib.contenttypes.models`.  Renamed
+`StaleGenericRelated` to :class:`BrokenGFKs
+<lino.modlib.contenttypes.models.BrokenGFKs>`, and only now it starts
+to be useful and complete.
 
-Upgrade in Eupen: restoring the database from snapshot (without
-migration) gave an error message on two objects:
+New unit test :doc:`/tutorials/gfks/index` brings another
+observation to my problem discovered yestarday (described in
+:mod:`test_broken_gfks
+<lino_welfare.projects.eupen.tests.test_broken_gfks>`).
 
-Deferred IncomeConfirmation #24
+Restoring the database from snapshot (without migration) gave an error
+message :message:`Deferred IncomeConfirmation #24
 (u'Ausl\xe4nderbeihilfe/5/1/12/6517/24') : 'Role' object has no
-attribute 'language'
+attribute 'language'` on two objects.

@@ -6,7 +6,8 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
 
         yield 'lino.modlib.contenttypes'
+        yield 'gfks'
 
-SITE = Site(globals(), 'broken_gfks')
+SITE = Site(globals())
 
 DEBUG = True

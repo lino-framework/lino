@@ -5,6 +5,8 @@
 """
 Database models for `lino.modlib.contenttypes`.
 
+See also unit test :doc:`/dev/gfks`.
+
 .. autosummary::
 
 """
@@ -146,6 +148,7 @@ def get_stale_generic_related(model):
 class BrokenGFKs(dd.VirtualTable):
     """Shows all database objects (model instances) who have a broken
     GeneriForeignKey field.
+
 
     """
     label = _("Broken GFKs")

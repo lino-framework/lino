@@ -65,6 +65,7 @@ Getting acquaintained
 - :doc:`ar` : Using action requests
 - :doc:`html` : Generating HTML
 - :doc:`custom_actions` : Writing custom actions
+- :doc:`gfks` : Lino and `GenericForeignKey` fields
 
 - :doc:`/tutorials/letsmti/index` :
 - :doc:`/tutorials/layouts` :
@@ -94,6 +95,7 @@ Getting acquaintained
    ar
    html
    custom_actions
+   gfks
    /tutorials/letsmti/index
    /tutorials/layouts
    /tutorials/vtables/index
@@ -135,7 +137,7 @@ Special topics
    /tutorials/auto_create/index
    /tutorials/pisa/index
    /tutorials/input_mask/index
-   /tutorials/broken_gfks/index
+   /tutorials/gfks/index
 
 Drafts
 ======
@@ -184,3 +186,4 @@ Other
    dd
    rt
    mixins
+   /tutorials/index

@@ -22,10 +22,10 @@ Added a new test module for testing this table:
 Which made me discover that when I delete an object, Django *does*
 automatically delete any objects which have a GenericForeignKey
 pointing at it as well. Already in `1.6
-<https://docs.djangoproject.com/en/1.6/ref/contrib/contenttypes/>`.
+<https://docs.djangoproject.com/en/1.6/ref/contrib/contenttypes/>`_.
 
 So theoretically I can remove my custom :meth:`Model.delete
-<lino.core.model.Model.unused_delete>` method which did exactly that.
+<lino.core.model.Model.delete>` method which did exactly that.
 I have been reinventing the wheel once more.  And I am going to adapt
 Lino to Django.  Yes (sigh!), that's the disadvantage of being a poor
 lonesome codeboy.
@@ -45,9 +45,8 @@ field. Which is confirmed by `Why won't my GenericForeignKey cascade
 when deleting?
 <http://stackoverflow.com/questions/6803018/why-wont-my-genericforeignkey-cascade-when-deleting>`_.
 OTOH this statement seems to be wrong: it happens also in my projects
-which do *not* use any `GenericRelation`.  As :mod:`test_stale_gfk
-<lino_welfare.projects.eupen.tests.test_stale_gfk>` shows.
-
+which do *not* use any `GenericRelation`.  As :mod:`test_broken_gfk
+<lino_welfare.projects.eupen.tests.test_broken_gfk>` shows.
 
 Which means that :class:`Change <lino.modlib.changes.models.Change>`
 objects are currently *not* preserved if their `master` or `object`

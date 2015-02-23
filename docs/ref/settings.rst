@@ -77,12 +77,12 @@ We are also working on alternative user interfaces
 
 .. setting:: INSTALLED_APPS
 
-Lino sets this automatically from the values returned by the
-:setting:`get_installed_apps` method.  In order to modify your
-:setting:`INSTALLED_APPS`, you usually override this method.  The only
-exception is in very small code snippets where you can specify them as
-positional arguments when instantiating the :class:`Site
-<lino.core.site.Site>`.
+In a Lino application you usually set your :setting:`INSTALLED_APPS`
+by overriding the :meth:`get_installed_apps
+<lino.core.site.Site.get_installed_apps>` method.  Alternatively, in
+very small projects (such as the projects in :doc:`/tutorials/index`)
+you might prefer to specify them as positional arguments when
+instantiating the :class:`Site <lino.core.site.Site>`.
 
 .. setting:: MEDIA_ROOT
 

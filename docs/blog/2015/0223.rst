@@ -1,0 +1,6 @@
+=========================
+Monday, February 23, 2015
+=========================
+
+I continued to research and document about GFK fields in :doc:`/dev/gfks`.
+:doc:`/tutorials/gfks/index`.

@@ -398,8 +398,10 @@ class Kernel(object):
         #~ logger.info("20130827 startup_site done")
 
     def get_generic_related(self, obj):
-        """Yield all database objects in database for which the given
-        GenericForeignKey gfk points to the object `obj`.
+        """Yield a serieas of (gfk, queryset) tuples, all database objects for
+         which the given GenericForeignKey gfk points to the object
+         `obj`. See also :doc:`/dev/gfks`.
+
         """
         if len(self.GFK_LIST) == 0:
             return  # e.g. if contenttypes is not installed

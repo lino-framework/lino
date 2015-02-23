@@ -33,17 +33,6 @@ class DisableDeleteHandler():
 
     def disable_delete_on_object(self, obj):
         # logger.info("20101104 called %s.disable_delete(%s)", obj, self)
-        def veto(obj, m, n):
-            msg = _(
-                "Cannot delete %(self)s "
-                "because %(count)d %(refs)s refer to it."
-            ) % dict(
-                self=obj, count=n,
-                refs=m._meta.verbose_name_plural
-                or m._meta.verbose_name + 's')
-            #~ print msg
-            return msg
-
         for m, fk in self.fklist:
             if not fk.name in m.allow_cascaded_delete:
                 n = m.objects.filter(**{fk.name: obj}).count()
@@ -60,6 +49,6 @@ class DisableDeleteHandler():
             # print "20141208 - %s %s %s" % (
             #     gfk.model, gfk.name, qs.query)
             if n:
-                return veto(obj, qs.model, n)
+                return obj.delete_veto_message(qs.model, n)
         return None
 
