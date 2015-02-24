@@ -80,8 +80,35 @@ class FinancialVoucher(ledger.Voucher):
 
 
 class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
-    """Base class for items of all financial vouchers
+    """The base class for the items of all types of financial vouchers
     (:class:`FinancialVoucher`).
+
+    .. attribute:: account
+
+        The general account to be used in the primary booking.
+
+    .. attribute:: partner
+
+        The partner account to be used in the primary booking.
+
+    .. attribute:: amount
+
+        The amount to be booked.
+
+    .. attribute:: dc
+
+        The direction of the primary booking to create.
+
+    .. attribute:: remark
+    .. attribute:: seqno
+
+    .. attribute:: match
+
+        The voucher that caused this voucher item.  For example the
+        :attr:`match` of the payment of an invoice points to that
+        invoice.
+
+        See :attr:`lino.modlib.ledger.mixins.Matchable.match`.
 
     """
     class Meta:
@@ -115,6 +142,10 @@ class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
                 #~ self.amount = - m.balance
 
     def partner_changed(self, ar):
+        """The :meth:`trigger method <lino.core.model.Model.FOO_changed>` for
+        :attr:`partner`.
+
+        """
         if self.partner:
             flt = dict(partner=self.partner, satisfied=False)
             if self.match:
@@ -125,29 +156,50 @@ class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
             if len(suggestions) == 0:
                 pass
             elif len(suggestions) == 1:
-                match = suggestions[0]
-                if match.trade_type is not None:
-                    self.account = match.trade_type.get_partner_account()
-                if self.account_id is None:
-                    self.account = match.account
-                self.dc = match.dc
-                self.amount = - match.balance
-                self.match = match.match
+                self.fill_suggestion(suggestions[0])
             else:
-                raise NotImplementedError("20150222")
-                grouper = rt.modules.finan.Grouper.get_or_create(self.partner)
-                for match in suggestions:
-                    if match.trade_type is not None:
-                        self.account = match.trade_type.get_partner_account()
-                    if self.account_id is None:
-                        self.account = match.account
-                    if self.account == match.account:
-                        self.dc = match.dc
-                        self.amount = - match.balance
-                        self.match = match.match
+                self.set_grouper(suggestions)
             if self.account_id is None:
                 raise ValidationError(
                     _("Could not determine the general account"))
+
+    def fill_suggestion(self, match):
+        """Fill the fields of this item from the given suggestion (a
+        `DueMovement` instance).
+
+        """
+        if match.trade_type is not None:
+            self.account = match.trade_type.get_partner_account()
+        if self.account_id is None:
+            self.account = match.account
+        self.dc = match.dc
+        self.amount = - match.balance
+        self.match = match.match
+
+    def set_grouper(self, suggestions):
+        # not tested
+        Grouper = rt.modules.finan.Grouper
+        GrouperItem = rt.modules.finan.GrouperItem
+        fkw = dict(partner=self.partner)
+        fkw.update(state__in=VoucherStates.get_editable_states())
+        try:
+            Grouper.objects.get(**fkw)
+        except Grouper.DoesNotExist:
+            pass
+        else:
+            msg = _("There is already an open grouper for {0}")
+            raise Warning(msg.format(self.partner))
+        jnl = self.voucher.journal.grouper_journal
+        grouper = jnl.create_voucher()
+        for match in suggestions:
+            gi = GrouperItem(voucher=grouper)
+            gi.fill_suggestion(match)
+            gi.full_clean()
+            gi.save()
+        grouper.register_voucher()
+        grouper.full_clean()
+        grouper.save()
+        self.match = grouper
 
     def full_clean(self, *args, **kw):
         if self.dc is None:

@@ -13,16 +13,47 @@ from django.db import models
 from lino.modlib.accounts.utils import ZERO, DEBIT, CREDIT
 from lino.modlib.ledger.fields import DcAmountField
 from lino.modlib.ledger.choicelists import VoucherTypes
-from lino.api import dd, _
+from lino.api import dd, rt, _
 
 from .mixins import FinancialVoucher, FinancialVoucherItem
 
 ledger = dd.resolve_app('ledger')
 
 
+class ShowSuggestions(dd.Action):
+    # started as a copy of ShowSlaveTable
+    TABLE2ACTION_ATTRS = tuple('help_text icon_name label sort_index'.split())
+    show_in_bbar = True
+
+    @classmethod
+    def get_actor_label(self):
+        return self._label or self.slave_table.label
+
+    def attach_to_actor(self, actor, name):
+        if actor.suggestions_table is None:
+            logger.info("%s has no suggestions_table", actor)
+            return  # don't attach
+        if isinstance(actor.suggestions_table, basestring):
+            T = rt.modules.resolve(actor.suggestions_table)
+            if T is None:
+                raise Exception("No table named %s" % actor.suggestions_table)
+            actor.suggestions_table = T
+        for k in self.TABLE2ACTION_ATTRS:
+            setattr(self, k, getattr(actor.suggestions_table, k))
+        return super(ShowSuggestions, self).attach_to_actor(actor, name)
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        sar = ar.spawn(ar.actor.suggestions_table, master_instance=obj)
+        js = ar.renderer.request_handler(sar)
+        ar.set_response(eval_js=js)
+
+
 class Grouper(FinancialVoucher):
-    """A **matcher** is a rather internal journal entry used to group a
-    series of matches .
+    """A rather internal journal entry used to group a series of matches.
+
+    There are two types of groupers: *partner* groupers and *general
+    account* groupers.
 
     """
     class Meta:
@@ -30,7 +61,7 @@ class Grouper(FinancialVoucher):
         verbose_name_plural = _("Groupers")
 
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
-    account = dd.ForeignKey('accounts.Account', blank=True, null=True)
+    # account = dd.ForeignKey('accounts.Account', blank=True, null=True)
 
 
 class JournalEntry(FinancialVoucher):
@@ -101,6 +132,7 @@ class BankStatement(FinancialVoucher):
             yield m
         yield self.create_movement(a, not self.journal.dc, amount)
 
+
 class GrouperItem(FinancialVoucherItem):
     """An item of a :class:`Grouper`."""
     voucher = dd.ForeignKey('finan.Grouper', related_name='items')
@@ -163,6 +195,13 @@ class GrouperDetail(JournalEntryDetail):
 
 
 class JournalEntries(dd.Table):
+    """The table of all :class:`JournalEntry` vouchers.
+
+    This is also the base table for the default tables of all other
+    financial voucher types (:class:`PaymentOrders`,
+    :class:`BankStatemens` and :class:`Groupers`).
+
+    """
     model = 'finan.JournalEntry'
     params_panel_hidden = True
     order_by = ["date", "id"]
@@ -177,6 +216,9 @@ class JournalEntries(dd.Table):
     narration 
     """, window_size=(40, 'auto'))
 
+    suggest = ShowSuggestions()
+    suggestions_table = None  # 'finan.SuggestionsByJournalEntry'
+
     @classmethod
     def get_request_queryset(cls, ar):
         qs = super(JournalEntries, cls).get_request_queryset(ar)
@@ -189,12 +231,14 @@ class JournalEntries(dd.Table):
 
 
 class PaymentOrders(JournalEntries):
+    """The table of all :class:`PaymentOrder` vouchers."""
     model = 'finan.PaymentOrder'
     column_names = "date id number user *"
     detail_layout = PaymentOrderDetail()
 
 
 class Groupers(JournalEntries):
+    """The table of all :class:`Grouper` vouchers."""
     model = 'finan.Grouper'
     column_names = "date id number partner user workflow_buttons"
     detail_layout = GrouperDetail()
@@ -205,6 +249,7 @@ class Groupers(JournalEntries):
 
 
 class BankStatements(JournalEntries):
+    """The table of all :class:`BankStatement` vouchers."""
     model = 'finan.BankStatement'
     column_names = "date id number balance1 balance2 user *"
     detail_layout = BankStatementDetail()
@@ -213,14 +258,17 @@ class BankStatements(JournalEntries):
     balance1
     balance2
     """
+    suggestions_table = 'finan.SuggestionsByBankStatement'
 
 
 class PaymentOrdersByJournal(ledger.ByJournal, PaymentOrders):
-    pass
 
+    suggestions_table = 'finan.SuggestionsByPaymentOrder'
 
 class JournalEntriesByJournal(ledger.ByJournal, JournalEntries):
-    pass
+
+    suggestions_table = 'finan.SuggestionsByJournalEntry'
+
 
 
 class BankStatementsByJournal(ledger.ByJournal, BankStatements):
@@ -260,6 +308,7 @@ class ItemsByGrouper(ItemsByVoucher):
 
 
 class FillSuggestions(dd.Action):
+    """Fill selected suggestions into a financial voucher."""
     label = _("Fill")
     icon_name = 'lightning'
     http_method = 'POST'
@@ -270,13 +319,10 @@ class FillSuggestions(dd.Action):
         seqno = None
         n = 0
         for obj in ar.selected_rows:
-            i = voucher.add_voucher_item(obj.account,
-                                         dc=not obj.dc,
-                                         seqno=seqno,
-                                         amount=obj.balance,
-                                         partner=obj.partner,
-                                         match=obj.match)
-                #~ match=obj.voucher.get_default_match())
+            i = voucher.add_voucher_item(
+                obj.account, dc=not obj.dc, seqno=seqno,
+                amount=obj.balance, partner=obj.partner,
+                match=obj.match)
             if i.amount < 0:
                 i.amount = - i.amount
                 i.dc = not i.dc
@@ -292,23 +338,21 @@ class FillSuggestions(dd.Action):
 
 
 class SuggestionsByVoucher(ledger.ExpectedMovements):
+    """Shows the suggested items for a given voucher, with a button to
+    fill them into the current voucher.
 
-    """
-    Shows a list of suggested items for a given voucher,,
-    with a button to fill them into the current voucher.
-    
-    This is an abstract virtual slave table,
-    inherited by
+    This is the base class for
     :class:`SuggestionsByJournalEntry`
-    :class:`SuggestionsByBankStatement`
-    and :class:`SuggestionsByPaymentOrder`
-    who define the class of the `master_instance`.
-    
+    :class:`SuggestionsByBankStatement` and
+    :class:`SuggestionsByPaymentOrder` who define the class of the
+    master_instance (:attr:`master <lino.core.actors.Actor.master>`)
+
+    This is an abstract virtual slave table.
+
     """
 
     label = _("Suggestions")
-    column_names = 'partner match account due_date debts payments balance'
-    #~ column_names = 'voucher__date partner account voucher_link:5 debit credit'
+    column_names = 'partner match account due_date debts payments balance *'
     window_size = (70, 20)  # (width, height)
 
     editable = False
@@ -346,23 +390,14 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
 
 
 class SuggestionsByJournalEntry(SuggestionsByVoucher):
-
-    """
-    Shows a list of suggested items for this :class:`JournalEntry`,
-    with a button to fill them into the current voucher.
-    
-    """
+    "A :class:`SuggestionsByVoucher` table for a :class:`JournalEntry`."
     master = 'finan.JournalEntry'
 
-
-JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
+# JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
 
 
 class SuggestionsByPaymentOrder(SuggestionsByVoucher):
-
-    """
-    This is not a docstring.
-    """
+    "A :class:`SuggestionsByVoucher` table for a :class:`PaymentOrder`."
 
     master = 'finan.PaymentOrder'
 
@@ -377,19 +412,19 @@ class SuggestionsByPaymentOrder(SuggestionsByVoucher):
         #~ kw.update(trade_type=vat.TradeTypes.purchases)
         return kw
 
-
-PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
+# PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
 
 
 class SuggestionsByBankStatement(SuggestionsByVoucher):
+    "A :class:`SuggestionsByVoucher` table for a :class:`BankStatement`."
     master = 'finan.BankStatement'
 
+# BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
 
-BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
 
+# Declare the voucher types:
 
 VoucherTypes.add_item(JournalEntry, JournalEntriesByJournal)
 VoucherTypes.add_item(PaymentOrder, PaymentOrdersByJournal)
 VoucherTypes.add_item(BankStatement, BankStatementsByJournal)
 VoucherTypes.add_item(Grouper, GroupersByJournal)
-

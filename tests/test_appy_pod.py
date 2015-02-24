@@ -1,20 +1,15 @@
 # -*- coding: UTF-8 -*-
-"""Verify whether the following bug is fixed:
-
-    Bug Description
+"""Verify whether the following bug (`1169217
+<https://bugs.launchpad.net/appy/+bug/1169217>`_) is fixed:
 
     When I run appy_pod.Renderer on a template which contains buggy
     instructions, then the resulting file contains the tracebacks as
     comments. Very well. But sometimes I'd prefer appy.pod to not catch
     such exceptions. E.g. when I run it within a unit test suite.
 
-    https://bugs.launchpad.net/appy/+bug/1169217
+You can run only this test as follows::
 
-Note: this test case is in fact always skipped because the current
-development version of appy `has no `setup.py` file
-<https://bugs.launchpad.net/appy/+bug/1048963>`_ and thus cannot be
-installed using pip (the PYTHONPATH trick doesn't seem work with
-`setup.py test`).
+  $ python setup.py test -s tests.test_appy_pod
 
 """
 import os
@@ -54,6 +49,7 @@ class RaiseExceptionTest(unittest.TestCase):
         renderer = Renderer(tpl, context, target, **PARAMS)
         try:
             renderer.run()
+            self.fail("appy renderer failed to raise an error.")
         except Exception as e:
             self.assertEqual(str(e), (
                 'Error while evaluating expression "foo".'

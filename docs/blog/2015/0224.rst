@@ -1,0 +1,20 @@
+==========================
+Tuesday, February 24, 2015
+==========================
+
+
+What happens when there is more than one payment suggestion for a
+partner?
+
+Lino should show a dialog box with a selection list where the user can
+select one or multiple of these suggestions.  
+This would be a subclass of SuggestionsByVoucher
+
+If the user selects more
+than one suggestion, Lino will do it better than TIM. While in TIM
+this would create one line per suggestion in the bank statement, Lino
+creates a **grouper** for these suggestions.  If there is already
+another (unregistered) grouper for this partner, Lino should raise a
+warning :message:`There is already an open grouper for partner X`.
+
+But now about this dialog box. It must contain a table

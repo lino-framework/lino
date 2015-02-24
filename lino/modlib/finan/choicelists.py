@@ -8,8 +8,11 @@ from lino.api import dd, _
 
 
 class VoucherStates(dd.Workflow):
-    #~ label = _("State")
-    pass
+    """The list of possible states for a voucher."""
+    @classmethod
+    def get_editable_states(cls):
+        return [o for o in cls.objects() if o.editable]
+
 add = VoucherStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
 add('20', _("Registered"), 'registered', editable=False)

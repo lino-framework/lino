@@ -1014,14 +1014,11 @@ class ShowSlaveTable(Action):
 
     """
     TABLE2ACTION_ATTRS = tuple('help_text icon_name label sort_index'.split())
-    #~ label = "ShowSlaveTable"
     show_in_bbar = True
-    # sort_index = 60
 
     def __init__(self, slave_table, **kw):
         self.slave_table = slave_table
         self.explicit_attribs = set(kw.keys())
-        #~ kw.setdefault('label',slave_table.label)
         super(ShowSlaveTable, self).__init__(**kw)
 
     @classmethod
@@ -1037,10 +1034,6 @@ class ShowSlaveTable(Action):
         for k in self.TABLE2ACTION_ATTRS:
             if not k in self.explicit_attribs:
                 setattr(self, k, getattr(self.slave_table, k))
-        #~ self.label = self.slave_table.label
-        #~ self.help_text = self.slave_table.help_text
-        #~ self.icon_name = self.slave_table.icon_name
-        #~ self.icon_file = self.slave_table.icon_file
         return super(ShowSlaveTable, self).attach_to_actor(actor, name)
 
     def run_from_ui(self, ar, **kw):
@@ -1048,8 +1041,6 @@ class ShowSlaveTable(Action):
         sar = ar.spawn(self.slave_table, master_instance=obj)
         js = ar.renderer.request_handler(sar)
         ar.set_response(eval_js=js)
-        #~ kw.update(eval_js=js)
-        #~ return kw
 
 
 class NotifyingAction(Action):
