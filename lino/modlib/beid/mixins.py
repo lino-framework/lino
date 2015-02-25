@@ -72,7 +72,7 @@ class BeIdCardTypes(dd.ChoiceList):
     | [2] `Enum be.fedict.commons.eid.consumer.DocumentType <http://code.google.com/p/eid-applet/source/browse/trunk/eid-applet-service/src/main/java/be/fedict/eid/applet/service/DocumentType.java>`_
 
 
-    Excerpts from [1]: 
+    Excerpts from [1]:
     
     - Johan: A document type of 7 is used for bootstrap cards ? What
       is a bootstrap card (maybe some kind of test card?)  Danny: A
@@ -303,9 +303,8 @@ NAMES = tuple('last_name middle_name first_name'.split())
 
 
 class FindByBeIdAction(BaseBeIdReadCardAction):
-    """
-    Read an eID card without being on a holder. Either show the holder
-    or ask to create a new holder.
+    """Read an eID card without being on a precise holder. Either show the
+    holder or ask to create a new holder.
 
     This is a list action, usually called from a quicklink or a main
     menu item.

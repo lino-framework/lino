@@ -82,6 +82,10 @@ def set_default_verbose_name(f):
     if f.verbose_name == f.name.replace('_', ' '):
         f.verbose_name = f.rel.to._meta.verbose_name
 
+CLONEABLE_ATTRS = frozenset("""ah request user subst_user
+bound_action create_kw known_values param_values
+action_param_values""".split())
+
 
 class CallbackChoice(object):
     #~ def __init__(self,name,label,func):
@@ -94,11 +98,15 @@ class CallbackChoice(object):
 
 
 class Callback(object):
-
-    """
-    A callback is a question that rose during an AJAX action.
+    """A callback is a question that rose during an AJAX action.
     The original action is pending until we get a request
     that answers the question.
+
+    TODO: move all callback-related code out of
+    :mod:`lino.core.kernel` into to a separate module and install it
+    as a "kernel plugin" in a similar way as :mod:`lino.core.web` and
+    :mod:`lino.utils.config`.
+
     """
     title = _('Confirmation')
     #~ def __init__(self,yes,no):
@@ -463,45 +471,36 @@ class Kernel(object):
         pass
 
     def run_callback(self, request, thread_id, button_id):
-        """
-        Return an existing (pending) callback.
+        """Continue the action which was started in a previous request and
+        which asked for user interaction via a :class:`Callback`.
+
         This is called from `lino.core.views.Callbacks`.
+
         """
         # logger.info("20131212 get_callback %s %s", thread_id, button_id)
 
         # 20140304 Also set a renderer so that callbacks can use it
         # (feature needed by beid.FindByBeIdAction).
 
-        ar = ActorRequest(request, renderer=self.default_renderer)
-
         thread_id = int(thread_id)
         cb = self.pending_threads.pop(thread_id, None)
-        #~ d = self.pop_thread(int(thread_id))
         if cb is None:
+            ar = ActorRequest(request, renderer=self.default_renderer)
             logger.debug("No callback %r in %r" % (
                 thread_id, self.pending_threads.keys()))
             ar.error("Unknown callback %r" % thread_id)
             return self.render_action_response(ar)
 
         # e.g. SubmitInsertClient must set `data_record` in the
-        # callback request ("ar2", not "ar"), i.e. the methods to
-        # create an instance and to fill `data_record` must run on the
-        # callback request.  So the callback request must be a clone
-        # of the original request.  New since 20140421
-        ar.actor = cb.ar.actor
-        ar.ah = cb.ar.ah
-        ar.bound_action = cb.ar.bound_action
-        ar.create_kw = cb.ar.create_kw
-        ar.known_values = cb.ar.known_values
-        ar.param_values = cb.ar.param_values
-        ar.action_param_values = cb.ar.action_param_values
-        ar.data_iterator = cb.ar.data_iterator
+        # callback request ("ar2"), not the original request ("ar"),
+        # i.e. the methods to create an instance and to fill
+        # `data_record` must run on the callback request.  So the
+        # callback request must be a clone of the original request.
+        # New since 20140421
+        ar = cb.ar.actor.request_from(cb.ar)
+        for k in CLONEABLE_ATTRS:
+            setattr(ar, k, getattr(cb.ar, k))
 
-        # for k in ('data_record', 'goto_record_id'):
-        #     v = cb.ar.response.get(k, None)
-        #     if v is not None:
-        #         ar.response[k] = v
-                
         for c in cb.choices:
             if c.name == button_id:
                 c.func(ar)
@@ -509,14 +508,6 @@ class Kernel(object):
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
         return self.render_action_response(ar)
-
-        #~ m = getattr(d,button_id)
-        #~ rv = m(request)
-        #~ if button_id == 'yes':
-            #~ rv = d.yes()
-        #~ elif button_id == 'no':
-            #~ rv = d.no()
-        #~ return self.render_action_response(rv)
 
     def add_callback(self, ar, *msgs):
         """
