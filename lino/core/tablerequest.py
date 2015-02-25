@@ -388,18 +388,17 @@ class TableRequest(ActionRequest):
                 tble.body.append(xghtml.E.tr(*cells))
 
     def get_field_info(ar, column_names=None):
-        """
-        Return a tuple (fields, headers, widths) which expresses which
-        columns, headers and widths the user wants for this request. If
-        `self` has web request info, checks for GET parameters cn, cw and
-        ch (coming from the grid widget). Also apply the tables's
-        :meth:`override_column_headers
+        """Return a tuple `(fields, headers, widths)` which expresses which
+        columns, headers and widths the user wants for this
+        request. If `self` has web request info, checks for GET
+        parameters cn, cw and ch (coming from the grid widget). Also
+        apply the tables's :meth:`override_column_headers
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
         u = ar.get_user()
         if u is not None:
-            jsgen.set_for_user_profile(u.profile)
+            jsgen.set_user_profile(u.profile)
 
         if ar.request is None:
             columns = None

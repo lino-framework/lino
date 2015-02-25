@@ -14,7 +14,7 @@ You can run only this test as follows::
 """
 import os
 import os.path
-from os.path import join, dirname, abspath, exists
+from os.path import join, dirname, abspath, exists, normpath
 import sys
 
 import unittest
@@ -43,7 +43,7 @@ class RaiseExceptionTest(unittest.TestCase):
             python_version=sys.version,
             platform=sys.platform,
         )
-        target = join(MYDIR, '..', 'tmp', 'result.odt')
+        target = normpath(join(MYDIR, '..', 'tmp', 'result.odt'))
         if exists(target):
             os.remove(target)
         renderer = Renderer(tpl, context, target, **PARAMS)

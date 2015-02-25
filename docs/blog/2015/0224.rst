@@ -2,19 +2,114 @@
 Tuesday, February 24, 2015
 ==========================
 
+Bank statements
+===============
 
-What happens when there is more than one payment suggestion for a
-partner?
+I continued to work on the bank statements.  Here is my plan for what
+to do when there is more than one payment suggestion for a partner.
 
 Lino should show a dialog box with a selection list where the user can
 select one or multiple of these suggestions.  
 This would be a subclass of SuggestionsByVoucher
 
-If the user selects more
-than one suggestion, Lino will do it better than TIM. While in TIM
-this would create one line per suggestion in the bank statement, Lino
-creates a **grouper** for these suggestions.  If there is already
-another (unregistered) grouper for this partner, Lino should raise a
-warning :message:`There is already an open grouper for partner X`.
+If the user selects more than one suggestion, Lino should do it better
+than TIM. While in TIM this would create one line per suggestion in
+the bank statement, Lino creates a **grouper** for these suggestions.
+If there is already another (unregistered) grouper for this partner,
+Lino should raise a warning :message:`There is already an open grouper
+for partner X`.
 
-But now about this dialog box. It must contain a table
+
+Mahmoud and the Lino test suite
+===============================
+
+Mahmoud and I are currently trying to get the Lino test suite pass on
+his machine.  We discovered that there was one important line missing
+in :srcref:`tests/test_appy_pod.py`.
+
+
+Don't forget to optimize your tables!
+=====================================
+
+Today I passed most of my day on a performance problem in Châtelet.
+And the users there had to live with a slow Lino for a whole day.  And
+at the same time Estonia was celebrating `Independence Day
+<https://en.wikipedia.org/wiki/Independence_Day_%28Estonia%29>`__.
+Thanks to Pierre and especially Mahmout for their help.
+
+I learned some tricks for analyzing such situations. For example this
+shows the number of Apache worker processes::
+
+  $ ps aux |grep apache |wc -l
+
+Or this shows the IP addresses of all connected clients::
+
+  $ netstat -atn |grep 'tcp\|udp' | awk '{print $5}' | cut -d: -f1 | sort | uniq -c | sort -n
+
+We saw that the apache error log said::
+
+    [Tue Feb 24 11:43:07 2015] [error] server is within MinSpareThreads of MaxClients, consider raising the MaxClients setting
+    [Tue Feb 24 11:46:11 2015] [error] server reached MaxClients setting, consider raising the MaxClients setting
+
+Or we used the `MySQLTuner-perl
+<https://github.com/major/mysqltuner-perl>`_ to analyze Lino's
+database usage and it warned us::
+
+    [!!] Joins performed without indexes: 143
+    [!!] Temporary tables created on disk: 37% (334 on disk / 892 total)
+
+   
+All these were very interesting, but the real reason was: last
+night during a routine upgrade with database snapshot and restore, I
+also used the occasion to manually delete about 8600 rows from one
+table (:class:`changes.Change <lino.modlib.changes.models.Change>`)
+which was still hanging around but no longer used in Châtelet.  I did
+not yet know that "after deleting a large part of a MyISAM or ARCHIVE
+table" it is recommended to run an `OPTIMIZE TABLE
+<http://dev.mysql.com/doc/refman/5.5/en/optimize-table.html>`_ on that
+table!
+
+
+
+assert profile == jsgen._for_user_profile
+=========================================
+
+The performance problem forced me to investigate on another problem
+which looks as follows::
+
+    201502-24 16:38:21 ERROR base : Internal Server Error: /
+    Traceback (most recent call last):
+      File ".../env/local/lib/python2.7/site-packages/django/core/handlers/base.py", line 112, in get_response
+        response = wrapped_callback(request, *callback_args, **callback_kwargs)
+      File ".../env/local/lib/python2.7/site-packages/django/views/generic/base.py", line 69, in view
+        return self.dispatch(request, *args, **kwargs)
+      File ".../env/local/lib/python2.7/site-packages/django/views/generic/base.py", line 87, in dispatch
+        return handler(request, *args, **kwargs)
+      File ".../env/repositories/lino/lino/modlib/extjs/views.py", line 128, in get
+        return http.HttpResponse(renderer.html_page(request, **kw))
+      File ".../env/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 442, in html_page
+        self.build_js_cache_for_profile(user.profile, False)
+      File ".../env/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 624, in build_js_cache_for_profile
+        return settings.SITE.kernel.make_cache_file(fn, write, force)
+      File ".../env/repositories/lino/lino/core/kernel.py", line 719, in make_cache_file
+        write(f)
+      File ".../env/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 622, in write
+        self.write_lino_js(f, profile)
+      File ".../env/repositories/lino/lino/modlib/extjs/ext_renderer.py", line 650, in write_lino_js
+        assert profile == jsgen._for_user_profile
+    AssertionError
+
+This is simply because :mod:`lino.utils.jsgen` is not thread-safe.
+Sounds simple, but it took me some time to understand it.  Ticket
+:ticket:`107`.  The problem occured only if two different user
+profiles made a request at the same time (i.e. the second request
+coming in while :meth:`build_js_cache_for_profile
+<lino.modlib.extjs.ext_renderer.ExtRenderer.build_js_cache_for_profile>`
+of the first request is still running. And that method takes a few
+seconds.)
+
+While :ticket:`107` is not solved, it is recommended to configure
+`mod_wsgi` so that it does not use multithreading.
+
+Another result of this day is :ticket:`108` (new ideas for the
+:manage:`diag` management command).

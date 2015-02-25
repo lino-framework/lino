@@ -97,10 +97,10 @@ See the following chapters of the MySQL documentation
 Lino and the InnoDB engine
 ==========================
 
-Lino versions before :blogref:`20141220` wer more easy to use with
-the MyISAM database storage because :manage:`initdb` can fail to
-drop tables due to InnoDB's more severe integrity contraints.  Using
-InnoDB can cause the following error message when trying to run
+Lino versions before :blogref:`20141220` were more easy to use with
+the MyISAM database storage because :manage:`initdb` can fail to drop
+tables due to InnoDB's more severe integrity contraints.  Using InnoDB
+can cause the following error message when trying to run
 :manage:`initdb` a *second* time::
 
     IntegrityError: (1217, 'Cannot delete or update a parent row: 
@@ -121,5 +121,14 @@ See also `Setting the Storage Engine
 <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
 
 
+Tuning database performance
+===========================
+
+
+Use `MySQLTuner-perl <https://github.com/major/mysqltuner-perl>`_ to
+analyze Lino's database usage::
+
+  $ wget https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl
+  $ perl mysqltuner.pl
 
 

@@ -481,7 +481,7 @@ class ExtRenderer(HtmlRenderer):
             #~ title=self.site.title,
             tbar=js_code('Lino.main_menu'),
         )
-        jsgen.set_for_user_profile(request.user.profile)
+        jsgen.set_user_profile(request.user.profile)
         return win
 
     def html_page_user(self, request, site):
@@ -605,8 +605,8 @@ class ExtRenderer(HtmlRenderer):
                         count, time.time() - started)
 
     def build_js_cache_for_profile(self, profile, force):
-        """Build the lino*.js file for the specified user and the current
-        language.  If the file exists and is up to date, don't
+        """Build the :xfile:`lino*.js` file for the specified user and the
+        current language.  If the file exists and is up to date, don't
         generate it unless `force=False` is specified.
 
         This is called
@@ -614,7 +614,7 @@ class ExtRenderer(HtmlRenderer):
         - with `force=True` by :class:`lino.models.BuildSiteCache`
 
         """
-        jsgen.set_for_user_profile(profile)
+        jsgen.set_user_profile(profile)
 
         fn = os.path.join(*self.lino_js_parts(profile))
 
