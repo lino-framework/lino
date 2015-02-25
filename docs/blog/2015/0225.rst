@@ -1,0 +1,6 @@
+============================
+Wednesday, February 25, 2015
+============================
+
+I solved :ticket:`107`, at least theoretically.
+To be tested on the field by :ticket:`108`.

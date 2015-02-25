@@ -132,7 +132,7 @@
         {{ javascript(p + "/Ext.ux.AwesomeUploader.js") }}
     {%- endif -%}
     {# Main Lino js code #}
-    {{ javascript(site.build_media_url(*renderer.lino_js_parts(user.profile))) }}
+    {{ javascript(site.build_media_url(*renderer.lino_js_parts())) }}
     {# ###### OnReady JS code ###### #}
     <script type="text/javascript">
     Ext.onReady(function() {

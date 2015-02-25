@@ -77,6 +77,7 @@ import types
 import datetime
 import decimal
 import fractions
+import threading
 
 
 from django.conf import settings
@@ -92,10 +93,13 @@ from lino.utils import curry
 from lino.core.utils import Permittable
 
 
-def dict2js(d):
-    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
+user_profile_rlock = threading.RLock()
 
 CONVERTERS = []
+
+
+def dict2js(d):
+    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
 
 
 def register_converter(func):
@@ -104,11 +108,23 @@ def register_converter(func):
 _for_user_profile = None
 
 
-def set_user_profile(up):
+def with_user_profile(up, func, *args, **kwargs):
     global _for_user_profile
-    _for_user_profile = up
 
-set_for_user_profile = set_user_profile
+    with user_profile_rlock:
+        _for_user_profile = up
+        return func(*args, **kwargs)
+        _for_user_profile = None
+    
+
+def get_user_profile():
+    return _for_user_profile
+
+# def set_user_profile(up):
+#     global _for_user_profile
+#     _for_user_profile = up
+
+# set_for_user_profile = set_user_profile
 
 
 def key2js(s):

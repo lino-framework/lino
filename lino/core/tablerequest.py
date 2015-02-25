@@ -396,73 +396,78 @@ class TableRequest(ActionRequest):
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
-        u = ar.get_user()
-        if u is not None:
-            jsgen.set_user_profile(u.profile)
+        def getit():
 
-        if ar.request is None:
-            columns = None
-        else:
-            columns = [
-                str(x) for x in ar.request.REQUEST.getlist(
-                    constants.URL_PARAM_COLUMNS)]
-        if columns:
-            all_widths = ar.request.REQUEST.getlist(
-                constants.URL_PARAM_WIDTHS)
-            hiddens = [
-                (x == 'true') for x in ar.request.REQUEST.getlist(
-                    constants.URL_PARAM_HIDDENS)]
-            fields = []
-            widths = []
-            ah = ar.actor.get_handle()
-            for i, cn in enumerate(columns):
-                col = None
-                for e in ah.list_layout.main.columns:
-                    if e.name == cn:
-                        col = e
-                        break
-                if col is None:
-                    raise Exception("No column named %r in %s" %
-                                    (cn, ar.ah.list_layout.main.columns))
-                if not hiddens[i]:
-                    fields.append(col)
-                    widths.append(int(all_widths[i]))
-        else:
-            if column_names:
-                from lino.core import layouts
-                ll = layouts.ColumnsLayout(column_names, datasource=ar.actor)
-                lh = ll.get_layout_handle(settings.SITE.kernel.default_ui)
-                columns = lh.main.columns
-                columns = [e for e in columns if not e.hidden]
+            if ar.request is None:
+                columns = None
             else:
-                ah = ar.actor.get_request_handle(ar)
-                columns = ah.list_layout.main.columns
+                columns = [
+                    str(x) for x in ar.request.REQUEST.getlist(
+                        constants.URL_PARAM_COLUMNS)]
+            if columns:
+                all_widths = ar.request.REQUEST.getlist(
+                    constants.URL_PARAM_WIDTHS)
+                hiddens = [
+                    (x == 'true') for x in ar.request.REQUEST.getlist(
+                        constants.URL_PARAM_HIDDENS)]
+                fields = []
+                widths = []
+                ah = ar.actor.get_handle()
+                for i, cn in enumerate(columns):
+                    col = None
+                    for e in ah.list_layout.main.columns:
+                        if e.name == cn:
+                            col = e
+                            break
+                    if col is None:
+                        raise Exception("No column named %r in %s" %
+                                        (cn, ar.ah.list_layout.main.columns))
+                    if not hiddens[i]:
+                        fields.append(col)
+                        widths.append(int(all_widths[i]))
+            else:
+                if column_names:
+                    from lino.core import layouts
+                    ll = layouts.ColumnsLayout(column_names, datasource=ar.actor)
+                    lh = ll.get_layout_handle(settings.SITE.kernel.default_ui)
+                    columns = lh.main.columns
+                    columns = [e for e in columns if not e.hidden]
+                else:
+                    ah = ar.actor.get_request_handle(ar)
+                    columns = ah.list_layout.main.columns
 
-            # render them so that babelfields in hidden_languages get hidden:
-            for e in columns:
-                e.value = e.ext_options()
-            #
-            columns = [e for e in columns if not e.value.get('hidden', False)]
+                # render them so that babelfields in hidden_languages get hidden:
+                for e in columns:
+                    e.value = e.ext_options()
+                #
+                columns = [e for e in columns if not e.value.get('hidden', False)]
 
-            columns = [e for e in columns if not e.hidden]
+                columns = [e for e in columns if not e.hidden]
 
-            widths = ["%d" % (col.width or col.preferred_width)
-                      for col in columns]
-            #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
-            #~ fields = [col.field._lino_atomizer for col in columns]
-            fields = columns
+                widths = ["%d" % (col.width or col.preferred_width)
+                          for col in columns]
+                #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
+                #~ fields = [col.field._lino_atomizer for col in columns]
+                fields = columns
 
-        headers = [column_header(col) for col in fields]
+            headers = [column_header(col) for col in fields]
 
-        oh = ar.actor.override_column_headers(ar)
-        if oh:
-            for i, e in enumerate(columns):
-                header = oh.get(e.name, None)
-                if header is not None:
-                    headers[i] = header
-            #~ print 20120507, oh, headers
+            oh = ar.actor.override_column_headers(ar)
+            if oh:
+                for i, e in enumerate(columns):
+                    header = oh.get(e.name, None)
+                    if header is not None:
+                        headers[i] = header
+                #~ print 20120507, oh, headers
 
-        return fields, headers, widths
+            return fields, headers, widths
+    
+        u = ar.get_user()
+        if u is None:
+            return getit()
+        else:
+            return jsgen.with_user_profile(u.profile, getit)
+
 
     def row2html(self, recno, columns, row, sums, **cellattrs):
         has_numeric_value = False
