@@ -33,7 +33,7 @@ late than never.
 Released :mod:`atelier` version 0.0.9
 =====================================
 
-Two optimizations in :mod:`atelier` (thanks to Mahmout who fell into
+Two optimizations in :mod:`atelier` (thanks to Mahmoud who fell into
 these traps):
 
 - The command :cmd:`fab blog` failed when the user had only

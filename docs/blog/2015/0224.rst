@@ -35,7 +35,7 @@ Today I passed most of my day on a performance problem in Châtelet.
 And the users there had to live with a slow Lino for a whole day.  And
 at the same time Estonia was celebrating `Independence Day
 <https://en.wikipedia.org/wiki/Independence_Day_%28Estonia%29>`__.
-Thanks to Pierre and especially Mahmout for their help.
+Thanks to Pierre and especially Mahmoud for their help.
 
 I learned some tricks for analyzing such situations. For example this
 shows the number of Apache worker processes::

@@ -13,20 +13,45 @@ from lino.utils.xmlgen.html import E, lines2p
 
 
 class ContactRelated(dd.Model):
-    """
-    Model mixin for things that relate to a *company*, potentially
-    represented by a *contact person* having a given *role*.
+    """Model mixin for things that relate to **either** a private person
+    **or** a company, the latter potentially represented by a contact
+    person having a given role in that company.  Typical usages are
+    **invoices** or **contracts**.
 
-    Adds 3 fields `company`, `contact_person` and `contact_role`.
+    Adds 3 database fields and two virtual fields.
 
     .. attribute:: company
 
-    Pointer to :class:`Company`.
+        Pointer to :class:`lino.modlib.contacts.models.Company`.
 
     .. attribute:: contact_person
 
-    Pointer to :class:`Person`.
+        Pointer to :class:`lino.modlib.contacts.models.Person`.
 
+    .. attribute:: contact_role
+
+        The optional :class:`Role <lino.modlib.contacts.models.Role>`
+        of the :attr:`contact_person` within :attr:`company`.
+
+    .. attribute:: partner
+
+        (Virtual field) The "legal partner", i.e. usually the
+        :attr:`company`, except when that field is empty, in which
+        case `partner` contains the :attr:`contact_person`.  If both
+        fields are empty, then `partner` contains `None`.
+
+    .. attribute:: recipient
+
+        (Virtual field) The :class:`Addressable
+        <lino.utils.addressable.Addressable>` object to be used when
+        printing a postal address for this.
+
+    Difference between :attr:`partner` and `recipient`: an invoice can
+    be issued and addressed to a given person in a company (i.e. a
+    :class:`Role <lino.modlib.contacts.models.Role>` object), but
+    accountants want to know the juristic person, which is either the
+    :attr:`company` or a private :attr:`person` (if no :attr:`company`
+    specified), but not a combination of both.
 
     """
 
@@ -50,7 +75,6 @@ class ContactRelated(dd.Model):
         related_name="%(app_label)s_%(class)s_set_by_contact_role",
         blank=True, null=True,
         verbose_name=_("represented as"))
-    """Pointer to :class:`RoleType`."""
 
     @dd.chooser()
     def contact_person_choices(cls, company):
@@ -87,15 +111,6 @@ class ContactRelated(dd.Model):
     def get_partner(self):
         return self.company or self.contact_person
     partner = property(get_partner)
-    """(read-only property) \
-    The "legal partner", \
-    i.e. usually the :class:`Company` instance pointed to by \
-    the `company` field, \
-    except when that field is empty, in which case `partner` \
-    contains the :class:`Person` pointed to by the \
-    `contact_person` field.
-    If both fields are empty, then `partner` contains `None`.
-    """
 
     def get_address_html(self, *args, **kwargs):
         rec = self.get_recipient()

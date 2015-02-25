@@ -108,11 +108,16 @@ def register_converter(func):
 _for_user_profile = None
 
 
-def with_user_profile(up, func, *args, **kwargs):
+def with_user_profile(profile, func, *args, **kwargs):
+    """Run the given callable `func` with the given user profile `profile`
+    activated. Optional args and kwargs are forwarded to the callable,
+    and the return value is returned.
+
+    """
     global _for_user_profile
 
     with user_profile_rlock:
-        _for_user_profile = up
+        _for_user_profile = profile
         return func(*args, **kwargs)
         _for_user_profile = None
     

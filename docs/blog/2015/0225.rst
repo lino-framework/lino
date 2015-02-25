@@ -2,5 +2,57 @@
 Wednesday, February 25, 2015
 ============================
 
+Learning from yesterday
+=======================
+
 I solved :ticket:`107`, at least theoretically.
 To be tested on the field by :ticket:`108`.
+
+A ticket for Mahmoud
+====================
+
+Created new :ticket:`109` and assigned it to Mahmoud.
+
+Miscellaneous
+=============
+
+Created new :ticket:`110`. This is waiting for confirmation from Chatelet.
+
+
+Final sprint in Eupen
+=====================
+
+Recorded and fixed a subtle new ticket :ticket:`111`.
+
+-   First of all there was a translation problem:
+    "Ausgestellte Bescheinigungen" --> "Ausgestellte Bestätigungen"
+
+-   The problem was in
+    :func:`lino.modlib.excerpts.models.post_init_excerpt` when setting
+    the default language of a new excerpt. I had been thinking that the
+    :attr:`recipient <lino.modlib.excerpts.models.Excerpt.recipient>` 
+    overrides the 
+    :attr:`owner <lino.modlib.excerpts.models.Excerpt.owner>`, but as it turns out it is the opposite: 
+    the `owner` overrides the `recipient`.  
+    This rule is important when they specify both
+    a `recipient` and a `language` on the :class:`Confirmation
+    <lino_welfare.modlib.aids.mixins.Confirmation>`.
+
+
+setup() got an unexpected keyword argument 'known_values'
+=========================================================
+
+Created new :ticket:`112` and started to work on it.
+
+
+The application [DavLink|EIDReader] from http://127.0.0.1:8000/ uses resources from the following remote locations:
+
+  - 
+
+Are you sure you want to run this application?
+
+| For more information see: 
+| `JAR File Manifest Attributes <http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html#app_library>`_
+| and 
+| `Preventing the Repurposing of an Application <
+http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/manifest.html#app_library>`_

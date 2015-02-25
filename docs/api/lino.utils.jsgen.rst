@@ -13,13 +13,13 @@ lino.utils.jsgen
       declare_vars
       dict2js
       force_unicode
+      get_user_profile
       id2js
       js_line
       key2js
       py2js
       register_converter
-      set_for_user_profile
-      set_user_profile
+      with_user_profile
    
    
 

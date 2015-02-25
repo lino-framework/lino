@@ -378,20 +378,35 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     .. attribute:: owner
 
-      :ref:`gfk` to the object being printed by this excerpt.
-      Defined in :class:`dd.Controllable`.
+      The object being printed by this excerpt.
+      See :attr:`Controllable.owner
+      <lino.modlib.contenttypes.mixins.Controllable.owner>`.
 
     .. attribute:: company
 
-      The optional recipient of this excerpt.
+      The optional company of the :attr:`recipient` of this
+      excerpt.  See :attr:`ContactRelated.company
+      <lino.modlib.contacts.mixins.ContactRelated.company>`.
+
+
+      The optional recipient of this excerpt. See :attr:``
       (ForeignKey to :class:`ml.contacts.Company`)
 
     .. attribute:: contact_person
 
-      The optional recipient of this excerpt.
-      (ForeignKey to :class:`ml.contacts.Person`)
+      The optional contact person of the :attr:`recipient` of this
+      excerpt.  See :attr:`ContactRelated.contact_person
+      <lino.modlib.contacts.mixins.ContactRelated.contact_person>`.
+
+    .. attribute:: recipient
+
+      The recipient of this excerpt.  See
+      :attr:`ContactRelated.recipient
+      <lino.modlib.contacts.mixins.ContactRelated.recipient>`
 
     .. attribute:: language
+
+      The language used for printing this excerpt.
 
     .. attribute:: date
 
@@ -579,7 +594,15 @@ from django.db.models.signals import post_init
 
 
 @dd.receiver(post_init, sender=Excerpt)
-def my_handler(sender, instance=None, **kwargs):
+def post_init_excerpt(sender, instance=None, **kwargs):
+    """This is called for every new Excerpt object and it sets certain
+    default values.
+
+    For the default language, note that the :attr:`owner` overrides
+    the :attr:`recipient`. This rule is important e.g. for printing
+    aid confirmations in Lino Welfare.
+
+    """
     self = instance
     if not self.owner_id:
         # When creating an Excerpt by double-clicking in
@@ -594,13 +617,13 @@ def my_handler(sender, instance=None, **kwargs):
         self.contact_role = self.owner.contact_role
         # print("on_create 20150212", self)
 
-    # default language : recipient overrides owner
     if not self.language:
-        rec = self.recipient
-        if rec is not None:
-            self.language = rec.get_print_language()
-        if not self.language and self.owner is not None:
+        if self.owner_id:
             self.language = self.owner.get_print_language()
+        if not self.language:
+            rec = self.recipient
+            if rec is not None:
+                self.language = rec.get_print_language()
 
 
 if has_davlink:

@@ -42,6 +42,7 @@ lino.modlib.finan.models
       PaymentOrderItem
       PaymentOrders
       PaymentOrdersByJournal
+      ShowSuggestions
       SuggestionsByBankStatement
       SuggestionsByJournalEntry
       SuggestionsByPaymentOrder
