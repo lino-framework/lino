@@ -26,7 +26,7 @@ the same except that it uses `eidjslib` instead of
 
 import os
 
-from lino import ad
+from lino.api import ad
 
 
 class Plugin(ad.Plugin):  # was: use_eidreader

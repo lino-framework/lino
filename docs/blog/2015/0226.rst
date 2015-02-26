@@ -62,3 +62,4 @@ python specified by `sys.executable`, which seems a robust approach.)
 
 .. _beautifulsoup4: http://www.crummy.com/software/BeautifulSoup/
 
+The same is true for html5lib, reportlab and pisa.
