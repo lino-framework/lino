@@ -14,10 +14,12 @@ You can run only this test as follows::
 """
 import os
 import os.path
-from os.path import join, dirname, abspath, exists, normpath
+from os.path import join, dirname, abspath, exists
 import sys
 
 import unittest
+
+import tempfile
 
 from appy.pod.renderer import Renderer
 from appy import version
@@ -43,7 +45,7 @@ class RaiseExceptionTest(unittest.TestCase):
             python_version=sys.version,
             platform=sys.platform,
         )
-        target = normpath(join(MYDIR, '..', 'tmp', 'result.odt'))
+        target = join(tempfile.gettempdir(), 'result.odt')
         if exists(target):
             os.remove(target)
         renderer = Renderer(tpl, context, target, **PARAMS)
