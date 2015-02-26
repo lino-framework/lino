@@ -39,3 +39,26 @@ This caused another subtle change with possible side effects: when
 `run_from_ui` raises an exception, Lino (until now) still closed the
 action form window. Now the window is closed only when the action runs
 without anyu exception.
+
+
+Directory not empty: '.../lino/tmp/result.odt.1424701578.354042'
+================================================================
+
+Mahmoud solved ticket :ticket:`109`.
+
+ImportError: No module named bs4
+================================
+
+Ha! I found the explanation for the current problem on travis. The
+Lino test suite was failing there with error messages
+:message:`ImportError: No module named bs4`. Explanation:
+
+beautifulsoup4_ is actually needed only when you want to run the test
+suite, not for normal operation.  Despite this it must be specified in
+`install_requires`, not in `tests_require`, because the doctests are
+run in the environment specified by `install_requires`. (Don't ask me
+*why*...  :meth:`atelier.test.TestCase.run_simple_doctests` uses the
+python specified by `sys.executable`, which seems a robust approach.)
+
+.. _beautifulsoup4: http://www.crummy.com/software/BeautifulSoup/
+

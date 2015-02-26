@@ -20,13 +20,17 @@ SETUP_INFO = dict(
         'django<1.7', 'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy',
-        'jinja2', 'appy', 'pytidylib', 'PyYAML',
+        'beautifulsoup4', 'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'django-iban', 'xlwt', 'xlrd'],
-    tests_require=[
-        'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa'],
+    tests_require=['html5lib', 'reportlab==2.7', 'pisa'],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.
     # So we install reportlab 2.7 (the latest 2.x version)
+
+    # beautifulsoup4 is actually needed only when you want to run the test
+    # suite, not for normal operation.  Despite this it must be specified in
+    # `install_requires`, not in `tests_require`, because the doctests are
+    # run in the environment specified by `install_requires`.
 
     description="A framework for writing desktop-like web applications "
     "using Django and ExtJS",
