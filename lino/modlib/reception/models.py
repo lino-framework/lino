@@ -94,8 +94,6 @@ def create_prompt_event(
     Create a "prompt event".
     """
     ekw = dict(project=project)
-    #~ ekw.update(state=cal.EventStates.draft)
-    #~ ekw.update(state=EventStates.published)
     today = settings.SITE.today()
     ekw.update(start_date=today)
     ekw.update(end_date=today)

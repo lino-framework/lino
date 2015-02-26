@@ -556,13 +556,12 @@ class Kernel(object):
         """
         a = ar.bound_action.action
         try:
-            if a.parameters is not None and not a.no_params_window:
-                ar.set_response(close_window=True)
             a.run_from_ui(ar)
+            if a.parameters and not a.no_params_window:
+                ar.set_response(close_window=True)
         except exceptions.ValidationError as e:
             logger.info("20150127 run_action %r", e)
             ar.error(ar.ah.actor.error2str(e), alert=True)
-
         except Warning as e:
             ar.error(unicode(e), alert=True)
 

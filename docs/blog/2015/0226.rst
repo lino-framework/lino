@@ -17,3 +17,25 @@ Ticket :ticket:`113`.
   :class:`lino.mixins.periods.DatePeriod`.
 
 - Added a section "The period of a confirmation" to :ref:`welfare.tested.aids`
+
+
+Validating an action parameter form
+===================================
+
+A user in Eupen discovered the following bug:
+:class:`CreateClientVisit
+<lino_welfare.modlib.reception.models.CreateClientVisit>`
+accepts to create visits with an empty `user` field.
+
+And indeed, the client-side form validation does not work here. Ticket
+:ticket:`114`.
+
+As a workaround I test it now manually in the action's run_from_ui method::
+
+    if not pv.user:
+        raise Warning(_("Please select a user!"))
+
+This caused another subtle change with possible side effects: when
+`run_from_ui` raises an exception, Lino (until now) still closed the
+action form window. Now the window is closed only when the action runs
+without anyu exception.

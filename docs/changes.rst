@@ -20,6 +20,14 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+- When :meth:`lino.core.actions.Action.run_from_ui` raises an
+  exception, Lino (until now) nevertheless closed the action form
+  window. Now the window is closed only when the action runs without
+  any exception. :blogref:`20150226`.
+
+- Building the :xfile:`lino_*.js` files (:mod:`lino.utils.jsgen`) is
+  now thread-safe.  :blogref:`20150225`.
+
 - No more need to set `user_model` :blogref:`20150116`.
 
 - New way to define modular menus. :blogref:`20150114`.
