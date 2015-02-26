@@ -18,9 +18,11 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
 
 from lino.core.model import Model
+from lino.utils.format_date import fdl
 from lino.utils.ranges import isrange
 from lino.utils.format_date import fds
 from lino.core.utils import ParameterPanel
@@ -43,12 +45,10 @@ class DatePeriod(Model):
     class Meta:
         abstract = True
 
-    start_date = models.DateField(
-        _("Start date"),
-        blank=True, null=True)
-    end_date = models.DateField(
-        _("End date"),
-        blank=True, null=True)
+    empty_period_text = ""
+
+    start_date = models.DateField(_("Start date"), blank=True, null=True)
+    end_date = models.DateField(_("End date"), blank=True, null=True)
 
     def full_clean(self, *args, **kw):
         if not isrange(self.start_date, self.end_date):
@@ -57,6 +57,34 @@ class DatePeriod(Model):
 
     def get_period(self):
         return (self.start_date, self.end_date)
+
+    def is_past(self):
+        return (self.end_date and self.end_date <= settings.SITE.today())
+
+    def is_future(self):
+        return (self.start_date and self.start_date > settings.SITE.today())
+
+    def get_period_text(self):
+        if self.start_date and self.end_date:
+            if self.start_date == self.end_date:
+                # s = E.tostring(E.b(fdl(self.start_date)))
+                s = fdl(self.start_date)
+                return pgettext("date", "on %s") % s
+            else:
+                kw = dict()
+                kw.update(a=fdl(self.start_date))
+                kw.update(b=fdl(self.end_date))
+                return pgettext("date range", "between %(a)s and %(b)s") % kw
+        elif self.start_date:
+            s = fdl(self.start_date)
+            if self.is_future():
+                return pgettext("future date range", "from %s") % s
+            else:
+                return pgettext("date range", "from %s") % s
+        elif self.end_date:
+            s = fdl(self.end_date)
+            return pgettext("date range", "until %s") % s
+        return self.empty_period_text
 
 
 class ObservedPeriod(ParameterPanel):

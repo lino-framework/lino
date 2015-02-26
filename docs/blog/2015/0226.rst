@@ -1,0 +1,19 @@
+===========================
+Thursday, February 26, 2015
+===========================
+
+The period of a confirmation
+============================
+
+Melanie reported some grammar bugs in the "when" text of confirmations.
+Ticket :ticket:`113`.
+
+- The `Confirmation.start_date` no longer defaults to today.  Leaving
+  both dates empty is now accepted as a valid confirmation and means
+  that the confirmation does not mention any period in its text.
+
+- Moved the business logic from
+  :class:`lino_welfare.modlib.aids.mixins.Confirmation` to
+  :class:`lino.mixins.periods.DatePeriod`.
+
+- Added a section "The period of a confirmation" to :ref:`welfare.tested.aids`

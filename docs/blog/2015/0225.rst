@@ -117,4 +117,18 @@ currently always need to manually confirm two exceptions:
     | and 
     | `Preventing the Repurposing of an Application <http://docs.oracle.com/javase/7/docs/technotes/guides/jweb/security/no_redeploy.html>`_
 
+
     
+Tutorials and the test suite
+============================
+
+I noted that :ref:`lino.tutorial.polls` is part of the test suite, but
+it is not a demo project (see :attr:`demo_projects
+<atelier.fablib.env.demo_projects>`).  This means that running the
+Lino test suite does currently not create a persitent cached demo
+database and a `media/cache` of that project. To get that, we would
+need to move the Python code from `/docs` to `/lino` (i.e. to
+somewhere under :mod:`lino.projects`).  That's needed when running the
+test suite on Travis.  This move would require substantial changes in
+the text. But it would have another advantage: we would be able to
+write more than one tested document about the same demo project.

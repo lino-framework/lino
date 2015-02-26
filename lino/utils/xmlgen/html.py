@@ -51,23 +51,36 @@ Usage::
 
 from __future__ import unicode_literals
 
+import types
 from xml.etree import ElementTree as ET
+
 from atelier import rstgen
 from lino.utils import join_elems
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import Namespace
 
 
-def HtmlNamespace(Namespace):
+class HtmlNamespace(Namespace):
 
-    def tostring(self, element, *args, **kw):
-        kw.setdefault('method', 'html')
-        return super(HtmlNamespace, self).tostring(element, *args, **kw)
+    def tostring(self, v, *args, **kw):
+        if isinstance(v, types.GeneratorType):
+            return "".join([self.tostring(x, *args, **kw) for x in v])
+        if self.iselement(v):
+            # kw.setdefault('method', 'html')
+            return super(HtmlNamespace, self).tostring(v, *args, **kw)
+        return unicode(v)
+
+    def to_rst(self, v):
+        if isinstance(v, types.GeneratorType):
+            return "".join([self.to_rst(x) for x in v])
+        if E.iselement(v):
+            return _html2rst(v)
+        return unicode(v)
 
 
 #~ E = Namespace("http://www.w3.org/1999/xhtml","""
-E = Namespace(None, """
-a 
+E = HtmlNamespace(None, """
+a
 abbr
 acronym
 address
@@ -81,10 +94,10 @@ bdo
 big
 blockquote
 body
-br       
-button   
-caption  
-center   
+br
+button
+caption
+center
 cite     
 code     
 col      
@@ -313,11 +326,9 @@ def _html2rst(e, **kw):
 
 
 def html2rst(e):
-    """
-    Convert a :mod:`lino.utils.xmlgen.html` element 
-    (e.g. a value of a :class:`DisplayField <lino.core.fields.DisplayField>`) 
-    to an reStructuredText string.
-    Currently it knows only P and B tags, 
+    """Convert a :mod:`lino.utils.xmlgen.html` element (e.g. a value of a
+    :class:`DisplayField <lino.core.fields.DisplayField>`) to an
+    reStructuredText string.  Currently it knows only P and B tags,
     ignoring all other formatting.
     
     Usage example:
@@ -343,6 +354,7 @@ def html2rst(e):
     >>> e = E.p("An empty bold text:",E.b(""))
     >>> print html2rst(e)
     An empty bold text:
+
     """
     return _html2rst(e).strip()
 
