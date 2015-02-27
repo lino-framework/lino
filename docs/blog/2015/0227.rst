@@ -17,20 +17,19 @@ by declaring ot for two plugins:
 This required a little optimization: in :class:`lino.core.site.Site`,
 the :meth:`load_plugins <lino.core.site.Site.load_plugins>` method now
 has a more natural behaviour: when a plugin requested by
-meth:`get_installed_apps <lino.core.site.Site.get_installed_apps>`
+:meth:`get_installed_apps <lino.core.site.Site.get_installed_apps>`
 needs some other plugin, then this other plugin is inserted into the
 resulting :setting:`INSTALLED_APPS` *before* the plugin who needs
 it. Until now these automatically installed plugins went to the end of
 the list. Which was disturbing when using the above dependencies
 because the demo fixtures need to get loaded in the right order.
 
-Side effect: This change might require a database migration even if no
-fields have changed, because the ContentType identifiers may have
-changed.
+Side effect: This change requires a database dump & restore because
+the primary keys ContentType may have changed.
 
 Another (positive) side effect: The tables `BusyVisitors`,
 `GoneVisitors`, `MyWaitingVisitors` and `WaitingVisitors` in
-:mod:`lino.modlib.reception` are subclasses of :class:`cal.Guest
+:mod:`lino.modlib.reception` are subclasses of :class:`cal.Guests
 <lino.modlib.cal.models_guest.Guests>` and use the same
 `detail_layout` of. But due to the "wrong" loading order, Lino until
 now generated a new :class:`DetailLayout

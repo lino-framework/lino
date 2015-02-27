@@ -127,8 +127,8 @@ class Guest(dd.Model):
     #~ def confirm(self,ar):
         #~ self.state = GuestState.confirmed
 
-#~ class Guests(dd.Table,workflows.Workflowable):
 class Guests(dd.Table):
+    "The default table for :class:`Guest`."
     help_text = _("""A guest is a partner invited to an event. """)
     model = 'cal.Guest'
     required = dd.required(user_groups='office', user_level='admin')

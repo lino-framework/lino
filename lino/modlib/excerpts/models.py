@@ -618,7 +618,8 @@ def post_init_excerpt(sender, instance=None, **kwargs):
         # print("on_create 20150212", self)
 
     if not self.language:
-        if self.owner_id:
+        if self.owner_id and self.owner:  # owner might still be None
+                                          # if it is a broken GFK
             self.language = self.owner.get_print_language()
         if not self.language:
             rec = self.recipient
