@@ -395,8 +395,6 @@ class BusyVisitors(Visitors):
 class WaitingVisitors(Visitors):
     label = _("Waiting visitors")
     help_text = _("Shows the visitors in the waiting room.")
-    #~ known_values = dict(state=GuestStates.waiting)
-    #~ filter = Q(waiting_since__isnull=False,busy_since__isnull=True)
     column_names = 'since partner event__user position event__summary workflow_buttons'
     visitor_state = GuestStates.waiting
 
