@@ -63,7 +63,7 @@ from lino.utils.xmlgen import Namespace
 class HtmlNamespace(Namespace):
 
     def tostring(self, v, *args, **kw):
-        if isinstance(v, types.GeneratorType):
+        if isinstance(v, (types.GeneratorType, list, tuple)):
             return "".join([self.tostring(x, *args, **kw) for x in v])
         if self.iselement(v):
             # kw.setdefault('method', 'html')

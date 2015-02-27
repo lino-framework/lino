@@ -62,3 +62,11 @@ which required a change in database structure: a new database field
 which points to the new choicelist :class:`isip.OverlapGroups
 <lino_welfare.modlib.isip.choicelists.OverlapGroups>`.
 
+
+
+from lino.api.runtime import *
+from lino.utils import mti
+p = contacts.Person.objects.get(pk=178)
+cli = pcsw.Client.objects.get(pk=178)
+ar = contacts.Partners.request(renderer=settings.SITE.kernel.extjs_renderer)
+print E.tostring(p.get_mti_buttons(ar))
