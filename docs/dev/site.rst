@@ -89,20 +89,20 @@ These will go into the :setting:`INSTALLED_APPS` setting (but
 >>> Site(pseudoglobals, "lino.modlib.notes")  #doctest: +ELLIPSIS
 <lino.projects.min1.settings.Site object at ...>
 >>> print('\n'.join(pseudoglobals['INSTALLED_APPS']))
-django.contrib.sessions
 lino.modlib.about
 lino.modlib.extjs
 lino.modlib.bootstrap3
 lino.modlib.notes
 lino
-lino.modlib.contenttypes
+lino.modlib.office
 lino.modlib.system
 lino.modlib.users
 lino.modlib.countries
 lino.modlib.contacts
+lino.modlib.contenttypes
 lino.modlib.cal
 lino.modlib.export_excel
-lino.modlib.office
+django.contrib.sessions
 
 
 As an application developer you won't specifiy this argument,

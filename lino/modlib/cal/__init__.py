@@ -75,7 +75,7 @@ Or in :ref:`faggio` there is one calendar per Room. Thus the
 
 """
 
-from lino import ad
+from lino.api import ad
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -83,6 +83,8 @@ from django.utils.translation import ugettext_lazy as _
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Calendar")
+
+    needs_plugins = ['lino.modlib.contenttypes']
 
     def setup_main_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)

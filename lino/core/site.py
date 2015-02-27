@@ -1153,11 +1153,17 @@ documentation.
         return kw
 
     def load_plugins(self):
+        """Load all plugins and set the :setting:`INSTALLED_APPS` setting.
+
+        This includes a call to :meth:`get_apps_modifiers` and
+        :meth:`get_installed_apps`.
+
+        """
         # Called internally during `__init__` method.
 
         from django.utils.importlib import import_module
 
-        installed_apps = []
+        requested_apps = []
         apps_modifiers = self.get_apps_modifiers()
 
         if hasattr(self, 'hidden_apps'):
@@ -1169,7 +1175,7 @@ documentation.
                 x = apps_modifiers.pop(app_label, x)
                 if x:
                     # convert unicode to string
-                    installed_apps.append(str(x))
+                    requested_apps.append(str(x))
             else:
                 # if it's not a string, then it's an iterable of strings
                 for xi in x:
@@ -1183,8 +1189,8 @@ documentation.
                 "Invalid app_label '{0}' in your get_apps_modifiers!".format(
                     apps_modifiers.keys()[0]))
 
+        # actual_apps = []
         plugins = []
-        auto_apps = []
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
@@ -1206,24 +1212,30 @@ documentation.
             cfg = PLUGIN_CONFIGS.pop(k, None)
             if cfg:
                 p.configure(**cfg)
+
+            for dep in p.needs_plugins:
+                k2 = dep.rsplit('.')[-1]
+                if not k2 in self.plugins:
+                    install_plugin(dep, needed_by=p)
+                    # plugins.append(dep)
+
+            # actual_apps.append(app_name)
             plugins.append(p)
             self.plugins.define(k, p)
-            for dep in p.needs_plugins:
-                k = dep.rsplit('.')[-1]
-                if not k in self.plugins:
-                    install_plugin(dep, needed_by=p)
-                    auto_apps.append(dep)
 
-        for app_name in installed_apps:
+        for app_name in requested_apps:
             install_plugin(app_name)
 
-        installed_apps.extend(auto_apps)
-
+        # The return value of get_auth_method() may depend on a
+        # plugin, so if needed we must add the django.contrib.sessions
+        # afterwards.
         if self.get_auth_method() == 'session':
-            installed_apps.insert(0, str('django.contrib.sessions'))
+            # actual_apps.insert(0, str('django.contrib.sessions'))
             install_plugin(str('django.contrib.sessions'))
 
-        self.update_settings(INSTALLED_APPS=tuple(installed_apps))
+        # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
+        self.update_settings(
+            INSTALLED_APPS=tuple([p.app_name for p in plugins]))
         self.installed_plugins = tuple(plugins)
 
         if self.override_modlib_models is not None:

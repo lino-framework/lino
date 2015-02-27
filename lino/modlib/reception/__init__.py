@@ -20,15 +20,14 @@ Extended by :mod:`lino_welfare.modlib.reception`.
 
 
 """
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Reception")
-    depends = ['cal']
+
+    needs_plugins = ['lino.modlib.system', 'lino.modlib.cal']
 
     def setup_main_menu(config, site, profile, m):
         app = site.plugins.reception

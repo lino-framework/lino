@@ -33,13 +33,15 @@ The default database comes with the following list of
 
 """
 
-from lino import ad, _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
     "See :class:`lino.core.plugin.Plugin`."
 
     verbose_name = _("Contacts")
+
+    needs_plugins = ['lino.modlib.countries']  # because of TextFieldTemplate
 
     ## settings
     hide_region = False

@@ -8,9 +8,6 @@ See also :doc:`/dev/users`
 
 """
 
-#~ import logging
-#~ logger = logging.getLogger(__name__)
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -67,8 +64,7 @@ class ChangePassword(dd.Action):
 
 
 class User(CreatedModified):
-    """
-    Represents a user of this site.
+    """Represents a user of this site.
 
     .. attribute:: username
     
@@ -84,13 +80,11 @@ class User(CreatedModified):
 
     .. attribute:: partner
 
-        Pointer to the :class:`ml.contacts.Partner` instance related to
-        this user.
+        Pointer to the :class:`lino.modlib.contacts.models.Partner`
+        instance related to this user.
 
-        This is a DummyField when :mod:`ml.contacts` is not installed.
-
-
-
+        This is a DummyField when :mod:`lino.modlib.contacts` is not
+        installed.
 
     """
 

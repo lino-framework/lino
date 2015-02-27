@@ -1,25 +1,21 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-
 from lino.projects.std.settings import *
+
 
 class Site(Site):
     title = "Lino Mini 2"
 
     project_model = 'projects.Project'
 
-    #~ languages = ('de', 'fr')
     languages = 'en et'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.contenttypes'
-        yield 'lino.modlib.system'
         yield 'lino.modlib.changes'
         yield 'lino.modlib.users'
-        yield 'lino.modlib.countries'
         # yield 'lino.modlib.uploads'
         # yield 'lino.modlib.outbox'
         yield 'lino.modlib.excerpts'
@@ -32,10 +28,8 @@ class Site(Site):
         yield 'lino.modlib.projects'
         yield 'lino.modlib.humanlinks'
         yield 'lino.modlib.households'
-        yield 'lino.modlib.cal'
         # yield 'lino.modlib.extensible'
         yield 'lino.modlib.pages'
-        #~ yield 'lino.projects.min2'
         yield 'lino.modlib.export_excel'
 
     def setup_user_profiles(self):

@@ -63,3 +63,10 @@ python specified by `sys.executable`, which seems a robust approach.)
 .. _beautifulsoup4: http://www.crummy.com/software/BeautifulSoup/
 
 The same is true for html5lib, reportlab and pisa.
+
+Now that this riddle is finally solved, there are unfortunately more
+failures of the test suite on travis (sigh!). One of them was an easy
+pick: :doc:`/dev/translate/index` required :ref:`cosi`.  But the
+remaining ones are again quite a brain-teaser for a poor guy as me.
+The build log is `here
+<https://travis-ci.org/lsaffre/lino/jobs/52340489>`_

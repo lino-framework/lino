@@ -14,7 +14,7 @@ Overview
 --------
 
 You are going to edit a series of :xfile:`.po` files which are part of
-the code repositories of both Lino and :ref:`cosi`.  
+the code repositories of Lino.
 
 To edit these :xfile:`.po` files you will be using either your
 preferred plain text editor or a tool like Poedit_.  We recommend the
@@ -35,9 +35,8 @@ are correct.
 - We suppose that you have installed the :ref:`development version
   <lino.dev.install>` of Lino.  
 
-- We also suppose that :ref:`cosi` is the application you want to
-  translate, and that you have installed it as explained in
-  :ref:`cosi.install`.
+- We suppose that :mod:`lino.projects.min1` is the application you
+  want to translate.
 
 - And let's say for example that you want to translate them to
   *Spanish*.
@@ -92,10 +91,6 @@ Open another terminal window and go to the Lino repository.
 
   $ cd ~/repositories/lino
 
-Note: You must go to the *Lino* repository because these strings are
-part of Lino, not of :ref:`cosi`. In fact :ref:`cosi` has almost no
-translatable string of its own, it is mostly a combination of
-different modules from :mod:`lino.modlib`.
 
 Translate
 ---------
@@ -140,18 +135,16 @@ Submit your work
 ---------------------
 
 When you are satisfied with your work, you will make a pull request to
-ask us to integrate your changes into the public repositories of Lino
-and :ref:`cosi`.
+ask us to integrate your changes into the public Lino repositories.
 
 More about pull requests in :doc:`/dev/git`.
-
 
 
 Create a demo user for your language
 ------------------------------------
 
 If Lino does not yet have a default demo administrator for your
-language (:mod:`ml.users.fixtures.demo`), then you need to
+language (:mod:`lino.modlib.users.fixtures.demo`), then you need to
 create a local fixture which adds a demo user for your language.  It's
 easy::
 
