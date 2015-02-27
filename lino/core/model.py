@@ -726,7 +726,6 @@ class Model(models.Model):
         if a is None:
             if ar and ar.actor and ar.actor.model \
                and self.__class__ is ar.actor.model:
-               # "and isinstance(self, ar.actor.model):
                 a = ar.actor.detail_action
             else:
                 a = self.__class__.get_default_table().detail_action
