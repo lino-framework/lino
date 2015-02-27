@@ -329,8 +329,6 @@ class LayoutElement(VisibleComponent):
         which are visible because they have less requirements.
 
         """
-        #~ if str(self.layout_handle.layout._datasource) == 'cal.Guests':
-            #~ logger.info("20130720 %s loosens requirements from %s",self.layout_handle.layout,actor)
         if self.layout_handle.layout._datasource == actor:
             return  # nothing to loosen
 
@@ -351,7 +349,6 @@ class LayoutElement(VisibleComponent):
                         if not group in self.required[k]:
                             self.required[k].append(group)
                             loosened = True
-                    #~ self.required[k] = ' '.join(set(actor.required[k].split() + self.required[k].split()))
                 else:
                     del self.required[k]
                     loosened = True
@@ -363,35 +360,8 @@ class LayoutElement(VisibleComponent):
                 loosened = True
                 del self.required[k]
 
-        #~ if self.layout_handle.layout._datasource == actor:
-            #~ if loosened:
-                #~ raise Exception("20130720 Expected nothing to loosen")
-            # ~ return # nothing to loosen
-
-        #~ for k,v in actor.required.items():
-            #~ new[k] = v
-            #~ if k in self.required:
-                #~ if self.required[k] > v:
-                    #~ removed.add(k)
-            #~ else:
-                #~ removed.add(k)
-        # if str(actor) == 'aids.GrantingsByClient':
-        #     logger.info(
-        #         "20141003 loosen_requirements %r of %s from %s",
-        #         self.required, self.layout_handle.layout, actor)
         if loosened:
-            #~ self.required = new
             self.install_permission_handler()
-            #~ if str(actor) == 'cal.Guests':
-                #~ logger.info("20121116 loosened requirements %s of %s from %s",loosened,self.layout_handle.layout,actor)
-            #~ logger.info("20121116 %s uses %s loosening requirements %s",actor,self.layout_handle.layout,','.join(loosened))
-            #~ if self.layout_handle.layout._datasource != actor:
-                #~ raise Exception("%s != %s" % (self.layout_handle.layout._datasource,actor))
-            #~ for e in self.elements:
-                #~ if isinstance(e,Container):
-                    #~ e.loosen_requirements(actor)
-        #~ elif self.layout_handle.layout._datasource != actor:
-            #~ logger.info("20121116 %s uses %s with same requirements",actor,self.layout_handle.layout)
 
     def __repr__(self):
         return "<%s %s in %s>" % (self.__class__.__name__, self.name, self.layout_handle.layout)

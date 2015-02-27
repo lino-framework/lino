@@ -29,6 +29,17 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.system', 'lino.modlib.cal']
 
+    required_user_groups = 'reception'
+    """The required user groups for viewing actors of this plugin.
+    
+    This is overridden by Lino Welfare to include "coaching".
+
+    This way of configuring permissions is an example for why it would
+    be useful to replace user groups by a UserRole class (and to
+    populate UserProfiles with subclasses of it).
+
+    """
+
     def setup_main_menu(config, site, profile, m):
         app = site.plugins.reception
         m = m.add_menu(app.app_name, app.verbose_name)

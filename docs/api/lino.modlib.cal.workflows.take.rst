@@ -19,10 +19,7 @@ lino.modlib.cal.workflows.take
 
    .. autosummary::
    
-      EventStates
-      GuestStates
       TakeEvent
-      TaskStates
    
    
 

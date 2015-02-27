@@ -5,12 +5,6 @@ lino.modlib.cal.models_guest
 
    
    
-   .. rubric:: Functions
-
-   .. autosummary::
-   
-      pgettext
-   
    
 
    
@@ -31,7 +25,6 @@ lino.modlib.cal.models_guest
       MyGuests
       MyPendingPresences
       MyPresences
-      Q
    
    
 

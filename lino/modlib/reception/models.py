@@ -44,7 +44,7 @@ add('45', _("Busy"), 'busy')
 add('46', _("Gone"), 'gone')
 
 
-from lino.modlib.reception import Plugin
+config = dd.plugins.reception
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -82,7 +82,8 @@ dd.inject_field(
 def beware(sender, instance=None, **kw):
     if instance.prompt_calendar is not None:
         if instance.prompt_calendar.invite_client:
-            raise Warning("prompt event_type may not invite client!")
+            raise Warning(
+                _("The event type for prompt events may not invite client!"))
 
 #~ dd.inject_field('cal.Event','is_prompt',
     #~ models.BooleanField(_("Prompt event"),default=False))
@@ -102,14 +103,14 @@ def create_prompt_event(
     ekw.update(user=user)
     if summary:
         ekw.update(summary=summary)
-    event = cal.Event(**ekw)
+    event = rt.modules.cal.Event(**ekw)
     event.save()
     if now is None:
         now = datetime.datetime.now()
     rt.modules.cal.Guest(
         event=event,
         partner=partner,
-        state=cal.GuestStates.waiting,
+        state=rt.modules.cal.GuestStates.waiting,
         role=guest_role,
         #~ role=settings.SITE.site_config.client_guestrole,
         waiting_since=now
@@ -125,7 +126,7 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
 
     required = dd.Required(
-        user_groups='reception',
+        user_groups=config.required_user_groups,
         states='invited accepted present')
 
     def get_action_permission(self, ar, obj, state):
@@ -141,8 +142,7 @@ class CheckinVisitor(dd.NotifyingAction):
             partner=obj.partner)
 
     def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        # cal.Guest
+        obj = ar.selected_rows[0]  # a cal.Guest instance
 
         def doit(ar2):
             obj.waiting_since = datetime.datetime.now()
@@ -174,6 +174,7 @@ class ReceiveVisitor(dd.Action):
     label = _("Receive")
     help_text = _("Visitor was received by agent")
     show_in_workflow = True
+    # debug_permissions = 20150227
 
     required = dd.Required(states='waiting')
 
@@ -248,13 +249,14 @@ class CheckoutVisitor(dd.Action):
         ar.confirm(ok, msg, _("Are you sure?"))
 
 
-cal.Guest.checkin = CheckinVisitor(sort_index=100)
-cal.Guest.receive = ReceiveVisitor(sort_index=101)
-cal.Guest.checkout = CheckoutVisitor(sort_index=102)
-
-
 @dd.receiver(dd.pre_analyze)
 def my_guest_workflows(sender=None, **kw):
+    Guest = rt.modules.cal.Guest
+
+    Guest.checkin = CheckinVisitor(sort_index=100)
+    Guest.receive = ReceiveVisitor(sort_index=101)
+    Guest.checkout = CheckoutVisitor(sort_index=102)
+
     GuestStates.excused.add_transition(
         states='invited accepted absent')
     GuestStates.absent.add_transition(
@@ -305,7 +307,7 @@ class ExpectedGuests(cal.Guests):
     waiting_since busy_since'
     hidden_columns = 'waiting_since busy_since'
     #~ checkin = CheckinGuest()
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups=config.required_user_groups)
 
     @classmethod
     def get_queryset(self, ar):
@@ -333,7 +335,7 @@ if False:
         workflow_buttons'
         order_by = ['waiting_since']
         #~ checkout = CheckoutGuest()
-        required = dd.Required(user_groups='reception')
+        required = dd.Required(user_groups=config.required_user_groups)
         auto_fit_column_widths = True
 
         @dd.displayfield(_('Since'))
@@ -343,10 +345,12 @@ if False:
 
 
 class Visitors(cal.Guests):
-    """
-    No subclass should be editable because deleting would leave the
+    """No subclass should be editable because deleting would leave the
     useless cal.Event.
+
     """
+    # debug_permissions = 20150227
+
     editable = False
     abstract = True
     column_names = 'since partner event__user event__summary workflow_buttons'
@@ -385,7 +389,7 @@ class BusyVisitors(Visitors):
     help_text = _("Shows the visitors who are busy with some agent.")
     visitor_state = GuestStates.busy
     order_by = ['busy_since']
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups=config.required_user_groups)
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -395,11 +399,12 @@ class BusyVisitors(Visitors):
 class WaitingVisitors(Visitors):
     label = _("Waiting visitors")
     help_text = _("Shows the visitors in the waiting room.")
-    column_names = 'since partner event__user position event__summary workflow_buttons'
+    column_names = ('since partner event__user position '
+                    'event__summary workflow_buttons')
     visitor_state = GuestStates.waiting
 
     order_by = ['waiting_since']
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups=config.required_user_groups)
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -422,7 +427,7 @@ class GoneVisitors(Visitors):
     help_text = _("Shows the visitors who have gone.")
     visitor_state = GuestStates.gone
     order_by = ['-gone_since']
-    required = dd.Required(user_groups='reception')
+    required = dd.Required(user_groups=config.required_user_groups)
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -431,7 +436,8 @@ class GoneVisitors(Visitors):
 
 class MyWaitingVisitors(MyVisitors, WaitingVisitors):
     label = _("Visitors waiting for me")
-    #~ column_names = 'since partner event__summary workflow_buttons'
+    column_names = ('since partner position '
+                    'event__summary workflow_buttons')
 
 
 class MyBusyVisitors(MyVisitors, BusyVisitors):
@@ -463,7 +469,4 @@ page."""
 class MyGoneVisitors(MyVisitors, GoneVisitors):
     label = _("My gone visitors")
 
-
-dd.add_user_group('reception', Plugin.verbose_name)
-
-
+dd.add_user_group(config.app_label, config.verbose_name)

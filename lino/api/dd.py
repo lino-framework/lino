@@ -113,6 +113,8 @@ Shortcut to the main Lino logger.
 
 # logger.info("20140227 dd.py a")
 
+from django.conf import settings
+
 from lino.core.tables import VirtualTable
 
 from lino.core.utils import resolve_model, UnresolvedModel
@@ -136,7 +138,6 @@ from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
 from django.db.models.fields import FieldDoesNotExist
 from django.db import models
-from django.conf import settings
 
 from lino.core.frames import Frame
 from lino.core.tables import VentilatingTable

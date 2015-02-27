@@ -15,19 +15,14 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, mixins
+from lino import mixins
+from lino.api import dd, _
 
 from .workflows import GuestStates
 from .workflows import EventStates
 
-# outbox = dd.resolve_app('outbox')
 
-
-# class GuestRole(outbox.MailableType, mixins.BabelNamed):
 class GuestRole(mixins.BabelNamed):
     templates_group = 'cal/Guest'
 
@@ -100,32 +95,6 @@ class Guest(dd.Model):
         return ar.obj2html(self.event, self.event.get_event_summary(ar))
         #~ return event_summary(self.event,ar.get_user())
 
-    #~ def before_ui_save(self,ar,**kw):
-        #~ if not self.state:
-            #~ self.state = GuestStates.invited
-        #~ return super(Guest,self).before_ui_save(ar,**kw)
-
-    #~ def on_user_change(self,request):
-        #~ if not self.state:
-            #~ self.state = GuestState.invited
-
-
-    #~ def get_recipient(self):
-        #~ return self.partner
-    #~ recipient = property(get_recipient)
-
-    #~ @classmethod
-    #~ def setup_report(cls,rpt):
-        #~ mixins.CachedPrintable.setup_report(rpt)
-        #~ outbox.Mailable.setup_report(rpt)
-
-    #~ @dd.action(_("Invite"),required=dict(states=['']))
-    #~ def invite(self,ar):
-        #~ self.state = GuestState.invited
-
-    #~ @dd.action(_("Confirm"),required=dict(states=['invited']))
-    #~ def confirm(self,ar):
-        #~ self.state = GuestState.confirmed
 
 class Guests(dd.Table):
     "The default table for :class:`Guest`."

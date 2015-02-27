@@ -31,14 +31,9 @@ def objects():
 
     add = Instantiator('cal.Priority', 'ref').build
     yield add('1', **dd.babel_values('name', en=u"very urgent", de=u"sehr dringend",   fr=u"très urgent", et=u"väga kiire"))
-    # yield add('2', **dd.babel_values('name', en=u"quite urgent", de=u"recht dringend",   fr=u"relativement urgent"))
     yield add('3', **dd.babel_values('name', en=u"urgent", de=u"dringend",   fr=u"urgent", et="kiire"))
-    # yield add('4', **dd.babel_values('name', en=u"relatively urgent", de=u"ziemlich dringend",   fr=u"relativement urgent"))
     yield add('5', **dd.babel_values('name', en=u"normal", de=u"normal",   fr=u"normal", et="keskmine"))
-    # yield add('6', **dd.babel_values('name', en=u"not very urgent", de=u"nicht sehr niedrig",   fr=u"pas très urgent"))
-    # yield add('7', **dd.babel_values('name', en=u"not urgent", de=u"nicht dringend",   fr=u"pas urgent"))
     yield add('9', **dd.babel_values('name', en=u"not urgent", de=u"nicht dringend",   fr=u"pas urgent", et="mitte kiire"))
-    # yield add('9', **dd.babel_values('name', en=u"not urgent at all", de=u"überhaupt nicht dringend",   fr=u"pas urgent du tout"))
 
     calendar = Instantiator('cal.Calendar').build
     general = calendar(**dd.str2kw('name', _("General")))
@@ -46,14 +41,12 @@ def objects():
                                     # fr="Général",
     yield general
     settings.SITE.site_config.site_calendar = general
-    #~ settings.SITE.site_config.holiday_event_type = holidays
     yield settings.SITE.site_config
 
     event_type = Instantiator('cal.EventType').build
-    holidays = event_type(all_rooms=True,
-                          **dd.str2kw('name', _("Holidays")))
-                                   #     de="Feiertage",
-                                   #     fr="Jours fériés",
+    holidays = event_type(
+        is_appointment=False,
+        all_rooms=True, **dd.str2kw('name', _("Holidays")))
     yield holidays
 
     RecurrentEvent = dd.resolve_model('cal.RecurrentEvent')

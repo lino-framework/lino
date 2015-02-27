@@ -9,8 +9,10 @@ lino.mixins.periods
 
    .. autosummary::
    
+      fdl
       fds
       isrange
+      pgettext
       rangefmt
    
    

@@ -107,24 +107,16 @@ add('75', _("Omitted"), 'omitted', fixed=True)
 #~ add('80', _("Absent"), 'absent')
 
 
-#~ EventStates.editable_states.add(EventStates.suggested)
-#~ EventStates.editable_states.add(EventStates.draft)
 class GuestState(dd.State):
     afterwards = False
 
 
 class GuestStates(dd.Workflow):
-    """
-    Possible values for the state of a Guest. The list of choices for
-    the :attr:`Guest.state` field.  Example data:
-
-    .. django2rst::
-
-            rt.show(cal.GuestStates)
+    """Possible values for the state of a Guest. The list of choices for
+    the :attr:`Guest.state` field.
 
     The actual content can be redefined by other apps,
-    e.g. :mod:`ml.reception`.
-
+    e.g. :mod:`lino.modlib.reception`.
 
     """
     verbose_name_plural = _("Guest states")

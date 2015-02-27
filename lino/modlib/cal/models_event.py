@@ -47,8 +47,7 @@ outbox = dd.resolve_app('outbox')
 
 class EventType(mixins.BabelNamed, mixins.Sequenced,
                 MailableType):
-    """
-    The possible value of the :attr:`Event.type` field.
+    """The possible value of the :attr:`Event.type` field.
     Example content:
 
     .. lino2rst::
@@ -64,9 +63,7 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
         The table (:class:`EventsByDay` and
         :class:`MyEvents`) show only events whose type has the
         `is_appointment` field checked.
-     
 
-   
     """
     templates_group = 'cal/Event'
 
@@ -76,8 +73,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
         verbose_name_plural = _("Event Types")
         ordering = ['seqno']
 
-    #~ name = models.CharField(_("Name"),max_length=200)
-    description = dd.RichTextField(_("Description"), blank=True, format='html')
+    description = dd.RichTextField(
+        _("Description"), blank=True, format='html')
     is_appointment = models.BooleanField(
         _("Event is an appointment"), default=True)
     all_rooms = models.BooleanField(_("Locks all rooms"), default=False)
@@ -93,12 +90,18 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
         blank=True, null=True)
     event_label = dd.BabelCharField(
         _("Event label"),
-        max_length=200, blank=True, default=_("Appointment"))
+        max_length=200, blank=True, default=_("Calendar entry"))
 
     max_conflicting = models.PositiveIntegerField(
         _("Simultaneous events"),
         help_text=_("How many conflicting events should be tolerated."),
         default=1)
+
+    def __unicode__(self):
+        # when selecting an Event.event_type it is more natural to
+        # have the event_label. It seems that the current `name` field
+        # is actually never used.
+        return settings.SITE.babelattr(self, 'event_label')
 
 
 class EventTypes(dd.Table):
@@ -925,6 +928,7 @@ class MyEvents(Events):
         #~ kw.update(assigned_to=ar.get_user())
         #~ logger.info("20130807 %s %s",self,kw)
         kw.update(start_date=settings.SITE.today())
+        kw.update(end_date=settings.SITE.today(14))
         return kw
 
     @classmethod

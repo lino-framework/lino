@@ -35,11 +35,11 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
 
         yield 'lino.modlib.system'
-        yield 'lino.modlib.contenttypes'
+        # yield 'lino.modlib.contenttypes'
         yield 'lino.modlib.users'
         yield 'lino.modlib.changes'
         yield 'lino.modlib.languages'
-        yield 'lino.modlib.countries'
+        # yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.addresses'
@@ -48,9 +48,9 @@ class Site(Site):
         yield 'lino.modlib.uploads'
         yield 'lino.modlib.notes'
         yield 'lino.modlib.outbox'
-        yield 'lino.modlib.extensible'
         yield 'lino.modlib.cal'
-        # yield 'lino.modlib.reception'
+        yield 'lino.modlib.extensible'
+        yield 'lino.modlib.reception'
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.polls'
         yield 'lino.modlib.cv'
@@ -74,4 +74,9 @@ class Site(Site):
     def setup_plugins(self):
         super(Site, self).setup_plugins()
         self.plugins.countries.configure(country_code='BE')
+
+    def do_site_startup(self):
+        # lino.modlib.reception requires some workflow to be imported
+        from lino.modlib.cal.workflows import feedback
+        super(Site, self).do_site_startup()
 

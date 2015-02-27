@@ -4,7 +4,7 @@
 
 """Adds feedback-based workflow to :mod:`lino.modlib.cal`. You
 "activate" this by simply importing it from within a
-:xfile:`models.py` used by your application.
+:xfile:`models.py` module used by your application.
 
 Used e.g. by :ref:`welfare`.
 
@@ -20,19 +20,18 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd
 
-from lino.modlib.cal.workflows import EventStates, GuestStates
+from ..workflows import EventStates, GuestStates
 
 add = EventStates.add_item
 add('40', _("Published"), 'published', edit_guests=True)
 
 
-if True:
-    add = GuestStates.add_item
-    add('20', _("Accepted"), 'accepted')
-    add('30', _("Rejected"), 'rejected')
-    add('40', _("Present"), 'present', afterwards=True)
-    add('50', _("Absent"), 'absent', afterwards=True)
-    add('60', _("Excused"), 'excused', afterwards=True)
+add = GuestStates.add_item
+add('20', _("Accepted"), 'accepted')
+add('30', _("Rejected"), 'rejected')
+add('40', _("Present"), 'present', afterwards=True)
+add('50', _("Absent"), 'absent', afterwards=True)
+add('60', _("Excused"), 'excused', afterwards=True)
 
 
 class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):
@@ -80,8 +79,9 @@ def my_guest_workflows(sender=None, **kw):
     GuestStates.present.add_transition(
         states='invited accepted',  # owner=True,
         allow=event_took_place)
-    GuestStates.absent.add_transition(states='invited accepted',  # owner=True,
-                                      allow=event_took_place)
+    GuestStates.absent.add_transition(
+        states='invited accepted',  # owner=True,
+        allow=event_took_place)
 
 
 class ResetEvent(dd.ChangeStateAction):
@@ -91,10 +91,21 @@ class ResetEvent(dd.ChangeStateAction):
 
 
 class CloseMeeting(dd.ChangeStateAction):
+    """To close a meeting means that the meeting is over and the guests go
+    home.
+
+    """
     label = _("Close meeting")
     help_text = _("The event took place.")
     icon_name = 'emoticon_smile'
     required = dict(states='published draft')
+
+    def get_action_permission(self, ar, obj, state):
+        d = obj.end_date or obj.start_date
+        if d > dd.today():
+            return False
+        return super(CloseMeeting,
+                     self).get_action_permission(ar, obj, state)
 
 
 @dd.receiver(dd.pre_analyze)
@@ -111,5 +122,3 @@ def my_event_workflows(sender=None, **kw):
         states='published draft',
         icon_name='cross')
     EventStates.draft.add_transition(ResetEvent)
-
-

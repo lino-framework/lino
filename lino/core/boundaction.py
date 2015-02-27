@@ -119,7 +119,7 @@ class BoundAction(object):
         return self.allow_view(profile)
 
     def __repr__(self):
-        return "<%s(%s,%r)>" % (
+        return "<%s(%s, %r)>" % (
             self.__class__.__name__, self.actor, self.action)
 
 

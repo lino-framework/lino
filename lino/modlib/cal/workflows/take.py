@@ -1,24 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Importing this from within one of your :xfile:`models.py` modules will
-add the "Take" action.
+"""Importing this from within one of your :xfile:`models.py` modules
+will add the :class:`TakeEvent` action to your application's
+`cal.Event`.
 
 """
 
 from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-
-
-from lino.api import dd, rt
-
-from ..workflows import (TaskStates, EventStates, GuestStates)
+from lino.api import dd, _
 
 
 class TakeEvent(dd.Action):
@@ -65,7 +57,6 @@ class TakeEvent(dd.Action):
             ar.set_response(refresh=True)
 
         ar.confirm(ok, self.help_text, _("Are you sure?"))
-
 
 
 @dd.receiver(dd.pre_analyze)

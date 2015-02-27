@@ -567,9 +567,7 @@ def add_requirements(obj, **kw):
     :meth:`Permittable.add_requirements`.
 
     """
-    #~ logger.info("20120927 perms.set_required %r",kw)
     new = dict()
-    #~ new.update(getattr(obj,'required',{}))
     new.update(obj.required)
     new.update(kw)
     obj.required = new
