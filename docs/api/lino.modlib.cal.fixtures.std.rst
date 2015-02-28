@@ -19,7 +19,6 @@ lino.modlib.cal.fixtures.std
 
    .. autosummary::
    
-      ContentType
       Instantiator
       relativedelta
    

@@ -101,7 +101,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
         # when selecting an Event.event_type it is more natural to
         # have the event_label. It seems that the current `name` field
         # is actually never used.
-        return settings.SITE.babelattr(self, 'event_label')
+        return settings.SITE.babelattr(self, 'event_label') \
+            or settings.SITE.babelattr(self, 'name')
 
 
 class EventTypes(dd.Table):

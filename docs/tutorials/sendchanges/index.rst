@@ -6,14 +6,11 @@ Notifying others about database modifications
 
 This is a usage example for :mod:`lino.utils.sendchanges`.
 
+.. $ python setup.py test -s tests.DocsTests.test_sendchanges
+
 General stuff:
 
->>> from lino.runtime import *
->>> from lino import rt
->>> from django.test.client import Client
->>> import json
->>> client = Client()
-
+>>> from lino.api.doctest import *
 
 In your :xfile:`settings.py` file your override :meth:`do_site_startup
 <lino.core.site.Site.do_site_startup>` in a similar way as shown
@@ -31,14 +28,14 @@ need to care about authentication in this tutorial.
 Loading demo data
 =================
 
-As usual we must load our demo data fixture using Django's standard
-loaddata command:
+We must load our demo data fixture using Django's standard loaddata
+command:
 
 >>> from django.core.management import call_command
 >>> call_command('initdb_demo', interactive=False)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 Creating tables ...
-Installed 236 object(s) from 10 fixture(s)
+Installed 237 object(s) from 10 fixture(s)
 
 
 
@@ -108,7 +105,7 @@ Create a Person:
 
 >>> url = '/api/contacts/Persons'
 >>> data = dict(an='submit_insert', first_name='Joe', last_name='Doe')
->>> res = client.post(url, data=data)
+>>> res = test_client.post(url, data=data)
 To: john@example.com, joe@example.com
 Subject: Created: Joe Doe
 User Robin Rood has created this record.
@@ -124,7 +121,7 @@ Create an organization:
 
 >>> url = '/api/contacts/Companies'
 >>> data = dict(an='submit_insert', name='Joe Doe\'s pub')
->>> res = client.post(url, data=data)
+>>> res = test_client.post(url, data=data)
 To: john@example.com, joe@example.com
 Subject: Created partner Joe Doe's pub
 User Robin Rood has created this record.

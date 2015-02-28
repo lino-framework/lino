@@ -17,7 +17,6 @@ ONE_DAY = relativedelta(days=1)
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
@@ -48,6 +47,7 @@ def objects():
         is_appointment=False,
         all_rooms=True, **dd.str2kw('name', _("Holidays")))
     yield holidays
+    yield event_type(**dd.str2kw('name', _("Meeting")))
 
     RecurrentEvent = dd.resolve_model('cal.RecurrentEvent')
     add = Instantiator(RecurrentEvent, event_type=holidays).build

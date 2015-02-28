@@ -82,7 +82,9 @@ Replaced these by usage of a new plugin setting
 for :mod:`lino.modlib.reception`
 
 
-Started a new tested document :ref:`welfare.tested.cal`.
-`cal.EventType.__unicode__` now returns the `event_label`.
+Started a new tested document :ref:`welfare.tested.cal`. Changed
+several details in the demo fixtures, but also found two optimizations
+to the module:
 
-It is no longer allowed to close a meeting which lies in the future.
+- `cal.EventType.__unicode__` now returns the `event_label`.
+- It is no longer allowed to close a meeting which lies in the future.

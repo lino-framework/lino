@@ -6,24 +6,52 @@ Exporting to Excel
 This document obsoletes :doc:`test_presto`.
 
 .. to run only this test:
+
   $ python setup.py test -s tests.DocsTests.test_min1
 
 General stuff:
 
 >>> import os
->>> import json
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.doctests'
 >>> from lino.api.doctest import *
 
+Robin has twelve appointments in the period 20141023..20141122:
+
+>>> from lino.utils import i2d
+>>> pv = dict(start_date=i2d(20141023), end_date=i2d(20141122))
+>>> rt.login('robin').show(cal.MyEvents,param_values=pv)
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+====================== ================ =============== ================
+ When                   Event Type       Summary         Workflow
+---------------------- ---------------- --------------- ----------------
+ Thu 10/23/14 (10:20)   Calendar entry   Meeting         **Took place**
+ Fri 10/24/14 (11:10)   Calendar entry   Consultation    **Cancelled**
+ Sat 10/25/14 (08:30)   Calendar entry   Evaluation      **Suggested**
+ Sat 10/25/14 (13:30)   Calendar entry   Seminar         **Omitted**
+ Sun 10/26/14 (09:40)   Calendar entry   First meeting   **Draft**
+ Mon 10/27/14 (10:20)   Calendar entry   Interview       **Took place**
+ Mon 10/27/14 (11:10)   Calendar entry   Lunch           **Cancelled**
+ Tue 10/28/14 (13:30)   Calendar entry   Dinner          **Omitted**
+ Wed 10/29/14 (08:30)   Calendar entry   Breakfast       **Suggested**
+ Wed 10/29/14 (09:40)   Calendar entry   Meeting         **Draft**
+ Thu 10/30/14 (10:20)   Calendar entry   Consultation    **Took place**
+ Fri 10/31/14 (11:10)   Calendar entry   Seminar         **Cancelled**
+====================== ================ =============== ================
+<BLANKLINE>
+
+Let's import them to `.xls`.
+
 When exporting to `.xls`, the URL is rather long because it includes
 detailed information about the grid columns: their widths (``cw``),
-whether they are hidden (``ch``) and their ordering (``ci``).
+whether they are hidden (``ch``) and their ordering (``ci``). This is
+necessary because we want the resulting `.xls` sheet to reflect
+if the client has changed these.
 
 >>> url = "/api/cal/MyEvents?_dc=1414106085710"
 >>> url += "&cw=411&cw=287&cw=411&cw=73&cw=274&cw=140&cw=274&cw=220&cw=220&cw=220&cw=287&cw=181&cw=114&cw=181&cw=114&cw=170&cw=73&cw=73&cw=274&cw=140&cw=274&cw=274&cw=181&cw=274&cw=140"
 >>> url += "&ch=&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true"
 >>> url += "&ci=when_text&ci=summary&ci=workflow_buttons&ci=id&ci=owner_type&ci=owner_id&ci=user&ci=modified&ci=created&ci=build_time&ci=build_method&ci=start_date&ci=start_time&ci=end_date&ci=end_time&ci=access_class&ci=sequence&ci=auto_type&ci=event_type&ci=transparent&ci=room&ci=priority&ci=state&ci=assigned_to&ci=owner&name=0"
->>> url += "&pv=23.10.2014&pv=&pv=&pv=&pv=2&pv=&pv=&pv=&pv=y"
+>>> url += "&pv=23.10.2014&pv=22.11.2014&pv=&pv=&pv=2&pv=&pv=&pv=&pv=y"
 >>> url += "&an=export_excel&sr=61"
 
 >>> res = test_client.get(url, REMOTE_USER='robin')
@@ -60,11 +88,14 @@ It has 4 columns and 13 rows:
 >>> print(s.ncols, s.nrows)
 (4, 13)
 
+The first row contains our column headings. Which differ from those of
+the table above because our user had changed them manually:
+
 >>> print(s.row(0))
 [text:u'When', text:u'Created', text:u'Start date', text:u'Start time']
 
 >>> print(s.row(1))
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-[text:u'Thu 10/23/14 (10:20)', xldate:..., xldate:..., xldate:...]
+[text:u'Thu 10/23/14 (08:30)', xldate:..., xldate:..., xldate:...]
 
 
