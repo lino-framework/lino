@@ -149,7 +149,7 @@ But careful with name prefixes:
     kw = name2kw(text, last_name_first=False)
     if len(kw) != 2:
         raise Warning(
-            "Cannot find first and last names in %r", text)
+            "Cannot find first and last names in {0}".format(text))
     for k in ('last_name', 'first_name'):
         if kw[k] and not kw[k].isupper():
             kw[k] = upper1(kw[k])

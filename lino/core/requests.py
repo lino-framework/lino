@@ -502,7 +502,7 @@ request from it.
         The first argument, `spec` can be:
         - a string with the name of a model, actor or action
         - another action request
-        - a bound action (i.e. a :class:`BoundAction` instance)
+        - a :class:`BoundAction` instance
 
         Optional keyword arguments are
 
@@ -513,7 +513,7 @@ request from it.
 
         Any other keyword arguments are forwarded to :meth:`spawn`.
 
-        Usage in a tested doc:
+        Usage in a :doc:`tested document </dev/tested_docs>`:
 
         >>> from lino.api import rt
         >>> rt.login('robin').show('users.UsersOverview', limit=5)

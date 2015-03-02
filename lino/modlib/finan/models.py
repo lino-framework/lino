@@ -194,7 +194,7 @@ class GrouperDetail(JournalEntryDetail):
     """, label=_("General"))
 
 
-class JournalEntries(dd.Table):
+class FinancialVouchers(dd.Table):
     """The table of all :class:`JournalEntry` vouchers.
 
     This is also the base table for the default tables of all other
@@ -213,7 +213,7 @@ class JournalEntries(dd.Table):
     detail_layout = JournalEntryDetail()
     insert_layout = dd.FormLayout("""
     date user
-    narration 
+    narration
     """, window_size=(40, 'auto'))
 
     suggest = ShowSuggestions()
@@ -221,7 +221,7 @@ class JournalEntries(dd.Table):
 
     @classmethod
     def get_request_queryset(cls, ar):
-        qs = super(JournalEntries, cls).get_request_queryset(ar)
+        qs = super(FinancialVouchers, cls).get_request_queryset(ar)
         if not isinstance(qs, list):
             if ar.param_values.pyear:
                 qs = qs.filter(year=ar.param_values.pyear)
@@ -230,14 +230,19 @@ class JournalEntries(dd.Table):
         return qs
 
 
-class PaymentOrders(JournalEntries):
+class JournalEntries(FinancialVouchers):
+    suggestions_table = 'finan.SuggestionsByJournalEntry'
+
+
+class PaymentOrders(FinancialVouchers):
     """The table of all :class:`PaymentOrder` vouchers."""
     model = 'finan.PaymentOrder'
     column_names = "date id number user *"
     detail_layout = PaymentOrderDetail()
+    suggestions_table = 'finan.SuggestionsByPaymentOrder'
 
 
-class Groupers(JournalEntries):
+class Groupers(FinancialVouchers):
     """The table of all :class:`Grouper` vouchers."""
     model = 'finan.Grouper'
     column_names = "date id number partner user workflow_buttons"
@@ -248,7 +253,7 @@ class Groupers(JournalEntries):
     """
 
 
-class BankStatements(JournalEntries):
+class BankStatements(FinancialVouchers):
     """The table of all :class:`BankStatement` vouchers."""
     model = 'finan.BankStatement'
     column_names = "date id number balance1 balance2 user *"
@@ -262,13 +267,11 @@ class BankStatements(JournalEntries):
 
 
 class PaymentOrdersByJournal(ledger.ByJournal, PaymentOrders):
+    pass
 
-    suggestions_table = 'finan.SuggestionsByPaymentOrder'
 
 class JournalEntriesByJournal(ledger.ByJournal, JournalEntries):
-
-    suggestions_table = 'finan.SuggestionsByJournalEntry'
-
+    pass
 
 
 class BankStatementsByJournal(ledger.ByJournal, BankStatements):
@@ -375,7 +378,7 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
         voucher = ar.master_instance
         kw = super(SuggestionsByVoucher, cls).param_defaults(ar, **kw)
         #~ kw = super(MyEvents,self).param_defaults(ar,**kw)
-        #~ kw.update(journal=voucher.journal)
+        kw.update(for_journal=voucher.journal)
         kw.update(date_until=voucher.date)
         #~ kw.update(trade_type=vat.TradeTypes.purchases)
         return kw
@@ -385,15 +388,13 @@ class SuggestionsByVoucher(ledger.ExpectedMovements):
         #~ partner = ar.master_instance
         #~ if partner is None: return []
         flt.update(satisfied=False)
-        flt.update(account__clearable=True)
+        # flt.update(account__clearable=True)
         return super(SuggestionsByVoucher, cls).get_data_rows(ar, **flt)
 
 
 class SuggestionsByJournalEntry(SuggestionsByVoucher):
     "A :class:`SuggestionsByVoucher` table for a :class:`JournalEntry`."
     master = 'finan.JournalEntry'
-
-# JournalEntriesByJournal.suggest = dd.ShowSlaveTable(SuggestionsByJournalEntry)
 
 
 class SuggestionsByPaymentOrder(SuggestionsByVoucher):
@@ -412,14 +413,10 @@ class SuggestionsByPaymentOrder(SuggestionsByVoucher):
         #~ kw.update(trade_type=vat.TradeTypes.purchases)
         return kw
 
-# PaymentOrdersByJournal.suggest = dd.ShowSlaveTable(SuggestionsByPaymentOrder)
-
 
 class SuggestionsByBankStatement(SuggestionsByVoucher):
     "A :class:`SuggestionsByVoucher` table for a :class:`BankStatement`."
     master = 'finan.BankStatement'
-
-# BankStatementsByJournal.suggest = dd.ShowSlaveTable(SuggestionsByBankStatement)
 
 
 # Declare the voucher types:

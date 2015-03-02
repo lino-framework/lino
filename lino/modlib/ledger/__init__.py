@@ -14,16 +14,15 @@
 
 from __future__ import unicode_literals
 
-
-from django.utils.translation import ugettext_lazy as _
-
-from lino import ad
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
     verbose_name = _("Ledger")
+
+    needs_plugins = ['lino.modlib.accounts']
 
     use_pcmn = False
     """

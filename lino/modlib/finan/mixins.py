@@ -10,7 +10,6 @@ from django.core.exceptions import ValidationError
 
 from lino.modlib.accounts.utils import ZERO
 from lino.modlib.accounts.fields import DebitOrCreditField
-from lino.modlib.ledger.mixins import Matchable
 
 from lino.api import dd, rt, _
 from lino import mixins
@@ -79,7 +78,7 @@ class FinancialVoucher(ledger.Voucher):
         return amount, mvts
 
 
-class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
+class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem):
     """The base class for the items of all types of financial vouchers
     (:class:`FinancialVoucher`).
 
@@ -108,8 +107,6 @@ class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
         :attr:`match` of the payment of an invoice points to that
         invoice.
 
-        See :attr:`lino.modlib.ledger.mixins.Matchable.match`.
-
     """
     class Meta:
         abstract = True
@@ -121,6 +118,26 @@ class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem, Matchable):
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
     account = dd.ForeignKey('accounts.Account', blank=True)
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
+    match = dd.ForeignKey(
+        'ledger.Movement',
+        help_text=_("The matched movement."),
+        verbose_name=_("Match"),
+        related_name="%(app_label)s_%(class)s_set_by_match",
+        blank=True, null=True)
+
+    @dd.chooser()
+    def match_choices(cls, voucher, partner):
+        matchable_accounts = rt.modules.accounts.Account.objects.filter(
+            matchrule__journal=voucher.journal)
+        fkw = dict(account__in=matchable_accounts)
+        fkw.update(satisfied=False)
+        if partner:
+            fkw.update(partner=partner)
+        qs = rt.modules.ledger.Movement.objects.filter(**fkw)
+        qs = qs.order_by('voucher__date')
+        #~ qs = qs.distinct('match')
+        return qs
+        # return qs.values_list('match', flat=True)
 
     def get_default_match(self):
         return str(self.date)

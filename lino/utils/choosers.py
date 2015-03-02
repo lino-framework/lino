@@ -59,9 +59,9 @@ class ChoicesChooser(FieldChooser):
 
 
 class Chooser(FieldChooser):
+    """A **chooser** holds information about the possible choices of a
+    field.
 
-    """
-    A Chooser holds information about the possible choices of a field.
     """
     #~ stored_name = None
     simple_values = False
@@ -115,7 +115,6 @@ class Chooser(FieldChooser):
         if hasattr(model, "create_%s_choice" % field.name):
             self.can_create_choice = True
 
-        #~ if hasattr(model,"get_%s_display" % field.name):
         m = getattr(model, "%s_choice_display" % field.name, None)
         if m is not None:
             self.choice_display_method = m
@@ -140,18 +139,12 @@ class Chooser(FieldChooser):
             return self.model.get_param_elem(name)
         return de
 
-    #~ def get_data_elem(self,name):
-        #~ for vf in self.model._meta.virtual_fields:
-            #~ if vf.name == name:
-                #~ return vf
-        #~ return self.model._meta.get_field(name)
-
     def __call__(self, *args, **kw):
         for i, v in enumerate(args):
             kw[self.context_fields[i]] = v
         return self.get_choices(**kw)
 
-    def get_choices(self, **context):  # 20120918b
+    def get_choices(self, **context):
         """Return a list of choices for this chooser, using keyword parameters
         as context.
 
@@ -161,14 +154,6 @@ class Chooser(FieldChooser):
             args.append(context.get(varname, None))
         return self.meth(*args)
 
-    #~ def get_instance_choices(self,obj):
-        #~ "Return a list of choices for this chooser, using `obj` as context."
-        #~ args = []
-        #~ for varname in self.context_params:
-            #~ args.append(getattr(obj,varname,None))
-        #~ return self.meth(*args)
-
-    #~ def get_request_choices(self,ar,tbl):
     def get_request_choices(self, request, tbl):
         """
         Return a list of choices for this chooser,

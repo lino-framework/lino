@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 from decimal import Decimal
 
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
@@ -25,10 +24,10 @@ from lino.modlib.vat.utils import add_vat, remove_vat, HUNDRED
 from lino.modlib.vat.choicelists import TradeTypes
 from lino.modlib.vat.mixins import QtyVatItemBase, VatDocument
 from lino.modlib.vat.mixins import get_default_vat_regime
+from lino.modlib.ledger.mixins import Matchable
+from lino.modlib.ledger.choicelists import VoucherTypes
 
 ledger = dd.resolve_app('ledger', strict=True)
-vat = dd.resolve_app('vat', strict=True)
-products = dd.resolve_app('products', strict=True)
 
 
 TradeTypes.sales.update(
@@ -104,10 +103,7 @@ class ShippingModes(dd.Table):
     model = ShippingMode
 
 
-class SalesDocument(
-        VatDocument,
-        ledger.Matchable,
-        Certifiable):
+class SalesDocument(VatDocument, Matchable, Certifiable):
     """Common base class for `orders.Order` and :class:`Invoice`.
 
     Subclasses must either add themselves a date field (as does
@@ -142,9 +138,10 @@ class SalesDocument(
         return TradeTypes.sales
 
     def add_voucher_item(self, product=None, qty=None, **kw):
+        Product = rt.modules.products.Product
         if product is not None:
-            if not isinstance(product, products.Product):
-                product = products.Product.objects.get(pk=product)
+            if not isinstance(product, Product):
+                product = Product.objects.get(pk=product)
             #~ if qty is None:
                 #~ qty = Duration(1)
         kw['product'] = product
@@ -414,7 +411,7 @@ class InvoicesByPartner(Invoices):
 
 @dd.receiver(dd.pre_analyze)
 def add_voucher_type(sender, **kw):
-    ledger.VoucherTypes.add_item('sales.Invoice', InvoicesByJournal)
+    VoucherTypes.add_item('sales.Invoice', InvoicesByJournal)
 
 
 #~ def customize_siteconfig():

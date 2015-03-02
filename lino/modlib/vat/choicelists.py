@@ -82,7 +82,7 @@ add('50', _("Exempt"), 'exempt', item_vat=False)
 class TradeType(dd.Choice):
     """
     Base class for the choices of :class:`TradeTypes`.
-    
+
     """
     price_field_name = None
     price_field_label = None
@@ -145,12 +145,8 @@ this trade type.
 
 class TradeTypes(dd.ChoiceList):
     """The **trade type** is one of the basic properties of every
-operation.
-
-    Typical content is as follows (but applications may redefine or
-    extend this list in :meth:`lino.core.site.Site.setup_choicelists`):
-
-       .. django2rst:: rt.show("vat.TradeTypes")
+    accountable operation where are partner is involved.  Typical
+    trade types are "Sales", "Purchases" and "Wages".
 
     """
 

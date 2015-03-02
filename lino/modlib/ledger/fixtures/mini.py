@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino.api import dd
+from lino.api import dd, rt
 from lino.modlib.accounts.utils import DEBIT
 
 accounts = dd.resolve_app('accounts')
@@ -191,10 +191,10 @@ def objects():
         chart=chart,
         ref="P",
         **dd.babel_values('name',
-                       de="Einkaufsrechnungen",
-                       fr="Factures achat",
-                       en="Purchase invoices",
-                       et="Ostuarved"))
+                          de="Einkaufsrechnungen",
+                          fr="Factures achat",
+                          en="Purchase invoices",
+                          et="Ostuarved"))
 
     if finan:
         yield finan.BankStatement.create_journal(
@@ -232,4 +232,24 @@ def objects():
             account=VATDCL_ACCOUNT,
             **kw)
 
-
+    payments = []
+    if finan:
+        payments += [finan.BankStatement, finan.JournalEntry,
+                     finan.PaymentOrder]
+    
+    MatchRule = rt.modules.ledger.MatchRule
+    for jnl in ledger.Journal.objects.all():
+        if jnl.voucher_type.model in payments:
+            yield MatchRule(
+                journal=jnl,
+                account=settings.SITE.site_config.clients_account)
+            yield MatchRule(
+                journal=jnl,
+                account=settings.SITE.site_config.suppliers_account)
+            a = settings.SITE.site_config.wages_account
+            if a:
+                yield MatchRule(journal=jnl, account=a)
+        elif jnl.trade_type:
+            a = jnl.trade_type.get_partner_account()
+            if a:
+                yield MatchRule(journal=jnl, account=a)

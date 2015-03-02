@@ -275,15 +275,16 @@ class VatDocument(VatTotal):
             if m:
                 yield self.create_movement(a, not self.journal.dc, m)
                 sum += m
-        if self.match:
-            match = self.match
-        else:
-            match = self  # "%s#%s" % (self.journal.ref, self.pk)
+        # if self.match:
+        #     match = self.match
+        # else:
+        #     match = self  # "%s#%s" % (self.journal.ref, self.pk)
 
         a = self.get_trade_type().get_partner_account()
         if a is not None:
             yield self.create_movement(
-                a, self.journal.dc, sum, partner=self.partner, match=match)
+                a, self.journal.dc, sum, partner=self.partner,
+                match=self.match)
 
     def fill_defaults(self):
         if not self.payment_term:

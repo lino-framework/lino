@@ -6,9 +6,6 @@
 
 - Models :class:`Journal`, :class:`Voucher` and :class:`Movement`
 
-- The :class:`DueMovement` class, a volatile object representing a
-  group of matching movements.
-
 - :class:`DebtsByAccount` and :class:`DebtsByPartner` are two reports
   based on :class:`ExpectedMovements`
 
@@ -37,7 +34,6 @@ from django.conf import settings
 from lino import dd, rt, mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.utils.report import Report
-from lino.modlib.ledger.utils import FiscalYears
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.utils import mti
@@ -49,9 +45,9 @@ from lino.modlib.accounts.fields import DebitOrCreditField
 from lino.modlib.vat.choicelists import TradeTypes
 from lino.modlib.vat.mixins import VatDocument, VatItemBase
 
+from .utils import DueMovement, get_due_movements
 from .mixins import Matchable
-from .fields import MatchField
-from .choicelists import VoucherTypes
+from .choicelists import FiscalYears, VoucherTypes
 
 
 TradeTypes.purchases.update(
@@ -241,6 +237,7 @@ class Journals(dd.Table):
     force_sequence account dc build_method template
     name
     printed_name
+    MatchRulesByJournal
     """
     insert_layout = dd.FormLayout("""
     ref name
@@ -309,16 +306,15 @@ class Voucher(UserAuthored, mixins.Registrable):
     #~ def create_journal(cls,jnl_id,trade_type,**kw):
         #~ doctype = get_doctype(cls)
         #~ jnl = Journal(doctype=doctype,id=jnl_id,*args,**kw)
+        if isinstance(trade_type, basestring):
+            trade_type = TradeTypes.get_by_name(trade_type)
         if isinstance(account, basestring):
             account = chart.get_account_by_ref(account)
             #~ account = account.Account.objects.get(chart=chart,ref=account)
-        if isinstance(trade_type, basestring):
-            trade_type = TradeTypes.get_by_name(trade_type)
         vt = VoucherTypes.get_by_value(dd.full_model_name(cls))
         kw.update(chart=chart)
         if account is not None:
             kw.update(account=account)
-        #~ jnl = Journal(trade_type=tt,voucher_type=vt,id=jnl_id,**kw)
         return Journal(trade_type=trade_type, voucher_type=vt, **kw)
 
     def __unicode__(self):
@@ -589,19 +585,21 @@ class Movement(dd.Model):
         #~ blank=True,null=False,
         verbose_name=_("Seq.No."))
 
-    #~ pos = models.IntegerField("Position",blank=True,null=True)
     account = dd.ForeignKey('accounts.Account')
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
     amount = dd.PriceField(default=0)
     dc = DebitOrCreditField()
 
-    match = MatchField(blank=True, null=True)
+    match = models.ForeignKey(
+        'ledger.Movement', verbose_name=_("Match"),
+        help_text=_("The movement matched by this one."),
+        related_name="%(app_label)s_%(class)s_set_by_match",
+        blank=True, null=True)
+
+    # match = MatchField(blank=True, null=True)
 
     satisfied = models.BooleanField(_("Satisfied"), default=False)
-    #~ match = dd.ForeignKey('self',verbose_name=_("Match"),blank=True,null=True)
-    #~ is_credit = models.BooleanField(_("Credit"),default=False)
-    #~ debit = dd.PriceField(default=0)
-    #~ credit = dd.PriceField(default=0)
+    # TODO: rename "satisfied" to "cleared"
 
     @dd.chooser(simple_values=True)
     def match_choices(cls, partner, account):
@@ -736,89 +734,32 @@ class MovementsByAccount(Movements):
         return kw
 
 
-class DueMovement(object):
-    """A **due movement** is a movement which a partner should do in order
-    to satisfy their debt.  Or which we should do in order to satisfy
-    our debt.
+class MatchRule(dd.Model):
+    """A **match rule** specifies that a movement into given account can
+be cleared using a given journal.
 
     """
-    def __init__(self, dc, mvt):
-        self.dc = dc
-        self.partner = mvt.partner
-        self.account = mvt.account
-        self.match = mvt.match
-        self.pk = self.id = mvt.id
+    # allow_cascaded_delete = ['account', 'journal']
 
-        self.debts = []
-        self.payments = []
-        self.balance = ZERO
-        self.due_date = None
-        self.trade_type = None
-        self.has_unsatisfied_movement = False
-        self.has_satisfied_movement = False
+    class Meta:
+        verbose_name = _("Match rule")
+        verbose_name_plural = _("Match rules")
+        unique_together = ['account', 'journal']
 
-        qs = Movement.objects.filter(
-            partner=self.partner, account=self.account, match=self.match)
-        for mvt in qs.order_by('voucher__date'):
-            self.collect(mvt)
-
-    def collect(self, mvt):
-        if mvt.satisfied:
-            self.has_satisfied_movement = True
-        else:
-            self.has_unsatisfied_movement = True
-        if self.trade_type is None:
-            voucher = mvt.voucher.get_mti_leaf()
-            self.trade_type = voucher.get_trade_type()
-        if mvt.dc == self.dc:
-            self.debts.append(mvt)
-            self.balance += mvt.amount
-            voucher = mvt.voucher.get_mti_leaf()
-            due_date = voucher.get_due_date()
-            if self.due_date is None or due_date < self.due_date:
-                self.due_date = due_date
-        else:
-            self.payments.append(mvt)
-            self.balance -= mvt.amount
-
-    def update_satisfied(self):
-        satisfied = self.balance == ZERO
-        if satisfied:
-            if not self.has_unsatisfied_movement:
-                return
-        else:
-            if not self.has_satisfied_movement:
-                return
-        for m in self.debts + self.payments:
-            if m.satisfied != satisfied:
-                m.satisfied = satisfied
-                m.save()
+    account = dd.ForeignKey('accounts.Account')
+    journal = JournalRef()
 
 
-def get_due_movements(dc, **flt):
-    """Analyze the movements corresponding to the given filter condition
-    `flt` and yield a series of :class:`DueMovement` objects which
-    --if they were booked-- would satisfy the given movements.
-    
-    There will be at most one :class:`DueMovement` per (account,
-    partner, match), each of them grouping the movements with same
-    partner, account and match.
+class MatchRules(dd.Table):
+    model = 'ledger.MatchRule'
 
-    The balances of the :class:`DueMovement` objects will be positive
-    or negative depending on the specified `dc`.
 
-    """
-    if dc is None:
-        return
-    qs = Movement.objects.filter(**flt)
-    qs = qs.order_by('voucher__date')
-    matches_by_account = dict()
-    for mvt in qs:
-        k = (mvt.account, mvt.partner)
-        matches = matches_by_account.setdefault(k, set())
-        if not mvt.match in matches:
-            matches.add(mvt.match)
-            yield DueMovement(dc, mvt)
+class MatchRulesByAccount(MatchRules):
+    master_key = 'account'
+
+
+class MatchRulesByJournal(MatchRules):
+    master_key = 'journal'
 
 
 class ExpectedMovements(dd.VirtualTable):
@@ -829,10 +770,10 @@ class ExpectedMovements(dd.VirtualTable):
     auto_fit_column_widths = True
     parameters = dd.ParameterPanel(
         date_until=models.DateField(_("Date until"), blank=True, null=True),
-        trade_type=TradeTypes.field(blank=True))
-        #~ journal=dd.ForeignKey(Journal,blank=True))
+        trade_type=TradeTypes.field(blank=True),
+        for_journal=dd.ForeignKey('ledger.Journal', blank=True))
         #~ dc=DebitOrCreditField(default=accounts.DEBIT))
-    params_layout = "trade_type date_until"
+    params_layout = "trade_type date_until for_journal"
 
     #~ DUE_DC = accounts.DEBIT
 
@@ -849,6 +790,10 @@ class ExpectedMovements(dd.VirtualTable):
             flt.update(account=pv.trade_type.get_partner_account())
         if pv.date_until is not None:
             flt.update(voucher__date__lte=pv.date_until)
+        if pv.for_journal is not None:
+            accounts = rt.modules.accounts.Account.objects.filter(
+                matchrule__journal=pv.for_journal).distinct()
+            flt.update(account__in=accounts)
         return get_due_movements(cls.get_dc(ar), **flt)
 
     @classmethod
@@ -956,9 +901,17 @@ InvoiceStates.draft.add_transition(
 
 
 class AccountInvoice(VatDocument, Voucher, Matchable):
-    """
-    An invoice for which the user enters just the bare accounts and
+    """An invoice for which the user enters just the bare accounts and
     amounts (not e.g. products, quantities, discounts).
+
+    An account invoice does not usually produce a printable
+    document. This model is typically used to store incoming purchase
+    invoices, but exceptions in both directions are possible: (1)
+    purchase invoices can be stored using `purchases.Invoice` if stock
+    management is important, or (2) outgoing sales invoice can have
+    been created using some external tool and are entered into Lino
+    just for the general ledger.
+
     """
     class Meta:
         verbose_name = _("Invoice")
@@ -1402,9 +1355,9 @@ customize_accounts()
 
 
 def update_partner_satisfied(p):
-    """
-    This is called when a voucher has been (un)registered  on each 
+    """This is called when a voucher has been (un)registered on each
     partner for whom the voucher caused at least one movement.
+
     """
     for m in get_due_movements(DEBIT, partner=p):
         m.update_satisfied()

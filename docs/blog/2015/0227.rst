@@ -58,8 +58,8 @@ which points to the new choicelist :class:`isip.OverlapGroups
 Stupid Luc
 ==========
 
-Oops, I noticed that yesterda ago I accidentally removed some code
-from :mod:`lino_welfare.modlib.reception.models` which was was still
+Oops, I noticed that yesterdy I accidentally removed some code from
+:mod:`lino_welfare.modlib.reception.models` which was was still
 used. It is an outfashioned method for getting the partner field of
 cal.Guest to look like a client. The good way to do it would be to add
 a setting :attr:`lino.modlib.cal.Plugin.partner_model` and to set this

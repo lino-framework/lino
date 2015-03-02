@@ -22,6 +22,7 @@ lino.modlib.finan.models
       FillSuggestions
       FinancialVoucher
       FinancialVoucherItem
+      FinancialVouchers
       Grouper
       GrouperDetail
       GrouperItem

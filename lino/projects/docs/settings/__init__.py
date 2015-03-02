@@ -57,8 +57,9 @@ class Site(Site):
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 
-        yield 'lino.modlib.accounts'
-        yield 'lino.modlib.ledger'
+        # yield 'lino.modlib.accounts'
+        # yield 'lino.modlib.ledger'
+        yield 'lino.modlib.finan'
         yield 'lino.modlib.vat'
         yield 'lino.modlib.products'
         yield 'lino.modlib.auto.sales'

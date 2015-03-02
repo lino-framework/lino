@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,7 +19,6 @@ logger = logging.getLogger(__name__)
 
 
 import datetime
-#~ from datetime import timedelta as delta
 from dateutil.relativedelta import relativedelta as delta
 
 from decimal import Decimal
@@ -119,7 +118,7 @@ def objects():
     INFLATION_RATE = Decimal("0.02")
 
     """
-    5 "purchase stories" : each story represents a provider who sends 
+    5 "purchase stories" : each story represents a provider who sends
     monthly invoices.
     """
     PURCHASE_STORIES = []
@@ -134,7 +133,7 @@ def objects():
     #~ date = settings.SITE.demo_date() + delta(years=-2)
     START_YEAR = settings.SITE.start_year  # 2011
     date = datetime.date(START_YEAR, 1, 1)
-    end_date = datetime.date(2013, 5, 1)
+    end_date = datetime.date(START_YEAR+1, 5, 1)
     while date < end_date:
 
         if sales:
@@ -188,8 +187,7 @@ def objects():
             invoice.register(REQUEST)
             invoice.save()
 
-        if False:
-          if finan and (end_date - date) > MORE_THAN_A_MONTH:
+        if finan and (end_date - date) > MORE_THAN_A_MONTH:
             # last month not yet done
             #~ po = finan.PaymentOrder(journal=JOURNAL_PO,
             JOURNAL_PO = ledger.Journal.objects.get(ref="PO")

@@ -21,6 +21,8 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Financial")
 
+    needs_plugins = ['lino.modlib.ledger']
+
     def setup_main_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
         ledger = site.modules.ledger

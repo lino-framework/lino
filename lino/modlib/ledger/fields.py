@@ -7,17 +7,21 @@
 
 """
 
-# from django.db import models
 
 from lino.api import dd, _
 
 
-def MatchField(verbose_name=None, **kwargs):
-    if verbose_name is None:
-        verbose_name = _("Match")
-    kwargs.update(verbose_name=verbose_name)
-    kwargs.update(related_name="%(app_label)s_%(class)s_set_by_match",)
-    return dd.ForeignKey('ledger.Voucher', **kwargs)
+# def MatchField(verbose_name=None, **kwargs):
+#     """A pointer to another movement which is to be cleared by the owner
+#     of this field.
+
+#     """
+#     if verbose_name is None:
+#         verbose_name = _("Match")
+#     kwargs.update(verbose_name=verbose_name)
+#     kwargs.update(help_text=_("The movement to be cleared."))
+#     kwargs.update(related_name="%(app_label)s_%(class)s_set_by_match",)
+#     return dd.ForeignKey('ledger.Movement', **kwargs)
 
 
 # class MatchField(models.CharField):
@@ -45,5 +49,3 @@ class DcAmountField(dd.VirtualField):
         if obj.dc == self.dc:
             return obj.amount
         return None
-
-
