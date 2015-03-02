@@ -260,9 +260,10 @@ def resolve_model(model_spec, app_label=None, strict=False):
     cache, so you should not use it at module-level of a
     :xfile:`models.py` module.
 
-    In general we recommend to use ``from lino import rt`` and
+    In general we recommend to use ``from lino.api import rt`` and
     ``rt.modules.contacts.Person`` over
-    ``resolve_model('contacts.Person')``.
+    ``resolve_model('contacts.Person')``. Note however that this works
+    only in a local scope, not at global module level.
 
     """
     # ~ models.get_apps() # trigger django.db.models.loading.cache._populate()

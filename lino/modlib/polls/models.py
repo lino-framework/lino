@@ -229,7 +229,7 @@ class Question(mixins.Sequenced):
 
     choiceset = models.ForeignKey('polls.ChoiceSet', blank=True, null=True)
     multiple_choices = models.BooleanField(
-        _("Allow multiple choices"), blank=True)
+        _("Allow multiple choices"), blank=True, default=False)
     is_heading = models.BooleanField(_("Heading"), default=False)
 
     NUMBERED_TITLE_FORMAT = "%s) %s"

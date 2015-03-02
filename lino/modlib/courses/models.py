@@ -47,13 +47,13 @@ cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
 contacts = dd.resolve_app('contacts')
 
-"""
-Here we must use `resolve_model` with `strict=True`
-because we want the concrete model
-and we don't know whether it is overridden
-by this application.
-"""
-Person = dd.resolve_model('contacts.Person', strict=True)
+# """
+# Here we must use `resolve_model` with `strict=True`
+# because we want the concrete model
+# and we don't know whether it is overridden
+# by this application.
+# """
+# Person = dd.resolve_model('contacts.Person', strict=True)
 # equivalent alternative :
 #~ Person = settings.SITE.modules.contacts.Person
 

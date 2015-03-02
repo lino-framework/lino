@@ -44,6 +44,7 @@ from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
 
+from lino import AFTER17
 from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
@@ -1319,7 +1320,15 @@ documentation.
             pre_startup.send(self)
 
             for p in self.installed_plugins:
-                m = loading.load_app(p.app_name, False)
+                # m = loading.load_app(p.app_name, False)
+                if AFTER17:
+                    # In Django17+ we cannot say can_postpone=False,
+                    # and we don't need to, because anyway we used it
+                    # just for our hack in `lino.models`
+                    m = loading.load_app(p.app_name)
+                else:
+                    m = loading.load_app(p.app_name, False)
+
                 self.modules.define(p.app_label, m)
 
             for p in self.installed_plugins:

@@ -184,6 +184,7 @@ class FakeField(object):
     max_digits = None
     decimal_places = None
     default = NOT_PROVIDED
+    generate_reverse_relation = False  # needed when AFTER17
 
     def is_enabled(self, lh):
         """
