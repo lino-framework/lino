@@ -518,7 +518,7 @@ class ExtRenderer(HtmlRenderer):
                     authorities = [
                         (a.user.id, unicode(a.user))
                         for a in users.Authority.objects.filter(
-                            authorized=user)]
+                            authorized=user).exclude(user__profile='')]
 
                 a = users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
@@ -529,7 +529,7 @@ class ExtRenderer(HtmlRenderer):
                 if len(authorities):
                     act_as = [
                         dict(text=t, handler=js_code(
-                            "function(){Lino.set_subst_user(%s,%s)}" % (v, py2js(t))))
+                            "function(){Lino.set_subst_user(%s, %s)}" % (v, py2js(t))))
                         for v, t in authorities]
                             #~ for v,t in user.get_received_mandates()]
                     act_as.insert(0, dict(

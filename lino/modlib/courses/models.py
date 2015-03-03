@@ -36,7 +36,7 @@ from lino import mixins
 
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
-from lino.modlib.contacts.utils import parse_name
+from lino.mixins.human import parse_name
 from lino.modlib.users.mixins import UserAuthored
 
 from .choicelists import EnrolmentStates, CourseStates

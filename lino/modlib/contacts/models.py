@@ -45,7 +45,7 @@ from lino.utils.addressable import Addressable
 
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 
-from .utils import name2kw
+from lino.mixins.human import name2kw, Human, Born
 
 
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
@@ -235,10 +235,10 @@ class PartnersByCountry(Partners):
     order_by = "city street street_no".split()
 
 
-class Person(mixins.Human, mixins.Born, Partner):
+class Person(Human, Born, Partner):
     """
     A physical person and an individual human being.
-    See :ref:`lino.tutorial.human`.
+    See also :ref:`lino.tutorial.human`.
 
     """
     class Meta:

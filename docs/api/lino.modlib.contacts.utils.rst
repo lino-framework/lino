@@ -22,4 +22,10 @@ lino.modlib.contacts.utils
 
    
    
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ValidationError
+   
    

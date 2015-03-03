@@ -3,14 +3,18 @@
 About Humans
 ============
 
-This test application explains some basic truths about humans (as the
-:mod:`lino.mixins.human` module sees them).
+This test application explains some basic things about humans (as the
+:mod:`lino.mixins.human` and :mod:`lino.modlib.contacts.utils` modules
+see them).
 
-The database structure used for the following examples is very simple,
-we define a single model `Person` which just inherits
-:class:`lino.mixins.human.Human`:
+
+The database structure used for the following examples is very simple:
 
 .. literalinclude:: models.py
+
+We define a single model `Person` which just inherits
+:class:`lino.mixins.human.Human`.
+
 
 .. 
   >>> from __future__ import print_function 
@@ -22,14 +26,88 @@ we define a single model `Person` which just inherits
 Database fields
 ---------------
 
-The Human mixin defines four database fields: `first_name`,
+The `Human` mixin defines four database fields: `first_name`,
 `middle_name`, `last_name` and `gender`.
 
 The `gender` field is a pointer to
 the :class:`lino.modlib.system.mixins.Genders` choicelist.
 
 All these fields may be blank (except if your application changed that
-rule using :func:`dd.update_field`).
+rule using :func:`lino.core.inject.update_field`).
+
+
+Parsing names
+-------------
+
+>>> from lino.mixins.human import name2kw
+
+Examples:
+
+>>> name2kw("Saffre Luc")
+{'first_name': 'Luc', 'last_name': 'Saffre'}
+>>> name2kw("Rilke Rainer Maria")
+{'first_name': 'Rainer Maria', 'last_name': 'Rilke'}
+>>> name2kw("Van Rompuy Herman")
+{'first_name': 'Herman', 'last_name': 'Van Rompuy'}
+>>> name2kw("'T Jampens Jan")
+{'first_name': 'Jan', 'last_name': "'T Jampens"}
+>>> name2kw("Van den Bossche Marc Antoine Bernard")
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+>>> name2kw("Den Tandt Marc Antoine Bernard")
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Den Tandt'}
+
+In more complicated cases, a comma is required to help:
+
+>>> name2kw("Mombanga born Ngungi, Maria Magdalena")
+{'first_name': 'Maria Magdalena', 'last_name': 'Mombanga born Ngungi'}
+
+Some examples with `first_name` first:
+
+>>> name2kw("Luc Saffre", False)
+{'first_name': 'Luc', 'last_name': 'Saffre'}
+>>> name2kw("Rainer Maria Rilke", False)
+{'first_name': 'Rainer Maria', 'last_name': 'Rilke'}
+>>> name2kw("Herman Van Rompuy", False)
+{'first_name': 'Herman', 'last_name': 'Van Rompuy'}
+>>> name2kw("Jan 'T Jampens",False)
+{'first_name': 'Jan', 'last_name': "'T Jampens"}
+>>> name2kw("Marc Antoine Bernard Van den Bossche", False)
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Van den Bossche'}
+>>> name2kw("Marc Antoine Bernard Den Tandt", False)
+{'first_name': 'Marc Antoine Bernard', 'last_name': 'Den Tandt'}
+
+Edge cases:
+
+>>> name2kw("")
+{}
+
+Bibliography:
+
+#. http://en.wikipedia.org/wiki/Dutch_name
+#. http://www.myheritage.com/support-post-130501/dutch-belgium-german-french-surnames-with-prefix-such-as-van
+
+
+
+Examples:
+
+>>> from lino.mixins.human import parse_name
+
+>>> print(parse_name("luc saffre"))
+{'first_name': 'Luc', 'last_name': 'Saffre'}
+
+But careful with name prefixes:
+
+>>> print(parse_name("herman van veen"))
+{'first_name': 'Herman', 'last_name': 'van veen'}
+>>> print(parse_name("jean van den bossche"))
+{'first_name': 'Jean', 'last_name': 'van den bossche'}
+
+>>> parse_name("Foo")
+Traceback (most recent call last):
+...
+ValidationError: [u'Cannot find first and last name in "Foo"']
+
+
 
 
 

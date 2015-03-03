@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 
-See :ref:`lino.tutorial.human`.
+See test cases and examples in :doc:`/tutorials/human/index`.
+
+.. autosummary::
+
 
 """
 
@@ -11,6 +14,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext
 from django.conf import settings
@@ -20,6 +24,90 @@ from lino.dd import Genders
 
 from lino.core import fields
 from lino.core import model
+
+name_prefixes1 = ("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
+                  'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI")
+name_prefixes2 = ("VAN DEN", "VAN DER", "VAN DE",
+                  "IN HET", "VON DER", "DE LA")
+
+
+def name2kw(s, last_name_first=True):
+    """Separate first name from last name.  Split a string that contains
+both last_name and first_name.  The caller must indicate whether the
+string contains last_name first (e.g. Saffre Luc) or first_name first
+(e.g. Luc Saffre).
+
+    """
+    kw = {}
+    a = s.split(',')
+    if len(a) == 2:
+        if last_name_first:
+            return dict(last_name=a[0].strip(), first_name=a[1].strip())
+    a = s.strip().split()
+    if len(a) == 0:
+        return dict()
+    elif len(a) == 1:
+        return dict(last_name=a[0])
+    elif len(a) == 2:
+        if last_name_first:
+            return dict(last_name=a[0], first_name=a[1])
+        else:
+            return dict(last_name=a[1], first_name=a[0])
+    else:
+        # string consisting of more than 3 words
+        if last_name_first:
+            a01 = a[0] + ' ' + a[1]
+            if a01.upper() in name_prefixes2:
+                return dict(
+                    last_name=a01 + ' ' + a[2],
+                    first_name=' '.join(a[3:]))
+            elif a[0].upper() in name_prefixes1:
+                return dict(
+                    last_name=a[0] + ' ' + a[1],
+                    first_name=' '.join(a[2:]))
+            else:
+                return dict(last_name=a[0],
+                            first_name=' '.join(a[1:]))
+        else:
+            if len(a) >= 4:
+                pc = a[-3] + ' ' + a[-2]  # prefix2 candidate
+                if pc.upper() in name_prefixes2:
+                    return dict(
+                        last_name=pc + ' ' + a[-1],
+                        first_name=' '.join(a[:-3]))
+            pc = a[-2]  # prefix candidate
+            if pc.upper() in name_prefixes1:
+                return dict(
+                    last_name=pc + ' ' + a[-1],
+                    first_name=' '.join(a[:-2]))
+        return dict(
+            last_name=a[-1],
+            first_name=' '.join(a[:-1]))
+
+    return kw
+
+
+def upper1(s):
+    if ' ' in s:
+        return s  # don't change
+    return s[0].upper() + s[1:]
+
+
+def parse_name(text):
+    """Parse the given `text` and return a dict of `first_name` and
+    `last_name` value.
+
+    Extends :func:`name2kw` by raising a  ValidationError if necessary.
+
+    """
+    kw = name2kw(text, last_name_first=False)
+    if len(kw) != 2:
+        raise ValidationError(
+            _("Cannot find first and last name in \"{0}\"").format(text))
+    for k in ('last_name', 'first_name'):
+        if kw[k] and not kw[k].isupper():
+            kw[k] = upper1(kw[k])
+    return kw
 
 
 def get_salutation(gender, nominative=False):

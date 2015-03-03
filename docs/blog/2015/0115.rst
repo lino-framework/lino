@@ -53,31 +53,25 @@ presence at another date.
 Neither VISUAL nor EDITOR environment variable is set!
 ======================================================
 
-Typing :cmd:`fab blog` failed when neither `VISUAL` nor `EDITOR`
-environment variable were set. As :ref:`mma` describes in `his blog
-<http://iamdevops.com/blog/2015/0114.html>`_.
+Typing :cmd:`fab blog` failed when neither :envvar:`VISUAL` nor
+:envvar:`EDITOR` environment variable were set. As :ref:`mma`
+describes in `his blog <http://iamdevops.com/blog/2015/0114.html>`_.
 
 This is the time to speak about another problem.  Actually, :cmd:`fab
-blog` should use neither `VISUAL` nor `EDITOR`.  Because these
-variables are expected for use cases when the calling program **waits
-until the editor terminates**. Like `git commit`, `git merge` and `git
-rebase -i`. 
+blog` should use neither :envvar:`VISUAL` nor :envvar:`EDITOR`.
+Because these variables are expected for use cases when the calling
+program **waits until the editor terminates**. Like `git commit`, `git
+merge` and `git rebase -i`.
 
 But when we invoke :cmd:`fab blog`, we want to **not wait** for the
 editor to terminate.  We want it to launch the editor with our blog
 entry and then we want to return back to the command line.
 
 Since I never seriously used `git commit`, `git merge` and `git rebase
--i`, I had my `EDITOR` set to `emacsclient --no-wait` and was happy.
+-i`, I had my :envvar:`EDITOR` set to `emacsclient --no-wait` and was
+happy.  But that happiness was ephemeric. See :blogref:`20150105` for
+an example. 
 
-But see :blogref:`20150105` for example.
-
-That's why I had 
-
-
-
-		Don't wait for the server to return
-
-
-
-I changed `get_visual_editor`
+I changed :mod:`atelier.fablib` accordingly. It no longer looks for
+any of these environment variables but expects a new configuration
+setting :attr:`atelier.fablib.env.editor_command`.
