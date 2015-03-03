@@ -116,7 +116,7 @@ class StoreField(object):
         """
         Test cases:
         - setting a CharField to ''
-        - sales.Invoice.number may be blank        
+        - sales.Invoice.number may be blank
         """
         v = self.extract_form_data(post_data)
         #~ logger.info("20130128 %s.form2obj() %s = %r",self.__class__.__name__,self.name,v)
@@ -562,7 +562,7 @@ class BooleanStoreField(StoreField):
 
     def parse_form_value(self, v, obj):
         """
-        Ext.ensible CalendarPanel sends boolean values as 
+        Ext.ensible CalendarPanel sends boolean values as
         """
         #~ print "20110717 parse_form_value", self.field.name, v, obj
         return constants.parse_boolean(v)
@@ -947,9 +947,8 @@ class ParameterStore(BaseStore):
 
 
 class Store(BaseStore):
+    """A Store is the collection of StoreFields for a given actor.
 
-    """
-    A Store is the collection of StoreFields for a given Table.
     """
 
     pk = None
@@ -960,7 +959,7 @@ class Store(BaseStore):
         self.rh = rh
         self.actor = rh.actor
         """
-        MTI children have two primary keys. Example::
+        MTI children have two primary keys. Example (not tested)::
         >>> from lino.projects.pcsw.models import Person
         >>> [f for f in Person._meta.fields if f.primary_key]
         [<django.db.models.fields.AutoField: id>, <django.db.models.fields.related.OneToOneField: contact_ptr>]
@@ -1093,6 +1092,10 @@ class Store(BaseStore):
         fields.append(sf)
 
     def form2obj(self, ar, form_values, instance, is_new):
+        """Store the `form_values` into the `instance` by calling
+        :meth:`form2obj` for every store field.
+
+        """
         disabled_fields = set(self.actor.disabled_fields(instance, ar))
         changed_triggers = []
         for f in self.all_fields:

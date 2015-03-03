@@ -151,7 +151,7 @@ class UserProfile(Choice):
             if g.value:  # no level for UserGroups.blank_item
                 v = getattr(self, g.value + '_level', None)
                 if v is not None:
-                    s += ",%s=%s" % (g.value, v.name)
+                    s += ",%s=%s" % (g.value, v)
         s += ")"
         return s
 

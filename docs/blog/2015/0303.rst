@@ -1,0 +1,45 @@
+======================
+Tuesday, March 3, 2015
+======================
+
+Lino and Django 1.7
+===================
+
+Mahmoud and I started yesterday to work on :ticket:`38` (Convert to
+Django 1.7).
+
+When upgrading to Django 1.7, the :command:`fab initdb` fails already
+on the first demo database. You can reproduce the current state as
+follows::
+
+  $ cd lino/projects/docs
+  $ ./initdb_tmp
+
+In the current development version, this causes an exception: 
+
+   Problem installing fixture
+   '.../lino/modlib/users/fixtures/demo.py':
+   User(username='robin',...,language='en',...) :
+   {'language': [u"Value 'en' is not a valid choice."]}
+
+
+
+
+Cannot find first and last names in %r
+======================================
+
+This error message was sent as an admin email when a user had
+submitted an insert form with a non-parsable doctor name on a
+:class:`lino_welfare.modlib.aids.models.RefundConfirmation`.
+
+It was caused by :func:`lino.modlib.contacts.utils.parse_name`.  I
+changed the exception type from `Warning` to `ValidationError`.
+
+Another solution might have been to extend
+:meth:`lino.core.store.Store.form2obj` so that it also digests
+`Warning` exceptions.  I am undecided which one to prefer.  `Warning`
+has the advantage of being a built-in exception type while
+`ValidationError` is from Django. On the other hand this built-in
+`Warning` is not actually meant for being used by code as mine, it is
+used by the `warnings` module as a warning category.
+

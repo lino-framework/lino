@@ -7,13 +7,13 @@ Some utilities for parsing contact data.
 
 - :func:`name2kw` to separate first name from last name
 
-- :func:`street2kw` to separate house number and optional 
+- :func:`street2kw` to separate house number and optional
   flat number from street
 
 """
 
 import re
-
+from django.core.exceptions import ValidationError
 
 name_prefixes1 = ("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
                   'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI")
@@ -66,7 +66,6 @@ Edge cases:
 
 >>> name2kw("")
 {}
-
 
 Bibliography:
 
@@ -144,11 +143,17 @@ But careful with name prefixes:
 >>> print(parse_name("jean van den bossche"))
 {'first_name': 'Jean', 'last_name': 'van den bossche'}
 
+>>> parse_name("Foo")
+Traceback (most recent call last):
+...
+ValidationError: [u'Cannot find first and last names in Foo']
+
+
 
     """
     kw = name2kw(text, last_name_first=False)
     if len(kw) != 2:
-        raise Warning(
+        raise ValidationError(
             "Cannot find first and last names in {0}".format(text))
     for k in ('last_name', 'first_name'):
         if kw[k] and not kw[k].isupper():

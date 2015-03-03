@@ -80,7 +80,6 @@ class BabelTextField(RichTextField):
 
 
 class LanguageField(models.CharField):
-
     """A field that lets the user select a language from the available
     :attr:`lino.core.site.Site.languages`.
 

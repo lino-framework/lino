@@ -39,3 +39,13 @@ if not AFTER17:
             raise ImportError(msg)
 
     startup()
+
+else:
+
+    from django.apps import AppConfig
+
+    class LinoConfig(AppConfig):
+
+        def ready(self):
+
+            startup()
