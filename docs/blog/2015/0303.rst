@@ -74,7 +74,8 @@ Meine Antwort:
 
 
 - Lino allowed to create appointments for a user without `profile`
-- Lino allowed non-manager users to act as a colleague with
+- Lino showed also users without profile in the :menuselection:`Act
+  as...` menu of non-manager users.
 
 
 

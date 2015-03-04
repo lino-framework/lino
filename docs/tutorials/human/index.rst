@@ -3,16 +3,14 @@
 About Humans
 ============
 
-This test application explains some basic things about humans (as the
-:mod:`lino.mixins.human` and :mod:`lino.modlib.contacts.utils` modules
-see them).
-
+This chapter explains some basic things about humans (as the
+:mod:`lino.mixins.human` module sees them).
 
 The database structure used for the following examples is very simple:
 
 .. literalinclude:: models.py
 
-We define a single model `Person` which just inherits
+That is, we define a single model `Person` which just inherits
 :class:`lino.mixins.human.Human`.
 
 
