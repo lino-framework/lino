@@ -4,48 +4,16 @@
 
 """Database models for `lino.modlib.dedupe`.
 
-Overrides the :attr:`submit_insert <dd.Model.submit_insert>` action
-of :class:`lino.modlib.contacts.contacts.Person` with
-:class:`CheckedSubmitInsert`, a customized variant of the standard
-:class:`SubmitInsert <dd.SubmitInsert>` that checks for duplicate
-persons and asks a user confirmation when necessary.
-
-The current implementation of the detection algorithm is rather
-primitive.  We might one day add another table with NYSIIS or SOUNDEX
-strings.
-
-Also defines a virtual table :class:`SimilarPersons`, which does that
-same check on existing Persons and shows a slave table of persons that
-are "similar" to a given master instance (and therefore are potential
-duplicates).
-
-Examples and test cases in :ref:`welfare.tested.pcsw`.
-
 """
 
 from __future__ import unicode_literals
 
-# import fuzzy
-# fuzzy.nysiis()
+from lino.api import dd, _
 
 
-import logging
-logger = logging.getLogger(__name__)
-
-
-from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-
-
-from lino.api import dd, rt
-from lino.core.actions import SubmitInsert
-
-contacts = dd.resolve_app('contacts')
-
-
-class SimilarPersons(dd.VirtualTable):
+class SimilarPartners(dd.VirtualTable):
     """See above."""
-    label = _("Similar Persons")
+    label = _("Similar Partner")
     # slave_grid_format = 'html'
     slave_grid_format = 'summary'
 
@@ -67,67 +35,31 @@ class SimilarPersons(dd.VirtualTable):
         if mi is None:
             return
 
-        for o in self.find_similar_instances(mi):
+        for o in mi.find_similar_instances():
             yield self.Row(mi, o)
-
-    @classmethod
-    def get_words(self, obj):
-        s1 = set()
-        for s in (obj.last_name, obj.first_name):
-            for word in s.split():
-                s1.add(word)
-        s2 = set()
-        for n in s1:
-            for word in n.split('-'):
-                s2.add(word)
-        return s2
-    
-    @classmethod
-    def find_similar_instances(self, obj):
-        """This is Lino's default algorithm for finding similar humans in a
-        database. It is rather simplistic. To become more smart, we
-        might add helper tables with soundex copies of the names.
-
-        """
-        qs = contacts.Person.objects.exclude(pk=obj.pk)
-        for w in self.get_words(obj):
-            # logger.info("20140222 find_similar_instances word %s", w)
-            flt = Q(last_name__icontains=w) | Q(first_name__icontains=w)
-            qs = qs.filter(flt)
-        # logger.info("20140222 find_similar_instances %s", qs.query)
-        return qs
 
     @dd.displayfield(_("Other"))
     def other(self, obj, ar):
         return ar.obj2html(obj.slave)
 
 
-class CheckedSubmitInsert(SubmitInsert):
 
-    def run_from_ui(self, ar, **kw):
-        obj = ar.create_instance_from_request()
-
-        def ok(ar2):
-            self.save_new_instance(ar2, obj)
-            ar2.set_response(close_window=True)
-            # logger.info("20140512 CheckedSubmitInsert")
-
-        qs = SimilarPersons.find_similar_instances(obj)
-        if qs.count() > 0:
-            msg = _("There are %d %s with similar name:") % (
-                qs.count(), qs.model._meta.verbose_name_plural)
-            for other in qs[:4]:
-                msg += '<br/>' + unicode(other)
-
-            msg += '<br/>'
-            msg += _("Are you sure you want to create a new "
-                     "%(model)s named %(name)s?") % dict(
-                         model=qs.model._meta.verbose_name,
-                         name=obj.get_full_name())
-
-            ar.confirm(ok, msg)
-        else:
-            ok(ar)
+# @dd.receiver(dd.pre_analyze)
+# def dedupe_pre_analyze(sender=None, **kwargs):
+#     Partner = rt.modules.contacts.Partner
+#     dd.inject_field(Partner, 'phonetic_name',
+#                     models.CharField(_("Phonetic name"), max_length=200))
+#     dd.update_model(Partner, submit_insert=CheckedSubmitInsert())
 
 
-dd.update_model(contacts.Person, submit_insert=CheckedSubmitInsert())
+# dd.inject_field('contacts.Partner', 'phonetic_name',
+#                 models.CharField(_("Phonetic name"), max_length=200))
+# dd.update_model('contacts.Partner', submit_insert=CheckedSubmitInsert())
+
+# from lino.modlib.contacts.models import Partner
+# from django.db.models.signals import pre_save
+
+# @dd.receiver(pre_save, sender=Partner)
+# def post_init_dedupe(sender, instance=None, **kwargs):
+#     instance.phonetic_name = ' '.join([
+#         fuzzy.nysiis(w) for w in instance.get_words()])

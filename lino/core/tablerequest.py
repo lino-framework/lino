@@ -468,7 +468,6 @@ class TableRequest(ActionRequest):
         else:
             return jsgen.with_user_profile(u.profile, getit)
 
-
     def row2html(self, recno, columns, row, sums, **cellattrs):
         has_numeric_value = False
         cells = []

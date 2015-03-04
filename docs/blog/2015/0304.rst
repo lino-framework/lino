@@ -20,3 +20,45 @@ of raising an `IntegrityError` :message:`(1048, "Column
 If the recipient of an aid confirmation is a
 :class:`lino.modlib.contacts.models.Role`, Lino no longer raises an
 AttributeError "'Role' object has no attribute 'language'"
+
+
+Combinations of two
+===================
+
+I started to work on :ticket:`118`. The first part is a general
+problem: how to find duplicate persons in a database.  This is done by
+:mod:`lino.modlib.dedupe` (see :ref:`welfare.tested.dedupe`), but
+until now it was just a proof of concept which needed to be
+optimized. That's done.
+
+Side effects:
+
+- not only persons but all partners
+- uses a new database field phonetic_name
+- Use a model mixin and override full_clean.
+
+This is an example case where Django's signals would cause a lot of
+trouble and hacking while overriding a model mixin and full_clean is
+elegant.
+
+The optimized algorithem uses *combinations*:
+
+>>> from itertools import combinations
+>>> [''.join(c) for c in combinations(['a', 'b'], 2)]
+['ab']
+>>> [''.join(c) for c in combinations(['a', 'b', 'c'], 2)]
+['ab', 'ac', 'bc']
+>>> [''.join(c) for c in combinations(['a', 'b', 'c', 'd'], 2)]
+['ab', 'ac', 'ad', 'bc', 'bd', 'cd']
+
+
+Lino and Django 1.7
+===================
+
+Mahmoud correctly `discovered
+<http://iamdevops.com/blog/2015/0303.html>`_ Daniel's blog entry about
+`how to get rid of the warning "1_6.W001"
+<http://daniel.hepper.net/blog/2014/04/fixing-1_6-w001-when-upgrading-from-django-1-5-to-1-7/>`_.
+Added a :setting:`TEST_RUNNER` setting to
+:mod:`lino.projects.std.settings`.
+

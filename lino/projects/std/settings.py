@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines Lino default settings. You include this (directly or
@@ -81,3 +81,4 @@ DATABASES = {
 
 SECRET_KEY = "20227"  # see :djangoticket:`20227`
 
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
