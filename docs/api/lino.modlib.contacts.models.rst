@@ -27,12 +27,14 @@ lino.modlib.contacts.models
    
       AddressLocation
       Addressable
+      Born
       Companies
       Company
       CompanyDetail
       CompanyType
       CompanyTypes
       ContactRelated
+      Human
       OldCompanyContact
       Organisation
       Organisations

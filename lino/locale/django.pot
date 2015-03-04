@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.17\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-03-03 20:46+0200\n"
+"POT-Creation-Date: 2015-03-04 03:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -565,61 +565,61 @@ msgstr ""
 msgid "Duplicated %(old)s to %(new)s."
 msgstr ""
 
-#: lino/mixins/human.py:108
+#: lino/mixins/human.py:106
 msgid "Cannot find first and last name in \"{0}\""
 msgstr ""
 
-#: lino/mixins/human.py:133
+#: lino/mixins/human.py:131
 msgid "Mrs"
 msgstr ""
 
-#: lino/mixins/human.py:135
+#: lino/mixins/human.py:133
 msgctxt "nominative salutation"
 msgid "Mr"
 msgstr ""
 
-#: lino/mixins/human.py:136
+#: lino/mixins/human.py:134
 msgctxt "indirect salutation"
 msgid "Mr"
 msgstr ""
 
-#: lino/mixins/human.py:169 lino/modlib/users/models.py:116
+#: lino/mixins/human.py:167 lino/modlib/users/models.py:116
 msgid "First name"
 msgstr ""
 
-#: lino/mixins/human.py:172
+#: lino/mixins/human.py:170
 msgid "First or given name."
 msgstr ""
 
-#: lino/mixins/human.py:175
+#: lino/mixins/human.py:173
 msgid "Middle name"
 msgstr ""
 
-#: lino/mixins/human.py:176
+#: lino/mixins/human.py:174
 msgid "Space-separated list of all middle names."
 msgstr ""
 
-#: lino/mixins/human.py:179 lino/modlib/users/models.py:117
+#: lino/mixins/human.py:177 lino/modlib/users/models.py:117
 msgid "Last name"
 msgstr ""
 
-#: lino/mixins/human.py:180
+#: lino/mixins/human.py:178
 msgid "Last name (family name)."
 msgstr ""
 
-#: lino/mixins/human.py:273
+#: lino/mixins/human.py:271
 msgid "Birth date"
 msgstr ""
 
-#: lino/mixins/human.py:296 lino/modlib/ledger/models.py:1268
+#: lino/mixins/human.py:294 lino/modlib/ledger/models.py:1268
 msgid "Age"
 msgstr ""
 
-#: lino/mixins/human.py:300
+#: lino/mixins/human.py:298
 msgid "unknown"
 msgstr ""
 
-#: lino/mixins/human.py:301
+#: lino/mixins/human.py:299
 #, python-format
 msgid "%d years"
 msgstr ""

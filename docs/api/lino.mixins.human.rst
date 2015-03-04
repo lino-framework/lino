@@ -11,7 +11,10 @@ lino.mixins.human
    
       get_salutation
       join_words
+      name2kw
+      parse_name
       pgettext
+      upper1
    
    
 
@@ -28,5 +31,11 @@ lino.mixins.human
    
 
    
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+   
+      ValidationError
    
    

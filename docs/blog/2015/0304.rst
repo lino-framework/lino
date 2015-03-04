@@ -1,0 +1,13 @@
+========================
+Wednesday, March 4, 2015
+========================
+
+Please specify a doctor type
+============================
+
+When inserting a :class:`aids.RefundConfirmation
+<lino_welfare.modlib.aids.RefundConfirmation>`: Lino now says
+:message:`Please specify a doctor type` ("Bitte geben Sie die Art des
+Arztes an") if user leaves both doctor and doctor_type blank (instead
+of raising an `IntegrityError` :message:`(1048, "Column
+'doctor_type_id' cannot be null")`).

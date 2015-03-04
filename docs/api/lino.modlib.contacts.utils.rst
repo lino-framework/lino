@@ -9,10 +9,7 @@ lino.modlib.contacts.utils
 
    .. autosummary::
    
-      name2kw
-      parse_name
       street2kw
-      upper1
    
    
 
@@ -21,11 +18,5 @@ lino.modlib.contacts.utils
    
 
    
-   
-   .. rubric:: Exceptions
-
-   .. autosummary::
-   
-      ValidationError
    
    
