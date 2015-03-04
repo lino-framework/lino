@@ -131,6 +131,7 @@ def fmt(func_caller):
 @receiver(pre_analyze)
 # def check_pending_injects(signal,sender,models_list=None,**kw):
 def check_pending_injects(sender, models_list=None, **kw):
+    # raise Exception(20150304)
     # called from kernel.analyze_models()
     site = sender
     #~ logger.info("20130212 check_pending_injects()...")

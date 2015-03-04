@@ -40,12 +40,12 @@ if not AFTER17:
 
     startup()
 
-else:
+# else:
 
-    from django.apps import AppConfig
+#     from django.apps import AppConfig
 
-    class LinoConfig(AppConfig):
+#     class LinoConfig(AppConfig):
 
-        def ready(self):
+#         def ready(self):
 
-            startup()
+#             startup()

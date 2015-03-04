@@ -65,7 +65,7 @@ else:
 
 
 def startup():
-    # called from `lino.models`
+    # called from `lino.models` (before Django 1.7) or below (after 1.7)
     from django.conf import settings
     if False:
         settings.SITE.startup()
@@ -80,20 +80,15 @@ def startup():
                             traceback.format_exc(e))
 
 
-
-
 if AFTER17:
 
     from django.apps import AppConfig
 
     class AppConfig(AppConfig):
         name = 'lino'
-        # verbose_name = "Djangosite"
     
         def ready(self):
             
             startup()
 
     default_app_config = 'lino.AppConfig'
-
-
