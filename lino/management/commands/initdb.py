@@ -137,25 +137,29 @@ Are you sure (y/n) ?""" % dbname):
             sql_list = []
             conn = connections[using]
 
+            sql = sql_flush(no_style(), conn, only_django=False)
+            sql_list.extend(sql)
+
             if AFTER17:
+                # django.core.management.base.CommandError: App
+                # 'sessions' has migrations. Only the sqlmigrate and
+                # sqlflush commands can be used when an app has
+                # migrations.
                 # from django.apps import apps
-                # print 20140913, apps
                 # app_list = apps.get_app_configs()
-                sql = sql_flush(no_style(), conn, only_django=False)
-                sql_list.extend(sql)
+                # for app in app_list:
+                #     sql_list.extend(sql_delete(app, no_style(), conn))
+                pass
 
             elif USE_SQLDELETE:
                 #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
+                
                 app_list = [models.get_app(app_label)
                             for app_label in app_labels()]
                 for app in app_list:
                     # app_label = app.__name__.split('.')[-2]
                     sql_list.extend(sql_delete(app, no_style(), conn))
                     # print app_label, ':', sql_list
-            else:
-                #~ call_command('flush',verbosity=0,interactive=False)
-                #~ call_command('flush',**options)
-                sql_list.extend(sql_flush(no_style(), conn, only_django=False))
 
             #~ print sql_list
 
@@ -174,10 +178,12 @@ Are you sure (y/n) ?""" % dbname):
 
             transaction.commit_unless_managed()
 
-
         settings.SITE._site_config = None  # clear cached instance
 
-        call_command('syncdb', load_initial_data=False, **options)
+        if AFTER17:
+            call_command('migrate', **options)
+        else:
+            call_command('syncdb', load_initial_data=False, **options)
 
         if len(args):
             call_command('loaddata', *args, **options)

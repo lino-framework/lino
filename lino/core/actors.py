@@ -263,8 +263,8 @@ class Actor(actions.Parametrizable):
                     return 'green'
 
         Defining this method will cause an additional special
-        `RowClassStoreField` field in the :class:`lino.ui.Store` objects
-        of this actor.
+        `RowClassStoreField` field in the :class:`lino.core.Store`
+        objects of this actor.
 
     .. classmethod:: get_welcome_messages(self, ar)
 

@@ -1,0 +1,15 @@
+=======================
+Thursday, March 5, 2015
+=======================
+
+Reported and fixed :ticket:`120` : :class:`reception.Clients
+<lino_welfare.modlib.reception.models.Clients>` now has the same
+default parameters as :class:`pcsw.Clients
+<lino_welfare.modlib.pcsw.models.Clients>`.
+
+Fixed a bug in 
+:meth:`lino_welfare.modlib.pcsw.models.Clients.get_request_queryset`
+: coachings must not used for filtering when
+e.g. `observed_event` is set to `ClientEvents.isip`
+
+

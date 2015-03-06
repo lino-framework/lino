@@ -87,8 +87,11 @@ if AFTER17:
     class AppConfig(AppConfig):
         name = 'lino'
     
+        # def __init__(self, app_name, app_module):
+        #     super(AppConfig, self).__init__(app_name, app_module)
+        #     startup()
+
         def ready(self):
-            
             startup()
 
     default_app_config = 'lino.AppConfig'

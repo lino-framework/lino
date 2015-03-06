@@ -4,6 +4,15 @@
 
 """Model mixin for `lino.modlib.dedupe`.
 
+Note about the name: The first meaning of *to dupe somebody* is "to
+make a dupe of; deceive; delude; trick." (`reference.com
+<http://dictionary.reference.com/browse/dupe>`_). This is *not* the
+meaning of our `Dupable` mixin. We use the second meaning: "to dupe
+something" can also mean "to *duplicate* something".  This mixin is to
+be used on models for which there is a danger of having duplicate
+records. It is both for *avoiding* such duplicates on new records and
+for *detecting* existing duplicates.
+
 
 """
 
@@ -34,7 +43,7 @@ class CheckedSubmitInsert(SubmitInsert):
 
         qs = obj.find_similar_instances()
         if qs.count() > 0:
-            msg = _("There are %d %s with similar name:") % (
+            msg = _("There are %d similar %s:") % (
                 qs.count(), qs.model._meta.verbose_name_plural)
             for other in qs[:4]:
                 msg += '<br/>\n' + unicode(other)
@@ -50,8 +59,8 @@ class CheckedSubmitInsert(SubmitInsert):
             ok(ar)
 
 
-class Dedupable(dd.Model):
-    """Adds a field `phonetic_name` and replaces `submit_insert` by
+class Dupable(dd.Model):
+    """Adds a field `phonetic_words` and replaces `submit_insert` by
     :class:`CheckedSubmitInsert`.
 
     """
@@ -60,44 +69,48 @@ class Dedupable(dd.Model):
 
     submit_insert = CheckedSubmitInsert()
 
-    phonetic_name = models.CharField(_("Phonetic name"), max_length=200)
+    # phonetic_words = models.CharField(_("Phonetic name"), max_length=200)
 
-    def full_clean(self):
-        self.phonetic_name = ' '.join([
-            fuzzy.nysiis(w) for w in self.get_words()])
-        super(Dedupable, self).full_clean()
+    def save(self, *args, **kwargs):
+        super(Dupable, self).save(*args, **kwargs)
+        # A related object set can be replaced in bulk with one
+        # operation by assigning a new iterable of objects to it
+        PhoneticWord = rt.modules.dedupe.PhoneticWord
+        PhoneticWord.objects.filter(owner=self).delete()
+        words = map(fuzzy.nysiis, self.get_dupable_words())
+        for w in words:
+            PhoneticWord(word=w, owner=self).save()
+        # words = [PhoneticWord(word=w, owner=self) for w in words]
+        # self.phonetic_words.clear()
+        # self.phonetic_words = words
+        # for w in words:
+        #     w.save()
 
-    def get_words(self):
+    def get_dupable_words(self):
         name = self.name
         for c in '-,/&+':
             name = name.replace(c, ' ')
         return name.split()
-        # s1 = set()
-        # for word in name.split():
-        #     s1.add(word)
-        # s2 = set()
-        # for n in s1:
-        #     for word in n.split('-'):
-        #         s2.add(word)
-        # return s2
 
-    def find_similar_instances(obj):
+    def find_similar_instances(obj, *args, **kwargs):
         """This is Lino's default algorithm for finding similar humans in a
         database. It is rather simplistic. To become more smart, we
         might add helper tables with soundex copies of the names.
 
         """
-        qs = rt.modules.contacts.Partner.objects.exclude(pk=obj.pk)
+        if obj.pk is None:
+            return obj.__class__.objects.none()
+        qs = obj.__class__.objects.exclude(pk=obj.pk).filter(*args, **kwargs)
         cnd = Q()
-        parts = [fuzzy.nysiis(w) for w in obj.get_words()]
+        parts = map(fuzzy.nysiis, obj.get_dupable_words())
         for comb in combinations(parts, 2):
             cnd |= (
-                Q(phonetic_name__icontains=comb[0]) &
-                Q(phonetic_name__icontains=comb[1]))
+                Q(phonetic_words__word=comb[0]) &
+                Q(phonetic_words__word=comb[1]))
         if cnd:
             # logger.info("20140222 find_similar_instances word %s", w)
             qs = qs.filter(cnd)
-        # logger.info("20140222 find_similar_instances %s", qs.query)
+        # print("20140222 find_similar_instances %s" % qs.query)
         return qs
 
 

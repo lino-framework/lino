@@ -4,8 +4,17 @@
 When a Lino application starts up
 =================================
 
+There are three phases in the lifecycle of a Lino process:
+
+- while Django settings are being loaded (:mod:`lino.api.ad`)
+- while Django models are being loaded (:mod:`lino.api.dd`)
+- normal runtime (:mod:`lino.api.rt`)
+
+
 A server startup signal for Django
 ==================================
+
+This section is for Django before 1.7.
 
 Lino provides a solution for Django's old problem of not having an
 "application server startup signal", a signal to be emitted when the
@@ -47,7 +56,7 @@ app's models.py file" as described by `Ross McFarland on Sun 24 June
 That's why :mod:`lino`  must be the *last* item of your
 :setting:`INSTALLED_APPS`.
 
-.. currentmodule:: ad
+.. currentmodule:: lino.core.site
 
 Although :mod:`lino` doesn't have any model of its own, it
 does have a `models` module which invokes

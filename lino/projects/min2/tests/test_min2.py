@@ -9,6 +9,7 @@ module by issuing either::
 
   $ go min2
   $ python manage.py test
+  $ python manage.py test tests.test_min2.QuickTest.test_dupable
 
 or::
 
@@ -45,13 +46,16 @@ from lino.utils.djangotest import RemoteAuthTestCase
 
 from lino.core.utils import full_model_name
 
+def create(m, **kw):
+    obj = m(**kw)
+    obj.full_clean()
+    obj.save()
+    return obj
+
 
 class QuickTest(RemoteAuthTestCase):
 
     fixtures = ['std', 'few_countries']
-
-    def test00(self):
-        self.assertEqual(1 + 1, 2)
 
     def test_controllables(self):
         found = []
@@ -69,12 +73,6 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(len(Person.allow_cascaded_delete), 0)
         self.assertEqual(len(Note.allow_cascaded_delete), 0)
         self.assertEqual(len(Excerpt.allow_cascaded_delete), 1)
-
-        def create(m, **kw):
-            obj = m(**kw)
-            obj.full_clean()
-            obj.save()
-            return obj
 
         doe = create(Person, first_name="John", last_name="Doe")
         note = create(Note, owner=doe, body="John Doe is a fink!")
@@ -116,3 +114,18 @@ class QuickTest(RemoteAuthTestCase):
         note.delete()
         self.assertEqual(Excerpt.objects.count(), 0)
         self.assertEqual(ExcerptType.objects.count(), 1)
+
+    def test_dupable(self):
+        
+        Person = rt.modules.contacts.Person
+        PhoneticWord = rt.modules.dedupe.PhoneticWord
+        bernard = create(Person, first_name="Bernard", last_name="Bodard")
+        
+        self.assertEqual(Person.objects.count(), 1)
+        self.assertEqual(bernard.phonetic_words.count(), 2)
+        self.assertEqual(PhoneticWord.objects.count(), 2)
+
+        bernard2 = create(Person, first_name="Bernhard", last_name="Bodard")
+        ar = rt.modules.dedupe.SimilarPartners.request(bernard2)
+        self.assertEqual(ar.get_total_count(), 1)
+

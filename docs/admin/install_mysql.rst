@@ -6,6 +6,13 @@ If you decided to use MySQL as database frontend,
 then here is a cheat sheet for quickly doing so.
 No warranty.
 
+.. contents:: Table of contents
+    :local:
+    :depth: 1
+            
+
+
+
 Installation
 ============
 
@@ -121,14 +128,7 @@ See also `Setting the Storage Engine
 <http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
 
 
-Tuning database performance
-===========================
+Tuning
+======
 
-
-Use `MySQLTuner-perl <https://github.com/major/mysqltuner-perl>`_ to
-analyze Lino's database usage::
-
-  $ wget https://raw.githubusercontent.com/major/MySQLTuner-perl/master/mysqltuner.pl
-  $ perl mysqltuner.pl
-
-
+See separate document :doc:`/admin/mysql_tune`.

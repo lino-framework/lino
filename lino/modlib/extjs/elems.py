@@ -19,6 +19,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
+from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
@@ -2131,7 +2132,8 @@ def create_layout_element(lh, name, **kw):
     if isinstance(de, SingleRelatedObjectDescriptor):
         return SingleRelatedObjectElement(lh, de.related, **kw)
 
-    if isinstance(de, ManyRelatedObjectsDescriptor):
+    if isinstance(de, (
+            ManyRelatedObjectsDescriptor, ForeignRelatedObjectsDescriptor)):
         e = ManyRelatedObjectElement(lh, de.related, **kw)
         lh.add_store_field(e.field)
         return e

@@ -1,0 +1,71 @@
+=====================
+Friday, March 6, 2015
+=====================
+
+Editable primary key
+====================
+
+Worked on :ticket:`121` : In the detail window opened from
+:class:`reception.Clients
+<lino_welfare.modlib.reception.models.Clients>` (only from there), the
+client's `id` field is editable although it is the primary key.  
+
+This was because Client is an MTI child and thus has **more than one
+primary key** fields. I verified this using the following temporary
+test session (i.e. I ran `python -m doctest docs/blog/2015/0306.rst`
+repeatedly to get this running when writing this blog entry, but it is
+not part of the test suite):
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+...    'lino_welfare.projects.eupen.settings.doctests'
+>>> from lino.api.doctest import *
+>>> reception.Clients.get_pk_field()
+<django.db.models.fields.related.OneToOneField: person_ptr>
+
+>>> for (fld, model) in pcsw.Client._meta.get_fields_with_model():
+...     if fld.primary_key:
+...         print fld.name, fld
+id <django.db.models.fields.AutoField: id>
+partner_ptr <django.db.models.fields.related.OneToOneField: partner_ptr>
+person_ptr <django.db.models.fields.related.OneToOneField: person_ptr>
+
+Another observation is that the problem occurs only when I don't have
+the usual ``*`` in `column_names`. Adding this was indeed a quick and
+acceptable workaround.
+
+But that was just a coincidence.  Here we see that before our change
+only `person_ptr` and `partner_ptr` were disabled, `id` was missing:
+
+>>> d['disabled_fields']  #doctest: +SKIP
+{u'person_ptr_id': True, u'partner_ptr': True, 'modified': True, 'AgentsByClient': True, 'created': True}
+
+The serious solution was to add *all* primary keys to the
+`disabled_fields`. Or, even better: to add those which are being used
+in some layout. We don't need to disable `person_ptr` or `partner_ptr`
+if there is no widget in any of the layouts managed by this store.
+
+>>> u = rt.login("robin").get_user()
+>>> ar = reception.Clients.request(user=u)
+>>> store = reception.Clients.get_handle().store
+>>> obj = pcsw.Client.objects.get(id=257)
+>>> d = store.row2dict(ar, obj)
+
+The new implementation is that Store has an attribute `primary_keys`
+with a set of all primary keys which are used in some layout.
+
+>>> d['disabled_fields']
+{u'id': True, 'modified': True, 'AgentsByClient': True, 'created': True}
+
+
+When MySQL is slow
+==================
+
+Started new document :doc:`/admin/mysql_tune`.
+
+Checkin an appointment
+======================
+
+Un bénéficiaire a un rendez-vous planifié. Il arrive et je clique sur
+"Arriver". Mais ensuite ce bénéficiaire n'apparait pas dans la salle
+d'attente.

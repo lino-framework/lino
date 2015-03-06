@@ -425,9 +425,9 @@ class DisabledFieldsStoreField(SpecialStoreField):
     
     Note some special cases:
     
-    - vat.VatDocument.total_incl (readonly virtual PriceField) must be
-      disabled and may not get submitted.  ExtJS requires us to set
-      this dynamically each time.
+    - :attr:`lino.modlib.vat.mixins.VatDocument.total_incl` (readonly
+      virtual PriceField) must be disabled and may not get submitted.
+      ExtJS requires us to set this dynamically each time.
 
     - JobsOverview.body (a virtual HtmlBox) or Model.workflow_buttons
       (a displayfield) must *not* have the 'disabled' css class -
@@ -461,16 +461,19 @@ class DisabledFieldsStoreField(SpecialStoreField):
 
         # disable the primary key field if pk is set (i.e. on saved instance):
         if self.store.pk is not None and obj.pk is not None:
-            if self.store.pk.attname is None:
-                raise Exception('20130322b')
-            d[self.store.pk.attname] = True
-            #~ l.append(self.store.pk.attname)
-            # MTI children have two "primary keys":
-            if isinstance(self.store.pk, models.OneToOneField):
-                #~ l.append(self.store.pk.rel.field_name)
-                if self.store.pk.rel.field_name is None:
-                    raise Exception('20130322c')
-                d[self.store.pk.rel.field_name] = True
+            for pk in self.store.primary_keys:
+                d[pk.attname] = True
+            # if self.store.pk.attname is None:
+            #     raise Exception('20130322b')
+            # d[self.store.pk.attname] = True
+            # # MTI children have an additional "primary key" for every
+            # # parent:
+            # pk = self.store.pk
+            # while isinstance(pk, models.OneToOneField):
+            #     if pk.rel.field_name is None:
+            #         raise Exception('20130322c')
+            #     d[pk.rel.field_name] = True
+            #     pk = None
         return d
 
 
@@ -954,38 +957,15 @@ class Store(BaseStore):
     pk = None
 
     def __init__(self, rh, **options):
-        #~ assert isinstance(rh,tables.TableHandle)
-        #~ Component.__init__(self,id2js(rh.report.actor_id),**options)
         self.rh = rh
         self.actor = rh.actor
-        """
-        MTI children have two primary keys. Example (not tested)::
-        >>> from lino.projects.pcsw.models import Person
-        >>> [f for f in Person._meta.fields if f.primary_key]
-        [<django.db.models.fields.AutoField: id>, <django.db.models.fields.related.OneToOneField: contact_ptr>]
-        >>> Person._meta.pk
-        <django.db.models.fields.related.OneToOneField: contact_ptr>
-        >>> p = Person.objects.get(pk=118)
-        >>> p
-        <Person: ARENS Annette (118)>
-        >>> p.contact_ptr_id = 117
-        >>> print p.pk
-        117
-        >>> p.save()
-        >>>        
-        """
-        #~ if issubclass(rh.report,dbtables.Table):
-            #~ self.pk = self.report.model._meta.pk
-            #~ assert self.pk is not None, "Cannot make Store for %s because %s has no pk" % (
-              #~ self.report.actor_id,self.report.model)
-
-        #~ fields = []
 
         # temporary dict used by collect_fields and add_field_for
         self.df2sf = {}
         self.all_fields = []
         self.list_fields = []
         self.detail_fields = []
+        self.primary_keys = set([])
 
         def addfield(sf):
             self.all_fields.append(sf)
@@ -1056,10 +1036,10 @@ class Store(BaseStore):
         self.detail_fields = tuple(self.detail_fields)
 
     def collect_fields(self, fields, *layouts):
-        """
-        `fields` is a pointer to either `self.detail_fields` or `self.list_fields`.
-        Each of these must contain a primary key field.
-        
+        """`fields` is a pointer to either `self.detail_fields` or
+        `self.list_fields`.  Each of these must contain a primary key
+        field.
+
         """
         pk_found = False
         for layout in layouts:
@@ -1067,6 +1047,7 @@ class Store(BaseStore):
                 assert df is not None
                 self.add_field_for(fields, df)
                 if df.primary_key:
+                    self.primary_keys.add(df)
                     pk_found = True
                     if self.pk is None:
                         self.pk = df

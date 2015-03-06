@@ -31,6 +31,7 @@ class Site(Site):
         # yield 'lino.modlib.extensible'
         yield 'lino.modlib.pages'
         yield 'lino.modlib.export_excel'
+        yield 'lino.modlib.dedupe'
 
     def setup_user_profiles(self):
         """

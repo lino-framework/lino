@@ -509,52 +509,6 @@ def py2js(v):
     # ~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
 
 
-"""
-The following works only for Python 2.6 and above, which is not available on Lenny.
-See also http://code.google.com/p/lino/wiki/20100215
-
-class LinoJSONEncoder(DjangoJSONEncoder):
-    def _iterencode_default(self, o, markers=None):
-        if type(o) is types.GeneratorType:
-            #~ for ln in o: yield ln+'\n'
-            return "\n".join([ln for ln in o])
-        if isinstance(o,js_code):
-            return o.s
-        if isinstance(o,Variable):
-            return o.as_ext()
-        return super(LinoJSONEncoder, self)._iterencode_default(o,markers)
-        #~ for chunk in super(LinoJSONEncoder, self)._iterencode(o,markers):
-            #~ yield chunk
-
-    def default(self, o):
-      
-        if isinstance(o,menus.Menu):
-            if o.parent is None:
-                return o.items
-            return dict(text=o.label,menu=dict(items=o.items))
-            
-        if isinstance(o,menus.MenuItem):
-            # from lino.lino_site import lino_site
-            # todo: convert
-            # url = lino_site.ui.action_url_http(o.actor)
-            #handler = "function(btn,evt){Lino.do_action(undefined,%r,%r,{})}" % (url,id2js(o.actor.actor_id))
-            return dict(text=o.label,handler=js_code(handler))
-            
-        return super(LinoJSONEncoder, self).default(o)
-
-
-
-
-def py2js(v,**kw):
-    # logger.debug("py2js(%r,%r)",v,kw)
-    if isinstance(v,Variable):
-        return v.as_ext(**kw)
-    assert len(kw) == 0, "py2js() : value %r not allowed with keyword parameters" % v
-    return json.dumps(v, cls=LinoJSONEncoder) # http://code.djangoproject.com/ticket/3324
-    
-"""
-
-
 def _test():
     import doctest
     doctest.testmod()

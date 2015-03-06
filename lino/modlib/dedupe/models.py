@@ -6,9 +6,23 @@
 
 """
 
-from __future__ import unicode_literals
-
+from django.db import models
 from lino.api import dd, _
+
+
+class PhoneticWord(dd.Model):
+
+    allow_cascaded_delete = ['owner']
+
+    owner = dd.ForeignKey('contacts.Partner', related_name='phonetic_words')
+    word = models.CharField(max_length=100)
+
+    def __unicode__(self):
+        return self.word
+
+
+class PhoneticWords(dd.Table):
+    model = 'dedupe.PhoneticWord'
 
 
 class SimilarPartners(dd.VirtualTable):
@@ -19,15 +33,15 @@ class SimilarPartners(dd.VirtualTable):
 
     class Row:
 
-        def __init__(self, master, slave):
+        def __init__(self, master, other):
             self.master = master
-            self.slave = slave
+            self.other = other
 
         def summary_row(self, ar):
-            yield ar.obj2html(self.slave)
+            yield ar.obj2html(self.other)
 
         def __unicode__(self):
-            return unicode(self.slave)
+            return unicode(self.other)
 
     @classmethod
     def get_data_rows(self, ar):
@@ -40,7 +54,7 @@ class SimilarPartners(dd.VirtualTable):
 
     @dd.displayfield(_("Other"))
     def other(self, obj, ar):
-        return ar.obj2html(obj.slave)
+        return ar.obj2html(obj.other)
 
 
 

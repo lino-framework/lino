@@ -57,4 +57,5 @@ Other
     oood
     watch_tim
     tim2lino
+    mysql_tune
     

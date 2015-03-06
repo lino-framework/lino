@@ -235,15 +235,32 @@ def update_model(model_spec, **actions):
 
 
 def inject_field(model_spec, name, field, doc=None):
-    """
-    Add the given field to the given model.
-    See also :srcref:`docs/tickets/49`.
-    
-    Since `inject_field` is usually called at the global level 
-    of `models modules`, it cannot know whether the given `model_spec` 
-    has already been imported (and its class prepared) or not. 
-    That's why it uses Django's `class_prepared` signal to maintain 
-    its own list of models.
+    """Add the given field to the given model.
+
+    The following code::
+
+        class Foo(dd.Model):
+           field1 = models.ForeignKey(...)
+
+        dd.inject_field(Foo, 'field2', models.CharField(max_length=20))
+
+    is functionally equivalent to this code::
+
+        class Foo(dd.Model):
+           field1 = models.ForeignKey(Bar)
+           field2 = models.CharField(max_length=20)
+
+    Because `inject_field` is usually called at the global level of
+    `models modules`, it cannot know whether the given `model_spec`
+    has already been imported (and its class prepared) or not.  That's
+    why it uses Django's `class_prepared` signal to maintain its own
+    list of models.
+
+    Note that :meth:`inject_field` causes problems when the modified
+    model has subclasses and is not abstract (i.e., is an MTI parent).
+    Subclasses will have only some part of the injected field's
+    definition.
+
     """
     if doc:
         field.__doc__ = doc
