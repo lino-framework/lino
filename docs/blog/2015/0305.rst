@@ -13,3 +13,6 @@ Fixed a bug in
 e.g. `observed_event` is set to `ClientEvents.isip`
 
 
+
+I continued to work on :mod:`lino.modlib.dedupe`.
+

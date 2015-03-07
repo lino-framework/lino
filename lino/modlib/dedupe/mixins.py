@@ -20,12 +20,21 @@ from __future__ import unicode_literals
 
 import fuzzy
 
+DMETA = fuzzy.DMetaphone()
+
 from django.db import models
-from django.db.models import Q
+# from django.db.models import Q
 
 from lino.api import dd, rt, _
 from lino.core.actions import SubmitInsert
-from itertools import combinations
+# from itertools import combinations
+
+
+def phonetic(s):
+    # fuzzy.DMetaphone does not work with unicode strings
+    # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
+    return DMETA(s.encode('utf8'))[0]
+    # return fuzzy.nysiis(s)
 
 
 class CheckedSubmitInsert(SubmitInsert):
@@ -77,7 +86,7 @@ class Dupable(dd.Model):
         # operation by assigning a new iterable of objects to it
         PhoneticWord = rt.modules.dedupe.PhoneticWord
         PhoneticWord.objects.filter(owner=self).delete()
-        words = map(fuzzy.nysiis, self.get_dupable_words())
+        words = map(phonetic, self.get_dupable_words())
         for w in words:
             PhoneticWord(word=w, owner=self).save()
         # words = [PhoneticWord(word=w, owner=self) for w in words]
@@ -101,16 +110,12 @@ class Dupable(dd.Model):
         if obj.pk is None:
             return obj.__class__.objects.none()
         qs = obj.__class__.objects.exclude(pk=obj.pk).filter(*args, **kwargs)
-        cnd = Q()
-        parts = map(fuzzy.nysiis, obj.get_dupable_words())
-        for comb in combinations(parts, 2):
-            cnd |= (
-                Q(phonetic_words__word=comb[0]) &
-                Q(phonetic_words__word=comb[1]))
-        if cnd:
-            # logger.info("20140222 find_similar_instances word %s", w)
-            qs = qs.filter(cnd)
-        # print("20140222 find_similar_instances %s" % qs.query)
+        parts = map(phonetic, obj.get_dupable_words())
+        qs = qs.filter(phonetic_words__word__in=parts).distinct()
+        qs = qs.annotate(
+            num=models.Count('phonetic_words__word'))
+        qs = qs.filter(num__gte=2)
+        # print("20150306 find_similar_instances %s" % qs.query)
         return qs
 
 

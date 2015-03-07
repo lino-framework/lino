@@ -19,6 +19,10 @@ Examples and test cases in :ref:`welfare.tested.dedupe`.
 The current implementation of the detection algorithm uses the `fuzzy
 <https://pypi.python.org/pypi/Fuzzy>`_ module.
 
+Doug Hellmann about `Using Fuzzy Matching to Search by Sound with
+Python <http://www.informit.com/articles/article.aspx?p=1848528>`_
+
+
 
 .. autosummary::
    :toctree:

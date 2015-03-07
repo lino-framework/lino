@@ -117,6 +117,7 @@ class QuickTest(RemoteAuthTestCase):
 
     def test_dupable(self):
         
+        Company = rt.modules.contacts.Company
         Person = rt.modules.contacts.Person
         PhoneticWord = rt.modules.dedupe.PhoneticWord
         bernard = create(Person, first_name="Bernard", last_name="Bodard")
@@ -124,8 +125,27 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(Person.objects.count(), 1)
         self.assertEqual(bernard.phonetic_words.count(), 2)
         self.assertEqual(PhoneticWord.objects.count(), 2)
+        words = [o.word for o in PhoneticWord.objects.filter(owner=bernard)]
+        self.assertEqual(words, [u'PTRT', u'PRNR'])
 
-        bernard2 = create(Person, first_name="Bernhard", last_name="Bodard")
-        ar = rt.modules.dedupe.SimilarPartners.request(bernard2)
-        self.assertEqual(ar.get_total_count(), 1)
+        godard = create(Person, first_name="Bernard", last_name="Godard")
+        words = [o.word for o in PhoneticWord.objects.filter(owner=godard)]
+        self.assertEqual(words, [u'KTRT', u'PRNR'])
+
+        bernard3 = create(Person, first_name="Bernhard", last_name="Bodard")
+        words = [o.word for o in PhoneticWord.objects.filter(owner=bernard3)]
+        self.assertEqual(words, [u'PTRT', u'PRNR'])
+
+        comp = create(Company, name="Külamaja OÜ")
+
+        self.assertEqual(
+            map(unicode, bernard.find_similar_instances()),
+            [u'Bernhard Bodard'])
+
+        self.assertEqual(
+            map(unicode, godard.find_similar_instances()), [])
+
+        self.assertEqual(
+            map(unicode, bernard3.find_similar_instances()),
+            [u'Bernard Bodard'])
 
