@@ -34,10 +34,21 @@ from django.utils import translation
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
-from babel.dates import format_datetime, format_date
+from babel.dates import format_date as babel_format_date
+
 from lino.core.site import to_locale
 
 from lino.api import dd, rt
+
+
+def format_date(d, fmt):
+    """Return the given date `d` formatted using Django's current language
+    combined with `Babel's date formatting
+    <http://babel.edgewall.org/wiki/Documentation/dates.html>`_
+
+    """
+    return babel_format_date(
+        d, fmt, locale=to_locale(translation.get_language()))
 
 
 def aware(d):
@@ -99,8 +110,7 @@ def when_text(d, t=None):
         return ''
     # fmt = 'yyyy MMM dd (EE)'
     # txt = d.strftime(settings.SITE.date_format_strftime)
-    txt = format_date(
-        d, 'EE ', locale=to_locale(translation.get_language()))
+    txt = format_date(d, 'EE ')
     txt += dd.fds(d)
     if t is not None:
         txt += ' (%s)' % t.strftime(settings.SITE.time_format_strftime)
