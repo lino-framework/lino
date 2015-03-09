@@ -311,10 +311,10 @@ class UpdateGuests(dd.MultipleRowAction):
         if not obj.state.edit_guests:
             ar.info("not state.edit_guests")
             return 0
-        existing = set([g.partner for g in obj.guest_set.all()])
+        existing = set([g.partner.pk for g in obj.guest_set.all()])
         n = 0
         for g in obj.suggest_guests():
-            if not g.partner in existing:
+            if g.partner.pk not in existing:
                 g.save()
                 n += 1
         return n

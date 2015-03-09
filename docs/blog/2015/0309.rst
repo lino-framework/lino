@@ -72,3 +72,60 @@ question.
   à la liste des participants. Cette règle était trop simpliste. Par
   exemple quand on modifie le bénéficiaire d'un rendez-vous
   existant. Lino demande maintentant.
+
+
+
+MySQL performace
+================
+
+Here is another MySQLTuner report::
+
+    >>  MySQLTuner 1.4.0 - Major Hayden <major@mhtx.net>
+    >>  Bug reports, feature requests, and downloads at http://mysqltuner.com/
+    >>  Run with '--help' for additional options and output filtering
+    Please enter your MySQL administrative login: django
+    Please enter your MySQL administrative password: 
+    [OK] Currently running supported MySQL version 5.5.41-0+wheezy1-log
+    [OK] Operating on 64-bit architecture
+
+    -------- Storage Engine Statistics -------------------------------------------
+    [--] Status: +ARCHIVE +BLACKHOLE +CSV -FEDERATED +InnoDB +MRG_MYISAM 
+    [--] Data in MyISAM tables: 1M (Tables: 162)
+    [!!] InnoDB is enabled but isn't being used
+    [OK] Total fragmented tables: 0
+
+    -------- Security Recommendations  -------------------------------------------
+    ERROR 1142 (42000) at line 1: SELECT command denied to user 'django'@'localhost' for table 'user'
+    [OK] All database users have passwords assigned
+
+    -------- Performance Metrics -------------------------------------------------
+    [--] Up for: 3d 10h 24m 20s (19M q [64.568 qps], 61K conn, TX: 9B, RX: 13B)
+    [--] Reads / Writes: 66% / 34%
+    [--] Total buffers: 192.0M global + 2.7M per thread (151 max threads)
+    [OK] Maximum possible memory usage: 597.8M (3% of installed RAM)
+    [OK] Slow queries: 0% (5K/19M)
+    [OK] Highest usage of available connections: 10% (16/151)
+    [OK] Key buffer size / total MyISAM indexes: 16.0M/2.6M
+    [OK] Key buffer hit rate: 100.0% (13M cached / 921 reads)
+    [OK] Query cache efficiency: 99.4% (18M cached / 18M selects)
+    [!!] Query cache prunes per day: 7763
+    [OK] Sorts requiring temporary tables: 0% (1 temp sorts / 3K sorts)
+    [!!] Joins performed without indexes: 871
+    [OK] Temporary tables created on disk: 19% (2K on disk / 12K total)
+    [OK] Thread cache hit rate: 97% (1K created / 61K connections)
+    [!!] Table cache hit rate: 4% (141 open / 2K opened)
+    [OK] Open file limit used: 24% (249/1K)
+    [OK] Table locks acquired immediately: 99% (228K immediate / 228K locks)
+
+    -------- Recommendations -----------------------------------------------------
+    General recommendations:
+        Add skip-innodb to MySQL configuration to disable InnoDB
+        Adjust your join queries to always utilize indexes
+        Increase table_open_cache gradually to avoid file descriptor limits
+        Read this before increasing table_open_cache over 64: http://bit.ly/1mi7c4C
+    Variables to adjust:
+        query_cache_size (> 16M)
+        join_buffer_size (> 128.0K, or always use indexes with joins)
+        table_open_cache (> 400)
+
+
