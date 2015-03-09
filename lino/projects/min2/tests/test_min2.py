@@ -93,7 +93,7 @@ class QuickTest(RemoteAuthTestCase):
 ==== ===============
  ID   Controlled by
 ---- ---------------
- 1    **John Doe**
+ 1    *John Doe*
 ==== ===============
 """)
 
@@ -103,7 +103,7 @@ class QuickTest(RemoteAuthTestCase):
 ==== ===============
  ID   Controlled by
 ---- ---------------
- 1    **Note #1**
+ 1    *Note #1*
 ==== ===============
 """)
 
@@ -137,21 +137,50 @@ class QuickTest(RemoteAuthTestCase):
         godard = create(Person, first_name="Bernard", last_name="Godard")
         erna = create(Person, first_name="Erna", last_name="Odar")
         bernard4 = create(
-            Person, first_name="Bernhard-Marie", last_name="Bodard")
+            Person, first_name="Bernard-Marie", last_name="Bodard")
         marie = create(Person, first_name="Marie", last_name="Bernard-Bodard")
 
         create(Company, name="Külamaja OÜ")
 
         def check(obj, expected):
-            self.assertEqual(
-                map(unicode, obj.find_similar_instances()), expected)
+            got = map(unicode, obj.find_similar_instances())
+            got = '\n'.join(got)
+            self.assertEqual(got, expected.strip())
 
-        check(bernard, ['Bodard Bernard', 'Bernhard Bodard'])
-        check(bernard2, ['Bernard Bodard', 'Bernhard Bodard'])
-        check(bernard3, ['Bernard Bodard', 'Bernhard Bodard'])
-        check(godard, [])
-        check(erna, [])
-        check(bernard4, ['Bodard Bernard', 'Bernard Bodard'])
-        check(marie, [])
+        check(bernard, """
+Bodard Bernard
+Bernhard Bodard
+Bernard-Marie Bodard
+Marie Bernard-Bodard
+""")
+
+        check(bernard2, """
+Bernard Bodard
+Bernhard Bodard
+Bernard-Marie Bodard
+Marie Bernard-Bodard
+""")
+
+        check(bernard3, """
+Bernard Bodard
+Bodard Bernard
+Bernard-Marie Bodard
+Marie Bernard-Bodard
+""")
+
+        check(godard, "")
+        check(erna, "")
+        check(bernard4, """
+Marie Bernard-Bodard
+Bernard Bodard
+Bodard Bernard
+Bernhard Bodard
+""")
+        check(marie, """
+Bernard-Marie Bodard
+Bernard Bodard
+Bodard Bernard
+Bernhard Bodard
+""")
 
 

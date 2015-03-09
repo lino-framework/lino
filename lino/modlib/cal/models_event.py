@@ -580,8 +580,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         txt = when_text(self.start_date, self.start_time)
         if self.end_date and self.end_date != self.start_date:
             txt += "-" + when_text(self.end_date, self.end_time)
-        # return txt
-        return ar.obj2html(self, txt)
+        return txt
+        # return ar.obj2html(self, txt)
 
     @dd.displayfield(_("Link URL"))
     def url(self, ar):

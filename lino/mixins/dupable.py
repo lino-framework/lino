@@ -194,6 +194,7 @@ class Dupable(dd.Model):
         qs = qs.filter(dupable_words__word__in=parts).distinct()
         qs = qs.annotate(num=models.Count('dupable_words__word'))
         qs = qs.filter(num__gte=self.dupable_matches_required)
+        qs = qs.order_by('-num', 'pk')
         # print("20150306 find_similar_instances %s" % qs.query)
         return qs
 

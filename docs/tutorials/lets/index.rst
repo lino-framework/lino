@@ -275,35 +275,35 @@ Installed 26 object(s) from 1 fixture(s)
 Show the list of members:    
 
 >>> rt.show(lets.Members)
-... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-========= ===================== ========== ============================= =========================
- name      email                 place      offered_products              wanted_products
---------- --------------------- ---------- ----------------------------- -------------------------
- Fred      fred@example.com      Tallinn    **Bread**, **Buckwheat**
- Argo      argo@example.com      Haapsalu   **Electricity repair work**
+... #doctest: +NORMALIZE_WHITESPACE -REPORT_UDIFF
+========= ===================== ========== =========================== =====================
+ name      email                 place      offered_products            wanted_products
+--------- --------------------- ---------- --------------------------- ---------------------
+ Fred      fred@example.com      Tallinn    *Bread*, *Buckwheat*
+ Argo      argo@example.com      Haapsalu   *Electricity repair work*
  Peter     peter@example.com     Vigala
- Anne      anne@example.com      Tallinn    **Buckwheat**
+ Anne      anne@example.com      Tallinn    *Buckwheat*
  Jaanika   jaanika@example.com   Tallinn
- Henri     henri@example.com     Tallinn    **Electricity repair work**   **Buckwheat**, **Eggs**
- Mari      mari@example.com      Tartu                                    **Eggs**
+ Henri     henri@example.com     Tallinn    *Electricity repair work*   *Buckwheat*, *Eggs*
+ Mari      mari@example.com      Tartu                                  *Eggs*
  Katrin    katrin@example.com    Vigala
-========= ===================== ========== ============================= =========================
+========= ===================== ========== =========================== =====================
 <BLANKLINE>
 
 The `Products` table shows all products in alphabetical order:
 
 >>> rt.show(lets.Products)
-... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-==== ========================= ===================== =====================
- ID   name                      Offered by            Wanted by 
----- ------------------------- --------------------- ---------------------
- 1    Bread                     **Fred**
- 2    Buckwheat                 **Fred**, **Anne**    **Henri**
+... #doctest: +NORMALIZE_WHITESPACE -REPORT_UDIFF
+==== ========================= ================= =================
+ ID   name                      Offered by        Wanted by
+---- ------------------------- ----------------- -----------------
+ 1    Bread                     *Fred*
+ 2    Buckwheat                 *Fred*, *Anne*    *Henri*
  5    Building repair work
- 3    Eggs                                            **Henri**, **Mari**
- 6    Electricity repair work   **Henri**, **Argo**
+ 3    Eggs                                        *Henri*, *Mari*
+ 6    Electricity repair work   *Henri*, *Argo*
  4    Sanitary repair work
-==== ========================= ===================== =====================
+==== ========================= ================= =================
 <BLANKLINE>
 
 
@@ -332,14 +332,14 @@ which there is at least one offer or one demand.  It also specifies
 
 >>> rt.show(lets.ActiveProducts)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-========================= ===================== =====================
- name                      Offered by            Wanted by
-------------------------- --------------------- ---------------------
- Bread                     **Fred**
- Buckwheat                 **Fred**, **Anne**    **Henri**
- Eggs                                            **Henri**, **Mari**
- Electricity repair work   **Henri**, **Argo**
-========================= ===================== =====================
+========================= ================= =================
+ name                      Offered by        Wanted by
+------------------------- ----------------- -----------------
+ Bread                     *Fred*
+ Buckwheat                 *Fred*, *Anne*    *Henri*
+ Eggs                                        *Henri*, *Mari*
+ Electricity repair work   *Henri*, *Argo*
+========================= ================= =================
 <BLANKLINE>
 
 

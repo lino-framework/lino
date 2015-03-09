@@ -58,10 +58,15 @@ All this work has several advantages:
 Participants d'un rendez-vous
 =============================
 
-- Quand on crée un rendez-vous manuel avec un client, et quand on ne
-  spécifie pas de client dans le dialogue d'insertion (mais plus tard
-  dans le détail en remplissant le champ "Bénéficiaire"), also Lino ne
-  remplissait pas les participants.
+Identifié et résolu deux problèmes qui pourraient être l'explication
+du ticket :ticket:`123`. En général le phénomène vient quand Lino n'a
+pas crée d'entrée dans le panneau "Participants" du rendez-vous en
+question.
+
+- Quand on crée un rendez-vous manuel avec un bénéficiaire, et quand
+  on ne spécifie pas de bénéficiaire dans le dialogue d'insertion
+  (mais plus tard dans le détail en remplissant le champ
+  "Bénéficiaire"), also Lino ne remplissait pas les participants.
 
 - Quand un rendez-vous a au moins un participant, Lino ne touche plus
   à la liste des participants. Cette règle était trop simpliste. Par

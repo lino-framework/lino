@@ -89,12 +89,12 @@ class TestCase(TestCase):
         rst = BrokenGFKs.to_rst(ar)
         # print rst
         self.assertEqual(rst, """\
-================ ==================== ===================================================== ========
- Database model   Database object      Message                                               Action
----------------- -------------------- ----------------------------------------------------- --------
- **comment**      **Comment object**   Invalid primary key 1 for gfks.Member in `owner_id`   delete
- **note**         **Note object**      Invalid primary key 1 for gfks.Member in `owner_id`   manual
- **memo**         **Memo object**      Invalid primary key 1 for gfks.Member in `owner_id`   clear
-================ ==================== ===================================================== ========
+================ ================== ===================================================== ========
+ Database model   Database object    Message                                               Action
+---------------- ------------------ ----------------------------------------------------- --------
+ *comment*        *Comment object*   Invalid primary key 1 for gfks.Member in `owner_id`   delete
+ *note*           *Note object*      Invalid primary key 1 for gfks.Member in `owner_id`   manual
+ *memo*           *Memo object*      Invalid primary key 1 for gfks.Member in `owner_id`   clear
+================ ================== ===================================================== ========
 """)
 
