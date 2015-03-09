@@ -146,7 +146,7 @@ class CheckinVisitor(dd.NotifyingAction):
 
         def doit(ar2):
             obj.waiting_since = datetime.datetime.now()
-            obj.state = GuestStates.busy
+            obj.state = GuestStates.waiting
             obj.busy_since = None
             obj.save()
             ar2.success()
@@ -184,8 +184,6 @@ class ReceiveVisitor(dd.Action):
         def ok(ar):
             obj.state = GuestStates.busy
             obj.busy_since = datetime.datetime.now()
-            #~ if obj.state in ExpectedGuestsStates:
-                #~ obj.state = GuestStates.present
 
             if not obj.event.start_time:
                 ar.info("event.start_time has been set")
