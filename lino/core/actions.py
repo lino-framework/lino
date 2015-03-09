@@ -1047,6 +1047,7 @@ class NotifyingAction(Action):
 
     # show_in_row_actions = True
     custom_handler = True
+    show_in_bbar = False
 
     parameters = dict(
         notify_subject=models.CharField(
