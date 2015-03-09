@@ -72,8 +72,8 @@ class Account(IbanBicHolder):
 
     allow_cascaded_delete = ['partner']
 
-    def after_ui_save(self, ar):
-        super(Account, self).after_ui_save(ar)
+    def after_ui_save(self, ar, cw):
+        super(Account, self).after_ui_save(ar, cw)
         if self.primary:
             mi = self.partner
             for o in mi.sepa_accounts.exclude(id=self.id):

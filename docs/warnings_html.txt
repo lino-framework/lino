@@ -1,2 +1,4 @@
-/home/luc/hgwork/lino/docs/examples/belref/index.rst:34: WARNING: undefined label: plain (if the link has no caption the label must precede a section header)
-/home/luc/hgwork/lino/docs/ref/settings.rst:8: WARNING: unknown document: /dev/applications
+/home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.contacts.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/api/lino.projects.min2.tests.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/docs/api/lino.projects.min2.tests.test_min2.rst:: WARNING: document isn't included in any toctree

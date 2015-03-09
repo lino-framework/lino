@@ -46,10 +46,12 @@ from lino.utils.djangotest import RemoteAuthTestCase
 
 from lino.core.utils import full_model_name
 
+
 def create(m, **kw):
     obj = m(**kw)
     obj.full_clean()
     obj.save()
+    obj.after_ui_save(None, None)
     return obj
 
 
@@ -119,33 +121,37 @@ class QuickTest(RemoteAuthTestCase):
         
         Company = rt.modules.contacts.Company
         Person = rt.modules.contacts.Person
-        PhoneticWord = rt.modules.dedupe.PhoneticWord
+        DupableWord = rt.modules.dupable_partners.Word
+
         bernard = create(Person, first_name="Bernard", last_name="Bodard")
         
         self.assertEqual(Person.objects.count(), 1)
-        self.assertEqual(bernard.phonetic_words.count(), 2)
-        self.assertEqual(PhoneticWord.objects.count(), 2)
-        words = [o.word for o in PhoneticWord.objects.filter(owner=bernard)]
+        self.assertEqual(bernard.dupable_words.count(), 2)
+        self.assertEqual(DupableWord.objects.count(), 2)
+        words = [o.word for o in DupableWord.objects.filter(owner=bernard)]
         self.assertEqual(words, [u'PTRT', u'PRNR'])
 
+        bernard2 = create(Person, first_name="Bodard", last_name="Bernard")
+        bernard3 = create(
+            Person, first_name="Bernhard", last_name="Bodard")
         godard = create(Person, first_name="Bernard", last_name="Godard")
-        words = [o.word for o in PhoneticWord.objects.filter(owner=godard)]
-        self.assertEqual(words, [u'KTRT', u'PRNR'])
+        erna = create(Person, first_name="Erna", last_name="Odar")
+        bernard4 = create(
+            Person, first_name="Bernhard-Marie", last_name="Bodard")
+        marie = create(Person, first_name="Marie", last_name="Bernard-Bodard")
 
-        bernard3 = create(Person, first_name="Bernhard", last_name="Bodard")
-        words = [o.word for o in PhoneticWord.objects.filter(owner=bernard3)]
-        self.assertEqual(words, [u'PTRT', u'PRNR'])
+        create(Company, name="Külamaja OÜ")
 
-        comp = create(Company, name="Külamaja OÜ")
+        def check(obj, expected):
+            self.assertEqual(
+                map(unicode, obj.find_similar_instances()), expected)
 
-        self.assertEqual(
-            map(unicode, bernard.find_similar_instances()),
-            [u'Bernhard Bodard'])
+        check(bernard, ['Bodard Bernard', 'Bernhard Bodard'])
+        check(bernard2, ['Bernard Bodard', 'Bernhard Bodard'])
+        check(bernard3, ['Bernard Bodard', 'Bernhard Bodard'])
+        check(godard, [])
+        check(erna, [])
+        check(bernard4, ['Bodard Bernard', 'Bernard Bodard'])
+        check(marie, [])
 
-        self.assertEqual(
-            map(unicode, godard.find_similar_instances()), [])
-
-        self.assertEqual(
-            map(unicode, bernard3.find_similar_instances()),
-            [u'Bernard Bodard'])
 

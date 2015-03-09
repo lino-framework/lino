@@ -114,7 +114,8 @@ lino.modlib.contenttypes.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.davlink
-lino.modlib.dedupe
+lino.modlib.dupable_partners
+lino.modlib.dupable_partners.fixtures
 lino.modlib.excerpts
 lino.modlib.excerpts.fixtures
 lino.modlib.export_excel

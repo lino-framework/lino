@@ -68,8 +68,8 @@ class Address(AddressLocation):
     def __unicode__(self):
         return self.address_location(', ')
 
-    def after_ui_save(self, ar):
-        super(Address, self).after_ui_save(ar)
+    def after_ui_save(self, ar, cw):
+        super(Address, self).after_ui_save(ar, cw)
         mi = self.partner
         if mi is None:
             return

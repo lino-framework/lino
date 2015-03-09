@@ -126,7 +126,7 @@ class Poll(UserAuthored, mixins.CreatedModified, Referrable):
     def __unicode__(self):
         return self.ref or self.title
 
-    def after_ui_save(self, ar):
+    def after_ui_save(self, ar, cw):
         if self.questions_to_add:
             # print "20150203 self.questions_to_add", self,
             # self.questions_to_add
@@ -154,7 +154,7 @@ class Poll(UserAuthored, mixins.CreatedModified, Referrable):
             self.questions_to_add = ''
             self.save()  # save again because we modified afterwards
 
-        super(Poll, self).after_ui_save(ar)
+        super(Poll, self).after_ui_save(ar, cw)
 
     @dd.virtualfield(dd.HtmlBox(_("Result")))
     def result(self, ar):

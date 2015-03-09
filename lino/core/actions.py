@@ -880,7 +880,7 @@ class SaveRow(Action):
         else:
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))
 
-        elem.after_ui_save(ar)
+        elem.after_ui_save(ar, watcher)
 
         # TODO: in fact we need *either* `rows` (when this was called
         # from a Grid) *or* `goto_instance` (when this was called from a
@@ -963,7 +963,7 @@ class CreateRow(Action):
         # yes, `on_ui_created` comes *after* save()
         on_ui_created.send(elem, request=ar.request)
         elem.after_ui_create(ar)
-        elem.after_ui_save(ar)
+        elem.after_ui_save(ar, None)
         ar.success(_("%s has been created.") % obj2unicode(elem))
 
         if ar.actor.handle_uploaded_files is None:

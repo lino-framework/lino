@@ -10,6 +10,7 @@ application.
    :toctree:
 
     duplicable
+    dupable
     sequenced
     human
     periods

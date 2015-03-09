@@ -46,7 +46,7 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     cv
     davlink
     declarations
-    dedupe
+    dupable_partners
     eid_jslib
     events
     families

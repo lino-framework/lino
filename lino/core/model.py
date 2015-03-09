@@ -440,9 +440,11 @@ class Model(models.Model):
         """
         pass
 
-    def after_ui_save(self, ar):
+    def after_ui_save(self, ar, cw):
         """Like :meth:`before_ui_save`, but
         **after** the changes are written to the database.
+
+        Argument `cw` is the :class:`ChangeWatcher`.
         
         Called after a PUT or POST on this row,
         and after the row has been saved.
@@ -599,7 +601,7 @@ class Model(models.Model):
 
         watcher.send_update(ar.request)
 
-        row.after_ui_save(ar)
+        row.after_ui_save(ar, watcher)
 
     def after_send_mail(self, mail, ar, kw):
         """

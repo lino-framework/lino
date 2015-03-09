@@ -17,6 +17,7 @@ it adds some more modlib plugins:
 - :mod:`lino.modlib.pages`
 
 It overrides the :mod:`lino.modlib.contacts` plugin by its own version
-:mod:`lino.projects.min2.modlib.contacts`.
+``lino.projects.min2.modlib.contacts``.
+
 
 """

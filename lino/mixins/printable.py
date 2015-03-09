@@ -777,8 +777,6 @@ class CachedPrintable(Duplicable, Printable):
             self.build_method = self.get_default_build_method()
         super(CachedPrintable, self).full_clean(*args, **kwargs)
 
-    #~ def print_from_posting(self,posting,ar,**kw):
-        #~ return self.do_print.run_from_session(ar,**kw)
     def on_duplicate(self, ar, master):
         super(CachedPrintable, self).on_duplicate(ar, master)
         self.build_time = None

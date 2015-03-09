@@ -296,9 +296,9 @@ class UpdateGuests(dd.MultipleRowAction):
     """Decide whether it is time to add Guest instances for this event,
     and if yes, call :meth:`suggest_guests` to instantiate them.
 
-    - No guests added when loading from dump
+    - No guests must be added when loading from dump
     - The Event must be in a state which allows editing the guests
-    - If there are already at least one guests, no guests will be added
+    - If there are already at least one guest, no guests will be added
 
     """
 
@@ -306,21 +306,17 @@ class UpdateGuests(dd.MultipleRowAction):
     icon_name = 'lightning'
 
     def run_on_row(self, obj, ar):
-        #~ print "20130722 Event.save"
-        #~ print "20130717 add_guests"
         if settings.SITE.loading_from_dump:
             return 0
         if not obj.state.edit_guests:
             ar.info("not state.edit_guests")
             return 0
-        if obj.guest_set.all().count() > 0:
-            ar.info("guest_set not empty")
-            return 0
+        existing = set([g.partner for g in obj.guest_set.all()])
         n = 0
         for g in obj.suggest_guests():
-            g.save()
-            n += 1
-            #~ settings.SITE.modules.cal.Guest(event=self,partner=p).save()
+            if not g.partner in existing:
+                g.save()
+                n += 1
         return n
 
 
@@ -474,13 +470,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
 
-    # def save(self, *args, **kw):
-    #     r = super(Event, self).save(*args, **kw)
-    #     self.add_guests()
-    #     return r
-
     def after_ui_create(self, ar):
         super(Event, self).after_ui_create(ar)
+        self.update_guests.run_from_code(ar)
+
+    def after_ui_save(self, ar, cw):
+        super(Event, self).after_ui_save(ar, cw)
         self.update_guests.run_from_code(ar)
 
     def suggest_guests(self):
@@ -585,9 +580,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         txt = when_text(self.start_date, self.start_time)
         if self.end_date and self.end_date != self.start_date:
             txt += "-" + when_text(self.end_date, self.end_time)
-        return txt
-        #~ logger.info("20130802a when_text %r",txt)
-        # return ar.obj2html(self, txt)
+        # return txt
+        return ar.obj2html(self, txt)
 
     @dd.displayfield(_("Link URL"))
     def url(self, ar):
@@ -633,8 +627,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     @classmethod
     def on_analyze(cls, lino):
-        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls,
-            '''summary''')
+        cls.DISABLED_AUTO_FIELDS = dd.fields_list(cls, "summary")
+        super(Event, cls).on_analyze(lino)
 
 
 dd.update_field(Event, 'user', verbose_name=_("Responsible user"))

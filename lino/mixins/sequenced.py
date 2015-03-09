@@ -103,7 +103,7 @@ class MoveDown(actions.Action):
 
 
 class DuplicateSequenced(Duplicate):
-
+    """Duplicate this row."""
     def run_from_code(self, ar, **kw):
         obj = ar.selected_rows[0]
 

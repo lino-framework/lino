@@ -240,15 +240,18 @@ class Kernel(object):
         models_list = models.get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 
-        if self.user_model:
-            self.user_model = resolve_model(
-                self.user_model,
-                strict="Unresolved model '%s' in user_model.")
+        self.setup_model_spec(self, 'user_model')
+        self.setup_model_spec(self, 'project_model')
 
-        if self.project_model:
-            self.project_model = resolve_model(
-                self.project_model,
-                strict="Unresolved model '%s' in project_model.")
+        # if self.user_model:
+        #     self.user_model = resolve_model(
+        #         self.user_model,
+        #         strict="Unresolved model '%s' in user_model.")
+
+        # if self.project_model:
+        #     self.project_model = resolve_model(
+        #         self.project_model,
+        #         strict="Unresolved model '%s' in project_model.")
 
         for app_name_model, p in self.override_modlib_models.items():
             # app_name_model is the full installed app module name +

@@ -535,10 +535,10 @@ class RecurrenceSet(Started, Ended):
         blank=True, null=True)
 
     @classmethod
-    def on_analyze(cls, lino):
+    def on_analyze(cls, site):
         cls.WEEKDAY_FIELDS = dd.fields_list(
             cls, 'monday tuesday wednesday thursday friday saturday  sunday')
-        super(RecurrenceSet, cls).on_analyze(lino)
+        super(RecurrenceSet, cls).on_analyze(site)
 
     @classmethod
     def get_registrable_fields(cls, site):

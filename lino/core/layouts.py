@@ -487,7 +487,6 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         return h
 
     def __str__(self):
-        #~ return "%s Detail(%s)" % (self._datasource,[str(x) for x in self.layouts])
         return "%s on %s" % (self.__class__.__name__, self._datasource)
 
     def get_choices_url(self, ui, field, **kw):

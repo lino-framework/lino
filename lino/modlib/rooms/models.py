@@ -135,8 +135,8 @@ class Booking(contacts.ContactRelated, Reservation):
                 #~ ar.confirm("Booking has no events! Are you sure?")
                 raise Warning("Booking has no events!")
 
-    def after_ui_save(self, ar):
-        super(Booking, self).after_ui_save(ar)
+    def after_ui_save(self, ar, cw):
+        super(Booking, self).after_ui_save(ar, cw)
         if self.state.editable:
             self.update_reminders(ar)
 

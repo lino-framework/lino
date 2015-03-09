@@ -18,10 +18,10 @@ from lino.modlib.contacts.models import *
 from lino.modlib.cal.workflows import take, feedback
 
 from lino.modlib.addresses.mixins import AddressOwner
-from lino.modlib.dedupe.mixins import Dupable
+from lino.modlib.dupable_partners.mixins import DupablePartner
 
 
-class Partner(Partner, AddressOwner, mixins.CreatedModified, Dupable):
+class Partner(Partner, AddressOwner, mixins.CreatedModified, DupablePartner):
 
     hidden_columns = 'created modified'
 

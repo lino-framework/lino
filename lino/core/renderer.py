@@ -207,7 +207,7 @@ request `tar`."""
             url = self.instance_handler(ar, obj)
             if url is not None:
                 return E.a(*text, href=url)
-        return E.b(*text)
+        return E.em(*text)
 
     def quick_upload_buttons(self, rr):
         return '[?!]'

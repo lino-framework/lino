@@ -306,17 +306,19 @@ documentation.
     """
 
     loading_from_dump = False
-    """
-    This is normally `False`, except when the process is loading data from
-    a :ref:`Python dump <dpy>`.
+    """Whether the process is currently loading data from a :ref:`Python
+    dump <dpy>`.
 
-    The Python dump then calls
-    :func:`lino.utils.dpy.install_migrations` which sets this to
-    `True`.
+    When loading from a python dump, application code should not
+    generate certain automatic data because that data is also part of
+    the dump.
 
-    Application code should not change this setting (except for certain
-    special test cases).
+    This is normally `False`, but a Python dump created with
+    :manage:`dump2py` explicitly calls :meth:`install_migrations`
+    which sets this to `True`.
 
+    Application code should not change this setting except for certain
+    special test cases.
 
     """
 
@@ -1423,6 +1425,34 @@ documentation.
 
         """
         return app_label in self.plugins
+
+    def setup_model_spec(self, obj, name):
+        """If the value of the named attribute of `obj` is a string, replace
+        it by the model specified by that string.
+
+        Example usage::
+
+            # library code:
+            class ThingBase(object):
+                the_model = None
+
+                def __init__(self):
+                    settings.SITE.setup_model_spec(self, 'the_model')
+    
+            # user code:
+            class MyThing(ThingBase):
+                the_model = "contacts.Partner"
+
+
+        """
+        spec = getattr(obj, name)
+        if spec and isinstance(spec, basestring):
+            if not self.is_installed_model_spec(spec):
+                setattr(obj, name, None)
+                return
+            from lino.core.utils import resolve_model
+            msg = "Unresolved model '%s' in {0}.".format(name)
+            setattr(obj, name, resolve_model(spec, strict=msg))
 
     def on_each_app(self, methname, *args):
         """

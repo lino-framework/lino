@@ -397,12 +397,12 @@ class VatItemBase(Sequenced, VatTotal):
             self.reset_totals(ar)
         super(VatItemBase, self).before_ui_save(ar)
 
-    def after_ui_save(self, ar):
+    def after_ui_save(self, ar, cw):
         """
         After editing a grid cell automatically show new invoice totals.
         See :srcref:`docs/tickets/68`
         """
-        kw = super(VatItemBase, self).after_ui_save(ar)
+        kw = super(VatItemBase, self).after_ui_save(ar, cw)
         if self.voucher.refresh_after_item_edit:
             ar.set_response(refresh_all=True)
             self.voucher.compute_totals()

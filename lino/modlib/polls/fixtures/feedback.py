@@ -48,7 +48,6 @@ Next time I will participate again.
 """ % dict(X="Lino Polly"))
 
     for p in polls.Poll.objects.exclude(questions_to_add=''):
-        p.after_ui_save(None)
-        #~ p.save()
+        p.after_ui_save(None, None)
         yield polls.Response(
             poll=p, user=USERS.pop(), state=polls.ResponseStates.draft)

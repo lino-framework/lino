@@ -747,7 +747,7 @@ request from it.
         else:
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))
 
-        elem.after_ui_save(ar)
+        elem.after_ui_save(ar, watcher)
 
     def get_help_url(self, docname=None, text=None, **kw):
         """Generate a link to the help section of the documentation (whose

@@ -69,7 +69,6 @@ class Site(Site):
         yield 'lino.modlib.iban'
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.beid'
-        yield 'lino.modlib.dedupe'
 
     def setup_plugins(self):
         super(Site, self).setup_plugins()

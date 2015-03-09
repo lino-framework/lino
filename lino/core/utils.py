@@ -604,7 +604,6 @@ class InstanceAction(object):
         self.bound_action.action.run_from_ui(ar)
 
     def run_from_session(self, ses, **kw):
-        #~ print self,args, kw
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
         ar.selected_rows = [self.instance]
@@ -716,6 +715,12 @@ class ChangeWatcher(object):
                     if old != new:
                         yield k, old, new
 
+    def has_changed(self, fieldname):
+        old = self.original_state[fieldname]
+        if old != self.watched.__dict__.get(fieldname, NOT_PROVIDED):
+            return True
+        return False
+        
     def is_dirty(self):
         #~ if self.is_new:
             #~ return True

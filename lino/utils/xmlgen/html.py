@@ -287,7 +287,7 @@ def _html2rst(e, **kw):
         rst += ' |br| \n'
     elif e.tag == 'b':
         rst += '**'
-    elif e.tag == 'em':
+    elif e.tag == 'em' or e.tag == 'i':
         rst += '*'
     elif e.tag == 'a':
         rst += '`'

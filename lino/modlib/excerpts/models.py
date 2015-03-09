@@ -151,8 +151,8 @@ class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
         super(ExcerptType, self).save(*args, **kwargs)
         self.update_siblings()
 
-    def after_ui_save(self, ar):
-        super(ExcerptType, self).after_ui_save(ar)
+    def after_ui_save(self, ar, cw):
+        super(ExcerptType, self).after_ui_save(ar, cw)
         if self.primary:
             ar.set_response(refresh_all=True)
 

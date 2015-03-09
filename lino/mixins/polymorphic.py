@@ -124,6 +124,7 @@ class Polymorphic(model.Model):
 
     @classmethod
     def on_analyze(cls, site):
+        super(Polymorphic, cls).on_analyze(site)
         if cls._mtinav_models is None:
             models = list(models_by_base(cls))
 

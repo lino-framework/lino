@@ -1,0 +1,69 @@
+=====================
+Monday, March 9, 2015
+=====================
+
+Avoiding duplicate partners
+===========================
+
+There is hope that SimilarPartners now produces usable results.
+To be verified on a production site.
+
+The previous implementation did not use an additional table. It simply
+added a field `phonetic_words` (containing the phonetic words
+separated by spaces) and used an SQL statement constructed .
+
+If we then had two rows *a* and *b*, *a* with `phonetic_words` being
+'BAR BART FOO' and *b* with `phonetic_words` being 'BING BARN FOO'.
+
+The find similar rows for *a*, it used the following WHERE clause
+using all possible **combinations of two** of *a*'s phonetic words::
+
+    WHERE ('BAR'  in pw AND 'BART' in pw)
+       or ('BAR'  in pw AND 'FOO' in pw)
+       or ('BART' in pw AND 'FOO' in pw)
+
+But this also (wrongly) matched our *b* row because 'BAR' matches
+'BARN'. AFAIK the LIKE clause in SQL does not have regular expression
+syntax.
+
+Note that MySQL has a `SOUNDEX
+<http://dev.mysql.com/doc/refman/5.0/en/string-functions.html>`_
+function, but this implements only the original Soundex algorithm and
+is not usable for non-english languages.
+
+
+These are reasons why we now use an additional table defined by the
+:class:`lino.modlib.dupable_partners.models.Word` model.
+
+The implementation was rather tricky.  I splitted `lino.modlib.dedupe`
+into a mixin :mod:`lino.mixins.dupable` and a new plugin
+:mod:`lino.modlib.dupable_partners`.  
+
+All this work has several advantages:
+
+- there is hope that it works now.
+
+- it is now possible to have more than one dupable model in an
+  application. For example both partners and products might be
+  dupable, and each of them must get its own table of phonetic words.
+
+- applications can chose to not install
+  :mod:`lino.modlib.dupable_partners` even if their partners model
+  inherits from :mod:`DupablePartner
+  <lino.modlib.dupable_partners.mixins.DupablePartner>`.
+
+
+
+
+Participants d'un rendez-vous
+=============================
+
+- Quand on crée un rendez-vous manuel avec un client, et quand on ne
+  spécifie pas de client dans le dialogue d'insertion (mais plus tard
+  dans le détail en remplissant le champ "Bénéficiaire"), also Lino ne
+  remplissait pas les participants.
+
+- Quand un rendez-vous a au moins un participant, Lino ne touche plus
+  à la liste des participants. Cette règle était trop simpliste. Par
+  exemple quand on modifie le bénéficiaire d'un rendez-vous
+  existant. Lino demande maintentant.

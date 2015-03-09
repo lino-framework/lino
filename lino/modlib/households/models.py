@@ -110,7 +110,7 @@ class Household(contacts.Partner):
         if partner is not None:
             hh.add_member(partner, MemberRoles.partner)
         hh.after_ui_create(ar)
-        hh.after_ui_save(ar)
+        hh.after_ui_save(ar, None)
         return hh
 
 
@@ -212,8 +212,8 @@ class Member(mixins.DatePeriod):
             "Checking this field will automatically disable any "
             "other primary memberships."))
 
-    def after_ui_save(self, ar):
-        super(Member, self).after_ui_save(ar)
+    def after_ui_save(self, ar, cw):
+        super(Member, self).after_ui_save(ar, cw)
         mi = self.person
         if mi is None:
             return
@@ -248,7 +248,7 @@ class Member(mixins.DatePeriod):
         self.primary = True
         self.full_clean()
         self.save()
-        self.after_ui_save(ar)
+        self.after_ui_save(ar, None)
         ar.success(refresh=True)
 
 
