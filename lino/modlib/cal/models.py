@@ -114,23 +114,15 @@ class RemoteCalendars(dd.Table):
 
 
 class Room(mixins.BabelNamed):
+    """A location where calendar events can happen.  For a given Room you
+    can see the :class:`EventsByRoom` that happened (or will happen)
+    there.  A Room is BabelNamed (has a multilingual name).
 
-    """
-    A location where Events can happen.
-    For a given Room you can see the :class:`EventsByRoom`
-    that happened (or will happen) there.
-    A Room is BabelNamed (has a multilingual name).
     """
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Room')
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
-
-    #~ def __unicode__(self):
-        #~ s = mixins.BabelNamed.__unicode__(self)
-        #~ if self.company and self.company.city:
-            #~ s = '%s (%s)' % (self.company.city,s)
-        #~ return s
 
 
 class Rooms(dd.Table):

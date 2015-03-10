@@ -13,15 +13,13 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, mixins
-
-contacts = dd.resolve_app('contacts', strict=True)
-#~ cal = dd.resolve_app('cal',strict=True)
+from lino.api import dd, _
+from lino import mixins
 
 from lino.modlib.cal.utils import Recurrencies
 from lino.modlib.cal.mixins import Reservation
+from lino.modlib.contacts.mixins import ContactRelated
 
 
 class BookingStates(dd.Workflow):
@@ -61,7 +59,7 @@ def setup_BookingStates_workflow(sender=None, **kw):
         icon_name='cross')
 
 
-class Booking(contacts.ContactRelated, Reservation):
+class Booking(ContactRelated, Reservation):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Booking')
@@ -70,20 +68,10 @@ class Booking(contacts.ContactRelated, Reservation):
 
     #~ workflow_state_field = 'state'
 
-    #~ required_to_register = dict(states='draft option cancelled')
-    #~ required_to_deregister = dict(states='registered option cancelled')
-
     state = BookingStates.field(default=BookingStates.draft)
 
     event_type = dd.ForeignKey('cal.EventType', null=True, blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
-
-    #~ def full_clean(self,*args,**kw):
-        #~ if self.every_unit is None:
-            #~ self.every_unit = 1
-        #~ if self.every is None:
-            #~ self.every = Recurrencies.once
-        #~ super(Booking,self).full_clean(*args,**kw)
 
     def __unicode__(self):
         return u"%s #%s (%s)" % (self._meta.verbose_name, self.pk, self.room)

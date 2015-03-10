@@ -11,10 +11,9 @@ When this app is installed, then you must also add the `.jar` files
 required by :ref:`eidreader` into your media directory, in a
 subdirectory named "eidreader".
 
-An alternative implementation of the same functionality is
+An (untested) alternative implementation of the same functionality is
 :mod:`lino.modlib.eid_jslib.beid` which overrides this app and does
-the same except that it uses `eidjslib` instead of
-:ref:`eidreader`.
+the same except that it uses `eidjslib` instead of :ref:`eidreader`.
 
 .. autosummary::
    :toctree:

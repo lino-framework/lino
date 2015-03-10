@@ -11,7 +11,6 @@ libraries.
 A **plugin library** is a collection of reusable plugins which are
 designed to work together.
 
-
 Let's take :ref:`faggio`.  It uses Lino's standard calendar module
 :mod:`lino.modlib.cal`, but extends the `Room` model defined there:
 
@@ -38,38 +37,31 @@ Here is the relevant application developer's code which defines the
             return s
 
 For this to work, the *library version* of :class:`cal.Room
-<lino.modlib.cal.models.Room>` must have `abstract=True`.  Here is how
-that class is begin defined::
+<lino.modlib.cal.models.Room>` must have `abstract=True`.  But only in
+this special case. The general case is that when an application
+installs :mod:`lino.modlib.cal` , it gets (among others) a new model
+:class:`cal.Room <lino.modlib.cal.models.Room>`.  We wouldn't want to
+force every application which uses :mod:`lino.modlib.cal` to override
+the `Room` model just to make it concrete.
+
+In other words: The *abstractness of certain models* in a library
+plugin must be *optional*.  The plugin developer should need to decide
+whether his version of the Model is subclassable or not.
+
+There is no way in Django to make a model abstract "afterwards".  So
+we need a central place where models modules can ask whether it wants
+a given model to be abstract or not.
+
+To solve this problem, Lino offers the :meth:`is_abstract_model
+<lino.core.site.Site.is_abstract_model>` method.  Usage example::
 
     class Room(dd.BabelNamed):
         class Meta:
-            abstract = dd.is_abstract_model('cal.Room')
+            abstract = dd.is_abstract_model(__name__, 'Room')
             verbose_name = _("Room")
             verbose_name_plural = _("Rooms")
 
-
-The *abstractness of certain models* in a library app must be
-*optional*.  Not all Lino applications who use the calendar module
-want to override the `Room` model.  Afaics there is no way in Django
-to make a model abstract "afterwards".  IOW we need a central place
-where models modules can ask whether it wants a given model to be
-abstract or not.
-
-This is why the above code calls the :meth:`is_abstract_model
-<lino.core.site.Site.is_abstract_model>` method.  The implementation
-of this method has evolved in time.  The first implementation used a
-simple set of strings in a class attribute of
-:class:`lino.core.site.Site`.  That might have been a standard Django
-setting.  But as things got more and more complex, it became difficult
-to define this manually. And it was redundant because every app *does*
-know which library models it is going to override.  But how to load
-that information from an app before actually importing it?  I then
-discovered that Django doesn't use the :file:`__init__.py` files of
-installed apps.  And of course I was lucky to have a
-:class:`lino.core.site.Site` class which is being *instantiated*
-before `settings` have finished to load...
-
-The trick here is that the :file:`lino_faggio/cal/__init__.py` file
+The trick here is that the :file:`lino_faggio/lib/cal/__init__.py` file
 now contains this information in the `extends_models` attribute::
 
 
@@ -77,11 +69,24 @@ now contains this information in the `extends_models` attribute::
 
     class Plugin(Plugin):
 
-        extends_models = ['cal.Room']
+        extends_models = ['Room']
 
 
+The implementation of :meth:`is_abstract_model
+<lino.core.site.Site.is_abstract_model>` has evolved in time.  The
+first implementation used a simple set of strings in a class attribute
+of :class:`lino.core.site.Site`.  That might have been a standard
+Django setting.  But as things got more and more complex, it became
+difficult to define this manually. And it was redundant because every
+app *does* know which library models it is going to override.  But how
+to load that information from an app before actually importing it?  We
+then discovered that Django doesn't use the :file:`__init__.py` files
+of installed apps.  And of course we were lucky to have a
+:class:`lino.core.site.Site` class which is being *instantiated*
+before `settings` have finished to load...
 
-The :mod:`lino.api.ad` module.
+
+See also the :mod:`lino.api.ad` module.
 
 Fixtures and management commands
 ================================

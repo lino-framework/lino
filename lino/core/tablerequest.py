@@ -147,6 +147,9 @@ class TableRequest(ActionRequest):
     def __iter__(self):
         return self.data_iterator.__iter__()
 
+    def __getitem__(self, i):
+        return self.data_iterator.__getitem__(i)
+
     def parse_req(self, request, rqdata, **kw):
         """Parse the incoming HttpRequest and translate it into keyword
         arguments to be used by :meth:`setup`.
