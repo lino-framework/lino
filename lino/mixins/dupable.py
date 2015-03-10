@@ -187,6 +187,8 @@ class Dupable(dd.Model):
     def find_similar_instances(self, *args, **kwargs):
         """
         """
+        if self.dupable_word_model is None:
+            return self.__class__.objects.none()
         qs = self.__class__.objects.filter(*args, **kwargs)
         if self.pk is not None:
             qs = qs.exclude(pk=self.pk)

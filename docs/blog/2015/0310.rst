@@ -2,6 +2,9 @@
 Tuesday, March 10, 2015
 =======================
 
+Upgrade in Châtelet
+===================
+
 The :attr:`show_in_bbar <lino.core.actions.Action.show_in_bbar>`
 attribute of :class:`CheckinVisitor
 <lino.modlib.reception.models.CheckinVisitor>`, :class:`ReceiveVisitor
@@ -10,3 +13,55 @@ attribute of :class:`CheckinVisitor
 <lino.modlib.reception.models.CheckoutVisitor>` were not yet correct.
 I must define them individually on each action, not on
 :class:`NotifyingAction <lino.core.actions.NotifyingAction>`.
+
+Checkin and pull in :ref:`chat`.
+
+
+About migrations
+================
+
+Mahmoud and I are working together on :ticket:`38`.  The "startup
+signal, apps and plugins" topic seems more or less done.
+
+Another big topic are migrations.
+
+Until now all our customers are perfectly happy without schema
+migrations because Lino has :doc:`Python fixtures </topcs/dpy>`.
+
+But as it seems, in `Django 1.9
+<https://docs.djangoproject.com/en/1.7/internals/deprecation/>`_ the
+"legacy method of syncing apps without migrations will be removed, and
+migrations will become compulsory for all apps.", so Django will force
+us some day to live with them.
+
+The big problem with migrations are dependencies between plugins.
+Before reading on, make sure that you have read Django's section about
+`Dependencies
+<https://docs.djangoproject.com/en/1.7/topics/migrations/#dependencies>`_.
+
+Lino adds quite some cool stuff for doing plugin inheritance.  And of
+course we unfortunately can't expect the Django developers to care
+about this cool stuff.
+
+What is that cool stuff and what problems will it cause for
+migrations?
+
+- Plugin inheritance
+- :func:`lino.core.inject.inject_field`
+
+
+
+Cannot resolve keyword 'dupable_words' into field
+=================================================
+
+The new version in :ref:`chat` had a bug which caused an :ref:`ise`
+when trying to (manually) create a new partner.
+
+This came only when :mod:`lino.modlib.dupable_partners` is hidden.
+
+Wrote a test case `test_dupable_hidden` in
+:mod:`lino_welfare.projects.chatelet.tests` which would have detected
+this bug.
+
+Checkin and pull 
+
