@@ -11,10 +11,10 @@ lino.modlib.cal.utils
    
       amonthago
       aware
+      babel_format_date
       dt2kw
       force_unicode
       format_date
-      format_datetime
       setkw
       to_locale
       update_auto_component

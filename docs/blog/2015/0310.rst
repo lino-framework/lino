@@ -1,0 +1,12 @@
+=======================
+Tuesday, March 10, 2015
+=======================
+
+The :attr:`show_in_bbar <lino.core.actions.Action.show_in_bbar>`
+attribute of :class:`CheckinVisitor
+<lino.modlib.reception.models.CheckinVisitor>`, :class:`ReceiveVisitor
+<lino.modlib.reception.models.ReceiveVisitor>` and
+:class:`CheckoutVisitor
+<lino.modlib.reception.models.CheckoutVisitor>` were not yet correct.
+I must define them individually on each action, not on
+:class:`NotifyingAction <lino.core.actions.NotifyingAction>`.

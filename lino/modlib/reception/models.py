@@ -121,9 +121,14 @@ def create_prompt_event(
 
 
 class CheckinVisitor(dd.NotifyingAction):
+    """The "Checkin" action on a :class:`Guest
+    <lino.modlib.cal.models_guest.Guest>`.
+
+    """
     label = _("Checkin")
     help_text = _("Mark this visitor as arrived")
     show_in_workflow = True
+    show_in_bbar = False
 
     required = dd.Required(
         user_groups=config.required_user_groups,
@@ -171,11 +176,14 @@ class CheckinVisitor(dd.NotifyingAction):
 
 
 class ReceiveVisitor(dd.Action):
+    """The "Receive" action on a :class:`Guest
+    <lino.modlib.cal.models_guest.Guest>`.
+
+    """
     label = _("Receive")
     help_text = _("Visitor was received by agent")
     show_in_workflow = True
-    # debug_permissions = 20150227
-
+    show_in_bbar = False
     required = dd.Required(states='waiting')
 
     def run_from_ui(self, ar, **kw):
@@ -227,9 +235,14 @@ def checkout_guest(obj, ar):
 
 
 class CheckoutVisitor(dd.Action):
+    """The "Checkout" action on a :class:`Guest
+    <lino.modlib.cal.models_guest.Guest>`.
+
+    """
     label = _("Checkout")
     help_text = _("Visitor left the centre")
     show_in_workflow = True
+    show_in_bbar = False
 
     #~ required = dict(states='waiting')
     required = dd.Required(states='busy waiting')

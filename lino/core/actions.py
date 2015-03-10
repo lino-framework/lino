@@ -308,20 +308,23 @@ class Action(Parametrizable, Permittable):
     """
 
     show_in_bbar = True
-    """
-    Whether this action should be displayed as a button in the toolbar
+    """Whether this action should be displayed as a button in the toolbar
     and the context menu.
 
-    For example :class:`ml.beid.FindByBeIdAction` has
-    :attr:`show_in_bbar` explicitly set to `False`, otherwise it
-    would be visible in the toolbar.
+    For example the :class:`CheckinVisitor
+    <lino.modlib.reception.models.CheckinVisitor>`,
+    :class:`ReceiveVisitor
+    <lino.modlib.reception.models.ReceiveVisitor>` and
+    :class:`CheckoutVisitor
+    <lino.modlib.reception.models.CheckoutVisitor>` actions have this
+    attribute explicitly set to `False` because otherwise they would be
+    visible in the toolbar.
 
     """
 
     show_in_workflow = False
-    """
-    Used internally.  Whether this action should be displayed as the
-    :meth:`workflow_buttons <dd.Model.workflow_buttons>`
+    """Used internally.  Whether this action should be displayed as the
+    :attr:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
     column. If this is True, then Lino will automatically set
     :attr:`custom_handler` to True.
 
@@ -1044,10 +1047,24 @@ class ShowSlaveTable(Action):
 
 
 class NotifyingAction(Action):
+    """An action with a generic dialog window of three fields "Summary",
+    "Description" and a checkbox "Don't send email notification". The
+    default implementation calls the request's :meth:`add_system_note
+    <lino.core.requests.BaseRequest.add_system_note>` method.
 
-    # show_in_row_actions = True
+    Screenshot of a notifying action:
+
+    .. image:: /images/screenshots/reception.CheckinVisitor.png
+        :scale: 50
+
+    Dialog fields:
+
+    .. attribute:: subject
+    .. attribute:: body
+    .. attribute:: silent
+
+    """
     custom_handler = True
-    show_in_bbar = False
 
     parameters = dict(
         notify_subject=models.CharField(
@@ -1062,9 +1079,6 @@ class NotifyingAction(Action):
     notify_body
     notify_silent
     """, window_size=(50, 15))
-
-    #~ def update_system_note_kw(self,ar,kw,obj):
-        #~ pass
 
     def get_notify_subject(self, ar, obj):
         """
@@ -1109,7 +1123,6 @@ class NotifyingAction(Action):
 class MultipleRowAction(Action):
     """Base class for actions that update something on every selected row.
     """
-    # show_in_row_actions = True
     custom_handler = True
     callable_from = (GridEdit, ShowDetailAction)
 
@@ -1206,9 +1219,7 @@ def action(*args, **kw):
     def decorator(fn):
         # print 20140422, fn.__name__
         kw.setdefault('custom_handler', True)
-        #~ kw.setdefault('show_in_row_actions',True)
         a = Action(*args, **kw)
-        #~ a.run = curry(fn,a)
 
         def wrapped(ar):
             obj = ar.selected_rows[0]

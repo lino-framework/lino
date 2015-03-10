@@ -454,14 +454,18 @@ request from it.
         return True
 
     def get_user(self):
-        """Return the :class:`User <ml.users.User>` instance of the user who
-        issued the request.  If the authenticated user is acting as
-        somebody else, return that user's instance.
+        """Return the :class:`User <lino.modlib.users.models.User>` instance
+        of the user who issued the request.  If the authenticated user
+        is acting as somebody else, return that user's instance.
 
         """
         return self.subst_user or self.user
 
     def add_system_note(self, owner, subject, body, silent):
+        """Calls the Site's :meth:`emit_system_note
+        <lino.core.site.Site.emit_system_note>` method.
+
+        """
         settings.SITE.emit_system_note(
             self.request, owner, subject, body, silent)
 
