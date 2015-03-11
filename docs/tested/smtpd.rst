@@ -11,7 +11,7 @@ Lino Noi has a recmail command which starts an SMTP server.
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
 >>> from __future__ import print_function 
 >>> from __future__ import unicode_literals
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> from django.test.client import Client
 >>> ses = rt.login("robin")
 

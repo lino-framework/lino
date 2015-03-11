@@ -7,7 +7,7 @@ urlpatterns = dd.plugins.bootstrap3.get_patterns(None)
 
 # from . import views
 
-# from lino import rt
+# from lino.api import rt
 
 # urlpatterns = [
 #     # ex: /polls/

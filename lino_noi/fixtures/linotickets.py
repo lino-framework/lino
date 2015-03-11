@@ -23,7 +23,7 @@ import datetime
 
 from unipath import Path
 
-from lino import rt
+from lino.api import rt
 
 TICKETS = """
 #1 [closed] : Wrong layout in Chrome and FF when tab gets activated
