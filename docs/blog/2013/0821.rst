@@ -69,7 +69,7 @@ Here is how I discovered the reason.
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.test'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> from pprint import pprint
 >>> ses = settings.SITE.login('rolf')
 >>> ses.set_language('de')

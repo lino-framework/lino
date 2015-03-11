@@ -162,7 +162,7 @@ class GeneratingCommand(BaseCommand):
         logger.info("Generated %s files", self.generated_count)
 
     def generate(self, tplname, fn, **context):
-        from lino import rt
+        from lino.api import rt
         from Cheetah.Template import Template as CheetahTemplate
 
         #~ if self.tmpl_dir:

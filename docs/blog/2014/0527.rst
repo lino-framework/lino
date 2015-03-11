@@ -90,7 +90,7 @@ For example I discovered the folowing problem after the migration:
 
 Which I solved simply by a script to be run using the :manage:`run` command::
 
-    from lino.runtime import *
+    from lino.api.shell import *
     for M in (isip.Contract, jobs.Contract):
       for obj in M.objects.all():
         ex = obj.printed_by

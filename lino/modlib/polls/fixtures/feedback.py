@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
+# Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
-from lino import rt
+from lino.api import rt
 from lino.utils import Cycler
 
 

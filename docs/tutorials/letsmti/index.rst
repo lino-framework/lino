@@ -68,8 +68,8 @@ and check whether their output is the same as the one displayed here.
 Doctests usually need to do some initialization.
 
 >>> from __future__ import print_function
->>> from lino.runtime import *
->>> from lino import rt
+>>> from lino.api.shell import *
+>>> from lino.api import rt
 
 Since doctests run on a temporary database, we need to load our
 fixture each time this document is being tested.

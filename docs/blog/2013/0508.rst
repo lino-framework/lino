@@ -26,7 +26,7 @@ Here is a code draft for an "integrity test" that detects such cases:
   
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.demo'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> for model in (debts.Entry,):
 ...     for o in model.objects.all():
 ...         o.full_clean()

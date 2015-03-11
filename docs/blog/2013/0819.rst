@@ -108,7 +108,7 @@ and so I set up a secured demo database to `use_beid_jslib`.
 Here is how to manually set a password for a given user::
 
     $ python manage.py shell
-    >>> from lino.runtime import *
+    >>> from lino.api.shell import *
     >>> u = users.User.objects.get(username='robin')
     >>> u.password
     u'!'

@@ -141,7 +141,7 @@ important part of software development.
 So here is, again our ``Authors`` table, this time in a testable
 console format:
 
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> rt.show(tables.Authors)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ============ =========== =========

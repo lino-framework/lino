@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 
-from lino import dd, rt, _, mixins
+from lino.api import dd, rt, _
+from lino import mixins
+
 from lino.utils import join_words, join_elems
 from lino.utils.xmlgen.html import E
 

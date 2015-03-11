@@ -28,22 +28,46 @@ class AddressOwner(dd.Model):
     def get_address_by_type(self, address_type):
         Address = rt.modules.addresses.Address
         try:
-            return rt.modules.addresses.Address.objects.get(
+            return Address.objects.get(
                 partner=self, address_type=address_type)
         except Address.DoesNotExist:
             return self.get_primary_address()
         except Address.MultipleObjectsReturned:
             return self.get_primary_address()
-        
-    def get_primary_address(self):
+
+    def get_primary_address(self, update=False):
+        """Return the primary address of this partner.
+
+        If the optional argument `update` is True, this method has a
+        side effect of updating or even creating an address record
+        when appropriate and possible:
+
+        - if there is exactly one :class:`Address` object which just fails to
+          be marked as primary, mark it as primary and return it.
+
+        - if there is no :class:`Address` object, and if the
+          :class:`Partner` has some non-empty address field, create an
+          address record from these, using `AddressTypes.official` as
+          type.
+
+        """
         Address = rt.modules.addresses.Address
-        # AddressTypes = rt.modules.addresses.AddressTypes
-        # ADDRESS_FIELDS = rt.modules.addresses.ADDRESS_FIELDS
 
         kw = dict(partner=self, primary=True)
         try:
             return Address.objects.get(**kw)
         except Address.DoesNotExist:
+            pass
+        qs = Address.objects.filter(partner=self)
+        num = qs.count()
+        if num == 1:
+            addr = qs[0]
+            if update:
+                addr.primary = True
+                addr.full_clean()
+                addr.save()
+            return addr
+        elif num == 0 and update:
             kw.update(address_type=AddressTypes.official)
             has_values = False
             for fldname in Address.ADDRESS_FIELDS:
@@ -57,16 +81,6 @@ class AddressOwner(dd.Model):
                 addr.save()
                 return addr
 
-    def get_overview_elems(self, ar):
-        elems = super(AddressOwner, self).get_overview_elems(ar)
-        sar = ar.spawn('addresses.AddressesByPartner',
-                       master_instance=self)
-        # btn = sar.as_button(_("Manage addresses"), icon_name="wrench")
-        btn = sar.as_button(_("Manage addresses"))
-        # elems.append(E.p(btn, align="right"))
-        elems.append(E.p(btn))
-        return elems
-    
     def sync_primary_address(self, request):
         Address = rt.modules.addresses.Address
         watcher = ChangeWatcher(self)
@@ -83,4 +97,13 @@ class AddressOwner(dd.Model):
         self.save()
         watcher.send_update(request)
 
-
+    def get_overview_elems(self, ar):
+        elems = super(AddressOwner, self).get_overview_elems(ar)
+        sar = ar.spawn('addresses.AddressesByPartner',
+                       master_instance=self)
+        # btn = sar.as_button(_("Manage addresses"), icon_name="wrench")
+        btn = sar.as_button(_("Manage addresses"))
+        # elems.append(E.p(btn, align="right"))
+        elems.append(E.p(btn))
+        return elems
+    

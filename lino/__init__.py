@@ -33,7 +33,7 @@ srcref_url = 'https://github.com/lsaffre/lino/blob/master/%s'
 
 def setup_project(settings_module):
     os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
-    from lino.runtime import settings
+    from lino.api.shell import settings
 
 
 from django.utils.translation import ugettext_lazy as _

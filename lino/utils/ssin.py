@@ -118,7 +118,7 @@ from django.core.exceptions import ValidationError
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext_lazy as _
 
-from lino.dd import Genders
+from lino.api.dd import Genders
 
 
 YEAR2000 = '='

@@ -93,7 +93,7 @@ and can be changed in settings.py file:
             """
             Defines application-specific default user profiles.
             """
-            from lino import dd
+            from lino.api import dd
             from django.utils.translation import ugettext_lazy as _
             from lino.core.perms import UserLevels
             dd.UserProfiles.reset("office system")  # names of UserGroups we want to set specific user level for

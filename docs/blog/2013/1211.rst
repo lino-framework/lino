@@ -18,7 +18,7 @@ has no effect when `settings` have been loaded.  Now it is fixed:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
->>> from lino.runtime import settings
+>>> from lino.api.shell import settings
 >>> from __future__ import print_function
 >>> print(settings.LANGUAGES)
 [('de', 'German'), ('en', 'English'), ('es', 'Spanish'), ('et', 'Estonian'), ('fr', 'French'), ('nl', 'Dutch'), ('pt-br', 'Brazilian Portuguese')]

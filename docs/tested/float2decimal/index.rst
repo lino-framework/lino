@@ -10,7 +10,7 @@ Assigning float values to a DecimalField
 
 .. 
     >>> from __future__ import print_function
-    >>> from lino.runtime import *
+    >>> from lino.api.shell import *
     >>> globals().update(float2decimal.__dict__)
 
 This document shows that the following bug has been removed:

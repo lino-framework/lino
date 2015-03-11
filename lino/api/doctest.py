@@ -4,7 +4,7 @@
 
 """A selection of names to be used in tested documents."""
 
-from lino.runtime import *
+from lino.api.shell import *
 from django.utils import translation
 from django.test import Client
 import json

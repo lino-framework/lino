@@ -31,7 +31,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino import dd, rt, mixins
+from lino.api import dd, rt
+from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.utils.report import Report
 from lino.utils.xmlgen.html import E

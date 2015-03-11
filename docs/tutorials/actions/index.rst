@@ -19,7 +19,7 @@ and a table `Moos` on `Moo` defining another two action `b` and `t`.
 
 ..
   >>> # encoding: utf-8
-  >>> from lino.runtime import *
+  >>> from lino.api.shell import *
   >>> globals().update(actions.__dict__)
   >>> from pprint import pprint
 

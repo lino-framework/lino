@@ -64,7 +64,7 @@ Let's create a little Site with the following :xfile:`models.py` file:
 
 ..
   >>> from __future__ import print_function
-  >>> from lino.runtime import *
+  >>> from lino.api.shell import *
   >>> Product = mldbc.Product
   
 
@@ -127,7 +127,7 @@ Chaise, Table, Ecran, Souris, Clavier, Consultation
 
 Here is how we got the above table:
 
->>> from lino import rt
+>>> from lino.api import rt
 >>> rt.show(mldbc.Products)
 ==================== ================== ============= ============
  Designation          Designation (fr)   Category      Price

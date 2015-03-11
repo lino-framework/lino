@@ -22,7 +22,6 @@ from django.utils import translation
 from django.utils.encoding import force_unicode
 from django.core.exceptions import ValidationError
 
-#~ from lino import dd, rt
 from lino.utils.djangotest import NoAuthTestCase
 from lino.utils.djangotest import RemoteAuthTestCase
 

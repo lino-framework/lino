@@ -10,7 +10,7 @@ a convenient name for different usage contexts.
    ad
    dd
    rt
-   runtime
+   shell
    doctest
 
 """

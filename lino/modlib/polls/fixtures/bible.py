@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
-from lino import rt
+from lino.api import rt
 from lino.utils import Cycler
 
 

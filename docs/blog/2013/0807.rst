@@ -17,7 +17,7 @@ calendar event:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.demo'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> ses = settings.SITE.login('rolf')
 >>> ses.spawn(settings.SITE.modules.cal.MyEventsToday).get_total_count()
 1

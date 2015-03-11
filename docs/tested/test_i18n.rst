@@ -11,7 +11,7 @@ General stuff:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.i18n.settings'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> from django.test import Client
 >>> client = Client()
 >>> ses = settings.SITE.login('robin')

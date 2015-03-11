@@ -27,9 +27,9 @@ Combinations of two
 
 I started to work on :ticket:`118`. The first part is a general
 problem: how to find duplicate persons in a database.  This is done by
-:mod:`lino.modlib.dedupe` (see :ref:`welfare.tested.dedupe`), but
-until now it was just a proof of concept which needed to be
-optimized. That's done.
+`lino.modlib.dedupe`, but until now it was just a proof of concept
+which needed to be optimized. That's done now. See
+:ref:`welfare.tested.dupable_partners`.
 
 Side effects:
 

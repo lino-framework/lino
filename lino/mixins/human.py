@@ -20,7 +20,7 @@ from django.utils.translation import pgettext
 from django.conf import settings
 
 from lino.utils import join_words
-from lino.dd import Genders
+from lino.api.dd import Genders
 
 from lino.core import fields
 from lino.core import model

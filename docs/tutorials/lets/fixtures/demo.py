@@ -1,4 +1,4 @@
-from lino import rt
+from lino.api import rt
 
 
 def findbyname(model, name):

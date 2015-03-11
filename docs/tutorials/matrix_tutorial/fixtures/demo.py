@@ -5,7 +5,6 @@ from lino.api import dd, rt
 from django.conf import settings
 
 from lino.utils import Cycler
-#~ from lino.runtime import settings, matrix_tutorial
 
 Entry = dd.resolve_model('matrix_tutorial.Entry')
 EntryType = dd.resolve_model('matrix_tutorial.EntryType')

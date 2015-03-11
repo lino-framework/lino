@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino import dd, mixins
+from lino.api import dd
+from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 

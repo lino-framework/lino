@@ -32,7 +32,7 @@ from lino.utils.instantiator import Instantiator
 
 from lino.modlib.countries.models import PlaceTypes
 
-from lino import rt
+from lino.api import rt
 
 if True:
 

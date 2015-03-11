@@ -22,7 +22,8 @@ from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino import dd, rt, mixins
+from lino.api import dd, rt
+from lino import mixins
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.outbox.mixins import MailableType, Mailable

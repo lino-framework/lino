@@ -1,4 +1,4 @@
-from lino import rt
+from lino.api import rt
 from lino.utils import mti
 
 

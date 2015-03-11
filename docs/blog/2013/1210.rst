@@ -67,7 +67,7 @@ trick!
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_faggio.settings.test'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> from __future__ import print_function
 >>> ses = settings.SITE.login()
 >>> ah = courses.EventsByCourse.get_handle()

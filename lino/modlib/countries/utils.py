@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ValidationError
 
-from lino import rt
+from lino.api import rt
 from lino.utils import join_words
 from lino.utils.instantiator import InstanceGenerator
 

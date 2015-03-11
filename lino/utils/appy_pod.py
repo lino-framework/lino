@@ -38,7 +38,7 @@ from lino.utils.html2odf import html2odf, toxml
 from lino.utils.media import TmpMediaFile
 from lino.utils.xmlgen.html import E
 
-from lino import rt
+from lino.api import rt
 
 from lino.modlib.extjs.elems import NumberFieldElement
 

@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.utils.translation import ugettext as _
 
-from lino import rt
+from lino.api import rt
 from lino.core.signals import receiver
 from lino.core.signals import on_ui_created, on_ui_updated, pre_ui_delete
 from lino.core.fields import fields_list

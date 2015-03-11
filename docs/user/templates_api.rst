@@ -74,7 +74,7 @@ TODO: This is just a start and far from being complete...
 
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
-    >>> from lino.runtime import *
+    >>> from lino.api.shell import *
     >>> from lino.utils.format_date import fds, fdm, fdl, fdf
     >>> import datetime
 

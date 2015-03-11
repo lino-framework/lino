@@ -34,12 +34,12 @@ exceptions when it comes to hackerish usages.  For example certain
 tested tutorial documents (like :doc:`/tutorials/tables/index`) used a
 trick to put the names of models and tables to the global namespace:
 
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> globals().update(tables)
 
 This hack has become different: 
 
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> globals().update(tables.__dict__)
 
 

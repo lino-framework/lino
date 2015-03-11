@@ -17,7 +17,7 @@ from lino.core.utils import resolve_model
 
 from lino.utils import Cycler
 from lino.utils import i2d
-from lino import dd, rt, mixins
+from lino.api import dd, rt
 
 
 def objects():

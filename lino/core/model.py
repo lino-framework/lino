@@ -882,7 +882,7 @@ action on individual instances.
                   contacts.Partner.print_subclasses_graph()
 
         """
-        from lino import rt
+        from lino.api import rt
         pairs = []
 
         def collect(m):

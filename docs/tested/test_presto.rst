@@ -11,8 +11,8 @@ General stuff:
 >>> import os
 >>> import json
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.settings.doctests'
->>> from lino.runtime import *
->>> from lino import dd
+>>> from lino.api.shell import *
+>>> from lino.api import dd
 >>> from django.test import Client
 >>> client = Client()
 

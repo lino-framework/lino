@@ -31,7 +31,7 @@ Just to have a trace of what I have been doing today...
 `merge_test.py`::
 
   from django.conf import settings
-  from lino import dd
+  from lino.api import dd
   from lino.core.merge import MergePlan
   from lino.utils.xmlgen import html
 

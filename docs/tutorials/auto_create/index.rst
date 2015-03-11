@@ -21,7 +21,7 @@ We define a single simple model:
 
 Define a handler for the auto_create signal:
 
->>> from lino import dd
+>>> from lino.api import dd
 >>> @dd.receiver(dd.auto_create)
 ... def my_auto_create_handler(sender,**kw):
 ...    print "My auto_create handler was called with",sender

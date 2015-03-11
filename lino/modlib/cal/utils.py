@@ -17,7 +17,7 @@ Some calendar utilities
   >>> import os
   >>> os.environ['DJANGO_SETTINGS_MODULE'] = \\
   ...     'lino.projects.docs.settings.demo'
-  >>> from lino.runtime import *
+  >>> from lino.api.shell import *
 
 
 """

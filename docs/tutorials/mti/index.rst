@@ -12,7 +12,7 @@ Multi-table inheritance (MTI)
   comment, but doctest executes them.
   
   >>> from __future__ import print_function
-  >>> from lino.api.runtime import *
+  >>> from lino.api.shell import *
   >>> Person = mti.Person
   >>> Restaurant = mti.Restaurant
   >>> Place = mti.Place

@@ -19,7 +19,7 @@ Here some test cases:
 >>> from decimal import Decimal
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.demo'
->>> from lino import dd
+>>> from lino.api import dd
 >>> f = dd.QuantityField()
 >>> f.to_python(None)
 >>> f.to_python(30)

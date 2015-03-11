@@ -5,18 +5,12 @@
 """Defines the :class:`Dupable` model mixin and related functionality
 to assist users in finding duplicate database records.
 
-:mod:`lino.modlib.dupable_partners` defines a virtual table
-:class:`SimilarPartners`, which does that same check on existing
-partners and shows a slave table of partners that are "similar" to a
-given master instance (and therefore are potential duplicates).
-
-Examples and test cases in :ref:`welfare.tested.dedupe`.
+Used by :mod:`lino.modlib.dupable_partners`.
 
 The current implementation of the detection algorithm uses the `fuzzy
-<https://pypi.python.org/pypi/Fuzzy>`_ module.
-
-Doug Hellmann about `Using Fuzzy Matching to Search by Sound with
-Python <http://www.informit.com/articles/article.aspx?p=1848528>`_
+<https://pypi.python.org/pypi/Fuzzy>`_ module. Read also Doug Hellmann
+about `Using Fuzzy Matching to Search by Sound with Python
+<http://www.informit.com/articles/article.aspx?p=1848528>`_
 
 """
 

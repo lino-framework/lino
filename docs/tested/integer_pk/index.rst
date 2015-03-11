@@ -10,7 +10,7 @@ Do not define IntegerField as explicit primary_key field
 
 .. 
     >>> from __future__ import print_function
-    >>> from lino.runtime import *
+    >>> from lino.api.shell import *
     >>> globals().update(integer_pk.__dict__)
 
 Here are the models used for this test:

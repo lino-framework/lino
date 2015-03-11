@@ -5,7 +5,7 @@
 
 """
 
-from lino import dd, _
+from lino.api import dd, _
 
 
 class MemberRoles(dd.ChoiceList):

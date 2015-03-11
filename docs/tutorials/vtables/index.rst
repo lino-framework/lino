@@ -13,8 +13,8 @@ Here is the :xfile:`models.py` file we will use for this tutorial:
 Some setup for doctest:
   
 >>> from __future__ import print_function
->>> from lino import rt
->>> from lino.runtime import *
+>>> from lino.api import rt
+>>> from lino.api.shell import *
 >>> globals().update(vtables.__dict__)
 
 

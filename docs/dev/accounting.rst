@@ -157,7 +157,7 @@ Income and Expenses are listed in the Profit & Loss statement.
 As a summary here once more this hard-coded table of basic account
 types:
 
->>> from lino import rt
+>>> from lino.api import rt
 >>> rt.show('accounts.AccountTypes')
 ==================== =============== =============== ======== ==========
  value                name            text            D/C      Sheet

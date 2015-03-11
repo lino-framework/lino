@@ -16,7 +16,6 @@ from lino.api import dd
 from lino.modlib.countries.mixins import AddressLocation
 
 from .choicelists import AddressTypes, DataSources
-# from .mixins import AddressOwner
 
 
 class Address(AddressLocation):

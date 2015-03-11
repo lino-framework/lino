@@ -12,7 +12,6 @@ Adds some :class:`household roles <households.Role>`.
 from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
-from lino import rt
 
 
 def objects():

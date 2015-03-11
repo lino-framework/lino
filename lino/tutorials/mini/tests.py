@@ -44,8 +44,7 @@ class QuickTest(RemoteAuthTestCase):
     maxDiff = None
 
     def test_sepa(self):
-        from lino.runtime import sepa
-        from lino.runtime import contacts
+        from lino.api.shell import sepa, contacts
         partner = contacts.Partner(name="Foo")
         partner.full_clean()
         partner.save()

@@ -35,10 +35,7 @@ other database objects are referring to it".
 from __future__ import unicode_literals
 from __future__ import print_function
 
-import logging
-logger = logging.getLogger(__name__)
-
-from lino import rt
+from lino.api import rt
 
 from lino.modlib.contenttypes.mixins import Controllable
 

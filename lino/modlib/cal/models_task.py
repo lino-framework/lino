@@ -13,14 +13,12 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-import dateutil
-
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
 
-from lino import dd, mixins
+from lino.api import dd
+from lino import mixins
 
 from .models import Component
 

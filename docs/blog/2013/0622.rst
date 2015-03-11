@@ -33,7 +33,7 @@ and are only for history documentation purposes.)
 
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings'
-    >>> from lino.runtime import *
+    >>> from lino.api.shell import *
     >>> from django.test import Client
     >>> client = Client()
     

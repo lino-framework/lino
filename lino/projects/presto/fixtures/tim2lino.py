@@ -61,8 +61,6 @@ Company = resolve_model("contacts.Company")
 Account = dd.resolve_model('accounts.Account')
 Group = dd.resolve_model('accounts.Group')
 
-# from lino.runtime import *
-
 if True:
     users = dd.resolve_app('users')
     tickets = dd.resolve_app('tickets')

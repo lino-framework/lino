@@ -1,0 +1,59 @@
+=========================
+Wednesday, March 11, 2015
+=========================
+
+When reading eID cards
+======================
+
+Discovered  :ticket:`127` and :ticket:`128`.
+
+Fixed :ticket:`127` and added two lines in
+:mod:`lino_welfare.projects.std.tests.test_beid` to test it.
+
+
+
+Sphinx 1.3 has been released
+============================
+
+Takayuki Shimizukawa has released a new version of Sphinx.  I
+converted the documentation for :mod:`atelier` to the new Alabaster
+theme which I have been using before e.g. in `German Lino Welfare user
+documentation <http://de.welfare.lino-framework.org/>`_ and which has
+the advantage of being responsive. But there is one open question
+before I can use it for the Lino docs: how can I get the "previous |
+next | modules | index" links that used to be in the upper right
+corner? Not urgent.
+
+
+Checking primary addresses
+==========================
+
+I fixed :ticket:`127`, but how can we set the :attr:`primary
+<lino.modlib.addresses.models.Address.primary>` flag for the address
+of card holders that have been read from eID cards until now?
+
+- I adapted the :meth:`get_primary_address
+  <lino.modlib.addresses.mixins.AddressOwner.get_primary_address>`.
+
+- New test module :mod:`lino.projects.min2.tests.test_addresses`.
+
+A first and simplistic approach can be to write a local script to be
+executed with :manage:`run`::
+
+  from lino.api.shell import *
+
+
+
+Tidying up the API
+==================
+
+Above script motivated me to finally do another API change: rename
+`lino.api.runtime` to `lino.api.shell`. And that caused me to also
+tidy up the backwards-compatibility modules `lino.runtime`, `lino.ad`
+and `lino.rt`. So the above script does no longer do::
+
+  from lino.runtime import *
+
+But::
+
+  from lino.api.shell import *

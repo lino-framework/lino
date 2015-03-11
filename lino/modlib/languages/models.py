@@ -9,7 +9,8 @@
 
 from django.db import models
 
-from lino import dd, mixins
+from lino.api import dd
+from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
 

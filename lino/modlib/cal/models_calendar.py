@@ -24,7 +24,8 @@ from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from lino.modlib.users.mixins import UserAuthored
 
-from lino import dd, rt, mixins
+from lino.api import dd, rt
+from lino import mixins
 
 
 def default_color():

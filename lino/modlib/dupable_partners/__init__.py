@@ -14,7 +14,15 @@ To use it, applications must do two things:
   <lino.modlib.contacts.models.Partner>` model to inherit from
   :class:`lino.modlib.dupable_partners.mixins.DupablePartner`.
 
+Defines a virtual slave table :class:`SimilarPartners`, which shows
+the partners that are "similar" to a given master instance (and
+therefore are potential duplicates).
+
+See also :mod:`lino.mixins.dupable`.
+
 A usage example is :mod:`lino.projects.min2`.
+
+Examples and test cases in :ref:`welfare.tested.dupable_partners`.
 
 """
 

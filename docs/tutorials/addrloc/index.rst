@@ -36,7 +36,7 @@ Here are the tables we are going to use in this tutorial:
 
 Here is our ``Companies`` table in a testable console format:
 
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> rt.show(addrloc.Companies)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ======== ======================================

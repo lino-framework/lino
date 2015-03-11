@@ -105,27 +105,23 @@ Lino and the InnoDB engine
 ==========================
 
 Lino versions before :blogref:`20141220` were more easy to use with
-the MyISAM database storage because :manage:`initdb` can fail to drop
-tables due to InnoDB's more severe integrity contraints.  Using InnoDB
-can cause the following error message when trying to run
-:manage:`initdb` a *second* time::
+the MyISAM storage instead of the default InnoDB storage (see `Setting
+the Storage Engine
+<http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_).
+
+Using InnoDB could cause
+the following error message when trying to run :manage:`initdb` on a
+non-empty database::
 
     IntegrityError: (1217, 'Cannot delete or update a parent row: 
     a foreign key constraint fails')
 
-One method to set the default database storage on a Debian server is
-to create a file :file:`/etc/mysql/conf.d/set_myisam_engine.cnf`
-with this content::
+This was because :manage:`initdb` could fail to drop tables due to
+InnoDB's more severe integrity contraints.
 
-    [mysqld]
-    default-storage-engine=myisam
-
-If you insist on InnoDB, you can work around this problem by doing
-yourself a `DROP DATABASE` followed by a new `CREATE DATABASE`
-before running :manage:`initdb`.
-
-See also `Setting the Storage Engine
-<http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
+Even with InnoDB it was possible to work around this problem by doing
+yourself a `DROP DATABASE` followed by a new `CREATE DATABASE` each
+time before running :manage:`initdb`.
 
 
 Tuning

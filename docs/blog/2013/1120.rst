@@ -56,7 +56,7 @@ is not the same as::
     
 or::
 
-    from lino.runtime import foo
+    from lino.api.shell import foo
     
 
     

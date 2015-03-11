@@ -71,8 +71,8 @@ Test case setup:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_faggio.settings.test'
->>> from lino.runtime import *
->>> from lino import dd
+>>> from lino.api.shell import *
+>>> from lino.api import dd
 >>> from django.db import models
 >>> from django.db.models import Q
 

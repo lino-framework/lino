@@ -12,7 +12,7 @@ from django.db import models
 from lino.utils.instantiator import Instantiator
 from lino.core.utils import resolve_model
 
-from lino import rt
+from lino.api import rt
 
 
 def objects():

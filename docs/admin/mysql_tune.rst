@@ -10,6 +10,30 @@ See also :doc:`install_mysql`.
     :depth: 1
 
 
+MyISAM or InnoDB?
+=================
+
+The `storage engine
+<http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_
+(typically either MyISAM or InnoDB, see also `Comparison of MySQL
+database engines
+<https://en.wikipedia.org/wiki/Comparison_of_MySQL_database_engines>`_)
+can influence your database performance.
+
+MySQL can set the storage engine per table, but Django has no API for
+specifying this setting because it is specific to MySQL.  So all
+tables in a Lino database will have the default database storage
+defined.
+
+MySQL has no possibility to specify the default storage *per
+database*, but you can set the *system-wide* default database storage
+on a Debian server by creating a file
+:file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
+
+    [mysqld]
+    default-storage-engine=myisam
+
+
 MySQLTuner
 ==========
 

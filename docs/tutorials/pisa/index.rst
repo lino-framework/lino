@@ -29,7 +29,7 @@ such things using scripts.
 Note that you need to manually add `pip install pisa`.
 
 >>> from __future__ import print_function 
->>> from lino.api.runtime import *
+>>> from lino.api.shell import *
 >>> from django.test import Client
 >>> from pisa.models import Person
 

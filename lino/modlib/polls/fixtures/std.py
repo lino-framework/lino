@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from lino.api import dd
-from lino import rt
-from lino.ad import _
+from lino.api import dd, rt, _
 
 
 def objects():

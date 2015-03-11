@@ -11,7 +11,7 @@ Usage:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> from django.utils import translation
 
 >>> for value,text in choicelist_choices():

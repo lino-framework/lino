@@ -26,7 +26,7 @@ from django.utils import translation
 
 from django.template.loader import (select_template, Context,
                                     TemplateDoesNotExist)
-from lino import rt
+from lino.api import rt
 from lino.utils.xmlgen.html import E
 
 davlink = settings.SITE.plugins.get('davlink', None)

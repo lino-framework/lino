@@ -1,4 +1,4 @@
-from lino.runtime import *
+from lino.api.shell import *
 from lino.utils.instantiator import Instantiator
 
 

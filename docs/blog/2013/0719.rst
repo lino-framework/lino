@@ -10,7 +10,7 @@ The following snippet reproduced this bug:
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_welfare.settings.test'
 >>> from pprint import pprint
 >>> from django.test import Client
->>> from lino.runtime import *
+>>> from lino.api.shell import *
 >>> settings.SITE.startup()
 >>> client = Client()
 >>> # url = 'http://welfare-demo.lino-framework.org/api/newcomers/NewClients?fmt=csv'

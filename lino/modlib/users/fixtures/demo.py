@@ -10,7 +10,7 @@ Lino currently knows demo users for the following languages:
 
 .. django2rst::
 
-  from lino.runtime import *
+  from lino.api.shell import *
   ses = rt.login()
   ses.show(users.Users, 
     column_names="username first_name last_name language")
