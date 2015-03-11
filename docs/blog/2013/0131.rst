@@ -2,6 +2,6 @@
 ========
 
 Continued to work on Lino's inner beauty:
-the new module :mod:`lino.runtime` 
+the new module :mod:`lino.api.shell` 
 
 

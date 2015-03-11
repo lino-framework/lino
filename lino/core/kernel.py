@@ -228,7 +228,7 @@ class Kernel(object):
             process_name = 'WSGI'
         else:
             process_name = ' '.join(sys.argv)
-        #~ logger.info("Started %s on %r (PID %s).", process_name,self.title,os.getpid())
+
         logger.info("Started %s (using %s) --> PID %s",
                     process_name, settings.SETTINGS_MODULE, os.getpid())
         logger.info(self.welcome_text())
@@ -242,16 +242,6 @@ class Kernel(object):
 
         self.setup_model_spec(self, 'user_model')
         self.setup_model_spec(self, 'project_model')
-
-        # if self.user_model:
-        #     self.user_model = resolve_model(
-        #         self.user_model,
-        #         strict="Unresolved model '%s' in user_model.")
-
-        # if self.project_model:
-        #     self.project_model = resolve_model(
-        #         self.project_model,
-        #         strict="Unresolved model '%s' in project_model.")
 
         for app_name_model, p in self.override_modlib_models.items():
             # app_name_model is the full installed app module name +

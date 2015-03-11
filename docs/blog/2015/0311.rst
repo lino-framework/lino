@@ -33,14 +33,17 @@ I fixed :ticket:`127`, but how can we set the :attr:`primary
 of card holders that have been read from eID cards until now?
 
 - I adapted the :meth:`get_primary_address
-  <lino.modlib.addresses.mixins.AddressOwner.get_primary_address>`.
+  <lino.modlib.addresses.mixins.AddressOwner.get_primary_address>` method.
 
 - New test module :mod:`lino.projects.min2.tests.test_addresses`.
 
-A first and simplistic approach can be to write a local script to be
-executed with :manage:`run`::
+Now a first approach can be to write a local script to be executed
+with the :manage:`run` command::
 
   from lino.api.shell import *
+  for p in contacts.Partner.objects.all():
+      p.get_primary_address(update=True)
+      
 
 
 
@@ -48,12 +51,15 @@ Tidying up the API
 ==================
 
 Above script motivated me to finally do another API change: rename
-`lino.api.runtime` to `lino.api.shell`. And that caused me to also
-tidy up the backwards-compatibility modules `lino.runtime`, `lino.ad`
-and `lino.rt`. So the above script does no longer do::
+``lino.api.runtime`` to :mod:`lino.api.shell`.
+
+And that caused me to remove finally those backwards-compatibility
+modules ``lino.runtim``, ``lino.ad`` and ``lino.rt``.
+
+The script in the previous section with old API would have been::
 
   from lino.runtime import *
 
-But::
+Now it is::
 
   from lino.api.shell import *

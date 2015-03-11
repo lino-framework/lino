@@ -35,14 +35,12 @@ def setup_project(settings_module):
     os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
     from lino.api.shell import settings
 
-
 from django.utils.translation import ugettext_lazy as _
-"""The above is here so we can write a single import statement in
-plugins::
+# The above is here so we can write a single import statement in
+# plugins:
+#
+#   from lino.api import ad, _
 
-  from lino import ad, _
-
-"""
 
 DJANGO_DEFAULT_LANGUAGE = 'en-us'
 

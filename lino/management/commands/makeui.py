@@ -26,10 +26,6 @@ from django.utils.encoding import force_unicode
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import loading
-#~ from django.db import models
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from lino.core import actors
-#~ from lino.utils import get_class_attr
 
 import lino
 from lino.core import dbtables
@@ -38,9 +34,7 @@ from lino.core.utils import app_labels
 from lino.utils import confirm
 from lino.utils import rstgen
 from lino.core.menus import Menu, MenuItem
-#~ from lino.utils.jsgen import py2js
 from lino.utils import jsgen
-#~ from lino.core.utils import makedirs_if_missing
 from lino.management.commands.makedocs import GeneratingCommand
 
 

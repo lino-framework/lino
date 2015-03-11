@@ -12,6 +12,7 @@
     makeui
     mergedata
     monitor
+    run
     show
     syncscreenshots
 

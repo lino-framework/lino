@@ -1,4 +1,32 @@
-/home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/api/lino.projects.min2.modlib.contacts.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/api/lino.projects.min2.tests.rst:: WARNING: document isn't included in any toctree
-/home/luc/hgwork/lino/docs/api/lino.projects.min2.tests.test_min2.rst:: WARNING: document isn't included in any toctree
+WARNING: [autosummary] failed to import u'lino.management.commands.makedocs': no module named lino.management.commands.makedocs
+WARNING: [autosummary] failed to import u'lino.management.commands.makeui': no module named lino.management.commands.makeui
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:6: WARNING: failed to import makedocs
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:6: WARNING: failed to import makeui
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:6: WARNING: toctree references unknown document u'api/makedocs'
+/home/luc/hgwork/lino/docs/api/lino.management.commands.rst:6: WARNING: toctree references unknown document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+<autosummary>:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+<autosummary>:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makedocs'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'

@@ -14,12 +14,11 @@ per partner.
     models
     fixtures.demo2
 
+Some unit test cases are :mod:`lino.projects.min2.tests.test_addresses`.
 
 """
 
-from lino.api import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

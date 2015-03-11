@@ -11,7 +11,7 @@ on a Lino site:
   
 - In your manage.py you must add a line::
  
-    import lino.runtime
+    import lino.api.shell
     
 The remainder of this article is just my personal and not very 
 elaborated first impression.

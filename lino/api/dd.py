@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-The :mod:`lino.dd` module is a shortcut to those parts of Lino which
+The :mod:`lino.api.dd` module is a shortcut to those parts of Lino which
 are used in your :xfile:`models.py` modules.  The name ``dd`` stands
 for "Database Design".
 

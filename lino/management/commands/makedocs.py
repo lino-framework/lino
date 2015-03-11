@@ -6,7 +6,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import errno
 import sys
 from optparse import make_option
 from os.path import join
@@ -18,20 +17,15 @@ from django.utils.encoding import force_unicode
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import loading
-#~ from django.db import models
-#~ from django.contrib.contenttypes.models import ContentType
-#~ from lino.core import actors
-#~ from lino.utils import get_class_attr
 
 import lino
 from lino.core.utils import app_labels
-from lino.utils import confirm, curry
+from lino.utils import curry
 from lino.utils import rstgen
 from lino.utils.restify import doc2rst, abstract
 from lino.core import dbtables
 
-#~ from lino.core.utils import makedirs_if_missing, full_model_name
-from lino.dd import full_model_name
+from lino.api.dd import full_model_name
 
 
 def fieldtype(f):

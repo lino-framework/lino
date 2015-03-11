@@ -93,7 +93,7 @@ Note that `Chooser.get_choices()` ignores any unused keyword arguments:
 from django.db import models
 from lino.api import dd, rt
 from lino.utils import choosers
-from lino.dd import obj2str
+from lino.api.dd import obj2str
 
 YEAR_IN_SCHOOL_CHOICES = (
     ('FR', 'Freshman'),
