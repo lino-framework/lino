@@ -1,62 +1,49 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2014 Luc Saffre
+# Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur"""
-Utilities for manipulating `Belgian national identification numbers
-<http://en.wikipedia.org/wiki/National_identification_number#Belgium>`__.
-It defines the functions :func:`format_ssin`, 
-:func:`is_valid_ssin` and :func:`ssin_validator`. 
+ur""" Utilities for manipulating *Belgian national identification
+numbers*.
 
-Belgians call their national identification number
-**INSZ** ("identificatienummer van de sociale zekerheid) in Dutch,
-**NISS** ("No. d'identification de Sécurité Sociale") in French
-or **INSS** ("Identifizierungsnummer der Sozialen Sicherheit") in German.
-We use the English abbreviation
-**SSIN** ("Social Security Identification Number"),
-though some sources also speak about **INSS** 
-("Identification Number Social Security"). 
-That's a normal phenomen in Belgium, don't worry.
-See also 
-`Numéro de registre national
-<http://fr.wikipedia.org/wiki/Num%C3%A9ro_de_registre_national>`_
-and
-`Rijksregisternummer
-<http://nl.wikipedia.org/wiki/Rijksregisternummer>`_
+Belgians call their national identification number **INSZ**
+("identificatienummer van de sociale zekerheid) in Dutch, **NISS**
+("No. d'identification de Sécurité Sociale") in French or **INSS**
+("Identifizierungsnummer der Sozialen Sicherheit") in German.  We use
+the English abbreviation **SSIN** ("Social Security Identification
+Number"), though some sources also speak about **INSS**
+("Identification Number Social Security").
 
+See also
 
-http://www.ibz.rrn.fgov.be/fileadmin/user_upload/Registre/Acces_RN/RRNS003_F_IV.pdf
-http://www.simplification.fgov.be/doc/1206617650-4990.pdf
+- the Wikipedia articles about `Belgian national identification
+  numbers
+  <http://en.wikipedia.org/wiki/National_identification_number#Belgium>`__,
+  `Numéro de registre national
+  <http://fr.wikipedia.org/wiki/Num%C3%A9ro_de_registre_national>`_
+  and `Rijksregisternummer
+  <http://nl.wikipedia.org/wiki/Rijksregisternummer>`_
+
+- http://www.ibz.rrn.fgov.be/fileadmin/user_upload/Registre/Acces_RN/RRNS003_F_IV.pdf
+- http://www.simplification.fgov.be/doc/1206617650-4990.pdf
 
 
 Formatting Belgian National Numbers
 -----------------------------------
 
-An obsolete but still used format for printing a Belgian SSIN is
-``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, ``x`` indicates
-the century (``*`` for the 19th, `` `` (space) for the 20th and ``=``
-for the 21st century), ``123`` is a sequential number for persons born
-the same day (odd numbers for men and even numbers for women), and
-``97`` is a check digit (remainder of previous digits divided by 97).
+This module defines the functions :func:`format_ssin` and
+:func:`new_format_ssin`.
 
-And a function :func:`generate_ssin` is mainly used to generate
-fictive demo data.  For example, here is the national number of the
-25th boy born in Belgium on June 1st, 1968:
+An officialy obsolete but still used format for printing a Belgian
+SSIN is ``YYMMDDx123-97``, where ``YYMMDD`` is the birth date, ``x``
+indicates the century (``*`` for the 19th, a *space* for the 20th and
+a ``=`` for the 21st century), ``123`` is a sequential number for
+persons born the same day (odd numbers for men and even numbers for
+women), and ``97`` is a check digit (remainder of previous digits
+divided by 97).
 
->>> import datetime
-    
->>> n = generate_ssin(datetime.date(1968,6,1), Genders.male, 53)
->>> print n
-680601 053-29
->>> ssin_validator(n)
 
-The sequence number is optional and the default value depends on the gender.
-For boys it is 1, for girls 2.
-
->>> n = generate_ssin(datetime.date(2002,4,5),Genders.female)
->>> print n
-020405 002=44
->>> ssin_validator(n)
+Validation
+----------
 
 There are two validator functions, :func:`is_valid_ssin` and
 :func:`ssin_validator`.  the difference between them is that one
@@ -68,6 +55,9 @@ the user language.
 Traceback (most recent call last):
 ...
 ValidationError: [u'Invalid SSIN 123 : A formatted SSIN must have 13 positions']
+
+>>> is_valid_ssin('123')
+False
 
 Here is the SSIN of a person with incomplete birth date:
 
@@ -81,18 +71,16 @@ Here is the SSIN of a person with incomplete birth date:
 No need for special characters?
 -------------------------------
 
-In 1983 Belgians discovered that the formatting 
-with a special character to indicate the century 
-is not absolutely required since the national 
-register no longer cared about people born before 
-1900, and now the century can be deduced by trying 
-the check digits.
+In 1983 Belgians discovered that the formatting with a special
+character to indicate the century is not absolutely required since the
+national register no longer cared about people born before 1900, and
+now the century can be deduced by trying the check digits.
 
 >>> format_ssin('68060105329')
 '680601 053-29'
 
-In order to say whether the person is born in 19xx or 20xx,
-we need to look at the check digits.
+In order to say whether the person is born in 19xx or 20xx, we need to
+look at the check digits.
 
 For example, the 25th boy born on June 1st in **1912** will get
 another check-digit than a similar boy exactly 100 years later (in
@@ -127,8 +115,31 @@ YEAR1800 = '*'
 
 
 def generate_ssin(birth_date, gender, seq=None):
-    """
-    Generate an SSIN from a given birth date, gender and optional sequence number.
+    """Generate an SSIN from a given birth date, gender and optional
+    sequence number.
+
+
+    And a function :func:`generate_ssin` is mainly used to generate
+    fictive demo data.  For example, here is the national number of the
+    25th boy born in Belgium on June 1st, 1968:
+
+    Examples:
+
+    >>> import datetime
+
+    >>> n = generate_ssin(datetime.date(1968, 6, 1), Genders.male, 53)
+    >>> print n
+    680601 053-29
+    >>> ssin_validator(n)
+
+    The sequence number is optional and the default value depends on
+    the gender.  For boys it is 1, for girls 2.
+
+    >>> n = generate_ssin(datetime.date(2002, 4, 5),Genders.female)
+    >>> print n
+    020405 002=44
+    >>> ssin_validator(n)
+
     """
     year = birth_date.year
     sep1 = ' '
@@ -167,9 +178,9 @@ def is_valid_ssin(ssin):
 
 
 def new_format_ssin(s):
-    """
-    Formats a raw SSIN as they are printed on the back of 
-    Belgian eid cards, for example "68.06.01-053.09"
+    """Formats a raw SSIN as they are printed on the back of Belgian eid
+    cards, for example "68.06.01-053.09"
+
     """
     s = s.strip()
     if not s:
@@ -181,6 +192,14 @@ def new_format_ssin(s):
     return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:]
 
 
+def parse_ssin(ssin):
+    ssin = ssin.replace(YEAR2000, '')
+    ssin = ssin.replace(YEAR1900, '')
+    ssin = ssin.replace(YEAR1800, '')
+    ssin = ssin.replace(' ', '')
+    return format_ssin(ssin)
+
+
 def format_ssin(raw_ssin):
     """
     Add formatting chars to a given raw SSIN.
@@ -189,7 +208,7 @@ def format_ssin(raw_ssin):
     if not raw_ssin:
         return ''
     if len(raw_ssin) != 11:
-        raise Exception(
+        raise ValidationError(
             force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
             + force_unicode(_('A raw SSIN must have 11 positions')))
     bd = raw_ssin[:6]
@@ -207,7 +226,7 @@ def format_ssin(raw_ssin):
         return bd + ' ' + sn + YEAR1900 + cd
     if is_ok('2' + bd + sn):
         return bd + ' ' + sn + YEAR2000 + cd
-    raise Exception(
+    raise ValidationError(
         force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
         + force_unicode(_('Could not recognize checkdigit')))
 
@@ -234,9 +253,7 @@ def ssin_validator(ssin):
     try:
         xtest = int(xtest)
     except ValueError, e:
-        raise ValidationError(
-            _('Invalid SSIN %s : ') % ssin + str(e)
-        )
+        raise ValidationError(_('Invalid SSIN %s : ') % ssin + str(e))
     xtest = abs((xtest - 97 * (int(xtest / 97))) - 97)
     if xtest == 0:
         xtest = 97
@@ -249,7 +266,3 @@ def ssin_validator(ssin):
         )
     return
 
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod()

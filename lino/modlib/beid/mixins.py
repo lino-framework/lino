@@ -22,6 +22,8 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext
+from django.core.exceptions import ValidationError
+
 from lino.core.utils import get_field
 
 from lino.core.utils import ChangeWatcher
@@ -36,6 +38,7 @@ from lino.utils import ssin
 from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
+from lino.mixins.repairable import Repairable
 
 config = dd.plugins.beid
 
@@ -423,11 +426,16 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         return self.process_row(ar, row, attrs)
 
 
-class BeIdCardHolder(dd.Model):
-    """
-    Mixin for models which represent an eid card holder.
+class BeIdCardHolder(Repairable):
+    """Mixin for models which represent an eid card holder.
     Currently only Belgian eid cards are tested.
     Concrete subclasses must also inherit from :mod:`lino.mixins.Born`.
+
+    .. attribute:: national_id
+
+    The SSIN. It is a *nullable char field* declared *unique*. It is
+    not validated directly because that would cause problems with
+    legacy data where SSINs need manual control.
 
     """
     class Meta:
@@ -560,6 +568,26 @@ class BeIdCardHolder(dd.Model):
                 setattr(obj, fld.name, new)
         return objects, diffs
 
+    def repairdata(self, really=False):
+        """Implements :meth:`lino.mixins.repairable.Repairable.repairdata`.
+
+        """
+        yield super(BeIdCardHolder, self).repairdata(really)
+        if self.national_id:
+            try:
+                expected = ssin.parse_ssin(self.national_id)
+            except ValidationError:
+                pass  # cannot repair invalid SSIN
+            else:
+                got = self.national_id
+                if got != expected:
+                    msg = "Malformed SSIN '{got}' changed to '{expected}'."
+                    yield msg.format(**locals())
+                    if really:
+                        self.national_id = expected
+                        self.full_clean()
+                        self.save()
+    
 
 def holder_model():
     cmc = list(rt.models_by_base(BeIdCardHolder))

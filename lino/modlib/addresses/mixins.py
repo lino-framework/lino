@@ -14,11 +14,12 @@ from django.utils.translation import ugettext_lazy as _
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
+from lino.mixins.repairable import Repairable
 
 from .choicelists import AddressTypes
 
 
-class AddressOwner(dd.Model):
+class AddressOwner(Repairable):
     """Base class for the "addressee" of any address.
 
     """
@@ -80,6 +81,10 @@ class AddressOwner(dd.Model):
                 addr.full_clean()
                 addr.save()
                 return addr
+
+    def repairdata(self, really=False):
+        yield super(AddressOwner, self).repairdata(really)
+        # TODO
 
     def sync_primary_address(self, request):
         Address = rt.modules.addresses.Address

@@ -24,7 +24,7 @@ installed.
 """
 
 from django.utils.translation import ugettext_lazy as _
-from lino import ad
+from lino.api import ad
 
 
 class Plugin(ad.Plugin):

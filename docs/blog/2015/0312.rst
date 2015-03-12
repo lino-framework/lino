@@ -3,3 +3,63 @@ Thursday, March 12, 2015
 ========================
 
 Last adaptions in test suites after yesterday's changes.
+
+UnicodeEncodeError
+==================
+
+I had a UnicodeEncodeError when running the :manage:`show` command::
+
+    $ python manage.py show pcsw.StrangeClients
+
+    Traceback (most recent call last):
+      ...
+      File ".../lino/core/renderer.py", line 308, in show_request
+        print(ar.to_rst(*args, **kw))
+    UnicodeEncodeError: 'ascii' codec can't encode character u'\xe9' in position 1712: ordinal not in range(128)
+
+But Lino was innocent. It was because the terminal or the system was
+poorly configured.  See https://wiki.python.org/moin/PrintFails
+
+My ~/.bashrc contained::
+
+  export LANG=en_GB.UTF-8
+
+and I solved it by changing this to::
+
+  export LANG=C.UTF-8
+
+after invoking ``locale -a`` in order to see which locales are
+available::
+
+    $ locale -a
+    C
+    C.UTF-8
+    POSIX
+    fr_BE.utf8
+
+
+Another workaround was to set :envvar:`PYTHONIOENCODING` to "utf-8".
+
+
+Repairable data
+===============
+
+Tonight I had the inspiration for solving a series of subtle but
+disturbing problems:  
+
+- pcsw.Clients with an SSIN which actually is valid, but wrongly
+  formatted
+- Partners with a single address, but which is not marked as primary
+- Calendar events which should have their client as guest, but they
+  don't have 
+
+The solution is a new module :mod:`lino.mixins.repairable` and a
+management command :manage:`repairdata`.
+
+The first
+item of above list is already implemented, tested by
+:mod:`lino_welfare.projects.std.tests.test_beid`.  I also worked on the
+documentation of :mod:`lino.utils.ssin`.
+The other two items are for tomorrow...
+
+
