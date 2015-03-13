@@ -29,7 +29,9 @@ from lino.api import dd, rt
 
 def flatten(iter):
     for msg in iter:
-        if isinstance(msg, (basestring, Promise)):
+        if msg is None:
+            pass
+        elif isinstance(msg, (basestring, Promise)):
             yield unicode(msg)
         else:
             for msg2 in flatten(msg):
@@ -48,16 +50,26 @@ class Repairable(dd.Model):
         """Repair all repairable problems on this database object.  If
         `really` is False, just report them.
         
-        Return or yield a list of strings, each one a message which
-        explain what has (or would have) been done.
-
+        Returns a string which is the concatenation of all repairable
+        problems detected on this object. Returns an empty string if
+        no problem was detected.
         """
         return '  '.join(flatten(self.get_repairable_problems(really)))
 
     def get_repairable_problems(self, really=False):
-        """
-        Return or yield a list of strings, each one a message which
-        explain what has (or would have) been repaired.
+        """Return or yield a suite of messages, each message explaining a
+        concrete problem.
+
+        Each message can be:
+
+        - a text (translatable or not) explaining the problem. The
+          message should a single sentence without line breaks.
+
+        - `None` : will be ignored.
+
+        - an iterable : will be iterated, expecting another series of
+          messages.
+
         """
         return []
 

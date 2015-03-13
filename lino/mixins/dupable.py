@@ -24,8 +24,10 @@ from django.conf import settings
 from django.db import models
 # from django.db.models import Q
 
-from lino.api import dd, rt, _
+from lino.api import dd, _
 from lino.core.actions import SubmitInsert
+
+from lino.mixins.repairable import Repairable
 
 
 def phonetic(s):
@@ -74,8 +76,8 @@ class DupableWordBase(dd.Model):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a
     subclass of DupableWordBase. The subclass must define a field
-    :attr:`owner` which points to the Dupable. And the
-    :attr:`dupable_word_model`,
+    :attr:`owner` which points to the Dupable and set the
+    :attr:`dupable_word_model`.
 
     """
     class Meta:
@@ -89,7 +91,7 @@ class DupableWordBase(dd.Model):
         return self.word
 
 
-class Dupable(dd.Model):
+class Dupable(Repairable):
     """Base class for models that can be "dupable".
 
     This mixin is to be used on models for which there is a danger of
@@ -127,15 +129,11 @@ class Dupable(dd.Model):
     """
 
     dupable_word_model = None
+    """Full name of the model used to hold dupable words for instances of
+    this model.  Applications can specify a string which will be
+    resolved at startup to the model's class object.
 
-    # def save(self, *args, **kwargs):
-    #     super(Dupable, self).save(*args, **kwargs)
-
-    # Overriding name_changed won't work because we don't know whether
-    # parent has a `name_changed` methdod:
-    # def name_changed(self, ar):
-    #     super(Dupable, self).name_changed(ar)
-    #     self.update_dupable_words()
+    """
 
     @classmethod
     def on_analyze(cls, site):
@@ -149,7 +147,7 @@ class Dupable(dd.Model):
         #     return
         site.setup_model_spec(cls, 'dupable_word_model')
 
-    def update_dupable_words(self):
+    def update_dupable_words(self, really=True):
         """Update the dupable words of this row."""
         # "A related object set can be replaced in bulk with one
         # operation by assigning a new iterable of objects to it". But
@@ -163,9 +161,18 @@ class Dupable(dd.Model):
         wanted = map(phonetic, self.get_dupable_words())
         if existing == wanted:
             return
-        qs.delete()
-        for w in wanted:
-            self.dupable_word_model(word=w, owner=self).save()
+        if really:
+            qs.delete()
+            for w in wanted:
+                self.dupable_word_model(word=w, owner=self).save()
+        return _("Must update dupable words.")
+
+    def get_repairable_problems(self, really=True):
+        """Adds a message :message:`Must update dupable words.`
+
+        """
+        yield super(Dupable, self).get_repairable_problems(really)
+        yield self.update_dupable_words(really)
 
     def after_ui_save(self, ar, cw):
         super(Dupable, self).after_ui_save(ar, cw)
@@ -195,22 +202,3 @@ class Dupable(dd.Model):
         return qs
 
 
-# @dd.receiver(dd.pre_analyze)
-# def setup_dupable_handlers(sender=None, request=None, **kw):
-
-# @dd.receiver(dd.on_ui_updated(sender=Dupable))
-# def on_dupable_update(sender=None, request=None, **kw):
-
-#     if 'name' in sender.get_updates():
-#         sender.watched.update_dupable_words()
-
-
-def update_all_dupable_words():
-    """To be called after initializing a demo database, e.g. from
-    `lino_welfare.fixtures.demo2`.
-
-    """
-    raise Exception("Not yet used. Maybe once as an action on SiteConfig.")
-    for m in settings.SITE.models_by_base(Dupable):
-        for obj in m.objects.all():
-            obj.update_dupable_words()
