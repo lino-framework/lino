@@ -99,4 +99,3 @@ def objects():
                                + DURATIONS.pop())
                 yield e
 
-    # yield subscribe_all()

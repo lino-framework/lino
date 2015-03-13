@@ -568,11 +568,11 @@ class BeIdCardHolder(Repairable):
                 setattr(obj, fld.name, new)
         return objects, diffs
 
-    def repairdata(self, really=False):
-        """Implements :meth:`lino.mixins.repairable.Repairable.repairdata`.
+    def get_repairable_problems(self, really=False):
+        """Implements :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`.
 
         """
-        yield super(BeIdCardHolder, self).repairdata(really)
+        yield super(BeIdCardHolder, self).get_repairable_problems(really)
         if self.national_id:
             try:
                 expected = ssin.parse_ssin(self.national_id)
@@ -581,7 +581,7 @@ class BeIdCardHolder(Repairable):
             else:
                 got = self.national_id
                 if got != expected:
-                    msg = "Malformed SSIN '{got}' changed to '{expected}'."
+                    msg = "Malformed SSIN '{got}' must be '{expected}'."
                     yield msg.format(**locals())
                     if really:
                         self.national_id = expected

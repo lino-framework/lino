@@ -49,17 +49,17 @@ disturbing problems:
 
 - pcsw.Clients with an SSIN which actually is valid, but wrongly
   formatted
-- Partners with a single address, but which is not marked as primary
-- Calendar events which should have their client as guest, but they
-  don't have 
+- some Partners have a single address, but which is not marked as
+  primary
+- some Calendar events should have their client as guest, but they
+  don't have
 
 The solution is a new module :mod:`lino.mixins.repairable` and a
 management command :manage:`repairdata`.
 
-The first
-item of above list is already implemented, tested by
-:mod:`lino_welfare.projects.std.tests.test_beid`.  I also worked on the
-documentation of :mod:`lino.utils.ssin`.
-The other two items are for tomorrow...
+The first item of above list is already implemented, tested by
+:mod:`lino_welfare.projects.std.tests.test_beid`.  I also worked on
+the documentation of :mod:`lino.utils.ssin`.  The other two items are
+for tomorrow...
 
 

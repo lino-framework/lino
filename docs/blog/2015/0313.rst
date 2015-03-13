@@ -1,0 +1,36 @@
+======================
+Friday, March 13, 2015
+======================
+
+Repairable data
+===============
+
+(Continued from yesterday.)
+
+I applied the new feature :mod:`lino.mixins.repairable` to
+:mod:`lino.modlib.addresses` : :meth:`get_primary_address
+<lino.modlib.addresses.mixins.AddressOwner.get_primary_address>` no
+longer has an "optional side effect", but that functionality is now in
+:meth:`AddressOwner.get_repairable_problems
+<lino.modlib.addresses.mixins.AddressOwner.get_repairable_problems>`.
+
+And also :mod:`lino.modlib.cal` now detects repairable data:
+:meth:`cal.Event.get_repairable_problems
+<lino.modlib.cal.models_event.Event.get_repairable_problems>`.
+
+Note that when :meth:`AddressOwner.get_repairable_problems
+<lino.modlib.addresses.mixins.AddressOwner.get_repairable_problems>` detects some
+repairable data, e.g. :message:`Unique address is not marked
+primary.`, then :manage:`repairdata` it will usually report this
+message several times: a first time for the :class:`Partner
+<lino.modlib.contacts.models.Partner>`, another time for the
+:class:`Person <lino.modlib.contacts.models.Person>` or
+:class:`Company <lino.modlib.contacts.models.Company>`.
+
+
+
+Yearly index page of a daily blog 
+=================================
+
+A little change in :mod:`atelier.sphinxconf.blog`: the toctree of the
+yearly index page (:rst:dir:`blogger_year`) is no longer hidden.

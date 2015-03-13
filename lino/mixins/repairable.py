@@ -22,7 +22,18 @@ Tested by :mod:`lino_welfare.projects.std.test_beid`.
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from lino.api import dd, rt, _
+from django.utils.functional import Promise
+
+from lino.api import dd, rt
+
+
+def flatten(iter):
+    for msg in iter:
+        if isinstance(msg, (basestring, Promise)):
+            yield unicode(msg)
+        else:
+            for msg2 in flatten(msg):
+                yield msg2
 
 
 class Repairable(dd.Model):
@@ -33,11 +44,20 @@ class Repairable(dd.Model):
     class Meta:
         abstract = True
 
-    def repairdata(self, really=False):
-        """Repair any repairable problem. If `really` is False, just
-        simulate. Return or yield a list of strings which explain what
-        has (or would have) been done.
+    def repairdata(self, really=True):
+        """Repair all repairable problems on this database object.  If
+        `really` is False, just report them.
+        
+        Return or yield a list of strings, each one a message which
+        explain what has (or would have) been done.
 
+        """
+        return '  '.join(flatten(self.get_repairable_problems(really)))
+
+    def get_repairable_problems(self, really=False):
+        """
+        Return or yield a list of strings, each one a message which
+        explain what has (or would have) been repaired.
         """
         return []
 
@@ -52,30 +72,23 @@ class Repairable(dd.Model):
         return cls.objects.all()
 
 
-def flatten(iterable):
-    for msg in iterable:
-        if isinstance(msg, basestring):
-            yield msg
-        else:
-            for msg2 in flatten(msg):
-                yield msg2
-
-
-def repairdata(really=False):
-    """Loop over all repairable database objects and
-    run the :meth:`repair
+def repairdata(really=True):
+    """Loop over all repairable database objects and run the :meth:`repair
     <Repairable.repair>` method on each of them.
     
-    Yield one line of text per object which had at least one repair
-    message.
+    Yield one line of text per object for which there was at least one
+    repair message.
 
     This is what :manage:`repairdata` command calls to do its work.
+
+    Note that the default value for `really` (when calling it from
+    Python code) is `True` while the default value for the `--really`
+    option of the :manage:`repairdata` command is `False`.
 
     """
         
     for m in rt.models_by_base(Repairable):
         for obj in m.get_repairable_objects():
-            l = list(flatten(obj.repairdata(really=really)))
-            msg = '. '.join(l)
+            msg = obj.repairdata(really)
             if msg:
-                yield "{0} : {1}".format(obj, msg.strip())
+                yield "{0} : {1}".format(obj, msg)

@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Database models of `lino.modlib.addresses`.
+Model mixins for `lino.modlib.addresses`.
 
 """
 
@@ -11,7 +11,7 @@ from __future__ import print_function
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd, rt
+from lino.api import rt
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
 from lino.mixins.repairable import Repairable
@@ -36,55 +36,58 @@ class AddressOwner(Repairable):
         except Address.MultipleObjectsReturned:
             return self.get_primary_address()
 
-    def get_primary_address(self, update=False):
+    def get_primary_address(self):
         """Return the primary address of this partner.
 
-        If the optional argument `update` is True, this method has a
+        """
+        Address = rt.modules.addresses.Address
+        try:
+            return Address.objects.get(partner=self, primary=True)
+        except Address.DoesNotExist:
+            pass
+
+    def get_repairable_problems(self, really=False):
+        """If the optional argument `update` is True, this method has a
         side effect of updating or even creating an address record
         when appropriate and possible:
 
-        - if there is exactly one :class:`Address` object which just fails to
+        - :message:`Unique address is not marked primary.` --
+          if there is exactly one :class:`Address` object which just fails to
           be marked as primary, mark it as primary and return it.
 
-        - if there is no :class:`Address` object, and if the
+        - :message:`Non-empty address fields, but no address record.`
+          -- if there is no :class:`Address` object, and if the
           :class:`Partner` has some non-empty address field, create an
           address record from these, using `AddressTypes.official` as
           type.
 
         """
+        yield super(AddressOwner, self).get_repairable_problems(really)
         Address = rt.modules.addresses.Address
-
-        kw = dict(partner=self, primary=True)
-        try:
-            return Address.objects.get(**kw)
-        except Address.DoesNotExist:
-            pass
         qs = Address.objects.filter(partner=self)
         num = qs.count()
         if num == 1:
             addr = qs[0]
-            if update:
-                addr.primary = True
-                addr.full_clean()
-                addr.save()
-            return addr
-        elif num == 0 and update:
-            kw.update(address_type=AddressTypes.official)
-            has_values = False
+            if not addr.primary:
+                if really:
+                    addr.primary = True
+                    addr.full_clean()
+                    addr.save()
+                yield _("Unique address is not marked primary.")
+        elif num == 0:
+            kw = dict()
             for fldname in Address.ADDRESS_FIELDS:
                 v = getattr(self, fldname)
-                kw[fldname] = v
                 if v:
-                    has_values = True
-            if has_values:
-                addr = Address(**kw)
-                addr.full_clean()
-                addr.save()
-                return addr
-
-    def repairdata(self, really=False):
-        yield super(AddressOwner, self).repairdata(really)
-        # TODO
+                    kw[fldname] = v
+            if kw:
+                yield _("Non-empty address fields, but no address record.")
+                if really:
+                    kw.update(partner=self, primary=True)
+                    kw.update(address_type=AddressTypes.official)
+                    addr = Address(**kw)
+                    addr.full_clean()
+                    addr.save()
 
     def sync_primary_address(self, request):
         Address = rt.modules.addresses.Address

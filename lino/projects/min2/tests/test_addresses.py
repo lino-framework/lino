@@ -60,7 +60,8 @@ class QuickTest(RemoteAuthTestCase):
         addr = doe.get_primary_address()
         self.assertEqual(addr, None)
 
-        addr = doe.get_primary_address(True)
+        doe.repairdata(True)
+        addr = doe.get_primary_address()
         self.assertEqual(Address.objects.count(), 1)
         self.assertEqual(addr.city, eupen)
         self.assertEqual(addr.primary, True)
@@ -68,11 +69,10 @@ class QuickTest(RemoteAuthTestCase):
         addr.primary = False
         addr.save()
         addr = doe.get_primary_address()
-        self.assertEqual(addr.city, eupen)
-        self.assertEqual(addr.primary, False)
+        self.assertEqual(addr, None)
         self.assertEqual(Address.objects.count(), 1)
 
-        addr.delete()
+        Address.objects.all().delete()
         self.assertEqual(Address.objects.count(), 0)
         addr = doe.get_primary_address()
         self.assertEqual(addr, None)

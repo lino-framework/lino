@@ -11,6 +11,7 @@ See :mod:`lino.mixins.repairable`.
 
 from __future__ import unicode_literals, print_function
 
+import sys
 from optparse import make_option
 from django.core.management.base import BaseCommand
 from lino.api import dd
@@ -24,12 +25,17 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option(
-            '-s', '--simulate', action='store', dest='simulate',
+            '-r', '--really', action='store', dest='really',
             default=False,
-            help="Only simulate, don't actually repair anything."),
+            help="If this is not specified, we just show repairable "
+            "problems without actually repairing anything."),
     )
 
     def handle(self, *args, **options):
-        for msg in repairdata(simulate=options['simulate']):
+        n = 0
+        for msg in repairdata(really=options['really']):
             print(msg)
-
+            n += 1
+        if n > 0:
+            print("Found {0} repairable problem(s).".format(n))
+            sys.exit(-1)
