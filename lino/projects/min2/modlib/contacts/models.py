@@ -18,7 +18,7 @@ from lino.modlib.contacts.models import *
 from lino.modlib.cal.workflows import take, feedback
 
 from lino.modlib.addresses.mixins import AddressOwner
-from lino.modlib.dupable_partners.mixins import DupablePartner
+from lino.modlib.dupable_partners.mixins import DupablePartner, DupablePerson
 
 
 class Partner(Partner, AddressOwner, mixins.CreatedModified, DupablePartner):
@@ -74,7 +74,7 @@ class PartnerDetail(PartnerDetail):
     """, label=_("Miscellaneous"))
 
 
-class Person(Partner, Person):
+class Person(Partner, Person, DupablePerson):
     """
     Represents a physical person.
     """

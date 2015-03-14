@@ -50,7 +50,7 @@ class SimilarPartners(dd.VirtualTable):
         if mi is None:
             return
 
-        for o in mi.find_similar_instances():
+        for o in mi.find_similar_instances(4):
             yield self.Row(mi, o)
 
     @dd.displayfield(_("Other"))

@@ -139,8 +139,14 @@ class QuickTest(RemoteAuthTestCase):
 
         create(Company, name="Külamaja OÜ")
 
+        def create_person(first, last):
+            return create(Person, first_name=first, last_name=last)
+
+        mm1 = create_person("Marie", "Meier")
+        mm2 = create_person("Marie", "Meyer")
+
         def check(obj, expected):
-            got = map(unicode, obj.find_similar_instances())
+            got = map(unicode, obj.find_similar_instances(4))
             got = '\n'.join(got)
             self.assertEqual(got, expected.strip())
 
@@ -168,11 +174,7 @@ Marie Bernard-Bodard
         check(godard, "")
         check(erna, "")
         check(bernard4, """
-Marie Bernard-Bodard
-Bernard Bodard
-Bodard Bernard
-Bernhard Bodard
-""")
+Marie Bernard-Bodard""")
         check(marie, """
 Bernard-Marie Bodard
 Bernard Bodard
@@ -180,4 +182,5 @@ Bodard Bernard
 Bernhard Bodard
 """)
 
-
+        check(mm1, "Marie Meyer")
+        check(mm2, "Marie Meier")

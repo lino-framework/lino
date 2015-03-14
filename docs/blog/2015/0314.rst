@@ -1,0 +1,11 @@
+========================
+Saturday, March 14, 2015
+========================
+
+
+I (hopefully) solved the "Combined first names" problem.  Added test
+cases about it in several documents:
+
+- :ref:`welfare.tested.pcsw`
+- :mod:`lino.projects.min2.tests.test_min2`.
+- :ref:`welfare.tested.dupable_partners`

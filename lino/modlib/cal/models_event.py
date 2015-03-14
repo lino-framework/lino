@@ -490,8 +490,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     def get_repairable_problems(self, really=False):
         """Implements
-        :meth:`lino.mixins.repairableRepairable.get_repairable_problems`
-        by checking for one repairable problem:
+        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`
+        by checking for the following repairable problem:
 
         - :message:`No participants although NNN suggestions exist.` ---
           This is probably due to some bug, so we repair this by adding the

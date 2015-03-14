@@ -12,6 +12,12 @@ The current implementation of the detection algorithm uses the `fuzzy
 about `Using Fuzzy Matching to Search by Sound with Python
 <http://www.informit.com/articles/article.aspx?p=1848528>`_
 
+Note about the name: to dupe *somebody* means "to make a dupe of;
+deceive; delude; trick." (`reference.com
+<http://dictionary.reference.com/browse/dupe>`_), while to dupe
+*something* means to duplicate it (eventually in order to cheat
+somebody e.g. by making a cheap copy of a valuable object).
+
 """
 
 from __future__ import unicode_literals
@@ -54,11 +60,11 @@ class CheckedSubmitInsert(SubmitInsert):
             ar2.set_response(close_window=True)
             # logger.info("20140512 CheckedSubmitInsert")
 
-        qs = obj.find_similar_instances()
-        if qs.count() > 0:
+        qs = obj.find_similar_instances(4)
+        if len(qs) > 0:
             msg = _("There are %d similar %s:") % (
-                qs.count(), qs.model._meta.verbose_name_plural)
-            for other in qs[:4]:
+                len(qs), obj._meta.verbose_name_plural)
+            for other in qs:
                 msg += '<br/>\n' + unicode(other)
 
             msg += '<br/>\n'
@@ -98,13 +104,6 @@ class Dupable(Repairable):
     having unwanted duplicate records. It is both for *avoiding* such
     duplicates on new records and for *detecting* existing duplicates.
 
-    Note about the name: to dupe *somebody* means "to make a dupe of;
-    deceive; delude; trick." (`reference.com
-    <http://dictionary.reference.com/browse/dupe>`_), while to dupe
-    *something* means to duplicate it (eventually in order to cheat
-    somebody e.g. by making a cheap copy of a valuable object).
-
-
     """
     class Meta:
         abstract = True
@@ -121,12 +120,6 @@ class Dupable(Repairable):
     dupable_words_field = 'name'
     """The name of a CharField on this model which holds the full-text
     description that is being tested for duplicates."""
-
-    dupable_matches_required = 2
-    """Minimum number of words that must sound alike before two rows
-    should be considered asimilar.
-
-    """
 
     dupable_word_model = None
     """Full name of the model used to hold dupable words for instances of
@@ -147,6 +140,13 @@ class Dupable(Repairable):
         #     return
         site.setup_model_spec(cls, 'dupable_word_model')
 
+    def dupable_matches_required(self):
+        """Return the minimum number of words that must sound alike before
+        two rows should be considered asimilar.
+        
+        """
+        return 2
+
     def update_dupable_words(self, really=True):
         """Update the dupable words of this row."""
         # "A related object set can be replaced in bulk with one
@@ -158,7 +158,7 @@ class Dupable(Repairable):
             return
         qs = self.dupable_word_model.objects.filter(owner=self)
         existing = [o.word for o in qs]
-        wanted = map(phonetic, self.get_dupable_words())
+        wanted = self.get_dupable_words(self.dupable_words_field)
         if existing == wanted:
             return
         if really:
@@ -168,7 +168,11 @@ class Dupable(Repairable):
         return _("Must update dupable words.")
 
     def get_repairable_problems(self, really=True):
-        """Adds a message :message:`Must update dupable words.`
+        """Implements
+        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`
+        by checking for the following repairable problem:
+
+        - :message:`Must update dupable words.`
 
         """
         yield super(Dupable, self).get_repairable_problems(really)
@@ -179,26 +183,32 @@ class Dupable(Repairable):
         if cw is None or cw.has_changed(self.dupable_words_field):
             self.update_dupable_words()
 
-    def get_dupable_words(self):
-        name = getattr(self, self.dupable_words_field)
+    def get_dupable_words(self, k):
+        s = getattr(self, k)
         for c in '-,/&+':
-            name = name.replace(c, ' ')
-        return name.split()
+            s = s.replace(c, ' ')
+        return map(phonetic, s.split())
 
-    def find_similar_instances(self, *args, **kwargs):
-        """
+    def find_similar_instances(self, limit=None, **kwargs):
+        """If `limit` is specified, we never want to see more than `limit`
+        duplicates.
+
+        Note that an overridden version of this method might return a
+        list or tuple instead of a Django queryset.
+
         """
         if self.dupable_word_model is None:
             return self.__class__.objects.none()
-        qs = self.__class__.objects.filter(*args, **kwargs)
+        qs = self.__class__.objects.filter(**kwargs)
         if self.pk is not None:
             qs = qs.exclude(pk=self.pk)
-        parts = map(phonetic, self.get_dupable_words())
+        parts = self.get_dupable_words(self.dupable_words_field)
         qs = qs.filter(dupable_words__word__in=parts).distinct()
         qs = qs.annotate(num=models.Count('dupable_words__word'))
-        qs = qs.filter(num__gte=self.dupable_matches_required)
+        qs = qs.filter(num__gte=self.dupable_matches_required())
         qs = qs.order_by('-num', 'pk')
         # print("20150306 find_similar_instances %s" % qs.query)
-        return qs
-
+        if limit is None:
+            return qs
+        return qs[:limit]
 

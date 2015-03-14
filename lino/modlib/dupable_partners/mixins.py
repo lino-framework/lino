@@ -22,3 +22,37 @@ class DupablePartner(Dupable):
         abstract = True
 
     dupable_word_model = 'dupable_partners.Word'
+
+
+class DupablePerson(DupablePartner):
+
+    class Meta:
+        abstract = True
+
+    def dupable_matches_required(self):
+        """Two persons named *Marie-Louise Dupont* and *Marie-Louise
+        Vandenmeulenbos* should *not* match.
+
+        """
+        first = self.get_dupable_words('first_name')
+        return max(2, len(first)+1)
+
+    def unused_find_similar_instances(self, limit, **kwargs):
+        first = self.get_dupable_words('first_name')
+        if len(first) <= 1:
+            super(DupablePerson, self).find_similar_instances(limit, **kwargs)
+        lst = []
+        i = 0
+
+        def matches(other):
+            return True
+
+        for o in super(DupablePerson, self).find_similar_instances(
+                None, **kwargs):
+            if matches(self, o):
+                lst.append(o)
+                i += 1
+                if i >= limit:
+                    break
+        return lst
+            

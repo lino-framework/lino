@@ -47,9 +47,9 @@ class AddressOwner(Repairable):
             pass
 
     def get_repairable_problems(self, really=False):
-        """If the optional argument `update` is True, this method has a
-        side effect of updating or even creating an address record
-        when appropriate and possible:
+        """Implements
+        :meth:`lino.mixins.repairableRepairable.get_repairable_problems`
+        by checking for the following repairable problem:
 
         - :message:`Unique address is not marked primary.` --
           if there is exactly one :class:`Address` object which just fails to
