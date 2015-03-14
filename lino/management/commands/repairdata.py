@@ -33,7 +33,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         n = 0
-        for msg in repairdata(really=options['really']):
+        for msg in repairdata(args, really=options['really']):
             print(msg)
             n += 1
         if n > 0:

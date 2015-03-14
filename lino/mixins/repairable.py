@@ -85,9 +85,11 @@ class Repairable(dd.Model):
         return cls.objects.all()
 
 
-def repairdata(really=True):
+def repairdata(args=None, really=True):
     """Loop over all repairable database objects and run the :meth:`repair
-    <Repairable.repair>` method on each of them.
+    <Repairable.repair>` method on each of them.  If `really` is
+    `False`, just show repairable problems without actually repairing
+    anything
     
     Yield one line of text per object for which there was at least one
     repair message.
@@ -99,8 +101,17 @@ def repairdata(really=True):
     option of the :manage:`repairdata` command is `False`.
 
     """
-        
-    for m in rt.models_by_base(Repairable):
+    if args:
+        lst = []
+        for a in args:
+            m = rt.modules.resolve(a)
+            if not isinstance(m, type) or not issubclass(m, Repairable):
+                raise Exception(
+                    "Error: {0} is not a repairable model!".format(a))
+            lst.append(m)
+    else:
+        lst = rt.models_by_base(Repairable)
+    for m in lst:
         for obj in m.get_repairable_objects():
             msg = obj.repairdata(really)
             if msg:
