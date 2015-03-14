@@ -569,15 +569,16 @@ class BeIdCardHolder(Repairable):
         return objects, diffs
 
     def get_repairable_problems(self, really=False):
-        """Implements :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`.
+        """Implements
+        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`.
 
         """
         yield super(BeIdCardHolder, self).get_repairable_problems(really)
         if self.national_id:
             try:
                 expected = ssin.parse_ssin(self.national_id)
-            except ValidationError:
-                pass  # cannot repair invalid SSIN
+            except ValidationError as e:
+                dd.logger.warning("Cannot repair invalid SSIN (%s)", e)
             else:
                 got = self.national_id
                 if got != expected:
@@ -585,8 +586,11 @@ class BeIdCardHolder(Repairable):
                     yield msg.format(**locals())
                     if really:
                         self.national_id = expected
-                        self.full_clean()
-                        self.save()
+                        try:
+                            self.full_clean()
+                            self.save()
+                        except ValueError as e:
+                            dd.logger.warning("%s : %s", self, e)
     
 
 def holder_model():
