@@ -25,7 +25,7 @@ class Command(BaseCommand):
 
     option_list = BaseCommand.option_list + (
         make_option(
-            '-r', '--really', action='store', dest='really',
+            '-r', '--really', action='store_true', dest='really',
             default=False,
             help="If this is not specified, we just show repairable "
             "problems without actually repairing anything."),
