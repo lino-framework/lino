@@ -589,7 +589,7 @@ class BeIdCardHolder(Repairable):
                         try:
                             self.full_clean()
                             self.save()
-                        except ValueError as e:
+                        except ValidationError as e:
                             dd.logger.warning("%s : %s", self, e)
     
 
