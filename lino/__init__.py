@@ -25,6 +25,7 @@ import os
 
 from os.path import join, dirname
 
+
 execfile(join(dirname(__file__), 'setup_info.py'))
 __version__ = SETUP_INFO['version']
 intersphinx_urls = dict(docs="http://www.lino-framework.org")
@@ -35,11 +36,12 @@ def setup_project(settings_module):
     os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
     from lino.api.shell import settings
 
-from django.utils.translation import ugettext_lazy as _
-# The above is here so we can write a single import statement in
-# plugins:
+
+# The following line is here so we can write a single import statement
+# in plugins:
 #
 #   from lino.api import ad, _
+from django.utils.translation import ugettext_lazy as _
 
 
 DJANGO_DEFAULT_LANGUAGE = 'en-us'
