@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-03-10 17:25+0200\n"
-"PO-Revision-Date: 2015-03-10 17:28+0300\n"
+"PO-Revision-Date: 2015-03-15 10:12+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -3811,9 +3811,8 @@ msgid ""
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:320
-#, fuzzy
 msgid "Oops."
-msgstr "Locaux"
+msgstr "Oups."
 
 #: lino/modlib/excerpts/models.py:325
 #, fuzzy
@@ -3835,9 +3834,9 @@ msgid "Excerpt"
 msgstr "Extrait"
 
 #: lino/modlib/excerpts/models.py:487
-#, fuzzy, python-format
+#, python-format
 msgid "Unprinted %s #%s"
-msgstr "%s #%d non imprimé"
+msgstr "%s #%s non imprimé"
 
 #: lino/modlib/excerpts/models.py:556
 msgid "Preview"
@@ -3866,9 +3865,8 @@ msgid "Existing excerpts"
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:769
-#, fuzzy
 msgid "not printed"
-msgstr "Envois postaux imprimés"
+msgstr "non imprimé"
 
 #: lino/modlib/excerpts/models.py:775
 msgid "Last week"
