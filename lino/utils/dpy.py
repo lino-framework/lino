@@ -435,7 +435,7 @@ class FakeDeserializedObject(base.DeserializedObject):
                 try:
                     obj.full_clean()
                 except ValidationError as e:
-                    raise Exception("{0} : {1}".format(obj2str(obj), e))
+                    raise  # Exception("{0} : {1}".format(obj2str(obj), e))
             obj.save(*args, **kw)
             logger.debug("%s has been saved" % obj2str(obj))
             self.deserializer.register_success()

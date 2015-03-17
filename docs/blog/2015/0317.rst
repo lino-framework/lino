@@ -1,0 +1,32 @@
+=======================
+Tuesday, March 17, 2015
+=======================
+
+Worked on :ticket:`38` (Make Lino run with Django
+1.7).  
+
+Mahmoud and I had been stuck for a while on a problem problem which
+occured in Lino with Django 1.7. Already the `fab initdb` failed with
+a ValidationError stating that ``'en'`` were not a valid choice for
+the `language` field.
+
+The problem was in :func:`lino.utils.mldbc.fields.LanguageField` which
+set the `choices` as follows::
+
+  choices=iter(settings.SITE.LANGUAGE_CHOICES),
+
+The solution was to remove the call to `iter()
+<https://docs.python.org/2/library/functions.html#iter>`_ ::
+
+  choices=settings.SITE.LANGUAGE_CHOICES,
+
+I don't remember why I did that `iter()` around `LANGUAGE_CHOICES`.  I
+guess that I was worried what happens when languages changes after
+having defined these fields.  But for the moment I cannot remember why
+this should happen.  But the test suite of Lino with Django 1.6
+passes, so this change doesn't break anything.  And thus we can
+consider the problem as solved.  Explanation is that "Django 1.7 does
+some trickery with our choices, and specifying an iterator over a list
+instead of the list itself produces strange behaviour."  This is not a
+full explanation, but it is satisfying as long as our solution does
+not cause any other problems.

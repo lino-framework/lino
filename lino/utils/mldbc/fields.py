@@ -90,7 +90,8 @@ class LanguageField(models.CharField):
     def __init__(self, *args, **kw):
         defaults = dict(
             verbose_name=_("Language"),
-            choices=iter(settings.SITE.LANGUAGE_CHOICES),
+            # choices=list(settings.SITE.LANGUAGE_CHOICES),
+            choices=settings.SITE.LANGUAGE_CHOICES,
             blank=True,
             # default=settings.SITE.get_default_language,
             #~ default=get_language,
