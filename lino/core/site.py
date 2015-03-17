@@ -136,6 +136,15 @@ class Site(object):
                 Foo = rt.foos.Foo
                 return Foo(name=name, price=price)
 
+    .. attribute:: LANGUAGE_CHOICES
+    
+        A tuple in the format expected by Django's `choices
+        <https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices>`__
+        attribute, used e.g. by :class:`LanguageField
+        <lino.utils.mldbc.fields.LanguageField>`. It's content is
+        automatically populated from :attr:`languages` and application
+        code should not change it's value.
+
     """
 
     confdirs = None
