@@ -5,9 +5,6 @@ Career module (tested)
 ==================================
 
 
-
-.. include:: /include/tested.rst
-
 .. How to test only this document:
 
   $ python setup.py test -s tests.DocsTests.test_cv
