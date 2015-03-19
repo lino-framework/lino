@@ -9,6 +9,7 @@ See also :doc:`install_mysql`.
     :local:
     :depth: 1
 
+.. _mysql.engine:
 
 MyISAM or InnoDB?
 =================
@@ -32,6 +33,9 @@ on a Debian server by creating a file
 
     [mysqld]
     default-storage-engine=myisam
+
+Instead of naming the file :file:`set_myisam_engine.cnf`, you might
+consider naming it :file:`.keepme`.
 
 
 MySQLTuner

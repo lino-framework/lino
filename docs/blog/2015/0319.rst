@@ -1,0 +1,27 @@
+========================
+Thursday, March 19, 2015
+========================
+
+Mahmoud discovered several bugs which had slipped undiscovered through
+the test suite.
+
+Added :mod:`lino.projects.docs.test` which caused them to appear.
+
+The first bug was that :mod:`lino.modlib.cv` specified a
+:attr:`required <lino.core.actors.Actor.required>` with
+``user_groups="integ"`` for most tables.  That user group exists only
+in :ref:`welfare`.
+
+Instead of simply removing it in :mod:`lino.modlib.cv` (and adding it
+afterwards again in :mod:`lino_welfare.modlib.cv`), I invented the
+:meth:`lino.core.plugin.Plugin.required` method.  This is a simple
+hook for adding application-specific group requirements to all actors
+of a plugin.
+
+Note that :class:`LanguageKnowledges
+<lino.modlib.cv.models.LanguageKnowledges>` and two subclasses thereof
+specified another user group "coaching".  I hope that this was by
+mistake. If it wasn't, then the above hook is not yet a solution.
+
+
+Another type bug was in :mod:`lino.modlib.postings`.

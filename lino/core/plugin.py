@@ -283,3 +283,9 @@ class Plugin(object):
         """
         return self.needed_by or self
 
+    def required(self, **kwargs):
+        """Return a Requirement object (currently just a `dict`) corresponding
+        to the specified keyword arguments.
+
+        """
+        return kwargs

@@ -13,7 +13,7 @@ Adds functionality for managing postings.
 
 """
 
-from lino import ad, _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
@@ -28,6 +28,6 @@ class Plugin(ad.Plugin):
         m.add_action('postings.PostingsPrinted')
         m.add_action('postings.PostingsSent')
 
-    def setup_explorer_menu(config, site, profile, m):
+    def setup_explorer_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
         m.add_action('postings.Postings')

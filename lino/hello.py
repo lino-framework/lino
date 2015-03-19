@@ -1,5 +1,5 @@
-"""If you want to see which version of Lino you have, you can always
-say "hello" to Lino:
+"""If you want to see which version of Lino you have, you can say
+"hello" to Lino:
 
 .. code-block:: bash
 

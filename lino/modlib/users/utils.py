@@ -72,7 +72,7 @@ def make_permission_handler(*args, **kw):
         When `user_groups` is not specified, then the profile's
         default level (`UserProfile.level`) is being tested, otherwise
         the userlevel for the group membership.
-        E.g. `dd.required(user_level='manager',user_groups='integ')`
+        E.g. `dd.required(user_level='manager', user_groups='integ')`
         will pass when `profile.level` is "user" and
         `profile.integ_level` is "manager"
         
@@ -83,10 +83,13 @@ def make_permission_handler(*args, **kw):
         required to get permission to view this Actor.  The default
         value `None` means that no special group membership is
         required.  Alternatively, if this is a string, it will be
-        converted to a list of strings.
+        converted to a list of strings.  Specifying more than one user
+        groups means that only one of them is required.
         
     `states`
-        List of strings naming the user groups for which membership is required 
+
+        List of strings naming the user groups for which membership is
+        required.
     
     `allow`
         An additional custom permission handler

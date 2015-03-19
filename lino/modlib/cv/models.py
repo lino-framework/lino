@@ -26,16 +26,8 @@ Database models for `lino.modlib.cv`.
 
 from __future__ import unicode_literals
 
-import logging
-logger = logging.getLogger(__name__)
-
-import datetime
-ONE_DAY = datetime.timedelta(days=1)
-
 from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd, rt
 from lino import mixins
@@ -89,8 +81,7 @@ class LanguageKnowledge(dd.Model):
 
 class LanguageKnowledges(dd.Table):
     model = LanguageKnowledge
-    required = dd.required(
-        user_groups='coaching', user_level='manager')
+    required = config.required(user_level='manager')
 
 
 class LanguageKnowledgesByPerson(LanguageKnowledges):
@@ -98,14 +89,14 @@ class LanguageKnowledgesByPerson(LanguageKnowledges):
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
     column_names = "language native spoken written cef_level"
-    required = dd.required(user_groups='coaching')
+    required = config.required()
     auto_fit_column_widths = True
 
 
 class KnowledgesByLanguage(LanguageKnowledges):
     master_key = 'language'
     column_names = "person native spoken written cef_level"
-    required = dd.required(user_groups='coaching')
+    required = config.required()
 
 
 ## Trainings
@@ -122,7 +113,7 @@ class TrainingTypes(dd.Table):
     """The default table showing all :class:`TrainingType` instances.
 
     """
-    required = dd.required(user_groups='integ', user_level='admin')
+    required = config.required(user_level='admin')
     model = 'cv.TrainingType'
     order_by = ["name"]
     detail_layout = """
@@ -173,7 +164,7 @@ class Trainings(dd.Table):
 
     """
 
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Training'
     order_by = "country city type".split()
 
@@ -186,17 +177,17 @@ class Trainings(dd.Table):
 
 
 class TrainingsByCountry(Trainings):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'country'
 
 
 class TrainingsByType(Trainings):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'type'
 
 
 class TrainingsByPerson(HistoryByPerson, Trainings):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     column_names = 'type content start_date end_date \
     school country state certificates *'
     auto_fit_column_widths = True
@@ -217,7 +208,7 @@ class EducationLevels(dd.Table):
     """The default table showing all :class:`EducationLevel` instances.
     """
 
-    required = dict(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.EducationLevel'
     column_names = 'name *'
     order_by = ['name']
@@ -254,7 +245,7 @@ class StudyType(mixins.BabelNamed):
 class StudyTypes(dd.Table):
     """The default table showing all :class:`StudyType` instances.
     """
-    required = dd.required(user_groups='integ', user_level='admin')
+    required = config.required(user_level='admin')
     #~ label = _('Study types')
     model = StudyType
     order_by = ["name"]
@@ -300,7 +291,7 @@ class Studies(dd.Table):
     """The default table showing all :class:`Study` instances.
     """
 
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Study'
     order_by = "country city type content".split()
 
@@ -313,12 +304,12 @@ class Studies(dd.Table):
 
 
 class StudiesByCountry(Studies):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'country'
 
 
 class StudiesByLevel(Studies):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'education_level'
 
 
@@ -327,21 +318,21 @@ class StudiesByPlace(Studies):
     Lists all Studies in a given Place.
     Used as slave grid in Places detail.
     """
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'city'
     column_names = 'school type person content start_date end_date \
     state language remarks *'
 
 
 class StudiesByType(Studies):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'type'
     column_names = 'school person content start_date end_date \
     state language remarks *'
 
 
 class StudiesByPerson(HistoryByPerson, Studies):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     column_names = 'type content start_date end_date school country \
     state education_level *'
     auto_fit_column_widths = True
@@ -360,7 +351,7 @@ class Status(mixins.BabelNamed):
 class Statuses(dd.Table):
     """The default table showing all :class:`Status` instances.
     """
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Status'
     order_by = ['name']
 
@@ -380,7 +371,7 @@ class Regime(mixins.BabelNamed):
 class Regimes(dd.Table):
     """The default table showing all :class:`Regime` instances.
     """
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Regime'
     order_by = ['name']
     detail_layout = """
@@ -398,7 +389,7 @@ class Duration(mixins.BabelNamed):
 class Durations(dd.Table):
     """The default table showing all :class:`Duration` instances.
     """
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Duration'
     order_by = ['name']
     detail_layout = """
@@ -421,14 +412,13 @@ class Sector(mixins.BabelNamed):
 class Sectors(dd.Table):
     """The default table showing all :class:`Sector` instances.
     """
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = Sector
     order_by = ['name']
     detail_layout = """
     id name
     remark FunctionsBySector
     cv.ExperiencesBySector
-    jobs.CandidaturesBySector
     """
 
 
@@ -453,14 +443,13 @@ class Functions(dd.Table):
     """The default table showing all :class:`Function` instances.
     """
     #~ debug_permissions = 20130704
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Function'
     column_names = 'name sector *'
     order_by = ['name']
     detail_layout = """
     id name sector
     remark
-    jobs.CandidaturesByFunction
     cv.ExperiencesByFunction
     """
 
@@ -499,7 +488,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
 class Experiences(dd.Table):
     """The default table showing all :class:`Experience` instances.
     """
-    required = dd.required(user_groups='integ', user_level='manager')
+    required = config.required(user_level='manager')
     model = 'cv.Experience'
     # stay_in_grid = True
     detail_layout = """
@@ -512,19 +501,19 @@ class Experiences(dd.Table):
 
 
 class ExperiencesBySector(Experiences):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'sector'
     order_by = ["start_date"]
 
 
 class ExperiencesByFunction(Experiences):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     master_key = 'function'
     order_by = ["start_date"]
 
 
 class ExperiencesByPerson(HistoryByPerson, Experiences):
-    required = dd.required(user_groups='integ')
+    required = config.required()
     auto_fit_column_widths = True
     column_names = "company start_date end_date function title \
     status duration country remarks *"
