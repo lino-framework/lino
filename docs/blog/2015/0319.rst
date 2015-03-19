@@ -2,6 +2,9 @@
 Thursday, March 19, 2015
 ========================
 
+Hydra hunting with Mahmoud
+==========================
+
 Mahmoud discovered several bugs which had slipped undiscovered through
 the test suite.
 
@@ -23,5 +26,19 @@ Note that :class:`LanguageKnowledges
 specified another user group "coaching".  I hope that this was by
 mistake. If it wasn't, then the above hook is not yet a solution.
 
+Another bug was in :mod:`lino.modlib.postings`. This was just a typo.
 
-Another type bug was in :mod:`lino.modlib.postings`.
+And yet another bug which we discovered together while I explained to
+Mahmoud above things: the default implementation of
+:meth:`lino.core.site.Site.setup_user_profiles` incorrectly
+initialized the `level` attributes of user profiles with the *name* (a
+string value) instead of the choice instance from
+:class:`lino.modlib.users.choicelists.UserLevels` for each.  Added a
+new tested document :doc:`/tested/cv` which helped me to understand
+the reason and which verifies that the bug is fixed.  This problem did
+not appear in any real application because these use
+:meth:`UserProfiles.reset
+<lino.modlib.users.choicelists.UserProfiles.reset>` with an explicit
+list of groups and :meth:`UserProfiles.add_item
+<lino.modlib.users.choicelists.UserProfiles.add_item>` with a
+`memberships` attribute.

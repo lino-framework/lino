@@ -1558,16 +1558,18 @@ documentation.
         from lino.utils.dpy import install_migrations
         install_migrations(self, *args)
 
-    def get_default_required(self, **kw):
-        """Return a dict with the default value for the
-        :attr:`dd.Actor.required` attribute of every actor.
+    def get_default_required(self, **kwargs):
+        """Return a dict with the default value for the :attr:`required
+        <lino.core.actors.Actor.required>` attribute of every actor.
+        This is also the default value for
+        :meth:`lino.core.plugin.Plugin.get_default_required`.
 
         """
         #~ if not kw.has_key('auth'):
             #~ kw.update(auth=True)
         if self.user_model is not None:
-            kw.setdefault('auth', True)
-        return kw
+            kwargs.setdefault('auth', True)
+        return kwargs
 
     def parse_date(self, s):
         """Convert a string formatted using :attr:`date_format_strftime` or
@@ -1673,9 +1675,11 @@ documentation.
 
         """
 
-        from lino.modlib.users.choicelists import UserProfiles, UserGroups
+        from lino.modlib.users.choicelists import (UserProfiles,
+                                                   UserGroups, UserLevels)
 
         def grouplevels(level):
+            level = getattr(UserLevels, level)
             kw = dict(level=level)
             for g in UserGroups.items():
                 kw[g.name+'_level'] = level

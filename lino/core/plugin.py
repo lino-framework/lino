@@ -283,9 +283,9 @@ class Plugin(object):
         """
         return self.needed_by or self
 
-    def required(self, **kwargs):
+    def get_default_required(self, **kwargs):
         """Return a Requirement object (currently just a `dict`) corresponding
         to the specified keyword arguments.
 
         """
-        return kwargs
+        return self.site.get_default_required(**kwargs)

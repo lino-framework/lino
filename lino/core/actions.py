@@ -596,16 +596,12 @@ def buttons2pager(buttons, title=None):
 
 
 class GridEdit(TableAction):
-    """
-    Open a window with a grid editor on this table as main item.
-    """
+    """Open a window with a grid editor on this table as main item.
 
-    #~ debug_permissions = 20130704
-
+    """
     use_param_panel = True
     show_in_workflow = False
     opens_a_window = True
-    # ~ icon_file = 'application_view_list.png' # used e.g. by quick_add_buttons()
     action_name = 'grid'
 
     def is_callable_from(self, caller):

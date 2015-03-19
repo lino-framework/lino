@@ -70,6 +70,9 @@ class DocsTests(LinoTestCase):
     def test_accounting(self):
         self.run_simple_doctests('docs/dev/accounting.rst')
 
+    def test_cv(self):
+        self.run_simple_doctests('docs/tested/cv.rst')
+
     def test_dumpy(self):
         self.run_simple_doctests("docs/tutorials/dumpy.rst")
 

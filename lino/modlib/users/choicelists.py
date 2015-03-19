@@ -222,6 +222,7 @@ class UserProfiles(ChoiceList):
 
     @classmethod
     def add_item(cls, value, text, memberships=None, name=None, **kw):
+        """Deserves a docstring."""
         return cls.add_item_instance(UserProfile(
             cls, value, text, name, memberships, **kw))
 
