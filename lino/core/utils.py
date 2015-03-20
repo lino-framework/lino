@@ -34,6 +34,7 @@ from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_unicode
+from django.contrib.contenttypes.models import ContentType
 
 from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
@@ -43,7 +44,6 @@ from django.core.validators import (
     validate_email, ValidationError, URLValidator)
 
 validate_url = URLValidator()
-
 
 def is_valid_url(s):
     """Returns `True` if the given string is a valid URL.  This calls
@@ -750,4 +750,23 @@ def error2str(self, e):
                 for k, v in md.items()])
         return '\n'.join(e.messages)
     return unicode(e)
+
+
+def gfk2lookup(gfk, obj, **kw):
+    """
+    GenericForeignKey field `gfk` 
+    """
+    if obj is None:
+        # 20120222 : here was only `pass`, and the two other lines
+        # were uncommented. don't remember why I commented them out.
+        # But it caused all tasks to appear in UploadsByController of
+        # an insert window for uploads.
+        kw[gfk.ct_field] = None
+        kw[gfk.fk_field] = None
+    else:
+        ct = ContentType.objects.get_for_model(
+            obj.__class__)
+        kw[gfk.ct_field] = ct
+        kw[gfk.fk_field] = obj.pk
+        return kw
 

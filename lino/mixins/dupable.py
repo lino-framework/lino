@@ -28,7 +28,6 @@ DMETA = fuzzy.DMetaphone()
 
 from django.conf import settings
 from django.db import models
-# from django.db.models import Q
 
 from lino.api import dd, _
 from lino.core.actions import SubmitInsert
@@ -212,3 +211,33 @@ class Dupable(Repairable):
             return qs
         return qs[:limit]
 
+
+class SimilarObjects(dd.VirtualTable):
+    """Shows the other objects who are similar to this one."""
+    # slave_grid_format = 'html'
+    slave_grid_format = 'summary'
+
+    class Row:
+
+        def __init__(self, master, other):
+            self.master = master
+            self.other = other
+
+        def summary_row(self, ar):
+            yield ar.obj2html(self.other)
+
+        def __unicode__(self):
+            return unicode(self.other)
+
+    @classmethod
+    def get_data_rows(self, ar):
+        mi = ar.master_instance
+        if mi is None:
+            return
+
+        for o in mi.find_similar_instances(4):
+            yield self.Row(mi, o)
+
+    @dd.displayfield(_("Other"))
+    def other(self, obj, ar):
+        return ar.obj2html(obj.other)

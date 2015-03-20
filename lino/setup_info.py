@@ -22,7 +22,10 @@ SETUP_INFO = dict(
         'Babel', 'odfpy',
         'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
-        'django-iban', 'xlwt', 'xlrd'],
+        'fuzzy',  # lino.mixins.dupable
+        'clint',  # lino.modlib.plausibility.management.commands
+        'django-iban',  # lino.modlib.sepa
+        'xlwt', 'xlrd'],
     tests_require=[],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.
@@ -159,6 +162,10 @@ lino.modlib.outbox
 lino.modlib.outbox.fixtures
 lino.modlib.blogs
 lino.modlib.workflows
+lino.modlib.plausibility
+lino.modlib.plausibility.fixtures
+lino.modlib.plausibility.management
+lino.modlib.plausibility.management.commands
 lino.modlib.polls
 lino.modlib.polls.fixtures
 lino.modlib.postings

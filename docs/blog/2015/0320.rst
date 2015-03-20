@@ -1,0 +1,59 @@
+======================
+Friday, March 20, 2015
+======================
+
+I started to work on a number of "minor" problems discovered with Gerd
+two days ago.
+
+A new plugin: "Plausibility"
+============================
+
+The `StrangeClients` table was definitively too slow in real life.  I
+finally did what I had been meditating for some time and wrote a whole
+new plugin :mod:`lino.modlib.plausibility`.  I chose the name
+"plausible" (in the meaning of "credible", "logical", "consistent",
+"tenable").
+
+So Lino now has a generic infrastructure for handling this kind of
+problems.  The basic idea is to store the messages in a temporary
+table instead of running the checks "live" each time when somebody
+requests to see them. 
+
+Users now see in their menu a new command "My plausibility problems",
+and I guess that they will be asking "What does Lino know about my
+problems?" In German we should maybe rather use "Meine
+Aktenkontrollliste" instead of "Meine Plausibilitätsprobleme".
+
+- :class:`lino.modlib.plausibility.models.Problem`
+- :class:`lino.modlib.plausibility.models.CheckPlausibility`
+- :class:`lino.modlib.plausibility.choicelists.Checker`
+- :class:`lino.modlib.plausibility.choicelists.Checkers`
+- :manage:`check_plausibility`
+
+
+Added new utility function :func:`lino.core.utils.gfk2lookup`. This
+code was until now in :meth:`AbstractTable.get_filter_kw
+<lino.core.tables.AbstractTable.get_filter_kw>`, but moved it to
+:mod:`lino.core.utils` because it is of general interest, and
+especially now used by :meth:`Checker.update_for_object
+<lino.modlib.plausibility.choicelists.Checker.update_for_object>`.
+
+I wanted a progress bar for :manage:`check_plausibility` and
+discovered Kenneth Reitz's `clint
+<https://github.com/kennethreitz/clint>`_. Cool!
+
+New tested document :ref:`welfare.tested.plausibility`.
+
+Similar clients
+===============
+
+The algorithm for finding similar clients
+is not yet good enough. For example if we have two duped clients
+"Albert Bruno GONZALES" and "Albert GONZALES", then SimilarPersons for
+the first client does not show the other.
+
+New module
+:mod:`lino_welfare.modlib.similar_clients`.
+
+Our famous fictive dupe client *Dorothée Demeulenaere-Dobbelstein* no
+longer has a `birth_date` and a `national_id`.

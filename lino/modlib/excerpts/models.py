@@ -798,8 +798,8 @@ if settings.SITE.project_model is not None:
 @dd.receiver(dd.pre_analyze)
 def set_excerpts_actions(sender, **kw):
     """Installs (1) print management actions on models for which there is
-an excerpt type and (2) the excerpt shortcut fields defined in
-:class:`lino.modlib.excerpts.choicelists.Shortcuts`.
+    an excerpt type and (2) the excerpt shortcut fields defined in
+    :class:`lino.modlib.excerpts.choicelists.Shortcuts`.
 
     """
     # logger.info("20140401 %s.set_attest_actions()", __name__)

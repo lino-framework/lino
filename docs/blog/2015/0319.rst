@@ -17,9 +17,9 @@ in :ref:`welfare`.
 
 Instead of simply removing it in :mod:`lino.modlib.cv` (and adding it
 afterwards again in :mod:`lino_welfare.modlib.cv`), I invented the
-:meth:`lino.core.plugin.Plugin.required` method.  This is a simple
-hook for adding application-specific group requirements to all actors
-of a plugin.
+:meth:`lino.core.plugin.Plugin.get_default_required` method.  This is
+a simple hook for adding application-specific group requirements to
+all actors of a plugin.
 
 Note that :class:`LanguageKnowledges
 <lino.modlib.cv.models.LanguageKnowledges>` and two subclasses thereof

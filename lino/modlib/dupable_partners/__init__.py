@@ -21,8 +21,7 @@ therefore are potential duplicates).
 See also :mod:`lino.mixins.dupable`.
 
 A usage example is :mod:`lino.projects.min2`.
-
-Examples and test cases in :ref:`welfare.tested.dupable_partners`.
+See also :mod:`lino_welfare.modlib.dupable_clients`.
 
 """
 

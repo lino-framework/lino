@@ -28,7 +28,7 @@ Visible changes
   didn't work.
 
 - Moved a chapter from :ref:`welfare.tested.pcsw` into a separate
-  document :ref:`welfare.tested.dupable_partners`. This document shows a
+  document :ref:`welfare.tested.dupable_clients`. This document shows a
   consequence of having :meth:`workflow_buttons
   <lino.core.model.Model.workflow_buttons>` moved from Actor to Model.
 

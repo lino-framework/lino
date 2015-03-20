@@ -231,7 +231,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ if not classDict.has_key('app_label'):
             #~ classDict['app_label'] = cls.__module__.split('.')[-2]
         """
-        UserGroups manually sets max_length because the
+        UserGroups manually sets `max_length` because the
         default list has only one group with value "system",
         but applications may want to add longer group names
         """
@@ -439,7 +439,7 @@ class ChoiceList(tables.AbstractTable):
         #~ if cls is ChoiceList:
             #~ raise Exception("Cannot define items on the base class")
         is_duplicate = False
-        if cls.items_dict.has_key(i.value):
+        if i.value in cls.items_dict:
             #~ raise Exception("Duplicate value %r in %s." % (i.value,cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
@@ -464,9 +464,10 @@ Django creates copies of them when inheriting models.
         if i.name:
             #~ if hasattr(cls,i.name):
             if not is_duplicate:
-                if cls.__dict__.has_key(i.name):
-                    raise Exception("An item named %r is already defined in %s" % (
-                        i.name, cls.__name__))
+                if i.name in cls.__dict__:
+                    raise Exception(
+                        "An item named %r is already defined in %s" % (
+                            i.name, cls.__name__))
             setattr(cls, i.name, i)
             #~ i.name = name
         return i
@@ -515,11 +516,11 @@ Django creates copies of them when inheriting models.
 
     @classmethod
     def display_text(cls, bc):
-        """
-        Override this to customize the display text of choices.
-        :class:`lino.core.perms.UserGroups` and :class:`lino.modlib.cv.models.CefLevel`
-        used to do this before we had the 
-        :attr:`ChoiceList.show_values` option.
+        """Override this to customize the display text of choices.
+        :class:`lino.core.perms.UserGroups` and
+        :class:`lino.modlib.cv.models.CefLevel` used to do this before
+        we had the :attr:`ChoiceList.show_values` option.
+
         """
         if cls.show_values:
             def fn(bc):
@@ -666,18 +667,13 @@ class ChoiceListField(models.CharField):
         #~ return value
 
     def _get_choices(self):
-        """
-        HACK: Django by default stores a copy of our list 
-        when the `choices` of a field are evaluated for the 
-        first time. We don't want that because ChoiceLists may 
-        change afterwards.
+        """HACK: Django by default stores a copy of our list when the
+        `choices` of a field are evaluated for the first time. We
+        don't want that because ChoiceLists may change afterwards.
+
         """
         return self.choicelist.choices
-        #~ if hasattr(self._choices, 'next'):
-            #~ choices, self._choices = tee(self._choices)
-            #~ return choices
-        #~ else:
-            #~ return self._choices
+
     choices = property(_get_choices)
 
     def get_prep_value(self, value):

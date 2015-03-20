@@ -14,7 +14,6 @@ import yaml
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 # from django.core.exceptions import PermissionDenied
 
@@ -25,7 +24,7 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import signals
 from lino.core.tablerequest import TableRequest
-from lino.core.utils import Handle
+from lino.core.utils import Handle, gfk2lookup
 from lino.utils.xmlgen.html import E
 from lino.utils.xmlgen.html import RstTable
 
@@ -556,23 +555,7 @@ method in order to sort the rows of the queryset.
         elif self.master is models.Model:
             pass
         elif isinstance(self.master_field, generic.GenericForeignKey):
-        #~ elif self.master is ContentType:
-            #~ print 20110415
-            if master_instance is None:
-                """
-                20120222 : here was only `pass`, and the two other lines
-                were uncommented. don't remember why I commented them out.
-                But it caused all tasks to appear in UploadsByController of
-                an insert window for uploads.
-                """
-                #~ pass
-                kw[self.master_field.ct_field] = None
-                kw[self.master_field.fk_field] = None
-            else:
-                ct = ContentType.objects.get_for_model(
-                    master_instance.__class__)
-                kw[self.master_field.ct_field] = ct
-                kw[self.master_field.fk_field] = master_instance.pk
+            kw = gfk2lookup(self.master_field, master_instance, **kw)
         elif self.master_field is not None:
             if master_instance is None:
                 if not self.master_field.null:

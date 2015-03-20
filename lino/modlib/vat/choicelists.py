@@ -6,10 +6,6 @@ Choicelists for `lino.modlib.vat`.
 
 .. autosummary::
 
-It defines two database models :class:`VatRule` and
-:class:`PaymentTerm`, and a series of mixins which are used in
-:mod:`lino.modlib.ledger`, :mod:`lino.modlib.sales` and other apps.
-
 """
 
 from __future__ import unicode_literals

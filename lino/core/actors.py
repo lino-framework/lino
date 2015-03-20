@@ -15,7 +15,6 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 
 from lino.core import fields
 from lino.core import actions

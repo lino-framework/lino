@@ -8,7 +8,7 @@ Database models for `lino.modlib.dupable_partners`.
 
 from lino.api import dd, _
 
-from lino.mixins.dupable import DupableWordBase
+from lino.mixins.dupable import DupableWordBase, SimilarObjects
 
 
 class Word(DupableWordBase):
@@ -26,34 +26,6 @@ class Words(dd.Table):
     required = dd.Required(user_level='admin')
 
 
-class SimilarPartners(dd.VirtualTable):
-    """Shows the other partners who are similar to this one."""
+class SimilarPartners(SimilarObjects):
     label = _("Similar partners")
-    # slave_grid_format = 'html'
-    slave_grid_format = 'summary'
-
-    class Row:
-
-        def __init__(self, master, other):
-            self.master = master
-            self.other = other
-
-        def summary_row(self, ar):
-            yield ar.obj2html(self.other)
-
-        def __unicode__(self):
-            return unicode(self.other)
-
-    @classmethod
-    def get_data_rows(self, ar):
-        mi = ar.master_instance
-        if mi is None:
-            return
-
-        for o in mi.find_similar_instances(4):
-            yield self.Row(mi, o)
-
-    @dd.displayfield(_("Other"))
-    def other(self, obj, ar):
-        return ar.obj2html(obj.other)
 
