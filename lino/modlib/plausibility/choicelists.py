@@ -82,7 +82,19 @@ class Checker(dd.Choice):
         return []
 
     def get_responsible_user(self, obj):
-        return None
+        """The :attr:`user <lino.modlib.plausibility.models.Problem.user>` to
+        be considered as reponsible for problems detected by this
+        checker on the given database object `obj`.
+
+        The given `obj` will always be an instance of :attr:`model`.
+
+        The default implementation returns the *main plausibility
+        responsible* defined for this site (see
+        :attr:`responsible_user
+        <lino.modlib.plausibility.Plugin.responsible_user>`).
+
+        """
+        return dd.plugins.plausibility.get_responsible_user(self, obj)
 
 
 class Checkers(dd.ChoiceList):

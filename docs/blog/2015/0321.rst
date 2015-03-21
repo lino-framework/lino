@@ -1,0 +1,22 @@
+========================
+Saturday, March 21, 2015
+========================
+
+Added a setting :attr:`responsible_user
+<lino.modlib.plausibility.Plugin.responsible_user>` for
+:mod:`lino.modlib.plausibility`. Example of local configuration::
+
+    class Site(Site):
+
+        def setup_plugins(self):
+            super(Site, self).setup_plugins()
+            self.plugins.plausibility.configure(responsible_user='annabell')
+
+Added a new checker
+:class:`lino.modlib.countries.models.PlaceChecker`, the first checker
+in standard Lino.
+
+TODO: 
+
+- convert also repairable problems to this system?
+- Why is the `detail_layout` of `Checkers` being ignored?

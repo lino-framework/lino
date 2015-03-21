@@ -23,7 +23,31 @@ from .choicelists import Checker, Checkers
 
 
 class Problem(Controllable, UserAuthored):
-    """"""
+    """Represents a detected plausibility problem.
+
+    Database objects of this model are considered temporary data which
+    may be updated automatically without user interaction.
+
+    .. attribute:: message
+
+       The message text.
+
+    .. attribute:: checker
+
+       The :class:`Checker
+       <lino.modlib.plausibility.choicelists.Checker>` which reported
+       this problem
+
+    .. attribute:: user
+
+       The :class:`user <lino.modlib.users.models.User>` reponsible
+       for fixing this problem.
+
+       This field is being filled by the :meth:`get_responsible_user
+       <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
+       method of the :attr:`checker`.
+
+    """
     class Meta:
         verbose_name = _("Plausibility problem")
         verbose_name_plural = _("Plausibility problems")
@@ -38,6 +62,7 @@ dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 
 
 class Problems(dd.Table):
+    "The table of all :class:`Problem` objects."
     model = 'plausibility.Problem'
     column_names = "user owner message:40 checker *"
     auto_fit_column_widths = True
@@ -87,8 +112,26 @@ class ProblemsByChecker(Problems):
     master = Checker
 
 
-class MyProblems(ByUser, Problems):
-    pass
+class MyProblems(Problems):
+    """Shows the plausibility problems assigned to this user.
+
+    """
+    label = _("Plausibility problems assigned to me")
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(MyProblems, self).param_defaults(ar, **kw)
+        kw.update(user=ar.get_user())
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            msg = _("There are {0} plausibility problems assigned to you.")
+            msg = msg.format(count)
+            yield ar.href_to_request(sar, msg)
 
 
 class CheckPlausibility(dd.Action):

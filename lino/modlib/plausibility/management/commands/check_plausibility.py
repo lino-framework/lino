@@ -7,7 +7,8 @@
 
 .. py2rst::
 
-  from lino.modlib.plausibility.management.commands.check_plausibility import Command
+  from lino.modlib.plausibility.management.commands.check_plausibility \
+      import Command
   print(Command.help)
 
 """

@@ -182,7 +182,7 @@ class Plugin(object):
 
     def on_init(self):
         """This will be called when the Plugin is being instantiated (i.e.
-        even before the :class:`Site` instantiation has finished. User by
+        even before the :class:`Site` instantiation has finished. Used by
         :mod:`lino.modlib.users` to set :attr:`user_model`.
 
         """

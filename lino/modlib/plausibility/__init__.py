@@ -18,6 +18,7 @@ are attached to a given model.
 
 Examples of plausibility problems are:
 
+- :class:`lino.modlib.countries.models.PlaceChecker`
 - :class:`lino_welfare.modlib.pcsw.models.SSINChecker`
 - :class:`lino_welfare.modlib.pcsw.models.ClientCoachingsChecker`
 - :class:`lino_welfare.modlib.isip.mixins.OverlappingContractsChecker`
@@ -46,10 +47,51 @@ from lino.api import ad, _
 class Plugin(ad.Plugin):
     """See :doc:`/dev/plugins`.
 
+    .. attribute:: responsible_user
+
+        The :attr:`username <lino.modlib.users.models.User.username>`
+        of the **main plausibility responsible**, i.e. a designated
+        user who will be attributed to plausibility problems for which
+        no *specific responible* could be designated (returned by the
+        checker's :meth:`get_responsible_user
+        <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
+        method).
+
+        The default value for this is `None`, except on a demo site
+        (i.e. which has :attr:`is_demo_site
+        <lino.core.site.Site.is_demo_site>` set to `True`) where it is
+        ``"'robin'``.
+
     """
     verbose_name = _("Plausibility")
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.contenttypes']
 
-    needs_plugins = ['lino.modlib.contenttypes']
+    # plugin settings
+    responsible_user = None  # the username (a string)
+    _responsible_user = None  # the cached User object
+
+    def get_responsible_user(self, checker, obj):
+        if self.responsible_user is None:
+            return None
+        if self._responsible_user is None:
+            User = self.site.modules.users.User
+            try:
+                self._responsible_user = User.objects.get(
+                    username=self.responsible_user)
+            except User.DoesNotExist:
+                msg = "Invalid username '{0}' in `responsible_user` "
+                msg = msg.format(self.responsible_user)
+                raise Exception(msg)
+        return self._responsible_user
+
+    def on_site_startup(self, site):
+        """Set :attr:`responsible_user` to ``"'robin'`` if this is a demo site
+        (:attr:`is_demo_site <lino.core.site.Site.is_demo_site>`).
+
+        """
+        super(Plugin, self).on_site_startup(site)
+        if site.is_demo_site:
+            self.configure(responsible_user='robin')
 
     def setup_main_menu(self, site, profile, m):
         g = site.plugins.office

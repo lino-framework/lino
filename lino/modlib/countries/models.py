@@ -18,7 +18,7 @@ from django.conf import settings
 from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
-from django.core.exceptions import ValidationError
+from lino.modlib.plausibility.choicelists import Checker
 
 config = dd.plugins.countries
 
@@ -207,3 +207,17 @@ class PlacesByCountry(Places):
     details_of_master_template = _("%(details)s in %(master)s")
 
 
+class PlaceChecker(Checker):
+    """The name of a geographical place
+    (:attr:`lino.modlib.countries.models.Place.name`) should not
+    consist of only digits.
+
+    """
+    model = 'countries.Place'
+    verbose_name = _("Check plausibility of geographical places.")
+
+    def get_checker_problems(self, obj):
+        if obj.name.isdigit():
+            yield _("Name contains only digits.")
+
+PlaceChecker.activate()
