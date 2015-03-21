@@ -312,10 +312,12 @@ class Kernel(object):
                     #~ else:
                         #~ logger.info(msg)
                 elif isinstance(f, models.ForeignKey):
-                    #~ f.rel.to = dd.resolve_model(f.rel.to,strict=True)
+                    # f.rel.to = resolve_model(f.rel.to, strict=True)
                     if isinstance(f.rel.to, basestring):
-                        raise Exception("%s %s relates to %r (models are %s)" %
-                                        (model, f.name, f.rel.to, models_list))
+                        raise Exception("Could not resolve target %r of "
+                                        "ForeignKey '%s' in %s "
+                                        "(models are %s)" %
+                                        (f.rel.to, f.name, model, models_list))
                     set_default_verbose_name(f)
 
                     """
