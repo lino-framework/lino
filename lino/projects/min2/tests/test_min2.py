@@ -60,7 +60,8 @@ class QuickTest(RemoteAuthTestCase):
         found = []
         for M in rt.models_by_base(Controllable):
             found.append(full_model_name(M))
-        expected = """excerpts.Excerpt outbox.Mail outbox.Attachment
+        expected = """excerpts.Excerpt plausibility.Problem
+        outbox.Mail outbox.Attachment
         notes.Note uploads.Upload cal.Task cal.Event""".split()
         self.assertEqual(found, expected)
 

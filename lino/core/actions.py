@@ -541,8 +541,8 @@ class Action(Parametrizable, Permittable):
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)
 
-    def run_from_code(self, ar, **kw):
-        self.run_from_ui(ar, **kw)
+    def run_from_code(self, ar, *args, **kw):
+        self.run_from_ui(ar, *args, **kw)
 
     def run_from_session(self, ses, *args, **kw):  # 20130820
         if len(args):

@@ -6,11 +6,8 @@
 
 A plausibility problem is a "soft" database integrity problem which is
 not visible by the DBMS because detecting it requires higher business
-intelligence.  This is what they have in common with repairable
-problems (defined using the :class:`Repairable
-<lino.mixins.repairable.Repairable>` mixin). Unlike repairable
-problems, plausibility problems cannot be fixed automatically,
-i.e. they need **human interaction**.
+intelligence.  Some plausibility problems can be fixed automatically,
+others need human interaction.
 
 The application developer writes **plausibility checkers**,
 i.e. pieces of code which contain that business intelligence and which

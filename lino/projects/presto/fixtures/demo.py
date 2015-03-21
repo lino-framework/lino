@@ -6,8 +6,9 @@ from lino.api import rt
 
 
 def objects():
+    return []
     # create a primary Address for each Partner
-    for obj in rt.modules.contacts.Partner.objects.all():
-        obj.repairdata()
-        yield obj
+    # for obj in rt.modules.contacts.Partner.objects.all():
+    #     obj.repairdata()
+    #     yield obj
 

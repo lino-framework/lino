@@ -12,7 +12,6 @@
     makeui
     mergedata
     monitor
-    repairdata
     run
     show
     syncscreenshots

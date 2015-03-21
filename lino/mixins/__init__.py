@@ -16,7 +16,6 @@ application.
     periods
     polymorphic
     printable
-    repairable
     uploadable
 
 Parameter panels:

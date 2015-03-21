@@ -11,15 +11,14 @@ from __future__ import print_function
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.api import rt
+from lino.api import rt, dd
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
-from lino.mixins.repairable import Repairable
 
 from .choicelists import AddressTypes
 
 
-class AddressOwner(Repairable):
+class AddressOwner(dd.Model):
     """Base class for the "addressee" of any address.
 
     """
@@ -45,49 +44,6 @@ class AddressOwner(Repairable):
             return Address.objects.get(partner=self, primary=True)
         except Address.DoesNotExist:
             pass
-
-    def get_repairable_problems(self, really=False):
-        """Implements
-        :meth:`lino.mixins.repairableRepairable.get_repairable_problems`
-        by checking for the following repairable problem:
-
-        - :message:`Unique address is not marked primary.` --
-          if there is exactly one :class:`Address` object which just fails to
-          be marked as primary, mark it as primary and return it.
-
-        - :message:`Non-empty address fields, but no address record.`
-          -- if there is no :class:`Address` object, and if the
-          :class:`Partner` has some non-empty address field, create an
-          address record from these, using `AddressTypes.official` as
-          type.
-
-        """
-        yield super(AddressOwner, self).get_repairable_problems(really)
-        Address = rt.modules.addresses.Address
-        qs = Address.objects.filter(partner=self)
-        num = qs.count()
-        if num == 1:
-            addr = qs[0]
-            if not addr.primary:
-                if really:
-                    addr.primary = True
-                    addr.full_clean()
-                    addr.save()
-                yield _("Unique address is not marked primary.")
-        elif num == 0:
-            kw = dict()
-            for fldname in Address.ADDRESS_FIELDS:
-                v = getattr(self, fldname)
-                if v:
-                    kw[fldname] = v
-            if kw:
-                yield _("Non-empty address fields, but no address record.")
-                if really:
-                    kw.update(partner=self, primary=True)
-                    kw.update(address_type=AddressTypes.official)
-                    addr = Address(**kw)
-                    addr.full_clean()
-                    addr.save()
 
     def sync_primary_address(self, request):
         Address = rt.modules.addresses.Address
@@ -115,3 +71,65 @@ class AddressOwner(Repairable):
         elems.append(E.p(btn))
         return elems
     
+from lino.modlib.plausibility.choicelists import Checker
+
+
+class AddressOwnerChecker(Checker):
+    """Checks for the following plausibility problems:
+
+    - :message:`Unique address is not marked primary.` --
+      if there is exactly one :class:`Address` object which just fails to
+      be marked as primary, mark it as primary and return it.
+
+    - :message:`Non-empty address fields, but no address record.`
+      -- if there is no :class:`Address` object, and if the
+      :class:`Partner` has some non-empty address field, create an
+      address record from these, using `AddressTypes.official` as
+      type.
+
+    """
+    verbose_name = _("Check for missing or non-primary address records")
+    model = AddressOwner
+    
+    def get_checker_problems(self, obj, fix=False):
+        Address = rt.modules.addresses.Address
+        qs = Address.objects.filter(partner=obj)
+        num = qs.count()
+        kw = dict()
+        for fldname in Address.ADDRESS_FIELDS:
+            v = getattr(obj, fldname)
+            if v:
+                kw[fldname] = v
+        if num > 1:
+            return
+        if num == 1:
+            addr = qs[0]
+            if not addr.primary:
+                # check whether it is the same address than the one
+                # specified on AddressOwner
+                diff = {}
+                for k, other in kw.items():
+                    my = getattr(addr, k)
+                    if my != other:
+                        diff[k] = (my, other)
+                if len(diff) == 0:
+                    yield (True, _("Unique address is not marked primary."))
+                    if fix:
+                        addr.primary = True
+                        addr.full_clean()
+                        addr.save()
+                    return
+                # else:
+                #     dd.logger.info("20150321, diff is %s", diff)
+                    
+        if kw:
+            yield (True,
+                   _("Non-empty address fields, but no address record."))
+            if fix:
+                kw.update(partner=obj, primary=True)
+                kw.update(address_type=AddressTypes.official)
+                addr = Address(**kw)
+                addr.full_clean()
+                addr.save()
+
+AddressOwnerChecker.activate()

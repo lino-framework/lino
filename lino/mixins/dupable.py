@@ -32,8 +32,6 @@ from django.db import models
 from lino.api import dd, _
 from lino.core.actions import SubmitInsert
 
-from lino.mixins.repairable import Repairable
-
 
 def phonetic(s):
     # fuzzy.DMetaphone does not work with unicode strings, see
@@ -96,7 +94,7 @@ class DupableWordBase(dd.Model):
         return self.word
 
 
-class Dupable(Repairable):
+class Dupable(dd.Model):
     """Base class for models that can be "dupable".
 
     This mixin is to be used on models for which there is a danger of
@@ -147,7 +145,7 @@ class Dupable(Repairable):
         return 2
 
     def update_dupable_words(self, really=True):
-        """Update the dupable words of this row."""
+        """Update the phonetic words of this row."""
         # "A related object set can be replaced in bulk with one
         # operation by assigning a new iterable of objects to it". But
         # only when the relatin is nullable...
@@ -164,18 +162,7 @@ class Dupable(Repairable):
             qs.delete()
             for w in wanted:
                 self.dupable_word_model(word=w, owner=self).save()
-        return _("Must update dupable words.")
-
-    def get_repairable_problems(self, really=True):
-        """Implements
-        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`
-        by checking for the following repairable problem:
-
-        - :message:`Must update dupable words.`
-
-        """
-        yield super(Dupable, self).get_repairable_problems(really)
-        yield self.update_dupable_words(really)
+        return _("Must update phonetic words.")
 
     def after_ui_save(self, ar, cw):
         super(Dupable, self).after_ui_save(ar, cw)
@@ -210,6 +197,26 @@ class Dupable(Repairable):
         if limit is None:
             return qs
         return qs[:limit]
+
+
+from lino.modlib.plausibility.choicelists import Checker
+
+
+class DupableChecker(Checker):
+    verbose_name = _("Check for missing phonetic words")
+    model = Dupable
+    
+    def get_checker_problems(self, obj, really=False):
+        """Checks for the following repairable problem:
+
+        - :message:`Must update phonetic words.`
+
+        """
+        msg = obj.update_dupable_words(really)
+        if msg:
+            yield (True, msg)
+
+DupableChecker.activate()
 
 
 class SimilarObjects(dd.VirtualTable):

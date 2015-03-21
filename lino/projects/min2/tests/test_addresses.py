@@ -60,7 +60,8 @@ class QuickTest(RemoteAuthTestCase):
         addr = doe.get_primary_address()
         self.assertEqual(addr, None)
 
-        doe.repairdata(True)
+        ar = rt.modules.contacts.Companies.request()
+        doe.check_plausibility(ar, fix=True)
         addr = doe.get_primary_address()
         self.assertEqual(Address.objects.count(), 1)
         self.assertEqual(addr.city, eupen)

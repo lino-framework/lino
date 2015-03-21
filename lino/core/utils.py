@@ -595,9 +595,9 @@ class InstanceAction(object):
     def __str__(self):
         return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
 
-    def run_from_code(self, ar, **kw):
+    def run_from_code(self, ar, *args, **kw):
         ar.selected_rows = [self.instance]
-        return self.bound_action.action.run_from_code(ar)
+        return self.bound_action.action.run_from_code(ar, *args, **kw)
 
     def run_from_ui(self, ar, **kw):
         ar.selected_rows = [self.instance]
@@ -611,7 +611,7 @@ class InstanceAction(object):
         return ar.response
 
     def __call__(self, *args, **kwargs):
-        return self.run_from_session(*args, **kwargs)
+        return self.run_from_code(*args, **kwargs)
 
     def as_button_elem(self, ar, label=None, **kwargs):
         return settings.SITE.ui.row_action_button(

@@ -38,11 +38,15 @@ class Command(BaseCommand):
         make_option(
             '-l', '--list', action='store_true', dest='list',
             default=False,
-            help="Show a list of available checkers."),
+            help="Don't check, just show a list of available checkers."),
+        make_option(
+            '-f', '--fix', action='store_true', dest='fix',
+            default=False,
+            help="Fix any repairable problems."),
     )
 
     def handle(self, *args, **options):
         if options['list']:
             Checkers.show()
         else:
-            check_plausibility(*args)
+            check_plausibility(args=args, fix=options['fix'])

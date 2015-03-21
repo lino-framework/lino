@@ -38,7 +38,6 @@ from lino.utils import ssin
 from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
-from lino.mixins.repairable import Repairable
 
 config = dd.plugins.beid
 
@@ -426,7 +425,7 @@ class BeIdReadCardAction(BaseBeIdReadCardAction):
         return self.process_row(ar, row, attrs)
 
 
-class BeIdCardHolder(Repairable):
+class BeIdCardHolder(dd.Model):
     """Mixin for models which represent an eid card holder.
     Currently only Belgian eid cards are tested.
     Concrete subclasses must also inherit from :mod:`lino.mixins.Born`.
@@ -568,30 +567,33 @@ class BeIdCardHolder(Repairable):
                 setattr(obj, fld.name, new)
         return objects, diffs
 
-    def get_repairable_problems(self, really=False):
-        """Implements
-        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`.
 
-        """
-        yield super(BeIdCardHolder, self).get_repairable_problems(really)
-        if self.national_id:
+from lino.modlib.plausibility.choicelists import Checker
+
+
+class BeIdCardHolderChecker(Checker):
+    model = BeIdCardHolder
+    verbose_name = _("Check for invalid SSINs")
+    
+    def get_checker_problems(self, obj, fix=False):
+        if obj.national_id:
             try:
-                expected = ssin.parse_ssin(self.national_id)
+                expected = ssin.parse_ssin(obj.national_id)
             except ValidationError as e:
-                dd.logger.warning("Cannot repair invalid SSIN (%s)", e)
+                yield (False, _("Cannot repair invalid SSIN ({0})").format(e))
             else:
-                got = self.national_id
+                got = obj.national_id
                 if got != expected:
                     msg = "Malformed SSIN '{got}' must be '{expected}'."
-                    yield msg.format(**locals())
-                    if really:
-                        self.national_id = expected
-                        try:
-                            self.full_clean()
-                            self.save()
-                        except ValidationError as e:
-                            dd.logger.warning("%s : %s", self, e)
-    
+                    yield (True, msg.format(**locals()))
+                    if fix:
+                        obj.national_id = expected
+                        obj.full_clean()
+                        obj.save()
+                        dd.logger.info("20150321 fixed %s", expected)
+
+BeIdCardHolderChecker.activate()
+
 
 def holder_model():
     cmc = list(rt.models_by_base(BeIdCardHolder))

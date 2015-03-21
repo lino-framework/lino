@@ -488,30 +488,6 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             for obj in self.owner.suggest_cal_guests(self):
                 yield obj
 
-    def get_repairable_problems(self, really=False):
-        """Implements
-        :meth:`lino.mixins.repairable.Repairable.get_repairable_problems`
-        by checking for the following repairable problem:
-
-        - :message:`No participants although NNN suggestions exist.` ---
-          This is probably due to some bug, so we repair this by adding the
-          suggested guests.
-
-        """
-        yield super(Event, self).get_repairable_problems(really)
-
-        if not self.state.edit_guests:
-            return
-        existing = set([g.partner.pk for g in self.guest_set.all()])
-        if len(existing) == 0:
-            suggested = list(self.suggest_guests())
-            if len(suggested) > 0:
-                msg = _("No participants although {0} suggestions exist.")
-                yield msg.format(len(suggested))
-                if really:
-                    for g in suggested:
-                        g.save()
-
     def get_event_summary(event, ar):
         """How this event should be summarized in contexts where possibly
         another user is looking (i.e. currently in invitations of
@@ -657,6 +633,33 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
 
 dd.update_field(Event, 'user', verbose_name=_("Responsible user"))
+
+from lino.modlib.plausibility.choicelists import Checker
+
+
+class EventChecker(Checker):
+    """Check whether this event has :message:`No participants although NNN
+    suggestions exist.` -- This is probably due to some bug, so we
+    repair this by adding the suggested guests.
+
+    """
+    verbose_name = _("Check for missing participants")
+    model = Event
+    
+    def get_checker_problems(self, obj, really=False):
+        if not obj.state.edit_guests:
+            return
+        existing = set([g.partner.pk for g in obj.guest_set.all()])
+        if len(existing) == 0:
+            suggested = list(obj.suggest_guests())
+            if len(suggested) > 0:
+                msg = _("No participants although {0} suggestions exist.")
+                yield (True, msg.format(len(suggested)))
+                if really:
+                    for g in suggested:
+                        g.save()
+
+EventChecker.activate()
 
 
 class EventDetail(dd.FormLayout):

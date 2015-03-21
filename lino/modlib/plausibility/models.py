@@ -14,8 +14,9 @@ from clint.textui import puts, progress
 
 from django.db import models
 
+from lino.core.utils import gfk2lookup
 from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import UserAuthored
 
 from lino.api import dd, rt, _
 
@@ -47,6 +48,11 @@ class Problem(Controllable, UserAuthored):
        <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
        method of the :attr:`checker`.
 
+    .. attribute:: repairable
+
+        Whether this problem is repairable, i.e. can be repaired
+        automatically.
+
     """
     class Meta:
         verbose_name = _("Plausibility problem")
@@ -57,6 +63,7 @@ class Problem(Controllable, UserAuthored):
     # severity = Severities.field()
     # feedback = Feedbacks.field(blank=True)
     message = models.CharField(_("Message"), max_length=250)
+    repairable = models.BooleanField(_("Repairable"), default=False)
 
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 
@@ -64,7 +71,7 @@ dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 class Problems(dd.Table):
     "The table of all :class:`Problem` objects."
     model = 'plausibility.Problem'
-    column_names = "user owner message:40 checker *"
+    column_names = "user owner message:40 repairable checker *"
     auto_fit_column_widths = True
     parameters = dict(
         user=models.ForeignKey(
@@ -105,7 +112,7 @@ class AllProblems(Problems):
 
 class ProblemsByOwner(Problems):
     master_key = 'owner'
-    column_names = "message:40 checker user *"
+    column_names = "message:40 checker user repairable *"
 
 
 class ProblemsByChecker(Problems):
@@ -142,15 +149,19 @@ class CheckPlausibility(dd.Action):
         self.model = model
         super(CheckPlausibility, self).__init__()
 
-    def run_from_ui(self, ar):
+    def run_from_ui(self, ar, fix=False):
+        """Implements :meth:`lino.core.actions.Action.run_from_ui`.
+
         """
-        Implements :meth:`lino.core.actions.Action.run_from_ui`.
-        """
+        Problem = rt.modules.plausibility.Problem
+        gfk = Problem.owner
         checkers = get_checkable_models()[self.model]
         for obj in ar.selected_rows:
             assert isinstance(obj, self.model)
+            qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
+            qs.delete()
             for chk in checkers:
-                chk.update_for_object(obj)
+                chk.update_for_object(obj, False, fix)
 
 
 @dd.receiver(dd.pre_analyze)
@@ -174,14 +185,14 @@ def get_checkable_models(*args):
         selection = Checkers.objects()
     checkable_models = dict()
     for chk in selection:
-        m = dd.resolve_model(chk.model)
-        lst = checkable_models.setdefault(m, [])
-        lst.append(chk)
+        for m in rt.models_by_base(chk.model):
+            lst = checkable_models.setdefault(m, [])
+            lst.append(chk)
     return checkable_models
 
 
-def check_plausibility(*args, **options):
-    """Called by :manage:`check_plausibility`."""
+def check_plausibility(args=[], fix=True):
+    """Called by :manage:`check_plausibility`. See there."""
     Problem = rt.modules.plausibility.Problem
     mc = get_checkable_models(*args)
     for m, checkers in mc.items():
@@ -189,15 +200,17 @@ def check_plausibility(*args, **options):
         Problem.objects.filter(owner_type=ct).delete()
         name = unicode(m._meta.verbose_name_plural)
         qs = m.objects.all()
-        msg = "Running {0} plausibility checkers on {1} {2}...".format(
+        msg = _("Running {0} plausibility checkers on {1} {2}...").format(
             len(checkers), qs.count(), name)
         puts(msg)
-        n = 0
+        sums = [0, 0, name]
         for obj in progress.bar(qs):
             for chk in checkers:
-                if chk.update_for_object(obj, False) is not None:
-                    n += 1
-        if n:
-            puts("Found {0} plausibility problems in {1}.".format(n, name))
+                todo, done = chk.update_for_object(obj, False, fix)
+                sums[0] += len(todo)
+                sums[1] += len(done)
+        if sums[0] or sums[1]:
+            msg = _("Found {0} and fixed {1} plausibility problems in {2}.")
+            puts(msg.format(*sums))
         else:
-            puts("No plausibility problems found in {0}.".format(name))
+            puts(_("No plausibility problems found in {0}.").format(name))

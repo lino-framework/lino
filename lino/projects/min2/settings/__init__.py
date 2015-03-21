@@ -32,6 +32,7 @@ class Site(Site):
         yield 'lino.modlib.pages'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.dupable_partners'
+        yield 'lino.modlib.plausibility'
 
     def setup_user_profiles(self):
         """

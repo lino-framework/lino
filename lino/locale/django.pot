@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.17\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-03-20 21:33+0200\n"
+"POT-Creation-Date: 2015-03-21 11:36+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -570,7 +570,7 @@ msgstr ""
 msgid "Must update dupable words."
 msgstr ""
 
-#: lino/mixins/dupable.py:241 lino/modlib/households/choicelists.py:27
+#: lino/mixins/dupable.py:260 lino/modlib/households/choicelists.py:27
 #: lino/modlib/households/fixtures/std.py:33
 msgid "Other"
 msgstr ""
@@ -1112,11 +1112,11 @@ msgstr ""
 msgid "Read from eID"
 msgstr ""
 
-#: lino/modlib/addresses/mixins.py:76
+#: lino/modlib/addresses/mixins.py:76 lino/modlib/addresses/mixins.py:144
 msgid "Unique address is not marked primary."
 msgstr ""
 
-#: lino/modlib/addresses/mixins.py:84
+#: lino/modlib/addresses/mixins.py:84 lino/modlib/addresses/mixins.py:157
 msgid "Non-empty address fields, but no address record."
 msgstr ""
 
@@ -1453,6 +1453,10 @@ msgstr ""
 
 #: lino/modlib/beid/mixins.py:534
 msgid "Must read eID card!"
+msgstr ""
+
+#: lino/modlib/beid/mixins.py:606
+msgid "Cannot repair invalid SSIN ({0})"
 msgstr ""
 
 #: lino/modlib/blogs/__init__.py:11
@@ -1831,7 +1835,7 @@ msgstr ""
 msgid "all day"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:372 lino/modlib/cal/models_event.py:724
+#: lino/modlib/cal/models_event.py:372 lino/modlib/cal/models_event.py:750
 msgid "Assigned to"
 msgstr ""
 
@@ -1840,7 +1844,7 @@ msgstr ""
 msgid "Unsaved %s"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:509
+#: lino/modlib/cal/models_event.py:509 lino/modlib/cal/models_event.py:679
 msgid "No participants although {0} suggestions exist."
 msgstr ""
 
@@ -1864,84 +1868,84 @@ msgstr ""
 msgid "Responsible user"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:684 lino/modlib/system/mixins.py:101
+#: lino/modlib/cal/models_event.py:710 lino/modlib/system/mixins.py:101
 #: lino/modlib/tickets/models.py:303
 msgid "Observed event"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:685 lino/modlib/system/mixins.py:102
+#: lino/modlib/cal/models_event.py:711 lino/modlib/system/mixins.py:102
 #: lino/modlib/tickets/models.py:304
 msgid "Observed events"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:687
+#: lino/modlib/cal/models_event.py:713
 msgid "Okay"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:688
+#: lino/modlib/cal/models_event.py:714
 msgid "Pending"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:694
+#: lino/modlib/cal/models_event.py:720
 msgid "A List of calendar entries. Each entry is called an event."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:716 lino/modlib/cal/models_task.py:128
+#: lino/modlib/cal/models_event.py:742 lino/modlib/cal/models_task.py:128
 msgid "Managed by"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:718 lino/modlib/cal/models_guest.py:120
+#: lino/modlib/cal/models_event.py:744 lino/modlib/cal/models_guest.py:120
 #: lino/modlib/cal/models_task.py:130
 msgid "Only rows managed by this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:726
+#: lino/modlib/cal/models_event.py:752
 msgid "Only events assigned to this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:729 lino/modlib/cal/models_task.py:134
+#: lino/modlib/cal/models_event.py:755 lino/modlib/cal/models_task.py:134
 #: lino/modlib/tickets/models.py:333
 msgid "Only rows having this state."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:732 lino/modlib/reception/models.py:285
+#: lino/modlib/cal/models_event.py:758 lino/modlib/reception/models.py:285
 msgid "Appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:835
+#: lino/modlib/cal/models_event.py:861
 msgid "Appointments today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:872 lino/modlib/excerpts/models.py:773
+#: lino/modlib/cal/models_event.py:898 lino/modlib/excerpts/models.py:773
 msgid "Today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:873
+#: lino/modlib/cal/models_event.py:899
 msgid "Show all calendar events of the same day."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:937
+#: lino/modlib/cal/models_event.py:963
 msgid "My appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:938
+#: lino/modlib/cal/models_event.py:964
 msgid "Table of my appointments."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:969
+#: lino/modlib/cal/models_event.py:995
 msgid "Events assigned to me"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:970
+#: lino/modlib/cal/models_event.py:996
 msgid "Table of events assigned to me."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:988
+#: lino/modlib/cal/models_event.py:1014
 #, python-format
 msgid "%d events have been assigned to you."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:1012
+#: lino/modlib/cal/models_event.py:1038
 #, python-format
 msgid "%(num)d reminders for %(user)s have been updated."
 msgstr ""
@@ -2674,7 +2678,7 @@ msgstr ""
 msgid "Database object"
 msgstr ""
 
-#: lino/modlib/contenttypes/models.py:147 lino/modlib/plausibility/models.py:35
+#: lino/modlib/contenttypes/models.py:147 lino/modlib/plausibility/models.py:64
 msgid "Message"
 msgstr ""
 
@@ -2908,6 +2912,14 @@ msgstr ""
 #: lino/modlib/countries/models.py:207
 #, python-format
 msgid "%(details)s in %(master)s"
+msgstr ""
+
+#: lino/modlib/countries/models.py:217
+msgid "Check plausibility of geographical places."
+msgstr ""
+
+#: lino/modlib/countries/models.py:221
+msgid "Name contains only digits."
 msgstr ""
 
 #: lino/modlib/countries/fixtures/few_countries.py:24
@@ -3576,7 +3588,7 @@ msgstr ""
 msgid "VAT declarations"
 msgstr ""
 
-#: lino/modlib/dupable_partners/__init__.py:34
+#: lino/modlib/dupable_partners/__init__.py:33
 msgid "Dupable partners"
 msgstr ""
 
@@ -4946,7 +4958,7 @@ msgstr ""
 msgid "raw html"
 msgstr ""
 
-#: lino/modlib/plausibility/__init__.py:32
+#: lino/modlib/plausibility/__init__.py:66
 msgid "Plausibility"
 msgstr ""
 
@@ -4971,35 +4983,47 @@ msgstr ""
 msgid "Plausibility problem severities"
 msgstr ""
 
-#: lino/modlib/plausibility/choicelists.py:93
+#: lino/modlib/plausibility/choicelists.py:126
 msgid "Plausibility checker"
 msgstr ""
 
-#: lino/modlib/plausibility/choicelists.py:94
+#: lino/modlib/plausibility/choicelists.py:127
 msgid "Plausibility checkers"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:28
+#: lino/modlib/plausibility/models.py:57
 msgid "Plausibility problem"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:29
+#: lino/modlib/plausibility/models.py:58
 msgid "Plausibility problems"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:37 lino/modlib/plausibility/models.py:47
+#: lino/modlib/plausibility/models.py:65
+msgid "Repairable"
+msgstr ""
+
+#: lino/modlib/plausibility/models.py:67 lino/modlib/plausibility/models.py:78
 msgid "Responsible"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:48
+#: lino/modlib/plausibility/models.py:79
 msgid "Only problems for this responsible."
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:50
+#: lino/modlib/plausibility/models.py:81
 msgid "Only problems by this checker."
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:96
+#: lino/modlib/plausibility/models.py:125
+msgid "Plausibility problems assigned to me"
+msgstr ""
+
+#: lino/modlib/plausibility/models.py:138
+msgid "There are {0} plausibility problems assigned to you."
+msgstr ""
+
+#: lino/modlib/plausibility/models.py:145
 msgid "Check plausibility"
 msgstr ""
 

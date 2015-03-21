@@ -46,37 +46,61 @@ class Checker(dd.Choice):
     model = None
     help_text = None
 
-    def __init__(self, model):
-        assert isinstance(model, basestring)
-        value = self.model + '.' + self.__class__.__name__
+    def __init__(self):
+        if isinstance(self.model, basestring):
+            value = self.model + '.' + self.__class__.__name__
+        else:
+            value = self.model.__name__ + '.' + self.__class__.__name__
         text = self.verbose_name or value
         super(Checker, self).__init__(value, text, None)
 
     @classmethod
     def activate(cls):
-        self = cls(cls.model)
+        self = cls()
         Checkers.add_item_instance(self)
 
-    def update_for_object(self, obj, delete=True):
+    def resolve_model(self, site):
+        if isinstance(self.model, basestring):
+            self.model = site.modules.resolve(self.model)
+
+    def update_for_object(self, obj, delete=True, fix=False):
         """Update the problems of this checker and the specified object.
+
+        When `delete` is False, the caller is responsible for deleting
+        any existing objects.
+
         """
         Problem = rt.modules.plausibility.Problem
         if delete:
             gfk = Problem.owner
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))
             qs.delete()
-        msg = '\n'.join([unicode(s) for s in self.get_checker_problems(obj)])
+        repairable = False
+        done = []
+        todo = []
+        for rep, msg in self.get_checker_problems(obj, fix):
+            if rep:
+                repairable = True
+            if fix and rep:
+                done.append(msg)
+            else:
+                todo.append(msg)
+        msg = '\n'.join([unicode(s) for s in todo])
         if msg:
             prb = Problem(
                 owner=obj, message=msg, checker=self,
+                repairable=repairable,
                 user=self.get_responsible_user(obj))
             prb.full_clean()
             prb.save()
-            return prb
+        return (todo, done)
 
-    def get_checker_problems(self, obj):
-        """Return or yield a series of messages, each describing a
-        plausibility problem.
+    def get_checker_problems(self, obj, fix=False):
+        """Return or yield a series of `(fixable, message)` tuples, each
+        describing a plausibility problem. `fixable` is a boolean
+        saying whther this problem can be automatically fixed. And if
+        `fix` is `True`, this method is also responsible for fixing
+        it.
 
         """
         return []
@@ -113,3 +137,15 @@ class Checkers(dd.ChoiceList):
     value name text
     plausibility.ProblemsByChecker
     """
+
+    # @classmethod
+    # def on_analyze(cls, site):
+    #     super(Checkers, cls).on_analyze(site)
+    #     for chk in cls.objects():
+    #         chk.resolve_model(site)
+
+
+@dd.receiver(dd.pre_analyze)
+def resolve_checkers(sender, **kw):
+    for chk in Checkers.objects():
+        chk.resolve_model(sender)
