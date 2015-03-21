@@ -11,7 +11,7 @@ Choicelists for `lino.modlib.plausibility`.
 
 from __future__ import unicode_literals, print_function
 
-from django.conf import settings
+from django.utils import translation
 from lino.core.utils import gfk2lookup
 
 from lino.api import dd, rt, _
@@ -56,6 +56,13 @@ class Checker(dd.Choice):
 
     @classmethod
     def activate(cls):
+        """Application developers must call this on their subclass in order to
+        "register" or "activate" it.
+
+        This actually just creates an instance and adds it as a choice
+        to the :class:`Checkers` choicelist.
+
+        """
         self = cls()
         Checkers.add_item_instance(self)
 
@@ -63,7 +70,7 @@ class Checker(dd.Choice):
         if isinstance(self.model, basestring):
             self.model = site.modules.resolve(self.model)
 
-    def update_for_object(self, obj, delete=True, fix=False):
+    def update_problems(self, obj, delete=True, fix=False):
         """Update the problems of this checker and the specified object.
 
         When `delete` is False, the caller is responsible for deleting
@@ -75,27 +82,32 @@ class Checker(dd.Choice):
             gfk = Problem.owner
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))
             qs.delete()
-        repairable = False
+
+        fixable = False
         done = []
         todo = []
-        for rep, msg in self.get_checker_problems(obj, fix):
+        for rep, msg in self.get_plausibility_problems(obj, fix):
             if rep:
-                repairable = True
+                fixable = True
             if fix and rep:
                 done.append(msg)
             else:
                 todo.append(msg)
-        msg = '\n'.join([unicode(s) for s in todo])
-        if msg:
-            prb = Problem(
-                owner=obj, message=msg, checker=self,
-                repairable=repairable,
-                user=self.get_responsible_user(obj))
+        if len(todo):
+            user = self.get_responsible_user(obj)
+            if user is None:
+                lang = dd.get_default_language()
+            else:
+                lang = user.language
+            with translation.override(lang):
+                msg = '\n'.join([unicode(s) for s in todo])
+            prb = Problem(owner=obj, message=msg, checker=self,
+                          fixable=fixable, user=user)
             prb.full_clean()
             prb.save()
         return (todo, done)
 
-    def get_checker_problems(self, obj, fix=False):
+    def get_plausibility_problems(self, obj, fix=False):
         """Return or yield a series of `(fixable, message)` tuples, each
         describing a plausibility problem. `fixable` is a boolean
         saying whther this problem can be automatically fixed. And if
@@ -137,12 +149,6 @@ class Checkers(dd.ChoiceList):
     value name text
     plausibility.ProblemsByChecker
     """
-
-    # @classmethod
-    # def on_analyze(cls, site):
-    #     super(Checkers, cls).on_analyze(site)
-    #     for chk in cls.objects():
-    #         chk.resolve_model(site)
 
 
 @dd.receiver(dd.pre_analyze)

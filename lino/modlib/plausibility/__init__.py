@@ -4,8 +4,8 @@
 
 """Adds functionality for handling plausibility problems.
 
-A plausibility problem is a "soft" database integrity problem which is
-not visible by the DBMS because detecting it requires higher business
+A plausibility problem is a database integrity problem which is not
+visible by the DBMS because detecting it requires higher business
 intelligence.  Some plausibility problems can be fixed automatically,
 others need human interaction.
 
@@ -16,10 +16,15 @@ are attached to a given model.
 Examples of plausibility problems are:
 
 - :class:`lino.modlib.countries.models.PlaceChecker`
+- :class:`lino.modlib.beid.mixins.BeIdCardHolderChecker`
+- :class:`lino.modlib.addresses.mixins.AddressOwnerChecker`
+- :class:`lino.mixins.dupable.DupableChecker`
 - :class:`lino_welfare.modlib.pcsw.models.SSINChecker`
 - :class:`lino_welfare.modlib.pcsw.models.ClientCoachingsChecker`
 - :class:`lino_welfare.modlib.isip.mixins.OverlappingContractsChecker`
 - :class:`lino_welfare.modlib.dupable_clients.models.SimilarClientsChecker`
+
+
 
 Users automatically get a button "Update plausibility problems" on
 objects for which there is at least one checker available.

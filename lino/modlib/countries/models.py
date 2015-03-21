@@ -216,7 +216,7 @@ class PlaceChecker(Checker):
     model = 'countries.Place'
     verbose_name = _("Check plausibility of geographical places.")
 
-    def get_checker_problems(self, obj, really=False):
+    def get_plausibility_problems(self, obj, fix=False):
         if obj.name.isdigit():
             yield (False, _("Name contains only digits."))
 

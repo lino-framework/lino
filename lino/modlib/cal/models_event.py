@@ -646,7 +646,7 @@ class EventChecker(Checker):
     verbose_name = _("Check for missing participants")
     model = Event
     
-    def get_checker_problems(self, obj, really=False):
+    def get_plausibility_problems(self, obj, fix=False):
         if not obj.state.edit_guests:
             return
         existing = set([g.partner.pk for g in obj.guest_set.all()])
@@ -655,7 +655,7 @@ class EventChecker(Checker):
             if len(suggested) > 0:
                 msg = _("No participants although {0} suggestions exist.")
                 yield (True, msg.format(len(suggested)))
-                if really:
+                if fix:
                     for g in suggested:
                         g.save()
 

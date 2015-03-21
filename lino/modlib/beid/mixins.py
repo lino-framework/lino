@@ -38,6 +38,7 @@ from lino.utils import ssin
 from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
+from lino.modlib.plausibility.choicelists import Checker
 
 config = dd.plugins.beid
 
@@ -432,15 +433,15 @@ class BeIdCardHolder(dd.Model):
 
     .. attribute:: national_id
 
-    The SSIN. It is a *nullable char field* declared *unique*. It is
-    not validated directly because that would cause problems with
-    legacy data where SSINs need manual control.
+        The SSIN. It is a *nullable char field* declared *unique*. It
+        is not validated directly because that would cause problems
+        with legacy data where SSINs need manual control. See also
+        :class:`BeIdCardHolderChecker`.
 
     """
     class Meta:
         abstract = True
 
-    #~ national_id = models.CharField(max_length=200,
     national_id = dd.NullCharField(
         max_length=200,
         unique=True,
@@ -478,10 +479,6 @@ class BeIdCardHolder(dd.Model):
         blank=True,  # null=True,
         verbose_name=_("noble condition"),
         help_text=_("The eventual noble condition of this person."))
-
-    if False:  # see 20140210
-        print_eid_content = dd.DirectPrintAction(
-            _("eID sheet"), 'eid-content', icon_name='vcard')
 
     beid_readonly_fields = set(
         'noble_condition card_valid_from card_valid_until \
@@ -568,19 +565,25 @@ class BeIdCardHolder(dd.Model):
         return objects, diffs
 
 
-from lino.modlib.plausibility.choicelists import Checker
-
 
 class BeIdCardHolderChecker(Checker):
+    """Invalid NISSes are not refused à priori using a ValidationError
+    (see :attr:`BeIdCardHolder.national_id`), but this checker reports
+    them.
+
+    Belgian NISSes are stored including the formatting characters (see
+    :mod:`lino.utils.ssin`) in order to guarantee uniqueness.
+
+    """
     model = BeIdCardHolder
     verbose_name = _("Check for invalid SSINs")
     
-    def get_checker_problems(self, obj, fix=False):
+    def get_plausibility_problems(self, obj, fix=False):
         if obj.national_id:
             try:
                 expected = ssin.parse_ssin(obj.national_id)
             except ValidationError as e:
-                yield (False, _("Cannot repair invalid SSIN ({0})").format(e))
+                yield (False, _("Cannot fix invalid SSIN ({0})").format(e))
             else:
                 got = obj.national_id
                 if got != expected:
@@ -590,7 +593,6 @@ class BeIdCardHolderChecker(Checker):
                         obj.national_id = expected
                         obj.full_clean()
                         obj.save()
-                        dd.logger.info("20150321 fixed %s", expected)
 
 BeIdCardHolderChecker.activate()
 

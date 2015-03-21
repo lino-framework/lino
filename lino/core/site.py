@@ -2053,7 +2053,7 @@ documentation.
 
     def get_default_language(self):
         """
-        The django code of the default language to use in every 
+        The django code of the default language to use in every
         :class:`dd.LanguageField`.
         
         """

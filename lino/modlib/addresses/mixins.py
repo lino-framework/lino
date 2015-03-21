@@ -91,7 +91,7 @@ class AddressOwnerChecker(Checker):
     verbose_name = _("Check for missing or non-primary address records")
     model = AddressOwner
     
-    def get_checker_problems(self, obj, fix=False):
+    def get_plausibility_problems(self, obj, fix=False):
         Address = rt.modules.addresses.Address
         qs = Address.objects.filter(partner=obj)
         num = qs.count()

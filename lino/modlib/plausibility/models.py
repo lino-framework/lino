@@ -29,15 +29,21 @@ class Problem(Controllable, UserAuthored):
     Database objects of this model are considered temporary data which
     may be updated automatically without user interaction.
 
-    .. attribute:: message
-
-       The message text.
-
     .. attribute:: checker
 
        The :class:`Checker
        <lino.modlib.plausibility.choicelists.Checker>` which reported
-       this problem
+       this problem.
+
+    .. attribute:: message
+
+       The message text. This is a concatenation of all messages that
+       were yeld by the :attr:`checker`.
+
+    .. attribute:: fixable
+
+        Whether this problem is fixable, i.e. can be repaired
+        automatically.
 
     .. attribute:: user
 
@@ -47,11 +53,6 @@ class Problem(Controllable, UserAuthored):
        This field is being filled by the :meth:`get_responsible_user
        <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
        method of the :attr:`checker`.
-
-    .. attribute:: repairable
-
-        Whether this problem is repairable, i.e. can be repaired
-        automatically.
 
     """
     class Meta:
@@ -63,15 +64,17 @@ class Problem(Controllable, UserAuthored):
     # severity = Severities.field()
     # feedback = Feedbacks.field(blank=True)
     message = models.CharField(_("Message"), max_length=250)
-    repairable = models.BooleanField(_("Repairable"), default=False)
+    fixable = models.BooleanField(_("Fixable"), default=False)
 
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
+Problem.set_widget_options('checker', width=10)
+Problem.set_widget_options('user', width=10)
 
 
 class Problems(dd.Table):
     "The table of all :class:`Problem` objects."
     model = 'plausibility.Problem'
-    column_names = "user owner message:40 repairable checker *"
+    column_names = "user owner message:40 fixable checker *"
     auto_fit_column_widths = True
     parameters = dict(
         user=models.ForeignKey(
@@ -112,7 +115,7 @@ class AllProblems(Problems):
 
 class ProblemsByOwner(Problems):
     master_key = 'owner'
-    column_names = "message:40 checker user repairable *"
+    column_names = "message:40 checker user fixable *"
 
 
 class ProblemsByChecker(Problems):
@@ -142,7 +145,7 @@ class MyProblems(Problems):
 
 
 class CheckPlausibility(dd.Action):
-
+    icon_name = 'bell'
     label = _("Check plausibility")
 
     def __init__(self, model):
@@ -158,10 +161,11 @@ class CheckPlausibility(dd.Action):
         checkers = get_checkable_models()[self.model]
         for obj in ar.selected_rows:
             assert isinstance(obj, self.model)
+            # (todo, done)
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
             qs.delete()
             for chk in checkers:
-                chk.update_for_object(obj, False, fix)
+                chk.update_problems(obj, False, fix)
 
 
 @dd.receiver(dd.pre_analyze)
@@ -206,7 +210,7 @@ def check_plausibility(args=[], fix=True):
         sums = [0, 0, name]
         for obj in progress.bar(qs):
             for chk in checkers:
-                todo, done = chk.update_for_object(obj, False, fix)
+                todo, done = chk.update_problems(obj, False, fix)
                 sums[0] += len(todo)
                 sums[1] += len(done)
         if sums[0] or sums[1]:

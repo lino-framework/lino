@@ -364,6 +364,10 @@ $a.icon_file
 	background-image: url(images/mjames/script_add.png) !important;
 }
 
+.x-tbar-bell{
+	background-image: url(images/mjames/bell.png) !important;
+}
+
 .x-tbar-calendar{
 	background-image: url(images/mjames/calendar.png) !important;
 }

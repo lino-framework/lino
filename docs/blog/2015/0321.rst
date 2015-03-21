@@ -21,20 +21,29 @@ Integrate repairable problems into plausibility
 ===============================================
 
 Cool. Sometimes growing means to *reduce* the number of code
-line. This is an example.  I integrate the `lino.mixins.repairable`
-module into :mod:lino.modlib.plausible`.  Instead of writing a
-`get_repairable_problems` methods, we write Checkers.  And the
-:meth:`get_checker_problems method
-<lino.modlib.plausible.choicelists.Checker.get_checker_problems>`
-method must yield tuples instead of simple strings.  And the
-:class:`Problem <lino.modlib.plausible.models.Problem>` model has 
-a new field
-:class:`repairable <lino.modlib.plausible.models.Problem.repairable>`.
+lines. Today is an example.  I integrated the `lino.mixins.repairable`
+module into :mod:`lino.modlib.plausibility`.  
 
-
+Instead of writing a `get_repairable_problems` method, we write
+:class:`Checker <lino.modlib.plausibility.choicelists.Checker>`
+classes and :meth:`activate
+<lino.modlib.plausibility.choicelists.Checker.activate>` them.  And
+the :meth:`get_plausibility_problems
+<lino.modlib.plausibility.choicelists.Checker.get_plausibility_problems>`
+method must yield `(fixable, message)` tuples instead of simple
+strings.  And the :class:`Problem
+<lino.modlib.plausibility.models.Problem>` model has a new field
+:attr:`fixable <lino.modlib.plausibility.models.Problem.fixable>`.
 
 
 TODO: 
 
 - Why is the `detail_layout` of `Checkers` being ignored?
+- icon for check_plausibility
+- Messages should be translatable. 
+- how to should users be able to fix problems?
+
+- Rename `lino.modlib.plausability` to `lino.modlib.datacheck`? But
+  won't that be too similar to Django's `System check framework
+  <https://docs.djangoproject.com/en/1.7/topics/checks/>`_? 
 

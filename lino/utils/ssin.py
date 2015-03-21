@@ -192,12 +192,16 @@ def new_format_ssin(s):
     return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:]
 
 
-def parse_ssin(ssin):
+def unformat_ssin(ssin):
     ssin = ssin.replace(YEAR2000, '')
     ssin = ssin.replace(YEAR1900, '')
     ssin = ssin.replace(YEAR1800, '')
     ssin = ssin.replace(' ', '')
-    return format_ssin(ssin)
+    return ssin
+
+
+def parse_ssin(ssin):
+    return format_ssin(unformat_ssin(ssin))
 
 
 def format_ssin(raw_ssin):

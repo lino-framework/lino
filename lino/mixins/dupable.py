@@ -203,16 +203,16 @@ from lino.modlib.plausibility.choicelists import Checker
 
 
 class DupableChecker(Checker):
+    """Checks for the following repairable problem:
+
+    - :message:`Must update phonetic words.`
+
+    """
     verbose_name = _("Check for missing phonetic words")
     model = Dupable
     
-    def get_checker_problems(self, obj, really=False):
-        """Checks for the following repairable problem:
-
-        - :message:`Must update phonetic words.`
-
-        """
-        msg = obj.update_dupable_words(really)
+    def get_plausibility_problems(self, obj, fix=False):
+        msg = obj.update_dupable_words(fix)
         if msg:
             yield (True, msg)
 
