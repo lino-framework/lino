@@ -4,7 +4,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from lino.core.model import Model

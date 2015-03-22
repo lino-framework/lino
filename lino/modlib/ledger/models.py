@@ -895,6 +895,7 @@ add('20', _("Registered"), 'registered', editable=False)
 #~ add('30',_("Sent"),'sent')
 add('40', _("Paid"), 'paid', editable=False)
 
+
 InvoiceStates.registered.add_transition(
     _("Register"), states='draft', icon_name='accept')
 InvoiceStates.draft.add_transition(

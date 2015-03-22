@@ -51,7 +51,10 @@ class Checker(dd.Choice):
             value = self.model + '.' + self.__class__.__name__
         else:
             value = self.model.__name__ + '.' + self.__class__.__name__
-        text = self.verbose_name or value
+        if self.verbose_name is None:
+            text = value
+        else:
+            text = self.verbose_name
         super(Checker, self).__init__(value, text, None)
 
     @classmethod

@@ -38,6 +38,7 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 
 from django.db import models
+from django.db.models import loading
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
@@ -237,7 +238,7 @@ class Kernel(object):
             logger.info("Done %s (PID %s)", process_name, os.getpid())
         atexit.register(goodbye)
 
-        models_list = models.get_models(include_auto_created=True)
+        models_list = loading.get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 
         self.setup_model_spec(self, 'user_model')

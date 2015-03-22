@@ -2,7 +2,8 @@
 # Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Date formatting functions
+"""
+Date formatting functions
 -------------------------
 
 To run the Lino test suite on this module::

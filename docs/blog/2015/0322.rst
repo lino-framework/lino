@@ -50,3 +50,13 @@ TODO:
   Note that this has nothing to do with Django's `System check
   framework <https://docs.djangoproject.com/en/1.7/topics/checks/>`_?
 
+
+
+Example:
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.demo'
+>>> from lino.api.shell import *
+>>> # from lino.core.choicelists import choicelist_choices
+>>> # choicelist_choices()
+

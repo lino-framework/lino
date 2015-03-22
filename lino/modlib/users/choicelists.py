@@ -44,6 +44,7 @@ class UserLevels(ChoiceList):
     short_name = models.CharField(
         _("Short name"), max_length=2,
         help_text=_("Used when defining UserProfiles"))
+    item_class = UserLevel
 
     @classmethod
     def get_column_names(self, ar):

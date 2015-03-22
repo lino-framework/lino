@@ -137,7 +137,11 @@ class Choice(object):
             raise Exception("value must be a string")
         self.pk = self.value = value
         self.name = name or value
-        self.text = text or self.__class__.__name__
+        # self.text = text or self.__class__.__name__
+        if text is None:
+            self.text = self.__class__.__name__
+        else:
+            self.text = text
         for k, v in kw.items():
             setattr(self, k, v)
 
@@ -306,12 +310,12 @@ class ChoiceList(tables.AbstractTable):
 
     """
 
-    preferred_width = 4
+    preferred_width = None
     """Preferred width (in characters) used by :class:`fields
     <lino.core.fields.ChoiceListField>` that refer to this list.
 
     This is automatically set to length of the longest choice text
-    (using the :attr:`default site language <lino.Lino.languages>`).
+    (using the :attr:`default site language <lino.site.Site.languages>`).
     It might guess wrong if the user language is not the default site
     language.
 
@@ -428,6 +432,14 @@ class ChoiceList(tables.AbstractTable):
             cls.item_class(value, text, name, *args, **kw))
 
     @classmethod
+    def class_init(cls):
+        cls.preferred_width = 4
+        for i in cls.choices:
+            dt = cls.display_text(i)
+            cls.preferred_width = max(
+                cls.preferred_width, len(unicode(dt)))
+
+    @classmethod
     def add_item_instance(cls, i):
         #~ if cls is ChoiceList:
             #~ raise Exception("Cannot define items on the base class")
@@ -439,7 +451,7 @@ class ChoiceList(tables.AbstractTable):
         i.attach(cls)
         dt = cls.display_text(i)
         cls.choices.append((i, dt))
-        cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
+        # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
         cls.items_dict[i.value] = i
         #~ cls.items_dict[i] = i
         if len(i.value) > cls.max_length:

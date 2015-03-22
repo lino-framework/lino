@@ -2759,7 +2759,9 @@ Please convert to Plugin method".format(mod, methname)
         yield 'lino.modlib.bootstrap3'
         for a in self.local_apps:
             yield a
-        yield "lino"
+        from lino import AFTER17
+        if not AFTER17:
+            yield "lino"
 
     site_prefix = '/'
     """This must be set if your project is not being served at the "root"

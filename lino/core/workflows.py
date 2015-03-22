@@ -31,7 +31,7 @@ class State(choicelists.Choice):
                        **required):
         """Declare or create a `ChangeStateAction` which makes the object
 enter this state.  `label` can be either a string or a subclass of
-ChangeStateAction.
+:class:`ChangeStateAction`.
 
         You can specify an explicit `name` in order to allow replacing
         the transition action later by another action.
@@ -54,7 +54,7 @@ ChangeStateAction.
         if icon_name is not None:
             kw.update(icon_name=icon_name)
         kw.update(sort_index=10 + i)
-        if label and not isinstance(label, (basestring, Promise)):
+        if label is not None and not isinstance(label, (basestring, Promise)):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
             assert issubclass(label, ChangeStateAction)
@@ -77,7 +77,9 @@ ChangeStateAction.
                 cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
-            a = cl(self, required, label=label or self.text, **kw)
+            if label is None:
+                label = self.text
+            a = cl(self, required, label=label, **kw)
             if debug_permissions:
                 a.debug_permissions = debug_permissions
         a.attach_to_workflow(self.choicelist, name)

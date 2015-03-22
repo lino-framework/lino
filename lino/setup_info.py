@@ -17,7 +17,9 @@ SETUP_INFO = dict(
     name='lino',
     version='1.6.17',
     install_requires=[
-        'django<1.7', 'Sphinx',
+        # 'django<1.7', 
+        'django',
+        'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy',
         'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',

@@ -92,7 +92,7 @@ class PropType(mixins.BabelNamed):
     choicelist = models.CharField(
         max_length=50, blank=True,
         verbose_name=_("Choices List"),
-        choices=choicelist_choices())
+        choices=choicelist_choices)
 
     default_value = models.CharField(
         _("default value"),
