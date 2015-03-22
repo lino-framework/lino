@@ -25,10 +25,13 @@ from lino.core.model import Model
 from lino.core import actors
 from lino.core import frames
 
+from lino.core.choicelists import ChoiceListField
+
 
 from lino.core.utils import resolve_model, get_field, UnresolvedModel
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 
+INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
 def unused_parse_js_date(s, name):
     #~ v = dateparser.parse(s)
@@ -544,6 +547,8 @@ class Table(AbstractTable):
                     assert not m2m
                     if fk.rel is not None:
                         master_model = fk.rel.to
+                    elif isinstance(fk, ChoiceListField):
+                        master_model = fk.choicelist.item_class
                 except models.FieldDoesNotExist:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
@@ -552,12 +557,21 @@ class Table(AbstractTable):
                             break
                 if master_model is None:
                     df = getattr(self.model, self.master_key, None)
-                    if isinstance(df, fields.DummyField):
+                    if df is None:
+                        msg = "No field '{0}' in {1}".format(
+                            self.master_key, self.model)
+                        raise Exception(INVALID_MK.format(
+                            self.master_key, self, msg))
+                    elif isinstance(df, fields.DummyField):
                         self.abstract = True
                     else:
-                        raise Exception(
-                            "%s : no master for master_key %r in %s" % (
-                                self, self.master_key, self.model))
+                        msg = "Cannot handle master key {0}".format(df)
+                        raise Exception(INVALID_MK.format(
+                            self.master_key, self, msg))
+                        # raise Exception(
+                        #     "%s : invalid master class for master_key "
+                        #     "%r in %s" % (
+                        #         self, self.master_key, self.model))
                 else:
                     self.master = master_model
                     self.master_field = fk

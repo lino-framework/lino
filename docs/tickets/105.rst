@@ -10,7 +10,7 @@ action links (i.e. dynamically when the target row is known).
 
 Or to be more precise: they *can* be in the toolbar, but Lino does not
 initialize their parameter fields
-dynamically. :meth:`dd.Action.action_param_defaults` is never called.
+dynamically. :meth:`lino.core.actions.Action.action_param_defaults` is never called.
 
 For example :attr:`ml.pcsw.Client.create_visit` has a dialog box which
 does not need to get initialized dynamically.

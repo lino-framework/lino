@@ -189,7 +189,7 @@ Version 1.6.12 (released :blogref:`20130924`)
 
 - Renamed `dd.AuthorRowAction` to `dd.AuthorAction`
   and merged the now obsolete `dd.RowAction` into 
-  :class:`dd.Action <lino.core.actions.Action>`.
+  :class:`lino.core.actions.Action <lino.core.actions.Action>`.
 
 
 - :mod:`html2xhtml <lino.utils.html2xhtml>` is now just a wrapper to 

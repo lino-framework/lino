@@ -6,7 +6,7 @@ Pulled in :ref:`welcht` to production server and migrated the database.
 
 Fixed a bug in :mod:`lino.core.actions` which caused the
 `toggle_choice` action to fail. `toggle_choice` is our first action
-with parameters but no window (i.e. :attr:`dd.Action.no_params_window`
+with parameters but no window (i.e. :attr:`lino.core.actions.Action.no_params_window`
 set to True).
 
 :mod:`ml.humanlinks` : uncle, cousin etc are now `addable_link_types`.

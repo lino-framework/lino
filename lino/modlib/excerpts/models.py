@@ -20,11 +20,12 @@ import datetime
 ONE_WEEK = datetime.timedelta(days=7)
 ONE_DAY = datetime.timedelta(days=1)
 
-from django.db import models
-from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 from django.utils import translation
+from django.conf import settings
+from django.db import models
+from django.db.utils import OperationalError
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
@@ -811,9 +812,10 @@ def set_excerpts_actions(sender, **kw):
     try:
         etypes = [(obj, obj.content_type)
                   for obj in ExcerptType.objects.all()]
-    except Exception as e:
+    except OperationalError:
+        # logger.warning("Failed to set excerpts actions : %s", e)
+        # Happens e.g. when the database has not yet been migrated
         etypes = []
-        logger.warning("Failed to set excerpts actions : %s", e)
 
     for atype, ct in etypes:
         if ct is not None:

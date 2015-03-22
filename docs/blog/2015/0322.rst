@@ -1,0 +1,52 @@
+======================
+Sunday, March 22, 2015
+======================
+
+I continued to work on :mod:`lino.modlib.plausibility`.
+
+Managing plausibility problems using the web interface
+======================================================
+
+Users are now able to fix problems using the web interface: the
+"Bell" button is now a combobutton with two actions
+:class:`UpdateProblems <lino.modlib.plausibility.models.UpdateProblems>`
+and
+:class:`FixProblems <lino.modlib.plausibility.models.FixProblems>`.
+
+The :class:`Problems <lino.modlib.plausibility.models.Problems>`
+table is now read-only.
+
+
+Detail window on a ChoiceList
+=============================
+
+Cool! The :class:`Checkers
+<lino.modlib.plausibility.choicelists.Checkers>` table now has a
+detail window where you can admire the :class:`ProblemsByChecker
+<lino.modlib.plausibility.models.ProblemsByChecker>` table.
+
+This required two subtle new features: 
+
+- Lino now supports a :attr:`detail_layout
+  <lino.core.actors.Actor.detail_layout>` on a
+  :class:`ChoiceList <lino.core.choicelists.ChoiceList>`.
+
+- Lino now supports slave tables whose master is a 
+  :class:`lino.core.choicelists.Choice`.
+
+General side effects:
+
+- I removed the warning message :message:`Failed to set excerpts
+  actions` which was logged by
+  :func:`lino.modlib.excerpts.models.set_excerpts_actions`.
+
+- Updated documentation.
+
+
+TODO:
+
+- Rename `lino.modlib.plausability` to `lino.modlib.checkdata`?  Not
+  now. One good thing is that "plausability" rimes with "integrity".
+  Note that this has nothing to do with Django's `System check
+  framework <https://docs.djangoproject.com/en/1.7/topics/checks/>`_?
+

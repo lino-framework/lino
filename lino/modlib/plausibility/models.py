@@ -69,13 +69,15 @@ class Problem(Controllable, UserAuthored):
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 Problem.set_widget_options('checker', width=10)
 Problem.set_widget_options('user', width=10)
+Problem.set_widget_options('message', width=50)
 
 
 class Problems(dd.Table):
-    "The table of all :class:`Problem` objects."
+    "The base table for :class:`Problem` objects."
     model = 'plausibility.Problem'
-    column_names = "user owner message:40 fixable checker *"
+    column_names = "user owner message fixable checker *"
     auto_fit_column_widths = True
+    editable = False
     parameters = dict(
         user=models.ForeignKey(
             'users.User', blank=True, null=True,
@@ -94,7 +96,6 @@ class Problems(dd.Table):
             qs = qs.filter(user=pv.user)
         if pv.checker:
             qs = qs.filter(checker=pv.checker)
-
         return qs
 
     @classmethod
@@ -110,16 +111,39 @@ class Problems(dd.Table):
 
 
 class AllProblems(Problems):
+    """Show all plausibility problems.
+
+    This table can be opened by system managers using
+    :menuselection:`Explorer --> System --> Plausibility problems`.
+
+    """
     required = dd.required(user_level='manager')
 
 
 class ProblemsByOwner(Problems):
     master_key = 'owner'
-    column_names = "message:40 checker user fixable *"
+    column_names = "message checker user fixable *"
 
 
 class ProblemsByChecker(Problems):
-    master = Checker
+    """Show the plausibility problems by checker.
+
+    This was the first use case of a slave table with a master which
+    is something else than a model instance.
+
+    """
+    master_key = 'checker'
+
+    column_names = "user owner message fixable *"
+
+    @classmethod
+    def get_master_instance(cls, ar, model, pk):
+        return Checkers.get_by_value(pk)
+
+    @classmethod
+    def get_filter_kw(self, ar, **kw):
+        kw.update(checker=ar.master_instance)
+        return kw
 
 
 class MyProblems(Problems):
@@ -144,38 +168,53 @@ class MyProblems(Problems):
             yield ar.href_to_request(sar, msg)
 
 
-class CheckPlausibility(dd.Action):
+class UpdateProblems(dd.Action):
+    """Updates the list of plausibility problems for a given database
+    object.
+
+    This action is automatically being installed on each model for
+    which there is at least one active :class:`Checker
+    <lino.modlib.plausibility.choicelists.Checker>`.
+
+    """
     icon_name = 'bell'
     label = _("Check plausibility")
+    combo_group = "plausibility"
+    fix_them = False
 
     def __init__(self, model):
         self.model = model
-        super(CheckPlausibility, self).__init__()
+        super(UpdateProblems, self).__init__()
 
-    def run_from_ui(self, ar, fix=False):
-        """Implements :meth:`lino.core.actions.Action.run_from_ui`.
-
-        """
+    def run_from_ui(self, ar, fix=None):
+        if fix is None:
+            fix = self.fix_them
         Problem = rt.modules.plausibility.Problem
         gfk = Problem.owner
         checkers = get_checkable_models()[self.model]
         for obj in ar.selected_rows:
             assert isinstance(obj, self.model)
-            # (todo, done)
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
             qs.delete()
             for chk in checkers:
                 chk.update_problems(obj, False, fix)
+        ar.set_response(refresh=True)
+
+
+class FixProblems(UpdateProblems):
+    label = _("Fix plausibility problems")
+    fix_them = True
 
 
 @dd.receiver(dd.pre_analyze)
 def set_plausibility_actions(sender, **kw):
-    """Installs the :class:`CheckPlausibility` action on every model for
+    """Installs the :class:`UpdateProblems` action on every model for
     which there is at least one Checker
 
     """
     for m in get_checkable_models().keys():
-        m.define_action(check_plausibility=CheckPlausibility(m))
+        m.define_action(check_plausibility=UpdateProblems(m))
+        m.define_action(fix_problems=FixProblems(m))
 
 
 def get_checkable_models(*args):

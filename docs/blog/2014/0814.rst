@@ -80,7 +80,7 @@ DONE:
   pro Beschluss geben. Bestätiger der Beschlusses ist par défaut der
   Primärbegleiter, Bestätiger einer Bescheinigung ist der des
   Beschlusses.
-- Bestätiger immer auch in jedem :attr:`insert_layout <dd.Actor.insert_layout>` sichtbar
+- Bestätiger immer auch in jedem :attr:`insert_layout <lino.core.actors.Actor.insert_layout>` sichtbar
 
 - Lebensmittelbank: Empfänger (Rotes Kreuz) fehlt (d.h. neue Felder
   company und contact_person in AidType)

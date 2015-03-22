@@ -136,6 +136,10 @@ class Checker(dd.Choice):
 class Checkers(dd.ChoiceList):
     """The list of plausibility problem types known by this application.
 
+    This was the first use case of a :class:`ChoiceList
+    <lino.core.choicelists.ChoiceList>` with a :attr:`detail_layout
+    <lino.core.actors.Actor.detail_layout>`.
+
     """
     required = dd.required(user_level='admin')
     verbose_name = _("Plausibility checker")
@@ -144,7 +148,6 @@ class Checkers(dd.ChoiceList):
     max_length = 50
     column_names = "name text"
 
-    # the following would be nice but is currently ignored:
     detail_layout = """
     value name text
     plausibility.ProblemsByChecker

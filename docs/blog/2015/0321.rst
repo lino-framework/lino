@@ -38,11 +38,3 @@ strings.  And the :class:`Problem
 - Added new icon `bell.png` for the CheckPlausibility action
 - Messages are translated to the language of the responsible user.
 
-TODO: 
-
-- How should users be able to fix problems using the web interface?
-- Why is the `detail_layout` of `Checkers` being ignored?
-- Rename `lino.modlib.plausability` to `lino.modlib.datacheck`? But
-  won't that be too similar to Django's `System check framework
-  <https://docs.djangoproject.com/en/1.7/topics/checks/>`_? 
-

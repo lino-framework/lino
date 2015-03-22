@@ -17,8 +17,8 @@
   didn't work at first, I had to rediscover certain 
   possibilities of defining custom actions.
 
-  Renamed `dd.AuthorRowAction` to `dd.AuthorAction`
-  and `dd.RowAction` to `dd.Action`.
+- Renamed `AuthorRowAction` to `AuthorAction`
+  and `RowAction` to :class:`Action <lino.core.actions.Action>`.
   
 - Updated :ref:`djangosite` documentation and changed a few rather 
   internal function signatures.

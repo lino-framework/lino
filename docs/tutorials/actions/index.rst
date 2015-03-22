@@ -33,7 +33,7 @@ You can define actions
 
 
 - either using the `dd.action` decorator on a method
-  or by defining a custom subclass of `dd.Action <lino.core.actions.Action>`
+  or by defining a custom subclass of `lino.core.actions.Action <lino.core.actions.Action>`
   (and adding an instance of this class to the Model or the Table)
   
   

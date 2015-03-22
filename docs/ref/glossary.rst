@@ -83,7 +83,7 @@ Glossary
   welcome message 
      A user-specific message that you get in your main page.  welcome
      messages are being generated dynamically each time your main page
-     is being displayed. See :meth:`dd.Actor.get_welcome_messages`.
+     is being displayed. See :meth:`lino.core.actors.Actor.get_welcome_messages`.
 
 
   watch_calendars
@@ -129,9 +129,9 @@ Glossary
     can specify "action parameters" before actually running the
     action.  
 
-    An :class:`dd.Action` is a dialog action if it has
-    :attr:`dd.Action.parameters` defined and
-    :attr:`dd.Action.no_params_window` has not been enabled.
+    An :class:`lino.core.actions.Action` is a dialog action if it has
+    :attr:`lino.core.actions.Action.parameters` defined and
+    :attr:`lino.core.actions.Action.no_params_window` has not been enabled.
     
 
   Detail Window

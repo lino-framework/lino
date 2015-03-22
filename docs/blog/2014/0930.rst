@@ -14,6 +14,6 @@ the missing "detail" required to make :mod:`ml.polls` usable:
     opens a window which the user must confirm.
 
 There is no API change, but a new class attribute
-:attr:`dd.Action.no_params_window`. 
+:attr:`lino.core.actions.Action.no_params_window`. 
 
 Wrote a new tested document :ref:`tested.polly`.

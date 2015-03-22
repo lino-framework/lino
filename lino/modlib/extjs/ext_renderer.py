@@ -1130,11 +1130,14 @@ class ExtRenderer(HtmlRenderer):
         if rh.store.pk is not None:
             kw.update(ls_id_property=rh.store.pk.name)
             kw.update(pk_index=rh.store.pk_index)
-            #~ if settings.SITE.use_contenttypes:
             if settings.SITE.is_installed('contenttypes'):
-                kw.update(
-                    content_type=ContentType.objects.get_for_model(rh.store.pk.model).pk)
-                #~ kw.update(content_type=ContentType.objects.get_for_model(rh.actor.model).pk)
+                m = getattr(rh.store.pk, 'model', None)
+                # e.g. pk may be the VALUE_FIELD of a choicelist which
+                # has no model
+                if m is not None:
+                    ct = ContentType.objects.get_for_model(m).pk
+                    kw.update(content_type=ct)
+
         kw.update(cell_edit=rh.actor.cell_edit)
         kw.update(ls_bbar_actions=self.toolbar(
             rh.actor.get_toolbar_actions(rh.actor.default_action.action)))

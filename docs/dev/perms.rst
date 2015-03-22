@@ -7,15 +7,15 @@ Permissions
 Lino adds enterprise-level concepts for definining permissions. This
 includes a replacement for Django's User model. 
 
-.. include:: /include/wip.rst
 
-The :attr:`required <dd.Actor.required>` attribute of a table
-specifies which users get permission to view that table.
+The :attr:`required <lino.core.actors.Actor.required>` attribute of a
+table specifies the conditions that must be met in order to get
+permission to view that table.
 
 Two other attributes
-:attr:`update_required <dd.Actor.update_required>` 
+:attr:`update_required <lino.core.actors.Actor.update_required>` 
 and
-:attr:`delete_required <dd.Actor.delete_required>` 
+:attr:`delete_required <lino.core.actors.Actor.delete_required>` 
 can additionally restrict modification permissions
 for those users who can *view* a given table.
 
@@ -243,8 +243,8 @@ available) on an actor where you would not (or would) have expected it
 to be.
 
 In this situation you can temporarily set the `debug_permissions`
-attributes on both the :attr:`Actor <dd.Actor.debug_permissions>` and
-the :attr:`Action <dd.Action.debug_permissions>` to True.
+attributes on both the :attr:`Actor <lino.core.actors.Actor.debug_permissions>` and
+the :attr:`Action <lino.core.actions.Action.debug_permissions>` to True.
 
 This will cause Lino to log an info message for each invocation of a
 handler on this action.

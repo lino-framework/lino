@@ -3,7 +3,7 @@ Monday, July 21, 2014
 =====================
 
 I removed the following permission test in the
-:meth:`dd.Actor.parse_req` method of
+:meth:`lino.core.actors.Actor.parse_req` method of
 :class:`ml.extensible.PanelEvents`::
 
     if not request.user.profile.authenticated:

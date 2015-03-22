@@ -6,7 +6,7 @@ Choosers for parameters of a table
 ----------------------------------
 
 :ref:`new`: until now it was not possible to write a chooser for a
-field of :attr:`dd.Actor.parameters`.  Now it is.  :ref:`regressions`.
+field of :attr:`lino.core.actors.Actor.parameters`.  Now it is.  :ref:`regressions`.
 
 This feature was needed for solving the following problem (from
 :srcref:`docs/tickets/123`):
@@ -20,7 +20,7 @@ TODO: After implementing this I understood that this is still not the
 perfect solution for our problem. In fact we need a choicelist with a
 hard-coded list of "course regiona": geographical subdivisions of the
 area covered by the site owner. Every room gets assigned one region.
-The :attr:`dd.Actor.parameters` (and :attr:`dd.Actor.params_layout`)
+The :attr:`lino.core.actors.Actor.parameters` (and :attr:`lino.core.actors.Actor.params_layout`)
 must then become "dynamic", adding one checkbox per region (replacing
 the current combox `city`).  "dynamic" means here: after
 :meth:`lino.core.site.Site.setup_choicelists` but before generating the

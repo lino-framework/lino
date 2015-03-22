@@ -343,7 +343,7 @@ your :file:`models.py` file::
     """
 
 To add a Detail Window to a table, you simply add a
-:attr:`detail_layout <dd.Actor.detail_layout>` attribute to the
+:attr:`detail_layout <lino.core.actors.Actor.detail_layout>` attribute to the
 Table's class definition.
     
 Not all tables have a Detail Window.  In our case the `Polls` table
@@ -360,7 +360,7 @@ an **Insert Window**:
     :scale: 50
     
 This one exists because Polls has the following 
-:attr:`insert_layout <dd.Actor.insert_layout>` attribute:: 
+:attr:`insert_layout <lino.core.actors.Actor.insert_layout>` attribute:: 
 
     insert_layout = dd.FormLayout("""
     question
@@ -394,9 +394,9 @@ you know from Django's QuerySet.
 
 But it also has Lino-specific attributes like 
 :attr:`column_names <dd.AbstractTable.column_names>`,
-:attr:`detail_layout <dd.Actor.detail_layout>` 
+:attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
 or
-:attr:`parameters <dd.Actor.parameters>`.
+:attr:`parameters <lino.core.actors.Actor.parameters>`.
 
 To define Tables, you simply need to declare their classes.
 Tables never get instantiated.
@@ -414,7 +414,7 @@ knowing that
 inherits from
 :class:`dd.AbstractTable` 
 who inherits from
-:class:`dd.Actor`.
+:class:`lino.core.actors.Actor`.
 
 Since tables are normal Python classes 
 they can use inheritance.
@@ -441,11 +441,11 @@ and `Model._meta` options.
 Actions
 -------
 
-Lino has a class :class:`Action <dd.Action>` 
+Lino has a class :class:`Action <lino.core.actions.Action>` 
 which represents the methods who have a clickable button 
 or menu item in the user interface. 
 
-Each :class:`Action <dd.Action>` instance holds a few important pieces
+Each :class:`Action <lino.core.actions.Action>` instance holds a few important pieces
 of information:
 
 - label : the text to place on the button or menu item
@@ -474,7 +474,7 @@ Many actions are created automatically by Lino. For example:
 
 - The :guilabel:`Save`, :guilabel:`Delete` and :guilabel:`New` buttons
   in the bottom toolbar of the Detail window have their own
-  :class:`Action <dd.Action>` instance.
+  :class:`Action <lino.core.actions.Action>` instance.
   
 Custom actions are the actions defined by the application developer.
 Our tutorial has one of them:
@@ -497,8 +497,8 @@ Our tutorial has one of them:
 
 The :func:`@dd.action <dd.action>` decorator can have keyword
 parameters to specify information about the action. In practice these
-may be :attr:`label <dd.Action.label>`, :attr:`help_text
-<dd.Action.help_text>` and :attr:`required <dd.Action.required>`.
+may be :attr:`label <lino.core.actions.Action.label>`, :attr:`help_text
+<lino.core.actions.Action.help_text>` and :attr:`required <lino.core.actions.Action.required>`.
 
 The action method itself should have the following signature::
 

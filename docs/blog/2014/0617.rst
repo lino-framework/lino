@@ -60,7 +60,7 @@ Miscellaneous
   :mod:`lino_welfare.modlib.courses` by :mod:`lino.modlib.courses`.
 
 - Excerpts should never get created manually. So I set
-  :attr:`dd.Actor.allow_create` to False on
+  :attr:`lino.core.actors.Actor.allow_create` to False on
   :class:`lino.modlib.excerpts.Excerpts`.  
 
 

@@ -576,7 +576,9 @@ method in order to sort the rows of the queryset.
                     # master_instance = None
                     return  # cannot add rows to this table
             kw[self.master_field.name] = master_instance
-
+        # else:
+        #     msg = "20150322 Cannot handle master {0}".format(master_instance)
+        #     raise Exception(msg)
         return kw
 
     #~ @classmethod

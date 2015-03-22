@@ -116,6 +116,8 @@ from lino.core import fields
 
 
 STRICT = True
+VALUE_FIELD = models.CharField(_("value"), max_length=20)
+VALUE_FIELD.attname = 'value'
 
 
 class Choice(object):
@@ -133,7 +135,7 @@ class Choice(object):
         #~ self.choicelist = choicelist
         if not isinstance(value, basestring):
             raise Exception("value must be a string")
-        self.value = value
+        self.pk = self.value = value
         self.name = name or value
         self.text = text or self.__class__.__name__
         for k, v in kw.items():
@@ -259,8 +261,6 @@ class ChoiceListMeta(actors.ActorMetaClass):
 #~ choicelist_column_fields['name'] = fields.VirtualField(models.CharField())
 
 
-#~ class ChoiceList(object):
-#~ class ChoiceList(actors.Actor):
 class ChoiceList(tables.AbstractTable):
 
     """
@@ -291,22 +291,19 @@ class ChoiceList(tables.AbstractTable):
     """
 
     stored_name = None
-    """
-    Every subclass of ChoiceList will be automatically registered.
-    Define this if your class's name clashes with the name of an 
+    """Every subclass of ChoiceList will be automatically registered.
+    Define this if your class's name clashes with the name of an
     existing ChoiceList.
+
     """
 
     verbose_name = None
     verbose_name_plural = None
 
-    #~ label = None
-    #~ "The label or title for this list"
-
     show_values = False
-    """
-    Set this to True if the user interface should include the `value`
+    """Set this to True if the user interface should include the `value`
     attribute of each choice.
+
     """
 
     preferred_width = 4
@@ -351,17 +348,9 @@ class ChoiceList(tables.AbstractTable):
         return getattr(self, name)
         #~ return _choicelist_column_fields.get(name)
 
-    @fields.virtualfield(models.CharField(_("value"), max_length=20))
+    @fields.virtualfield(VALUE_FIELD)
     def value(cls, choice, ar):
         return choice.value
-
-    @fields.displayfield(_("Remark"))
-    def remark(cls, choice, ar):
-        return choice.remark
-        #~ txt = unicode(getattr(choice,'remark',''))
-        #~ print repr(txt)
-        #~ txt = ""
-        #~ return txt
 
     @fields.virtualfield(models.CharField(_("text"), max_length=50))
     def text(cls, choice, ar):
@@ -371,6 +360,10 @@ class ChoiceList(tables.AbstractTable):
     def name(cls, choice, ar):
         return choice.name
 
+    @fields.displayfield(_("Remark"))
+    def remark(cls, choice, ar):
+        return choice.remark
+
     @classmethod
     def get_data_rows(self, ar=None):
         return self.items()
@@ -378,7 +371,7 @@ class ChoiceList(tables.AbstractTable):
     @classmethod
     def get_actor_label(self):
         """
-        Compute the label of this actor. 
+        Compute the label of this actor.
         Called only if `label` is not set, and only once during site startup.
         """
         return self._label or self.verbose_name_plural or self.__name__
@@ -409,9 +402,9 @@ class ChoiceList(tables.AbstractTable):
 
     @classmethod
     def field(cls, *args, **kw):
-        """
-        Create a database field (a :class:`ChoiceListField`)
-        that holds one value of this choicelist. 
+        """Create a database field (a :class:`ChoiceListField`) that holds
+        one value of this choicelist.
+
         """
         fld = ChoiceListField(cls, *args, **kw)
         cls.setup_field(fld)
@@ -471,6 +464,16 @@ Django creates copies of them when inheriting models.
             setattr(cls, i.name, i)
             #~ i.name = name
         return i
+
+    @classmethod
+    def get_pk_field(self):
+        """See :meth:`lino.core.actors.Actor.get_pk_field`.
+        """
+        return VALUE_FIELD
+
+    @classmethod
+    def get_row_by_pk(cls, ar, pk):
+        return cls.get_by_value(pk)
 
     @classmethod
     def to_python(cls, value):
@@ -661,10 +664,6 @@ class ChoiceListField(models.CharField):
         if isinstance(value, Choice):
             return value
         return self.choicelist.to_python(value)
-        #~ value = self.choicelist.to_python(value)
-        # ~ if value is None: # see 20110907
-            #~ value = ''
-        #~ return value
 
     def _get_choices(self):
         """HACK: Django by default stores a copy of our list when the

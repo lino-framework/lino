@@ -8,6 +8,6 @@ global list of active courses) is probably longer needed now that we
 have `ActiveCoursesByPupil`.
 
 Removed the `get_todo_tables` feature and replaced its last usages by
-corresponding :meth:`dd.Actor.get_welcome_messages` definitions.
+corresponding :meth:`lino.core.actors.Actor.get_welcome_messages` definitions.
 
 Enrolment options.

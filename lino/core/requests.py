@@ -710,7 +710,8 @@ request from it.
                 rec.update(title=E.tostring(ar.href_to_request(ar))
                            + u" » " + ar.get_detail_title(elem))
         rec.update(id=elem.pk)
-        rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
+        if ar.actor.editable:
+            rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
         if rh.actor.show_detail_navigator:
             rec.update(navinfo=navinfo(ar.data_iterator, elem))
         return rec

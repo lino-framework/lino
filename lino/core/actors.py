@@ -523,16 +523,16 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def get_pk_field(self):
-        """
-        Return the Django field object used to represent the primary key
+        """Return the Django field object used to represent the primary key
         when filling `selected_pks`.
+
         """
         return None
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
-        """
-        Return the data row identified by the given primary key.
+        """Return the data row identified by the given primary key.
+
         """
         return None
 
@@ -541,14 +541,14 @@ class Actor(actions.Parametrizable):
         """Return the `master_instance` corresponding to the specified primary
         key.
 
-        Override this only on actors whose :attr:`master` is something
-        else than a database model (a feature which is a not yet
-        tested).
+        You need to override this only on slave actors whose
+        :attr:`master` is something else than a database model,
+        e.g. the :class:`ProblemsByChecker
+        <lino.modlib.plausibility.models.ProblemsByChecker>` table.
 
         `ar` is the action request on this actor. `model` is the
-        :attr:`master_class`, except if :attr:`master` is
-        `ContentType` (in which case `model` is the requested master
-        model).
+        :attr:`master`, except if :attr:`master` is `ContentType` (in
+        which case `model` is the requested master model).
 
         """
         try:

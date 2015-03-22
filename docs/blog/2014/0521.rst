@@ -53,7 +53,7 @@ More fiddling:
 
     
 - :class:`ml.beid.FindByBeIdAction` now has :attr:`show_in_bbar
-  <dd.Action.show_in_bbar>` explicitly set to `False`. Otherwise it was
+  <lino.core.actions.Action.show_in_bbar>` explicitly set to `False`. Otherwise it was
   visible in the toolbar
 
 - "Adressen verwalten" sah unglücklich aus als rechtsbündiger Text.

@@ -16,7 +16,7 @@ drop, and then (later) open a list of their uploads where they can
 "manage" them: assign them to a project, share them with others, ...
 
 - New module :mod:`lino.modlib.awesomeuploader`.
-- New action attribute :attr:`dd.Action.extjs_main_panel`, and
+- New action attribute :attr:`lino.core.actions.Action.extjs_main_panel`, and
   `CalendarAction` is no longer defined in :mod:`lino.core` but in
   :mod:`lino.modlib.extensible` (Cool! If that remains the only
   result of today, then I am already happy!)

@@ -17,7 +17,7 @@ actions:
 - :attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
 - :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`
 - :attr:`params_layout <lino.core.actors.Actor.params_layout>`
-- and for the :attr:`params_layout <dd.Action.params_layout>` of a
+- and for the :attr:`params_layout <lino.core.actions.Action.params_layout>` of a
   custom action.
 
 For simple layouts it is enough to specify them just as a string
@@ -63,7 +63,7 @@ This is for :class:`ColumnsLayout` and :class:`FormLayout`.
 
 :class:`ParamsLayout` are special but similar: their data elements
 refer to the *parameters* of an actor defined in
-:attr:`dd.Actor.parameters`.
+:attr:`lino.core.actors.Actor.parameters`.
 
 
 Panels
@@ -73,7 +73,7 @@ Panels
 
 Every layout has at least one panel whose name is ``main``.
 
-When a :attr:`detail_layout <dd.Actor.detail_layout>` is a string,
+When a :attr:`detail_layout <lino.core.actors.Actor.detail_layout>` is a string,
 then Lino replaces this by a :class:`FormLayout` instance whose `main`
 panel is that string.
 

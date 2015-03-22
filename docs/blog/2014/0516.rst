@@ -10,7 +10,7 @@ I discovered that Lino didn't yet support choosers on actions with a
 parameter window.
 
 - One problem was that :func:`lino.core.actions.check_for_chooser`
-  failed when you defined a :meth:`dd.Action.FOO_choices` method on an
+  failed when you defined a :meth:`lino.core.actions.Action.FOO_choices` method on an
   action.
 
 - Another problem was that
