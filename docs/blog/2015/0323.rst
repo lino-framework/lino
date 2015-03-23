@@ -78,3 +78,45 @@ of :class:`DupableClient
 bug and wrote a test case :mod:`test_dupe_clients
 <lino_welfare.projects.std.tests.test_dupe_clients>` to verify it.
 
+
+
+Session with Mahmoud
+====================
+
+Some notes during our next session.
+
+I noticed that the term "management command" in the Django
+documentation has been replaced by "django-admin command". Seems that
+I must update the Lino documentation accordingly.
+
+We discovered another black hole in the documentation:
+:doc:`/dev/site_config`.
+
+Mahmoud asked "Why do I need to pass this `globals()` when
+instantiating a SITE?", and it took me more than a minute to find the
+answer in the documentation. And this answer then was not deep enough
+to be useful.  The missing piece for him was that "global", in Python
+means "per module" and not "per process".
+
+The big chain of imports of many subclasses of the
+:class:`lino.core.site.Site` class can seem confusing.  But it gives
+us a hierarchy of places where we can define and override attributes
+and methods of an application.
+
+For example:
+
+- :class:`lino.core.site.Site`
+- :mod:`lino.projects.std.settings`
+- :mod:`lino.projects.min1.settings`
+- :mod:`lino.projects.min1.settings.demo`
+
+Or:
+
+- :class:`lino.core.site.Site`
+- :mod:`lino.projects.std.settings`
+- :mod:`lino_welfare.projects.std.settings`
+- :mod:`lino_welfare.projects.eupen.settings`
+- :mod:`lino_welfare.projects.eupen.settings.demo`
+
+
+

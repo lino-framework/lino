@@ -3,5 +3,9 @@ applications.
 
 The parent of every Lino application.
 
+.. autosummary::
+   :toctree:
+
+   settings
 
 """

@@ -924,10 +924,13 @@ documentation.
     override_modlib_models = None
 
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
-        """
-        Every Lino application calls this once in it's
+        """Every Lino application calls this once in it's
         :file:`settings.py` file.
         See :doc:`/usage`.
+
+        `settings_globals` is the `globals()` dictionary of your
+        :xfile:`settings.py`.
+
         """
         # self.logger.info("20140226 Site.__init__() a %s", self)
         #~ print "20130404 ok?"
@@ -1165,7 +1168,8 @@ documentation.
         return kw
 
     def load_plugins(self):
-        """Load all plugins and set the :setting:`INSTALLED_APPS` setting.
+        """Load all plugins and build the :setting:`INSTALLED_APPS` setting
+        for Django.
 
         This includes a call to :meth:`get_apps_modifiers` and
         :meth:`get_installed_apps`.

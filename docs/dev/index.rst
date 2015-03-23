@@ -55,11 +55,13 @@ Getting acquaintained
 - :doc:`users` : Why do we replace Django's user management. Passwords.
 - :doc:`site` : Instantiating a `Site`.  Specifying the
   `INSTALLED_APPS`. Additional local apps.
+- :doc:`dump2py` : Python dumps
+- :doc:`site_config` : The SiteConfig used to store "global" site-wide
+  parameters in the database.
 - :doc:`languages` : if you write applications for users who don't
   speak English.
 - :doc:`i18n` : About "internationalization" and "translatable strings".
 - :doc:`menu` : Standard items of a main menu
-- :doc:`dump2py` :
 - :doc:`actors` :
 - :doc:`choicelists` :
 - :doc:`parameters` :
@@ -88,11 +90,12 @@ Getting acquaintained
    application
    plugins
    site
-   languages
+   dump2py
+   site_config
    users
+   languages
    i18n
    menu
-   dump2py
    actors
    choicelists
    parameters

@@ -1,6 +1,16 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
+This is the base for all settings of lino.projects.min1
+
+.. autosummary::
+   :toctree:
+
+   demo
+
+
+"""
 
 from lino.projects.std.settings import *
 

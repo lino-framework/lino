@@ -10,4 +10,10 @@ It uses the following plugins:
 - :mod:`lino.modlib.cal` (which needs :mod:`lino.modlib.contenttypes`)
 - :mod:`lino.modlib.export_excel`
 
+.. autosummary::
+   :toctree:
+
+   settings
+
+
 """

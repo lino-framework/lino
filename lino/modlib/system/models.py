@@ -55,7 +55,6 @@ class SiteConfigManager(models.Manager):
 
 
 class SiteConfig(dd.Model):
-
     """
     This model should have exactly one instance,
     used to store persistent global site parameters.

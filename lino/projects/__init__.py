@@ -17,6 +17,7 @@ Poorly documented examples at different development states:
 .. autosummary::
    :toctree:
 
+   lino.projects.std
    lino.projects.min1
    lino.projects.min2
    lino.projects.cms
