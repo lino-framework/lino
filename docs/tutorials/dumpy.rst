@@ -1,11 +1,38 @@
 .. _lino.tutorial.dpy:
 
-============================
-Playing with Python fixtures
-============================
+===============================
+Introduction to Python fixtures
+===============================
 
 .. to run only this test:
   $ python setup.py test -s tests.DocsTests.test_dumpy
+
+**Python fixtures** are one of the important concepts which Lino adds
+to a Django project. They are used to write demonstration data
+samples for application prototypes and test suites.
+
+You know that a *fixture* is a portion of data (a collection of data
+records in one or several tables) which can be loaded into a database.
+Read more about fixtures in the `Providing initial data for models
+<https://docs.djangoproject.com/en/dev/howto/initial-data/>`_ article
+of the Django documentation.  This article says that "fixtures can be
+written as XML, YAML, or JSON documents".  Well, Lino adds another
+format to this list: Python.  
+
+Here is a fictive minimal example of a Python fixture::
+
+  from myapp.models import Foo
+  def objects():
+      yield Foo(name="First")
+      yield Foo(name="Second")
+
+A Python fixture is syntactically a normal Python module, stored in a
+file ending with `.py` and designed to being imported and exectued
+during Django's `loaddata
+<https://docs.djangoproject.com/en/dev/ref/django-admin/#django-admin-loaddata>`_
+command.
+
+
 
 
 This tutorial shows how to use :ref:`dpy`.

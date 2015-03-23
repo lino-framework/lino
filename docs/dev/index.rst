@@ -59,6 +59,7 @@ Getting acquaintained
   speak English.
 - :doc:`i18n` : About "internationalization" and "translatable strings".
 - :doc:`menu` : Standard items of a main menu
+- :doc:`dump2py` :
 - :doc:`actors` :
 - :doc:`choicelists` :
 - :doc:`parameters` :
@@ -91,6 +92,7 @@ Getting acquaintained
    users
    i18n
    menu
+   dump2py
    actors
    choicelists
    parameters
