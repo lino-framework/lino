@@ -1,0 +1,16 @@
+======================
+Monday, March 23, 2015
+======================
+
+Yesterday I checked in the untested master so that Mahmoud can
+continue to work on :ticket:`38`.  Now I had another two hours of work
+for getting the test suite to pass again under Django 1.6.
+
+- :func:`choicelist_choices
+  <lino.core.choicelists.choicelist_choices>` used by the
+  :attr:`choicelist
+  <lino.modlib.properties.modules.PropType.choicelist>` field of
+  :class:`properties.PropType <lino.modlib.properties.modules.PropType>`.
+
+- The `ChoiceList.class_init` we introduced yesterday forgot to call
+  `super`.

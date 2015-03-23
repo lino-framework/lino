@@ -55,7 +55,13 @@ class TableRequest(ActionRequest):
     _sliced_data_iterator = None
 
     def execute(self):
+        """This will actually call the :meth:`get_data_iterator` and run the
+        database query.
 
+        Automatically called when either :attr:`data_iterator`
+        or :attr:`sliced_data_iterator` is accesed.
+
+        """
         try:
             self._data_iterator = self.get_data_iterator()
         except Warning as e:
@@ -63,9 +69,11 @@ class TableRequest(ActionRequest):
             self.no_data_text = unicode(e)
             self._data_iterator = []
         except Exception as e:
+            if not settings.SITE.catch_layout_exceptions:
+                raise
             # Report this exception. But since such errors may occur
             # rather often and since exception loggers usually send an
-            # email to the local system admin, make sure to log an
+            # email to the local system admin, make sure to log each
             # exception only once.
             self.no_data_text = unicode(e)
             w = WARNINGS_LOGGED.get(str(e))

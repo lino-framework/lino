@@ -57,6 +57,7 @@ Getting acquaintained
   `INSTALLED_APPS`. Additional local apps.
 - :doc:`languages` : if you write applications for users who don't
   speak English.
+- :doc:`i18n` : About "internationalization" and "translatable strings".
 - :doc:`menu` : Standard items of a main menu
 - :doc:`actors` :
 - :doc:`choicelists` :
@@ -88,6 +89,7 @@ Getting acquaintained
    site
    languages
    users
+   i18n
    menu
    actors
    choicelists

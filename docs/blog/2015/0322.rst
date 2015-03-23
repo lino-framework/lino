@@ -51,12 +51,64 @@ TODO:
   framework <https://docs.djangoproject.com/en/1.7/topics/checks/>`_?
 
 
+Lino and Django 1.7
+===================
 
-Example:
+Mahmoud and I had a 3 hours extreme programming session on ticket
+:ticket:`38`.  Here are some traces of what we did.
+
+I started a new section of the Developers Guide: :doc:`/dev/i18n`.
+
+We tested this document using::
+
+  $ python -m doctest docs/blog/2015/0322.rst
+
+
+
+Django 1.7 is more strict about the fact that translatable strings may
+not be translated while models are still loading. Which in first place
+means that you must `ugettext_lazy` and not `ugettext`. Lino
+accidentally still used the latter in one or two modules.
+
+I learned that lazy translatable strings (instances of
+`django.utils.translations.Promise`) are also being translated when
+code tests for their boolean value.
+
+For example:
+
+>>> from django.utils.translation import ugettext_lazy as _
+>>> verbose_name = _("January")
+>>> verbose_name  #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+<django.utils.functional.__proxy__ object at ...>
+
+Now the following statement won't work unless the "internationlization
+machine" has been initialized:
+
+>>> s2 = verbose_name or "Month"  #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+Exception raised:
+    Traceback (most recent call last):
+    ...
+    ImproperlyConfigured: Requested setting USE_I18N, but settings are not configured. You must either define the environment variable DJANGO_SETTINGS_MODULE or call settings.configure() before accessing settings.
+
+But this is allowed:
+
+>>> if verbose_name is None:
+...     s2 = "Month"
+... else:
+...     s2 = verbose_name
+
+Here an example:
 
 >>> import os
 >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.demo'
 >>> from lino.api.shell import *
->>> # from lino.core.choicelists import choicelist_choices
->>> # choicelist_choices()
+
+>>> from lino.core.choicelists import choicelist_choices
+>>> choicelist_choices()  #doctest: +NORMALIZE_WHITESPACE +ELLIPSIS
+[('cal.AccessClasses', 'AccessClasses'), 
+('cal.DurationUnits', 'DurationUnits'), 
+('cal.EventEvents', <django.utils.functional.__proxy__ object at ...>), 
+(u'cal.EventStates', <django.utils.functional.__proxy__ object at ...>), 
+...
+('users.UserProfiles', <django.utils.functional.__proxy__ object at ...>)]
 

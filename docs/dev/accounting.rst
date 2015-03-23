@@ -24,7 +24,7 @@ document by issuing::
 
   $ python setup.py test -s tests.DocsTests.test_accounting
 
-General stuff:
+Doctest initialization:
 
 >>> from __future__ import print_function
 >>> import os

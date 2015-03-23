@@ -43,6 +43,12 @@ def get_window_actions():
             if ba.action.is_window_action():
                 wl = ba.get_window_layout() or ba.action.params_layout
                 if wl is not None:
+                    if isinstance(wl, basestring):
+                        raise Exception("20150323 : {0}".format(ba))
+                        # Was used to find Exception: 20150323 :
+                        # <BoundAction(plausibility.Checkers,
+                        # <ShowDetailAction detail (u'Detail')>)>
+
                     if not wl in coll:
                         lh = wl.get_layout_handle(ui)
                         for e in lh.main.walk():

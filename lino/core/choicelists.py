@@ -223,10 +223,14 @@ def get_choicelist(i):
 
 
 def choicelist_choices():
-    #~ print '20121209 choicelist_choices()', CHOICELISTS
-    l = [(k, v.verbose_name_plural or v.__name__)
-         for k, v in CHOICELISTS.items()]
-    #~ l = [ (k,v.label or v.__name__) for k,v in CHOICELISTS.items()]
+    """Return a list of all choicelists defined for this application."""
+    l = []
+    for k, v in CHOICELISTS.items():
+        if v.verbose_name_plural is None:
+            text = v.__name__
+        else:
+            text = v.verbose_name_plural
+        l.append((k, text))
     l.sort(lambda a, b: cmp(a[0], b[0]))
     return l
 
@@ -305,7 +309,7 @@ class ChoiceList(tables.AbstractTable):
     verbose_name_plural = None
 
     show_values = False
-    """Set this to True if the user interface should include the `value`
+    """Set this to `True` if the user interface should include the `value`
     attribute of each choice.
 
     """
@@ -433,8 +437,9 @@ class ChoiceList(tables.AbstractTable):
 
     @classmethod
     def class_init(cls):
+        super(ChoiceList, cls).class_init()
         cls.preferred_width = 4
-        for i in cls.choices:
+        for i in cls.get_list_items():
             dt = cls.display_text(i)
             cls.preferred_width = max(
                 cls.preferred_width, len(unicode(dt)))
@@ -532,7 +537,7 @@ Django creates copies of them when inheriting models.
     @classmethod
     def display_text(cls, bc):
         """Override this to customize the display text of choices.
-        :class:`lino.core.perms.UserGroups` and
+        :class:`lino.modlib.users.choicelists.UserGroups` and
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
@@ -542,9 +547,6 @@ Django creates copies of them when inheriting models.
                 return u"%s (%s)" % (bc.value, unicode(bc))
             return lazy(fn, unicode)(bc)
         return lazy(unicode, unicode)(bc)
-        #~ return bc
-        #~ return unicode(bc)
-        #~ return _(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
@@ -610,7 +612,8 @@ class ChoiceListField(models.CharField):
     
     ChoiceListField cannot be nullable since they are implemented as
     CharFields.  Therefore when filtering on empty values in a
-    database query you cannot use ``__isnull``::
+    database query you cannot use ``__isnull``.  The following query
+    won't work as expected::
     
       for u in users.User.objects.filter(profile__isnull=False):
       

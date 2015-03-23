@@ -1,0 +1,56 @@
+Internationalization
+====================
+
+An introduction to translatable strings.
+
+About this document
+-------------------
+
+This document is part of the Lino test suite. You can test only this
+document by issuing::
+
+  $ python setup.py test -s tests.DocsTests.test_i18n
+
+Doctest initialization:
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.demo'
+>>> from lino.api.shell import *
+
+>>> from django.utils import translation
+>>> from django.utils.translation import ugettext as _
+
+If no language is activated, :func:`ugettext` just returns the English
+text:
+
+>>> _("January")
+u'January'
+
+In Lino we usually use the :func:`translation.override` context when
+we want to translate:
+
+>>> with translation.override('fr'):
+...     _("January")
+u'janvier'
+
+How does the :func:`ugettext` function know that "January" is
+"janvier" in French? See :command:`fab mm`.
+
+Note that :func:`ugettext` will do the lookup in-place. The following
+code prints English and not German:
+
+>>> s = _("January")
+>>> with translation.override('de'):
+...     print(s)
+January
+
+>>> from django.utils.translation import ugettext_lazy as _
+>>> s = _("January")
+>>> with translation.override('de'):
+...     print(s)  #doctest: +ELLIPSIS
+<django.utils.functional.__proxy__ object at ...>
+
+>>> with translation.override('de'):
+...     print(unicode(s))
+Januar
+

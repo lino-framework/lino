@@ -76,7 +76,7 @@ def discover_choosers():
 
 def install_layout(cls, k, layout_class, **options):
     """
-    - ``k`` is one of 'detail_layout', 'insert_layout', 'params_layout'
+    - `k` is one of 'detail_layout', 'insert_layout', 'params_layout'
     - `layout_class`
 
     """
