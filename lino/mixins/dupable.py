@@ -152,9 +152,11 @@ class Dupable(dd.Model):
 
     def update_dupable_words(self, really=True):
         """Update the phonetic words of this row."""
-        # "A related object set can be replaced in bulk with one
-        # operation by assigning a new iterable of objects to it". But
-        # only when the relatin is nullable...
+
+        # Excerpt from Django docs: "A related object set can be
+        # replaced in bulk with one operation by assigning a new
+        # iterable of objects to it". But only when the relation is
+        # nullable...
         if settings.SITE.loading_from_dump:
             return
         if self.dupable_word_model is None:

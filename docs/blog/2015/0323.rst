@@ -65,3 +65,16 @@ I also invoked this manually::
     [################################] 12858/12858 - 00:01:15
     Found 12322 and fixed 0 plausibility problems in Persons.
     INFO Done manage.py check_plausibility (PID 21591)
+
+
+New test case for duplicate clients
+===================================
+
+Our three concrete cases of duplicate clients in Eupen were still not
+detected due to a minor bug in :meth:`find_similar_instances
+<lino_welfare.modlib.dupable_clients.mixins.DupableClient.find_similar_instances>`
+of :class:`DupableClient
+<lino_welfare.modlib.dupable_clients.mixins.DupableClient>`. Fixed the
+bug and wrote a test case :mod:`test_dupe_clients
+<lino_welfare.projects.std.tests.test_dupe_clients>` to verify it.
+

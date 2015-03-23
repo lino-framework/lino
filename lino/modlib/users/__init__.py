@@ -15,13 +15,12 @@ Lino's core even if it is not among the installed apps.
     mixins
     choicelists
     fixtures.demo
+    fixtures.demo_users
     fixtures.demo2
 
 """
 
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
