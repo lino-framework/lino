@@ -5,7 +5,13 @@
 """Defines the :class:`Dupable` model mixin and related functionality
 to assist users in finding duplicate database records.
 
-Used by :mod:`lino.modlib.dupable_partners`.
+Note that adding :class:`Dupable` to your model's base classes does
+not yet activate any functionality, it just declares that model as
+being dupable.  In order to activate verification, you must also
+define a model which implements :class:`DupableWordBase` and set
+:attr:`Dupable.dupable_word_model` to point to that model.  This is
+done by plugins like :mod:`lino.modlib.dupable_partners` or
+:mod:`lino_welfare.modlib.dupable_clients`
 
 The current implementation of the detection algorithm uses the `fuzzy
 <https://pypi.python.org/pypi/Fuzzy>`_ module. Read also Doug Hellmann
@@ -22,26 +28,11 @@ somebody e.g. by making a cheap copy of a valuable object).
 
 from __future__ import unicode_literals
 
-import fuzzy
-
-DMETA = fuzzy.DMetaphone()
-
 from django.conf import settings
 from django.db import models
 
 from lino.api import dd, _
 from lino.core.actions import SubmitInsert
-
-
-def phonetic(s):
-    # fuzzy.DMetaphone does not work with unicode strings, see
-    # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
-    dm = DMETA(s.encode('utf8'))
-    dms = dm[0] or dm[1]
-    if dms is None:
-        return ''
-    return dms.decode('utf8')
-    # return fuzzy.nysiis(s)
 
 
 class CheckedSubmitInsert(SubmitInsert):
@@ -92,6 +83,21 @@ class DupableWordBase(dd.Model):
 
     def __unicode__(self):
         return self.word
+
+    @classmethod
+    def on_analyze(cls, site):
+        import fuzzy
+        cls._fuzzy_DMetaphone = fuzzy.DMetaphone()
+
+    @classmethod
+    def reduce_word(cls, s):
+        # fuzzy.DMetaphone does not work with unicode strings, see
+        # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
+        dm = cls._fuzzy_DMetaphone(s.encode('utf8'))
+        dms = dm[0] or dm[1]
+        if dms is None:
+            return ''
+        return dms.decode('utf8')
 
 
 class Dupable(dd.Model):
@@ -173,7 +179,7 @@ class Dupable(dd.Model):
         s = getattr(self, k)
         for c in '-,/&+':
             s = s.replace(c, ' ')
-        return map(phonetic, s.split())
+        return map(self.dupable_word_model.reduce_word, s.split())
 
     def find_similar_instances(self, limit=None, **kwargs):
         """If `limit` is specified, we never want to see more than `limit`

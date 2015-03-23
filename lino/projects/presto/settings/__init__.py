@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from lino.projects.std.settings import *
@@ -15,14 +15,6 @@ class Site(Site):
     languages = 'en de fr et'
 
     project_model = 'tickets.Project'
-
-    # p = None
-    # override_modlib_models = {
-    #     'contacts.Person': p,
-    #     'contacts.Company': p,
-    #     'households.Household': p,
-    #     'sales.Invoice': p,
-    #     'sales.InvoiceItem': p}
 
     def setup_user_profiles(self):
         """
