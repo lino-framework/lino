@@ -24,7 +24,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import translation
 from django.conf import settings
 from django.db import models
-from django.db.utils import OperationalError
+from django.db.utils import OperationalError, ProgrammingError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -812,7 +812,7 @@ def set_excerpts_actions(sender, **kw):
     try:
         etypes = [(obj, obj.content_type)
                   for obj in ExcerptType.objects.all()]
-    except OperationalError:
+    except (OperationalError, ProgrammingError):
         # logger.warning("Failed to set excerpts actions : %s", e)
         # Happens e.g. when the database has not yet been migrated
         etypes = []
