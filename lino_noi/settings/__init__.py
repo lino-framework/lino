@@ -45,7 +45,7 @@ class Site(Site):
         return kw
 
     def get_admin_main_items(self):
-        yield self.modules.tickets.MyOpenTickets
+        yield self.modules.tickets.MyAssignedTickets
         yield self.modules.tickets.RecentTickets
 
 # the following line should not be active in a checked-in version
