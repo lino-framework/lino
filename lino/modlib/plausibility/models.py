@@ -88,26 +88,7 @@ class Problems(dd.Table):
         )
     params_layout = "user checker"
 
-    @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(Problems, self).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.user:
-            qs = qs.filter(user=pv.user)
-        if pv.checker:
-            qs = qs.filter(checker=pv.checker)
-        return qs
-
-    @classmethod
-    def get_title_tags(self, ar):
-        for t in super(Problems, self).get_title_tags(ar):
-            yield t
-        pv = ar.param_values
-        for k in ('user', 'checker'):
-            v = getattr(pv, k)
-            if v:
-                yield unicode(self.parameters[k].verbose_name) \
-                    + ' ' + unicode(v)
+    simple_parameters = ('user', 'checker')
 
 
 class AllProblems(Problems):

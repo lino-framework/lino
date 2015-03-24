@@ -111,7 +111,8 @@ class TestCase(TestCase):
         """
         filename = 'docs/' + filename
         sys.path.insert(0,  os.path.abspath('docs'))
-        import conf  # trigger Django startup
+        import conf  # import Sphinx conf.py which possibly triggers
+                     # Django startup
 
         res = doctest.testfile(filename, module_relative=False,
                                encoding='utf-8',

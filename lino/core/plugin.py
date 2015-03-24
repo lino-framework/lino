@@ -277,8 +277,13 @@ class Plugin(object):
         ui.setup_media_link(urlpatterns, self.media_name, source=source)
 
     def get_menu_group(self):
-        """Return the :class:`Plugin` instance into whose menu this plugin
-        wants to be inserted.
+        """Return the plugin into whose menu this plugin wants to be inserted.
+        If this plugin was automatically installed because some other
+        plugin needs it, return that other plugin. Otherwise return
+        this plugin.
+
+        Used by :mod:`lino.modlib.languages`.
+        Returns a :class:`Plugin` instance.
 
         """
         return self.needed_by or self

@@ -101,9 +101,7 @@ means "per module" and not "per process".
 The big chain of imports of many subclasses of the
 :class:`lino.core.site.Site` class can seem confusing.  But it gives
 us a hierarchy of places where we can define and override attributes
-and methods of an application.
-
-For example:
+and methods of an application.  For example:
 
 - :class:`lino.core.site.Site`
 - :mod:`lino.projects.std.settings`

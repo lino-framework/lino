@@ -8,19 +8,83 @@
 
 from __future__ import print_function
 
+import logging
+logger = logging.getLogger(__name__)
+
 import os
+import json
 import unittest
 import doctest
 
-from lino.utils.pythontest import TestCase as PythonTestCase
-from lino.utils.djangotest import CommonTestCase
-from django.test import Client
-from django.conf import settings
+from .pythontest import TestCase as PythonTestCase
 
 import collections
 HttpQuery = collections.namedtuple(
     'HttpQuery',
     ['username', 'url_base', 'json_fields', 'expected_rows', 'kwargs'])
+
+
+class CommonTestCase(unittest.TestCase):
+    """An extended `django.test.TestCase`.
+
+    """
+
+    def check_json_result(self, response, expected_keys=None, msg=''):
+        """Checks the result of response which is expected to return a
+        JSON-encoded dictionary with the expected_keys.
+
+        """
+        # print("20150129 response is %r" % response.content)
+        self.assertEqual(
+            response.status_code, 200,
+            "Response status ({0}) was {1} instead of 200".format(
+                msg, response.status_code))
+        try:
+            result = json.loads(response.content)
+        except ValueError as e:
+            logger.warning("%s in %r", e, response.content)
+            raise
+        if expected_keys is not None:
+            self.assertEqual(set(result.keys()), set(expected_keys.split()))
+        return result
+
+    def assertEquivalent(self, a, b, report_plain=False):
+        """Compares to strings, ignoring whitespace repetitions and writing a
+        logger message in case they are different.  For long strings
+        it's then more easy to find the difference.
+
+        """
+        if a == b:
+            return
+        ta = a.strip().split()
+        tb = b.strip().split()
+        if ta == tb:
+            return
+        if report_plain:
+            logger.warning(
+                "----- EXPECTED : -----\n%s\n----- GOT : -----\n%s", a, b)
+        else:
+            logger.warning("EXPECTED : %s", ' '.join(ta))
+            logger.warning("     GOT : %s", ' '.join(tb))
+        self.fail("EXPECTED and GOT are not equivalent")
+
+    def request_PUT(self, url, data, **kw):
+        """Sends a PUT request using Djangos test client, overriding the
+        `content_type` keyword.  This is how ExtJS grids behave by
+        default.
+
+        """
+        kw.update(content_type='application/x-www-form-urlencoded')
+        response = self.client.put(url, data, **kw)
+        self.assertEqual(response.status_code, 200)
+        return response
+
+    def assertDoesNotExist(self, model, **kw):
+        try:
+            model.objects.get(**kw)
+            self.fail("Oops, %s(%s) already exists?" % (model.__name__, kw))
+        except model.DoesNotExist:
+            pass
 
 
 class DocTest(unittest.TestCase):
@@ -37,6 +101,7 @@ class DocTest(unittest.TestCase):
     """
 
     def test_files(self):
+        from django.conf import settings
         #~ g = dict(print_=six.print_)
         g = dict()
         g.update(settings=settings)
@@ -61,11 +126,13 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
 
     """
     def __call__(self, *args, **kw):
+        from django.test import Client
         self.client = Client()
         return super(DemoTestCase, self).__call__(*args, **kw)
 
     def demo_get(self, username, url_base, json_fields, expected_rows,
                  **kwargs):
+        from django.conf import settings
         case = HttpQuery(username, url_base, json_fields,
                          expected_rows, kwargs)
         url = settings.SITE.build_admin_url(case.url_base, **case.kwargs)

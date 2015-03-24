@@ -713,6 +713,11 @@ class Table(AbstractTable):
             qs = qs.exclude(**rr.exclude)
             #~ qs = qs.exclude(rr.exclude)
 
+        for k in self.simple_parameters:
+            v = getattr(rr.param_values, k)
+            if v:
+                qs = qs.filter(**{k: v})
+
         if self.filter:
             qs = qs.filter(self.filter)
 

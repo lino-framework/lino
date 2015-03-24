@@ -326,6 +326,9 @@ class Actor(actions.Parametrizable):
     parameters = None
     "See :attr:`lino.core.actions.Parametrizable.parameters`."
 
+    simple_parameters = []
+    "A list of names of parameters which are automatically handled."
+
     _layout_class = layouts.ParamsLayout
 
     sort_index = 60
@@ -879,7 +882,11 @@ class Actor(actions.Parametrizable):
         the actual title.
 
         """
-        return []
+        for k in self.simple_parameters:
+            v = getattr(ar.param_values, k)
+            if v:
+                yield unicode(self.parameters[k].verbose_name) \
+                    + ' ' + unicode(v)
 
     @classmethod
     def setup_request(self, ar):

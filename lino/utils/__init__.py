@@ -260,25 +260,25 @@ class IncompleteDate:
 
     W.A. Mozart's birth date:
 
-    >>> print IncompleteDate(1756,1,27)
+    >>> print IncompleteDate(1756, 1, 27)
     1756-01-27
 
     Christ's birth date:
 
-    >>> print IncompleteDate(-7,12,25)
+    >>> print IncompleteDate(-7, 12, 25)
     -7-12-25
-    >>> print IncompleteDate(-7,12,25).strftime("%d.%m.%Y")
+    >>> print IncompleteDate(-7, 12, 25).strftime("%d.%m.%Y")
     25.12.-7
 
     Note that you cannot convert all incomplete dates
     to real datetime.date objects:
 
-    >>> IncompleteDate(-7,12,25).as_date()
+    >>> IncompleteDate(-7, 12, 25).as_date()
     Traceback (most recent call last):
     ...
     ValueError: year is out of range
 
-    >>> IncompleteDate(1756,1,27).as_date()
+    >>> IncompleteDate(1756, 1, 27).as_date()
     datetime.date(1756, 1, 27)
 
     An IncompleteDate is allowed to be complete:
@@ -348,25 +348,20 @@ class IncompleteDate:
         #~ s = fmt.replace("%Y",iif(self.bc,'-','')+str(self.year))
         if self.year == 0:
             s = fmt.replace("%Y", '0000')
-        else:
+        else:  # year might be negative
             s = fmt.replace("%Y", str(self.year))
         s = s.replace("%m", "%02d" % self.month)
         s = s.replace("%d", "%02d" % self.day)
         return s
 
-        #~ return self.strftime_(fmt,
-            #~ iif(self.bc,-1,1)*self.year,
-            #~ self.month,
-            #~ self.day)
-
     def as_date(self):
         return datetime.date(
-            #~ (self.year * iif(self.bc,-1,1)) or 1900,
             self.year or 1900,
-            self.month or 1,
-            self.day or 1)
+            self.month or 6,
+            self.day or 15)
 
     def get_age(self, today):
+        "Return age in years as integer."
         a = (self.month, self.day)
         b = (today.month, today.day)
         if a > b:

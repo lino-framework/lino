@@ -183,6 +183,7 @@ lino.modlib.pages.fixtures
 lino.modlib.office
 lino.modlib.orders
 lino.modlib.changes
+lino.modlib.clocking
 lino.modlib.comments
 lino.modlib.concepts
 lino.modlib.declarations

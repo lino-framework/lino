@@ -252,9 +252,11 @@ class LinksByHuman(Links):
 
         try:
             links.sort(by_age)
-        except AttributeError:
-            # 'str' object has no attribute 'as_date'
-            # possible when incomplete or empty birth_date
+        # except AttributeError:
+        except (AttributeError, ValueError):
+            # AttributeError: 'str' object has no attribute 'as_date'
+            # possible when empty birth_date
+            # ValueError: day is out of range for month
             pass
 
         items = []

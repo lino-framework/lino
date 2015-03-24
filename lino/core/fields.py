@@ -21,13 +21,14 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes import generic
+from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.utils import full_model_name
 from lino.core.utils import resolve_field
 from lino.core.utils import resolve_model
 
-from lino.utils.format_date import IncompleteDate
+from lino.utils import IncompleteDate
 from lino.utils import quantities
 
 
@@ -718,14 +719,24 @@ class QuantityField(CharField):
         return str(value)
 
 
-class IncompleteDateField(models.CharField):
+def validate_incomplete_date(value):
+    """Raise ValidationError if user enters e.g. a date 30.02.2009.
+    """
+    try:
+        value.as_date()
+    except ValueError:
+        raise ValidationError(_("Invalid date"))
 
+
+class IncompleteDateField(models.CharField):
     """
     A field that behaves like a DateField, but accepts
     incomplete dates represented using
     :class:`lino.utils.format_date.IncompleteDate`.
     """
     __metaclass__ = models.SubfieldBase
+
+    default_validators = [validate_incomplete_date]
 
     def __init__(self, *args, **kw):
         kw.update(max_length=11)
