@@ -1,17 +1,18 @@
-
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-03-23 15:21+0200\n"
-"PO-Revision-Date: 2015-03-15 10:12+0300\n"
+"PO-Revision-Date: 2015-03-25 01:45+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: fr\n"
 
 #: lino/config/403.html:3 lino/config/403.html:7
 msgid "Permission denied"
@@ -67,12 +68,13 @@ msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-"
-"framework.org/demos.html\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
+"\">sites de démonstration</a>."
 
 #: lino/config/admin_main_base.html:20
 #, python-format
-msgid "Your feedback is welcome to %s or directly to the person who invited you."
+msgid ""
+"Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Vos réactions sont les bienvenues par courier électronique à %s."
 
 #: lino/config/admin_main_base.html:30
@@ -81,8 +83,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:31
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:35
@@ -387,8 +389,7 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"%(self)s ne peut être supprimé parce que %(count)d  %(refs)s y font "
-"référence"
+"%(self)s ne peut être supprimé parce que %(count)d  %(refs)s y font référence"
 
 #: lino/core/model.py:633
 msgid "Workflow"
@@ -746,9 +747,9 @@ msgstr "Imprimer"
 #: lino/mixins/printable.py:408
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new "
-"browser window. If it doesn't, please consult %(help)s or ask your system"
-" administrator."
+"Your printable document (filename %(doc)s) should now open in a new browser "
+"window. If it doesn't, please consult %(help)s or ask your system "
+"administrator."
 msgstr ""
 
 #: lino/mixins/printable.py:497
@@ -771,8 +772,8 @@ msgstr ""
 
 #: lino/mixins/printable.py:585
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/mixins/printable.py:609
@@ -1179,8 +1180,8 @@ msgstr ""
 
 #: lino/modlib/auto/sales/models.py:61
 msgid ""
-"How many days in advance invoices should be posted so that the customer "
-"has a chance to pay them in time."
+"How many days in advance invoices should be posted so that the customer has "
+"a chance to pay them in time."
 msgstr ""
 
 #: lino/modlib/auto/sales/models.py:143
@@ -1392,8 +1393,7 @@ msgid ""
 "There is more than one client with national id %(national_id)s in our "
 "database."
 msgstr ""
-"Il y a plus d'un client avec NN %(national_id)s dans notre base de "
-"données."
+"Il y a plus d'un client avec NN %(national_id)s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:359 lino/modlib/beid/mixins.py:371
 #, fuzzy, python-format
@@ -1408,8 +1408,8 @@ msgstr "D'accord pour créer nouveau bénéficiaire %s?"
 #: lino/modlib/beid/mixins.py:378
 #, python-format
 msgid ""
-"Cannot create new client because there is already a person named %s in "
-"our database."
+"Cannot create new client because there is already a person named %s in our "
+"database."
 msgstr "Il y a déjà une personne nommée %s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:382 lino/modlib/beid/mixins.py:389
@@ -1419,8 +1419,8 @@ msgstr "Oups!"
 #: lino/modlib/beid/mixins.py:385
 #, python-format
 msgid ""
-"Cannot create new client because there is more than one person named %s "
-"in our database."
+"Cannot create new client because there is more than one person named %s in "
+"our database."
 msgstr "Il y a plus d'une personne nommée %s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:408
@@ -1793,8 +1793,7 @@ msgid ""
 "Whether this subscription should \"\n"
 "        \"initially be displayed as a hidden calendar."
 msgstr ""
-"Activer cette case pour ne pas afficher ce calendrier en ouvrant le "
-"panneau."
+"Activer cette case pour ne pas afficher ce calendrier en ouvrant le panneau."
 
 #: lino/modlib/cal/models_event.py:73
 msgid "Event Type"
@@ -1827,9 +1826,8 @@ msgid "Event label"
 msgstr "Intitulé des évènements"
 
 #: lino/modlib/cal/models_event.py:94
-#, fuzzy
 msgid "Calendar entry"
-msgstr "Calendrier"
+msgstr "Entrée calendrier"
 
 #: lino/modlib/cal/models_event.py:97
 msgid "Simultaneous events"
@@ -1842,8 +1840,7 @@ msgstr ""
 #: lino/modlib/cal/models_event.py:110
 msgid ""
 "The list of Event Types defined on this system.\n"
-"    An EventType is a list of events which have certain things in common,"
-"\n"
+"    An EventType is a list of events which have certain things in common,\n"
 "    especially they are displayed in the same colour in the calendar panel"
 msgstr ""
 
@@ -1874,10 +1871,11 @@ msgid "Transparent"
 msgstr "non bloquant"
 
 #: lino/modlib/cal/models_event.py:363
-msgid "Indicates that this Event shouldn't prevent other Events at the same time."
+msgid ""
+"Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr ""
-"Indique que cet évènement n'empêche pas d'avoir d'autres évènements en "
-"même temps."
+"Indique que cet évènement n'empêche pas d'avoir d'autres évènements en même "
+"temps."
 
 #: lino/modlib/cal/models_event.py:368
 msgid "all day"
@@ -2070,7 +2068,8 @@ msgid "My presences"
 msgstr "Mes présences"
 
 #: lino/modlib/cal/models_guest.py:219
-msgid "Shows all my presences in calendar events, independently of their state."
+msgid ""
+"Shows all my presences in calendar events, independently of their state."
 msgstr ""
 
 #: lino/modlib/cal/models_guest.py:254
@@ -2649,8 +2648,7 @@ msgstr "Allocution"
 
 #: lino/modlib/contacts/models.py:253
 msgid ""
-"Text to print before allocation and name as part of the first address "
-"line."
+"Text to print before allocation and name as part of the first address line."
 msgstr ""
 
 #: lino/modlib/contacts/models.py:321
@@ -2721,8 +2719,7 @@ msgstr ""
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
-"        Or, newly created partners inherit the country of the site owner."
-"\n"
+"        Or, newly created partners inherit the country of the site owner.\n"
 "        "
 msgstr ""
 
@@ -2747,12 +2744,14 @@ msgstr "Textes d'aide"
 msgid "Model"
 msgstr "Modèle"
 
-#: lino/modlib/contenttypes/models.py:72 lino/modlib/importfilters/models.py:58
+#: lino/modlib/contenttypes/models.py:72
+#: lino/modlib/importfilters/models.py:58
 #, fuzzy
 msgid "Field"
 msgstr "Fichier"
 
-#: lino/modlib/contenttypes/models.py:74 lino/modlib/importfilters/models.py:37
+#: lino/modlib/contenttypes/models.py:74
+#: lino/modlib/importfilters/models.py:37
 #: lino/modlib/importfilters/models.py:61
 msgid "HelpText"
 msgstr ""
@@ -2774,7 +2773,8 @@ msgstr ""
 msgid "Database object"
 msgstr ""
 
-#: lino/modlib/contenttypes/models.py:147 lino/modlib/plausibility/models.py:66
+#: lino/modlib/contenttypes/models.py:147
+#: lino/modlib/plausibility/models.py:66
 msgid "Message"
 msgstr ""
 
@@ -2801,7 +2801,8 @@ msgstr "Types de note"
 msgid "Places"
 msgstr "Endroits"
 
-#: lino/modlib/countries/__init__.py:36 lino/modlib/countries/choicelists.py:54
+#: lino/modlib/countries/__init__.py:36
+#: lino/modlib/countries/choicelists.py:54
 #, fuzzy
 msgid "County"
 msgstr "Pays"
@@ -2995,7 +2996,8 @@ msgid "Part of"
 msgstr ""
 
 #: lino/modlib/countries/models.py:104
-msgid "The superordinate geographic place         of which this place is a part."
+msgid ""
+"The superordinate geographic place         of which this place is a part."
 msgstr ""
 
 #: lino/modlib/countries/models.py:178
@@ -3792,8 +3794,8 @@ msgstr "Céer courrier"
 
 #: lino/modlib/excerpts/models.py:104
 msgid ""
-"There's at most one primary type per model.         Enabling this field "
-"will automatically make the other         types non-primary."
+"There's at most one primary type per model.         Enabling this field will "
+"automatically make the other         types non-primary."
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:109
@@ -3833,8 +3835,7 @@ msgstr ""
 #, fuzzy
 msgid "Create an excerpt in order to print this data record."
 msgstr ""
-"Historique des impressions qui ont été faites à partir de cet "
-"enregistrement."
+"Historique des impressions qui ont été faites à partir de cet enregistrement."
 
 #: lino/modlib/excerpts/models.py:307
 #, fuzzy
@@ -3843,8 +3844,8 @@ msgstr "Imprimé"
 
 #: lino/modlib/excerpts/models.py:309
 msgid ""
-"Mark this object as not printed. A subsequent call to print will generate"
-" a new cache file."
+"Mark this object as not printed. A subsequent call to print will generate a "
+"new cache file."
 msgstr ""
 
 #: lino/modlib/excerpts/models.py:321
@@ -3895,8 +3896,7 @@ msgstr "Communiqué"
 #: lino/modlib/excerpts/models.py:739
 msgid "History of excerpts based on this data record."
 msgstr ""
-"Historique des impressions qui ont été faites à partir de cet "
-"enregistrement."
+"Historique des impressions qui ont été faites à partir de cet enregistrement."
 
 #: lino/modlib/excerpts/models.py:740
 msgid "Existing excerpts"
@@ -4052,7 +4052,8 @@ msgstr ""
 msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
 msgstr ""
 
-#: lino/modlib/extjs/linoweb.js:1773 lino/modlib/plausibility/choicelists.py:36
+#: lino/modlib/extjs/linoweb.js:1773
+#: lino/modlib/plausibility/choicelists.py:36
 msgid "Warning"
 msgstr "Avertissement"
 
@@ -4360,11 +4361,11 @@ msgstr "Membres de ménage"
 
 #: lino/modlib/households/models.py:212
 msgid ""
-"Whether this is the primary household of this person. Checking this field"
-" will automatically disable any other primary memberships."
+"Whether this is the primary household of this person. Checking this field "
+"will automatically disable any other primary memberships."
 msgstr ""
-"Marque ceci comme ménage primaire de cette personne. Activer cette case "
-"va la désactiver pour les autres ménages."
+"Marque ceci comme ménage primaire de cette personne. Activer cette case va "
+"la désactiver pour les autres ménages."
 
 #: lino/modlib/households/models.py:248
 msgid "Make this the primary household."
@@ -5089,8 +5090,8 @@ msgstr ""
 
 #: lino/modlib/outbox/mixins.py:55
 msgid ""
-"The name of the file to be used as template when creating an email from a"
-" mailable of this type."
+"The name of the file to be used as template when creating an email from a "
+"mailable of this type."
 msgstr ""
 
 #: lino/modlib/outbox/mixins.py:72
@@ -5738,7 +5739,8 @@ msgid "Expected Guests"
 msgstr "Visiteurs attendus"
 
 #: lino/modlib/reception/models.py:313
-msgid "Consult this table when checking in a partner who     has an appointment."
+msgid ""
+"Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
 #: lino/modlib/reception/models.py:341
@@ -5895,8 +5897,8 @@ msgstr ""
 
 #: lino/modlib/sepa/models.py:68
 msgid ""
-"Enabling this field will automatically disable any previous primary "
-"account and update the partner's IBAN and BIC"
+"Enabling this field will automatically disable any previous primary account "
+"and update the partner's IBAN and BIC"
 msgstr ""
 
 #: lino/modlib/smtpd/__init__.py:12
@@ -5909,14 +5911,13 @@ msgstr ""
 
 #: lino/modlib/statbel/models.py:23
 msgid ""
-"The official code for this place                     used by "
-"statbel.fgov.be"
+"The official code for this place                     used by statbel.fgov.be"
 msgstr ""
 
 #: lino/modlib/statbel/models.py:33
 msgid ""
-"The official code for this country                     used by "
-"statbel.fgov.be"
+"The official code for this country                     used by statbel.fgov."
+"be"
 msgstr ""
 
 #: lino/modlib/system/__init__.py:27 lino/modlib/users/choicelists.py:192
@@ -6383,8 +6384,8 @@ msgstr ""
 
 #: lino/modlib/users/models.py:112
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot "
-"log in."
+"Users with an empty `profile` field are considered inactive and cannot log "
+"in."
 msgstr ""
 
 #: lino/modlib/users/models.py:115
@@ -6446,8 +6447,8 @@ msgstr ""
 
 #: lino/modlib/vat/choicelists.py:65
 msgid ""
-"Determines how the VAT is being handled,         i.e. whether and how it "
-"is to be paid."
+"Determines how the VAT is being handled,         i.e. whether and how it is "
+"to be paid."
 msgstr ""
 
 #: lino/modlib/vat/choicelists.py:70
@@ -7213,28 +7214,8 @@ msgstr ""
 #~ msgid "Appointment"
 #~ msgstr "Rendez-vous"
 
-#~ msgid "Must update dupable words."
-#~ msgstr ""
-
 #~ msgid "eID sheet"
 #~ msgstr "Fiche eID"
 
-#~ msgid "Cannot repair invalid SSIN ({0})"
-#~ msgstr ""
-
 #~ msgid "Repairable"
 #~ msgstr "Effacer la cache"
-
-#~ msgid "Cannot merge an instance to itself."
-#~ msgstr ""
-
-#~ msgid "I really cannot merge an instance to itself."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Uncomplete dates are allowed, e.g. \n"
-#~ "\"%(ex1)s\" means \"some day in 1980\", \n"
-#~ "\"%(ex2)s\" means \"in July 1980\"\n"
-#~ "or \"%(ex3)s\" means \"on a 23th of July\"."
-#~ msgstr ""
-

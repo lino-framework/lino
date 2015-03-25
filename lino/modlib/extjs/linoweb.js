@@ -878,14 +878,19 @@ Lino.edit_tinymce_text = function(panel, options) {
   
   
   function save() {
-    //~ if (todo_after_save) {alert('tried to save again'); return; }
     if (saving) {alert('tried to save again'); return; }
-    //~ var url = panel.containing_window.main_item.get_record_url(rec.id);
     var url = panel.containing_panel.get_record_url(rec.id);
     var params = Ext.apply({}, panel.containing_panel.get_base_params());
     params[panel.editor.name] = editor.getValue();
     //~ params.{{ext_requests.URL_PARAM_SUBST_USER}} = Lino.subst_user;
     //~ Lino.insert_subst_user(params);
+
+    // 20150325 http://trac.lino-framework.org/ticket/131
+    var action_name = panel.containing_panel.save_action_name;
+    if (!action_name) 
+        action_name = panel.containing_panel.action_name;
+    params.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
+
     var a = { 
       params: params, 
       method: 'PUT',
