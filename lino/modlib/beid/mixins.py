@@ -587,7 +587,8 @@ class BeIdCardHolderChecker(Checker):
                 got = obj.national_id
                 if got != expected:
                     msg = _("Malformed SSIN '{got}' must be '{expected}'.")
-                    yield (True, msg.format(**locals()))
+                    params = dict(expected=expected, got=got, obj=obj)
+                    yield (True, msg.format(**params))
                     if fix:
                         obj.national_id = expected
                         try:
@@ -595,7 +596,7 @@ class BeIdCardHolderChecker(Checker):
                         except ValidationError as e:
                             msg = _("Failed to fix malformed "
                                     "SSIN '{got}' of '{obj}'.")
-                            raise ValidationError(msg, params=locals())
+                            raise ValidationError(msg, params=params)
                         obj.save()
 
 BeIdCardHolderChecker.activate()
