@@ -17,6 +17,7 @@ from django.db.models.query import QuerySet
 from django.contrib.contenttypes.models import ContentType
 
 from lino.core.utils import obj2str
+from lino.core.store import get_atomizer
 from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
@@ -500,11 +501,16 @@ class TableRequest(ActionRequest):
         return cells
 
     def row2text(self, fields, row, sums):
+        """Render the given `row` into a line of text, using the given list of
+        `fields` and collecting sums into `sums`.
+
+        """
         for i, fld in enumerate(fields):
             if fld.field is not None:
-                getter = fld.field._lino_atomizer.full_value_from_object
                 if True:
+                    sf = get_atomizer(row.__class__, fld.field, fld.field.name)
                     try:
+                        getter = sf.full_value_from_object
                         v = getter(row, self)
                     except Exception as e:
                         raise Exception("20150218 %s: %s" % (fld.field, e))
@@ -512,6 +518,7 @@ class TableRequest(ActionRequest):
                         yield "%s:\n%s" % (fld.field, e)
                         continue
                 else:
+                    getter = fld.field._lino_atomizer.full_value_from_object
                     v = getter(row, self)
                     
                 if v is None:

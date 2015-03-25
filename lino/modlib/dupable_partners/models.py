@@ -8,10 +8,10 @@ Database models for `lino.modlib.dupable_partners`.
 
 from lino.api import dd, _
 
-from lino.mixins.dupable import DupableWordBase, SimilarObjects
+from lino.mixins.dupable import PhoneticWordBase, SimilarObjects
 
 
-class Word(DupableWordBase):
+class Word(PhoneticWordBase):
     """Phonetic words for Partners."""
 
     class Meta:

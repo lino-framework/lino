@@ -787,6 +787,10 @@ class OneToOneStoreField(RelatedMixin, StoreField):
 
 
 def get_atomizer(model, fld, name):
+    """Return the atomizer for this database field. The atomizer is an
+    instance of a subclass of :class:`StoreField`.
+
+    """
     sf = getattr(fld, '_lino_atomizer', None)
     if sf is None:
         sf = create_atomizer(model, fld, name)

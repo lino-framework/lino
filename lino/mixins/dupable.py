@@ -5,24 +5,24 @@
 """Defines the :class:`Dupable` model mixin and related functionality
 to assist users in finding duplicate database records.
 
-Note that adding :class:`Dupable` to your model's base classes does
-not yet activate any functionality, it just declares that model as
-being dupable.  In order to activate verification, you must also
-define a model which implements :class:`DupableWordBase` and set
-:attr:`Dupable.dupable_word_model` to point to that model.  This is
-done by plugins like :mod:`lino.modlib.dupable_partners` or
-:mod:`lino_welfare.modlib.dupable_clients`
-
-The current implementation of the detection algorithm uses the `fuzzy
-<https://pypi.python.org/pypi/Fuzzy>`_ module. Read also Doug Hellmann
-about `Using Fuzzy Matching to Search by Sound with Python
+The current implementation uses a helper table with "phonetic words"
+and the `Double Metaphone
+<https://en.wikipedia.org/wiki/Metaphone#Double_Metaphone>`_ of the
+detection phonetic algorithm (from the `fuzzy
+<https://pypi.python.org/pypi/Fuzzy>`_ module).  Read also Doug
+Hellmann about `Using Fuzzy Matching to Search by Sound with Python
 <http://www.informit.com/articles/article.aspx?p=1848528>`_
+(2012-03-22).
 
 Note about the name: to dupe *somebody* means "to make a dupe of;
 deceive; delude; trick." (`reference.com
 <http://dictionary.reference.com/browse/dupe>`_), while to dupe
 *something* means to duplicate it (eventually in order to cheat
 somebody e.g. by making a cheap copy of a valuable object).
+
+Don't mix up this module with :mod:`lino.mixins.duplicable`.  Models
+are "duplicable" if users --sometimes-- *want* to duplicate some
+instance thereof.
 
 """
 
@@ -66,12 +66,14 @@ class CheckedSubmitInsert(SubmitInsert):
             ok(ar)
 
 
-class DupableWordBase(dd.Model):
+class PhoneticWordBase(dd.Model):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a
-    subclass of DupableWordBase. The subclass must define a field
-    :attr:`owner` which points to the Dupable and set the
-    :attr:`dupable_word_model`.
+    subclass of `PhoneticWordBase`.
+    The subclass must define a field
+    :attr:`owner` which points to the `Dupable`, and the `Dupable`'s
+    :attr:`dupable_word_model` must point to its subclass
+    of `PhoneticWordBase`.
 
     """
     class Meta:
@@ -106,6 +108,14 @@ class Dupable(dd.Model):
     This mixin is to be used on models for which there is a danger of
     having unwanted duplicate records. It is both for *avoiding* such
     duplicates on new records and for *detecting* existing duplicates.
+
+    Note that adding :class:`Dupable` to your model's base classes does
+    not yet activate any functionality, it just declares that model as
+    being dupable.  In order to activate verification, you must also
+    define a model which implements :class:`PhoneticWordBase` and set
+    :attr:`Dupable.dupable_word_model` to point to that model.  This is
+    done by plugins like :mod:`lino.modlib.dupable_partners` or
+    :mod:`lino_welfare.modlib.dupable_clients`
 
     """
     class Meta:
