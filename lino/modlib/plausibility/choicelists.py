@@ -150,6 +150,7 @@ class Checkers(dd.ChoiceList):
     item_class = Checker
     max_length = 50
     column_names = "name text"
+    show_values = False
 
     detail_layout = """
     value name text

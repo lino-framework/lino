@@ -193,9 +193,11 @@ def new_format_ssin(s):
 
 
 def unformat_ssin(ssin):
+    """Remove formatting characters from given SSIN."""
     ssin = ssin.replace(YEAR2000, '')
     ssin = ssin.replace(YEAR1900, '')
     ssin = ssin.replace(YEAR1800, '')
+    ssin = ssin.replace('.', '')
     ssin = ssin.replace(' ', '')
     return ssin
 

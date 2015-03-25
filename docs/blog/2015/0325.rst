@@ -17,3 +17,7 @@ Cannot save RichTextField when editing in own window
 ====================================================
 
 And it seems that I also managed to fix ticket :ticket:`131`. Nice.
+
+
+
+:func:`lino.utils.ssin.unformat_ssin` now also removes periods (".").
