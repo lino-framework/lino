@@ -596,7 +596,8 @@ class BeIdCardHolderChecker(Checker):
                         except ValidationError as e:
                             msg = _("Failed to fix malformed "
                                     "SSIN '{got}' of '{obj}'.")
-                            raise ValidationError(msg, params=params)
+                            msg = msg.format(**params)
+                            raise Warning(msg)
                         obj.save()
 
 BeIdCardHolderChecker.activate()
