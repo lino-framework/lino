@@ -565,7 +565,6 @@ class BeIdCardHolder(dd.Model):
         return objects, diffs
 
 
-
 class BeIdCardHolderChecker(Checker):
     """Invalid NISSes are not refused à priori using a ValidationError
     (see :attr:`BeIdCardHolder.national_id`), but this checker reports
@@ -587,11 +586,16 @@ class BeIdCardHolderChecker(Checker):
             else:
                 got = obj.national_id
                 if got != expected:
-                    msg = "Malformed SSIN '{got}' must be '{expected}'."
+                    msg = _("Malformed SSIN '{got}' must be '{expected}'.")
                     yield (True, msg.format(**locals()))
                     if fix:
                         obj.national_id = expected
-                        obj.full_clean()
+                        try:
+                            obj.full_clean()
+                        except ValidationError as e:
+                            msg = _("Failed to fix malformed "
+                                    "SSIN '{got}' of '{obj}'.")
+                            raise ValidationError(msg, params=locals())
                         obj.save()
 
 BeIdCardHolderChecker.activate()
