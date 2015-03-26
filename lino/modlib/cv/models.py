@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd, rt
 from lino import mixins
@@ -344,8 +345,8 @@ class StudiesByPerson(HistoryByPerson, Studies):
 class Status(mixins.BabelNamed):
 
     class Meta:
-        verbose_name = _("Status")
-        verbose_name_plural = _('Statuses')
+        verbose_name = pgettext("work experience", "Status")
+        verbose_name_plural = pgettext("work experience", 'Statuses')
 
 
 class Statuses(dd.Table):
@@ -515,14 +516,14 @@ class ExperiencesByFunction(Experiences):
 class ExperiencesByPerson(HistoryByPerson, Experiences):
     required = config.get_default_required()
     auto_fit_column_widths = True
-    column_names = "company start_date end_date function title \
-    status duration country remarks *"
+    column_names = "company country start_date end_date function \
+    status duration termination_reason remarks *"
 
 
 class ExperiencesByStatus(Experiences):
     master_key = 'status'
-    column_names = "company start_date end_date title sector \
-    function country remarks"
+    column_names = "company country start_date end_date title sector \
+    function regime remarks"
 
 
 class ExperiencesByRegime(Experiences):

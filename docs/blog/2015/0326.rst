@@ -1,0 +1,15 @@
+========================
+Thursday, March 26, 2015
+========================
+
+:mod:`setup_auto_event
+<lino_welfare.modlib.isip.mixins.ContractBase.setup_auto_event>` 
+always took the first coaching found, 
+because 
+:mod:`lino_welfare.modlib.pcsw.models.Client.get_coachings>` 
+
+To understand, fix and test this, I started a new document
+:ref:`welfare.tour.autoevents` (using parts from
+:ref:`welfare.tested.integ`)
+
+TODO: add screenshots to this document.
