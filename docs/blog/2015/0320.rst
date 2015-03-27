@@ -28,7 +28,7 @@ Aktenkontrollliste" instead of "Meine Plausibilitätsprobleme".
 - :class:`lino.modlib.plausibility.models.CheckPlausibility`
 - :class:`lino.modlib.plausibility.choicelists.Checker`
 - :class:`lino.modlib.plausibility.choicelists.Checkers`
-- :manage:`check_plausibility`
+- ``check_plausibility`` (later renamed to :manage:`checkdata`
 
 
 Added new utility function :func:`lino.core.utils.gfk2lookup`. This

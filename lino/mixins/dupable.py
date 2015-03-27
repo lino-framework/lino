@@ -48,7 +48,7 @@ class CheckedSubmitInsert(SubmitInsert):
             ar2.set_response(close_window=True)
             # logger.info("20140512 CheckedSubmitInsert")
 
-        qs = obj.find_similar_instances(4)
+        qs = list(obj.find_similar_instances(4))
         if len(qs) > 0:
             msg = _("There are %d similar %s:") % (
                 len(qs), obj._meta.verbose_name_plural)
@@ -58,7 +58,7 @@ class CheckedSubmitInsert(SubmitInsert):
             msg += '<br/>\n'
             msg += _("Are you sure you want to create a new "
                      "%(model)s named %(name)s?") % dict(
-                model=qs.model._meta.verbose_name,
+                model=obj._meta.verbose_name,
                 name=obj.get_full_name())
 
             ar.confirm(ok, msg)
@@ -194,11 +194,13 @@ class Dupable(dd.Model):
         return map(self.dupable_word_model.reduce_word, s.split())
 
     def find_similar_instances(self, limit=None, **kwargs):
-        """If `limit` is specified, we never want to see more than `limit`
-        duplicates.
+        """Return a queryset or yield a list of similar objects.
+
+        If `limit` is specified, we never want to see more than
+        `limit` duplicates.
 
         Note that an overridden version of this method might return a
-        list or tuple instead of a Django queryset.
+        list or generator instead of a Django queryset.
 
         """
         if self.dupable_word_model is None:

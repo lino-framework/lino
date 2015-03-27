@@ -47,10 +47,11 @@ class Checker(dd.Choice):
     help_text = None
 
     def __init__(self):
-        if isinstance(self.model, basestring):
-            value = self.model + '.' + self.__class__.__name__
-        else:
-            value = self.model.__name__ + '.' + self.__class__.__name__
+        value = self.__module__ + '.' + self.__class__.__name__
+        # if isinstance(self.model, basestring):
+        #     value = self.model + '.' + self.__class__.__name__
+        # else:
+        #     value = self.model.__name__ + '.' + self.__class__.__name__
         if self.verbose_name is None:
             text = value
         else:
@@ -86,13 +87,12 @@ class Checker(dd.Choice):
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))
             qs.delete()
 
-        fixable = False
         done = []
         todo = []
-        for rep, msg in self.get_plausibility_problems(obj, fix):
-            if rep:
-                fixable = True
-            if fix and rep:
+        for fixable, msg in self.get_plausibility_problems(obj, fix):
+            if fixable:
+                msg = u"(\u2605) " + unicode(msg)
+            if fixable and fix:
                 done.append(msg)
             else:
                 todo.append(msg)
@@ -104,8 +104,7 @@ class Checker(dd.Choice):
                 lang = user.language
             with translation.override(lang):
                 msg = '\n'.join([unicode(s) for s in todo])
-            prb = Problem(owner=obj, message=msg, checker=self,
-                          fixable=fixable, user=user)
+            prb = Problem(owner=obj, message=msg, checker=self, user=user)
             prb.full_clean()
             prb.save()
         return (todo, done)
@@ -148,7 +147,8 @@ class Checkers(dd.ChoiceList):
     verbose_name = _("Plausibility checker")
     verbose_name_plural = _("Plausibility checkers")
     item_class = Checker
-    max_length = 50
+    max_length = 250
+    # e.g. "lino_welfare.modlib.pcsw.models.ClientCoachingsChecker"
     column_names = "name text"
     show_values = False
 

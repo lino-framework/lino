@@ -327,10 +327,10 @@ class AbstractTable(actors.Actor):
     """
 
     cell_edit = True
-    """
-    `True` to use ExtJS CellSelectionModel, `False` to use RowSelectionModel.
-    When True, the users cannot select multiple rows.
-    When False, the users cannot select and edit individual cells.
+    """`True` (default) to use ExtJS CellSelectionModel, `False` to use
+    RowSelectionModel.  When `True`, the users cannot select multiple
+    rows.  When `False`, the users cannot edit individual cells using
+    the :kbd:`F2` key..
 
     """
 

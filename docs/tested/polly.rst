@@ -9,12 +9,10 @@ plugin using :ref:`polly`.
 .. How to test only this document:
   $ python setup.py test -s tests.DocsTests.test_polly
 
-..  
-    >>> from __future__ import print_function
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.polly.settings.doctests'
-
+>>> from __future__ import print_function
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+...    'lino.projects.polly.settings.doctests'
 >>> from lino.api.doctest import *
     
 This document uses the :mod:`lino.projects.polly` test database:

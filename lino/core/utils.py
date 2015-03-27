@@ -162,14 +162,25 @@ def sorted_models_list():
     return models_list
 
 
-def models_by_base(base):
+def models_by_base(base, toplevel_only=False):
     """Yields a list of installed models that are subclass of the given
     base class.
 
     """
+    found = []
     for m in models.get_models():
         if issubclass(m, base):
-            yield m
+            add = True
+            if toplevel_only:
+                for i, old in enumerate(found):
+                    if issubclass(m, old):
+                        add = False
+                    elif issubclass(old, m):
+                        found[i] = m
+                        add = False
+            if add:
+                found.append(m)
+    return found
 
 #~ models_by_abc = models_by_base
 

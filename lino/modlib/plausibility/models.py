@@ -10,8 +10,6 @@ Database models for `lino.modlib.plausibility`.
 
 from __future__ import unicode_literals, print_function
 
-from clint.textui import puts, progress
-
 from django.db import models
 
 from lino.core.utils import gfk2lookup
@@ -21,6 +19,78 @@ from lino.modlib.users.mixins import UserAuthored
 from lino.api import dd, rt, _
 
 from .choicelists import Checker, Checkers
+
+
+class UpdateProblem(dd.Action):
+    icon_name = 'bell'
+    label = _("Check plausibility")
+    combo_group = "plausibility"
+    fix_them = False
+    sort_index = 90
+    # custom_handler = True
+    # select_rows = False
+    default_format = None
+
+    def run_from_ui(self, ar, fix=None):
+        if fix is None:
+            fix = self.fix_them
+        Problem = rt.modules.plausibility.Problem
+        print(20150327, ar.selected_rows)
+        for obj in ar.selected_rows:
+            assert isinstance(obj, Problem)
+            chk = obj.checker
+            owner = obj.owner
+            # not tested: what happens if the following deletes
+            # another obj from selected_rows?
+            qs = Problem.objects.filter(
+                **gfk2lookup(Problem.owner, owner, checker=chk))
+            qs.delete()
+            chk.update_problems(owner, False, fix)
+        ar.set_response(refresh_all=True)
+
+
+class FixProblem(UpdateProblem):
+    label = _("Fix plausibility problems")
+    fix_them = True
+    sort_index = 91
+
+
+class UpdateProblemsByController(dd.Action):
+    """Updates the list of plausibility problems for a given database
+    object.
+
+    This action is automatically being installed on each model for
+    which there is at least one active :class:`Checker
+    <lino.modlib.plausibility.choicelists.Checker>`.
+
+    """
+    icon_name = 'bell'
+    label = _("Check plausibility")
+    combo_group = "plausibility"
+    fix_them = False
+
+    def __init__(self, model):
+        self.model = model
+        super(UpdateProblemsByController, self).__init__()
+
+    def run_from_ui(self, ar, fix=None):
+        if fix is None:
+            fix = self.fix_them
+        Problem = rt.modules.plausibility.Problem
+        gfk = Problem.owner
+        checkers = get_checkable_models()[self.model]
+        for obj in ar.selected_rows:
+            assert isinstance(obj, self.model)
+            qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
+            qs.delete()
+            for chk in checkers:
+                chk.update_problems(obj, False, fix)
+        ar.set_response(refresh=True)
+
+
+class FixProblemsByController(UpdateProblemsByController):
+    label = _("Fix plausibility problems")
+    fix_them = True
 
 
 class Problem(Controllable, UserAuthored):
@@ -40,11 +110,6 @@ class Problem(Controllable, UserAuthored):
        The message text. This is a concatenation of all messages that
        were yeld by the :attr:`checker`.
 
-    .. attribute:: fixable
-
-        Whether this problem is fixable, i.e. can be repaired
-        automatically.
-
     .. attribute:: user
 
        The :class:`user <lino.modlib.users.models.User>` reponsible
@@ -58,13 +123,18 @@ class Problem(Controllable, UserAuthored):
     class Meta:
         verbose_name = _("Plausibility problem")
         verbose_name_plural = _("Plausibility problems")
+        ordering = ['owner_type', 'owner_id', 'checker']
 
     # problem_type = ProblemTypes.field()
     checker = Checkers.field()
     # severity = Severities.field()
     # feedback = Feedbacks.field(blank=True)
     message = models.CharField(_("Message"), max_length=250)
-    fixable = models.BooleanField(_("Fixable"), default=False)
+    # fixable = models.BooleanField(_("Fixable"), default=False)
+
+    update_problem = UpdateProblem()
+    fix_problem = FixProblem()
+
 
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 Problem.set_widget_options('checker', width=10)
@@ -75,9 +145,10 @@ Problem.set_widget_options('message', width=50)
 class Problems(dd.Table):
     "The base table for :class:`Problem` objects."
     model = 'plausibility.Problem'
-    column_names = "user owner message fixable checker *"
+    column_names = "user owner message #fixable checker *"
     auto_fit_column_widths = True
     editable = False
+    cell_edit = False
     parameters = dict(
         user=models.ForeignKey(
             'users.User', blank=True, null=True,
@@ -103,7 +174,7 @@ class AllProblems(Problems):
 
 class ProblemsByOwner(Problems):
     master_key = 'owner'
-    column_names = "message checker user fixable *"
+    column_names = "message checker user #fixable *"
 
 
 class ProblemsByChecker(Problems):
@@ -115,7 +186,7 @@ class ProblemsByChecker(Problems):
     """
     master_key = 'checker'
 
-    column_names = "user owner message fixable *"
+    column_names = "user owner message #fixable *"
 
     @classmethod
     def get_master_instance(cls, ar, model, pk):
@@ -149,53 +220,16 @@ class MyProblems(Problems):
             yield ar.href_to_request(sar, msg)
 
 
-class UpdateProblems(dd.Action):
-    """Updates the list of plausibility problems for a given database
-    object.
-
-    This action is automatically being installed on each model for
-    which there is at least one active :class:`Checker
-    <lino.modlib.plausibility.choicelists.Checker>`.
-
-    """
-    icon_name = 'bell'
-    label = _("Check plausibility")
-    combo_group = "plausibility"
-    fix_them = False
-
-    def __init__(self, model):
-        self.model = model
-        super(UpdateProblems, self).__init__()
-
-    def run_from_ui(self, ar, fix=None):
-        if fix is None:
-            fix = self.fix_them
-        Problem = rt.modules.plausibility.Problem
-        gfk = Problem.owner
-        checkers = get_checkable_models()[self.model]
-        for obj in ar.selected_rows:
-            assert isinstance(obj, self.model)
-            qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
-            qs.delete()
-            for chk in checkers:
-                chk.update_problems(obj, False, fix)
-        ar.set_response(refresh=True)
-
-
-class FixProblems(UpdateProblems):
-    label = _("Fix plausibility problems")
-    fix_them = True
-
-
 @dd.receiver(dd.pre_analyze)
 def set_plausibility_actions(sender, **kw):
-    """Installs the :class:`UpdateProblems` action on every model for
-    which there is at least one Checker
+    """Installs the :class:`UpdateProblemsByController` action on every
+    model for which there is at least one Checker
 
     """
     for m in get_checkable_models().keys():
-        m.define_action(check_plausibility=UpdateProblems(m))
-        m.define_action(fix_problems=FixProblems(m))
+        assert m is not Problem
+        m.define_action(check_plausibility=UpdateProblemsByController(m))
+        m.define_action(fix_problems=FixProblemsByController(m))
 
 
 def get_checkable_models(*args):
@@ -209,32 +243,9 @@ def get_checkable_models(*args):
         selection = Checkers.objects()
     checkable_models = dict()
     for chk in selection:
-        for m in rt.models_by_base(chk.model):
+        for m in rt.models_by_base(chk.model, toplevel_only=True):
             lst = checkable_models.setdefault(m, [])
             lst.append(chk)
     return checkable_models
 
 
-def check_plausibility(args=[], fix=True):
-    """Called by :manage:`check_plausibility`. See there."""
-    Problem = rt.modules.plausibility.Problem
-    mc = get_checkable_models(*args)
-    for m, checkers in mc.items():
-        ct = rt.modules.contenttypes.ContentType.objects.get_for_model(m)
-        Problem.objects.filter(owner_type=ct).delete()
-        name = unicode(m._meta.verbose_name_plural)
-        qs = m.objects.all()
-        msg = _("Running {0} plausibility checkers on {1} {2}...").format(
-            len(checkers), qs.count(), name)
-        puts(msg)
-        sums = [0, 0, name]
-        for obj in progress.bar(qs):
-            for chk in checkers:
-                todo, done = chk.update_problems(obj, False, fix)
-                sums[0] += len(todo)
-                sums[1] += len(done)
-        if sums[0] or sums[1]:
-            msg = _("Found {0} and fixed {1} plausibility problems in {2}.")
-            puts(msg.format(*sums))
-        else:
-            puts(_("No plausibility problems found in {0}.").format(name))

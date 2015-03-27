@@ -15,3 +15,4 @@ which are part of the test suite.
    integer_pk/index
    float2decimal/index
    cv
+   core_utils

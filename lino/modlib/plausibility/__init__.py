@@ -38,8 +38,8 @@ table to the `detail_layout` of any model.
 
     models
     choicelists
-    fixtures.demo2
-    management.commands.check_plausibility
+    fixtures.checkdata
+    management.commands.checkdata
 
 """
 
