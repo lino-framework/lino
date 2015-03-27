@@ -2,14 +2,24 @@
 Thursday, March 26, 2015
 ========================
 
-:mod:`setup_auto_event
-<lino_welfare.modlib.isip.mixins.ContractBase.setup_auto_event>` 
-always took the first coaching found, 
-because 
-:mod:`lino_welfare.modlib.pcsw.models.Client.get_coachings>` 
+With Mathieu: :mod:`setup_auto_event
+<lino_welfare.modlib.isip.mixins.ContractBase.setup_auto_event>`
+always took the first coaching found, because
+:mod:`lino_welfare.modlib.pcsw.models.Client.get_coachings>` ignored
+the `period` when there were additional filter parameters.
 
 To understand, fix and test this, I started a new document
 :ref:`welfare.tour.autoevents` (using parts from
 :ref:`welfare.tested.integ`)
 
 TODO: add screenshots to this document.
+
+
+With Gerd: There was a bug in
+:class:`lino.modlib.addresses.mixins.AddressOwnerChecker`. I extended
+:mod:`lino.projects.min2.tests.test_addresses` in order to understand,
+fix and test this.
+
+With Pierre: Added new setting :attr:`autorefresh_seconds
+<lino.modlib.extjs.Plugin.autorefresh_seconds>`.  Added new button
+"refresh" (i.e. a manual refresh without refreshing the browser)

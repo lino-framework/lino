@@ -305,12 +305,14 @@ Lino.insert_subst_user = function(p){
 
 Lino.login_window = null;
 
+{% if settings.SITE.plugins.extjs.autorefresh_seconds -%}
 Lino.autorefresh = function() {
   if (Lino.current_window == null) {
       Lino.viewport.refresh();
-      Lino.autorefresh.defer(10000);
+      Lino.autorefresh.defer({{settings.SITE.plugins.extjs.autorefresh_seconds*1000}});
   }
 }
+{%- endif %}
 
 Lino.show_login_window = function(on_login) {
   //~ console.log('20121103 show_login_window',arguments);

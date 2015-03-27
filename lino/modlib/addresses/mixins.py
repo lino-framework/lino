@@ -95,41 +95,56 @@ class AddressOwnerChecker(Checker):
         Address = rt.modules.addresses.Address
         qs = Address.objects.filter(partner=obj)
         num = qs.count()
-        kw = dict()
-        for fldname in Address.ADDRESS_FIELDS:
-            v = getattr(obj, fldname)
-            if v:
-                kw[fldname] = v
-        if num > 1:
-            return
-        if num == 1:
+        if num == 0:
+            kw = dict()
+            for fldname in Address.ADDRESS_FIELDS:
+                v = getattr(obj, fldname)
+                if v:
+                    kw[fldname] = v
+            if kw:
+                yield (True,
+                       _("Owner with address, but no address record."))
+                if fix:
+                    kw.update(partner=obj, primary=True)
+                    kw.update(address_type=AddressTypes.official)
+                    addr = Address(**kw)
+                    addr.full_clean()
+                    addr.save()
+        elif num == 1:
             addr = qs[0]
+            # check whether it is the same address than the one
+            # specified on AddressOwner
+            diffs = {}
+            for k in Address.ADDRESS_FIELDS:
+                my = getattr(addr, k)
+                other = getattr(obj, k)
+                if my != other:
+                    diffs[k] = (my, other)
+            if addr.primary and not diffs:
+                return  # that's the normal case. no problem.
             if not addr.primary:
-                # check whether it is the same address than the one
-                # specified on AddressOwner
-                diff = {}
-                for k, other in kw.items():
-                    my = getattr(addr, k)
-                    if my != other:
-                        diff[k] = (my, other)
-                if len(diff) == 0:
-                    yield (True, _("Unique address is not marked primary."))
-                    if fix:
-                        addr.primary = True
-                        addr.full_clean()
-                        addr.save()
-                    return
-                # else:
-                #     dd.logger.info("20150321, diff is %s", diff)
-                    
-        if kw:
-            yield (True,
-                   _("Non-empty address fields, but no address record."))
+                yield (True, _("Unique address is not marked primary."))
+                if fix:
+                    addr.primary = True
+            if addr.primary and len(diffs):
+                msg = _("Primary address differs from owner address ({0}).")
+                diffstext = [
+                    _("{0}:{1}->{2}").format(k, *v) for k, v in diffs.items()]
+                msg = msg.format(', '.join(diffstext))
+                yield (True, msg)
+                if fix:
+                    for k, v in diffs.items():
+                        (my, other) = v
+                        setattr(addr, k, other)
             if fix:
-                kw.update(partner=obj, primary=True)
-                kw.update(address_type=AddressTypes.official)
-                addr = Address(**kw)
                 addr.full_clean()
                 addr.save()
+        else:
+            qs = qs.filter(primary=True)
+            num = qs.count()
+            if num == 0:
+                yield (False, _("Multiple addresses, but none is primary."))
+            elif num != 1:
+                yield (False, _("Multiple primary addresses."))
 
 AddressOwnerChecker.activate()

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-03-26 09:29+0200\n"
-"PO-Revision-Date: 2015-03-26 09:35+0300\n"
+"PO-Revision-Date: 2015-03-26 11:25+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -776,7 +776,7 @@ msgstr "D'accord ?"
 
 #: lino/mixins/printable.py:533
 msgid "Edit Print Template"
-msgstr ""
+msgstr "Modifier le modèle d'impression"
 
 #: lino/mixins/printable.py:585
 msgid ""
@@ -795,7 +795,7 @@ msgstr "%s a été créé"
 
 #: lino/mixins/printable.py:637
 msgid "This will discard all changes in the generated file."
-msgstr ""
+msgstr "Ceci va écraser toute modification manuelle dans le document généré."
 
 #: lino/mixins/printable.py:660
 msgid "Template"
@@ -4596,16 +4596,14 @@ msgid "Stepdaughter"
 msgstr "Belle-fille"
 
 #: lino/modlib/humanlinks/models.py:104 lino/modlib/humanlinks/models.py:105
-#, fuzzy
 msgctxt "male"
 msgid "Brother"
-msgstr "Mère"
+msgstr "Frère"
 
 #: lino/modlib/humanlinks/models.py:104 lino/modlib/humanlinks/models.py:105
-#, fuzzy
 msgctxt "female"
 msgid "Sister"
-msgstr "Signalétique"
+msgstr "Sœur"
 
 #: lino/modlib/humanlinks/models.py:110 lino/modlib/humanlinks/models.py:111
 #, fuzzy
@@ -4614,29 +4612,25 @@ msgid "Cousin"
 msgstr "Comptabilité"
 
 #: lino/modlib/humanlinks/models.py:110 lino/modlib/humanlinks/models.py:111
-#, fuzzy
 msgctxt "female"
 msgid "Cousin"
-msgstr "Comptabilité"
+msgstr "Cousine"
 
 #: lino/modlib/humanlinks/models.py:116
-#, fuzzy
 msgid "Uncle"
-msgstr "une fois"
+msgstr "Oncle"
 
 #: lino/modlib/humanlinks/models.py:116
-#, fuzzy
 msgid "Aunt"
-msgstr "au "
+msgstr "Tante"
 
 #: lino/modlib/humanlinks/models.py:117
 msgid "Nephew"
 msgstr ""
 
 #: lino/modlib/humanlinks/models.py:117
-#, fuzzy
 msgid "Niece"
-msgstr "une fois"
+msgstr "Nièce"
 
 #: lino/modlib/humanlinks/models.py:121 lino/modlib/humanlinks/models.py:122
 msgctxt "male"

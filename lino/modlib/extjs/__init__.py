@@ -65,6 +65,13 @@ class Plugin(Plugin):
 
     """
 
+    autorefresh_seconds = 60
+    """Number of seconds to wait between two refreshes when autorefresh is
+    activated. Default is 60. Set this to 0 in order to deactivate
+    the autorefresh button.
+
+    """
+
     media_root = None
     """
     Path to the ExtJS root directory.  Only used when

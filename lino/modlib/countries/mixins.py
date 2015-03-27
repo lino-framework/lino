@@ -164,8 +164,8 @@ class AddressLocation(CountryRegionCity):
     
     .. attribute:: addess_column
 
-    Virtual field which returns the location as a comma-separated
-    one-line string.
+        Virtual field which returns the location as a comma-separated
+        one-line string.
 
     """
     class Meta:
