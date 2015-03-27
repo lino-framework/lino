@@ -121,11 +121,11 @@ class QuickTest(RemoteAuthTestCase):
         assert_check(
             doe, "Primary address differs from owner address "
             "(city:Eupen->None, zip_code:4700->).")
-
-        # repair it
+        # Lino cannot repair this automatically
         doe.check_plausibility(ar, fix=True)
         self.assertEqual(Address.objects.count(), 1)
+        self.assertEqual(doe.city, None)
         addr = doe.get_primary_address()
-        self.assertEqual(addr.city, None)
+        self.assertEqual(addr.city, eupen)
         self.assertEqual(addr.primary, True)
         

@@ -1,0 +1,23 @@
+======================
+Friday, March 27, 2015
+======================
+
+Continued on 
+:class:`lino.modlib.addresses.mixins.AddressOwnerChecker` and
+:mod:`lino.projects.min2.tests.test_addresses`.
+
+With Pierre: Added new setting :attr:`autorefresh_seconds
+<lino.modlib.extjs.Plugin.autorefresh_seconds>`.  Added new button
+"refresh" (i.e. a manual refresh without refreshing the browser)
+
+
+
+
+More ideas:
+
+- models_by_base : add a parameter to return only "top-level models"
+  and use this for getting the models on which to run a
+  Checker. Because e.g. AddressChecker does needs to run only on
+  Partner, not also on Person, Company, Client etc.
+
+- name Checker using their full Python name, not the model

@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.api import rt, dd
 from lino.utils.xmlgen.html import E
 from lino.core.utils import ChangeWatcher
+from lino.modlib.plausibility.choicelists import Checker
 
 from .choicelists import AddressTypes
 
@@ -46,8 +47,12 @@ class AddressOwner(dd.Model):
             pass
 
     def sync_primary_address(self, request):
-        Address = rt.modules.addresses.Address
         watcher = ChangeWatcher(self)
+        self.sync_primary_address_()
+        watcher.send_update(request)
+
+    def sync_primary_address_(self):
+        Address = rt.modules.addresses.Address
         kw = dict(partner=self, primary=True)
         try:
             pa = Address.objects.get(**kw)
@@ -59,7 +64,6 @@ class AddressOwner(dd.Model):
                 fld = self._meta.get_field(k)
                 setattr(self, k, fld.get_default())
         self.save()
-        watcher.send_update(request)
 
     def get_overview_elems(self, ar):
         elems = super(AddressOwner, self).get_overview_elems(ar)
@@ -71,8 +75,6 @@ class AddressOwner(dd.Model):
         elems.append(E.p(btn))
         return elems
     
-from lino.modlib.plausibility.choicelists import Checker
-
 
 class AddressOwnerChecker(Checker):
     """Checks for the following plausibility problems:
@@ -110,41 +112,46 @@ class AddressOwnerChecker(Checker):
                     addr = Address(**kw)
                     addr.full_clean()
                     addr.save()
-        elif num == 1:
-            addr = qs[0]
-            # check whether it is the same address than the one
-            # specified on AddressOwner
+            return
+    
+        def getdiffs(obj, addr):
             diffs = {}
             for k in Address.ADDRESS_FIELDS:
                 my = getattr(addr, k)
                 other = getattr(obj, k)
                 if my != other:
                     diffs[k] = (my, other)
-            if addr.primary and not diffs:
-                return  # that's the normal case. no problem.
-            if not addr.primary:
-                yield (True, _("Unique address is not marked primary."))
-                if fix:
-                    addr.primary = True
-            if addr.primary and len(diffs):
-                msg = _("Primary address differs from owner address ({0}).")
-                diffstext = [
-                    _("{0}:{1}->{2}").format(k, *v) for k, v in diffs.items()]
-                msg = msg.format(', '.join(diffstext))
-                yield (True, msg)
-                if fix:
-                    for k, v in diffs.items():
-                        (my, other) = v
-                        setattr(addr, k, other)
-            if fix:
-                addr.full_clean()
-                addr.save()
+            return diffs
+
+        if num == 1:
+            addr = qs[0]
+            # check whether it is the same address than the one
+            # specified on AddressOwner
+            diffs = getdiffs(obj, addr)
+            if not diffs:
+                if not addr.primary:
+                    yield (True, _("Unique address is not marked primary."))
+                    if fix:
+                        addr.primary = True
+                        addr.full_clean()
+                        addr.save()
+                return
         else:
+            addr = None
             qs = qs.filter(primary=True)
             num = qs.count()
             if num == 0:
                 yield (False, _("Multiple addresses, but none is primary."))
-            elif num != 1:
+            elif num == 1:
+                addr = qs[0]
+                diffs = getdiffs(obj, addr)
+            else:
                 yield (False, _("Multiple primary addresses."))
+        if addr and diffs:
+            msg = _("Primary address differs from owner address ({0}).")
+            diffstext = [
+                _("{0}:{1}->{2}").format(k, *v) for k, v in diffs.items()]
+            msg = msg.format(', '.join(diffstext))
+            yield (False, msg)
 
 AddressOwnerChecker.activate()

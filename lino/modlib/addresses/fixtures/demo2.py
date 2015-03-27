@@ -20,9 +20,17 @@ def objects():
     STREETS = Cycler(streets_of_eupen())
     TYPES = Cycler(AddressTypes.objects())
 
+    def create_addr_from_owner(o, **kw):
+        kw.update(partner=o)
+        for k in Address.ADDRESS_FIELDS:
+            kw[k] = getattr(o, k)
+        return Address(**kw)
+
     nr = 1
     for p in Partner.objects.filter(city=eupen):
         if nr % 3:
+            yield create_addr_from_owner(
+                p, primary=True, address_type=AddressTypes.official)
             kw = dict(partner=p)
             kw.update(address_type=TYPES.pop())
             kw.update(street=STREETS.pop())
