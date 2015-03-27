@@ -38,8 +38,7 @@ from optparse import make_option
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db.utils import IntegrityError
-
+from django.db.utils import IntegrityError, OperationalError
 from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
 #~ from django.core.management.sql import sql_reset
@@ -91,7 +90,7 @@ class Command(BaseCommand):
             try:
                 cursor.execute(sql)
                 hope = True
-            except IntegrityError as e:
+            except (IntegrityError, OperationalError) as e:
                 pending.append(sql)
                 errors.append(str(e))
         if not hope:
