@@ -92,7 +92,7 @@ class Command(BaseCommand):
                 hope = True
             except (IntegrityError, OperationalError) as e:
                 pending.append(sql)
-                errors.append(str(e))
+                errors.append(e)
         if not hope:
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
