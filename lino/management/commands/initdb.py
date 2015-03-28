@@ -96,7 +96,8 @@ class Command(BaseCommand):
         if not hope:
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
-                msg += "\n%s (%s)" % (sql, errors[i])
+                e = errors[i]
+                msg += "\n%s : %s (%s)" % (e.__class__.__name__, sql, e)
             raise Exception(msg)
         return pending
 

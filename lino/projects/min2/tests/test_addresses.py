@@ -78,7 +78,8 @@ class QuickTest(RemoteAuthTestCase):
 
         assert_check(doe, '')  # No problems yet since not checked
         doe.check_plausibility(ar, fix=False)
-        assert_check(doe, 'Owner with address, but no address record.')
+        assert_check(
+            doe, '(\u2605) Owner with address, but no address record.')
 
         addr = doe.get_primary_address()
         self.assertEqual(addr, None)
@@ -97,7 +98,7 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(Address.objects.count(), 1)
 
         doe.check_plausibility(ar, fix=False)
-        assert_check(doe, 'Unique address is not marked primary.')
+        assert_check(doe, '(\u2605) Unique address is not marked primary.')
 
         Address.objects.all().delete()
         self.assertEqual(Address.objects.count(), 0)
