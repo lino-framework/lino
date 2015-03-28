@@ -97,7 +97,7 @@ class Command(BaseCommand):
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
                 e = errors[i]
-                msg += "\n%s : %s (%s)" % (e.__class__.__name__, sql, e)
+                msg += "\n%s :\n  %s\n  %s" % (e.__class__, sql, e)
             raise Exception(msg)
         return pending
 
