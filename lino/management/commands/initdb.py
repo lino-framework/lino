@@ -141,8 +141,9 @@ Are you sure (y/n) ?""" % dbname):
             sql_list = []
             conn = connections[using]
 
-            sql = sql_flush(no_style(), conn, only_django=False)
-            sql_list.extend(sql)
+            # adds a "DELETE FROM tablename;" for each table
+            # sql = sql_flush(no_style(), conn, only_django=False)
+            # sql_list.extend(sql)
 
             if AFTER17:
                 # django.core.management.base.CommandError: App

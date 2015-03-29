@@ -54,3 +54,17 @@ success, but the error report is more detailed::
       DROP TABLE `declarations_declaration`;
       (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
     INFO Done manage.py initdb_demo --traceback --noinput (PID 22830)
+
+
+
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min2.settings.demo'
+>>> from django.core.management.sql import sql_delete, sql_flush
+>>> from django.core.management.color import no_style
+>>> from django.db import connections, transaction, DEFAULT_DB_ALIAS
+>>> conn = connections[DEFAULT_DB_ALIAS]
+>>> sql_delete('contacts', no_style(), conn)
+[]
+>>> sql_flush(no_style(), conn, only_django=False)  # doctest: +ELLIPSIS
+[u'DELETE FROM "addresses_address";', ... u'DELETE FROM "users_user";']
+
