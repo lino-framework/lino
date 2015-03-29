@@ -106,7 +106,8 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEqual(addr, None)
 
         doe.check_plausibility(ar, fix=False)
-        assert_check(doe, 'Owner with address, but no address record.')
+        assert_check(
+            doe, '(\u2605) Owner with address, but no address record.')
 
         doe.check_plausibility(ar, fix=True)
         assert_check(doe, '')  # problem has been fixed
