@@ -54,7 +54,7 @@ from atelier.utils import confirm
 
 USE_SQLDELETE = True
 
-USE_DROP_CREATE = False  # tried, but doesn't seem to work
+USE_DROP_CREATE_DB = True  # tried, but doesn't seem to work
 """
 http://stackoverflow.com/questions/3414247/django-drop-all-tables-from-database
 http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
@@ -130,12 +130,13 @@ Are you sure (y/n) ?""" % dbname):
         dd.logger.info(
             "`initdb %s` started on database %s.", ' '.join(args), dbname)
 
-        if USE_DROP_CREATE and engine == 'django.db.backends.mysql':
-            # TODO: this works only for mysql
+        if USE_DROP_CREATE_DB and engine == 'django.db.backends.mysql':
+            # works only for mysql
             from django.db import connection
             cursor = connection.cursor()
             cursor.execute("DROP DATABASE %s;" % dbname)
             cursor.execute("CREATE DATABASE %s charset 'utf8';" % dbname)
+            del connections[DEFAULT_DB_ALIAS]
 
         else:
 
