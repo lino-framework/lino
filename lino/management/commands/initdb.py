@@ -95,8 +95,8 @@ class Command(BaseCommand):
                 errors.append(e)
         if not hope:
             # a temporary last attempt: run them all in one statement
-            sql = "SET foreign_key_checks=0;" + ';'.join(sql_list)
-            cursor.execute(sql)
+            # sql = "SET foreign_key_checks=0;" + ';'.join(sql_list)
+            # cursor.execute(sql)
 
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
@@ -171,9 +171,12 @@ Are you sure (y/n) ?""" % dbname):
             if len(sql_list):
                 with conn.constraint_checks_disabled():
                     cursor = conn.cursor()
-                    pending = self.try_sql(cursor, sql_list)
-                    while len(pending):
-                        pending = self.try_sql(cursor, pending)
+                    for sql in sql_list:
+                        cursor.execute(sql)
+
+                    # pending = self.try_sql(cursor, sql_list)
+                    # while len(pending):
+                    #     pending = self.try_sql(cursor, pending)
 
                 # conn.disable_constraint_checking()
                 # try:
