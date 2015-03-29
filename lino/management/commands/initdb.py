@@ -94,8 +94,9 @@ class Command(BaseCommand):
                 pending.append(sql)
                 errors.append(e)
         if not hope:
-            # a last attempt: run them all in one statement
-            cursor.execute(';'.join(sql_list))
+            # a temporary last attempt: run them all in one statement
+            sql = "SET foreign_key_checks=0;" + ';'.join(sql_list)
+            cursor.execute(sql)
 
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
