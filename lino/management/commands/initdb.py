@@ -168,7 +168,7 @@ Are you sure (y/n) ?""" % dbname):
             #~ print sql_list
 
             if len(sql_list):
-                with connection.constraint_checks_disabled():
+                with conn.constraint_checks_disabled():
                     cursor = conn.cursor()
                     pending = self.try_sql(cursor, sql_list)
                     while len(pending):
