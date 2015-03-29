@@ -1,0 +1,6 @@
+======================
+Sunday, March 29, 2015
+======================
+
+Still trying to understand what's happening in :manage:`initdb`
+with InnoDB.

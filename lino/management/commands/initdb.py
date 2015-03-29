@@ -82,10 +82,11 @@ class Command(BaseCommand):
             'Defaults to the "default" database.'),
     )
 
-    def try_sql(self, cursor, sql_list):
+    def try_sql(self, conn, sql_list):
         hope = False
         pending = []
         errors = []
+        cursor = conn.cursor()
         for sql in sql_list:
             try:
                 cursor.execute(sql)
@@ -170,13 +171,12 @@ Are you sure (y/n) ?""" % dbname):
 
             if len(sql_list):
                 with conn.constraint_checks_disabled():
-                    cursor = conn.cursor()
-                    for sql in sql_list:
-                        cursor.execute(sql)
+                    # for sql in sql_list:
+                    #     cursor.execute(sql)
 
-                    # pending = self.try_sql(cursor, sql_list)
-                    # while len(pending):
-                    #     pending = self.try_sql(cursor, pending)
+                    pending = self.try_sql(conn, sql_list)
+                    while len(pending):
+                        pending = self.try_sql(conn, pending)
 
                 # conn.disable_constraint_checking()
                 # try:
