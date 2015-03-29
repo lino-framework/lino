@@ -94,6 +94,9 @@ class Command(BaseCommand):
                 pending.append(sql)
                 errors.append(e)
         if not hope:
+            # a last attempt: run them all in one statement
+            cursor.execute(';'.join(sql))
+
             msg = "%d pending SQL statements failed:" % len(pending)
             for i, sql in enumerate(pending):
                 e = errors[i]
@@ -164,17 +167,18 @@ Are you sure (y/n) ?""" % dbname):
             #~ print sql_list
 
             if len(sql_list):
+                conn.disable_constraint_checking()
                 try:
                     cursor = conn.cursor()
-                    conn.disable_constraint_checking()
                     pending = self.try_sql(cursor, sql_list)
                     while len(pending):
                         pending = self.try_sql(cursor, pending)
-                    conn.enable_constraint_checking()
 
                 except Exception:
                     transaction.rollback_unless_managed(using=using)
                     raise
+
+                conn.enable_constraint_checking()
 
             transaction.commit_unless_managed()
 

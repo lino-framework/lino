@@ -2,4 +2,55 @@
 Saturday, March 28, 2015
 ========================
 
-Continued to try to get :manage:`initdb` to work on InnoDB.
+Continued to try to get :manage:`initdb` to work on InnoDB. No
+success, but the error report is more detailed::
+
+    Traceback (most recent call last):
+      ...
+      File ".../lino/lino/management/commands/initdb_demo.py", line 32, in handle
+        super(Command, self).handle(*args, **options)
+      File ".../lino/lino/management/commands/initdb.py", line 172, in handle
+        pending = self.try_sql(cursor, pending)
+      File ".../lino/lino/management/commands/initdb.py", line 101, in try_sql
+        raise Exception(msg)
+    Exception: 13 pending SQL statements failed:
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `users_user`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.OperationalError'> :
+      ALTER TABLE `countries_place` DROP FOREIGN KEY `parent_id_refs_id_998565a6`;
+      (1025, "Error on rename of './ylle/countries_place' to './ylle/#sql2-6948-5c7' (errno: 152)")
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `countries_place`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `countries_country`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.OperationalError'> :
+      ALTER TABLE `contacts_partner` DROP FOREIGN KEY `invoice_recipient_id_refs_id_6900f480`;
+      (1025, "Error on rename of './ylle/contacts_partner' to './ylle/#sql2-6948-5c7' (errno: 152)")
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `contacts_partner`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `accounts_account`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `accounts_group`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `accounts_chart`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `ledger_voucher`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `ledger_journal`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `vat_paymentterm`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    <class 'django.db.utils.IntegrityError'> :
+      DROP TABLE `declarations_declaration`;
+      (1217, 'Cannot delete or update a parent row: a foreign key constraint fails')
+    INFO Done manage.py initdb_demo --traceback --noinput (PID 22830)
