@@ -135,11 +135,12 @@ version = '.'.join(release.split('.')[:2])
 # List of directories, relative to source directory, that shouldn't be searched
 # for source files.
 exclude_patterns = [
-    'blog/2009/*',
-    'blog/2010/*',
-    'blog/2011/*',
-    'blog/2012/*',
-    'blog/2013/*',
+    'blog/*',
+    # 'blog/2009/*',
+    # 'blog/2010/*',
+    # 'blog/2011/*',
+    # 'blog/2012/*',
+    # 'blog/2013/*',
     'releases/*',
     'tickets/*',
     # 'releases/2010/*',
@@ -322,9 +323,8 @@ autosummary_generate = True
 
 # http://sphinx.pocoo.org/theming.html
 
-# html_theme = "default"
-html_theme = "classic"
-html_theme_options = dict(collapsiblesidebar=True, externalrefs=True)
+# html_theme = "classic"
+# html_theme_options = dict(collapsiblesidebar=True, externalrefs=True)
 
 todo_include_todos = True
 

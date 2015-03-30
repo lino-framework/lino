@@ -459,8 +459,11 @@ class DisabledFieldsStoreField(SpecialStoreField):
         for name in self.always_disabled:
             d[name] = True
 
-        # disable the primary key field if pk is set (i.e. on saved instance):
-        if self.store.pk is not None and obj.pk is not None:
+        # disable the primary key field of a saved instance. Note that
+        # pk might be set also on an unsaved instance and that
+
+        if ar.bound_action.action.disable_primary_key \
+           and self.store.pk is not None:
             for pk in self.store.primary_keys:
                 d[pk.attname] = True
             # if self.store.pk.attname is None:

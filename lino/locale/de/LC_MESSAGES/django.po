@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-03-27 08:53+0200\n"
-"PO-Revision-Date: 2015-03-27 08:57+0300\n"
+"PO-Revision-Date: 2015-03-30 12:20+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3092,7 +3092,7 @@ msgstr ""
 
 #: lino/modlib/countries/models.py:221
 msgid "Name contains only digits."
-msgstr ""
+msgstr "Name enthält lediglich Ziffern."
 
 #: lino/modlib/countries/fixtures/few_countries.py:24
 msgid "Estonia"

@@ -34,11 +34,11 @@ class DupablePerson(DupablePartner):
         Vandenmeulenbos* should *not* match.
 
         """
-        first = self.get_dupable_words('first_name')
+        first = self.get_dupable_words(self.first_name)
         return max(2, len(first)+1)
 
     def unused_find_similar_instances(self, limit, **kwargs):
-        first = self.get_dupable_words('first_name')
+        first = self.get_dupable_words(self.first_name)
         if len(first) <= 1:
             super(DupablePerson, self).find_similar_instances(limit, **kwargs)
         lst = []

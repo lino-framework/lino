@@ -22,9 +22,6 @@ You can initialize your demo database by running::
     >>> from django.core.management import call_command
     >>> call_command('initdb_demo', interactive=False)
     Creating tables ...
-    Creating table countries_country
-    Creating table countries_place
-    Creating table addrloc_company
     Installing custom SQL ...
     Installing indexes ...
     Installed 172 object(s) from 4 fixture(s)

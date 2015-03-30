@@ -173,7 +173,8 @@ class Dupable(dd.Model):
             return
         qs = self.dupable_word_model.objects.filter(owner=self)
         existing = [o.word for o in qs]
-        wanted = self.get_dupable_words(self.dupable_words_field)
+        wanted = self.get_dupable_words(
+            getattr(self, self.dupable_words_field))
         if existing == wanted:
             return
         if really:
@@ -187,8 +188,7 @@ class Dupable(dd.Model):
         if cw is None or cw.has_changed(self.dupable_words_field):
             self.update_dupable_words()
 
-    def get_dupable_words(self, k):
-        s = getattr(self, k)
+    def get_dupable_words(self, s):
         for c in '-,/&+':
             s = s.replace(c, ' ')
         return map(self.dupable_word_model.reduce_word, s.split())
@@ -208,7 +208,8 @@ class Dupable(dd.Model):
         qs = self.__class__.objects.filter(**kwargs)
         if self.pk is not None:
             qs = qs.exclude(pk=self.pk)
-        parts = self.get_dupable_words(self.dupable_words_field)
+        parts = self.get_dupable_words(
+            getattr(self, self.dupable_words_field))
         qs = qs.filter(dupable_words__word__in=parts).distinct()
         qs = qs.annotate(num=models.Count('dupable_words__word'))
         qs = qs.filter(num__gte=self.dupable_matches_required())

@@ -150,6 +150,11 @@ class Action(Parametrizable, Permittable):
 
     debug_permissions = False
     save_action_name = None
+    disable_primary_key = True
+    """Whether primary key fields should be disabled when using this
+    action. This is `True` for all actions except :class:`InsertRow`.
+
+    """
 
     icon_name = None
     """
@@ -783,11 +788,14 @@ class ShowEmptyTable(ShowDetailAction):
 
 
 class InsertRow(TableAction):
-    """Open the Insert window filled with a blank row.  The new row will
-    be actually created only when this window gets submitted.
+    """Open the Insert window filled with a row of blank or default
+    values.  The new row will be actually created only when this
+    window gets submitted.
 
     """
     save_action_name = 'submit_insert'
+
+    disable_primary_key = False
 
     label = _("New")
     icon_name = 'add'  # if action rendered as toolbar button

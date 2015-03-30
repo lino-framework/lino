@@ -6,6 +6,10 @@ About Humans
 This chapter explains some basic things about humans (as the
 :mod:`lino.mixins.human` module sees them).
 
+.. 
+
+  $ python setup.py test -s tests.DocsTests.test_human
+
 The database structure used for the following examples is very simple:
 
 .. literalinclude:: models.py
@@ -266,4 +270,29 @@ He or she
 We'll reuse the same files for another little lessan
 about :ref:`lino.tutorial.pisa`.
 
+
+The `strip_name_prefix` function
+--------------------------------
+
+>>> from lino.mixins.human import strip_name_prefix
+>>> strip_name_prefix("Vandenberg")
+'VANDENBERG'
+
+>>> strip_name_prefix("Van den Berg")
+'BERG'
+
+>>> strip_name_prefix("Vonnegut")
+'VONNEGUT'
+
+>>> strip_name_prefix("von Goethe")
+'GOETHE'
+
+>>> strip_name_prefix("Jean")
+'JEAN'
+
+>>> strip_name_prefix("Jean-Jacques")
+'JEAN-JACQUES'
+
+>>> strip_name_prefix("Nemard")
+'NEMARD'
 

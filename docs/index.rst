@@ -21,7 +21,7 @@ Sitemap
    demos
    about/index
    community/index
-   blog/index
+   blog
    documentation
 
 

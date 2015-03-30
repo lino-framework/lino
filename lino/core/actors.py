@@ -580,7 +580,7 @@ class Actor(actions.Parametrizable):
         model method.  When defined on the model, is must be an *instance*
         method::
 
-          def disabled_fields(self,ar):
+          def disabled_fields(self, ar):
               ...
               return set()
 

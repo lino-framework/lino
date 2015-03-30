@@ -262,11 +262,6 @@ fixture each time this document is being tested.
 >>> from django.core.management import call_command
 >>> call_command('initdb', 'demo', interactive=False)
 Creating tables ...
-Creating table lets_place
-Creating table lets_member
-Creating table lets_product
-Creating table lets_offer
-Creating table lets_demand
 Installing custom SQL ...
 Installing indexes ...
 Installed 26 object(s) from 1 fixture(s)

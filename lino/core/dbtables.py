@@ -33,13 +33,6 @@ from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 
 INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
-def unused_parse_js_date(s, name):
-    #~ v = dateparser.parse(s)
-    #~ v = dateparser.parse(s,fuzzy=True)
-    return datetime.date(*settings.SITE.parse_date(s))
-    #~ print "parse_js_date %s : %r -> %s" % (name,s,v)
-    #~ return v
-
 
 def wildcard_data_elems(model):
     """

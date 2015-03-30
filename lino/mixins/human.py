@@ -25,10 +25,23 @@ from lino.api.dd import Genders
 from lino.core import fields
 from lino.core import model
 
-name_prefixes1 = ("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
-                  'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI")
-name_prefixes2 = ("VAN DEN", "VAN DER", "VAN DE",
-                  "IN HET", "VON DER", "DE LA")
+name_prefixes1 = set(("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
+                      'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI"))
+name_prefixes2 = set(("VAN DEN", "VAN DER", "VAN DE",
+                      "IN HET", "VON DER", "DE LA"))
+
+NAME_PREFIXES = set([p + ' ' for p in name_prefixes1])
+NAME_PREFIXES |= set([p + ' ' for p in name_prefixes2])
+
+
+def strip_name_prefix(s):
+    """Strip name prefix from given family name `s`."""
+    s = s.upper()
+    for p in NAME_PREFIXES:
+        if s.startswith(p):
+            s = s[len(p):]
+    return s
+
 
 
 def name2kw(s, last_name_first=True):

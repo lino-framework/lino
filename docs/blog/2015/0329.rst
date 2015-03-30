@@ -2,5 +2,12 @@
 Sunday, March 29, 2015
 ======================
 
-Still trying to understand what's happening in :manage:`initdb`
-with InnoDB.
+Resetting a database
+====================
+
+Still trying to understand what's happening in :manage:`initdb` with
+InnoDB. The most straightforward solution is to drop the whole
+database and to create a new one. Now I discovered why it did not
+work: with MySQL we need to "close" the conenction by saying ``del
+connections[alias]``. Although this solution is engine-specific I have
+the feeling that it is the best one.

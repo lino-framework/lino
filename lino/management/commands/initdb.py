@@ -1,4 +1,4 @@
-# Copyright 2009-2014 by Luc Saffre.
+# Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """.. management_command:: initdb
@@ -6,12 +6,10 @@
 Performs an initialization of the database, replacing all data by default
 data (according to the specified fixtures).
 
-This command REMOVES *all existing tables* from the database
-(not only Django tables), then runs Django's `syncdb`
-and `loaddata` commands to load the specified fixtures for all applications.
-
-This may sound dangerous, but it is what you want when you ask to
-restore the factory settings of a Lino application.
+This command REMOVES *all existing tables* from the database (not only
+Django tables), then runs Django's `syncdb` (or `migrate`) to create
+all tables, and `loaddata` commands to load the specified fixtures for
+all applications.
 
 This reimplements a simplified version of Django's `reset` command,
 without the possibility of deleting *only some* data (the thing which
@@ -19,20 +17,17 @@ caused so big problems that Django 1.3. decided to `deprecate this
 command <https://docs.djangoproject.com/en/dev/releases/1.3\
 /#reset-and-sqlreset-management-commands>`__.
 
-Truncating the database (i.e. dropping all tables without dropping the
-database itself) is not always trivial, and Lino's :manage:`initdb`
-sometimes fails on this task.  For example when the dbms is severe
-when checking foreign key integrity.
-
-TODO: Django now has a `flush
-<https://docs.djangoproject.com/en/dev/ref/django-admin/#flush>`_
-command which is hopefully the part of "reset" which we are
-reimplimenting here. Ticket :ticket:`48`.
+Deleting all data and table definitions from a database is not always
+trivial. It is not tested on PostgreSQL. In MySQL we use a somewhat
+hackerish and MySQL-specific DROP DATABASE and CREATE DATABASE because
+even with `constraint_checks_disabled` we had sporadic errors. See
+:blogref:`20150328`
 
 """
 
 from __future__ import unicode_literals
 
+import os
 from optparse import make_option
 
 from django.conf import settings
@@ -54,13 +49,10 @@ from atelier.utils import confirm
 
 USE_SQLDELETE = True
 
-USE_DROP_CREATE_DB = True  # tried, but doesn't seem to work
+USE_DROP_CREATE_DB = True
 """
 http://stackoverflow.com/questions/3414247/django-drop-all-tables-from-database
 http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
-
-The problem is that it accepts the DROP DATABASE, but afterwards I get
-"no database selected" when I run syncdb.
 
 """
 
@@ -130,16 +122,21 @@ Are you sure (y/n) ?""" % dbname):
         dd.logger.info(
             "`initdb %s` started on database %s.", ' '.join(args), dbname)
 
-        if USE_DROP_CREATE_DB and engine == 'django.db.backends.mysql':
-            # works only for mysql
-            from django.db import connection
-            cursor = connection.cursor()
+        if engine == 'django.db.backends.sqlite3':
+            if dbname != ':memory:':
+                os.remove(dbname)
+                del connections[using]
+        elif engine == 'django.db.backends.mysql':
+            conn = connections[using]
+            cursor = conn.cursor()
             cursor.execute("DROP DATABASE %s;" % dbname)
             cursor.execute("CREATE DATABASE %s charset 'utf8';" % dbname)
-            del connections[DEFAULT_DB_ALIAS]
-
+            # We must now force Django to reconnect, otherwise we get
+            # "no database selected" since Django would try to
+            # continue on the dropped database:
+            del connections[using]
         else:
-
+            raise Exception("Not tested for %r" % engine)
             sql_list = []
             conn = connections[using]
 

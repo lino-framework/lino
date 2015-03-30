@@ -87,6 +87,8 @@ CLONEABLE_ATTRS = frozenset("""ah request user subst_user
 bound_action create_kw known_values param_values
 action_param_values""".split())
 
+GFK_TARGETS = (models.AutoField, models.IntegerField)
+
 
 class CallbackChoice(object):
     #~ def __init__(self,name,label,func):
@@ -406,11 +408,16 @@ class Kernel(object):
         """
         if len(self.GFK_LIST) == 0:
             return  # e.g. if contenttypes is not installed
+
+        if not isinstance(obj._meta.pk, GFK_TARGETS):
+            # raise Exception("20150330 %s", obj._meta.pk)
+            return  # e.g. Country.iso_code is a CharField, cannot
+                    # point to a country using GFK
         obj_ct = ContentType.objects.get_for_model(obj.__class__)
+        # logger.info("20150330 ok %s", obj_ct)
         for gfk in self.GFK_LIST:
             fk_field, remote_model, direct, m2m = \
                 gfk.model._meta.get_field_by_name(gfk.fk_field)
-
             kw = dict()
             kw[gfk.fk_field] = obj.pk
             kw[gfk.ct_field] = obj_ct

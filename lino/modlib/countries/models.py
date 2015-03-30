@@ -80,6 +80,10 @@ class Countries(dd.Table):
     isocode name short_code
     countries.PlacesByCountry
     """
+    insert_layout = """
+    isocode short_code
+    name
+    """
 
 
 class Place(mixins.BabelNamed):
