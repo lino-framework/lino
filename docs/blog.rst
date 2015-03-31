@@ -1,8 +1,8 @@
 .. _blog:
 
-=====
-Blogs
-=====
+====
+Blog
+====
 
 On March 30, 2015, as part of the process of decentralizing the Lino
 development, we moved Luc's "Lino developer blog" out the Lino

@@ -691,6 +691,37 @@ class Requirements(object):
     owner = None
 
 
+class PseudoRequest:
+    """A Django HTTP request which isn't really one.
+
+    Typical usage example::
+
+        from lino.core.utils import PseudoRequest, ChangeWatcher
+
+        REQUEST = PseudoRequest("robin")
+
+        for obj in qs:
+            cw = ChangeWatcher(obj)
+            # update `obj`
+            obj.full_clean()
+            obj.save()
+            cw.send_update(REQUEST)
+
+    """
+    def __init__(self, username):
+        self.username = username
+        self._user = None
+
+    def get_user(self):
+        if self._user is None:
+            if settings.SITE.user_model is not None:
+                #~ print 20130222, self.username
+                self._user = settings.SITE.user_model.objects.get(
+                    username=self.username)
+        return self._user
+    user = property(get_user)
+
+
 class ChangeWatcher(object):
     """Lightweight volatile object to watch changes and send the
     :attr:`on_ui_updated <lino.core.signals.on_ui_updated>` signal.

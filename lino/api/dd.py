@@ -233,7 +233,7 @@ from lino.core.inject import update_field
 from lino.core.inject import inject_quick_add_buttons
 from lino.core.inject import do_when_prepared, when_prepared
 
-from lino.core.utils import ParameterPanel
+from lino.core.utils import ParameterPanel, PseudoRequest
 
 from lino.modlib.users.choicelists import UserLevels, UserGroups
 from lino.modlib.users.utils import add_user_group
@@ -243,22 +243,6 @@ from lino.modlib.users.utils import add_user_group
 # from lino.core.actors import get_default_required as required
 
 Required = required = settings.SITE.get_default_required
-
-
-class PseudoRequest:
-
-    def __init__(self, username):
-        self.username = username
-        self._user = None
-
-    def get_user(self):
-        if self._user is None:
-            if settings.SITE.user_model is not None:
-                #~ print 20130222, self.username
-                self._user = settings.SITE.user_model.objects.get(
-                    username=self.username)
-        return self._user
-    user = property(get_user)
 
 
 from lino.utils import IncompleteDate
