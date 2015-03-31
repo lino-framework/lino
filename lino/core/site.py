@@ -31,7 +31,7 @@ Note that the path should be absolute and without a ``~``.
 """
 
 import os
-from os.path import normpath, dirname, join, isdir, relpath
+from os.path import normpath, dirname, join, isdir, relpath, exists
 import inspect
 import datetime
 import warnings
@@ -276,7 +276,7 @@ class Site(object):
     """
     The time when this Site has been instantiated,
     in other words the startup time of this Django process.
-    Don't modify this. 
+    Don't modify this.
 
     """
 
@@ -948,17 +948,6 @@ documentation.
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
 
-    def run_djangosite_local(self):
-        """
-        See :doc:`/admin/djangosite_local`
-        """
-        try:
-            from djangosite_local import setup_site
-        except ImportError:
-            pass
-        else:
-            setup_site(self)
-
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
         *does* contain a `fixtures` subdir, then Lino automatically adds this
@@ -1004,13 +993,8 @@ documentation.
         else:
             self.cache_dir = Path(self.project_dir).absolute()
 
-
-        #~ self.qooxdoo_prefix = '/media/qooxdoo/lino_apps/' + self.project_name + '/build/'
-        #~ self.dummy_messages = set()
         self._starting_up = False
         self._startup_done = False
-
-        #~ self._response = None
         self.startup_time = datetime.datetime.now()
 
         dbname = join(self.cache_dir, 'default.db')
@@ -1020,13 +1004,6 @@ documentation.
                 'NAME': dbname
             }
         })
-
-        #~ self.django_settings.update(SECRET_KEY="20227")
-        # see :djangoticket:`20227`
-
-        #~ django_settings.update(FORMAT_MODULE_PATH = 'djangosite.formats')
-        #~ django_settings.update(LONG_DATE_FORMAT = "l, j F Y")
-        #~ django_settings.update(LONG_DATE_FORMAT = "l, F j, Y")
 
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
@@ -1038,16 +1015,6 @@ documentation.
         if i != -1:
             modname = modname[:i]
         self.is_local_project_dir = not modname in self.local_apps
-
-        def settings_subdirs(name):
-            lst = []
-            for p in self.get_settings_subdirs(name):
-                if not os.path.exists(os.path.join(p, '..', 'models.py')):
-                    lst.append(p.replace(os.sep, "/"))
-            return lst
-
-        self.update_settings(FIXTURE_DIRS=tuple(settings_subdirs('fixtures')))
-        self.update_settings(LOCALE_PATHS=tuple(settings_subdirs('locale')))
 
         self.VIRTUAL_FIELDS = []
 
@@ -1061,6 +1028,225 @@ documentation.
             ),
         )
 
+    def run_djangosite_local(self):
+        """
+        See :doc:`/admin/djangosite_local`
+        """
+        try:
+            from djangosite_local import setup_site
+        except ImportError:
+            pass
+        else:
+            setup_site(self)
+
+    def override_settings(self, **kwargs):
+        # Called internally during `__init__` method.
+        # Also called from :mod:`lino.utils.djangotest`
+
+        #~ logger.info("20130404 lino.site.Site.override_defaults")
+
+        for k, v in kwargs.items():
+            if not hasattr(self, k):
+                raise Exception("%s has no attribute %s" % (self.__class__, k))
+            setattr(self, k, v)
+
+        self.apply_languages()
+
+    def load_plugins(self):
+        """Load all plugins and build the :setting:`INSTALLED_APPS` setting
+        for Django.
+
+        This includes a call to :meth:`get_apps_modifiers` and
+        :meth:`get_installed_apps`.
+
+        """
+        # Called internally during `__init__` method.
+
+        from django.utils.importlib import import_module
+
+        requested_apps = []
+        apps_modifiers = self.get_apps_modifiers()
+
+        if hasattr(self, 'hidden_apps'):
+            raise Exception("Replace hidden_apps by get_apps_modifiers()")
+
+        def add(x):
+            if isinstance(x, basestring):
+                app_label = x.split('.')[-1]
+                x = apps_modifiers.pop(app_label, x)
+                if x:
+                    # convert unicode to string
+                    requested_apps.append(str(x))
+            else:
+                # if it's not a string, then it's an iterable of strings
+                for xi in x:
+                    add(xi)
+
+        for x in self.get_installed_apps():
+            add(x)
+
+        if apps_modifiers:
+            raise Exception(
+                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
+                    apps_modifiers.keys()[0]))
+
+        # actual_apps = []
+        plugins = []
+        self.plugins = AttrDict()
+
+        def install_plugin(app_name, needed_by=None):
+            app_mod = import_module(app_name)
+
+            # Can an `__init__.py` file may explicitly set ``Plugin =
+            # None``? Is that feature being used?
+            app_class = getattr(app_mod, 'Plugin', None)
+            if app_class is None:
+                app_class = Plugin
+            # print "Loading plugin", app_name
+            k = app_name.rsplit('.')[-1]
+            if k in self.plugins:
+                txt = self.plugins[k]
+                raise Exception("Tried to install '%s' where '%s' "
+                                "is already installed." % (
+                                    app_name, txt))
+            p = app_class(self, k, app_name, app_mod, needed_by)
+            cfg = PLUGIN_CONFIGS.pop(k, None)
+            if cfg:
+                p.configure(**cfg)
+
+            for dep in p.needs_plugins:
+                k2 = dep.rsplit('.')[-1]
+                if not k2 in self.plugins:
+                    install_plugin(dep, needed_by=p)
+                    # plugins.append(dep)
+
+            # actual_apps.append(app_name)
+            plugins.append(p)
+            self.plugins.define(k, p)
+
+        for app_name in requested_apps:
+            install_plugin(app_name)
+
+        # The return value of get_auth_method() may depend on a
+        # plugin, so if needed we must add the django.contrib.sessions
+        # afterwards.
+        if self.get_auth_method() == 'session':
+            # actual_apps.insert(0, str('django.contrib.sessions'))
+            install_plugin(str('django.contrib.sessions'))
+
+        # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
+        self.update_settings(
+            INSTALLED_APPS=tuple([p.app_name for p in plugins]))
+        self.installed_plugins = tuple(plugins)
+
+        if self.override_modlib_models is not None:
+            raise Exception("override_modlib_models no longer allowed")
+
+        self.override_modlib_models = dict()
+        for p in self.installed_plugins:
+            if p.extends_models is not None:
+                for m in p.extends_models:
+                    if "." in m:
+                        raise Exception(
+                            "extends_models in %s still uses '.'" %
+                            p.app_name)
+                    name = p.extends_from().__module__ + '.' + m
+                    self.override_modlib_models[name] = p
+        # raise Exception("20140825 %s", self.override_modlib_models)
+
+    def setup_plugins(self):
+        """This method is called exactly once during site startup, after
+        :meth:`load_plugins` and before models are being populated.
+
+        """
+        pass
+
+    def install_settings(self):
+
+        assert not self.help_url.endswith('/')
+
+        if self.webdav_url is None:
+            self.webdav_url = '/media/webdav/'
+        if self.webdav_root is None:
+            self.webdav_root = join(self.cache_dir, 'media', 'webdav')
+
+        if not self.django_settings.get('MEDIA_ROOT', False):
+            # Django's default value for MEDIA_ROOT is an empty
+            # string.  In certain test cases there might be no
+            # MEDIA_ROOT key at all.  Lino's default value for
+            # MEDIA_ROOT is ``<cache_dir>/media``.
+            self.django_settings.update(
+                MEDIA_ROOT=join(self.cache_dir, 'media'))
+
+        self.update_settings(
+            ROOT_URLCONF='lino.core.urls'
+        )
+        self.update_settings(
+            MEDIA_URL='/media/'
+        )
+        self.update_settings(
+            TEMPLATE_LOADERS=tuple([
+                'lino.core.web.Loader',
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+                #~ 'django.template.loaders.eggs.Loader',
+            ]))
+
+        tcp = []
+        if self.user_model == 'auth.User':  # not tested
+            self.update_settings(LOGIN_URL='/accounts/login/')
+            self.update_settings(LOGIN_REDIRECT_URL="/")
+            tcp += ['django.contrib.auth.context_processors.auth']
+
+        tcp += [
+            'django.core.context_processors.debug',
+            'django.core.context_processors.i18n',
+            'django.core.context_processors.media',
+            'django.core.context_processors.static',
+            #    'django.core.context_processors.request',
+            #~ 'django.contrib.messages.context_processors.messages',
+        ]
+        self.update_settings(TEMPLATE_CONTEXT_PROCESSORS=tuple(tcp))
+
+        self.define_settings(
+            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
+
+        def settings_subdirs(lst, name):
+            def add(p):
+                p = p.replace(os.sep, "/")
+                if not p in lst:
+                    lst.append(p)
+
+            for p in self.get_settings_subdirs(name):
+                # if the parent of a settings subdir has a
+                # `models.py`, then it is a plugin and we must not add
+                # the subdir because Django does that.
+                if not exists(join(p, '..', 'models.py')):
+                    add(p)
+
+            if False:
+                # If a plugin has no "fixtures" ("config") directory
+                # of its own, inherit it from parents.  That would be
+                # nice and it even works, but with a stud: these
+                # fixtures will be loaded at the end.
+                for ip in self.installed_plugins:
+                    if not ip.get_subdir(name):
+                        pc = ip.extends_from()
+                        while pc and issubclass(pc, Plugin):
+                            p = pc.get_subdir(name)
+                            if p:
+                                add(p)
+                            pc = pc.extends_from()
+
+        fixture_dirs = list(self.django_settings.get('FIXTURE_DIRS', []))
+        locale_paths = list(self.django_settings.get('LOCALE_PATHS', []))
+        settings_subdirs(fixture_dirs, 'fixtures')
+        settings_subdirs(locale_paths, 'locale')
+        self.update_settings(FIXTURE_DIRS=tuple(fixture_dirs))
+        self.update_settings(LOCALE_PATHS=tuple(locale_paths))
+
+        # print(20150331, self.django_settings['FIXTURE_DIRS'])
+
     def setup_cache_directory(self):
         """When :envvar:`LINO_CACHE_ROOT` is set, Lino adds a stamp file
         called :xfile:`lino_cache.txt` to every project's cache
@@ -1069,8 +1255,8 @@ documentation.
 
         .. xfile:: lino_cache.txt
 
-        A small text file with one line of text which Contains the
-        path of the project which uses this cache directory.
+            A small text file with one line of text which contains the
+            path of the project which uses this cache directory.
 
         """
 
@@ -1167,108 +1353,6 @@ documentation.
 
         return kw
 
-    def load_plugins(self):
-        """Load all plugins and build the :setting:`INSTALLED_APPS` setting
-        for Django.
-
-        This includes a call to :meth:`get_apps_modifiers` and
-        :meth:`get_installed_apps`.
-
-        """
-        # Called internally during `__init__` method.
-
-        from django.utils.importlib import import_module
-
-        requested_apps = []
-        apps_modifiers = self.get_apps_modifiers()
-
-        if hasattr(self, 'hidden_apps'):
-            raise Exception("Replace hidden_apps by get_apps_modifiers()")
-
-        def add(x):
-            if isinstance(x, basestring):
-                app_label = x.split('.')[-1]
-                x = apps_modifiers.pop(app_label, x)
-                if x:
-                    # convert unicode to string
-                    requested_apps.append(str(x))
-            else:
-                # if it's not a string, then it's an iterable of strings
-                for xi in x:
-                    add(xi)
-
-        for x in self.get_installed_apps():
-            add(x)
-
-        if apps_modifiers:
-            raise Exception(
-                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
-                    apps_modifiers.keys()[0]))
-
-        # actual_apps = []
-        plugins = []
-        self.plugins = AttrDict()
-
-        def install_plugin(app_name, needed_by=None):
-            app_mod = import_module(app_name)
-
-            # Can an `__init__.py` file may explicitly set ``Plugin =
-            # None``? Is that feature being used?
-            app_class = getattr(app_mod, 'Plugin', None)
-            if app_class is None:
-                app_class = Plugin
-            # print "Loading plugin", app_name
-            k = app_name.rsplit('.')[-1]
-            if k in self.plugins:
-                txt = self.plugins[k]
-                raise Exception("Tried to install '%s' where '%s' "
-                                "is already installed." % (
-                                    app_name, txt))
-            p = app_class(self, k, app_name, app_mod, needed_by)
-            cfg = PLUGIN_CONFIGS.pop(k, None)
-            if cfg:
-                p.configure(**cfg)
-
-            for dep in p.needs_plugins:
-                k2 = dep.rsplit('.')[-1]
-                if not k2 in self.plugins:
-                    install_plugin(dep, needed_by=p)
-                    # plugins.append(dep)
-
-            # actual_apps.append(app_name)
-            plugins.append(p)
-            self.plugins.define(k, p)
-
-        for app_name in requested_apps:
-            install_plugin(app_name)
-
-        # The return value of get_auth_method() may depend on a
-        # plugin, so if needed we must add the django.contrib.sessions
-        # afterwards.
-        if self.get_auth_method() == 'session':
-            # actual_apps.insert(0, str('django.contrib.sessions'))
-            install_plugin(str('django.contrib.sessions'))
-
-        # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
-        self.update_settings(
-            INSTALLED_APPS=tuple([p.app_name for p in plugins]))
-        self.installed_plugins = tuple(plugins)
-
-        if self.override_modlib_models is not None:
-            raise Exception("override_modlib_models no longer allowed")
-
-        self.override_modlib_models = dict()
-        for p in self.installed_plugins:
-                if p.extends_models is not None:
-                    for m in p.extends_models:
-                        if "." in m:
-                            raise Exception(
-                                "extends_models in %s still uses '.'" %
-                                p.app_name)
-                        name = p.extends_from() + '.' + m
-                        self.override_modlib_models[name] = p
-        # raise Exception("20140825 %s", self.override_modlib_models)
-
     def is_hidden_app(self, app_label):
         """
         Return True if the app is known, but has been disabled using
@@ -1362,18 +1446,9 @@ documentation.
             self._logger = logging.getLogger(__name__)
         return self._logger
 
-    def setup_plugins(self):
-        """This method is called exactly once during site startup, after
-        :meth:`load_plugins` and before models are being populated.
-
-        """
-        pass
-
     def get_settings_subdirs(self, subdir_name):
-        """
-        Yield all (existing) directories named `subdir_name` of this
-        site's project directory and it's inherited project
-        directories.
+        """Yield all (existing) directories named `subdir_name` of this Site's
+        project directory and it's inherited project directories.
 
         """
 
@@ -2415,71 +2490,6 @@ site. :manage:`diag` is a command-line shortcut to this.
     def override_defaults(self, **kwargs):
         self.override_settings(**kwargs)
         self.install_settings()
-
-    def override_settings(self, **kwargs):
-        # Called internally during `__init__` method.
-        # Also called from :mod:`lino.utils.djangotest`
-
-        #~ logger.info("20130404 lino.site.Site.override_defaults")
-
-        for k, v in kwargs.items():
-            if not hasattr(self, k):
-                raise Exception("%s has no attribute %s" % (self.__class__, k))
-            setattr(self, k, v)
-
-        self.apply_languages()
-
-    def install_settings(self):
-
-        assert not self.help_url.endswith('/')
-
-        if self.webdav_url is None:
-            self.webdav_url = '/media/webdav/'
-        if self.webdav_root is None:
-            self.webdav_root = join(self.cache_dir, 'media', 'webdav')
-
-        if not self.django_settings.get('MEDIA_ROOT', False):
-            # Django's default value for MEDIA_ROOT is an empty
-            # string.  In certain test cases there might be no
-            # MEDIA_ROOT key at all.  Lino's default value for
-            # MEDIA_ROOT is ``<cache_dir>/media``.
-            self.django_settings.update(
-                MEDIA_ROOT=join(self.cache_dir, 'media'))
-
-        self.update_settings(
-            ROOT_URLCONF='lino.core.urls'
-        )
-        self.update_settings(
-            MEDIA_URL='/media/'
-        )
-        self.update_settings(
-            TEMPLATE_LOADERS=tuple([
-                'lino.core.web.Loader',
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                #~ 'django.template.loaders.eggs.Loader',
-            ]))
-
-        tcp = []
-        if self.user_model == 'auth.User':  # not tested
-            self.update_settings(LOGIN_URL='/accounts/login/')
-            self.update_settings(LOGIN_REDIRECT_URL="/")
-            tcp += ['django.contrib.auth.context_processors.auth']
-
-        tcp += [
-            'django.core.context_processors.debug',
-            'django.core.context_processors.i18n',
-            'django.core.context_processors.media',
-            'django.core.context_processors.static',
-            #    'django.core.context_processors.request',
-            #~ 'django.contrib.messages.context_processors.messages',
-        ]
-        self.update_settings(TEMPLATE_CONTEXT_PROCESSORS=tuple(tcp))
-
-        self.define_settings(
-            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
-
-        #~ print 20130313, self.django_settings['MIDDLEWARE_CLASSES']
 
     def is_imported_partner(self, obj):
         """

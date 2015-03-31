@@ -8,10 +8,10 @@ See :doc:`/dev/plugins` before reading this.
 
 """
 
-from os.path import exists
+from os.path import exists, join, dirname, isdir, abspath
 
 from urllib import urlencode
-
+import inspect
 
 class Plugin(object):
     """The base class for all plugins.
@@ -146,6 +146,14 @@ class Plugin(object):
         not yet import `django.conf.settings`.  But you get the `site`
         object being instantiated.
 
+        Parameters:
+
+        :site:       The :class:`Site` instance
+        :app_label:  e.g. "contacts"
+        :app_name:   e.g. "lino.modlib.contacts"
+        :app_module: The module object corresponding to the
+                     :xfile:`__init__.py` file.
+
         """
         # site.logger.info("20140226 Plugin.__init__() %s",
         #                  app_label)
@@ -194,12 +202,23 @@ class Plugin(object):
         """
         pass
 
-    def extends_from(self):
-        # return the name of the module from which this module inherits.
-        for p in self.__class__.__bases__:
+    @classmethod
+    def extends_from(cls):
+        """Return the plugin from which this plugin inherits."""
+        # for p in self.__class__.__bases__:
+        for p in cls.__bases__:
             if issubclass(p, Plugin):
-                return p.__module__
-        raise Exception("20140825 extends_from failed")
+                return p
+        # raise Exception("20140825 extends_from failed")
+
+    @classmethod
+    def get_subdir(cls, name):
+        """Get the absolute path of the named subdirectory if it exists."""
+        p = dirname(inspect.getfile(cls))
+        p = abspath(join(p, name))
+        if isdir(p):
+            return p
+        # print("20150331 %s : no directory %s" % (cls, p))
 
     def before_analyze(self):
         """This is called during startup, when all models modules have been

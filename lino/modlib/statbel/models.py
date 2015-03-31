@@ -2,9 +2,8 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-This just adds `inscode` fields to `countries.Place`
-and `countries.Country`.
+"""No additional database models, but just adds `inscode` fields to
+`countries.Place` and `countries.Country`.
 
 """
 
