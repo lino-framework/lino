@@ -11,6 +11,9 @@ libraries.
 A **plugin library** is a collection of reusable plugins which are
 designed to work together.
 
+The :mod:`lino.projects.min2` project has an example of extending a
+plugin from  :mod:`lino.modlib`.
+
 
 The :meth:`is_abstract_model` method
 ====================================

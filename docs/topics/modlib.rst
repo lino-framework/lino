@@ -8,6 +8,6 @@ The :mod:`lino.modlib` package is a collection of reusable
 
 There may come other such collections, developed by other authors. 
 
-See also :doc:`/dev/apps`
+See also :doc:`/dev/plugin_inheritance`
 
 

@@ -16,11 +16,11 @@ it adds some more modlib plugins:
 - :mod:`lino.modlib.households`
 - :mod:`lino.modlib.pages`
 
-The package is a **usage example** of :doc:`/dev/apps` because if
-overrides the :mod:`lino.modlib.contacts` plugin by its own version
-``lino.projects.min2.modlib.contacts`` (which is not included in this
-documentation tree for technical reasons, and anyway you should
-inspect the source code if you want to go futher).
+This is also a **usage example** of :doc:`/dev/plugin_inheritance`
+because if overrides the :mod:`lino.modlib.contacts` plugin by its own
+version ``lino.projects.min2.modlib.contacts`` (which is not included
+in this documentation tree for technical reasons, and anyway you
+should inspect the source code if you want to go futher).
 
 The package has a **test suite** for testing some of the plugins it
 uses:
@@ -31,8 +31,5 @@ uses:
    tests.test_addresses
    tests.test_birth_date
    tests.test_min2
-
-
-   
 
 """

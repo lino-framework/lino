@@ -1,13 +1,13 @@
 """The fixtures for `lino.modlib.countries`.
 
+These are just wrappers to those in :mod:`lino.modlib.countries.fixtures`.
+
 .. autosummary::
    :toctree:
 
     demo
-    few_countries
     few_cities
     be
-    ee
     eesti
 
 """
