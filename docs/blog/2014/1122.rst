@@ -1,9 +1,0 @@
-===========================
-Saturday, November 22, 2014
-===========================
-
-I spent several hours on the rather benedictine work of redesigning
-the algorithm for generating fictive integration contracts (isip and
-jobs) for the welfare demo database.
-
-:mod:`lino_welfare.modlib.integ.fixtures.demo`

@@ -1,6 +1,0 @@
-20120328
-========
-
-
-Continued on :mod:`lino.apps.az`.
-New models Enrolment, Course, Room in `lino.apps.az.courses`.

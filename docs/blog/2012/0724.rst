@@ -1,6 +1,0 @@
-20120724
-========
-
-More internal optimizations to get :mod:`lino.tutorials.t1` 
-running.
-

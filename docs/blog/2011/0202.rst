@@ -1,5 +1,0 @@
-20110202
-========
-
-#.  Release :doc:`/releases/2011/0202`  in Eupen.
-

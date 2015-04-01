@@ -1,4 +1,0 @@
-20120412
-========
-
-Worked on :mod:`lino.modlib.vocbook`. New module :mod:`lino.utils.memo`.

@@ -1,9 +1,0 @@
-=========================
-Thursday, October 9, 2014
-=========================
-
-Continued on :srcref:`docs/tickets/133`.  Today I'll mostly write
-documentation and try to make things more clear since these are my
-last hours before a 4 days trip to Berlin.
-
-:ref:`lino.tutorial.pisa` shows the new message.

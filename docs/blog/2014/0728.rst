@@ -1,5 +1,0 @@
-=====================
-Monday, July 28, 2014
-=====================
-
-Fixed some bugs in :ref:`presto`. 

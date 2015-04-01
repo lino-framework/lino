@@ -1,4 +1,4 @@
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from django.db import models
@@ -108,10 +108,11 @@ class PersonDetail(contacts.PersonDetail):
         #~ lh.lesson.label = _("Lesson")
         #~ lh.event.label =
         #~ lh.notes.label = _("Notes")
-def site_setup(site):
-    #~ site.modules.contacts.Persons.set_detail_layout(PersonDetail())
 
-    #~ site.modules.cal.Events.set_detail_layout(EventDetail())
+@dd.receiver(dd.post_analyze)
+def my_details(sender, **kw):
+    site = sender
+
     site.modules.cal.Events.set_detail_layout('general more')
     site.modules.cal.Events.add_detail_panel('general', """
     event_type summary user project 

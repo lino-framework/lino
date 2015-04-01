@@ -194,7 +194,8 @@ lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
 lino.modlib.statbel
-lino.modlib.statbel.fixtures
+lino.modlib.statbel.countries
+lino.modlib.statbel.countries.fixtures
 lino.modlib.sepa
 lino.modlib.sepa.fixtures
 lino.modlib.system

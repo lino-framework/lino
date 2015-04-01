@@ -1,7 +1,0 @@
-========================
-Friday, October 31, 2014
-========================
-
-Opened :srcref:`docs/tickets/143` because I understood that this is a serious
-show stopper for :ref:`cosi`.
-

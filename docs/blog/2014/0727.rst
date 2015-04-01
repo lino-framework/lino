@@ -1,5 +1,0 @@
-=====================
-Sunday, July 27, 2014
-=====================
-
-Started :srcref:`docs/tickets/118`.

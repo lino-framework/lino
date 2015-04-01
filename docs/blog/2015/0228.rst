@@ -1,9 +1,0 @@
-===========================
-Saturday, February 28, 2015
-===========================
-
-The Welfare test suite is still broken due to some subtle changes
-yesterday. I decided to leave it partly broken because these failures
-are just from the demo fixtures.
-
-

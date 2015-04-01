@@ -1,2 +1,0 @@
-.. blogger_year:: 
-

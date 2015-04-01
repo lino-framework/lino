@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -16,7 +16,9 @@ class Main(concepts.TopLevelConcepts):
     pass
 
 
-def site_setup(site):
+@dd.receiver(dd.post_analyze)
+def my_details(sender, **kw):
+    site = sender
     site.modules.countries.Places.required = dd.required(auth=False)
     site.modules.countries.Countries.required = dd.required(auth=False)
     site.modules.concepts.Concepts.required = dd.required(auth=False)

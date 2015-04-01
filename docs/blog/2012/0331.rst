@@ -1,6 +1,0 @@
-20120331
-========
-
-For the first time I wrote down a few words about the
-:doc:`/topics/gpdn`.
-

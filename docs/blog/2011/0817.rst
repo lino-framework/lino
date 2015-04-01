@@ -1,9 +1,0 @@
-20110817
-========
-
-Today I continued with the CalDAV functionality (:srcref:`docs/tickets/47`).
-As a first step I got the introduction script from `python-caldav <http://packages.python.org/caldav/>`_ running:
-
-.. literalinclude:: 0817.py
-   :language: python
-   :linenos:

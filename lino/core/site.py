@@ -1482,8 +1482,13 @@ documentation.
         """Return True if the named model is declared as being extended by
         :attr:`lino.core.plugin.Plugin.extends_models`.
 
-        `name` must be a string with the full model name,
-        e.g. ``"myapp.MyModel"``.
+        Typical usage::
+
+            class MyModel(dd.Model):
+                 class Meta:
+                     abstract = dd.is_abstract_model(__name__, 'MyModel')
+
+        See :doc:`/dev/plugin_inheritance`.
 
         """
         name = '.'.join(module_name.split('.')[:-1])

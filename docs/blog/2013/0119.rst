@@ -1,6 +1,0 @@
-20130119
-========
-
-I invested a few hours into the question 
-"How to make Lino more Django-like?" and opened
-:srcref:`docs/tickets/70`.

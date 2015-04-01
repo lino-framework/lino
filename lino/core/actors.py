@@ -956,15 +956,24 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def set_detail_layout(self, *args, **kw):
-        """
-        Update the :attr:`detail_layout` of this actor, or create a new
+        """Update the :attr:`detail_layout` of this actor, or create a new
         layout if there wasn't one before.
 
-        The first argument can be either a string or a :class:`FormLayout
-        <dd.FormLayout>` instance.  If it is a string, it will replace the
-        currently defined 'main' panel.  With the special case that if the
-        current main panel is horizontal (i.e. the layout has tabs) it
-        replaces the 'general' tab.
+        The first argument can be either a string or a
+        :class:`FormLayout <lino.core.layouts.FormLayout>` instance.
+        If it is a string, it will replace the currently defined
+        'main' panel.  With the special case that if the current `main`
+        panel is horizontal (i.e. the layout has tabs), it replaces the
+        'general' tab.
+
+        Typical usage example::
+
+            @dd.receiver(dd.post_analyze)
+            def my_details(sender, **kw):
+                contacts = sender.modules.contacts
+                contacts.Partners.set_detail_layout(PartnerDetail())
+
+
 
         """
         return self.set_form_layout('detail_layout', *args, **kw)
@@ -974,6 +983,7 @@ class Actor(actions.Parametrizable):
         """
         Update the :attr:`insert_layout` of this actor,
         or create a new layout if there wasn't one before.
+
         Otherwise same usage as :meth:`set_detail_layout`.
 
         """

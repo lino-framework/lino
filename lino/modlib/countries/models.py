@@ -36,6 +36,7 @@ class Country(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
+        abstract = dd.is_abstract_model(__name__, 'Country')
 
     isocode = models.CharField(
         max_length=4, primary_key=True,
@@ -94,6 +95,8 @@ class Place(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
+        abstract = dd.is_abstract_model(__name__, 'Place')
+
         if not settings.SITE.allow_duplicate_cities:
             unique_together = (
                 'country', 'parent', 'name', 'type', 'zip_code')
@@ -105,8 +108,8 @@ class Place(mixins.BabelNamed):
         'self',
         blank=True, null=True,
         verbose_name=_("Part of"),
-        help_text=_("The superordinate geographic place \
-        of which this place is a part."))
+        help_text=_("The superordinate geographic place "
+                    "of which this place is a part."))
 
     #~ def __unicode__(self):
         #~ return self.name

@@ -4,7 +4,6 @@ statistical institute
 .. autosummary::
    :toctree:
 
-    models
-    fixtures.inscodes
+    countries
 
 """

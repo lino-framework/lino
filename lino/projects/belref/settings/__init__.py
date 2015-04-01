@@ -43,13 +43,10 @@ class Site(Site):
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
-            # if a != 'lino.extjs':
-            #     yield a
         #~ yield 'lino.modlib.contenttypes'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'
-        yield 'lino.modlib.statbel'
-        yield 'lino.modlib.countries'
+        yield 'lino.modlib.statbel.countries'
         #~ yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.outbox'
         #~ yield 'lino.modlib.blogs'

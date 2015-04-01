@@ -1,7 +1,0 @@
-==========================
-Tuesday, September 9, 2014
-==========================
-
-Fixed a bug which (at least in :ref:`welfare` and :ref:`presto`)
-caused an :ref:`ise` "DoesNotExist -- Guest has no partner" when user
-tried to add a line in `cal.GuestsByEvent`.

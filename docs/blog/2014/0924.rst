@@ -1,7 +1,0 @@
-=============================
-Wednesday, September 24, 2014
-=============================
-
-Continued on :srcref:`docs/tickets/126`.
-
-Automatically generate calendar subscriptions.

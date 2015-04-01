@@ -1,5 +1,0 @@
-==========================
-Saturday, October 25, 2014
-==========================
-
-Worked on :srcref:`docs/tickets/132`.

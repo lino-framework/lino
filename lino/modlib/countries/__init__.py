@@ -1,8 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino.modlib.countries` package
-defines models and choicelists for managing geographic places.
+"""Defines models and choicelists for managing geographic places.
 
 
 .. autosummary::
@@ -12,17 +11,13 @@ defines models and choicelists for managing geographic places.
     mixins
     models
     utils
-    fixtures.demo
-    fixtures.few_countries
-    fixtures.few_cities
-    fixtures.be
-    fixtures.ee
-    fixtures.eesti
+    fixtures
 
+See also :mod:`lino.modlib.statbel.countries`.
 
 """
 
-from lino import ad, _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

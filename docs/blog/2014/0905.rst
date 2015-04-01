@@ -1,7 +1,0 @@
-=========================
-Friday, September 5, 2014
-=========================
-
-Final sprint for :srcref:`docs/tickets/121`.
-
-

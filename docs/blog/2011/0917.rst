@@ -1,5 +1,0 @@
-20110917
-========
-
-Worked on :srcref:`docs/tickets/45`.
-

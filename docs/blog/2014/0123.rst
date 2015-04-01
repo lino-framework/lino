@@ -1,8 +1,0 @@
-====================================
-20140123 (Thursday, 23 January 2014)
-====================================
-
-Worked on :srcref:`docs/tickets/93`.
-
-- New module :mod:`lino_welfare.modlib.aids`:
-

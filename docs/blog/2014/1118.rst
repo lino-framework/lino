@@ -1,8 +1,0 @@
-==========================
-Tuesday, November 18, 2014
-==========================
-
-Lino has a new fan: :ref:`sw` is an independent developer located in
-Eupen.  I wrote some minor documentation changes while getting started
-with him.  Together we found another oddness in :ref:`cosi` and
-registered it as :ticket:`9`.

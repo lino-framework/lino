@@ -1,8 +1,0 @@
-====================
-Monday, July 7, 2014
-====================
-
-Oops, Juhan lost some time because he didn't know that Lino requires
-Python 2. Added this to the preliminaries of :ref:`lino.dev.install`.
-Opened new ticket :srcref:`docs/tickets/117` just in case someone wants to
-discuss this.

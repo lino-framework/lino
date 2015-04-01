@@ -1,6 +1,0 @@
-==========================
-Wednesday, August 27, 2014
-==========================
-
-Worked on :srcref:`docs/tickets/121`.
-

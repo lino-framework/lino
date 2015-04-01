@@ -1,6 +1,0 @@
-=========================
-Monday, February 16, 2015
-=========================
-
-Continued on the todo list in :doc:`0213`.
-
