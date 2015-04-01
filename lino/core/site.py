@@ -830,6 +830,7 @@ documentation.
     """
 
     appy_params = dict(ooPort=8100)
+    # appy_params = dict(pythonWithUnoPath='/usr/bin/python3')
     """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::
@@ -847,14 +848,16 @@ documentation.
     <http://bazaar.launchpad.net/~appy-dev/appy/trunk/view/head:/pod/renderer.py>`_
     for details.
 
+    See also :doc:`/admin/oood`
+
     """
 
     #~ decimal_separator = '.'
     decimal_separator = ','
-    """
-    Set this to either ``'.'`` or ``','`` to define wether to use 
-    comma or dot as decimal point separator when entering 
-    a `DecimalField`.
+    """Set this to either ``'.'`` or ``','`` to define wether to use
+    comma or dot as decimal point separator when entering a
+    `DecimalField`.
+
     """
 
     #~ decimal_group_separator = ','

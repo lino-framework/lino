@@ -64,6 +64,13 @@ class Country(mixins.BabelNamed):
             return cd.region_types + cd.city_types
         return PlaceTypes.items()
 
+    @classmethod
+    def get_actual_countries(cls):
+        return cls.objects.all()
+
+Country.set_widget_options('short_code', width=10)
+Country.set_widget_options('isocode', width=10)
+
 
 class Countries(dd.Table):
 

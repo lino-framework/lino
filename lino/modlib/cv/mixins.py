@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -14,10 +14,13 @@ from lino.api import dd, rt
 from lino.mixins.periods import DatePeriod
 
 
-class SchoolingStates(dd.ChoiceList):
+class EducationEntryStates(dd.ChoiceList):
+    """The possible states of an **education entry**.
+
+    """
     verbose_name = _("State")
 
-add = SchoolingStates.add_item
+add = EducationEntryStates.add_item
 add('0', _("Success"), 'success')
 add('1', _("Failure"), 'failure')
 add('2', _("Ongoing"), 'ongoing')

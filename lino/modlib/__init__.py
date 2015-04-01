@@ -24,7 +24,6 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     users
     system
 
-
 "Enterprise Resources"
 ======================
 
@@ -73,10 +72,8 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     reception
     rooms
     sales
-    auto.sales
     sepa
     smtpd
-    statbel
     thirds
     clocking
     tickets
@@ -84,5 +81,15 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
     vat
     vocbook
     workflows
+
+
+Differentiator packages
+=======================
+
+.. autosummary::
+   :toctree:
+
+    auto
+    statbel
 
 """

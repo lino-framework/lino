@@ -25,7 +25,7 @@ class Plugin(ad.Plugin):
 
     def setup_config_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)
-        m.add_action('cv.TrainingTypes')
+        # m.add_action('cv.TrainingTypes')
         m.add_action('cv.StudyTypes')
         m.add_action('cv.EducationLevels')
         m.add_action('cv.Sectors')

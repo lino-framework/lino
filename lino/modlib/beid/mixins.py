@@ -438,6 +438,17 @@ class BeIdCardHolder(dd.Model):
         with legacy data where SSINs need manual control. See also
         :class:`BeIdCardHolderChecker`.
 
+    .. attribute:: nationality
+
+        The nationality. This is a pointer to
+        :class:`countries.Country
+        <lino.modlib.statbel.countries.models.Country>` which should
+        contain also entries for refugee statuses.
+
+        Note that the nationality is *not* being read from eID card
+        because it is stored there as a language and gender specific
+        plain text.
+
     """
     class Meta:
         abstract = True

@@ -1,5 +1,21 @@
-Install OpenOffice.org server 
+Install OpenOffice.org server
 =============================
+
+.. rubric:: Cheat sheet
+
+You must install `python3-uno` package::
+
+  $ sudo aptitude install python3-uno
+
+and then set your :attr:`appy_params
+<lino.core.site.Site.appy_params>` to point to your `python3`
+executable, e.g. by specifying in your :xfile:`settings.py`::
+
+  SITE.appy_params.update(pythonWithUnoPath='/usr/bin/python3')
+
+
+.. rubric:: The following is probably obsolete
+
 
 See also :srcref:`/docs/blog/2010/1116`. But basically:
 

@@ -16,11 +16,11 @@ http://users.pandora.be/bosteels/countries.xml
 TODO: Estonian names. Maybe from
 https://et.wikipedia.org/wiki/ISO_maakoodide_loend
 
-TABLE2 contains 4-letter codes for countries that no longer exist.
+`TABLE2` contains 4-letter codes for countries that no longer exist.
 This is mostly based on <http://www.davros.org/misc/iso3166.html>,
 but one country (DEDE) was added.
 
-Another fixture, :mod:`lino.modlib.statbel.fixtures.inscodes`,
+The :mod:`lino.modlib.statbel.countries.fixtures.inscodes` fixture,
 extends this data by attaching Belgian INS codes to these countries.
 
 """

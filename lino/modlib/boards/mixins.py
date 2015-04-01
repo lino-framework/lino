@@ -11,15 +11,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from lino.api import dd
+from lino.api import dd, rt, _
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.mixins import UserAuthored
 
 
 class BoardDecision(UserAuthored):
-    # base class for aids.Confirmation
+    """Mixin for models that represent a board decision.  Base class for
+    :class:`lino_welfare.modlib.aids.mixins.Confirmation`.
+
+    """
     class Meta:
         abstract = True
 
@@ -29,8 +31,7 @@ class BoardDecision(UserAuthored):
 
     @dd.chooser()
     def board_choices(self, decision_date):
-        M = dd.resolve_model('boards.Board')
-        qs = M.objects.all()
+        qs = rt.modules.boards.Board.objects.all()
         if decision_date:
             qs = dd.PeriodEvents.active.add_filter(qs, decision_date)
         return qs

@@ -26,6 +26,11 @@ class DisableDeleteHandler():
         self.fklist = []
 
     def add_fk(self, rel_model, fk):
+        # called from kernel.
+        for m, fld in self.fklist:
+            if rel_model is m:
+                # avoid duplicate entries caused by MTI children
+                return
         self.fklist.append((rel_model, fk))
 
     def __str__(self):

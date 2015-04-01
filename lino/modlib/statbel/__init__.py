@@ -1,5 +1,5 @@
-"""Adds support for the classification codes of the Belgian
-statistical institute
+"""A package to differentiate between the "standard" `countries`
+module and its "Belgian statistic" version.
 
 .. autosummary::
    :toctree:

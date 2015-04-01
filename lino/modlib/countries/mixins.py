@@ -57,6 +57,10 @@ class CountryCity(dd.Model):
     def city_choices(cls, country):
         return rt.modules.countries.Place.get_cities(country)
 
+    @dd.chooser()
+    def country_choices(cls):
+        return rt.modules.countries.Country.get_actual_countries()
+
     def create_city_choice(self, text):
         """
         Called when an unknown city name was given.

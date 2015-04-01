@@ -91,7 +91,7 @@ def objects():
                                    en=u"Remote study",
                                    ))
 
-    M = Instantiator('cv.TrainingType').build
+    M = Instantiator('cv.StudyType', is_training=True, is_study=False).build
     yield M(**dd.str2kw('name', _("Prequalifying")))
     yield M(**dd.str2kw('name', _("Qualifying")))
     yield M(**dd.str2kw('name', _("Alpha")))

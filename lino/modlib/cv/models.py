@@ -2,19 +2,19 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.cv`.
+"""Database models for `lino.modlib.cv`.
 
 .. autosummary::
 
 - A **Language knowledge** is when a given person knows a given language.
 
-- A **Schooling** (fr: Éducation, de: Ausbildung) is when a given person
-  has followed lessons in a given *school* for a given *period*.  There
-  are two basic types of schooling: **Study** (fr: Études, de: Studium)
-  and **Training** (fr: Formation, de: Lehre).
+- An **education** entry (fr: Éducation, de: Bildung) is when a given
+  person has followed lessons in a given *school* for a given
+  *period*.  There are two basic types of education: **studies** (fr:
+  Études, de: Studium) and **trainings** (fr: Formation, de:
+  Ausbildung).
 
-- An **Work experience** (fr: Expérience professionnelle, de:
+- A **Work experience** (fr: Expérience professionnelle, de:
   Berufserfahrung) is when a given person has worked in a given
   *organisation* for a given *period*.
 
@@ -37,12 +37,14 @@ from lino.modlib.countries.mixins import CountryCity
 
 from .mixins import (SectorFunction, PersonHistoryEntry,
                      HistoryByPerson, CefLevel, HowWell,
-                     SchoolingStates)
+                     EducationEntryStates)
 
 config = dd.plugins.cv
 
 
+##
 ## Language knowledge
+##
 
 class LanguageKnowledge(dd.Model):
     """
@@ -100,30 +102,11 @@ class KnowledgesByLanguage(LanguageKnowledges):
     required = config.get_default_required()
 
 
-## Trainings
+##
+## Education
+##
 
-
-class TrainingType(mixins.BabelNamed):
-
-    class Meta:
-        verbose_name = _("Training Type")
-        verbose_name_plural = _("Training Types")
-
-
-class TrainingTypes(dd.Table):
-    """The default table showing all :class:`TrainingType` instances.
-
-    """
-    required = config.get_default_required(user_level='admin')
-    model = 'cv.TrainingType'
-    order_by = ["name"]
-    detail_layout = """
-    name id
-    cv.TrainingsByType
-    """
-
-
-class Schooling(PersonHistoryEntry, CountryCity):
+class EducationEntry(PersonHistoryEntry, CountryCity):
     "Abstract base class for :class:`Training` and :class:`Study`."
     class Meta:
         abstract = True
@@ -132,19 +115,105 @@ class Schooling(PersonHistoryEntry, CountryCity):
 
     school = models.CharField(_("Establishment"), max_length=200, blank=True)
 
-    state = SchoolingStates.field(blank=True)
+    state = EducationEntryStates.field(blank=True)
 
     remarks = models.TextField(
         blank=True, null=True, verbose_name=_("Remarks"))
 
+    type = models.ForeignKey('cv.StudyType')
 
-class Training(Schooling):
+
+class StudyOrTraining(dd.Model):
+
+    class Meta:
+        abstract = True
+
+    is_study = models.BooleanField(_("Study"), default=True)
+    is_training = models.BooleanField(_("Training"), default=False)
+
+
+class EducationLevel(StudyOrTraining, mixins.BabelNamed, mixins.Sequenced):
+
+    class Meta:
+        verbose_name = _("Education Level")
+        verbose_name_plural = _("Education Levels")
+
+
+class EducationLevels(dd.Table):
+    """The default table showing all :class:`EducationLevel` instances.
+    """
+
+    required = config.get_default_required(user_level='manager')
+    model = 'cv.EducationLevel'
+    column_names = 'name *'
+    order_by = ['name']
+    detail_layout = """
+    name is_study is_training
+    StudyTypesByLevel
+    StudiesByLevel
+    """
+
+
+class StudyType(StudyOrTraining, mixins.BabelNamed):
+    """The **Education Type** of a study or training is a way to group
+    entries according to their type.
+
+    TODO: Rename this to `EducationType`.
+
+    Also used in :attr:`isip.Contract.study_type
+    <lino_welfare.modlib.isip.models.Contract.study_type>` and by
+    :attr:`EducationEntry.type`.
+
+    .. attribute:: education_level
+
+        Pointer to the :class:`EducationLevel`.
+
+    .. attribute:: study_regime
+
+        One choice from :class:`StudyRegimes`.
+
+    """
+    class Meta:
+        verbose_name = _("Education Type")
+        verbose_name_plural = _("Education Types")
+
+    education_level = dd.ForeignKey(
+        'cv.EducationLevel',
+        null=True, blank=True)
+
+
+class StudyTypes(dd.Table):
+    """The default table showing all :class:`StudyType` instances.
+    """
+    required = config.get_default_required(user_level='admin')
+    model = StudyType
+    order_by = ["name"]
+    detail_layout = """
+    name id
+    education_level is_study is_training
+    cv.StudiesByType
+    """
+
+    insert_layout = """
+    name
+    is_study is_training
+    education_level
+    """
+
+
+class StudyTypesByLevel(StudyTypes):
+    master_key = 'education_level'
+
+
+##
+## Trainings
+##
+
+class Training(EducationEntry):
 
     class Meta:
         verbose_name = _("Training")
         verbose_name_plural = _("Trainings")
-
-    type = models.ForeignKey('cv.TrainingType')
 
     content = models.CharField(
         max_length=200,
@@ -158,6 +227,10 @@ class Training(Schooling):
 
     def __unicode__(self):
         return unicode(self.type)
+
+    @dd.chooser()
+    def type_choices(cls):
+        return rt.modules.cv.StudyType.objects.filter(is_training=True)
 
 
 class Trainings(dd.Table):
@@ -198,80 +271,11 @@ class TrainingsByPerson(HistoryByPerson, Trainings):
 ## Studies
 ##
 
-class EducationLevel(mixins.BabelNamed, mixins.Sequenced):
-
-    class Meta:
-        verbose_name = _("Education Level")
-        verbose_name_plural = _("Education Levels")
-
-
-class EducationLevels(dd.Table):
-    """The default table showing all :class:`EducationLevel` instances.
-    """
-
-    required = config.get_default_required(user_level='manager')
-    model = 'cv.EducationLevel'
-    column_names = 'name *'
-    order_by = ['name']
-    detail_layout = """
-    name
-    StudyTypesByLevel
-    StudiesByLevel
-    """
-
-
-class StudyType(mixins.BabelNamed):
-    """
-    Used in :attr:`Contract.study_type` and by :attr:`jobs.Study.type`.
-
-    .. attribute:: education_level
-
-        Pointer to the :class:`EducationLevel`.
-
-    .. attribute:: study_regime
-
-        One choice from :class:`StudyRegimes`.
-
-
-    """
-    class Meta:
-        verbose_name = _("Study Type")
-        verbose_name_plural = _("Study Types")
-
-    education_level = dd.ForeignKey(
-        'cv.EducationLevel',
-        null=True, blank=True)
-
-
-class StudyTypes(dd.Table):
-    """The default table showing all :class:`StudyType` instances.
-    """
-    required = config.get_default_required(user_level='admin')
-    #~ label = _('Study types')
-    model = StudyType
-    order_by = ["name"]
-    detail_layout = """
-    name education_level id
-    cv.StudiesByType
-    """
-
-    insert_layout = """
-    name
-    education_level
-    """
-
-
-class StudyTypesByLevel(StudyTypes):
-    master_key = 'education_level'
-
-
-class Study(Schooling):
+class Study(EducationEntry):
 
     class Meta:
         verbose_name = _("Study")
         verbose_name_plural = _("Studies")
-
-    type = models.ForeignKey('cv.StudyType')
 
     education_level = dd.ForeignKey(
         'cv.EducationLevel',
@@ -286,6 +290,10 @@ class Study(Schooling):
 
     def __unicode__(self):
         return unicode(self.type)
+
+    @dd.chooser()
+    def type_choices(cls):
+        return rt.modules.cv.StudyType.objects.filter(is_study=True)
 
 
 class Studies(dd.Table):

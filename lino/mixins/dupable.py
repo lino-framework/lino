@@ -33,6 +33,8 @@ from django.db import models
 
 from lino.api import dd, _
 from lino.core.actions import SubmitInsert
+from lino.utils import join_elems
+from lino.utils.xmlgen.html import E
 
 
 class CheckedSubmitInsert(SubmitInsert):
@@ -244,18 +246,19 @@ class SimilarObjects(dd.VirtualTable):
     """Shows the other objects who are similar to this one."""
     # slave_grid_format = 'html'
     slave_grid_format = 'summary'
+    master = dd.Model
 
-    class Row:
+    # class Row:
 
-        def __init__(self, master, other):
-            self.master = master
-            self.other = other
+    #     def __init__(self, master, other):
+    #         self.master = master
+    #         self.other = other
 
-        def summary_row(self, ar):
-            yield ar.obj2html(self.other)
+    #     def summary_row(self, ar):
+    #         yield ar.obj2html(self.other)
 
-        def __unicode__(self):
-            return unicode(self.other)
+    #     def __unicode__(self):
+    #         return unicode(self.other)
 
     @classmethod
     def get_data_rows(self, ar):
@@ -264,8 +267,23 @@ class SimilarObjects(dd.VirtualTable):
             return
 
         for o in mi.find_similar_instances(4):
-            yield self.Row(mi, o)
+            # yield self.Row(mi, o)
+            yield o
 
-    @dd.displayfield(_("Other"))
-    def other(self, obj, ar):
-        return ar.obj2html(obj.other)
+    @dd.displayfield(_("Similar record"))
+    def similar_record(self, obj, ar):
+        # return ar.obj2html(obj.other)
+        return ar.obj2html(obj)
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        chunks = []
+        for other in ar.spawn(self, master_instance=obj):
+            chunks.append(ar.obj2html(other))
+        if len(chunks):
+            s = getattr(obj, obj.dupable_words_field)
+            words = ', '.join(obj.get_dupable_words(s))
+            chunks.append(_("Phonetic words: {0}").format(words))
+            return E.p(*join_elems(chunks))
+        return ''
+
