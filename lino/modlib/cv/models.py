@@ -145,7 +145,7 @@ class EducationLevels(dd.Table):
 
     required = config.get_default_required(user_level='manager')
     model = 'cv.EducationLevel'
-    column_names = 'name is_study is_training*'
+    column_names = 'name is_study is_training *'
     order_by = ['name']
     detail_layout = """
     name is_study is_training
