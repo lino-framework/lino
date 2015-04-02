@@ -11,8 +11,7 @@ A Lino application is technically a Django project where certain
 choices have been made for you as the application developer.  For
 example you don't not need to write any URLconf, HTML, CSS nor
 Javascript.  A Lino application has an out-of-the box user interface.
-Technical details about the differences between Lino and Django are
-described in :doc:`lino_and_django`.
+More about this in :doc:`lino_and_django`.
 
 Advantages: everything gets much easier: writing a prototype, changing
 database structures and business logic, long-term maintenance,

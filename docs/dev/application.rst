@@ -18,13 +18,15 @@ A *software application* is a standalone piece of software which is
 *perceived as an entity* by *end-users*.
 
 Unfortunately, Django comes with a rather special use of the word
-"app".  Daniel and Audrey (`Two scoops of Django
-<https://django.2scoops.org/>`_) say it in a diplomatic way: "It's not
-uncommon for new Django developers to become understandably confused
-by Django's usage of the word 'app'."
+'application'.  Daniel and Audrey (`Two scoops of Django
+<http://twoscoopspress.org/products/two-scoops-of-django-1-6>`_) say
+it in a diplomatic way: "It's not uncommon for new Django developers
+to become understandably confused by Django's usage of the word
+'app'."
 
-And if you ask me: Django is simply wrong here.  Django says "app"
-where it should say "plugin". Things like `django.contrib.contenttypes
+And if you ask me: Django is simply wrong here.  Django says
+"application" where it should say "plugin". Things like
+`django.contrib.contenttypes
 <https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/>`_
 are not what normal people would call an "application", they are
 rather "plugins" or "modules".

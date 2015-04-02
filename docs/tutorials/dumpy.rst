@@ -7,9 +7,10 @@ Introduction to Python fixtures
 .. to run only this test:
   $ python setup.py test -s tests.DocsTests.test_dumpy
 
-**Python fixtures** are one of the important concepts which Lino adds
-to a Django project. They are used to write demonstration data
-samples for application prototypes and test suites.
+This tutorial shows how to use :doc:`the Python serializer
+</topics/dpy>` for writing and loading demonstration data samples for
+application prototypes and test suites.
+
 
 You know that a *fixture* is a portion of data (a collection of data
 records in one or several tables) which can be loaded into a database.
@@ -31,11 +32,6 @@ file ending with `.py` and designed to being imported and exectued
 during Django's `loaddata
 <https://docs.djangoproject.com/en/dev/ref/django-admin/#django-admin-loaddata>`_
 command.
-
-
-
-
-This tutorial shows how to use :ref:`dpy`.
 
 
 The :manage:`initdb` and :manage:`initdb_demo` commands
@@ -158,6 +154,10 @@ Try to apply this fixture::
   INFO Saved 2 instances from t:\hgwork\lino\docs\tutorials\dumpy1.py.
   Installed 1 object(s) from 1 fixture(s)
   INFO Lino initdb done ('dumpy1',) on database t:\data\luc\lino\dsbe\dsbe_test.db.
+
+A technical detail: you cannot use relative imports in a Python
+fixture.  See `here
+<http://stackoverflow.com/questions/4907054/loading-each-py-file-in-a-path-imp-load-module-complains-about-relative-impor>`__
 
 
 .. _tutorial.instantiator:
