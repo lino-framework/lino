@@ -74,7 +74,7 @@ def my_guest_workflows(sender=None, **kw):
     def event_took_place(action, user, obj, state):
         return obj.event_id and (obj.event.state == EventStates.took_place)
 
-    GuestStates.rejected.add_transition(AcceptInvitation)
+    GuestStates.accepted.add_transition(AcceptInvitation)
     GuestStates.rejected.add_transition(RejectInvitation)
     GuestStates.present.add_transition(
         states='invited accepted',  # owner=True,
