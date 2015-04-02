@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-01 16:42+0300\n"
+"POT-Creation-Date: 2015-04-02 08:49+0300\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -273,7 +273,7 @@ msgstr ""
 #: lino/core/choicelists.py:371 lino/modlib/addresses/models.py:55
 #: lino/modlib/blogs/models.py:31 lino/modlib/cal/models_guest.py:73
 #: lino/modlib/courses/models.py:259 lino/modlib/courses/models.py:722
-#: lino/modlib/cv/models.py:412 lino/modlib/cv/models.py:437
+#: lino/modlib/cv/models.py:418 lino/modlib/cv/models.py:443
 #: lino/modlib/excerpts/models.py:84 lino/modlib/finan/mixins.py:118
 #: lino/modlib/lists/models.py:89 lino/modlib/notes/models.py:43
 #: lino/modlib/notes/models.py:80 lino/modlib/polls/models.py:627
@@ -464,14 +464,14 @@ msgstr ""
 msgid "Site"
 msgstr ""
 
-#: lino/core/site.py:1776 lino/projects/homeworkschool/settings/__init__.py:76
+#: lino/core/site.py:1777 lino/projects/homeworkschool/settings/__init__.py:76
 #: lino/projects/min2/settings/__init__.py:46
 #: lino/projects/polly/settings/__init__.py:43
 #: lino/projects/presto/settings/__init__.py:28
 msgid "Anonymous"
 msgstr ""
 
-#: lino/core/site.py:1780 lino/modlib/users/choicelists.py:67
+#: lino/core/site.py:1781 lino/modlib/users/choicelists.py:67
 #: lino/modlib/users/models.py:92
 #: lino/projects/homeworkschool/settings/__init__.py:78
 #: lino/projects/min2/settings/__init__.py:50
@@ -480,7 +480,7 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: lino/core/site.py:1781 lino/modlib/users/choicelists.py:69
+#: lino/core/site.py:1782 lino/modlib/users/choicelists.py:69
 #: lino/projects/homeworkschool/settings/__init__.py:79
 #: lino/projects/min2/settings/__init__.py:51
 #: lino/projects/polly/settings/__init__.py:46
@@ -488,19 +488,19 @@ msgstr ""
 msgid "Administrator"
 msgstr ""
 
-#: lino/core/site.py:2036 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:2037 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:2906
+#: lino/core/site.py:2907
 msgid "This is "
 msgstr ""
 
-#: lino/core/site.py:2915
+#: lino/core/site.py:2916
 msgid " using "
 msgstr ""
 
-#: lino/core/site.py:2960
+#: lino/core/site.py:2961
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -2613,7 +2613,7 @@ msgid "Fax"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:99 lino/modlib/cv/models.py:121
-#: lino/modlib/cv/models.py:480 lino/modlib/lists/models.py:54
+#: lino/modlib/cv/models.py:486 lino/modlib/lists/models.py:54
 #: lino/modlib/users/models.py:120
 msgid "Remarks"
 msgstr ""
@@ -3400,12 +3400,12 @@ msgstr ""
 msgid "Establishment"
 msgstr ""
 
-#: lino/modlib/cv/models.py:131 lino/modlib/cv/models.py:275
+#: lino/modlib/cv/models.py:131 lino/modlib/cv/models.py:277
 msgid "Study"
 msgstr ""
 
 #: lino/modlib/cv/models.py:132 lino/modlib/cv/models.py:215
-#: lino/modlib/cv/models.py:478
+#: lino/modlib/cv/models.py:484
 msgid "Training"
 msgstr ""
 
@@ -3437,73 +3437,73 @@ msgstr ""
 msgid "Certificates"
 msgstr ""
 
-#: lino/modlib/cv/models.py:276
+#: lino/modlib/cv/models.py:278
 msgid "Studies"
 msgstr ""
 
-#: lino/modlib/cv/models.py:285
+#: lino/modlib/cv/models.py:287
 msgid "Study content"
 msgstr ""
 
-#: lino/modlib/cv/models.py:350
+#: lino/modlib/cv/models.py:356
 msgctxt "work experience"
 msgid "Status"
 msgstr ""
 
-#: lino/modlib/cv/models.py:351
+#: lino/modlib/cv/models.py:357
 msgctxt "work experience"
 msgid "Statuses"
 msgstr ""
 
-#: lino/modlib/cv/models.py:370
+#: lino/modlib/cv/models.py:376
 msgid "Work Regime"
 msgstr ""
 
-#: lino/modlib/cv/models.py:371
+#: lino/modlib/cv/models.py:377
 msgid "Work Regimes"
 msgstr ""
 
-#: lino/modlib/cv/models.py:388
+#: lino/modlib/cv/models.py:394
 msgid "Contract Duration"
 msgstr ""
 
-#: lino/modlib/cv/models.py:389
+#: lino/modlib/cv/models.py:395
 msgid "Contract Durations"
 msgstr ""
 
-#: lino/modlib/cv/models.py:407
+#: lino/modlib/cv/models.py:413
 msgid "Job Sector"
 msgstr ""
 
-#: lino/modlib/cv/models.py:408
+#: lino/modlib/cv/models.py:414
 msgid "Job Sectors"
 msgstr ""
 
-#: lino/modlib/cv/models.py:432
+#: lino/modlib/cv/models.py:438
 msgid "Job Function"
 msgstr ""
 
-#: lino/modlib/cv/models.py:433
+#: lino/modlib/cv/models.py:439
 msgid "Job Functions"
 msgstr ""
 
-#: lino/modlib/cv/models.py:467
+#: lino/modlib/cv/models.py:473
 msgid "Job Experience"
 msgstr ""
 
-#: lino/modlib/cv/models.py:468
+#: lino/modlib/cv/models.py:474
 msgid "Job Experiences"
 msgstr ""
 
-#: lino/modlib/cv/models.py:471
+#: lino/modlib/cv/models.py:477
 msgid "company"
 msgstr ""
 
-#: lino/modlib/cv/models.py:474
+#: lino/modlib/cv/models.py:480
 msgid "job title"
 msgstr ""
 
-#: lino/modlib/cv/models.py:485
+#: lino/modlib/cv/models.py:491
 msgid "Termination reason"
 msgstr ""
 
@@ -5733,26 +5733,26 @@ msgstr ""
 msgid "Mail server"
 msgstr ""
 
-#: lino/modlib/statbel/countries/models.py:32
-#: lino/modlib/statbel/countries/models.py:59
+#: lino/modlib/statbel/countries/models.py:38
+#: lino/modlib/statbel/countries/models.py:68
 msgid "INS code"
 msgstr ""
 
-#: lino/modlib/statbel/countries/models.py:34
+#: lino/modlib/statbel/countries/models.py:40
 msgid "The official code for this country used by statbel.fgov.be"
 msgstr ""
 
-#: lino/modlib/statbel/countries/models.py:38
+#: lino/modlib/statbel/countries/models.py:44
 msgid "Actual country"
 msgstr ""
 
-#: lino/modlib/statbel/countries/models.py:40
+#: lino/modlib/statbel/countries/models.py:46
 msgid ""
 "Select the actual country if this row represents a refugee status or a "
 "former country."
 msgstr ""
 
-#: lino/modlib/statbel/countries/models.py:61
+#: lino/modlib/statbel/countries/models.py:70
 msgid "The official code for this place used by statbel.fgov.be"
 msgstr ""
 
@@ -6842,11 +6842,6 @@ msgstr ""
 #~ msgid "Non-empty address fields, but no address record."
 #~ msgstr ""
 
-#~ msgid ""
-#~ "The superordinate geographic place         of"
-#~ " which this place is a part."
-#~ msgstr ""
-
 #~ msgid "Training Type"
 #~ msgstr ""
 
@@ -6869,15 +6864,5 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "No plausibility problems found in {0}."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The official code for this place"
-#~ "                     used by statbel.fgov.be"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The official code for this country"
-#~ "                     used by statbel.fgov.be"
 #~ msgstr ""
 

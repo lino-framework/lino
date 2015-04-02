@@ -145,7 +145,7 @@ class EducationLevels(dd.Table):
 
     required = config.get_default_required(user_level='manager')
     model = 'cv.EducationLevel'
-    column_names = 'name *'
+    column_names = 'name is_study is_training*'
     order_by = ['name']
     detail_layout = """
     name is_study is_training
@@ -468,7 +468,10 @@ class FunctionsBySector(Functions):
 
 
 class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
+    """A **work experience** is when a given person has worked for a given
+    period in a given company.
 
+    """
     class Meta:
         verbose_name = _("Job Experience")
         verbose_name_plural = _("Job Experiences")
