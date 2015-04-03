@@ -209,7 +209,7 @@ class StudyTypesByLevel(StudyTypes):
 ## Trainings
 ##
 
-class Training(EducationEntry):
+class Training(SectorFunction, EducationEntry):
 
     class Meta:
         verbose_name = _("Training")
@@ -234,20 +234,34 @@ class Training(EducationEntry):
 
 
 class Trainings(dd.Table):
-    """The default table showing all :class:`Trainings` instances.
+    """Base table for all tables on :class:`Training`.
 
     """
 
-    required = config.get_default_required(user_level='manager')
     model = 'cv.Training'
     order_by = "country city type".split()
 
     detail_layout = """
     person start_date end_date
     type state #success certificates
+    sector function
     school country city
     remarks
     """
+
+    insert_layout = """
+    person start_date end_date
+    type state #success certificates
+    sector function
+    school country city
+    """
+
+
+class AllTrainings(Trainings):
+    """The explorer table showing all :class:`Trainings` instances.
+
+    """
+    required = config.get_default_required(user_level='manager')
 
 
 class TrainingsByCountry(Trainings):
@@ -262,7 +276,7 @@ class TrainingsByType(Trainings):
 
 class TrainingsByPerson(HistoryByPerson, Trainings):
     required = config.get_default_required()
-    column_names = 'type content start_date end_date \
+    column_names = 'type sector content start_date end_date \
     school country state certificates *'
     auto_fit_column_widths = True
 

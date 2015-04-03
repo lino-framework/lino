@@ -287,6 +287,7 @@ class TextRenderer(HtmlRenderer):
         self.user = None
 
     def instance_handler(self, ar, obj):
+        "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
         return None
 
     def pk2url(self, ar, pk, **kw):

@@ -714,7 +714,6 @@ class ChoiceListField(models.CharField):
 
 
 class MultiChoiceListField(ChoiceListField):
-
     """
     A field whose value is a `list` of `Choice` instances.
     Stored in the database as a CharField using a delimiter character.

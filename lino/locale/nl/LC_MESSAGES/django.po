@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-02 08:49+0300\n"
+"POT-Creation-Date: 2015-04-02 15:58+0300\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
@@ -212,7 +212,7 @@ msgstr "Zusammenfassung"
 #: lino/core/actions.py:1076 lino/core/model.py:629 lino/core/tables.py:689
 #: lino/modlib/cal/mixins.py:140 lino/modlib/cal/mixins.py:573
 #: lino/modlib/cal/models_calendar.py:46 lino/modlib/cal/models_event.py:78
-#: lino/modlib/cal/models_event.py:187 lino/modlib/courses/models.py:137
+#: lino/modlib/cal/models_event.py:144 lino/modlib/courses/models.py:137
 #: lino/modlib/courses/models.py:258 lino/modlib/importfilters/models.py:109
 #: lino/modlib/ledger/models.py:941 lino/modlib/ledger/models.py:1128
 #: lino/modlib/orders/models.py:244 lino/modlib/sales/models.py:288
@@ -1692,8 +1692,8 @@ msgstr ""
 msgid "Times"
 msgstr "Druckdatum"
 
-#: lino/modlib/cal/mixins.py:582 lino/modlib/cal/models_event.py:578
-#: lino/modlib/cal/models_event.py:591 lino/modlib/events/models.py:112
+#: lino/modlib/cal/mixins.py:582 lino/modlib/cal/models_event.py:535
+#: lino/modlib/cal/models_event.py:548 lino/modlib/events/models.py:112
 msgid "When"
 msgstr "Wanneer"
 
@@ -1853,13 +1853,13 @@ msgstr ""
 
 #: lino/modlib/cal/models_event.py:73
 #, fuzzy
-msgid "Event Type"
-msgstr "Empfängerart"
+msgid "Calendar Event Type"
+msgstr "Kalenders"
 
-#: lino/modlib/cal/models_event.py:74 lino/modlib/notes/models.py:78
+#: lino/modlib/cal/models_event.py:74
 #, fuzzy
-msgid "Event Types"
-msgstr "Empfängerart"
+msgid "Calendar Event Types"
+msgstr "Kalenders"
 
 #: lino/modlib/cal/models_event.py:80
 msgid "Event is an appointment"
@@ -1902,168 +1902,170 @@ msgid ""
 "The list of Event Types defined on this system.\n"
 "    An EventType is a list of events which have certain things in common,"
 "\n"
-"    especially they are displayed in the same colour in the calendar panel"
+"    especially they are displayed in the same colour in the calendar "
+"panel.\n"
+"    "
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:182
+#: lino/modlib/cal/models_event.py:139
 #, fuzzy
 msgid "Recurrent Event"
 msgstr "Benutzer-Level"
 
-#: lino/modlib/cal/models_event.py:183
+#: lino/modlib/cal/models_event.py:140
 #, fuzzy
 msgid "Recurrent Events"
 msgstr "Benutzer-Level"
 
-#: lino/modlib/cal/models_event.py:306
+#: lino/modlib/cal/models_event.py:263
 #, fuzzy
 msgid "Update Guests"
 msgstr "Empfänger"
 
-#: lino/modlib/cal/models_event.py:355
+#: lino/modlib/cal/models_event.py:312
 #, fuzzy
 msgctxt "cal"
 msgid "Event"
 msgstr "Empfänger"
 
-#: lino/modlib/cal/models_event.py:356
+#: lino/modlib/cal/models_event.py:313
 #, fuzzy
 msgctxt "cal"
 msgid "Events"
 msgstr "Empfänger"
 
-#: lino/modlib/cal/models_event.py:363
+#: lino/modlib/cal/models_event.py:320
 msgid "Transparent"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:363
+#: lino/modlib/cal/models_event.py:320
 msgid "Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:368
+#: lino/modlib/cal/models_event.py:325
 msgid "all day"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:372 lino/modlib/cal/models_event.py:727
+#: lino/modlib/cal/models_event.py:329 lino/modlib/cal/models_event.py:684
 #: lino/modlib/tickets/models.py:316
 msgid "Assigned to"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:393
+#: lino/modlib/cal/models_event.py:350
 #, python-format
 msgid "Unsaved %s"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:501 lino/modlib/reception/models.py:43
+#: lino/modlib/cal/models_event.py:458 lino/modlib/reception/models.py:43
 msgid "Busy"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:505
+#: lino/modlib/cal/models_event.py:462
 msgid "with"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:587
+#: lino/modlib/cal/models_event.py:544
 msgid "Link URL"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:597
+#: lino/modlib/cal/models_event.py:554
 #, fuzzy
 msgid "Reminder"
 msgstr "Geschlecht"
 
-#: lino/modlib/cal/models_event.py:635 lino/modlib/cal/models_guest.py:118
+#: lino/modlib/cal/models_event.py:592 lino/modlib/cal/models_guest.py:118
 msgid "Responsible user"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:646
+#: lino/modlib/cal/models_event.py:603
 msgid "Check for missing participants"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:656
+#: lino/modlib/cal/models_event.py:613
 msgid "No participants although {0} suggestions exist."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:687 lino/modlib/system/mixins.py:101
+#: lino/modlib/cal/models_event.py:644 lino/modlib/system/mixins.py:101
 #: lino/modlib/tickets/models.py:288
 msgid "Observed event"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:688 lino/modlib/system/mixins.py:102
+#: lino/modlib/cal/models_event.py:645 lino/modlib/system/mixins.py:102
 #: lino/modlib/tickets/models.py:289
 #, fuzzy
 msgid "Observed events"
 msgstr "Benutzer-Level"
 
-#: lino/modlib/cal/models_event.py:690
+#: lino/modlib/cal/models_event.py:647
 msgid "Okay"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:691
+#: lino/modlib/cal/models_event.py:648
 #, fuzzy
 msgid "Pending"
 msgstr "Änderung"
 
-#: lino/modlib/cal/models_event.py:697
+#: lino/modlib/cal/models_event.py:654
 msgid "A List of calendar entries. Each entry is called an event."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:719 lino/modlib/cal/models_task.py:128
+#: lino/modlib/cal/models_event.py:676 lino/modlib/cal/models_task.py:128
 msgid "Managed by"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:721 lino/modlib/cal/models_guest.py:120
+#: lino/modlib/cal/models_event.py:678 lino/modlib/cal/models_guest.py:120
 #: lino/modlib/cal/models_task.py:130
 msgid "Only rows managed by this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:729
+#: lino/modlib/cal/models_event.py:686
 msgid "Only events assigned to this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:732 lino/modlib/cal/models_task.py:134
+#: lino/modlib/cal/models_event.py:689 lino/modlib/cal/models_task.py:134
 #: lino/modlib/tickets/models.py:323
 msgid "Only rows having this state."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:735 lino/modlib/reception/models.py:285
+#: lino/modlib/cal/models_event.py:692 lino/modlib/reception/models.py:285
 msgid "Appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:838
+#: lino/modlib/cal/models_event.py:795
 msgid "Appointments today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:875 lino/modlib/excerpts/models.py:774
+#: lino/modlib/cal/models_event.py:832 lino/modlib/excerpts/models.py:774
 #, fuzzy
 msgid "Today"
 msgstr "als"
 
-#: lino/modlib/cal/models_event.py:876
+#: lino/modlib/cal/models_event.py:833
 msgid "Show all calendar events of the same day."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:940
+#: lino/modlib/cal/models_event.py:897
 msgid "My appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:941
+#: lino/modlib/cal/models_event.py:898
 msgid "Table of my appointments."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:972
+#: lino/modlib/cal/models_event.py:929
 msgid "Events assigned to me"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:973
+#: lino/modlib/cal/models_event.py:930
 msgid "Table of events assigned to me."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:991
+#: lino/modlib/cal/models_event.py:948
 #, fuzzy, python-format
 msgid "%d events have been assigned to you."
 msgstr "%s wurde aktualisiert."
 
-#: lino/modlib/cal/models_event.py:1015
+#: lino/modlib/cal/models_event.py:972
 #, python-format
 msgid "%(num)d reminders for %(user)s have been updated."
 msgstr ""
@@ -2735,7 +2737,7 @@ msgid "Fax"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:99 lino/modlib/cv/models.py:121
-#: lino/modlib/cv/models.py:486 lino/modlib/lists/models.py:54
+#: lino/modlib/cv/models.py:489 lino/modlib/lists/models.py:54
 #: lino/modlib/users/models.py:120
 msgid "Remarks"
 msgstr ""
@@ -3574,7 +3576,7 @@ msgid "Study"
 msgstr ""
 
 #: lino/modlib/cv/models.py:132 lino/modlib/cv/models.py:215
-#: lino/modlib/cv/models.py:484
+#: lino/modlib/cv/models.py:487
 msgid "Training"
 msgstr ""
 
@@ -3663,25 +3665,25 @@ msgstr ""
 msgid "Job Functions"
 msgstr "Omschrijving"
 
-#: lino/modlib/cv/models.py:473
+#: lino/modlib/cv/models.py:476
 #, fuzzy
 msgid "Job Experience"
 msgstr "Referenz"
 
-#: lino/modlib/cv/models.py:474
+#: lino/modlib/cv/models.py:477
 #, fuzzy
 msgid "Job Experiences"
 msgstr "Referenz"
 
-#: lino/modlib/cv/models.py:477
+#: lino/modlib/cv/models.py:480
 msgid "company"
 msgstr ""
 
-#: lino/modlib/cv/models.py:480
+#: lino/modlib/cv/models.py:483
 msgid "job title"
 msgstr ""
 
-#: lino/modlib/cv/models.py:491
+#: lino/modlib/cv/models.py:494
 #, fuzzy
 msgid "Termination reason"
 msgstr "Omschrijving"
@@ -5151,6 +5153,11 @@ msgstr "Änderungsart"
 #, fuzzy
 msgid "Note Types"
 msgstr "Änderungsart"
+
+#: lino/modlib/notes/models.py:78
+#, fuzzy
+msgid "Event Types"
+msgstr "Empfängerart"
 
 #: lino/modlib/notes/models.py:117 lino/modlib/plausibility/choicelists.py:35
 #, fuzzy
@@ -7579,5 +7586,18 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "No plausibility problems found in {0}."
+#~ msgstr ""
+
+#~ msgid "Event Type"
+#~ msgstr "Empfängerart"
+
+#~ msgid ""
+#~ "The list of Event Types defined on this system.\n"
+#~ "    An EventType is a list of "
+#~ "events which have certain things in "
+#~ "common,\n"
+#~ "    especially they are displayed in "
+#~ "the same colour in the calendar "
+#~ "panel"
 #~ msgstr ""
 

@@ -70,8 +70,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'EventType')
-        verbose_name = _("Event Type")
-        verbose_name_plural = _("Event Types")
+        verbose_name = _("Calendar Event Type")
+        verbose_name_plural = _("Calendar Event Types")
         ordering = ['seqno']
 
     description = dd.RichTextField(
@@ -91,7 +91,9 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
         blank=True, null=True)
     event_label = dd.BabelCharField(
         _("Event label"),
-        max_length=200, blank=True, default=_("Calendar entry"))
+        max_length=200, blank=True)
+    # , default=_("Calendar entry"))
+    # default values for a Babelfield don't work as expected
 
     max_conflicting = models.PositiveIntegerField(
         _("Simultaneous events"),
@@ -109,7 +111,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced,
 class EventTypes(dd.Table):
     help_text = _("""The list of Event Types defined on this system.
     An EventType is a list of events which have certain things in common,
-    especially they are displayed in the same colour in the calendar panel""")
+    especially they are displayed in the same colour in the calendar panel.
+    """)
     required = dd.required(user_groups='office', user_level='manager')
     model = 'cal.EventType'
     column_names = "name *"
@@ -129,50 +132,6 @@ class EventTypes(dd.Table):
     name
     event_label
     """, window_size=(60, 'auto'))
-
-#~ def default_calendar(user):
-    #~ """
-    #~ Returns or creates the default calendar for the given user.
-    #~ """
-    #~ try:
-        #~ return Calendar.objects.get(user=user,is_default=True)
-    #~ except Calendar.DoesNotExist,e:
-        #~ color = Calendar.objects.all().count() + 1
-        #~ while color > 32:
-            #~ color -= 32
-        #~ cal = Calendar(user=user,is_default=True,color=color)
-        #~ cal.full_clean()
-        #~ cal.save()
-        #~ logger.debug(u"Created default calendar for %s.",user)
-        #~ return cal
-
-
-#~ class EventType(mixins.PrintableType,outbox.MailableType,mixins.BabelNamed):
-    #~ """The type of an Event.
-    #~ Determines which build method and template to be used for printing the event.
-    #~ """
-    #~ templates_group = 'cal/Event'
-    #~ class Meta:
-        #~ verbose_name = pgettext(u"cal",u"Event Type")
-        #~ verbose_name_plural = pgettext(u"cal",u'Event Types')
-#~ class EventTypes(dd.Table):
-    #~ model = EventType
-    #~ required = dict(user_groups='office')
-    #~ column_names = 'name build_method template *'
-    #~ detail_layout = """
-    #~ id name
-    #~ build_method template email_template attach_to_email
-    #~ cal.EventsByType
-    #~ """
-#~ class AutoEvent(object):
-    #~ def __init__(self,auto_id,user,date,subject,owner,start_time,end_time):
-        #~ self.auto_id = auto_id
-        #~ self.user = user
-        #~ self.date = date
-        #~ self.subject = subject
-        #~ self.owner = owner
-        #~ self.start_time = start_time
-        #~ self.end_time = end_time
 
 
 class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):

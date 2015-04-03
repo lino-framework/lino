@@ -272,6 +272,8 @@ def my_guest_workflows(sender=None, **kw):
         states='invited accepted absent')
     GuestStates.absent.add_transition(
         states='accepted excused')
+    GuestStates.present.add_transition(
+        states='invited accepted')
 
 
 class AppointmentsByPartner(dd.Table):

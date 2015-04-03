@@ -54,6 +54,12 @@ will try to explain my decisions here.
   generate its own stuff.  For the plain Django part of your
   application you can use the system of your choice.
 
+- Actions, Choosers, ChoiceLists, Workflows, multi-lingual database
+  content, generating printable documents, ...
+
+- Higher level solutions : :mod:`lino.modlib.changes`,
+  :mod:`lino.modlib.excerpts`, ...
+
 
 .. rubric:: Footnotes
 

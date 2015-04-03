@@ -297,8 +297,9 @@ def resolve_model(model_spec, app_label=None, strict=False):
             if False:
                 from django.db.models import loading
                 print(20130219, settings.INSTALLED_APPS)
-                print(loading.get_models())
-                #~ if len(loading.cache.postponed) > 0:
+                print([full_model_name(m) for m in loading.get_models()])
+                if len(loading.cache.postponed) > 0:
+                    print("POSTPONED:", loading.cache.postponed)
 
             if isinstance(strict, basestring):
                 raise Exception(strict % model_spec)

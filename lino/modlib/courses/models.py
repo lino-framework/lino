@@ -144,12 +144,15 @@ class Line(mixins.BabelNamed):
 
     event_type = dd.ForeignKey(
         'cal.EventType', null=True, blank=True,
-        help_text=_("""The Event Type to which events will be generated."""))
+        help_text=_(
+            "The type of calendar events to be generated. "
+            "If this is empty, no calendar events will be generated."))
 
-    tariff = dd.ForeignKey('products.Product',
-                           blank=True, null=True,
-                           verbose_name=_("Participation fee"),
-                           related_name='lines_by_tariff')
+    tariff = dd.ForeignKey(
+        'products.Product',
+        blank=True, null=True,
+        verbose_name=_("Participation fee"),
+        related_name='lines_by_tariff')
 
     guest_role = dd.ForeignKey(
         "cal.GuestRole", blank=True, null=True,
@@ -692,7 +695,9 @@ class ConfirmedSubmitInsert(dd.SubmitInsert):
 
 
 class Enrolment(UserAuthored, sales.Invoiceable):
-
+    """An **enrolment** is when a given pupil plans to participate in a
+    given course.
+    """
     invoiceable_date_field = 'request_date'
     workflow_state_field = 'state'
 
