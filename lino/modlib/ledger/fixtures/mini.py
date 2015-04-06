@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 from lino.modlib.accounts.utils import DEBIT
 
 accounts = dd.resolve_app('accounts')
@@ -57,6 +57,9 @@ current_group = None
 
 
 def objects():
+
+    JournalGroups = rt.modules.ledger.JournalGroups
+
     chart = accounts.Chart(**dd.babel_values(
         'name', en="Minimal Accounts Chart",
         fr="Plan comptable réduit",
@@ -175,62 +178,76 @@ def objects():
     if sales:
         settings.SITE.site_config.update(sales_account=obj)
 
+    ## JOURNALS
+
+    kw = dict(chart=chart, journal_group=JournalGroups.sales)
     if sales:
         MODEL = sales.Invoice
-        #~ yield sales.Orders.create_journal("VKR",'sales',name=u"Aufträge")
     else:
         MODEL = ledger.AccountInvoice
-    kw = dd.babel_values('name', de="Verkaufsrechnungen",
-                      fr="Factures vente",
-                      en="Sales invoices",
-                      et="Müügiarved")
-    yield MODEL.create_journal('sales', ref="S", chart=chart, **kw)
+    kw.update(dd.str2kw('name', _("Sales invoices")))
+    # kw = dd.babel_values('name', de="Verkaufsrechnungen",
+    #                   fr="Factures vente",
+    #                   en="Sales invoices",
+    #                   et="Müügiarved")
+    kw.update(trade_type='sales', ref="SLS")
+    yield MODEL.create_journal(**kw)
 
-    yield ledger.AccountInvoice.create_journal(
-        'purchases',
-        chart=chart,
-        ref="P",
-        **dd.babel_values('name',
-                          de="Einkaufsrechnungen",
-                          fr="Factures achat",
-                          en="Purchase invoices",
-                          et="Ostuarved"))
+    kw.update(journal_group=JournalGroups.purchases)
+    kw.update(trade_type='purchases', ref="PRC")
+    kw.update(dd.str2kw('name', _("Purchase invoices")))
+    #     'purchases',
+    #     chart=chart,
+    #     ref="P",
+    #     **dd.babel_values('name',
+    #                       de="Einkaufsrechnungen",
+    #                       fr="Factures achat",
+    #                       en="Purchase invoices",
+    #                       et="Ostuarved"))
+    yield ledger.AccountInvoice.create_journal(**kw)
 
     if finan:
-        yield finan.BankStatement.create_journal(
-            chart=chart,
-            name="Bestbank", account=BESTBANK_ACCOUNT, ref="B")
-        kw = dd.babel_values(
-            'name', de="Zahlungsaufträge", fr="Ordres de paiement",
-            en="Payment Orders", et="Maksekorraldused")
-        yield finan.PaymentOrder.create_journal(
-            'purchases', chart=chart,
+        kw.update(journal_group=JournalGroups.financial)
+        kw.update(dd.str2kw('name', _("Bestbank")))
+        kw.update(account=BESTBANK_ACCOUNT, ref="BNK")
+        yield finan.BankStatement.create_journal(**kw)
+
+        kw.update(dd.str2kw('name', _("Payment Orders")))
+        # kw.update(dd.babel_values(
+        #     'name', de="Zahlungsaufträge", fr="Ordres de paiement",
+        #     en="Payment Orders", et="Maksekorraldused"))
+        kw.update(
+            trade_type='purchases',
             account=PO_BESTBANK_ACCOUNT,
-            ref="PO", **kw)
-        kw = dd.babel_values(
-            'name', en="Cash",
-            de="Kasse", fr="Caisse",
-            et="Kassa")
-        yield finan.BankStatement.create_journal(
-            chart=chart, account=CASH_ACCOUNT, ref="C", **kw)
-        kw = dd.babel_values(
-            'name', en="Miscellaneous Journal Entries",
-            de="Diverse Buchungen", fr="Opérations diverses",
-            et="Muud operatsioonid")
-        yield finan.JournalEntry.create_journal(
-            chart=chart,
-            ref="M", dc=DEBIT, **kw)
+            ref="PMO")
+        yield finan.PaymentOrder.create_journal(**kw)
+
+        kw.update(trade_type='')
+        kw.update(account=CASH_ACCOUNT, ref="CSH")
+        kw.update(dd.str2kw('name', _("Cash")))
+        # kw = dd.babel_values(
+        #     'name', en="Cash",
+        #     de="Kasse", fr="Caisse",
+        #     et="Kassa")
+        yield finan.BankStatement.create_journal(**kw)
+
+        kw.update(dd.str2kw('name', _("Miscellaneous Journal Entries")))
+        # kw = dd.babel_values(
+        #     'name', en="Miscellaneous Journal Entries",
+        #     de="Diverse Buchungen", fr="Opérations diverses",
+        #     et="Muud operatsioonid")
+        kw.update(account=CASH_ACCOUNT, ref="MSG", dc=DEBIT)
+        yield finan.JournalEntry.create_journal(**kw)
 
     if declarations:
-        kw = dd.babel_values(
-            'name', en="VAT declarations",
-            de="MWSt-Erklärungen", fr="Déclarations TVA",
-            et="Käibemaksudeklaratsioonid")
-        yield declarations.Declaration.create_journal(
-            chart=chart,
-            ref="V",
-            account=VATDCL_ACCOUNT,
-            **kw)
+        kw = dict(chart=chart, journal_group=JournalGroups.financial)
+        kw.update(dd.str2kw('name', _("VAT declarations")))
+        # kw = dd.babel_values(
+        #     'name', en="VAT declarations",
+        #     de="MWSt-Erklärungen", fr="Déclarations TVA",
+        #     et="Käibemaksudeklaratsioonid")
+        kw.update(account=VATDCL_ACCOUNT, ref="VAT", dc=None)
+        yield declarations.Declaration.create_journal(**kw)
 
     payments = []
     if finan:

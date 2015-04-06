@@ -21,22 +21,22 @@ Robin has twelve appointments in the period 20141023..20141122:
 >>> pv = dict(start_date=i2d(20141023), end_date=i2d(20141122))
 >>> rt.login('robin').show(cal.MyEvents,param_values=pv)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-====================== ================ =============== ================
- When                   Event Type       Summary         Workflow
----------------------- ---------------- --------------- ----------------
- Thu 10/23/14 (10:20)   Calendar entry   Meeting         **Took place**
- Fri 10/24/14 (11:10)   Calendar entry   Consultation    **Cancelled**
- Sat 10/25/14 (08:30)   Calendar entry   Evaluation      **Suggested**
- Sat 10/25/14 (13:30)   Calendar entry   Seminar         **Omitted**
- Sun 10/26/14 (09:40)   Calendar entry   First meeting   **Draft**
- Mon 10/27/14 (10:20)   Calendar entry   Interview       **Took place**
- Mon 10/27/14 (11:10)   Calendar entry   Lunch           **Cancelled**
- Tue 10/28/14 (13:30)   Calendar entry   Dinner          **Omitted**
- Wed 10/29/14 (08:30)   Calendar entry   Breakfast       **Suggested**
- Wed 10/29/14 (09:40)   Calendar entry   Meeting         **Draft**
- Thu 10/30/14 (10:20)   Calendar entry   Consultation    **Took place**
- Fri 10/31/14 (11:10)   Calendar entry   Seminar         **Cancelled**
-====================== ================ =============== ================
+====================== ===================== =============== ================
+ When                   Calendar Event Type   Summary         Workflow
+---------------------- --------------------- --------------- ----------------
+ Thu 10/23/14 (10:20)   Meeting               Meeting         **Took place**
+ Fri 10/24/14 (11:10)   Meeting               Consultation    **Cancelled**
+ Sat 10/25/14 (08:30)   Meeting               Evaluation      **Suggested**
+ Sat 10/25/14 (13:30)   Meeting               Seminar         **Omitted**
+ Sun 10/26/14 (09:40)   Meeting               First meeting   **Draft**
+ Mon 10/27/14 (10:20)   Meeting               Interview       **Took place**
+ Mon 10/27/14 (11:10)   Meeting               Lunch           **Cancelled**
+ Tue 10/28/14 (13:30)   Meeting               Dinner          **Omitted**
+ Wed 10/29/14 (08:30)   Meeting               Breakfast       **Suggested**
+ Wed 10/29/14 (09:40)   Meeting               Meeting         **Draft**
+ Thu 10/30/14 (10:20)   Meeting               Consultation    **Took place**
+ Fri 10/31/14 (11:10)   Meeting               Seminar         **Cancelled**
+====================== ===================== =============== ================
 <BLANKLINE>
 
 Let's import them to `.xls`.

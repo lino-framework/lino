@@ -48,7 +48,7 @@ from lino.modlib.vat.mixins import VatDocument, VatItemBase
 
 from .utils import DueMovement, get_due_movements
 from .mixins import Matchable
-from .choicelists import FiscalYears, VoucherTypes
+from .choicelists import FiscalYears, VoucherTypes, JournalGroups
 
 
 TradeTypes.purchases.update(
@@ -70,11 +70,15 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
     .. attribute:: ref
     .. attribute:: trade_type
 
-    Pointer to :class:`TradeTypes`.
+        Pointer to :class:`TradeTypes`.
 
     .. attribute:: voucher_type
 
-    Pointer to :class:`VoucherTypes`.
+        Pointer to an item of :class:`VoucherTypes`.
+
+    .. attribute:: journal_group
+
+        Pointer to an item of :class:`JournalGroups`.
 
     .. attribute:: force_sequence
 
@@ -85,8 +89,8 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
 
     .. attribute:: template
 
-    See :attr:`PrintableType.template
-    <lino.mixins.printable.PrintableType.template>`.
+        See :attr:`PrintableType.template
+        <lino.mixins.printable.PrintableType.template>`.
 
 
     """
@@ -98,6 +102,7 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
     ref = dd.NullCharField(max_length=20, unique=True)
     trade_type = TradeTypes.field(blank=True)
     voucher_type = VoucherTypes.field()
+    journal_group = JournalGroups.field()
 
     force_sequence = models.BooleanField(
         _("Force chronological sequence"), default=False)
@@ -232,9 +237,9 @@ class Journals(dd.Table):
     """
     model = Journal
     order_by = ["seqno"]
-    column_names = "ref:5 name trade_type voucher_type force_sequence * seqno id"
+    column_names = "ref:5 name trade_type journal_group voucher_type force_sequence * seqno id"
     detail_layout = """
-    ref:5 trade_type seqno id voucher_type:10
+    ref:5 trade_type seqno id voucher_type:10 journal_group:10
     force_sequence account dc build_method template
     name
     printed_name

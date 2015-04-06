@@ -4,11 +4,32 @@
 
 """Choicelists for `lino.modlib.ledger`.
 
+.. autosummary::
+
 """
 
 from django.conf import settings
 
 from lino.api import dd, rt, _
+
+
+class JournalGroups(dd.ChoiceList):
+    """The list of possible journal groups.
+
+    This list is used to build the main menu. For each journal group
+    there will be a menu item in the main menu.
+
+    Journals whose :attr:`journal_group
+    <lino.modlib.ledger.models.Journal.journal_group>` is empty will
+    not be available through the main user menu.
+
+    """
+
+add = JournalGroups.add_item
+add('10', _("Sales"), 'sales')
+add('20', _("Purchases"), 'purchases')
+add('30', _("Wages"), 'wages')
+add('40', _("Financial"), 'financial')
 
 
 class FiscalYear(dd.Choice):

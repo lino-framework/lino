@@ -42,7 +42,7 @@ class DebitOrCreditField(models.BooleanField):
     def __init__(self, *args, **kw):
         kw.setdefault('help_text',
                       _("Debit (checked) or Credit (not checked)"))
-        kw.setdefault('default', None)
+        # kw.setdefault('default', None)
         models.BooleanField.__init__(self, *args, **kw)
 
 

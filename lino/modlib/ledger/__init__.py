@@ -7,8 +7,10 @@
 .. autosummary::
     :toctree:
 
-    models
+    utils
+    choicelists
     mixins
+    models
 
 """
 
@@ -34,11 +36,11 @@ class Plugin(ad.Plugin):
     """
 
     def setup_main_menu(config, site, profile, main):
-        from lino.modlib.vat.models import TradeTypes
+        from .choicelists import JournalGroups
         Journal = site.modules.ledger.Journal
-        for tt in TradeTypes.objects():
-            m = main.add_menu(tt.name, tt.text)
-            for jnl in Journal.objects.filter(trade_type=tt):
+        for grp in JournalGroups.objects():
+            m = main.add_menu(grp.name, grp.text)
+            for jnl in Journal.objects.filter(journal_group=grp):
                 m.add_action(jnl.voucher_type.table_class,
                              label=unicode(jnl),
                              params=dict(master_instance=jnl))

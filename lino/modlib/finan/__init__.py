@@ -23,13 +23,13 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.ledger']
 
-    def setup_main_menu(self, site, profile, m):
-        m = m.add_menu(self.app_label, self.verbose_name)
-        ledger = site.modules.ledger
-        for jnl in ledger.Journal.objects.filter(trade_type=''):
-            m.add_action(jnl.voucher_type.table_class,
-                         label=unicode(jnl),
-                         params=dict(master_instance=jnl))
+    # def setup_main_menu(self, site, profile, m):
+    #     m = m.add_menu(self.app_label, self.verbose_name)
+    #     ledger = site.modules.ledger
+    #     for jnl in ledger.Journal.objects.filter(trade_type=''):
+    #         m.add_action(jnl.voucher_type.table_class,
+    #                      label=unicode(jnl),
+    #                      params=dict(master_instance=jnl))
 
     def setup_explorer_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)

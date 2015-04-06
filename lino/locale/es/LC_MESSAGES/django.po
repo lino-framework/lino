@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-02 15:58+0300\n"
+"POT-Creation-Date: 2015-04-06 10:21+0300\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: es <LL@li.org>\n"
@@ -210,9 +210,9 @@ msgstr ""
 #: lino/core/actions.py:1076 lino/core/model.py:629 lino/core/tables.py:689
 #: lino/modlib/cal/mixins.py:140 lino/modlib/cal/mixins.py:573
 #: lino/modlib/cal/models_calendar.py:46 lino/modlib/cal/models_event.py:78
-#: lino/modlib/cal/models_event.py:144 lino/modlib/courses/models.py:137
-#: lino/modlib/courses/models.py:258 lino/modlib/importfilters/models.py:109
-#: lino/modlib/ledger/models.py:941 lino/modlib/ledger/models.py:1128
+#: lino/modlib/cal/models_event.py:146 lino/modlib/courses/models.py:137
+#: lino/modlib/courses/models.py:261 lino/modlib/importfilters/models.py:109
+#: lino/modlib/ledger/models.py:946 lino/modlib/ledger/models.py:1133
 #: lino/modlib/orders/models.py:244 lino/modlib/sales/models.py:288
 #: lino/modlib/system/models.py:172 lino/modlib/tickets/models.py:95
 #: lino/modlib/tickets/models.py:240 lino/modlib/uploads/models.py:103
@@ -272,8 +272,8 @@ msgstr ""
 
 #: lino/core/choicelists.py:371 lino/modlib/addresses/models.py:55
 #: lino/modlib/blogs/models.py:31 lino/modlib/cal/models_guest.py:73
-#: lino/modlib/courses/models.py:259 lino/modlib/courses/models.py:722
-#: lino/modlib/cv/models.py:418 lino/modlib/cv/models.py:443
+#: lino/modlib/courses/models.py:262 lino/modlib/courses/models.py:727
+#: lino/modlib/cv/models.py:432 lino/modlib/cv/models.py:457
 #: lino/modlib/excerpts/models.py:84 lino/modlib/finan/mixins.py:118
 #: lino/modlib/lists/models.py:89 lino/modlib/notes/models.py:43
 #: lino/modlib/notes/models.py:80 lino/modlib/polls/models.py:627
@@ -318,10 +318,10 @@ msgid "User abandoned"
 msgstr ""
 
 #: lino/core/layouts.py:449 lino/modlib/cal/fixtures/std.py:38
-#: lino/modlib/courses/models.py:481 lino/modlib/excerpts/models.py:643
+#: lino/modlib/courses/models.py:484 lino/modlib/excerpts/models.py:643
 #: lino/modlib/finan/models.py:168 lino/modlib/finan/models.py:180
 #: lino/modlib/finan/models.py:187 lino/modlib/finan/models.py:194
-#: lino/modlib/ledger/models.py:971 lino/modlib/polls/models.py:182
+#: lino/modlib/ledger/models.py:976 lino/modlib/polls/models.py:182
 #: lino/modlib/polls/models.py:364 lino/modlib/rooms/models.py:151
 #: lino/modlib/sales/models.py:231 lino/modlib/tickets/models.py:112
 #: lino/projects/homeworkschool/models.py:123
@@ -524,12 +524,12 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: lino/core/utils.py:462
+#: lino/core/utils.py:463
 #, python-format
 msgid "Row %(rowid)d of %(rowcount)d"
 msgstr ""
 
-#: lino/core/utils.py:465
+#: lino/core/utils.py:466
 msgid "No navigation"
 msgstr ""
 
@@ -640,7 +640,7 @@ msgstr ""
 msgid "Birth date"
 msgstr ""
 
-#: lino/mixins/human.py:307 lino/modlib/ledger/models.py:1270
+#: lino/mixins/human.py:307 lino/modlib/ledger/models.py:1275
 msgid "Age"
 msgstr ""
 
@@ -758,7 +758,7 @@ msgstr ""
 #: lino/mixins/printable.py:498 lino/mixins/printable.py:591
 #: lino/mixins/printable.py:638 lino/modlib/auto/sales/models.py:186
 #: lino/modlib/auto/sales/models.py:322 lino/modlib/cal/workflows/take.py:59
-#: lino/modlib/courses/models.py:932 lino/modlib/courses/workflows.py:43
+#: lino/modlib/courses/models.py:937 lino/modlib/courses/workflows.py:43
 #: lino/modlib/reception/models.py:173 lino/modlib/reception/models.py:207
 #: lino/modlib/reception/models.py:260
 msgid "Are you sure?"
@@ -819,7 +819,7 @@ msgstr ""
 msgid "Moved down."
 msgstr ""
 
-#: lino/mixins/sequenced.py:134 lino/modlib/ledger/models.py:587
+#: lino/mixins/sequenced.py:134 lino/modlib/ledger/models.py:592
 msgid "Seq.No."
 msgstr ""
 
@@ -889,7 +889,7 @@ msgstr ""
 #: lino/modlib/about/models.py:234 lino/modlib/about/models.py:338
 #: lino/modlib/about/models.py:384 lino/modlib/contacts/models.py:89
 #: lino/modlib/contacts/models.py:138 lino/modlib/courses/models.py:89
-#: lino/modlib/courses/models.py:272 lino/modlib/importfilters/models.py:33
+#: lino/modlib/courses/models.py:275 lino/modlib/importfilters/models.py:33
 #: lino/modlib/outbox/models.py:49 lino/modlib/tickets/models.py:89
 #: lino/modlib/users/models.py:141
 msgid "Name"
@@ -1036,12 +1036,12 @@ msgid "Sheet"
 msgstr ""
 
 #: lino/modlib/accounts/fields.py:17 lino/modlib/finan/models.py:145
-#: lino/modlib/ledger/models.py:625 lino/modlib/ledger/models.py:1141
+#: lino/modlib/ledger/models.py:630 lino/modlib/ledger/models.py:1146
 msgid "Debit"
 msgstr ""
 
 #: lino/modlib/accounts/fields.py:18 lino/modlib/finan/models.py:146
-#: lino/modlib/ledger/models.py:632 lino/modlib/ledger/models.py:1145
+#: lino/modlib/ledger/models.py:637 lino/modlib/ledger/models.py:1150
 msgid "Credit"
 msgstr ""
 
@@ -1216,12 +1216,12 @@ msgstr ""
 msgid "Create invoice from invoiceables for this partner"
 msgstr ""
 
-#: lino/modlib/auto/sales/models.py:217 lino/modlib/ledger/models.py:919
+#: lino/modlib/auto/sales/models.py:217 lino/modlib/ledger/models.py:924
 #: lino/modlib/sales/models.py:167
 msgid "Invoice"
 msgstr ""
 
-#: lino/modlib/auto/sales/models.py:218 lino/modlib/ledger/models.py:920
+#: lino/modlib/auto/sales/models.py:218 lino/modlib/ledger/models.py:925
 #: lino/modlib/sales/models.py:168
 msgid "Invoices"
 msgstr ""
@@ -1230,11 +1230,11 @@ msgstr ""
 msgid "Invoiceable"
 msgstr ""
 
-#: lino/modlib/auto/sales/models.py:257 lino/modlib/ledger/models.py:938
+#: lino/modlib/auto/sales/models.py:257 lino/modlib/ledger/models.py:943
 msgid "Voucher item"
 msgstr ""
 
-#: lino/modlib/auto/sales/models.py:258 lino/modlib/ledger/models.py:939
+#: lino/modlib/auto/sales/models.py:258 lino/modlib/ledger/models.py:944
 msgid "Voucher items"
 msgstr ""
 
@@ -1285,8 +1285,8 @@ msgstr ""
 msgid "Invoiceables"
 msgstr ""
 
-#: lino/modlib/auto/sales/models.py:418 lino/modlib/courses/models.py:1069
-#: lino/modlib/ledger/models.py:1275
+#: lino/modlib/auto/sales/models.py:418 lino/modlib/courses/models.py:1074
+#: lino/modlib/ledger/models.py:1280
 msgid "Actions"
 msgstr ""
 
@@ -1295,7 +1295,7 @@ msgid "List of invoiceable items for this partner"
 msgstr ""
 
 #: lino/modlib/auto/sales/models.py:453 lino/modlib/clocking/models.py:121
-#: lino/modlib/events/models.py:71 lino/modlib/ledger/models.py:276
+#: lino/modlib/events/models.py:71 lino/modlib/ledger/models.py:281
 #: lino/modlib/notes/models.py:121 lino/modlib/outbox/models.py:206
 #: lino/modlib/polls/models.py:328
 msgid "Date"
@@ -1638,8 +1638,8 @@ msgstr ""
 msgid "Times"
 msgstr ""
 
-#: lino/modlib/cal/mixins.py:582 lino/modlib/cal/models_event.py:535
-#: lino/modlib/cal/models_event.py:548 lino/modlib/events/models.py:112
+#: lino/modlib/cal/mixins.py:582 lino/modlib/cal/models_event.py:537
+#: lino/modlib/cal/models_event.py:550 lino/modlib/events/models.py:112
 msgid "When"
 msgstr ""
 
@@ -1819,19 +1819,15 @@ msgstr ""
 msgid "Event label"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:94
-msgid "Calendar entry"
-msgstr ""
-
-#: lino/modlib/cal/models_event.py:97
+#: lino/modlib/cal/models_event.py:99
 msgid "Simultaneous events"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:98
+#: lino/modlib/cal/models_event.py:100
 msgid "How many conflicting events should be tolerated."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:110
+#: lino/modlib/cal/models_event.py:112
 msgid ""
 "The list of Event Types defined on this system.\n"
 "    An EventType is a list of events which have certain things in common,"
@@ -1841,156 +1837,156 @@ msgid ""
 "    "
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:139
+#: lino/modlib/cal/models_event.py:141
 msgid "Recurrent Event"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:140
+#: lino/modlib/cal/models_event.py:142
 msgid "Recurrent Events"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:263
+#: lino/modlib/cal/models_event.py:265
 msgid "Update Guests"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:312
+#: lino/modlib/cal/models_event.py:314
 msgctxt "cal"
 msgid "Event"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:313
+#: lino/modlib/cal/models_event.py:315
 msgctxt "cal"
 msgid "Events"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:320
+#: lino/modlib/cal/models_event.py:322
 msgid "Transparent"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:320
+#: lino/modlib/cal/models_event.py:322
 msgid "Indicates that this Event shouldn't prevent other Events at the same time."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:325
+#: lino/modlib/cal/models_event.py:327
 msgid "all day"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:329 lino/modlib/cal/models_event.py:684
+#: lino/modlib/cal/models_event.py:331 lino/modlib/cal/models_event.py:686
 #: lino/modlib/tickets/models.py:316
 msgid "Assigned to"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:350
+#: lino/modlib/cal/models_event.py:352
 #, python-format
 msgid "Unsaved %s"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:458 lino/modlib/reception/models.py:43
+#: lino/modlib/cal/models_event.py:460 lino/modlib/reception/models.py:43
 msgid "Busy"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:462
+#: lino/modlib/cal/models_event.py:464
 msgid "with"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:544
+#: lino/modlib/cal/models_event.py:546
 msgid "Link URL"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:554
+#: lino/modlib/cal/models_event.py:556
 msgid "Reminder"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:592 lino/modlib/cal/models_guest.py:118
+#: lino/modlib/cal/models_event.py:594 lino/modlib/cal/models_guest.py:118
 msgid "Responsible user"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:603
+#: lino/modlib/cal/models_event.py:605
 msgid "Check for missing participants"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:613
+#: lino/modlib/cal/models_event.py:615
 msgid "No participants although {0} suggestions exist."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:644 lino/modlib/system/mixins.py:101
+#: lino/modlib/cal/models_event.py:646 lino/modlib/system/mixins.py:101
 #: lino/modlib/tickets/models.py:288
 msgid "Observed event"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:645 lino/modlib/system/mixins.py:102
+#: lino/modlib/cal/models_event.py:647 lino/modlib/system/mixins.py:102
 #: lino/modlib/tickets/models.py:289
 msgid "Observed events"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:647
+#: lino/modlib/cal/models_event.py:649
 msgid "Okay"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:648
+#: lino/modlib/cal/models_event.py:650
 msgid "Pending"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:654
+#: lino/modlib/cal/models_event.py:656
 msgid "A List of calendar entries. Each entry is called an event."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:676 lino/modlib/cal/models_task.py:128
+#: lino/modlib/cal/models_event.py:678 lino/modlib/cal/models_task.py:128
 msgid "Managed by"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:678 lino/modlib/cal/models_guest.py:120
+#: lino/modlib/cal/models_event.py:680 lino/modlib/cal/models_guest.py:120
 #: lino/modlib/cal/models_task.py:130
 msgid "Only rows managed by this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:686
+#: lino/modlib/cal/models_event.py:688
 msgid "Only events assigned to this user."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:689 lino/modlib/cal/models_task.py:134
+#: lino/modlib/cal/models_event.py:691 lino/modlib/cal/models_task.py:134
 #: lino/modlib/tickets/models.py:323
 msgid "Only rows having this state."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:692 lino/modlib/reception/models.py:285
+#: lino/modlib/cal/models_event.py:694 lino/modlib/reception/models.py:287
 msgid "Appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:795
+#: lino/modlib/cal/models_event.py:797
 msgid "Appointments today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:832 lino/modlib/excerpts/models.py:774
+#: lino/modlib/cal/models_event.py:834 lino/modlib/excerpts/models.py:774
 msgid "Today"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:833
+#: lino/modlib/cal/models_event.py:835
 msgid "Show all calendar events of the same day."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:897
+#: lino/modlib/cal/models_event.py:899
 msgid "My appointments"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:898
+#: lino/modlib/cal/models_event.py:900
 msgid "Table of my appointments."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:929
+#: lino/modlib/cal/models_event.py:931
 msgid "Events assigned to me"
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:930
+#: lino/modlib/cal/models_event.py:932
 msgid "Table of events assigned to me."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:948
+#: lino/modlib/cal/models_event.py:950
 #, python-format
 msgid "%d events have been assigned to you."
 msgstr ""
 
-#: lino/modlib/cal/models_event.py:972
+#: lino/modlib/cal/models_event.py:974
 #, python-format
 msgid "%(num)d reminders for %(user)s have been updated."
 msgstr ""
@@ -2007,7 +2003,7 @@ msgstr ""
 msgid "The role of a guest expresses what the partner is going to do there."
 msgstr ""
 
-#: lino/modlib/cal/models_guest.py:59 lino/modlib/courses/models.py:1015
+#: lino/modlib/cal/models_guest.py:59 lino/modlib/courses/models.py:1020
 msgid "Participant"
 msgstr ""
 
@@ -2075,8 +2071,8 @@ msgstr ""
 msgid "Tasks"
 msgstr ""
 
-#: lino/modlib/cal/models_task.py:45 lino/modlib/ledger/models.py:819
-#: lino/modlib/ledger/models.py:924 lino/modlib/ledger/models.py:1266
+#: lino/modlib/cal/models_task.py:45 lino/modlib/ledger/models.py:824
+#: lino/modlib/ledger/models.py:929 lino/modlib/ledger/models.py:1271
 msgid "Due date"
 msgstr ""
 
@@ -2262,7 +2258,7 @@ msgstr ""
 
 #: lino/modlib/cal/workflows/__init__.py:98
 #: lino/modlib/courses/choicelists.py:26 lino/modlib/declarations/models.py:36
-#: lino/modlib/finan/choicelists.py:17 lino/modlib/ledger/models.py:892
+#: lino/modlib/finan/choicelists.py:17 lino/modlib/ledger/models.py:897
 #: lino/modlib/orders/models.py:49 lino/modlib/polls/utils.py:26
 #: lino/modlib/polls/utils.py:50 lino/modlib/rooms/models.py:29
 #: lino/modlib/sales/models.py:72
@@ -2584,7 +2580,7 @@ msgid "represented as"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:86 lino/modlib/households/choicelists.py:22
-#: lino/modlib/households/models.py:376 lino/modlib/ledger/models.py:1258
+#: lino/modlib/households/models.py:376 lino/modlib/ledger/models.py:1263
 #: lino/projects/presto/modlib/contacts/models.py:18
 msgid "Partner"
 msgstr ""
@@ -2615,7 +2611,7 @@ msgid "Fax"
 msgstr ""
 
 #: lino/modlib/contacts/models.py:99 lino/modlib/cv/models.py:121
-#: lino/modlib/cv/models.py:489 lino/modlib/lists/models.py:54
+#: lino/modlib/cv/models.py:503 lino/modlib/lists/models.py:54
 #: lino/modlib/users/models.py:120
 msgid "Remarks"
 msgstr ""
@@ -3045,12 +3041,12 @@ msgid "Congo (Democratic Republic)"
 msgstr ""
 
 #: lino/modlib/courses/__init__.py:35 lino/modlib/courses/models.py:63
-#: lino/modlib/courses/models.py:249
+#: lino/modlib/courses/models.py:252
 msgid "Courses"
 msgstr ""
 
 #: lino/modlib/courses/choicelists.py:27 lino/modlib/declarations/models.py:37
-#: lino/modlib/finan/choicelists.py:18 lino/modlib/ledger/models.py:893
+#: lino/modlib/finan/choicelists.py:18 lino/modlib/ledger/models.py:898
 #: lino/modlib/orders/models.py:50 lino/modlib/polls/utils.py:51
 #: lino/modlib/rooms/models.py:31 lino/modlib/sales/models.py:73
 msgid "Registered"
@@ -3068,11 +3064,11 @@ msgstr ""
 msgid "Uses a place"
 msgstr ""
 
-#: lino/modlib/courses/choicelists.py:43 lino/modlib/courses/models.py:428
+#: lino/modlib/courses/choicelists.py:43 lino/modlib/courses/models.py:431
 msgid "Requested"
 msgstr ""
 
-#: lino/modlib/courses/choicelists.py:44 lino/modlib/courses/models.py:433
+#: lino/modlib/courses/choicelists.py:44 lino/modlib/courses/models.py:436
 msgid "Confirmed"
 msgstr ""
 
@@ -3112,165 +3108,167 @@ msgstr ""
 msgid "Course Lines"
 msgstr ""
 
-#: lino/modlib/courses/models.py:147 lino/modlib/rooms/models.py:74
-msgid "The Event Type to which events will be generated."
+#: lino/modlib/courses/models.py:147
+msgid ""
+"The type of calendar events to be generated. If this is empty, no "
+"calendar events will be generated."
 msgstr ""
 
-#: lino/modlib/courses/models.py:151 lino/modlib/courses/models.py:275
-#: lino/modlib/courses/models.py:713
+#: lino/modlib/courses/models.py:154 lino/modlib/courses/models.py:278
+#: lino/modlib/courses/models.py:718
 msgid "Participation fee"
 msgstr ""
 
-#: lino/modlib/courses/models.py:156
+#: lino/modlib/courses/models.py:159
 msgid "Default guest role for particpants of events."
 msgstr ""
 
-#: lino/modlib/courses/models.py:160
+#: lino/modlib/courses/models.py:163
 msgid "Options category"
 msgstr ""
 
-#: lino/modlib/courses/models.py:166
+#: lino/modlib/courses/models.py:169
 msgid "Fees category"
 msgstr ""
 
-#: lino/modlib/courses/models.py:206
+#: lino/modlib/courses/models.py:209
 msgid "Shows events of courses of this teacher"
 msgstr ""
 
-#: lino/modlib/courses/models.py:248
+#: lino/modlib/courses/models.py:251
 msgid "Course"
 msgstr ""
 
-#: lino/modlib/courses/models.py:254
+#: lino/modlib/courses/models.py:257
 msgid "Instructor"
 msgstr ""
 
-#: lino/modlib/courses/models.py:266 lino/modlib/courses/models.py:715
+#: lino/modlib/courses/models.py:269 lino/modlib/courses/models.py:720
 msgctxt "in a course"
 msgid "Places"
 msgstr ""
 
-#: lino/modlib/courses/models.py:279
+#: lino/modlib/courses/models.py:282
 msgid "Enrolments until"
 msgstr ""
 
-#: lino/modlib/courses/models.py:402
+#: lino/modlib/courses/models.py:405
 msgid "Info"
 msgstr ""
 
-#: lino/modlib/courses/models.py:410 lino/modlib/courses/models.py:486
+#: lino/modlib/courses/models.py:413 lino/modlib/courses/models.py:489
 #: lino/modlib/events/__init__.py:30
 msgid "Events"
 msgstr ""
 
-#: lino/modlib/courses/models.py:416
+#: lino/modlib/courses/models.py:419
 msgid "Available places"
 msgstr ""
 
-#: lino/modlib/courses/models.py:419
+#: lino/modlib/courses/models.py:422
 msgid "Unlimited"
 msgstr ""
 
-#: lino/modlib/courses/models.py:438 lino/modlib/courses/models.py:702
-#: lino/modlib/courses/models.py:983
+#: lino/modlib/courses/models.py:441 lino/modlib/courses/models.py:707
+#: lino/modlib/courses/models.py:988
 msgid "Enrolments"
 msgstr ""
 
-#: lino/modlib/courses/models.py:555
+#: lino/modlib/courses/models.py:558
 #, python-format
 msgid "in %s"
 msgstr ""
 
-#: lino/modlib/courses/models.py:612
+#: lino/modlib/courses/models.py:615
 msgid "Draft courses"
 msgstr ""
 
-#: lino/modlib/courses/models.py:627
+#: lino/modlib/courses/models.py:630
 msgid "Active courses"
 msgstr ""
 
-#: lino/modlib/courses/models.py:646
+#: lino/modlib/courses/models.py:649
 msgid "Enrolment option"
 msgstr ""
 
-#: lino/modlib/courses/models.py:647
+#: lino/modlib/courses/models.py:650
 msgid "Enrolment options"
 msgstr ""
 
-#: lino/modlib/courses/models.py:652 lino/projects/babel_tutorial/models.py:18
+#: lino/modlib/courses/models.py:655 lino/projects/babel_tutorial/models.py:18
 msgid "Price"
 msgstr ""
 
-#: lino/modlib/courses/models.py:701
+#: lino/modlib/courses/models.py:706
 msgid "Enrolment"
 msgstr ""
 
-#: lino/modlib/courses/models.py:711
+#: lino/modlib/courses/models.py:716
 msgid "Date of request"
 msgstr ""
 
-#: lino/modlib/courses/models.py:719 lino/modlib/rooms/models.py:30
+#: lino/modlib/courses/models.py:724 lino/modlib/rooms/models.py:30
 msgid "Option"
 msgstr ""
 
-#: lino/modlib/courses/models.py:724
+#: lino/modlib/courses/models.py:729
 msgid "Confirmation details"
 msgstr ""
 
-#: lino/modlib/courses/models.py:777
+#: lino/modlib/courses/models.py:782
 #, python-format
 msgid "No places left in %s"
 msgstr ""
 
-#: lino/modlib/courses/models.py:839
+#: lino/modlib/courses/models.py:844
 msgid "Course state"
 msgstr ""
 
-#: lino/modlib/courses/models.py:841
+#: lino/modlib/courses/models.py:846
 msgid "Participants only"
 msgstr ""
 
-#: lino/modlib/courses/models.py:842
+#: lino/modlib/courses/models.py:847
 msgid ""
 "Hide cancelled enrolments. Ignored if you specify an explicit enrolment "
 "state."
 msgstr ""
 
-#: lino/modlib/courses/models.py:898
+#: lino/modlib/courses/models.py:903
 msgid "Also "
 msgstr ""
 
-#: lino/modlib/courses/models.py:916
+#: lino/modlib/courses/models.py:921
 msgid "Confirm all"
 msgstr ""
 
-#: lino/modlib/courses/models.py:930
+#: lino/modlib/courses/models.py:935
 #, python-format
 msgid "This will confirm all %d enrolments in this list."
 msgstr ""
 
-#: lino/modlib/courses/models.py:937
+#: lino/modlib/courses/models.py:942
 msgid "Pending requested enrolments"
 msgstr ""
 
-#: lino/modlib/courses/models.py:953
+#: lino/modlib/courses/models.py:958
 msgid "Pending confirmed enrolments"
 msgstr ""
 
-#: lino/modlib/courses/models.py:1044
+#: lino/modlib/courses/models.py:1049
 msgid "Suggested courses"
 msgstr ""
 
-#: lino/modlib/courses/models.py:1049
+#: lino/modlib/courses/models.py:1054
 #, python-format
 msgid "%(details)s for %(master)s"
 msgstr ""
 
-#: lino/modlib/courses/models.py:1084
+#: lino/modlib/courses/models.py:1089
 msgid "Enrol"
 msgstr ""
 
-#: lino/modlib/courses/models.py:1089
+#: lino/modlib/courses/models.py:1094
 msgid "Show enrolment"
 msgstr ""
 
@@ -3402,12 +3400,12 @@ msgstr ""
 msgid "Establishment"
 msgstr ""
 
-#: lino/modlib/cv/models.py:131 lino/modlib/cv/models.py:277
+#: lino/modlib/cv/models.py:131 lino/modlib/cv/models.py:291
 msgid "Study"
 msgstr ""
 
 #: lino/modlib/cv/models.py:132 lino/modlib/cv/models.py:215
-#: lino/modlib/cv/models.py:487
+#: lino/modlib/cv/models.py:501
 msgid "Training"
 msgstr ""
 
@@ -3439,73 +3437,73 @@ msgstr ""
 msgid "Certificates"
 msgstr ""
 
-#: lino/modlib/cv/models.py:278
+#: lino/modlib/cv/models.py:292
 msgid "Studies"
 msgstr ""
 
-#: lino/modlib/cv/models.py:287
+#: lino/modlib/cv/models.py:301
 msgid "Study content"
 msgstr ""
 
-#: lino/modlib/cv/models.py:356
+#: lino/modlib/cv/models.py:370
 msgctxt "work experience"
 msgid "Status"
 msgstr ""
 
-#: lino/modlib/cv/models.py:357
+#: lino/modlib/cv/models.py:371
 msgctxt "work experience"
 msgid "Statuses"
 msgstr ""
 
-#: lino/modlib/cv/models.py:376
+#: lino/modlib/cv/models.py:390
 msgid "Work Regime"
 msgstr ""
 
-#: lino/modlib/cv/models.py:377
+#: lino/modlib/cv/models.py:391
 msgid "Work Regimes"
 msgstr ""
 
-#: lino/modlib/cv/models.py:394
+#: lino/modlib/cv/models.py:408
 msgid "Contract Duration"
 msgstr ""
 
-#: lino/modlib/cv/models.py:395
+#: lino/modlib/cv/models.py:409
 msgid "Contract Durations"
 msgstr ""
 
-#: lino/modlib/cv/models.py:413
+#: lino/modlib/cv/models.py:427
 msgid "Job Sector"
 msgstr ""
 
-#: lino/modlib/cv/models.py:414
+#: lino/modlib/cv/models.py:428
 msgid "Job Sectors"
 msgstr ""
 
-#: lino/modlib/cv/models.py:438
+#: lino/modlib/cv/models.py:452
 msgid "Job Function"
 msgstr ""
 
-#: lino/modlib/cv/models.py:439
+#: lino/modlib/cv/models.py:453
 msgid "Job Functions"
 msgstr ""
 
-#: lino/modlib/cv/models.py:476
+#: lino/modlib/cv/models.py:490
 msgid "Job Experience"
 msgstr ""
 
-#: lino/modlib/cv/models.py:477
+#: lino/modlib/cv/models.py:491
 msgid "Job Experiences"
 msgstr ""
 
-#: lino/modlib/cv/models.py:480
+#: lino/modlib/cv/models.py:494
 msgid "company"
 msgstr ""
 
-#: lino/modlib/cv/models.py:483
+#: lino/modlib/cv/models.py:497
 msgid "job title"
 msgstr ""
 
-#: lino/modlib/cv/models.py:494
+#: lino/modlib/cv/models.py:508
 msgid "Termination reason"
 msgstr ""
 
@@ -3578,13 +3576,13 @@ msgid "Submitted"
 msgstr ""
 
 #: lino/modlib/declarations/models.py:41 lino/modlib/finan/choicelists.py:21
-#: lino/modlib/ledger/models.py:900 lino/modlib/orders/models.py:53
+#: lino/modlib/ledger/models.py:905 lino/modlib/orders/models.py:53
 #: lino/modlib/polls/utils.py:54 lino/modlib/sales/models.py:80
 msgid "Register"
 msgstr ""
 
 #: lino/modlib/declarations/models.py:42 lino/modlib/finan/choicelists.py:23
-#: lino/modlib/ledger/models.py:902 lino/modlib/orders/models.py:54
+#: lino/modlib/ledger/models.py:907 lino/modlib/orders/models.py:54
 #: lino/modlib/polls/utils.py:55 lino/modlib/sales/models.py:82
 msgid "Deregister"
 msgstr ""
@@ -3670,6 +3668,7 @@ msgid "VAT declaration"
 msgstr ""
 
 #: lino/modlib/declarations/models.py:133
+#: lino/modlib/ledger/fixtures/mini.py:244
 msgid "VAT declarations"
 msgstr ""
 
@@ -4117,7 +4116,7 @@ msgstr ""
 msgid "Family"
 msgstr ""
 
-#: lino/modlib/finan/__init__.py:22
+#: lino/modlib/finan/__init__.py:22 lino/modlib/ledger/choicelists.py:21
 msgid "Financial"
 msgstr ""
 
@@ -4134,7 +4133,7 @@ msgid "The matched movement."
 msgstr ""
 
 #: lino/modlib/finan/mixins.py:124 lino/modlib/ledger/mixins.py:29
-#: lino/modlib/ledger/models.py:595 lino/modlib/ledger/models.py:813
+#: lino/modlib/ledger/models.py:600 lino/modlib/ledger/models.py:818
 msgid "Match"
 msgstr ""
 
@@ -4166,7 +4165,7 @@ msgstr ""
 msgid "Payment Order"
 msgstr ""
 
-#: lino/modlib/finan/models.py:80
+#: lino/modlib/finan/models.py:80 lino/modlib/ledger/fixtures/mini.py:215
 msgid "Payment Orders"
 msgstr ""
 
@@ -4203,7 +4202,7 @@ msgid "Expense"
 msgstr ""
 
 #: lino/modlib/finan/models.py:173 lino/modlib/ledger/__init__.py:23
-#: lino/modlib/ledger/models.py:976 lino/modlib/sales/models.py:241
+#: lino/modlib/ledger/models.py:981 lino/modlib/sales/models.py:241
 msgid "Ledger"
 msgstr ""
 
@@ -4303,7 +4302,7 @@ msgstr ""
 msgid "%s is member of multiple households"
 msgstr ""
 
-#: lino/modlib/households/models.py:363 lino/modlib/reception/models.py:475
+#: lino/modlib/households/models.py:363 lino/modlib/reception/models.py:477
 msgid " and "
 msgstr ""
 
@@ -4591,11 +4590,24 @@ msgstr ""
 msgid "Estonian"
 msgstr ""
 
-#: lino/modlib/ledger/choicelists.py:30
+#: lino/modlib/ledger/choicelists.py:18 lino/modlib/sales/__init__.py:27
+#: lino/modlib/vat/choicelists.py:153
+msgid "Sales"
+msgstr ""
+
+#: lino/modlib/ledger/choicelists.py:19 lino/modlib/vat/choicelists.py:154
+msgid "Purchases"
+msgstr ""
+
+#: lino/modlib/ledger/choicelists.py:20 lino/modlib/vat/choicelists.py:155
+msgid "Wages"
+msgstr ""
+
+#: lino/modlib/ledger/choicelists.py:40
 msgid "Fiscal Year"
 msgstr ""
 
-#: lino/modlib/ledger/choicelists.py:31
+#: lino/modlib/ledger/choicelists.py:41
 msgid "Fiscal Years"
 msgstr ""
 
@@ -4615,182 +4627,202 @@ msgstr ""
 msgid "Suppliers account"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:95
+#: lino/modlib/ledger/models.py:99
 msgid "Journal"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:96
+#: lino/modlib/ledger/models.py:100
 msgid "Journals"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:103
+#: lino/modlib/ledger/models.py:108
 msgid "Force chronological sequence"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:206
+#: lino/modlib/ledger/models.py:211
 #, python-format
 msgid "%s is not the last voucher in journal"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:273 lino/modlib/ledger/models.py:516
-#: lino/modlib/ledger/models.py:639
+#: lino/modlib/ledger/models.py:278 lino/modlib/ledger/models.py:521
+#: lino/modlib/ledger/models.py:644
 msgid "Voucher"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:274
+#: lino/modlib/ledger/models.py:279
 msgid "Vouchers"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:280
+#: lino/modlib/ledger/models.py:285
 msgid "Narration"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:495
+#: lino/modlib/ledger/models.py:500
 msgid "VAT vouchers"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:569
+#: lino/modlib/ledger/models.py:574
 msgid "Create voucher in journal "
 msgstr ""
 
-#: lino/modlib/ledger/models.py:580
+#: lino/modlib/ledger/models.py:585
 msgid "Movement"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:581
+#: lino/modlib/ledger/models.py:586
 msgid "Movements"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:596
+#: lino/modlib/ledger/models.py:601
 msgid "The movement matched by this one."
 msgstr ""
 
-#: lino/modlib/ledger/models.py:602
+#: lino/modlib/ledger/models.py:607
 msgid "Satisfied"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:676
+#: lino/modlib/ledger/models.py:681
 msgid "Show cleared movements"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:746
+#: lino/modlib/ledger/models.py:751
 msgid "Match rule"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:747
+#: lino/modlib/ledger/models.py:752
 msgid "Match rules"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:767 lino/modlib/ledger/models.py:825
+#: lino/modlib/ledger/models.py:772 lino/modlib/ledger/models.py:830
 msgid "Debts"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:773
+#: lino/modlib/ledger/models.py:778
 msgid "Date until"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:820
+#: lino/modlib/ledger/models.py:825
 msgid "Due date of the eldest debt in this match group"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:825
+#: lino/modlib/ledger/models.py:830
 msgid "List of invoices in this match group"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:831
+#: lino/modlib/ledger/models.py:836
 msgid "Payments"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:831
+#: lino/modlib/ledger/models.py:836
 msgid "List of payments in this match group"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:836 lino/modlib/ledger/models.py:1262
+#: lino/modlib/ledger/models.py:841 lino/modlib/ledger/models.py:1267
 msgid "Balance"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:896 lino/modlib/sales/models.py:76
+#: lino/modlib/ledger/models.py:901 lino/modlib/sales/models.py:76
 msgid "Paid"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:923 lino/modlib/sales/models.py:125
+#: lino/modlib/ledger/models.py:928 lino/modlib/sales/models.py:125
 msgid "Your reference"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1133
+#: lino/modlib/ledger/models.py:1138
 msgid ""
 "Debit\n"
 "before"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1137
+#: lino/modlib/ledger/models.py:1142
 msgid ""
 "Credit\n"
 "before"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1149
+#: lino/modlib/ledger/models.py:1154
 msgid ""
 "Debit\n"
 "after"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1153
+#: lino/modlib/ledger/models.py:1158
 msgid ""
 "Credit\n"
 "after"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1160
+#: lino/modlib/ledger/models.py:1165
 msgid "General Accounts Balances"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1170 lino/modlib/ledger/models.py:1189
+#: lino/modlib/ledger/models.py:1175 lino/modlib/ledger/models.py:1194
 msgid "Ref"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1195
+#: lino/modlib/ledger/models.py:1200
 msgid "Client Accounts Balances"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1200
+#: lino/modlib/ledger/models.py:1205
 msgid "Supplier Accounts Balances"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1282
+#: lino/modlib/ledger/models.py:1287
 msgid "Debtors"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1283
+#: lino/modlib/ledger/models.py:1288
 msgid "List of partners (usually clients)     who are in debt towards us."
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1289
+#: lino/modlib/ledger/models.py:1294
 msgid "Creditors"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1290
+#: lino/modlib/ledger/models.py:1295
 msgid "List of partners (usually suppliers)     who are giving credit to us."
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1299
+#: lino/modlib/ledger/models.py:1304
 msgid "Situation"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1300
+#: lino/modlib/ledger/models.py:1305
 msgid "Overview of the financial situation on a given date."
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1309
+#: lino/modlib/ledger/models.py:1314
 msgid "Activity Report"
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1310
+#: lino/modlib/ledger/models.py:1315
 msgid "Overview of the financial activity during a given period."
 msgstr ""
 
-#: lino/modlib/ledger/models.py:1353
+#: lino/modlib/ledger/models.py:1358
 msgid "Clearable"
+msgstr ""
+
+#: lino/modlib/ledger/fixtures/mini.py:188
+msgid "Sales invoices"
+msgstr ""
+
+#: lino/modlib/ledger/fixtures/mini.py:198
+msgid "Purchase invoices"
+msgstr ""
+
+#: lino/modlib/ledger/fixtures/mini.py:211
+msgid "Bestbank"
+msgstr ""
+
+#: lino/modlib/ledger/fixtures/mini.py:227
+msgid "Cash"
+msgstr ""
+
+#: lino/modlib/ledger/fixtures/mini.py:234
+msgid "Miscellaneous Journal Entries"
 msgstr ""
 
 #: lino/modlib/lists/__init__.py:15
@@ -5574,72 +5606,72 @@ msgstr ""
 msgid "%(guest)s leaves after meeting with %(user)s."
 msgstr ""
 
-#: lino/modlib/reception/models.py:312
+#: lino/modlib/reception/models.py:314
 msgid "Expected Guests"
 msgstr ""
 
-#: lino/modlib/reception/models.py:313
+#: lino/modlib/reception/models.py:315
 msgid "Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
-#: lino/modlib/reception/models.py:341
+#: lino/modlib/reception/models.py:343
 msgid "Received Visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:342
+#: lino/modlib/reception/models.py:344
 msgid "Shows the visitors being received."
 msgstr ""
 
-#: lino/modlib/reception/models.py:352 lino/modlib/reception/models.py:405
-#: lino/modlib/reception/models.py:420 lino/modlib/reception/models.py:443
+#: lino/modlib/reception/models.py:354 lino/modlib/reception/models.py:407
+#: lino/modlib/reception/models.py:422 lino/modlib/reception/models.py:445
 msgid "Since"
 msgstr ""
 
-#: lino/modlib/reception/models.py:399
+#: lino/modlib/reception/models.py:401
 msgid "Busy visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:400
+#: lino/modlib/reception/models.py:402
 msgid "Shows the visitors who are busy with some agent."
 msgstr ""
 
-#: lino/modlib/reception/models.py:411
+#: lino/modlib/reception/models.py:413
 msgid "Waiting visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:412
+#: lino/modlib/reception/models.py:414
 msgid "Shows the visitors in the waiting room."
 msgstr ""
 
-#: lino/modlib/reception/models.py:425
+#: lino/modlib/reception/models.py:427
 msgid "Position"
 msgstr ""
 
-#: lino/modlib/reception/models.py:425
+#: lino/modlib/reception/models.py:427
 msgid "Position in waiting queue (per agent)"
 msgstr ""
 
-#: lino/modlib/reception/models.py:437
+#: lino/modlib/reception/models.py:439
 msgid "Gone visitors"
 msgstr ""
 
-#: lino/modlib/reception/models.py:438
+#: lino/modlib/reception/models.py:440
 msgid "Shows the visitors who have gone."
 msgstr ""
 
-#: lino/modlib/reception/models.py:449
+#: lino/modlib/reception/models.py:451
 msgid "Visitors waiting for me"
 msgstr ""
 
-#: lino/modlib/reception/models.py:456
+#: lino/modlib/reception/models.py:458
 msgid "Visitors busy with me"
 msgstr ""
 
-#: lino/modlib/reception/models.py:469
+#: lino/modlib/reception/models.py:471
 msgid "You are busy with "
 msgstr ""
 
-#: lino/modlib/reception/models.py:481
+#: lino/modlib/reception/models.py:483
 msgid "My gone visitors"
 msgstr ""
 
@@ -5655,16 +5687,16 @@ msgstr ""
 msgid "Bookings"
 msgstr ""
 
+#: lino/modlib/rooms/models.py:74
+msgid "The Event Type to which events will be generated."
+msgstr ""
+
 #: lino/modlib/rooms/models.py:132
 msgid "Contact person"
 msgstr ""
 
 #: lino/modlib/rooms/models.py:133
 msgid "Organizer"
-msgstr ""
-
-#: lino/modlib/sales/__init__.py:27 lino/modlib/vat/choicelists.py:153
-msgid "Sales"
 msgstr ""
 
 #: lino/modlib/sales/models.py:35
@@ -6242,14 +6274,6 @@ msgstr ""
 
 #: lino/modlib/vat/choicelists.py:151
 msgid "The type of trade: usually either `sales` or `purchases`."
-msgstr ""
-
-#: lino/modlib/vat/choicelists.py:154
-msgid "Purchases"
-msgstr ""
-
-#: lino/modlib/vat/choicelists.py:155
-msgid "Wages"
 msgstr ""
 
 #: lino/modlib/vat/choicelists.py:156
@@ -6875,13 +6899,6 @@ msgstr ""
 #~ msgid "Event Type"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "The list of Event Types defined on this system.\n"
-#~ "    An EventType is a list of "
-#~ "events which have certain things in "
-#~ "common,\n"
-#~ "    especially they are displayed in "
-#~ "the same colour in the calendar "
-#~ "panel"
+#~ msgid "Calendar entry"
 #~ msgstr ""
 

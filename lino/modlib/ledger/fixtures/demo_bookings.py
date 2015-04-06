@@ -98,7 +98,7 @@ def objects():
         yield Product(name="Bar", sales_price='599.90')
         yield Product(name="Baz", sales_price='990.00')
         PRODUCTS = Cycler(Product.objects.order_by('id'))
-        JOURNAL_S = ledger.Journal.objects.get(ref="S")
+        JOURNAL_S = ledger.Journal.objects.get(ref="SLS")
         #~ assert JOURNAL_S.dc == accounts.DEBIT
         CUSTOMERS = Cycler(Person.objects.order_by('id'))
         ITEMCOUNT = Cycler(1, 2, 3)
@@ -107,7 +107,7 @@ def objects():
 
     PROVIDERS = Cycler(Company.objects.order_by('id'))
 
-    JOURNAL_P = ledger.Journal.objects.get(ref="P")
+    JOURNAL_P = ledger.Journal.objects.get(ref="PRC")
     #~ assert JOURNAL_P.dc == accounts.CREDIT
     ACCOUNTS = Cycler(JOURNAL_P.get_allowed_accounts())
     AMOUNTS = Cycler([Decimal(x) for x in
@@ -190,7 +190,7 @@ def objects():
         if finan and (end_date - date) > MORE_THAN_A_MONTH:
             # last month not yet done
             #~ po = finan.PaymentOrder(journal=JOURNAL_PO,
-            JOURNAL_PO = ledger.Journal.objects.get(ref="PO")
+            JOURNAL_PO = ledger.Journal.objects.get(ref="PMO")
             po = JOURNAL_PO.create_voucher(
                 user=USERS.pop(),
                 date=date + delta(days=20))
@@ -204,7 +204,7 @@ def objects():
             po.save()
 
             #~ bs = finan.BankStatement(journal=JOURNAL_BANK,
-            JOURNAL_BANK = ledger.Journal.objects.get(ref="B")
+            JOURNAL_BANK = ledger.Journal.objects.get(ref="BNK")
             bs = JOURNAL_BANK.create_voucher(
                 user=USERS.pop(),
                 date=date + delta(days=28))
