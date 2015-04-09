@@ -34,6 +34,10 @@ from lino.api import dd, _
 
 
 class DcAmountField(dd.VirtualField):
+    """An editable virtual field to get and set both database fields
+    :attr:`amount` and :attr:`dc`
+
+    """
 
     editable = True
 

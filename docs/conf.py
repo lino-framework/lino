@@ -30,6 +30,7 @@ extensions += ['atelier.sphinxconf.blog']
 extensions += ['atelier.sphinxconf.complex_tables']
 extensions += ['lino.sphinxcontrib.logo']
 extensions += ['lino.sphinxcontrib.actordoc']
+extensions += ['sphinx.ext.napoleon']
 
 extensions += ['atelier.sphinxconf.sigal_image']
 sigal_base_url = 'http://sigal.saffre-rumma.net'

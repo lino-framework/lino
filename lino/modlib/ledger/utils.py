@@ -12,10 +12,56 @@ from lino.api import rt
 from lino.modlib.accounts.utils import ZERO
 
 
+class Balance(object):
+    """Light-weight object to represent a balance, i.e. an amount together
+    with its booking direction (debit or credit).
+
+    Attributes:
+
+    .. attribute:: d
+
+        The amount of this balance when it is debiting, otherwise zero.
+
+    .. attribute:: c
+
+        The amount of this balance when it is crediting, otherwise zero.
+
+    """
+
+    def __init__(self, d, c):
+        if d > c:
+            self.d = d - c
+            self.c = ZERO
+        else:
+            self.c = c - d
+            self.d = ZERO
+
+
 class DueMovement(object):
-    """A **due movement** is a movement which a partner should do in order
-    to satisfy their debt.  Or which we should do in order to satisfy
-    our debt.
+    """A **due movement** is a movement which a partner should do in
+    order to satisfy their debt.  Or which we should do in order to
+    satisfy our debt.
+
+    It represents a group of "matching" movements.
+
+    The "matching" movements of a given movement are those whose
+    `match`, `partner` and `account` fields have the same values.
+    
+    These movements are themselves grouped into "debts" and "payments".
+    A "debt" increases the debt and a "payment" decreases it.
+    
+    .. attribute:: dc
+
+        Whether I mean *my* debts and payments (towards that partner)
+        or those *of the partner* (towards me).
+
+    .. attribute:: match
+
+        The first :class:`Movement` object of the group.
+
+    .. attribute:: partner
+
+    .. attribute:: account
 
     """
     def __init__(self, dc, mvt):
@@ -85,6 +131,19 @@ def get_due_movements(dc, **flt):
     The balances of the :class:`DueMovement` objects will be positive
     or negative depending on the specified `dc`.
 
+    Generates and yields a list of the :class:`DueMovement` objects
+    specified by the filter criteria.
+
+    Arguments:
+
+        dc (boolean): The caller must specify whether he means the debts and
+               payments *towards the partner* or *towards myself*.
+
+        **flt: Any keyword argument is forwarded to Django's `filter()
+            <https://docs.djangoproject.com/en/dev/ref/models/querysets/#filter>`_
+            method in order to specifiy which :class:`Movement`
+            objects to consider.
+
     """
     if dc is None:
         return
@@ -98,4 +157,3 @@ def get_due_movements(dc, **flt):
         if not m in matches:
             matches.add(m)
             yield DueMovement(dc, mvt)
-

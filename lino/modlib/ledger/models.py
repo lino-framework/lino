@@ -31,9 +31,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 from lino import mixins
-from django.utils.translation import ugettext_lazy as _
 from lino.utils.report import Report
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
@@ -46,9 +45,9 @@ from lino.modlib.accounts.fields import DebitOrCreditField
 from lino.modlib.vat.choicelists import TradeTypes
 from lino.modlib.vat.mixins import VatDocument, VatItemBase
 
-from .utils import DueMovement, get_due_movements
-from .mixins import Matchable
+from .utils import Balance, DueMovement, get_due_movements
 from .choicelists import FiscalYears, VoucherTypes, JournalGroups
+from .mixins import Matchable, VoucherItem
 
 
 TradeTypes.purchases.update(
@@ -769,6 +768,14 @@ class MatchRulesByJournal(MatchRules):
 
 
 class ExpectedMovements(dd.VirtualTable):
+    """
+    A virtual table of :class:`DueMovement` rows, showing
+    all "expected" "movements (payments)".
+
+    Subclassed by :class:`lino.modlib.finan.models.SuggestionsByVoucher`.
+
+
+    """
     label = _("Debts")
     icon_name = 'book_link'
     #~ column_names = 'match due_date debts payments balance'
@@ -852,6 +859,11 @@ class ExpectedMovements(dd.VirtualTable):
 
 
 class DebtsByAccount(ExpectedMovements):
+    """
+    The :class:`ExpectedMovements` accessible by clicking the "Debts"
+    action button on an :class:`Account <ml.accounts.Account>`.
+
+    """
     master = 'accounts.Account'
 
     @classmethod
@@ -871,7 +883,16 @@ dd.inject_action('accounts.Account', due=dd.ShowSlaveTable(DebtsByAccount))
 
 
 class DebtsByPartner(ExpectedMovements):
+    """
+    This is the table being printed in a Payment Reminder.  Usually
+    this table has one row per sales invoice which is not fully paid.
+    But several invoices ("debts") may be grouped by match.  If the
+    partner has purchase invoices, these are deduced from the balance.
 
+    This table is accessible by clicking the "Debts" action button on
+    a :class:`Partner <ml.contacts.Partner>`.
+
+    """
     master = 'contacts.Partner'
     #~ column_names = 'due_date debts payments balance'
 
@@ -932,31 +953,6 @@ class AccountInvoice(VatDocument, Voucher, Matchable):
 
     def get_due_date(self):
         return self.due_date or self.date
-
-
-class VoucherItem(dd.Model):
-
-    allow_cascaded_delete = ['voucher']
-
-    class Meta:
-        abstract = True
-        verbose_name = _("Voucher item")
-        verbose_name_plural = _("Voucher items")
-
-    title = models.CharField(_("Description"), max_length=200, blank=True)
-
-    def get_row_permission(self, ar, state, ba):
-        """
-        Items of registered invoices may not be edited
-        """
-        #~ logger.info("VoucherItem.get_row_permission %s %s %s",self.voucher,state,ba)
-        if not self.voucher.state.editable:
-            #~ if not ar.bound_action.action.readonly:
-            if not ba.action.readonly:
-                return False
-        #~ if not self.voucher.get_row_permission(ar,self.voucher.state,ba):
-            #~ return False
-        return super(VoucherItem, self).get_row_permission(ar, state, ba)
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -1031,6 +1027,10 @@ class AccountInvoices(PartnerVouchers):
 
 
 class InvoicesByJournal(AccountInvoices, ByJournal):
+    """
+    Shows all invoices of a given journal (whose
+    :attr:`Journal.voucher_type` must be :class:`AccountInvoice`)
+    """
     params_layout = "partner state year"
     column_names = "number date due_date " \
         "partner " \
@@ -1077,18 +1077,17 @@ def mvtsum(**fkw):
     return d['amount__sum'] or ZERO
 
 
-class Balance(object):
-
-    def __init__(self, d, c):
-        if d > c:
-            self.d = d - c
-            self.c = ZERO
-        else:
-            self.c = c - d
-            self.d = ZERO
-
-
 class AccountsBalance(dd.VirtualTable):
+    """A virtual table, the base class for different reports that show a
+    list of accounts with the following columns:
+
+      ref description old_d old_c during_d during_c new_d new_c
+
+    Subclasses are :class:'GeneralAccountsBalance`,
+    :class:'ClientAccountsBalance` and
+    :class:'SupplierAccountsBalance`.
+
+    """
     auto_fit_column_widths = True
     column_names = "ref description old_d old_c during_d during_c new_d new_c"
     slave_grid_format = 'html'
@@ -1161,6 +1160,9 @@ class AccountsBalance(dd.VirtualTable):
 
 
 class GeneralAccountsBalance(AccountsBalance):
+    """An :class:`AccountsBalance` for general accounts.
+
+    """
 
     label = _("General Accounts Balances")
 
@@ -1178,7 +1180,9 @@ class GeneralAccountsBalance(AccountsBalance):
 
 
 class PartnerAccountsBalance(AccountsBalance):
+    """An :class:`AccountsBalance` for partner accounts.
 
+    """
     trade_type = NotImplementedError
 
     @classmethod
@@ -1197,11 +1201,18 @@ class PartnerAccountsBalance(AccountsBalance):
 
 
 class ClientAccountsBalance(PartnerAccountsBalance):
+    """
+    A :class:`PartnerAccountsBalance` for the TradeType "sales".
+
+    """
     label = _("Client Accounts Balances")
     trade_type = TradeTypes.sales
 
 
 class SupplierAccountsBalance(PartnerAccountsBalance):
+    """
+    A :class:`PartnerAccountsBalance` for the TradeType "purchases".
+    """
     label = _("Supplier Accounts Balances")
     trade_type = TradeTypes.purchases
 
@@ -1210,8 +1221,13 @@ class SupplierAccountsBalance(PartnerAccountsBalance):
 
 
 class DebtorsCreditors(dd.VirtualTable):
-
     """
+    Abstract base class for different tables showing a list of
+    partners with the following columns:
+
+      partner due_date balance actions
+
+
     """
     auto_fit_column_widths = True
     column_names = "age due_date partner balance actions"
@@ -1284,6 +1300,11 @@ class DebtorsCreditors(dd.VirtualTable):
 
 
 class Debtors(DebtorsCreditors):
+    """
+    Lists those partners who have some debt against us.
+    :class:`DebtorsCreditors`.
+
+    """
     label = _("Debtors")
     help_text = _("List of partners (usually clients) \
     who are in debt towards us.")
@@ -1291,6 +1312,10 @@ class Debtors(DebtorsCreditors):
 
 
 class Creditors(DebtorsCreditors):
+    """
+    Lists those partners who give us some form of credit.
+    :class:`DebtorsCreditors`.
+    """
     label = _("Creditors")
     help_text = _("List of partners (usually suppliers) \
     who are giving credit to us.")
@@ -1301,6 +1326,13 @@ class Creditors(DebtorsCreditors):
 
 
 class Situation(Report):
+    """
+    A report consisting of the following tables:
+
+   -  :class:`Debtors`
+   -  :class:`Creditors`
+
+    """
     label = _("Situation")
     help_text = _("Overview of the financial situation on a given date.")
     required = dd.required(user_groups='accounts')
@@ -1311,6 +1343,14 @@ class Situation(Report):
 
 
 class ActivityReport(Report):
+    """
+    A report consisting of the following tables:
+
+    - :class:`GeneralAccountsBalance`
+    - :class:`ClientAccountsBalance`
+    - :class:`SupplierAccountsBalance`
+
+    """
     label = _("Activity Report")
     help_text = _("Overview of the financial activity during a given period.")
     required = dd.required(user_groups='accounts')

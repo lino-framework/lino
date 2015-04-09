@@ -79,12 +79,16 @@ class VoucherType(dd.Choice):
         super(VoucherType, self).__init__(value, text, name)
 
     def get_journals(self):
+        """Return a list of the :class:`Journal` objects that work on this
+        voucher type.
+
+        """
         return rt.modules.ledger.Journal.objects.filter(voucher_type=self)
 
 
 class VoucherTypes(dd.ChoiceList):
     """A list of the available voucher types (i.e. the database models
-subclasses of ledger.Voucher`).
+    subclasses of ledger.Voucher`).
 
     """
 
@@ -93,6 +97,9 @@ subclasses of ledger.Voucher`).
 
     @classmethod
     def get_for_model(self, model):
+        """
+        Return the :class:`VoucherType` for the given model.
+        """
         for o in self.objects():
             # ~ o.model = dd.resolve_model(o.model) # TODO: resolve only once
             if o.model is model:

@@ -326,7 +326,7 @@ class Model(models.Model):
         """Return a list of names of fields that should be disabled (not
         editable) for this record.
 
-        Example::
+        Usage example::
 
           def disabled_fields(self,request):
               if self.user == request.user: return []
@@ -615,7 +615,7 @@ class Model(models.Model):
         """Return or yield a series of HTML elements that describes this
         record in a :func:`lino.core.tables.summary`.
 
-        Example::
+        Usage example::
 
             def summary_row(self, ar):
                 elems = [ar.obj2html(self)]
@@ -776,7 +776,7 @@ action on individual instances.
     def set_widget_options(self, name, **options):
         """Set default values for the widget options of a given element.
 
-        Example::
+        Usage example::
 
             JobSupplyment.set_widget_options('duration', width=10)
 

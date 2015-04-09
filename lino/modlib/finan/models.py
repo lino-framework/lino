@@ -1,7 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-The :xfile:`models` module for the :mod:`lino.modlib.finan` app.
+Database models for `lino.modlib.finan`.
 """
 
 

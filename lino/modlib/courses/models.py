@@ -333,8 +333,10 @@ class Course(cal.Reservation):
             self.line.event_type, 'event_label'), i)
 
     def suggest_cal_guests(self, event):
+        """Look up enrolments of this course and suggest them as guests."""
         # logger.info("20140314 suggest_guests")
         Guest = rt.modules.cal.Guest
+        Enrolment = rt.modules.courses.Enrolment
         if self.line is None:
             return
         gr = self.line.guest_role

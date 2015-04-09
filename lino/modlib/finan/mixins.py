@@ -179,6 +179,10 @@ class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem):
             if self.account_id is None:
                 raise ValidationError(
                     _("Could not determine the general account"))
+        print self.partner_id
+        if self.partner_id is None:
+            raise ValidationError(
+                _("Could not determine the partner account"))
 
     def fill_suggestion(self, match):
         """Fill the fields of this item from the given suggestion (a
