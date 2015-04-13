@@ -444,7 +444,12 @@ class Model(models.Model):
         """Like :meth:`before_ui_save`, but
         **after** the changes are written to the database.
 
-        Argument `cw` is the :class:`ChangeWatcher`.
+        Arguments: 
+
+            ar: the action request 
+  
+            cw: the :class:`ChangeWatcher` object, or `None` if this is
+                a new instance.
         
         Called after a PUT or POST on this row,
         and after the row has been saved.

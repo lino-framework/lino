@@ -726,7 +726,9 @@ request from it.
         by Restful.*
 
         """
-        if not is_new:
+        if is_new:
+            watcher = None
+        else:
             watcher = ChangeWatcher(elem)
         ar.ah.store.form2obj(ar, data, elem, is_new)
         elem.full_clean()
