@@ -101,19 +101,11 @@ class ExtRenderer(HtmlRenderer):
         """
         if v is settings.SITE.LANGUAGE_CHOICES:
             return js_code('LANGUAGE_CHOICES')
-        #~ if v is STRENGTH_CHOICES:
-            #~ return js_code('STRENGTH_CHOICES')
-        #~ if v is KNOWLEDGE_CHOICES:
-            #~ return js_code('KNOWLEDGE_CHOICES')
         if isinstance(v, choicelists.Choice):
             """
             This is special. We don't render the text but the value.
             """
             return v.value
-        #~ if isinstance(v,babel.BabelText):
-            #~ return unicode(v)
-        #~ if isinstance(v,Promise):
-            #~ return unicode(v)
         if isinstance(v, models.Model):
             return v.pk
         if isinstance(v, Exception):
@@ -563,6 +555,16 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.main_menu = \
                 Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
 
+    def before_row_edit(self, panel):
+        from lino.core.actions import get_view_permission
+        #~ l.append("console.log('before_row_edit',record);")
+        for e in panel.active_children:
+            if not get_view_permission(e):
+                continue
+            for p in settings.SITE.installed_plugins:
+                for ln in p.get_row_edit_lines(e, panel):
+                    yield ln
+        
     def build_site_cache(self, force=False):
         """Build the site cache files under `/media/cache`, especially the
         :xfile:`lino*.js` files, one per user profile and language.
@@ -984,7 +986,7 @@ class ExtRenderer(HtmlRenderer):
         yield "  window_title: %s," % py2js(tbl.label)
 
         yield "  before_row_edit : function(record) {"
-        for ln in ext_elems.before_row_edit(dh.main):
+        for ln in self.before_row_edit(dh.main):
             yield "    " + ln
         yield "  },"
 
@@ -1042,7 +1044,7 @@ class ExtRenderer(HtmlRenderer):
         #~ if issubclass(tbl,tables.AbstractTable):
         if True:
             yield "    this.before_row_edit = function(record) {"
-            for ln in ext_elems.before_row_edit(dh.main):
+            for ln in self.before_row_edit(dh.main):
                 yield "      " + ln
             yield "    }"
         on_render = self.build_on_render(dh.main)
@@ -1188,7 +1190,7 @@ class ExtRenderer(HtmlRenderer):
             yield "    " + ln
 
         yield "    this.before_row_edit = function(record) {"
-        for ln in ext_elems.before_row_edit(rh.list_layout.main):
+        for ln in self.before_row_edit(rh.list_layout.main):
             yield "      " + ln
         yield "    };"
 

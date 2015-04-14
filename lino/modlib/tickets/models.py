@@ -63,7 +63,7 @@ class ProjectType(mixins.PrintableType, mixins.BabelNamed):
 
 
 class ProjectTypes(dd.Table):
-    model = ProjectType
+    model = 'tickets.ProjectType'
     column_names = 'name build_method template *'
 
 
@@ -76,38 +76,32 @@ class ProjectTypes(dd.Table):
     #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
 
-class Project(UserAuthored, TimeInvestment, mixins.Referrable):
-
-    """
-    The `user` ("Autor") of a project is the User who manages that Project.
+class Project(TimeInvestment, mixins.Referrable):
+    """A **project** is something on which several users work together.
     """
     class Meta:
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
 
-    #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
     name = models.CharField(_("Name"), max_length=200)
     parent = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType', blank=True, null=True)
-    #~ summary = models.CharField(_("Summary"),max_length=200,blank=True)
-    #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
     description = dd.RichTextField(_("Description"), blank=True,
                                    format='plain')
     srcref_url_template = models.CharField(blank=True, max_length=200)
     changeset_url_template = models.CharField(blank=True, max_length=200)
 
     def __unicode__(self):
-        return self.name
+        return self.ref or self.name
 
 
 class ProjectDetail(dd.FormLayout):
-    main = "general tickets"
+    main = "general tickets history"
 
     general = dd.Panel("""
-    ref name parent
-    type user
-    description ProjectsByProject
+    ref name parent type
+    description:30 ProjectsByProject:30
     # cal.EventsByProject
     """, label=_("General"))
 
@@ -118,7 +112,7 @@ class ProjectDetail(dd.FormLayout):
     history = dd.Panel("""
     srcref_url_template changeset_url_template
     MilestonesByProject
-    """, label=_("Tickets"))
+    """, label=_("Timeline"))
 
 
 class Projects(dd.Table):
@@ -132,9 +126,9 @@ class ProjectsByProject(Projects):
     column_names = "ref name *"
 
 
-class MyProjects(Projects, ByUser):
-    order_by = ["name"]
-    column_names = 'ref name id *'
+# class MyProjects(Projects, ByUser):
+#     order_by = ["name"]
+#     column_names = 'ref name id *'
 
 # class ProjectsByPartner(Projects):
 #     master_key = 'partner'
@@ -165,15 +159,18 @@ class VotesByPartner(Votes):
     column_names = "ticket remark *"
 
 
-class Milestone(mixins.Referrable):
+class Milestone(dd.Model):  # mixins.Referrable):
     """
     """
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
+        ordering = ['project', 'label']
 
-    project = dd.ForeignKey('tickets.Project', blank=True, null=True)
-    #~ label = models.CharField(_("Label"),max_length=20)
+    project = dd.ForeignKey(
+        'tickets.Project',
+        related_name='milestones_by_project')
+    label = models.CharField(_("Label"), max_length=20)
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
     #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
@@ -181,21 +178,24 @@ class Milestone(mixins.Referrable):
     #~ def __unicode__(self):
         #~ return self.label
 
+    def __unicode__(self):
+        return "{0}:{1}".format(self.project, self.label)
+
 
 class Milestones(dd.Table):
-    model = Milestone
+    model = 'tickets.Milestone'
     detail_layout = """
-    project ref expected reached id
+    project label expected reached id
     TicketsFixed TicketsReported
     """
-    insert_layout = dd.FormLayout("""
-    project ref
-    """, window_size=(40, 'auto'))
+    insert_layout = """
+    project label
+    """
 
 
 class MilestonesByProject(Milestones):
     master_key = 'project'
-    column_names = "ref expected reached *"
+    column_names = "label expected reached *"
 
 
 class Dependency(dd.Model):
@@ -270,14 +270,14 @@ class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
     def reported_for_choices(cls, project):
         if not project:
             return []
-        return project.tickets_milestone_set_by_project.filter(
+        return project.milestones_by_project.filter(
             reached__isnull=False)
 
     @dd.chooser()
     def fixed_for_choices(cls, project):
         if not project:
             return []
-        return project.tickets_milestone_set_by_project.all()
+        return project.milestones_by_project.all()
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
@@ -292,15 +292,25 @@ add('10', _("Opened"), 'opened')
 add('20', _("Closed"), 'closed')
 
 
-class Tickets(dd.Table):
-    model = 'tickets.Ticket'
-    detail_layout = """
-    summary assigned_to project reported_for id planned_time invested_time
+class TicketDetail(dd.DetailLayout):
+    main = "general time"
+
+    general = dd.Panel("""
+    summary assigned_to project reported_for id 
     user created modified state workflow_buttons fixed_for
     description
     ParentsByTicket ChildrenByTicket
+    """, label=_("General"))
+
+    time = dd.Panel("""
+    planned_time invested_time
     clocking.SessionsByTicket
-    """
+    """, label=_("Time"))
+
+
+class Tickets(dd.Table):
+    model = 'tickets.Ticket'
+    detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
     summary
     project
@@ -317,7 +327,7 @@ class Tickets(dd.Table):
             blank=True, null=True,
             help_text=_("Only rows authored by this user.")),
         project=dd.ForeignKey(
-            settings.SITE.project_model,
+            'tickets.Project',
             blank=True, null=True),
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
@@ -331,7 +341,7 @@ class Tickets(dd.Table):
         qs = super(Tickets, self).get_request_queryset(ar)
         pv = ar.param_values
 
-        if settings.SITE.project_model is not None and pv.project:
+        if pv.project:
             qs = qs.filter(project=pv.project)
 
         if pv.observed_event == TicketEvents.opened:
@@ -357,7 +367,7 @@ class Tickets(dd.Table):
                 pv.start_date,
                 pv.end_date)
 
-        if settings.SITE.project_model is not None and pv.project:
+        if pv.project:
             yield unicode(pv.project)
 
 
@@ -368,6 +378,7 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary user planned_time invested_time *"
+    auto_fit_column_widths = True
 
 
 class RecentTickets(Tickets):
@@ -384,14 +395,14 @@ class RecentTickets(Tickets):
 class TicketsFixed(Tickets):
     label = _("Tickets Fixed")
     master_key = 'fixed_for'
-    column_names = "summary user *"
+    column_names = "id summary user *"
     editable = False
 
 
 class TicketsReported(Tickets):
     label = _("Tickets Reported")
     master_key = 'reported_for'
-    column_names = "summary user *"
+    column_names = "id summary user *"
     editable = False
 
 

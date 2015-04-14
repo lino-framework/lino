@@ -660,14 +660,12 @@ class Kernel(object):
         return urlpatterns
 
     def get_patterns(self):
-        # self.site.startup()
+        """This is the method called from :mod:`lino.core.urls`.
 
+        """
         database_ready.send(self.site)
 
         urlpatterns = self.get_media_urls()
-
-        # urlpatterns += patterns(
-        #     '', ('^$', self.default_renderer.plugin.get_index_view()))
 
         for p in self.site.installed_plugins:
             if isinstance(p, Plugin):

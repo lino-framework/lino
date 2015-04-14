@@ -63,17 +63,6 @@
     {%- if site.use_spinner -%}
         {{ javascript(site.build_extjs_url('examples/ux/Spinner.js')) }}
     {%- endif -%}
-    {%- if site.use_tinymce -%}
-        {{ javascript(site.build_tinymce_url("tiny_mce.js")) }}
-        {{ javascript(site.build_media_url(
-            "lino/tinymce/Ext.ux.TinyMCE.js")) }}
-        <script language="javascript" type="text/javascript">
-            tinymce.init({
-                    theme : "advanced"
-                    // , mode : "textareas"
-            });
-        </script>
-    {%- endif -%}
     {{ javascript(site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js")) }}
     {%- if run_jasmine -%}  {# site.use_jasmine #}
         {{ javascript(site.build_media_url("jasmine/jasmine.js")) }}
@@ -131,6 +120,11 @@
         {{ javascript(p + "/Ext.ux.AwesomeUploaderLocalization.js") }}
         {{ javascript(p + "/Ext.ux.AwesomeUploader.js") }}
     {%- endif -%}
+    {%- for p in site.installed_plugins -%}
+        {%- for ln in p.get_head_lines(site, request) -%}
+            {{ ln }}
+        {%- endfor -%}
+    {%- endfor -%}
     {# Main Lino js code #}
     {{ javascript(site.build_media_url(*renderer.lino_js_parts())) }}
     {# ###### OnReady JS code ###### #}
@@ -176,11 +170,9 @@
     {%- endif -%}
 
     {%- for p in site.installed_plugins -%}
-        {%- if p.get_head_lines -%}
-            {%- for ln in p.get_head_lines(site, request) -%}
-                {{ ln }}
-            {%- endfor -%}
-        {%- endif -%}
+        {%- for ln in p.get_body_lines(site, request) -%}
+            {{ ln }}
+        {%- endfor -%}
     {%- endfor -%}
 
     <div id="body"></div>

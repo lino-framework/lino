@@ -8,8 +8,7 @@ other modules.
 
 """
 
-from lino import ad
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
@@ -20,15 +19,4 @@ class Plugin(ad.Plugin):
     def on_site_startup(self, site):
         from lino.modlib.users.utils import add_user_group
         add_user_group(self.app_label, self.verbose_name)
-
-    def setup_config_menu(self, site, profile, m):
-        if site.user_model is not None:
-            p = m.add_menu(self.app_label, self.verbose_name)
-            p.add_action('system.MyTextFieldTemplates')
-
-    def setup_explorer_menu(self, site, profile, m):
-        if site.user_model is not None:
-            p = m.add_menu(self.app_label, self.verbose_name)
-            p.add_action('system.TextFieldTemplates')
-
 

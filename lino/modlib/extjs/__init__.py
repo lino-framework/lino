@@ -27,7 +27,7 @@ people than the empoyees of the company who wrote the application.
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from lino.ad import Plugin
+from lino.api.ad import Plugin
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -90,13 +90,39 @@ class Plugin(Plugin):
 
         # logger.info("20140227 extjs.Plugin.on_ui_init() b")
 
+    def get_row_edit_lines(self, e, panel):
+        from .elems import (GridElement, HtmlBoxElement, FieldElement,
+                            form_field_name)
+        from lino.core import constants
+        master_field = panel.layout_handle.layout._datasource.master_field
+        if isinstance(e, GridElement):
+            yield "%s.on_master_changed();" % e.as_ext()
+        elif isinstance(e, HtmlBoxElement):
+            yield "%s.refresh();" % e.as_ext()
+        elif isinstance(e, FieldElement):
+            holder = panel.layout_handle.layout.get_chooser_holder()
+            chooser = holder.get_chooser_for_field(e.field.name)
+            if not chooser:
+                return
+            for f in chooser.context_fields:
+                if master_field and master_field.name == f.name:
+                    yield "var bp = this.get_base_params();"
+                    yield "%s.setContextValue('%s',bp['%s']);" % (
+                        e.as_ext(), constants.URL_PARAM_MASTER_PK,
+                        constants.URL_PARAM_MASTER_PK)
+                    yield "%s.setContextValue('%s',bp['%s']);" % (
+                        e.as_ext(), constants.URL_PARAM_MASTER_TYPE,
+                        constants.URL_PARAM_MASTER_TYPE)
+                else:
+                    yield (
+                        "%s.setContextValue(%r, record ? record."
+                        "data[%r] : undefined);" % (
+                            e.as_ext(), f.name, form_field_name(f)))
+
     def get_css_includes(self, site):
         yield self.build_media_url('resources/css/ext-all.css')
 
     def get_js_includes(self, settings, language):
-        return []
-
-    def get_head_lines(cls, site, request):
         return []
 
     def get_used_libs(self, html=False):
@@ -117,14 +143,6 @@ class Plugin(Plugin):
         return views.AdminIndex.as_view()
 
     def get_patterns(self, ui):
-        # from django.conf.urls import patterns, include
-        urls = self.get_ext_urls(ui)
-        # if self.url_prefix:
-        #     return patterns(
-        #         '', ('^' + self.url_prefix+"/", include(urls)))
-        return urls
-
-    def get_ext_urls(self, ui):
 
         from django.conf.urls import patterns
         from . import views
@@ -132,7 +150,6 @@ class Plugin(Plugin):
 
         ui.code_mtime = codetime()
 
-        # ui.extjs_renderer.build_site_cache()
         self.renderer.build_site_cache()
 
         rx = '^'
@@ -172,16 +189,4 @@ class Plugin(Plugin):
                                     (rx + r'run-jasmine$',
                                      views.RunJasmine.as_view()),
                                     )
-        if ui.site.user_model and self.site.use_tinymce:
-            urlpatterns += patterns(
-                '',
-                (rx + r'templates/(?P<app_label>\w+)/'
-                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$',
-                 views.Templates.as_view()),
-                (rx + r'templates/(?P<app_label>\w+)/'
-                 + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/'
-                 + r'(?P<tplname>\w+)$',
-                 views.Templates.as_view()),
-            )
-
         return urlpatterns

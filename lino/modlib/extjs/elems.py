@@ -26,7 +26,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
 from lino.core import fields
-from lino.core.actions import Permittable
+from lino.core.actions import Permittable, get_view_permission
 from lino.core import constants
 
 from lino.utils.ranges import constrain
@@ -81,68 +81,6 @@ def py2html(obj, name):
     if getattr(obj, '__iter__', False):
         obj = list(obj)
     return escape(unicode(obj))
-
-
-def get_view_permission(e):
-    if isinstance(e, Permittable) and not e.get_view_permission(
-            jsgen._for_user_profile):
-        return False
-    # e.g. pcsw.ClientDetail has a tab "Other", visible only to system
-    # admins but the "Other" contains a GridElement RolesByPerson
-    # which is not per se reserved for system admins.  js of normal
-    # users should not try to call on_master_changed() on it
-    parent = e.parent
-    while parent is not None:
-        if isinstance(parent, Permittable) and not parent.get_view_permission(
-                jsgen._for_user_profile):
-            return False  # bug 3 (bcss_summary) blog/2012/09/27
-        parent = parent.parent
-    return True
-
-
-def before_row_edit(panel):
-    l = []
-    #~ l.append("console.log('before_row_edit',record);")
-    master_field = panel.layout_handle.layout._datasource.master_field
-    for e in panel.active_children:
-        if not get_view_permission(e):
-            continue
-        if isinstance(e, GridElement):
-            l.append("%s.on_master_changed();" % e.as_ext())
-        #~ elif isinstance(e,PictureElement):
-            #~ l.append("this.load_picture_to(%s,record);" % e.as_ext())
-        #~ elif isinstance(e,TextFieldElement):
-            #~ if e.separate_window:
-                #~ l.append("%s.refresh();" % e.as_ext())
-        elif isinstance(e, HtmlBoxElement):
-            l.append("%s.refresh();" % e.as_ext())
-        elif isinstance(e, TextFieldElement):
-            if e.format == 'html' and settings.SITE.use_tinymce:
-                l.append("%s.refresh();" % e.as_ext())
-        elif isinstance(e, FieldElement):
-            holder = panel.layout_handle.layout.get_chooser_holder()
-            chooser = holder.get_chooser_for_field(e.field.name)
-            if chooser:
-                #~ logger.debug("20100615 %s.%s has chooser", self.layout_handle.layout, e.field.name)
-                for f in chooser.context_fields:
-                    if master_field and master_field.name == f.name:
-                        #~ print 20120603, panel.layout_handle.layout._datasource, e.field.name, f.name
-                        #~ l.append("console.log('20120602 before_row_edit',this.get_base_params());")
-                        l.append("var bp = this.get_base_params();")
-                        l.append("%s.setContextValue('%s',bp['%s']);" % (
-                            e.as_ext(), constants.URL_PARAM_MASTER_PK,
-                            constants.URL_PARAM_MASTER_PK))
-                        l.append("%s.setContextValue('%s',bp['%s']);" % (
-                            e.as_ext(), constants.URL_PARAM_MASTER_TYPE,
-                            constants.URL_PARAM_MASTER_TYPE))
-                    else:
-                        l.append(
-                            "%s.setContextValue(%r, record ? record."
-                            "data[%r] : undefined);" % (
-                                e.as_ext(), f.name, form_field_name(f)))
-    #~ return js_code('function(record){\n  %s\n}' % ('\n  '.join(l)))
-    #~ return js_code('function(record){ %s }' % (' '.join(l)))
-    return l
 
 
 class GridColumn(jsgen.Component):

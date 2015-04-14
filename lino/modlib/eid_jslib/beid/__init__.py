@@ -40,7 +40,7 @@ class Plugin(BeIdPlugin):  # was: use_eid_jslib
         yield self.build_media_url('be_belgium_eid.js')
         yield self.build_media_url('hellerim_base64.js')
 
-    def get_head_lines(self, site, request):
+    def get_body_lines(self, site, request):
         p = self.build_media_url()
         p = request.build_absolute_uri(p)
         #~ print p

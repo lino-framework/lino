@@ -35,7 +35,7 @@ command:
 >>> call_command('initdb_demo', interactive=False)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 Creating tables ...
-Installed 237 object(s) from 10 fixture(s)
+Installed 235 object(s) from 9 fixture(s)
 
 
 

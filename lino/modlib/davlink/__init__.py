@@ -22,7 +22,7 @@ class Plugin(ad.Plugin):
 
     media_name = 'davlink'
 
-    def get_head_lines(self, site, request):
+    def get_body_lines(self, site, request):
         if not site.use_java:
             return
         # jar = self.build_media_url('DavLink.jar')

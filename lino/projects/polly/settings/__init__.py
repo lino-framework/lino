@@ -38,12 +38,12 @@ class Site(Site):
         """
         from django.utils.translation import ugettext_lazy as _
         from lino.modlib.users.choicelists import UserProfiles
-        UserProfiles.reset('* office polls')
+        UserProfiles.reset('* polls')
         add = UserProfiles.add_item
-        add('000', _("Anonymous"),       '_ _ _',
+        add('000', _("Anonymous"),       '_ _',
             'anonymous', readonly=True, authenticated=False)
-        add('100', _("User"),            'U U U', 'user')
-        add('900', _("Administrator"),   'A A A', 'admin')
+        add('100', _("User"),            'U U', 'user')
+        add('900', _("Administrator"),   'A A', 'admin')
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

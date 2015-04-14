@@ -581,7 +581,7 @@ documentation.
     """
 
     tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
-    "Similar to :attr:`extjs_base_url` but pointing to http://www.tinymce.com."
+    "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_base_url`."
 
     jasmine_root = None
     """Path to the Jasmine root directory.  Only used on a development
@@ -591,12 +591,7 @@ documentation.
     """
 
     tinymce_root = None
-    """Path to the tinymce root directory.  Only to be used on a
-    development server if the `media` directory has no symbolic link
-    to the TinyMCE root directory, and only if :attr:`use_tinymce` is
-    True.
-
-    """
+    "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
     """Username to be used if a request with no remote user header (see
@@ -665,10 +660,7 @@ documentation.
     """
 
     use_tinymce = True
-    """
-    Whether to use TinyMCE instead of Ext.form.HtmlEditor.
-    See also :attr:`tinymce_root`.
-    See `/blog/2011/0523`.
+    """Replaced by :mod:`lino.modlib.tinymce`.
     """
 
     use_jasmine = False
@@ -2820,10 +2812,10 @@ Please convert to Plugin method".format(mod, methname)
         return self.kernel.default_renderer.plugin.build_media_url(
             *args, **kw)
 
-    def build_tinymce_url(self, url):
-        if self.tinymce_base_url:
-            return self.tinymce_base_url + url
-        return self.build_media_url('tinymce', url)
+    # def build_tinymce_url(self, url):
+    #     if self.tinymce_base_url:
+    #         return self.tinymce_base_url + url
+    #     return self.build_media_url('tinymce', url)
 
     def get_system_note_recipients(self, request, obj, silent):
         """Return or yield a list of recipients

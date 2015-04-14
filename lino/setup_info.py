@@ -199,8 +199,9 @@ lino.modlib.statbel.countries.fixtures
 lino.modlib.sepa
 lino.modlib.sepa.fixtures
 lino.modlib.system
-lino.modlib.system.fixtures
 lino.modlib.system.tests
+lino.modlib.tinymce
+lino.modlib.tinymce.fixtures
 lino.projects
 lino.projects.belref
 lino.projects.belref.fixtures

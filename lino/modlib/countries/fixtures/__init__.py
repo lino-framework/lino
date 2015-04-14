@@ -3,11 +3,12 @@
 .. autosummary::
    :toctree:
 
-    demo
-    few_countries
-    few_cities
+    all_countries
     be
+    demo
     ee
     eesti
+    few_countries
+    few_cities
 
 """

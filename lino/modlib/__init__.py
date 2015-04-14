@@ -12,17 +12,25 @@ The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
 .. autosummary::
    :toctree:
 
-    about
     bootstrap3
-    changes
     contenttypes
     excerpts
-    export_excel
-    extensible
     extjs
     plausibility
     users
     system
+
+"Options"
+=========
+
+.. autosummary::
+   :toctree:
+
+    about
+    changes
+    export_excel
+    extensible
+    tinymce
 
 "Enterprise Resources"
 ======================

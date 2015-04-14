@@ -1231,3 +1231,23 @@ def action(*args, **kw):
         a.run_from_ui = wrapped
         return a
     return decorator
+
+
+def get_view_permission(e):
+    from lino.utils import jsgen
+    if isinstance(e, Permittable) and not e.get_view_permission(
+            jsgen._for_user_profile):
+        return False
+    # e.g. pcsw.ClientDetail has a tab "Other", visible only to system
+    # admins but the "Other" contains a GridElement RolesByPerson
+    # which is not per se reserved for system admins.  js of normal
+    # users should not try to call on_master_changed() on it
+    parent = e.parent
+    while parent is not None:
+        if isinstance(parent, Permittable) and not parent.get_view_permission(
+                jsgen._for_user_profile):
+            return False  # bug 3 (bcss_summary) blog/2012/09/27
+        parent = parent.parent
+    return True
+
+

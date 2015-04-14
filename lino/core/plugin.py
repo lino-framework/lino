@@ -258,6 +258,12 @@ class Plugin(object):
     def get_head_lines(cls, site, request):
         return []
 
+    def get_body_lines(cls, site, request):
+        return []
+
+    def get_row_edit_lines(self, e, panel):
+        return []
+
     def build_media_url(self, *parts, **kw):
         if self.media_base_url:
             url = self.media_base_url + '/'.join(parts)
