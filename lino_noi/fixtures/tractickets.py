@@ -36,9 +36,6 @@ def objects():
         kw = dict()
         kw.update(id=d.id)
         kw.update(summary=d.summary)
-        if d.milestone:
-            kw.update(reported_for=Milestone.objects.get_or_create(
-                ref=d.milestone)[0])
         if d.reporter:
             kw.update(user=User.objects.get_or_create(username=d.reporter)[0])
         else:
@@ -47,9 +44,15 @@ def objects():
             kw.update(
                 assigned_to=User.objects.get_or_create(username=d.owner)[0])
         if d.component:
-            kw.update(
-                project=Project.objects.get_or_create(ref=d.component)[0])
-        if d.status != 'new':
+            prj = Project.objects.get_or_create(ref=d.component)[0]
+        else:
+            prj = Project.objects.get_or_create(ref=d.component)[0]
+        kw.update(project=prj)
+        if d.milestone:
+            mls = Milestone.objects.get_or_create(
+                project=prj, label=d.milestone)[0]
+            kw.update(fixed_for=mls)
+        if not d.status in ('new', 'accepted'):
             kw.update(state=TicketStates.get_by_name(d.status))
         # if d.resolution == 'fixed':
         # else:
