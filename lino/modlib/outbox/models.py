@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -303,6 +303,7 @@ class MyOutbox(Mails):
 class MailsByController(Mails):
     required = dd.required()
     master_key = 'owner'
+    auto_fit_column_widths = True
     #~ label = _("Postings")
     #~ slave_grid_format = 'summary'
 

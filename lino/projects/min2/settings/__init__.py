@@ -1,11 +1,16 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
+Default settings for a `lino.projects.min2` application.
+"""
 
 from lino.projects.std.settings import *
 
 
 class Site(Site):
+    """The parent of all :mod:`lino.projects.min2` applications.
+    """
     title = "Lino Mini 2"
 
     project_model = 'projects.Project'
@@ -33,6 +38,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.dupable_partners'
         yield 'lino.modlib.plausibility'
+        yield 'lino.modlib.tinymce'
 
     def setup_user_profiles(self):
         """
@@ -50,5 +56,4 @@ class Site(Site):
         add('100', _("User"),           'U U U')
         add('900', _("Administrator"),  'A A A',
             name='admin')
-
 

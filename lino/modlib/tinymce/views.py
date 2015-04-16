@@ -19,6 +19,8 @@ from lino.core.views import requested_actor
 
 from jinja2 import Template as JinjaTemplate
 
+from lino.api import dd, rt
+
 
 class Templates(View):
 
@@ -40,15 +42,14 @@ class Templates(View):
             if elem is None:
                 raise http.Http404("%s %s does not exist." % (rpt, pk))
 
-            TextFieldTemplate = settings.SITE.\
-                modules.system.TextFieldTemplate
+            TextFieldTemplate = rt.modules.tinymce.TextFieldTemplate
             if tplname:
                 tft = TextFieldTemplate.objects.get(pk=int(tplname))
                 if settings.SITE.trusted_templates:
                     #~ return http.HttpResponse(tft.text)
                     template = JinjaTemplate(tft.text)
                     context = dict(request=request,
-                                   instance=elem, **settings.SITE.modules)
+                                   instance=elem, **rt.modules)
                     return http.HttpResponse(template.render(**context))
                 else:
                     return http.HttpResponse(tft.text)
@@ -57,7 +58,7 @@ class Templates(View):
 
             templates = []
             for obj in qs:
-                url = settings.SITE.build_admin_url(
+                url = dd.plugins.tinymce.build_plain_url(
                     'templates',
                     app_label, actor, pk, fldname, unicode(obj.pk))
                 templates.append([

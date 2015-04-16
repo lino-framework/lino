@@ -168,7 +168,7 @@ class NoteDetail(dd.FormLayout):
     subject project
     company contact_person contact_role
     id user:10 language:8 build_time
-    body outbox.MailsByController
+    body:40 outbox.MailsByController:40
     """
 
 

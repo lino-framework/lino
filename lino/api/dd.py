@@ -7,6 +7,21 @@ The :mod:`lino.api.dd` module is a shortcut to those parts of Lino which
 are used in your :xfile:`models.py` modules.  The name ``dd`` stands
 for "Database Design".
 
+Application:
+
+- :attr:`plugins <lino.core.site.Site.plugins>`
+- :attr:`decfmt <lino.core.site.Site.decfmt>`
+- :attr:`str2kw <lino.core.site.Site.str2kw>`
+- :attr:`today <lino.core.site.Site.today>`
+- :attr:`strftime <lino.core.site.Site.strftime>`
+- :attr:`demo_date <lino.core.site.Site.demo_date>`
+- :attr:`is_abstract_model <lino.core.site.Site.is_abstract_model>`
+- :attr:`is_installed <lino.core.site.Site.is_installed>`
+- :attr:`get_db_overview_rst <lino.core.site.Site.get_db_overview_rst>`
+- :attr:`add_welcome_handler <lino.core.site.Site.add_welcome_handler>`
+- :attr:`build_media_url <lino.core.site.Site.build_media_url>`
+- :attr:`get_default_language <lino.core.site.Site.get_default_language>`
+
 
 Tables:
 

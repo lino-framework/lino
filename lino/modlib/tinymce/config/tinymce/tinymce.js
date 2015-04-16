@@ -225,11 +225,13 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     //             this.title,record.title, record);
     var todo = function() {
       if (record) {
-        var url = '{{settings.SITE.build_admin_url("templates")}}' 
+        var url = '{{site.plugins.tinymce.build_plain_url("templates")}}' 
               + this.containing_panel.ls_url + "/" 
               + String(record.id) + "/" + this.editor.name;
-        //~ console.log('RichTextPanel.refresh()',url);
-        if (this.editor.ed) this.editor.ed.settings.template_external_list_url = url;
+        console.log('20150415 RichTextPanel.refresh()',url);
+        if (this.editor.ed)
+            this.editor.ed.settings.template_external_list_url = url;
+          else {console.log("20150415 no editor")}
         this.set_base_params(this.containing_panel.get_master_params());
         //~ var v = record ? this.format_data(record.data[this.editor.name]) : ''
         var v = this.format_data(record.data[this.editor.name])

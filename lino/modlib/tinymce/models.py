@@ -59,7 +59,6 @@ class TextFieldTemplates(dd.Table):
     text
     """
 
+
 class MyTextFieldTemplates(TextFieldTemplates, ByUser):
     required = dd.required(user_groups='office')
-
-

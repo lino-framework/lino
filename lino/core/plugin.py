@@ -13,24 +13,25 @@ from os.path import exists, join, dirname, isdir, abspath
 from urllib import urlencode
 import inspect
 
+
 class Plugin(object):
     """The base class for all plugins.
 
+    For an introduction, see :doc:`/dev/plugins`.
+
     A :class:`Plugin` is an optional descriptor for an app which gets
     defined and configured before Django models start to load.
-
     Lino creates one :class:`Plugin` instance for every installed app.
-    
+
     The :class:`Plugin` class is comparable to Django's `AppConfig
     <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
-    which has been added in version 1.7.. But there is at least one
-    fundamental difference: the :class:`Plugin` instances for all
-    installed apps are available (in :attr:`Site.plugins
-    <lino.core.site.Site.plugins>`) when the
-    :xfile:`settings.py` file has been loaded and *before* Django
-    starts to load the first :xfile:`models.py`.  This is possible
-    because Plugins are defined in your app's :xfile:`__init__.py`
-    file.
+    which has been added in version 1.7., but there is at least one
+    fundamental difference: in Lino the :class:`Plugin` instances for
+    all installed apps are available (in :attr:`dd.plugins
+    <lino.core.site.Site.plugins>`) when the :xfile:`settings.py` file
+    has been loaded and *before* Django starts to load the first
+    :xfile:`models.py`.  This is possible because Plugins are defined
+    in your app's :xfile:`__init__.py` file.
 
     For example::
 

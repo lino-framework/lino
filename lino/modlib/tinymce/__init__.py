@@ -25,7 +25,7 @@ class Plugin(ad.Plugin):
 
     site_js_snippets = ['tinymce/tinymce.js']
 
-    url_prefix = 'tiny'
+    url_prefix = 'tinymce'
 
     media_name = 'tinymce'
 

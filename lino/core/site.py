@@ -282,8 +282,12 @@ class Site(object):
 
     plugins = None
     """An :class:`AttrDict` object with one entry for each installed app,
-    mapping to the :class:`lino.core.plugin.Plugin` instance
-    corresponding to that app.
+    mapping the `app_label` of every plugin to the corresponding
+    :class:`lino.core.plugin.Plugin` instance.
+
+    This attribute is automatically filled by Lino and available as
+    :attr:`dd.plugins <lino.api.dd>` already before Django starts to
+    import :xfile:`models.py` modules.
 
     """
 

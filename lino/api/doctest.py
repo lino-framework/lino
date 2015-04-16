@@ -61,8 +61,7 @@ def check_json_result(response, expected_keys=None, msg=''):
     try:
         result = json.loads(response.content)
     except ValueError as e:
-        logger.warning("%s in %r", e, response.content)
-        raise
+        raise Exception("{0} in {1}".format(e, response.content))
     if expected_keys is not None:
         if set(result.keys()) != set(expected_keys.split()):
             raise Exception("{0} != {1}".format(

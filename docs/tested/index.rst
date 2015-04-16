@@ -16,3 +16,4 @@ which are part of the test suite.
    float2decimal/index
    cv
    core_utils
+   tinymce
