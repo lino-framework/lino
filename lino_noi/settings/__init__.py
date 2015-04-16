@@ -17,7 +17,7 @@ class Site(Site):
 
     demo_fixtures = ['std', 'demo', 'demo2',
                      # 'linotickets',
-                     'tractickets']
+                     'tractickets', 'luc']
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
