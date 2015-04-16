@@ -67,7 +67,6 @@ class Entry(mixins.TypedPrintable,
     type = models.ForeignKey(EntryType, blank=True, null=True)
     # ,null=True)
     title = models.CharField(_("Heading"), max_length=200, blank=True)
-    #~ summary = dd.RichTextField(_("Summary"),blank=True,format='html')
     body = dd.RichTextField(_("Body"), blank=True, format='html')
 
     def __unicode__(self):

@@ -27,7 +27,7 @@ from django.conf import settings
 from django.db import models
 
 from lino import mixins
-from lino.api import dd, rt, _
+from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
@@ -35,7 +35,7 @@ blogs = dd.resolve_app('blogs')
 
 from lino.modlib.tickets.utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
-from lino.modlib.users.mixins import ByUser, UserAuthored
+from lino.modlib.users.mixins import UserAuthored
 
 
 class TimeInvestment(dd.Model):
@@ -233,7 +233,7 @@ class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
 
     project = dd.ForeignKey('tickets.Project', blank=True, null=True)
     summary = models.CharField(
-        _("Summary"), max_length=200,
+        pgettext("Ticket", "Summary"), max_length=200,
         blank=True,
         help_text=_("Short summary of the problem."))
     description = dd.RichTextField(

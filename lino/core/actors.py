@@ -58,6 +58,7 @@ def register_actor(a):
     #~ logger.debug("register_actor %s",a)
     if not settings.SITE.is_installed(a.app_label):
         # happens when sphinx autodoc imports a non installed module
+        # logger.info("20150416 register_actor skipped %s", a)
         return
     old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:

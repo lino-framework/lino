@@ -19,10 +19,8 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
 
-from lino.api import dd, rt
+from lino.api import dd, rt, _, pgettext
 from lino import mixins
 
 from lino.modlib.postings.mixins import Postable
@@ -142,8 +140,8 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
         verbose_name_plural = _("Recurrent Events")
 
     event_type = models.ForeignKey('cal.EventType', blank=True, null=True)
-    # ~ summary = models.CharField(_("Summary"),max_length=200,blank=True) # iCal:SUMMARY
-    description = dd.RichTextField(_("Description"), blank=True, format='html')
+    description = dd.RichTextField(
+        _("Description"), blank=True, format='html')
 
     def before_auto_event_save(self, obj):
         if self.end_date and self.end_date != self.start_date:
@@ -311,8 +309,8 @@ class Event(Component, Ended,
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
-        verbose_name = pgettext(u"cal", u"Event")
-        verbose_name_plural = pgettext(u"cal", u"Events")
+        verbose_name = pgettext("cal", "Event")
+        verbose_name_plural = pgettext("cal", "Events")
 
     update_guests = UpdateGuests()
 

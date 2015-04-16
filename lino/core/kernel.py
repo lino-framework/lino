@@ -162,6 +162,27 @@ class Kernel(object):
 
     def __init__(self, site):
         # logger.info("20140227 Kernel.__init__() a")
+
+        # from django.utils.importlib import import_module
+        # # For every plugin, Lino checks whether the package contains a
+        # # module named `ui` and, if yes, imports this module. The
+        # # benefit of this is that all "Lino extensions" to the models
+        # # can be moved out of :xfile:`models.py` into a separate file
+        # # :xfile:`ui.py`.
+        # # print '\n'.join([p.app_name for p in self.installed_plugins])
+        # for p in site.installed_plugins:
+        #     # fn = dirname(inspect.getfile(p.app_module))
+        #     # fn = join(fn, 'ui.py')
+        #     try:
+        #         x = p.app_name + '.ui'
+        #         import_module(x)
+        #         logger.info("20150416 imported %s", x)
+        #     except Exception as e:
+        #     # except ImportError as e:
+        #         if str(e) != "No module named ui":
+        #             logger.warning("Failed to import %s : %s", x, e)
+        #             # raise Exception("Failed to import %s : %s" % (x, e))
+
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
@@ -192,8 +213,7 @@ class Kernel(object):
             names.add(n)
 
         for p in site.installed_plugins:
-            if isinstance(p, Plugin):
-                p.on_ui_init(self)
+            p.on_ui_init(self)
 
         ui = self.site.plugins.resolve(self.site.default_ui)
         if ui is None:

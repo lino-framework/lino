@@ -184,6 +184,7 @@ lino.modlib.office
 lino.modlib.orders
 lino.modlib.changes
 lino.modlib.clocking
+lino.modlib.clocking.fixtures
 lino.modlib.comments
 lino.modlib.concepts
 lino.modlib.declarations

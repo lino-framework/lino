@@ -1717,7 +1717,7 @@ documentation.
 
         """
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
-        
+
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
         self.ui = self.kernel  # internal backwards compat
@@ -2983,8 +2983,13 @@ signature as `django.core.mail.EmailMessage`.
         return moneyfmt(v, places=places, **kw)
 
     def get_printable_context(self, **kw):
+        """Adds a series of "built-in" functions to be used when rendering
+        printable documents.
+
+        """
         from django.conf import settings
-        from django.utils.translation import ugettext_lazy as _
+        from django.utils.translation import ugettext
+        from django.utils.translation import pgettext
         from lino.api import dd, rt
         from lino.utils import iif
 
@@ -3011,8 +3016,13 @@ signature as `django.core.mail.EmailMessage`.
         )
 
         def translate(s):
-            return _(s.decode('utf8'))
+            return ugettext(s.decode('utf8'))
         kw.update(_=translate)
+
+        def ptranslate(ctx, s):
+            return pgettext(ctx.decode('utf8'), s.decode('utf8'))
+        kw.update(pgettext=pgettext)
+
         return kw
 
     LOOKUP_OP = '__iexact'
