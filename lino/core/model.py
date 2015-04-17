@@ -799,9 +799,8 @@ action on individual instances.
         return options
 
     def get_printable_context(self, **kw):
-        """Defines certain names of a template context.
-
-        See :doc:`/user/templates_api`.
+        """Adds a series of names to the context used when rendering printable
+        documents. See :doc:`/user/templates_api`.
 
         :class:`lino.modlib.notes.models.Note` extends this.
 

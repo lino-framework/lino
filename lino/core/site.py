@@ -2983,8 +2983,8 @@ signature as `django.core.mail.EmailMessage`.
         return moneyfmt(v, places=places, **kw)
 
     def get_printable_context(self, **kw):
-        """Adds a series of "built-in" functions to be used when rendering
-        printable documents.
+        """Adds a series of names to the context used when rendering printable
+        documents. See :doc:`/user/templates_api`.
 
         """
         from django.conf import settings

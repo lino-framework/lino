@@ -4,6 +4,8 @@
 
 """A selection of names to be used in tested documents."""
 
+
+
 from lino.api.shell import *
 from django.utils import translation
 from django.test import Client
@@ -12,6 +14,7 @@ from bs4 import BeautifulSoup
 from lino.utils import AttrDict
 from lino.utils import i2d
 from lino.utils.xmlgen.html import E
+from atelier.rstgen import attrtable
 
 test_client = Client()
 # naming it simply "client" caused conflict with a
@@ -113,3 +116,5 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
     # except Exception as e:
     #     print("%s:\n%s" % (url, e))
     #     raise
+
+
