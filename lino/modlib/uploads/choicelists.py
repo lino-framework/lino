@@ -80,7 +80,7 @@ add('90', _("Uploads"), 'general')
 def set_upload_shortcuts(sender, **kw):
     """This is the successor for `quick_upload_buttons`."""
 
-    # remember that models have been overridden.
+    # remember that models might have been overridden.
     UploadType = sender.modules.uploads.UploadType
 
     for i in Shortcuts.items():

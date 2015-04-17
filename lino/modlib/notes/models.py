@@ -26,21 +26,24 @@ from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.modlib.outbox.mixins import MailableType, Mailable
 from lino.modlib.contacts.mixins import ContactRelated
+from .choicelists import SpecialTypes
 
 
 class NoteType(mixins.BabelNamed, mixins.PrintableType, MailableType):
-
+    """
+    .. attribute:: special_type
+    """
     templates_group = 'notes/Note'
 
     class Meta:
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")
 
-    #~ name = models.CharField(max_length=200)
     important = models.BooleanField(
         verbose_name=_("important"),
         default=False)
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
+    special_type = SpecialTypes.field(blank=True)
 
 
 class NoteTypes(dd.Table):
@@ -51,7 +54,7 @@ class NoteTypes(dd.Table):
     model = 'notes.NoteType'
     required = dd.required(user_level='admin', user_groups='office')
     #~ label = _("Note types")
-    column_names = 'name build_method template *'
+    column_names = 'name build_method template special_type *'
     order_by = ["name"]
 
     insert_layout = """
@@ -61,7 +64,7 @@ class NoteTypes(dd.Table):
 
     detail_layout = """
     id name
-    build_method template email_template attach_to_email
+    build_method template special_type email_template attach_to_email
     remark:60x5
     notes.NotesByType
     """

@@ -85,6 +85,15 @@ class Certifiable(dd.Model):
             return set()
         return self.CERTIFIED_FIELDS
 
+    def on_duplicate(self, ar, master):
+        """After duplicating e.g. a budget which had been printed, we don't
+        want the duplicate point to the same
+        excerpt. :meth:`lino.mixins.duplicable.Duplicable.on_duplicate`.
+
+        """
+        super(Certifiable, self).on_duplicate(ar, master)
+        self.printed_by = None
+
     @classmethod
     def on_analyze(cls, site):
         # Contract.user.verbose_name = _("responsible (DSBE)")

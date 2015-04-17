@@ -8,6 +8,7 @@ Adds a multipurpose model "Note"
 .. autosummary::
    :toctree:
 
+   choicelists
    models
    fixtures.demo
    fixtures.std

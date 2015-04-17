@@ -43,7 +43,7 @@ def objects():
 
     for i in range(100):
         kw = dict(user=USERS.pop(),
-                  date=settings.SITE.demo_date(days=i),
+                  date=settings.SITE.demo_date(days=i-400),
                   subject="Important note %d" % i,
                   #~ company=COMPANIES.pop(),
                   type=NTYPES.pop())
