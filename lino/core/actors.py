@@ -444,12 +444,6 @@ class Actor(actions.Parametrizable):
     """
 
     label = None
-    """
-    The text to appear e.g. on a button that will call the default
-    action of an actor.  This attribute is *not* inherited to
-    subclasses.  For :class:`dd.Table` subclasses that don't have a
-    label, Lino will call :meth:`get_actor_label`.
-    """
 
     default_action = None
     actor_id = None

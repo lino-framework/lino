@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`Duplicable`.  "duplicable"
@@ -13,18 +13,15 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.conf import settings
-
 from django.utils.translation import ugettext_lazy as _
-# from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 
 from lino.core import actions
 from lino.core import model
 
 
 class Duplicate(actions.Action):
-    """
-    Duplicate the selected row.
+    """Duplicate the selected row.
+
     """
     label = _("Duplicate")
     sort_index = 11
@@ -77,6 +74,7 @@ class Duplicate(actions.Action):
         return new
 
     def run_from_ui(self, ar, **kw):
+        """This actually runs the action."""
         obj = ar.selected_rows[0]
         new = self.run_from_code(ar)
         kw = dict()
@@ -85,7 +83,7 @@ class Duplicate(actions.Action):
                   dict(old=obj, new=new))
         #~ kw.update(new_status=dict(record_id=new.pk))
         ar.success(**kw)
-        if ar.actor.stay_in_grid:
+        if ar.actor.detail_action is None or ar.actor.stay_in_grid:
             ar.set_response(refresh_all=True)
         else:
             ar.goto_instance(new)

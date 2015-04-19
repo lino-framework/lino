@@ -2,14 +2,13 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""Choicelists for :mod:`lino.modlib.notes`.
+
 .. autosummary::
 
 """
 
-from django.utils.translation import ugettext_lazy as _
-
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 
 
 class SpecialType(dd.Choice):

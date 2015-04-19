@@ -327,7 +327,7 @@ class VirtualField(FakeField):
         specify `editable=False` in their return_type::
         
           @dd.virtualfield(dd.PriceField(_("Total")))
-          def total(self,ar=None):
+          def total(self, ar=None):
               return self.total_excl + self.total_vat
         """
 
