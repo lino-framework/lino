@@ -678,7 +678,7 @@ class VirtualTable(AbstractTable):
     pass
 
 
-class VentilatingTable(AbstractTable):
+class VentilatingTable(VirtualTable):
     """
     A mixin for tables that have a series of automatically generated
     columns

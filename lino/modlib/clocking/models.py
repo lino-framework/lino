@@ -33,20 +33,27 @@ Extreme case of a session:
 
 """
 
+import datetime
+from collections import OrderedDict
+
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 from lino import mixins
 from lino.api import dd, rt, _
 
+from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E
-from lino.modlib.cal.mixins import Started, Ended
+from lino.utils.quantities import Duration
+
+from lino.modlib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
 class SessionType(mixins.BabelNamed):
-
-    "Deserves more documentation."
+    """The type of a :class:`Session`.
+    """
 
     class Meta:
         verbose_name = _("Session Type")
@@ -58,8 +65,129 @@ class SessionTypes(dd.Table):
     column_names = 'name *'
 
 
-class Session(UserAuthored, Started, Ended):
+class CloseSession(dd.Action):
+    """To close a session means to stop working on that ticket for this time.
 
+    """
+    label = _("Close session")
+    help_text = _("Stop working on that ticket for now.")
+    # icon_name = 'emoticon_smile'
+    show_in_workflow = True
+    # show_in_bbar = False
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.end_time:
+            return False
+        return super(CloseSession,
+                     self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+
+        def ok(ar2):
+            now = datetime.datetime.now()
+            for obj in ar.selected_rows:
+                obj.set_datetime('end', now)
+                # obj.end_date = dd.today()
+                # obj.end_time = now.time()
+                obj.save()
+                obj.ticket.touch()
+                obj.ticket.save()
+                ar2.set_response(refresh=True)
+
+        if True:
+            ok(ar)
+        else:
+            msg = _("Close {0} sessions.").format(len(ar.selected_rows))
+            ar.confirm(ok, msg, _("Are you sure?"))
+
+
+class EndSession(dd.Action):
+    label = _("End session")
+    help_text = _("Stop working on that ticket.")
+    show_in_workflow = True
+    show_in_bbar = False
+    
+    def get_action_permission(self, ar, obj, state):
+        Session = rt.modules.clocking.Session
+        qs = Session.objects.filter(
+            user=ar.get_user(), end_time__isnull=True)
+        if qs.count() == 0:
+            return False
+        return super(EndSession, self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        Session = rt.modules.clocking.Session
+        ses = Session.objects.get(user=ar.get_user(), end_time__isnull=True)
+        ses.set_datetime('end', datetime.datetime.now())
+        ses.full_clean()
+        ses.save()
+        ar.set_response(refresh=True)
+
+
+class StartSession(dd.Action):
+    """Start working on that ticket for this time.
+
+    """
+    label = _("Start session")
+    help_text = _("Start working on that ticket.")
+    # icon_name = 'emoticon_smile'
+    show_in_workflow = True
+    show_in_bbar = False
+
+    parameters = dict(
+        summary=models.CharField(_("Summary"), blank=True, max_length=200),
+        session_type=dd.ForeignKey(
+            'clocking.SessionType', null=True, blank=True)
+    )
+
+    params_layout = """
+    summary
+    session_type
+    """
+
+    def get_action_permission(self, ar, obj, state):
+        Session = rt.modules.clocking.Session
+        qs = Session.objects.filter(
+            user=ar.get_user(), end_time__isnull=True)
+        if qs.count():
+            # _("You are already working on #{0}").format(obj.id)
+            return False
+        return super(StartSession, self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        Session = rt.modules.clocking.Session
+        me = ar.get_user()
+        apv = ar.action_param_values
+
+        def ok(ar2):
+            # now = datetime.datetime.now()
+            for obj in ar.selected_rows:
+                # qs = Session.objects.filter(user=me, end_time__isnull=True)
+                # if qs.count():
+                #     ar.error(_("You are already working on #{0}").format(
+                #         obj.id))
+                # else:
+                ses = Session(
+                    ticket=obj,
+                    summary=apv.summary,
+                    session_type=apv.session_type,
+                    user=me)
+                ses.full_clean()
+                ses.save()
+                ar2.set_response(refresh=True)
+
+        if len(ar.selected_rows) == 1:
+            ok(ar)
+        else:
+            msg = _("This will open {0} simultaneous sessions.").format(
+                len(ar.selected_rows))
+            ar.confirm(ok, msg, _("Are you sure?"))
+
+dd.inject_action("tickets.Ticket", start_session=StartSession())
+dd.inject_action("tickets.Ticket", end_session=EndSession())
+
+
+class Session(UserAuthored, StartedEnded):
     """
     A Session is when a user works on a given ticket.
     """
@@ -68,14 +196,16 @@ class Session(UserAuthored, Started, Ended):
         verbose_name_plural = _('Sessions')
 
     ticket = dd.ForeignKey('tickets.Ticket')
-    session_type = dd.ForeignKey('clocking.SessionType')
+    session_type = dd.ForeignKey('clocking.SessionType', null=True, blank=True)
     summary = models.CharField(
         _("Summary"), max_length=200, blank=True,
         help_text=_("Summary of the session."))
-    # date = models.DateField(verbose_name=_("Date"), blank=True)
-    break_time = models.TimeField(
-        blank=True, null=True,
-        verbose_name=_("Break Time"))
+    # break_time = models.TimeField(
+    #     blank=True, null=True,
+    #     verbose_name=_("Break Time"))
+    break_time = dd.DurationField(_("Break Time"), blank=True)
+
+    close_session = CloseSession()
 
     def __unicode__(self):
         if self.start_time and self.end_time:
@@ -86,87 +216,288 @@ class Session(UserAuthored, Started, Ended):
         return "%s # %s" % (self._meta.verbose_name, self.pk)
 
     def save(self, *args, **kwargs):
-        if self.start_date is None and not settings.SITE.loading_from_dump:
-            self.start_date = settings.SITE.today()
+        if not settings.SITE.loading_from_dump:
+            if self.start_date is None:
+                self.start_date = dd.today()
+            if self.start_time is None:
+                self.start_time = datetime.datetime.now().time()
         super(Session, self).save(*args, **kwargs)
+
+    def get_duration(self):
+        diff = super(Session, self).get_duration()
+        if diff is not None and self.break_time is not None:
+            diff -= self.break_time
+        return diff
+        
+        # if self.end_time is None:
+        #     diff = datetime.timedelta()
+        # else:
+        #     diff = self.get_datetime('end') - self.get_datetime('start')
+        #     if self.break_time is not None:
+        #         diff -= self.break_time
+        # return Duration(diff)
+
+dd.update_field(Session, 'user', blank=False, nul=False)
 
 
 class Sessions(dd.Table):
-    model = Session
-    column_names = 'ticket start_date start_time end_date end_time break_time summary user *'
-    order_by = ['start_date', 'start_time']
-    stay_in_grid = True
+    model = 'clocking.Session'
+    column_names = 'ticket start_date start_time end_date end_time '\
+                   'break_time summary user *'
+    order_by = ['-start_date', '-start_time']
+    # order_by = ['start_date', 'start_time']
+    # stay_in_grid = True
+    parameters = mixins.ObservedPeriod(
+        project=dd.ForeignKey('tickets.Project', blank=True),
+        observed_event=dd.PeriodEvents.field(
+            blank=True, default=dd.PeriodEvents.active),
+    )
+    params_layout = "start_date end_date observed_event project"
+    auto_fit_column_widths = True
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Sessions, self).get_request_queryset(ar)
+        pv = ar.param_values
+        ce = pv.observed_event
+        if ce is not None:
+            qs = ce.add_filter(qs, pv)
+
+        if pv.project:
+            l1 = Project.objects.filter(parent=pv.project)
+            l2 = Project.objects.filter(parent__in=l1)
+            l3 = Project.objects.filter(parent__in=l2)
+            projects = set([pv.project])
+            projects |= set(l1)
+            projects |= set(l2)
+            projects |= set(l3)
+            # print 20150421, projects
+            qs = qs.filter(ticket__project__in=projects)
+
+        # if pv.start_date:
+        #     if pv.end_date:
+        #         qs = qs.filter(start_date__gte=pv.start_date)
+        #     else:
+        #         qs = qs.filter(start_date=pv.start_date)
+        # if pv.end_date:
+        #     qs = qs.filter(end_date__lte=pv.end_date)
+        # print 20150421, qs.query
+        return qs
 
 
 class SessionsByTicket(Sessions):
     master_key = 'ticket'
-    column_names = 'start_date start_time summary user end_time break_time end_date *'
+    column_names = 'start_date summary start_time end_time  '\
+                   'break_time duration user *'
 
-
-# class SessionsByProject(Sessions):
-#     master_key = 'project'
 
 class MySessions(Sessions, ByUser):
-    order_by = ['start_date', 'start_time']
     column_names = 'start_date start_time end_time break_time ticket summary *'
 
 
 class MySessionsByDate(MySessions):
     #~ master_key = 'date'
-    order_by = ['start_time']
+    # order_by = ['start_time']
     label = _("My sessions by date")
-    column_names = 'start_time end_time break_time ticket summary *'
+    column_names = 'start_time end_time break_time duration ticket summary '\
+                   'workflow_buttons *'
 
-    parameters = dict(
-        today=models.DateField(_("Date"),
-                               blank=True, default=settings.SITE.today),
-    )
+    # parameters = dict(
+    #     today=models.DateField(_("Date"), blank=True),
+    # )
 
     @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(MySessions, self).get_request_queryset(ar)
-        #~ if ar.param_values.date:
-        return qs.filter(start_date=ar.param_values.today)
-        #~ return qs
+    def param_defaults(self, ar, **kw):
+        kw = super(MySessionsByDate, self).param_defaults(ar, **kw)
+        kw.update(start_date=dd.today())
+        kw.update(end_date=dd.today())
+        return kw
 
     @classmethod
     def create_instance(self, ar, **kw):
-        kw.update(date=ar.param_values.today)
+        kw.update(start_date=ar.param_values.start_date)
         return super(MySessions, self).create_instance(ar, **kw)
 
 
-def you_are_busy_messages(ar):
-    """Yield :message:`You are busy in XXX` messages for the welcome
-page."""
+def welcome_messages(ar):
+    """Yield messages for the welcome page."""
 
-    events = rt.modules.cal.Event.objects.filter(
-        user=ar.get_user(), guest__state=GuestStates.busy).distinct()
-    if events.count() > 0:
-        chunks = [unicode(_("You are busy in "))]
+    Session = rt.modules.clocking.Session
+    Ticket = rt.modules.tickets.Ticket
+    TicketStates = rt.modules.tickets.TicketStates
+    me = ar.get_user()
+
+    busy_tickets = set()
+    # your open sessions (i.e. those you are busy with)
+    qs = Session.objects.filter(user=me, end_time__isnull=True)
+    if qs.count() > 0:
+        chunks = [unicode(_("You are busy with "))]
         sep = None
-        for evt in events:
+        for ses in qs:
             if sep:
                 chunks.append(sep)
-            ctx = dict(id=evt.id)
-            if evt.event_type is None:
-                ctx.update(label=unicode(evt))
-            else:
-                ctx.update(label=evt.event_type.event_label)
-
-            if evt.project is None:
-                txt = _("{label} #{id}").format(**ctx)
-            else:
-                ctx.update(project=unicode(evt.project))
-                txt = _("{label} with {project}").format(**ctx)
-            chunks.append(ar.obj2html(evt, txt))
+            busy_tickets.add(ses.ticket.id)
+            txt = unicode(ses.ticket)
+            chunks.append(
+                ar.obj2html(ses.ticket, txt, title=ses.ticket.summary))
             chunks += [
                 ' (',
-                ar.instance_action_button(evt.close_meeting),
+                ar.instance_action_button(ses.close_session, u'\u2713'),
                 ')']
             sep = ', '
         chunks.append('. ')
         yield E.span(*chunks)
+        return
+    closed_states = (
+        TicketStates.fixed, TicketStates.tested,
+        TicketStates.waiting, TicketStates.refused)
+    # suggest tickets you might want to start working on
+    qs = Ticket.objects.filter(
+        Q(assigned_to__isnull=True) | Q(assigned_to=me))
+    qs = qs.exclude(state__in=closed_states)
+    qs = qs.exclude(id__in=busy_tickets)
+    qs = qs.order_by('-modified')
+    if qs.count() > 0:
+        od = OrderedDict()  # state -> list of tickets
+        for ticket in qs:
+            lst = od.setdefault(ticket.state, [])
+            lst.append(ticket)
+        items = []
+        for state, tickets in od.items():
+            chunks = ["{0} : ".format(state)]
+            sep = None
+            for ticket in tickets:
+                if sep:
+                    chunks.append(sep)
+                txt = unicode(ticket)
+                # txt = "#{0}".format(ticket.id)
+                # if ticket.nickname:
+                #     txt += u" ({0})".format(ticket.nickname)
+                chunks.append(
+                    ar.obj2html(ticket, txt, title=ticket.summary))
+                sep = ', '
+            # chunks.append('. ')
+            items.append(E.li(*chunks))
+        yield E.div(E.p(_("You might want to work on")), E.ul(*items))
             
-#dd.add_welcome_handler(you_are_busy_messages)
+dd.add_welcome_handler(welcome_messages)
 
 
+# class DurationsByUser(dd.VirtualTable):
+#     master = 'users.User'
+
+class InvestedTimes(dd.VentilatingTable):
+    # required = dd.Required()
+    label = _("Invested times")
+    hide_zero_rows = True
+    parameters = mixins.ObservedPeriod()
+    params_layout = "start_date end_date"
+    # editable = False
+    auto_fit_column_widths = True
+
+    class Row(object):
+        def __init__(self, day):
+            self.day = day
+
+        def __unicode__(self):
+            return str(self.day)
+
+    @classmethod
+    def get_data_rows(cls, ar):
+        pv = ar.param_values
+        start_date = pv.start_date or dd.today(-7)
+        end_date = pv.end_date or settings.SITE.ignore_dates_after
+        d = start_date
+        while d < end_date:
+            yield cls.Row(d)
+            d += ONE_DAY
+
+    @dd.displayfield("Date")
+    def date(cls, row, ar):
+        return dd.fdl(row.day)
+
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        kw = super(InvestedTimes, cls).param_defaults(ar, **kw)
+        kw.update(start_date=dd.today(-7))
+        kw.update(end_date=dd.today())
+        return kw
+
+    @classmethod
+    def get_ventilated_columns(self):
+        Project = rt.modules.tickets.Project
+
+        def w(prj, verbose_name):
+            # return a getter function for a RequestField on the given
+            # EntryType.
+
+            def func(fld, obj, ar):
+                pv = dict(start_date=obj.day, end_date=obj.day)
+                pv.update(observed_event=dd.PeriodEvents.active)
+                pv.update(project=prj)
+                sar = Sessions.request(param_values=pv)
+                tot = Duration()
+                for obj in sar:
+                    d = obj.get_duration()
+                    if d is not None:
+                        tot += d
+                if tot:
+                    return tot
+
+            return dd.VirtualField(dd.DurationField(verbose_name), func)
+        for p in Project.objects.filter(parent__isnull=True).order_by('ref'):
+            yield w(p, unicode(p))
+        yield w(None, _("Total"))
+
+from lino.modlib.tickets.models import Project
+
+
+@dd.receiver(dd.post_save, sender=Project)
+def my_setup_columns(sender, **kw):
+    InvestedTimes.setup_columns()
+    settings.SITE.kernel.must_build_site_cache()
+
+
+if False:  # works, but is not useful
+
+    def weekly_reporter(days, ar, start_date, end_date):
+        Session = rt.modules.clocking.Session
+        me = ar.get_user()
+        qs = Session.objects.filter(
+            user=me, start_date__gte=start_date, end_date__lte=end_date)
+        # print 20150420, start_date, end_date, qs
+        d2p = dict()
+        for ses in qs:
+            prj = ses.ticket.project
+            if prj is not None:
+                while prj.parent is not None:
+                    prj = prj.parent
+            projects = d2p.setdefault(ses.start_date, dict())
+            duration = projects.setdefault(prj, Duration())
+            #datetime.timedelta())
+            duration += ses.get_duration()
+            projects[prj] = duration
+
+        # print 20150420, d2p
+        def fmt(delta):
+            return str(Duration(delta))
+
+        for date, projects in d2p.items():
+            parts = []
+            tot = Duration()
+            for prj, duration in projects.items():
+                if prj is None:
+                    prj = "N/A"
+                txt = "{0} ({1})".format(prj, fmt(duration))
+                parts.append(txt)
+                tot += duration
+            if len(parts):
+                if len(parts) == 1:
+                    txt = parts[0]
+                else:
+                    txt = ', '.join(parts) + " = " + fmt(tot)
+                txt = E.p(txt, style="text-align:right")
+                days[date].append(txt)
+
+    from lino.utils.weekly import add_reporter
+    add_reporter(weekly_reporter)

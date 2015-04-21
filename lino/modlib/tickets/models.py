@@ -33,9 +33,8 @@ from lino.utils.xmlgen.html import E
 
 blogs = dd.resolve_app('blogs')
 
-from lino.modlib.tickets.utils import TicketStates, DependencyTypes
+from .utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
-from lino.modlib.users.mixins import UserAuthored
 
 
 class TimeInvestment(dd.Model):
@@ -51,11 +50,10 @@ class TimeInvestment(dd.Model):
         _("Invested time"), blank=True, null=True, editable=False)
 
 
-class ProjectType(mixins.PrintableType, mixins.BabelNamed):
+class ProjectType(mixins.BabelNamed):
+    """The type of a :class:`Project`."""
 
-    "Deserves more documentation."
-
-    templates_group = 'tickets/Project'
+    # templates_group = 'tickets/Project'
 
     class Meta:
         verbose_name = _("Project Type")
@@ -64,7 +62,11 @@ class ProjectType(mixins.PrintableType, mixins.BabelNamed):
 
 class ProjectTypes(dd.Table):
     model = 'tickets.ProjectType'
-    column_names = 'name build_method template *'
+    column_names = 'name *'
+    # column_names = 'name build_method template *'
+    detail_layout = """id name
+    ProjectsByType
+    """
 
 
 #~ class Repository(UserAuthored):
@@ -75,6 +77,17 @@ class ProjectTypes(dd.Table):
     #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
     #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
+# class Nicknamed(dd.Model):
+#     class Meta:
+#         abstract = True
+
+#     def __unicode__(self):
+#         txt = super(Nicknamed, self).__unicode__()
+#         if self.nickname:
+#             return u"{0} ({1})".format(txt, self.nickname)
+#         return txt
+#         #     return u"#{0} ({1})".format(self.id, self.nickname)
+#         # return u"#{0}".format(self.id)
 
 class Project(TimeInvestment, mixins.Referrable):
     """A **project** is something on which several users work together.
@@ -87,8 +100,7 @@ class Project(TimeInvestment, mixins.Referrable):
     parent = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Parent"))
     type = models.ForeignKey('tickets.ProjectType', blank=True, null=True)
-    description = dd.RichTextField(_("Description"), blank=True,
-                                   format='plain')
+    description = dd.RichTextField(_("Description"), blank=True)
     srcref_url_template = models.CharField(blank=True, max_length=200)
     changeset_url_template = models.CharField(blank=True, max_length=200)
 
@@ -106,6 +118,7 @@ class ProjectDetail(dd.FormLayout):
     """, label=_("General"))
 
     tickets = dd.Panel("""
+    SponsorshipsByProject
     TicketsByProject #SessionsByProject
     """, label=_("Tickets"))
 
@@ -123,8 +136,12 @@ class Projects(dd.Table):
 class ProjectsByProject(Projects):
     master_key = 'parent'
     label = _("Sub-projects")
-    column_names = "ref name *"
+    column_names = "ref name type *"
 
+
+class ProjectsByType(Projects):
+    master_key = 'type'
+    column_names = "ref name *"
 
 # class MyProjects(Projects, ByUser):
 #     order_by = ["name"]
@@ -135,28 +152,28 @@ class ProjectsByProject(Projects):
 #     column_names = "ref name *"
 
 
-class Vote(dd.Model):
+class Sponsorship(dd.Model):
     class Meta:
-        verbose_name = _("Vote")
-        verbose_name_plural = _('Votes')
+        verbose_name = _("Sponsorship")
+        verbose_name_plural = _('Sponsorships')
 
-    ticket = dd.ForeignKey('tickets.Ticket')
+    project = dd.ForeignKey('tickets.Project')
     partner = dd.ForeignKey('contacts.Partner')
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 
 
-class Votes(dd.Table):
-    model = 'tickets.Vote'
+class Sponsorships(dd.Table):
+    model = 'tickets.Sponsorship'
 
 
-class VotesByTicket(Votes):
-    master_key = 'ticket'
+class SponsorshipsByProject(Sponsorships):
+    master_key = 'project'
     column_names = "partner remark *"
 
 
-class VotesByPartner(Votes):
+class SponsorshipsByPartner(Sponsorships):
     master_key = 'partner'
-    column_names = "ticket remark *"
+    column_names = "project remark *"
 
 
 class Milestone(dd.Model):  # mixins.Referrable):
@@ -179,7 +196,7 @@ class Milestone(dd.Model):  # mixins.Referrable):
         #~ return self.label
 
     def __unicode__(self):
-        return "{0}:{1}".format(self.project, self.label)
+        return u"{0}:{1}".format(self.project, self.label)
 
 
 class Milestones(dd.Table):
@@ -213,16 +230,18 @@ class Dependencies(dd.Table):
 
 
 class ChildrenByTicket(Dependencies):
+    label = _("Children")
     master_key = 'parent'
     column_names = "dependency_type child *"
 
 
 class ParentsByTicket(Dependencies):
+    label = _("Parents")
     master_key = 'child'
     column_names = "dependency_type parent *"
 
 
-class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
+class Ticket(mixins.CreatedModified, TimeInvestment):
     """
     """
     workflow_state_field = 'state'
@@ -232,12 +251,12 @@ class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
         verbose_name_plural = _('Tickets')
 
     project = dd.ForeignKey('tickets.Project', blank=True, null=True)
+    nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
     summary = models.CharField(
         pgettext("Ticket", "Summary"), max_length=200,
         blank=True,
         help_text=_("Short summary of the problem."))
-    description = dd.RichTextField(
-        _("Description"), blank=True, format='plain')
+    description = dd.RichTextField(_("Description"), blank=True)
 
     reported_for = dd.ForeignKey(
         'tickets.Milestone',
@@ -253,18 +272,34 @@ class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
         help_text=_("The milestone for which this ticket has been fixed."))
     assigned_to = dd.ForeignKey(
         settings.SITE.user_model,
+        verbose_name=_("Assigned to"),
         related_name="assigned_tickets",
         blank=True, null=True,
         help_text=_("The user who works on this ticket."))
+    reporter = dd.ForeignKey(
+        settings.SITE.user_model,
+        verbose_name=_("Reporter"),
+        related_name="reported_tickets",
+        help_text=_("The user who reported this ticket."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
-    state = TicketStates.field(blank=True)
+    state = TicketStates.field(default=TicketStates.new)
     closed = models.DateTimeField(_("Closed since"), editable=False, null=True)
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
 
+    def on_create(self, ar):
+        if self.reporter_id is None:
+            u = ar.get_user()
+            if u is not None:
+                self.reporter = u
+        super(Ticket, self).on_create(ar)
+
     def __unicode__(self):
-        return u"#%d (%s)" % (self.id, self.summary)
+        if self.nickname:
+            return u"#{0} ({1})".format(self.id, self.nickname)
+        return u"#{0}".format(self.id)
+        # return u"#%d (%s)" % (self.id, self.summary)
 
     @dd.chooser()
     def reported_for_choices(cls, project):
@@ -283,6 +318,8 @@ class Ticket(UserAuthored, mixins.CreatedModified, TimeInvestment):
     def overview(self, ar):
         return ar.obj2html(self)
 
+# dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
+
 
 class TicketEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
@@ -296,19 +333,21 @@ class TicketDetail(dd.DetailLayout):
     main = "general time"
 
     general = dd.Panel("""
-    summary assigned_to project reported_for id 
-    user created modified state workflow_buttons fixed_for
+    summary id
+    project state workflow_buttons
     description
-    ParentsByTicket ChildrenByTicket
+    clocking.SessionsByTicket
     """, label=_("General"))
 
     time = dd.Panel("""
-    planned_time invested_time
-    clocking.SessionsByTicket
-    """, label=_("Time"))
+    reporter reported_for fixed_for created modified
+    planned_time invested_time assigned_to
+    ParentsByTicket ChildrenByTicket
+    """, label=_("Planning"))
 
 
 class Tickets(dd.Table):
+    required = dd.Required(auth=True)
     model = 'tickets.Ticket'
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
@@ -317,10 +356,10 @@ class Tickets(dd.Table):
     """, window_size=(50, 'auto'))
 
     parameters = mixins.ObservedPeriod(
-        user=dd.ForeignKey(
+        reporter=dd.ForeignKey(
             settings.SITE.user_model,
             blank=True, null=True,
-            help_text=_("Only rows authored by this user.")),
+            help_text=_("Only rows reporter by this user.")),
         assigned_to=dd.ForeignKey(
             settings.SITE.user_model,
             verbose_name=_("Assigned to"),
@@ -332,9 +371,9 @@ class Tickets(dd.Table):
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
         observed_event=TicketEvents.field(blank=True))
-    params_layout = """user assigned_to project state \
+    params_layout = """reporter assigned_to project state \
     start_date end_date observed_event"""
-    simple_parameters = ('user', 'assigned_to', 'state')
+    simple_parameters = ('reporter', 'assigned_to', 'state')
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -372,12 +411,12 @@ class Tickets(dd.Table):
 
 
 class UnassignedTickets(Tickets):
-    column_names = "summary project user *"
+    column_names = "summary project reporter *"
 
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary user planned_time invested_time *"
+    column_names = "summary reporter planned_time invested_time *"
     auto_fit_column_widths = True
 
 
@@ -395,14 +434,14 @@ class RecentTickets(Tickets):
 class TicketsFixed(Tickets):
     label = _("Tickets Fixed")
     master_key = 'fixed_for'
-    column_names = "id summary user *"
+    column_names = "id summary reporter *"
     editable = False
 
 
 class TicketsReported(Tickets):
     label = _("Tickets Reported")
     master_key = 'reported_for'
-    column_names = "id summary user *"
+    column_names = "id summary reporter *"
     editable = False
 
 
@@ -415,31 +454,41 @@ class MyOwnedTickets(Tickets):
         kw = super(MyOwnedTickets, self).param_defaults(ar, **kw)
         u = ar.get_user()
         if u is not None:
-            kw.update(user=u)
+            kw.update(reporter=u)
         return kw
 
 
-class MyAssignedTickets(Tickets):
-    label = _("Tickets assigned to me")
+class MyTickets(Tickets):
+    label = _("My tickets")
     order_by = ["-created", "id"]
     column_names = 'created id project summary state *'
     # slave_grid_format = 'summary'
 
     @classmethod
     def param_defaults(self, ar, **kw):
-        kw = super(MyAssignedTickets, self).param_defaults(ar, **kw)
+        kw = super(MyTickets, self).param_defaults(ar, **kw)
         u = ar.get_user()
         if u is not None:
             kw.update(assigned_to=u)
+        kw.update(state=TicketStates.active)
         return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            txt = _("There are %d tickets for you.") % count
+            yield ar.href_to_request(sar, txt)
 
     @classmethod
     def get_slave_summary(self, obj, ar):
         buttons = []
         # sar = ar.spawn(self, master_instance=ar.get_user())
         u = ar.get_user()
-        sar = self.insert_action.request_from(ar, known_values=dict(user=u))
-        qs = Ticket.objects.filter(user=u)
+        sar = self.insert_action.request_from(
+            ar, known_values=dict(reporter=u))
+        qs = Ticket.objects.filter(reporter=u)
         # qs = qs.exclude(state=TicketStates.active)
         for ticket in qs:
             # btn = ar.instance_action_button(
@@ -449,41 +498,3 @@ class MyAssignedTickets(Tickets):
             buttons.append(btn)
 
         return E.div(*buttons)
-
-
-def you_are_busy_messages(ar):
-    """Yield :message:`You are busy in XXX` messages for the welcome
-page."""
-
-    events = rt.modules.cal.Event.objects.filter(
-        user=ar.get_user(), guest__state=GuestStates.busy).distinct()
-    if events.count() > 0:
-        chunks = [unicode(_("You are busy in "))]
-        sep = None
-        for evt in events:
-            if sep:
-                chunks.append(sep)
-            ctx = dict(id=evt.id)
-            if evt.event_type is None:
-                ctx.update(label=unicode(evt))
-            else:
-                ctx.update(label=evt.event_type.event_label)
-
-            if evt.project is None:
-                txt = _("{label} #{id}").format(**ctx)
-            else:
-                ctx.update(project=unicode(evt.project))
-                txt = _("{label} with {project}").format(**ctx)
-            chunks.append(ar.obj2html(evt, txt))
-            chunks += [
-                ' (',
-                ar.instance_action_button(evt.close_meeting),
-                ')']
-            sep = ', '
-        chunks.append('. ')
-        yield E.span(*chunks)
-            
-
-#dd.add_welcome_handler(you_are_busy_messages)
-
-

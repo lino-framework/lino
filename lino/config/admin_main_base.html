@@ -68,7 +68,8 @@
 {% endif %}
 
 {% block admin_main_items %}
-{% for T in settings.SITE.get_admin_main_items() %}
+{% for T in settings.SITE.get_admin_main_items(ar) %}
+{% if E.iselement(T) %}{{E.tostring(T)}}{% else %}
 {% if T.default_action.get_view_permission(ar.get_user().profile) %}
 <h2>{{T.label}} 
 {# {{E.tostring(ar.window_action_button(T.default_action,
@@ -79,8 +80,8 @@
     style='vertical-align:0;',
     icon_name="../xsite/link"))}}
 </h2>
-
 {{E.tostring(ar.show(T, limit=T.preview_limit))}}
+{% endif %}
 {% endif %}
 {% endfor %}
 {% endblock %}

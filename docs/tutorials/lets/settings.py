@@ -17,7 +17,7 @@ class Site(Site):
         m = main.add_menu("config", "Configure")
         m.add_action(self.modules.lets.Places)
 
-    def get_admin_main_items(self):
+    def get_admin_main_items(self, ar):
 
         yield self.modules.lets.ActiveProducts
 

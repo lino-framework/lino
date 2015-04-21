@@ -338,7 +338,6 @@ class VirtStoreField(StoreField):
 
 
 class RequestStoreField(StoreField):
-
     """
     StoreField for :class:`lino.core.fields.RequestField`.
     """
@@ -358,7 +357,7 @@ class RequestStoreField(StoreField):
         return l.append(self.format_value(ar, v))
 
     def value2dict(self, v, d, row):
-        d[self.name] = self.format_value(settings.SITE.ui, v)
+        d[self.name] = self.format_value(None, v)
         #~ d[self.options['name']] = self.format_value(ui,v)
         #~ d[self.field.name] = v
 

@@ -17,6 +17,7 @@ from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
 from .choicelists import AccountTypes
+from .utils import DEBIT, CREDIT
 
 
 class Chart(mixins.BabelNamed):

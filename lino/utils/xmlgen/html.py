@@ -40,8 +40,8 @@ Usage::
     
     >>> kw = dict(title=u'Ein süßes Beispiel')
     >>> kw.update(href="foo/bar.html")
-    >>> btn = E.button(type='button',class_='x-btn-text x-tbar-upload')
-    >>> html = E.a(btn,**kw)
+    >>> btn = E.button(type='button', class_='x-btn-text x-tbar-upload')
+    >>> html = E.a(btn, **kw)
     >>> print E.tostring_pretty(html)
     <a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
     <button class="x-btn-text x-tbar-upload" type="button" />

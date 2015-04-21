@@ -147,6 +147,11 @@ class BaseRequest(object):
     known_values = {}
     master_instance = None
 
+    tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
+    # ~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
+    cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
+    # ~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
+
     request = None
     """The incoming Django HttpRequest object which caused this action
     request.
@@ -156,6 +161,7 @@ class BaseRequest(object):
     renderer = None
     selected_rows = []
     content_type = 'application/json'
+    requesting_panel = None
 
     def __init__(self, request=None, parent=None, **kw):
         self.request = request

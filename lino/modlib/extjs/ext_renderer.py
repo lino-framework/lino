@@ -1229,6 +1229,9 @@ class ExtRenderer(HtmlRenderer):
         yield "};"
 
     def js_render_window_action(self, rh, ba, unused_profile):
+        # x = str(rh)
+        # if x.startswith('clocking'):
+        #     print "20150421 {0}".format(x)
         profile = jsgen.get_user_profile()
         rpt = rh.actor
 
@@ -1249,6 +1252,7 @@ class ExtRenderer(HtmlRenderer):
         elif ba.action.extjs_main_panel:
             pass
         else:
+            # print "20150421 {0}".format(rh)
             return
 
         windowConfig = dict()

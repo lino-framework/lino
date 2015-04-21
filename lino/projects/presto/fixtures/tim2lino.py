@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
-# This file is part of the Lino project.
-# Lino is free software; you can redistribute it and/or modify
-# it under the terms of the GNU Lesser General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Lesser General Public License for more details.
-# You should have received a copy of the GNU Lesser General Public License
-# along with Lino ; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2009-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 """
 
@@ -45,10 +35,12 @@ from lino.utils import dblogger
 from lino.utils import mti
 from lino.utils import dpy
 
-from lino.modlib.accounts.utils import AccountTypes
+from lino.modlib.accounts.choicelists import AccountTypes
 
 from lino.core.utils import resolve_model, obj2str
 from lino.core.utils import is_valid_email
+
+from lino.modlib.ledger.choicelists import JournalGroups
 
 from lino.api import dd, rt
 
@@ -64,6 +56,7 @@ Group = dd.resolve_model('accounts.Group')
 if True:
     users = dd.resolve_app('users')
     tickets = dd.resolve_app('tickets')
+    clocking = dd.resolve_app('clocking')
     households = dd.resolve_app('households')
     vat = dd.resolve_app('vat')
     sales = dd.resolve_app('sales')
@@ -185,17 +178,17 @@ def row2jnl(row):
         return None, None, None
 
 
-
 def ticket_state(idpns):
     if idpns == ' ':
-        return tickets.TicketStates.accepted
+        return tickets.TicketStates.new
     if idpns == 'A':
         return tickets.TicketStates.waiting
     if idpns == 'C':
-        return tickets.TicketStates.closed
+        return tickets.TicketStates.fixed
     if idpns == 'X':
         return tickets.TicketStates.cancelled
-    return None  # 20120829 tickets.TicketStates.blank_item
+    return tickets.TicketStates.new
+    # return None  # 20120829 tickets.TicketStates.blank_item
 
 #~ def country2kw(row,kw):
 
@@ -441,12 +434,15 @@ class TimLoader(object):
         if row.alias == 'VEN':
             if row.idctr == 'V':
                 kw.update(trade_type=vat.TradeTypes.sales)
+                kw.update(journal_group=JournalGroups.sales)
                 vcl = sales.Invoice
             elif row.idctr == 'E':
                 kw.update(trade_type=vat.TradeTypes.purchases)
                 vcl = ledger.AccountInvoice
+                kw.update(journal_group=JournalGroups.purchases)
         elif row.alias == 'FIN':
             idgen = row.idgen.strip()
+            kw.update(journal_group=JournalGroups.financial)
             if idgen:
                 kw.update(account=self.CHART.get_account_by_ref(idgen))
                 if idgen.startswith('58'):
@@ -768,7 +764,13 @@ class TimLoader(object):
             obj.save()
             kw = compte2iban(compte1, partner=obj, primary=True)
             if kw['iban']:
-                yield sepa.Account(**kw)
+                obj = sepa.Account(**kw)
+                try:
+                    obj.full_clean()
+                    yield obj
+                except ValidationError:
+                    dd.logger.warning(
+                        "Ignored invalid PAR->Compte1 %r", compte1)
 
     def load_prj(self, row, **kw):
         pk = int(row.idprj.strip())
@@ -780,7 +782,7 @@ class TimLoader(object):
         #     kw.update(partner_id=self.par_pk(row.idpar.strip()))
 
         kw.update(ref=row.seq.strip())
-        kw.update(user=self.get_user(None))
+        # kw.update(user=self.get_user(None))
         desc = dbfmemo(row.abstract).strip() + '\n\n' + dbfmemo(row.body)
         #~ kw.update(summary=dbfmemo(row.abstract))
         kw.update(description=desc)
@@ -792,30 +794,38 @@ class TimLoader(object):
         if row.idprj.strip():
             kw.update(project_id=int(row.idprj))
             #~ kw.update(partner_id=PRJPAR.get(int(row.idprj),None))
-        if row.idpar.strip():
-            kw.update(partner_id=self.par_pk(row.idpar))
         kw.update(summary=row.short.strip())
         kw.update(description=dbfmemo(row.memo))
         kw.update(state=ticket_state(row.idpns))
         kw.update(closed=row.closed)
         kw.update(created=row['date'])
         kw.update(modified=datetime.datetime.now())
-        kw.update(user=self.get_user(row.idusr))
+        kw.update(reporter=self.get_user(row.idusr))
         return tickets.Ticket(**kw)
+        # if row.idpar.strip():
+        #     kw = dict(project=obj)
+        #     kw.update(partner_id=self.par_pk(row.idpar))
+        #     yield tickets.Sponsorship(**kw)
 
     def load_dls(self, row, **kw):
         if not row.iddls.strip():
             return
+        if not row.idpin.strip():
+            return
+        try:
+            ticket = tickets.Ticket.objects.get(pk=int(row.idpin))
+        except tickets.Ticket.DoesNotExist:
+            return
         pk = int(row.iddls)
         kw.update(id=pk)
-        if row.idprj.strip():
-            kw.update(project_id=int(row.idprj))
+        kw.update(ticket=ticket)
+        # if row.idprj.strip():
+        #     kw.update(project_id=int(row.idprj))
             #~ kw.update(partner_id=PRJPAR.get(int(row.idprj),None))
-        if row.idpar.strip():
-            kw.update(partner_id=self.par_pk(row.idpar))
+        # if row.idpar.strip():
+        #     kw.update(partner_id=self.par_pk(row.idpar))
         kw.update(summary=row.nb.strip())
-        kw.update(description=dbfmemo(row.memo))
-        kw.update(date=row.date)
+        kw.update(start_date=row.date)
         kw.update(user=self.get_user(row.idusr))
 
         def set_time(kw, fldname, v):
@@ -832,8 +842,8 @@ class TimLoader(object):
         #~ kw.update(start_time=row.von.strip())
         #~ kw.update(end_time=row.bis.strip())
         #~ kw.update(break_time=row.pause.strip())
-        kw.update(is_private=tim2bool(row.isprivat))
-        obj = tickets.Session(**kw)
+        # kw.update(is_private=tim2bool(row.isprivat))
+        obj = clocking.Session(**kw)
         #~ if row.idpar.strip():
             #~ partner_id = self.par_pk(row.idpar)
             #~ if obj.project and obj.project.partner \
@@ -844,7 +854,13 @@ class TimLoader(object):
                 #~ pass
             #~ else:
                 # ~ dblogger.warning("Lost DLS->IdPar of DLS#%d" % pk)
-        return obj
+        yield obj
+        if row.memo.strip():
+            kw = dict(owner=obj)
+            kw.update(body=dbfmemo(row.memo))
+            kw.update(user=obj.user)
+            kw.update(date=obj.start_date)
+            yield rt.modules.notes.Note(**kw)
 
     def load_art(self, row, **kw):
         try:
@@ -904,12 +920,11 @@ class TimLoader(object):
 
         self = tim
 
-        self.ROOT = users.User(
-            username='root', profile='900', last_name="Root")
+        self.ROOT = users.User(username='luc', profile='900')
         self.ROOT.set_password("1234")
         yield self.ROOT
 
-        settings.SITE.loading_from_dump = True
+        # settings.SITE.loading_from_dump = True
 
         self.CHART = accounts.Chart(name="Default")
         yield self.CHART
@@ -939,9 +954,11 @@ class TimLoader(object):
         #~ yield tim.load_dbf('NAT')
         yield tim.load_dbf('PLZ')
         yield tim.load_dbf('PAR')
-        yield tim.load_dbf('PRJ')
 
+        settings.SITE.loading_from_dump = True
+        yield tim.load_dbf('PRJ')
         yield dpy.FlushDeferredObjects
+        settings.SITE.loading_from_dump = False
 
         """
         We need a FlushDeferredObjects here because most Project 
@@ -1008,7 +1025,7 @@ class MyTimLoader(TimLoader):
         yield self.load_dbf('PLS')
         yield self.load_dbf('MBR')
 
-        if GET_THEM_ALL:
+        if False:  # and GET_THEM_ALL:
             yield self.load_dbf('PIN')
             yield self.load_dbf('DLS')
 
@@ -1044,7 +1061,7 @@ class MyTimLoader(TimLoader):
 
         p1 = self.get_customer(row.idpar)
         if p1 is None:
-            logger.warning(
+            logger.debug(
                 "Failed to load MBR %s : "
                 "No idpar", row)
             return
@@ -1056,14 +1073,14 @@ class MyTimLoader(TimLoader):
                 kw = dict()
                 p = mti.get_child(p1, Company)
                 if p is None:
-                    logger.warning(
+                    logger.debug(
                         "Failed to load MBR %s : "
                         "idpar is not a company", row)
                     return
                 kw.update(company=p)
                 p = mti.get_child(p2, Person)
                 if p is None:
-                    logger.warning(
+                    logger.debug(
                         "Failed to load MBR %s : "
                         "idpar2 is not a person", row)
                     return
@@ -1075,27 +1092,27 @@ class MyTimLoader(TimLoader):
             if role is not None:
                 household = mti.get_child(p1, Household)
                 if household is None:
-                    logger.warning(
+                    logger.debug(
                         "Failed to load MBR %s : "
                         "idpar is not a household", row)
                     return
                 person = mti.get_child(p2, Person)
                 if person is None:
-                    logger.warning(
+                    logger.debug(
                         "Failed to load MBR %s : idpar2 is not a person", row)
                     return
                 return households.Member(
                     household=household,
                     person=person,
                     role=role)
-            logger.warning(
+            logger.debug(
                 "Failed to load MBR %s : idpar2 is not empty", row)
             return
 
         try:
             lst = lists.List.objects.get(ref=row.idpls.strip())
         except lists.List.DoesNotExist:
-            logger.warning(
+            logger.debug(
                 "Failed to load MBR %s : unknown idpls", row)
             return
         kw.update(list=lst)

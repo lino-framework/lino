@@ -25,6 +25,7 @@ from django.utils.encoding import force_unicode
 from lino import mixins
 from lino.api import dd, rt
 from lino.utils import ONE_DAY
+from lino.utils.quantities import Duration
 from lino.utils.xmlgen.html import E
 
 from .utils import Recurrencies
@@ -124,6 +125,29 @@ class Ended(dd.Model):
         blank=True, null=True,
         verbose_name=_("End Time"))
     #~ end = dd.FieldSet(_("End"),'end_date end_time')
+
+
+class StartedEnded(Started, Ended):
+
+    class Meta:
+        abstract = True
+
+    def get_duration(self):
+        st = self.get_datetime('start')
+        et = self.get_datetime('end')
+        if st is None or et is None:
+            return None
+        if et < st:
+            return None  # negative duration not supported
+        return Duration(et - st)
+
+    @dd.virtualfield(dd.QuantityField(_("Duration")))
+    def duration(self, ar):
+        return self.get_duration()
+
+    # @dd.virtualfield(models.TimeField(_("Duration")))
+    # def duration(self, ar):
+    #     return datetime.time(self.get_duration())
 
 
 class StartedSummaryDescription(Started):

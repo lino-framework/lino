@@ -342,20 +342,20 @@ class TableRequest(ActionRequest):
         self.dump2html(t, self.sliced_data_iterator, **kw)
         e = t.as_element()
         if header_level is not None:
-            # return E.div(E.h2(self.get_title()), e)
             return E.div(E.h2(self.actor.label), e)
         return e
 
     #~ def table2xhtml(self):
         #~ return settings.SITE.ui.table2xhtml(self)
 
-    def dump2html(ar, tble, data_iterator, column_names=None):
+    def dump2html(self, tble, data_iterator, column_names=None):
         """
         Render this table into an existing
         :class:`lino.utils.xmlgen.html.Table` instance.
 
         """
-        tble.attrib.update(cellspacing="3px", bgcolor="#ffffff", width="100%")
+        ar = self
+        tble.attrib.update(self.tableattrs)
 
         grid = ar.ah.list_layout.main
         columns = grid.columns
@@ -363,15 +363,11 @@ class TableRequest(ActionRequest):
         columns = fields
         #~ print 20130330, cellwidths
 
-        # ~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-        cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
-        # ~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
-        #~ cellattrs = dict()
-
         headers = [
-            x for x in grid.headers2html(ar, columns, headers, **cellattrs)]
+            x for x in grid.headers2html(
+                self, columns, headers, **self.cellattrs)]
         sums = [fld.zero for fld in columns]
-        #~ hr = tble.add_header_row(*headers,**cellattrs)
+        #~ hr = tble.add_header_row(*headers,**self.cellattrs)
         if cellwidths:
             for i, td in enumerate(headers):
                 td.attrib.update(width=str(cellwidths[i]))
@@ -379,7 +375,7 @@ class TableRequest(ActionRequest):
         #~ print 20120623, ar.actor
         recno = 0
         for obj in data_iterator:
-            cells = ar.row2html(recno, columns, obj, sums, **cellattrs)
+            cells = ar.row2html(recno, columns, obj, sums, **self.cellattrs)
             if cells is not None:
                 recno += 1
                 #~ ar.actor.apply_row_format(tr,recno)
@@ -396,7 +392,7 @@ class TableRequest(ActionRequest):
                     has_sum = True
                     break
             if has_sum:
-                cells = ar.sums2html(columns, sums, **cellattrs)
+                cells = ar.sums2html(columns, sums, **self.cellattrs)
                 tble.body.append(xghtml.E.tr(*cells))
 
     def get_field_info(ar, column_names=None):

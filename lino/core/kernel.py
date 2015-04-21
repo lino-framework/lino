@@ -708,6 +708,11 @@ class Kernel(object):
 
         return urlpatterns
 
+    _must_build = False
+
+    def must_build_site_cache(self):
+        self._must_build = True
+        
     def make_cache_file(self, fn, write, force=False):
         """Make the specified cache file.  This is used internally at server
 startup.
@@ -717,7 +722,7 @@ startup.
             logger.info("MEDIA_ROOT does not exist: %s", settings.MEDIA_ROOT)
             return 0
         fn = join(settings.MEDIA_ROOT, fn)
-        if not force and os.path.exists(fn):
+        if not force and not self._must_build and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > self.code_mtime:
                 logger.info("%s (%s) is up to date.", fn, time.ctime(mtime))

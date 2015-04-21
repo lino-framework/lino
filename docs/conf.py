@@ -35,7 +35,7 @@ extensions += ['sphinx.ext.napoleon']
 extensions += ['atelier.sphinxconf.sigal_image']
 sigal_base_url = 'http://sigal.saffre-rumma.net'
 
-if True:
+if False:
     extensions += ['sphinxcontrib.blockdiag']
     # Fontpath for blockdiag (truetype font)
     blockdiag_fontpath = '/usr/share/fonts/truetype/ipafont/ipagp.ttf'

@@ -30,6 +30,8 @@ from lino.core.utils import resolve_model
 
 from lino.utils import IncompleteDate
 from lino.utils import quantities
+from lino.utils.quantities import Duration
+
 
 
 class PasswordField(models.CharField):
@@ -476,8 +478,8 @@ def constant():
 
 class RequestField(VirtualField):
     """A :class:`VirtualField` whose values are table action requests to
-be rendered as a clickable integer containing the number of rows.
-Clicking on it will open a window with the table.
+    be rendered as a clickable integer containing the number of rows.
+    Clicking on it will open a window with the table.
 
     """
     def __init__(self, get, *args, **kw):
@@ -653,15 +655,15 @@ class CharField(models.CharField):
 
 class QuantityField(CharField):
 
-    """
-    A field that accepts both
-    :class:`lino.utils.quantity.Decimal`,
-    :class:`lino.utils.quantity.Percentage`
+    """A field that accepts 
+    :class:`lino.utils.quantities.Quantity`,
+    :class:`lino.utils.quantities.Percentage`
     and
-    :class:`lino.utils.quantity.Duration`
+    :class:`lino.utils.quantities.Duration`
     values.
 
-    Implemented as a CharField (sorting or filter ranges may not work)
+    Implemented as a CharField (sorting or filter ranges may not work
+    as expected)
 
     QuantityFields are implemented as CharFields and
     therefore should *not* be declared `null=True`.
@@ -717,6 +719,17 @@ class QuantityField(CharField):
         if value is None:
             return ''
         return str(value)
+
+
+class DurationField(QuantityField):
+    def to_python(self, value):
+        if isinstance(value, Duration):
+            return value
+        if value:
+            # if isinstance(value, basestring):
+            #     return Duration(value)
+            return Duration(value)
+        return None
 
 
 def validate_incomplete_date(value):

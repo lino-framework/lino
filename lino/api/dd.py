@@ -190,6 +190,7 @@ from lino.core.fields import MonthField
 from lino.core.fields import PercentageField
 #~ from lino.core.fields import LinkedForeignKey
 from lino.core.fields import QuantityField
+from lino.core.fields import DurationField
 from lino.core.fields import HtmlBox, PriceField, RichTextField
 
 from lino.core.fields import DisplayField, displayfield, htmlbox

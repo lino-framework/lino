@@ -100,6 +100,7 @@ def configure_plugin(app_label, **kwargs):
     cfg.update(kwargs)
 
 
+# from django.db.models.fields import NOT_PROVIDED
 class NOT_PROVIDED:
     pass
 
@@ -2958,7 +2959,7 @@ signature as `django.core.mail.EmailMessage`.
                 place=unicode(sc.city.name), date=fdl(today))
         return fdl(today)
 
-    def get_admin_main_items(self):
+    def get_admin_main_items(self, ar):
         """Expected to yield a sequence of "items" to be rendered on the home
         page (:xfile:`admin_main.html`).
 

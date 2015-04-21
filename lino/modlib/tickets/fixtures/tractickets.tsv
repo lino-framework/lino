@@ -1,0 +1,132 @@
+﻿id	summary	status	owner	type	priority	milestone	component	severity	resolution	time	changetime	reporter
+1	Using character types in an .odt template	closed	luc	oddness	major	gx-2014-12	appy_pod	medium	sleep	2014-11-11 04:22:30	2014-12-04 12:06:44	admin
+2	Add a `Table.start_at_bottom` option	closed	luc	enhancement	major		web_ui	medium	sleep	2014-11-11 04:30:29	2015-01-31 08:44:50	admin
+3	"Somaire pour panneau ""Interviews"" d'un client"	closed	luc	enhancement	major	mj-2014-12-20	modlib.polls	medium	fixed	2014-11-11 05:55:14	2015-02-06 19:59:27	admin
+4	selecting `course_area` when inserting into `courses.Course`	accepted	luc	defect	default	mj-2015-02-17	welfare	trivial		2014-11-11 06:04:14	2015-02-17 22:25:26	admin
+5	Compétences professionnelles dans table à part	closed	luc	enhancement	major	mj-2014-12-20	lino	medium	fixed	2014-11-11 06:16:40	2015-01-26 22:34:20	admin
+6	Write a test case which tests available actions per user profile	new		enhancement	default		welfare	medium		2014-11-12 23:47:11	2014-11-12 23:47:11	luc
+7	Définir le mot de passe pour un nouvel utilisateur	closed		defect	default	mj-2014-12-20	lino	medium	fixed	2014-11-14 11:02:58	2015-01-13 04:48:47	luc
+8	Évalutations automatiques d'un PIIS : pq le bénéficiaire n'y est pas?	closed		defect	default	mj-2015-02-17	welfare	medium	fixed	2014-11-14 11:33:01	2015-03-26 11:47:23	luc
+9	"InvoicesByJournal : parameter panel should not have a field ""Journal"""	new		oddness	default	Così 1.0	cosi	medium		2014-11-18 23:50:01	2014-11-18 23:50:01	luc
+10	Move trac to lino-framework.org	closed		task	minor		community	medium	fixed	2014-11-19 12:33:43	2014-12-04 14:23:25	luc
+11	Add a time tracking plugin to trac	new		enhancement	default		community	medium		2014-11-19 12:37:17	2014-11-19 12:37:17	luc
+12	Add code repositories to trac	new		enhancement	default		community	medium		2014-11-19 12:39:44	2014-11-19 12:39:44	luc
+13	add a test case for conflicting events in welfare	new		enhancement	default		welfare	medium		2014-11-20 13:13:33	2014-11-20 13:13:33	luc
+14	simulation mode for eidreader	new		enhancement	default		welfare	medium		2014-11-24 12:35:07	2014-11-24 12:35:07	luc
+15	Cannot print in ConfirmationsByGranting	closed		defect	minor	gx-2014-12	lino	medium	fixed	2014-11-25 21:12:45	2014-12-04 12:06:44	luc
+16	Cannot create new confirmations when working as Theresia	closed	luc	defect	default	gx-2014-12	welfare	medium	fixed	2014-11-25 21:14:08	2014-12-04 12:06:44	luc
+17	date range of aids.Confirmation must be within that of the aids.Granting	closed		defect	default	gx-2014-12	lino	medium	fixed	2014-11-25 21:15:46	2014-12-04 12:06:44	luc
+18	Apotheke aus Klientenkontakten wird ignoriert beim Erstellen einer Bestätigung AMK	closed		defect	default	gx-2014-12	lino	medium	fixed	2014-11-25 21:17:27	2014-12-04 12:06:44	luc
+19	Additional page in AMK confirmation	closed	luc	defect	default	gx-2014-12	welfare	medium	fixed	2014-11-25 21:18:39	2014-12-04 12:17:19	luc
+20	Cannot see UserProfiles table	closed		defect	default		lino	medium	fixed	2014-11-28 14:49:54	2014-11-28 14:58:19	luc
+21	Garde d'enfant	closed		enhancement	default	mj-2014-12	welfare	medium	fixed	2014-12-01 23:22:38	2014-12-20 13:29:44	luc
+22	Parcours : Formations dans une table à part	closed		defect	default	mj-2014-12	lino	medium	fixed	2014-12-03 08:31:24	2014-12-04 12:15:44	luc
+23	Diverse Probleme Schuldnerberatung	closed		defect	major	gx-2014-12	welfare	medium	fixed	2014-12-04 12:10:58	2014-12-05 23:04:46	luc
+24	"Wenn man auf Speichern klickt, springt Bild auf Reiter ""Allgemein"""	closed		oddness	default	gx-2014-12	lino	medium	fixed	2014-12-04 12:33:36	2014-12-05 23:04:05	luc
+25	"Tabelle ""Benutzer und Klienten"" in Startseite nur für DSBE-Benutzer anzeigen"	closed		oddness	default	gx-2014-12	welfare	medium	fixed	2014-12-04 12:34:30	2014-12-11 11:42:43	luc
+26	"Ungefragte Änderungen im Reiter ""Lebenslauf"""	closed		enhancement	default	gx-2014-12	welfare	medium	fixed	2014-12-04 12:38:31	2014-12-05 23:06:11	luc
+27	Änderungen Ausdruck Budget	closed		enhancement	default	gx-2014-12	welfare	medium	fixed	2014-12-04 13:33:56	2014-12-12 05:22:54	luc
+28	2 Probleme Ausdruck AMK	closed		defect	default	gx-2014-12	welfare	medium	fixed	2014-12-04 14:22:31	2014-12-05 21:37:30	luc
+29	Deleting objects related by generic foreignkeys	closed		oddness	default	gx-2014-12	lino	medium	fixed	2014-12-04 14:25:26	2014-12-09 13:46:01	luc
+30	Report to show orphaned Controllables	closed		enhancement	default	gx-2014-12	lino	medium	fixed	2014-12-04 14:30:21	2014-12-12 07:52:38	luc
+31	Merge north and djangosite into Lino	closed		oddness	default	inside	lino	medium	fixed	2014-12-05 09:20:32	2014-12-12 23:06:16	luc
+32	Keep change records when partner gets deleted?	closed		oddness	default	gx-2014-12	lino	medium	fixed	2014-12-08 23:28:30	2014-12-09 12:50:26	luc
+33	Create human link	closed		defect	default		welfare	medium	fixed	2014-12-09 17:24:22	2015-02-01 11:24:34	Taavi
+34	Bug beim Erfassen von Notizen	closed		defect	default	gx-2014-12-12	welfare	medium	fixed	2014-12-09 17:32:19	2014-12-18 10:02:49	luc
+35	Selectable table layouts when printing `debts.Budget`	new		enhancement	default	gx-2015-03-04	welfare	medium		2014-12-12 05:14:59	2015-03-04 05:11:58	luc
+36	Add Python 3 support	new		enhancement	default	inside	lino	medium		2014-12-12 22:51:32	2014-12-12 22:52:57	luc
+37	Upgrade from ExtJS 3 to 5	new		enhancement	default	inside	lino	heavy		2014-12-12 22:59:28	2015-01-12 21:06:44	luc
+38	Make Lino run with Django 1.7	new		enhancement	default	inside	lino	medium		2014-12-12 23:05:25	2015-03-17 17:59:53	luc
+39	Get the docs to build on `readthedocs.org`	new		defect	default	inside	lino	medium		2014-12-12 23:15:26	2014-12-12 23:15:26	luc
+40	Make the Lino Developer's Guide readable	new		task	default	inside	lino	medium		2014-12-14 11:15:37	2014-12-14 11:15:37	luc
+41	Adding records in grid mode	new		defect	default		lino	medium		2014-12-14 20:20:16	2014-12-14 20:20:16	luc
+42	New European VAT regulation	new		defect	default	Così 1.0	lino	medium		2014-12-14 20:22:15	2014-12-14 20:22:15	luc
+43	"Nouveau module ""Recherche active d'emploi"""	closed		enhancement	default	mj-2014-12	welfare	medium	fixed	2014-12-15 14:03:33	2014-12-15 14:03:56	luc
+44	Section headings for `lino.modlib.polls`	closed		enhancement	default	mj-2014-12-20	lino	medium	fixed	2014-12-16 02:02:46	2015-02-06 19:59:27	luc
+45	Convert atelier.fablib.double_dump_test to a lino management command	new		enhancement	default		lino	medium		2014-12-16 09:56:47	2014-12-16 09:56:47	luc
+46	pcsw.Clients doesn't show all rows	closed		defect	default	gx-2014-12-12	welfare	medium	fixed	2014-12-16 17:55:11	2014-12-19 07:18:05	luc
+47	Upload Identifikationsdokument	closed		enhancement	default	gx-2015-01-15	welfare	medium	fixed	2014-12-17 19:18:49	2015-01-25 07:45:37	luc
+48	"initdb command should use ""flush"" instead of reimplementing ""reset"""	new		enhancement	default		lino	medium		2014-12-18 10:32:40	2014-12-18 10:32:40	luc
+49	ParamsLayout on pcsw.Clients expects a list of 12 values but got 16	closed		defect	default	gx-2015-01-25	welfare	medium	fixed	2014-12-19 15:18:27	2015-01-30 11:07:00	luc
+50	New module `lino.modlib.wages`	new		enhancement	default	üü-2014.12	lino	medium		2014-12-19 15:51:23	2014-12-19 15:51:23	luc
+51	Send email notification on update	closed		enhancement	default	gx-2014-12-19	lino	medium	fixed	2015-01-06 03:37:37	2015-01-11 22:46:36	luc
+52	A widget for editing ManyToManyField	new		enhancement	default	inside	lino	medium		2015-01-06 15:19:20	2015-01-26 06:44:50	luc
+53	"""Klient"" leer wenn in EventsByPartner ein Termin erstellt wird"	closed		defect	default	gx-2015-01-25	welfare	medium	fixed	2015-01-08 14:09:54	2015-02-04 11:48:56	luc
+54	"Benutzerprofil ""Newcomers"" übersetzen nach ""Erstempfang"""	closed		oddness	default	gx-2014-12-19	lino	medium	fixed	2015-01-08 14:10:31	2015-01-10 07:17:20	luc
+55	Termin erstellen für Klient ohne Begleitung	closed		enhancement	default	gx-2014-12-19	lino	medium	fixed	2015-01-08 14:11:39	2015-01-11 22:46:36	luc
+56	choosers don't know the requesting user	new		enhancement	default	inside	lino	medium		2015-01-12 06:40:48	2015-02-23 14:51:02	luc
+57	"""Meine Aufgaben"" muss chronologisch aufsteigend sortiert sein"	closed		oddness	default	gx-2015-01-11	lino	medium	fixed	2015-01-14 03:42:53	2015-01-15 08:19:45	gerd
+58	"""Zu unterschreibende HB"" --> ""Zu bestätigende HB"""	closed		oddness	default	gx-2015-01-11	welfare	medium	fixed	2015-01-14 03:43:45	2015-01-15 08:07:53	gerd
+59	signer of aids.Granting or aids.Confirmation set to blank	closed		oddness	default	gx-2015-01-25	welfare	medium	fixed	2015-01-14 03:45:46	2015-02-04 10:40:16	gerd
+60	Termine machen für Neuzugänge	closed		enhancement	default	gx-2015-01-15	welfare	medium	fixed	2015-01-14 07:51:08	2015-01-22 18:57:00	gerd
+61	Teilnehmer auschecken direkt von Startseite aus	closed		oddness	default	gx-2015-01-15	lino	medium	fixed	2015-01-14 17:01:31	2015-01-22 08:15:57	luc
+62	Wenn Termin stattgefunden hat, sollen Teilnehmer ausgecheckt werden	closed		enhancement	default	gx-2015-01-11	lino	medium	fixed	2015-01-14 17:07:02	2015-01-15 08:07:53	luc
+63	Kann Budget-Zeilen nicht nach oben/unten verschieben	closed		defect	default	gx-2015-01-11	lino	medium	fixed	2015-01-15 08:53:25	2015-01-15 08:53:37	luc
+64	"Anwesenheitsbescheinigung immer ""am heutigen Tag"""	closed		defect	default	gx-2015-01-15	lino	medium	fixed	2015-01-15 16:09:36	2015-01-15 16:09:49	luc
+65	tables tutorial	new		task	default		lino	medium		2015-01-20 23:42:11	2015-01-20 23:42:11	luc
+66	write tutorial about displayfields	new		task	default		lino	medium		2015-01-21 00:17:57	2015-01-21 00:17:57	luc
+67	Payment suggestion mixes up debit with credit	closed		defect	default	Così 1.0	lino	medium	fixed	2015-01-21 17:48:20	2015-02-23 15:20:04	luc
+68	Lino springt zum ersten Reiter  wenn ich zum ersten Mal speichere.	closed		defect	default	gx-2015-01-25	lino	medium	fixed	2015-01-22 08:25:01	2015-01-30 11:07:00	luc
+69	AJAX communication error nach Adresse erstellen	closed		defect	default	gx-2015-01-15	lino	medium	fixed	2015-01-22 11:07:05	2015-01-22 11:07:33	luc
+70	Set `Site.user_model` automatically	new		oddness	default	inside	lino	medium		2015-01-23 06:17:27	2015-01-23 06:17:27	luc
+71	Plausibilitätstest (Aktenkontrollliste)	closed		enhancement	default	gx-2015-02-09	lino	medium	fixed	2015-01-25 07:38:15	2015-02-13 03:40:18	gerd
+72	Stages d'immersion	closed	mathieu	enhancement	default	mj-2014-12-20	lino	medium	fixed	2015-01-25 08:25:44	2015-02-06 19:59:27	luc
+73	"Rename ""modlib"" to ""lib"""	new		oddness	default	inside	lino	medium		2015-01-25 08:31:27	2015-01-25 08:31:27	luc
+74	Write a tutorial about virtualfield	new		defect	default	docs	lino	medium		2015-01-25 08:33:44	2015-01-25 08:33:44	mahmoud
+75	Drei Bescheinigungen auch in FR	closed		defect	default	gx-2015-01-25	lino	medium	invalid	2015-01-26 13:15:33	2015-01-27 15:04:16	luc
+76	Sprache einer Bescheinigung manuell angeben	closed		enhancement	default	gx-2015-02-09	lino	medium	fixed	2015-01-26 13:16:46	2015-02-12 12:05:53	gerd
+77	"Move the ""hyperlink"" arrow of foreign key to the end, not at the beginning"	new		enhancement	default		lino	medium		2015-01-26 16:55:01	2015-01-26 16:55:01	joe
+78	Remove confusing [+] and [-] buttons from top toolbar?	closed		oddness	default		lino	medium	fixed	2015-01-26 17:06:40	2015-01-26 17:32:30	joe
+79	aids.RefundConfirmation.doctor : FK to Partner instead of Person?	closed		oddness	default	gx-2015-01-25	lino	medium	fixed	2015-01-26 17:35:16	2015-02-03 17:29:22	luc
+80	Convert Partner to Person	closed		oddness	default	gx-2015-01-25	lino	medium	fixed	2015-01-26 17:42:58	2015-01-29 01:55:45	luc
+81	RefundConfirmation : set doctor_type when doctor is known	closed		oddness	default	gx-2015-01-25	lino	medium	fixed	2015-01-26 17:44:07	2015-02-04 08:04:56	luc
+82	Title of the detail window should be clickable	new		defect	default		lino	medium		2015-01-26 18:15:51	2015-01-26 18:15:51	joe
+83	dd.chooser - allow to filter by master key	new		defect	default		lino	medium		2015-01-26 18:46:36	2015-01-26 18:47:18	joe
+84	"Différencier entre ""Art.61"" et ""Art.60§7"""	closed	gerd	enhancement	default	mj-2014-12-20	welfare	medium	fixed	2015-01-31 06:46:32	2015-02-06 19:59:27	luc
+85	Lino allows to edit contenttypes	new		defect	default		lino	medium		2015-02-01 10:25:28	2015-02-01 10:25:28	luc
+86	Move Luc's blog out of Lino	new		task	default		lino	medium		2015-02-01 11:11:47	2015-02-01 11:11:47	luc
+87	"Fehlermeldung nach ""Neuzugang zuweisen"""	closed		defect	default	gx-2015-01-25	welfare	medium	fixed	2015-02-03 15:29:31	2015-02-04 07:23:56	luc
+88	Cannot create humanlinks.Links when working as Alicia	closed		defect	default	gx-2015-01-25	lino	medium	fixed	2015-02-03 16:02:04	2015-02-03 16:21:09	luc
+89	Audible signal when a client is waiting for an agent	new		defect	default	gx-2015-03-04	lino	medium		2015-02-03 17:11:39	2015-03-04 05:11:58	luc
+90	Client.create_visit should show all appointable users	closed		oddness	default	gx-2015-01-25	welfare	medium	fixed	2015-02-03 17:15:05	2015-02-03 17:15:16	luc
+91	newcomers.Clients : new parameter & default values	closed		enhancement	default	gx-2015-02-09	welfare	medium	fixed	2015-02-05 14:40:36	2015-02-13 03:37:49	luc
+92	change menu when acting as another user	closed		defect	default	gx-2015-02-04	lino	medium	fixed	2015-02-05 14:46:16	2015-02-05 15:24:35	luc
+93	unconfirmed grantings editable by all	closed		defect	default	gx-2015-02-09	welfare	medium	fixed	2015-02-06 12:46:41	2015-02-12 12:11:10	luc
+94	'NoneType' object has no attribute 'attname' on RefuseClient	closed		defect	default	gx-2015-02-04	lino	medium	fixed	2015-02-09 18:07:27	2015-02-09 18:07:42	luc
+95	"Onglet ""Intervenants"" vide pour certains utilisateurs"	closed		defect	default	mj-2015-02-06	welfare	medium	fixed	2015-02-09 21:03:37	2015-02-13 13:15:36	luc
+96	Internal changes for generating the extjs javascript	new		defect	minor	inside	lino	heavy		2015-02-11 01:33:13	2015-02-11 01:33:13	luc
+97	"Neues Feld ""ID Buchhaltung"" pro Klient"	closed		enhancement	default	gx-2015-02-09	welfare	medium	fixed	2015-02-11 09:41:17	2015-02-12 12:37:52	gerd
+98	"New excerpt type ""file sheet"" for pcsw.Client (Aktenblatt eines Klienten)"	closed		enhancement	default	gx-2015-02-09	welfare	medium	fixed	2015-02-11 09:43:18	2015-02-12 12:37:52	gerd
+99	"Boutons ""Excusé"" et ""Absent"""	closed		oddness	default	mj-2015-02-06	lino	medium	fixed	2015-02-13 13:17:40	2015-02-17 22:18:50	luc
+100	UsersWithClients et bénéficiaires avec plusieurs interventions	new		enhancement	default	mj-2015-02-17	lino	medium		2015-02-13 13:18:53	2015-02-17 22:25:26	luc
+101	Freins: utilisateur par défaut celui qui l'encode	closed		oddness	default	mj-2015-02-06	lino	medium	fixed	2015-02-13 14:50:07	2015-02-17 22:19:27	luc
+102	Évaluations s'il y a plusieurs interventions actives	new		defect	default	mj-2015-02-17	welfare	medium		2015-02-17 22:23:10	2015-02-17 22:25:26	luc
+103	Beim Erstellen einer AMK wird nicht die Apotheke übernommen, die in den Kontakten steht.	closed		oddness	default	gx-2015-02-13	welfare	medium	fixed	2015-02-18 13:55:13	2015-02-20 22:46:55	luc
+104	Overlapping contracts are sometimes allowed	closed		defect	default	mj-2015-02-17	welfare	medium	fixed	2015-02-20 17:37:22	2015-03-25 08:24:41	luc
+105	Changes in file_sheet.ods for pcsw.Client (Aktenblatt eines Klienten)	closed		enhancement	default	gx-2015-02-13	lino	medium	fixed	2015-02-20 17:38:48	2015-02-22 23:56:21	luc
+106	Better information about stale generic relations (Broken GFKs)	closed		defect	default	gx-2015-02-13	lino	medium	fixed	2015-02-22 23:58:56	2015-02-23 00:11:37	luc
+107	Make `lino.utils.jsgen` thread-safe	closed		enhancement	default	gx-2015-02-22	lino	medium	fixed	2015-02-25 02:15:44	2015-02-25 13:53:00	luc
+108	"A command to ask ""Lino how do you do?"""	new		enhancement	default	gx-2015-03-04	lino	medium		2015-02-25 02:50:09	2015-03-04 05:11:58	luc
+109	[Errno 39] Directory not empty: '.../lino/tmp/result.odt.1424701578.354042'	closed	mahmoud	defect	default	inside	lino	medium	fixed	2015-02-25 08:22:08	2015-02-26 22:29:55	mahmoud
+110	Make cal.Event.assigned_to optional	new		enhancement	default	mj-2015-02-17	lino	medium		2015-02-25 08:45:36	2015-02-25 08:45:36	luc
+111	Bescheinigungen Ausländerbeihilfe in FR	closed		defect	default	gx-2015-02-22	welfare	medium	fixed	2015-02-25 11:19:42	2015-02-25 13:48:46	gerd
+112	setup() got an unexpected keyword argument 'known_values'	closed		oddness	default	mj-2015-02-17	lino	medium	fixed	2015-02-25 12:57:26	2015-02-25 15:35:31	mathieu
+113	Bescheinigungen ohne Datum	closed		oddness	default	gx-2015-02-22	lino	medium	fixed	2015-02-26 07:37:43	2015-02-26 07:41:21	luc
+114	client-side form validation for ActionFormPanel	new	mahmoud	oddness	default	Così 1.0	lino	medium		2015-02-26 14:41:59	2015-02-26 14:41:59	luc
+115	Lino sollte nachfragen, bevor er eine neue Stadt anlegt	new		oddness	default	gx-2015-03-04	lino	medium		2015-03-03 22:07:07	2015-03-04 05:11:58	luc
+116	Bessere Fehlermeldungen wenn Arzt falsch eingegeben	closed		oddness	default	gx-2015-02-26	lino	medium	fixed	2015-03-03 22:18:17	2015-03-04 04:37:49	luc
+117	Ankreuzfelder newcomers_consultations und newcomers_appointments wieder zurück	closed		oddness	default	gx-2015-02-26	lino	medium	fixed	2015-03-03 22:22:52	2015-03-03 22:23:04	luc
+118	Ähnliche Namen finden in Aktenkontrollliste	new		enhancement	default	gx-2015-03-04	lino	medium		2015-03-03 22:24:10	2015-03-04 05:11:58	luc
+119	Lino allowed non-manager users to act as a colleague without profile	closed		defect	default	gx-2015-02-26	lino	medium	fixed	2015-03-04 05:09:51	2015-03-04 05:10:02	luc
+120	Empfang -> Klienten default_params	new		defect	default	gx-2015-03-04	lino	medium		2015-03-05 16:48:06	2015-03-05 16:48:06	luc
+121	pcsw.Client.id is editable	new		oddness	default	gx-2015-03-04	lino	medium		2015-03-05 16:49:01	2015-03-05 16:49:01	luc
+122	"Aktenkontrollliste : Zustand ""Begleitet"", aber keine aktive Begleitung"	new		enhancement	default	gx-2015-03-04	lino	medium		2015-03-05 17:48:22	2015-03-05 17:48:22	luc
+123	bénéficiaire d'un rendez-vous n'apparait pas dans la salle d'attente	closed		defect	default	mj-2015-02-17	lino	medium	fixed	2015-03-06 17:59:37	2015-03-09 23:47:25	luc
+124	performance mysql	new		task	default	mj-2015-02-17	lino	medium		2015-03-06 18:01:20	2015-03-06 18:01:20	luc
+125	optimize javascript usage	assigned	mahmoud	enhancement	default	inside	lino	medium		2015-03-09 17:52:07	2015-03-09 17:55:14	luc
+126	Why Model.allow_cascaded_delete ?	new		oddness	default	inside	lino	medium		2015-03-09 20:36:21	2015-03-09 20:36:21	luc
+127	Set primary address after reading eId card	closed		defect	default	mj-2015-02-17	welfare	medium	fixed	2015-03-11 07:57:46	2015-03-25 08:24:41	luc
+128	"""Instructeur"" d'un atelier : pointer vers utilisateurs, pas vers personnes"	closed		defect	default	mj-2015-02-17	lino	medium	worksforme	2015-03-11 08:07:17	2015-03-11 08:20:22	mathieu
+129	Manager acting as User should have user's menu	closed		oddness	default	inside	lino	medium	fixed	2015-03-19 20:59:56	2015-03-19 23:37:03	luc
+130	checked in guests should appear in waiting guests	new		defect	default	mj-2015-02-17	lino	medium		2015-03-23 21:14:51	2015-03-23 21:14:51	luc
+131	Cannot save RichTextField when editing in own window	new		defect	default	gx-2015-03-04	lino	medium		2015-03-25 03:02:58	2015-03-25 03:02:58	gerd

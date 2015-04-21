@@ -145,8 +145,11 @@ class Modified(model.Model):
 
     def save(self, *args, **kwargs):
         if not settings.SITE.loading_from_dump:
-            self.modified = datetime.datetime.now()
+            self.touch()
         super(Modified, self).save(*args, **kwargs)
+
+    def touch(self):
+        self.modified = datetime.datetime.now()
 
 
 class Created(model.Model):

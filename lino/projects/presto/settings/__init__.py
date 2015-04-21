@@ -52,7 +52,9 @@ class Site(Site):
         yield 'lino.modlib.auto.sales'
         #~ 'lino.modlib.projects',
         yield 'lino.modlib.blogs'
-        yield 'lino.modlib.tickets'
+        yield 'lino.modlib.notes'
+        # yield 'lino.modlib.tickets'
+        yield 'lino.modlib.clocking'
         yield 'lino.modlib.uploads'
         #~ 'lino.modlib.thirds',
         yield 'lino.modlib.extensible'
@@ -70,4 +72,20 @@ class Site(Site):
     def setup_plugins(self):
         super(Site, self).setup_plugins()
         self.plugins.countries.configure(country_code='BE')
+
+    def get_admin_main_items(self, ar):
+        if False:
+            from lino.utils.weekly import get_report
+
+            def datefmt(d):
+                T = self.modules.clocking.MySessionsByDate
+                sar = T.request_from(
+                    ar, param_values=dict(start_date=d, end_date=d))
+                return ar.href_to_request(
+                    sar, str(d.day), style="font-size:xx-small;")
+
+            yield get_report(ar, datefmt=datefmt)
+        yield self.modules.clocking.InvestedTimes
+        # yield self.modules.tickets.MyTickets
+        # yield self.modules.tickets.RecentTickets
 

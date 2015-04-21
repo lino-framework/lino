@@ -628,7 +628,7 @@ class TextFieldElement(FieldElement):
         self.format = getattr(field, 'textfield_format', None) \
             or settings.SITE.textfield_format
         if self.format == 'html':
-            if settings.SITE.use_tinymce:
+            if settings.SITE.is_installed('tinymce'):
                 self.value_template = "new Lino.RichTextPanel(%s)"
                 self.active_child = True
                 #~ if self.label:
@@ -989,8 +989,6 @@ class NumberFieldElement(FieldElement):
     """
     filter_type = 'numeric'
     gridfilters_settings = dict(type='numeric')
-    #~ xtype = 'numberfield'
-    #~ xtype = None
     value_template = "new Ext.form.NumberField(%s)"
     sortable = True
     grid_column_template = "new Lino.NullNumberColumn(%s)"
@@ -1012,7 +1010,8 @@ class NumberFieldElement(FieldElement):
 
     def sum2html(self, ar, sums, i, **cellattrs):
         cellattrs.update(align="right")
-        return super(NumberFieldElement, self).sum2html(ar, sums, i, **cellattrs)
+        return super(NumberFieldElement, self).sum2html(
+            ar, sums, i, **cellattrs)
 
     #~ 20130119b
     #~ def value2html(self,ar,v,**cellattrs):
@@ -1122,14 +1121,7 @@ class DecimalFieldElement(NumberFieldElement):
 
 
 class QuantityFieldElement(CharFieldElement):
-#~ class QuantityFieldElement(DecimalFieldElement):
-    #~ grid_column_template = "new Lino.NullNumberColumn(%s)"
-    #~ def get_field_options(self,**kw):
-        #~ kw = CharFieldElement.get_field_options(self,**kw)
-        #~ kw.update(align='right')
-        #~ kw.update(fieldClass="x-form-field x-form-num-field")
-        #~ return kw
-
+    
     def get_column_options(self, **kw):
         #~ print 20130125, self.field.name
         kw = super(QuantityFieldElement, self).get_column_options(**kw)
@@ -1138,6 +1130,9 @@ class QuantityFieldElement(CharFieldElement):
         kw.update(format='')  # 20130125
         # ~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
         return kw
+
+    def value2num(self, v):
+        return v
 
 
 class DisplayElement(FieldElement):

@@ -1,36 +1,48 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r"""
 A :class:`Duration` is a Decimal expressed in ``hh:mm`` format.
 A :class:`Percentage` is a Decimal expressed in ``x%`` format.
-A :class:`Fraction` is a number expressed in ``a/b`` format.
 
 Usage examples:
 
+The `parse` function
+====================
+
 >>> parse('1')
 Decimal('1')
->>> parse('1/3')
-Fraction(1, 3)
+>>> parse('1:15')
+Duration('1:15')
 >>> parse('33%')
 Percentage('33%')
 
 >>> lines = []
->>> lines.append('repr(x)              str(x)   x*3')
->>> lines.append('-------------------- ------ -----')
->>> for s in '2','2.5','5/12','1/3','33%','2:30':
+>>> lines.append('repr(x)              str(x)    x*3  x*100')
+>>> lines.append('------------------- ------- ------ ------')
+>>> for s in '2', '2.5', '33%', '2:30', '0:20':
 ...     v = parse(s)
-...     lines.append("%-20s %6s %6s" % (repr(v), v, v*3))
+...     lines.append("%-20s %6s %6s %6s" % (repr(v), v, v*3, v*100))
 >>> print '\n'.join(lines)
-repr(x)              str(x)   x*3
--------------------- ------ -----
-Decimal('2')              2      6
-Decimal('2.5')          2.5    7.5
-Fraction(5, 12)        5/12    5/4
-Fraction(1, 3)          1/3      1
-Percentage('33%')       33%   0.99
-Duration('2:30')       2:30   7:30
+repr(x)              str(x)    x*3  x*100
+------------------- ------- ------ ------
+Decimal('2')              2      6    200
+Decimal('2.5')          2.5    7.5  250.0
+Percentage('33%')       33%   0.99  33.00
+Duration('2:30')       2:30   7:30 250:00
+Duration('0:20')       0:20   1:00  33:20
+
+Formatting
+==========
+
+>>> print Duration("0.33334")
+0:20
+>>> print Duration("2.50")
+2:30
+
+Decimal separator
+=================
 
 Both period and comma are accepted as decimal separator:
 
@@ -39,14 +51,20 @@ Decimal('1.5')
 >>> parse('1,5')
 Decimal('1.5')
 
+But you may not use both at the same time:
+
+>>> parse('1,000.50')
+Traceback (most recent call last):
+...
+Exception: Invalid decimal value '1,000.50'
+
 
 """
 
+import datetime
 from decimal import Decimal
-from fractions import Fraction
 
-#~ from decimal import Decimal, ROUND_UP,ROUND_HALF_UP,ROUND_HALF_DOWN, getcontext
-#~ getcontext().rounding = ROUND_UP
+DEC2HOUR = Decimal(1) / Decimal(60)
 
 
 class Quantity(Decimal):
@@ -67,32 +85,6 @@ class Quantity(Decimal):
     def __mul__(self, *args, **kw):
         return self.__class__(Decimal.__mul__(self, *args, **kw))
     __rmul__ = __mul__
-
-
-DEC2HOUR = Decimal(1) / Decimal(60)
-
-
-#~ class Fraction(Quantity):
-    #~ def __new__(cls, value="0", context=None):
-        #~ if isinstance(value,basestring) and '/' in value:
-            #~ a,b = value.split('/')
-            #~ a = Decimal(a)
-            #~ b = Decimal(b)
-            #~ self = Decimal.__new__(Fraction,a/b,context)
-            #~ self._a = a
-            #~ self._b = b
-            #~ return self
-        #~ return cls.__new__(Quantity,value,context)
-
-    #~ def __str__(self):
-        #~ return str(self._a) + '/' + str(self._b)
-
-    #~ def simplify(self):
-        #~ pass
-
-    #~ def __mul__(self, other, context=None):
-        #~ return Fraction("%s/%s" % (self._a * other,self._b))
-    #~ __rmul__ = __mul__
 
 
 class Percentage(Quantity):
@@ -157,34 +149,24 @@ class Duration(Quantity):
     >>> print Duration('1:05') - Duration('0:10')
     0:55
     
-    
+    >>> print Duration(datetime.timedelta(0))
+    0:00
+    >>> print Duration(datetime.timedelta(0, hours=10))
+    10:00
+    >>> print Duration(datetime.timedelta(0, minutes=10))
+    0:10
     """
 
-    #~ _hh_mm = False
-
-    #~ __slots__ = Decimal.__slots__ + ('_hh_mm',)
-    #~ __slots__ = ('_exp','_int','_sign', '_is_special')
-
     def __new__(cls, value="0", context=None):
-    #~ def __init__(self,value,**kw):
-        if isinstance(value, basestring) and ':' in value:
-            h, m = value.split(':')
-            value = Decimal(h) + Decimal(m) * DEC2HOUR
-
-        #~ self = super(Duration,cls).__new__(Duration,value,context)
+        if isinstance(value, basestring):
+            if ':' in value:
+                h, m = value.split(':')
+                value = Decimal(h) + Decimal(m) * DEC2HOUR
+        elif isinstance(value, datetime.timedelta):
+            a = str(value).split(':')[:2]
+            return cls(':'.join(a))
         self = Decimal.__new__(Duration, value, context)
-        #~ self._hh_mm = True
         return self
-        #~ self = super(Duration,cls).__new__(Decimal,value,context)
-        #~ self = Decimal.__new__(Decimal,value,context)
-        #~ self._hh_mm = False
-        #~ return self
-        #~ return Decimal.__new__(value,context)
-        #~ assert isinstance(value,Decimal)
-        #~ self.value = value
-        #~ self.format = format
-        #~ for n in '__add__', '__mul__', '__sub__':
-            #~ setattr(self,n,getattr(self.value,n))
 
     def __str__(self):
         minutes = (self - int(self)) / DEC2HOUR
@@ -200,8 +182,8 @@ def parse(s):
         raise Exception("Expected a string, got %r" % s)
     if ':' in s:
         return Duration(s)
-    if '/' in s:
-        return Fraction(s)
+    # if '/' in s:
+    #     return Fraction(s)
     if s.endswith('%'):
         return Percentage(s)
     return parse_decimal(s)
