@@ -333,7 +333,7 @@ class TicketDetail(dd.DetailLayout):
     main = "general time"
 
     general = dd.Panel("""
-    summary id
+    summary nickname id
     project state workflow_buttons
     description
     clocking.SessionsByTicket
@@ -352,8 +352,8 @@ class Tickets(dd.Table):
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
     summary
-    project
-    """, window_size=(50, 'auto'))
+    nickname project
+    """, window_size=(60, 'auto'))
 
     parameters = mixins.ObservedPeriod(
         reporter=dd.ForeignKey(
