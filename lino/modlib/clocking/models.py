@@ -200,6 +200,7 @@ class Session(UserAuthored, StartedEnded):
     summary = models.CharField(
         _("Summary"), max_length=200, blank=True,
         help_text=_("Summary of the session."))
+    description = dd.RichTextField(_("Description"), blank=True)
     # break_time = models.TimeField(
     #     blank=True, null=True,
     #     verbose_name=_("Break Time"))
@@ -254,6 +255,17 @@ class Sessions(dd.Table):
     )
     params_layout = "start_date end_date observed_event project"
     auto_fit_column_widths = True
+
+    detail_layout = """
+    ticket start_date start_time end_date end_time break_time user
+    summary
+    description
+    """
+    insert_layout = """
+    ticket
+    summary
+    session_type
+    """
 
     @classmethod
     def get_request_queryset(self, ar):

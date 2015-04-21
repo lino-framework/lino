@@ -18,6 +18,7 @@ add('01', _("Official address"), 'official')  # IT020
 add('02', _("Unverified address"), 'unverified')  # IT042
 add('03', _("Declared address"), 'declared')  # IT214
 add('04', _("Reference address"), 'reference')
+add('99', _("Sonstige"), 'other')
 
 
 class DataSources(dd.ChoiceList):
