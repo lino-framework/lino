@@ -1,0 +1,1 @@
+WARNING: [autosummary] failed to import u'lino.modlib.statbel.countries.fixtures.ee': no module named lino.modlib.statbel.countries.fixtures.ee (name=u'lino.modlib.statbel.countries.fixtures.ee', path=u'/home/luc/hgwork/lino/docs/api')
