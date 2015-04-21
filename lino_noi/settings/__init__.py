@@ -44,8 +44,8 @@ class Site(Site):
         # `auth=True`. In Lino Noi everybody can see everything.
         return kw
 
-    def get_admin_main_items(self):
-        yield self.modules.tickets.MyAssignedTickets
+    def get_admin_main_items(self, ar):
+        yield self.modules.tickets.MyTickets
         yield self.modules.tickets.RecentTickets
 
 # the following line should not be active in a checked-in version

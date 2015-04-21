@@ -11,8 +11,18 @@ COLUMNS = """id summary status owner type priority milestone
 component severity resolution time changetime reporter""".split()
 
 
-def objects():
+def makeuser(username):
+    User = rt.modules.users.User
+    u, created = User.objects.get_or_create(username=username)
+    if created:
+        u.profile = rt.modules.users.UserProfiles.admin
+        u.set_password('1234')
+        u.full_clean()
+        u.save()
+    return u
 
+
+def objects():
     Project = rt.modules.tickets.Project
     Milestone = rt.modules.tickets.Milestone
     Ticket = rt.modules.tickets.Ticket
@@ -37,12 +47,12 @@ def objects():
         kw.update(id=d.id)
         kw.update(summary=d.summary)
         if d.reporter:
-            kw.update(user=User.objects.get_or_create(username=d.reporter)[0])
+            kw.update(reporter=makeuser(d.reporter))
         else:
-            kw.update(user=User.objects.get(username='robin'))
+            kw.update(reporter=User.objects.get(username='luc'))
         if d.owner:
             kw.update(
-                assigned_to=User.objects.get_or_create(username=d.owner)[0])
+                assigned_to=makeuser(d.owner))
         if d.component:
             prj = Project.objects.get_or_create(ref=d.component)[0]
         else:
@@ -52,7 +62,12 @@ def objects():
             mls = Milestone.objects.get_or_create(
                 project=prj, label=d.milestone)[0]
             kw.update(fixed_for=mls)
-        if not d.status in ('new', 'accepted'):
+            kw.update(state=TicketStates.tested)
+        elif d.status == ('closed'):
+            kw.update(state=TicketStates.fixed)
+        elif d.status in ('assigned', 'accepted'):
+            kw.update(state=TicketStates.active)
+        else:
             kw.update(state=TicketStates.get_by_name(d.status))
         # if d.resolution == 'fixed':
         # else:
@@ -61,7 +76,7 @@ def objects():
         kw.update(modified=d.changetime)
         states.add(d.status)
         yield Ticket(**kw)
-    print states
+    # print states
 
 
 
