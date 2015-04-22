@@ -70,7 +70,7 @@ class CloseSession(dd.Action):
 
     """
     label = _("Close session")
-    help_text = _("Stop working on that ticket for now.")
+    help_text = _("Stop time-tracking this session.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
     # show_in_bbar = False
@@ -103,7 +103,7 @@ class CloseSession(dd.Action):
 
 class EndSession(dd.Action):
     label = _("End session")
-    help_text = _("Stop working on that ticket.")
+    help_text = _("Stop working on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
     
@@ -360,20 +360,26 @@ def welcome_messages(ar):
         chunks.append('. ')
         yield E.span(*chunks)
         return
-    closed_states = (
-        TicketStates.fixed, TicketStates.tested,
-        TicketStates.waiting, TicketStates.refused)
-    # suggest tickets you might want to start working on
+    # suggest tickets you might want to work on
+    return  # no longer used because RecentTickets is better
     qs = Ticket.objects.filter(
         Q(assigned_to__isnull=True) | Q(assigned_to=me))
-    qs = qs.exclude(state__in=closed_states)
+    # qs = qs.exclude(state__in=TicketStates.idle_states)
+    qs = qs.filter(closed__isnull=True)
     qs = qs.exclude(id__in=busy_tickets)
     qs = qs.order_by('-modified')
     if qs.count() > 0:
         od = OrderedDict()  # state -> list of tickets
         for ticket in qs:
             lst = od.setdefault(ticket.state, [])
-            lst.append(ticket)
+            if len(lst) < 10:
+                txt = unicode(ticket)
+                # txt = "#{0}".format(ticket.id)
+                # if ticket.nickname:
+                #     txt += u" ({0})".format(ticket.nickname)
+                lst.append(ar.obj2html(ticket, txt, title=ticket.summary))
+            elif len(lst) == 10:
+                lst.append('...')
         items = []
         for state, tickets in od.items():
             chunks = ["{0} : ".format(state)]
@@ -381,12 +387,7 @@ def welcome_messages(ar):
             for ticket in tickets:
                 if sep:
                     chunks.append(sep)
-                txt = unicode(ticket)
-                # txt = "#{0}".format(ticket.id)
-                # if ticket.nickname:
-                #     txt += u" ({0})".format(ticket.nickname)
-                chunks.append(
-                    ar.obj2html(ticket, txt, title=ticket.summary))
+                chunks.append(ticket)
                 sep = ', '
             # chunks.append('. ')
             items.append(E.li(*chunks))
@@ -400,7 +401,7 @@ dd.add_welcome_handler(welcome_messages)
 
 class InvestedTimes(dd.VentilatingTable):
     # required = dd.Required()
-    label = _("Invested times")
+    label = _("Hours worked")
     hide_zero_rows = True
     parameters = mixins.ObservedPeriod()
     params_layout = "start_date end_date"
@@ -414,15 +415,24 @@ class InvestedTimes(dd.VentilatingTable):
         def __unicode__(self):
             return str(self.day)
 
+    # @dd.virtualfield(models.CharField(_("Description"), max_length=30))
+    @dd.displayfield(_("Description"))
+    def description(self, obj, ar):
+        pv = dict(start_date=obj.day, end_date=obj.day)
+        pv.update(observed_event=dd.PeriodEvents.active)
+        sar = ar.spawn(Sessions, param_values=pv)
+        return sar.ar2button(label=unicode(obj))
+
     @classmethod
     def get_data_rows(cls, ar):
         pv = ar.param_values
         start_date = pv.start_date or dd.today(-7)
-        end_date = pv.end_date or settings.SITE.ignore_dates_after
-        d = start_date
-        while d < end_date:
+        end_date = pv.end_date or dd.today(7)
+        # settings.SITE.ignore_dates_after
+        d = end_date
+        while d > start_date:
             yield cls.Row(d)
-            d += ONE_DAY
+            d -= ONE_DAY
 
     @dd.displayfield("Date")
     def date(cls, row, ar):

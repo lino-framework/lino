@@ -79,6 +79,14 @@ def tickets_workflows(sender=None, **kw):
     """
     """
     TicketStates.active.add_transition(states="new waiting")
+    TicketStates.waiting.add_transition(states="active new fixed")
     TicketStates.fixed.add_transition(states="active new waiting")
-    TicketStates.tested.add_transition(states="fixed active new waiting")
-    TicketStates.waiting.add_transition(states="active new")
+    TicketStates.tested.add_transition(states="active new waiting fixed")
+    TicketStates.refused.add_transition(states="active new waiting")
+    TicketStates.cancelled.add_transition(states="active new waiting")
+    # TicketStates.new.add_transition(states="active waiting fixed tested")
+
+    # not used:
+    TicketStates.idle_states = (
+        TicketStates.fixed, TicketStates.tested,
+        TicketStates.waiting, TicketStates.refused)

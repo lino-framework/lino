@@ -132,6 +132,14 @@ class StartedEnded(Started, Ended):
     class Meta:
         abstract = True
 
+    def save(self, *args, **kw):
+        """
+        Fills default value end_date
+        """
+        if self.end_time and not self.end_date:
+            self.end_date = self.start_date
+        super(Ended, self).save(*args, **kw)
+
     def get_duration(self):
         st = self.get_datetime('start')
         et = self.get_datetime('end')

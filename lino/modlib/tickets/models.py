@@ -23,8 +23,11 @@ by a version number.
 
 """
 
+import datetime
+
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 
 from lino import mixins
 from lino.api import dd, rt, _, pgettext
@@ -241,6 +244,36 @@ class ParentsByTicket(Dependencies):
     column_names = "dependency_type parent *"
 
 
+class CloseTicket(dd.Action):
+    """
+    """
+    label = _("Close ticket")
+    help_text = _("Mark this ticket as closed.")
+    show_in_workflow = True
+    show_in_bbar = False
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.closed:
+            return False
+        return super(CloseTicket,
+                     self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+
+        def ok(ar2):
+            now = datetime.datetime.now()
+            for obj in ar.selected_rows:
+                obj.closed = now
+                obj.save()
+                ar2.set_response(refresh=True)
+
+        if True:
+            ok(ar)
+        else:
+            msg = _("Close {0} tickets.").format(len(ar.selected_rows))
+            ar.confirm(ok, msg, _("Are you sure?"))
+
+
 class Ticket(mixins.CreatedModified, TimeInvestment):
     """
     """
@@ -288,6 +321,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
 
+    close_tickert = CloseTicket()
+
     def on_create(self, ar):
         if self.reporter_id is None:
             u = ar.get_user()
@@ -333,14 +368,14 @@ class TicketDetail(dd.DetailLayout):
     main = "general time"
 
     general = dd.Panel("""
-    summary nickname id
+    summary:40 nickname:20 id
     project state workflow_buttons
     description
     clocking.SessionsByTicket
     """, label=_("General"))
 
     time = dd.Panel("""
-    reporter reported_for fixed_for created modified
+    reporter reported_for fixed_for created modified closed
     planned_time invested_time assigned_to
     ParentsByTicket ChildrenByTicket
     """, label=_("Planning"))
@@ -349,6 +384,7 @@ class TicketDetail(dd.DetailLayout):
 class Tickets(dd.Table):
     required = dd.Required(auth=True)
     model = 'tickets.Ticket'
+    auto_fit_column_widths = True
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
     summary
@@ -370,8 +406,11 @@ class Tickets(dd.Table):
             blank=True, null=True),
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
+        active=dd.YesNo.field(
+            blank=True,
+            help_text=_("Only tickets which are not closed.")),
         observed_event=TicketEvents.field(blank=True))
-    params_layout = """reporter assigned_to project state \
+    params_layout = """reporter assigned_to project state active \
     start_date end_date observed_event"""
     simple_parameters = ('reporter', 'assigned_to', 'state')
 
@@ -393,6 +432,13 @@ class Tickets(dd.Table):
                 qs = qs.filter(closed__gte=pv.start_date)
             if pv.end_date:
                 qs = qs.filter(closed__lte=pv.end_date)
+        # elif pv.observed_event == TicketEvents.active:
+        #     qs = qs.filter(closed__isnull=True)
+
+        if pv.active == dd.YesNo.yes:
+            qs = qs.filter(closed__isnull=True)
+        elif pv.active == dd.YesNo.no:
+            qs = qs.exclude(closed__isnull=False)
 
         return qs
 
@@ -417,14 +463,18 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary reporter planned_time invested_time *"
-    auto_fit_column_widths = True
 
 
 class RecentTickets(Tickets):
     label = _("Recent tickets")
     order_by = ["-modified", "id"]
-    column_names = 'overview reporter project state *'
-    auto_fit_column_widths = True
+    column_names = 'overview reporter project state workflow_buttons:20 *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(RecentTickets, self).param_defaults(ar, **kw)
+        kw.update(active=dd.YesNo.yes)
+        return kw
 
 
 # class TicketsByPartner(Tickets):
@@ -440,10 +490,16 @@ class TicketsFixed(Tickets):
 
 
 class TicketsReported(Tickets):
-    label = _("Tickets Reported")
+    label = _("Reported tickets")
     master_key = 'reported_for'
     column_names = "id summary reporter *"
     editable = False
+
+
+class TicketsByReporter(Tickets):
+    label = _("Reported tickets ")
+    master_key = 'reporter'
+    column_names = "id summary:60 workflow_buttons:20 *"
 
 
 class MyOwnedTickets(Tickets):

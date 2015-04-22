@@ -1560,7 +1560,8 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
         panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
         if (!panel) 
-            panel = Lino.current_window.main_item;
+            if (Lino.current_window)
+                panel = Lino.current_window.main_item;
 
     }
 
@@ -2399,8 +2400,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     var fn = function(panel, btn, step) {
       var p = {};
       self.add_field_values(p)
-
-      Ext.apply(p, panel.get_base_params());
+      if (panel) Ext.apply(p, panel.get_base_params());
       delete p.{{ext_requests.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{ext_requests.URL_PARAM_PARAM_VALUES}});
 
