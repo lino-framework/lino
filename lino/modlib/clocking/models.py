@@ -420,7 +420,7 @@ class InvestedTimes(dd.VentilatingTable):
     def description(self, obj, ar):
         pv = dict(start_date=obj.day, end_date=obj.day)
         pv.update(observed_event=dd.PeriodEvents.active)
-        sar = ar.spawn(Sessions, param_values=pv)
+        sar = ar.spawn(MySessionsByDate, param_values=pv)
         return sar.ar2button(label=unicode(obj))
 
     @classmethod
