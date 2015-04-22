@@ -34,6 +34,7 @@ class Site(Site):
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
 
+        # yield 'lino.modlib.uploads'
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
@@ -41,7 +42,7 @@ class Site(Site):
 
         # yield 'lino.modlib.awesomeuploader'
 
-        yield 'lino_noi'
+        yield 'lino_noi.lib.main'
 
     def get_default_required(self, **kw):
         # overrides the default behaviour which would add
@@ -49,7 +50,8 @@ class Site(Site):
         return kw
 
     def get_admin_main_items(self, ar):
-        yield self.modules.tickets.MyTickets
+        yield self.modules.clocking.InvestedTimes
+        # yield self.modules.tickets.MyTickets
         yield self.modules.tickets.RecentTickets
 
 # the following line should not be active in a checked-in version
