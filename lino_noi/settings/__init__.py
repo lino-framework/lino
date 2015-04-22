@@ -19,6 +19,8 @@ class Site(Site):
                      # 'linotickets',
                      'tractickets', 'luc']
 
+    project_model = 'tickets.Project'
+
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
