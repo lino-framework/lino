@@ -28,7 +28,8 @@ class Site(Site):
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.cal'
         # yield 'lino.modlib.products'
-        yield 'lino.modlib.tickets'
+        # yield 'lino.modlib.tickets'
+        yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
 
         yield 'lino.modlib.excerpts'
