@@ -26,6 +26,7 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
+        yield 'lino.modlib.cal'
         # yield 'lino.modlib.products'
         yield 'lino.modlib.tickets'
         yield 'lino.modlib.lists'
