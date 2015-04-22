@@ -88,5 +88,5 @@ class Site(Site):
             yield get_report(ar, datefmt=datefmt)
         yield self.modules.clocking.InvestedTimes
         # yield self.modules.tickets.MyTickets
-        # yield self.modules.tickets.RecentTickets
+        yield self.modules.tickets.RecentTickets
 

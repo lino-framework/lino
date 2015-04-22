@@ -316,7 +316,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
-        return ar.obj2html(self)
+        return E.span(ar.obj2html(self), ' ', self.summary)
 
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
@@ -423,7 +423,8 @@ class TicketsByProject(Tickets):
 class RecentTickets(Tickets):
     label = _("Recent tickets")
     order_by = ["-modified", "id"]
-    column_names = 'modified id overview state *'
+    column_names = 'overview reporter project state *'
+    auto_fit_column_widths = True
 
 
 # class TicketsByPartner(Tickets):
