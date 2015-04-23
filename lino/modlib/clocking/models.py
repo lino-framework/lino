@@ -48,6 +48,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 
 from lino.modlib.cal.mixins import StartedEnded
+from lino.modlib.cal.utils import when_text
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
@@ -413,7 +414,7 @@ class InvestedTimes(dd.VentilatingTable):
             self.day = day
 
         def __unicode__(self):
-            return str(self.day)
+            return when_text(self.day)
 
     # @dd.virtualfield(models.CharField(_("Description"), max_length=30))
     @dd.displayfield(_("Description"))

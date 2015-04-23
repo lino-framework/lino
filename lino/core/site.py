@@ -1322,25 +1322,30 @@ documentation.
         return 'remote'
 
     def get_apps_modifiers(self, **kw):
-        """This will be called during Site instantiation (i.e. may not import
-        any Django modules) and is expected to return a dict of
-        `app_label` to `full_python_path` mappings. The default
-        returns an empty dict.
+        """Override or hide individual plugins of an existing application.
 
-        These mappings will be applied to the apps returned by
-        :meth:`get_installed_apps`.
-
-        Mapping an app_label to `None` will remove (not install) that
-        app from your Site.
-
-        You can use this to override or hide individual apps without
-        changing their order. Example::
+        For example, if your site inherits from
+        :mod:`lino.projects.min2`::
 
             def get_apps_modifiers(self, **kw):
-                kw.update(debts=None)
-                kw.update(courses='lino.modlib.courses')
-                kw.update(pcsw='lino_welfare.settings.chatelet.pcsw')
+                kw.update(sales=None)
+                kw.update(courses='my.modlib.courses')
                 return kw
+
+        The default implementation returns an empty dict.
+
+        This method adds an additional level of customization because
+        it lets you remove or replace individual plugins from
+        :setting:`INSTALLED_APPS` without rewriting your own
+        :meth:`get_installed_apps`.
+
+        This will be called during Site instantiation and is expected to
+        return a dict of `app_label` to `full_python_path`
+        mappings which you want to override in the list of plugins
+        returned by :meth:`get_installed_apps`.
+
+        Mapping an `app_label` to `None` will remove that plugin from
+        :setting:`INSTALLED_APPS`.
 
         It is theoretically possible but not recommended to replace an
         existing `app_label` by an app with a different
