@@ -47,25 +47,25 @@ add = TicketStates.add_item
 #     action_name=_("Start"),
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
-add('20', _("Active"), 'active')
+add('20', _("To do"), 'todo')
 add('21', _("Sticky"), 'sticky')
 add('30', _("Callback"), 'callback',
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
     help_text=_("Waiting for feedback from partner."))
 add('40', _("Fixed"), 'fixed',
-    # required=dict(states=['active']),
+    # required=dict(states=['todo']),
     help_text=_("Has been fixed. Waiting to be tested."))
 add('50', _("Tested"), 'tested',
     # required=dict(states=['fixed']),
     help_text=_("Has been fixed and tested."))
 add('60', _("Refused"), 'refused',
-    # required=dict(states="tested new active callback"),
+    # required=dict(states="tested new todo callback"),
     help_text=_("It has been decided that we won't fix this ticket."))
 # add('70', _("Sleeping"), 'sleeping',
 #     help_text=_("Waiting for better times."))
 # add('90', _("Cancelled"), 'cancelled',
-#     # required=dict(states=['new active waiting']),
+#     # required=dict(states=['new todo waiting']),
 #     help_text=_("Has been cancelled for some reason."))
 
 """Difference between Cancelled and Refused : Canceled means that we
@@ -87,17 +87,17 @@ want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
-    TicketStates.active.add_transition(states="new callback")
-    TicketStates.callback.add_transition(states="active new fixed")
-    TicketStates.fixed.add_transition(states="active new callback")
-    TicketStates.tested.add_transition(states="active new callback fixed")
-    TicketStates.refused.add_transition(states="active new callback")
-    # TicketStates.cancelled.add_transition(states="active new callback")
-    # TicketStates.new.add_transition(states="active callback fixed tested")
-    # TicketStates.sleeping.add_transition(states="active new callback")
+    TicketStates.todo.add_transition(states="new callback")
+    TicketStates.callback.add_transition(states="todo new fixed")
+    TicketStates.fixed.add_transition(states="todo new callback")
+    TicketStates.tested.add_transition(states="todo new callback fixed")
+    TicketStates.refused.add_transition(states="todo new callback")
+    # TicketStates.cancelled.add_transition(states="todo new callback")
+    # TicketStates.new.add_transition(states="todo callback fixed tested")
+    # TicketStates.sleeping.add_transition(states="todo new callback")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
-    TicketStates.work_states = (TicketStates.active, TicketStates.new)
+    TicketStates.work_states = (TicketStates.todo, TicketStates.new)
     TicketStates.waiting_states = (
         TicketStates.callback, TicketStates.fixed, TicketStates.tested)
 
