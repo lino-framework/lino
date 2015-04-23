@@ -346,7 +346,7 @@ def welcome_messages(ar):
                 ar.obj2html(ses.ticket, txt, title=ses.ticket.summary))
             chunks += [
                 ' (',
-                ar.instance_action_button(ses.close_session, u'\u2713'),
+                ar.instance_action_button(ses.end_session, u'\u2713'),
                 ')']
             sep = ', '
         chunks.append('. ')
