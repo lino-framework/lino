@@ -66,11 +66,11 @@ class SessionTypes(dd.Table):
     column_names = 'name *'
 
 
-class CloseSession(dd.Action):
+class EndSession(dd.Action):
     """To close a session means to stop working on that ticket for this time.
 
     """
-    label = _("Close session")
+    label = _("End session")
     help_text = _("Stop time-tracking this session.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
@@ -79,7 +79,7 @@ class CloseSession(dd.Action):
     def get_action_permission(self, ar, obj, state):
         if obj.end_time:
             return False
-        return super(CloseSession,
+        return super(EndSession,
                      self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
@@ -102,90 +102,81 @@ class CloseSession(dd.Action):
             ar.confirm(ok, msg, _("Are you sure?"))
 
 
-class EndSession(dd.Action):
-    label = _("End session")
-    help_text = _("Stop working on this ticket.")
+class EndTicketSession(dd.Action):
+    # label = _("End session")
+    label = u"\u231a\u2198"
+    help_text = _("End the active session on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
     
     def get_action_permission(self, ar, obj, state):
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
-            user=ar.get_user(), end_time__isnull=True)
+            user=ar.get_user(), ticket=obj, end_time__isnull=True)
         if qs.count() == 0:
             return False
-        return super(EndSession, self).get_action_permission(ar, obj, state)
+        return super(EndTicketSession, self).get_action_permission(
+            ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         Session = rt.modules.clocking.Session
-        ses = Session.objects.get(user=ar.get_user(), end_time__isnull=True)
+        ses = Session.objects.get(
+            user=ar.get_user(), ticket=ar.selected_rows[0],
+            end_time__isnull=True)
         ses.set_datetime('end', datetime.datetime.now())
         ses.full_clean()
         ses.save()
         ar.set_response(refresh=True)
 
 
-class StartSession(dd.Action):
-    """Start working on that ticket for this time.
+class StartTicketSession(dd.Action):
+    # label = _("Start session")
+    # label = u"\u262d"
+    #label = u"\u2692"
+    # label = u"\u2690"
+    # label = u"\u2328"
+    # label = u"\u231a\u2197"
+    label = u"\u2197"
 
-    """
-    label = _("Start session")
-    help_text = _("Start working on that ticket.")
+    help_text = _("Start a session on this ticket.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
     show_in_bbar = False
 
-    parameters = dict(
-        summary=models.CharField(_("Summary"), blank=True, max_length=200),
-        session_type=dd.ForeignKey(
-            'clocking.SessionType', null=True, blank=True)
-    )
+    # parameters = dict(
+    #     summary=models.CharField(_("Summary"), blank=True, max_length=200),
+    #     session_type=dd.ForeignKey(
+    #         'clocking.SessionType', null=True, blank=True)
+    # )
 
-    params_layout = """
-    summary
-    session_type
-    """
+    # params_layout = """
+    # summary
+    # session_type
+    # """
 
     def get_action_permission(self, ar, obj, state):
+        if obj.standby is not None or obj.closed is not None:
+            return False
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
-            user=ar.get_user(), end_time__isnull=True)
+            user=ar.get_user(), ticket=obj, end_time__isnull=True)
         if qs.count():
-            # _("You are already working on #{0}").format(obj.id)
             return False
-        return super(StartSession, self).get_action_permission(ar, obj, state)
+        return super(StartTicketSession, self).get_action_permission(
+            ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
-        Session = rt.modules.clocking.Session
         me = ar.get_user()
-        apv = ar.action_param_values
+        obj = ar.selected_rows[0]
 
-        def ok(ar2):
-            # now = datetime.datetime.now()
-            for obj in ar.selected_rows:
-                # qs = Session.objects.filter(user=me, end_time__isnull=True)
-                # if qs.count():
-                #     ar.error(_("You are already working on #{0}").format(
-                #         obj.id))
-                # else:
-                ses = Session(
-                    ticket=obj,
-                    summary=apv.summary,
-                    session_type=apv.session_type,
-                    user=me)
-                ses.full_clean()
-                ses.save()
-                ar2.set_response(refresh=True)
+        ses = rt.modules.clocking.Session(ticket=obj, user=me)
+        ses.full_clean()
+        ses.save()
+        ar.set_response(refresh=True)
 
-        if len(ar.selected_rows) == 1:
-            ok(ar)
-        else:
-            msg = _("This will open {0} simultaneous sessions.").format(
-                len(ar.selected_rows))
-            ar.confirm(ok, msg, _("Are you sure?"))
 
-dd.inject_action("tickets.Ticket", start_session=StartSession())
-dd.inject_action("tickets.Ticket", end_session=EndSession())
+dd.inject_action("tickets.Ticket", start_session=StartTicketSession())
+dd.inject_action("tickets.Ticket", end_session=EndTicketSession())
 
 
 class Session(UserAuthored, StartedEnded):
@@ -207,7 +198,7 @@ class Session(UserAuthored, StartedEnded):
     #     verbose_name=_("Break Time"))
     break_time = dd.DurationField(_("Break Time"), blank=True)
 
-    close_session = CloseSession()
+    end_session = EndSession()
 
     def __unicode__(self):
         if self.start_time and self.end_time:
@@ -360,12 +351,13 @@ def welcome_messages(ar):
             sep = ', '
         chunks.append('. ')
         yield E.span(*chunks)
-        return
-    # suggest tickets you might want to work on
-    return  # no longer used because RecentTickets is better
+        # return
+
+    # Favourite tickets are subject to their own welcome message.
     qs = Ticket.objects.filter(
         Q(assigned_to__isnull=True) | Q(assigned_to=me))
-    # qs = qs.exclude(state__in=TicketStates.idle_states)
+    qs = qs.filter(state__in=TicketStates.favorite_states)
+    # qs = qs.filter(state=TicketStates.sticky)
     qs = qs.filter(closed__isnull=True)
     qs = qs.exclude(id__in=busy_tickets)
     qs = qs.order_by('-modified')
@@ -392,8 +384,10 @@ def welcome_messages(ar):
                 sep = ', '
             # chunks.append('. ')
             items.append(E.li(*chunks))
-        yield E.div(E.p(_("You might want to work on")), E.ul(*items))
-            
+        yield _("Your favourite tickets are:")
+        yield E.ul(*items)
+        # yield E.div(E.p(_("You might want to work on")), E.ul(*items))
+
 dd.add_welcome_handler(welcome_messages)
 
 

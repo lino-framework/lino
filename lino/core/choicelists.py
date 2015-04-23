@@ -422,9 +422,9 @@ class ChoiceList(tables.AbstractTable):
     @classmethod
     def multifield(cls, *args, **kw):
         """
-        Not yet imlpemented.
+        Not yet implemented.
         Create a database field (a :class:`ChoiceListField`)
-        that holds a set of multiple values of this choicelist. 
+        that holds a set of multiple values of this choicelist.
         """
         fld = MultiChoiceListField(cls, *args, **kw)
         cls._fields.append(fld)
@@ -740,8 +740,8 @@ class MultiChoiceListField(ChoiceListField):
             return []
         if isinstance(value, list):
             return value
-
-        value = self.choicelist.to_python(value)
+        value = [self.choicelist.to_python(v)
+                 for v in value.split(self.delimiter_char)]
         return value
 
     def get_prep_value(self, value):
@@ -756,8 +756,8 @@ class MultiChoiceListField(ChoiceListField):
         return self.get_prep_value(value)
 
     def get_text_for_value(self, value):
-        return ', '.join([self.choicelist.get_text_for_value(bc.value) for bc in value])
-
+        return ', '.join([
+            self.choicelist.get_text_for_value(bc.value) for bc in value])
 
 
 def _test():

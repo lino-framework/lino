@@ -223,7 +223,8 @@ request `tar`."""
 
     def ar2button(self, ar, obj=None, label=None, title=None, **kw):
         ba = ar.bound_action
-        label = label or ba.action.label
+        # label = label or ba.action.label
+        label = label or ba.get_button_label()
         status = ar.get_status()
         js = self.ar2js(ar, obj, **status)
         uri = self.js2url(js)

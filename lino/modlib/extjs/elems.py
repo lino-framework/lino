@@ -763,12 +763,11 @@ class ChoicesFieldElement(ComboFieldElement):
 
 
 class ChoiceListFieldElement(ChoicesFieldElement):
-
-    """
-    Like :class:`ChoicesFieldElement`, but we use the fact that
+    """Like :class:`ChoicesFieldElement`, but we use the fact that
     choicelists are actors to define them once and refer to them.
-    Special case are choicelist fields with blank=True: these
-    must dynamicaly add a blank choice to the the choicelist.
+    Special case are choicelist fields with blank=True: these must
+    dynamicaly add a blank choice to the the choicelist.
+
     """
 
     def __init__(self, layout_handle, field, **kw):

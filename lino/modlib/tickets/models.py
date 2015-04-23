@@ -245,33 +245,66 @@ class ParentsByTicket(Dependencies):
 
 
 class CloseTicket(dd.Action):
-    """
-    """
-    label = _("Close ticket")
+    #label = _("Close ticket")
+    label = u"\u2611"
     help_text = _("Mark this ticket as closed.")
     show_in_workflow = True
     show_in_bbar = False
 
     def get_action_permission(self, ar, obj, state):
-        if obj.closed:
+        if obj.standby is not None or obj.closed is not None:
             return False
-        return super(CloseTicket,
-                     self).get_action_permission(ar, obj, state)
+        return super(CloseTicket, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
+        now = datetime.datetime.now()
+        for obj in ar.selected_rows:
+            obj.closed = now
+            obj.save()
+            ar.set_response(refresh=True)
 
-        def ok(ar2):
-            now = datetime.datetime.now()
-            for obj in ar.selected_rows:
-                obj.closed = now
-                obj.save()
-                ar2.set_response(refresh=True)
 
-        if True:
-            ok(ar)
-        else:
-            msg = _("Close {0} tickets.").format(len(ar.selected_rows))
-            ar.confirm(ok, msg, _("Are you sure?"))
+class StandbyTicket(dd.Action):
+    #label = _("Standby mode")
+    label = u"\u2a37"
+    label = u"\u2609"
+    help_text = _("Put this ticket into standby mode.")
+    show_in_workflow = True
+    show_in_bbar = False
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.standby is not None or obj.closed is not None:
+            return False
+        return super(StandbyTicket, self).get_action_permission(
+            ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        now = datetime.datetime.now()
+        for obj in ar.selected_rows:
+            obj.standby = now
+            obj.save()
+            ar.set_response(refresh=True)
+
+
+class ActivateTicket(dd.Action):
+    # label = _("Activate")
+    label = u"\u2600"
+    help_text = _("Reactivate this ticket from standby mode or closed.")
+    show_in_workflow = True
+    show_in_bbar = False
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.standby is None and obj.closed is None:
+            return False
+        return super(ActivateTicket, self).get_action_permission(
+            ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        for obj in ar.selected_rows:
+            obj.standby = None
+            obj.closed = None
+            obj.save()
+            ar.set_response(refresh=True)
 
 
 class Ticket(mixins.CreatedModified, TimeInvestment):
@@ -316,12 +349,19 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         help_text=_("The user who reported this ticket."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field(default=TicketStates.new)
-    closed = models.DateTimeField(_("Closed since"), editable=False, null=True)
+    closed = models.DateTimeField(
+        _("Closed since"), editable=False, null=True)
+    standby = models.DateTimeField(
+        _("Standby since"), editable=False, null=True)
+    # standby = models.BooleanField(_("Standby"), default=False)
+
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
 
-    close_tickert = CloseTicket()
+    close_ticket = CloseTicket()
+    set_standby = StandbyTicket()
+    activate_ticket = ActivateTicket()
 
     def on_create(self, ar):
         if self.reporter_id is None:
@@ -375,7 +415,7 @@ class TicketDetail(dd.DetailLayout):
     """, label=_("General"))
 
     time = dd.Panel("""
-    reporter reported_for fixed_for created modified closed
+    reporter reported_for fixed_for created modified closed standby
     planned_time invested_time assigned_to
     ParentsByTicket ChildrenByTicket
     """, label=_("Planning"))
@@ -406,21 +446,22 @@ class Tickets(dd.Table):
             blank=True, null=True),
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
-        active=dd.YesNo.field(
+        show_closed=dd.YesNo.field(
             blank=True,
-            help_text=_("Only tickets which are not closed.")),
+            help_text=_("Show tickets which are closed.")),
+        show_standby=dd.YesNo.field(
+            blank=True,
+            help_text=_("Show tickets which are in standby mode.")),
         observed_event=TicketEvents.field(blank=True))
-    params_layout = """reporter assigned_to project state active \
-    start_date end_date observed_event"""
-    simple_parameters = ('reporter', 'assigned_to', 'state')
+    params_layout = """
+    reporter assigned_to project state
+    show_closed show_standby start_date end_date observed_event"""
+    simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
     @classmethod
     def get_request_queryset(self, ar):
         qs = super(Tickets, self).get_request_queryset(ar)
         pv = ar.param_values
-
-        if pv.project:
-            qs = qs.filter(project=pv.project)
 
         if pv.observed_event == TicketEvents.opened:
             if pv.start_date:
@@ -435,9 +476,9 @@ class Tickets(dd.Table):
         # elif pv.observed_event == TicketEvents.active:
         #     qs = qs.filter(closed__isnull=True)
 
-        if pv.active == dd.YesNo.yes:
+        if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed__isnull=True)
-        elif pv.active == dd.YesNo.no:
+        elif pv.show_closed == dd.YesNo.yes:
             qs = qs.exclude(closed__isnull=False)
 
         return qs
@@ -452,9 +493,6 @@ class Tickets(dd.Table):
                 pv.start_date,
                 pv.end_date)
 
-        if pv.project:
-            yield unicode(pv.project)
-
 
 class UnassignedTickets(Tickets):
     column_names = "summary project reporter *"
@@ -465,15 +503,18 @@ class TicketsByProject(Tickets):
     column_names = "summary reporter planned_time invested_time *"
 
 
-class RecentTickets(Tickets):
-    label = _("Recent tickets")
+class ActiveTickets(Tickets):
+    help_text = _("Active tickets are those which are neither "
+                  "closed nor in standby mode.")
+    label = _("Active tickets")
     order_by = ["-modified", "id"]
     column_names = 'overview reporter project state workflow_buttons:20 *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
-        kw = super(RecentTickets, self).param_defaults(ar, **kw)
-        kw.update(active=dd.YesNo.yes)
+        kw = super(ActiveTickets, self).param_defaults(ar, **kw)
+        kw.update(show_closed=dd.YesNo.no)
+        kw.update(show_standby=dd.YesNo.no)
         return kw
 
 
