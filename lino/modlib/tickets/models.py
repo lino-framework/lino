@@ -512,7 +512,7 @@ class ActiveTickets(Tickets):
                   "closed nor in standby mode.")
     label = _("Active tickets")
     order_by = ["-modified", "id"]
-    column_names = 'overview reporter project state workflow_buttons:20 *'
+    column_names = 'overview:50 workflow_buttons:30 reporter:10 project:10 *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
