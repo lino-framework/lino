@@ -480,6 +480,10 @@ class Tickets(dd.Table):
             qs = qs.filter(closed__isnull=True)
         elif pv.show_closed == dd.YesNo.yes:
             qs = qs.exclude(closed__isnull=False)
+        if pv.show_standby == dd.YesNo.no:
+            qs = qs.filter(standby__isnull=True)
+        elif pv.show_standby == dd.YesNo.yes:
+            qs = qs.exclude(standby__isnull=False)
 
         return qs
 
