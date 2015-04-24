@@ -1654,10 +1654,12 @@ documentation.
         :meth:`lino.core.plugin.Plugin.get_default_required`.
 
         """
-        #~ if not kw.has_key('auth'):
-            #~ kw.update(auth=True)
-        if self.user_model is not None:
-            kwargs.setdefault('auth', True)
+        # setting the default value for `auth` is moved to
+        # `boundaction.__init__` because `Site.user_model` is known
+        # only after importing the models
+
+        # if self.user_model is not None:
+        #     kwargs.setdefault('auth', True)
         return kwargs
 
     def parse_date(self, s):

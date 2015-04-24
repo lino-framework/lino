@@ -41,6 +41,10 @@ class BoundAction(object):
         else:
             required.update(actor.update_required)
         required.update(action.required)
+
+        if settings.SITE.user_model is not None:
+            required.setdefault('auth', True)
+
         #~ print 20120628, str(a), required
         #~ def wrap(a,required,fn):
             #~ return fn

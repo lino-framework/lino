@@ -395,7 +395,7 @@ dd.add_welcome_handler(welcome_messages)
 #     master = 'users.User'
 
 class InvestedTimes(dd.VentilatingTable):
-    # required = dd.Required()
+    required = dd.Required()
     label = _("Hours worked")
     hide_zero_rows = True
     parameters = mixins.ObservedPeriod()

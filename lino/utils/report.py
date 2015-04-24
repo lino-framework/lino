@@ -17,11 +17,12 @@ from lino.core.requests import VirtualRow
 from lino.core import actions
 from lino.core import fields
 
-from lino.mixins.printable import (Printable, DirectPrintAction)
+# from lino.mixins.printable import (Printable, DirectPrintAction)
 from lino.utils.xmlgen.html import E
 
 
-class EmptyTableRow(VirtualRow, Printable):
+# class EmptyTableRow(VirtualRow, Printable):
+class EmptyTableRow(VirtualRow):
 
     """
     Base class for virtual rows of an :class:`EmptyTable`.
@@ -85,7 +86,7 @@ class EmptyTable(Frame):
     default_list_action_name = 'show'
     default_elem_action_name = 'show'
 
-    do_print = DirectPrintAction()
+    # do_print = DirectPrintAction()
 
     @classmethod
     def get_default_action(cls):
