@@ -156,7 +156,7 @@ class StartTicketSession(dd.Action):
     # """
 
     def get_action_permission(self, ar, obj, state):
-        if obj.standby is not None or obj.closed is not None:
+        if obj.standby or obj.closed:
             return False
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
@@ -354,12 +354,11 @@ def welcome_messages(ar):
         yield E.span(*chunks)
         # return
 
-    # Favourite tickets are subject to their own welcome message.
+    # Tickets in "favourite" states get their own welcome message.
     qs = Ticket.objects.filter(
         Q(assigned_to__isnull=True) | Q(assigned_to=me))
     qs = qs.filter(state__in=TicketStates.favorite_states)
-    # qs = qs.filter(state=TicketStates.sticky)
-    qs = qs.filter(closed__isnull=True)
+    qs = qs.filter(closed=False, standby=False)
     qs = qs.exclude(id__in=busy_tickets)
     qs = qs.order_by('-modified')
     if qs.count() > 0:
