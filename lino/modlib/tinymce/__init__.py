@@ -60,16 +60,20 @@ class Plugin(ad.Plugin):
     });
 </script>"""
 
-    def get_patterns(self, kernel):
+    def get_patterns(self, kernel, prefix=''):
         from django.conf.urls import patterns
         from . import views
 
+        if prefix:
+            assert prefix.endswith('/')
+        rx = '^' + prefix
+
         urlpatterns = patterns(
             '',
-            (r'^templates/(?P<app_label>\w+)/'
+            (rx + r'templates/(?P<app_label>\w+)/'
              + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)$',
              views.Templates.as_view()),
-            (r'^templates/(?P<app_label>\w+)/'
+            (rx + r'templates/(?P<app_label>\w+)/'
              + r'(?P<actor>\w+)/(?P<pk>\w+)/(?P<fldname>\w+)/'
              + r'(?P<tplname>\w+)$',
              views.Templates.as_view()))

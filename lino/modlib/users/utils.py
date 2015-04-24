@@ -96,7 +96,10 @@ def make_permission_handler(*args, **kw):
         
     `auth`
 
-        If True, permission is given only to authenticated users.
+        If True, permission is given only to authenticated users.  The
+        default value of this is `True` when
+        :attr:`lino.core.Site.user_model` is not None, or otherwise
+        `False`.
         
     `owner`
 

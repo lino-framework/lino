@@ -47,7 +47,7 @@ class Plugin(ad.Plugin):
         tpl = env.get_template('template.jnlp')
         f.write(tpl.render(**context))
 
-    def get_patterns(self, ui):
+    def get_patterns(self, ui, prefix=''):
         fn = os.path.join(*self.jnlp_file_parts())
         ui.make_cache_file(fn, self.write_jnlp_file)
         return []

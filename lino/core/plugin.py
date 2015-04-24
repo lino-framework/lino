@@ -244,7 +244,7 @@ class Plugin(object):
             return self.app_name
         return "%s (%s)" % (self.app_name, ', '.join(l))
 
-    def get_patterns(self, ui):
+    def get_patterns(self, kernel, prefix=''):
         """Return a list of url patterns to be added to the Site's patterns.
 
         """
@@ -284,7 +284,7 @@ class Plugin(object):
             url += "?" + urlencode(kw)
         return url
 
-    def setup_media_links(self, ui, urlpatterns):
+    def setup_media_links(self, ui, urlpatterns, prefix):
         if self.media_name is None:
             return
 
@@ -300,7 +300,8 @@ class Plugin(object):
             raise Exception(
                 "Directory %s (specified in %s.media_root) does not exist" %
                 (source, self))
-        ui.setup_media_link(urlpatterns, self.media_name, source=source)
+        ui.setup_media_link(
+            urlpatterns, prefix, self.media_name, source=source)
 
     def get_menu_group(self):
         """Return the plugin into whose menu this plugin wants to be inserted.

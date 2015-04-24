@@ -628,7 +628,7 @@ class Kernel(object):
         """
         return self.default_renderer.row_action_button(*args, **kw)
 
-    def get_media_urls(self):
+    def get_media_urls(self, prefix=''):
         #~ print "20121110 get_media_urls"
         from lino.core.utils import is_devserver
         from django.conf import settings
@@ -636,10 +636,13 @@ class Kernel(object):
         urlpatterns = []
 
         logger.debug("Checking /media URLs ")
-        prefix = settings.MEDIA_URL[1:]
-        if not prefix.endswith('/'):
+        if not settings.MEDIA_URL.endswith('/'):
             raise Exception("MEDIA_URL %r doesn't end with a '/'!" %
                             settings.MEDIA_URL)
+        if prefix:
+            prefix += settings.MEDIA_URL[1:]
+        else:
+            prefix = settings.MEDIA_URL[1:]
 
         # if not self.site.extjs_base_url:
         #     self.setup_media_link(urlpatterns, 'extjs', 'extjs_root')
@@ -651,13 +654,14 @@ class Kernel(object):
 
         for p in self.site.installed_plugins:
             if isinstance(p, Plugin):
-                p.setup_media_links(self, urlpatterns)
+                p.setup_media_links(self, urlpatterns, prefix)
 
-        if self.site.use_tinymce:
-            if not self.site.tinymce_base_url:
-                self.setup_media_link(urlpatterns, 'tinymce', 'tinymce_root')
+        # if self.site.use_tinymce:
+        #     if not self.site.tinymce_base_url:
+        #         self.setup_media_link(urlpatterns, 'tinymce', 'tinymce_root')
         if self.site.use_jasmine:
-            self.setup_media_link(urlpatterns, 'jasmine', 'jasmine_root')
+            self.setup_media_link(
+                urlpatterns, prefix, 'jasmine', 'jasmine_root')
 
         try:
             src = resource_filename(
@@ -667,7 +671,7 @@ class Kernel(object):
             # tree
             src = join(dirname(lino.__file__), 'media')
 
-        self.setup_media_link(urlpatterns, 'lino', source=src)
+        self.setup_media_link(urlpatterns, prefix, 'lino', source=src)
 
         #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
         if is_devserver():
@@ -685,26 +689,32 @@ class Kernel(object):
         """
         database_ready.send(self.site)
 
-        urlpatterns = self.get_media_urls()
+        if self.site.site_prefix:
+            prefix = self.site.site_prefix[1:]
+        else:
+            prefix = ''
+        rx = '^' + prefix
+
+        urlpatterns = self.get_media_urls(prefix)
 
         for p in self.site.installed_plugins:
             if isinstance(p, Plugin):
                 # urlpatterns += p.get_patterns(self)
-                pat = p.get_patterns(self)
-                if p.url_prefix:
-                    urlpatterns += patterns(
-                        '', url('^' + p.url_prefix + "/?",
-                                include(pat)))
-                else:
-                    urlpatterns += pat
+                urlpatterns += p.get_patterns(self, prefix)
+                # pat = p.get_patterns(self, prefix)
+                # if p.url_prefix:
+                #     urlpatterns += patterns(
+                #         '', url(rx + p.url_prefix + "/?",
+                #                 include(pat)))
+                # else:
+                #     urlpatterns += pat
 
         if self.site.django_admin_prefix:  # experimental
             from django.contrib import admin
             admin.autodiscover()
-            urlpatterns += patterns('',
-                                    ('^' + self.site.django_admin_prefix[1:]
-                                     + "/", include(admin.site.urls))
-                                    )
+            urlpatterns += patterns('', (
+                rx + self.site.django_admin_prefix[1:]
+                + "/", include(admin.site.urls)))
 
         return urlpatterns
 
@@ -742,17 +752,21 @@ startup.
             raise
         #~ logger.info("Wrote %s ...", fn)
 
-    def setup_media_link(self, urlpatterns, short_name,
+    def setup_media_link(self, urlpatterns, prefix, short_name,
                          attr_name=None, source=None):
         if not exists(settings.MEDIA_ROOT):
             logger.info("MEDIA_ROOT does not exist: %s",
                         settings.MEDIA_ROOT)
             return
-        prefix = settings.MEDIA_URL[1:]
+        # prefix = settings.MEDIA_URL[1:]
         target = join(settings.MEDIA_ROOT, short_name)
         if exists(target):
             logger.debug("media path exists: %s", target)
             return
+        if prefix:
+            assert prefix.endswith('/')
+        rx = '^' + prefix
+
         if attr_name is not None:
             # usage is deprecated
             source = getattr(self.site, attr_name)
@@ -771,7 +785,7 @@ startup.
             urlpatterns.extend(
                 patterns(
                     'django.views.static',
-                    (r'^%s%s/(?P<path>.*)$' % (prefix, short_name),
+                    (rx + r'%s/(?P<path>.*)$' % short_name,
                      'serve', {
                          'document_root': source,
                          'show_indexes': False})))

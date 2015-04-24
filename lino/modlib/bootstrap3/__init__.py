@@ -39,15 +39,20 @@ class Plugin(Plugin):
         from . import views
         return views.Index.as_view()
 
-    def get_patterns(self, kernel):
+    def get_patterns(self, kernel, prefix=''):
         from django.conf.urls import patterns
         from . import views
+
+        if prefix:
+            assert prefix.endswith('/')
+        rx = '^' + prefix
+
         urls = patterns(
             '',
-            (r'^/?$', views.Index.as_view()),
-            (r'^(?P<app_label>\w+)/(?P<actor>\w+)$',
+            (rx + r'/?$', views.Index.as_view()),
+            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
              views.List.as_view()),
-            (r'^(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
              views.Element.as_view()),
         )
         return urls

@@ -144,17 +144,20 @@ class Plugin(Plugin):
         from . import views
         return views.AdminIndex.as_view()
 
-    def get_patterns(self, ui):
+    def get_patterns(self, kernel, prefix=''):
 
         from django.conf.urls import patterns
         from . import views
         from lino.utils import codetime
 
-        ui.code_mtime = codetime()
+        kernel.code_mtime = codetime()
 
         self.renderer.build_site_cache()
 
-        rx = '^'
+        if prefix:
+            assert prefix.endswith('/')
+        rx = '^' + prefix
+
         urlpatterns = patterns(
             '',
             (rx + '/?$', views.AdminIndex.as_view()),
@@ -181,14 +184,11 @@ class Plugin(Plugin):
             (rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$',
              views.Callbacks.as_view()),
         )
-        if ui.site.use_eid_applet:
-            urlpatterns += patterns('',
-                                    (rx + r'eid-applet-service$',
-                                     views.EidAppletService.as_view()),
-                                    )
-        if ui.site.use_jasmine:
-            urlpatterns += patterns('',
-                                    (rx + r'run-jasmine$',
-                                     views.RunJasmine.as_view()),
-                                    )
+        if kernel.site.use_eid_applet:
+            urlpatterns += patterns(
+                '', (rx + r'eid-applet-service$',
+                     views.EidAppletService.as_view()), )
+        if kernel.site.use_jasmine:
+            urlpatterns += patterns(
+                '', (rx + r'run-jasmine$', views.RunJasmine.as_view()), )
         return urlpatterns

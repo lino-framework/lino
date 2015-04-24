@@ -746,6 +746,8 @@ documentation.
 
     default_ui = 'extjs'
 
+    root_urlconf = 'lino.core.urls'
+    
     textfield_format = 'plain'
     """The default format for text fields.
     Valid choices are currently 'plain' and 'html'.
@@ -1178,9 +1180,7 @@ documentation.
             self.django_settings.update(
                 MEDIA_ROOT=join(self.cache_dir, 'media'))
 
-        self.update_settings(
-            ROOT_URLCONF='lino.core.urls'
-        )
+        self.update_settings(ROOT_URLCONF=self.root_urlconf)
         self.update_settings(
             MEDIA_URL='/media/'
         )
