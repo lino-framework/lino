@@ -21,6 +21,10 @@ class Site(Site):
 
     project_model = 'tickets.Project'
 
+    root_urlconf = 'lino_noi.urls'
+
+    site_prefix = '/admin/'
+
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'

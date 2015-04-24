@@ -1,0 +1,21 @@
+{% extends "main/base.html" %}
+{% set active_page = "" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+  <h1>{{obj}} {{obj.summary}}</h1>
+  <p>{{obj.description}}<p>
+  <ul>
+    <li><b>State:</b>{{obj.state}}  
+      {% if obj.closed %} (closed){% endif %}
+      {% if obj.standby %} (standby){% endif %}
+      (last update {{obj.modified}})
+    </li>
+    <li><b>Reported by:</b> {{obj.reporter}} {{obj.created}}</li>
+    <li><b>Project:</b> {{obj.project}}</li>
+
+  </ul>
+</tr></table>
+</div>
+{% endblock %}
+

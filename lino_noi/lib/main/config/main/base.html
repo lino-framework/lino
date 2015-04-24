@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html language="{{requested_language}}"><head>
+<meta charset="utf-8"/>
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{site.plugins.bootstrap3.build_media_url('css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.build_media_url('lino', 'bootstrap.css')}}" type="text/css">
+</head><body>
+<div id="wrap">
+  <div class="container-fluid">
+    {% block header %}
+    <div class="container-fluid lino-bs-header">
+    <a href="/admin">{{_("Admin")}}</a> 
+    {% if len(site.languages) > 1 -%}
+      {% for lang in site.languages -%}
+        {% if lang.django_code == requested_language -%}
+            {{lang.django_code}}
+        {% else -%} {# URL_PARAM_USER_LANGUAGE #}
+            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a> 
+        {% endif -%}
+      {% endfor -%}
+    {% endif -%}
+
+    </div>
+    {% endblock %}
+
+    {% block navbar %}
+      {% if menu -%}
+        <nav class="navbar navbar-default" role="navigation">
+          <div class="container-fluid">
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  {{menu}}
+              </div>  
+           </div>  
+        </nav>  
+      {% endif -%}
+    {% endblock %}
+    {% block main %}
+    <div class="container-fluid">
+        {% block content %}
+        This page has no content.
+        {% endblock %}
+    </div>
+    {% endblock %}
+  </div>
+  <div id="push"></div>
+</div>
+<div id="footer">
+<footer class="container-fluid">
+{% block footer %}
+<p style="vertical-align: middle;">
+{% if request %}
+&copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
+{% endif %}
+{{E.tostring(site.welcome_html())}}
+</p>
+{% endblock %}
+</footer>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="{{site.plugins.bootstrap3.build_media_url('js','bootstrap.min.js')}}"></script>
+</body></html>
