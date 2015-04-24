@@ -410,13 +410,13 @@ class TicketDetail(dd.DetailLayout):
 
     general = dd.Panel("""
     summary:40 nickname:20 id
-    project state workflow_buttons
+    reporter project state workflow_buttons
     description
     clocking.SessionsByTicket
     """, label=_("General"))
 
     time = dd.Panel("""
-    reporter reported_for fixed_for created modified closed standby
+    reported_for fixed_for created modified closed standby
     planned_time invested_time assigned_to
     ParentsByTicket ChildrenByTicket
     """, label=_("Planning"))
@@ -430,8 +430,8 @@ class Tickets(dd.Table):
     auto_fit_column_widths = True
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
+    reporter project
     summary
-    nickname project
     """, window_size=(60, 'auto'))
 
     parameters = mixins.ObservedPeriod(
