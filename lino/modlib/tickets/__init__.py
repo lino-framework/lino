@@ -27,6 +27,7 @@ class Plugin(ad.Plugin):
         m.add_action('tickets.Projects')
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
+        m.add_action('tickets.Tickets')
 
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()
@@ -37,7 +38,6 @@ class Plugin(ad.Plugin):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         # m.add_action('tickets.Projects')
-        m.add_action('tickets.Tickets')
         m.add_action('tickets.Milestones')
         m.add_action('tickets.Dependencies')
         m.add_action('tickets.Sponsorship')

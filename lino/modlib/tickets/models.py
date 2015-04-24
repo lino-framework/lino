@@ -349,19 +349,20 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         help_text=_("The user who reported this ticket."))
     #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field(default=TicketStates.new)
-    closed = models.DateTimeField(
-        _("Closed since"), editable=False, null=True)
-    standby = models.DateTimeField(
-        _("Standby since"), editable=False, null=True)
-    # standby = models.BooleanField(_("Standby"), default=False)
+    # closed = models.DateTimeField(
+    #     _("Closed since"), editable=False, null=True)
+    # standby = models.DateTimeField(
+    #     _("Standby since"), editable=False, null=True)
+    standby = models.BooleanField(_("Standby"), default=False)
+    closed = models.BooleanField(_("Closed"), default=False)
 
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
         #~ blank=True,null=True)
 
-    close_ticket = CloseTicket()
-    set_standby = StandbyTicket()
-    activate_ticket = ActivateTicket()
+    # close_ticket = CloseTicket()
+    # set_standby = StandbyTicket()
+    # activate_ticket = ActivateTicket()
 
     def on_create(self, ar):
         if self.reporter_id is None:
@@ -424,6 +425,8 @@ class TicketDetail(dd.DetailLayout):
 class Tickets(dd.Table):
     required = dd.Required(auth=True)
     model = 'tickets.Ticket'
+    order_by = ["id"]
+    column_names = 'id summary:50 standby closed workflow_buttons:30 reporter:10 project:10 *'
     auto_fit_column_widths = True
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""
@@ -477,13 +480,13 @@ class Tickets(dd.Table):
         #     qs = qs.filter(closed__isnull=True)
 
         if pv.show_closed == dd.YesNo.no:
-            qs = qs.filter(closed__isnull=True)
+            qs = qs.filter(closed=False)
         elif pv.show_closed == dd.YesNo.yes:
-            qs = qs.exclude(closed__isnull=False)
+            qs = qs.exclude(closed=True)
         if pv.show_standby == dd.YesNo.no:
-            qs = qs.filter(standby__isnull=True)
+            qs = qs.filter(standby=False)
         elif pv.show_standby == dd.YesNo.yes:
-            qs = qs.exclude(standby__isnull=False)
+            qs = qs.exclude(standby=True)
 
         return qs
 

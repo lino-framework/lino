@@ -104,7 +104,8 @@ class EndSession(dd.Action):
 
 class EndTicketSession(dd.Action):
     # label = _("End session")
-    label = u"\u231a\u2198"
+    # label = u"\u231a\u2198"
+    label = u"\u2198"
     help_text = _("End the active session on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
