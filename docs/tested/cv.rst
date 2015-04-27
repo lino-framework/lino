@@ -67,7 +67,7 @@ True
 <UserLevels.user:30>
 
 >>> LanguageKnowledges.required
-{'user_level': u'manager', 'auth': True}
+{'user_level': u'manager'}
 
 >>> LanguageKnowledges.default_action.get_view_permission(u)
 False

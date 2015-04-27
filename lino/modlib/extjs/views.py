@@ -116,14 +116,14 @@ class AdminIndex(View):
     """
 
     def get(self, request, *args, **kw):
-        # logger.info("20130719 AdminIndex")
-        settings.SITE.startup()
+        # logger.info("20150427 AdminIndex.get()")
+        # settings.SITE.startup()
         renderer = dd.plugins.extjs.renderer
-        if settings.SITE.user_model is not None:
-            user = request.subst_user or request.user
-            a = settings.SITE.get_main_action(user)
-            if a is not None and a.get_view_permission(user.profile):
-                kw.update(on_ready=renderer.action_call(request, a, {}))
+        # if settings.SITE.user_model is not None:
+        #     user = request.subst_user or request.user
+        #     a = settings.SITE.get_main_action(user)
+        #     if a is not None and a.get_view_permission(user.profile):
+        #         kw.update(on_ready=renderer.action_call(request, a, {}))
         return http.HttpResponse(renderer.html_page(request, **kw))
 
 
@@ -143,11 +143,8 @@ class MainHtml(View):
 
 
 class Authenticate(View):
-
-    """
-    This view is being used when
-    :setting:`remote_user_header` is empty
-    (and :setting:`user_model` not).
+    """This view is being used when :setting:`remote_user_header` is
+    empty (and :setting:`user_model` not).
 
     """
 

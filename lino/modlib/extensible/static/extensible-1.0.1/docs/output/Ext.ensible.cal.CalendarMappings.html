@@ -1,0 +1,57 @@
+<div class="body-wrap" xmlns:ext="http://www.extjs.com"><div class="top-tools"><a class="inner-link" href="#Ext.ensible.cal.CalendarMappings-props"><img src="resources/images/default/s.gif" class="item-icon icon-prop">Properties</a>&#13;<a class="inner-link" href="#Ext.ensible.cal.CalendarMappings-methods"><img src="resources/images/default/s.gif" class="item-icon icon-method">Methods</a>&#13;<a class="inner-link" href="#Ext.ensible.cal.CalendarMappings-events"><img src="resources/images/default/s.gif" class="item-icon icon-event">Events</a>&#13;<a class="bookmark" href="../docs/?class=Ext.ensible.cal.CalendarMappings"><img src="resources/images/default/s.gif" class="item-icon icon-fav">Direct Link</a>&#13;</div><h1>Class <a href="source/CalendarMappings.html#cls-Ext.ensible.cal.CalendarMappings">Ext.ensible.cal.CalendarMappings</a></h1><table cellspacing="0"><tr><td class="label">Package:</td><td class="hd-info">Ext.ensible.cal</td></tr><tr><td class="label">Defined In:</td><td class="hd-info"><a href="source/CalendarMappings.html#cls-Ext.ensible.cal.CalendarMappings">CalendarMappings.js</a></td></tr><tr><td class="label">Class:</td><td class="hd-info"><a href="source/CalendarMappings.html#cls-Ext.ensible.cal.CalendarMappings">CalendarMappings</a></td></tr><tr><td class="label">Extends:</td><td class="hd-info">Object</td></tr></table><div class="description">A simple object that provides the field definitions for 
+<a href="output/Ext.ensible.cal.CalendarRecord.html" ext:cls="Ext.ensible.cal.CalendarRecord">CalendarRecord</a>s so that they can be easily overridden.
+<p>There are several ways of overriding the default Calendar record mappings to customize how 
+Ext records are mapped to your back-end data model. If you only need to change a handful 
+of field properties you can directly modify the CalendarMappings object as needed and then 
+reconfigure it. The simplest approach is to only override specific field attributes:</p>
+<pre><code><b>var</b> M = Ext.ensible.cal.CalendarMappings;
+M.Title.mapping = <em>'cal_title'</em>;
+M.Title.name = <em>'CalTitle'</em>;
+Ext.ensible.cal.CalendarRecord.reconfigure();</code></pre>
+<p>You can alternately override an entire field definition using object-literal syntax, or 
+provide your own custom field definitions (as in the following example). Note that if you do 
+this, you <b>MUST</b> include a complete field definition, including the <tt>type</tt> attribute
+if the field is not the default type of <tt>string</tt>.</p>
+<pre><code><i>// Add a <b>new</b> field that does not exist <b>in</b> the <b>default</b> CalendarMappings:</i>
+Ext.ensible.cal.CalendarMappings.Owner = {
+    name: <em>'Owner'</em>,
+    mapping: <em>'owner'</em>,
+    type: <em>'string'</em>
+};
+Ext.ensible.cal.CalendarRecord.reconfigure();</code></pre>
+<p>If you are overriding a significant number of field definitions it may be more convenient 
+to simply redefine the entire CalendarMappings object from scratch. The following example
+redefines the same fields that exist in the standard CalendarRecord object but the names and 
+mappings have all been customized. Note that the name of each field definition object 
+(e.g., 'CalendarId') should <b>NOT</b> be changed for the default CalendarMappings fields as it 
+is the key used to access the field data programmatically.</p>
+<pre><code>Ext.ensible.cal.CalendarMappings = {
+    CalendarId:   {name:<em>'ID'</em>, mapping: <em>'id'</em>, type: <em>'int'</em>},
+    Title:        {name:<em>'CalTitle'</em>, mapping: <em>'title'</em>, type: <em>'string'</em>},
+    Description:  {name:<em>'Desc'</em>, mapping: <em>'desc'</em>, type: <em>'string'</em>},
+    ColorId:      {name:<em>'Color'</em>, mapping: <em>'color'</em>, type: <em>'int'</em>},
+    IsHidden:     {name:<em>'Hidden'</em>, mapping: <em>'hidden'</em>, type: <em>'boolean'</em>},
+    
+    <i>// We can also add some <b>new</b> fields that <b>do</b> not exist <b>in</b> the standard CalendarRecord:</i>
+    Owner:        {name: <em>'Owner'</em>, mapping: <em>'owner'</em>}
+};
+<i>// Don<em>'t forget to reconfigure!</i>
+Ext.ensible.cal.CalendarRecord.reconfigure();</code></pre>
+<p><b>NOTE:</b> Any record reconfiguration you want to perform must be done <b>PRIOR to</b> 
+initializing your data store, otherwise the changes will not be reflected in the store's records.</p>
+<p>Another important note is that if you alter the default mapping for <tt>CalendarId</tt>, make sure to add
+that mapping as the <tt>idProperty</tt> of your data reader, otherwise it won't recognize how to
+access the data correctly and will treat existing records as phantoms. Here's an easy way to make sure
+your mapping is always valid:</p>
+<pre><code><b>var</b> reader = <b>new</b> Ext.data.JsonReader({
+    totalProperty: <em>'total'</em>,
+    successProperty: <em>'success'</em>,
+    root: <em>'data'</em>,
+    messageProperty: <em>'message'</em>,
+    
+    <i>// read the id property generically, regardless of the mapping:</i>
+    idProperty: Ext.ensible.cal.CalendarMappings.CalendarId.mapping  || <em>'id'</em>,
+    
+    <i>// this is also a handy way to configure your reader<em>'s fields generically:</i>
+    fields: Ext.ensible.cal.CalendarRecord.prototype.fields.getRange()
+});</code></pre></div><div class="hr"></div><a id="Ext.ensible.cal.CalendarMappings-props"></a><h2>Public Properties</h2><div class="no-members">This class has no public properties.</div><a id="Ext.ensible.cal.CalendarMappings-methods"></a><h2>Public Methods</h2><div class="no-members">This class has no public methods.</div><a id="Ext.ensible.cal.CalendarMappings-events"></a><h2>Public Events</h2><div class="no-members">This class has no public events.</div></div>

@@ -14,7 +14,6 @@
    mixins
    projects
    modlib
-   management.commands
 
 
 """

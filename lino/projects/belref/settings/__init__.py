@@ -68,5 +68,5 @@ class Site(Site):
         m.add_action(self.modules.countries.Countries)
         m.add_action(self.modules.countries.Places)
 
-    def get_main_action(self, user):
-        return self.modules.belref.Main.default_action
+    # def get_main_action(self, user):
+    #     return self.modules.belref.Main.default_action

@@ -148,8 +148,8 @@ request `tar`."""
 
         kw.update(href=url)
         if icon_name is not None:
-            src = settings.SITE.build_media_url(
-                'lino', 'extjs', 'images', 'mjames', icon_name + '.png')
+            src = settings.SITE.plugins.lino.build_static_url(
+                'extjs', 'images', 'mjames', icon_name + '.png')
             img = E.img(src=src, alt=icon_name)
             return E.a(img, **kw)
         else:

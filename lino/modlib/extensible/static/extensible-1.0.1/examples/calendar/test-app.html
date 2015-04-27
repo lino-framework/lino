@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extensible Calendar App</title>
+    <!-- Ext includes -->
+    <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.2.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/ext-all-debug.js"></script>
+    <!--link rel="stylesheet" type="text/css" href="http://localhost/ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="http://localhost/ext-3.3.0/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="http://localhost/ext-3.3.0/ext-all-debug.js"></script-->
+    <!-- Any Ext overrides go here -->
+    
+    <!-- Extensible includes -->
+    <link rel="stylesheet" type="text/css" href="../../resources/css/extensible-all.css" />
+    <script type="text/javascript" src="../../extensible-all-debug.js"></script>
+	<!-- Any Extensible overrides go here -->
+    
+    <!-- Shared example includes -->
+    <link rel="stylesheet" type="text/css" href="../examples.css" />
+    <script type="text/javascript" src="../examples.js"></script>
+    
+    <!-- Page-specific includes -->
+    <link rel="stylesheet" type="text/css" href="test-app.css" />
+	<script type="text/javascript" src="data/calendars.js"></script>
+    <script type="text/javascript" src="data/events.js"></script>
+    <script type="text/javascript" src="CalendarStore.js"></script>
+    <script type="text/javascript" src="MemoryEventStore.js"></script>
+	<script type="text/javascript" src="test-app.js"></script>
+</head>
+<body>
+    <div style="display:none;">
+    <div id="app-header-content">
+        <div id="app-logo">
+            <div class="logo-top">&#160;</div>
+            <div id="logo-body">&#160;</div>
+            <div class="logo-bottom">&#160;</div>
+        </div>
+        <h1>Ext Calendar Pro</h1>
+        <span id="app-msg" class="x-hidden"></span>
+    </div>
+    </div>
+</body>
+<script>
+    var updateLogoDt = function(){
+        document.getElementById('logo-body').innerHTML = new Date().getDate();
+    }
+    updateLogoDt();
+    setInterval(updateLogoDt, 1000);
+</script>
+</html>

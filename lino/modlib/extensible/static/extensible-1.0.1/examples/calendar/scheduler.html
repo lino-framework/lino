@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extensible Calendar + Ext Scheduler</title>
+    <!-- Ext includes -->
+    <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.3.1/resources/css/ext-all.css" />
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/ext-all-debug.js"></script>
+    <!-- Any Ext overrides go here -->
+    
+    <!-- Extensible includes -->
+    <link rel="stylesheet" type="text/css" href="../../resources/css/extensible-all.css" />
+    <script type="text/javascript" src="../../extensible-all-debug.js"></script>
+    <script type="text/javascript" src="MemoryEventStore.js"></script>
+    <!-- Any Extensible overrides go here -->
+    
+    <!-- Shared example includes -->
+    <link rel="stylesheet" type="text/css" href="../examples.css" />
+    <script type="text/javascript" src="../examples.js"></script>
+    
+    <!-- Scheduler components -->
+    <link href="http://extjs.cachefly.net/ext-3.3.1/examples/ux/css/Spinner.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="scheduler/css/sch-all.css" />
+    <link href="scheduler/editor.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/examples/ux/Spinner.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/examples/ux/SpinnerField.js"></script>
+    <script type="text/javascript" src="scheduler/ext.ux.form.datetime.js"></script>
+    <script type="text/javascript" src="scheduler/sch-all-eval.js"></script>
+    
+    <!-- Page-specific code -->
+    <script src="scheduler/DemoEditor.js" type="text/javascript"></script>
+    <script src="scheduler/DemoScheduler.js" type="text/javascript"></script>
+    <script type="text/javascript" src="scheduler.js"></script>
+    
+    <style>
+        #sched {
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        #cal {      
+            height: 600px;
+        }
+        /* 
+         * Override some styles from the scheduler's default example CSS to 
+         * be consistent with other calendar example pages:
+         */
+        body { 
+            padding:0; 
+            font-size:12px;
+            font-family: arial, sans-serif; 
+        }
+        h1 {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sample-overview">
+        <h1>Extensible Calendar + Ext Scheduler</h1>
+        <p>This is a combination example that makes use of the excellent third-party <a href="http://ext-scheduler.com/">Ext Scheduler</a> component.
+        You can update the "staff" field in the calendar events or drag an event from one person to another within the scheduler to reassign it.
+        The "location" field can also be updated in either component (you have to go to the details form in the calendar to update it) and
+        it will automatically be reflected in both.</p>
+        
+        <p>Note that Ext Scheduler is a commercial component, and the version included here by permission is an evaluation copy. Please visit
+        <a href="http://ext-scheduler.com/examples.html">ext-scheduler.com</a> to see more examples of the scheduler component in action.</p>
+        
+        <p class="view-src"><a target="_blank" href="scheduler.js">View the source</a></p>
+    </div>
+    
+    <div id="sched"></div>
+    <div id="cal"></div>
+</body>
+</html>

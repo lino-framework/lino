@@ -33,7 +33,7 @@ class Site(Site):
         yield 'lino.modlib.projects'
         yield 'lino.modlib.humanlinks'
         yield 'lino.modlib.households'
-        # yield 'lino.modlib.extensible'
+        yield 'lino.modlib.extensible'
         yield 'lino.modlib.pages'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.dupable_partners'

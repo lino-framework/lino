@@ -108,23 +108,8 @@ class Index(View):
             user = request.subst_user or request.user
         else:
             user = auth.AnonymousUser.instance()
-        a = settings.SITE.get_main_action(user)
-        if a is None:
-            ar = BaseRequest(
-                user=user, request=request,
-                renderer=ui.renderer)
-        else:
-            if not a.get_view_permission(user.profile):
-                raise exceptions.PermissionDenied(
-                    "As %s you have no permission to run this action."
-                    % user.profile)
-                # The text of an Exception may not be
-                # internationalized because some error handling code
-                # may want to write it to a plain ascii stream.
-            kw.update(renderer=ui.renderer)
-            ar = a.request(request=request, **kw)
-            context.update(title=ar.get_title())
-            # TODO: let ar generate main
-            # context.update(main=ui.bs3_renderer.action_call(request,a,{}))
+        ar = BaseRequest(
+            user=user, request=request,
+            renderer=ui.renderer)
         context.update(ar=ar)
         return http_response(request, 'bootstrap3/index.html', context)

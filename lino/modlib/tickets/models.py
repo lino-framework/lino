@@ -38,9 +38,10 @@ blogs = dd.resolve_app('blogs')
 
 from .utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
+from lino.modlib.contacts.mixins import ContactRelated
 
 
-class TimeInvestment(dd.Model):
+class TimeInvestment(ContactRelated):
 
     class Meta:
         abstract = True
@@ -353,6 +354,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     #     _("Closed since"), editable=False, null=True)
     # standby = models.DateTimeField(
     #     _("Standby since"), editable=False, null=True)
+    feedback = models.BooleanField(_("Waiting for feedback"), default=False)
     standby = models.BooleanField(_("Standby"), default=False)
     closed = models.BooleanField(_("Closed"), default=False)
 
@@ -406,17 +408,18 @@ add('20', _("Closed"), 'closed')
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general time"
+    main = "general planning"
 
     general = dd.Panel("""
     summary:40 nickname:20 id
     reporter project state workflow_buttons
+    feedback standby closed
     description
     clocking.SessionsByTicket
     """, label=_("General"))
 
-    time = dd.Panel("""
-    reported_for fixed_for created modified closed standby
+    planning = dd.Panel("""
+    reported_for fixed_for created modified
     planned_time invested_time assigned_to
     ParentsByTicket ChildrenByTicket
     """, label=_("Planning"))
@@ -426,7 +429,7 @@ class Tickets(dd.Table):
     required = dd.Required(auth=True)
     model = 'tickets.Ticket'
     order_by = ["id"]
-    column_names = 'id summary:50 standby closed workflow_buttons:30 reporter:10 project:10 *'
+    column_names = 'id summary:50 feedback standby closed workflow_buttons:30 reporter:10 project:10 *'
     auto_fit_column_widths = True
     detail_layout = TicketDetail()
     insert_layout = dd.FormLayout("""

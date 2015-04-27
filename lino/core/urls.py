@@ -11,5 +11,12 @@ This is found by Django because :mod:`lino.projects.std.settings`
 """
 
 from django.conf import settings
-settings.SITE.startup()
+
+# from lino.core.signals import database_ready
+
+# settings.SITE.startup()
+# database_ready.send(settings.SITE)
+
+# from lino.modlib.extjs.urls import urlpatterns
+
 urlpatterns = settings.SITE.ui.get_patterns()

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extensible : Localized Calendar</title>
+    <!-- This is required for most non-English locales! -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf8">
+    
+    <!-- Ext includes -->
+    <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.2.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.2.0/ext-all-debug.js"></script>
+    <!--link rel="stylesheet" type="text/css" href="http://localhost/ext-3.3.0/resources/css/ext-all.css" />
+    <script type="text/javascript" src="http://localhost/ext-3.3.0/adapter/ext/ext-base-debug.js"></script>
+    <script type="text/javascript" src="http://localhost/ext-3.3.0/ext-all-debug.js"></script-->
+    <!-- Any Ext overrides go here -->
+    
+    <!-- Extensible includes -->
+    <link rel="stylesheet" type="text/css" href="../../resources/css/extensible-all.css" />
+    <script type="text/javascript" src="../../extensible-all-debug.js"></script>
+    <!-- Any Extensible overrides go here -->
+    
+    <!-- Shared example includes -->
+    <link rel="stylesheet" type="text/css" href="../examples.css" />
+    <script type="text/javascript" src="../examples.js"></script>
+    
+    <!-- Page-specific includes -->
+    <script type="text/javascript" src="data/events.js"></script>
+    <script type="text/javascript" src="MemoryEventStore.js"></script>
+    <script type="text/javascript" src="localization.js"></script>
+    
+    <style>
+        .sample-ct {
+            /* pre-size the container for smoother rendering, should match the panel's height config */
+            height: 700px;
+        }
+        .combo-ct {
+            padding-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sample-overview">
+        <h1>Localized Calendar Example</h1>
+        <p>A simple example showing how to display the calendar components in different locales. Note that the sample events
+        are not localized and will always display in English.</p>
+        
+        <p>If you would like to contribute an additional locale, please translate the most current English locale file and post it 
+        to the <a href="http://ext.ensible.com/forum/viewforum.php?f=10">Extensible forums</a>.</p>
+        
+        <p class="view-src"><a target="_blank" href="localization.js">View the source</a></p>
+    </div>
+    
+    <div class="combo-ct">
+        <div style="float:left;padding:5px 10px 0 0;">Selected Locale:</div>
+        <div id="locales" style="float:left;"></div>
+        <div style="clear:left;"></div>
+    </div>
+    
+    <div id="cal" class="sample-ct"></div>
+</body>
+</html>

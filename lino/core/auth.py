@@ -27,7 +27,7 @@ from lino.modlib.users.utils import AnonymousUser
 
 class AuthMiddleWareBase(object):
     """Common base class for :class:`RemoteUserMiddleware`,
-    :class:`SessionsUserMiddleware` and :class:`NoUserMiddleware`.
+    :class:`SessionUserMiddleware` and :class:`NoUserMiddleware`.
 
     """
 
@@ -46,17 +46,18 @@ class AuthMiddleWareBase(object):
         raise NotImplementedError
 
     def process_request(self, request):
-        settings.SITE.startup()
-        """
-        first request will trigger site startup to load UserProfiles
-        """
+        # logger.info("20150424 %s process_request %s" % (
+        #     self.__class__.__name__, request.path))
+
+        # first request will trigger site startup to load UserProfiles
+        # settings.SITE.startup()
 
         user = self.get_user_from_request(request)
 
         self.on_login(request, user)
 
     def authenticate(self, username, password=NOT_NEEDED):
-        # logger.info("20150129 authenticate %s, %s" % (username, password))
+        # logger.info("20150424 authenticate %s, %s" % (username, password))
 
         if not username:
             return AnonymousUser.instance()
@@ -207,12 +208,12 @@ class NoUserMiddleware(AuthMiddleWareBase):
 
 class SessionUserMiddleware(AuthMiddleWareBase):
 
-    """
-    Middleware automatically installed by 
-    :meth:`get_middleware_classes <lino.site.Site.get_middleware_classes>`
-    when 
-    :setting:`remote_user_header` is None
-    and :setting:`user_model` not.
+    """Middleware automatically installed by
+    :meth:`get_middleware_classes
+    <lino.site.Site.get_middleware_classes>` when
+    :setting:`remote_user_header` is None and :setting:`user_model`
+    not.
+
     """
 
     def get_user_from_request(self, request):

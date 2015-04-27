@@ -20,8 +20,8 @@ class Plugin(ad.Plugin):
     calendar_end_hour = 18  # setting
 
     site_js_snippets = ['snippets/extensible.js']
-    media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
-    media_name = 'extensible'
+    media_name = 'extensible-1.0.1'
+    # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
 
     def get_used_libs(self, html=None):
         if html:
@@ -34,15 +34,15 @@ class Plugin(ad.Plugin):
                    "http://ext.ensible.com/products/calendar/")
 
     def get_css_includes(self, site):
-        yield self.build_media_url('resources/css/extensible-all.css')
+        yield self.build_static_url('resources/css/extensible-all.css')
 
     def get_js_includes(self, settings, language):
         if settings.DEBUG:
-            yield self.build_media_url('extensible-all-debug.js')
+            yield self.build_static_url('extensible-all-debug.js')
         else:
-            yield self.build_media_url('extensible-all.js')
+            yield self.build_static_url('extensible-all.js')
         if language != 'en':
-            yield self.build_media_url(
+            yield self.build_static_url(
                 'src', 'locale',
                 'extensible-lang-' + language + '.js')
 

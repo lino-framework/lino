@@ -17,57 +17,57 @@
         {%- block css_plugins -%}
             {%- for p in site.installed_plugins -%}
                 {%- if p.get_css_includes -%}
-                    {%- for name in p.get_css_includes(site) -%}
+                    {%- for name in p.get_css_includes(site) %}
                         {{ stylesheet(name) }}
-                    {%- endfor -%}
+                    {% endfor -%}
                 {%- endif -%}
             {%- endfor -%}
         {%- endblock css_plugins -%}
         {%- block css_legacy -%}
             {%- if run_jasmine -%}
-                {{ stylesheet(site.build_media_url("jasmine/jasmine.css")) }}
+                {{ stylesheet(site.build_static_url("jasmine/jasmine.css")) }}
             {%- endif -%}
             {%- if site.use_vinylfox -%}
-                {{ stylesheet(site.build_media_url('lino/vinylfox/resources/css/htmleditorplugins.css')) }}
+                {{ stylesheet(site.build_static_url("vinylfox/resources/css/htmleditorplugins.css")) }}
             {%- endif -%}
             {%- if site.use_filterRow -%}
-                {{ stylesheet(site.build_media_url('lino/filterRow/filterRow.css')) }}
+                {{ stylesheet(site.build_static_url("filterRow/filterRow.css")) }}
             {%- endif -%}
             {%- if site.use_gridfilters -%}
-                {{ stylesheet(site.build_extjs_url("examples/ux/statusbar/css/statusbar.css")) }}
-                {{ stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/GridFilters.css")) }}
-                {{ stylesheet(site.build_extjs_url("examples/ux/gridfilters/css/RangeMenu.css")) }}
+                {{ stylesheet(extjs.build_static_url("examples/ux/statusbar/css/statusbar.css")) }}
+                {{ stylesheet(extjs.build_static_url("examples/ux/gridfilters/css/GridFilters.css")) }}
+                {{ stylesheet(extjs.build_static_url("examples/ux/gridfilters/css/RangeMenu.css")) }}
             {%- endif -%}
-            {{ stylesheet(site.build_extjs_url("examples/ux/fileuploadfield/css/fileuploadfield.css")) }}
-            {{ stylesheet(site.build_media_url("lino/extjs/lino.css")) }}
+            {{ stylesheet(extjs.build_static_url("examples/ux/fileuploadfield/css/fileuploadfield.css")) }}
+            {{ stylesheet(site.build_static_url("extjs/lino.css")) }}
             {%- if site.use_awesome_uploader -%}
-                {{ stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader.css"))}}
-                {{ stylesheet(site.build_media_url("lino/AwesomeUploader/AwesomeUploader Progress Bar.css"))}}
+                {{ stylesheet(site.build_static_url("AwesomeUploader/AwesomeUploader.css"))}}
+                {{ stylesheet(site.build_static_url("AwesomeUploader/AwesomeUploader Progress Bar.css"))}}
             {%- endif -%}
         {%- endblock css_legacy -%}
     {%- endblock css -%}
     {# ###### JavaScript files ###### #}
     {%- block js -%}
         {%- if settings.DEBUG -%}
-            {{ javascript(site.build_extjs_url('adapter/ext/ext-base-debug.js'))}}
-            {{ javascript(site.build_extjs_url('ext-all-debug.js')) }}
+            {{ javascript(extjs.build_static_url('adapter/ext/ext-base-debug.js'))}}
+            {{ javascript(extjs.build_static_url('ext-all-debug.js')) }}
         {%- else -%}
-            {{ javascript(site.build_extjs_url('adapter/ext/ext-base.js')) }}
-            {{ javascript(site.build_extjs_url('ext-all.js')) }}
+            {{ javascript(extjs.build_static_url('adapter/ext/ext-base.js')) }}
+            {{ javascript(extjs.build_static_url('ext-all.js')) }}
         {%- endif -%}
     {%- endblock js -%}
     {%- if language != 'en' -%}
-        {{ javascript(site.build_extjs_url('src/locale/ext-lang-' + language + '.js')) }}
+        {{ javascript(extjs.build_static_url('src/locale/ext-lang-' + language + '.js')) }}
     {%- endif -%}
-    {{ javascript(site.build_extjs_url('examples/ux/statusbar/StatusBar.js')) }}
+    {{ javascript(extjs.build_static_url('examples/ux/statusbar/StatusBar.js')) }}
     {%- if site.use_spinner -%}
-        {{ javascript(site.build_extjs_url('examples/ux/Spinner.js')) }}
+        {{ javascript(extjs.build_static_url('examples/ux/Spinner.js')) }}
     {%- endif -%}
-    {{ javascript(site.build_media_url("lino/extjs/Ext.ux.form.DateTime.js")) }}
+    {{ javascript(site.build_static_url("extjs/Ext.ux.form.DateTime.js")) }}
     {%- if run_jasmine -%}  {# site.use_jasmine #}
-        {{ javascript(site.build_media_url("jasmine/jasmine.js")) }}
-        {{ javascript(site.build_media_url("jasmine/jasmine-html.js")) }}
-        {{ javascript(site.build_media_url("lino/jasmine/specs.js")) }}
+        {{ javascript(site.build_static_url("jasmine/jasmine.js")) }}
+        {{ javascript(site.build_static_url("jasmine/jasmine-html.js")) }}
+        {{ javascript(site.build_static_url("jasmine/specs.js")) }}
     {%- endif -%}
     {%- for p in site.installed_plugins -%}
         {%- if p.get_js_includes -%}
@@ -77,7 +77,7 @@
         {%- endif -%}
     {%- endfor -%}
     {%- if site.use_gridfilters -%}
-        {%- set p = site.build_extjs_url('examples/ux/gridfilters') -%}
+        {%- set p = extjs.build_static_url('examples/ux/gridfilters') -%}
         {{ javascript(p + "/menu/RangeMenu.js") }}
         {{ javascript(p + "/menu/ListMenu.js") }}
         {{ javascript(p + "/GridFilters.js") }}
@@ -88,14 +88,14 @@
         {{ javascript(p + "/filter/NumericFilter.js") }}
         {{ javascript(p + "/filter/BooleanFilter.js") }}
     {%- endif -%}
-    {{ javascript(site.build_extjs_url("examples/ux/fileuploadfield/FileUploadField.js")) }}
+    {{ javascript(extjs.build_static_url("examples/ux/fileuploadfield/FileUploadField.js")) }}
 
     {%- if site.use_filterRow -%}
-        {%- set p = site.build_media_url('lino', 'filterRow') -%}
+        {%- set p = site.build_static_url('filterRow') -%}
         {{ javascript(p + "/filterRow.js") }}
     {%- endif -%}
     {%- if site.use_vinylfox -%}
-        {%- set p = site.build_media_url() + '/lino/vinylfox/src/Ext.ux.form.HtmlEditor' -%}
+        {%- set p = site.build_static_url() + '/vinylfox/src/Ext.ux.form.HtmlEditor' -%}
         {{ javascript(p + ".MidasCommand.js") }}
         {{ javascript(p + ".Divider.js") }}
         {{ javascript(p + ".HR.js") }}
@@ -113,7 +113,7 @@
         {{ javascript(p + ".Plugins.js") }}
     {%- endif -%}
     {%- if site.use_awesome_uploader -%}
-        {%- set p = site.build_media_url() + '/lino/AwesomeUploader/' -%}
+        {%- set p = site.build_static_url() + '/AwesomeUploader/' -%}
         {{ javascript(p + "/Ext.ux.XHRUpload.js") }}
         {{ javascript(p + "/swfupload.js") }}
      {# {{ javascript(p + "/swfupload.swfobject.js") }} #}
@@ -126,14 +126,15 @@
         {%- endfor -%}
     {%- endfor -%}
     {# Main Lino js code #}
-    {{ javascript(site.build_media_url(*renderer.lino_js_parts())) }}
+    {{ javascript(site.build_media_url(*ext_renderer.lino_js_parts())) }}
+    {# javascript(site.buildurl('linolib.js')) #}
     {# ###### OnReady JS code ###### #}
     <script type="text/javascript">
     Ext.onReady(function() {
     {% block js_onready %}
         //console.time('onReady');
         {# Render current user items #}
-        {%- for ln in renderer.html_page_user(request, site) -%}
+        {%- for ln in ext_renderer.html_page_user(request, site) -%}
             {{ ln }}
         {%- endfor -%}
         {# anonymous request using permalink: forward request.path as "on_login" URL #}
@@ -141,7 +142,7 @@
             {%- set on_ready = "Lino.show_login_window(" + py2js(request.path) + ")" -%}
         {%- endif -%}
         {# Render main window #}
-        {%- set win = renderer.html_page_main_window(on_ready, request, site) -%}
+        {%- set win = ext_renderer.html_page_main_window(on_ready, request, site) -%}
         {% for ln in jsgen.declare_vars(win) -%}
             {{ ln }}
         {%- endfor %}

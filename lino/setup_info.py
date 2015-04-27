@@ -90,8 +90,6 @@ lino
 lino.api
 lino.core
 lino.history
-lino.management
-lino.management.commands
 lino.mixins
 lino.modlib
 lino.modlib.auto
@@ -139,6 +137,9 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
+lino.modlib.lino
+lino.modlib.lino.management
+lino.modlib.lino.management.commands
 lino.modlib.lists
 lino.modlib.lists.fixtures
 lino.modlib.notes
@@ -257,7 +258,7 @@ lino.test_apps.example
 lino.test_apps.quantityfield
 lino.test_apps.20121124
 lino.test_apps.nomti
-lino.tests
+lino.modlib.lino.tests
 lino.tutorials
 lino.tutorials.mini
 lino.utils
@@ -299,6 +300,6 @@ add_package_data('lino.modlib.notes', 'config/notes/Note/*.odt')
 add_package_data('lino.modlib.outbox', 'config/outbox/Mail/*.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
-l = add_package_data('lino')
+l = add_package_data('lino.modlib.lino')
 for lng in 'de fr et nl'.split():
-    l.append('locale/%s/LC_MESSAGES/*.mo' % lng)
+    l.append('lino/modlib/lino/locale/%s/LC_MESSAGES/*.mo' % lng)

@@ -4,6 +4,10 @@
 Testing `lino.modlib.tinymce`
 =============================
 
+.. to run only this test:
+
+  $ python setup.py test -s tests.DocsTests.test_tinymce
+
 This document tests some functionality of :mod:`lino.modlib.tinymce`.
 
 Currently especially the behaviour of 
@@ -11,10 +15,6 @@ Currently especially the behaviour of
 which is designed to make usage of TinyMCE's
 `external_template_list_url <http://www.tinymce.com/wiki.php/Configuration3x:external_template_list_url>`__ setting.
 
-
-.. to run only this test:
-
-  $ python setup.py test -s tests.DocsTests.test_tinymce
 
 General stuff:
 

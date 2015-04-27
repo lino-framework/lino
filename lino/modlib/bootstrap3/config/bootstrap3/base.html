@@ -2,15 +2,15 @@
 <html language="{{requested_language}}"><head>
 <meta charset="utf-8"/>
 <title>{% block title %}{% endblock %}</title>
-<link rel="stylesheet" href="{{site.plugins.bootstrap3.build_media_url('css','bootstrap.css')}}" type="text/css">
-<link rel="stylesheet" href="{{site.build_media_url('lino','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.plugins.bootstrap3.build_static_url('css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.plugins.lino.build_static_url('bootstrap.css')}}" type="text/css">
 </head><body>
 <div id="wrap">
   <div class="container-fluid">
     {% block header %}
     <div class="container-fluid lino-bs-header">
     {% if site.user_model -%}
-        <form class="form-inline" method="POST" action="{{ar.renderer.plugin.build_media_url('auth')}}">
+        <form class="form-inline" method="POST" action="{{ar.renderer.plugin.build_plain_url('auth')}}">
         <input type="username" class="input-small" placeholder="Username">
         <input type="password" class="input-small" placeholder="Password">
         <button type="submit" class="btn">Sign in</button>
@@ -81,5 +81,5 @@
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="{{site.plugins.bootstrap3.build_media_url('js','bootstrap.min.js')}}"></script>
+<script src="{{site.plugins.bootstrap3.build_static_url('js','bootstrap.min.js')}}"></script>
 </body></html>

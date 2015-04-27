@@ -353,6 +353,7 @@ class Course(cal.Reservation):
 
     def get_free_places(self):
         used_states = EnrolmentStates.filter(uses_a_place=True)
+        Enrolment = rt.modules.courses.Enrolment
         qs = Enrolment.objects.filter(course=self, state__in=used_states)
         res = qs.aggregate(models.Sum('places'))
         # logger.info("20140819 %s", res)

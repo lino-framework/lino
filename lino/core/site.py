@@ -995,11 +995,13 @@ documentation.
         else:
             self.cache_dir = Path(self.project_dir).absolute()
 
+        gen = self.cache_dir.child('static')
+
         self._starting_up = False
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
-        dbname = join(self.cache_dir, 'default.db')
+        dbname = self.cache_dir.child('default.db')
         self.django_settings.update(DATABASES={
             'default': {
                 'ENGINE': 'django.db.backends.sqlite3',
@@ -1168,22 +1170,25 @@ documentation.
         assert not self.help_url.endswith('/')
 
         if self.webdav_url is None:
-            self.webdav_url = '/media/webdav/'
+            self.webdav_url = self.site_prefix + 'media/webdav/'
         if self.webdav_root is None:
             self.webdav_root = join(self.cache_dir, 'media', 'webdav')
 
-        if not self.django_settings.get('MEDIA_ROOT', False):
+        # if not self.django_settings.get('MEDIA_ROOT', False):
             # Django's default value for MEDIA_ROOT is an empty
             # string.  In certain test cases there might be no
             # MEDIA_ROOT key at all.  Lino's default value for
             # MEDIA_ROOT is ``<cache_dir>/media``.
+        self.django_settings.update(
+            MEDIA_ROOT=join(self.cache_dir, 'media'))
+
+        if not self.django_settings.get('STATIC_ROOT', False):
             self.django_settings.update(
-                MEDIA_ROOT=join(self.cache_dir, 'media'))
+                STATIC_ROOT=self.cache_dir.child('static'))
 
         self.update_settings(ROOT_URLCONF=self.root_urlconf)
-        self.update_settings(
-            MEDIA_URL='/media/'
-        )
+        self.update_settings(MEDIA_URL='/media/')
+        self.update_settings(STATIC_URL='/static/')
         self.update_settings(
             TEMPLATE_LOADERS=tuple([
                 'lino.core.web.Loader',
@@ -1224,6 +1229,13 @@ documentation.
                 if not exists(join(p, '..', 'models.py')):
                     add(p)
 
+            # local_dir = self.cache_dir.child(name)
+            # if local_dir.exists():
+            #     print "20150427 adding local directory %s" % local_dir
+            #     add(local_dir)
+            # The STATICFILES_DIRS setting should not contain the
+            # STATIC_ROOT setting
+
             if False:
                 # If a plugin has no "fixtures" ("config") directory
                 # of its own, inherit it from parents.  That would be
@@ -1240,10 +1252,14 @@ documentation.
 
         fixture_dirs = list(self.django_settings.get('FIXTURE_DIRS', []))
         locale_paths = list(self.django_settings.get('LOCALE_PATHS', []))
+        sfd = list(self.django_settings.get('STATICFILES_DIRS', []))
+        # sfd.append(self.cache_dir.child('genjs'))
         settings_subdirs(fixture_dirs, 'fixtures')
         settings_subdirs(locale_paths, 'locale')
+        settings_subdirs(sfd, 'static')
         self.update_settings(FIXTURE_DIRS=tuple(fixture_dirs))
         self.update_settings(LOCALE_PATHS=tuple(locale_paths))
+        self.update_settings(STATICFILES_DIRS=tuple(sfd))
 
         # print(20150331, self.django_settings['FIXTURE_DIRS'])
 
@@ -2721,13 +2737,13 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'
 
-    def get_main_action(self, profile):
-        """
-        Return the action to show as top-level "index.html".
-        The default implementation returns `None`, which means
-        that Lino will call :meth:`get_main_html`.
-        """
-        return None
+    # def get_main_action(self, profile):
+    #     """No longer used.
+    #     Return the action to show as top-level "index.html".
+    #     The default implementation returns `None`, which means
+    #     that Lino will call :meth:`get_main_html`.
+    #     """
+    #     return None
 
     def get_main_html(self, request):
         """Return a chunk of html to be displayed in the main area of the
@@ -2780,6 +2796,7 @@ Please convert to Plugin method".format(mod, methname)
 
         if self.django_admin_prefix:
             yield 'django.contrib.admin'
+        yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
         yield 'lino.modlib.extjs'
         yield 'lino.modlib.bootstrap3'
@@ -2787,12 +2804,20 @@ Please convert to Plugin method".format(mod, methname)
             yield a
         from lino import AFTER17
         if not AFTER17:
-            yield "lino"
+            yield "lino.modlib.lino"
 
     site_prefix = '/'
-    """This must be set if your project is not being served at the "root"
-    URL of your server.  It must start *and* end with a
-    *slash*. Default value is ``'/'``.  For example if you have::
+    """The string to prefix to every URL of the Lino web interface.
+
+    This must *start and end with a *slash*.  Default value is
+    ``'/'``.
+
+    This must be set if your project is not being served at the "root"
+    URL of your server.
+
+    When this Site is running under something else than a development
+    server, this setting must correspond to your web server's
+    configuration.  For example if you have::
     
         WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
       
@@ -2812,16 +2837,28 @@ Please convert to Plugin method".format(mod, methname)
         return url
 
     def build_media_url(self, *args, **kw):
-        return self.buildurl('media', *args, **kw)
+        from django.conf import settings
+        url = settings.MEDIA_URL + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
+        # return self.buildurl('media', *args, **kw)
+
+    def build_static_url(self, *args, **kw):
+        from django.conf import settings
+        url = settings.STATIC_URL + ("/".join(args))
+        if len(kw):
+            url += "?" + urlencode(kw)
+        return url
 
     def build_admin_url(self, *args, **kw):
-        # backwards compatibility
+        # deprecated. 
         return self.kernel.default_renderer.plugin.build_plain_url(
             *args, **kw)
         
     def build_extjs_url(self, *args, **kw):
-        # backwards compatibility
-        return self.kernel.default_renderer.plugin.build_media_url(
+        raise Exception("20150425 deprecated")
+        return self.kernel.default_renderer.plugin.build_static_url(
             *args, **kw)
 
     # def build_tinymce_url(self, url):

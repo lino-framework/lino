@@ -2,7 +2,8 @@
 Things to know
 ==============
 
-A list of things you should know as a :doc:`/team/lad`.
+A list of things you should know as a :doc:`/team/lad`
+before you can start to love Lino.
 
 
 Python
@@ -19,27 +20,13 @@ for example
   `datetime`,  `sys`,  `os`, `re`,  `decimal`,  `logging`, ... 
 - the major differences between Python 2 and 3
 
-Sphinx
-======
-
-Documentation about Lino is written using `Sphinx
-<http://sphinx-doc.org>`_.
-
-- You know how Sphinx works and why we use it. Important chapters of
-  the Sphinx documentation include
-  `The build configuration file <http://sphinx-doc.org/config.html>`_
-
-- You are able to use the same blogging system as Luc and to document
-  your own contributions to Lino in a :doc:`developer blog
-  </team/devblog>`.  
-
-
 Django
 ======
 
 Lino applications are Django projects.
 
 - You know how to get a Django project up and running.
+  (You should have followed the `Tutorial <https://docs.djangoproject.com/en/dev/>`_)
   You know what a :xfile:`settings.py` file is.
 - You know most about Django's model layer : the ``Model`` class,
   the field types, executing database queries
@@ -59,6 +46,21 @@ platform.
 - You know why we prefer our own `Trac <http://trac.edgewall.org/>`_
   instance over GitHub's integrated ticketing system and how we use
   it.
+
+
+Sphinx
+======
+
+Documentation about Lino is written using `Sphinx
+<http://sphinx-doc.org>`_.
+
+- You should know how Sphinx works and why we use it. Important chapters of
+  the Sphinx documentation include
+  `The build configuration file <http://sphinx-doc.org/config.html>`_
+
+- You should try to use the same blogging system as Luc and to document
+  your own contributions to Lino in a :doc:`developer blog
+  </team/devblog>`.  
 
 
 The UNIX shell

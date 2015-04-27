@@ -427,6 +427,7 @@ class ExtRenderer(HtmlRenderer):
 
         """
         user = request.user
+        # print 20150427, user
         if True:  # user.profile.level >= UserLevels.admin:
             if request.subst_user:
                 user = request.subst_user
@@ -439,12 +440,13 @@ class ExtRenderer(HtmlRenderer):
             tpl = settings.SITE.jinja_env.get_template('extjs/index.html')
             context = {
                 'site': settings.SITE,
-                'renderer': self,
+                'extjs': settings.SITE.plugins.extjs,
+                'ext_renderer': self,
                 'py2js': py2js,  # TODO: Should be template filter
                 'jsgen': jsgen,  # TODO: Should be in filters
                 'language': translation.get_language(),
                 'request': request,
-                'user': user,  # Current acting user
+                'user': user,  # Current user
             }
             context.update(kw)
             return tpl.render(context)
@@ -574,11 +576,11 @@ class ExtRenderer(HtmlRenderer):
             logger.debug(
                 "Not building site cache because `settings.SITE.never_build_site_cache` is True")
             return
-        if not os.path.isdir(settings.MEDIA_ROOT):
+        if not os.path.isdir(settings.STATIC_ROOT):
             logger.debug(
                 "Not building site cache because " +
-                "directory '%s' (settings.MEDIA_ROOT) does not exist.",
-                settings.MEDIA_ROOT)
+                "directory '%s' (settings.STATIC_ROOT) does not exist.",
+                settings.STATIC_ROOT)
             return
 
         started = time.time()
@@ -603,7 +605,7 @@ class ExtRenderer(HtmlRenderer):
                         count, time.time() - started)
 
     def build_js_cache(self, force):
-        """Build the :xfile:`lino*.js` file for the specified user and the
+        """Build the :xfile:`lino*.js` file for the current user and the
         current language.  If the file exists and is up to date, don't
         generate it unless `force=False` is specified.
 
@@ -794,6 +796,7 @@ class ExtRenderer(HtmlRenderer):
 
     def lino_js_parts(self):
         profile = jsgen.get_user_profile()
+        # return ('genjs',
         return ('cache', 'js',
                 'lino_' + profile.value + '_'
                 + translation.get_language() + '.js')
@@ -1286,8 +1289,8 @@ class ExtRenderer(HtmlRenderer):
             yield "  return %s;" % ba.action.extjs_main_panel
         else:
             p = dict()
-            if ba.action is settings.SITE.get_main_action(profile):
-                p.update(is_home_page=True)
+            # if ba.action is settings.SITE.get_main_action(profile):
+            #     p.update(is_home_page=True)
             if ba.action.hide_top_toolbar or ba.actor.hide_top_toolbar or ba.action.parameters:
                 p.update(hide_top_toolbar=True)
             if rpt.hide_window_title:
@@ -1310,20 +1313,16 @@ class ExtRenderer(HtmlRenderer):
         Called from :xfile:`linolib.js`.
         """
 
+        extjs = settings.SITE.plugins.extjs
+
         def fn():
-            yield """// lino.js --- generated %s by Lino version %s.""" % (time.ctime(), lino.__version__)
+            yield "// lino.js --- generated %s by Lino version %s." % (
+                time.ctime(), lino.__version__)
             #~ // $site.title ($lino.welcome_text())
-            yield "Ext.BLANK_IMAGE_URL = '%s';" % settings.SITE.build_extjs_url('resources/images/default/s.gif')
-            yield "LANGUAGE_CHOICES = %s;" % py2js(list(settings.SITE.LANGUAGE_CHOICES))
-            # TODO: replace the following lines by a generic method for all ChoiceLists
-            #~ yield "STRENGTH_CHOICES = %s;" % py2js(list(STRENGTH_CHOICES))
-            #~ yield "KNOWLEDGE_CHOICES = %s;" % py2js(list(KNOWLEDGE_CHOICES))
+            yield "Ext.BLANK_IMAGE_URL = '%s';" % extjs.build_static_url(
+                'resources/images/default/s.gif')
+            yield "LANGUAGE_CHOICES = %s;" % py2js(
+                list(settings.SITE.LANGUAGE_CHOICES))
             yield "MEDIA_URL = %s;" % py2js(settings.SITE.build_media_url())
-            #~ yield "ADMIN_URL = %r;" % settings.SITE.admin_prefix
 
-            #~ yield "API_URL = %r;" % self.build_url('api')
-            #~ yield "TEMPLATES_URL = %r;" % self.build_url('templates')
-            #~ yield "Lino.status_bar = new Ext.ux.StatusBar({defaultText:'Lino version %s.'});" % lino.__version__
-
-        #~ return '\n'.join([ln for ln in fn()])
         return '\n'.join(fn())

@@ -53,7 +53,7 @@ settings. Including for example :setting:`INSTALLED_APPS` and
 >>> SITE = Site(pseudoglobals, no_local=True)
 >>> sorted(pseudoglobals.keys())
 ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
-['DATABASES', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'LANGUAGES', 'LANGUAGE_CODE', 'LOCALE_PATHS', 'LOGGING', 'LOGGING_CONFIG', 'MEDIA_ROOT', 'MEDIA_URL', 'MIDDLEWARE_CLASSES', 'ROOT_URLCONF', 'SERIALIZATION_MODULES', 'TEMPLATE_CONTEXT_PROCESSORS', 'TEMPLATE_LOADERS', 'USE_L10N']
+['DATABASES', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'LANGUAGES', 'LANGUAGE_CODE', 'LOCALE_PATHS', 'LOGGING', 'LOGGING_CONFIG', 'MEDIA_ROOT', 'MEDIA_URL', 'MIDDLEWARE_CLASSES', 'ROOT_URLCONF', 'SERIALIZATION_MODULES', 'STATICFILES_DIRS', 'STATIC_ROOT', 'STATIC_URL', 'TEMPLATE_CONTEXT_PROCESSORS', 'TEMPLATE_LOADERS', 'USE_L10N']
 
 A more detailed description of the Django settings managed by Lino is
 in :doc:`/ref/settings`.
@@ -89,11 +89,12 @@ These will go into the :setting:`INSTALLED_APPS` setting (but
 >>> Site(pseudoglobals, "lino.modlib.notes")  #doctest: +ELLIPSIS
 <lino.projects.min1.settings.Site object at ...>
 >>> print('\n'.join(pseudoglobals['INSTALLED_APPS']))
+django.contrib.staticfiles
 lino.modlib.about
 lino.modlib.extjs
 lino.modlib.bootstrap3
 lino.modlib.notes
-lino
+lino.modlib.lino
 lino.modlib.system
 lino.modlib.users
 lino.modlib.office
@@ -140,10 +141,11 @@ These are the Django settings which Lino will override:
 {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                            'NAME': Path('/.../default.db')}},
  'FIXTURE_DIRS': (),
- 'INSTALLED_APPS': ('lino.modlib.about',
+ 'INSTALLED_APPS': ('django.contrib.staticfiles',
+                    'lino.modlib.about',
                     'lino.modlib.extjs',
                     'lino.modlib.bootstrap3',
-                    'lino'),
+                    'lino.modlib.lino'),
  'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'LOGGING': {'disable_existing_loggers': True,
@@ -159,6 +161,9 @@ These are the Django settings which Lino will override:
  'ROOT_URLCONF': 'lino.core.urls',
  'SECRET_KEY': '20227',
  'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
+ 'STATICFILES_DIRS': (),
+ 'STATIC_ROOT': Path('/.../core/static'),
+ 'STATIC_URL': '/static/',
  'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
                                  'django.core.context_processors.i18n',
                                  'django.core.context_processors.media',

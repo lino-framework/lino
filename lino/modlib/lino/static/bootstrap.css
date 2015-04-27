@@ -1,0 +1,53 @@
+/* styles to be applied after bootstrap css */
+div .lino-bs-header {
+  text-align: right;
+  /* 
+  background-color:gold;
+  background-color:#c7dffc; 
+  */
+  padding: 2px 6px;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- 
+copied and modified from 
+http://twitter.github.com/bootstrap/examples/sticky-footer.html
+and 
+https://gist.github.com/1953801
+*/
+
+html, body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by it's height */
+  margin: 0 auto -63px;
+}
+
+/* Set the fixed height of the footer here */
+#push {
+height: 60px;
+}
+
+footer {
+	height: 60px;
+    font-size: small;
+	padding: 0 10px 0 10px;
+	border-top: 1px solid #eee;
+    background-color: #eeeeee;
+}
+
+footer > p {
+	text-align: center;
+    background-color: #eeeeee;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+

@@ -27,26 +27,19 @@ class Plugin(ad.Plugin):
 
     url_prefix = 'tinymce'
 
-    media_name = 'tinymce'
+    media_name = 'tinymce-3.4.8'
 
     media_root = None
-    """Path to the tinymce root directory.  Only to be used on a
-    development server if the `media` directory has no symbolic link
-    to the TinyMCE root directory, and only if :attr:`use_tinymce` is
-    True.
-
-    """
-
-    media_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
+    # media_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
 
     def get_used_libs(self, html=False):
         if html is not None:
-            yield ("TinyMCE", '?', "http://www.tinymce.com/")
+            yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
+            yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
 
     def get_js_includes(self, settings, language):
-        yield self.build_media_url('tiny_mce.js')
-        yield settings.SITE.build_media_url(
-            "lino", "tinymce", "Ext.ux.TinyMCE.js")
+        yield self.build_static_url('tiny_mce.js')
+        yield settings.SITE.build_static_url("tinymce", "Ext.ux.TinyMCE.js")
 
     def get_head_lines(self, site, request):
         # yield javascript(site.build_media_url("tinymce", "tiny_mce.js"))
@@ -60,13 +53,11 @@ class Plugin(ad.Plugin):
     });
 </script>"""
 
-    def get_patterns(self, kernel, prefix=''):
+    def get_patterns(self, kernel):
         from django.conf.urls import patterns
         from . import views
 
-        if prefix:
-            assert prefix.endswith('/')
-        rx = '^' + prefix
+        rx = '^'
 
         urlpatterns = patterns(
             '',

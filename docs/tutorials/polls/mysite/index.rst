@@ -82,7 +82,7 @@ And then enter the following Python instructions there:
 
 >>> from django.conf import settings
 >>> settings.INSTALLED_APPS
-('lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'polls', 'lino')
+('django.contrib.staticfiles', 'lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'polls', 'lino.modlib.lino')
 
 This shows that your 'polls' app has been embedded into a series of
 other apps. The details of this is not important right now. Just note

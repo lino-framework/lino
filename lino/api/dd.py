@@ -305,6 +305,7 @@ is_installed = settings.SITE.is_installed
 get_db_overview_rst = settings.SITE.get_db_overview_rst
 add_welcome_handler = settings.SITE.add_welcome_handler
 build_media_url = settings.SITE.build_media_url
+build_static_url = settings.SITE.build_static_url
 get_default_language = settings.SITE.get_default_language
 
 apps = plugins = settings.SITE.plugins

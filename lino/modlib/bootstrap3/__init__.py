@@ -21,9 +21,9 @@ class Plugin(Plugin):
 
     url_prefix = 'bs3'
 
-    media_name = 'bootstrap'
-    media_root = None
-    media_base_url = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/"
+    media_name = 'bootstrap-3.3.4'
+    # media_root = None
+    # media_base_url = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/"
 
     def on_ui_init(self, ui):
         from .renderer import Renderer
@@ -32,27 +32,28 @@ class Plugin(Plugin):
 
     def get_used_libs(self, html=False):
         if html is not None:
-            yield ("Bootstrap", '3.x', "http://getbootstrap.com")
+            yield ("Bootstrap", '3.3.4', "http://getbootstrap.com")
             # yield ("jQuery", '?', "http://...")
 
     def get_index_view(self):
         from . import views
         return views.Index.as_view()
 
-    def get_patterns(self, kernel, prefix=''):
-        from django.conf.urls import patterns
+    def get_patterns(self, kernel):
+        from django.conf.urls import url
         from . import views
 
-        if prefix:
-            assert prefix.endswith('/')
-        rx = '^' + prefix
+        # if prefix:
+        #     assert prefix.endswith('/')
+        # rx = '^' + prefix
+        rx = '^'
 
-        urls = patterns(
-            '',
-            (rx + r'/?$', views.Index.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.List.as_view()),
-            (rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.Element.as_view()),
-        )
+        urls = [
+            # url(rx + r'/?$', views.Index.as_view()),
+            url(rx + r'$', views.Index.as_view()),
+            url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.List.as_view()),
+            url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.Element.as_view()),
+        ]
         return urls

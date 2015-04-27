@@ -47,10 +47,10 @@ class Plugin(Plugin):
 
     url_prefix = "admin"
 
-    media_name = 'extjs'
+    media_name = 'ext-3.3.1'
 
-    media_base_url = "http://extjs-public.googlecode.com/" + \
-                     "svn/tags/extjs-3.3.1/release/"
+    # media_base_url = "http://extjs-public.googlecode.com/" + \
+    #                  "svn/tags/extjs-3.3.1/release/"
     """The URL from where to include the ExtJS library files.
     
     The default value points to the `extjs-public
@@ -122,7 +122,7 @@ class Plugin(Plugin):
                             e.as_ext(), f.name, form_field_name(f)))
 
     def get_css_includes(self, site):
-        yield self.build_media_url('resources/css/ext-all.css')
+        yield self.build_static_url('resources/css/ext-all.css')
 
     def get_js_includes(self, settings, language):
         return []
@@ -144,9 +144,9 @@ class Plugin(Plugin):
         from . import views
         return views.AdminIndex.as_view()
 
-    def get_patterns(self, kernel, prefix=''):
+    def get_patterns(self, kernel):
 
-        from django.conf.urls import patterns
+        from django.conf.urls import url  # patterns
         from . import views
         from lino.utils import codetime
 
@@ -154,41 +154,44 @@ class Plugin(Plugin):
 
         self.renderer.build_site_cache()
 
-        if prefix:
-            assert prefix.endswith('/')
-        rx = '^' + prefix
+        # if prefix:
+        #     assert prefix.endswith('/')
+        # rx = '^' + prefix
+        rx = '^'
 
-        urlpatterns = patterns(
-            '',
-            (rx + '/?$', views.AdminIndex.as_view()),
-            (rx + r'api/main_html$',
-             views.MainHtml.as_view()),
-            (rx + r'auth$', views.Authenticate.as_view()),
-            (rx + r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.GridConfig.as_view()),
-            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.ApiList.as_view()),
-            (rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.ApiElement.as_view()),
-            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
-             views.Restful.as_view()),
-            (rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-             views.Restful.as_view()),
-            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$',
-             views.Choices.as_view()),
-            (rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/(?P<fldname>\w+)$',
-             views.Choices.as_view()),
-            (rx + r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<an>\w+)/(?P<field>\w+)$',
-             views.ActionParamChoices.as_view()),
+        urlpatterns = [
+            # url(rx + '/?$', views.AdminIndex.as_view()),
+            url(rx + '$', views.AdminIndex.as_view()),
+            url(rx + r'api/main_html$', views.MainHtml.as_view()),
+            url(rx + r'auth$', views.Authenticate.as_view()),
+            url(rx + r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.GridConfig.as_view()),
+            url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.ApiList.as_view()),
+            url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.ApiElement.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.Restful.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.Restful.as_view()),
+            url(rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$',
+                views.Choices.as_view()),
+            url(rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/'
+                '(?P<fldname>\w+)$',
+                views.Choices.as_view()),
+            url(rx + r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/'
+                '(?P<an>\w+)/(?P<field>\w+)$',
+                views.ActionParamChoices.as_view()),
             # the thread_id can be a negative number:
-            (rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/(?P<button_id>\w+)$',
-             views.Callbacks.as_view()),
-        )
+            url(rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/'
+                '(?P<button_id>\w+)$',
+                views.Callbacks.as_view())
+        ]
         if kernel.site.use_eid_applet:
-            urlpatterns += patterns(
-                '', (rx + r'eid-applet-service$',
-                     views.EidAppletService.as_view()), )
+            urlpatterns.append(
+                url(rx + r'eid-applet-service$',
+                    views.EidAppletService.as_view()))
         if kernel.site.use_jasmine:
-            urlpatterns += patterns(
-                '', (rx + r'run-jasmine$', views.RunJasmine.as_view()), )
+            urlpatterns.append(
+                url(rx + r'run-jasmine$', views.RunJasmine.as_view()))
         return urlpatterns
