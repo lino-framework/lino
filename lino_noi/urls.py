@@ -13,9 +13,7 @@ from lino.api import rt
 
 settings.SITE.startup()
 
-urlpatterns = settings.SITE.kernel.get_patterns()
-
-urlpatterns += [
+urlpatterns = [
     # ex: /polls/
     url(r'^$',
         views.Index.as_view(),
@@ -35,5 +33,5 @@ urlpatterns += [
 #     url(r'^admin/', include('lino.core.urls')),
 # ]
 
-
+urlpatterns += settings.SITE.kernel.get_patterns()
 
