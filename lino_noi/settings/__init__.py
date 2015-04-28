@@ -22,7 +22,8 @@ class Site(Site):
     project_model = 'tickets.Project'
 
     root_urlconf = 'lino_noi.urls'
-    site_prefix = '/admin/'
+    # site_prefix = '/admin/'
+    default_ui = None
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
