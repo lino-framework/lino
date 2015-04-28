@@ -292,26 +292,26 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
-.x-tbar-arrow_join{ background-image: url(images/mjames/arrow_join.png) !important; }
-.x-tbar-book_link{ background-image: url(images/mjames/book_link.png) !important; }
-.x-tbar-eye{ background-image: url(images/mjames/eye.png) !important; }
-.x-tbar-basket{ background-image: url(images/mjames/basket.png) !important; }
-.x-tbar-arrow_up{ background-image: url(images/mjames/arrow_up.png) !important; }
+.x-tbar-arrow_join{ background-image: url(/static/images/mjames/arrow_join.png) !important; }
+.x-tbar-book_link{ background-image: url(/static/images/mjames/book_link.png) !important; }
+.x-tbar-eye{ background-image: url(/static/images/mjames/eye.png) !important; }
+.x-tbar-basket{ background-image: url(/static/images/mjames/basket.png) !important; }
+.x-tbar-arrow_up{ background-image: url(/static/images/mjames/arrow_up.png) !important; }
 .x-tbar-arrow_down{
-	background-image: url(images/mjames/arrow_down.png) !important;
+	background-image: url(/static/images/mjames/arrow_down.png) !important;
 }
 
 .x-tbar-delete{
-	background-image: url(images/mjames/delete.png) !important;
+	background-image: url(/static/images/mjames/delete.png) !important;
 }
 /*
 .x-item-disabled .x-tbar-delete{
-	background-image: url(images/default/grid/delete-disabled.gif) !important;
+	background-image: url(/static/images/default/grid/delete-disabled.gif) !important;
 }
 */
 
 .x-tbar-add{
-	background-image: url(images/mjames/add.png) !important;
+	background-image: url(/static/images/mjames/add.png) !important;
 }
 
 /*
@@ -320,98 +320,98 @@ $a.icon_name
 $a.icon_file
 */
 .x-tbar-emoticon_smile{
-	background-image: url(images/mjames/emoticon_smile.png) !important;
+	background-image: url(/static/images/mjames/emoticon_smile.png) !important;
 }
 
 .x-tbar-pencil{
-	background-image: url(images/mjames/pencil.png) !important;
+	background-image: url(/static/images/mjames/pencil.png) !important;
 }
 
 .x-tbar-cross{
-	background-image: url(images/mjames/cross.png) !important;
+	background-image: url(/static/images/mjames/cross.png) !important;
 }
 
 .x-tbar-money{
-	background-image: url(images/mjames/money.png) !important;
+	background-image: url(/static/images/mjames/money.png) !important;
 }
 
 .x-tbar-application_form{
-	background-image: url(images/mjames/application_form.png) !important;
+	background-image: url(/static/images/mjames/application_form.png) !important;
 }
 
 .x-tbar-disk{
-	background-image: url(images/mjames/disk.png) !important;
+	background-image: url(/static/images/mjames/disk.png) !important;
 }
 
 .x-tbar-hourglass {
-	background-image: url(images/mjames/hourglass.png) !important;
+	background-image: url(/static/images/mjames/hourglass.png) !important;
 }
 .x-tbar-date_add {
-	background-image: url(images/mjames/date_add.png) !important;
+	background-image: url(/static/images/mjames/date_add.png) !important;
 }
 .x-tbar-email_add{
-	background-image: url(images/mjames/email_add.png) !important;
+	background-image: url(/static/images/mjames/email_add.png) !important;
 }
 .x-tbar-email_go{
-	background-image: url(images/mjames/email_go.png) !important;
+	background-image: url(/static/images/mjames/email_go.png) !important;
 }
 
 .x-tbar-script {
-	background-image: url(images/mjames/script.png) !important;
+	background-image: url(/static/images/mjames/script.png) !important;
 }
 
 .x-tbar-script_add {
-	background-image: url(images/mjames/script_add.png) !important;
+	background-image: url(/static/images/mjames/script_add.png) !important;
 }
 
 .x-tbar-bell{
-	background-image: url(images/mjames/bell.png) !important;
+	background-image: url(/static/images/mjames/bell.png) !important;
 }
 
 .x-tbar-calendar{
-	background-image: url(images/mjames/calendar.png) !important;
+	background-image: url(/static/images/mjames/calendar.png) !important;
 }
 
 .x-tbar-printer{
-	background-image: url(images/mjames/printer.png) !important;
+	background-image: url(/static/images/mjames/printer.png) !important;
 }
 
 .x-tbar-lightning{
-	background-image: url(images/mjames/lightning.png) !important;
+	background-image: url(/static/images/mjames/lightning.png) !important;
 }
 
 .x-tbar-printer_delete{
-	background-image: url(images/mjames/printer_delete.png) !important;
+	background-image: url(/static/images/mjames/printer_delete.png) !important;
 }
 .x-tbar-arrow_divide{
-	background-image: url(images/mjames/arrow_divide.png) !important;
+	background-image: url(/static/images/mjames/arrow_divide.png) !important;
 }
 .x-tbar-pdf{
-	background-image: url(images/mjames/page_white_acrobat.png) !important;
+	background-image: url(/static/images/mjames/page_white_acrobat.png) !important;
 }
 .x-tbar-html{
-	background-image: url(images/mjames/html.png) !important;
+	background-image: url(/static/images/mjames/html.png) !important;
 }
 .x-tbar-csv{
-	background-image: url(images/mjames/page_excel.png) !important;
+	background-image: url(/static/images/mjames/page_excel.png) !important;
 }
 .x-tbar-vcard{
-	background-image: url(images/mjames/vcard.png) !important;
+	background-image: url(/static/images/mjames/vcard.png) !important;
 }
 .x-tbar-vcard_add{
-	background-image: url(images/mjames/vcard_add.png) !important;
+	background-image: url(/static/images/mjames/vcard_add.png) !important;
 }
 .x-tbar-done{
-	background-image: url(images/mjames/accept.png) !important;
+	background-image: url(/static/images/mjames/accept.png) !important;
 }
 .x-tbar-parameters{
-	background-image: url(images/mjames/database_gear.png) !important;
+	background-image: url(/static/images/mjames/database_gear.png) !important;
 }
 .x-tbar-wrench{
-	background-image: url(images/mjames/wrench.png) !important;
+	background-image: url(/static/images/mjames/wrench.png) !important;
 }
 .x-tbar-transmit{
-	background-image: url(images/mjames/transmit.png) !important;
+	background-image: url(/static/images/mjames/transmit.png) !important;
 }
 
 /* 

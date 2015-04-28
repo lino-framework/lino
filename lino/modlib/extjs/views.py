@@ -53,8 +53,9 @@ from lino.core import dbtables
 from lino.core.views import requested_actor, action_request
 from lino.core.views import json_response, json_response_kw
 
-from lino.core import constants as ext_requests
-
+from lino.core import constants
+from lino.core.requests import BaseRequest
+        
 MAX_ROW_COUNT = 300
 
 
@@ -134,30 +135,27 @@ class MainHtml(View):
         settings.SITE.startup()
         ui = settings.SITE.kernel
         #~ raise Exception("20131023")
-        from lino.core import requests
-        ar = requests.BaseRequest(request)
-        ar.set_response(
-            success=True,
-            html=settings.SITE.get_main_html(request))
+        ar = BaseRequest(request)
+        ar.success(html=settings.SITE.get_main_html(request))
         return ui.render_action_response(ar)
 
 
 class Authenticate(View):
     """This view is being used when :setting:`remote_user_header` is
     empty (and :setting:`user_model` not).
+    :class:`lino.core.auth.SessionUserMiddleware`
 
     """
 
     def get(self, request, *args, **kw):
-        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME)
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
             username = request.session.pop('username', None)
             request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
 
-            from lino.core import requests
-            ar = requests.BaseRequest(request)
+            ar = BaseRequest(request)
             ar.success("User %r logged out." % username)
             return settings.SITE.kernel.render_action_response(ar)
         raise http.Http404()
@@ -166,14 +164,14 @@ class Authenticate(View):
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = auth.authenticate(username, password)
-        from lino.core import requests
-        ar = requests.BaseRequest(request)
+        ar = BaseRequest(request)
         if user is None:
             ar.error("Could not authenticate %r" % username)
-            return settings.SITE.kernel.render_action_response(ar)
-        request.session['username'] = username
-        request.session['password'] = password
-        ar.success(("Now logged in as %r" % username))
+        else:
+            request.session['username'] = username
+            request.session['password'] = password
+            ar.success(("Now logged in as %r" % username))
+            print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.render_action_response(ar)
 
 
@@ -219,20 +217,20 @@ def choices_for_field(request, holder, field):
                 holder.model, field.name, qs))
         if chooser.simple_values:
             def row2dict(obj, d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj
+                d[constants.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[constants.CHOICES_VALUE_FIELD] = obj
                 return d
         elif chooser.instance_values:
             # same code as for ForeignKey
             def row2dict(obj, d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                     obj, request, field)
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
+                d[constants.CHOICES_VALUE_FIELD] = obj.pk
                 return d
         else:  # values are (value,text) tuples
             def row2dict(obj, d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                d[constants.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
                 return d
 
     elif field.choices:
@@ -240,12 +238,12 @@ def choices_for_field(request, holder, field):
 
         def row2dict(obj, d):
             if type(obj) is list or type(obj) is tuple:
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj[1])
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj[0]
+                d[constants.CHOICES_TEXT_FIELD] = unicode(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
             else:
-                d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                     obj, request, field)
-                d[ext_requests.CHOICES_VALUE_FIELD] = unicode(obj)
+                d[constants.CHOICES_VALUE_FIELD] = unicode(obj)
             return d
 
     elif isinstance(field, models.ForeignKey):
@@ -255,9 +253,9 @@ def choices_for_field(request, holder, field):
         # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
 
         def row2dict(obj, d):
-            d[ext_requests.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+            d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
                 obj, request, field)
-            d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
+            d[constants.CHOICES_VALUE_FIELD] = obj.pk
             return d
     else:
         raise http.Http404("No choices for %s" % field)
@@ -265,17 +263,17 @@ def choices_for_field(request, holder, field):
 
 
 def choices_response(request, qs, row2dict, emptyValue):
-    quick_search = request.GET.get(ext_requests.URL_PARAM_FILTER, None)
+    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
     if quick_search is not None:
         qs = dbtables.add_quick_search_filter(qs, quick_search)
 
     count = len(qs)
 
-    offset = request.GET.get(ext_requests.URL_PARAM_START, None)
+    offset = request.GET.get(constants.URL_PARAM_START, None)
     if offset:
         qs = qs[int(offset):]
         #~ kw.update(offset=int(offset))
-    limit = request.GET.get(ext_requests.URL_PARAM_LIMIT, None)
+    limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
     if limit:
         #~ kw.update(limit=int(limit))
         qs = qs[:int(limit)]
@@ -283,8 +281,8 @@ def choices_response(request, qs, row2dict, emptyValue):
     rows = [row2dict(row, {}) for row in qs]
     if emptyValue is not None:  # 20121203
         empty = dict()
-        empty[ext_requests.CHOICES_TEXT_FIELD] = emptyValue
-        empty[ext_requests.CHOICES_VALUE_FIELD] = None
+        empty[constants.CHOICES_TEXT_FIELD] = emptyValue
+        empty[constants.CHOICES_VALUE_FIELD] = None
         rows.insert(0, empty)
     return json_response_kw(count=count, rows=rows)
     #~ return json_response_kw(count=len(rows),rows=rows)
@@ -331,9 +329,9 @@ class Choices(View):
             #~ qs = rpt.request(self).get_queryset()
 
             def row2dict(obj, d):
-                d[ext_requests.CHOICES_TEXT_FIELD] = unicode(obj)
+                d[constants.CHOICES_TEXT_FIELD] = unicode(obj)
                 # getattr(obj,'pk')
-                d[ext_requests.CHOICES_VALUE_FIELD] = obj.pk
+                d[constants.CHOICES_VALUE_FIELD] = obj.pk
                 return d
         else:
             """
@@ -422,7 +420,7 @@ class ApiElement(View):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
 
-        action_name = request.GET.get(ext_requests.URL_PARAM_ACTION_NAME,
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
                                       rpt.default_elem_action_name)
         ba = rpt.get_url_action(action_name)
         if ba is None:
@@ -446,11 +444,11 @@ class ApiElement(View):
         ah = ar.ah
 
         fmt = request.GET.get(
-            ext_requests.URL_PARAM_FORMAT, ba.action.default_format)
+            constants.URL_PARAM_FORMAT, ba.action.default_format)
 
         if ba.action.opens_a_window:
 
-            if fmt == ext_requests.URL_FORMAT_JSON:
+            if fmt == constants.URL_FORMAT_JSON:
                 if pk == '-99999':
                     elem = ar.create_instance()
                     datarec = ar.elem2rec_insert(ah, elem)
@@ -464,7 +462,7 @@ class ApiElement(View):
 
             after_show = ar.get_status(record_id=pk)
 
-            tab = request.GET.get(ext_requests.URL_PARAM_TAB, None)
+            tab = request.GET.get(constants.URL_PARAM_TAB, None)
             if tab is not None:
                 tab = int(tab)
                 after_show.update(active_tab=tab)
@@ -537,10 +535,10 @@ class ApiList(View):
         rh = ar.ah
 
         fmt = request.GET.get(
-            ext_requests.URL_PARAM_FORMAT,
+            constants.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
 
-        if fmt == ext_requests.URL_FORMAT_JSON:
+        if fmt == constants.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
                     for row in ar.sliced_data_iterator]
             total_count = ar.get_total_count()
@@ -559,15 +557,15 @@ class ApiList(View):
                         ar.param_values))
             return json_response(kw)
 
-        if fmt == ext_requests.URL_FORMAT_HTML:
+        if fmt == constants.URL_FORMAT_HTML:
             after_show = ar.get_status()
 
             sp = request.GET.get(
-                ext_requests.URL_PARAM_SHOW_PARAMS_PANEL, None)
+                constants.URL_PARAM_SHOW_PARAMS_PANEL, None)
             if sp is not None:
                 #~ after_show.update(show_params_panel=sp)
                 after_show.update(
-                    show_params_panel=ext_requests.parse_boolean(sp))
+                    show_params_panel=constants.parse_boolean(sp))
 
             # if isinstance(ar.bound_action.action, actions.InsertRow):
             #     elem = ar.create_instance()
@@ -607,7 +605,7 @@ class ApiList(View):
                 w.writerow([unicode(v) for v in rh.store.row2list(ar, row)])
             return response
 
-        if fmt == ext_requests.URL_FORMAT_PRINTER:
+        if fmt == constants.URL_FORMAT_PRINTER:
             if ar.get_total_count() > MAX_ROW_COUNT:
                 raise Exception(_("List contains more than %d rows") %
                                 MAX_ROW_COUNT)
@@ -632,22 +630,22 @@ class GridConfig(View):
         PUT = http.QueryDict(request.body)  # raw_post_data before Django 1.4
         gc = dict(
             widths=[int(x)
-                    for x in PUT.getlist(ext_requests.URL_PARAM_WIDTHS)],
+                    for x in PUT.getlist(constants.URL_PARAM_WIDTHS)],
             columns=[str(x)
-                     for x in PUT.getlist(ext_requests.URL_PARAM_COLUMNS)],
+                     for x in PUT.getlist(constants.URL_PARAM_COLUMNS)],
             hiddens=[(x == 'true')
-                     for x in PUT.getlist(ext_requests.URL_PARAM_HIDDENS)],
+                     for x in PUT.getlist(constants.URL_PARAM_HIDDENS)],
             #~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
         )
 
         filter = PUT.get('filter', None)
         if filter is not None:
             filter = json.loads(filter)
-            gc['filters'] = [ext_requests.dict2kw(flt) for flt in filter]
+            gc['filters'] = [constants.dict2kw(flt) for flt in filter]
 
         name = PUT.get('name', None)
         if name is None:
-            name = ext_requests.DEFAULT_GC_NAME
+            name = constants.DEFAULT_GC_NAME
         else:
             name = int(name)
 

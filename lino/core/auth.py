@@ -46,13 +46,13 @@ class AuthMiddleWareBase(object):
         raise NotImplementedError
 
     def process_request(self, request):
-        # logger.info("20150424 %s process_request %s" % (
-        #     self.__class__.__name__, request.path))
-
         # first request will trigger site startup to load UserProfiles
         # settings.SITE.startup()
 
         user = self.get_user_from_request(request)
+
+        # logger.info("20150428 %s process_request %s -> %s" % (
+        #     self.__class__.__name__, request.path, user))
 
         self.on_login(request, user)
 
@@ -217,6 +217,11 @@ class SessionUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
+
+        # logger.info("20150428 %s get_user_from_request %s, %s" % (
+        #     self.__class__.__name__,
+        #     request.session.get('username'),
+        #     request.session.get('password')))
 
         user = self.authenticate(request.session.get('username'),
                                  request.session.get('password'))

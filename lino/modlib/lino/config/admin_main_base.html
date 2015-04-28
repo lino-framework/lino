@@ -72,9 +72,6 @@
 {% if E.iselement(T) %}{{E.tostring(T)}}{% else %}
 {% if T.default_action.get_view_permission(ar.get_user().profile) %}
 <h2>{{T.label}} 
-{# {{E.tostring(ar.window_action_button(T.default_action,
-    title=_("Show this panel in own window"),
-    icon_ffile="../wikipedia/external_text"))}} #}
 {{E.tostring(ar.window_action_button(T.default_action,
     title=_("Show this panel in own window"),
     style='vertical-align:0;',

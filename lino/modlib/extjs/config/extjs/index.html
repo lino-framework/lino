@@ -56,7 +56,7 @@
             {{ javascript(extjs.build_static_url('ext-all.js')) }}
         {%- endif -%}
     {%- endblock js -%}
-    {%- if language != 'en' -%}
+    {%- if not language.startswith('en') -%}
         {{ javascript(extjs.build_static_url('src/locale/ext-lang-' + language + '.js')) }}
     {%- endif -%}
     {{ javascript(extjs.build_static_url('examples/ux/statusbar/StatusBar.js')) }}
