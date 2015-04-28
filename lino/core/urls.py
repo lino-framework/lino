@@ -19,4 +19,4 @@ from django.conf import settings
 
 # from lino.modlib.extjs.urls import urlpatterns
 
-urlpatterns = settings.SITE.ui.get_patterns()
+urlpatterns = settings.SITE.kernel.get_patterns()

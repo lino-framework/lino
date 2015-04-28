@@ -76,10 +76,10 @@ Lino.on_eventupdate  = function(cp,rec,el) {
 //~ Lino.eventStore = new Ext.data.ArrayStore({ 
 Lino.unused_eventStore = new Ext.data.JsonStore({ 
   listeners: { exception: Lino.on_store_exception }
-  ,url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}'
+  ,url: '{{extjs.build_plain_url("restful/extensible/PanelEvents")}}'
   ,restful : true
   ,proxy: new Ext.data.HttpProxy({ 
-      url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}', 
+      url: '{{extjs.build_plain_url("restful/extensible/PanelEvents")}}', 
       disableCaching: false // no need for cache busting when loading via Ajax
       //~ disableCaching:true,
   })
@@ -94,7 +94,7 @@ Lino.unused_eventStore = new Ext.data.JsonStore({
     //~ foo.bar = baz; // 20120213
       if (!options) options = {};
       if (!options.params) options.params = {};
-      //~ options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
+      //~ options.params.$constants.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
       
       var view = this.cal_panel.getActiveView();
       var bounds = view.getViewBounds();
@@ -235,10 +235,10 @@ Lino.CalendarApp = function() { return {
       var cap = null;
       this.event_store = new Ext.data.JsonStore({ 
           listeners: { exception: Lino.on_store_exception }
-          ,url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}'
+          ,url: '{{extjs.build_plain_url("restful/extensible/PanelEvents")}}'
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelEvents")}}', 
+              url: '{{extjs.build_plain_url("restful/extensible/PanelEvents")}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ disableCaching:true,
           })
@@ -253,7 +253,7 @@ Lino.CalendarApp = function() { return {
             //~ foo.bar = baz; // 20120213
               if (!options) options = {};
               if (!options.params) options.params = {};
-              //~ options.params.$ext_requests.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
+              //~ options.params.$constants.URL_PARAM_TEAM_VIEW = Lino.calendar_app.team_view_button.pressed;
               
               var view = this.cal_panel.getActiveView();
               var bounds = view.getViewBounds();
@@ -279,7 +279,7 @@ Lino.CalendarApp = function() { return {
           listeners: { exception: Lino.on_store_exception }
           ,restful : true
           ,proxy: new Ext.data.HttpProxy({ 
-              url: '{{settings.SITE.build_admin_url("restful/extensible/PanelCalendars",fmt=ext_requests.URL_FORMAT_JSON)}}', 
+              url: '{{extjs.build_plain_url("restful/extensible/PanelCalendars",fmt=constants.URL_FORMAT_JSON)}}', 
               disableCaching: false // no need for cache busting when loading via Ajax
               //~ restful : true
               //~ method: "GET"
@@ -363,9 +363,8 @@ Lino.CalendarApp = function() { return {
                     //~ pressed:false,
                     //~ toggleHandler: function(btn,state) { 
                       //~ // console.log('20120716 teamView.toggle()');
-                      //~ this.event_store.setBaseParam('{{ext_requests.URL_PARAM_TEAM_VIEW}}',state);
+                      //~ this.event_store.setBaseParam('{{constants.URL_PARAM_TEAM_VIEW}}',state);
                       //~ this.event_store.load();
-                      //~ // Lino.eventStore.load({params:{$ext_requests.URL_PARAM_TEAM_VIEW:state}});
                       //~ // console.log("team view",state);
                     //~ }
                   //~ })

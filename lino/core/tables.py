@@ -24,7 +24,8 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import signals
 from lino.core.tablerequest import TableRequest
-from lino.core.utils import Handle, gfk2lookup
+# from lino.core.utils import Handle
+from lino.core.utils import gfk2lookup
 from lino.utils.xmlgen.html import E
 from lino.utils.xmlgen.html import RstTable
 
@@ -102,7 +103,8 @@ if False:  # 20130710
             f.write(yaml.dump(self.data))
 
 
-class TableHandle(Handle):
+# class TableHandle(Handle):
+class TableHandle(object):
     """
     For every table we create one "handle" per renderer.
     """
@@ -111,7 +113,7 @@ class TableHandle(Handle):
 
     def __init__(self, actor):
         self.actor = actor
-        Handle.__init__(self)
+        # Handle.__init__(self)
         #~ super(TableHandle,self).__init__()
 
     def __str__(self):
@@ -124,7 +126,7 @@ class TableHandle(Handle):
         self._layouts = [self.list_layout]
 
     def get_actor_url(self, *args, **kw):
-        return settings.SITE.ui.get_actor_url(self.actor, *args, **kw)
+        return settings.SITE.kernel.get_actor_url(self.actor, *args, **kw)
 
     def submit_elems(self):
         return []
@@ -139,8 +141,7 @@ class TableHandle(Handle):
         return lh.main.columns
 
     def get_slaves(self):
-        #~ return [ sl.get_handle(self.ui) for sl in self.actor._slaves ]
-        return [sl.get_handle(settings.SITE.ui) for sl in self.actor._slaves]
+        return [sl.get_handle() for sl in self.actor._slaves]
 
 
 class Group(object):
@@ -610,10 +611,7 @@ method in order to sort the rows of the queryset.
         To be combined with the `show` management command.
         """
         settings.SITE.startup()
-        #~ settings.SITE.ui
         if pk is not None:
-            #~ elem = self.get_row_by_pk(pk)
-            #~ elem = self.model.objects.get(pk=pk)
             if an is None:
                 an = self.default_elem_action_name
         elif an is None:

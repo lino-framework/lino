@@ -695,8 +695,7 @@ class Model(models.Model):
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
         actor = self.get_default_table()
-        kw.update(renderer=settings.SITE.ui.text_renderer)
-        #~ ar = settings.SITE.ui.text_renderer.request(**kw)
+        kw.update(renderer=settings.SITE.kernel.text_renderer)
         ar = actor.request(**kw)
         return self.preview(ar)
         #~ username = kw.pop('username',None)

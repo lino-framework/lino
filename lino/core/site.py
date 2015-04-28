@@ -392,7 +392,7 @@ documentation.
     """A universal identifier for this Site.  This is needed when
     synchronizing with CalDAV server.  Locally created calendar
     components in remote calendars will get a UID based on this
-    parameter, using ``"%s@%s" (self.pk, settings.SITE.ui)``.
+    parameter, using ``"%s@%s" % (self.pk, settings.SITE.kernel)``.
     
     The default value is ``'myuid'``, and you should certainly
     override this on a production server that uses remote calendars.
@@ -1750,10 +1750,9 @@ documentation.
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
-        self.ui = self.kernel  # internal backwards compat
+        # self.ui = self.kernel  # internal backwards compat
         self.user_interfaces = tuple([
-            p for p in self.installed_plugins
-            if isinstance(p, Plugin) and p.ui_label])
+            p for p in self.installed_plugins if p.ui_label])
 
         # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
 
@@ -2859,21 +2858,6 @@ Please convert to Plugin method".format(mod, methname)
         if len(kw):
             url += "?" + urlencode(kw)
         return url
-
-    def build_admin_url(self, *args, **kw):
-        # deprecated.
-        return self.kernel.default_renderer.plugin.build_plain_url(
-            *args, **kw)
-        
-    def build_extjs_url(self, *args, **kw):
-        raise Exception("20150425 deprecated")
-        return self.kernel.default_renderer.plugin.build_lib_url(
-            *args, **kw)
-
-    # def build_tinymce_url(self, url):
-    #     if self.tinymce_base_url:
-    #         return self.tinymce_base_url + url
-    #     return self.build_media_url('tinymce', url)
 
     def get_system_note_recipients(self, request, obj, silent):
         """Return or yield a list of recipients

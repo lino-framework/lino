@@ -8,7 +8,6 @@
 
    models
    management.commands
-   tests
 
 """
 
@@ -19,6 +18,4 @@ class Plugin(Plugin):
 
     ui_label = _("Lino")
 
-    # url_prefix = 'lino'
-
-    media_name = 'lino'
+    # media_name = 'lino'

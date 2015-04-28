@@ -584,7 +584,7 @@ class ActionParamsLayout(ParamsLayout):
         e.declare_type = jsgen.DECLARE_THIS
 
     def get_choices_url(self, ui, field, **kw):
-        return settings.SITE.build_admin_url(
+        return settings.SITE.kernel.default_ui.build_plain_url(
             "apchoices",
             self._datasource.defining_actor.app_label,
             self._datasource.defining_actor.__name__,

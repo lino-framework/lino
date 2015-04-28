@@ -21,24 +21,13 @@ class Plugin(Plugin):
         from lino.modlib.bootstrap3.renderer import Renderer
         self.renderer = Renderer(self)
 
-    def get_patterns(self, ui, prefix=''):
-        from django.conf.urls import patterns
+    def get_patterns(self, ui):
+        from django.conf.urls import url
         from . import views
 
-        if prefix:
-            assert prefix.endswith('/')
-        rx = '^' + prefix
-
-        urls = patterns(
-            '',
-            (rx + r'/?$', self.get_index_view()),
-            (rx + r'(?P<ref>\w*)$', views.PagesIndex.as_view()),
-        )
-
-        # if self.url_prefix:
-        #     return patterns(
-        #         '', ('^' + self.url_prefix + "/", include(urls)))
-        return urls
+        return [
+            url(r'^/?$', self.get_index_view()),
+            url(r'^(?P<ref>\w*)$', views.PagesIndex.as_view())]
 
     def get_index_view(self):
         from . import views

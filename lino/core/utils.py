@@ -469,21 +469,21 @@ def navinfo(qs, elem):
         message=message)
 
 
-class Handle:
-    """Base class for :class:`lino.core.tables.TableHandle`,
-    :class:`lino.core.frames.FrameHandle` etc.
+# class Handle(object):
+#     """Base class for :class:`lino.core.tables.TableHandle`,
+#     :class:`lino.core.frames.FrameHandle` etc.
 
-    The "handle" of an actor is responsible for expanding layouts into
-    sets of (renderer-specific) widgets (called "elements"). This
-    operation is done once per actor per renderer.
+#     The "handle" of an actor is responsible for expanding layouts into
+#     sets of (renderer-specific) widgets (called "elements"). This
+#     operation is done once per actor per renderer.
 
-    """
-    def __init__(self):
-        self.ui = settings.SITE.ui
+#     """
+#     # def __init__(self):
+#     #     self.ui = settings.SITE.kernel.default_ui
 
-    def setup(self, ar):
-        self.ui.setup_handle(self, ar)
-        #~ settings.SITE.ui.setup_handle(self,ar)
+#     def setup(self, ar):
+#         settings.SITE.kernel.setup_handle(self, ar)
+#         # self.ui.setup_handle(self, ar)
 
 
 class Parametrizable(object):
@@ -626,7 +626,7 @@ class InstanceAction(object):
         return self.run_from_code(*args, **kwargs)
 
     def as_button_elem(self, ar, label=None, **kwargs):
-        return settings.SITE.ui.row_action_button(
+        return settings.SITE.kernel.row_action_button(
             self.instance, ar, self.bound_action, label, **kwargs)
 
     def as_button(self, *args, **kwargs):

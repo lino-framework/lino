@@ -469,7 +469,7 @@ class About(EmptyTable):
     def server_status(cls, obj, ar):
         body = []
         body.append(E.p(_("%s pending threads") %
-                    len(settings.SITE.ui.pending_threads)))
+                    len(settings.SITE.kernel.pending_threads)))
         return E.div(*body, class_='htmlText')
 
     #~ @dd.displayfield(_("Versions"))

@@ -113,9 +113,7 @@ class Renderer(AppyRenderer):
         context.update(toxml=toxml)
         #~ from lino.extjs import ui
         #~ self.extjs_ui = ui
-        #~ self.extjs_ui = settings.SITE.ui
-        #~ context.update(ui=self.extjs_ui)
-        context.update(ui=settings.SITE.ui)
+        context.update(ui=settings.SITE.kernel)
         context.update(settings=settings)
         context.update(sc=settings.SITE.site_config)
         context.update(settings.SITE.modules)
@@ -129,7 +127,6 @@ class Renderer(AppyRenderer):
     def jinja_func(self, template_name, **kw):
         saved_renderer = self.ar.renderer
         try:
-            # self.ar.renderer = settings.SITE.ui.plain_renderer
             self.ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             if not '.' in template_name:
                 template_name += '.html'
@@ -565,7 +562,7 @@ class PrintTableAction(actions.Action):
         if not tplfile:
             raise Exception("No file %s" % self.template_name)
 
-        ar.renderer = settings.SITE.ui.default_renderer  # 20120624
+        ar.renderer = settings.SITE.kernel.default_renderer  # 20120624
 
         context = self.get_context(ar)
         if os.path.exists(target_file):

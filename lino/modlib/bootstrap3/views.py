@@ -58,7 +58,6 @@ class List(View):
 
     def get(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.GET, True)
-        # ar.renderer = settings.SITE.ui.bs3_renderer
         ar.renderer = dd.plugins.bootstrap3.renderer
         context = dict(
             title=ar.get_title(),

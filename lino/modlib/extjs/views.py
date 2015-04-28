@@ -171,7 +171,7 @@ class Authenticate(View):
             request.session['username'] = username
             request.session['password'] = password
             ar.success(("Now logged in as %r" % username))
-            print "20150428 Now logged in as %r (%s)" % (username, user)
+            # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.render_action_response(ar)
 
 

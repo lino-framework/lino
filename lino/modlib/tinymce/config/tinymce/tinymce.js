@@ -14,14 +14,14 @@ Lino.edit_tinymce_text = function(panel, options) {
     var url = panel.containing_panel.get_record_url(rec.id);
     var params = Ext.apply({}, panel.containing_panel.get_base_params());
     params[panel.editor.name] = editor.getValue();
-    //~ params.{{ext_requests.URL_PARAM_SUBST_USER}} = Lino.subst_user;
+    //~ params.{{constants.URL_PARAM_SUBST_USER}} = Lino.subst_user;
     //~ Lino.insert_subst_user(params);
 
     // 20150325 http://trac.lino-framework.org/ticket/131
     var action_name = panel.containing_panel.save_action_name;
     if (!action_name) 
         action_name = panel.containing_panel.action_name;
-    params.{{ext_requests.URL_PARAM_ACTION_NAME}} = action_name;
+    params.{{constants.URL_PARAM_ACTION_NAME}} = action_name;
 
     var a = { 
       params: params, 

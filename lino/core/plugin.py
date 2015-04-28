@@ -275,20 +275,19 @@ class Plugin(object):
             if len(kw):
                 url += "?" + urlencode(kw)
             return url
-        # return self.buildurl('media', self.media_name, *parts, **kw)
-        return self.site.build_static_url(
-            self.media_name, *parts, **kw)
+        return self.site.build_static_url(self.media_name, *parts, **kw)
 
     def build_plain_url(self, *args, **kw):
         if self.url_prefix:
-            return self.buildurl(self.url_prefix, *args, **kw)
-        return self.buildurl(*args, **kw)
+            return self.site.buildurl(self.url_prefix, *args, **kw)
+        return self.site.buildurl(*args, **kw)
 
-    def buildurl(self, *args, **kw):
-        url = self.site.site_prefix + ("/".join(args))
-        if len(kw):
-            url += "?" + urlencode(kw)
-        return url
+    # def buildurl(self, *args, **kw):
+    #     raise Exception("20150425 deprecated")
+    #     url = self.site.site_prefix + ("/".join(args))
+    #     if len(kw):
+    #         url += "?" + urlencode(kw)
+    #     return url
 
     def get_menu_group(self):
         """Return the plugin into whose menu this plugin wants to be inserted.

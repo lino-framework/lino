@@ -657,7 +657,7 @@ class Actor(actions.Parametrizable):
         if h is None:
             h = self._handle_class(self)
             setattr(self, hname, h)
-            h.setup(ar)
+            settings.SITE.kernel.setup_handle(h, ar)
         return h
 
     @classmethod
@@ -1231,7 +1231,7 @@ class Actor(actions.Parametrizable):
             kw.update(master_instance=master_instance)
         kw.update(actor=self)
         kw.update(known_values=known_values)
-        kw.update(renderer=settings.SITE.ui.text_renderer)
+        kw.update(renderer=settings.SITE.kernel.text_renderer)
         self.request(**kw).show(column_names)
 
     @classmethod
@@ -1260,7 +1260,7 @@ class Actor(actions.Parametrizable):
             #~ ar = self.request(ui,request=ar.request,
                 #~ master_instance=master,param_values={})
             ar = self.request(master, request=ar.request, param_values={})
-            ar.renderer = settings.SITE.ui.default_renderer
+            ar.renderer = settings.SITE.kernel.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ar.table2xhtml()
             #~ s = etree.tostring(ui.table2xhtml(ar))

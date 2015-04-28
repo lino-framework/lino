@@ -345,9 +345,6 @@ class TableRequest(ActionRequest):
             return E.div(E.h2(self.actor.label), e)
         return e
 
-    #~ def table2xhtml(self):
-        #~ return settings.SITE.ui.table2xhtml(self)
-
     def dump2html(self, tble, data_iterator, column_names=None):
         """
         Render this table into an existing

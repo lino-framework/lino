@@ -432,7 +432,7 @@ def find_menu_item(spec):
     from django.conf import settings
     from lino.api import dd
     profile = dd.modules.users.UserProfiles.get_by_value('900')
-    menu = settings.SITE.get_site_menu(settings.SITE.ui, profile)
+    menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
     for mi in menu.walk_items():
         if mi.bound_action == spec:
             return mi

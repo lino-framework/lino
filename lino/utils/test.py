@@ -135,7 +135,7 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         from django.conf import settings
         case = HttpQuery(username, url_base, json_fields,
                          expected_rows, kwargs)
-        url = settings.SITE.build_admin_url(case.url_base, **case.kwargs)
+        url = settings.SITE.buildurl(case.url_base, **case.kwargs)
 
         if True:
             msg = 'Using remote authentication, but no user credentials found.'

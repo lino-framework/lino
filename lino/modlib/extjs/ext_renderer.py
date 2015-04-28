@@ -363,16 +363,16 @@ class ExtRenderer(HtmlRenderer):
         uri = self.js2url(h)
         return self.href_button(uri, text, **kw)
 
-    def build_admin_url(self, *args, **kw):
-        return self.plugin.build_plain_url(*args, **kw)
+    # def build_admin_url(self, *args, **kw):
+    #     return self.plugin.build_plain_url(*args, **kw)
 
     def get_actor_url(self, actor, *args, **kw):
-        return self.build_admin_url(
+        return self.plugin.build_plain_url(
             "api",
             actor.app_label, actor.__name__, *args, **kw)
 
     def get_home_url(self, *args, **kw):
-        return self.build_admin_url(*args, **kw)
+        return self.plugin.build_plain_url(*args, **kw)
 
     def get_request_url(self, ar, *args, **kw):
         """
@@ -392,11 +392,11 @@ class ExtRenderer(HtmlRenderer):
         #~ kw = self.request2kw(rr,**kw)
         if ar.bound_action != ar.actor.default_action:
             kw[constants.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
-        return self.build_admin_url(
+        return self.plugin.build_plain_url(
             'api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
     def get_detail_url(self, obj, *args, **kw):
-        return self.build_admin_url(
+        return self.plugin.build_plain_url(
             'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
 
     def show_request(self, ar, **kw):
@@ -630,7 +630,9 @@ class ExtRenderer(HtmlRenderer):
             site=settings.SITE,
             settings=settings,
             lino=lino,
-            ext_requests=constants,
+            # ext_requests=constants,
+            constants=constants,
+            extjs=settings.SITE.plugins.extjs,
         )
 
         context.update(_=_)

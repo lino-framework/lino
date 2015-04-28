@@ -45,7 +45,7 @@ class Plugin(Plugin):
     Default is `False` since currently this is not really useful.
     """
 
-    url_prefix = "admin"
+    url_prefix = "ext"
 
     media_name = 'ext-3.3.1'
 

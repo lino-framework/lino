@@ -174,7 +174,6 @@ class BaseRequest(object):
             else:
                 rqdata = request.REQUEST
             kw = self.parse_req(request, rqdata, **kw)
-        #~ 20120605 self.ah = actor.get_handle(ui)
         if parent is not None:
             for k in inheritable_attrs:
                 if k in kw:
@@ -415,10 +414,10 @@ request from it.
         return retval
 
     def set_callback(self, *args, **kw):
-        return settings.SITE.ui.set_callback(self, *args, **kw)
+        return settings.SITE.kernel.set_callback(self, *args, **kw)
 
     def add_callback(self, *args, **kw):
-        return settings.SITE.ui.add_callback(self, *args, **kw)
+        return settings.SITE.kernel.add_callback(self, *args, **kw)
 
     def goto_instance(self, obj, **kw):
         """

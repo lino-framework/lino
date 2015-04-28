@@ -96,7 +96,7 @@ class Command(GeneratingCommand):
         for rpt in (dbtables.master_reports
                     + dbtables.slave_reports
                     + dbtables.generic_slaves.values()):
-            rh = rpt.get_handle(ui)
+            rh = rpt.get_handle()
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)
             context.update(rh=rh)

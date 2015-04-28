@@ -153,7 +153,7 @@ Estonia''')
         luc = Person.objects.get(name__exact="Saffre Luc")
         self.assertEqual(luc.pk, contacts.PARTNER_NUMBERS_START_AT)
 
-        url = settings.SITE.build_admin_url(
+        url = settings.SITE.buildurl(
             'api', 'contacts', 'Person',
             '%d?query=&an=detail&fmt=json' % luc.pk)
         #~ url = '/api/contacts/Person/%d?query=&an=detail&fmt=json' % luc.pk
@@ -236,7 +236,7 @@ Estonia''')
 
         """
 
-        url = settings.SITE.build_admin_url(
+        url = settings.SITE.buildurl(
             'api', 'system', 'SiteConfigs', '1?an=detail&fmt=json')
         response = self.client.get(url, REMOTE_USER='root')
         result = self.check_json_result(

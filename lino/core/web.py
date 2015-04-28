@@ -166,7 +166,7 @@ def render_from_request(request, template_name, **context):
     extend_context(context)
     context.update(request=request)
     ar = requests.BaseRequest(
-        renderer=settings.SITE.ui.default_renderer,
+        renderer=settings.SITE.kernel.default_renderer,
         request=request)
     context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(template_name)
@@ -192,7 +192,7 @@ class DjangoJinjaTemplate:
         context_dict.setdefault('request', None)
         context_dict.setdefault(
             'ar', requests.BaseRequest(
-                renderer=settings.SITE.ui.default_renderer))
+                renderer=settings.SITE.kernel.default_renderer))
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)
 

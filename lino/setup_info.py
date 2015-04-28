@@ -258,7 +258,6 @@ lino.test_apps.example
 lino.test_apps.quantityfield
 lino.test_apps.20121124
 lino.test_apps.nomti
-lino.modlib.lino.tests
 lino.tutorials
 lino.tutorials.mini
 lino.utils
