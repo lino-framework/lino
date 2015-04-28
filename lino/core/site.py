@@ -515,16 +515,15 @@ documentation.
     default_build_method = "appypdf"
 
     is_demo_site = True
-    """
-    When this is `True`, then this site runs in "demo" mode.     
-    "Demo mode" means:
+    """When this is `True`, then this site runs in "demo" mode.  "Demo
+    mode" means:
     
-    - the welcome text for anonymous users says "This demo site has X 
-      users, they all have "1234" as password", 
-      followed by a list of available usernames.
+    - the welcome text for anonymous users says "This demo site has X
+      users, they all have "1234" as password", followed by a list of
+      available usernames.
     
-    Default value is `True`.
-    On a production site you will of course set this to `False`.
+    Default value is `True`.  On a production site you will of course
+    set this to `False`.
     
     See also :attr:`demo_fixtures`.
 
@@ -995,8 +994,6 @@ documentation.
         else:
             self.cache_dir = Path(self.project_dir).absolute()
 
-        gen = self.cache_dir.child('static')
-
         self._starting_up = False
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
@@ -1012,6 +1009,15 @@ documentation.
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
         })
+
+        if self.site_prefix != '/':
+            if not self.site_prefix.endswith('/'):
+                raise Exception("`site_prefix` must end with a '/'!")
+            if not self.site_prefix.startswith('/'):
+                raise Exception("`site_prefix` must start with a '/'!")
+            self.update_settings(
+                SESSION_COOKIE_PATH=self.site_prefix[:-1])
+            # self.update_settings(SESSION_COOKIE_NAME='ssid')
 
         ## Local project directory
         modname = self.__module__
@@ -2815,6 +2821,9 @@ Please convert to Plugin method".format(mod, methname)
     This must be set if your project is not being served at the "root"
     URL of your server.
 
+    If this is different from the default value, Lino also sets
+    :setting:`SESSION_COOKIE_PATH`.
+
     When this Site is running under something else than a development
     server, this setting must correspond to your web server's
     configuration.  For example if you have::
@@ -2852,7 +2861,7 @@ Please convert to Plugin method".format(mod, methname)
         return url
 
     def build_admin_url(self, *args, **kw):
-        # deprecated. 
+        # deprecated.
         return self.kernel.default_renderer.plugin.build_plain_url(
             *args, **kw)
         

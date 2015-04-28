@@ -47,15 +47,9 @@ def setup_site(self):
     self.django_settings.update(ADMINS=[["John Doe", "john@example.com"]])
     self.django_settings.update(DEBUG=False)
     self.django_settings.update(SECRET_KEY='?~hdakl123ASD%#¤/&¤')
-    if hasattr(self, 'appy_params'): 
-        # it's a lino.site.Site, not just djangosite.site.Site
 
-        if self.site_prefix != '/':
-            assert self.site_prefix.endswith('/')
-            self.update_settings(SESSION_COOKIE_PATH=self.site_prefix[:-1])
+    self.site_config_defaults = dict(default_build_method='appypdf')
 
-        self.site_config_defaults = dict(default_build_method='appypdf')
-
-        self.appy_params.update(ooPort=8100)
-        #        pythonWithUnoPath='/etc/openoffice.org3/program/python')
+    self.appy_params.update(ooPort=8100)
+    #        pythonWithUnoPath='/etc/openoffice.org3/program/python')
 
