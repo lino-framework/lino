@@ -2867,7 +2867,7 @@ Please convert to Plugin method".format(mod, methname)
         
     def build_extjs_url(self, *args, **kw):
         raise Exception("20150425 deprecated")
-        return self.kernel.default_renderer.plugin.build_static_url(
+        return self.kernel.default_renderer.plugin.build_lib_url(
             *args, **kw)
 
     # def build_tinymce_url(self, url):

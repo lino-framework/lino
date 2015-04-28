@@ -48,7 +48,7 @@ class Plugin(ad.Plugin):  # was: use_eidreader
             return
         # p = self.build_media_url('EIDReader.jar')
         # p = self.build_media_url('eidreader.jnlp')
-        p = self.build_static_url()
+        p = self.build_lib_url()
         p = request.build_absolute_uri(p)
         yield '<applet name="EIDReader" code="src.eidreader.EIDReader.class"'
         # yield '        archive="%s"' % p

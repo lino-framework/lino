@@ -38,8 +38,8 @@ class Plugin(ad.Plugin):
             yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
 
     def get_js_includes(self, settings, language):
-        yield self.build_static_url('tiny_mce.js')
-        yield settings.SITE.build_static_url("tinymce", "Ext.ux.TinyMCE.js")
+        yield self.build_lib_url('tiny_mce.js')
+        yield settings.SITE.build_static_url("tinymce/Ext.ux.TinyMCE.js")
 
     def get_head_lines(self, site, request):
         # yield javascript(site.build_media_url("tinymce", "tiny_mce.js"))

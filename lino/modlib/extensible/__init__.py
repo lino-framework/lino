@@ -34,15 +34,15 @@ class Plugin(ad.Plugin):
                    "http://ext.ensible.com/products/calendar/")
 
     def get_css_includes(self, site):
-        yield self.build_static_url('resources/css/extensible-all.css')
+        yield self.build_lib_url('resources/css/extensible-all.css')
 
     def get_js_includes(self, settings, language):
         if settings.DEBUG:
-            yield self.build_static_url('extensible-all-debug.js')
+            yield self.build_lib_url('extensible-all-debug.js')
         else:
-            yield self.build_static_url('extensible-all.js')
+            yield self.build_lib_url('extensible-all.js')
         if language != 'en':
-            yield self.build_static_url(
+            yield self.build_lib_url(
                 'src', 'locale',
                 'extensible-lang-' + language + '.js')
 

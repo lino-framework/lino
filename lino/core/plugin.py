@@ -267,6 +267,9 @@ class Plugin(object):
         return []
 
     def build_static_url(self, *parts, **kw):
+        raise Exception("Renamed to build_lib_url")
+
+    def build_lib_url(self, *parts, **kw):
         if self.media_base_url:
             url = self.media_base_url + '/'.join(parts)
             if len(kw):
@@ -286,68 +289,6 @@ class Plugin(object):
         if len(kw):
             url += "?" + urlencode(kw)
         return url
-
-    def unused_setup_static_links(self, ui, urlpatterns):
-        if self.media_name is None:
-            return
-        logger = self.site.logger
-        # logger.info("20150426 setup_static_links %s %s",
-        #             self.media_name, self.media_base_url)
-        if self.media_base_url:
-            return
-
-        source = self.media_root
-        if not source:
-            # raise Exception("%s.media_root is not set." % self)
-            return
-
-        if not exists(source):
-            raise Exception(
-                "Directory %s (specified in %s.media_root) does not exist" %
-                (source, self))
-
-        # ui.setup_static_link(urlpatterns, self.media_name, source=source)
-        short_name = self.media_name
-
-        # logger.info("20150426 setup_static_link %s -> %s", short_name, source)
-
-        from django.conf import settings
-
-        if not exists(settings.STATIC_ROOT):
-            logger.info("STATIC_ROOT does not exist: %s",
-                        settings.STATIC_ROOT)
-            return
-
-        target = join(settings.STATIC_ROOT, 'libs', short_name)
-        if exists(target):
-            logger.info("20150426 static target path exists: %s", target)
-            return
-
-        self.site.makedirs_if_missing(dirname(target))
-
-        # from lino.core.utils import is_devserver
-        # if is_devserver():
-        #     from django.conf.urls.static import static
-        #     logger.info("20150426 serve static %s",
-        #                 settings.STATIC_URL+short_name)
-        #     urlpatterns += static(
-        #         settings.STATIC_URL+'libs/'+short_name+"/", source)
-        #     return
-
-        symlink = getattr(os, 'symlink', None)
-        if symlink is None:
-            # Cannot run a production server on an OS that doesn't
-            # have symlinks.
-            logger.warning("Cannot create symlink %s -> %s.",
-                           target, source)
-        else:
-            logger.info("Create symlink %s -> %s.", target, source)
-            try:
-                symlink(source, target)
-            except OSError as e:
-                msg = "Failed to symlink {0} to {1} : {2}"
-                msg = msg.format(source, target, e)
-                raise OSError(msg)
 
     def get_menu_group(self):
         """Return the plugin into whose menu this plugin wants to be inserted.

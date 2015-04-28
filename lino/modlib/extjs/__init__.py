@@ -122,7 +122,7 @@ class Plugin(Plugin):
                             e.as_ext(), f.name, form_field_name(f)))
 
     def get_css_includes(self, site):
-        yield self.build_static_url('resources/css/ext-all.css')
+        yield self.build_lib_url('resources/css/ext-all.css')
 
     def get_js_includes(self, settings, language):
         return []
