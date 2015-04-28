@@ -9,7 +9,7 @@
   <div class="container-fluid">
     {% block header %}
     <div class="container-fluid lino-bs-header">
-    {% if site.user_model -%}
+    {% if False and site.user_model -%}
         <form class="form-inline" method="POST" action="{{ar.renderer.plugin.build_plain_url('auth')}}">
         <input type="username" class="input-small" placeholder="Username">
         <input type="password" class="input-small" placeholder="Password">
@@ -25,12 +25,14 @@
             <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a> 
         {% endif -%}
       {% endfor -%}
+      {%- if len(site.user_interfaces) > 0 %}
+          &mdash;
+      {% endif -%}
     {% endif -%}
 
-    {%- if len(site.user_interfaces) > 1 -%}
-        &mdash;
+    {%- if len(site.user_interfaces) > 0 -%}
         {% for p in site.user_interfaces -%}
-            {%- if ar.renderer == p.renderer %}
+            {%- if ar.ui == p %}
             {{p.ui_label}}
             {%- else -%}
             <a href="{{p.build_plain_url()}}">{{p.ui_label}}</a>
@@ -38,7 +40,7 @@
         {%- endfor -%}
     {%- endif -%}
 
-    {% if site.user_model -%}
+    {% if False and site.user_model -%}
       </form>
     {% endif -%}
 
@@ -70,7 +72,7 @@
 <footer class="container-fluid">
 {% block footer %}
 <p style="vertical-align: middle;">
-{% if request %}
+{% if request  and site.title %}
 &copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
 {% endif %}
 {{E.tostring(site.welcome_html())}}

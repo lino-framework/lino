@@ -11,9 +11,6 @@ See also:
 - :doc:`/tutorials/actions/index`
 
 
-.. |disk| image:: ../../lino/media/extjs/images/mjames/disk.png
-
-
 """
 
 import logging
@@ -132,7 +129,8 @@ def setup_params_choosers(self):
 
 
 def make_params_layout_handle(self, ui):
-    return self.params_layout.get_layout_handle(settings.SITE.kernel.default_ui)
+    return self.params_layout.get_layout_handle(
+        settings.SITE.kernel.default_ui)
 
 
 class Action(Parametrizable, Permittable):
@@ -926,7 +924,6 @@ class ValidateForm(Action):
 
 class SubmitDetail(SaveRow):
     """The "Save" button of a :term:`detail window`.
-    Rendered as a button with a disk (|disk|).
 
     Called when the OK button of a Detail Window was clicked.
     Installed as `submit_detail` on every actor.

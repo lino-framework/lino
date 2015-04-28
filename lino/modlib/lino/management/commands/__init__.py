@@ -9,7 +9,6 @@
     initdb_demo
     makedocs
     makescreenshots
-    makeui
     mergedata
     monitor
     run

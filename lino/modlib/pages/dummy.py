@@ -16,6 +16,7 @@ from django.db import models
 
 from lino.utils import AttrDict
 from lino.core import web
+from lino.api import dd
 
 from lino.utils.restify import restify
 from lino.utils.restify import doc2rst

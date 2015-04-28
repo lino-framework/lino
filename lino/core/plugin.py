@@ -97,6 +97,10 @@ class Plugin(object):
 
     ui_label = None
 
+    ui_handle_attr_name = None
+    """Currently implemented by :mod:`lino.modlib.extjs`,
+    :mod:`lino.modlib.bootstrap3`."""
+
     media_base_url = None
     """
     Remote URL base for media files.
@@ -137,9 +141,6 @@ class Plugin(object):
     List of js snippets to be injected into the `lino_*.js` file.
 
     """
-
-    ui_handle_attr_name = None
-    """Currently only implemented by :mod:`lino.modlib.extjs`. """
 
     renderer = None
 

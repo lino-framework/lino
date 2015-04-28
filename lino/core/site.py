@@ -1748,11 +1748,14 @@ documentation.
         """
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
 
+        self.user_interfaces = tuple([
+            p for p in self.installed_plugins if p.ui_label])
+
+        self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
+
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
         # self.ui = self.kernel  # internal backwards compat
-        self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label])
 
         # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
 

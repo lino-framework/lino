@@ -206,7 +206,6 @@ class LayoutHandle:
         return e
 
     def create_element(self, desc_name):
-        # from lino.modlib.extjs.elems import create_layout_element
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
         if name in self._names:
@@ -293,8 +292,6 @@ class BaseLayout(object):
     on the :class:`Actor <lino.core.actors.Actor>`.
 
     """
-
-    _handle_class = LayoutHandle
 
     _datasource = None
 
@@ -473,7 +470,6 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         """
         `ui` is a :class:`Plugin` instance.
         """
-        # hname = constants._handle_attr_name
         hname = ui.ui_handle_attr_name
         if hname is None:
             raise Exception(
@@ -482,7 +478,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         # we do not want any inherited handle
         h = self.__dict__.get(hname, None)
         if h is None:
-            h = self._handle_class(self, ui)
+            h = LayoutHandle(self, ui)
             setattr(self, hname, h)
         return h
 

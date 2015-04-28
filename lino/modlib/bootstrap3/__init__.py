@@ -13,8 +13,7 @@ from lino.api.ad import Plugin, _
 
 class Plugin(Plugin):
 
-    ui_label = _("Bootstrap")
-
+    # ui_label = _("Bootstrap")
     ui_handle_attr_name = 'bootstrap3_handle'
 
     # site_js_snippets = ['snippets/plain.js']

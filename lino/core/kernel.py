@@ -222,8 +222,13 @@ class Kernel(object):
                     "No installed app labelled %r"
                     % self.site.default_ui)
             ui.url_prefix = None
-            self.default_renderer = ui.renderer
-            self.default_ui = ui
+        else:
+            for p in self.site.installed_plugins:
+                if p.ui_handle_attr_name is not None:
+                    ui = p
+                    break
+        self.default_renderer = ui.renderer
+        self.default_ui = ui
 
         post_ui_build.send(self)
 
@@ -231,7 +236,7 @@ class Kernel(object):
         for res in actors.actors_list:
             for ba in res.get_actions():
                 if ba.action.params_layout is not None:
-                    ba.action.params_layout.get_layout_handle(ui)
+                    ba.action.params_layout.get_layout_handle(self.default_ui)
         # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(kernel, self):

@@ -11,11 +11,11 @@
 
 """
 
-from lino.api.ad import Plugin, _
+# from lino.api.ad import Plugin, _
 
 
-class Plugin(Plugin):
+# class Plugin(Plugin):
 
-    ui_label = _("Lino")
+#     ui_label = _("Lino")
 
-    # media_name = 'lino'
+#     # media_name = 'lino'
