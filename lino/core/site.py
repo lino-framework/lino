@@ -1190,13 +1190,14 @@ documentation.
         self.django_settings.update(
             MEDIA_ROOT=join(self.cache_dir, 'media'))
 
+        self.update_settings(ROOT_URLCONF=self.root_urlconf)
+        self.update_settings(MEDIA_URL='/media/')
+
         if not self.django_settings.get('STATIC_ROOT', False):
             self.django_settings.update(
                 STATIC_ROOT=self.cache_dir.child('static'))
-
-        self.update_settings(ROOT_URLCONF=self.root_urlconf)
-        self.update_settings(MEDIA_URL='/media/')
-        self.update_settings(STATIC_URL='/static/')
+        if not self.django_settings.get('STATIC_URL', False):
+            self.update_settings(STATIC_URL='/static/')
         self.update_settings(
             TEMPLATE_LOADERS=tuple([
                 'lino.core.web.Loader',
