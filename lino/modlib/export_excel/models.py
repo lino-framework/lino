@@ -122,7 +122,7 @@ class ExcelRenderer(TableRenderer):
 class ExportExcelAction(actions.Action):
     label = _("Export to .xls")
     help_text = _('Export this table as an .xls document')
-    icon_name = 'csv'
+    icon_name = 'page_excel'
     sort_index = -5
     select_rows = False
     default_format = 'ajax'

@@ -45,6 +45,16 @@ config = dd.plugins.beid
 dd.add_user_group('beid', config.verbose_name)
 
 
+def get_image_parts(card_number):
+    return ("beid", card_number + ".jpg")
+
+
+def card_number_to_picture_file(card_number):
+    parts = get_image_parts(card_number)
+    #~ TODO: handle configurability of card_number_to_picture_file
+    return os.path.join(settings.MEDIA_ROOT, *parts)
+
+
 def simulate_wrap(msg):
     if config.read_only_simulate:
         msg = "(%s:) %s" % (unicode(_("Simulation")), msg)
@@ -191,7 +201,7 @@ class BaseBeIdReadCardAction(dd.Action):
         card_number = str(data.cardNumber)
 
         if data.photo:
-            fn = config.card_number_to_picture_file(card_number)
+            fn = card_number_to_picture_file(card_number)
             if os.path.exists(fn):
                 logger.warning("Overwriting existing image file %s.", fn)
             try:
@@ -449,6 +459,10 @@ class BeIdCardHolder(dd.Model):
         because it is stored there as a language and gender specific
         plain text.
 
+    .. attribute:: image
+
+        Virtual field which displays the picture.
+
     """
     class Meta:
         abstract = True
@@ -574,6 +588,24 @@ class BeIdCardHolder(dd.Model):
                         dd.obj2str(new)))
                 setattr(obj, fld.name, new)
         return objects, diffs
+
+    @dd.htmlbox()
+    def image(self, ar):
+        url = self.get_image_url(ar)
+        return E.a(E.img(src=url, width="100%"), href=url, target="_blank")
+        # s = '<img src="%s" width="100%%"/>' % url
+        # s = '<a href="%s" target="_blank">%s</a>' % (url, s)
+        # return s
+
+    def get_image_url(self, ar):
+        if self.card_number:
+            parts = get_image_parts(self.card_number)
+            return settings.SITE.build_media_url(*parts)
+        return settings.SITE.build_static_url("contacts.Person.jpg")
+
+    # def get_image_path(self):
+    #     #~ TODO: handle configurability of card_number_to_picture_file
+    #     return os.path.join(settings.MEDIA_ROOT, *self.get_image_parts())
 
 
 class BeIdCardHolderChecker(Checker):

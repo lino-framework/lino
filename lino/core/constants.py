@@ -122,6 +122,26 @@ URL_FORMAT_HTML = 'html'
 DEFAULT_GC_NAME = 0
 
 
+ICON_NAMES = """
+arrow_join arrow_up arrow_down delete add book_link eye basket
+emoticon_smile pencil cross money
+application_form application_view_list application_view_detail
+disk hourglass date_add email_add email_go script script_add bell calendar
+printer lightning printer_delete arrow_divide
+page_white_acrobat page_excel
+html vcard vcard_add wrench transmit
+accept database_gear
+cancel flag_green date_next
+""".split()
+"""
+A list of all names allowed as
+:attr:`lino.core.actions.Action.icon_name`.
+"""
+
+# pdf --> page_white_acrobat
+# csv -> page_excel
+
+
 def dict2kw(d):
     newd = {}
     for k, v in d.items():

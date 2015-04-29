@@ -121,9 +121,8 @@
         {{ javascript(p + "/Ext.ux.AwesomeUploader.js") }}
     {%- endif -%}
     {%- for p in site.installed_plugins -%}
-        {%- for ln in p.get_head_lines(site, request) -%}
-            {{ ln }}
-        {%- endfor -%}
+        {%- for ln in p.get_head_lines(site, request) %}
+           {{ ln }}{% endfor -%}
     {%- endfor -%}
     {# Main Lino js code #}
     {{ javascript(site.build_media_url(*ext_renderer.lino_js_parts())) }}

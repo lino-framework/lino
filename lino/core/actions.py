@@ -383,6 +383,11 @@ class Action(Parametrizable, Permittable):
         if self.show_in_workflow:
             self.custom_handler = True
 
+        if self.icon_name:
+            if not self.icon_name in constants.ICON_NAMES:
+                raise Exception(
+                    "Unkonwn icon_name '{0}'".format(self.icon_name))
+
         register_params(self)
 
     def __get__(self, instance, owner):

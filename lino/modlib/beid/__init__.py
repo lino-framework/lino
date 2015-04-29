@@ -61,9 +61,3 @@ class Plugin(ad.Plugin):  # was: use_eidreader
         yield '<param name="jnlp_href" value="eidreader.jnlp">'
         yield '</applet>'
 
-    def card_number_to_picture_file(self, card_number):
-        #~ TODO: handle configurability of card_number_to_picture_file
-        from django.conf import settings
-        return os.path.join(settings.MEDIA_ROOT, 'beid',
-                            card_number + '.jpg')
-

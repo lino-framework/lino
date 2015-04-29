@@ -576,10 +576,10 @@ class ExtRenderer(HtmlRenderer):
             logger.debug(
                 "Not building site cache because `settings.SITE.never_build_site_cache` is True")
             return
-        if not os.path.isdir(settings.STATIC_ROOT):
+        if not os.path.isdir(settings.MEDIA_ROOT):
             logger.debug(
                 "Not building site cache because " +
-                "directory '%s' (settings.STATIC_ROOT) does not exist.",
+                "directory '%s' (settings.MEDIA_ROOT) does not exist.",
                 settings.STATIC_ROOT)
             return
 

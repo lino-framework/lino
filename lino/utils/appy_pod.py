@@ -526,7 +526,7 @@ class PrintTableAction(actions.Action):
     """
     label = _("Table (landscape)")
     help_text = _('Show this table as a pdf document')
-    icon_name = 'pdf'
+    icon_name = 'page_white_acrobat'
     sort_index = -10
     select_rows = False
     default_format = 'ajax'

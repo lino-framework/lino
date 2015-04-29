@@ -127,6 +127,20 @@ class Plugin(Plugin):
     def get_js_includes(self, settings, language):
         return []
 
+    def get_head_lines(self, site, request):
+        yield "<style>"
+        from lino.core.constants import ICON_NAMES
+        tpl = ".x-tbar-{0}{{ background-image: url({1}) !important; }}"
+        for n in ICON_NAMES:
+            url = site.build_static_url('images', 'mjames', n + '.png')
+            yield tpl.format(n, url)
+            
+        yield """
+.x-tbar-done{ background-image: url(/static/images/mjames/accept.png) !important; }
+.x-tbar-parameters{ background-image: url(/static/images/mjames/database_gear.png) !important; }
+"""
+        yield "</style>"
+
     def get_used_libs(self, html=False):
         if html is not None:
             # version = '<script type="text/javascript">\

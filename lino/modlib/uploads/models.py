@@ -240,7 +240,8 @@ subclasses for the different `_upload_area`.
                         settings.SITE.build_media_url(m.file.name),
                         _(" [show]"),  # fmt(m),
                         target='_blank',
-                        icon_name='../xsite/link',
+                        icon_name=settings.SITE.build_static_url(
+                            'images/xsite/link'),
                         # icon_name='page_go',
                         # style="vertical-align:-30%;",
                         title=_("Open the uploaded file in a new browser window"))
