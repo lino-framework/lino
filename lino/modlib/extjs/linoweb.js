@@ -541,7 +541,7 @@ Lino.MainPanel = {
         //~ this.params_panel.on('bodyresize',update,this,{single:true,delay:200});
         this.toggle_params_panel_btn = new Ext.Button({ scope:this, 
           //~ text: "$_("[parameters]")", // gear
-          iconCls: 'x-tbar-parameters',
+          iconCls: 'x-tbar-database_gear',
           tooltip:"{{_('Show or hide the table parameters panel')}}",
           enableToggle: true,
           //~ pressed: ! this.params_panel.hidden,

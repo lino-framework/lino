@@ -155,9 +155,11 @@ class Action(Parametrizable, Permittable):
     """
 
     icon_name = None
-    """
-    The class name of an icon to be used for this action when rendered
+    """The class name of an icon to be used for this action when rendered
     as toolbar button.
+
+    Allowed icon names are defined in
+    :data:`lino.core.constants.ICON_NAMES`.
 
     """
 
