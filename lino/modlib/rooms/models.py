@@ -33,7 +33,7 @@ add('40', _("Cancelled"), 'cancelled', editable=False)
 
 
 @dd.receiver(dd.pre_analyze)
-def setup_BookingStates_workflow(sender=None, **kw):
+def setup_rooms_workflow(sender=None, **kw):
 
     #~ BookingStates.draft.add_transition(
         #~ states='option registered cancelled',

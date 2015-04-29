@@ -36,6 +36,7 @@ import inspect
 import datetime
 import warnings
 import collections
+import threading
 from urllib import urlencode
 
 from unipath import Path
@@ -50,6 +51,7 @@ from lino.core.plugin import Plugin
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
 
+startup_rlock = threading.RLock()
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
@@ -155,13 +157,14 @@ class Site(object):
     
     kernel = None
     """
-    This attribute is available only after site startup.
+    This attribute is available only after :meth:`startup`.
     See :mod:`lino.core.kernel`.
 
     """
+
     ui = None
     """
-    Alias for :attr:`kernel`.
+    Used to be an alias for :attr:`kernel`.
 
     """
 
@@ -994,7 +997,6 @@ documentation.
         else:
             self.cache_dir = Path(self.project_dir).absolute()
 
-        self._starting_up = False
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
@@ -1415,6 +1417,8 @@ documentation.
                         "Tried to define existing Django setting %s" % name)
         self.django_settings.update(kwargs)
 
+    _starting_up = False
+    
     def startup(self):
         """Start up this Site.
 
@@ -1426,18 +1430,25 @@ documentation.
         cache.
 
         """
-        
+
         # This code can run several times at once when running
         # e.g. under mod_wsgi: another thread has started and not yet
         # finished `startup()`.
-        if self._startup_done:
-            # self.logger.info("20140227 Lino startup already done")
-            return
 
-        if self._starting_up:
-            # raise Exception("Startup called while still starting up.")
-            pass
-        else:
+        with startup_rlock:
+        
+            if self._starting_up:
+                # This is needed because Django "somehow" imports the
+                # settings module twice. The phenomen is not fully
+                # explained, but without this test we had the startup
+                # code being run twice, which caused various error
+                # messages (e.g. Duplicate label in workflow setup)
+                return
+    
+            if self._startup_done:
+                # self.logger.info("20140227 Lino startup already done")
+                return
+    
             self._starting_up = True
 
             from lino.core.signals import pre_startup, post_startup
@@ -1464,7 +1475,7 @@ documentation.
             # self.logger.info("20140227 Site.do_site_startup() done")
             post_startup.send(self)
 
-        self._startup_done = True
+            self._startup_done = True
 
     @property
     def logger(self):
@@ -1751,7 +1762,7 @@ documentation.
         self.user_interfaces = tuple([
             p for p in self.installed_plugins if p.ui_label])
 
-        self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
+        # self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)

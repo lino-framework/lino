@@ -362,7 +362,9 @@ class Kernel(object):
             if isinstance(p, Plugin):
                 p.before_analyze()
 
+        # logger.info("20150429 Gonna send pre_analyze signal")
         pre_analyze.send(self, models_list=models_list)
+        # logger.info("20150429 pre_analyze signal done")
         # MergeActions are defined in pre_analyze.
         # And MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles

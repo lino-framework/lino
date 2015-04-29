@@ -17,9 +17,12 @@ add = VoucherStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
 add('20', _("Registered"), 'registered', editable=False)
 
-VoucherStates.registered.add_transition(
-    _("Register"), states='draft', icon_name='accept')
-VoucherStates.draft.add_transition(
-    _("Deregister"), states="registered", icon_name='pencil')
+
+@dd.receiver(dd.pre_analyze)
+def setup_workflow(sender=None, **kw):
+    VoucherStates.registered.add_transition(
+        _("Register"), states='draft', icon_name='accept')
+    VoucherStates.draft.add_transition(
+        _("Deregister"), states="registered", icon_name='pencil')
 
 

@@ -14,7 +14,7 @@ from django.conf import settings
 
 # from lino.core.signals import database_ready
 
-# settings.SITE.startup()
+settings.SITE.startup()
 # database_ready.send(settings.SITE)
 
 # from lino.modlib.extjs.urls import urlpatterns

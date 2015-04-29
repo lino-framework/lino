@@ -67,13 +67,12 @@ class AcceptInvitation(InvitationFeedback):
 
 
 @dd.receiver(dd.pre_analyze)
-def my_guest_workflows(sender=None, **kw):
+def gueststates_workflow(sender=None, **kw):
     """
     A Guest can be marked absent or present only for events that took place
     """
     def event_took_place(action, user, obj, state):
         return obj.event_id and (obj.event.state == EventStates.took_place)
-
     GuestStates.accepted.add_transition(AcceptInvitation)
     GuestStates.rejected.add_transition(RejectInvitation)
     GuestStates.present.add_transition(

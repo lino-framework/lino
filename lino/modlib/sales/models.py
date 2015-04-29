@@ -76,11 +76,13 @@ add('40', _("Sent"), 'sent', editable=False)
 add('50', _("Paid"), 'paid', editable=False)
 
 
-InvoiceStates.registered.add_transition(
-    _("Register"), states='draft', icon_name='accept')
-InvoiceStates.draft.add_transition(
-    _("Deregister"), states="registered", icon_name='pencil')
-#~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
+@dd.receiver(dd.pre_analyze)
+def sales_workflow(sender=None, **kw):
+    InvoiceStates.registered.add_transition(
+        _("Register"), states='draft', icon_name='accept')
+    InvoiceStates.draft.add_transition(
+        _("Deregister"), states="registered", icon_name='pencil')
+    #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
 class ShippingMode(mixins.BabelNamed):
