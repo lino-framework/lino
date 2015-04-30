@@ -27,11 +27,12 @@ urlpatterns = [
     # ex: /polls/5/results/
     # url(r'^(?P<company_id>[0-9]+)/contacts/$',
     #     views.contacts, name='contacts'),
+    url('', include('lino.core.urls'))
 ]
 
 # urlpatterns += [
 #     url(r'^admin/', include('lino.core.urls')),
 # ]
 
-urlpatterns += settings.SITE.kernel.get_patterns()
+# urlpatterns += settings.SITE.kernel.get_patterns()
 
