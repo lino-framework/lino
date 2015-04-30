@@ -31,7 +31,6 @@ import sys
 import time
 import codecs
 import atexit
-from pkg_resources import Requirement, resource_filename, DistributionNotFound
 
 from django.conf import settings
 from django.core import exceptions
@@ -42,14 +41,9 @@ from django.db.models import loading
 from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
 
-from lino.core.signals import database_ready
-from django.conf.urls import patterns, include
-from django.conf.urls import url
-
 from django.utils.translation import ugettext_lazy as _
 
-import lino
-
+from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
@@ -187,6 +181,7 @@ class Kernel(object):
         self.site = site
         self.GFK_LIST = []
         self.kernel_startup(site)
+        self.code_mtime = codetime()
 
         if site.build_js_cache_on_startup is None:
             site.build_js_cache_on_startup = not (
@@ -495,9 +490,6 @@ class Kernel(object):
     def abandon_response(self):
         return self.success(_("User abandoned"))
 
-    def get_urls(self):
-        raise NotImplementedError()
-
     def field2elem(self, lui, field, **kw):
         pass
 
@@ -635,109 +627,6 @@ class Kernel(object):
         See :meth:`ExtRenderer.row_action_button`
         """
         return self.default_renderer.row_action_button(*args, **kw)
-
-    def get_media_urls(self):
-        #~ print "20121110 get_media_urls"
-        from django.conf import settings
-
-        urlpatterns = []
-
-        logger.debug("Checking /media URLs ")
-        if not settings.MEDIA_URL.endswith('/'):
-            raise Exception("MEDIA_URL %r doesn't end with a '/'!" %
-                            settings.MEDIA_URL)
-        # prefix = settings.MEDIA_URL[1:]
-
-        # if not self.site.extjs_base_url:
-        #     self.setup_media_link(urlpatterns, 'extjs', 'extjs_root')
-
-        # if self.site.use_bootstrap:
-        #     if not self.site.bootstrap_base_url:
-        #         self.setup_media_link(urlpatterns,
-        #             'bootstrap', 'bootstrap_root')
-
-        # for p in self.site.installed_plugins:
-        #     p.setup_static_links(self, urlpatterns)
-
-        # if self.site.use_tinymce:
-        #     if not self.site.tinymce_base_url:
-        #         self.setup_media_link(urlpatterns, 'tinymce', 'tinymce_root')
-        # if self.site.use_jasmine:
-        #     self.setup_static_link(
-        #         urlpatterns, 'jasmine', 'jasmine_root')
-
-        if False:  # after 20150425
-
-            try:
-                src = resource_filename(
-                    Requirement.parse("lino"), "lino/media")
-            except DistributionNotFound:
-                # if it is not installed using pip, link directly to the source
-                # tree
-                src = join(dirname(lino.__file__), 'media')
-
-            self.setup_static_link(urlpatterns, 'lino', source=src)
-
-        return urlpatterns
-
-    def get_patterns(self):
-        """This is the method called from :mod:`lino.core.urls`.
-
-        """
-        from lino.core.utils import is_devserver
-        from django.conf.urls.static import static
-
-        database_ready.send(self.site)
-
-        urlpatterns = self.get_media_urls()
-
-        if self.site.site_prefix:
-            prefix = self.site.site_prefix[1:]
-        else:
-            prefix = ''
-        rx = '^' + prefix
-
-        for p in self.site.installed_plugins:
-            # urlpatterns += p.get_patterns(self)
-            # urlpatterns += p.get_patterns(self, prefix)
-            pat = p.get_patterns(self)
-            prx = rx
-            if p.url_prefix:
-                prx += p.url_prefix + "/"
-            if prx == '^':
-                urlpatterns += pat
-            else:
-                urlpatterns.append(url(prx, include(pat)))
-
-        if self.site.django_admin_prefix:  # experimental
-            from django.contrib import admin
-            admin.autodiscover()
-            urlpatterns.append(url(
-                rx + self.site.django_admin_prefix[1:]
-                + "/", include(admin.site.urls)))
-
-        #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
-        if is_devserver():
-            from django.conf.urls.static import static
-            # from django.contrib.staticfiles.views import serve
-            # opts = {'document_root': settings.MEDIA_ROOT,
-            #         'show_indexes': False}
-            # pat = r'^%s(?P<path>.*)$' % prefix
-            urlpatterns += static(
-                settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-                # 'django.views.static', (pat, 'serve', opts))
-
-            # why do i need the following? i thought that this is done
-            # automatically:
-            # urlpatterns += static(
-            #     settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-            # logger.info("20150426 serve static %s -> %s",
-            #             settings.STATIC_URL, settings.STATIC_ROOT)
-
-            # pat = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL[1:])
-            # urlpatterns.append(url(pat, serve))
-
-        return urlpatterns
 
     _must_build = False
 

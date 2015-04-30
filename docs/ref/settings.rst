@@ -38,13 +38,6 @@ Lino sets this automatically when
 
 See http://docs.djangoproject.com/en/dev/ref/settings/#language-code
 
-.. setting:: ROOT_URL
-
-Lino sets this automatically to :mod:`lino.core.urls`.
-You might specify your own :setting:`ROOT_URLS` on a Lino site.
-
-See http://docs.djangoproject.com/en/dev/ref/settings/#root-url
-
 .. setting:: DATABASES
 
 Lino sets this to `SQLite` on a file `default.db` in your 
@@ -67,12 +60,13 @@ See http://docs.djangoproject.com/en/dev/ref/settings/#languages
 
 .. setting:: ROOT_URLCONF
 
-You'll set this to :mod:`lino.ui.extjs3.urls` and don't need to write 
-any local html nor css.
+This is set to the value of your :class:`Site <lino.core.site.Site>`\
+'s :attr:`root_urlconf <lino.core.site.Site.root_urlconf>` attribute
+(which itself defaults to :mod:`lino.core.urls`).
 
-We are also working on alternative user interfaces 
-:mod:`lino.ui.extjs4.urls` and
-:mod:`lino.ui.qx.urls`.
+See `URL dispatcher
+<https://docs.djangoproject.com/en/dev/topics/http/urls/>`_ section of
+the Django documentation.
 
 
 .. setting:: INSTALLED_APPS

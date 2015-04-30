@@ -53,7 +53,7 @@ class Plugin(ad.Plugin):
     });
 </script>"""
 
-    def get_patterns(self, kernel):
+    def get_patterns(self):
         from django.conf.urls import url
         from . import views
 

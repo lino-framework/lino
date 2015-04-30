@@ -47,10 +47,9 @@ class Plugin(ad.Plugin):
         tpl = env.get_template('template.jnlp')
         f.write(tpl.render(**context))
 
-    def get_patterns(self, ui, prefix=''):
+    def on_ui_init(self, kernel):
         fn = os.path.join(*self.jnlp_file_parts())
-        ui.make_cache_file(fn, self.write_jnlp_file)
-        return []
+        kernel.make_cache_file(fn, self.write_jnlp_file)
 
     def jnlp_file_parts(self):
         return ('cache', self.media_name + '.jnlp')

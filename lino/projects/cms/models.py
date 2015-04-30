@@ -4,16 +4,3 @@
 
 """
 """
-
-import os
-import cgi
-import datetime
-
-from django.db import models
-#~ from django.db.models import Q
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-
-
-from lino import mixins
-from lino.api import dd, rt

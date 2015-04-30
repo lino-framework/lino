@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 The dummy module for `pages`.
@@ -57,12 +57,17 @@ def lookup(ref, default=models.NOT_PROVIDED):
 def render_node(request, node, template_name='pages/node.html', **context):
     context.update(node=node)
     heading = dd.babelattr(node, 'title', '')
+    if settings.SITE.title is None:
+        title = settings.SITE.verbose_name
+    else:
+        title = settings.SITE.title
+
     if heading:
         context.update(heading=heading)
-        context.update(title=heading + ' &middot; ' + settings.SITE.title)
+        context.update(title=heading + ' &middot; ' + title)
     else:
-        context.update(heading=settings.SITE.title)
-        context.update(title=settings.SITE.title)
+        context.update(heading=title)
+        context.update(title=title)
     body = dd.babelattr(node, 'body', '')
     if not node.raw_html:
         body = restify(doc2rst(body))

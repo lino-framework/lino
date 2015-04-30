@@ -747,8 +747,27 @@ documentation.
     """
 
     default_ui = 'extjs'
+    """The `app_label` of the plugin which is to be used as default user
+    interface on this :class:`Site`.
+
+    Default value is ``'extjs'`` (which points to
+    :mod:`lino.modlib.extjs`). Other candidates are
+    :mod:`lino.modlib.pages` and
+    :mod:`lino.modlib.bootstrap3`.
+
+    Another possibility is to set it to `None`. In that case you will
+    probably also set :attr:`root_urlconf` to a custom URL dispatcher.
+    Usage example see :mod:`lino.projects.cms`.
+
+    """
 
     root_urlconf = 'lino.core.urls'
+    """The value to be attribute to :setting:`ROOT_URLCONF` when this
+    :class:`Site` instantiates.
+
+    The default value is :mod:`lino.core.urls`.
+
+    """
     
     textfield_format = 'plain'
     """The default format for text fields.

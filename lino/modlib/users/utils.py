@@ -386,17 +386,9 @@ class AnonymousUser(object):
     def instance(cls):
         if cls._instance is None:
             cls._instance = AnonymousUser()
-            try:
-                cls._instance.profile = UserProfiles.get_by_value(
-                    settings.SITE.anonymous_user_profile)
-                if cls._instance.profile is None:
-                    raise Exception("20150122 %s" %
-                                    settings.SITE.anonymous_user_profile)
-                # if cls._instance.profile.authenticated:
-                #     logger.warning(
-                #         "20121121 profile specified by \
-                #         `anonymous_user_profile` is `authenticated`")
-            except KeyError:
+            cls._instance.profile = UserProfiles.get_by_value(
+                settings.SITE.anonymous_user_profile, None)
+            if cls._instance.profile is None:
                 raise Exception(
                     "Invalid value %r for `SITE.anonymous_user_profile`. "
                     "Must be one of %s" % (

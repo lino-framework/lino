@@ -31,54 +31,18 @@ System requirements
     $ virtualenv tmp
     $ . tmp/bin/activate
 
-
-Using the latest released version
----------------------------------
-
-That said, installing Lino is easy:
-
-.. code-block:: bash
-
-  $ pip install lino
-  Downloading/unpacking lino
-  ...
-  Successfully installed lino django Sphinx atelier unipath python-dateutil Babel odfpy jinja2 appy pytidylib PyYAML django-iban xlwt xlrd Pygments docutils fabric six pytz markupsafe django-countries paramiko pycrypto ecdsa
-  Cleaning up...
-
-
-This might take some time since it will install all dependencies.
-
-Telling your Lino version
--------------------------
-
-When you want to see which version you have, you can say "hello" to
-Lino:
-
-
-.. py2rst::
-
-    self.shell_block(["python", "-m", "lino.hello"])
-
-
-The above launches Python with the `-m
-<https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
-command-line switch which basically instructs it to just import the
-specified module :mod:`lino.hello`.
-
-
-Using the development version
------------------------------
-
-You should install the development version if you want to use Lino's
-newest features before they get officially released on PyPI, or if you
-possibly want to contribute to the project.
-
+- You will need to install git_ on your computer to get the source
+  files.
 
 
 Get the sources
 ---------------
 
-You will need git_ to get the source files.
+You might theoretically install Lino using ``pip install lino``, but
+this method isn't currently being tested very thoroughly. So in most
+cases we currently recommend to use the development version because
+you will probably want to use Lino's newest features before they get
+officially released on PyPI.
 
 Create a directory (e.g. :file:`~/repositories`) meant to hold your
 working copies of version-controlled software projects, `cd` to that
@@ -118,11 +82,36 @@ Notes:
       $ cd lino ; python setup.py develop ; cd ..
 
 
+
+Telling your Lino version
+-------------------------
+
+When you want to see which version you have, you can say "hello" to
+Lino:
+
+
+.. py2rst::
+
+    self.shell_block(["python", "-m", "lino.hello"])
+
+
+The above launches Python with the `-m
+<https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
+command-line switch which basically instructs it to just import the
+specified module :mod:`lino.hello`.
+
+Another old trick to check which version of Lino Python actually uses,
+is to invoky python and run::
+
+>>> import lino
+>>> print lino.__file__
+
+
 Run Lino's test suite
 ---------------------
 
 In order to check to see whether everything worked well, we are now
-going to run the test suite.  
+going to run the test suite.
 
 And before running the test suite, we must initialize the **demo
 databases** because the test suite has many test cases which would
@@ -130,23 +119,29 @@ fail if these demo databases were missing or not in their virgin
 state.
 
 The easiest way to initialize the demo databases is to run the
-:cmd:`fab initdb` command.  Which requires atelier_ (my personal
-collection of general Pyton utilities).
+:cmd:`fab initdb` command::
 
-So we must do::
-
-    $ pip install atelier
     $ cd ~/repositories/lino
     $ fab initdb
 
+The ``fab`` command has been installed on your system (more precisely:
+into your Python environment) by the fabric_ package, which itself has
+been required by atelier_, which is another Python package developed
+by :ref:`luc`.
+
+The ``fab`` command is a kind of Make tool which works by looking for
+a file named :xfile:`fabfile.py`. The Lino repository contains such a
+file, and this file uses :mod:`atelier.fablib`, which defines a whole
+series of tasks like `initdb` and `test`.
+
 And here we go for the test suite itself::
 
-    $ cd ~/repositories/lino
     $ fab test
 
-The :cmd:`fab test` command simply runs the test suite, it is a short
-for ``python setup.py test``
+The :cmd:`fab test` command is a short
+for ``python setup.py test`` which simply runs the test suite.
 
-Congratulations if you got the test suite to pass. 
 
+
+Congratulations if you got the test suite to pass.
 

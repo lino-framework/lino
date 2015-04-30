@@ -19,9 +19,9 @@ class Site(Site):
     #~ description = _("yet another Content Management System.")
     version = "0.1"
     author = 'Luc Saffre'
-    author_email = 'luc.saffre@fsfe.org'
+    author_email = 'luc@lino-framework.org'
 
-    default_ui = 'bootstrap3'
+    default_ui = 'pages'
 
     languages = 'en de fr'
 
@@ -38,15 +38,9 @@ class Site(Site):
         yield 'lino.modlib.contacts'
         #~ yield 'lino.modlib.outbox'
         yield 'lino.modlib.blogs'
-        yield 'lino.modlib.tickets'
+        # yield 'lino.modlib.tickets'
         yield 'lino.modlib.pages'
         yield 'lino.projects.cms'
-
-
-    # def get_apps_modifiers(self, **kk):
-    #     kw = super(Site, self).get_apps_modifiers(**kk)
-    #     kw.update(extjs=None)
-    #     return kw
 
 
 SITE = Site(globals())

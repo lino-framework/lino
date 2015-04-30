@@ -8,12 +8,12 @@ from lino.api.ad import Plugin, _
 class Plugin(Plugin):
 
     ui_label = _("Pages")
-
     verbose_name = _("Pages")
 
+    ui_handle_attr_name = 'pages_handle'
     url_prefix = 'p'
 
-    media_name = 'pages'
+    # media_name = 'pages'
 
     def on_ui_init(self, kernel):
         """This is called when the kernel is being instantiated.
@@ -21,7 +21,7 @@ class Plugin(Plugin):
         from lino.modlib.bootstrap3.renderer import Renderer
         self.renderer = Renderer(self)
 
-    def get_patterns(self, ui):
+    def get_patterns(self):
         from django.conf.urls import url
         from . import views
 

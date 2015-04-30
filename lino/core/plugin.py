@@ -246,7 +246,7 @@ class Plugin(object):
             return self.app_name
         return "%s (%s)" % (self.app_name, ', '.join(l))
 
-    def get_patterns(self, kernel):
+    def get_patterns(self):
         """Return a list of url patterns to be added to the Site's patterns.
 
         """

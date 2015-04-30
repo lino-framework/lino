@@ -1,22 +1,72 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The default URLconf module, defines the variable `urlpatterns` as
-required by Django.  Lino application code doesn't need to worry about
-this.
+"""The default URLconf module for Lino applications.
+As an application developer you don't need to worry about this.
 
 This is found by Django because :mod:`lino.projects.std.settings`
-:setting:`ROOT_URLCONF` is set to ``'lino.core.urls'``.
+:setting:`ROOT_URLCONF` is set to :mod:`lino.core.urls`.
 
 """
 
 from django.conf import settings
+from django.conf.urls import url, include
+from django.conf.urls.static import static
+from lino.core.signals import database_ready
+from lino.core.utils import is_devserver
 
-# from lino.core.signals import database_ready
+site = settings.SITE
 
-settings.SITE.startup()
-# database_ready.send(settings.SITE)
+site.startup()
 
 # from lino.modlib.extjs.urls import urlpatterns
 
-urlpatterns = settings.SITE.kernel.get_patterns()
+urlpatterns = []
+
+
+database_ready.send(site)
+
+urlpatterns = []
+
+if site.site_prefix:
+    prefix = site.site_prefix[1:]
+else:
+    prefix = ''
+rx = '^' + prefix
+
+for p in site.installed_plugins:
+    pat = p.get_patterns()
+    prx = rx
+    if p.url_prefix:
+        prx += p.url_prefix + "/"
+    if prx == '^':
+        urlpatterns += pat
+    else:
+        urlpatterns.append(url(prx, include(pat)))
+
+if site.django_admin_prefix:  # not tested
+    from django.contrib import admin
+    admin.autodiscover()
+    urlpatterns.append(url(
+        rx + site.django_admin_prefix[1:]
+        + "/", include(admin.site.urls)))
+
+#~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
+if is_devserver():
+    # from django.contrib.staticfiles.views import serve
+    # opts = {'document_root': settings.MEDIA_ROOT,
+    #         'show_indexes': False}
+    # pat = r'^%s(?P<path>.*)$' % prefix
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        # 'django.views.static', (pat, 'serve', opts))
+
+    # why do i need the following? i thought that this is done
+    # automatically:
+    # urlpatterns += static(
+    #     settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # logger.info("20150426 serve static %s -> %s",
+    #             settings.STATIC_URL, settings.STATIC_ROOT)
+
+    # pat = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL[1:])
+    # urlpatterns.append(url(pat, serve))

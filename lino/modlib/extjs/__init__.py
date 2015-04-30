@@ -158,19 +158,14 @@ class Plugin(Plugin):
         from . import views
         return views.AdminIndex.as_view()
 
-    def get_patterns(self, kernel):
+    def get_patterns(self):
 
+        from django.conf import settings
         from django.conf.urls import url  # patterns
         from . import views
-        from lino.utils import codetime
-
-        kernel.code_mtime = codetime()
 
         self.renderer.build_site_cache()
 
-        # if prefix:
-        #     assert prefix.endswith('/')
-        # rx = '^' + prefix
         rx = '^'
 
         urlpatterns = [
@@ -201,11 +196,11 @@ class Plugin(Plugin):
                 '(?P<button_id>\w+)$',
                 views.Callbacks.as_view())
         ]
-        if kernel.site.use_eid_applet:
+        if settings.SITE.use_eid_applet:
             urlpatterns.append(
                 url(rx + r'eid-applet-service$',
                     views.EidAppletService.as_view()))
-        if kernel.site.use_jasmine:
+        if settings.SITE.use_jasmine:
             urlpatterns.append(
                 url(rx + r'run-jasmine$', views.RunJasmine.as_view()))
         return urlpatterns

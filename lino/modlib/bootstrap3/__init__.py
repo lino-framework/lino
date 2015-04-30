@@ -38,7 +38,7 @@ class Plugin(Plugin):
         from . import views
         return views.Index.as_view()
 
-    def get_patterns(self, kernel):
+    def get_patterns(self):
         from django.conf.urls import url
         from . import views
 
