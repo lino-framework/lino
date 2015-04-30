@@ -23,6 +23,8 @@ by a version number.
 
 """
 
+from __future__ import unicode_literals
+
 import datetime
 
 from django.conf import settings
@@ -41,10 +43,13 @@ from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 
 
-class TimeInvestment(ContactRelated):
+class TimeInvestment(dd.Model):
 
     class Meta:
         abstract = True
+
+    closed = models.BooleanField(_("Closed"), default=False)
+    private = models.BooleanField(_("Private"), default=False)
 
     planned_time = models.TimeField(
         _("Planned time"),
@@ -88,12 +93,12 @@ class ProjectTypes(dd.Table):
 #     def __unicode__(self):
 #         txt = super(Nicknamed, self).__unicode__()
 #         if self.nickname:
-#             return u"{0} ({1})".format(txt, self.nickname)
+#             return "{0} ({1})".format(txt, self.nickname)
 #         return txt
-#         #     return u"#{0} ({1})".format(self.id, self.nickname)
-#         # return u"#{0}".format(self.id)
+#         #     return "#{0} ({1})".format(self.id, self.nickname)
+#         # return "#{0}".format(self.id)
 
-class Project(TimeInvestment, mixins.Referrable):
+class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     """A **project** is something on which several users work together.
     """
     class Meta:
@@ -117,12 +122,13 @@ class ProjectDetail(dd.FormLayout):
 
     general = dd.Panel("""
     ref name parent type
+    private closed
     description:30 ProjectsByProject:30
     # cal.EventsByProject
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    SponsorshipsByProject
+    company contact_person #contact_role #SponsorshipsByProject
     TicketsByProject #SessionsByProject
     """, label=_("Tickets"))
 
@@ -156,28 +162,28 @@ class ProjectsByType(Projects):
 #     column_names = "ref name *"
 
 
-class Sponsorship(dd.Model):
-    class Meta:
-        verbose_name = _("Sponsorship")
-        verbose_name_plural = _('Sponsorships')
+# class Sponsorship(dd.Model):
+#     class Meta:
+#         verbose_name = _("Sponsorship")
+#         verbose_name_plural = _('Sponsorships')
 
-    project = dd.ForeignKey('tickets.Project')
-    partner = dd.ForeignKey('contacts.Partner')
-    remark = models.CharField(_("Remark"), max_length=200, blank=True)
-
-
-class Sponsorships(dd.Table):
-    model = 'tickets.Sponsorship'
+#     project = dd.ForeignKey('tickets.Project')
+#     partner = dd.ForeignKey('contacts.Partner')
+#     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 
 
-class SponsorshipsByProject(Sponsorships):
-    master_key = 'project'
-    column_names = "partner remark *"
+# class Sponsorships(dd.Table):
+#     model = 'tickets.Sponsorship'
 
 
-class SponsorshipsByPartner(Sponsorships):
-    master_key = 'partner'
-    column_names = "project remark *"
+# class SponsorshipsByProject(Sponsorships):
+#     master_key = 'project'
+#     column_names = "partner remark *"
+
+
+# class SponsorshipsByPartner(Sponsorships):
+#     master_key = 'partner'
+#     column_names = "project remark *"
 
 
 class Milestone(dd.Model):  # mixins.Referrable):
@@ -200,7 +206,7 @@ class Milestone(dd.Model):  # mixins.Referrable):
         #~ return self.label
 
     def __unicode__(self):
-        return u"{0}:{1}".format(self.project, self.label)
+        return "{0}:{1}".format(self.project, self.label)
 
 
 class Milestones(dd.Table):
@@ -245,67 +251,93 @@ class ParentsByTicket(Dependencies):
     column_names = "dependency_type parent *"
 
 
-class CloseTicket(dd.Action):
-    #label = _("Close ticket")
-    label = u"\u2611"
-    help_text = _("Mark this ticket as closed.")
+# class CloseTicket(dd.Action):
+#     #label = _("Close ticket")
+#     label = "\u2611"
+#     help_text = _("Mark this ticket as closed.")
+#     show_in_workflow = True
+#     show_in_bbar = False
+
+#     def get_action_permission(self, ar, obj, state):
+#         if obj.standby is not None or obj.closed is not None:
+#             return False
+#         return super(CloseTicket, self).get_action_permission(ar, obj, state)
+
+#     def run_from_ui(self, ar, **kw):
+#         now = datetime.datetime.now()
+#         for obj in ar.selected_rows:
+#             obj.closed = now
+#             obj.save()
+#             ar.set_response(refresh=True)
+
+
+# class StandbyTicket(dd.Action):
+#     #label = _("Standby mode")
+#     label = "\u2a37"
+#     label = "\u2609"
+#     help_text = _("Put this ticket into standby mode.")
+#     show_in_workflow = True
+#     show_in_bbar = False
+
+#     def get_action_permission(self, ar, obj, state):
+#         if obj.standby is not None or obj.closed is not None:
+#             return False
+#         return super(StandbyTicket, self).get_action_permission(
+#             ar, obj, state)
+
+#     def run_from_ui(self, ar, **kw):
+#         now = datetime.datetime.now()
+#         for obj in ar.selected_rows:
+#             obj.standby = now
+#             obj.save()
+#             ar.set_response(refresh=True)
+
+
+# class ActivateTicket(dd.Action):
+#     # label = _("Activate")
+#     label = "☀"  # "\u2600"
+#     help_text = _("Reactivate this ticket from standby mode or closed state.")
+#     show_in_workflow = True
+#     show_in_bbar = False
+
+#     def get_action_permission(self, ar, obj, state):
+#         if obj.standby is None and obj.closed is None:
+#             return False
+#         return super(ActivateTicket, self).get_action_permission(
+#             ar, obj, state)
+
+#     def run_from_ui(self, ar, **kw):
+#         for obj in ar.selected_rows:
+#             obj.standby = False
+#             obj.closed = False
+#             obj.save()
+#             ar.set_response(refresh=True)
+
+
+class SpawnTicket(dd.Action):
+    # label = _("Spawn new ticket")
+    # label = "\u2611" "☑"
+    label = "⚇"  # "\u2687"
+    help_text = _("Spawn a new child ticket from this one.")
     show_in_workflow = True
     show_in_bbar = False
 
-    def get_action_permission(self, ar, obj, state):
-        if obj.standby is not None or obj.closed is not None:
-            return False
-        return super(CloseTicket, self).get_action_permission(ar, obj, state)
-
     def run_from_ui(self, ar, **kw):
-        now = datetime.datetime.now()
-        for obj in ar.selected_rows:
-            obj.closed = now
-            obj.save()
-            ar.set_response(refresh=True)
-
-
-class StandbyTicket(dd.Action):
-    #label = _("Standby mode")
-    label = u"\u2a37"
-    label = u"\u2609"
-    help_text = _("Put this ticket into standby mode.")
-    show_in_workflow = True
-    show_in_bbar = False
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.standby is not None or obj.closed is not None:
-            return False
-        return super(StandbyTicket, self).get_action_permission(
-            ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        now = datetime.datetime.now()
-        for obj in ar.selected_rows:
-            obj.standby = now
-            obj.save()
-            ar.set_response(refresh=True)
-
-
-class ActivateTicket(dd.Action):
-    # label = _("Activate")
-    label = u"\u2600"
-    help_text = _("Reactivate this ticket from standby mode or closed.")
-    show_in_workflow = True
-    show_in_bbar = False
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.standby is None and obj.closed is None:
-            return False
-        return super(ActivateTicket, self).get_action_permission(
-            ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        for obj in ar.selected_rows:
-            obj.standby = None
-            obj.closed = None
-            obj.save()
-            ar.set_response(refresh=True)
+        p = ar.selected_rows[0]
+        c = Ticket(reporter=ar.get_user())
+        for k in ('project', 'private'):
+            setattr(c, k, getattr(p, k))
+        c.full_clean()
+        c.save()
+        d = Dependency(
+            parent=p, child=c,
+            dependency_type=DependencyTypes.requires)
+        d.full_clean()
+        d.save()
+        ar.success(
+            _("New ticket {0} has been spawned as child of {1}.").format(
+                c, p))
+        ar.goto_instance(c)
 
 
 class Ticket(mixins.CreatedModified, TimeInvestment):
@@ -318,12 +350,15 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         verbose_name_plural = _('Tickets')
 
     project = dd.ForeignKey('tickets.Project', blank=True, null=True)
+    product = dd.ForeignKey('products.Product', blank=True, null=True)
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
     summary = models.CharField(
         pgettext("Ticket", "Summary"), max_length=200,
         blank=True,
         help_text=_("Short summary of the problem."))
     description = dd.RichTextField(_("Description"), blank=True)
+    # parent = models.ForeignKey(
+    #     'self', blank=True, null=True, verbose_name=_("Parent"))
 
     reported_for = dd.ForeignKey(
         'tickets.Milestone',
@@ -356,7 +391,6 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     #     _("Standby since"), editable=False, null=True)
     feedback = models.BooleanField(_("Waiting for feedback"), default=False)
     standby = models.BooleanField(_("Standby"), default=False)
-    closed = models.BooleanField(_("Closed"), default=False)
 
     #~ start_date = models.DateField(
         #~ verbose_name=_("Start date"),
@@ -365,6 +399,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     # close_ticket = CloseTicket()
     # set_standby = StandbyTicket()
     # activate_ticket = ActivateTicket()
+    spawn_ticket = SpawnTicket()
 
     def on_create(self, ar):
         if self.reporter_id is None:
@@ -373,11 +408,13 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
                 self.reporter = u
         super(Ticket, self).on_create(ar)
 
+    # def get_choices_text(self, request, actor, field):
+    #     return "{0} ({1})".format(self, self.summary)
+
     def __unicode__(self):
         if self.nickname:
-            return u"#{0} ({1})".format(self.id, self.nickname)
-        return u"#{0}".format(self.id)
-        # return u"#%d (%s)" % (self.id, self.summary)
+            return "#{0} ({1})".format(self.id, self.nickname)
+        return "#{0} ({1})".format(self.id, self.summary)
 
     @dd.chooser()
     def reported_for_choices(cls, project):
@@ -394,7 +431,9 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
-        return E.span(ar.obj2html(self), ' ', self.summary)
+        # return ar.obj2html(self, "#{0}".self.id)
+        return ar.obj2html(self)
+        # return E.span(ar.obj2html(self), ' ', self.summary)
 
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
@@ -411,16 +450,16 @@ class TicketDetail(dd.DetailLayout):
     main = "general planning"
 
     general = dd.Panel("""
-    summary:40 nickname:20 id
+    summary:40 nickname:10 id
     reporter project state workflow_buttons
-    feedback standby closed
+    feedback standby closed private
     description
     clocking.SessionsByTicket
     """, label=_("General"))
 
     planning = dd.Panel("""
     reported_for fixed_for created modified
-    planned_time invested_time assigned_to
+    planned_time invested_time assigned_to product
     ParentsByTicket ChildrenByTicket
     """, label=_("Planning"))
 
@@ -458,10 +497,13 @@ class Tickets(dd.Table):
         show_standby=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are in standby mode.")),
+        show_private=dd.YesNo.field(
+            blank=True,
+            help_text=_("Show tickets which are private.")),
         observed_event=TicketEvents.field(blank=True))
     params_layout = """
     reporter assigned_to project state
-    show_closed show_standby start_date end_date observed_event"""
+    show_closed show_standby show_private start_date end_date observed_event"""
     simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
     @classmethod
@@ -486,10 +528,16 @@ class Tickets(dd.Table):
             qs = qs.filter(closed=False)
         elif pv.show_closed == dd.YesNo.yes:
             qs = qs.filter(closed=True)
+
         if pv.show_standby == dd.YesNo.no:
             qs = qs.filter(standby=False)
         elif pv.show_standby == dd.YesNo.yes:
             qs = qs.filter(standby=True)
+
+        if pv.show_private == dd.YesNo.no:
+            qs = qs.filter(private=False, project__private=False)
+        elif pv.show_private == dd.YesNo.yes:
+            qs = qs.filter(Q(private=True) | Q(project__private=True))
 
         return qs
 
@@ -502,6 +550,12 @@ class Tickets(dd.Table):
             yield daterange_text(
                 pv.start_date,
                 pv.end_date)
+
+
+# class ChildrenByTicket(Tickets):
+#     label = _("Children")
+#     master_key = 'parent'
+#     column_names = "id summary project reporter *"
 
 
 class UnassignedTickets(Tickets):
@@ -551,5 +605,3 @@ class TicketsByReporter(Tickets):
     label = _("Reported tickets ")
     master_key = 'reporter'
     column_names = "id summary:60 workflow_buttons:20 *"
-
-

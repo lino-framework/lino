@@ -35,7 +35,7 @@ class Partner(Partner, AddressOwner, mixins.CreatedModified):
 
 class PartnerDetail(PartnerDetail):
 
-    main = "general contact tickets misc "
+    main = "general contact #tickets misc "
 
     general = dd.Panel("""
     overview:20 general2:20 general3:40
@@ -47,7 +47,7 @@ class PartnerDetail(PartnerDetail):
     url
     """
 
-    tickets = "tickets.SponsorshipsByPartner"
+    # tickets = "tickets.SponsorshipsByPartner"
 
     general3 = """
     email:40
@@ -96,7 +96,7 @@ dd.update_field(Person, 'last_name', blank=False)
 
 class PersonDetail(PersonDetail):
 
-    main = "general contact tickets misc"
+    main = "general contact #tickets misc"
 
     general = dd.Panel("""
     overview:20 general2:40 general3:40
@@ -130,7 +130,7 @@ class PersonDetail(PersonDetail):
     addr2
     """
 
-    tickets = "tickets.SponsorshipsByPartner"
+    # tickets = "tickets.SponsorshipsByPartner"
 
     misc = dd.Panel("""
     url
@@ -156,7 +156,7 @@ class Company(Partner, Company):
 
 class CompanyDetail(CompanyDetail):
 
-    main = "general contact tickets misc"
+    main = "general contact #tickets misc"
 
     general = dd.Panel("""
     overview:20 general2:40 general3:40
@@ -188,7 +188,7 @@ class CompanyDetail(CompanyDetail):
     addr2
     """
 
-    tickets = "tickets.SponsorshipsByPartner"
+    # tickets = "tickets.SponsorshipsByPartner"
 
     misc = dd.Panel("""
     id language

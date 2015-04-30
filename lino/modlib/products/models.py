@@ -72,15 +72,15 @@ class Products(dd.Table):
     required = dd.required(auth=True)
     model = 'products.Product'
     order_by = ["id"]
-    column_names = "id:3 name cat vat_class sales_price:6 *"
+    column_names = "id:3 name cat vat_class #sales_price:6 *"
 
     insert_layout = """
-    cat sales_price vat_class
+    cat #sales_price vat_class
     name
     """
 
     detail_layout = """
-    id cat sales_price vat_class
+    id cat #sales_price vat_class
     name
     description
     """

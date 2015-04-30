@@ -161,7 +161,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
         theme : "advanced",
         content_css: '{{site.build_static_url("extjs/lino.css")}}',
 
-        language: '{{settings.LANGUAGE_CODE}}',
+        language: '{{language[:2]}}',
         //~ template_external_list_url : url,
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",

@@ -277,12 +277,14 @@ class Model(models.Model):
     def get_choices_text(self, request, actor, field):
         """
         Return the text to be displayed when an instance of this model
-        is being used as a choice in a combobox (i.e. by ForeignKey fields
+        is being used as a choice in a combobox of a ForeignKey field
         pointing to this model).
         `request` is the web request,
         `actor` is the requesting actor.
-        Default is to simply return `unicode(self)`.
-        One usage example is :class:`lino.modlib.countries.models.Place`.
+
+        The default behavious is to simply return `unicode(self)`.
+
+        Usage example is :class:`lino.modlib.countries.models.Place`.
         """
         return unicode(self)
 

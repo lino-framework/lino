@@ -630,6 +630,7 @@ class ExtRenderer(HtmlRenderer):
             site=settings.SITE,
             settings=settings,
             lino=lino,
+            language=translation.get_language(),
             # ext_requests=constants,
             constants=constants,
             extjs=settings.SITE.plugins.extjs,

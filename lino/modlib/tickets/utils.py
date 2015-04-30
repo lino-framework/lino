@@ -9,9 +9,9 @@ from lino.api import dd, rt
 class DependencyTypes(dd.ChoiceList):
     verbose_name = _("Dependency type")
 add = DependencyTypes.add_item
-add('10', _("Duplicate"), 'duplicate')
+add('10', _("Requires"), 'requires')
 add('20', _("Callback"), 'callback')
-add('30', _("Requires"), 'requires')
+add('30', _("Duplicate"), 'duplicate')
 
     
 class TicketStates(dd.Workflow):

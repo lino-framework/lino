@@ -180,8 +180,8 @@ class Kernel(object):
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
-        self.kernel_startup(site)
         self.code_mtime = codetime()
+        self.kernel_startup(site)
 
         if site.build_js_cache_on_startup is None:
             site.build_js_cache_on_startup = not (
@@ -233,6 +233,7 @@ class Kernel(object):
                 if ba.action.params_layout is not None:
                     ba.action.params_layout.get_layout_handle(self.default_ui)
         # logger.info("20140227 Kernel.__init__() done")
+
 
     def kernel_startup(kernel, self):
         """This is a part of a Lino site startup.  The Django Model

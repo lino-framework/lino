@@ -125,8 +125,12 @@ request `tar`."""
         """
         if icon_name is NOT_GIVEN:
             icon_name = ba.action.icon_name
-        if icon_name is not None and not 'style' in kw:
-            kw.update(style="vertical-align:-30%;")
+        if not 'style' in kw:
+            if icon_name is None:
+                kw.update(style="text-decoration:none")  # Experimental. Added
+            else:
+                kw.update(style="vertical-align:-30%;")
+                                                 # 20150430
         return self.href_button(url, text, title, icon_name=icon_name, **kw)
 
     def href_button(

@@ -385,8 +385,9 @@ class AnonymousUser(object):
     @classmethod
     def instance(cls):
         if cls._instance is None:
-            settings.SITE.startup()  # fill UserProfiles also in
-                                     # multithreaded environment
+            # Call startup() to fill UserProfiles also in a
+            # multi-threaded environment:
+            settings.SITE.startup()
             cls._instance = AnonymousUser()
             cls._instance.profile = UserProfiles.get_by_value(
                 settings.SITE.anonymous_user_profile, None)

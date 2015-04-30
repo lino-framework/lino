@@ -40,4 +40,4 @@ class Plugin(ad.Plugin):
         # m.add_action('tickets.Projects')
         m.add_action('tickets.Milestones')
         m.add_action('tickets.Dependencies')
-        m.add_action('tickets.Sponsorship')
+        # m.add_action('tickets.Sponsorships')
