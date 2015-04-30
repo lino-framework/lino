@@ -20,6 +20,7 @@ class Site(Site):
                      'tractickets', 'luc']
 
     project_model = 'tickets.Project'
+    textfield_format = 'html'
 
     root_urlconf = 'lino_noi.urls'
     # site_prefix = '/admin/'
@@ -34,7 +35,7 @@ class Site(Site):
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
         yield 'lino.modlib.cal'
-        # yield 'lino.modlib.products'
+        yield 'lino.modlib.products'
         # yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
@@ -43,6 +44,7 @@ class Site(Site):
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
+        yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
 
         # yield 'lino.modlib.awesomeuploader'

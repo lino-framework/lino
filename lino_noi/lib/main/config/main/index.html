@@ -1,8 +1,18 @@
 {% extends "bootstrap3/base.html" %}
+{% set active_page = "" %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
-This is Lino Noi, the ticketing application for Lino, written in
-Lino.  
+<p>This is Lino Noi, the ticketing application for Lino, written in
+Lino.  </p>
+
+<ul>
+{% for obj in settings.SITE.modules.tickets.ActiveTickets.request() %}
+{% if not obj.private %}
+<li><a href="ticket/{{obj.id}}">{{obj}}</a></li>
+{% endif %}
+{% endfor %}
+</ul>
+
 {% endblock %}
 
 
