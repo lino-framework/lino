@@ -719,7 +719,7 @@ class PublicTickets(Tickets):
     def param_defaults(self, ar, **kw):
         kw = super(PublicTickets, self).param_defaults(ar, **kw)
         kw.update(show_closed=dd.YesNo.no)
-        kw.update(show_standby=dd.YesNo.no)
+        # kw.update(show_standby=dd.YesNo.no)
         kw.update(show_private=dd.YesNo.no)
         return kw
 
