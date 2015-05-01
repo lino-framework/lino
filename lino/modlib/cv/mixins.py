@@ -115,7 +115,7 @@ class HistoryByPerson(dd.Table):
     @classmethod
     def create_instance(self, req, **kw):
         obj = super(HistoryByPerson, self).create_instance(req, **kw)
-        if obj.person is not None:
+        if obj.person_id is not None:
             previous_exps = self.model.objects.filter(
                 person=obj.person).order_by('start_date')
             if previous_exps.count() > 0:
