@@ -41,7 +41,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Contacts")
 
-    needs_plugins = ['lino.modlib.countries']  # because of TextFieldTemplate
+    needs_plugins = ['lino.modlib.countries']
 
     ## settings
     hide_region = False

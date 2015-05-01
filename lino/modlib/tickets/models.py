@@ -38,9 +38,11 @@ from lino.utils.xmlgen.html import E
 
 blogs = dd.resolve_app('blogs')
 
-from .utils import TicketStates, DependencyTypes
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
+from lino.utils import join_elems
+
+from .choicelists import TicketStates, LinkTypes
 
 
 class TimeInvestment(dd.Model):
@@ -122,13 +124,13 @@ class ProjectDetail(dd.FormLayout):
 
     general = dd.Panel("""
     ref name parent type
-    private closed
+    company #contact_person #contact_role private closed
     description:30 ProjectsByProject:30
     # cal.EventsByProject
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    company contact_person #contact_role #SponsorshipsByProject
+    #SponsorshipsByProject
     TicketsByProject #SessionsByProject
     """, label=_("Tickets"))
 
@@ -145,7 +147,7 @@ class Projects(dd.Table):
 
 class ProjectsByProject(Projects):
     master_key = 'parent'
-    label = _("Sub-projects")
+    label = _("Subprojects")
     column_names = "ref name type *"
 
 
@@ -157,9 +159,10 @@ class ProjectsByType(Projects):
 #     order_by = ["name"]
 #     column_names = 'ref name id *'
 
-# class ProjectsByPartner(Projects):
-#     master_key = 'partner'
-#     column_names = "ref name *"
+
+class ProjectsByCompany(Projects):
+    master_key = 'company'
+    column_names = "ref name *"
 
 
 # class Sponsorship(dd.Model):
@@ -225,30 +228,171 @@ class MilestonesByProject(Milestones):
     column_names = "label expected reached *"
 
 
-class Dependency(dd.Model):
+class Link(dd.Model):
+
     class Meta:
         verbose_name = _("Dependency")
-        verbose_name_plural = _('Dependencies')
+        verbose_name_plural = _("Dependencies")
 
-    parent = dd.ForeignKey('tickets.Ticket', related_name="children")
-    child = dd.ForeignKey('tickets.Ticket', related_name="parents")
-    dependency_type = DependencyTypes.field()
+    type = LinkTypes.field(default=LinkTypes.requires)
+    parent = dd.ForeignKey(
+        'tickets.Ticket',
+        verbose_name=_("Parent"),
+        related_name='tickets_children')
+    child = dd.ForeignKey(
+        'tickets.Ticket',
+        blank=True, null=True,
+        verbose_name=_("Child"),
+        related_name='tickets_parents')
+
+    @dd.displayfield(_("Type"))
+    def type_as_parent(self, ar):
+        # print('20140204 type_as_parent', self.type)
+        return self.type.as_parent()
+
+    @dd.displayfield(_("Type"))
+    def type_as_child(self, ar):
+        # print('20140204 type_as_child', self.type)
+        return self.type.as_child()
+
+    def __unicode__(self):
+        if self.type is None:
+            return super(Link, self).__unicode__()
+        return _("%(child)s is %(what)s") % dict(
+            child=unicode(self.child),
+            what=self.type_of_parent_text())
+
+    def type_of_parent_text(self):
+        return _("%(type)s of %(parent)s") % dict(
+            parent=self.parent,
+            type=self.type.as_child())
 
 
-class Dependencies(dd.Table):
-    model = 'tickets.Dependency'
+class Links(dd.Table):
+    model = 'tickets.Link'
+    required = dd.required(user_level='admin')
+    stay_in_grid = True
+    detail_layout = dd.FormLayout("""
+    parent
+    child
+    type
+    """, window_size=(40, 'auto'))
 
 
-class ChildrenByTicket(Dependencies):
-    label = _("Children")
-    master_key = 'parent'
-    column_names = "dependency_type child *"
+class LinksByTicket(Links):
+
+    label = _("Dependencies")
+    required = dd.required()
+    master = 'tickets.Ticket'
+    column_names = 'parent type_as_parent:10 child'
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        mi = ar.master_instance  # a Person
+        if mi is None:
+            return
+        Link = rt.modules.tickets.Link
+        flt = Q(parent=mi) | Q(child=mi)
+        return Link.objects.filter(flt).order_by(
+            'child__modified', 'parent__modified')
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
+        for :class:`LinksByTicket`.
+
+        """
+        # if obj.pk is None:
+        #     return ''
+        #     raise Exception("20150218")
+        sar = self.request_from(ar, master_instance=obj)
+        links = []
+        for lnk in sar:
+            if lnk.parent is None or lnk.child is None:
+                pass
+            else:
+                if lnk.child_id == obj.id:
+                    i = (lnk.type.as_child(), lnk.parent)
+                else:
+                    i = (lnk.type.as_parent(), lnk.child)
+                links.append(i)
+
+        def by_age(a, b):
+            return cmp(b[1].modified, a[1].modified)
+
+        try:
+            links.sort(by_age)
+        # except AttributeError:
+        except (AttributeError, ValueError):
+            # AttributeError: 'str' object has no attribute 'as_date'
+            # possible when empty birth_date
+            # ValueError: day is out of range for month
+            pass
+
+        items = []
+        for type, other in links:
+
+            txt = "#%d" % other.id
+            items.append(E.span(
+                unicode(type), " ",
+                ar.obj2html(other, txt, title=other.summary)))
+            # items.append(E.li(unicode(type), " ", ar.obj2html(obj)))
+        elems = []
+        if len(items) > 0:
+            elems += join_elems(items)
+            # elems.append(l(*items))
+            # elems.append(E.ul(*items))
+        else:
+            elems.append(_("No dependencies."))
+
+        # Buttons for creating relationships:
+        sar = self.insert_action.request_from(ar)
+        if sar.get_permission():
+            actions = []
+            for lt in LinkTypes.objects():
+                sar.known_values.update(type=lt, parent=obj)
+                sar.known_values.pop('child', None)
+                btn = sar.ar2button(None, lt.as_parent(), icon_name=None)
+                actions.append(btn)
+                if not lt.symmetric:
+                    actions.append('/')
+                    sar.known_values.update(type=lt, child=obj)
+                    sar.known_values.pop('parent', None)
+                    btn = sar.ar2button(None, lt.as_child(), icon_name=None)
+                    actions.append(btn)
+                actions.append(' ')
+
+            if len(actions) > 0:
+                elems += [E.br(), _("Create dependency as ")] + actions
+        return E.div(*elems)
 
 
-class ParentsByTicket(Dependencies):
-    label = _("Parents")
-    master_key = 'child'
-    column_names = "dependency_type parent *"
+
+# class Dependency(dd.Model):
+#     class Meta:
+#         verbose_name = _("Dependency")
+#         verbose_name_plural = _('Dependencies')
+
+#     parent = dd.ForeignKey('tickets.Ticket', related_name="children")
+#     child = dd.ForeignKey('tickets.Ticket', related_name="parents")
+#     dependency_type = DependencyTypes.field()
+
+
+# class Dependencies(dd.Table):
+#     model = 'tickets.Dependency'
+
+
+# class ChildrenByTicket(Dependencies):
+#     label = _("Children")
+#     master_key = 'parent'
+#     column_names = "dependency_type child *"
+
+
+# class ParentsByTicket(Dependencies):
+#     label = _("Parents")
+#     master_key = 'child'
+#     column_names = "dependency_type parent *"
 
 
 # class CloseTicket(dd.Action):
@@ -324,14 +468,14 @@ class SpawnTicket(dd.Action):
 
     def run_from_ui(self, ar, **kw):
         p = ar.selected_rows[0]
-        c = Ticket(reporter=ar.get_user())
+        c = rt.modules.tickets.Ticket(reporter=ar.get_user())
         for k in ('project', 'private'):
             setattr(c, k, getattr(p, k))
         c.full_clean()
         c.save()
-        d = Dependency(
+        d = rt.modules.tickets.Link(
             parent=p, child=c,
-            dependency_type=DependencyTypes.requires)
+            type=LinkTypes.requires)
         d.full_clean()
         d.save()
         ar.success(
@@ -357,8 +501,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         blank=True,
         help_text=_("Short summary of the problem."))
     description = dd.RichTextField(_("Description"), blank=True)
-    # parent = models.ForeignKey(
-    #     'self', blank=True, null=True, verbose_name=_("Parent"))
+    duplicate_of = models.ForeignKey(
+        'self', blank=True, null=True, verbose_name=_("Duplicate of"))
 
     reported_for = dd.ForeignKey(
         'tickets.Milestone',
@@ -451,16 +595,15 @@ class TicketDetail(dd.DetailLayout):
 
     general = dd.Panel("""
     summary:40 nickname:10 id
-    reporter project state workflow_buttons
-    feedback standby closed private
-    description
-    clocking.SessionsByTicket
+    reporter project product reported_for
+    state workflow_buttons feedback standby closed private
+    description clocking.SessionsByTicket
     """, label=_("General"))
 
     planning = dd.Panel("""
-    reported_for fixed_for created modified
-    planned_time invested_time assigned_to product
-    ParentsByTicket ChildrenByTicket
+    fixed_for created modified
+    assigned_to duplicate_of planned_time invested_time
+    DuplicatesByTicket LinksByTicket #ChildrenByTicket
     """, label=_("Planning"))
 
 
@@ -552,10 +695,10 @@ class Tickets(dd.Table):
                 pv.end_date)
 
 
-# class ChildrenByTicket(Tickets):
-#     label = _("Children")
-#     master_key = 'parent'
-#     column_names = "id summary project reporter *"
+class DuplicatesByTicket(Tickets):
+    label = _("Duplicates")
+    master_key = 'duplicate_of'
+    column_names = "id summary project reporter *"
 
 
 class UnassignedTickets(Tickets):
@@ -565,6 +708,20 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "summary reporter planned_time invested_time *"
+
+
+class PublicTickets(Tickets):
+    label = _("Public tickets")
+    order_by = ["-modified", "id"]
+    column_names = 'overview:50 workflow_buttons:30 reporter:10 project:10 *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(PublicTickets, self).param_defaults(ar, **kw)
+        kw.update(show_closed=dd.YesNo.no)
+        kw.update(show_standby=dd.YesNo.no)
+        kw.update(show_private=dd.YesNo.no)
+        return kw
 
 
 class ActiveTickets(Tickets):
