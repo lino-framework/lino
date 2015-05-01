@@ -30,13 +30,11 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
         yield 'lino.modlib.system'
-        # yield 'lino.modlib.users'
         yield 'lino_noi.lib.users'
-        yield 'lino.modlib.countries'
-        yield 'lino.modlib.contacts'
+        yield 'lino_noi.lib.contacts'
         yield 'lino.modlib.cal'
         yield 'lino.modlib.products'
-        # yield 'lino.modlib.tickets'
+        yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
 

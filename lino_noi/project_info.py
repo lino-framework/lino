@@ -36,6 +36,7 @@ SETUP_INFO.update(packages=[
     'lino_noi.fixtures',
     'lino_noi.lib',
     'lino_noi.lib.main',
+    'lino_noi.lib.contacts',
     'lino_noi.lib.users',
     'lino_noi.lib.users.fixtures',
     'lino_noi.settings',
