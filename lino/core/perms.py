@@ -1,14 +1,23 @@
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
 
-:class:`AnonymousUser`
+USER_ROLES = set()
 
-"""
 
-from __future__ import unicode_literals
+class UserRoleMeta(type):
 
-import logging
-logger = logging.getLogger(__name__)
+    def __new__(meta, classname, bases, classDict):
+        """Every subclass of :class:`UserRole` is being registered into a
+        global set of available user roles.
 
+        """
+        cls = type.__new__(meta, classname, bases, classDict)
+
+        if classname != 'UserRole':
+            USER_ROLES.add(cls)
+        return cls
+
+
+class UserRole(object):
+    __metaclass__ = UserRoleMeta
 

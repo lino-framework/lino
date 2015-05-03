@@ -125,7 +125,7 @@ class ProjectDetail(dd.FormLayout):
     general = dd.Panel("""
     ref name parent type
     company #contact_person #contact_role private closed
-    description:30 ProjectsByProject:30
+    description:30 ProjectsByParent:30
     # cal.EventsByProject
     """, label=_("General"))
 
@@ -143,9 +143,10 @@ class ProjectDetail(dd.FormLayout):
 class Projects(dd.Table):
     model = 'tickets.Project'
     detail_layout = ProjectDetail()
+    column_names = "ref name parent type *"
 
 
-class ProjectsByProject(Projects):
+class ProjectsByParent(Projects):
     master_key = 'parent'
     label = _("Subprojects")
     column_names = "ref name type *"

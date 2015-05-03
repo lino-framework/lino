@@ -252,5 +252,3 @@ class UserGroups(ChoiceList):
 # add = UserGroups.add_item
 # add('system', _("System"))
 # filled using add_user_group()
-
-

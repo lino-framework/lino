@@ -23,7 +23,6 @@ The ``lino.core`` package
     menus
     merge
     model
-    perms
     plugin
     renderer
     requests

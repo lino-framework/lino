@@ -482,7 +482,7 @@ class CourseDetail(dd.FormLayout):
     main = "general events courses.EnrolmentsByCourse"
     general = dd.Panel("""
     line teacher start_date end_date start_time end_time
-    user room #slot workflow_buttons id:8
+    enrolments_until room #slot workflow_buttons id:8 user
     description
     """, label=_("General"))
     events = dd.Panel("""
@@ -543,8 +543,8 @@ class Courses(dd.Table):
             flt = Q(room__isnull=True)
             flt |= Q(room__company__city=ar.param_values.city)
             qs = qs.filter(flt)
-        flt = Q(enrolments_until__isnull=True) | \
-              Q(enrolments_until__gte=dd.today())
+        flt = Q(enrolments_until__isnull=True)
+        flt |= Q(enrolments_until__gte=dd.today())
         if ar.param_values.active == dd.YesNo.yes:
             qs = qs.filter(flt)
         elif ar.param_values.active == dd.YesNo.no:
@@ -737,8 +737,12 @@ class Enrolment(UserAuthored, sales.Invoiceable):
     submit_insert = ConfirmedSubmitInsert()
 
     @dd.chooser()
-    def course_choices(cls, course_area):
-        qs = rt.modules.courses.Course.objects.all()
+    def course_choices(cls, course_area, request_date):
+        if request_date is None:
+            request_date = dd.today()
+        flt = Q(enrolments_until__isnull=True)
+        flt |= Q(enrolments_until__gte=request_date)
+        qs = rt.modules.courses.Course.objects.filter(flt)
         if course_area:
             qs = qs.filter(line__course_area=course_area)
         return qs
