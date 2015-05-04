@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+">
+<information>
+    <title>EIDReader</title>
+    <vendor>Code Gears / Rumma &amp; Ko</vendor>
+    <offline-allowed/>
+</information>
+<security><all-permissions /></security>
+<resources>
+    <!-- Application Resources -->
+    <j2se version="1.7+"
+          href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="EIDReader.jar" main="true" />
+    <jar href="commons-logging.jar" download="eager" main="false" />
+    <jar href="commons-codec.jar" download="eager" main="false" />
+    <jar href="eid-applet-service.jar" download="eager" main="false" />
+
+</resources>
+<applet-desc 
+     name="EIDReader"
+     width="1" height="1"
+     main-class="src.eidreader.EIDReader">
+ </applet-desc>
+</jnlp>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+">
+    <information>
+        <title>DavLink Applet</title>
+        <vendor>Manuel Weidmann / Luc Saffre</vendor>
+        <offline-allowed/>
+    </information>
+    <security><all-permissions/></security>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.7+" />
+        <jar href="DavLink.jar" main="true"/>
+        <!-- href attribute contains relative path;
+        codebase attribute not specified -->
+    </resources>
+    <applet-desc
+         name="DavLink"
+         main-class="davlink.DavLink"
+         width="1"
+         height="1">
+     </applet-desc>
+     <update check="background"/>
+</jnlp>
