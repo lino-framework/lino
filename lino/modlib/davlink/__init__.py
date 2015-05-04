@@ -41,6 +41,7 @@ class Plugin(ad.Plugin):
     def write_jnlp_file(self, f):
         context = dict(
             site=self.site,
+            davlink=self,
         )
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(
             os.path.dirname(__file__)))

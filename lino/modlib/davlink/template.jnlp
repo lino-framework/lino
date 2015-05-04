@@ -9,7 +9,7 @@
     <resources>
         <!-- Application Resources -->
         <j2se version="1.7+" />
-        <jar href="{{site.build_media_url('davlink', 'DavLink.jar')}}" 
+        <jar href="{{davlink.build_lib_url('DavLink.jar')}}" 
              main="true"/>
         <!-- href attribute contains relative path;
         codebase attribute not specified -->
