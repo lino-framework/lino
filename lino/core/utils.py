@@ -724,20 +724,22 @@ class PseudoRequest:
 
 
 class ChangeWatcher(object):
-    """Lightweight volatile object to watch changes and send the
-    :attr:`on_ui_updated <lino.core.signals.on_ui_updated>` signal.
+    """Lightweight volatile object to watch changes on a database object.
 
-    The receiver function can use:
+    This is used e.g. by the :data:`on_ui_updated
+    <lino.core.signals.on_ui_updated>` signal.
 
-    - `watcher.watched` : .
+    .. attribute:: watched
 
-    - `watcher.original_state`: a `dict` containing (fieldname --> value)
-      before the change.
+        The model instance which has been changed and caused the signal.
+
+    .. attribute:: original_state
+
+        a `dict` containing (fieldname --> value) before the change.
 
     """
 
     watched = None
-    """The model instance which has been changed and caused the signal."""
 
     def __init__(self, watched):
         self.original_state = dict(watched.__dict__)

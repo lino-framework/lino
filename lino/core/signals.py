@@ -62,14 +62,18 @@
 
 .. data:: on_ui_updated
 
-    Sent when a model instance has been modified and saved.  This will
-    be called each time some database object has been updated.
+    Sent when a database model instance has been modified and saved
+    using the web interface.
 
-    Parameters:
+    A receiver of this signal gets the following keyword parameters:
 
-    sender: the model instance which has been updated
-    watcher: the :class:`lino.core.utils.ChangeWatcher` instance
-    request: the HttpRequest object
+    :sender: the database model of the instance which has been updated
+
+    :watcher: the :class:`ChangeWatcher
+              <lino.core.utils.ChangeWatcher>` object (which contains
+              the model instance and information about the changes)
+
+    :request: the HttpRequest object
     
 .. data:: pre_merge
     
@@ -94,7 +98,6 @@
     - `sender` : the parent (a database object instance)
     - `request` : the HttpRequest which asks to create an MTI child
     - `child` : the child model (a class object)
-    
 
 """
 

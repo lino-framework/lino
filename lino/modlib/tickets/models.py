@@ -708,7 +708,8 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary reporter planned_time invested_time *"
+    column_names = "summary reported_for fixed_for state closed invested_time *"
+    auto_fit_column_widths = True
 
 
 class PublicTickets(Tickets):

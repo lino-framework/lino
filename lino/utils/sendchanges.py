@@ -29,6 +29,12 @@ Note that the order of subscription is important when the watched
 models inherit from each other: for a given model instance, the first
 matching subscription will be used.
 
+This module is not yet being used in reality.
+
+TODO: Currently it will go through the global list of emiters for each
+update, create, delete. It would be better to analyze the emitters at
+startup and install receivers only for the needed models and events.
+
 """
 
 import logging

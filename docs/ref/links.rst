@@ -35,12 +35,10 @@ Links to other sites
     See http://lxml.de
   
   CBSS
-    Crossroads Bank for Social Security.
-    See :doc:`/topics/bcss`.
+    `Crossroads Bank for Social Security <http://www.ksz-bcss.fgov.be>`__
     
   BCSS
-    Banque Carrefour de la Sécurité Sociale 
-    See :doc:`/topics/bcss`.
+    `Banque Carrefour de la Sécurité Sociale <http://www.ksz-bcss.fgov.be>`__
     
   PyPI
     The Python Package Index.
