@@ -122,7 +122,7 @@ class Emitter(object):
             self.sendmails(request, subject, self.delete_tpl, **context)
 
     def sendmails(self, request, subject, template, **context):
-        # logger.info("body template %s, template)
+        # logger.info("20150504 sendmails body template %s", template)
         context.update(request=request)
         body = template.render(**context)
         sender = request.user.email or settings.SERVER_EMAIL
@@ -164,11 +164,11 @@ def on_created(sender=None, request=None, **kw):
 
 
 @receiver(on_ui_updated)
-def on_updated(sender=None, request=None, **kw):
-    # sender is a ChangeWatcher
-    s = find_emitter(sender.watched)
+def on_updated(sender=None, watcher=None, request=None, **kw):
+    # watcher is a ChangeWatcher
+    s = find_emitter(watcher.watched)
     if s is not None:
-        s.emit_updated(request, sender)
+        s.emit_updated(request, watcher)
 
 
 @receiver(pre_ui_delete)

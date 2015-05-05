@@ -65,9 +65,11 @@
     Sent when a model instance has been modified and saved.  This will
     be called each time some database object has been updated.
 
-    Unlike Django's `post_save` signal, the `sender` is a
-    :class:`lino.core.utils.ChangeWatcher` instance, and the HttpRequest
-    will be passed to the receiver.
+    Parameters:
+
+    sender: the model instance which has been updated
+    watcher: the :class:`lino.core.utils.ChangeWatcher` instance
+    request: the HttpRequest object
     
 .. data:: pre_merge
     
@@ -109,7 +111,7 @@ pre_merge = Signal(['request'])
 pre_remove_child = Signal(['request', 'child'])
 pre_add_child = Signal(['request'])
 on_ui_created = Signal(['request'])
-on_ui_updated = Signal(['request'])
+on_ui_updated = Signal(['request', 'watcher'])
 pre_ui_save = Signal(['instance', 'ar'])
 pre_ui_delete = Signal(['request'])
 pre_ui_build = Signal()

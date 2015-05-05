@@ -729,9 +729,9 @@ class ChangeWatcher(object):
 
     The receiver function can use:
 
-    - `sender.watched` : .
+    - `watcher.watched` : .
 
-    - `original_state`: a `dict` containing (fieldname --> value)
+    - `watcher.original_state`: a `dict` containing (fieldname --> value)
       before the change.
 
     """
@@ -774,7 +774,8 @@ class ChangeWatcher(object):
 
     def send_update(self, request):
         #~ print "ChangeWatcher.send_update()", self.watched
-        on_ui_updated.send(sender=self, request=request)
+        on_ui_updated.send(
+            sender=self.watched.__class__, watcher=self, request=request)
 
 
 def error2str(self, e):

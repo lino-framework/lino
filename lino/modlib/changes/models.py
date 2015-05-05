@@ -259,18 +259,18 @@ def log_change(type, request, master, obj, msg=''):
 
 
 @receiver(on_ui_updated)
-def on_update(sender=None, request=None, **kw):
+def on_update(sender=None, watcher=None, request=None, **kw):
     """
     Log a Change if there is a `change_watcher_spec`.
     """
-    master = get_master(sender.watched)
+    master = get_master(watcher.watched)
     if master is None:
         # No master, nothing to log
         return
 
-    cs = sender.watched.change_watcher_spec
+    cs = watcher.watched.change_watcher_spec
     changes = []
-    for k, old, new in sender.get_updates(cs.ignored_fields):
+    for k, old, new in watcher.get_updates(cs.ignored_fields):
         changes.append("%s : %s --> %s" %
                        (k, dd.obj2str(old), dd.obj2str(new)))
     if len(changes) == 0:
@@ -279,7 +279,7 @@ def on_update(sender=None, request=None, **kw):
         msg = changes[0]
     else:
         msg = '- ' + ('\n- '.join(changes))
-    log_change(ChangeTypes.update, request, master, sender.watched, msg)
+    log_change(ChangeTypes.update, request, master, watcher.watched, msg)
 
 
 @receiver(pre_ui_delete)

@@ -446,7 +446,7 @@ class Model(models.Model):
         """Like :meth:`before_ui_save`, but
         **after** the changes are written to the database.
 
-        Arguments: 
+        Arguments:
 
             ar: the action request 
   
