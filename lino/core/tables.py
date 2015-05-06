@@ -261,7 +261,7 @@ class AbstractTable(actors.Actor):
     toolbar, that's theoretically what we want (but can lead to waste
     of performance if there are many rows).
     
-    Test case and description in :ref:`cosi.tested`.
+    Test case and description in the tested docs of :ref:`cosi`.
     
 
     """

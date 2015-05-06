@@ -1660,7 +1660,7 @@ documentation.
         Another difference is that any arguments are forwarded to
         :func:`atelier.utils.date_offset`.
 
-        Needed in test cases like :ref:`welfare.tested.integ` where the
+        This feature is being used in many test cases where e.g. the
         age of people would otherwise change.
 
         """

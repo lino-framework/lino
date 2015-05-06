@@ -70,13 +70,13 @@ The list has not yet been systematically checked for completeness.
 
 - Alicia for constructive end-user feedback
 
-- Andreas for competent consultation on :ref:`cosi` and marketing
+- Andreas for competent consultation on Lino Così and marketing
   questions.
 
 - Elmar for sustaining Lino on the political level
 
 - Gerd for long-term partnership and lots of ideas for both the
-  framework itself and :ref:`welfare`.
+  framework itself and Lino Welfare.
 
 - Hubert for constructive end-user feedback
 
@@ -88,7 +88,7 @@ The list has not yet been systematically checked for completeness.
 - Manuel for partnership and input on technologies, web design, and
   marketing
 
-- Melanie for constructive end-user feedback
+- Melanie B and Melanie L for constructive end-user feedback
 
 - Merike for feedback on technical and infrastructural questions.
 
@@ -96,8 +96,7 @@ The list has not yet been systematically checked for completeness.
 
 - Ralf for competent feedback on marketing questions 
 
-- Roger for long-term partnership and lots of ideas on marketing and
-  :ref:`faggio`
+- Roger for lots of ideas on marketing and Lino Faggio
 
-- Sven for analysis, testing and lots of ideas on :ref:`faggio`.
+- Sven for analysis, testing and lots of ideas on Lino Faggio
 

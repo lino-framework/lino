@@ -262,12 +262,12 @@ class ExtRenderer(HtmlRenderer):
         different actor. Remember e.g. the "Must read eID card" action
         button in eid_info of newcomers.NewClients (20140422).
 
-        See also :ref:`welfare.tested.integ` which tests whether the
-        `ar.instance_action_button` in `households.MembersByPerson`
-        works.
+        :obj:  The database object
+        :ar:   The action request
+        :ba:  The bound action
+        :request_kwargs: keyword arguments to forwarded to the child action request
 
-        `kw` can have:
-        - record_id
+        Any kwyword other arguments are forwarded to :meth:`ar2js`.
 
         """
         if ar is None:

@@ -15,10 +15,12 @@ import os
 import sys
 from unipath import Path
 from atelier.sphinxconf import configure
+import lino
 
 sys.path.insert(0, Path(__file__).parent.absolute())
 
 extlinks = {}
+intersphinx_mapping = {}
 extensions = []
 
 configure(globals(), 'lino.projects.docs.settings.demo')
@@ -46,7 +48,6 @@ if False:
 #~ sys.path.append(DOCSDIR)
 
 
-import lino
 
 """
 Trigger loading of Djangos model cache in order to avoid side effects that
@@ -107,8 +108,8 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u"Lino"
-copyright = u'2002-2015 Luc Saffre'
+project = "Lino"
+copyright = '2002-2015 Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -312,16 +313,24 @@ extlinks.update({
 })
 
 
+intersphinx_mapping = {}
+
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    intersphinx_mapping = {}
-    for n in """python django
-    atelier lino
-    lino-welfare lino-faggio lino-patrols""".split():
-        intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
-else:        
-    for n in """python django""".split():
-        intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
+# if on_rtd:
+#     for n in """python django
+#     atelier lino
+#     lino-welfare lino-faggio lino-patrols""".split():
+#         intersphinx_mapping[n] = (
+#             'http://%s.readthedocs.org/en/latest/' % n, None)
+
+for n in """python django""".split():
+    intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
+
+
+from django.utils.importlib import import_module
+for n in ['atelier']:
+    m = import_module(n)
+    intersphinx_mapping[n] = (m.intersphinx_urls['docs'], None)
 
 autosummary_generate = True
 

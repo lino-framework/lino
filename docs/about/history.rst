@@ -22,8 +22,8 @@ In **August 2009** he started to use the :term:`ExtJS` Javascript framework.
 
 The first real-world Lino application started in a Belgian *Public
 Centre for Social Welfare* (PCSW) in **January 2011**.  In **August
-2012** we forked it into a separate project :ref:`welfare`.  to be
-maintained by an independant organization.
+2012** we forked it into a separate project :ref:`welfare` in order to
+make it maintainable by an independant organization.
 
 In September 2012 we purchased the domain name `lino-framework.org`.
 

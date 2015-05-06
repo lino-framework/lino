@@ -55,13 +55,3 @@ lino-framework.org
 It is hosted in collaboration with 
 `Active Systems OÜ <http://active.ee>`_.
 
-.. _patrols: 
-
-Lino Patrols
-------------
-
-See http://patrols.lino-framework.org
-
-
-
-
