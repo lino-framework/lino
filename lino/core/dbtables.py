@@ -113,6 +113,7 @@ def add_gridfilters(qs, gridfilters):
     if not isinstance(qs, QuerySet):
         raise NotImplementedError('TODO: filter also simple lists')
     q = models.Q()
+    print 20150506, gridfilters
     for flt in gridfilters:
         field = get_field(qs.model, flt['field'])
         flttype = flt['type']
@@ -140,7 +141,8 @@ def add_gridfilters(qs, gridfilters):
             kw[field.name + "__" + cmp] = flt['value']
             q = q & models.Q(**kw)
         elif flttype == 'boolean':
-            kw[field.name + "__equals"] = flt['value']
+            kw[field.name] = flt['value']
+            # kw[field.name + "__equals"] = flt['value']
             q = q & models.Q(**kw)
         elif flttype == 'date':
             v = datetime.date(*settings.SITE.parse_date(flt['value']))
