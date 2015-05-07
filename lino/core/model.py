@@ -812,49 +812,6 @@ action on individual instances.
         kw.update(language=self.get_print_language())
         return kw
 
-    LINO_MODEL_ATTRIBS = (
-        '_widget_options',
-        'set_widget_options',
-        'get_widget_options',
-        'get_chooser_for_field',
-        'get_detail_action',
-        'get_print_language',
-        'get_row_permission',
-        'get_excerpt_options',
-        'is_attestable',
-        'get_data_elem',
-        'get_param_elem',
-        'after_ui_save',
-        'after_ui_create',
-        'preferred_foreignkey_width',
-        'before_ui_save',
-        'allow_cascaded_delete',
-        'workflow_state_field',
-        'workflow_owner_field',
-        'disabled_fields',
-        'get_choices_text',
-        'summary_row',
-        'submit_insert',
-        'active_fields',
-        'hidden_columns',
-        'hidden_elements',
-        'get_default_table',
-        'get_template_group',
-        'get_related_project',
-        'get_system_note_recipients',
-        'get_system_note_type',
-        'quick_search_fields',
-        'change_watcher_spec',
-        'on_analyze',
-        'disable_delete',
-        'lookup_or_create',
-        'on_duplicate',
-        'on_create',
-        'error2str',
-        'get_typed_instance',
-        'print_subclasses_graph',
-        'grid_post', 'submit_insert')
-
     @classmethod
     def django2lino(cls, model):
         """
@@ -866,7 +823,7 @@ action on individual instances.
         if issubclass(model, cls):
             return
 
-        for k in cls.LINO_MODEL_ATTRIBS:
+        for k in LINO_MODEL_ATTRIBS:
             if not hasattr(model, k):
                 #~ setattr(model,k,getattr(dd.Model,k))
                 setattr(model, k, cls.__dict__[k])
@@ -915,3 +872,47 @@ action on individual instances.
   
 """ % s
         print s
+
+LINO_MODEL_ATTRIBS = (
+    '_widget_options',
+    'set_widget_options',
+    'get_widget_options',
+    'get_chooser_for_field',
+    'get_detail_action',
+    'get_print_language',
+    'get_row_permission',
+    'get_excerpt_options',
+    'is_attestable',
+    'get_data_elem',
+    'get_param_elem',
+    'after_ui_save',
+    'after_ui_create',
+    'preferred_foreignkey_width',
+    'before_ui_save',
+    'allow_cascaded_delete',
+    'workflow_state_field',
+    'workflow_owner_field',
+    'disabled_fields',
+    'get_choices_text',
+    'summary_row',
+    'submit_insert',
+    'active_fields',
+    'hidden_columns',
+    'hidden_elements',
+    'get_default_table',
+    'get_template_group',
+    'get_related_project',
+    'get_system_note_recipients',
+    'get_system_note_type',
+    'quick_search_fields',
+    'change_watcher_spec',
+    'on_analyze',
+    'disable_delete',
+    'lookup_or_create',
+    'on_duplicate',
+    'on_create',
+    'error2str',
+    'get_typed_instance',
+    'print_subclasses_graph',
+    'grid_post', 'submit_insert', 'delete_veto_message')
+

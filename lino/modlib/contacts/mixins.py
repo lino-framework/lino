@@ -112,6 +112,16 @@ class ContactRelated(dd.Model):
         return self.company or self.contact_person
     partner = property(get_partner)
 
+    def get_excerpt_options(self, ar, **kw):
+        """Implements :meth:`lino.core.model.Model.get_excerpt_options`.
+
+        """
+        kw = super(ContactRelated, self).get_excerpt_options(ar, **kw)
+        kw.update(company=self.company)
+        kw.update(contact_person=self.contact_person)
+        kw.update(contact_role=self.contact_role)
+        return kw
+
     def get_address_html(self, *args, **kwargs):
         rec = self.get_recipient()
         if rec is None:

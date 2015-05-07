@@ -389,7 +389,6 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
       excerpt.  See :attr:`ContactRelated.company
       <lino.modlib.contacts.mixins.ContactRelated.company>`.
 
-
       The optional recipient of this excerpt. See :attr:``
       (ForeignKey to :class:`ml.contacts.Company`)
 
@@ -617,11 +616,12 @@ def post_init_excerpt(sender, instance=None, **kwargs):
         # the project.
         if self.project_id:
             self.owner = self.project
-    if isinstance(self.owner, ContactRelated):
-        self.company = self.owner.company
-        self.contact_person = self.owner.contact_person
-        self.contact_role = self.owner.contact_role
-        # print("on_create 20150212", self)
+
+    # if isinstance(self.owner, ContactRelated):
+    #     self.company = self.owner.company
+    #     self.contact_person = self.owner.contact_person
+    #     self.contact_role = self.owner.contact_role
+    #     # print("on_create 20150212", self)
 
     if not self.language:
         if self.owner_id and self.owner:  # owner might still be None
