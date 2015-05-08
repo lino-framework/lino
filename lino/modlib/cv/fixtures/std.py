@@ -12,7 +12,6 @@ from lino.api import dd
 
 
 def objects():
-
     
     """
     Education levels in Belgium:
@@ -116,3 +115,18 @@ def objects():
     Convention de premier emploi
     Contrat de travail à temps partiel
     """
+
+    status = Instantiator('cv.Status').build
+    yield status(**dd.str2kw('name', _("Worker")))
+    yield status(**dd.str2kw('name', _("Employee")))
+    yield status(**dd.str2kw('name', _("Freelancer")))
+    yield status(**dd.str2kw('name', _("Voluntary")))
+    yield status(**dd.str2kw('name', _("Student")))
+    yield status(**dd.str2kw('name', _("Laboratory")))  # fr=Stage,
+                                                        # de=Praktikum
+    yield status(**dd.str2kw('name', _("Interim")))
+
+    regime = Instantiator('cv.Regime').build
+    yield regime(**dd.str2kw('name', _("Full-time")))
+    yield regime(**dd.str2kw('name', _("Part-time")))
+    yield regime(**dd.str2kw('name', _("Other")))

@@ -35,7 +35,7 @@ class UpdateProblem(dd.Action):
         if fix is None:
             fix = self.fix_them
         Problem = rt.modules.plausibility.Problem
-        print(20150327, ar.selected_rows)
+        # print(20150327, ar.selected_rows)
         for obj in ar.selected_rows:
             assert isinstance(obj, Problem)
             chk = obj.checker
