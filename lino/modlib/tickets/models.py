@@ -66,8 +66,6 @@ class TimeInvestment(dd.Model):
 class ProjectType(mixins.BabelNamed):
     """The type of a :class:`Project`."""
 
-    # templates_group = 'tickets/Project'
-
     class Meta:
         verbose_name = _("Project Type")
         verbose_name_plural = _('Project Types')
@@ -76,9 +74,23 @@ class ProjectType(mixins.BabelNamed):
 class ProjectTypes(dd.Table):
     model = 'tickets.ProjectType'
     column_names = 'name *'
-    # column_names = 'name build_method template *'
     detail_layout = """id name
     ProjectsByType
+    """
+
+class TicketType(mixins.BabelNamed):
+    """The type of a :class:`Ticket`."""
+
+    class Meta:
+        verbose_name = _("Ticket type")
+        verbose_name_plural = _('Ticket types')
+
+
+class TicketTypes(dd.Table):
+    model = 'tickets.TicketType'
+    column_names = 'name *'
+    detail_layout = """id name
+    TicketsByType
     """
 
 
@@ -505,6 +517,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         blank=True,
         help_text=_("Short summary of the problem."))
     description = dd.RichTextField(_("Description"), blank=True)
+    ticket_type = dd.ForeignKey('tickets.TicketType', blank=True, null=True)
     duplicate_of = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Duplicate of"))
 
@@ -598,7 +611,7 @@ class TicketDetail(dd.DetailLayout):
     main = "general planning"
 
     general = dd.Panel("""
-    summary:40 nickname:10 id
+    summary:40 nickname:10 id ticket_type
     reporter project product reported_for
     state workflow_buttons feedback standby closed private
     description clocking.SessionsByTicket
@@ -711,7 +724,13 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary reported_for fixed_for state closed invested_time *"
+    column_names = "summary ticket_type reported_for fixed_for state closed invested_time *"
+    auto_fit_column_widths = True
+
+
+class TicketsByType(Tickets):
+    master_key = 'ticket_type'
+    column_names = "summary state closed invested_time *"
     auto_fit_column_widths = True
 
 

@@ -9,6 +9,7 @@ Adds functionality for managing tickets.
 
     models
     choicelists
+    fixtures.demo
 
 
 """
@@ -35,6 +36,7 @@ class Plugin(ad.Plugin):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('tickets.ProjectTypes')
+        m.add_action('tickets.TicketTypes')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()

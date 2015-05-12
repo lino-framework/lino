@@ -129,6 +129,24 @@ class LinkType(dd.Choice):
 
 
 class LinkTypes(dd.ChoiceList):
+    """The possible values of a :class:`lino.modlib.tickets.models.Link`.
+
+    .. attribute:: requires
+
+        The parent ticket requires the child ticket.
+    
+    .. attribute:: triggers
+
+        The parent ticket triggers the child ticket.
+    
+    .. attribute:: deploys
+
+        The parent ticket is a deployment which deploys the child ticket.
+
+        Release notes are a printout of a deployment ticket which
+        lists the deployed tickets.
+
+    """
     required = dd.required(user_level='admin')
     verbose_name = _("Dependency type")
     verbose_name_plural = _("Dependency types")
@@ -138,7 +156,7 @@ add = LinkTypes.add_item
 add('10', 'requires', _("Requires"), _("Required by"))
 add('20', 'triggers', _("Triggers"), _("Triggered by"))
 add('30', 'seealso', _("See also"), _("Referred by"))
-add('40', 'solves', _("Solves"), _("Solved by"))
+add('40', 'deploys', _("Deploys"), _("Deployed by"))
 # add('20', 'duplicates', _("Duplicates"), _("Duplicate of"))
 
 # LinkTypes.addable_types = [LinkTypes.requires, LinkTypes.duplicates]
