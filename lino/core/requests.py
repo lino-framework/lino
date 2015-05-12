@@ -509,6 +509,7 @@ request from it.
         be specified as second argument.
 
         The first argument, `spec` can be:
+
         - a string with the name of a model, actor or action
         - another action request
         - a :class:`BoundAction` instance
@@ -549,6 +550,7 @@ request from it.
         ar = self.spawn(spec, **kw)
 
         def doit():
+            # print 20150512, ar.renderer
             return ar.renderer.show_request(
                 ar, column_names=column_names, header_level=header_level)
 

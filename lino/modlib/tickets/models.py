@@ -345,25 +345,26 @@ class LinksByTicket(Links):
             # ValueError: day is out of range for month
             pass
 
-        items = []
-        for type, other in links:
-
+        tbt = dict()  # tickets by lnktype
+        for lnktype, other in links:
+            lst = tbt.setdefault(lnktype, [])
             txt = "#%d" % other.id
-            items.append(E.span(
-                unicode(type), " ",
-                ar.obj2html(other, txt, title=other.summary)))
-            # items.append(E.li(unicode(type), " ", ar.obj2html(obj)))
+            lst.append(ar.obj2html(other, txt, title=other.summary))
+
+        items = []
+        for lnktype, lst in tbt.items():
+            items.append(E.li(unicode(lnktype), ": ", *join_elems(lst, ', ')))
         elems = []
         if len(items) > 0:
-            elems += join_elems(items)
+            # elems += join_elems(items)
             # elems.append(l(*items))
-            # elems.append(E.ul(*items))
+            elems.append(E.ul(*items))
         else:
             elems.append(_("No dependencies."))
 
         # Buttons for creating relationships:
         sar = self.insert_action.request_from(ar)
-        if sar.get_permission():
+        if ar.renderer.is_interactive and sar.get_permission():
             actions = []
             for lt in LinkTypes.objects():
                 actions.append(E.br())
@@ -754,7 +755,8 @@ class ActiveTickets(Tickets):
                   "closed nor in standby mode.")
     label = _("Active tickets")
     order_by = ["-modified", "id"]
-    column_names = 'overview:50 workflow_buttons:30 reporter:10 project:10 *'
+    column_names = 'overview:50 workflow_buttons:30 \
+    reporter:10 ticket_type:10 project:10 *'
 
     @classmethod
     def param_defaults(self, ar, **kw):

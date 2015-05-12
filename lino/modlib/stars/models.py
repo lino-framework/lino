@@ -56,7 +56,8 @@ class StarObject(dd.Action):
         obj = ar.selected_rows[0]
         Star = rt.modules.stars.Star
         Star(owner=obj, user=ar.get_user()).save()
-        ar.success(refresh=True)
+        ar.success(
+            _("{0} is now starred.").format(obj), refresh_all=True)
 
 
 class UnstarObject(dd.Action):
@@ -78,9 +79,10 @@ class UnstarObject(dd.Action):
         obj = ar.selected_rows[0]
         star = get_favourite(obj, ar.get_user())
         star.delete()
-        ar.success(refresh=True)
-    
-    
+        ar.success(
+            _("{0} is no longer starred.").format(obj), refresh_all=True)
+
+
 dd.Model.star_object = StarObject()
 dd.Model.unstar_object = UnstarObject()
 

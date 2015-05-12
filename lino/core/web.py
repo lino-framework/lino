@@ -147,8 +147,6 @@ def site_setup(self):
 
 def extend_context(context):
     def parse(s):
-        #~ print 20121221, s
-        #~ return Template(s).render(**context)
         return settings.SITE.jinja_env.from_string(s).render(**context)
     context.update(
         now=datetime.datetime.now(),

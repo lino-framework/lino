@@ -92,7 +92,10 @@ class HtmlRenderer(object):
         """
         Returns a HTML element representing this request as a table.
         """
-        #~ return ar.table2xhtml(**kw)
+        if ar.actor.master is not None:
+            if ar.actor.slave_grid_format == 'summary':
+                return E.tostring(
+                    ar.actor.get_slave_summary(ar.master_instance, ar))
         return E.tostring(ar.table2xhtml(**kw))
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
@@ -202,15 +205,14 @@ request `tar`."""
         #~ return '<p>%s</p>' % s
         return E.p(*buttons)
 
-    def obj2html(self, ar, obj, text=None):
+    def obj2html(self, ar, obj, text=None, **kwargs):
         if text is None:
             text = (force_unicode(obj),)
         elif isinstance(text, basestring):
             text = (text,)
-        if self.is_interactive:
-            url = self.instance_handler(ar, obj)
-            if url is not None:
-                return E.a(*text, href=url)
+        url = self.instance_handler(ar, obj)
+        if url is not None:
+            return E.a(*text, href=url, **kwargs)
         return E.em(*text)
 
     def quick_upload_buttons(self, rr):

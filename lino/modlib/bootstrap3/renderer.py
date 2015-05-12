@@ -19,7 +19,7 @@ class Renderer(HtmlRenderer):
 
     """
 
-    is_interactive = True
+    # is_interactive = True
 
     def instance_handler(self, ar, obj, **kw):
         a = obj.get_detail_action(ar)
