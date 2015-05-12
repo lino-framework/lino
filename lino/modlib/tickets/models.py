@@ -40,11 +40,11 @@ blogs = dd.resolve_app('blogs')
 
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
-from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, ByUser
+# from lino.modlib.contenttypes.mixins import Controllable
+# from lino.modlib.users.mixins import UserAuthored, ByUser
 from lino.utils import join_elems
 
-from .choicelists import TicketStates, LinkTypes
+from .choicelists import TicketEvents, TicketStates, LinkTypes
 
 
 class TimeInvestment(dd.Model):
@@ -366,17 +366,20 @@ class LinksByTicket(Links):
         if sar.get_permission():
             actions = []
             for lt in LinkTypes.objects():
+                actions.append(E.br())
                 sar.known_values.update(type=lt, parent=obj)
                 sar.known_values.pop('child', None)
                 btn = sar.ar2button(None, lt.as_parent(), icon_name=None)
-                actions.append(btn)
                 if not lt.symmetric:
-                    actions.append('/')
+                    # actions.append('/')
                     sar.known_values.update(type=lt, child=obj)
                     sar.known_values.pop('parent', None)
-                    btn = sar.ar2button(None, lt.as_child(), icon_name=None)
-                    actions.append(btn)
-                actions.append(' ')
+                    btn2 = sar.ar2button(None, lt.as_child(), icon_name=None)
+                    # actions.append(btn)
+                    btn = E.span(btn, '/', btn2)
+                actions.append(btn)
+                # actions.append(' ')
+            # actions = join_elems(actions, E.br)
 
             if len(actions) > 0:
                 elems += [E.br(), _("Create dependency as ")] + actions
@@ -550,7 +553,9 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     #     _("Closed since"), editable=False, null=True)
     # standby = models.DateTimeField(
     #     _("Standby since"), editable=False, null=True)
-    feedback = models.BooleanField(_("Waiting for feedback"), default=False)
+    feedback = models.BooleanField(
+        _("Feedback"), default=False,
+        help_text=_("Ticket is waiting for feedback from somebody else."))
     standby = models.BooleanField(_("Standby"), default=False)
 
     #~ start_date = models.DateField(
@@ -599,28 +604,24 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
 
-class TicketEvents(dd.ChoiceList):
-    verbose_name = _("Observed event")
-    verbose_name_plural = _("Observed events")
-add = TicketEvents.add_item
-add('10', _("Opened"), 'opened')
-add('20', _("Closed"), 'closed')
-
-
 class TicketDetail(dd.DetailLayout):
     main = "general planning"
 
     general = dd.Panel("""
-    summary:40 nickname:10 id ticket_type
-    reporter project product reported_for
-    state workflow_buttons feedback standby closed private
-    description clocking.SessionsByTicket
+    general1 LinksByTicket
+    description:30 clocking.SessionsByTicket:40
     """, label=_("General"))
+    
+    general1 = """
+    summary:40 id ticket_type:10
+    reporter project product reported_for
+    workflow_buttons:20 feedback standby closed private
+    """
 
     planning = dd.Panel("""
-    fixed_for created modified
-    assigned_to duplicate_of planned_time invested_time
-    DuplicatesByTicket LinksByTicket #ChildrenByTicket
+    nickname:10 fixed_for created modified
+    state assigned_to duplicate_of planned_time invested_time
+    DuplicatesByTicket  #ChildrenByTicket
     """, label=_("Planning"))
 
 

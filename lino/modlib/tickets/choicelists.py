@@ -18,6 +18,14 @@ from django.utils.translation import string_concat
 from lino.api import dd, _
 
 
+class TicketEvents(dd.ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+add = TicketEvents.add_item
+add('10', _("Opened"), 'opened')
+add('20', _("Closed"), 'closed')
+
+
 class TicketStates(dd.Workflow):
 
     """
@@ -155,7 +163,7 @@ class LinkTypes(dd.ChoiceList):
 add = LinkTypes.add_item
 add('10', 'requires', _("Requires"), _("Required by"))
 add('20', 'triggers', _("Triggers"), _("Triggered by"))
-add('30', 'seealso', _("See also"), _("Referred by"))
+# add('30', 'seealso', _("See also"), _("Referred by"))
 add('40', 'deploys', _("Deploys"), _("Deployed by"))
 # add('20', 'duplicates', _("Duplicates"), _("Duplicate of"))
 
