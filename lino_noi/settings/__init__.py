@@ -44,6 +44,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
+        yield 'lino.modlib.stars'
 
         # yield 'lino.modlib.awesomeuploader'
 
