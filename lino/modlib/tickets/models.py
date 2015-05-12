@@ -673,16 +673,18 @@ class Tickets(dd.Table):
         qs = super(Tickets, self).get_request_queryset(ar)
         pv = ar.param_values
 
-        if pv.observed_event == TicketEvents.opened:
-            if pv.start_date:
-                qs = qs.filter(created__gte=pv.start_date)
-            if pv.end_date:
-                qs = qs.filter(created__lte=pv.end_date)
-        elif pv.observed_event == TicketEvents.closed:
-            if pv.start_date:
-                qs = qs.filter(closed__gte=pv.start_date)
-            if pv.end_date:
-                qs = qs.filter(closed__lte=pv.end_date)
+        if pv.observed_event:
+            qs = pv.observed_event.add_filter(qs, pv)
+        # if pv.observed_event == TicketEvents.opened:
+        #     if pv.start_date:
+        #         qs = qs.filter(created__gte=pv.start_date)
+        #     if pv.end_date:
+        #         qs = qs.filter(created__lte=pv.end_date)
+        # elif pv.observed_event == TicketEvents.closed:
+        #     if pv.start_date:
+        #         qs = qs.filter(closed__gte=pv.start_date)
+        #     if pv.end_date:
+        #         qs = qs.filter(closed__lte=pv.end_date)
         # elif pv.observed_event == TicketEvents.active:
         #     qs = qs.filter(closed__isnull=True)
 
@@ -700,7 +702,7 @@ class Tickets(dd.Table):
             qs = qs.filter(private=False, project__private=False)
         elif pv.show_private == dd.YesNo.yes:
             qs = qs.filter(Q(private=True) | Q(project__private=True))
-
+        print 20150512, qs.query
         return qs
 
     @classmethod
@@ -732,6 +734,12 @@ class TicketsByProject(Tickets):
 
 class TicketsByType(Tickets):
     master_key = 'ticket_type'
+    column_names = "summary state closed invested_time *"
+    auto_fit_column_widths = True
+
+
+class TicketsByProduct(Tickets):
+    master_key = 'product'
     column_names = "summary state closed invested_time *"
     auto_fit_column_widths = True
 

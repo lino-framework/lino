@@ -18,12 +18,50 @@ from django.utils.translation import string_concat
 from lino.api import dd, _
 
 
+class TicketEvent(dd.Choice):
+
+    def add_filter(self, qs, pv):
+        return qs
+
+
+from datetime import datetime, time
+combine = datetime.combine
+T00 = time(0, 0, 0)
+T24 = time(23, 59, 59)
+
+
+class TicketEventOpened(TicketEvent):
+
+    def add_filter(self, qs, pv):
+        if pv.start_date:
+            qs = qs.filter(created__gte=combine(pv.start_date, T00))
+        if pv.end_date:
+            qs = qs.filter(created__lte=combine(pv.end_date, T24))
+        return qs
+
+
+class TicketEventModified(TicketEvent):
+
+    def add_filter(self, qs, pv):
+        if pv.start_date:
+            qs = qs.filter(modified__gte=combine(pv.start_date, T00))
+        if pv.end_date:
+            qs = qs.filter(modified__lte=combine(pv.end_date, T24))
+        return qs
+
+
 class TicketEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
-add = TicketEvents.add_item
-add('10', _("Opened"), 'opened')
-add('20', _("Closed"), 'closed')
+    item_class = TicketEvent
+
+add = TicketEvents.add_item_instance
+add(TicketEventOpened('10', _("Created"), 'created'))
+add(TicketEventModified('20', _("Modified"), 'modified'))
+
+# add = TicketEvents.add_item
+# add('10', _("Opened"), 'opened')
+# add('20', _("Closed"), 'closed')
 
 
 class TicketStates(dd.Workflow):
