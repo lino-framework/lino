@@ -354,39 +354,40 @@ def welcome_messages(ar):
         yield E.span(*chunks)
         # return
 
-    # Tickets in "favourite" states get their own welcome message.
-    qs = Ticket.objects.filter(
-        Q(assigned_to__isnull=True) | Q(assigned_to=me))
-    qs = qs.filter(state__in=TicketStates.favorite_states)
-    qs = qs.filter(closed=False, standby=False)
-    qs = qs.exclude(id__in=busy_tickets)
-    qs = qs.order_by('-modified')
-    if qs.count() > 0:
-        od = OrderedDict()  # state -> list of tickets
-        for ticket in qs:
-            lst = od.setdefault(ticket.state, [])
-            if len(lst) < 10:
-                txt = unicode(ticket)
-                # txt = "#{0}".format(ticket.id)
-                # if ticket.nickname:
-                #     txt += u" ({0})".format(ticket.nickname)
-                lst.append(ar.obj2html(ticket, txt, title=ticket.summary))
-            elif len(lst) == 10:
-                lst.append('...')
-        items = []
-        for state, tickets in od.items():
-            chunks = ["{0} : ".format(state)]
-            sep = None
-            for ticket in tickets:
-                if sep:
-                    chunks.append(sep)
-                chunks.append(ticket)
-                sep = ', '
-            # chunks.append('. ')
-            items.append(E.li(*chunks))
-        yield _("Your favourite tickets are:")
-        yield E.ul(*items)
-        # yield E.div(E.p(_("You might want to work on")), E.ul(*items))
+    if False:
+        # Tickets in "favourite" states get their own welcome message.
+        qs = Ticket.objects.filter(
+            Q(assigned_to__isnull=True) | Q(assigned_to=me))
+        qs = qs.filter(state__in=TicketStates.favorite_states)
+        qs = qs.filter(closed=False, standby=False)
+        qs = qs.exclude(id__in=busy_tickets)
+        qs = qs.order_by('-modified')
+        if qs.count() > 0:
+            od = OrderedDict()  # state -> list of tickets
+            for ticket in qs:
+                lst = od.setdefault(ticket.state, [])
+                if len(lst) < 10:
+                    txt = unicode(ticket)
+                    # txt = "#{0}".format(ticket.id)
+                    # if ticket.nickname:
+                    #     txt += u" ({0})".format(ticket.nickname)
+                    lst.append(ar.obj2html(ticket, txt, title=ticket.summary))
+                elif len(lst) == 10:
+                    lst.append('...')
+            items = []
+            for state, tickets in od.items():
+                chunks = ["{0} : ".format(state)]
+                sep = None
+                for ticket in tickets:
+                    if sep:
+                        chunks.append(sep)
+                    chunks.append(ticket)
+                    sep = ', '
+                # chunks.append('. ')
+                items.append(E.li(*chunks))
+            yield _("Your favourite tickets are:")
+            yield E.ul(*items)
+            # yield E.div(E.p(_("You might want to work on")), E.ul(*items))
 
 dd.add_welcome_handler(welcome_messages)
 

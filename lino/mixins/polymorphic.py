@@ -135,17 +135,9 @@ class Polymorphic(model.Model):
                 if a in b.__bases__:
                     level += b.__bases__.index(a)
                 return level
-                # if a is b:
-                #     return 0
-                # if issubclass(a, b):
-                #     return 1
-                # return -1
 
             # models.sort(f)
             cls._mtinav_models = tuple(models)
-
-            # cls._mti_ins_actions = []
-            # cls._mti_del_actions = []
 
             def add(m, cl):
                 a = cl(m)
@@ -155,15 +147,6 @@ class Polymorphic(model.Model):
                 add(m, DeleteChild)
                 add(m, InsertChild)
 
-            # cls._mti_ins_actions = tuple(cls._mti_ins_actions)
-            # cls._mti_del_actions = tuple(cls._mti_del_actions)
-
-    # def get_mti_leaf(self):
-    #     model = self.get_child_model()
-    #     if model is self.__class__:
-    #         return self
-    #     related_name = model.__name__.lower()
-    #     return getattr(self, related_name)
 
     def get_mti_child(self, *args):
         """Return the specified specialization or `None`.

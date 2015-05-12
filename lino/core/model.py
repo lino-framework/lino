@@ -478,14 +478,14 @@ class Model(models.Model):
 
     def update_owned_instance(self, controllable):
         """
-        Called by :class:`ml.contenttypes.Controllable`.
+        Called by :class:`lino.modlib.contenttypes.Controllable`.
         """
         #~ print '20120627 tools.Model.update_owned_instance'
         pass
 
     def after_update_owned_instance(self, controllable):
         """
-        Called by :class:`ml.contenttypes.Controllable`.
+        Called by :class:`lino.modlib.contenttypes.Controllable`.
         """
         pass
 

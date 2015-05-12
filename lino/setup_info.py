@@ -92,11 +92,12 @@ lino.core
 lino.history
 lino.mixins
 lino.modlib
-lino.modlib.auto
-lino.modlib.auto.sales
+lino.modlib.accounts
 lino.modlib.addresses
 lino.modlib.addresses.fixtures
 lino.modlib.appypod
+lino.modlib.auto
+lino.modlib.auto.sales
 lino.modlib.awesomeuploader
 lino.modlib.beid
 lino.modlib.boards
@@ -172,7 +173,7 @@ lino.modlib.plausibility.management.commands
 lino.modlib.polls
 lino.modlib.polls.fixtures
 lino.modlib.postings
-lino.modlib.accounts
+lino.modlib.stars
 lino.modlib.vat
 lino.modlib.vat.fixtures
 lino.modlib.households

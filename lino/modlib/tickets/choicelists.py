@@ -138,6 +138,7 @@ add = LinkTypes.add_item
 add('10', 'requires', _("Requires"), _("Required by"))
 add('20', 'triggers', _("Triggers"), _("Triggered by"))
 add('30', 'seealso', _("See also"), _("Referred by"))
+add('40', 'solves', _("Solves"), _("Solved by"))
 # add('20', 'duplicates', _("Duplicates"), _("Duplicate of"))
 
 # LinkTypes.addable_types = [LinkTypes.requires, LinkTypes.duplicates]

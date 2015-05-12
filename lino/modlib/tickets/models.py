@@ -25,8 +25,6 @@ by a version number.
 
 from __future__ import unicode_literals
 
-import datetime
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -36,10 +34,14 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
+from lino.core.utils import gfk2lookup
+
 blogs = dd.resolve_app('blogs')
 
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
+from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.users.mixins import UserAuthored, ByUser
 from lino.utils import join_elems
 
 from .choicelists import TicketStates, LinkTypes
@@ -394,6 +396,7 @@ class LinksByTicket(Links):
 #     label = _("Parents")
 #     master_key = 'child'
 #     column_names = "dependency_type parent *"
+
 
 
 # class CloseTicket(dd.Action):
