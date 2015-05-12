@@ -14,7 +14,7 @@ class TemplateView(View):
 
 class Index(TemplateView):
 
-    template_name = 'main/index.html'
+    template_name = 'noi/index.html'
 
     def get(self, request):
         s = render_from_request(request, self.template_name)
@@ -24,11 +24,11 @@ class Index(TemplateView):
 class Detail(TemplateView):
 
     model = None  # to be specified in views.py
-    # template_name = 'main/detail.html'
+    # template_name = 'noi/detail.html'
 
     def __init__(self, model, *args, **kwargs):
         self.model = model
-        self.template_name = "main/{0}.html".format(full_model_name(model))
+        self.template_name = "noi/{0}.html".format(full_model_name(model))
         super(TemplateView, self).__init__(*args, **kwargs)
 
     def get(self, request, pk):

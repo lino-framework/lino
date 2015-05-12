@@ -13,11 +13,14 @@
 {% if obj.product %}
 <br/><b>Product:</b> {{obj.product}}
 {% endif %}
+
+{% if False %}
 {% if obj.project %}
 <br/><b>Project:</b> {{obj.name}}
 {% endif %}
 {% if obj.ticket_type %}
 <br/><b>Type:</b> {{obj.ticket_type}}
+{% endif %}
 {% endif %}
 </p>
 <div>{{obj.description}}</div>

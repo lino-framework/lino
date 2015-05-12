@@ -33,7 +33,7 @@ class Site(Site):
         yield 'lino_noi.lib.users'
         yield 'lino_noi.lib.contacts'
         yield 'lino.modlib.cal'
-        yield 'lino.modlib.products'
+        yield 'lino_noi.lib.products'
         yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
@@ -48,7 +48,7 @@ class Site(Site):
 
         # yield 'lino.modlib.awesomeuploader'
 
-        yield 'lino_noi.lib.main'
+        yield 'lino_noi.lib.noi'
 
     def get_default_required(self, **kw):
         # overrides the default behaviour which would add
