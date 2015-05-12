@@ -1,8 +1,10 @@
 from django.http import HttpResponse
 from django.views.generic import View
+from django.conf import settings
 
-from lino.core.web import render_from_request
+# from lino.core.web import render_from_request
 from lino.core.utils import full_model_name
+from lino.core.requests import BaseRequest
 
 
 class TemplateView(View):
@@ -34,6 +36,14 @@ class Detail(TemplateView):
         s = render_from_request(request, self.template_name, obj=obj)
         return HttpResponse(s)
 
+
+def render_from_request(request, template_name, **context):
+    template = settings.SITE.jinja_env.get_template(template_name)
+    ar = BaseRequest(
+        renderer=settings.SITE.plugins.bootstrap3.renderer,
+        request=request)
+    context = settings.SITE.get_printable_context(ar=ar, **context)
+    return template.render(**context)
 
 # def contacts(request, company_id):
 #     response = "You're looking at the contacts of company %s."

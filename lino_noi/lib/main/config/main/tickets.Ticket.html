@@ -10,9 +10,18 @@
 {% if obj.standby %} (standby){% endif %}
 (last update {{obj.modified}})
 <br/><b>Reported by:</b> {{obj.reporter}} {{obj.created}}
+{% if obj.product %}
+<br/><b>Product:</b> {{obj.product}}
+{% endif %}
+{% if obj.project %}
 <br/><b>Project:</b> {{obj.project}}
+{% endif %}
+{% if obj.ticket_type %}
+<br/><b>Type:</b> {{obj.ticket_type}}
+{% endif %}
 </p>
-  <div>{{obj.description}}</div>
+<div>{{obj.description}}</div>
+<div>{{ar.show('tickets.LinksByTicket', obj)}}</div>
 </div>
 {% endblock %}
 
