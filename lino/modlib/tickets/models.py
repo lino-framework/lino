@@ -702,7 +702,7 @@ class Tickets(dd.Table):
             qs = qs.filter(private=False, project__private=False)
         elif pv.show_private == dd.YesNo.yes:
             qs = qs.filter(Q(private=True) | Q(project__private=True))
-        print 20150512, qs.query
+        # print 20150512, qs.query
         return qs
 
     @classmethod
