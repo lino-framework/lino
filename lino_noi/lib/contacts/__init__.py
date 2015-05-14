@@ -8,8 +8,6 @@ Lino Noi extension of :mod:`lino.modlib.contacts`.
    :toctree:
 
     models
-    fixtures.demo
-    fixtures.demo2
 
 """
 

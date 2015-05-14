@@ -4,7 +4,7 @@
 Changes in Lino Noi
 ========================
 
-See the author's :ref:`Developer Blog <blog>`
+See the author's `Developer Blog <http://luc.lino-framework.org/>`__
 to get detailed news.
 The final truth about what's going on is only 
 `The Source Code <https://github.com/lsaffre/lino-cosi>`_.

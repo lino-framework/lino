@@ -7,9 +7,7 @@
    :toctree:
 
    settings
-   models
    lib
-   fixtures.tractickets
    fixtures.linotickets
 
 
