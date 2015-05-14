@@ -23,6 +23,7 @@ class ProductCat(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
+        abstract = dd.is_abstract_model(__name__, 'ProductCat')
 
     #~ name = dd.BabelCharField(max_length=200)
     description = models.TextField(blank=True)
@@ -31,7 +32,7 @@ class ProductCat(mixins.BabelNamed):
 
 
 class ProductCats(dd.Table):
-    model = ProductCat
+    model = 'products.ProductCat'
     required = dd.required(user_level='manager')
     order_by = ["id"]
     detail_layout = """
@@ -46,6 +47,7 @@ class Product(mixins.BabelNamed):
     class Meta:
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
+        abstract = dd.is_abstract_model(__name__, 'Product')
 
     description = dd.BabelTextField(
         verbose_name=_("Long description"),
