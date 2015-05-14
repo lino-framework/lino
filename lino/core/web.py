@@ -14,14 +14,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from os.path import join, dirname, isdir
-import datetime
 import jinja2
+from jinja2 import contextfilter, contextfunction
 
 
 from django.conf import settings
-from django.utils.translation import get_language
 from django.utils.translation import ugettext_lazy as _
-#~ from django.template.loaders import app_directories
 from django.template.loader import BaseLoader
 from django.template.base import TemplateDoesNotExist
 
@@ -142,17 +140,33 @@ def site_setup(self):
         _=_,
     )
 
+    @contextfunction
+    def counter_function(context, name=None, value=None, step=1):
+        """This is a Jinja context function.
+
+        Parameters are:
+
+        :context: the `Context
+        <http://jinja.pocoo.org/docs/dev/api/#the-context>`_.
+        :name:  the name of the counter
+        :step:  Optional increment step
+
+        """
+        counters = context['inc_counters']
+        if value is None:
+            if name in counters:
+                value = counters.get(name)
+                value += step
+            else:
+                value = step
+        counters[name] = value
+        return value
+
+    self.jinja_env.globals.update(counter=counter_function)
+
+
     #~ print __file__, 20121231, self.jinja_env.list_templates('.html')
 
-
-def extend_context(context):
-    def parse(s):
-        return settings.SITE.jinja_env.from_string(s).render(**context)
-    context.update(
-        now=datetime.datetime.now(),
-        parse=parse,
-        requested_language=get_language(),
-    )
 
 from lino.core import requests
 
@@ -161,7 +175,8 @@ def render_from_request(request, template_name, **context):
     """
     Adds some more context names
     """
-    extend_context(context)
+    context = settings.SITE.get_printable_context(**context)
+    # extend_context(context)
     context.update(request=request)
     ar = requests.BaseRequest(
         renderer=settings.SITE.kernel.default_renderer,
@@ -186,7 +201,8 @@ class DjangoJinjaTemplate:
         context_dict = {}
         for d in context.dicts:
             context_dict.update(d)
-        extend_context(context_dict)
+        # extend_context(context_dict)
+        context_dict = settings.SITE.get_printable_context(**context_dict)
         context_dict.setdefault('request', None)
         context_dict.setdefault(
             'ar', requests.BaseRequest(

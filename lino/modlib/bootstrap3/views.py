@@ -20,7 +20,6 @@ from lino.utils.xmlgen.html import E
 
 from lino.api import dd
 from lino.core import auth
-from lino.core import web
 from lino.core.requests import BaseRequest
 from lino.core.views import action_request
 
@@ -44,7 +43,7 @@ def http_response(request, tplname, context):
         menu = E.tostring(menu)
         MENUS[k] = menu
     context.update(menu=menu, E=E)
-    web.extend_context(context)
+    context = settings.SITE.get_printable_context(**context)
     template = settings.SITE.jinja_env.get_template(tplname)
 
     response = http.HttpResponse(

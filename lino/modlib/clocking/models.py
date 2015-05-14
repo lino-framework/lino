@@ -301,8 +301,7 @@ class MySessions(Sessions, ByUser):
 
 
 class MySessionsByDate(MySessions):
-    #~ master_key = 'date'
-    # order_by = ['start_time']
+    order_by = ['start_date', 'start_time']
     label = _("My sessions by date")
     column_names = 'start_time end_time break_time duration ticket summary '\
                    'workflow_buttons *'

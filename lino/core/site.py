@@ -44,6 +44,7 @@ from atelier.utils import AttrDict, date_offset
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language
 
 from lino import AFTER17
 from lino.core.plugin import Plugin
@@ -372,7 +373,7 @@ documentation.
 
     trusted_templates = False
     """
-    Set this to True if you are sure that the users of your site won't try to 
+    Set this to True if you are sure that the users of your site won't try to
     misuse Jinja's capabilities.
 
     """
@@ -2385,7 +2386,7 @@ given object `obj`. The dict will have one key for each
         from django.utils import translation
         if len(args) == 0:
             info = self.language_dict.get(
-                translation.get_language(), self.DEFAULT_LANGUAGE)
+                get_language(), self.DEFAULT_LANGUAGE)
             default_value = None
             if info == self.DEFAULT_LANGUAGE:
                 return values.get(info.name)
@@ -2394,7 +2395,7 @@ given object `obj`. The dict will have one key for each
                 return values.get(self.DEFAULT_LANGUAGE.name)
             return x
         elif len(args) == 1:
-            info = self.language_dict.get(translation.get_language(), None)
+            info = self.language_dict.get(get_language(), None)
             if info is None:
                 return args[0]
             default_value = args[0]
@@ -2464,8 +2465,7 @@ given object `obj`. The dict will have one key for each
 
         """
         if language is None:
-            from django.utils import translation
-            language = translation.get_language()
+            language = get_language()
         info = self.language_dict.get(language, self.DEFAULT_LANGUAGE)
         if info.index != 0:
             v = getattr(obj, attrname + info.suffix, None)
@@ -3094,6 +3094,16 @@ signature as `django.core.mail.EmailMessage`.
         def ptranslate(ctx, s):
             return pgettext(ctx.decode('utf8'), s.decode('utf8'))
         kw.update(pgettext=pgettext)
+
+        def parse(s):
+            return self.jinja_env.from_string(s).render(**kw)
+        kw.update(
+            now=datetime.datetime.now(),
+            parse=parse,
+            requested_language=get_language(),
+        )
+    
+        kw.update(inc_counters=dict())
 
         return kw
 
