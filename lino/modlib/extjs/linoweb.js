@@ -740,7 +740,7 @@ Lino.close_window = function(status_update, norestore) {
   var ww = Lino.window_history.pop();
   var retval = cw.main_item.requesting_panel;
   // console.log(
-  //     "20140917 Lino.close_window() going to close", cw.title,
+  //     "20150514 Lino.close_window() going to close", cw.title,
   //     "previous is", ww, 
   //     "norestore is", norestore,
   //     "retval is", retval);
@@ -1488,7 +1488,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
 
 Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
-    // console.log('20141127 Lino.handle_action_result()', result);
+    // console.log('20150514 Lino.handle_action_result()', result);
     
     // if (panel instanceof Lino.GridPanel) {
     //     gridmode = true;
@@ -1553,13 +1553,15 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
                 if (ww.window.main_item.ls_detail_handler == detail_handler) {
                     ns.record_id = result.record_id;
                     ns.data_record = result.data_record;
-                    // console.log("20140630 use new status.");
+                    // console.log("20150514 use new status.");
                 }
             }
         }
 
-        panel = Lino.close_window(function(st) {Ext.apply(st, ns)}); 
+        panel = Lino.close_window(
+            function(ww) { Ext.apply(ww.status, ns) }); 
         if (!panel) 
+            // console.log("20150514 close_window returned no panel.");
             if (Lino.current_window)
                 panel = Lino.current_window.main_item;
 
@@ -1578,10 +1580,10 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
           if (panel instanceof Lino.FormPanel 
               && panel.ls_detail_handler == detail_handler) 
             {
-              // console.log("20140630 use panel.set_status().");
+              // console.log("20150514 use panel.set_status().");
               panel.set_status(st);
           } else {
-              // console.log("20140630 run detail_handler.");
+              // console.log("20150514 run detail_handler.");
               st.base_params = panel.get_base_params();
               detail_handler.run(null, st);
           }
@@ -2069,7 +2071,7 @@ Lino.call_ajax_action = function(
 Lino.row_action_handler = function(actionName, hm, pp) {
   var p = {};
   var fn = function(panel, btn, step) {
-      // console.log('20140930 row_action_handler');
+      // console.log('20150514 row_action_handler');
       if (pp) { p = pp(panel); if (! p) return; }
       
       if (!panel || panel.get_current_record == undefined) { // AFTER_20130725
@@ -4367,7 +4369,7 @@ Lino.Window = Ext.extend(Ext.Window,{
     
     this.main_item.config_containing_window(config);
     
-    //~ console.log('20120110 Lino.Window.constructor() 2');
+    // console.log('20150514 Lino.Window.constructor() 2');
     Lino.Window.superclass.constructor.call(this,config);
     
     //~ console.log('20120110 Lino.Window.constructor() 3');
