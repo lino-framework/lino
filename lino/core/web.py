@@ -15,16 +15,19 @@ logger = logging.getLogger(__name__)
 
 from os.path import join, dirname, isdir
 import jinja2
-from jinja2 import contextfilter, contextfunction
+from jinja2 import contextfunction
 
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext
+from django.utils.translation import pgettext
 from django.template.loader import BaseLoader
 from django.template.base import TemplateDoesNotExist
 
 from lino.utils import iif
 from lino.utils import format_date
+from lino.api import rt
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -129,16 +132,39 @@ def site_setup(self):
     self.jinja_env.globals.update(
         settings=settings,
         site=self,
-        dtos=format_date.fds,
-        dtosl=format_date.fdl,
+        dtos=format_date.fds,  # obsolete
+        dtosl=format_date.fdl,  # obsolete
         as_ul=as_ul,
         as_table=as_table,
         iif=iif,
         unicode=unicode,
         len=len,
         E=E,
-        _=_,
+        # _=_,
+        mtos=self.decfmt,  # obsolete
+        decfmt=self.decfmt,
+        fds=format_date.fds,
+        fdm=format_date.fdm,
+        fdl=format_date.fdl,
+        fdf=format_date.fdf,
+        fdmy=format_date.fdmy,
+        babelattr=self.babelattr,
+        babelitem=self.babelitem,  # obsolete
+        tr=self.babelitem,
+        # dd=dd,
+        rt=rt,
+        # lino=self.modules,  # experimental
+        # site_config=self.site_config,
+
     )
+
+    def translate(s):
+        return ugettext(s.decode('utf8'))
+    self.jinja_env.globals.update(_=translate)
+
+    def ptranslate(ctx, s):
+        return pgettext(ctx.decode('utf8'), s.decode('utf8'))
+    self.jinja_env.globals.update(pgettext=pgettext)
 
     @contextfunction
     def counter_function(context, name=None, value=None, step=1):
