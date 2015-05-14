@@ -7,17 +7,31 @@
 """
 
 from lino.api import dd
+from lino.mixins import Referrable
 from lino.modlib.products.models import *
+
+
+class Product(Product, Referrable):
+    pass
 
 
 class ProductDetail(dd.DetailLayout):
     main = """
-    id cat #sales_price vat_class
+    id ref cat #sales_price vat_class
     name
     description
     tickets.TicketsByProduct
     """
 
 
-def site_setup(site):
-    site.modules.products.Products.set_detail_layout(ProductDetail())
+class Products(Products):
+    detail_layout = ProductDetail()
+    insert_layout = """
+    ref cat
+    name
+    """
+    column_names = "ref name cat *"
+
+
+# def site_setup(site):
+#     site.modules.products.Products.set_detail_layout(ProductDetail())
