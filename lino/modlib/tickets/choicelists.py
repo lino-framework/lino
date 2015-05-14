@@ -99,16 +99,17 @@ add = TicketStates.add_item
 add('10', _("New"), 'new')
 add('20', _("To do"), 'todo')
 add('21', _("Sticky"), 'sticky')
-add('30', _("Callback"), 'callback',
+# add('30', _("Callback"), 'callback',
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
-    help_text=_("Waiting for feedback from partner."))
-add('40', _("Fixed"), 'fixed',
-    # required=dict(states=['todo']),
-    help_text=_("Has been fixed. Waiting to be tested."))
-add('50', _("Tested"), 'tested',
-    # required=dict(states=['fixed']),
-    help_text=_("Has been fixed and tested."))
+    # help_text=_("Waiting for feedback from partner."))
+# add('40', _("Fixed"), 'fixed',
+#     # required=dict(states=['todo']),
+#     help_text=_("Has been fixed. Waiting to be tested."))
+add('50', _("Done"), 'done')
+# add('50', _("Tested"), 'tested',
+#     # required=dict(states=['fixed']),
+#     help_text=_("Has been fixed and tested."))
 add('60', _("Refused"), 'refused',
     # required=dict(states="tested new todo callback"),
     help_text=_("It has been decided that we won't fix this ticket."))
@@ -137,19 +138,18 @@ want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
-    TicketStates.todo.add_transition(states="new callback")
-    TicketStates.callback.add_transition(states="todo new fixed")
-    TicketStates.fixed.add_transition(states="todo new callback")
-    TicketStates.tested.add_transition(states="todo new callback fixed")
-    TicketStates.refused.add_transition(states="todo new callback")
+    TicketStates.todo.add_transition(states="new")
+    # TicketStates.callback.add_transition(states="todo new fixed")
+    TicketStates.done.add_transition(states="todo new")
+    # TicketStates.tested.add_transition(states="todo new callback fixed")
+    TicketStates.refused.add_transition(states="todo")
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
     # TicketStates.sleeping.add_transition(states="todo new callback")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
     TicketStates.work_states = (TicketStates.todo, TicketStates.new)
-    TicketStates.waiting_states = (
-        TicketStates.callback, TicketStates.fixed, TicketStates.tested)
+    TicketStates.waiting_states = (TicketStates.done, )
 
     # not used:
     # TicketStates.idle_states = (

@@ -64,9 +64,9 @@ def objects():
             mls = Milestone.objects.get_or_create(
                 project=prj, label=d.milestone)[0]
             kw.update(fixed_for=mls)
-            kw.update(state=TicketStates.tested)
+            kw.update(state=TicketStates.done)
         elif d.status == ('closed'):
-            kw.update(state=TicketStates.fixed)
+            kw.update(state=TicketStates.done)
         elif d.status in ('assigned', 'accepted'):
             kw.update(state=TicketStates.active)
         else:
