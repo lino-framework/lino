@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-05-08 19:40+0300\n"
-"PO-Revision-Date: 2015-05-08 19:42+0300\n"
+"PO-Revision-Date: 2015-05-15 20:07+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -1457,7 +1457,7 @@ msgstr "Titre"
 #: lino/modlib/notes/models.py:138 lino/modlib/outbox/models.py:215
 #: lino/modlib/pages/models.py:83
 msgid "Body"
-msgstr ""
+msgstr "Corps du texte"
 
 #: lino/modlib/boards/__init__.py:20 lino/modlib/boards/models.py:25
 #: lino/modlib/languages/__init__.py:31
@@ -2160,9 +2160,8 @@ msgid "Holidays"
 msgstr "Jours fériés"
 
 #: lino/modlib/cal/fixtures/std.py:50
-#, fuzzy
 msgid "Meeting"
-msgstr "Envoi postal"
+msgstr "Réunion"
 
 #: lino/modlib/cal/workflows/__init__.py:39
 #, fuzzy
@@ -2242,7 +2241,7 @@ msgstr "Déplacé"
 
 #: lino/modlib/cal/workflows/__init__.py:104
 msgid "Took place"
-msgstr "a eu lieu"
+msgstr "Evènement terminé"
 
 #: lino/modlib/cal/workflows/__init__.py:106
 msgid "Omitted"
@@ -2286,10 +2285,9 @@ msgstr "Rendez-vous a eu lieu"
 
 #: lino/modlib/cal/workflows/faggio.py:52
 #: lino/modlib/cal/workflows/feedback.py:120
-#, fuzzy
 msgctxt "calendar event action"
 msgid "Cancel"
-msgstr "Annulé"
+msgstr "Annuler"
 
 #: lino/modlib/cal/workflows/faggio.py:61
 #: lino/modlib/cal/workflows/feedback.py:87
@@ -2327,9 +2325,8 @@ msgid "Accept"
 msgstr "Accepter"
 
 #: lino/modlib/cal/workflows/feedback.py:64
-#, fuzzy
 msgid "Accept this invitation."
-msgstr "Rejeter cette invitation."
+msgstr "Accepter cette invitation."
 
 #: lino/modlib/cal/workflows/feedback.py:66
 #, python-format
@@ -2337,14 +2334,12 @@ msgid "%(guest)s confirmed invitation %(day)s at %(time)s"
 msgstr ""
 
 #: lino/modlib/cal/workflows/feedback.py:97
-#, fuzzy
 msgid "Close meeting"
-msgstr "Envoi postal"
+msgstr "Terminer la réunion"
 
 #: lino/modlib/cal/workflows/feedback.py:98
-#, fuzzy
 msgid "The event took place."
-msgstr "Rendez-vous a eu lieu"
+msgstr "Le rendez-vous a eu lieu."
 
 #: lino/modlib/cal/workflows/feedback.py:116
 msgid "Mark this as published. All participants have been informed."
@@ -2356,7 +2351,7 @@ msgstr "Accepter"
 
 #: lino/modlib/cal/workflows/take.py:34
 msgid "Take responsibility for this event."
-msgstr ""
+msgstr "Prendre la responsabilité de l'évènement."
 
 #: lino/modlib/changes/__init__.py:20 lino/modlib/changes/models.py:64
 #: lino/modlib/changes/models.py:90
@@ -3293,11 +3288,11 @@ msgstr ""
 
 #: lino/modlib/courses/models.py:949
 msgid "Pending requested enrolments"
-msgstr ""
+msgstr "Demandes d’inscription en attente"
 
 #: lino/modlib/courses/models.py:965
 msgid "Pending confirmed enrolments"
-msgstr ""
+msgstr "Demandes d’inscription confirmées"
 
 #: lino/modlib/courses/models.py:1056
 #, fuzzy
@@ -4062,7 +4057,7 @@ msgstr "Se connecter"
 
 #: lino/modlib/extjs/ext_renderer.py:1158
 msgid "No data to display."
-msgstr ""
+msgstr "Pas de données à afficher."
 
 #: lino/modlib/extjs/linoweb.js:545
 msgid "Show or hide the table parameters panel"
@@ -4111,7 +4106,7 @@ msgstr "Aller vers enregistrement"
 
 #: lino/modlib/extjs/linoweb.js:2566
 msgid "First"
-msgstr ""
+msgstr "Premier"
 
 #: lino/modlib/extjs/linoweb.js:2569
 #, fuzzy
@@ -4125,11 +4120,11 @@ msgstr "Suivant"
 
 #: lino/modlib/extjs/linoweb.js:2587
 msgid "Reload current record"
-msgstr ""
+msgstr "Relire les données et actualiser l'écran"
 
 #: lino/modlib/extjs/linoweb.js:2782
 msgid "Save changes to current record ?"
-msgstr ""
+msgstr " Sauvegarder les modifications?"
 
 #: lino/modlib/extjs/linoweb.js:2840
 msgid "No more records to display. Detail window has been closed."
@@ -5315,11 +5310,11 @@ msgstr ""
 
 #: lino/modlib/outbox/models.py:200
 msgid "Outgoing Mail"
-msgstr ""
+msgstr "Mail envoyé"
 
 #: lino/modlib/outbox/models.py:201
 msgid "Outgoing Mails"
-msgstr ""
+msgstr "Mails envoyés"
 
 #: lino/modlib/outbox/models.py:292
 msgid "My Outbox"
