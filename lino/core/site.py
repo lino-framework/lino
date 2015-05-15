@@ -3095,7 +3095,7 @@ signature as `django.core.mail.EmailMessage`.
             return self.jinja_env.from_string(s).render(**kw)
         kw.update(parse=parse)
     
-        kw.update(inc_counters=dict())
+        # kw.update(inc_counters=dict())
 
         return kw
 

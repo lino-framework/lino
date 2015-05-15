@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
@@ -32,6 +32,7 @@ This is a tested document. To test it, run::
     mytidylib
     htmlgen
     instantiator
+    jinja
     jscompressor
     jsgen
     latex

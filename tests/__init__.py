@@ -70,9 +70,6 @@ class DocsTests(LinoTestCase):
     def test_min1(self):
         self.run_simple_doctests("docs/tested/min1.rst")
 
-    def test_counter(self):
-        self.run_simple_doctests("docs/tested/counter.rst")
-
     def test_settings(self):
         self.run_simple_doctests('docs/dev/ad.rst')
 
@@ -164,6 +161,9 @@ class UtilsTests(LinoTestCase):
 
     def test_html2odf(self):
         self.run_simple_doctests('lino/utils/html2odf.py')
+
+    def test_jinja(self):
+        self.run_simple_doctests('lino/utils/jinja.py')
 
     def test_xmlgen_html(self):
         self.run_simple_doctests('lino/utils/xmlgen/html.py')

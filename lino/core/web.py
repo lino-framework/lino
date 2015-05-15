@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 from os.path import join, dirname, isdir
 import jinja2
-from jinja2 import contextfunction
+from jinja2.exceptions import TemplateNotFound
 
 
 from django.conf import settings
@@ -30,8 +30,8 @@ from lino.utils import format_date
 from lino.api import rt
 
 from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
-from jinja2.exceptions import TemplateNotFound
+from lino.utils.xmlgen.html import E
+from lino.utils.jinja import Counter
 
 SUBDIR_NAME = 'config'
 
@@ -114,8 +114,6 @@ def site_setup(self):
         ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         t = xghtml.Table()
-        #~ t = doc.add_table()
-        #~ ar.ui.ar2html(ar,t,ar.sliced_data_iterator)
         ar.dump2html(t, ar.sliced_data_iterator)
 
         #~ print ar.get_total_count()
@@ -153,6 +151,7 @@ def site_setup(self):
         tr=self.babelitem,
         # dd=dd,
         rt=rt,
+        Counter=Counter,
         # lino=self.modules,  # experimental
         # site_config=self.site_config,
 
@@ -166,30 +165,29 @@ def site_setup(self):
         return pgettext(ctx.decode('utf8'), s.decode('utf8'))
     self.jinja_env.globals.update(pgettext=pgettext)
 
-    @contextfunction
-    def counter_function(context, name=None, value=None, step=1):
-        """This is a Jinja context function.
+    # @contextfunction
+    # def counter_function(context, name=None, value=None, step=1):
+    #     """This is a Jinja context function.
 
-        Parameters are:
+    #     Parameters are:
 
-        :context: the `Context
-        <http://jinja.pocoo.org/docs/dev/api/#the-context>`_.
-        :name:  the name of the counter
-        :step:  Optional increment step
+    #     :context: the `Context
+    #     <http://jinja.pocoo.org/docs/dev/api/#the-context>`_.
+    #     :name:  the name of the counter
+    #     :step:  Optional increment step
 
-        """
-        counters = context['inc_counters']
-        if value is None:
-            if name in counters:
-                value = counters.get(name)
-                value += step
-            else:
-                value = step
-        counters[name] = value
-        return value
+    #     """
+    #     counters = context['inc_counters']
+    #     if value is None:
+    #         if name in counters:
+    #             value = counters.get(name)
+    #             value += step
+    #         else:
+    #             value = step
+    #     counters[name] = value
+    #     return value
 
-    self.jinja_env.globals.update(counter=counter_function)
-
+    # self.jinja_env.globals.update(counter=counter_function)
 
     #~ print __file__, 20121231, self.jinja_env.list_templates('.html')
 

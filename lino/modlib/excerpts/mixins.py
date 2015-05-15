@@ -53,20 +53,6 @@ class Certifiable(dd.Model):
       A :class:`Certifiable` is considered "certified" when this this is
       not `None`.
 
-    .. method:: get_certifiable_fields()
-
-      Expected to return a string with a space-separated list of field
-      names.  These files will automaticaly become disabled (readonly)
-      when the document is "certified". The default implementation
-      returns an empty string, which means that no field will become
-      disabled when the row is "certified".
-
-      Example::
-
-          @classmethod
-          def get_certifiable_fields(cls):
-              return 'date user title'
-
 
     """
     class Meta:
@@ -104,6 +90,20 @@ class Certifiable(dd.Model):
 
     @classmethod
     def get_certifiable_fields(cls):
+        """
+        Expected to return a string with a space-separated list of field
+        names.  These files will automaticaly become disabled (readonly)
+        when the document is "certified". The default implementation
+        returns an empty string, which means that no field will become
+        disabled when the row is "certified".
+
+        Example::
+
+          @classmethod
+          def get_certifiable_fields(cls):
+              return 'date user title'
+
+        """
         return ''
 
     @dd.displayfield(_("Printed"))
