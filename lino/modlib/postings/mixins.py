@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -63,7 +63,6 @@ class CreatePostings(dd.Action):
 
 
 class Postable(dd.Model):
-
     """
     Mixin for models that provide a "Post" button.
     """

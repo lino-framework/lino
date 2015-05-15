@@ -21,7 +21,6 @@ from lino.api import dd, rt
 from lino import mixins
 from django.conf import settings
 
-from lino.modlib.postings.mixins import Postable
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.modlib.outbox.mixins import MailableType, Mailable
@@ -106,11 +105,11 @@ class Note(mixins.TypedPrintable,
            Controllable,
            ContactRelated,
            mixins.ProjectRelated,
-           Mailable,
-           Postable,
-           ):
-    """
-    Deserves more documentation.
+           Mailable):
+    """A **note** is a dated and timed document written by its author (a
+    user). For example a report of a meeting or a phone call, or just
+    some observation. Notes are usually meant for internal use.
+
     """
 
     manager_level_field = 'office_level'
