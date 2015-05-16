@@ -13,6 +13,13 @@ from django.utils.translation import string_concat
 from lino.core import actions
 from lino.core import choicelists
 
+# from django.utils.encoding import force_text
+# from django.utils.functional import lazy
+# def _string_format(tpl, *args, **kwargs):
+#     args = tuple([force_text(s) for s in args])
+#     return tpl.format(*args, **kwargs)
+# string_format = lazy(_string_format, basestring)
+
 
 class State(choicelists.Choice):
     """A `State` is a specialized :class:`Choice
@@ -142,7 +149,6 @@ class Workflow(choicelists.ChoiceList):
 
 
 class ChangeStateAction(actions.Action):
-
     """This is the class used when generating automatic "state
     actions". For each possible value of the Actor's
     :attr:`workflow_state_field` there will be an automatic action
@@ -175,12 +181,11 @@ class ChangeStateAction(actions.Action):
         kw.update(required=new_required)
         if self.help_text is None:
             if help_text is None:
-                help_text = _("Mark this as %s") % target_state.text
-        #~ help_text = getattr(target_state,'help_text',None)
-        #~ if help_text is not None:
+                # help_text = string_format(
+                #     _("Mark this as {0}"), target_state.text)
+                help_text = string_concat(
+                    _("Mark this as"), ' ', target_state.text)
             kw.update(help_text=help_text)
-        else:
-            assert help_text is None
 
         super(ChangeStateAction, self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
