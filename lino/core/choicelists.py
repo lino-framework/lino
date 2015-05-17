@@ -2,59 +2,8 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur"""
-Utility for defining hard-coded internationalized choice lists
-whose value is rendered according to the current language.
-
-Usage:
-
-
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
->>> from lino.api.shell import *
->>> from django.utils import translation
-
->>> for value,text in choicelist_choices():
-...     print "%s : %s" % (value, unicode(text))
-cal.AccessClasses : AccessClasses
-cal.DurationUnits : DurationUnits
-cal.Weekdays : Weekdays
-lino.Genders : Genders
-users.UserGroups : User Groups
-users.UserLevels : User Levels
-users.UserProfiles : User Profiles
-
->>> Genders = dd.Genders
->>> for bc,text in Genders.choices:
-...     print "%s : %s" % (bc.value, unicode(text))
-M : Male
-F : Female
-
->>> print unicode(Genders.male)
-Male
-
->>> with translation.override('de'):
-...    print unicode(Genders.male)
-Männlich
-
->>> print str(Genders.male)
-male
-
->>> print repr(Genders.male)
-Genders.male:M
-
-Comparing Choices uses their *value* (not the alias or text):
-
->>> UserLevels = dd.UserLevels
-
->>> UserLevels.manager > UserLevels.user
-True
->>> UserLevels.manager == '40'
-True
->>> UserLevels.manager == 'manager'
-False
->>> UserLevels.manager == ''
-False
+ur"""Defines the classes :class:`Choice` and :class:`ChoiceList`.  See
+:doc:`/dev/choicelists`.
 
 
 Defining your own ChoiceLists
@@ -62,8 +11,8 @@ Defining your own ChoiceLists
 
 >>> class MyColors(Choicelist):
 ...     verbose_name_plural = "My colors"
->>> MyColors.add_item('01',("Red"),'red')
->>> MyColors.add_item('02',("Green"),'green')
+>>> MyColors.add_item('01', ("Red"), 'red')
+>>> MyColors.add_item('02', ("Green"), 'green')
 
 `add_item` takes at least 2 and optionally a third positional argument:
 
@@ -121,32 +70,60 @@ VALUE_FIELD.attname = 'value'
 
 
 class Choice(object):
-
-    """
-    A constant (hard-coded) value whose unicode representation
-    depends on the current babel language at runtime.
-    Used by :class:`ChoiceList`.
+    """A constant value whose unicode representation depends on the
+    current language at runtime.  Every item of a :class:`ChoiceList`
+    must be an instance of :class:`Choice` or a subclass thereof.
 
     """
     choicelist = None
     remark = None
+    pk = None
+    value = None
+    """(a string) The value to use e.g. when this choice is being
+                stored in a database."""
+    text = None
+    """A translatable string containing the text to show to the user.
 
-    def __init__(self, value, text=None, name=None, **kw):
-        #~ self.choicelist = choicelist
+    """
+
+    name = None
+    """A string to be used as attribute name on the choicelist for
+    referring to this choice from application code.
+
+    If this is `None` or not specified, the choice is a nameless
+    choice, which is a full-fledged choice object but is not
+    accessible as a class attribute on its choicelists
+
+    """
+
+    def __init__(self, value, text=None, name=None, **kwargs):
+        """Create a new :class:`Choice` instance.
+    
+        Parameters: see :attr:`value`, :attr:`text` and :attr:`name`.
+        Any keyword arguments will become attributes on the instance.
+
+        This is also being called from :meth:`Choicelist.add_item`.
+    
+        """
         if not isinstance(value, basestring):
             raise Exception("value must be a string")
         self.pk = self.value = value
-        self.name = name or value
-        # self.text = text or self.__class__.__name__
+        self.name = name
+        # if name is not None:
+        #     if self.name is None:
+        #         self.name = value
+        # else:
+        #     self.name = name
         if text is None:
-            self.text = self.__class__.__name__
+            if self.text is None:
+                self.text = self.__class__.__name__
         else:
             self.text = text
-        for k, v in kw.items():
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def update(self, **kw):
-        for k, v in kw.items():
+    def update(self, **kwargs):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
@@ -169,24 +146,20 @@ class Choice(object):
     def __repr__(self):
         if self.name is None:
             return "<%s:%s>" % (self.choicelist.__name__, self.value)
-            #~ s = "%s:%s" % (self.choicelist.__name__,self.value)
         else:
-            return "<%s.%s:%s>" % (self.choicelist.__name__, self.name, self.value)
-            #~ s = "%s.%s:%s" % (self.choicelist.__name__,self.name,self.value)
-        #~ return "<%s(%s)>" % (self.__class__.__name__,s)
+            return "<%s.%s:%s>" % (
+                self.choicelist.__name__, self.name, self.value)
 
     def __str__(self):
         if self.name:
             return self.name
         return unicode_string(self.text)
-        #~ return unicode(self.text).encode(sys.getdefaultencoding(),'backslashreplace')
 
     def __unicode__(self):
         return unicode(self.text)
 
     def __call__(self):
-        # make it callable so it can be used as `default` of a field.
-        # see blog/2012/0527
+        """Make it callable so it can be used as `default` of a field."""
         return self
 
     @classmethod
@@ -198,8 +171,9 @@ class UnresolvedValue(Choice):
     def __init__(self, choicelist, value):
         self.choicelist = choicelist
         self.value = value
-        self.text = "Unresolved value %r for %s" % (value, choicelist.__name__)
-        self.name = ''
+        self.text = "Unresolved value %r for %s" % (
+            value, choicelist.__name__)
+        self.name = None
 
 
 CHOICELISTS = {}
@@ -278,20 +252,12 @@ class ChoiceList(tables.AbstractTable):
 
     workflow_actions = []
 
-    #~ _handle_class = tables.TableHandle
-
     item_class = Choice
     """
     The class of items of this list.
     """
 
     auto_fit_column_widths = True
-
-    #~ blank = True
-    #~ """
-    #~ Set this to False if you don't want to accept
-    #~ any blank value for your ChoiceList.
-    #~ """
 
     preferred_foreignkey_width = 20
     """
@@ -366,7 +332,7 @@ class ChoiceList(tables.AbstractTable):
 
     @fields.virtualfield(models.CharField(_("name"), max_length=20))
     def name(cls, choice, ar):
-        return choice.name
+        return choice.name or ''
 
     @fields.displayfield(_("Remark"))
     def remark(cls, choice, ar):
@@ -388,21 +354,13 @@ class ChoiceList(tables.AbstractTable):
     def clear(cls):
         """
         """
-
         # remove previously defined choices from class dict:
         for ci in cls.items_dict.values():
             if ci.name:
                 delattr(cls, ci.name)
         cls.items_dict = {}
         cls.choices = []
-        #~ if cls.blank:
-            #~ cls.add_item('','',name='blank_item')
         cls.choices = []  # remove blank_item from choices
-
-        #~ cls.items_dict = {'' : cls.blank_item }
-
-        #~ cls.max_length = 1
-        #~ cls.items = []
 
     @classmethod
     def setup_field(cls, fld):
@@ -431,9 +389,15 @@ class ChoiceList(tables.AbstractTable):
         return fld
 
     @classmethod
-    def add_item(cls, value, text, name=None, *args, **kw):
+    def add_item(cls, *args, **kw):
+        """Instantiates a new choice and adds it to this list. Signature is
+        that of the :meth:`Choice.__init__` method (which might have
+        been overridden if you defined a customized
+        :attr:`item_class`.
+
+        """
         return cls.add_item_instance(
-            cls.item_class(value, text, name, *args, **kw))
+            cls.item_class(*args, **kw))
 
     @classmethod
     def class_init(cls):
@@ -450,7 +414,6 @@ class ChoiceList(tables.AbstractTable):
             #~ raise Exception("Cannot define items on the base class")
         is_duplicate = False
         if i.value in cls.items_dict:
-            #~ raise Exception("Duplicate value %r in %s." % (i.value,cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
         i.attach(cls)
@@ -472,7 +435,6 @@ Django creates copies of them when inheriting models.
             #~ for fld in cls._fields:
                 #~ fld.set_max_length(cls.max_length)
         if i.name:
-            #~ if hasattr(cls,i.name):
             if not is_duplicate:
                 if i.name in cls.__dict__:
                     raise Exception(

@@ -270,17 +270,18 @@ def have_action(ba):
     visible = []
     hidden = []
     for p in UserProfiles.objects():
+        name = p.name or p.value
         if ba.get_view_permission(p):
-            visible.append(p)
+            visible.append(name)
         else:
-            hidden.append(p)
+            hidden.append(name)
     if len(hidden) == 0:
         return _("all")
     if len(visible) == 0:
         return _("nobody")
     if len(hidden) < len(visible):
-        return _("all except %s") % ', '.join([p.name for p in hidden])
-    return ', '.join([p.name for p in visible])
+        return _("all except %s") % ', '.join(hidden)
+    return ', '.join(visible)
 
 
 class DetailLayouts(dd.VirtualTable):

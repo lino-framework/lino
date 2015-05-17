@@ -97,7 +97,7 @@ class Certifiable(dd.Model):
         returns an empty string, which means that no field will become
         disabled when the row is "certified".
 
-        Example::
+        For example::
 
           @classmethod
           def get_certifiable_fields(cls):

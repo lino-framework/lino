@@ -90,10 +90,11 @@ class BuildMethod(Choice):
 
     def get_target(self, action, elem):
         "used by `get_target_name`"
+        # assert self.name is not None
         return MediaFile(
             self.use_webdav,
             self.cache_name,
-            self.name,
+            self.value,
             elem.filename_root() + self.target_ext)
 
     def get_target_name(self, action, elem):

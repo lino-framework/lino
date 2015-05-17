@@ -1829,7 +1829,8 @@ documentation.
             level = getattr(UserLevels, level)
             kw = dict(level=level)
             for g in UserGroups.items():
-                kw[g.name+'_level'] = level
+                if g.value is not None:
+                    kw[g.value+'_level'] = level
             return kw
 
         UserProfiles.reset()

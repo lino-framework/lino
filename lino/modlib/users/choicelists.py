@@ -74,13 +74,13 @@ UserLevels.SHORT_NAMES = dict(
 class UserProfile(Choice):
 
     hidden_languages = None
-    """
-    A subset of :setting:`languages`
-    which should be hidden in this user profile.
-    Default value is :attr:`hidden_languages <UserProfiles.hidden_languages>`.
-    This is used on multilingual sites with more than 4 or 5 languages.
-    See the source code of :meth:`lino_welfare.settings.Site.setup_user_profiles`
-    for a usage example.
+    """A subset of :setting:`languages` which should be hidden in this
+    user profile.  Default value is :attr:`hidden_languages
+    <UserProfiles.hidden_languages>`.  This is used on multilingual
+    sites with more than 4 or 5 languages.  See the source code of
+    :meth:`lino_welfare.settings.Site.setup_user_profiles` for a usage
+    example.
+
     """
 
     def __init__(self, cls, value, text,
@@ -107,7 +107,6 @@ class UserProfile(Choice):
                 #~ kw.setdefault(k,UserLevels.blank_item) 20120829
                 self.kw.setdefault(k, None)
         else:
-        #~ if memberships is not None:
             if len(self.memberships.split()) != len(cls.membership_keys):
                 raise Exception(
                     "Invalid memberships specification %r : "
@@ -149,10 +148,9 @@ class UserProfile(Choice):
         #~ s += "level=%s" % self.level.name
         s += "level=%s" % self.level
         for g in UserGroups.items():
-            if g.value:  # no level for UserGroups.blank_item
-                v = getattr(self, g.value + '_level', None)
-                if v is not None:
-                    s += ",%s=%s" % (g.value, v)
+            v = getattr(self, g.value + '_level', None)
+            if v is not None:
+                s += ",%s=%s" % (g.value, v)
         s += ")"
         return s
 

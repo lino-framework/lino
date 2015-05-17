@@ -1,38 +1,58 @@
-What are choicelists?
-=====================
+===========================
+Introduction to choicelists
+===========================
+
+.. To run only this test:
+
+   $ python setup.py test -s tests.DocsTests.test_choicelists
 
 A :class:`ChoiceList <lino.core.choicelists.ChoiceList>` is a
-"hard-coded" list of translatable values.
+"constant"[#constant]_ ordered list of translatable values.
 
-Wherever you use a `choices` attribute on a database field in a plain
-Django application, you should consider using a :class:`ChoiceList
-<lino.core.choicelists.ChoiceList>` instead.
+Wherever in a *plain Django* application you use a `choices` attribute
+on a database field, in a *Lino* application you should consider using
+a :class:`ChoiceList <lino.core.choicelists.ChoiceList>` instead.
 
 ..
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+    ...     'lino.projects.min1.settings.doctests'
     >>> from lino.api.doctest import *
     
 
-For example the :class:`lino.modlib.system.mixins.Genders` choicelist.
+For example the :mod:`lino.projects.min1` we have the following choicelists:
 
 
-ChoiceLists are actors. This means that they are globally accessible
-using their actor name.
+>>> from lino.core.choicelists import choicelist_choices
+>>> for value, text in choicelist_choices():
+...     print "%s : %s" % (value, unicode(text))
+cal.AccessClasses : AccessClasses
+cal.DurationUnits : DurationUnits
+cal.EventEvents : Observed events
+cal.EventStates : Event states
+cal.GuestStates : Guest states
+cal.Recurrencies : Recurrencies
+cal.TaskStates : Task states
+cal.Weekdays : Weekdays
+countries.PlaceTypes : PlaceTypes
+lino.BuildMethods : BuildMethods
+plausibility.Checkers : Plausibility checkers
+system.Genders : Genders
+system.PeriodEvents : Observed events
+system.YesNo : Yes or no
+users.UserGroups : User Groups
+users.UserLevels : User Levels
+users.UserProfiles : User Profiles
 
->>> print(rt.modules.system.Genders)
-system.Genders
+ChoiceLists are actors, and choiceLists are tables. 
+This means that they are globally accessible
+in :data:`rt.modules` using their plugin name (aka "app label") and
+actor name. 
 
-Like every Actor, ChoiceLists are never instantiated. They are just
-the class object itself:
+For example: the :class:`Genders <lino.modlib.system.mixins.Genders>`
+choicelist is in a plugin called "system":
 
->>> from lino.modlib.system.mixins import Genders
->>> Genders is rt.modules.system.Genders
-True
-
-ChoiceLists can be rendered as tables:
-
->>> rt.show(Genders)
+>>> rt.show(rt.modules.system.Genders)
 ======= ======== ========
  value   name     text
 ------- -------- --------
@@ -41,8 +61,31 @@ ChoiceLists can be rendered as tables:
 ======= ======== ========
 <BLANKLINE>
 
-Each row of a choicelist is a choice. Named choices are accessible as
-class attributes on their choicelist:
+The text of a choice is a **translatable** string, while *value* and
+*name* remain **unchanged**:
+
+>>> with translation.override('de'):
+...     rt.show(rt.modules.system.Genders)
+====== ======== ==========
+ Wert   name     Text
+------ -------- ----------
+ M      male     Männlich
+ F      female   Weiblich
+====== ======== ==========
+<BLANKLINE>
+
+
+Like every Actor, ChoiceLists are **never instantiated**. They are
+just the class object itself:
+
+>>> from lino.modlib.system.mixins import Genders
+>>> Genders is rt.modules.system.Genders
+True
+
+
+Each row of a choicelist is a choice. Individual choices can have a
+name, which makes them accessible as **class attributes on their
+choicelist**:
 
 >>> Genders.male
 <Genders.male:M>
@@ -73,8 +116,7 @@ The **name** is how Python code can refer to this choice.
 >>> print(repr(Genders.male))
 <Genders.male:M>
 
-The **text** is what the user sees.
-It is a translatable string, 
+The **text** is what the user sees.  It is a translatable string,
 implemented using Django's i18n machine:
 
 >>> [g.text for g in Genders.objects()] # doctest: +ELLIPSIS
@@ -104,5 +146,30 @@ The text of a choice depends on the current user language.
 >>> with translation.override('et'):
 ...     [unicode(g) for g in Genders.objects()]
 [u'Mees', u'Naine']
+
+
+
+Comparing Choices uses their *value* (not the *name* nor *text*):
+
+>>> UserLevels = rt.modules.users.UserLevels
+
+>>> UserLevels.manager > UserLevels.user
+True
+>>> UserLevels.manager == '40'
+True
+>>> UserLevels.manager == 'manager'
+False
+>>> UserLevels.manager == ''
+False
+
+
+
+
+
+.. rubric:: Footnotes
+
+.. [#constant] We put "constant" between quotation marks because of course it may
+  vary. But if it does so, then only once at server startup.
+
 
 
