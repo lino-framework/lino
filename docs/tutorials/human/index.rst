@@ -1,14 +1,19 @@
 .. _lino.tutorial.human:
 
+============
 About Humans
 ============
 
-This chapter explains some basic things about humans (as the
+.. How to test only this document:
+  $ python setup.py test -s tests.DocsTests.test_human
+
+This document explains some basic things about humans (as the
 :mod:`lino.mixins.human` module sees them).
 
-.. 
+.. contents::
+   :depth: 1
+   :local:
 
-  $ python setup.py test -s tests.DocsTests.test_human
 
 The database structure used for the following examples is very simple:
 

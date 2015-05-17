@@ -136,7 +136,6 @@ inheritable_attrs = frozenset(
 
 
 class BaseRequest(object):
-
     """Base class of all action requests.
 
     """

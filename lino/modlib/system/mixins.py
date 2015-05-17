@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Miscellaneous mixins available in :mod:`ml.system`.
+Miscellaneous mixins for `lino.modlib.system`.
 
 """
 
@@ -29,9 +29,9 @@ class YesNo(ChoiceList):
         rt.show(YesNo)
 
     Used e.g. to define parameter panel fields for BooleanFields::
-    
+
       foo = dd.YesNo.field(_("Foo"), blank=True)
-      
+
 
     """
     verbose_name_plural = _("Yes or no")
