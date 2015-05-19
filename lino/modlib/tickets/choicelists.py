@@ -12,16 +12,11 @@ Database models for `lino.modlib.humanlinks`.
 from __future__ import unicode_literals
 from __future__ import print_function
 
-from django.utils.translation import pgettext_lazy as pgettext
 from django.utils.translation import string_concat
 
+from lino.mixins.periods import ObservedEvent
+
 from lino.api import dd, _
-
-
-class TicketEvent(dd.Choice):
-
-    def add_filter(self, qs, pv):
-        return qs
 
 
 from datetime import datetime, time
@@ -30,7 +25,8 @@ T00 = time(0, 0, 0)
 T24 = time(23, 59, 59)
 
 
-class TicketEventOpened(TicketEvent):
+class TicketEventOpened(ObservedEvent):
+    text = _("Created")
 
     def add_filter(self, qs, pv):
         if pv.start_date:
@@ -40,7 +36,8 @@ class TicketEventOpened(TicketEvent):
         return qs
 
 
-class TicketEventModified(TicketEvent):
+class TicketEventModified(ObservedEvent):
+    text = _("Modified")
 
     def add_filter(self, qs, pv):
         if pv.start_date:
@@ -53,15 +50,10 @@ class TicketEventModified(TicketEvent):
 class TicketEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
-    item_class = TicketEvent
 
 add = TicketEvents.add_item_instance
-add(TicketEventOpened('10', _("Created"), 'created'))
-add(TicketEventModified('20', _("Modified"), 'modified'))
-
-# add = TicketEvents.add_item
-# add('10', _("Opened"), 'opened')
-# add('20', _("Closed"), 'closed')
+add(TicketEventOpened('10'))
+add(TicketEventModified('20'))
 
 
 class TicketStates(dd.Workflow):

@@ -176,7 +176,7 @@ class BaseBeIdReadCardAction(dd.Action):
 
     def card2client(self, data):
         """Convert the data coming from the card into database fields to be
-        stored in the CardH
+        stored in the card holder.
 
         """
         countries = dd.resolve_app('countries', strict=True)

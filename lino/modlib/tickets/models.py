@@ -675,18 +675,6 @@ class Tickets(dd.Table):
 
         if pv.observed_event:
             qs = pv.observed_event.add_filter(qs, pv)
-        # if pv.observed_event == TicketEvents.opened:
-        #     if pv.start_date:
-        #         qs = qs.filter(created__gte=pv.start_date)
-        #     if pv.end_date:
-        #         qs = qs.filter(created__lte=pv.end_date)
-        # elif pv.observed_event == TicketEvents.closed:
-        #     if pv.start_date:
-        #         qs = qs.filter(closed__gte=pv.start_date)
-        #     if pv.end_date:
-        #         qs = qs.filter(closed__lte=pv.end_date)
-        # elif pv.observed_event == TicketEvents.active:
-        #     qs = qs.filter(closed__isnull=True)
 
         if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed=False)

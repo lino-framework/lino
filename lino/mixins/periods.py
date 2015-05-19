@@ -22,6 +22,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
 
 from lino.core.model import Model
+from lino.core.choicelists import Choice
 from lino.utils.format_date import fdl
 from lino.utils.ranges import isrange
 from lino.utils.format_date import fds
@@ -30,6 +31,16 @@ from lino.core.utils import ParameterPanel
 
 def rangefmt(r):
     return fds(r[0]) + '...' + fds(r[1])
+
+
+class ObservedEvent(Choice):
+    """Base class for choices of "observed event"-style choicelists."""
+
+    def __init__(self, value, **kwargs):
+        super(ObservedEvent, self).__init__(value, name=value, **kwargs)
+
+    def add_filter(self, qs, pv):
+        return qs
 
 
 class DatePeriod(Model):
