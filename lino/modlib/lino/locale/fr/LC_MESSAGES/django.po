@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-05-16 04:31+0300\n"
-"PO-Revision-Date: 2015-05-16 04:33+0300\n"
+"PO-Revision-Date: 2015-05-18 02:02+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -3167,9 +3167,8 @@ msgid "Course"
 msgstr "heures"
 
 #: lino/modlib/courses/models.py:257
-#, fuzzy
 msgid "Instructor"
-msgstr "Administrateur"
+msgstr "Instructeur"
 
 #: lino/modlib/courses/models.py:269 lino/modlib/courses/models.py:723
 msgctxt "in a course"
@@ -3177,9 +3176,8 @@ msgid "Places"
 msgstr "Places"
 
 #: lino/modlib/courses/models.py:282
-#, fuzzy
 msgid "Enrolments until"
-msgstr "Présent"
+msgstr "Inscriptions jusqu'au"
 
 #: lino/modlib/courses/models.py:408
 msgid "Info"

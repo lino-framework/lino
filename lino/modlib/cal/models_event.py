@@ -908,7 +908,7 @@ class MyEvents(Events):
         #~ kw.update(assigned_to=ar.get_user())
         #~ logger.info("20130807 %s %s",self,kw)
         kw.update(start_date=settings.SITE.today())
-        kw.update(end_date=settings.SITE.today(14))
+        # kw.update(end_date=settings.SITE.today(14))
         return kw
 
     @classmethod

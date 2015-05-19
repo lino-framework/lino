@@ -35,6 +35,7 @@ from lino import mixins
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.mixins.human import parse_name
+from lino.modlib.excerpts.mixins import Certifiable
 from lino.modlib.users.mixins import UserAuthored
 
 from .choicelists import EnrolmentStates, CourseStates
@@ -43,7 +44,7 @@ config = settings.SITE.plugins.courses
 
 cal = dd.resolve_app('cal')
 sales = dd.resolve_app('sales')
-contacts = dd.resolve_app('contacts')
+# contacts = dd.resolve_app('contacts')
 
 # """
 # Here we must use `resolve_model` with `strict=True`
@@ -123,13 +124,24 @@ class Topics(dd.Table):
 
 
 class Line(mixins.BabelNamed):
-    """A line (of Courses) is a series which groups courses into a
+    """A **line** (or **series**) of courses groups courses into a
     configurable list of categories.
+
+    We chose the word "line" instead of "series" because it has a
+    plural.
+
+    .. attribute:: body_template
+
+        The body template to use when printing a course of this
+        series.  Leave empty to use the site's default (defined by
+        `body_template` on the
+        :class:`lino.modlib.excerpts.models.ExcerptType` for
+        :class:`Course`)
 
     """
     class Meta:
-        verbose_name = _("Course Line")
-        verbose_name_plural = _('Course Lines')
+        verbose_name = pgettext("singular form", "Course series")
+        verbose_name_plural = pgettext("plural form", 'Course series')
         abstract = dd.is_abstract_model(__name__, 'Line')
     ref = dd.NullCharField(_("Reference"), max_length=30, unique=True)
     course_area = CourseAreas.field(blank=True)
@@ -170,6 +182,18 @@ class Line(mixins.BabelNamed):
         related_name="courses_lines_by_fees_cat",
         blank=True, null=True)
 
+    body_template = models.CharField(
+        max_length=200,
+        verbose_name=_("Body template"),
+        blank=True, help_text="The body template to use when "
+        "printing a course of this series. "
+        "Leave empty to use the site's default.")
+
+    def __unicode__(self):
+        if self.ref:
+            return self.ref
+        return super(Line, self).__unicode__()
+
     @dd.chooser()
     def tariff_choices(cls, fees_cat):
         if not fees_cat:
@@ -177,10 +201,12 @@ class Line(mixins.BabelNamed):
         Product = rt.modules.products.Product
         return Product.objects.filter(cat=fees_cat)
 
-    def __unicode__(self):
-        if self.ref:
-            return self.ref
-        return super(Line, self).__unicode__()
+    @dd.chooser(simple_values=True)
+    def body_template_choices(cls):
+        return settings.SITE.list_templates(
+            '.body.html',
+            rt.modules.courses.Enrolment.get_template_group(),
+            'excerpts')
 
 
 class Lines(dd.Table):
@@ -188,7 +214,7 @@ class Lines(dd.Table):
     # required = dd.required(user_level='manager')
     detail_layout = """
     id name ref
-    topic fees_cat tariff options_cat
+    topic fees_cat tariff options_cat body_template
     event_type guest_role every_unit every
     description
     courses.CoursesByLine
@@ -221,7 +247,7 @@ class EventsByTeacher(cal.Events):
             return []
         # TODO: build a list of courses, then show events by course
         qs = super(EventsByTeacher, self).get_request_queryset(ar)
-        mycourses = rt.modules.Course.objects.filter(teacher=teacher)
+        # mycourses = rt.modules.Course.objects.filter(teacher=teacher)
         qs = qs.filter(course__in=teacher.course_set.all())
         return qs
 
@@ -503,7 +529,8 @@ class Courses(dd.Table):
     start_date
     line teacher
     """
-    column_names = "start_date #info line teacher room workflow_buttons *"
+    column_names = "start_date enrolments_until line teacher " \
+                   "room workflow_buttons *"
     # order_by = ['start_date']
     # order_by = 'line__name room__name start_date'.split()
     order_by = ['name']
@@ -584,16 +611,10 @@ class CoursesByTeacher(Courses):
 
 
 class CoursesByLine(Courses):
+    """Show the courses per course line."""
     master_key = "line"
     column_names = "info weekdays_text room times_text teacher *"
     order_by = ['room__name', 'start_date']
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(Courses, self).param_defaults(ar, **kw)
-        kw.update(state=CourseStates.registered)
-        kw.update(active=dd.YesNo.yes)
-        return kw
 
 
 class CoursesByTopic(Courses):
@@ -697,7 +718,7 @@ class ConfirmedSubmitInsert(dd.SubmitInsert):
         ar.set_response(close_window=True)
 
 
-class Enrolment(UserAuthored, sales.Invoiceable):
+class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
     """An **enrolment** is when a given pupil plans to participate in a
     given course.
     """
@@ -836,6 +857,13 @@ class Enrolment(UserAuthored, sales.Invoiceable):
 
     def get_invoiceable_qty(self):
         return self.places
+
+    def get_body_template(self):
+        """Overrides :meth:`lino.core.model.Model.get_body_template`."""
+        return self.course.line.body_template
+
+    # def get_excerpt_title(self):
+    #     return unicode(self.course.line)
 
 
 class Enrolments(dd.Table):

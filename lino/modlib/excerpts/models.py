@@ -25,6 +25,7 @@ from django.utils import translation
 from django.conf import settings
 from django.db import models
 from django.db.utils import OperationalError, ProgrammingError
+from django.db.models.signals import post_init
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -131,7 +132,7 @@ class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
                 raise ValidationError(
                     _("Cannot set %(c)s for non.certifiable "
                       "model %(m)s") % dict(
-                        c=_("Certifying"), m=mc.meta.verbose_name))
+                        c=_("Certifying"), m=mc._meta.verbose_name))
         super(ExcerptType, self).full_clean(*args, **kwargs)
 
     def update_siblings(self):
@@ -193,8 +194,9 @@ We override everything in Excerpt to not call the class method.""")
         obj = cls.get_for_model(model)
         for k, v in kw.items():
             setattr(obj, k, v)
-        obj.full_clean()
-        obj.save()
+        # obj.full_clean()
+        # obj.save()
+        return obj
 
     def get_or_create_excerpt(self, ar):
         obj = ar.selected_rows[0]
@@ -298,39 +300,6 @@ class CreateExcerpt(dd.Action):
             ex.do_print.run_from_ui(ar, **kw)
         else:
             ar.goto_instance(ex)
-
-
-class ClearPrinted(dd.Action):
-    """Action to clear the print cache (i.e. the generated printable
-document)."""
-    sort_index = 51
-    label = _('Clear print cache')
-    icon_name = 'printer_delete'
-    help_text = _("Mark this object as not printed. A subsequent "
-                  "call to print will generate a new cache file.")
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.printed_by_id is None:
-            return False
-        return super(ClearPrinted, self).get_action_permission(
-            ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        if obj.printed_by is None:
-            ar.error(_("Oops."))
-            return
-
-        def ok(ar2):
-            obj.clear_cache()
-            ar2.success(_("Print cache file has been cleared."), refresh=True)
-        if False:
-            ar.confirm(
-                ok,
-                _("Going to clear the print cache file of %s") %
-                dd.obj2unicode(obj))
-        else:
-            ok(ar)
 
 
 class BodyTemplateContentField(dd.VirtualField):
@@ -595,9 +564,6 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         super(Excerpt, cls).on_analyze(site)
 
 
-from django.db.models.signals import post_init
-
-
 @dd.receiver(post_init, sender=Excerpt)
 def post_init_excerpt(sender, instance=None, **kwargs):
     """This is called for every new Excerpt object and it sets certain
@@ -830,10 +796,10 @@ def set_excerpts_actions(sender, **kw):
                                # been removed
                 an = atype.get_action_name()
                 m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
-                if atype.primary:
-                    if atype.certifying:
-                        m.define_action(
-                            clear_printed=ClearPrinted())
+                # if atype.primary:
+                #     if atype.certifying:
+                #         m.define_action(
+                #             clear_printed=ClearPrinted())
 
     # An attestable model must also inherit
     # :class:`lino.mixins.printable.BasePrintable` or some subclass

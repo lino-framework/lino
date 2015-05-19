@@ -760,12 +760,26 @@ action on individual instances.
         return cls._meta.app_label + '/' + cls.__name__
 
     def get_body_template(self):
-        # used by excerpts
+        """Return the name of the body template to use when rendering this
+        object in a printable excerpt (:mod:`lino.modlib.excerpts`).
+        An empty string means that Lino should use the default value
+        defined on the ExcerptType.
+
+        """
         return ''
 
+    # def get_excerpt_type(self):
+    #     "Return the primary ExcerptType for the given model."
+    #     ContentType = settings.SITE.modules.contenttypes.ContentType
+    #     ct = ContentType.objects.get_for_model(
+    #         self.__class__)
+    #     return self.__class__.objects.get(primary=True, content_type=ct)
+
     def get_excerpt_options(self, ar, **kw):
-        """Set additional fields of newly created excerpts from this.
-        Used by :class:`lino.modlib.excerpts.CreateExcerpt`.
+        """Set additional fields of newly created excerpts from this.  Called
+        from
+        :class:`lino.modlib.excerpts.models.ExcerptType.get_or_create_excerpt`.
+
         """
         return kw
 

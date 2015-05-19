@@ -16,6 +16,39 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 from lino.api import dd
 
 
+class ClearPrinted(dd.Action):
+    """Action to clear the print cache (i.e. the generated printable
+document)."""
+    sort_index = 51
+    label = _('Clear print cache')
+    icon_name = 'printer_delete'
+    help_text = _("Mark this object as not printed. A subsequent "
+                  "call to print will generate a new cache file.")
+
+    def get_action_permission(self, ar, obj, state):
+        if obj.printed_by_id is None:
+            return False
+        return super(ClearPrinted, self).get_action_permission(
+            ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        if obj.printed_by is None:
+            ar.error(_("Oops."))
+            return
+
+        def ok(ar2):
+            obj.clear_cache()
+            ar2.success(_("Print cache file has been cleared."), refresh=True)
+        if False:
+            ar.confirm(
+                ok,
+                _("Going to clear the print cache file of %s") %
+                dd.obj2unicode(obj))
+        else:
+            ok(ar)
+
+
 class Certifiable(dd.Model):
     """
     Any model which inherits from this mixin becomes "certifiable".
@@ -25,7 +58,7 @@ class Certifiable(dd.Model):
         `printed` which point to the excerpt that is the "definitive"
         ("Certifying") printout of this object.
 
-      - It may define a list of "certifiable" fields. 
+      - It may define a list of "certifiable" fields.
         See :meth:`get_certifiable_fields`.
 
     Usage example::
@@ -65,6 +98,8 @@ class Certifiable(dd.Model):
         related_name="%(app_label)s_%(class)s_set_as_printed",
         blank=True, null=True,
     )
+
+    clear_printed = ClearPrinted()
 
     def disabled_fields(self, ar):
         if self.printed_by_id is None:
