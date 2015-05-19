@@ -21,8 +21,6 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.changes'
         yield 'lino.modlib.users'
-        # yield 'lino.modlib.uploads'
-        # yield 'lino.modlib.outbox'
         yield 'lino.modlib.excerpts'
         yield 'lino.projects.min2.modlib.contacts'
         yield 'lino.modlib.addresses'

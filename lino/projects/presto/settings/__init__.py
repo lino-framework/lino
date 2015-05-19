@@ -37,7 +37,7 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.countries'
         yield 'lino.modlib.properties'
-        yield 'lino.projects.presto.modlib.contacts'
+        yield 'lino.projects.presto.lib.contacts'
         yield 'lino.modlib.households'
         yield 'lino.modlib.lists'
         yield 'lino.modlib.addresses'
@@ -68,7 +68,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.plausibility'
 
-        yield 'lino.projects.presto'
+        yield 'lino.projects.presto.lib.presto'
 
     def setup_plugins(self):
         super(Site, self).setup_plugins()

@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.db import models
+from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
@@ -112,9 +113,16 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
         if self.id is None:
             sc = settings.SITE.site_config
             if sc.next_partner_id is not None:
-                self.id = sc.next_partner_id
-                sc.next_partner_id += 1
-                sc.save()
+                try:
+                    self.__class__.objects.get(id=sc.next_partner_id)
+                    raise ValidationError(
+                        "Cannot create partner with id={0}. "
+                        "Check your next_partner_id in SiteConfig!".format(
+                            sc.next_partner_id))
+                except self.__class__.DoesNotExist:
+                    self.id = sc.next_partner_id
+                    sc.next_partner_id += 1
+                    sc.save()
         #~ logger.info("20120327 Partner.save(%s,%s)",args,kw)
         super(Partner, self).save(*args, **kw)
 
