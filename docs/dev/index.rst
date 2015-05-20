@@ -79,6 +79,7 @@ Getting acquaintained
 - :doc:`/tutorials/mldbc/index` :
 - :doc:`/tutorials/human/index` :
 - :doc:`plugin_inheritance` : Plugin inheritance
+- :doc:`plugin_cooperation` : Plugin cooperation
 - :doc:`printing` : (TODO)
 - :doc:`accounting` : Accounting explained to Python developers.
 
@@ -111,6 +112,7 @@ Getting acquaintained
    /tutorials/mldbc/index
    /tutorials/human/index
    plugin_inheritance
+   plugin_cooperation
    printing
    accounting
    

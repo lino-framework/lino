@@ -38,7 +38,7 @@ from collections import OrderedDict
 
 from django.conf import settings
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from lino import mixins
 from lino.api import dd, rt, _
@@ -50,6 +50,27 @@ from lino.utils.quantities import Duration
 from lino.modlib.cal.mixins import StartedEnded
 from lino.modlib.cal.utils import when_text
 from lino.modlib.users.mixins import ByUser, UserAuthored
+
+from lino.modlib.tickets.choicelists import TicketEvents, ObservedEvent
+
+
+class TicketHasSessions(ObservedEvent):
+    """Select only tickets for which there has been at least one session
+    during the given period.
+
+    """
+    text = _("Has been worked on")
+
+    def add_filter(self, qs, pv):
+        if pv.start_date:
+            qs = qs.filter(sessions_by_ticket__start_date__gte=pv.start_date)
+        if pv.end_date:
+            qs = qs.filter(sessions_by_ticket__end_date__lte=pv.end_date)
+        qs = qs.annotate(num_sessions=Count('sessions_by_ticket'))
+        qs = qs.filter(num_sessions__gt=0)
+        return qs
+
+TicketEvents.add_item_instance(TicketHasSessions("clocking"))
 
 
 class SessionType(mixins.BabelNamed):
@@ -188,7 +209,8 @@ class Session(UserAuthored, StartedEnded):
         verbose_name = _("Session")
         verbose_name_plural = _('Sessions')
 
-    ticket = dd.ForeignKey('tickets.Ticket')
+    ticket = dd.ForeignKey(
+        'tickets.Ticket', related_name="sessions_by_ticket")
     session_type = dd.ForeignKey('clocking.SessionType', null=True, blank=True)
     summary = models.CharField(
         _("Summary"), max_length=200, blank=True,

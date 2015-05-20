@@ -25,7 +25,12 @@ T00 = time(0, 0, 0)
 T24 = time(23, 59, 59)
 
 
-class TicketEventOpened(ObservedEvent):
+class TicketEvents(dd.ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+
+
+class TicketEventCreated(ObservedEvent):
     text = _("Created")
 
     def add_filter(self, qs, pv):
@@ -34,6 +39,8 @@ class TicketEventOpened(ObservedEvent):
         if pv.end_date:
             qs = qs.filter(created__lte=combine(pv.end_date, T24))
         return qs
+
+TicketEvents.add_item_instance(TicketEventCreated('created'))
 
 
 class TicketEventModified(ObservedEvent):
@@ -47,13 +54,7 @@ class TicketEventModified(ObservedEvent):
         return qs
 
 
-class TicketEvents(dd.ChoiceList):
-    verbose_name = _("Observed event")
-    verbose_name_plural = _("Observed events")
-
-add = TicketEvents.add_item_instance
-add(TicketEventOpened('10'))
-add(TicketEventModified('20'))
+TicketEvents.add_item_instance(TicketEventModified('modified'))
 
 
 class TicketStates(dd.Workflow):
