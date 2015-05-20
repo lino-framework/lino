@@ -79,6 +79,7 @@
 		/** ----------------------------------------------------------
 		*/
 		initComponent: function() {
+                    // console.log("20150220 Ext.ux.initComponent()");
 			this.tinymceSettings = this.tinymceSettings || {};
       //~ console.log('initComponent',this.tinymceSettings);
 			Ext.ux.TinyMCE.initTinyMCE({ language: this.tinymceSettings.language });

@@ -180,8 +180,11 @@ class Kernel(object):
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
-        self.code_mtime = codetime()
         self.kernel_startup(site)
+        self.code_mtime = codetime()
+        # We set `code_mtime` only after kernel_startup() because
+        # codetime watches only those modules which are already
+        # imported.
 
         if site.build_js_cache_on_startup is None:
             site.build_js_cache_on_startup = not (

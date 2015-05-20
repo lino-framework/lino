@@ -1,6 +1,7 @@
+/* Copyright 2009-2015 Luc Saffre */
 Lino.edit_tinymce_text = function(panel, options) {
   // `panel` is the RichTextPanel
-  //~ console.log(20111220,panel);
+  // console.log(20150520, panel);
   //~ var rec = panel.get_current_record();
   var rec = panel.containing_panel.get_current_record();
   var value = rec ? rec.data[panel.editor.name] : '';
@@ -152,8 +153,8 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
   //~ initComponent : function(){
     //~ Lino.RichTextPanel.superclass.initComponent.call(this);
   //~ },
-  constructor : function(config,params) {
-    //~ console.log('Lino.RichTextPanel.initComponent',this);
+  constructor : function(config, params) {
+      console.log('20150520a Lino.RichTextPanel.initComponent', this);
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + String(rec.id) + "/" + config.name;
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + config.name;
     var t = this;
@@ -198,6 +199,8 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     //~ delete config.label;
     this.before_init(config,params);
     
+    console.log('20150520b Lino.RichTextPanel.initComponent', this);
+
     this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
     config.tools = [{
@@ -214,7 +217,9 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     
     config.items = this.editor;
     config.layout = "fit";
+    console.log('20150520c Lino.RichTextPanel.initComponent', this);
     Lino.RichTextPanel.superclass.constructor.call(this, config);
+    console.log('20150520d Lino.RichTextPanel.initComponent', this);
   },
   refresh : function(unused) { 
       this.refresh_with_after();

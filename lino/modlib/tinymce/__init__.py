@@ -2,16 +2,22 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds usage of the TinyMCE editor
-instead of Ext.form.HtmlEditor
-for RichTextFields.
-See also :attr:`tinymce_root`.
-See `/blog/2011/0523`.
-(formerly `use_tinymce`).
+"""Adds usage of the TinyMCE editor instead of Ext.form.HtmlEditor for
+RichTextFields.  See also :attr:`tinymce_root`.  See
+`/blog/2011/0523`.  (formerly `use_tinymce`).
 
 """
 
 from lino.api import ad
+
+TINYMCE3 = True
+"""Set this to False if you want Lino to use TinyMCE 4.1.10 instead of
+the currently used 3.4.8.  When you do this, windows containing a
+TextField don't open, and the JS console says "TypeError: sp is
+undefined". That's because we did not yet get Andrew Mayorov's
+Ext.ux.TinyMCE to work with TinyMCE 4.
+
+"""
 
 
 def javascript(url):
@@ -27,18 +33,29 @@ class Plugin(ad.Plugin):
 
     url_prefix = 'tinymce'
 
-    media_name = 'tinymce-3.4.8'
+    if TINYMCE3:
+        media_name = 'tinymce-3.4.8'
+    else:
+        media_name = 'tinymce-4.1.10'
 
     media_root = None
     # media_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
+    # media_base_url = "http:////tinymce.cachefly.net/4.1/tinymce.min.js"
 
     def get_used_libs(self, html=False):
         if html is not None:
-            yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
-            yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
+            if TINYMCE3:
+                yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
+            else:
+                yield ("TinyMCE", '4.1.10', "http://www.tinymce.com/")
+            # yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
+            yield ("Ext.ux.TinyMCE", '0.8.4', "http://www.byte-force.com")
 
     def get_js_includes(self, settings, language):
-        yield self.build_lib_url('tiny_mce.js')
+        if TINYMCE3:
+            yield self.build_lib_url('tiny_mce.js')
+        else:
+            yield self.build_lib_url('tinymce.min.js')
         yield settings.SITE.build_static_url("tinymce/Ext.ux.TinyMCE.js")
 
     def get_head_lines(self, site, request):
@@ -47,6 +64,7 @@ class Plugin(ad.Plugin):
         #     "lino", "tinymce", "Ext.ux.TinyMCE.js"))
         yield """
 <script language="javascript" type="text/javascript">
+    console.log("20150520", tinymce);
     tinymce.init({
             theme : "advanced"
             // , mode : "textareas"
