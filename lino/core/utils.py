@@ -190,23 +190,22 @@ def app_labels():
 
 
 def range_filter(value, f1, f2):
+    """Assuming a database model with two fields of same data type named
+    `f1` and `f2`, return a Q object to select those rows whose `f1`
+    and `f2` encompass the given value `value`.
+
     """
-    Assuming a database model with two fields of same data type named 
-    `f1` and `f2`, return a Q object to select those rows
-    whose `f1` and `f2` encompass the given value `value`.
-    """
-    #~ filter = Q(**{f2+'__isnull':False}) | Q(**{f1+'__isnull':False})
     q1 = Q(**{f1 + '__isnull': True}) | Q(**{f1 + '__lte': value})
     q2 = Q(**{f2 + '__isnull': True}) | Q(**{f2 + '__gte': value})
     return Q(q1, q2)
 
 
 def inrange_filter(fld, rng, **kw):
-    """
-    Assuming a database model with a field named  `fld`, 
-    return a Q object to select those rows
-    whose `fld` value is not null and within the given range `rng`.
-    `rng` must be a tuple of list with two items
+    """Assuming a database model with a field named `fld`, return a Q
+    object to select those rows whose `fld` value is not null and
+    within the given range `rng`.  `rng` must be a tuple or list with
+    two items.
+
     """
     assert rng[0] <= rng[1]
     kw[fld + '__isnull'] = False

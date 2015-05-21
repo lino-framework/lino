@@ -287,7 +287,7 @@ class TrainingsByPerson(HistoryByPerson, Trainings):
 ##
 
 class Study(EducationEntry):
-
+    
     class Meta:
         verbose_name = _("Study")
         verbose_name_plural = _("Studies")
