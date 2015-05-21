@@ -259,6 +259,8 @@ class Plugin(object):
         return []
 
     def get_head_lines(cls, site, request):
+        """Yield or return a list of textlines to add to the `<head>` of the
+        html page."""
         return []
 
     def get_body_lines(cls, site, request):

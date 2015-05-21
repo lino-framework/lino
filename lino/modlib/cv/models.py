@@ -192,6 +192,7 @@ class StudyTypes(dd.Table):
     name id
     education_level is_study is_training
     cv.StudiesByType
+    cv.TrainingsByType
     """
 
     insert_layout = """
@@ -210,7 +211,7 @@ class StudyTypesByLevel(StudyTypes):
 ##
 
 class Training(SectorFunction, EducationEntry):
-
+    
     class Meta:
         verbose_name = _("Training")
         verbose_name_plural = _("Trainings")
