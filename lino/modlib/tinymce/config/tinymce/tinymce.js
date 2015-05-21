@@ -154,14 +154,16 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     //~ Lino.RichTextPanel.superclass.initComponent.call(this);
   //~ },
   constructor : function(config, params) {
-      console.log('20150520a Lino.RichTextPanel.initComponent', this);
+      // console.log('20150520a Lino.RichTextPanel.initComponent', this);
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + String(rec.id) + "/" + config.name;
     //~ var url = TEMPLATES_URL + config.ls_url + "/" + config.name;
     var t = this;
     var tinymce_options = {
         theme : "advanced",
-        content_css: '{{site.build_static_url("extjs/lino.css")}}',
+        content_css: '{{site.build_static_url("extjs/lino.css")}},{{site.build_static_url("tinymce_content.css")}}',
 
+        theme_advanced_font_sizes : "12px,13px,14px,16px,18px,20px,24px",
+        font_size_style_values : "12px,13px,14px,16px,18px,20px,24px",
         language: '{{language[:2]}}',
         //~ template_external_list_url : url,
         theme_advanced_toolbar_location : "top",
@@ -199,7 +201,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     //~ delete config.label;
     this.before_init(config,params);
     
-    console.log('20150520b Lino.RichTextPanel.initComponent', this);
+    // console.log('20150520b Lino.RichTextPanel.initComponent', this);
 
     this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
@@ -217,9 +219,9 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     
     config.items = this.editor;
     config.layout = "fit";
-    console.log('20150520c Lino.RichTextPanel.initComponent', this);
+    // console.log('20150520c Lino.RichTextPanel.initComponent', this);
     Lino.RichTextPanel.superclass.constructor.call(this, config);
-    console.log('20150520d Lino.RichTextPanel.initComponent', this);
+    // console.log('20150520d Lino.RichTextPanel.initComponent', this);
   },
   refresh : function(unused) { 
       this.refresh_with_after();

@@ -34,7 +34,8 @@ class Plugin(ad.Plugin):
     url_prefix = 'tinymce'
 
     if TINYMCE3:
-        media_name = 'tinymce-3.4.8'
+        # media_name = 'tinymce-3.4.8'
+        media_name = 'tinymce-3.5.11'
     else:
         media_name = 'tinymce-4.1.10'
 
@@ -45,7 +46,8 @@ class Plugin(ad.Plugin):
     def get_used_libs(self, html=False):
         if html is not None:
             if TINYMCE3:
-                yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
+                # yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
+                yield ("TinyMCE", '3.5.11', "http://www.tinymce.com/")
             else:
                 yield ("TinyMCE", '4.1.10', "http://www.tinymce.com/")
             # yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
@@ -56,20 +58,7 @@ class Plugin(ad.Plugin):
             yield self.build_lib_url('tiny_mce.js')
         else:
             yield self.build_lib_url('tinymce.min.js')
-        yield settings.SITE.build_static_url("tinymce/Ext.ux.TinyMCE.js")
-
-    def get_head_lines(self, site, request):
-        # yield javascript(site.build_media_url("tinymce", "tiny_mce.js"))
-        # yield javascript(site.build_media_url(
-        #     "lino", "tinymce", "Ext.ux.TinyMCE.js"))
-        yield """
-<script language="javascript" type="text/javascript">
-    console.log("20150520", tinymce);
-    tinymce.init({
-            theme : "advanced"
-            // , mode : "textareas"
-    });
-</script>"""
+        yield settings.SITE.build_static_url("byteforce", "Ext.ux.TinyMCE.js")
 
     def get_patterns(self):
         from django.conf.urls import url
