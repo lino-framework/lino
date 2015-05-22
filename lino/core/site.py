@@ -3061,26 +3061,19 @@ signature as `django.core.mail.EmailMessage`.
 
         """
         # from django.conf import settings
-        # from django.utils.translation import ugettext
-        # from django.utils.translation import pgettext
-        # from lino.api import dd, rt
-        # from lino.utils import iif
+        from django.utils.translation import ugettext
+        from django.utils.translation import pgettext
+        from lino.api import dd
+        from lino.utils import iif
 
         # kw.update(
         #     dtos=dd.fds,  # obsolete
         #     dtosl=dd.fdf,  # obsolete
         #     dtomy=dd.fdmy,  # obsolete
         #     mtos=self.decfmt,  # obsolete
-        #     decfmt=self.decfmt,
-        #     fds=dd.fds,
-        #     fdm=dd.fdm,
-        #     fdl=dd.fdl,
-        #     fdf=dd.fdf,
-        #     fdmy=dd.fdmy,
         #     babelattr=dd.babelattr,
         #     babelitem=self.babelitem,
         #     tr=self.babelitem,
-        #     iif=iif,
         #     dd=dd,
         #     rt=rt,
         #     settings=settings,
@@ -3088,13 +3081,23 @@ signature as `django.core.mail.EmailMessage`.
         #     site_config=self.site_config,
         # )
 
+        kw['_'] = ugettext
         kw.update(
+            decfmt=self.decfmt,
+            fds=dd.fds,
+            fdm=dd.fdm,
+            fdl=dd.fdl,
+            fdf=dd.fdf,
+            fdmy=dd.fdmy,
+            iif=iif,
+            pgettext=pgettext,
             now=datetime.datetime.now(),
             requested_language=get_language())
 
         def parse(s):
             return self.jinja_env.from_string(s).render(**kw)
         kw.update(parse=parse)
+
     
         # kw.update(inc_counters=dict())
 
