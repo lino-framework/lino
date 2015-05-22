@@ -35,19 +35,16 @@ INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
 
 def wildcard_data_elems(model):
-    """
-    Yields names that will be used as wildcard column_names of a Table.
+    """Yields names that will be used as wildcard in the :attr:`column_names`
+    of a Table.
+
     """
     meta = model._meta
-    #~ for f in meta.fields: yield f.name
-    #~ for f in meta.many_to_many: yield f.name
-    #~ for f in meta.virtual_fields: yield f.name
     for f in meta.fields:
-        #~ if f.editable:
-        if not isinstance(f, fields.RichTextField):
-            if not isinstance(f, fields.VirtualField):
-                if not getattr(f, '_lino_babel_field', False):
-                    yield f
+        # if not isinstance(f, fields.RichTextField):
+        if not isinstance(f, fields.VirtualField):
+            if not getattr(f, '_lino_babel_field', False):
+                yield f
     for f in meta.many_to_many:
         yield f
     for f in meta.virtual_fields:

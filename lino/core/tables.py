@@ -178,17 +178,21 @@ class AbstractTable(actors.Actor):
     """
 
     column_names = '*'
-    """
-    A string that describes the list of columns of this table.
+    """A string that describes the list of columns of this table.
 
-    Default value is ``'*'``.
-
-    Lino will automatically create a :class:`dd.ColumnsLayout` from this.
-
+    Lino will automatically create a
+    :class:`lino.core.layouts.ColumnsLayout` from this.
     This string must not contain any newline characters because a
     ColumnsLayout's `main` panel descriptor must be horizontal.
 
+    Default value is ``'*'``.  This wildcard character means "all
+    columns which have not been named explicitly". It can be combined
+    with explicitly specified names. For example::
 
+      column_names = "name owner * date"
+
+    specifies that `name` and `owner` come first, followed by all
+    other columns and finally by `date`.
 
     """
 
