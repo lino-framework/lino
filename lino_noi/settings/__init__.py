@@ -58,7 +58,8 @@ class Site(Site):
     def get_admin_main_items(self, ar):
         yield self.modules.clocking.InvestedTimes
         # yield self.modules.tickets.MyTickets
-        yield self.modules.tickets.ActiveTickets
+        # yield self.modules.tickets.ActiveTickets
+        yield self.modules.tickets.InterestingTickets
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'

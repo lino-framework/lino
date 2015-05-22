@@ -20,7 +20,7 @@ class ProductDetail(dd.DetailLayout):
     id ref cat #sales_price vat_class
     name
     description
-    tickets.TicketsByProduct
+    tickets.InterestsByProduct  tickets.TicketsByProduct
     """
 
 

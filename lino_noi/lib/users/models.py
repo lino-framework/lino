@@ -41,7 +41,7 @@ class UserDetail(UserDetail):
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    tickets.TicketsByReporter
+    tickets.InterestsByUser tickets.TicketsByReporter
     """, label=_("Tickets"))
 
 
