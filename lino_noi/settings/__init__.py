@@ -15,9 +15,9 @@ class Site(Site):
 
     version = '0.0.1'
 
-    demo_fixtures = ['std', 'demo', 'demo2',
+    demo_fixtures = ['std', 'demo', 'demo2']
                      # 'linotickets',
-                     'tractickets', 'luc']
+                     # 'tractickets', 'luc']
 
     project_model = 'tickets.Project'
     textfield_format = 'html'
