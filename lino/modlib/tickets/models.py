@@ -41,7 +41,7 @@ blogs = dd.resolve_app('blogs')
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 # from lino.modlib.contenttypes.mixins import Controllable
-# from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import UserAuthored, ByUser
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
@@ -77,6 +77,7 @@ class ProjectTypes(dd.Table):
     detail_layout = """id name
     ProjectsByType
     """
+
 
 class TicketType(mixins.BabelNamed):
     """The type of a :class:`Ticket`."""
@@ -641,6 +642,7 @@ class Tickets(dd.Table):
     parameters = mixins.ObservedPeriod(
         reporter=dd.ForeignKey(
             settings.SITE.user_model,
+            verbose_name=_("Reporter"),
             blank=True, null=True,
             help_text=_("Only rows reporter by this user.")),
         assigned_to=dd.ForeignKey(
@@ -648,6 +650,11 @@ class Tickets(dd.Table):
             verbose_name=_("Assigned to"),
             blank=True, null=True,
             help_text=_("Only rows authored by this user.")),
+        interesting_for=dd.ForeignKey(
+            settings.SITE.user_model,
+            verbose_name=_("Interesting for"),
+            blank=True, null=True,
+            help_text=_("Only tickets interesting for this user.")),
         project=dd.ForeignKey(
             'tickets.Project',
             blank=True, null=True),
@@ -664,7 +671,7 @@ class Tickets(dd.Table):
             help_text=_("Show tickets which are private.")),
         observed_event=TicketEvents.field(blank=True))
     params_layout = """
-    reporter assigned_to project state
+    reporter assigned_to interesting_for project state
     show_closed show_standby show_private start_date end_date observed_event"""
     simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
@@ -675,6 +682,12 @@ class Tickets(dd.Table):
 
         if pv.observed_event:
             qs = pv.observed_event.add_filter(qs, pv)
+
+        if pv.interesting_for:
+            interests = pv.interesting_for.tickets_interest_set_by_user.values(
+                'product')
+            if len(interests) > 0:
+                qs = qs.filter(product__in=interests)
 
         if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed=False)
@@ -762,6 +775,16 @@ class ActiveTickets(Tickets):
         return kw
 
 
+class InterestingTickets(ActiveTickets):
+    label = _("Interesting tickets")
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(InterestingTickets, self).param_defaults(ar, **kw)
+        kw.update(interesting_for=ar.get_user())
+        return kw
+
+
 # class TicketsByPartner(Tickets):
 #     master_key = 'partner'
 #     column_names = "summary project user *"
@@ -785,3 +808,39 @@ class TicketsByReporter(Tickets):
     label = _("Reported tickets ")
     master_key = 'reporter'
     column_names = "id summary:60 workflow_buttons:20 *"
+
+
+class Interest(UserAuthored):
+    """An **interest** is the fact that a given user is interested in the
+    tickets related to a given product.
+
+    """
+    class Meta:
+        verbose_name = _("Interest")
+        verbose_name_plural = _('Interests')
+
+    product = dd.ForeignKey(
+        'products.Product',
+        related_name='interests_by_product')
+
+
+class Interests(dd.Table):
+    model = 'tickets.Interest'
+    column_names = "user product *"
+
+
+class MyInterests(Interests, ByUser):
+    order_by = ["product__ref"]
+    column_names = 'product__ref product *'
+
+
+class InterestsByUser(Interests):
+    master_key = 'user'
+    order_by = ["product"]
+    column_names = 'product *'
+
+
+class InterestsByProduct(Interests):
+    master_key = 'product'
+    order_by = ["user"]
+    column_names = 'user *'
