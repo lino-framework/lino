@@ -258,8 +258,8 @@ dd.update_field(Session, 'user', blank=False, nul=False)
 
 class Sessions(dd.Table):
     model = 'clocking.Session'
-    column_names = 'ticket start_date start_time end_date end_time '\
-                   'break_time summary user *'
+    column_names = 'ticket user start_date start_time end_date end_time '\
+                   'break_time summary duration  *'
     order_by = ['-start_date', '-start_time']
     # order_by = ['start_date', 'start_time']
     # stay_in_grid = True

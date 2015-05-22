@@ -536,10 +536,10 @@ class FieldElement(LayoutElement):
         if is_hidden_babel_field(self.field):
             kw.update(hidden=True)
 
-        # When used as editor of an EditorGridPanel, don't set the name attribute
-        # because it is not needed for grids and might conflict with fields of a
-        # surronding detail form. See ticket #38 (`/blog/2011/0408`).
-        # Also don't set a label then.
+        # When used as editor of an EditorGridPanel, don't set the
+        # name attribute because it is not needed for grids and might
+        # conflict with fields of a surronding detail form. See ticket
+        # #38 (`/blog/2011/0408`).  Also don't set a label then.
         if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
             kw.update(name=self.field.name)
             if self.label:
@@ -600,8 +600,18 @@ class FieldElement(LayoutElement):
         return E.td(self.format_sum(ar, sums, i), **cellattrs)
 
     def format_sum(self, ar, sums, i):
+        """Return a string or an html element which expresses a sum of this
+        column.
+
+        :ar: the action request
+        :sums: a list of sum values for all columns of this `ar`
+        :i: the index of this field in `sums`
+
+        """
         if i == 0:
             return E.b(ar.get_sum_text())
+        if sums[i]:
+            return E.b(self.format_value(ar, sums[i]))
         return ''
 
     def value2num(self, v):
@@ -1893,7 +1903,6 @@ class TabPanel(Panel):
         )
 
         Container.__init__(self, layout_handle, name, *elems, **kw)
-
 
 
 _FIELD2ELEM = (

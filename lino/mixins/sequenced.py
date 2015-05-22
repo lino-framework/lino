@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
@@ -12,6 +13,8 @@ order which can be manipulated by the user using actions
 .. autosummary::
 
 """
+
+from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -32,11 +35,12 @@ class MoveUp(actions.Action):
 
     """
 
-    label = _("Up")
-    #~ label = "\u2191" thin arrow up
-    # ~ label = "\u25b2" # triangular arrow up
+    # label = _("Up")
+    # label = "\u2191" thin arrow up
+    # label = "\u25b2" # triangular arrow up
+    label = "↑"  #
     custom_handler = True
-    icon_name = 'arrow_up'
+    # icon_name = 'arrow_up'
     #~ icon_file = 'arrow_up.png'
     help_text = _("Move this row one row upwards")
     readonly = False
@@ -69,11 +73,12 @@ class MoveDown(actions.Action):
 :class:`Sequenced` object as :attr:`Sequenced.move_down`.
 
     """
-    label = _("Down")
-    #~ label = "\u2193"
+    # label = _("Down")
+    label = "↓"
     # ~ label = "\u25bc" # triangular arrow down
+    #~ label = "\u2193"
+    # icon_name = 'arrow_down'
     custom_handler = True
-    icon_name = 'arrow_down'
     #~ icon_file = 'arrow_down.png'
     help_text = _("Move this row one row downwards")
     readonly = False
