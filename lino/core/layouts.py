@@ -151,8 +151,7 @@ class LayoutHandle:
             wildcard_str = self.layout.join_str.join(wildcard_names)
             desc = desc.replace('*', wildcard_str)
             if len(explicit_specs) > 0:
-                self.hidden_elements = self.hidden_elements | set(
-                    wildcard_names)
+                self.hidden_elements |= set(wildcard_names)
 
         if "\n" in desc:
             # it's a vertical box
