@@ -834,6 +834,8 @@ class Interest(UserAuthored):
         'products.Product',
         related_name='interests_by_product')
 
+dd.update_field(Interest, 'user', verbose_name=_("User"))
+
 
 class Interests(dd.Table):
     model = 'tickets.Interest'

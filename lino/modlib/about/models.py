@@ -399,36 +399,18 @@ class FormPanels(dd.VirtualTable):
 
 
 class About(EmptyTable):
+    """Display information about this web site.  This defines the window
+    which opens via the menu command :menuselection:`Site --> About`.
 
-    """
-    A modal window displaying information about this server.
     """
     label = _("About")
     help_text = _("Show information about this site.")
     required = dict(auth=False)
-    #~ hide_window_title = True
     hide_top_toolbar = True
-    #~ window_size = (700,400)
-    #~ detail_layout = AboutDetail(window_size = (700,400))
-    #~ detail_layout = AboutDetail()
     detail_layout = dd.FormLayout("""
     about_html
     server_status
     """, window_size=(60, 20))
-
-    #~ versions = dd.Constant(lino.welcome_html())
-
-    #~ do_build = BuildSiteCache()
-
-    #~ @classmethod
-    #~ def setup_actions(self):
-        #~ super(About,self).setup_actions()
-        #~ self.add_action(BuildSiteCache())
-
-    #~ @dd.constant(_("Versions"))
-    #~ @dd.constant()
-    #~ def versions(cls,ui):
-        #~ return settings.SITE.welcome_html(ui)
 
     @dd.constant()
     def about_html(cls):
@@ -472,18 +454,6 @@ class About(EmptyTable):
         body.append(E.p(_("%s pending threads") %
                     len(settings.SITE.kernel.pending_threads)))
         return E.div(*body, class_='htmlText')
-
-    #~ @dd.displayfield(_("Versions"))
-    #~ def versions(self,obj,ar):
-        #~ return lino.welcome_html(ar.ui)
-
-    #~ @dd.constantfield(_("Versions"))
-    #~ def versions(cls,self,req):
-        #~ return lino.welcome_html()
-
-    #~ @dd.virtualfield(models.DateTimeField(_("Server up since")))
-    #~ def startup_time(cls,self,req):
-        #~ return settings.SITE.startup_time
 
 
 class SourceFiles(dd.VirtualTable):
