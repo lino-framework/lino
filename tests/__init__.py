@@ -29,8 +29,11 @@ class DocsTests(BaseTestCase):
     def test_packages(self):
         self.run_packages_test(SETUP_INFO['packages'])
 
-    def test_demo(self):
+    def test_smtpd(self):
         self.run_simple_doctests('docs/tested/smtpd.rst')
+
+    def test_clocking(self):
+        self.run_simple_doctests('docs/tested/clocking.rst')
 
 
 class DemoTests(BaseTestCase):
