@@ -838,6 +838,7 @@ class Interest(UserAuthored):
 class Interests(dd.Table):
     model = 'tickets.Interest'
     column_names = "user product *"
+    auto_fit_column_widths = True
 
 
 class MyInterests(Interests, ByUser):
@@ -861,4 +862,3 @@ dd.inject_field(
     dd.ForeignKey(
         'tickets.Project', verbose_name=_("Current project"),
         blank=True, null=True, related_name="users_by_project"))
-
