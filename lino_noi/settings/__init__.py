@@ -12,6 +12,7 @@ from lino.projects.std.settings import *
 class Site(Site):
 
     verbose_name = "Lino Noi"
+    url = "http://noi.lino-framework.org/"
 
     version = '0.0.1'
 
