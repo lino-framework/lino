@@ -7,28 +7,32 @@ SETUP_INFO = dict(
     version='0.0.1',
     install_requires=['lino', 'xlwt'],
     test_suite='tests',
-    description="A Lino application for managing local communities",
+    description="The Lino application used by the Lino team for managing their tickets",
     long_description="""\
 Lino Noi is a `Lino <http://www.lino-framework.org>`_ application
-for managing teams who use a ticketing system.  The name comes from
+used by the Lino team for managing their tickets.  The name comes from
 Italian "noi" which means "we".
 
 """,
     author='Luc Saffre',
-    author_email='luc.saffre@gmail.com',
+    author_email='luc@lino-framework.org',
     url="http://noi.lino-framework.org",
     license='BSD License',
     classifiers="""\
 Programming Language :: Python
 Programming Language :: Python :: 2
-Development Status :: 1 - Planning
+Development Status :: 4 - Beta
 Environment :: Web Environment
 Framework :: Django
 Intended Audience :: Developers
 Intended Audience :: System Administrators
-License :: OSI Approved :: GNU General Public License (GPL)
+Intended Audience :: Information Technology
+Intended Audience :: Customer Service
+License :: OSI Approved :: BSD License
 Operating System :: OS Independent
 Topic :: Office/Business :: Scheduling
+Topic :: Office/Business :: Groupware
+Topic :: Software Development :: Bug Tracking
 """.splitlines())
 
 SETUP_INFO.update(packages=[

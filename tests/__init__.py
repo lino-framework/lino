@@ -24,16 +24,16 @@ class BaseTestCase(TestCase):
     django_settings_module = 'lino_noi.settings.test'
 
 
-class DocsTests(BaseTestCase):
+class SpecsTests(BaseTestCase):
 
     def test_packages(self):
         self.run_packages_test(SETUP_INFO['packages'])
 
     def test_smtpd(self):
-        self.run_simple_doctests('docs/tested/smtpd.rst')
+        self.run_simple_doctests('docs/specs/smtpd.rst')
 
-    def test_clocking(self):
-        self.run_simple_doctests('docs/tested/clocking.rst')
+    def test_tickets(self):
+        self.run_simple_doctests('docs/specs/tickets.rst')
 
 
 class DemoTests(BaseTestCase):

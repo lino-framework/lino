@@ -1,9 +1,26 @@
-.. _noi.tested.clocking:
+.. _noi.tested.tickets:
 
-Clocking
-========
+===============================================
+Ticket management and development time tracking
+===============================================
 
-The :mod:`lino.modlib.clocking` module is for doing time tracking.
+.. How to test only this document:
+
+  $ python setup.py test -s tests.SpecsTests.test_tickets
+
+Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
+:mod:`lino.modlib.clocking` (Development time tracking).
+
+The goal of these modules is managing tickets (problems introduced by
+a customer) and registering the time needed by developers who work on
+these tickets. It is then possible to publish diverse work reports.
+
+
+.. contents::
+  :local:
+
+A tested document
+=================
 
 .. include:: /include/tested.rst
 
@@ -14,6 +31,104 @@ The :mod:`lino.modlib.clocking` module is for doing time tracking.
 >>> from lino.api.doctest import *
 
 >>> ses = rt.login("robin")
+
+
+Tickets versus Clocking
+=======================
+
+Note that :mod:`clocking <lino.modlib.clocking>` depends on
+:mod:`tickets <lino.modlib.tickets>`, but not vice-versa. 
+
+>>> dd.plugins.clocking.needs_plugins
+['lino.modlib.tickets']
+>>> dd.plugins.tickets.needs_plugins
+[]
+
+Some other applicaton might use :mod:`tickets <lino.modlib.tickets>`
+without wanting to manage :mod:`clocking <lino.modlib.clocking>`.  But
+Lino Noi uses them both.
+
+
+Tickets
+=======
+
+A :class:`Ticket <lino.modlib.tickets.models.Ticket>` represents a
+concrete problem introduced by a 
+:attr:`reporter <lino.modlib.tickets.models.Ticket.reporter>` 
+(usually a customer).
+
+A ticket is usually assigned to one and only one user
+(:attr:`assigned_to <lino.modlib.tickets.models.Ticket.assigned_to>`)
+who is expected to work on it. That user might be the customer,
+e.g. when the developer has a question.
+
+The :attr:`project <lino.modlib.tickets.models.Ticket.project>` of a
+ticket is used to specify "who is going to pay" for it. Lino Noi does
+not issue invoices, so it uses this information only for reporting
+about it and helping with the decision about whether and how worktime
+is being invoiced to the customer.  But the invoicing itself is not
+curently goal of Lino Noi.
+
+The :attr:`product <lino.modlib.tickets.models.Ticket.product>` is
+what Trac calls "component". Products are "customer-side
+classification" of the different components which are being developed
+by the team that uses a given Lino Noi site.
+
+The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a ticket
+
+>>> ses.show(tickets.TicketStates)
+======= ========= =========
+ value   name      text
+------- --------- ---------
+ 10      new       New
+ 20      todo      To do
+ 21      sticky    Sticky
+ 50      done      Done
+ 60      refused   Refused
+======= ========= =========
+<BLANKLINE>
+
+
+
+When a ticket has been marked as :attr:`closed <lino.modlib.tickets.models.Ticket.closed>`.
+
+- :attr:`standby <lino.modlib.tickets.models.Ticket.standby>` 
+
+
+Projects
+========
+
+>>> ses.show(tickets.Projects)
+=========== ============ ======== ==============
+ Reference   Name         Parent   Project Type
+----------- ------------ -------- --------------
+             Eupen
+             Raeren
+             Bütgenbach
+=========== ============ ======== ==============
+<BLANKLINE>
+
+
+Products
+========
+
+>>> ses.show(products.Products)
+=========== ============== ==========
+ Reference   Designation    Category
+----------- -------------- ----------
+             Lino Core
+             Lino Welfare
+             Lino Cosi
+             Lino Faggio
+=========== ============== ==========
+<BLANKLINE>
+  
+- :class:`Session <lino.modlib.clocking.models.Session>`
+
+Sessions
+========
+
+The 
 
 >>> ses.show(clocking.Sessions)
 ... #doctest: +REPORT_UDIFF

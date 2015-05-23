@@ -2,13 +2,13 @@
 lino-noi README
 ==========================
 
-A Lino application for managing local communities
+The Lino application used by the Lino team for managing their tickets
 
 Description
 -----------
 
 Lino Noi is a `Lino <http://www.lino-framework.org>`_ application
-for managing teams who use a ticketing system.  The name comes from
+used by the Lino team for managing their tickets.  The name comes from
 Italian "noi" which means "we".
 
 
