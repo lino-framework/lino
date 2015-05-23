@@ -4,10 +4,10 @@
 
 """Database models for `lino.modlib.clocking`.
 
-A **Session** is when an employee (a User) works during a given lapse
-of time on a given Ticket.
+A **Session** is when a user works during a given lapse of time on a
+given Ticket.
 
-All the Sessions related to a given Project represent the time
+All the sessions related to a given project represent the time
 invested into that Project.
 
 Extreme case of a session:
@@ -28,7 +28,7 @@ Extreme case of a session:
 
     Ticket start end    Pause  Duration
     #1     9:23  13:12  0:45
-    #2     10:17 11:12  0:12       0:43   
+    #2     10:17 11:12  0:12       0:43
     #3     10:23 10:28             0:05
 
 """
@@ -126,7 +126,7 @@ class EndSession(dd.Action):
 class EndTicketSession(dd.Action):
     # label = _("End session")
     # label = u"\u231a\u2198"
-    label = u"\u2198"
+    label = u"↘"  # u"\u2198"
     help_text = _("End the active session on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
@@ -158,23 +158,12 @@ class StartTicketSession(dd.Action):
     # label = u"\u2690"
     # label = u"\u2328"
     # label = u"\u231a\u2197"
-    label = u"\u2197"
+    label = u"↗"  # \u2197
 
     help_text = _("Start a session on this ticket.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
     show_in_bbar = False
-
-    # parameters = dict(
-    #     summary=models.CharField(_("Summary"), blank=True, max_length=200),
-    #     session_type=dd.ForeignKey(
-    #         'clocking.SessionType', null=True, blank=True)
-    # )
-
-    # params_layout = """
-    # summary
-    # session_type
-    # """
 
     def get_action_permission(self, ar, obj, state):
         if obj.standby or obj.closed:
@@ -199,6 +188,9 @@ class StartTicketSession(dd.Action):
 
 dd.inject_action("tickets.Ticket", start_session=StartTicketSession())
 dd.inject_action("tickets.Ticket", end_session=EndTicketSession())
+dd.inject_field(
+    "users.User", 'open_session_on_new_ticket',
+    models.BooleanField(_("Open session on new ticket"), default=False))
 
 
 class Session(UserAuthored, StartedEnded):
@@ -357,7 +349,7 @@ def welcome_messages(ar):
     # your open sessions (i.e. those you are busy with)
     qs = Session.objects.filter(user=me, end_time__isnull=True)
     if qs.count() > 0:
-        chunks = [unicode(_("You are busy with "))]
+        chunks = [E.b(unicode(_("You are busy with ")))]
         sep = None
         for ses in qs:
             if sep:
@@ -368,47 +360,12 @@ def welcome_messages(ar):
                 ar.obj2html(ses.ticket, txt, title=ses.ticket.summary))
             chunks += [
                 ' (',
-                ar.instance_action_button(ses.end_session, u'\u2713'),
+                ar.instance_action_button(
+                    ses.end_session, EndTicketSession.label),
                 ')']
             sep = ', '
         chunks.append('. ')
-        yield E.span(*chunks)
-        # return
-
-    if False:
-        # Tickets in "favourite" states get their own welcome message.
-        qs = Ticket.objects.filter(
-            Q(assigned_to__isnull=True) | Q(assigned_to=me))
-        qs = qs.filter(state__in=TicketStates.favorite_states)
-        qs = qs.filter(closed=False, standby=False)
-        qs = qs.exclude(id__in=busy_tickets)
-        qs = qs.order_by('-modified')
-        if qs.count() > 0:
-            od = OrderedDict()  # state -> list of tickets
-            for ticket in qs:
-                lst = od.setdefault(ticket.state, [])
-                if len(lst) < 10:
-                    txt = unicode(ticket)
-                    # txt = "#{0}".format(ticket.id)
-                    # if ticket.nickname:
-                    #     txt += u" ({0})".format(ticket.nickname)
-                    lst.append(ar.obj2html(ticket, txt, title=ticket.summary))
-                elif len(lst) == 10:
-                    lst.append('...')
-            items = []
-            for state, tickets in od.items():
-                chunks = ["{0} : ".format(state)]
-                sep = None
-                for ticket in tickets:
-                    if sep:
-                        chunks.append(sep)
-                    chunks.append(ticket)
-                    sep = ', '
-                # chunks.append('. ')
-                items.append(E.li(*chunks))
-            yield _("Your favourite tickets are:")
-            yield E.ul(*items)
-            # yield E.div(E.p(_("You might want to work on")), E.ul(*items))
+        yield E.p(*chunks)
 
 dd.add_welcome_handler(welcome_messages)
 
@@ -489,12 +446,22 @@ class InvestedTimes(dd.VentilatingTable):
         yield w(None, _("Total"))
 
 from lino.modlib.tickets.models import Project
+from lino.modlib.tickets.models import Ticket
 
 
 @dd.receiver(dd.post_save, sender=Project)
 def my_setup_columns(sender, **kw):
     InvestedTimes.setup_columns()
     settings.SITE.kernel.must_build_site_cache()
+
+
+@dd.receiver(dd.post_save, sender=Ticket)
+def on_ticket_create(sender, instance=None, created=False, **kwargs):
+    me = instance.reporter
+    if created and me is not None and me.open_session_on_new_ticket:
+        ses = rt.modules.clocking.Session(ticket=instance, user=me)
+        ses.full_clean()
+        ses.save()
 
 
 if False:  # works, but is not useful

@@ -570,11 +570,21 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     spawn_ticket = SpawnTicket()
 
     def on_create(self, ar):
+        # print "20150523a on_create", self.reporter_id
+        # print "20150523a on_create", self.reporter_id
         if self.reporter_id is None:
             u = ar.get_user()
             if u is not None:
                 self.reporter = u
         super(Ticket, self).on_create(ar)
+
+    def full_clean(self):
+        # print "20150523b on_create", self.reporter
+        super(Ticket, self).full_clean()
+        me = self.reporter
+        if me and me.current_project:
+            self.project = me.current_project
+                
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
@@ -631,13 +641,14 @@ class Tickets(dd.Table):
     required = dd.Required(auth=True)
     model = 'tickets.Ticket'
     order_by = ["id"]
-    column_names = 'id summary:50 feedback standby closed workflow_buttons:30 reporter:10 project:10 *'
+    column_names = 'id summary:50 feedback standby closed ' \
+                   'workflow_buttons:30 reporter:10 project:10 *'
     auto_fit_column_widths = True
     detail_layout = TicketDetail()
-    insert_layout = dd.FormLayout("""
-    reporter project
+    insert_layout = """
+    reporter product
     summary
-    """, window_size=(60, 'auto'))
+    """
 
     parameters = mixins.ObservedPeriod(
         reporter=dd.ForeignKey(
@@ -844,3 +855,10 @@ class InterestsByProduct(Interests):
     master_key = 'product'
     order_by = ["user"]
     column_names = 'user *'
+
+dd.inject_field(
+    'users.User', 'current_project',
+    dd.ForeignKey(
+        'tickets.Project', verbose_name=_("Current project"),
+        blank=True, null=True, related_name="users_by_project"))
+
