@@ -20,18 +20,18 @@
 ...    "bar baz bar-o-baz foo-bar class def")
 
 >>> bob = E.bar_o_baz()
->>> baz = E.add_child(bob,'baz',class_='first')
+>>> baz = E.add_child(bob, 'baz', class_='first')
 >>> print E.tostring(baz)
 <baz xmlns="http://my.ns" class="first" />
 
->>> bob = E.bar_o_baz('Hello',class_='first',foo_bar="3")
+>>> bob = E.bar_o_baz('Hello', class_='first', foo_bar="3")
 >>> print E.tostring(bob)
 <bar-o-baz xmlns="http://my.ns" class="first" foo-bar="3">Hello</bar-o-baz>
 
 The following reproduces a pifall. Here is the initial code:
 
->>> E = Namespace(None,"div br")
->>> bob = E.div("a",E.br(),"b",E.br(),"c",E.br(),"d")
+>>> E = Namespace(None, "div br")
+>>> bob = E.div("a", E.br(), "b", E. br(), "c", E.br(), "d")
 >>> print E.tostring(bob)
 <div>a<br />b<br />c<br />d</div>
 
@@ -41,7 +41,7 @@ The idea is to use `join_elems` to insert the <br> tags:
 
 But surprise:
 
->>> elems = join_elems(["a","b","c","d"],sep=E.br())
+>>> elems = join_elems(["a", "b", "c", "d"], sep=E.br())
 >>> print E.tostring(E.div(*elems))
 <div>a<br />bcd<br />bcd<br />bcd</div>
 
@@ -50,7 +50,7 @@ inserted multiple times at different places.  The correct usage is
 without the parentheses so that `join_elems` instantiates each time a
 new element:
 
->>> elems = join_elems(["a","b","c","d"],sep=E.br)
+>>> elems = join_elems(["a", "b", "c", "d"], sep=E.br)
 >>> print E.tostring(E.div(*elems))
 <div>a<br />b<br />c<br />d</div>
 
@@ -63,7 +63,6 @@ logger = logging.getLogger(__name__)
 import datetime
 from functools import partial
 
-#~ from xml.etree import ElementTree as ET
 from lino.utils.xmlgen import etree
 #~ from lino.utils import Warning
 from django.utils.functional import Promise
@@ -239,6 +238,18 @@ class Namespace(object):
         e = ecl(*args, **kw)
         parent.append(e)
         return e
+
+    def fromstring(self, s):
+        """Build an element tree from the given XML source string.
+
+        This just forwards to the
+        :meth:`xml.etree.ElementTree.fromstring` library function.
+        See the `Parsing XML
+        <https://docs.python.org/2.7/library/xml.etree.elementtree.html#parsing-xml>`__
+        section of the Python docs.
+
+        """
+        return etree.etree.fromstring(s)
 
 RAW = etree.XML
 

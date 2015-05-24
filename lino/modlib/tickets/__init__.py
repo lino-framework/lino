@@ -8,6 +8,7 @@ Adds functionality for managing tickets.
    :toctree:
 
     models
+    ui
     choicelists
     fixtures.demo
 

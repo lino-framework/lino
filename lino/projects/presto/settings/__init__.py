@@ -28,6 +28,8 @@ class Site(Site):
         add('000', _("Anonymous"),       '_ _', 'anonymous',
             readonly=True, authenticated=False)
         add('100', _("User"),            'U U', 'user')
+        add('200', _("Developer"),       'U U', 'developer')
+        add('300', _("Senior"),          'U U', 'senior')
         add('900', _("Administrator"),   'A A', 'admin')
 
     def get_installed_apps(self):

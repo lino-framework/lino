@@ -71,14 +71,6 @@ class ProjectType(mixins.BabelNamed):
         verbose_name_plural = _('Project Types')
 
 
-class ProjectTypes(dd.Table):
-    model = 'tickets.ProjectType'
-    column_names = 'name *'
-    detail_layout = """id name
-    ProjectsByType
-    """
-
-
 class TicketType(mixins.BabelNamed):
     """The type of a :class:`Ticket`."""
 
@@ -87,33 +79,12 @@ class TicketType(mixins.BabelNamed):
         verbose_name_plural = _('Ticket types')
 
 
-class TicketTypes(dd.Table):
-    model = 'tickets.TicketType'
-    column_names = 'name *'
-    detail_layout = """id name
-    TicketsByType
-    """
-
-
 #~ class Repository(UserAuthored):
     #~ class Meta:
         #~ verbose_name = _("Repository")
         #~ verbose_name_plural = _('Repositories')
 
-    #~ ref = dd.NullCharField(_("Reference"),max_length=40,blank=True,null=True,unique=True)
-    #~ srcref_url_template = models.CharField(_("Name"),max_length=200)
 
-# class Nicknamed(dd.Model):
-#     class Meta:
-#         abstract = True
-
-#     def __unicode__(self):
-#         txt = super(Nicknamed, self).__unicode__()
-#         if self.nickname:
-#             return "{0} ({1})".format(txt, self.nickname)
-#         return txt
-#         #     return "#{0} ({1})".format(self.id, self.nickname)
-#         # return "#{0}".format(self.id)
 
 class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     """A **project** is something on which several users work together.
@@ -132,53 +103,6 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
 
     def __unicode__(self):
         return self.ref or self.name
-
-
-class ProjectDetail(dd.FormLayout):
-    main = "general tickets history"
-
-    general = dd.Panel("""
-    ref name parent type
-    company #contact_person #contact_role private closed
-    description:30 ProjectsByParent:30
-    # cal.EventsByProject
-    """, label=_("General"))
-
-    tickets = dd.Panel("""
-    #SponsorshipsByProject
-    TicketsByProject #SessionsByProject
-    """, label=_("Tickets"))
-
-    history = dd.Panel("""
-    srcref_url_template changeset_url_template
-    MilestonesByProject
-    """, label=_("Timeline"))
-
-
-class Projects(dd.Table):
-    model = 'tickets.Project'
-    detail_layout = ProjectDetail()
-    column_names = "ref name parent type *"
-
-
-class ProjectsByParent(Projects):
-    master_key = 'parent'
-    label = _("Subprojects")
-    column_names = "ref name type *"
-
-
-class ProjectsByType(Projects):
-    master_key = 'type'
-    column_names = "ref name *"
-
-# class MyProjects(Projects, ByUser):
-#     order_by = ["name"]
-#     column_names = 'ref name id *'
-
-
-class ProjectsByCompany(Projects):
-    master_key = 'company'
-    column_names = "ref name *"
 
 
 # class Sponsorship(dd.Model):
@@ -282,138 +206,6 @@ class Link(dd.Model):
         return _("%(type)s of %(parent)s") % dict(
             parent=self.parent,
             type=self.type.as_child())
-
-
-class Links(dd.Table):
-    model = 'tickets.Link'
-    required = dd.required(user_level='admin')
-    stay_in_grid = True
-    detail_layout = dd.FormLayout("""
-    parent
-    child
-    type
-    """, window_size=(40, 'auto'))
-
-
-class LinksByTicket(Links):
-
-    label = _("Dependencies")
-    required = dd.required()
-    master = 'tickets.Ticket'
-    column_names = 'parent type_as_parent:10 child'
-    slave_grid_format = 'summary'
-
-    @classmethod
-    def get_request_queryset(self, ar):
-        mi = ar.master_instance  # a Person
-        if mi is None:
-            return
-        Link = rt.modules.tickets.Link
-        flt = Q(parent=mi) | Q(child=mi)
-        return Link.objects.filter(flt).order_by(
-            'child__modified', 'parent__modified')
-
-    @classmethod
-    def get_slave_summary(self, obj, ar):
-        """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
-        for :class:`LinksByTicket`.
-
-        """
-        # if obj.pk is None:
-        #     return ''
-        #     raise Exception("20150218")
-        sar = self.request_from(ar, master_instance=obj)
-        links = []
-        for lnk in sar:
-            if lnk.parent is None or lnk.child is None:
-                pass
-            else:
-                if lnk.child_id == obj.id:
-                    i = (lnk.type.as_child(), lnk.parent)
-                else:
-                    i = (lnk.type.as_parent(), lnk.child)
-                links.append(i)
-
-        def by_age(a, b):
-            return cmp(b[1].modified, a[1].modified)
-
-        try:
-            links.sort(by_age)
-        # except AttributeError:
-        except (AttributeError, ValueError):
-            # AttributeError: 'str' object has no attribute 'as_date'
-            # possible when empty birth_date
-            # ValueError: day is out of range for month
-            pass
-
-        tbt = dict()  # tickets by lnktype
-        for lnktype, other in links:
-            lst = tbt.setdefault(lnktype, [])
-            txt = "#%d" % other.id
-            lst.append(ar.obj2html(other, txt, title=other.summary))
-
-        items = []
-        for lnktype, lst in tbt.items():
-            items.append(E.li(unicode(lnktype), ": ", *join_elems(lst, ', ')))
-        elems = []
-        if len(items) > 0:
-            # elems += join_elems(items)
-            # elems.append(l(*items))
-            elems.append(E.ul(*items))
-        else:
-            elems.append(_("No dependencies."))
-
-        # Buttons for creating relationships:
-        sar = self.insert_action.request_from(ar)
-        if ar.renderer.is_interactive and sar.get_permission():
-            actions = []
-            for lt in LinkTypes.objects():
-                actions.append(E.br())
-                sar.known_values.update(type=lt, parent=obj)
-                sar.known_values.pop('child', None)
-                btn = sar.ar2button(None, lt.as_parent(), icon_name=None)
-                if not lt.symmetric:
-                    # actions.append('/')
-                    sar.known_values.update(type=lt, child=obj)
-                    sar.known_values.pop('parent', None)
-                    btn2 = sar.ar2button(None, lt.as_child(), icon_name=None)
-                    # actions.append(btn)
-                    btn = E.span(btn, '/', btn2)
-                actions.append(btn)
-                # actions.append(' ')
-            # actions = join_elems(actions, E.br)
-
-            if len(actions) > 0:
-                elems += [E.br(), _("Create dependency as ")] + actions
-        return E.div(*elems)
-
-
-
-# class Dependency(dd.Model):
-#     class Meta:
-#         verbose_name = _("Dependency")
-#         verbose_name_plural = _('Dependencies')
-
-#     parent = dd.ForeignKey('tickets.Ticket', related_name="children")
-#     child = dd.ForeignKey('tickets.Ticket', related_name="parents")
-#     dependency_type = DependencyTypes.field()
-
-
-# class Dependencies(dd.Table):
-#     model = 'tickets.Dependency'
-
-
-# class ChildrenByTicket(Dependencies):
-#     label = _("Children")
-#     master_key = 'parent'
-#     column_names = "dependency_type child *"
-
-
-# class ParentsByTicket(Dependencies):
-#     label = _("Parents")
-#     master_key = 'child'
-#     column_names = "dependency_type parent *"
-
 
 
 # class CloseTicket(dd.Action):
@@ -616,211 +408,6 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
 
-class TicketDetail(dd.DetailLayout):
-    main = "general planning"
-
-    general = dd.Panel("""
-    general1 LinksByTicket
-    description:30 clocking.SessionsByTicket:40
-    """, label=_("General"))
-    
-    general1 = """
-    summary:40 id ticket_type:10
-    reporter project product reported_for
-    workflow_buttons:20 feedback standby closed private
-    """
-
-    planning = dd.Panel("""
-    nickname:10 fixed_for created modified
-    state assigned_to duplicate_of planned_time invested_time
-    DuplicatesByTicket  #ChildrenByTicket
-    """, label=_("Planning"))
-
-
-class Tickets(dd.Table):
-    required = dd.Required(auth=True)
-    model = 'tickets.Ticket'
-    order_by = ["id"]
-    column_names = 'id summary:50 feedback standby closed ' \
-                   'workflow_buttons:30 reporter:10 project:10 *'
-    auto_fit_column_widths = True
-    detail_layout = TicketDetail()
-    insert_layout = """
-    reporter product
-    summary
-    """
-
-    parameters = mixins.ObservedPeriod(
-        reporter=dd.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Reporter"),
-            blank=True, null=True,
-            help_text=_("Only rows reporter by this user.")),
-        assigned_to=dd.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Assigned to"),
-            blank=True, null=True,
-            help_text=_("Only rows authored by this user.")),
-        interesting_for=dd.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Interesting for"),
-            blank=True, null=True,
-            help_text=_("Only tickets interesting for this user.")),
-        project=dd.ForeignKey(
-            'tickets.Project',
-            blank=True, null=True),
-        state=TicketStates.field(
-            blank=True, help_text=_("Only rows having this state.")),
-        show_closed=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are closed.")),
-        show_standby=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are in standby mode.")),
-        show_private=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are private.")),
-        observed_event=TicketEvents.field(blank=True))
-    params_layout = """
-    reporter assigned_to interesting_for project state
-    show_closed show_standby show_private start_date end_date observed_event"""
-    simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
-
-    @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(Tickets, self).get_request_queryset(ar)
-        pv = ar.param_values
-
-        if pv.observed_event:
-            qs = pv.observed_event.add_filter(qs, pv)
-
-        if pv.interesting_for:
-            interests = pv.interesting_for.tickets_interest_set_by_user.values(
-                'product')
-            if len(interests) > 0:
-                qs = qs.filter(product__in=interests)
-
-        if pv.show_closed == dd.YesNo.no:
-            qs = qs.filter(closed=False)
-        elif pv.show_closed == dd.YesNo.yes:
-            qs = qs.filter(closed=True)
-
-        if pv.show_standby == dd.YesNo.no:
-            qs = qs.filter(standby=False)
-        elif pv.show_standby == dd.YesNo.yes:
-            qs = qs.filter(standby=True)
-
-        if pv.show_private == dd.YesNo.no:
-            qs = qs.filter(private=False, project__private=False)
-        elif pv.show_private == dd.YesNo.yes:
-            qs = qs.filter(Q(private=True) | Q(project__private=True))
-        # print 20150512, qs.query
-        return qs
-
-    @classmethod
-    def get_title_tags(self, ar):
-        for t in super(Tickets, self).get_title_tags(ar):
-            yield t
-        pv = ar.param_values
-        if pv.start_date or pv.end_date:
-            yield daterange_text(
-                pv.start_date,
-                pv.end_date)
-
-
-class DuplicatesByTicket(Tickets):
-    label = _("Duplicates")
-    master_key = 'duplicate_of'
-    column_names = "id summary project reporter *"
-
-
-class UnassignedTickets(Tickets):
-    column_names = "summary project reporter *"
-
-
-class TicketsByProject(Tickets):
-    master_key = 'project'
-    column_names = "summary ticket_type reported_for fixed_for state closed invested_time *"
-    auto_fit_column_widths = True
-
-
-class TicketsByType(Tickets):
-    master_key = 'ticket_type'
-    column_names = "summary state closed invested_time *"
-    auto_fit_column_widths = True
-
-
-class TicketsByProduct(Tickets):
-    master_key = 'product'
-    column_names = "summary state closed invested_time *"
-    auto_fit_column_widths = True
-
-
-class PublicTickets(Tickets):
-    label = _("Public tickets")
-    order_by = ["-modified", "id"]
-    column_names = 'overview:50 workflow_buttons:30 reporter:10 project:10 *'
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(PublicTickets, self).param_defaults(ar, **kw)
-        kw.update(show_closed=dd.YesNo.no)
-        # kw.update(show_standby=dd.YesNo.no)
-        kw.update(show_private=dd.YesNo.no)
-        return kw
-
-
-class ActiveTickets(Tickets):
-    help_text = _("Active tickets are those which are neither "
-                  "closed nor in standby mode.")
-    label = _("Active tickets")
-    order_by = ["-modified", "id"]
-    column_names = 'overview:50 workflow_buttons:40 \
-    reporter:10 ticket_type:10 project:10 *'
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(ActiveTickets, self).param_defaults(ar, **kw)
-        kw.update(show_closed=dd.YesNo.no)
-        kw.update(show_standby=dd.YesNo.no)
-        return kw
-
-
-class InterestingTickets(ActiveTickets):
-    label = _("Interesting tickets")
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(InterestingTickets, self).param_defaults(ar, **kw)
-        kw.update(interesting_for=ar.get_user())
-        return kw
-
-
-# class TicketsByPartner(Tickets):
-#     master_key = 'partner'
-#     column_names = "summary project user *"
-
-
-class TicketsFixed(Tickets):
-    label = _("Tickets Fixed")
-    master_key = 'fixed_for'
-    column_names = "id summary reporter *"
-    editable = False
-
-
-class TicketsReported(Tickets):
-    label = _("Reported tickets")
-    master_key = 'reported_for'
-    column_names = "id summary reporter *"
-    editable = False
-
-
-class TicketsByReporter(Tickets):
-    label = _("Reported tickets ")
-    master_key = 'reporter'
-    column_names = "id summary:60 workflow_buttons:20 *"
-
-
 class Interest(UserAuthored):
     """An **interest** is the fact that a given user is interested in the
     tickets related to a given product.
@@ -837,30 +424,10 @@ class Interest(UserAuthored):
 dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
-class Interests(dd.Table):
-    model = 'tickets.Interest'
-    column_names = "user product *"
-    auto_fit_column_widths = True
-
-
-class MyInterests(Interests, ByUser):
-    order_by = ["product__ref"]
-    column_names = 'product__ref product *'
-
-
-class InterestsByUser(Interests):
-    master_key = 'user'
-    order_by = ["product"]
-    column_names = 'product *'
-
-
-class InterestsByProduct(Interests):
-    master_key = 'product'
-    order_by = ["user"]
-    column_names = 'user *'
-
 dd.inject_field(
     'users.User', 'current_project',
     dd.ForeignKey(
         'tickets.Project', verbose_name=_("Current project"),
         blank=True, null=True, related_name="users_by_project"))
+
+from .ui import *

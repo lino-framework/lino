@@ -6,13 +6,10 @@
 each language.  These names are being used by the :doc:`Online demo
 sites </demos>`.
 
-Lino currently knows demo users for the following languages:
-
-.. django2rst::
-
-  from lino.api.shell import *
+.. Lino currently knows demo users for the following languages:
+  .. lino2rst::
   ses = rt.login()
-  ses.show(users.Users,
+  ses.show(rt.modules.users.Users,
     column_names="username first_name last_name language")
 
 We are trying to sound realistic without actually hitting any real

@@ -14,11 +14,12 @@ def objects():
     Interest = rt.modules.tickets.Interest
     Project = rt.modules.tickets.Project
 
-    p = rt.modules.users.UserProfiles.user
-    yield User(username="mathieu", profile=p)
-    yield User(username="marc", profile=p)
-    yield User(username="luc", profile=p)
-    yield User(username="jean", profile=p)
+    user = rt.modules.users.UserProfiles.user
+    dev = rt.modules.users.UserProfiles.developer
+    yield User(username="mathieu", profile=user)
+    yield User(username="marc", profile=user)
+    yield User(username="luc", profile=dev)
+    yield User(username="jean", profile=dev)
 
     USERS = Cycler(User.objects.all())
 
@@ -35,8 +36,8 @@ def objects():
 
     PRODUCTS = Cycler(Product.objects.all())
 
-    # note that robin has no interest, so he sees all tickets
-    for u in User.objects.filter(profile=p):
+    # note that developers has no interest, so they sees all tickets
+    for u in User.objects.filter(profile=user):
         for i in range(3):
             yield Interest(user=u, product=PRODUCTS.pop())
 
@@ -46,14 +47,16 @@ def objects():
 
     PROJECTS = Cycler(Project.objects.all())
 
-    def ticket(s):
-        return Ticket(
+    def ticket(s, **kwargs):
+        kwargs.update(
             ticket_type=TYPES.pop(), summary=s,
             reporter=USERS.pop(),
             product=PRODUCTS.pop(), project=PROJECTS.pop())
+        return Ticket(**kwargs)
     yield ticket("Foo fails to bar when baz")
     yield ticket("Bar is not always baz")
     yield ticket("Baz sucks")
     yield ticket("Foo and bar don't baz")
-    yield ticket("Cannot create Foo")
+    yield ticket("Cannot create Foo", description="""<p>When I try to create
+    a <b>Foo</b>, then I get a <b>Bar</b> instead of a Foo.</p>""")
 

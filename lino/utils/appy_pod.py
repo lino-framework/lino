@@ -282,26 +282,14 @@ class Renderer(AppyRenderer):
         columns, headers, widths = ar.get_field_info(column_names)
         widths = map(int, widths)
         tw = sum(widths)
-        """
-        specifying relative widths doesn't seem to work
-        (and that's a pity because absolute widths requires us 
-        to know the table_width). 
-        """
+        # specifying relative widths doesn't seem to work (and that's
+        # a pity because absolute widths requires us to know the
+        # table_width).
         use_relative_widths = False
         if use_relative_widths:
             width_specs = ["%d*" % (w * 100 / tw) for w in widths]
-            #~ width_specs = [(w*100/tw) for w in widths]
         else:
-            # ~ total_width = 180 # suppose table width = 18cm = 180mm
             width_specs = ["%dmm" % (table_width * w / tw) for w in widths]
-        #~ else:
-            #~ width_specs = []
-            #~ for w in widths:
-                                #~ if w.endswith('%'):
-                                        #~ mm = float(w[:-1]) * table_width / 100
-                                        #~ width_specs.append("%dmm" % mm)
-                                #~ else:
-        #~ print 20120419, width_specs
 
         doc = OpenDocumentText()
 
@@ -326,9 +314,10 @@ class Renderer(AppyRenderer):
 
         st = add_style(name="Number Cell", family="paragraph",
                        parentstylename="Table Contents")
-        st.addElement(ParagraphProperties(numberlines="false",
-                                          textalign="end", justifysingleword="true",
-                                          linenumber="0"))
+        st.addElement(ParagraphProperties(
+            numberlines="false",
+            textalign="end", justifysingleword="true",
+            linenumber="0"))
 
         dn = "Table Column Header"
         st = self.stylesManager.styles.getStyle(dn)
@@ -430,13 +419,6 @@ class Renderer(AppyRenderer):
             return "Table Contents"
 
         def value2cell(ar, i, fld, val, style_name, tc):
-            #~ text = html2odt.html2odt(fld.value2html(ar,val))
-            params = dict()
-            #~ if isinstance(fld,ext_store.BooleanStoreField):
-                #~ params.update(text=fld.value2html(ar,val))
-            #~ else:
-                #~ params.update(text=fld.format_value(ar,val))
-            #~ params.update(text=fld.format_value(ar,val))
             txt = fld.value2html(ar, val)
 
             p = text.P(stylename=style_name)

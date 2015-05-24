@@ -5,6 +5,23 @@
 """A Sphinx extension used to write multilingual user documentation
 for a Lino application.
 
+.. rst:directive:: lino2rst
+
+  Execute Python code and process the output as reStructuredText
+  source code.  This is like :rst:dir:`py2rst` but with the following
+  names defined:
+
+  :settings: The Django settings module which is active while building
+             the docs.
+            
+  :dd: The :mod:`lino.api.dd` module.
+            
+  :rt: The :mod:`lino.api.rt` module.
+            
+  Plus the app_label of each installed plugin.
+            
+            
+
 .. rst:directive:: actor
 
 Usage::
@@ -393,7 +410,7 @@ class CurrentProject(TempDataDirective):
 
 
 class Lino2rstDirective(Py2rstDirective):
-    """Defines the :rst:dir:`django2rst` directive."""
+    """Defines the :rst:dir:`lino2rst` directive."""
 
     def get_context(self):
         from django.conf import settings

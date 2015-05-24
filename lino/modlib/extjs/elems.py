@@ -3,10 +3,12 @@
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
-.. autosummary::
-
+The biggest part of this module should actually be moved to
+:mod:`lino.core.elems`.
 
 """
+
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -26,7 +28,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
 from lino.core import fields
-from lino.core.actions import Permittable, get_view_permission
+from lino.core.actions import Permittable
 from lino.core import constants
 
 from lino.utils.ranges import constrain
@@ -34,6 +36,8 @@ from lino.utils import jsgen
 from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, js_code
+from lino.utils.html2xhtml import html2xhtml
+
 from lino.utils import join_elems
 from lino.core.actors import qs2summary
 
@@ -577,8 +581,8 @@ class FieldElement(LayoutElement):
         pass
 
     def value2html(self, ar, v, **cellattrs):
-        """Return a etree element representing of the given value.
-        The possible return values may be:
+        """Return an etree element representing of the given value.  The
+        possible return values may be:
 
         - an xml.etree.ElementTree.Element
 
@@ -680,6 +684,14 @@ class TextFieldElement(FieldElement):
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(unicode(self.field.verbose_name))
         yield E.textarea(text, rows=str(self.preferred_height))
+
+    def value2html(self, ar, v, **cellattrs):
+        if self.format == 'html' and v:
+            v = html2xhtml(v)
+            top = E.fromstring(v)
+        else:
+            top = self.format_value(ar, v)
+        return E.td(top, **cellattrs)
 
 
 class CharFieldElement(FieldElement):
