@@ -28,6 +28,10 @@ class Site(Site):
     default_ui = None
 
     def get_installed_apps(self):
+        """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
+        Noi.
+
+        """
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
         yield 'lino.modlib.system'
@@ -35,7 +39,7 @@ class Site(Site):
         yield 'lino_noi.lib.contacts'
         yield 'lino.modlib.cal'
         yield 'lino_noi.lib.products'
-        yield 'lino.modlib.tickets'
+        # yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
 
@@ -50,6 +54,24 @@ class Site(Site):
         # yield 'lino.modlib.awesomeuploader'
 
         yield 'lino_noi.lib.noi'
+
+    def setup_user_profiles(self):
+        """Implements :meth:`lino.core.site.Site.setup_user_profiles` for Lino
+        Noi.
+
+        """
+        from lino.modlib.users.choicelists import UserProfiles
+        from django.utils.translation import ugettext_lazy as _
+        UserProfiles.reset('* office')
+        add = UserProfiles.add_item
+        add('000', _("Anonymous"),       '_ _', 'anonymous',
+            readonly=True, authenticated=False)
+        add('100', _("User"),            'U U', 'user')
+        add('200', _("Consultant"),      'U U', 'consultant')
+        add('300', _("Hoster"),          'U U', 'hoster')
+        add('400', _("Developer"),       'U U', 'developer')
+        add('490', _("Senior"),          'U U', 'senior')
+        add('900', _("Administrator"),   'A A', 'admin')
 
     def get_default_required(self, **kw):
         # overrides the default behaviour which would add

@@ -7,11 +7,17 @@ SETUP_INFO = dict(
     version='0.0.1',
     install_requires=['lino', 'xlwt'],
     test_suite='tests',
-    description="The Lino application used by the Lino team for managing their tickets",
+    description="The Lino application used by the Lino team for managing their work on the Lino project",
     long_description="""\
-Lino Noi is a `Lino <http://www.lino-framework.org>`_ application
-used by the Lino team for managing their tickets.  The name comes from
-Italian "noi" which means "we".
+Lino Noi is the `Lino <http://www.lino-framework.org>`_
+application used by the Lino team for managing their work on the Lino project.
+The name comes from Italian "noi" which means "we".
+
+It can be called a <a
+href="https://en.wikipedia.org/wiki/DevOps">DevOps tool</a> in that it
+stresses communication, collaboration, integration, automation, and
+measurement of cooperation between software developers, users and
+other IT professionals.
 
 """,
     author='Luc Saffre',

@@ -1,8 +1,8 @@
 .. _noi.tested.tickets:
 
-===============================================
-Ticket management and development time tracking
-===============================================
+========================================
+Ticket management and work time tracking
+========================================
 
 .. How to test only this document:
 
@@ -11,9 +11,10 @@ Ticket management and development time tracking
 Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
 :mod:`lino.modlib.clocking` (Development time tracking).
 
-The goal of these modules is managing tickets (problems introduced by
-a customer) and registering the time needed by developers who work on
-these tickets. It is then possible to publish diverse work reports.
+The goal of these modules is managing tickets (problems reported by
+customers or other users) and registering the time needed by
+developers (or other users) to work on these tickets. It is then
+possible to publish diverse work reports.
 
 
 .. contents::
@@ -36,18 +37,55 @@ A tested document
 Tickets versus Clocking
 =======================
 
-Note that :mod:`clocking <lino.modlib.clocking>` depends on
-:mod:`tickets <lino.modlib.tickets>`, but not vice-versa. 
+Note that :mod:`lino.modlib.clocking` depends on
+:mod:`lino.modlib.tickets` and not vice-versa.  A time tracking system
+makes no sense if you don't have a ticketing system.  Lino Noi uses
+them both, but some other applicaton might use only :mod:`tickets
+<lino.modlib.tickets>` without wanting to manage :mod:`clocking
+<lino.modlib.clocking>`.
 
 >>> dd.plugins.clocking.needs_plugins
 ['lino.modlib.tickets']
 >>> dd.plugins.tickets.needs_plugins
 []
 
-Some other applicaton might use :mod:`tickets <lino.modlib.tickets>`
-without wanting to manage :mod:`clocking <lino.modlib.clocking>`.  But
-Lino Noi uses them both.
+See also :attr:`needs_plugin <lino.core.plugin.Plugin.needs_plugin>`.
 
+
+User profiles
+=============
+
+A default Lino Noi site has the following user profiles:
+
+>>> ses.show(users.UserProfiles)
+======= ============ ===============
+ value   name         text
+------- ------------ ---------------
+ 000     anonymous    Anonymous
+ 100     user         User
+ 200     consultant   Consultant
+ 300     hoster       Hoster
+ 400     developer    Developer
+ 490     senior       Senior
+ 900     admin        Administrator
+======= ============ ===============
+<BLANKLINE>
+
+
+A **user** is somebody who uses some part of the software being
+developed by the team. This is usually the contact person of a
+customer.
+
+A **consultant** is an intermediate agent between end-users and the
+team.
+
+A **hoster** is a special kind of customer who installs and maintains
+servers where Lino applications run.
+
+A **developer** is somebody who works on tickets by doing code
+changes.
+
+A **senior** is a developer who additionaly can triage tickets.
 
 Tickets
 =======
@@ -74,6 +112,9 @@ what Trac calls "component". Products are "customer-side
 classification" of the different components which are being developed
 by the team that uses a given Lino Noi site.
 
+Lifecycle of a ticket
+=====================
+
 The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a ticket
 
 >>> ses.show(tickets.TicketStates)
@@ -87,7 +128,6 @@ The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a ticket
  60      refused   Refused
 ======= ========= =========
 <BLANKLINE>
-
 
 
 When a ticket has been marked as :attr:`closed <lino.modlib.tickets.models.Ticket.closed>`.
