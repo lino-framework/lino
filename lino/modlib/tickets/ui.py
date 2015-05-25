@@ -338,7 +338,7 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "summary ticket_type reported_for fixed_for state closed invested_time *"
+    column_names = "overview:50 product:10 reporter:10 state closed standby *"
     auto_fit_column_widths = True
 
 

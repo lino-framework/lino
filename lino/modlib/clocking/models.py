@@ -245,7 +245,8 @@ class Session(UserAuthored, StartedEnded):
         #         diff -= self.break_time
         # return Duration(diff)
 
-dd.update_field(Session, 'user', blank=False, nul=False)
+dd.update_field(
+    Session, 'user', blank=False, null=False, verbose_name=_("Worker"))
 
 
 class Sessions(dd.Table):
@@ -256,12 +257,17 @@ class Sessions(dd.Table):
     # order_by = ['start_date', 'start_time']
     # stay_in_grid = True
     parameters = mixins.ObservedPeriod(
-        project=dd.ForeignKey('tickets.Project', blank=True),
+        project=dd.ForeignKey('tickets.Project', null=True, blank=True),
+        user=dd.ForeignKey('users.User', null=True, blank=True),
+        session_type=dd.ForeignKey(
+            'clocking.SessionType', null=True, blank=True),
         observed_event=dd.PeriodEvents.field(
             blank=True, default=dd.PeriodEvents.active),
     )
-    params_layout = "start_date end_date observed_event project"
+    params_layout = "start_date end_date observed_event project "\
+                    "user session_type"
     auto_fit_column_widths = True
+    simple_parameters = ('user', 'session_type')
 
     detail_layout = """
     ticket start_date start_time end_date end_time break_time user
@@ -310,8 +316,14 @@ class SessionsByTicket(Sessions):
                    'break_time duration user *'
 
 
-class MySessions(Sessions, ByUser):
+class MySessions(Sessions):
     column_names = 'start_date start_time end_time break_time ticket summary *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(MySessions, self).param_defaults(ar, **kw)
+        kw.update(user=ar.get_user())
+        return kw
 
 
 class MySessionsByDate(MySessions):
@@ -319,10 +331,6 @@ class MySessionsByDate(MySessions):
     label = _("My sessions by date")
     column_names = 'start_time end_time break_time duration ticket summary '\
                    'workflow_buttons *'
-
-    # parameters = dict(
-    #     today=models.DateField(_("Date"), blank=True),
-    # )
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -389,7 +397,6 @@ class InvestedTimes(dd.VentilatingTable):
         def __unicode__(self):
             return when_text(self.day)
 
-    # @dd.virtualfield(models.CharField(_("Description"), max_length=30))
     @dd.displayfield(_("Description"))
     def description(self, obj, ar):
         pv = dict(start_date=obj.day, end_date=obj.day)
@@ -431,7 +438,8 @@ class InvestedTimes(dd.VentilatingTable):
                 pv = dict(start_date=obj.day, end_date=obj.day)
                 pv.update(observed_event=dd.PeriodEvents.active)
                 pv.update(project=prj)
-                sar = Sessions.request(param_values=pv)
+                pv.update(user=ar.get_user())
+                sar = MySessionsByDate.request(param_values=pv)
                 tot = Duration()
                 for obj in sar:
                     d = obj.get_duration()

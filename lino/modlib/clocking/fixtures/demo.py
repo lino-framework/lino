@@ -18,18 +18,29 @@ def objects():
     Session = rt.modules.clocking.Session
     Ticket = rt.modules.tickets.Ticket
     User = rt.modules.users.User
-    USERS = Cycler(User.objects.all())
+    UserProfiles = rt.modules.users.UserProfiles
+    devs = (UserProfiles.developer, UserProfiles.senior)
+    workers = User.objects.filter(profile__in=devs)
+    WORKERS = Cycler(workers)
     TYPES = Cycler(SessionType.objects.all())
     TICKETS = Cycler(Ticket.objects.all())
     DURATIONS = Cycler([5, 12, 13, 20, 10, 20, 20, 3, 6, 17, 23])
 
-    ts = datetime.datetime.combine(
-        dd.demo_date(), datetime.time(9, 0, 0))
+    for t in Ticket.objects.all():
+        t.assigned_to = WORKERS.pop()
+        yield t
 
-    for i in range(20):
-        obj = Session(
-            ticket=TICKETS.pop(), session_type=TYPES.pop(), user=USERS.pop())
-        obj.set_datetime('start', ts)
-        ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
-        obj.set_datetime('end', ts)
-        yield obj
+    for u in workers:
+
+        ts = datetime.datetime.combine(
+            dd.demo_date(), datetime.time(9, 0, 0))
+    
+        TICKETS = Cycler(Ticket.objects.filter(assigned_to=u))
+
+        for i in range(20):
+            obj = Session(
+                ticket=TICKETS.pop(), session_type=TYPES.pop(), user=u)
+            obj.set_datetime('start', ts)
+            ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
+            obj.set_datetime('end', ts)
+            yield obj
