@@ -572,3 +572,5 @@ def set_detail_layouts(sender=None, **kwargs):
     """)
 
 
+def properties_list(owner, *prop_ids):
+    return []

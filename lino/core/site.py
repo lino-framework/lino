@@ -516,7 +516,17 @@ documentation.
 
     """
 
-    default_build_method = "appypdf"
+    # default_build_method = "appypdf"
+    default_build_method = "appyodt"
+    """The default build method to use when rendering printable documents.
+
+    This is the last default value, used only when
+    :attr:`default_build_method
+    <lino.modlib.system.models.SiteConfig.default_build_method>` in
+    :class:`SiteConfig <lino.modlib.system.models.SiteConfig>` is
+    empty.
+
+    """
 
     is_demo_site = True
     """When this is `True`, then this site runs in "demo" mode.  "Demo
@@ -1214,8 +1224,13 @@ documentation.
         self.update_settings(MEDIA_URL='/media/')
 
         if not self.django_settings.get('STATIC_ROOT', False):
-            self.django_settings.update(
-                STATIC_ROOT=self.cache_dir.child('static'))
+            cache_root = os.environ.get('LINO_CACHE_ROOT', None)
+            if cache_root:
+                self.django_settings.update(
+                    STATIC_ROOT=Path(cache_root).child('collectstatic'))
+            else:
+                self.django_settings.update(
+                    STATIC_ROOT=self.cache_dir.child('static'))
         if not self.django_settings.get('STATIC_URL', False):
             self.update_settings(STATIC_URL='/static/')
         self.update_settings(
@@ -3063,7 +3078,7 @@ signature as `django.core.mail.EmailMessage`.
         # from django.conf import settings
         from django.utils.translation import ugettext
         from django.utils.translation import pgettext
-        from lino.api import dd
+        from lino.api import dd, rt
         from lino.utils import iif
 
         # kw.update(
@@ -3074,8 +3089,6 @@ signature as `django.core.mail.EmailMessage`.
         #     babelattr=dd.babelattr,
         #     babelitem=self.babelitem,
         #     tr=self.babelitem,
-        #     dd=dd,
-        #     rt=rt,
         #     settings=settings,
         #     lino=self.modules,  # experimental
         #     site_config=self.site_config,
@@ -3083,6 +3096,8 @@ signature as `django.core.mail.EmailMessage`.
 
         kw['_'] = ugettext
         kw.update(
+            dd=dd,
+            rt=rt,
             decfmt=self.decfmt,
             fds=dd.fds,
             fdm=dd.fdm,
@@ -3097,7 +3112,6 @@ signature as `django.core.mail.EmailMessage`.
         def parse(s):
             return self.jinja_env.from_string(s).render(**kw)
         kw.update(parse=parse)
-
     
         # kw.update(inc_counters=dict())
 

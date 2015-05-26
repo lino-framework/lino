@@ -94,8 +94,26 @@ See :blogref:`20100716`
   
 .. setting:: SERIALIZATION_MODULES
 
-See `Django doc
-<https://docs.djangoproject.com/en/1.6/ref/settings/#serialization-modules>`_.
+    See `Django doc
+    <https://docs.djangoproject.com/en/1.6/ref/settings/#serialization-modules>`__.
 
 .. setting:: FIXTURE_DIRS
+
+.. setting:: STATIC_ROOT
+
+    The root directory where static files are to be collected when the
+    `collectstatic` command is run.  See `Django doc
+    <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-STATIC_ROOT>`__.
+
+    This is not needed as long as you work on a development server
+    because the developement server serves static files automagically.
+
+    If this is not set, Lino sets an intelligent default value for it
+    as follows.
+
+    When :envvar:`LINO_CACHE_ROOT` is set, the default value for
+    :setting:`STATIC_ROOT` is a subdir named :file:`collectstatic` of
+    :envvar:`LINO_CACHE_ROOT`.  Otherwise it is set to a subdir named
+    :file:`static` of the :attr:`cache_dir
+    <lino.core.site.Site.cache_dir>`.
 

@@ -14,7 +14,7 @@ from lino.modlib.excerpts.mixins import Certifiable
 
 
 def objects():
-    ExcerptType = dd.resolve_model('excerpts.ExcerptType')
+    ExcerptType = rt.modules.excerpts.ExcerptType
     for cls in rt.models_by_base(Certifiable):
         kw = dd.str2kw('name', cls._meta.verbose_name)
         if False:

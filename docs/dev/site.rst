@@ -162,7 +162,7 @@ These are the Django settings which Lino will override:
  'SECRET_KEY': '20227',
  'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
  'STATICFILES_DIRS': (),
- 'STATIC_ROOT': Path('/.../core/static'),
+ 'STATIC_ROOT': Path('/...'),
  'STATIC_URL': '/static/',
  'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
                                  'django.core.context_processors.i18n',

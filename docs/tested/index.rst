@@ -17,3 +17,4 @@ which are part of the test suite.
    cv
    core_utils
    tinymce
+   dynamic

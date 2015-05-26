@@ -43,6 +43,9 @@ class DocsTests(LinoTestCase):
     def test_cv(self):
         self.run_simple_doctests('docs/tested/cv.rst')
 
+    def test_dynamic(self):
+        self.run_simple_doctests('docs/tested/dynamic.rst')
+
     def test_dumpy(self):
         self.run_simple_doctests("docs/tutorials/dumpy.rst")
 

@@ -49,10 +49,18 @@ def get_image_parts(card_number):
     return ("beid", card_number + ".jpg")
 
 
-def card_number_to_picture_file(card_number):
-    parts = get_image_parts(card_number)
+def get_image_path(card_number):
+    """Return the full path of the image file on the server. This may be
+    used by printable templates.
+
+    """
     #~ TODO: handle configurability of card_number_to_picture_file
-    return os.path.join(settings.MEDIA_ROOT, *parts)
+    if card_number:
+        parts = get_image_parts(card_number)
+        fn = os.path.join(settings.MEDIA_ROOT, *parts)
+        if os.path.exists(fn):
+            return fn
+    return os.path.join(settings.STATIC_ROOT, "contacts.Person.jpg")
 
 
 def simulate_wrap(msg):
@@ -201,7 +209,7 @@ class BaseBeIdReadCardAction(dd.Action):
         card_number = str(data.cardNumber)
 
         if data.photo:
-            fn = card_number_to_picture_file(card_number)
+            fn = get_image_path(card_number)
             if os.path.exists(fn):
                 logger.warning("Overwriting existing image file %s.", fn)
             try:
@@ -603,9 +611,8 @@ class BeIdCardHolder(dd.Model):
             return settings.SITE.build_media_url(*parts)
         return settings.SITE.build_static_url("contacts.Person.jpg")
 
-    # def get_image_path(self):
-    #     #~ TODO: handle configurability of card_number_to_picture_file
-    #     return os.path.join(settings.MEDIA_ROOT, *self.get_image_parts())
+    def get_image_path(self):
+        return get_image_path(self.card_number)
 
 
 class BeIdCardHolderChecker(Checker):

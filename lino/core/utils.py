@@ -182,8 +182,6 @@ def models_by_base(base, toplevel_only=False):
                 found.append(m)
     return found
 
-#~ models_by_abc = models_by_base
-
 
 def app_labels():
     return [a.__name__.split('.')[-2] for a in loading.get_apps()]

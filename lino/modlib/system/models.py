@@ -53,10 +53,17 @@ class SiteConfigManager(models.Manager):
 
 
 class SiteConfig(dd.Model):
-    """
-    This model should have exactly one instance,
+    """This model should have exactly one instance,
     used to store persistent global site parameters.
     Application code sees this instance as ``settings.SITE.site_config``.
+
+    .. attribute:: default_build_method
+
+        The default build method to use when rendering printable documents.
+
+        If this field is empty, Lino uses the value found in
+        :attr:`lino.core.site.Site.default_build_method`.
+
     """
 
     class Meta:
