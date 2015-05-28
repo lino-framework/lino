@@ -42,7 +42,7 @@ def render_from_request(request, template_name, **context):
     ar = BaseRequest(
         renderer=settings.SITE.plugins.bootstrap3.renderer,
         request=request)
-    context = settings.SITE.get_printable_context(ar=ar, **context)
+    context = ar.get_printable_context(**context)
     return template.render(**context)
 
 # def contacts(request, company_id):
