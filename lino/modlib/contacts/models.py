@@ -177,7 +177,7 @@ but e.g. :class:`Human` overrides this.
         return self.language
 
 
-class PartnerDetail(dd.FormLayout):
+class PartnerDetail(dd.DetailLayout):
 
     main = """
     address_box:60 contact_box:30
@@ -215,10 +215,10 @@ class Partners(dd.Table):
     order_by = ['name', 'id']
     #~ column_names = "name * id"
     detail_layout = PartnerDetail()
-    insert_layout = dd.FormLayout("""
+    insert_layout = """
     name
     language email
-    """, window_size=(40, 'auto'))
+    """
 
     @classmethod
     def get_queryset(self, ar):
@@ -315,10 +315,10 @@ class Persons(Partners):
         "phone:10 gsm:10 id language:10 *")
     detail_layout = PersonDetail()
 
-    insert_layout = dd.FormLayout("""
+    insert_layout = """
     first_name last_name
     gender language
-    """, window_size=(60, 'auto'))
+    """
 
 
 class CompanyType(mixins.BabelNamed):
@@ -393,11 +393,11 @@ class Companies(Partners):
         "name_column:20 address_column email "
         "phone:10 gsm:10 id language:10 *")
     detail_layout = CompanyDetail()
-    insert_layout = dd.FormLayout("""
+    insert_layout = """
     name
     language:20 email:40
     type id
-    """, window_size=(60, 'auto'))
+    """
 
 #~ class List(Partner):
     #~ pass

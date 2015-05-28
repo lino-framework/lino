@@ -2,6 +2,11 @@
 Ostbelgizismen
 ==============
 
+.. How to run only this test:
+
+  $ python setup.py test -s tests.DocsTests.test_de_BE
+
+
 I wrote this article to test and document the new support 
 for :ref:`mldbc` with different variants of a same language 
 on a same Site.
@@ -18,11 +23,12 @@ This example site is going to show a list of differences between
 those two languages.
 
 The site uses a single model, which is a :class:`BabelNamed 
-<north.dbutils.BabelNamed>`:
+<lino.utils.mldbc.BabelNamed>`:
 
 .. literalinclude:: models.py
 
 >>> from de_BE.models import *
+>>> from lino.api import rt
 
 
 Populate the database
@@ -45,7 +51,7 @@ Installed 3 object(s) from 1 fixture(s)
 
 Here is the result:
 
->>> Expressions.show()
+>>> rt.show(Expressions)
 ==== ============== ================== =====================
  ID   Designation    Designation (de)   Designation (de-be)
 ---- -------------- ------------------ ---------------------

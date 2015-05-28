@@ -41,7 +41,7 @@ from lino.utils.html2xhtml import html2xhtml
 from lino.utils import join_elems
 from lino.core.actors import qs2summary
 
-from lino.core.layouts import (FormLayout, ParamsLayout,
+from lino.core.layouts import (FormLayout, InsertLayout, ParamsLayout,
                                ColumnsLayout, ActionParamsLayout)
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
@@ -1972,6 +1972,9 @@ def field2elem(layout_handle, field, **kw):
                     layout_handle, field, **kw)
     if field.choices:
         if isinstance(field, choicelists.ChoiceListField):
+            if field.choicelist.preferred_width is None:
+                raise Exception(
+                    "%s has no preferred_width" % field.choicelist)
             kw.setdefault(
                 'preferred_width',
                 field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)
@@ -2114,8 +2117,11 @@ def create_layout_element(lh, name, **kw):
         return GenericForeignKeyElement(lh, de, **kw)
 
     if isinstance(de, type) and issubclass(de, tables.AbstractTable):
-        # The data element refers to a table.
+        # The data element refers to a slave table. Slave tables make
+        # no sense in an insert window because the master does not yet
+        # exist.
         kw.update(master_panel=js_code("this"))
+        
         if isinstance(lh.layout, FormLayout):
             # When a table is specified in the layout of a
             # DetailWindow, then it will be rendered as a panel that

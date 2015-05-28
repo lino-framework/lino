@@ -45,6 +45,7 @@ from django.core.validators import (
 
 validate_url = URLValidator()
 
+
 def is_valid_url(s):
     """Returns `True` if the given string is a valid URL.  This calls
 Django's `URLValidator()`, but does not raise an exception.
@@ -813,4 +814,5 @@ def gfk2lookup(gfk, obj, **kw):
         kw[gfk.ct_field] = ct
         kw[gfk.fk_field] = obj.pk
     return kw
+
 

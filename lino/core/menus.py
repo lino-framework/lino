@@ -10,12 +10,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
-from django.db import models
 
 from atelier import rstgen
 from lino.core.utils import obj2str
-from lino.core import actors
 from lino.utils.xmlgen.html import E
+from lino.core.actors import resolve_action
+from lino.core.boundaction import BoundAction
 
 
 class MenuItem:
@@ -43,7 +43,7 @@ class MenuItem:
             pass
             #~ if instance is not None:
                 #~ action = instance.get_default_table().default_action
-        elif not isinstance(action, actors.BoundAction):
+        elif not isinstance(action, BoundAction):
             raise Exception("20121003 not a BoundAction: %r" % action)
         if instance is not None:
             if action is None:
@@ -177,36 +177,7 @@ class MenuItem:
 def create_item(spec, action=None, help_text=None, **kw):
     """
     """
-    givenspec = spec
-    if isinstance(spec, basestring):
-        spec = settings.SITE.modules.resolve(spec)
-        #~ if a is None:
-            #~ raise Exception("Could not resolve action specifier %r" % spec)
-    if isinstance(spec, actors.BoundAction):
-        a = spec
-    else:
-        if isinstance(spec, type) and issubclass(spec, models.Model):
-            spec = spec.get_default_table()
-            assert spec is not None
-
-        if isinstance(spec, type) and issubclass(spec, actors.Actor):
-            if action:
-                a = spec.get_url_action(action)
-                #~ print 20121210, a
-                if a is None:
-                    raise Exception("add_action(%r,%r,%r) found None" %
-                                    (spec, action, kw))
-            else:
-                a = spec.default_action
-                if a is None:
-                    raise Exception("%r default_action is None?!" % spec)
-        else:
-            raise Exception("Action spec %r returned invalid object %r" %
-                            (givenspec, spec))
-
-    #~ if kw.has_key('params'):
-        #~ if a.actor.__name__ == 'Contacts':
-          #~ raise Exception("20120103")
+    a = resolve_action(spec, action)
     if help_text is None:
         if a == a.actor.default_action:
             help_text = a.actor.help_text or a.action.help_text
@@ -429,7 +400,6 @@ class Toolbar(Menu):
 
 
 def find_menu_item(spec):
-    from django.conf import settings
     from lino.api import dd
     profile = dd.modules.users.UserProfiles.get_by_value('900')
     menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)

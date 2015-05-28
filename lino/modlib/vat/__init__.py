@@ -33,7 +33,7 @@ class Plugin(ad.Plugin):
     """
     verbose_name = _("VAT")
 
-    needs_plugins = ['lino.modlib.countries']
+    needs_plugins = ['lino.modlib.countries', 'lino.modlib.accounts']
 
     vat_quarterly = False
     """

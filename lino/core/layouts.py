@@ -396,7 +396,6 @@ In %s, updating attribute %r:
             #~ raise Exception("name %r already defined in %s" % (name,self))
         self._add_panel(name, tpl, label, options)
 
-    #~ @classmethod
     def _add_panel(self, name, tpl, label, options):
         if tpl is None:
             return  # when does this occur?
@@ -415,7 +414,6 @@ Adding panel %r to %s ---:
         if options:
             self._element_options[name] = options
 
-    #~ @classmethod
     def add_tabpanel(self, name, tpl=None, label=None, **options):
         """
         Add a tab panel to an existing layout.
@@ -504,13 +502,12 @@ class FieldLayout(BaseLayout):
 
 
 class FormLayout(FieldLayout):
-    """
-    A Layout description for a Detail Window or an Insert Window.
+    """A Layout description for a Detail Window or an Insert Window.
 
-    Lino instantiates this for every 
-    :attr:`detail_layout <dd.Actor.detail_layout>` 
-    and for every 
-    :attr:`insert_layout <dd.Actor.insert_layout>`.
+    Lino instantiates this for every :attr:`detail_layout
+    <dd.Actor.detail_layout>` and for every :attr:`insert_layout
+    <dd.Actor.insert_layout>`.
+
     """
     join_str = "\n"
 

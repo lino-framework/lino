@@ -24,7 +24,7 @@ Career module (tested)
 >>> UserLevels = rt.modules.users.UserLevels
 >>> LanguageKnowledges = rt.modules.cv.LanguageKnowledges
 
->>> UserLevels.show()
+>>> rt.show(UserLevels)
 ======= ========= ============ =============== ========
  value   name      Short name   text            Remark
 ------- --------- ------------ --------------- --------
@@ -35,7 +35,7 @@ Career module (tested)
 ======= ========= ============ =============== ========
 <BLANKLINE>
 
->>> UserProfiles.show()
+>>> rt.show(UserProfiles)
 ======= =========== ===============
  value   name        text
 ------- ----------- ---------------

@@ -3070,53 +3070,6 @@ signature as `django.core.mail.EmailMessage`.
         from lino.utils import moneyfmt
         return moneyfmt(v, places=places, **kw)
 
-    def get_printable_context(self, **kw):
-        """Adds a series of names to the context used when rendering printable
-        documents. See :doc:`/user/templates_api`.
-
-        """
-        # from django.conf import settings
-        from django.utils.translation import ugettext
-        from django.utils.translation import pgettext
-        from lino.api import dd, rt
-        from lino.utils import iif
-
-        # kw.update(
-        #     dtos=dd.fds,  # obsolete
-        #     dtosl=dd.fdf,  # obsolete
-        #     dtomy=dd.fdmy,  # obsolete
-        #     mtos=self.decfmt,  # obsolete
-        #     babelattr=dd.babelattr,
-        #     babelitem=self.babelitem,
-        #     tr=self.babelitem,
-        #     settings=settings,
-        #     lino=self.modules,  # experimental
-        #     site_config=self.site_config,
-        # )
-
-        kw['_'] = ugettext
-        kw.update(
-            dd=dd,
-            rt=rt,
-            decfmt=self.decfmt,
-            fds=dd.fds,
-            fdm=dd.fdm,
-            fdl=dd.fdl,
-            fdf=dd.fdf,
-            fdmy=dd.fdmy,
-            iif=iif,
-            pgettext=pgettext,
-            now=datetime.datetime.now(),
-            requested_language=get_language())
-
-        def parse(s):
-            return self.jinja_env.from_string(s).render(**kw)
-        kw.update(parse=parse)
-    
-        # kw.update(inc_counters=dict())
-
-        return kw
-
     LOOKUP_OP = '__iexact'
 
     def lookup_filter(self, fieldname, value, **kw):

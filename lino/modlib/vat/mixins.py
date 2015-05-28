@@ -28,15 +28,13 @@ from lino.mixins import Sequenced
 from .utils import ZERO, ONE
 from .choicelists import VatClasses, VatRegimes
 
-config = dd.plugins.vat
-
 
 def get_default_vat_regime():
-    return config.default_vat_regime
+    return dd.plugins.vat.default_vat_regime
 
 
 def get_default_vat_class():
-    return config.default_vat_class
+    return dd.plugins.vat.default_vat_class
 
 
 class VatTotal(dd.Model):

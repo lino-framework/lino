@@ -196,14 +196,6 @@ def objects():
     kw.update(journal_group=JournalGroups.purchases)
     kw.update(trade_type='purchases', ref="PRC")
     kw.update(dd.str2kw('name', _("Purchase invoices")))
-    #     'purchases',
-    #     chart=chart,
-    #     ref="P",
-    #     **dd.babel_values('name',
-    #                       de="Einkaufsrechnungen",
-    #                       fr="Factures achat",
-    #                       en="Purchase invoices",
-    #                       et="Ostuarved"))
     yield ledger.AccountInvoice.create_journal(**kw)
 
     if finan:

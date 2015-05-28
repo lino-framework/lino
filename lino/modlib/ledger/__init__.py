@@ -24,7 +24,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Ledger")
 
-    needs_plugins = ['lino.modlib.accounts']
+    needs_plugins = ['lino.modlib.vat']
 
     use_pcmn = False
     """

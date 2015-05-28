@@ -131,7 +131,7 @@ class PaymentTerm(BabelNamed):
 
 
 class PaymentTerms(dd.Table):
-    model = PaymentTerm
+    model = 'vat.PaymentTerm'
     order_by = ["id"]
 
 

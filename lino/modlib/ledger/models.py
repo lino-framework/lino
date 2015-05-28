@@ -61,7 +61,10 @@ TradeTypes.purchases.update(
     partner_account_field_label=_("Suppliers account"))
 
 
-class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
+class Journal(mixins.BabelNamed,
+              mixins.Sequenced,
+              mixins.Referrable,
+              mixins.PrintableType):
     """A sequence of numbered vouchers.
 
     **Fields:**
@@ -98,7 +101,6 @@ class Journal(mixins.BabelNamed, mixins.Sequenced, mixins.PrintableType):
         verbose_name = _("Journal")
         verbose_name_plural = _("Journals")
 
-    ref = dd.NullCharField(max_length=20, unique=True)
     trade_type = TradeTypes.field(blank=True)
     voucher_type = VoucherTypes.field()
     journal_group = JournalGroups.field()

@@ -91,8 +91,8 @@ class TradeType(dd.Choice):
     dc = DEBIT
 
     def get_base_account(self):
-        """Return the :class:`ml.accounts.Account` into which the **base
-        amount** of any operation should be booked.
+        """Return the :class:`lino.modlib.accounts.models.Account` into which
+        the **base amount** of any operation should be booked.
 
         """
         if self.base_account_field_name is None:

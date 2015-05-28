@@ -11,8 +11,11 @@ See introduction in :doc:`/dev/ar`.
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import get_language
 from django.utils import translation
 from django import http
 from django.core import exceptions
@@ -271,12 +274,18 @@ request from it.
         return self.__class__(**kw)
 
     def spawn(self, spec=None, **kw):
-        """
-        Create a new ActionRequest using default values from this one and
+        """Create a new action request using default values from this one and
         the action specified by `spec`.
 
+        The first argument, `spec` can be:
+
+        - a string with the name of a model, actor or action
+        - a :class:`BoundAction` instance
+        - another action request (deprecated use)
+
         """
-        if isinstance(spec, ActionRequest):
+        from lino.core.actors import resolve_action
+        if isinstance(spec, ActionRequest):  # deprecated use
             for k, v in kw.items():
                 assert hasattr(spec, k)
                 setattr(spec, k, v)
@@ -286,11 +295,58 @@ request from it.
             spec = spec.request(**kw)
             # spec.setup_from(self)
         else:
-            from lino.core.menus import create_item
-            mi = create_item(spec)
             kw.update(parent=self)
-            spec = mi.bound_action.request(**kw)
+            ba = resolve_action(spec)
+            spec = ba.request(**kw)
+            # from lino.core.menus import create_item
+            # mi = create_item(spec)
+            # spec = mi.bound_action.request(**kw)
         return spec
+
+    def get_printable_context(self, **kw):
+        """Adds a series of names to the context used when rendering printable
+        documents. See :doc:`/user/templates_api`.
+
+        """
+        # from django.conf import settings
+        from django.utils.translation import ugettext
+        from django.utils.translation import pgettext
+        from lino.api import dd, rt
+        from lino.utils import iif
+
+        # kw.update(
+        #     dtos=dd.fds,  # obsolete
+        #     dtosl=dd.fdf,  # obsolete
+        #     dtomy=dd.fdmy,  # obsolete
+        #     mtos=self.decfmt,  # obsolete
+        #     babelattr=dd.babelattr,
+        #     babelitem=self.babelitem,
+        #     tr=self.babelitem,
+        #     settings=settings,
+        #     lino=self.modules,  # experimental
+        #     site_config=self.site_config,
+        # )
+
+        kw['_'] = ugettext
+        kw.update(
+            dd=dd,
+            rt=rt,
+            decfmt=dd.decfmt,
+            fds=dd.fds,
+            fdm=dd.fdm,
+            fdl=dd.fdl,
+            fdf=dd.fdf,
+            fdmy=dd.fdmy,
+            iif=iif,
+            pgettext=pgettext,
+            now=datetime.datetime.now(),
+            requested_language=get_language())
+
+        def parse(s):
+            return self.jinja_env.from_string(s).render(**kw)
+        kw.update(parse=parse)
+        # kw.update(inc_counters=dict())
+        return kw
 
     def set_selected_pks(self, *selected_pks):
         #~ print 20131003, selected_pks
@@ -406,6 +462,7 @@ request from it.
         self.set_callback(cb)
 
     def render_jinja(self, template, **context):
+        context.update(ar=self)
         saved_renderer = self.renderer
         self.renderer = settings.SITE.plugins.bootstrap3.renderer
         retval = template.render(**context)
@@ -501,26 +558,26 @@ request from it.
                 raise Exception("Cannot handle %r" % item)
 
     def show(self, spec, master_instance=None, column_names=None,
-             header_level=None, language=None, **kw):
-        """
-        Show the specified table or action using the current renderer.  If
+             header_level=None, language=None, **kwargs):
+        """Show the specified table or action using the current renderer.  If
         the table is a :term:`slave table`, then a `master_instance` must
         be specified as second argument.
 
-        The first argument, `spec` can be:
+        The first argument, `spec` is forwarded to :meth:`spawn`.
 
-        - a string with the name of a model, actor or action
-        - another action request
-        - a :class:`BoundAction` instance
+        Optional keyword arguments are:
 
-        Optional keyword arguments are
+        :column_names: overrides default list of columns
 
-        - `column_names` overrides default list of columns
-        - `header_level` show also the header (using specified level)
-        - `language` overrides the default language used for headers and
-          translatable data
+        :header_level: show also the header (using specified level)
+
+        :language: overrides the default language used for headers and
+                   translatable data
 
         Any other keyword arguments are forwarded to :meth:`spawn`.
+
+        Note that this function either returns a string or prints to
+        stdout and returns None, depending on the current renderer.
 
         Usage in a :doc:`tested document </dev/tested_docs>`:
 
@@ -531,22 +588,13 @@ request from it.
 
           {{ar.show('users.UsersOverview')}}
 
-        Usage in an appy.pod template::
-
-          do text
-          from html(ar.show('users.UsersOverview'))
-
-        Note that this function either returns a string or prints to
-        stdout and returns None, depending on the current renderer.
-
-
         """
         # 20130905 added master_instance positional arg. but finally
         # didn't use it.
         if master_instance is not None:
-            kw.update(master_instance=master_instance)
+            kwargs.update(master_instance=master_instance)
 
-        ar = self.spawn(spec, **kw)
+        ar = self.spawn(spec, **kwargs)
 
         def doit():
             # print 20150512, ar.renderer
@@ -840,14 +888,14 @@ class ActorRequest(BaseRequest):
             bp[constants.URL_PARAM_SUBST_USER] = self.subst_user.id
         return kw
 
-    def spawn(self, actor, **kw):
-        """Same as :meth:`BaseRequest.spawn`, except that the first positional
-        argument is an `actor`.
+    # def spawn(self, actor, **kw):
+    #     """Same as :meth:`BaseRequest.spawn`, except that the first positional
+    #     argument is an `actor`.
 
-        """
-        if actor is None:
-            actor = self.actor
-        return super(ActorRequest, self).spawn(actor, **kw)
+    #     """
+    #     if actor is None:
+    #         actor = self.actor
+    #     return super(ActorRequest, self).spawn(actor, **kw)
 
     def summary_row(self, *args, **kw):
         return self.actor.summary_row(self, *args, **kw)
@@ -1047,4 +1095,5 @@ class ActionRequest(ActorRequest):
         return str(self.actor)
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
+
 

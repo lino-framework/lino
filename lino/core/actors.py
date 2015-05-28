@@ -21,7 +21,7 @@ from lino.core import actions
 from lino.core import layouts
 from lino.core.utils import resolve_model
 from lino.core.requests import ActionRequest
-from lino.core.requests import BoundAction
+from lino.core.boundaction import BoundAction
 from lino.core.constants import _handle_attr_name
 from lino.core.utils import add_requirements
 from lino.core.utils import error2str
@@ -1218,7 +1218,8 @@ class Actor(actions.Parametrizable):
         return sar
 
     @classmethod
-    def show(self, master_instance=None, column_names=None, **known_values):
+    def unused_show(self, master_instance=None,
+                    column_names=None, **known_values):
         """
         Creates an action request for this actor and calls its
         :meth:`show <lino.core.requests.ActionRequest.show>`
@@ -1287,3 +1288,36 @@ class Actor(actions.Parametrizable):
     def error2str(self, e):
         return error2str(self, e)
 
+
+def resolve_action(spec, action=None):
+    givenspec = spec
+
+    if isinstance(spec, basestring):
+        spec = settings.SITE.modules.resolve(spec)
+        #~ if a is None:
+            #~ raise Exception("Could not resolve action specifier %r" % spec)
+
+    if isinstance(spec, BoundAction):
+        return spec
+
+    if isinstance(spec, type) and issubclass(spec, models.Model):
+        spec = spec.get_default_table()
+        assert spec is not None
+
+    if isinstance(spec, type) and issubclass(spec, Actor):
+        if action:
+            a = spec.get_url_action(action)
+            #~ print 20121210, a
+            if a is None:
+                raise Exception(
+                    "resolve_action(%r, %r) found None" % (spec, action))
+        else:
+            a = spec.default_action
+            if a is None:
+                raise Exception("%r default_action is None?!" % spec)
+        return a
+
+    raise Exception("Action spec %r returned invalid object %r" %
+                    (givenspec, spec))
+
+    

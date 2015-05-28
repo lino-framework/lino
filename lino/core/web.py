@@ -199,12 +199,11 @@ def render_from_request(request, template_name, **context):
     """
     Adds some more context names
     """
-    context = settings.SITE.get_printable_context(**context)
-    # extend_context(context)
     context.update(request=request)
     ar = requests.BaseRequest(
         renderer=settings.SITE.kernel.default_renderer,
         request=request)
+    context = ar.get_printable_context(**context)
     context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(template_name)
     return template.render(**context)
@@ -226,11 +225,11 @@ class DjangoJinjaTemplate:
         for d in context.dicts:
             context_dict.update(d)
         # extend_context(context_dict)
-        context_dict = settings.SITE.get_printable_context(**context_dict)
+        ar = requests.BaseRequest(
+            renderer=settings.SITE.kernel.default_renderer)
+        context_dict = ar.get_printable_context(**context_dict)
         context_dict.setdefault('request', None)
-        context_dict.setdefault(
-            'ar', requests.BaseRequest(
-                renderer=settings.SITE.kernel.default_renderer))
+        context_dict.setdefault('ar', ar)
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)
 

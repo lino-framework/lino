@@ -212,7 +212,6 @@ class SimpleBuildMethod(BuildMethod):
 
 
 class AppyBuildMethod(SimpleBuildMethod):
-
     """
     Base class for Build Methods that use `.odt` templates designed
     for :term:`appy.pod`.
@@ -225,20 +224,17 @@ class AppyBuildMethod(SimpleBuildMethod):
     default_template = 'Default.odt'
 
     def simple_build(self, ar, elem, tpl, target):
-        #~ from lino.models import get_site_config
-        #~ from appy.pod.renderer import Renderer
-        #~ renderer = None
-        """
-        When the source string contains non-ascii characters, then
-        we must convert it to a unicode string.
-        """
-        lang = str(elem.get_print_language() or settings.SITE.DEFAULT_LANGUAGE.django_code)
+        # When the source string contains non-ascii characters, then
+        # we must convert it to a unicode string.
+        lang = str(elem.get_print_language()
+                   or settings.SITE.DEFAULT_LANGUAGE.django_code)
         logger.info(u"appy.pod render %s -> %s (language=%r,params=%s",
                     tpl, target, lang, settings.SITE.appy_params)
 
         with translation.override(lang):
 
-            context = elem.get_printable_context(ar=ar)
+            context = elem.get_printable_context(ar)
+            context.update(ar=ar)
 
             # backwards compat for existing .odt templates.  Cannot
             # set this earlier because that would cause "render() got
@@ -329,6 +325,9 @@ class RtfBuildMethod(SimpleBuildMethod):
 
 
 class BuildMethods(ChoiceList):
+    """
+    The choicelist of build methods offered on this site.
+    """
     verbose_name = _("Build method")
     item_class = BuildMethod
     app_label = 'lino'

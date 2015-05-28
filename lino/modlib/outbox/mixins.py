@@ -154,10 +154,7 @@ class Mailable(dd.Model):
             filename = rt.find_config_file(name, group)
             if filename:
                 tpl = settings.SITE.jinja_env.get_template(group+"/"+name)
-                context = self.get_printable_context(ar=ar)
-                # context = dict(
-                #     instance=self,
-                # )
+                context = self.get_printable_context(ar)
                 return ar.render_jinja(tpl, **context)
 
     def get_mailable_subject(self):

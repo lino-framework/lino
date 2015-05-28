@@ -813,15 +813,15 @@ action on individual instances.
         options.update(self._widget_options.get(name, {}))
         return options
 
-    def get_printable_context(self, **kw):
+    def get_printable_context(self, ar, **kw):
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 
         :class:`lino.modlib.notes.models.Note` extends this.
 
         """
-        # same as mixins,EmptyTableRow.get_printable_context
-        kw = settings.SITE.get_printable_context(**kw)
+        # same as lino.utils.report.EmptyTableRow.get_printable_context
+        kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # preferred in new templates
         kw.update(language=self.get_print_language())
         return kw

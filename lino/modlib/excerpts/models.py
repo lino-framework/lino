@@ -525,17 +525,17 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self, ar):
         with translation.override(self.get_print_language()):
-            ctx = self.get_printable_context(ar=ar)
+            ctx = self.get_printable_context(ar)
             return '<div class="htmlText">%s</div>' % ctx['body']
 
-    def get_printable_context(self, **kw):
+    def get_printable_context(self, ar, **kw):
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 
         """
 
-        kw = self.owner.get_printable_context(**kw)
-        kw = super(Excerpt, self).get_printable_context(**kw)
+        kw = self.owner.get_printable_context(ar, **kw)
+        kw = super(Excerpt, self).get_printable_context(ar, **kw)
         kw.update(obj=self.owner)
         body = ''
         if self.excerpt_type_id is not None:
@@ -547,7 +547,6 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             if tplname:
                 template = settings.SITE.jinja_env.get_template(tplname)
                 logger.info("body template %s (%s)", tplname, template)
-                ar = kw['ar']
                 body = ar.render_jinja(template, **kw)
 
         kw.update(body=body)

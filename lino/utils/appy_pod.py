@@ -2,9 +2,10 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Defines :class:`Renderer`
-and :class:`PrintTableAction`.
+"""Defines :class:`Renderer` (a subclass of
+:class:`appy.pod.renderer.Renderer`, not of
+:class:`lino.core.renderer.Renderer`) and :class:`PrintTableAction`.
+
 """
 
 from __future__ import unicode_literals
@@ -95,7 +96,12 @@ class Renderer(AppyRenderer):
       by passing it to :mod:`lino.utils.html2odf`.
 
     - `table(ar, column_names=None)` : render an
-      :class:`lino.core.tables.TableRequest` as a table.
+      :class:`lino.core.tables.TableRequest` as a table. Example::
+
+        do text
+        from table(ar.spawn('users.UsersOverview'))
+
+
 
     """
 

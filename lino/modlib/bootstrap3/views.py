@@ -27,9 +27,9 @@ from lino.core.views import action_request
 MENUS = dict()
 
 
-def http_response(request, tplname, context):
+def http_response(ar, tplname, context):
     "Deserves a docstring"
-    u = request.subst_user or request.user
+    u = ar.get_user()
     lang = get_language()
     k = (u.profile, lang)
     menu = MENUS.get(k, None)
@@ -39,11 +39,12 @@ def http_response(request, tplname, context):
         assert bs3.renderer is not None
         url = bs3.build_plain_url()
         menu.add_url_button(url, label=_("Home"))
-        menu = menu.as_bootstrap_html(bs3.renderer, request)
+        menu = menu.as_bootstrap_html(bs3.renderer, ar.request)
         menu = E.tostring(menu)
         MENUS[k] = menu
     context.update(menu=menu, E=E)
-    context = settings.SITE.get_printable_context(**context)
+    context = ar.get_printable_context(**context)
+    context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(tplname)
 
     response = http.HttpResponse(
@@ -65,7 +66,7 @@ class List(View):
             main=ar.as_bootstrap_html(),
         )
         context.update(ar=ar)
-        return http_response(request, ar.actor.list_html_template, context)
+        return http_response(ar, ar.actor.list_html_template, context)
 
 
 class Element(View):
@@ -86,7 +87,7 @@ class Element(View):
         )
         #~ template = web.jinja_env.get_template('detail.html')
         context.update(ar=ar)
-        return http_response(request, ar.actor.detail_html_template, context)
+        return http_response(ar, ar.actor.detail_html_template, context)
 
 
 class Index(View):
@@ -110,4 +111,4 @@ class Index(View):
             user=user, request=request,
             renderer=ui.renderer)
         context.update(ar=ar)
-        return http_response(request, 'bootstrap3/index.html', context)
+        return http_response(ar, 'bootstrap3/index.html', context)
