@@ -36,7 +36,11 @@ ad.configure_plugins("accounts", ref_length=%r)
 
     def setup_config_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
-        m.add_action('accounts.Charts')
+        m.add_action('accounts.AccountCharts')
+        if False:
+            for ch in site.modules.accounts.AccountCharts.items():
+                m.add_action(
+                    site.modules.accounts.GroupsByChart, master_instance=ch)
         m.add_action('accounts.Groups')
         m.add_action('accounts.Accounts')
 

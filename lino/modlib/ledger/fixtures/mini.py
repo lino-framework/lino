@@ -59,13 +59,14 @@ current_group = None
 def objects():
 
     JournalGroups = rt.modules.ledger.JournalGroups
+    chart = rt.modules.accounts.AccountCharts.accounts
 
-    chart = accounts.Chart(**dd.babel_values(
-        'name', en="Minimal Accounts Chart",
-        fr="Plan comptable réduit",
-        et="Minimaalne kontoplaan",
-        de="Reduzierter Kontenplan"))
-    yield chart
+    # chart = accounts.Chart(**dd.babel_values(
+    #     'name', en="Minimal Accounts Chart",
+    #     fr="Plan comptable réduit",
+    #     et="Minimaalne kontoplaan",
+    #     de="Reduzierter Kontenplan"))
+    # yield chart
     #~ account = Instantiator(accounts.Account,"ref name").build
 
     def Group(ref, type, fr, de, en, et=None):

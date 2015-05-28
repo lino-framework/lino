@@ -40,7 +40,7 @@ from lino.utils import mti
 
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.accounts.utils import DEBIT, CREDIT, ZERO
-from lino.modlib.accounts.choicelists import AccountTypes
+from lino.modlib.accounts.choicelists import AccountTypes, AccountCharts
 from lino.modlib.accounts.fields import DebitOrCreditField
 from lino.modlib.vat.choicelists import TradeTypes
 from lino.modlib.vat.mixins import VatDocument, VatItemBase
@@ -107,7 +107,8 @@ class Journal(mixins.BabelNamed,
 
     force_sequence = models.BooleanField(
         _("Force chronological sequence"), default=False)
-    chart = dd.ForeignKey('accounts.Chart')
+    chart = AccountCharts.field()
+    # chart = dd.ForeignKey('accounts.Chart')
     account = dd.ForeignKey('accounts.Account', blank=True, null=True)
     printed_name = dd.BabelCharField(max_length=100, blank=True)
     dc = DebitOrCreditField()
@@ -1412,3 +1413,4 @@ def update_partner_satisfied(p):
     """
     for m in get_due_movements(DEBIT, partner=p):
         m.update_satisfied()
+

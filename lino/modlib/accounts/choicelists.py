@@ -9,10 +9,36 @@ from __future__ import unicode_literals
 
 
 from django.db import models
-from lino.api import dd, _
+from lino.api import dd, rt, _
 
 from .fields import DebitOrCreditField
 from .utils import DEBIT, CREDIT
+
+
+class AccountChart(dd.Choice):
+
+    def get_account_by_ref(self, ref):
+        Account = rt.modules.accounts.Account
+        try:
+            #~ print 20121203, dict(ref=account,chart=self.journal.chart)
+            return Account.objects.get(ref=ref, chart=self)
+        except Account.DoesNotExist:
+            raise Warning("No account with reference %r" % ref)
+
+
+class AccountCharts(dd.ChoiceList):
+    verbose_name = _("Account Chart")
+    verbose_name_plural = _("Account Charts")
+    item_class = AccountChart
+    required = dd.required(user_level='manager')
+
+    detail_layout = """
+    name
+    GroupsByChart
+    """
+
+AccountCharts.add_item(
+    "accounts", dd.plugins.accounts.verbose_name, 'accounts')
 
 
 class Sheet(object):

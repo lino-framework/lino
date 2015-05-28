@@ -12,40 +12,40 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from .choicelists import AccountTypes
+from .choicelists import AccountTypes, AccountCharts
 from .utils import DEBIT, CREDIT
 
 
-class Chart(mixins.BabelNamed):
-    "A collection of accounts."
-    class Meta:
-        verbose_name = _("Account Chart")
-        verbose_name_plural = _("Account Charts")
+# class Chart(mixins.BabelNamed):
+#     "A collection of accounts."
+#     class Meta:
+#         verbose_name = _("Account Chart")
+#         verbose_name_plural = _("Account Charts")
 
-    def get_account_by_ref(self, ref):
-        try:
-            #~ print 20121203, dict(ref=account,chart=self.journal.chart)
-            return Account.objects.get(ref=ref, chart=self)
-        except Account.DoesNotExist:
-            raise Warning("No Account with reference %r" % ref)
+#     def get_account_by_ref(self, ref):
+#         try:
+#             #~ print 20121203, dict(ref=account,chart=self.journal.chart)
+#             return Account.objects.get(ref=ref, chart=self)
+#         except Account.DoesNotExist:
+#             raise Warning("No Account with reference %r" % ref)
 
 
-class Charts(dd.Table):
-    model = Chart
-    required = dd.required(user_level='manager')
+# class Charts(dd.Table):
+#     model = Chart
+#     required = dd.required(user_level='manager')
 
-    insert_layout = """
-    name
-    """
+#     insert_layout = """
+#     name
+#     """
 
-    detail_layout = """
-    id name
-    GroupsByChart
-    """
+#     detail_layout = """
+#     id name
+#     GroupsByChart
+#     """
 
 
 #~ class Group(mixins.BabelNamed,mixins.Sequenced):
@@ -58,7 +58,8 @@ class Group(mixins.BabelNamed):
         verbose_name_plural = _("Account Groups")
         unique_together = ['chart', 'ref']
 
-    chart = models.ForeignKey(Chart)
+    # chart = models.ForeignKey(Chart)
+    chart = AccountCharts.field()
     ref = dd.NullCharField(
         max_length=settings.SITE.plugins.accounts.ref_length)
     #~ ref = models.CharField(max_length=100)
@@ -103,7 +104,8 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
         unique_together = ['chart', 'ref']
         ordering = ['ref']
 
-    chart = models.ForeignKey(Chart)
+    chart = AccountCharts.field()
+    # chart = models.ForeignKey(Chart)
     group = models.ForeignKey(Group)
     #~ ref = models.CharField(max_length=100)
     ref = dd.NullCharField(
@@ -116,7 +118,9 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
         if self.group_id is not None:
             self.chart = self.group.chart
             if not self.ref:
-                self.ref = str(self.chart.account_set.count() + 1)
+                qs = rt.modules.accounts.Account.objects.filter(
+                    chart=self.chart)
+                self.ref = str(qs.count() + 1)
             if not self.name:
                 self.name = self.group.name
             #~ if not self.type:

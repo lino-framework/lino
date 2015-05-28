@@ -141,7 +141,7 @@ class Choice(object):
 
     #~ 20120620: removed to see where it was used
     #~ def __getattr__(self,name):
-        #~ return curry(getattr(self.choicelist,name),self)
+        #~ return curry(getattr(self.choicelist, name),self)
 
     def __repr__(self):
         if self.name is None:
