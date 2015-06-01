@@ -35,7 +35,7 @@ class Partner(Partner, AddressOwner, mixins.CreatedModified):
 
 class PartnerDetail(PartnerDetail):
 
-    main = "general contact #tickets misc "
+    main = "general contact #tickets ledger misc "
 
     general = dd.Panel("""
     overview:20 general2:20 general3:40
@@ -67,6 +67,11 @@ class PartnerDetail(PartnerDetail):
     street_prefix street:25 street_no street_box
     addr2
     """
+
+    ledger = dd.Panel("""
+    ledger.VouchersByPartner
+    ledger.MovementsByPartner
+    """, label=dd.plugins.ledger.verbos_name)
 
     misc = dd.Panel("""
     created modified

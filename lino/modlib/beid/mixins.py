@@ -58,8 +58,8 @@ def get_image_path(card_number):
     if card_number:
         parts = get_image_parts(card_number)
         fn = os.path.join(settings.MEDIA_ROOT, *parts)
-        if os.path.exists(fn):
-            return fn
+        # if os.path.exists(fn):
+        return fn
     return os.path.join(settings.STATIC_ROOT, "contacts.Person.jpg")
 
 

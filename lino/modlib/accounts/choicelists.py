@@ -16,7 +16,7 @@ from .utils import DEBIT, CREDIT
 
 
 class AccountChart(dd.Choice):
-
+    
     def get_account_by_ref(self, ref):
         Account = rt.modules.accounts.Account
         try:
@@ -27,6 +27,7 @@ class AccountChart(dd.Choice):
 
 
 class AccountCharts(dd.ChoiceList):
+    """The list of accounting charts available in this application."""
     verbose_name = _("Account Chart")
     verbose_name_plural = _("Account Charts")
     item_class = AccountChart
@@ -37,8 +38,7 @@ class AccountCharts(dd.ChoiceList):
     GroupsByChart
     """
 
-AccountCharts.add_item(
-    "accounts", dd.plugins.accounts.verbose_name, 'accounts')
+AccountCharts.add_item("default", _("Default"), 'default')
 
 
 class Sheet(object):

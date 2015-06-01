@@ -1,23 +1,15 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.vat`.
-
-.. autosummary::
+"""Database models for `lino.modlib.vat`.
 
 It defines two database models :class:`VatRule` and
-:class:`PaymentTerm`, and a series of mixins which are used in
-:mod:`lino.modlib.ledger`, :mod:`lino.modlib.sales` and other apps.
+:class:`PaymentTerm`.
 
 """
 
 from __future__ import unicode_literals
 from __future__ import print_function
-
-import datetime
-
-from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.conf import settings
@@ -25,14 +17,17 @@ from django.db.models import Q
 
 from lino.mixins.periods import DatePeriod
 from lino.mixins import Sequenced
-from lino.mixins import BabelNamed
 from lino.modlib.system.mixins import PeriodEvents
 
 from lino.api import dd, rt, _
 
-from .utils import remove_vat, ZERO
-from .choicelists import VatClasses, VatRegimes, TradeTypes
-from .mixins import VatTotal, VatDocument, VatItemBase
+from .utils import ZERO
+from .choicelists import VatClasses, VatRegimes
+from .mixins import VatDocument, VatItemBase
+
+from lino.modlib.ledger.models import SimpleInvoices, Voucher, ByJournal
+from lino.modlib.ledger.mixins import Matchable, VoucherItem
+from lino.modlib.ledger.choicelists import VoucherTypes, InvoiceStates
 
 
 class VatRule(Sequenced, DatePeriod):
@@ -58,7 +53,6 @@ class VatRule(Sequenced, DatePeriod):
         verbose_name_plural = _("VAT rules")
 
     country = dd.ForeignKey('countries.Country', blank=True, null=True)
-    # trade_type = TradeTypes.field(blank=True)
     vat_class = VatClasses.field(blank=True)
     vat_regime = VatRegimes.field(blank=True)
     rate = models.DecimalField(default=ZERO, decimal_places=4, max_digits=7)
@@ -107,32 +101,195 @@ class VatRules(dd.Table):
     auto_fit_column_widths = True
 
 
-class PaymentTerm(BabelNamed):
-    """A convention on how an invoice should be paid.
+class AccountInvoice(VatDocument, Voucher, Matchable):
+    """An invoice for which the user enters just the bare accounts and
+    amounts (not e.g. products, quantities, discounts).
+
+    An account invoice does not usually produce a printable
+    document. This model is typically used to store incoming purchase
+    invoices, but exceptions in both directions are possible: (1)
+    purchase invoices can be stored using `purchases.Invoice` if stock
+    management is important, or (2) outgoing sales invoice can have
+    been created using some external tool and are entered into Lino
+    just for the general ledger.
 
     """
-
     class Meta:
-        verbose_name = _("Payment Term")
-        verbose_name_plural = _("Payment Terms")
+        verbose_name = _("Invoice")
+        verbose_name_plural = _("Invoices")
 
-    days = models.IntegerField(default=0)
-    months = models.IntegerField(default=0)
-    end_of_month = models.BooleanField(default=False)
+    your_ref = models.CharField(
+        _("Your reference"), max_length=200, blank=True)
+    due_date = models.DateField(_("Due date"), blank=True, null=True)
+    state = InvoiceStates.field(default=InvoiceStates.draft)
+    workflow_state_field = 'state'
 
-    def get_due_date(self, date1):
-        assert isinstance(date1, datetime.date), \
-            "%s is not a date" % date1
-        d = date1 + relativedelta(months=self.months, days=self.days)
-        if self.end_of_month:
-            d = datetime.date(d.year, d.month + 1, 1)
-            d = relativedelta(d, days=-1)
-        return d
+    def get_due_date(self):
+        return self.due_date or self.date
 
 
-class PaymentTerms(dd.Table):
-    model = 'vat.PaymentTerm'
-    order_by = ["id"]
+class InvoiceDetail(dd.FormLayout):
+    main = "general ledger"
+
+    totals = """
+    total_base
+    total_vat
+    total_incl
+    workflow_buttons
+    """
+
+    general = dd.Panel("""
+    id date partner user
+    due_date your_ref vat_regime #item_vat
+    ItemsByInvoice:60 totals:20
+    """, label=_("General"))
+
+    ledger = dd.Panel("""
+    journal year number narration
+    MovementsByVoucher
+    """, label=_("Ledger"))
+
+
+class AccountInvoices(SimpleInvoices):
+    model = 'vat.AccountInvoice'
+    order_by = ["-id"]
+    column_names = "date id number partner total_incl user *"
+    detail_layout = InvoiceDetail()
+    insert_layout = """
+    journal partner
+    date total_incl
+    """
+    # start_at_bottom = True
+
+
+class InvoicesByJournal(AccountInvoices, ByJournal):
+    """
+    Shows all invoices of a given journal (whose
+    :attr:`Journal.voucher_type` must be :class:`AccountInvoice`)
+    """
+    params_layout = "partner state year"
+    column_names = "number date due_date " \
+        "partner " \
+        "total_incl " \
+        "total_base total_vat user workflow_buttons *"
+                  #~ "ledger_remark:10 " \
+    insert_layout = """
+    partner
+    date total_incl
+    """
+
+
+VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
+
+
+class InvoiceItem(VoucherItem, VatItemBase):
+    voucher = dd.ForeignKey('ledger.AccountInvoice', related_name='items')
+
+    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
+    account = models.ForeignKey('accounts.Account')
+
+    def get_base_account(self, tt):
+        return self.account
+
+    @dd.chooser()
+    def account_choices(self, voucher):
+        if voucher and voucher.journal:
+            fkw = {voucher.journal.trade_type.name + '_allowed': True}
+            return rt.modules.accounts.Account.objects.filter(
+                chart=voucher.journal.chart, **fkw)
+        return []
+
+
+class ItemsByInvoice(dd.Table):
+    model = 'ledger.InvoiceItem'
+    column_names = "account title vat_class total_base total_vat total_incl"
+    master_key = 'voucher'
+    order_by = ["seqno"]
+    auto_fit_column_widths = True
+
+
+class VouchersByPartner(dd.VirtualTable):
+    """A :class:`dd.VirtualTable` which shows all VatDocument
+    vouchers by :class:`lino.modlib.contacts.models.Partner`. It has a
+    customized slave summary.
+
+    """
+    label = _("VAT vouchers")
+    order_by = ["-date", '-id']
+    master = 'contacts.Partner'
+    column_names = "date voucher total_incl total_base total_vat"
+
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_data_rows(self, ar):
+        obj = ar.master_instance
+        rows = []
+        if obj is not None:
+            for M in rt.models_by_base(VatDocument):
+                rows += list(M.objects.filter(partner=obj))
+
+            def by_date(a, b):
+                return cmp(b.date, a.date)
+
+            rows.sort(by_date)
+        return rows
+
+    @dd.displayfield(_("Voucher"))
+    def voucher(self, row, ar):
+        return ar.obj2html(row)
+
+    @dd.virtualfield('ledger.Voucher.date')
+    def date(self, row, ar):
+        return row.date
+
+    @dd.virtualfield('vat.AccountInvoice.total_incl')
+    def total_incl(self, row, ar):
+        return row.total_incl
+
+    @dd.virtualfield('vat.AccountInvoice.total_base')
+    def total_base(self, row, ar):
+        return row.total_base
+
+    @dd.virtualfield('vat.AccountInvoice.total_vat')
+    def total_vat(self, row, ar):
+        return row.total_vat
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+
+        elems = []
+        sar = self.request(master_instance=obj)
+        # elems += ["Partner:", unicode(ar.master_instance)]
+        for voucher in sar:
+            vc = voucher.get_mti_leaf()
+            if vc and vc.state.name == "draft":
+                elems += [ar.obj2html(vc), " "]
+
+        vtypes = set()
+        for m in rt.models_by_base(VatDocument):
+            vtypes.add(
+                VoucherTypes.get_by_value(dd.full_model_name(m)))
+
+        actions = []
+
+        def add_action(btn):
+            if btn is None:
+                return False
+            actions.append(btn)
+            return True
+
+        for vt in vtypes:
+            for jnl in vt.get_journals():
+                sar = vt.table_class.insert_action.request_from(
+                    ar, master_instance=jnl,
+                    known_values=dict(partner=obj))
+                actions.append(
+                    sar.ar2button(label=unicode(jnl), icon_name=None))
+                actions.append(' ')
+
+        elems += [E.br(), _("Create voucher in journal ")] + actions
+        return E.div(*elems)
 
 
 if False:
@@ -170,7 +327,7 @@ dd.inject_field(
     'contacts.Partner',
     'payment_term',
     models.ForeignKey(
-        'vat.PaymentTerm',
+        'ledger.PaymentTerm',
         blank=True, null=True,
         help_text=_("The default payment term for "
                     "sales invoices to this customer.")))

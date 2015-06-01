@@ -8,6 +8,7 @@ application.  See :doc:`/dev/accounting`.
 .. autosummary::
     :toctree:
 
+    choicelists
     models
     utils
     fields

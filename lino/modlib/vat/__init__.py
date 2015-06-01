@@ -5,8 +5,7 @@
 """Adds functionality for handling value-added tax (VAT).
 
 This module is designed to work both *with* and *without*
-:mod:`lino.modlib.ledger` and :mod:`lino.modlib.declarations`
-installed.
+:mod:`lino.modlib.declarations` installed.
 
 
 
@@ -18,8 +17,6 @@ installed.
     choicelists
     mixins
     fixtures.euvatrates
-
-
 
 """
 
@@ -33,20 +30,25 @@ class Plugin(ad.Plugin):
     """
     verbose_name = _("VAT")
 
-    needs_plugins = ['lino.modlib.countries', 'lino.modlib.accounts']
+    needs_plugins = ['lino.modlib.countries', 'lino.modlib.ledger']
 
     vat_quarterly = False
     """
     Set this to True to support quarterly VAT declarations.
-    Used by :mod:`ml.declarations`.
+    Used by :mod:`lino.modlib.declarations`.
     """
 
     default_vat_regime = 'private'
+    """The default VAT regime. If this is specified as a string, Lino will
+    resolve it at startup into an item of :class:`VatRegimes
+    <lino.modlib.vat.choicelists.VatRegimes>`.
+
+    """
 
     default_vat_class = 'normal'
     """The default VAT class. If this is specified as a string, Lino will
     resolve it at startup into an item of :class:`VatClasses
-    <lino.modlib.vat.models.VatClasses>`.
+    <lino.modlib.vat.choicelists.VatClasses>`.
 
     """
 
@@ -69,12 +71,10 @@ invoice item. Return value must be an item of
 
     def setup_config_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)
-        m.add_action('vat.PaymentTerms')
         m.add_action('vat.VatRules')
 
     def setup_explorer_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)
         m.add_action('vat.VatRegimes')
-        m.add_action('vat.TradeTypes')
         m.add_action('vat.VatClasses')
 

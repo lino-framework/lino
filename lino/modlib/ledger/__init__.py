@@ -24,7 +24,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Ledger")
 
-    needs_plugins = ['lino.modlib.vat']
+    needs_plugins = ['lino.modlib.accounts']
 
     use_pcmn = False
     """
@@ -32,6 +32,14 @@ class Plugin(ad.Plugin):
 
     PCMN stands for "plan compatable minimum normalisé" and is a
     standardized nomenclature for accounts used in France and Belgium.
+
+    """
+
+    project_model = None
+    """Leave this to `None` for normal behaviour.  Set this to a string of
+    the form `'<app_label>.<ModelName>'` if you want to add an
+    additional field `project` to all models which inherit from
+    :class:`lino.modlib.vat.mixins.PartnerRelated`.
 
     """
 
@@ -57,14 +65,15 @@ class Plugin(ad.Plugin):
         mg = site.plugins.accounts
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('ledger.Journals')
+        m.add_action('ledger.PaymentTerms')
 
     def setup_explorer_menu(self, site, profile, m):
         mg = site.plugins.accounts
         m = m.add_menu(mg.app_label, mg.verbose_name)
-        m.add_action('ledger.AccountInvoices')
         m.add_action('ledger.Vouchers')
         m.add_action('ledger.VoucherTypes')
         m.add_action('ledger.Movements')
         m.add_action('ledger.FiscalYears')
+        m.add_action('ledger.TradeTypes')
 
 

@@ -1,7 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-The :xfile:`models` module for the :mod:`lino.modlib.finan` app.
+Model mixins for :mod:`lino.modlib.finan`.
 """
 
 
@@ -10,9 +10,9 @@ from django.core.exceptions import ValidationError
 
 from lino.modlib.accounts.utils import ZERO
 from lino.modlib.accounts.fields import DebitOrCreditField
+from lino.modlib.ledger.mixins import VoucherItem
 
 from lino.api import dd, rt, _
-from lino import mixins
 
 from .choicelists import VoucherStates
 
@@ -78,7 +78,7 @@ class FinancialVoucher(ledger.Voucher):
         return amount, mvts
 
 
-class FinancialVoucherItem(mixins.Sequenced, ledger.VoucherItem):
+class FinancialVoucherItem(VoucherItem):
     """The base class for the items of all types of financial vouchers
     (:class:`FinancialVoucher`).
 

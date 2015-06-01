@@ -23,7 +23,8 @@ from decimal import Decimal
 from django.conf import settings
 
 from lino.api import dd, rt, _
-from lino.mixins import Sequenced
+
+from lino.modlib.ledger.mixins import PartnerRelated, VoucherItem
 
 from .utils import ZERO, ONE
 from .choicelists import VatClasses, VatRegimes
@@ -38,25 +39,24 @@ def get_default_vat_class():
 
 
 class VatTotal(dd.Model):
-    """
-    Model mixin which defines the fields `total_incl`, `total_base`
+    """Model mixin which defines the fields `total_incl`, `total_base`
     and `total_vat`.  Used for both the document header
     (:class:`VatDocument`) and for each item (:class:`VatItemBase`).
 
     .. attribute:: total_incl
     
-    A :class:`dd.PriceField` which stores the total amount VAT
-    *included*.
+        A :class:`lino.core.fields.PriceField` which stores the total
+        amount VAT *included*.
 
     .. attribute:: total_base
 
-    A :class:`dd.PriceField` which stores the total amount VAT
-    *excluded*.
+        A :class:`lino.core.fields.PriceField` which stores the total
+        amount VAT *excluded*.
 
     .. attribute:: total_vat
 
-    A :class:`dd.PriceField` which stores the amount of VAT.
-
+        A :class:`lino.core.fields.PriceField` which stores the amount
+        of VAT.
 
     """
     class Meta:
@@ -115,14 +115,14 @@ class VatTotal(dd.Model):
         If there are rounding differences, `total_vat` will get them.
 
         """
-        logger.info("20150128 total_base_changed %r", self.total_base)
+        # logger.info("20150128 total_base_changed %r", self.total_base)
         if self.total_base is None:
             self.reset_totals(ar)
             if self.total_base is None:
                 return
 
         rule = self.get_vat_rule()
-        logger.info("20150128 %r", rule)
+        # logger.info("20150128 %r", rule)
         if rule is None:
             self.total_incl = None
             self.total_vat = None
@@ -172,28 +172,33 @@ class VatTotal(dd.Model):
             self.total_vat = self.total_incl - self.total_base
 
 
-class VatDocument(VatTotal):
-    """
-    Abstract base class for invoices, offers and other vouchers.
+class VatDocument(PartnerRelated, VatTotal):
+    """Abstract base class for invoices, offers and other vouchers.
 
-    .. attribute:: refresh_after_item_edit = False
+    .. attribute:: refresh_after_item_edit
 
-    See :srcref:`docs/tickets/68`
+        The total fields of an invoice are currently not automatically
+        updated each time an item is modified.  Users must click the
+        Save or the Register button to see the invoices totals.
 
-    .. attribute:: partner
-
-    The recipient of this document. A pointer to
-    :class:`ml.contacts.Partner`.
+        One idea is to have
+        :meth:`lino.modlib.vat.models.VatItemBase.after_ui_save`
+        insert a `refresh_all=True` (into the response to the PUT or
+        POST coming from Lino.GridPanel.on_afteredit).
+        
+        This has the disadvantage that the cell cursor moves to the
+        upper left corner after each cell edit.  We can see how this
+        feels by setting :attr:`refresh_after_item_edit` to `True`.
 
     .. attribute:: vat_regime
 
-    The VAT regime to be used in this document.  A pointer to
-    :class:`VatRegimes`.
+        The VAT regime to be used in this document.  A pointer to
+        :class:`VatRegimes`.
 
     .. attribute:: payment_term
 
-    The payment terms to be used in this document.  A pointer to
-    :class:`PaymentTerm`.
+        The payment terms to be used in this document.  A pointer to
+        :class:`PaymentTerm`.
 
     """
 
@@ -204,7 +209,6 @@ class VatDocument(VatTotal):
     class Meta:
         abstract = True
 
-    partner = dd.ForeignKey('contacts.Partner')
     vat_regime = VatRegimes.field()
     payment_term = dd.ForeignKey('vat.PaymentTerm', blank=True, null=True)
 
@@ -212,7 +216,6 @@ class VatDocument(VatTotal):
     def get_registrable_fields(cls, site):
         for f in super(VatDocument, cls).get_registrable_fields(site):
             yield f
-        yield 'partner'
         yield 'vat_regime'
         yield 'payment_term'
 
@@ -222,10 +225,6 @@ class VatDocument(VatTotal):
         def __init__(self, *args, **kw):
             super(VatDocument, self).__init__(*args, **kw)
             self.item_vat = settings.SITE.get_item_vat(self)
-
-    def get_recipient(self):
-        return self.partner
-    recipient = property(get_recipient)
 
     def compute_totals(self):
         if self.pk is None:
@@ -273,10 +272,6 @@ class VatDocument(VatTotal):
             if m:
                 yield self.create_movement(a, not self.journal.dc, m)
                 sum += m
-        # if self.match:
-        #     match = self.match
-        # else:
-        #     match = self  # "%s#%s" % (self.journal.ref, self.pk)
 
         a = self.get_trade_type().get_partner_account()
         if a is not None:
@@ -289,8 +284,8 @@ class VatDocument(VatTotal):
             self.payment_term = self.partner.payment_term
         if not self.vat_regime:
             self.vat_regime = self.partner.vat_regime
-        if not self.vat_regime:
-            self.vat_regime = get_default_vat_regime()
+            if not self.vat_regime:
+                self.vat_regime = get_default_vat_regime()
 
     def full_clean(self, *args, **kw):
         self.fill_defaults()
@@ -305,7 +300,7 @@ class VatDocument(VatTotal):
         super(VatDocument, self).before_state_change(ar, old, new)
 
 
-class VatItemBase(Sequenced, VatTotal):
+class VatItemBase(VoucherItem, VatTotal):
     """Model mixin for items of a :class:`VatTotal`.
 
     Abstract Base class for
@@ -318,8 +313,8 @@ class VatItemBase(Sequenced, VatTotal):
 
     .. attribute:: vat_class
 
-    The VAT class to be applied for this item. A pointer to
-    :class:`VatClasses`.
+        The VAT class to be applied for this item. A pointer to
+        :class:`VatClasses`.
 
     """
 
@@ -340,12 +335,6 @@ class VatItemBase(Sequenced, VatTotal):
 
     def get_base_account(self, tt):
         raise NotImplementedError
-
-    #~ def unit_price_includes_vat(self):
-        #~ return True
-
-    def get_siblings(self):
-        return self.voucher.items.all()
 
     def get_vat_rule(self):
         if self.vat_class is None:

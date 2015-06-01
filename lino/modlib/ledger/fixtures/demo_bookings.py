@@ -26,14 +26,10 @@ from decimal import Decimal
 from django.conf import settings
 from lino.utils import Cycler
 from lino.api import dd
-accounts = dd.resolve_app('accounts')
 vat = dd.resolve_app('vat')
 sales = dd.resolve_app('sales')
 ledger = dd.resolve_app('ledger')
 finan = dd.resolve_app('finan')
-declarations = dd.resolve_app('declarations')
-#~ partners = dd.resolve_app('partners')
-notes = dd.resolve_app('notes')
 
 partner_model = settings.SITE.partners_app_label + '.Partner'
 
