@@ -121,21 +121,6 @@ class Registrable(model.Model):
         self.set_workflow_state(ar, state_field, target_state)
 
 
-    #~ def deregister(self,ar):
-        #~ """
-        #~ Deregister this item.
-        #~ The base implementation just sets the state to "draft".
-        #~ Subclasses may override this to add custom behaviour.
-        #~ """
-        #~ state_field = self._meta.get_field('state')
-        #~ self.state = state_field.choicelist.draft
-
-    #~ def before_printable_build(self,bm):
-        #~ state_field = self._meta.get_field('state')
-        #~ if self.state != state_field.choicelist.registered:
-            #~ self.register(None)
-            #~ self.save()
-
 class Modified(model.Model):
 
     class Meta:

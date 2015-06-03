@@ -18,8 +18,11 @@ def objects():
     ClientContactType = rt.modules.pcsw.ClientContactType
     ClientStates = rt.modules.pcsw.ClientStates
     Journal = rt.modules.ledger.Journal
-    SimpleInvoice = rt.modules.novat.SimpleInvoice
-    BankStatement = rt.modules.finan.BankStatement
+    Invoice = rt.modules.vatless.Invoice
+    InvoiceItem = rt.modules.vatless.InvoiceItem
+    Account = rt.modules.accounts.Account
+    AccountCharts = rt.modules.accounts.AccountCharts
+    AccountTypes = rt.modules.accounts.AccountTypes
 
     CLIENTS = Cycler(Client.objects.filter(client_state=ClientStates.coached))
 
@@ -28,17 +31,29 @@ def objects():
     for cct in qs:
         qs2 = Partner.objects.filter(client_contact_type=cct)
         if qs2.count():
-            i = (cct, Cycler(qs2))
-            l.append(i)
+            # i = (cct, Cycler(qs2))
+            l.append(Cycler(qs2))
     RECIPIENTS = Cycler(l)
+    ACCOUNTS = Cycler(Account.objects.filter(
+        chart=AccountCharts.default, type=AccountTypes.expenses))
+    AMOUNTS = Cycler(10, '12.50', 25, '29.95', 120, '5.33')
 
+    ses = rt.login('robin')
     PRC = Journal.get_by_ref('PRC')
     for i in range(20):
         kw = dict()
-        kw.update(partner=CLIENTS.pop())
-        if i % 3:
-            kw.update(recipient=RECIPIENTS.pop())
+        kw.update(partner=RECIPIENTS.pop())
+        if i % 9 != 0:
+            kw.update(project=CLIENTS.pop())
         kw.update(date=dd.today(-5*i))
         kw.update(journal=PRC)
-        yield SimpleInvoice(**kw)
-
+        kw.update(user=ses.get_user())
+        obj = Invoice(**kw)
+        yield obj
+        yield InvoiceItem(
+            voucher=obj, amount=AMOUNTS.pop(), account=ACCOUNTS.pop())
+        if i % 5 == 0:
+            yield InvoiceItem(
+                voucher=obj, amount=AMOUNTS.pop(), account=ACCOUNTS.pop())
+        obj.register(ses)
+        obj.save()

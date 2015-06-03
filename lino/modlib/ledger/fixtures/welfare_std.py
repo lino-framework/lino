@@ -10,6 +10,7 @@ for social accounting.
 from __future__ import unicode_literals
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 
 from lino.api import dd, rt
 
@@ -17,9 +18,10 @@ current_group = None
 
 
 def objects():
-    SimpleInvoice = rt.modules.novat.SimpleInvoice
+    Invoice = rt.modules.vatless.Invoice
     JournalGroups = rt.modules.ledger.JournalGroups
     BankStatement = rt.modules.finan.BankStatement
+    PaymentOrder = rt.modules.finan.PaymentOrder
     # Chart = rt.modules.accounts.Chart
     Group = rt.modules.accounts.Group
     Account = rt.modules.accounts.Account
@@ -56,15 +58,14 @@ def objects():
     yield group('44', 'assets', _("Suppliers"))
     obj = account('4400', 'liabilities', _("Suppliers"), clearable=True)
     yield obj
-    # if vat:
-    #     settings.SITE.site_config.update(suppliers_account=obj)
+    settings.SITE.site_config.update(suppliers_account=obj)
 
     yield group('55', 'assets', _("Financial institutes"))
-    yield account("5500", 'bank_accounts', "Bestbank")
+    yield account("5500", 'bank_accounts', "KBC")
     yield account("5700", 'bank_accounts', _("Cash"))
 
     yield group('58', 'assets', _("Current transactions"))
-    yield account("5810", 'bank_accounts', _("Payment Orders"),
+    yield account("5800", 'bank_accounts', _("Payment Orders"),
                   clearable=True)
 
     yield group('6', 'expenses', _("Expenses"))
@@ -98,10 +99,15 @@ def objects():
     kw = dict(chart=chart, journal_group=JournalGroups.purchases)
     kw.update(trade_type='purchases', ref="PRC")
     kw.update(dd.str2kw('name', _("Purchase invoices")))
-    yield SimpleInvoice.create_journal(**kw)
+    yield Invoice.create_journal(**kw)
 
     kw.update(journal_group=JournalGroups.financial)
-    kw.update(dd.str2kw('name', _("Bestbank")))
-    kw.update(account='5500', ref="BNK")
+    kw.update(dd.str2kw('name', _("KBC")))
+    kw.update(account='5500', ref="KBC")
     yield BankStatement.create_journal(**kw)
+
+    kw.update(journal_group=JournalGroups.financial)
+    kw.update(dd.str2kw('name', _("PO KBC")))
+    kw.update(account='5800', ref="POKBC")
+    yield PaymentOrder.create_journal(**kw)
 

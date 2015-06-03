@@ -43,21 +43,10 @@ from lino.modlib.accounts.choicelists import AccountTypes, AccountCharts
 from lino.modlib.accounts.fields import DebitOrCreditField
 
 from .utils import get_due_movements
-from .choicelists import (FiscalYears, VoucherTypes, JournalGroups,
-                          TradeTypes)
+from .choicelists import (FiscalYears, VoucherTypes, VoucherStates,
+                          JournalGroups, TradeTypes)
 from .mixins import PartnerRelated, VoucherNumber, JournalRef
 from .ui import *
-
-
-TradeTypes.purchases.update(
-    #~ price_field_name='sales_price',
-    #~ price_field_label=_("Sales price"),
-    base_account_field_name='purchases_account',
-    base_account_field_label=_("Purchases Base account"),
-    vat_account_field_name='purchases_vat_account',
-    vat_account_field_label=_("Purchases VAT account"),
-    partner_account_field_name='suppliers_account',
-    partner_account_field_label=_("Suppliers account"))
 
 
 class Journal(mixins.BabelNamed,
@@ -276,6 +265,8 @@ class Voucher(UserAuthored, mixins.Registrable):
     year = FiscalYears.field(blank=True)
     number = VoucherNumber(blank=True, null=True)
     narration = models.CharField(_("Narration"), max_length=200, blank=True)
+    state = VoucherStates.field(default=VoucherStates.draft)
+    workflow_state_field = 'state'
 
     #~ @classmethod
     #~ def create_journal(cls,id,**kw):

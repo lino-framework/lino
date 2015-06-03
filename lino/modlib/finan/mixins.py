@@ -14,7 +14,7 @@ from lino.modlib.ledger.mixins import VoucherItem
 
 from lino.api import dd, rt, _
 
-from .choicelists import VoucherStates
+from lino.modlib.ledger.choicelists import VoucherStates
 
 ledger = dd.resolve_app('ledger')
 
@@ -26,7 +26,7 @@ class FinancialVoucher(ledger.Voucher):
     :class:`PaymentOrder` and
     :class:`BankStatement`.
     """
-    state = VoucherStates.field(default=VoucherStates.draft)
+    # state = VoucherStates.field(default=VoucherStates.draft)
 
     class Meta:
         abstract = True

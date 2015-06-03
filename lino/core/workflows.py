@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
-.. autosummary::
+"""Defines the classes used for generating workflows:
+:class:`State` and :class:`Workflow`, :class:`ChangeStateAction`.
 
 """
+
+import logging
+logger = logging.getLogger(__name__)
 
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
@@ -37,8 +40,8 @@ class State(choicelists.Choice):
                        debug_permissions=None,
                        **required):
         """Declare or create a `ChangeStateAction` which makes the object
-enter this state.  `label` can be either a string or a subclass of
-:class:`ChangeStateAction`.
+        enter this state.  `label` can be either a string or a
+        subclass of :class:`ChangeStateAction`.
 
         You can specify an explicit `name` in order to allow replacing
         the transition action later by another action.
@@ -114,11 +117,14 @@ class Workflow(choicelists.ChoiceList):
 
         """
         super(Workflow, cls).on_analyze(site)
+        # logger.info("20150602 Workflow.on_analyze %s", cls)
         for fld in cls._fields:
             model = getattr(fld, 'model', None)
             if model:
+                # logger.info("20150602 %s, %s", model, cls.workflow_actions)
                 for a in cls.workflow_actions:
-                    if not a.action_name.startswith('wf'):
+                    # if not a.action_name.startswith('wf'):
+                    if not hasattr(model, a.action_name):
                         setattr(model, a.action_name, a)
 
     @classmethod

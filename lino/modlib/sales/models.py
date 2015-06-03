@@ -21,13 +21,15 @@ from lino import mixins
 from lino.modlib.excerpts.mixins import Certifiable
 
 from lino.modlib.vat.utils import add_vat, remove_vat, HUNDRED
-from lino.modlib.vat.choicelists import TradeTypes
 from lino.modlib.vat.mixins import QtyVatItemBase, VatDocument
 from lino.modlib.vat.mixins import get_default_vat_regime
-from lino.modlib.ledger.mixins import Matchable
-from lino.modlib.ledger.choicelists import VoucherTypes
+from lino.modlib.ledger.mixins import Matchable, VoucherItem
+from lino.modlib.ledger.models import Voucher
+from lino.modlib.ledger.choicelists import TradeTypes
+from lino.modlib.ledger.choicelists import VoucherTypes, VoucherStates
+from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
 
-ledger = dd.resolve_app('ledger', strict=True)
+# ledger = dd.resolve_app('ledger', strict=True)
 
 
 TradeTypes.sales.update(
@@ -62,27 +64,27 @@ dd.inject_field(
 #~ add('E',_("E-mail"))
 
 
-class InvoiceStates(dd.Workflow):
-    """List of the possible values for the state of an :class:`Invoice`.
+# class InvoiceStates(dd.Workflow):
+#     """List of the possible values for the state of an :class:`Invoice`.
 
-    """
-    pass
+#     """
+#     pass
 
-add = InvoiceStates.add_item
-add('10', _("Draft"), 'draft', editable=True)
-add('20', _("Registered"), 'registered', editable=False)
-add('30', _("Signed"), 'signed', editable=False)
-add('40', _("Sent"), 'sent', editable=False)
-add('50', _("Paid"), 'paid', editable=False)
+# add = InvoiceStates.add_item
+# add('10', _("Draft"), 'draft', editable=True)
+# add('20', _("Registered"), 'registered', editable=False)
+# add('30', _("Signed"), 'signed', editable=False)
+# add('40', _("Sent"), 'sent', editable=False)
+# add('50', _("Paid"), 'paid', editable=False)
 
 
-@dd.receiver(dd.pre_analyze)
-def sales_workflow(sender=None, **kw):
-    InvoiceStates.registered.add_transition(
-        _("Register"), states='draft', icon_name='accept')
-    InvoiceStates.draft.add_transition(
-        _("Deregister"), states="registered", icon_name='pencil')
-    #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
+# @dd.receiver(dd.pre_analyze)
+# def sales_workflow(sender=None, **kw):
+#     InvoiceStates.registered.add_transition(
+#         _("Register"), states='draft', icon_name='accept')
+#     InvoiceStates.draft.add_transition(
+#         _("Deregister"), states="registered", icon_name='pencil')
+#     #~ InvoiceStates.submitted.add_transition(_("Submit"),states="registered")
 
 
 class ShippingMode(mixins.BabelNamed):
@@ -102,13 +104,13 @@ class ShippingMode(mixins.BabelNamed):
 
 class ShippingModes(dd.Table):
 
-    model = ShippingMode
+    model = 'sales.ShippingMode'
 
 
-class SalesDocument(VatDocument, Matchable, Certifiable):
+class SalesDocument(VatDocument, Certifiable):
     """Common base class for `orders.Order` and :class:`Invoice`.
 
-    Subclasses must either add themselves a date field (as does
+    Subclasses must either add themselves a `date` field (as does
     Order) or inherit it from Voucher (as does Invoice)
 
     """
@@ -123,8 +125,8 @@ class SalesDocument(VatDocument, Matchable, Certifiable):
     # ship_to = models.ForeignKey('contacts.Partner',
         # blank=True,null=True,
         # related_name="ship_to_%(class)s")
-    your_ref = models.CharField(
-        _("Your reference"), max_length=200, blank=True)
+    # your_ref = models.CharField(
+    #     _("Your reference"), max_length=200, blank=True)
     shipping_mode = models.ForeignKey(ShippingMode, blank=True, null=True)
     subject = models.CharField(_("Subject line"), max_length=200, blank=True)
     intro = models.TextField("Introductive Text", blank=True)
@@ -152,11 +154,11 @@ class SalesDocument(VatDocument, Matchable, Certifiable):
         return super(SalesDocument, self).add_voucher_item(**kw)
 
 
-class SalesDocuments(ledger.PartnerVouchers):
+class SalesDocuments(PartnerVouchers):
     pass
 
 
-class Invoice(SalesDocument, ledger.Voucher):
+class Invoice(SalesDocument, Voucher, Matchable):
     """A sales invoice is a legal document which describes that something
     (the invoice items) has been sold to a given partner. The partner
     can be either a private person or an organization.
@@ -169,13 +171,9 @@ class Invoice(SalesDocument, ledger.Voucher):
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    due_date = models.DateField(_("Date of payment"), blank=True, null=True)
     order = dd.ForeignKey('orders.Order', blank=True, null=True)
-    state = InvoiceStates.field(default=InvoiceStates.draft)
-    workflow_state_field = 'state'
-
-    def get_due_date(self):
-        return self.due_date or self.date
+    # state = InvoiceStates.field(default=InvoiceStates.draft)
+    # workflow_state_field = 'state'
 
     def full_clean(self, *args, **kw):
         if self.due_date is None:
@@ -253,7 +251,7 @@ class Invoices(SalesDocuments):
     subject
     """, window_size=(40, 'auto'))
     parameters = dict(
-        state=InvoiceStates.field(blank=True),
+        state=VoucherStates.field(blank=True),
         **SalesDocuments.parameters)
 
     # start_at_bottom = True
@@ -267,7 +265,7 @@ class Invoices(SalesDocuments):
         return qs
 
 
-class InvoicesByJournal(Invoices, ledger.ByJournal):
+class InvoicesByJournal(Invoices, ByJournal):
     """Shows all invoices of a given journal (whose `voucher_type` must be
     :class:`Invoice`)
 
@@ -281,7 +279,7 @@ class InvoicesByJournal(Invoices, ledger.ByJournal):
                   #~ "ledger_remark:10 " \
 
 
-class ProductDocItem(ledger.VoucherItem, QtyVatItemBase):
+class ProductDocItem(QtyVatItemBase):
 
     class Meta:
         abstract = True

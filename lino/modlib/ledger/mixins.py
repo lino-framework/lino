@@ -65,12 +65,11 @@ class PartnerRelated(dd.Model):
 
 class Matchable(dd.Model):
     """Adds a field :attr:`match` and a chooser for it.
+    Requires a field `partner`.
 
     Base class for :class:`AccountInvoice`
     (and e.g. `sales.Invoice`, `finan.DocItem`)
     
-    Requires a field `partner`.
-
     .. attribute:: match
 
        Pointer to the :class:`voucher
@@ -81,6 +80,9 @@ class Matchable(dd.Model):
     class Meta:
         abstract = True
 
+    your_ref = models.CharField(
+        _("Your reference"), max_length=200, blank=True)
+    due_date = models.DateField(_("Due date"), blank=True, null=True)
     match = dd.ForeignKey(
         'ledger.Movement',
         help_text=_("The movement to be matched."),
@@ -101,6 +103,9 @@ class Matchable(dd.Model):
         #~ qs = qs.distinct('match')
         return qs
         # return qs.values_list('match', flat=True)
+
+    def get_due_date(self):
+        return self.due_date or self.date
 
 
 class VoucherItem(Sequenced):
@@ -135,6 +140,25 @@ class VoucherItem(Sequenced):
         #~ if not self.voucher.get_row_permission(ar,self.voucher.state,ba):
             #~ return False
         return super(VoucherItem, self).get_row_permission(ar, state, ba)
+
+
+class AccountInvoiceItem(VoucherItem):
+
+    class Meta:
+        abstract = True
+
+    account = models.ForeignKey('accounts.Account')
+
+    def get_base_account(self, tt):
+        return self.account
+
+    @dd.chooser()
+    def account_choices(self, voucher):
+        if voucher and voucher.journal:
+            fkw = {voucher.journal.trade_type.name + '_allowed': True}
+            return rt.modules.accounts.Account.objects.filter(
+                chart=voucher.journal.chart, **fkw)
+        return []
 
 
 def JournalRef(**kw):

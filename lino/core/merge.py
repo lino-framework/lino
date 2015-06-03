@@ -55,7 +55,7 @@ class MergePlan(object):
             else:
                 self.related.append((fk, qs))
         self.generic_related = []
-        for gfk, qs in settings.SITE.kernel.get_generic_related(self.obj):
+        for gfk, fk, qs in settings.SITE.kernel.get_generic_related(self.obj):
             if not getattr(gfk, 'dont_merge', False):
                 self.generic_related.append((gfk, qs))
 

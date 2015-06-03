@@ -26,8 +26,18 @@ from .choicelists import VatClasses, VatRegimes
 from .mixins import VatDocument, VatItemBase
 
 from lino.modlib.ledger.models import SimpleInvoices, Voucher, ByJournal
-from lino.modlib.ledger.mixins import Matchable, VoucherItem
-from lino.modlib.ledger.choicelists import VoucherTypes, InvoiceStates
+from lino.modlib.ledger.mixins import Matchable, AccountInvoiceItem
+from lino.modlib.ledger.choicelists import VoucherTypes, VoucherStates
+from lino.modlib.ledger.choicelists import TradeTypes
+
+
+TradeTypes.purchases.update(
+    base_account_field_name='purchases_account',
+    base_account_field_label=_("Purchases Base account"),
+    vat_account_field_name='purchases_vat_account',
+    vat_account_field_label=_("Purchases VAT account"),
+    partner_account_field_name='suppliers_account',
+    partner_account_field_label=_("Suppliers account"))
 
 
 class VatRule(Sequenced, DatePeriod):
@@ -118,14 +128,7 @@ class AccountInvoice(VatDocument, Voucher, Matchable):
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    your_ref = models.CharField(
-        _("Your reference"), max_length=200, blank=True)
-    due_date = models.DateField(_("Due date"), blank=True, null=True)
-    state = InvoiceStates.field(default=InvoiceStates.draft)
-    workflow_state_field = 'state'
-
-    def get_due_date(self):
-        return self.due_date or self.date
+    # state = InvoiceStates.field(default=InvoiceStates.draft)
 
 
 class InvoiceDetail(dd.FormLayout):
@@ -182,26 +185,12 @@ class InvoicesByJournal(AccountInvoices, ByJournal):
 VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 
 
-class InvoiceItem(VoucherItem, VatItemBase):
-    voucher = dd.ForeignKey('ledger.AccountInvoice', related_name='items')
-
-    #~ account = models.ForeignKey('accounts.Account',blank=True,null=True)
-    account = models.ForeignKey('accounts.Account')
-
-    def get_base_account(self, tt):
-        return self.account
-
-    @dd.chooser()
-    def account_choices(self, voucher):
-        if voucher and voucher.journal:
-            fkw = {voucher.journal.trade_type.name + '_allowed': True}
-            return rt.modules.accounts.Account.objects.filter(
-                chart=voucher.journal.chart, **fkw)
-        return []
+class InvoiceItem(AccountInvoiceItem, VatItemBase):
+    voucher = dd.ForeignKey('vat.AccountInvoice', related_name='items')
 
 
 class ItemsByInvoice(dd.Table):
-    model = 'ledger.InvoiceItem'
+    model = 'vat.InvoiceItem'
     column_names = "account title vat_class total_base total_vat total_incl"
     master_key = 'voucher'
     order_by = ["seqno"]

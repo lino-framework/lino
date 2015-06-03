@@ -643,7 +643,7 @@ class Model(models.Model):
         actor = ar.actor
         l = []
         state = actor.get_row_state(obj)
-        if state:
+        if state is not None:
             #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
             l.append(E.b(unicode(state)))
             #~ l.append(u" » ")
@@ -652,6 +652,8 @@ class Model(models.Model):
             #~ sep = u" \u25b8 "
             sep = u" \u2192 "
         else:
+            # logger.info('20150602 no state for %s in %s (%s)',
+            #             obj, actor, actor.model)
             sep = ''
 
         for ba in actor.get_actions():

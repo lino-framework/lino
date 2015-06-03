@@ -21,11 +21,11 @@ class Plugin(ad.Plugin):
     """See :doc:`/dev/plugins`.
 
     """
-    verbose_name = _("VAT-less")
+    verbose_name = _("VAT-less invoicing")
 
     needs_plugins = ['lino.modlib.countries', 'lino.modlib.ledger']
 
     def setup_explorer_menu(config, site, profile, m):
         m = m.add_menu(config.app_label, config.verbose_name)
-        m.add_action('novat.SimpleInvoices')
+        m.add_action('vatless.Invoices')
 

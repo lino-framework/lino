@@ -240,22 +240,20 @@ def inject_vat_fields(sender, **kw):
                                           blank=True, null=True))
 
 
-class InvoiceStates(dd.Workflow):
+class VoucherStates(dd.Workflow):
     #~ label = _("State")
     pass
-add = InvoiceStates.add_item
+add = VoucherStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
 add('20', _("Registered"), 'registered', editable=False)
-#~ add('20',_("Signed"),'signed')
-#~ add('30',_("Sent"),'sent')
-add('40', _("Paid"), 'paid', editable=False)
+add('30', _("Fixed"), 'fixed', editable=False)
 
 
 @dd.receiver(dd.pre_analyze)
 def setup_vat_workflow(sender=None, **kw):
-    InvoiceStates.registered.add_transition(
+    VoucherStates.registered.add_transition(
         _("Register"), states='draft', icon_name='accept')
-    InvoiceStates.draft.add_transition(
+    VoucherStates.draft.add_transition(
         _("Deregister"), states="registered", icon_name='pencil')
 
 

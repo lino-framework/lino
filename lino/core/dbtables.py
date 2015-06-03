@@ -510,7 +510,9 @@ class Table(AbstractTable):
                                 if not isinstance(
                                         existing_value, actions.Action):
                                     raise Exception(
-                                        "%s cannot install model action %s because name is already used for %r" % self, k, existing_value)
+                                        "%s cannot install model action %s "
+                                        "because name is already used "
+                                        "for %r" % self, k, existing_value)
 
             for name in ('workflow_state_field', 'workflow_owner_field'):
                 if getattr(self, name) is None:

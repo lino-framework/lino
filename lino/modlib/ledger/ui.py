@@ -166,11 +166,11 @@ class ExpectedMovements(dd.VirtualTable):
 
     @classmethod
     def get_pk_field(self):
-        return Movement._meta.pk
+        return rt.modules.ledger.Movement._meta.pk
 
     @classmethod
     def get_row_by_pk(cls, ar, pk):
-        mvt = Movement.objects.get(pk=pk)
+        mvt = rt.modules.ledger.Movement.objects.get(pk=pk)
         return cls.get_row_for(mvt, ar)
 
     @classmethod
@@ -270,10 +270,11 @@ class PartnerVouchers(Vouchers):
     editable = True
 
     parameters = dict(
-        partner=models.ForeignKey(
-            'contacts.Partner', blank=True, null=True),
+        project=dd.ForeignKey(
+            dd.plugins.ledger.project_model, blank=True, null=True),
+        partner=dd.ForeignKey('contacts.Partner', blank=True, null=True),
         **Vouchers.parameters)
-    params_layout = "journal year partner"
+    params_layout = "journal year project partner"
 
     @classmethod
     def get_request_queryset(cls, ar):
