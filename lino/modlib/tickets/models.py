@@ -370,6 +370,11 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         super(Ticket, self).on_create(ar)
 
     def full_clean(self):
+        """If :attr:`project` is not set and if the ticket has a
+        :attr:`reporter`, use that reporter's :attr:`current_project`
+        as default value.
+
+        """
         # print "20150523b on_create", self.reporter
         super(Ticket, self).full_clean()
         me = self.reporter

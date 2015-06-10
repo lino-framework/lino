@@ -15,10 +15,10 @@ application prototypes and test suites.
 You know that a *fixture* is a portion of data (a collection of data
 records in one or several tables) which can be loaded into a database.
 Read more about fixtures in the `Providing initial data for models
-<https://docs.djangoproject.com/en/dev/howto/initial-data/>`_ article
+<https://docs.djangoproject.com/en/1.6/howto/initial-data/>`_ article
 of the Django documentation.  This article says that "fixtures can be
 written as XML, YAML, or JSON documents".  Well, Lino adds another
-format to this list: Python.  
+format to this list: Python.
 
 Here is a fictive minimal example of a Python fixture::
 
@@ -27,11 +27,15 @@ Here is a fictive minimal example of a Python fixture::
       yield Foo(name="First")
       yield Foo(name="Second")
 
-A Python fixture is syntactically a normal Python module, stored in a
-file ending with `.py` and designed to being imported and exectued
-during Django's `loaddata
-<https://docs.djangoproject.com/en/dev/ref/django-admin/#django-admin-loaddata>`_
+A Python fixture is a normal Python module, stored in a file ending
+with `.py` and designed to being imported and exectued during Django's
+`loaddata
+<https://docs.djangoproject.com/en/1.6/ref/django-admin/#django-admin-loaddata>`_
 command.
+
+It is expected to contain a function named ``objects`` which must take
+no parameters and which must return or yield a list of database
+objects.
 
 
 The :manage:`initdb` and :manage:`initdb_demo` commands

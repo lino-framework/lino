@@ -19,8 +19,12 @@ Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 System requirements
 -------------------
 
-- Lino requires Python 2. It is not yet converted to Python 3.
-  See :ticket:`36` if you want to discuss this.
+- Lino still requires **Django 1.6**, we just did not yet take the
+  time to make it work with newer versions. Any contribution is
+  welcome.
+
+- Lino requires **Python 2**.  Also here: we just did not yet take the
+  time to make it work with Python 3. Any contribution is welcome.
 
 - We assume you have pip_ installed. `pip` is not automatically
   bundled with Python 2, but it has become the de-facto standard.
@@ -100,13 +104,6 @@ The above launches Python with the `-m
 command-line switch which basically instructs it to just import the
 specified module :mod:`lino.hello`.
 
-Another old trick to check which version of Lino Python actually uses,
-is to invoky python and run::
-
->>> import lino
->>> print lino.__file__
-
-
 Run Lino's test suite
 ---------------------
 
@@ -138,10 +135,18 @@ And here we go for the test suite itself::
 
     $ fab test
 
-The :cmd:`fab test` command is a short
-for ``python setup.py test`` which simply runs the test suite.
+The :cmd:`fab test` command is a short for ``python setup.py test``
+which simply runs the test suite.  The output should be something like
+this::
 
+    [localhost] local: python setup.py -q test
+    .....................................................................
+    ----------------------------------------------------------------------
+    Ran 69 tests in 52.712s
+    OK
+    Done.
 
 
 Congratulations if you got the test suite to pass.
 
+As your next step, we now suggest to :doc:`/tutorials/hello/index`.

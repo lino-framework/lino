@@ -9,7 +9,7 @@ inherits from one of the simple :ref:`out-of-the-box projects
 <lino.projects>` included with Lino.
 
 We suppose that you have installed Lino the framework as described in
-:ref:`lino.dev.install`.
+:doc:`/dev/install`.
 
 
 The project directory
@@ -46,20 +46,23 @@ Explanations:
 
        SITE = Site(globals(), ...)
 
-    That is, you **instantiate** a :class:`Site
-    <lino.core.site.Site>` class and store this object as
-    :setting:`SITE` in your Django settings. It will set default
-    values for all required Django settings (e.g. :setting:`DATABASES`
-    and :setting:`LOGGING`).  More about this in :ref:`settings`.
+    That is, you *instantiate* a :class:`Site <lino.core.site.Site>`
+    class and store this object as :setting:`SITE` in your Django
+    settings. This line will automatically install default values for
+    all required Django settings (e.g. :setting:`DATABASES` and
+    :setting:`LOGGING`) into your global namespace.
+
+You might add ``DEBUG = True`` or other settings of your choice after
+these two lines, but it is not necessary.
+
+More about this in :doc:`/dev/settings`.
     
-You might add ``DEBUG = True`` or other settings of your choice.
 
 
 The ``manage.py`` file
 ----------------------
 
-It's not absolutele necessary, but we suggest that you also add a
-:xfile:`manage.py` file with the following content:
+Now add a :xfile:`manage.py` file with the following content:
 
 .. literalinclude:: manage.py
 
@@ -106,10 +109,9 @@ that's what you want. So go on and type ``y``::
   INFO Stopped manage.py initdb_demo (PID 3780)  
 
 There's a lot to say about what we just did.  Lino applications use to
-make abundant use of :ref:`dpy` in order to have a rich set of "demo
-data".  If you are curious, then read more about Python fixtures in
-:ref:`lino.tutorial.dpy`.
-
+make abundant use of so-called *Python fixtures* in order to have a
+rich set of "demo data".  We will come back to this in the next
+chapter, :doc:`/tutorials/dumpy`.
 
 
 Start the web server
@@ -132,3 +134,5 @@ see some welcome text and instructions for logging in.
 
 Congratulations! Enjoy the first Lino application running on your
 machine!
+
+Next suggested chapter: :doc:`/tutorials/dumpy`.

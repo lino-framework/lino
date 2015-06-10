@@ -16,10 +16,10 @@ Getting started
 
    install
    /tutorials/hello/index
-   /tutorials/polls/mysite/index
    /tutorials/dumpy
    /tutorials/tables/index
    /tutorials/lets/index
+   /tutorials/polls/mysite/index
 
 - :doc:`/dev/install` : How to install Lino. System requirements. "Released
   version" versus "Development version". How to run Lino's test
@@ -30,10 +30,6 @@ Getting started
   a ``manage.py``. Initialize a demo database. Run a development
   server.
 
-- :doc:`/tutorials/polls/mysite/index` : We convert the “Polls”
-  application from Django’s tutorial into a Lino application. This
-  will introduce some differences between Lino and Django.
-
 - :doc:`/tutorials/dumpy` : The ``initdb`` and ``initdb_demo``
   commands.  Playing with fixtures.  Writing your own fixture.
 
@@ -43,6 +39,10 @@ Getting started
 - :doc:`/tutorials/lets/index` : What is a technical specification?
   Describing a database structure. Designing your tables. Writing demo
   data. Writing test cases. Menu structure and main page. Form layouts.
+
+- :doc:`/tutorials/polls/mysite/index` : We convert the “Polls”
+  application from Django’s tutorial into a Lino application. This
+  will introduce some differences between Lino and Django.
 
 
 Getting acquaintained
@@ -170,6 +170,7 @@ Drafts
    style
    datamig
    versioning
+   versions
 
 
 Other
