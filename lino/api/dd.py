@@ -211,6 +211,7 @@ from lino.utils.choosers import chooser, action_chooser
 
 from lino.core.layouts import FormLayout, DetailLayout, InsertLayout, Panel
 from lino.core.layouts import ParamsLayout
+from lino.core.layouts import DummyPanel
 
 
 from lino.core.signals import on_ui_created, pre_ui_delete, on_ui_updated

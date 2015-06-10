@@ -195,11 +195,6 @@ class VatDocument(PartnerRelated, VatTotal):
         The VAT regime to be used in this document.  A pointer to
         :class:`VatRegimes`.
 
-    .. attribute:: payment_term
-
-        The payment terms to be used in this document.  A pointer to
-        :class:`PaymentTerm`.
-
     """
 
     auto_compute_totals = True
@@ -210,14 +205,12 @@ class VatDocument(PartnerRelated, VatTotal):
         abstract = True
 
     vat_regime = VatRegimes.field()
-    payment_term = dd.ForeignKey('vat.PaymentTerm', blank=True, null=True)
 
     @classmethod
     def get_registrable_fields(cls, site):
         for f in super(VatDocument, cls).get_registrable_fields(site):
             yield f
         yield 'vat_regime'
-        yield 'payment_term'
 
     if False:
         # this didn't work as expected because __init__() is called

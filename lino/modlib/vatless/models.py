@@ -15,12 +15,13 @@ logger = logging.getLogger(__name__)
 
 from decimal import Decimal
 
-from django.conf import settings
+from django.db import models
 
 from lino.api import dd, rt, _
 
-from lino.modlib.ledger.choicelists import (
-    FiscalYears, VoucherTypes, VoucherStates)
+from lino.utils.xmlgen.html import E
+
+from lino.modlib.ledger.choicelists import VoucherTypes
 from lino.modlib.ledger.mixins import (PartnerRelated, AccountInvoiceItem,
                                        Matchable)
 from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
@@ -33,6 +34,8 @@ TradeTypes.purchases.update(
 
 
 class Invoice(PartnerRelated, Voucher, Matchable):
+
+    # title = models.CharField(_("Description"), max_length=200, blank=True)
 
     amount = dd.PriceField(_("Amount"), blank=True, null=True)
     # state = VoucherStates.field(default=VoucherStates.draft)
@@ -98,6 +101,7 @@ class Invoice(PartnerRelated, Voucher, Matchable):
 class InvoiceItem(AccountInvoiceItem):
 
     voucher = dd.ForeignKey('vatless.Invoice', related_name='items')
+    title = models.CharField(_("Description"), max_length=200, blank=True)
     amount = dd.PriceField(_("Amount"), blank=True, null=True)
 
 
@@ -131,33 +135,33 @@ class InvoiceDetail(dd.FormLayout):
 class Invoices(PartnerVouchers):
     model = 'vatless.Invoice'
     order_by = ["-id"]
-    parameters = dict(
-        state=VoucherStates.field(blank=True),
-        **PartnerVouchers.parameters)
-    params_layout = "project partner state journal year"
-    params_panel_hidden = True
+    # parameters = dict(
+    #     state=VoucherStates.field(blank=True),
+    #     **PartnerVouchers.parameters)
+    # params_layout = "project partner state journal year"
+    # params_panel_hidden = True
     column_names = "date id number project partner amount user *"
     detail_layout = InvoiceDetail()
     insert_layout = """
-    journal project 
+    journal project
     partner
     date amount
     """
     # start_at_bottom = True
 
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Invoices, cls).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.state:
-            qs = qs.filter(state=pv.state)
-        return qs
+    # @classmethod
+    # def get_request_queryset(cls, ar):
+    #     qs = super(Invoices, cls).get_request_queryset(ar)
+    #     pv = ar.param_values
+    #     if pv.state:
+    #         qs = qs.filter(state=pv.state)
+    #     return qs
 
-    @classmethod
-    def unused_param_defaults(cls, ar, **kw):
-        kw = super(Invoices, cls).param_defaults(ar, **kw)
-        kw.update(pyear=FiscalYears.from_date(settings.SITE.today()))
-        return kw
+    # @classmethod
+    # def unused_param_defaults(cls, ar, **kw):
+    #     kw = super(Invoices, cls).param_defaults(ar, **kw)
+    #     kw.update(pyear=FiscalYears.from_date(settings.SITE.today()))
+    #     return kw
 
 
 class InvoicesByJournal(Invoices, ByJournal):
@@ -177,3 +181,82 @@ class InvoicesByJournal(Invoices, ByJournal):
     order_by = ["-number"]
 
 VoucherTypes.add_item(Invoice, InvoicesByJournal)
+
+
+class VouchersByPartner(dd.VirtualTable):
+    """Shows all ledger vouchers of a given partner.
+    
+    This is a :class:`lino.core.tables.VirtualTable` with a customized
+    slave summary.
+
+    """
+    label = _("Partner vouchers")
+    order_by = ["-date", '-id']
+    master = 'contacts.Partner'
+    column_names = "date voucher amount"
+
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_data_rows(self, ar):
+        obj = ar.master_instance
+        rows = []
+        if obj is not None:
+            for M in rt.models_by_base(Invoice):
+                rows += list(M.objects.filter(partner=obj))
+
+            def by_date(a, b):
+                return cmp(b.date, a.date)
+
+            rows.sort(by_date)
+        return rows
+
+    @dd.displayfield(_("Voucher"))
+    def voucher(self, row, ar):
+        return ar.obj2html(row)
+
+    @dd.virtualfield('ledger.Voucher.date')
+    def date(self, row, ar):
+        return row.date
+
+    @dd.virtualfield('vatless.Invoice.amount')
+    def amount(self, row, ar):
+        return row.amount
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+
+        elems = []
+        sar = self.request(master_instance=obj)
+        # elems += ["Partner:", unicode(ar.master_instance)]
+        for voucher in sar:
+            vc = voucher.get_mti_leaf()
+            if vc and vc.state.name == "draft":
+                elems += [ar.obj2html(vc), " "]
+
+        vtypes = set()
+        for m in rt.models_by_base(Invoice):
+            vtypes.add(
+                VoucherTypes.get_by_value(dd.full_model_name(m)))
+
+        actions = []
+
+        def add_action(btn):
+            if btn is None:
+                return False
+            actions.append(btn)
+            return True
+
+        for vt in vtypes:
+            for jnl in vt.get_journals():
+                sar = vt.table_class.insert_action.request_from(
+                    ar, master_instance=jnl,
+                    known_values=dict(partner=obj))
+                actions.append(
+                    sar.ar2button(label=unicode(jnl), icon_name=None))
+                actions.append(' ')
+
+        elems += [E.br(), _("Create voucher in journal ")] + actions
+        return E.div(*elems)
+
+

@@ -123,7 +123,7 @@ Are you sure (y/n) ?""" % dbname):
             "`initdb %s` started on database %s.", ' '.join(args), dbname)
 
         if engine == 'django.db.backends.sqlite3':
-            if dbname != ':memory:':
+            if dbname != ':memory:' and os.path.isfile(dbname):
                 os.remove(dbname)
                 del connections[using]
         elif engine == 'django.db.backends.mysql':

@@ -21,13 +21,16 @@ from lino.modlib.system.mixins import PeriodEvents
 
 from lino.api import dd, rt, _
 
+from lino.utils.xmlgen.html import E
+
 from .utils import ZERO
 from .choicelists import VatClasses, VatRegimes
 from .mixins import VatDocument, VatItemBase
 
-from lino.modlib.ledger.models import SimpleInvoices, Voucher, ByJournal
+from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
+from lino.modlib.ledger.models import Voucher
 from lino.modlib.ledger.mixins import Matchable, AccountInvoiceItem
-from lino.modlib.ledger.choicelists import VoucherTypes, VoucherStates
+from lino.modlib.ledger.choicelists import VoucherTypes
 from lino.modlib.ledger.choicelists import TradeTypes
 
 
@@ -149,11 +152,11 @@ class InvoiceDetail(dd.FormLayout):
 
     ledger = dd.Panel("""
     journal year number narration
-    MovementsByVoucher
+    ledger.MovementsByVoucher
     """, label=_("Ledger"))
 
 
-class AccountInvoices(SimpleInvoices):
+class AccountInvoices(PartnerVouchers):
     model = 'vat.AccountInvoice'
     order_by = ["-id"]
     column_names = "date id number partner total_incl user *"
@@ -187,6 +190,7 @@ VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
 
 class InvoiceItem(AccountInvoiceItem, VatItemBase):
     voucher = dd.ForeignKey('vat.AccountInvoice', related_name='items')
+    title = models.CharField(_("Description"), max_length=200, blank=True)
 
 
 class ItemsByInvoice(dd.Table):

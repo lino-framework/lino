@@ -1,14 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""The `demo` fixture for `households`
-===================================
+"""Adds demo data for `households`
 
 Creates some households by marrying a few Persons.
 
-Every third household gets divorced: we puts an `end_date` to that
+Every third household gets divorced: we put an `end_date` to that
 membership and create another membership for the same person with
-another person.  
+another person.
 
 """
 
@@ -25,7 +24,7 @@ def objects():
     Member = rt.modules.households.Member
     MemberRoles = rt.modules.households.MemberRoles
     # Household = resolve_model('households.Household')
-    Person = resolve_model(dd.apps.households.person_model)
+    Person = resolve_model(dd.plugins.households.person_model)
     Type = resolve_model('households.Type')
 
     MEN = Cycler(Person.objects.filter(gender=dd.Genders.male)

@@ -1035,6 +1035,9 @@ class Actor(actions.Parametrizable):
         """
         Adds a panel to the Detail of this actor.
         Arguments: see :meth:`lino.core.layouts.BaseLayout.add_panel`
+
+        This is deprecated. Use mixins instead.
+
         """
         self.detail_layout.add_panel(*args, **kw)
 
@@ -1043,6 +1046,9 @@ class Actor(actions.Parametrizable):
         """
         Adds a tab panel to the Detail of this actor.
         See :meth:`lino.core.layouts.BaseLayout.add_tabpanel`
+
+        This is deprecated. Use mixins instead.
+
         """
         self.detail_layout.add_tabpanel(*args, **kw)
 
@@ -1290,6 +1296,14 @@ class Actor(actions.Parametrizable):
 
 
 def resolve_action(spec, action=None):
+    """Return the `BoundAction` object corresponding to the given
+    specifier `spec`. The specifier can be:
+
+    - a model or a table
+    - a string of the form ``myapp.MyModel`` (i.e. resolving to a model)
+    - a string of the form ``myapp.MyModels`` (i.e. resolving to a table)
+
+    """
     givenspec = spec
 
     if isinstance(spec, basestring):

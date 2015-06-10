@@ -2,7 +2,7 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""Choicelists for `lino.modlib.accounts'.
+r"""Choicelists for `lino.modlib.accounts`.
 """
 
 from __future__ import unicode_literals

@@ -48,7 +48,7 @@ def objects():
 
     if False:  # old system
 
-        MODEL = ledger.AccountInvoice
+        MODEL = vat.AccountInvoice
         vt = ledger.VoucherTypes.get_for_model(MODEL)
         JOURNALS = Cycler(vt.get_journals())
         Partner = dd.resolve_model(partner_model)
@@ -69,12 +69,12 @@ def objects():
             yield invoice
             ar = MODEL.request(user=u)
             for j in range(ITEMCOUNT.pop()):
-                item = ledger.InvoiceItem(voucher=invoice,
-                                          account=jnl.get_allowed_accounts()[
-                                              0],
-                                          #~ product=PRODUCTS.pop(),
-                                          total_incl=AMOUNTS.pop()
-                                          )
+                item = vat.InvoiceItem(voucher=invoice,
+                                       account=jnl.get_allowed_accounts()[
+                                           0],
+                                       #~ product=PRODUCTS.pop(),
+                                       total_incl=AMOUNTS.pop()
+                )
                 item.total_incl_changed(ar)
                 item.before_ui_save(ar)
                 #~ if item.total_incl:
@@ -159,19 +159,19 @@ def objects():
                 invoice.save()
 
         for story in PURCHASE_STORIES:
-            invoice = ledger.AccountInvoice(journal=JOURNAL_P,
-                                            partner=story[0],
-                                            user=USERS.pop(),
-                                            date=date + delta(days=DATE_DELTAS.pop()))
+            invoice = vat.AccountInvoice(journal=JOURNAL_P,
+                                         partner=story[0],
+                                         user=USERS.pop(),
+                                         date=date + delta(
+                                             days=DATE_DELTAS.pop()))
             yield invoice
             for account, amount in story[1]:
                 amount += amount + \
                     (amount * INFLATION_RATE * (date.year - START_YEAR))
-                item = ledger.InvoiceItem(voucher=invoice,
-                                          account=account,
-                                          total_incl=amount +
-                                          AMOUNT_DELTAS.pop()
-                                          )
+                item = vat.InvoiceItem(voucher=invoice,
+                                       account=account,
+                                       total_incl=amount +
+                                       AMOUNT_DELTAS.pop())
                 item.total_incl_changed(REQUEST)
                 item.before_ui_save(REQUEST)
                 #~ if item.total_incl:

@@ -56,8 +56,9 @@ class FixProblem(UpdateProblem):
 
 
 class UpdateProblemsByController(dd.Action):
-    """Updates the list of plausibility problems for a given database
-    object.
+    """Updates the table of plausibility problems for a given database
+    object, also removing those messages which no longer exist. This
+    action does not change anything else in the database.
 
     This action is automatically being installed on each model for
     which there is at least one active :class:`Checker
@@ -89,6 +90,10 @@ class UpdateProblemsByController(dd.Action):
 
 
 class FixProblemsByController(UpdateProblemsByController):
+    """Update plausibility problems, repairing those which are
+    automatically fixable.
+
+    """
     label = _("Fix plausibility problems")
     fix_them = True
 

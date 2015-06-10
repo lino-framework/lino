@@ -248,7 +248,7 @@ class Voucher(UserAuthored, mixins.Registrable):
     """
     A Voucher is a document that represents a monetary transaction.
     Subclasses must define a field `state`.  This model is subclassed
-    by sales.Invoice, ledger.AccountInvoice, finan.Statement etc...
+    by sales.Invoice, vat.AccountInvoice, finan.Statement etc...
     
     It is *not* abstract so that :class:`Movement` can have a ForeignKey
     to a Voucher. Otherwise we would have to care ourselves about data

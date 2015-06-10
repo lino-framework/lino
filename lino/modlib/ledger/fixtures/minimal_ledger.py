@@ -59,7 +59,7 @@ current_group = None
 def objects():
 
     JournalGroups = rt.modules.ledger.JournalGroups
-    chart = rt.modules.accounts.AccountCharts.accounts
+    chart = rt.modules.accounts.AccountCharts.default
 
     # chart = accounts.Chart(**dd.babel_values(
     #     'name', en="Minimal Accounts Chart",
@@ -185,7 +185,7 @@ def objects():
     if sales:
         MODEL = sales.Invoice
     else:
-        MODEL = ledger.AccountInvoice
+        MODEL = vat.AccountInvoice
     kw.update(dd.str2kw('name', _("Sales invoices")))
     # kw = dd.babel_values('name', de="Verkaufsrechnungen",
     #                   fr="Factures vente",
@@ -197,7 +197,7 @@ def objects():
     kw.update(journal_group=JournalGroups.purchases)
     kw.update(trade_type='purchases', ref="PRC")
     kw.update(dd.str2kw('name', _("Purchase invoices")))
-    yield ledger.AccountInvoice.create_journal(**kw)
+    yield vat.AccountInvoice.create_journal(**kw)
 
     if finan:
         kw.update(journal_group=JournalGroups.financial)

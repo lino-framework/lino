@@ -37,7 +37,7 @@ class Partner(Partner, AddressOwner, mixins.CreatedModified, DupablePartner):
 
 class PartnerDetail(PartnerDetail):
 
-    main = "general contact misc "
+    main = "general contact misc"
 
     general = dd.Panel("""
     overview:20 general2:20 general3:40

@@ -123,11 +123,11 @@ class InvoiceDetail(dd.FormLayout):
 class SimpleInvoices(PartnerVouchers):
     model = 'novat.SimpleInvoice'
     order_by = ["-id"]
-    parameters = dict(
-        state=VoucherStates.field(blank=True),
-        **PartnerVouchers.parameters)
-    params_layout = "partner state journal year"
-    params_panel_hidden = True
+    # parameters = dict(
+    #     state=VoucherStates.field(blank=True),
+    #     **PartnerVouchers.parameters)
+    # params_layout = "partner state journal year"
+    # params_panel_hidden = True
     column_names = "date id number partner total user *"
     detail_layout = InvoiceDetail()
     insert_layout = """
@@ -136,13 +136,13 @@ class SimpleInvoices(PartnerVouchers):
     """
     # start_at_bottom = True
 
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(SimpleInvoices, cls).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.state:
-            qs = qs.filter(state=pv.state)
-        return qs
+    # @classmethod
+    # def get_request_queryset(cls, ar):
+    #     qs = super(SimpleInvoices, cls).get_request_queryset(ar)
+    #     pv = ar.param_values
+    #     if pv.state:
+    #         qs = qs.filter(state=pv.state)
+    #     return qs
 
     @classmethod
     def unused_param_defaults(cls, ar, **kw):

@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""Defines the :manage:`checkdata` management command.
+"""Defines the :manage:`checkdata` management command:
 
 .. management_command:: checkdata
 
@@ -10,6 +10,10 @@
   from lino.modlib.plausibility.management.commands.checkdata \
       import Command
   print(Command.help)
+
+In other words, this command does the same as if a user would click on
+the button with the bell ("Check plausibility") on each database
+object for which there are data checkers.
 
 """
 

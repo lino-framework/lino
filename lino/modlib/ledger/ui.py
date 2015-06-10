@@ -40,6 +40,7 @@ from lino.modlib.accounts.utils import DEBIT, CREDIT, ZERO
 
 from .utils import Balance, DueMovement, get_due_movements
 from .choicelists import TradeTypes, FiscalYears
+from .choicelists import VoucherStates
 from .mixins import JournalRef
 
 
@@ -272,21 +273,25 @@ class PartnerVouchers(Vouchers):
     parameters = dict(
         project=dd.ForeignKey(
             dd.plugins.ledger.project_model, blank=True, null=True),
+        state=VoucherStates.field(blank=True),
         partner=dd.ForeignKey('contacts.Partner', blank=True, null=True),
         **Vouchers.parameters)
-    params_layout = "journal year project partner"
+    params_layout = "partner project state journal year"
+    params_panel_hidden = True
+    simple_parameters = ['partner', 'state']
 
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(PartnerVouchers, cls).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.partner:
-            qs = qs.filter(partner=pv.partner)
-        return qs
+    # @classmethod
+    # def get_request_queryset(cls, ar):
+    #     qs = super(PartnerVouchers, cls).get_request_queryset(ar)
+    #     pv = ar.param_values
+    #     if pv.partner:
+    #         qs = qs.filter(partner=pv.partner)
+    #     return qs
 
 
 def mvtsum(**fkw):
-    d = Movement.objects.filter(**fkw).aggregate(models.Sum('amount'))
+    d = rt.modules.ledger.Movement.objects.filter(
+        **fkw).aggregate(models.Sum('amount'))
     return d['amount__sum'] or ZERO
 
 
@@ -381,7 +386,8 @@ class GeneralAccountsBalance(AccountsBalance):
 
     @classmethod
     def get_request_queryset(self, ar):
-        return rt.modules.accounts.Account.objects.order_by('group__ref', 'ref')
+        return rt.modules.accounts.Account.objects.order_by(
+            'group__ref', 'ref')
 
     @classmethod
     def rowmvtfilter(self, row):

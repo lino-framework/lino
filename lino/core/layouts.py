@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import constants
 from lino.core.fields import fields_list
@@ -30,6 +31,14 @@ def DEBUG_LAYOUTS(lo):
     #~ if lo._table.__name__ == 'Users':
         #~ return True
     return False
+
+
+class DummyPanel:
+    """A layout panel which does not exist in the current configuration
+    but might exist as a real panel in some other configuration.
+
+    """
+    pass
 
 
 class Panel(object):
@@ -74,7 +83,7 @@ class Panel(object):
 class LayoutHandle:
     """
     A `LayoutHandle` analyzes some subclass of :class:`BaseLayout` and
-    stores the resulting LayoutElements provided by the UI.
+    stores the resulting layout elements provided by the renderer.
 
     The same class is used for all kinds of BaseLayout instances.
     """
@@ -124,6 +133,9 @@ class LayoutHandle:
 
     def desc2elem(self, elemname, desc, **kwargs):
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
+
+        if isinstance(desc, DummyPanel):
+            return None
 
         if isinstance(desc, Panel):
             if len(kwargs):
@@ -265,6 +277,17 @@ class LayoutHandle:
         return True
 
     def get_data_elem(self, name):
+        # 20150610 : data elements defined on the layout panel have
+        # precedence over those defined in the datasource.
+
+        # if not name in ('__str__', '__unicode__', 'name', 'label'):
+        if not name in ('name', 'label'):
+            value = getattr(self.layout, name, NOT_PROVIDED)
+            if name == 'ledger':
+                logger.info("20150610 'ledger' in instance of %s is %r",
+                            self.layout.__class__, value)
+            if value is not NOT_PROVIDED:
+                return value
         return self.layout.get_data_elem(name)
 
     def get_choices_url(self, *args, **kw):
@@ -502,11 +525,11 @@ class FieldLayout(BaseLayout):
 
 
 class FormLayout(FieldLayout):
-    """A Layout description for a Detail Window or an Insert Window.
+    """Base class for layout descriptions of detail and insert windows.
 
     Lino instantiates this for every :attr:`detail_layout
-    <dd.Actor.detail_layout>` and for every :attr:`insert_layout
-    <dd.Actor.insert_layout>`.
+    <lino.core.actors.Actor.detail_layout>` and for every
+    :attr:`insert_layout <lino.core.actors.Actor.insert_layout>`.
 
     """
     join_str = "\n"
@@ -541,10 +564,10 @@ class ParamsLayout(BaseLayout):
     """
     A Layout description for a table parameter panel.
 
-    Lino instantiates this for every actor with 
-    :attr:`parameters <dd.Actor.parameters>`,
+    Lino instantiates this for every actor with
+    :attr:`parameters <lino.core.actors.Actor.parameters>`,
     based on that actor's
-    :attr:`params_layout <dd.Actor.params_layout>`.
+    :attr:`params_layout <lino.core.actors.Actor.params_layout>`.
     """
     join_str = " "
     url_param_name = constants.URL_PARAM_PARAM_VALUES

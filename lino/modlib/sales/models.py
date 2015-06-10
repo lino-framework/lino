@@ -23,10 +23,10 @@ from lino.modlib.excerpts.mixins import Certifiable
 from lino.modlib.vat.utils import add_vat, remove_vat, HUNDRED
 from lino.modlib.vat.mixins import QtyVatItemBase, VatDocument
 from lino.modlib.vat.mixins import get_default_vat_regime
-from lino.modlib.ledger.mixins import Matchable, VoucherItem
+from lino.modlib.ledger.mixins import Matchable, SequencedVoucherItem
 from lino.modlib.ledger.models import Voucher
 from lino.modlib.ledger.choicelists import TradeTypes
-from lino.modlib.ledger.choicelists import VoucherTypes, VoucherStates
+from lino.modlib.ledger.choicelists import VoucherTypes
 from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
 
 # ledger = dd.resolve_app('ledger', strict=True)
@@ -250,19 +250,19 @@ class Invoices(SalesDocuments):
     partner date
     subject
     """, window_size=(40, 'auto'))
-    parameters = dict(
-        state=VoucherStates.field(blank=True),
-        **SalesDocuments.parameters)
+    # parameters = dict(
+    #     state=VoucherStates.field(blank=True),
+    #     **SalesDocuments.parameters)
 
     # start_at_bottom = True
 
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Invoices, cls).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.state:
-            qs = qs.filter(state=pv.state)
-        return qs
+    # @classmethod
+    # def get_request_queryset(cls, ar):
+    #     qs = super(Invoices, cls).get_request_queryset(ar)
+    #     pv = ar.param_values
+    #     if pv.state:
+    #         qs = qs.filter(state=pv.state)
+    #     return qs
 
 
 class InvoicesByJournal(Invoices, ByJournal):
@@ -339,12 +339,13 @@ class ItemsByDocument(dd.Table):
     order_by = ["seqno"]
 
 
-class InvoiceItem(ProductDocItem):
+class InvoiceItem(ProductDocItem, SequencedVoucherItem):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'InvoiceItem')
 
     voucher = models.ForeignKey('sales.Invoice', related_name='items')
+    title = models.CharField(_("Description"), max_length=200, blank=True)
 
 
 class ItemsByInvoice(ItemsByDocument):
@@ -440,25 +441,16 @@ def add_voucher_type(sender, **kw):
             #~ related_name='customers_account'))
 
 
-MODULE_LABEL = dd.plugins.sales.verbose_name
+class ProductDetailMixin(dd.DetailLayout):
+    sales = dd.Panel("""
+    sales.InvoiceItemsByProduct
+    """, label=dd.plugins.sales.verbose_name)
+    
 
-
-def site_setup(site):
-    if site.is_installed('products'):
-        site.modules.products.Products.add_detail_tab(
-            "sales",
-            """
-            sales.InvoiceItemsByProduct
-            """,
-            label=MODULE_LABEL)
-
-
-class PartnerDetailMixin(dd.Panel):
-    sales = dd.Panel(
-        """
-        invoice_recipient vat_regime payment_term
-        sales.InvoicesByPartner
-        """,
-        label=MODULE_LABEL)
+class PartnerDetailMixin(dd.DetailLayout):
+    sales = dd.Panel("""
+    invoice_recipient vat_regime payment_term
+    sales.InvoicesByPartner
+    """, label=dd.plugins.sales.verbose_name)
 
 

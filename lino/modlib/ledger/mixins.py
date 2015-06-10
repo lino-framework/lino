@@ -36,11 +36,17 @@ class PartnerRelated(dd.Model):
         :mod:`lino.modlib.vat` plugin is nonempty, above objects will
         have a
 
+    .. attribute:: payment_term
+
+        The payment terms to be used in this document.  A pointer to
+        :class:`PaymentTerm`.
+
     """
     class Meta:
         abstract = True
 
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
+    payment_term = dd.ForeignKey('ledger.PaymentTerm', blank=True, null=True)
 
     if dd.plugins.ledger.project_model:
         project = models.ForeignKey(
@@ -55,6 +61,7 @@ class PartnerRelated(dd.Model):
         for f in super(PartnerRelated, cls).get_registrable_fields(site):
             yield f
         yield 'partner'
+        yield 'payment_term'
         if dd.plugins.ledger.project_model:
             yield 'project'
 
@@ -90,6 +97,8 @@ class Matchable(dd.Model):
         related_name="%(app_label)s_%(class)s_set_by_match",
         blank=True, null=True)
 
+    title = models.CharField(_("Description"), max_length=200, blank=True)
+
     @dd.chooser()
     def match_choices(cls, journal, partner):
         matchable_accounts = rt.modules.accounts.Account.objects.filter(
@@ -108,11 +117,28 @@ class Matchable(dd.Model):
         return self.due_date or self.date
 
 
-class VoucherItem(Sequenced):
+class VoucherItem(dd.Model):
     """Base class for items of a voucher.
 
     Subclasses must define a field :attr:`voucher` which must be a
-    ForeignKey with related_name='items'
+    ForeignKey to some subclass of :class:`ledger.Voucher
+    <lino.modlib.ledger.models.Voucher>` with related_name='items'.
+
+    .. attribute:: voucher
+
+        Pointer to the voucher (a subclass of :class:`ledger.Voucher
+        <lino.modlib.ledger.models.Voucher>`) which contains this
+        item.  Non nullable.
+
+    .. attribute:: title
+
+        The title of this voucher.
+
+        Currently (because of :djangoticket:`19465`), this field is
+        not implemented here but in the subclasses:
+
+        :class:`lino.modlib.vat.models.AccountInvoice`
+        :class:`lino.modlib.vat.models.InvoiceItem`
 
     """
 
@@ -120,13 +146,8 @@ class VoucherItem(Sequenced):
 
     class Meta:
         abstract = True
-        # verbose_name = _("Voucher item")
-        # verbose_name_plural = _("Voucher items")
 
-    title = models.CharField(_("Description"), max_length=200, blank=True)
-
-    def get_siblings(self):
-        return self.voucher.items.all()
+    # title = models.CharField(_("Description"), max_length=200, blank=True)
 
     def get_row_permission(self, ar, state, ba):
         """
@@ -142,7 +163,29 @@ class VoucherItem(Sequenced):
         return super(VoucherItem, self).get_row_permission(ar, state, ba)
 
 
-class AccountInvoiceItem(VoucherItem):
+class SequencedVoucherItem(Sequenced):
+
+    class Meta:
+        abstract = True
+
+    def get_siblings(self):
+        return self.voucher.items.all()
+
+
+class AccountInvoiceItem(VoucherItem, SequencedVoucherItem):
+    """Abstract base class for items of an account invoice.
+    This is subclassed by
+    :class:`lino.modlib.vat.models.InvoiceItem`
+    and
+    :class:`lino.modlib.vatless.models.InvoiceItem`.
+    It defines the :attr:`account` field and some related methods.
+
+    .. attribute:: account
+
+        ForeignKey pointing to the account (:class:`accounts.Account
+        <lino.modlib.accounts.models.Account>`) that is to be moved.
+
+    """
 
     class Meta:
         abstract = True

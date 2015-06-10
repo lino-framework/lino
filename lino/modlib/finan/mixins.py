@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 
 from lino.modlib.accounts.utils import ZERO
 from lino.modlib.accounts.fields import DebitOrCreditField
-from lino.modlib.ledger.mixins import VoucherItem
+from lino.modlib.ledger.mixins import VoucherItem, SequencedVoucherItem
 
 from lino.api import dd, rt, _
 
@@ -78,7 +78,7 @@ class FinancialVoucher(ledger.Voucher):
         return amount, mvts
 
 
-class FinancialVoucherItem(VoucherItem):
+class FinancialVoucherItem(VoucherItem, SequencedVoucherItem):
     """The base class for the items of all types of financial vouchers
     (:class:`FinancialVoucher`).
 

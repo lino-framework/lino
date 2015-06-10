@@ -1,0 +1,24 @@
+/* 
+
+Copyright 2015 Luc Saffre & Takayuki Shimizukawa
+
+The alabaster theme which became default in Sphinx 1.3 is very
+beautiful, but how can I get the `previous | next | index` links that
+used to be in the upper right corner?
+
+Answer: 
+
+- add the following line to your `.templates/layout.html`::
+
+    {% set css_files = css_files + ["_static/myalabaster.css"] %}
+
+  (after the first line, which should be ``{% extends "!layout.html" %}``)
+
+- add this file to your .static directory
+
+*/
+
+div.related {
+    display: block;
+}
+

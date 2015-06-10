@@ -59,7 +59,7 @@ The ``manage.py`` file
 ----------------------
 
 It's not absolutele necessary, but we suggest that you also add a
-:xfile:`manage.py` file with the following content::
+:xfile:`manage.py` file with the following content:
 
 .. literalinclude:: manage.py
 

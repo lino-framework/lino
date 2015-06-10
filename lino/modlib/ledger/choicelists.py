@@ -25,6 +25,24 @@ class JournalGroups(dd.ChoiceList):
     <lino.modlib.ledger.models.Journal.journal_group>` is empty will
     not be available through the main user menu.
 
+    The default configuration has the following journal groups:
+
+    .. attribute:: sales
+
+        For sales journals.
+
+    .. attribute:: purchases
+
+        For purchases journals.
+
+    .. attribute:: wages
+
+        For wages journals.
+
+    .. attribute:: financial
+
+        For financial journals (bank statements and cash reports)
+
     """
 
 add = JournalGroups.add_item
@@ -113,8 +131,7 @@ class VoucherTypes(dd.ChoiceList):
 
 
 class TradeType(dd.Choice):
-    """
-    Base class for the choices of :class:`TradeTypes`.
+    """Base class for the choices of :class:`TradeTypes`.
 
     """
     price_field_name = None
@@ -177,9 +194,36 @@ this trade type.
 
 
 class TradeTypes(dd.ChoiceList):
-    """The **trade type** is one of the basic properties of every
-    accountable operation where are partner is involved.  Typical
-    trade types are "Sales", "Purchases" and "Wages".
+    """A choicelist with the **trade types** defined for this application.
+
+    The trade type is one of the basic properties of every accountable
+    operation where are partner is involved.
+
+    The default configuration defines the following trade types:
+
+    .. attribute:: sales
+
+        A sale transaction is when you write an invoice to a customer
+        and then expect the customer to pay it.
+
+    .. attribute:: purchases
+
+        A purchase transaction is when you get an invoice from a
+        provider who expects you to pay it.
+
+
+    .. attribute:: wages
+
+        A wage transaction is when you write a payroll (declare the
+        fact that you owe some wage to an employee) and later pay it
+        (e.g. via a payment order).
+
+
+    .. attribute:: clearings
+
+        A clearing transaction is when an employee declares that he
+        paid some invoice for you, and later you pay that money back
+        to his account.
 
     """
 

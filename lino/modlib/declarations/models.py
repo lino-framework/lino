@@ -30,17 +30,17 @@ ledger = dd.resolve_app('ledger')
 ZERO = Decimal()
 
 
-class DeclarationStates(dd.Workflow):
-    pass
-add = DeclarationStates.add_item
-add("00", _("Draft"), "draft", editable=True)
-add("10", _("Registered"), "registered", editable=False)
-add("20", _("Submitted"), "submitted", editable=False)
+# class DeclarationStates(dd.Workflow):
+#     pass
+# add = DeclarationStates.add_item
+# add("00", _("Draft"), "draft", editable=True)
+# add("10", _("Registered"), "registered", editable=False)
+# add("20", _("Submitted"), "submitted", editable=False)
 
-DeclarationStates.registered.add_transition(
-    _("Register"), states='draft submitted')
-DeclarationStates.draft.add_transition(_("Deregister"), states="registered")
-DeclarationStates.submitted.add_transition(_("Submit"), states="registered")
+# DeclarationStates.registered.add_transition(
+#     _("Register"), states='draft submitted')
+# DeclarationStates.draft.add_transition(_("Deregister"), states="registered")
+# DeclarationStates.submitted.add_transition(_("Submit"), states="registered")
 
 
 from dateutil.relativedelta import relativedelta
@@ -134,7 +134,7 @@ class Declaration(ledger.Voucher):
 
     #~ year = FiscalYears.field()
     period = DeclarationPeriods.field()
-    state = DeclarationStates.field(default=DeclarationStates.draft)
+    # state = DeclarationStates.field(default=DeclarationStates.draft)
 
     #~ def save(self,*args,**kw):
         #~ if self.state == DeclarationStates.draft:

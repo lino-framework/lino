@@ -69,9 +69,9 @@ class PartnerDetail(PartnerDetail):
     """
 
     ledger = dd.Panel("""
-    ledger.VouchersByPartner
+    vat.VouchersByPartner
     ledger.MovementsByPartner
-    """, label=dd.plugins.ledger.verbos_name)
+    """, label=dd.plugins.ledger.verbose_name)
 
     misc = dd.Panel("""
     created modified

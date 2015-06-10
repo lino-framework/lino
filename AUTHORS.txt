@@ -1,3 +1,5 @@
+.. _authors:
+
 Authors
 =======
 
@@ -7,3 +9,5 @@ Contributors:
 
 - Flavio Gondin <flvgondin@gmail.com> (:blogref:`20130622`, :blogref:`20130623`)
 - Josef Kejzlar <joe@wpj.cz> (:blogref:`20130701`).
+- Sandeep Sawant <sandeepsawant22@gmail.com> (:blogref:`20150610`)
+- Mahmoud Abbas 

@@ -41,8 +41,9 @@ from lino.utils.html2xhtml import html2xhtml
 from lino.utils import join_elems
 from lino.core.actors import qs2summary
 
-from lino.core.layouts import (FormLayout, InsertLayout, ParamsLayout,
-                               ColumnsLayout, ActionParamsLayout)
+from lino.core.layouts import (FormLayout, ParamsLayout,
+                               ColumnsLayout, ActionParamsLayout,
+                               DummyPanel)
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.core import tables
@@ -1855,8 +1856,7 @@ class GridElement(Container):
             yield th
 
     def as_plain_html(self, ar, obj):
-        sar = ar.spawn(actor=self.actor,
-                       action=self.actor.default_action, master_instance=obj)
+        sar = ar.spawn(self.actor.default_action, master_instance=obj)
         yield sar.as_bootstrap_html(as_main=(self.name == "main"))
         #~ yield ar.ui.table2xhtml(sar,10)
 
@@ -2072,7 +2072,23 @@ def create_layout_element(lh, name, **kw):
     else:
         de = lh.get_data_elem(name)
 
+    if de is None:
+        # If the plugin has been hidden, we want the element to simply
+        # disappear, similar as if the user had no view permission.
+        s = name.split('.')
+        if len(s) == 2:
+            if settings.SITE.is_hidden_app(s[0]):
+                return None
+        # ctx = (lh.layout.__class__, name, ', '.join(dir(lh.layout)))
+        # raise Exception(
+        #     "Instance of %s has no data element '%s' (names are %s)" % ctx)
+        raise Exception("{0} has no data element '{1}'".format(
+            lh.layout, name))
+
     if isinstance(de, type) and issubclass(de, fields.Dummy):
+        return None
+
+    if isinstance(de, DummyPanel):
         return None
 
     if isinstance(de, fields.DummyField):
@@ -2104,7 +2120,6 @@ def create_layout_element(lh, name, **kw):
             if len(settings.SITE.BABEL_LANGS) > 0:
                 elems = [create_field_element(lh, de, **kw)]
                 for lang in settings.SITE.BABEL_LANGS:
-                    #~ bf = lh.get_data_elem(name+'_'+lang)
                     bf = lh.get_data_elem(name + lang.suffix)
                     elems.append(create_field_element(lh, bf, **kw))
                 return elems
@@ -2177,20 +2192,6 @@ def create_layout_element(lh, name, **kw):
         rt = getattr(de, 'return_type', None)
         if rt is not None:
             return create_meth_element(lh, name, de, rt, **kw)
-
-    if not name in ('__str__', '__unicode__', 'name', 'label'):
-        value = getattr(lh, name, None)
-        if value is not None:
-            return value
-
-    # One last possibility is that the app has been hidden. In that
-    # case we want the element to simply disappear, similar as if the
-    # user had no view permission.
-
-    s = name.split('.')
-    if len(s) == 2:
-        if settings.SITE.is_hidden_app(s[0]):
-            return None
 
     # Now we tried everything. Build an error message.
 
