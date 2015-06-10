@@ -85,7 +85,6 @@ class TicketType(mixins.BabelNamed):
         #~ verbose_name_plural = _('Repositories')
 
 
-
 class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     """A **project** is something on which several users work together.
     """
@@ -374,9 +373,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         # print "20150523b on_create", self.reporter
         super(Ticket, self).full_clean()
         me = self.reporter
-        if me and me.current_project:
+        if me and not self.project and me.current_project:
             self.project = me.current_project
-                
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
