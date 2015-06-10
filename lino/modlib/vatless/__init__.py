@@ -10,6 +10,7 @@
    :toctree:
 
     models
+    mixins
 
 """
 

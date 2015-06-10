@@ -3,6 +3,7 @@ Contributors
 ============
 
 The following persons have contributed ideas or code to Lino.
+Code contributors are also listed in :srcref:`/AUTHORS.txt`.
 
 (TODO: write some sentences about each of them.)
 
@@ -26,12 +27,15 @@ Gerd Xhonneux
 Josef Kejzlar
 -------------
 
+.. _sandeep:
+
+Sandeep Sawant
+--------------
+
 .. _xmj:
 
 Johannes Meixner
 ----------------
-
-.. refstothis:: xmj
 
 .. _luc:
 
@@ -45,8 +49,6 @@ See http://saffre-rumma.net/luc
 
 Mahmoud Abbas
 -------------
-
-.. refstothis:: mma
 
 .. _mw:
 
@@ -68,8 +70,6 @@ Mathieu Jacqmin
 Pierre Hembise
 --------------
 
-.. refstothis:: ph
-
 
 .. _rr:
 
@@ -81,9 +81,6 @@ Roger Rauw
 
 Steve Woellenweber
 ------------------
-
-.. refstothis:: sw
-
 
 
 

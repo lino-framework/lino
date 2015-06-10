@@ -42,9 +42,8 @@ def http_response(ar, tplname, context):
         menu = menu.as_bootstrap_html(bs3.renderer, ar.request)
         menu = E.tostring(menu)
         MENUS[k] = menu
-    context.update(menu=menu, E=E)
+    context.update(menu=menu)
     context = ar.get_printable_context(**context)
-    context.update(ar=ar)
     template = settings.SITE.jinja_env.get_template(tplname)
 
     response = http.HttpResponse(

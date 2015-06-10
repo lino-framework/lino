@@ -5,8 +5,6 @@
 """Model mixins for `lino.modlib.vatless`.
 
 
-:message:`Unknown element 'ledger' in PersonDetail`.
-
 """
 
 

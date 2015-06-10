@@ -329,6 +329,8 @@ request from it.
 
         kw['_'] = ugettext
         kw.update(
+            ar=self,
+            E=E,
             dd=dd,
             rt=rt,
             decfmt=dd.decfmt,
