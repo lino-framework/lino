@@ -139,7 +139,7 @@ These are the Django settings which Lino will override:
 >>> pprint(Site().django_settings)
 ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
 {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
-                           'NAME': Path('/.../default.db')}},
+                           'NAME': .../default.db')}},
  'FIXTURE_DIRS': (),
  'INSTALLED_APPS': ('django.contrib.staticfiles',
                     'lino.modlib.about',
@@ -153,7 +153,7 @@ These are the Django settings which Lino will override:
              'level': 'INFO',
              'logger_names': 'atelier lino'},
  'LOGGING_CONFIG': 'lino.utils.log.configure',
- 'MEDIA_ROOT': Path('/.../core/media'),
+ 'MEDIA_ROOT': .../core/media'),
  'MEDIA_URL': '/media/',
  'MIDDLEWARE_CLASSES': ('django.middleware.common.CommonMiddleware',
                         'lino.core.auth.NoUserMiddleware',
@@ -162,7 +162,7 @@ These are the Django settings which Lino will override:
  'SECRET_KEY': '20227',
  'SERIALIZATION_MODULES': {'py': 'lino.utils.dpy'},
  'STATICFILES_DIRS': (),
- 'STATIC_ROOT': Path('/...'),
+ 'STATIC_ROOT': ...'),
  'STATIC_URL': '/static/',
  'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
                                  'django.core.context_processors.i18n',
