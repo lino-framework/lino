@@ -528,14 +528,14 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             ctx = self.get_printable_context(ar)
             return '<div class="htmlText">%s</div>' % ctx['body']
 
-    def get_printable_context(self, ar, **kw):
+    def get_printable_context(self, ar=None, **kw):
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 
         """
 
         kw = self.owner.get_printable_context(ar, **kw)
-        kw = super(Excerpt, self).get_printable_context(ar, **kw)
+        kw = super(Excerpt, self).get_printable_context(**kw)
         kw.update(obj=self.owner)
         body = ''
         if self.excerpt_type_id is not None:

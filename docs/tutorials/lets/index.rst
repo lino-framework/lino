@@ -219,9 +219,9 @@ Designing your tables
 =====================
 
 For this tutorial we defined the tables in a separate file
-:file:`tables.py`.
+:file:`ui.py`.
 
-.. literalinclude:: tables.py
+.. literalinclude:: ui.py
 
 
 Writing demo data
@@ -452,6 +452,12 @@ Here are some screenshots.
     
 .. image:: e.png
     :scale: 70
+    
+.. image:: members_insert.png
+    :scale: 30
+    
+.. image:: members_insert.png
+    :scale: 30
     
 
 Summary

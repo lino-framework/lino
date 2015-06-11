@@ -4,9 +4,9 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
-   Developers </dev/index>
+   Developer's Guide </dev/index>
    Team members </team/index>
-   Administrators </admin/index>
+   System Administrators </admin/index>
    Users </user/index>
    /help/index
    /api/index

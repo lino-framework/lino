@@ -47,32 +47,33 @@ to "prepare your database" by running the command::
   $ python manage.py initdb_demo
   
 The :xfile:`manage.py` Python script is the standard Django interface
-for running a so-called **management command**.  If you don't know
-what management commands are, please read this: `django-admin.py and
-manage.py <https://docs.djangoproject.com/en/dev/ref/django-admin/>`_.
+for running a so-called **administrative task** (if you did't know
+that, please read `django-admin.py and manage.py
+<https://docs.djangoproject.com/en/1.6/ref/django-admin/>`_).
 
-The :manage:`initdb_demo` 
-command which we used here is a `custom management command 
-<https://docs.djangoproject.com/en/dev/howto/custom-management-commands/>`_ 
-provided by Lino.
-It does nothing else than to call 
-:manage:`initdb` with the **demo fixtures**.
+The :manage:`initdb_demo` command which we used here is a `custom
+django-admin command
+<https://docs.djangoproject.com/en/1.6/howto/custom-management-commands/>`_
+provided by Lino.  
+
+It does nothing else than to call :manage:`initdb`
+with the **demo fixtures**.
 
 The **demo fixtures** is a predefined set of fixture names,
 defined by the application developer in 
 the :attr:`demo_fixtures <lino.core.site.Site.demo_fixtures>` setting.
 The `min1` app has the following demo fixtures:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.min1.settings.demo'
-    >>> from django.conf import settings
-    >>> settings.SITE.demo_fixtures
-    'std demo demo2'
+>>> import os
+>>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+...    'lino.projects.min1.settings.demo'
+>>> from django.conf import settings
+>>> settings.SITE.demo_fixtures
+'std demo demo2'
 
 So the ``initdb_demo`` command above is equivalent to::
   
-  $ python manage.py initdb std demo
+  $ python manage.py initdb std demo demo2
 
 The :manage:`initdb` command
 ----------------------------
@@ -91,10 +92,10 @@ So the above line is roughly equivalent to::
 
   $ python manage.py flush
   $ python manage.py syncdb
-  $ python manage.py loaddata std all_countries few_cities all_languages props demo 
+  $ python manage.py loaddata std demo demo2
   
 Removing all tables may sound dangerous, but that's what we want when
-we want to "just have a look at this application", or when are
+we want to "just have a look at this application", or when we are
 developing a prototype and just made some changes to the database
 structure.  We assume that nobody will ever let a Lino application and
 some other application share the same database.
@@ -143,7 +144,7 @@ But put your real name and data, this is your local file.
 .. literalinclude:: dumpy1.py
     :linenos:
     
-   
+
 Try to apply this fixture::    
 
   $ python manage.py initdb dumpy1

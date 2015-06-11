@@ -277,7 +277,7 @@ class AbstractTable(actors.Actor):
 
     """
 
-    auto_fit_column_widths = False
+    auto_fit_column_widths = settings.SITE.auto_fit_column_widths
     """Set this to `True` if you want to have the column widths adjusted
     to always fill the available width.  This implies that there will
     be no horizontal scrollbar.

@@ -1,14 +1,10 @@
 .. _layouts_tutorial:
 
 ==========================
-An introduction to layouts
+Some more layout examples
 ==========================
 
-:doc:`/dev/layouts` are one of Lino's important and innovative
-features.  They provide a way to design forms independently from the
-chosen user-interface.  Concept and implementation is fully the
-author's idea, and we didn't yet find a similar approach in any other
-framework.
+See :doc:`/dev/layouts` 
 
 
 Modal windows
@@ -17,18 +13,6 @@ Modal windows
 If you want a modal window (not a full-screen window), then you need
 to specify the `window_size` keyword argument.  A simple FormLayout
 
-
-.. textimage:: layouts1.jpg
-  :scale: 40 %
-  
-  ::
-
-    class Invoices(SalesDocuments):
-        ...
-        insert_layout = dd.FormLayout("""
-        partner date 
-        subject
-        """,window_size=(40,'auto'))
 
 
 Tabbed forms
@@ -83,8 +67,8 @@ as a tabbed panel.
         
 
 
-Polymorphism
-------------
+Layouts and polymorphism
+------------------------
 
 :mod:`lino.modlib.contacts` 
 uses MTI to represent the fact that a Partner can be 

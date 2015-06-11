@@ -52,8 +52,12 @@ We will now initialize our database with this fixture::
 Designing your tables
 =====================
 
-If our models are as described above, here are the tables we are going
-to create in this tutorial:
+You will have noticed the last line of our :xfile:`models.py` file above::
+
+  from .ui import *
+
+The :xfile:`ui.py` file describes the tables we are going to use in
+this tutorial:
 
 .. literalinclude:: ui.py
 
@@ -65,7 +69,7 @@ Please note:
 - Tables may inherit from other tables (e.g. ``BooksByAuthor``)
 
 - You may define your tables together with the models in your
-  :file:`models.py` file, or in a separate file :file:`tables.py`. It's
+  :file:`models.py` file, or in a separate file :file:`ui.py`. It's
   a matter of taste.  But if you separate them, then you must import
   that file from within your :file:`models.py` file so that they get
   discovered at startup.

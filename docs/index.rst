@@ -20,9 +20,9 @@ Sitemap
 
    demos
    about/index
+   documentation
    community/index
    blog
-   documentation
 
 
 

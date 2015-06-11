@@ -815,7 +815,7 @@ action on individual instances.
         options.update(self._widget_options.get(name, {}))
         return options
 
-    def get_printable_context(self, ar, **kw):
+    def get_printable_context(self, ar=None, **kw):
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 

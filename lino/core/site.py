@@ -151,6 +151,13 @@ class Site(object):
 
     """
 
+    auto_fit_column_widths = True
+    """The default value for the :attr:`auto_fit_column_widths
+    <lino.core.tables.Table.auto_fit_column_widths>` of tables in this
+    application.
+
+    """
+    
     confdirs = None
     """This attribute is available only after site startup.  See
     :mod:`lino.utils.config`.

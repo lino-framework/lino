@@ -4,9 +4,6 @@ from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.core.actors import qs2summary
 
-# We must import it so that it gets loaded together with the models.
-from .tables import *
-
 
 class Place(dd.Model):
     name = models.CharField(max_length=200)
@@ -63,4 +60,7 @@ class Demand(dd.Model):
         return "%s (%s)" % (self.product, self.customer)
 
 
+# Import all tables so that they get discovered together with the
+# models:
 
+from .ui import *

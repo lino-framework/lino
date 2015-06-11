@@ -16,6 +16,11 @@ class Members(dd.Table):
     OffersByMember DemandsByMember
     """
 
+    insert_layout = """
+    name place
+    email
+    """
+
 
 class Products(dd.Table):
     model = 'lets.Product'

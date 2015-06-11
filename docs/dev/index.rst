@@ -18,8 +18,9 @@ Getting started
    /tutorials/hello/index
    /tutorials/dumpy
    /tutorials/tables/index
-   /tutorials/lets/index
+   layouts
    /tutorials/polls/mysite/index
+   /tutorials/lets/index
 
 - :doc:`/dev/install` : How to install Lino. System requirements. "Released
   version" versus "Development version". How to run Lino's test
@@ -36,13 +37,19 @@ Getting started
 - :doc:`/tutorials/tables/index` : Models, tables and views. What is a
   table? Designing your tables. Using tables without a web server.
 
-- :doc:`/tutorials/lets/index` : What is a technical specification?
-  Describing a database structure. Designing your tables. Writing demo
-  data. Writing test cases. Menu structure and main page. Form layouts.
+- :doc:`layouts` : About layouts, detail windows, data elements and
+  panels.
 
-- :doc:`/tutorials/polls/mysite/index` : We convert the “Polls”
-  application from Django’s tutorial into a Lino application. This
-  will introduce some differences between Lino and Django.
+- :doc:`/tutorials/polls/mysite/index` : Just as a summary, we convert
+  the “Polls” application from Django’s tutorial into a Lino
+  application. This will illustrate some differences between Lino and
+  Django.
+
+- :doc:`/tutorials/lets/index` : A full-stack example about the work
+  of a Lino application developer.  Writing a technical specification.
+  Describing a database structure. Designing your tables. Writing demo
+  data. Writing test cases. Menu structure and main page. Form
+  layouts.
 
 
 Getting acquaintained
@@ -69,6 +76,7 @@ Getting acquaintained
 - :doc:`ar` : Using action requests
 - :doc:`html` : Generating HTML
 - :doc:`custom_actions` : Writing custom actions
+- :doc:`action_parameters` :
 - :doc:`gfks` : Lino and `GenericForeignKey` fields
 
 - :doc:`/tutorials/letsmti/index` :
@@ -103,6 +111,7 @@ Getting acquaintained
    ar
    html
    custom_actions
+   action_parameters
    gfks
    /tutorials/letsmti/index
    /tutorials/layouts
@@ -122,8 +131,6 @@ Reference
 
 .. toctree::
    :maxdepth: 1
-
-   layouts
 
    ml/index
    
