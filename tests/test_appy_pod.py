@@ -53,6 +53,8 @@ class RaiseExceptionTest(unittest.TestCase):
             renderer.run()
             self.fail("appy renderer failed to raise an error.")
         except Exception as e:
-            self.assertEqual(str(e), (
-                'Error while evaluating expression "foo".'
-                " name 'foo' is not defined"))
+            s = str(e)
+            if not s.startswith('Error while evaluating expression "foo".'):
+                self.fail("Incorrect appy error message.")
+            if not s.endswith("name 'foo' is not defined"):
+                self.fail("Incorrect appy error message.")
