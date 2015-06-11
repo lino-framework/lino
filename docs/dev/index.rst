@@ -22,74 +22,75 @@ Getting started
    /tutorials/polls/mysite/index
    /tutorials/lets/index
 
-- :doc:`/dev/install` : How to install Lino. System requirements. "Released
-  version" versus "Development version". How to run Lino's test
-  suite.
+#.  :doc:`/dev/install` : How to install Lino. System requirements. "Released
+    version" versus "Development version". How to run Lino's test
+    suite.
 
-- :doc:`/tutorials/hello/index` : The first Lino application running
-  on your machine. It's easier than with Django. A ``settings.py`` and
-  a ``manage.py``. Initialize a demo database. Run a development
-  server.
+#.  :doc:`/tutorials/hello/index` : The first Lino application running
+    on your machine. It's easier than with Django. A ``settings.py`` and
+    a ``manage.py``. Initialize a demo database. Run a development
+    server.
 
-- :doc:`/tutorials/dumpy` : The ``initdb`` and ``initdb_demo``
-  commands.  Playing with fixtures.  Writing your own fixture.
+#.  :doc:`/tutorials/dumpy` : The ``initdb`` and ``initdb_demo``
+    commands.  Playing with fixtures.  Writing your own fixture.
 
-- :doc:`/tutorials/tables/index` : Models, tables and views. What is a
-  table? Designing your tables. Using tables without a web server.
+#.  :doc:`/tutorials/tables/index` : Models, tables and views. What is a
+    table? Designing your tables. Using tables without a web server.
 
-- :doc:`layouts` : About layouts, detail windows, data elements and
-  panels.
+#.  :doc:`layouts` : About layouts, detail windows, data elements and
+    panels.
 
-- :doc:`/tutorials/polls/mysite/index` : Just as a summary, we convert
-  the “Polls” application from Django’s tutorial into a Lino
-  application. This will illustrate some differences between Lino and
-  Django.
+#.  :doc:`/tutorials/polls/mysite/index` : Just as a summary, we convert
+    the “Polls” application from Django’s tutorial into a Lino
+    application. This will illustrate some differences between Lino and
+    Django.
 
-- :doc:`/tutorials/lets/index` : A full-stack example about the work
-  of a Lino application developer.  Writing a technical specification.
-  Describing a database structure. Designing your tables. Writing demo
-  data. Writing test cases. Menu structure and main page. Form
-  layouts.
+#.  :doc:`/tutorials/lets/index` : A full-stack example about the work
+    of a Lino application developer.  Writing a technical specification.
+    Describing a database structure. Designing your tables. Writing demo
+    data. Writing test cases. Menu structure and main page. Form
+    layouts.
 
 
 Getting acquaintained
 =====================
 
-- :doc:`settings` : The Django settings module. How Lino integrates
-  into Django settings. Inheriting settings.
-- :doc:`application` : An app is not an application.
-- :doc:`plugins` : Why we need plugins. Configuring plugins.
-- :doc:`users` : Why do we replace Django's user management. Passwords.
-- :doc:`site` : Instantiating a `Site`.  Specifying the
-  `INSTALLED_APPS`. Additional local apps.
-- :doc:`dump2py` : Python dumps
-- :doc:`site_config` : The SiteConfig used to store "global" site-wide
-  parameters in the database.
-- :doc:`languages` : if you write applications for users who don't
-  speak English.
-- :doc:`i18n` : About "internationalization" and "translatable strings".
-- :doc:`menu` : Standard items of a main menu
-- :doc:`actors` :
-- :doc:`choicelists` :
-- :doc:`parameters` :
+#.  :doc:`settings` : The Django settings module. How Lino integrates
+    into Django settings. Inheriting settings.
+#.  :doc:`application` : An app is not an application.
+#.  :doc:`plugins` : Why we need plugins. Configuring plugins.
+#.  :doc:`users` : Why do we replace Django's user management. Passwords.
+#.  :doc:`site` : Instantiating a `Site`.  Specifying the
+    `INSTALLED_APPS`. Additional local apps.
+#.  :doc:`dump2py` : Python dumps
+#.  :doc:`site_config` : The SiteConfig used to store "global" site-wide
+    parameters in the database.
+#.  :doc:`languages` : if you write applications for users who don't
+    speak English.
+#.  :doc:`i18n` : About "internationalization" and "translatable strings".
+#.  :doc:`menu` : Standard items of a main menu
+#.  :doc:`actors` :
+#.  :doc:`choicelists` :
+#.  :doc:`parameters` :
 
-- :doc:`ar` : Using action requests
-- :doc:`html` : Generating HTML
-- :doc:`custom_actions` : Writing custom actions
-- :doc:`action_parameters` :
-- :doc:`gfks` : Lino and `GenericForeignKey` fields
+#.  :doc:`ar` : Using action requests
+#.  :doc:`html` : Generating HTML
+#.  :doc:`custom_actions` : Writing custom actions
+#.  :doc:`action_parameters` :
+#.  :doc:`gfks` : Lino and `GenericForeignKey` fields
 
-- :doc:`/tutorials/letsmti/index` :
-- :doc:`/tutorials/layouts` :
-- :doc:`/tutorials/vtables/index` :
-- :doc:`actions` :
-- :doc:`/tutorials/actions/index` :
-- :doc:`/tutorials/mldbc/index` :
-- :doc:`/tutorials/human/index` :
-- :doc:`plugin_inheritance` : Plugin inheritance
-- :doc:`plugin_cooperation` : Plugin cooperation
-- :doc:`printing` : (TODO)
-- :doc:`accounting` : Accounting explained to Python developers.
+#.  :doc:`/tutorials/letsmti/index` :
+#.  :doc:`/tutorials/layouts` :
+#.  :doc:`/tutorials/vtables/index` :
+#.  :doc:`actions` :
+#.  :doc:`/tutorials/actions/index` :
+#.  :doc:`/tutorials/mldbc/index` :
+#.  :doc:`/tutorials/human/index` :
+#.  :doc:`plugin_inheritance` : Plugin inheritance
+#.  :doc:`plugin_cooperation` : Plugin cooperation
+#.  :doc:`printing` : (TODO)
+#.  :doc:`accounting` : Accounting explained to Python developers.
+#.  :doc:`cache` : telling Lino where to store temporari files.
 
 .. toctree::
    :maxdepth: 1
@@ -124,6 +125,7 @@ Getting acquaintained
    plugin_cooperation
    printing
    accounting
+   cache
    
 
 Reference

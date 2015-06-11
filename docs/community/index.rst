@@ -7,7 +7,7 @@ much to do.  This is the time for pioneers to join us!
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 1
 
     get_involved
     contributors

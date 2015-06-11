@@ -9,24 +9,8 @@
 
     $ python setup.py test -s tests.CoreTests.test_site
 
-
 .. autosummary::
 
-
-.. envvar:: LINO_CACHE_ROOT
-
-If an environment variable :envvar:`LINO_CACHE_ROOT` is set, then the
-cached data of demo projects (the :xfile:`default.db` files and the
-:xfile:`media` directories) are not written into the file tree of the
-source code repository but below the given directory.  See
-:attr:`atelier.fablib.env.demo_projects`.
-
-For example you can add the following line to your :file:`.bashrc`
-file::
-
-  export LINO_CACHE_ROOT=/home/luc/tmp/cache
-
-Note that the path should be absolute and without a ``~``.
 
 """
 
@@ -615,8 +599,8 @@ documentation.
 
     """
 
-    tinymce_root = None
-    "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
+    # tinymce_root = None
+    # "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
     """Username to be used if a request with no remote user header (see

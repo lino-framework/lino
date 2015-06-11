@@ -180,6 +180,9 @@ class DurationUnit(dd.Choice):
         >>> start_date = i2d(20140401)
         >>> DurationUnits.months.add_duration(start_date, 3)
         datetime.date(2014, 7, 1)
+        >>> DurationUnits.years.add_duration(start_date, 1)
+        datetime.date(2015, 4, 1)
+
 
         """
         if orig is None:

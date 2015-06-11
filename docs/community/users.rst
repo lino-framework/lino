@@ -25,9 +25,6 @@ Using :ref:`welfare` since March 2014.
 
 - Contact: :ref:`mj`
 
-.. refstothis:: chat
-
-
 
 .. _eiche:
 

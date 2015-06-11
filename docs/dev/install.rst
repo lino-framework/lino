@@ -7,6 +7,7 @@ Installing Lino
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
 .. _fabric: http://www.fabfile.org/
+.. _pycrypto: https://pypi.python.org/pypi/pycrypto
 .. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
 
@@ -16,31 +17,45 @@ prefer to install one of the existing Lino applications, e.g.  `Lino
 Così <http://cosi.lino-framework.org/install/index.html>`__ of `Lino
 Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 
+
+.. contents::
+    :depth: 1
+    :local:
+
 System requirements
--------------------
+===================
 
-- Lino still requires **Django 1.6**, we just did not yet take the
-  time to make it work with newer versions. Any contribution is
-  welcome.
+#.  Lino still requires **Django 1.6**, we just did not yet take the
+    time to make it work with newer versions. Any contribution is
+    welcome.
 
-- Lino requires **Python 2**.  Also here: we just did not yet take the
-  time to make it work with Python 3. Any contribution is welcome.
+#.  Lino requires **Python 2**.  Also here: we just did not yet take the
+    time to make it work with Python 3. Any contribution is welcome.
 
-- We assume you have pip_ installed. `pip` is not automatically
-  bundled with Python 2, but it has become the de-facto standard.
+#.  We assume you have pip_ installed. `pip` is not automatically
+    bundled with Python 2, but it has become the de-facto standard.
 
-- We recommend to use virtualenv_ (`pip install virtualenv`) and to
-  activate a new environment. Something like this::
+#.  We recommend to use virtualenv_ (`pip install virtualenv`) and to
+    activate a new environment. Something like this::
 
-    $ virtualenv tmp
-    $ . tmp/bin/activate
+        $ virtualenv tmp
+        $ . tmp/bin/activate
 
-- You will need to install git_ on your computer to get the source
-  files.
+#.  You will need the **Python header files** on your system because
+    Lino requires fabric_ which in turn requires pycrypto_ which is an
+    `extension module <https://docs.python.org/2/c-api/intro.html>`_. On a
+    Debian system this means something like::
+
+        $ sudo apt-get install python-dev
+
+
+
+#.  You will need to install git_ on your computer to get the source
+    files.
 
 
 Get the sources
----------------
+===============
 
 You might theoretically install Lino using ``pip install lino``, but
 this method isn't currently being tested very thoroughly. So in most
@@ -61,7 +76,7 @@ contains a file :xfile:`setup.py`, a file :xfile:`README.rst` and a
 whole tree of other files and directories.
 
 Installation
-------------
+============
 
 Now you are ready to "install" Lino, i.e. to tell your Python
 interpreter where the source file are, so that you can import them
@@ -88,7 +103,7 @@ Notes:
 
 
 Telling your Lino version
--------------------------
+=========================
 
 When you want to see which version you have, you can say "hello" to
 Lino:
@@ -104,8 +119,34 @@ The above launches Python with the `-m
 command-line switch which basically instructs it to just import the
 specified module :mod:`lino.hello`.
 
+Defining a cache directory for Lino
+===================================
+
+Before going on, you should prepare a place where Lino can store
+temporary files like the SQLite database file, static files and
+dynamically generated files of miscellaneous types like `.js`, `.pdf`,
+`.xls`.
+
+You do this by creating an empty directory where you have write
+permission, and then set the :envvar:`LINO_CACHE_ROOT` environment
+variable to point to it.
+
+For example on a Debian system you might add the following line to
+your :xfile:`.bashrc` file::
+
+    export LINO_CACHE_ROOT=/home/myname/tmp/lino_cache
+
+Don't forget to open a new terminal window after editing the file in
+order to activate these changes.  You can verify whether the variable
+is set using this command::
+
+    $ set | grep LINO_CACHE_ROOT
+
+More about this in :doc:`cache`.
+
+
 Run Lino's test suite
----------------------
+=====================
 
 In order to check to see whether everything worked well, we are now
 going to run the test suite.

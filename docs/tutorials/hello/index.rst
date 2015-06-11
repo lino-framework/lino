@@ -12,8 +12,14 @@ We suppose that you have installed Lino the framework as described in
 :doc:`/dev/install`.
 
 
+.. contents::
+    :depth: 1
+    :local:
+
+
+
 The project directory
----------------------
+=====================
 
 Create an empty directory which will become your project directory::
 
@@ -25,7 +31,7 @@ directory as described hereafter.
 
 
 The ``settings.py`` file
--------------------------
+========================
 
 Your first :xfile:`settings.py` file should look as follows:
 
@@ -60,7 +66,7 @@ More about this in :doc:`/dev/settings`.
 
 
 The ``manage.py`` file
-----------------------
+=======================
 
 Now add a :xfile:`manage.py` file with the following content:
 
@@ -74,7 +80,7 @@ prefer.
 
 
 Initial data
-------------
+=======================
 
 Next we create your database and populate it with some demo content.
 
@@ -113,9 +119,39 @@ make abundant use of so-called *Python fixtures* in order to have a
 rich set of "demo data".  We will come back to this in the next
 chapter, :doc:`/tutorials/dumpy`.
 
+Collecting static files
+=======================
+
+A last thing to do before you can see Lino running as a web
+application is to run Django's :manage:`collectstatic` command::
+
+    $ python manage.py collectstatic
+
+The output should be something like this::
+
+    You have requested to collect static files at the destination
+    location as specified in your settings:
+
+        /home/myname/tmp/lino_cache/collectstatic
+
+    This will overwrite existing files!
+    Are you sure you want to do this?
+
+    Type 'yes' to continue, or 'no' to cancel: yes
+
+    4688 static files copied to '/home/myname/tmp/lino_cache/collectstatic', 0 unmodified.
+
+
+
+Actually you need to do this only for your first local Lino project
+because static files are the same for every Lino application.  There
+are exceptions to this rule, but we can ignore them for the moment.
+More about this in :doc:`/dev/cache`.
+
+
 
 Start the web server
---------------------
+=======================
 
 Now you can start the development server::
 
