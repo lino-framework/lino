@@ -33,7 +33,7 @@ def objects():
                 en='Default', de="Standard", fr="Standard"))
 
     if ledger:
-        Invoice = dd.resolve_model('sales.Invoice')
+        Invoice = dd.resolve_model('sales.VatProductInvoice')
         InvoiceItem = dd.resolve_model('sales.InvoiceItem')
         vt = ledger.VoucherTypes.get_for_model(Invoice)
         JOURNALS = Cycler(vt.get_journals())

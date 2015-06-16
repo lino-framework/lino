@@ -3,9 +3,6 @@
 
 """Database models for `lino.modlib.vat`.
 
-It defines two database models :class:`VatRule` and
-:class:`PaymentTerm`.
-
 """
 
 from __future__ import unicode_literals
@@ -44,21 +41,31 @@ TradeTypes.purchases.update(
 
 
 class VatRule(Sequenced, DatePeriod):
-    """Example data see :mod:`lino.modlib.vat.fixtures.euvatrates`
+    """A rule which defines how VAT is to be handled for a given invoice
+    item.
+
+    Example data see :mod:`lino.modlib.vat.fixtures.euvatrates`.
+
+    Database fields:
 
     .. attribute:: country
     .. attribute:: vat_class
+
     .. attribute:: vat_regime
+
+        The regime for which this rule applies. Pointer to
+        :class:`VatRegimes <lino.modlib.vat.choicelists.VatRegimes>`.
+    
     .. attribute:: rate
     
-    The VAT rate to be applied. Note that a VAT rate of 20 percent is
-    stored as `0.20` (not `20`).
+        The VAT rate to be applied. Note that a VAT rate of 20 percent is
+        stored as `0.20` (not `20`).
 
     .. attribute:: can_edit
 
-    Whether the VAT amount can be modified by the user. This applies
-    only for documents with :attr:`VatTotal.auto_compute_totals` set
-    to `False`.
+        Whether the VAT amount can be modified by the user. This applies
+        only for documents with :attr:`VatTotal.auto_compute_totals` set
+        to `False`.
 
     """
     class Meta:
@@ -106,17 +113,9 @@ criteria.
         return "{country} {vat_class} {rate}".format(**kw)
 
 
-class VatRules(dd.Table):
-    model = 'vat.VatRule'
-    column_names = "seqno country vat_class vat_regime \
-    start_date end_date rate can_edit *"
-    hide_sums = True
-    auto_fit_column_widths = True
-
-
-class AccountInvoice(VatDocument, Voucher, Matchable):
+class VatAccountInvoice(VatDocument, Voucher, Matchable):
     """An invoice for which the user enters just the bare accounts and
-    amounts (not e.g. products, quantities, discounts).
+    amounts (not products, quantities, discounts).
 
     An account invoice does not usually produce a printable
     document. This model is typically used to store incoming purchase
@@ -134,155 +133,15 @@ class AccountInvoice(VatDocument, Voucher, Matchable):
     # state = InvoiceStates.field(default=InvoiceStates.draft)
 
 
-class InvoiceDetail(dd.FormLayout):
-    main = "general ledger"
-
-    totals = """
-    total_base
-    total_vat
-    total_incl
-    workflow_buttons
-    """
-
-    general = dd.Panel("""
-    id date partner user
-    due_date your_ref vat_regime #item_vat
-    ItemsByInvoice:60 totals:20
-    """, label=_("General"))
-
-    ledger = dd.Panel("""
-    journal year number narration
-    ledger.MovementsByVoucher
-    """, label=_("Ledger"))
-
-
-class AccountInvoices(PartnerVouchers):
-    model = 'vat.AccountInvoice'
-    order_by = ["-id"]
-    column_names = "date id number partner total_incl user *"
-    detail_layout = InvoiceDetail()
-    insert_layout = """
-    journal partner
-    date total_incl
-    """
-    # start_at_bottom = True
-
-
-class InvoicesByJournal(AccountInvoices, ByJournal):
-    """
-    Shows all invoices of a given journal (whose
-    :attr:`Journal.voucher_type` must be :class:`AccountInvoice`)
-    """
-    params_layout = "partner state year"
-    column_names = "number date due_date " \
-        "partner " \
-        "total_incl " \
-        "total_base total_vat user workflow_buttons *"
-                  #~ "ledger_remark:10 " \
-    insert_layout = """
-    partner
-    date total_incl
-    """
-
-
-VoucherTypes.add_item(AccountInvoice, InvoicesByJournal)
-
-
 class InvoiceItem(AccountInvoiceItem, VatItemBase):
-    voucher = dd.ForeignKey('vat.AccountInvoice', related_name='items')
-    title = models.CharField(_("Description"), max_length=200, blank=True)
-
-
-class ItemsByInvoice(dd.Table):
-    model = 'vat.InvoiceItem'
-    column_names = "account title vat_class total_base total_vat total_incl"
-    master_key = 'voucher'
-    order_by = ["seqno"]
-    auto_fit_column_widths = True
-
-
-class VouchersByPartner(dd.VirtualTable):
-    """A :class:`dd.VirtualTable` which shows all VatDocument
-    vouchers by :class:`lino.modlib.contacts.models.Partner`. It has a
-    customized slave summary.
+    """An item of an account invoice.  Inherits from
+    :class:`AccountInvoiceItem
+    <lino.modlib.ledger.mixins.AccountInvoiceItem>` and
+    :class:`VatItemBase <lino.modlib.vat.models.VatItemBase>`.
 
     """
-    label = _("VAT vouchers")
-    order_by = ["-date", '-id']
-    master = 'contacts.Partner'
-    column_names = "date voucher total_incl total_base total_vat"
-
-    slave_grid_format = 'summary'
-
-    @classmethod
-    def get_data_rows(self, ar):
-        obj = ar.master_instance
-        rows = []
-        if obj is not None:
-            for M in rt.models_by_base(VatDocument):
-                rows += list(M.objects.filter(partner=obj))
-
-            def by_date(a, b):
-                return cmp(b.date, a.date)
-
-            rows.sort(by_date)
-        return rows
-
-    @dd.displayfield(_("Voucher"))
-    def voucher(self, row, ar):
-        return ar.obj2html(row)
-
-    @dd.virtualfield('ledger.Voucher.date')
-    def date(self, row, ar):
-        return row.date
-
-    @dd.virtualfield('vat.AccountInvoice.total_incl')
-    def total_incl(self, row, ar):
-        return row.total_incl
-
-    @dd.virtualfield('vat.AccountInvoice.total_base')
-    def total_base(self, row, ar):
-        return row.total_base
-
-    @dd.virtualfield('vat.AccountInvoice.total_vat')
-    def total_vat(self, row, ar):
-        return row.total_vat
-
-    @classmethod
-    def get_slave_summary(self, obj, ar):
-
-        elems = []
-        sar = self.request(master_instance=obj)
-        # elems += ["Partner:", unicode(ar.master_instance)]
-        for voucher in sar:
-            vc = voucher.get_mti_leaf()
-            if vc and vc.state.name == "draft":
-                elems += [ar.obj2html(vc), " "]
-
-        vtypes = set()
-        for m in rt.models_by_base(VatDocument):
-            vtypes.add(
-                VoucherTypes.get_by_value(dd.full_model_name(m)))
-
-        actions = []
-
-        def add_action(btn):
-            if btn is None:
-                return False
-            actions.append(btn)
-            return True
-
-        for vt in vtypes:
-            for jnl in vt.get_journals():
-                sar = vt.table_class.insert_action.request_from(
-                    ar, master_instance=jnl,
-                    known_values=dict(partner=obj))
-                actions.append(
-                    sar.ar2button(label=unicode(jnl), icon_name=None))
-                actions.append(' ')
-
-        elems += [E.br(), _("Create voucher in journal ")] + actions
-        return E.div(*elems)
+    voucher = dd.ForeignKey('vat.VatAccountInvoice', related_name='items')
+    title = models.CharField(_("Description"), max_length=200, blank=True)
 
 
 if False:
@@ -324,3 +183,5 @@ dd.inject_field(
         blank=True, null=True,
         help_text=_("The default payment term for "
                     "sales invoices to this customer.")))
+
+from .ui import *

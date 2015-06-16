@@ -18,7 +18,7 @@ def objects():
     ClientContactType = rt.modules.pcsw.ClientContactType
     ClientStates = rt.modules.pcsw.ClientStates
     Journal = rt.modules.ledger.Journal
-    Invoice = rt.modules.vatless.Invoice
+    Invoice = rt.modules.vatless.AccountInvoice
     InvoiceItem = rt.modules.vatless.InvoiceItem
     Account = rt.modules.accounts.Account
     AccountCharts = rt.modules.accounts.AccountCharts

@@ -2,17 +2,27 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for handling value-added tax (VAT).
+"""Adds functionality for handling incoming and outgoing invoices in a
+context where the site operator is subject to value-added tax
+(VAT). Site operators outside the European Union are likely to use 
+:mod:`lino.modlib.vatless` instead.
 
 This module is designed to work both *with* and *without*
 :mod:`lino.modlib.declarations` installed.
 
+Installing this plugin will automatically install
+:mod:`lino.modlib.countries` :mod:`lino.modlib.ledger`.
+
+The modules :mod:`lino.modlib.vatless` and :mod:`lino.modlib.vat` can
+theoretically both be installed (though obviously this wouldn't make
+much sense).
 
 
 .. autosummary::
    :toctree:
 
     models
+    ui
     utils
     choicelists
     mixins

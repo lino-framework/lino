@@ -60,6 +60,7 @@ class Site(Site):
         # yield 'lino.modlib.accounts'
         # yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
+        yield 'lino.modlib.vatless'
         yield 'lino.modlib.finan'
         yield 'lino.modlib.products'
         yield 'lino.modlib.auto.sales'

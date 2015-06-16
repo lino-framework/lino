@@ -87,7 +87,7 @@ class Invoiceable(dd.Model):
     class Meta:
         abstract = True
 
-    invoice = dd.ForeignKey('sales.Invoice', blank=True, null=True)
+    invoice = dd.ForeignKey('sales.VatProductInvoice', blank=True, null=True)
 
     @classmethod
     def get_partner_filter(cls, partner):
@@ -141,8 +141,9 @@ def create_invoice_for(obj, ar):
     invoiceables = list(Invoiceable.get_invoiceables_for(obj))
     if len(invoiceables) == 0:
         raise Warning(_("No invoiceables found for %s.") % obj)
-    jnl = Invoice.get_journals()[0]
-    invoice = Invoice(partner=obj, journal=jnl, date=settings.SITE.today())
+    M = VatProductInvoice
+    jnl = M.get_journals()[0]
+    invoice = M(partner=obj, journal=jnl, date=settings.SITE.today())
     invoice.save()
     for ii in invoiceables:
         i = InvoiceItem(voucher=invoice, invoiceable=ii,
@@ -208,14 +209,9 @@ class CreateInvoiceForPartner(CreateInvoice):
 contacts.Partner.create_invoice = CreateInvoiceForPartner()
 
 
-class Invoice(Invoice):  # 20130709
+class VatProductInvoice(VatProductInvoice):
 
     #~ fill_invoice = FillInvoice()
-
-    class Meta(Invoice.Meta):  # 20130709
-        #~ app_label = 'sales'
-        verbose_name = _("Invoice")
-        verbose_name_plural = _("Invoices")
 
     def before_state_change(self, ar, old, new):
         if new.name == 'registered':
@@ -232,7 +228,7 @@ class Invoice(Invoice):  # 20130709
                 i.invoiceable.invoice = None
                 i.invoiceable.save()
             #~ self.deregister_voucher(ar)
-        super(Invoice, self).before_state_change(ar, old, new)
+        super(VatProductInvoice, self).before_state_change(ar, old, new)
 
     def get_invoiceables(self, model):
         lst = []
@@ -253,7 +249,6 @@ class InvoiceItem(InvoiceItem):  # 20130709
     invoiceable_label = _("Invoiceable")
 
     class Meta(InvoiceItem.Meta):  # 20130709
-        #~ app_label = 'sales'
         verbose_name = _("Voucher item")
         verbose_name_plural = _("Voucher items")
 

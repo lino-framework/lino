@@ -108,10 +108,10 @@ class ShippingModes(dd.Table):
 
 
 class SalesDocument(VatDocument, Certifiable):
-    """Common base class for `orders.Order` and :class:`Invoice`.
+    """Common base class for `orders.Order` and :class:`VatProductInvoice`.
 
     Subclasses must either add themselves a `date` field (as does
-    Order) or inherit it from Voucher (as does Invoice)
+    Order) or inherit it from Voucher (as does VatProductInvoice)
 
     """
 
@@ -158,7 +158,7 @@ class SalesDocuments(PartnerVouchers):
     pass
 
 
-class Invoice(SalesDocument, Voucher, Matchable):
+class VatProductInvoice(SalesDocument, Voucher, Matchable):
     """A sales invoice is a legal document which describes that something
     (the invoice items) has been sold to a given partner. The partner
     can be either a private person or an organization.
@@ -167,7 +167,7 @@ class Invoice(SalesDocument, Voucher, Matchable):
 
     """
     class Meta:
-        abstract = dd.is_abstract_model(__name__, 'Invoice')
+        abstract = dd.is_abstract_model(__name__, 'VatProductInvoice')
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
@@ -182,18 +182,18 @@ class Invoice(SalesDocument, Voucher, Matchable):
                     self.date)
         # SalesDocument.before_save(self)
         # ledger.LedgerDocumentMixin.before_save(self)
-        super(Invoice, self).full_clean(*args, **kw)
+        super(VatProductInvoice, self).full_clean(*args, **kw)
 
     #~ def before_state_change(self,ar,old,new):
         #~ if new.name == 'registered':
             #~ self.compute_totals()
         #~ elif new.name == 'draft':
             #~ pass
-        #~ super(Invoice,self).before_state_change(ar,old,new)
+        #~ super(VatProductInvoice,self).before_state_change(ar,old,new)
 
     @classmethod
     def get_registrable_fields(cls, site):
-        for f in super(Invoice, cls).get_registrable_fields(site):
+        for f in super(VatProductInvoice, cls).get_registrable_fields(site):
             yield f
         yield 'due_date'
         yield 'order'
@@ -242,7 +242,7 @@ class InvoiceDetail(dd.FormLayout):
 
 
 class Invoices(SalesDocuments):
-    model = 'sales.Invoice'
+    model = 'sales.VatProductInvoice'
     order_by = ["-id"]
     column_names = "id date partner total_incl user *"
     detail_layout = InvoiceDetail()
@@ -267,7 +267,7 @@ class Invoices(SalesDocuments):
 
 class InvoicesByJournal(Invoices, ByJournal):
     """Shows all invoices of a given journal (whose `voucher_type` must be
-    :class:`Invoice`)
+    :class:`VatProductInvoice`)
 
     """
     params_panel_hidden = True
@@ -344,7 +344,7 @@ class InvoiceItem(ProductDocItem, SequencedVoucherItem):
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'InvoiceItem')
 
-    voucher = models.ForeignKey('sales.Invoice', related_name='items')
+    voucher = models.ForeignKey('sales.VatProductInvoice', related_name='items')
     title = models.CharField(_("Description"), max_length=200, blank=True)
 
 
@@ -397,7 +397,7 @@ class DocumentsToSign(Invoices):
 
 
 class InvoicesByPartner(Invoices):
-    #~ model = 'sales.Invoice'
+    #~ model = 'sales.VatProductInvoice'
     order_by = ["-date", '-id']
     master_key = 'partner'
     column_names = "date total_incl total_base total_vat *"
@@ -412,7 +412,7 @@ class InvoicesByPartner(Invoices):
 
 @dd.receiver(dd.pre_analyze)
 def add_voucher_type(sender, **kw):
-    VoucherTypes.add_item('sales.Invoice', InvoicesByJournal)
+    VoucherTypes.add_item('sales.VatProductInvoice', InvoicesByJournal)
 
 
 #~ def customize_siteconfig():

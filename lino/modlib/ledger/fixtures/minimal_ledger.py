@@ -183,9 +183,9 @@ def objects():
 
     kw = dict(chart=chart, journal_group=JournalGroups.sales)
     if sales:
-        MODEL = sales.Invoice
+        MODEL = sales.VatProductInvoice
     else:
-        MODEL = vat.AccountInvoice
+        MODEL = vat.VatAccountInvoice
     kw.update(dd.str2kw('name', _("Sales invoices")))
     # kw = dd.babel_values('name', de="Verkaufsrechnungen",
     #                   fr="Factures vente",
@@ -197,7 +197,7 @@ def objects():
     kw.update(journal_group=JournalGroups.purchases)
     kw.update(trade_type='purchases', ref="PRC")
     kw.update(dd.str2kw('name', _("Purchase invoices")))
-    yield vat.AccountInvoice.create_journal(**kw)
+    yield vat.VatAccountInvoice.create_journal(**kw)
 
     if finan:
         kw.update(journal_group=JournalGroups.financial)

@@ -45,8 +45,14 @@ class PartnerRelated(dd.Model):
     class Meta:
         abstract = True
 
-    partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
-    payment_term = dd.ForeignKey('ledger.PaymentTerm', blank=True, null=True)
+    partner = dd.ForeignKey(
+        'contacts.Partner',
+        related_name="%(app_label)s_%(class)s_set_by_partner",
+        blank=True, null=True)
+    payment_term = dd.ForeignKey(
+        'ledger.PaymentTerm',
+        related_name="%(app_label)s_%(class)s_set_by_payment_term",
+        blank=True, null=True)
 
     if dd.plugins.ledger.project_model:
         project = models.ForeignKey(
@@ -120,15 +126,15 @@ class Matchable(dd.Model):
 class VoucherItem(dd.Model):
     """Base class for items of a voucher.
 
-    Subclasses must define a field :attr:`voucher` which must be a
-    ForeignKey to some subclass of :class:`ledger.Voucher
-    <lino.modlib.ledger.models.Voucher>` with related_name='items'.
+    Subclasses must define the following fields:
 
     .. attribute:: voucher
 
-        Pointer to the voucher (a subclass of :class:`ledger.Voucher
-        <lino.modlib.ledger.models.Voucher>`) which contains this
-        item.  Non nullable.
+        Pointer to the voucher which contains this item.  Non
+        nullable.  The voucher must be a subclass of
+        :class:`ledger.Voucher<lino.modlib.ledger.models.Voucher>`.
+        The `related_name` must be `'items'`.
+    
 
     .. attribute:: title
 
@@ -190,7 +196,9 @@ class AccountInvoiceItem(VoucherItem, SequencedVoucherItem):
     class Meta:
         abstract = True
 
-    account = models.ForeignKey('accounts.Account')
+    account = models.ForeignKey(
+        'accounts.Account',
+        related_name="%(app_label)s_%(class)s_set_by_account")
 
     def get_base_account(self, tt):
         return self.account

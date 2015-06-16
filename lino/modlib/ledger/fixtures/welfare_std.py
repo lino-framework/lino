@@ -18,7 +18,7 @@ current_group = None
 
 
 def objects():
-    Invoice = rt.modules.vatless.Invoice
+    Invoice = rt.modules.vatless.AccountInvoice
     JournalGroups = rt.modules.ledger.JournalGroups
     BankStatement = rt.modules.finan.BankStatement
     PaymentOrder = rt.modules.finan.PaymentOrder

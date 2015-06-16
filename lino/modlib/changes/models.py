@@ -114,7 +114,7 @@ class Changes(dd.Table):
     required = dd.required(user_level='admin')
 
     editable = False
-    model = Change
+    model = 'changes.Change'
     order_by = ['-time']
 
     detail_layout = """
@@ -131,7 +131,7 @@ class Changes(dd.Table):
         qs = super(Changes, cls).get_request_queryset(ar)
         if not isinstance(qs, list):
             if ar.param_values.change_type:
-                qs = qs.filter(type=ar.param_values.type)
+                qs = qs.filter(type=ar.param_values.change_type)
             if ar.param_values.date:
                 qs = qs.filter(time__range=(
                     ar.param_values.date,

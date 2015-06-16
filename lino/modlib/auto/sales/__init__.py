@@ -16,7 +16,7 @@ from lino.modlib.sales import Plugin
 
 class Plugin(Plugin):
 
-    extends_models = ['Invoice',  'InvoiceItem']
+    extends_models = ['VatProductInvoice',  'InvoiceItem']
 
     def setup_main_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)

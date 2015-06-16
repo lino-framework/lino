@@ -48,7 +48,7 @@ def objects():
 
     if False:  # old system
 
-        MODEL = vat.AccountInvoice
+        MODEL = vat.VatAccountInvoice
         vt = ledger.VoucherTypes.get_for_model(MODEL)
         JOURNALS = Cycler(vt.get_journals())
         Partner = dd.resolve_model(partner_model)
@@ -135,16 +135,17 @@ def objects():
         if sales:
             for i in range(SALES_PER_MONTH.pop()):
                 #~ print __file__, date
-                invoice = sales.Invoice(journal=JOURNAL_S,
-                                        partner=CUSTOMERS.pop(),
-                                        user=USERS.pop(),
-                                        date=date + delta(days=10 + DATE_DELTAS.pop()))
+                invoice = sales.VatProductInvoice(
+                    journal=JOURNAL_S,
+                    partner=CUSTOMERS.pop(),
+                    user=USERS.pop(),
+                    date=date + delta(days=10 + DATE_DELTAS.pop()))
                 yield invoice
                 for j in range(ITEMCOUNT.pop()):
-                    item = sales.InvoiceItem(voucher=invoice,
-                                             product=PRODUCTS.pop(),
-                                             qty=QUANTITIES.pop()
-                                             )
+                    item = sales.InvoiceItem(
+                        voucher=invoice,
+                        product=PRODUCTS.pop(),
+                        qty=QUANTITIES.pop())
                     item.product_changed(REQUEST)
                     item.before_ui_save(REQUEST)
                     #~ if item.total_incl:
@@ -159,11 +160,9 @@ def objects():
                 invoice.save()
 
         for story in PURCHASE_STORIES:
-            invoice = vat.AccountInvoice(journal=JOURNAL_P,
-                                         partner=story[0],
-                                         user=USERS.pop(),
-                                         date=date + delta(
-                                             days=DATE_DELTAS.pop()))
+            invoice = vat.VatAccountInvoice(
+                journal=JOURNAL_P, partner=story[0], user=USERS.pop(),
+                date=date + delta(days=DATE_DELTAS.pop()))
             yield invoice
             for account, amount in story[1]:
                 amount += amount + \
