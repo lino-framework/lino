@@ -97,6 +97,7 @@ import sys
 import datetime
 import re
 from decimal import Decimal
+import locale
 
 # encapsulate where they come from:
 
@@ -518,6 +519,27 @@ def uncamel(s):
 
     """
     return UNCAMEL_RE.sub(r'_\1', s).lower()
+
+
+def puts(s):
+    """A simplistic replacement for the `puts` function of `clint` which
+    has the problem of not supporting
+    `unicode strings <https://github.com/kennethreitz/clint/issues/48>`__.
+
+    This method is meant for issuing to the interactive console
+    messages which do not need to be logged because they just give
+    information about what's going on.
+
+    Currently this just prints the string to stdout using ``print``. I
+    prefer to use this over a plain ``print`` statement because I
+    guess that there will be problems (mainly thinking about the fact
+    that writing to stdout is considered an error in a wsgi
+    application).
+
+    """
+    # if isinstance(s, unicode):
+    #     print s.encode(locale.getpreferredencoding())
+    print s
 
 
 def _test():

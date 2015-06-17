@@ -546,7 +546,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             tplname = self.get_body_template_name()
             if tplname:
                 template = settings.SITE.jinja_env.get_template(tplname)
-                logger.info("body template %s (%s)", tplname, template)
+                # logger.info("body template %s (%s)", tplname, template)
                 body = ar.render_jinja(template, **kw)
 
         kw.update(body=body)

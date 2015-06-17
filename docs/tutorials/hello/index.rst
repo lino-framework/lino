@@ -21,13 +21,18 @@ We suppose that you have installed Lino the framework as described in
 The project directory
 =====================
 
-Create an empty directory which will become your project directory::
+Create an empty directory which will become your *project directory*::
 
     $ mkdir ~/projects/mysite
     $ cd ~/projects/mysite
 
-Create two files :xfile:`settings.py` and :xfile:`manage.py` in this
-directory as described hereafter.
+Create an empty file :xfile:`__init__.py` in this directory in order
+to make it usable as a Python package::
+
+    $ touch __init__.py
+
+Create two other files :xfile:`settings.py` and :xfile:`manage.py` in
+this directory as described hereafter.
 
 
 The ``settings.py`` file

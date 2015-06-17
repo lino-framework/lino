@@ -15,16 +15,21 @@ Getting started
    :hidden:
 
    install
+   /tutorials/polls/mysite/index
    /tutorials/hello/index
    /tutorials/dumpy
    /tutorials/tables/index
    layouts
-   /tutorials/polls/mysite/index
    /tutorials/lets/index
 
 #.  :doc:`/dev/install` : How to install Lino. System requirements. "Released
     version" versus "Development version". How to run Lino's test
     suite.
+
+#.  :doc:`/tutorials/polls/mysite/index` : In this section we are
+    going to convert the “Polls” application from Django’s tutorial
+    into a Lino application. This will illustrate some differences
+    between Lino and Django.
 
 #.  :doc:`/tutorials/hello/index` : The first Lino application running
     on your machine. It's easier than with Django. A ``settings.py`` and
@@ -39,11 +44,6 @@ Getting started
 
 #.  :doc:`layouts` : About layouts, detail windows, data elements and
     panels.
-
-#.  :doc:`/tutorials/polls/mysite/index` : Just as a summary, we convert
-    the “Polls” application from Django’s tutorial into a Lino
-    application. This will illustrate some differences between Lino and
-    Django.
 
 #.  :doc:`/tutorials/lets/index` : A full-stack example about the work
     of a Lino application developer.  Writing a technical specification.

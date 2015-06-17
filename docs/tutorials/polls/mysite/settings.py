@@ -5,12 +5,16 @@ class Site(Site):
 
     title = "Cool Polls"
 
+    def get_installed_apps(self):
+        yield super(Site, self).get_installed_apps()
+        yield 'polls'
+
     def setup_menu(self, profile, main):
         m = main.add_menu("polls", "Polls")
         m.add_action('polls.Polls')
         m.add_action('polls.Choices')
 
-SITE = Site(globals(), 'polls')
+SITE = Site(globals())
 
 # your local settings here
 

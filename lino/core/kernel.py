@@ -43,6 +43,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext_lazy as _
 
+from lino.utils import puts
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -237,7 +238,6 @@ class Kernel(object):
                     ba.action.params_layout.get_layout_handle(self.default_ui)
         # logger.info("20140227 Kernel.__init__() done")
 
-
     def kernel_startup(kernel, self):
         """This is a part of a Lino site startup.  The Django Model
         definitions are done, now Lino analyzes them and does certain
@@ -259,7 +259,7 @@ class Kernel(object):
 
         logger.info("Started %s (using %s) --> PID %s",
                     process_name, settings.SETTINGS_MODULE, os.getpid())
-        logger.info(self.welcome_text())
+        # puts(self.welcome_text())
 
         def goodbye():
             logger.info("Done %s (PID %s)", process_name, os.getpid())
@@ -400,11 +400,12 @@ class Kernel(object):
 
         post_analyze.send(self, models_list=models_list)
 
-        logger.info("Languages: %s. %d apps, %d models, %s actors.",
-                    ', '.join([li.django_code for li in self.languages]),
-                    len(self.modules),
-                    len(models_list),
-                    len(actors.actors_list))
+        if False:
+            logger.info("Languages: %s. %d apps, %d models, %s actors.",
+                        ', '.join([li.django_code for li in self.languages]),
+                        len(self.modules),
+                        len(models_list),
+                        len(actors.actors_list))
 
         #~ logger.info(settings.INSTALLED_APPS)
 
@@ -587,7 +588,7 @@ class Kernel(object):
             if a.parameters and not a.no_params_window:
                 ar.set_response(close_window=True)
         except exceptions.ValidationError as e:
-            logger.info("20150127 run_action %r", e)
+            # logger.info("20150127 run_action %r", e)
             ar.error(ar.ah.actor.error2str(e), alert=True)
         except Warning as e:
             ar.error(unicode(e), alert=True)
@@ -652,7 +653,7 @@ class Kernel(object):
         if not force and not self._must_build and os.path.exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > self.code_mtime:
-                logger.info("%s (%s) is up to date.", fn, time.ctime(mtime))
+                logger.debug("%s (%s) is up to date.", fn, time.ctime(mtime))
                 return 0
 
         logger.info("Building %s ...", fn)

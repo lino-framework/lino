@@ -1686,7 +1686,7 @@ documentation.
         """
         Text to display in a console window when Lino starts.
         """
-        return ', '.join(["%s %s" % (n, v)
+        return ', '.join([u"%s %s" % (n, v)
                           for n, v, u in self.get_used_libs()])
 
     def site_version(self):

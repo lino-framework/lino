@@ -1,4 +1,4 @@
-# Copyright 2010-2014 Luc Saffre
+# Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Provides the default logging configuration interface shipped with

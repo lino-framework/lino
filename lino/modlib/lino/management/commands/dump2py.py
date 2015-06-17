@@ -46,6 +46,8 @@ import os
 from optparse import make_option
 from decimal import Decimal
 
+from clint.textui import progress
+
 from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
@@ -53,6 +55,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 
+from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
@@ -75,7 +78,7 @@ class Command(BaseCommand):
     )
 
     def write_files(self):
-        logger.info("Writing %s...", self.main_file)
+        puts("Writing {0}...".format(self.main_file))
         self.stream = open(self.main_file, 'wt')
         current_version = settings.SITE.version
 
@@ -213,10 +216,10 @@ def main():
 
 """)
 
-        for model in self.models:
+        for model in progress.bar(self.models):
             filename = '%s.py' % model._meta.db_table
             filename = os.path.join(self.output_dir, filename)
-            logger.info("Writing %s...", filename)
+            # puts("Writing {0}...".format(filename))
             stream = file(filename, 'wt')
             stream.write('# -*- coding: UTF-8 -*-\n')
             qs = model.objects.all()
@@ -268,7 +271,7 @@ if __name__ == '__main__':
         while len(unsorted) and hope:
             hope = False
             guilty = dict()
-            #~ print "hope for", [m.__name__ for m in unsorted]
+            #~ puts("hope for", [m.__name__ for m in unsorted])
             for model in unsorted:
                 deps = set([f.rel.to
                             for f in model._meta.fields
@@ -365,5 +368,5 @@ if __name__ == '__main__':
 
         #~ logger.info("Running %s to %s.", self, self.output_dir)
         self.write_files()
-        logger.info("Wrote %s objects to %s and siblings.",
-                    self.count_objects, self.main_file)
+        logger.info("Wrote %s objects to %s and siblings." % (
+            self.count_objects, self.main_file))

@@ -51,28 +51,5 @@ class Choice(dd.Model):
             return ar.confirm(yes, msg)
         return yes(ar)
 
-
-class Polls(dd.Table):
-    model = Poll
-    sort_order = ['pub_date']
-
-    detail_layout = """
-    id question
-    hidden pub_date
-    ChoicesByPoll
-    """
-
-    insert_layout = """
-    question
-    hidden
-    """
-
-
-class Choices(dd.Table):
-    model = Choice
-
-
-class ChoicesByPoll(Choices):
-    master_key = 'poll'
-
+from .ui import *
 

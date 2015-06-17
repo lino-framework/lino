@@ -1,44 +1,4 @@
-WARNING: [autosummary] failed to import u'lino.modlib.lino.tests': no module named lino.modlib.lino.tests (name=u'lino.modlib.lino.tests', path=u'/home/luc/hgwork/lino/docs/api')
-WARNING: [autosummary] failed to import u'lino.modlib.lino.management.commands.makeui': no module named lino.modlib.lino.management.commands.makeui (name=u'lino.modlib.lino.management.commands.makeui', path=u'/home/luc/hgwork/lino/docs/api')
-WARNING: [autosummary] failed to import u'lino.modlib.statbel.countries.fixtures.ee': no module named lino.modlib.statbel.countries.fixtures.ee (name=u'lino.modlib.statbel.countries.fixtures.ee', path=u'/home/luc/hgwork/lino/docs/api')
-/home/luc/hgwork/lino/lino/core/actions.py:docstring of lino.core.actions:10: WARNING: image file not readable: api/../../lino/media/extjs/images/mjames/disk.png
-/home/luc/hgwork/lino/lino/core/actions.py:docstring of lino.core.actions.SubmitDetail:1: WARNING: image file not readable: api/../../lino/media/extjs/images/mjames/disk.png
-/home/luc/hgwork/lino/lino/modlib/cal/workflows/take.py:docstring of lino.modlib.cal.workflows.take.TakeEvent:10: WARNING: image file not readable: api/../../lino/media/extjs/images/mjames/flag_green.png
-/home/luc/hgwork/lino/lino/modlib/cal/workflows/take.py:docstring of lino.modlib.cal.workflows.take.TakeEvent:12: WARNING: image file not readable: api/../../lino/media/extjs/images/mjames/flag_green.png
-/home/luc/hgwork/lino/docs/api/lino.modlib.lino.rst:4: WARNING: failed to import tests
-/home/luc/hgwork/lino/docs/api/lino.modlib.lino.rst:4: WARNING: toctree references unknown document u'api/tests'
-/home/luc/hgwork/lino/docs/api/lino.modlib.lino.management.commands.rst:6: WARNING: failed to import makeui
-/home/luc/hgwork/lino/docs/api/lino.modlib.lino.management.commands.rst:6: WARNING: toctree references unknown document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-<autosummary>:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-<autosummary>:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/makeui'
-None:None: WARNING: toctree contains reference to nonexisting document u'api/tests'
+WARNING: intersphinx inventory 'http://python.readthedocs.org/en/latest/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
+WARNING: intersphinx inventory 'http://atelier.lino-framework.org/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
+WARNING: intersphinx inventory 'http://django.readthedocs.org/en/latest/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
+/home/luc/hgwork/lino/docs/dev/userdocs.rst:17: WARNING: undefined label: atelier.sphinxext (if the link has no caption the label must precede a section header)

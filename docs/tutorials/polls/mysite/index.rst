@@ -3,9 +3,8 @@
 The Lino Polls tutorial 
 =======================
 
-In this tutorial we are going to take the "Polls" 
-application from Django's excellent tutorial and turn it 
-into a Lino application.
+In this tutorial we are going to take the "Polls" application from
+Django's tutorial and turn it into a Lino application.
 
 .. currentmodule:: lino.core.site
 
@@ -17,29 +16,52 @@ into a Lino application.
 Create a local Django project
 -----------------------------
 
-Before reading on, please follow
-`Part 1 of the Django tutorial
-<https://docs.djangoproject.com/en/1.6/intro/tutorial01/>`_,
-which applies entirely for a Lino application.
-Afterwards we meet here again. See you later!
+Before reading on, please follow Part 1 of the Django tutorial.  Lino
+is just a set of extensions for a Django project, so there is a lot of
+Django know-how which applies entirely for a Lino application.
 
-Done? Okay, let's go further.
-You have now a set of files in your "project directory". 
-Your project is still lacking the most visible part:
-a web interface.
+There we go: 
 
-The Django tutorial continues by introducing 
-Django's Admin module to create a web interface.
-We now leave the Django philosophy and continue 
-"the Lino way" of defining our application's web interface.
-Lino is an alternative to Django's Admin module.
+  `Writing your first Django app, part 1
+  <https://docs.djangoproject.com/en/1.6/intro/tutorial01/>`_.  
+
+Just part 1, not the whole tutorial.  Afterwards we meet here again.
+See you later!  And don't panic if you read the warning "This document
+is for an insecure version of Django that is no longer
+supported. Please upgrade to a newer release!" (when your first
+application is ready for production, we will have updated Lino to play
+with newer Django versions).
+
+Done? Okay, here we continue.
+
+You have now a set of files in your "project directory"::
+
+    mysite/
+        manage.py
+        mysite/
+            __init__.py
+            settings.py
+            urls.py
+            wsgi.py
+        polls/
+            __init__.py
+            admin.py
+            models.py
+            tests.py
+            views.py
+
+
+The Django tutorial continues (in part 2) by introducing Django's
+**Admin** module to create a web interface.  We now leave the Django
+philosophy and continue "the Lino way" of defining our application's
+web interface.  Lino is an alternative to Django's Admin module.
 
 Most files remain unchanged, they are the same as with every Django project:
-:file:`__init__.py`, :file:`manage.py`,
-:file:`urls.py` and :file:`wsgi.py`.
+:xfile:`__init__.py`, :xfile:`manage.py`,
+:xfile:`urls.py`, :xfile:`views.py` and :xfile:`wsgi.py`.
 
 But we are now going to modify the files 
-:file:`settings.py` and
+:file:`mysite/settings.py` and
 :file:`polls/models.py`.
 
 The :file:`settings.py` file
@@ -47,7 +69,8 @@ The :file:`settings.py` file
 
 Lino uses some tricks to make Django :xfile:`settings.py` files more
 pleasant to work with, especially if you maintain Lino sites for
-several customers.
+several customers.  A visible difference is that Lino's
+:xfile:`settings.py` files are smaller. That's because
 
 - Change the contents of your :xfile:`settings.py` to the following:
 
@@ -55,39 +78,50 @@ several customers.
 
 A few explanations:
 
-This instantiates your local :setting:`SITE` setting.  Every Lino
-application requires a setting named :setting:`SITE` which must be a
-:class:`Site <lino.core.site.Site>` instance.
+The second line instantiates your local :setting:`SITE` object.  Every
+Lino application requires a setting named :setting:`SITE` which must
+be a :class:`Site <lino.core.site.Site>` instance.
 
 The first argument of the instantiator (``globals()``) is the global
 namespace of your settings module.  Lino uses this to fill
-"intelligent default values" to your settings.  That's why these lines
-should be at the *beginning* of your file.
+"intelligent default values" to your settings module's global
+namespace.
 
-All remaining positional arguments will go into the
-:setting:`INSTALLED_APPS` setting.  In our example we have only one
-positional argument ``'polls'``.
+One of the Django settings managed by Lino is
+:setting:`INSTALLED_APPS`. You probably have been wondering why we
+removed it from our :xfile:`settings.py`. Actually it *is* being
+defined, but automatically and behind the scenes.
 
-Lino automatically adds some more apps before and after your app.  As
-an application developer you don't need to worry about those
-additional "system" apps, you just trust Lino that he will fill into
-:setting:`INSTALLED_APPS` what is needed.  
+Lino calls the :meth:`get_installed_apps
+<lino.core.site.Site.get_installed_apps>` method which it expects to
+yield a list of strings.  Lino then adds some more "system" apps and
+stores the resulting list into your :setting:`INSTALLED_APPS` setting.
 
-Trust is good, control is better, so let's be curious and have a look
-at them.  Open a Django shell in your project directory::
+Let's be curious and have a look at them.  Open a Django shell in your
+project directory::
 
   $ python manage.py shell
   
 And then enter the following Python instructions there:  
 
+>>> from pprint import pprint
 >>> from django.conf import settings
->>> settings.INSTALLED_APPS
-('django.contrib.staticfiles', 'lino.modlib.about', 'lino.modlib.extjs', 'lino.modlib.bootstrap3', 'polls', 'lino.modlib.lino')
+>>> pprint(settings.INSTALLED_APPS)
+('django.contrib.staticfiles',
+ 'lino.modlib.about',
+ 'lino.modlib.extjs',
+ 'lino.modlib.bootstrap3',
+ 'lino.modlib.lino',
+ 'polls')
 
-This shows that your 'polls' app has been embedded into a series of
-other apps. The details of this is not important right now. Just note
-that Lino modifies your :setting:`INSTALLED_APPS` setting, and this
-magic happens when your :class:`Site` object gets instantiated.
+At the moment you don't need to worry about those additional "system"
+apps, you can just trust Lino that he will fill into
+:setting:`INSTALLED_APPS` what is needed.
+
+**Keep in mind:** In Lino you don't code your
+:setting:`INSTALLED_APPS` directly, but you override your Site's
+:meth:`get_installed_apps <lino.core.site.Site.get_installed_apps>`
+method.
 
 Other Django setting for which Lino sets default values are:
 
