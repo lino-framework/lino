@@ -1,9 +1,0 @@
-#!/bin/bash
-OUTFILE=`date +fixtures/d%Y%m%d$1.py`
-echo $OUTFILE
-if [ -f $OUTFILE ]
-then
-  echo "Sorry, there is already a file $OUTFILE. Delete it yourself if you dare."
-  exit -1
-fi
-python manage.py dumpdata --format py > $OUTFILE

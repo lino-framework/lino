@@ -1,3 +1,0 @@
-#!/bin/bash
-sudo /etc/init.d/watch_tim stop
-[ "$?" == 0 ] && sudo /etc/init.d/apache2 stop
