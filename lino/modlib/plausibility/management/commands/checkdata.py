@@ -85,4 +85,5 @@ class Command(BaseCommand):
         if options['list']:
             Checkers.show()
         else:
+            rt.startup()
             check_plausibility(args=args, fix=options['fix'])

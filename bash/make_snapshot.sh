@@ -2,8 +2,9 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 #
-# Make a snapshot of a Lino database
-# This is meant as template for a script to be copied to your PATH
+# Make a snapshot of a Lino database.
+# This is meant as template for a script to be adapted to your system.
+# This is not meant to be used as is.
 #
 
 set -e  # exit on error
@@ -16,18 +17,20 @@ set -e  # exit on error
 # WARNING: everything in this directory will be deleted without confirmation
 SNAPSHOTDIR=snapshot
 
+# name of target zip file to be created:
+ZIPFILE=snapshot.zip
+
 # uncomment the following if you have no virtualenv:
 ENVDIR=env
 
 # make new files writable for other group members:
 umask 0007
 
-# compute name of target zip file to be created:
-ZIPFILE=`date +%Y%m%d_%H%M%S.zip`
 if [ -f $ZIPFILE ]
   then
-  echo "Sorry, there is already a file $ZIPFILE. Delete it yourself if you dare."
-  exit -1
+  mv $ZIPFILE `date -r $ZIPFILE +%Y%m%d_%H%M.zip`
+  # echo "Sorry, there is already a file $ZIPFILE. Delete it yourself if you dare."
+  # exit -1
 fi
 
 if [ -d $ENVDIR ]
@@ -37,8 +40,8 @@ fi
 
 if [ -d $SNAPSHOTDIR ]
   then
-    # rmdir --ignore-fail-on-non-empty $SNAPSHOTDIR
-    rm -r $SNAPSHOTDIR
+    rm $SNAPSHOTDIR/* 
+    rmdir $SNAPSHOTDIR
 fi
 
 python manage.py dump2py $SNAPSHOTDIR
