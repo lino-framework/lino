@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 by Luc Saffre.
+# Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
-""".. management_command:: dump2py
+"""This defines the :manage:`dump2py` management command.
+
+.. management_command:: dump2py
 
 To make a python dump of your database (be it for daily backup or
 before a migration), go to your project directory and say::

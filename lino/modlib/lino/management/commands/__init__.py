@@ -5,6 +5,7 @@
    :toctree:
 
     diag
+    dump2py
     initdb
     initdb_demo
     makedocs

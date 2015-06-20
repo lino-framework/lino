@@ -6,15 +6,18 @@ Making a snapshot of a Lino database
 
 .. xfile:: make_snapshot.sh
 
-The file :srcref:`/bash/make_snapshot.sh` can be used to make a
-snapshot of a Lino database. 
+The :xfile:`make_snapshot.sh` script makes a :manage:`dump2py`
+snapshot of a Lino database.
 
-Note that this script is not meant to be used as is but as template
-for a script to be adapted to your system.
+
+Before you can use it, your system administrator must manually copy it
+from the template file :srcref:`/bash/make_snapshot.sh` to an
+appropriate place on your server and adapt it to your system
+environment.
 
 When run successfully, :xfile:`make_snapshot.sh` creates a file
 :file:`snapshot.zip` which contains the current state of a Lino
-database. It calls :manage:`dump2py` to create a Python dump.
+database. 
 
 If a file :file:`snapshot.zip` already exists (e.g. from a previous
 run), then the script renames that file by postfixing "_YYYYMMDD_hhmm"
@@ -52,7 +55,7 @@ Sample configuration in a file :file:`/etc/logrotate.d/snapshot`::
 You must then take care to run :xfile:`make_snapshot.sh` shortly *after*
 `logrotate` because otherwise make_snapshot would rename yesterday's file before logrotate can rotate it.
 
-For example the following `:file:/etc/crontab` specifies that
+For example the following :file:`/etc/crontab` specifies that
 logrotate runs every morning at **6h25** (it is a script in
 :file:`/etc/cron.daily`)::
 
