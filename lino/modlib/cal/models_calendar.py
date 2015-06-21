@@ -53,7 +53,7 @@ class Calendar(mixins.BabelNamed):
 
 
 class Calendars(dd.Table):
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = 'cal.Calendar'
 
     insert_layout = """
@@ -95,7 +95,7 @@ class Subscription(UserAuthored):
 
 
 class Subscriptions(dd.Table):
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = 'cal.Subscription'
     order_by = ['calendar__name']
     #~ insert_layout = """
@@ -116,13 +116,13 @@ class Subscriptions(dd.Table):
 
 
 class SubscriptionsByUser(Subscriptions):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'user'
     auto_fit_column_widths = True
 
 
 class SubscriptionsByCalendar(Subscriptions):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'calendar'
     auto_fit_column_widths = True
 

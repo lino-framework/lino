@@ -554,7 +554,7 @@ class Situation(Report):
     """
     label = _("Situation")
     help_text = _("Overview of the financial situation on a given date.")
-    required = dd.required(user_groups='accounts')
+    required_roles = dd.required(AccountingReader)
 
     parameters = mixins.Today()
 
@@ -572,7 +572,7 @@ class ActivityReport(Report):
     """
     label = _("Activity Report")
     help_text = _("Overview of the financial activity during a given period.")
-    required = dd.required(user_groups='accounts')
+    required_roles = dd.required(AccountingReader)
 
     parameters = mixins.Yearly(
         # include_vat = models.BooleanField(

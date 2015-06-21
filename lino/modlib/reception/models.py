@@ -130,9 +130,8 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
     show_in_bbar = False
 
-    required = dd.Required(
-        user_groups=config.required_user_groups,
-        states='invited accepted present')
+    required_roles = config.get_default_required_roles()
+    required_states = 'invited accepted present'
 
     def get_action_permission(self, ar, obj, state):
         if obj.partner_id is None:
@@ -184,7 +183,7 @@ class ReceiveVisitor(dd.Action):
     help_text = _("Visitor was received by agent")
     show_in_workflow = True
     show_in_bbar = False
-    required = dd.Required(states='waiting')
+    required_states = 'waiting'
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
@@ -244,8 +243,7 @@ class CheckoutVisitor(dd.Action):
     show_in_workflow = True
     show_in_bbar = False
 
-    #~ required = dict(states='waiting')
-    required = dd.Required(states='busy waiting')
+    required_states = 'busy waiting'
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
@@ -320,7 +318,7 @@ class ExpectedGuests(cal.Guests):
     waiting_since busy_since'
     hidden_columns = 'waiting_since busy_since'
     #~ checkin = CheckinGuest()
-    required = dd.Required(user_groups=config.required_user_groups)
+    required_roles = config.get_default_required_roles()
 
     @classmethod
     def get_queryset(self, ar):
@@ -348,7 +346,7 @@ if False:
         workflow_buttons'
         order_by = ['waiting_since']
         #~ checkout = CheckoutGuest()
-        required = dd.Required(user_groups=config.required_user_groups)
+        required_roles = config.get_default_required_roles()
         auto_fit_column_widths = True
 
         @dd.displayfield(_('Since'))
@@ -402,7 +400,7 @@ class BusyVisitors(Visitors):
     help_text = _("Shows the visitors who are busy with some agent.")
     visitor_state = GuestStates.busy
     order_by = ['busy_since']
-    required = dd.Required(user_groups=config.required_user_groups)
+    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -417,7 +415,7 @@ class WaitingVisitors(Visitors):
     visitor_state = GuestStates.waiting
 
     order_by = ['waiting_since']
-    required = dd.Required(user_groups=config.required_user_groups)
+    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -440,7 +438,7 @@ class GoneVisitors(Visitors):
     help_text = _("Shows the visitors who have gone.")
     visitor_state = GuestStates.gone
     order_by = ['-gone_since']
-    required = dd.Required(user_groups=config.required_user_groups)
+    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):

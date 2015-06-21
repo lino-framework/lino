@@ -83,8 +83,8 @@ class LanguageKnowledge(dd.Model):
 
 
 class LanguageKnowledges(dd.Table):
-    model = LanguageKnowledge
-    required = config.get_default_required(user_level='manager')
+    model = 'cv.LanguageKnowledge'
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
 
 
 class LanguageKnowledgesByPerson(LanguageKnowledges):
@@ -92,14 +92,14 @@ class LanguageKnowledgesByPerson(LanguageKnowledges):
     #~ label = _("Language knowledge")
     #~ button_label = _("Languages")
     column_names = "language native spoken written cef_level"
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     auto_fit_column_widths = True
 
 
 class KnowledgesByLanguage(LanguageKnowledges):
     master_key = 'language'
     column_names = "person native spoken written cef_level"
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
 
 
 ##
@@ -143,7 +143,7 @@ class EducationLevels(dd.Table):
     """The default table showing all :class:`EducationLevel` instances.
     """
 
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.EducationLevel'
     column_names = 'name is_study is_training *'
     order_by = ['name']
@@ -185,7 +185,7 @@ class StudyType(StudyOrTraining, mixins.BabelNamed):
 class StudyTypes(dd.Table):
     """The default table showing all :class:`StudyType` instances.
     """
-    required = config.get_default_required(user_level='admin')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = StudyType
     order_by = ["name"]
     detail_layout = """
@@ -262,21 +262,21 @@ class AllTrainings(Trainings):
     """The explorer table showing all :class:`Trainings` instances.
 
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
 
 
 class TrainingsByCountry(Trainings):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'country'
 
 
 class TrainingsByType(Trainings):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'type'
 
 
 class TrainingsByPerson(HistoryByPerson, Trainings):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     column_names = 'type sector content start_date end_date \
     school country state certificates *'
     auto_fit_column_widths = True
@@ -315,7 +315,7 @@ class Studies(dd.Table):
     """The default table showing all :class:`Study` instances.
     """
 
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Study'
     order_by = "country city type content".split()
 
@@ -328,12 +328,12 @@ class Studies(dd.Table):
 
 
 class StudiesByCountry(Studies):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'country'
 
 
 class StudiesByLevel(Studies):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'education_level'
 
 
@@ -342,21 +342,21 @@ class StudiesByPlace(Studies):
     Lists all Studies in a given Place.
     Used as slave grid in Places detail.
     """
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'city'
     column_names = 'school type person content start_date end_date \
     state language remarks *'
 
 
 class StudiesByType(Studies):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'type'
     column_names = 'school person content start_date end_date \
     state language remarks *'
 
 
 class StudiesByPerson(HistoryByPerson, Studies):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     column_names = 'type content start_date end_date school country \
     state education_level *'
     auto_fit_column_widths = True
@@ -375,7 +375,7 @@ class Status(mixins.BabelNamed):
 class Statuses(dd.Table):
     """The default table showing all :class:`Status` instances.
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Status'
     order_by = ['name']
 
@@ -395,7 +395,7 @@ class Regime(mixins.BabelNamed):
 class Regimes(dd.Table):
     """The default table showing all :class:`Regime` instances.
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Regime'
     order_by = ['name']
     detail_layout = """
@@ -413,7 +413,7 @@ class Duration(mixins.BabelNamed):
 class Durations(dd.Table):
     """The default table showing all :class:`Duration` instances.
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Duration'
     order_by = ['name']
     detail_layout = """
@@ -436,7 +436,7 @@ class Sector(mixins.BabelNamed):
 class Sectors(dd.Table):
     """The default table showing all :class:`Sector` instances.
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = Sector
     order_by = ['name']
     detail_layout = """
@@ -467,7 +467,7 @@ class Functions(dd.Table):
     """The default table showing all :class:`Function` instances.
     """
     #~ debug_permissions = 20130704
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Function'
     column_names = 'name sector *'
     order_by = ['name']
@@ -515,7 +515,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
 class Experiences(dd.Table):
     """The default table showing all :class:`Experience` instances.
     """
-    required = config.get_default_required(user_level='manager')
+    required_roles = config.get_default_required_roles(dd.SiteStaff)
     model = 'cv.Experience'
     # stay_in_grid = True
     detail_layout = """
@@ -528,19 +528,19 @@ class Experiences(dd.Table):
 
 
 class ExperiencesBySector(Experiences):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'sector'
     order_by = ["start_date"]
 
 
 class ExperiencesByFunction(Experiences):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     master_key = 'function'
     order_by = ["start_date"]
 
 
 class ExperiencesByPerson(HistoryByPerson, Experiences):
-    required = config.get_default_required()
+    required_roles = config.get_default_required_roles()
     auto_fit_column_widths = True
     column_names = "company country start_date end_date function \
     status duration termination_reason remarks *"

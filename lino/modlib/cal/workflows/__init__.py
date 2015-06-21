@@ -37,7 +37,7 @@ class TaskStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Task states")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     app_label = 'cal'
 
 
@@ -73,7 +73,7 @@ class EventStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Event states")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     help_text = _("""The possible states of a calendar event.""")
     app_label = 'cal'
     item_class = EventState
@@ -120,7 +120,7 @@ class GuestStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Guest states")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     app_label = 'cal'
     item_class = GuestState
     afterwards = models.BooleanField(_("Afterwards"), default=False)

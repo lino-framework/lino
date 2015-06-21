@@ -54,7 +54,7 @@ class InvitationFeedback(dd.ChangeStateAction, dd.NotifyingAction):
 class RejectInvitation(InvitationFeedback):
     label = _("Reject")
     help_text = _("Reject this invitation.")
-    required = dict(states='invited accepted')  # ,owner=False)
+    required_states = 'invited accepted'  # ,owner=False)
     notify_subject = _(
         "%(guest)s cannot accept invitation %(day)s at %(time)s")
 
@@ -62,7 +62,7 @@ class RejectInvitation(InvitationFeedback):
 class AcceptInvitation(InvitationFeedback):
     label = _("Accept")
     help_text = _("Accept this invitation.")
-    required = dict(states='invited rejected')  # ,owner=False)
+    required_states = 'invited rejected'  # ,owner=False)
     notify_subject = _("%(guest)s confirmed invitation %(day)s at %(time)s")
 
 
@@ -86,7 +86,7 @@ def gueststates_workflow(sender=None, **kw):
 class ResetEvent(dd.ChangeStateAction):
     label = _("Reset")
     icon_name = 'cancel'
-    required = dict(states='published took_place')
+    required_states = 'published took_place'
 
 
 class CloseMeeting(dd.ChangeStateAction):
@@ -97,7 +97,7 @@ class CloseMeeting(dd.ChangeStateAction):
     label = _("Close meeting")
     help_text = _("The event took place.")
     icon_name = 'emoticon_smile'
-    required = dict(states='published draft')
+    required_states = 'published draft'
 
     def get_action_permission(self, ar, obj, state):
         d = obj.end_date or obj.start_date

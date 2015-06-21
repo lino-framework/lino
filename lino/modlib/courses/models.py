@@ -95,7 +95,7 @@ class Slot(mixins.Sequenced, StartEndTime):
 
 class Slots(dd.Table):
     model = Slot
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.SiteAdmin)
     insert_layout = """
     start_time end_time
     name
@@ -115,7 +115,7 @@ class Topic(mixins.BabelNamed, mixins.Printable):
 
 class Topics(dd.Table):
     model = Topic
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.SiteAdmin)
     detail_layout = """
     id name
     courses.LinesByTopic
@@ -211,7 +211,6 @@ class Line(mixins.BabelNamed):
 
 class Lines(dd.Table):
     model = 'courses.Line'
-    # required = dd.required(user_level='manager')
     detail_layout = """
     id name ref
     topic fees_cat tariff options_cat body_template
@@ -681,7 +680,7 @@ if False:
 
     class Options(dd.Table):
         model = 'courses.Option'
-        required = dd.required(user_level='manager')
+        required_roles = dd.required(dd.StaffMember)
         stay_in_grid = True
         column_names = 'name price *'
         auto_fit_column_widths = True
@@ -697,7 +696,7 @@ if False:
 
     class OptionsByCourse(Options):
         master_key = 'course'
-        required = dd.required()
+        required_roles = dd.required()
 
 
 ## ENROLMENT
@@ -868,7 +867,7 @@ class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
 
 class Enrolments(dd.Table):
     #~ debug_permissions=20130531
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'courses.Enrolment'
     stay_in_grid = True
     parameters = mixins.ObservedPeriod(
@@ -1004,7 +1003,7 @@ class PendingConfirmedEnrolments(Enrolments):
 
 class EnrolmentsByPupil(Enrolments):
     params_panel_hidden = True
-    required = dd.required()
+    required_roles = dd.required()
     master_key = "pupil"
     column_names = 'request_date course user:10 remark amount:10 workflow_buttons *'
     auto_fit_column_widths = True
@@ -1038,7 +1037,7 @@ class EnrolmentsByPupil(Enrolments):
 
 class EnrolmentsByCourse(Enrolments):
     params_panel_hidden = True
-    required = dd.required()
+    required_roles = dd.required()
     master_key = "course"
     column_names = 'request_date pupil_info option \
     remark amount:10 workflow_buttons *'

@@ -111,7 +111,7 @@ class EventTypes(dd.Table):
     An EventType is a list of events which have certain things in common,
     especially they are displayed in the same colour in the calendar panel.
     """)
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = 'cal.EventType'
     column_names = "name *"
 
@@ -178,7 +178,7 @@ class RecurrentEvents(dd.Table):
 
     """
     model = 'cal.RecurrentEvent'
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     column_names = "start_date end_date name every_unit event_type *"
     auto_fit_column_widths = True
     order_by = ['start_date']
@@ -653,7 +653,7 @@ class Events(dd.Table):
 
     help_text = _("A List of calendar entries. Each entry is called an event.")
     model = 'cal.Event'
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     column_names = 'when_text:20 user summary event_type *'
 
     # hidden_columns = """
@@ -794,7 +794,7 @@ class EventsByDay(Events):
     """
     label = _("Appointments today")
     column_names = 'room event_type summary owner workflow_buttons *'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     auto_fit_column_widths = True
     params_panel_hidden = False
 
@@ -866,7 +866,7 @@ class EventsByRoom(Events):
 
 
 class EventsByController(Events):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'owner'
     column_names = 'when_text summary workflow_buttons *'
     # column_names = 'when_text:20 linked_date summary workflow_buttons *'
@@ -875,7 +875,7 @@ class EventsByController(Events):
 if settings.SITE.project_model:
 
     class EventsByProject(Events):
-        required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
         master_key = 'project'
         auto_fit_column_widths = True
         column_names = 'linked_date user summary workflow_buttons'
@@ -885,7 +885,7 @@ if settings.SITE.project_model:
 class OneEvent(Events):
     show_detail_navigator = False
     use_as_default_table = False
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
 
 
 class MyEvents(Events):
@@ -896,7 +896,7 @@ class MyEvents(Events):
     """
     label = _("My appointments")
     help_text = _("Table of my appointments.")
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     column_names = 'when_text project event_type summary workflow_buttons *'
     auto_fit_column_widths = True
 
@@ -929,7 +929,7 @@ class MyAssignedEvents(MyEvents):
     label = _("Events assigned to me")
     help_text = _("Table of events assigned to me.")
     #~ master_key = 'assigned_to'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     #~ column_names = 'when_text:20 project summary workflow_buttons *'
     #~ known_values = dict(assigned_to=EventStates.assigned)
 

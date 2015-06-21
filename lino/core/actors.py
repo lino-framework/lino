@@ -365,9 +365,9 @@ class Actor(actions.Parametrizable):
     Whether to log :ref:`debug_permissions` for this actor.
     """
 
-    required = settings.SITE.get_default_required()
-    update_required = dict()
-    delete_required = dict()
+    required_roles = settings.SITE.get_default_required_roles()
+    update_required = set()
+    delete_required = set()
 
     editable = None
     """Set this explicitly to `True` or `False` to make the whole table

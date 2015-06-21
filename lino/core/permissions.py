@@ -1,6 +1,8 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+from lino.api import _
+
 USER_ROLES = set()
 
 
@@ -20,4 +22,16 @@ class UserRoleMeta(type):
 
 class UserRole(object):
     __metaclass__ = UserRoleMeta
+
+
+class SiteUser(UserRole):
+    verbose_name = _("Site user")
+
+
+class StaffMember(SiteUser):
+    verbose_name = _("Staff member")
+
+
+class SiteAdmin(StaffMember):
+    verbose_name = _("Site administrator")
 

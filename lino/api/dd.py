@@ -252,14 +252,11 @@ from lino.core.inject import do_when_prepared, when_prepared
 
 from lino.core.utils import ParameterPanel, PseudoRequest
 
-from lino.modlib.users.choicelists import UserLevels, UserGroups
-from lino.modlib.users.utils import add_user_group
+#from lino.modlib.users.choicelists import UserLevels, UserGroups
+#from lino.modlib.users.utils import add_user_group
 
 
-
-# from lino.core.actors import get_default_required as required
-
-Required = required = settings.SITE.get_default_required
+Required = required = settings.SITE.get_default_required_roles
 
 
 from lino.utils import IncompleteDate
@@ -321,3 +318,5 @@ from django.utils import translation
 get_language = translation.get_language
 
 # logger.info("20140227 dd.py b %s", site)
+
+from lino.core.permissions import SiteAdmin, SiteUser

@@ -104,7 +104,7 @@ class Task(Component):
 class Tasks(dd.Table):
     help_text = _("""A calendar task is something you need to do.""")
     model = 'cal.Task'
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     column_names = 'start_date summary workflow_buttons *'
     order_by = ["start_date", "start_time"]
 
@@ -187,7 +187,7 @@ class Tasks(dd.Table):
 
 class TasksByController(Tasks):
     master_key = 'owner'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     column_names = 'start_date summary workflow_buttons id'
     #~ hidden_columns = set('owner_id owner_type'.split())
     auto_fit_column_widths = True
@@ -199,7 +199,7 @@ if settings.SITE.user_model:
         Shows the list of automatically generated tasks for this user.
         """
         master_key = 'user'
-        required = dd.required(user_groups='office')
+        required_roles = dd.required(OfficeUser)
 
     class MyTasks(Tasks):
         """All my tasks.  Only those whose start_date is today or in the
@@ -208,8 +208,7 @@ future.  This table is used in
 
         """
         label = _("My tasks")
-        required = dd.required(user_groups='office')
-        #~ required = dict()
+        required_roles = dd.required(OfficeUser)
         help_text = _("Table of all my tasks.")
         column_names = 'start_date summary workflow_buttons project'
         params_panel_hidden = True
@@ -226,7 +225,7 @@ future.  This table is used in
 if settings.SITE.project_model:
 
     class TasksByProject(Tasks):
-        required = dd.required(user_groups='office')
+        required_roles = dd.required(OfficeUser)
         master_key = 'project'
         column_names = 'start_date user summary workflow_buttons *'
 

@@ -167,17 +167,14 @@ class ChangeStateAction(actions.Action):
 
     def __init__(self, target_state, required, help_text=None, **kw):
         self.target_state = target_state
-        #~ kw.update(label=getattr(target_state,'action_label',target_state.text))
-        #~ kw.setdefault('label',target_state.text)
-        #~ required = getattr(target_state,'required',None)
-        #~ if required is not None:
         assert not 'required' in kw
-        new_required = dict(self.required)
-        new_required.update(required)
+        new_required = self(self.required_roles)
+        new_required |= required
         if target_state.name:
 
             m = getattr(target_state.choicelist, 'allow_transition', None)
             if m is not None:
+                raise Exception(20150621)
                 assert not 'allowed' in required
 
                 def allow(action, user, obj, state):

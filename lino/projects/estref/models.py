@@ -8,9 +8,12 @@ The :xfile:`models` module for :ref:`estref` app.
 """
 
 from lino.api import dd, rt
+from lino.core.permissions import SiteUser, StaffMember
 
 
 def site_setup(site):
-    site.modules.countries.Places.required = dd.required(auth=False)
-    site.modules.countries.Countries.required = dd.required(auth=False)
-
+    lst = (site.modules.countries.Places,
+           site.modules.countries.Countries)
+    for t in lst:
+        t.required_roles.discard(SiteUser)
+        t.required_roles.discard(StaffMember)

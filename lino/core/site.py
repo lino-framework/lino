@@ -1707,20 +1707,18 @@ documentation.
         from lino.utils.dpy import install_migrations
         install_migrations(self, *args)
 
-    def get_default_required(self, **kwargs):
+    def get_default_required_roles(self, *args):
         """Return a dict with the default value for the :attr:`required
         <lino.core.actors.Actor.required>` attribute of every actor.
         This is also the default value for
-        :meth:`lino.core.plugin.Plugin.get_default_required`.
+        :meth:`lino.core.plugin.Plugin.get_default_required_roles`.
 
         """
         # setting the default value for `auth` is moved to
         # `boundaction.__init__` because `Site.user_model` is known
         # only after importing the models
 
-        # if self.user_model is not None:
-        #     kwargs.setdefault('auth', True)
-        return kwargs
+        return set(args)
 
     def parse_date(self, s):
         """Convert a string formatted using :attr:`date_format_strftime` or
@@ -1828,25 +1826,17 @@ documentation.
 
         """
 
-        from lino.modlib.users.choicelists import (UserProfiles,
-                                                   UserGroups, UserLevels)
+        from lino.modlib.users.choicelists import UserProfiles
+        from lino.core.permissions import SiteUser, SiteAdmin
 
-        def grouplevels(level):
-            level = getattr(UserLevels, level)
-            kw = dict(level=level)
-            for g in UserGroups.items():
-                if g.value is not None:
-                    kw[g.value+'_level'] = level
-            return kw
-
-        UserProfiles.reset()
+        UserProfiles.clear()
         add = UserProfiles.add_item
         add('000', _("Anonymous"), name='anonymous',
             readonly=self.user_model is not None,
             authenticated=False,
-            **grouplevels('user'))
-        add('100', _("User"), name='user', **grouplevels('user'))
-        add('900', _("Administrator"), name='admin', **grouplevels('admin'))
+            roles=set())
+        add('100', _("User"), name='user', roles=set([SiteUser]))
+        add('900', _("Administrator"), name='admin', roles=set([SiteAdmin]))
 
     def setup_choicelists(self):
         """This is a hook for code to be run *after* all plugins have been

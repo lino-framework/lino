@@ -35,7 +35,7 @@ class GuestRoles(dd.Table):
     help_text = _("The role of a guest expresses what the "
                   "partner is going to do there.")
     model = GuestRole
-    required = dd.required(user_groups='office', user_level='admin')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     detail_layout = """
     id name
     #build_method #template #email_template #attach_to_email
@@ -100,7 +100,7 @@ class Guests(dd.Table):
     "The default table for :class:`Guest`."
     help_text = _("""A guest is a partner invited to an event. """)
     model = 'cal.Guest'
-    required = dd.required(user_groups='office', user_level='admin')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     column_names = 'partner role workflow_buttons remark event *'
     detail_layout = """
     event partner role
@@ -194,26 +194,26 @@ class Guests(dd.Table):
 
 class GuestsByEvent(Guests):
     master_key = 'event'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     auto_fit_column_widths = True
     column_names = 'partner role workflow_buttons'
 
 
 class GuestsByRole(Guests):
     master_key = 'role'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
 
 if settings.SITE.is_installed('contacts'):
 
     class GuestsByPartner(Guests):
         label = _("Presences")
         master_key = 'partner'
-        required = dd.required(user_groups='office')
+        required_roles = dd.required(OfficeUser)
         column_names = 'event__when_text workflow_buttons'
         auto_fit_column_widths = True
 
     class MyPresences(Guests):
-        required = dd.required(user_groups='office')
+        required_roles = dd.required(OfficeUser)
         order_by = ['event__start_date', 'event__start_time']
         label = _("My presences")
         help_text = _(
@@ -269,7 +269,7 @@ if settings.SITE.is_installed('contacts'):
 
     class MyGuests(Guests):
         label = _("My guests")
-        required = dd.required(user_groups='office')
+        required_roles = dd.required(OfficeUser)
         order_by = ['event__start_date', 'event__start_time']
         column_names = 'event__start_date event__start_time event_summary role workflow_buttons remark *'
 

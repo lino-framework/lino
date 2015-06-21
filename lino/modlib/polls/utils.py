@@ -19,7 +19,7 @@ class PollStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Poll States")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
 
 
 add = PollStates.add_item
@@ -43,7 +43,7 @@ class ResponseStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Response States")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
 
 
 add = ResponseStates.add_item
@@ -53,15 +53,5 @@ add('20', _("Registered"), 'registered', editable=False)
 
 ResponseStates.registered.add_transition(_("Register"), states='draft')
 ResponseStates.draft.add_transition(_("Deregister"), states="registered")
-
-
-# class QuestionType(dd.Choice):
-    
-# class QuestionTypes(dd.ChoiceList):
-#     verbose_name_plural = _("Question Types")
-#     required = dd.required(user_level='admin')
-    
-# add = QuestionTypes.add_item
-# add('10', _("Draft"), 'draft', editable=True)
 
 

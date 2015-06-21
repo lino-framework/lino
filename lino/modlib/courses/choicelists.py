@@ -20,7 +20,7 @@ from lino.api import dd
 
 
 class CourseStates(dd.Workflow):
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.SiteAdmin)
 
 add = CourseStates.add_item
 add('10', _("Draft"), 'draft', editable=True)
@@ -35,7 +35,7 @@ add('20', _("Registered"), 'registered', editable=False)
 
 class EnrolmentStates(dd.Workflow):
     verbose_name_plural = _("Enrolment states")
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.SiteAdmin)
     invoiceable = models.BooleanField(_("invoiceable"), default=True)
     uses_a_place = models.BooleanField(_("Uses a place"), default=True)
 

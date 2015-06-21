@@ -318,7 +318,7 @@ class VisibleComponent(Component, Permittable):
         self.allow_read = curry(make_view_permission_handler(
             self, True,
             self.debug_permissions,
-            **self.required), self)
+            self.required_roles), self)
 
     def is_visible(self):
         if self.hidden:
@@ -344,7 +344,7 @@ class VisibleComponent(Component, Permittable):
         if label is not None:
             self.label = label
         if required is not NOT_PROVIDED:
-            self.required = required
+            self.required_roles = required
         # if help_text is not None:
         #     self.help_text = help_text
 

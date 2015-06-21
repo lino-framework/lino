@@ -37,6 +37,7 @@ from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
 from lino.core.utils import (Permittable, Parametrizable,
                              InstanceAction)
+from lino.core.permissions import SiteUser
 from lino.utils.choosers import Chooser
 
 PLAIN_PAGE_LENGTH = 15
@@ -810,7 +811,7 @@ class InsertRow(TableAction):
     hide_top_toolbar = True
     help_text = _("Insert a new record")
     # ~ readonly = False # see blog/2012/0726
-    required = dict(user_level='user')
+    required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
     hide_virtual_fields = True
@@ -853,7 +854,7 @@ class InsertRow(TableAction):
 class UpdateRowAction(Action):
     show_in_workflow = False
     readonly = False
-    required = dict(user_level='user')
+    required_roles = set([SiteUser])
 
 
 class SaveRow(Action):
@@ -1167,7 +1168,7 @@ class DeleteSelected(MultipleRowAction):
     sort_index = 30
     readonly = False
     show_in_workflow = False
-    required = dict(user_level='user')
+    required_roles = set([SiteUser])
     #~ callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")

@@ -279,7 +279,8 @@ class UserInsert(dd.FormLayout):
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
-    required = dict(user_level='manager')
+    required_roles = [dd.SiteAdmin]
+    # required = dict(user_level='manager')
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]

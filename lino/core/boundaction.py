@@ -31,23 +31,19 @@ class BoundAction(object):
         self.action = action
         self.actor = actor
 
-        required = dict()
+        required = set()
         if action.readonly:
-            required.update(actor.required)
-        #~ elif isinstance(action,InsertRow):
-            #~ required.update(actor.create_required)
+            required |= actor.required_roles
         elif isinstance(action, actions.DeleteSelected):
-            required.update(actor.delete_required)
+            required |= actor.delete_required
         else:
-            required.update(actor.update_required)
-        required.update(action.required)
+            required |= actor.update_required
+        required |= action.required_roles
 
         if settings.SITE.user_model is not None:
-            required.setdefault('auth', True)
-
-        #~ print 20120628, str(a), required
-        #~ def wrap(a,required,fn):
-            #~ return fn
+            if len(required) == 0:
+                from lino.core.permissions import SiteUser
+                required = set([SiteUser])
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions
@@ -65,10 +61,10 @@ class BoundAction(object):
         from lino.modlib.users.utils import (
             make_permission_handler, make_view_permission_handler)
         self.allow_view = curry(make_view_permission_handler(
-            self, action.readonly, debug_permissions, **required), action)
+            self, action.readonly, debug_permissions, required), action)
         self._allow = curry(make_permission_handler(
             action, actor, action.readonly,
-            debug_permissions, **required), action)
+            debug_permissions, required), action)
         #~ if debug_permissions:
             #~ logger.info("20130424 _allow is %s",self._allow)
         #~ actor.actions.define(a.action_name,ba)

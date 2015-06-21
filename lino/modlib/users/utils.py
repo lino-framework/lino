@@ -11,35 +11,12 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.db.models.fields import NOT_PROVIDED
-
 from django.conf import settings
 
 from lino.core import workflows
 from lino.core.utils import obj2str
 
-from .choicelists import UserProfiles, UserGroups, UserLevels
-
-
-def add_user_group(name, label):
-    """Add a user group to the :class:`UserGroups
-    <lino.modlib.users.choicelists.UserGroups>` choicelist. If a group
-    with that name already exists, add `label` to the existing group.
-
-    """
-    #~ logging.info("add_user_group(%s,%s)",name,label)
-    #~ print "20120705 add_user_group(%s,%s)" % (name,unicode(label))
-    g = UserGroups.items_dict.get(name)
-    if g is None:
-        g = UserGroups.add_item(name, label)
-    else:
-        if g.text != label:
-            g.text += " & " + unicode(label)
-    #~ if False:
-        # TODO: 'UserProfile' object has no attribute 'accounting_level'
-    k = name + '_level'
-    UserProfiles.inject_field(k, UserLevels.field(g.text, blank=True))
-    UserProfiles.virtual_fields[k].lino_resolve_type()
+from .choicelists import UserProfiles
 
 
 def make_permission_handler(*args, **kw):
@@ -133,71 +110,19 @@ def make_view_permission_handler(*args, **kw):
 
 
 def make_view_permission_handler_(
-        actor, readonly, debug_permissions,
-        user_level=None, user_groups=None,
-        allow=None, auth=False, owner=None, states=None):
+        actor, readonly, debug_permissions, required_roles):
 
-    if allow is not None:
-        if not isinstance(actor.action, workflows.ChangeStateAction):
-            raise Exception("20130724 %s" % actor)
+        # user_level=None, user_groups=None,
+        # allow=None, auth=False, owner=None, states=None):
+
     if True:
         # ignore `allow` requirement for view_permission because
         # workflows.Choice.add_transition
         def allow(action, profile):
-            return True
-    # if settings.SITE.user_model is not None:
-    if True:  # e.g. public readonly site
-        if auth:
-            allow_before_auth = allow
-
-            def allow(action, profile):
-                if not profile.authenticated:
-                    return False
-                return allow_before_auth(action, profile)
-
-        if user_groups is not None:
-            if isinstance(user_groups, basestring):
-                user_groups = user_groups.split()
-            if user_level is None:
-                user_level = UserLevels.user
-            else:
-                user_level = getattr(UserLevels, user_level, None)
-                if user_level is None:
-                    raise Exception("Invalid user_level %r for %s" %
-                                    (user_level, actor))
-            for g in user_groups:
-                # raise Exception if no such group exists
-                UserGroups.get_by_value(g)
-                #~ if not UserGroups.get_by_name(g):
-                    #~ raise Exception("Invalid UserGroup %r" % g)
-            allow1 = allow
-
-            def allow(action, profile):
-                if not allow1(action, profile):
-                    return False
-                for g in user_groups:
-                    level = getattr(profile, g + '_level', NOT_PROVIDED)
-                    if level is NOT_PROVIDED:
-                        # We need to report the guilty actor,
-                        # otherwise it is difficult to locate the error.
-                        raise Exception(
-                            "user_group '%s' required by %s does not exist" %
-                            (g, actor))
-                        return False
-                    if level >= user_level:
-                        return True
-                    #~ elif debug_permissions:
-                        #~ logger.info("20130704 level %r < %r",level,user_level)
-                return False
-
-        elif user_level is not None:
-            user_level = getattr(UserLevels, user_level)
-            allow_user_level = allow
-
-            def allow(action, profile):
-                if profile.level < user_level:
-                    return False
-                return allow_user_level(action, profile)
+            for rr in action.required_roles:
+                if isinstance(rr, profile.roles):
+                    return True
+            return False
 
     if not readonly:
         allow3 = allow
@@ -226,8 +151,7 @@ def make_view_permission_handler_(
 
 
 def make_permission_handler_(
-    elem, actor, readonly, debug_permissions,
-        user_level=None, user_groups=None,
+    elem, actor, readonly, debug_permissions, required_roles,
         allow=None, auth=False, owner=None, states=None):
 
     #~ if str(actor) == 'courses.PendingCourseRequests':
@@ -240,7 +164,11 @@ def make_permission_handler_(
 
     if allow is None:
         def allow(action, user, obj, state):
-            return True
+            for rr in action.required_roles:
+                if isinstance(rr, user.profile.roles):
+                    return True
+            return False
+
     # if settings.SITE.user_model is not None:
     if True:  # e.g. public readonly site
         if auth:
@@ -262,44 +190,6 @@ def make_permission_handler_(
                         #~ logger.info("20130424 allow_owner returned False")
                     return False
                 return allow_owner(action, user, obj, state)
-
-        if user_groups is not None:
-            if isinstance(user_groups, basestring):
-                user_groups = user_groups.split()
-            if user_level is None:
-                user_level = UserLevels.user
-            else:
-                user_level = getattr(UserLevels, user_level)
-            for g in user_groups:
-                # raise Exception if no such group exists
-                UserGroups.get_by_value(g)
-                #~ if not UserGroups.get_by_name(g):
-                    #~ raise Exception("Invalid UserGroup %r" % g)
-            allow1 = allow
-
-            def allow(action, user, obj, state):
-                if not allow1(action, user, obj, state):
-                    #~ if action.action_name == 'wf7':
-                        #~ logger.info("20130424 allow1 returned False")
-                    return False
-                for g in user_groups:
-                    level = getattr(user.profile, g + '_level')
-                    if level >= user_level:
-                        return True
-                return False
-
-        elif user_level is not None:
-            user_level = getattr(UserLevels, user_level)
-            allow_user_level = allow
-
-            def allow(action, user, obj, state):
-                #~ if user.profile.level is None or user.profile.level < user_level:
-                if user.profile.level < user_level:
-                    #~ print 20120715, user.profile.level
-                    #~ if action.action_name == 'wf7':
-                        #~ logger.info("20130424 allow_user_level returned False")
-                    return False
-                return allow_user_level(action, user, obj, state)
 
     if states is not None:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):

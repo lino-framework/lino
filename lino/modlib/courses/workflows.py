@@ -52,7 +52,7 @@ class PrintAndChangeStateAction(dd.ChangeStateAction):
 
 
 class CertifyEnrolment(PrintAndChangeStateAction):
-    required = dd.required(states='confirmed')
+    required_states = 'confirmed'
     label = _("Certify")
     #~ label = _("Award")
     #~ label = school.EnrolmentStates.award.text
@@ -67,7 +67,7 @@ class ConfirmEnrolment(dd.ChangeStateAction):
     #~ icon_name = 'cancel'
     #~ required = dict(states='assigned',owner=True)
     # ~ required = dict(states='published rescheduled took_place')#,owner=True)
-    required = dict(states='requested')  # ,owner=True)
+    required_states = 'requested'  # ,owner=True)
     help_text = _("Check for possible problems.")
 
     def run_from_ui(self, ar, **kw):

@@ -110,7 +110,7 @@ class RemoteCalendar(mixins.Sequenced):
 
 class RemoteCalendars(dd.Table):
     model = 'cal.RemoteCalendar'
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
 
 
 class Room(mixins.BabelNamed):
@@ -127,7 +127,7 @@ class Room(mixins.BabelNamed):
 
 class Rooms(dd.Table):
     help_text = _("List of rooms where calendar events can happen.")
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = 'cal.Room'
     detail_layout = """
     id name
@@ -146,7 +146,7 @@ class Priority(mixins.BabelNamed):
 
 class Priorities(dd.Table):
     help_text = _("List of possible priorities of calendar events.")
-    required = dd.required(user_groups='office', user_level='manager')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = Priority
     column_names = 'name *'
 

@@ -544,7 +544,7 @@ class Permittable(object):
 
     """
 
-    required = {}
+    required_roles = set()
     """
     The permissions required to view this actor.
     A dict with permission requirements.
@@ -570,7 +570,7 @@ class Permittable(object):
         raise NotImplementedError()
 
 
-def add_requirements(obj, **kw):
+def add_requirements(obj, *args):
     """Add the specified requirements to `obj`.  `obj` can be an
     :class:`lino.core.actors.Actor` or any :class:`Permittable`.
     Application code uses this indirectly through the shortcut methods
@@ -578,10 +578,7 @@ def add_requirements(obj, **kw):
     :meth:`Permittable.add_requirements`.
 
     """
-    new = dict()
-    new.update(obj.required)
-    new.update(kw)
-    obj.required = new
+    obj.required_roles = obj.required_roles | set(args)
 
 
 class InstanceAction(object):

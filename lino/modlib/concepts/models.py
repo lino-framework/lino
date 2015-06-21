@@ -56,7 +56,6 @@ class Concept(mixins.BabelNamed):
 
 
 class Concepts(dd.Table):
-    #~ required = dd.required(user_level='manager')
     model = Concept
     column_names = 'name id abbr'
     detail_layout = """

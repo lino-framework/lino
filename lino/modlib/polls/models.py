@@ -55,7 +55,7 @@ class ChoiceSet(mixins.BabelNamed):
 
 
 class ChoiceSets(dd.Table):
-    required = dd.Required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'polls.ChoiceSet'
     detail_layout = """
     name
@@ -84,12 +84,12 @@ class Choice(mixins.BabelNamed, mixins.Sequenced):
 
 class Choices(dd.Table):
     model = 'polls.Choice'
-    required = dd.Required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
 
 
 class ChoicesBySet(Choices):
     master_key = 'choiceset'
-    required = dd.Required()
+    required_roles = dd.required()
 
 
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
@@ -201,7 +201,7 @@ class Polls(dd.Table):
 
 
 class AllPolls(Polls):
-    required = dd.Required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     column_names = 'id ref title user state *'
 
 
@@ -262,7 +262,7 @@ Question.set_widget_options('number', width=5)
 
 
 class Questions(dd.Table):
-    required = dd.Required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'polls.Question'
     column_names = "seqno poll number title choiceset is_heading *"
     detail_layout = """
@@ -275,7 +275,7 @@ class Questions(dd.Table):
 
 
 class QuestionsByPoll(Questions):
-    required = dd.Required()
+    required_roles = dd.required()
     master_key = 'poll'
     column_names = 'seqno number title:50 is_heading *'
     auto_fit_column_widths = True
@@ -378,7 +378,7 @@ class Responses(dd.Table):
 
 
 class AllResponses(Responses):
-    required = dd.Required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
 
 
 class MyResponses(ByUser, Responses):
@@ -452,7 +452,7 @@ class AnswerChoice(dd.Model):
 
 
 class AnswerChoices(dd.Table):
-    required = dd.Required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     model = 'polls.AnswerChoice'
 
 
@@ -488,7 +488,7 @@ class AnswerRemarksByAnswer(AnswerRemarks):
 
 
 class AllAnswerRemarks(AnswerRemarks):
-    required = dd.Required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
 
 
 class AnswersByResponseRow(object):
