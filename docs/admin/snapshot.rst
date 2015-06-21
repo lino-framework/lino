@@ -6,9 +6,10 @@ Making a snapshot of a Lino database
 
 .. xfile:: make_snapshot.sh
 
-The :xfile:`make_snapshot.sh` script makes a :manage:`dump2py`
-snapshot of a Lino database.
-
+The :xfile:`make_snapshot.sh` script makes a snapshot of a Lino
+database, including a Python dump (made with :manage:`dump2py`), a
+`pip freeze`, configuration files, local fixtures and possibly other
+local files and a `mysqldump`.
 
 Before you can use it, your system administrator must manually copy it
 from the template file :srcref:`/bash/make_snapshot.sh` to an

@@ -42,7 +42,7 @@ class ProductCats(dd.Table):
     """
 
 
-class Product(mixins.BabelNamed):
+class Product(mixins.BabelNamed, mixins.Referrable):
 
     class Meta:
         verbose_name = _("Product")
@@ -61,28 +61,20 @@ class Product(mixins.BabelNamed):
     else:
         vat_class = dd.DummyField()
 
-    #~ vatExempt = models.BooleanField(verbose_name=_("VAT exempt"),default=False)
-    #~ price = dd.PriceField(verbose_name=_("Price"),blank=True,null=True)
-    # image = models.ImageField(blank=True,null=True,
-    # upload_to=".")
-
-    #~ def __unicode__(self):
-        #~ return self.name
-
 
 class Products(dd.Table):
     required = dd.required(auth=True)
     model = 'products.Product'
     order_by = ["id"]
-    column_names = "id:3 name cat vat_class #sales_price:6 *"
+    column_names = "id ref name cat vat_class *"
 
     insert_layout = """
-    cat #sales_price vat_class
+    ref cat
     name
     """
 
     detail_layout = """
-    id cat #sales_price vat_class
+    id ref cat #sales_price vat_class
     name
     description
     """

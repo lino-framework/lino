@@ -69,6 +69,7 @@ class Site(Site):
         yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.plausibility'
+        yield 'lino.modlib.tinymce'
 
         yield 'lino.projects.presto.lib.presto'
 
