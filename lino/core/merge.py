@@ -126,13 +126,14 @@ class MergePlan(object):
                 # ~ # setattr(qs,gfk.name,merge_to)
                 #~ i.full_clean()
                 #~ i.save()
-
+                
         # Build the return message
         msg = _("Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows.") % dict(
             this=self.obj, merge_to=self.merge_to, updated=update_count)
-
-        # delete any reference to the deleted object
+        # Delete object from database:
         self.obj.delete()
+
+        # Delete the reference to the deleted object:
         del self.obj
         return msg
 
@@ -149,6 +150,7 @@ class MergeAction(actions.Action):
     show_in_workflow = False
     readonly = False
     required = dict(user_level='admin')
+    must_log = True
 
     def __init__(self, model, **kw):
 
@@ -226,6 +228,7 @@ class MergeAction(actions.Action):
             msg = mp.execute(request=ar.request)
             ar2.goto_instance(mp.merge_to)
             ar2.success(msg, alert=True, close_window=True)
+            logger.info("%s : %s", ar.get_user(), msg)
 
         if msg is None:
             return ok(ar)

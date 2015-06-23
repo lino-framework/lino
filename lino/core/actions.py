@@ -145,7 +145,6 @@ class Action(Parametrizable, Permittable):
     """
     The text to appear on the button.
     """
-
     debug_permissions = False
     save_action_name = None
     disable_primary_key = True

@@ -349,6 +349,12 @@ class Model(models.Model):
         See :blogref:`20150221`.
 
         """
+
+        # Double-check to avoid "murder bug" (20150623).
+        msg = self.disable_delete()
+        if msg is not None:
+            raise Warning(msg)
+
         kernel = settings.SITE.kernel
         # print "20141208 generic related objects for %s:" % obj
         must_cascade = []
@@ -363,6 +369,11 @@ class Model(models.Model):
                     raise Warning(self.delete_veto_message(
                         qs.model, qs.count()))
         for qs in must_cascade:
+            if qs.count():
+                logger.info("Deleting %d %s before deleting %s",
+                            qs.count(),
+                            qs.model._meta.verbose_name_plural,
+                            obj2str(self))
             for obj in qs:
                 obj.delete()
         super(Model, self).delete(**kw)

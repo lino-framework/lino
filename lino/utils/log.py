@@ -150,7 +150,7 @@ production server with :setting:`DEBUG` False.
 
     from django.utils.log import AdminEmailHandler
 
-    #~ print 20101225, config
+    # print 20150623, config
     # encoding = config.get('encoding', 'UTF-8')
     logfile = config.get('filename', None)
     rotate = config.get('rotate', True)

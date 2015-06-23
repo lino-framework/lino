@@ -1098,4 +1098,3 @@ class ActionRequest(ActorRequest):
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
 
-
