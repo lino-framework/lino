@@ -14,7 +14,7 @@ Lino Noi extension of :mod:`lino.modlib.products`.
 from lino.modlib.products import Plugin
 
 
-class Plugin(Plugin):
+# class Plugin(Plugin):
     
-    extends_models = ['Product']
+#     extends_models = ['Product']
 
