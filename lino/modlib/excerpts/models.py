@@ -419,10 +419,14 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
     #     mails_by_owner = dd.ShowSlaveTable('outbox.MailsByController')
 
     def get_body_template(self):
-        assert self.__class__ is not self.owner.__class__
-        tplname = self.owner.get_body_template()
-        if tplname:
-            return tplname
+        """Return the body template to use for this excerpt."""
+        owner = self.owner
+        # owner is None e.g. if is a broken GFK
+        if owner is not None:
+            assert self.__class__ is not owner.__class__
+            tplname = owner.get_body_template()
+            if tplname:
+                return tplname
         return self.excerpt_type.body_template
 
     def get_body_template_filename(self):

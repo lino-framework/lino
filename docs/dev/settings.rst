@@ -4,6 +4,7 @@ Lino and your Django settings
 
 This section explains some basic things about your Django settings and
 Lino.
+See also :doc:`/admin/settings`.
 
 .. _settings:
 
@@ -12,21 +13,41 @@ Django settings module
 
 The **Django settings module** is the most important thing in Django.
 Almost everything you do with Django requires the settings module to
-be loaded. Django does that automatically, but needs to know where it
-is. You can specify this either using the
-:envvar:`DJANGO_SETTINGS_MODULE` environment variable or the
-`--settings` command-line option of certain management commands.
+be loaded. Django does that automagically as soon as you import some
+module which needs the settings. And when that moment arrives, Django
+needs to know the name of your settings module. 
 
-It must be importable. That is, if it contains e.g. ``foo.bar.baz``,
-then Django will do an equivalent of ``import foo.bar.baz`` before it
-is able to do anything else.
+You can specify this either using the :envvar:`DJANGO_SETTINGS_MODULE`
+environment variable or the `--settings` command-line option of
+certain admin commands.
 
-See also :doc:`/admin/settings`.
+To illustrate this, let's open a Python session in an environment with
+Django installed but *without* any :envvar:`DJANGO_SETTINGS_MODULE`
+variable defined, and then type:
+
+>>> from django.conf import settings
+
+This will pass. But as soon as you want to actually access some
+attribute of `settings`, you will get an `ImproperlyConfigured`
+exception:
+
+>>> settings.DEBUG
+Traceback (most recent call last):
+...
+django.core.exceptions.ImproperlyConfigured: Requested setting DATABASES, 
+but settings are not configured. You must either define the environment 
+variable DJANGO_SETTINGS_MODULE or call settings.configure() before 
+accessing settings.
+
 
 .. envvar:: DJANGO_SETTINGS_MODULE
   
 The :envvar:`DJANGO_SETTINGS_MODULE` environment variable is expected
 to contain the *Python name* of the `Django settings module`_. 
+
+The settings module must be importable. That is, if
+:envvar:`DJANGO_SETTINGS_MODULE` contains e.g. ``foo.bar.baz``, then
+Django will do the equivalent of ``import foo.bar.baz``.
 
 .. xfile:: settings.py
 
@@ -34,7 +55,6 @@ When we speak about "the :xfile:`settings.py` file", then we actually
 mean the `Django settings module`_.  That's because the filename of a
 Django settings module is often in a file named :xfile:`settings.py`.
 But in reality it can be some arbitrary filename.
-
 
 
 
@@ -52,11 +72,18 @@ your local settings module and then define a :setting:`SITE` variable.
 
 .. setting:: SITE
 
-Lino expects one important variable in your :xfile:`settings.py` file.
-It must be named :setting:`SITE`, and it must contain an instance of
-the :class:`lino.core.site.Site` class (or --more often-- some
-subclass thereof).  This :setting:`SITE` setting is what turns your
-Django project into a Lino application.
+A Lino :xfile:`settings.py` file always contains the following line::
+
+  SITE = Site(globals())
+
+This line instantiates your local :setting:`SITE` object.  Every Lino
+application requires a setting named :setting:`SITE` which must be a
+:class:`Site <lino.core.site.Site>` instance.
+
+The :setting:`SITE` setting is what turns your Django project into a
+Lino application.
+
+More about this in :doc:`site`.
 
 Inheriting settings
 ===================

@@ -93,28 +93,33 @@ class Model(models.Model):
         abstract = True
 
     allow_cascaded_delete = frozenset()
-    """A list of names of ForeignKey fields of this model that allow for
-    cascaded delete.
+    """A set of names of ForeignKey of GenericForeignKey fields of this
+    model that allow for cascaded delete.
+
+    If this is a simple string, Lino expects it to be a
+    space-separated list of filenames and convert it into a set at
+    startup.
     
-    Lino by default forbids to delete (using the web interface) any
-    object that is referenced by other objects. Users will get a
-    message of type "Cannot delete X because n Ys refer to it".
+    Lino by default forbids to delete any object that is referenced by
+    other objects. Users will get a message of type "Cannot delete X
+    because n Ys refer to it".
     
     Example: Lino should not refuse to delete a Mail just because it
     has some Recipient.  When deleting a Mail, Lino should also delete
     its Recipients.  That's why
     :class:`lino.modlib.outbox.models.Recipient` has
-    ``allow_cascaded_delete = ['mail']``.
+    ``allow_cascaded_delete = 'mail'``.
     
-    Note that this is also used by
+    This is also used by
     :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
     whether slaves of a record being duplicated should be duplicated
     as well.
     
     This mechanism doesn't depend on nor influence Django's `on_delete
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-    option.  But of course you should not `allow_cascaded_delete` for
-    fields which have e.g. `on_delete=PROTECT`.
+    option.  But of course you should not
+    :attr:`allow_cascaded_delete` for fields which have
+    e.g. `on_delete=PROTECT`.
 
     """
 
@@ -342,11 +347,31 @@ class Model(models.Model):
 
     def delete(self, **kw):
         """Before actually deleting an object, we override Django's behaviour
-        concerning objects related via a GFK field.
+        concerning related objects via a GFK field.
+
+        In Lino you can configure the cascading behaviour using
+        :attr:`allow_cascaded_delete`.
+
         See also :doc:`/dev/gfks`.
 
-        It seems that this is useless because Django does it too.
-        See :blogref:`20150221`.
+        It seems that Django deletes *generic related objects* only if
+        the object being deleted has a `GenericRelation
+        <https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
+        field (according to `Why won't my GenericForeignKey cascade
+        when deleting?
+        <http://stackoverflow.com/questions/6803018/why-wont-my-genericforeignkey-cascade-when-deleting>`_).
+        OTOH this statement seems to be wrong: it happens also in my
+        projects which do *not* use any `GenericRelation`.  As
+        :mod:`test_broken_gfk
+        <lino_welfare.projects.eupen.tests.test_broken_gfk>` shows.
+
+        TODO: instead of calling :meth:`disable_delete
+        <lino.core.model.Model.disable_delete>` here again (it has
+        been called earlier by the delete action before asking for user
+        confirmation), Lino might change the `on_delete` attribute of all
+        `ForeignKey` fields which are not in
+        :attr:`allow_cascaded_delete` from ``CASCADE`` to
+        ``PRTOTECTED`` at startup.
 
         """
 
