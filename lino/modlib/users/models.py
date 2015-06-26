@@ -22,7 +22,7 @@ from lino.core import actions
 
 from lino.mixins import CreatedModified
 
-from .choicelists import UserProfiles, UserLevels, UserGroups
+from .choicelists import UserProfiles
 from .mixins import UserAuthored
 
 
@@ -162,7 +162,7 @@ class User(CreatedModified):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if user.profile.level < UserLevels.admin:
+                if not dd.SiteAdmin.permitted_for(user.profile):
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
@@ -175,7 +175,8 @@ class User(CreatedModified):
         #~ if ar.get_user().is_superuser:
         #~ if request.user.is_superuser:
         rv = super(User, self).disabled_fields(ar)
-        if ar.get_user().profile.level < UserLevels.admin:
+        if not dd.SiteAdmin.permitted_for(ar.get_user().profile):
+        # if ar.get_user().profile.level < UserLevels.admin:
             rv.add('profile')
         return rv
 
@@ -279,8 +280,7 @@ class UserInsert(dd.FormLayout):
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
-    required_roles = [dd.SiteAdmin]
-    # required = dict(user_level='manager')
+    required_roles = dd.required(dd.SiteAdmin)
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
@@ -308,7 +308,7 @@ class Users(dd.Table):
 class MySettings(Users):
     use_as_default_table = False
     hide_top_toolbar = True
-    required = dict()
+    required_roles = dd.required()
     default_list_action_name = 'detail'
 
     @classmethod
@@ -360,12 +360,12 @@ class Authority(UserAuthored):
 
 
 class Authorities(dd.Table):
-    required = dict(user_level='manager')
+    required_roles = dd.required(dd.SiteAdmin)
     model = Authority
 
 
 class AuthoritiesGiven(Authorities):
-    required = dict()
+    required_roles = dd.required()
     master_key = 'user'
     label = _("Authorities given")
     column_names = 'authorized'
@@ -373,7 +373,7 @@ class AuthoritiesGiven(Authorities):
 
 
 class AuthoritiesTaken(Authorities):
-    required = dict()
+    required_roles = dd.required()
     master_key = 'authorized'
     label = _("Authorities taken")
     column_names = 'user'

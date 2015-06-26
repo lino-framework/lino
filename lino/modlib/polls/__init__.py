@@ -11,6 +11,7 @@ It is also used in :ref:`welfare`.
    :toctree:
 
     models
+    choicelists
     utils
     fixtures.bible
     fixtures.feedback

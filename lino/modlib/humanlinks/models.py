@@ -57,7 +57,7 @@ class LinkType(dd.Choice):
 
 
 class LinkTypes(dd.ChoiceList):
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     verbose_name = _("Parency type")
     verbose_name_plural = _("Parency types")
     item_class = LinkType
@@ -199,7 +199,7 @@ class Link(dd.Model):
 
 class Links(dd.Table):
     model = 'humanlinks.Link'
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent
@@ -211,7 +211,7 @@ class Links(dd.Table):
 class LinksByHuman(Links):
     "See :class:`ml.humanlinks.LinksByHuman`."
     label = _("Human Links")
-    required = dd.required()
+    required_roles = dd.required()
     master = config.person_model
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'

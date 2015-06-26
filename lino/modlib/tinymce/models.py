@@ -9,13 +9,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from django.conf import settings
-from django.utils.encoding import force_unicode
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.office.choicelists import OfficeUser
 from lino.api import dd
 
 
@@ -47,7 +45,7 @@ class TextFieldTemplate(UserAuthored):
 
 class TextFieldTemplates(dd.Table):
     model = TextFieldTemplate
-    required = dd.required(user_groups='office', user_level='admin')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     insert_layout = dd.FormLayout("""
     name
     user #team
@@ -61,4 +59,4 @@ class TextFieldTemplates(dd.Table):
 
 
 class MyTextFieldTemplates(TextFieldTemplates, ByUser):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)

@@ -578,7 +578,7 @@ def add_requirements(obj, *args):
     :meth:`Permittable.add_requirements`.
 
     """
-    obj.required_roles = obj.required_roles | set(args)
+    obj.required_roles |= set(args)
 
 
 class InstanceAction(object):

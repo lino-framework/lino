@@ -15,8 +15,7 @@ from django.utils.encoding import force_unicode
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.users.mixins import UserAuthored, ByUser
-from lino.modlib.users.choicelists import UserProfiles, UserLevels, UserGroups
+from lino.modlib.users.choicelists import UserProfiles
 from lino.api import dd
 from lino.core import actions
 

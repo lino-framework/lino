@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
@@ -28,7 +28,7 @@ from lino.core import actions
 from lino.core import layouts
 from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
-from lino.core.permissions import StaffMember
+from lino.modlib.users.choicelists import StaffMember
 from lino.utils.xmlgen.html import E
 
 

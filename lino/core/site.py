@@ -1826,17 +1826,16 @@ documentation.
 
         """
 
-        from lino.modlib.users.choicelists import UserProfiles
-        from lino.core.permissions import SiteUser, SiteAdmin
+        from lino.modlib.users.choicelists import (
+            UserProfiles, Anonymous, SiteUser, SiteAdmin)
 
         UserProfiles.clear()
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"), name='anonymous',
+        add = UserProfiles.add_item_instance
+        add(Anonymous('000', name='anonymous',
             readonly=self.user_model is not None,
-            authenticated=False,
-            roles=set())
-        add('100', _("User"), name='user', roles=set([SiteUser]))
-        add('900', _("Administrator"), name='admin', roles=set([SiteAdmin]))
+            authenticated=False))
+        add(SiteUser('100', name='user'))
+        add(SiteAdmin('900', name='admin'))
 
     def setup_choicelists(self):
         """This is a hook for code to be run *after* all plugins have been

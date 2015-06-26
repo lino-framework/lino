@@ -174,7 +174,7 @@ class AllProblems(Problems):
     :menuselection:`Explorer --> System --> Plausibility problems`.
 
     """
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
 
 
 class ProblemsByOwner(Problems):

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,6 +19,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
 from lino import mixins
+from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.users.choicelists import StaffMember
 
 from .models import Component
 
@@ -104,7 +106,7 @@ class Task(Component):
 class Tasks(dd.Table):
     help_text = _("""A calendar task is something you need to do.""")
     model = 'cal.Task'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(StaffMember, OfficeUser)
     column_names = 'start_date summary workflow_buttons *'
     order_by = ["start_date", "start_time"]
 

@@ -14,6 +14,7 @@ This is the base for all settings of lino.projects.min1
 
 from lino.projects.std.settings import *
 
+
 class Site(Site):
     title = "Lino Mini 1"
 
@@ -37,3 +38,23 @@ class Site(Site):
     def get_admin_main_items(self, ar):
         yield self.modules.cal.MyEvents
 
+    def setup_user_profiles(self):
+        """
+        Defines application-specific default user profiles.
+        Local site administrators can override this in their :xfile:.
+        """
+        from lino.modlib.users.choicelists import (
+            UserProfiles, Anonymous, SiteUser, StaffMember, SiteAdmin)
+        from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+
+        class SiteUser(OfficeUser): pass
+        class StaffMember(StaffMember, OfficeStaff): pass
+        class SiteAdmin(SiteAdmin, OfficeStaff): pass
+
+        UserProfiles.clear()
+        add = UserProfiles.add_item_instance
+        add(Anonymous('000', name='anonymous',
+                      readonly=True, authenticated=False))
+        add(SiteUser('100',  name='user'))
+        add(StaffMember('200', name='staff'))
+        add(SiteAdmin('900', name='admin'))

@@ -18,14 +18,13 @@ the same except that it uses `eidjslib` instead of :ref:`eidreader`.
 .. autosummary::
    :toctree:
 
+    choicelists
     mixins
     models
 
 """
 
-import os
-
-from lino.api import ad
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):  # was: use_eidreader

@@ -42,16 +42,23 @@ class Site(Site):
         """
         Defines a set of user profiles.
         """
-        from django.utils.translation import ugettext_lazy as _
-        from lino.modlib.users.choicelists import UserProfiles
-        UserProfiles.reset(
-            '* office reception')
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"),      '_ _ _',
-            name='anonymous',
+        # from django.utils.translation import ugettext_lazy as _
+        from lino.modlib.users.choicelists import (
+            UserProfiles, Anonymous, SiteAdmin)
+        from lino.modlib.office.choicelists import OfficeUser
+        from lino.modlib.reception.choicelists import ReceptionClerk
+
+        class SiteUser(OfficeUser, ReceptionClerk):
+            pass
+
+        class SiteAdmin(SiteAdmin, OfficeUser, ReceptionClerk):
+            pass
+
+        UserProfiles.clear()
+        add = UserProfiles.add_item_instance
+        add(Anonymous('000', name='anonymous',
             readonly=True,
-            authenticated=False)
-        add('100', _("User"),           'U U U')
-        add('900', _("Administrator"),  'A A A',
-            name='admin')
+            authenticated=False))
+        add(SiteUser('100', name='user'))
+        add(SiteAdmin('900', name='admin'))
 

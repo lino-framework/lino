@@ -115,14 +115,8 @@ def make_view_permission_handler_(
         # user_level=None, user_groups=None,
         # allow=None, auth=False, owner=None, states=None):
 
-    if True:
-        # ignore `allow` requirement for view_permission because
-        # workflows.Choice.add_transition
-        def allow(action, profile):
-            for rr in action.required_roles:
-                if isinstance(rr, profile.roles):
-                    return True
-            return False
+    def allow(action, profile):
+        return profile.has_required_role(required_roles)
 
     if not readonly:
         allow3 = allow
@@ -144,8 +138,9 @@ def make_view_permission_handler_(
             v = allow4(action, profile)
             if True:  # not v:
                 logger.info(
-                    u"debug_permissions (view) %r required(%s,%s), allow(%s)--> %s",
-                    action, user_level, user_groups, profile, v)
+                    u"debug_permissions (view) %r "
+                    "required(%s), allow(%s)--> %s",
+                    action, action.required_roles, profile, v)
             return v
     return allow
 
@@ -164,12 +159,8 @@ def make_permission_handler_(
 
     if allow is None:
         def allow(action, user, obj, state):
-            for rr in action.required_roles:
-                if isinstance(rr, user.profile.roles):
-                    return True
-            return False
+            return user.profile.has_required_role(required_roles)
 
-    # if settings.SITE.user_model is not None:
     if True:  # e.g. public readonly site
         if auth:
             allow_before_auth = allow

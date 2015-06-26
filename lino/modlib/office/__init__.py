@@ -6,6 +6,8 @@ other modules.
 
 .. autosummary::
 
+  choicelists
+
 """
 
 from lino.api import ad, _
@@ -16,7 +18,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Office")
 
-    def on_site_startup(self, site):
-        from lino.modlib.users.utils import add_user_group
-        add_user_group(self.app_label, self.verbose_name)
+    # def on_site_startup(self, site):
+    #     from lino.modlib.users.utils import add_user_group
+    #     add_user_group(self.app_label, self.verbose_name)
 

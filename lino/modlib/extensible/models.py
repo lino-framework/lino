@@ -23,6 +23,8 @@ from django.utils.translation import ugettext_lazy as _
 from lino.api import dd
 from lino.core import constants
 
+from lino.modlib.office.choicelists import OfficeUser
+
 from ..cal.models import Subscription, Calendars, Events
 
 
@@ -93,7 +95,7 @@ class CalendarPanel(dd.Frame):
     """Open a window with a classical "Calendar" view. """
     help_text = _("""Displays your events in a "calendar view" \
     with the possibility to switch between daily, weekly, monthly view.""")
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     label = _("Calendar")
 
     @classmethod
@@ -103,7 +105,7 @@ class CalendarPanel(dd.Frame):
 
 class PanelCalendars(Calendars):
     use_as_default_table = False
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     #~ column_names = 'id name description color is_hidden'
     #~ column_names = 'id babel_name description color is_hidden'
     column_names = 'id summary description color is_hidden'
@@ -143,7 +145,7 @@ class PanelEvents(Events):
     """
     The table used for Ext.ensible CalendarPanel.
     """
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     use_as_default_table = False
     #~ parameters = dict(team_view=models.BooleanField(_("Team View")))
 

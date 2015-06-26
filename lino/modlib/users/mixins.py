@@ -17,13 +17,13 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
+from lino.api import dd
 
 from lino.core import fields
 from lino.core import model
 from lino.core import actions
 from lino.core import dbtables
 
-from .choicelists import UserLevels
 from .utils import AnonymousUser
 
 
@@ -37,10 +37,9 @@ class UserAuthored(model.Model):
     class Meta:
         abstract = True
 
-    required = dict(auth=True)
-
-    manager_level_field = 'level'
-    """By default, only system managers can edit other users' work.  
+    # manager_level_field = 'level'
+    manager_roles_required = dd.StaffMember
+    """By default, only system managers can edit other users' work.
 
     If the application defines customized UserGroups, then we may want
     to permit it also to department managers.  If an application
@@ -91,14 +90,15 @@ class UserAuthored(model.Model):
         """Only system managers can edit other users' work.
 
         """
+        if hasattr(self, 'manager_level_field'):
+            raise Exception("{0} has a manager_level_field".format(self))
         if not super(UserAuthored, self).get_row_permission(ar, state, ba):
             return False
         user = ar.get_user()
-        if self.manager_level_field is not None \
+        if self.manager_roles_required is not None \
            and self.user != ar.user \
            and (ar.subst_user is None or self.user != ar.subst_user) \
-           and getattr(user.profile, self.manager_level_field) < \
-           UserLevels.manager:
+           and not isinstance(user.profile, self.manager_roles_required):
             return ba.action.readonly
         return True
 
@@ -144,14 +144,13 @@ if settings.SITE.user_model is None:
 class AuthorAction(actions.Action):
     """
     """
-    manager_level_field = 'level'
+    manager_roles_required = dd.StaffMember
+    # manager_level_field = 'level'
 
     def get_action_permission(self, ar, obj, state):
         user = ar.get_user()
-        if obj.user != user and getattr(
-                user.profile, self.manager_level_field) < UserLevels.manager:
+        if obj.user != user and not isinstance(
+                user.profile, self.manager_roles_required):
             return self.readonly
         return super(
             AuthorAction, self).get_action_permission(ar, obj, state)
-
-

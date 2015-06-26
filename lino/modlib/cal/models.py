@@ -24,6 +24,7 @@ from lino.utils import ONE_DAY
 
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
 
 from .utils import (
     DurationUnits, Recurrencies,
@@ -163,7 +164,8 @@ class Component(StartedSummaryDescription,
     """
     workflow_state_field = 'state'
 
-    manager_level_field = 'office_level'
+    manager_roles_required = OfficeStaff
+    # manager_level_field = 'office_level'
 
     class Meta:
         abstract = True
@@ -355,7 +357,7 @@ class UserDetailMixin(dd.Panel):
         cal_left:30 cal.TasksByUser:60
         """,
         label=MODULE_LABEL,
-        required=dict(user_groups='office'))
+        required_roles=[OfficeUser])
 
     
 def unused_site_setup(site):
@@ -377,7 +379,7 @@ def unused_site_setup(site):
         cal_left:30 cal.TasksByUser:60
         """,
         MODULE_LABEL,
-        required=dict(user_groups='office'))
+        required_roles=[OfficeUser])
 
 
 customize_users()

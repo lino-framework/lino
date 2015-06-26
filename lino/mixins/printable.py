@@ -41,6 +41,8 @@ from lino.core.model import Model
 from lino.core.choicelists import Choice, ChoiceList
 from lino.mixins.duplicable import Duplicable
 
+from lino.modlib.users.choicelists import StaffMember
+
 from lino.utils.media import MediaFile
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
@@ -531,7 +533,7 @@ class EditTemplate(BasePrintAction):
     sort_index = 51
     url_action_name = 'edit_tpl'
     label = _('Edit Print Template')
-    required = dict(user_level='manager')
+    required_roles = settings.SITE.get_default_required_roles(StaffMember)
 
     def run_from_ui(self, ar, **kw):
 

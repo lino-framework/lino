@@ -49,7 +49,7 @@ class Couple(dd.Model):
 
 class Couples(dd.Table):
     model = Couple
-    required = dd.Required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
 
 
 class CoupleField(dd.VirtualField):

@@ -50,7 +50,7 @@ class Panel(object):
     The `options` parameter can be:
 
     - label
-    - required
+    - required_roles
 
     Unlike a :class:`FormLayout` it cannot have any child panels
     and cannot become a tabbed panel.
@@ -58,6 +58,7 @@ class Panel(object):
     """
 
     def __init__(self, desc, label=None, **options):
+        assert not 'required' in options
         self.desc = desc
         if label is not None:
             options.update(label=label)

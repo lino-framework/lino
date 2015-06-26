@@ -331,7 +331,7 @@ class VisibleComponent(Component, Permittable):
     def setup(self, width=None, height=None, label=None,
               preferred_width=None,
               # help_text=None,
-              required=NOT_PROVIDED,
+              required_roles=NOT_PROVIDED,
               **kw):
         self.value.update(kw)
         #~ Component.__init__(self,name,**kw)
@@ -343,8 +343,8 @@ class VisibleComponent(Component, Permittable):
             self.height = height
         if label is not None:
             self.label = label
-        if required is not NOT_PROVIDED:
-            self.required_roles = required
+        if required_roles is not NOT_PROVIDED:
+            self.required_roles = required_roles
         # if help_text is not None:
         #     self.help_text = help_text
 
@@ -457,32 +457,28 @@ def py2js(v):
         #~ return 'undefined'
         return 'null'
     if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
-        #~ return "[ %s ]" % ", ".join([py2js(x) for x in v])
         elems = [py2js(x) for x in v
-                 if (not isinstance(x, VisibleComponent)) or x.get_view_permission(_for_user_profile)]
+                 if (not isinstance(x, VisibleComponent))
+                 or x.get_view_permission(_for_user_profile)]
         return "[ %s ]" % ", ".join(elems)
+
     if isinstance(v, dict):  # ) is types.DictType:
-        #~ print 20100226, repr(v)
         return "{ %s }" % ", ".join([
             "%s: %s" % (py2js(k), py2js(v)) for k, v in v.items()
-            if (not isinstance(v, VisibleComponent)) or v.get_view_permission(_for_user_profile)
+            if (not isinstance(v, VisibleComponent))
+            or v.get_view_permission(_for_user_profile)
         ])
-            #~ "%s: %s" % (k,py2js(v)) for k,v in v.items()])
+
     if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
-    #~ if isinstance(v,CRL):
-        #~ return str(v)
     if isinstance(v, Quantity):
         return '"%s"' % v
     if isinstance(v, (int, long, decimal.Decimal, fractions.Fraction)):
         return str(v)
     if isinstance(v, IncompleteDate):
         return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
-        #~ return '"%s"' % v
     if isinstance(v, datetime.datetime):
-        #~ """20120120"""
         return '"%s"' % v.strftime(settings.SITE.datetime_format_strftime)
-        #~ return '"%s"' % v.strftime('%Y-%m-%d %H:%M:%S')
     if isinstance(v, datetime.time):
         return '"%s"' % v.strftime(settings.SITE.time_format_strftime)
     if isinstance(v, datetime.date):
@@ -490,9 +486,6 @@ def py2js(v):
             v = IncompleteDate(v)
             return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
         return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
-        #~ return 'new Date(%d,%d,%d)' % (v.year,v.month-1,v.day)
-        #~ return repr('%d.%d.%d' % (v.day,v.month,v.year))
-        #~ return repr(str(v))
 
     if isinstance(v, float):
         return repr(v)

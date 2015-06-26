@@ -143,7 +143,7 @@ class Checkers(dd.ChoiceList):
     <lino.core.actors.Actor.detail_layout>`.
 
     """
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     verbose_name = _("Plausibility checker")
     verbose_name_plural = _("Plausibility checkers")
     item_class = Checker

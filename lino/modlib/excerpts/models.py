@@ -39,6 +39,7 @@ from lino.utils import join_elems
 
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
+from lino.modlib.users.choicelists import SiteAdmin
 
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
@@ -46,6 +47,8 @@ has_davlink = davlink is not None and settings.SITE.use_java
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.outbox.mixins import Mailable, MailableType
+
+from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
 
 from .mixins import Certifiable
 from .choicelists import Shortcuts
@@ -251,7 +254,7 @@ class ExcerptTypes(dd.Table):
     Displays all rows of :class:`ExcerptType`.
     """
     model = 'excerpts.ExcerptType'
-    required = dd.required(user_level='admin', user_groups='office')
+    required_roles = dd.required(SiteAdmin, OfficeUser)
     column_names = ("content_type_display primary certifying name "
                     "build_method  template body_template *")
     order_by = ["content_type__app_label", "content_type__model", "name"]
@@ -398,7 +401,8 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     """
 
-    manager_level_field = 'office_level'
+    manager_roles_required = OfficeStaff
+    # manager_level_field = 'office_level'
     allow_cascaded_delete = "owner"
 
     class Meta:
@@ -618,7 +622,7 @@ if has_davlink:
         config = dd.Panel(
             "body_template_content",
             label=_("Configure"),
-            required=dd.required(user_level="admin"))
+            required_roles=dd.required(SiteAdmin))
 
 else:
 
@@ -639,7 +643,7 @@ dd.update_field(Excerpt, 'contact_person',
 
 class Excerpts(dd.Table):
     """Base class for all tables on :class:`Excerpt`."""
-    required = dd.required(user_groups='office', user_level='admin')
+    required_roles = dd.required(SiteAdmin, OfficeUser)
     # label = _("Excerpts history")
     icon_name = 'script'
     use_as_default_table = False
@@ -687,14 +691,14 @@ class Excerpts(dd.Table):
 
 class ExcerptsByX(Excerpts):
     use_as_default_table = True
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     order_by = ['-build_time', 'id']
     auto_fit_column_widths = True
     # window_size = (70, 20)
 
 
 class MyExcerpts(ByUser, ExcerptsByX):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     column_names = "build_time excerpt_type project *"
 
 

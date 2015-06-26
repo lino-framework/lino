@@ -39,7 +39,7 @@ class ListType(mixins.BabelNamed):
 
 
 class ListTypes(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'lists.ListType'
     column_names = 'name *'
 
@@ -57,7 +57,7 @@ class List(mixins.BabelNamed, mixins.Referrable):
 
 
 class Lists(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'lists.List'
     column_names = 'ref name list_type *'
     order_by = ['ref']
@@ -90,7 +90,7 @@ class Member(mixins.Sequenced):
 
 
 class Members(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'lists.Member'
 
 

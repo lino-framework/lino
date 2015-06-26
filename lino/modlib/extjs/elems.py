@@ -238,13 +238,11 @@ class LayoutElement(VisibleComponent):
             setattr(self, k, v)
 
         # new since 20121130. theoretically better
-        if not 'required' in kw:
-            required = dict()
-            required.update(layout_handle.layout._datasource.required)
-            required.update(self.required)
-            kw.update(required=required)
-        #~ else:
-            #~ logger.info("20121130 %s %s",name,kw)
+        if not 'required_roles' in kw:
+            required = set()
+            required |= layout_handle.layout._datasource.required_roles
+            required |= self.required_roles
+            kw.update(required_roles=required)
 
         VisibleComponent.__init__(self, name, **kw)
         #~ if opts:
@@ -259,8 +257,8 @@ class LayoutElement(VisibleComponent):
     #~ def submit_fields(self):
         #~ return []
 
-    def add_requirements(self, **kw):
-        super(LayoutElement, self).add_requirements(**kw)
+    def add_requirements(self, *args):
+        super(LayoutElement, self).add_requirements(*args)
         self.install_permission_handler()
 
     def loosen_requirements(self, actor):
@@ -268,7 +266,7 @@ class LayoutElement(VisibleComponent):
         also in `actor`.
 
         For example an InsertFormPanel has initially the requirements
-        of the actor who defines it. The actor may not be visible to
+        of the actor who defines it. That actor may not be visible to
         the current user.  But the panel may be used by other actors
         which are visible because they have less requirements.
 
@@ -276,39 +274,46 @@ class LayoutElement(VisibleComponent):
         if self.layout_handle.layout._datasource == actor:
             return  # nothing to loosen
 
-        loosened = False
-        for k, v in self.required.items():
-            if k == 'user_groups':
-                """
-                loosening user_groups requirements
-                means to *add* allowed groups
-                """
-                if k in actor.required:
-                    user_groups = actor.required[k]
-                    if isinstance(user_groups, basestring):
-                        user_groups = user_groups.split()
-                    if isinstance(self.required[k], basestring):
-                        self.required[k] = self.required[k].split()
-                    for group in user_groups:
-                        if not group in self.required[k]:
-                            self.required[k].append(group)
-                            loosened = True
-                else:
-                    del self.required[k]
-                    loosened = True
-            elif k in actor.required:
-                if actor.required[k] < v:
-                    loosened = True
-                    self.required[k] = actor.required[k]
-            else:
-                loosened = True
-                del self.required[k]
+        s1 = self.required_roles
+        self.required_roles &= actor.required_roles
+        loosened = s1 != self.required_roles
+
+        # loosened = False
+        # for k, v in self.required.items():
+        #     if k == 'user_groups':
+        #         """
+        #         loosening user_groups requirements
+        #         means to *add* allowed groups
+        #         """
+        #         if k in actor.required:
+        #             user_groups = actor.required[k]
+        #             if isinstance(user_groups, basestring):
+        #                 user_groups = user_groups.split()
+        #             if isinstance(self.required[k], basestring):
+        #                 self.required[k] = self.required[k].split()
+        #             for group in user_groups:
+        #                 if not group in self.required[k]:
+        #                     self.required[k].append(group)
+        #                     loosened = True
+        #         else:
+        #             del self.required[k]
+        #             loosened = True
+        #     elif k in actor.required:
+        #         if actor.required[k] < v:
+        #             loosened = True
+        #             self.required[k] = actor.required[k]
+        #     else:
+        #         loosened = True
+        #         del self.required[k]
 
         if loosened:
+            # tpl = "20150626 loosened requirements of {0} from {1}"
+            # logger.info(tpl.format(self, actor))
             self.install_permission_handler()
 
     def __repr__(self):
-        return "<%s %s in %s>" % (self.__class__.__name__, self.name, self.layout_handle.layout)
+        return "<%s %s in %s>" % (
+            self.__class__.__name__, self.name, self.layout_handle.layout)
 
     def get_property(self, name):
         v = getattr(self, name, None)
@@ -2031,9 +2036,9 @@ def create_layout_panel(lh, name, vertical, elems, **kwargs):
     pkw.update(width=kwargs.pop('width', None))
     pkw.update(height=kwargs.pop('height', None))
     # pkw.update(help_text=kwargs.pop('help_text', None))
-    v = kwargs.pop('required', NOT_PROVIDED)
+    v = kwargs.pop('required_roles', NOT_PROVIDED)
     if v is not NOT_PROVIDED:
-        pkw.update(required=v)
+        pkw.update(required_roles=v)
     if kwargs:
         raise Exception("Unknown panel attributes %r for %s" % (kwargs, lh))
     if name == 'main':
@@ -2169,7 +2174,7 @@ def create_layout_element(lh, name, **kw):
                 field._return_type_for_method = de.slave_as_html_meth()
                 lh.add_store_field(field)
                 e = HtmlBoxElement(lh, field, **kw)
-                e.add_requirements(**de.required)
+                e.add_requirements(*de.required_roles)
                 return e
 
             elif de.slave_grid_format == 'summary':

@@ -697,8 +697,8 @@ class Actor(actions.Parametrizable):
         self.hidden_elements = self.hidden_elements | set(names)
 
     @classmethod
-    def add_view_requirements(cls, **kw):
-        return add_requirements(cls, **kw)
+    def add_view_requirements(cls, *args):
+        return add_requirements(cls, *args)
 
     @classmethod
     def get_view_permission(self, profile):
@@ -706,6 +706,7 @@ class Actor(actions.Parametrizable):
         given profile.
 
         """
+        # return isinstance(profile, tuple(self.required_roles))
         return True
 
     @classmethod

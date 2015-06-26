@@ -25,6 +25,8 @@ from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.modlib.outbox.mixins import MailableType, Mailable
 from lino.modlib.contacts.mixins import ContactRelated
+from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+
 from .choicelists import SpecialTypes
 
 
@@ -51,7 +53,7 @@ class NoteTypes(dd.Table):
     Displays all rows of :class:`NoteType`.
     """
     model = 'notes.NoteType'
-    required = dd.required(user_level='admin', user_groups='office')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     #~ label = _("Note types")
     column_names = 'name build_method template special_type *'
     order_by = ["name"]
@@ -89,7 +91,7 @@ class EventTypes(dd.Table):
     List of all Event Types.
     """
     model = 'notes.EventType'
-    required = dd.required(user_level='admin', user_groups='office')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     column_names = 'name *'
     order_by = ["name"]
 
@@ -112,7 +114,8 @@ class Note(mixins.TypedPrintable,
 
     """
 
-    manager_level_field = 'office_level'
+    manager_roles_required = OfficeStaff
+    # manager_level_field = 'office_level'
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Note')
@@ -175,7 +178,7 @@ class NoteDetail(dd.FormLayout):
 
 
 class Notes(dd.Table):
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     model = 'notes.Note'
     detail_layout = NoteDetail()
     column_names = "date time id user event_type type project subject * body"
@@ -183,7 +186,7 @@ class Notes(dd.Table):
 
 
 class AllNotes(Notes):
-    required = dd.required(user_groups='office', user_level='admin')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
 
 
 class MyNotes(ByUser, Notes):

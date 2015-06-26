@@ -33,7 +33,7 @@ class ProductCat(mixins.BabelNamed):
 
 class ProductCats(dd.Table):
     model = 'products.ProductCat'
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     order_by = ["id"]
     detail_layout = """
     id name
@@ -63,7 +63,6 @@ class Product(mixins.BabelNamed, mixins.Referrable):
 
 
 class Products(dd.Table):
-    required = dd.required(auth=True)
     model = 'products.Product'
     order_by = ["id"]
     column_names = "id ref name cat vat_class *"

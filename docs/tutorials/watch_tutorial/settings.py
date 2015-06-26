@@ -24,17 +24,6 @@ class Site(Site):
 
         yield 'watch_tutorial'
 
-    def setup_user_profiles(self):
-
-        from lino.modlib.users.choicelists import UserProfiles
-        from django.utils.translation import ugettext_lazy as _
-        UserProfiles.reset('* office')
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"),                  '_ _',
-            name='anonymous', readonly=True, authenticated=False)
-        add('100', _("User"),                       'U U', name='user')
-        add('900', _("Administrator"),              'A A', name='admin')
-
 
 SITE = Site(globals(), no_local=True)
 

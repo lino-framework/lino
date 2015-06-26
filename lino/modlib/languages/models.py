@@ -13,6 +13,8 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
+from lino.modlib.office.choicelists import OfficeUser
+
 
 class Language(mixins.BabelNamed):
 
@@ -27,6 +29,6 @@ class Language(mixins.BabelNamed):
 
 class Languages(dd.Table):
     model = 'languages.Language'
-    required = dd.required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
 
 

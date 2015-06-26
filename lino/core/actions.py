@@ -37,7 +37,7 @@ from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
 from lino.core.utils import (Permittable, Parametrizable,
                              InstanceAction)
-from lino.core.permissions import SiteUser
+# from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
 
 PLAIN_PAGE_LENGTH = 15
@@ -363,6 +363,8 @@ class Action(Parametrizable, Permittable):
     """
 
     hide_virtual_fields = False
+
+    required_states = None
 
     def __init__(self, label=None, **kw):
         """The first argument is the optional `label`, other arguments should
@@ -811,7 +813,7 @@ class InsertRow(TableAction):
     hide_top_toolbar = True
     help_text = _("Insert a new record")
     # ~ readonly = False # see blog/2012/0726
-    required_roles = set([SiteUser])
+    # required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
     hide_virtual_fields = True
@@ -854,7 +856,7 @@ class InsertRow(TableAction):
 class UpdateRowAction(Action):
     show_in_workflow = False
     readonly = False
-    required_roles = set([SiteUser])
+    # required_roles = set([SiteUser])
 
 
 class SaveRow(Action):
@@ -1168,7 +1170,7 @@ class DeleteSelected(MultipleRowAction):
     sort_index = 30
     readonly = False
     show_in_workflow = False
-    required_roles = set([SiteUser])
+    # required_roles = set([SiteUser])
     #~ callable_from = (GridEdit,ShowDetailAction)
     #~ needs_selection = True
     label = _("Delete")
@@ -1221,10 +1223,11 @@ def action(*args, **kw):
     In practice you'll possibly use:
     :attr:`label <Action.label>`,
     :attr:`help_text <Action.help_text>` and
-    :attr:`required <Action.required>`.
+    :attr:`required_roles <Action.required_roles>`.
 
     """
     def decorator(fn):
+        assert not 'required' in kw
         # print 20140422, fn.__name__
         kw.setdefault('custom_handler', True)
         a = Action(*args, **kw)

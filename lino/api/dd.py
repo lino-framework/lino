@@ -319,4 +319,4 @@ get_language = translation.get_language
 
 # logger.info("20140227 dd.py b %s", site)
 
-from lino.core.permissions import SiteAdmin, SiteUser
+from lino.modlib.users.choicelists import SiteAdmin, StaffMember, SiteUser

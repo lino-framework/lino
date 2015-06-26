@@ -66,21 +66,31 @@ class AcceptInvitation(InvitationFeedback):
     notify_subject = _("%(guest)s confirmed invitation %(day)s at %(time)s")
 
 
+class MarkPresent(dd.ChangeStateAction):
+    label = _("Present")
+    help_text = _("Mark this guest as present.")
+    required_states = 'invited accepted'
+
+    def get_action_permission(self, ar, obj, state):
+        if not super(MarkPresent, self).get_action_permission(ar, obj, state):
+            return False
+        return obj.event_id and (obj.event.state == EventStates.took_place)
+
+
+class MarkAbsent(MarkPresent):
+    label = _("Absent")
+    help_text = _("Mark this guest as absent.")
+
+
 @dd.receiver(dd.pre_analyze)
 def gueststates_workflow(sender=None, **kw):
     """
     A Guest can be marked absent or present only for events that took place
     """
-    def event_took_place(action, user, obj, state):
-        return obj.event_id and (obj.event.state == EventStates.took_place)
     GuestStates.accepted.add_transition(AcceptInvitation)
     GuestStates.rejected.add_transition(RejectInvitation)
-    GuestStates.present.add_transition(
-        states='invited accepted',  # owner=True,
-        allow=event_took_place)
-    GuestStates.absent.add_transition(
-        states='invited accepted',  # owner=True,
-        allow=event_took_place)
+    GuestStates.rejected.add_transition(MarkPresent)
+    GuestStates.rejected.add_transition(MarkAbsent)
 
 
 class ResetEvent(dd.ChangeStateAction):
@@ -111,13 +121,13 @@ class CloseMeeting(dd.ChangeStateAction):
 def my_event_workflows(sender=None, **kw):
 
     EventStates.published.add_transition(  # _("Confirm"),
-        states='suggested draft',
+        required_states='suggested draft',
         icon_name='accept',
         help_text=_("Mark this as published. "
                     "All participants have been informed."))
     EventStates.took_place.add_transition(CloseMeeting, name='close_meeting')
     EventStates.cancelled.add_transition(
         pgettext("calendar event action", "Cancel"),
-        states='published draft',
+        required_states='published draft',
         icon_name='cross')
     EventStates.draft.add_transition(ResetEvent)

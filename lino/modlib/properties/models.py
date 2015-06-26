@@ -275,7 +275,7 @@ class PropertyOccurence(dd.Model):
 
 
 class PropGroups(dd.Table):
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     model = PropGroup
     detail_layout = """
     id name 
@@ -284,7 +284,7 @@ class PropGroups(dd.Table):
 
 
 class PropTypes(dd.Table):
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     model = PropType
     detail_layout = """
     id name choicelist default_value
@@ -294,7 +294,7 @@ class PropTypes(dd.Table):
 
 
 class Properties(dd.Table):
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     model = Property
     order_by = ['name']
     #~ column_names = "id name"

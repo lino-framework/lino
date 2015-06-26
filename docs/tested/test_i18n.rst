@@ -28,7 +28,7 @@ all users, we add a filter:
 
 The non-translated result is:
 
->>> ses.show('users.UsersOverview',language='en',**kw)
+>>> ses.show('users.UsersOverview', language='en', **kw)
 ========== =============== ==========
  Username   User Profile    Language
 ---------- --------------- ----------
@@ -38,7 +38,7 @@ The non-translated result is:
 
 Now we look at this table in different languages:
 
->>> ses.show('users.UsersOverview',language='de',**kw)
+>>> ses.show('users.UsersOverview', language='de', **kw)
 ============== ================ =========
  Benutzername   Benutzerprofil   Sprache
 -------------- ---------------- ---------
@@ -47,7 +47,7 @@ Now we look at this table in different languages:
 <BLANKLINE>
 
 
->>> ses.show('users.UsersOverview',language='fr',**kw)
+>>> ses.show('users.UsersOverview', language='fr', **kw)
 =================== ====================== ========
  Nom d'utilisateur   Profil d'utilisateur   Langue
 ------------------- ---------------------- --------
@@ -55,7 +55,7 @@ Now we look at this table in different languages:
 =================== ====================== ========
 <BLANKLINE>
 
->>> ses.show('users.UsersOverview',language='et',**kw)
+>>> ses.show('users.UsersOverview', language='et', **kw)
 ============== ================= ======
  Kasutajanimi   Kasutajaprofiil   Keel
 -------------- ----------------- ------
@@ -64,7 +64,7 @@ Now we look at this table in different languages:
 <BLANKLINE>
 
 
->>> ses.show('users.UsersOverview',language='pt',**kw)
+>>> ses.show('users.UsersOverview', language='pt', **kw)
 ================= =================== ========
  Nome de usuário   Perfil do usuário   Idioma
 ----------------- ------------------- --------
@@ -72,7 +72,7 @@ Now we look at this table in different languages:
 ================= =================== ========
 <BLANKLINE>
 
->>> ses.show('users.UsersOverview',language='pt-br',**kw)
+>>> ses.show('users.UsersOverview', language='pt-br', **kw)
 ================= =================== ========
  Nome de usuário   Perfil do usuário   Idioma
 ----------------- ------------------- --------

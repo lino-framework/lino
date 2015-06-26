@@ -17,7 +17,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 
-from lino.core.permissions import SiteAdmin
 from lino.core.choicelists import ChoiceList, Choice
 
 
@@ -33,16 +32,16 @@ class UserProfile(Choice):
 
     """
 
-    def __init__(self, value, text,
-                 name=None, roles=None, authenticated=True,
+    def __init__(self, value=None, text=None,
+                 name=None, authenticated=True,
                  readonly=False,
                  **kw):
-
+        if value is None:
+            value = self.__module__.split('.')[-2] + '.' \
+                + self.__class__.__name__
         super(UserProfile, self).__init__(value, text, name)
         self.readonly = readonly
-        #~ self.expert = expert
         self.authenticated = authenticated
-        self.roles = roles
         self.kw = kw
 
     def attach(self, cls):
@@ -69,11 +68,33 @@ class UserProfile(Choice):
         s = str(self.choicelist)
         if self.name:
             s += "." + self.name
-        s += ":" + self.value + "("
-        s += ', '.join([r.__name__ for r in self.roles])
-        s += ")"
+        s += ":" + self.value
         return s
 
+    def has_required_role(self, required_roles):
+        for rr in required_roles:
+            if not isinstance(self, rr):
+                return False
+        return True
+
+
+class Anonymous(UserProfile):
+    text = _("Anonymous")
+
+
+class SiteUser(UserProfile):
+    text = _("Site user")
+
+
+class StaffMember(SiteUser):
+    text = _("Staff member")
+
+
+class SiteAdmin(StaffMember):
+    text = _("Administrator")
+
+
+##
 
 class UserProfiles(ChoiceList):
     """The list of user profiles available on this site.
@@ -105,4 +126,3 @@ class UserProfiles(ChoiceList):
     <UserProfile.hidden_languages>` of newly attached choice item.
 
     """
-

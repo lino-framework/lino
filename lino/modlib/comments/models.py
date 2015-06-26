@@ -63,7 +63,7 @@ class Comments(dd.Table):
 
 
 class MyComments(ByUser, Comments):
-    required = dd.required()
+    required_roles = dd.required()
     auto_fit_column_widths = True
     #~ master_key = 'user'
     #~ column_names = "date event_type type subject project body *"
@@ -75,7 +75,7 @@ class MyComments(ByUser, Comments):
 
 
 class CommentsByX(Comments):
-    required = dd.required()
+    required_roles = dd.required()
     #~ column_names = "date event_type type subject body user *"
     order_by = ["-created"]
 

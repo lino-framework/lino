@@ -84,7 +84,7 @@ class LanguageKnowledge(dd.Model):
 
 class LanguageKnowledges(dd.Table):
     model = 'cv.LanguageKnowledge'
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
 
 
 class LanguageKnowledgesByPerson(LanguageKnowledges):
@@ -143,7 +143,7 @@ class EducationLevels(dd.Table):
     """The default table showing all :class:`EducationLevel` instances.
     """
 
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.EducationLevel'
     column_names = 'name is_study is_training *'
     order_by = ['name']
@@ -185,7 +185,7 @@ class StudyType(StudyOrTraining, mixins.BabelNamed):
 class StudyTypes(dd.Table):
     """The default table showing all :class:`StudyType` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = StudyType
     order_by = ["name"]
     detail_layout = """
@@ -262,7 +262,7 @@ class AllTrainings(Trainings):
     """The explorer table showing all :class:`Trainings` instances.
 
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
 
 
 class TrainingsByCountry(Trainings):
@@ -315,7 +315,7 @@ class Studies(dd.Table):
     """The default table showing all :class:`Study` instances.
     """
 
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Study'
     order_by = "country city type content".split()
 
@@ -375,7 +375,7 @@ class Status(mixins.BabelNamed):
 class Statuses(dd.Table):
     """The default table showing all :class:`Status` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Status'
     order_by = ['name']
 
@@ -395,7 +395,7 @@ class Regime(mixins.BabelNamed):
 class Regimes(dd.Table):
     """The default table showing all :class:`Regime` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Regime'
     order_by = ['name']
     detail_layout = """
@@ -413,7 +413,7 @@ class Duration(mixins.BabelNamed):
 class Durations(dd.Table):
     """The default table showing all :class:`Duration` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Duration'
     order_by = ['name']
     detail_layout = """
@@ -436,7 +436,7 @@ class Sector(mixins.BabelNamed):
 class Sectors(dd.Table):
     """The default table showing all :class:`Sector` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = Sector
     order_by = ['name']
     detail_layout = """
@@ -467,7 +467,7 @@ class Functions(dd.Table):
     """The default table showing all :class:`Function` instances.
     """
     #~ debug_permissions = 20130704
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Function'
     column_names = 'name sector *'
     order_by = ['name']
@@ -515,7 +515,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
 class Experiences(dd.Table):
     """The default table showing all :class:`Experience` instances.
     """
-    required_roles = config.get_default_required_roles(dd.SiteStaff)
+    required_roles = config.get_default_required_roles(dd.StaffMember)
     model = 'cv.Experience'
     # stay_in_grid = True
     detail_layout = """

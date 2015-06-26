@@ -38,7 +38,8 @@ class State(choicelists.Choice):
                        #~ icon_file=None,
                        icon_name=None,
                        debug_permissions=None,
-                       **required):
+                       required_states=None,
+                       *required_roles):
         """Declare or create a `ChangeStateAction` which makes the object
         enter this state.  `label` can be either a string or a
         subclass of :class:`ChangeStateAction`.
@@ -68,7 +69,10 @@ class State(choicelists.Choice):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
             assert issubclass(label, ChangeStateAction)
-            if required:
+            if required_roles:
+                raise Exception(
+                    "Cannot specify requirements when using your own class")
+            if required_states:
                 raise Exception(
                     "Cannot specify requirements when using your own class")
             if notify:
@@ -81,15 +85,17 @@ class State(choicelists.Choice):
             for a in workflow_actions:
                 if isinstance(a, label):
                     raise Exception("Duplicate transition label %s" % a)
-            a = label(self, required, **kw)
+            a = label(self, **kw)
         else:
+            if required_states:
+                kw.update(required_states=set(required_states))
             if notify:
                 cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
             if label is None:
                 label = self.text
-            a = cl(self, required, label=label, **kw)
+            a = cl(self, set(required_roles), label=label, **kw)
             if debug_permissions:
                 a.debug_permissions = debug_permissions
         a.attach_to_workflow(self.choicelist, name)
@@ -139,6 +145,7 @@ class Workflow(choicelists.ChoiceList):
     def override_transition(cls, **kw):
         """
         """
+        raise Exception("Must convert after class_permissions")
         for name, cl in kw.items():
             found = False
             for i, a in enumerate(cls.workflow_actions):
@@ -165,23 +172,26 @@ class ChangeStateAction(actions.Action):
     show_in_bbar = False
     show_in_workflow = True
 
-    def __init__(self, target_state, required, help_text=None, **kw):
+    def __init__(self, target_state, required_roles=None,
+                 help_text=None, required_states=None, **kw):
         self.target_state = target_state
         assert not 'required' in kw
-        new_required = self(self.required_roles)
-        new_required |= required
+        assert not 'required_roles' in kw
+        new_required = set(self.required_roles)
+        if required_roles is not None:
+            new_required |= required_roles
         if target_state.name:
 
             m = getattr(target_state.choicelist, 'allow_transition', None)
             if m is not None:
-                raise Exception(20150621)
-                assert not 'allowed' in required
+                raise Exception("20150621 was allow_transition still used?!")
+                assert not 'allowed' in required_roles
 
                 def allow(action, user, obj, state):
                     return m(obj, user, target_state)
                 new_required.update(allow=allow)
 
-        kw.update(required=new_required)
+        kw.update(required_roles=new_required)
         if self.help_text is None:
             if help_text is None:
                 # help_text = string_format(

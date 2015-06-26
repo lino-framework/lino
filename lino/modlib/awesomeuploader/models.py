@@ -29,7 +29,6 @@ class UploaderAction(dd.Action):
 class UploaderPanel(dd.Frame):
 
     help_text = _("Open an window for multiple file uploads.")
-    # required = dd.required(user_groups='office')
     label = _("Uploader")
 
     @classmethod

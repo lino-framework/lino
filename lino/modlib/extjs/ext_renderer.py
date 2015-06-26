@@ -43,6 +43,8 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from lino.utils.xmlgen.html import E
 
+from lino.modlib.users.choicelists import SiteAdmin
+
 if False:
     from lino.utils.jscompressor import JSCompressor
     jscompress = JSCompressor().compress
@@ -52,7 +54,7 @@ else:
 
 from . import elems as ext_elems
 
-from lino.modlib.users.choicelists import UserProfiles, UserLevels
+from lino.modlib.users.choicelists import UserProfiles
 
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
@@ -503,7 +505,7 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=unicode(user)))
 
-                if user.profile.level >= UserLevels.admin:
+                if isinstance(user.profile, SiteAdmin):
                     authorities = [
                         (u.id, unicode(u))
                         for u in settings.SITE.user_model.objects.exclude(
@@ -730,6 +732,11 @@ class ExtRenderer(HtmlRenderer):
         assert profile == jsgen.get_user_profile()
 
         for res in actors_list:
+            # if str(res) == 'about.Inspector':
+            #     msg = "20150626 {0} {1} {2}".format(
+            #         res.required_roles, profile,
+            #         profile.has_required_role(res.required_roles))
+            #     raise Exception(msg)
             add(res,
                 form_panels, res.detail_layout, "%s.DetailFormPanel" % res)
             add(res,
@@ -946,7 +953,8 @@ class ExtRenderer(HtmlRenderer):
         tbl = dh.layout._datasource
 
         yield ""
-        yield "Lino.%s = Ext.extend(Ext.form.FormPanel,{" % dh.layout._formpanel_name
+        yield "Lino.%s = Ext.extend(Ext.form.FormPanel, {" % \
+            dh.layout._formpanel_name
         for k, v in dh.main.ext_options().items():
             #~ if k != 'items':
             if not k in self.SUPPRESSED:
@@ -966,6 +974,8 @@ class ExtRenderer(HtmlRenderer):
             yield "    " + ln
             lc += 1
         if lc == 0:
+            # print 20150626, dh.main.elements[0].required_roles
+            # print 20150626, jsgen._for_user_profile.__class__
             raise Exception("%r of %s has no variables" % (dh.main, dh))
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
@@ -1020,9 +1030,11 @@ class ExtRenderer(HtmlRenderer):
 
         tbl = dh.layout._datasource
         if not dh.main.get_view_permission(jsgen.get_user_profile()):
-            msg = "No view permission for main panel of %s :" % dh.layout._formpanel_name
-            msg += " main requires %s, but actor %s requires %s)" % (dh.main.required,
-                                                                     tbl, tbl.required)
+            msg = "No view permission for main panel of %s :" % \
+                  dh.layout._formpanel_name
+            msg += " main requires %s, but actor %s requires %s)" % (
+                dh.main.required_roles,
+                tbl, tbl.required_roles)
             #~ raise Exception(msg)
             logger.warning(msg)
             return
@@ -1238,7 +1250,7 @@ class ExtRenderer(HtmlRenderer):
         # x = str(rh)
         # if x.startswith('clocking'):
         #     print "20150421 {0}".format(x)
-        profile = jsgen.get_user_profile()
+        # profile = jsgen.get_user_profile()
         rpt = rh.actor
 
         if rpt.parameters and ba.action.use_param_panel:

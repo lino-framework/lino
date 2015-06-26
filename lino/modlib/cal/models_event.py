@@ -25,6 +25,7 @@ from lino import mixins
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.outbox.mixins import MailableType, Mailable
+from lino.modlib.office.choicelists import OfficeUser
 
 from .utils import (
     Recurrencies,
@@ -875,7 +876,7 @@ class EventsByController(Events):
 if settings.SITE.project_model:
 
     class EventsByProject(Events):
-    required_roles = dd.required(OfficeUser)
+        required_roles = dd.required(OfficeUser)
         master_key = 'project'
         auto_fit_column_widths = True
         column_names = 'linked_date user summary workflow_buttons'

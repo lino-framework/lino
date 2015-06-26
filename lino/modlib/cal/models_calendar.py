@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
 
 from lino.api import dd, rt
 from lino import mixins
@@ -83,7 +84,8 @@ class Subscription(UserAuthored):
         verbose_name_plural = _("Subscriptions")
         unique_together = ['user', 'calendar']
 
-    manager_level_field = 'office_level'
+    manager_roles_required = OfficeStaff
+    # manager_level_field = 'office_level'
 
     calendar = dd.ForeignKey(
         'cal.Calendar', help_text=_("The calendar you want to subscribe to."))

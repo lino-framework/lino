@@ -9,7 +9,7 @@ The :xfile:`models` module for the :mod:`lino.projects.belref` app.
 
 from lino.api import dd
 
-from lino.core.permissions import SiteUser, StaffMember
+from lino.modlib.users.choicelists import SiteUser, StaffMember
 
 concepts = dd.resolve_app('concepts')
 

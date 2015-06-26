@@ -17,20 +17,7 @@ class Site(Site):
     project_model = 'tickets.Project'
 
     def setup_user_profiles(self):
-        """
-        Defines application-specific default user profiles.
-        Local site administrators can override this in their :xfile:.
-        """
-        from lino.modlib.users.choicelists import UserProfiles
-        from django.utils.translation import ugettext_lazy as _
-        UserProfiles.reset('* office')
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"),       '_ _', 'anonymous',
-            readonly=True, authenticated=False)
-        add('100', _("User"),            'U U', 'user')
-        add('200', _("Developer"),       'U U', 'developer')
-        add('300', _("Senior"),          'U U', 'senior')
-        add('900', _("Administrator"),   'A A', 'admin')
+        import lino.projects.presto.roles
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

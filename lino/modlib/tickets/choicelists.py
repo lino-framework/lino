@@ -131,14 +131,14 @@ want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
-    TicketStates.todo.add_transition(states="new")
+    TicketStates.todo.add_transition(required_states="new")
     # TicketStates.callback.add_transition(states="todo new fixed")
-    TicketStates.done.add_transition(states="todo new")
+    TicketStates.done.add_transition(required_states="todo new")
     # TicketStates.tested.add_transition(states="todo new callback fixed")
-    TicketStates.refused.add_transition(states="todo new")
+    TicketStates.refused.add_transition(required_states="todo new")
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
-    # TicketStates.sleeping.add_transition(states="todo new callback")
+    # TicketStates.sleeping.add_transition(required_states="todo new callback")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
     TicketStates.work_states = (TicketStates.todo, TicketStates.new)
@@ -186,7 +186,7 @@ class LinkTypes(dd.ChoiceList):
         lists the deployed tickets.
 
     """
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     verbose_name = _("Dependency type")
     verbose_name_plural = _("Dependency types")
     item_class = LinkType

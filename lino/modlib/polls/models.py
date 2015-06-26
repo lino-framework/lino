@@ -808,4 +808,4 @@ class PollResult(Questions):
                 known_values=dict(question=obj, choice=c))
 
 
-dd.add_user_group(config.app_label, config.verbose_name)
+# dd.add_user_group(config.app_label, config.verbose_name)

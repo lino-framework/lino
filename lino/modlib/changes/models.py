@@ -120,7 +120,7 @@ class Changes(dd.Table):
             settings.SITE.user_model,
             blank=True)
 
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
 
     editable = False
     model = 'changes.Change'
@@ -159,7 +159,7 @@ class ChangesByObject(Changes):
     object.
 
     """
-    required = dd.required()
+    required_roles = dd.required(dd.StaffMember)
     master_key = 'object'
     column_names = 'time user type master diff master_type master_id'
 
@@ -169,7 +169,7 @@ class ChangesByMaster(Changes):
     including those applied to "child" objects.
 
     """
-    required = dd.required()
+    required_roles = dd.required()
     master_key = 'master'
     column_names = 'time user type object diff object_type object_id'
 

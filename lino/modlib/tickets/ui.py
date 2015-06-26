@@ -112,7 +112,7 @@ class ProjectsByCompany(Projects):
 
 class Links(dd.Table):
     model = 'tickets.Link'
-    required = dd.required(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent
@@ -124,7 +124,7 @@ class Links(dd.Table):
 class LinksByTicket(Links):
 
     label = _("Dependencies")
-    required = dd.required()
+    required_roles = dd.required()
     master = 'tickets.Ticket'
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'
@@ -236,7 +236,6 @@ class TicketDetail(dd.DetailLayout):
 
 
 class Tickets(dd.Table):
-    required = dd.Required(auth=True)
     model = 'tickets.Ticket'
     order_by = ["id"]
     column_names = 'id summary:50 feedback standby closed ' \

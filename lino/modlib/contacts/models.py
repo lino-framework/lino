@@ -209,7 +209,7 @@ class PartnerDetail(dd.DetailLayout):
 
 
 class Partners(dd.Table):
-    required = dd.Required(user_level='user')  # user_groups='office')
+    # required_roles = dd.required(dd.SiteUser)
     model = 'contacts.Partner'
     column_names = "name email * id"
     order_by = ['name', 'id']
@@ -333,7 +333,7 @@ class CompanyType(mixins.BabelNamed):
 
 
 class CompanyTypes(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -434,7 +434,7 @@ class RoleType(mixins.BabelNamed):
 
 
 class RoleTypes(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = RoleType
 
 
@@ -490,13 +490,12 @@ class Role(dd.Model, Addressable):
 
 
 class Roles(dd.Table):
-    required = dd.required(user_level='manager')
-    #~ required_user_level = UserLevels.manager
+    required_roles = dd.required(dd.StaffMember)
     model = 'contacts.Role'
 
 
 class RolesByCompany(Roles):
-    required = dd.required()
+    required_roles = dd.required()
     auto_fit_column_widths = True
     #~ required_user_level = None
     label = _("Contact persons")
@@ -506,7 +505,7 @@ class RolesByCompany(Roles):
 
 
 class RolesByPerson(Roles):
-    required = dd.required()
+    required_roles = dd.required()
     #~ required_user_level = None
     label = _("Contact for")
     master_key = 'person'

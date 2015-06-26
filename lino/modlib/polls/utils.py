@@ -27,9 +27,12 @@ add('10', _("Draft"), 'draft')
 add('20', _("Published"), 'published')
 add('30', _("Closed"), 'closed')
 
-PollStates.published.add_transition(_("Publish"), states='draft')
-PollStates.closed.add_transition(_("Close"), states='draft published')
-PollStates.draft.add_transition(_("Reopen"), states='published closed')
+PollStates.published.add_transition(
+    _("Publish"), required_states='draft')
+PollStates.closed.add_transition(
+    _("Close"), required_states='draft published')
+PollStates.draft.add_transition(
+    _("Reopen"), required_states='published closed')
 
 
 class ResponseStates(dd.Workflow):
@@ -51,7 +54,9 @@ add('10', _("Draft"), 'draft', editable=True)
 add('20', _("Registered"), 'registered', editable=False)
 
 
-ResponseStates.registered.add_transition(_("Register"), states='draft')
-ResponseStates.draft.add_transition(_("Deregister"), states="registered")
+ResponseStates.registered.add_transition(
+    _("Register"), required_states='draft')
+ResponseStates.draft.add_transition(
+    _("Deregister"), required_states="registered")
 
 

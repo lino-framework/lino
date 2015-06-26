@@ -31,7 +31,7 @@ class ContentTypes(dd.Table):
     """
     model = 'contenttypes.ContentType'
 
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.SiteAdmin)
 
     detail_layout = """
     id name app_label model base_classes
@@ -114,7 +114,7 @@ class HelpText(dd.Model):
 
 
 class HelpTexts(dd.Table):
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     model = 'contenttypes.HelpText'
     column_names = "field verbose_name help_text id content_type"
 

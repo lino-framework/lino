@@ -1130,4 +1130,4 @@ class SuggestedCoursesByPupil(ActiveCourses):
         return E.span(btn)  # E.p(...) until 20150128
 
 
-dd.add_user_group(config.app_label, config.verbose_name)
+# dd.add_user_group(config.app_label, config.verbose_name)

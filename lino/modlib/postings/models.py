@@ -19,6 +19,8 @@ from lino.api import dd
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
+from lino.modlib.office.choicelists import OfficeUser
+
 
 class PostingStates(dd.Workflow):
 
@@ -95,7 +97,7 @@ class Posting(UserAuthored, mixins.ProjectRelated, Controllable):
 
 
 class Postings(dd.Table):
-    required = dd.Required(user_level='manager', user_groups='office')
+    required_roles = dd.required(dd.StaffMember, OfficeUser)
     model = Posting
     column_names = 'date user owner partner *'
     order_by = ['date']
@@ -111,15 +113,12 @@ class Postings(dd.Table):
 
 
 class MyPostings(Postings, ByUser):
-    required = dd.Required(user_groups='office')
-    #~ required = dict()
-    #~ master_key = 'owner'
+    required_roles = dd.required(OfficeUser)
     column_names = 'date partner state workflow_buttons *'
 
 
 class PostingsByState(Postings):
-    #~ required = dd.Required(user_groups='office',user_level='secretary')
-    required = dd.Required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     column_names = 'date user partner workflow_buttons *'
 
 
@@ -147,20 +146,20 @@ class PostingsSent(PostingsByState):
 
 
 class PostingsByController(Postings):
-    required = dd.Required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'owner'
     column_names = 'date partner workflow_buttons'
     auto_fit_column_widths = True
 
 
 class PostingsByPartner(Postings):
-    required = dd.Required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'partner'
     column_names = 'date owner state workflow_buttons *'
 
 
 class PostingsByProject(Postings):
-    required = dd.Required(user_groups='office')
+    required_roles = dd.required(OfficeUser)
     master_key = 'project'
     column_names = 'date partner state workflow_buttons *'
 

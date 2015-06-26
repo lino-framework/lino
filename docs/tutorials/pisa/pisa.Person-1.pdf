@@ -70,7 +70,11 @@ endobj
 % 'R7': class PDFInfo 
 7 0 obj
 << /Author ()
+<<<<<<< HEAD
  /CreationDate (D:20150627114421-02'00')
+=======
+ /CreationDate (D:20150626142431-02'00')
+>>>>>>> http://luc.lino-framework.org/blog/2015/0626.html
  /Creator (\(unspecified\))
  /Keywords ()
  /Producer (pisa HTML to PDF <http://www.htmltopdf.org>)
@@ -124,7 +128,11 @@ xref
 trailer
 << /ID 
  % ReportLab generated PDF document -- digest (http://www.reportlab.com) 
+<<<<<<< HEAD
  [( '\216\001\005\216\340T\014\242KF\337zp\316) ( '\216\001\005\216\340T\014\242KF\337zp\316)] 
+=======
+ [(\235b\241\357N\340'\367\341\225\345:\364\013oK) (\235b\241\357N\340'\367\341\225\345:\364\013oK)] 
+>>>>>>> http://luc.lino-framework.org/blog/2015/0626.html
 
  /Info 7 0 R
  /Root 6 0 R

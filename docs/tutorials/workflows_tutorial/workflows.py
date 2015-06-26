@@ -31,7 +31,7 @@ def my_entry_workflow(sender=None,**kw):
 class StartEntry(dd.ChangeStateAction):
     label = _("Start")
     help_text = _("This action is not allowed when company, body or subject is empty.")
-    required = dict(states='todo cancelled')
+    required_states = 'todo cancelled'
     def get_action_permission(self,ar,obj,state):
         # cannot start entries with empty company, subject or body fields
         if not obj.company or not obj.subject or not obj.body:
@@ -41,12 +41,12 @@ class StartEntry(dd.ChangeStateAction):
 class FinishEntry(StartEntry):
     icon_name='accept'
     label = _("Finish")
-    required = dict(states='todo started')
+    required_states = 'todo started'
     help_text = _("Inherts from StartEntry and thus is not allowed when company, body or subject is empty.")
         
 class WakeupEntry(dd.ChangeStateAction,dd.NotifyingAction):
     label = _("Wake up")
-    required = dict(states='sleeping')
+    required_states = 'sleeping'
     # in our example waking up an antry will send a notification
     def get_notify_subject(self,ar,obj):
         return _("Entry %s has been reactivated!") % obj

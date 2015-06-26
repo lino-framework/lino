@@ -1,6 +1,8 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+raise Exception("moved to users.choicelists")
+
 from lino.api import _
 
 USER_ROLES = set()
@@ -22,6 +24,17 @@ class UserRoleMeta(type):
 
 class UserRole(object):
     __metaclass__ = UserRoleMeta
+
+    @classmethod
+    def permitted_for(cls, profile):
+        """Return `True` if actions requiring this role are permitted for
+        users with the given profile.
+
+        """
+        for r in profile.roles:
+            if issubclass(r, cls):
+                return True
+        return False
 
 
 class SiteUser(UserRole):

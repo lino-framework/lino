@@ -72,7 +72,7 @@ Accessing individual choices
 ============================
 
 Each row of a choicelist is a choice. Individual choices can have a
-name, which makes them accessible as **class attributes** on the
+**name**, which makes them accessible as **class attributes** on the
 **choicelist** which own them:
 
 >>> Genders.male
@@ -145,15 +145,15 @@ The text of a choice depends on the current user language.
 
 Comparing Choices uses their *value* (not the *name* nor *text*):
 
->>> UserLevels = rt.modules.users.UserLevels
+>>> UserProfiles = rt.modules.users.UserProfiles
 
->>> UserLevels.manager > UserLevels.user
+>>> UserProfiles.admin > UserProfiles.user
 True
->>> UserLevels.manager == '40'
+>>> UserProfiles.admin == '900'
 True
->>> UserLevels.manager == 'manager'
+>>> UserProfiles.admin == 'manager'
 False
->>> UserLevels.manager == ''
+>>> UserProfiles.admin == ''
 False
 
 

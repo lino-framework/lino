@@ -267,11 +267,11 @@ def my_guest_workflows(sender=None, **kw):
     Guest.checkout = CheckoutVisitor(sort_index=102)
 
     GuestStates.excused.add_transition(
-        states='invited accepted absent')
+        required_states='invited accepted absent')
     GuestStates.absent.add_transition(
-        states='accepted excused')
+        required_states='accepted excused')
     GuestStates.present.add_transition(
-        states='invited accepted')
+        required_states='invited accepted')
 
 
 class AppointmentsByPartner(dd.Table):
@@ -480,4 +480,4 @@ page."""
 class MyGoneVisitors(MyVisitors, GoneVisitors):
     label = _("My gone visitors")
 
-dd.add_user_group(config.app_label, config.verbose_name)
+#dd.add_user_group(config.app_label, config.verbose_name)

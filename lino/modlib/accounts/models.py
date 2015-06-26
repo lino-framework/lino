@@ -70,12 +70,9 @@ class Group(mixins.BabelNamed):
 class Groups(dd.Table):
     
     model = 'accounts.Group'
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     order_by = ['chart', 'ref']
     column_names = 'chart ref name account_type *'
-    #~ required = dict(user_groups=['debts'],user_level='manager')
-    #~ required_user_groups = ['debts']
-    #~ required_user_level = UserLevels.manager
 
     insert_layout = """
     name
@@ -137,7 +134,7 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
 
 class Accounts(dd.Table):
     model = Account
-    required = dd.required(user_level='manager')
+    required_roles = dd.required(dd.StaffMember)
     order_by = ['ref']
     column_names = "ref name group *"
     insert_layout = """
@@ -152,10 +149,10 @@ class Accounts(dd.Table):
 
 
 class AccountsByGroup(Accounts):
-    required = dd.required()
+    required_roles = dd.required()
     master_key = 'group'
     column_names = "ref name *"
 
 
-dd.add_user_group('accounts', dd.plugins.accounts.verbose_name)
+# dd.add_user_group('accounts', dd.plugins.accounts.verbose_name)
 

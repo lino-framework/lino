@@ -156,7 +156,7 @@ class Inspector(dd.VirtualTable):
     
     """
     label = _("Inspector")
-    required = dict(user_level='admin')
+    required_roles = dd.required(dd.StaffMember)
     column_names = "i_name i_type i_value"
     parameters = dict(
         inspected=models.CharField(
@@ -405,7 +405,8 @@ class About(EmptyTable):
     """
     label = _("About")
     help_text = _("Show information about this site.")
-    required = dict(auth=False)
+    required_roles = set([])
+    # required = dict(auth=False)
     hide_top_toolbar = True
     detail_layout = dd.FormLayout("""
     about_html

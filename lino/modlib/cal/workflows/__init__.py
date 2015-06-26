@@ -42,13 +42,7 @@ class TaskStates(dd.Workflow):
 
 
 add = TaskStates.add_item
-#~ add('10', _("To do"),'todo',required=dict(states=['']))
-#~ add('20', pgettext_lazy(u"cal",u"Started"),'started',required=dict(states=['','todo']))
-#~ add('30', _("Done"),'done',required=dict(states=['','todo','started']))
-#~ add('40', _("Sleeping"),'sleeping',required=dict(states=['','todo']))
-#~ add('50', _("Cancelled"),'cancelled',required=dict(states=['todo','sleeping']))
 
-#~ add('00', _("Virgin"),'todo')
 add('10', _("To do"), 'todo')
 add('20', pgettext(u"cal", u"Started"), 'started')
 add('30', _("Done"), 'done')
@@ -139,7 +133,9 @@ add('10', _("Invited"), 'invited')
 @dd.receiver(dd.pre_analyze)
 def setup_task_workflows(sender=None, **kw):
 
-    TaskStates.todo.add_transition(_("Reopen"), states='done cancelled')
-    TaskStates.done.add_transition(states='todo started', icon_name='accept')
+    TaskStates.todo.add_transition(
+        _("Reopen"), required_states='done cancelled')
+    TaskStates.done.add_transition(
+        required_states='todo started', icon_name='accept')
     TaskStates.cancelled.add_transition(
-        states='todo started', icon_name='cancel')
+        required_states='todo started', icon_name='cancel')

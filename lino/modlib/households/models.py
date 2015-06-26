@@ -17,7 +17,7 @@ from lino import mixins
 
 from lino.utils import join_words, join_elems
 from lino.utils.xmlgen.html import E
-from lino.modlib.office import OfficeUser
+from lino.modlib.office.choicelists import OfficeUser
 
 from .choicelists import MemberRoles
 

@@ -296,8 +296,8 @@ add('30', _("Fixed"), 'fixed', editable=False)
 @dd.receiver(dd.pre_analyze)
 def setup_vat_workflow(sender=None, **kw):
     VoucherStates.registered.add_transition(
-        _("Register"), states='draft', icon_name='accept')
+        _("Register"), required_states='draft', icon_name='accept')
     VoucherStates.draft.add_transition(
-        _("Deregister"), states="registered", icon_name='pencil')
+        _("Deregister"), required_states="registered", icon_name='pencil')
 
 
