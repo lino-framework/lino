@@ -18,7 +18,6 @@ logger = logging.getLogger(__name__)
 import datetime
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -57,6 +56,15 @@ class Change(dd.Model):
     Each database change of a watched object will generate one Change
     record.
 
+    .. attribute:: master
+
+        The database object which acts as "master".
+    
+    .. attribute:: object
+
+        The database object which has been modified.
+    
+    
     """
 
     class Meta:
@@ -73,18 +81,17 @@ class Change(dd.Model):
         user = dd.DummyField()
 
     object_type = models.ForeignKey(
-        ContentType, blank=True, null=True,
+        'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Object type"),
         related_name='changes_by_object')
     object_id = dd.GenericForeignKeyIdField(
         object_type, blank=True, null=True)
     object = dd.GenericForeignKey('object_type', 'object_id', _("Object"))
-    # see blog/2013/0123
 
     master_type = models.ForeignKey(
-        ContentType,
+        'contenttypes.ContentType',
         verbose_name=_("Master type"), related_name='changes_by_master')
-    master_id = dd.GenericForeignKeyIdField(master_type, )
+    master_id = dd.GenericForeignKeyIdField(master_type)
     master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
@@ -99,7 +106,8 @@ class Changes(dd.Table):
     """
 
     param_object_type = models.ForeignKey(
-        ContentType, verbose_name=_("Object type"), blank=True)
+        'contenttypes.ContentType', 
+        verbose_name=_("Object type"), blank=True)
     parameters = {
         'change_type': ChangeTypes.field(force_selection=False, blank=True),
         'date': models.DateField(_("Only changes from"), blank=True),
@@ -157,7 +165,7 @@ class ChangesByObject(Changes):
 
 class ChangesByMaster(Changes):
     """Slave Table showing the changes related to the current object,
-    including thos applied to "child" objects.
+    including those applied to "child" objects.
 
     """
     required = dd.required()

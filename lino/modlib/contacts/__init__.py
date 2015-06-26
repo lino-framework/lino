@@ -41,7 +41,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Contacts")
 
-    needs_plugins = ['lino.modlib.countries']
+    needs_plugins = ['lino.modlib.countries', 'lino.modlib.system']
 
     ## settings
     hide_region = False

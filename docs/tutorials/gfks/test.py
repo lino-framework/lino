@@ -76,15 +76,26 @@ class TestCase(TestCase):
         check_status(0, 0, 0, 1)
         Memo.objects.all().delete()
 
-        # Django does not prevent us from deleting the member, and it
-        # leaves the note and the memo in the database.
+        # The above behaviour is thanks to a `pre_delete_handler`
+        # which Lino adds automatically. Theoretically it is no longer
+        # possible to produce broken GFKs.  But now we disable this
+        # `pre_delete_handler` and use Django's raw `delete` method in
+        # order to produce some broken GFKs:
+
+        from django.db.models.signals import pre_delete
+        from lino.core.model import pre_delete_handler
+        pre_delete.disconnect(pre_delete_handler)
 
         check_status(0, 0, 0, 0)
         mbr = create_objects()
         check_status(1, 1, 1, 1)
         models.Model.delete(mbr)
+
+        # The member has been deleted, but all generic related objects
+        # are still there:
         check_status(0, 1, 1, 1)
 
+        # That's what the BrokenGFKs table is supposed to show:
         ar = BrokenGFKs.request()
         rst = BrokenGFKs.to_rst(ar)
         # print rst

@@ -180,7 +180,7 @@ but e.g. :class:`Human` overrides this.
 class PartnerDetail(dd.DetailLayout):
 
     main = """
-    address_box:60 contact_box:30
+    address_box:60 contact_box:30 overview
     bottom_box
     """
 

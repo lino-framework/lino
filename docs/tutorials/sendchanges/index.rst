@@ -12,7 +12,7 @@ General stuff:
 
 >>> from lino.api.doctest import *
 
-In your :xfile:`settings.py` file your override :meth:`do_site_startup
+In your :xfile:`settings.py` file override :meth:`do_site_startup
 <lino.core.site.Site.do_site_startup>` in a similar way as shown
 below.
 
