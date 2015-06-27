@@ -1,8 +1,8 @@
 .. _lino.tutorial.gfks:
 
-=================================
+==============================
 A tested example of GFK fields
-=================================
+==============================
 
 .. This document is part of the test suite.  To test only this
    document, run:
@@ -85,7 +85,17 @@ All objects are still there:
 >>> print status()
 [1, 1, 1, 1]
 
-Django does **not** prevent us from deleting the member:
+The above behaviour is thanks to a `pre_delete_handler` which Lino
+adds automatically. 
+
+We can disable this `pre_delete_handler` and use Django's raw `delete`
+method in order produce broken GFKs:
+
+>>> from django.db.models.signals import pre_delete
+>>> from lino.core.model import pre_delete_handler
+>>> pre_delete.disconnect(pre_delete_handler)
+
+Now deleting the member will not fail
 
 >>> from django.db import models
 >>> models.Model.delete(mbr)

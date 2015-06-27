@@ -91,6 +91,8 @@ class TestCase(TestCase):
         check_status(1, 1, 1, 1)
         models.Model.delete(mbr)
 
+        pre_delete.connect(pre_delete_handler)
+
         # The member has been deleted, but all generic related objects
         # are still there:
         check_status(0, 1, 1, 1)

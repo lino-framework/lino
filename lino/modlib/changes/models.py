@@ -89,9 +89,10 @@ class Change(dd.Model):
     object = dd.GenericForeignKey('object_type', 'object_id', _("Object"))
 
     master_type = models.ForeignKey(
-        'contenttypes.ContentType',
+        'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Master type"), related_name='changes_by_master')
-    master_id = dd.GenericForeignKeyIdField(master_type)
+    master_id = dd.GenericForeignKeyIdField(
+        master_type, blank=True, null=True,)
     master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
