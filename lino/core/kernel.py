@@ -465,6 +465,11 @@ class Kernel(object):
         - `_message` : a textual description of the problem
         - `_todo` : 'delete', 'clear' or 'manual'
 
+        Note: the "clear" action should not run automatically, at
+        least not for :mod:`lino.modlib.changes`.
+
+        See also :ref:`lino.tutorial.watch`.
+
         """
         gfks = [f for f in self.GFK_LIST if f.model is model]
         if len(gfks):

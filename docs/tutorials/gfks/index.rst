@@ -122,7 +122,7 @@ table:
 
 TODO: a management command to cleanup broken GFK fields. This would
 execute the suggested actions (delete and clear) without any further
-user interaction.
+user interaction. Attention: 
 
 Note that in plain Django you can achieve some of the above things by
 using `GenericRelation

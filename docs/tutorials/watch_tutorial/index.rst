@@ -172,7 +172,11 @@ fields `object_id` and `object_type` still contain their values:
 <BLANKLINE>
 
 
-Now we delete the organization:
+Until 20150626 only the
+:attr:`object<lino.modlib.changes.models.Change.object>` was nullable,
+not the :attr:`master<lino.modlib.changes.models.Change.master>`.  But
+now you can also delete the master, and all change records will still
+remain:
 
 >>> url = '/api/contacts/Companies/181'
 >>> data = dict(an='delete_selected', sr=181)
@@ -185,8 +189,46 @@ Now we delete the organization:
 >>> r.status_code
 200
 >>> rt.show(changes.Changes, column_names="id type master object diff")
-<BLANKLINE>
-No data to display
+==== ============= ======== ======== ==============================================================
+ ID   Change Type   Master   Object   Changes
+---- ------------- -------- -------- --------------------------------------------------------------
+ 5    Delete                          Company(id=181,name='Our pub',language='en',partner_ptr=181)
+ 4    Delete                          Entry(id=1,user=1,subject='test',company=181)
+ 3    Create                          Entry(id=1,user=1,subject='test',company=181)
+ 2    Update                          name : 'My pub' --> 'Our pub'
+ 1    Create                          Company(id=181,name='My pub',language='en',partner_ptr=181)
+==== ============= ======== ======== ==============================================================
 <BLANKLINE>
 
+
+Of course these change records are now considered broken GFKs:
+
+
+>>> rt.show(contenttypes.BrokenGFKs)
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+================ ================= =============================================================== ========
+ Database model   Database object   Message                                                         Action
+---------------- ----------------- --------------------------------------------------------------- --------
+ *Change*         *#1*              Invalid primary key 181 for contacts.Company in `object_id`     clear
+ *Change*         *#2*              Invalid primary key 181 for contacts.Company in `object_id`     clear
+ *Change*         *#3*              Invalid primary key 1 for watch_tutorial.Entry in `object_id`   clear
+ *Change*         *#4*              Invalid primary key 1 for watch_tutorial.Entry in `object_id`   clear
+ *Change*         *#5*              Invalid primary key 181 for contacts.Company in `object_id`     clear
+ *Change*         *#1*              Invalid primary key 181 for contacts.Partner in `master_id`     clear
+ *Change*         *#2*              Invalid primary key 181 for contacts.Partner in `master_id`     clear
+ *Change*         *#3*              Invalid primary key 181 for contacts.Partner in `master_id`     clear
+ *Change*         *#4*              Invalid primary key 181 for contacts.Partner in `master_id`     clear
+ *Change*         *#5*              Invalid primary key 181 for contacts.Partner in `master_id`     clear
+================ ================= =============================================================== ========
+<BLANKLINE>
+
+There open questions regarding these change records:
+
+- Do we really never want to remove them? Do we really want a nullable
+  master field? Should this option be configurable?
+- How to tell :class:`lino.modlib.contenttypes.models.BrokenGFKs` to
+  differentiate them from ?
+- Should :meth:`get_broken_generic_related
+  <lino.core.kernel.Kernel.get_broken_generic_related>` suggest to
+  "clear" nullable GFK fields?
 

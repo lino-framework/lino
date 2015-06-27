@@ -71,7 +71,7 @@ class Change(dd.Model):
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
 
-    allow_cascaded_delete = 'master'
+    # allow_cascaded_delete = 'master'
 
     time = models.DateTimeField()
     type = ChangeTypes.field()
@@ -92,7 +92,7 @@ class Change(dd.Model):
         'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Master type"), related_name='changes_by_master')
     master_id = dd.GenericForeignKeyIdField(
-        master_type, blank=True, null=True,)
+        master_type, blank=True, null=True)
     master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
