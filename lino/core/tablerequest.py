@@ -15,6 +15,7 @@ from django.db import models
 from django.conf import settings
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from lino.core.utils import obj2str
 from lino.core.store import get_atomizer
@@ -205,7 +206,7 @@ class TableRequest(ActionRequest):
                 else:
                     mi = self.actor.get_master_instance(self, master, pk)
                     if mi is None:
-                        raise Exception(
+                        raise ObjectDoesNotExist(
                             "Invalid master key {0} for {1}".format(
                                 pk, self.actor))
                     kw['master_instance'] = mi

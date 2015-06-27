@@ -211,15 +211,14 @@ Polls tutorial.
 When you are developing and maintaining a database application, it
 happens very often that you need to change the database structure.
 
-Data migration is a complex topic. Django needed until version 1.7
-before they dared to suggest a default method to automating these
-tasks (see `Migrations
-<https://docs.djangoproject.com/en/1.7/topics/migrations/>`_ if you
-are curious).  
+Instead of manually filling your demo data again and again after every
+database change, you write it once as a *fixture*.
 
-Lino suggests a slightly different approach to the whole topic, and
-this approach starts here.  We are now going to add a **demo
-fixture**.
+With Lino it is easy and fun to write demo fixtures because you can
+write them in Python.  Read more about them in
+:ref:`lino.tutorial.dpy`, or simply stay here and learn by doing.
+
+We are now going to add a **demo fixture**.
 
 - Create a directory named :file:`fixtures` in your :file:`polls`
   directory.
@@ -231,7 +230,7 @@ fixture**.
 
   .. literalinclude:: ../polls/fixtures/demo1.py
 
-  Or, if you prefer, the following does exactly the same but has the
+- If you prefer, the following code does exactly the same but has the
   advantage of being more easy to maintain:
 
   .. literalinclude:: ../polls/fixtures/demo.py

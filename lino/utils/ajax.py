@@ -28,9 +28,9 @@ import sys
 import traceback
 from django.conf import settings
 from django.http import HttpResponseServerError
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.encoding import smart_text
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 
 
 class AjaxExceptionResponse:
@@ -51,4 +51,6 @@ class AjaxExceptionResponse:
                 settings.SITE.logger.exception(exception)
             if isinstance(exception, PermissionDenied):
                 return HttpResponseForbidden(response)
+            if isinstance(exception, ObjectDoesNotExist):
+                return HttpResponseBadRequest(response)
             return HttpResponseServerError(response)
