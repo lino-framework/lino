@@ -19,6 +19,8 @@ from lino.api import dd
 
 from lino.modlib.users.models import *
 
+from lino.modlib.office.roles import OfficeUser
+
 
 class UserDetail(UserDetail):
     """Layout of User Detail in Lino Welfare."""
@@ -33,7 +35,7 @@ class UserDetail(UserDetail):
     cal = dd.Panel("""
     cal_left:30 cal.TasksByUser:60
     """, label=dd.plugins.cal.verbose_name,
-                   required=dict(user_groups='office'))
+                   required_roles=dd.login_required(OfficeUser))
 
     general = dd.Panel("""
     box1

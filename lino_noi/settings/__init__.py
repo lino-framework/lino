@@ -60,18 +60,27 @@ class Site(Site):
         Noi.
 
         """
+        from lino.core.roles import (Anonymous, SiteAdmin)
+        from lino.modlib.office.roles import OfficeStaff, OfficeUser
         from lino.modlib.users.choicelists import UserProfiles
         from django.utils.translation import ugettext_lazy as _
-        UserProfiles.reset('* office')
+
+        class SiteUser(OfficeUser):
+            pass
+        
+        class SiteAdmin(SiteAdmin, OfficeStaff):
+            pass
+        
+        UserProfiles.clear()
         add = UserProfiles.add_item
-        add('000', _("Anonymous"),       '_ _', 'anonymous',
+        add('000', _("Anonymous"),       Anonymous, 'anonymous',
             readonly=True, authenticated=False)
-        add('100', _("User"),            'U U', 'user')
-        add('200', _("Consultant"),      'U U', 'consultant')
-        add('300', _("Hoster"),          'U U', 'hoster')
-        add('400', _("Developer"),       'U U', 'developer')
-        add('490', _("Senior"),          'U U', 'senior')
-        add('900', _("Administrator"),   'A A', 'admin')
+        add('100', _("User"),            SiteUser, 'user')
+        add('200', _("Consultant"),      SiteUser, 'consultant')
+        add('300', _("Hoster"),          SiteUser, 'hoster')
+        add('400', _("Developer"),       SiteUser, 'developer')
+        add('490', _("Senior"),          SiteUser, 'senior')
+        add('900', _("Administrator"),   SiteAdmin, 'admin')
 
     def get_default_required(self, **kw):
         # overrides the default behaviour which would add
