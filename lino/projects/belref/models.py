@@ -9,8 +9,6 @@ The :xfile:`models` module for the :mod:`lino.projects.belref` app.
 
 from lino.api import dd
 
-from lino.modlib.users.choicelists import SiteUser, StaffMember
-
 concepts = dd.resolve_app('concepts')
 
 
@@ -26,8 +24,8 @@ def my_details(sender, **kw):
            site.modules.countries.Countries,
            site.modules.concepts.Concepts)
     for t in lst:
-        t.required_roles.discard(SiteUser)
-        t.required_roles.discard(StaffMember)
+        t.required_roles.discard(dd.SiteUser)
+        t.required_roles.discard(dd.SiteStaff)
 
     site.modules.countries.Places.set_detail_layout("""
     name country inscode

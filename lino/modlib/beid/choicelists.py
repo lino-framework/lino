@@ -1,14 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
 from lino.api import dd, _
-from lino.modlib.users.choicelists import SiteUser
-
-
-class BeIdUser(SiteUser):
-    verbose_name = _("eID card reader")
 
 
 class BeIdCardTypes(dd.ChoiceList):
@@ -50,7 +45,7 @@ class BeIdCardTypes(dd.ChoiceList):
     
     """
 
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     verbose_name = _("eID card type")
     verbose_name_plural = _("eID card types")
 

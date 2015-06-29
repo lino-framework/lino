@@ -238,7 +238,9 @@ class LayoutElement(VisibleComponent):
             setattr(self, k, v)
 
         # new since 20121130. theoretically better
-        if not 'required_roles' in kw:
+        if 'required_roles' in kw:
+            assert isinstance(kw['required_roles'], set)
+        else:
             required = set()
             required |= layout_handle.layout._datasource.required_roles
             required |= self.required_roles

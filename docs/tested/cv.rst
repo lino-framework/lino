@@ -28,7 +28,7 @@ Career module (tested)
  value   name        text
 ------- ----------- ---------------
  000     anonymous   Anonymous
- 100     user        Site user
+ 100     user        User
  900     admin       Administrator
 ======= =========== ===============
 <BLANKLINE>
@@ -42,11 +42,10 @@ users.UserProfiles.admin:900
 users.UserProfiles.user:100
 
 >>> LanguageKnowledges.required_roles
-set([<class 'lino.modlib.users.choicelists.StaffMember'>])
+set([<class 'lino.modlib.cv.roles.CareerStaff'>])
 
 >>> LanguageKnowledges.default_action.get_view_permission(u)
 False
 
 >>> LanguageKnowledges.default_action.get_view_permission(a)
-True
-
+False

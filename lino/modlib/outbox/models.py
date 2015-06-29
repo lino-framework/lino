@@ -26,7 +26,7 @@ from lino.utils.html2text import html2text
 from django.core.mail import EmailMultiAlternatives
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .choicelists import RecipientTypes
 
@@ -76,15 +76,14 @@ class Recipient(dd.Model):
 
 
 class Recipients(dd.Table):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
-    #~ required_user_level = UserLevels.manager
+    required_roles = dd.required(OfficeStaff)
     model = Recipient
     #~ column_names = 'mail  type *'
     #~ order_by = ["address"]
 
 
 class RecipientsByMail(Recipients):
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     master_key = 'mail'
     column_names = 'partner:20 address:20 name:20 type:10 *'
     #~ column_names = 'type owner_type owner_id'
@@ -265,7 +264,7 @@ class Mail(UserAuthored, mixins.Printable,
 
 class Mails(dd.Table):
     #~ read_access = dd.required(user_level='manager')
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = Mail
     column_names = "sent recipients subject * body"
     hidden_columns = 'body'
@@ -287,7 +286,7 @@ if not settings.SITE.project_model:
 
 
 class MyOutbox(Mails):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeUser)
 
     label = _("My Outbox")
     master_key = 'user'
@@ -328,7 +327,7 @@ if settings.SITE.project_model is not None:
 
 
 class SentByPartner(Mails):
-    """Shows the Mails that have been sent to a given Partner. 
+    """Shows the Mails that have been sent to a given Partner.
     """
     required_roles = dd.required()
     master = 'contacts.Partner'
@@ -375,7 +374,7 @@ class Attachment(Controllable):
 
 
 class Attachments(dd.Table):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = Attachment
     #~ window_size = (400,500)
     #~ detail_layout = """

@@ -186,7 +186,7 @@ class LinkTypes(dd.ChoiceList):
         lists the deployed tickets.
 
     """
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     verbose_name = _("Dependency type")
     verbose_name_plural = _("Dependency types")
     item_class = LinkType

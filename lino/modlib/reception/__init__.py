@@ -35,7 +35,7 @@ class Plugin(ad.Plugin):
     This is overridden by Lino Welfare to include "coaching".
 
     This way of configuring permissions is an example for why it would
-    be useful to replace user groups by a UserRole class (and to
+    be useful to replace user groups by a UserProfile class (and to
     populate UserProfiles with subclasses of it).
 
     """
@@ -55,7 +55,3 @@ class Plugin(ad.Plugin):
         # `pcsw_tests.py`.  Waiting for user feedback before doing this.
         m.add_action('reception.MyWaitingVisitors')
 
-    def get_default_required_roles(self, *args):
-        from .choicelists import ReceptionClerk
-        return super(Plugin, self).get_default_required_roles(
-            ReceptionClerk, *args)

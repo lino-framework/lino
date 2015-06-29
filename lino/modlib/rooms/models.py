@@ -23,7 +23,7 @@ from lino.modlib.contacts.mixins import ContactRelated
 
 
 class BookingStates(dd.Workflow):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 add = BookingStates.add_item
 add('10', _("Draft"), 'draft', editable=True)

@@ -505,7 +505,7 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=unicode(user)))
 
-                if isinstance(user.profile, SiteAdmin):
+                if isinstance(user.profile.role, SiteAdmin):
                     authorities = [
                         (u.id, unicode(u))
                         for u in settings.SITE.user_model.objects.exclude(

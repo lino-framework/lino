@@ -13,7 +13,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.mixins import UserAuthored, ByUser
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser
 from lino.api import dd
 
 
@@ -45,7 +45,7 @@ class TextFieldTemplate(UserAuthored):
 
 class TextFieldTemplates(dd.Table):
     model = TextFieldTemplate
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     insert_layout = dd.FormLayout("""
     name
     user #team

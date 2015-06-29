@@ -34,6 +34,7 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
+from lino.core.roles import SiteStaff
 from lino.core.utils import gfk2lookup
 
 blogs = dd.resolve_app('blogs')
@@ -112,7 +113,7 @@ class ProjectsByCompany(Projects):
 
 class Links(dd.Table):
     model = 'tickets.Link'
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent

@@ -40,7 +40,7 @@ dd.update_field(Comment, 'user', editable=False)
 
 
 class Comments(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     slave_grid_format = "summary"
 
     model = 'comments.Comment'

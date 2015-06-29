@@ -13,6 +13,7 @@ from __future__ import unicode_literals, print_function
 
 from django.utils import translation
 from lino.core.utils import gfk2lookup
+from lino.core.roles import SiteStaff
 
 from lino.api import dd, rt, _
 
@@ -143,7 +144,7 @@ class Checkers(dd.ChoiceList):
     <lino.core.actors.Actor.detail_layout>`.
 
     """
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     verbose_name = _("Plausibility checker")
     verbose_name_plural = _("Plausibility checkers")
     item_class = Checker

@@ -563,8 +563,8 @@ class Permittable(object):
     
     """
 
-    def add_requirements(self, **kw):
-        return add_requirements(self, **kw)
+    def add_requirements(self, *args):
+        return add_requirements(self, *args)
 
     def get_view_permission(self, profile):
         raise NotImplementedError()

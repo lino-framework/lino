@@ -39,7 +39,7 @@ from lino.utils import join_words
 from lino.utils import IncompleteDate
 from lino.modlib.contacts.utils import street2kw
 from lino.modlib.plausibility.choicelists import Checker
-from lino.modlib.beid.choicelists import BeIdUser
+from .roles import BeIdUser
 
 config = dd.plugins.beid
 
@@ -435,7 +435,7 @@ class BeIdCardHolder(dd.Model):
 
     def disabled_fields(self, ar):
         rv = super(BeIdCardHolder, self).disabled_fields(ar)
-        if ar.get_user().profile.level < dd.UserLevels.admin:
+        if not isinstance(ar.get_user().profile.role, dd.SiteStaff):
             rv |= self.beid_readonly_fields
         #~ logger.info("20130808 beid %s", rv)
         return rv

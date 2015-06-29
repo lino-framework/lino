@@ -17,7 +17,7 @@ from lino import mixins
 
 from lino.utils import join_words, join_elems
 from lino.utils.xmlgen.html import E
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
 
 from .choicelists import MemberRoles
 
@@ -38,7 +38,7 @@ class Type(mixins.BabelNamed):
 
 
 class Types(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(ContactsStaff)
     model = 'households.Type'
     detail_layout = """
     name
@@ -149,7 +149,7 @@ class HouseholdDetail(dd.FormLayout):
 
 class Households(contacts.Partners):
     model = 'households.Household'
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.required(ContactsUser)
     order_by = ["name"]
     detail_layout = HouseholdDetail()
 
@@ -257,12 +257,12 @@ class Member(mixins.DatePeriod):
 
 class Members(dd.Table):
     model = 'households.Member'
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(ContactsStaff)
     order_by = ['start_date', 'end_date']
 
 
 class MembersByHousehold(Members):
-    required_roles = dd.required()
+    required_roles = dd.required(ContactsUser)
     label = _("Household Members")
     master_key = 'household'
     column_names = 'person role start_date end_date *'
@@ -275,7 +275,7 @@ class SiblingsByPerson(Members):
 
     """
     label = _("Household composition")
-    required_roles = dd.required()
+    required_roles = dd.required(ContactsUser)
     master = config.person_model
     column_names = 'person role start_date end_date *'
     auto_fit_column_widths = True
@@ -404,7 +404,7 @@ dd.inject_action(
 
 
 class MembersByPerson(Members):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(ContactsStaff)
     label = _("Household memberships")
     master_key = 'person'
     column_names = 'household role primary start_date end_date *'

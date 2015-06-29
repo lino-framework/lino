@@ -25,7 +25,7 @@ from lino import mixins
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.outbox.mixins import MailableType, Mailable
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .utils import (
     Recurrencies,
@@ -112,7 +112,7 @@ class EventTypes(dd.Table):
     An EventType is a list of events which have certain things in common,
     especially they are displayed in the same colour in the calendar panel.
     """)
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = 'cal.EventType'
     column_names = "name *"
 
@@ -179,7 +179,7 @@ class RecurrentEvents(dd.Table):
 
     """
     model = 'cal.RecurrentEvent'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     column_names = "start_date end_date name every_unit event_type *"
     auto_fit_column_widths = True
     order_by = ['start_date']
@@ -654,7 +654,7 @@ class Events(dd.Table):
 
     help_text = _("A List of calendar entries. Each entry is called an event.")
     model = 'cal.Event'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     column_names = 'when_text:20 user summary event_type *'
 
     # hidden_columns = """
@@ -793,9 +793,9 @@ class EventsByDay(Events):
     :term:`appointments <appointment>`.
 
     """
+    required_roles = dd.required(OfficeUser)
     label = _("Appointments today")
     column_names = 'room event_type summary owner workflow_buttons *'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
     auto_fit_column_widths = True
     params_panel_hidden = False
 

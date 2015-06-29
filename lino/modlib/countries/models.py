@@ -19,7 +19,7 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.plausibility.choicelists import Checker
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser
 
 config = dd.plugins.countries
 
@@ -198,7 +198,7 @@ class Places(dd.Table):
     """)
 
     model = 'countries.Place'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     order_by = "country name".split()
     column_names = "country name type zip_code parent *"
     detail_layout = """

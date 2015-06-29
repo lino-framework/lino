@@ -18,12 +18,6 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
 
-from lino.modlib.users.choicelists import SiteUser
-
-
-class CoursesUser(SiteUser):
-    verbose_name = _("Courses user")
-
 
 class CourseStates(dd.Workflow):
     required_roles = dd.required(dd.SiteAdmin)

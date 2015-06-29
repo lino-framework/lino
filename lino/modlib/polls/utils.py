@@ -19,7 +19,7 @@ class PollStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Poll States")
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 add = PollStates.add_item
@@ -46,7 +46,7 @@ class ResponseStates(dd.Workflow):
 
     """
     verbose_name_plural = _("Response States")
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 add = ResponseStates.add_item

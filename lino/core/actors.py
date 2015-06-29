@@ -662,9 +662,12 @@ class Actor(actions.Parametrizable):
 
     @classmethod
     def class_init(cls):
-        """Called internally a site startup. Don't override.
+        """Called internally at site startup. Don't override.
 
         """
+        if hasattr(cls, 'required'):
+            raise Exception(
+                "{0} : convert required to required_roles".format(cls))
         master = getattr(cls, 'master', None)
         if isinstance(master, basestring):
             cls.master = resolve_model(master)

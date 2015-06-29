@@ -28,7 +28,7 @@ from lino.core import actions
 from lino.core import layouts
 from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
-from lino.modlib.users.choicelists import StaffMember
+from lino.core.roles import SiteStaff
 from lino.utils.xmlgen.html import E
 
 
@@ -150,7 +150,7 @@ class MergeAction(actions.Action):
     sort_index = 31
     show_in_workflow = False
     readonly = False
-    required_roles = settings.SITE.get_default_required_roles(StaffMember)
+    required_roles = settings.SITE.get_default_required_roles(SiteStaff)
 
     def __init__(self, model, **kw):
 

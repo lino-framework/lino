@@ -36,15 +36,15 @@ cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
 
 from lino.modlib.cal.workflows import GuestStates, EventStates
+from lino.modlib.office.roles import OfficeUser
 
+from .roles import ReceptionUser, ReceptionOperator
 
 add = GuestStates.add_item
 add('44', _("Waiting"), 'waiting')
 add('45', _("Busy"), 'busy')
 add('46', _("Gone"), 'gone')
 
-
-config = dd.plugins.reception
 
 #~ add = GuestStates.add_item
 #~ add('21', _("Waiting"),'waiting')
@@ -130,7 +130,7 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
     show_in_bbar = False
 
-    required_roles = config.get_default_required_roles()
+    required_roles = dd.required(ReceptionUser)
     required_states = 'invited accepted present'
 
     def get_action_permission(self, ar, obj, state):
@@ -174,7 +174,19 @@ class CheckinVisitor(dd.NotifyingAction):
         return doit(ar)
 
 
-class ReceiveVisitor(dd.Action):
+class MyVisitorAction(dd.Action):
+
+    def get_action_permission(self, ar, obj, state):
+        me = ar.get_user()
+        if obj.event.user != me and not isinstance(
+                me.profile.role, ReceptionOperator):
+            return False
+        rv = super(
+            MyVisitorAction, self).get_action_permission(ar, obj, state)
+        return rv
+
+
+class ReceiveVisitor(MyVisitorAction):
     """The "Receive" action on a :class:`Guest
     <lino.modlib.cal.models_guest.Guest>`.
 
@@ -233,7 +245,7 @@ def checkout_guest(obj, ar):
     obj.save()
 
 
-class CheckoutVisitor(dd.Action):
+class CheckoutVisitor(MyVisitorAction):
     """The "Checkout" action on a :class:`Guest
     <lino.modlib.cal.models_guest.Guest>`.
 
@@ -242,7 +254,6 @@ class CheckoutVisitor(dd.Action):
     help_text = _("Visitor left the centre")
     show_in_workflow = True
     show_in_bbar = False
-
     required_states = 'busy waiting'
 
     def run_from_ui(self, ar, **kw):
@@ -318,7 +329,7 @@ class ExpectedGuests(cal.Guests):
     waiting_since busy_since'
     hidden_columns = 'waiting_since busy_since'
     #~ checkin = CheckinGuest()
-    required_roles = config.get_default_required_roles()
+    required_roles = dd.required(ReceptionOperator)
 
     @classmethod
     def get_queryset(self, ar):
@@ -346,7 +357,7 @@ if False:
         workflow_buttons'
         order_by = ['waiting_since']
         #~ checkout = CheckoutGuest()
-        required_roles = config.get_default_required_roles()
+        required_roles = dd.required(ReceptionUser)
         auto_fit_column_widths = True
 
         @dd.displayfield(_('Since'))
@@ -362,6 +373,7 @@ class Visitors(cal.Guests):
     """
     # debug_permissions = 20150227
 
+    required_roles = dd.required(ReceptionUser)
     editable = False
     abstract = True
     column_names = 'since partner event__user event__summary workflow_buttons'
@@ -400,7 +412,6 @@ class BusyVisitors(Visitors):
     help_text = _("Shows the visitors who are busy with some agent.")
     visitor_state = GuestStates.busy
     order_by = ['busy_since']
-    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -415,7 +426,6 @@ class WaitingVisitors(Visitors):
     visitor_state = GuestStates.waiting
 
     order_by = ['waiting_since']
-    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -438,7 +448,6 @@ class GoneVisitors(Visitors):
     help_text = _("Shows the visitors who have gone.")
     visitor_state = GuestStates.gone
     order_by = ['-gone_since']
-    required_roles = config.get_default_required_roles()
 
     @dd.displayfield(_('Since'))
     def since(self, obj, ar):
@@ -446,6 +455,7 @@ class GoneVisitors(Visitors):
 
 
 class MyWaitingVisitors(MyVisitors, WaitingVisitors):
+    required_roles = dd.required(ReceptionUser, OfficeUser)
     label = _("Visitors waiting for me")
     column_names = ('since partner position '
                     'event__summary workflow_buttons')
@@ -453,31 +463,12 @@ class MyWaitingVisitors(MyVisitors, WaitingVisitors):
 
 class MyBusyVisitors(MyVisitors, BusyVisitors):
     """Shows the visitors with whom I am busy."""
+    required_roles = dd.required(ReceptionUser, OfficeUser)
     label = _("Visitors busy with me")
-
-    @classmethod
-    def unused_get_welcome_messages(cls, ar):
-        """Yield :message:`You are busy with` messages for the welcome
-page."""
-        guests = []
-        sar = ar.spawn(cls)
-        for g in sar:
-            guests.append(g)
-        #~ print "20130909 MyBusyVisitors get_welcome_messages", guests
-        if len(guests) > 0:
-            #~ print 20130909, guests[0].get_default_table()
-            chunks = [unicode(_("You are busy with "))]
-
-            def f(g):
-                return sar.row_action_button(
-                    g, cls.detail_action, unicode(g.partner), icon_name=None)
-            chunks += join_elems([f(g)
-                                 for g in guests], sep=unicode(_(" and ")))
-            chunks.append('.')
-            yield E.span(*chunks)
 
 
 class MyGoneVisitors(MyVisitors, GoneVisitors):
+    required_roles = dd.required(ReceptionUser, OfficeUser)
     label = _("My gone visitors")
 
-#dd.add_user_group(config.app_label, config.verbose_name)
+

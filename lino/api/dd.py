@@ -256,6 +256,8 @@ from lino.core.utils import ParameterPanel, PseudoRequest
 #from lino.modlib.users.utils import add_user_group
 
 
+login_required = settings.SITE.get_default_required_roles
+# deprecated aliases:
 Required = required = settings.SITE.get_default_required_roles
 
 
@@ -319,4 +321,4 @@ get_language = translation.get_language
 
 # logger.info("20140227 dd.py b %s", site)
 
-from lino.modlib.users.choicelists import SiteAdmin, StaffMember, SiteUser
+from lino.core.roles import SiteStaff, SiteUser, SiteAdmin

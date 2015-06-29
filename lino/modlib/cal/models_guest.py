@@ -18,8 +18,7 @@ from django.db import models
 
 from lino import mixins
 from lino.api import dd, _
-from lino.modlib.office.choicelists import OfficeUser
-from lino.modlib.users.choicelists import StaffMember
+from lino.modlib.office.roles import OfficeUser
 
 from .workflows import GuestStates
 from .workflows import EventStates
@@ -37,7 +36,7 @@ class GuestRoles(dd.Table):
     help_text = _("The role of a guest expresses what the "
                   "partner is going to do there.")
     model = GuestRole
-    required_roles = dd.required(StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     detail_layout = """
     id name
     #build_method #template #email_template #attach_to_email
@@ -102,7 +101,7 @@ class Guests(dd.Table):
     "The default table for :class:`Guest`."
     help_text = _("""A guest is a partner invited to an event. """)
     model = 'cal.Guest'
-    required_roles = dd.required(StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     column_names = 'partner role workflow_buttons remark event *'
     detail_layout = """
     event partner role

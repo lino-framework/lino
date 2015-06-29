@@ -38,7 +38,7 @@ class UserAuthored(model.Model):
         abstract = True
 
     # manager_level_field = 'level'
-    manager_roles_required = dd.StaffMember
+    manager_roles_required = dd.SiteStaff
     """By default, only system managers can edit other users' work.
 
     If the application defines customized UserGroups, then we may want
@@ -98,7 +98,7 @@ class UserAuthored(model.Model):
         if self.manager_roles_required is not None \
            and self.user != ar.user \
            and (ar.subst_user is None or self.user != ar.subst_user) \
-           and not isinstance(user.profile, self.manager_roles_required):
+           and not isinstance(user.profile.role, self.manager_roles_required):
             return ba.action.readonly
         return True
 
@@ -144,7 +144,7 @@ if settings.SITE.user_model is None:
 class AuthorAction(actions.Action):
     """
     """
-    manager_roles_required = dd.StaffMember
+    manager_roles_required = dd.SiteStaff
     # manager_level_field = 'level'
 
     def get_action_permission(self, ar, obj, state):

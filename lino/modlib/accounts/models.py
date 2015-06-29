@@ -70,7 +70,7 @@ class Group(mixins.BabelNamed):
 class Groups(dd.Table):
     
     model = 'accounts.Group'
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     order_by = ['chart', 'ref']
     column_names = 'chart ref name account_type *'
 
@@ -134,7 +134,7 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
 
 class Accounts(dd.Table):
     model = Account
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     order_by = ['ref']
     column_names = "ref name group *"
     insert_layout = """

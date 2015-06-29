@@ -15,6 +15,8 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
+from lino.modlib.office.roles import OfficeUser
+
 from .mixins import BoardDecision
 
 
@@ -39,7 +41,7 @@ dd.update_field(Board, 'end_date', verbose_name=_("Worked until"))
 
 class Boards(dd.Table):
     model = 'boards.Board'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     column_names = 'name *'
     order_by = ["name"]
 
@@ -82,7 +84,7 @@ class Member(dd.Model):
 
 class Members(dd.Table):
     model = 'boards.Member'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
 
 
 class MembersByBoard(Members):

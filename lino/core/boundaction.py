@@ -40,10 +40,10 @@ class BoundAction(object):
             required |= actor.update_required
         required |= action.required_roles
 
-        if settings.SITE.user_model is not None:
-            if len(required) == 0:
-                from lino.modlib.users.choicelists import SiteUser
-                required.add(SiteUser)
+        # if settings.SITE.user_model is not None:
+        #     if len(required) == 0:
+        #         from lino.modlib.users.choicelists import SiteUser
+        #         required.add(SiteUser)
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions
@@ -64,7 +64,8 @@ class BoundAction(object):
             self, action.readonly, debug_permissions, required), action)
         self._allow = curry(make_permission_handler(
             action, actor, action.readonly,
-            debug_permissions, required), action)
+            debug_permissions, required,
+            allowed_states=action.required_states), action)
         #~ if debug_permissions:
             #~ logger.info("20130424 _allow is %s",self._allow)
         #~ actor.actions.define(a.action_name,ba)

@@ -24,7 +24,7 @@ from lino.utils import ONE_DAY
 
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .utils import (
     DurationUnits, Recurrencies,
@@ -111,7 +111,7 @@ class RemoteCalendar(mixins.Sequenced):
 
 class RemoteCalendars(dd.Table):
     model = 'cal.RemoteCalendar'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
 
 
 class Room(mixins.BabelNamed):
@@ -128,7 +128,7 @@ class Room(mixins.BabelNamed):
 
 class Rooms(dd.Table):
     help_text = _("List of rooms where calendar events can happen.")
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = 'cal.Room'
     detail_layout = """
     id name
@@ -147,7 +147,7 @@ class Priority(mixins.BabelNamed):
 
 class Priorities(dd.Table):
     help_text = _("List of possible priorities of calendar events.")
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = Priority
     column_names = 'name *'
 
@@ -357,7 +357,7 @@ class UserDetailMixin(dd.Panel):
         cal_left:30 cal.TasksByUser:60
         """,
         label=MODULE_LABEL,
-        required_roles=[OfficeUser])
+        required_roles=dd.required(OfficeUser))
 
     
 def unused_site_setup(site):
@@ -379,7 +379,7 @@ def unused_site_setup(site):
         cal_left:30 cal.TasksByUser:60
         """,
         MODULE_LABEL,
-        required_roles=[OfficeUser])
+        required_roles=dd.required(OfficeUser))
 
 
 customize_users()

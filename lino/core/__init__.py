@@ -24,7 +24,6 @@ The ``lino.core`` package
     merge
     model
     plugin
-    permissions
     renderer
     requests
     signals

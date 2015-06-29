@@ -13,7 +13,7 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser
 
 
 class Language(mixins.BabelNamed):

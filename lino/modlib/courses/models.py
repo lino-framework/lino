@@ -680,7 +680,7 @@ if False:
 
     class Options(dd.Table):
         model = 'courses.Option'
-        required_roles = dd.required(dd.StaffMember)
+        required_roles = dd.required(dd.SiteStaff)
         stay_in_grid = True
         column_names = 'name price *'
         auto_fit_column_widths = True
@@ -867,7 +867,7 @@ class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
 
 class Enrolments(dd.Table):
     #~ debug_permissions=20130531
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'courses.Enrolment'
     stay_in_grid = True
     parameters = mixins.ObservedPeriod(

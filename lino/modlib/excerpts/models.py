@@ -48,7 +48,7 @@ from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.outbox.mixins import Mailable, MailableType
 
-from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .mixins import Certifiable
 from .choicelists import Shortcuts

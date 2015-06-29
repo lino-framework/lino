@@ -45,6 +45,7 @@ from lino.utils.addressable import Addressable
 
 
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
+from .roles import ContactsUser, ContactsStaff
 
 from lino.mixins.human import name2kw, Human, Born
 
@@ -209,11 +210,10 @@ class PartnerDetail(dd.DetailLayout):
 
 
 class Partners(dd.Table):
-    # required_roles = dd.required(dd.SiteUser)
+    required_roles = dd.required(ContactsUser)
     model = 'contacts.Partner'
     column_names = "name email * id"
     order_by = ['name', 'id']
-    #~ column_names = "name * id"
     detail_layout = PartnerDetail()
     insert_layout = """
     name
@@ -303,11 +303,10 @@ class PersonDetail(PartnerDetail):
 
 
 class Persons(Partners):
-
     """
     List of all Persons.
     """
-    #~ required = dict(user_level='user')
+    required_roles = dd.required(ContactsUser)
     model = "contacts.Person"
     order_by = ["last_name", "first_name", "id"]
     column_names = (
@@ -333,7 +332,7 @@ class CompanyType(mixins.BabelNamed):
 
 
 class CompanyTypes(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(ContactsStaff)
     model = 'contacts.CompanyType'
     column_names = 'name *'
     #~ label = _("Company types")
@@ -387,6 +386,7 @@ class CompanyDetail(PartnerDetail):
 
 
 class Companies(Partners):
+    required_roles = dd.required(ContactsUser)
     model = "contacts.Company"
     order_by = ["name"]
     column_names = (
@@ -434,7 +434,7 @@ class RoleType(mixins.BabelNamed):
 
 
 class RoleTypes(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(ContactsStaff)
     model = RoleType
 
 
@@ -490,12 +490,12 @@ class Role(dd.Model, Addressable):
 
 
 class Roles(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(ContactsStaff)
     model = 'contacts.Role'
 
 
 class RolesByCompany(Roles):
-    required_roles = dd.required()
+    required_roles = dd.required(ContactsUser)
     auto_fit_column_widths = True
     #~ required_user_level = None
     label = _("Contact persons")
@@ -505,7 +505,7 @@ class RolesByCompany(Roles):
 
 
 class RolesByPerson(Roles):
-    required_roles = dd.required()
+    required_roles = dd.required(ContactsUser)
     #~ required_user_level = None
     label = _("Contact for")
     master_key = 'person'

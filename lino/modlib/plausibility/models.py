@@ -15,6 +15,7 @@ from django.db import models
 from lino.core.utils import gfk2lookup
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
+from lino.core.roles import SiteStaff
 
 from lino.api import dd, rt, _
 
@@ -174,7 +175,7 @@ class AllProblems(Problems):
     :menuselection:`Explorer --> System --> Plausibility problems`.
 
     """
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 class ProblemsByOwner(Problems):

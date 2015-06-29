@@ -28,33 +28,10 @@ from lino.utils import AttrDict
 
 from lino.utils.code import codetime, codefiles, SourceFile
 from lino.utils.xmlgen.html import E
+from lino.utils.diag import get_window_actions, have_action
 
 from lino.api import dd
-
-from lino.modlib.users.choicelists import UserProfiles
-
-
-def get_window_actions():
-    from lino.core.actors import actors_list
-    ui = settings.SITE.kernel.default_ui
-    coll = dict()
-    for a in actors_list:
-        for ba in a.get_actions():
-            if ba.action.is_window_action():
-                wl = ba.get_window_layout() or ba.action.params_layout
-                if wl is not None:
-                    if isinstance(wl, basestring):
-                        raise Exception("20150323 : {0}".format(ba))
-                        # Was used to find Exception: 20150323 :
-                        # <BoundAction(plausibility.Checkers,
-                        # <ShowDetailAction detail (u'Detail')>)>
-
-                    if not wl in coll:
-                        lh = wl.get_layout_handle(ui)
-                        for e in lh.main.walk():
-                            e.loosen_requirements(a)
-                        coll[wl] = ba
-    return coll
+from lino.core.roles import SiteStaff
 
 
 class Models(dd.VirtualTable):
@@ -156,7 +133,7 @@ class Inspector(dd.VirtualTable):
     
     """
     label = _("Inspector")
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     column_names = "i_name i_type i_value"
     parameters = dict(
         inspected=models.CharField(
@@ -262,26 +239,6 @@ class Inspector(dd.VirtualTable):
     #~ versions:40x5 startup_time:30
     #~ about.Models:70x10
     #~ """
-
-
-def have_action(ba):
-    if ba is None:
-        return _("N/A")
-    visible = []
-    hidden = []
-    for p in UserProfiles.objects():
-        name = p.name or p.value
-        if ba.get_view_permission(p):
-            visible.append(name)
-        else:
-            hidden.append(name)
-    if len(hidden) == 0:
-        return _("all")
-    if len(visible) == 0:
-        return _("nobody")
-    if len(hidden) < len(visible):
-        return _("all except %s") % ', '.join(hidden)
-    return ', '.join(visible)
 
 
 class DetailLayouts(dd.VirtualTable):
@@ -405,7 +362,7 @@ class About(EmptyTable):
     """
     label = _("About")
     help_text = _("Show information about this site.")
-    required_roles = set([])
+    required_roles = set()
     # required = dict(auth=False)
     hide_top_toolbar = True
     detail_layout = dd.FormLayout("""

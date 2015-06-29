@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
 from lino.modlib.countries.mixins import AddressLocation
+from lino.core.roles import SiteStaff
 
 from .choicelists import AddressTypes, DataSources
 
@@ -101,7 +102,7 @@ def clear_partner_on_delete(sender=None, request=None, **kw):
 
 class Addresses(dd.Table):
     model = 'addresses.Address'
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     column_names = (
         "partner address_type:10 remark:10 "
         "address_column:30 primary data_source *")

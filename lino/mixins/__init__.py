@@ -101,9 +101,8 @@ class Registrable(model.Model):
         """Only rows in an editable state may be edited.
 
         """
-        # logger.info(
-        #     "20150202 Registrable.get_row_permission %s %s %s %s",
-        #     self, state, ba.action, ar.bound_action.action.readonly)
+        # print "20150628 Registrable.get_row_permission %s %s %s %s" \
+        #     % (self, state, ba.action, ar.bound_action.action.readonly)
         if state and not state.editable:
             if not ar.bound_action.action.readonly:
                 return False

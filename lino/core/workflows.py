@@ -39,7 +39,7 @@ class State(choicelists.Choice):
                        icon_name=None,
                        debug_permissions=None,
                        required_states=None,
-                       *required_roles):
+                       required_roles=None):
         """Declare or create a `ChangeStateAction` which makes the object
         enter this state.  `label` can be either a string or a
         subclass of :class:`ChangeStateAction`.
@@ -88,14 +88,14 @@ class State(choicelists.Choice):
             a = label(self, **kw)
         else:
             if required_states:
-                kw.update(required_states=set(required_states))
+                kw.update(required_states=required_states)
             if notify:
                 cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
             if label is None:
                 label = self.text
-            a = cl(self, set(required_roles), label=label, **kw)
+            a = cl(self, required_roles, label=label, **kw)
             if debug_permissions:
                 a.debug_permissions = debug_permissions
         a.attach_to_workflow(self.choicelist, name)
@@ -145,13 +145,13 @@ class Workflow(choicelists.ChoiceList):
     def override_transition(cls, **kw):
         """
         """
-        raise Exception("Must convert after class_permissions")
         for name, cl in kw.items():
             found = False
             for i, a in enumerate(cls.workflow_actions):
                 if a.action_name == name:
                     new = cl(
-                        a.target_state, a.required, sort_index=a.sort_index)
+                        a.target_state, a.required_roles,
+                        sort_index=a.sort_index)
                     new.attach_to_workflow(cls, name)
                     cls.workflow_actions[i] = new
                     found = True
@@ -173,7 +173,7 @@ class ChangeStateAction(actions.Action):
     show_in_workflow = True
 
     def __init__(self, target_state, required_roles=None,
-                 help_text=None, required_states=None, **kw):
+                 help_text=None, **kw):
         self.target_state = target_state
         assert not 'required' in kw
         assert not 'required_roles' in kw

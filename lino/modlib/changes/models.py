@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.api import dd
 from lino.core import fields
 
+from lino.core.roles import SiteStaff
 from lino.core.signals import pre_ui_delete, on_ui_created, on_ui_updated
 from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child, pre_remove_child
@@ -120,7 +121,7 @@ class Changes(dd.Table):
             settings.SITE.user_model,
             blank=True)
 
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
     editable = False
     model = 'changes.Change'
@@ -159,7 +160,7 @@ class ChangesByObject(Changes):
     object.
 
     """
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     master_key = 'object'
     column_names = 'time user type master diff master_type master_id'
 

@@ -1,10 +1,7 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the choicelists for :mod:`lino.modlib.users`, i.e.
-:class:`UserLevels`, 
-:class:`UserGroups` and
-:class:`UserProfiles`.
+"""Defines the choicelists for :mod:`lino.modlib.users`.
 
 """
 
@@ -16,11 +13,14 @@ logger = logging.getLogger(__name__)
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-
 from lino.core.choicelists import ChoiceList, Choice
+from lino.core.roles import Anonymous, SiteUser, SiteAdmin
+
+from lino.api import dd
 
 
 class UserProfile(Choice):
+    """Base class for all user profiles. """
 
     hidden_languages = None
     """A subset of :setting:`languages` which should be hidden in this
@@ -32,14 +32,15 @@ class UserProfile(Choice):
 
     """
 
-    def __init__(self, value=None, text=None,
+    def __init__(self, value, text, role_class,
                  name=None, authenticated=True,
                  readonly=False,
                  **kw):
-        if value is None:
-            value = self.__module__.split('.')[-2] + '.' \
-                + self.__class__.__name__
+        # if value is None:
+        #     value = self.__module__.split('.')[-2] + '.' \
+        #         + self.__class__.__name__
         super(UserProfile, self).__init__(value, text, name)
+        self.role = role_class()
         self.readonly = readonly
         self.authenticated = authenticated
         self.kw = kw
@@ -73,46 +74,21 @@ class UserProfile(Choice):
 
     def has_required_role(self, required_roles):
         for rr in required_roles:
-            if not isinstance(self, rr):
+            if not isinstance(self.role, rr):
                 return False
         return True
 
-
-class Anonymous(UserProfile):
-    text = _("Anonymous")
-
-
-class SiteUser(UserProfile):
-    text = _("Site user")
-
-
-class StaffMember(SiteUser):
-    text = _("Staff member")
-
-
-class SiteAdmin(StaffMember):
-    text = _("Administrator")
-
-
 ##
+
 
 class UserProfiles(ChoiceList):
     """The list of user profiles available on this site.
     
-    Each user profile is a set of user levels (one for each functional
-    group), leading to an individual combination of permissions.
-    
-    The demo database has defined the following user profiles:
-
-    .. django2rst:: rt.show(users.UserProfiles,
-                            column_names='value name text level')
-
-    Note that we show here only the "general" or "system" userlevel.
-    Open :menuselection:`Explorer --> System --> User Profiles`
-    in your Lino to see all application-specific userlevels.
+    You can see the user profiles available in your application via
+    :menuselection:`Explorer --> System --> User Profiles`.
 
     """
-    required_roles = settings.SITE.get_default_required_roles(SiteAdmin)
+    required_roles = dd.login_required(SiteAdmin)
     item_class = UserProfile
     verbose_name = _("User Profile")
     verbose_name_plural = _("User Profiles")
@@ -126,3 +102,9 @@ class UserProfiles(ChoiceList):
     <UserProfile.hidden_languages>` of newly attached choice item.
 
     """
+
+add = UserProfiles.add_item
+add('000', _("Anonymous"), Anonymous, name='anonymous',
+    readonly=True, authenticated=False)
+add('100', _("User"), SiteUser, name='user')
+add('900', _("Administrator"), SiteAdmin, name='admin')

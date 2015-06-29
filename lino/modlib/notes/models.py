@@ -25,7 +25,7 @@ from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.modlib.outbox.mixins import MailableType, Mailable
 from lino.modlib.contacts.mixins import ContactRelated
-from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .choicelists import SpecialTypes
 
@@ -53,7 +53,7 @@ class NoteTypes(dd.Table):
     Displays all rows of :class:`NoteType`.
     """
     model = 'notes.NoteType'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     #~ label = _("Note types")
     column_names = 'name build_method template special_type *'
     order_by = ["name"]
@@ -91,7 +91,7 @@ class EventTypes(dd.Table):
     List of all Event Types.
     """
     model = 'notes.EventType'
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     column_names = 'name *'
     order_by = ["name"]
 
@@ -186,7 +186,7 @@ class Notes(dd.Table):
 
 
 class AllNotes(Notes):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
 
 
 class MyNotes(ByUser, Notes):

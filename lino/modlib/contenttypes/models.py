@@ -20,6 +20,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.utils import DatabaseError
 from django.db.models import FieldDoesNotExist
 
+from lino.core.roles import SiteStaff
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
@@ -31,7 +32,7 @@ class ContentTypes(dd.Table):
     """
     model = 'contenttypes.ContentType'
 
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.required(dd.SiteStaff)
 
     detail_layout = """
     id name app_label model base_classes
@@ -114,7 +115,7 @@ class HelpText(dd.Model):
 
 
 class HelpTexts(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'contenttypes.HelpText'
     column_names = "field verbose_name help_text id content_type"
 

@@ -37,8 +37,6 @@ class Plugin(ad.Plugin):
 
         if site.user_model:
             system.add_action('users.Authorities')
-            # system.add_action('users.UserGroups')
-            # system.add_action('users.UserLevels')
             system.add_action('users.UserProfiles')
 
 

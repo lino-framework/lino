@@ -13,6 +13,7 @@ class Site(Site):
         m = main.add_menu("polls", "Polls")
         m.add_action('polls.Polls')
         m.add_action('polls.Choices')
+        super(Site, self).setup_menu(profile, main)
 
 SITE = Site(globals())
 

@@ -19,7 +19,7 @@ from lino.api import dd
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
-from lino.modlib.office.choicelists import OfficeUser
+from lino.modlib.office.roles import OfficeUser
 
 
 class PostingStates(dd.Workflow):
@@ -97,7 +97,7 @@ class Posting(UserAuthored, mixins.ProjectRelated, Controllable):
 
 
 class Postings(dd.Table):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(dd.SiteStaff, OfficeUser)
     model = Posting
     column_names = 'date user owner partner *'
     order_by = ['date']

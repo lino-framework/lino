@@ -55,7 +55,7 @@ class ChoiceSet(mixins.BabelNamed):
 
 
 class ChoiceSets(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'polls.ChoiceSet'
     detail_layout = """
     name
@@ -84,7 +84,7 @@ class Choice(mixins.BabelNamed, mixins.Sequenced):
 
 class Choices(dd.Table):
     model = 'polls.Choice'
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 class ChoicesBySet(Choices):
@@ -201,7 +201,7 @@ class Polls(dd.Table):
 
 
 class AllPolls(Polls):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     column_names = 'id ref title user state *'
 
 
@@ -262,7 +262,7 @@ Question.set_widget_options('number', width=5)
 
 
 class Questions(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'polls.Question'
     column_names = "seqno poll number title choiceset is_heading *"
     detail_layout = """
@@ -378,7 +378,7 @@ class Responses(dd.Table):
 
 
 class AllResponses(Responses):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 class MyResponses(ByUser, Responses):
@@ -452,7 +452,7 @@ class AnswerChoice(dd.Model):
 
 
 class AnswerChoices(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'polls.AnswerChoice'
 
 
@@ -488,7 +488,7 @@ class AnswerRemarksByAnswer(AnswerRemarks):
 
 
 class AllAnswerRemarks(AnswerRemarks):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
 
 class AnswersByResponseRow(object):

@@ -30,6 +30,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 
 
+from lino.core.roles import SiteStaff
 from lino.api import dd, rt
 from lino import mixins
 
@@ -275,7 +276,7 @@ class PropertyOccurence(dd.Model):
 
 
 class PropGroups(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = PropGroup
     detail_layout = """
     id name 
@@ -284,7 +285,7 @@ class PropGroups(dd.Table):
 
 
 class PropTypes(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = PropType
     detail_layout = """
     id name choicelist default_value
@@ -294,7 +295,7 @@ class PropTypes(dd.Table):
 
 
 class Properties(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = Property
     order_by = ['name']
     #~ column_names = "id name"

@@ -37,7 +37,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.modlib.accounts.utils import DEBIT, CREDIT, ZERO
-from lino.modlib.accounts.choicelists import AccountingReader
+from lino.modlib.accounts.roles import AccountingReader
 
 from .utils import Balance, DueMovement, get_due_movements
 from .choicelists import TradeTypes, FiscalYears

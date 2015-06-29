@@ -35,6 +35,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
+from .roles import SiteUser
 
 startup_rlock = threading.RLock()
 
@@ -90,6 +91,7 @@ def configure_plugin(app_label, **kwargs):
 # from django.db.models.fields import NOT_PROVIDED
 class NOT_PROVIDED:
     pass
+
 
 
 class Site(object):
@@ -420,6 +422,12 @@ documentation.
 
     If None, use logic described in :doc:`/topics/auth`
   
+
+    """
+
+    disable_user_roles = False
+    """Set this to `True` if you want to disable the `required_roles` part
+    of the permission system.
 
     """
 
@@ -1708,17 +1716,20 @@ documentation.
         install_migrations(self, *args)
 
     def get_default_required_roles(self, *args):
-        """Return a dict with the default value for the :attr:`required
-        <lino.core.actors.Actor.required>` attribute of every actor.
+        """Return a dict with the default value for the :attr:`required_roles
+        <lino.core.actors.Actor.required_roles>` attribute of every actor.
         This is also the default value for
         :meth:`lino.core.plugin.Plugin.get_default_required_roles`.
 
         """
+        if len(args):
+            return set(args)
+        return set([SiteUser])
+
         # setting the default value for `auth` is moved to
         # `boundaction.__init__` because `Site.user_model` is known
-        # only after importing the models
-
-        return set(args)
+        # only after importing the models.
+        # return set(args)
 
     def parse_date(self, s):
         """Convert a string formatted using :attr:`date_format_strftime` or
@@ -1825,17 +1836,7 @@ documentation.
         :xfile:`settings.py`.
 
         """
-
-        from lino.modlib.users.choicelists import (
-            UserProfiles, Anonymous, SiteUser, SiteAdmin)
-
-        UserProfiles.clear()
-        add = UserProfiles.add_item_instance
-        add(Anonymous('000', name='anonymous',
-            readonly=self.user_model is not None,
-            authenticated=False))
-        add(SiteUser('100', name='user'))
-        add(SiteAdmin('900', name='admin'))
+        pass
 
     def setup_choicelists(self):
         """This is a hook for code to be run *after* all plugins have been

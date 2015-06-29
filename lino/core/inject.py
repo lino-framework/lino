@@ -13,6 +13,7 @@ from django.dispatch import receiver
 
 from lino.core import fields
 from lino.core.signals import pre_analyze
+from lino.core.utils import resolve_model
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
@@ -320,6 +321,7 @@ def inject_quick_add_buttons(model, name, target):
     def fn(self, ar):
         return ar.renderer.quick_add_buttons(
             ar.spawn(target, master_instance=self))
+    tm = resolve_model(target.model)
     inject_field(model, name,
                  fields.VirtualField(fields.DisplayField(
-                     target.model._meta.verbose_name_plural), fn))
+                     tm._meta.verbose_name_plural), fn))

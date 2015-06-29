@@ -11,14 +11,8 @@ from __future__ import unicode_literals
 from django.db import models
 from lino.api import dd, rt, _
 
-from lino.modlib.users.choicelists import SiteUser
-
 from .fields import DebitOrCreditField
 from .utils import DEBIT, CREDIT
-
-
-class AccountingReader(SiteUser):
-    verbose_name = _("Accounting reader")
 
 
 class AccountChart(dd.Choice):
@@ -37,7 +31,7 @@ class AccountCharts(dd.ChoiceList):
     verbose_name = _("Account Chart")
     verbose_name_plural = _("Account Charts")
     item_class = AccountChart
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
 
     detail_layout = """
     name

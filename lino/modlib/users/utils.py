@@ -115,8 +115,12 @@ def make_view_permission_handler_(
         # user_level=None, user_groups=None,
         # allow=None, auth=False, owner=None, states=None):
 
-    def allow(action, profile):
-        return profile.has_required_role(required_roles)
+    if settings.SITE.disable_user_roles or settings.SITE.user_model is None:
+        def allow(action, profile):
+            return True
+    else:
+        def allow(action, profile):
+            return profile.has_required_role(required_roles)
 
     if not readonly:
         allow3 = allow
@@ -147,7 +151,7 @@ def make_view_permission_handler_(
 
 def make_permission_handler_(
     elem, actor, readonly, debug_permissions, required_roles,
-        allow=None, auth=False, owner=None, states=None):
+        allow=None, auth=False, owner=None, allowed_states=None):
 
     #~ if str(actor) == 'courses.PendingCourseRequests':
         #~ if allow is None: raise Exception("20130424")
@@ -158,8 +162,13 @@ def make_permission_handler_(
             #~ user_level,user_groups,states,allow,owner,auth])
 
     if allow is None:
-        def allow(action, user, obj, state):
-            return user.profile.has_required_role(required_roles)
+        if settings.SITE.disable_user_roles or \
+           settings.SITE.user_model is None:
+            def allow(action, user, obj, state):
+                return True
+        else:
+            def allow(action, user, obj, state):
+                return user.profile.has_required_role(required_roles)
 
     if True:  # e.g. public readonly site
         if auth:
@@ -182,12 +191,12 @@ def make_permission_handler_(
                     return False
                 return allow_owner(action, user, obj, state)
 
-    if states is not None:
+    if allowed_states:
         #~ if not isinstance(actor.workflow_state_field,choicelists.ChoiceListField):
         if actor.workflow_state_field is None:
             raise Exception(
                 """\
-%s cannot specify `states` when %s.workflow_state_field is %r.
+%s cannot specify `allowed_states` when %s.workflow_state_field is %r.
                 """ % (elem, actor, actor.workflow_state_field))
         #~ else:
             #~ print 20120621, "ok", actor
@@ -195,34 +204,24 @@ def make_permission_handler_(
         #~ states = frozenset([getattr(lst,n) for n in states])
         #~ possible_states = [st.name for st in lst.items()] + [BLANK_STATE]
         ns = []
-        if isinstance(states, basestring):
-            states = states.split()
-        for n in states:
+        if isinstance(allowed_states, basestring):
+            allowed_states = allowed_states.split()
+        for n in allowed_states:
             if n is not None:
                 if n == '_':
                     n = None
                 else:
                     n = lst.get_by_name(n)
             ns.append(n)
-            #~ if n:
-                #~ ns.append(getattr(lst,n))
-            #~ else:
-                #~ ns.append(lst.blank_item)
-
-            #~ if not st in possible_states:
-                #~ raise Exception("Invalid state %r, must be one of %r" % (st,possible_states))
-        states = frozenset(ns)
+        allowed_states = frozenset(ns)
         allow2 = allow
-        #~ if debug_permissions:
-            #~ logger.info("20121009 %s required states: %s",actor,states)
 
         def allow(action, user, obj, state):
             if not allow2(action, user, obj, state):
                 return False
             if obj is None:
                 return True
-            return state in states
-    #~ return perms.Permission(allow)
+            return state in allowed_states
 
     if not readonly:
         allow3 = allow
@@ -240,8 +239,10 @@ def make_permission_handler_(
         def allow(action, user, obj, state):
             v = allow4(action, user, obj, state)
             logger.info(
-                u"debug_permissions %r required(%s,%s,%s), allow(%s,%s,%s)--> %s",
-                action, user_level, user_groups, states, user.username, obj2str(obj), state, v)
+                u"debug_permissions %r required(%s, %s), "
+                "allow(%s, %s, %s) --> %s",
+                action, required_roles,
+                allowed_states, user.username, obj2str(obj), state, v)
             return v
     return allow
 

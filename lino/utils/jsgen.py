@@ -344,6 +344,10 @@ class VisibleComponent(Component, Permittable):
         if label is not None:
             self.label = label
         if required_roles is not NOT_PROVIDED:
+            if not isinstance(required_roles, set):
+                raise Exception(
+                    "20150628 %s has required_roles %s" % (
+                        self, required_roles))
             self.required_roles = required_roles
         # if help_text is not None:
         #     self.help_text = help_text

@@ -23,7 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from lino.api import dd, rt
 from lino import mixins
@@ -54,7 +54,7 @@ class Calendar(mixins.BabelNamed):
 
 
 class Calendars(dd.Table):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = 'cal.Calendar'
 
     insert_layout = """
@@ -97,7 +97,7 @@ class Subscription(UserAuthored):
 
 
 class Subscriptions(dd.Table):
-    required_roles = dd.required(dd.StaffMember, OfficeUser)
+    required_roles = dd.required(OfficeStaff)
     model = 'cal.Subscription'
     order_by = ['calendar__name']
     #~ insert_layout = """

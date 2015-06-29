@@ -19,6 +19,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 from .choicelists import Shortcuts, UploadAreas
 
@@ -59,7 +60,7 @@ class UploadTypes(dd.Table):
 
 This usually is accessible via the `Configure` menu.
     """
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(OfficeStaff)
     model = 'uploads.UploadType'
     column_names = "upload_area name max_number wanted shortcut *"
     order_by = ["upload_area", "name"]
@@ -132,7 +133,7 @@ dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
 
 class Uploads(dd.Table):
     "Shows all Uploads"
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(OfficeStaff)
     model = 'uploads.Upload'
     column_names = "file type user owner description *"
 
@@ -178,7 +179,7 @@ class UploadsByType(Uploads):
 
 class MyUploads(Uploads, ByUser):
     """Shows only my Uploads (i.e. those whose author is current user)."""
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     column_names = "file description user owner *"
     # order_by = ["modified"]
 

@@ -43,18 +43,39 @@ class Site(Site):
         Defines application-specific default user profiles.
         Local site administrators can override this in their :xfile:.
         """
-        from lino.modlib.users.choicelists import (
-            UserProfiles, Anonymous, SiteUser, StaffMember, SiteAdmin)
-        from lino.modlib.office.choicelists import OfficeUser, OfficeStaff
 
-        class SiteUser(OfficeUser): pass
-        class StaffMember(StaffMember, OfficeStaff): pass
-        class SiteAdmin(SiteAdmin, OfficeStaff): pass
+
+        from django.utils.translation import ugettext_lazy as _
+        from lino.modlib.users.choicelists import UserProfiles
+        from lino.core.roles import Anonymous, SiteAdmin
+        from lino.modlib.office.roles import OfficeUser, OfficeStaff
+
+        class SiteUser(OfficeUser):
+            pass
+
+        class SiteAdmin(SiteAdmin, OfficeStaff):
+            pass
 
         UserProfiles.clear()
-        add = UserProfiles.add_item_instance
-        add(Anonymous('000', name='anonymous',
-                      readonly=True, authenticated=False))
-        add(SiteUser('100',  name='user'))
-        add(StaffMember('200', name='staff'))
-        add(SiteAdmin('900', name='admin'))
+        add = UserProfiles.add_item
+        add('000', _("Anonymous"), Anonymous, name='anonymous',
+            readonly=True,
+            authenticated=False)
+        add('100', _("User"), SiteUser, name='user')
+        add('900', _("Administrator"), SiteAdmin, name='admin')
+
+        # from lino.modlib.users.choicelists import (
+        #     UserProfiles, Anonymous, SiteUser, StaffMember, SiteAdmin)
+        # from lino.modlib.office.roles import OfficeUser, OfficeStaff
+
+        # class SiteUser(OfficeUser): pass
+        # class StaffMember(StaffMember, OfficeStaff): pass
+        # class SiteAdmin(SiteAdmin, OfficeStaff): pass
+
+        # UserProfiles.clear()
+        # add = UserProfiles.add_item_instance
+        # add(Anonymous('000', name='anonymous',
+        #               readonly=True, authenticated=False))
+        # add(SiteUser('100',  name='user'))
+        # add(StaffMember('200', name='staff'))
+        # add(SiteAdmin('900', name='admin'))

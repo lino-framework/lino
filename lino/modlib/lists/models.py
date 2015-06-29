@@ -22,6 +22,7 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from lino.core.roles import SiteStaff
 from lino.api import dd
 from lino import mixins
 
@@ -39,7 +40,7 @@ class ListType(mixins.BabelNamed):
 
 
 class ListTypes(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'lists.ListType'
     column_names = 'name *'
 
@@ -57,7 +58,7 @@ class List(mixins.BabelNamed, mixins.Referrable):
 
 
 class Lists(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'lists.List'
     column_names = 'ref name list_type *'
     order_by = ['ref']
@@ -90,7 +91,7 @@ class Member(mixins.Sequenced):
 
 
 class Members(dd.Table):
-    required_roles = dd.required(dd.StaffMember)
+    required_roles = dd.required(dd.SiteStaff)
     model = 'lists.Member'
 
 
