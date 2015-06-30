@@ -39,18 +39,14 @@ class UserAuthored(model.Model):
 
     # manager_level_field = 'level'
     manager_roles_required = dd.SiteStaff
-    """By default, only system managers can edit other users' work.
+    """By default, only :class:`lino.core.roles.SiteStaff` users can edit
+    other users' work.
 
-    If the application defines customized UserGroups, then we may want
-    to permit it also to department managers.  If an application
-    defines a UserGroup `foo`, then it can set this attribute to
-    `'foo_level'` on a model to specify that a manager level for the
-    foo department is enough to get edit permission on other users'
-    instances.
+    Setting :attr:`manager_roles_required` to `None` will **disable**
+    this behaviour (i.e. everybody can edit the work of other users).
 
-    Setting :attr:`manager_level_field` on your model to `None` will
-    disable this behaviour (i.e. everybody can edit the work of other
-    users).
+    An application can also set :attr:`manager_roles_required` on a
+    model to some other user role class or a tuple of such classes.
 
     Usage examples see :class:`lino.modlib.notes.models.Note` or
     :class:`lino.modlib.cal.models.Component`.

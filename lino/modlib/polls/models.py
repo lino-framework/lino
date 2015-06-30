@@ -312,7 +312,7 @@ class ToggleChoice(dd.Action):
             obj.save()
         else:
             raise Exception(
-                "Oops: %s returned %d rows." % (qs.query, qs.count()))
+                "Oops, %s returned %d rows." % (qs.query, qs.count()))
         ar.success(refresh=True)
         # dd.logger.info("20140930 %s", obj)
             

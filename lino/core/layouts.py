@@ -424,7 +424,7 @@ In %s, updating attribute %r:
         if tpl is None:
             return  # when does this occur?
         if hasattr(self, name):
-            raise Exception("Oops: %s has already a name %r" % (self, name))
+            raise Exception("Oops, %s has already a name %r" % (self, name))
         if DEBUG_LAYOUTS(self):
             msg = """\
 Adding panel %r to %s ---:

@@ -763,10 +763,10 @@ def install_migrations(self, loader):
             #~ logger.info("Found %s()", funcname)
             to_version = m(globals_dict)
             if not isinstance(to_version, basestring):
-                raise Exception("Oops: %s didn't return a string!" % m)
+                raise Exception("Oops, %s didn't return a string!" % m)
             if to_version <= from_version:
                 raise Exception(
-                    "Oops: %s tries to migrate from version %s to %s ?!" %
+                    "Oops, %s tries to migrate from version %s to %s ?!" %
                     (m, from_version, to_version))
             msg = "Migrating from version %s to %s" % (
                 from_version, to_version)

@@ -411,12 +411,12 @@ class Model(models.Model):
 
         """
         msg = _(
-            "Cannot delete %(self)s "
+            "Cannot delete %(model)s %(self)s "
             "because %(count)d %(refs)s refer to it."
         ) % dict(
             self=self, count=n,
-            refs=m._meta.verbose_name_plural
-            or m._meta.verbose_name + 's')
+            model=self._meta.verbose_name,
+            refs=m._meta.verbose_name_plural or m._meta.verbose_name + 's')
         #~ print msg
         return msg
 

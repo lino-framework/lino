@@ -68,7 +68,7 @@ The :meth:`disable_delete <lino.core.model.Model.disable_delete>`
 method also sees these objects:
 
 >>> print(unicode(mbr.disable_delete()))
-Cannot delete John because 1 notes refer to it.
+Cannot delete member John because 1 notes refer to it.
 
 This means that Lino would prevent users from deleting this member
 through the web interface.
@@ -78,7 +78,7 @@ Lino also protects normal application code from deleting a member:
 >>> mbr.delete()
 Traceback (most recent call last):
   ...
-Warning: Cannot delete John because 1 notes refer to it.
+Warning: Cannot delete member John because 1 notes refer to it.
 
 All objects are still there:
 

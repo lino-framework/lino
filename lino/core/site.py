@@ -997,7 +997,7 @@ the `required_roles` part
             local_apps = [local_apps]
         if not isinstance(settings_globals, dict):
             raise Exception("""
-            Oops, the first argument when instantiating a %s
+            The first argument when instantiating a %s
             must be your settings.py file's `globals()`
             and not %r
             """ % (self.__class__.__name__, settings_globals))
@@ -1338,7 +1338,7 @@ the `required_roles` part
                         ok = True
                         break
             if not ok:
-                msg = ("Oops : cannot use {cache_dir} for {this} "
+                msg = ("Oops, cannot use {cache_dir} for {this} "
                        "because it is used for {other}.")
                 msg = msg.format(
                     cache_dir=self.cache_dir,

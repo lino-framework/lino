@@ -57,7 +57,7 @@ class ConfigDirCache(object):
 
     def __init__(self, site):
         if self._init:
-            raise Exception("Oops")
+            raise Exception("Oops, ConfigDirCache was already instantiated!")
         self._init = True
         self.site = site
         config_dirs = []

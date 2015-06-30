@@ -12,6 +12,8 @@ from __future__ import print_function
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.db import models
+
 
 from lino.api import dd
 
@@ -34,7 +36,7 @@ document)."""
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         if obj.printed_by is None:
-            ar.error(_("Oops."))
+            ar.error(_("Oops, the print cache was already cleared."))
             return
 
         def ok(ar2):
@@ -50,8 +52,7 @@ document)."""
 
 
 class Certifiable(dd.Model):
-    """
-    Any model which inherits from this mixin becomes "certifiable".
+    """Any model which inherits from this mixin becomes "certifiable".
     That is:
 
       - it has a `printed_by` field and a corresponding virtual field
@@ -86,6 +87,9 @@ class Certifiable(dd.Model):
       A :class:`Certifiable` is considered "certified" when this this is
       not `None`.
 
+      Note that this field is a nullable ForeignKey with `on_delete
+      <https://docs.djangoproject.com/en/1.8/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
+      set to ``SET_NULL``.
 
     """
     class Meta:
@@ -96,8 +100,7 @@ class Certifiable(dd.Model):
         verbose_name=_("Printed"),
         editable=False,
         related_name="%(app_label)s_%(class)s_set_as_printed",
-        blank=True, null=True,
-    )
+        blank=True, null=True, on_delete=models.SET_NULL)
 
     clear_printed = ClearPrinted()
 

@@ -61,7 +61,7 @@ class TestCase(TestCase):
             mbr.delete()
         except Warning as e:
             self.assertEqual(
-                unicode(e), "Cannot delete John because 1 notes refer to it.")
+                unicode(e), "Cannot delete member John because 1 notes refer to it.")
         else:
             self.fail("Expected an exception")
 
