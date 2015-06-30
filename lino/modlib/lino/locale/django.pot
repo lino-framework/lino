@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.17\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-30 19:59+0300\n"
+"POT-Creation-Date: 2015-06-30 21:36+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -480,43 +480,54 @@ msgctxt "indirect salutation"
 msgid "Mr"
 msgstr ""
 
-#: lino/mixins/human.py:180 lino/modlib/users/models.py:116
+#: lino/mixins/human.py:187
+msgctxt "(of a human)"
+msgid "Title"
+msgstr ""
+
+#: lino/mixins/human.py:189
+msgid ""
+"Text to print between salutation and name as part of the first address "
+"line."
+msgstr ""
+
+#: lino/mixins/human.py:194 lino/modlib/users/models.py:116
 msgid "First name"
 msgstr ""
 
-#: lino/mixins/human.py:183
+#: lino/mixins/human.py:195
 msgid "First or given name."
 msgstr ""
 
-#: lino/mixins/human.py:186
+#: lino/mixins/human.py:198
 msgid "Middle name"
 msgstr ""
 
-#: lino/mixins/human.py:187
+#: lino/mixins/human.py:199
 msgid "Space-separated list of all middle names."
 msgstr ""
 
-#: lino/mixins/human.py:190 lino/modlib/users/models.py:117
+#: lino/mixins/human.py:202 lino/modlib/users/models.py:117
 msgid "Last name"
 msgstr ""
 
-#: lino/mixins/human.py:191
+#: lino/mixins/human.py:203
 msgid "Last name (family name)."
 msgstr ""
 
-#: lino/mixins/human.py:284
+#: lino/mixins/human.py:298
 msgid "Birth date"
 msgstr ""
 
-#: lino/mixins/human.py:307 lino/modlib/ledger/ui.py:511
+#: lino/mixins/human.py:321 lino/modlib/ledger/ui.py:511
 msgid "Age"
 msgstr ""
 
-#: lino/mixins/human.py:311
+#: lino/mixins/human.py:325
 msgid "unknown"
 msgstr ""
 
-#: lino/mixins/human.py:312
+#: lino/mixins/human.py:326
 #, python-format
 msgid "%d years"
 msgstr ""
@@ -597,7 +608,7 @@ msgstr ""
 msgid "❌"
 msgstr ""
 
-#: lino/mixins/polymorphic.py:212 lino/modlib/contacts/models.py:163
+#: lino/mixins/polymorphic.py:212 lino/modlib/contacts/models.py:162
 msgid "See as "
 msgstr ""
 
@@ -747,8 +758,8 @@ msgid "show callables"
 msgstr ""
 
 #: lino/modlib/about/models.py:209 lino/modlib/about/models.py:295
-#: lino/modlib/about/models.py:341 lino/modlib/contacts/models.py:91
-#: lino/modlib/contacts/models.py:147 lino/modlib/courses/models.py:90
+#: lino/modlib/about/models.py:341 lino/modlib/contacts/models.py:90
+#: lino/modlib/contacts/models.py:146 lino/modlib/courses/models.py:90
 #: lino/modlib/courses/models.py:300 lino/modlib/importfilters/models.py:33
 #: lino/modlib/outbox/models.py:50 lino/modlib/tickets/models.py:95
 #: lino/modlib/users/models.py:141
@@ -1012,7 +1023,7 @@ msgstr ""
 msgid "{0}:{1}->{2}"
 msgstr ""
 
-#: lino/modlib/addresses/models.py:47 lino/modlib/contacts/models.py:194
+#: lino/modlib/addresses/models.py:47 lino/modlib/contacts/models.py:193
 #: lino/modlib/countries/mixins.py:256 lino/modlib/outbox/models.py:49
 msgid "Address"
 msgstr ""
@@ -2409,7 +2420,7 @@ msgstr ""
 msgid "Concept"
 msgstr ""
 
-#: lino/modlib/concepts/models.py:42 lino/modlib/contacts/models.py:331
+#: lino/modlib/concepts/models.py:42 lino/modlib/contacts/models.py:320
 msgid "Abbreviation"
 msgstr ""
 
@@ -2469,44 +2480,44 @@ msgstr ""
 msgid "represented as"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:88 lino/modlib/households/choicelists.py:22
+#: lino/modlib/contacts/models.py:87 lino/modlib/households/choicelists.py:22
 #: lino/modlib/households/models.py:377 lino/modlib/ledger/ui.py:499
 #: lino/projects/presto/lib/contacts/models.py:18
 msgid "Partner"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:89
+#: lino/modlib/contacts/models.py:88
 #: lino/projects/presto/lib/contacts/models.py:19
 msgid "Partners"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:95
+#: lino/modlib/contacts/models.py:94
 msgid "E-Mail"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:96
+#: lino/modlib/contacts/models.py:95
 msgid "URL"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:97
+#: lino/modlib/contacts/models.py:96
 msgid "Phone"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:98
+#: lino/modlib/contacts/models.py:97
 msgid "GSM"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:99
+#: lino/modlib/contacts/models.py:98
 msgid "Fax"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:101 lino/modlib/cv/models.py:123
+#: lino/modlib/contacts/models.py:100 lino/modlib/cv/models.py:123
 #: lino/modlib/cv/models.py:506 lino/modlib/lists/models.py:55
 #: lino/modlib/users/models.py:120
 msgid "Remarks"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:202
+#: lino/modlib/contacts/models.py:201
 #: lino/projects/min2/modlib/contacts/models.py:62
 #: lino/projects/min2/modlib/contacts/models.py:125
 #: lino/projects/min2/modlib/contacts/models.py:180
@@ -2516,89 +2527,79 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:254
+#: lino/modlib/contacts/models.py:253
 #: lino/projects/min2/modlib/contacts/models.py:83
 #: lino/projects/presto/lib/contacts/models.py:87
 msgid "Person"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:255
+#: lino/modlib/contacts/models.py:254
 #: lino/projects/min2/modlib/contacts/models.py:84
 #: lino/projects/presto/lib/contacts/models.py:88
 msgid "Persons"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:260 lino/modlib/pages/models.py:81
-msgid "Title"
-msgstr ""
-
-#: lino/modlib/contacts/models.py:261
-msgid ""
-"Text to print before allocation and name as part of the first address "
-"line."
-msgstr ""
-
-#: lino/modlib/contacts/models.py:328
+#: lino/modlib/contacts/models.py:317
 msgid "Organization type"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:329
+#: lino/modlib/contacts/models.py:318
 msgid "Organization types"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:355
+#: lino/modlib/contacts/models.py:344
 msgid "Organization"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:356
+#: lino/modlib/contacts/models.py:345
 msgid "Organizations"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:359
+#: lino/modlib/contacts/models.py:348
 msgid "Name prefix"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:432
+#: lino/modlib/contacts/models.py:421
 msgid "Function"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:433
+#: lino/modlib/contacts/models.py:422
 msgid "Functions"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:451
+#: lino/modlib/contacts/models.py:440
 msgid "Contact Person"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:452
+#: lino/modlib/contacts/models.py:441
 msgid "Contact Persons"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:457
+#: lino/modlib/contacts/models.py:446
 msgid "Contact Role"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:501
+#: lino/modlib/contacts/models.py:490
 msgid "Contact persons"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:510
+#: lino/modlib/contacts/models.py:499
 msgid "Contact for"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:522
+#: lino/modlib/contacts/models.py:511
 msgid "Next partner id"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:523
+#: lino/modlib/contacts/models.py:512
 msgid "The next automatic id for any new partner."
 msgstr ""
 
-#: lino/modlib/contacts/models.py:531
+#: lino/modlib/contacts/models.py:520
 msgid "Site owner"
 msgstr ""
 
-#: lino/modlib/contacts/models.py:533
+#: lino/modlib/contacts/models.py:522
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
@@ -5214,6 +5215,10 @@ msgstr ""
 
 #: lino/modlib/pages/models.py:71
 msgid "Nodes"
+msgstr ""
+
+#: lino/modlib/pages/models.py:81
+msgid "Title"
 msgstr ""
 
 #: lino/modlib/pages/models.py:86

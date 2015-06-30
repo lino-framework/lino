@@ -240,6 +240,30 @@ specify it explicitly:
 M. Jean Dupont
 
 
+Honorific titles
+================
+
+The :attr:`title <lino.mixins.human.Human.title>` field of a human is
+for specifying a honorific `title
+<https://en.wikipedia.org/wiki/Title>`__ such as "Dr." or "PhD".
+
+Note that this field is always printed *between* salutation and name.
+It does not handle special cases like titles which replace the
+salutation ("Br.", "Sr.") or which must come at another position of
+the full name (e.g. "Cardinal", "Graf" before the last name).
+
+
+>>> settings.SITE.uppercase_last_name = False
+>>> p.title = "Dr."
+>>> p.save()
+>>> print(p.get_full_name())
+Mr Dr. Jean Dupont
+>>> with translation.override('de'):
+...     print(p.get_full_name())
+Herrn Dr. Jean Dupont
+
+
+
 The `mf` method
 ---------------
 
@@ -272,7 +296,7 @@ Templates can use the third argument to handle this case properly:
 He or she
 
 
-We'll reuse the same files for another little lessan
+We'll reuse the same files for another little lesson
 about :ref:`lino.tutorial.pisa`.
 
 

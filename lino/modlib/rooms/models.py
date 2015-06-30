@@ -45,17 +45,17 @@ def setup_rooms_workflow(sender=None, **kw):
     #~ Bookings.deregister_action.add_requirements(states='option registered cancelled')
     #~ Bookings.register_action.add_requirements(states='option draft cancelled')
     BookingStates.draft.add_transition(
-        states='registered option cancelled',
+        required_states='registered option cancelled',
         icon_name="pencil")
     BookingStates.option.add_transition(
-        states='draft registered',
+        required_states='draft registered',
         icon_name="eye",
         help_text=_("Optionally booked. Ask customer before any decision."))
     BookingStates.registered.add_transition(
-        states='draft option cancelled',
+        required_states='draft option cancelled',
         icon_name="accept")
     BookingStates.cancelled.add_transition(
-        states='draft option registered',
+        required_states='draft option registered',
         icon_name='cross')
 
 

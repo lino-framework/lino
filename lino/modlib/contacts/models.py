@@ -30,9 +30,8 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd
+from lino.api import dd, _, pgettext
 from lino import mixins
 
 from lino.utils import join_words
@@ -255,13 +254,6 @@ class Person(Human, Born, Partner):
         verbose_name_plural = _("Persons")
         ordering = ['last_name', 'first_name']
 
-    title = models.CharField(
-        max_length=200, blank=True,
-        verbose_name=_('Title'),
-        help_text=_(
-            "Text to print before allocation and name as part "
-            "of the first address line."))
-
     def full_clean(self, *args, **kw):
         """Set the `name` field of this person.  This field is visible in the
         Partner's detail but not in the Person's detail and serves for
@@ -280,18 +272,15 @@ class Person(Human, Born, Partner):
 
     def address_person_lines(self, *args, **kw):
         "Deserves more documentation."
-        if self.title:
-            yield self.title
+        # if self.title:
+        #     yield join_words(self.get_salutation(), self.title)
+        #     kw.update(salutation=False)
         yield self.get_full_name(*args, **kw)
-        #~ l = filter(lambda x:x,[self.first_name,self.last_name])
-        #~ yield  " ".join(l)
 
     def get_name_elems(self, ar):
-        elems = [self.get_salutation(nominative=True), E.br()]
-        if self.title:
-            elems += [self.title, ' ']
-        elems += [self.first_name, ' ',
-                  E.b(self.last_name)]
+        elems = [self.get_salutation(nominative=True), ' ',
+                 self.title, E.br()]
+        elems += [self.first_name, ' ', E.b(self.last_name)]
         return elems
 
 

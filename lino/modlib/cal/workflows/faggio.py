@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -42,7 +42,7 @@ def my_event_workflows(sender=None, **kw):
     # sender.modules.cal.Event.find_next_date = FindNextDate()
 
     EventStates.took_place.add_transition(
-        states='suggested draft cancelled',
+        required_states='suggested draft cancelled',
         help_text=_("Event took place."),
         icon_name='emoticon_smile')
     #~ EventStates.absent.add_transition(states='published',icon_file='emoticon_unhappy.png')
@@ -51,7 +51,7 @@ def my_event_workflows(sender=None, **kw):
     EventStates.cancelled.add_transition(
         pgettext("calendar event action", "Cancel"),
         #~ owner=True,
-        states='suggested draft took_place',
+        required_states='suggested draft took_place',
         icon_name='cross')
     # EventStates.omitted.add_transition(
     #     pgettext("calendar event action", "Omit"),
@@ -59,10 +59,10 @@ def my_event_workflows(sender=None, **kw):
     #     icon_name='date_delete')
     EventStates.suggested.add_transition(
         _("Reset"),
-        states='draft suggested took_place cancelled',
+        required_states='draft suggested took_place cancelled',
         help_text=_("Reset to initial state."))
 
     # EventStates.suggested.add_transition(
     #     _("Reset"),
-    #     states='draft took_place cancelled',
+    #     required_states='draft took_place cancelled',
     #     help_text=_("Reset to 'suggested' state."))
