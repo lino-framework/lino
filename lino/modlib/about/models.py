@@ -31,7 +31,6 @@ from lino.utils.xmlgen.html import E
 from lino.utils.diag import get_window_actions, have_action
 
 from lino.api import dd
-from lino.core.roles import SiteStaff
 
 
 class Models(dd.VirtualTable):
@@ -126,7 +125,6 @@ class Inspected(object):
 
 
 class Inspector(dd.VirtualTable):
-
     """
     Shows a simplistic "inspector" which once helped me for debugging.
     Needs more work to become seriously useful...
@@ -278,8 +276,9 @@ class DetailLayouts(dd.VirtualTable):
         elems = [f.name for f in lh._store_fields]
         return fill(' '.join(elems), 60)
 
+if False:
 
-class WindowActions(dd.VirtualTable):
+  class WindowActions(dd.VirtualTable):
     """Shows a list of all window actions defined in this application.
 
     """
@@ -315,7 +314,7 @@ class WindowActions(dd.VirtualTable):
         return fill(' '.join(elems), 50)
 
 
-class FormPanels(dd.VirtualTable):
+  class FormPanels(dd.VirtualTable):
     """Shows a list of all form panels defined in this application.
 
     """
@@ -363,7 +362,6 @@ class About(EmptyTable):
     label = _("About")
     help_text = _("Show information about this site.")
     required_roles = set()
-    # required = dict(auth=False)
     hide_top_toolbar = True
     detail_layout = dd.FormLayout("""
     about_html

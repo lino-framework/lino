@@ -16,6 +16,9 @@ from django.conf import settings
 from lino.utils import curry
 from lino.core import actions
 
+from lino.core.permissions import (
+    make_permission_handler, make_view_permission_handler)
+
 
 class BoundAction(object):
 
@@ -58,8 +61,6 @@ class BoundAction(object):
                     "for %r (required=%s) is active (settings=%s)." % (
                         self, required, os.environ['DJANGO_SETTINGS_MODULE']))
 
-        from lino.modlib.users.utils import (
-            make_permission_handler, make_view_permission_handler)
         self.allow_view = curry(make_view_permission_handler(
             self, action.readonly, debug_permissions, required), action)
         self._allow = curry(make_permission_handler(

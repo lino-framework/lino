@@ -31,6 +31,8 @@ class Site(Site):
     # languages = 'en de fr'
     languages = 'en de fr et nl pt-br es'
 
+    enable_role_based_permissions = True
+
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
 
@@ -54,6 +56,7 @@ class Site(Site):
         yield 'lino.modlib.excerpts'
         yield 'lino.modlib.polls'
         yield 'lino.modlib.cv'
+        yield 'lino.modlib.boards'
         yield 'lino.modlib.postings'
         yield 'lino.modlib.households'
 
@@ -71,6 +74,7 @@ class Site(Site):
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.beid'
         yield 'lino.modlib.tinymce'
+        yield 'lino.modlib.export_excel'
 
     def setup_plugins(self):
         super(Site, self).setup_plugins()

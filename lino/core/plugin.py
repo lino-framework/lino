@@ -304,9 +304,3 @@ class Plugin(object):
         """
         return self.needed_by or self
 
-    # def get_default_required_roles(self, *args):
-    #     """Return a set of user roles to specify as default value for
-    #     required_roles.
-
-    #     """
-    #     return self.site.get_default_required_roles(*args)

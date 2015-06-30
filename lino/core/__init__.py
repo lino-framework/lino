@@ -23,9 +23,11 @@ The ``lino.core`` package
     menus
     merge
     model
+    permissions
     plugin
     renderer
     requests
+    roles
     signals
     site
     store

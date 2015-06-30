@@ -535,52 +535,6 @@ class Parametrizable(object):
             return wl.window_size
 
 
-class Permittable(object):
-
-    """Base class for objects that have view permissions control.
-
-    :class:`lino.core.actors.Actor` would be a subclass, but is a
-    special case since actors never get instantiated.
-
-    """
-
-    required_roles = set()
-    """
-    The permissions required to view this actor.
-    A dict with permission requirements.
-    See :func:`lino.core.perms.make_permission_handler`.
-    """
-
-    # internally needed for make_permission_handler
-    workflow_state_field = None
-    # internally needed for make_permission_handler
-    workflow_owner_field = None
-    #~ readonly = True
-
-    debug_permissions = False
-    """
-    Whether to log :ref:`debug_permissions` for this action.
-    
-    """
-
-    def add_requirements(self, *args):
-        return add_requirements(self, *args)
-
-    def get_view_permission(self, profile):
-        raise NotImplementedError()
-
-
-def add_requirements(obj, *args):
-    """Add the specified requirements to `obj`.  `obj` can be an
-    :class:`lino.core.actors.Actor` or any :class:`Permittable`.
-    Application code uses this indirectly through the shortcut methods
-    :meth:`lino.core.actors.Actor.add_view_requirements` or a
-    :meth:`Permittable.add_requirements`.
-
-    """
-    obj.required_roles |= set(args)
-
-
 class InstanceAction(object):
     """Volatile object which wraps a given action to be run on a given
     model instance.
@@ -667,24 +621,6 @@ class ParameterPanel(object):
 
     def items(self, *args, **kw):
         return self.fields.items(*args, **kw)
-
-
-class Requirements(object):
-
-    """Not yet used. TODO: implement requirements as a class.
-
-    - handle conversions (like accepting both list and string for
-      `user_groups` )
-    - implement loosen_requirements as __or__()
-    - implement add_requirements as __and__()
-
-    """
-    user_level = None
-    user_groups = None
-    states = None
-    allow = None
-    auth = True
-    owner = None
 
 
 class PseudoRequest:

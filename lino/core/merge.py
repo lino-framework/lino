@@ -7,7 +7,7 @@ This defines the :class:`MergeAction` class.
 Usage example::
 
   @dd.receiver(dd.pre_analyze)
-  def set_merge_actions(sender,**kw):
+  def my_merge_actions(sender,**kw):
       modules = sender.modules
       for m in (modules.contacts.Person,modules.contacts.Company):
           m.define_action(merge_row=dd.MergeAction(m))
@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-# from django.utils.translation import ugettext as _
 
 from lino.core import actions
 from lino.core import layouts
@@ -150,7 +149,7 @@ class MergeAction(actions.Action):
     sort_index = 31
     show_in_workflow = False
     readonly = False
-    required_roles = settings.SITE.get_default_required_roles(SiteStaff)
+    required_roles = set([SiteStaff])
 
     def __init__(self, model, **kw):
 

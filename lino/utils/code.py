@@ -1,14 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Defines some utilities to instpect the running Python code:
+Defines some utilities to inspect the running Python code.
 
-:func:`codefiles`
-:func:`codetime`
-and
-:func:`analyze_rst`
 """
 
 import logging
@@ -19,13 +15,11 @@ import sys
 import time
 import fnmatch
 
-#~ def codefiles(pattern='.*', flags=0):
-
 
 def codefiles(pattern='*'):
     """
-    Yield a list of the source files corresponding to the currently 
-    imported modules which match the given pattern
+    Yield a list of the source files corresponding to the currently
+    imported modules that match the given pattern
     """
     #~ exp = re.compile(pattern, flags)
 
@@ -134,7 +128,7 @@ def analyze_rst(*packages):
       
     """
     fields = 'count_code count_doc count_comment count_total'.split()
-    headers = ["name"] + fields
+    headers = ["name", "code lines", "doc lines", "comment lines", "total lines"] 
     rows = []
 
     total_sums = [0] * len(fields)

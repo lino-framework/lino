@@ -256,11 +256,6 @@ from lino.core.utils import ParameterPanel, PseudoRequest
 #from lino.modlib.users.utils import add_user_group
 
 
-login_required = settings.SITE.get_default_required_roles
-# deprecated aliases:
-Required = required = settings.SITE.get_default_required_roles
-
-
 from lino.utils import IncompleteDate
 
 from lino.utils.format_date import fdm, fdl, fdf, fdmy
@@ -319,6 +314,16 @@ def resolve_plugin(app_label):
 from django.utils import translation
 get_language = translation.get_language
 
+from lino.core.roles import SiteStaff, SiteUser, SiteAdmin
+
+
+def login_required(*args):
+    if len(args):
+        return set(args)
+    return set([SiteUser])
+
+# deprecated aliases:
+Required = required = login_required
+
 # logger.info("20140227 dd.py b %s", site)
 
-from lino.core.roles import SiteStaff, SiteUser, SiteAdmin

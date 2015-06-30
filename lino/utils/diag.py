@@ -1,11 +1,10 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from textwrap import fill
+# from textwrap import fill
 from atelier import rstgen
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.users.choicelists import UserProfiles
 
@@ -35,7 +34,7 @@ def get_window_actions():
 
 def have_action(ba):
     if ba is None:
-        return _("N/A")
+        return "N/A"
     visible = []
     hidden = []
     for p in UserProfiles.objects():
@@ -45,16 +44,16 @@ def have_action(ba):
         else:
             hidden.append(name)
     if len(hidden) == 0:
-        return _("all")
+        return "all"
     if len(visible) == 0:
-        return _("nobody")
+        return "nobody"
     if len(hidden) < len(visible):
-        return _("all except %s") % ', '.join(hidden)
+        return "all except %s" % ', '.join(hidden)
     return ', '.join(visible)
 
 
 def window_actions():
-
+    # settings.SITE.startup()
     l = list(get_window_actions().values())
 
     def f(a, b):
@@ -63,7 +62,7 @@ def window_actions():
     items = []
     for ba in sorted(l, f):
         items.append(
-            "{0} (viewable for {1}) : ".format(
+            "{0} (viewable for {1}) : {2}".format(
                 ba.full_name(), have_action(ba), fields(ba)))
 
     return rstgen.ul(items)
@@ -75,5 +74,6 @@ def fields(ba):
         return ''
     lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
     elems = [str(f.name) for f in lh._store_fields]
-    return fill(' '.join(elems), 50)
+    return ', '.join(elems)
+    # return fill(' '.join(elems), 50)
 

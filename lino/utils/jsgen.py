@@ -90,7 +90,8 @@ from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
 from lino.utils import curry
-from lino.core.utils import Permittable
+from lino.core.permissions import Permittable
+from lino.core.permissions import make_view_permission_handler
 
 
 user_profile_rlock = threading.RLock()
@@ -312,9 +313,6 @@ class VisibleComponent(Component, Permittable):
         self.install_permission_handler()
 
     def install_permission_handler(self):
-
-        from lino.modlib.users.utils import make_view_permission_handler
-
         self.allow_read = curry(make_view_permission_handler(
             self, True,
             self.debug_permissions,

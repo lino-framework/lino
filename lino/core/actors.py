@@ -23,7 +23,7 @@ from lino.core.utils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.boundaction import BoundAction
 from lino.core.constants import _handle_attr_name
-from lino.core.utils import add_requirements
+from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import error2str
 from lino.utils import curry, AttrDict
 from lino.utils.xmlgen.html import E
@@ -215,7 +215,7 @@ class ActorMetaClass(type):
         return cls.get_actor_editable()
 
 
-class Actor(actions.Parametrizable):
+class Actor(actions.Parametrizable, Permittable):
     """The base class for all actors.  Subclassed by :class:`AbstractTable
     <lino.core.tables.AbstractTable>`, :class:`Table
     <lino.core.dbtables.Table>`, :class:`ChoiceList
@@ -360,12 +360,6 @@ class Actor(actions.Parametrizable):
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
 
-    debug_permissions = False
-    """
-    Whether to log :ref:`debug_permissions` for this actor.
-    """
-
-    required_roles = settings.SITE.get_default_required_roles()
     update_required = set()
     delete_required = set()
 
@@ -393,18 +387,6 @@ class Actor(actions.Parametrizable):
     """
     When specifying an :attr:`insert_layout` using a simple a multline
     string, then Lino will instantiate a FormPanel with this width.
-    """
-
-    workflow_state_field = None
-    """
-    The name of the field that contains the workflow state of an
-    object.  Subclasses may override this.
-    """
-
-    workflow_owner_field = None
-    """
-    The name of the field that contains the user who is considered to
-    own an object when `Rule.owned_only` is checked.
     """
 
     hide_window_title = False

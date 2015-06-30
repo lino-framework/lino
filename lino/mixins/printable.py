@@ -533,7 +533,7 @@ class EditTemplate(BasePrintAction):
     sort_index = 51
     url_action_name = 'edit_tpl'
     label = _('Edit Print Template')
-    required_roles = settings.SITE.get_default_required_roles(SiteStaff)
+    required_roles = set([SiteStaff])
 
     def run_from_ui(self, ar, **kw):
 

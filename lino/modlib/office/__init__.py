@@ -6,7 +6,7 @@ other modules.
 
 .. autosummary::
 
-  choicelists
+  roles
 
 """
 

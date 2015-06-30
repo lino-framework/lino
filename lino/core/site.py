@@ -35,7 +35,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from .roles import SiteUser
+# from .roles import SiteUser
 
 startup_rlock = threading.RLock()
 
@@ -425,8 +425,14 @@ documentation.
 
     """
 
-    disable_user_roles = False
-    """Set this to `True` if you want to disable the `required_roles` part
+    enable_role_based_permissions = False
+    """Set this to `True` if you want to enable permission control
+    based on user roles defined in
+    :attr:`required_roles <lino.core.permissions.Permittable.required_roles>`
+    and :attr:`lino.modlib.users.choicelists.UserProfile.role`
+
+
+the `required_roles` part
     of the permission system.
 
     """
@@ -1714,22 +1720,6 @@ documentation.
         """
         from lino.utils.dpy import install_migrations
         install_migrations(self, *args)
-
-    def get_default_required_roles(self, *args):
-        """Return a dict with the default value for the :attr:`required_roles
-        <lino.core.actors.Actor.required_roles>` attribute of every actor.
-        This is also the default value for
-        :meth:`lino.core.plugin.Plugin.get_default_required_roles`.
-
-        """
-        if len(args):
-            return set(args)
-        return set([SiteUser])
-
-        # setting the default value for `auth` is moved to
-        # `boundaction.__init__` because `Site.user_model` is known
-        # only after importing the models.
-        # return set(args)
 
     def parse_date(self, s):
         """Convert a string formatted using :attr:`date_format_strftime` or

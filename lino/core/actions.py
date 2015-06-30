@@ -35,8 +35,8 @@ from lino.core import fields
 from lino.core import keyboard
 from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
-from lino.core.utils import (Permittable, Parametrizable,
-                             InstanceAction)
+from lino.core.permissions import Permittable
+from lino.core.utils import Parametrizable, InstanceAction
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
 
