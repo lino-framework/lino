@@ -36,9 +36,7 @@ cal = dd.resolve_app('cal')
 system = dd.resolve_app('system')
 
 from lino.modlib.cal.workflows import GuestStates, EventStates
-from lino.modlib.office.roles import OfficeUser
-
-from .roles import ReceptionUser, ReceptionOperator
+from lino.modlib.office.roles import OfficeUser, OfficeOperator
 
 add = GuestStates.add_item
 add('44', _("Waiting"), 'waiting')
@@ -130,7 +128,7 @@ class CheckinVisitor(dd.NotifyingAction):
     show_in_workflow = True
     show_in_bbar = False
 
-    required_roles = dd.required(ReceptionUser)
+    required_roles = dd.required((OfficeUser, OfficeOperator))
     required_states = 'invited accepted present'
 
     def get_action_permission(self, ar, obj, state):
@@ -179,7 +177,7 @@ class MyVisitorAction(dd.Action):
     def get_action_permission(self, ar, obj, state):
         me = ar.get_user()
         if obj.event.user != me and not isinstance(
-                me.profile.role, ReceptionOperator):
+                me.profile.role, OfficeOperator):
             return False
         rv = super(
             MyVisitorAction, self).get_action_permission(ar, obj, state)
@@ -320,6 +318,7 @@ class AppointmentsByPartner(dd.Table):
 
 
 class ExpectedGuests(cal.Guests):
+    """General table of all expected guests."""
     label = _("Expected Guests")
     help_text = _("Consult this table when checking in a partner who \
     has an appointment.")
@@ -329,7 +328,7 @@ class ExpectedGuests(cal.Guests):
     waiting_since busy_since'
     hidden_columns = 'waiting_since busy_since'
     #~ checkin = CheckinGuest()
-    required_roles = dd.required(ReceptionOperator)
+    required_roles = dd.required(OfficeOperator)
 
     @classmethod
     def get_queryset(self, ar):
@@ -357,7 +356,7 @@ if False:
         workflow_buttons'
         order_by = ['waiting_since']
         #~ checkout = CheckoutGuest()
-        required_roles = dd.required(ReceptionUser)
+        required_roles = dd.required(OfficeUser)
         auto_fit_column_widths = True
 
         @dd.displayfield(_('Since'))
@@ -366,14 +365,29 @@ if False:
             return naturaltime(obj.busy_since)
 
 
+# class ReceptionUser(SiteUser):
+#     ored_roles = (OfficeUser(), OfficeOperator())
+#     def satisfies(self, required_role):
+#         is isinstance(OfficeUser, OfficeOperator
+
 class Visitors(cal.Guests):
-    """No subclass should be editable because deleting would leave the
+    """Common base class for the following tables:
+
+    ========================== ============================
+    :class:`WaitingVisitors`   :class:`MyWaitingVisitors`
+    :class:`BusyVisitors`      :class:`MyBusyVisitors`
+    :class:`GoneVisitors`      :class:`MyGoneVisitors`
+    ========================== ============================
+
+    No subclass should be editable because deleting would leave the
     useless cal.Event.
+
+
 
     """
     # debug_permissions = 20150227
 
-    required_roles = dd.required(ReceptionUser)
+    required_roles = dd.required((OfficeUser, OfficeOperator))
     editable = False
     abstract = True
     column_names = 'since partner event__user event__summary workflow_buttons'
@@ -399,7 +413,7 @@ class Visitors(cal.Guests):
 
 
 class MyVisitors(object):
-
+    """Table mixin to add "only my visitors" as additional condition."""
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(MyVisitors, self).param_defaults(ar, **kw)
@@ -408,6 +422,7 @@ class MyVisitors(object):
 
 
 class BusyVisitors(Visitors):
+    """Show busy visitors (with any user)."""
     label = _("Busy visitors")
     help_text = _("Shows the visitors who are busy with some agent.")
     visitor_state = GuestStates.busy
@@ -419,6 +434,7 @@ class BusyVisitors(Visitors):
 
 
 class WaitingVisitors(Visitors):
+    """Show waiting visitors (for any user)."""
     label = _("Waiting visitors")
     help_text = _("Shows the visitors in the waiting room.")
     column_names = ('since partner event__user position '
@@ -444,6 +460,7 @@ class WaitingVisitors(Visitors):
 
 
 class GoneVisitors(Visitors):
+    """Show gone visitors (for any user)."""
     label = _("Gone visitors")
     help_text = _("Shows the visitors who have gone.")
     visitor_state = GuestStates.gone
@@ -455,20 +472,22 @@ class GoneVisitors(Visitors):
 
 
 class MyWaitingVisitors(MyVisitors, WaitingVisitors):
-    required_roles = dd.required(ReceptionUser, OfficeUser)
+    """Show visitors waiting for me."""
+    required_roles = dd.required(OfficeUser)
     label = _("Visitors waiting for me")
     column_names = ('since partner position '
                     'event__summary workflow_buttons')
 
 
 class MyBusyVisitors(MyVisitors, BusyVisitors):
-    """Shows the visitors with whom I am busy."""
-    required_roles = dd.required(ReceptionUser, OfficeUser)
+    """Show the visitors with whom I am busy."""
+    required_roles = dd.required(OfficeUser)
     label = _("Visitors busy with me")
 
 
 class MyGoneVisitors(MyVisitors, GoneVisitors):
-    required_roles = dd.required(ReceptionUser, OfficeUser)
+    """Show my visitors who have gone."""
+    required_roles = dd.required(OfficeUser)
     label = _("My gone visitors")
 
 

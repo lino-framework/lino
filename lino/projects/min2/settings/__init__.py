@@ -47,12 +47,11 @@ class Site(Site):
 
         from lino.core.roles import Anonymous, SiteAdmin
         from lino.modlib.office.roles import OfficeUser, OfficeStaff
-        from lino.modlib.reception.roles import ReceptionOperator
 
         class SiteUser(OfficeUser):
             pass
 
-        class SiteAdmin(SiteAdmin, OfficeStaff, ReceptionOperator):
+        class SiteAdmin(SiteAdmin, OfficeStaff):
             pass
 
         UserProfiles.clear()

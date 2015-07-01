@@ -37,6 +37,8 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+from lino.modlib.office.roles import OfficeStaff
+
 from lino.api import dd, rt
 
 
@@ -70,6 +72,7 @@ Site.  See :func:`add_shortcut`.
 
 
 class UploadAreas(dd.ChoiceList):
+    required_roles = dd.required(OfficeStaff)
     verbose_name = _("Upload Area")
     verbose_name_plural = _("Upload Areas")
 add = UploadAreas.add_item

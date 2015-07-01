@@ -15,16 +15,21 @@ class Anonymous(UserRole):
 
 
 class SiteUser(UserRole):
-    pass
+    """Every authenticated user has this role."""
 
 
 class SiteStaff(SiteUser):
-    """Certain privileged technical actions require this role by default:
+    """A user who can configure site-wide functionality.
 
-    :class:`MergeAction <lino.core.merge.MergeAction>`
-    :class:`EditTemplate <lino.mixins.printable.EditTemplate>`
+    Certain privileged actions require this role:
+
+    - Merging duplicate database records (:class:`MergeAction
+      <lino.core.merge.MergeAction>`)
+
+    - Editing printable templates (:class:`EditTemplate
+      <lino.mixins.printable.EditTemplate>`)
+
     """
-    pass
 
 
 class SiteAdmin(SiteStaff):

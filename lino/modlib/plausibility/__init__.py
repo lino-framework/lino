@@ -36,8 +36,9 @@ table to the `detail_layout` of any model.
 .. autosummary::
    :toctree:
 
-    models
+    roles
     choicelists
+    models
     fixtures.checkdata
     management.commands.checkdata
 

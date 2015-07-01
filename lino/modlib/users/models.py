@@ -162,7 +162,7 @@ class User(CreatedModified):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not dd.SiteAdmin.permitted_for(user.profile):
+                if not isinstance(user.profile.role, dd.SiteAdmin):
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
@@ -172,11 +172,8 @@ class User(CreatedModified):
         Only System admins may change the `profile` of users.
         See also :meth:`Users.get_row_permission`.
         """
-        #~ if ar.get_user().is_superuser:
-        #~ if request.user.is_superuser:
         rv = super(User, self).disabled_fields(ar)
-        if not dd.SiteAdmin.permitted_for(ar.get_user().profile):
-        # if ar.get_user().profile.level < UserLevels.admin:
+        if not isinstance(ar.get_user().profile.role, dd.SiteAdmin):
             rv.add('profile')
         return rv
 

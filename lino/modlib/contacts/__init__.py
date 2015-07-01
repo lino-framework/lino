@@ -6,6 +6,7 @@
 .. autosummary::
    :toctree:
 
+    roles
     models
     utils
     mixins

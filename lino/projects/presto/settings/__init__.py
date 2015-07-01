@@ -18,33 +18,8 @@ class Site(Site):
 
     def setup_user_profiles(self):
 
-        from lino.core.roles import Anonymous, SiteAdmin, SiteStaff
-        from lino.modlib.office.roles import OfficeStaff
-        from lino.modlib.reception.roles import ReceptionUser
+        import lino.projects.presto.roles
 
-        class SiteUser(ReceptionUser):
-            pass
-
-        class SiteAdmin(SiteAdmin, OfficeStaff, ReceptionUser):
-            pass
-
-        class Developer(SiteStaff):
-            pass
-
-        class SeniorDeveloper(Developer):
-            pass
-
-        from django.utils.translation import ugettext_lazy as _
-        from lino.modlib.users.choicelists import UserProfiles
-        UserProfiles.clear()
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"), Anonymous, name='anonymous',
-            readonly=True,
-            authenticated=False)
-        add('100', _("User"), SiteUser, name='user')
-        add('500', _("Developer"), Developer, name='developer')
-        add('510', _("Senior Developer"), SeniorDeveloper, name='senior')
-        add('900', _("Administrator"), SiteAdmin, name='admin')
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

@@ -350,3 +350,9 @@ gettext_compact = True
 
 
 # print 20150311, extensions, templates_path
+
+# print 20150701, autodoc_default_flags
+# raise 123
+
+autodoc_member_order = 'bysource'
+autodoc_default_flags = ['show-inheritance', 'members']

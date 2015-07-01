@@ -1,5 +1,6 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""User roles for `lino.modlib.cal`. """
 
 from lino.core.roles import SiteUser
 
@@ -13,7 +14,8 @@ class OfficeUser(ContactsUser):
     """
 
 
-class OfficeOperator(ContactsUser):
+# class OfficeOperator(ContactsUser):
+class OfficeOperator(SiteUser):
     """A user who manages office functionality for other users (but not
     for himself).
 
@@ -21,6 +23,7 @@ class OfficeOperator(ContactsUser):
 
 
 class OfficeStaff(OfficeUser, OfficeOperator, ContactsStaff):
-    pass
+    """A user who manages configuration of office functionality.
 
+    """
 

@@ -3,7 +3,6 @@
 # License: BSD, see LICENSE for more details.
 """Core tools of Lino's permission system.
 
-See :attr:`lino.core.site.Site.enable_role_based_permissions`.
 """
 
 import logging
@@ -26,9 +25,37 @@ class Permittable(object):
     """
 
     required_roles = set([SiteUser])
-    """
-    A set of user roles required to view this actor or action.
-    
+    """A set of user roles required to view this actor or action.
+
+    Each element if the set must be either a subclass of `UserRole` or
+    a tuple thereof.
+
+    The default value is a set with a single element
+    :class:`SiteUser`, which means that the actor is available only
+    for authenticated users.
+
+    An empty set means that the actor is visible to everybody,
+    including anonymous users.
+
+    Note that this is being used only when
+    :attr:`enable_role_based_permissions
+    <lino.core.site.Site.enable_role_based_permissions>` is set to
+    `True`.
+
+    Examples of recommended ways for specifying this attribute::
+
+       # for everybody
+       required_roles = set()
+
+       # only for office users:
+       required_roles = dd.login_required(OfficeUser)
+
+       # only for users who are BOTH OfficeUser AND SiteStaff:
+       required_roles = dd.login_required(OfficeUser, SiteStaff)
+
+       # only for users who are EITHER OfficeUser OR SiteStaff:
+       required_roles = dd.login_required((OfficeUser, SiteStaff))
+
     """
 
     workflow_state_field = None

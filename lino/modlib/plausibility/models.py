@@ -21,6 +21,8 @@ from lino.api import dd, rt, _
 
 from .choicelists import Checker, Checkers
 
+from .roles import PlausibilityUser
+
 
 class UpdateProblem(dd.Action):
     icon_name = 'bell'
@@ -208,6 +210,7 @@ class MyProblems(Problems):
     """Shows the plausibility problems assigned to this user.
 
     """
+    required_roles = dd.required(PlausibilityUser)
     label = _("Plausibility problems assigned to me")
 
     @classmethod

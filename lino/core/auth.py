@@ -183,12 +183,14 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 
         user = self.authenticate(username)
 
+        # print 20150701, user.profile.role
+
         if user is None:
             # print("20130514 Unknown username %s from request %s" % (
             #     username, request))
             #~ raise Exception(
             #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator."
-            #~ logger.info("Unknown or inactive username %r.",username)
+            # logger.info("Unknown or inactive username %r.", username)
             raise exceptions.PermissionDenied()
 
         return user

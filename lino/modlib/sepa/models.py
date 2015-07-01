@@ -28,6 +28,8 @@ config = dd.apps.sepa
 from ..iban.fields import IBANField, BICField
 from ..iban.utils import belgian_nban_to_iban_bic, iban2bic
 
+from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
+
 
 class IbanBicHolder(dd.Model):
 
@@ -91,10 +93,12 @@ PRIMARY_FIELDS = dd.fields_list(Account, 'iban bic')
 
 
 class Accounts(dd.Table):
+    required_roles = dd.login_required(ContactsStaff)
     model = 'sepa.Account'
 
 
 class AccountsByPartner(Accounts):
+    required_roles = dd.login_required(ContactsUser)
     master_key = 'partner'
     column_names = 'iban bic remark'
     order_by = ['iban']

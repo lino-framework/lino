@@ -2,6 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 from lino.api import dd, _
+from lino.modlib.office.roles import OfficeStaff
 
 
 class AddressType(dd.Choice):
@@ -9,6 +10,7 @@ class AddressType(dd.Choice):
 
 
 class AddressTypes(dd.ChoiceList):
+    required_roles = dd.login_required(OfficeStaff)
     verbose_name = _("Address type")
     verbose_name_plural = _("Address types")
     item_class = AddressType

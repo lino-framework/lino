@@ -131,6 +131,7 @@ class BrokenGFKs(dd.VirtualTable):
 
     """
     label = _("Broken GFKs")
+    required_roles = dd.required(dd.SiteStaff)
 
     column_names = "database_model database_object message todo"
 

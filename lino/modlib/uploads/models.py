@@ -58,7 +58,7 @@ class UploadType(mixins.BabelNamed):
 class UploadTypes(dd.Table):
     """The table with all existing upload types.
 
-This usually is accessible via the `Configure` menu.
+    This usually is accessible via the `Configure` menu.
     """
     required_roles = dd.required(OfficeStaff)
     model = 'uploads.UploadType'
@@ -185,7 +185,7 @@ class MyUploads(Uploads, ByUser):
 
 
 class AreaUploads(Uploads):
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     stay_in_grid = True
     _upload_area = UploadAreas.general
     slave_grid_format = 'summary'

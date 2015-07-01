@@ -25,7 +25,7 @@ from lino import mixins
 
 from lino.modlib.postings.mixins import Postable
 from lino.modlib.outbox.mixins import MailableType, Mailable
-from lino.modlib.office.roles import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .utils import (
     Recurrencies,
@@ -793,7 +793,7 @@ class EventsByDay(Events):
     :term:`appointments <appointment>`.
 
     """
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.required((OfficeUser, OfficeOperator))
     label = _("Appointments today")
     column_names = 'room event_type summary owner workflow_buttons *'
     auto_fit_column_widths = True

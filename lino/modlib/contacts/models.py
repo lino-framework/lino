@@ -424,7 +424,7 @@ class RoleType(mixins.BabelNamed):
 
 class RoleTypes(dd.Table):
     required_roles = dd.required(ContactsStaff)
-    model = RoleType
+    model = 'contacts.RoleType'
 
 
 #~ class Contact(dd.Model):
