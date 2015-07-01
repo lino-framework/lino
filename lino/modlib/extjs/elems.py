@@ -26,6 +26,8 @@ from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 from django.contrib.contenttypes import generic
 from django.db.models.fields import NOT_PROVIDED
 
+from atelier import rstgen
+
 from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Permittable
@@ -1526,7 +1528,7 @@ class Container(LayoutElement):
             return False
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
-               e.get_view_permission(jsgen._for_user_profile):
+               e.get_view_permission(profile):
                 # one visble child is enough, no need to continue loop
                 return True
         #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)

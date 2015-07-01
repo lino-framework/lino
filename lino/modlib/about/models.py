@@ -238,8 +238,9 @@ class Inspector(dd.VirtualTable):
     #~ about.Models:70x10
     #~ """
 
+if False:
 
-class DetailLayouts(dd.VirtualTable):
+  class DetailLayouts(dd.VirtualTable):
     """Shows a list of all detail layouts
     (:attr:`lino.core.actors.Actor.detail_layout`) defined in this
     application.
@@ -276,7 +277,6 @@ class DetailLayouts(dd.VirtualTable):
         elems = [f.name for f in lh._store_fields]
         return fill(' '.join(elems), 60)
 
-if False:
 
   class WindowActions(dd.VirtualTable):
     """Shows a list of all window actions defined in this application.

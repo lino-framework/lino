@@ -240,18 +240,12 @@ specify it explicitly:
 M. Jean Dupont
 
 
-Honorific titles
-================
+The title of a human
+--------------------
 
 The :attr:`title <lino.mixins.human.Human.title>` field of a human is
-for specifying a honorific `title
+for specifying a `title
 <https://en.wikipedia.org/wiki/Title>`__ such as "Dr." or "PhD".
-
-Note that this field is always printed *between* salutation and name.
-It does not handle special cases like titles which replace the
-salutation ("Br.", "Sr.") or which must come at another position of
-the full name (e.g. "Cardinal", "Graf" before the last name).
-
 
 >>> settings.SITE.uppercase_last_name = False
 >>> p.title = "Dr."

@@ -148,16 +148,22 @@ def get_salutation(gender, nominative=False):
 
 
 class Human(model.Model):
-    """
-  Base class for all models that represent a human.  It defines the
-  fields `first_name`, `middle_name, `last_name` and `gender`.
+    """Base class for all models that represent a human.
 
     .. attribute:: title
 
-        An optional title like "Dr.", "PhD"...
+        An optional name prefix like "Dr." or "PhD", used to specify a
+        professional position or academic qualification.
 
-        If given, it comes *between* salutation and name
-        (see `here <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__).
+        If given, the content of this field comes always *between*
+        salutation and name.  It does not handle special cases like
+        titles which replace the salutation ("Br.", "Sr.") or which must
+        come at another position of the full name (e.g. "Cardinal", "Graf"
+        before the last name).
+
+        External links: `linguee.de
+        <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__
+        and `wikipedia.org <https://en.wikipedia.org/wiki/Title>`__
 
     .. attribute:: first_name
 
@@ -174,9 +180,8 @@ class Human(model.Model):
 
     .. attribute:: gender
 
-        The gender of this person.
-        Possible values are defined in :class:`dd.Genders`.
-
+        The sex of this person (male or female).  Possible values are
+        defined in :class:`lino.modlib.lino.choicelists.Genders`.
 
     """
 

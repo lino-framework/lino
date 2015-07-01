@@ -81,7 +81,7 @@ class Panel(object):
             #~ self.desc = self.desc.replace(name,'')
 
 
-class LayoutHandle:
+class LayoutHandle(object):
     """
     A `LayoutHandle` analyzes some subclass of :class:`BaseLayout` and
     stores the resulting layout elements provided by the renderer.
@@ -284,9 +284,9 @@ class LayoutHandle:
         # if not name in ('__str__', '__unicode__', 'name', 'label'):
         if not name in ('name', 'label'):
             value = getattr(self.layout, name, NOT_PROVIDED)
-            if name == 'ledger':
-                logger.info("20150610 'ledger' in instance of %s is %r",
-                            self.layout.__class__, value)
+            # if name == 'ledger':
+            #     logger.info("20150610 'ledger' in instance of %s is %r",
+            #                 self.layout.__class__, value)
             if value is not NOT_PROVIDED:
                 return value
         return self.layout.get_data_elem(name)
@@ -519,6 +519,16 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             self._datasource.app_label,
             self._datasource.__name__,
             field.name, **kw)
+
+    def to_rst(self, profile=None, name=None):
+        lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
+        # if profile is None:
+        #     profile = UserProfiles.admin
+        if name is None:
+            e = lh.main
+        else:
+            e = lh.main.find_by_name(name)
+        return e.to_rst(profile)
 
 
 class FieldLayout(BaseLayout):

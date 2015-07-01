@@ -1,11 +1,14 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Some diagnostic utilities."""
 
 # from textwrap import fill
 from atelier import rstgen
 
 from django.conf import settings
 
+from lino.core.layouts import BaseLayout
+from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserProfiles
 
 
@@ -76,4 +79,50 @@ def fields(ba):
     elems = [str(f.name) for f in lh._store_fields]
     return ', '.join(elems)
     # return fill(' '.join(elems), 50)
+
+
+def py2rst(self, doctestfmt=False):
+    """Render any Python object as reStructuredText.
+
+    Where "any" actually means a layout or a layout element.
+    :class:`lino.core.layouts.BaseLayout`
+    :mod:`lino.modlib.extjs.elems`
+
+    If the optional argument `doctestfmt` is specified as `True`, then
+    output contains less blank lines which might be invalid
+    reStructuredText but is more doctest-friendly.
+
+    """
+    if isinstance(self, BaseLayout):
+        lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
+        return py2rst(lh.main, doctestfmt)
+        
+    if isinstance(self, Wrapper):
+        self = self.wrapped
+
+    if isinstance(self, FieldElement):
+        s = "**%s** (%s)" % (unicode(self.field.verbose_name), self.field.name)
+    elif self.label is None:
+        s = "(%s)" % self.name
+    else:
+        s = "**%s** (%s)" % (unicode(self.label), self.name)
+    if have_action(self) != have_action(self.parent):
+        s += " [visible for %s]" % have_action(self)
+    if isinstance(self, Container):
+        use_ul = False
+        for e in self.elements:
+            if isinstance(e, Container):
+                use_ul = True
+        children = [py2rst(e, doctestfmt) for e in self.elements]
+        if len(children):
+            if use_ul:
+                s += ':\n'
+                if not doctestfmt:
+                    s += '\n'
+                s += rstgen.ul(children)
+            else:
+                s += ": " + ', '.join(children)
+                
+    return s
+
 
