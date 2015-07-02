@@ -1,4 +1,0 @@
-WARNING: intersphinx inventory 'http://python.readthedocs.org/en/latest/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
-WARNING: intersphinx inventory 'http://atelier.lino-framework.org/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
-WARNING: intersphinx inventory 'http://django.readthedocs.org/en/latest/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
-/home/luc/hgwork/lino/docs/dev/userdocs.rst:17: WARNING: undefined label: atelier.sphinxext (if the link has no caption the label must precede a section header)

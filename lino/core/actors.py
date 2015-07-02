@@ -325,7 +325,7 @@ class Actor(actions.Parametrizable, Permittable):
     """
 
     parameters = None
-    "See :attr:`lino.core.actions.Parametrizable.parameters`."
+    "See :attr:`lino.core.utils.Parametrizable.parameters`."
 
     simple_parameters = []
     "A list of names of parameters which are automatically handled."
@@ -659,6 +659,13 @@ class Actor(actions.Parametrizable, Permittable):
             cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
 
+        if cls.parameters is None:
+            params = cls.get_parameter_fields()
+            if len(params):
+                cls.parameters = params
+        else:
+            cls.parameters = cls.get_parameter_fields(**cls.parameters)
+
     @classmethod
     def get_known_values(self):
         return self._known_values
@@ -872,7 +879,7 @@ class Actor(actions.Parametrizable, Permittable):
     @classmethod
     def setup_request(self, ar):
         """Customized versions may e.g. set `master_instance` before calling
-        super().  
+        super().
 
         Used e.g. by :class:`lino.modlib.outbox.models.MyOutbox` or
         :class:`lino.modlib.users.mixins.ByUser`.
@@ -888,10 +895,21 @@ class Actor(actions.Parametrizable, Permittable):
         pass
 
     @classmethod
+    def get_parameter_fields(cls, **fields):
+        """Inheritable hook for defining parameters. Called once per actor at
+        site startup.  The default implementation just calls
+        :meth:`get_parameter_fields
+        <lino.core.model.Model.get_parameter_fields>` of the
+        :attr:`model` (if a :attr:`model` is set).
+
+        """
+        if cls.model is None:
+            return fields
+        return cls.model.get_parameter_fields(**fields)
+
+    @classmethod
     def get_param_elem(self, name):
-        # same as in Action, but here it is a class method
-        if name == 'propgroup_skills':
-            logger.info("20140919 get_param_elem %s", self.parameters)
+        # same as in Parametrizable, but here it is a class method
 
         if self.parameters:
             return self.parameters.get(name, None)

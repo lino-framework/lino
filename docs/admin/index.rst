@@ -29,7 +29,18 @@ Java applets included with Lino
    /davlink/index
    /eidreader/index
    /java/index
+
+
+Printing
+--------
+
+.. toctree::
+    :maxdepth: 2
    
+    using_appy_pod
+    printable
+    excerpts
+    appy_templates
 
 Other
 -----
@@ -37,8 +48,6 @@ Other
 .. toctree::
     :maxdepth: 2
    
-    using_appy_pod
-    printable
     snapshot
     settings
     which_lino

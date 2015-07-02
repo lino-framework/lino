@@ -2,8 +2,8 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-See :doc:`/admin/printable`
+"""Defines most of the classes needed for
+:doc:`/admin/printable`.
 
 """
 
@@ -645,6 +645,8 @@ class PrintableType(Model):
     """
     Base class for models that specify the
     :attr:`TypedPrintable.type`.
+
+    .. attribute:: build_method
     """
 
     templates_group = None
@@ -690,18 +692,27 @@ class PrintableType(Model):
 
 
 class Printable(object):
-    """
-    Mixin for Models whose instances have a "print" action (i.e. for
+    """Mixin for Models whose instances have a "print" action (i.e. for
     which Lino can generate a printable document).
 
     Extended by :class:`CachedPrintable` and :class:`TypedPrintable`.
-    
+
+    .. attribute:: do_print
+
+        The action used to print this object.
+        This is an instance of
+        :class:`DirectPrintAction` or :class:`CachedPrintAction` by
+        default.  And if :mod:`lino.modlib.excerpts` is installed,
+        then :func:`set_excerpts_actions
+        <lino.modlib.excerpts.set_excerpts_actions>` possibly replaces
+        :attr:`do_print` by a
+        :class:`lino.modlib.excerpts.CreateExcerpt` instance.
+
+    .. attribute:: edit_template
+
     """
 
     do_print = DirectPrintAction()
-    # Note that :func:`lino.modlib.excerpts.set_excerpts_actions` possibly
-    # replaces the `do_print` action by a `excerpts.CreateExcerpt`
-    # instance.
 
     edit_template = EditTemplate()
 

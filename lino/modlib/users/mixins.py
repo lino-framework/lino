@@ -32,12 +32,16 @@ class UserAuthored(model.Model):
     points to the "author" of this object. The default user is
     automatically set to the requesting user.
 
+    .. attribute:: user
+
+        The author of this object.
+        A pointer to :class:`lino.modlib.users.models.User`.
+
     """
 
     class Meta:
         abstract = True
 
-    # manager_level_field = 'level'
     manager_roles_required = dd.SiteStaff
     """By default, only :class:`lino.core.roles.SiteStaff` users can edit
     other users' work.
@@ -53,20 +57,12 @@ class UserAuthored(model.Model):
 
     """
 
-    if settings.SITE.user_model:
-
-        workflow_owner_field = 'user'
-
-        user = models.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Author"),
-            related_name="%(app_label)s_%(class)s_set_by_user",
-            blank=True, null=True
-        )
-
-    else:
-
-        user = fields.DummyField()
+    workflow_owner_field = 'user'
+    user = dd.ForeignKey(
+        'users.User',
+        verbose_name=_("Author"),
+        related_name="%(app_label)s_%(class)s_set_by_user",
+        blank=True, null=True)
 
     def on_create(self, ar):
         """
@@ -98,7 +94,36 @@ class UserAuthored(model.Model):
             return ba.action.readonly
         return True
 
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        """Adds the :attr:`user` filter parameter field."""
+        fields.update(user=models.ForeignKey(
+            'users.User', blank=True, null=True))
+        return super(UserAuthored, cls).get_parameter_fields(**fields)
+
 AutoUser = UserAuthored  # old name for backwards compatibility
+
+
+class My(dbtables.Table):
+    """Table mixin for tables on :class:`UserAuthored`.
+
+    Used by
+    :mod:`lino.modlib.excerpts` and
+    :mod:`lino.modlib.reception`.
+    """
+
+    @classmethod
+    def get_actor_label(self):
+        if self.model is None:
+            return self._label or self.__name__
+        return self._label or \
+            _("My %s") % self.model._meta.verbose_name_plural
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(My, self).param_defaults(ar, **kw)
+        kw.update(user=ar.get_user())
+        return kw
 
 
 class ByUser(dbtables.Table):

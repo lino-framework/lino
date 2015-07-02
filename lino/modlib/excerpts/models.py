@@ -4,8 +4,6 @@
 """
 Database models for `lino.modlib.excerpts`.
 
-.. autosummary::
-
 """
 
 from __future__ import unicode_literals
@@ -38,7 +36,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import ByUser, UserAuthored
+from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.users.choicelists import SiteAdmin
 
 davlink = settings.SITE.plugins.get('davlink', None)
@@ -48,7 +46,7 @@ from lino.modlib.postings.mixins import Postable
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.outbox.mixins import Mailable, MailableType
 
-from lino.modlib.office.roles import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .mixins import Certifiable
 from .choicelists import Shortcuts
@@ -56,8 +54,36 @@ from .choicelists import Shortcuts
 
 class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
                   MailableType):
-    """
+    """The type of an excerpt. Every excerpt has a mandatory field
+    :attr:`Excerpt.excerpt_type` which points to an :class:`ExcerptType`
+    instance.
     
+    .. attribute:: name
+
+        The designation of this excerpt type.
+        One field for every :attr:`language <lino.core.site.Site.language>`.
+
+    .. attribute:: content_type
+
+        The database model for which this excerpt type is to be used.
+
+    .. attribute:: build_method
+
+        See :attr:`lino.mixinsPrintableType.build_method`.
+
+    .. attribute:: template
+ 
+        The main template to be used when printing an excerpt of this type.
+
+    .. attribute:: body_template
+
+        The body template to use when printing an excerpt of this type.
+
+    .. attribute:: email_template
+
+        The template to use when sending this an excerpt of this type
+        by email.
+
     .. attribute:: shortcut
 
         Optional pointer to a shortcut field.  If this is not empty, then
@@ -65,12 +91,6 @@ class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
 
         See also :class:`Shortcuts`.
         See also :class:`lino.modlib.excerpts.choicelists.Shortcuts`.
-
-    .. attribute:: template
- 
-        The main template to be used when printing an excerpt of this type.
-
-
 
     """
     # templates_group = 'excerpts/Excerpt'
@@ -349,6 +369,10 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
     """A printable document that describes some aspect of the current
     situation.
 
+    .. attribute:: excerpt_type
+
+        The type of this excerpt (ForeignKey to :class:`ExcerptType`).
+
     .. attribute:: owner
 
       The object being printed by this excerpt.
@@ -411,9 +435,6 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         verbose_name_plural = _("Excerpts")
 
     excerpt_type = dd.ForeignKey('excerpts.ExcerptType')
-    """The type of this excerpt (ForeignKey to :class:`ExcerptType`).
-
-    """
 
     body_template_content = BodyTemplateContentField(_("Body template"))
 
@@ -509,10 +530,12 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     @dd.chooser()
     def excerpt_type_choices(cls, owner):
-        # logger.info("20140513 %s", owner)
-        qs = ExcerptType.objects.order_by('name')
+        # logger.info("20150702 %s", owner)
+        qs = rt.modules.excerpts.ExcerptType.objects.order_by('name')
         if owner is None:
-            return qs.filter(content_type__isnull=True)
+            # e.g. when choosing on the *parameter* field
+            # return qs.filter(content_type__isnull=True)
+            return qs.filter()
         ct = ContentType.objects.get_for_model(owner.__class__)
         return qs.filter(content_type=ct)
 
@@ -643,10 +666,9 @@ dd.update_field(Excerpt, 'contact_person',
 
 class Excerpts(dd.Table):
     """Base class for all tables on :class:`Excerpt`."""
-    required_roles = dd.required(SiteAdmin, OfficeUser)
     # label = _("Excerpts history")
     icon_name = 'script'
-    use_as_default_table = False
+    required_roles = dd.required((OfficeUser, OfficeOperator))
 
     model = 'excerpts.Excerpt'
     detail_layout = ExcerptDetail()
@@ -656,19 +678,19 @@ class Excerpts(dd.Table):
     """
     column_names = ("id excerpt_type owner project "
                     "company language build_time *")
-    order_by = ["id"]
-
+    order_by = ['-build_time', 'id']
+    auto_fit_column_widths = True
     allow_create = False
 
     parameters = mixins.ObservedPeriod(
-        puser=models.ForeignKey(
-            'users.User', blank=True, null=True),
-        pexcerpt_type=models.ForeignKey(
+        excerpt_type=models.ForeignKey(
             'excerpts.ExcerptType', blank=True, null=True),
         pcertifying=dd.YesNo.field(_("Certifying excerpts"), blank=True))
     params_layout = """
     start_date end_date pcertifying
-    puser pexcerpt_type"""
+    user excerpt_type"""
+
+    simple_parameters = ['user', 'excerpt_type']
 
     @classmethod
     def get_request_queryset(cls, ar):
@@ -680,34 +702,30 @@ class Excerpts(dd.Table):
         elif pv.pcertifying == dd.YesNo.no:
             qs = qs.filter(excerpt_type__certifying=False)
 
-        if pv.puser:
-            qs = qs.filter(user=pv.puser)
-
-        if pv.pexcerpt_type:
-            qs = qs.filter(excerpt_type=pv.pexcerpt_type)
-
         return qs
 
 
-class ExcerptsByX(Excerpts):
-    use_as_default_table = True
-    required_roles = dd.required(OfficeUser)
-    order_by = ['-build_time', 'id']
-    auto_fit_column_widths = True
+# class ExcerptsByX(Excerpts):
     # window_size = (70, 20)
 
 
-class MyExcerpts(ByUser, ExcerptsByX):
-    required_roles = dd.required(OfficeUser)
+class AllExcerpts(Excerpts):
+    required_roles = dd.required(SiteAdmin, OfficeStaff)
+    order_by = ["id"]
+    column_names = ("id excerpt_type owner project "
+                    "company language build_time *")
+
+
+class MyExcerpts(My, Excerpts):
     column_names = "build_time excerpt_type project *"
 
 
-class ExcerptsByType(ExcerptsByX):
+class ExcerptsByType(Excerpts):
     master_key = 'excerpt_type'
     column_names = "build_time owner project user *"
 
             
-class ExcerptsByOwner(ExcerptsByX):
+class ExcerptsByOwner(Excerpts):
     """Shows all excerpts whose :attr:`owner <Excerpt.owner>` field is
     this.
 
@@ -746,9 +764,6 @@ class ExcerptsByOwner(ExcerptsByX):
         # qs = sar.data_iterator
         Q = models.Q
         add(_("not printed"), Q(build_time__isnull=True))
-        # t0 = datetime.datetime.combine(dd.today(), datetime.time(0, 0, 0))
-        # t24 = datetime.datetime.combine(dd.today(), datetime.time(23, 59, 59))
-        # add(_("Today"), Q(build_time__gte=t0, build_time__lte=t24))
         add(_("Today"), Q(build_time__gte=dd.today() - ONE_DAY))
         t7 = dd.today() - ONE_WEEK
         add(_("Last week"),
@@ -826,7 +841,7 @@ def set_excerpts_actions(sender, **kw):
                 sar = ar.spawn(
                     ExcerptsByOwner,
                     master_instance=obj,
-                    param_values=dict(pexcerpt_type=et))
+                    param_values=dict(excerpt_type=et))
                 n = sar.get_total_count()
                 if n > 0:
                     ex = sar.sliced_data_iterator[0]

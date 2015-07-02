@@ -503,11 +503,14 @@ class Parametrizable(object):
     known_values = None
 
     parameters = None
-    """
-    User-definable parameter fields for this actor or action.
+    """User-definable parameter fields for this actor or action.
     Set this to a `dict` of `name = models.XyzField()` pairs.
 
+    On an actor you can alternatively or additionally implement a
+    class method :meth:`lino.core.actors.Actor.get_parameter_fields`.
+
     TODO: write documentation.
+
     """
 
     params_layout = None

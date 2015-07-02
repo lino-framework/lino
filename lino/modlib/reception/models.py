@@ -27,6 +27,9 @@ from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
+
+from lino.modlib.users.mixins import My
+
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
@@ -412,14 +415,6 @@ class Visitors(cal.Guests):
         #~ return naturaltime(getattr(obj,k))
 
 
-class MyVisitors(object):
-    """Table mixin to add "only my visitors" as additional condition."""
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(MyVisitors, self).param_defaults(ar, **kw)
-        kw.update(user=ar.get_user())
-        return kw
-
 
 class BusyVisitors(Visitors):
     """Show busy visitors (with any user)."""
@@ -471,7 +466,7 @@ class GoneVisitors(Visitors):
         return naturaltime(obj.gone_since)
 
 
-class MyWaitingVisitors(MyVisitors, WaitingVisitors):
+class MyWaitingVisitors(My, WaitingVisitors):
     """Show visitors waiting for me."""
     required_roles = dd.required(OfficeUser)
     label = _("Visitors waiting for me")
@@ -479,13 +474,13 @@ class MyWaitingVisitors(MyVisitors, WaitingVisitors):
                     'event__summary workflow_buttons')
 
 
-class MyBusyVisitors(MyVisitors, BusyVisitors):
+class MyBusyVisitors(My, BusyVisitors):
     """Show the visitors with whom I am busy."""
     required_roles = dd.required(OfficeUser)
     label = _("Visitors busy with me")
 
 
-class MyGoneVisitors(MyVisitors, GoneVisitors):
+class MyGoneVisitors(My, GoneVisitors):
     """Show my visitors who have gone."""
     required_roles = dd.required(OfficeUser)
     label = _("My gone visitors")

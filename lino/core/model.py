@@ -849,11 +849,24 @@ action on individual instances.
         d.update(options)
 
     @classmethod
+    def get_parameter_fields(cls, **fields):
+        """Inheritable hook for defining parameters.
+        Called once per actor at site startup.
+
+        It receives a `dict` object `fields` and is expected to
+        return a `dict` which it may update.
+
+        Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
+        """
+        return fields
+
+    @classmethod
     def get_widget_options(self, name, **options):
         options.update(self._widget_options.get(name, {}))
         return options
 
     def get_printable_context(self, ar=None, **kw):
+
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 
@@ -928,6 +941,7 @@ action on individual instances.
         print s
 
 LINO_MODEL_ATTRIBS = (
+    'get_parameter_fields',
     '_widget_options',
     'set_widget_options',
     'get_widget_options',

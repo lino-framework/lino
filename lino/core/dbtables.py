@@ -421,8 +421,8 @@ class Table(AbstractTable):
         #~ return cls.model._meta.get_field(name)
 
     @classmethod
-    def get_widget_options(self, name, **options):
-        return self.model.get_widget_options(name, **options)
+    def get_widget_options(cls, name, **options):
+        return cls.model.get_widget_options(name, **options)
 
     @classmethod
     def get_pk_field(self):

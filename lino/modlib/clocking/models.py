@@ -258,7 +258,7 @@ class Sessions(dd.Table):
     # stay_in_grid = True
     parameters = mixins.ObservedPeriod(
         project=dd.ForeignKey('tickets.Project', null=True, blank=True),
-        user=dd.ForeignKey('users.User', null=True, blank=True),
+        # user=dd.ForeignKey('users.User', null=True, blank=True),
         session_type=dd.ForeignKey(
             'clocking.SessionType', null=True, blank=True),
         observed_event=dd.PeriodEvents.field(
