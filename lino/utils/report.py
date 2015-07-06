@@ -14,6 +14,8 @@ from lino.utils import curry
 from lino.core.frames import Frame
 
 from lino.core.requests import VirtualRow
+from lino.core.requests import ActionRequest
+from lino.core.actions import ShowEmptyTable
 from lino.core import actions
 from lino.core import fields
 
@@ -22,7 +24,6 @@ from lino.utils.xmlgen.html import E
 
 
 class EmptyTableRow(VirtualRow, Printable):
-
     """
     Base class for virtual rows of an :class:`EmptyTable`.
     An EmptyTableRow instance
@@ -87,17 +88,13 @@ class EmptyTable(Frame):
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowEmptyTable()
+        return ShowEmptyTable()
 
     @classmethod
     def create_instance(self, ar, **kw):
         if self.parameters:
             kw.update(ar.param_values)
 
-        #~ for k,v in req.param_values.items():
-            #~ kw[k] = v
-        #~ for k,f in self.parameters.items():
-            #~ kw[k] = f.value_from_object(None)
         obj = EmptyTableRow(self, **kw)
         kw = ar.ah.store.row2dict(ar, obj)
         obj._data = kw
@@ -114,12 +111,21 @@ class EmptyTable(Frame):
             return getattr(getattr(settings.SITE.modules, a[0]), a[1])
 
 
-class Report(EmptyTable):
-    """
-    A special kind of :class:`EmptyTable` used to quickly create
-    complex "reports". A report is a series of tables combined into a
-    single printable and previewable document.
+class ReportRequest(ActionRequest):
 
+    def table2rst(ar, **kwargs):
+        # self = ar.selected_rows[0]
+        self = None  # ar.actor.create_instance(ar)
+        return '\n'.join(ar.story2rst(
+            ar.actor.get_story(self, ar), **kwargs))
+        # return '\n'.join(ar.story2rst(
+        #     ar.actor.get_story(self, ar), master_instance=self, **kwargs))
+        
+
+class Report(EmptyTable):
+    """A special kind of :class:`EmptyTable` used to create complex
+    "reports". A report is a series of tables combined into a single
+    printable and previewable document.
 
     """
 
@@ -128,6 +134,14 @@ class Report(EmptyTable):
     do_print = DirectPrintAction()
 
     report_items = NotImplementedError
+
+    @classmethod
+    def request(self, **kw):
+        """Return an action request on this actor.
+
+        """
+        kw.update(actor=self)
+        return ReportRequest(**kw)
 
     @classmethod
     def get_story(cls, self, ar):
@@ -146,6 +160,8 @@ class Report(EmptyTable):
     def body(cls, self, ar):
         elems = tuple(ar.story2html(
             self.get_story(ar), master_instance=self))
+        if None in elems:
+            return "20150703 {0}".format(elems)
         return E.div(*elems)
 
     @classmethod
@@ -153,5 +169,4 @@ class Report(EmptyTable):
         chunks = tuple(apr.story2odt(
             self.get_story(apr.ar), master_instance=self))
         return str('').join(chunks)  # must be utf8 encoded
-
 

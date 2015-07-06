@@ -55,7 +55,6 @@ class Site(Site):
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
 
-        yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.plausibility'
         yield 'lino.modlib.tinymce'

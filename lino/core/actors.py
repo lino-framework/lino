@@ -1214,8 +1214,8 @@ class Actor(actions.Parametrizable, Permittable):
 
     @classmethod
     def request(self, *args, **kw):
-        """Return a programmatically instantiated :class:`ActionRequest
-        <lino.core.requests.ActionRequest>` on this actor.
+        """Return an :class:`ActionRequest <lino.core.requests.ActionRequest>`
+        on this actor.
 
         """
         kw.update(actor=self)

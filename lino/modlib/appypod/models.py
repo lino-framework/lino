@@ -8,8 +8,10 @@ Database models for `lino.modlib.appypod`.
 
 """
 
-
-from lino.utils.appy_pod import PrintTableAction, PortraitPrintTableAction
 from lino.core.tables import AbstractTable
+
+from .choicelists import *
+from .mixins import PrintTableAction, PortraitPrintTableAction
+
 AbstractTable.as_pdf = PrintTableAction()
 AbstractTable.as_pdf_p = PortraitPrintTableAction()

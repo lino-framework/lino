@@ -10,8 +10,8 @@ or :doc:`/tutorials/de_BE/index` don't.
 .. autosummary::
    :toctree:
 
-   models
    mixins
+   models
    tests
 
 

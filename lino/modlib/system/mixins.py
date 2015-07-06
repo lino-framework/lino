@@ -108,4 +108,3 @@ add('10', _("Starts"), 'started')
 add('20', _("Is active"), 'active')
 add('30', _("Ends"), 'ended')
 
-

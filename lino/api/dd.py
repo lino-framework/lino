@@ -200,8 +200,8 @@ from lino.core.fields import Constant, constant
 from lino.core.fields import ForeignKey
 from lino.core.fields import CharField
 
-from lino.utils.appy_pod import PrintTableAction
-from lino.utils.appy_pod import PrintLabelsAction
+from lino.modlib.appypod.mixins import PrintTableAction
+from lino.modlib.appypod.mixins import PrintLabelsAction
 
 from lino.core.utils import babelkw
 from lino.core.utils import babelattr

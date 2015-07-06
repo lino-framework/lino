@@ -135,6 +135,8 @@ lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
 lino.modlib.contenttypes
+lino.modlib.appypod
+lino.modlib.printing
 lino.modlib.cal
 lino.modlib.export_excel
 django.contrib.sessions

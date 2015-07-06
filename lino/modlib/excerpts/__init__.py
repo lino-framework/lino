@@ -45,7 +45,9 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Excerpts")
 
-    needs_plugins = ['lino.modlib.outbox', 'lino.modlib.office']
+    needs_plugins = [
+        'lino.modlib.printing',
+        'lino.modlib.outbox', 'lino.modlib.office']
 
     def setup_main_menu(self, site, profile, m):
         mg = site.plugins.office

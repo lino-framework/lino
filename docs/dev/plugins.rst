@@ -45,16 +45,23 @@ For example::
 
 As a :doc:`/team/sysadm` you can override these configuration defaults
 in your project's :xfile:`settings.py` using the
-:meth:`configure_plugin <lino.core.site.Site.configure_plugin>`
-method.  This function must be called *before* the :setting:`SITE` has
-been instantiated, otherwise *they will be ignored silently*.  For
-example, if you want to set the :attr:`country_code
+:func:`configure_plugin <lino.core.site.configure_plugin>`
+function.  
+
+For example, if you want to set the :attr:`country_code
 <lino.modlib.countries.Plugin.country_code>` of
 :mod:`lino.modlib.countries` to `'DE'`::
 
     from lino_cosi.projects.apc.settings import *
     configure_plugin('countries', country_code='DE')
     SITE = Site(globals())
+
+Beware the pitfall: :func:`configure_plugin
+<lino.core.site.configure_plugin>` must be called *before* the
+:setting:`SITE` has been instantiated, otherwise *they will be ignored
+silently*.  (It is not easy to prevent accidental calls to *after*
+Site initialization because there are scenarios where you want to
+instantiate several `Site` objects.)
 
 Uncomplete list of configurable plugin attributes:
 

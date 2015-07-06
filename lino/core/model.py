@@ -327,7 +327,7 @@ class Model(models.Model):
         table".
 
         """
-        return self._lino_default_table
+        return self._lino_default_table  # set in dbtables.py
 
     def disabled_fields(self, ar):
         """Return a list of names of fields that should be disabled (not

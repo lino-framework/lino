@@ -100,8 +100,7 @@ class SendMail(dd.Action):
     url_action_name = 'send'
     label = _('Send email')
     callable_from = (actions.GridEdit,
-                     actions.ShowDetailAction,
-                     actions.ShowEmptyTable)  # but not from InsertRow
+                     actions.ShowDetailAction)  # but not from InsertRow
 
     #~ callable_from = None
 

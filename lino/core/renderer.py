@@ -313,4 +313,5 @@ class TextRenderer(HtmlRenderer):
         reStructuredText markup.
 
         """
-        print(ar.to_rst(*args, **kw))
+        print(ar.table2rst(*args, **kw))
+        # return ar.to_rst(*args, **kw)

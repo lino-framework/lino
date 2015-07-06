@@ -5,7 +5,7 @@ Introduction to database excerpts
 =================================
 
 While the basics about printing out of a Lino application are
-described in :doc:`printable`, many Lino applications use
+described in :doc:`printing`, many Lino applications use
 :mod:`lino.modlib.excerpts`.
 
 .. currentmodule:: lino.modlib.excerpts

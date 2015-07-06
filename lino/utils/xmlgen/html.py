@@ -292,13 +292,6 @@ def _html2rst(e, **kw):
     elif e.tag == 'a':
         rst += '`'
 
-    #~ doesn't yet work:
-    """
-    """
-
-    #~ if e.tag == 'a':
-        #~ return '`%s <%s>`__' % (e.text,e.get('href'))
-
     if e.text:
         rst += e.text
     for child in e:
@@ -306,6 +299,8 @@ def _html2rst(e, **kw):
 
     if e.tag == 'p':
         rst += '\n\n'
+    elif e.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+        rst = '\n\n' + rstgen.header(int(e.tag[1]), rst.strip()) + '\n\n'
     elif e.tag == 'b':
         if rst == '**':
             rst = ''
@@ -327,10 +322,10 @@ def _html2rst(e, **kw):
 
 
 def html2rst(e):
-    """Convert a :mod:`lino.utils.xmlgen.html` element (e.g. a value of a
-    :class:`DisplayField <lino.core.fields.DisplayField>`) to an
-    reStructuredText string.  Currently it knows only P and B tags,
-    ignoring all other formatting.
+    """Convert a :mod:`lino.utils.xmlgen.html` element to an
+    reStructuredText string.
+
+    Currently it knows only P and B tags, ignoring all other formatting.
     
     Usage example:
     

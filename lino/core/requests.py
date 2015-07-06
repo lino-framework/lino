@@ -559,6 +559,25 @@ request from it.
             else:
                 raise Exception("Cannot handle %r" % item)
 
+    def story2rst(self, story, *args, **kwargs):
+        from lino.core.actors import Actor
+        from lino.core.requests import ActionRequest
+        from lino.utils.xmlgen.html import html2rst
+        for item in story:
+            if E.iselement(item):
+                yield html2rst(item)
+            elif isinstance(item, type) and issubclass(item, Actor):
+                # ar = self.spawn(item)
+                ar = item.default_action.request(parent=self)
+                yield ar.table2rst(**kwargs)
+            elif isinstance(item, ActionRequest):
+                yield item.table2rst(*args, **kwargs)
+            elif isiterable(item):
+                for i in self.story2rst(item, *args, **kwargs):
+                    yield i
+            else:
+                raise Exception("Cannot handle %r" % item)
+
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, **kwargs):
         """Show the specified table or action using the current renderer.  If
@@ -961,7 +980,8 @@ class ActorRequest(BaseRequest):
         """
         Returns a string representing this request in reStructuredText markup.
         """
-        return self.actor.to_rst(self, *args, **kw)
+        # return self.actor.to_rst(self, *args, **kw)
+        return self.table2rst(*args, **kw)
 
     def run(self, *args, **kw):
         """

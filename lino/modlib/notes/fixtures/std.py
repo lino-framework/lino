@@ -12,5 +12,6 @@ from lino.core.utils import resolve_model
 def objects():
 
     noteType = Instantiator('notes.NoteType', "name").build
-    yield noteType((u"Default"), build_method='appyodt', template='Default.odt')
+    yield noteType(
+        _("Default"), build_method='appyodt', template='Default.odt')
     #~ yield noteType((u"Test (rtf)"),build_method='rtf',template='test.rtf')

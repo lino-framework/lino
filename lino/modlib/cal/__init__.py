@@ -84,7 +84,7 @@ class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Calendar")
 
-    needs_plugins = ['lino.modlib.contenttypes']
+    needs_plugins = ['lino.modlib.contenttypes', 'lino.modlib.printing']
 
     def setup_main_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)

@@ -11,9 +11,7 @@ To use it, simply add the following line to your
 
 """
 
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

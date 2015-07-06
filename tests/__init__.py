@@ -23,6 +23,11 @@ class LibTests(LinoTestCase):
         self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 
+class DocsAdminTests(TestCase):
+    def test_printing(self):
+        self.run_simple_doctests('docs/admin/printing.rst')
+
+
 class DocsTests(LinoTestCase):
 
     # python setup.py test -s tests.DocsTests.test_docs

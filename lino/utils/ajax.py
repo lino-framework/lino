@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """When an exception occurs during an AJAX call, Lino should not
@@ -34,12 +34,13 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 
 
 class AjaxExceptionResponse:
-
+    """"""
     def process_exception(self, request, exception):
         if request.is_ajax():
             (exc_type, exc_info, tb) = sys.exc_info()
-            response = "%s\n" % exc_type.__name__
-            response += "%s\n\n" % exc_info
+            response = "%s: " % exc_type.__name__
+            response += "%s\n" % exc_info
+            response += "in request {0}\n".format(format_request(request))
             if settings.DEBUG:
                 response += "TRACEBACK:\n"
                 for tb in traceback.format_tb(tb):
@@ -54,3 +55,11 @@ class AjaxExceptionResponse:
             if isinstance(exception, ObjectDoesNotExist):
                 return HttpResponseBadRequest(response)
             return HttpResponseServerError(response)
+
+
+def format_request(req):
+    s = "{0} {1}".format(req.method, req.path)
+    qs = req.META.get('QUERY_STRING')
+    if qs:
+        s += "?" + qs
+    return s

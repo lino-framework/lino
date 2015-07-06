@@ -1,5 +1,5 @@
 # coding: utf-8
-# Copyright 2009-2012 Luc Saffre
+# Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Generate one houndred notes.
@@ -10,14 +10,13 @@ points to a model that has no `name` field.
 """
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+
 from lino.utils.instantiator import Instantiator
 from lino.core.utils import resolve_model
 from lino.utils import Cycler
 
 
 def objects():
-    #~ User = settings.SITE.user_model()
     User = resolve_model(settings.SITE.user_model)
     Note = resolve_model('notes.Note')
     NoteType = resolve_model('notes.NoteType')

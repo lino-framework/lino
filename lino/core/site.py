@@ -2,15 +2,13 @@
 # Copyright 2009-2015 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :class:`Site` class. For an overview see :doc:`/dev/site`.
+"""Defines the :class:`Site` class. For an overview see
+:doc:`/dev/site` and :doc:`/dev/plugins` .
 
 .. This document is part of the Lino test suite. You can test only
    this document using::
 
     $ python setup.py test -s tests.CoreTests.test_site
-
-.. autosummary::
-
 
 """
 
@@ -29,6 +27,7 @@ from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
+# from django.core.exceptions import ImproperlyConfigured
 
 from lino import AFTER17
 from lino.core.plugin import Plugin
@@ -84,6 +83,9 @@ def configure_plugin(app_label, **kwargs):
     See :doc:`/dev/plugins`.
 
     """
+    # if PLUGIN_CONFIGS is None:
+    #     raise ImproperlyConfigured(
+    #         "Tried to call configure_plugin after Site instantiation")
     cfg = PLUGIN_CONFIGS.setdefault(app_label, {})
     cfg.update(kwargs)
 
@@ -1200,6 +1202,12 @@ the `required_roles` part
                     name = p.extends_from().__module__ + '.' + m
                     self.override_modlib_models[name] = p
         # raise Exception("20140825 %s", self.override_modlib_models)
+
+        # Tried to prevent accidental calls to configure_plugin()
+        # *after* Site initialization.
+
+        # global PLUGIN_CONFIGS
+        # PLUGIN_CONFIGS = None
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after

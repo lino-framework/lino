@@ -23,6 +23,7 @@ from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
+from lino.utils.xmlgen.html import RstTable
 
 from .requests import ActionRequest
 
@@ -308,9 +309,8 @@ class TableRequest(ActionRequest):
 
         if master_id is not None:
             raise Exception("20150218 deprecated?")
-            assert master_instance is None
-            master_instance = self.master.objects.get(pk=master_id)
-
+            # assert master_instance is None
+            # master_instance = self.master.objects.get(pk=master_id)
 
         # Table.page_length is not a default value for ReportRequest.limit
         # For example CSVReportRequest wants all rows.
@@ -334,6 +334,37 @@ class TableRequest(ActionRequest):
 
         if limit is not None:
             self.limit = limit
+
+    def table2rst(ar, column_names=None, header_level=None, **kwargs):
+        """
+        Return a reStructuredText representation of this table request.
+        """
+        fields, headers, widths = ar.get_field_info(column_names)
+
+        sums = [fld.zero for fld in fields]
+        rows = []
+        recno = 0
+        for row in ar.sliced_data_iterator:
+            recno += 1
+            rows.append([x for x in ar.row2text(fields, row, sums)])
+        if len(rows) == 0:
+            return "\n{0}\n".format(unicode(ar.no_data_text))
+
+        if not ar.actor.hide_sums:
+            has_sum = False
+            for i in sums:
+                if i:
+                    #~ print '20120914 zero?', repr(i)
+                    has_sum = True
+                    break
+            if has_sum:
+                rows.append([x for x in ar.sums2html(fields, sums)])
+
+        t = RstTable(headers, **kwargs)
+        s = t.to_rst(rows)
+        if header_level is not None:
+            s = E.tostring(E.h2(ar.get_title())) + s
+        return s
 
     def table2xhtml(self, header_level=None, **kw):
         """

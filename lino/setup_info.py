@@ -173,6 +173,7 @@ lino.modlib.polls
 lino.modlib.polls.fixtures
 lino.modlib.postings
 lino.modlib.print_pisa
+lino.modlib.printing
 lino.modlib.products
 lino.modlib.products.fixtures
 lino.modlib.projects

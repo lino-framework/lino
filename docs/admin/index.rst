@@ -18,6 +18,7 @@ Installation
     djangosite_local
     media
     install_mysql
+    config_dirs
    
 
 Java applets included with Lino
@@ -37,8 +38,8 @@ Printing
 .. toctree::
     :maxdepth: 2
    
+    printing
     using_appy_pod
-    printable
     excerpts
     appy_templates
 

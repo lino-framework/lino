@@ -34,8 +34,7 @@ class CreatePostings(dd.Action):
     icon_name = 'script_add'
 
     callable_from = (actions.GridEdit,
-                     actions.ShowDetailAction,
-                     actions.ShowEmptyTable)  # but not from InsertRow
+                     actions.ShowDetailAction)  # but not from InsertRow
 
     def run_from_ui(self, ar, **kw):
 

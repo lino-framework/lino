@@ -98,8 +98,8 @@ class TestCase(TestCase):
         check_status(0, 1, 1, 1)
 
         # That's what the BrokenGFKs table is supposed to show:
-        ar = BrokenGFKs.request()
-        rst = BrokenGFKs.to_rst(ar)
+        rst = BrokenGFKs.request().table2rst()
+        # rst = BrokenGFKs.to_rst(ar)
         # print rst
         self.assertEqual(rst, """\
 ================ ================== ===================================================== ========

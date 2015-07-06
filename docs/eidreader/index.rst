@@ -75,5 +75,6 @@ authentication).
     countries
     install
     applets
+    issues
     
 

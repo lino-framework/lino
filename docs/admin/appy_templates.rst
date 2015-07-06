@@ -4,6 +4,30 @@
 Appy POD template syntax
 ========================
 
+When a printable document is being generated using the
+:class:`AppyBuildMethod <lino.modlib.printing.choicelists.AppyBuildMethod>` build method, 
+Lino uses `appy.pod <http://appyframework.org/pod.html>`__
+a library 
+
+
+uses a special approach:
+  the templates are themselves `.odt` files.
+  See :doc:`appy_templates`
+
+  it marks template commands 
+  using OOo's "change records" and "comments" features. 
+  Appy/Pod also handles transparently 
+  the fact that .odt files are in fact .zip files containing a set of .xml files.
+
+Weblinks
+========
+
+.. glossary::
+
+  appy_pod
+    http://appyframework.org/pod.html
+
+
 .. currentmodule:: lino.utils.appy_pod
 
 

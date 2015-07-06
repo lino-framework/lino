@@ -31,7 +31,10 @@ from lino.core.renderer import HtmlRenderer
 
 from lino.ad import Plugin
 
-from lino.core import actions
+# from lino.core import actions
+from lino.core.actions import (ShowEmptyTable, ShowDetailAction,
+                               InsertRow, GridEdit, SubmitDetail,
+                               SubmitInsert)
 from lino.core import dbtables
 from lino.core import tables
 
@@ -311,7 +314,7 @@ class ExtRenderer(HtmlRenderer):
             if request and request.subst_user:
                 status[
                     constants.URL_PARAM_SUBST_USER] = request.subst_user
-            if isinstance(a, actions.ShowEmptyTable):
+            if isinstance(a, ShowEmptyTable):
                 status.update(record_id=-99998)
             if request is None:
                 rp = None
@@ -786,8 +789,8 @@ class ExtRenderer(HtmlRenderer):
                 if ba.action.parameters and not ba.action.no_params_window:
                     pass
                 elif ba.action.opens_a_window:
-                    if isinstance(ba.action, (actions.ShowDetailAction,
-                                              actions.InsertRow)):
+                    if isinstance(ba.action, (ShowDetailAction,
+                                              InsertRow)):
                         for ln in self.js_render_detail_action_FormPanel(
                                 rh, ba):
                             f.write(ln + '\n')
@@ -879,15 +882,15 @@ class ExtRenderer(HtmlRenderer):
         if a.parameters and not a.no_params_window:
             kw.update(panel_btn_handler=js_code(
                 "Lino.param_action_handler(Lino.%s)" % ba.full_name()))
-        elif isinstance(a, actions.SubmitInsert):
+        elif isinstance(a, SubmitInsert):
             js = 'function(panel){panel.save()}'
             kw.update(panel_btn_handler=js_code(js))
-        elif isinstance(a, actions.SubmitDetail):
+        elif isinstance(a, SubmitDetail):
             js = 'function(panel){panel.save()}'
             kw.update(panel_btn_handler=js_code(js))
-        elif isinstance(a, actions.ShowDetailAction):
+        elif isinstance(a, ShowDetailAction):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
-        elif isinstance(a, actions.InsertRow):
+        elif isinstance(a, InsertRow):
             kw.update(panel_btn_handler=js_code('Lino.show_insert'))
         else:
             kw.update(
@@ -1258,11 +1261,11 @@ class ExtRenderer(HtmlRenderer):
         else:
             params_panel = None
 
-        if isinstance(ba.action, actions.ShowDetailAction):
+        if isinstance(ba.action, ShowDetailAction):
             mainPanelClass = "Lino.%sPanel" % ba.full_name()
-        elif isinstance(ba.action, actions.InsertRow):
+        elif isinstance(ba.action, InsertRow):
             mainPanelClass = "Lino.%sPanel" % ba.full_name()
-        elif isinstance(ba.action, actions.GridEdit):
+        elif isinstance(ba.action, GridEdit):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
         elif ba.action.parameters and not ba.action.no_params_window:
             params_panel = ba.action.make_params_layout_handle(

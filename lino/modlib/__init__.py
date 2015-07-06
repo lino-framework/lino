@@ -3,23 +3,31 @@
 
 """The standard model library included with Lino.
 
-The modules in the :mod:`lino.modlib` package are ready-to-use "apps"
-(as Django calls them) for Lino applications.
+A collection of ready-to-use plugins (Django calls them "apps") for
+Lino applications.
 
-"System apps"
+"System plugins"
 =============
 
 .. autosummary::
    :toctree:
 
-    bootstrap3
     contenttypes
+    system
+    printing
     excerpts
-    extjs
     lino
     plausibility
     users
-    system
+
+"User interfaces"
+=================
+
+.. autosummary::
+   :toctree:
+
+    bootstrap3
+    extjs
 
 "Options"
 =========

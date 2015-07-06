@@ -26,8 +26,7 @@ from lino.core import signals
 from lino.core.tablerequest import TableRequest
 # from lino.core.utils import Handle
 from lino.core.utils import gfk2lookup
-from lino.utils.xmlgen.html import E
-from lino.utils.xmlgen.html import RstTable
+# from lino.utils.xmlgen.html import E
 
 
 class InvalidRequest(Exception):
@@ -596,11 +595,11 @@ method in order to sort the rows of the queryset.
     @classmethod
     def request(self, master_instance=None, **kw):
         """Return a new :class:`TableRequest
-        <lino.core.trequest.TableRequest>` on this table.
+        <lino.core.tablerequest.TableRequest>` on this table.
 
         If this is a slave table, the :attr:`master_instance
-        <lino.core.trequest.TableRequest.master_instance>` can be
-        specified as optional positional argument.
+        <lino.core.tablerequest.TableRequest.master_instance>` can be
+        specified as optional first positional argument.
 
         """
         kw.update(actor=self)
@@ -637,34 +636,9 @@ method in order to sort the rows of the queryset.
             os.startfile(url)
 
     @classmethod
-    def to_rst(cls, ar, column_names=None, header_level=None, **kwargs):
-        "Better name would be table2rst (analog to table2xhtml())"
-        fields, headers, widths = ar.get_field_info(column_names)
-
-        sums = [fld.zero for fld in fields]
-        rows = []
-        recno = 0
-        for row in ar.sliced_data_iterator:
-            recno += 1
-            rows.append([x for x in ar.row2text(fields, row, sums)])
-        if len(rows) == 0:
-            return "\n{0}\n".format(unicode(ar.no_data_text))
-
-        if not cls.hide_sums:
-            has_sum = False
-            for i in sums:
-                if i:
-                    #~ print '20120914 zero?', repr(i)
-                    has_sum = True
-                    break
-            if has_sum:
-                rows.append([x for x in ar.sums2html(fields, sums)])
-
-        t = RstTable(headers, **kwargs)
-        s = t.to_rst(rows)
-        if header_level is not None:
-            s = E.tostring(E.h2(ar.get_title())) + s
-        return s
+    def to_rst(cls, ar, *args, **kwargs):
+        raise Exception(
+            "Table.to_rst(cls, ar, ...) replaced by ar.table2rst(...)")
 
 
 class VirtualTable(AbstractTable):
