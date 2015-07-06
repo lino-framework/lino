@@ -45,7 +45,6 @@ class Site(Site):
 
         # yield 'lino.modlib.uploads'
         yield 'lino.modlib.excerpts'
-        yield 'lino.modlib.appypod'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
