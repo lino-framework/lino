@@ -31,7 +31,7 @@ class Site(Site):
     # languages = 'en de fr'
     languages = 'en de fr et nl pt-br es'
 
-    enable_role_based_permissions = True
+    user_profiles_module = 'lino.projects.docs.roles'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

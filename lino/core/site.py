@@ -95,7 +95,6 @@ class NOT_PROVIDED:
     pass
 
 
-
 class Site(object):
     """The base class for a Lino application.  This class is designed to
     be overridden by both application developers and local site
@@ -427,15 +426,15 @@ documentation.
 
     """
 
-    enable_role_based_permissions = False
-    """Set this to `True` if you want to enable permission control
+    # enable_role_based_permissions = False
+
+    user_profiles_module = None
+    """
+    The name of a Python module which defines the user roles.
+    Set this if you want to enable permission control
     based on user roles defined in
     :attr:`required_roles <lino.core.permissions.Permittable.required_roles>`
-    and :attr:`lino.modlib.users.choicelists.UserProfile.role`
-
-
-the `required_roles` part
-    of the permission system.
+    and :attr:`lino.modlib.users.choicelists.UserProfile.role`.
 
     """
 
@@ -1146,7 +1145,7 @@ the `required_roles` part
         def install_plugin(app_name, needed_by=None):
             app_mod = import_module(app_name)
 
-            # Can an `__init__.py` file may explicitly set ``Plugin =
+            # Can an `__init__.py` file explicitly set ``Plugin =
             # None``? Is that feature being used?
             app_class = getattr(app_mod, 'Plugin', None)
             if app_class is None:

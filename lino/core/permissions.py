@@ -37,10 +37,9 @@ class Permittable(object):
     An empty set means that the actor is visible to everybody,
     including anonymous users.
 
-    Note that this is being used only when
-    :attr:`enable_role_based_permissions
-    <lino.core.site.Site.enable_role_based_permissions>` is set to
-    `True`.
+    Note that this is being ignored when
+    :attr:`user_profiles_module
+    <lino.core.site.Site.user_profiles_module>` is empty.
 
     Examples of recommended ways for specifying this attribute::
 
@@ -162,7 +161,7 @@ def make_view_permission_handler(*args, **kw):
 def make_view_permission_handler_(
         actor, readonly, debug_permissions, required_roles):
 
-    if settings.SITE.enable_role_based_permissions:
+    if settings.SITE.user_profiles_module:
         def allow(action, profile):
             return profile.has_required_role(required_roles)
     else:
@@ -209,7 +208,7 @@ def make_permission_handler_(
             #~ user_level,user_groups,states,allow,owner,auth])
 
     if allow is None:
-        if settings.SITE.enable_role_based_permissions:
+        if settings.SITE.user_profiles_module:
             def allow(action, user, obj, state):
                 return user.profile.has_required_role(required_roles)
         else:

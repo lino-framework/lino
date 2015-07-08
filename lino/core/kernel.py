@@ -320,6 +320,10 @@ class Kernel(object):
         #         if k.startswith('setup_'):
         #             self.modules.define(app_label, k, v)
 
+        if self.user_profiles_module:
+            from django.utils.importlib import import_module
+            import_module(self.user_profiles_module)
+        
         self.setup_choicelists()
         self.setup_workflows()
 

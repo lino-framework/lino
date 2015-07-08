@@ -3,6 +3,10 @@
 Watching database changes
 -------------------------
 
+.. How to test only this module:
+
+    $ python setup.py test -s tests.DocsTests.test_watch
+
 .. currentmodule:: lino.core.site
 
 This tutorial explains how to implement a kind of `audit trail
