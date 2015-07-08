@@ -19,7 +19,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
-from lino.modlib.office.roles import OfficeUser, OfficeStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .choicelists import Shortcuts, UploadAreas
 
@@ -179,13 +179,13 @@ class UploadsByType(Uploads):
 
 class MyUploads(Uploads, ByUser):
     """Shows only my Uploads (i.e. those whose author is current user)."""
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.required((OfficeUser, OfficeOperator))
     column_names = "file description user owner *"
     # order_by = ["modified"]
 
 
 class AreaUploads(Uploads):
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.required((OfficeUser, OfficeOperator))
     stay_in_grid = True
     _upload_area = UploadAreas.general
     slave_grid_format = 'summary'
