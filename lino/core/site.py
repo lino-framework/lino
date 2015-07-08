@@ -429,12 +429,26 @@ documentation.
     # enable_role_based_permissions = False
 
     user_profiles_module = None
-    """
-    The name of a Python module which defines the user roles.
-    Set this if you want to enable permission control
-    based on user roles defined in
-    :attr:`required_roles <lino.core.permissions.Permittable.required_roles>`
-    and :attr:`lino.modlib.users.choicelists.UserProfile.role`.
+    """The full Python path of the **user profiles module** to be used on
+    this site.
+
+    Lino will import this module during site startup. It is expected
+    to define application-specific user roles (if necessary) and to
+    fill the :class:`UserProfiles
+    <lino.modlib.users.choicelists.UserProfiles>` choicelist.
+
+    This must be set if you want to enable permission control based on
+    user roles defined in :attr:`required_roles
+    <lino.core.permissions.Permittable.required_roles>` and
+    :attr:`lino.modlib.users.choicelists.UserProfile.role`. For
+    example::
+
+        class Site(Site):
+            user_profiles_module = 'lino.projects.std.roles'
+
+    Examples of such user profiles modules are
+    :mod:`lino.projects.std.roles` and
+    :mod:`lino.projects.presto.roles`.
 
     """
 
@@ -1810,12 +1824,11 @@ documentation.
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
     def setup_user_profiles(self):
-        """Application developers override this to define application-specific
-        :class:`UserProfiles
-        <lino.modllib.users.choicelists.UserProfiles>`.
+        """Deprecated. Use :attr:`user_profiles_module` instead. 
 
-        Lino by default has three user profiles: "Anonymous", "User"
-        and "Administrator".
+        Application developers override this to define
+        application-specific :class:`UserProfiles
+        <lino.modllib.users.choicelists.UserProfiles>`.
 
         This is done even if :attr:`user_model` is None (i.e.
         :mod:`lino.modlib.users` is not installed) because we want

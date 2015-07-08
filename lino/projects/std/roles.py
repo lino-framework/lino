@@ -1,9 +1,9 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the standard user roles for `lino.projects.docs`.
-
-See also :attr:`lino.core.Site.Site.user_profiles_module`.
+"""Defines a default set of user profiles "Anonymous", "User" and
+"Administrator". To be used as :attr:`user_profiles_module
+<lino.core.site.Site.user_profiles_module>`.
 
 """
 
@@ -13,10 +13,12 @@ from lino.modlib.accounts.roles import AccountingReader
 
 
 class SiteUser(OfficeUser, AccountingReader):
+    """A normal user of this site."""
     pass
 
 
 class SiteAdmin(SiteAdmin, OfficeStaff, AccountingReader):
+    """A user with all adminstrator permissions on this site."""
     pass
 
 

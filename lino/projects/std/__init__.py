@@ -6,6 +6,8 @@ The parent of every Lino application.
 .. autosummary::
    :toctree:
 
-   settings
+
+    roles
+    settings
 
 """
