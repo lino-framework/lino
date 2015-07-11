@@ -124,11 +124,11 @@ class DirectPrintAction(BasePrintAction):
         self.build_method = build_method
         self.tplname = tplname
 
-    def get_print_templates(self, bm, elem):
-        #~ assert bm is self.bm
+    def get_print_templates(self, bm, obj):
+        #~ assert bm is self.build_method
         if self.tplname:
             return [self.tplname + bm.template_ext]
-        return elem.get_print_templates(bm, self)
+        return obj.get_print_templates(bm, self)
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
@@ -147,9 +147,8 @@ class DirectPrintAction(BasePrintAction):
 
 class CachedPrintAction(BasePrintAction):
 
-    """Note that this action should rather be called 'Open a printable
-    document' than 'Print'.  For the user they are synonyms as long as
-    Lino doesn't support server-side printing.
+    """A print action which uses a cache for the generated printable
+    document and builds is only when it doesn't yet exist.
 
     """
 
@@ -332,11 +331,25 @@ class ClearCacheAction(Action):
 
 
 class PrintableType(Model):
-    """
-    Base class for models that specify the
+    """Base class for models that specify the
     :attr:`TypedPrintable.type`.
 
     .. attribute:: build_method
+
+        A pointer to an item of
+        :class:`lino.modlib.printing.choicelists.BuildMethods`.
+
+    .. attribute:: template
+
+        The name of the file to be used as template.
+    
+        If this field is empty, Lino will use the filename returned by
+        :meth:`lino.modlib.printing.Plugin.get_default_template`.
+    
+        The list of choices for this field depend on the
+        :attr:`build_method`.  Ending must correspond to the
+        :attr:`build_method`.
+
     """
 
     templates_group = None
@@ -347,16 +360,8 @@ class PrintableType(Model):
     class Meta:
         abstract = True
 
-    build_method = BuildMethods.field(
-        verbose_name=_("Build method"),
-        blank=True, null=True)
-
+    build_method = BuildMethods.field(blank=True, null=True)
     template = models.CharField(_("Template"), max_length=200, blank=True)
-    """
-    The name of the file to be used as template.
-    The list of choices for this field depend on the :attr:`build_method`.
-    Ending must correspond to the :attr:`build_method`.
-    """
 
     @classmethod
     def get_template_groups(cls):
@@ -364,7 +369,6 @@ class PrintableType(Model):
         `PrintableType` but an **instance method** on `Printable`.
 
         """
-        #~ return cls.templates_group or cls._meta.app_label
         return [cls.templates_group]  # or full_model_name(cls)
 
     @chooser(simple_values=True)
@@ -382,7 +386,7 @@ class PrintableType(Model):
 
 
 class Printable(object):
-    """Mixin for Models whose instances have a "print" action (i.e. for
+    """Mixin for models whose instances have a "print" action (i.e. for
     which Lino can generate a printable document).
 
     Extended by :class:`CachedPrintable` and :class:`TypedPrintable`.
@@ -424,9 +428,7 @@ class Printable(object):
         the returned list may not contain more than 1 element.
 
         """
-        if bm.default_template:
-            return [bm.default_template]
-        return ['Default' + bm.template_ext]
+        return [bm.get_default_template(self)]
 
     def get_default_build_method(self):
         return BuildMethods.get_system_default()
@@ -563,10 +565,7 @@ class TypedPrintable(CachedPrintable):
         ptype = self.get_printable_type()
         if ptype is None:
             return super(TypedPrintable, self).get_print_templates(bm, action)
-        tplname = ptype.template or bm.default_template
-        if not tplname.endswith(bm.template_ext):
-            raise Warning(
-                "Invalid template '%s' configured for %s '%s' (expected filename ending with '%s')." %
-                (tplname, ptype.__class__.__name__, unicode(ptype), bm.template_ext))
-        return [tplname]
 
+        if ptype.template:
+            return [ptype.template]
+        return [bm.get_default_template(self)]

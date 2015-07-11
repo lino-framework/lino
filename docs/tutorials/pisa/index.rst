@@ -15,7 +15,6 @@ We create a template:
 
 .. literalinclude:: config/Default.pisa.html
 
-
 That's basically all. 
 
 :srcref:`/docs/tutorials/pisa/pisa.Person-1.pdf`
@@ -29,14 +28,13 @@ such things using scripts.
 Note that you need to manually add `pip install pisa`.
 
 >>> from __future__ import print_function 
->>> from lino.api.shell import *
->>> from django.test import Client
+>>> from lino.api.doctest import *
 >>> from pisa.models import Person
 
 Must set `default_build_method` to ``"pisa"`` because otherwise Lino would 
 use ``"appyodt"``
 
->>> settings.SITE.site_config.update(default_build_method = 'pisa')
+>>> settings.SITE.site_config.update(default_build_method='pisa')
 
 Let's install our well-known demo root users from
 :mod:`lino.modlib.users.fixtures.demo`:

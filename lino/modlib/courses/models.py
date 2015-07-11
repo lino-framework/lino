@@ -815,9 +815,7 @@ class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
         super(Enrolment, self).save(*args, **kw)
 
     def get_print_templates(self, bm, action):
-        #~ if self.state:
         return [self.state.name + bm.template_ext]
-        #~ return super(Enrolment,self).get_print_templates(bm,action)
 
     def __unicode__(self):
         return "%s / %s" % (self.course, self.pupil)

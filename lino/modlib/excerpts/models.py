@@ -263,7 +263,6 @@ We override everything in Excerpt to not call the class method.""")
     @dd.displayfield(_("Model"))
     def content_type_display(self, ar):
         model = self.content_type.model_class()
-        
         label = "{0} ({1})".format(
             dd.full_model_name(model), model._meta.verbose_name)
         return ar.obj2html(self.content_type, label)
@@ -505,6 +504,20 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             return super(Excerpt, self).filename_root()
         o = self.owner
         return o._meta.app_label + '.' + o.__class__.__name__ + '-' + str(o.pk)
+
+    def get_print_templates(self, bm, action):
+        et = self.excerpt_type
+        if et is not None and et.certifying:
+            tpls = self.owner.get_excerpt_templates(bm)
+            if tpls is not None:
+                return tpls
+        return super(Excerpt, self).get_print_templates(bm, action)
+        # ptype = self.get_printable_type()
+        # # raise Exception("20150710 %s" % self.owner)
+        # if ptype is not None and ptype.template:
+        #     return [ptype.template]
+        # # return [bm.get_default_template(self)]
+        # return [dd.plugins.excerpts.get_default_template(bm, self.owner)]
 
     # def get_recipient(self):
     #     rec = super(Excerpt, self).get_recipient()

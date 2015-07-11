@@ -20,7 +20,7 @@ def objects():
         if False:
             kw.update(backward_compat=True)
         yield ExcerptType(
-            template='Default.odt',
+            #template='Default.odt',
             primary=True,
             certifying=True,
             content_type=ContentType.objects.get_for_model(cls),

@@ -49,6 +49,8 @@ class Plugin(ad.Plugin):
         'lino.modlib.printing',
         'lino.modlib.outbox', 'lino.modlib.office']
 
+    # _default_template_handlers = {}
+
     def setup_main_menu(self, site, profile, m):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)
@@ -63,3 +65,25 @@ class Plugin(ad.Plugin):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('excerpts.AllExcerpts')
+
+    # def register_default_template_handler(self, model, func):
+    #     self._default_template_handlers[model] = func
+
+    # def get_default_template(self, bm, obj):
+    #     """Return the filename to use as main template when no
+    #     explicit template name is specified.
+    #     :attr:`template<lino.modlib.printing.mixins.PrintableType.template>`.
+
+    #     """
+    #     h = self._default_template_handlers.get(obj.__class__, None)
+    #     if h is None:
+    #         return bm.get_default_template(obj)
+    #     return h(obj, bm)
+
+
+# def default_template_handler(obj, bm):
+#     if bm.default_template:
+#         return bm.default_template
+#     return 'Default' + bm.template_ext
+
+

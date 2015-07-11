@@ -22,7 +22,7 @@ from django.template.loader import (select_template, Context,
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.media import MediaFile
-from lino.api import rt, _
+from lino.api import dd, rt, _
 
 try:
     import pyratemp
@@ -42,7 +42,7 @@ class BuildMethod(Choice):
     template_ext = None
     templates_name = None
     cache_name = 'cache'
-    default_template = ''
+    default_template = ''  # overridden by lino.modlib.appypod
 
     use_webdav = False
     """Whether this build method results is an editable file.  For
@@ -78,6 +78,16 @@ class BuildMethod(Choice):
 
     def get_target_name(self, action, elem):
         return self.get_target(action, elem).name
+
+    def get_default_template(self, obj):
+        """Theoretically it is possible to write build methods which override
+        this.
+
+        """
+        if self.default_template:
+            return self.default_template
+        return 'Default' + self.template_ext
+        # return dd.plugins.printing.get_default_template(self, obj)
 
     def get_target_url(self, action, elem):
         return self.get_target(action, elem).url
@@ -160,6 +170,13 @@ class SimpleBuildMethod(BuildMethod):
                 "exactly 1 template (got %r)" % (
                     elem.__class__.__name__, tpls))
         tpl_leaf = tpls[0]
+        if not tpl_leaf.endswith(self.template_ext):
+            raise Warning(
+                "Invalid template '%s' configured for %s '%s' "
+                "(expected filename ending with '%s')." %
+                (tpl_leaf, elem.__class__.__name__, unicode(elem),
+                 self.template_ext))
+
         lang = elem.get_print_language() \
             or settings.SITE.DEFAULT_LANGUAGE.django_code
         if lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
