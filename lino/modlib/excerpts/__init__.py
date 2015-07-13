@@ -20,11 +20,7 @@ button in the toolbar::
 Or by adding :class:`excerpts.ExcerptsByOwner <ExcerptsByOwner>` or
 :class:`excerpts.ExcerptsByProject <ExcerptsByProject>` (or both, or
 your own subclass of one of them) to the :attr:`detail_layout
-<dd.Actor.detail_layout>`.
-
-
-
-
+<lino.core.actors.Actor.detail_layout>`.
 
 .. autosummary::
    :toctree:

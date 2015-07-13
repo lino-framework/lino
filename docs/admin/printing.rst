@@ -194,19 +194,16 @@ Pisa vs. LaTeX
 Not yet implemented
 ===================
 
-There are some other possible candidates that we didn't yet have time to meet with:
+There are some other possible candidates that we didn't yet have time
+to meet with:
 
 - `rst2pdf <http://rst2pdf.googlecode.com>`_
   is a tool to convert restructured text to PDF using reportlab.
 
-- `wkhtmltopdf <http://code.google.com/p/wkhtmltopdf>`_.
-  converts html to pdf using the webkit rendering engine, and qt.
-  There is also a `Python binding <http://github.com/mreiferson/py-wkhtmltox>`_
-  
-- `RTF Template <http://rtftemplate.sourceforge.net/>`_ uses another approach: 
-  users design their templates by "using merge fields (MERGEFIELD), 
-  hyperlink fields (HYPERLINK) and 
-  bookmarks (BOOKMARK, to manage start/end loop)."
+- `RTF Template <http://rtftemplate.sourceforge.net/>`_ uses another
+  approach: users design their templates by "using merge fields
+  (MERGEFIELD), hyperlink fields (HYPERLINK) and bookmarks (BOOKMARK,
+  to manage start/end loop)."
   
 
    

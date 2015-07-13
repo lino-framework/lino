@@ -169,4 +169,3 @@ class Certifiable(dd.Model):
     def get_excerpt_templates(self, bm):
         """Return either None or a list of template names."""
         return None
-        
