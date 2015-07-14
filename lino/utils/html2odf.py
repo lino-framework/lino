@@ -1,40 +1,44 @@
-# Copyright 2011-2013 Luc Saffre
+# -*- coding: UTF-8 -*-
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-  
-This module contains mainly a utility function :func:`html2odf` 
-which converts an ElementTree object 
-generated using :mod:`lino.utils.xmlgen.html`
-to a fragment of ODF.
+"""This module contains mainly a utility function :func:`html2odf` which
+converts an ElementTree object generated using
+:mod:`lino.utils.xmlgen.html` to a fragment of ODF.
 
 >>> from lino.utils.xmlgen.html import E
 >>> def test(e):
 ...     print E.tostring(e)
 ...     print toxml(html2odf(e))
->>> test(E.p("This is a ",E.b("first")," test.")) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.p("This is a ", E.b("first"), " test."))
+... #doctest: +NORMALIZE_WHITESPACE
 <p>This is a <b>first</b> test.</p>
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
-is a <text:span text:style-name="Strong Emphasis">first</text:span> test.</text:p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This
+is a <text:span text:style-name="Strong Emphasis">first</text:span>
+test.</text:p>
 
->>> test(E.p(E.b("This")," is another test.")) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.p(E.b("This")," is another test."))
+... #doctest: +NORMALIZE_WHITESPACE
 <p><b>This</b> is another test.</p>
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span
 text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
 
->>> test(E.p(E.i("This")," is another test.")) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.p(E.i("This")," is another test."))
+... #doctest: +NORMALIZE_WHITESPACE
 <p><i>This</i> is another test.</p>
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span
 text:style-name="Emphasis">This</text:span> is another test.</text:p>
 
->>> test(E.td(E.p("This is another test."))) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.td(E.p("This is another test.")))
+... #doctest: +NORMALIZE_WHITESPACE
 <td><p>This is another test.</p></td>
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This 
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">This
 is another test.</text:p>
 
->>> test(E.td(E.p(E.b("This")," is another test."))) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.td(E.p(E.b("This"), " is another test.")))
+... #doctest: +NORMALIZE_WHITESPACE
 <td><p><b>This</b> is another test.</p></td>
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span
 text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
 
 >>> test(E.ul(E.li("First item"),E.li("Second item"))) #doctest: +NORMALIZE_WHITESPACE
@@ -64,23 +68,16 @@ Edge case:
 >>> print toxml(html2odf("Plain string"))
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Plain string</text:p>
 
+>>> print toxml(html2odf(u"Ein schöner Text"))
+... #doctest: +NORMALIZE_WHITESPACE
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Ein
+schÃ¶ner Text</text:p>
 """
-
 
 import logging
 logger = logging.getLogger(__name__)
 
-import os
-
-from lino.utils.xmlgen.html import E
-
-
-from django.utils.encoding import force_unicode
-from django.conf import settings
-
-
-from cStringIO import StringIO
-#~ from StringIO import StringIO
+from StringIO import StringIO
 
 
 def toxml(node):
@@ -89,21 +86,7 @@ def toxml(node):
     return buf.getvalue()
 
 
-from odf.opendocument import OpenDocumentText
-from odf.style import Style, TextProperties, ParagraphProperties
-from odf.style import TableColumnProperties, TableRowProperties, TableCellProperties
-#~ from odf.text import P
-from odf.element import Text
 from odf import text
-from odf.table import Table, TableColumns, TableColumn, TableHeaderRows, TableRows, TableRow, TableCell
-
-from cStringIO import StringIO
-
-
-def toxml(node):
-    buf = StringIO()
-    node.toXml(0, buf)
-    return buf.getvalue()
 
 
 #~ PTAGS = ('p','td','li')

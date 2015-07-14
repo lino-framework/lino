@@ -1,0 +1,2 @@
+/home/luc/hgwork/lino/docs/api/lino.modlib.countries.models.rst:14: WARNING: failed to import OfficeUser
+/home/luc/hgwork/lino/docs/api/lino.modlib.uploads.models.rst:24: WARNING: failed to import ByUser
