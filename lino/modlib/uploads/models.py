@@ -18,7 +18,7 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .choicelists import Shortcuts, UploadAreas
@@ -84,10 +84,7 @@ def filename_leaf(name):
     return name
 
 
-class Upload(
-        mixins.Uploadable,
-        UserAuthored,
-        Controllable):
+class Upload(mixins.Uploadable, UserAuthored, Controllable):
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Upload')
@@ -133,9 +130,10 @@ dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
 
 class Uploads(dd.Table):
     "Shows all Uploads"
-    required_roles = dd.required(OfficeStaff)
     model = 'uploads.Upload'
+    required_roles = dd.login_required((OfficeUser, OfficeOperator))
     column_names = "file type user owner description *"
+    order_by = ['-id']
 
     detail_layout = dd.DetailLayout("""
     file user
@@ -151,25 +149,31 @@ class Uploads(dd.Table):
     """
 
     parameters = mixins.ObservedPeriod(
-        puser=models.ForeignKey(
-            'users.User', blank=True, null=True,
-            verbose_name=_("Uploaded by")),
-        pupload_type=models.ForeignKey(
+        # user=models.ForeignKey(
+        #     'users.User', blank=True, null=True,
+        #     verbose_name=_("Uploaded by")),
+        upload_type=models.ForeignKey(
             'uploads.UploadType', blank=True, null=True))
-    params_layout = "start_date end_date puser pupload_type"
+    params_layout = "start_date end_date user upload_type"
+    simple_param_fields = ['user']
 
     @classmethod
     def get_request_queryset(cls, ar):
         qs = super(Uploads, cls).get_request_queryset(ar)
         pv = ar.param_values
 
-        if pv.puser:
-            qs = qs.filter(user=pv.puser)
+        if pv.user:
+            qs = qs.filter(user=pv.user)
 
-        if pv.pupload_type:
-            qs = qs.filter(type=pv.pupload_type)
+        if pv.upload_type:
+            qs = qs.filter(type=pv.upload_type)
 
         return qs
+
+
+class AllUploads(Uploads):
+    use_as_default_table = False
+    required_roles = dd.required(OfficeStaff)
 
 
 class UploadsByType(Uploads):
@@ -177,11 +181,21 @@ class UploadsByType(Uploads):
     column_names = "file description user * "
 
 
-class MyUploads(Uploads, ByUser):
+class MyUploads(My, Uploads):
     """Shows only my Uploads (i.e. those whose author is current user)."""
     required_roles = dd.required((OfficeUser, OfficeOperator))
     column_names = "file description user owner *"
     # order_by = ["modified"]
+
+    # @classmethod
+    # def get_actor_label(self):
+    #     return _("My %s") % _("Uploads")
+
+    # @classmethod
+    # def param_defaults(self, ar, **kw):
+    #     kw = super(MyUploads, self).param_defaults(ar, **kw)
+    #     kw.update(user=ar.get_user())
+    #     return kw
 
 
 class AreaUploads(Uploads):

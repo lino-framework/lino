@@ -33,5 +33,5 @@ class Plugin(ad.Plugin):
     def setup_explorer_menu(config, site, profile, m):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)
-        m.add_action('uploads.Uploads')
+        m.add_action('uploads.AllUploads')
         m.add_action('uploads.UploadAreas')
