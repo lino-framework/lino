@@ -90,6 +90,7 @@ add = TicketStates.add_item
 #     action_name=_("Start"),
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
+add('15', _("Observing"), 'observing')
 add('20', _("To do"), 'todo')
 add('21', _("Sticky"), 'sticky')
 # add('30', _("Callback"), 'callback',

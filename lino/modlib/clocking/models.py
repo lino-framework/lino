@@ -258,6 +258,7 @@ class Sessions(dd.Table):
     # stay_in_grid = True
     parameters = mixins.ObservedPeriod(
         project=dd.ForeignKey('tickets.Project', null=True, blank=True),
+        ticket=dd.ForeignKey('tickets.Ticket', null=True, blank=True),
         # user=dd.ForeignKey('users.User', null=True, blank=True),
         session_type=dd.ForeignKey(
             'clocking.SessionType', null=True, blank=True),
@@ -265,9 +266,9 @@ class Sessions(dd.Table):
             blank=True, default=dd.PeriodEvents.active),
     )
     params_layout = "start_date end_date observed_event project "\
-                    "user session_type"
+                    "user session_type ticket"
     auto_fit_column_widths = True
-    simple_parameters = ('user', 'session_type')
+    simple_parameters = ('user', 'session_type', 'ticket')
 
     detail_layout = """
     ticket start_date start_time end_date end_time break_time user
@@ -317,7 +318,8 @@ class SessionsByTicket(Sessions):
 
 
 class MySessions(Sessions):
-    column_names = 'start_date start_time end_time break_time ticket summary *'
+    column_names = 'start_date start_time end_time '\
+                   'break_time ticket summary *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
