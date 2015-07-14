@@ -2,20 +2,18 @@
 # Copyright 2012-2013 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur"""
-OdsReader uses odfpy to extract data from an .ods document 
+ur""" OdsReader uses odfpy to extract data from an .ods document
 (OpenOffice.org spreadsheet).
 
-Thanks to Marco Conti and gtr for their blog post
-`Read an ODS file with Python and Odfpy
+Thanks to Marco Conti and gtr for their blog post `Read an ODS file
+with Python and Odfpy
 <http://www.marco83.com/work/173/read-an-ods-file-with-python-and-odfpy/>`_
-which was a valuable source of inspiration to me.
-Unlike Marco's reader this one doesn't store any data in memory, 
-it just loops over the rows.
+which was a valuable source of inspiration to me.  Unlike Marco's
+reader this one doesn't store any data in memory, it just loops over
+the rows.
 
-OdsReader is used to import data from .ods files into a 
-Django database using a :ref:`dpy` fixture,
-but not limited to this usage.
+OdsReader is used to import data from .ods files into a Django
+database using a :ref:`dpy` fixture, but not limited to this usage.
 
 State : works for me, but very young and probably full of bugs.
 
@@ -59,21 +57,20 @@ from lino.utils import AttrDict
 
 
 class SimpleOdsReader(object):
+    """Abstract base class. For each .ods file you are probably creating a
+    subclass of this.
 
     """
-    Abstract base class. For each .ods file you are probably creating 
-    a subclass of this.
-    """
     filename = None
-    """
-    The full path name of the .ods file to be read.
+    """The full path name of the .ods file to be read.
+
     """
 
     headers = None
-    """
-    A list of unicode strings, one for each column in the file.
-    The headers specified here must match exactly those found 
-    in the .ods file.
+    """A list of unicode strings, one for each column in the file.  The
+    headers specified here must match exactly those found in the .ods
+    file.
+
     """
 
     def __init__(self, **kw):
@@ -81,10 +78,9 @@ class SimpleOdsReader(object):
             setattr(self, k, v)
 
     def cells2row(self, cells):
-        """
-        This will be called for each recognized data row and 
-        may perform a conversion before yielding it.
-        Subclasses may override this.
+        """This will be called for each recognized data row and may perform a
+        conversion before yielding it.  Subclasses may override this.
+
         """
         return cells
 
@@ -92,7 +88,7 @@ class SimpleOdsReader(object):
         """
         Yields the data rows found in this .ods file.
         """
-        doc = opendocument.load(self.filename)
+        doc = opendocument.load(unicode(self.filename))
         logger.debug("Reading %s", self.filename)
         if self.column_names is None:
             self.column_names = self.headers
