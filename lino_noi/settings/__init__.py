@@ -34,7 +34,7 @@ class Site(Site):
         """
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
-        yield 'lino.modlib.system'
+        # yield 'lino.modlib.system'
         yield 'lino_noi.lib.users'
         yield 'lino_noi.lib.contacts'
         yield 'lino.modlib.cal'

@@ -6,7 +6,16 @@ Ticket management and work time tracking
 
 .. How to test only this document:
 
-  $ python setup.py test -s tests.SpecsTests.test_tickets
+    $ python setup.py test -s tests.SpecsTests.test_tickets
+    
+    doctest init:
+
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
+    >>> from __future__ import print_function 
+    >>> from __future__ import unicode_literals
+    >>> from lino.api.doctest import *
+
 
 Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
 :mod:`lino.modlib.clocking` (Development time tracking).
@@ -19,19 +28,6 @@ possible to publish diverse work reports.
 
 .. contents::
   :local:
-
-A tested document
-=================
-
-.. include:: /include/tested.rst
-
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
->>> from __future__ import print_function 
->>> from __future__ import unicode_literals
->>> from lino.api.doctest import *
-
->>> ses = rt.login("robin")
 
 
 Tickets versus Clocking
@@ -57,6 +53,7 @@ User profiles
 
 A default Lino Noi site has the following user profiles:
 
+>>> ses = rt.login("robin")
 >>> ses.show(users.UserProfiles)
 ======= ============ ===============
  value   name         text
@@ -115,22 +112,32 @@ by the team that uses a given Lino Noi site.
 Lifecycle of a ticket
 =====================
 
-The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a ticket
+The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a
+ticket has one of the following values:
 
 >>> ses.show(tickets.TicketStates)
-======= ========= =========
- value   name      text
-------- --------- ---------
- 10      new       New
- 20      todo      To do
- 21      sticky    Sticky
- 50      done      Done
- 60      refused   Refused
-======= ========= =========
+======= =========== ===========
+ value   name        text
+------- ----------- -----------
+ 10      new         New
+ 15      observing   Observing
+ 20      todo        To do
+ 21      sticky      Sticky
+ 50      done        Done
+ 60      refused     Refused
+======= =========== ===========
 <BLANKLINE>
 
+- new : somebody reported that ticket, but there was no response so
+  far.
+- observing : the ticket is confirmed, but we don't yet know exactly
+  what to do with it.
+- todo : appears in the todo list of somebody (either the assigned
+  worker, or our general todo list)
+- 
 
-When a ticket has been marked as :attr:`closed <lino.modlib.tickets.models.Ticket.closed>`.
+When a ticket has been marked as :attr:`closed
+<lino.modlib.tickets.models.Ticket.closed>`.
 
 - :attr:`standby <lino.modlib.tickets.models.Ticket.standby>` 
 
