@@ -691,7 +691,8 @@ class Excerpts(dd.Table):
     """
     column_names = ("id excerpt_type owner project "
                     "company language build_time *")
-    order_by = ['-build_time', 'id']
+    # order_by = ['-build_time', 'id']
+    order_by = ['-id']
     auto_fit_column_widths = True
     allow_create = False
 
@@ -724,18 +725,19 @@ class Excerpts(dd.Table):
 
 class AllExcerpts(Excerpts):
     required_roles = dd.required(SiteAdmin, OfficeStaff)
-    order_by = ["id"]
     column_names = ("id excerpt_type owner project "
                     "company language build_time *")
 
 
 class MyExcerpts(My, Excerpts):
     column_names = "build_time excerpt_type project *"
+    order_by = ['-build_time', 'id']
 
 
 class ExcerptsByType(Excerpts):
     master_key = 'excerpt_type'
     column_names = "build_time owner project user *"
+    order_by = ['-build_time', 'id']
 
             
 class ExcerptsByOwner(Excerpts):
@@ -748,6 +750,7 @@ class ExcerptsByOwner(Excerpts):
     help_text = _("History of excerpts based on this data record.")
     label = _("Existing excerpts")
     column_names = "build_time excerpt_type user project *"
+    order_by = ['-build_time', 'id']
     slave_grid_format = 'summary'
     auto_fit_column_widths = True
     MORE_LIMIT = 5
@@ -794,6 +797,7 @@ if settings.SITE.project_model is not None:
     class ExcerptsByProject(ExcerptsByOwner):
         master_key = 'project'
         column_names = "build_time excerpt_type user owner *"
+        order_by = ['-build_time', 'id']
 
         @classmethod
         def format_excerpt(self, ex):

@@ -77,6 +77,7 @@ the web interface.  In a virgin database are no changes:
 No data to display
 <BLANKLINE>
 
+
 We create a new person
 
 >>> url = '/api/contacts/Companies'

@@ -82,6 +82,7 @@ class ExtRenderer(HtmlRenderer):
 
     """
     is_interactive = True
+    # is_prepared = False
 
     def __init__(self, plugin):
         HtmlRenderer.__init__(self, plugin)
@@ -89,6 +90,8 @@ class ExtRenderer(HtmlRenderer):
 
         for s in 'green blue red yellow'.split():
             self.row_classes_map[s] = 'x-grid3-row-%s' % s
+
+        self.prepare_layouts()
 
     def pk2url(self, ar, pk, **kw):
         return None
@@ -577,6 +580,10 @@ class ExtRenderer(HtmlRenderer):
         :xfile:`lino*.js` files, one per user profile and language.
 
         """
+        # if not self.is_prepared:
+        #     self.prepare_layouts()
+        #     self.is_prepared = True
+
         if settings.SITE.never_build_site_cache:
             logger.debug(
                 "Not building site cache because `settings.SITE.never_build_site_cache` is True")
@@ -600,7 +607,6 @@ class ExtRenderer(HtmlRenderer):
 
         if force or settings.SITE.build_js_cache_on_startup:
             count = 0
-            #~ langs = settings.SITE.AVAILABLE_LANGUAGES
             for lng in settings.SITE.languages:
                 with translation.override(lng.django_code):
                     for profile in UserProfiles.objects():
@@ -612,11 +618,16 @@ class ExtRenderer(HtmlRenderer):
     def build_js_cache(self, force):
         """Build the :xfile:`lino*.js` file for the current user and the
         current language.  If the file exists and is up to date, don't
-        generate it unless `force=False` is specified.
+        generate it unless `force` is `True`.
 
         This is called
-        - on each request if :setting:`build_js_cache_on_startup` is `False`.
-        - with `force=True` by :class:`lino.models.BuildSiteCache`
+
+        - on each request if :attr:`build_js_cache_on_startup
+          <lino.core.site.Site.build_js_cache_on_startup>` is `False`.
+
+        - with `force=True` when
+          :class:`lino.modlib.lino.models.BuildSiteCache` action is
+          run.
 
         """
         fn = os.path.join(*self.lino_js_parts())
@@ -626,6 +637,76 @@ class ExtRenderer(HtmlRenderer):
 
         return settings.SITE.kernel.make_cache_file(fn, write, force)
     
+    def prepare_layouts(self):
+        
+        self.actors_list = [
+            rpt for rpt in dbtables.master_reports
+            + dbtables.slave_reports
+            + dbtables.generic_slaves.values()
+            + dbtables.custom_tables
+            + dbtables.frames_list]
+
+        self.actors_list.extend(
+            [a for a in choicelists.CHOICELISTS.values()
+             if settings.SITE.is_installed(a.app_label)])
+
+        # don't generate JS for abstract actors
+        self.actors_list = [a for a in self.actors_list
+                            if not a.is_abstract()]
+
+        # Layouts
+
+        self.form_panels = set()
+        self.param_panels = set()
+        self.action_param_panels = set()
+
+        def add(res, collector, fl, formpanel_name):
+            # res: an actor
+            # collector: one of form_panels, param_panels or
+            # action_param_panels
+            # fl : a FormLayout
+            if fl is None:
+                return
+            if fl._datasource is None:
+                return  # 20130804
+
+            if fl._datasource != res:
+                fl._other_datasources.add(res)
+                # if str(res).startswith('newcomers.AvailableCoaches'):
+                #     logger.info("20150716 %s also needed by %s", fl, res)
+
+            if False:
+                try:
+                    lh = fl.get_layout_handle(self.plugin)
+                except Exception as e:
+                    logger.exception(e)
+                    raise Exception("Could not define %s for %r: %s" % (
+                        formpanel_name, res, e))
+
+                    
+                # lh.main.loosen_requirements(res)
+                for e in lh.main.walk():
+                    e.loosen_requirements(res)
+
+            if not fl in collector:
+                fl._formpanel_name = formpanel_name
+                fl._url = res.actor_url()
+                collector.add(fl)
+
+        for res in self.actors_list:
+            add(res, self.form_panels, res.detail_layout,
+                "%s.DetailFormPanel" % res)
+            add(res, self.form_panels, res.insert_layout,
+                "%s.InsertFormPanel" % res)
+            add(res, self.param_panels, res.params_layout,
+                "%s.ParamsPanel" % res)
+
+            for ba in res.get_actions():
+                if ba.action.parameters:
+                    add(res, self.action_param_panels,
+                        ba.action.params_layout,
+                        "%s.%s_ActionFormPanel" % (res, ba.action.action_name))
+
     def write_lino_js(self, f):
 
         profile = jsgen.get_user_profile()
@@ -660,31 +741,18 @@ class ExtRenderer(HtmlRenderer):
             'home', _("Home"), javascript="Lino.handle_home_button()")
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
 
-        actors_list = [
-            rpt for rpt in dbtables.master_reports
-            + dbtables.slave_reports
-            + dbtables.generic_slaves.values()
-            + dbtables.custom_tables
-            + dbtables.frames_list]
-
-        actors_list.extend(
-            [a for a in choicelists.CHOICELISTS.values()
-             if settings.SITE.is_installed(a.app_label)])
-
-        # don't generate JS for abstract actors
-        actors_list = [a for a in actors_list if not a.is_abstract()]
-
         """Call Ext.namespace for *all* actors because
         e.g. outbox.Mails.FormPanel is defined in ns outbox.Mails
         which is not directly used by non-expert users.
 
         """
-        for a in actors_list:
+        for a in self.actors_list:
             f.write("Ext.namespace('Lino.%s')\n" % a)
 
         # actors with their own `get_handle_name` don't have a js
         # implementation
-        actors_list = [a for a in actors_list if a.get_handle_name is None]
+        actors_list = [
+            a for a in self.actors_list if a.get_handle_name is None]
 
         # generate only actors whose default_action is visible
         actors_list = [
@@ -702,70 +770,39 @@ class ExtRenderer(HtmlRenderer):
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
 
-        # Layouts
-
-        form_panels = set()
-        param_panels = set()
-        action_param_panels = set()
-
-        def add(res, collector, fl, formpanel_name):
-            # res: an actor
-            # collector: one of form_panels, param_panels or
-            # action_param_panels
-            # fl : a FormLayout
-            if fl is None:
-                return
-            if fl._datasource is None:
-                return  # 20130804
-            try:
-                lh = fl.get_layout_handle(self.plugin)
-            except Exception as e:
-                logger.exception(e)
-                raise Exception("Could not define %s for %r: %s" % (
-                    formpanel_name, res, e))
-
-            for e in lh.main.walk():
-                e.loosen_requirements(res)
-
-            if not fl in collector:
-                fl._formpanel_name = formpanel_name
-                fl._url = res.actor_url()
-                collector.add(fl)
-
         assert profile == jsgen.get_user_profile()
 
-        for res in actors_list:
-            # if str(res) == 'about.Inspector':
-            #     msg = "20150626 {0} {1} {2}".format(
-            #         res.required_roles, profile,
-            #         profile.has_required_role(res.required_roles))
-            #     raise Exception(msg)
-            add(res,
-                form_panels, res.detail_layout, "%s.DetailFormPanel" % res)
-            add(res,
-                form_panels, res.insert_layout, "%s.InsertFormPanel" % res)
-            add(res, param_panels, res.params_layout, "%s.ParamsPanel" % res)
-
-            for ba in res.get_actions():
-                if ba.action.parameters:
-                    add(res, action_param_panels, ba.action.params_layout,
-                        "%s.%s_ActionFormPanel" % (res, ba.action.action_name))
+        def must_render(fl, profile):
+            """Return True if the given form layout `fl` is needed for
+            profile."""
+            if fl._datasource.get_view_permission(profile):
+                return True
+            for ds in fl._other_datasources:
+                if ds.get_view_permission(profile):
+                    return True
+            return True
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
-        for fl in param_panels:
+        for fl in self.param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            for ln in self.js_render_ParamsPanelSubclass(lh):
-                f.write(ln + '\n')
+            if must_render(fl, profile):
+            # if lh.main.get_view_permission(profile):
+                for ln in self.js_render_ParamsPanelSubclass(lh):
+                    f.write(ln + '\n')
 
-        for fl in action_param_panels:
+        for fl in self.action_param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            for ln in self.js_render_ActionFormPanelSubclass(lh):
-                f.write(ln + '\n')
+            if must_render(fl, profile):
+            # if lh.main.get_view_permission(profile):
+                for ln in self.js_render_ActionFormPanelSubclass(lh):
+                    f.write(ln + '\n')
 
-        for fl in form_panels:
+        for fl in self.form_panels:
             lh = fl.get_layout_handle(self.plugin)
-            for ln in self.js_render_FormPanelSubclass(lh):
-                f.write(ln + '\n')
+            if must_render(fl, profile):
+            # if lh.main.get_view_permission(profile):
+                for ln in self.js_render_FormPanelSubclass(lh):
+                    f.write(ln + '\n')
 
         actions_written = set()
         for rpt in actors_list:
@@ -1055,6 +1092,7 @@ class ExtRenderer(HtmlRenderer):
             yield "  disable_editing: true,"
         yield "  initComponent : function() {"
         # 20140503 yield "    var containing_panel = this;"
+        # yield "// user profile: %s" % jsgen._for_user_profile
         lc = 0
         for ln in jsgen.declare_vars(dh.main):
             yield "    " + ln
@@ -1334,8 +1372,10 @@ class ExtRenderer(HtmlRenderer):
         extjs = settings.SITE.plugins.extjs
 
         def fn():
-            yield "// lino.js --- generated %s by Lino version %s." % (
-                time.ctime(), lino.__version__)
+            yield "// lino.js --- generated %s by %s for %s." % (
+                time.ctime(), cgi.escape(settings.SITE.site_version()),
+                jsgen.get_user_profile())
+            # lino.__version__)
             #~ // $site.title ($lino.welcome_text())
             yield "Ext.BLANK_IMAGE_URL = '%s';" % extjs.build_lib_url(
                 'resources/images/default/s.gif')

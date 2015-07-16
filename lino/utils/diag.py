@@ -14,7 +14,7 @@ from lino.modlib.users.choicelists import UserProfiles
 
 def get_window_actions():
     from lino.core.actors import actors_list
-    ui = settings.SITE.kernel.default_ui
+    # ui = settings.SITE.kernel.default_ui
     coll = dict()
     for a in actors_list:
         for ba in a.get_actions():
@@ -28,9 +28,9 @@ def get_window_actions():
                         # <ShowDetailAction detail (u'Detail')>)>
 
                     if not wl in coll:
-                        lh = wl.get_layout_handle(ui)
-                        for e in lh.main.walk():
-                            e.loosen_requirements(a)
+                        # lh = wl.get_layout_handle(ui)
+                        # for e in lh.main.walk():
+                        #     e.loosen_requirements(a)
                         coll[wl] = ba
     return coll
 

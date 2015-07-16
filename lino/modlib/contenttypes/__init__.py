@@ -20,6 +20,8 @@ from lino import ad
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
+    needs_plugins = ['lino.modlib.system']
+
     def setup_reports_menu(config, site, profile, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)

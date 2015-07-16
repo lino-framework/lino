@@ -26,6 +26,8 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("System")
 
+    needs_plugins = ['lino.modlib.printing']
+
     def setup_config_menu(self, site, profile, m):
         system = m.add_menu(self.app_label, self.verbose_name)
         system.add_instance_action(site.site_config)

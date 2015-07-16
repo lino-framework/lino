@@ -139,7 +139,7 @@ def set_upload_shortcuts(sender, **kw):
                 items.append(btn)
 
             return E.div(*join_elems(items, ', '))
-        
+
         vf = dd.VirtualField(dd.DisplayField(i.text), f)
         dd.inject_field(i.model_spec, i.name, vf)
         # logger.info("Installed upload shortcut field %s.%s",

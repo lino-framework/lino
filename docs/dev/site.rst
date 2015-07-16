@@ -129,14 +129,14 @@ lino.modlib.extjs
 lino.modlib.bootstrap3
 lino.modlib.notes
 lino.modlib.lino
+lino.modlib.appypod
+lino.modlib.printing
 lino.modlib.system
 lino.modlib.users
 lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
 lino.modlib.contenttypes
-lino.modlib.appypod
-lino.modlib.printing
 lino.modlib.cal
 lino.modlib.export_excel
 django.contrib.sessions

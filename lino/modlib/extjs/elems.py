@@ -244,7 +244,7 @@ class LayoutElement(VisibleComponent):
             assert isinstance(kw['required_roles'], set)
         else:
             required = set()
-            required |= layout_handle.layout._datasource.required_roles
+            # required |= layout_handle.layout._datasource.required_roles
             required |= self.required_roles
             kw.update(required_roles=required)
 
@@ -265,7 +265,7 @@ class LayoutElement(VisibleComponent):
         super(LayoutElement, self).add_requirements(*args)
         self.install_permission_handler()
 
-    def loosen_requirements(self, actor):
+    def unused_loosen_requirements(self, actor):
         """Retain only those requirements of `self` which are
         also in `actor`.
 
@@ -279,40 +279,17 @@ class LayoutElement(VisibleComponent):
             return  # nothing to loosen
 
         s1 = self.required_roles
-        self.required_roles &= actor.required_roles
+        self.required_roles = self.required_roles & actor.required_roles
+        # NB: don't change above line to the shorter syntax:
+        # self.required_roles &= actor.required_roles
+        # Because then the following wouldn't work:
         loosened = s1 != self.required_roles
 
-        # loosened = False
-        # for k, v in self.required.items():
-        #     if k == 'user_groups':
-        #         """
-        #         loosening user_groups requirements
-        #         means to *add* allowed groups
-        #         """
-        #         if k in actor.required:
-        #             user_groups = actor.required[k]
-        #             if isinstance(user_groups, basestring):
-        #                 user_groups = user_groups.split()
-        #             if isinstance(self.required[k], basestring):
-        #                 self.required[k] = self.required[k].split()
-        #             for group in user_groups:
-        #                 if not group in self.required[k]:
-        #                     self.required[k].append(group)
-        #                     loosened = True
-        #         else:
-        #             del self.required[k]
-        #             loosened = True
-        #     elif k in actor.required:
-        #         if actor.required[k] < v:
-        #             loosened = True
-        #             self.required[k] = actor.required[k]
-        #     else:
-        #         loosened = True
-        #         del self.required[k]
-
         if loosened:
-            # tpl = "20150626 loosened requirements of {0} from {1}"
-            # logger.info(tpl.format(self, actor))
+            # tpl = "20150716 loosened requirements of {0} from {1}"
+            # msg = tpl.format(self, actor)
+            # #logger.info(msg)
+            # raise Exception(msg)
             self.install_permission_handler()
 
     def __repr__(self):
@@ -1508,7 +1485,7 @@ class Container(LayoutElement):
 
     def ext_options(self, **kw):
         kw = LayoutElement.ext_options(self, **kw)
-        # not necessary to filter here, jsgen does that
+        # not necessary to filter elements here, jsgen does that
         kw.update(items=self.elements)
         # if all my children are hidden, i am myself hidden
         for e in self.elements:
@@ -1529,8 +1506,13 @@ class Container(LayoutElement):
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
                e.get_view_permission(profile):
-                # one visble child is enough, no need to continue loop
+                # one visible child is enough, no need to continue loop
                 return True
+            # if not isinstance(e, Permittable):
+            #     return True
+            # if isinstance(e, Panel) and \
+            #    e.get_view_permission(profile):
+            #     return True
         #~ logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
         return False
 
@@ -1550,7 +1532,8 @@ class Wrapper(VisibleComponent):
         VisibleComponent.__init__(self, e.name + "_ct", **kw)
         self.wrapped = e
         for n in ('width', 'height', 'preferred_width', 'preferred_height',
-                  'vflex', 'loosen_requirements'):
+                  # 'loosen_requirements'
+                  'vflex'):
             setattr(self, n, getattr(e, n))
 
         if e.vflex:
@@ -1776,6 +1759,10 @@ class Panel(Container):
 
 
 class GridElement(Container):
+    """Represents a Lino.GridPanel, i.e. the widget used to represent a
+    table or a slave table.
+
+    """
     declare_type = jsgen.DECLARE_VAR
     #~ declare_type = jsgen.DECLARE_THIS
     #value_template = "new Ext.grid.EditorGridPanel(%s)"
@@ -1982,8 +1969,9 @@ def field2elem(layout_handle, field, **kw):
     if field.choices:
         if isinstance(field, choicelists.ChoiceListField):
             if field.choicelist.preferred_width is None:
-                raise Exception(
-                    "%s has no preferred_width" % field.choicelist)
+                msg = "{0} has no preferred_width. Is the plugin installed?"
+                msg = msg.format(field.choicelist)
+                raise Exception(msg)
             kw.setdefault(
                 'preferred_width',
                 field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)

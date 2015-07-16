@@ -336,6 +336,7 @@ class BaseLayout(object):
         """
         self._labels = self.override_labels()
         self._added_panels = dict()
+        self._other_datasources = set()
         #~ self._window_size = window_size
         self.hidden_elements = hidden_elements or frozenset()
         self._element_options = dict()

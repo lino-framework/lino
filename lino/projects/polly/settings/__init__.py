@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -34,7 +34,7 @@ class Site(Site):
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
-        yield 'lino.modlib.system'
+        # yield 'lino.modlib.system'
         yield 'lino.modlib.users'
         #~ yield 'lino.modlib.countries'
         #~ yield 'lino.modlib.properties'
@@ -43,4 +43,4 @@ class Site(Site):
         yield 'lino.modlib.polls'
         #~ yield 'lino.modlib.pages'
         #~ yield 'lino.projects.polly'
-        yield 'lino.modlib.appypod'
+        # yield 'lino.modlib.appypod'

@@ -1253,7 +1253,7 @@ def get_view_permission(e):
     while parent is not None:
         if isinstance(parent, Permittable) and not parent.get_view_permission(
                 jsgen._for_user_profile):
-            return False  # bug 3 (bcss_summary) blog/2012/09/27
+            return False  # bug 3 (bcss_summary) blog/2012/0927
         parent = parent.parent
     return True
 

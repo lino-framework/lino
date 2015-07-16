@@ -32,7 +32,25 @@ module.
   no means for defining instance-specific permissions and has no
   built-in concept of user profiles.
 
-- 
+ 
+Creating a root user
+====================
+
+The most Linoish way to create a root user (or a set of demo users) is
+to run :manage:`initdb_demo`.  This will reset the database to a
+virgin state and then load all your demo data, which includes
+:mod:`lino.modlib.users.fixtures.demo_users` (except if you changed
+your :attr:`lino.core.site.Site.demo_fixtures`).
+
+If you don't want to reset your database, then you can write a script
+and run it with :manage:`run`. For example::
+
+    from lino.api.shell import users
+    obj = users.User(username="root")
+    obj.set_password("1234!")
+    obj.full_clean()
+    obj.save()
+
 
 
 Passwords
