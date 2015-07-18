@@ -24,8 +24,8 @@ class Site(Site):
     textfield_format = 'html'
 
     root_urlconf = 'lino_noi.urls'
-    # site_prefix = '/admin/'
     default_ui = None
+    user_profiles_module = 'lino_noi.lib.noi.roles'
 
     def get_installed_apps(self):
         """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
@@ -53,33 +53,6 @@ class Site(Site):
         # yield 'lino.modlib.awesomeuploader'
 
         yield 'lino_noi.lib.noi'
-
-    def setup_user_profiles(self):
-        """Implements :meth:`lino.core.site.Site.setup_user_profiles` for Lino
-        Noi.
-
-        """
-        from lino.core.roles import (Anonymous, SiteAdmin)
-        from lino.modlib.office.roles import OfficeStaff, OfficeUser
-        from lino.modlib.users.choicelists import UserProfiles
-        from django.utils.translation import ugettext_lazy as _
-
-        class SiteUser(OfficeUser):
-            pass
-        
-        class SiteAdmin(SiteAdmin, OfficeStaff):
-            pass
-        
-        UserProfiles.clear()
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"),       Anonymous, 'anonymous',
-            readonly=True, authenticated=False)
-        add('100', _("User"),            SiteUser, 'user')
-        add('200', _("Consultant"),      SiteUser, 'consultant')
-        add('300', _("Hoster"),          SiteUser, 'hoster')
-        add('400', _("Developer"),       SiteUser, 'developer')
-        add('490', _("Senior"),          SiteUser, 'senior')
-        add('900', _("Administrator"),   SiteAdmin, 'admin')
 
     def get_default_required(self, **kw):
         # overrides the default behaviour which would add
