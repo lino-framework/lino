@@ -14,6 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.db import models
 
+from lino.utils.mldbc.mixins import BabelNamed
 
 from lino.api import dd
 
@@ -169,3 +170,38 @@ class Certifiable(dd.Model):
     def get_excerpt_templates(self, bm):
         """Return either None or a list of template names."""
         return None
+
+
+class ExcerptTitle(BabelNamed):
+    """Mixin for models like
+    :class:`lino_welfare.modlib.aids.models.AidType` and
+    :class:`lino.modlib.courses.models.Line`.
+
+    .. attribute:: name
+
+        The designation of this row as seen by the user e.g. when
+        selecting an instance of this model.
+
+        One field for every :attr:`language <lino.core.site.Site.language>`.
+
+    .. attribute:: excerpt_title
+
+        The text to print as title in confirmations.
+        One field for every :attr:`language <lino.core.site.Site.language>`.
+        If this is empty, then :attr:`name` is used.
+
+    """
+    class Meta:
+        abstract = True
+
+    excerpt_title = dd.BabelCharField(
+        _("Excerpt title"),
+        max_length=200,
+        blank=True,
+        help_text=_(
+            "The title to be used when printing an excerpt."))
+
+
+    def get_excerpt_title(self):
+        return dd.babelattr(self, 'excerpt_title') or unicode(self)
+

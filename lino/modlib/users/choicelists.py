@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core.roles import Anonymous, SiteUser, SiteAdmin
+from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
 from lino.api import dd
 
@@ -104,7 +104,7 @@ class UserProfiles(ChoiceList):
     """
 
 add = UserProfiles.add_item
-add('000', _("Anonymous"), Anonymous, name='anonymous',
+add('000', _("Anonymous"), UserRole, name='anonymous',
     readonly=True, authenticated=False)
 add('100', _("User"), SiteUser, name='user')
 add('900', _("Administrator"), SiteAdmin, name='admin')

@@ -10,8 +10,8 @@ class UserRole(object):
     pass
 
 
-class Anonymous(UserRole):
-    pass
+# class Anonymous(UserRole):
+#     pass
 
 
 class SiteUser(UserRole):

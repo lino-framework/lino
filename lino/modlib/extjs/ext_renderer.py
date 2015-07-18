@@ -772,34 +772,38 @@ class ExtRenderer(HtmlRenderer):
 
         assert profile == jsgen.get_user_profile()
 
-        def must_render(fl, profile):
+        def must_render(lh, profile):
             """Return True if the given form layout `fl` is needed for
             profile."""
-            if fl._datasource.get_view_permission(profile):
+            if not lh.main.get_view_permission(profile):
+                return False
+            if lh.layout._datasource.get_view_permission(profile):
                 return True
-            for ds in fl._other_datasources:
+            for ds in lh.layout._other_datasources:
                 if ds.get_view_permission(profile):
                     return True
-            return True
+            return False
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in self.param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(fl, profile):
+            if must_render(lh, profile):
             # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_ParamsPanelSubclass(lh):
                     f.write(ln + '\n')
 
         for fl in self.action_param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(fl, profile):
+            if must_render(lh, profile):
             # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_ActionFormPanelSubclass(lh):
                     f.write(ln + '\n')
 
+        assert profile == jsgen.get_user_profile()
+
         for fl in self.form_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(fl, profile):
+            if must_render(lh, profile):
             # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_FormPanelSubclass(lh):
                     f.write(ln + '\n')
@@ -990,8 +994,6 @@ class ExtRenderer(HtmlRenderer):
 
     def js_render_ParamsPanelSubclass(self, dh):
 
-        tbl = dh.layout._datasource
-
         yield ""
         yield "Lino.%s = Ext.extend(Ext.form.FormPanel, {" % \
             dh.layout._formpanel_name
@@ -1016,7 +1018,12 @@ class ExtRenderer(HtmlRenderer):
         if lc == 0:
             # print 20150626, dh.main.elements[0].required_roles
             # print 20150626, jsgen._for_user_profile.__class__
-            raise Exception("%r of %s has no variables" % (dh.main, dh))
+            msg = "%r of %s has no variables" % (dh.main, dh)
+            msg += ", datasource: %r, other datasources: %r" % (
+                dh.layout._datasource, dh.layout._other_datasources)
+            msg += ", main elements: %r" % dh.main.elements
+            # raise Exception(msg)
+            print(20150717, msg)
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
             [e for e in dh.main.walk()
@@ -1072,11 +1079,12 @@ class ExtRenderer(HtmlRenderer):
         if not dh.main.get_view_permission(jsgen.get_user_profile()):
             msg = "No view permission for main panel of %s :" % \
                   dh.layout._formpanel_name
-            msg += " main requires %s, but actor %s requires %s)" % (
+            msg += " main requires %s (actor %s requires %s)" % (
                 dh.main.required_roles,
                 tbl, tbl.required_roles)
             #~ raise Exception(msg)
             logger.warning(msg)
+            print 20150717, msg
             return
 
         yield ""

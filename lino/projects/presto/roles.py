@@ -3,7 +3,7 @@
 
 """Defines the standard user roles for `lino.projects.presto`."""
 
-from lino.core.roles import Anonymous, SiteAdmin, SiteStaff
+from lino.core.roles import UserRole, SiteAdmin, SiteStaff
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 
 
@@ -26,7 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.modlib.users.choicelists import UserProfiles
 UserProfiles.clear()
 add = UserProfiles.add_item
-add('000', _("Anonymous"), Anonymous, name='anonymous',
+add('000', _("Anonymous"), UserRole, name='anonymous',
     readonly=True,
     authenticated=False)
 add('100', _("User"), SiteUser, name='user')

@@ -36,6 +36,7 @@ from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 from lino.mixins.human import parse_name
 from lino.modlib.excerpts.mixins import Certifiable
+from lino.modlib.excerpts.mixins import ExcerptTitle
 from lino.modlib.users.mixins import UserAuthored
 
 from .choicelists import EnrolmentStates, CourseStates
@@ -123,12 +124,26 @@ class Topics(dd.Table):
     """
 
 
-class Line(mixins.BabelNamed):
+class Line(ExcerptTitle):
     """A **line** (or **series**) of courses groups courses into a
     configurable list of categories.
 
     We chose the word "line" instead of "series" because it has a
-    plural.
+    plural form (not sure whether this idea was so cool).
+
+    .. attribute:: name
+
+        The designation of this course series as seen by the user
+        e.g. when selecting the series of a course.
+
+        One field for every :attr:`language <lino.core.site.Site.language>`.
+
+    .. attribute:: excerpt_title
+
+        The text to print as title in enrolments.
+
+        See also
+        :attr:`lino.modlib.excerpts.mixins.ExcerptTitle.excerpt_title`.
 
     .. attribute:: body_template
 
@@ -216,6 +231,7 @@ class Lines(dd.Table):
     topic fees_cat tariff options_cat body_template
     event_type guest_role every_unit every
     description
+    excerpt_title
     courses.CoursesByLine
     """
     insert_layout = dd.FormLayout("""
@@ -859,8 +875,8 @@ class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
         """Overrides :meth:`lino.core.model.Model.get_body_template`."""
         return self.course.line.body_template
 
-    # def get_excerpt_title(self):
-    #     return unicode(self.course.line)
+    def get_excerpt_title(self):
+        return self.course.line.get_excerpt_title()
 
 
 class Enrolments(dd.Table):
