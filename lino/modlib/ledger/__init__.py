@@ -9,6 +9,7 @@
 
     utils
     choicelists
+    roles
     mixins
     models
 

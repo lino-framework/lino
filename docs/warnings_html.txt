@@ -1,1 +1,5 @@
-/home/luc/hgwork/lino/docs/tutorials/watch_tutorial/index2.rst:: WARNING: document isn't included in any toctree
+/home/luc/hgwork/lino/lino/modlib/__init__.py:docstring of lino.modlib:7: WARNING: Title underline too short.
+
+"System plugins"
+=============
+/home/luc/hgwork/lino/docs/dev/perms.rst:92: WARNING: Block quote ends without a blank line; unexpected unindent.

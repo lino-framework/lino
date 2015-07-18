@@ -360,8 +360,8 @@ class Actor(actions.Parametrizable, Permittable):
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
 
-    update_required = set()
-    delete_required = set()
+    # update_required = set()
+    # delete_required = set()
 
     editable = None
     """Set this explicitly to `True` or `False` to make the whole table

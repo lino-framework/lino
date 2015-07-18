@@ -12,10 +12,9 @@ class Site(Site):
     """The parent of all :mod:`lino.projects.min2` applications.
     """
     title = "Lino Mini 2"
-
     project_model = 'projects.Project'
-
     languages = 'en et'
+    user_profiles_module = 'lino.modlib.users.roles'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
@@ -37,28 +36,4 @@ class Site(Site):
         yield 'lino.modlib.dupable_partners'
         yield 'lino.modlib.plausibility'
         yield 'lino.modlib.tinymce'
-
-    def setup_user_profiles(self):
-        """
-        Defines a set of user profiles.
-        """
-        from django.utils.translation import ugettext_lazy as _
-        from lino.modlib.users.choicelists import UserProfiles
-
-        from lino.core.roles import Anonymous, SiteAdmin
-        from lino.modlib.office.roles import OfficeUser, OfficeStaff
-
-        class SiteUser(OfficeUser):
-            pass
-
-        class SiteAdmin(SiteAdmin, OfficeStaff):
-            pass
-
-        UserProfiles.clear()
-        add = UserProfiles.add_item
-        add('000', _("Anonymous"), Anonymous, name='anonymous',
-            readonly=True,
-            authenticated=False)
-        add('100', _("User"), SiteUser, name='user')
-        add('900', _("Administrator"), SiteAdmin, name='admin')
 

@@ -7,15 +7,18 @@
 
 
 class UserRole(object):
-    pass
+    """Base class for all user roles. Even anonymous users have this
+    role.
 
-
-# class Anonymous(UserRole):
-#     pass
+    """
 
 
 class SiteUser(UserRole):
     """Every authenticated user has this role."""
+
+
+class Supervisor(UserRole):
+    """A user who has permission to act as another user."""
 
 
 class SiteStaff(SiteUser):

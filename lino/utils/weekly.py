@@ -9,6 +9,7 @@ from lino.utils import ONE_DAY
 SEVEN_DAYS = datetime.timedelta(days=7)
 from lino.utils.xmlgen.html import E
 from lino.modlib.cal.utils import Weekdays
+from lino.modlib.users.roles import SiteUser
 
 REPORTERS = []
 
@@ -19,7 +20,7 @@ def add_reporter(r):
 
 
 def get_report(ar, today=None, weeksback=1, weeksforth=0, datefmt=dd.fds):
-    if not ar.user.profile.authenticated:
+    if not ar.user.profile.has_required_roles([SiteUser]):
         return E.p()
     if today is None:
         today = dd.today()

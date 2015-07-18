@@ -20,17 +20,23 @@ from lino.api import dd
 
 
 class UserProfile(Choice):
-    """Base class for all user profiles. """
+    """Base class for all user profiles.
+
+    """
 
     hidden_languages = None
     """A subset of :setting:`languages` which should be hidden in this
     user profile.  Default value is :attr:`hidden_languages
     <UserProfiles.hidden_languages>`.  This is used on multilingual
-    sites with more than 4 or 5 languages.  See the source code of
-    :meth:`lino_welfare.settings.Site.setup_user_profiles` for a usage
-    example.
+    sites with more than 4 or 5 languages.
 
     """
+
+    readonly = False
+    """Whether users with this profile get only write-proteced access."""
+
+    authenticated = True
+    """Whether users with this profile should be considered authenticated."""
 
     def __init__(self, value, text, role_class,
                  name=None, authenticated=True,
@@ -72,7 +78,17 @@ class UserProfile(Choice):
         s += ":" + self.value
         return s
 
-    def has_required_role(self, required_roles):
+    def has_required_roles(self, required_roles):
+        """Return True if this profile has the specified roles.
+
+        :required_roles: a set or iterable of role requirements.  The
+                         profile must satisfy *every* specified
+                         requirement.  Every requirement is either a
+                         class object (subclass of UserRole) or a
+                         tuple thereof.
+
+        """
+
         for rr in required_roles:
             if not isinstance(self.role, rr):
                 return False
@@ -104,7 +120,6 @@ class UserProfiles(ChoiceList):
     """
 
 add = UserProfiles.add_item
-add('000', _("Anonymous"), UserRole, name='anonymous',
-    readonly=True, authenticated=False)
+add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
 add('100', _("User"), SiteUser, name='user')
 add('900', _("Administrator"), SiteAdmin, name='admin')

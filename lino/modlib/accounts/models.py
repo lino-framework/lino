@@ -94,7 +94,42 @@ class GroupsByChart(Groups):
 
 
 class Account(mixins.BabelNamed, mixins.Sequenced):
+    """An **account** is an item of an account chart used to collect
+    ledger transactions or other accountable items.
 
+    .. attribute:: name
+
+        The multilingual designation of this account, as the users see
+        it.
+
+
+    .. attribute:: chart
+
+        The *account chart* to which this account belongs.  This must
+        point to an item of
+        :class:`lino.modlib.accounts.choicelists.AccountCharts`.
+    
+    .. attribute:: group
+
+        The *account group* to which this account belongs.  This must
+        point to an instance of :class:`Group`.
+    
+    .. attribute:: seqno
+
+        The sequence number of this account within its :attr:`group`.
+    
+    .. attribute:: ref
+
+        An optional unique name which can be used to reference a given
+        account.
+
+    .. attribute:: type
+
+        The *account type* of this account.  This must
+        point to an item of
+        :class:`lino.modlib.accounts.choicelists.AccountTypes`.
+    
+    """
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
@@ -102,14 +137,10 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
         ordering = ['ref']
 
     chart = AccountCharts.field()
-    # chart = models.ForeignKey(Chart)
-    group = models.ForeignKey(Group)
-    #~ ref = models.CharField(max_length=100)
+    group = models.ForeignKey('accounts.Group')
     ref = dd.NullCharField(
         max_length=settings.SITE.plugins.accounts.ref_length)
-    #~ chart = models.ForeignKey(Chart)
     type = AccountTypes.field()  # blank=True)
-    # help_text = dd.RichTextField(_("Introduction"),format="html",blank=True)
 
     def full_clean(self, *args, **kw):
         if self.group_id is not None:

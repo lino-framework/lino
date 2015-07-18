@@ -163,7 +163,7 @@ def make_view_permission_handler_(
 
     if settings.SITE.user_profiles_module:
         def allow(action, profile):
-            return profile.has_required_role(required_roles)
+            return profile.has_required_roles(required_roles)
     else:
         def allow(action, profile):
             return True
@@ -210,23 +210,23 @@ def make_permission_handler_(
     if allow is None:
         if settings.SITE.user_profiles_module:
             def allow(action, user, obj, state):
-                return user.profile.has_required_role(required_roles)
+                return user.profile.has_required_roles(required_roles)
         else:
             def allow(action, user, obj, state):
                 return True
 
     if True:  # e.g. public readonly site
         if auth:
+            raise Exception("20150718 auth still used?")
             allow_before_auth = allow
 
             def allow(action, user, obj, state):
-                if not user.profile.authenticated:
-                    #~ if action.action_name == 'wf7':
-                        #~ logger.info("20130424 allow_before_auth returned False")
+                if not user.profile.has_required_roles([SiteUser]):
                     return False
                 return allow_before_auth(action, user, obj, state)
 
         if owner is not None:
+            raise Exception("20150718 owner still used?")
             allow_owner = allow
 
             def allow(action, user, obj, state):

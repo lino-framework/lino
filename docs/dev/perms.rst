@@ -5,78 +5,95 @@ Permissions
 ===========
 
 Lino adds enterprise-level concepts for definining permissions. This
-includes a replacement for Django's User model. 
+includes a replacement for Django's User model.
 
-.. note:: this document needs update after 20150627
+See also: :doc:`users`.
+
 
 User roles
 ==========
 
+Certain objects in Lino have a :attr:`roles_required
+<lino.core.permissions.Permittable.roles_required>` attribute which
+specifies the user roles required for getting permission to access
+this resource.  Where "resource" is one of the following:
+
+- an actor :class:`lino.core.actors.Actor` 
+- an action :class:`lino.core.actions.Action` 
+- a panel :class:`lino.core.layouts.Panel` 
+
+User profiles
+=============
+
+User roles are just class objects which represent conditions for
+getting permission to access miscellaneous functionalities.  They are
+things that *may* act as a requirement.  Every plugin may define its
+own user roles which may inherit from other roles defined by other
+plugins
+
+At some moment, a site administrator needs to assign a role to every
+user. In this situation it would be irritating to see all roles at
+this moment.  Not all user roles are meaningful in a given
+application.  So we need to define a *subset of all available roles*
+for that application.  This is done using the :class:`UserProfiles
+<lino.modlib.users.choicelists.UserProfiles>` choicelist.
+
+The :class:`UserProfiles <lino.modlib.users.choicelists.UserProfiles>`
+choicelist
+
+- defines the subset of roles to be made available
+- it gives a translatable name to every role
+- it assigns a value to every choice in order to store that profile
+
+
+And then the :attr:`profile <lino.modlib.users.models.User.profile>`
+field of :class:`users.User <lino.modlib.users.models.User>` model is
+used to assign such a profile to a given user.
+
+
+Local customizations
+====================
+
+You may have noted that :class:`UserProfiles
+<lino.modlib.users.choicelists.UserProfiles>` is a choicelist, not a
+database table.
+
+This is because it depends on the application and is usually not
+locally modified.  Local site administrators may nevertheless decide
+to change the set of available user profiles.
+
+A user profile may have additional attributes which influence the user
+interface:
+
+
+- :attr:`hidden_languages
+  <lino.modlib.users.choicelists.UserProfile.hidden_languages>` 
+
+- :attr:`readonly <lino.modlib.users.choicelists.UserProfile.readonly>` 
+
+
+The user profiles module
+========================
+
+The :attr:`roles_required
+<lino.core.permissions.Permittable.roles_required>` attribute is being
+ignored when :attr:`user_profiles_module
+<lino.core.site.Site.user_profiles_module>` is empty.
+
+
+.. xfile:: roles.py
+
+
+- the :xfile:`roles.py` is used for both defining roles and profiles
 
 
 
-Specifying the required roles
+ the user
+roles that we want to make available in a given application:
 
 
-The :attr:`required <lino.core.actors.Actor.required>` attribute of a
-table specifies the conditions that must be met in order to get
-permission to view that table.
-
-Two other attributes
-:attr:`update_required <lino.core.actors.Actor.update_required>` 
-and
-:attr:`delete_required <lino.core.actors.Actor.delete_required>` 
-can additionally restrict modification permissions
-for those users who can *view* a given table.
-
-Default permissions are as follows
-::
-
-    class Actor(actions.Parametrizable):
-        required = get_default_required()
-        update_required = dict()
-        delete_required = dict()
-
-All `required` members are dictionaries containing parameters passed 
-to :func:`lino.utils.perms.make_permission_handler` (see method description 
-for detailed description)
-
-There is a helper function for populating the required user rights.
-:func:`lino.utils.auth.get_default_required` (or shortcut 
-:func:`lino.dd.required`) method returns "registered users only" 
-if :setting:`user_model` is set (authentication is allowed) and no requirements otherwise.
-To further restricts permission, pass additional requirements as parameters.
-
-Example: Requires authenticated user with at least "Manager" user level.
-::
-
-    required = get_default_required(user_level="manager")
-
-
-User Object
------------
-
-Main permissions object is :attr:`lino.core.site.Site.user_model`, 
-specified in Site configuration. 
-See :doc:`/topics/auth`.
-
-If :attr:`user_model <lino.Lino.user_model>` is 'users.User' or 
-some sub-class, there is :attr:`profile lino.modlib.users.User`
-member that contains user privileges in form of 
-:class:`UserProfiles <lino.core.perms.UserProfiles>`.
-
-*TODO: Implement password changing from GUI*
-
-Currently the easiest way to create user and set the password is from 
-django shell using following script
-::
-
-    from django.conf import settings
-    u = settings.SITE.user_model.objects.get(username="TestUserName")
-    u.set_password("TestPassword")
-    u.save()
-
-
+Every profile is assigned to one and only one user role. But not
+every user role is made available for selection in the
 
 
 

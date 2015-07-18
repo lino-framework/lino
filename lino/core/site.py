@@ -444,10 +444,10 @@ documentation.
     example::
 
         class Site(Site):
-            user_profiles_module = 'lino.projects.std.roles'
+            user_profiles_module = 'lino.modlib.users.roles'
 
     Examples of such user profiles modules are
-    :mod:`lino.projects.std.roles` and
+    :mod:`lino.modlib.users.roles` and
     :mod:`lino.projects.presto.roles`.
 
     """
@@ -1824,26 +1824,7 @@ documentation.
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
     def setup_user_profiles(self):
-        """Deprecated. Use :attr:`user_profiles_module` instead. 
-
-        Application developers override this to define
-        application-specific :class:`UserProfiles
-        <lino.modllib.users.choicelists.UserProfiles>`.
-
-        This is done even if :attr:`user_model` is None (i.e.
-        :mod:`lino.modlib.users` is not installed) because we want
-        also the anonymous user to have a profile.  See
-        :attr:`anonymous_user_profile`.
-
-        Application developers who use group-based requirements can
-        override this in their application's :xfile:`settings.py` to
-        provide a default list of user profiles for their application.
-
-        See the source code of :mod:`lino.projects.presto` or
-        :mod:`lino_welfare.settings` for a usage example.
-
-        Local site administrators may again override this in their
-        :xfile:`settings.py`.
+        """Deprecated. Use :attr:`user_profiles_module` instead.
 
         """
         pass
@@ -1853,8 +1834,6 @@ documentation.
         instantiated and *before* the models are being discovered.
 
         This is useful for redefining your application's ChoiceLists.
-
-        The default implementation just calls :meth:`setup_user_profiles`.
 
         Note that you may not specify values longer than `max_length` when
         redefining your choicelists.  This limitation is because these

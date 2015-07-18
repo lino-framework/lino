@@ -10,9 +10,10 @@ Lino's core even if it is not among the installed apps.
 .. autosummary::
    :toctree:
 
-    models
     utils
     mixins
+    roles
+    models
     choicelists
     fixtures.demo
     fixtures.demo_users
@@ -30,3 +31,16 @@ class Plugin(ad.Plugin):
     def on_init(self):
         super(Plugin, self).on_init()
         self.site.set_user_model('users.User')
+
+    def setup_config_menu(self, site, profile, m):
+        g = site.plugins.system
+        m = m.add_menu(g.app_label, g.verbose_name)
+        m.add_action('users.Users')
+
+    def setup_explorer_menu(self, site, profile, m):
+        g = site.plugins.system
+        m = m.add_menu(g.app_label, g.verbose_name)
+        m.add_action('users.Authorities')
+        m.add_action('users.UserProfiles')
+
+

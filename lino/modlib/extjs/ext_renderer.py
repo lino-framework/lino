@@ -46,7 +46,7 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from lino.utils.xmlgen.html import E
 
-from lino.modlib.users.choicelists import SiteAdmin
+from lino.core.roles import SiteUser, Supervisor
 
 if False:
     from lino.utils.jscompressor import JSCompressor
@@ -491,9 +491,11 @@ class ExtRenderer(HtmlRenderer):
         return win
 
     def html_page_user(self, request, site):
+
+        # TODO: move the following to lino.modlib.users
         if settings.SITE.user_model is not None:
 
-            if request.user.profile.authenticated:
+            if request.user.profile.has_required_roles([SiteUser]):
 
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
@@ -511,7 +513,7 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=unicode(user)))
 
-                if isinstance(user.profile.role, SiteAdmin):
+                if user.profile.has_required_roles([Supervisor]):
                     authorities = [
                         (u.id, unicode(u))
                         for u in settings.SITE.user_model.objects.exclude(

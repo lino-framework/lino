@@ -31,14 +31,3 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, profile, m):
         system = m.add_menu(self.app_label, self.verbose_name)
         system.add_instance_action(site.site_config)
-        if site.user_model and profile.authenticated:
-            system.add_action(site.user_model)
-
-    def setup_explorer_menu(self, site, profile, m):
-        system = m.add_menu(self.app_label, self.verbose_name)
-
-        if site.user_model:
-            system.add_action('users.Authorities')
-            system.add_action('users.UserProfiles')
-
-

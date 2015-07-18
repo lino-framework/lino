@@ -7,7 +7,6 @@ The parent of every Lino application.
    :toctree:
 
 
-    roles
     settings
 
 """

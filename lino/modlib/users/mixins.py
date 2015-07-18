@@ -26,6 +26,8 @@ from lino.core import dbtables
 
 from .utils import AnonymousUser
 
+from .roles import SiteUser
+
 
 class UserAuthored(model.Model):
     """Model mixin for database objects that have a `user` field which
@@ -152,7 +154,7 @@ class ByUser(dbtables.Table):
 
     @classmethod
     def get_view_permission(self, profile):
-        if not profile.authenticated:
+        if not profile.has_required_roles([SiteUser]):
             return False
         return super(ByUser, self).get_view_permission(profile)
 
