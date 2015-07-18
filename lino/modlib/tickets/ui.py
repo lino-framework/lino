@@ -34,18 +34,11 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
-from lino.core.roles import SiteStaff
-from lino.core.utils import gfk2lookup
-
-blogs = dd.resolve_app('blogs')
-
 from lino.modlib.cal.mixins import daterange_text
-from lino.modlib.contacts.mixins import ContactRelated
-# from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import My
 from lino.utils import join_elems
 
-from .choicelists import TicketEvents, TicketStates, LinkTypes
+from .choicelists import TicketEvents, ProjectEvents, TicketStates, LinkTypes
 
 
 class ProjectTypes(dd.Table):
@@ -89,6 +82,29 @@ class Projects(dd.Table):
     model = 'tickets.Project'
     detail_layout = ProjectDetail()
     column_names = "ref name parent type *"
+    parameters = mixins.ObservedPeriod(
+        observed_event=ProjectEvents.field(blank=True),
+        interesting_for=dd.ForeignKey(
+            settings.SITE.user_model,
+            verbose_name=_("Interesting for"),
+            blank=True, null=True,
+            help_text=_("Only project interesting for this user.")))
+    params_layout = """interesting_for start_date end_date observed_event"""
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Projects, self).get_request_queryset(ar)
+        pv = ar.param_values
+
+        if pv.observed_event:
+            qs = pv.observed_event.add_filter(qs, pv)
+
+        if pv.interesting_for:
+            interests = pv.interesting_for.tickets_interest_set_by_user.values(
+                'product')
+            if len(interests) > 0:
+                qs = qs.filter(tickets_by_project__product__in=interests)
+        return qs
 
 
 class ProjectsByParent(Projects):
@@ -100,10 +116,6 @@ class ProjectsByParent(Projects):
 class ProjectsByType(Projects):
     master_key = 'type'
     column_names = "ref name *"
-
-# class MyProjects(Projects, ByUser):
-#     order_by = ["name"]
-#     column_names = 'ref name id *'
 
 
 class ProjectsByCompany(Projects):
@@ -231,7 +243,7 @@ class TicketDetail(dd.DetailLayout):
 
     planning = dd.Panel("""
     nickname:10 fixed_for created modified
-    state assigned_to duplicate_of planned_time invested_time
+    state assigned_to duplicate_of planned_time 
     DuplicatesByTicket  #ChildrenByTicket
     """, label=_("Planning"))
 
@@ -249,6 +261,7 @@ class Tickets(dd.Table):
     """
 
     parameters = mixins.ObservedPeriod(
+        observed_event=TicketEvents.field(blank=True),
         reporter=dd.ForeignKey(
             settings.SITE.user_model,
             verbose_name=_("Reporter"),
@@ -277,8 +290,7 @@ class Tickets(dd.Table):
             help_text=_("Show tickets which are in standby mode.")),
         show_private=dd.YesNo.field(
             blank=True,
-            help_text=_("Show tickets which are private.")),
-        observed_event=TicketEvents.field(blank=True))
+            help_text=_("Show tickets which are private.")))
     params_layout = """
     reporter assigned_to interesting_for project state
     show_closed show_standby show_private start_date end_date observed_event"""
@@ -344,13 +356,13 @@ class TicketsByProject(Tickets):
 
 class TicketsByType(Tickets):
     master_key = 'ticket_type'
-    column_names = "summary state closed invested_time *"
+    column_names = "summary state closed  *"
     auto_fit_column_widths = True
 
 
 class TicketsByProduct(Tickets):
     master_key = 'product'
-    column_names = "summary state closed invested_time *"
+    column_names = "summary state closed  *"
     auto_fit_column_widths = True
 
 
@@ -421,14 +433,13 @@ class TicketsByReporter(Tickets):
     column_names = "id summary:60 workflow_buttons:20 *"
 
 
-
 class Interests(dd.Table):
     model = 'tickets.Interest'
     column_names = "user product *"
     auto_fit_column_widths = True
 
 
-class MyInterests(Interests, ByUser):
+class MyInterests(My, Interests):
     order_by = ["product__ref"]
     column_names = 'product__ref product *'
 

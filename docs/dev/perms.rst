@@ -56,11 +56,11 @@ Local customizations
 
 You may have noted that :class:`UserProfiles
 <lino.modlib.users.choicelists.UserProfiles>` is a choicelist, not a
-database table.
+database table.  This is because it depends on the application and is
+usually not locally modified.  
 
-This is because it depends on the application and is usually not
-locally modified.  Local site administrators may nevertheless decide
-to change the set of available user profiles.
+Local site administrators may nevertheless decide to change the set of
+available user profiles.
 
 A user profile may have additional attributes which influence the user
 interface:

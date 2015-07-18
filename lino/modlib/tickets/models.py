@@ -59,8 +59,8 @@ class TimeInvestment(dd.Model):
         _("Planned time"),
         blank=True, null=True)
 
-    invested_time = models.TimeField(
-        _("Invested time"), blank=True, null=True, editable=False)
+    # invested_time = models.TimeField(
+    #     _("Invested time"), blank=True, null=True, editable=False)
 
 
 class ProjectType(mixins.BabelNamed):
@@ -305,7 +305,9 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
 
-    project = dd.ForeignKey('tickets.Project', blank=True, null=True)
+    project = dd.ForeignKey(
+        'tickets.Project', blank=True, null=True,
+        related_name="tickets_by_project")
     product = dd.ForeignKey('products.Product', blank=True, null=True)
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
     summary = models.CharField(

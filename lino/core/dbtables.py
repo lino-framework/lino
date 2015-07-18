@@ -689,17 +689,27 @@ class Table(AbstractTable):
 
     @classmethod
     def get_request_queryset(self, rr):
-        """
-        Build a Queryset for the specified request on this table.
+        """Build a Queryset for the specified request on this table.
+
         Upon first call, this will also lazily install Table.queryset
         which will be reused on every subsequent call.
+
+        The return value is othe of the following:
+
+        - a Django queryset
+        - a list or tuple
+
+        - If you override this, you may turn this method into a
+          generator. The only advantage of this is syntax, since the
+          yeld objects will be stored in a tuple.
+
         """
         qs = self.get_queryset(rr)
         if qs is None:
-            return []
+            return self.model.objects.none()
         kw = self.get_filter_kw(rr)
         if kw is None:
-            return []
+            return self.model.objects.none()
         if len(kw):
             qs = qs.filter(**kw)
 

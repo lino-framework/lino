@@ -8,6 +8,7 @@
 
 import logging
 logger = logging.getLogger(__name__)
+from types import GeneratorType
 
 import json
 
@@ -85,6 +86,9 @@ class TableRequest(ActionRequest):
                 logger.exception(e)
             self._data_iterator = []
 
+        if isinstance(self._data_iterator, GeneratorType):
+            # print 20150718, self._data_iterator
+            self._data_iterator = tuple(self._data_iterator)
         self._sliced_data_iterator = self._data_iterator
         if False:  # self.actor.start_at_bottom:
             if self.offset is not None:
@@ -133,9 +137,6 @@ class TableRequest(ActionRequest):
         if self.actor.get_data_rows is not None:
             l = []
             for row in self.actor.get_data_rows(self):
-                #~ if len(l) > 300:
-                    #~ raise Exception("20120521 More than 300 items in %s" %
-                        #~ unicode(rows))
                 group = self.actor.group_from_row(row)
                 group.process_row(l, row)
             return l
@@ -153,7 +154,13 @@ class TableRequest(ActionRequest):
             return di.count()
         #~ if di is None:
             #~ raise Exception("data_iterator is None: %s" % self)
-        return len(di)
+        if False:
+            return len(di)
+        else:
+            try:
+                return len(di)
+            except TypeError:
+                raise TypeError("{0} has no length".format(di))
 
     def __iter__(self):
         return self.data_iterator.__iter__()

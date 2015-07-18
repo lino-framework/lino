@@ -57,6 +57,13 @@ class TicketEventModified(ObservedEvent):
 TicketEvents.add_item_instance(TicketEventModified('modified'))
 
 
+class ProjectEvents(dd.ChoiceList):
+    verbose_name = _("Observed event")
+    verbose_name_plural = _("Observed events")
+    
+ProjectEvents.add_item_instance(TicketEventModified('modified'))
+
+
 class TicketStates(dd.Workflow):
 
     """

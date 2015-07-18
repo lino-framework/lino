@@ -29,10 +29,10 @@ def objects():
 
     TYPES = Cycler(TT.objects.all())
 
-    yield Product(name="Lino Core")
-    yield Product(name="Lino Welfare")
-    yield Product(name="Lino Cosi")
-    yield Product(name="Lino Faggio")
+    yield Product(name="Lino Core", ref="lino")
+    yield Product(name="Lino Welfare", ref="welfare")
+    yield Product(name="Lino Cosi", ref="cosi")
+    yield Product(name="Lino Faggio", ref="faggio")
 
     PRODUCTS = Cycler(Product.objects.all())
 
@@ -41,9 +41,9 @@ def objects():
         for i in range(3):
             yield Interest(user=u, product=PRODUCTS.pop())
 
-    yield Project(name="Eupen")
-    yield Project(name="Raeren")
-    yield Project(name="Bütgenbach")
+    yield Project(name="Eupen", ref="eupen")
+    yield Project(name="Raeren", ref="raeren")
+    yield Project(name="Bütgenbach", ref="bbach")
 
     PROJECTS = Cycler(Project.objects.all())
 
