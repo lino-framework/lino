@@ -149,9 +149,9 @@ Projects
 =========== ============ ======== ==============
  Reference   Name         Parent   Project Type
 ----------- ------------ -------- --------------
-             Eupen
-             Raeren
-             Bütgenbach
+ eupen       Eupen
+ raeren      Raeren
+ bbach       Bütgenbach
 =========== ============ ======== ==============
 <BLANKLINE>
 
@@ -163,10 +163,10 @@ Products
 =========== ============== ==========
  Reference   Designation    Category
 ----------- -------------- ----------
-             Lino Core
-             Lino Welfare
-             Lino Cosi
-             Lino Faggio
+ lino        Lino Core
+ welfare     Lino Welfare
+ cosi        Lino Cosi
+ faggio      Lino Faggio
 =========== ============== ==========
 <BLANKLINE>
   
@@ -225,3 +225,117 @@ The
  **Total (40 rows)**                                                                                              **9:07**
 ================================ ======== ============ ============ ========== ========== ============ ========= ==========
 <BLANKLINE>
+
+
+User interests
+==============
+
+Not every user is interested in everything. For example Marc is
+interested only in three products. We define this by creating
+:class:`UserInterest <lino.modlib.tickets.models.UserInterest>`
+objects:
+
+>>> marc = users.User.objects.get(username="marc")
+>>> rt.show(tickets.InterestsByUser, marc)
+... #doctest: +REPORT_UDIFF
+==============
+ Product
+--------------
+ Lino Core
+ Lino Welfare
+ Lino Faggio
+==============
+<BLANKLINE>
+
+>>> rt.show(tickets.InterestsByProduct, products.Product.objects.get(ref="welfare"))
+... #doctest: +REPORT_UDIFF
+=========
+ User
+---------
+ mathieu
+ marc
+=========
+<BLANKLINE>
+
+
+When a user has no interests at all, that means actually that they are
+interested in everything. For example Luc:
+
+>>> luc = users.User.objects.get(username="luc")
+>>> rt.show(tickets.InterestsByUser, luc)
+... #doctest: +REPORT_UDIFF
+<BLANKLINE>
+No data to display
+<BLANKLINE>
+
+
+Service Report
+==============
+
+>>> pv = dict(interesting_for=marc)
+>>> ses.show(clocking.ServiceReport, param_values=pv)
+... #doctest: +REPORT_UDIFF
+------------
+Introduction
+------------
+Service report for marc (period from 2015-01-01 to 2015-05-23)
+-------
+Tickets
+-------
+======= ======================= ========== ========= ============== ==========
+ ID      Summary                 Reporter   Project   Product        Time
+------- ----------------------- ---------- --------- -------------- ----------
+ 2       Bar is not always baz   marc       raeren    Lino Faggio    2:26
+ 3       Baz sucks               luc        bbach     Lino Core      1:27
+ 4       Foo and bar don't baz   jean       eupen     Lino Welfare   2:23
+ **0**                                                               **6:16**
+======= ======================= ========== ========= ============== ==========
+<BLANKLINE>
+--------
+Projects
+--------
+==================== ============ ========= ==========
+ Reference            Name         Tickets   Time
+-------------------- ------------ --------- ----------
+ eupen                Eupen        *#4*      2:23
+ raeren               Raeren       *#2*      2:26
+ bbach                Bütgenbach   *#3*      1:27
+ **Total (3 rows)**                          **6:16**
+==================== ============ ========= ==========
+<BLANKLINE>
+
+
+>>> pv = dict(interesting_for=luc)
+>>> ses.show(clocking.ServiceReport, param_values=pv)
+... #doctest: +REPORT_UDIFF
+------------
+Introduction
+------------
+Service report for luc (period from 2015-01-01 to 2015-05-23)
+-------
+Tickets
+-------
+======= =========================== ============ ========= ============== ==========
+ ID      Summary                     Reporter     Project   Product        Time
+------- --------------------------- ------------ --------- -------------- ----------
+ 1       Foo fails to bar when baz   mathieu      eupen     Lino Cosi      1:27
+ 2       Bar is not always baz       marc         raeren    Lino Faggio    2:26
+ 3       Baz sucks                   luc          bbach     Lino Core      1:27
+ 4       Foo and bar don't baz       jean         eupen     Lino Welfare   2:23
+ 5       Cannot create Foo           Robin Rood   raeren    Lino Cosi      1:24
+ **0**                                                                     **9:07**
+======= =========================== ============ ========= ============== ==========
+<BLANKLINE>
+--------
+Projects
+--------
+==================== ============ ============ ==========
+ Reference            Name         Tickets      Time
+-------------------- ------------ ------------ ----------
+ eupen                Eupen        *#1*, *#4*   3:50
+ raeren               Raeren       *#2*, *#5*   3:50
+ bbach                Bütgenbach   *#3*         1:27
+ **Total (3 rows)**                             **9:07**
+==================== ============ ============ ==========
+<BLANKLINE>
+
