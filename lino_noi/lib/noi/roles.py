@@ -4,14 +4,15 @@
 """Defines the standard user roles for `lino_noi`."""
 
 
-
 from lino.core.roles import (UserRole, SiteAdmin)
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.modlib.users.choicelists import UserProfiles
 from django.utils.translation import ugettext_lazy as _
 
+
 class SiteUser(OfficeUser):
     pass
+
 
 class SiteAdmin(SiteAdmin, OfficeStaff):
     pass
