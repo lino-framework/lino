@@ -19,9 +19,11 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
-from lino.core import constants as ext_requests
-
+from lino.utils.xmlgen.html import RstTable
+from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
+from lino.core import constants
+
 from . import elems
 
 if False:
@@ -39,10 +41,10 @@ def add_user_language(kw, ar):
     lang = get_language()
     #~ print 2013115, [li.django_code for li in settings.SITE.languages], settings.SITE.get_default_language(), lang, u.language
     if u and u.language and lang != u.language:
-        kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE, lang)
+        kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
     #~ elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
     elif lang != settings.SITE.get_default_language():
-        kw.setdefault(ext_requests.URL_PARAM_USER_LANGUAGE, lang)
+        kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
 
 
     #~ if len(settings.SITE.languages) > 1:
@@ -88,9 +90,10 @@ class HtmlRenderer(object):
     def href(self, url, text):
         return E.a(text, href=url)
 
-    def show_request(self, ar, **kw):
-        """
-        Returns a HTML element representing this request as a table.
+    def show_table(self, ar, **kw):
+        """Returns a HTML element representing the given action request as a
+        table.
+
         """
         if ar.actor.master is not None:
             if ar.actor.slave_grid_format == 'summary':
@@ -308,10 +311,64 @@ class TextRenderer(HtmlRenderer):
     #         text = '??'
     #     return "**{0}**".format(text)
 
-    def show_request(self, ar, *args, **kw):
+    def unused_show_request(self, ar, *args, **kw):
         """Prints a string to stdout representing this request in
         reStructuredText markup.
 
         """
-        print(ar.table2rst(*args, **kw))
+        self.show_table(ar, *args, **kw)
+        # print(ar.table2rst(*args, **kw))
         # return ar.to_rst(*args, **kw)
+
+    def show_table(self, ar, column_names=None, header_level=None, **kwargs):
+        """Render the given table request as reStructuredText to stdout."""
+        fields, headers, widths = ar.get_field_info(column_names)
+
+        sums = [fld.zero for fld in fields]
+        rows = []
+        recno = 0
+        for row in ar.sliced_data_iterator:
+            recno += 1
+            rows.append([x for x in ar.row2text(fields, row, sums)])
+        if len(rows) == 0:
+            print("\n{0}\n".format(unicode(ar.no_data_text)))
+            return
+
+        if not ar.actor.hide_sums:
+            has_sum = False
+            for i in sums:
+                if i:
+                    #~ print '20120914 zero?', repr(i)
+                    has_sum = True
+                    break
+            if has_sum:
+                rows.append([x for x in ar.sums2html(fields, sums)])
+
+        t = RstTable(headers, **kwargs)
+        s = t.to_rst(rows)
+        if header_level is not None:
+            s = E.tostring(E.h2(ar.get_title())) + s
+        print(s)
+
+    def show_story(self, ar, story, *args, **kwargs):
+        """Render the given story as reStructuredText to stdout."""
+        from lino.core.actors import Actor
+        from lino.core.requests import ActionRequest
+        # from lino.utils.xmlgen.html import _html2rst as html2rst
+        from lino.utils.xmlgen.html import html2rst
+
+        for item in story:
+            if E.iselement(item):
+                print(html2rst(item))
+            elif isinstance(item, type) and issubclass(item, Actor):
+                ar = item.default_action.request(parent=ar)
+                self.show_table(ar, *args, **kwargs)
+            elif isinstance(item, ActionRequest):
+                self.show_table(item, *args, **kwargs)
+                # print(item.table2rst(*args, **kwargs))
+            elif isiterable(item):
+                self.show_story(ar, item, *args, **kwargs)
+                # for i in self.show_story(ar, item, *args, **kwargs):
+                #     print(i)
+            else:
+                raise Exception("Cannot handle %r" % item)

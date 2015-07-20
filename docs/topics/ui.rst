@@ -2,6 +2,8 @@
 The user interface
 ==================
 
+(Needs revision. See also :doc:`/dev/rendering`.)
+
 Lino comes with an extensible collection of out-of-the-box user interfaces.
 
 Currently there's one serious user interface based on Sencha ExtJS and

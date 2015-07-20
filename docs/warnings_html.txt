@@ -1,8 +1,0 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.models.rst:52: WARNING: failed to import ByUser
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.models.rst:42: WARNING: failed to import SiteStaff
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:29: WARNING: failed to import gfk2lookup
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:42: WARNING: failed to import ByUser
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:42: WARNING: failed to import ContactRelated
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:42: WARNING: failed to import SiteStaff
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:42: WARNING: failed to import UserAuthored
-/home/luc/hgwork/lino/docs/dev/perms.rst:92: WARNING: Block quote ends without a blank line; unexpected unindent.

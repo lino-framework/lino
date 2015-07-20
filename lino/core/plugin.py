@@ -143,6 +143,7 @@ class Plugin(object):
     """
 
     renderer = None
+    """The renderer used by this plugin. See :doc:`/dev/rendering`."""
 
     def __init__(self, site, app_label, app_name, app_module, needed_by):
         """This is called when the Site object *instantiates*, i.e.  you may

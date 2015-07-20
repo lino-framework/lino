@@ -345,7 +345,7 @@ request from it.
             requested_language=get_language())
 
         def parse(s):
-            return self.jinja_env.from_string(s).render(**kw)
+            return settings.SITE.jinja_env.from_string(s).render(**kw)
         kw.update(parse=parse)
         # kw.update(inc_counters=dict())
         return kw
@@ -541,7 +541,7 @@ request from it.
 
     def story2html(self, story, *args, **kw):
         """
-        Convert a stream of story items into a stream of HTML elements.
+        Convert a story into a stream of HTML elements.
         """
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
@@ -552,7 +552,7 @@ request from it.
                 yield self.show(item, *args, **kw)
             elif isinstance(item, TableRequest):
                 assert item.renderer is not None
-                yield self.renderer.show_request(item)
+                yield self.renderer.show_table(item)
             elif isiterable(item):
                 for i in self.story2html(item, *args, **kw):
                     yield i
@@ -560,23 +560,7 @@ request from it.
                 raise Exception("Cannot handle %r" % item)
 
     def story2rst(self, story, *args, **kwargs):
-        from lino.core.actors import Actor
-        from lino.core.requests import ActionRequest
-        from lino.utils.xmlgen.html import html2rst
-        for item in story:
-            if E.iselement(item):
-                yield html2rst(item)
-            elif isinstance(item, type) and issubclass(item, Actor):
-                # ar = self.spawn(item)
-                ar = item.default_action.request(parent=self)
-                yield ar.table2rst(**kwargs)
-            elif isinstance(item, ActionRequest):
-                yield item.table2rst(*args, **kwargs)
-            elif isiterable(item):
-                for i in self.story2rst(item, *args, **kwargs):
-                    yield i
-            else:
-                raise Exception("Cannot handle %r" % item)
+        return self.renderer.show_story(self, story, *args, **kwargs)
 
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, **kwargs):
@@ -610,6 +594,8 @@ request from it.
           {{ar.show('users.UsersOverview')}}
 
         """
+        from lino.utils.report import Report
+
         # 20130905 added master_instance positional arg. but finally
         # didn't use it.
         if master_instance is not None:
@@ -619,7 +605,10 @@ request from it.
 
         def doit():
             # print 20150512, ar.renderer
-            return ar.renderer.show_request(
+            if issubclass(ar.actor, Report):
+                story = ar.actor.get_story(None, ar)
+                return ar.renderer.show_story(self, story)
+            return ar.renderer.show_table(
                 ar, column_names=column_names, header_level=header_level)
 
         if language:
@@ -975,13 +964,6 @@ class ActorRequest(BaseRequest):
         #~ location = ar.renderer.get_request_url(ar)
         location = ar.get_request_url()
         return self.request.build_absolute_uri(location)
-
-    def to_rst(self, *args, **kw):
-        """
-        Returns a string representing this request in reStructuredText markup.
-        """
-        # return self.actor.to_rst(self, *args, **kw)
-        return self.table2rst(*args, **kw)
 
     def run(self, *args, **kw):
         """

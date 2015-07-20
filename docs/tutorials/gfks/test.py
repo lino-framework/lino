@@ -98,8 +98,8 @@ class TestCase(TestCase):
         check_status(0, 1, 1, 1)
 
         # That's what the BrokenGFKs table is supposed to show:
-        rst = BrokenGFKs.request().table2rst()
-        # rst = BrokenGFKs.to_rst(ar)
+        # rst = BrokenGFKs.request().table2rst()
+        rst = BrokenGFKs.request().to_rst()
         # print rst
         self.assertEqual(rst, """\
 ================ ================== ===================================================== ========
@@ -109,5 +109,6 @@ class TestCase(TestCase):
  *note*           *Note object*      Invalid primary key 1 for gfks.Member in `owner_id`   manual
  *memo*           *Memo object*      Invalid primary key 1 for gfks.Member in `owner_id`   clear
 ================ ================== ===================================================== ========
+
 """)
 

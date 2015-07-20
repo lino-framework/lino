@@ -8,8 +8,10 @@
 
 import logging
 logger = logging.getLogger(__name__)
-from types import GeneratorType
 
+from types import GeneratorType
+import sys
+from StringIO import StringIO
 import json
 
 from django.db import models
@@ -24,7 +26,7 @@ from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
-from lino.utils.xmlgen.html import RstTable
+# from lino.utils.xmlgen.html import RstTable
 
 from .requests import ActionRequest
 
@@ -342,36 +344,24 @@ class TableRequest(ActionRequest):
         if limit is not None:
             self.limit = limit
 
-    def table2rst(ar, column_names=None, header_level=None, **kwargs):
+    def to_rst(self, *args, **kw):
+        """Returns a string representing this table request in
+        reStructuredText markup.
+
         """
-        Return a reStructuredText representation of this table request.
+        stdout = sys.stdout
+        sys.stdout = StringIO()
+        self.table2rst(*args, **kw)
+        rv = sys.stdout.getvalue()
+        sys.stdout = stdout
+        return rv
+
+    def table2rst(self, *args, **kwargs):
+        """Print a reStructuredText representation of this table request to
+        stdout.
+
         """
-        fields, headers, widths = ar.get_field_info(column_names)
-
-        sums = [fld.zero for fld in fields]
-        rows = []
-        recno = 0
-        for row in ar.sliced_data_iterator:
-            recno += 1
-            rows.append([x for x in ar.row2text(fields, row, sums)])
-        if len(rows) == 0:
-            return "\n{0}\n".format(unicode(ar.no_data_text))
-
-        if not ar.actor.hide_sums:
-            has_sum = False
-            for i in sums:
-                if i:
-                    #~ print '20120914 zero?', repr(i)
-                    has_sum = True
-                    break
-            if has_sum:
-                rows.append([x for x in ar.sums2html(fields, sums)])
-
-        t = RstTable(headers, **kwargs)
-        s = t.to_rst(rows)
-        if header_level is not None:
-            s = E.tostring(E.h2(ar.get_title())) + s
-        return s
+        settings.SITE.kernel.text_renderer.show_table(self, *args, **kwargs)
 
     def table2xhtml(self, header_level=None, **kw):
         """
@@ -480,7 +470,8 @@ class TableRequest(ActionRequest):
                     ah = ar.actor.get_request_handle(ar)
                     columns = ah.list_layout.main.columns
 
-                # render them so that babelfields in hidden_languages get hidden:
+                # render them so that babelfields in hidden_languages
+                # get hidden:
                 for e in columns:
                     e.value = e.ext_options()
                 #

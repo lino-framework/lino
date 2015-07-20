@@ -93,6 +93,7 @@ class QuickTest(RemoteAuthTestCase):
 ---- ---------------
  1    *John Doe*
 ==== ===============
+
 """)
 
         ar = rt.modules.excerpts.Excerpts.request()
@@ -103,6 +104,7 @@ class QuickTest(RemoteAuthTestCase):
 ---- ---------------
  1    *Note #1*
 ==== ===============
+
 """)
 
         self.assertEqual(excerpt.disable_delete(), None)

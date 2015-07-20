@@ -635,11 +635,6 @@ method in order to sort the rows of the queryset.
         if url:
             os.startfile(url)
 
-    @classmethod
-    def to_rst(cls, ar, *args, **kwargs):
-        raise Exception(
-            "Table.to_rst(cls, ar, ...) replaced by ar.table2rst(...)")
-
 
 class VirtualTable(AbstractTable):
     """

@@ -113,13 +113,14 @@ class EmptyTable(Frame):
 
 class ReportRequest(ActionRequest):
 
-    def table2rst(ar, **kwargs):
+    def unsued_show_request(ar, **kwargs):
         # self = ar.selected_rows[0]
         self = None  # ar.actor.create_instance(ar)
-        return '\n'.join(ar.story2rst(
-            ar.actor.get_story(self, ar), **kwargs))
+        story = ar.actor.get_story(self, ar)
+        ar.renderer.show_story(story)
+
         # return '\n'.join(ar.story2rst(
-        #     ar.actor.get_story(self, ar), master_instance=self, **kwargs))
+        #     ar.actor.get_story(self, ar), **kwargs))
         
 
 class Report(EmptyTable):

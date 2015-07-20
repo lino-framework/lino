@@ -2,6 +2,8 @@
 Printing documents
 ==================
 
+See also :doc:`/admin/printing`.
+
 Yet another lack in the Developer Guide is some introduction to the
 topic of printing documents from your Lino application.
 

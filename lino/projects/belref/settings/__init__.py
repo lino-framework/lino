@@ -21,28 +21,15 @@ class Site(Site):
     demo_fixtures = 'demo all_countries be inscodes'
 
     #~ admin_prefix = 'admin'
-    # default_ui = 'plain'
     default_ui = 'bootstrap3'
 
     #~ anonymous_user_profile =
 
     languages = 'fr nl de'
 
-    #~ project_model = 'tickets.Project'
-    #~ user_model = 'users.User'
-
-    #~ sidebar_width  = 3
-
-    # hidden_apps = 'extjs'
-
-    def get_apps_modifiers(self, **kk):
-        kw = super(Site, self).get_apps_modifiers(**kk)
-        kw.update(extjs=None)
-        # kw.update(plain=None)
-        return kw
-
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
+        yield 'lino.modlib.bootstrap3'
         #~ yield 'lino.modlib.contenttypes'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'
@@ -53,7 +40,6 @@ class Site(Site):
         #~ yield 'lino.modlib.tickets'
         #~ yield 'lino.modlib.pages'
         yield 'lino.modlib.concepts'
-        # yield 'lino.modlib.bootstrap3'
         yield 'lino.projects.belref'
 
     def setup_menu(self, profile, main):

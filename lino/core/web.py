@@ -57,9 +57,10 @@ def list_templates(self, ext, *groups):
 
 def site_setup(self):
     """
-    Adds a `jinja_env` attribute to `settings.SITE`.
     This is being called from
     :meth:`lino.core.kernel.Kernel.kernel_startup`.
+
+    Adds a `jinja_env` attribute to `settings.SITE`.
     
     Lino has an automatic and currently not configurable method
     for building Jinja's template loader. It looks for

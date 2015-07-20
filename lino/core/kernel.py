@@ -200,7 +200,6 @@ class Kernel(object):
 
         pre_ui_build.send(self)
 
-        # self.plain_renderer = PlainRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]

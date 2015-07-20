@@ -91,6 +91,7 @@ Getting acquaintained
 #.  :doc:`printing` : (TODO)
 #.  :doc:`accounting` : Accounting explained to Python developers.
 #.  :doc:`cache` : telling Lino where to store temporari files.
+#.  :doc:`rendering` : 
 
 .. toctree::
    :maxdepth: 1
@@ -126,6 +127,7 @@ Getting acquaintained
    printing
    accounting
    cache
+   rendering
    
 
 Reference

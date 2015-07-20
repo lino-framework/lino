@@ -84,6 +84,7 @@ class QuickTest(RemoteAuthTestCase):
  Mr John Doe   Father   Mr Joseph Doe
  Mr John Doe   Father   Mrs Mary Doe
 ============= ======== ===============
+
 """)
 
         # Here we are just testing whether no exception is risen. The

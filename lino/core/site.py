@@ -2823,8 +2823,9 @@ Please convert to Plugin method".format(mod, methname)
             yield 'django.contrib.admin'
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
-        yield 'lino.modlib.extjs'
-        yield 'lino.modlib.bootstrap3'
+        if self.default_ui == "extjs":
+            yield 'lino.modlib.extjs'
+            yield 'lino.modlib.bootstrap3'
         for a in self.local_apps:
             yield a
         from lino import AFTER17

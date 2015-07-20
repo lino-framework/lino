@@ -407,7 +407,7 @@ class ExtRenderer(HtmlRenderer):
         return self.plugin.build_plain_url(
             'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
 
-    def show_request(self, ar, **kw):
+    def show_table(self, ar, **kw):
         """
         Returns a HTML element representing this request as a table.
         Used by appy_pod rendered.
