@@ -272,6 +272,25 @@ No data to display
 Service Report
 ==============
 
+A service report (:class:`clocking.ServiceReport
+<lino.modlib.clocking.ui.ServiceReport>`) is a document which reports
+about the hours invested during a given date range.  It can be
+addressed to a recipient (a user) and in that case will consider only
+the tickets for which this user has specified interest.
+
+It currently contains two tables:
+
+- a list of tickets, with invested time (i.e. the sum of durations
+  of all sessions that lie in the given data range)
+- a list of projects, with invested time and list of the tickets that
+  are assigned to this project.
+
+This report will be a valuable help for developers like me because it
+serves as a base for writing invoices :-)
+
+Here is a version for Marc (who is not interested in all projects):
+
+
 >>> pv = dict(interesting_for=marc)
 >>> ses.show(clocking.ServiceReport, param_values=pv)
 ... #doctest: +REPORT_UDIFF
@@ -303,6 +322,10 @@ Projects
  **Total (3 rows)**                          **6:16**
 ==================== ============ ========= ==========
 <BLANKLINE>
+
+
+And here is another version for Luc (i.e. all projects are
+considered):
 
 
 >>> pv = dict(interesting_for=luc)
@@ -339,3 +362,11 @@ Projects
 ==================== ============ ============ ==========
 <BLANKLINE>
 
+
+..
+    .. py2rst::
+
+    from lino.api.shell import *
+    luc = users.User.objects.get(username="luc")
+    pv = dict(interesting_for=luc)
+    print(rt.show(clocking.ServiceReport, param_values=pv))
