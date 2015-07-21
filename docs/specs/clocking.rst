@@ -136,15 +136,15 @@ serves as a base for writing invoices.
 Site #1 (u'welket')
 
 >>> rt.show(clocking.ReportedTickets, obj)
-=========================== ==== ============ ========= ============== ======== ==========
- Summary                     ID   Reporter     Project   Product        Site     Time
---------------------------- ---- ------------ --------- -------------- -------- ----------
- Foo fails to bar when baz   1    mathieu      lino      Lino Cosi      welket   1:27
- Baz sucks                   3    luc                    Lino Core               1:27
- Foo and bar don't baz       4    jean         docs      Lino Welfare            2:23
- Cannot create Foo           5    Robin Rood             Lino Cosi               1:24
- **Total (4 rows)**                                                              **6:41**
-=========================== ==== ============ ========= ============== ======== ==========
+=========================== ==== ============ ========= ============== ======== ======= ==========
+ Summary                     ID   Reporter     Project   Product        Site     State   Time
+--------------------------- ---- ------------ --------- -------------- -------- ------- ----------
+ Foo fails to bar when baz   1    mathieu      lino      Lino Cosi      welket   New     1:27
+ Baz sucks                   3    luc                    Lino Core               New     1:27
+ Foo and bar don't baz       4    jean         docs      Lino Welfare            New     2:23
+ Cannot create Foo           5    Robin Rood             Lino Cosi               New     1:24
+ **Total (4 rows)**                                                                      **6:41**
+=========================== ==== ============ ========= ============== ======== ======= ==========
 <BLANKLINE>
 
 >>> rt.show(clocking.ReportedProjects, obj)
