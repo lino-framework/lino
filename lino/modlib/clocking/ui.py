@@ -264,7 +264,7 @@ class InvestedTime(dd.Table):
     
 class ReportedTickets(Tickets, InvestedTime):
     master = 'clocking.ServiceReport'
-    column_names = "summary id reporter project product site invested_time"
+    column_names = "summary id reporter project product site state invested_time"
 
     @classmethod
     def get_request_queryset(self, ar):
