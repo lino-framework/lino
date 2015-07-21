@@ -88,8 +88,7 @@ Projects
 ========
 
 A **project** is something for which somebody is possibly willing to
-pay money. Every ticket should get assigned to some project after some
-time, at least when it is closed.
+pay money.
 
 >>> rt.show(tickets.Projects)
 =========== =============== ======== ==============
@@ -100,6 +99,23 @@ time, at least when it is closed.
  docs        Documentation
 =========== =============== ======== ==============
 <BLANKLINE>
+
+Developers can start working on tickets without needing to know who is
+going to pay for their work.  Every ticket should get assigned to some
+project after some time, but You can see a list of tickets which have
+not yet been assigned to a project:
+
+>>> pv = dict(has_project=dd.YesNo.no)
+>>> rt.show(tickets.Tickets, param_values=pv)
+... #doctest: +REPORT_UDIFF
+==== =================== ========== ========= ======== ========== ============ =========
+ ID   Summary             Feedback   Standby   Closed   Workflow   Reporter     Project
+---- ------------------- ---------- --------- -------- ---------- ------------ ---------
+ 3    Baz sucks           No         No        No       **New**    luc
+ 5    Cannot create Foo   No         No        No       **New**    Robin Rood
+==== =================== ========== ========= ======== ========== ============ =========
+<BLANKLINE>
+
 
 
 Products
@@ -161,6 +177,7 @@ authenticated developer it looks like this:
  1    Foo fails to bar when baz   No         No        No       **New** → [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
 ==== =========================== ========== ========= ======== ================================================ ========== =========
 <BLANKLINE>
+
 
 
 

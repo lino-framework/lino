@@ -140,9 +140,9 @@ Site #1 (u'welket')
  Summary                     ID   Reporter     Project   Product        Site     Time
 --------------------------- ---- ------------ --------- -------------- -------- ----------
  Foo fails to bar when baz   1    mathieu      lino      Lino Cosi      welket   1:27
- Baz sucks                   3    luc          docs      Lino Core               1:27
- Foo and bar don't baz       4    jean         lino      Lino Welfare            2:23
- Cannot create Foo           5    Robin Rood   team      Lino Cosi               1:24
+ Baz sucks                   3    luc                    Lino Core               1:27
+ Foo and bar don't baz       4    jean         docs      Lino Welfare            2:23
+ Cannot create Foo           5    Robin Rood             Lino Cosi               1:24
  **Total (4 rows)**                                                              **6:41**
 =========================== ==== ============ ========= ============== ======== ==========
 <BLANKLINE>
@@ -151,9 +151,9 @@ Site #1 (u'welket')
 ==================== =============== ============ ==========
  Reference            Name            Tickets      Time
 -------------------- --------------- ------------ ----------
- lino                 Framework       *#1*, *#4*   3:50
- team                 Team            *#5*         1:24
- docs                 Documentation   *#3*         1:27
+ lino                 Framework       *#1*         1:27
+ docs                 Documentation   *#4*         2:23
+                      (no project)    *#3*, *#5*   2:51
  **Total (3 rows)**                                **6:41**
 ==================== =============== ============ ==========
 <BLANKLINE>
