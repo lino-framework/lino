@@ -44,8 +44,10 @@ from lino.api import dd, rt, _
 from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 
+from lino.mixins.periods import DatePeriod
 from lino.modlib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.excerpts.mixins import Certifiable
 
 
 class SessionType(mixins.BabelNamed):
@@ -295,5 +297,19 @@ if False:  # works, but is not useful
 
     from lino.utils.weekly import add_reporter
     add_reporter(weekly_reporter)
+
+
+class ServiceReport(Certifiable, DatePeriod):
+
+    class Meta:
+        verbose_name = _("Service Report")
+        verbose_name_plural = _("Service Reports")
+
+    interesting_for = dd.ForeignKey(
+        settings.SITE.user_model,
+        verbose_name=_("Interesting for"),
+        blank=True, null=True,
+        help_text=_("Only tickets interesting for this user."))
+
 
 from .ui import *

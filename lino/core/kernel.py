@@ -58,7 +58,7 @@ from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store
-from lino.core.renderer import TextRenderer
+from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_analyze, post_analyze)
 from .plugin import Plugin
@@ -200,6 +200,7 @@ class Kernel(object):
 
         pre_ui_build.send(self)
 
+        self.html_renderer = HtmlRenderer(self)
         self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
@@ -213,6 +214,7 @@ class Kernel(object):
         for p in site.installed_plugins:
             p.on_ui_init(self)
 
+        ui = None
         if self.site.default_ui is not None:
             ui = self.site.plugins.resolve(self.site.default_ui)
             if ui is None:
@@ -225,6 +227,9 @@ class Kernel(object):
                 if p.ui_handle_attr_name is not None:
                     ui = p
                     break
+            if ui is None:
+                raise Exception("No user interface in {0}".format(
+                    [u.app_name for u in self.site.installed_plugins]))
         self.default_renderer = ui.renderer
         self.default_ui = ui
 

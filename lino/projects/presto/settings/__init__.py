@@ -42,12 +42,12 @@ class Site(Site):
         yield 'lino.modlib.notes'
         # yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'
-        yield 'lino.modlib.uploads'
+        # yield 'lino.modlib.uploads'
         #~ 'lino.modlib.thirds',
         yield 'lino.modlib.extensible'
         yield 'lino.modlib.cal'
-        yield 'lino.modlib.outbox'
-        yield 'lino.modlib.excerpts'
+        # yield 'lino.modlib.outbox'
+        # yield 'lino.modlib.excerpts'
         #~ yield 'lino.modlib.postings'
         #~ yield 'lino.modlib.pages'
 

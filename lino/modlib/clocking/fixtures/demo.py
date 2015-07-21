@@ -44,3 +44,6 @@ def objects():
             ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
             obj.set_datetime('end', ts)
             yield obj
+
+    ServiceReport = rt.modules.clocking.ServiceReport
+    yield ServiceReport(start_date=dd.today(-90))

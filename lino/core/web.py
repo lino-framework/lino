@@ -197,8 +197,11 @@ from lino.core import requests
 
 
 def render_from_request(request, template_name, **context):
-    """
-    Adds some more context names
+    """Adds some more context names.
+
+    Replaces ar.renderer is not a HtmlRenderer but the Site's
+    default_renderer.
+
     """
     context.update(request=request)
     ar = requests.BaseRequest(
@@ -230,7 +233,7 @@ class DjangoJinjaTemplate:
             renderer=settings.SITE.kernel.default_renderer)
         context_dict = ar.get_printable_context(**context_dict)
         context_dict.setdefault('request', None)
-        context_dict.setdefault('ar', ar)
+        #context_dict.setdefault('ar', ar)
         #~ logger.info("20130118 %s",context_dict.keys())
         return self.jt.render(context_dict)
 

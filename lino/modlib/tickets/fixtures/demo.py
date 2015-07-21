@@ -19,7 +19,7 @@ def objects():
     yield User(username="mathieu", profile=user)
     yield User(username="marc", profile=user)
     yield User(username="luc", profile=dev)
-    yield User(username="jean", profile=dev)
+    yield User(username="jean", profile=rt.modules.users.UserProfiles.senior)
 
     USERS = Cycler(User.objects.all())
 

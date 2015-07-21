@@ -60,9 +60,8 @@ class NOT_GIVEN:
 
 
 class HtmlRenderer(object):
-
     """
-    Deserves more documentation.
+    See :doc:`/dev/rendering`.
     """
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
@@ -100,6 +99,9 @@ class HtmlRenderer(object):
                 return E.tostring(
                     ar.actor.get_slave_summary(ar.master_instance, ar))
         return E.tostring(ar.table2xhtml(**kw))
+
+    def action_call(self, request, bound_action, status):
+        return None
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
         """Return a string with Javascript code that would run the given
@@ -208,6 +210,16 @@ request `tar`."""
         #~ return '<p>%s</p>' % s
         return E.p(*buttons)
 
+    def pk2url(self, ar, pk, **kw):
+        return None
+
+    def get_home_url(self, *args, **kw):
+        return settings.SITE.kernel.default_ui.build_plain_url(*args, **kw)
+
+    def instance_handler(self, ar, obj):
+        "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
+        return None
+
     def obj2html(self, ar, obj, text=None, **kwargs):
         if text is None:
             text = (force_unicode(obj),)
@@ -284,6 +296,28 @@ request `tar`."""
             label = ba.action.label
         return "[%s]" % label
 
+    def show_story(self, ar, story, *args, **kwargs):
+        """Render the given story as an HTML element."""
+        from lino.core.actors import Actor
+        from lino.core.tables import TableRequest
+        elems = []
+        for item in story:
+            if E.iselement(item):
+                elems.append(item)
+            elif isinstance(item, type) and issubclass(item, Actor):
+                ar = item.default_action.request(parent=ar)
+                elems.append(self.show_table(ar, *args, **kwargs))
+            elif isinstance(item, TableRequest):
+                assert item.renderer is not None
+                elems.append(self.show_table(item, *args, **kwargs))
+            elif isiterable(item):
+                elems.append(self.show_story(ar, item, *args, **kwargs))
+                # for i in self.show_story(item, *args, **kwargs):
+                #     yield i
+            else:
+                raise Exception("Cannot handle %r" % item)
+        return E.div(*elems)
+
 
 class TextRenderer(HtmlRenderer):
     """The renderer used when rendering to .rst files and console output.
@@ -295,13 +329,6 @@ class TextRenderer(HtmlRenderer):
     def __init__(self, *args, **kw):
         HtmlRenderer.__init__(self,  *args, **kw)
         self.user = None
-
-    def instance_handler(self, ar, obj):
-        "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
-        return None
-
-    def pk2url(self, ar, pk, **kw):
-        return None
 
     def get_request_url(self, ar, *args, **kw):
         return None

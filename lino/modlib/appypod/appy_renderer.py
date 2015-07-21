@@ -98,7 +98,8 @@ class Renderer(AppyRenderer):
     def jinja_func(self, template_name, **kw):
         saved_renderer = self.ar.renderer
         try:
-            self.ar.renderer = settings.SITE.plugins.bootstrap3.renderer
+            self.ar.renderer = settings.SITE.kernel.html_renderer
+            # self.ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             if not '.' in template_name:
                 template_name += '.html'
             #~ printable = self.contentParser.env.context.get('this',None)

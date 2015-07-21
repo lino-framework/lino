@@ -1056,6 +1056,9 @@ class AutoFieldElement(NumberFieldElement):
     def value2num(self, v):
         return 0
 
+    def format_sum(self, ar, sums, i):
+        return ''
+
 
 class RequestFieldElement(IntegerFieldElement):
 
@@ -1070,11 +1073,12 @@ class RequestFieldElement(IntegerFieldElement):
     def value2html(self, ar, v, **cellattrs):
         # logger.info("20121116 value2html(%s)", v)
         n = v.get_total_count()
-        if True:
-            if n == 0:
-                return E.td(**cellattrs)
-        url = 'javascript:' + ar.renderer.request_handler(v)
-        return E.td(E.a(str(n), href=url), **cellattrs)
+        if n == 0:
+            return E.td(**cellattrs)
+        url = ar.renderer.request_handler(v)
+        if url is None:
+            return E.td(str(n), **cellattrs)
+        return E.td(E.a(str(n), href='javascript:'+url), **cellattrs)
 
     def format_value(self, ar, v):
         # logger.info("20121116 format_value(%s)", v)
@@ -1938,12 +1942,12 @@ _FIELD2ELEM = (
     (models.TimeField, TimeFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
+    (models.AutoField, AutoFieldElement),
     (models.BooleanField, BooleanFieldElement),
     # TODO: Lino currently renders NullBooleanField like BooleanField
     (models.NullBooleanField, BooleanFieldElement),
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
-    (models.AutoField, AutoFieldElement),
     #~ (generic.GenericForeignKey, GenericForeignKeyElement),
 )
 

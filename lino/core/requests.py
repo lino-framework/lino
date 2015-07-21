@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
+from copy import copy
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -314,22 +315,12 @@ request from it.
         from lino.api import dd, rt
         from lino.utils import iif
 
-        # kw.update(
-        #     dtos=dd.fds,  # obsolete
-        #     dtosl=dd.fdf,  # obsolete
-        #     dtomy=dd.fdmy,  # obsolete
-        #     mtos=self.decfmt,  # obsolete
-        #     babelattr=dd.babelattr,
-        #     babelitem=self.babelitem,
-        #     tr=self.babelitem,
-        #     settings=settings,
-        #     lino=self.modules,  # experimental
-        #     site_config=self.site_config,
-        # )
+        sar = copy(self)
+        sar.renderer = settings.SITE.kernel.html_renderer
 
         kw['_'] = ugettext
         kw.update(
-            ar=self,
+            ar=sar,
             E=E,
             dd=dd,
             rt=rt,
@@ -347,7 +338,6 @@ request from it.
         def parse(s):
             return settings.SITE.jinja_env.from_string(s).render(**kw)
         kw.update(parse=parse)
-        # kw.update(inc_counters=dict())
         return kw
 
     def set_selected_pks(self, *selected_pks):
@@ -464,11 +454,11 @@ request from it.
         self.set_callback(cb)
 
     def render_jinja(self, template, **context):
-        context.update(ar=self)
-        saved_renderer = self.renderer
-        self.renderer = settings.SITE.plugins.bootstrap3.renderer
+        # context.update(ar=self)
+        # saved_renderer = self.renderer
+        # self.renderer = settings.SITE.plugins.bootstrap3.renderer
         retval = template.render(**context)
-        self.renderer = saved_renderer
+        # self.renderer = saved_renderer
         return retval
 
     def set_callback(self, *args, **kw):
@@ -539,25 +529,33 @@ request from it.
         """
         return thing.run_from_session(self, *args, **kw)
 
-    def story2html(self, story, *args, **kw):
+    def story2html(self, story, *args, **kwargs):
+        """Convert a story into a stream of HTML elements.
+
         """
-        Convert a story into a stream of HTML elements.
-        """
-        from lino.core.actors import Actor
-        from lino.core.tables import TableRequest
-        for item in story:
-            if E.iselement(item):
-                yield item
-            elif isinstance(item, type) and issubclass(item, Actor):
-                yield self.show(item, *args, **kw)
-            elif isinstance(item, TableRequest):
-                assert item.renderer is not None
-                yield self.renderer.show_table(item)
-            elif isiterable(item):
-                for i in self.story2html(item, *args, **kw):
-                    yield i
-            else:
-                raise Exception("Cannot handle %r" % item)
+        return settings.SITE.kernel.html_renderer.show_story(
+            self, story, *args, **kwargs)
+        # return ''.join([
+        #     E.tostring(i) for i in
+        #     settings.SITE.html_renderer.show_story(
+        #         self, story, *args, **kwargs)])
+            
+        raise Exception("Moved to HtmlRenderer.show_stor")
+        # from lino.core.actors import Actor
+        # from lino.core.tables import TableRequest
+        # for item in story:
+        #     if E.iselement(item):
+        #         yield item
+        #     elif isinstance(item, type) and issubclass(item, Actor):
+        #         yield self.show(item, *args, **kw)
+        #     elif isinstance(item, TableRequest):
+        #         assert item.renderer is not None
+        #         yield self.renderer.show_table(item)
+        #     elif isiterable(item):
+        #         for i in self.story2html(item, *args, **kw):
+        #             yield i
+        #     else:
+        #         raise Exception("Cannot handle %r" % item)
 
     def story2rst(self, story, *args, **kwargs):
         return self.renderer.show_story(self, story, *args, **kwargs)

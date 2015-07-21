@@ -2,7 +2,7 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Views for `lino.modlib.bootstrap3`.
+"""Views for `lino.modlib.tinymce`.
 
 """
 

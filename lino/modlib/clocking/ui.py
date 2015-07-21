@@ -263,10 +263,19 @@ class InvestedTime(dd.Table):
 
     
 class ReportedTickets(Tickets, InvestedTime):
-    column_names = "id summary reporter project product invested_time"
+    master = 'clocking.ServiceReport'
+    column_names = "summary id reporter project product invested_time"
 
     @classmethod
     def get_request_queryset(self, ar):
+        mi = ar.master_instance
+        if mi is None:
+            return
+        spv = dict(start_date=mi.start_date, end_date=mi.end_date)
+        spv.update(observed_event=TicketEvents.clocking)
+        spv.update(interesting_for=mi.interesting_for)
+        ar.param_values.update(spv)
+
         qs = super(ReportedTickets, self).get_request_queryset(ar)
         for obj in qs:
             obj._invested_time = compute_invested_time(obj, ar.param_values)
@@ -274,24 +283,28 @@ class ReportedTickets(Tickets, InvestedTime):
 
 
 class ReportedProjects(Projects, InvestedTime):
+    master = 'clocking.ServiceReport'
     column_names = "ref name active_tickets invested_time"
 
     @classmethod
     def get_request_queryset(self, ar):
         Tickets = rt.modules.tickets.Tickets
+        mi = ar.master_instance
+        if mi is None:
+            return
         qs = super(ReportedProjects, self).get_request_queryset(ar)
-        pv = ar.param_values
+        # pv = ar.param_values
         for prj in qs:
             tot = Duration()
             tickets = []
-            spv = dict(start_date=pv.start_date, end_date=pv.end_date)
+            spv = dict(start_date=mi.start_date, end_date=mi.end_date)
             spv.update(observed_event=TicketEvents.clocking)
-            spv.update(interesting_for=pv.interesting_for)
+            spv.update(interesting_for=mi.interesting_for)
             spv.update(project=prj)
             sar = Tickets.request(master_instance=prj, param_values=spv)
             # for ticket in Ticket.objects.filter(project=prj):
             for ticket in sar:
-                ttot = compute_invested_time(ticket, pv)
+                ttot = compute_invested_time(ticket, mi)
                 if ttot:
                     tot += ttot
                     tickets.append(ticket)
@@ -308,7 +321,16 @@ class ReportedProjects(Projects, InvestedTime):
         return E.p(*join_elems(lst, ', '))
 
 
-class ServiceReport(Report):
+class ServiceReports(dd.Table):
+    model = "clocking.ServiceReport"
+    detail_layout = """
+    start_date end_date interesting_for printed
+    ReportedTickets
+    ReportedProjects
+    """
+
+
+class unused_ServiceReport(Report):
     """Gives an overview about the times worked during a given period.
 
     """

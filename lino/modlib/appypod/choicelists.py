@@ -40,7 +40,7 @@ class AppyBuildMethod(SimpleBuildMethod):
         with translation.override(lang):
 
             context = elem.get_printable_context(ar)
-            context.update(ar=ar)
+            # 20150721 context.update(ar=ar)
 
             # backwards compat for existing .odt templates.  Cannot
             # set this earlier because that would cause "render() got
