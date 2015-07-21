@@ -278,7 +278,7 @@ class ReportedTickets(Tickets, InvestedTime):
 
         qs = super(ReportedTickets, self).get_request_queryset(ar)
         for obj in qs:
-            obj._invested_time = compute_invested_time(obj, ar.param_values)
+            obj._invested_time = compute_invested_time(obj, mi)
             yield obj
 
 
@@ -292,32 +292,45 @@ class ReportedProjects(Projects, InvestedTime):
         mi = ar.master_instance
         if mi is None:
             return
-        qs = super(ReportedProjects, self).get_request_queryset(ar)
-        # pv = ar.param_values
-        for prj in qs:
+
+        def worked_time(**spv):
             tot = Duration()
             tickets = []
-            spv = dict(start_date=mi.start_date, end_date=mi.end_date)
+            spv.update(start_date=mi.start_date, end_date=mi.end_date)
             spv.update(observed_event=TicketEvents.clocking)
             spv.update(interesting_for=mi.interesting_for)
-            spv.update(project=prj)
-            sar = Tickets.request(master_instance=prj, param_values=spv)
+            # spv.update(project=prj)
+            sar = Tickets.request(param_values=spv)
             # for ticket in Ticket.objects.filter(project=prj):
             for ticket in sar:
                 ttot = compute_invested_time(ticket, mi)
                 if ttot:
                     tot += ttot
                     tickets.append(ticket)
+            return tot, tickets
+
+        qs = super(ReportedProjects, self).get_request_queryset(ar)
+        for prj in qs:
+            tot, tickets = worked_time(project=prj)
             if tot:
                 prj._tickets = tickets
                 prj._invested_time = tot
                 yield prj
 
+        # add an unsaved project for the tickets without project:
+        tot, tickets = worked_time(has_project=dd.YesNo.no)
+        if tot:
+            prj = rt.modules.tickets.Project(name="(no project)")
+            prj._tickets = tickets
+            prj._invested_time = tot
+            yield prj
+
     @dd.displayfield(_("Tickets"))
     def active_tickets(cls, obj, ar):
         lst = []
         for ticket in obj._tickets:
-            lst.append(ar.obj2html(ticket, text="#%d" % ticket.id))
+            lst.append(ar.obj2html(
+                ticket, text="#%d" % ticket.id, title=unicode(ticket)))
         return E.p(*join_elems(lst, ', '))
 
 

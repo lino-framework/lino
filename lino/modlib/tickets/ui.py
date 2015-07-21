@@ -288,6 +288,9 @@ class Tickets(dd.Table):
         show_closed=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are closed.")),
+        has_project=dd.YesNo.field(
+            blank=True,
+            help_text=_("Show tickets with project assigned.")),
         show_standby=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are in standby mode.")),
@@ -295,7 +298,7 @@ class Tickets(dd.Table):
             blank=True,
             help_text=_("Show tickets which are private.")))
     params_layout = """
-    reporter assigned_to interesting_for project state
+    reporter assigned_to interesting_for project state has_project
     show_closed show_standby show_private start_date end_date observed_event"""
     simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
@@ -318,6 +321,13 @@ class Tickets(dd.Table):
             qs = qs.filter(closed=False)
         elif pv.show_closed == dd.YesNo.yes:
             qs = qs.filter(closed=True)
+
+        if pv.has_project == dd.YesNo.no:
+            qs = qs.filter(project__isnull=True)
+        elif pv.has_project == dd.YesNo.yes:
+            qs = qs.filter(project__isnull=False)
+        elif pv.has_project is not None:
+            raise Exception("20150721 %s" % pv.has_project)
 
         if pv.show_standby == dd.YesNo.no:
             qs = qs.filter(standby=False)

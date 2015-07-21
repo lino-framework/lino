@@ -63,14 +63,17 @@ def objects():
         kwargs.update(
             ticket_type=TYPES.pop(), summary=s,
             reporter=USERS.pop(),
-            product=PRODUCTS.pop(), project=PROJECTS.pop())
+            product=PRODUCTS.pop())
+        if False:
+            kwargs.update(project=PROJECTS.pop())
         return Ticket(**kwargs)
 
     welket = Site.objects.get(name="welket")
-    yield ticket("Foo fails to bar when baz", site=welket)
-    yield ticket("Bar is not always baz")
+    yield ticket(
+        "Foo fails to bar when baz", site=welket, project=PROJECTS.pop())
+    yield ticket("Bar is not always baz", project=PROJECTS.pop())
     yield ticket("Baz sucks")
-    yield ticket("Foo and bar don't baz")
+    yield ticket("Foo and bar don't baz", project=PROJECTS.pop())
     yield ticket("Cannot create Foo", description="""<p>When I try to create
     a <b>Foo</b>, then I get a <b>Bar</b> instead of a Foo.</p>""")
 
