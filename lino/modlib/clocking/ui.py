@@ -341,6 +341,8 @@ def my_setup_columns(sender, **kw):
 
 @dd.receiver(dd.post_save, sender=Ticket)
 def on_ticket_create(sender, instance=None, created=False, **kwargs):
+    if settings.SITE.loading_from_dump:
+        return
     me = instance.reporter
     if created and me is not None and me.open_session_on_new_ticket:
         ses = rt.modules.clocking.Session(ticket=instance, user=me)
