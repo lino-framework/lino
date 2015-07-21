@@ -35,11 +35,11 @@ class UserProfile(Choice):
     readonly = False
     """Whether users with this profile get only write-proteced access."""
 
-    authenticated = True
-    """Whether users with this profile should be considered authenticated."""
+    # authenticated = True
+    # """Whether users with this profile should be considered authenticated."""
 
     def __init__(self, value, text, role_class,
-                 name=None, authenticated=True,
+                 name=None,  # authenticated=True,
                  readonly=False,
                  **kw):
         # if value is None:
@@ -48,7 +48,7 @@ class UserProfile(Choice):
         super(UserProfile, self).__init__(value, text, name)
         self.role = role_class()
         self.readonly = readonly
-        self.authenticated = authenticated
+        # self.authenticated = authenticated
         self.kw = kw
 
     def attach(self, cls):

@@ -98,7 +98,10 @@ class User(CreatedModified):
 
     hidden_columns = 'password remarks'
 
-    #~ authenticated = True
+    authenticated = True
+    """This is always `True`.
+    See also :attr:`lino.modlib.users.utils.AnonymousUser.authenticated`.
+    """
 
     username = models.CharField(
         _('Username'), max_length=30,

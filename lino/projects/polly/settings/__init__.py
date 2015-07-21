@@ -28,6 +28,7 @@ class Site(Site):
     author_email = 'luc.saffre@gmail.com'
 
     demo_fixtures = 'std demo feedback demo2'.split()
+    user_profiles_module = 'lino.modlib.users.roles'
 
     languages = 'en de et'
 

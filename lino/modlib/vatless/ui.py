@@ -109,17 +109,19 @@ class VouchersByPartner(dd.VirtualTable):
     label = _("Partner vouchers")
     order_by = ["-date", '-id']
     master = 'contacts.Partner'
-    column_names = "date voucher amount"
-
     slave_grid_format = 'summary'
+
+    column_names = "date voucher project amount state"
+    _master_field_name = 'partner'
 
     @classmethod
     def get_data_rows(self, ar):
         obj = ar.master_instance
         rows = []
         if obj is not None:
+            flt = {self._master_field_name: obj}
             for M in rt.models_by_base(AccountInvoice):
-                rows += list(M.objects.filter(partner=obj))
+                rows += list(M.objects.filter(**flt))
 
             def by_date(a, b):
                 return cmp(b.date, a.date)
@@ -131,9 +133,22 @@ class VouchersByPartner(dd.VirtualTable):
     def voucher(self, row, ar):
         return ar.obj2html(row)
 
+    if dd.plugins.ledger.project_model:
+        @dd.virtualfield('ledger.Movement.project')
+        def project(self, row, ar):
+            return row.project
+
+    @dd.virtualfield('ledger.Movement.partner')
+    def partner(self, row, ar):
+        return row.partner
+
     @dd.virtualfield('ledger.Voucher.date')
     def date(self, row, ar):
         return row.date
+
+    @dd.virtualfield('ledger.Voucher.state')
+    def state(self, row, ar):
+        return row.state
 
     @dd.virtualfield('vatless.AccountInvoice.amount')
     def amount(self, row, ar):
@@ -163,16 +178,22 @@ class VouchersByPartner(dd.VirtualTable):
             actions.append(btn)
             return True
 
-        for vt in vtypes:
-            for jnl in vt.get_journals():
-                sar = vt.table_class.insert_action.request_from(
-                    ar, master_instance=jnl,
-                    known_values=dict(partner=obj))
-                actions.append(
-                    sar.ar2button(label=unicode(jnl), icon_name=None))
-                actions.append(' ')
+        if not ar.get_user().profile.readonly:
+            flt = {self._master_field_name: obj}
+            for vt in vtypes:
+                for jnl in vt.get_journals():
+                    sar = vt.table_class.insert_action.request_from(
+                        ar, master_instance=jnl,
+                        known_values=flt)
+                    actions.append(
+                        sar.ar2button(label=unicode(jnl), icon_name=None))
+                    actions.append(' ')
 
-        elems += [E.br(), _("Create voucher in journal ")] + actions
+            elems += [E.br(), _("Create voucher in journal ")] + actions
         return E.div(*elems)
 
 
+class VouchersByProject(VouchersByPartner):
+    label = _("Project vouchers")
+    _master_field_name = 'project'
+    column_names = "date voucher partner amount state"

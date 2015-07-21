@@ -21,7 +21,11 @@ class AnonymousUser(object):
     Similar to Django's approach to represent anonymous visitors
     as a special kind of user.
     """
-    #~ authenticated = False
+    authenticated = False
+    """This is always `False`.
+    See also :attr:`lino.modlib.users.models.User.authenticated`.
+    """
+
     email = None
     username = 'anonymous'
     modified = None

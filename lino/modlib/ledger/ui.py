@@ -604,3 +604,90 @@ class ActivityReport(Report):
 #                 label=MODULE_LABEL)
 
 
+class Movements(dd.Table):
+    """
+    The base table for all tables working on :class:`Movement`.
+
+    Displayed by :menuselection:`Explorer --> Accounting --> Movements`.
+
+    This is also the base class for :class:`MovementsByVoucher`,
+    :class:`MovementsByAccount` and :class:`MovementsByPartner` and
+    defines e.g. filtering parameters.
+    """
+    
+    model = 'ledger.Movement'
+    column_names = 'voucher_link account debit credit *'
+    editable = False
+    parameters = mixins.ObservedPeriod(
+        pyear=FiscalYears.field(blank=True),
+        ppartner=models.ForeignKey('contacts.Partner', blank=True, null=True),
+        paccount=models.ForeignKey('accounts.Account', blank=True, null=True),
+        pjournal=JournalRef(blank=True),
+        cleared=dd.YesNo.field(_("Show cleared movements"), blank=True))
+    params_layout = """
+    start_date end_date cleared
+    pjournal pyear ppartner paccount"""
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Movements, cls).get_request_queryset(ar)
+
+        if ar.param_values.cleared == dd.YesNo.yes:
+            qs = qs.filter(satisfied=True)
+        elif ar.param_values.cleared == dd.YesNo.no:
+            qs = qs.filter(satisfied=False)
+
+        if ar.param_values.ppartner:
+            qs = qs.filter(partner=ar.param_values.ppartner)
+        if ar.param_values.paccount:
+            qs = qs.filter(account=ar.param_values.paccount)
+        if ar.param_values.pyear:
+            qs = qs.filter(voucher__year=ar.param_values.pyear)
+        if ar.param_values.pjournal:
+            qs = qs.filter(voucher__journal=ar.param_values.pjournal)
+        return qs
+
+
+class MovementsByVoucher(Movements):
+    master_key = 'voucher'
+    column_names = 'seqno account debit credit match satisfied'
+    auto_fit_column_widths = True
+
+
+class MovementsByPartner(Movements):
+    master_key = 'partner'
+    order_by = ['-voucher__date']
+    column_names = ('voucher__date voucher_link debit credit '
+                    'account match project satisfied')
+    auto_fit_column_widths = True
+
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        kw = super(MovementsByPartner, cls).param_defaults(ar, **kw)
+        kw.update(cleared=dd.YesNo.no)
+        kw.update(pyear='')
+        return kw
+
+
+class MovementsByProject(MovementsByPartner):
+    master_key = 'project'
+    column_names = ('voucher__date voucher_link debit credit '
+                    'account match partner satisfied')
+
+
+class MovementsByAccount(Movements):
+    master_key = 'account'
+    order_by = ['-voucher__date']
+    column_names = 'voucher__date voucher_link debit credit \
+    partner match satisfied'
+    auto_fit_column_widths = True
+
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        kw = super(MovementsByAccount, cls).param_defaults(ar, **kw)
+        if ar.master_instance is not None and ar.master_instance.clearable:
+            kw.update(cleared=dd.YesNo.no)
+            kw.update(pyear='')
+        return kw
+
+

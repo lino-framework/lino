@@ -245,14 +245,17 @@ class PaymentTerm(mixins.BabelNamed):
 
 
 class Voucher(UserAuthored, mixins.Registrable):
-    """
-    A Voucher is a document that represents a monetary transaction.
-    Subclasses must define a field `state`.  This model is subclassed
-    by sales.Invoice, vat.AccountInvoice, finan.Statement etc...
-    
+    """A Voucher is a document that represents a monetary transaction.
+
     It is *not* abstract so that :class:`Movement` can have a ForeignKey
-    to a Voucher. Otherwise we would have to care ourselves about data
-    integrity, and we couln't make queries on `voucher__xxx`.
+    to a Voucher.
+
+    A voucher is never instantiated using this base model but using
+    one of its subclasses. Examples of subclassed are sales.Invoice,
+    vat.AccountInvoice (or vatless.AccountInvoice), finan.Statement
+    etc...
+    
+    Subclasses must define a field `state`.
 
     """
 
@@ -514,87 +517,6 @@ class Movement(PartnerRelated):
         return "%s.%d" % (unicode(self.voucher), self.seqno)
 
 
-class Movements(dd.Table):
-    """
-    The base table for all tables working on :class:`Movement`.
-
-    Displayed by :menuselection:`Explorer --> Accounting --> Movements`.
-
-    This is also the base class for :class:`MovementsByVoucher`,
-    :class:`MovementsByAccount` and :class:`MovementsByPartner` and
-    defines e.g. filtering parameters.
-    """
-    
-    model = Movement
-    column_names = 'voucher_link account debit credit *'
-    editable = False
-    parameters = mixins.ObservedPeriod(
-        pyear=FiscalYears.field(blank=True),
-        ppartner=models.ForeignKey('contacts.Partner', blank=True, null=True),
-        paccount=models.ForeignKey('accounts.Account', blank=True, null=True),
-        pjournal=JournalRef(blank=True),
-        cleared=dd.YesNo.field(_("Show cleared movements"), blank=True))
-    params_layout = """
-    start_date end_date cleared
-    pjournal pyear ppartner paccount"""
-
-    @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Movements, cls).get_request_queryset(ar)
-
-        if ar.param_values.cleared == dd.YesNo.yes:
-            qs = qs.filter(satisfied=True)
-        elif ar.param_values.cleared == dd.YesNo.no:
-            qs = qs.filter(satisfied=False)
-
-        if ar.param_values.ppartner:
-            qs = qs.filter(partner=ar.param_values.ppartner)
-        if ar.param_values.paccount:
-            qs = qs.filter(account=ar.param_values.paccount)
-        if ar.param_values.pyear:
-            qs = qs.filter(voucher__year=ar.param_values.pyear)
-        if ar.param_values.pjournal:
-            qs = qs.filter(voucher__journal=ar.param_values.pjournal)
-        return qs
-
-
-class MovementsByVoucher(Movements):
-    master_key = 'voucher'
-    column_names = 'seqno account debit credit match satisfied'
-    auto_fit_column_widths = True
-
-
-class MovementsByPartner(Movements):
-    master_key = 'partner'
-    order_by = ['-voucher__date']
-    column_names = ('voucher__date voucher_link debit credit '
-                    'account match satisfied')
-    auto_fit_column_widths = True
-
-    @classmethod
-    def param_defaults(cls, ar, **kw):
-        kw = super(MovementsByPartner, cls).param_defaults(ar, **kw)
-        kw.update(cleared=dd.YesNo.no)
-        kw.update(pyear='')
-        return kw
-
-
-class MovementsByAccount(Movements):
-    master_key = 'account'
-    order_by = ['-voucher__date']
-    column_names = 'voucher__date voucher_link debit credit \
-    partner match satisfied'
-    auto_fit_column_widths = True
-
-    @classmethod
-    def param_defaults(cls, ar, **kw):
-        kw = super(MovementsByAccount, cls).param_defaults(ar, **kw)
-        if ar.master_instance is not None and ar.master_instance.clearable:
-            kw.update(cleared=dd.YesNo.no)
-            kw.update(pyear='')
-        return kw
-
-
 class MatchRule(dd.Model):
     """A **match rule** specifies that a movement into given account can
 be cleared using a given journal.
@@ -611,20 +533,15 @@ be cleared using a given journal.
     journal = JournalRef()
 
 
-def customize_accounts():
-
-    for tt in TradeTypes.objects():
-        dd.inject_field(
-            'accounts.Account',
-            tt.name + '_allowed',
-            models.BooleanField(verbose_name=tt.text, default=False))
-
+for tt in TradeTypes.objects():
     dd.inject_field(
         'accounts.Account',
-        'clearable', models.BooleanField(_("Clearable"), default=False))
+        tt.name + '_allowed',
+        models.BooleanField(verbose_name=tt.text, default=False))
 
-
-customize_accounts()
+dd.inject_field(
+    'accounts.Account',
+    'clearable', models.BooleanField(_("Clearable"), default=False))
 
 
 def update_partner_satisfied(p):

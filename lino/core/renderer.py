@@ -23,6 +23,8 @@ from lino.utils.xmlgen.html import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
 from lino.core import constants
+# from lino.utils.xmlgen.html import _html2rst as html2rst
+from lino.utils.xmlgen.html import html2rst
 
 from . import elems
 
@@ -349,6 +351,13 @@ class TextRenderer(HtmlRenderer):
 
     def show_table(self, ar, column_names=None, header_level=None, **kwargs):
         """Render the given table request as reStructuredText to stdout."""
+
+        if ar.actor.master is not None:
+            if ar.actor.slave_grid_format == 'summary':
+                print(html2rst(
+                    ar.actor.get_slave_summary(ar.master_instance, ar)))
+                return
+
         fields, headers, widths = ar.get_field_info(column_names)
 
         sums = [fld.zero for fld in fields]
@@ -381,8 +390,6 @@ class TextRenderer(HtmlRenderer):
         """Render the given story as reStructuredText to stdout."""
         from lino.core.actors import Actor
         from lino.core.requests import ActionRequest
-        # from lino.utils.xmlgen.html import _html2rst as html2rst
-        from lino.utils.xmlgen.html import html2rst
 
         for item in story:
             if E.iselement(item):

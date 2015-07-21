@@ -1,5 +1,5 @@
 <div class="htmlText" style="margin:5px">
-{% if request.user.profile.authenticated %}
+{% if request.user.authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}
         {% for mi in settings.SITE.get_quicklinks(ar).items %}

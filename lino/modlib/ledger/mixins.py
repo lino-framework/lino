@@ -21,8 +21,9 @@ from lino.mixins import Sequenced
 class PartnerRelated(dd.Model):
     """Base class for things that are related to one and only one trade
     partner (i.e. another organization or person). This is base class
-    for trade documents (e.g. invoices or offers), entries of
-    financial vouchers and ledger movements.
+    for both (1) trade document vouchers (e.g. invoices or offers) and
+    (2) for the individual entries of financial vouchers and ledger
+    movements.
 
     .. attribute:: partner
 
@@ -31,10 +32,10 @@ class PartnerRelated(dd.Model):
 
     .. attribute:: project
 
-        If the :attr:`project_model
+        Pointer to the "project". This field exists only if the
+        :attr:`project_model
         <lino.modlib.ledger.Plugin.project_model>` setting of the
-        :mod:`lino.modlib.vat` plugin is nonempty, above objects will
-        have a
+        :mod:`lino.modlib.ledger` plugin is nonempty.
 
     .. attribute:: payment_term
 

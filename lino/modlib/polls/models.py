@@ -590,7 +590,9 @@ class AnswersByResponse(dd.VirtualTable):
             return
         AnswerRemarks = rt.modules.polls.AnswerRemarksByAnswer
         all_responses = rt.modules.polls.Response.objects.filter(
-            poll=response.poll, partner=response.partner).order_by('date')
+            poll=response.poll).order_by('date')
+        if response.partner:
+            all_responses = all_responses.filter(partner=response.partner)
         ht = xghtml.Table()
         ht.attrib.update(cellspacing="5px", bgcolor="#ffffff", width="100%")
         cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")

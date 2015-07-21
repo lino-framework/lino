@@ -78,13 +78,12 @@ class QuickTest(RemoteAuthTestCase):
         s = ar.to_rst()
         # print(s)
         self.assertEqual(s, """\
-============= ======== ===============
- Parent        Type     Child
-------------- -------- ---------------
- Mr John Doe   Father   Mr Joseph Doe
- Mr John Doe   Father   Mrs Mary Doe
-============= ======== ===============
+John is
 
+Father of *Mary* (4 years)
+
+Father of *Joseph* (5 years) |br| 
+Create relationship as **Father**/**Son** **Adoptive father**/**Adopted son** **Husband** **Partner** **Stepfather**/**Stepson** **Brother** **Cousin** **Uncle**/**Nephew** **Relative** **Other**
 """)
 
         # Here we are just testing whether no exception is risen. The
