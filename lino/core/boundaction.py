@@ -105,9 +105,29 @@ class BoundAction(object):
         return self.actor.get_row_permission(obj, ar, state, self)
 
     def get_bound_action_permission(self, ar, obj, state):
-        if not self.action.get_action_permission(ar, obj, state):
+        """Checks whether this bound action has permission to run.
+
+        This is done in two steps: first we check the requirements
+        specified in `required_roles` and required_states, then (if
+        these pass) we check any custom permissions defined on the
+        action via :meth:`get_action_permission
+        <lino.core.actions.Action.get_action_permission>`.
+
+        The order of these is important since a custom permission
+        handler of an action with default `required_roles` can make
+        database queries based on `ar.get_user()`, which would cause
+        errors like :message:`Cannot assign
+        "<lino.modlib.users.utils.AnonymousUser object at
+        0x7f562512f210>": "Upload.user" must be a "User" instance`
+        when called by anonymous.
+
+        """
+        if not self._allow(ar.get_user(), obj, state):
             return False
-        return self._allow(ar.get_user(), obj, state)
+        return self.action.get_action_permission(ar, obj, state)
+        # if not self.action.get_action_permission(ar, obj, state):
+        #     return False
+        # return self._allow(ar.get_user(), obj, state)
 
     def get_view_permission(self, profile):
         """

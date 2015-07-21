@@ -27,6 +27,7 @@ class AnonymousUser(object):
     modified = None
     partner = None
     language = None
+    readonly = True
     #~ id = None
     pk = None
 

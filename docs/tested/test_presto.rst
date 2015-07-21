@@ -1,30 +1,22 @@
-Exporting to Excel (obsolete)
-=============================
+.. _lino.tested.presto:
 
-This document is obsolete. Replaced by :doc:`min1`.
+==================================
+Miscellaneous tests in Lino Presto
+==================================
 
 .. to run only this test:
-  $ python setup.py test -s tests.DocsTests.test_presto
+    $ python setup.py test -s tests.DocsTests.test_presto
+    
+    doctest init
 
-General stuff:
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.settings.doctests'
+    >>> from lino.api.doctest import *
 
->>> import os
->>> import json
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.presto.settings.doctests'
->>> from lino.api.shell import *
->>> from lino.api import dd
->>> from django.test import Client
->>> client = Client()
+Test whether the bootstrap3 user interface works:
 
-
-
->>> url = '/api/countries/Countries?_dc=1408820029695&cw=198&cw=198&cw=198&cw=198&cw=54&cw=54&cw=45&ch=&ch=&ch=&ch=&ch=&ch=true&ch=true&ci=name&ci=name_de&ci=name_fr&ci=name_et&ci=isocode&ci=short_code&ci=iso3&name=0&an=export_excel'
->>> res = client.get(url, REMOTE_USER='robin')
->>> print(res.status_code)
+>>> url = '/bs3/products/Products'
+>>> res = test_client.get(url, REMOTE_USER='robin')
+>>> print res.status_code
 200
->>> result = json.loads(res.content)
->>> print(result.keys())
-[u'open_url', u'success']
->>> print(result['open_url'])
-/media/cache/appyxls/127.0.0.1/countries.Countries.xls
 

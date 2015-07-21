@@ -3,17 +3,22 @@
 Exporting to Excel
 ==================
 
-This document obsoletes :doc:`test_presto`.
+When :mod:`lino.modlib.export_excel` is installed, every grid view has
+a button `Export to Excel`.
+
+This document tests this functionality.
+
 
 .. to run only this test:
 
-  $ python setup.py test -s tests.DocsTests.test_min1
+    $ python setup.py test -s tests.DocsTests.test_min1
+    
+    doctest init:
 
-General stuff:
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.doctests'
+    >>> from lino.api.doctest import *
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.doctests'
->>> from lino.api.doctest import *
 
 Robin has twelve appointments in the period 20141023..20141122:
 

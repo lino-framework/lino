@@ -47,6 +47,12 @@ class Plugin(ad.Plugin):
 
     # _default_template_handlers = {}
 
+    responsible_user = None
+    """The username of the user responsible for monitoring the excerpts
+    system. This is currently used only by
+    :mod:`lino.modlib.excerpts.fixtures.demo2`.
+    """
+
     def setup_main_menu(self, site, profile, m):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)

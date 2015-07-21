@@ -40,8 +40,7 @@ blogs = dd.resolve_app('blogs')
 
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
-# from lino.modlib.contenttypes.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import UserAuthored
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
@@ -104,28 +103,17 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
         return self.ref or self.name
 
 
-# class Sponsorship(dd.Model):
-#     class Meta:
-#         verbose_name = _("Sponsorship")
-#         verbose_name_plural = _('Sponsorships')
+class Site(dd.Model):
+    class Meta:
+        verbose_name = _("Site")
+        verbose_name_plural = _('Sites')
 
-#     project = dd.ForeignKey('tickets.Project')
-#     partner = dd.ForeignKey('contacts.Partner')
-#     remark = models.CharField(_("Remark"), max_length=200, blank=True)
+    partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
+    name = models.CharField(_("Designation"), max_length=200)
+    remark = models.CharField(_("Remark"), max_length=200, blank=True)
 
-
-# class Sponsorships(dd.Table):
-#     model = 'tickets.Sponsorship'
-
-
-# class SponsorshipsByProject(Sponsorships):
-#     master_key = 'project'
-#     column_names = "partner remark *"
-
-
-# class SponsorshipsByPartner(Sponsorships):
-#     master_key = 'partner'
-#     column_names = "project remark *"
+    def __unicode__(self):
+        return self.name
 
 
 class Milestone(dd.Model):  # mixins.Referrable):
@@ -308,6 +296,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     project = dd.ForeignKey(
         'tickets.Project', blank=True, null=True,
         related_name="tickets_by_project")
+    site = dd.ForeignKey('tickets.Site', blank=True, null=True)
     product = dd.ForeignKey('products.Product', blank=True, null=True)
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
     summary = models.CharField(
@@ -413,8 +402,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
 
-class Interest(UserAuthored):
-    """An **interest** is the fact that a given user is interested in the
+class Interest(dd.Model):
+    """An **interest** is the fact that a given site is interested in the
     tickets related to a given product.
 
     """
@@ -426,7 +415,11 @@ class Interest(UserAuthored):
         'products.Product',
         related_name='interests_by_product')
 
-dd.update_field(Interest, 'user', verbose_name=_("User"))
+    site = dd.ForeignKey(
+        'tickets.Site',
+        related_name='interests_by_site')
+
+# dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
 dd.inject_field(

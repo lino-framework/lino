@@ -85,10 +85,10 @@ class Projects(dd.Table):
     parameters = mixins.ObservedPeriod(
         observed_event=ProjectEvents.field(blank=True),
         interesting_for=dd.ForeignKey(
-            settings.SITE.user_model,
+            'tickets.Site',
             verbose_name=_("Interesting for"),
             blank=True, null=True,
-            help_text=_("Only project interesting for this user.")))
+            help_text=_("Only project interesting for this site.")))
     params_layout = """interesting_for start_date end_date observed_event"""
 
     @classmethod
@@ -100,7 +100,10 @@ class Projects(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.interesting_for:
-            interests = pv.interesting_for.tickets_interest_set_by_user.values(
+            qs = qs.filter(
+                Q(tickets_by_project__site=pv.interesting_for) |
+                Q(tickets_by_project__site__isnull=True))
+            interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
                 qs = qs.filter(tickets_by_project__product__in=interests)
@@ -237,13 +240,13 @@ class TicketDetail(dd.DetailLayout):
     
     general1 = """
     summary:40 id ticket_type:10
-    reporter project product reported_for
+    reporter project product site
     workflow_buttons:20 feedback standby closed private
     """
 
     planning = dd.Panel("""
-    nickname:10 fixed_for created modified
-    state assigned_to duplicate_of planned_time 
+    nickname:10 created modified reported_for fixed_for
+    state assigned_to duplicate_of planned_time
     DuplicatesByTicket  #ChildrenByTicket
     """, label=_("Planning"))
 
@@ -273,10 +276,10 @@ class Tickets(dd.Table):
             blank=True, null=True,
             help_text=_("Only rows authored by this user.")),
         interesting_for=dd.ForeignKey(
-            settings.SITE.user_model,
+            'tickets.Site',
             verbose_name=_("Interesting for"),
             blank=True, null=True,
-            help_text=_("Only tickets interesting for this user.")),
+            help_text=_("Only tickets interesting for this site.")),
         project=dd.ForeignKey(
             'tickets.Project',
             blank=True, null=True),
@@ -305,7 +308,8 @@ class Tickets(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.interesting_for:
-            interests = pv.interesting_for.tickets_interest_set_by_user.values(
+            qs = qs.filter(Q(site=pv.interesting_for) | Q(site__isnull=True))
+            interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
                 qs = qs.filter(product__in=interests)
@@ -404,7 +408,7 @@ class InterestingTickets(ActiveTickets):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(InterestingTickets, self).param_defaults(ar, **kw)
-        kw.update(interesting_for=ar.get_user())
+        # kw.update(interesting_for=ar.get_user())
         return kw
 
 
@@ -433,25 +437,53 @@ class TicketsByReporter(Tickets):
     column_names = "id summary:60 workflow_buttons:20 *"
 
 
+class Sites(dd.Table):
+    model = 'tickets.Site'
+    column_names = "name partner remark id *"
+    order_by = ['name']
+    auto_fit_column_widths = True
+
+    insert_layout = """
+    name
+    remark
+    """
+
+    detail_layout = """
+    id name partner
+    remark
+    InterestsBySite TicketsBySite
+    """
+
+
+class SitesByPartner(Sites):
+    master_key = 'partner'
+    column_names = "name remark *"
+
+
 class Interests(dd.Table):
     model = 'tickets.Interest'
-    column_names = "user product *"
+    column_names = "site product *"
     auto_fit_column_widths = True
 
 
-class MyInterests(My, Interests):
-    order_by = ["product__ref"]
-    column_names = 'product__ref product *'
+# class MyInterests(My, Interests):
+#     order_by = ["product__ref"]
+#     column_names = 'product__ref product *'
 
 
-class InterestsByUser(Interests):
-    master_key = 'user'
+class InterestsBySite(Interests):
+    master_key = 'site'
     order_by = ["product"]
     column_names = 'product *'
 
 
 class InterestsByProduct(Interests):
     master_key = 'product'
-    order_by = ["user"]
-    column_names = 'user *'
+    order_by = ["site"]
+    column_names = 'site *'
+
+
+class TicketsBySite(Tickets):
+    master_key = 'site'
+
 

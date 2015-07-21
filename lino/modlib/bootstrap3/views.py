@@ -44,6 +44,7 @@ def http_response(ar, tplname, context):
         MENUS[k] = menu
     context.update(menu=menu)
     context = ar.get_printable_context(**context)
+    context['ar'] = ar
     template = settings.SITE.jinja_env.get_template(tplname)
 
     response = http.HttpResponse(
@@ -109,5 +110,5 @@ class Index(View):
         ar = BaseRequest(
             user=user, request=request,
             renderer=ui.renderer)
-        context.update(ar=ar)
+        # context.update(ar=ar)
         return http_response(ar, 'bootstrap3/index.html', context)

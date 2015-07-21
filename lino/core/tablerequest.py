@@ -530,18 +530,18 @@ class TableRequest(ActionRequest):
         """
         for i, fld in enumerate(fields):
             if fld.field is not None:
-                if True:
-                    sf = get_atomizer(row.__class__, fld.field, fld.field.name)
+                sf = get_atomizer(row.__class__, fld.field, fld.field.name)
+                if False:
                     try:
                         getter = sf.full_value_from_object
                         v = getter(row, self)
                     except Exception as e:
-                        raise Exception("20150218 %s: %s" % (fld.field, e))
+                        raise Exception("20150218 %s: %s" % (sf, e))
                         # was used to find bug 20130422:
                         yield "%s:\n%s" % (fld.field, e)
                         continue
                 else:
-                    getter = fld.field._lino_atomizer.full_value_from_object
+                    getter = sf.full_value_from_object
                     v = getter(row, self)
                     
                 if v is None:

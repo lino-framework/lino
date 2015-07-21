@@ -8,11 +8,13 @@ from lino.utils import Cycler
 
 def objects():
     User = rt.modules.users.User
+    # Company = rt.modules.contacts.Company
     Product = rt.modules.products.Product
     TT = rt.modules.tickets.TicketType
     Ticket = rt.modules.tickets.Ticket
     Interest = rt.modules.tickets.Interest
     Project = rt.modules.tickets.Project
+    Site = rt.modules.tickets.Site
 
     user = rt.modules.users.UserProfiles.user
     dev = rt.modules.users.UserProfiles.developer
@@ -25,7 +27,7 @@ def objects():
 
     yield TT(**dd.str2kw('name', _("Bugfix")))
     yield TT(**dd.str2kw('name', _("Enhancement")))
-    yield TT(**dd.str2kw('name', _("Deployment")))
+    yield TT(**dd.str2kw('name', _("Upgrade")))
 
     TYPES = Cycler(TT.objects.all())
 
@@ -36,14 +38,24 @@ def objects():
 
     PRODUCTS = Cycler(Product.objects.all())
 
-    # note that developers has no interest, so they sees all tickets
-    for u in User.objects.filter(profile=user):
-        for i in range(3):
-            yield Interest(user=u, product=PRODUCTS.pop())
+    # kettenis = Company(name="ÖSHZ Kettenis")
+    # yield kettenis
+    # schaerbeek = Company(name="CPAS de Schaerbeek")
+    # yield schaerbeek
 
-    yield Project(name="Eupen", ref="eupen")
-    yield Project(name="Raeren", ref="raeren")
-    yield Project(name="Bütgenbach", ref="bbach")
+    # yield Site(name="welket", partner=kettenis)
+    # yield Site(name="welsch", partner=schaerbeek)
+
+    yield Site(name="welket")
+    yield Site(name="welsch")
+
+    for u in Site.objects.all():
+        for i in range(3):
+            yield Interest(site=u, product=PRODUCTS.pop())
+
+    yield Project(name="Framework", ref="lino")
+    yield Project(name="Team", ref="team")
+    yield Project(name="Documentation", ref="docs")
 
     PROJECTS = Cycler(Project.objects.all())
 
@@ -53,7 +65,9 @@ def objects():
             reporter=USERS.pop(),
             product=PRODUCTS.pop(), project=PROJECTS.pop())
         return Ticket(**kwargs)
-    yield ticket("Foo fails to bar when baz")
+
+    welket = Site.objects.get(name="welket")
+    yield ticket("Foo fails to bar when baz", site=welket)
     yield ticket("Bar is not always baz")
     yield ticket("Baz sucks")
     yield ticket("Foo and bar don't baz")

@@ -264,7 +264,7 @@ class InvestedTime(dd.Table):
     
 class ReportedTickets(Tickets, InvestedTime):
     master = 'clocking.ServiceReport'
-    column_names = "summary id reporter project product invested_time"
+    column_names = "summary id reporter project product site invested_time"
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -328,50 +328,6 @@ class ServiceReports(dd.Table):
     ReportedTickets
     ReportedProjects
     """
-
-
-class unused_ServiceReport(Report):
-    """Gives an overview about the times worked during a given period.
-
-    """
-
-    label = _("Service Report")
-
-    parameters = ObservedPeriod(
-        interesting_for=dd.ForeignKey(
-            settings.SITE.user_model,
-            verbose_name=_("Interesting for"),
-            blank=True, null=True,
-            help_text=_("Only tickets interesting for this user.")),
-    )
-
-    params_layout = "start_date end_date interesting_for"
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(ServiceReport, self).param_defaults(ar, **kw)
-        D = datetime.date
-        kw.update(start_date=D(dd.today().year, 1, 1))
-        kw.update(end_date=dd.today())
-        return kw
-
-    @classmethod
-    def get_story(cls, self, ar):
-        pv = ar.param_values
-        yield E.h2(_("Introduction"))
-        s = "Service report for {0}".format(pv.interesting_for)
-        s += " (period from {0} to {1})".format(pv.start_date, pv.end_date)
-        yield E.p(s)
-        spv = dict(start_date=pv.start_date, end_date=pv.end_date)
-        spv.update(observed_event=TicketEvents.clocking)
-        spv.update(interesting_for=pv.interesting_for)
-        yield E.h2(ReportedTickets.label)
-        yield ar.spawn(ReportedTickets, param_values=spv)
-
-        spv.update(observed_event=ProjectEvents.clocking)
-        yield E.h2(ReportedProjects.label)
-        yield ar.spawn(ReportedProjects, param_values=spv)
-
 
 from lino.modlib.tickets.models import Project
 from lino.modlib.tickets.models import Ticket

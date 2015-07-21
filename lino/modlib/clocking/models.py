@@ -41,6 +41,8 @@ from django.db import models
 from lino import mixins
 from lino.api import dd, rt, _
 
+from lino.core.roles import SiteUser
+
 from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 
@@ -102,15 +104,22 @@ class EndTicketSession(dd.Action):
     help_text = _("End the active session on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
+    required_roles = dd.login_required()
     
     def get_action_permission(self, ar, obj, state):
+        # u = ar.get_user()
+        # if not u.profile.has_required_roles([SiteUser]):
+        #     # avoid query with AnonymousUser
+        #     return False
+        if not super(EndTicketSession, self).get_action_permission(
+                ar, obj, state):
+            return False
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
             user=ar.get_user(), ticket=obj, end_time__isnull=True)
         if qs.count() == 0:
             return False
-        return super(EndTicketSession, self).get_action_permission(
-            ar, obj, state)
+        return True
 
     def run_from_ui(self, ar, **kw):
         Session = rt.modules.clocking.Session
@@ -140,9 +149,13 @@ class StartTicketSession(dd.Action):
     def get_action_permission(self, ar, obj, state):
         if obj.standby or obj.closed:
             return False
+        u = ar.get_user()
+        if not u.profile.has_required_roles([SiteUser]):
+            # avoid query with AnonymousUser
+            return False
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
-            user=ar.get_user(), ticket=obj, end_time__isnull=True)
+            user=u, ticket=obj, end_time__isnull=True)
         if qs.count():
             return False
         return super(StartTicketSession, self).get_action_permission(
@@ -306,10 +319,10 @@ class ServiceReport(Certifiable, DatePeriod):
         verbose_name_plural = _("Service Reports")
 
     interesting_for = dd.ForeignKey(
-        settings.SITE.user_model,
+        'tickets.Site',
         verbose_name=_("Interesting for"),
         blank=True, null=True,
-        help_text=_("Only tickets interesting for this user."))
+        help_text=_("Only tickets interesting for this site."))
 
 
 from .ui import *

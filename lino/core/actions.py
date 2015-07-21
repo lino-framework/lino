@@ -1223,7 +1223,7 @@ def action(*args, **kw):
     In practice you'll possibly use:
     :attr:`label <Action.label>`,
     :attr:`help_text <Action.help_text>` and
-    :attr:`required_roles <Action.required_roles>`.
+    :attr:`required_roles <lino.core.permissions.Permittable.required_roles>`.
 
     """
     def decorator(fn):

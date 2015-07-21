@@ -46,4 +46,7 @@ def objects():
             yield obj
 
     ServiceReport = rt.modules.clocking.ServiceReport
-    yield ServiceReport(start_date=dd.today(-90))
+    Site = rt.modules.tickets.Site
+    welket = Site.objects.get(name="welket")
+    yield ServiceReport(
+        start_date=dd.today(-90), interesting_for=welket)
