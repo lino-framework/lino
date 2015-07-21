@@ -41,7 +41,8 @@ them both, but some other applicaton might use only :mod:`tickets
 <lino.modlib.clocking>`.
 
 >>> dd.plugins.clocking.needs_plugins
-['lino.modlib.tickets']
+['lino.modlib.tickets', 'lino.modlib.excerpts']
+
 >>> dd.plugins.tickets.needs_plugins
 []
 
@@ -286,14 +287,16 @@ It currently contains two tables:
   are assigned to this project.
 
 This report will be a valuable help for developers like me because it
-serves as a base for writing invoices :-)
+serves as a base for writing invoices.
+
+The following tests are currently skipped.
 
 Here is a version for Marc (who is not interested in all projects):
 
 
 >>> pv = dict(interesting_for=marc)
 >>> ses.show(clocking.ServiceReport, param_values=pv)
-... #doctest: +REPORT_UDIFF
+... #doctest: +REPORT_UDIFF +SKIP
 ------------
 Introduction
 ------------
@@ -330,7 +333,7 @@ considered):
 
 >>> pv = dict(interesting_for=luc)
 >>> ses.show(clocking.ServiceReport, param_values=pv)
-... #doctest: +REPORT_UDIFF
+... #doctest: +REPORT_UDIFF +SKIP
 ------------
 Introduction
 ------------

@@ -33,6 +33,8 @@ class Site(Site):
 
         """
         yield super(Site, self).get_installed_apps()
+        yield 'lino.modlib.extjs'
+        yield 'lino.modlib.bootstrap3'
         yield 'lino.modlib.contenttypes'
         # yield 'lino.modlib.system'
         yield 'lino_noi.lib.users'
@@ -44,7 +46,7 @@ class Site(Site):
         yield 'lino.modlib.lists'
 
         # yield 'lino.modlib.uploads'
-        yield 'lino.modlib.excerpts'
+        # yield 'lino.modlib.excerpts'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
