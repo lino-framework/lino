@@ -12,6 +12,8 @@ specifications. One of their goal is to get tested.
    :maxdepth: 1
    :glob:
   
+   general
    tickets
+   clocking
    smtpd
    hosts

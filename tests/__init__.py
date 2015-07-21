@@ -32,8 +32,17 @@ class SpecsTests(BaseTestCase):
     def test_smtpd(self):
         self.run_simple_doctests('docs/specs/smtpd.rst')
 
+    def test_hosts(self):
+        self.run_simple_doctests('docs/specs/hosts.rst')
+
     def test_tickets(self):
         self.run_simple_doctests('docs/specs/tickets.rst')
+
+    def test_clocking(self):
+        self.run_simple_doctests('docs/specs/clocking.rst')
+
+    def test_general(self):
+        self.run_simple_doctests('docs/specs/general.rst')
 
 
 class DemoTests(BaseTestCase):
