@@ -277,7 +277,8 @@ class Document(object):
             E.body(*body)
         )
 
-IGNORED_TAGS = set(['tbody', 'table', 'div', 'span'])
+NEWLINE_TAGS = set(['p', 'thead', 'tr', 'li'])
+IGNORED_TAGS = set(['tbody', 'table', 'div', 'span', 'br', 'ul', 'ol'])
 
 
 def html2rst(e, stripped=False):
@@ -316,12 +317,21 @@ def html2rst(e, stripped=False):
     An empty bold text:
     <BLANKLINE>
 
+    >>> e = E.ul(E.li("First"), E.li("Second"))
+    >>> print html2rst(e, True)
+    <BLANKLINE>
+    First
+    Second
+    <BLANKLINE>
     """
     #~ print "20120613 html2odftext()", e.tag, e.text
     rst = ''
     if e.tag in ('p', 'li'):
         if not stripped:
             rst += '\n\n'
+
+    elif e.tag in ('ul', 'ol'):
+        rst += '\n'
     elif e.tag == 'br':
         if stripped:
             rst += '\n'
@@ -339,7 +349,7 @@ def html2rst(e, stripped=False):
     for child in e:
         rst += html2rst(child, stripped)
 
-    if e.tag == 'p':
+    if e.tag in NEWLINE_TAGS:
         if stripped:
             rst += '\n'
         else:
@@ -364,14 +374,13 @@ def html2rst(e, stripped=False):
         rst += ' <%s>`__' % e.get('href')
     elif e.tag in ('td', 'th'):
         rst += ' '
-    elif e.tag in ('thead', 'tr'):
-        rst += '\n'
     else:
         if not e.tag in IGNORED_TAGS:
             raise Exception("20150723 %s" % e.tag)
 
     if e.tail:
         rst += e.tail
+
     return rst
 
 
