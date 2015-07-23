@@ -224,17 +224,19 @@ class AreaUploads(Uploads):
     @classmethod
     def get_slave_summary(self, obj, ar):
         """Displays the uploads related to this controller as a list grouped
-by uploads type.
+        by uploads type.
 
-Note that this also works on
-:class:`lino_welfare.modlib.uploads.models.UploadsByClient` and their
-subclasses for the different `_upload_area`.
+        Note that this also works on
+        :class:`lino_welfare.modlib.uploads.models.UploadsByClient`
+        and their subclasses for the different `_upload_area`.
 
         """
         UploadType = rt.modules.uploads.UploadType
         # Upload = rt.modules.uploads.Upload
         elems = []
         types = []
+
+        perm = ar.get_user().profile.has_required_roles(self.required_roles)
 
         for ut in UploadType.objects.filter(upload_area=self._upload_area):
             sar = ar.spawn(
@@ -264,8 +266,8 @@ subclasses for the different `_upload_area`.
                     files.append(E.span(edit, ' ', show))
                 else:
                     files.append(edit)
-            if ut.wanted and (
-                    ut.max_number < 0 or len(files) < ut.max_number):
+            if perm and ut.wanted \
+               and (ut.max_number < 0 or len(files) < ut.max_number):
                 btn = self.insert_action.request_from(
                     sar, master_instance=obj,
                     known_values=dict(type_id=ut.id)).ar2button()

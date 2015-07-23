@@ -16,6 +16,21 @@ from lino.modlib.users.mixins import UserAuthored, ByUser
 
 
 class Star(UserAuthored, Controllable):
+    """Represents the fact that a given database object is starred by a
+    given User.
+
+    .. attribute:: owner
+
+        The starred database object
+
+    .. attribute:: user
+
+        The starring user (pointer to :class:lino.modlib.users.models.User`
+
+    """
+
+    controller_is_optional = False
+
     class Meta:
         verbose_name = _("Star")
         verbose_name_plural = _("Stars")

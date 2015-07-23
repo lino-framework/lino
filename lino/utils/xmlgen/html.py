@@ -71,11 +71,11 @@ class HtmlNamespace(Namespace):
             return super(HtmlNamespace, self).tostring(v, *args, **kw)
         return unicode(v)
 
-    def to_rst(self, v):
+    def to_rst(self, v, stripped=True):
         if isinstance(v, types.GeneratorType):
-            return "".join([self.to_rst(x) for x in v])
+            return "".join([self.to_rst(x, stripped) for x in v])
         if E.iselement(v):
-            return _html2rst(v)
+            return html2rst(v, stripped)
         return unicode(v)
 
 
@@ -277,14 +277,56 @@ class Document(object):
             E.body(*body)
         )
 
+IGNORED_TAGS = set(['tbody', 'table', 'div', 'span'])
 
-def _html2rst(e, **kw):
+
+def html2rst(e, stripped=False):
+    """Convert a :mod:`lino.utils.xmlgen.html` element to a
+    reStructuredText string.
+
+    If `stripped` is `True`, output will be more concise and optimized
+    for console output, but possibly not valid reStructuredText.
+
+    Usage example:
+    
+    >>> from lino.utils.xmlgen.html import E, html2rst
+    >>> e = E.p("This is a ", E.b("first"), " test.")
+    >>> print html2rst(e, True)
+    This is a **first** test.
+    <BLANKLINE>
+    
+    >>> e = E.p(E.b("This")," is another test.")
+    >>> print html2rst(e, True)
+    **This** is another test.
+    <BLANKLINE>
+    
+    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
+    >>> print html2rst(e, True)
+    **This** is *another* test.
+    <BLANKLINE>
+    
+    >>> url = "http://example.com"
+    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
+    >>> print html2rst(e, True)
+    **This** is `a link <http://example.com>`__.
+    <BLANKLINE>
+    
+    >>> e = E.p("An empty bold text:",E.b(""))
+    >>> print html2rst(e, True)
+    An empty bold text:
+    <BLANKLINE>
+
+    """
     #~ print "20120613 html2odftext()", e.tag, e.text
     rst = ''
     if e.tag in ('p', 'li'):
-        rst += '\n\n'
+        if not stripped:
+            rst += '\n\n'
     elif e.tag == 'br':
-        rst += ' |br| \n'
+        if stripped:
+            rst += '\n'
+        else:
+            rst += ' |br| \n'
     elif e.tag == 'b':
         rst += '**'
     elif e.tag == 'em' or e.tag == 'i':
@@ -295,12 +337,19 @@ def _html2rst(e, **kw):
     if e.text:
         rst += e.text
     for child in e:
-        rst += _html2rst(child)
+        rst += html2rst(child, stripped)
 
     if e.tag == 'p':
-        rst += '\n\n'
+        if stripped:
+            rst += '\n'
+        else:
+            rst += '\n\n'
     elif e.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
-        rst = '\n\n' + rstgen.header(int(e.tag[1]), rst.strip()) + '\n\n'
+        rst = rstgen.header(int(e.tag[1]), rst.strip())
+        if stripped:
+            rst += '\n'
+        else:
+            rst = '\n\n' + rst + '\n\n'
     elif e.tag == 'b':
         if rst == '**':
             rst = ''
@@ -313,46 +362,21 @@ def _html2rst(e, **kw):
             rst += '*'
     elif e.tag == 'a':
         rst += ' <%s>`__' % e.get('href')
-    #~ else:
-        #~ rst += ' '
+    elif e.tag in ('td', 'th'):
+        rst += ' '
+    elif e.tag in ('thead', 'tr'):
+        rst += '\n'
+    else:
+        if not e.tag in IGNORED_TAGS:
+            raise Exception("20150723 %s" % e.tag)
 
     if e.tail:
         rst += e.tail
     return rst
 
 
-def html2rst(e):
-    """Convert a :mod:`lino.utils.xmlgen.html` element to an
-    reStructuredText string.
-
-    Currently it knows only P and B tags, ignoring all other formatting.
-    
-    Usage example:
-    
-    >>> from lino.utils.xmlgen.html import E, html2rst
-    >>> e = E.p("This is a ", E.b("first"), " test.")
-    >>> print html2rst(e)
-    This is a **first** test.
-    
-    >>> e = E.p(E.b("This")," is another test.")
-    >>> print html2rst(e)
-    **This** is another test.
-    
-    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
-    >>> print html2rst(e)
-    **This** is *another* test.
-    
-    >>> url = "http://example.com"
-    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
-    >>> print html2rst(e)
-    **This** is `a link <http://example.com>`__.
-    
-    >>> e = E.p("An empty bold text:",E.b(""))
-    >>> print html2rst(e)
-    An empty bold text:
-
-    """
-    return _html2rst(e).strip()
+# def html2rst(e):
+#     return _html2rst(e).strip()
 
 
 class RstTable(rstgen.Table):
@@ -390,7 +414,7 @@ A table containing elementtree HTML:
 
     def format_value(self, v):
         if etree.iselement(v):
-            return html2rst(v)
+            return html2rst(v, True).strip()
         return super(RstTable, self).format_value(v)
 
 

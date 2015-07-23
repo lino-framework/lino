@@ -17,8 +17,8 @@ class Controllable(dd.Model):
 
     """Mixin for models that are "controllable" by another database object.
 
-    Defines three fields :attr:`owned_type`, :attr:`owned_id` and :attr:`owned`. And a class
-    attribute :attr:`owner_label`.
+    Defines three fields :attr:`owned_type`, :attr:`owned_id` and
+    :attr:`owned`. And a class attribute :attr:`owner_label`.
 
     For example in :mod:`lino.modlibs.cal`, the owner of a Task or Event
     is some other database object that caused the task's or event's

@@ -1,7 +1,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for starring database objects (marking them as
+"""Adds functionality for "starring" database objects (marking them as
 "favourite").
 
 .. autosummary::

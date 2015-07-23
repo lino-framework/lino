@@ -561,16 +561,23 @@ request from it.
         return self.renderer.show_story(self, story, *args, **kwargs)
 
     def show(self, spec, master_instance=None, column_names=None,
-             header_level=None, language=None, **kwargs):
+             header_level=None, language=None, nosummary=False,
+             stripped=True, **kwargs):
         """Show the specified table or action using the current renderer.  If
         the table is a :term:`slave table`, then a `master_instance` must
         be specified as second argument.
 
-        The first argument, `spec` is forwarded to :meth:`spawn`.
+        The first argument specifies the table or actor to show. It is
+        forwarded to :meth:`spawn`.
 
         Optional keyword arguments are:
 
         :column_names: overrides default list of columns
+
+        :nosummary: if it is a table with :attr:`slave_grid_format
+                    <lino.core.tables.AbstractTable.slave_grid_format>`
+                    set to ``'summary'``, force rendering it as a
+                    table.
 
         :header_level: show also the header (using specified level)
 
@@ -607,7 +614,8 @@ request from it.
                 story = ar.actor.get_story(None, ar)
                 return ar.renderer.show_story(self, story)
             return ar.renderer.show_table(
-                ar, column_names=column_names, header_level=header_level)
+                ar, column_names=column_names, header_level=header_level,
+                nosummary=nosummary, stripped=stripped)
 
         if language:
             with translation.override(language):
@@ -666,7 +674,7 @@ request from it.
     def ar2button(self, *args, **kw):
         """Return an HTML element with a button for running this action
          request. Does not spawn another request. Does not check
-         permission.
+         permissions.
 
         """
         return self.renderer.ar2button(self, *args, **kw)

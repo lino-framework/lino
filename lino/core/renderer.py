@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from cgi import escape
+from atelier import rstgen
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
@@ -19,12 +20,13 @@ from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
+
 from lino.utils.xmlgen.html import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
 from lino.core import constants
 # from lino.utils.xmlgen.html import _html2rst as html2rst
-from lino.utils.xmlgen.html import html2rst
+# from lino.utils.xmlgen.html import html2rst
 
 from . import elems
 
@@ -91,12 +93,12 @@ class HtmlRenderer(object):
     def href(self, url, text):
         return E.a(text, href=url)
 
-    def show_table(self, ar, **kw):
+    def show_table(self, ar, nosummary=False, **kw):
         """Returns a HTML element representing the given action request as a
-        table.
+        table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
 
         """
-        if ar.actor.master is not None:
+        if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
                 return E.tostring(
                     ar.actor.get_slave_summary(ar.master_instance, ar))
@@ -349,13 +351,17 @@ class TextRenderer(HtmlRenderer):
         # print(ar.table2rst(*args, **kw))
         # return ar.to_rst(*args, **kw)
 
-    def show_table(self, ar, column_names=None, header_level=None, **kwargs):
-        """Render the given table request as reStructuredText to stdout."""
+    def show_table(self, ar, column_names=None, header_level=None,
+                   nosummary=False, stripped=True, **kwargs):
+        """Render the given table request as reStructuredText to stdout.
+        See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
+        """
 
-        if ar.actor.master is not None:
+        if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
-                print(html2rst(
-                    ar.actor.get_slave_summary(ar.master_instance, ar)))
+                print(E.to_rst(
+                    ar.actor.get_slave_summary(ar.master_instance, ar),
+                    stripped=stripped))
                 return
 
         fields, headers, widths = ar.get_field_info(column_names)
@@ -367,7 +373,11 @@ class TextRenderer(HtmlRenderer):
             recno += 1
             rows.append([x for x in ar.row2text(fields, row, sums)])
         if len(rows) == 0:
-            print("\n{0}\n".format(unicode(ar.no_data_text)))
+            s = unicode(ar.no_data_text)
+            if stripped:
+                print(s)
+            else:
+                print("\n", s, "\n")
             return
 
         if not ar.actor.hide_sums:
@@ -383,7 +393,8 @@ class TextRenderer(HtmlRenderer):
         t = RstTable(headers, **kwargs)
         s = t.to_rst(rows)
         if header_level is not None:
-            s = E.tostring(E.h2(ar.get_title())) + s
+            print(rstgen.header(header_level, ar.get_title()))
+            # s = E.tostring(E.h2(ar.get_title())) + s
         print(s)
 
     def show_story(self, ar, story, *args, **kwargs):
@@ -393,7 +404,7 @@ class TextRenderer(HtmlRenderer):
 
         for item in story:
             if E.iselement(item):
-                print(html2rst(item))
+                print(E.to_rst(item))
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
                 self.show_table(ar, *args, **kwargs)
