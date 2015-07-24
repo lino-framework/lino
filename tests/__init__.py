@@ -48,6 +48,9 @@ class DocsTests(LinoTestCase):
     def test_cv(self):
         self.run_simple_doctests('docs/tested/cv.rst')
 
+    def test_households(self):
+        self.run_simple_doctests('docs/tested/households.rst')
+
     def test_dynamic(self):
         self.run_simple_doctests('docs/tested/dynamic.rst')
 
@@ -175,6 +178,9 @@ class UtilsTests(LinoTestCase):
 
     def test_xmlgen_html(self):
         self.run_simple_doctests('lino/utils/xmlgen/html.py')
+
+    def test_html2rst(self):
+        self.run_simple_doctests('lino/utils/html2rst.py')
 
     def test_xmlgen_sepa(self):
         # self.run_simple_doctests('lino/utils/xmlgen/sepa.py')

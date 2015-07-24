@@ -29,21 +29,15 @@ lino.projects.polly.settings.doctests
 Rolf Rompen's response to Participant feedback
 
 >>> rt.login(obj.user.username).show(polls.AnswersByResponse, obj)
-Question7/21/151) There was enough to eat.
+Question 10/23/14 
 <BLANKLINE>
-**1** **2** **3** **4** **5** (**Remark**)
+1) There was enough to eat. **1** **2** **3** **4** **5** (**Remark**)
 <BLANKLINE>
-2) The stewards were nice and attentive.
+2) The stewards were nice and attentive. **1** **2** **3** **4** **5** (**Remark**)
 <BLANKLINE>
-**1** **2** **3** **4** **5** (**Remark**)
+3) The participation fee was worth the money. **1** **2** **3** **4** **5** (**Remark**)
 <BLANKLINE>
-3) The participation fee was worth the money.
-<BLANKLINE>
-**1** **2** **3** **4** **5** (**Remark**)
-<BLANKLINE>
-4) Next time I will participate again.
-<BLANKLINE>
-**1** **2** **3** **4** **5** (**Remark**)
+4) Next time I will participate again. **1** **2** **3** **4** **5** (**Remark**)
 
 >>> client = Client()
 >>> mt = contenttypes.ContentType.objects.get_for_model(obj.__class__).id

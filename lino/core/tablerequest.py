@@ -26,7 +26,6 @@ from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
-# from lino.utils.xmlgen.html import RstTable
 
 from .requests import ActionRequest
 

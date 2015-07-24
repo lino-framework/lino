@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
-from lino.api import rt
+from lino.api import dd, rt
 from lino.utils import Cycler
 
 
@@ -50,4 +50,5 @@ Next time I will participate again.
     for p in polls.Poll.objects.exclude(questions_to_add=''):
         p.after_ui_save(None, None)
         yield polls.Response(
-            poll=p, user=USERS.pop(), state=polls.ResponseStates.draft)
+            poll=p, user=USERS.pop(), date=dd.today(),
+            state=polls.ResponseStates.draft)

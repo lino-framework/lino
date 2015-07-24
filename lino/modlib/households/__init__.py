@@ -5,6 +5,8 @@
 """Adds functionality for managing households (i.e. groups of humans
 who live together in a same house).
 
+Technical specification see :ref:`lino.specs.households`.
+
 .. autosummary::
    :toctree:
 

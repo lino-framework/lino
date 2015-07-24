@@ -1,1 +1,2 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.models.rst:29: WARNING: failed to import customize_accounts
+/home/luc/hgwork/lino/docs/api/lino.core.tablerequest.rst:24: WARNING: failed to import RstTable
+/home/luc/hgwork/lino/docs/api/lino.utils.xmlgen.html.rst:57: WARNING: failed to import RstTable

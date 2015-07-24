@@ -407,15 +407,16 @@ class ExtRenderer(HtmlRenderer):
         return self.plugin.build_plain_url(
             'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
 
-    def show_table(self, ar, **kw):
+    def show_table(
+            self, ar, stripped=True, nosummary=False, **kw):
         """
         Returns a HTML element representing this request as a table.
         Used by appy_pod rendered.
         """
-        if ar.actor.slave_grid_format == 'summary':
-            return ar.actor.get_slave_summary(ar.master_instance, ar)
-        else:
-            return ar.table2xhtml(**kw)
+        if ar.actor.master is not None and not nosummary:
+            if ar.actor.slave_grid_format == 'summary':
+                return ar.actor.get_slave_summary(ar.master_instance, ar)
+        return ar.table2xhtml(**kw)
 
     def handler_item(self, mi, handler, help_text):
         #~ handler = "function(){%s}" % handler
@@ -492,7 +493,7 @@ class ExtRenderer(HtmlRenderer):
 
     def html_page_user(self, request, site):
 
-        # TODO: move the following to lino.modlib.users
+        # TODO: move the following to lino.modlib.users?
         if settings.SITE.user_model is not None:
 
             if request.user.profile.has_required_roles([SiteUser]):

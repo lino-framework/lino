@@ -82,7 +82,7 @@ John is
 Father of *Mary* (4 years)
 Father of *Joseph* (5 years)
 
-Create relationship as **Father**/**Son** **Adoptive father**/**Adopted son** **Husband** **Partner** **Stepfather**/**Stepson** **Brother** **Cousin** **Uncle**/**Nephew** **Relative** **Other** 
+Create relationship as **Father**/**Son** **Adoptive father**/**Adopted son** **Husband** **Partner** **Stepfather**/**Stepson** **Brother** **Cousin** **Uncle**/**Nephew** **Relative** **Other**
 """)
 
         # Here we are just testing whether no exception is risen. The

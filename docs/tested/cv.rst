@@ -7,13 +7,15 @@ Career module (tested)
 
 .. How to test only this document:
 
-  $ python setup.py test -s tests.DocsTests.test_cv
+    $ python setup.py test -s tests.DocsTests.test_cv
+    
+    doctest init:
 
->>> from __future__ import print_function
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-...    'lino.projects.docs.settings.demo'
->>> from lino.api.doctest import *
+    >>> from __future__ import print_function
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+    ...    'lino.projects.docs.settings.demo'
+    >>> from lino.api.doctest import *
 
 .. contents:: 
    :local:

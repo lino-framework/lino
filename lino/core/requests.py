@@ -612,7 +612,7 @@ request from it.
             # print 20150512, ar.renderer
             if issubclass(ar.actor, Report):
                 story = ar.actor.get_story(None, ar)
-                return ar.renderer.show_story(self, story)
+                return ar.renderer.show_story(self, story, stripped=stripped)
             return ar.renderer.show_table(
                 ar, column_names=column_names, header_level=header_level,
                 nosummary=nosummary, stripped=stripped)

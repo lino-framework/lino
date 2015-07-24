@@ -12,41 +12,39 @@
 #
 #   $ python setup.py test -s tests.UtilsTests.test_xmlgen_html
 
+"""Defines an ElementTree Builder for generating HTML documents.
 
-"""
-A set of HTML generator tags for building HTML documents.
+Usage:
 
-Usage::
+>>> from lino.utils.xmlgen.html import E
+>>> html = E.html(
+...            E.head( E.title("Hello World") ),
+...            E.body(
+...              E.h1("Hello World !"),
+...              class_="main"
+...            )
+...        )
 
-    >>> from lino.utils.xmlgen.html import E
-    >>> html = E.html(
-    ...            E.head( E.title("Hello World") ),
-    ...            E.body(
-    ...              E.h1("Hello World !"),
-    ...              class_="main"
-    ...            )
-    ...        )
+>>> print E.tostring_pretty(html)
+<html>
+<head>
+<title>Hello World</title>
+</head>
+<body class="main">
+<h1>Hello World !</h1>
+</body>
+</html>
 
-    >>> print E.tostring_pretty(html)
-    <html>
-    <head>
-    <title>Hello World</title>
-    </head>
-    <body class="main">
-    <h1>Hello World !</h1>
-    </body>
-    </html>
-    
-    
-    >>> kw = dict(title=u'Ein süßes Beispiel')
-    >>> kw.update(href="foo/bar.html")
-    >>> btn = E.button(type='button', class_='x-btn-text x-tbar-upload')
-    >>> html = E.a(btn, **kw)
-    >>> print E.tostring_pretty(html)
-    <a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
-    <button class="x-btn-text x-tbar-upload" type="button" />
-    </a>
-    
+
+>>> kw = dict(title=u'Ein süßes Beispiel')
+>>> kw.update(href="foo/bar.html")
+>>> btn = E.button(type='button', class_='x-btn-text x-tbar-upload')
+>>> html = E.a(btn, **kw)
+>>> print E.tostring_pretty(html)
+<a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
+<button class="x-btn-text x-tbar-upload" type="button" />
+</a>
+
 """
 
 from __future__ import unicode_literals
@@ -54,13 +52,15 @@ from __future__ import unicode_literals
 import types
 from xml.etree import ElementTree as ET
 
-from atelier import rstgen
 from lino.utils import join_elems
-from lino.utils.xmlgen import etree
 from lino.utils.xmlgen import Namespace
+from lino.utils.html2rst import html2rst
 
 
 class HtmlNamespace(Namespace):
+    """The HTML namespace.
+    This is instantiated as ``E``.
+    """
 
     def tostring(self, v, *args, **kw):
         # if isinstance(v, types.GeneratorType):
@@ -79,7 +79,6 @@ class HtmlNamespace(Namespace):
         return unicode(v)
 
 
-#~ E = Namespace("http://www.w3.org/1999/xhtml","""
 E = HtmlNamespace(None, """
 a
 abbr
@@ -194,7 +193,6 @@ data-toggle
 tabindex
 placeholder
 """)
-"""The HTML namespace."""
 
 
 def table_header_row(*headers, **kw):
@@ -276,155 +274,6 @@ class Document(object):
             E.head(*headers),
             E.body(*body)
         )
-
-NEWLINE_TAGS = set(['p', 'thead', 'tr', 'li'])
-IGNORED_TAGS = set(['tbody', 'table', 'div', 'span', 'br', 'ul', 'ol'])
-
-
-def html2rst(e, stripped=False):
-    """Convert a :mod:`lino.utils.xmlgen.html` element to a
-    reStructuredText string.
-
-    If `stripped` is `True`, output will be more concise and optimized
-    for console output, but possibly not valid reStructuredText.
-
-    Usage example:
-    
-    >>> from lino.utils.xmlgen.html import E, html2rst
-    >>> e = E.p("This is a ", E.b("first"), " test.")
-    >>> print html2rst(e, True)
-    This is a **first** test.
-    <BLANKLINE>
-    
-    >>> e = E.p(E.b("This")," is another test.")
-    >>> print html2rst(e, True)
-    **This** is another test.
-    <BLANKLINE>
-    
-    >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
-    >>> print html2rst(e, True)
-    **This** is *another* test.
-    <BLANKLINE>
-    
-    >>> url = "http://example.com"
-    >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
-    >>> print html2rst(e, True)
-    **This** is `a link <http://example.com>`__.
-    <BLANKLINE>
-    
-    >>> e = E.p("An empty bold text:",E.b(""))
-    >>> print html2rst(e, True)
-    An empty bold text:
-    <BLANKLINE>
-
-    >>> e = E.ul(E.li("First"), E.li("Second"))
-    >>> print html2rst(e, True)
-    <BLANKLINE>
-    First
-    Second
-    <BLANKLINE>
-    """
-    #~ print "20120613 html2odftext()", e.tag, e.text
-    rst = ''
-    if e.tag in ('p', 'li'):
-        if not stripped:
-            rst += '\n\n'
-
-    elif e.tag in ('ul', 'ol'):
-        rst += '\n'
-    elif e.tag == 'br':
-        if stripped:
-            rst += '\n'
-        else:
-            rst += ' |br| \n'
-    elif e.tag == 'b':
-        rst += '**'
-    elif e.tag == 'em' or e.tag == 'i':
-        rst += '*'
-    elif e.tag == 'a':
-        rst += '`'
-
-    if e.text:
-        rst += e.text
-    for child in e:
-        rst += html2rst(child, stripped)
-
-    if e.tag in NEWLINE_TAGS:
-        if stripped:
-            rst += '\n'
-        else:
-            rst += '\n\n'
-    elif e.tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
-        rst = rstgen.header(int(e.tag[1]), rst.strip())
-        if stripped:
-            rst += '\n'
-        else:
-            rst = '\n\n' + rst + '\n\n'
-    elif e.tag == 'b':
-        if rst == '**':
-            rst = ''
-        else:
-            rst += '**'
-    elif e.tag == 'em':
-        if rst == '*':
-            rst = ''
-        else:
-            rst += '*'
-    elif e.tag == 'a':
-        rst += ' <%s>`__' % e.get('href')
-    elif e.tag in ('td', 'th'):
-        rst += ' '
-    else:
-        if not e.tag in IGNORED_TAGS:
-            raise Exception("20150723 %s" % e.tag)
-
-    if e.tail:
-        rst += e.tail
-
-    return rst
-
-
-# def html2rst(e):
-#     return _html2rst(e).strip()
-
-
-class RstTable(rstgen.Table):
-
-    """\
-A table containing elementtree HTML:
-
-.. complextable::
-  :header: 
-
-  Code <NEXTCELL> Result <NEXTROW>
-
-  >>> from lino.utils.xmlgen.html import E, RstTable
-  >>> headers = [E.p("A ", E.b("formatted"), " header"), "A plain header"]
-  >>> rows = [[1,2], [3,4]]
-  >>> print RstTable(headers).to_rst(rows)
-  ======================== ================
-   A **formatted** header   A plain header
-  ------------------------ ----------------
-   1                        2
-   3                        4
-  ======================== ================
-  <BLANKLINE>
-
-  <NEXTCELL>
-
-  ======================== ================
-   A **formatted** header   A plain header
-  ------------------------ ----------------
-   1                        2
-   3                        4
-  ======================== ================
-
-    """
-
-    def format_value(self, v):
-        if etree.iselement(v):
-            return html2rst(v, True).strip()
-        return super(RstTable, self).format_value(v)
 
 
 def lines2p(lines, min_height=0, **attrs):

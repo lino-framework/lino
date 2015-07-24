@@ -73,9 +73,7 @@ The :mod:`lino.modlib.changes` plugin records only changes made using
 the web interface.  In a virgin database are no changes:
 
 >>> rt.show(changes.Changes)
-<BLANKLINE>
 No data to display
-<BLANKLINE>
 
 
 We create a new person

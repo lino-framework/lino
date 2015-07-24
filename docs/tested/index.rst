@@ -18,3 +18,4 @@ which are part of the test suite.
    core_utils
    tinymce
    dynamic
+   households

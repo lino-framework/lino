@@ -21,7 +21,7 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
 
-from lino.utils.xmlgen.html import RstTable
+from lino.utils.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
 from lino.core import constants
@@ -93,9 +93,12 @@ class HtmlRenderer(object):
     def href(self, url, text):
         return E.a(text, href=url)
 
-    def show_table(self, ar, nosummary=False, **kw):
+    def show_table(self, ar, nosummary=False, stripped=True, **kw):
         """Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
+
+        This silently ignores the parameters `nosummary` and
+        `stripped` since for HTML they have no meaning.
 
         """
         if ar.actor.master is not None and not nosummary:
@@ -300,8 +303,11 @@ request `tar`."""
             label = ba.action.label
         return "[%s]" % label
 
-    def show_story(self, ar, story, *args, **kwargs):
-        """Render the given story as an HTML element."""
+    def show_story(self, ar, story, stripped=True, **kwargs):
+        """Render the given story as an HTML element. Ignore `stripped`
+        because it makes no sense in HTML.
+
+        """
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
         elems = []
@@ -310,12 +316,12 @@ request `tar`."""
                 elems.append(item)
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
-                elems.append(self.show_table(ar, *args, **kwargs))
+                elems.append(self.show_table(ar, **kwargs))
             elif isinstance(item, TableRequest):
                 assert item.renderer is not None
-                elems.append(self.show_table(item, *args, **kwargs))
+                elems.append(self.show_table(item, **kwargs))
             elif isiterable(item):
-                elems.append(self.show_story(ar, item, *args, **kwargs))
+                elems.append(self.show_story(ar, item, **kwargs))
                 # for i in self.show_story(item, *args, **kwargs):
                 #     yield i
             else:
@@ -359,9 +365,12 @@ class TextRenderer(HtmlRenderer):
 
         if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
-                print(E.to_rst(
+                s = E.to_rst(
                     ar.actor.get_slave_summary(ar.master_instance, ar),
-                    stripped=stripped))
+                    stripped=stripped)
+                if stripped:
+                    s = s.strip()
+                print(s)
                 return
 
         fields, headers, widths = ar.get_field_info(column_names)
@@ -393,26 +402,29 @@ class TextRenderer(HtmlRenderer):
         t = RstTable(headers, **kwargs)
         s = t.to_rst(rows)
         if header_level is not None:
-            print(rstgen.header(header_level, ar.get_title()))
+            h = rstgen.header(header_level, ar.get_title())
+            if stripped:
+                h = h.strip()
+            print(h)
             # s = E.tostring(E.h2(ar.get_title())) + s
         print(s)
 
-    def show_story(self, ar, story, *args, **kwargs):
+    def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as reStructuredText to stdout."""
         from lino.core.actors import Actor
         from lino.core.requests import ActionRequest
 
         for item in story:
             if E.iselement(item):
-                print(E.to_rst(item))
+                print(E.to_rst(item, stripped))
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
-                self.show_table(ar, *args, **kwargs)
+                self.show_table(ar, stripped=stripped, **kwargs)
             elif isinstance(item, ActionRequest):
-                self.show_table(item, *args, **kwargs)
+                self.show_table(item, stripped=stripped, **kwargs)
                 # print(item.table2rst(*args, **kwargs))
             elif isiterable(item):
-                self.show_story(ar, item, *args, **kwargs)
+                self.show_story(ar, item, stripped, **kwargs)
                 # for i in self.show_story(ar, item, *args, **kwargs):
                 #     print(i)
             else:
