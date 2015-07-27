@@ -13,6 +13,15 @@ from lino.api import dd
 from lino.modlib.smtpd.signals import mail_received
 
 
+@dd.receiver(dd.post_analyze)
+def my_details(sender, **kw):
+    sender.modules.system.SiteConfigs.set_detail_layout("""
+    site_company next_partner_id:10
+    default_build_method
+    max_auto_events default_event_type site_calendar
+    """)
+
+
 @dd.receiver(mail_received)
 def process_message(sender=None, peer=None, mailfrom=None,
                     rcpttos=None, data=None, **kwargsg):
