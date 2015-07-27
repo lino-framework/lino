@@ -1,2 +1,8 @@
 /home/luc/hgwork/lino/docs/api/lino.core.tablerequest.rst:24: WARNING: failed to import RstTable
-/home/luc/hgwork/lino/docs/api/lino.utils.xmlgen.html.rst:57: WARNING: failed to import RstTable
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import OrderedDict
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import Q
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import Report
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import ReportedProjects
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import ReportedTickets
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import ServiceReport
+/home/luc/hgwork/lino/docs/api/lino.modlib.clocking.ui.rst:26: WARNING: failed to import StartedEnded

@@ -29,10 +29,15 @@ from lino.utils import join_elems
 class ContentTypes(dd.Table):
     """Default table for `django.contrib.ContentType`.
 
+
+    .. attribute:: base_classes
+
+        Display a clickable list of all MTI parents, i.e. base models
+
     """
     model = 'contenttypes.ContentType'
 
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
 
     detail_layout = """
     id name app_label model base_classes
@@ -42,6 +47,8 @@ class ContentTypes(dd.Table):
 
     @dd.displayfield(_("Base classes"))
     def base_classes(self, obj, ar):
+        if obj is None:
+            return ""
         chunks = []
 
         def add(cl):
@@ -55,15 +62,17 @@ class ContentTypes(dd.Table):
                     ct = ContentType.objects.get_for_model(cl)
                     chunks.append(
                         ar.obj2html(ct, unicode(cl._meta.verbose_name)))
-        if obj is not None:
-            #~ add(obj.model_class())
-            for b in obj.model_class().__bases__:
+        #~ add(obj.model_class())
+        cl = obj.model_class()
+        # e.g. if database is nor synchronized
+        if cl is not None:
+            for b in cl.__bases__:
                 add(b)
         return E.p(*join_elems(chunks, sep=', '))
 
 
 class HelpText(dd.Model):
-
+    """A custom help text to be displayed for a given field."""
     class Meta:
         verbose_name = _("Help Text")
         verbose_name_plural = _("Help Texts")
@@ -115,7 +124,7 @@ class HelpText(dd.Model):
 
 
 class HelpTexts(dd.Table):
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
     model = 'contenttypes.HelpText'
     column_names = "field verbose_name help_text id content_type"
 
@@ -131,7 +140,7 @@ class BrokenGFKs(dd.VirtualTable):
 
     """
     label = _("Broken GFKs")
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
 
     column_names = "database_model database_object message todo"
 

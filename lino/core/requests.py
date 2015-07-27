@@ -622,18 +622,20 @@ request from it.
                 return doit()
         return doit()
 
-    def show_menu(self, remove_blanklines=True):
+    def show_menu(self, stripped=True):
         """
         Used in tested docs
         """
-        mnu = settings.SITE.get_site_menu(None, self.get_user().profile)
-        s = mnu.as_rst(self)
-        if remove_blanklines:
-            for ln in s.splitlines():
-                if ln.strip():
-                    print ln
-        else:
-            print s
+        user = self.get_user()
+        with translation.override(user.language):
+            mnu = settings.SITE.get_site_menu(None, user.profile)
+            s = mnu.as_rst(self)
+            if stripped:
+                for ln in s.splitlines():
+                    if ln.strip():
+                        print ln
+            else:
+                print s
 
     def get_request_url(self, *args, **kw):
         return self.renderer.get_home_url(*args, **kw)

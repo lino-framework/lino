@@ -6,28 +6,23 @@
 
 """
 
-import datetime
-from collections import OrderedDict
 
 from django.conf import settings
-from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Count
 
-from lino import mixins
 from lino.api import dd, rt, _
 
 from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E, join_elems
 from lino.utils.quantities import Duration
-from lino.utils.report import Report
 from lino.mixins import ObservedPeriod
 
-from lino.modlib.cal.mixins import StartedEnded
 from lino.modlib.cal.utils import when_text
 
 
 from lino.modlib.tickets.choicelists import (TicketEvents,
                                              ProjectEvents, ObservedEvent)
+from lino.modlib.tickets.ui import Tickets, Projects
 
 
 class TicketHasSessions(ObservedEvent):
@@ -241,7 +236,6 @@ class InvestedTimes(dd.VentilatingTable):
         yield w(None, _("Total"))
 
 
-from lino.modlib.tickets.ui import Tickets, Projects
 
 
 def compute_invested_time(obj, pv):
@@ -262,7 +256,8 @@ class InvestedTime(dd.Table):
         return obj._invested_time
 
     
-class ReportedTickets(Tickets, InvestedTime):
+class TicketsByReport(Tickets, InvestedTime):
+    """The list of tickets mentioned in a service report."""
     master = 'clocking.ServiceReport'
     column_names = "summary id reporter project product site state invested_time"
 
@@ -276,13 +271,14 @@ class ReportedTickets(Tickets, InvestedTime):
         spv.update(interesting_for=mi.interesting_for)
         ar.param_values.update(spv)
 
-        qs = super(ReportedTickets, self).get_request_queryset(ar)
+        qs = super(TicketsByReport, self).get_request_queryset(ar)
         for obj in qs:
             obj._invested_time = compute_invested_time(obj, mi)
             yield obj
 
 
-class ReportedProjects(Projects, InvestedTime):
+class ProjectsByReport(Projects, InvestedTime):
+    """The list of projects mentioned in a service report."""
     master = 'clocking.ServiceReport'
     column_names = "ref name active_tickets invested_time"
 
@@ -309,7 +305,7 @@ class ReportedProjects(Projects, InvestedTime):
                     tickets.append(ticket)
             return tot, tickets
 
-        qs = super(ReportedProjects, self).get_request_queryset(ar)
+        qs = super(ProjectsByReport, self).get_request_queryset(ar)
         for prj in qs:
             tot, tickets = worked_time(project=prj)
             if tot:
@@ -335,12 +331,19 @@ class ReportedProjects(Projects, InvestedTime):
 
 
 class ServiceReports(dd.Table):
+    """List of service reports."""
     model = "clocking.ServiceReport"
     detail_layout = """
     start_date end_date interesting_for printed
-    ReportedTickets
-    ReportedProjects
+    TicketsByReport
+    ProjectsByReport
     """
+
+
+class ReportsBySite(ServiceReports):
+    """List of service reports issued for a given site."""
+    master_key = 'interesting_for'
+
 
 from lino.modlib.tickets.models import Project
 from lino.modlib.tickets.models import Ticket
@@ -361,5 +364,4 @@ def on_ticket_create(sender, instance=None, created=False, **kwargs):
         ses = rt.modules.clocking.Session(ticket=instance, user=me)
         ses.full_clean()
         ses.save()
-
 

@@ -430,7 +430,7 @@ def navinfo(qs, elem):
     recno = 0
     message = None
     #~ LEN = ar.get_total_count()
-    if isinstance(qs, list):
+    if isinstance(qs, (list, tuple)):
         LEN = len(qs)
         id_list = [obj.pk for obj in qs]
         #~ logger.info('20130714')
