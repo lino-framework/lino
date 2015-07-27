@@ -8,6 +8,6 @@ Period from {{fdl(obj.start_date)}}
 to {{fdl(obj.end_date)}}
 {% endif %}
 
-{{ar.show(rt.modules.clocking.ReportedTickets, obj, header_level=2)}}
-{{ar.show(rt.modules.clocking.ReportedProjects, obj, header_level=2)}}
+{{ar.show(rt.modules.clocking.TicketsByReport, obj, header_level=2)}}
+{{ar.show(rt.modules.clocking.ProjectsByReport, obj, header_level=2)}}
 

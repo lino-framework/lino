@@ -259,7 +259,10 @@ class InvestedTime(dd.Table):
 class TicketsByReport(Tickets, InvestedTime):
     """The list of tickets mentioned in a service report."""
     master = 'clocking.ServiceReport'
-    column_names = "summary id reporter project product site state invested_time"
+    # column_names = "summary id reporter project product site state
+    # invested_time"
+    column_names = "id my_description state invested_time"
+    order_by = ['id']
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -276,11 +279,32 @@ class TicketsByReport(Tickets, InvestedTime):
             obj._invested_time = compute_invested_time(obj, mi)
             yield obj
 
+    @dd.displayfield(_("Description"))
+    def my_description(cls, obj, ar):
+        mi = ar.master_instance
+        if mi is None:
+            return
+        lst = [obj.summary]
+        tpl = "{0}: {1}"
+        if obj.site is not None and obj.site == mi.interesting_for:
+            lst.append(_("site-specific"))
+        if obj.reporter is not None:
+            lst.append(tpl.format(
+                unicode(_("Reporter")), unicode(obj.reporter)))
+        if obj.project is not None:
+            lst.append(tpl.format(
+                unicode(_("Project")), unicode(obj.project)))
+        if obj.product is not None:
+            lst.append(tpl.format(
+                unicode(_("Product")), unicode(obj.product)))
+        return E.p(*join_elems(lst, '. '))
+
 
 class ProjectsByReport(Projects, InvestedTime):
     """The list of projects mentioned in a service report."""
     master = 'clocking.ServiceReport'
     column_names = "ref name active_tickets invested_time"
+    order_by = ['ref']
 
     @classmethod
     def get_request_queryset(self, ar):
