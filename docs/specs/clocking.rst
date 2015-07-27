@@ -135,24 +135,24 @@ serves as a base for writing invoices.
 >>> obj.interesting_for
 Site #1 (u'welket')
 
->>> rt.show(clocking.ReportedTickets, obj)
-=========================== ==== ============ ========= ============== ======== ======= ==========
- Summary                     ID   Reporter     Project   Product        Site     State   Time
---------------------------- ---- ------------ --------- -------------- -------- ------- ----------
- Foo fails to bar when baz   1    mathieu      lino      Lino Cosi      welket   New     1:27
- Baz sucks                   3    luc                    Lino Core               New     1:27
- Foo and bar don't baz       4    jean         docs      Lino Welfare            New     2:23
- Cannot create Foo           5    Robin Rood             Lino Cosi               New     1:24
- **Total (4 rows)**                                                                      **6:41**
-=========================== ==== ============ ========= ============== ======== ======= ==========
+>>> rt.show(clocking.TicketsByReport, obj)
+==== ================================================================================================ ======= ==========
+ ID   Description                                                                                      State   Time
+---- ------------------------------------------------------------------------------------------------ ------- ----------
+ 1    Foo fails to bar when baz. site-specific. Reporter: mathieu. Project: lino. Product: Lino Cosi   New     1:27
+ 3    Baz sucks. Reporter: luc. Product: Lino Core                                                     New     1:27
+ 4    Foo and bar don't baz. Reporter: jean. Project: docs. Product: Lino Welfare                      New     2:23
+ 5    Cannot create Foo. Reporter: Robin Rood. Product: Lino Cosi                                      New     1:24
+                                                                                                               **6:41**
+==== ================================================================================================ ======= ==========
 <BLANKLINE>
 
->>> rt.show(clocking.ReportedProjects, obj)
+>>> rt.show(clocking.ProjectsByReport, obj)
 ==================== =============== ============ ==========
  Reference            Name            Tickets      Time
 -------------------- --------------- ------------ ----------
- lino                 Framework       *#1*         1:27
  docs                 Documentation   *#4*         2:23
+ lino                 Framework       *#1*         1:27
                       (no project)    *#3*, *#5*   2:51
  **Total (3 rows)**                                **6:41**
 ==================== =============== ============ ==========
