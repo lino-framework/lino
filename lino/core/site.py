@@ -432,16 +432,21 @@ documentation.
     """The full Python path of the **user profiles module** to be used on
     this site.
 
-    Lino will import this module during site startup. It is expected
-    to define application-specific user roles (if necessary) and to
-    fill the :class:`UserProfiles
+    This must be set if you want to enable permission control based on
+    user roles defined in :attr:`Permittable.required_roles
+    <lino.core.permissions.Permittable.required_roles>` and
+    :attr:`UserProfile.role
+    <lino.modlib.users.choicelists.UserProfile.role>`.
+
+    Default value is `None`, meaning that role-based permission
+    control is inactive: every user can see everything.
+
+    If set, Lino will import this module during site startup. It is
+    expected to define application-specific user roles (if necessary)
+    and to fill the :class:`UserProfiles
     <lino.modlib.users.choicelists.UserProfiles>` choicelist.
 
-    This must be set if you want to enable permission control based on
-    user roles defined in :attr:`required_roles
-    <lino.core.permissions.Permittable.required_roles>` and
-    :attr:`lino.modlib.users.choicelists.UserProfile.role`. For
-    example::
+    For example::
 
         class Site(Site):
             user_profiles_module = 'lino.modlib.users.roles'

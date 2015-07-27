@@ -38,6 +38,12 @@ class UserProfile(Choice):
     # authenticated = True
     # """Whether users with this profile should be considered authenticated."""
 
+    role = None
+    """The role of users having this profile. This is an instance of
+    :class:`<lino.core.roles.UserRole>` or some subclass thereof.
+
+    """
+
     def __init__(self, value, text, role_class,
                  name=None,  # authenticated=True,
                  readonly=False,
@@ -84,7 +90,8 @@ class UserProfile(Choice):
         :required_roles: a set or iterable of role requirements.  The
                          profile must satisfy *every* specified
                          requirement.  Every requirement is either a
-                         class object (subclass of UserRole) or a
+                         class object (subclass of
+                         :class:`<lino.core.roles.UserRole>`) or a
                          tuple thereof.
 
         """
