@@ -285,7 +285,7 @@ class TicketsByReport(Tickets, InvestedTime):
         if mi is None:
             return
         lst = [obj.summary]
-        tpl = "{0}: {1}"
+        tpl = u"{0}: {1}"
         if obj.site is not None and obj.site == mi.interesting_for:
             lst.append(_("site-specific"))
         if obj.reporter is not None:
