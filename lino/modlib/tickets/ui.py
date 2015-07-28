@@ -247,7 +247,7 @@ class TicketDetail(dd.DetailLayout):
 
     planning = dd.Panel("""
     nickname:10 created modified reported_for fixed_for
-    state assigned_to duplicate_of planned_time
+    state priority assigned_to duplicate_of planned_time
     DuplicatesByTicket  #ChildrenByTicket
     """, label=_("Planning"))
 
@@ -399,6 +399,8 @@ class PublicTickets(Tickets):
     def param_defaults(self, ar, **kw):
         kw = super(PublicTickets, self).param_defaults(ar, **kw)
         kw.update(show_assigned=dd.YesNo.no)
+        kw.update(show_private=dd.YesNo.no)
+        kw.update(show_closed=dd.YesNo.no)
         return kw
 
 
@@ -429,9 +431,8 @@ class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
     button_label = _("Talk")
     order_by = ["-id"]
-    column_names = "overview:50 planned_time product:10 reporter:10 " \
-                   "project:10 " \
-                   "assigned_to:10 workflow_buttons:40 *"
+    column_names = "overview:50 planned_time priority reporter:10 " \
+                   "workflow_buttons:40 *"
 
     @classmethod
     def param_defaults(self, ar, **kw):
