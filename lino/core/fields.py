@@ -200,8 +200,8 @@ class FakeField(object):
 
 
 class RemoteField(FakeField):
-    """A field on a related object.  LayoutHandle instantiates
-    a RemoteField for example when
+    """A field on a related object. Remote fields are created by
+    :meth:`lino.core.model.Model.get_data_elem` when needed.
 
     """
     #~ primary_key = False

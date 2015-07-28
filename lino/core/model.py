@@ -205,6 +205,12 @@ class Model(models.Model):
 
     @classmethod
     def get_data_elem(model, name):
+        """Return the named data element. This can be a database field, a
+        :class:`lino.core.fields.RemoteField`, a
+        :class:`lino.core.fields.VirtualField` or a Django-style
+        virtual field (GenericForeignKey).
+
+        """
         #~ logger.info("20120202 get_data_elem %r,%r",model,name)
         if not name.startswith('__'):
             parts = name.split('__')
@@ -239,12 +245,8 @@ class Model(models.Model):
                         for fld in field_chain:
                             if obj is None:
                                 return obj
-                            #~ obj = fld.value_from_object(obj)
                             obj = fld._lino_atomizer.full_value_from_object(
                                 obj, ar)
-                        #~ for n in parts:
-                            #~ obj = getattr(obj,n)
-                        #~ print '20130422 %s --> %r', fld.name,obj
                         return obj
                     except Exception as e:
                         raise Exception(
@@ -260,16 +262,6 @@ class Model(models.Model):
             return model._meta.get_field(name)
         except models.FieldDoesNotExist:
             pass
-
-        #~ s = name.split('.')
-        #~ if len(s) == 1:
-            #~ mod = import_module(model.__module__)
-            #~ rpt = getattr(mod,name,None)
-        #~ elif len(s) == 2:
-            #~ mod = getattr(settings.SITE.modules,s[0])
-            #~ rpt = getattr(mod,s[1],None)
-        #~ else:
-            #~ raise Exception("Invalid data element name %r" % name)
 
         v = get_class_attr(model, name)
         if v is not None:

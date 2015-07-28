@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-06-30 21:36+0300\n"
-"PO-Revision-Date: 2015-06-30 21:38+0300\n"
+"PO-Revision-Date: 2015-07-28 17:25+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language-Team: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -6628,9 +6628,8 @@ msgid "Add a (+) button when there is no upload of this type."
 msgstr ""
 
 #: lino/modlib/uploads/models.py:131 lino/modlib/uploads/models.py:156
-#, fuzzy
 msgid "Uploaded by"
-msgstr "Upload-Art"
+msgstr "Hochgeladen durch"
 
 #: lino/modlib/uploads/models.py:242
 #, fuzzy

@@ -1,8 +1,26 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
+"""Defines the "store" and its "fields" .
 
-Defines the `Store` class and its "fields" (aka atomizers).
+During startup, Lino instantiates a "store" and its "fields" (aka
+"atomizers") for every table.  These were used originally for dealing
+with Sencha ExtJS GridPanels and FormPanels, but the concept turned
+out useful for other features.
+
+Some usages specific to Sencha ExtJS:
+
+- for generating the JS code of the GridPanel definition
+- for generating an "atomized" JSON representation when
+  rendering data for that GridPanel
+- for parsing the JSON sent by GridPanel and FormPanel
+
+Other usages:
+
+- remote fields (:class:`lino.core.fields.RemoteField`)
+
+- render tables as text
+  (:meth:`lino.core.renderer.TextRenderer.show_table` and
+  :meth:`lino.core.tablerequest.TableRequest.row2text`)
 
 """
 
@@ -39,7 +57,17 @@ from lino.utils import IncompleteDate
 class StoreField(object):
 
     """Base class for the fields of a :class:`Store`.
+
+    .. attribute:: field
+
+        The database field (a subclass of
+        `django.db.models.fields.Field`)
     
+    .. attribute:: options
+
+        A `dict` with options to be used by :meth:`as_js`.
+    
+
     Note: `value_from_object` and `full_value_from_object` are
     similar, but for ForeignKeyStoreField and GenericForeignKeyField
     one returns the primary key while the other returns the full
@@ -56,21 +84,15 @@ class StoreField(object):
     def __init__(self, field, name, **options):
         self.field = field
         self.name = name
-        #~ if isinstance(field,generic.GenericForeignKey):
-            #~ self.editable = False
-        #~ else:
-            # ~ self.editable = field.editable # VirtualField changes this
-        #~ options.update(name=name or field.name)
         self.options = options
-
-    #~ def __repr__(self):
-        #~ return self.__class__.__name__ + ' ' + self.field.name
 
     def as_js(self, name):
         """
-        possible side effect. but self.options is used only for as_js(),
-        and in case of virtual remote fields they use the virtual field's 
-        delegate as_js method but with their own name.
+        Return a Javascript string which defines this atomizer as an
+        object. This is used by :mod:`lino.modlib.extjs.ext_renderer`.
+        and in case of virtual remote fields they use the
+        virtual field's delegate as_js method but with their own name.
+
         """
         self.options.update(name=name)
         return py2js(self.options)
@@ -85,6 +107,9 @@ class StoreField(object):
         yield self.name
 
     def value_from_object(self, obj, ar):
+        """
+        
+        """
         return self.full_value_from_object(obj, ar)
 
     def full_value_from_object(self, obj, ar):
@@ -165,15 +190,11 @@ class StoreField(object):
         return force_unicode(v)
 
 
-#~ class RemoteStoreField(StoreField):
-    #~ def __init__(self,store,rf):
-        #~ self.remote_field = rf
-        #~ self.delegate = store.create_atomizer(rf.field)
-        #~ StoreField.__init__
-
-
 class RelatedMixin(object):
+    """Common methods for :class:`ForeignKeyStoreField` and
+    :class:`OneToOneField`.
 
+    """
     def get_rel_to(self, obj):
         #~ if self.field.rel is None:
             #~ return None
@@ -393,24 +414,8 @@ class SpecialStoreField(StoreField):
         self.options = dict(name=self.name)
         self.store = store
 
-    #~ def value2dict(self,v,d):
-        #~ d[self.name] = v
-
-    #~ def obj2dict(self,request,obj,d):
-        # ~ # d.update(disable_editing=self.value_from_object(request,obj))
-        #~ d[self.name] = self.value_from_object(request,obj)
-
-    #~ def __repr__(self):
-        #~ return "%s '%s'" % (self.__class__.__name__, self.name)
-
     def parse_form_value(self, v, instance):
         pass
-
-    #~ def obj2list(self,request,obj):
-        #~ return [self.value_from_object(request,obj)]
-
-    #~ def value2list(self,ui,v):
-        #~ return [v]
 
     def form2obj(self, ar, instance, post_data, is_new):
         pass
@@ -525,33 +530,10 @@ class DisableEditingStoreField(SpecialStoreField):
         return not v
 
 
-#~ class PropertiesStoreField(StoreField):
-#~ class PropertyStoreField(StoreField):
-    #~ def __init__(self,field,**kw):
-        #~ kw['type'] = ...
-        #~ StoreField.__init__(self,field,**kw)
-    #~ def get_from_form(self,instance,post_data):
-        #~ v = post_data.get(self.field.name)
-        #~ if v == 'true':
-            #~ v = True
-        #~ else:
-            #~ v = False
-        #~ instance[self.field.name] = v
-#~ from lino.utils.textfields import extract_summary
-#~ class TextStoreField(StoreField):
-    #~ def value_from_object(self,request,obj):
-        #~ v = self.field.value_from_object(obj)
-        #~ if request.expand_memos:
-            #~ return v
-        #~ return extract_summary(v)
 class BooleanStoreField(StoreField):
+    """A :class:`StoreField` for `BooleanField
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#booleanfield>`__.
 
-    """
-    This class wouldn't be necessary if Django's 
-    `BooleanField.to_python` method would interpret 
-    "on" as a valid `True` value. We had some interesting 
-    discussion on this in :djangoticket:`#15497 (BooleanField
-    should work for all PostgreSQL expressions)<15497>`. 
     """
 
     form2obj_default = False  # 'off'
@@ -569,7 +551,6 @@ class BooleanStoreField(StoreField):
         """
         Ext.ensible CalendarPanel sends boolean values as
         """
-        #~ print "20110717 parse_form_value", self.field.name, v, obj
         return constants.parse_boolean(v)
 
     def format_value(self, ar, v):
@@ -578,8 +559,6 @@ class BooleanStoreField(StoreField):
 
 class DisplayStoreField(StoreField):
     pass
-    # def full_value_from_object(self, obj, ar):
-    #     return self.field.value_from_object(obj, ar)
 
 
 class GenericForeignKeyField(DisplayStoreField):
@@ -594,27 +573,6 @@ class GenericForeignKeyField(DisplayStoreField):
         if ar.renderer is None:
             return unicode(v)
         return ar.obj2html(v)
-
-
-class unused_GenericForeignKeyField(StoreField):
-
-    def full_value_from_object(self, obj, ar):
-        v = getattr(obj, self.name, None)
-        #~ logger.info("full_value_from_object() %s",v)
-        return v
-        #~ owner = getattr(obj,self.name)
-        #~ if owner is None:
-            # ~ # owner_id = getattr(obj,self.field.fk_field)
-            # ~ # if owner_id is None:
-                # ~ # return ''
-            #~ return ''
-        #~ return ar.obj2html(owner)
-
-    def value2list(self, ar, v, l, row):
-        return l.append(unicode(v))
-
-    def value2dict(self, v, d, row):
-        d[self.name] = unicode(v)
 
 
 class DecimalStoreField(StoreField):
@@ -648,9 +606,9 @@ class IntegerStoreField(StoreField):
 
 class AutoStoreField(StoreField):
 
-    """
-    A :class:`StoreField` for 
-    `AutoField <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
+    """A :class:`StoreField` for `AutoField
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
+
     """
 
     def __init__(self, field, name, **kw):
@@ -809,35 +767,21 @@ def create_atomizer(model, fld, name):
         sf = create_atomizer(model, fld.field, fld.name)
 
         def value_from_object(sf, obj, ar):
-            #~ if fld.name == 'event__when_text':
-                #~ logger.info("20130802 create_atomizer RemoteField value_from_object")
             m = fld.func
             return m(obj, ar)
 
         def full_value_from_object(sf, obj, ar):
-            #~ logger.info("20120406 %s.full_value_from_object(%s)",sf.name,sf)
             m = fld.func
             v = m(obj, ar)
-            #~ if fld.name == 'event__when_text':
-                #~ logger.info("20130802 full_value_from_object %s",obj)
             return v
 
         sf.value_from_object = curry(value_from_object, sf)
         sf.full_value_from_object = curry(full_value_from_object, sf)
-        #~ sf.field = fld.field
-        #~ sf.value2list = curry(value2list,sf)
         return sf
-    #~ if isinstance(fld,tables.ComputedColumn):
-        #~ logger.info("20111230 Store.create_atomizer(%s)", fld)
-        #~ return ComputedColumnField(fld)
     meth = getattr(fld, '_return_type_for_method', None)
     if meth is not None:
         # uh, this is tricky...
         return MethodStoreField(fld, name)
-    #~ if isinstance(fld,fields.HtmlBox):
-        #~ ...
-    #~ if isinstance(fld,dd.LinkedForeignKey):
-        #~ return LinkedForeignKeyField(fld,name)
 
     sf_class = getattr(fld, 'lino_atomizer_class', None)
     if sf_class is not None:

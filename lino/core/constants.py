@@ -149,16 +149,9 @@ def dict2kw(d):
     return newd
 
 
-def authenticated_user(user):
-    #~ if user.is_anonymous():
-        #~ return None
-    return user
-
-
 def parse_boolean(v):
     if v in ('true', 'on', True):
         return True
     if v in ('false', 'off', False):
         return False
-    #~ raise Exception("Invalid boolean value %r for field %s" % (v,self.name))
     raise Exception("Invalid boolean value %r" % v)
