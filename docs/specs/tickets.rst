@@ -58,28 +58,25 @@ The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
-======= =========== ===========
- value   name        text
-------- ----------- -----------
- 10      new         New
- 15      observing   Observing
- 20      todo        To do
- 21      sticky      Sticky
- 50      done        Done
- 60      refused     Refused
-======= =========== ===========
+======= ========= =========
+ value   name      text
+------- --------- ---------
+ 10      new       New
+ 15      talk      Talk
+ 20      todo      To do
+ 21      sticky    Sticky
+ 50      done      Done
+ 60      refused   Refused
+======= ========= =========
 <BLANKLINE>
 
-- new : somebody reported that ticket, but there was no response so
-  far.
-- observing : the ticket is confirmed, but we don't yet know exactly
-  what to do with it.
-- todo : appears in the todo list of somebody (either the assigned
-  worker, or our general todo list)
-- 
+See :class:`lino.modlib.tickets.choicelists.TicketStates` for an
+overview of these.
 
-When a ticket has been marked as :attr:`closed
-<lino.modlib.tickets.models.Ticket.closed>`.
+Note that a ticket also has a checkbox for marking it as :attr:`closed
+<lino.modlib.tickets.models.Ticket.closed>`.  This means that a ticket
+can be marked as "closed" in any of above states.  We are not sure
+whether this is a cool feature (#372).
 
 - :attr:`standby <lino.modlib.tickets.models.Ticket.standby>` 
 
@@ -111,8 +108,8 @@ not yet been assigned to a project:
 ==== =================== ========== ========= ======== ========== ============ =========
  ID   Summary             Feedback   Standby   Closed   Workflow   Reporter     Project
 ---- ------------------- ---------- --------- -------- ---------- ------------ ---------
- 3    Baz sucks           No         No        No       **New**    luc
  5    Cannot create Foo   No         No        No       **New**    Robin Rood
+ 3    Baz sucks           No         No        No       **New**    luc
 ==== =================== ========== ========= ======== ========== ============ =========
 <BLANKLINE>
 
@@ -171,11 +168,11 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ========== ========= ======== ================================================ ========== =========
- ID   Summary                     Feedback   Standby   Closed   Workflow                                         Reporter   Project
----- --------------------------- ---------- --------- -------- ------------------------------------------------ ---------- ---------
- 1    Foo fails to bar when baz   No         No        No       **New** → [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
-==== =========================== ========== ========= ======== ================================================ ========== =========
+==== =========================== ========== ========= ======== ======================================================= ========== =========
+ ID   Summary                     Feedback   Standby   Closed   Workflow                                                Reporter   Project
+---- --------------------------- ---------- --------- -------- ------------------------------------------------------- ---------- ---------
+ 1    Foo fails to bar when baz   No         No        No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
+==== =========================== ========== ========= ======== ======================================================= ========== =========
 <BLANKLINE>
 
 

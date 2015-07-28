@@ -13,7 +13,6 @@ class Site(Site):
 
     verbose_name = "Lino Noi"
     url = "http://noi.lino-framework.org/"
-
     version = '0.0.1'
 
     demo_fixtures = ['std', 'demo', 'demo2']
@@ -22,9 +21,6 @@ class Site(Site):
 
     project_model = 'tickets.Project'
     textfield_format = 'html'
-
-    root_urlconf = 'lino_noi.urls'
-    default_ui = None
     user_profiles_module = 'lino_noi.lib.noi.roles'
 
     def get_installed_apps(self):
@@ -33,8 +29,8 @@ class Site(Site):
 
         """
         yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.extjs'
-        yield 'lino.modlib.bootstrap3'
+        # yield 'lino.modlib.extjs'
+        # yield 'lino.modlib.bootstrap3'
         yield 'lino.modlib.contenttypes'
         # yield 'lino.modlib.system'
         yield 'lino_noi.lib.users'
@@ -66,6 +62,14 @@ class Site(Site):
         # yield self.modules.tickets.MyTickets
         # yield self.modules.tickets.ActiveTickets
         yield self.modules.tickets.InterestingTickets
+        yield self.modules.tickets.PublicTickets
+
+    def setup_quicklinks(self, ar, tb):
+        super(Site, self).setup_quicklinks(ar, tb)
+
+        tb.add_action(self.modules.tickets.TicketsToTriage)
+        tb.add_action(self.modules.tickets.TicketsToTalk)
+        tb.add_action(self.modules.tickets.TicketsToDo)
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'

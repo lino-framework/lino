@@ -46,14 +46,8 @@ class SpecsTests(BaseTestCase):
 
 
 class DemoTests(BaseTestCase):
-    """
-    $ python setup.py test -s tests.DemoTests.test_admin
+    """Run tests on the demo projects.
     """
 
     def test_admin(self):
         self.run_django_manage_test()
-
-
-
-
-
