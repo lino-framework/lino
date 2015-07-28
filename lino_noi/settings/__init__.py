@@ -2,6 +2,18 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""
+
+.. autosummary::
+   :toctree:
+
+   public
+   doctests
+   demo
+
+
+
+"""
 
 from __future__ import print_function
 from __future__ import unicode_literals
