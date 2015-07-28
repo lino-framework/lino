@@ -39,6 +39,11 @@ Development
   action.  Bug fixed.
 
 
+Version 1.6.18 (released :blogref:`20150728`)
+=============================================
+
+- Lots of changes. Lino Noi 0.0.1 needs this version.
+
 Version 1.6.17 (released :blogref:`20150108`)
 =============================================
 
