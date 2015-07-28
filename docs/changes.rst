@@ -14,7 +14,7 @@ Version 0.0.2 (in development)
 ==============================
 
 
-Version 0.0.1 (released 2015-07-28)
-===================================
+Version 0.0.1 (released :blogref:`20150728`)
+============================================
 
 This is a first prototype.
