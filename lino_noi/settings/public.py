@@ -16,15 +16,7 @@ class Site(Site):
     root_urlconf = 'lino_noi.urls'
     default_ui = None
 
-    # def get_apps_modifiers(self, **kw):
-    #     kw = super(Site, self).get_apps_modifiers(**kw)
-    #     kw.update(extjs=None)
-
     def get_installed_apps(self):
-        """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
-        Noi.
-
-        """
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.bootstrap3'
 
