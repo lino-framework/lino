@@ -143,6 +143,7 @@ class Kernel(object):
 <lino.core.site.Site.kernel>`.
 
     """
+    default_ui = None
 
     # _singleton_instance = None
 
@@ -227,19 +228,23 @@ class Kernel(object):
                 if p.ui_handle_attr_name is not None:
                     ui = p
                     break
-            if ui is None:
-                raise Exception("No user interface in {0}".format(
-                    [u.app_name for u in self.site.installed_plugins]))
-        self.default_renderer = ui.renderer
-        self.default_ui = ui
+            # if ui is None:
+            #     raise Exception("No user interface in {0}".format(
+            #         [u.app_name for u in self.site.installed_plugins]))
+        if ui is not None:
+            self.default_renderer = ui.renderer
+            self.default_ui = ui
 
         post_ui_build.send(self)
 
-        # trigger creation of params_layout.params_store
-        for res in actors.actors_list:
-            for ba in res.get_actions():
-                if ba.action.params_layout is not None:
-                    ba.action.params_layout.get_layout_handle(self.default_ui)
+        if self.default_ui is not None:
+
+            # trigger creation of params_layout.params_store
+            for res in actors.actors_list:
+                for ba in res.get_actions():
+                    if ba.action.params_layout is not None:
+                        ba.action.params_layout.get_layout_handle(
+                            self.default_ui)
         # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(kernel, self):

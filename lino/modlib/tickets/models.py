@@ -9,11 +9,6 @@ time, energy and money.  The partner can be either external or the
 runner of the site.  Projects form a tree: each Project can have a
 `parent` (another Project for which it is a sub-project).
 
-A **Ticket** is a concrete question or problem formulated by a
-`reporter` (a user).  A Ticket is always related to one and only one
-Project.  It may be related to other tickets which may belong to other
-projects.
-
 Projects are handled by their *name* while Tickets are handled by
 their *number*.
 
@@ -86,6 +81,16 @@ class TicketType(mixins.BabelNamed):
 
 class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     """A **project** is something on which several users work together.
+
+    .. attribute:: name
+
+    .. attribute:: parent
+
+    .. attribute:: assign_to
+
+        The user to whom new tickets will be assigned.
+        See :attr:`Ticket.assigned_to`.
+
     """
     class Meta:
         verbose_name = _("Project")
@@ -94,6 +99,11 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     name = models.CharField(_("Name"), max_length=200)
     parent = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Parent"))
+    assign_to = dd.ForeignKey(
+        settings.SITE.user_model,
+        verbose_name=_("Assign tickets to"),
+        blank=True, null=True,
+        help_text=_("The user to whom new tickets will be assigned."))
     type = models.ForeignKey('tickets.ProjectType', blank=True, null=True)
     description = dd.RichTextField(_("Description"), blank=True)
     srcref_url_template = models.CharField(blank=True, max_length=200)
@@ -285,7 +295,24 @@ class SpawnTicket(dd.Action):
 
 
 class Ticket(mixins.CreatedModified, TimeInvestment):
-    """
+    """A **Ticket** is a concrete question or problem formulated by a
+    :attr:`reporter` (a user).
+    
+    A Ticket is always related to one and only one Project.  It may be
+    related to other tickets which may belong to other projects.
+
+
+    .. attribute:: reporter
+
+        The user who is reported this ticket.
+
+    .. attribute:: assigned_to
+
+        The user who is working on this ticket.
+
+        If this field is empty and :attr:`project` is not empty, then
+        default value is taken from :attr:`Project.assign_to`.
+
     """
     workflow_state_field = 'state'
 
@@ -331,24 +358,20 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         verbose_name=_("Reporter"),
         related_name="reported_tickets",
         help_text=_("The user who reported this ticket."))
-    #~ state = models.ForeignKey('tickets.TicketState',blank=True,null=True)
     state = TicketStates.field(default=TicketStates.new)
-    # closed = models.DateTimeField(
-    #     _("Closed since"), editable=False, null=True)
-    # standby = models.DateTimeField(
-    #     _("Standby since"), editable=False, null=True)
     feedback = models.BooleanField(
         _("Feedback"), default=False,
         help_text=_("Ticket is waiting for feedback from somebody else."))
     standby = models.BooleanField(_("Standby"), default=False)
 
-    #~ start_date = models.DateField(
-        #~ verbose_name=_("Start date"),
-        #~ blank=True,null=True)
+    deadline = models.DateField(
+        verbose_name=_("Deadline"),
+        blank=True, null=True)
 
-    # close_ticket = CloseTicket()
-    # set_standby = StandbyTicket()
-    # activate_ticket = ActivateTicket()
+    priority = models.SmallIntegerField(
+        _("Priority"), default=0,
+        help_text=_("Value between 0 and 100."))
+
     spawn_ticket = SpawnTicket()
 
     def on_create(self, ar):
@@ -371,6 +394,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         me = self.reporter
         if me and not self.project and me.current_project:
             self.project = me.current_project
+        if not self.assigned_to and self.project and self.project.assign_to:
+            self.assigned_to = self.project.assign_to
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)

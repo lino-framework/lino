@@ -66,8 +66,42 @@ ProjectEvents.add_item_instance(TicketEventModified('modified'))
 
 class TicketStates(dd.Workflow):
 
-    """
-    The state of a ticket (new, open, closed, ...)
+    """The state of a ticket (new, open, closed, ...)
+
+    Default choices are:
+
+    .. attribute:: new
+
+        Somebody reported this ticket, but there was no response so
+        far.
+        The ticket needs to be triaged.
+
+    .. attribute:: talk
+
+        The ticket needs discussion with the reporter.
+        We don't yet know exactly
+        what to do with it.
+
+    .. attribute:: todo
+
+        The ticket is confirmed and we are working on it.
+        It appears in the todo list of somebody (either the assigned
+        worker, or our general todo list)
+
+    .. attribute:: sticky
+
+        Special state for permanent tickets which have no lifecycle.
+
+    .. attribute:: done
+
+        The ticket is basically done. If it is not also marked as
+        closed, then something else still needs to be done
+        (e.g. testing, confirmation, documentation,..)
+
+    .. attribute:: refused
+
+        It has been decided that we won't fix this ticket.
+
     """
     #~ label = _("Ticket State")
 
@@ -97,7 +131,7 @@ add = TicketStates.add_item
 #     action_name=_("Start"),
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
-add('15', _("Observing"), 'observing')
+add('15', _("Talk"), 'talk')
 add('20', _("To do"), 'todo')
 add('21', _("Sticky"), 'sticky')
 # add('30', _("Callback"), 'callback',
@@ -120,10 +154,10 @@ add('60', _("Refused"), 'refused',
 #     # required=dict(states=['new todo waiting']),
 #     help_text=_("Has been cancelled for some reason."))
 
-"""Difference between Cancelled and Refused : Canceled means that we
-don't want to talk about this ticket anymore.  Refused makes sense for
-tickets which had been asked by a partner. In that case we still may
-want to report it.
+"""Difference between Cancelled and Refused was that: Canceled means
+that we don't want to talk about this ticket anymore.  Refused makes
+sense for tickets which had been asked by a partner. In that case we
+still may want to report it.
 
 """
 
@@ -139,11 +173,10 @@ want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
-    TicketStates.todo.add_transition(required_states="new")
-    # TicketStates.callback.add_transition(states="todo new fixed")
-    TicketStates.done.add_transition(required_states="todo new")
-    # TicketStates.tested.add_transition(states="todo new callback fixed")
-    TicketStates.refused.add_transition(required_states="todo new")
+    TicketStates.talk.add_transition(required_states="new todo")
+    TicketStates.todo.add_transition(required_states="new talk")
+    TicketStates.done.add_transition(required_states="todo new talk")
+    TicketStates.refused.add_transition(required_states="todo new talk")
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
     # TicketStates.sleeping.add_transition(required_states="todo new callback")

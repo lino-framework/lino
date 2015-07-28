@@ -12,7 +12,7 @@ from __future__ import unicode_literals
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
-from django.db import models
+from django.db.models import Q
 
 from lino.core.choicelists import ChoiceList, Choice
 
@@ -80,10 +80,10 @@ class PeriodEvent(Choice):
             qs = qs.filter(end_date__gte=obj.start_date)
             qs = qs.filter(end_date__lte=obj.end_date)
         elif self.name == 'active':
-            qs = qs.filter(models.Q(start_date__isnull=True) |
-                           models.Q(start_date__lte=obj.end_date))
-            qs = qs.filter(models.Q(end_date__isnull=True) |
-                           models.Q(end_date__gte=obj.start_date))
+            qs = qs.filter(Q(start_date__isnull=True) |
+                           Q(start_date__lte=obj.end_date))
+            qs = qs.filter(Q(end_date__isnull=True) |
+                           Q(end_date__gte=obj.start_date))
         return qs
 
 

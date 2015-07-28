@@ -58,19 +58,20 @@ class TicketTypes(dd.Table):
 
 
 class ProjectDetail(dd.FormLayout):
-    main = "general tickets history"
+    main = "general #tickets history"
 
     general = dd.Panel("""
     ref name parent type
-    company #contact_person #contact_role private closed
-    description:30 ProjectsByParent:30
+    company assign_to #contact_person #contact_role private closed
+    description:30
+    ProjectsByParent:30 TicketsByProject
     # cal.EventsByProject
     """, label=_("General"))
 
-    tickets = dd.Panel("""
-    #SponsorshipsByProject
-    TicketsByProject #SessionsByProject
-    """, label=_("Tickets"))
+    # tickets = dd.Panel("""
+    # #SponsorshipsByProject
+    # TicketsByProject #SessionsByProject
+    # """, label=_("Tickets"))
 
     history = dd.Panel("""
     srcref_url_template changeset_url_template
@@ -113,7 +114,7 @@ class Projects(dd.Table):
 class ProjectsByParent(Projects):
     master_key = 'parent'
     label = _("Subprojects")
-    column_names = "ref name type *"
+    column_names = "ref name *"
 
 
 class ProjectsByType(Projects):
@@ -253,7 +254,7 @@ class TicketDetail(dd.DetailLayout):
 
 class Tickets(dd.Table):
     model = 'tickets.Ticket'
-    order_by = ["id"]
+    order_by = ["-id"]
     column_names = 'id summary:50 feedback standby closed ' \
                    'workflow_buttons:30 reporter:10 project:10 *'
     auto_fit_column_widths = True
@@ -274,7 +275,7 @@ class Tickets(dd.Table):
             settings.SITE.user_model,
             verbose_name=_("Assigned to"),
             blank=True, null=True,
-            help_text=_("Only rows authored by this user.")),
+            help_text=_("Only tickets assigned to this user.")),
         interesting_for=dd.ForeignKey(
             'tickets.Site',
             verbose_name=_("Interesting for"),
@@ -285,6 +286,9 @@ class Tickets(dd.Table):
             blank=True, null=True),
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
+        show_assigned=dd.YesNo.field(
+            blank=True,
+            help_text=_("Show tickets which are assigned to somebody.")),
         show_closed=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are closed.")),
@@ -299,7 +303,8 @@ class Tickets(dd.Table):
             help_text=_("Show tickets which are private.")))
     params_layout = """
     reporter assigned_to interesting_for project state has_project
-    show_closed show_standby show_private start_date end_date observed_event"""
+    show_assigned show_closed show_standby show_private \
+    start_date end_date observed_event"""
     simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
     @classmethod
@@ -322,12 +327,15 @@ class Tickets(dd.Table):
         elif pv.show_closed == dd.YesNo.yes:
             qs = qs.filter(closed=True)
 
+        if pv.show_assigned == dd.YesNo.no:
+            qs = qs.filter(assigned_to__isnull=True)
+        elif pv.show_assigned == dd.YesNo.yes:
+            qs = qs.filter(assigned_to__isnull=False)
+
         if pv.has_project == dd.YesNo.no:
             qs = qs.filter(project__isnull=True)
         elif pv.has_project == dd.YesNo.yes:
             qs = qs.filter(project__isnull=False)
-        elif pv.has_project is not None:
-            raise Exception("20150721 %s" % pv.has_project)
 
         if pv.show_standby == dd.YesNo.no:
             qs = qs.filter(standby=False)
@@ -381,20 +389,89 @@ class TicketsByProduct(Tickets):
 
 
 class PublicTickets(Tickets):
+    roles_required = set([])
     label = _("Public tickets")
-    order_by = ["-modified", "id"]
-    column_names = 'overview:50 workflow_buttons:30 reporter:10 project:10 *'
+    order_by = ["-priority", "-id"]
+    column_names = 'overview:50 workflow_buttons:30 project:10 *'
     filter = models.Q(assigned_to=None)
 
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(PublicTickets, self).param_defaults(ar, **kw)
-        kw.update(show_closed=dd.YesNo.no)
-        # kw.update(show_standby=dd.YesNo.no)
-        kw.update(show_private=dd.YesNo.no)
+        kw.update(show_assigned=dd.YesNo.no)
         return kw
 
 
+class TicketsToTriage(Tickets):
+    label = _("Tickets to triage")
+    button_label = _("Triage")
+    order_by = ["-id"]
+    column_names = 'overview:50 product:10 reporter:10 project:10 ' \
+                   'assigned_to:10 ticket_type:10 workflow_buttons:40 *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(TicketsToTriage, self).param_defaults(ar, **kw)
+        kw.update(state=TicketStates.new)
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            msg = _("{0} new tickets.")
+            msg = msg.format(count)
+            yield ar.href_to_request(sar, msg)
+
+
+class TicketsToTalk(Tickets):
+    label = _("Tickets to talk")
+    button_label = _("Talk")
+    order_by = ["-id"]
+    column_names = "overview:50 planned_time product:10 reporter:10 " \
+                   "project:10 " \
+                   "assigned_to:10 workflow_buttons:40 *"
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(TicketsToTalk, self).param_defaults(ar, **kw)
+        kw.update(state=TicketStates.talk)
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            msg = _("{0} tickets to talk.")
+            msg = msg.format(count)
+            yield ar.href_to_request(sar, msg)
+
+
+class TicketsToDo(Tickets):
+    label = _("Tickets to do")
+    button_label = _("To do")
+    order_by = ["priority", "-deadline", "-id"]
+    column_names = 'overview:50 priority deadline ' \
+                   'assigned_to:10 workflow_buttons:40 *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(TicketsToDo, self).param_defaults(ar, **kw)
+        kw.update(state=TicketStates.todo)
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            msg = _("{0} tickets to do.")
+            msg = msg.format(count)
+            yield ar.href_to_request(sar, msg)
+
+    
 class ActiveTickets(Tickets):
     help_text = _("Active tickets are those which are neither "
                   "closed nor in standby mode.")

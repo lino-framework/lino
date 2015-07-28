@@ -426,8 +426,6 @@ documentation.
 
     """
 
-    # enable_role_based_permissions = False
-
     user_profiles_module = None
     """The full Python path of the **user profiles module** to be used on
     this site.
