@@ -208,15 +208,24 @@ class EditTemplate(BasePrintAction):
     """Edit the print template, i.e. the file specified by
     :meth:`Printable.get_print_templates`.
 
-    The action becomes automatically visible for users with
-    `UserLevel` "manager" and when :mod:`lino.modlib.davlink` is
-    installed.
+    The action available only when :mod:`lino.modlib.davlink` is
+    installed, and only for users with `SiteStaff` role.
 
-    If it is visible, then it still works only when your
-    :xfile:`webdav` directory (1) is published by your server under
-    "/webdav" and (2) has a symbolic link named `config` which points
-    to your local config directory. And (3) the local config directory
-    must be writable by `www-data`.
+    If it is available, then it still works only when
+
+    - your site has a local config directory
+    - your :xfile:`webdav` directory (1) is published by your server under
+      "/webdav" and (2) has a symbolic link named `config` which points
+      to your local config directory.
+    - the local config directory is writable by `www-data`
+
+    **Factory template versus local template**
+    
+    The action automatically copies a factory template to the local
+    config tree if necessary. Before doing so, it will ask for
+    confirmation: :message:`Before you can edit this template we must
+    create a local copy on the server.  This will exclude the template
+    from future updates.`
 
     """
     sort_index = 51
