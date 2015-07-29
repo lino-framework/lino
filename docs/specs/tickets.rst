@@ -105,12 +105,12 @@ not yet been assigned to a project:
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
 ... #doctest: +REPORT_UDIFF
-==== =================== ========== ========= ======== ========== ============ =========
- ID   Summary             Feedback   Standby   Closed   Workflow   Reporter     Project
----- ------------------- ---------- --------- -------- ---------- ------------ ---------
- 5    Cannot create Foo   No         No        No       **New**    Robin Rood
- 3    Baz sucks           No         No        No       **New**    luc
-==== =================== ========== ========= ======== ========== ============ =========
+==== =================== ======== ========== ============ =========
+ ID   Summary             Closed   Workflow   Reporter     Project
+---- ------------------- -------- ---------- ------------ ---------
+ 5    Cannot create Foo   No       **New**    Robin Rood
+ 3    Baz sucks           No       **New**    luc
+==== =================== ======== ========== ============ =========
 <BLANKLINE>
 
 
@@ -155,11 +155,11 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ========== ========= ======== ========== ========== =========
- ID   Summary                     Feedback   Standby   Closed   Workflow   Reporter   Project
----- --------------------------- ---------- --------- -------- ---------- ---------- ---------
- 1    Foo fails to bar when baz   No         No        No       **New**    mathieu    lino
-==== =========================== ========== ========= ======== ========== ========== =========
+==== =========================== ======== ========== ========== =========
+ ID   Summary                     Closed   Workflow   Reporter   Project
+---- --------------------------- -------- ---------- ---------- ---------
+ 1    Foo fails to bar when baz   No       **New**    mathieu    lino
+==== =========================== ======== ========== ========== =========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -168,11 +168,11 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ========== ========= ======== ======================================================= ========== =========
- ID   Summary                     Feedback   Standby   Closed   Workflow                                                Reporter   Project
----- --------------------------- ---------- --------- -------- ------------------------------------------------------- ---------- ---------
- 1    Foo fails to bar when baz   No         No        No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
-==== =========================== ========== ========= ======== ======================================================= ========== =========
+==== =========================== ======== ======================================================= ========== =========
+ ID   Summary                     Closed   Workflow                                                Reporter   Project
+---- --------------------------- -------- ------------------------------------------------------- ---------- ---------
+ 1    Foo fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
+==== =========================== ======== ======================================================= ========== =========
 <BLANKLINE>
 
 
