@@ -372,7 +372,8 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = "overview:50 product:10 reporter:10 state closed standby *"
+    column_names = ("overview:50 product:10 reporter:10 state "
+                    "closed planned_time *")
 
 
 class TicketsByType(Tickets):
