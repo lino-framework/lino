@@ -42,7 +42,24 @@ from .choicelists import TicketEvents, TicketStates, LinkTypes
 
 
 class TimeInvestment(dd.Model):
+    """Model mixin for things which represent a time investment.  This
+    currently just defines a group of three fields:
 
+    .. attribute:: closed
+
+       Whether this investment is closed, i.e. certain things should
+       not change anymore.
+
+    .. attribute:: private
+
+       Whether this investment is private, i.e. should not be publicly
+       visible anywhere.
+
+    .. attribute:: planned_time
+
+        The time (in hours) we plan to work on this project or ticket.
+
+    """
     class Meta:
         abstract = True
 

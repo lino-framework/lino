@@ -1362,7 +1362,7 @@ documentation.
                         ok = True
                         break
             if not ok:
-                msg = ("Oops, cannot use {cache_dir} for {this} "
+                msg = ("Cannot use {cache_dir} for {this} "
                        "because it is used for {other}.")
                 msg = msg.format(
                     cache_dir=self.cache_dir,

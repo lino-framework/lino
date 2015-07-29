@@ -303,7 +303,7 @@ class TicketsByReport(Tickets, InvestedTime):
 class ProjectsByReport(Projects, InvestedTime):
     """The list of projects mentioned in a service report."""
     master = 'clocking.ServiceReport'
-    column_names = "ref name active_tickets invested_time"
+    column_names = "ref name active_tickets planned_time invested_time"
     order_by = ['ref']
 
     @classmethod
