@@ -242,12 +242,13 @@ class TicketDetail(dd.DetailLayout):
     general1 = """
     summary:40 id ticket_type:10
     reporter project product site
-    workflow_buttons:20 feedback standby closed private
+    workflow_buttons:20 assigned_to priority closed
     """
 
     planning = dd.Panel("""
     nickname:10 created modified reported_for fixed_for
-    state priority assigned_to duplicate_of planned_time
+    state duplicate_of planned_time
+    standby feedback private
     DuplicatesByTicket  #ChildrenByTicket
     """, label=_("Planning"))
 
@@ -255,9 +256,8 @@ class TicketDetail(dd.DetailLayout):
 class Tickets(dd.Table):
     model = 'tickets.Ticket'
     order_by = ["-id"]
-    column_names = 'id summary:50 feedback standby closed ' \
+    column_names = 'id summary:50 #feedback #standby closed ' \
                    'workflow_buttons:30 reporter:10 project:10 *'
-    auto_fit_column_widths = True
     detail_layout = TicketDetail()
     insert_layout = """
     reporter product
@@ -373,19 +373,16 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = "overview:50 product:10 reporter:10 state closed standby *"
-    auto_fit_column_widths = True
 
 
 class TicketsByType(Tickets):
     master_key = 'ticket_type'
     column_names = "summary state closed  *"
-    auto_fit_column_widths = True
 
 
 class TicketsByProduct(Tickets):
     master_key = 'product'
     column_names = "summary state closed  *"
-    auto_fit_column_widths = True
 
 
 class PublicTickets(Tickets):
@@ -431,7 +428,7 @@ class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
     button_label = _("Talk")
     order_by = ["-id"]
-    column_names = "overview:50 planned_time priority reporter:10 " \
+    column_names = "overview:50 reporter:10 project planned_time priority " \
                    "workflow_buttons:40 *"
 
     @classmethod
@@ -453,7 +450,7 @@ class TicketsToTalk(Tickets):
 class TicketsToDo(Tickets):
     label = _("Tickets to do")
     button_label = _("To do")
-    order_by = ["priority", "-deadline", "-id"]
+    order_by = ["-priority", "-deadline", "-id"]
     column_names = 'overview:50 priority deadline ' \
                    'assigned_to:10 workflow_buttons:40 *'
 
@@ -529,7 +526,6 @@ class Sites(dd.Table):
     model = 'tickets.Site'
     column_names = "name partner remark id *"
     order_by = ['name']
-    auto_fit_column_widths = True
 
     insert_layout = """
     name
@@ -551,12 +547,6 @@ class SitesByPartner(Sites):
 class Interests(dd.Table):
     model = 'tickets.Interest'
     column_names = "site product *"
-    auto_fit_column_widths = True
-
-
-# class MyInterests(My, Interests):
-#     order_by = ["product__ref"]
-#     column_names = 'product__ref product *'
 
 
 class InterestsBySite(Interests):

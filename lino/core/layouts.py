@@ -165,6 +165,11 @@ class LayoutHandle(object):
             desc = desc.replace('*', wildcard_str)
             if len(explicit_specs) > 0:
                 self.hidden_elements |= set(wildcard_names)
+            mk = self.layout._datasource.master_key
+            if mk and not mk in explicit_specs \
+               and not mk in self.hidden_elements:
+                desc += ' ' + mk
+                self.hidden_elements.add(mk)
 
         if "\n" in desc:
             # it's a vertical box
@@ -338,7 +343,7 @@ class BaseLayout(object):
         self._added_panels = dict()
         self._other_datasources = set()
         #~ self._window_size = window_size
-        self.hidden_elements = hidden_elements or frozenset()
+        self.hidden_elements = hidden_elements or set()
         self._element_options = dict()
         if main is not None:
             self.main = main
@@ -561,7 +566,7 @@ class ColumnsLayout(FieldLayout):
 
     Lino automatically creates one instance of this for every table
     using the string specified in that table's :attr:`column_names
-    <dd.AbstractTable.column_names>` attribute.
+    <lino.core.tables.AbstractTable.column_names>` attribute.
     
     """
     join_str = " "

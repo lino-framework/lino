@@ -1228,24 +1228,6 @@ class Actor(actions.Parametrizable, Permittable):
         return sar
 
     @classmethod
-    def unused_show(self, master_instance=None,
-                    column_names=None, **known_values):
-        """
-        Creates an action request for this actor and calls its
-        :meth:`show <lino.core.requests.ActionRequest.show>`
-        method.
-        This is a shortcut for usage in tested document snippets.
-
-        """
-        kw = dict()
-        if master_instance is not None:
-            kw.update(master_instance=master_instance)
-        kw.update(actor=self)
-        kw.update(known_values=known_values)
-        kw.update(renderer=settings.SITE.kernel.text_renderer)
-        self.request(**kw).show(column_names)
-
-    @classmethod
     def to_html(self, **kw):
         """
         """

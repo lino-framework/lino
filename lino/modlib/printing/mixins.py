@@ -241,7 +241,8 @@ class EditTemplate(BasePrintAction):
         local_file = None
         groups = elem.get_template_groups()
         assert len(groups) > 0
-        for grp in groups:
+        for grp in reversed(groups):
+            # subtle: if there are more than 1 groups
             parts = [grp, leaf]
             local_file = join(lcd.name, *parts)
             if filename == local_file:
@@ -282,9 +283,6 @@ class EditTemplate(BasePrintAction):
             ar.confirm(ok, msg, _("Are you sure?"))
                 
 
-# http://10.171.37.173/api/excerpts/ExcerptTypes/5?an=detail
-
-
 class ClearCacheAction(Action):
 
     """
@@ -309,7 +307,8 @@ class ClearCacheAction(Action):
         # should be visible in the UI
         if obj is not None and not obj.build_time:
             return False
-        return super(ClearCacheAction, self).get_action_permission(ar, obj, state)
+        return super(ClearCacheAction, self).get_action_permission(
+            ar, obj, state)
 
     def run_from_ui(self, ar):
         elem = ar.selected_rows[0]
@@ -320,13 +319,20 @@ class ClearCacheAction(Action):
                        elem, refresh=True)
 
         t = elem.get_cache_mtime()
-        if t is not None and t != elem.build_time:
-            logger.info(
-                "20140313 %r != %r", elem.get_cache_mtime(), elem.build_time)
-            return ar.confirm(
-                doit,
-                _("This will discard all changes in the generated file."),
-                _("Are you sure?"))
+        if t is not None:
+            # set microseconds to 0 because Django DateTimeField has
+            # no ms precision:
+            t = datetime.datetime(
+                t.year, t.month, t.day, t.hour, t.minute, t.second)
+
+            if t != elem.build_time:
+                # logger.info(
+                #     "20140313 %r != %r", elem.get_cache_mtime(),
+                #     elem.build_time)
+                return ar.confirm(
+                    doit,
+                    _("This will discard all changes in the generated file."),
+                    _("Are you sure?"))
         return doit(ar)
 
 
@@ -497,6 +503,10 @@ class CachedPrintable(Duplicable, Printable):
             self.do_print, self)
 
     def get_cache_mtime(self):
+        """Return the modification time (a `datetime`) of the generated cache
+        file, or `None` if no such file exists.
+
+        """
         filename = self.get_target_name()
         if not filename:
             return None
