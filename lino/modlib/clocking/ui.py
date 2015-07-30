@@ -261,7 +261,7 @@ class TicketsByReport(Tickets, InvestedTime):
     master = 'clocking.ServiceReport'
     # column_names = "summary id reporter project product site state
     # invested_time"
-    column_names = "id my_description state invested_time"
+    column_names = "id my_description state planned_time invested_time"
     order_by = ['id']
 
     @classmethod
