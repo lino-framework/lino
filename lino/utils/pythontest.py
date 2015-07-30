@@ -57,7 +57,7 @@ class TestCase(TestCase):
         args = ["python", "manage.py"]
         args += ["test"]
         if cwd is not None:
-            args += [os.path.abspath(cwd)]  # see 20150730
+            args += [os.path.realpath(cwd)]  # see 20150730
         args += ["--noinput"]
         args += ["--failfast"]
         if cwd is not None:
