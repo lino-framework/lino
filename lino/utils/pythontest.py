@@ -56,6 +56,8 @@ class TestCase(TestCase):
     def run_django_manage_test(self, cwd=None, **kw):
         args = ["python", "manage.py"]
         args += ["test"]
+        if cwd is not None:
+            args += [os.path.abspath(cwd)]  # see 20150730
         args += ["--noinput"]
         args += ["--failfast"]
         if cwd is not None:

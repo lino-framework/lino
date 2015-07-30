@@ -50,6 +50,7 @@ from lino.mixins.periods import DatePeriod
 from lino.modlib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.excerpts.mixins import Certifiable
+from lino.modlib.tickets.choicelists import TicketStates
 
 
 class SessionType(mixins.BabelNamed):
@@ -313,7 +314,18 @@ if False:  # works, but is not useful
 
 
 class ServiceReport(Certifiable, DatePeriod):
+    """A **service report** is a document used in various discussions with
+    a stakeholder.
 
+    .. attribute:: start_date
+    .. attribute:: end_date
+    .. attribute:: interesting_for
+    .. attribute:: ticket_state
+
+    .. attribute:: printed
+        See :attr:`lino.modlib.exerpts.mixins.Certifiable.printed`
+
+    """
     class Meta:
         verbose_name = _("Service Report")
         verbose_name_plural = _("Service Reports")
@@ -324,5 +336,19 @@ class ServiceReport(Certifiable, DatePeriod):
         blank=True, null=True,
         help_text=_("Only tickets interesting for this site."))
 
+    ticket_state = TicketStates.field(
+        null=True, blank=True,
+        help_text=_("Only tickets in this state."))
 
+    def get_tickets_parameters(self, **pv):
+        """Return a dict with parameter values for `tickets.Tickets` based on
+        the options of this report.
+
+        """
+        pv.update(start_date=self.start_date, end_date=self.end_date)
+        pv.update(interesting_for=self.interesting_for)
+        if self.ticket_state:
+            pv.update(state=self.ticket_state)
+        return pv
+        
 from .ui import *

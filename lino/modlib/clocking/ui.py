@@ -269,9 +269,12 @@ class TicketsByReport(Tickets, InvestedTime):
         mi = ar.master_instance
         if mi is None:
             return
-        spv = dict(start_date=mi.start_date, end_date=mi.end_date)
+        spv = mi.get_tickets_parameters()
+        # spv = dict(start_date=mi.start_date, end_date=mi.end_date)
         spv.update(observed_event=TicketEvents.clocking)
-        spv.update(interesting_for=mi.interesting_for)
+        # spv.update(interesting_for=mi.interesting_for)
+        # if mi.ticket_state:
+        #     spv.update(state=mi.ticket_state)
         ar.param_values.update(spv)
 
         qs = super(TicketsByReport, self).get_request_queryset(ar)
@@ -316,12 +319,9 @@ class ProjectsByReport(Projects, InvestedTime):
         def worked_time(**spv):
             tot = Duration()
             tickets = []
-            spv.update(start_date=mi.start_date, end_date=mi.end_date)
+            spv = mi.get_tickets_parameters(**spv)
             spv.update(observed_event=TicketEvents.clocking)
-            spv.update(interesting_for=mi.interesting_for)
-            # spv.update(project=prj)
             sar = Tickets.request(param_values=spv)
-            # for ticket in Ticket.objects.filter(project=prj):
             for ticket in sar:
                 ttot = compute_invested_time(ticket, mi)
                 if ttot:
@@ -358,7 +358,7 @@ class ServiceReports(dd.Table):
     """List of service reports."""
     model = "clocking.ServiceReport"
     detail_layout = """
-    start_date end_date interesting_for printed
+    start_date end_date interesting_for ticket_state printed
     TicketsByReport
     ProjectsByReport
     """
