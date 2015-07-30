@@ -54,14 +54,15 @@ class TestCase(TestCase):
         self.run_subprocess(args, **kw)
 
     def run_django_manage_test(self, cwd=None, **kw):
+        """Run the `manage.py test` command in the given directory."""
         args = ["python", "manage.py"]
         args += ["test"]
         if cwd is not None:
-            args += [os.path.realpath(cwd)]  # see 20150730
+            args += ["--top-level-directory=" + os.path.abspath(cwd)]
+            # args += [os.path.realpath(cwd)]  # see 20150730
+            kw.update(cwd=cwd)
         args += ["--noinput"]
         args += ["--failfast"]
-        if cwd is not None:
-            kw.update(cwd=cwd)
         self.run_subprocess(args, **kw)
 
     def run_django_admin_test_cd(self, cwd, **kw):
