@@ -18,6 +18,8 @@ import os
 import yaml
 import base64
 
+from unipath import Path
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -45,6 +47,9 @@ config = dd.plugins.beid
 
 from .choicelists import BeIdCardTypes
 
+MALE = Path(__file__).parent.child('luc.jpg')
+FEMALE = Path(__file__).parent.child('ly.jpg')
+
 
 def get_image_parts(card_number):
     return ("beid", card_number + ".jpg")
@@ -57,8 +62,9 @@ def get_image_path(card_number):
     """
     if card_number:
         parts = get_image_parts(card_number)
-        return os.path.join(settings.MEDIA_ROOT, *parts)
-    return os.path.join(settings.STATIC_ROOT, "contacts.Person.jpg")
+        # return os.path.join(settings.MEDIA_ROOT, *parts)
+        return Path(settings.MEDIA_ROOT).child(*parts)
+    return Path(settings.STATIC_ROOT).child("contacts.Person.jpg")
 
 
 def simulate_wrap(msg):
@@ -125,8 +131,10 @@ class BaseBeIdReadCardAction(dd.Action):
         card_number = str(data.cardNumber)
 
         if data.photo:
+            if not card_number:
+                raise Exception("20150730 photo data but no card_number ")
             fn = get_image_path(card_number)
-            if os.path.exists(fn):
+            if fn.exists():
                 logger.warning("Overwriting existing image file %s.", fn)
             try:
                 fp = file(fn, 'wb')
@@ -529,6 +537,21 @@ class BeIdCardHolder(dd.Model):
 
     def get_image_path(self):
         return get_image_path(self.card_number)
+
+    def make_demo_picture(self):
+        """Create a demo picture for this card holder. """
+        if not self.card_number:
+            raise Exception("20150730")
+        src = self.mf(MALE, FEMALE)
+        dst = self.get_image_path()
+        # dst = settings.SITE.cache_dir.child(
+        #     'media', 'beid', self.card_number + '.jpg')
+        if dst.needs_update([src]):
+            logger.info("Create demo picture %s", dst)
+            settings.SITE.makedirs_if_missing(dst.parent)
+            src.copy(dst)
+        else:
+            logger.info("Demo picture %s is up-to-date", dst)
 
 
 class BeIdCardHolderChecker(Checker):
