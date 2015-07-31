@@ -284,17 +284,16 @@ class ChoiceList(tables.AbstractTable):
     """Preferred width (in characters) used by :class:`fields
     <lino.core.fields.ChoiceListField>` that refer to this list.
 
-    This is automatically set to length of the longest choice text
-    (using the :attr:`default site language <lino.site.Site.languages>`).
-    It might guess wrong if the user language is not the default site
-    language.
-
-    The hard-coded absolute minimum is 4.  Currently you cannot
-    manually force it to a lower value than that.
+    If this is `None`, then Lino calculates the value at startup,
+    taking the length of the longest choice text.  The hard-coded
+    absolute minimum in that case is 4.  Note that it calculates the
+    value using the :attr:`default site language
+    <lino.site.Site.languages>` and thus might guess wrong if the user
+    language is not the default site language.
 
     Note that by this we mean the width of the bare text field,
     excluding any UI-specific control like the trigger button of a
-    combobox.  That's why e.g. `lino.ui.extjs3.ext_elems` adds a
+    combobox.  That's why e.g. :mod:`lino.modlib.extjs.ext_elems` adds
     another value for the trigger button.
 
     """
@@ -402,11 +401,12 @@ class ChoiceList(tables.AbstractTable):
     @classmethod
     def class_init(cls):
         super(ChoiceList, cls).class_init()
-        cls.preferred_width = 4
-        for i in cls.get_list_items():
-            dt = cls.display_text(i)
-            cls.preferred_width = max(
-                cls.preferred_width, len(unicode(dt)))
+        if cls.preferred_width is None:
+            pw = 4
+            for i in cls.get_list_items():
+                dt = cls.display_text(i)
+                pw = max(pw, len(unicode(dt)))
+            cls.preferred_width = pw
 
     @classmethod
     def add_item_instance(cls, i):

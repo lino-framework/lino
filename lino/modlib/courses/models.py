@@ -59,6 +59,7 @@ sales = dd.resolve_app('sales')
 
 
 class CourseAreas(dd.ChoiceList):
+    preferred_width = 10
     verbose_name = _("Course area")
     verbose_name_plural = _("Course areas")
 add = CourseAreas.add_item
@@ -228,7 +229,7 @@ class Lines(dd.Table):
     model = 'courses.Line'
     detail_layout = """
     id name ref
-    topic fees_cat tariff options_cat body_template
+    course_area topic fees_cat tariff options_cat body_template
     event_type guest_role every_unit every
     description
     excerpt_title
@@ -826,6 +827,9 @@ class Enrolment(UserAuthored, sales.Invoiceable, Certifiable):
         #~ return _("Confirmation not implemented")
 
     def save(self, *args, **kw):
+        if not self.course_area:
+            if self.course and self.course.line:
+                self.course_area = self.course.line.course_area
         if self.amount is None:
             self.compute_amount()
         super(Enrolment, self).save(*args, **kw)

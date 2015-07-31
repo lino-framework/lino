@@ -33,11 +33,10 @@ from lino.utils import quantities
 from lino.utils.quantities import Duration
 
 
-
 class PasswordField(models.CharField):
 
     """Stored as plain text in database, but not displayed in user
-interface.
+    interface.
 
     """
     pass
@@ -45,30 +44,28 @@ interface.
 
 class RichTextField(models.TextField):
 
-    """Only difference with Django's `models.TextField` is that you can
-    specify a keyword argument `format` to override the global
-    :attr:`lino.core.site.Site.textfield_format`.
+    """Like Django's `models.TextField`, but you can specify a keyword
+    argument :attr:`textfield_format`.
+
+    .. attribute:: textfield_format
+
+        Override the global
+        :attr:`lino.core.site.Site.textfield_format`.
+    
+        For backwards compatibility `format` is an alias for
+        `textfield_format`.
 
     """
 
     def __init__(self, *args, **kw):
-        self.textfield_format = kw.pop('format', None)
+        self.textfield_format = kw.pop(
+            'format', kw.pop('textfield_format', None))
         super(RichTextField, self).__init__(*args, **kw)
 
     def set_format(self, fmt):
         self.textfield_format = fmt
 
 
-#~ class PercentageField(models.SmallIntegerField):
-    #~ """
-    #~ Deserves more documentation.
-    #~ """
-    #~ def __init__(self, *args, **kw):
-        #~ defaults = dict(
-            #~ max_length=3,
-            #~ )
-        #~ defaults.update(kw)
-        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
 class PercentageField(models.DecimalField):
 
     """
