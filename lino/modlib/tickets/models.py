@@ -409,8 +409,9 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         # print "20150523b on_create", self.reporter
         super(Ticket, self).full_clean()
         me = self.reporter
-        if me and not self.project and me.current_project:
-            self.project = me.current_project
+        if False:
+            if me and not self.project and me.current_project:
+                self.project = me.current_project
         if not self.assigned_to and self.project and self.project.assign_to:
             self.assigned_to = self.project.assign_to
 
@@ -464,10 +465,12 @@ class Interest(dd.Model):
 # dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
-dd.inject_field(
-    'users.User', 'current_project',
-    dd.ForeignKey(
-        'tickets.Project', verbose_name=_("Current project"),
-        blank=True, null=True, related_name="users_by_project"))
+if False:  # removed current_project field because it caused circular
+           # dependency
+    dd.inject_field(
+        'users.User', 'current_project',
+        dd.ForeignKey(
+            'tickets.Project', verbose_name=_("Current project"),
+            blank=True, null=True, related_name="users_by_project"))
 
 from .ui import *
