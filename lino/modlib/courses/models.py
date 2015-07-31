@@ -227,6 +227,9 @@ class Line(ExcerptTitle):
 
 class Lines(dd.Table):
     model = 'courses.Line'
+    column_names = ("ref name topic course_area "
+                    "event_type guest_role every_unit every *")
+    order_by = ['ref', 'name']
     detail_layout = """
     id name ref
     course_area topic fees_cat tariff options_cat body_template
