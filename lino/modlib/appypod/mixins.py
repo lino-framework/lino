@@ -16,7 +16,7 @@ from lino.utils.media import TmpMediaFile
 from lino.core import actions
 from lino.api import rt, _
 
-from .appy_renderer import Renderer
+from .appy_renderer import Renderer as AppyRenderer
 
 
 class PrintTableAction(actions.Action):
@@ -33,7 +33,8 @@ class PrintTableAction(actions.Action):
     MAX_ROW_COUNT = 900
     template_name = "Table.odt"
     target_file_format = 'pdf'  # can be pdf, odt or rtf
-    # ~ target_file_format = 'odt' # write to odt to see error messages for debugging templates
+    # target_file_format = 'odt'  # write to odt to see error messages
+                                  # for debugging templates
     combo_group = 'pdf'
 
     def is_callable_from(self, caller):
@@ -60,15 +61,15 @@ class PrintTableAction(actions.Action):
         if not tplfile:
             raise Exception("No file %s" % self.template_name)
 
-        ar.renderer = settings.SITE.kernel.default_renderer  # 20120624
+        ar.renderer = settings.SITE.kernel.html_renderer  # 20120624
 
         context = self.get_context(ar)
         if os.path.exists(target_file):
             os.remove(target_file)
         logger.debug(u"appy.pod render %s -> %s (params=%s",
                      tplfile, target_file, settings.SITE.appy_params)
-        renderer = Renderer(ar, tplfile, context,
-                            target_file, **settings.SITE.appy_params)
+        renderer = AppyRenderer(
+            ar, tplfile, context, target_file, **settings.SITE.appy_params)
         renderer.run()
 
     def get_context(self, ar):
