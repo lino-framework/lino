@@ -14,10 +14,10 @@ valid XHTML. It is far from being perfect but activaly being used in
 
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
-... <img src="foo.org">''')) #doctest: +NORMALIZE_WHITESPACE
+... <img src="foo.org" alt="Foo">''')) #doctest: +NORMALIZE_WHITESPACE
 <p>Hello,&nbsp;world!<br />
 Again I say: Hello,&nbsp;world!</p>
-<img src="foo.org" alt="" />
+<img src="foo.org" alt="Foo" />
 
 
 >>> html = '''\
