@@ -34,9 +34,14 @@ from distutils.version import StrictVersion as V
 
 class RaiseExceptionTest(unittest.TestCase):
 
-    @unittest.skipIf(V(version.short) < V('0.9.0'),
-                     "not supported with appy version %s" % version.short)
+    # unittest.skipIf is not available in Python 2.6
+    # @unittest.skipIf(V(version.short) < V('0.9.0'),
+    #                  "not supported with appy version %s" % version.short)
     def test_01(self):
+
+        if V(version.short) < V('0.9.0'):
+            # "not supported with appy version %s" % version.short)
+            return
 
         tpl = join(MYDIR, 'appy', 'template.odt')
         context = dict()
