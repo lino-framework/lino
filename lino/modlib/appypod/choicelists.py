@@ -14,7 +14,7 @@ from django.utils import translation
 
 from lino.modlib.printing.choicelists import SimpleBuildMethod, BuildMethods
 
-from .appy_renderer import Renderer
+from .appy_renderer import Renderer as AppyRenderer
 
 
 class AppyBuildMethod(SimpleBuildMethod):
@@ -47,8 +47,8 @@ class AppyBuildMethod(SimpleBuildMethod):
             # multiple values for keyword argument 'self'" exception
             context.update(self=context['this'])
 
-            Renderer(ar, tpl, context, target,
-                     **settings.SITE.appy_params).run()
+            AppyRenderer(ar, tpl, context, target,
+                         **settings.SITE.appy_params).run()
         return os.path.getmtime(target)
 
 
