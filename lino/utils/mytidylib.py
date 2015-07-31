@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This is not used and just an illustration of how much time people
-can waste before realizing that they are reinventing the wheel.
+"""This is used only when libtidy is not available.
 
 """
-from __future__ import print_function, unicode_literals
+# from __future__ import print_function, unicode_literals
 from xml.sax.saxutils import quoteattr
 
 from HTMLParser import HTMLParser
@@ -47,7 +46,7 @@ class MyHTMLParser(HTMLParser):
 
     def write_startendtag(self, tag, attrs):
         if attrs:
-            self.result += '<%s %s/>' % (tag, attrs2xml(attrs))
+            self.result += '<%s %s />' % (tag, attrs2xml(attrs))
         else:
             self.result += '<%s/>' % tag
 

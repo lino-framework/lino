@@ -6,7 +6,6 @@
 #
 #  $ python setup.py test -s tests.UtilsTests.test_tidy
 
-
 ur"""Defines the :func:`html2xhtml` function which converts HTML to
 valid XHTML.
 
@@ -17,7 +16,7 @@ module.
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
 ... <img src="foo.org" alt="Foo">'''))
-... #doctest: +NORMALIZE_WHITESPACE +SKIP
+... #doctest: +NORMALIZE_WHITESPACE -SKIP
 <p>Hello,&nbsp;world!<br />
 Again I say: Hello,&nbsp;world!</p>
 <img src="foo.org" alt="Foo" />
@@ -49,7 +48,6 @@ before and reopended after a block element.
 <div><span class="c">oops</span></div>
 <span class="c">baz</span>bam
 
-
 >>> print(html2xhtml('''<strong><ul><em><li>Foo</li></em><li>Bar</li></ul></strong>'''))
 <ul>
 <li><strong><em>Foo</em></strong></li>
@@ -70,7 +68,7 @@ to "<p>foo</p><p>bar</p><p>baz</p>".
 
 """
 
-from __future__ import print_function, unicode_literals
+# from __future__ import print_function, unicode_literals
 
 WRAP_BEFORE = """\
 <html>
@@ -102,14 +100,20 @@ try:
         #     document = document[:-15]
         return document.strip()
 
+    HAS_TIDYLIB = True
+
 except OSError:
-    # happens on readthedocs.org:
-    # OSError: Could not load libtidy using any of these names: libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,libtidy.dylib,tidy
-    # we can simply ignore it since it is just for building the docs.
-    
-    from .mytidylib import html2xhtml
+    # happens on readthedocs.org and Travis CI: OSError: Could not
+    # load libtidy using any of these names:
+    # libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,
+    # libtidy.dylib,tidy
+
+    # We can simply ignore it since it is just for building the docs.
+    from lino.utils.mytidylib import html2xhtml
     # TODO: emulate it well enough so that at least the test suite passes
     
+    HAS_TIDYLIB = False
+
 
 def _test():
     import doctest

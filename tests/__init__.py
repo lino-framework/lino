@@ -190,7 +190,9 @@ class UtilsTests(LinoTestCase):
         self.run_simple_doctests('lino/utils/memo.py')
 
     def test_tidy(self):
-        self.run_simple_doctests('lino/utils/html2xhtml.py')
+        from lino.utils.html2xhtml import HAS_TIDYLIB
+        if HAS_TIDYLIB:
+            self.run_simple_doctests('lino/utils/html2xhtml.py')
 
     def test_demonames(self):
         self.run_simple_doctests("""
