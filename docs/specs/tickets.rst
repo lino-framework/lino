@@ -1,4 +1,4 @@
-.. _noi.tested.tickets:
+.. _noi.specs.tickets:
 
 =================
 Ticket management
@@ -91,9 +91,9 @@ pay money.
 =========== =============== ======== ==============
  Reference   Name            Parent   Project Type
 ----------- --------------- -------- --------------
- lino        Framework
- team        Team
- docs        Documentation
+ linö        Framewörk
+ téam        Téam
+ dócs        Documentatión
 =========== =============== ======== ==============
 <BLANKLINE>
 
@@ -122,10 +122,10 @@ Products
 =========== ============== ==========
  Reference   Designation    Category
 ----------- -------------- ----------
- lino        Lino Core
- welfare     Lino Welfare
- cosi        Lino Cosi
- faggio      Lino Faggio
+ linõ        Lino Core
+ welfäre     Lino Welfare
+ così        Lino Cosi
+ faggiö      Lino Faggio
 =========== ============== ==========
 <BLANKLINE>
   
@@ -158,7 +158,7 @@ can see all local tickets for a given site object:
 ==== =========================== ======== ========== ========== =========
  ID   Summary                     Closed   Workflow   Reporter   Project
 ---- --------------------------- -------- ---------- ---------- ---------
- 1    Foo fails to bar when baz   No       **New**    mathieu    lino
+ 1    Föö fails to bar when baz   No       **New**    mathieu    linö
 ==== =========================== ======== ========== ========== =========
 <BLANKLINE>
 
@@ -171,7 +171,7 @@ authenticated developer it looks like this:
 ==== =========================== ======== ======================================================= ========== =========
  ID   Summary                     Closed   Workflow                                                Reporter   Project
 ---- --------------------------- -------- ------------------------------------------------------- ---------- ---------
- 1    Foo fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    lino
+ 1    Föö fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    linö
 ==== =========================== ======== ======================================================= ========== =========
 <BLANKLINE>
 

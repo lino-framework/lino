@@ -17,3 +17,4 @@ specifications. One of their goal is to get tested.
    clocking
    smtpd
    hosts
+   as_pdf
