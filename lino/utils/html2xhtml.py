@@ -2,22 +2,29 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur""" Defines the :func:`html2xhtml` function which converts HTML to
-valid XHTML. It is far from being perfect but activaly being used in
-:mod:`lino.utils.appy_pod`.
+# How to test this document:
+#
+#  $ python setup.py test -s tests.UtilsTests.test_tidy
 
-.. This document is a part of the test suite.
 
-  $ python setup.py test -s tests.UtilsTests.test_tidy
+ur"""Defines the :func:`html2xhtml` function which converts HTML to
+valid XHTML.
 
-  >>> from lino.utils.html2xhtml import *
+It uses Jason Stitt's `pytidylib
+<http://countergram.com/open-source/pytidylib/docs/index.html>`__
+module.
 
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>
-... <img src="foo.org" alt="Foo">''')) #doctest: +NORMALIZE_WHITESPACE
+... <img src="foo.org" alt="Foo">'''))
+... #doctest: +NORMALIZE_WHITESPACE +SKIP
 <p>Hello,&nbsp;world!<br />
 Again I say: Hello,&nbsp;world!</p>
 <img src="foo.org" alt="Foo" />
+
+Above test is currently skipped because tidylib output can slightly
+differ (``alt="Foo">`` versus ``alt="Foo" >``) depending on the
+installed version of tidylib.
 
 
 >>> html = '''\
@@ -77,6 +84,8 @@ try:
 
     from tidylib import tidy_fragment
 
+    # http://tidy.sourceforge.net/docs/quickref.html
+
     def html2xhtml(html, **options):
         options.update(doctype='omit')
         options.update(show_warnings=0)
@@ -98,8 +107,8 @@ except OSError:
     # OSError: Could not load libtidy using any of these names: libtidy,libtidy.so,libtidy-0.99.so.0,cygtidy-0-99-0,tidylib,libtidy.dylib,tidy
     # we can simply ignore it since it is just for building the docs.
     
-    from mytidylib import html2xhtml
-    #  TODO: emulate it well enough so that at least the test suite passes
+    from .mytidylib import html2xhtml
+    # TODO: emulate it well enough so that at least the test suite passes
     
 
 def _test():
