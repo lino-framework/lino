@@ -35,6 +35,6 @@ class SiteStaff(SiteUser):
     """
 
 
-class SiteAdmin(SiteStaff):
+class SiteAdmin(SiteStaff, Supervisor):
     """The root user of this system. """
     pass
