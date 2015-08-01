@@ -98,7 +98,6 @@ import sys
 import datetime
 import re
 from decimal import Decimal
-import locale
 
 # encapsulate where they come from:
 

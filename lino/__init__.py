@@ -20,8 +20,8 @@
 
 from __future__ import unicode_literals
 
+import sys
 import os
-
 from os.path import join, dirname
 
 
@@ -31,16 +31,17 @@ intersphinx_urls = dict(docs="http://www.lino-framework.org")
 srcref_url = 'https://github.com/lsaffre/lino/blob/master/%s'
 
 
+if sys.version_info[0] > 2:
+    PYAFTER26 = True
+elif sys.version_info[0] == 2 and sys.version_info[1] > 6:
+    PYAFTER26 = True
+else:
+    PYAFTER26 = False
+
+
 def setup_project(settings_module):
     os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
     from lino.api.shell import settings
-
-
-# The following line is here so we can write a single import statement
-# in plugins:
-#
-#   from lino.api import ad, _
-from django.utils.translation import ugettext_lazy as _
 
 
 DJANGO_DEFAULT_LANGUAGE = 'en-us'
@@ -94,3 +95,8 @@ if AFTER17:
             startup()
 
     default_app_config = 'lino.AppConfig'
+
+
+# deprecated use, only backwards compat:
+from django.utils.translation import ugettext_lazy as _
+

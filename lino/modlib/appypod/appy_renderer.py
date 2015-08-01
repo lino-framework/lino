@@ -232,7 +232,7 @@ class Renderer(AppyRenderer):
         ``do text from table(...)`` statement.
         """
         if True:
-            return self.insert_table_(*args, **kw).decode('utf-8')
+            return self.insert_table_(*args, **kw)
         else:
             #~ since i cannot yet tell appy_pod to alert me when there is an
             #~ exception, here at least i write it to the logger

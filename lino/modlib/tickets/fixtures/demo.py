@@ -2,6 +2,8 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+from __future__ import unicode_literals
+
 from lino.api import rt, dd, _
 from lino.utils import Cycler
 
@@ -31,10 +33,10 @@ def objects():
 
     TYPES = Cycler(TT.objects.all())
 
-    yield Product(name="Lino Core", ref="lino")
-    yield Product(name="Lino Welfare", ref="welfare")
-    yield Product(name="Lino Cosi", ref="cosi")
-    yield Product(name="Lino Faggio", ref="faggio")
+    yield Product(name="Lino Core", ref="linõ")
+    yield Product(name="Lino Welfare", ref="welfäre")
+    yield Product(name="Lino Cosi", ref="così")
+    yield Product(name="Lino Faggio", ref="faggiö")
 
     PRODUCTS = Cycler(Product.objects.all())
 
@@ -53,9 +55,9 @@ def objects():
         for i in range(3):
             yield Interest(site=u, product=PRODUCTS.pop())
 
-    yield Project(name="Framework", ref="lino")
-    yield Project(name="Team", ref="team")
-    yield Project(name="Documentation", ref="docs")
+    yield Project(name="Framewörk", ref="linö")
+    yield Project(name="Téam", ref="téam")
+    yield Project(name="Documentatión", ref="dócs")
 
     PROJECTS = Cycler(Project.objects.all())
 
@@ -70,7 +72,7 @@ def objects():
 
     welket = Site.objects.get(name="welket")
     yield ticket(
-        "Foo fails to bar when baz", site=welket, project=PROJECTS.pop())
+        "Föö fails to bar when baz", site=welket, project=PROJECTS.pop())
     yield ticket("Bar is not always baz", project=PROJECTS.pop())
     yield ticket("Baz sucks")
     yield ticket("Foo and bar don't baz", project=PROJECTS.pop())

@@ -1,7 +1,9 @@
 from unipath import Path
 
 from lino.utils.pythontest import TestCase
-import lino
+from lino import SETUP_INFO
+from lino import PYAFTER26
+from lino.utils.html2xhtml import HAS_TIDYLIB
 
 
 class LinoTestCase(TestCase):
@@ -11,7 +13,7 @@ class LinoTestCase(TestCase):
 
 class PackagesTests(LinoTestCase):
     def test_01(self):
-        self.run_packages_test(lino.SETUP_INFO['packages'])
+        self.run_packages_test(SETUP_INFO['packages'])
 
 
 class LibTests(LinoTestCase):
@@ -145,7 +147,8 @@ class DocsTests(LinoTestCase):
         self.run_simple_doctests('lino/utils/__init__.py')
 
     def test_float2decimal(self):
-        self.run_django_manage_test("docs/tested/float2decimal")
+        if PYAFTER26:
+            self.run_django_manage_test("docs/tested/float2decimal")
 
     def test_integer_pk(self):
         self.run_django_manage_test("docs/tested/integer_pk")
@@ -183,14 +186,13 @@ class UtilsTests(LinoTestCase):
         self.run_simple_doctests('lino/utils/html2rst.py')
 
     def test_xmlgen_sepa(self):
-        # self.run_simple_doctests('lino/utils/xmlgen/sepa.py')
-        self.run_simple_doctests('lino/utils/xmlgen/sepa/__init__.py')
+        if PYAFTER26:
+            self.run_simple_doctests('lino/utils/xmlgen/sepa/__init__.py')
 
     def test_memo(self):
         self.run_simple_doctests('lino/utils/memo.py')
 
     def test_tidy(self):
-        from lino.utils.html2xhtml import HAS_TIDYLIB
         if HAS_TIDYLIB:
             self.run_simple_doctests('lino/utils/html2xhtml.py')
 

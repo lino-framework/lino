@@ -4,6 +4,10 @@
 """Some shortcut modules which group Lino's core functionalities into
 a convenient name for different usage contexts.
 
+Common usage is to write import statements like this::
+
+  from lino.api import ad, _
+
 .. autosummary::
    :toctree:
 
