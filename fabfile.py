@@ -13,6 +13,7 @@ add_demo_project('lino.projects.polly.settings.demo')
 add_demo_project('lino.projects.presto.settings.demo')
 add_demo_project('lino.projects.i18n.settings')
 add_demo_project('lino.projects.events.settings')
+add_demo_project('lino.projects.cms.settings')
 
 env.revision_control_system = 'git'
 

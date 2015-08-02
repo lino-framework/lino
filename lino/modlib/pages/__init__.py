@@ -15,11 +15,11 @@ class Plugin(Plugin):
 
     # media_name = 'pages'
 
-    # def on_ui_init(self, kernel):
-    #     """This is called when the kernel is being instantiated.
-    #     """
-    #     from lino.modlib.bootstrap3.renderer import Renderer
-    #     self.renderer = Renderer(self)
+    def on_ui_init(self, ui):
+        from .renderer import Renderer
+        self.renderer = Renderer(self)
+        # from lino.modlib.bootstrap3.renderer import Renderer
+        # self.renderer = Renderer(self)
 
     def get_patterns(self):
         from django.conf.urls import url

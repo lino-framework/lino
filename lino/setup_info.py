@@ -215,12 +215,14 @@ lino.projects.belref.fixtures
 lino.projects.belref.settings
 lino.projects.cms
 lino.projects.cms.fixtures
+lino.projects.cms.tests
 lino.projects.crl
 lino.projects.crl.fixtures
 lino.projects.docs
 lino.projects.docs.settings
 lino.projects.estref
 lino.projects.estref.settings
+lino.projects.estref.tests
 lino.projects.events
 lino.projects.homeworkschool
 lino.projects.homeworkschool.fixtures
@@ -238,6 +240,7 @@ lino.projects.min2.settings
 lino.projects.min2.tests
 lino.projects.polly
 lino.projects.polly.settings
+lino.projects.polly.tests
 lino.projects.presto
 lino.projects.presto.lib
 lino.projects.presto.lib.contacts
@@ -245,6 +248,7 @@ lino.projects.presto.lib.contacts.fixtures
 lino.projects.presto.lib.presto
 lino.projects.presto.lib.presto.fixtures
 lino.projects.presto.settings
+lino.projects.presto.tests
 lino.projects.std
 lino.sphinxcontrib
 lino.sphinxcontrib.logo
