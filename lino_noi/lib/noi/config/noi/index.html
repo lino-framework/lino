@@ -2,14 +2,26 @@
 {% set active_page = "" %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
-<p>This is Lino Noi, the ticket manager for Lino, written in
-Lino.  </p>
+<p>Welcome to the public user interface to bug tracker used by the
+Lino team.
+</p>
 
+<p>Here is our list of tickets waiting for a voluntary collaborator to
+take care of them.  Please notify us about your interest by email
+to <em>team at lino-framework.org</em>.
+</p>
+
+
+{{ar.show('tickets.PublicTickets', header_level=2)}}
+
+{% if False %}
 <ul>
 {% for obj in settings.SITE.modules.tickets.PublicTickets.request() %}
 <li><a href="ticket/{{obj.id}}">{{obj}}</a></li>
 {% endfor %}
 </ul>
+
+{% endif %}
 
 {% endblock %}
 
