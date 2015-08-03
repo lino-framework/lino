@@ -70,10 +70,10 @@ class Site(Site):
         return kw
 
     def get_admin_main_items(self, ar):
-        yield self.modules.clocking.InvestedTimes
+        yield self.modules.clocking.WorkedHours
         # yield self.modules.tickets.MyTickets
         # yield self.modules.tickets.ActiveTickets
-        yield self.modules.tickets.InterestingTickets
+        # yield self.modules.tickets.InterestingTickets
         yield self.modules.tickets.PublicTickets
 
     def setup_quicklinks(self, ar, tb):

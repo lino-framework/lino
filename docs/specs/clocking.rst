@@ -106,6 +106,13 @@ creating :class:`Interest
 ========
 <BLANKLINE>
 
+Worked hours
+============
+
+>>> rt.show(clocking.WorkedHours)
+... #doctest: +REPORT_UDIFF
+
+
 
 Service Report
 ==============
