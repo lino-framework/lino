@@ -163,9 +163,9 @@ class MySessionsByDate(MySessions):
         return super(MySessions, self).create_instance(ar, **kw)
 
 
-class InvestedTimes(dd.VentilatingTable):
+class WorkedHours(dd.VentilatingTable):
     required_roles = dd.required()
-    label = _("Hours worked")
+    label = _("Worked hours")
     hide_zero_rows = True
     parameters = ObservedPeriod()
     params_layout = "start_date end_date"
@@ -203,7 +203,7 @@ class InvestedTimes(dd.VentilatingTable):
 
     @classmethod
     def param_defaults(cls, ar, **kw):
-        kw = super(InvestedTimes, cls).param_defaults(ar, **kw)
+        kw = super(WorkedHours, cls).param_defaults(ar, **kw)
         kw.update(start_date=dd.today(-7))
         kw.update(end_date=dd.today())
         return kw
@@ -375,7 +375,7 @@ from lino.modlib.tickets.models import Ticket
 
 @dd.receiver(dd.post_save, sender=Project)
 def my_setup_columns(sender, **kw):
-    InvestedTimes.setup_columns()
+    WorkedHours.setup_columns()
     settings.SITE.kernel.must_build_site_cache()
 
 

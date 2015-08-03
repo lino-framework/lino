@@ -390,7 +390,7 @@ class PublicTickets(Tickets):
     roles_required = set([])
     label = _("Unassigned tickets")
     order_by = ["-priority", "-id"]
-    column_names = 'overview:50 state:10 project:10 product:10 priority:3 *'
+    column_names = 'overview:50 state:10 ticket_type:10 project:10 product:10 priority:3 *'
     filter = models.Q(assigned_to=None)
 
     @classmethod
