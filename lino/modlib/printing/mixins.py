@@ -167,7 +167,6 @@ class CachedPrintAction(BasePrintAction):
             obj = ar.selected_rows[0]
             bm = obj.get_build_method()
             mf = bm.get_target(self, obj)
-
             leaf = mf.parts[-1]
             if obj.build_time is None:
                 obj.build_target(ar)

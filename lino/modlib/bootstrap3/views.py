@@ -36,9 +36,10 @@ def http_response(ar, tplname, context):
     if menu is None:
         menu = settings.SITE.get_site_menu(None, u.profile)
         bs3 = settings.SITE.plugins.bootstrap3
-        assert bs3.renderer is not None
-        url = bs3.build_plain_url()
-        menu.add_url_button(url, label=_("Home"))
+        if False:  # 20150803 home button now in base.html
+            assert bs3.renderer is not None
+            url = bs3.build_plain_url()
+            menu.add_url_button(url, label=_("Home"))
         menu = menu.as_bootstrap_html(bs3.renderer, ar.request)
         menu = E.tostring(menu)
         MENUS[k] = menu

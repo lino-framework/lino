@@ -17,6 +17,9 @@
         &mdash;
     {% endif -%}
 
+    {% if ar.request and ar.request.path != '/' -%}
+        <a href="{{ar.get_home_url()}}">{{_("Home")}}</a>
+    {% endif -%}
     {% if len(site.languages) > 1 -%}
       {% for lang in site.languages -%}
         {% if lang.django_code == requested_language -%}
@@ -32,7 +35,7 @@
 
     {%- if len(site.user_interfaces) > 0 -%}
         {% for p in site.user_interfaces -%}
-            {%- if ar.ui == p %}
+            {%- if ar.renderer == p.renderer %}
             {{p.ui_label}}
             {%- else -%}
             <a href="{{p.build_plain_url()}}">{{p.ui_label}}</a>

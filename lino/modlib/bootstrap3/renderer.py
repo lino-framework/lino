@@ -28,11 +28,11 @@ class Renderer(HtmlRenderer):
                 add_user_language(kw, ar)
                 return self.get_detail_url(obj, **kw)
 
-    #~ def href_to(self,ar,obj,text=None):
-        #~ h = self.instance_handler(ar,obj)
-        #~ if h is None:
-            #~ return cgi.escape(force_unicode(obj))
-        #~ return self.href(url,text or cgi.escape(force_unicode(obj)))
+    def get_detail_url(self, obj, *args, **kw):
+        return self.plugin.build_plain_url(
+            obj._meta.app_label,
+            obj.__class__.__name__,
+            str(obj.pk), *args, **kw)
 
     def pk2url(self, ar, pk, **kw):
         if pk is not None:
@@ -40,12 +40,6 @@ class Renderer(HtmlRenderer):
                 ar.actor.model._meta.app_label,
                 ar.actor.model.__name__,
                 str(pk), **kw)
-
-    def get_detail_url(self, obj, *args, **kw):
-        return self.plugin.build_plain_url(
-            obj._meta.app_label,
-            obj.__class__.__name__,
-            str(obj.pk), *args, **kw)
 
     def get_home_url(self, *args, **kw):
         return self.plugin.build_plain_url(*args, **kw)

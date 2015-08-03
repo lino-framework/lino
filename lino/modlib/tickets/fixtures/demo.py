@@ -17,6 +17,8 @@ def objects():
     Interest = rt.modules.tickets.Interest
     Project = rt.modules.tickets.Project
     Site = rt.modules.tickets.Site
+    Link = rt.modules.tickets.Link
+    LinkTypes = rt.modules.tickets.LinkTypes
 
     user = rt.modules.users.UserProfiles.user
     dev = rt.modules.users.UserProfiles.developer
@@ -79,3 +81,7 @@ def objects():
     yield ticket("Cannot create Foo", description="""<p>When I try to create
     a <b>Foo</b>, then I get a <b>Bar</b> instead of a Foo.</p>""")
 
+    yield Link(
+        type=LinkTypes.requires,
+        parent=Ticket.objects.get(pk=1),
+        child=Ticket.objects.get(pk=2))

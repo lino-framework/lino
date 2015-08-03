@@ -458,12 +458,11 @@ request from it.
         self.set_callback(cb)
 
     def render_jinja(self, template, **context):
-        # context.update(ar=self)
-        # saved_renderer = self.renderer
+        sar = copy(self)
+        sar.renderer = settings.SITE.kernel.html_renderer
+        context.update(ar=sar)
         # self.renderer = settings.SITE.plugins.bootstrap3.renderer
-        retval = template.render(**context)
-        # self.renderer = saved_renderer
-        return retval
+        return template.render(**context)
 
     def set_callback(self, *args, **kw):
         return settings.SITE.kernel.set_callback(self, *args, **kw)
@@ -605,8 +604,6 @@ request from it.
         """
         from lino.utils.report import Report
 
-        # 20130905 added master_instance positional arg. but finally
-        # didn't use it.
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
 
@@ -654,7 +651,19 @@ request from it.
             else:
                 print s
 
+    def get_home_url(self, *args, **kw):
+        """Return URL to the "home page" as defined by the renderer, without
+        switching language to default language.
+
+        """
+        if translation.get_language() != settings.SITE.DEFAULT_LANGUAGE:
+            kw[constants.URL_PARAM_USER_LANGUAGE] = translation.get_language()
+        return self.renderer.get_home_url(*args, **kw)
+
     def get_request_url(self, *args, **kw):
+        """When called on a BaseRequest, this just redirects to home.
+
+        """
         return self.renderer.get_home_url(*args, **kw)
 
     def summary_row(self, obj, **kw):
