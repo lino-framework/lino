@@ -2,15 +2,8 @@
 {% set active_page = "" %}
 {% block title %}{{title}}{% endblock %}
 {% block content %}
-<p>Welcome to the public user interface to bug tracker used by the
-Lino team.
-</p>
-
-<p>Here is our list of tickets waiting for a voluntary collaborator to
-take care of them.  Please notify us about your interest by email
-to <em>team at lino-framework.org</em>.
-</p>
-
+<p>Welcome to the public user interface of the 
+{{settings.SITE.title}} site.</p>
 
 {{ar.show('tickets.PublicTickets', header_level=2)}}
 
