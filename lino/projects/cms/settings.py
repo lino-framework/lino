@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Lino CMS is yet another simple Content Management System.
+"""The Django settings module for Lino CMS.
 
 """
 
@@ -14,9 +13,7 @@ from lino.projects.std.settings import *
 
 class Site(Site):
 
-    #~ title = __name__
     verbose_name = "Lino CMS"
-    #~ description = _("yet another Content Management System.")
     version = "0.1"
     author = 'Luc Saffre'
     author_email = 'luc@lino-framework.org'
@@ -32,7 +29,6 @@ class Site(Site):
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contenttypes'
-        # yield 'lino.modlib.system'
         yield 'lino.modlib.extjs'
         yield 'lino.modlib.bootstrap3'
         yield 'lino.modlib.users'

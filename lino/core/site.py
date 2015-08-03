@@ -2862,7 +2862,6 @@ Please convert to Plugin method".format(mod, methname)
     """
 
     def buildurl(self, *args, **kw):
-        #~ url = '/' + ("/".join(args))
         url = self.site_prefix + ("/".join(args))
         if len(kw):
             url += "?" + urlencode(kw)
@@ -2874,7 +2873,6 @@ Please convert to Plugin method".format(mod, methname)
         if len(kw):
             url += "?" + urlencode(kw)
         return url
-        # return self.buildurl('media', *args, **kw)
 
     def build_static_url(self, *args, **kw):
         from django.conf import settings

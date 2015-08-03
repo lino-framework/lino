@@ -315,12 +315,16 @@ request from it.
         from lino.api import dd, rt
         from lino.utils import iif
 
-        sar = copy(self)
-        sar.renderer = settings.SITE.kernel.html_renderer
+        if False:  # 20150803 why was this?  It disturbed e.g. for the bs3
+                   # language selector.
+            sar = copy(self)
+            sar.renderer = settings.SITE.kernel.html_renderer
+            kw['ar'] = sar
+        else:
+            kw['ar'] = self
 
         kw['_'] = ugettext
         kw.update(
-            ar=sar,
             E=E,
             dd=dd,
             rt=rt,

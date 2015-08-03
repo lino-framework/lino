@@ -26,7 +26,8 @@ class Plugin(Plugin):
         from . import views
 
         return [
-            url(r'^/?$', self.get_index_view()),
+            # url(r'^/?$', self.get_index_view()),
+            url(r'^$', self.get_index_view()),
             url(r'^(?P<ref>\w*)$', views.PagesIndex.as_view())]
 
     def get_index_view(self):

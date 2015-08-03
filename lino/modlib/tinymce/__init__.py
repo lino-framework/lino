@@ -33,11 +33,51 @@ class Plugin(ad.Plugin):
 
     url_prefix = 'tinymce'
 
+    # window_width = 600
+    # window_height = 500
+
+    window_width = 500
+    """The initial width of the window to use when editing in own
+    window.
+
+    """
+
+    window_height = 400
+    """The initial height of the window to use when editing in own
+    window.
+
+    """
+
+    field_buttons = (
+        "bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,"
+        "bullist,numlist,|,outdent,indent,|,undo,redo,|,removeformat,template")
+    """The toolbar buttons when editing a field inside a detail form."""
+
+    window_buttons1 = (
+        "save,cancel,|,bold,italic,underline,|,justifyleft,justifycenter,"
+        "justifyright,fontselect,fontsizeselect,formatselect,|,"
+        "search,replace")
+    """The first row of toolbar buttons when editing in own window."""
+    window_buttons2 = (
+        "cut,copy,paste,template,|,bullist,numlist,|,outdent,indent,|,"
+        "undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,"
+        "backcolor")
+    """The second row of toolbar buttons when editing in own window."""
+
+    window_buttons3 = (
+        "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,"
+        "sub,sup,|,charmap,emotions,|,tablecontrols")
+    """The third row of toolbar buttons when editing in own window."""
+
     if TINYMCE3:
-        # media_name = 'tinymce-3.4.8'
-        media_name = 'tinymce-3.5.11'
+        media_name = 'tinymce-3.4.8'
+        # media_name = 'tinymce-3.5.11'
     else:
         media_name = 'tinymce-4.1.10'
+    """Lino currently includes three versions of TinyMCE, but for
+    production sites we still use the eldest version 3.4.8.
+
+    """
 
     media_root = None
     # media_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"

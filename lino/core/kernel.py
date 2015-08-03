@@ -220,8 +220,8 @@ class Kernel(object):
             ui = self.site.plugins.resolve(self.site.default_ui)
             if ui is None:
                 raise Exception(
-                    "No installed app labelled %r"
-                    % self.site.default_ui)
+                    "Invalid value %r for `default_ui` (must be one of %s)"
+                    % (self.site.default_ui, self.site.plugins.keys()))
             ui.url_prefix = None
         else:
             for p in self.site.installed_plugins:

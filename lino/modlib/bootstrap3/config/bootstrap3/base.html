@@ -22,7 +22,7 @@
         {% if lang.django_code == requested_language -%}
             {{lang.django_code}}
         {% else -%} {# URL_PARAM_USER_LANGUAGE #}
-            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a> 
+            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a>
         {% endif -%}
       {% endfor -%}
       {%- if len(site.user_interfaces) > 0 %}

@@ -1,5 +1,6 @@
 /* Copyright 2009-2015 Luc Saffre */
 Lino.edit_tinymce_text = function(panel, options) {
+  // edit the text in own window.
   // `panel` is the RichTextPanel
   // console.log(20150520, panel);
   //~ var rec = panel.get_current_record();
@@ -74,9 +75,9 @@ Lino.edit_tinymce_text = function(panel, options) {
         //~ language: "de",
         plugins : "save,emotions,spellchecker,advhr,insertdatetime,preview,table,searchreplace,template", 
         // Theme options - button# indicated the row# only
-        theme_advanced_buttons1 : "save,cancel,|,bold,italic,underline,|,justifyleft,justifycenter,justifyright,fontselect,fontsizeselect,formatselect,|,search,replace",
-        theme_advanced_buttons2 : "cut,copy,paste,template,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,link,unlink,anchor,image,|,code,preview,|,forecolor,backcolor",
-        theme_advanced_buttons3 : "insertdate,inserttime,|,spellchecker,advhr,,removeformat,|,sub,sup,|,charmap,emotions,|,tablecontrols",      
+        theme_advanced_buttons1 : "{{site.plugins.tinymce.window_buttons1}}",
+        theme_advanced_buttons2 : "{{site.plugins.tinymce.window_buttons2}}",
+        theme_advanced_buttons3 : "{{site.plugins.tinymce.window_buttons3}}",
         theme_advanced_resizing : false,
         convert_urls : false,
         save_onsavecallback : save_callback,
@@ -93,10 +94,10 @@ Lino.edit_tinymce_text = function(panel, options) {
     //~ bbar: actions,
     layout: 'fit',
     items: editor,
-    width: 600, 
-    height:500,
+    width: {{site.plugins.tinymce.window_width}}, 
+    height: {{site.plugins.tinymce.window_height}},
     minWidth: 100,
-		minHeight: 100,
+    minHeight: 100,
     modal: true,
     resizable: true,
     maximizable: true,
@@ -169,8 +170,8 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
         theme_advanced_toolbar_location : "top",
         theme_advanced_toolbar_align : "left",
         theme_advanced_statusbar_location : "bottom",
-        template_popup_width : 700,
-        template_popup_height : 500,
+        template_popup_width : {{site.plugins.tinymce.window_width}},
+        template_popup_height : {{site.plugins.tinymce.window_height}},
         template_replace_values : { 
             data_field : function(element){ 
                 //~ console.log(20110722,fieldName,t.containing_window.get_current_record()); 
@@ -184,7 +185,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
       tinymceSettings: {
         plugins : "noneditable,template", 
         // Theme options - button# indicated the row# only
-        theme_advanced_buttons1 : "bold,italic,underline,|,justifyleft,justifycenter,justifyright,|,bullist,numlist,|,outdent,indent,|,undo,redo,|,removeformat,template",
+        theme_advanced_buttons1 : "{{site.plugins.tinymce.field_buttons}}",
         theme_advanced_buttons2 : "",
         theme_advanced_buttons3 : "", // ,|,sub,sup,|,charmap",      
         theme_advanced_resizing : false

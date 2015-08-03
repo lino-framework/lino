@@ -438,15 +438,6 @@ class TicketsToTalk(Tickets):
         kw.update(state=TicketStates.talk)
         return kw
 
-    @classmethod
-    def get_welcome_messages(cls, ar, **kw):
-        sar = ar.spawn(cls)
-        count = sar.get_total_count()
-        if count > 0:
-            msg = _("{0} tickets to talk.")
-            msg = msg.format(count)
-            yield ar.href_to_request(sar, msg)
-
 
 class TicketsToDo(Tickets):
     label = _("Tickets to do")
@@ -461,16 +452,7 @@ class TicketsToDo(Tickets):
         kw.update(state=TicketStates.todo)
         return kw
 
-    @classmethod
-    def get_welcome_messages(cls, ar, **kw):
-        sar = ar.spawn(cls)
-        count = sar.get_total_count()
-        if count > 0:
-            msg = _("{0} tickets to do.")
-            msg = msg.format(count)
-            yield ar.href_to_request(sar, msg)
 
-    
 class ActiveTickets(Tickets):
     help_text = _("Active tickets are those which are neither "
                   "closed nor in standby mode.")
