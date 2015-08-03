@@ -105,12 +105,12 @@ not yet been assigned to a project:
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
 ... #doctest: +REPORT_UDIFF
-==== =================== ======== ========== ============ =========
- ID   Summary             Closed   Workflow   Reporter     Project
----- ------------------- -------- ---------- ------------ ---------
- 5    Cannot create Foo   No       **New**    Robin Rood
+==== =================== ======== ========== ================= =========
+ ID   Summary             Closed   Workflow   Reporter          Project
+---- ------------------- -------- ---------- ----------------- ---------
+ 5    Cannot create Foo   No       **New**    Romain Raffault
  3    Baz sucks           No       **New**    luc
-==== =================== ======== ========== ============ =========
+==== =================== ======== ========== ================= =========
 <BLANKLINE>
 
 
@@ -119,14 +119,14 @@ Products
 ========
 
 >>> rt.show(products.Products)
-=========== ============== ==========
- Reference   Designation    Category
------------ -------------- ----------
+=========== ============== ================== ================== ==========
+ Reference   Designation    Designation (de)   Designation (fr)   Category
+----------- -------------- ------------------ ------------------ ----------
  linõ        Lino Core
  welfäre     Lino Welfare
  così        Lino Cosi
  faggiö      Lino Faggio
-=========== ============== ==========
+=========== ============== ================== ================== ==========
 <BLANKLINE>
   
 

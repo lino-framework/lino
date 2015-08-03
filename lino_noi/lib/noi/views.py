@@ -1,3 +1,11 @@
+# -*- coding: UTF-8 -*-
+# Copyright 2015 Luc Saffre
+# License: BSD (see file COPYING for details)
+"""
+Views for the public web interface of Lino Noi.
+
+"""
+
 from django.http import HttpResponse
 from django.views.generic import View
 from django.conf import settings
@@ -5,6 +13,15 @@ from django.conf import settings
 # from lino.core.web import render_from_request
 from lino.core.utils import full_model_name
 from lino.core.requests import BaseRequest
+
+
+def render_from_request(request, template_name, **context):
+    template = settings.SITE.jinja_env.get_template(template_name)
+    ar = BaseRequest(
+        renderer=settings.SITE.plugins.noi.renderer,
+        request=request)
+    context = ar.get_printable_context(**context)
+    return template.render(**context)
 
 
 class TemplateView(View):
@@ -36,16 +53,4 @@ class Detail(TemplateView):
         s = render_from_request(request, self.template_name, obj=obj)
         return HttpResponse(s)
 
-
-def render_from_request(request, template_name, **context):
-    template = settings.SITE.jinja_env.get_template(template_name)
-    ar = BaseRequest(
-        renderer=settings.SITE.plugins.bootstrap3.renderer,
-        request=request)
-    context = ar.get_printable_context(**context)
-    return template.render(**context)
-
-# def contacts(request, company_id):
-#     response = "You're looking at the contacts of company %s."
-#     return HttpResponse(response % company_id)
 

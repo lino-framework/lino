@@ -8,13 +8,14 @@ Django user interface using the hand-written URLConf module
 
 """
 
-from lino_noi.settings.demo import *
+from .demo import *
 
 
 class Site(Site):
 
-    root_urlconf = 'lino_noi.urls'
-    default_ui = None
+    # root_urlconf = 'lino_noi.urls'
+    # default_ui = None
+    default_ui = 'noi'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

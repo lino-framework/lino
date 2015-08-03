@@ -135,13 +135,14 @@ serves as a base for writing invoices.
 Site #1 (u'welket')
 
 >>> rt.show(clocking.TicketsByReport, obj)
+... #doctest: +REPORT_UDIFF
 ==== ================================================================================================ ======= ============== ==========
  ID   Description                                                                                      State   Planned time   Time
 ---- ------------------------------------------------------------------------------------------------ ------- -------------- ----------
  1    Föö fails to bar when baz. site-specific. Reporter: mathieu. Project: linö. Product: Lino Cosi   New                    1:27
  3    Baz sucks. Reporter: luc. Product: Lino Core                                                     New                    1:27
  4    Foo and bar don't baz. Reporter: jean. Project: dócs. Product: Lino Welfare                      New                    2:23
- 5    Cannot create Foo. Reporter: Robin Rood. Product: Lino Cosi                                      New                    1:24
+ 5    Cannot create Foo. Reporter: Romain Raffault. Product: Lino Cosi                                 New                    1:24
                                                                                                                               **6:41**
 ==== ================================================================================================ ======= ============== ==========
 <BLANKLINE>
