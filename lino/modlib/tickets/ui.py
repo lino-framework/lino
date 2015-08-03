@@ -388,9 +388,9 @@ class TicketsByProduct(Tickets):
 
 class PublicTickets(Tickets):
     roles_required = set([])
-    label = _("Public tickets")
+    label = _("Unassigned tickets")
     order_by = ["-priority", "-id"]
-    column_names = 'overview:50 workflow_buttons:30 project:10 *'
+    column_names = 'priority overview:50 state:10 project:10 product:10 *'
     filter = models.Q(assigned_to=None)
 
     @classmethod
@@ -399,6 +399,7 @@ class PublicTickets(Tickets):
         kw.update(show_assigned=dd.YesNo.no)
         kw.update(show_private=dd.YesNo.no)
         kw.update(show_closed=dd.YesNo.no)
+        # kw.update(state=TicketStates.todo)
         return kw
 
 

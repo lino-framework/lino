@@ -17,6 +17,7 @@ def objects():
     SessionType = rt.modules.clocking.SessionType
     Session = rt.modules.clocking.Session
     Ticket = rt.modules.tickets.Ticket
+    # TicketStates = rt.modules.tickets.TicketStates
     User = rt.modules.users.User
     UserProfiles = rt.modules.users.UserProfiles
     devs = (UserProfiles.developer, UserProfiles.senior)
@@ -26,8 +27,10 @@ def objects():
     TICKETS = Cycler(Ticket.objects.all())
     DURATIONS = Cycler([5, 12, 13, 20, 10, 20, 20, 3, 6, 17, 23])
 
-    for t in Ticket.objects.all():
-        t.assigned_to = WORKERS.pop()
+    # every third ticket is unassigned and thus listed in PublicTickets
+    for i, t in enumerate(Ticket.objects.all()):
+        if i % 3:
+            t.assigned_to = WORKERS.pop()
         yield t
 
     for u in workers:
