@@ -73,7 +73,7 @@ class Site(Site):
                     sar, str(d.day), style="font-size:xx-small;")
 
             yield get_report(ar, datefmt=datefmt)
-        yield self.modules.clocking.InvestedTimes
+        yield self.modules.clocking.WorkedHours
         # yield self.modules.tickets.MyTickets
         yield self.modules.tickets.ActiveTickets
 

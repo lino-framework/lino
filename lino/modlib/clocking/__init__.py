@@ -26,8 +26,8 @@ class Plugin(ad.Plugin):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('clocking.MySessions')
-        m.add_action('clocking.MySessionsByDate')
-        m.add_action('clocking.InvestedTimes')
+        # m.add_action('clocking.MySessionsByDate')
+        # m.add_action('clocking.WorkedHours')
 
     def setup_reports_menu(self, site, profile, m):
         p = self.get_menu_group()
