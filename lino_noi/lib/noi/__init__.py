@@ -26,7 +26,7 @@ class Plugin(Plugin):
         self.renderer = Renderer(self)
 
     def get_patterns(self):
-        from django.conf.urls import url, include
+        from django.conf.urls import url  # , include
         from . import views
 
         Ticket = self.site.modules.tickets.Ticket
@@ -36,7 +36,7 @@ class Plugin(Plugin):
                 name='index'),
             url(r'^ticket/(?P<pk>[0-9]+)/$',
                 views.Detail.as_view(model=Ticket)),
-            url('', include('lino.core.urls'))
+            # url('', include('lino.core.urls'))
         ]
 
         return urlpatterns
