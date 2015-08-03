@@ -8,7 +8,6 @@ The main plugin for Lino Noi.
    :toctree:
 
     models
-    roles
 
 """
 
