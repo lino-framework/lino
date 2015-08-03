@@ -70,7 +70,7 @@ class EndSession(dd.Action):
     help_text = _("Stop time-tracking this session.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
-    # show_in_bbar = False
+    show_in_bbar = False
 
     def get_action_permission(self, ar, obj, state):
         if obj.end_time:

@@ -148,7 +148,7 @@ class MySessionsByDate(MySessions):
     order_by = ['start_date', 'start_time']
     label = _("My sessions by date")
     column_names = 'start_time end_time break_time duration ticket summary '\
-                   'workflow_buttons *'
+                   'user workflow_buttons *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -167,8 +167,9 @@ class WorkedHours(dd.VentilatingTable):
     required_roles = dd.required()
     label = _("Worked hours")
     hide_zero_rows = True
-    parameters = ObservedPeriod()
-    params_layout = "start_date end_date"
+    parameters = ObservedPeriod(
+        user=dd.ForeignKey('users.User', null=True, blank=True))
+    params_layout = "start_date end_date user"
     # editable = False
     auto_fit_column_widths = True
 
@@ -183,6 +184,7 @@ class WorkedHours(dd.VentilatingTable):
     def description(self, obj, ar):
         pv = dict(start_date=obj.day, end_date=obj.day)
         pv.update(observed_event=dd.PeriodEvents.active)
+        pv.update(user=ar.param_values.user)
         sar = ar.spawn(MySessionsByDate, param_values=pv)
         return sar.ar2button(label=unicode(obj))
 
@@ -206,6 +208,7 @@ class WorkedHours(dd.VentilatingTable):
         kw = super(WorkedHours, cls).param_defaults(ar, **kw)
         kw.update(start_date=dd.today(-7))
         kw.update(end_date=dd.today())
+        kw.update(user=ar.get_user())
         return kw
 
     @classmethod
@@ -220,7 +223,7 @@ class WorkedHours(dd.VentilatingTable):
                 pv = dict(start_date=obj.day, end_date=obj.day)
                 pv.update(observed_event=dd.PeriodEvents.active)
                 pv.update(project=prj)
-                pv.update(user=ar.get_user())
+                pv.update(user=ar.param_values.user)
                 sar = MySessionsByDate.request(param_values=pv)
                 tot = Duration()
                 for obj in sar:
@@ -234,8 +237,6 @@ class WorkedHours(dd.VentilatingTable):
         for p in Project.objects.filter(parent__isnull=True).order_by('ref'):
             yield w(p, unicode(p))
         yield w(None, _("Total"))
-
-
 
 
 def compute_invested_time(obj, pv):

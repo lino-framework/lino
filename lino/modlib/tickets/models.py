@@ -39,6 +39,7 @@ from lino.modlib.users.mixins import UserAuthored
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
+from .roles import Worker
 
 
 class TimeInvestment(dd.Model):
@@ -394,10 +395,13 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id
         # print "20150523a on_create", self.reporter_id
-        if self.reporter_id is None:
-            u = ar.get_user()
-            if u is not None:
-                self.reporter = u
+        me = ar.get_user()
+        if me is not None:
+            if self.reporter_id is None:
+                self.reporter = me
+            if self.assigned_to_id is None:
+                if me.has_required_roles([Worker]):
+                    self.assigned_to = me
         super(Ticket, self).on_create(ar)
 
     def full_clean(self):

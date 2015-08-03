@@ -7,6 +7,7 @@ Adds functionality for managing tickets.
 .. autosummary::
    :toctree:
 
+    roles
     models
     ui
     choicelists

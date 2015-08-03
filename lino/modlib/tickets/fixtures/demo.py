@@ -20,10 +20,10 @@ def objects():
     Link = rt.modules.tickets.Link
     LinkTypes = rt.modules.tickets.LinkTypes
 
-    user = rt.modules.users.UserProfiles.user
+    cons = rt.modules.users.UserProfiles.consultant
     dev = rt.modules.users.UserProfiles.developer
-    yield User(username="mathieu", profile=user)
-    yield User(username="marc", profile=user)
+    yield User(username="mathieu", profile=cons)
+    yield User(username="marc", profile=cons)
     yield User(username="luc", profile=dev)
     yield User(username="jean", profile=rt.modules.users.UserProfiles.senior)
 
@@ -80,6 +80,10 @@ def objects():
     yield ticket("Foo and bar don't baz", project=PROJECTS.pop())
     yield ticket("Cannot create Foo", description="""<p>When I try to create
     a <b>Foo</b>, then I get a <b>Bar</b> instead of a Foo.</p>""")
+    yield ticket("Sell bar in baz", project=PROJECTS.pop())
+    yield ticket("No Foo after deleting Bar", project=PROJECTS.pop())
+    yield ticket("Is there any Bar in Foo?", project=PROJECTS.pop())
+    yield ticket("Foo never matches Bar", project=PROJECTS.pop())
 
     yield Link(
         type=LinkTypes.requires,

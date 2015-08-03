@@ -11,6 +11,7 @@ from lino.api import rt, dd
 from lino.utils import Cycler
 
 from lino.modlib.cal.utils import DurationUnits
+from lino.modlib.tickets.roles import Worker
 
 
 def objects():
@@ -20,12 +21,13 @@ def objects():
     # TicketStates = rt.modules.tickets.TicketStates
     User = rt.modules.users.User
     UserProfiles = rt.modules.users.UserProfiles
-    devs = (UserProfiles.developer, UserProfiles.senior)
+    # devs = (UserProfiles.developer, UserProfiles.senior)
+    devs = [p for p in UserProfiles.items() if p.has_required_roles([Worker])]
     workers = User.objects.filter(profile__in=devs)
     WORKERS = Cycler(workers)
     TYPES = Cycler(SessionType.objects.all())
     TICKETS = Cycler(Ticket.objects.all())
-    DURATIONS = Cycler([5, 12, 13, 20, 10, 20, 20, 3, 6, 17, 23])
+    DURATIONS = Cycler([12, 138, 90, 10, 122, 209, 37, 62, 179, 233, 5])
 
     # every third ticket is unassigned and thus listed in PublicTickets
     for i, t in enumerate(Ticket.objects.all()):
@@ -35,18 +37,19 @@ def objects():
 
     for u in workers:
 
-        ts = datetime.datetime.combine(
-            dd.demo_date(), datetime.time(9, 0, 0))
-    
         TICKETS = Cycler(Ticket.objects.filter(assigned_to=u))
+        if len(TICKETS) == 0:
+            continue
 
-        for i in range(20):
-            obj = Session(
-                ticket=TICKETS.pop(), session_type=TYPES.pop(), user=u)
-            obj.set_datetime('start', ts)
-            ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
-            obj.set_datetime('end', ts)
-            yield obj
+        for date in (dd.demo_date(), dd.demo_date(-1), dd.demo_date(-3)):
+            ts = datetime.datetime.combine(date, datetime.time(9, 0, 0))
+            for i in range(7):
+                obj = Session(
+                    ticket=TICKETS.pop(), session_type=TYPES.pop(), user=u)
+                obj.set_datetime('start', ts)
+                ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
+                obj.set_datetime('end', ts)
+                yield obj
 
     ServiceReport = rt.modules.clocking.ServiceReport
     Site = rt.modules.tickets.Site
