@@ -21,19 +21,19 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
-
 from lino import mixins
 from lino.api import dd, rt
 from lino.utils import ONE_DAY
 from lino.utils.quantities import Duration
 from lino.utils.xmlgen.html import E
 
-from .utils import Recurrencies
-from .utils import Weekdays
+from .utils import Recurrencies, Weekdays, AccessClasses
 
 from .workflows import EventStates
+from lino.modlib.office.roles import OfficeStaff
 
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.contenttypes.mixins import Controllable
 
 
 def format_time(t):
@@ -729,3 +729,79 @@ class Reservation(RecurrenceSet, EventGenerator, mixins.Registrable):
         #~ super(Reservation,self).after_ui_save(ar)
         #~ if self.state.editable:
             #~ self.update_reminders(ar)
+
+
+class Component(StartedSummaryDescription,
+                mixins.ProjectRelated,
+                UserAuthored,
+                Controllable,
+                mixins.CreatedModified):
+
+    """
+    Abstract base class for :class:`Event` and :class:`Task`.
+
+    """
+    workflow_state_field = 'state'
+
+    manager_roles_required = OfficeStaff
+    # manager_level_field = 'office_level'
+
+    class Meta:
+        abstract = True
+
+    access_class = AccessClasses.field(blank=True, help_text=_("""\
+Whether this is private, public or between."""))  # iCal:CLASS
+    sequence = models.IntegerField(_("Revision"), default=0)
+    auto_type = models.IntegerField(null=True, blank=True, editable=False)
+
+    def save(self, *args, **kw):
+        if self.user is not None and self.access_class is None:
+            self.access_class = self.user.access_class
+        super(Component, self).save(*args, **kw)
+
+    def on_duplicate(self, ar, master):
+        self.auto_type = None
+
+    def disabled_fields(self, ar):
+        rv = super(Component, self).disabled_fields(ar)
+        if self.auto_type:
+            rv |= self.DISABLED_AUTO_FIELDS
+        return rv
+
+    def get_uid(self):
+        """
+        This is going to be used when sending
+        locally created components to a remote calendar.
+        """
+        if not settings.SITE.uid:
+            raise Exception(
+                'Cannot create local calendar components because settings.SITE.uid is empty.')
+        return "%s@%s" % (self.pk, settings.SITE.uid)
+
+    #~ def on_user_change(self,request):
+        #~ raise NotImplementedError
+        #~ self.user_modified = True
+    def summary_row(self, ar, **kw):
+        #~ logger.info("20120217 Component.summary_row() %s", self)
+        #~ if self.owner and not self.auto_type:
+        html = [ar.obj2html(self)]
+        if self.start_time:
+            html += [_(" at "),
+                     dd.strftime(self.start_time)]
+        if self.state:
+            html += [' [%s]' % force_unicode(self.state)]
+        if self.summary:
+            html += [': %s' % force_unicode(self.summary)]
+            #~ html += ui.href_to(self,force_unicode(self.summary))
+        #~ html += _(" on ") + dbutils.dtos(self.start_date)
+        #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
+            #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)
+        if self.project is not None:
+            html.append(" (%s)" % self.project.summary_row(ar, **kw))
+            #~ print 20120217, self.project.__class__, self
+            #~ html += " (%s)" % self.project.summary_row(ui)
+        return html
+        #~ return super(Event,self).summary_row(ui,rr,**kw)
+
+#~ Component.owner.verbose_name = _("Automatically created by")
+

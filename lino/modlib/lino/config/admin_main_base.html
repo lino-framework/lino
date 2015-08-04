@@ -20,7 +20,11 @@
         <p>
         {{_("This is a Lino demo site.")}}
         {{_("Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</a>.")}}
-        {{_("Your feedback is welcome to %s or directly to the person who invited you.") % '<a href="mailto:%(e)s">%(e)s</a>' % dict(e=settings.SITE.help_email)}}
+        {{_("Your feedback is welcome to %s or directly to the person who invited you.") % '<a href="mailto:{0}">{0}</a>'.format(settings.SITE.help_email)}}
+        {% if site.the_demo_date %}
+        <b>{{_("We are running with simulated date set to {0}.").format(
+        fdf(site.the_demo_date))}}</b>
+        {% endif %}
         </p>
         {% endif %}
         {% endblock %}

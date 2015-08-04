@@ -6,13 +6,16 @@ Lino core utilities
 This document tests some functionality of :mod:`lino.core.utils`.
 
 .. How to test only this document:
-  $ python setup.py test -s tests.DocsTests.test_core_utils
 
->>> from __future__ import print_function
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-...    'lino.projects.min2.settings.doctests'
->>> from lino.api.doctest import *
+    $ python setup.py test -s tests.DocsTests.test_core_utils
+
+    doctest init:
+
+    >>> from __future__ import print_function
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
+    ...    'lino.projects.min2.settings.doctests'
+    >>> from lino.api.doctest import *
 
 Get installed models which are subclass of a something
 ======================================================
@@ -22,7 +25,7 @@ models which are subclass of a given class.
 
 >>> from lino.mixins.duplicable import Duplicable
 >>> rt.models_by_base(Duplicable)
-[<class 'lino.modlib.excerpts.models.Excerpt'>, <class 'lino.modlib.pages.models.Page'>, <class 'lino.modlib.projects.models.Project'>, <class 'lino.modlib.notes.models.Note'>, <class 'lino.modlib.cal.models.RemoteCalendar'>, <class 'lino.modlib.cal.models_event.EventType'>, <class 'lino.modlib.cal.models_event.Event'>]
+[<class 'lino.modlib.excerpts.models.Excerpt'>, <class 'lino.modlib.pages.models.Page'>, <class 'lino.modlib.projects.models.Project'>, <class 'lino.modlib.notes.models.Note'>, <class 'lino.modlib.cal.models.RemoteCalendar'>, <class 'lino.modlib.cal.models.EventType'>, <class 'lino.modlib.cal.models.Event'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Partner)
 [<class 'lino.projects.min2.modlib.contacts.models.Partner'>, <class 'lino.projects.min2.modlib.contacts.models.Person'>, <class 'lino.projects.min2.modlib.contacts.models.Company'>, <class 'lino.modlib.households.models.Household'>]

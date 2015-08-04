@@ -10,10 +10,7 @@
     mixins
     utils
     models
-    models_calendar
-    models_event
-    models_guest
-    models_task
+    ui
     workflows
     fixtures.std
     fixtures.demo
