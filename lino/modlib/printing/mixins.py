@@ -328,15 +328,16 @@ class ClearCacheAction(Action):
 
         t = elem.get_cache_mtime()
         if t is not None:
-            # set microseconds to 0 because Django DateTimeField has
-            # no ms precision:
+            # set microseconds to those of the stored field because
+            # Django DateTimeField can have microseconds precision or
+            # not depending on the database backend.
+
             t = datetime.datetime(
-                t.year, t.month, t.day, t.hour, t.minute, t.second)
+                t.year, t.month, t.day, t.hour,
+                t.minute, t.second, elem.build_time.microsecond)
 
             if t != elem.build_time:
-                # logger.info(
-                #     "20140313 %r != %r", elem.get_cache_mtime(),
-                #     elem.build_time)
+                logger.info("20140313 %r != %r", t, elem.build_time)
                 return ar.confirm(
                     doit,
                     _("This will discard all changes in the generated file."),
