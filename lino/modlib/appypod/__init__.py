@@ -1,13 +1,15 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This app installs a button to "print" any table into PDf using
+"""This plugins installs a button to "print" any table into PDF using
 LibreOffice.  This requires :mod:`lino.utils.appy_pod`.
 
-To use it, simply add the following line to your
-:setting:`get_installed_apps`::
+.. autosummary::
+   :toctree:
 
-    yield 'lino.modlib.appypod'
+    choicelists
+    mixins
+    models
 
 """
 

@@ -251,6 +251,9 @@ class Namespace(object):
         """
         return etree.etree.fromstring(s)
 
+    def raw(self, *args):
+        return RAW(*args)
+
 RAW = etree.XML
 
 

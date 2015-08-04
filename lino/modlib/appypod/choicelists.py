@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Choicelists for `lino.modlib.appypod`.
+"""
 
 from __future__ import unicode_literals
 
@@ -53,7 +55,6 @@ class AppyBuildMethod(SimpleBuildMethod):
 
 
 class AppyOdtBuildMethod(AppyBuildMethod):
-
     """
     Generates .odt files from .odt templates.
     
@@ -75,7 +76,6 @@ class AppyPdfBuildMethod(AppyBuildMethod):
 
 
 class AppyRtfBuildMethod(AppyBuildMethod):
-
     """
     Generates .rtf files from .odt templates.
     """
@@ -85,7 +85,6 @@ class AppyRtfBuildMethod(AppyBuildMethod):
 
 
 class AppyDocBuildMethod(AppyBuildMethod):
-
     """
     Generates .doc files from .odt templates.
     """

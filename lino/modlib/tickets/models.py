@@ -400,7 +400,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
             if self.reporter_id is None:
                 self.reporter = me
             if self.assigned_to_id is None:
-                if me.has_required_roles([Worker]):
+                if me.profile.has_required_roles([Worker]):
                     self.assigned_to = me
         super(Ticket, self).on_create(ar)
 

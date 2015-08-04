@@ -2,7 +2,9 @@
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""Choicelists for `lino.modlib.accounts`.
+"""Choicelists for `lino.modlib.accounts`.
+See :doc:`/dev/accounting`.
+
 """
 
 from __future__ import unicode_literals
@@ -16,7 +18,10 @@ from .utils import DEBIT, CREDIT
 
 
 class AccountChart(dd.Choice):
-    
+    """An **account chart** is a collection of accounts which are
+    considered a whole. See also :class:`AccountCharts`.
+
+    """
     def get_account_by_ref(self, ref):
         Account = rt.modules.accounts.Account
         try:
@@ -27,7 +32,15 @@ class AccountChart(dd.Choice):
 
 
 class AccountCharts(dd.ChoiceList):
-    """The list of accounting charts available in this application."""
+    """The global list of account charts available in this application.
+    In normal applications there is one single account chart named
+    :attr:`default`.
+
+    .. attribute:: default
+
+        The default account chart.
+
+    """
     verbose_name = _("Account Chart")
     verbose_name_plural = _("Account Charts")
     item_class = AccountChart
@@ -110,6 +123,7 @@ Sheet.objects = (Balance, Earnings, CashFlow)
 
 
 class AccountType(dd.Choice):
+    """The base class for all **account types**."""
     top_level = True
     sheet = None
     #~ def __init__(self,value,text,name,dc=True,**kw):
@@ -172,6 +186,7 @@ class BankAccounts(Assets):
 
 
 class AccountTypes(dd.ChoiceList):
+    """The global list of account types. See :class:`AccountType`."""
     verbose_name = _("Account Type")
     item_class = AccountType
     column_names = 'value name text dc sheet'
@@ -186,8 +201,6 @@ class AccountTypes(dd.ChoiceList):
 
 
 add = AccountTypes.add_item
-#~ def add(*args):
-    #~ AccountTypes.add_item_instance(AccountType(*args))
 add = AccountTypes.add_item_instance
 add(Assets())
 add(Liabilities())

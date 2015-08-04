@@ -143,6 +143,12 @@ class BaseRequest(object):
     """Base class of all action requests.
 
     """
+    user = None
+    subst_user = None
+
+    renderer = None
+    """The renderer to use when processing this request."""
+
     actor = None
     action_param_values = None
     param_values = None
@@ -161,7 +167,6 @@ class BaseRequest(object):
 
     """
 
-    renderer = None
     selected_rows = []
     content_type = 'application/json'
     requesting_panel = None
