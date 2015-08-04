@@ -262,7 +262,7 @@ class TicketsByReport(Tickets, InvestedTime):
     master = 'clocking.ServiceReport'
     # column_names = "summary id reporter project product site state
     # invested_time"
-    column_names = "id my_description state planned_time invested_time"
+    column_names = "id my_description state invested_time"
     order_by = ['id']
 
     @classmethod
@@ -307,7 +307,7 @@ class TicketsByReport(Tickets, InvestedTime):
 class ProjectsByReport(Projects, InvestedTime):
     """The list of projects mentioned in a service report."""
     master = 'clocking.ServiceReport'
-    column_names = "ref name active_tickets planned_time invested_time"
+    column_names = "ref name active_tickets invested_time"
     order_by = ['ref']
 
     @classmethod
