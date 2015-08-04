@@ -7,6 +7,7 @@
 
 $ python setup.py test -s tests.UtilsTests.test_addressable
 
+
 """
 
 from __future__ import print_function
@@ -27,6 +28,9 @@ class Addressable(object):
         Vana-Vigala küla   | location
         Vigala vald        | location
         Estonia            | location
+
+    Usable subclasses must implement at least
+    :meth:`address_person_lines` and :meth:`address_location_lines`.
 
     .. attribute:: address
 
@@ -52,6 +56,7 @@ class Addressable(object):
         raise NotImplementedError()
 
     def get_address_lines(self):
+        """Yields a series of strings, one for each line of the address."""
         for ln in self.address_person_lines():
             yield ln
         for ln in self.address_location_lines():
@@ -72,25 +77,30 @@ class Addressable(object):
         
             <p>line1<br/>line2...</p>
 
+        This returns always exactly one paragraph, even if the address
+        is empty (in which case the paragraph is empty):
+
+        >>> print(TestAddress().get_address_html())
+        <p />
+
+        Optional attributes for the enclosing `<p>` tag can be
+        specified as keyword arguments. Example:
+
+        >>> addr = TestAddress('line1', 'line2')
+        >>> print(addr.get_address_html(class_="Recipient"))
+        <p class="Recipient">line1<br />line2</p>
+          
         If `min_height` is specified, makes sure that the string
         contains at least that many lines. Adds as many empty lines
         (``<br/>``) as needed.  This is useful in a template which
         wants to get a given height for every address.
-          
-        Optional attributes for the enclosing `<p>` tag can be
-        specified as keyword arguments. Example::
 
-            >>> class MyAddr(Addressable):
-            ...     def __init__(self, *lines): self.lines = lines
-            ...     def address_person_lines(self): return []
-            ...     def address_location_lines(self): return self.lines
-            ...     
-            >>> addr = MyAddr('line1', 'line2')
-            >>> print(addr.get_address_html(class_="Recipient"))
-            <p class="Recipient">line1<br />line2</p>
-          
-        This is done using the :func:`lino.utils.xmlgen.html.lines2p`
-        function (see there for more examples).
+        >>> print(addr.get_address_html(min_height=5))
+        <p>line1<br />line2<br /><br /><br /></p>
+
+        Any arguments are forwarded to :meth:`lines2p
+        <lino.utils.xmlgen.html.lines2p>` which is used to pack the address
+        lines into a paragraph (see there for more examples).
 
         """
         lines = list(self.get_address_lines())
@@ -98,4 +108,24 @@ class Addressable(object):
 
     address_html = property(get_address_html)
 
+    def has_address(self):
+        """
+        >>> TestAddress('line1', 'line2').has_address()
+        True
+        >>> TestAddress().has_address()
+        False
+        """
+        return len(self.address_location_lines()) > 0
+
+
+class TestAddress(Addressable):
+    """Used only for testing."""
+    def __init__(self, *lines):
+        self.lines = lines
+
+    def address_person_lines(self):
+        return []
+
+    def address_location_lines(self):
+        return self.lines
 

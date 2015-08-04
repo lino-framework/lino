@@ -384,9 +384,6 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
       excerpt.  See :attr:`ContactRelated.company
       <lino.modlib.contacts.mixins.ContactRelated.company>`.
 
-      The optional recipient of this excerpt. See :attr:``
-      (ForeignKey to :class:`ml.contacts.Company`)
-
     .. attribute:: contact_person
 
       The optional contact person of the :attr:`recipient` of this
@@ -409,18 +406,10 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     .. method:: get_address_html
 
-        Return the address of *the recipient of this excerpt* as a string
-        containing html markup.  The markup defines exactly one paragraph,
-        even if this excerpt has no recipient (in which case the paragraph
-        is empty).
+        See
+        :meth:`lino.modlib.contacts.mixins.ContactRelated.get_address_html`.
 
-        Any arguments are forwarded to :meth:`lines2p
-        <lino.utils.xmlgen.html.lines2p>` which is used to pack the address
-        lines into a paragraph.
-
-        The "recipent of this excerpt" is either the :attr:`company` or
-        :attr:`contact_person` of this excerpt (if one of these fields is
-        non-empty), or the recipient of the :attr:`owner`.
+        Return the address of the :attr:`recipient` of this excerpt.
 
     """
 

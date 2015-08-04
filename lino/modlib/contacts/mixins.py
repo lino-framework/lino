@@ -43,8 +43,13 @@ class ContactRelated(dd.Model):
     .. attribute:: recipient
 
         (Virtual field) The :class:`Addressable
-        <lino.utils.addressable.Addressable>` object to be used when
+        <lino.utils.addressable.Addressable>` object to use when
         printing a postal address for this.
+        This is typically either the :attr:`company` or
+        :attr:`contact_person` (if one of these fields is
+        non-empty). It may also be a
+        :class:`lino.modlib.contacts.models.Role` object.
+
 
     Difference between :attr:`partner` and `recipient`: an invoice can
     be issued and addressed to a given person in a company (i.e. a
@@ -123,6 +128,12 @@ class ContactRelated(dd.Model):
         return kw
 
     def get_address_html(self, *args, **kwargs):
+        """
+        Return the address of the :attr:`recipient` of this object.
+        See
+        :meth:`Addressable.get_address_html
+        <lino.utils.addressable.Addressable.get_address_html>`.
+        """
         rec = self.get_recipient()
         if rec is None:
             return E.tostring(lines2p([], *args, **kwargs))
