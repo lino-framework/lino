@@ -82,7 +82,7 @@ class SiteConfig(dd.Model):
     def update(self, **kw):
         for k, v in kw.items():
             if not hasattr(self, k):
-                raise Exception("Siteconfig has no attribute %r" % k)
+                raise Exception("SiteConfig has no attribute %r" % k)
             setattr(self, k, v)
         self.save()
 

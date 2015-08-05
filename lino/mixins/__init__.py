@@ -232,15 +232,16 @@ class ProjectRelated(model.Model):
 
 
 class Referrable(model.Model):
-
     """
     Mixin for things that have a unique `ref` field and a `get_by_ref` method.
     """
     class Meta:
         abstract = True
 
+    ref_max_length = 40
+
     ref = fields.NullCharField(_("Reference"),
-                               max_length=40,
+                               max_length=ref_max_length,
                                blank=True, null=True,
                                unique=True)
 

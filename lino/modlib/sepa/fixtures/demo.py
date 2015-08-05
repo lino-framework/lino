@@ -1,16 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014 Luc Saffre
-# This file is part of the Lino Cosi project.
-# Lino Cosi is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino Cosi is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino Cosi; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2014-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 """
 Adds some commonly known partners and their bank accounts.
@@ -19,6 +9,7 @@ Adds some commonly known partners and their bank accounts.
 from __future__ import unicode_literals
 
 from lino.utils.instantiator import Instantiator
+from lino.api import rt
 
 Company = Instantiator('contacts.Company', 'name url').build
 Account = Instantiator('sepa.Account', 'partner bic iban remark').build
@@ -45,27 +36,38 @@ def objects():
     C = adder.add_company
     A = adder.add_account
         
-    yield C('AS Express Post', 'http://www.expresspost.ee/')
+    yield C('AS Express Post', 'http://www.expresspost.ee/',
+            country="EE")
     yield A('HABAEE2X', 'EE872200221012067904')
 
-    yield C('AS Matsalu Veevärk', 'http://www.matsaluvv.ee')
+    yield C('AS Matsalu Veevärk', 'http://www.matsaluvv.ee',
+            country="EE")
     yield A('HABAEE2X', 'EE732200221045112758')
 
-    yield C('Eesti Energia AS', "http://www.energia.ee")
+    yield C('Eesti Energia AS', "http://www.energia.ee",
+            country="EE")
     yield A('HABAEE2X', 'EE232200001180005555', "Eraklilendile")
     yield A('HABAEE2X', 'EE322200221112223334', "Ärikliendile")
     yield A('EEUHEE2X', 'EE081010002059413005')
     yield A('FOREEE2X', 'EE70 3300 3320 9900 0006')
     yield A('NDEAEE2X', 'EE43 17000 1700 0115 797')
     
-    yield C('IIZI kindlustusmaakler AS', "http://www.iizi.ee")
+    yield C('IIZI kindlustusmaakler AS', "http://www.iizi.ee",
+            country="EE")
     yield A('HABAEE2X', 'EE382200221013987931')
 
-    yield C('Maksu- ja tolliamet', "http://www.emta.ee")
+    yield C('Maksu- ja tolliamet', "http://www.emta.ee",
+            country="EE")
     yield A('HABAEE2X', 'EE522200221013264447')
 
-    yield C('Ragn-Sells AS', "http://www.ragnsells.ee")
+    tallinn = rt.modules.countries.Place.objects.get(name="Tallinn")
+    yield C('Ragn-Sells AS', "http://www.ragnsells.ee", country="EE",
+            street="Suur-Sõjamäe", street_no=50, street_box="a",
+            zip_code="11415",
+            city=tallinn)
     yield A('HABAEE2X', 'EE202200221001178338')
+    yield A('', 'EE781010220002715011 ')
+    yield A('', 'EE321700017000231134')
 
     yield C('Electrabel Customer Solutions',
             "https://www.electrabel.be",

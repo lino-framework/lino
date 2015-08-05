@@ -4,11 +4,14 @@
 """Adds models and tables for managing bank accounts for your
 partners.  It requires the :mod:`lino.modlib.contacts` app.
 
+.. autosummary::
+   :toctree:
+
+    models
+
 """
 
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

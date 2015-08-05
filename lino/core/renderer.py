@@ -343,20 +343,6 @@ class TextRenderer(HtmlRenderer):
     def get_request_url(self, ar, *args, **kw):
         return None
 
-    # def href_to_request(self, sar, tar, text=None, **ignored):
-    #     if text is None:
-    #         text = '??'
-    #     return "**{0}**".format(text)
-
-    def unused_show_request(self, ar, *args, **kw):
-        """Prints a string to stdout representing this request in
-        reStructuredText markup.
-
-        """
-        self.show_table(ar, *args, **kw)
-        # print(ar.table2rst(*args, **kw))
-        # return ar.to_rst(*args, **kw)
-
     def show_table(self, ar, column_names=None, header_level=None,
                    nosummary=False, stripped=True, **kwargs):
         """Render the given table request as reStructuredText to stdout.

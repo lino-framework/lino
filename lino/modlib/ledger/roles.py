@@ -5,13 +5,20 @@
 
 from lino.core.roles import UserRole
 from lino.api import _
+from lino.modlib.office.roles import OfficeUser, SiteAdmin
+from lino.modlib.users.choicelists import UserProfiles
+
+
+class LedgerUser(UserRole):
+    pass
+
+
+class LedgerStaff(UserRole):
+    pass
 
 
 class AccountingReader(UserRole):
     pass
-
-
-from lino.modlib.office.roles import *
 
 
 class SiteUser(OfficeUser, AccountingReader):
@@ -19,7 +26,7 @@ class SiteUser(OfficeUser, AccountingReader):
     pass
 
 
-class SiteAdmin(SiteAdmin, OfficeStaff, AccountingReader):
+class SiteAdmin(SiteAdmin, LedgerStaff):
     """A user with all permissions."""
     pass
 

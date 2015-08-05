@@ -23,7 +23,8 @@ from lino.modlib.excerpts.mixins import Certifiable
 from lino.modlib.vat.utils import add_vat, remove_vat, HUNDRED
 from lino.modlib.vat.mixins import QtyVatItemBase, VatDocument
 from lino.modlib.vat.mixins import get_default_vat_regime
-from lino.modlib.ledger.mixins import Matchable, SequencedVoucherItem
+from lino.modlib.iban.mixins import Payable
+from lino.modlib.ledger.mixins import Matching, SequencedVoucherItem
 from lino.modlib.ledger.models import Voucher
 from lino.modlib.ledger.choicelists import TradeTypes
 from lino.modlib.ledger.choicelists import VoucherTypes
@@ -158,7 +159,7 @@ class SalesDocuments(PartnerVouchers):
     pass
 
 
-class VatProductInvoice(SalesDocument, Voucher, Matchable):
+class VatProductInvoice(SalesDocument, Voucher, Matching, Payable):
     """A sales invoice is a legal document which describes that something
     (the invoice items) has been sold to a given partner. The partner
     can be either a private person or an organization.

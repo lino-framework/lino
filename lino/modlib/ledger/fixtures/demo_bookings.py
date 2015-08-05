@@ -5,8 +5,8 @@
 """
 Creates fictive demo bookings
 
-- monthly purchases (causing costs) 
-- monthly sales 
+- monthly purchases (causing costs)
+- monthly sales
 - monthly payment orders and bank statements
 
 

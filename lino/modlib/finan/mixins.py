@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 from lino.modlib.accounts.utils import ZERO
 from lino.modlib.accounts.fields import DebitOrCreditField
 from lino.modlib.ledger.mixins import VoucherItem, SequencedVoucherItem
+from lino.modlib.ledger.mixins import ProjectRelated, Matching
 
 from lino.api import dd, rt, _
 
@@ -48,6 +49,16 @@ class FinancialVoucher(ledger.Voucher):
         for p in partners:
             ledger.update_partner_satisfied(p)
 
+    def add_item_from_due(self, obj, **kwargs):
+        i = self.add_voucher_item(
+            obj.account, dc=not obj.dc,
+            amount=obj.balance, partner=obj.partner,
+            match=obj.match, **kwargs)
+        if i.amount < 0:
+            i.amount = - i.amount
+            i.dc = not i.dc
+        return i
+
     def get_wanted_movements(self):
         amount, movements = self.get_finan_movements()
         if amount:
@@ -78,7 +89,8 @@ class FinancialVoucher(ledger.Voucher):
         return amount, mvts
 
 
-class FinancialVoucherItem(VoucherItem, SequencedVoucherItem):
+class FinancialVoucherItem(VoucherItem, SequencedVoucherItem,
+                           ProjectRelated, Matching):
     """The base class for the items of all types of financial vouchers
     (:class:`FinancialVoucher`).
 
@@ -118,26 +130,10 @@ class FinancialVoucherItem(VoucherItem, SequencedVoucherItem):
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
     account = dd.ForeignKey('accounts.Account', blank=True)
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
-    match = dd.ForeignKey(
-        'ledger.Movement',
-        help_text=_("The matched movement."),
-        verbose_name=_("Match"),
-        related_name="%(app_label)s_%(class)s_set_by_match",
-        blank=True, null=True)
 
     @dd.chooser()
     def match_choices(cls, voucher, partner):
-        matchable_accounts = rt.modules.accounts.Account.objects.filter(
-            matchrule__journal=voucher.journal)
-        fkw = dict(account__in=matchable_accounts)
-        fkw.update(satisfied=False)
-        if partner:
-            fkw.update(partner=partner)
-        qs = rt.modules.ledger.Movement.objects.filter(**fkw)
-        qs = qs.order_by('voucher__date')
-        #~ qs = qs.distinct('match')
-        return qs
-        # return qs.values_list('match', flat=True)
+        return cls.get_match_choices(voucher.journal, partner)
 
     def get_default_match(self):
         return str(self.date)

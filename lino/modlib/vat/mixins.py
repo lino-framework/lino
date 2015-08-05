@@ -24,7 +24,8 @@ from django.conf import settings
 
 from lino.api import dd, rt, _
 
-from lino.modlib.ledger.mixins import PartnerRelated, VoucherItem
+from lino.modlib.ledger.mixins import (
+    PartnerRelated, ProjectRelated, VoucherItem)
 
 from .utils import ZERO, ONE
 from .choicelists import VatClasses, VatRegimes
@@ -172,7 +173,7 @@ class VatTotal(dd.Model):
             self.total_vat = self.total_incl - self.total_base
 
 
-class VatDocument(PartnerRelated, VatTotal):
+class VatDocument(PartnerRelated, ProjectRelated, VatTotal):
     """Abstract base class for invoices, offers and other vouchers.
 
     .. attribute:: refresh_after_item_edit

@@ -3,11 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-:xfile:`models.py` module for the :mod:`lino.modlib.sepa` app.
-
-Defines the :class:`EventType` and :class:`Event` models and their tables.
-
-There are some test cases in :mod:`lino.tutorials.mini.tests`
+Database models for `lino.modlib.sepa`.
 
 """
 
@@ -20,37 +16,12 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
-
 from lino.core.utils import ChangeWatcher
-
-config = dd.apps.sepa
-
-from ..iban.fields import IBANField, BICField
-from ..iban.utils import belgian_nban_to_iban_bic, iban2bic
-
 from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
+from lino.modlib.iban.mixins import BankAccount
 
 
-class IbanBicHolder(dd.Model):
-
-    class Meta:
-        abstract = True
-
-    iban = IBANField(_("IBAN"))
-    bic = BICField(_("BIC"), blank=True)
-
-    def full_clean(self):
-        if self.iban and not self.bic:
-            if self.iban[0].isdigit():
-                iban, bic = belgian_nban_to_iban_bic(self.iban)
-                self.bic = bic
-                self.iban = iban
-            else:
-                self.bic = iban2bic(self.iban) or ''
-        super(IbanBicHolder, self).full_clean()
-
-
-class Account(IbanBicHolder):
+class Account(BankAccount):
     """A bank account related to a given :class:`ml.contacts.Partner`.
 
     """
@@ -100,7 +71,7 @@ class Accounts(dd.Table):
 class AccountsByPartner(Accounts):
     required_roles = dd.login_required(ContactsUser)
     master_key = 'partner'
-    column_names = 'iban bic remark'
+    column_names = 'iban bic remark primary *'
     order_by = ['iban']
     auto_fit_column_widths = True
 

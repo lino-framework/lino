@@ -24,10 +24,9 @@ from .utils import ZERO
 from .choicelists import VatClasses, VatRegimes
 from .mixins import VatDocument, VatItemBase
 
-from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
 from lino.modlib.ledger.models import Voucher
-from lino.modlib.ledger.mixins import Matchable, AccountInvoiceItem
-from lino.modlib.ledger.choicelists import VoucherTypes
+from lino.modlib.ledger.mixins import Matching, AccountVoucherItem
+from lino.modlib.iban.mixins import Payable
 from lino.modlib.ledger.choicelists import TradeTypes
 
 
@@ -113,7 +112,7 @@ criteria.
         return "{country} {vat_class} {rate}".format(**kw)
 
 
-class VatAccountInvoice(VatDocument, Voucher, Matchable):
+class VatAccountInvoice(VatDocument, Voucher, Payable, Matching):
     """An invoice for which the user enters just the bare accounts and
     amounts (not products, quantities, discounts).
 
@@ -130,14 +129,9 @@ class VatAccountInvoice(VatDocument, Voucher, Matchable):
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    # state = InvoiceStates.field(default=InvoiceStates.draft)
 
-
-class InvoiceItem(AccountInvoiceItem, VatItemBase):
-    """An item of an account invoice.  Inherits from
-    :class:`AccountInvoiceItem
-    <lino.modlib.ledger.mixins.AccountInvoiceItem>` and
-    :class:`VatItemBase <lino.modlib.vat.models.VatItemBase>`.
+class InvoiceItem(AccountVoucherItem, VatItemBase):
+    """An item of an account invoice.
 
     """
     voucher = dd.ForeignKey('vat.VatAccountInvoice', related_name='items')

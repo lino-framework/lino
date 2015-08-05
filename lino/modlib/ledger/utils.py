@@ -78,6 +78,7 @@ class DueMovement(object):
         self.trade_type = None
         self.has_unsatisfied_movement = False
         self.has_satisfied_movement = False
+        self.iban_bic = None
 
         self.collect(mvt)
 
@@ -91,6 +92,7 @@ class DueMovement(object):
             self.has_satisfied_movement = True
         else:
             self.has_unsatisfied_movement = True
+
         if self.trade_type is None:
             voucher = mvt.voucher.get_mti_leaf()
             self.trade_type = voucher.get_trade_type()
@@ -101,6 +103,12 @@ class DueMovement(object):
             due_date = voucher.get_due_date()
             if self.due_date is None or due_date < self.due_date:
                 self.due_date = due_date
+            iban_bic = voucher.get_iban_bic()
+            if self.iban_bic is None:
+                self.iban_bic = iban_bic
+            elif self.iban_bic != iban_bic:
+                raise Exception("More than one IBAN/BIC")
+
         else:
             self.payments.append(mvt)
             self.balance -= mvt.amount

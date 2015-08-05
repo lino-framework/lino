@@ -17,14 +17,11 @@ from decimal import Decimal
 
 from django.db import models
 
-from lino.api import dd, rt, _
+from lino.api import dd, _
 
-from lino.utils.xmlgen.html import E
-
-from lino.modlib.ledger.choicelists import VoucherTypes
-from lino.modlib.ledger.mixins import (PartnerRelated, AccountInvoiceItem,
-                                       Matchable)
-from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
+from lino.modlib.ledger.mixins import (
+    ProjectRelated, PartnerRelated, AccountVoucherItem, Matching)
+from lino.modlib.iban.mixins import Payable
 from lino.modlib.ledger.models import Voucher
 from lino.modlib.ledger.choicelists import TradeTypes
 
@@ -33,17 +30,14 @@ TradeTypes.purchases.update(
     partner_account_field_label=_("Suppliers account"))
 
 
-class AccountInvoice(PartnerRelated, Voucher, Matchable):
+class AccountInvoice(PartnerRelated, ProjectRelated, Voucher, Payable,
+                     Matching):
 
     class Meta:
         verbose_name = _("Invoice")
         verbose_name_plural = _("Invoices")
 
-    # title = models.CharField(_("Description"), max_length=200, blank=True)
-
     amount = dd.PriceField(_("Amount"), blank=True, null=True)
-    # state = VoucherStates.field(default=VoucherStates.draft)
-    # workflow_state_field = 'state'
 
     def compute_totals(self):
         if self.pk is None:
@@ -101,8 +95,10 @@ class AccountInvoice(PartnerRelated, Voucher, Matchable):
             pass
         super(AccountInvoice, self).before_state_change(ar, old, new)
 
+dd.update_field(AccountInvoice, 'iban', blank=True)
 
-class InvoiceItem(AccountInvoiceItem):
+
+class InvoiceItem(AccountVoucherItem):
     """An item of an :class:`AccountInvoice`."""
     voucher = dd.ForeignKey('vatless.AccountInvoice', related_name='items')
     title = models.CharField(_("Description"), max_length=200, blank=True)

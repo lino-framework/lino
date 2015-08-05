@@ -15,7 +15,35 @@ from django.db import models
 from lino.api import dd, rt, _
 from lino.mixins import Sequenced
 
-# from .fields import MatchField
+
+class ProjectRelated(dd.Model):
+    """Model mixin for objects that are related to a :attr:`project`.
+
+    .. attribute:: project
+
+        Pointer to the "project". This field exists only if the
+        :attr:`project_model
+        <lino.modlib.ledger.Plugin.project_model>` setting of the
+        :mod:`lino.modlib.ledger` plugin is nonempty.
+
+    """
+    class Meta:
+        abstract = True
+
+    if dd.plugins.ledger.project_model:
+        project = models.ForeignKey(
+            dd.plugins.ledger.project_model,
+            blank=True, null=True,
+            related_name="%(app_label)s_%(class)s_set_by_project")
+    else:
+        project = dd.DummyField()
+
+    @classmethod
+    def get_registrable_fields(cls, site):
+        for f in super(ProjectRelated, cls).get_registrable_fields(site):
+            yield f
+        if dd.plugins.ledger.project_model:
+            yield 'project'
 
 
 class PartnerRelated(dd.Model):
@@ -29,13 +57,6 @@ class PartnerRelated(dd.Model):
 
         The recipient of this document. A pointer to
         :class:`lino.modlib.contacts.models.Partner`.
-
-    .. attribute:: project
-
-        Pointer to the "project". This field exists only if the
-        :attr:`project_model
-        <lino.modlib.ledger.Plugin.project_model>` setting of the
-        :mod:`lino.modlib.ledger` plugin is nonempty.
 
     .. attribute:: payment_term
 
@@ -55,33 +76,28 @@ class PartnerRelated(dd.Model):
         related_name="%(app_label)s_%(class)s_set_by_payment_term",
         blank=True, null=True)
 
-    if dd.plugins.ledger.project_model:
-        project = models.ForeignKey(
-            dd.plugins.ledger.project_model,
-            blank=True, null=True,
-            related_name="%(app_label)s_%(class)s_set_by_project")
-    else:
-        project = dd.DummyField()
-
     @classmethod
     def get_registrable_fields(cls, site):
         for f in super(PartnerRelated, cls).get_registrable_fields(site):
             yield f
         yield 'partner'
         yield 'payment_term'
-        if dd.plugins.ledger.project_model:
-            yield 'project'
 
     def get_recipient(self):
         return self.partner
     recipient = property(get_recipient)
 
 
-class Matchable(dd.Model):
-    """Adds a field :attr:`match` and a chooser for it.
-    Requires a field `partner`.
+class Matching(dd.Model):
+    """Model mixin for database objects that are considered *matching
+    transactions*.  A **matching transaction** is a transaction that
+    matches some other movement to be cleared.
 
-    Base class for :class:`AccountInvoice`
+    Adds a field :attr:`match` and a chooser for it.  Requires a field
+    `partner`.  The default implementation of the chooser for
+    :attr:`match` requires a `journal`.
+
+    Base class for :class:`vat.AccountInvoice`
     (and e.g. `sales.Invoice`, `finan.DocItem`)
     
     .. attribute:: match
@@ -94,9 +110,6 @@ class Matchable(dd.Model):
     class Meta:
         abstract = True
 
-    your_ref = models.CharField(
-        _("Your reference"), max_length=200, blank=True)
-    due_date = models.DateField(_("Due date"), blank=True, null=True)
     match = dd.ForeignKey(
         'ledger.Movement',
         help_text=_("The movement to be matched."),
@@ -104,10 +117,10 @@ class Matchable(dd.Model):
         related_name="%(app_label)s_%(class)s_set_by_match",
         blank=True, null=True)
 
-    title = models.CharField(_("Description"), max_length=200, blank=True)
-
-    @dd.chooser()
-    def match_choices(cls, journal, partner):
+    @classmethod
+    def get_match_choices(cls, journal, partner):
+        """This is the general algorithm.
+        """
         matchable_accounts = rt.modules.accounts.Account.objects.filter(
             matchrule__journal=journal)
         fkw = dict(account__in=matchable_accounts)
@@ -120,8 +133,10 @@ class Matchable(dd.Model):
         return qs
         # return qs.values_list('match', flat=True)
 
-    def get_due_date(self):
-        return self.due_date or self.date
+    @dd.chooser()
+    def match_choices(cls, journal, partner):
+        # todo: move this to implementing classes?
+        return cls.get_match_choices(journal, partner)
 
 
 class VoucherItem(dd.Model):
@@ -179,8 +194,8 @@ class SequencedVoucherItem(Sequenced):
         return self.voucher.items.all()
 
 
-class AccountInvoiceItem(VoucherItem, SequencedVoucherItem):
-    """Abstract base class for items of an account invoice.
+class AccountVoucherItem(VoucherItem, SequencedVoucherItem):
+    """Abstract base class for voucher items which point to an account.
     This is subclassed by
     :class:`lino.modlib.vat.models.InvoiceItem`
     and

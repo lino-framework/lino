@@ -400,8 +400,6 @@ def is_hidden_babel_field(fld):
         return False
     if jsgen._for_user_profile.hidden_languages is None:
         return False
-    #~ if lng.name == 'nl':
-        #~ raise Exception(20130728)
     if lng in jsgen._for_user_profile.hidden_languages:
         return True
     return False

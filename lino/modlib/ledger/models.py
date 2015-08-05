@@ -45,7 +45,7 @@ from lino.modlib.accounts.fields import DebitOrCreditField
 from .utils import get_due_movements
 from .choicelists import (FiscalYears, VoucherTypes, VoucherStates,
                           JournalGroups, TradeTypes)
-from .mixins import PartnerRelated, VoucherNumber, JournalRef
+from .mixins import PartnerRelated, ProjectRelated, VoucherNumber, JournalRef
 from .ui import *
 
 
@@ -433,8 +433,15 @@ class Voucher(UserAuthored, mixins.Registrable):
         return self.items.model(**kw)
         #~ return super(AccountInvoice,self).add_voucher_item(**kw)
 
+    def get_iban_bic(self):
+        """Return either None or a tuple `(iban, bic)`. This is called by
+        :class:`lino.modlib.ledger.utils.DueMovement`.
 
-class Movement(PartnerRelated):
+        """
+        return None
+
+
+class Movement(ProjectRelated):
     """Represents an accounting movement in the ledger.
 
     """
@@ -445,6 +452,11 @@ class Movement(PartnerRelated):
         verbose_name_plural = _("Movements")
 
     voucher = models.ForeignKey(Voucher)
+
+    partner = dd.ForeignKey(
+        'contacts.Partner',
+        related_name="%(app_label)s_%(class)s_set_by_partner",
+        blank=True, null=True)
 
     seqno = models.IntegerField(
         #~ blank=True,null=False,
@@ -478,7 +490,7 @@ class Movement(PartnerRelated):
     #~ def full_clean(self,*args,**kw):
         #~ if not self.match:
             #~ self.match = self.voucher.get_default_match()
-        #~ super(Matchable,self).full_clean(*args,**kw)
+        #~ super(Matching,self).full_clean(*args,**kw)
     #~ def get_default_match(self):
         #~ return unicode(self.voucher)
     def select_text(self):

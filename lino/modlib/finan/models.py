@@ -13,6 +13,7 @@ from django.db import models
 from lino.modlib.accounts.utils import ZERO, DEBIT, CREDIT
 from lino.modlib.ledger.fields import DcAmountField
 from lino.modlib.ledger.choicelists import VoucherTypes
+from lino.modlib.iban.mixins import BankAccount
 from lino.api import dd, rt, _
 
 from .mixins import FinancialVoucher, FinancialVoucherItem
@@ -57,6 +58,7 @@ class Grouper(FinancialVoucher):
 
     """
     class Meta:
+        abstract = dd.is_abstract_model(__name__, 'Grouper')
         verbose_name = _("Grouper")
         verbose_name_plural = _("Groupers")
 
@@ -69,13 +71,18 @@ class JournalEntry(FinancialVoucher):
 
     """
     class Meta:
+        abstract = dd.is_abstract_model(__name__, 'JournalEntry')
         verbose_name = _("Journal Entry")
         verbose_name_plural = _("Journal Entries")
 
 
 class PaymentOrder(FinancialVoucher):
+    """A **payment order** is when a user instructs a bank to execute a
+    series of outgoing transactions from a given bank account.
 
+    """
     class Meta:
+        abstract = dd.is_abstract_model(__name__, 'PaymentOrder')
         verbose_name = _("Payment Order")
         verbose_name_plural = _("Payment Orders")
 
@@ -93,15 +100,26 @@ class PaymentOrder(FinancialVoucher):
             yield m
         yield self.create_movement(a, self.journal.dc, -amount)
 
+    def add_item_from_due(self, obj, **kwargs):
+        if obj.iban_bic is None:
+            return
+        i = super(PaymentOrder, self).add_item_from_due(obj, **kwargs)
+        i.bic, i.iban = obj.iban_bic
+        return i
+
 
 class BankStatement(FinancialVoucher):
+    """A **bank statement** is a document issued by the bank, which
+    reports all transactions which occured on a given account during a
+    given period.
 
+    """
     class Meta:
+        abstract = dd.is_abstract_model(__name__, 'BankStatement')
         verbose_name = _("Bank Statement")
         verbose_name_plural = _("Bank Statements")
 
     balance1 = dd.PriceField(_("Old balance"), default=ZERO)
-    #~ balance2 = dd.PriceField(_("New balance"),blank=True,null=True)
     balance2 = dd.PriceField(_("New balance"), default=ZERO)
 
     def get_previous_voucher(self):
@@ -154,9 +172,12 @@ class BankStatementItem(FinancialVoucherItem):
     credit = DcAmountField(CREDIT, _("Expense"))
 
 
-class PaymentOrderItem(FinancialVoucherItem):
+class PaymentOrderItem(FinancialVoucherItem, BankAccount):
     """An item of a :class:`PaymentOrder`."""
     voucher = dd.ForeignKey('finan.PaymentOrder', related_name='items')
+
+# dd.update_field(PaymentOrderItem, 'iban', blank=True)
+# dd.update_field(PaymentOrderItem, 'bic', blank=True)
 
 
 class JournalEntryDetail(dd.FormLayout):
@@ -311,7 +332,12 @@ class ItemsByGrouper(ItemsByVoucher):
 
 
 class FillSuggestions(dd.Action):
-    """Fill selected suggestions into a financial voucher."""
+    """Fill selected suggestions into a financial voucher.
+
+    This creates one voucher item for each selected DueMovement
+    object.
+
+    """
     label = _("Fill")
     icon_name = 'lightning'
     http_method = 'POST'
@@ -322,17 +348,12 @@ class FillSuggestions(dd.Action):
         seqno = None
         n = 0
         for obj in ar.selected_rows:
-            i = voucher.add_voucher_item(
-                obj.account, dc=not obj.dc, seqno=seqno,
-                amount=obj.balance, partner=obj.partner,
-                match=obj.match)
-            if i.amount < 0:
-                i.amount = - i.amount
-                i.dc = not i.dc
-            i.full_clean()
-            i.save()
-            seqno = i.seqno + 1
-            n += 1
+            i = voucher.add_item_from_due(obj, seqno=seqno)
+            if i is not None:
+                i.full_clean()
+                i.save()
+                seqno = i.seqno + 1
+                n += 1
 
         msg = _("%d items have been added to %s.") % (n, voucher)
         logger.info(msg)

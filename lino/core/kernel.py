@@ -623,11 +623,10 @@ class Kernel(object):
             return
 
         if isinstance(h, tables.TableHandle):
+            he = set(h.actor.hidden_columns | h.actor.hidden_elements)
             ll = layouts.ColumnsLayout(
                 h.actor.get_column_names(ar),
-                h.actor,
-                hidden_elements=h.actor.hidden_columns
-                | h.actor.hidden_elements)
+                h.actor, hidden_elements=he)
             h.list_layout = ll.get_layout_handle(self.default_ui)
         else:
             h.list_layout = None

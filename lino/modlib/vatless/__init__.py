@@ -4,11 +4,11 @@
 
 """Adds functionality for handling incoming and outgoing invoices in a
 VAT-less context (i.e. for organizations which have no obligation of
-VAT declaration).  Site operators subject to VATare likely to use
+VAT declaration).  Site operators subject to VAT are likely to use
 :mod:`lino.modlib.vat` instead.
 
 Installing this plugin will automatically install
-:mod:`lino.modlib.countries` :mod:`lino.modlib.ledger`.
+:mod:`lino.modlib.countries` and :mod:`lino.modlib.ledger`.
 
 
 .. autosummary::
@@ -20,8 +20,7 @@ Installing this plugin will automatically install
 
 """
 
-from django.utils.translation import ugettext_lazy as _
-from lino.api import ad
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
@@ -33,6 +32,7 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino.modlib.countries', 'lino.modlib.ledger']
 
     def setup_explorer_menu(self, site, profile, m):
-        m = m.add_menu(self.app_label, self.verbose_name)
+        mg = site.plugins.accounts
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('vatless.Invoices')
 

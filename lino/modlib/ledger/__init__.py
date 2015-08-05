@@ -40,7 +40,7 @@ class Plugin(ad.Plugin):
     """Leave this to `None` for normal behaviour.  Set this to a string of
     the form `'<app_label>.<ModelName>'` if you want to add an
     additional field `project` to all models which inherit from
-    :class:`lino.modlib.vat.mixins.PartnerRelated`.
+    :class:`lino.modlib.ledger.mixins.ProjectRelated`.
 
     """
 
@@ -71,6 +71,7 @@ class Plugin(ad.Plugin):
     def setup_explorer_menu(self, site, profile, m):
         mg = site.plugins.accounts
         m = m.add_menu(mg.app_label, mg.verbose_name)
+        m.add_action('ledger.MatchRules')
         m.add_action('ledger.Vouchers')
         m.add_action('ledger.VoucherTypes')
         m.add_action('ledger.Movements')

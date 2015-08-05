@@ -166,6 +166,12 @@ class Choice(object):
     def get_chooser_for_field(cls, fieldname):
         return None
 
+    def get_typed_instance(self, model):
+        """
+        Used when implementing :ref:`polymorphism`.
+        """
+        return self
+
 
 class UnresolvedValue(Choice):
     def __init__(self, choicelist, value):
@@ -304,7 +310,6 @@ class ChoiceList(tables.AbstractTable):
     def get_default_action(cls):
         return actions.GridEdit()
 
-    #~ hidden_columns = frozenset()
     hidden_columns = frozenset(['workflow_buttons'])
 
     column_names = 'value name text *'

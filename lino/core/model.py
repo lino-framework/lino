@@ -738,7 +738,6 @@ class Model(models.Model):
         """
         Used when implementing :ref:`polymorphism`.
         """
-        #~ assert model is self.__class__
         return self
 
     def get_detail_action(self, ar):

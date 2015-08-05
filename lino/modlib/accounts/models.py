@@ -16,39 +16,10 @@ from lino.api import dd, rt
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
+from lino.core.roles import SiteStaff
+
 from .choicelists import AccountTypes, AccountCharts
 from .utils import DEBIT, CREDIT
-
-
-# class Chart(mixins.BabelNamed):
-#     "A collection of accounts."
-#     class Meta:
-#         verbose_name = _("Account Chart")
-#         verbose_name_plural = _("Account Charts")
-
-#     def get_account_by_ref(self, ref):
-#         try:
-#             #~ print 20121203, dict(ref=account,chart=self.journal.chart)
-#             return Account.objects.get(ref=ref, chart=self)
-#         except Account.DoesNotExist:
-#             raise Warning("No Account with reference %r" % ref)
-
-
-# class Charts(dd.Table):
-#     model = Chart
-#     required = dd.required(user_level='manager')
-
-#     insert_layout = """
-#     name
-#     """
-
-#     detail_layout = """
-#     id name
-#     GroupsByChart
-#     """
-
-
-#~ class Group(mixins.BabelNamed,mixins.Sequenced):
 
 
 class Group(mixins.BabelNamed):
@@ -70,7 +41,7 @@ class Group(mixins.BabelNamed):
 class Groups(dd.Table):
     
     model = 'accounts.Group'
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
     order_by = ['chart', 'ref']
     column_names = 'chart ref name account_type *'
 
@@ -93,7 +64,7 @@ class GroupsByChart(Groups):
     column_names = 'ref name account_type *'
 
 
-class Account(mixins.BabelNamed, mixins.Sequenced):
+class Account(mixins.BabelNamed, mixins.Sequenced, mixins.Referrable):
     """An **account** is an item of an account chart used to collect
     ledger transactions or other accountable items.
 
@@ -130,6 +101,8 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
         :class:`lino.modlib.accounts.choicelists.AccountTypes`.
     
     """
+    ref_max_length = settings.SITE.plugins.accounts.ref_length
+
     class Meta:
         verbose_name = _("Account")
         verbose_name_plural = _("Accounts")
@@ -138,8 +111,8 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
 
     chart = AccountCharts.field()
     group = models.ForeignKey('accounts.Group')
-    ref = dd.NullCharField(
-        max_length=settings.SITE.plugins.accounts.ref_length)
+    # ref = dd.NullCharField(
+    #     max_length=settings.SITE.plugins.accounts.ref_length)
     type = AccountTypes.field()  # blank=True)
 
     def full_clean(self, *args, **kw):
@@ -165,7 +138,7 @@ class Account(mixins.BabelNamed, mixins.Sequenced):
 
 class Accounts(dd.Table):
     model = Account
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
     order_by = ['ref']
     column_names = "ref name group *"
     insert_layout = """
@@ -180,9 +153,16 @@ class Accounts(dd.Table):
 
 
 class AccountsByGroup(Accounts):
-    required_roles = dd.required()
+    required_roles = dd.login_required()
     master_key = 'group'
     column_names = "ref name *"
+
+
+class AccountsByChart(Accounts):
+    required_roles = dd.login_required()
+    master_key = 'chart'
+    order_by = ['ref']
+    column_names = 'ref name group *'
 
 
 # dd.add_user_group('accounts', dd.plugins.accounts.verbose_name)

@@ -281,14 +281,6 @@ class PartnerVouchers(Vouchers):
     params_panel_hidden = True
     simple_parameters = ['partner', 'state']
 
-    # @classmethod
-    # def get_request_queryset(cls, ar):
-    #     qs = super(PartnerVouchers, cls).get_request_queryset(ar)
-    #     pv = ar.param_values
-    #     if pv.partner:
-    #         qs = qs.filter(partner=pv.partner)
-    #     return qs
-
 
 def mvtsum(**fkw):
     d = rt.modules.ledger.Movement.objects.filter(
@@ -651,15 +643,15 @@ class Movements(dd.Table):
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
     column_names = 'seqno account debit credit match satisfied'
-    auto_fit_column_widths = True
+    # auto_fit_column_widths = True
 
 
 class MovementsByPartner(Movements):
     master_key = 'partner'
     order_by = ['-voucher__date']
     column_names = ('voucher__date voucher_link debit credit '
-                    'account match project satisfied')
-    auto_fit_column_widths = True
+                    'match project satisfied *')
+    # auto_fit_column_widths = True
 
     @classmethod
     def param_defaults(cls, ar, **kw):
@@ -671,8 +663,8 @@ class MovementsByPartner(Movements):
 
 class MovementsByProject(MovementsByPartner):
     master_key = 'project'
-    column_names = ('voucher__date voucher_link debit credit '
-                    'account match partner satisfied')
+    column_names = ('voucher__date voucher_link partner debit credit '
+                    'match satisfied *')
 
 
 class MovementsByAccount(Movements):
@@ -680,7 +672,7 @@ class MovementsByAccount(Movements):
     order_by = ['-voucher__date']
     column_names = 'voucher__date voucher_link debit credit \
     partner match satisfied'
-    auto_fit_column_widths = True
+    # auto_fit_column_widths = True
 
     @classmethod
     def param_defaults(cls, ar, **kw):

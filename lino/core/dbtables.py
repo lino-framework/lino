@@ -569,7 +569,7 @@ class Table(AbstractTable):
                 else:
                     self.master = master_model
                     self.master_field = fk
-                    self.hidden_columns |= set([fk.name])
+                    # self.hidden_columns |= set([fk.name])
 
         super(Table, self).class_init()
 

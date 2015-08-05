@@ -335,7 +335,8 @@ class BaseLayout(object):
 
     main = None
 
-    def __init__(self, main=None, datasource=None, hidden_elements=None, **kw):
+    def __init__(self, main=None, datasource=None,
+                 hidden_elements=None, **kw):
         """
         datasource is either an actor or an action.
         """

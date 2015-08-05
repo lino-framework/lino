@@ -591,11 +591,6 @@ class Actor(actions.Parametrizable, Permittable):
 
     @classmethod
     def has_handle(self, ui):
-        #~ if ui is None:
-            #~ hname = '_lino_console_handler'
-        #~ else:
-            #~ hname = _handle_attr_name
-        #~ return self.__dict__.get(hname,False)
         return self.__dict__.get(_handle_attr_name, False)
 
     @classmethod

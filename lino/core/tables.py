@@ -311,9 +311,9 @@ class AbstractTable(actors.Actor):
     **Value** : Application code should specify this as a *single
     string* containing a space-separated list of field names.  Lino
     will automatically resolve this during server startup using
-    :func:`dd.fields_list`.  The runtime value of this attribute is a
-    *set of strings*, each one the name of a data element. Defaults to
-    an empty set.
+    :func:`lino.core.utils.fields_list`.  The runtime value of this
+    attribute is a *set of strings*, each one the name of a data
+    element. Defaults to an empty set.
 
     **Inheritance** : Note that this can be specified either on a
     :class:`Model` or on a :class:`Table`.  Lino will make a union of

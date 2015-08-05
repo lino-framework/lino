@@ -29,6 +29,8 @@ class VatClasses(dd.ChoiceList):
 
     """
     verbose_name = _("VAT Class")
+    verbose_name_plural = _("VAT Classes")
+
 add = VatClasses.add_item
 add('0', _("Exempt"), 'exempt')    # post stamps, ...
 add('1', _("Reduced"), 'reduced')  # food, books,...
@@ -53,7 +55,8 @@ class VatRegimes(dd.ChoiceList):
     .. django2rst:: rt.show("vat.VatClasses")
 
     """
-    verbose_name = _("VAT Regime")
+    verbose_name = _("VAT regime")
+    verbose_name_plural = _("VAT regimes")
     item_class = VatRegime
     help_text = _(
         "Determines how the VAT is being handled, \

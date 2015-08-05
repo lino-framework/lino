@@ -2,7 +2,7 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for `lino.modlib.vatless`.
+"""Actors for `lino.modlib.vatless`.
 
 
 
@@ -14,6 +14,7 @@ from lino.api import dd, rt, _
 
 from lino.utils.xmlgen.html import E
 
+from lino.modlib.ledger.mixins import PartnerRelated, ProjectRelated
 from lino.modlib.ledger.choicelists import VoucherTypes
 from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
 
@@ -37,7 +38,7 @@ class InvoiceDetail(dd.FormLayout):
 
     general = dd.Panel("""
     id date project partner user
-    due_date your_ref workflow_buttons amount
+    due_date your_ref iban bic workflow_buttons amount
     ItemsByInvoice
     """, label=_("General"))
 
@@ -154,6 +155,8 @@ class VouchersByPartner(dd.VirtualTable):
     def amount(self, row, ar):
         return row.amount
 
+    _models_base = PartnerRelated
+
     @classmethod
     def get_slave_summary(self, obj, ar):
 
@@ -166,9 +169,10 @@ class VouchersByPartner(dd.VirtualTable):
                 elems += [ar.obj2html(vc), " "]
 
         vtypes = set()
-        for m in rt.models_by_base(AccountInvoice):
-            vtypes.add(
-                VoucherTypes.get_by_value(dd.full_model_name(m)))
+        for m in rt.models_by_base(self._models_base):
+            vt = VoucherTypes.get_by_value(dd.full_model_name(m))
+            if vt is not None:
+                vtypes.add(vt)
 
         actions = []
 
@@ -196,4 +200,5 @@ class VouchersByPartner(dd.VirtualTable):
 class VouchersByProject(VouchersByPartner):
     label = _("Project vouchers")
     _master_field_name = 'project'
+    _models_base = ProjectRelated
     column_names = "date voucher partner amount state"

@@ -112,6 +112,9 @@ class VoucherTypes(dd.ChoiceList):
 
     """
 
+    verbose_name = _("Voucher type")
+    verbose_name_plural = _("Voucher types")
+
     item_class = VoucherType
     max_length = 100
 
@@ -227,7 +230,8 @@ class TradeTypes(dd.ChoiceList):
 
     """
 
-    verbose_name = _("Trade Type")
+    verbose_name = _("Trade type")
+    verbose_name_plural = _("Trade types")
     item_class = TradeType
     help_text = _("The type of trade: usually either `sales` or `purchases`.")
 
