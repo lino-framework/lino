@@ -133,24 +133,24 @@ Site #1 (u'welket')
 
 >>> rt.show(clocking.TicketsByReport, obj)
 ... #doctest: +REPORT_UDIFF
-==== =================================================================================== ======= ============== ============
- ID   Description                                                                         State   Planned time   Time
----- ----------------------------------------------------------------------------------- ------- -------------- ------------
- 3    Baz sucks. Reporter: luc. Product: Lino Core                                        New                    32:41
- 5    Cannot create Foo. Reporter: Romain Raffault. Product: Lino Cosi                    New                    33:35
- 8    Is there any Bar in Foo?. Reporter: mathieu. Project: dócs. Product: Lino Welfare   New                    35:57
- 9    Foo never matches Bar. Reporter: marc. Project: linö. Product: Lino Cosi            New                    33:05
-                                                                                                                 **135:18**
-==== =================================================================================== ======= ============== ============
+==== =================================================================================== ======= ============
+ ID   Description                                                                         State   Time
+---- ----------------------------------------------------------------------------------- ------- ------------
+ 3    Baz sucks. Reporter: luc. Product: Lino Core                                        New     32:41
+ 5    Cannot create Foo. Reporter: Romain Raffault. Product: Lino Cosi                    New     33:35
+ 8    Is there any Bar in Foo?. Reporter: mathieu. Project: dócs. Product: Lino Welfare   New     35:57
+ 9    Foo never matches Bar. Reporter: marc. Project: linö. Product: Lino Cosi            New     33:05
+                                                                                                  **135:18**
+==== =================================================================================== ======= ============
 <BLANKLINE>
 
 >>> rt.show(clocking.ProjectsByReport, obj)
-==================== =============== ============ ============== ============
- Reference            Name            Tickets      Planned time   Time
--------------------- --------------- ------------ -------------- ------------
- dócs                 Documentatión   *#8*                        35:57
- linö                 Framewörk       *#9*                        33:05
-                      (no project)    *#5*, *#3*                  66:16
- **Total (3 rows)**                                               **135:18**
-==================== =============== ============ ============== ============
+==================== =============== ============ ============
+ Reference            Name            Tickets      Time
+-------------------- --------------- ------------ ------------
+ dócs                 Documentatión   *#8*         35:57
+ linö                 Framewörk       *#9*         33:05
+                      (no project)    *#5*, *#3*   66:16
+ **Total (3 rows)**                                **135:18**
+==================== =============== ============ ============
 <BLANKLINE>
