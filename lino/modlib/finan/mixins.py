@@ -80,7 +80,7 @@ class FinancialVoucher(ledger.Voucher):
             else:
                 match = ''
             b = self.create_movement(
-                i.account, i.dc, i.amount,
+                i.account, None, i.dc, i.amount,
                 seqno=i.seqno,
                 match=match,
                 partner=i.partner)

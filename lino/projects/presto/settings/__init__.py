@@ -33,7 +33,6 @@ class Site(Site):
         yield 'lino.modlib.accounts'
         # yield 'lino.modlib.ledger'
         yield 'lino.modlib.vat'
-        yield 'lino.modlib.iban'
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.finan'
         yield 'lino.modlib.auto.sales'

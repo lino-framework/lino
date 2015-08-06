@@ -18,10 +18,12 @@ from django.utils.translation import ugettext_lazy as _
 from lino.api import dd
 from lino.core.utils import ChangeWatcher
 from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
-from lino.modlib.iban.mixins import BankAccount
+
+from .fields import IBANField, BICField
+from .utils import belgian_nban_to_iban_bic, iban2bic
 
 
-class Account(BankAccount):
+class Account(dd.Model):
     """A bank account related to a given :class:`ml.contacts.Partner`.
 
     """
@@ -33,6 +35,10 @@ class Account(BankAccount):
     partner = dd.ForeignKey(
         'contacts.Partner',
         related_name='sepa_accounts')
+
+    iban = IBANField(_("IBAN"))
+    bic = BICField(_("BIC"), blank=True)
+
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 
     primary = models.BooleanField(
@@ -44,6 +50,21 @@ class Account(BankAccount):
             "the partner's IBAN and BIC"))
 
     allow_cascaded_delete = ['partner']
+
+    def __unicode__(self):
+        if self.remark:
+            return "{0} ({1})".format(self.iban, self.remark)
+        return self.iban
+
+    def full_clean(self):
+        if self.iban and not self.bic:
+            if self.iban[0].isdigit():
+                iban, bic = belgian_nban_to_iban_bic(self.iban)
+                self.bic = bic
+                self.iban = iban
+            else:
+                self.bic = iban2bic(self.iban) or ''
+        super(Account, self).full_clean()
 
     def after_ui_save(self, ar, cw):
         super(Account, self).after_ui_save(ar, cw)

@@ -8,7 +8,6 @@ it adds some more modlib plugins:
 - :mod:`lino.modlib.excerpts`
 - :mod:`lino.modlib.addresses`
 - :mod:`lino.modlib.reception`
-- :mod:`lino.modlib.iban`
 - :mod:`lino.modlib.sepa`
 - :mod:`lino.modlib.notes`
 - :mod:`lino.modlib.projects`

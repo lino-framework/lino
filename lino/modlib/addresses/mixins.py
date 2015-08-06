@@ -92,6 +92,13 @@ class AddressOwnerChecker(Checker):
     """
     verbose_name = _("Check for missing or non-primary address records")
     model = AddressOwner
+    messages = dict(
+        no_address=_("Owner with address, but no address record."),
+        unique_not_primary=_("Unique address is not marked primary."),
+        no_primary=_("Multiple addresses, but none is primary."),
+        multiple_primary=_("Multiple primary addresses."),
+        primary_differs=_("Primary address differs from owner address ({0})."),
+    )
     
     def get_plausibility_problems(self, obj, fix=False):
         Address = rt.modules.addresses.Address
@@ -104,8 +111,7 @@ class AddressOwnerChecker(Checker):
                 if v:
                     kw[fldname] = v
             if kw:
-                yield (True,
-                       _("Owner with address, but no address record."))
+                yield (True, self.messages['no_address'])
                 if fix:
                     kw.update(partner=obj, primary=True)
                     kw.update(address_type=AddressTypes.official)
@@ -130,7 +136,7 @@ class AddressOwnerChecker(Checker):
             diffs = getdiffs(obj, addr)
             if not diffs:
                 if not addr.primary:
-                    yield (True, _("Unique address is not marked primary."))
+                    yield (True, self.messages['unique_not_primary'])
                     if fix:
                         addr.primary = True
                         addr.full_clean()
@@ -141,17 +147,16 @@ class AddressOwnerChecker(Checker):
             qs = qs.filter(primary=True)
             num = qs.count()
             if num == 0:
-                yield (False, _("Multiple addresses, but none is primary."))
+                yield (False, self.messages['no_primary'])
             elif num == 1:
                 addr = qs[0]
                 diffs = getdiffs(obj, addr)
             else:
-                yield (False, _("Multiple primary addresses."))
+                yield (False, self.messages['multiple_primary'])
         if addr and diffs:
-            msg = _("Primary address differs from owner address ({0}).")
             diffstext = [
                 _("{0}:{1}->{2}").format(k, *v) for k, v in diffs.items()]
-            msg = msg.format(', '.join(diffstext))
+            msg = self.messages['primary_differs'].format(', '.join(diffstext))
             yield (False, msg)
 
 AddressOwnerChecker.activate()

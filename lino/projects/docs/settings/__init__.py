@@ -70,7 +70,6 @@ class Site(Site):
         yield 'lino.modlib.concepts'
         yield 'lino.modlib.courses'
         yield 'lino.modlib.pages'
-        yield 'lino.modlib.iban'
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.beid'
         yield 'lino.modlib.tinymce'

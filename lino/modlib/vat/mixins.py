@@ -233,7 +233,7 @@ class VatDocument(PartnerRelated, ProjectRelated, VatTotal):
         self.total_vat = vat
         self.total_incl = vat + base
 
-    def get_vat_sums(self):
+    def get_sums_dict(self):
         sums_dict = dict()
 
         def book(account, amount):
@@ -245,7 +245,7 @@ class VatDocument(PartnerRelated, ProjectRelated, VatTotal):
         tt = self.get_trade_type()
         vat_account = tt.get_vat_account()
         if vat_account is None:
-            raise Exception("No vat account for %s." % tt)
+            raise Exception("No VAT account for %s." % tt)
         for i in self.items.order_by('seqno'):
             if i.total_base:
                 b = i.get_base_account(tt)
@@ -259,18 +259,18 @@ class VatDocument(PartnerRelated, ProjectRelated, VatTotal):
         return sums_dict
 
     def get_wanted_movements(self):
-        sums_dict = self.get_vat_sums()
+        sums_dict = self.get_sums_dict()
         #~ logger.info("20120901 get_wanted_movements %s",sums_dict)
         sum = Decimal()
         for a, m in sums_dict.items():
             if m:
-                yield self.create_movement(a, not self.journal.dc, m)
+                yield self.create_movement(a, None, not self.journal.dc, m)
                 sum += m
 
         a = self.get_trade_type().get_partner_account()
         if a is not None:
             yield self.create_movement(
-                a, self.journal.dc, sum, partner=self.partner,
+                a, None, self.journal.dc, sum, partner=self.partner,
                 match=self.match)
 
     def fill_defaults(self):

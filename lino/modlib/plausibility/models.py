@@ -168,6 +168,9 @@ class Problems(dd.Table):
     params_layout = "user checker"
 
     simple_parameters = ('user', 'checker')
+    detail_layout = dd.DetailLayout("""
+    user owner checker id
+    message""", window_size=(70, 'auto'))
 
 
 class AllProblems(Problems):

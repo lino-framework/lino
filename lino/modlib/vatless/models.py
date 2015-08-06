@@ -21,7 +21,7 @@ from lino.api import dd, _
 
 from lino.modlib.ledger.mixins import (
     ProjectRelated, PartnerRelated, AccountVoucherItem, Matching)
-from lino.modlib.iban.mixins import Payable
+from lino.modlib.sepa.mixins import Payable
 from lino.modlib.ledger.models import Voucher
 from lino.modlib.ledger.choicelists import TradeTypes
 
@@ -30,8 +30,7 @@ TradeTypes.purchases.update(
     partner_account_field_label=_("Suppliers account"))
 
 
-class AccountInvoice(PartnerRelated, ProjectRelated, Voucher, Payable,
-                     Matching):
+class AccountInvoice(PartnerRelated, Voucher, Payable, Matching):
 
     class Meta:
         verbose_name = _("Invoice")
@@ -48,14 +47,15 @@ class AccountInvoice(PartnerRelated, ProjectRelated, Voucher, Payable,
                 base += i.amount
         self.amount = base
 
-    def get_vat_sums(self):
+    def get_sums_dict(self):
         sums_dict = dict()
 
-        def book(account, amount):
-            if account in sums_dict:
-                sums_dict[account] += amount
+        def book(account, prj, amount):
+            k = (account, prj)
+            if k in sums_dict:
+                sums_dict[k] += amount
             else:
-                sums_dict[account] = amount
+                sums_dict[k] = amount
         tt = self.get_trade_type()
         for i in self.items.order_by('seqno'):
             if i.amount:
@@ -64,24 +64,24 @@ class AccountInvoice(PartnerRelated, ProjectRelated, Voucher, Payable,
                     raise Exception(
                         "No base account for %s (amount is %r)" % (
                             i, i.amount))
-                book(b, i.amount)
+                book(b, i.project, i.amount)
         return sums_dict
 
     def get_wanted_movements(self):
-        sums_dict = self.get_vat_sums()
+        sums_dict = self.get_sums_dict()
         #~ logger.info("20120901 get_wanted_movements %s",sums_dict)
         sum = Decimal()
-        for a, m in sums_dict.items():
+        for k, m in sums_dict.items():
+            a, prj = k
             if m:
-                yield self.create_movement(a, not self.journal.dc, m)
+                yield self.create_movement(a, prj, not self.journal.dc, m)
                 sum += m
 
         a = self.get_trade_type().get_partner_account()
         if a is not None:
             yield self.create_movement(
-                a, self.journal.dc, sum,
+                a, None, self.journal.dc, sum,
                 partner=self.partner,
-                project=self.project,
                 match=self.match)
 
     def full_clean(self, *args, **kw):
@@ -95,10 +95,8 @@ class AccountInvoice(PartnerRelated, ProjectRelated, Voucher, Payable,
             pass
         super(AccountInvoice, self).before_state_change(ar, old, new)
 
-dd.update_field(AccountInvoice, 'iban', blank=True)
 
-
-class InvoiceItem(AccountVoucherItem):
+class InvoiceItem(AccountVoucherItem, ProjectRelated):
     """An item of an :class:`AccountInvoice`."""
     voucher = dd.ForeignKey('vatless.AccountInvoice', related_name='items')
     title = models.CharField(_("Description"), max_length=200, blank=True)

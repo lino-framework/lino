@@ -24,7 +24,6 @@ class Site(Site):
         yield 'lino.projects.min2.modlib.contacts'
         yield 'lino.modlib.addresses'
         yield 'lino.modlib.reception'
-        yield 'lino.modlib.iban'
         yield 'lino.modlib.sepa'
         yield 'lino.modlib.notes'
         yield 'lino.modlib.projects'

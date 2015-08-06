@@ -13,7 +13,6 @@ from django.db import models
 from lino.modlib.accounts.utils import ZERO, DEBIT, CREDIT
 from lino.modlib.ledger.fields import DcAmountField
 from lino.modlib.ledger.choicelists import VoucherTypes
-from lino.modlib.iban.mixins import BankAccount
 from lino.api import dd, rt, _
 
 from .mixins import FinancialVoucher, FinancialVoucherItem
@@ -98,7 +97,7 @@ class PaymentOrder(FinancialVoucher):
         self.total = - amount
         for m in movements:
             yield m
-        yield self.create_movement(a, self.journal.dc, -amount)
+        yield self.create_movement(a, None, self.journal.dc, -amount)
 
     def add_item_from_due(self, obj, **kwargs):
         if obj.iban_bic is None:
@@ -148,7 +147,7 @@ class BankStatement(FinancialVoucher):
         self.balance2 = self.balance1 + amount
         for m in movements:
             yield m
-        yield self.create_movement(a, not self.journal.dc, amount)
+        yield self.create_movement(a, None, not self.journal.dc, amount)
 
 
 class GrouperItem(FinancialVoucherItem):
@@ -172,9 +171,10 @@ class BankStatementItem(FinancialVoucherItem):
     credit = DcAmountField(CREDIT, _("Expense"))
 
 
-class PaymentOrderItem(FinancialVoucherItem, BankAccount):
+class PaymentOrderItem(FinancialVoucherItem):
     """An item of a :class:`PaymentOrder`."""
     voucher = dd.ForeignKey('finan.PaymentOrder', related_name='items')
+    bank_account = dd.ForeignKey('sepa.Account', blank=True, null=True)
 
 # dd.update_field(PaymentOrderItem, 'iban', blank=True)
 # dd.update_field(PaymentOrderItem, 'bic', blank=True)

@@ -339,7 +339,7 @@ class Model(models.Model):
 
     def delete(self, **kw):
         # Double-check to avoid "murder bug" (20150623).
-        msg = self.disable_delete()
+        msg = self.disable_delete(None)
         if msg is not None:
             raise Warning(msg)
         super(Model, self).delete(**kw)

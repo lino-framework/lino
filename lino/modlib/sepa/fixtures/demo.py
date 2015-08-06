@@ -4,6 +4,9 @@
 
 """
 Adds some commonly known partners and their bank accounts.
+
+These are real data randomly collected from Internet.
+
 """
 
 from __future__ import unicode_literals
@@ -19,15 +22,21 @@ class Adder(object):
     
     def __init__(self):
         self.current_partner = None
+        self.primary = False
+        # make the first account of every company primary
         
     def add_company(self, name, url, **kw):
         obj = Company(name=name, url=url, **kw)
         self.current_partner = obj
+        self.primary = True
         return obj
     
     def add_account(self, bic, iban, remark=''):
         iban = iban.replace(' ', '')
-        return Account(self.current_partner, bic, iban, remark)
+        acc = Account(
+            self.current_partner, bic, iban, remark, primary=self.primary)
+        self.primary = False
+        return acc
 
 
 def objects():
@@ -81,11 +90,27 @@ def objects():
     yield A('BPOTBEB1', 'BE46 0003 2544 8336')
     yield A('BPOTBEB1', 'BE81 0003 2587 3924')
 
-    yield C('Ethias s.a.',
-            "http://www.ethias.be",
+    yield C('Ethias s.a.', "http://www.ethias.be",
             vat_id="BE 0404.484.654",
             street="Rue des Croisiers",
             street_no=24,
             country="BE",
             zip_code="4000")
     yield A('ETHIBEBB', 'BE79827081803833')
+
+    yield C("Niederau Eupen AG", "http://www.niederau.be",
+            vat_id="BE 0419.897.855",
+            street="Herbesthaler Straße",
+            street_no=134,
+            country="BE",
+            zip_code="4700")
+    yield A('BBRUBEBB', 'BE98 3480 3103 3293')
+
+    yield C("Leffin Electronics", "",
+            email="info@leffin-electronics.be",
+            vat_id="BE0650.238.114",
+            street="Schilsweg",
+            street_no=80,
+            country="BE",
+            zip_code="4700")
+    yield A('GEBABEBB', 'BE38 2480 1735 7572')

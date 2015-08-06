@@ -26,7 +26,8 @@ SETUP_INFO = dict(
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'fuzzy',  # lino.mixins.dupable
         'clint',  # lino.modlib.plausibility.management.commands
-        'django-iban',  # lino.modlib.sepa
+        'django-localflavor',  # lino.modlib.sepa
+        # 'django-iban',  # lino.modlib.sepa
         'xlwt', 'xlrd'],
     tests_require=[],
     # pisa has a bug which makes it complain that "Reportlab Version
@@ -146,7 +147,6 @@ lino.modlib.households
 lino.modlib.households.fixtures
 lino.modlib.humanlinks
 lino.modlib.humanlinks.fixtures
-lino.modlib.iban
 lino.modlib.importfilters
 lino.modlib.languages
 lino.modlib.languages.fixtures

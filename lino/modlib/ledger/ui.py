@@ -642,8 +642,9 @@ class Movements(dd.Table):
 
 class MovementsByVoucher(Movements):
     master_key = 'voucher'
-    column_names = 'seqno account debit credit match satisfied'
+    column_names = 'seqno project partner account debit credit match satisfied'
     # auto_fit_column_widths = True
+    slave_grid_format = "html"
 
 
 class MovementsByPartner(Movements):
@@ -651,6 +652,7 @@ class MovementsByPartner(Movements):
     order_by = ['-voucher__date']
     column_names = ('voucher__date voucher_link debit credit '
                     'match project satisfied *')
+    slave_grid_format = "html"
     # auto_fit_column_widths = True
 
     @classmethod
@@ -663,8 +665,9 @@ class MovementsByPartner(Movements):
 
 class MovementsByProject(MovementsByPartner):
     master_key = 'project'
-    column_names = ('voucher__date voucher_link partner debit credit '
+    column_names = ('voucher__date voucher_link account partner debit credit '
                     'match satisfied *')
+    slave_grid_format = "html"
 
 
 class MovementsByAccount(Movements):
@@ -673,6 +676,7 @@ class MovementsByAccount(Movements):
     column_names = 'voucher__date voucher_link debit credit \
     partner match satisfied'
     # auto_fit_column_widths = True
+    slave_grid_format = "html"
 
     @classmethod
     def param_defaults(cls, ar, **kw):

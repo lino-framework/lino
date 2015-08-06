@@ -1,20 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 Luc Saffre
-# This file is part of the Lino Welfare project.
-# Lino Welfare is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3 of the License, or
-# (at your option) any later version.
-# Lino Welfare is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# You should have received a copy of the GNU General Public License
-# along with Lino Welfare; if not, see <http://www.gnu.org/licenses/>.
+# Copyright 2014-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
 """This module contains some quick tests:
 
-- In a :class:`ml.sepa.Account`:
+- In a :class:`lino.modlib.sepa.models.Account`:
 
   - Fill IBAN and BIC from Belgian NBAN or IBAN
   - Test whether the record is being validated.
@@ -33,11 +23,8 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-# from django.conf import settings
 from django.core.exceptions import ValidationError
 from lino.utils.djangotest import RemoteAuthTestCase
-
-# from lino.api import dd, rt
 
 
 class QuickTest(RemoteAuthTestCase):
@@ -80,7 +67,7 @@ class QuickTest(RemoteAuthTestCase):
         except ValidationError as e:
             self.assertEqual(
                 e.message_dict,
-                {'bic': ['A SWIFT-BIC is either 8 or 11 characters long.']})
+                {'bic': ['BIC codes have either 8 or 11 characters.']})
 
         # Raise ValidationError when no BIC is given
         obj = sepa.Account(partner=partner)

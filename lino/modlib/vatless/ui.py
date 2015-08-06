@@ -14,7 +14,7 @@ from lino.api import dd, rt, _
 
 from lino.utils.xmlgen.html import E
 
-from lino.modlib.ledger.mixins import PartnerRelated, ProjectRelated
+from lino.modlib.ledger.mixins import PartnerRelated
 from lino.modlib.ledger.choicelists import VoucherTypes
 from lino.modlib.ledger.ui import PartnerVouchers, ByJournal
 
@@ -23,12 +23,12 @@ from .models import AccountInvoice
 
 class InvoiceItems(dd.Table):
     model = 'vatless.InvoiceItem'
-    auto_fit_column_widths = True
+    # auto_fit_column_widths = True
     order_by = ['voucher', "seqno"]
 
 
 class ItemsByInvoice(InvoiceItems):
-    column_names = "account title amount"
+    column_names = "project account amount title"
     master_key = 'voucher'
     order_by = ["seqno"]
 
@@ -37,8 +37,8 @@ class InvoiceDetail(dd.FormLayout):
     main = "general ledger"
 
     general = dd.Panel("""
-    id date project partner user
-    due_date your_ref iban bic workflow_buttons amount
+    id date partner user
+    due_date your_ref bank_account workflow_buttons amount
     ItemsByInvoice
     """, label=_("General"))
 
@@ -56,10 +56,10 @@ class Invoices(PartnerVouchers):
     #     **PartnerVouchers.parameters)
     # params_layout = "project partner state journal year"
     # params_panel_hidden = True
-    column_names = "date id number project partner amount user *"
+    column_names = "date id number partner amount user *"
     detail_layout = InvoiceDetail()
     insert_layout = """
-    journal project
+    journal
     partner
     date amount
     """
@@ -86,12 +86,11 @@ class InvoicesByJournal(Invoices, ByJournal):
     :class:`lino.modlib.sales.models.AccountInvoice`).
 
     """
-    params_layout = "project partner state year"
+    params_layout = "partner state year"
     column_names = "number date " \
-        "project partner amount due_date user workflow_buttons *"
+        "partner amount due_date user workflow_buttons *"
                   #~ "ledger_remark:10 " \
     insert_layout = """
-    project
     partner
     date amount
     """
@@ -112,7 +111,7 @@ class VouchersByPartner(dd.VirtualTable):
     master = 'contacts.Partner'
     slave_grid_format = 'summary'
 
-    column_names = "date voucher project amount state"
+    column_names = "date voucher amount state"
     _master_field_name = 'partner'
 
     @classmethod
@@ -134,10 +133,10 @@ class VouchersByPartner(dd.VirtualTable):
     def voucher(self, row, ar):
         return ar.obj2html(row)
 
-    if dd.plugins.ledger.project_model:
-        @dd.virtualfield('ledger.Movement.project')
-        def project(self, row, ar):
-            return row.project
+    # if dd.plugins.ledger.project_model:
+    #     @dd.virtualfield('ledger.Movement.project')
+    #     def project(self, row, ar):
+    #         return row.project
 
     @dd.virtualfield('ledger.Movement.partner')
     def partner(self, row, ar):
@@ -155,8 +154,6 @@ class VouchersByPartner(dd.VirtualTable):
     def amount(self, row, ar):
         return row.amount
 
-    _models_base = PartnerRelated
-
     @classmethod
     def get_slave_summary(self, obj, ar):
 
@@ -169,7 +166,7 @@ class VouchersByPartner(dd.VirtualTable):
                 elems += [ar.obj2html(vc), " "]
 
         vtypes = set()
-        for m in rt.models_by_base(self._models_base):
+        for m in rt.models_by_base(PartnerRelated):
             vt = VoucherTypes.get_by_value(dd.full_model_name(m))
             if vt is not None:
                 vtypes.add(vt)
@@ -197,8 +194,3 @@ class VouchersByPartner(dd.VirtualTable):
         return E.div(*elems)
 
 
-class VouchersByProject(VouchersByPartner):
-    label = _("Project vouchers")
-    _master_field_name = 'project'
-    _models_base = ProjectRelated
-    column_names = "date voucher partner amount state"

@@ -353,7 +353,7 @@ class Voucher(UserAuthored, mixins.Registrable):
         self.movement_set.all().delete()
         #~ super(Voucher,self).deregister(ar)
 
-    def disable_delete(self, ar):
+    def disable_delete(self, ar=None):
         msg = self.journal.disable_voucher_delete(self)
         if msg is not None:
             return msg
@@ -366,29 +366,20 @@ class Voucher(UserAuthored, mixins.Registrable):
         """
         raise NotImplementedError()
 
-    def create_movement(self, account, dc, amount, **kw):
+    def create_movement(self, account, project, dc, amount, **kw):
         assert isinstance(account, rt.modules.accounts.Account)
         kw['voucher'] = self
-        #~ account = accounts.Account.objects.get(group__ref=account)
-        #~ account = self.journal.chart.get_account_by_ref(account)
         kw['account'] = account
+        if dd.plugins.ledger.project_model:
+            kw['project'] = project
+
         if amount < 0:
             amount = - amount
             dc = not dc
         kw['amount'] = amount
         kw['dc'] = dc
 
-        #~ kw['journal'] = self.journal
-        #~ kw['year'] = self.year
-        #~ kw['number'] = self.number
-        #~ kw['voucher'] = self
-        #kw['number'] = self.number
-        #~ kw.setdefault('date',self.date)
-        #~ if not kw.get('date',None):
-            #~ kw['date'] = self.value_date
         b = Movement(**kw)
-        # print b.date
-        # b.save()
         return b
 
     #~ def get_row_permission(self,ar,state,ba):

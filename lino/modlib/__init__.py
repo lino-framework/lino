@@ -71,7 +71,6 @@ Lino applications.
     finan
     households
     humanlinks
-    iban
     importfilters
     languages
     ledger
