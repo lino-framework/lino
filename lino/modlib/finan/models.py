@@ -100,10 +100,10 @@ class PaymentOrder(FinancialVoucher):
         yield self.create_movement(a, None, self.journal.dc, -amount)
 
     def add_item_from_due(self, obj, **kwargs):
-        if obj.iban_bic is None:
+        if obj.bank_account is None:
             return
         i = super(PaymentOrder, self).add_item_from_due(obj, **kwargs)
-        i.bic, i.iban = obj.iban_bic
+        i.bank_account = obj.bank_account
         return i
 
 
@@ -323,7 +323,7 @@ class ItemsByBankStatement(ItemsByVoucher):
 
 class ItemsByPaymentOrder(ItemsByVoucher):
     model = 'finan.PaymentOrderItem'
-    column_names = "seqno partner match amount remark *"
+    column_names = "seqno partner bank_account match amount remark *"
 
 
 class ItemsByGrouper(ItemsByVoucher):
@@ -422,6 +422,7 @@ class SuggestionsByPaymentOrder(SuggestionsByVoucher):
     "A :class:`SuggestionsByVoucher` table for a :class:`PaymentOrder`."
 
     master = 'finan.PaymentOrder'
+    column_names = 'partner match account due_date debts payments balance bank_account *'
 
     @classmethod
     def param_defaults(cls, ar, **kw):

@@ -68,6 +68,9 @@ class Payable(dd.Model):
     def get_due_date(self):
         return self.due_date or self.date
 
+    def get_bank_account(self):
+        return self.bank_account
+
     @dd.chooser()
     def bank_account_choices(cls, partner):
         return rt.modules.sepa.Account.objects.filter(

@@ -214,6 +214,11 @@ class ExpectedMovements(dd.VirtualTable):
     def account(self, row, ar):
         return row.account
 
+    @dd.virtualfield(dd.ForeignKey(
+        'sepa.Account', verbose_name=_("Bank account")))
+    def bank_account(self, row, ar):
+        return row.bank_account
+
 
 class DebtsByAccount(ExpectedMovements):
     """
