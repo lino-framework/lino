@@ -103,9 +103,11 @@ class HtmlRenderer(object):
         """
         if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
-                return E.tostring(
-                    ar.actor.get_slave_summary(ar.master_instance, ar))
-        return E.tostring(ar.table2xhtml(**kw))
+                return ar.actor.get_slave_summary(ar.master_instance, ar)
+        return ar.table2xhtml(**kw)
+        #         return E.tostring(
+        #             ar.actor.get_slave_summary(ar.master_instance, ar))
+        # return E.tostring(ar.table2xhtml(**kw))
 
     def action_call(self, request, bound_action, status):
         return None

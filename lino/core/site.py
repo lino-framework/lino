@@ -1264,7 +1264,7 @@ documentation.
             self.update_settings(STATIC_URL='/static/')
         self.update_settings(
             TEMPLATE_LOADERS=tuple([
-                'lino.core.web.Loader',
+                'lino.modlib.jinja.loader.Loader',
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
                 #~ 'django.template.loaders.eggs.Loader',
@@ -2780,8 +2780,10 @@ Please convert to Plugin method".format(mod, methname)
         implementation renders the :xfile:`admin_main.html` template.
 
         """
-        from lino.core import web
-        return web.render_from_request(request, 'admin_main.html')
+        return self.plugins.jinja.render_from_request(
+            request, 'admin_main.html')
+        # from lino.core import web
+        # return web.render_from_request(request, 'admin_main.html')
 
     def get_welcome_messages(self, ar):
         """
@@ -2826,6 +2828,7 @@ Please convert to Plugin method".format(mod, methname)
             yield 'django.contrib.admin'
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
+        # yield 'lino.modlib.jinja'
         if self.default_ui == "extjs":
             yield 'lino.modlib.extjs'
             yield 'lino.modlib.bootstrap3'

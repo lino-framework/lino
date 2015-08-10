@@ -46,7 +46,8 @@ def http_response(ar, tplname, context):
     context.update(menu=menu)
     context = ar.get_printable_context(**context)
     context['ar'] = ar
-    template = settings.SITE.jinja_env.get_template(tplname)
+    env = settings.SITE.plugins.jinja.renderer.jinja_env
+    template = env.get_template(tplname)
 
     response = http.HttpResponse(
         template.render(**context),

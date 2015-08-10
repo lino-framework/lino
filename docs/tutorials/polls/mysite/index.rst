@@ -114,6 +114,7 @@ If you are curious:
     ('django.contrib.staticfiles',
      'lino.modlib.about',
      'lino.modlib.extjs',
+     'lino.modlib.jinja',
      'lino.modlib.bootstrap3',
      'lino.modlib.lino',
      'polls')

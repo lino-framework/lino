@@ -127,6 +127,20 @@ class ContactRelated(dd.Model):
         kw.update(contact_role=self.contact_role)
         return kw
 
+    def has_address(self):
+        """Return True if this object has a recipient which has an address.
+
+        See
+        :meth:`Addressable.has_address
+        <lino.utils.addressable.Addressable.has_address>`.
+        Used e.g. in xfile:`excerpts/Default.odt`
+
+        """
+        rec = self.recipient
+        if rec is not None:
+            return rec.has_address()
+        return False
+
     def get_address_html(self, *args, **kwargs):
         """
         Return the address of the :attr:`recipient` of this object.

@@ -16,6 +16,7 @@ Lino applications.
     system
     printing
     excerpts
+    jinja
     lino
     plausibility
     users

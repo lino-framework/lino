@@ -446,7 +446,8 @@ class ExtRenderer(HtmlRenderer):
                 self.build_js_cache(False)
 
             # Render teplate
-            tpl = settings.SITE.jinja_env.get_template('extjs/index.html')
+            env = settings.SITE.plugins.jinja.renderer.jinja_env
+            tpl = env.get_template('extjs/index.html')
             context = {
                 'site': settings.SITE,
                 'extjs': settings.SITE.plugins.extjs,
@@ -732,10 +733,11 @@ class ExtRenderer(HtmlRenderer):
         #~ f.write(jscompress(unicode(tpl)+'\n'))
         f.write(jscompress(tpl.render(**context) + '\n'))
 
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
         for p in settings.SITE.installed_plugins:
             if isinstance(p, Plugin):
                 for tplname in p.site_js_snippets:
-                    tpl = settings.SITE.jinja_env.get_template(tplname)
+                    tpl = env.get_template(tplname)
                     f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
                     f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 

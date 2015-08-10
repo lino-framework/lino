@@ -580,7 +580,8 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             if tplname:
                 # sar = copy(ar)
                 # sar.renderer = settings.SITE.kernel.html_renderer
-                template = settings.SITE.jinja_env.get_template(tplname)
+                env = settings.SITE.plugins.jinja.renderer.jinja_env
+                template = env.get_template(tplname)
                 # logger.info("body template %s (%s)", tplname, template)
                 body = ar.render_jinja(template, **kw)
 

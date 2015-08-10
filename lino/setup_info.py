@@ -140,6 +140,7 @@ lino.modlib.excerpts.fixtures
 lino.modlib.export_excel
 lino.modlib.extensible
 lino.modlib.extjs
+lino.modlib.jinja
 lino.modlib.families
 lino.modlib.finan
 lino.modlib.finan.fixtures

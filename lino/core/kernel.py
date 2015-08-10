@@ -52,7 +52,7 @@ from lino.core import fields
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
-from lino.core import web
+# from lino.core import web
 from lino.core import views
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
@@ -192,7 +192,7 @@ class Kernel(object):
             site.build_js_cache_on_startup = not (
                 settings.DEBUG or is_devserver())
 
-        web.site_setup(site)
+        # web.site_setup(site)
 
         for a in actors.actors_list:
             if a.get_welcome_messages is not None:

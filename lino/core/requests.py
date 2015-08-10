@@ -345,7 +345,9 @@ request from it.
             requested_language=get_language())
 
         def parse(s):
-            return settings.SITE.jinja_env.from_string(s).render(**kw)
+            # return settings.SITE.jinja_env.from_string(s).render(**kw)
+            return dd.plugins.jinja.renderer.jinja_env.from_string(
+                s).render(**kw)
         kw.update(parse=parse)
         return kw
 
@@ -464,7 +466,8 @@ request from it.
 
     def render_jinja(self, template, **context):
         sar = copy(self)
-        sar.renderer = settings.SITE.kernel.html_renderer
+        # sar.renderer = settings.SITE.kernel.html_renderer
+        sar.renderer = settings.SITE.plugins.jinja.renderer
         context.update(ar=sar)
         # self.renderer = settings.SITE.plugins.bootstrap3.renderer
         return template.render(**context)
@@ -543,27 +546,6 @@ request from it.
         """
         return settings.SITE.kernel.html_renderer.show_story(
             self, story, *args, **kwargs)
-        # return ''.join([
-        #     E.tostring(i) for i in
-        #     settings.SITE.html_renderer.show_story(
-        #         self, story, *args, **kwargs)])
-            
-        raise Exception("Moved to HtmlRenderer.show_stor")
-        # from lino.core.actors import Actor
-        # from lino.core.tables import TableRequest
-        # for item in story:
-        #     if E.iselement(item):
-        #         yield item
-        #     elif isinstance(item, type) and issubclass(item, Actor):
-        #         yield self.show(item, *args, **kw)
-        #     elif isinstance(item, TableRequest):
-        #         assert item.renderer is not None
-        #         yield self.renderer.show_table(item)
-        #     elif isiterable(item):
-        #         for i in self.story2html(item, *args, **kw):
-        #             yield i
-        #     else:
-        #         raise Exception("Cannot handle %r" % item)
 
     def story2rst(self, story, *args, **kwargs):
         return self.renderer.show_story(self, story, *args, **kwargs)

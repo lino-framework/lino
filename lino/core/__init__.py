@@ -36,7 +36,6 @@ The ``lino.core`` package
     urls
     utils
     views
-    web
     workflows
 
 

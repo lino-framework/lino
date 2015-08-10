@@ -152,7 +152,8 @@ class Mailable(dd.Model):
         for group in self.get_template_groups():
             filename = rt.find_config_file(name, group)
             if filename:
-                tpl = settings.SITE.jinja_env.get_template(group+"/"+name)
+                env = settings.SITE.plugins.jinja.renderer.jinja_env
+                tpl = env.get_template(group+"/"+name)
                 context = self.get_printable_context(ar)
                 return ar.render_jinja(tpl, **context)
 

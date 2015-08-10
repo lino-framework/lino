@@ -87,7 +87,10 @@ class Renderer(AppyRenderer):
         context.update(ui=settings.SITE.kernel)
         context.update(settings=settings)
         context.update(sc=settings.SITE.site_config)
-        context.update(settings.SITE.modules)
+        if False:
+            context.update(settings.SITE.modules)
+            # 20150810 removed above line because this "feature"
+            # caused the name `jinja` defined above to be overridden.
         kw.update(finalizeFunction=self.finalize_func)
         AppyRenderer.__init__(self, template, context, result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()
@@ -104,7 +107,8 @@ class Renderer(AppyRenderer):
                 template_name += '.html'
             #~ printable = self.contentParser.env.context.get('this',None)
             #~ print 20130910, settings.SITE.jinja_env
-            template = settings.SITE.jinja_env.get_template(template_name)
+            env = settings.SITE.plugins.jinja.renderer.jinja_env
+            template = env.get_template(template_name)
             #~ print 20130910, template, dir(self)
             html = template.render(self.contentParser.env.context)
             self.ar.renderer = saved_renderer

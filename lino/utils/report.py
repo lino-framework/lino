@@ -134,7 +134,7 @@ class Report(EmptyTable):
 
     do_print = DirectPrintAction()
 
-    report_items = NotImplementedError
+    report_items = None
 
     @classmethod
     def request(self, **kw):
@@ -151,6 +151,8 @@ class Report(EmptyTable):
         requests.
 
         """
+        if cls.report_items is None:
+            raise Exception("{0} has no report_items".format(cls))
         for A in cls.report_items:
             yield E.h2(unicode(A.label))
             if A.help_text:
@@ -159,11 +161,12 @@ class Report(EmptyTable):
 
     @fields.virtualfield(fields.HtmlBox())
     def body(cls, self, ar):
-        elems = tuple(ar.story2html(
-            self.get_story(ar), master_instance=self))
-        if None in elems:
-            return "20150703 {0}".format(elems)
-        return E.div(*elems)
+        return ar.story2html(self.get_story(ar))
+        # elems = tuple(ar.story2html(self.get_story(ar)))
+        # self.get_story(ar), master_instance=self))
+        # if None in elems:
+        #     return "20150703 {0}".format(elems)
+        # return E.div(*elems)
 
     @classmethod
     def as_appy_pod_xml(cls, self, apr):
