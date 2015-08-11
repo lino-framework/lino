@@ -597,7 +597,7 @@ request from it.
         ar = self.spawn(spec, **kwargs)
 
         def doit():
-            # print 20150512, ar.renderer
+            # print 20150811, ar.renderer
             if issubclass(ar.actor, Report):
                 story = ar.actor.get_story(None, ar)
                 return ar.renderer.show_story(self, story, stripped=stripped)

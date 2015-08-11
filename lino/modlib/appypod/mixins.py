@@ -16,7 +16,7 @@ from lino.utils.media import TmpMediaFile
 from lino.core import actions
 from lino.api import rt, _
 
-from .appy_renderer import Renderer as AppyRenderer
+from .appy_renderer import AppyRenderer
 
 
 class PrintTableAction(actions.Action):
@@ -61,7 +61,7 @@ class PrintTableAction(actions.Action):
         if not tplfile:
             raise Exception("No file %s" % self.template_name)
 
-        ar.renderer = settings.SITE.kernel.html_renderer  # 20120624
+        # 20150810 ar.renderer = settings.SITE.kernel.html_renderer  # 20120624
 
         context = self.get_context(ar)
         if os.path.exists(target_file):

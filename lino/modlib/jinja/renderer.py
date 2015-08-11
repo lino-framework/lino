@@ -28,10 +28,6 @@ from lino.api import rt
 
 
 class JinjaRenderer(HtmlRenderer):
-    def show_table(self, *args, **kwargs):
-        e = super(JinjaRenderer, self).show_table(*args, **kwargs)
-        return E.tostring(e)
-
     def __init__(self, *args, **kwargs):
         super(JinjaRenderer, self).__init__(*args, **kwargs)
 
@@ -72,8 +68,8 @@ class JinjaRenderer(HtmlRenderer):
             a = settings.SITE.modules.resolve(action_spec)
             ar = a.request(user=AnonymousUser.instance())
             # 20150810
-            ar.renderer = settings.SITE.plugins.bootstrap3.renderer
-            # ar.renderer = self
+            # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
+            ar.renderer = self
 
             t = xghtml.Table()
             ar.dump2html(t, ar.sliced_data_iterator)
@@ -86,8 +82,8 @@ class JinjaRenderer(HtmlRenderer):
             a = settings.SITE.modules.resolve(action_spec)
             ar = a.request(user=AnonymousUser.instance())
             # 20150810
-            # ar.renderer = self
-            ar.renderer = settings.SITE.plugins.bootstrap3.renderer
+            ar.renderer = self
+            # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
         self.jinja_env.globals.update(
@@ -128,28 +124,9 @@ class JinjaRenderer(HtmlRenderer):
             return pgettext(ctx.decode('utf8'), s.decode('utf8'))
         self.jinja_env.globals.update(pgettext=pgettext)
 
-        # @contextfunction
-        # def counter_function(context, name=None, value=None, step=1):
-        #     """This is a Jinja context function.
-
-        #     Parameters are:
-
-        #     :context: the `Context
-        #     <http://jinja.pocoo.org/docs/dev/api/#the-context>`_.
-        #     :name:  the name of the counter
-        #     :step:  Optional increment step
-
-        #     """
-        #     counters = context['inc_counters']
-        #     if value is None:
-        #         if name in counters:
-        #             value = counters.get(name)
-        #             value += step
-        #         else:
-        #             value = step
-        #     counters[name] = value
-        #     return value
-
-        # self.jinja_env.globals.update(counter=counter_function)
-
         #~ print __file__, 20121231, self.jinja_env.list_templates('.html')
+
+    def show_table(self, *args, **kwargs):
+        e = super(JinjaRenderer, self).show_table(*args, **kwargs)
+        return E.tostring(e)
+

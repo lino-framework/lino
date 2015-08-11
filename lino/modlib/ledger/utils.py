@@ -113,9 +113,9 @@ class DueMovement(object):
                     self.bank_account = bank_account
                 elif self.bank_account != bank_account:
                     raise Exception("More than one IBAN/BIC")
-            else:
-                dd.logger.info(
-                    "20150810 no bank account for {0}".format(voucher))
+            # else:
+            #     dd.logger.info(
+            #         "20150810 no bank account for {0}".format(voucher))
 
         else:
             self.payments.append(mvt)

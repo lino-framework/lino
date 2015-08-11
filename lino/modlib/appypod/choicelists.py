@@ -16,7 +16,7 @@ from django.utils import translation
 
 from lino.modlib.printing.choicelists import SimpleBuildMethod, BuildMethods
 
-from .appy_renderer import Renderer as AppyRenderer
+from .appy_renderer import AppyRenderer
 
 
 class AppyBuildMethod(SimpleBuildMethod):
