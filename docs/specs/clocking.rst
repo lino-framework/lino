@@ -133,15 +133,15 @@ Site #1 (u'welket')
 
 >>> rt.show(clocking.TicketsByReport, obj)
 ... #doctest: +REPORT_UDIFF
-==== =================================================================================== ======= ============
- ID   Description                                                                         State   Time
----- ----------------------------------------------------------------------------------- ------- ------------
- 3    Baz sucks. Reporter: luc. Product: Lino Core                                        New     32:41
- 5    Cannot create Foo. Reporter: Romain Raffault. Product: Lino Cosi                    New     33:35
- 8    Is there any Bar in Foo?. Reporter: mathieu. Project: dócs. Product: Lino Welfare   New     35:57
- 9    Foo never matches Bar. Reporter: marc. Project: linö. Product: Lino Cosi            New     33:05
-                                                                                                  **135:18**
-==== =================================================================================== ======= ============
+==== ================================================================================================= ======= ============
+ ID   Description                                                                                       State   Time
+---- ------------------------------------------------------------------------------------------------- ------- ------------
+ 3    Baz sucks. Site: pypi. Reporter: luc. Product: Lino Core                                          New     32:41
+ 5    Cannot create Foo. Site: welsch. Reporter: Romain Raffault. Product: Lino Cosi                    New     33:35
+ 8    Is there any Bar in Foo?. Site: welsch. Reporter: mathieu. Project: dócs. Product: Lino Welfare   New     35:57
+ 9    Foo never matches Bar. Site: pypi. Reporter: marc. Project: linö. Product: Lino Cosi              New     33:05
+                                                                                                                **135:18**
+==== ================================================================================================= ======= ============
 <BLANKLINE>
 
 >>> rt.show(clocking.ProjectsByReport, obj)

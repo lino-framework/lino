@@ -139,15 +139,15 @@ We have a list of all sites for which we do support:
 ============= ========= ======== ====
  Designation   Partner   Remark   ID
 ------------- --------- -------- ----
+ pypi                             3
  welket                           1
  welsch                           2
 ============= ========= ======== ====
 <BLANKLINE>
 
 
-A ticket may or may not be **local**, i.e. specific to a given
-**Site**. Local tickets are never interesting to other sites even when
-they are assigned a product for which the other site has interest.
+A ticket may or may not be **local**, i.e. assigned to a given
+**Site**.
 
 When a ticket is site-specific, we simply assign the `site` field. We
 can see all local tickets for a given site object:
@@ -155,11 +155,13 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ======== ========== ========== =========
- ID   Summary                     Closed   Workflow   Reporter   Project
----- --------------------------- -------- ---------- ---------- ---------
- 1    Föö fails to bar when baz   No       **New**    mathieu    linö
-==== =========================== ======== ========== ========== =========
+==== =========================== ======== ========== ============ =========
+ ID   Summary                     Closed   Workflow   Reporter     Project
+---- --------------------------- -------- ---------- ------------ ---------
+ 7    No Foo after deleting Bar   No       **New**    Robin Rood   téam
+ 4    Foo and bar don't baz       No       **New**    jean         dócs
+ 1    Föö fails to bar when baz   No       **New**    mathieu      linö
+==== =========================== ======== ========== ============ =========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -168,13 +170,25 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ======== ======================================================= ========== =========
- ID   Summary                     Closed   Workflow                                                Reporter   Project
----- --------------------------- -------- ------------------------------------------------------- ---------- ---------
- 1    Föö fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu    linö
-==== =========================== ======== ======================================================= ========== =========
+==== =========================== ======== ======================================================= ============ =========
+ ID   Summary                     Closed   Workflow                                                Reporter     Project
+---- --------------------------- -------- ------------------------------------------------------- ------------ ---------
+ 7    No Foo after deleting Bar   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   Robin Rood   téam
+ 4    Foo and bar don't baz       No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   jean         dócs
+ 1    Föö fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu      linö
+==== =========================== ======== ======================================================= ============ =========
 <BLANKLINE>
 
 
-
-
+>>> welket = tickets.Site.objects.get(name="welket")
+>>> rt.show(tickets.MilestonesBySite, welket)
+... #doctest: +REPORT_UDIFF
+==== ============== ========= =======
+ ID   Expected for   Reached   Label
+---- -------------- --------- -------
+ 1    5/3/15         5/3/15
+ 3    5/7/15         5/7/15
+ 5    5/11/15        5/11/15
+ 7    5/15/15        5/15/15
+==== ============== ========= =======
+<BLANKLINE>
