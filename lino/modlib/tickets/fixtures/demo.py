@@ -15,6 +15,7 @@ def objects():
     TT = rt.modules.tickets.TicketType
     Ticket = rt.modules.tickets.Ticket
     Interest = rt.modules.tickets.Interest
+    Milestone = rt.modules.tickets.Milestone
     Project = rt.modules.tickets.Project
     Site = rt.modules.tickets.Site
     Link = rt.modules.tickets.Link
@@ -52,22 +53,33 @@ def objects():
 
     yield Site(name="welket")
     yield Site(name="welsch")
+    yield Site(name="pypi")
 
-    for u in Site.objects.all():
+    for u in Site.objects.exclude(name="pypi"):
         for i in range(3):
             yield Interest(site=u, product=PRODUCTS.pop())
+
+    SITES = Cycler(Site.objects.exclude(name="pypi"))
+    for i in range(7):
+        d = dd.today(i*2-20)
+        yield Milestone(site=SITES.pop(), expected=d, reached=d)
+    yield Milestone(site=SITES.pop(), expected=dd.today())
 
     yield Project(name="Framewörk", ref="linö")
     yield Project(name="Téam", ref="téam")
     yield Project(name="Documentatión", ref="dócs")
 
     PROJECTS = Cycler(Project.objects.all())
+    SITES = Cycler(Site.objects.all())
 
-    def ticket(s, **kwargs):
+    def ticket(summary, **kwargs):
+        site = SITES.pop()
         kwargs.update(
-            ticket_type=TYPES.pop(), summary=s,
+            ticket_type=TYPES.pop(), summary=summary,
             reporter=USERS.pop(),
+            site=site,
             product=PRODUCTS.pop())
+            
         if False:
             kwargs.update(project=PROJECTS.pop())
         return Ticket(**kwargs)

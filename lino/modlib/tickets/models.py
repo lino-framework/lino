@@ -150,37 +150,25 @@ class Milestone(dd.Model):  # mixins.Referrable):
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
-        ordering = ['project', 'label']
+        ordering = ['site', 'label']
 
-    project = dd.ForeignKey(
-        'tickets.Project',
-        related_name='milestones_by_project')
-    label = models.CharField(_("Label"), max_length=20)
+    # project = dd.ForeignKey(
+    #     'tickets.Project',
+    #     related_name='milestones_by_project')
+    site = dd.ForeignKey(
+        'tickets.Site',
+        related_name='milestones_by_site')
+    label = models.CharField(_("Label"), max_length=20, blank=True)
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
-    #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"), blank=True)
 
     #~ def __unicode__(self):
         #~ return self.label
 
     def __unicode__(self):
-        return "{0}:{1}".format(self.project, self.label)
-
-
-class Milestones(dd.Table):
-    model = 'tickets.Milestone'
-    detail_layout = """
-    project label expected reached id
-    TicketsFixed TicketsReported
-    """
-    insert_layout = """
-    project label
-    """
-
-
-class MilestonesByProject(Milestones):
-    master_key = 'project'
-    column_names = "label expected reached *"
+        label = self.label or "M{0}".format(self.id)
+        return "{0}:{1}".format(self.site, label)
 
 
 class Link(dd.Model):
@@ -428,17 +416,16 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         return "#{0} ({1})".format(self.id, self.summary)
 
     @dd.chooser()
-    def reported_for_choices(cls, project):
-        if not project:
+    def reported_for_choices(cls, site):
+        if not site:
             return []
-        return project.milestones_by_project.filter(
-            reached__isnull=False)
+        return site.milestones_by_site.filter(reached__isnull=False)
 
     @dd.chooser()
-    def fixed_for_choices(cls, project):
-        if not project:
+    def fixed_for_choices(cls, site):
+        if not site:
             return []
-        return project.milestones_by_project.all()
+        return site.milestones_by_site.all()
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):

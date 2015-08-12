@@ -75,7 +75,7 @@ class ProjectDetail(dd.FormLayout):
 
     history = dd.Panel("""
     srcref_url_template changeset_url_template
-    MilestonesByProject
+    #MilestonesByProject
     """, label=_("Timeline"))
 
 
@@ -316,11 +316,13 @@ class Tickets(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.interesting_for:
-            qs = qs.filter(Q(site=pv.interesting_for) | Q(site__isnull=True))
+            # qs = qs.filter(Q(site=pv.interesting_for) | Q(site__isnull=True))
+
             interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
-                qs = qs.filter(product__in=interests)
+                qs = qs.filter(
+                    Q(product__in=interests) | Q(site=pv.interesting_for))
 
         if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed=False)
@@ -547,5 +549,23 @@ class InterestsByProduct(Interests):
 
 class TicketsBySite(Tickets):
     master_key = 'site'
+
+
+class Milestones(dd.Table):
+    model = 'tickets.Milestone'
+    detail_layout = """
+    site id label expected reached
+    description
+    TicketsFixed TicketsReported
+    """
+    insert_layout = """
+    site label
+    description
+    """
+
+
+class MilestonesBySite(Milestones):
+    master_key = 'site'
+    column_names = "id expected reached label *"
 
 

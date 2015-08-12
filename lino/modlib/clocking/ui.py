@@ -290,8 +290,11 @@ class TicketsByReport(Tickets, InvestedTime):
             return
         lst = [obj.summary]
         tpl = u"{0}: {1}"
-        if obj.site is not None and obj.site == mi.interesting_for:
-            lst.append(_("site-specific"))
+        # if obj.site is not None and obj.site == mi.interesting_for:
+        #     lst.append(_("site-specific"))
+        if obj.site is not None and obj.site != mi.interesting_for:
+            lst.append(tpl.format(
+                unicode(_("Site")), unicode(obj.site)))
         if obj.reporter is not None:
             lst.append(tpl.format(
                 unicode(_("Reporter")), unicode(obj.reporter)))
