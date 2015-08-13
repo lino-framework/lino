@@ -150,7 +150,6 @@ class Milestone(dd.Model):  # mixins.Referrable):
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
-        ordering = ['site', 'label']
 
     # project = dd.ForeignKey(
     #     'tickets.Project',

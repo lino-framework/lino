@@ -552,19 +552,22 @@ class TicketsBySite(Tickets):
 
 
 class Milestones(dd.Table):
+    order_by = ['-id']
+    # order_by = ['label', '-id']
     model = 'tickets.Milestone'
     detail_layout = """
     site id label expected reached
     description
     TicketsFixed TicketsReported
     """
-    insert_layout = """
+    insert_layout = dd.InsertLayout("""
     site label
     description
-    """
+    """, window_size=(50, 15))
 
 
 class MilestonesBySite(Milestones):
+    order_by = ['-id']
     master_key = 'site'
     column_names = "id expected reached label *"
 
