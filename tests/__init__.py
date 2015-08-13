@@ -10,8 +10,10 @@ from unipath import Path
 
 ROOTDIR = Path(__file__).parent.parent
 
+SETUP_INFO = {}
+
 # load SETUP_INFO:
-execfile(ROOTDIR.child('lino_noi', 'project_info.py'), globals())
+execfile(ROOTDIR.child('lino_noi', 'setup_info.py'), globals())
 
 from lino.utils.pythontest import TestCase
 
@@ -48,9 +50,14 @@ class SpecsTests(BaseTestCase):
         self.run_simple_doctests('docs/specs/as_pdf.rst')
 
 
-class DemoTests(BaseTestCase):
+class ProjectsTests(BaseTestCase):
     """Run tests on the demo projects.
     """
 
-    def test_admin(self):
-        self.run_django_manage_test()
+    def test_team(self):
+        self.run_django_manage_test('lino_noi/projects/team')
+
+    def test_teamadm(self):
+        self.run_django_manage_test('lino_noi/projects/teamadm')
+
+

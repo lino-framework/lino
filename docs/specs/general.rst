@@ -16,7 +16,7 @@ possible to publish **service reports**.
     doctest init:
 
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
     >>> from __future__ import print_function 
     >>> from __future__ import unicode_literals
     >>> from lino.api.doctest import *

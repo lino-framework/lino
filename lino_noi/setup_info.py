@@ -43,14 +43,19 @@ Topic :: Software Development :: Bug Tracking
 
 SETUP_INFO.update(packages=[
     'lino_noi',
-    'lino_noi.fixtures',
     'lino_noi.lib',
     'lino_noi.lib.noi',
+    'lino_noi.lib.noi.fixtures',
     'lino_noi.lib.contacts',
     'lino_noi.lib.products',
     'lino_noi.lib.users',
     'lino_noi.lib.users.fixtures',
-    'lino_noi.settings',
+    'lino_noi.projects',
+    'lino_noi.projects.team',
+    'lino_noi.projects.team.tests',
+    'lino_noi.projects.team.settings',
+    'lino_noi.projects.teamadm',
+    'lino_noi.projects.teamadm.tests',
 ])
 
 SETUP_INFO.update(message_extractors={

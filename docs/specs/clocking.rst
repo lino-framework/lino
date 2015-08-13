@@ -12,7 +12,7 @@ Work time tracking
 
     >>> from __future__ import print_function, unicode_literals
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
     >>> from lino.api.doctest import *
 
 

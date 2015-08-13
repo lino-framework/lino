@@ -1,6 +1,6 @@
 import datetime
 
-from lino_noi.settings import *
+from ..settings import *
 
 
 class Site(Site):

@@ -8,17 +8,16 @@ Views for the public web interface of Lino Noi.
 
 from django.http import HttpResponse
 from django.views.generic import View
-from django.conf import settings
 
-# from lino.core.web import render_from_request
 from lino.core.utils import full_model_name
 from lino.core.requests import BaseRequest
+from lino.api import dd
 
 
 def render_from_request(request, template_name, **context):
-    template = settings.SITE.jinja_env.get_template(template_name)
+    template = dd.plugins.jinja.renderer.jinja_env.get_template(template_name)
     ar = BaseRequest(
-        renderer=settings.SITE.plugins.noi.renderer,
+        renderer=dd.plugins.noi.renderer,
         request=request)
     context = ar.get_printable_context(**context)
     return template.render(**context)

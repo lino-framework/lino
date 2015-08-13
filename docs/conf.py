@@ -11,7 +11,7 @@
 extensions = []
 
 from atelier.sphinxconf import configure
-configure(globals(), 'lino_noi.settings.doctests')
+configure(globals(), 'lino_noi.projects.team.settings.doctests')
 
 extensions += ['lino.sphinxcontrib.logo']
 

@@ -8,7 +8,7 @@ Django user interface using the hand-written URLConf module
 
 """
 
-from .demo import *
+from lino_noi.projects.team.settings.demo import *
 
 
 class Site(Site):

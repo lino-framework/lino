@@ -12,7 +12,7 @@ Ticket management
     doctest init:
 
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.demo'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
     >>> from __future__ import print_function 
     >>> from __future__ import unicode_literals
     >>> from lino.api.doctest import *
@@ -186,9 +186,9 @@ authenticated developer it looks like this:
 ==== ============== ========= =======
  ID   Expected for   Reached   Label
 ---- -------------- --------- -------
- 1    5/3/15         5/3/15
- 3    5/7/15         5/7/15
- 5    5/11/15        5/11/15
  7    5/15/15        5/15/15
+ 5    5/11/15        5/11/15
+ 3    5/7/15         5/7/15
+ 1    5/3/15         5/3/15
 ==== ============== ========= =======
 <BLANKLINE>

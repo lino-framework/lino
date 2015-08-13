@@ -6,16 +6,15 @@
 .. autosummary::
    :toctree:
 
-   settings
    lib
-   fixtures.linotickets
+   projects
 
 
 """
 
 import os
 
-execfile(os.path.join(os.path.dirname(__file__), 'project_info.py'))
+execfile(os.path.join(os.path.dirname(__file__), 'setup_info.py'))
 __version__ = SETUP_INFO['version']
 
 intersphinx_urls = dict(docs="http://noi.lino-framework.org")

@@ -13,7 +13,7 @@ Printing tables
 
     >>> from __future__ import print_function, unicode_literals
     >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.settings.doctests'
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.doctests'
     >>> from lino.api.doctest import *
 
 
