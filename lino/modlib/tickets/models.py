@@ -423,7 +423,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
     def reported_for_choices(cls, site):
         if not site:
             return []
-        return site.milestones_by_site.filter(reached__isnull=False)
+        # return site.milestones_by_site.filter(reached__isnull=False)
+        return site.milestones_by_site.all()
 
     @dd.chooser()
     def fixed_for_choices(cls, site):
