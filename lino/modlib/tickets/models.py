@@ -166,7 +166,12 @@ class Milestone(dd.Model):  # mixins.Referrable):
         #~ return self.label
 
     def __unicode__(self):
-        label = self.label or "M{0}".format(self.id)
+        label = self.label
+        if not label:
+            if self.reached:
+                label = self.reached.isoformat()
+            else:
+                label = "#{0}".format(self.id)
         return "{0}:{1}".format(self.site, label)
 
 
