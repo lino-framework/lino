@@ -157,7 +157,7 @@ class Milestone(dd.Model):  # mixins.Referrable):
     #     related_name='milestones_by_project')
     site = dd.ForeignKey(
         'tickets.Site',
-        related_name='milestones_by_site')
+        related_name='milestones_by_site', blank=True, null=True)
     label = models.CharField(_("Label"), max_length=20, blank=True)
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
