@@ -521,7 +521,7 @@ class Sites(dd.Table):
     detail_layout = """
     id name partner
     remark
-    InterestsBySite TicketsBySite
+    InterestsBySite TicketsBySite MilestonesBySite
     """
 
 
