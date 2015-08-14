@@ -108,7 +108,7 @@ class Changes(dd.Table):
     """
 
     param_object_type = models.ForeignKey(
-        'contenttypes.ContentType', 
+        'contenttypes.ContentType',
         verbose_name=_("Object type"), blank=True)
     parameters = {
         'change_type': ChangeTypes.field(force_selection=False, blank=True),
@@ -121,7 +121,7 @@ class Changes(dd.Table):
             settings.SITE.user_model,
             blank=True)
 
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
 
     editable = False
     model = 'changes.Change'
@@ -160,7 +160,7 @@ class ChangesByObject(Changes):
     object.
 
     """
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
     master_key = 'object'
     column_names = 'time user type master diff master_type master_id'
 
@@ -183,9 +183,12 @@ class WatcherSpec:
 
 def watch_all_changes(ignore=[]):
 
-    """Call to watch all changes on all models. This is fallback method
-    and settings passed to specific model using `watch_changes` call
-    takes precedence.
+    """Call this to activate change watching on *all* models. The default
+    behaviour is to watch only models that have been explicitly
+    declared using :func:`watch_changes`.
+
+    This is a fallback method and settings passed to specific model
+    using `watch_changes` call takes precedence.
 
 
     :param ignore: specify list of model names to ignore

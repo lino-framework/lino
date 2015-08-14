@@ -828,6 +828,22 @@ documentation.
 
     """
 
+    log_each_action_request = False
+    """Whether Lino should log every incoming request for non
+    :attr:`readonly <lino.core.actions.Action.readonly>` actions.
+
+    This is experimental. Theoretically it is useless to ask Lino for
+    logging every request since Apache does this.
+
+    Note also that there is no warranty that actually *each* request
+    is being logged.  It corrently works only for requests that are
+    being processed by the kernel's :meth:`run_action
+    <lino.core.kernel.Kernel.run_action>` or
+    :meth:`run_callback
+    <lino.core.kernel.Kernel.run_callback>` methods.
+
+    """
+
     verbose_client_info_message = False
     """
     Set this to True if actions should send debug messages to the client.

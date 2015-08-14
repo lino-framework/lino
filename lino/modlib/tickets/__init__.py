@@ -50,3 +50,4 @@ class Plugin(ad.Plugin):
         m.add_action('tickets.Links')
         # m.add_action('tickets.Sponsorships')
         m.add_action('tickets.Interests')
+        m.add_action('tickets.Deployments')

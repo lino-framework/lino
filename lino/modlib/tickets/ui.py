@@ -249,7 +249,7 @@ class TicketDetail(dd.DetailLayout):
     nickname:10 created modified reported_for fixed_for
     state duplicate_of planned_time
     standby feedback private
-    DuplicatesByTicket  #ChildrenByTicket
+    DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
     """, label=_("Planning"))
 
 
@@ -557,7 +557,7 @@ class Milestones(dd.Table):
     model = 'tickets.Milestone'
     detail_layout = """
     site id label expected reached
-    description
+    description DeploymentsByMilestone
     TicketsFixed TicketsReported
     """
     insert_layout = dd.InsertLayout("""
@@ -572,3 +572,17 @@ class MilestonesBySite(Milestones):
     column_names = "id expected reached label *"
 
 
+class Deployments(dd.Table):
+    model = 'tickets.Deployment'
+
+
+class DeploymentsByMilestone(Deployments):
+    order_by = ['-ticket__id']
+    master_key = 'milestone'
+    column_names = "ticket remark *"
+
+
+class DeploymentsByTicket(Deployments):
+    order_by = ['-milestone__reached']
+    master_key = 'ticket'
+    column_names = "milestone__reached milestone  remark *"

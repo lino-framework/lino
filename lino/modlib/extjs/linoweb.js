@@ -4085,9 +4085,9 @@ Lino.cell_context_menu = function(grid,row,col,e) {
 
 
 Lino.chooser_handler = function(combo,name) {
-  return function(cmp,newValue,oldValue) {
+  return function(cmp, newValue, oldValue) {
     //~ console.log('Lino.chooser_handler()',cmp,oldValue,newValue);
-    combo.setContextValue(name,newValue);
+    combo.setContextValue(name, newValue);
   }
 };
 
@@ -4212,8 +4212,8 @@ Lino.SimpleRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
       Lino.SimpleRemoteComboStore.superclass.constructor.call(this, Ext.apply(config, {
           totalProperty: 'count',
           root: 'rows',
-          id: 'value', // constants.CHOICES_VALUE_FIELD
-          fields: ['value' ], // constants.CHOICES_VALUE_FIELD, // constants.CHOICES_TEXT_FIELD
+          id: '{{constants.CHOICES_VALUE_FIELD}}', // 'value'
+          fields: ['{{constants.CHOICES_VALUE_FIELD}}' ], 
           listeners: { exception: Lino.on_store_exception }
       }));
   }

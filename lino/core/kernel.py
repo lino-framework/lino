@@ -107,7 +107,6 @@ class Callback(object):
 
     """
     title = _('Confirmation')
-    #~ def __init__(self,yes,no):
 
     def __init__(self, ar, message):
         self.message = message
@@ -549,6 +548,10 @@ class Kernel(object):
 
         for c in cb.choices:
             if c.name == button_id:
+                a = ar.bound_action.action
+                if self.site.log_each_action_request and not a.readonly:
+                    logger.info("run_callback {0} {1} {2}".format(
+                        thread_id, cb.message, c.name))
                 c.func(ar)
                 return self.render_action_response(ar)
 
@@ -600,7 +603,10 @@ class Kernel(object):
         in a user-friendly way.
 
         """
+        
         a = ar.bound_action.action
+        if self.site.log_each_action_request and not a.readonly:
+            logger.info("run_action {0}".format(ar))
         try:
             a.run_from_ui(ar)
             if a.parameters and not a.no_params_window:
@@ -666,7 +672,7 @@ class Kernel(object):
         fn = join(settings.MEDIA_ROOT, fn)
         # fn = join(settings.STATIC_ROOT, fn)
         # fn = join(self.site.cache_dir, fn)
-        if not force and not self._must_build and os.path.exists(fn):
+        if not force and not self._must_build and exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > self.code_mtime:
                 logger.debug("%s (%s) is up to date.", fn, time.ctime(mtime))

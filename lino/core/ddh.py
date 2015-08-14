@@ -7,7 +7,6 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.db import models
 
@@ -17,8 +16,8 @@ class DisableDeleteHandler():
 
     Lino's default behaviour is to forbit deletion if there is any
     other object in the database that refers to this. To implement
-    this, Lino installs a `DisableDeleteHandler` instance on each
-    model in an attribute `_lino_ddh` during kernel startup.
+    this, Lino installs a :class:`DisableDeleteHandler` instance on
+    each model in an attribute `_lino_ddh` during kernel startup.
 
     """
 
@@ -27,7 +26,7 @@ class DisableDeleteHandler():
         self.fklist = []
 
     def add_fk(self, rel_model, fk):
-        # called from kernel.
+        # called from kernel during startup
         for m, fld in self.fklist:
             if rel_model is m:
                 # avoid duplicate entries caused by MTI children
@@ -60,4 +59,3 @@ class DisableDeleteHandler():
             if n:
                 return obj.delete_veto_message(qs.model, n)
         return None
-

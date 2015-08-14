@@ -461,6 +461,28 @@ class Interest(dd.Model):
 # dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
+class Deployment(dd.Model):
+    """A **deployment** is the fact that a given ticket is being fixed (or
+    installed or activated) by a given milestone (to a given site).
+
+    """
+    class Meta:
+        verbose_name = _("Deployment")
+        verbose_name_plural = _('Deployments')
+
+    ticket = dd.ForeignKey('tickets.Ticket')
+    milestone = dd.ForeignKey('tickets.Milestone')
+    remark = dd.RichTextField(_("Remark"), blank=True)
+
+    @dd.chooser()
+    def milestone_choices(cls, ticket):
+        if not ticket:
+            return []
+        if ticket.site:
+            return ticket.site.milestones_by_site.all()
+        return rt.modules.tickets.Milestone.objects.order_by('label')
+
+
 if False:  # removed current_project field because it caused circular
            # dependency
     dd.inject_field(

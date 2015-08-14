@@ -21,6 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from lino.core.utils import obj2str
+from lino.core.utils import format_request
 from lino.core.store import get_atomizer
 from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
@@ -604,6 +605,8 @@ class TableRequest(ActionRequest):
         u = self.get_user()
         if u is not None:
             kw.update(user=u.username)
+        if False:  # self.request:
+            kw.update(request=format_request(self.request))
         return "<%s %s(%s)>" % (
             self.__class__.__name__, self.bound_action.full_name(), kw)
 

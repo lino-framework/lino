@@ -32,29 +32,11 @@ from __future__ import unicode_literals
 import sys
 import traceback
 from django.conf import settings
-from django.http import HttpResponseServerError, QueryDict
+from django.http import HttpResponseServerError
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-
-
-def format_request(request):
-    """Format a Django HttpRequest for logging it with the warning when an
-    error occurs while processing an AJAX request.
-
-    """
-    s = "{0} {1}".format(request.method, request.path)
-    qs = request.META.get('QUERY_STRING')
-    if qs:
-        s += "?" + qs
-    if request.body:
-        data = QueryDict(request.body)
-        data = str(data)
-        if len(data) > 1000:
-            data = data[:200] + "..."
-        s += " (data: {0})".format(data)
-
-    return s
+from lino.core.utils import format_request
 
 
 class AjaxExceptionResponse:

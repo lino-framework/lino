@@ -338,63 +338,14 @@ class Model(models.Model):
         return set()
 
     def delete(self, **kw):
-        # Double-check to avoid "murder bug" (20150623).
+        """
+        Double-check to avoid "murder bug" (20150623).
+
+        
+        """
         msg = self.disable_delete(None)
         if msg is not None:
             raise Warning(msg)
-        super(Model, self).delete(**kw)
-
-    def unused_delete(self, **kw):
-        """Before actually deleting an object, we override Django's behaviour
-        concerning related objects via a GFK field.
-
-        In Lino you can configure the cascading behaviour using
-        :attr:`allow_cascaded_delete`.
-
-        See also :doc:`/dev/gfks`.
-
-        It seems that Django deletes *generic related objects* only if
-        the object being deleted has a `GenericRelation
-        <https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
-        field (according to `Why won't my GenericForeignKey cascade
-        when deleting?
-        <http://stackoverflow.com/questions/6803018/why-wont-my-genericforeignkey-cascade-when-deleting>`_).
-        OTOH this statement seems to be wrong: it happens also in my
-        projects which do *not* use any `GenericRelation`.  As
-        :mod:`test_broken_gfk
-        <lino_welfare.projects.eupen.tests.test_broken_gfk>` shows.
-
-        TODO: instead of calling :meth:`disable_delete
-        <lino.core.model.Model.disable_delete>` here again (it has
-        been called earlier by the delete action before asking for user
-        confirmation), Lino might change the `on_delete` attribute of all
-        `ForeignKey` fields which are not in
-        :attr:`allow_cascaded_delete` from ``CASCADE`` to
-        ``PRTOTECTED`` at startup.
-
-        """
-
-        kernel = settings.SITE.kernel
-        # print "20141208 generic related objects for %s:" % obj
-        must_cascade = []
-        for gfk, fk_field, qs in kernel.get_generic_related(self):
-            if gfk.name in qs.model.allow_cascaded_delete:
-                must_cascade.append(qs)
-            else:
-                if fk_field.null:  # clear nullable GFKs
-                    for obj in qs:
-                        setattr(obj, gfk.name, None)
-                elif qs.count():
-                    raise Warning(self.delete_veto_message(
-                        qs.model, qs.count()))
-        for qs in must_cascade:
-            if qs.count():
-                logger.info("Deleting %d %s before deleting %s",
-                            qs.count(),
-                            qs.model._meta.verbose_name_plural,
-                            obj2str(self))
-            for obj in qs:
-                obj.delete()
         super(Model, self).delete(**kw)
 
     def delete_veto_message(self, m, n):
@@ -1007,7 +958,7 @@ def pre_delete_handler(sender, instance=None, **kw):
     confirmation), Lino might change the `on_delete` attribute of all
     `ForeignKey` fields which are not in
     :attr:`allow_cascaded_delete` from ``CASCADE`` to
-    ``PRTOTECTED`` at startup.
+    ``PROTECTED`` at startup.
 
     """
 
@@ -1030,5 +981,5 @@ def pre_delete_handler(sender, instance=None, **kw):
                         qs.count(),
                         qs.model._meta.verbose_name_plural,
                         obj2str(instance))
-        for obj in qs:
-            obj.delete()
+            for obj in qs:
+                obj.delete()

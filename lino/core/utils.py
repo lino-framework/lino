@@ -35,6 +35,7 @@ from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_unicode
 from django.contrib.contenttypes.models import ContentType
+from django.http import QueryDict
 
 from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
@@ -87,6 +88,30 @@ def is_devserver():
     #~ print 20130315, sys.argv[1]
     return len(sys.argv) > 1 and sys.argv[1] in (
         'runserver', 'testserver', 'test', "makescreenshots")
+
+
+def format_request(request):
+    """Format a Django HttpRequest for logging it.
+
+    This was written for the warning to be logged in
+    :mod:`lino.utils.ajax` when an error occurs while processing an
+    AJAX request.
+
+    """
+    s = "{0} {1}".format(request.method, request.path)
+    qs = request.META.get('QUERY_STRING')
+    if qs:
+        s += "?" + qs
+    # Exception: You cannot access body after reading from request's
+    # data stream
+    if request.body:
+        data = QueryDict(request.body)
+        data = str(data)
+        if len(data) > 1000:
+            data = data[:200] + "..."
+        s += " (data: {0})".format(data)
+
+    return s
 
 
 def full_model_name(model, sep='.'):

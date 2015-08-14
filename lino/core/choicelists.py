@@ -419,6 +419,7 @@ class ChoiceList(tables.AbstractTable):
             #~ raise Exception("Cannot define items on the base class")
         is_duplicate = False
         if i.value in cls.items_dict:
+            raise Exception("Duplicate value %r in %s." % (i.value, cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
         i.attach(cls)
