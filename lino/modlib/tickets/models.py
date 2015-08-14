@@ -351,7 +351,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         verbose_name='Reported for',
         blank=True, null=True,
         help_text=_("Milestone for which this ticket has been reported."))
-    fixed_for = dd.ForeignKey(
+    fixed_for = dd.ForeignKey(  # no longer used since 20150814
         'tickets.Milestone',
         related_name='tickets_fixed',
         verbose_name='Fixed for',
@@ -472,7 +472,7 @@ class Deployment(dd.Model):
 
     ticket = dd.ForeignKey('tickets.Ticket')
     milestone = dd.ForeignKey('tickets.Milestone')
-    remark = dd.RichTextField(_("Remark"), blank=True)
+    remark = dd.RichTextField(_("Remark"), blank=True, format="plain")
 
     @dd.chooser()
     def milestone_choices(cls, ticket):
@@ -484,7 +484,7 @@ class Deployment(dd.Model):
 
 
 if False:  # removed current_project field because it caused circular
-           # dependency
+           # dependency (and was not useful)
     dd.inject_field(
         'users.User', 'current_project',
         dd.ForeignKey(

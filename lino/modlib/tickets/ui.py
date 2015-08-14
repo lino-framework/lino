@@ -246,7 +246,7 @@ class TicketDetail(dd.DetailLayout):
     """
 
     planning = dd.Panel("""
-    nickname:10 created modified reported_for fixed_for
+    nickname:10 created modified reported_for #fixed_for
     state duplicate_of planned_time
     standby feedback private
     DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
@@ -558,7 +558,7 @@ class Milestones(dd.Table):
     detail_layout = """
     site id label expected reached
     description DeploymentsByMilestone
-    TicketsFixed TicketsReported
+    #TicketsFixed TicketsReported
     """
     insert_layout = dd.InsertLayout("""
     site label
