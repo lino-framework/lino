@@ -219,7 +219,7 @@ class Line(ExcerptTitle):
 
     @dd.chooser(simple_values=True)
     def body_template_choices(cls):
-        return settings.SITE.list_templates(
+        return dd.plugins.jinja.list_templates(
             '.body.html',
             rt.modules.courses.Enrolment.get_template_group(),
             'excerpts')

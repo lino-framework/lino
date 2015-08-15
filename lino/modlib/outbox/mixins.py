@@ -59,7 +59,7 @@ when creating an email from a mailable of this type.
     @dd.chooser(simple_values=True)
     def email_template_choices(cls):
         tplgroups = cls.get_template_groups()
-        return settings.SITE.list_templates('.eml.html', *tplgroups)
+        return dd.plugins.jinja.list_templates('.eml.html', *tplgroups)
 
 
 class CreateMail(dd.Action):

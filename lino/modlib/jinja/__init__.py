@@ -54,11 +54,11 @@ class Plugin(ad.Plugin):
                 #~ prefix = os.path.join(*(group.split('/')))
                 def ff(fn):
                     return fn.startswith(group) and fn.endswith(ext)
-                lst = self.jinja_env.list_templates(filter_func=ff)
+                lst = self.renderer.jinja_env.list_templates(filter_func=ff)
                 L = len(group) + 1
                 retval += [i[L:] for i in lst]
             return retval
-        return self.jinja_env.list_templates(extensions=[ext])
+        return self.renderer.jinja_env.list_templates(extensions=[ext])
 
     def render_from_request(self, request, template_name, **context):
         """Adds some more context names.
