@@ -296,6 +296,9 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
         if mi is None:
             return
 
+        if not mi.changes_since:
+            return
+
         spv = dict()
         end_date = mi.reached or mi.expected or dd.today()
         spv.update(start_date=mi.changes_since, end_date=end_date)
@@ -323,8 +326,9 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
             return title
         if mi.changes_since:
             return _("Changes since {0}").format(dd.fds(mi.changes_since))
-        end_date = mi.reached or mi.expected or dd.today()
-        return _("Changes before {0}").format(dd.fds(end_date))
+        # end_date = mi.reached or mi.expected or dd.today()
+        # return _("Changes before {0}").format(dd.fds(end_date))
+        return title
 
 
 class TicketsByReport(Tickets, InvestedTime):
