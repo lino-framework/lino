@@ -239,8 +239,8 @@ class WorkedHours(dd.VentilatingTable):
         yield w(None, _("Total"))
 
 
-def compute_invested_time(obj, pv):
-    spv = dict(start_date=pv.start_date, end_date=pv.end_date)
+def compute_invested_time(obj, pv, **spv):
+    # spv = dict(start_date=pv.start_date, end_date=pv.end_date)
     spv.update(observed_event=dd.PeriodEvents.active)
     sar = SessionsByTicket.request(master_instance=obj, param_values=spv)
     tot = Duration()
@@ -256,7 +256,77 @@ class InvestedTime(dd.Table):
     def invested_time(cls, obj, ar):
         return obj._invested_time
 
+    @dd.displayfield(_("Description"))
+    def my_description(cls, obj, ar):
+        mi = ar.master_instance
+        if mi is None:
+            return
+        lst = [obj.summary]
+        tpl = u"{0}: {1}"
+        # if obj.site is not None and obj.site == mi.interesting_for:
+        #     lst.append(_("site-specific"))
+        if obj.site is not None:  # and obj.site != mi.interesting_for:
+            lst.append(tpl.format(
+                unicode(_("Site")), unicode(obj.site)))
+        if obj.reporter is not None:
+            lst.append(tpl.format(
+                unicode(_("Reporter")), unicode(obj.reporter)))
+        if obj.project is not None:
+            lst.append(tpl.format(
+                unicode(_("Project")), unicode(obj.project)))
+        if obj.product is not None:
+            lst.append(tpl.format(
+                unicode(_("Product")), unicode(obj.product)))
+        return E.p(*join_elems(lst, '. '))
+
+
+class OtherTicketsByMilestone(Tickets, InvestedTime):
+    """Print a table with tickets the are not explicitly deployed but
+    which have been worked on and which are interesting for this
+    site.
+
+    """
+    column_names = "id my_description state invested_time"
+    master = 'tickets.Milestone'
+    label = _("Other tickets")
     
+    @classmethod
+    def get_request_queryset(self, ar):
+        mi = ar.master_instance
+        if mi is None:
+            return
+
+        spv = dict()
+        end_date = mi.reached or mi.expected or dd.today()
+        spv.update(start_date=mi.changes_since, end_date=end_date)
+        spv.update(interesting_for=mi.site)
+        spv.update(observed_event=TicketEvents.clocking)
+        ar.param_values.update(spv)
+
+        qs = super(OtherTicketsByMilestone, self).get_request_queryset(ar)
+
+        explicit = rt.modules.tickets.Deployment.objects.filter(
+            milestone=mi).values_list('ticket_id', flat=True)
+        qs = qs.exclude(id__in=explicit)
+        for obj in qs:
+            obj._invested_time = compute_invested_time(
+                obj, mi, start_date=mi.changes_since, end_date=end_date)
+            yield obj
+
+    @classmethod
+    def get_title_base(self, ar):
+        """
+        """
+        title = self.title or self.label
+        mi = ar.master_instance
+        if mi is None:
+            return title
+        if mi.changes_since:
+            return _("Changes since {0}").format(dd.fds(mi.changes_since))
+        end_date = mi.reached or mi.expected or dd.today()
+        return _("Changes before {0}").format(dd.fds(end_date))
+
+
 class TicketsByReport(Tickets, InvestedTime):
     """The list of tickets mentioned in a service report."""
     master = 'clocking.ServiceReport'
@@ -280,31 +350,9 @@ class TicketsByReport(Tickets, InvestedTime):
 
         qs = super(TicketsByReport, self).get_request_queryset(ar)
         for obj in qs:
-            obj._invested_time = compute_invested_time(obj, mi)
+            obj._invested_time = compute_invested_time(
+                obj, mi, start_date=mi.start_date, end_date=mi.end_date)
             yield obj
-
-    @dd.displayfield(_("Description"))
-    def my_description(cls, obj, ar):
-        mi = ar.master_instance
-        if mi is None:
-            return
-        lst = [obj.summary]
-        tpl = u"{0}: {1}"
-        # if obj.site is not None and obj.site == mi.interesting_for:
-        #     lst.append(_("site-specific"))
-        if obj.site is not None and obj.site != mi.interesting_for:
-            lst.append(tpl.format(
-                unicode(_("Site")), unicode(obj.site)))
-        if obj.reporter is not None:
-            lst.append(tpl.format(
-                unicode(_("Reporter")), unicode(obj.reporter)))
-        if obj.project is not None:
-            lst.append(tpl.format(
-                unicode(_("Project")), unicode(obj.project)))
-        if obj.product is not None:
-            lst.append(tpl.format(
-                unicode(_("Product")), unicode(obj.product)))
-        return E.p(*join_elems(lst, '. '))
 
 
 class ProjectsByReport(Projects, InvestedTime):
@@ -327,7 +375,8 @@ class ProjectsByReport(Projects, InvestedTime):
             spv.update(observed_event=TicketEvents.clocking)
             sar = Tickets.request(param_values=spv)
             for ticket in sar:
-                ttot = compute_invested_time(ticket, mi)
+                ttot = compute_invested_time(
+                    ticket, mi, start_date=mi.start_date, end_date=mi.end_date)
                 if ttot:
                     tot += ttot
                     tickets.append(ticket)

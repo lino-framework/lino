@@ -556,9 +556,11 @@ class Milestones(dd.Table):
     # order_by = ['label', '-id']
     model = 'tickets.Milestone'
     detail_layout = """
-    site id label expected reached
-    description DeploymentsByMilestone
-    #TicketsFixed TicketsReported
+    site id label expected reached changes_since printed
+    description
+    #TicketsFixed
+    TicketsReported DeploymentsByMilestone
+    #clocking.OtherTicketsByMilestone
     """
     insert_layout = dd.InsertLayout("""
     site label
@@ -577,9 +579,10 @@ class Deployments(dd.Table):
 
 
 class DeploymentsByMilestone(Deployments):
+    label = _("Deployed tickets")
     order_by = ['-ticket__id']
     master_key = 'milestone'
-    column_names = "ticket remark *"
+    column_names = "ticket:30 ticket__state:10 remark:30 *"
 
 
 class DeploymentsByTicket(Deployments):

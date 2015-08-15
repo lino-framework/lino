@@ -36,6 +36,7 @@ blogs = dd.resolve_app('blogs')
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
@@ -144,7 +145,7 @@ class Site(dd.Model):
         return self.name
 
 
-class Milestone(dd.Model):  # mixins.Referrable):
+class Milestone(Certifiable):  # mixins.Referrable):
     """
     """
     class Meta:
@@ -161,6 +162,10 @@ class Milestone(dd.Model):  # mixins.Referrable):
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
     description = dd.RichTextField(_("Description"), blank=True)
+    changes_since = models.DateField(
+        _("Changes since"), blank=True, null=True,
+        help_text=_("In printed document include a list of "
+                    "other changes since this date"))
 
     #~ def __unicode__(self):
         #~ return self.label
@@ -464,6 +469,8 @@ class Interest(dd.Model):
 class Deployment(dd.Model):
     """A **deployment** is the fact that a given ticket is being fixed (or
     installed or activated) by a given milestone (to a given site).
+
+    Deployments are visible to the user either by ticket or by milestone.
 
     """
     class Meta:
