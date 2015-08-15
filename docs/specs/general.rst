@@ -41,10 +41,10 @@ them both, but some other applicaton might use only :mod:`tickets
 <lino.modlib.clocking>`.
 
 >>> dd.plugins.clocking.needs_plugins
-['lino.modlib.tickets', 'lino.modlib.excerpts']
+['lino.modlib.tickets']
 
 >>> dd.plugins.tickets.needs_plugins
-[]
+['lino.modlib.excerpts']
 
 See also :attr:`needs_plugins <lino.core.plugin.Plugin.needs_plugins>`.
 
