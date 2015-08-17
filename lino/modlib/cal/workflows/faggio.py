@@ -8,13 +8,14 @@ from ..workflows import *
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 
-if True:
-    add = GuestStates.add_item
-    #add('20', _("Accepted"),'accepted')
-    add('40', _("Present"), 'present', afterwards=True)
-    add('50', _("Absent"), 'absent', afterwards=True)
-    add('60', _("Excused"), 'excused')
-    #~ add('60', _("Visit"),'visit')
+GuestStates.clear()
+add = GuestStates.add_item
+add('10', _("Invited"), 'invited')
+#add('20', _("Accepted"),'accepted')
+add('40', _("Present"), 'present', afterwards=True)
+add('50', _("Absent"), 'absent', afterwards=True)
+add('60', _("Excused"), 'excused')
+#~ add('60', _("Visit"),'visit')
 
 
 # class FindNextDate(dd.Action):

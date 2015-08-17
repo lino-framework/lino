@@ -41,6 +41,13 @@ system = dd.resolve_app('system')
 from lino.modlib.cal.workflows import GuestStates, EventStates
 from lino.modlib.office.roles import OfficeUser, OfficeOperator
 
+# lino.modlib.reception requires the `feedback` workflow. Before
+# adding new GuestStates, make sure that
+# `lino.modlib.cal.workflows.feedback` has been imported because this
+# will clear GuestStates
+
+import lino.modlib.cal.workflows.feedback
+
 add = GuestStates.add_item
 add('44', _("Waiting"), 'waiting')
 add('45', _("Busy"), 'busy')

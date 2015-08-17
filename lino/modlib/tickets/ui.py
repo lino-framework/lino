@@ -449,6 +449,10 @@ class TicketsToTalk(Tickets):
 
 
 class TicketsToDo(Tickets):
+    """Shows a list of tickets "to do". This means attributed to me and
+    state "confirmed".
+
+    """
     label = _("Tickets to do")
     order_by = ["-priority", "-deadline", "-id"]
     column_names = 'overview:50 priority #deadline waiting_for ' \

@@ -338,6 +338,11 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         If this field is empty and :attr:`project` is not empty, then
         default value is taken from :attr:`Project.assign_to`.
 
+    .. attribute:: waiting_for
+
+        An unformatted one-line text which describes what this ticket
+        is waiting for.
+
     """
     workflow_state_field = 'state'
 

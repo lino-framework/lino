@@ -91,6 +91,11 @@ class BoundAction(object):
         kw.update(parent=ar)
         return self.request(*args, **kw)
 
+    def run_from_session(self, ses, **kw):
+        ar = self.request_from(ses, **kw)
+        self.action.run_from_code(ar)
+        return ar.response
+
     def get_button_label(self, *args):
         return self.action.get_button_label(self.actor, *args)
 

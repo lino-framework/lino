@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
