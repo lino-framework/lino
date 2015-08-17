@@ -286,21 +286,31 @@ class Link(dd.Model):
 class SpawnTicket(dd.Action):
     # label = _("Spawn new ticket")
     # label = "\u2611" "☑"
-    label = "⚇"  # "\u2687"
-    help_text = _("Spawn a new child ticket from this one.")
-    show_in_workflow = True
+    # label = "⚇"  # "\u2687"
+    show_in_workflow = False
     show_in_bbar = False
+
+    def __init__(self, label, link_type):
+        self.label = label
+        self.link_type = link_type
+        self.help_text = _(
+            "Spawn a new child ticket {0} this one.").format(
+            link_type.as_child())
+        super(SpawnTicket, self).__init__()
 
     def run_from_ui(self, ar, **kw):
         p = ar.selected_rows[0]
-        c = rt.modules.tickets.Ticket(reporter=ar.get_user())
+        c = rt.modules.tickets.Ticket(
+            reporter=ar.get_user(),
+            summary=_("New ticket {0} #{1}".format(
+                self.link_type.as_child(), p.id)))
         for k in ('project', 'private'):
             setattr(c, k, getattr(p, k))
         c.full_clean()
         c.save()
         d = rt.modules.tickets.Link(
             parent=p, child=c,
-            type=LinkTypes.requires)
+            type=self.link_type)
         d.full_clean()
         d.save()
         ar.success(
@@ -374,10 +384,10 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         related_name="reported_tickets",
         help_text=_("The user who reported this ticket."))
     state = TicketStates.field(default=TicketStates.new)
-    feedback = models.BooleanField(
-        _("Feedback"), default=False,
-        help_text=_("Ticket is waiting for feedback from somebody else."))
-    standby = models.BooleanField(_("Standby"), default=False)
+    waiting_for = models.CharField(
+        _("Waiting for"), max_length=200,
+        blank=True,
+        help_text=_("What to do next."))
 
     deadline = models.DateField(
         verbose_name=_("Deadline"),
@@ -387,7 +397,17 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         _("Priority"), default=0,
         help_text=_("Value between 0 and 100."))
 
-    spawn_ticket = SpawnTicket()
+    # deprecated fields:
+    feedback = models.BooleanField(
+        _("Feedback"), default=False,
+        help_text=_("Ticket is waiting for feedback from somebody else."))
+    standby = models.BooleanField(_("Standby"), default=False)
+
+    spawn_triggered = SpawnTicket(
+        _("Spawn triggered ticket"),
+        LinkTypes.triggers)
+    # spawn_triggered = SpawnTicket("⚇", LinkTypes.triggers)  # "\u2687"
+    # spawn_ticket = SpawnTicket("", LinkTypes.requires)  # "\u2687"
 
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id

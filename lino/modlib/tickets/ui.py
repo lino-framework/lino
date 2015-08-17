@@ -207,6 +207,12 @@ class LinksByTicket(Links):
             elems.append(_("No dependencies."))
 
         # Buttons for creating relationships:
+
+        sar = obj.spawn_triggered.request_from(ar)
+        if ar.renderer.is_interactive and sar.get_permission():
+            btn = sar.ar2button(obj)
+            elems += [E.br(), btn]
+        
         sar = self.insert_action.request_from(ar)
         if ar.renderer.is_interactive and sar.get_permission():
             actions = []
@@ -242,13 +248,13 @@ class TicketDetail(dd.DetailLayout):
     general1 = """
     summary:40 id ticket_type:10
     reporter project product site
-    workflow_buttons:20 assigned_to priority closed
+    workflow_buttons:20 assigned_to waiting_for
     """
 
     planning = dd.Panel("""
     nickname:10 created modified reported_for #fixed_for
-    state duplicate_of planned_time
-    standby feedback private
+    state duplicate_of planned_time priority
+    standby feedback private closed
     DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
     """, label=_("Planning"))
 
@@ -430,7 +436,6 @@ class TicketsToTriage(Tickets):
 
 class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
-    button_label = _("Talk")
     order_by = ["-id"]
     column_names = "overview:50 reporter:10 project planned_time priority " \
                    "workflow_buttons:40 *"
@@ -444,7 +449,6 @@ class TicketsToTalk(Tickets):
 
 class TicketsToDo(Tickets):
     label = _("Tickets to do")
-    button_label = _("To do")
     order_by = ["-priority", "-deadline", "-id"]
     column_names = 'overview:50 priority deadline ' \
                    'assigned_to:10 workflow_buttons:40 *'
@@ -453,6 +457,7 @@ class TicketsToDo(Tickets):
     def param_defaults(self, ar, **kw):
         kw = super(TicketsToDo, self).param_defaults(ar, **kw)
         kw.update(state=TicketStates.todo)
+        kw.update(assigned_to=ar.get_user())
         return kw
 
 
@@ -473,14 +478,14 @@ class ActiveTickets(Tickets):
         return kw
 
 
-class InterestingTickets(ActiveTickets):
-    label = _("Interesting tickets")
+# class InterestingTickets(ActiveTickets):
+#     label = _("Interesting tickets")
 
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(InterestingTickets, self).param_defaults(ar, **kw)
-        # kw.update(interesting_for=ar.get_user())
-        return kw
+#     @classmethod
+#     def param_defaults(self, ar, **kw):
+#         kw = super(InterestingTickets, self).param_defaults(ar, **kw)
+#         # kw.update(interesting_for=ar.get_user())
+#         return kw
 
 
 # class TicketsByPartner(Tickets):

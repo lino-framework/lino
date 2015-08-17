@@ -132,8 +132,10 @@ add = TicketStates.add_item
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
 add('15', _("Talk"), 'talk')
-add('20', _("To do"), 'todo')
+add('20', _("Confirmed"), 'todo')
 add('21', _("Sticky"), 'sticky')
+add('30', _("Sleeping"), 'sleeping',
+    help_text=_("Waiting for some external event."))
 # add('30', _("Callback"), 'callback',
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
@@ -148,8 +150,6 @@ add('50', _("Done"), 'done')
 add('60', _("Refused"), 'refused',
     # required=dict(states="tested new todo callback"),
     help_text=_("It has been decided that we won't fix this ticket."))
-# add('70', _("Sleeping"), 'sleeping',
-#     help_text=_("Waiting for better times."))
 # add('90', _("Cancelled"), 'cancelled',
 #     # required=dict(states=['new todo waiting']),
 #     help_text=_("Has been cancelled for some reason."))
@@ -173,13 +173,15 @@ still may want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
+    TicketStates.sticky.add_transition(required_states="new")
     TicketStates.talk.add_transition(required_states="new todo")
     TicketStates.todo.add_transition(required_states="new talk")
-    TicketStates.done.add_transition(required_states="todo new talk")
-    TicketStates.refused.add_transition(required_states="todo new talk")
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
-    # TicketStates.sleeping.add_transition(required_states="todo new callback")
+    TicketStates.sleeping.add_transition(required_states="todo new talk")
+    TicketStates.done.add_transition(required_states="todo new talk sleeping")
+    TicketStates.refused.add_transition(
+        required_states="todo new talk sleeping")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
     TicketStates.work_states = (TicketStates.todo, TicketStates.new)
@@ -235,8 +237,10 @@ class LinkTypes(dd.ChoiceList):
 add = LinkTypes.add_item
 add('10', 'requires', _("Requires"), _("Required by"))
 add('20', 'triggers', _("Triggers"), _("Triggered by"))
-# add('30', 'seealso', _("See also"), _("Referred by"))
+add('30', 'seealso', _("See also"), _("Referred by"))
+# deprecated (use "fixed_for" field instead):
 add('40', 'deploys', _("Deploys"), _("Deployed by"))
-# add('20', 'duplicates', _("Duplicates"), _("Duplicate of"))
+# replaced by FK field "duplicate_of"):
+# add('50', 'duplicates', _("Duplicates"), _("Duplicate of"))
 
 # LinkTypes.addable_types = [LinkTypes.requires, LinkTypes.duplicates]

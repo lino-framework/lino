@@ -592,10 +592,14 @@ class InstanceAction(object):
         ar.selected_rows = [self.instance]
         self.bound_action.action.run_from_ui(ar)
 
-    def run_from_session(self, ses, **kw):
+    def request_from(self, ses, **kw):
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
         ar.selected_rows = [self.instance]
+        return ar
+
+    def run_from_session(self, ses, **kw):
+        ar = self.request_from(ses, **kw)
         self.bound_action.action.run_from_code(ar)
         return ar.response
 
@@ -616,8 +620,8 @@ class InstanceAction(object):
 
     def get_row_permission(self, ar):
         state = self.bound_action.actor.get_row_state(self.instance)
-        logger.info("20150202 ia.get_row_permission() %s using %s",
-                    self, state)
+        # logger.info("20150202 ia.get_row_permission() %s using %s",
+        #             self, state)
         return self.bound_action.get_row_permission(ar, self.instance, state)
 
 
