@@ -47,7 +47,7 @@ class Site(Site):
         # yield 'lino.modlib.system'
         yield 'lino_noi.lib.users'
         yield 'lino_noi.lib.contacts'
-        yield 'lino.modlib.cal'
+        # yield 'lino.modlib.cal'
         yield 'lino_noi.lib.products'
         # yield 'lino.modlib.tickets'
         yield 'lino.modlib.clocking'

@@ -25,17 +25,17 @@ from lino.modlib.office.roles import OfficeUser
 class UserDetail(UserDetail):
     """Layout of User Detail in Lino Welfare."""
 
-    main = "general tickets cal"
+    main = "general tickets"
 
     cal_left = """
     event_type access_class
     cal.SubscriptionsByUser
     """
 
-    cal = dd.Panel("""
-    cal_left:30 cal.TasksByUser:60
-    """, label=dd.plugins.cal.verbose_name,
-                   required_roles=dd.login_required(OfficeUser))
+    # cal = dd.Panel("""
+    # cal_left:30 cal.TasksByUser:60
+    # """, label=dd.plugins.cal.verbose_name,
+    #                required_roles=dd.login_required(OfficeUser))
 
     general = dd.Panel("""
     box1

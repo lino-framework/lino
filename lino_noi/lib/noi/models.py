@@ -18,7 +18,6 @@ def my_details(sender, **kw):
     sender.modules.system.SiteConfigs.set_detail_layout("""
     site_company next_partner_id:10
     default_build_method
-    max_auto_events default_event_type site_calendar
     """)
 
 

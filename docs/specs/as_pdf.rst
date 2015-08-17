@@ -32,8 +32,8 @@ This document describes and tests the print to pdf function.
 ...     assert result['success']
 ...     print(result['open_url'])
 
->>> mytest("tickets/InterestingTickets")  #doctest: -SKIP
-/media/cache/appypdf/127.0.0.1/tickets.InterestingTickets.pdf
+>>> mytest("tickets/TicketsToDo")  #doctest: -SKIP
+/media/cache/appypdf/127.0.0.1/tickets.TicketsToDo.pdf
 
 >>> mytest("tickets/Tickets")  #doctest: -SKIP
 /media/cache/appypdf/127.0.0.1/tickets.Tickets.pdf

@@ -58,16 +58,17 @@ The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
-======= ========= =========
- value   name      text
-------- --------- ---------
- 10      new       New
- 15      talk      Talk
- 20      todo      To do
- 21      sticky    Sticky
- 50      done      Done
- 60      refused   Refused
-======= ========= =========
+======= ========== ===========
+ value   name       text
+------- ---------- -----------
+ 10      new        New
+ 15      talk       Talk
+ 20      todo       Confirmed
+ 21      sticky     Sticky
+ 30      sleeping   Sleeping
+ 50      done       Done
+ 60      refused    Refused
+======= ========== ===========
 <BLANKLINE>
 
 See :class:`lino.modlib.tickets.choicelists.TicketStates` for an
@@ -170,13 +171,13 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ======== ======================================================= ============ =========
- ID   Summary                     Closed   Workflow                                                Reporter     Project
----- --------------------------- -------- ------------------------------------------------------- ------------ ---------
- 7    No Foo after deleting Bar   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   Robin Rood   téam
- 4    Foo and bar don't baz       No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   jean         dócs
- 1    Föö fails to bar when baz   No       **New** → [Talk] [To do] [Done] [Refused] [↗] [⚇] [☆]   mathieu      linö
-==== =========================== ======== ======================================================= ============ =========
+==== =========================== ======== =========================================================================== ============ =========
+ ID   Summary                     Closed   Workflow                                                                    Reporter     Project
+---- --------------------------- -------- --------------------------------------------------------------------------- ------------ ---------
+ 7    No Foo after deleting Bar   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood   téam
+ 4    Foo and bar don't baz       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean         dócs
+ 1    Föö fails to bar when baz   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu      linö
+==== =========================== ======== =========================================================================== ============ =========
 <BLANKLINE>
 
 
