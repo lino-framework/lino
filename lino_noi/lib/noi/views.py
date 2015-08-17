@@ -6,7 +6,7 @@ Views for the public web interface of Lino Noi.
 
 """
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views.generic import View
 
 from lino.core.utils import full_model_name
@@ -48,7 +48,10 @@ class Detail(TemplateView):
         super(TemplateView, self).__init__(*args, **kwargs)
 
     def get(self, request, pk):
-        obj = self.model.objects.get(pk=pk)
+        try:
+            obj = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            raise Http404()
         s = render_from_request(request, self.template_name, obj=obj)
         return HttpResponse(s)
 
