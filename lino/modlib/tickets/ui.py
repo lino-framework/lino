@@ -436,8 +436,9 @@ class TicketsToTriage(Tickets):
 
 class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
-    order_by = ["-id"]
-    column_names = "overview:50 reporter:10 project planned_time priority " \
+    order_by = ["-priority", "-deadline", "-id"]
+    # order_by = ["-id"]
+    column_names = "overview:50  priority #deadline waiting_for " \
                    "workflow_buttons:40 *"
 
     @classmethod
@@ -450,8 +451,8 @@ class TicketsToTalk(Tickets):
 class TicketsToDo(Tickets):
     label = _("Tickets to do")
     order_by = ["-priority", "-deadline", "-id"]
-    column_names = 'overview:50 priority deadline ' \
-                   'assigned_to:10 workflow_buttons:40 *'
+    column_names = 'overview:50 priority #deadline waiting_for ' \
+                   'workflow_buttons:40 *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
