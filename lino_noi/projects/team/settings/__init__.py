@@ -82,6 +82,7 @@ class Site(Site):
         tb.add_action(self.modules.tickets.TicketsToTriage)
         tb.add_action(self.modules.tickets.TicketsToTalk)
         tb.add_action(self.modules.tickets.TicketsToDo)
+        tb.add_action(self.modules.tickets.Tickets)
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
