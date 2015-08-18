@@ -12,6 +12,7 @@ from lino.utils import Cycler
 
 from lino.modlib.cal.utils import DurationUnits
 from lino.modlib.tickets.roles import Worker
+from lino.utils.quantities import Duration
 
 
 def objects():
@@ -33,7 +34,7 @@ def objects():
     for i, t in enumerate(Ticket.objects.all()):
         if i % 3:
             t.assigned_to = WORKERS.pop()
-        yield t
+            yield t
 
     for u in workers:
 
@@ -42,14 +43,19 @@ def objects():
             continue
 
         for date in (dd.demo_date(), dd.demo_date(-1), dd.demo_date(-3)):
+            worked = Duration()
             ts = datetime.datetime.combine(date, datetime.time(9, 0, 0))
             for i in range(7):
                 obj = Session(
                     ticket=TICKETS.pop(), session_type=TYPES.pop(), user=u)
                 obj.set_datetime('start', ts)
-                ts = DurationUnits.minutes.add_duration(ts, DURATIONS.pop())
+                d = DURATIONS.pop()
+                ts = DurationUnits.minutes.add_duration(ts, d)
                 obj.set_datetime('end', ts)
                 yield obj
+                worked += d
+                if worked > 8:
+                    break
 
     ServiceReport = rt.modules.clocking.ServiceReport
     Site = rt.modules.tickets.Site

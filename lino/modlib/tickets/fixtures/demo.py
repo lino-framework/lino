@@ -67,7 +67,7 @@ def objects():
 
     yield Project(name="Framewörk", ref="linö")
     yield Project(name="Téam", ref="téam")
-    yield Project(name="Documentatión", ref="dócs")
+    yield Project(name="Documentatión", ref="docs")
 
     PROJECTS = Cycler(Project.objects.all())
     SITES = Cycler(Site.objects.all())
@@ -90,12 +90,22 @@ def objects():
     yield ticket("Bar is not always baz", project=PROJECTS.pop())
     yield ticket("Baz sucks")
     yield ticket("Foo and bar don't baz", project=PROJECTS.pop())
+    # a ticket without project:
     yield ticket("Cannot create Foo", description="""<p>When I try to create
     a <b>Foo</b>, then I get a <b>Bar</b> instead of a Foo.</p>""")
+
     yield ticket("Sell bar in baz", project=PROJECTS.pop())
     yield ticket("No Foo after deleting Bar", project=PROJECTS.pop())
     yield ticket("Is there any Bar in Foo?", project=PROJECTS.pop())
     yield ticket("Foo never matches Bar", project=PROJECTS.pop())
+    yield ticket("Where can I find a Foo when bazing Bazes?",
+                 project=PROJECTS.pop())
+    yield ticket("Class-based Foos and Bars?", project=PROJECTS.pop())
+    yield ticket("Foo cannot bar", project=PROJECTS.pop())
+    yield ticket("Bar cannot foo", project=PROJECTS.pop())
+    yield ticket("Bar cannot baz", project=PROJECTS.pop())
+    yield ticket("Bars have no foo", project=PROJECTS.pop())
+    yield ticket("How to get bar from foo", project=PROJECTS.pop())
 
     yield Link(
         type=LinkTypes.requires,

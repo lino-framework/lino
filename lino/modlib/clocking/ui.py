@@ -114,15 +114,7 @@ class Sessions(dd.Table):
             qs = ce.add_filter(qs, pv)
 
         if pv.project:
-            l1 = Project.objects.filter(parent=pv.project)
-            l2 = Project.objects.filter(parent__in=l1)
-            l3 = Project.objects.filter(parent__in=l2)
-            projects = set([pv.project])
-            projects |= set(l1)
-            projects |= set(l2)
-            projects |= set(l3)
-            # print 20150421, projects
-            qs = qs.filter(ticket__project__in=projects)
+            qs = qs.filter(ticket__project__in=pv.project.whole_clan())
 
         return qs
 
@@ -174,19 +166,45 @@ class WorkedHours(dd.VentilatingTable):
     auto_fit_column_widths = True
 
     class Row(object):
-        def __init__(self, day):
+        def __init__(self, ar, day):
             self.day = day
+            self._root2tot = {}
+            self._tickets = set()
+            grand_tot = Duration()
+            pv = dict(start_date=day, end_date=day)
+            pv.update(observed_event=dd.PeriodEvents.active)
+            pv.update(user=ar.param_values.user)
+            self.sar = ar.spawn(MySessionsByDate, param_values=pv)
+            for ses in self.sar:
+                self._tickets.add(ses.ticket)
+                d = ses.get_duration()
+                if d is not None:
+                    grand_tot += d
+                    root = ses.get_root_project()
+                    if root is not None:
+                        tot = self._root2tot.get(root, Duration()) + d
+                        self._root2tot[root] = tot
+    
+            self._root2tot[None] = grand_tot
 
         def __unicode__(self):
             return when_text(self.day)
 
     @dd.displayfield(_("Description"))
     def description(self, obj, ar):
-        pv = dict(start_date=obj.day, end_date=obj.day)
-        pv.update(observed_event=dd.PeriodEvents.active)
-        pv.update(user=ar.param_values.user)
-        sar = ar.spawn(MySessionsByDate, param_values=pv)
-        return sar.ar2button(label=unicode(obj))
+        # pv = dict(start_date=obj.day, end_date=obj.day)
+        # pv.update(observed_event=dd.PeriodEvents.active)
+        # pv.update(user=ar.param_values.user)
+        # sar = ar.spawn(MySessionsByDate, param_values=pv)
+        elems = [obj.sar.ar2button(label=unicode(obj))]
+        tickets = [
+            ar.obj2html(t, "#{0}".format(t.id), title=t.summary)
+            for t in obj._tickets]
+        if len(tickets) > 0:
+            elems.append(" (")
+            elems += join_elems(tickets, ', ')
+            elems.append(")")
+        return E.p(*elems)
 
     @classmethod
     def get_data_rows(cls, ar):
@@ -196,7 +214,7 @@ class WorkedHours(dd.VentilatingTable):
         # settings.SITE.ignore_dates_after
         d = end_date
         while d > start_date:
-            yield cls.Row(d)
+            yield cls.Row(ar, d)
             d -= ONE_DAY
 
     @dd.displayfield("Date")
@@ -212,7 +230,7 @@ class WorkedHours(dd.VentilatingTable):
         return kw
 
     @classmethod
-    def get_ventilated_columns(self):
+    def get_ventilated_columns(cls):
         Project = rt.modules.tickets.Project
 
         def w(prj, verbose_name):
@@ -220,20 +238,10 @@ class WorkedHours(dd.VentilatingTable):
             # EntryType.
 
             def func(fld, obj, ar):
-                pv = dict(start_date=obj.day, end_date=obj.day)
-                pv.update(observed_event=dd.PeriodEvents.active)
-                pv.update(project=prj)
-                pv.update(user=ar.param_values.user)
-                sar = MySessionsByDate.request(param_values=pv)
-                tot = Duration()
-                for obj in sar:
-                    d = obj.get_duration()
-                    if d is not None:
-                        tot += d
-                if tot:
-                    return tot
+                return obj._root2tot.get(prj, None)
 
             return dd.VirtualField(dd.DurationField(verbose_name), func)
+
         for p in Project.objects.filter(parent__isnull=True).order_by('ref'):
             yield w(p, unicode(p))
         yield w(None, _("Total"))

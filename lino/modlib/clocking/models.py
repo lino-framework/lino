@@ -217,6 +217,14 @@ class Session(UserAuthored, StartedEnded):
                 self.start_time = datetime.datetime.now().time()
         super(Session, self).save(*args, **kwargs)
 
+    def get_root_project(self):
+        """Return the root project for this session (or None if session has no
+        ticket).
+
+        """
+        if self.ticket and self.ticket.project:
+            return self.ticket.project.get_parental_line()[0]
+
     def get_duration(self):
         diff = super(Session, self).get_duration()
         if diff is not None and self.break_time is not None:

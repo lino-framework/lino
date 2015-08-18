@@ -98,7 +98,8 @@ class TicketType(mixins.BabelNamed):
         #~ verbose_name_plural = _('Repositories')
 
 
-class Project(TimeInvestment, mixins.Referrable, ContactRelated):
+class Project(TimeInvestment, mixins.Hierarizable, mixins.Referrable,
+              ContactRelated):
     """A **project** is something on which several users work together.
 
     .. attribute:: name
@@ -116,8 +117,8 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
         verbose_name_plural = _('Projects')
 
     name = models.CharField(_("Name"), max_length=200)
-    parent = models.ForeignKey(
-        'self', blank=True, null=True, verbose_name=_("Parent"))
+    # parent = models.ForeignKey(
+    #     'self', blank=True, null=True, verbose_name=_("Parent"))
     assign_to = dd.ForeignKey(
         settings.SITE.user_model,
         verbose_name=_("Assign tickets to"),
@@ -127,9 +128,21 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     description = dd.RichTextField(_("Description"), blank=True)
     srcref_url_template = models.CharField(blank=True, max_length=200)
     changeset_url_template = models.CharField(blank=True, max_length=200)
+    # root = models.ForeignKey(
+    #     'self', blank=True, null=True, verbose_name=_("Root"))
 
     def __unicode__(self):
         return self.ref or self.name
+
+    # def save(self, *args, **kwargs):
+    #     root = self.parent
+    #     while root is not None:
+    #         if root.parent is None:
+    #             break
+    #         else:
+    #             root = root.parent
+    #     self.root = root
+    #     super(Project, self).save(*args, **kwargs)
 
 
 class Site(dd.Model):
