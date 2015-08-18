@@ -94,7 +94,7 @@ pay money.
 ----------- --------------- -------- --------------
  linö        Framewörk
  téam        Téam
- dócs        Documentatión
+ docs        Documentatión
 =========== =============== ======== ==============
 <BLANKLINE>
 
@@ -156,13 +156,16 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ======== ========== ============ =========
- ID   Summary                     Closed   Workflow   Reporter     Project
----- --------------------------- -------- ---------- ------------ ---------
- 7    No Foo after deleting Bar   No       **New**    Robin Rood   téam
- 4    Foo and bar don't baz       No       **New**    jean         dócs
- 1    Föö fails to bar when baz   No       **New**    mathieu      linö
-==== =========================== ======== ========== ============ =========
+==== =========================================== ======== ========== ============= =========
+ ID   Summary                                     Closed   Workflow   Reporter      Project
+---- ------------------------------------------- -------- ---------- ------------- ---------
+ 16   How to get bar from foo                     No       **New**    marc          téam
+ 13   Bar cannot foo                              No       **New**    Rolf Rompen   téam
+ 10   Where can I find a Foo when bazing Bazes?   No       **New**    luc           téam
+ 7    No Foo after deleting Bar                   No       **New**    Robin Rood    téam
+ 4    Foo and bar don't baz                       No       **New**    jean          docs
+ 1    Föö fails to bar when baz                   No       **New**    mathieu       linö
+==== =========================================== ======== ========== ============= =========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -171,13 +174,16 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================== ======== =========================================================================== ============ =========
- ID   Summary                     Closed   Workflow                                                                    Reporter     Project
----- --------------------------- -------- --------------------------------------------------------------------------- ------------ ---------
- 7    No Foo after deleting Bar   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood   téam
- 4    Foo and bar don't baz       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean         dócs
- 1    Föö fails to bar when baz   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu      linö
-==== =========================== ======== =========================================================================== ============ =========
+==== =========================================== ======== =========================================================================== ============= =========
+ ID   Summary                                     Closed   Workflow                                                                    Reporter      Project
+---- ------------------------------------------- -------- --------------------------------------------------------------------------- ------------- ---------
+ 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   marc          téam
+ 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Rolf Rompen   téam
+ 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   luc           téam
+ 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood    téam
+ 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean          docs
+ 1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu       linö
+==== =========================================== ======== =========================================================================== ============= =========
 <BLANKLINE>
 
 
