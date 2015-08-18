@@ -1,7 +1,7 @@
 WARNING: [autosummary] failed to import u'lino.modlib.jinja.choicelists': no module named lino.modlib.jinja.choicelists (name=u'lino.modlib.jinja.choicelists', path=u'/home/luc/hgwork/lino/docs/api')
 WARNING: [autosummary] failed to import u'lino.modlib.jinja.mixins': no module named lino.modlib.jinja.mixins (name=u'lino.modlib.jinja.mixins', path=u'/home/luc/hgwork/lino/docs/api')
 WARNING: [autosummary] failed to import u'lino.modlib.jinja.models': no module named lino.modlib.jinja.models (name=u'lino.modlib.jinja.models', path=u'/home/luc/hgwork/lino/docs/api')
-/home/luc/hgwork/lino/docs/api/lino.modlib.tickets.ui.rst:41: WARNING: failed to import InterestingTickets
+/home/luc/hgwork/lino/docs/api/lino.modlib.notes.fixtures.demo.rst:12: WARNING: failed to import resolve_model
 None:None: WARNING: toctree contains reference to nonexisting document u'api/choicelists'
 None:None: WARNING: toctree contains reference to nonexisting document u'api/mixins'
 None:None: WARNING: toctree contains reference to nonexisting document u'api/models'
