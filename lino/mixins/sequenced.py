@@ -2,13 +2,13 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
-:class:`Hierarizable`.
+:class:`Hierarchical`.
 
 A `Sequenced` is something which has a sequence number and thus a sort
 order which can be manipulated by the user using actions
 :class:`MoveUp` and :class:`MoveDown`.
 
-:class:`Hierarizable` is a :class:`Sequenced` with a `parent` field.
+:class:`Hierarchical` is a :class:`Sequenced` with a `parent` field.
 
 .. autosummary::
 
@@ -247,7 +247,7 @@ class Sequenced(Duplicable):
         return E.p(*l)
 
 
-class Hierarizable(Duplicable):
+class Hierarchical(Duplicable):
     """Abstract model mixin for things that have a "parent" and
     "siblings".
 
@@ -266,14 +266,14 @@ class Hierarizable(Duplicable):
         return self.__class__.objects.filter(parent__isnull=True)
 
     #~ def save(self, *args, **kwargs):
-        #~ super(Hierarizable, self).save(*args, **kwargs)
+        #~ super(Hierarchical, self).save(*args, **kwargs)
     def full_clean(self, *args, **kwargs):
         p = self.parent
         while p is not None:
             if p == self:
                 raise ValidationError("Cannot be your own ancestor")
             p = p.parent
-        super(Hierarizable, self).full_clean(*args, **kwargs)
+        super(Hierarchical, self).full_clean(*args, **kwargs)
 
     def is_parented(self, other):
         if self == other:

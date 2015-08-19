@@ -21,7 +21,7 @@ from lino.modlib.users.mixins import ByUser, UserAuthored
 class Comment(
         mixins.CreatedModified,
         UserAuthored,
-        mixins.Hierarizable,
+        mixins.Hierarchical,
         Controllable):
     """The model definition."""
 

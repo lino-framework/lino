@@ -98,7 +98,7 @@ class TicketType(mixins.BabelNamed):
         #~ verbose_name_plural = _('Repositories')
 
 
-class Project(TimeInvestment, mixins.Hierarizable, mixins.Referrable,
+class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
               ContactRelated):
     """A **project** is something on which several users work together.
 

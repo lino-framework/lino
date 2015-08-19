@@ -59,7 +59,7 @@ PAGES = settings.SITE.plugins.pages
     #~ """
 
 
-class Page(mixins.Referrable, mixins.Hierarizable):
+class Page(mixins.Referrable, mixins.Hierarchical):
 
     """
     Deserves more documentation.

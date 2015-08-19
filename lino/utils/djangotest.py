@@ -97,18 +97,12 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 class WebIndexTestCase(DjangoManageTestCase):
     """Designed to be just imported. No subclassing needed."""
 
-    override_djangosite_settings = dict(
-        build_js_cache_on_startup=True)
-
-    # def __call__(self, *args, **kw):
-    #     self.fail(settings.SETTINGS_MODULE)
-    #     return super(WebIndexTestCase, self).__call__(*args, **kw)
+    # removed 20150819 because it took unbearably much time for
+    # welfare test suite:
+    # override_djangosite_settings = dict(
+    #     build_js_cache_on_startup=True)
 
     def test_get_root(self):
-        # self.assertEqual(settings.SETTINGS_MODULE, '')
-        # self.assertEqual(settings.SITE.user_model, [])
-        # self.assertEqual(settings.MIDDLEWARE_CLASSES, [])
-        # self.assertEqual(1, 2)
         client = Client()
         url = '/'
         res = client.get(url)
