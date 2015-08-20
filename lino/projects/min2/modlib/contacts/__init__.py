@@ -4,6 +4,11 @@
 """
 Overrides :mod:`lino.modlib.contacts` for :mod:`lino.projects.min2`.
 
+.. autosummary::
+   :toctree:
+
+   models
+
 """
 
 from lino.modlib.contacts import Plugin

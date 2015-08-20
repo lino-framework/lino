@@ -74,7 +74,7 @@ class PartnerDetail(PartnerDetail):
     """, label=_("Miscellaneous"))
 
 
-class Person(Partner, Person, DupablePerson):
+class Person(Person, Partner, DupablePerson):
     """
     Represents a physical person.
     """
@@ -143,7 +143,7 @@ class Persons(Persons):
     detail_layout = PersonDetail()
 
 
-class Company(Partner, Company):
+class Company(Company, Partner):
 
     class Meta:
         verbose_name = _("Organisation")

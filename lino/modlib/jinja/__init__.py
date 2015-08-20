@@ -6,9 +6,8 @@
 .. autosummary::
    :toctree:
 
-    choicelists
-    mixins
-    models
+    loader
+    renderer
 
 """
 
