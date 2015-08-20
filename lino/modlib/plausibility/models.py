@@ -13,7 +13,7 @@ from __future__ import unicode_literals, print_function
 from django.db import models
 
 from lino.core.utils import gfk2lookup
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
 from lino.core.roles import SiteStaff
 

@@ -12,7 +12,7 @@ from django.conf import settings
 from lino.api import dd
 from lino import mixins
 from lino.modlib.contacts import models as contacts
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 
 
 class Third(mixins.Sequenced, contacts.PartnerDocument, Controllable):

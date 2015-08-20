@@ -1533,7 +1533,6 @@ documentation.
             self._starting_up = True
 
             from lino.core.signals import pre_startup, post_startup
-            from django.db.models import loading
 
             pre_startup.send(self)
 
@@ -1543,8 +1542,17 @@ documentation.
                     # In Django17+ we cannot say can_postpone=False,
                     # and we don't need to, because anyway we used it
                     # just for our hack in `lino.models`
-                    m = loading.load_app(p.app_name)
+                    # load_app(app_name) is deprecated
+                    # from django.apps import apps
+                    # m = apps.load_app(p.app_name)
+                    from django.utils.importlib import import_module
+                    try:
+                        m = import_module(p.app_name + '.models')
+                    except ImportError:
+                        m = "No module {0}.models".format(p.app_name)
+                        # self.logger.warning(m)
                 else:
+                    from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
                 self.modules.define(p.app_label, m)
@@ -1672,8 +1680,13 @@ documentation.
         installed app.
 
         """
-        from django.db.models import loading
-        for mod in loading.get_apps():
+        if AFTER17:
+            from django.apps import apps
+            apps = [a.models_module for a in apps.get_app_configs()]
+        else:
+            from django.db.models import loading
+            apps = loading.get_apps()
+        for mod in apps:
             meth = getattr(mod, methname, None)
             if meth is not None:
                 meth(self, *args)
@@ -2703,14 +2716,17 @@ site. :manage:`diag` is a command-line shortcut to this.
 
 
         """
-
-        from django.utils.translation import ugettext_lazy as _
-        from django.db.models import loading
+        if AFTER17:
+            from django.apps import apps
+            apps = [a.models_module for a in apps.get_app_configs()]
+        else:
+            from django.db.models import loading
+            apps = loading.get_apps()
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
     
-            for mod in loading.get_apps():
+            for mod in apps:
                 if hasattr(mod, methname):
                     msg = "{0} still has a function {1}(). \
 Please convert to Plugin method".format(mod, methname)

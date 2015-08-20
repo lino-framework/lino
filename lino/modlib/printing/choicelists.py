@@ -17,12 +17,17 @@ import cStringIO
 
 from django.conf import settings
 
-from django.template.loader import (select_template, Context,
-                                    TemplateDoesNotExist)
+
+try:
+    from django.template import Context, TemplateDoesNotExist
+except ImportError:
+    from django.template.loader import Context, TemplateDoesNotExist
+
+from django.template.loader import select_template
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.media import MediaFile
-from lino.api import dd, rt, _
+from lino.api import rt, _
 
 try:
     import pyratemp

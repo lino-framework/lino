@@ -6,11 +6,11 @@ logger = logging.getLogger(__name__)
 
 import django
 
-from django.conf import settings
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
 from django.dispatch import receiver
 
+from lino import AFTER17
 from lino.core import fields
 from lino.core.signals import pre_analyze
 from lino.core.utils import resolve_model
@@ -52,6 +52,9 @@ def fix_field_cache(model):
     Remove duplicate entries in `_field_cache` to fix Django issue #10808
     """
 
+    if AFTER17:
+        return
+
     cache = []
     field_names = set()
     duplicates = []
@@ -65,8 +68,6 @@ def fix_field_cache(model):
     if len(duplicates) == 0:
         return
         #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
-    #~ if django.get_version().startswith('1.6'):
-        #~ return
 
     model._meta._field_cache = tuple(cache)
     model._meta._field_name_cache = [x for x, _ in cache]
@@ -158,7 +159,10 @@ def check_pending_injects(sender, models_list=None, **kw):
     #~ for model in models.get_models():
     for model in models_list:
         clear_field_cache(model._meta)
-        model._meta._fill_fields_cache()
+        if AFTER17:
+            model._meta._expire_cache()
+        else:
+            model._meta._fill_fields_cache()
         fix_field_cache(model)
 
 
@@ -269,7 +273,10 @@ def inject_field(model_spec, name, field, doc=None):
     def todo(model):
         #~ logger.info("20131110 gonna inject_field %s %s",model.__name__,name)
         model.add_to_class(name, field)
-        model._meta._fill_fields_cache()
+        if AFTER17:
+            model._meta._expire_cache()
+        else:
+            model._meta._fill_fields_cache()
         fix_field_cache(model)
 
     return do_when_prepared(todo, model_spec)

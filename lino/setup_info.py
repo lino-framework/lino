@@ -119,8 +119,8 @@ lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.contacts.management
 lino.modlib.contacts.management.commands
-lino.modlib.contenttypes
-lino.modlib.contenttypes.fixtures
+lino.modlib.gfks
+lino.modlib.gfks.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.courses

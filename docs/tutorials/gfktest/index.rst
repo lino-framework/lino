@@ -11,7 +11,7 @@ A tested example of GFK fields
 
    Or:
 
-     $ cd docs/tutorials/gfks
+     $ cd docs/tutorials/gfktest
      $ python manage.py test
 
 
@@ -41,10 +41,10 @@ Doctests initialization:
 
 >>> from __future__ import print_function, unicode_literals
 >>> from lino.api.doctest import *
->>> Member = rt.modules.gfks.Member
->>> Comment = rt.modules.gfks.Comment
->>> Note = rt.modules.gfks.Note
->>> Memo = rt.modules.gfks.Memo
+>>> Member = rt.modules.gfktest.Member
+>>> Comment = rt.modules.gfktest.Comment
+>>> Note = rt.modules.gfktest.Note
+>>> Memo = rt.modules.gfktest.Memo
 
 A utility function:
 
@@ -109,15 +109,15 @@ The users of a Lino application can see these broken GFKs by opening
 the :class:`BrokenGFKs <lino.modlib.contenttypes.models.BrokenGFKs>`
 table:
 
->>> rt.show(contenttypes.BrokenGFKs)
+>>> rt.show(gfks.BrokenGFKs)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-================ ================== ===================================================== ========
- Database model   Database object      Message                                               Action
----------------- ------------------ ----------------------------------------------------- --------
- *comment*        *Comment object*   Invalid primary key 1 for gfks.Member in `owner_id`   delete
- *note*           *Note object*      Invalid primary key 1 for gfks.Member in `owner_id`   manual
- *memo*           *Memo object*      Invalid primary key 1 for gfks.Member in `owner_id`   clear
-================ ================== ===================================================== ========
+================ ================== ======================================================== ========
+ Database model   Database object    Message                                                  Action
+---------------- ------------------ -------------------------------------------------------- --------
+ *comment*        *Comment object*   Invalid primary key 1 for gfktest.Member in `owner_id`   delete
+ *note*           *Note object*      Invalid primary key 1 for gfktest.Member in `owner_id`   manual
+ *memo*           *Memo object*      Invalid primary key 1 for gfktest.Member in `owner_id`   clear
+================ ================== ======================================================== ========
 <BLANKLINE>
 
 TODO: a management command to cleanup broken GFK fields. This would

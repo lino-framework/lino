@@ -31,10 +31,15 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.generic import GenericForeignKey
 
 from lino.utils.instantiator import make_converter
 from lino.core import constants
+
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 
 
 def is_foreignkey(fld):

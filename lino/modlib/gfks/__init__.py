@@ -4,7 +4,7 @@
 """Extends `django.contrib.contenttypes`.  This module must be
 installed if your models contain GenericForeignKey fields or inherit
 from the :class:`Controllable
-<lino.modlib.contenttypes.mixins.Controllable>` mixin.
+<lino.modlib.gfks.mixins.Controllable>` mixin.
 
 .. autosummary::
    :toctree:
@@ -14,28 +14,28 @@ from the :class:`Controllable
 
 """
 
-from lino import ad
+from lino.api import ad
 
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    needs_plugins = ['lino.modlib.system']
+    needs_plugins = ['lino.modlib.system', 'django.contrib.contenttypes']
 
     def setup_reports_menu(config, site, profile, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
-        m.add_action(site.modules.contenttypes.BrokenGFKs)
+        m.add_action(site.modules.gfks.BrokenGFKs)
 
     def setup_config_menu(config, site, profile, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
-        m.add_action(site.modules.contenttypes.HelpTexts)
+        m.add_action(site.modules.gfks.HelpTexts)
 
     def setup_explorer_menu(config, site, profile, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
-        m.add_action(site.modules.contenttypes.ContentTypes)
+        m.add_action(site.modules.gfks.ContentTypes)
 
 
 

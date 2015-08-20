@@ -12,7 +12,7 @@ Lino applications.
 .. autosummary::
    :toctree:
 
-    contenttypes
+    gfks
     system
     printing
     excerpts

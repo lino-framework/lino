@@ -20,7 +20,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes import generic
+
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 
@@ -31,6 +31,14 @@ from lino.core.utils import resolve_model
 from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
+
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey \
+        as DjangoGenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey \
+        as DjangoGenericForeignKey
 
 
 class PasswordField(models.CharField):
@@ -185,6 +193,7 @@ class FakeField(object):
     decimal_places = None
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
+    is_relation = False  # required by Django 1.8
 
     def is_enabled(self, lh):
         """
@@ -340,7 +349,10 @@ class VirtualField(FakeField):
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
         #~ self.lino_resolve_type(model,name)
-        model._meta.add_virtual_field(self)
+        if AFTER17:
+            model._meta.add_field(self, virtual=True)
+        else:
+            model._meta.add_virtual_field(self)
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
 
     def __repr__(self):
@@ -564,7 +576,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
         return name, path, args, kwargs
 
 
-class GenericForeignKey(generic.GenericForeignKey):
+class GenericForeignKey(DjangoGenericForeignKey):
 
     """Add verbose_name and help_text to Django's GFK.  Used by
     :class:`lino.mixins.Controllable`.
@@ -576,7 +588,7 @@ class GenericForeignKey(generic.GenericForeignKey):
         self.verbose_name = verbose_name
         self.help_text = help_text
         self.dont_merge = dont_merge
-        generic.GenericForeignKey.__init__(self, ct_field, fk_field)
+        DjangoGenericForeignKey.__init__(self, ct_field, fk_field)
 
     def contribute_to_class(self, cls, name):
         """Automatically set-up chooser and display field for ID field of

@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Database models for `lino.modlib.contenttypes`.
+Database models for `lino.modlib.gfks`.
 
 See also unit test :doc:`/dev/gfks`.
 
@@ -13,7 +13,6 @@ See also unit test :doc:`/dev/gfks`.
 
 
 from django.contrib.contenttypes.models import ContentType, models
-
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -125,7 +124,7 @@ class HelpText(dd.Model):
 
 class HelpTexts(dd.Table):
     required_roles = dd.required(SiteStaff)
-    model = 'contenttypes.HelpText'
+    model = 'gfks.HelpText'
     column_names = "field verbose_name help_text id content_type"
 
 
@@ -207,7 +206,7 @@ class BrokenGFKsByModel(BrokenGFKs):
 @dd.receiver(dd.pre_ui_build)
 def my_pre_ui_build(sender, **kw):
     try:
-        HelpText = rt.modules.contenttypes.HelpText
+        HelpText = rt.modules.gfks.HelpText
         for ht in HelpText.objects.filter(help_text__isnull=False):
             #~ logger.info("20120629 %s.help_text", ht)
             try:

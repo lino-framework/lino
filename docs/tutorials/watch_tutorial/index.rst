@@ -207,7 +207,7 @@ remain:
 Of course these change records are now considered broken GFKs:
 
 
->>> rt.show(contenttypes.BrokenGFKs)
+>>> rt.show(gfks.BrokenGFKs)
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 ================ ================= =============================================================== ========
  Database model   Database object   Message                                                         Action
@@ -229,7 +229,7 @@ There open questions regarding these change records:
 
 - Do we really never want to remove them? Do we really want a nullable
   master field? Should this option be configurable?
-- How to tell :class:`lino.modlib.contenttypes.models.BrokenGFKs` to
+- How to tell :class:`lino.modlib.gfks.models.BrokenGFKs` to
   differentiate them from ?
 - Should :meth:`get_broken_generic_related
   <lino.core.kernel.Kernel.get_broken_generic_related>` suggest to

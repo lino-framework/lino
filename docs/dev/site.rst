@@ -137,7 +137,8 @@ lino.modlib.users
 lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
-lino.modlib.contenttypes
+django.contrib.contenttypes
+lino.modlib.gfks
 lino.modlib.cal
 lino.modlib.export_excel
 django.contrib.sessions

@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
 from lino import mixins
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 

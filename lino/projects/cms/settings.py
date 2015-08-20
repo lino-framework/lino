@@ -28,7 +28,7 @@ class Site(Site):
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.contenttypes'
+        yield 'lino.modlib.gfks'
         yield 'lino.modlib.extjs'
         yield 'lino.modlib.bootstrap3'
         yield 'lino.modlib.users'

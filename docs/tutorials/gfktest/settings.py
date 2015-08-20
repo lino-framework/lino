@@ -7,8 +7,8 @@ class Site(Site):
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.contenttypes'
-        yield 'gfks'
+        yield 'lino.modlib.gfks'
+        yield 'gfktest'
 
 SITE = Site(globals())
 

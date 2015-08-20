@@ -35,7 +35,7 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.users.choicelists import SiteAdmin
 
@@ -376,7 +376,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
       The object being printed by this excerpt.
       See :attr:`Controllable.owner
-      <lino.modlib.contenttypes.mixins.Controllable.owner>`.
+      <lino.modlib.gfks.mixins.Controllable.owner>`.
 
     .. attribute:: company
 

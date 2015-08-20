@@ -23,11 +23,11 @@ class TestCase(TestCase):
 
         """
 
-        Member = rt.modules.gfks.Member
-        Note = rt.modules.gfks.Note
-        Memo = rt.modules.gfks.Memo
-        Comment = rt.modules.gfks.Comment
-        BrokenGFKs = rt.modules.contenttypes.BrokenGFKs
+        Member = rt.modules.gfktest.Member
+        Note = rt.modules.gfktest.Note
+        Memo = rt.modules.gfktest.Memo
+        Comment = rt.modules.gfktest.Comment
+        BrokenGFKs = rt.modules.gfks.BrokenGFKs
 
         def check_status(*args):
             for i, m in enumerate((Member, Comment, Note, Memo)):
@@ -102,13 +102,13 @@ class TestCase(TestCase):
         rst = BrokenGFKs.request().to_rst()
         # print rst
         self.assertEqual(rst, """\
-================ ================== ===================================================== ========
- Database model   Database object    Message                                               Action
----------------- ------------------ ----------------------------------------------------- --------
- *comment*        *Comment object*   Invalid primary key 1 for gfks.Member in `owner_id`   delete
- *note*           *Note object*      Invalid primary key 1 for gfks.Member in `owner_id`   manual
- *memo*           *Memo object*      Invalid primary key 1 for gfks.Member in `owner_id`   clear
-================ ================== ===================================================== ========
+================ ================== ======================================================== ========
+ Database model   Database object    Message                                                  Action
+---------------- ------------------ -------------------------------------------------------- --------
+ *comment*        *Comment object*   Invalid primary key 1 for gfktest.Member in `owner_id`   delete
+ *note*           *Note object*      Invalid primary key 1 for gfktest.Member in `owner_id`   manual
+ *memo*           *Memo object*      Invalid primary key 1 for gfktest.Member in `owner_id`   clear
+================ ================== ======================================================== ========
 
 """)
 

@@ -26,7 +26,6 @@ import datetime
 
 from django.db import models
 from django.db.models import Q
-from django.db.models import loading
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
@@ -43,6 +42,13 @@ from lino import AFTER17
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
+
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 validate_url = URLValidator()
 
@@ -180,7 +186,7 @@ def obj2str(i, force_detailed=False):
 
 def sorted_models_list():
     # trigger django.db.models.loading.cache._populate()
-    models_list = models.get_models()
+    models_list = get_models()
 
     def fn(a, b):
         return cmp(full_model_name(a), full_model_name(b))
@@ -194,7 +200,7 @@ def models_by_base(base, toplevel_only=False):
 
     """
     found = []
-    for m in models.get_models():
+    for m in get_models():
         if issubclass(m, base):
             add = True
             if toplevel_only:
@@ -210,7 +216,13 @@ def models_by_base(base, toplevel_only=False):
 
 
 def app_labels():
-    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+    if AFTER17:
+        from django.apps import get_app_configs
+        return [a.models_module.__name__.split('.')[-2]
+                for a in get_app_configs()]
+    else:
+        from django.db.models import loading
+        return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 
 def range_filter(value, f1, f2):
@@ -320,7 +332,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
             if False:
                 from django.db.models import loading
                 print(20130219, settings.INSTALLED_APPS)
-                print([full_model_name(m) for m in loading.get_models()])
+                print([full_model_name(m) for m in get_models()])
                 if len(loading.cache.postponed) > 0:
                     print("POSTPONED:", loading.cache.postponed)
 

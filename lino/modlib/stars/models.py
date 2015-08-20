@@ -11,7 +11,7 @@ from lino.api import dd, rt, _
 
 from lino.core.utils import gfk2lookup
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
 
 

@@ -138,7 +138,7 @@ class DocsTests(LinoTestCase):
         self.run_django_manage_test('docs/tutorials/letsmti')
 
     def test_gfks(self):
-        self.run_django_manage_test('docs/tutorials/gfks')
+        self.run_django_manage_test('docs/tutorials/gfktest')
 
     def test_mldbc(self):
         self.run_django_manage_test('docs/tutorials/mldbc')

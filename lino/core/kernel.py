@@ -37,9 +37,15 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 
 from django.db import models
-from django.db.models import loading
-from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.db.models.loading import get_models
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -52,7 +58,6 @@ from lino.core import fields
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
-# from lino.core import web
 from lino.core import views
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
@@ -66,6 +71,8 @@ from .ddh import DisableDeleteHandler
 from .utils import resolve_model
 from .utils import is_devserver
 from .utils import full_model_name as fmn
+
+
 
 
 def set_default_verbose_name(f):
@@ -273,7 +280,7 @@ class Kernel(object):
             logger.info("Done %s (PID %s)", process_name, os.getpid())
         atexit.register(goodbye)
 
-        models_list = loading.get_models(include_auto_created=True)
+        models_list = get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 
         self.setup_model_spec(self, 'user_model')
@@ -314,7 +321,7 @@ class Kernel(object):
             # self.modules.define(model._meta.app_label, model.__name__, model)
 
             for f in model._meta.virtual_fields:
-                if isinstance(f, generic.GenericForeignKey):
+                if isinstance(f, GenericForeignKey):
                     kernel.GFK_LIST.append(f)
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)

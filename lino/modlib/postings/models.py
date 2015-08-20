@@ -16,7 +16,7 @@ from django.core.exceptions import ValidationError
 from lino import mixins
 from lino.api import dd
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 from lino.modlib.office.roles import OfficeUser

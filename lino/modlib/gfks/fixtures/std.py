@@ -8,7 +8,7 @@ from lino.api import rt
 
 
 def objects():
-    HelpText = rt.modules.contenttypes.HelpText
+    HelpText = rt.modules.gfks.HelpText
     ContentType = rt.modules.contenttypes.ContentType
     HT = Instantiator(HelpText, "content_type field help_text").build
     yield HT(ContentType.objects.get_for_model(HelpText),
