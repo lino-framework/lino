@@ -129,7 +129,7 @@ lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.bootstrap3
 lino.modlib.notes
-lino.modlib.lino
+lino.modlib.lino_startup
 lino.modlib.appypod
 lino.modlib.printing
 lino.modlib.system
@@ -184,7 +184,7 @@ These are the Django settings which Lino will override:
                     'lino.modlib.extjs',
                     'lino.modlib.jinja',
                     'lino.modlib.bootstrap3',
-                    'lino.modlib.lino'),
+                    'lino.modlib.lino_startup'),
  'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'LOGGING': {'disable_existing_loggers': True,

@@ -23,6 +23,8 @@ from django.conf import settings
 from django import http
 from django.db import models
 
+from lino import AFTER17
+
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
 
@@ -67,7 +69,11 @@ def discover_choosers():
     #~ logger.debug("Instantiate model reports...")
     for model in models.get_models():
         #~ n = 0
-        for field in model._meta.fields + model._meta.virtual_fields:
+        if AFTER17:
+            allfields = model._meta.fields
+        else:
+            allfields = model._meta.fields + model._meta.virtual_fields
+        for field in allfields:
             check_for_chooser(model, field)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
 

@@ -1621,7 +1621,8 @@ documentation.
         name = '.'.join(module_name.split('.')[:-1])
         name += '.' + model_name
         rv = name in self.override_modlib_models
-        # self.logger.info("20140825 is_abstract_model %s -> %s", name, rv)
+        # self.logger.info("20150820 is_abstract_model %s -> %s (%s)",
+        #                  name, rv, self.override_modlib_models)
         return rv
 
     def is_installed_model_spec(self, model_spec):
@@ -2860,15 +2861,15 @@ Please convert to Plugin method".format(mod, methname)
             yield 'django.contrib.admin'
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
-        # yield 'lino.modlib.jinja'
+
         if self.default_ui == "extjs":
             yield 'lino.modlib.extjs'
             yield 'lino.modlib.bootstrap3'
+
         for a in self.local_apps:
             yield a
-        from lino import AFTER17
-        if not AFTER17:
-            yield "lino.modlib.lino"
+
+        yield "lino.modlib.lino_startup"
 
     site_prefix = '/'
     """The string to prefix to every URL of the Lino web interface.

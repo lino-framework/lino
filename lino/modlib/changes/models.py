@@ -37,7 +37,7 @@ class ChangeTypes(dd.ChoiceList):
     The list of possible choices for the `type` field
     of a :class:`Change`.
     """
-    app_label = 'lino'
+    # app_label = 'lino'
     verbose_name = _("Change Type")
     verbose_name_plural = _("Change Types")
 

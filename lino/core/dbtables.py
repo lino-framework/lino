@@ -18,6 +18,15 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.models import ContentType
 
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.db.models.loading import get_models
+
 
 from lino.core import fields
 from lino.core import actions
@@ -258,8 +267,10 @@ def discover():
             register_frame(rpt)
 
     logger.debug("Instantiate model tables...")
-    for model in models.get_models():
-        """Not getattr but __dict__.get because of the mixins.Listings trick."""
+    for model in get_models():
+
+        # Not getattr but __dict__.get because of the mixins.Listings
+        # trick.
         rpt = model.__dict__.get('_lino_default_table', None)
         #~ rpt = getattr(model,'_lino_default_table',None)
         #~ logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
@@ -543,6 +554,10 @@ class Table(AbstractTable):
                         master_model = fk.rel.to
                     elif isinstance(fk, ChoiceListField):
                         master_model = fk.choicelist.item_class
+                    elif isinstance(fk, GenericForeignKey):
+                        master_model = ContentType
+                    else:
+                        raise Exception("Oops: {0}".format(fk))
                 except models.FieldDoesNotExist:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
@@ -560,6 +575,9 @@ class Table(AbstractTable):
                         self.abstract = True
                     else:
                         msg = "Cannot handle master key {0}".format(df)
+                        msg += " (20150820 virtual fields: {0})".format(
+                            [vf.name for vf in
+                             self.model._meta.virtual_fields])
                         raise Exception(INVALID_MK.format(
                             self.master_key, self, msg))
                         # raise Exception(

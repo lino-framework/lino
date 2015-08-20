@@ -1,14 +1,13 @@
-"""
-Recording database changes
-==========================
+# Copyright 2012-2015 Luc Saffre
+# License: BSD (see file COPYING for details)
 
-See :ref:`lino.tutorial.watch` for an introduction.
+"""Adds functionality for recording database changes into a database
+table.  See :ref:`lino.tutorial.watch` for an introduction.
 
 .. autosummary::
    :toctree:
 
     models
-
 
 """
 from lino.api import ad, _

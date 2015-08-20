@@ -193,13 +193,23 @@ class FakeField(object):
     decimal_places = None
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
-    is_relation = False  # required by Django 1.8
+
+    # required by Django 1.8:
+    is_relation = False
+    concrete = False
+    auto_created = False
+    column = None
+    empty_values = set([None, ''])
 
     def is_enabled(self, lh):
         """
         Overridden by mti.EnableChild
         """
         return self.editable
+
+    def clean(self, raw_value, obj):
+        # needed for Django 1.8
+        pass
 
     def has_default(self):
         return self.default is not NOT_PROVIDED
@@ -216,6 +226,7 @@ class RemoteField(FakeField):
     def __init__(self, func, name, fld, **kw):
         self.func = func
         self.name = name
+        self.attname = name
         self.field = fld
         self.rel = self.field.rel
         self.verbose_name = fld.verbose_name
@@ -345,6 +356,7 @@ class VirtualField(FakeField):
     def attach_to_model(self, model, name):
         self.model = model
         self.name = name
+        self.attname = name
         #~ self.return_type.name = name
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
@@ -432,8 +444,9 @@ class VirtualField(FakeField):
         This special behaviour is needed to implement
         :class:`lino.utils.mti.EnableChild`.
         """
-        raise NotImplementedError("Cannot write %r to field %s" %
-                                  (value, self))
+        if value is not None:
+            raise NotImplementedError("Cannot write %r to field %s" %
+                                      (value, self))
 
     #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):

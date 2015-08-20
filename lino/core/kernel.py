@@ -73,8 +73,6 @@ from .utils import is_devserver
 from .utils import full_model_name as fmn
 
 
-
-
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
     Django sets it to ``field.name.replace('_', ' ')``.  We replace

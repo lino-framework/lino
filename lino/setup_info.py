@@ -153,9 +153,9 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
-lino.modlib.lino
-lino.modlib.lino.management
-lino.modlib.lino.management.commands
+lino.modlib.lino_startup
+lino.modlib.lino_startup.management
+lino.modlib.lino_startup.management.commands
 lino.modlib.lists
 lino.modlib.lists.fixtures
 lino.modlib.notes

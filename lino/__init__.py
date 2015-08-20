@@ -79,24 +79,6 @@ def startup():
             raise Exception("ImportError during startup:\n" +
                             traceback.format_exc(e))
 
-
-if AFTER17:
-
-    from django.apps import AppConfig
-
-    class AppConfig(AppConfig):
-        name = 'lino'
-    
-        # def __init__(self, app_name, app_module):
-        #     super(AppConfig, self).__init__(app_name, app_module)
-        #     startup()
-
-        def ready(self):
-            startup()
-
-    default_app_config = 'lino.AppConfig'
-
-
-# deprecated use, only backwards compat:
+# deprecated use, only for backwards compat:
 from django.utils.translation import ugettext_lazy as _
 
