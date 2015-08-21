@@ -119,6 +119,12 @@ class DocsTests(LinoTestCase):
     def test_tables(self):
         self.run_django_manage_test('docs/tutorials/tables')
     
+    def test_diamond(self):
+        self.run_django_manage_test('docs/tested/diamond')
+
+    def test_diamond2(self):
+        self.run_django_manage_test('docs/tested/diamond2')
+
     def test_addrloc(self):
         self.run_django_manage_test('docs/tutorials/addrloc')
     

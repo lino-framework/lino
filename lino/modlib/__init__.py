@@ -7,7 +7,7 @@ A collection of ready-to-use plugins (Django calls them "apps") for
 Lino applications.
 
 "System plugins"
-=============
+================
 
 .. autosummary::
    :toctree:

@@ -4,9 +4,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import django
 import inspect
-
 
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
@@ -16,6 +14,13 @@ from lino import AFTER17
 from lino.core import fields
 from lino.core.signals import pre_analyze
 from lino.core.utils import resolve_model
+
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
@@ -142,11 +147,9 @@ def fmt(func_caller):
 
 
 @receiver(pre_analyze)
-# def check_pending_injects(signal,sender,models_list=None,**kw):
 def check_pending_injects(sender, models_list=None, **kw):
     # raise Exception(20150304)
     # called from kernel.analyze_models()
-    site = sender
     #~ logger.info("20130212 check_pending_injects()...")
     if PENDING_INJECTS:
         msg = ''
@@ -330,7 +333,7 @@ def inject_quick_add_buttons(model, name, target):
     """
     Injects a virtual display field `name` into the specified `model`.
     This field will show up to three buttons
-    `[New]` `[Show last]` `[Show all]`. 
+    `[New]` `[Show last]` `[Show all]`.
     `target` is the table that will run these actions.
     It must be a slave of `model`.
     """
@@ -342,3 +345,13 @@ def inject_quick_add_buttons(model, name, target):
     inject_field(model, name,
                  fields.VirtualField(fields.DisplayField(
                      tm._meta.verbose_name_plural), fn))
+
+
+def django_patch():
+    """Remove duplicate entries in the field cache of models to fix
+    Django ticket :djangoticket:`10808`.
+
+    Used by :doc:`/docs/tested/diamond2/index`.
+
+    """
+    check_pending_injects(None, get_models())

@@ -19,3 +19,6 @@ which are part of the test suite.
    tinymce
    dynamic
    households
+   diamond/index
+   diamond2/index
+
