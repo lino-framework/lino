@@ -370,6 +370,7 @@ class TableRequest(ActionRequest):
         t = xghtml.Table()
         self.dump2html(t, self.sliced_data_iterator, **kw)
         e = t.as_element()
+        # print "20150822 table2xhtml", E.tostring(e)
         if header_level is not None:
             return E.div(E.h2(self.actor.label), e)
         return e

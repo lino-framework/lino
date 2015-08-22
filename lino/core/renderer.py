@@ -93,21 +93,21 @@ class HtmlRenderer(object):
     def href(self, url, text):
         return E.a(text, href=url)
 
-    def show_table(self, ar, nosummary=False, stripped=True, **kw):
+    def show_table(self, *args, **kwargs):
+        return E.tostring(self.table2story(*args, **kwargs))
+
+    def table2story(self, ar, nosummary=False, stripped=True, **kw):
         """Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
 
-        This silently ignores the parameters `nosummary` and
-        `stripped` since for HTML they have no meaning.
+        This silently ignores the parameter `stripped` since for HTML
+        this has no meaning.
 
         """
         if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
                 return ar.actor.get_slave_summary(ar.master_instance, ar)
         return ar.table2xhtml(**kw)
-        #         return E.tostring(
-        #             ar.actor.get_slave_summary(ar.master_instance, ar))
-        # return E.tostring(ar.table2xhtml(**kw))
 
     def action_call(self, request, bound_action, status):
         return None
@@ -318,10 +318,10 @@ request `tar`."""
                 elems.append(item)
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
-                elems.append(self.show_table(ar, **kwargs))
+                elems.append(self.table2story(ar, **kwargs))
             elif isinstance(item, TableRequest):
                 assert item.renderer is not None
-                elems.append(self.show_table(item, **kwargs))
+                elems.append(self.table2story(item, **kwargs))
             elif isiterable(item):
                 elems.append(self.show_story(ar, item, **kwargs))
                 # for i in self.show_story(item, *args, **kwargs):
@@ -345,8 +345,11 @@ class TextRenderer(HtmlRenderer):
     def get_request_url(self, ar, *args, **kw):
         return None
 
-    def show_table(self, ar, column_names=None, header_level=None,
-                   nosummary=False, stripped=True, **kwargs):
+    def show_table(self, *args, **kwargs):
+        print(self.table2story(*args, **kwargs))
+
+    def table2story(self, ar, column_names=None, header_level=None,
+                    nosummary=False, stripped=True, **kwargs):
         """Render the given table request as reStructuredText to stdout.
         See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
         """
@@ -358,8 +361,7 @@ class TextRenderer(HtmlRenderer):
                     stripped=stripped)
                 if stripped:
                     s = s.strip()
-                print(s)
-                return
+                return s
 
         fields, headers, widths = ar.get_field_info(column_names)
 
@@ -371,11 +373,9 @@ class TextRenderer(HtmlRenderer):
             rows.append([x for x in ar.row2text(fields, row, sums)])
         if len(rows) == 0:
             s = unicode(ar.no_data_text)
-            if stripped:
-                print(s)
-            else:
-                print("\n", s, "\n")
-            return
+            if not stripped:
+                s = "\n" + s + "\n"
+            return s
 
         if not ar.actor.hide_sums:
             has_sum = False
@@ -393,9 +393,9 @@ class TextRenderer(HtmlRenderer):
             h = rstgen.header(header_level, ar.get_title())
             if stripped:
                 h = h.strip()
-            print(h)
+            s = h + "\n" + s
             # s = E.tostring(E.h2(ar.get_title())) + s
-        print(s)
+        return s
 
     def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as reStructuredText to stdout."""
