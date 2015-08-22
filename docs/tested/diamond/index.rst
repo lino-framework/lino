@@ -4,10 +4,13 @@
 Diamond inheritance
 ===================
 
-This document shows that Django ticket :djangoticket:`10808` exists in
-Django 1.6 and has been solved in Django 1.7 (at least for some cases;
-see :doc:`../diamond2/index` for a more complex case which is still
-broken.)
+This document shows that the problem described in Django ticket
+:djangoticket:`10808` still exists in Django 1.6 and that it has been
+solved in Django 1.7 at least for the described case (see
+:doc:`../diamond2/index` for a more complex case).
+
+The source code used to generate and test this document is at
+:srcref:`docs/tested/diamond/`.
 
 
 .. This document is part of the test suite.  
@@ -20,7 +23,8 @@ broken.)
     >>> from __future__ import print_function
     >>> #from lino.api.doctest import *
 
-Here is our database structure:
+Our database structure is defined in :file:`main/models.py` as
+follows:
 
 .. literalinclude:: main/models.py
 

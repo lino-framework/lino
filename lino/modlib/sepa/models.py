@@ -13,9 +13,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd
+from lino.api import dd, _
 from lino.core.utils import ChangeWatcher
 from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
 
@@ -36,8 +35,8 @@ class Account(dd.Model):
         'contacts.Partner',
         related_name='sepa_accounts')
 
-    iban = IBANField(_("IBAN"))
-    bic = BICField(_("BIC"), blank=True)
+    iban = IBANField(verbose_name=_("IBAN"))
+    bic = BICField(verbose_name=_("BIC"), blank=True)
 
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 

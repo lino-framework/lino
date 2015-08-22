@@ -83,6 +83,9 @@ class DocsTests(LinoTestCase):
     def test_min1(self):
         self.run_simple_doctests("docs/tested/min1.rst")
 
+    def test_e006(self):
+        self.run_simple_doctests("docs/tested/e006.rst")
+
     def test_settings(self):
         self.run_simple_doctests('docs/dev/ad.rst')
 

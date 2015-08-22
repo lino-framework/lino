@@ -1,36 +1,31 @@
 from django.db import models
 
-# import lino.core.inject
-
 
 class Addressable(models.Model):
     class Meta:
         abstract = True
+    street = models.CharField(max_length=255, blank=True)
+        
 
-    a = models.CharField(max_length=255)
-
-
-class AbstractPartner(Addressable):
+class Restaurant(Addressable):
     class Meta:
         abstract = True
 
-    b = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     
 
-class AbstractPerson(AbstractPartner):
+class Bar(Restaurant):
     class Meta:
         abstract = True
 
-    c = models.CharField(max_length=255)
+    min_age = models.IntegerField()
     
 
-class Partner(AbstractPartner):
+class Pizzeria(Restaurant):
 
-    d = models.CharField(max_length=255)
+    specialty = models.CharField(max_length=255)
+
     
-
-class Person(Partner, AbstractPerson):
-
-    e = models.CharField(max_length=255)
-
+class PizzeriaBar(Bar, Pizzeria):
+    pizza_bar_specific_field = models.CharField(max_length=255)
 

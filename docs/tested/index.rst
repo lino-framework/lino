@@ -21,4 +21,4 @@ which are part of the test suite.
    households
    diamond/index
    diamond2/index
-
+   e006

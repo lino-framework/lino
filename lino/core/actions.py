@@ -25,8 +25,12 @@ from django.db import models
 
 from lino import AFTER17
 
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 from lino.core import constants
 from lino.core.utils import obj2unicode
@@ -41,6 +45,8 @@ from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
+from lino.utils.xmlgen import html as xghtml
+from lino.utils.xmlgen.html import E
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -67,7 +73,7 @@ def check_for_chooser(holder, field):
 def discover_choosers():
     logger.debug("Discovering choosers for model fields...")
     #~ logger.debug("Instantiate model reports...")
-    for model in models.get_models():
+    for model in get_models():
         #~ n = 0
         if AFTER17:
             allfields = model._meta.fields

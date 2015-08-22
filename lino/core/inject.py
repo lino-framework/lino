@@ -58,39 +58,49 @@ def clear_field_cache(self):
 
 
 def fix_field_cache(model):
-    """
-    _fill_fields_cache
-    Remove duplicate entries in `_field_cache` to fix Django issue #10808
+    """Remove duplicate entries in the field cache of the specified model
+    in order to fix Django issue #10808
+
     """
 
     if AFTER17:
-        field_cache = [(f, None) for f in model._meta.local_fields]
+        from django.db.models.options import make_immutable_fields_list
+        new_cache = []
+        field_names = set()
+        duplicates = []
+        for f in model._meta.fields:
+            if f.attname in field_names:
+                duplicates.append(f)
+            else:
+                field_names.add(f.attname)
+                new_cache.append(f)
+
+        if len(duplicates) == 0:
+            return
+            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+        model._meta.fields = make_immutable_fields_list('fields', new_cache)
+
     else:
         if not hasattr(model._meta, '_field_cache'):
             return
         field_cache = model._meta._field_cache
 
-    new_cache = []
-    field_names = set()
-    duplicates = []
-    for f, m in field_cache:
-        if f.attname in field_names:
-            duplicates.append(f)
-        else:
-            field_names.add(f.attname)
-            new_cache.append((f, m))
+        new_cache = []
+        field_names = set()
+        duplicates = []
+        for f, m in field_cache:
+            if f.attname in field_names:
+                duplicates.append(f)
+            else:
+                field_names.add(f.attname)
+                new_cache.append((f, m))
 
-    if len(duplicates) == 0:
-        return
-        #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+        if len(duplicates) == 0:
+            return
+            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
 
-    if AFTER17:
-        model._meta.local_fields = new_cache
-    else:
         model._meta._field_cache = tuple(new_cache)
         model._meta._field_name_cache = [x for x, _ in new_cache]
-    #~ if model.__name__ in ('Company','Partner'):
-        #~ logger.info("20130106 fixed field_cache %s (%s)",model,' '.join(field_names))
 
 
 @receiver(class_prepared)
@@ -287,7 +297,7 @@ def inject_field(model_spec, name, field, doc=None):
         # logger.info("20150820 gonna inject_field %s %s", model.__name__, name)
         model.add_to_class(name, field)
         if AFTER17:
-            model._meta._expire_cache()
+            pass  # model._meta._expire_cache()
         else:
             model._meta._fill_fields_cache()
         fix_field_cache(model)

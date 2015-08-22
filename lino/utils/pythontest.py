@@ -54,7 +54,7 @@ class TestCase(TestCase):
         self.run_subprocess(args, **kw)
 
     def run_django_manage_test(self, cwd=None, **kw):
-        """Run the `manage.py test` command in the given directory."""
+        """Run `python manage.py test` command in the given directory."""
         args = ["python", "manage.py"]
         args += ["test"]
         if cwd is not None:
@@ -66,6 +66,7 @@ class TestCase(TestCase):
         self.run_subprocess(args, **kw)
 
     def run_django_admin_test_cd(self, cwd, **kw):
+        """Run `django-admin.py test` in the given directory."""
         kw.update(cwd=cwd)
         args = ["django-admin.py"]
         args += ["test"]
@@ -77,12 +78,12 @@ class TestCase(TestCase):
         args += ["--traceback"]
         self.run_subprocess(args, **kw)
 
-    def run_django_admin_test(self, settings_module, *args, **kw):
-        warnings.warn("run_django_admin_test is deprecated")
-        parts = settings_module.split('.')
-        assert parts[-1] == "settings"
-        cwd = '/'.join(parts[:-1])
-        return self.run_django_admin_test_cd(cwd, *args, **kw)
+    # def run_django_admin_test(self, settings_module, *args, **kw):
+    #     warnings.warn("run_django_admin_test is deprecated")
+    #     parts = settings_module.split('.')
+    #     assert parts[-1] == "settings"
+    #     cwd = '/'.join(parts[:-1])
+    #     return self.run_django_admin_test_cd(cwd, *args, **kw)
 
     def run_django_admin_command(self, settings_module, *cmdargs, **kw):
         args = ["django-admin.py"]
@@ -117,13 +118,21 @@ class TestCase(TestCase):
         import conf  # import Sphinx conf.py which possibly triggers
                      # Django startup
 
-        res = doctest.testfile(filename, module_relative=False,
-                               encoding='utf-8',
-                               optionflags=doctest.REPORT_ONLY_FIRST_FAILURE)
+        self.check_doctest(filename)
+        # res = doctest.testfile(filename, module_relative=False,
+        #                        encoding='utf-8',
+        #                        optionflags=doctest.REPORT_ONLY_FIRST_FAILURE)
 
         del sys.path[0]
         #~ os.chdir(oldcwd)
 
-        if res.failed:
-            self.fail("doctest.testfile() failed. See earlier messages.")
+        # if res.failed:
+        #     self.fail("doctest.testfile() failed. See earlier messages.")
 
+    def check_doctest(self, n):
+        res = doctest.testfile(
+            n, module_relative=False,
+            encoding='utf-8',
+            optionflags=doctest.REPORT_ONLY_FIRST_FAILURE)
+        if res.failed:
+            self.fail("doctest {0} failed.".format(n))

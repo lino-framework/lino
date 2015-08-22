@@ -2,8 +2,7 @@
 import os
 import sys
 
-# we add ".." to PYTHONPATH because this is a single-dir Django project
-sys.path.insert(0,  os.path.abspath('.'))
+#sys.path.insert(0,  os.path.abspath('.'))
 
 if __name__ == "__main__":
     os.environ["DJANGO_SETTINGS_MODULE"] = "settings"

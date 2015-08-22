@@ -43,13 +43,18 @@ if AFTER17:
     from django.contrib.contenttypes.fields import GenericForeignKey
     from django.apps import apps
     get_models = apps.get_models
+    # def get_models(*args, **kwargs):
+    #     # print "20150822 gonna populate"
+    #     # apps.populate(settings.INSTALLED_APPS)
+    #     # print "20150822 ok"
+    #     return apps.get_models(*args, **kwargs)
 else:
     from django.contrib.contenttypes.generic import GenericForeignKey
     from django.db.models.loading import get_models
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils import puts
+# from lino.utils import puts
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors

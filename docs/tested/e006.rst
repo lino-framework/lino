@@ -1,0 +1,52 @@
+.. _lino.tested.e006:
+
+Django 1.7 complains about clashing fields
+==========================================
+
+
+.. to run only this test:
+
+    $ python setup.py test -s tests.DocsTests.test_e006
+    
+    doctest init:
+
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min2.settings.doctests'
+    >>> from lino.api.doctest import *
+
+
+Although :doc:`/docs/tested/diamond2/django17` passes, there are still
+problems under Django 1.7+ where :mod:`lino.projects.min2` complains
+about clashing fields::
+
+  contacts.Person.FOO: (models.E006) The field 'FOO' clashes with the field 'addr1' from model 'contacts.partner'.
+
+The reason for the problem is probably in :mod:`lino.core.inject`.
+
+The problem comes (probably) because the `name` field occurs *twice*
+in the list of fields:
+
+>>> Person = rt.modules.contacts.Person
+>>> from lino import AFTER17
+>>> if AFTER17:
+...     [f.name for f in Person._meta.get_fields()]
+... else:
+...     [f.name for (f, m) in Person._meta.get_fields_with_model()]
+[u'id', 'modified', 'created', 'country', 'city', 'zip_code', 'region', 'addr1', 'street_prefix', 'street', 'street_no', 'street_box', 'addr2', 'name', 'language', 'email', 'url', 'phone', 'gsm', 'fax', 'remarks', u'partner_ptr', 'title', 'first_name', 'middle_name', 'last_name', 'gender', 'birth_date']
+
+
+:meth:`._get_fields`
+:class:`django.db.models.options.Options` 
+
+
+        # remove duplicate fields
+        names = set()
+
+        def remove_duplicate_fields(f):
+            if f.name in names:
+                raise Exception(20150822)
+                return False
+            names.add(f.name)
+            return True
+        fields = filter(remove_duplicate_fields, fields)
+

@@ -30,19 +30,28 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
+
+# Model class django.contrib.contenttypes.models.ContentType doesn't
+# declare an explicit app_label and either isn't in an application in
+# INSTALLED_APPS or else was imported before its application was
+# loaded. This will no longer be supported in Django 1.9.
+# if settings.SITE.is_installed('contenttypes'):
+#     from django.contrib.contenttypes.models import ContentType
+# else:
+#     ContentType = None
 
 from lino.utils.instantiator import make_converter
 from lino.core import constants
 
 from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
 
 
 def is_foreignkey(fld):
+    if AFTER17:
+        from django.contrib.contenttypes.fields import GenericForeignKey
+    else:
+        from django.contrib.contenttypes.generic import GenericForeignKey
     return isinstance(fld, (models.ForeignKey, GenericForeignKey))
 
 
@@ -164,15 +173,19 @@ class Chooser(FieldChooser):
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
+        from django.contrib.contenttypes.models import ContentType
         kw = {}
 
         # 20120202
         if tbl.master_field is not None:
-            mt = request.REQUEST.get(constants.URL_PARAM_MASTER_TYPE)
-            try:
-                master = ContentType.objects.get(pk=mt).model_class()
-            except ContentType.DoesNotExist:
-                master = None
+            if tbl.master is not None:
+                master = tbl.master
+            else:
+                mt = request.REQUEST.get(constants.URL_PARAM_MASTER_TYPE)
+                try:
+                    master = ContentType.objects.get(pk=mt).model_class()
+                except ContentType.DoesNotExist:
+                    master = None
 
             pk = request.REQUEST.get(constants.URL_PARAM_MASTER_PK, None)
             if pk and master:

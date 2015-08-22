@@ -8,7 +8,9 @@ Under Django 1.6 we will have:
 (1, 6)
 
 >>> from main.models import PizzeriaBar
->>> p = PizzeriaBar(name="Mike's", pizza_bar_specific_field="Doodle")
+>>> p = PizzeriaBar(name="Michaels", min_age=21, specialty="Cheese", pizza_bar_specific_field="Doodle")
+>>> print (p.name, p.min_age, p.specialty, p.pizza_bar_specific_field)
+(u'', 21, 'Cheese', 'Doodle')
 
 >>> len(p.name)
 0

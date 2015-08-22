@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext
+from django.utils.translation import pgettext_lazy as pgettext
 from django.conf import settings
 
 from lino.utils import join_words

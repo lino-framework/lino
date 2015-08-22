@@ -1,18 +1,17 @@
-import unittest
-import doctest
+from lino.utils.pythontest import TestCase
 
 
-class DocTest(unittest.TestCase):
+class DocTest(TestCase):
 
     def test_files(self):
 
-        doctest.testfile('index.rst')
+        self.check_doctest('index.rst')
         from django import VERSION
         self.assertEqual(VERSION[0], 1)
         if VERSION[1] == 6:
-            doctest.testfile('django16.rst')
+            self.check_doctest('django16.rst')
         elif VERSION[1] > 6:
-            doctest.testfile('django17.rst')
+            self.check_doctest('django17.rst')
         else:
             self.fail("Unsupported Django version {0}".format(VERSION))
 

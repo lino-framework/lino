@@ -33,7 +33,7 @@ from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_unicode
-from django.contrib.contenttypes.models import ContentType
+#from django.contrib.contenttypes.models import ContentType
 from django.http import QueryDict
 
 from lino.core.signals import on_ui_updated
@@ -786,8 +786,8 @@ def gfk2lookup(gfk, obj, **kw):
         kw[gfk.ct_field] = None
         kw[gfk.fk_field] = None
     else:
-        ct = ContentType.objects.get_for_model(
-            obj.__class__)
+        ContentType = settings.SITE.modules.contenttypes.ContentType
+        ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
         kw[gfk.fk_field] = obj.pk
     return kw

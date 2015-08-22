@@ -1,21 +1,16 @@
 from django.db import models
 
 
-class Owner(models.Model):
+class Restaurant(models.Model):
     name = models.CharField(max_length=255)
 
 
-class FoodPlace(models.Model):
-    name = models.CharField(max_length=255)
-    owner = models.ForeignKey(Owner, blank=True, null=True)
+class Bar(Restaurant):
+    min_age = models.IntegerField()
 
 
-class Bar(FoodPlace):
-    pass
-
-
-class Pizzeria(FoodPlace):
-    pass
+class Pizzeria(Restaurant):
+    specialty = models.CharField(max_length=255)
 
 
 class PizzeriaBar(Bar, Pizzeria):

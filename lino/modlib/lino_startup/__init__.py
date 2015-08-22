@@ -36,7 +36,11 @@ if AFTER17:
 
         def ready(self):
             # raise Exception("20150820")
-            startup()
+            try:
+                startup()
+            except Exception as e:
+                print e
+                raise
 
     default_app_config = 'lino.modlib.lino_startup.LinoConfig'
 

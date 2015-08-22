@@ -13,8 +13,8 @@ Here is how we can fix this under Django 1.6 by running
 
 And now we have the correct behaviour:
 
->>> from main.models import Person
->>> p = Person(a="A", b="B", c="C", d="D", e="E")
->>> p.full_clean()
->>> print(p.a)
+>>> from main.models import PizzeriaBar
+>>> p = PizzeriaBar(name="A", min_age="B", specialty="C",
+...     pizza_bar_specific_field="Doodle")
+>>> print(p.name)
 A

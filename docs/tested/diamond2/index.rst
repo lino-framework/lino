@@ -13,17 +13,20 @@ Diamond inheritance (continued)
 
     >>> from __future__ import print_function
 
-This document shows a more complex case of multi-table diamond
-inheritance which is still broken in Django 1.7.
-Compare :doc:`../diamond/index` 
-for a predecessor of this problem.
+This document shows a case of multi-table diamond inheritance which is
+still broken in Django 1.7.  The difference with
+:doc:`../diamond/index` is that now we have two abstract parents.
 
 This document also shows that Lino has a work-around for both
 problems. Unfortunately that workaround works only until Django
 1.6. We are trying to adapt it to newer Django versions.
 
+The source code used to generate and test this document is at
+:srcref:`docs/tested/diamond2/`.
 
-Here is our database structure:
+
+Our database structure is defined in :file:`main/models.py` as
+follows:
 
 .. literalinclude:: main/models.py
 
@@ -32,22 +35,18 @@ The problem
 ===========
 
 
->>> from main.models import Person
->>> p = Person(a="A", b="B", c="C", d="D", e="E")
+>>> from main.models import PizzeriaBar
+>>> p = PizzeriaBar(name="A", min_age="B", specialty="C",
+...     pizza_bar_specific_field="Doodle")
 
-Despite the fact that we specify a non-blank value for `a`, we get:
+Despite the fact that we specify a non-blank value for `name`, we get
+a database object whose `name` is blank, while the
+`pizza_bar_specific_field` field is not:
 
->>> p.full_clean()
-Traceback (most recent call last):
-...
-ValidationError: {'a': [u'This field cannot be blank.'], 'b': [u'This field cannot be blank.']}
-
-And indeed the `a` field is blank, while the `e` field is not:
-
->>> print(p.a)
+>>> print(p.name)
 <BLANKLINE>
->>> print(p.e)
-E
+>>> print(p.pizza_bar_specific_field)
+Doodle
 
 
 .. include:: django16.rst

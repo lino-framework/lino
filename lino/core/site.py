@@ -1840,7 +1840,7 @@ documentation.
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
 
         self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label])
+            p for p in self.installed_plugins if p.ui_label is not None])
 
         # self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
 
