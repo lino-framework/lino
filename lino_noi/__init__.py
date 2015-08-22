@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""This is the main module of the Lino framework.
+"""This is the main module of Lino Noi.
 
 .. autosummary::
    :toctree:
