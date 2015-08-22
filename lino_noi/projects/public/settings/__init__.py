@@ -21,5 +21,3 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.bootstrap3'
 
-
-SITE = Site(globals())

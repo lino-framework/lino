@@ -54,8 +54,9 @@ SETUP_INFO.update(packages=[
     'lino_noi.projects.team',
     'lino_noi.projects.team.tests',
     'lino_noi.projects.team.settings',
-    'lino_noi.projects.teamadm',
-    'lino_noi.projects.teamadm.tests',
+    'lino_noi.projects.public',
+    'lino_noi.projects.public.settings',
+    'lino_noi.projects.public.tests',
 ])
 
 SETUP_INFO.update(message_extractors={

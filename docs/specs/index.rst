@@ -18,3 +18,4 @@ specifications. One of their goal is to get tested.
    smtpd
    hosts
    as_pdf
+   public

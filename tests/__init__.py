@@ -40,6 +40,9 @@ class SpecsTests(BaseTestCase):
     def test_tickets(self):
         self.run_simple_doctests('docs/specs/tickets.rst')
 
+    def test_public(self):
+        self.run_simple_doctests('docs/specs/public.rst')
+
     def test_clocking(self):
         self.run_simple_doctests('docs/specs/clocking.rst')
 
@@ -58,6 +61,6 @@ class ProjectsTests(BaseTestCase):
         self.run_django_manage_test('lino_noi/projects/team')
 
     def test_teamadm(self):
-        self.run_django_manage_test('lino_noi/projects/teamadm')
+        self.run_django_manage_test('lino_noi/projects/public')
 
 
