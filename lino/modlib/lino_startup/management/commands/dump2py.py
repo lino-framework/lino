@@ -53,6 +53,7 @@ from clint.textui import progress
 from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import ProgrammingError
 
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
@@ -71,6 +72,9 @@ class Command(BaseCommand):
         make_option('--noinput', action='store_false',
                     dest='interactive', default=True,
                     help='Do not prompt for input of any kind.'),
+        make_option('--tolerate', action='store_true',
+                    dest='tolerate', default=False,
+                    help='Tolerate database errors.'),
         #~ make_option('--quick', action='store_true',
         #~ dest='quick', default=False,
         #~ help='Do not call full_clean() method on restored instances.'),
@@ -225,26 +229,37 @@ def main():
             stream = file(filename, 'wt')
             stream.write('# -*- coding: UTF-8 -*-\n')
             qs = model.objects.all()
-            stream.write(
-                'logger.info("Loading %d objects to table %s...")\n' % (
-                    qs.count(), model._meta.db_table))
-            fields = [
-                f for f, m in model._meta.get_fields_with_model()
-                if m is None]
-            fields = [
-                f for f in fields
-                if not getattr(f, '_lino_babel_field', False)]
-            stream.write(
-                "# fields: %s\n" % ', '.join(
-                    [f.name for f in fields]))
-            for obj in qs:
-                self.count_objects += 1
-                #~ used_models.add(model)
-                stream.write('loader.save(create_%s(%s))\n' % (
-                    obj._meta.db_table,
-                    ','.join([self.value2string(obj, f) for f in fields])))
-            stream.write('\n')
-            stream.write('loader.flush_deferred_objects()\n')
+            try:
+                stream.write(
+                    'logger.info("Loading %d objects to table %s...")\n' % (
+                        qs.count(), model._meta.db_table))
+                fields = [
+                    f for f, m in model._meta.get_fields_with_model()
+                    if m is None]
+                fields = [
+                    f for f in fields
+                    if not getattr(f, '_lino_babel_field', False)]
+                stream.write(
+                    "# fields: %s\n" % ', '.join(
+                        [f.name for f in fields]))
+                for obj in qs:
+                    self.count_objects += 1
+                    #~ used_models.add(model)
+                    stream.write('loader.save(create_%s(%s))\n' % (
+                        obj._meta.db_table,
+                        ','.join([self.value2string(obj, f) for f in fields])))
+                stream.write('\n')
+                stream.write('loader.flush_deferred_objects()\n')
+            except ProgrammingError as e:
+                if not self.options['tolerate']:
+                    raise
+                stream.write('\n')
+                logger.warning("Tolerating database error %s in %s", (
+                    e, model._meta.db_table))
+                msg = ("The data of this table has not been dumped"
+                       "because an error {0} occured.").format(e)
+                stream.write('raise Exception("{0}")\n'.format(msg))
+                
             stream.close()
 
             #~ self.stream.write('\nfilename = os.path.join(os.path.dirname(__file__),"%s.py")\n' % )

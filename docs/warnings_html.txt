@@ -1,2 +1,18 @@
 WARNING: [autosummary] failed to import u'lino.modlib.lino': no module named lino.modlib.lino (name=u'lino.modlib.lino', path=u'/home/luc/hgwork/lino/docs/api')
+<autosummary>:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
 None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'
+/home/luc/hgwork/lino/docs/tested/e006.rst:72: WARNING: unknown document: /tested/diamond
+/home/luc/hgwork/lino/docs/tested/e006.rst:72: WARNING: unknown document: /tested/diamond2
