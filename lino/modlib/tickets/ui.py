@@ -63,8 +63,7 @@ class ProjectDetail(dd.FormLayout):
     general = dd.Panel("""
     ref name parent type
     company assign_to #contact_person #contact_role private closed
-    description:30
-    ProjectsByParent:30 TicketsByProject
+    description ProjectsByParent
     # cal.EventsByProject
     """, label=_("General"))
 
@@ -76,6 +75,7 @@ class ProjectDetail(dd.FormLayout):
     history = dd.Panel("""
     srcref_url_template changeset_url_template
     #MilestonesByProject
+    TicketsByProject
     """, label=_("Timeline"))
 
 
@@ -133,8 +133,8 @@ class Links(dd.Table):
     stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent
-    child
     type
+    child
     """, window_size=(40, 'auto'))
 
 

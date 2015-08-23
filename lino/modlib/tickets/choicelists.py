@@ -200,7 +200,8 @@ class LinkType(dd.Choice):
     def __init__(self, value, name, ptext, ctext, **kw):
         self.ptext = ptext  # parent
         self.ctext = ctext
-        text = string_concat(ctext, ' (', ptext, ')')
+        # text = string_concat(ptext, ' (', ctext, ')')
+        text = ptext
         super(LinkType, self).__init__(value, text, name, **kw)
 
     def as_parent(self):
@@ -237,9 +238,11 @@ class LinkTypes(dd.ChoiceList):
 add = LinkTypes.add_item
 add('10', 'requires', _("Requires"), _("Required by"))
 add('20', 'triggers', _("Triggers"), _("Triggered by"))
-add('30', 'seealso', _("See also"), _("Referred by"))
+add('30', 'suggests', _("Suggests"), _("Suggested by"))
+add('40', 'obsoletes', _("Obsoletes"), _("Obsoleted by"))
+# add('30', 'seealso', _("See also"), _("Referred by"))
 # deprecated (use "fixed_for" field instead):
-add('40', 'deploys', _("Deploys"), _("Deployed by"))
+# add('40', 'deploys', _("Deploys"), _("Deployed by"))
 # replaced by FK field "duplicate_of"):
 # add('50', 'duplicates', _("Duplicates"), _("Duplicate of"))
 

@@ -6,15 +6,12 @@
 
 """
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.db import models
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd, rt
 from lino import mixins
-from django.utils.translation import ugettext_lazy as _
 
 from lino.core.roles import SiteStaff
 
@@ -39,7 +36,7 @@ class Group(mixins.BabelNamed):
 
 
 class Groups(dd.Table):
-    
+    """The global table of all account groups."""
     model = 'accounts.Group'
     required_roles = dd.required(SiteStaff)
     order_by = ['chart', 'ref']
@@ -137,7 +134,7 @@ class Account(mixins.BabelNamed, mixins.Sequenced, mixins.Referrable):
 
 
 class Accounts(dd.Table):
-    model = Account
+    model = 'accounts.Account'
     required_roles = dd.required(SiteStaff)
     order_by = ['ref']
     column_names = "ref name group *"
@@ -164,6 +161,4 @@ class AccountsByChart(Accounts):
     order_by = ['ref']
     column_names = 'ref name group *'
 
-
-# dd.add_user_group('accounts', dd.plugins.accounts.verbose_name)
 

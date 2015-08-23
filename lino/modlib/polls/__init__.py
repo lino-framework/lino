@@ -1,15 +1,15 @@
 # Copyright 2013-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino.modlib.polls` package provides models and
-functionality for managing Polls.
+"""Provides database models and functionality for managing polls.
 
-This is the main app for :ref:`polly`.
-It is also used in :ref:`welfare`.
+This is the main plugin for :ref:`polly`.  It is also used in
+:ref:`welfare`.
 
 .. autosummary::
    :toctree:
 
+    roles
     models
     choicelists
     utils
@@ -18,9 +18,7 @@ It is also used in :ref:`welfare`.
 
 """
 
-from lino import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
