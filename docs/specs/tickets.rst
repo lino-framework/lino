@@ -199,3 +199,31 @@ authenticated developer it looks like this:
  1    5/3/15         5/3/15
 ==== ============== ========= =======
 <BLANKLINE>
+
+
+Dependencies between tickets
+============================
+
+>>> rt.show(tickets.LinkTypes)
+... #doctest: +REPORT_UDIFF
+======= =========== ===========
+ value   name        text
+------- ----------- -----------
+ 10      requires    Requires
+ 20      triggers    Triggers
+ 30      suggests    Suggests
+ 40      obsoletes   Obsoletes
+======= =========== ===========
+<BLANKLINE>
+
+
+
+
+>>> rt.show(tickets.Links)
+... #doctest: +REPORT_UDIFF
+==== ================= ================================ ============================
+ ID   Dependency type   Parent                           Child
+---- ----------------- -------------------------------- ----------------------------
+ 1    Requires          #1 (Föö fails to bar when baz)   #2 (Bar is not always baz)
+==== ================= ================================ ============================
+<BLANKLINE>
