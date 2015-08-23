@@ -254,8 +254,8 @@ def main():
                 if not self.options['tolerate']:
                     raise
                 stream.write('\n')
-                logger.warning("Tolerating database error %s in %s", (
-                    e, model._meta.db_table))
+                logger.warning("Tolerating database error %s in %s",
+                               e, model._meta.db_table)
                 msg = ("The data of this table has not been dumped"
                        "because an error {0} occured.").format(e)
                 stream.write('raise Exception("{0}")\n'.format(msg))
