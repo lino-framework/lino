@@ -6,20 +6,31 @@
 
 .. management_command:: dump2py
 
-To make a python dump of your database (be it for daily backup or
-before a migration), go to your project directory and say::
+Write a dump of your database to a set of Python modules.  This dump
+is useful for creating a daily backup or before an upgrade with data
+migration.
 
-  $ python manage.py dump2py mydump
+Usage: cd to your project directory and say::
+
+  $ python manage.py dump2py TARGET
   
 This will create a python dump of your database to the directory
-`mydump`.
+`TARGET`.
+
+Options:
+
+- `--noinput` : Do not prompt for user input of any kind.
+
+- `--tolerate` : Tolerate database errors. This can help to make a
+  snapshot of a database which is not (fully) synced with the
+  application code.
+
 
 The directory will contain a file :xfile:`restore.py` and a lot of
 other `.py` files (currently one for every model) which are being
-:func:`execfile`\ d from that :xfile:`restore.py`.
-
-To restore such a dump to your database, simply run the `restore.py`
-script using the :manage:`run` management command::
+:func:`execfile`\ d from that :xfile:`restore.py`.  To restore such a
+dump to your database, simply run the `restore.py` script using the
+:manage:`run` management command::
 
   $ python manage.py run mydump/restore.py
 
