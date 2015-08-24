@@ -1,5 +1,5 @@
 /* Copyright 2009-2015 Luc Saffre */
-document.domain = '{{settings.STATIC_URL.strip("http://").strip("https://").strip('/')}}';
+document.domain = '{{settings.STATIC_URL.replace("http://","").replace("https://","").rstrip('/')}}';
 Lino.edit_tinymce_text = function(panel, options) {
   // edit the text in own window.
   // `panel` is the RichTextPanel
