@@ -36,6 +36,11 @@ class Plugin(ad.Plugin):
     # window_width = 600
     # window_height = 500
 
+    document_domain = None
+    """
+    You must also manually change `tiny_mce_popup.js`
+    """
+
     window_width = 500
     """The initial width of the window to use when editing in own
     window.

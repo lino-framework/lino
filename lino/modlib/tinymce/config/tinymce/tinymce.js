@@ -1,5 +1,9 @@
 /* Copyright 2009-2015 Luc Saffre */
-document.domain = '{{settings.STATIC_URL.replace("http://","").replace("https://","").rstrip('/')}}';
+// document.domain = '{{settings.STATIC_URL.replace("http://","").replace("https://","").rstrip('/')}}';
+{% if site.plugins.tinymce.document_domain %}
+document.domain = '{{site.plugins.tinymce.document_domain}}';
+{% endif %}
+
 Lino.edit_tinymce_text = function(panel, options) {
   // edit the text in own window.
   // `panel` is the RichTextPanel
