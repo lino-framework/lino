@@ -1110,8 +1110,8 @@ documentation.
         )
 
     def run_djangosite_local(self):
-        """
-        See :doc:`/admin/djangosite_local`
+        """See :ref:`lino.djangosite_local`.
+
         """
         try:
             from djangosite_local import setup_site
