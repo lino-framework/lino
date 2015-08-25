@@ -579,7 +579,7 @@ class Milestones(dd.Table):
 
 
 class MilestonesBySite(Milestones):
-    order_by = ['-id']
+    order_by = ['-label', '-id']
     master_key = 'site'
     column_names = "id expected reached label *"
 
