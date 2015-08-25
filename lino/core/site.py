@@ -833,7 +833,8 @@ documentation.
     :attr:`readonly <lino.core.actions.Action.readonly>` actions.
 
     This is experimental. Theoretically it is useless to ask Lino for
-    logging every request since Apache does this.
+    logging every request since Apache does this. OTOH Lino can
+    produce more readable logs.
 
     Note also that there is no warranty that actually *each* request
     is being logged.  It corrently works only for requests that are

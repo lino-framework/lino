@@ -1,6 +1,12 @@
 # Copyright 2009-2011 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""A middleware for sending SQL statements to the Lino logger.
+Intended for use with the django development server.
+
+
+"""
+
 from django.db import connection
 from django.template import Template, Context
 
@@ -9,11 +15,9 @@ class SQLLogMiddleware:
 
     """
     Log all SQL statements direct to the console.
-    Intended for use with the django development server.
 
     Based on http://djangosnippets.org/snippets/1672/
     but writes to a file on the server instead of to the response.
-
     """
 
     def process_response(self, request, response):
@@ -46,7 +50,7 @@ class SQLLogToConsoleMiddleware:
     Log all SQL statements to the console.
     Intended for use with the django development server.
 
-    Based on http://djangosnippets.org/snippets/1672/ 
+    Based on http://djangosnippets.org/snippets/1672/
     but removed the test for settings.DEBUG.
     """
 

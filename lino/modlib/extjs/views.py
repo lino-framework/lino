@@ -620,7 +620,6 @@ class ApiList(View):
             return response
 
         return settings.SITE.kernel.run_action(ar)
-        #~ raise http.Http404("Format %r not supported for GET on %s" % (fmt,ar.actor))
 
 
 class GridConfig(View):

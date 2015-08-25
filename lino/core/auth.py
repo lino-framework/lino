@@ -6,8 +6,6 @@
 
 Lino's authentification middleware
 
-.. autosummary::
-
 
 """
 

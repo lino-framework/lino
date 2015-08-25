@@ -516,10 +516,7 @@ class Action(Parametrizable, Permittable):
         """
         if not actor.editable and not self.readonly:
             return False
-        #~ if self.name is not None:
-            #~ raise Exception("%s tried to attach named action %s" % (actor,self))
-        #~ if actor == self.defining_actor:
-            #~ raise Exception('20121003 %s %s' % (actor,name))
+
         if self.defining_actor is not None:
             # already defined in another actor
             return True
@@ -824,7 +821,6 @@ class InsertRow(TableAction):
     sort_index = 10
     hide_top_toolbar = True
     help_text = _("Insert a new record")
-    # ~ readonly = False # see blog/2012/0726
     # required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
@@ -842,7 +838,8 @@ class InsertRow(TableAction):
 
     def get_action_permission(self, ar, obj, state):
         # see blog/2012/0726
-        if settings.SITE.user_model and ar.get_user().profile.readonly:
+        # if settings.SITE.user_model and ar.get_user().profile.readonly:
+        if ar.get_user().profile.readonly:
             return False
         return super(InsertRow, self).get_action_permission(ar, obj, state)
 

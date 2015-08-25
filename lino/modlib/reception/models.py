@@ -183,6 +183,7 @@ class CheckinVisitor(dd.NotifyingAction):
 
 
 class MyVisitorAction(dd.Action):
+    readonly = False
 
     def get_action_permission(self, ar, obj, state):
         me = ar.get_user()
