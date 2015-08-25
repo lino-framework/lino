@@ -610,16 +610,12 @@ request from it.
                 return doit()
         return doit()
 
-    def show_menu(self, stripped=True, language=None):
-        """Print the main menu for the requesting user as a reStructuredText
-        formatted bullet list.
+    def show_menu(self, language=None, **kwargs):
+        """Show the main menu for the requesting user using the requested
+        renderer.
 
-        This is useful in tested docs.
+        This is uses in tested docs.
 
-        :stripped: remove lots of blanklines which are necessary for
-                   reStructuredText but disturbing in a doctest
-                   snippet.
-            
         :language: explicitly select another language than that
                    specified in the requesting user's :attr:`language
                    <lino.modlib.users.models.User.language>` field.
@@ -630,13 +626,7 @@ request from it.
             language = user.language
         with translation.override(language):
             mnu = settings.SITE.get_site_menu(None, user.profile)
-            s = mnu.as_rst(self)
-            if stripped:
-                for ln in s.splitlines():
-                    if ln.strip():
-                        print ln
-            else:
-                print s
+            self.renderer.show_menu(self, mnu, **kwargs)
 
     def get_home_url(self, *args, **kw):
         """Return URL to the "home page" as defined by the renderer, without

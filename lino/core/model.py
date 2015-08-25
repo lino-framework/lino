@@ -66,9 +66,9 @@ class Model(models.Model):
 
         Example of a context-sensitive chooser method::
 
-          country = models.ForeignKey(
+          country = dd.ForeignKey(
               'countries.Country', blank=True, null=True)
-          city = models.ForeignKey(
+          city = dd.ForeignKey(
               'countries.City', blank=True, null=True)
 
           @chooser()
@@ -93,8 +93,8 @@ class Model(models.Model):
         abstract = True
 
     allow_cascaded_delete = frozenset()
-    """A set of names of ForeignKey of GenericForeignKey fields of this
-    model that allow for cascaded delete.
+    """A set of names of `ForeignKey` or `GenericForeignKey` fields of
+    this model that allow for cascaded delete.
 
     If this is a simple string, Lino expects it to be a
     space-separated list of filenames and convert it into a set at

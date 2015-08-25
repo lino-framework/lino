@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
-from atelier import rstgen
 from lino.core.utils import obj2str
-from lino.utils.xmlgen.html import E
 from lino.core.actors import resolve_action
 from lino.core.boundaction import BoundAction
 
@@ -128,41 +126,13 @@ class MenuItem:
         return s
 
     def as_bootstrap_html(self, renderer, request, level=None):
-        if self.bound_action:
-            assert renderer is not None
-            sr = self.bound_action.actor.request(
-                action=self.bound_action,
-                user=request.user, subst_user=request.subst_user,
-                requesting_panel=request.requesting_panel,
-                renderer=renderer, **self.params)
-
-            url = sr.get_request_url()
-        else:
-            url = self.href
-        assert self.label is not None
-        if url is None:
-            return E.p()  # spacer
-        return E.li(E.a(self.label, href=url, tabindex="-1"))
+        raise Exception("20150824 moved to TextRenderer.show_menu")
 
     def as_rst(self, ar, level=None):
         """
         Render this menu item as an rst string.
         Currently used only for writing test cases.
         """
-        #~ if self.bound_action:
-            #~ sr = self.bound_action.actor.request(
-                #~ action=self.bound_action,
-                #~ user=request.user,subst_user=request.subst_user,
-                #~ requesting_panel=request.requesting_panel,
-                #~ renderer=ui.plain_renderer,**self.params)
-          #~
-            #~ url = sr.get_request_url()
-        #~ else:
-            #~ url = self.href
-        #~ assert self.label is not None
-        #~ if url is None:
-            # ~ return E.p() # spacer
-        #~ return E.li(E.a(self.label,href=url,tabindex="-1"))
         return unicode(self.label)
 
     def has_items(menu):
@@ -349,47 +319,10 @@ class Menu(MenuItem):
             #~ self.items_dict[i.name] = i
 
     def as_bootstrap_html(self, renderer, request, level=1):
-        items = [mi.as_bootstrap_html(renderer, request, level + 1)
-                 for mi in self.items]
-        #~ print 20120901, items
-        if level == 1:
-            return E.ul(*items, class_='nav navbar-nav')
-        if self.label is None:
-            raise Exception("%s has no label" % self)
-        if level == 2:
-            cl = 'dropdown'
-            menu_title = E.a(
-                unicode(self.label), E.b(' ', class_="caret"), href="#",
-                class_='dropdown-toggle', data_toggle="dropdown")
-        elif level == 3:
-            menu_title = E.a(unicode(self.label), href="#")
-            cl = 'dropdown-submenu'
-        else:
-            raise Exception("Menu with more than three levels")
-        return E.li(
-            menu_title,
-            E.ul(*items, class_='dropdown-menu'),
-            class_=cl)
+        raise Exception("20150824 moved to TextRenderer.show_menu")
 
     def as_rst(self, ar, level=1):
-        """
-        Render this menu as an rst string.
-        Currently used only for writing test cases.
-        """
-        has_submenus = False
-        for i in self.items:
-            if isinstance(i, Menu):
-                has_submenus = True
-        items = [mi.as_rst(ar, level + 1) for mi in self.items]
-        if has_submenus:
-            s = rstgen.ul(items).strip() + '\n'
-            if self.label is not None:
-                s = unicode(self.label) + ' :\n\n' + s
-        else:
-            s = ', '.join(items)
-            if self.label is not None:
-                s = unicode(self.label) + ' : ' + s
-        return s
+        raise Exception("20150824 moved to TextRenderer.show_menu")
 
 
 class Toolbar(Menu):

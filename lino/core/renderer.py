@@ -25,6 +25,7 @@ from lino.utils.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
 from lino.core import constants
+from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
 
@@ -330,6 +331,49 @@ request `tar`."""
                 raise Exception("Cannot handle %r" % item)
         return E.div(*elems)
 
+    def show_menu(self, ar, mnu, level=1):
+        """
+        Render the given menu as an HTML element.
+        Used for writing test cases.
+        """
+        if not isinstance(mnu, Menu):
+            assert isinstance(mnu, MenuItem)
+            if mnu.bound_action:
+                sr = mnu.bound_action.actor.request(
+                    action=mnu.bound_action,
+                    user=ar.user, subst_user=ar.subst_user,
+                    requesting_panel=ar.requesting_panel,
+                    renderer=self, **mnu.params)
+
+                url = sr.get_request_url()
+            else:
+                url = mnu.href
+            assert mnu.label is not None
+            if url is None:
+                return E.p()  # spacer
+            return E.li(E.a(mnu.label, href=url, tabindex="-1"))
+
+        items = [self.show_menu(ar, mi, level + 1) for mi in mnu.items]
+        #~ print 20120901, items
+        if level == 1:
+            return E.ul(*items, class_='nav navbar-nav')
+        if mnu.label is None:
+            raise Exception("%s has no label" % mnu)
+        if level == 2:
+            cl = 'dropdown'
+            menu_title = E.a(
+                unicode(mnu.label), E.b(' ', class_="caret"), href="#",
+                class_='dropdown-toggle', data_toggle="dropdown")
+        elif level == 3:
+            menu_title = E.a(unicode(mnu.label), href="#")
+            cl = 'dropdown-submenu'
+        else:
+            raise Exception("Menu with more than three levels")
+        return E.li(
+            menu_title,
+            E.ul(*items, class_='dropdown-menu'),
+            class_=cl)
+
 
 class TextRenderer(HtmlRenderer):
     """The renderer used when rendering to .rst files and console output.
@@ -344,6 +388,46 @@ class TextRenderer(HtmlRenderer):
 
     def get_request_url(self, ar, *args, **kw):
         return None
+       
+    def menu2rst(self, ar, mnu, level=1):
+        """Used by :meth:`show_menu`."""
+
+        if not isinstance(mnu, Menu):
+            return unicode(mnu.label)
+
+        has_submenus = False
+        for i in mnu.items:
+            if isinstance(i, Menu):
+                has_submenus = True
+        items = [self.menu2rst(ar, mi, level + 1) for mi in mnu.items]
+        if has_submenus:
+            s = rstgen.ul(items).strip() + '\n'
+            if mnu.label is not None:
+                s = unicode(mnu.label) + ' :\n\n' + s
+        else:
+            s = ', '.join(items)
+            if mnu.label is not None:
+                s = unicode(mnu.label) + ' : ' + s
+        return s
+
+    def show_menu(self, ar, mnu, stripped=True, level=1):
+        """
+        Render the given menu as a reStructuredText
+        formatted bullet list.
+        Called from :meth:`lino.core.requests.BaseRequest.show_menu`.
+
+        :stripped: remove lots of blanklines which are necessary for
+                   reStructuredText but disturbing in a doctest
+                   snippet.
+
+        """
+        s = self.menu2rst(ar, mnu, level)
+        if stripped:
+            for ln in s.splitlines():
+                if ln.strip():
+                    print(ln)
+        else:
+            print(s)
 
     def show_table(self, *args, **kwargs):
         print(self.table2story(*args, **kwargs))

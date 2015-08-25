@@ -16,7 +16,8 @@ encapsulates a bunch of functionality which becomes available only
 then.
 
 TODO: Rename "kernel" to something else.  Because "kernel" suggests
-something which is loaded *in first place*, but
+something which is loaded *in first place*. That's not true for Lino's
+"kernel".
 
 """
 
@@ -373,12 +374,45 @@ class Kernel(object):
                     """
                     If JobProvider is an MTI child of Company,
                     then mti.delete_child(JobProvider) must not fail on a
-                    JobProvider being refered only by objects that can refer
+                    JobProvider being referred only by objects that can refer
                     to a Company as well.
                     """
-                    if hasattr(f.rel.to, '_lino_ddh'):
-                        f.rel.to._lino_ddh.add_fk(m or model, f)
+                    if not hasattr(f.rel.to, '_lino_ddh'):
+                        raise Exception("20150824")
+                    f.rel.to._lino_ddh.add_fk(m or model, f)
 
+        # Set on_delete=PROTECT for FK fields that are not listed
+        # in `allow_cascaded_delete`.
+        for model in models_list:
+            for m, fk in model._lino_ddh.fklist:
+                if fk.rel.on_delete == models.CASCADE:
+                    if not fk.name in m.allow_cascaded_delete:
+                        msg = (
+                            "Setting {0}.{1}.on_delete to PROTECT because "
+                            "field is not specified in "
+                            "allow_cascaded_delete.").format(fmn(m), fk.name)
+                        logger.debug(msg)
+                        fk.rel.on_delete == models.PROTECT
+                else:
+                    if fk.name in m.allow_cascaded_delete:
+                        msg = ("{0}.{1} specified in allow_cascaded_delete "
+                               "but on_delete is not CASCADE").format(
+                            fmn(m), fk.name)
+                        raise Exception(msg)
+    
+                    if fk.rel.on_delete == models.SET_NULL:
+                        if not fk.null:
+                            msg = ("{0}.{1} has on_delete SET_NULL but "
+                                   "is not nullable ")
+                            msg = msg.format(fmn(m), fk.name, fk.rel.to)
+                            raise Exception(msg)
+
+                    else:
+                        msg = (
+                            "{0}.{1} has custom on_delete").format(
+                                fmn(m), fk.name, fk.rel.on_delete)
+                        logger.debug(msg)
+                
         for p in self.installed_plugins:
             if isinstance(p, Plugin):
                 p.before_analyze()

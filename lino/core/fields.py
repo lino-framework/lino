@@ -903,10 +903,15 @@ def fields_list(model, field_names):
 def ForeignKey(othermodel, *args, **kw):
     """A wrapper function which returns a Django `ForeignKey
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`_
-    field, with a subtle difference in the signature: it supports
-    `othermodel` being `None` or the name of some non-installed model
-    and returns a :class:`DummyField` in that case.  This difference
-    is useful when designing reusable models.
+    field, with some subtle differences:
+
+    - It supports `othermodel` being `None` or the name of some
+      non-installed model and returns a :class:`DummyField` in that
+      case.  This difference is useful when designing reusable models.
+
+    - (CANCELLED) The default value for `on_delete
+      <https://docs.djangoproject.com/en/1.8/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+      is ``PROTECT`` instead of ``CASCADE``.
 
     """
     if othermodel is None:
@@ -914,6 +919,8 @@ def ForeignKey(othermodel, *args, **kw):
     if isinstance(othermodel, basestring):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
+
+    # kw.setdefault('on_delete', models.PROTECT)
     return models.ForeignKey(othermodel, *args, **kw)
 
 

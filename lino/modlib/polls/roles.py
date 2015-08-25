@@ -8,7 +8,7 @@ e.g.  :mod:`lino.projects.polly`.
 """
 
 from django.utils.translation import ugettext_lazy as _
-from lino.core.roles import UserRole, SiteUser, SiteAdmin, SiteStaff
+from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
 
 class PollsUser(SiteUser):
@@ -17,7 +17,7 @@ class PollsUser(SiteUser):
     """
 
 
-class PollsStaff(PollsUser, SiteStaff):
+class PollsStaff(PollsUser):
     """A user who manages configuration of polls functionality.
 
     """

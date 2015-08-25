@@ -21,6 +21,8 @@ from lino.core import actions
 
 from lino.mixins.printable import BuildMethods
 
+from lino.core.roles import SiteStaff
+
 from .mixins import *
 
 
@@ -146,7 +148,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     model = 'system.SiteConfig'
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
     default_action = actions.ShowDetailAction()
     #~ has_navigator = False
     hide_top_toolbar = True
