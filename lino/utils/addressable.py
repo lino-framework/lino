@@ -115,7 +115,7 @@ class Addressable(object):
         >>> TestAddress().has_address()
         False
         """
-        return len(self.address_location_lines()) > 0
+        return len(list(self.address_location_lines())) > 0
 
 
 class TestAddress(Addressable):
