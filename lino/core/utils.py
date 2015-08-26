@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 import sys
 import datetime
+# import yaml
 
 from django.db import models
 from django.db.models import Q
@@ -112,8 +113,9 @@ def format_request(request):
     # data stream
     if request.body:
         data = QueryDict(request.body)
+        # data = yaml.dump(dict(data))
         data = str(data)
-        if len(data) > 1000:
+        if len(data) > 200:
             data = data[:200] + "..."
         s += " (data: {0})".format(data)
 

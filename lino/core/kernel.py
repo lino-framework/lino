@@ -77,6 +77,8 @@ from .ddh import DisableDeleteHandler
 from .utils import resolve_model
 from .utils import is_devserver
 from .utils import full_model_name as fmn
+from .utils import obj2str
+# from .utils import format_request
 
 
 def set_default_verbose_name(f):
@@ -650,7 +652,17 @@ class Kernel(object):
         
         a = ar.bound_action.action
         if self.site.log_each_action_request and not a.readonly:
-            logger.info("run_action {0}".format(ar))
+            flds = []
+            A = flds.append
+            a = ar.bound_action.action
+            # A(a.__class__.__module__+'.'+a.__class__.__name__)
+            A(ar.get_user().username)
+            A(ar.bound_action.full_name())
+            A(obj2str(ar.master_instance))
+            A(obj2str(ar.selected_rows))
+            # A(format_request(ar.request))
+            logger.info("run_action {0}".format(' '.join(flds)))
+            # logger.info("run_action {0}".format(ar))
         try:
             a.run_from_ui(ar)
             if a.parameters and not a.no_params_window:
