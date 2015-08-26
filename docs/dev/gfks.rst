@@ -10,7 +10,7 @@ object *of a given model*, a `GenericForeignKey` can point to a
 database object *of any model*.
 
 This section provides a topic overview. See also
-:doc:`/tutorials/gfks/index` and
+:doc:`/tutorials/gfktest/index` and
 :mod:`test_broken_gfks <lino_welfare.projects.eupen.tests.test_broken_gfks>`).
 
 Lino's :meth:`disable_delete <lino.core.model.Model.disable_delete>`
@@ -24,9 +24,9 @@ use :mod:`lino.modlib.contenttypes`, which is a thin wrapper around
 Django's original app. Lino's version gives you additional
 functionality:
 
-- the :class:`Controllable <lino.modlib.contenttypes.mixins,Controllable>`
+- the :class:`Controllable <lino.modlib.gfks.mixins.Controllable>`
   model mixin 
-- the :class:`BrokenGFKs :<lino.modlib.contenttypes.models.BrokenGFKs>` table
+- the :class:`BrokenGFKs <lino.modlib.gfks.models.BrokenGFKs>` table
 
 In Lino you can configure the cascading behaviour *from the model
 which defines the GFK*, either by using the

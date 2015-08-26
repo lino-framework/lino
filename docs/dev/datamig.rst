@@ -1,5 +1,5 @@
 =========================
-Designing data migrations
+Data migrations à la Lino
 =========================
 
 Overview
@@ -23,36 +23,49 @@ Disadvantage:
 - You cannot migrate a running system. Users must stop to work in your
   application for a few minutes.
 
-Advantages: 
+Advantage: 
 
-- Less work needed for developing, maintaining and testing migration code.
-- No need to panic if something goes wrong during the migrate, just
-  correct your code and try again.
+- The whole process of developing, maintaining and testing migration
+  code becomes more natural and easier to manage.
 
 
 General strategy for handling data migrations
 =============================================
 
-- Before upgrading it is useful to have a description of the changes
-  that are being applied. Writing such descriptions is job of the
-  application maintainer.  In smaller customized database application
-  projects this step can be optional. 
-
-- When you upgrade on a production site, always make a dump2py of your
-  database before the upgrade.
+- When you upgrade on a production site, always make a
+  :manage:`dump2py` of your database before the upgrade.
 
 - After the upgrade, reinitialize your database from that dump by
-  running the `restore.py` script.
+  running the :xfile:`restore.py` script.
 
-- Certain schema changes don't need a migrator and will be automatic:
-  new models, new fields (when they have a default value), `unique`
-  constraints, ...
+- Certain schema changes don't need a migrator and will work
+  automatically: new models, new fields (when they have a default
+  value), `unique` constraints, ...
 
 - If there were unhandled schema changes, you will get error messages.
-  You can then start to handle these database changes by either
-  locally modifying your `restore.py` script or by writing a migrator.
-  You can run the `restore.py` script as often as needed until there
+  No reason to panic. Just correct your code and try again.  You can
+  run the :xfile:`restore.py` script as often as needed until there
   are no more errors.
+
+There are two ways for correcting your code: either by locally
+modifying your :xfile:`restore.py` script or by writing a migrator.
+
+
+Modifying :xfile:`restore.py` script
+====================================
+
+Locally modifying a :xfile:`restore.py` script is the natural way when
+there is only one production site who needs to be migrated. It is a
+common situation when a new customer project has gone into production
+but is being used only on that customer's site.
+
+Look at the code of your :xfile:`restore.py` script.
+
+For example if a model or field has been removed, you can just comment
+out one line in that script.
+
+See also :doc:`dump2py`.
+
 
 Writing a migrator
 ==================

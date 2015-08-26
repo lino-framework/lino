@@ -291,8 +291,7 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
-    """
-    Whether this action possibly modifies data *in the given object*.
+    """Whether this action possibly modifies data *in the given object*.
     
     This means that :class:`InsertRow` is a `readonly` action.
     Actions like :class:`InsertRow` and :class:`Duplicable
@@ -304,6 +303,21 @@ class Action(Parametrizable, Permittable):
           if user.profile.readonly:
               return False
           return super(Duplicate, self).get_action_permission(ar, obj, state)
+
+    Discussion
+    
+    Maybe we should change the name `readonly` to `modifying` or
+    `writing` (and set the default value `False`).  Because for the
+    application developer that looks more natural.  Or --maybe better
+    but probably even more consequences-- the default value should be
+    `False`.  Being readonly, for actions, is a kind of "privilege":
+    they don't get logged, they also exists for readonly users.  It
+    would be more "secure" when the developer must be explicit when
+    granting that privilege.
+    
+    A danger with this attribute is that Lino actually does not check
+    whether it is true. When a readonly action actually does modify
+    the database, Lino won't "notice" it.
 
     """
 

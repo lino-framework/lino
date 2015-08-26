@@ -83,17 +83,10 @@ ignored when :attr:`user_profiles_module
 
 .. xfile:: roles.py
 
-
-- the :xfile:`roles.py` is used for both defining roles and profiles
-
-
-
- the user
-roles that we want to make available in a given application:
-
-
-Every profile is assigned to one and only one user role. But not
-every user role is made available for selection in the
+The :xfile:`roles.py` is used for both defining roles and profiles the
+user roles that we want to make available in a given application.
+Every profile is assigned to one and only one user role. But not every
+user role is made available for selection in the
 
 
 

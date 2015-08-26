@@ -537,8 +537,8 @@ class DisableEditingStoreField(SpecialStoreField):
 
 
 class BooleanStoreField(StoreField):
-    """A :class:`StoreField` for `BooleanField
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#booleanfield>`__.
+    """A :class:`StoreField` for
+    `BooleanField <https://docs.djangoproject.com/en/dev/ref/models/fields/#booleanfield>`__.
 
     """
 
@@ -612,8 +612,8 @@ class IntegerStoreField(StoreField):
 
 class AutoStoreField(StoreField):
 
-    """A :class:`StoreField` for `AutoField
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
+    """A :class:`StoreField` for 
+    `AutoField <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
 
     """
 

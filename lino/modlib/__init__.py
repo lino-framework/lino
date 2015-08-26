@@ -17,7 +17,7 @@ Lino applications.
     printing
     excerpts
     jinja
-    lino
+    lino_startup
     plausibility
     users
 

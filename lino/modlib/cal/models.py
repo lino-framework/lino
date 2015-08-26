@@ -406,8 +406,7 @@ class ExtAllDayField(dd.VirtualField):
 class Event(Component, Ended,
             mixins.TypedPrintable,
             Mailable, Postable):
-    """
-    A calendar event is a lapse of time to be visualized in a calendar.
+    """A calendar event is a lapse of time to be visualized in a calendar.
 
     .. attribute:: user
 
@@ -428,6 +427,11 @@ class Event(Component, Ended,
          The type of this event. Every calendar event should have this
          field pointing to a given :class:`EventType`, which holds
          extended configurable information about this event.
+
+    .. attribute:: linked_date
+
+         Shows the date and time of the event with a link that opens
+         all events on that day (cal.EventsByDay)
 
     """
     class Meta:

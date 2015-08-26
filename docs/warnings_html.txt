@@ -1,1 +1,2 @@
 WARNING: [autosummary] failed to import u'lino.modlib.lino': no module named lino.modlib.lino (name=u'lino.modlib.lino', path=u'/home/luc/hgwork/lino/docs/api')
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'

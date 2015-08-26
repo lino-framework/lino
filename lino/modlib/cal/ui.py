@@ -22,6 +22,7 @@ from .workflows import TaskStates
 from .workflows import GuestStates
 from .workflows import EventStates
 from .mixins import daterange_text
+from .utils import when_text
 
 
 class RemoteCalendars(dd.Table):

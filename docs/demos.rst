@@ -33,7 +33,7 @@ Of general interest:
 - belref_ : Official online demo of :ref:`belref`.
 - cosi-demo_ :    Official online demo of :ref:`cosi`.
 - faggio-demo_ :  Official online demo of :ref:`faggio` à la Roger
-- team_ : Official online demo of :ref:`noi`.
+- team_ : Official online demo of :mod:`lino_noi`.
 
 Specific to Belgium:
 

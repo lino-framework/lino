@@ -2,9 +2,8 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines extended field classes like :class:`DisplayField`,
-:class:`RichTextField` and :class:`PercentageField`, utility functions
-like :func:`fields_list`.
+"""Defines extended database field classes and utility functions
+related to fields.
 
 """
 
@@ -216,7 +215,9 @@ class FakeField(object):
 
 
 class RemoteField(FakeField):
-    """A field on a related object. Remote fields are created by
+    """A field on a related object.
+
+    Remote fields are created by
     :meth:`lino.core.model.Model.get_data_elem` when needed.
 
     """
@@ -258,12 +259,13 @@ class RemoteField(FakeField):
 
 class DisplayField(FakeField):
     """A field to be rendered like a normal read-only form field, but with
-    plain HTML instead of an ``<input>`` tag.  This is to be used as
+    plain HTML instead of an ``<input>`` tag.  
+
+    This is to be used as
     the `return_type` of a :class:`VirtualField`.
 
     The value to be represented is either some unicode text, a
-    translatable text or a :mod:`HTML element
-    <lino.utils.xmlgen.html>`.
+    translatable text or a :mod:`HTML element <lino.utils.xmlgen.html>`.
 
     """
     choices = None
@@ -296,7 +298,7 @@ class DisplayField(FakeField):
 
 class HtmlBox(DisplayField):
     """Like :class:`DisplayField`, but to be rendered as a panel rather
-than as a form field.
+    than as a form field.
 
     """
     pass
@@ -511,7 +513,7 @@ class RequestField(VirtualField):
 
 def displayfield(*args, **kw):
     """Decorator to turn a method into a :class:`VirtualField` of type
-:class:`DisplayField`.
+    :class:`DisplayField`.
 
     """
     return virtualfield(DisplayField(*args, **kw))
@@ -519,7 +521,7 @@ def displayfield(*args, **kw):
 
 def htmlbox(*args, **kw):
     """Decorator shortcut to turn a method into a a :class:`VirtualField`
-of type :class:`HtmlBox`.
+    of type :class:`HtmlBox`.
 
     """
     return virtualfield(HtmlBox(*args, **kw))
@@ -527,7 +529,8 @@ of type :class:`HtmlBox`.
 
 def requestfield(*args, **kw):
     """Decorator shortcut to turn a method into a a :class:`VirtualField`
-of type :class:`RequestField`.
+    of type :class:`RequestField`.
+
     """
     def decorator(fn):
         #~ def wrapped(*args):
@@ -538,13 +541,10 @@ of type :class:`RequestField`.
 
 
 class MethodField(VirtualField):
-
-    """
-    Not used. See `/blog/2011/1221`.
-    Similar to VirtualField, but the `get` argument to `__init__`
-    must be a string which is the name of a model method to be called
-    without a `request`.
-    """
+    # Not used. See `/blog/2011/1221`.
+    # Similar to VirtualField, but the `get` argument to `__init__`
+    # must be a string which is the name of a model method to be called
+    # without a `request`.
 
     def __init__(self, return_type, get, *args, **kw):
         self.args = args
@@ -572,7 +572,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     for fields that part of a :term:`GFK` and you want
     Lino to render them using a Combobox.
 
-    Used by :class:`ml.contenttypes.Controllable`.
+    Used by :class:`lino.modlib.gfks.mixins.Controllable`.
     """
 
     def __init__(self, type_field, *args, **kw):
@@ -591,8 +591,10 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
 
 class GenericForeignKey(DjangoGenericForeignKey):
 
-    """Add verbose_name and help_text to Django's GFK.  Used by
-    :class:`lino.mixins.Controllable`.
+    """Add verbose_name and help_text to Django's GFK.  
+
+    Used by
+    :class:`lino.modlib.gfks.mixins.Controllable`.
 
     """
 
@@ -640,7 +642,6 @@ class GenericForeignKey(DjangoGenericForeignKey):
 class CharField(models.CharField):
 
     """
-
     An extension around Django's `models.CharField`.
 
     Adds two keywords `mask_re` and
@@ -676,13 +677,10 @@ class CharField(models.CharField):
 
 
 class QuantityField(CharField):
-
-    """A field that accepts 
-    :class:`lino.utils.quantities.Quantity`,
-    :class:`lino.utils.quantities.Percentage`
-    and
-    :class:`lino.utils.quantities.Duration`
-    values.
+    """A field that accepts :class:`Quantity
+    <lino.utils.quantities.Quantity>`, :class:`Percentage
+    <lino.utils.quantities.Percentage>` and :class:`Duration
+    <lino.utils.quantities.Duration>` values.
 
     Implemented as a CharField (sorting or filter ranges may not work
     as expected)
@@ -901,8 +899,8 @@ def fields_list(model, field_names):
 
 
 def ForeignKey(othermodel, *args, **kw):
-    """A wrapper function which returns a Django `ForeignKey
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`_
+    """A wrapper function which returns a Django
+    `ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`__
     field, with some subtle differences:
 
     - It supports `othermodel` being `None` or the name of some
@@ -925,9 +923,9 @@ def ForeignKey(othermodel, *args, **kw):
 
 
 class CustomField(object):
-    """
-    Mixin to create a custom field. It defines a single method
-    :meth:`dd.CustomField.create_layout_elem`
+    """Mixin to create a custom field.
+
+    It defines a single method :meth:`create_layout_elem`.
 
     """
     def create_layout_elem(self, layout_handle, field, **kw):

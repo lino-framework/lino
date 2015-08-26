@@ -20,7 +20,7 @@ Another important thing is that you can use such a backup for data
 migrations (but that's for another chapter: :doc:`datamig`).
 
 
-Manually restoring data
+Manually repairing data
 =======================
 
 There are situations where you want to be a magician. For example your
