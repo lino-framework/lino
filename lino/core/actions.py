@@ -514,8 +514,8 @@ class Action(Parametrizable, Permittable):
         action won't be attached to the given actor.
 
         """
-        if not actor.editable and not self.readonly:
-            return False
+        # if not actor.editable and not self.readonly:
+        #     return False
 
         if self.defining_actor is not None:
             # already defined in another actor
