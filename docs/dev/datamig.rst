@@ -1,3 +1,5 @@
+.. _lino.datamig:
+
 =========================
 Data migrations à la Lino
 =========================

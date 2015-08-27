@@ -69,9 +69,9 @@ it is analog):
 
   }
 
-It might be useful to understand :doc:`/tested/diamond`,
-:doc:`/tested/diamond2` and the code of :mod:`lino.core.inject` before
-working on this problem.
+It might be useful to understand :doc:`/tested/diamond/index`,
+:doc:`/tested/diamond2/index` and the code of :mod:`lino.core.inject`
+before working on this problem.
 
 The problem might be related to the fact that `AFTER17` the `name`
 field occurs *twice* in the list of fields:
