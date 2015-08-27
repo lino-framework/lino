@@ -190,14 +190,14 @@ authenticated developer it looks like this:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.MilestonesBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== ============== ========= =======
- ID   Expected for   Reached   Label
----- -------------- --------- -------
- 7    5/15/15        5/15/15
- 5    5/11/15        5/11/15
- 3    5/7/15         5/7/15
- 1    5/3/15         5/3/15
-==== ============== ========= =======
+======= ========= ============== ====
+ Label   Reached   Expected for   ID
+------- --------- -------------- ----
+         5/15/15   5/15/15        7
+         5/11/15   5/11/15        5
+         5/7/15    5/7/15         3
+         5/3/15    5/3/15         1
+======= ========= ============== ====
 <BLANKLINE>
 
 
