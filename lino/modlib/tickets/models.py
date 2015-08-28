@@ -461,6 +461,12 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
             if not self.project.private:
                 self.private = False
 
+    def disabled_fields(self, ar):
+        rv = super(Ticket, self).disabled_fields(ar)
+        if self.project and not self.project.private:
+            rv.add('private')
+        return rv
+
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
 
