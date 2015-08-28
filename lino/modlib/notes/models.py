@@ -114,8 +114,7 @@ class Note(mixins.TypedPrintable,
 
     """
 
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Note')

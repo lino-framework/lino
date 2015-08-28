@@ -19,14 +19,13 @@ from django.conf import settings
 
 from lino.api import dd
 
-from lino.core import fields
+from lino.core.exceptions import ChangedAPI
 from lino.core import model
 from lino.core import actions
 from lino.core import dbtables
+from lino.core.roles import SiteUser, SiteStaff, login_required
 
 from .utils import AnonymousUser
-
-from .roles import SiteUser
 
 
 class UserAuthored(model.Model):
@@ -44,15 +43,22 @@ class UserAuthored(model.Model):
     class Meta:
         abstract = True
 
-    manager_roles_required = dd.SiteStaff
-    """By default, only :class:`lino.core.roles.SiteStaff` users can edit
-    other users' work.
+    manager_roles_required = login_required(SiteStaff)
+    """The list of required roles for getting permission to edit other
+    users' work.
 
-    Setting :attr:`manager_roles_required` to `None` will **disable**
+    By default, only :class:`SiteStaff <lino.core.roles.SiteStaff>`
+    users can edit other users' work.
+
+    An application can set :attr:`manager_roles_required` to some
+    other user role class or a tuple of such classes.
+
+    Setting :attr:`manager_roles_required` to ``[]`` will **disable**
     this behaviour (i.e. everybody can edit the work of other users).
 
-    An application can also set :attr:`manager_roles_required` on a
-    model to some other user role class or a tuple of such classes.
+    This is going to be passed to :meth:`has_required_roles
+    <lino.core.users.choicelists.UserProfile.has_required_roles>` of
+    the requesting user's profile.
 
     Usage examples see :class:`lino.modlib.notes.models.Note` or
     :class:`lino.modlib.cal.models.Component`.
@@ -80,21 +86,36 @@ class UserAuthored(model.Model):
                 self.user = u
         super(UserAuthored, self).on_create(ar)
 
-    def get_row_permission(self, ar, state, ba):
-        """Only system managers can edit other users' work.
+    def on_duplicate(self, ar, master):
+        """The default behaviour after duplicating is to change the author to
+        the user who requested the duplicate.
 
         """
-        if hasattr(self, 'manager_level_field'):
-            raise Exception("{0} has a manager_level_field".format(self))
+        if ar.user is not None:
+            self.user = ar.user
+        super(UserAuthored, self).on_duplicate(ar)
+
+    def get_row_permission(self, ar, state, ba):
+        """Only "managers" or "editors" can edit other users' work.
+
+        See also :attr:`manager_roles_required`.
+
+        """
         if not super(UserAuthored, self).get_row_permission(ar, state, ba):
             return False
         user = ar.get_user()
-        if self.manager_roles_required is not None \
-           and self.user != ar.user \
+        if self.user != ar.user \
            and (ar.subst_user is None or self.user != ar.subst_user) \
-           and not isinstance(user.profile.role, self.manager_roles_required):
+           and not user.profile.has_required_roles(
+               self.manager_roles_required):
             return ba.action.readonly
         return True
+
+    @classmethod
+    def on_analyze(cls, site):
+        if hasattr(cls, 'manager_level_field'):
+            raise ChangedAPI("{0} has a manager_level_field".format(cls))
+        super(UserAuthored, cls).on_analyze(site)
 
     @classmethod
     def get_parameter_fields(cls, **fields):
@@ -167,13 +188,12 @@ if settings.SITE.user_model is None:
 class AuthorAction(actions.Action):
     """
     """
-    manager_roles_required = dd.SiteStaff
-    # manager_level_field = 'level'
+    manager_roles_required = login_required(SiteStaff)
 
     def get_action_permission(self, ar, obj, state):
         user = ar.get_user()
-        if obj.user != user and not isinstance(
-                user.profile, self.manager_roles_required):
+        if obj.user != user and \
+           not user.profile.has_required_roles(self.manager_roles_required):
             return self.readonly
         return super(
             AuthorAction, self).get_action_permission(ar, obj, state)

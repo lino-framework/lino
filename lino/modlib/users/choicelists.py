@@ -85,21 +85,18 @@ class UserProfile(Choice):
         return s
 
     def has_required_roles(self, required_roles):
-        """Return True if this profile has the specified roles.
-
-        :required_roles: a set or iterable of role requirements.  The
-                         profile must satisfy *every* specified
-                         requirement.  Every requirement is either a
-                         class object (subclass of
-                         :class:`<lino.core.roles.UserRole>`) or a
-                         tuple thereof.
+        """Return `True` if this user profile's :attr:`role` satisfies the
+        specified requirements.  See
+        :meth:`lino.core.roles.UserRole.has_required_roles`.
 
         """
+        return self.role.has_required_roles(required_roles)
+        # try:
+        #     return self.role.has_required_roles(required_roles)
+        # except TypeError:
+        #     raise Exception("Invalid roles specified: {0}".format(
+        #         required_roles))
 
-        for rr in required_roles:
-            if not isinstance(self.role, rr):
-                return False
-        return True
 
 ##
 

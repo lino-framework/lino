@@ -742,9 +742,7 @@ class Component(StartedSummaryDescription,
 
     """
     workflow_state_field = 'state'
-
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     class Meta:
         abstract = True

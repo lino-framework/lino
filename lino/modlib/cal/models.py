@@ -242,8 +242,7 @@ class Subscription(UserAuthored):
         verbose_name_plural = _("Subscriptions")
         unique_together = ['user', 'calendar']
 
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     calendar = dd.ForeignKey(
         'cal.Calendar', help_text=_("The calendar you want to subscribe to."))

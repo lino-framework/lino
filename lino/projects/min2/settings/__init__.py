@@ -14,7 +14,7 @@ class Site(Site):
     title = "Lino Mini 2"
     project_model = 'projects.Project'
     languages = 'en et'
-    user_profiles_module = 'lino.modlib.users.roles'
+    user_profiles_module = 'lino.modlib.office.roles'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

@@ -12,6 +12,20 @@ class UserRole(object):
 
     """
 
+    def has_required_roles(self, required_roles):
+        """Return `True` if this role satisfies the specified roles.
+
+        The specified arguments are the set of role requirements
+        (class objects).  This role (an instance) must satisfy *every*
+        specified requirement.  Every requirement is either a class
+        object (subclass of :class:`<UserRole>`) or a tuple thereof.
+
+        """
+        for rr in required_roles:
+            if not isinstance(self, rr):
+                return False
+        return True
+
 
 class SiteUser(UserRole):
     """Every authenticated user has this role."""
@@ -38,3 +52,14 @@ class SiteStaff(SiteUser):
 class SiteAdmin(SiteStaff, Supervisor):
     """The root user of this system. """
     pass
+
+
+def login_required(*args):
+    """An API shortcut available in :mod:`lino.api.dd`. See
+    :meth:`lino.modlib.users.choicelists.UserProfile.has_required_role`
+
+    """
+    if len(args):
+        return set(args)
+    return set([SiteUser])
+

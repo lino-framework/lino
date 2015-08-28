@@ -811,7 +811,7 @@ class MyEvents(Events):
     """
     label = _("My appointments")
     help_text = _("Table of my appointments.")
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.login_required(OfficeUser)
     column_names = 'when_text project event_type summary workflow_buttons *'
     auto_fit_column_widths = True
 

@@ -14,6 +14,7 @@ The ``lino.core`` package
     dbtables
     dbutils
     ddh
+    exceptions
     fields
     frames
     inject

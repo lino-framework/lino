@@ -35,18 +35,7 @@ class BoundAction(object):
         self.actor = actor
 
         required = set(actor.required_roles)
-        # if action.readonly:
-        #     pass  # required |= actor.required_roles
-        # elif isinstance(action, actions.DeleteSelected):
-        #     required |= actor.delete_required
-        # else:
-        #     required |= actor.update_required
         required |= action.required_roles
-
-        # if settings.SITE.user_model is not None:
-        #     if len(required) == 0:
-        #         from lino.modlib.users.choicelists import SiteUser
-        #         required.add(SiteUser)
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions

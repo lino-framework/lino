@@ -413,7 +413,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     """
 
-    manager_roles_required = OfficeStaff
+    manager_roles_required = dd.login_required(OfficeStaff)
     # manager_level_field = 'office_level'
     allow_cascaded_delete = "owner"
 
