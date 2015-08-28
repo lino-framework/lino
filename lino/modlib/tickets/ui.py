@@ -107,7 +107,9 @@ class Projects(dd.Table):
             interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
-                qs = qs.filter(tickets_by_project__product__in=interests)
+                qs = qs.filter(
+                    tickets_by_project__product__in=interests,
+                    tickets_by_project__private=False)
         return qs
 
 
@@ -322,13 +324,13 @@ class Tickets(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.interesting_for:
-            # qs = qs.filter(Q(site=pv.interesting_for) | Q(site__isnull=True))
 
             interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
                 qs = qs.filter(
-                    Q(product__in=interests) | Q(site=pv.interesting_for))
+                    Q(site=pv.interesting_for) |
+                    Q(product__in=interests, private=False))
 
         if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed=False)

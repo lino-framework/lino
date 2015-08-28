@@ -451,8 +451,11 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         if False:
             if me and not self.project and me.current_project:
                 self.project = me.current_project
-        if not self.assigned_to and self.project and self.project.assign_to:
-            self.assigned_to = self.project.assign_to
+        if self.project:
+            if not self.assigned_to and self.project.assign_to:
+                self.assigned_to = self.project.assign_to
+            if self.project.private:
+                self.private = True
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
