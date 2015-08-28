@@ -49,13 +49,17 @@ class TimeInvestment(dd.Model):
 
     .. attribute:: closed
 
-       Whether this investment is closed, i.e. certain things should
-       not change anymore.
+        Whether this investment is closed, i.e. certain things should
+        not change anymore.
 
     .. attribute:: private
 
-       Whether this investment is private, i.e. should not be publicly
-       visible anywhere.
+        Whether this investment is private, i.e. should not be
+        publicly visible anywhere.
+        
+        The default value is True.  Tickets on public projects cannot
+        be private, but tickets on private projects may be manually
+        set to public.
 
     .. attribute:: planned_time
 
@@ -66,7 +70,7 @@ class TimeInvestment(dd.Model):
         abstract = True
 
     closed = models.BooleanField(_("Closed"), default=False)
-    private = models.BooleanField(_("Private"), default=False)
+    private = models.BooleanField(_("Private"), default=True)
 
     planned_time = models.TimeField(
         _("Planned time"),
@@ -454,8 +458,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         if self.project:
             if not self.assigned_to and self.project.assign_to:
                 self.assigned_to = self.project.assign_to
-            if self.project.private:
-                self.private = True
+            if not self.project.private:
+                self.private = False
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
