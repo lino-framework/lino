@@ -248,15 +248,15 @@ class TicketDetail(dd.DetailLayout):
     """, label=_("General"))
     
     general1 = """
-    summary:40 id ticket_type:10
-    reporter project product site
+    summary:40 id reporter
+    site product project private
     workflow_buttons:20 assigned_to waiting_for
     """
 
     planning = dd.Panel("""
-    nickname:10 created modified reported_for #fixed_for
+    nickname:10 created modified reported_for #fixed_for ticket_type:10
     state duplicate_of planned_time priority
-    standby feedback private closed
+    standby feedback closed
     DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
     """, label=_("Planning"))
 
