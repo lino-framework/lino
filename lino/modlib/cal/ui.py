@@ -193,8 +193,8 @@ class Tasks(dd.Table):
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
 
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        # if ar.param_values.user:
+        #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
             yield unicode(ar.param_values.project)
@@ -361,8 +361,8 @@ class Guests(dd.Table):
         if ar.param_values.guest_state:
             yield unicode(ar.param_values.guest_state)
 
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        # if ar.param_values.user:
+        #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
             yield unicode(ar.param_values.project)
@@ -672,8 +672,8 @@ class Events(dd.Table):
         if pv.event_type:
             yield unicode(pv.event_type)
 
-        if pv.user:
-            yield unicode(pv.user)
+        # if pv.user:
+        #     yield unicode(pv.user)
 
         if pv.room:
             yield unicode(pv.room)

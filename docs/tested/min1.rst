@@ -24,8 +24,11 @@ Robin has twelve appointments in the period 20141023..20141122:
 
 >>> from lino.utils import i2d
 >>> pv = dict(start_date=i2d(20141023), end_date=i2d(20141122))
->>> rt.login('robin').show(cal.MyEvents, param_values=pv)
+>>> rt.login('robin').show(cal.MyEvents, param_values=pv, header_level=1)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+=======================================================================
+My appointments (Managed by Robin Rood, Dates 23.10.2014 to 22.11.2014)
+=======================================================================
 ====================== ===================== =============== ================
  When                   Calendar Event Type   Summary         Workflow
 ---------------------- --------------------- --------------- ----------------
@@ -101,7 +104,7 @@ Now test whether the file is really okay.
 Note that long titles are truncated:
 
 >>> print(s.name.strip())
-My appointments (Dates 23.10.20
+My appointments (Managed by Rol
 
 It has 4 columns and 13 rows:
 
