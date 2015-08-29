@@ -20,7 +20,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Clocking")
 
-    needs_plugins = ['lino.modlib.tickets', 'lino.modlib.excerpts']
+    needs_plugins = ['lino.modlib.tickets']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()

@@ -10,32 +10,81 @@ from django.conf import settings
 from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserProfiles
+from lino.core import actors
 
 
-def get_window_actions():
-    from lino.core.actors import actors_list
-    # ui = settings.SITE.kernel.default_ui
-    coll = dict()
-    for a in actors_list:
-        for ba in a.get_actions():
-            if ba.action.is_window_action():
-                wl = ba.get_window_layout() or ba.action.params_layout
-                if wl is not None:
-                    if isinstance(wl, basestring):
-                        raise Exception("20150323 : {0}".format(ba))
-                        # Was used to find Exception: 20150323 :
-                        # <BoundAction(plausibility.Checkers,
-                        # <ShowDetailAction detail (u'Detail')>)>
+class Analyzer(object):
+    
+    def __init__(self):
+        self._initialized = False
 
-                    if not wl in coll:
-                        # lh = wl.get_layout_handle(ui)
-                        # for e in lh.main.walk():
-                        #     e.loosen_requirements(a)
-                        coll[wl] = ba
-    return coll
+    def analyze(self):
+        if self._initialized:
+            return
+        self._initialized = True
+        window_actions = dict()
+        self.custom_actions = []
+        for a in actors.actors_list:
+            for ba in a.get_actions():
+                if ba.action.is_window_action():
+                    wl = ba.get_window_layout() or ba.action.params_layout
+                    if wl is not None:
+                        if isinstance(wl, basestring):
+                            raise Exception("20150323 : {0}".format(ba))
+                            # Was used to find Exception: 20150323 :
+                            # <BoundAction(plausibility.Checkers,
+                            # <ShowDetailAction detail (u'Detail')>)>
+
+                        if not wl in window_actions:
+                            # lh = wl.get_layout_handle(ui)
+                            # for e in lh.main.walk():
+                            #     e.loosen_requirements(a)
+                            window_actions[wl] = ba
+                else:  # if ba.action.custom_handler:
+                    self.custom_actions.append(ba)
+        l = list(window_actions.values())
+
+        def f(a, b):
+            return cmp(a.full_name(), b.full_name())
+        self.window_actions = list(sorted(l, f))
+        self.custom_actions = list(sorted(self.custom_actions, f))
+    
+    def show_window_fields(self):
+        self.analyze()
+        items = []
+        for ba in analyzer.window_actions:
+            items.append(
+                "{0} : {1}".format(
+                    ba.full_name(), layout_fields(ba)))
+
+        return rstgen.ul(items)
+
+    def show_window_permissions(self):
+        self.analyze()
+        items = []
+        for ba in analyzer.window_actions:
+            items.append(
+                "{0} : visible for {1}".format(
+                    ba.full_name(), visible_for(ba)))
+
+        return rstgen.ul(items)
+    
+    def show_action_permissions(self, *classes):
+        self.analyze()
+        items = []
+        for ba in analyzer.custom_actions + analyzer.window_actions:
+            if isinstance(ba.action, classes):
+                items.append(
+                    "{0} : visible for {1}".format(
+                        ba.full_name(), visible_for(ba)))
+
+        return rstgen.ul(items)
+    
+analyzer = Analyzer()
 
 
-def have_action(ba):
+def visible_for(ba):
+    """Shows a list of user profiles for which this action is visible."""
     if ba is None:
         return "N/A"
     visible = []
@@ -50,28 +99,12 @@ def have_action(ba):
         return "all"
     if len(visible) == 0:
         return "nobody"
-    if len(hidden) < len(visible):
-        return "all except %s" % ', '.join(hidden)
-    return ', '.join(visible)
+    # if len(hidden) < len(visible):
+    #     return "all except %s" % ', '.join(hidden)
+    return ' '.join(visible)
 
 
-def window_actions():
-    # settings.SITE.startup()
-    l = list(get_window_actions().values())
-
-    def f(a, b):
-        return cmp(a.full_name(), b.full_name())
-
-    items = []
-    for ba in sorted(l, f):
-        items.append(
-            "{0} (viewable for {1}) : {2}".format(
-                ba.full_name(), have_action(ba), fields(ba)))
-
-    return rstgen.ul(items)
-
-
-def fields(ba):
+def layout_fields(ba):
     wl = ba.get_window_layout() or ba.action.params_layout
     if wl is None:
         return ''
@@ -106,8 +139,8 @@ def py2rst(self, doctestfmt=False):
         s = "(%s)" % self.name
     else:
         s = "**%s** (%s)" % (unicode(self.label), self.name)
-    if have_action(self) != have_action(self.parent):
-        s += " [visible for %s]" % have_action(self)
+    if visible_for(self) != visible_for(self.parent):
+        s += " [visible for %s]" % visible_for(self)
     if isinstance(self, Container):
         use_ul = False
         for e in self.elements:

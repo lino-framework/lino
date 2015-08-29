@@ -36,6 +36,7 @@ blogs = dd.resolve_app('blogs')
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
@@ -48,13 +49,17 @@ class TimeInvestment(dd.Model):
 
     .. attribute:: closed
 
-       Whether this investment is closed, i.e. certain things should
-       not change anymore.
+        Whether this investment is closed, i.e. certain things should
+        not change anymore.
 
     .. attribute:: private
 
-       Whether this investment is private, i.e. should not be publicly
-       visible anywhere.
+        Whether this investment is private, i.e. should not be
+        publicly visible anywhere.
+        
+        The default value is True.  Tickets on public projects cannot
+        be private, but tickets on private projects may be manually
+        set to public.
 
     .. attribute:: planned_time
 
@@ -65,7 +70,7 @@ class TimeInvestment(dd.Model):
         abstract = True
 
     closed = models.BooleanField(_("Closed"), default=False)
-    private = models.BooleanField(_("Private"), default=False)
+    private = models.BooleanField(_("Private"), default=True)
 
     planned_time = models.TimeField(
         _("Planned time"),
@@ -97,7 +102,8 @@ class TicketType(mixins.BabelNamed):
         #~ verbose_name_plural = _('Repositories')
 
 
-class Project(TimeInvestment, mixins.Referrable, ContactRelated):
+class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
+              ContactRelated):
     """A **project** is something on which several users work together.
 
     .. attribute:: name
@@ -115,8 +121,8 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
         verbose_name_plural = _('Projects')
 
     name = models.CharField(_("Name"), max_length=200)
-    parent = models.ForeignKey(
-        'self', blank=True, null=True, verbose_name=_("Parent"))
+    # parent = models.ForeignKey(
+    #     'self', blank=True, null=True, verbose_name=_("Parent"))
     assign_to = dd.ForeignKey(
         settings.SITE.user_model,
         verbose_name=_("Assign tickets to"),
@@ -126,9 +132,21 @@ class Project(TimeInvestment, mixins.Referrable, ContactRelated):
     description = dd.RichTextField(_("Description"), blank=True)
     srcref_url_template = models.CharField(blank=True, max_length=200)
     changeset_url_template = models.CharField(blank=True, max_length=200)
+    # root = models.ForeignKey(
+    #     'self', blank=True, null=True, verbose_name=_("Root"))
 
     def __unicode__(self):
         return self.ref or self.name
+
+    # def save(self, *args, **kwargs):
+    #     root = self.parent
+    #     while root is not None:
+    #         if root.parent is None:
+    #             break
+    #         else:
+    #             root = root.parent
+    #     self.root = root
+    #     super(Project, self).save(*args, **kwargs)
 
 
 class Site(dd.Model):
@@ -144,43 +162,39 @@ class Site(dd.Model):
         return self.name
 
 
-class Milestone(dd.Model):  # mixins.Referrable):
+class Milestone(Certifiable):  # mixins.Referrable):
     """
     """
     class Meta:
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
-        ordering = ['project', 'label']
 
-    project = dd.ForeignKey(
-        'tickets.Project',
-        related_name='milestones_by_project')
-    label = models.CharField(_("Label"), max_length=20)
+    # project = dd.ForeignKey(
+    #     'tickets.Project',
+    #     related_name='milestones_by_project')
+    site = dd.ForeignKey(
+        'tickets.Site',
+        related_name='milestones_by_site', blank=True, null=True)
+    label = models.CharField(_("Label"), max_length=20, blank=True)
     expected = models.DateField(_("Expected for"), blank=True, null=True)
     reached = models.DateField(_("Reached"), blank=True, null=True)
-    #~ description = dd.RichTextField(_("Description"),blank=True,format='plain')
+    description = dd.RichTextField(_("Description"), blank=True)
+    changes_since = models.DateField(
+        _("Changes since"), blank=True, null=True,
+        help_text=_("In printed document include a list of "
+                    "other changes since this date"))
 
     #~ def __unicode__(self):
         #~ return self.label
 
     def __unicode__(self):
-        return "{0}:{1}".format(self.project, self.label)
-
-
-class Milestones(dd.Table):
-    model = 'tickets.Milestone'
-    detail_layout = """
-    project label expected reached id
-    TicketsFixed TicketsReported
-    """
-    insert_layout = """
-    project label
-    """
-
-
-class MilestonesByProject(Milestones):
-    master_key = 'project'
-    column_names = "label expected reached *"
+        label = self.label
+        if not label:
+            if self.reached:
+                label = self.reached.isoformat()
+            else:
+                label = "#{0}".format(self.id)
+        return "{0}:{1}".format(self.site, label)
 
 
 class Link(dd.Model):
@@ -289,21 +303,31 @@ class Link(dd.Model):
 class SpawnTicket(dd.Action):
     # label = _("Spawn new ticket")
     # label = "\u2611" "☑"
-    label = "⚇"  # "\u2687"
-    help_text = _("Spawn a new child ticket from this one.")
-    show_in_workflow = True
+    # label = "⚇"  # "\u2687"
+    show_in_workflow = False
     show_in_bbar = False
+
+    def __init__(self, label, link_type):
+        self.label = label
+        self.link_type = link_type
+        self.help_text = _(
+            "Spawn a new child ticket {0} this one.").format(
+            link_type.as_child())
+        super(SpawnTicket, self).__init__()
 
     def run_from_ui(self, ar, **kw):
         p = ar.selected_rows[0]
-        c = rt.modules.tickets.Ticket(reporter=ar.get_user())
+        c = rt.modules.tickets.Ticket(
+            reporter=ar.get_user(),
+            summary=_("New ticket {0} #{1}".format(
+                self.link_type.as_child(), p.id)))
         for k in ('project', 'private'):
             setattr(c, k, getattr(p, k))
         c.full_clean()
         c.save()
         d = rt.modules.tickets.Link(
             parent=p, child=c,
-            type=LinkTypes.requires)
+            type=self.link_type)
         d.full_clean()
         d.save()
         ar.success(
@@ -330,6 +354,11 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 
         If this field is empty and :attr:`project` is not empty, then
         default value is taken from :attr:`Project.assign_to`.
+
+    .. attribute:: waiting_for
+
+        An unformatted one-line text which describes what this ticket
+        is waiting for.
 
     """
     workflow_state_field = 'state'
@@ -359,7 +388,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         verbose_name='Reported for',
         blank=True, null=True,
         help_text=_("Milestone for which this ticket has been reported."))
-    fixed_for = dd.ForeignKey(
+    fixed_for = dd.ForeignKey(  # no longer used since 20150814
         'tickets.Milestone',
         related_name='tickets_fixed',
         verbose_name='Fixed for',
@@ -377,10 +406,10 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         related_name="reported_tickets",
         help_text=_("The user who reported this ticket."))
     state = TicketStates.field(default=TicketStates.new)
-    feedback = models.BooleanField(
-        _("Feedback"), default=False,
-        help_text=_("Ticket is waiting for feedback from somebody else."))
-    standby = models.BooleanField(_("Standby"), default=False)
+    waiting_for = models.CharField(
+        _("Waiting for"), max_length=200,
+        blank=True,
+        help_text=_("What to do next."))
 
     deadline = models.DateField(
         verbose_name=_("Deadline"),
@@ -390,7 +419,17 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         _("Priority"), default=0,
         help_text=_("Value between 0 and 100."))
 
-    spawn_ticket = SpawnTicket()
+    # deprecated fields:
+    feedback = models.BooleanField(
+        _("Feedback"), default=False,
+        help_text=_("Ticket is waiting for feedback from somebody else."))
+    standby = models.BooleanField(_("Standby"), default=False)
+
+    spawn_triggered = SpawnTicket(
+        _("Spawn triggered ticket"),
+        LinkTypes.triggers)
+    # spawn_triggered = SpawnTicket("⚇", LinkTypes.triggers)  # "\u2687"
+    # spawn_ticket = SpawnTicket("", LinkTypes.requires)  # "\u2687"
 
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id
@@ -416,8 +455,17 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         if False:
             if me and not self.project and me.current_project:
                 self.project = me.current_project
-        if not self.assigned_to and self.project and self.project.assign_to:
-            self.assigned_to = self.project.assign_to
+        if self.project:
+            if not self.assigned_to and self.project.assign_to:
+                self.assigned_to = self.project.assign_to
+            if not self.project.private:
+                self.private = False
+
+    def disabled_fields(self, ar):
+        rv = super(Ticket, self).disabled_fields(ar)
+        if self.project and not self.project.private:
+            rv.add('private')
+        return rv
 
     # def get_choices_text(self, request, actor, field):
     #     return "{0} ({1})".format(self, self.summary)
@@ -428,17 +476,17 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         return "#{0} ({1})".format(self.id, self.summary)
 
     @dd.chooser()
-    def reported_for_choices(cls, project):
-        if not project:
+    def reported_for_choices(cls, site):
+        if not site:
             return []
-        return project.milestones_by_project.filter(
-            reached__isnull=False)
+        # return site.milestones_by_site.filter(reached__isnull=False)
+        return site.milestones_by_site.all()
 
     @dd.chooser()
-    def fixed_for_choices(cls, project):
-        if not project:
+    def fixed_for_choices(cls, site):
+        if not site:
             return []
-        return project.milestones_by_project.all()
+        return site.milestones_by_site.all()
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
@@ -469,8 +517,32 @@ class Interest(dd.Model):
 # dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
+class Deployment(dd.Model):
+    """A **deployment** is the fact that a given ticket is being fixed (or
+    installed or activated) by a given milestone (to a given site).
+
+    Deployments are visible to the user either by ticket or by milestone.
+
+    """
+    class Meta:
+        verbose_name = _("Deployment")
+        verbose_name_plural = _('Deployments')
+
+    ticket = dd.ForeignKey('tickets.Ticket')
+    milestone = dd.ForeignKey('tickets.Milestone')
+    remark = dd.RichTextField(_("Remark"), blank=True, format="plain")
+
+    @dd.chooser()
+    def milestone_choices(cls, ticket):
+        if not ticket:
+            return []
+        if ticket.site:
+            return ticket.site.milestones_by_site.all()
+        return rt.modules.tickets.Milestone.objects.order_by('label')
+
+
 if False:  # removed current_project field because it caused circular
-           # dependency
+           # dependency (and was not useful)
     dd.inject_field(
         'users.User', 'current_project',
         dd.ForeignKey(

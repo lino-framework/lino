@@ -66,9 +66,9 @@ class Model(models.Model):
 
         Example of a context-sensitive chooser method::
 
-          country = models.ForeignKey(
+          country = dd.ForeignKey(
               'countries.Country', blank=True, null=True)
-          city = models.ForeignKey(
+          city = dd.ForeignKey(
               'countries.City', blank=True, null=True)
 
           @chooser()
@@ -93,8 +93,8 @@ class Model(models.Model):
         abstract = True
 
     allow_cascaded_delete = frozenset()
-    """A set of names of ForeignKey of GenericForeignKey fields of this
-    model that allow for cascaded delete.
+    """A set of names of `ForeignKey` or `GenericForeignKey` fields of
+    this model that allow for cascaded delete.
 
     If this is a simple string, Lino expects it to be a
     space-separated list of filenames and convert it into a set at
@@ -161,6 +161,13 @@ class Model(models.Model):
     on this model.
 
     """
+
+    # simple_parameters = frozenset()
+    # """If specified, this is the default value for :attr:`simple_parameters
+    # <lino.core.tables.AbstractTable.simple_parameters>` of every `Table`
+    # on this model.
+
+    # """
 
     preferred_foreignkey_width = None
     """The default preferred width (in characters) of widgets that
@@ -322,7 +329,7 @@ class Model(models.Model):
         return self._lino_default_table  # set in dbtables.py
 
     def disabled_fields(self, ar):
-        """Return a list of names of fields that should be disabled (not
+        """Return a set of names of fields that should be disabled (not
         editable) for this record.
 
         Usage example::
@@ -338,63 +345,14 @@ class Model(models.Model):
         return set()
 
     def delete(self, **kw):
-        # Double-check to avoid "murder bug" (20150623).
+        """
+        Double-check to avoid "murder bug" (20150623).
+
+        
+        """
         msg = self.disable_delete(None)
         if msg is not None:
             raise Warning(msg)
-        super(Model, self).delete(**kw)
-
-    def unused_delete(self, **kw):
-        """Before actually deleting an object, we override Django's behaviour
-        concerning related objects via a GFK field.
-
-        In Lino you can configure the cascading behaviour using
-        :attr:`allow_cascaded_delete`.
-
-        See also :doc:`/dev/gfks`.
-
-        It seems that Django deletes *generic related objects* only if
-        the object being deleted has a `GenericRelation
-        <https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
-        field (according to `Why won't my GenericForeignKey cascade
-        when deleting?
-        <http://stackoverflow.com/questions/6803018/why-wont-my-genericforeignkey-cascade-when-deleting>`_).
-        OTOH this statement seems to be wrong: it happens also in my
-        projects which do *not* use any `GenericRelation`.  As
-        :mod:`test_broken_gfk
-        <lino_welfare.projects.eupen.tests.test_broken_gfk>` shows.
-
-        TODO: instead of calling :meth:`disable_delete
-        <lino.core.model.Model.disable_delete>` here again (it has
-        been called earlier by the delete action before asking for user
-        confirmation), Lino might change the `on_delete` attribute of all
-        `ForeignKey` fields which are not in
-        :attr:`allow_cascaded_delete` from ``CASCADE`` to
-        ``PRTOTECTED`` at startup.
-
-        """
-
-        kernel = settings.SITE.kernel
-        # print "20141208 generic related objects for %s:" % obj
-        must_cascade = []
-        for gfk, fk_field, qs in kernel.get_generic_related(self):
-            if gfk.name in qs.model.allow_cascaded_delete:
-                must_cascade.append(qs)
-            else:
-                if fk_field.null:  # clear nullable GFKs
-                    for obj in qs:
-                        setattr(obj, gfk.name, None)
-                elif qs.count():
-                    raise Warning(self.delete_veto_message(
-                        qs.model, qs.count()))
-        for qs in must_cascade:
-            if qs.count():
-                logger.info("Deleting %d %s before deleting %s",
-                            qs.count(),
-                            qs.model._meta.verbose_name_plural,
-                            obj2str(self))
-            for obj in qs:
-                obj.delete()
         super(Model, self).delete(**kw)
 
     def delete_veto_message(self, m, n):
@@ -508,14 +466,14 @@ class Model(models.Model):
 
     def update_owned_instance(self, controllable):
         """
-        Called by :class:`lino.modlib.contenttypes.Controllable`.
+        Called by :class:`lino.modlib.gfks.Controllable`.
         """
         #~ print '20120627 tools.Model.update_owned_instance'
         pass
 
     def after_update_owned_instance(self, controllable):
         """
-        Called by :class:`lino.modlib.contenttypes.Controllable`.
+        Called by :class:`lino.modlib.gfks.Controllable`.
         """
         pass
 
@@ -844,12 +802,23 @@ action on individual instances.
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
 
-        It receives a `dict` object `fields` and is expected to
-        return a `dict` which it may update.
+        It receives a `dict` object `fields` and is expected to return
+        that `dict` which it may update.
+
+        See also :meth:`get_simple_parameters`.
 
         Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
+
         """
         return fields
+
+    @classmethod
+    def get_simple_parameters(cls):
+        """Return a set of names of simple parameter fields of every
+        `Table` on this model.
+
+        """
+        return set([])
 
     @classmethod
     def get_widget_options(self, name, **options):
@@ -958,6 +927,7 @@ LINO_MODEL_ATTRIBS = (
     'active_fields',
     'hidden_columns',
     'hidden_elements',
+    'get_simple_parameters',
     'get_default_table',
     'get_template_group',
     'get_related_project',
@@ -1007,7 +977,7 @@ def pre_delete_handler(sender, instance=None, **kw):
     confirmation), Lino might change the `on_delete` attribute of all
     `ForeignKey` fields which are not in
     :attr:`allow_cascaded_delete` from ``CASCADE`` to
-    ``PRTOTECTED`` at startup.
+    ``PROTECTED`` at startup.
 
     """
 
@@ -1030,5 +1000,5 @@ def pre_delete_handler(sender, instance=None, **kw):
                         qs.count(),
                         qs.model._meta.verbose_name_plural,
                         obj2str(instance))
-        for obj in qs:
-            obj.delete()
+            for obj in qs:
+                obj.delete()

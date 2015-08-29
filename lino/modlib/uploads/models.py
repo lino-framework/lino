@@ -17,7 +17,7 @@ from lino.api import dd, rt
 from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 

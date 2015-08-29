@@ -13,6 +13,7 @@ from django.conf import settings
 from lino.core.utils import obj2str
 
 from .roles import SiteUser
+from .exceptions import ChangedAPI
 
 
 class Permittable(object):
@@ -121,14 +122,14 @@ def make_permission_handler(*args, **kw):
         An additional custom permission handler
         
     `auth`
-
+        No longer supported.
         If True, permission is given only to authenticated users.  The
         default value of this is `True` when
         :attr:`lino.core.Site.user_model` is not None, or otherwise
         `False`.
         
     `owner`
-
+        No longer supported.
         If True, permission is given only to the author of the object.
         If False, permission is given only to users who are not the
         author of the object.  This requirement is allowed only on
@@ -163,6 +164,8 @@ def make_view_permission_handler_(
 
     if settings.SITE.user_profiles_module:
         def allow(action, profile):
+            # if action.action_name == "export_excel":
+            #     print 20150828, profile.role, required_roles
             return profile.has_required_roles(required_roles)
     else:
         def allow(action, profile):
@@ -210,29 +213,17 @@ def make_permission_handler_(
     if allow is None:
         if settings.SITE.user_profiles_module:
             def allow(action, user, obj, state):
+                # print 20150828, action, required_roles
                 return user.profile.has_required_roles(required_roles)
         else:
             def allow(action, user, obj, state):
                 return True
 
-    if True:  # e.g. public readonly site
-        if auth:
-            raise Exception("20150718 auth still used?")
-            allow_before_auth = allow
+    if auth:
+        raise ChangedAPI("20150718 auth no longer supported")
 
-            def allow(action, user, obj, state):
-                if not user.profile.has_required_roles([SiteUser]):
-                    return False
-                return allow_before_auth(action, user, obj, state)
-
-        if owner is not None:
-            raise Exception("20150718 owner still used?")
-            allow_owner = allow
-
-            def allow(action, user, obj, state):
-                if obj is not None and (user == obj.user) != owner:
-                    return False
-                return allow_owner(action, user, obj, state)
+    if owner is not None:
+        raise ChangedAPI("20150718 owner no longer supported")
 
     if allowed_states:
         if actor.workflow_state_field is None:

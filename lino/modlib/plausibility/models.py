@@ -13,7 +13,7 @@ from __future__ import unicode_literals, print_function
 from django.db import models
 
 from lino.core.utils import gfk2lookup
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
 from lino.core.roles import SiteStaff
 
@@ -167,10 +167,17 @@ class Problems(dd.Table):
         )
     params_layout = "user checker"
 
-    simple_parameters = ('user', 'checker')
+    # simple_parameters = ('user', 'checker')
     detail_layout = dd.DetailLayout("""
     user owner checker id
     message""", window_size=(70, 'auto'))
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Problems, cls).get_simple_parameters()
+        s.add('user')
+        s.add('checker')
+        return s
 
 
 class AllProblems(Problems):

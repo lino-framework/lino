@@ -7,7 +7,7 @@ It uses the following plugins:
 - :mod:`lino.modlib.system`
 - :mod:`lino.modlib.users`
 - :mod:`lino.modlib.contacts` (which needs :mod:`lino.modlib.countries`)
-- :mod:`lino.modlib.cal` (which needs :mod:`lino.modlib.contenttypes`)
+- :mod:`lino.modlib.cal` (which needs :mod:`lino.modlib.gfks`)
 - :mod:`lino.modlib.export_excel`
 
 .. autosummary::

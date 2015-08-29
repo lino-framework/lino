@@ -1,11 +1,2 @@
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.mixins.rst:25: WARNING: failed to import AccountInvoiceItem
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.mixins.rst:25: WARNING: failed to import Matchable
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.roles.rst:10: WARNING: failed to import ContactsStaff
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.roles.rst:10: WARNING: failed to import ContactsUser
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.roles.rst:10: WARNING: failed to import OfficeOperator
-/home/luc/hgwork/lino/docs/api/lino.modlib.ledger.roles.rst:10: WARNING: failed to import OfficeStaff
-/home/luc/hgwork/lino/docs/api/lino.modlib.sales.models.rst:25: WARNING: failed to import Matchable
-/home/luc/hgwork/lino/docs/api/lino.modlib.vat.models.rst:12: WARNING: failed to import AccountInvoiceItem
-/home/luc/hgwork/lino/docs/api/lino.modlib.vat.models.rst:12: WARNING: failed to import Matchable
-/home/luc/hgwork/lino/docs/api/lino.modlib.vatless.models.rst:14: WARNING: failed to import AccountInvoiceItem
-/home/luc/hgwork/lino/docs/api/lino.modlib.vatless.models.rst:14: WARNING: failed to import Matchable
+WARNING: [autosummary] failed to import u'lino.modlib.lino': no module named lino.modlib.lino (name=u'lino.modlib.lino', path=u'/home/luc/hgwork/lino/docs/api')
+None:None: WARNING: toctree contains reference to nonexisting document u'api/lino'

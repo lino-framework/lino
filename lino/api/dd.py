@@ -314,13 +314,8 @@ def resolve_plugin(app_label):
 from django.utils import translation
 get_language = translation.get_language
 
-from lino.core.roles import SiteStaff, SiteUser, SiteAdmin
+from lino.core.roles import SiteStaff, SiteUser, SiteAdmin, login_required
 
-
-def login_required(*args):
-    if len(args):
-        return set(args)
-    return set([SiteUser])
 
 # deprecated aliases:
 Required = required = login_required

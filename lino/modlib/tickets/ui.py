@@ -63,8 +63,7 @@ class ProjectDetail(dd.FormLayout):
     general = dd.Panel("""
     ref name parent type
     company assign_to #contact_person #contact_role private closed
-    description:30
-    ProjectsByParent:30 TicketsByProject
+    description ProjectsByParent
     # cal.EventsByProject
     """, label=_("General"))
 
@@ -75,7 +74,8 @@ class ProjectDetail(dd.FormLayout):
 
     history = dd.Panel("""
     srcref_url_template changeset_url_template
-    MilestonesByProject
+    #MilestonesByProject
+    TicketsByProject
     """, label=_("Timeline"))
 
 
@@ -107,7 +107,9 @@ class Projects(dd.Table):
             interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
-                qs = qs.filter(tickets_by_project__product__in=interests)
+                qs = qs.filter(
+                    tickets_by_project__product__in=interests,
+                    tickets_by_project__private=False)
         return qs
 
 
@@ -133,8 +135,8 @@ class Links(dd.Table):
     stay_in_grid = True
     detail_layout = dd.FormLayout("""
     parent
-    child
     type
+    child
     """, window_size=(40, 'auto'))
 
 
@@ -207,6 +209,12 @@ class LinksByTicket(Links):
             elems.append(_("No dependencies."))
 
         # Buttons for creating relationships:
+
+        sar = obj.spawn_triggered.request_from(ar)
+        if ar.renderer.is_interactive and sar.get_permission():
+            btn = sar.ar2button(obj)
+            elems += [E.br(), btn]
+        
         sar = self.insert_action.request_from(ar)
         if ar.renderer.is_interactive and sar.get_permission():
             actions = []
@@ -240,16 +248,16 @@ class TicketDetail(dd.DetailLayout):
     """, label=_("General"))
     
     general1 = """
-    summary:40 id ticket_type:10
-    reporter project product site
-    workflow_buttons:20 assigned_to priority closed
+    summary:40 id reporter
+    site product project private
+    workflow_buttons:20 assigned_to waiting_for
     """
 
     planning = dd.Panel("""
-    nickname:10 created modified reported_for fixed_for
-    state duplicate_of planned_time
-    standby feedback private
-    DuplicatesByTicket  #ChildrenByTicket
+    nickname:10 created modified reported_for #fixed_for ticket_type:10
+    state duplicate_of planned_time priority
+    standby feedback closed
+    DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
     """, label=_("Planning"))
 
 
@@ -305,7 +313,13 @@ class Tickets(dd.Table):
     reporter assigned_to interesting_for project state has_project
     show_assigned show_closed show_standby show_private \
     start_date end_date observed_event"""
-    simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
+    # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Tickets, cls).get_simple_parameters()
+        s |= set(('reporter', 'assigned_to', 'state', 'project'))
+        return s
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -316,11 +330,13 @@ class Tickets(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.interesting_for:
-            qs = qs.filter(Q(site=pv.interesting_for) | Q(site__isnull=True))
+
             interests = pv.interesting_for.interests_by_site.values(
                 'product')
             if len(interests) > 0:
-                qs = qs.filter(product__in=interests)
+                qs = qs.filter(
+                    Q(site=pv.interesting_for) |
+                    Q(product__in=interests, private=False))
 
         if pv.show_closed == dd.YesNo.no:
             qs = qs.filter(closed=False)
@@ -428,9 +444,9 @@ class TicketsToTriage(Tickets):
 
 class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
-    button_label = _("Talk")
-    order_by = ["-id"]
-    column_names = "overview:50 reporter:10 project planned_time priority " \
+    order_by = ["-priority", "-deadline", "-id"]
+    # order_by = ["-id"]
+    column_names = "overview:50  priority #deadline waiting_for " \
                    "workflow_buttons:40 *"
 
     @classmethod
@@ -441,16 +457,20 @@ class TicketsToTalk(Tickets):
 
 
 class TicketsToDo(Tickets):
+    """Shows a list of tickets "to do". This means attributed to me and
+    state "confirmed".
+
+    """
     label = _("Tickets to do")
-    button_label = _("To do")
     order_by = ["-priority", "-deadline", "-id"]
-    column_names = 'overview:50 priority deadline ' \
-                   'assigned_to:10 workflow_buttons:40 *'
+    column_names = 'overview:50 priority #deadline waiting_for ' \
+                   'workflow_buttons:40 *'
 
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(TicketsToDo, self).param_defaults(ar, **kw)
         kw.update(state=TicketStates.todo)
+        kw.update(assigned_to=ar.get_user())
         return kw
 
 
@@ -471,14 +491,14 @@ class ActiveTickets(Tickets):
         return kw
 
 
-class InterestingTickets(ActiveTickets):
-    label = _("Interesting tickets")
+# class InterestingTickets(ActiveTickets):
+#     label = _("Interesting tickets")
 
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(InterestingTickets, self).param_defaults(ar, **kw)
-        # kw.update(interesting_for=ar.get_user())
-        return kw
+#     @classmethod
+#     def param_defaults(self, ar, **kw):
+#         kw = super(InterestingTickets, self).param_defaults(ar, **kw)
+#         # kw.update(interesting_for=ar.get_user())
+#         return kw
 
 
 # class TicketsByPartner(Tickets):
@@ -519,7 +539,7 @@ class Sites(dd.Table):
     detail_layout = """
     id name partner
     remark
-    InterestsBySite TicketsBySite
+    InterestsBySite TicketsBySite MilestonesBySite
     """
 
 
@@ -549,3 +569,41 @@ class TicketsBySite(Tickets):
     master_key = 'site'
 
 
+class Milestones(dd.Table):
+    order_by = ['-id']
+    # order_by = ['label', '-id']
+    model = 'tickets.Milestone'
+    detail_layout = """
+    site id label expected reached changes_since printed
+    description
+    #TicketsFixed
+    TicketsReported DeploymentsByMilestone
+    #clocking.OtherTicketsByMilestone
+    """
+    insert_layout = dd.InsertLayout("""
+    site label
+    description
+    """, window_size=(50, 15))
+
+
+class MilestonesBySite(Milestones):
+    order_by = ['-label', '-id']
+    master_key = 'site'
+    column_names = "label reached expected id *"
+
+
+class Deployments(dd.Table):
+    model = 'tickets.Deployment'
+
+
+class DeploymentsByMilestone(Deployments):
+    label = _("Deployed tickets")
+    order_by = ['-ticket__id']
+    master_key = 'milestone'
+    column_names = "ticket:30 ticket__state:10 remark:30 *"
+
+
+class DeploymentsByTicket(Deployments):
+    order_by = ['-milestone__reached']
+    master_key = 'ticket'
+    column_names = "milestone__reached milestone  remark *"

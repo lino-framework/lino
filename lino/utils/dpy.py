@@ -127,7 +127,7 @@ from __future__ import unicode_literals
             self.stream.write('from lino.utils.dpy import create_mti_child\n')
             self.stream.write('from lino.utils.dbutils import resolve_model\n')
             self.stream.write(
-                'from lino.modlib.contenttypes.models import ContentType\n')
+                'from lino.modlib.gfks.models import ContentType\n')
             self.stream.write('from django.conf import settings\n')
             self.stream.write('''
             

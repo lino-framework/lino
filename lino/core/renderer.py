@@ -25,6 +25,7 @@ from lino.utils.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
 from lino.core import constants
+from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
 
@@ -93,19 +94,21 @@ class HtmlRenderer(object):
     def href(self, url, text):
         return E.a(text, href=url)
 
-    def show_table(self, ar, nosummary=False, stripped=True, **kw):
+    def show_table(self, *args, **kwargs):
+        return E.tostring(self.table2story(*args, **kwargs))
+
+    def table2story(self, ar, nosummary=False, stripped=True, **kw):
         """Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
 
-        This silently ignores the parameters `nosummary` and
-        `stripped` since for HTML they have no meaning.
+        This silently ignores the parameter `stripped` since for HTML
+        this has no meaning.
 
         """
         if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
-                return E.tostring(
-                    ar.actor.get_slave_summary(ar.master_instance, ar))
-        return E.tostring(ar.table2xhtml(**kw))
+                return ar.actor.get_slave_summary(ar.master_instance, ar)
+        return ar.table2xhtml(**kw)
 
     def action_call(self, request, bound_action, status):
         return None
@@ -316,10 +319,10 @@ request `tar`."""
                 elems.append(item)
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
-                elems.append(self.show_table(ar, **kwargs))
+                elems.append(self.table2story(ar, **kwargs))
             elif isinstance(item, TableRequest):
                 assert item.renderer is not None
-                elems.append(self.show_table(item, **kwargs))
+                elems.append(self.table2story(item, **kwargs))
             elif isiterable(item):
                 elems.append(self.show_story(ar, item, **kwargs))
                 # for i in self.show_story(item, *args, **kwargs):
@@ -327,6 +330,49 @@ request `tar`."""
             else:
                 raise Exception("Cannot handle %r" % item)
         return E.div(*elems)
+
+    def show_menu(self, ar, mnu, level=1):
+        """
+        Render the given menu as an HTML element.
+        Used for writing test cases.
+        """
+        if not isinstance(mnu, Menu):
+            assert isinstance(mnu, MenuItem)
+            if mnu.bound_action:
+                sr = mnu.bound_action.actor.request(
+                    action=mnu.bound_action,
+                    user=ar.user, subst_user=ar.subst_user,
+                    requesting_panel=ar.requesting_panel,
+                    renderer=self, **mnu.params)
+
+                url = sr.get_request_url()
+            else:
+                url = mnu.href
+            assert mnu.label is not None
+            if url is None:
+                return E.p()  # spacer
+            return E.li(E.a(mnu.label, href=url, tabindex="-1"))
+
+        items = [self.show_menu(ar, mi, level + 1) for mi in mnu.items]
+        #~ print 20120901, items
+        if level == 1:
+            return E.ul(*items, class_='nav navbar-nav')
+        if mnu.label is None:
+            raise Exception("%s has no label" % mnu)
+        if level == 2:
+            cl = 'dropdown'
+            menu_title = E.a(
+                unicode(mnu.label), E.b(' ', class_="caret"), href="#",
+                class_='dropdown-toggle', data_toggle="dropdown")
+        elif level == 3:
+            menu_title = E.a(unicode(mnu.label), href="#")
+            cl = 'dropdown-submenu'
+        else:
+            raise Exception("Menu with more than three levels")
+        return E.li(
+            menu_title,
+            E.ul(*items, class_='dropdown-menu'),
+            class_=cl)
 
 
 class TextRenderer(HtmlRenderer):
@@ -342,9 +388,52 @@ class TextRenderer(HtmlRenderer):
 
     def get_request_url(self, ar, *args, **kw):
         return None
+       
+    def menu2rst(self, ar, mnu, level=1):
+        """Used by :meth:`show_menu`."""
 
-    def show_table(self, ar, column_names=None, header_level=None,
-                   nosummary=False, stripped=True, **kwargs):
+        if not isinstance(mnu, Menu):
+            return unicode(mnu.label)
+
+        has_submenus = False
+        for i in mnu.items:
+            if isinstance(i, Menu):
+                has_submenus = True
+        items = [self.menu2rst(ar, mi, level + 1) for mi in mnu.items]
+        if has_submenus:
+            s = rstgen.ul(items).strip() + '\n'
+            if mnu.label is not None:
+                s = unicode(mnu.label) + ' :\n\n' + s
+        else:
+            s = ', '.join(items)
+            if mnu.label is not None:
+                s = unicode(mnu.label) + ' : ' + s
+        return s
+
+    def show_menu(self, ar, mnu, stripped=True, level=1):
+        """
+        Render the given menu as a reStructuredText
+        formatted bullet list.
+        Called from :meth:`lino.core.requests.BaseRequest.show_menu`.
+
+        :stripped: remove lots of blanklines which are necessary for
+                   reStructuredText but disturbing in a doctest
+                   snippet.
+
+        """
+        s = self.menu2rst(ar, mnu, level)
+        if stripped:
+            for ln in s.splitlines():
+                if ln.strip():
+                    print(ln)
+        else:
+            print(s)
+
+    def show_table(self, *args, **kwargs):
+        print(self.table2story(*args, **kwargs))
+
+    def table2story(self, ar, column_names=None, header_level=None,
+                    nosummary=False, stripped=True, **kwargs):
         """Render the given table request as reStructuredText to stdout.
         See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
         """
@@ -356,8 +445,7 @@ class TextRenderer(HtmlRenderer):
                     stripped=stripped)
                 if stripped:
                     s = s.strip()
-                print(s)
-                return
+                return s
 
         fields, headers, widths = ar.get_field_info(column_names)
 
@@ -369,11 +457,9 @@ class TextRenderer(HtmlRenderer):
             rows.append([x for x in ar.row2text(fields, row, sums)])
         if len(rows) == 0:
             s = unicode(ar.no_data_text)
-            if stripped:
-                print(s)
-            else:
-                print("\n", s, "\n")
-            return
+            if not stripped:
+                s = "\n" + s + "\n"
+            return s
 
         if not ar.actor.hide_sums:
             has_sum = False
@@ -391,9 +477,9 @@ class TextRenderer(HtmlRenderer):
             h = rstgen.header(header_level, ar.get_title())
             if stripped:
                 h = h.strip()
-            print(h)
+            s = h + "\n" + s
             # s = E.tostring(E.h2(ar.get_title())) + s
-        print(s)
+        return s
 
     def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as reStructuredText to stdout."""

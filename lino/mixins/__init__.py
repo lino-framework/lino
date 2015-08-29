@@ -269,7 +269,7 @@ from lino.modlib.printing.mixins import (
     DirectPrintAction, CachedPrintAction)
 
 from lino.mixins.duplicable import Duplicable, Duplicate
-from lino.mixins.sequenced import Sequenced, Hierarizable
+from lino.mixins.sequenced import Sequenced, Hierarchical
 from lino.mixins.periods import DatePeriod
 from lino.mixins.periods import ObservedPeriod, Yearly, Today
 from lino.mixins.polymorphic import Polymorphic

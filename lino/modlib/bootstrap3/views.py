@@ -40,13 +40,15 @@ def http_response(ar, tplname, context):
             assert bs3.renderer is not None
             url = bs3.build_plain_url()
             menu.add_url_button(url, label=_("Home"))
-        menu = menu.as_bootstrap_html(bs3.renderer, ar.request)
-        menu = E.tostring(menu)
+        # menu = menu.as_bootstrap_html(bs3.renderer, ar.request)
+        e = bs3.renderer.show_menu(ar, menu)
+        menu = E.tostring(e)
         MENUS[k] = menu
     context.update(menu=menu)
     context = ar.get_printable_context(**context)
     context['ar'] = ar
-    template = settings.SITE.jinja_env.get_template(tplname)
+    env = settings.SITE.plugins.jinja.renderer.jinja_env
+    template = env.get_template(tplname)
 
     response = http.HttpResponse(
         template.render(**context),

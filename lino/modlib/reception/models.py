@@ -41,6 +41,13 @@ system = dd.resolve_app('system')
 from lino.modlib.cal.workflows import GuestStates, EventStates
 from lino.modlib.office.roles import OfficeUser, OfficeOperator
 
+# lino.modlib.reception requires the `feedback` workflow. Before
+# adding new GuestStates, make sure that
+# `lino.modlib.cal.workflows.feedback` has been imported because this
+# will clear GuestStates
+
+import lino.modlib.cal.workflows.feedback
+
 add = GuestStates.add_item
 add('44', _("Waiting"), 'waiting')
 add('45', _("Busy"), 'busy')
@@ -176,15 +183,15 @@ class CheckinVisitor(dd.NotifyingAction):
 
 
 class MyVisitorAction(dd.Action):
+    readonly = False
 
     def get_action_permission(self, ar, obj, state):
         me = ar.get_user()
-        if obj.event.user != me and not isinstance(
-                me.profile.role, OfficeOperator):
+        if obj.event.user != me \
+           and not me.profile.has_required_roles([OfficeOperator]):
             return False
-        rv = super(
-            MyVisitorAction, self).get_action_permission(ar, obj, state)
-        return rv
+        return super(MyVisitorAction, self).get_action_permission(
+            ar, obj, state)
 
 
 class ReceiveVisitor(MyVisitorAction):
@@ -384,8 +391,6 @@ class Visitors(cal.Guests):
 
     No subclass should be editable because deleting would leave the
     useless cal.Event.
-
-
 
     """
     # debug_permissions = 20150227

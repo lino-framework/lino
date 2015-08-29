@@ -15,7 +15,7 @@ from django.conf import settings
 from django.db import models
 
 from lino.utils import AttrDict
-from lino.core import web
+# from lino.core import web
 from lino.api import dd
 
 from lino.utils.restify import restify
@@ -73,7 +73,9 @@ def render_node(request, node, template_name='pages/node.html', **context):
         body = restify(doc2rst(body))
     #~ logger.info("20121227 render_node %s -> body is %s",node,body)
     context.update(body=body)
-    return web.render_from_request(request, template_name, **context)
+    # return web.render_from_request(request, template_name, **context)
+    return dd.plugins.jinja.render_from_request(
+        request, template_name, **context)
 
 
 def get_all_pages():

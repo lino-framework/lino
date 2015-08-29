@@ -22,6 +22,7 @@ switched off to avoid browser questions.
 .. _faggio-demo: http://faggio-demo.lino-framework.org
 .. _ylle: http://ylle.lino-framework.org
 .. _vtp2014: http://vtp2014.lino-framework.org
+.. _team: http://team.lino-framework.org/
 
 
 Of general interest:
@@ -32,6 +33,7 @@ Of general interest:
 - belref_ : Official online demo of :ref:`belref`.
 - cosi-demo_ :    Official online demo of :ref:`cosi`.
 - faggio-demo_ :  Official online demo of :ref:`faggio` à la Roger
+- team_ : Official online demo of :mod:`lino_noi`.
 
 Specific to Belgium:
 

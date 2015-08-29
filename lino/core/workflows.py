@@ -171,6 +171,7 @@ class ChangeStateAction(actions.Action):
 
     show_in_bbar = False
     show_in_workflow = True
+    readonly = False
 
     def __init__(self, target_state, required_roles=None,
                  help_text=None, **kw):

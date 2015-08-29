@@ -22,6 +22,7 @@ from lino.core import layouts
 from lino.core.utils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.boundaction import BoundAction
+from lino.core.exceptions import ChangedAPI
 from lino.core.constants import _handle_attr_name
 from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import error2str
@@ -327,9 +328,6 @@ class Actor(actions.Parametrizable, Permittable):
     parameters = None
     "See :attr:`lino.core.utils.Parametrizable.parameters`."
 
-    simple_parameters = []
-    "A list of names of parameters which are automatically handled."
-
     _layout_class = layouts.ParamsLayout
 
     sort_index = 60
@@ -345,7 +343,25 @@ class Actor(actions.Parametrizable, Permittable):
 
     """
 
+    simple_parameters = None
+    """A set of names of filter parameters which are handled automatically.
+
+    Application developers should normally not set this attribute but
+    define a :meth:`get_simple_parameters` on the model.
+    If you set this attribute yourself, then 
+    :meth:`get_simple_parameters` will not be called.
+
+    """
+
     hidden_elements = frozenset()
+    """A set of names of layoutelements which are hidden by default.
+
+    The default is an empty set except for
+    :class:`lino.core.dbtables.Table` where this will be populated from
+    :attr:`hidden_elements <lino.core.model.Model.hidden_elements>`
+    of the :class:`lino.core.model.Model`.
+    """
+
     detail_html_template = 'bootstrap3/detail.html'
     list_html_template = 'bootstrap3/table.html'
 
@@ -643,8 +659,8 @@ class Actor(actions.Parametrizable, Permittable):
 
         """
         if hasattr(cls, 'required'):
-            raise Exception(
-                "{0} : convert required to required_roles".format(cls))
+            raise ChangedAPI(
+                "{0} must convert `required` to `required_roles`".format(cls))
         master = getattr(cls, 'master', None)
         if isinstance(master, basestring):
             cls.master = resolve_model(master)
@@ -660,6 +676,12 @@ class Actor(actions.Parametrizable, Permittable):
                 cls.parameters = params
         else:
             cls.parameters = cls.get_parameter_fields(**cls.parameters)
+
+        cls.simple_parameters = cls.get_simple_parameters()
+        # if cls.simple_parameters is None:
+        #     cls.simple_parameters = cls.get_simple_parameters()
+        # else:
+        #     raise ChangedAPI("20150829 {0}".format(cls))
 
     @classmethod
     def get_known_values(self):
@@ -901,6 +923,16 @@ class Actor(actions.Parametrizable, Permittable):
         if cls.model is None:
             return fields
         return cls.model.get_parameter_fields(**fields)
+
+    @classmethod
+    def get_simple_parameters(cls):
+        """Inheritable hook for defining which parameters are simple.
+        Expected to return a set of names of parameter fields.
+
+        """
+        if cls.model is None:
+            return set([])
+        return cls.model.get_simple_parameters()
 
     @classmethod
     def get_param_elem(self, name):

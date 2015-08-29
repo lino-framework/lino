@@ -9,15 +9,15 @@ from lino.modlib.office.roles import OfficeUser, SiteAdmin
 from lino.modlib.users.choicelists import UserProfiles
 
 
-class LedgerUser(UserRole):
-    pass
-
-
-class LedgerStaff(UserRole):
-    pass
-
-
 class AccountingReader(UserRole):
+    pass
+
+
+class LedgerUser(AccountingReader):
+    pass
+
+
+class LedgerStaff(LedgerUser):
     pass
 
 

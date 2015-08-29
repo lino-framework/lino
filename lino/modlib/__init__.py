@@ -7,16 +7,17 @@ A collection of ready-to-use plugins (Django calls them "apps") for
 Lino applications.
 
 "System plugins"
-=============
+================
 
 .. autosummary::
    :toctree:
 
-    contenttypes
+    gfks
     system
     printing
     excerpts
-    lino
+    jinja
+    lino_startup
     plausibility
     users
 

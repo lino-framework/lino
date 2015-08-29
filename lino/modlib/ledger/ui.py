@@ -214,6 +214,11 @@ class ExpectedMovements(dd.VirtualTable):
     def account(self, row, ar):
         return row.account
 
+    @dd.virtualfield(dd.ForeignKey(
+        'sepa.Account', verbose_name=_("Bank account")))
+    def bank_account(self, row, ar):
+        return row.bank_account
+
 
 class DebtsByAccount(ExpectedMovements):
     """
@@ -279,7 +284,12 @@ class PartnerVouchers(Vouchers):
         **Vouchers.parameters)
     params_layout = "partner project state journal year"
     params_panel_hidden = True
-    simple_parameters = ['partner', 'state']
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(PartnerVouchers, cls).get_simple_parameters()
+        s |= set(['partner', 'state'])
+        return s
 
 
 def mvtsum(**fkw):

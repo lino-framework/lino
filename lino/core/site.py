@@ -828,6 +828,23 @@ documentation.
 
     """
 
+    log_each_action_request = False
+    """Whether Lino should log every incoming request for non
+    :attr:`readonly <lino.core.actions.Action.readonly>` actions.
+
+    This is experimental. Theoretically it is useless to ask Lino for
+    logging every request since Apache does this. OTOH Lino can
+    produce more readable logs.
+
+    Note also that there is no warranty that actually *each* request
+    is being logged.  It corrently works only for requests that are
+    being processed by the kernel's :meth:`run_action
+    <lino.core.kernel.Kernel.run_action>` or
+    :meth:`run_callback
+    <lino.core.kernel.Kernel.run_callback>` methods.
+
+    """
+
     verbose_client_info_message = False
     """
     Set this to True if actions should send debug messages to the client.
@@ -1094,8 +1111,8 @@ documentation.
         )
 
     def run_djangosite_local(self):
-        """
-        See :doc:`/admin/djangosite_local`
+        """See :ref:`lino.djangosite_local`.
+
         """
         try:
             from djangosite_local import setup_site
@@ -1264,7 +1281,7 @@ documentation.
             self.update_settings(STATIC_URL='/static/')
         self.update_settings(
             TEMPLATE_LOADERS=tuple([
-                'lino.core.web.Loader',
+                'lino.modlib.jinja.loader.Loader',
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
                 #~ 'django.template.loaders.eggs.Loader',
@@ -1517,7 +1534,6 @@ documentation.
             self._starting_up = True
 
             from lino.core.signals import pre_startup, post_startup
-            from django.db.models import loading
 
             pre_startup.send(self)
 
@@ -1527,8 +1543,17 @@ documentation.
                     # In Django17+ we cannot say can_postpone=False,
                     # and we don't need to, because anyway we used it
                     # just for our hack in `lino.models`
-                    m = loading.load_app(p.app_name)
+                    # load_app(app_name) is deprecated
+                    # from django.apps import apps
+                    # m = apps.load_app(p.app_name)
+                    from django.utils.importlib import import_module
+                    try:
+                        m = import_module(p.app_name + '.models')
+                    except ImportError:
+                        m = "No module {0}.models".format(p.app_name)
+                        # self.logger.warning(m)
                 else:
+                    from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
                 self.modules.define(p.app_label, m)
@@ -1597,7 +1622,8 @@ documentation.
         name = '.'.join(module_name.split('.')[:-1])
         name += '.' + model_name
         rv = name in self.override_modlib_models
-        # self.logger.info("20140825 is_abstract_model %s -> %s", name, rv)
+        # self.logger.info("20150820 is_abstract_model %s -> %s (%s)",
+        #                  name, rv, self.override_modlib_models)
         return rv
 
     def is_installed_model_spec(self, model_spec):
@@ -1656,8 +1682,13 @@ documentation.
         installed app.
 
         """
-        from django.db.models import loading
-        for mod in loading.get_apps():
+        if AFTER17:
+            from django.apps import apps
+            apps = [a.models_module for a in apps.get_app_configs()]
+        else:
+            from django.db.models import loading
+            apps = loading.get_apps()
+        for mod in apps:
             meth = getattr(mod, methname, None)
             if meth is not None:
                 meth(self, *args)
@@ -1810,7 +1841,7 @@ documentation.
         # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
 
         self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label])
+            p for p in self.installed_plugins if p.ui_label is not None])
 
         # self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
 
@@ -2687,14 +2718,17 @@ site. :manage:`diag` is a command-line shortcut to this.
 
 
         """
-
-        from django.utils.translation import ugettext_lazy as _
-        from django.db.models import loading
+        if AFTER17:
+            from django.apps import apps
+            apps = [a.models_module for a in apps.get_app_configs()]
+        else:
+            from django.db.models import loading
+            apps = loading.get_apps()
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
     
-            for mod in loading.get_apps():
+            for mod in apps:
                 if hasattr(mod, methname):
                     msg = "{0} still has a function {1}(). \
 Please convert to Plugin method".format(mod, methname)
@@ -2780,8 +2814,10 @@ Please convert to Plugin method".format(mod, methname)
         implementation renders the :xfile:`admin_main.html` template.
 
         """
-        from lino.core import web
-        return web.render_from_request(request, 'admin_main.html')
+        return self.plugins.jinja.render_from_request(
+            request, 'admin_main.html')
+        # from lino.core import web
+        # return web.render_from_request(request, 'admin_main.html')
 
     def get_welcome_messages(self, ar):
         """
@@ -2826,14 +2862,15 @@ Please convert to Plugin method".format(mod, methname)
             yield 'django.contrib.admin'
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
+
         if self.default_ui == "extjs":
             yield 'lino.modlib.extjs'
             yield 'lino.modlib.bootstrap3'
+
         for a in self.local_apps:
             yield a
-        from lino import AFTER17
-        if not AFTER17:
-            yield "lino.modlib.lino"
+
+        yield "lino.modlib.lino_startup"
 
     site_prefix = '/'
     """The string to prefix to every URL of the Lino web interface.

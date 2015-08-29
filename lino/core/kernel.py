@@ -16,7 +16,8 @@ encapsulates a bunch of functionality which becomes available only
 then.
 
 TODO: Rename "kernel" to something else.  Because "kernel" suggests
-something which is loaded *in first place*, but
+something which is loaded *in first place*. That's not true for Lino's
+"kernel".
 
 """
 
@@ -37,13 +38,24 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 
 from django.db import models
-from django.db.models import loading
-from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.models import ContentType
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.apps import apps
+    get_models = apps.get_models
+    # def get_models(*args, **kwargs):
+    #     # print "20150822 gonna populate"
+    #     # apps.populate(settings.INSTALLED_APPS)
+    #     # print "20150822 ok"
+    #     return apps.get_models(*args, **kwargs)
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.db.models.loading import get_models
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino.utils import puts
+# from lino.utils import puts
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -52,7 +64,6 @@ from lino.core import fields
 from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
-from lino.core import web
 from lino.core import views
 from lino.utils import class_dict_items
 from lino.core.requests import ActorRequest
@@ -66,6 +77,8 @@ from .ddh import DisableDeleteHandler
 from .utils import resolve_model
 from .utils import is_devserver
 from .utils import full_model_name as fmn
+from .utils import obj2str
+# from .utils import format_request
 
 
 def set_default_verbose_name(f):
@@ -107,7 +120,6 @@ class Callback(object):
 
     """
     title = _('Confirmation')
-    #~ def __init__(self,yes,no):
 
     def __init__(self, ar, message):
         self.message = message
@@ -192,7 +204,7 @@ class Kernel(object):
             site.build_js_cache_on_startup = not (
                 settings.DEBUG or is_devserver())
 
-        web.site_setup(site)
+        # web.site_setup(site)
 
         for a in actors.actors_list:
             if a.get_welcome_messages is not None:
@@ -274,7 +286,7 @@ class Kernel(object):
             logger.info("Done %s (PID %s)", process_name, os.getpid())
         atexit.register(goodbye)
 
-        models_list = loading.get_models(include_auto_created=True)
+        models_list = get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 
         self.setup_model_spec(self, 'user_model')
@@ -315,7 +327,7 @@ class Kernel(object):
             # self.modules.define(model._meta.app_label, model.__name__, model)
 
             for f in model._meta.virtual_fields:
-                if isinstance(f, generic.GenericForeignKey):
+                if isinstance(f, GenericForeignKey):
                     kernel.GFK_LIST.append(f)
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
@@ -364,12 +376,45 @@ class Kernel(object):
                     """
                     If JobProvider is an MTI child of Company,
                     then mti.delete_child(JobProvider) must not fail on a
-                    JobProvider being refered only by objects that can refer
+                    JobProvider being referred only by objects that can refer
                     to a Company as well.
                     """
-                    if hasattr(f.rel.to, '_lino_ddh'):
-                        f.rel.to._lino_ddh.add_fk(m or model, f)
+                    if not hasattr(f.rel.to, '_lino_ddh'):
+                        raise Exception("20150824")
+                    f.rel.to._lino_ddh.add_fk(m or model, f)
 
+        # Set on_delete=PROTECT for FK fields that are not listed
+        # in `allow_cascaded_delete`.
+        for model in models_list:
+            for m, fk in model._lino_ddh.fklist:
+                if fk.rel.on_delete == models.CASCADE:
+                    if not fk.name in m.allow_cascaded_delete:
+                        msg = (
+                            "Setting {0}.{1}.on_delete to PROTECT because "
+                            "field is not specified in "
+                            "allow_cascaded_delete.").format(fmn(m), fk.name)
+                        logger.debug(msg)
+                        fk.rel.on_delete == models.PROTECT
+                else:
+                    if fk.name in m.allow_cascaded_delete:
+                        msg = ("{0}.{1} specified in allow_cascaded_delete "
+                               "but on_delete is not CASCADE").format(
+                            fmn(m), fk.name)
+                        raise Exception(msg)
+    
+                    if fk.rel.on_delete == models.SET_NULL:
+                        if not fk.null:
+                            msg = ("{0}.{1} has on_delete SET_NULL but "
+                                   "is not nullable ")
+                            msg = msg.format(fmn(m), fk.name, fk.rel.to)
+                            raise Exception(msg)
+
+                    else:
+                        msg = (
+                            "{0}.{1} has custom on_delete").format(
+                                fmn(m), fk.name, fk.rel.on_delete)
+                        logger.debug(msg)
+                
         for p in self.installed_plugins:
             if isinstance(p, Plugin):
                 p.before_analyze()
@@ -549,6 +594,10 @@ class Kernel(object):
 
         for c in cb.choices:
             if c.name == button_id:
+                a = ar.bound_action.action
+                if self.site.log_each_action_request and not a.readonly:
+                    logger.info("run_callback {0} {1} {2}".format(
+                        thread_id, cb.message, c.name))
                 c.func(ar)
                 return self.render_action_response(ar)
 
@@ -600,7 +649,20 @@ class Kernel(object):
         in a user-friendly way.
 
         """
+        
         a = ar.bound_action.action
+        if self.site.log_each_action_request and not a.readonly:
+            flds = []
+            A = flds.append
+            a = ar.bound_action.action
+            # A(a.__class__.__module__+'.'+a.__class__.__name__)
+            A(ar.get_user().username)
+            A(ar.bound_action.full_name())
+            A(obj2str(ar.master_instance))
+            A(obj2str(ar.selected_rows))
+            # A(format_request(ar.request))
+            logger.info("run_action {0}".format(' '.join(flds)))
+            # logger.info("run_action {0}".format(ar))
         try:
             a.run_from_ui(ar)
             if a.parameters and not a.no_params_window:
@@ -666,7 +728,7 @@ class Kernel(object):
         fn = join(settings.MEDIA_ROOT, fn)
         # fn = join(settings.STATIC_ROOT, fn)
         # fn = join(self.site.cache_dir, fn)
-        if not force and not self._must_build and os.path.exists(fn):
+        if not force and not self._must_build and exists(fn):
             mtime = os.stat(fn).st_mtime
             if mtime > self.code_mtime:
                 logger.debug("%s (%s) is up to date.", fn, time.ctime(mtime))

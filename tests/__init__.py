@@ -83,6 +83,9 @@ class DocsTests(LinoTestCase):
     def test_min1(self):
         self.run_simple_doctests("docs/tested/min1.rst")
 
+    def test_e006(self):
+        self.run_simple_doctests("docs/tested/e006.rst")
+
     def test_settings(self):
         self.run_simple_doctests('docs/dev/ad.rst')
 
@@ -119,6 +122,12 @@ class DocsTests(LinoTestCase):
     def test_tables(self):
         self.run_django_manage_test('docs/tutorials/tables')
     
+    def test_diamond(self):
+        self.run_django_manage_test('docs/tested/diamond')
+
+    def test_diamond2(self):
+        self.run_django_manage_test('docs/tested/diamond2')
+
     def test_addrloc(self):
         self.run_django_manage_test('docs/tutorials/addrloc')
     
@@ -138,7 +147,7 @@ class DocsTests(LinoTestCase):
         self.run_django_manage_test('docs/tutorials/letsmti')
 
     def test_gfks(self):
-        self.run_django_manage_test('docs/tutorials/gfks')
+        self.run_django_manage_test('docs/tutorials/gfktest')
 
     def test_mldbc(self):
         self.run_django_manage_test('docs/tutorials/mldbc')

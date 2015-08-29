@@ -24,7 +24,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Tickets")
 
-    # needs_plugins = ['lino.modlib.clocking']
+    needs_plugins = ['lino.modlib.excerpts']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
@@ -50,3 +50,4 @@ class Plugin(ad.Plugin):
         m.add_action('tickets.Links')
         # m.add_action('tickets.Sponsorships')
         m.add_action('tickets.Interests')
+        m.add_action('tickets.Deployments')

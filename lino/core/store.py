@@ -36,7 +36,13 @@ from django.db import models
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
-from django.contrib.contenttypes import generic
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
+
+
 
 from lino.utils.jsgen import py2js
 from lino.utils.quantities import parse_decimal
@@ -450,7 +456,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
                                 f.vf.return_type, fields.DisplayField):
                             self.always_disabled.add(f.name)
                             #~ print "20121010 always disabled:", f
-                elif not isinstance(f.field, generic.GenericForeignKey):
+                elif not isinstance(f.field, GenericForeignKey):
                     if not f.field.editable:
                         self.always_disabled.add(f.name)
 
@@ -531,8 +537,8 @@ class DisableEditingStoreField(SpecialStoreField):
 
 
 class BooleanStoreField(StoreField):
-    """A :class:`StoreField` for `BooleanField
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#booleanfield>`__.
+    """A :class:`StoreField` for
+    `BooleanField <https://docs.djangoproject.com/en/dev/ref/models/fields/#booleanfield>`__.
 
     """
 
@@ -606,8 +612,8 @@ class IntegerStoreField(StoreField):
 
 class AutoStoreField(StoreField):
 
-    """A :class:`StoreField` for `AutoField
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
+    """A :class:`StoreField` for 
+    `AutoField <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
 
     """
 
@@ -803,7 +809,7 @@ def create_atomizer(model, fld, name):
         return PasswordStoreField(fld, name)
     if isinstance(fld, models.OneToOneField):
         return OneToOneStoreField(fld, name)
-    if isinstance(fld, generic.GenericForeignKey):
+    if isinstance(fld, GenericForeignKey):
         return GenericForeignKeyField(fld, name)
     if isinstance(fld, fields.GenericForeignKeyIdField):
         return ComboStoreField(fld, name)

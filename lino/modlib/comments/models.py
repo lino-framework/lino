@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 
 from lino.api import dd
 from lino import mixins
@@ -21,7 +21,7 @@ from lino.modlib.users.mixins import ByUser, UserAuthored
 class Comment(
         mixins.CreatedModified,
         UserAuthored,
-        mixins.Hierarizable,
+        mixins.Hierarchical,
         Controllable):
     """The model definition."""
 

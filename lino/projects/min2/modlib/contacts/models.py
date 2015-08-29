@@ -22,6 +22,10 @@ from lino.modlib.dupable_partners.mixins import DupablePartner, DupablePerson
 
 
 class Partner(Partner, AddressOwner, mixins.CreatedModified, DupablePartner):
+    """A Partner as seen in `lino.projects.min2`.  It does not define any
+    specific field but inherits from a specific set of mixins.
+
+    """
 
     hidden_columns = 'created modified'
 
@@ -74,7 +78,7 @@ class PartnerDetail(PartnerDetail):
     """, label=_("Miscellaneous"))
 
 
-class Person(Partner, Person, DupablePerson):
+class Person(Person, Partner, DupablePerson):
     """
     Represents a physical person.
     """
@@ -143,8 +147,14 @@ class Persons(Persons):
     detail_layout = PersonDetail()
 
 
-class Company(Partner, Company):
+class Company(Company, Partner):
+    """A company as seen in `lino.projects.min2`.
 
+    .. attribute:: vat_id
+
+        The VAT identification number.
+
+    """
     class Meta:
         verbose_name = _("Organisation")
         verbose_name_plural = _("Organisations")
@@ -205,5 +215,4 @@ def my_details(sender, **kw):
 
     contacts.Partners.set_detail_layout(contacts.PartnerDetail())
     contacts.Companies.set_detail_layout(contacts.CompanyDetail())
-
 

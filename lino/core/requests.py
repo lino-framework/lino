@@ -345,7 +345,9 @@ request from it.
             requested_language=get_language())
 
         def parse(s):
-            return settings.SITE.jinja_env.from_string(s).render(**kw)
+            # return settings.SITE.jinja_env.from_string(s).render(**kw)
+            return dd.plugins.jinja.renderer.jinja_env.from_string(
+                s).render(**kw)
         kw.update(parse=parse)
         return kw
 
@@ -464,7 +466,8 @@ request from it.
 
     def render_jinja(self, template, **context):
         sar = copy(self)
-        sar.renderer = settings.SITE.kernel.html_renderer
+        # sar.renderer = settings.SITE.kernel.html_renderer
+        sar.renderer = settings.SITE.plugins.jinja.renderer
         context.update(ar=sar)
         # self.renderer = settings.SITE.plugins.bootstrap3.renderer
         return template.render(**context)
@@ -543,27 +546,6 @@ request from it.
         """
         return settings.SITE.kernel.html_renderer.show_story(
             self, story, *args, **kwargs)
-        # return ''.join([
-        #     E.tostring(i) for i in
-        #     settings.SITE.html_renderer.show_story(
-        #         self, story, *args, **kwargs)])
-            
-        raise Exception("Moved to HtmlRenderer.show_stor")
-        # from lino.core.actors import Actor
-        # from lino.core.tables import TableRequest
-        # for item in story:
-        #     if E.iselement(item):
-        #         yield item
-        #     elif isinstance(item, type) and issubclass(item, Actor):
-        #         yield self.show(item, *args, **kw)
-        #     elif isinstance(item, TableRequest):
-        #         assert item.renderer is not None
-        #         yield self.renderer.show_table(item)
-        #     elif isiterable(item):
-        #         for i in self.story2html(item, *args, **kw):
-        #             yield i
-        #     else:
-        #         raise Exception("Cannot handle %r" % item)
 
     def story2rst(self, story, *args, **kwargs):
         return self.renderer.show_story(self, story, *args, **kwargs)
@@ -615,7 +597,7 @@ request from it.
         ar = self.spawn(spec, **kwargs)
 
         def doit():
-            # print 20150512, ar.renderer
+            # print 20150822, ar.renderer
             if issubclass(ar.actor, Report):
                 story = ar.actor.get_story(None, ar)
                 return ar.renderer.show_story(self, story, stripped=stripped)
@@ -628,16 +610,12 @@ request from it.
                 return doit()
         return doit()
 
-    def show_menu(self, stripped=True, language=None):
-        """Print the main menu for the requesting user as a reStructuredText
-        formatted bullet list.
+    def show_menu(self, language=None, **kwargs):
+        """Show the main menu for the requesting user using the requested
+        renderer.
 
-        This is useful in tested docs.
+        This is uses in tested docs.
 
-        :stripped: remove lots of blanklines which are necessary for
-                   reStructuredText but disturbing in a doctest
-                   snippet.
-            
         :language: explicitly select another language than that
                    specified in the requesting user's :attr:`language
                    <lino.modlib.users.models.User.language>` field.
@@ -648,13 +626,7 @@ request from it.
             language = user.language
         with translation.override(language):
             mnu = settings.SITE.get_site_menu(None, user.profile)
-            s = mnu.as_rst(self)
-            if stripped:
-                for ln in s.splitlines():
-                    if ln.strip():
-                        print ln
-            else:
-                print s
+            self.renderer.show_menu(self, mnu, **kwargs)
 
     def get_home_url(self, *args, **kw):
         """Return URL to the "home page" as defined by the renderer, without
@@ -916,7 +888,8 @@ class ActorRequest(BaseRequest):
         if self.actor.handle_uploaded_files is not None:
             self.actor.handle_uploaded_files(elem, self.request)
 
-        self.ah.store.form2obj(self, self.request.POST, elem, True)
+        if self.request is not None:
+            self.ah.store.form2obj(self, self.request.POST, elem, True)
         elem.full_clean()
         return elem
 

@@ -119,8 +119,8 @@ lino.modlib.contacts
 lino.modlib.contacts.fixtures
 lino.modlib.contacts.management
 lino.modlib.contacts.management.commands
-lino.modlib.contenttypes
-lino.modlib.contenttypes.fixtures
+lino.modlib.gfks
+lino.modlib.gfks.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.courses
@@ -140,6 +140,7 @@ lino.modlib.excerpts.fixtures
 lino.modlib.export_excel
 lino.modlib.extensible
 lino.modlib.extjs
+lino.modlib.jinja
 lino.modlib.families
 lino.modlib.finan
 lino.modlib.finan.fixtures
@@ -152,9 +153,9 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.ledger
 lino.modlib.ledger.fixtures
-lino.modlib.lino
-lino.modlib.lino.management
-lino.modlib.lino.management.commands
+lino.modlib.lino_startup
+lino.modlib.lino_startup.management
+lino.modlib.lino_startup.management.commands
 lino.modlib.lists
 lino.modlib.lists.fixtures
 lino.modlib.notes

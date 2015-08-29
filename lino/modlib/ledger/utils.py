@@ -7,7 +7,7 @@ a group of matching movements.
 
 """
 
-from lino.api import rt
+from lino.api import rt, dd
 
 from lino.modlib.accounts.utils import ZERO
 
@@ -78,7 +78,7 @@ class DueMovement(object):
         self.trade_type = None
         self.has_unsatisfied_movement = False
         self.has_satisfied_movement = False
-        self.iban_bic = None
+        self.bank_account = None
 
         self.collect(mvt)
 
@@ -88,6 +88,10 @@ class DueMovement(object):
             self.collect(mvt)
 
     def collect(self, mvt):
+        """Add the given movement to the list of movements that are being
+        satisfied by this DueMovement.
+
+        """
         if mvt.satisfied:
             self.has_satisfied_movement = True
         else:
@@ -103,11 +107,15 @@ class DueMovement(object):
             due_date = voucher.get_due_date()
             if self.due_date is None or due_date < self.due_date:
                 self.due_date = due_date
-            iban_bic = voucher.get_iban_bic()
-            if self.iban_bic is None:
-                self.iban_bic = iban_bic
-            elif self.iban_bic != iban_bic:
-                raise Exception("More than one IBAN/BIC")
+            bank_account = voucher.get_bank_account()
+            if bank_account is not None:
+                if self.bank_account != bank_account:
+                    self.bank_account = bank_account
+                elif self.bank_account != bank_account:
+                    raise Exception("More than one IBAN/BIC")
+            # else:
+            #     dd.logger.info(
+            #         "20150810 no bank account for {0}".format(voucher))
 
         else:
             self.payments.append(mvt)

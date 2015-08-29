@@ -23,10 +23,12 @@ from django.conf import settings
 from django.db.models.fields.related import SingleRelatedObjectDescriptor
 from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
 from django.db.models.fields.related import ManyRelatedObjectsDescriptor
-from django.contrib.contenttypes import generic
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 from django.db.models.fields import NOT_PROVIDED
-
-from atelier import rstgen
 
 from lino.core import layouts
 from lino.core import fields
@@ -76,7 +78,6 @@ def form_field_name(f):
 
 
 def has_fk_renderer(fld):
-    #~ return isinstance(fld,(models.ForeignKey,generic.GenericForeignKey))
     return isinstance(fld, models.ForeignKey)
 
 
@@ -1946,7 +1947,6 @@ _FIELD2ELEM = (
     (models.NullBooleanField, BooleanFieldElement),
     #~ (models.ManyToManyField, M2mGridElement),
     (models.ForeignKey, ForeignKeyElement),
-    #~ (generic.GenericForeignKey, GenericForeignKeyElement),
 )
 
 TRIGGER_BUTTON_WIDTH = 3
@@ -2124,7 +2124,7 @@ def create_layout_element(lh, name, **kw):
                 return elems
         return create_field_element(lh, de, **kw)
 
-    if isinstance(de, generic.GenericForeignKey):
+    if isinstance(de, GenericForeignKey):
         # create a horizontal panel with 2 comboboxes
         de.primary_key = False  # for ext_store.Store()
         lh.add_store_field(de)

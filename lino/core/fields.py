@@ -2,9 +2,8 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines extended field classes like :class:`DisplayField`,
-:class:`RichTextField` and :class:`PercentageField`, utility functions
-like :func:`fields_list`.
+"""Defines extended database field classes and utility functions
+related to fields.
 
 """
 
@@ -20,7 +19,7 @@ from decimal import Decimal
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.contenttypes import generic
+
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 
@@ -31,6 +30,14 @@ from lino.core.utils import resolve_model
 from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
+
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey \
+        as DjangoGenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey \
+        as DjangoGenericForeignKey
 
 
 class PasswordField(models.CharField):
@@ -186,18 +193,31 @@ class FakeField(object):
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
 
+    # required by Django 1.8:
+    is_relation = False
+    concrete = False
+    auto_created = False
+    column = None
+    empty_values = set([None, ''])
+
     def is_enabled(self, lh):
         """
         Overridden by mti.EnableChild
         """
         return self.editable
 
+    def clean(self, raw_value, obj):
+        # needed for Django 1.8
+        pass
+
     def has_default(self):
         return self.default is not NOT_PROVIDED
 
 
 class RemoteField(FakeField):
-    """A field on a related object. Remote fields are created by
+    """A field on a related object.
+
+    Remote fields are created by
     :meth:`lino.core.model.Model.get_data_elem` when needed.
 
     """
@@ -207,6 +227,7 @@ class RemoteField(FakeField):
     def __init__(self, func, name, fld, **kw):
         self.func = func
         self.name = name
+        self.attname = name
         self.field = fld
         self.rel = self.field.rel
         self.verbose_name = fld.verbose_name
@@ -238,12 +259,13 @@ class RemoteField(FakeField):
 
 class DisplayField(FakeField):
     """A field to be rendered like a normal read-only form field, but with
-    plain HTML instead of an ``<input>`` tag.  This is to be used as
+    plain HTML instead of an ``<input>`` tag.  
+
+    This is to be used as
     the `return_type` of a :class:`VirtualField`.
 
     The value to be represented is either some unicode text, a
-    translatable text or a :mod:`HTML element
-    <lino.utils.xmlgen.html>`.
+    translatable text or a :mod:`HTML element <lino.utils.xmlgen.html>`.
 
     """
     choices = None
@@ -276,7 +298,7 @@ class DisplayField(FakeField):
 
 class HtmlBox(DisplayField):
     """Like :class:`DisplayField`, but to be rendered as a panel rather
-than as a form field.
+    than as a form field.
 
     """
     pass
@@ -336,11 +358,15 @@ class VirtualField(FakeField):
     def attach_to_model(self, model, name):
         self.model = model
         self.name = name
+        self.attname = name
         #~ self.return_type.name = name
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
         #~ self.lino_resolve_type(model,name)
-        model._meta.add_virtual_field(self)
+        if AFTER17:
+            model._meta.add_field(self, virtual=True)
+        else:
+            model._meta.add_virtual_field(self)
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
 
     def __repr__(self):
@@ -420,8 +446,9 @@ class VirtualField(FakeField):
         This special behaviour is needed to implement
         :class:`lino.utils.mti.EnableChild`.
         """
-        raise NotImplementedError("Cannot write %r to field %s" %
-                                  (value, self))
+        if value is not None:
+            raise NotImplementedError("Cannot write %r to field %s" %
+                                      (value, self))
 
     #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):
@@ -486,7 +513,7 @@ class RequestField(VirtualField):
 
 def displayfield(*args, **kw):
     """Decorator to turn a method into a :class:`VirtualField` of type
-:class:`DisplayField`.
+    :class:`DisplayField`.
 
     """
     return virtualfield(DisplayField(*args, **kw))
@@ -494,7 +521,7 @@ def displayfield(*args, **kw):
 
 def htmlbox(*args, **kw):
     """Decorator shortcut to turn a method into a a :class:`VirtualField`
-of type :class:`HtmlBox`.
+    of type :class:`HtmlBox`.
 
     """
     return virtualfield(HtmlBox(*args, **kw))
@@ -502,7 +529,8 @@ of type :class:`HtmlBox`.
 
 def requestfield(*args, **kw):
     """Decorator shortcut to turn a method into a a :class:`VirtualField`
-of type :class:`RequestField`.
+    of type :class:`RequestField`.
+
     """
     def decorator(fn):
         #~ def wrapped(*args):
@@ -513,13 +541,10 @@ of type :class:`RequestField`.
 
 
 class MethodField(VirtualField):
-
-    """
-    Not used. See `/blog/2011/1221`.
-    Similar to VirtualField, but the `get` argument to `__init__`
-    must be a string which is the name of a model method to be called
-    without a `request`.
-    """
+    # Not used. See `/blog/2011/1221`.
+    # Similar to VirtualField, but the `get` argument to `__init__`
+    # must be a string which is the name of a model method to be called
+    # without a `request`.
 
     def __init__(self, return_type, get, *args, **kw):
         self.args = args
@@ -547,7 +572,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
     for fields that part of a :term:`GFK` and you want
     Lino to render them using a Combobox.
 
-    Used by :class:`ml.contenttypes.Controllable`.
+    Used by :class:`lino.modlib.gfks.mixins.Controllable`.
     """
 
     def __init__(self, type_field, *args, **kw):
@@ -564,10 +589,12 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
         return name, path, args, kwargs
 
 
-class GenericForeignKey(generic.GenericForeignKey):
+class GenericForeignKey(DjangoGenericForeignKey):
 
-    """Add verbose_name and help_text to Django's GFK.  Used by
-    :class:`lino.mixins.Controllable`.
+    """Add verbose_name and help_text to Django's GFK.  
+
+    Used by
+    :class:`lino.modlib.gfks.mixins.Controllable`.
 
     """
 
@@ -576,7 +603,7 @@ class GenericForeignKey(generic.GenericForeignKey):
         self.verbose_name = verbose_name
         self.help_text = help_text
         self.dont_merge = dont_merge
-        generic.GenericForeignKey.__init__(self, ct_field, fk_field)
+        DjangoGenericForeignKey.__init__(self, ct_field, fk_field)
 
     def contribute_to_class(self, cls, name):
         """Automatically set-up chooser and display field for ID field of
@@ -615,7 +642,6 @@ class GenericForeignKey(generic.GenericForeignKey):
 class CharField(models.CharField):
 
     """
-
     An extension around Django's `models.CharField`.
 
     Adds two keywords `mask_re` and
@@ -651,13 +677,10 @@ class CharField(models.CharField):
 
 
 class QuantityField(CharField):
-
-    """A field that accepts 
-    :class:`lino.utils.quantities.Quantity`,
-    :class:`lino.utils.quantities.Percentage`
-    and
-    :class:`lino.utils.quantities.Duration`
-    values.
+    """A field that accepts :class:`Quantity
+    <lino.utils.quantities.Quantity>`, :class:`Percentage
+    <lino.utils.quantities.Percentage>` and :class:`Duration
+    <lino.utils.quantities.Duration>` values.
 
     Implemented as a CharField (sorting or filter ranges may not work
     as expected)
@@ -876,12 +899,17 @@ def fields_list(model, field_names):
 
 
 def ForeignKey(othermodel, *args, **kw):
-    """A wrapper function which returns a Django `ForeignKey
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`_
-    field, with a subtle difference in the signature: it supports
-    `othermodel` being `None` or the name of some non-installed model
-    and returns a :class:`DummyField` in that case.  This difference
-    is useful when designing reusable models.
+    """A wrapper function which returns a Django
+    `ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`__
+    field, with some subtle differences:
+
+    - It supports `othermodel` being `None` or the name of some
+      non-installed model and returns a :class:`DummyField` in that
+      case.  This difference is useful when designing reusable models.
+
+    - (CANCELLED) The default value for `on_delete
+      <https://docs.djangoproject.com/en/1.8/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+      is ``PROTECT`` instead of ``CASCADE``.
 
     """
     if othermodel is None:
@@ -889,13 +917,15 @@ def ForeignKey(othermodel, *args, **kw):
     if isinstance(othermodel, basestring):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
+
+    # kw.setdefault('on_delete', models.PROTECT)
     return models.ForeignKey(othermodel, *args, **kw)
 
 
 class CustomField(object):
-    """
-    Mixin to create a custom field. It defines a single method
-    :meth:`dd.CustomField.create_layout_elem`
+    """Mixin to create a custom field.
+
+    It defines a single method :meth:`create_layout_elem`.
 
     """
     def create_layout_elem(self, layout_handle, field, **kw):

@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 from lino.core.utils import gfk2lookup
 from lino.api import rt
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 
 from lino.utils.djangotest import RemoteAuthTestCase
 

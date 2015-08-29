@@ -35,18 +35,7 @@ class BoundAction(object):
         self.actor = actor
 
         required = set(actor.required_roles)
-        # if action.readonly:
-        #     pass  # required |= actor.required_roles
-        # elif isinstance(action, actions.DeleteSelected):
-        #     required |= actor.delete_required
-        # else:
-        #     required |= actor.update_required
         required |= action.required_roles
-
-        # if settings.SITE.user_model is not None:
-        #     if len(required) == 0:
-        #         from lino.modlib.users.choicelists import SiteUser
-        #         required.add(SiteUser)
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions
@@ -90,6 +79,11 @@ class BoundAction(object):
         """
         kw.update(parent=ar)
         return self.request(*args, **kw)
+
+    def run_from_session(self, ses, **kw):
+        ar = self.request_from(ses, **kw)
+        self.action.run_from_code(ar)
+        return ar.response
 
     def get_button_label(self, *args):
         return self.action.get_button_label(self.actor, *args)

@@ -4,26 +4,37 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import django
+import inspect
 
-from django.conf import settings
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
 from django.dispatch import receiver
 
+from lino import AFTER17
 from lino.core import fields
 from lino.core.signals import pre_analyze
 from lino.core.utils import resolve_model
+
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
 
 
 def clear_field_cache(self):
-    """
-    Modified copy of the Django 1.6 add_field method of django.db.models.options.Options
+    """Modified copy of the Django 1.6 add_field method of
+    django.db.models.options.Options
+
     Here we don't add a field, we just delete the cache variables.
+
     """
+    assert not AFTER17
+
     if hasattr(self, '_m2m_cache'):
         del self._m2m_cache
     if hasattr(self, '_field_cache'):
@@ -47,45 +58,64 @@ def clear_field_cache(self):
 
 
 def fix_field_cache(model):
+    """Remove duplicate entries in the field cache of the specified model
+    in order to fix Django issue #10808
+
     """
-    _fill_fields_cache
-    Remove duplicate entries in `_field_cache` to fix Django issue #10808
-    """
 
-    cache = []
-    field_names = set()
-    duplicates = []
-    for f, m in model._meta._field_cache:
-        if f.attname in field_names:
-            duplicates.append(f)
-        else:
-            field_names.add(f.attname)
-            cache.append((f, m))
+    if AFTER17:
+        from django.db.models.options import make_immutable_fields_list
+        new_cache = []
+        field_names = set()
+        duplicates = []
+        for f in model._meta.fields:
+            if f.attname in field_names:
+                duplicates.append(f)
+            else:
+                field_names.add(f.attname)
+                new_cache.append(f)
 
-    if len(duplicates) == 0:
-        return
-        #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
-    #~ if django.get_version().startswith('1.6'):
-        #~ return
+        if len(duplicates) == 0:
+            return
+            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+        model._meta.fields = make_immutable_fields_list('fields', new_cache)
 
-    model._meta._field_cache = tuple(cache)
-    model._meta._field_name_cache = [x for x, _ in cache]
-    #~ if model.__name__ in ('Company','Partner'):
-        #~ logger.info("20130106 fixed field_cache %s (%s)",model,' '.join(field_names))
+    else:
+        if not hasattr(model._meta, '_field_cache'):
+            return
+        field_cache = model._meta._field_cache
+
+        new_cache = []
+        field_names = set()
+        duplicates = []
+        for f, m in field_cache:
+            if f.attname in field_names:
+                duplicates.append(f)
+            else:
+                field_names.add(f.attname)
+                new_cache.append((f, m))
+
+        if len(duplicates) == 0:
+            return
+            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+
+        model._meta._field_cache = tuple(new_cache)
+        model._meta._field_name_cache = [x for x, _ in new_cache]
 
 
 @receiver(class_prepared)
 def on_class_prepared(sender, **kw):
-    """
-    This is Lino's general `class_prepared` handler.
+    """This is Lino's general `class_prepared` handler.
     It does two things:
     
     - Run pending calls to :func:`inject_field` and :func:`update_field`.
     
-    - Apply a workaround for Django's ticket 10808.
-      In a Diamond inheritance pattern, `_meta._field_cache` contains certain fields twice.    
-      So we remove these duplicate fields from `_meta._field_cache`.
-      (A better solution would be of course to not collect them.)
+    - Apply a workaround for Django's ticket 10808.  In a diamond
+      inheritance pattern, `_meta._field_cache` contains certain
+      fields twice.  So we remove these duplicate fields from
+      `_meta._field_cache`.  (A better solution would be of course to
+      not collect them.)
+
     """
     #~ if sender.__name__ in ('Company','Partner'):
     #~ print("20131110 on_class_prepared",sender)
@@ -108,16 +138,13 @@ def on_class_prepared(sender, **kw):
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
 
-    """
-    django.db.models.options
-    """
-    if hasattr(model._meta, '_field_cache'):
+    if AFTER17:
+        #model._meta._expire_cache()
+        fix_field_cache(model)
+    else:
         fix_field_cache(model)
     #~ else:
         # ~ logger.info("20131110 Could not fix Django issue #10808 for %s",model)
-
-
-import inspect
 
 
 def fmt(func_caller):
@@ -130,11 +157,9 @@ def fmt(func_caller):
 
 
 @receiver(pre_analyze)
-# def check_pending_injects(signal,sender,models_list=None,**kw):
 def check_pending_injects(sender, models_list=None, **kw):
     # raise Exception(20150304)
     # called from kernel.analyze_models()
-    site = sender
     #~ logger.info("20130212 check_pending_injects()...")
     if PENDING_INJECTS:
         msg = ''
@@ -152,13 +177,15 @@ def check_pending_injects(sender, models_list=None, **kw):
     """
     20130106
     now we loop a last time over each model and fill it's _meta._field_cache
-    otherwise if some application module used inject_field() on a model which 
+    otherwise if some application module used inject_field() on a model which
     has subclasses, then the new field would not be seen by subclasses
     """
-    #~ for model in models.get_models():
     for model in models_list:
-        clear_field_cache(model._meta)
-        model._meta._fill_fields_cache()
+        if AFTER17:
+            model._meta._expire_cache()
+        else:
+            clear_field_cache(model._meta)
+            model._meta._fill_fields_cache()
         fix_field_cache(model)
 
 
@@ -241,14 +268,14 @@ def inject_field(model_spec, name, field, doc=None):
     The following code::
 
         class Foo(dd.Model):
-           field1 = models.ForeignKey(...)
+           field1 = dd.ForeignKey(...)
 
         dd.inject_field(Foo, 'field2', models.CharField(max_length=20))
 
     is functionally equivalent to this code::
 
         class Foo(dd.Model):
-           field1 = models.ForeignKey(Bar)
+           field1 = dd.ForeignKey(Bar)
            field2 = models.CharField(max_length=20)
 
     Because `inject_field` is usually called at the global level of
@@ -267,9 +294,12 @@ def inject_field(model_spec, name, field, doc=None):
         field.__doc__ = doc
 
     def todo(model):
-        #~ logger.info("20131110 gonna inject_field %s %s",model.__name__,name)
+        # logger.info("20150820 gonna inject_field %s %s", model.__name__, name)
         model.add_to_class(name, field)
-        model._meta._fill_fields_cache()
+        if AFTER17:
+            pass  # model._meta._expire_cache()
+        else:
+            model._meta._fill_fields_cache()
         fix_field_cache(model)
 
     return do_when_prepared(todo, model_spec)
@@ -313,7 +343,7 @@ def inject_quick_add_buttons(model, name, target):
     """
     Injects a virtual display field `name` into the specified `model`.
     This field will show up to three buttons
-    `[New]` `[Show last]` `[Show all]`. 
+    `[New]` `[Show last]` `[Show all]`.
     `target` is the table that will run these actions.
     It must be a slave of `model`.
     """
@@ -325,3 +355,13 @@ def inject_quick_add_buttons(model, name, target):
     inject_field(model, name,
                  fields.VirtualField(fields.DisplayField(
                      tm._meta.verbose_name_plural), fn))
+
+
+def django_patch():
+    """Remove duplicate entries in the field cache of models to fix
+    Django ticket :djangoticket:`10808`.
+
+    Used by :doc:`/tested/diamond2/index`.
+
+    """
+    check_pending_injects(None, get_models())

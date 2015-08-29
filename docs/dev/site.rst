@@ -126,9 +126,10 @@ These will go into the :setting:`INSTALLED_APPS` setting (but
 django.contrib.staticfiles
 lino.modlib.about
 lino.modlib.extjs
+lino.modlib.jinja
 lino.modlib.bootstrap3
 lino.modlib.notes
-lino.modlib.lino
+lino.modlib.lino_startup
 lino.modlib.appypod
 lino.modlib.printing
 lino.modlib.system
@@ -136,7 +137,8 @@ lino.modlib.users
 lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
-lino.modlib.contenttypes
+django.contrib.contenttypes
+lino.modlib.gfks
 lino.modlib.cal
 lino.modlib.export_excel
 django.contrib.sessions
@@ -180,8 +182,9 @@ These are the Django settings which Lino will override:
  'INSTALLED_APPS': ('django.contrib.staticfiles',
                     'lino.modlib.about',
                     'lino.modlib.extjs',
+                    'lino.modlib.jinja',
                     'lino.modlib.bootstrap3',
-                    'lino.modlib.lino'),
+                    'lino.modlib.lino_startup'),
  'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'LOGGING': {'disable_existing_loggers': True,
@@ -204,7 +207,7 @@ These are the Django settings which Lino will override:
                                  'django.core.context_processors.i18n',
                                  'django.core.context_processors.media',
                                  'django.core.context_processors.static'),
- 'TEMPLATE_LOADERS': ('lino.core.web.Loader',
+ 'TEMPLATE_LOADERS': ('lino.modlib.jinja.loader.Loader',
                       'django.template.loaders.filesystem.Loader',
                       'django.template.loaders.app_directories.Loader'),
  '__file__': '...'}

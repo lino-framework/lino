@@ -424,8 +424,9 @@ class Voucher(UserAuthored, mixins.Registrable):
         return self.items.model(**kw)
         #~ return super(AccountInvoice,self).add_voucher_item(**kw)
 
-    def get_iban_bic(self):
-        """Return either None or a tuple `(iban, bic)`. This is called by
+    def get_bank_account(self):
+        """Return the `sepa.Account` object to which this voucher is to be
+        paid. This is needed by
         :class:`lino.modlib.ledger.utils.DueMovement`.
 
         """

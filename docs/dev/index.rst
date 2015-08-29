@@ -157,7 +157,7 @@ Special topics
    /tutorials/auto_create/index
    /tutorials/pisa/index
    /tutorials/input_mask/index
-   /tutorials/gfks/index
+   /tutorials/gfktest/index
 
 Drafts
 ======

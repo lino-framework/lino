@@ -419,6 +419,7 @@ class ChoiceList(tables.AbstractTable):
             #~ raise Exception("Cannot define items on the base class")
         is_duplicate = False
         if i.value in cls.items_dict:
+            raise Exception("Duplicate value %r in %s." % (i.value, cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
         i.attach(cls)
@@ -518,9 +519,8 @@ Django creates copies of them when inheriting models.
     @classmethod
     def get_by_name(self, name, *args):
         """
-        Accepts the case that `name` is `None` (returns `None` then).
+        Supports the case that `name` is `None` (returns `None` then).
         """
-        #~ return getattr(self,name,*args)
         if name:
             return getattr(self, name, *args)
         else:

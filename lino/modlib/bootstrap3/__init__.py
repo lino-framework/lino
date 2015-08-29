@@ -18,6 +18,8 @@ class Plugin(Plugin):
 
     # site_js_snippets = ['snippets/plain.js']
 
+    needs_plugins = ['lino.modlib.jinja']
+
     url_prefix = 'bs3'
 
     media_name = 'bootstrap-3.3.4'

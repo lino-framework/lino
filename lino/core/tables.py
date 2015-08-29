@@ -14,8 +14,6 @@ import yaml
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes import generic
-# from django.core.exceptions import PermissionDenied
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -27,6 +25,12 @@ from lino.core.tablerequest import TableRequest
 # from lino.core.utils import Handle
 from lino.core.utils import gfk2lookup
 # from lino.utils.xmlgen.html import E
+
+from lino import AFTER17
+if AFTER17:
+    from django.contrib.contenttypes.fields import GenericForeignKey
+else:
+    from django.contrib.contenttypes.generic import GenericForeignKey
 
 
 class InvalidRequest(Exception):
@@ -558,7 +562,7 @@ method in order to sort the rows of the queryset.
             # UsersWithClients as "slave" of the "table" Home
         elif self.master is models.Model:
             pass
-        elif isinstance(self.master_field, generic.GenericForeignKey):
+        elif isinstance(self.master_field, GenericForeignKey):
             kw = gfk2lookup(self.master_field, master_instance, **kw)
         elif self.master_field is not None:
             if master_instance is None:

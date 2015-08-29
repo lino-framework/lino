@@ -24,8 +24,11 @@ Robin has twelve appointments in the period 20141023..20141122:
 
 >>> from lino.utils import i2d
 >>> pv = dict(start_date=i2d(20141023), end_date=i2d(20141122))
->>> rt.login('robin').show(cal.MyEvents,param_values=pv)
+>>> rt.login('robin').show(cal.MyEvents, param_values=pv, header_level=1)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
+=======================================================================
+My appointments (Managed by Robin Rood, Dates 23.10.2014 to 22.11.2014)
+=======================================================================
 ====================== ===================== =============== ================
  When                   Calendar Event Type   Summary         Workflow
 ---------------------- --------------------- --------------- ----------------
@@ -51,6 +54,21 @@ detailed information about the grid columns: their widths (``cw``),
 whether they are hidden (``ch``) and their ordering (``ci``). This is
 necessary because we want the resulting `.xls` sheet to reflect
 if the client has changed these.
+
+.. intermezzo 20150828
+
+    >>> cal.MyEvents.model.manager_roles_required
+    set([<class 'lino.modlib.office.roles.OfficeStaff'>])
+    >>> ba = cal.MyEvents.get_action_by_name("export_excel")
+    >>> u = rt.login('robin').user
+    >>> ba.actor.get_view_permission(u.profile)
+    True
+    >>> ba.action.get_view_permission(u.profile)
+    True
+    >>> ba.allow_view(u.profile)
+    True
+    >>> ba.get_view_permission(u.profile)
+    True
 
 >>> url = "/api/cal/MyEvents?_dc=1414106085710"
 >>> url += "&cw=411&cw=287&cw=411&cw=73&cw=274&cw=140&cw=274&cw=220&cw=220&cw=220&cw=287&cw=181&cw=114&cw=181&cw=114&cw=170&cw=73&cw=73&cw=274&cw=140&cw=274&cw=274&cw=181&cw=274&cw=140"
@@ -86,7 +104,7 @@ Now test whether the file is really okay.
 Note that long titles are truncated:
 
 >>> print(s.name.strip())
-My appointments (Dates 23.10.20
+My appointments (Managed by Rol
 
 It has 4 columns and 13 rows:
 

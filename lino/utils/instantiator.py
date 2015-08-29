@@ -35,13 +35,13 @@ from dateutil import parser as dateparser
 
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.generic import GenericForeignKey
-# from django.contrib.contenttypes.models import ContentType
 
 from lino.core.utils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d  # for backward compatibility of .py fixtures
 from lino.core.utils import obj2str
+
+from lino import AFTER17
 
 
 class DataError(Exception):
@@ -194,6 +194,11 @@ class ManyToManyConverter(LookupConverter):
 
 
 def make_converter(f, lookup_fields={}):
+    if AFTER17:
+        from django.contrib.contenttypes.fields import GenericForeignKey
+    else:
+        from django.contrib.contenttypes.generic import GenericForeignKey
+    
     if isinstance(f, models.ForeignKey):
         return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))
     if isinstance(f, GenericForeignKey):

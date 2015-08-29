@@ -14,6 +14,7 @@ The ``lino.core`` package
     dbtables
     dbutils
     ddh
+    exceptions
     fields
     frames
     inject
@@ -36,7 +37,6 @@ The ``lino.core`` package
     urls
     utils
     views
-    web
     workflows
 
 

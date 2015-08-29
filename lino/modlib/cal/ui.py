@@ -22,6 +22,7 @@ from .workflows import TaskStates
 from .workflows import GuestStates
 from .workflows import EventStates
 from .mixins import daterange_text
+from .utils import when_text
 
 
 class RemoteCalendars(dd.Table):
@@ -192,8 +193,8 @@ class Tasks(dd.Table):
         if ar.param_values.state:
             yield unicode(ar.param_values.state)
 
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        # if ar.param_values.user:
+        #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
             yield unicode(ar.param_values.project)
@@ -360,8 +361,8 @@ class Guests(dd.Table):
         if ar.param_values.guest_state:
             yield unicode(ar.param_values.guest_state)
 
-        if ar.param_values.user:
-            yield unicode(ar.param_values.user)
+        # if ar.param_values.user:
+        #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
             yield unicode(ar.param_values.project)
@@ -671,8 +672,8 @@ class Events(dd.Table):
         if pv.event_type:
             yield unicode(pv.event_type)
 
-        if pv.user:
-            yield unicode(pv.user)
+        # if pv.user:
+        #     yield unicode(pv.user)
 
         if pv.room:
             yield unicode(pv.room)
@@ -810,7 +811,7 @@ class MyEvents(Events):
     """
     label = _("My appointments")
     help_text = _("Table of my appointments.")
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.login_required(OfficeUser)
     column_names = 'when_text project event_type summary workflow_buttons *'
     auto_fit_column_widths = True
 

@@ -2,13 +2,13 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
-:class:`Hierarizable`.
+:class:`Hierarchical`.
 
 A `Sequenced` is something which has a sequence number and thus a sort
 order which can be manipulated by the user using actions
 :class:`MoveUp` and :class:`MoveDown`.
 
-:class:`Hierarizable` is a :class:`Sequenced` with a `parent` field.
+:class:`Hierarchical` is a :class:`Sequenced` with a `parent` field.
 
 .. autosummary::
 
@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.exceptions import ValidationError
 
 
 from lino.core import actions
@@ -246,7 +247,7 @@ class Sequenced(Duplicable):
         return E.p(*l)
 
 
-class Hierarizable(Sequenced):
+class Hierarchical(Duplicable):
     """Abstract model mixin for things that have a "parent" and
     "siblings".
 
@@ -265,14 +266,14 @@ class Hierarizable(Sequenced):
         return self.__class__.objects.filter(parent__isnull=True)
 
     #~ def save(self, *args, **kwargs):
-        #~ super(Hierarizable, self).save(*args, **kwargs)
+        #~ super(Hierarchical, self).save(*args, **kwargs)
     def full_clean(self, *args, **kwargs):
         p = self.parent
         while p is not None:
             if p == self:
                 raise ValidationError("Cannot be your own ancestor")
             p = p.parent
-        super(Hierarizable, self).full_clean(*args, **kwargs)
+        super(Hierarchical, self).full_clean(*args, **kwargs)
 
     def is_parented(self, other):
         if self == other:
@@ -291,4 +292,32 @@ class Hierarizable(Sequenced):
             p = p.parent
         return rv
 
+    def get_parental_line(self):
+        """A top-level project is its own root."""
+        obj = self
+        tree = [obj]
+        while obj.parent is not None:
+            obj = obj.parent
+            if obj in tree:
+                raise Exception("Circular parent")
+            tree.insert(0, obj)
+        return tree
+
+    def whole_clan(self):
+        # TODO: go deeper but check for circular references
+        clan = set([self])
+        l1 = self.__class__.objects.filter(parent=self)
+        if l1.count() == 0:
+            return clan
+        clan |= set(l1)
+        l2 = self.__class__.objects.filter(parent__in=l1)
+        if l2.count() == 0:
+            return clan
+        clan |= set(l2)
+        l3 = self.__class__.objects.filter(parent__in=l2)
+        if l3.count() == 0:
+            return clan
+        clan |= set(l3)
+        # print 20150421, projects
+        return clan
 

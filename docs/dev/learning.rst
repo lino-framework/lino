@@ -56,6 +56,8 @@ SQL
 ===
 
 - `SQL Tutorial <http://www.w3schools.com/sql/>`_
+- `A Beginner’s Guide to SQL
+  <https://blog.udemy.com/beginners-guide-to-sql/>`__
 
 Debian
 ======

@@ -33,7 +33,7 @@ from .workflows import EventStates
 from lino.modlib.office.roles import OfficeStaff
 
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 
 
 def format_time(t):
@@ -742,9 +742,7 @@ class Component(StartedSummaryDescription,
 
     """
     workflow_state_field = 'state'
-
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     class Meta:
         abstract = True

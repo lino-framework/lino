@@ -21,7 +21,7 @@ from lino.api import dd, rt
 from lino import mixins
 from django.conf import settings
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.modlib.outbox.mixins import MailableType, Mailable
 from lino.modlib.contacts.mixins import ContactRelated
@@ -114,8 +114,7 @@ class Note(mixins.TypedPrintable,
 
     """
 
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Note')

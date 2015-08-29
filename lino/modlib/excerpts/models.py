@@ -35,7 +35,7 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
-from lino.modlib.contenttypes.mixins import Controllable
+from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.users.choicelists import SiteAdmin
 
@@ -196,15 +196,15 @@ We override everything in Excerpt to not call the class method.""")
     def body_template_choices(cls, content_type):
         # 20140617 don't remember why the "excerpts" group was useful here
         # tplgroups = [model_group(content_type.model_class()), 'excerpts']
-        # return settings.SITE.list_templates('.body.html', *tplgroups)
+        # return dd.plugins.jinja.list_templates('.body.html', *tplgroups)
 
         tplgroup = content_type.model_class().get_template_group()
-        return settings.SITE.list_templates('.body.html', tplgroup, 'excerpts')
+        return dd.plugins.jinja.list_templates('.body.html', tplgroup, 'excerpts')
 
     @dd.chooser(simple_values=True)
     def email_template_choices(cls, content_type):
         tplgroup = content_type.model_class().get_template_group()
-        return settings.SITE.list_templates('.eml.html', tplgroup, 'excerpts')
+        return dd.plugins.jinja.list_templates('.eml.html', tplgroup, 'excerpts')
 
     @classmethod
     def get_for_model(cls, model):
@@ -376,7 +376,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
       The object being printed by this excerpt.
       See :attr:`Controllable.owner
-      <lino.modlib.contenttypes.mixins.Controllable.owner>`.
+      <lino.modlib.gfks.mixins.Controllable.owner>`.
 
     .. attribute:: company
 
@@ -413,7 +413,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
 
     """
 
-    manager_roles_required = OfficeStaff
+    manager_roles_required = dd.login_required(OfficeStaff)
     # manager_level_field = 'office_level'
     allow_cascaded_delete = "owner"
 
@@ -580,9 +580,12 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             if tplname:
                 # sar = copy(ar)
                 # sar.renderer = settings.SITE.kernel.html_renderer
-                template = settings.SITE.jinja_env.get_template(tplname)
+                env = settings.SITE.plugins.jinja.renderer.jinja_env
+                template = env.get_template(tplname)
                 # logger.info("body template %s (%s)", tplname, template)
                 body = ar.render_jinja(template, **kw)
+                # logger.info("20150811 body template %s (%s) -> %s",
+                #             tplname, template, body)
 
         kw.update(body=body)
         return kw
@@ -696,6 +699,12 @@ class Excerpts(dd.Table):
     user excerpt_type"""
 
     simple_parameters = ['user', 'excerpt_type']
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Excerpts, cls).get_simple_parameters()
+        s.add('excerpt_type')
+        return s
 
     @classmethod
     def get_request_queryset(cls, ar):

@@ -67,7 +67,7 @@ class Plugin(ad.Plugin):
 
     """
     verbose_name = _("Plausibility")
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.contenttypes']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
 
     # plugin settings
     responsible_user = None  # the username (a string)

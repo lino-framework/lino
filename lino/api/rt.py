@@ -30,6 +30,8 @@ find_config_files = settings.SITE.confdirs.find_config_files
 find_template_config_files = settings.SITE.confdirs.find_template_config_files
 makedirs_if_missing = settings.SITE.makedirs_if_missing
 relpath = settings.SITE.relpath
+# get_settings_subdirs = settings.SITE.get_settings_subdirs
+# is_local_project_dir = settings.SITE.is_local_project_dir
 
 
 def get_template(*args, **kw):
@@ -38,7 +40,8 @@ def get_template(*args, **kw):
     :mod:`lino.core.web`).
 
     """
-    return settings.SITE.jinja_env.get_template(*args, **kw)
+    return settings.SITE.plugins.jinja.renderer.jinja_env.get_template(
+        *args, **kw)
 
 
 def show(*args, **kw):

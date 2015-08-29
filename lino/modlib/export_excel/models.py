@@ -2,7 +2,7 @@
 # Copyright 2014-2015 Josef Kejzlar, Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :xfile:`models.py` for `lino.modlib.export_excel`.
+"""Database models for `lino.modlib.export_excel`.
 
 """
 import os
@@ -70,7 +70,7 @@ class TableRenderer(object):
 def sheet_name(s):
     s = s[:31]
     for c in u"[]:\\?/*\x00":
-        s = s.replace('/', '_')
+        s = s.replace(c, '_')
     return s
 
 

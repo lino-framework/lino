@@ -22,7 +22,7 @@ class Site(Site):
 
     demo_fixtures = 'std demo demo2'
 
-    user_profiles_module = 'lino.modlib.users.roles'
+    user_profiles_module = 'lino.modlib.office.roles'
 
     def setup_quicklinks(self, ar, tb):
         tb.add_action(self.modules.contacts.Persons.detail_action)

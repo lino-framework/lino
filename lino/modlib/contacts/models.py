@@ -83,6 +83,7 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
     # preferred width for ForeignKey fields to a Partner
 
     class Meta:
+        app_label = 'contacts'  # avoid RemovedInDjango19Warning
         abstract = dd.is_abstract_model(__name__, 'Partner')
         verbose_name = _("Partner")
         verbose_name_plural = _("Partners")
@@ -314,6 +315,8 @@ class CompanyType(mixins.BabelNamed):
 
     """
     class Meta:
+        app_label = 'contacts'  # avoid RemovedInDjango19Warning
+        abstract = dd.is_abstract_model(__name__, 'CompanyType')
         verbose_name = _("Organization type")
         verbose_name_plural = _("Organization types")
 
@@ -418,6 +421,8 @@ class RoleType(mixins.BabelNamed):
 
     """
     class Meta:
+        app_label = 'contacts'  # avoid RemovedInDjango19Warning
+        abstract = dd.is_abstract_model(__name__, 'RoleType')
         verbose_name = _("Function")
         verbose_name_plural = _("Functions")
 
@@ -437,6 +442,8 @@ class Role(dd.Model, Addressable):
     """
 
     class Meta:
+        app_label = 'contacts'  # avoid RemovedInDjango19Warning
+        abstract = dd.is_abstract_model(__name__, 'Role')
         verbose_name = _("Contact Person")
         verbose_name_plural = _("Contact Persons")
 

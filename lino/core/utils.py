@@ -23,10 +23,10 @@ logger = logging.getLogger(__name__)
 
 import sys
 import datetime
+# import yaml
 
 from django.db import models
 from django.db.models import Q
-from django.db.models import loading
 from django.db.models.fields import FieldDoesNotExist
 from django.utils.importlib import import_module
 from django.utils.translation import ugettext as _
@@ -34,7 +34,8 @@ from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_unicode
-from django.contrib.contenttypes.models import ContentType
+#from django.contrib.contenttypes.models import ContentType
+from django.http import QueryDict
 
 from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
@@ -42,6 +43,13 @@ from lino import AFTER17
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
+
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 validate_url = URLValidator()
 
@@ -87,6 +95,31 @@ def is_devserver():
     #~ print 20130315, sys.argv[1]
     return len(sys.argv) > 1 and sys.argv[1] in (
         'runserver', 'testserver', 'test', "makescreenshots")
+
+
+def format_request(request):
+    """Format a Django HttpRequest for logging it.
+
+    This was written for the warning to be logged in
+    :mod:`lino.utils.ajax` when an error occurs while processing an
+    AJAX request.
+
+    """
+    s = "{0} {1}".format(request.method, request.path)
+    qs = request.META.get('QUERY_STRING')
+    if qs:
+        s += "?" + qs
+    # Exception: You cannot access body after reading from request's
+    # data stream
+    if request.body:
+        data = QueryDict(request.body)
+        # data = yaml.dump(dict(data))
+        data = str(data)
+        if len(data) > 200:
+            data = data[:200] + "..."
+        s += " (data: {0})".format(data)
+
+    return s
 
 
 def full_model_name(model, sep='.'):
@@ -155,7 +188,7 @@ def obj2str(i, force_detailed=False):
 
 def sorted_models_list():
     # trigger django.db.models.loading.cache._populate()
-    models_list = models.get_models()
+    models_list = get_models()
 
     def fn(a, b):
         return cmp(full_model_name(a), full_model_name(b))
@@ -169,7 +202,7 @@ def models_by_base(base, toplevel_only=False):
 
     """
     found = []
-    for m in models.get_models():
+    for m in get_models():
         if issubclass(m, base):
             add = True
             if toplevel_only:
@@ -185,7 +218,13 @@ def models_by_base(base, toplevel_only=False):
 
 
 def app_labels():
-    return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+    if AFTER17:
+        from django.apps import get_app_configs
+        return [a.models_module.__name__.split('.')[-2]
+                for a in get_app_configs()]
+    else:
+        from django.db.models import loading
+        return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 
 def range_filter(value, f1, f2):
@@ -295,7 +334,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
             if False:
                 from django.db.models import loading
                 print(20130219, settings.INSTALLED_APPS)
-                print([full_model_name(m) for m in loading.get_models()])
+                print([full_model_name(m) for m in get_models()])
                 if len(loading.cache.postponed) > 0:
                     print("POSTPONED:", loading.cache.postponed)
 
@@ -567,10 +606,14 @@ class InstanceAction(object):
         ar.selected_rows = [self.instance]
         self.bound_action.action.run_from_ui(ar)
 
-    def run_from_session(self, ses, **kw):
+    def request_from(self, ses, **kw):
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
         ar.selected_rows = [self.instance]
+        return ar
+
+    def run_from_session(self, ses, **kw):
+        ar = self.request_from(ses, **kw)
         self.bound_action.action.run_from_code(ar)
         return ar.response
 
@@ -591,8 +634,8 @@ class InstanceAction(object):
 
     def get_row_permission(self, ar):
         state = self.bound_action.actor.get_row_state(self.instance)
-        logger.info("20150202 ia.get_row_permission() %s using %s",
-                    self, state)
+        # logger.info("20150202 ia.get_row_permission() %s using %s",
+        #             self, state)
         return self.bound_action.get_row_permission(ar, self.instance, state)
 
 
@@ -745,8 +788,8 @@ def gfk2lookup(gfk, obj, **kw):
         kw[gfk.ct_field] = None
         kw[gfk.fk_field] = None
     else:
-        ct = ContentType.objects.get_for_model(
-            obj.__class__)
+        ContentType = settings.SITE.modules.contenttypes.ContentType
+        ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
         kw[gfk.fk_field] = obj.pk
     return kw

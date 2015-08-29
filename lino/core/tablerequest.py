@@ -21,6 +21,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from lino.core.utils import obj2str
+from lino.core.utils import format_request
 from lino.core.store import get_atomizer
 from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
@@ -369,6 +370,7 @@ class TableRequest(ActionRequest):
         t = xghtml.Table()
         self.dump2html(t, self.sliced_data_iterator, **kw)
         e = t.as_element()
+        # print "20150822 table2xhtml", E.tostring(e)
         if header_level is not None:
             return E.div(E.h2(self.actor.label), e)
         return e
@@ -604,6 +606,8 @@ class TableRequest(ActionRequest):
         u = self.get_user()
         if u is not None:
             kw.update(user=u.username)
+        if False:  # self.request:
+            kw.update(request=format_request(self.request))
         return "<%s %s(%s)>" % (
             self.__class__.__name__, self.bound_action.full_name(), kw)
 

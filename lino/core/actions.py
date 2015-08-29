@@ -23,8 +23,14 @@ from django.conf import settings
 from django import http
 from django.db import models
 
-from lino.utils.xmlgen import html as xghtml
-E = xghtml.E
+from lino import AFTER17
+
+if AFTER17:
+    from django.apps import apps
+    get_models = apps.get_models
+else:
+    from django.db.models.loading import get_models
+
 
 from lino.core import constants
 from lino.core.utils import obj2unicode
@@ -39,6 +45,8 @@ from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
+from lino.utils.xmlgen import html as xghtml
+from lino.utils.xmlgen.html import E
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -65,9 +73,13 @@ def check_for_chooser(holder, field):
 def discover_choosers():
     logger.debug("Discovering choosers for model fields...")
     #~ logger.debug("Instantiate model reports...")
-    for model in models.get_models():
+    for model in get_models():
         #~ n = 0
-        for field in model._meta.fields + model._meta.virtual_fields:
+        if AFTER17:
+            allfields = model._meta.fields
+        else:
+            allfields = model._meta.fields + model._meta.virtual_fields
+        for field in allfields:
             check_for_chooser(model, field)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
 
@@ -279,8 +291,7 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
-    """
-    Whether this action possibly modifies data *in the given object*.
+    """Whether this action possibly modifies data *in the given object*.
     
     This means that :class:`InsertRow` is a `readonly` action.
     Actions like :class:`InsertRow` and :class:`Duplicable
@@ -292,6 +303,21 @@ class Action(Parametrizable, Permittable):
           if user.profile.readonly:
               return False
           return super(Duplicate, self).get_action_permission(ar, obj, state)
+
+    Discussion
+    
+    Maybe we should change the name `readonly` to `modifying` or
+    `writing` (and set the default value `False`).  Because for the
+    application developer that looks more natural.  Or --maybe better
+    but probably even more consequences-- the default value should be
+    `False`.  Being readonly, for actions, is a kind of "privilege":
+    they don't get logged, they also exists for readonly users.  It
+    would be more "secure" when the developer must be explicit when
+    granting that privilege.
+    
+    A danger with this attribute is that Lino actually does not check
+    whether it is true. When a readonly action actually does modify
+    the database, Lino won't "notice" it.
 
     """
 
@@ -502,12 +528,9 @@ class Action(Parametrizable, Permittable):
         action won't be attached to the given actor.
 
         """
-        if not actor.editable and not self.readonly:
-            return False
-        #~ if self.name is not None:
-            #~ raise Exception("%s tried to attach named action %s" % (actor,self))
-        #~ if actor == self.defining_actor:
-            #~ raise Exception('20121003 %s %s' % (actor,name))
+        # if not actor.editable and not self.readonly:
+        #     return False
+
         if self.defining_actor is not None:
             # already defined in another actor
             return True
@@ -812,7 +835,6 @@ class InsertRow(TableAction):
     sort_index = 10
     hide_top_toolbar = True
     help_text = _("Insert a new record")
-    # ~ readonly = False # see blog/2012/0726
     # required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
@@ -830,7 +852,8 @@ class InsertRow(TableAction):
 
     def get_action_permission(self, ar, obj, state):
         # see blog/2012/0726
-        if settings.SITE.user_model and ar.get_user().profile.readonly:
+        # if settings.SITE.user_model and ar.get_user().profile.readonly:
+        if ar.get_user().profile.readonly:
             return False
         return super(InsertRow, self).get_action_permission(ar, obj, state)
 

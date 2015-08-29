@@ -2,7 +2,7 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines :class:`Renderer` (a subclass of
+"""Defines :class:`AppyRenderer` (a subclass of
 :class:`appy.pod.renderer.Renderer`, not of
 :class:`lino.core.renderer.Renderer`).
 
@@ -17,8 +17,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
+from copy import copy
 
-from appy.pod.renderer import Renderer as AppyRenderer
+from appy.pod.renderer import Renderer as OriginalAppyRenderer
 
 from django.utils.encoding import force_unicode
 from django.conf import settings
@@ -64,14 +65,17 @@ UL_LIST_STYLE = """\
 """
 
 
-class Renderer(AppyRenderer):
+class AppyRenderer(OriginalAppyRenderer):
 
-    """The extended :term:`appy.pod` renderer used by Lino.
+    """The extended `appy.pod.renderer` used by Lino.
 
     """
 
     def __init__(self, ar, template, context, result, **kw):
-        self.ar = ar
+        self.ar = copy(ar)
+        # self.ar.renderer = settings.SITE.kernel.html_renderer
+        # self.ar.renderer = settings.SITE.plugins.bootstrap3.renderer
+        self.ar.renderer = settings.SITE.plugins.jinja.renderer
         #~ context.update(appy_renderer=self)
         context.update(restify=self.restify_func)
         context.update(html=self.html_func)
@@ -87,32 +91,35 @@ class Renderer(AppyRenderer):
         context.update(ui=settings.SITE.kernel)
         context.update(settings=settings)
         context.update(sc=settings.SITE.site_config)
-        context.update(settings.SITE.modules)
+        if False:
+            context.update(settings.SITE.modules)
+            # 20150810 removed above line because this "feature"
+            # caused the name `jinja` defined above to be overridden.
         kw.update(finalizeFunction=self.finalize_func)
-        AppyRenderer.__init__(self, template, context, result, **kw)
+        OriginalAppyRenderer.__init__(self, template, context, result, **kw)
         #~ self.my_automaticstyles = odf.style.automaticstyles()
         #~ self.my_styles = odf.style.styles()
         self.my_automaticstyles = []
         self.my_styles = []
 
-    def jinja_func(self, template_name, **kw):
-        saved_renderer = self.ar.renderer
+    def jinja_func(self, template_name, **kwargs):
+
+        #saved_renderer = self.ar.renderer
         try:
-            self.ar.renderer = settings.SITE.kernel.html_renderer
-            # self.ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             if not '.' in template_name:
                 template_name += '.html'
             #~ printable = self.contentParser.env.context.get('this',None)
             #~ print 20130910, settings.SITE.jinja_env
-            template = settings.SITE.jinja_env.get_template(template_name)
+            env = settings.SITE.plugins.jinja.renderer.jinja_env
+            template = env.get_template(template_name)
             #~ print 20130910, template, dir(self)
             html = template.render(self.contentParser.env.context)
-            self.ar.renderer = saved_renderer
+            #self.ar.renderer = saved_renderer
             return self.html_func(html)
             #~ print 20130910, html
             #~ return self.renderXhtml(html,**kw)
         except Exception as e:
-            self.ar.renderer = saved_renderer
+            #self.ar.renderer = saved_renderer
             import traceback
             traceback.print_exc(e)
 

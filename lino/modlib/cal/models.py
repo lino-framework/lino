@@ -11,6 +11,8 @@ from __future__ import unicode_literals
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.conf import settings
@@ -240,8 +242,7 @@ class Subscription(UserAuthored):
         verbose_name_plural = _("Subscriptions")
         unique_together = ['user', 'calendar']
 
-    manager_roles_required = OfficeStaff
-    # manager_level_field = 'office_level'
+    manager_roles_required = dd.login_required(OfficeStaff)
 
     calendar = dd.ForeignKey(
         'cal.Calendar', help_text=_("The calendar you want to subscribe to."))
@@ -404,8 +405,7 @@ class ExtAllDayField(dd.VirtualField):
 class Event(Component, Ended,
             mixins.TypedPrintable,
             Mailable, Postable):
-    """
-    A calendar event is a lapse of time to be visualized in a calendar.
+    """A calendar event is a lapse of time to be visualized in a calendar.
 
     .. attribute:: user
 
@@ -426,6 +426,11 @@ class Event(Component, Ended,
          The type of this event. Every calendar event should have this
          field pointing to a given :class:`EventType`, which holds
          extended configurable information about this event.
+
+    .. attribute:: linked_date
+
+         Shows the date and time of the event with a link that opens
+         all events on that day (cal.EventsByDay)
 
     """
     class Meta:

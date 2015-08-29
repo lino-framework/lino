@@ -36,6 +36,21 @@ class Plugin(ad.Plugin):
     # window_width = 600
     # window_height = 500
 
+    document_domain = None
+    """When serving static files from a different domain, TinyMCE needs to
+    know about this. Typical usage is to specify this in your
+    :file:`djangosite_local.py` file (:ref:`lino.djangosite_local`)::
+
+        def setup_site(self):
+            ...
+            from lino.api.ad import configure_plugin
+            configure_plugin('tinymce', document_domain="mydomain.com")
+
+    You must also manually change your static `tiny_mce_popup.js` file
+    after each `collectstatic`.
+
+    """
+
     window_width = 500
     """The initial width of the window to use when editing in own
     window.

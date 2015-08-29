@@ -14,6 +14,8 @@ from bs4 import BeautifulSoup
 from lino.utils import AttrDict
 from lino.utils import i2d
 from lino.utils.xmlgen.html import E
+from lino.utils.diag import analyzer
+
 from atelier.rstgen import attrtable
 
 test_client = Client()

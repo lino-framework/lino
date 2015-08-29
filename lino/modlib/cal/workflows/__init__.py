@@ -127,7 +127,9 @@ class GuestStates(dd.Workflow):
 add = GuestStates.add_item
 add('10', _("Invited"), 'invited')
 
-# will be filled by importing either feedback or faggio
+# GuestStates will be reset by importing either feedback or
+# faggio. But the calendar module itself requires a state named
+# `invited`
 
 
 @dd.receiver(dd.pre_analyze)

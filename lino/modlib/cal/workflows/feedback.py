@@ -26,7 +26,9 @@ add = EventStates.add_item
 add('40', _("Published"), 'published', edit_guests=True)
 
 
+GuestStates.clear()
 add = GuestStates.add_item
+add('10', _("Invited"), 'invited')
 add('20', _("Accepted"), 'accepted')
 add('30', _("Rejected"), 'rejected')
 add('40', _("Present"), 'present', afterwards=True)
