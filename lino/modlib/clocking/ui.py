@@ -89,10 +89,16 @@ class Sessions(dd.Table):
         observed_event=dd.PeriodEvents.field(
             blank=True, default=dd.PeriodEvents.active),
     )
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Sessions, cls).get_simple_parameters()
+        s |= set(['session_type', 'ticket'])
+        return s
+
     params_layout = "start_date end_date observed_event project "\
                     "user session_type ticket"
     auto_fit_column_widths = True
-    simple_parameters = ('user', 'session_type', 'ticket')
 
     detail_layout = """
     ticket start_date start_time end_date end_time break_time user

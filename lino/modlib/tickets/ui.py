@@ -313,7 +313,13 @@ class Tickets(dd.Table):
     reporter assigned_to interesting_for project state has_project
     show_assigned show_closed show_standby show_private \
     start_date end_date observed_event"""
-    simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
+    # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Tickets, cls).get_simple_parameters()
+        s |= set(('reporter', 'assigned_to', 'state', 'project'))
+        return s
 
     @classmethod
     def get_request_queryset(self, ar):

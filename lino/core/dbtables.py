@@ -507,6 +507,8 @@ class Table(AbstractTable):
             self.active_fields |= self.model.active_fields
             self.hidden_elements |= self.model.hidden_elements
 
+            # self.simple_parameters |= self.model.simple_parameters
+
             for b in self.model.mro():
                 for k, v in b.__dict__.items():
                     if isinstance(v, actions.Action):

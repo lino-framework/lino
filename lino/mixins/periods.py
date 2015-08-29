@@ -97,6 +97,24 @@ class DatePeriod(Model):
             return pgettext("date range", "until %s") % s
         return self.empty_period_text
 
+    get_default_start_date = None
+    get_default_end_date = None
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        fields.update(
+            start_date=models.DateField(
+                _("Period from"), blank=True, null=True,
+                default=cls.get_default_start_date,
+                help_text=_("Start date of observed period")))
+        fields.update(
+            end_date=models.DateField(
+                _("until"),
+                blank=True, null=True,
+                default=cls.get_default_end_date,
+                help_text=_("End date of observed period")))
+        return super(DatePeriod, cls).get_parameter_fields(**fields)
+
 
 class ObservedPeriod(ParameterPanel):
     """:class:`lino.core.param_panel.ParameterPanel` with two fields

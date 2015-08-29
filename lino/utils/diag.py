@@ -69,10 +69,10 @@ class Analyzer(object):
 
         return rstgen.ul(items)
     
-    def show_action_permissions(self, classes):
+    def show_action_permissions(self, *classes):
         self.analyze()
         items = []
-        for ba in analyzer.custom_actions:
+        for ba in analyzer.custom_actions + analyzer.window_actions:
             if isinstance(ba.action, classes):
                 items.append(
                     "{0} : visible for {1}".format(

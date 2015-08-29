@@ -162,6 +162,13 @@ class Model(models.Model):
 
     """
 
+    # simple_parameters = frozenset()
+    # """If specified, this is the default value for :attr:`simple_parameters
+    # <lino.core.tables.AbstractTable.simple_parameters>` of every `Table`
+    # on this model.
+
+    # """
+
     preferred_foreignkey_width = None
     """The default preferred width (in characters) of widgets that
     display a ForeignKey to this model.
@@ -322,7 +329,7 @@ class Model(models.Model):
         return self._lino_default_table  # set in dbtables.py
 
     def disabled_fields(self, ar):
-        """Return a list of names of fields that should be disabled (not
+        """Return a set of names of fields that should be disabled (not
         editable) for this record.
 
         Usage example::
@@ -795,12 +802,23 @@ action on individual instances.
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
 
-        It receives a `dict` object `fields` and is expected to
-        return a `dict` which it may update.
+        It receives a `dict` object `fields` and is expected to return
+        that `dict` which it may update.
+
+        See also :meth:`get_simple_parameters`.
 
         Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
+
         """
         return fields
+
+    @classmethod
+    def get_simple_parameters(cls):
+        """Return a set of names of simple parameter fields of every
+        `Table` on this model.
+
+        """
+        return set([])
 
     @classmethod
     def get_widget_options(self, name, **options):
@@ -909,6 +927,7 @@ LINO_MODEL_ATTRIBS = (
     'active_fields',
     'hidden_columns',
     'hidden_elements',
+    'get_simple_parameters',
     'get_default_table',
     'get_template_group',
     'get_related_project',

@@ -121,8 +121,16 @@ class UserAuthored(model.Model):
     def get_parameter_fields(cls, **fields):
         """Adds the :attr:`user` filter parameter field."""
         fields.setdefault(
-            'user', models.ForeignKey('users.User', blank=True, null=True))
+            'user', models.ForeignKey(
+                'users.User', verbose_name=_("Author"),
+                blank=True, null=True))
         return super(UserAuthored, cls).get_parameter_fields(**fields)
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(UserAuthored, cls).get_simple_parameters()
+        s.add('user')
+        return s
 
 AutoUser = UserAuthored  # old name for backwards compatibility
 

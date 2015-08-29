@@ -701,6 +701,12 @@ class Excerpts(dd.Table):
     simple_parameters = ['user', 'excerpt_type']
 
     @classmethod
+    def get_simple_parameters(cls):
+        s = super(Excerpts, cls).get_simple_parameters()
+        s.add('excerpt_type')
+        return s
+
+    @classmethod
     def get_request_queryset(cls, ar):
         qs = super(Excerpts, cls).get_request_queryset(ar)
         pv = ar.param_values
