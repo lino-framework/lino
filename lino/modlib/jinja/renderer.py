@@ -8,6 +8,7 @@ directories. TODO: do only one common loop for both.
 """
 
 from os.path import join, dirname, isdir
+import cgi
 import jinja2
 SUBDIR_NAME = 'config'
 
@@ -110,6 +111,7 @@ class JinjaRenderer(HtmlRenderer):
             tr=settings.SITE.babelitem,
             # dd=dd,
             rt=rt,
+            escape=cgi.escape,
             Counter=Counter,
             # lino=self.modules,  # experimental
             # site_config=self.site_config,

@@ -126,7 +126,9 @@ class User(CreatedModified):
 
     if dd.is_installed('contacts'):
 
-        partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
+        partner = models.ForeignKey(
+            'contacts.Partner', blank=True, null=True,
+            on_delete=models.PROTECT)
 
     else:
 

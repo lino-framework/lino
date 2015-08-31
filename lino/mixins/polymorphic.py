@@ -147,7 +147,6 @@ class Polymorphic(model.Model):
                 add(m, DeleteChild)
                 add(m, InsertChild)
 
-
     def get_mti_child(self, *args):
         """Return the specified specialization or `None`.
 

@@ -21,6 +21,7 @@ class UserRole(object):
         object (subclass of :class:`<UserRole>`) or a tuple thereof.
 
         """
+        check_required_roles(required_roles, "code")
         for rr in required_roles:
             if not isinstance(self, rr):
                 return False
@@ -62,4 +63,23 @@ def login_required(*args):
     if len(args):
         return set(args)
     return set([SiteUser])
+
+
+def check_role(rr, actor):
+    if not issubclass(rr, UserRole):
+        raise Exception(
+            "{0} (required on {1}) is not a UserRole".format(rr, actor))
+
+
+def check_required_roles(required_roles, actor):
+    for rr in required_roles:
+        if isinstance(rr, (tuple, list)):
+            if len(rr) == 0:
+                raise Exception(
+                    "{0} (required on {1}) is an empty tuple".format(
+                        rr, actor))
+            for rri in rr:
+                check_role(rri, actor)
+        else:
+            check_role(rr, actor)
 

@@ -2816,8 +2816,6 @@ Please convert to Plugin method".format(mod, methname)
         """
         return self.plugins.jinja.render_from_request(
             request, 'admin_main.html')
-        # from lino.core import web
-        # return web.render_from_request(request, 'admin_main.html')
 
     def get_welcome_messages(self, ar):
         """

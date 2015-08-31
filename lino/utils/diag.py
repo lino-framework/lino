@@ -11,6 +11,8 @@ from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserProfiles
 from lino.core import actors
+from lino.core.utils import get_models
+from lino.core.utils import full_model_name as fmn
 
 
 class Analyzer(object):
@@ -79,6 +81,34 @@ class Analyzer(object):
                         ba.full_name(), visible_for(ba)))
 
         return rstgen.ul(items)
+    
+    def show_foreign_keys(self):
+        self.analyze()
+        tdp = dict()  # target model -> delete handler -> pointer list
+        for target in get_models():
+            dp = tdp.setdefault(target, dict())
+            for m, fk in target._lino_ddh.fklist:
+                k = fk.rel.on_delete
+                p = dp.setdefault(k, [])
+                p.append((m, fk))
+
+        def fk2str(mfk):
+            return "{0}.{1}".format(fmn(mfk[0]), mfk[1].name)
+
+        items1 = []
+        for target, dp in tdp.items():
+            items2 = []
+            for dh, pl in dp.items():
+                items2.append(
+                    "{0} : {1}".format(
+                        dh.__name__, ', '.join([fk2str(mfk) for mfk in pl])))
+            if len(items2):
+                items2 = sorted(items2)
+                items1.append("{0} :\n{1}".format(
+                    fmn(target), rstgen.ul(items2)))
+    
+        items1 = sorted(items1)
+        return rstgen.ul(items1)
     
 analyzer = Analyzer()
 

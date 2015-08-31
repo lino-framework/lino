@@ -35,6 +35,8 @@ class BoundAction(object):
         self.actor = actor
 
         required = set(actor.required_roles)
+        # required = set()
+        # required |= actor.required_roles
         required |= action.required_roles
 
         debug_permissions = actor.debug_permissions and \

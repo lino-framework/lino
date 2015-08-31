@@ -104,7 +104,7 @@ class Index(View):
         assert ui.renderer is not None
         context = dict(
             title=settings.SITE.title,
-            main='',
+            main=settings.SITE.get_main_html(request),
         )
         if settings.SITE.user_model is not None:
             user = request.subst_user or request.user

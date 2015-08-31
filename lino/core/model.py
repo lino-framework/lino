@@ -317,7 +317,17 @@ class Model(models.Model):
                   return _("Cannot delete imported records.")
 
         """
-        return self._lino_ddh.disable_delete_on_object(self)
+        # Deleting a Person will also delete the Partner. Ask all MTI
+        # parents whether they have a veto (other than self).
+        for b in self.__class__.__bases__:
+            # if b is not self.__class__:
+            if issubclass(b, models.Model) and not b._meta.abstract:
+                msg = b._lino_ddh.disable_delete_on_object(
+                    self, self.__class__)
+                if msg is not None:
+                    # return "20150831 %s %s" % (b, msg)
+                    return msg
+        return self.__class__._lino_ddh.disable_delete_on_object(self)
 
     @classmethod
     def get_default_table(self):
@@ -347,7 +357,6 @@ class Model(models.Model):
     def delete(self, **kw):
         """
         Double-check to avoid "murder bug" (20150623).
-
         
         """
         msg = self.disable_delete(None)
