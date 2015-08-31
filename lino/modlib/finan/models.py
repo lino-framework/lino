@@ -13,9 +13,11 @@ from django.db import models
 from lino.modlib.accounts.utils import ZERO, DEBIT, CREDIT
 from lino.modlib.ledger.fields import DcAmountField
 from lino.modlib.ledger.choicelists import VoucherTypes
+from lino.modlib.ledger.roles import LedgerStaff
 from lino.api import dd, rt, _
 
 from .mixins import FinancialVoucher, FinancialVoucherItem
+
 
 ledger = dd.resolve_app('ledger')
 
@@ -224,6 +226,7 @@ class FinancialVouchers(dd.Table):
 
     """
     model = 'finan.JournalEntry'
+    required_roles = dd.login_required(LedgerStaff)
     params_panel_hidden = True
     order_by = ["date", "id"]
     parameters = dict(

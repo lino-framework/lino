@@ -13,6 +13,7 @@ from django.conf import settings
 from lino.api import dd, rt, _
 
 from lino.modlib.accounts.utils import DEBIT, CREDIT
+from .roles import LedgerStaff
 
 
 class JournalGroups(dd.ChoiceList):
@@ -67,6 +68,7 @@ class FiscalYears(dd.ChoiceList):
     in your :meth:`lino.core.site.Site.setup_choicelists`.
 
     """
+    required_roles = dd.login_required(LedgerStaff)
     item_class = FiscalYear
     verbose_name = _("Fiscal Year")
     verbose_name_plural = _("Fiscal Years")
@@ -112,6 +114,7 @@ class VoucherTypes(dd.ChoiceList):
 
     """
 
+    required_roles = dd.login_required(LedgerStaff)
     verbose_name = _("Voucher type")
     verbose_name_plural = _("Voucher types")
 
@@ -230,6 +233,7 @@ class TradeTypes(dd.ChoiceList):
 
     """
 
+    required_roles = dd.login_required(LedgerStaff)
     verbose_name = _("Trade type")
     verbose_name_plural = _("Trade types")
     item_class = TradeType

@@ -42,13 +42,14 @@ from .utils import Balance, DueMovement, get_due_movements
 from .choicelists import TradeTypes, FiscalYears
 from .choicelists import VoucherStates
 from .mixins import JournalRef
-from .roles import AccountingReader
+from .roles import AccountingReader, LedgerUser, LedgerStaff
 
 
 class Journals(dd.Table):
     """The default table showing all instances of :class:`Journal`.
 
     """
+    required_roles = dd.login_required(LedgerStaff)
     model = 'ledger.Journal'
     order_by = ["seqno"]
     column_names = "ref:5 name trade_type journal_group " \
@@ -72,6 +73,7 @@ class ByJournal(dd.Table):
     # order_by = ["-number"]
     master_key = 'journal'  # see django issue 10808
     # start_at_bottom = True
+    required_roles = dd.required(LedgerUser)
 
     @classmethod
     def get_title_base(self, ar):
@@ -83,6 +85,7 @@ class ByJournal(dd.Table):
 
 
 class PaymentTerms(dd.Table):
+    required_roles = dd.login_required(LedgerStaff)
     model = 'ledger.PaymentTerm'
     order_by = ["id"]
 
@@ -91,6 +94,7 @@ class Vouchers(dd.Table):
     """
     The base table for all tables working on :class:`Voucher`.
     """
+    required_roles = dd.login_required(LedgerStaff)
     model = 'ledger.Voucher'
     editable = False
     order_by = ["date", "number"]
@@ -113,6 +117,7 @@ class Vouchers(dd.Table):
 
 
 class MatchRules(dd.Table):
+    required_roles = dd.login_required(LedgerStaff)
     model = 'ledger.MatchRule'
 
 
@@ -120,7 +125,7 @@ class MatchRulesByAccount(MatchRules):
     master_key = 'account'
 
 
-class MatchRulesByJournal(MatchRules):
+class MatchRulesByJournal(ByJournal, MatchRules):
     master_key = 'journal'
 
 
@@ -451,6 +456,7 @@ class DebtorsCreditors(dd.VirtualTable):
 
 
     """
+    required_roles = dd.required(AccountingReader)
     auto_fit_column_widths = True
     column_names = "age due_date partner balance actions"
     slave_grid_format = 'html'
@@ -617,6 +623,7 @@ class Movements(dd.Table):
     defines e.g. filtering parameters.
     """
     
+    required_roles = dd.login_required(LedgerStaff)
     model = 'ledger.Movement'
     column_names = 'voucher_link account debit credit *'
     editable = False
