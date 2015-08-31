@@ -92,7 +92,7 @@ class User(CreatedModified):
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
-        ordering = ['last_name', 'first_name']
+        ordering = ['last_name', 'first_name', 'username']
 
     preferred_foreignkey_width = 15
 
