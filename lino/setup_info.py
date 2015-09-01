@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.18',
+    version='1.6.19',  # released 20150901
     install_requires=[
         'django<1.7',
         # 'django',
@@ -54,7 +54,7 @@ SETUP_INFO = dict(
     classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2
-  Development Status :: 4 - Beta
+  Development Status :: 5 - Production/Stable
   Environment :: Web Environment
   Framework :: Django
   Intended Audience :: Developers

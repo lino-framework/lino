@@ -38,8 +38,15 @@ Development
   :attr:`sort_index <lino.core.actions.Action.sort_index>` of the
   action.  Bug fixed.
 
-Version 1.6.19 (in deveopment)
+Version 1.6.20 (in deveopment)
 ==============================
+
+
+Version 1.6.19 (released :blogref:`20150901`)
+=============================================
+
+- Changed Development Status from beta to stable.
+- Lots of changes, especially the murder bug
 
 
 Version 1.6.18 (released :blogref:`20150728`)
