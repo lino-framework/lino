@@ -1045,11 +1045,12 @@ class SubmitInsert(CreateRow):
 
 
 class ShowSlaveTable(Action):
-    """A action which opens a window showing a table.  The table must be
-    specified when instantiating the action.
+    """An action which opens a window showing the table specified when
+    instantiating the action.
 
     """
-    TABLE2ACTION_ATTRS = tuple('help_text icon_name label sort_index'.split())
+    TABLE2ACTION_ATTRS = ('help_text', 'icon_name', 'label',
+                          'sort_index', 'required_roles')
     show_in_bbar = True
 
     def __init__(self, slave_table, **kw):

@@ -138,6 +138,7 @@ class ExpectedMovements(dd.VirtualTable):
 
 
     """
+    required_roles = dd.required(AccountingReader)
     label = _("Debts")
     icon_name = 'book_link'
     #~ column_names = 'match due_date debts payments balance'
