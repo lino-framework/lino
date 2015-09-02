@@ -89,19 +89,21 @@ A **project** is something for which somebody is possibly willing to
 pay money.
 
 >>> rt.show(tickets.Projects)
-=========== =============== ======== ==============
- Reference   Name            Parent   Project Type
------------ --------------- -------- --------------
- linö        Framewörk
- téam        Téam
- docs        Documentatión
-=========== =============== ======== ==============
+==================== =============== ======== ============== =========
+ Reference            Name            Parent   Project Type   Private
+-------------------- --------------- -------- -------------- ---------
+ linö                 Framewörk                               No
+ téam                 Téam                                    Yes
+ docs                 Documentatión                           No
+ **Total (3 rows)**                                           **1**
+==================== =============== ======== ============== =========
 <BLANKLINE>
 
 Developers can start working on tickets without needing to know who is
-going to pay for their work.  Every ticket should get assigned to some
-project after some time, but You can see a list of tickets which have
-not yet been assigned to a project:
+going to pay for their work (i.e. without specifying a project).
+Every ticket should get assigned to some project after some time, but
+You can see a list of tickets which have not yet been assigned to a
+project:
 
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
@@ -110,8 +112,34 @@ not yet been assigned to a project:
  ID   Summary             Closed   Workflow   Reporter          Project
 ---- ------------------- -------- ---------- ----------------- ---------
  5    Cannot create Foo   No       **New**    Romain Raffault
- 3    Baz sucks           No       **New**    luc
+ 3    Baz sucks           No       **New**    marc
 ==== =================== ======== ========== ================= =========
+<BLANKLINE>
+
+
+Private tickets
+===============
+
+Tickets are private by default. But when they are assigned to a public
+project, then their privacy is removed.
+
+So the private tickets are (1) those in project "téam" and (2) those
+without project:
+
+>>> pv = dict(show_private=dd.YesNo.yes)
+>>> rt.show(tickets.Tickets, param_values=pv)
+... #doctest: +REPORT_UDIFF
+==== =========================================== ======== ========== ================= =========
+ ID   Summary                                     Closed   Workflow   Reporter          Project
+---- ------------------------------------------- -------- ---------- ----------------- ---------
+ 16   How to get bar from foo                     No       **New**    luc               téam
+ 13   Bar cannot foo                              No       **New**    Rolf Rompen       téam
+ 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc              téam
+ 7    No Foo after deleting Bar                   No       **New**    Robin Rood        téam
+ 5    Cannot create Foo                           No       **New**    Romain Raffault
+ 3    Baz sucks                                   No       **New**    marc
+ 2    Bar is not always baz                       No       **New**    luc               téam
+==== =========================================== ======== ========== ================= =========
 <BLANKLINE>
 
 
@@ -159,12 +187,12 @@ can see all local tickets for a given site object:
 ==== =========================================== ======== ========== ============= =========
  ID   Summary                                     Closed   Workflow   Reporter      Project
 ---- ------------------------------------------- -------- ---------- ------------- ---------
- 16   How to get bar from foo                     No       **New**    marc          téam
+ 16   How to get bar from foo                     No       **New**    luc           téam
  13   Bar cannot foo                              No       **New**    Rolf Rompen   téam
- 10   Where can I find a Foo when bazing Bazes?   No       **New**    luc           téam
+ 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc          téam
  7    No Foo after deleting Bar                   No       **New**    Robin Rood    téam
- 4    Foo and bar don't baz                       No       **New**    jean          docs
- 1    Föö fails to bar when baz                   No       **New**    mathieu       linö
+ 4    Foo and bar don't baz                       No       **New**    mathieu       docs
+ 1    Föö fails to bar when baz                   No       **New**    jean          linö
 ==== =========================================== ======== ========== ============= =========
 <BLANKLINE>
 
@@ -177,12 +205,12 @@ authenticated developer it looks like this:
 ==== =========================================== ======== =========================================================================== ============= =========
  ID   Summary                                     Closed   Workflow                                                                    Reporter      Project
 ---- ------------------------------------------- -------- --------------------------------------------------------------------------- ------------- ---------
- 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   marc          téam
+ 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   luc           téam
  13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Rolf Rompen   téam
- 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   luc           téam
+ 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   marc          téam
  7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood    téam
- 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean          docs
- 1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu       linö
+ 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu       docs
+ 1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean          linö
 ==== =========================================== ======== =========================================================================== ============= =========
 <BLANKLINE>
 
