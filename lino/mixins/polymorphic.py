@@ -128,15 +128,19 @@ class Polymorphic(model.Model):
         if cls._mtinav_models is None:
             models = list(models_by_base(cls))
 
-            def f(a, b):
-                level = 0
-                if b in a.__bases__:
-                    level -= a.__bases__.index(b)
-                if a in b.__bases__:
-                    level += b.__bases__.index(a)
-                return level
-
+            # TODO: it would be nice to have them sorted in some
+            # understandable way, but that's not trivial. First
+            # attempts are not satisfying:
+            #
+            # def f(a, b):
+            #     level = 0
+            #     if b in a.__bases__:
+            #         level -= a.__bases__.index(b)
+            #     if a in b.__bases__:
+            #         level += b.__bases__.index(a)
+            #     return level
             # models.sort(f)
+
             cls._mtinav_models = tuple(models)
 
             def add(m, cl):
@@ -162,6 +166,26 @@ class Polymorphic(model.Model):
             except ObjectDoesNotExist:
                 pass
         #~ return self
+
+    def disable_delete(self, ar=None):
+        """Overrides :meth:`lino.core.model.Model.disable_delete`.
+        """
+        for m in self._mtinav_models:
+            if not self.__class__ is m:
+                obj = mti.get_child(self, m)
+                if obj is not None:
+                    ignore_models = set(self._mtinav_models)
+                    ignore_models.remove(m)
+                    msg = m._lino_ddh.disable_delete_on_object(
+                        obj, ignore_models)
+                    if msg is not None:
+                        return msg
+
+        ignore_models = set(self._mtinav_models)
+        ignore_models.remove(self.__class__)
+        # same as `super` but ignore those who have been asked
+        return self.__class__._lino_ddh.disable_delete_on_object(
+            self, ignore_models=ignore_models)
 
     def get_mti_buttons(self, ar):
         """"""

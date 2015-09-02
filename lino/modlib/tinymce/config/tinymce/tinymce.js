@@ -1,10 +1,9 @@
 /* Copyright 2009-2015 Luc Saffre */
-// document.domain = '{{settings.STATIC_URL.replace("http://","").replace("https://","").rstrip('/')}}';
 {% if site.plugins.tinymce.document_domain %}
 document.domain = '{{site.plugins.tinymce.document_domain}}';
 {% endif %}
 
-Lino.edit_tinymce_text = function(panel, options) {
+Lino.edit_tinymce_text = function(panel, tinymce_options) {
   // edit the text in own window.
   // `panel` is the RichTextPanel
   // console.log(20150520, panel);
@@ -89,7 +88,7 @@ Lino.edit_tinymce_text = function(panel, options) {
         save_enablewhendirty : true
         //~ save_oncancelcallback: on_cancel
   });
-  Ext.apply(settings,options);
+  Ext.apply(settings, tinymce_options);
   var editor = new Ext.ux.TinyMCE({
       value : value,
       tinymceSettings: settings
@@ -199,7 +198,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
         //~ save_oncancelcallback: on_cancel
         
     }};
-    Ext.apply(editorConfig.tinymceSettings,tinymce_options);
+    Ext.apply(editorConfig.tinymceSettings, tinymce_options);
     //~ editorConfig.name = config.action_name;
     editorConfig.name = config.name;
     delete config.name;
@@ -211,6 +210,27 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
 
     this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
+    function save_cmd() { 
+        console.log("20150902 save_cmd()", arguments);            
+        var cw = t.get_containing_window();
+        if (cw) {
+            cw.main_item.save();
+        }
+    }
+    this.editor.withEd(function(){
+        if (!t.editor.ed.addShortcut(
+            'ctrl+s', 'Save the content', save_cmd)) {
+            console.log("20150902 addShortcut() failed");            
+        };
+        // t.editor.ed.onKeyDown.add(function(ed, e) {
+        //     if (e.keyCode == 13 && e.ctrlKey) {
+        //         save_cmd(); 
+        //         return tinymce.dom.Event.cancel(e); 
+        //         // e.preventDefault();
+        //         // http://stackoverflow.com/questions/18971284/event-preventdefault-vs-return-false-no-jquery
+        //     }
+        // });
+    });
     config.tools = [{
                       qtip: "{{_('Edit text in own window')}}", 
                       id: "up",

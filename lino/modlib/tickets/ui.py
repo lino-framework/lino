@@ -82,7 +82,7 @@ class ProjectDetail(dd.FormLayout):
 class Projects(dd.Table):
     model = 'tickets.Project'
     detail_layout = ProjectDetail()
-    column_names = "ref name parent type *"
+    column_names = "ref name parent type private *"
     parameters = mixins.ObservedPeriod(
         observed_event=ProjectEvents.field(blank=True),
         interesting_for=dd.ForeignKey(

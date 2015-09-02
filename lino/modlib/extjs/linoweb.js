@@ -3067,9 +3067,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               }
           },
           { key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
-          // ,{ key: 's', ctrl: true, 
-          //    stopEvent: true,
-          //    fn: this.on_ctrl_s, scope:this }
+          ,{ key: 's', ctrl: true, 
+             stopEvent: true, fn: this.on_ok, scope:this }
       ]
   }
   

@@ -39,11 +39,18 @@ class DisableDeleteHandler():
         s = ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])
         return "<DisableDeleteHandler(%s, %s)>" % (self.model, s)
 
-    def disable_delete_on_object(self, obj, child_model=None):
+    def disable_delete_on_object(self, obj, ignore_models=set()):
+        """Return a message which explains why this object cannot be deleted.
+        Return `None` if there is no veto.
+
+        If `ignore_model` is specified, do not check for vetos on
+        ForeignKey fields defined on that model.
+
+        """
         #logger.info("20101104 called %s.disable_delete(%s)", obj, self)
         # print "20150831 disable_delete", obj, self
         for m, fk in self.fklist:
-            if m is child_model:
+            if m in ignore_models:
                 # print "20150831 skipping", m, fk
                 continue
             # if m.__name__.endswith("Partner") and fk.name == 'partner':

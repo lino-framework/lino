@@ -24,6 +24,7 @@ from __future__ import print_function
 from lino.api import rt
 
 from lino.utils.xmlgen.html import E
+from lino.utils.mti import insert_child, delete_child
 from lino.utils.djangotest import RemoteAuthTestCase
 from django.core.exceptions import ValidationError
 
@@ -38,7 +39,7 @@ def create(m, **kw):
 
 class QuickTest(RemoteAuthTestCase):
 
-    fixtures = ['std', 'few_countries', 'few_cities']
+    fixtures = ['std']
 
     def test_this(self):
 
@@ -91,4 +92,32 @@ Create relationship as **Father**/**Son** **Adoptive father**/**Adopted son** **
         s = E.tostring(html)
         self.assertEqual(s[:5], '<div>')
         
+    def test_02(self):
+        """Was written for :ticket:`488` (Kann Person nicht mehr von
+        Organisation entfernen (delete mti child with siblings)).
+
+        """
+        Person = rt.modules.contacts.Person
+        Company = rt.modules.contacts.Company
+        Partner = rt.modules.contacts.Partner
+
+        # 1 : does delete_child work in normal situation?
+        john = create(Person, first_name="John", last_name="Doe")
+        as_partner = Partner.objects.get(pk=john.pk)
+        delete_child(as_partner, Person)
+        self.assertEqual(Person.objects.count(), 0)
+        self.assertEqual(Partner.objects.count(), 1)
+        as_partner.delete()
+
+        # 2 : delete_child with an mti sibling
+        john = create(Person, first_name="John", last_name="Doe")
+        as_partner = Partner.objects.get(pk=john.pk)
+        insert_child(as_partner, Company, full_clean=True)
+        # this is the sitation:
+        self.assertEqual(Person.objects.count(), 1)
+        self.assertEqual(Partner.objects.count(), 1)
+        self.assertEqual(Company.objects.count(), 1)
+
+        # the following failed before #488 was fixed:
+        delete_child(as_partner, Company)
 
