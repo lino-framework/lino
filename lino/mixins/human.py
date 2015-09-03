@@ -303,6 +303,13 @@ class Born(model.Model):
         blank=True, verbose_name=_("Birth date"))
 
     def get_age(self, today=None):
+        """Return the age (in years) of this human.
+        See :meth:`lino.utils.IncompleteDateField.get_age`.
+        """
+        if self.birth_date:
+            return self.birth_date.get_age(today or settings.SITE.today())
+        
+    def get_exact_age(self, today=None):
         """
         Return the age as a :class:`datetime.timedelta` object.
 
@@ -325,7 +332,7 @@ class Born(model.Model):
 
     @fields.displayfield(_("Age"))
     def age(self, request, today=None):
-        a = self.get_age(today)
+        a = self.get_exact_age(today)
         if a is None:
             return unicode(_('unknown'))
         s = _("%d years") % (a.days / 365)

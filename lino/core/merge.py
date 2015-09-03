@@ -216,7 +216,7 @@ class MergeAction(actions.Action):
 
     def run_from_ui(self, ar):
         """
-        Implements :meth:`dd.Action.run_from_ui`.
+        Implements :meth:`lino.core.actions.Action.run_from_ui`.
         """
         obj = ar.selected_rows[0]
         mp = MergePlan(obj, ar.action_param_values.merge_to,

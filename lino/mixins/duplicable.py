@@ -94,9 +94,10 @@ class Duplicable(model.Model):
     """Adds a row action "Duplicate" which duplicates (creates a clone
     of) the object it was called on.
     
-    Subclasses may override :meth:`dd.Model.on_duplicate` to customize the
-    default behaviour, which is to copy all fields except the primary
-    key and all related objects that are duplicable.
+    Subclasses may override :meth:`lino.core.model.Model.on_duplicate`
+    to customize the default behaviour, which is to copy all fields
+    except the primary key and all related objects that are
+    duplicable.
 
     """
     class Meta:
