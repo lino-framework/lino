@@ -148,8 +148,8 @@ def set_upload_shortcuts(sender, **kw):
 
 def add_shortcut(*args, **kw):
     """Declare an upload shortcut field. This is designed to be called
-from within your :meth:`setup_choicelists
-<lino.core.site.Site.setup_choicelists>`.
+    from within your :meth:`setup_choicelists
+    <lino.core.site.Site.setup_choicelists>`.
 
     """
     return Shortcuts.add_item(*args, **kw)

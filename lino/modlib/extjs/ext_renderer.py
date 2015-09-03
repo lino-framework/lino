@@ -521,10 +521,13 @@ class ExtRenderer(HtmlRenderer):
                         for u in settings.SITE.user_model.objects.exclude(
                             profile='').exclude(id=user.id)]
                 else:
+                    qs = users.Authority.objects.filter(
+                        authorized=user).exclude(user__profile='')
+                    qs = qs.order_by(
+                        'user__last_name', 'user__first_name',
+                        'user__username')
                     authorities = [
-                        (a.user.id, unicode(a.user))
-                        for a in users.Authority.objects.filter(
-                            authorized=user).exclude(user__profile='')]
+                        (a.user.id, unicode(a.user)) for a in qs]
 
                 a = users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))

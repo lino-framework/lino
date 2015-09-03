@@ -59,38 +59,19 @@ PAGES = settings.SITE.plugins.pages
     #~ """
 
 
-class Page(mixins.Referrable, mixins.Hierarchical):
-
+class Page(mixins.Referrable, mixins.Hierarchical, mixins.Sequenced):
     """
     Deserves more documentation.
     """
 
     class Meta:
-        #~ abstract = True
         verbose_name = _("Node")
         verbose_name_plural = _("Nodes")
-        #~ unique_together = ['ref','language']
 
-    # ~ ref = dd.NullCharField(_("Reference"),blank=True,max_length=100) # ,unique=True)
-    #~ ref = models.CharField(_("Reference"),max_length=100,blank=True,unique=True)
-    #~ language = dbutils.LanguageField(default=dbutils.get_language,blank=True)
-    #~ language = dbutils.LanguageField(blank=True)
-
-    #~ type = models.ForeignKey(PageType,blank=True,null=True)
-    # ,null=True)
     title = dd.BabelCharField(_("Title"), max_length=200, blank=True)
-    #~ abstract = dd.RichTextField(_("Abstract"),blank=True,format='html')
     body = dd.BabelTextField(_("Body"), blank=True, format='plain')
 
-    #~ special = models.BooleanField(_("Special"),default=False)
     raw_html = models.BooleanField(_("raw html"), default=False)
-
-    #~ def __unicode__(self):
-        #~ return "%s -> %s (%s)" % (self.ref,self.title,self.language)
-        #~ return "%s -> %s (%s)" % (self.ref,self.title,self.language)
-        #~ return u'%s %s' % (self._meta.verbose_name,self.ref)
-    #~ def get_mailable_type(self):
-        #~ return self.type
 
     def get_absolute_url(self):
         if self.ref:

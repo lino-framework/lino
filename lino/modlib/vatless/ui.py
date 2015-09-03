@@ -80,7 +80,7 @@ class Invoices(PartnerVouchers):
     #     return kw
 
 
-class InvoicesByJournal(Invoices, ByJournal):
+class InvoicesByJournal(ByJournal, Invoices):
     """Shows all simple invoices of a given journal (whose
     :attr:`Journal.voucher_type` must be
     :class:`lino.modlib.sales.models.AccountInvoice`).

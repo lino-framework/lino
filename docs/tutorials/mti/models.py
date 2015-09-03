@@ -31,6 +31,7 @@ class Restaurant(Place):
 
 
 class Visit(models.Model):
+    allow_cascaded_delete = ['place']
     person = models.ForeignKey(Person)
     place = models.ForeignKey(Place)
     purpose = models.CharField(max_length=50)

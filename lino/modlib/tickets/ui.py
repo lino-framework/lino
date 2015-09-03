@@ -82,7 +82,7 @@ class ProjectDetail(dd.FormLayout):
 class Projects(dd.Table):
     model = 'tickets.Project'
     detail_layout = ProjectDetail()
-    column_names = "ref name parent type *"
+    column_names = "ref name parent type private *"
     parameters = mixins.ObservedPeriod(
         observed_event=ProjectEvents.field(blank=True),
         interesting_for=dd.ForeignKey(
@@ -382,8 +382,8 @@ class DuplicatesByTicket(Tickets):
     column_names = "id summary project reporter *"
 
 
-class UnassignedTickets(Tickets):
-    column_names = "summary project reporter *"
+# class UnassignedTickets(Tickets):
+#     column_names = "summary project reporter *"
 
 
 class TicketsByProject(Tickets):
@@ -403,7 +403,7 @@ class TicketsByProduct(Tickets):
 
 
 class PublicTickets(Tickets):
-    roles_required = set([])
+    required_roles = set([])
     label = _("Unassigned tickets")
     order_by = ["-priority", "-id"]
     column_names = 'overview:50 state:10 ticket_type:10 project:10 product:10 priority:3 *'

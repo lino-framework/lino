@@ -12,7 +12,7 @@ from django.conf import settings
 
 from lino.core.utils import obj2str
 
-from .roles import SiteUser
+from .roles import check_required_roles
 from .exceptions import ChangedAPI
 
 
@@ -25,13 +25,13 @@ class Permittable(object):
 
     """
 
-    required_roles = set([SiteUser])
+    required_roles = set()
     """A set of user roles required to view this actor or action.
 
     Each element if the set must be either a subclass of `UserRole` or
     a tuple thereof.
 
-    The default value is a set with a single element
+    The default value on actors is a set with a single element
     :class:`SiteUser`, which means that the actor is available only
     for authenticated users.
 
@@ -162,8 +162,13 @@ def make_view_permission_handler(*args, **kw):
 def make_view_permission_handler_(
         actor, readonly, debug_permissions, required_roles):
 
+    check_required_roles(required_roles, actor)
+
     if settings.SITE.user_profiles_module:
         def allow(action, profile):
+            # print str(actor)
+            # if str(actor.actor) == "tickets.PublicTickets":
+            #     print 20150831, profile.role, required_roles
             # if action.action_name == "export_excel":
             #     print 20150828, profile.role, required_roles
             return profile.has_required_roles(required_roles)
@@ -201,6 +206,8 @@ def make_view_permission_handler_(
 def make_permission_handler_(
     elem, actor, readonly, debug_permissions, required_roles,
         allow=None, auth=False, owner=None, allowed_states=None):
+
+    check_required_roles(required_roles, actor)
 
     #~ if str(actor) == 'courses.PendingCourseRequests':
         #~ if allow is None: raise Exception("20130424")

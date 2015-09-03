@@ -15,7 +15,9 @@ TINYMCE3 = True
 the currently used 3.4.8.  When you do this, windows containing a
 TextField don't open, and the JS console says "TypeError: sp is
 undefined". That's because we did not yet get Andrew Mayorov's
-Ext.ux.TinyMCE to work with TinyMCE 4.
+:srcref:`lino/modlib/tinymce/static/byteforce/Ext.ux.TinyMCE.js` to
+work with TinyMCE 4.  It seems that either ControlManager or
+WindowManager no longer are functions in tinymce4.
 
 """
 
@@ -85,8 +87,8 @@ class Plugin(ad.Plugin):
     """The third row of toolbar buttons when editing in own window."""
 
     if TINYMCE3:
-        media_name = 'tinymce-3.4.8'
-        # media_name = 'tinymce-3.5.11'
+        # media_name = 'tinymce-3.4.8'
+        media_name = 'tinymce-3.5.11'
     else:
         media_name = 'tinymce-4.1.10'
     """Lino currently includes three versions of TinyMCE, but for

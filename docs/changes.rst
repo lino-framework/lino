@@ -20,6 +20,22 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
+Version 1.6.20 (in development)
+===============================
+
+
+Version 1.6.19 (released :blogref:`20150901`)
+=============================================
+
+- Changed Development Status from beta to stable.
+- Lots of changes, especially the murder bug (:blogref:`20150831`)
+
+
+Version 1.6.18 (released :blogref:`20150728`)
+=============================================
+
+- Lots of changes. Lino Noi 0.0.1 needs this version.
+
 - When :meth:`lino.core.actions.Action.run_from_ui` raises an
   exception, Lino (until now) nevertheless closed the action form
   window. Now the window is closed only when the action runs without
@@ -38,14 +54,7 @@ Development
   :attr:`sort_index <lino.core.actions.Action.sort_index>` of the
   action.  Bug fixed.
 
-Version 1.6.19 (in deveopment)
-==============================
 
-
-Version 1.6.18 (released :blogref:`20150728`)
-=============================================
-
-- Lots of changes. Lino Noi 0.0.1 needs this version.
 
 Version 1.6.17 (released :blogref:`20150108`)
 =============================================

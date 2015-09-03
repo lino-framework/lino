@@ -65,9 +65,9 @@ def objects():
         yield Milestone(site=SITES.pop(), expected=d, reached=d)
     yield Milestone(site=SITES.pop(), expected=dd.today())
 
-    yield Project(name="Framewörk", ref="linö")
+    yield Project(name="Framewörk", ref="linö", private=False)
     yield Project(name="Téam", ref="téam")
-    yield Project(name="Documentatión", ref="docs")
+    yield Project(name="Documentatión", ref="docs", private=False)
 
     PROJECTS = Cycler(Project.objects.all())
     SITES = Cycler(Site.objects.all())

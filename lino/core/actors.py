@@ -29,6 +29,7 @@ from lino.core.utils import error2str
 from lino.utils import curry, AttrDict
 from lino.utils.xmlgen.html import E
 
+from .roles import SiteUser
 
 actor_classes = []
 actors_dict = None
@@ -278,6 +279,9 @@ class Actor(actions.Parametrizable, Permittable):
 
     """
     __metaclass__ = ActorMetaClass
+
+    required_roles = set([SiteUser])
+    """See :attr:`lino.core.permissions.Permittable.required_roles`"""
 
     model = None
     """

@@ -39,19 +39,6 @@ from django.utils.encoding import force_text
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-    from django.apps import apps
-    get_models = apps.get_models
-    # def get_models(*args, **kwargs):
-    #     # print "20150822 gonna populate"
-    #     # apps.populate(settings.INSTALLED_APPS)
-    #     # print "20150822 ok"
-    #     return apps.get_models(*args, **kwargs)
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
-    from django.db.models.loading import get_models
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -78,6 +65,7 @@ from .utils import resolve_model
 from .utils import is_devserver
 from .utils import full_model_name as fmn
 from .utils import obj2str
+from .utils import GenericForeignKey, get_models
 # from .utils import format_request
 
 
@@ -305,6 +293,9 @@ class Kernel(object):
             #~ print 20130216, model
             #~ fix_field_cache(model)
 
+            # if hasattr(model, '_lino_ddh'):
+            if '_lino_ddh' in model.__dict__:
+                raise Exception("20150831 %s", model)
             model._lino_ddh = DisableDeleteHandler(model)
 
             Model.django2lino(model)
@@ -381,6 +372,7 @@ class Kernel(object):
                     """
                     if not hasattr(f.rel.to, '_lino_ddh'):
                         raise Exception("20150824")
+                    # f.rel.to._lino_ddh.add_fk(f.model, f)
                     f.rel.to._lino_ddh.add_fk(m or model, f)
 
         # Set on_delete=PROTECT for FK fields that are not listed
@@ -394,7 +386,7 @@ class Kernel(object):
                             "field is not specified in "
                             "allow_cascaded_delete.").format(fmn(m), fk.name)
                         logger.debug(msg)
-                        fk.rel.on_delete == models.PROTECT
+                        fk.rel.on_delete = models.PROTECT
                 else:
                     if fk.name in m.allow_cascaded_delete:
                         msg = ("{0}.{1} specified in allow_cascaded_delete "
@@ -410,9 +402,8 @@ class Kernel(object):
                             raise Exception(msg)
 
                     else:
-                        msg = (
-                            "{0}.{1} has custom on_delete").format(
-                                fmn(m), fk.name, fk.rel.on_delete)
+                        msg = ("{0}.{1} has custom on_delete").format(
+                            fmn(m), fk.name, fk.rel.on_delete)
                         logger.debug(msg)
                 
         for p in self.installed_plugins:

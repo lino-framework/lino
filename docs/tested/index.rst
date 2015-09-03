@@ -22,3 +22,4 @@ which are part of the test suite.
    diamond/index
    diamond2/index
    e006
+   ddh

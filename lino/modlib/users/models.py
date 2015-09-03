@@ -92,7 +92,7 @@ class User(CreatedModified):
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
-        ordering = ['last_name', 'first_name']
+        ordering = ['last_name', 'first_name', 'username']
 
     preferred_foreignkey_width = 15
 
@@ -126,7 +126,9 @@ class User(CreatedModified):
 
     if dd.is_installed('contacts'):
 
-        partner = models.ForeignKey('contacts.Partner', blank=True, null=True)
+        partner = models.ForeignKey(
+            'contacts.Partner', blank=True, null=True,
+            on_delete=models.PROTECT)
 
     else:
 

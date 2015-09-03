@@ -47,8 +47,17 @@ from django.core.validators import (
 if AFTER17:
     from django.apps import apps
     get_models = apps.get_models
+    # def get_models(*args, **kwargs):
+    #     # print "20150822 gonna populate"
+    #     # apps.populate(settings.INSTALLED_APPS)
+    #     # print "20150822 ok"
+    #     return apps.get_models(*args, **kwargs)
+
+    # not used here, but by modules importing this
+    from django.contrib.contenttypes.fields import GenericForeignKey
 else:
     from django.db.models.loading import get_models
+    from django.contrib.contenttypes.generic import GenericForeignKey
 
 
 validate_url = URLValidator()
