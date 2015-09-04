@@ -12,6 +12,7 @@ from lino_noi.projects.team.settings.demo import *
 class Site(Site):
 
     default_ui = 'bootstrap3'
+    default_user = 'anonymous'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
