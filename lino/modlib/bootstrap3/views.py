@@ -106,10 +106,10 @@ class Index(View):
             title=settings.SITE.title,
             main=settings.SITE.get_main_html(request),
         )
-        if settings.SITE.user_model is not None:
-            user = request.subst_user or request.user
-        else:
+        if settings.SITE.user_model is None:
             user = auth.AnonymousUser.instance()
+        else:
+            user = request.subst_user or request.user
         ar = BaseRequest(
             user=user, request=request,
             renderer=ui.renderer)

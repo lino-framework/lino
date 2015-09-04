@@ -150,6 +150,27 @@ class AuthMiddleWareBase(object):
         raise NotImplementedError
 
 
+class DefaultUserMiddleware(AuthMiddleWareBase):
+    """Used when :attr:`lino.core.site.Site.default_user` is non-empty.
+    """
+    def get_user_from_request(self, request):
+        user = self.authenticate(settings.SITE.default_user)
+
+        # print 20150701, user.profile.role
+
+        if user is None:
+            # print("20130514 Unknown username %s from request %s" % (
+            #     username, request))
+            #~ raise Exception(
+            #~ raise exceptions.PermissionDenied("Unknown or inactive username %r. Please contact your system administrator."
+            # logger.info("Unknown or inactive username %r.", username)
+            raise exceptions.PermissionDenied(
+                "default_user {0} does not exist".format(
+                    settings.SITE.default_user))
+
+        return user
+
+
 class RemoteUserMiddleware(AuthMiddleWareBase):
 
     """Middleware automatically installed by :meth:`get_middleware_classes
@@ -172,8 +193,7 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
     """
 
     def get_user_from_request(self, request):
-        username = request.META.get(
-            settings.SITE.remote_user_header, settings.SITE.default_user)
+        username = request.META.get(settings.SITE.remote_user_header, None)
 
         if not username:
             raise Exception(

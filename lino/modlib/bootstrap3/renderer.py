@@ -19,6 +19,8 @@ class Renderer(HtmlRenderer):
 
     """
 
+    can_auth = False
+
     # is_interactive = True
 
     def instance_handler(self, ar, obj, **kw):
