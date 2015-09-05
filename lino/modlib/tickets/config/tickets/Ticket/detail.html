@@ -3,7 +3,7 @@
 {% block title %}{{title}}{% endblock %}
 {% block main %}
 <div class="row-fluid">
-  <h1>#{{obj.id}} ({{obj.summary}})</h1>
+<h1>#{{obj.id}} ({{obj.summary}})</h1>
 <p style="background-color:#eeeeee; padding:6pt;">
 <b>State:</b>{{obj.state}}  
 {% if obj.closed %} (closed){% endif %}
@@ -11,7 +11,7 @@
 (last update {{obj.modified}})
 <br/><b>Reported by:</b> {{obj.reporter}} {{obj.created}}
 {% if obj.product %}
-<br/><b>Product:</b> {{obj.product}}
+<br/><b>Product:</b> {{E.tostring(ar.obj2html(obj.product))}}
 {% endif %}
 
 {% if False %}
@@ -23,8 +23,15 @@
 {% endif %}
 {% endif %}
 </p>
-<div>{{obj.description}}</div>
+<div>
+{% if obj.private and not ar.get_user().authenticated%}
+(Private content)
+{% else %}
+{{obj.description}}
+{% endif %}
+</div>
 <div>{{ar.show('tickets.LinksByTicket', obj)}}</div>
 </div>
+{{E.tostring(navigator)}}
 {% endblock %}
 

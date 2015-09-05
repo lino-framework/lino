@@ -262,7 +262,7 @@ class TicketDetail(dd.DetailLayout):
 
 
 class Tickets(dd.Table):
-    required_roles = set([])
+    required_roles = set()
     model = 'tickets.Ticket'
     order_by = ["-id"]
     column_names = 'id summary:50 #feedback #standby closed ' \
