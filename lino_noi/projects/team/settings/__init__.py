@@ -49,7 +49,13 @@ class Site(Site):
         yield 'lino_noi.lib.contacts'
         # yield 'lino.modlib.cal'
         yield 'lino_noi.lib.products'
-        # yield 'lino.modlib.tickets'
+
+        yield 'lino.modlib.tickets'
+        # We explicitly yield 'tickets', although it would be
+        # automatically added by 'clocking', because we want
+        # :meth:`lino.core.plugin.Plugin.get_menu_group` to return
+        # "Tickets", not "Clocking".
+
         yield 'lino.modlib.clocking'
         yield 'lino.modlib.lists'
 
