@@ -262,6 +262,7 @@ class TicketDetail(dd.DetailLayout):
 
 
 class Tickets(dd.Table):
+    required_roles = set([])
     model = 'tickets.Ticket'
     order_by = ["-id"]
     column_names = 'id summary:50 #feedback #standby closed ' \
@@ -271,6 +272,8 @@ class Tickets(dd.Table):
     reporter product
     summary
     """
+
+    detail_html_template = "tickets/Ticket/detail.html"
 
     parameters = mixins.ObservedPeriod(
         observed_event=TicketEvents.field(blank=True),
@@ -403,7 +406,6 @@ class TicketsByProduct(Tickets):
 
 
 class PublicTickets(Tickets):
-    required_roles = set([])
     label = _("Unassigned tickets")
     order_by = ["-priority", "-id"]
     column_names = 'overview:50 state:10 ticket_type:10 project:10 product:10 priority:3 *'

@@ -37,12 +37,13 @@ class Star(UserAuthored, Controllable):
 
 
 def get_favourite(obj, user):
-    Star = rt.modules.stars.Star
-    qs = Star.objects.filter(
-        **gfk2lookup(Star.owner, obj, user=user))
-    if qs.count() == 0:
-        return None
-    return qs[0]
+    if user.authenticated:
+        Star = rt.modules.stars.Star
+        qs = Star.objects.filter(
+            **gfk2lookup(Star.owner, obj, user=user))
+        if qs.count() == 0:
+            return None
+        return qs[0]
 
 
 class Stars(dd.Table):

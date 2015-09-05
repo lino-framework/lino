@@ -641,15 +641,15 @@ documentation.
     # "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
-    """Username of the user to be used for **all** incoming requests.
-    Setting this to a nonempty value will make this site visible for
-    everyone without requiring any authentication.
+    """Username of the user to be used for all incoming requests.  Setting
+    this to a nonempty value will disable authentication on this site.
+    The special value `'anonymous'` will cause anonymous requests
+    (whose `user` attribute is the :class:`AnonymousUser
+    <lino.modlib.users.utils.AnonymousUser>` instance).
 
+    See also :meth:`get_auth_method`.
 
-    The special value `'anonymous'` will cause ``
-    lino.modlib.users.utils import AnonymousUser
-
-    This setting is ignored when :attr:`user_model` is `None`.
+    This setting should be `None` when :attr:`user_model` is `None`.
 
     """
 
@@ -1394,9 +1394,9 @@ documentation.
             stamp.write_file(this)
 
     def set_user_model(self, spec):
-        """This can be called during :meth:`Plugin.on_init
-        <lino.core.plugin.Plugin.on_init>` of apps which provide user
-        management (the only candidate is currently
+        """This can be called during the :meth:`on_init
+        <lino.core.plugin.Plugin.on_init>` of plugins which provide
+        user management (the only plugin which does this is currently
         :mod:`lino.modlib.users`).
 
         """
@@ -3028,9 +3028,9 @@ signature as `django.core.mail.EmailMessage`.
     def login(self, username=None, **kw):
         """Open a session as the user with the given `username`.
     
-        For usage from a shell.  Does not require any password because
-        when somebody has command-line access we trust that she has
-        already authenticated.
+        For usage from a shell or a tested document.  Does not require
+        any password because when somebody has command-line access we
+        trust that she has already authenticated.
     
         It returns a
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object.

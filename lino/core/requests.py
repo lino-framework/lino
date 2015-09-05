@@ -928,9 +928,6 @@ class ActorRequest(BaseRequest):
     def get_row_by_pk(self, pk):
         return self.actor.get_row_by_pk(self, pk)
 
-    def as_bootstrap_html(self, *args, **kw):
-        return self.bound_action.action.as_bootstrap_html(self, *args, **kw)
-
     def get_action_title(self):
         return self.bound_action.action.get_action_title(self)
 

@@ -125,9 +125,6 @@ class MenuItem:
             return s + self.name
         return s
 
-    def as_bootstrap_html(self, renderer, request, level=None):
-        raise Exception("20150824 moved to TextRenderer.show_menu")
-
     def as_rst(self, ar, level=None):
         """
         Render this menu item as an rst string.

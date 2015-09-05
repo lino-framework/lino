@@ -69,8 +69,8 @@ def check_json_result(response, expected_keys=None, msg=''):
         raise Exception("{0} in {1}".format(e, response.content))
     if expected_keys is not None:
         if set(result.keys()) != set(expected_keys.split()):
-            raise Exception("{0} != {1}".format(
-                result.keys() != expected_keys.split()))
+            raise Exception("'{0}' != '{1}'".format(
+                ' '.join(result.keys()), expected_keys))
     return result
 
 

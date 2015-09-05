@@ -1,0 +1,30 @@
+{% extends "bootstrap3/base.html" %}
+{% set active_page = "" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+  <h1>#{{obj.id}} ({{obj.summary}})</h1>
+<p style="background-color:#eeeeee; padding:6pt;">
+<b>State:</b>{{obj.state}}  
+{% if obj.closed %} (closed){% endif %}
+{% if obj.standby %} (standby){% endif %}
+(last update {{obj.modified}})
+<br/><b>Reported by:</b> {{obj.reporter}} {{obj.created}}
+{% if obj.product %}
+<br/><b>Product:</b> {{obj.product}}
+{% endif %}
+
+{% if False %}
+{% if obj.project %}
+<br/><b>Project:</b> {{obj.name}}
+{% endif %}
+{% if obj.ticket_type %}
+<br/><b>Type:</b> {{obj.ticket_type}}
+{% endif %}
+{% endif %}
+</p>
+<div>{{obj.description}}</div>
+<div>{{ar.show('tickets.LinksByTicket', obj)}}</div>
+</div>
+{% endblock %}
+
