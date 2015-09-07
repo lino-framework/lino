@@ -2,6 +2,9 @@
 Our ticketing system
 ====================
 
+Obsolete. We now use `Lino Noi <http://noi.lino-framework.org/>`__ as
+ticketing system.
+
 .. glossary::
 
   trac

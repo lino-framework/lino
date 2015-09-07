@@ -937,7 +937,7 @@ def iban2bic(iban):
     iban = iban.replace(' ', '')
     if iban.startswith('BE'):
         k = iban[4:7]
-        return BELGIAN_BICS[k]
+        return BELGIAN_BICS.get(k)
 
 
 def belgian_nban_to_iban_bic(s):

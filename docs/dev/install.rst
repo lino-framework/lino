@@ -145,6 +145,35 @@ is set using this command::
 More about this in :doc:`cache`.
 
 
+Collecting static files
+=======================
+
+One part of your cache directory are the static files.  When your
+:envvar:`LINO_CACHE_ROOT` is set, you should run Django's
+:manage:`collectstatic` command::
+
+    $ python manage.py collectstatic
+
+The output should be something like this::
+
+    You have requested to collect static files at the destination
+    location as specified in your settings:
+
+        /home/myname/tmp/lino_cache/collectstatic
+
+    This will overwrite existing files!
+    Are you sure you want to do this?
+
+    Type 'yes' to continue, or 'no' to cancel: yes
+
+    4688 static files copied to '/home/myname/tmp/lino_cache/collectstatic', 0 unmodified.
+
+
+You need to do this only for your first local Lino project because
+static files are the same for every Lino application.  There are
+exceptions to this rule, but we can ignore them for the moment.
+
+
 Run Lino's test suite
 =====================
 

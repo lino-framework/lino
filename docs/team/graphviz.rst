@@ -1,9 +1,10 @@
-Tests
-=====
+=======================
+Diagrams using graphviz
+=======================
 
 
-Using the ``.. graphviz::`` directive
--------------------------------------
+Using the :rst:dir:`.. graphviz::` directive
+============================================
 
 .. graphviz::
 
@@ -13,8 +14,8 @@ Using the ``.. graphviz::`` directive
    
    
 
-Using the ``.. inheritance-diagram::`` directive
-------------------------------------------------
+Using the :rst:dir:`.. inheritance-diagram::` directive
+=======================================================
 
 ::
 

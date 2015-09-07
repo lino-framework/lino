@@ -7,4 +7,3 @@ Topics
    
    *
    /django/index
-   /tests
